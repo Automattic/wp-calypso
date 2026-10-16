@@ -87,7 +87,7 @@ const SitePickerStep: Step< {
 			title: site?.title,
 		} );
 		const host = hostingProviderData?.hosting_provider?.slug;
-		navigation.submit?.( { action: 'select-site', site, host, shouldSkipSubmitTracking: true } );
+		navigation.submit?.( { action: 'select-site', site, host } );
 	};
 
 	const onSelectSite = ( site: SiteExcerptData ) => {

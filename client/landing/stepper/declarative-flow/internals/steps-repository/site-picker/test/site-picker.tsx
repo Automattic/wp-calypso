@@ -212,7 +212,15 @@ describe( 'SitePicker', () => {
 				slug: 'example.wordpress.com',
 				title: 'A Test Site',
 			} );
-			expect( recordStepNavigation ).not.toHaveBeenCalled();
+			expect( recordStepNavigation ).toHaveBeenCalledTimes( 1 );
+			expect( recordStepNavigation ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					providedDependencies: expect.objectContaining( {
+						action: 'select-site',
+						site: expect.objectContaining( { ID: 1 } ),
+					} ),
+				} )
+			);
 		}
 	);
 

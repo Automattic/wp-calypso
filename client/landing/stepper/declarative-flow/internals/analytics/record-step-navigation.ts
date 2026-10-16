@@ -27,6 +27,9 @@ const EXCLUDED_DEPENDENCIES = [
 	'suggestion',
 ];
 
+const isPrimitive = ( value: unknown ) =>
+	value === null || ( typeof value !== 'object' && typeof value !== 'function' );
+
 export function recordStepNavigation( {
 	event,
 	intent = '',
@@ -73,6 +76,20 @@ export function recordStepNavigation( {
 				propValue = Object.entries( propValue || {} )
 					.map( ( pair ) => pair.join( ':' ) )
 					.join( ',' );
+			}
+
+			if ( propName === 'site' && propValue && typeof propValue === 'object' ) {
+				propName = 'site_id';
+				propValue = ( propValue as { ID?: number } ).ID;
+			}
+
+			if ( Array.isArray( propValue ) && propValue.every( isPrimitive ) ) {
+				propValue = propValue.join( ',' );
+			}
+
+			// Tracks doesn't support nested properties, so drop any object left unflattened.
+			if ( propValue !== null && typeof propValue === 'object' ) {
+				return props;
 			}
 
 			return {
