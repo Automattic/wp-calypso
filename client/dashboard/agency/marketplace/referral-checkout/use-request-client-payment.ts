@@ -182,12 +182,8 @@ export function useRequestClientPayment( {
 			} );
 			// The link is copied for both flows.
 			const isLinkCopied = await copyToClipboard( referral.checkout_url );
-			// A development site's plan never went through the cart, which stays as it was.
-			if ( ! license ) {
-				clearStoredCart( 'referral' );
-				updateMarketplaceType( 'regular' );
-			}
-			navigate( {
+			// Emptied once Referrals shows, so the checkout never flashes an empty cart.
+			await navigate( {
 				to: '/referrals',
 				search: {
 					new_referral_order_email: email,
@@ -196,6 +192,11 @@ export function useRequestClientPayment( {
 					link_copied: isLinkCopied,
 				},
 			} );
+			// A development site's plan never went through the cart, which stays as it was.
+			if ( ! license ) {
+				clearStoredCart( 'referral' );
+				updateMarketplaceType( 'regular' );
+			}
 		} catch ( error ) {
 			const { code, message: errorMessage } = ( error ?? {} ) as ApiError;
 			createErrorNotice(

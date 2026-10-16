@@ -14,13 +14,14 @@ jest.mock( '@wordpress/components', () => ( {
 		className,
 		label,
 		onClick,
+		...props
 	}: {
 		children?: React.ReactNode;
 		className?: string;
 		label?: string;
 		onClick?: () => void;
 	} ) => (
-		<button className={ className } onClick={ onClick }>
+		<button className={ className } onClick={ onClick } { ...props }>
 			{ label }
 			{ children }
 		</button>
@@ -130,6 +131,23 @@ describe( 'ChatHeader', () => {
 			'agents-manager-chat-header__internal-only',
 			'agents-manager-chat-header__actions',
 		] );
+	} );
+
+	it( 'exempts its controls, but not the title, from the floating panel drag', () => {
+		installAdminBarTrigger();
+
+		const { container } = renderChatHeader( 'History', false, jest.fn() );
+		// agenttic's non-draggable selector for header controls.
+		const isExempt = ( element: Element | null ) =>
+			!! element?.closest( '[data-slot="chat-header"] [data-slot="button"]' );
+
+		expect( isExempt( container.querySelector( '.agents-manager-chat-header__back-btn' ) ) ).toBe(
+			true
+		);
+		expect( isExempt( screen.getByText( 'Minimize' ) ) ).toBe( true );
+		expect( isExempt( screen.getByText( 'More Options' ) ) ).toBe( true );
+		expect( isExempt( screen.getByText( 'Close' ) ) ).toBe( true );
+		expect( isExempt( screen.getByText( 'History' ) ) ).toBe( false );
 	} );
 
 	it( 'hides the internal-only pill on generally available screens', () => {

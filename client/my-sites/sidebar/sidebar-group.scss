@@ -113,10 +113,8 @@
 			height: 20px;
 			color: var(--wp-admin-sidebar-group-label-fg, #2271b1);
 			background: currentColor;
-			/* stylelint-disable function-url-quotes */
 			mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17.5 11.6004L12 16.0004L6.5 11.6004L7.4 10.4004L12 14.0004L16.5 10.4004L17.5 11.6004Z'/%3E%3C/svg%3E") no-repeat center / 150%;
 			-webkit-mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17.5 11.6004L12 16.0004L6.5 11.6004L7.4 10.4004L12 14.0004L16.5 10.4004L17.5 11.6004Z'/%3E%3C/svg%3E") no-repeat center / 150%;
-			/* stylelint-enable function-url-quotes */
 			cursor: pointer;
 		opacity: 0.7;
 		transition: transform 150ms ease, opacity 150ms ease;
@@ -166,10 +164,8 @@
 			width: 20px;
 			height: 20px;
 			background: currentColor;
-			/* stylelint-disable function-url-quotes */
 			mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m19 7-3-3-8.5 8.5-1 4 4-1L19 7Zm-7 11.5H5V20h7v-1.5Z'/%3E%3C/svg%3E") no-repeat center / contain;
 			-webkit-mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m19 7-3-3-8.5 8.5-1 4 4-1L19 7Zm-7 11.5H5V20h7v-1.5Z'/%3E%3C/svg%3E") no-repeat center / contain;
-			/* stylelint-enable function-url-quotes */
 		}
 
 		&:hover:not(:disabled) {

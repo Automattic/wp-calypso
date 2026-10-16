@@ -180,3 +180,11 @@ export function buildOmnibarNodesFromAdminBarNodes(
 
 	return omnibarNodes;
 }
+
+export function parseAdminBarTitle( node: AdminBarNode ) {
+	const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
+	return {
+		text: doc.body.textContent?.trim() || undefined,
+		tooltip: doc.querySelector( '[title]' )?.getAttribute( 'title' )?.trim() || undefined,
+	};
+}

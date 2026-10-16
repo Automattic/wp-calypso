@@ -45,7 +45,6 @@ const mockFetch = jest.fn().mockResolvedValue( { ok: true } );
 globalThis.fetch = mockFetch;
 
 const mockCreateFeedbackActions = createFeedbackActions as jest.Mock;
-const mockRegisterMessageActions = jest.fn();
 const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.MockedFunction<
 	typeof recordBigSkyTracksEvent
 >;
@@ -98,7 +97,6 @@ describe( 'useFeedbackAction', () => {
 	} );
 
 	const defaultConfig = {
-		registerMessageActions: mockRegisterMessageActions,
 		messages: [] as Message[],
 	};
 

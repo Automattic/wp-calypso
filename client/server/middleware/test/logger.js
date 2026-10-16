@@ -55,7 +55,7 @@ const withEnv = ( env ) => {
 	} );
 };
 
-const simulateRequest = ( { req, res, delay, finished = true } ) => {
+const simulateRequest = ( { req, res, delay = 0, finished = true } ) => {
 	loggerMiddleware()( req, res, () => {} );
 	jest.advanceTimersByTime( delay );
 	res.finished = finished;
