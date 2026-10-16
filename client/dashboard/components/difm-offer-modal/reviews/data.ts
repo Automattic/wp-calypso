@@ -7,7 +7,7 @@ export interface DifmOfferReview {
 	title: string;
 	quote: string;
 	reviewer: string;
-	/** The review on Trustpilot. The cards do not link to it yet. */
+	/** The review on Trustpilot. A card without a URL shows "Trustpilot" as plain text. */
 	url?: string;
 }
 
@@ -39,6 +39,7 @@ export function getDifmOfferReviews(): DifmOfferReview[] {
 				"My site is beautiful! It's better than I could've hoped for. I was having such a hard time designing the site myself. I had a vision in mind for exactly what I wanted, and they made it happen! Thank you!"
 			),
 			reviewer: 'Jennifer Board',
+			url: 'https://www.trustpilot.com/reviews/6a299679657786a2ef3a9cd3',
 		},
 		{
 			id: 'steve-sonn',
@@ -61,6 +62,7 @@ export function getDifmOfferReviews(): DifmOfferReview[] {
 				"Turned around the construction of an impressive website for my wife's new online ceramics business in a few days. Highly recommended, especially as it was free with an upgrade. Shows you really need an expert to do the job at the end of the day. Thank you Angelo A"
 			),
 			reviewer: 'Pablo',
+			url: 'https://www.trustpilot.com/reviews/69a4aa90075bf3d9b4fd87b0',
 		},
 	];
 }
