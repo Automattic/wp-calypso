@@ -24,6 +24,7 @@ describe( 'useBlockSuggestions', () => {
 			'translate',
 			'change-tone',
 		] );
+		expect( result.current.replaceEmptyViewSuggestions ).toBe( true );
 	} );
 
 	it( 'suggests nothing while no block is selected', () => {
@@ -31,6 +32,6 @@ describe( 'useBlockSuggestions', () => {
 
 		const { result } = renderHook( () => useBlockSuggestions() );
 
-		expect( result.current.suggestions ).toEqual( [] );
+		expect( result.current ).toEqual( { suggestions: [], replaceEmptyViewSuggestions: false } );
 	} );
 } );

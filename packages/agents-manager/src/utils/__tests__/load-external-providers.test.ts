@@ -68,6 +68,15 @@ jest.mock( '../checkpoints', () => ( {
 jest.mock( '../../abilities/woocommerce', () => ( {
 	wooFallbackToolProvider: { getAbilities: () => Promise.resolve( [] ), executeAbility: jest.fn() },
 } ) );
+jest.mock( '../../hooks/use-block-suggestions', () => ( {
+	useBlockSuggestions: () => ( {
+		suggestions: [
+			{ id: 'translate', label: 'Translate content', prompt: 'Translate this to:' },
+			{ id: 'remove-image-background', label: 'Remove background', prompt: 'Remove it' },
+		],
+		replaceEmptyViewSuggestions: true,
+	} ),
+} ) );
 
 // The abilities facade only loads the editor abilities on editor pages —
 // open the gate and resolve the load, so the merged provider and the sync
@@ -961,6 +970,31 @@ describe( 'loadExternalProviders', () => {
 			} );
 			expect( suggestions.map( ( { id } ) => id ) ).toContain( 'provider-chip' );
 			expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
+		} );
+
+		it( "let a provider's block chips win the dedupe by id", async () => {
+			const sidebarTranslate = { id: 'translate', label: 'Translate', prompt: '' };
+			setAgentsManagerData( {
+				bigSkyEnabled: true,
+				agentProviders: [
+					{
+						useSuggestions: () => ( {
+							suggestions: [ sidebarTranslate ],
+							replaceEmptyViewSuggestions: true,
+						} ),
+					},
+				],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.useSuggestions?.() ).toEqual( {
+				suggestions: [
+					sidebarTranslate,
+					{ id: 'remove-image-background', label: 'Remove background', prompt: 'Remove it' },
+				],
+				replaceEmptyViewSuggestions: true,
+			} );
 		} );
 
 		it( 'are not offered where Big Sky is off', async () => {

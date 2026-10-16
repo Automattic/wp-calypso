@@ -672,11 +672,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		} )
 	) ) as ( LoadedProviderModule | null )[];
 
-	// AM's editor suggestions go first, so they win the dedupe by id.
 	const editorSuggestions = await editorSuggestionsPromise;
 
+	// AM's empty-view suggestions go first, so they win the dedupe by id.
 	if ( editorSuggestions ) {
-		allUseSuggestions.push( editorSuggestions.useBlockSuggestions );
 		allGetEmptyViewSuggestions.push( editorSuggestions.getEditorEmptyViewSuggestions );
 	}
 
@@ -848,6 +847,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 				fn( actions );
 			}
 		} ) as AbilitiesSetupHook;
+	}
+
+	// AM's block suggestions go last, so a provider's own chips for the block
+	// (the Jetpack AI sidebar's) win the dedupe by id.
+	if ( editorSuggestions ) {
+		allUseSuggestions.push( editorSuggestions.useBlockSuggestions );
 	}
 
 	// Merge useSuggestions: combine from all providers, dedupe by id.
