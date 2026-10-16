@@ -648,7 +648,7 @@ describe( 'applyBlockEditsCallback', () => {
 			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
 			jest
 				.mocked( describeTextContrast )
-				.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 1 } );
+				.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 1, backdrops: [] } );
 			jest.mocked( describeMeasuredLayout ).mockReturnValue( [ 'Row in group (abcd): …' ] );
 
 			const result = await applyBlockEditsCallback( {
@@ -670,7 +670,7 @@ describe( 'applyBlockEditsCallback', () => {
 			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
 			jest
 				.mocked( describeTextContrast )
-				.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 2 } );
+				.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 2, backdrops: [] } );
 
 			const result = await applyBlockEditsCallback( input );
 
@@ -681,11 +681,38 @@ describe( 'applyBlockEditsCallback', () => {
 			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
 			jest
 				.mocked( describeTextContrast )
-				.mockReturnValue( { notes: [ 'Text contrast: all 1 …' ], failures: 0 } );
+				.mockReturnValue( { notes: [ 'Text contrast: all 1 …' ], failures: 0, backdrops: [] } );
 
 			const result = await applyBlockEditsCallback( input );
 
 			expect( result.result.contrastFailures ).toBe( 0 );
+		} );
+
+		it( 'sends the backdrops to fix beside the count', async () => {
+			const backdrops = [
+				{ clientId: 'c25n', name: 'core/group', ownBackground: false, textClientIds: [ 'ueo8' ] },
+			];
+
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			jest
+				.mocked( describeTextContrast )
+				.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 1, backdrops } );
+
+			const result = await applyBlockEditsCallback( input );
+
+			expect( result.result.contrastBackdrops ).toEqual( backdrops );
+		} );
+
+		it( 'leaves the backdrops out when there are none to fix', async () => {
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			jest
+				.mocked( describeTextContrast )
+				.mockReturnValue( { notes: [ 'Text contrast: all 1 …' ], failures: 0, backdrops: [] } );
+
+			const result = await applyBlockEditsCallback( input );
+
+			expect( result.result.contrastFailures ).toBe( 0 );
+			expect( result.result ).not.toHaveProperty( 'contrastBackdrops' );
 		} );
 
 		it( 'leaves the count out when there was no text to measure', async () => {
@@ -698,9 +725,11 @@ describe( 'applyBlockEditsCallback', () => {
 
 		it( 'leaves the count out, keeping the note, when no text could be measured', async () => {
 			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
-			jest
-				.mocked( describeTextContrast )
-				.mockReturnValue( { notes: [ 'Contrast could not be measured …' ], failures: null } );
+			jest.mocked( describeTextContrast ).mockReturnValue( {
+				notes: [ 'Contrast could not be measured …' ],
+				failures: null,
+				backdrops: [],
+			} );
 
 			const result = await applyBlockEditsCallback( input );
 
@@ -719,7 +748,7 @@ describe( 'applyBlockEditsCallback', () => {
 				} );
 				jest
 					.mocked( describeTextContrast )
-					.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 1 } );
+					.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 1, backdrops: [] } );
 			} );
 
 			it( 'measures the whole page when only the CSS changed, with no edited block', async () => {

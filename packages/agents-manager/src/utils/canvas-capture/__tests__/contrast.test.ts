@@ -1,5 +1,8 @@
 jest.mock( '../../block-ids', () => ( {
-	createShortIdLookup: () => ( { findShortId: ( clientId: string ) => clientId } ),
+	// A block the agent was never shown has no short id; these tests name such blocks `long-…`.
+	createShortIdLookup: () => ( {
+		findShortId: ( clientId: string ) => ( clientId.startsWith( 'long-' ) ? undefined : clientId ),
+	} ),
 } ) );
 jest.mock( '../../editor-blocks', () => ( {
 	getBlock: jest.fn(),
@@ -181,6 +184,14 @@ describe( 'failures', () => {
 				'Text contrast too low: heading (ueo8) and paragraph (qalw) — #14213D text on #1D2630, 1.04:1 (needs 4.5:1). The #1D2630 comes from group (c25n), which sets no background of its own, so the colour comes from the theme or global styles.',
 			],
 			failures: 2,
+			backdrops: [
+				{
+					clientId: 'c25n',
+					name: 'core/group',
+					ownBackground: false,
+					textClientIds: [ 'ueo8', 'qalw' ],
+				},
+			],
 		} );
 	} );
 
@@ -290,6 +301,11 @@ describe( 'failures', () => {
 				"Text contrast too low: button (pd19), button (pz9d) and button (mnyk) — #FFFFFF text on #C96F4A, 3.58:1 (needs 4.5:1). The #C96F4A comes from each block's own background.",
 			],
 			failures: 3,
+			backdrops: [
+				{ clientId: 'pd19', name: 'core/button', ownBackground: true, textClientIds: [ 'pd19' ] },
+				{ clientId: 'pz9d', name: 'core/button', ownBackground: true, textClientIds: [ 'pz9d' ] },
+				{ clientId: 'mnyk', name: 'core/button', ownBackground: true, textClientIds: [ 'mnyk' ] },
+			],
 		} );
 	} );
 
@@ -309,6 +325,11 @@ describe( 'failures', () => {
 				'Text contrast too low: button (pd19), button (pz9d) and button (mnyk) — #FFFFFF text on #C96F4A, 3.58:1 (needs 4.5:1). The #C96F4A comes from each block itself, which sets no background of its own, so the colour comes from the theme or global styles.',
 			],
 			failures: 3,
+			backdrops: [
+				{ clientId: 'pd19', name: 'core/button', ownBackground: false, textClientIds: [ 'pd19' ] },
+				{ clientId: 'pz9d', name: 'core/button', ownBackground: false, textClientIds: [ 'pz9d' ] },
+				{ clientId: 'mnyk', name: 'core/button', ownBackground: false, textClientIds: [ 'mnyk' ] },
+			],
 		} );
 	} );
 
@@ -378,6 +399,7 @@ it( 'says all the edited text passes when it does', () => {
 			'Text contrast: all 1 edited text block(s) measure at least 4.5:1 (3:1 for large text) against what renders behind them.',
 		],
 		failures: 0,
+		backdrops: [],
 	} );
 } );
 
@@ -416,6 +438,7 @@ describe( 'text it cannot measure', () => {
 		expect( describeTextContrast( [ 'cover' ] ) ).toEqual( {
 			notes: [ UNMEASURED_ONE ],
 			failures: null,
+			backdrops: [],
 		} );
 	} );
 
@@ -704,6 +727,7 @@ describe( 'every run of text in a block', () => {
 				'Text contrast too low: paragraph (mix) — #FFFFFF text on #FFFFFF, 1:1 (needs 4.5:1). The #FFFFFF comes from the page background.',
 			],
 			failures: 1,
+			backdrops: [],
 		} );
 	} );
 
@@ -720,6 +744,7 @@ describe( 'every run of text in a block', () => {
 				expect.stringMatching( /^Text contrast too low: paragraph \(mix\) — #FFFFFF text/ ),
 			],
 			failures: 1,
+			backdrops: [],
 		} );
 	} );
 
@@ -734,6 +759,7 @@ describe( 'every run of text in a block', () => {
 		expect( describeTextContrast( [ 'mix' ] ) ).toEqual( {
 			notes: [ UNMEASURED_ONE ],
 			failures: null,
+			backdrops: [],
 		} );
 	} );
 } );
@@ -761,6 +787,7 @@ describe( 'text a block holds besides its children', () => {
 				'Text contrast too low: details (det) — #FFFFFF text on #FFFFFF, 1:1 (needs 4.5:1). The #FFFFFF comes from the page background.',
 			],
 			failures: 1,
+			backdrops: [],
 		} );
 	} );
 
@@ -784,6 +811,89 @@ describe( 'text a block holds besides its children', () => {
 				'Text contrast too low: list-item (li2) — #FFFFFF text on #FFFFFF, 1:1 (needs 4.5:1). The #FFFFFF comes from the page background.',
 			],
 			failures: 1,
+			backdrops: [],
 		} );
+	} );
+} );
+
+describe( 'the backdrops to fix, for the server', () => {
+	const themeGroup = ( clientId: string, children: CanvasBlock[] ): CanvasBlock => ( {
+		clientId,
+		name: 'core/group',
+		style: { backgroundColor: NAVY },
+		children,
+	} );
+
+	const ownButton = ( clientId: string ): CanvasBlock => ( {
+		...text( clientId, WHITE_TEXT ),
+		name: 'core/button',
+		attributes: { backgroundColor: 'terracotta' },
+		style: { backgroundColor: 'rgb(201, 111, 74)' },
+	} );
+
+	it( 'lists every failing backdrop, worst first, though the notes are cut short', () => {
+		const groups = [ 'g1', 'g2', 'g3', 'g4', 'g5' ];
+
+		mountCanvas( [
+			...groups.map( ( id ) => themeGroup( id, [ text( `t${ id }` ) ] ) ),
+			ownButton( 'b1' ),
+			ownButton( 'b2' ),
+			ownButton( 'b3' ),
+		] );
+
+		const contrast = describeTextContrast( [ ...groups, 'b1', 'b2', 'b3' ] );
+
+		expect( contrast?.notes ).toContain(
+			'Text contrast too low for 4 more edited text block(s) not listed above.'
+		);
+		expect( contrast?.backdrops.map( ( row ) => row.clientId ) ).toEqual( [
+			...groups,
+			'b1',
+			'b2',
+			'b3',
+		] );
+		expect( contrast?.backdrops[ 0 ] ).toEqual( {
+			clientId: 'g1',
+			name: 'core/group',
+			ownBackground: false,
+			textClientIds: [ 'tg1' ],
+		} );
+		expect( contrast?.backdrops.slice( 5 ) ).toEqual(
+			[ 'b1', 'b2', 'b3' ].map( ( id ) => ( {
+				clientId: id,
+				name: 'core/button',
+				ownBackground: true,
+				textClientIds: [ id ],
+			} ) )
+		);
+	} );
+
+	it( 'lists at most twelve backdrops, and twelve text blocks over each', () => {
+		const groups = Array.from( { length: 13 }, ( _, index ) => `g${ index }` );
+		const crowded = Array.from( { length: 13 }, ( _, index ) => text( `c${ index }` ) );
+
+		mountCanvas( [
+			themeGroup( 'crowd', crowded ),
+			...groups.map( ( id ) => themeGroup( id, [ text( `t${ id }` ) ] ) ),
+		] );
+
+		const backdrops = describeTextContrast( [ 'crowd', ...groups ] )?.backdrops ?? [];
+
+		expect( backdrops ).toHaveLength( 12 );
+		expect( backdrops[ 0 ].clientId ).toBe( 'crowd' );
+		expect( backdrops[ 0 ].textClientIds ).toEqual(
+			crowded.slice( 0, 12 ).map( ( block ) => block.clientId )
+		);
+	} );
+
+	it( 'never names a block by its long id', () => {
+		mountCanvas( [
+			themeGroup( 'long-g', [ text( 'p1' ) ] ),
+			themeGroup( 'g2', [ text( 'long-p' ), text( 'p2' ) ] ),
+		] );
+
+		expect( describeTextContrast( [ 'long-g', 'g2' ] )?.backdrops ).toEqual( [
+			{ clientId: 'g2', name: 'core/group', ownBackground: false, textClientIds: [ 'p2' ] },
+		] );
 	} );
 } );
