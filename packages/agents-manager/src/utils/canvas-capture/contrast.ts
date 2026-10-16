@@ -42,6 +42,10 @@ interface Rgba {
 }
 
 const WHITE: Rgba = { r: 255, g: 255, b: 255, a: 1 };
+const BLACK: Rgba = { r: 0, g: 0, b: 0, a: 1 };
+
+// Text colours offered for a backdrop, the first that reads on it winning.
+const READABLE_CANDIDATES = [ BLACK, WHITE ];
 const TRANSPARENT: Rgba = { r: 0, g: 0, b: 0, a: 0 };
 
 // Media laid out over a background, as a cover block's image or video is.
@@ -67,6 +71,8 @@ export interface ContrastBackdrop {
 	ownBackground: boolean;
 	/** Short ids of the failing text blocks over this backdrop, not cut short as the notes are. */
 	textClientIds: string[];
+	/** A text colour that measures at least the needed ratio on this backdrop, as #RRGGBB; omitted when none does. */
+	readableText?: string;
 }
 
 /** The capture notes on the edited text's contrast, and how many of its blocks fall below their threshold. */
@@ -518,6 +524,21 @@ function collectBlocks( clientIds: string[] ): { blocks: string[]; truncated: bo
 	return { blocks: [ ...visited ], truncated };
 }
 
+/**
+ * A text colour that reads on every backdrop the failing runs sit on, held to
+ * the strictest threshold among them, so a correction need not guess one.
+ * On an opaque backdrop black or white always reaches 4.5:1, so this finds
+ * one in practice; `undefined` keeps the server from being handed a guess.
+ */
+function findReadableText( runs: Run[] ): string | undefined {
+	const needs = Math.max( ...runs.map( ( run ) => run.needs ) );
+	const readable = READABLE_CANDIDATES.find( ( candidate ) =>
+		runs.every( ( run ) => contrastRatio( candidate, run.backdrop.colour ) >= needs )
+	);
+
+	return readable && toHex( readable );
+}
+
 function listLabels( labels: string[] ): string {
 	const named = labels.slice( 0, MAX_NAMED );
 	const rest = labels.length - named.length;
@@ -726,7 +747,7 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 	// is the page background, which no edit can reach. Every failing run
 	// counts, not only a block's worst: one paragraph can fail against its
 	// group and against its own highlight, and both are a fix.
-	const byPainter = new Map< string, { worst: number; texts: Set< string > } >();
+	const byPainter = new Map< string, { worst: number; texts: Set< string >; runs: Run[] } >();
 
 	failing.forEach( ( item ) =>
 		item.failingRuns.forEach( ( run ) => {
@@ -736,23 +757,30 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 				return;
 			}
 
-			const row = byPainter.get( painter ) ?? { worst: Infinity, texts: new Set< string >() };
+			const row = byPainter.get( painter ) ?? {
+				worst: Infinity,
+				texts: new Set< string >(),
+				runs: [],
+			};
 
 			row.worst = Math.min( row.worst, run.ratio );
 			row.texts.add( item.clientId );
+			row.runs.push( run );
 			byPainter.set( painter, row );
 		} )
 	);
 
 	const backdrops = [ ...byPainter ]
 		.sort( ( [ , a ], [ , b ] ) => a.worst - b.worst )
-		.flatMap( ( [ painter, { texts } ] ): ContrastBackdrop[] => {
+		.flatMap( ( [ painter, { texts, runs } ] ): ContrastBackdrop[] => {
 			const clientId = findShortId( painter );
 			const name = getBlock( painter )?.name;
 
 			if ( ! clientId || ! name ) {
 				return [];
 			}
+
+			const readableText = findReadableText( runs );
 
 			return [
 				{
@@ -763,6 +791,7 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 						.map( ( textClientId ) => findShortId( textClientId ) )
 						.filter( ( id ): id is string => !! id )
 						.slice( 0, MAX_BACKDROP_TEXTS ),
+					...( readableText && { readableText } ),
 				},
 			];
 		} )

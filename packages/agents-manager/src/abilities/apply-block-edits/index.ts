@@ -94,6 +94,11 @@ export const applyBlockEditsAbility: Ability = {
 								name: { type: 'string' },
 								ownBackground: { type: 'boolean' },
 								textClientIds: { type: 'array', items: { type: 'string' } },
+								readableText: {
+									type: 'string',
+									description:
+										'A text colour measured readable on this backdrop, as #RRGGBB; absent when none is.',
+								},
 							},
 						},
 						description:
