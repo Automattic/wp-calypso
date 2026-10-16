@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { render } from '../../../../test-utils';
 import CartMenu from '../cart-menu';
 import type { AgencyProduct } from '@automattic/api-core';
@@ -13,14 +13,21 @@ const mockBackup = {
 	family_slug: 'jetpack-backup',
 } as AgencyProduct;
 
-const mockItem = { slug: mockBackup.slug, quantity: 1 };
+const mockStorage = {
+	name: 'Jetpack VaultPress Backup Add-on Storage (10GB)',
+	slug: 'jetpack-backup-addon-storage-10gb-monthly',
+	product_id: 2117,
+	family_slug: 'jetpack-backup-storage',
+} as AgencyProduct;
+
+let mockProduct = mockBackup;
 
 jest.mock( '../use-cart-lines', () => ( {
 	useCartLines: () => ( {
 		lines: [
 			{
-				item: mockItem,
-				product: mockBackup,
+				item: { slug: mockProduct.slug, quantity: 1 },
+				product: mockProduct,
 				priceInfo: { isFree: false, billingTerm: 'yearly' },
 				subtotal: 47.4,
 			},
@@ -38,11 +45,12 @@ jest.mock( '@tanstack/react-router', () => ( {
 	useLocation: () => ( { pathname: '/products', searchStr: '?category=jetpack' } ),
 } ) );
 
-function renderCart( isReferralMode: boolean ) {
+function renderCart( isReferralMode: boolean, product = mockBackup ) {
+	mockProduct = product;
 	return render(
 		<CartMenu
-			items={ [ mockItem ] }
-			products={ [ mockBackup ] }
+			items={ [ { slug: product.slug, quantity: 1 } ] }
+			products={ [ product ] }
 			term="yearly"
 			isReferralMode={ isReferralMode }
 			isAgencyApproved
@@ -72,5 +80,12 @@ describe( 'CartMenu', () => {
 			( await screen.findByRole( 'link', { name: 'Checkout' } ) ).getAttribute( 'href' ) ?? ''
 		);
 		expect( url.pathname ).toBe( '/checkout/agency/purchase' );
+	} );
+
+	it( 'names a backup storage add-on, not just its size', async () => {
+		renderCart( false, mockStorage );
+
+		const name = await screen.findByText( 'VaultPress Backup Add-on Storage 10GB' );
+		await waitFor( () => expect( name ).toBeVisible() );
 	} );
 } );
