@@ -421,7 +421,8 @@ function isLargeText( style: CSSStyleDeclaration ): boolean {
 /** A run's colours against what renders behind it, or `null` when either cannot be read. */
 function measureRun( element: Element, view: Window ): Run | null {
 	const style = view.getComputedStyle( element );
-	const colour = parseColour( style.color );
+	// The glyphs are painted in the text fill colour, which only defaults to `color`.
+	const colour = parseColour( style.webkitTextFillColor || style.color );
 	const backdrop = isAltered( element, view ) ? null : findBackdrop( element, view );
 
 	if ( ! colour || ! backdrop ) {
