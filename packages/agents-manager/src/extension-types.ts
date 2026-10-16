@@ -5,12 +5,7 @@
  * the wp-calypso orchestrator agent with custom abilities and context.
  */
 
-import type { Ability } from './abilities/types';
-
-/**
- * Re-export `Ability` for use by external plugins.
- */
-export type { Ability } from './abilities/types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * Tool Provider Interface
@@ -127,9 +122,6 @@ export interface BaseContextEntry {
  */
 export type ContextEntry = BaseContextEntry;
 
-// Re-export Suggestion from agenttic-ui for convenience
-export type { Suggestion } from '@automattic/agenttic-ui';
-
 /**
  * Big Sky Message Format
  *
@@ -171,4 +163,10 @@ export interface BigSkyMessage {
 	 * Optional: whether to show icon (defaults to true)
 	 */
 	showIcon?: boolean;
+
+	/**
+	 * Optional: lists AM's editor empty-view suggestions under the message, e.g.
+	 * to offer next steps after a site build.
+	 */
+	hasEditorEmptyViewSuggestions?: boolean;
 }
