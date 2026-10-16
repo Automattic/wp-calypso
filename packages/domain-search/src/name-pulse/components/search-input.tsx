@@ -8,10 +8,7 @@ import { useNamePulseUrlQuery } from '../hooks/use-name-pulse-url-query';
 import { NamePulseFilter } from './filter';
 import './search-input.scss';
 
-// Typing into a bar scrolled above the viewport reveals only the caret, and while
-// the bar is off screen the browser anchors scrolling to the results, so their
-// reload can push the page further down. Bring the whole bar back first; the
-// jump is instant because the caret reveal cancels a smooth scroll.
+// Off screen, the browser anchors scrolling to the results, so their reload pushes the page down.
 const keepNamePulseSearchBarInView = ( searchBar: HTMLElement | null ) => {
 	if ( ! searchBar || searchBar.getBoundingClientRect().top >= 0 ) {
 		return;
