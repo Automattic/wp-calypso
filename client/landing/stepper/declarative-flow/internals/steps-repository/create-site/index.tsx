@@ -350,8 +350,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 						sourceSlug,
 						siteIntent,
 						undefined, // siteGoals
-						null, // gardenName
-						null, // gardenPartnerName
 						urlQueryParams.get( 'spec_id' ),
 						isPlaygroundPublish ? 'playground-publish' : undefined,
 						undefined, // provisionTarget
