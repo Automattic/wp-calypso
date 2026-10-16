@@ -517,3 +517,129 @@ describe( 'homepage-first presentation', () => {
 		).toBe( true );
 	} );
 } );
+
+describe( 'homepage section presentation', () => {
+	let animate: jest.Mock;
+	let previousAnimate: PropertyDescriptor | undefined;
+	let previousRangeRects: PropertyDescriptor | undefined;
+
+	beforeEach( () => {
+		jest.mocked( window.matchMedia ).mock.results[ 0 ].value.matches = false;
+		const computedStyle = window.getComputedStyle;
+		jest.spyOn( window, 'getComputedStyle' ).mockImplementation( ( element ) => {
+			const style = computedStyle( element );
+			if ( ! style.opacity ) {
+				style.opacity = '1';
+			}
+			return style;
+		} );
+		const bounds = {
+			x: 0,
+			y: 0,
+			left: 0,
+			top: 0,
+			right: 1040,
+			bottom: 300,
+			width: 1040,
+			height: 300,
+			toJSON: () => ( {} ),
+		};
+		jest.spyOn( Element.prototype, 'getBoundingClientRect' ).mockReturnValue( bounds );
+		previousRangeRects = Object.getOwnPropertyDescriptor( Range.prototype, 'getClientRects' );
+		Object.defineProperty( Range.prototype, 'getClientRects', {
+			configurable: true,
+			value: () => [ bounds ],
+		} );
+		previousAnimate = Object.getOwnPropertyDescriptor( Element.prototype, 'animate' );
+		animate = jest.fn( () => ( { finished: Promise.resolve(), cancel: jest.fn() } ) );
+		Object.defineProperty( Element.prototype, 'animate', { configurable: true, value: animate } );
+		const viewport = document.querySelector( '.preview-viewport' )!;
+		Object.defineProperty( viewport, 'clientWidth', { configurable: true, value: 1090 } );
+		Object.defineProperty( viewport, 'clientHeight', { configurable: true, value: 800 } );
+		connect();
+	} );
+
+	afterEach( () => {
+		for ( const [ prototype, property, descriptor ] of [
+			[ Element.prototype, 'animate', previousAnimate ],
+			[ Range.prototype, 'getClientRects', previousRangeRects ],
+		] as const ) {
+			if ( descriptor ) {
+				Object.defineProperty( prototype, property, descriptor );
+			} else {
+				Reflect.deleteProperty( prototype, property );
+			}
+		}
+	} );
+
+	function flights() {
+		return animate.mock.contexts.filter( ( node: Element ) =>
+			node.classList.contains( 'preview-flight' )
+		);
+	}
+
+	it( 'features the hero received behind the design card once the preview becomes active', async () => {
+		render( 1, first );
+		await jest.advanceTimersByTimeAsync( 1500 );
+		expect( flights() ).toHaveLength( 0 );
+		send( { type: 'config', active: true, generating: true, complete: false } );
+		await jest.advanceTimersByTimeAsync( 20 );
+		expect( flights() ).toHaveLength( 1 );
+		render( 2, first.replace( 'Real generated content', 'Updated generated content' ) );
+		await jest.advanceTimersByTimeAsync( 1500 );
+		expect( flights() ).toHaveLength( 1 );
+	} );
+
+	it( 'waits for the body of an existing section and settles its latest revision before featuring it', async () => {
+		const heading =
+			'<main class="site"><section id="welcome"><h1>A meaningful first homepage</h1></section></main>';
+		render( 1, heading );
+		send( { type: 'config', active: true, generating: true, complete: false } );
+		await jest.advanceTimersByTimeAsync( 1500 );
+		expect( flights() ).toHaveLength( 0 );
+		render( 2, first );
+		await jest.advanceTimersByTimeAsync( 700 );
+		render( 3, first.replace( 'Real generated content', 'The composed section content' ) );
+		await jest.advanceTimersByTimeAsync( 700 );
+		expect( flights() ).toHaveLength( 0 );
+		await jest.advanceTimersByTimeAsync( 600 );
+		expect( flights() ).toHaveLength( 1 );
+		expect( roots.at( -1 )!.textContent ).toContain( 'The composed section content' );
+	} );
+
+	it( 'releases a legitimate heading-only section when the page is ready and skips decorative sections', async () => {
+		const heading =
+			'<main class="site"><section id="welcome"><h1>A meaningful first homepage with only a heading</h1></section><section id="decoration"></section></main>';
+		render( 1, heading );
+		send( { type: 'config', active: true, generating: true, complete: false } );
+		await jest.advanceTimersByTimeAsync( 1500 );
+		expect( flights() ).toHaveLength( 0 );
+		send( {
+			type: 'render',
+			route: '/',
+			title: 'Homepage',
+			epoch: '1:1',
+			revision: 2,
+			ready: true,
+			html: preparePreviewDocument( heading )!.html,
+		} );
+		await jest.advanceTimersByTimeAsync( 20 );
+		expect( flights() ).toHaveLength( 1 );
+	} );
+
+	it( 'shows waiting sections immediately when the host completes', async () => {
+		render( 1, first );
+		send( { type: 'config', active: true, generating: true, complete: false } );
+		expect( roots[ 0 ].querySelector< HTMLElement >( '#welcome' )!.style.visibility ).toBe(
+			'hidden'
+		);
+		send( { type: 'assets', assets: [] } );
+		expect( roots[ 0 ].querySelector< HTMLElement >( '#welcome' )!.style.visibility ).toBe(
+			'hidden'
+		);
+		send( { type: 'config', active: true, generating: false, complete: true } );
+		await jest.advanceTimersByTimeAsync( 1500 );
+		expect( flights() ).toHaveLength( 0 );
+		expect( roots[ 0 ].querySelector< HTMLElement >( '#welcome' )!.style.visibility ).toBe( '' );
+	} );
+} );
