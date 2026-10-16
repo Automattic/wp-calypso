@@ -518,6 +518,17 @@ describe( 'limits', () => {
 		expect( describeTextContrast( [ 'sect' ] ) ).toEqual( [] );
 	} );
 
+	it( 'claims no pass for all the text when the walk stopped short of some blocks', () => {
+		const spacers = Array.from( { length: 300 }, ( _, index ) => ( {
+			clientId: `s${ index }`,
+			name: 'core/spacer',
+		} ) );
+
+		mountCanvas( [ section( [ text( 'first' ), ...spacers, text( 'last' ) ] ) ] );
+
+		expect( describeTextContrast( [ 'sect' ] ) ).toEqual( [] );
+	} );
+
 	it( 'notes what passed and what it could not measure together', () => {
 		mountCanvas( [
 			section( [

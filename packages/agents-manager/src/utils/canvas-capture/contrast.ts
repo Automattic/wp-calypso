@@ -352,13 +352,23 @@ function setsOwnBackground( clientId: string ): boolean {
 	);
 }
 
-/** The edited blocks and their descendants that hold no blocks of their own. */
-function collectLeaves( clientIds: string[] ): string[] {
+/**
+ * The edited blocks and their descendants that hold no blocks of their own,
+ * and whether the walk stopped short of them all.
+ */
+function collectLeaves( clientIds: string[] ): { leaves: string[]; truncated: boolean } {
 	const leaves: string[] = [];
 	const visited = new Set< string >();
+	let truncated = false;
 
 	const walk = ( clientId: string ) => {
-		if ( visited.has( clientId ) || visited.size >= MAX_VISITED ) {
+		if ( visited.has( clientId ) ) {
+			return;
+		}
+
+		if ( visited.size >= MAX_VISITED ) {
+			truncated = true;
+
 			return;
 		}
 
@@ -377,7 +387,7 @@ function collectLeaves( clientIds: string[] ): string[] {
 
 	clientIds.forEach( walk );
 
-	return leaves;
+	return { leaves, truncated };
 }
 
 function listLabels( labels: string[] ): string {
@@ -432,9 +442,10 @@ function measureTextContrast( clientIds: string[] ): string[] {
 	const measured: Measured[] = [];
 	let unmeasured = 0;
 	let textBlocks = 0;
-	let capped = false;
+	const { leaves, truncated } = collectLeaves( clientIds );
+	let capped = truncated;
 
-	for ( const clientId of collectLeaves( clientIds ) ) {
+	for ( const clientId of leaves ) {
 		const blockElement = canvasDocument.querySelector( `[data-block="${ clientId }"]` );
 		const textElement = blockElement && findTextElement( blockElement, view );
 
@@ -512,7 +523,7 @@ function measureTextContrast( clientIds: string[] ): string[] {
 			) }). ${ source }`;
 		} );
 
-	// Past the cap, some edited text went unread, so "all" would overclaim.
+	// Past either cap, some edited text went unread, so "all" would overclaim.
 	if ( ! notes.length && measured.length && ! capped ) {
 		notes.push(
 			`Text contrast: all ${ measured.length } edited text block(s) measure at least 4.5:1 (3:1 for large text) against what renders behind them.`
