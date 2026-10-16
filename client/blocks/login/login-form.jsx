@@ -454,7 +454,7 @@ export class LoginForm extends Component {
 			return translate( 'Continue' );
 		}
 
-		return translate( 'Log In' );
+		return translate( 'Log in' );
 	};
 
 	showJetpackConnectSiteOnly = () => {

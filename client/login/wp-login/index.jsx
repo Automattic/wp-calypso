@@ -378,7 +378,7 @@ export class Login extends Component {
 
 				<DocumentHead
 					title={ getPartnerFormattedWindowTitle(
-						translate( 'Log In', { textOnly: true } ),
+						translate( 'Log in', { textOnly: true } ),
 						partnerConfig
 					) }
 					skipTitleFormatting
