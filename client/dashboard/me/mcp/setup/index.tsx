@@ -105,8 +105,8 @@ function McpSetupComponent() {
 				size="small"
 				header={
 					<PageHeader
-						title={ __( 'Connect AI agent' ) }
-						description={ __( 'Get instructions for connecting your AI agent.' ) }
+						title={ __( 'Connect to ChatGPT, Claude, and other external AI tools' ) }
+						description={ __( 'Choose your AI tool and follow the steps to connect it.' ) }
 						prefix={ <Breadcrumbs length={ 3 } /> }
 					/>
 				}
@@ -148,8 +148,8 @@ function McpSetupComponent() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Connect AI agent' ) }
-					description={ __( 'Get instructions for connecting your AI agent.' ) }
+					title={ __( 'Connect to ChatGPT, Claude, and other external AI tools' ) }
+					description={ __( 'Choose your AI tool and follow the steps to connect it.' ) }
 					prefix={ <Breadcrumbs length={ 3 } /> }
 				/>
 			}

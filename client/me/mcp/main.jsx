@@ -243,8 +243,8 @@ function McpComponent( { path } ) {
 				<SummaryButton
 					className="mcp-hub__panel"
 					href="/me/mcp/setup"
-					title={ translate( 'Connect external AI assistant' ) }
-					description={ translate( 'Get instructions for connecting your external AI assistant.' ) }
+					title={ translate( 'Connect to ChatGPT, Claude, and other external AI tools' ) }
+					description={ translate( 'Get step-by-step setup instructions for your AI tool.' ) }
 					decoration={ <Icon className="mcp-hub__summary-icon" icon={ connection } size={ 24 } /> }
 					density="low"
 				/>
