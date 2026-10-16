@@ -14,7 +14,6 @@ import { createPluginsRoutes } from './plugins';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
-import { startStoreRoute } from './start-store';
 import type { SiteTypeFeature } from '../../utils/site-type-feature-support';
 import type { AppConfig } from '../context';
 import type { AgencyCapability } from '@automattic/api-core';
@@ -99,10 +98,6 @@ const createRouteTree = ( config: AppConfig ) => {
 
 	if ( config.supports.me ) {
 		children.push( ...createMeRoutes( config ) );
-	}
-
-	if ( config.supports.startStoreRoute ) {
-		children.push( startStoreRoute );
 	}
 
 	children.push( catchAllRoute );

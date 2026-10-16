@@ -98,7 +98,12 @@ export default function ReferralCheckout() {
 
 	return (
 		<div className="referral-checkout">
-			<HStack className="referral-checkout__top-bar" justify="flex-start" spacing={ 6 }>
+			<HStack
+				className="referral-checkout__top-bar"
+				justify="flex-start"
+				spacing={ 6 }
+				expanded={ false }
+			>
 				<AutomatticLogo width={ 183 } height={ 40 } />
 				<RouterLinkButton to={ backTo } variant="link" icon={ chevronLeft }>
 					{ __( 'Back' ) }

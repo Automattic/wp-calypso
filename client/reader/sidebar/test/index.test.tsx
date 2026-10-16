@@ -80,6 +80,27 @@ describe( 'ReaderSidebar', () => {
 		} );
 	} );
 
+	describe( 'Conversations (WIP)', () => {
+		it( 'is shown to Automattic team members', () => {
+			const instance = new ReaderSidebar( {
+				...defaultProps,
+				teams: [ { slug: 'a8c', title: 'Automattic' } ],
+			} );
+
+			render( instance.renderSidebarMenu() );
+
+			expect( screen.getByText( 'Conversations (WIP)' ) ).toBeVisible();
+		} );
+
+		it( 'is hidden from everyone else', () => {
+			const instance = new ReaderSidebar( defaultProps );
+
+			render( instance.renderSidebarMenu() );
+
+			expect( screen.queryByText( 'Conversations (WIP)' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'title actions', () => {
 		it( 'links to the new subscription page and to search', () => {
 			const instance = new ReaderSidebar( defaultProps );

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { logBuildWowEvent, requestBuildWowSite } from 'calypso/landing/stepper/utils/build-wow';
 import { pollForBuildWowStatus } from './build-status-poller';
 import { getEditorUrlFromStatus } from './editor-url';
+import { getBuildWowApiOverride } from './poller';
 import type { BuildWowUi } from './build-status-poller';
 import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 
@@ -130,6 +131,12 @@ export function useSiteGeneration( {
 			siteIdentifier,
 			onReady: ( response ) => {
 				clearStoredStepTimer( siteIdentifier );
+				// A build followed from a local status server has no site to open. The
+				// timeout stays armed otherwise and would fail a screen that finished.
+				if ( getBuildWowApiOverride() ) {
+					window.clearTimeout( generationTimeout );
+					return;
+				}
 				const destination = getEditorUrlFromStatus( response.site_editor_url, source );
 				if ( ! destination ) {
 					setFailure( { reason: 'editor-unavailable' } );

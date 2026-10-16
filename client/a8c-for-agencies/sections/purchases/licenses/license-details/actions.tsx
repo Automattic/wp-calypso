@@ -13,6 +13,7 @@ import {
 import {
 	isPressableAddonProduct,
 	isPressableHostingProduct,
+	isPressableTitanProduct,
 	isWPCOMHostingProduct,
 } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import isJetpackCrmProduct from 'calypso/components/crm-downloads/is-jetpack-crm-product';
@@ -64,6 +65,9 @@ export default function LicenseDetailsActions( {
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const isPressableAddonLicense =
 		isPressableAddonProduct( licenseKey ) || isPressableAddonProduct( product );
+	// Titan inboxes are managed and cancelled in Pressable, not from the license list.
+	const isTitanLicense =
+		isPressableTitanProduct( licenseKey ) || isPressableTitanProduct( product );
 	const isWPCOMHostingLicense = isWPCOMHostingProduct( licenseKey );
 	const isAutoRenewDisabled =
 		subscription?.status === 'active' && ! subscription.isAutoRenewEnabled;
@@ -170,6 +174,7 @@ export default function LicenseDetailsActions( {
 
 			{ canRevoke &&
 				! isClientLicense &&
+				! isTitanLicense &&
 				( isChildLicense
 					? licenseState === LicenseState.Attached
 					: licenseState !== LicenseState.Revoked ) &&

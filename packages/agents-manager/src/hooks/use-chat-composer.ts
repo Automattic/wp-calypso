@@ -27,8 +27,9 @@ interface UseChatComposerOptions {
 /**
  * The chat composer: its input, the image upload that runs before a send, and
  * every path a user message is sent through — the composer, context cards and
- * the host bridge. A send that is dropped, stopped or fails leaves the composer as
- * it was, so the user can retry without retyping.
+ * the host bridge, and interactive UI actions, sent as hidden context messages.
+ * A send that is dropped, stopped or fails leaves the composer as it was, so the
+ * user can retry without retyping.
  */
 export function useChatComposer( {
 	isReaderChat,
@@ -250,6 +251,23 @@ export function useChatComposer( {
 		[ inputValue, submitChatMessage ]
 	);
 
+	// Sends a hidden context message, such as an interactive UI action, behind
+	// the same upload lock and credits gate as a typed message, so it is safe
+	// for any caller.
+	const submitContextMessage = useCallback(
+		async ( message: string, options: SubmitOptions ) => {
+			if ( isUploadingRef.current || isUploadingImages || ! beforeSubmit() ) {
+				return;
+			}
+
+			startTurn();
+			startNewUserRequest();
+			await flushPendingNavigation();
+			await onSubmit( message, options );
+		},
+		[ beforeSubmit, flushPendingNavigation, isUploadingImages, onSubmit ]
+	);
+
 	return {
 		inputValue,
 		setInputValue,
@@ -260,6 +278,7 @@ export function useChatComposer( {
 		submitComposerMessage,
 		submitChatMessage,
 		submitHostMessage,
+		submitContextMessage,
 		stopResponse,
 	};
 }

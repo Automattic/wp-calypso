@@ -47,7 +47,7 @@ export type CreditsStatus =
 	  } );
 
 /** Free-plan low-balance percentage, for the dot tone and the notice. */
-export const CREDITS_LOW_THRESHOLD = 20;
+const CREDITS_LOW_THRESHOLD = 20;
 
 /** Paid balance, in credits, below which the dot turns red and the low-balance notice shows. */
 export const CREDITS_LOW_BALANCE = 10000;
@@ -83,19 +83,16 @@ export function isCreditsExhausted( status: CreditsStatus ): boolean {
 
 /**
  * Low but not exhausted: paid plans by the combined balance against
- * `CREDITS_LOW_BALANCE`, free plans by percentage against `threshold`.
+ * `CREDITS_LOW_BALANCE`, free plans by percentage against `CREDITS_LOW_THRESHOLD`.
  */
-export function isCreditsLow(
-	status: CreditsStatus,
-	threshold: number = CREDITS_LOW_THRESHOLD
-): boolean {
+export function isCreditsLow( status: CreditsStatus ): boolean {
 	if ( isCreditsExhausted( status ) ) {
 		return false;
 	}
 
 	return status.plan === 'paid'
 		? status.remaining < CREDITS_LOW_BALANCE
-		: status.percent <= threshold;
+		: status.percent <= CREDITS_LOW_THRESHOLD;
 }
 
 /**
@@ -103,11 +100,8 @@ export function isCreditsLow(
  * credits notices. Otherwise paid plans stay muted and free plans use the
  * primary tone.
  */
-export function getCreditsTone(
-	status: CreditsStatus,
-	threshold: number = CREDITS_LOW_THRESHOLD
-): StatusIndicatorTone {
-	if ( isCreditsLow( status, threshold ) || isCreditsExhausted( status ) ) {
+export function getCreditsTone( status: CreditsStatus ): StatusIndicatorTone {
+	if ( isCreditsLow( status ) || isCreditsExhausted( status ) ) {
 		return 'error';
 	}
 
