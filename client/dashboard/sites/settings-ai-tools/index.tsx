@@ -42,11 +42,11 @@ import { useState } from 'react';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
-	getRemoteAbilityGroupKey,
 	getSiteContextToolIds,
 	getSiteLevelEnabled,
 	getSiteMcpAbilities,
 	getSiteRemoteGroups,
+	isRemoteAbilityEnabled,
 	mergeSiteMcpAbilities,
 } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
@@ -317,11 +317,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		collectNamespaces( remoteAbilities, savedRemoteGroups, category ).forEach( ( group ) => {
 			if ( group.abilities.length > 0 ) {
 				total += group.abilities.length;
-				enabled += group.abilities.filter(
-					( ability ) =>
-						savedRemoteGroups[
-							getRemoteAbilityGroupKey( ability.name, ability.meta?.annotations )
-						] === true
+				enabled += group.abilities.filter( ( ability ) =>
+					isRemoteAbilityEnabled( savedRemoteGroups, ability.name, ability.meta?.annotations )
 				).length;
 				return;
 			}
