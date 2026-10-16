@@ -284,4 +284,17 @@ describe( 'PluginDetails marketplace rating', () => {
 		expect( mockPluginDetailsV2Props.fullPlugin.rating ).toBe( 90 );
 		expect( mockPluginDetailsV2Props.fullPlugin.num_ratings ).toBeUndefined();
 	} );
+
+	test( 'keeps the WordPress.org rating for plugins that are not marketplace products', () => {
+		mockWpComPlugin = { data: undefined, isFetched: true, isFetching: false };
+
+		renderJetpackCloud( {
+			productsList: { items: { [ PLUGIN_SLUG ]: { product_type: 'jetpack' } } },
+			plugins: { wporg: { items: { [ PLUGIN_SLUG ]: { rating: 40, num_ratings: 12 } } } },
+		} );
+
+		expect( mockPluginDetailsV2Props.isMarketplaceProduct ).toBe( false );
+		expect( mockPluginDetailsV2Props.fullPlugin.rating ).toBe( 40 );
+		expect( mockPluginDetailsV2Props.fullPlugin.num_ratings ).toBe( 12 );
+	} );
 } );
