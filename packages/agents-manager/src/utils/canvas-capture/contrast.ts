@@ -42,6 +42,10 @@ const TRANSPARENT: Rgba = { r: 0, g: 0, b: 0, a: 0 };
 // Media laid out over a background, as a cover block's image or video is.
 const OVERLAY_MEDIA = new Set( [ 'img', 'video', 'picture', 'canvas', 'svg', 'iframe' ] );
 
+// The editor's own interface inside a block, which the page does not show:
+// an empty block's placeholder, an invalid block's warning, an appender.
+const EDITOR_UI = '.components-placeholder, .block-editor-warning, .block-list-appender';
+
 interface Backdrop {
 	colour: Rgba;
 	/** The block whose element painted the backdrop, if any did. */
@@ -145,10 +149,32 @@ const toHex = ( { r, g, b }: Rgba ): string =>
 // Rounded down, so a ratio just short of the threshold never prints as meeting it.
 const formatRatio = ( ratio: number ): string => `${ Math.floor( ratio * 100 ) / 100 }:1`;
 
-function isHidden( element: Element, view: Window ): boolean {
+const hasBackgroundImage = ( style: CSSStyleDeclaration ): boolean =>
+	!! style.backgroundImage && style.backgroundImage !== 'none';
+
+// Browsers read an unset background as transparent; jsdom reads it empty.
+const readBackground = ( style: CSSStyleDeclaration ): Rgba | null =>
+	style.backgroundColor ? parseColour( style.backgroundColor ) : TRANSPARENT;
+
+/** Whether a box paints anything: an image or gradient, or a colour that is not transparent or cannot be read. */
+const paints = ( style: CSSStyleDeclaration ): boolean =>
+	hasBackgroundImage( style ) || ( readBackground( style )?.a ?? 1 ) > 0;
+
+const isPositioned = ( style: CSSStyleDeclaration ): boolean =>
+	style.position === 'absolute' || style.position === 'fixed';
+
+const isSet = ( value: string ): boolean =>
+	!! value && value !== 'auto' && value !== 'none' && value !== 'normal';
+
+/** Whether the element is not seen: not displayed, invisible, or clipped away for screen readers alone. */
+function isUnseen( element: Element, view: Window ): boolean {
 	const style = view.getComputedStyle( element );
 
-	return style.display === 'none' || style.visibility === 'hidden';
+	return (
+		style.display === 'none' ||
+		style.visibility === 'hidden' ||
+		( isPositioned( style ) && ( isSet( style.clip ) || isSet( style.clipPath ) ) )
+	);
 }
 
 const isDisplayed = ( element: Element, view: Window ): boolean =>
@@ -167,14 +193,14 @@ function findTextElement( blockElement: Element, view: Window ): Element | null 
 	for ( let node = walker.nextNode(); node; node = walker.nextNode() ) {
 		const parent = node.parentElement;
 
-		if ( ! node.textContent?.trim() || ! parent ) {
+		if ( ! node.textContent?.trim() || ! parent || parent.closest( EDITOR_UI ) ) {
 			continue;
 		}
 
 		let hidden = false;
 
 		for ( let element: Element | null = parent; element; element = element.parentElement ) {
-			if ( isHidden( element, view ) ) {
+			if ( isUnseen( element, view ) ) {
 				hidden = true;
 				break;
 			}
@@ -192,30 +218,25 @@ function findTextElement( blockElement: Element, view: Window ): Element | null 
 	return null;
 }
 
-const hasBackgroundImage = ( style: CSSStyleDeclaration ): boolean =>
-	!! style.backgroundImage && style.backgroundImage !== 'none';
+const hasSize = ( rect: DOMRect ): boolean => rect.width > 0 && rect.height > 0;
 
-// An element with nothing set reads empty in some engines, not transparent.
-const readBackground = ( style: CSSStyleDeclaration ): Rgba | null =>
-	style.backgroundColor ? parseColour( style.backgroundColor ) : TRANSPARENT;
-
-/** Whether a box paints anything: an image or gradient, or a colour that is not transparent or cannot be read. */
-const paints = ( style: CSSStyleDeclaration ): boolean =>
-	hasBackgroundImage( style ) || ( readBackground( style )?.a ?? 1 ) > 0;
-
-const isPositioned = ( style: CSSStyleDeclaration ): boolean =>
-	style.position === 'absolute' || style.position === 'fixed';
-
-const hasContent = ( style: CSSStyleDeclaration ): boolean =>
-	!! style.content && style.content !== 'none' && style.content !== 'normal';
+const intersects = ( a: DOMRect, b: DOMRect ): boolean =>
+	a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
 
 /**
  * Whether something off the text's own ancestry is laid out over the
- * element's background: a positioned child that paints or is media, as a
- * cover block's overlay and image are, or a positioned pseudo-element that
- * paints. Its colour is not on the path the backdrop is read from.
+ * element's background, behind the text: a positioned child that paints or
+ * is media, as a cover block's overlay and image are, or a positioned
+ * pseudo-element that paints. Its colour is not on the path the backdrop is
+ * read from. A child whose box is clear of the text's is no overlay; one
+ * whose box cannot be read, nor a pseudo-element's, is taken to be.
  */
-function hasOverlay( element: Element, pathChild: Element | null, view: Window ): boolean {
+function hasOverlay(
+	element: Element,
+	pathChild: Element | null,
+	textRect: DOMRect,
+	view: Window
+): boolean {
 	const overlaid = Array.from( element.children ).some( ( child ) => {
 		if ( child === pathChild ) {
 			return false;
@@ -223,11 +244,17 @@ function hasOverlay( element: Element, pathChild: Element | null, view: Window )
 
 		const style = view.getComputedStyle( child );
 
-		return (
-			style.display !== 'none' &&
-			isPositioned( style ) &&
-			( OVERLAY_MEDIA.has( child.localName ) || paints( style ) )
-		);
+		if (
+			style.display === 'none' ||
+			! isPositioned( style ) ||
+			! ( OVERLAY_MEDIA.has( child.localName ) || paints( style ) )
+		) {
+			return false;
+		}
+
+		const rect = child.getBoundingClientRect();
+
+		return ! hasSize( rect ) || ! hasSize( textRect ) || intersects( rect, textRect );
 	} );
 
 	return (
@@ -235,7 +262,7 @@ function hasOverlay( element: Element, pathChild: Element | null, view: Window )
 		[ '::before', '::after' ].some( ( pseudo ) => {
 			const style = view.getComputedStyle( element, pseudo );
 
-			return hasContent( style ) && isPositioned( style ) && paints( style );
+			return isSet( style.content ) && isPositioned( style ) && paints( style );
 		} )
 	);
 }
@@ -263,6 +290,7 @@ function findBackdrop( element: Element, view: Window ): Backdrop | null {
 	let painter: Element | undefined;
 	let colour: Rgba | undefined;
 	let pathChild: Element | null = null;
+	const textRect = element.getBoundingClientRect();
 
 	for (
 		let current: Element | null = element;
@@ -271,7 +299,7 @@ function findBackdrop( element: Element, view: Window ): Backdrop | null {
 	) {
 		const style = view.getComputedStyle( current );
 
-		if ( hasBackgroundImage( style ) || hasOverlay( current, pathChild, view ) ) {
+		if ( hasBackgroundImage( style ) || hasOverlay( current, pathChild, textRect, view ) ) {
 			return null;
 		}
 
@@ -403,8 +431,8 @@ function measureTextContrast( clientIds: string[] ): string[] {
 
 	const measured: Measured[] = [];
 	let unmeasured = 0;
-
 	let textBlocks = 0;
+	let capped = false;
 
 	for ( const clientId of collectLeaves( clientIds ) ) {
 		const blockElement = canvasDocument.querySelector( `[data-block="${ clientId }"]` );
@@ -415,6 +443,7 @@ function measureTextContrast( clientIds: string[] ): string[] {
 		}
 
 		if ( ++textBlocks > MAX_TEXT_BLOCKS ) {
+			capped = true;
 			break;
 		}
 
@@ -483,7 +512,8 @@ function measureTextContrast( clientIds: string[] ): string[] {
 			) }). ${ source }`;
 		} );
 
-	if ( ! notes.length && measured.length ) {
+	// Past the cap, some edited text went unread, so "all" would overclaim.
+	if ( ! notes.length && measured.length && ! capped ) {
 		notes.push(
 			`Text contrast: all ${ measured.length } edited text block(s) measure at least 4.5:1 (3:1 for large text) against what renders behind them.`
 		);

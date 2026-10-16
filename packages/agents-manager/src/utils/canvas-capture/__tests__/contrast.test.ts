@@ -12,6 +12,20 @@ import type { BlockAttributes, EditorBlock } from '../../editor-blocks';
 
 type Styles = Partial< Record< keyof CSSStyleDeclaration, string > >;
 
+interface Rect {
+	top: number;
+	left: number;
+	width: number;
+	height: number;
+}
+
+const withRect = < T extends Element >( element: T, { top, left, width, height }: Rect ): T => {
+	element.getBoundingClientRect = () =>
+		( { top, left, width, height, bottom: top + height, right: left + width } ) as DOMRect;
+
+	return element;
+};
+
 interface CanvasBlock {
 	clientId: string;
 	name: string;
@@ -29,6 +43,8 @@ interface CanvasBlock {
 	textStyle?: Styles;
 	/** Computed styles on the element holding the text. */
 	textComputed?: Styles;
+	/** The text's box, which jsdom does not lay out. */
+	textRect?: Rect;
 	/** Adds markup of the block's own besides its text, such as a cover's overlay. */
 	build?: ( element: HTMLElement, canvasDocument: Document ) => void;
 	children?: CanvasBlock[];
@@ -65,6 +81,10 @@ function mountCanvas( roots: CanvasBlock[] ) {
 
 			if ( block.textComputed ) {
 				computed.set( span, { '': block.textComputed } );
+			}
+
+			if ( block.textRect ) {
+				withRect( span, block.textRect );
 			}
 		}
 
@@ -381,5 +401,139 @@ describe( 'text it cannot measure', () => {
 		mountCanvas( [ { ...text( 'ueo8' ), textComputed: { color: 'oklch(0.5 0.1 200)' } } ] );
 
 		expect( describeTextContrast( [ 'ueo8' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+	} );
+} );
+
+describe( 'what counts as text', () => {
+	it( 'skips text hidden from sight for screen readers, as a social link’s label is', () => {
+		mountCanvas( [
+			{
+				...text( 'fb', GREY_TEXT ),
+				name: 'core/social-link',
+				textComputed: { position: 'absolute', clipPath: 'inset(50%)' },
+			},
+		] );
+
+		expect( describeTextContrast( [ 'fb' ] ) ).toEqual( [] );
+	} );
+
+	it( 'skips the editor’s own interface inside a block', () => {
+		mountCanvas( [
+			{
+				clientId: 'img',
+				name: 'core/image',
+				build: ( element, canvasDocument ) => {
+					const placeholder = canvasDocument.createElement( 'div' );
+					placeholder.className = 'components-placeholder';
+					placeholder.style.color = GREY_TEXT.color;
+					placeholder.append( 'Upload' );
+					element.append( placeholder );
+				},
+			},
+		] );
+
+		expect( describeTextContrast( [ 'img' ] ) ).toEqual( [] );
+	} );
+
+	it( 'measures the first visible text, past text that is hidden', () => {
+		mountCanvas( [
+			{
+				clientId: 'c25n',
+				name: 'core/group',
+				style: { backgroundColor: NAVY },
+				children: [
+					{
+						...text( 'btn', WHITE_TEXT ),
+						build: ( element, canvasDocument ) => {
+							const hidden = canvasDocument.createElement( 'span' );
+							Object.assign( hidden.style, { ...NAVY_TEXT, visibility: 'hidden' } );
+							hidden.append( 'Hidden' );
+							element.append( hidden );
+						},
+					},
+				],
+			},
+		] );
+
+		expect( describeTextContrast( [ 'c25n' ] ) ).toEqual( [
+			'Text contrast: all 1 edited text block(s) measure at least 4.5:1 (3:1 for large text) against what renders behind them.',
+		] );
+	} );
+} );
+
+describe( 'overlays', () => {
+	const groupWithBadge = ( badge: Rect ): CanvasBlock => ( {
+		clientId: 'c25n',
+		name: 'core/group',
+		style: { backgroundColor: NAVY },
+		build: ( element, canvasDocument ) => {
+			const shape = withRect( canvasDocument.createElement( 'div' ), badge );
+			Object.assign( shape.style, { position: 'absolute', backgroundColor: 'rgb(255, 0, 0)' } );
+			element.append( shape );
+		},
+		children: [ { ...text( 'qalw' ), textRect: { top: 100, left: 0, width: 400, height: 20 } } ],
+	} );
+
+	it( 'still measures text clear of a positioned shape', () => {
+		mountCanvas( [ groupWithBadge( { top: 0, left: 900, width: 40, height: 40 } ) ] );
+
+		expect( describeTextContrast( [ 'c25n' ] ) ).toEqual( [
+			expect.stringMatching(
+				/^Text contrast too low: paragraph \(qalw\) — #14213D text on #1D2630/
+			),
+		] );
+	} );
+
+	it( 'leaves text under a positioned shape to the picture', () => {
+		mountCanvas( [ groupWithBadge( { top: 90, left: 0, width: 40, height: 40 } ) ] );
+
+		expect( describeTextContrast( [ 'c25n' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+	} );
+} );
+
+describe( 'limits', () => {
+	it( 'writes at most four failure notes', () => {
+		mountCanvas( [
+			{
+				clientId: 'c25n',
+				name: 'core/group',
+				style: { backgroundColor: NAVY },
+				children: [ 20, 30, 40, 50, 60 ].map( ( grey ) =>
+					text( `g${ grey }`, { color: `rgb(${ grey }, ${ grey }, ${ grey })`, fontSize: '16px' } )
+				),
+			},
+		] );
+
+		const notes = describeTextContrast( [ 'c25n' ] );
+
+		expect( notes ).toHaveLength( 4 );
+		notes.forEach( ( note ) => expect( note ).toMatch( /^Text contrast too low/ ) );
+	} );
+
+	it( 'claims no pass for all the text when there was more than it read', () => {
+		mountCanvas( [
+			section( Array.from( { length: 41 }, ( _, index ) => text( `p${ index }` ) ) ),
+		] );
+
+		expect( describeTextContrast( [ 'sect' ] ) ).toEqual( [] );
+	} );
+
+	it( 'notes what passed and what it could not measure together', () => {
+		mountCanvas( [
+			section( [
+				text( 'ueo8' ),
+				{
+					clientId: 'faded',
+					name: 'core/group',
+					style: { opacity: '0.5' },
+					children: [ text( 'qalw' ) ],
+				},
+			] ),
+		] );
+
+		expect( describeTextContrast( [ 'sect' ] ) ).toEqual( [
+			'Text contrast: all 1 edited text block(s) measure at least 4.5:1 (3:1 for large text) against what renders behind them.',
+			UNMEASURED_ONE,
+		] );
 	} );
 } );
