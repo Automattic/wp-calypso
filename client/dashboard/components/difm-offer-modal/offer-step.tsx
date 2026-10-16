@@ -59,7 +59,7 @@ export function OfferStep( {
 	];
 
 	return (
-		<div className="difm-offer-modal__body">
+		<div className="difm-offer-modal__body is-offer-step">
 			<ComponentViewTracker
 				eventName="calypso_dashboard_upsell_impression"
 				properties={ tracksProps }
