@@ -26,6 +26,7 @@ type DocumentPacket = {
 	title: string;
 	html: string;
 	revision: number;
+	ready: boolean;
 };
 
 type RoutePreview = { reference: StreamPreview; title: string };
@@ -46,7 +47,8 @@ function DocumentLoader( {
 	onDocument: (
 		reference: StreamPreview,
 		title: string,
-		document: PreparedPreviewDocument
+		document: PreparedPreviewDocument,
+		ready: boolean
 	) => void;
 	onAsset: (
 		reference: StreamPreview,
@@ -56,7 +58,7 @@ function DocumentLoader( {
 	) => void;
 	onFailure: ( route: string, failed: boolean ) => void;
 } ) {
-	const { html, assets, failed } = useBuildHtmlPreview( reference, stream );
+	const { html, assets, failed, ready } = useBuildHtmlPreview( reference, stream );
 	const assetLifetime = useRef< AbortController | null >( null );
 	useEffect( () => {
 		assetLifetime.current = new AbortController();
@@ -68,9 +70,9 @@ function DocumentLoader( {
 		}
 		const document = preparePreviewDocument( html, assets );
 		if ( document ) {
-			onDocument( reference, title, document );
+			onDocument( reference, title, document, ready );
 		}
-	}, [ html, assets, reference, title, onDocument ] );
+	}, [ html, assets, ready, reference, title, onDocument ] );
 	useEffect( () => {
 		if ( html === null || ! assets ) {
 			return;
@@ -169,12 +171,22 @@ function PreviewScene( {
 		}
 	}, [ post ] );
 	const onDocument = useCallback(
-		( reference: StreamPreview, title: string, document: PreparedPreviewDocument ) => {
+		(
+			reference: StreamPreview,
+			title: string,
+			document: PreparedPreviewDocument,
+			ready: boolean
+		) => {
 			if ( references.current.get( reference.route )?.epoch !== reference.epoch ) {
 				return;
 			}
 			const old = documents.current.get( reference.route );
-			if ( old?.html === document.html && old.epoch === reference.epoch && old.title === title ) {
+			if (
+				old?.html === document.html &&
+				old.epoch === reference.epoch &&
+				old.title === title &&
+				old.ready === ready
+			) {
 				return;
 			}
 			const packet: DocumentPacket = {
@@ -183,6 +195,7 @@ function PreviewScene( {
 				title: title.slice( 0, 100 ),
 				html: document.html,
 				revision: ( old?.revision ?? 0 ) + 1,
+				ready,
 			};
 			documents.current.set( reference.route, packet );
 			post( 'render', packet );

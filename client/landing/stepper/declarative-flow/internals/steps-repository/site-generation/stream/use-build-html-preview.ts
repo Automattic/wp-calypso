@@ -12,6 +12,7 @@ export function useBuildHtmlPreview(
 		key: string;
 		html: string;
 		assets: PreviewAssets;
+		ready: boolean;
 	} | null >( null );
 	const [ failedKey, setFailedKey ] = useState< string | null >( null );
 	const previewUrl = stream?.info.previewUrl;
@@ -22,6 +23,7 @@ export function useBuildHtmlPreview(
 	const route = reference?.route;
 	const epoch = reference?.epoch;
 	const documentId = reference?.documentId;
+	const ready = reference?.ready;
 	const key = `${ blogId }:${ runId }:${ epoch }:${ route }`;
 
 	useEffect( () => {
@@ -79,6 +81,7 @@ export function useBuildHtmlPreview(
 					setLoaded( {
 						key,
 						html: body.html,
+						ready: body.ready === true,
 						assets: parsePreviewAssets( body.assets, snapshotUrl ),
 					} );
 					failures = 0;
@@ -109,11 +112,12 @@ export function useBuildHtmlPreview(
 			controller.abort();
 			clearTimeout( timer );
 		};
-	}, [ previewUrl, snapshotUrl, runId, route, epoch, documentId, authorize, key ] );
+	}, [ previewUrl, snapshotUrl, runId, route, epoch, documentId, ready, authorize, key ] );
 
 	return {
 		html: reference && loaded?.key === key ? loaded.html : null,
 		assets: reference && loaded?.key === key ? loaded.assets : undefined,
 		failed: failedKey === key,
+		ready: reference && loaded?.key === key ? loaded.ready : false,
 	};
 }

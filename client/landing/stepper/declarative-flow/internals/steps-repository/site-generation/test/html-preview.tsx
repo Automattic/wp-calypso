@@ -466,6 +466,26 @@ it( 'sends only sanitized asset identities to the trusted runtime', () => {
 	).toBe( false );
 } );
 
+it( 'preserves missing image slots and background references without allowing network URLs', () => {
+	const html = `<html><head><style>.hero{background-image:url('${ imageSource }')}@font-face{font-family:Waiting;src:url('${ fontSource }')}</style></head><body><img class="product" src="${ imageSource }" width="400" height="300" alt="Sourdough" data-preview-loaded="forged" onerror="alert(1)"><div style="background:url(https://evil.example/track)"></div></body></html>`;
+	const pending = preparePreviewDocument( html )!;
+	const doc = new DOMParser().parseFromString( pending.html, 'text/html' );
+	const image = doc.querySelector( 'img' )!;
+	expect( image.hasAttribute( 'data-preview-pending' ) ).toBe( true );
+	expect( image.getAttribute( 'width' ) ).toBe( '400' );
+	expect( image.getAttribute( 'height' ) ).toBe( '300' );
+	expect( image.getAttribute( 'alt' ) ).toBe( 'Sourdough' );
+	expect( doc.querySelector( '[src],[onerror],[data-preview-loaded]' ) ).toBeNull();
+	expect( pending.html ).toContain( 'preview-pending:image' );
+	expect( pending.html ).not.toContain( 'evil.example' );
+	expect( pending.html ).not.toContain( fontSource );
+	const loaded = preparePreviewDocument( html, { [ imageSource ]: imageAsset } )!;
+	const next = new DOMParser().parseFromString( loaded.html, 'text/html' );
+	expect( next.querySelector( 'img' )?.getAttribute( 'data-preview-image' ) ).toBe( imageAsset.id );
+	expect( next.querySelector( 'img[data-preview-pending]' ) ).toBeNull();
+	expect( loaded.html ).not.toContain( 'token=' );
+} );
+
 it( 'keeps a slow asset request alive across document revisions and aborts on route unmount', async () => {
 	const load = jest.fn().mockReturnValue( new Promise( () => {} ) );
 	const factory = jest
@@ -582,4 +602,27 @@ it( 'offers a declined asset again only after capacity frees, within a budget', 
 	contentWindow.mockRestore();
 	global.MessageChannel = previousChannel;
 	factory.mockRestore();
+} );
+
+it( 'waits for fetched readiness and refetches when ready changes without an HTML revision', async () => {
+	global.fetch = jest
+		.fn()
+		.mockResolvedValue( { ok: true, json: async () => ( { ...payload, ready: false } ) } );
+	const { result, rerender } = renderHook( ( ref ) => useBuildHtmlPreview( ref, stream ), {
+		initialProps: reference,
+	} );
+	await waitFor( () => expect( result.current.html ).toBe( payload.html ) );
+	let resolve: ( value: unknown ) => void = () => {};
+	global.fetch = jest.fn().mockReturnValue(
+		new Promise( ( done ) => {
+			resolve = done;
+		} )
+	);
+	rerender( { ...reference, ready: true } );
+	await waitFor( () => expect( global.fetch ).toHaveBeenCalledTimes( 1 ) );
+	expect( result.current.ready ).toBe( false );
+	await act( async () => {
+		resolve( { ok: true, json: async () => ( { ...payload, ready: true } ) } );
+	} );
+	await waitFor( () => expect( result.current.ready ).toBe( true ) );
 } );

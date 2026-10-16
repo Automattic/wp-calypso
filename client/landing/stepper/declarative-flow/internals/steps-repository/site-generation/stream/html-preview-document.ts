@@ -78,19 +78,33 @@ function assetSources( assets: PreviewAssets, mimes: string[] ): string {
 	return Array.from( new Set( sources ) ).join( ' ' ) || "'none'";
 }
 
-function rewriteCssAssets( css: string, assets: PreviewAssets ): string {
+function rewriteCssAssets(
+	css: string,
+	assets: PreviewAssets,
+	preserveImageSlots = false
+): string {
 	// The engine emits ordinary url(...) references. CSP also blocks unrecognized URL syntax.
 	return css.replace(
 		/url\(\s*(?:"([^"\n]*)"|'([^'\n]*)'|([^\s)'";]+))\s*\)/gi,
 		( _match, doubleQuoted, singleQuoted, unquoted ) => {
-			const asset = assets[ doubleQuoted ?? singleQuoted ?? unquoted ];
-			return asset ? `url("${ asset.url }")` : 'url("")';
+			const source = doubleQuoted ?? singleQuoted ?? unquoted;
+			const asset = assets[ source ];
+			if ( asset ) {
+				return `url("${ asset.url }")`;
+			}
+			return preserveImageSlots && source && ! /\.(?:woff2?|ttf|otf|eot)(?:[?#]|$)/i.test( source )
+				? 'url("preview-pending:image")'
+				: 'url("")';
 		}
 	);
 }
 
 /** Keep generated markup isolated; only registered preview assets may load. */
-export function htmlPreviewDocument( html: string, assets: PreviewAssets = {} ): string {
+export function htmlPreviewDocument(
+	html: string,
+	assets: PreviewAssets = {},
+	preserveImageSlots = false
+): string {
 	const root = DOMPurify.sanitize( html, {
 		WHOLE_DOCUMENT: true,
 		RETURN_DOM: true,
@@ -142,7 +156,11 @@ export function htmlPreviewDocument( html: string, assets: PreviewAssets = {} ):
 	for ( const image of root.querySelectorAll( 'img' ) ) {
 		const asset = assets[ image.getAttribute( 'src' ) ?? '' ];
 		if ( ! asset || ! IMAGE_MIMES.includes( asset.mime_type ) ) {
-			image.remove();
+			if ( preserveImageSlots ) {
+				image.removeAttribute( 'src' );
+			} else {
+				image.remove();
+			}
 			continue;
 		}
 		image.setAttribute( 'crossorigin', 'anonymous' );
@@ -155,12 +173,12 @@ export function htmlPreviewDocument( html: string, assets: PreviewAssets = {} ):
 		}
 	}
 	for ( const style of root.querySelectorAll( 'style' ) ) {
-		style.textContent = rewriteCssAssets( style.textContent ?? '', assets );
+		style.textContent = rewriteCssAssets( style.textContent ?? '', assets, preserveImageSlots );
 	}
 	for ( const element of root.querySelectorAll( '[style]' ) ) {
 		element.setAttribute(
 			'style',
-			rewriteCssAssets( element.getAttribute( 'style' ) ?? '', assets )
+			rewriteCssAssets( element.getAttribute( 'style' ) ?? '', assets, preserveImageSlots )
 		);
 	}
 	const policy = document.createElement( 'meta' );
@@ -185,7 +203,7 @@ export function preparePreviewDocument(
 	if ( ! html.trim() || new Blob( [ html ] ).size > MAX_PREVIEW_HTML_BYTES ) {
 		return null;
 	}
-	const sanitized = htmlPreviewDocument( html, assets );
+	const sanitized = htmlPreviewDocument( html, assets, true );
 	const root = new DOMParser().parseFromString( sanitized, 'text/html' );
 	for ( const element of root.querySelectorAll( '*' ) ) {
 		for ( const attribute of Array.from( element.attributes ) ) {
@@ -198,6 +216,9 @@ export function preparePreviewDocument(
 	const byUrl = new Map( Object.values( assets ).map( ( asset ) => [ asset.url, asset ] ) );
 	const rewrite = ( value: string ) =>
 		value.replace( /url\(\s*"([^"\n]*)"\s*\)/gi, ( _match, url: string ) => {
+			if ( url === 'preview-pending:image' ) {
+				return 'url("preview-pending:image")';
+			}
 			const asset = byUrl.get( url );
 			return asset ? `url("preview-asset:${ asset.id }")` : 'url("")';
 		} );
@@ -206,6 +227,8 @@ export function preparePreviewDocument(
 		image.removeAttribute( 'src' );
 		if ( asset ) {
 			image.setAttribute( 'data-preview-image', asset.id );
+		} else {
+			image.setAttribute( 'data-preview-pending', '' );
 		}
 	}
 	root.querySelectorAll( 'style' ).forEach( ( style ) => {
