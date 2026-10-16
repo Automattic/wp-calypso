@@ -31,7 +31,6 @@ const product = {
 		referral_id: 99,
 		titan_domain: 'example.com',
 		titan_plan: 'standard',
-		mpcp_state: 'original-state',
 		afterPurchaseUrl:
 			'https://my.pressable.com/titan_email/checkout_return?agency_id=42-cli-7&email=client%40example.com&domain=example.com&quantity=2&signature=original',
 	},

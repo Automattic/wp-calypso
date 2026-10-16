@@ -3,7 +3,8 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
-import usePressableReturnPaths from 'calypso/a8c-for-agencies/sections/marketplace/billing-dragon-checkout/use-pressable-return-paths';
+import PressableCheckoutBack from 'calypso/a8c-for-agencies/sections/marketplace/billing-dragon-checkout/pressable-checkout-back';
+import usePressableCheckoutReturn from 'calypso/a8c-for-agencies/sections/marketplace/billing-dragon-checkout/use-pressable-return-paths';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutQueryClientProvider from 'calypso/my-sites/checkout/checkout-query-client-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
@@ -31,7 +32,7 @@ function ClientCheckoutContent( { skipActiveCart }: { skipActiveCart: boolean } 
 		preparedCartContext,
 		products,
 	} = useClientCheckout( { expressMode: false, skipActiveCart } );
-	const { successPath, cancelPath } = usePressableReturnPaths(
+	const { successPath, originalUrl } = usePressableCheckoutReturn(
 		products,
 		preparedCartContext?.agencyId,
 		skipActiveCart,
@@ -66,27 +67,47 @@ function ClientCheckoutContent( { skipActiveCart }: { skipActiveCart: boolean } 
 		);
 	}
 
-	if ( error ) {
+	if ( error && ! originalUrl ) {
 		return <ClientCheckoutV2Error title={ translate( 'Error' ) } message={ error } />;
 	}
-	if ( ! isReady ) {
+	if ( ! isReady && ! originalUrl ) {
 		return <ClientCheckoutV2Placeholder />;
+	}
+
+	let checkoutContent = <ClientCheckoutV2Placeholder />;
+	if ( error ) {
+		checkoutContent = <ClientCheckoutV2Error title={ translate( 'Error' ) } message={ error } />;
+	} else if ( isReady ) {
+		checkoutContent = (
+			<CheckoutMain
+				sitelessCheckoutType="a4a"
+				redirectTo={ successPath ?? redirectTo }
+				customizedPreviousPath="/client/subscriptions"
+				siteSlug=""
+				siteId={ 0 }
+			/>
+		);
 	}
 
 	return (
 		<div className="client-checkout-v2">
-			<div className="client-checkout-v2__top-bar">
+			<div
+				className={
+					originalUrl ? 'client-checkout-v2-pressable-top-bar' : 'client-checkout-v2__top-bar'
+				}
+			>
+				{ originalUrl && preparedCartContext && (
+					<PressableCheckoutBack
+						key={ originalUrl }
+						agencyId={ preparedCartContext.agencyId }
+						afterPurchaseUrl={ originalUrl }
+					/>
+				) }
 				<div className="client-checkout-v2__top-bar-logo">
 					<A4ALogo full size={ 14 } />
 				</div>
 			</div>
-			<CheckoutMain
-				sitelessCheckoutType="a4a"
-				redirectTo={ successPath ?? redirectTo }
-				customizedPreviousPath={ cancelPath ?? '/client/subscriptions' }
-				siteSlug=""
-				siteId={ 0 }
-			/>
+			{ checkoutContent }
 		</div>
 	);
 }

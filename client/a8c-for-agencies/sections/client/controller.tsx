@@ -114,15 +114,15 @@ export const clientCheckoutV2Context: Callback = ( context, next ) => {
 };
 
 export const clientPressableReturnContext: Callback = ( context, next ) => {
-	const { agency_id, referral_id, receipt_id, order_id, canceled } = context.query;
+	const { agency_id, referral_id, receipt_id, order_id } = context.query;
 	context.secondary = <ClientSidebar path={ context.path } />;
 	context.primary = (
 		<PressableReturn
+			isClient
 			agencyId={ agency_id }
 			referralId={ referral_id }
 			receiptId={ receipt_id }
 			orderId={ order_id }
-			canceled={ canceled }
 		/>
 	);
 	next();
