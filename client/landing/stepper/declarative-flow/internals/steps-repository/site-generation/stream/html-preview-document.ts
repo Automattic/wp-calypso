@@ -1,5 +1,3 @@
-import DOMPurify from 'dompurify';
-
 export const MAX_PREVIEW_HTML_BYTES = 262144;
 
 export type PreviewAsset = { id: string; mime_type: string; url: string };
@@ -99,59 +97,25 @@ function rewriteCssAssets(
 	);
 }
 
+// Generated markup is untrusted but contained: it only renders inside a
+// sandboxed frame whose CSP allows no script, network or navigation. This drops
+// only what would change how the page renders or fight the asset rewriting.
+const DROPPED_ELEMENTS = 'script, meta, base, link, noscript, template, iframe, object, embed';
+const DROPPED_ATTRIBUTES = [ 'nonce', 'srcset', 'sizes' ];
+
 /** Keep generated markup isolated; only registered preview assets may load. */
 export function htmlPreviewDocument(
 	html: string,
 	assets: PreviewAssets = {},
 	preserveImageSlots = false
 ): string {
-	const root = DOMPurify.sanitize( html, {
-		WHOLE_DOCUMENT: true,
-		RETURN_DOM: true,
-		USE_PROFILES: { html: true },
-		ADD_TAGS: [ 'style' ],
-		FORBID_TAGS: [
-			'base',
-			'meta',
-			'link',
-			'script',
-			'iframe',
-			'object',
-			'embed',
-			'form',
-			'input',
-			'button',
-			'select',
-			'textarea',
-			'picture',
-			'source',
-			'video',
-			'audio',
-		],
-		FORBID_ATTR: [
-			'href',
-			'srcset',
-			'action',
-			'formaction',
-			'ping',
-			'background',
-			'poster',
-			'nonce',
-			'is',
-			'autofocus',
-			'tabindex',
-			'contenteditable',
-			'slot',
-			'part',
-			'exportparts',
-		],
-	} );
-	if ( ! ( root instanceof Element ) ) {
-		return '';
-	}
-	const head = root.querySelector( 'head' );
-	if ( ! head ) {
-		return '';
+	const root = new DOMParser().parseFromString( html, 'text/html' );
+	root.querySelectorAll( DROPPED_ELEMENTS ).forEach( ( node ) => node.remove() );
+	for ( const element of root.querySelectorAll( '*' ) ) {
+		DROPPED_ATTRIBUTES.forEach( ( name ) => element.removeAttribute( name ) );
+		if ( element.tagName !== 'IMG' ) {
+			element.removeAttribute( 'src' );
+		}
 	}
 	for ( const image of root.querySelectorAll( 'img' ) ) {
 		const asset = assets[ image.getAttribute( 'src' ) ?? '' ];
@@ -167,11 +131,6 @@ export function htmlPreviewDocument(
 		image.setAttribute( 'referrerpolicy', 'no-referrer' );
 		image.setAttribute( 'src', asset.url );
 	}
-	for ( const element of root.querySelectorAll( '[src]' ) ) {
-		if ( element.tagName !== 'IMG' ) {
-			element.removeAttribute( 'src' );
-		}
-	}
 	for ( const style of root.querySelectorAll( 'style' ) ) {
 		style.textContent = rewriteCssAssets( style.textContent ?? '', assets, preserveImageSlots );
 	}
@@ -181,14 +140,18 @@ export function htmlPreviewDocument(
 			rewriteCssAssets( element.getAttribute( 'style' ) ?? '', assets, preserveImageSlots )
 		);
 	}
-	const policy = document.createElement( 'meta' );
+	const policy = root.createElement( 'meta' );
 	policy.httpEquiv = 'Content-Security-Policy';
 	policy.content = `default-src 'none'; script-src 'none'; style-src 'unsafe-inline'; img-src ${ assetSources( assets, IMAGE_MIMES ) }; font-src ${ assetSources( assets, FONT_MIMES ) }; form-action 'none'; base-uri 'none';`;
-	const referrer = document.createElement( 'meta' );
+	const referrer = root.createElement( 'meta' );
 	referrer.name = 'referrer';
 	referrer.content = 'no-referrer';
-	head.prepend( policy, referrer );
-	return '<!doctype html>' + root.outerHTML;
+	root.head.prepend( policy, referrer );
+	const inert = root.createElement( 'style' );
+	inert.textContent =
+		'a,area,button,input,select,textarea,summary,label{pointer-events:none!important}';
+	root.head.append( inert );
+	return '<!doctype html>' + root.documentElement.outerHTML;
 }
 
 export const MAX_PREVIEW_DOCUMENT_BYTES = 1048576;
@@ -212,7 +175,7 @@ export function preparePreviewDocument(
 			}
 		}
 	}
-	root.querySelectorAll( 'meta, script, template, noscript' ).forEach( ( node ) => node.remove() );
+	root.querySelectorAll( 'meta' ).forEach( ( node ) => node.remove() );
 	const byUrl = new Map( Object.values( assets ).map( ( asset ) => [ asset.url, asset ] ) );
 	const rewrite = ( value: string ) =>
 		value.replace( /url\(\s*"([^"\n]*)"\s*\)/gi, ( _match, url: string ) => {

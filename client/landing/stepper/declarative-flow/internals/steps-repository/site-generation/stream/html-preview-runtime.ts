@@ -40,6 +40,7 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
   const flightLayer = document.createElement('div');
   flightLayer.className = 'preview-flights';
   flightLayer.setAttribute('aria-hidden', 'true');
+  flightLayer.setAttribute('inert', '');
   const waiting = document.createElement('p');
   waiting.className = 'preview-waiting';
   scene.append(waiting, flightLayer);
@@ -209,11 +210,9 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
   ].join('\n');
   function parse(html) {
     const parsed = new DOMParser().parseFromString(html, 'text/html');
-    parsed.querySelectorAll('script,iframe,object,embed,form,input,button,select,textarea,link,meta,base,svg,math,template,noscript').forEach(node => node.remove());
-    parsed.querySelectorAll('*').forEach(node => {
-      Array.from(node.attributes).forEach(attribute => {
-        if (/^on/i.test(attribute.name) || /^(?:nonce|href|src|srcdoc|srcset|action|formaction|ping|autofocus|contenteditable)$/i.test(attribute.name)) node.removeAttribute(attribute.name);
-      });
+    parsed.querySelectorAll('script,meta,base,link,noscript,template,iframe,object,embed').forEach(node => node.remove());
+    parsed.querySelectorAll('[nonce],[src],[srcset],[sizes]').forEach(node => {
+      ['nonce','src','srcset','sizes'].forEach(name => node.removeAttribute(name));
     });
     return parsed.documentElement;
   }
@@ -275,7 +274,7 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
   function makePage(route, title, epoch) {
     const position = document.createElement('div'); position.className = 'preview-page';
     const surface = document.createElement('div'); surface.className = 'preview-surface';
-    const host = document.createElement('div'); host.className = 'preview-host';
+    const host = document.createElement('div'); host.className = 'preview-host'; host.setAttribute('inert','');
     const shadow = host.attachShadow({mode:'closed'});
     surface.append(host); position.append(surface); scene.insertBefore(position, flightLayer);
     const label = document.createElement('div'); label.className = 'preview-title'; label.textContent = title;

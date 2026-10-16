@@ -44,6 +44,7 @@ function FallbackPage( {
 						title
 					) }
 					sandbox=""
+					tabIndex={ -1 }
 					referrerPolicy="no-referrer"
 					srcDoc={ srcDoc }
 				/>
