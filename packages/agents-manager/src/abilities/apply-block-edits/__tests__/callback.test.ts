@@ -766,10 +766,15 @@ describe( 'applyBlockEditsCallback', () => {
 				expect( result.result.captureNotes ).toContain( 'Text contrast too low: …' );
 			} );
 
-			it( 'measures the edited blocks first, then the rest of the page', async () => {
+			it( 'captures and measures the whole page for block edits with CSS, the edited blocks first', async () => {
+				// The picture has to show what the notes leave to it.
 				jest.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'p{}' } ) );
 
 				await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
+
+				expect( captureCanvas ).toHaveBeenCalledWith(
+					expect.objectContaining( { fullPage: true } )
+				);
 
 				expect( describeTextContrast ).toHaveBeenCalledWith( [ 'resolved-a1', 'p1', 'h1' ], {
 					wholePage: true,
