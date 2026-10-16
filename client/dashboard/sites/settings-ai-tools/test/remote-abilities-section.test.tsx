@@ -120,11 +120,6 @@ function getPluginIntent( plugin: string ) {
 	} );
 }
 
-function getSectionIntent() {
-	// The section-level Enable all precedes the per-plugin intents in the document.
-	return screen.getAllByRole( 'checkbox', { name: 'Enable all' } )[ 0 ];
-}
-
 beforeEach( () => {
 	queryClient.clear();
 	queryClient.setDefaultOptions( {
@@ -217,29 +212,6 @@ describe( '<RemoteAbilitiesSection>', () => {
 			expect( getPluginIntent( 'Jetpack Forms' ) ).toBeChecked();
 			expect( screen.getByRole( 'checkbox', { name: 'Update form' } ) ).toBeChecked();
 			expect( screen.getByRole( 'checkbox', { name: 'Delete form' } ) ).toBeChecked();
-		} );
-	} );
-
-	test( 'the section intent saves every group key on the page', async () => {
-		const user = userEvent.setup();
-		seed( { abilities: catalog, remoteGroups: { 'write:akismet': true } } );
-		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
-
-		expect( getSectionIntent() ).not.toBeChecked();
-
-		const saveScope = mockRemoteGroupsSave( JETPACK_SITE, {
-			'write:akismet': true,
-			'write:jetpack-forms': true,
-			'destructive:jetpack-forms': true,
-		} );
-		await user.click( getSectionIntent() );
-
-		await waitFor( () => {
-			expect( saveScope.isDone() ).toBe( true );
-		} );
-		await waitFor( () => {
-			expect( getSectionIntent() ).toBeChecked();
-			expect( getPluginIntent( 'Jetpack Forms' ) ).toBeChecked();
 		} );
 	} );
 

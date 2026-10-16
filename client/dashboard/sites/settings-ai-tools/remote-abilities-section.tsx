@@ -147,9 +147,6 @@ export default function RemoteAbilitiesSection( {
 		);
 	};
 
-	const allKeys = [ ...namespaces.values() ].flatMap( ( group ) => group.keys );
-	const allEnabled = allKeys.length > 0 && allKeys.every( ( key ) => savedGroups[ key ] === true );
-
 	return (
 		<>
 			<VStack spacing={ 2 }>
@@ -159,17 +156,6 @@ export default function RemoteAbilitiesSection( {
 						'Advanced: choose which abilities published by this site’s plugins an external AI agent may use. All are off unless enabled here.'
 					) }
 					level={ 3 }
-					actions={
-						namespaces.size > 0 ? (
-							<ToggleControl
-								__nextHasNoMarginBottom
-								checked={ allEnabled }
-								disabled={ mutation.isPending }
-								label={ __( 'Enable all' ) }
-								onChange={ ( checked ) => saveGroups( allKeys, checked, 'all' ) }
-							/>
-						) : undefined
-					}
 				/>
 				{ isLoading && namespaces.size === 0 && <Spinner /> }
 				{ isError && (
