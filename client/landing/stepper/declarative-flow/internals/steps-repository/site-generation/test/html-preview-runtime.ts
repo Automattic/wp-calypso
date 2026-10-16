@@ -141,17 +141,35 @@ it( 'preserves existing sections when shared chrome arrives, and rejects stale r
 	expect( roots ).toHaveLength( 2 );
 } );
 
-it( 'keeps abstract loading tails outside actual documents and stops them from host completion only', () => {
+it( 'keeps an image slot in place as its asset becomes available, without replacing the section', () => {
 	connect();
-	send( { type: 'config', active: false, generating: true, complete: false } );
-	render( 1, first );
-	const tail = document.querySelector( '.preview-tail' )!;
-	expect( roots[ 0 ].querySelector( '.preview-tail' ) ).toBeNull();
-	expect( tail.children ).toHaveLength( 2 );
-	expect( tail.hasAttribute( 'hidden' ) ).toBe( false );
-	send( { type: 'config', active: false, generating: false, complete: true } );
-	expect( tail.hasAttribute( 'hidden' ) ).toBe( true );
-	expect( document.querySelector( '.completion-gloss' ) ).toBeNull();
+	const source = '/wp-content/themes/test/assets/bread.png';
+	const html = first.replace(
+		'</section>',
+		`<img src="${ source }" width="400" height="300" alt="Bread"></section>`
+	);
+	render( 1, html );
+	const section = roots[ 0 ].querySelector( '#welcome' );
+	const image = roots[ 0 ].querySelector( 'img' )!;
+	expect( image.hasAttribute( 'data-preview-pending' ) ).toBe( true );
+	const prepared = preparePreviewDocument( html, {
+		[ source ]: { id: 'a'.repeat( 64 ), mime_type: 'image/png', url: 'https://example.com/asset' },
+	} )!;
+	send( {
+		type: 'render',
+		route: '/',
+		title: 'Home',
+		epoch: '1:1',
+		revision: 2,
+		html: prepared.html,
+	} );
+	expect( roots[ 0 ].querySelector( '#welcome' ) ).toBe( section );
+	expect( roots[ 0 ].querySelector( 'img' ) ).toBe( image );
+	expect( image.hasAttribute( 'data-preview-pending' ) ).toBe( false );
+	expect( image.getAttribute( 'data-preview-image' ) ).toBe( 'a'.repeat( 64 ) );
+	expect( image.getAttribute( 'width' ) ).toBe( '400' );
+	expect( image.getAttribute( 'height' ) ).toBe( '300' );
+	expect( image.hasAttribute( 'src' ) ).toBe( false );
 } );
 
 const assetId = ( index: number ) => index.toString( 16 ).padStart( 64, '0' );
@@ -368,26 +386,59 @@ describe( 'responsive page composition', () => {
 				value: index === 0 ? 3200 : 1200 + index * 100,
 			} );
 		} );
+		if ( count > 0 ) {
+			send( {
+				type: 'render',
+				route: '/',
+				title: 'Home',
+				epoch: '1:1',
+				revision: 2,
+				html: preparePreviewDocument( first )!.html,
+				ready: true,
+			} );
+		}
 		send( { type: 'config', active: false, generating: false, complete: false } );
 	}
 
+	it( 'starts a solo homepage large and centered, then zooms out to keep all its sections visible', () => {
+		sizeScene( 1090, 800 );
+		addPages( 0 );
+		const root = roots[ 0 ].firstElementChild!;
+		Object.defineProperty( root, 'offsetHeight', { configurable: true, value: 600 } );
+		send( { type: 'config', active: false, generating: false, complete: false } );
+		const initial = positions()[ 0 ];
+		expect( initial.width ).toBeGreaterThan( 900 );
+		expect( initial.x + initial.width / 2 ).toBeCloseTo( 545 );
+		Object.defineProperty( root, 'offsetHeight', { configurable: true, value: 3200 } );
+		send( { type: 'config', active: false, generating: false, complete: false } );
+		const grown = positions()[ 0 ];
+		expect( grown.scale ).toBeLessThan( initial.scale );
+		expect( grown.x + grown.width / 2 ).toBeCloseTo( 545 );
+		expect( grown.y + 3200 * grown.scale ).toBeLessThanOrEqual( 800 );
+		expect( document.querySelector< HTMLElement >( '.preview-scene' )!.style.height ).toBe(
+			'800px'
+		);
+	} );
+
 	it.each( [ 720, 1090, 1570 ] )(
-		'keeps the home and companion pages grouped at width %i',
+		'aligns the finished homepage with the brand gutter and gives companions equal widths at %i',
 		( width ) => {
 			sizeScene( width, 800 );
 			addPages( 3 );
 			const [ home, ...companions ] = positions();
 			expect( home.x ).toBe( 0 );
-			expect( home.width ).toBeGreaterThan( Math.min( 600, width / 2 ) );
+			expect( home.width ).toBeGreaterThan( 400 );
 			expect( companions[ 0 ].y ).toBe( home.y );
 			companions.forEach( ( page ) => {
-				expect( page.x - home.width ).toBeCloseTo( 32 );
+				expect( page.x - home.x - home.width ).toBeCloseTo( 24 );
+				expect( page.width ).toBeCloseTo( companions[ 0 ].width );
+				expect( page.x + page.width ).toBeCloseTo( width );
 				expect( page.x + page.width ).toBeLessThanOrEqual( width );
 			} );
 			companions.slice( 1 ).forEach( ( page, index ) => {
 				const previous = companions[ index ];
 				expect( page.y - ( previous.y + ( 1300 + index * 100 ) * previous.scale ) ).toBeCloseTo(
-					56
+					40
 				);
 			} );
 			const scene = document.querySelector< HTMLElement >( '.preview-scene' )!;
@@ -397,15 +448,72 @@ describe( 'responsive page composition', () => {
 		}
 	);
 
-	it( 'uses the full mobile width and keeps every companion below the homepage', () => {
+	it( 'keeps the finished mobile homepage readable with companion pages below', () => {
 		sizeScene( 350, 700 );
 		addPages( 6 );
 		const [ home, ...companions ] = positions();
-		expect( home.x ).toBe( 0 );
+		expect( home.x + home.width / 2 ).toBeCloseTo( 175 );
 		expect( home.width ).toBeCloseTo( 350 );
 		companions.forEach( ( page ) => {
 			expect( page.y ).toBeGreaterThan( home.y + 3200 * home.scale );
 			expect( page.x + page.width ).toBeLessThanOrEqual( 350 );
 		} );
+		expect(
+			parseFloat( document.querySelector< HTMLElement >( '.preview-scene' )!.style.height )
+		).toBeGreaterThan( 700 );
+	} );
+} );
+
+describe( 'homepage-first presentation', () => {
+	function page( route: string, revision: number, ready = false, text = first, epoch = '1:1' ) {
+		send( {
+			type: 'render',
+			route,
+			revision,
+			ready,
+			title: route,
+			epoch,
+			html: preparePreviewDocument( text )!.html,
+		} );
+	}
+	it( 'buffers companion revisions and releases the latest when only homepage readiness changes', () => {
+		connect();
+		page( '/', 1 );
+		page( '/story/', 1 );
+		page(
+			'/story/',
+			2,
+			false,
+			first.replace( 'Real generated content', 'The latest story content' )
+		);
+		const companion = document.querySelectorAll< HTMLElement >( '.preview-page' )[ 1 ];
+		expect( companion.hidden ).toBe( true );
+		expect( roots[ 1 ].textContent ).toContain( 'The latest story content' );
+		page( '/', 2, true );
+		expect( companion.hidden ).toBe( false );
+		expect( document.querySelector< HTMLElement >( '.preview-scene' )!.dataset.presentation ).toBe(
+			'showcase'
+		);
+	} );
+	it( 'resets the gate when the homepage starts a new epoch', () => {
+		connect();
+		page( '/', 1, true );
+		page( '/story/', 1 );
+		page( '/', 2, false, first, '1:2' );
+		expect( document.querySelectorAll< HTMLElement >( '.preview-page' )[ 0 ].hidden ).toBe( true );
+		expect( document.querySelector< HTMLElement >( '.preview-scene' )!.dataset.presentation ).toBe(
+			'building'
+		);
+	} );
+	it( 'releases buffered pages immediately on host completion, even without a ready preview', () => {
+		connect();
+		page( '/', 1 );
+		page( '/story/', 1 );
+		send( { type: 'config', active: false, generating: false, complete: true } );
+		expect(
+			Array.from( document.querySelectorAll< HTMLElement >( '.preview-page' ) ).every(
+				( element ) => ! element.hidden
+			)
+		).toBe( true );
 	} );
 } );
