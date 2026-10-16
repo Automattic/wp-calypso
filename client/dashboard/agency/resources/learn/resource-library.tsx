@@ -25,7 +25,7 @@ import StageFilter from './stage-filter';
 import { getNeighbors, useResourceSelection } from './use-resource-selection';
 import { useRevealMore } from './use-reveal-more';
 import type { LayoutType } from './dataviews/views';
-import type { FilterResources } from './types';
+import type { FilterResources, ResourceSource } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
@@ -35,7 +35,7 @@ interface ResourceLibraryProps {
 	resources: AgencyEnablementResource[];
 	view: View;
 	onChangeView: ( view: View ) => void;
-	onPreviewResource: ( resource: AgencyEnablementResource ) => void;
+	onPreviewResource: ( resource: AgencyEnablementResource, source: ResourceSource ) => void;
 	onOpenResource: ( resource: AgencyEnablementResource ) => void;
 	onLoadMore: () => void;
 	readIds: number[];

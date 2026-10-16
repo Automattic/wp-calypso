@@ -10,6 +10,9 @@ export type RecordTracksEvent = (
 	properties?: Record< string, unknown >
 ) => void;
 
+/** Where a resource's details were opened from, for tracking. */
+export type ResourceSource = 'library' | 'recommended';
+
 /**
  * Selects a resource from a card or list row, given the click that selected it
  * and, from a card, the card itself for the modal to grow out of.
@@ -17,7 +20,8 @@ export type RecordTracksEvent = (
 export type SelectResource = (
 	resource: AgencyEnablementResource,
 	event: MouseEvent,
-	origin?: Element | null
+	origin?: Element | null,
+	source?: ResourceSource
 ) => void;
 
 /** Narrows the library to resources sharing one of a card's badges. */
