@@ -64,7 +64,10 @@ interface ApplyBlockEditsResultData {
 	message: string;
 	/** What the attached pictures do and do not show, one sentence each. */
 	captureNotes?: string[];
-	/** Edited text blocks measured below their contrast threshold; absent when none were measured. */
+	/**
+	 * Text blocks measured below their contrast threshold: the edited ones, or
+	 * the whole page's when custom CSS changed. Absent when none were measured.
+	 */
 	contrastFailures?: number;
 	error?: string;
 	details?: Record< string, unknown >;
@@ -433,10 +436,10 @@ export async function applyBlockEditsCallback(
 	// the notes' wording, so the field is left out when no text was measured.
 	// Kept out of `message`, which the user may see as the reply.
 	if ( fileParts ) {
+		const wholePage = edits?.customCSS !== undefined;
 		const contrast = describeTextContrast(
-			edits?.customCSS !== undefined
-				? [ ...changedClientIds, ...getPageClientIds() ]
-				: changedClientIds
+			wholePage ? [ ...changedClientIds, ...getPageClientIds() ] : changedClientIds,
+			{ wholePage }
 		);
 		const captureNotes = [
 			describeCaptureShape( fileParts ),

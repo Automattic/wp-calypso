@@ -621,6 +621,42 @@ describe( 'limits', () => {
 		expect( notesOf( [ 'sect' ] ) ).toEqual( [] );
 	} );
 
+	it( 'says the counts are of the page’s text when measuring the whole page', () => {
+		mountCanvas( [
+			section( [
+				text( 'ueo8' ),
+				{
+					clientId: 'faded',
+					name: 'core/group',
+					style: { opacity: '0.5' },
+					children: [ text( 'qalw' ) ],
+				},
+			] ),
+		] );
+
+		expect( describeTextContrast( [ 'sect' ], { wholePage: true } )?.notes ).toEqual( [
+			'Text contrast: all 1 text block(s) on the page measure at least 4.5:1 (3:1 for large text) against what renders behind them.',
+			'Contrast could not be measured for 1 text block(s) on the page, whose text sits over an image or gradient or uses a colour that cannot be read; judge those from the picture.',
+		] );
+	} );
+
+	it( 'says the left-out failures are on the page when measuring the whole page', () => {
+		mountCanvas( [
+			{
+				clientId: 'c25n',
+				name: 'core/group',
+				style: { backgroundColor: NAVY },
+				children: [ 20, 30, 40, 50, 60 ].map( ( grey ) =>
+					text( `g${ grey }`, { color: `rgb(${ grey }, ${ grey }, ${ grey })`, fontSize: '16px' } )
+				),
+			},
+		] );
+
+		expect( describeTextContrast( [ 'c25n' ], { wholePage: true } )?.notes[ 4 ] ).toBe(
+			'Text contrast too low for 1 more text block(s) on the page not listed above.'
+		);
+	} );
+
 	it( 'notes what passed and what it could not measure together', () => {
 		mountCanvas( [
 			section( [

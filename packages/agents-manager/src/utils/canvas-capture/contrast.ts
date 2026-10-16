@@ -478,13 +478,19 @@ function listLabels( labels: string[] ): string {
  * could not be read; with the number of blocks that fail, which the server
  * reads rather than the wording. A block with no visible text is skipped.
  * Never throws: the notes ride along with an edit and must not fail it.
- * @param clientIds The edited blocks.
+ * @param clientIds The blocks to measure: the edited ones, or the page's.
+ * @param options Options.
+ * @param options.wholePage Whether `clientIds` cover the page rather than the
+ * edited blocks alone, as for an edit to custom CSS, so the notes say so.
  * @returns The notes and the count, or `null` when there is no canvas, no
  * text to measure, or the measuring failed.
  */
-export function describeTextContrast( clientIds: string[] ): TextContrast | null {
+export function describeTextContrast(
+	clientIds: string[],
+	{ wholePage = false }: { wholePage?: boolean } = {}
+): TextContrast | null {
 	try {
-		return measureTextContrast( clientIds );
+		return measureTextContrast( clientIds, wholePage );
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( '[AgentsManager] Failed to measure the text contrast:', error );
@@ -493,7 +499,7 @@ export function describeTextContrast( clientIds: string[] ): TextContrast | null
 	}
 }
 
-function measureTextContrast( clientIds: string[] ): TextContrast | null {
+function measureTextContrast( clientIds: string[], wholePage: boolean ): TextContrast | null {
 	const canvasDocument = clientIds.length ? getCanvasDocument() : null;
 	const view = canvasDocument?.defaultView;
 
@@ -509,6 +515,8 @@ function measureTextContrast( clientIds: string[] ): TextContrast | null {
 		return shortId ? `${ shortName } (${ shortId })` : shortName;
 	};
 
+	// What the counts are of, so a pass is never read as covering more than it did.
+	const blocksMeasured = wholePage ? 'text block(s) on the page' : 'edited text block(s)';
 	const measured: Measured[] = [];
 	let unmeasured = 0;
 	let textBlocks = 0;
@@ -633,20 +641,20 @@ function measureTextContrast( clientIds: string[] ): TextContrast | null {
 
 	if ( unlisted > 0 ) {
 		notes.push(
-			`Text contrast too low for ${ unlisted } more edited text block(s) not listed above.`
+			`Text contrast too low for ${ unlisted } more ${ blocksMeasured } not listed above.`
 		);
 	}
 
-	// Past either cap, some edited text went unread, so "all" would overclaim.
+	// Past either cap, some text went unread, so "all" would overclaim.
 	if ( ! notes.length && measured.length && ! capped ) {
 		notes.push(
-			`Text contrast: all ${ measured.length } edited text block(s) measure at least 4.5:1 (3:1 for large text) against what renders behind them.`
+			`Text contrast: all ${ measured.length } ${ blocksMeasured } measure at least 4.5:1 (3:1 for large text) against what renders behind them.`
 		);
 	}
 
 	if ( unmeasured ) {
 		notes.push(
-			`Contrast could not be measured for ${ unmeasured } edited text block(s), whose text sits over an image or gradient or uses a colour that cannot be read; judge those from the picture.`
+			`Contrast could not be measured for ${ unmeasured } ${ blocksMeasured }, whose text sits over an image or gradient or uses a colour that cannot be read; judge those from the picture.`
 		);
 	}
 
