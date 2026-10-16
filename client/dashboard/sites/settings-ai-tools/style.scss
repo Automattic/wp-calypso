@@ -37,11 +37,13 @@
 
 // Clip children (summary button hover highlights) to the card's rounded corners,
 // and remove the double bottom border on the last summary button.
-.mcp-settings__access-card {
+.mcp-settings__access-card,
+.ai-tools-settings__agent-card {
 	overflow: hidden;
 }
 
-.mcp-settings__access-card .summary-button:last-child {
+.mcp-settings__access-card .summary-button:last-child,
+.ai-tools-settings__agent-card .summary-button:last-child {
 	border-bottom: 0 !important;
 }
 
