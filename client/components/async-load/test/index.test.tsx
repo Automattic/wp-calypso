@@ -3,7 +3,10 @@
  */
 import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import { Component, type ReactNode } from 'react';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import AsyncLoad from '../index';
+
+jest.mock( 'calypso/lib/analytics/mc', () => ( { bumpStat: jest.fn() } ) );
 
 const Loaded = () => <div>loaded</div>;
 const Boom = () => {
@@ -12,7 +15,13 @@ const Boom = () => {
 
 const requireLoaded = () => Promise.resolve( { default: Loaded } );
 const requireBoom = () => Promise.resolve( { default: Boom } );
-const requireReject = () => Promise.reject( new Error( 'chunk blocked' ) );
+const chunkLoadError = () =>
+	Object.assign( new Error( 'chunk blocked' ), { name: 'ChunkLoadError' } );
+const requireReject = () => Promise.reject( chunkLoadError() );
+const requireEvalError = () => Promise.reject( new TypeError( 'module eval boom' ) );
+const requireThrowSync = (): Promise< never > => {
+	throw chunkLoadError();
+};
 
 class CatchBoundary extends Component< { children: ReactNode }, { error: Error | null } > {
 	state = { error: null as Error | null };
@@ -37,6 +46,7 @@ describe( 'AsyncLoad', () => {
 
 	afterEach( () => {
 		consoleError.mockRestore();
+		jest.mocked( bumpStat ).mockClear();
 	} );
 
 	test( 'renders the loaded component on success', async () => {
@@ -55,10 +65,37 @@ describe( 'AsyncLoad', () => {
 		);
 
 		expect( await screen.findByText( 'fallback' ) ).toBeVisible();
+		expect( bumpStat ).toHaveBeenCalledWith( 'calypso_chunk_error', 'async-load' );
 	} );
 
-	/* `null` is what the shipped callers pass, and it must stay distinct from an omitted
-	   prop: a falsy check here would let the rejection escape and blank the whole app. */
+	test( 'renders loadFailureFallback when require throws synchronously', async () => {
+		render(
+			<AsyncLoad
+				require={ requireThrowSync }
+				placeholder={ null }
+				loadFailureFallback={ <div>fallback</div> }
+			/>
+		);
+
+		expect( await screen.findByText( 'fallback' ) ).toBeVisible();
+	} );
+
+	test( 'propagates non-chunk import errors even when a fallback is provided', async () => {
+		render(
+			<CatchBoundary>
+				<AsyncLoad
+					require={ requireEvalError }
+					placeholder={ null }
+					loadFailureFallback={ <div>fallback</div> }
+				/>
+			</CatchBoundary>
+		);
+
+		expect( await screen.findByText( 'boundary: module eval boom' ) ).toBeVisible();
+		expect( screen.queryByText( 'fallback' ) ).not.toBeInTheDocument();
+		expect( bumpStat ).not.toHaveBeenCalled();
+	} );
+
 	test( 'renders nothing and swallows the rejection when loadFailureFallback is null', async () => {
 		render(
 			<CatchBoundary>

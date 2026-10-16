@@ -1,10 +1,19 @@
 import { lazy, useMemo, Suspense, type ComponentType, type ReactNode } from 'react';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 
 import './style.scss';
 
 const DEFAULT_PLACEHOLDER = <div className="async-load__placeholder" />;
 
 type RequireCallback = () => Promise< { default: ComponentType< any > } >;
+
+function isChunkLoadError( error: unknown ): boolean {
+	return (
+		error instanceof Error &&
+		( error.name === 'ChunkLoadError' ||
+			( error as { code?: string } ).code === 'CSS_CHUNK_LOAD_FAILED' )
+	);
+}
 
 type AsyncLoadProps = {
 	placeholder?: ReactNode;
@@ -19,7 +28,7 @@ export default function AsyncLoad( {
 	require,
 	...props
 }: AsyncLoadProps ) {
-	/* Guard the import only: a rejected `require()` renders the fallback; runtime errors inside the loaded component still propagate. */
+	/* Guard chunk-load failures only: module evaluation errors and runtime errors inside the loaded component still propagate. */
 	const Component = useMemo(
 		() =>
 			lazy( () => {
@@ -27,9 +36,17 @@ export default function AsyncLoad( {
 					return require();
 				}
 
-				return require().catch( () => ( {
-					default: () => <>{ loadFailureFallback }</>,
-				} ) );
+				return Promise.resolve()
+					.then( require )
+					.catch( ( error ) => {
+						if ( ! isChunkLoadError( error ) ) {
+							throw error;
+						}
+
+						bumpStat( 'calypso_chunk_error', 'async-load' );
+
+						return { default: () => <>{ loadFailureFallback }</> };
+					} );
 			} ),
 		/* Only `require` should recreate the lazy factory; adding the fallback would remount and re-import when callers pass an inline value. */
 		// eslint-disable-next-line react-hooks/exhaustive-deps
