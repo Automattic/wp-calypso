@@ -80,7 +80,13 @@ function ReviewCard( {
 				</Text>
 			</blockquote>
 			<figcaption className="difm-offer-reviews__source">
-				<Text className="difm-offer-reviews__reviewer" size={ 11 } weight={ 400 } lineHeight="16px">
+				<Text
+					className="difm-offer-reviews__reviewer"
+					variant="muted"
+					size={ 11 }
+					weight={ 400 }
+					lineHeight="16px"
+				>
 					{ review.reviewer }
 				</Text>
 				{ review.url ? (
