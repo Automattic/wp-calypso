@@ -1,4 +1,5 @@
 import {
+	A4ATitanInboxSlugs,
 	AkismetPlans,
 	DomainProductSlugs,
 	JetpackPlans,
@@ -615,6 +616,16 @@ export function isTitanMail( purchase: Purchase | ObjectWithProductSlug ): boole
 	}
 
 	return ( Object.values( TitanMailSlugs ) as readonly string[] ).includes( purchase.product_slug );
+}
+
+export function isA4ATitanInbox( purchase: Purchase | ObjectWithProductSlug ): boolean {
+	if ( ! purchase.product_slug ) {
+		return false;
+	}
+
+	return ( Object.values( A4ATitanInboxSlugs ) as readonly string[] ).includes(
+		purchase.product_slug
+	);
 }
 
 export function isGoogleWorkspace( purchase: Purchase | ObjectWithProductSlug ): boolean {

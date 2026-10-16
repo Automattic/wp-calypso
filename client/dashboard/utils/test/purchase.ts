@@ -23,6 +23,7 @@ import {
 	isWithinRefundWindowDowngradeEligible,
 	isA4ASubscriptionMeta,
 	isA4ABillingDragonPurchase,
+	isA4ATitanInbox,
 } from '../purchase';
 import { getStudioCodeAiCreditsTitle } from '../studio-code-ai-credits';
 import type { Purchase } from '@automattic/api-core';
@@ -837,5 +838,22 @@ describe( 'getDelayedDowngradeRenewalPriceText', () => {
 				() => false
 			)
 		).toBeNull();
+	} );
+} );
+
+describe( 'isA4ATitanInbox', () => {
+	test( 'matches the Standard and Premium Pressable Titan inbox add-ons', () => {
+		expect( isA4ATitanInbox( { product_slug: 'pressable-addon-titan-inbox' } ) ).toBe( true );
+		expect( isA4ATitanInbox( { product_slug: 'pressable-addon-titan-inbox-premium' } ) ).toBe(
+			true
+		);
+	} );
+
+	test( 'rejects WordPress.com Titan Mail, other Pressable add-ons and missing slugs', () => {
+		expect( isA4ATitanInbox( makePurchase( { product_slug: 'wp_titan_mail_monthly' } ) ) ).toBe(
+			false
+		);
+		expect( isA4ATitanInbox( { product_slug: 'pressable-addon-storage-64gb' } ) ).toBe( false );
+		expect( isA4ATitanInbox( { product_slug: undefined } ) ).toBe( false );
 	} );
 } );
