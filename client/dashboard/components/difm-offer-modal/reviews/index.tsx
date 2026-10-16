@@ -1,4 +1,4 @@
-import { Button, ExternalLink, VisuallyHidden } from '@wordpress/components';
+import { Button, VisuallyHidden } from '@wordpress/components';
 import { useReducedMotion } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
@@ -80,13 +80,15 @@ function ReviewCard( {
 				</Text>
 			</blockquote>
 			<figcaption className="difm-offer-reviews__source">
-				<Text className="difm-offer-reviews__reviewer" size={ 11 } weight={ 500 }>
+				<Text className="difm-offer-reviews__reviewer" size={ 11 } weight={ 400 } lineHeight="16px">
 					{ review.reviewer }
 				</Text>
 				{ review.url ? (
-					<ExternalLink
+					<a
 						className="difm-offer-reviews__link"
 						href={ review.url }
+						target="_blank"
+						rel="noopener noreferrer"
 						onClick={ () => onLinkClick?.( review ) }
 						aria-label={ sprintf(
 							/* translators: %s is the name of the person who wrote the review. */
@@ -95,9 +97,11 @@ function ReviewCard( {
 						) }
 					>
 						Trustpilot
-					</ExternalLink>
+					</a>
 				) : (
-					<Text size={ 12 }>Trustpilot</Text>
+					<Text size={ 12 } lineHeight="16px">
+						Trustpilot
+					</Text>
 				) }
 			</figcaption>
 		</figure>
