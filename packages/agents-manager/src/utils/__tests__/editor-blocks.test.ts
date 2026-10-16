@@ -65,7 +65,8 @@ function withEditor( {
 							ancestors.unshift( parent );
 						}
 
-						return ancestors;
+						// Frozen, as the selector's cached result must not be changed.
+						return Object.freeze( ancestors );
 					},
 					areInnerBlocksControlled: ( clientId: string ) => controlled.includes( clientId ),
 					getBlocksByName: ( name: string ) =>
@@ -220,6 +221,25 @@ describe( 'writes', () => {
 		expect( replaceInnerBlocks.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 			markLastChangeAsPersistent.mock.invocationCallOrder.at( -1 ) as number
 		);
+	} );
+
+	it( 'rewrites the nearest record, every time, for a record nested in another', () => {
+		withEditor( {
+			postId: 1,
+			parents: { header: '', nav: 'header', item: 'nav', link: 'item' },
+			controlled: [ 'header', 'nav' ],
+		} );
+		const level = openUndoLevel();
+		const write = writeChildren( level );
+
+		write( 'header', blocks );
+		write( 'link', blocks );
+		write( 'link', blocks );
+		replaceInnerBlocks.mockClear();
+		level.close();
+
+		expect( replaceInnerBlocks ).toHaveBeenCalledTimes( 1 );
+		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'nav', [], false );
 	} );
 
 	it( 'rewrites the document root for a write outside every record', () => {

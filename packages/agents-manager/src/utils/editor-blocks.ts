@@ -279,9 +279,9 @@ function getSyncedRoot( clientId: string | undefined ): string {
 	}
 
 	return (
-		[ clientId, ...getBlockParents( clientId ).reverse() ].find( ( id ) =>
-			blockEditor?.areInnerBlocksControlled?.( id )
-		) ?? ''
+		[ ...getBlockParents( clientId ), clientId ]
+			.reverse()
+			.find( ( id ) => blockEditor?.areInnerBlocksControlled?.( id ) ) ?? ''
 	);
 }
 
