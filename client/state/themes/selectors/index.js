@@ -75,7 +75,6 @@ export { shouldShowAtomicTransferDialog } from 'calypso/state/themes/selectors/s
 export { shouldShowTryAndCustomize } from 'calypso/state/themes/selectors/should-show-try-and-customize';
 export { themePreviewVisibility } from 'calypso/state/themes/selectors/theme-preview-visibility';
 export { getThemeFiltersRequestError } from 'calypso/state/themes/selectors/get-theme-filters-request-error';
-export { canPublishThemeReview } from 'calypso/state/themes/selectors/can-publish-theme-review';
 export { getThemeTiers } from 'calypso/state/themes/selectors/get-theme-tiers';
 export { getThemeTier } from 'calypso/state/themes/selectors/get-theme-tier';
 export { getThemeTierForTheme } from 'calypso/state/themes/selectors/get-theme-tier-for-theme';

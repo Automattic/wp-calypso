@@ -23,14 +23,6 @@ jest.mock( '../../plugin-management-v2/hooks/use-plugin-version-info', () => {
 	} );
 } );
 
-const mockUseMarketplaceReviewsQuery = jest.fn();
-const mockUseMarketplaceReviewsStatsQuery = jest.fn().mockReturnValue( { data: [] } );
-
-jest.mock( 'calypso/data/marketplace/use-marketplace-reviews', () => ( {
-	useMarketplaceReviewsQuery: () => mockUseMarketplaceReviewsQuery(),
-	useMarketplaceReviewsStatsQuery: () => mockUseMarketplaceReviewsStatsQuery(),
-} ) );
-
 jest.mock( '@automattic/calypso-config', () => {
 	const fn = ( key ) => {
 		if ( 'magnificent_non_en_locales' === key ) {
@@ -74,19 +66,6 @@ describe( 'PluginDetailsHeader', () => {
 		plugin,
 	};
 
-	beforeEach( () => {
-		mockUseMarketplaceReviewsQuery.mockReturnValue( {
-			data: [
-				{
-					id: 0,
-					meta: {
-						wpcom_marketplace_rating: 1,
-					},
-				},
-			],
-		} );
-	} );
-
 	test.each( [ { configEnabled: true }, { configEnabled: false } ] )(
 		'should render the correct author url (configEnabled: $configEnabled)',
 		( { configEnabled } ) => {
@@ -113,27 +92,15 @@ describe( 'PluginDetailsHeader', () => {
 		expect( ratingElement ).toHaveTextContent( '1.2/5' );
 	} );
 
-	test( 'should render "add a review" if marketplace product with no ratings', () => {
-		mockUseMarketplaceReviewsQuery.mockReturnValue( { data: [] } );
+	test( 'should not render ratings if marketplace product', () => {
 		const props = {
 			...mockedProps,
 			isMarketplaceProduct: true,
-			plugin: { ...mockedProps.plugin, num_ratings: 0, rating: 0 },
+			plugin: { ...mockedProps.plugin, num_ratings: 1, rating: 23 },
 		};
 		render( <PluginDetailsHeader { ...props } /> );
-		const button = screen.getByText( 'Add a review' );
-		expect( button.tagName.toLowerCase() ).toBe( 'button' );
-	} );
-
-	test( 'should render review count if marketplace product', () => {
-		const props = {
-			...mockedProps,
-			isMarketplaceProduct: true,
-			plugin: { ...mockedProps.plugin, num_ratings: 0, rating: 0 },
-		};
-		render( <PluginDetailsHeader { ...props } /> );
-		const button = screen.getByText( '1 review' );
-		expect( button.tagName.toLowerCase() ).toBe( 'button' );
+		expect( screen.queryByText( /^Ratings?$/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Add a review' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render "add a review" if dotOrg plugin with no ratings', () => {

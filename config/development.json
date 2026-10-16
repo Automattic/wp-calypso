@@ -143,7 +143,6 @@
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
 		"marketplace-redesign": true,
-		"marketplace-reviews-notification": false,
 		"marketplace-test": true,
 		"mcp-settings": true,
 		"me/account-close": true,
