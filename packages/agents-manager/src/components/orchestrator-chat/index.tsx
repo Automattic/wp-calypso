@@ -290,12 +290,8 @@ export default function OrchestratorChat( {
 
 	// Registered before the providers' ability setup below, whose effects may
 	// clear suggestions.
-	const {
-		dynamicSuggestions,
-		replaceEmptyViewSuggestions,
-		contextualSuggestionIds,
-		showEditorEmptyViewSuggestions,
-	} = useDynamicSuggestions( { useSuggestions, isDocked, registerSuggestions, clearSuggestions } );
+	const { dynamicSuggestions, replaceEmptyViewSuggestions, contextualSuggestionIds } =
+		useDynamicSuggestions( { useSuggestions, isDocked, registerSuggestions, clearSuggestions } );
 
 	// The actions under each agent message.
 	const getCheckpointActionsForMessage = useCheckpointAvailability( {
@@ -339,7 +335,6 @@ export default function OrchestratorChat( {
 		getSessionId: getTabSessionId,
 		setIsBuildingSite,
 		setThinkingMessage,
-		showEditorEmptyViewSuggestions,
 	} );
 
 	useAbilitiesRegistration();

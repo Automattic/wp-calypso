@@ -60,8 +60,6 @@ export type AbilitiesSetupHook = ( actions: {
 	getSessionId: () => string | undefined;
 	setIsBuildingSite: ( isBuildingSite: boolean ) => void;
 	setThinkingMessage: ( message: string | null ) => void;
-	/** Offers AM's editor empty-view suggestions above the input, e.g. after a site build. */
-	showEditorEmptyViewSuggestions: () => void;
 } ) => void;
 
 /**

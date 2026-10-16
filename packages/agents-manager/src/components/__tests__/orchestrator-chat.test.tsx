@@ -54,10 +54,6 @@ const mockSetCheckpointActionReverted = jest.fn(
 );
 let mockSelectedBlockType: string | undefined;
 let mockSelectedBlockClientId: string | undefined;
-const mockEditorEmptyViewSuggestions = [
-	{ id: 'customize-colors', label: 'Customize colors', prompt: 'Customize the colors' },
-];
-const mockLoadAmEditorSuggestions = jest.fn();
 let mockBlockEditorStoreThrows = false;
 // Simulates Agenttic's floating truncation in the `AgentChat` mock.
 let mockRenderedSuggestionsLimit: number | undefined;
@@ -395,9 +391,6 @@ const mockRegisteredActions: Record< string, unknown > = {};
 jest.mock( '../../hooks/custom-actions', () => ( {
 	useRegisterCustomActions: ( actions: Record< string, unknown > ) =>
 		Object.assign( mockRegisteredActions, actions ),
-} ) );
-jest.mock( '../../abilities', () => ( {
-	loadAmEditorSuggestions: () => mockLoadAmEditorSuggestions(),
 } ) );
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
@@ -1360,31 +1353,6 @@ describe( 'OrchestratorChat', () => {
 
 			expect( registerSuggestions ).toHaveBeenCalledTimes( registrations );
 			expect( registerSuggestions ).toHaveBeenLastCalledWith( suggestions );
-		}
-	);
-
-	it.each( [
-		{
-			where: 'on the editor',
-			editorSuggestions: { getEditorEmptyViewSuggestions: () => mockEditorEmptyViewSuggestions },
-			registered: [ mockEditorEmptyViewSuggestions ],
-		},
-		{ where: 'off the editor', editorSuggestions: null, registered: [] },
-	] )(
-		'offers the editor empty-view suggestions when a provider asks, $where',
-		async ( { editorSuggestions, registered } ) => {
-			mockLoadAmEditorSuggestions.mockResolvedValue( editorSuggestions );
-			const registerSuggestions = jest.fn();
-			mockUseAgentChat.mockReturnValue( agentChatReturn( { registerSuggestions } ) );
-			const useProviderAbilitiesSetup = jest.fn();
-
-			render( chat( { useProviderAbilitiesSetup } ) );
-			registerSuggestions.mockClear();
-			await act( () =>
-				useProviderAbilitiesSetup.mock.lastCall[ 0 ].showEditorEmptyViewSuggestions()
-			);
-
-			expect( registerSuggestions.mock.calls ).toEqual( registered.map( ( list ) => [ list ] ) );
 		}
 	);
 
