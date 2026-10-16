@@ -70,7 +70,7 @@ function mockPageSave() {
 			expect( body.mcp_abilities.sites[ 0 ] ).toEqual( {
 				blog_id: JETPACK_SITE.ID,
 				abilities: { 'wpcom-mcp/posts-list': true },
-				remote_groups: { 'read:jetpack-forms': true, 'read:jetpack-forms/get-form': true },
+				remote_groups: { 'read:jetpack-forms': true },
 			} );
 			return true;
 		} )
@@ -81,7 +81,7 @@ function mockPageSave() {
 						blog_id: JETPACK_SITE.ID,
 						site_level_enabled: true,
 						abilities: { 'wpcom-mcp/posts-list': true },
-						remote_groups: { 'read:jetpack-forms': true, 'read:jetpack-forms/get-form': true },
+						remote_groups: { 'read:jetpack-forms': true },
 					},
 				],
 			},

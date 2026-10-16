@@ -251,7 +251,7 @@ describe( '<RemoteAbilitiesSection>', () => {
 		expect( screen.queryByText( 'Destructive' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'a plugin intent enables every group and ability key the plugin has on the page', async () => {
+	test( 'a plugin intent enables every group key the plugin has on the page', async () => {
 		const user = userEvent.setup();
 		seed( { abilities: catalog } );
 		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
@@ -259,8 +259,6 @@ describe( '<RemoteAbilitiesSection>', () => {
 		const saveScope = mockRemoteGroupsSave( JETPACK_SITE, {
 			'write:jetpack-forms': true,
 			'destructive:jetpack-forms': true,
-			'write:jetpack-forms/update-form': true,
-			'destructive:jetpack-forms/delete-form': true,
 		} );
 		await user.click( getPluginIntent( 'Jetpack Forms' ) );
 
@@ -272,7 +270,7 @@ describe( '<RemoteAbilitiesSection>', () => {
 		} );
 	} );
 
-	test( 'a plugin intent disable clears only the group keys, leaving ability entries dormant', async () => {
+	test( 'a plugin intent disable clears the group keys and any saved ability-level keys', async () => {
 		const user = userEvent.setup();
 		seed( {
 			abilities: catalog,
@@ -288,6 +286,8 @@ describe( '<RemoteAbilitiesSection>', () => {
 
 		const saveScope = mockRemoteGroupsSave( JETPACK_SITE, {
 			'write:akismet': false,
+			'write:akismet/check-comment': false,
+			'write:akismet/delete-spam': false,
 		} );
 		await user.click( getPluginIntent( 'Akismet' ) );
 

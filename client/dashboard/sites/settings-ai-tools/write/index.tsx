@@ -21,7 +21,6 @@ import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
 	getGroupDescriptors,
-	getRemoteAbilityKey,
 	getSiteContextToolIds,
 	getSiteMcpAbilities,
 	getSiteRemoteGroups,
@@ -103,12 +102,9 @@ export default function SiteAIToolsWrite() {
 	} );
 	const remoteNamespaces = collectNamespaces( remoteAbilities, savedRemoteGroups, TOOL_CATEGORY );
 	const remoteGroupKeys = [ ...remoteNamespaces.values() ].flatMap( ( group ) => group.keys );
-	const remoteAbilityKeys = [ ...remoteNamespaces.values() ].flatMap( ( group ) => [
-		...group.abilityKeys,
-		...group.abilities.map( ( ability ) =>
-			getRemoteAbilityKey( ability.name, ability.meta?.annotations )
-		),
-	] );
+	const remoteAbilityKeys = [ ...remoteNamespaces.values() ].flatMap(
+		( group ) => group.abilityKeys
+	);
 
 	const pageAllEnabled =
 		allTools.length > 0 &&
@@ -180,9 +176,9 @@ export default function SiteAIToolsWrite() {
 		allTools.forEach( ( [ toolId ] ) => {
 			overrides[ toolId ] = enabled;
 		} );
-		// Enabling writes every group and ability key; disabling clears the group
-		// keys and leaves any ability-level entries dormant behind them.
-		const remoteKeys = enabled ? [ ...remoteGroupKeys, ...remoteAbilityKeys ] : remoteGroupKeys;
+		// Both directions write group keys and saved ability-level keys:
+		// ability-level trues actively allow, so disabling must clear them too.
+		const remoteKeys = [ ...remoteGroupKeys, ...remoteAbilityKeys ];
 		mutation.mutate(
 			{
 				mcp_abilities: {

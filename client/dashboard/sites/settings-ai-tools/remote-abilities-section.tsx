@@ -174,19 +174,11 @@ export default function RemoteAbilitiesSection( {
 					group.abilities.every( ( ability ) =>
 						isRemoteAbilityEnabled( savedGroups, ability.name, ability.meta?.annotations )
 					);
-				// Enabling writes every group and ability key (no stale ability-level
-				// denies survive); disabling clears the group keys and leaves any
-				// ability-level entries dormant behind them.
-				const intentKeys = ( enabled: boolean ) =>
-					enabled
-						? [
-								...group.keys,
-								...group.abilityKeys,
-								...group.abilities.map( ( ability ) =>
-									getRemoteAbilityKey( ability.name, ability.meta?.annotations )
-								),
-							]
-						: group.keys;
+				// Both directions write the group keys and any saved ability-level
+				// keys: enabling overwrites stale denies, and disabling clears
+				// ability-level trues too — those actively allow, so leaving them
+				// would keep the abilities on.
+				const intentKeys = [ ...group.keys, ...group.abilityKeys ];
 				return (
 					<McpGroupCard
 						key={ namespace }
@@ -196,7 +188,7 @@ export default function RemoteAbilitiesSection( {
 						allEnabled={ namespaceEnabled }
 						disabled={ mutation.isPending }
 						onEnableAll={ ( checked ) =>
-							saveGroups( intentKeys( checked ), checked, `${ category }:${ namespace }` )
+							saveGroups( intentKeys, checked, `${ category }:${ namespace }` )
 						}
 					>
 						{ group.abilities.length > 0 ? (
