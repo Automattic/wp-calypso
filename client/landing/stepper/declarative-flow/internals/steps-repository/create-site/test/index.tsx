@@ -70,8 +70,6 @@ jest.mock( '@wordpress/data', () => ( {
 		siteUrl: mockSiteUrl,
 		progress: 0,
 		partnerBundle: null,
-		gardenName: null,
-		gardenPartnerName: null,
 		blueprint: mockBlueprint,
 	} ),
 } ) );
