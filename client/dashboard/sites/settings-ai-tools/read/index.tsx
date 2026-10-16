@@ -3,12 +3,7 @@ import '../style.scss';
 import { userSettingsQuery, userSettingsMutation, siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import {
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-	ToggleControl,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Fragment } from 'react';
 import {
@@ -19,7 +14,6 @@ import {
 } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
-import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -31,6 +25,7 @@ import {
 	isWriteTool,
 	sortTools,
 } from '../../../me/mcp/categories';
+import McpGroupCard from '../mcp-group-card';
 import RemoteAbilitiesSection from '../remote-abilities-section';
 
 interface McpAbility {
@@ -141,21 +136,26 @@ export default function SiteAIToolsRead() {
 
 	const renderToolToggles = ( tools: Array< [ string, McpAbility ] > ) =>
 		tools.map( ( [ toolId, tool ] ) => (
-			<ToggleControl
-				key={ toolId }
-				__nextHasNoMarginBottom
-				checked={ tool.enabled }
-				disabled={ mutation.isPending }
-				label={ tool.title }
-				help={ tool.description }
-				onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-			/>
+			<div key={ toolId } id={ toolId }>
+				<ToggleControl
+					__nextHasNoMarginBottom
+					checked={ tool.enabled }
+					disabled={ mutation.isPending }
+					label={ tool.title }
+					help={ tool.description }
+					onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+				/>
+			</div>
 		) );
 
-	const renderSubGroupedTools = (
+	const renderToolsContent = (
 		categoryTools: Array< [ string, McpAbility ] >,
 		categoryName: string
 	) => {
+		if ( ! SUB_CATEGORY_ORDER[ categoryName ] ) {
+			return <VStack spacing={ 4 }>{ renderToolToggles( sortTools( categoryTools ) ) }</VStack>;
+		}
+
 		const subGrouped: Record< string, Array< [ string, McpAbility ] > > = {};
 		categoryTools.forEach( ( [ toolId, tool ] ) => {
 			const sub = getSubCategory( toolId, tool ) ?? '';
@@ -171,14 +171,26 @@ export default function SiteAIToolsRead() {
 		const ungrouped = subGrouped[ '' ] ?? [];
 		const allGroups = ungrouped.length > 0 ? [ ...subGroups, '' ] : subGroups;
 
-		return allGroups.map( ( subName, index ) => (
-			<Fragment key={ subName || '__ungrouped__' }>
-				{ index > 0 && <CardDivider className="mcp-settings__tool-group-divider" /> }
-				<CardBody>
-					<VStack spacing={ 4 }>{ renderToolToggles( sortTools( subGrouped[ subName ] ) ) }</VStack>
-				</CardBody>
-			</Fragment>
-		) );
+		return (
+			<VStack spacing={ 4 }>
+				{ allGroups.map( ( subName, index ) => (
+					<Fragment key={ subName || '__ungrouped__' }>
+						{ index > 0 && (
+							<hr
+								style={ {
+									border: 'none',
+									borderTop: '1px solid var(--color-border-subtle, #dcdcde)',
+									margin: 0,
+								} }
+							/>
+						) }
+						<VStack spacing={ 4 }>
+							{ renderToolToggles( sortTools( subGrouped[ subName ] ) ) }
+						</VStack>
+					</Fragment>
+				) ) }
+			</VStack>
+		);
 	};
 
 	return (
@@ -201,32 +213,19 @@ export default function SiteAIToolsRead() {
 					}
 
 					const allEnabled = categoryTools.every( ( [ , tool ] ) => tool.enabled );
-					const subOrder = SUB_CATEGORY_ORDER[ categoryName ];
 
 					return (
-						<Card key={ categoryName }>
-							<CardHeader>
-								<HStack justify="space-between" alignment="center">
-									<Text as="h3" weight={ 600 } size={ 14 }>
-										{ categoryName }
-									</Text>
-									<ToggleControl
-										__nextHasNoMarginBottom
-										checked={ allEnabled }
-										disabled={ mutation.isPending }
-										label={ __( 'Enable all' ) }
-										onChange={ ( checked ) => handleEnableAll( categoryTools, checked ) }
-									/>
-								</HStack>
-							</CardHeader>
-							{ subOrder ? (
-								renderSubGroupedTools( categoryTools, categoryName )
-							) : (
-								<CardBody>
-									<VStack spacing={ 4 }>{ renderToolToggles( categoryTools ) }</VStack>
-								</CardBody>
-							) }
-						</Card>
+						<McpGroupCard
+							key={ categoryName }
+							id={ categoryName.toLowerCase().replace( /\s+/g, '-' ) }
+							title={ categoryName }
+							toolAnchors={ categoryTools.map( ( [ toolId ] ) => toolId ) }
+							allEnabled={ allEnabled }
+							disabled={ mutation.isPending }
+							onEnableAll={ ( checked ) => handleEnableAll( categoryTools, checked ) }
+						>
+							{ renderToolsContent( categoryTools, categoryName ) }
+						</McpGroupCard>
 					);
 				} ) }
 				<RemoteAbilitiesSection site={ site } category="read" />

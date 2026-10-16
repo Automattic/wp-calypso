@@ -5,13 +5,7 @@ import {
 } from '@automattic/api-queries';
 import languages from '@automattic/languages';
 import { useMutation, useSuspenseQuery, useQuery } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	__experimentalHeading as Heading,
-	ToggleControl,
-	Spinner,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, ToggleControl, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
@@ -22,9 +16,9 @@ import {
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { Card, CardBody, CardHeader } from '../../components/card';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
+import McpGroupCard from './mcp-group-card';
 import type { Site, SiteAbility } from '@automattic/api-core';
 
 export type RemoteAbilityCategory = 'read' | 'write';
@@ -170,34 +164,27 @@ export default function RemoteAbilitiesSection( {
 				const namespaceEnabled =
 					group.keys.length > 0 && group.keys.every( ( key ) => savedGroups[ key ] === true );
 				return (
-					<Card key={ namespace }>
-						<CardHeader>
-							<HStack justify="space-between" alignment="center">
-								<Heading level={ 3 } weight={ 600 } size={ 14 }>
-									{ formatNamespace( namespace ) }
-								</Heading>
-								<ToggleControl
-									__nextHasNoMarginBottom
-									checked={ namespaceEnabled }
-									disabled={ mutation.isPending }
-									label={ __( 'Enable all' ) }
-									onChange={ ( checked ) =>
-										saveGroups( group.keys, checked, `${ category }:${ namespace }` )
-									}
-								/>
-							</HStack>
-						</CardHeader>
-						{ group.abilities.length > 0 && (
-							<CardBody>
-								<VStack spacing={ 4 }>
-									{ group.abilities.map( ( ability ) => {
-										const groupKey = getRemoteAbilityGroupKey(
-											ability.name,
-											ability.meta?.annotations
-										);
-										return (
+					<McpGroupCard
+						key={ namespace }
+						id={ namespace }
+						title={ formatNamespace( namespace ) }
+						toolAnchors={ group.abilities.map( ( ability ) => ability.name ) }
+						allEnabled={ namespaceEnabled }
+						disabled={ mutation.isPending }
+						onEnableAll={ ( checked ) =>
+							saveGroups( group.keys, checked, `${ category }:${ namespace }` )
+						}
+					>
+						{ group.abilities.length > 0 ? (
+							<VStack spacing={ 4 }>
+								{ group.abilities.map( ( ability ) => {
+									const groupKey = getRemoteAbilityGroupKey(
+										ability.name,
+										ability.meta?.annotations
+									);
+									return (
+										<div key={ ability.name } id={ ability.name }>
 											<ToggleControl
-												key={ ability.name }
 												__nextHasNoMarginBottom
 												checked={ savedGroups[ groupKey ] === true }
 												disabled={ mutation.isPending }
@@ -205,12 +192,12 @@ export default function RemoteAbilitiesSection( {
 												help={ ability.description }
 												onChange={ ( checked ) => saveGroups( [ groupKey ], checked, groupKey ) }
 											/>
-										);
-									} ) }
-								</VStack>
-							</CardBody>
-						) }
-					</Card>
+										</div>
+									);
+								} ) }
+							</VStack>
+						) : undefined }
+					</McpGroupCard>
 				);
 			} ) }
 		</>
