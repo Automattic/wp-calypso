@@ -99,7 +99,7 @@
 
 	// Centre the 24px icon on the first 20px line of text.
 	li > :not(svg) {
-		padding-top: 2px;
+		padding-block-start: 2px;
 	}
 
 	svg {
