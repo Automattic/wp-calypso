@@ -20,6 +20,7 @@ import { logStashEvent } from '../../lib/analytics';
 import { getIncompleteFieldKeys, useCreditCardStoreState } from './store';
 import type { CardElementType, CardStoreType } from './types';
 import type { ProcessPayment } from '@automattic/composite-checkout';
+import type { I18n } from '@wordpress/i18n';
 import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:credit-card' );
@@ -191,7 +192,7 @@ export default function CreditCardPayButton( {
 function isCreditCardFormValid(
 	store: CardStoreType,
 	paymentPartner: string,
-	__: ( value: string ) => string,
+	__: I18n[ '__' ],
 	setDisplayFieldsError: ( value: string ) => void
 ) {
 	debug( 'validating credit card fields for partner', paymentPartner );
