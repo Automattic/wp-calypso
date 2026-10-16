@@ -65,8 +65,10 @@
 	}
 }
 
+// Cards and the Library's recommended tiles lift and tilt on hover.
 @media ( hover: hover ) and ( pointer: fine ) and ( prefers-reduced-motion: no-preference ) {
-	.dashboard-resources-learn__card {
+	.dashboard-resources-learn__card,
+	.dashboard-resources-learn__recommendation {
 		transition: transform 280ms cubic-bezier( 0.2, 1.4, 0.4, 1 );
 
 		&::after {

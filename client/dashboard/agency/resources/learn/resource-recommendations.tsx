@@ -30,11 +30,18 @@ function RecommendedResource( {
 				title={
 					<ResourceLink
 						resource={ resource }
-						onSelect={ ( item, event ) => onSelect( item, event, ref.current ) }
+						onSelect={ ( item, event ) => onSelect( item, event, ref.current, 'recommended' ) }
 					/>
 				}
 			>
-				<Text color="inherit" truncate numberOfLines={ 3 }>
+				<Text
+					color="inherit"
+					size={ 14 }
+					lineHeight={ 1.5 }
+					truncate
+					numberOfLines={ 3 }
+					className="dashboard-resources-learn__recommendation-description"
+				>
 					{ resource.description }
 				</Text>
 			</ResourceCardHeader>
