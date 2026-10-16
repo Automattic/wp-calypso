@@ -319,6 +319,7 @@ describe( 'useErrorNotice', () => {
 			actions[ 0 ].onClick();
 			expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
 				mode: ImageStudioMode.Generate,
+				placement: 'notice',
 				trigger: 'error',
 				...jetpackAiQuotaCredits,
 			} );

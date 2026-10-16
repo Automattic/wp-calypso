@@ -24,6 +24,7 @@ import {
 	trackImageStudioGenericShareFailed,
 	trackImageStudioFeatureClipAddedToPost,
 	trackImageStudioFeatureClipPanelViewed,
+	trackImageStudioCreditsMeterOpened,
 	trackImageStudioUpgradeNoticeShown,
 	trackImageStudioUpgradeNoticeClick,
 } from './tracking';
@@ -674,6 +675,7 @@ describe( 'upgrade notice tracking', () => {
 	it( 'records the Jetpack AI quota click and keeps the product-wide upgrade button event', () => {
 		trackImageStudioUpgradeNoticeClick( {
 			mode: ImageStudioMode.Edit,
+			placement: 'notice',
 			trigger: 'error',
 			...jetpackAiQuota,
 		} );
@@ -682,6 +684,7 @@ describe( 'upgrade notice tracking', () => {
 			'jetpack_big_sky_image_studio_upgrade_notice_click',
 			expect.objectContaining( {
 				mode: 'edit',
+				placement: 'notice',
 				trigger: 'error',
 				meter: 'jetpack_ai',
 				state: 'zero',
@@ -696,9 +699,25 @@ describe( 'upgrade notice tracking', () => {
 		} );
 	} );
 
+	it( 'records a popover click with its placement and no notice trigger', () => {
+		trackImageStudioUpgradeNoticeClick( {
+			mode: ImageStudioMode.Generate,
+			placement: 'popover',
+			trigger: 'none',
+			...siteCredits,
+			state: 'ok',
+		} );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_upgrade_notice_click',
+			expect.objectContaining( { placement: 'popover', trigger: 'none', state: 'ok' } )
+		);
+	} );
+
 	it( 'keeps site credits upgrades out of the Jetpack AI upgrade button funnel', () => {
 		trackImageStudioUpgradeNoticeClick( {
 			mode: ImageStudioMode.Edit,
+			placement: 'notice',
 			trigger: 'refresh',
 			...siteCredits,
 		} );
@@ -710,6 +729,38 @@ describe( 'upgrade notice tracking', () => {
 		expect( recordTracksEventMock ).not.toHaveBeenCalledWith(
 			'jetpack_ai_upgrade_button',
 			expect.anything()
+		);
+	} );
+} );
+
+describe( 'credits popover tracking', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+	} );
+
+	it( 'records what opened the popover, with the balance details', () => {
+		trackImageStudioCreditsMeterOpened( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'submit_blocked',
+			meter: 'site_credits',
+			state: 'zero',
+			planTier: 'business',
+			creditsLeft: 0,
+		} );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_credits_meter_opened',
+			expect.objectContaining( {
+				mode: 'edit',
+				trigger: 'submit_blocked',
+				meter: 'site_credits',
+				state: 'zero',
+				plan_tier: 'business',
+				credits_left: 0,
+			} )
 		);
 	} );
 } );

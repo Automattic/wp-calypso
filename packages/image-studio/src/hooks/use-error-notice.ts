@@ -70,6 +70,7 @@ export function useErrorNotice(
 					onClick: () =>
 						trackImageStudioUpgradeNoticeClick( {
 							mode,
+							placement: 'notice',
 							trigger: 'error',
 							...JETPACK_AI_QUOTA_NOTICE,
 						} ),

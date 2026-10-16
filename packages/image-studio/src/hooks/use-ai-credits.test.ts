@@ -5,6 +5,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { ImageStudioMode } from '../types';
 import {
+	trackImageStudioCreditsMeterOpened,
 	trackImageStudioUpgradeNoticeShown,
 	trackImageStudioUpgradeNoticeClick,
 } from '../utils/tracking';
@@ -28,6 +29,7 @@ jest.mock( '../utils/tracking', () => ( {
 	getImageStudioBlogId: jest.requireActual( '../utils/tracking' ).getImageStudioBlogId,
 	getImageStudioSiteType: jest.requireActual( '../utils/tracking' ).getImageStudioSiteType,
 	getImageStudioIsDevMode: jest.requireActual( '../utils/tracking' ).getImageStudioIsDevMode,
+	trackImageStudioCreditsMeterOpened: jest.fn(),
 	trackImageStudioUpgradeNoticeShown: jest.fn(),
 	trackImageStudioUpgradeNoticeClick: jest.fn(),
 } ) );
@@ -80,9 +82,17 @@ const noticeCredits = ( state: 'low' | 'zero', creditsLeft: number ) => ( {
 	ctaType: 'upgrade',
 	ref: 'wp_ai_credits',
 } );
+/** The balance details sent when the credits dot's popover opens. */
+const meterDetails = ( state: 'ok' | 'low' | 'zero', creditsLeft: number ) => ( {
+	meter: 'site_credits',
+	state,
+	planTier: 'premium',
+	creditsLeft,
+} );
 const meterAt = ( percent: number, isOpen = false ) => ( {
 	status: expect.objectContaining( { plan: 'paid', percent } ),
 	upgradeUrl: UPGRADE_URL,
+	onUpgradeClick: expect.any( Function ),
 	isOpen,
 	onToggle: expect.any( Function ),
 } );
@@ -196,6 +206,7 @@ describe( 'useAiCredits', () => {
 		result.current.notice?.action?.onClick?.();
 		expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
 			mode: ImageStudioMode.Edit,
+			placement: 'notice',
 			trigger: 'open',
 			...noticeCredits( 'zero', 0 ),
 		} );
@@ -206,6 +217,57 @@ describe( 'useAiCredits', () => {
 		} );
 		expect( canSubmit ).toBe( false );
 		expect( result.current.meter ).toEqual( meterAt( 0, true ) );
+		// The first read at zero stays quiet; only the blocked Send opens the popover.
+		expect( trackImageStudioCreditsMeterOpened ).toHaveBeenCalledTimes( 1 );
+		expect( trackImageStudioCreditsMeterOpened ).toHaveBeenCalledWith( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'submit_blocked',
+			...meterDetails( 'zero', 0 ),
+		} );
+	} );
+
+	it( 'records a click on the popover’s Upgrade link with its placement', async () => {
+		respondWith( { ai_credits: planSnapshot( 0 ), ...PLAN_BUYER } );
+		const { result } = renderCredits( ImageStudioMode.Edit );
+		await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+		result.current.meter?.onUpgradeClick?.();
+		expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledTimes( 1 );
+		expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
+			mode: ImageStudioMode.Edit,
+			placement: 'popover',
+			trigger: 'none',
+			...noticeCredits( 'zero', 0 ),
+		} );
+	} );
+
+	it( 'records a popover Upgrade click on a healthy balance as ok', async () => {
+		respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
+		const { result } = renderCredits();
+		await waitFor( () => expect( result.current.meter ).toBeDefined() );
+		expect( result.current.notice ).toBeUndefined();
+
+		result.current.meter?.onUpgradeClick?.();
+		expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
+			mode: ImageStudioMode.Generate,
+			placement: 'popover',
+			trigger: 'none',
+			meter: 'site_credits',
+			state: 'ok',
+			planTier: 'premium',
+			creditsLeft: 30_000,
+			ctaType: 'upgrade',
+			ref: 'wp_ai_credits',
+		} );
+	} );
+
+	it( 'gives the popover no click handler when there is no Upgrade link', async () => {
+		respondWith( { ai_credits: planSnapshot( 0 ), ...EDITOR } );
+		const { result } = renderCredits();
+		await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+		expect( result.current.meter?.upgradeUrl ).toBeUndefined();
+		expect( result.current.meter?.onUpgradeClick ).toBeUndefined();
 	} );
 
 	it( 'lets Send through and shows the amount left when credits are low', async () => {
@@ -747,6 +809,11 @@ describe( 'useAiCredits', () => {
 			trigger: 'refresh',
 			...noticeCredits( 'zero', 0 ),
 		} );
+		expect( trackImageStudioCreditsMeterOpened ).toHaveBeenCalledWith( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'exhausted',
+			...meterDetails( 'zero', 0 ),
+		} );
 	} );
 
 	it.each( [
@@ -855,6 +922,52 @@ describe( 'useAiCredits', () => {
 		} );
 
 		expect( result.current.meter?.isOpen ).toBe( false );
+		expect( trackImageStudioCreditsMeterOpened ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'records a click that opens the popover, but not a close or a repeat', async () => {
+		respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
+		const { result } = renderCredits( ImageStudioMode.Edit );
+		await waitFor( () => expect( result.current.meter ).toBeDefined() );
+
+		act( () => {
+			result.current.meter?.onToggle( true );
+		} );
+		expect( result.current.meter?.isOpen ).toBe( true );
+		expect( trackImageStudioCreditsMeterOpened ).toHaveBeenCalledWith( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'click',
+			...meterDetails( 'ok', 30_000 ),
+		} );
+
+		act( () => {
+			result.current.meter?.onToggle( true );
+		} );
+		act( () => {
+			result.current.meter?.onToggle( false );
+		} );
+		expect( result.current.meter?.isOpen ).toBe( false );
+		expect( trackImageStudioCreditsMeterOpened ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'records every blocked Send, even with the popover already open', async () => {
+		respondWith( { ai_credits: planSnapshot( 0 ), ...PLAN_BUYER } );
+		const { result } = renderCredits();
+		await waitFor( () => expect( result.current.isLimitReached ).toBe( true ) );
+
+		act( () => {
+			result.current.beforeSubmit();
+		} );
+		act( () => {
+			result.current.beforeSubmit();
+		} );
+		expect( result.current.meter?.isOpen ).toBe( true );
+		expect( trackImageStudioCreditsMeterOpened ).toHaveBeenCalledTimes( 2 );
+		expect( trackImageStudioCreditsMeterOpened ).toHaveBeenLastCalledWith( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'submit_blocked',
+			...meterDetails( 'zero', 0 ),
+		} );
 	} );
 
 	it( 'returns the same result between renders, so the memoised chat doesn’t re-render', async () => {
