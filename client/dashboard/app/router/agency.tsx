@@ -84,6 +84,7 @@ import {
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
+import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { AUTH_QUERY_KEY } from '../auth';
 import {
@@ -94,7 +95,7 @@ import {
 import { rootRoute } from './root';
 import type { HostingSection, ReferHostingType } from '../../agency/marketplace/paths';
 import type { AgencySupports } from '../context';
-import type { AgencyCapability, User } from '@automattic/api-core';
+import type { AgencyCapability, Referral, Site, User } from '@automattic/api-core';
 import type { AnyRoute, StaticDataRouteOption } from '@tanstack/react-router';
 
 /**
@@ -1014,19 +1015,23 @@ export const earnSectionRoutes = [
 // `/referrals/$referralId` – referral (client) detail view; hosts the tab routes
 export const earnReferralRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
-	head: () => ( { meta: [ { title: __( 'Referral details' ) } ] } ),
+	head: ( { loaderData }: { loaderData?: { referral?: Referral } } ) => ( {
+		meta: [ { title: loaderData?.referral?.client.email || __( 'Referral details' ) } ],
+	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'referrals/$referralId',
-	loader: async () => {
+	loader: async ( { params: { referralId } } ) => {
 		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
 		const agencyId = agency?.id ?? 0;
-		if ( agencyId ) {
-			await Promise.all( [
-				queryClient.ensureQueryData( referralsQuery( agencyId ) ),
-				queryClient.ensureQueryData( agencyProductsQuery( agencyId ) ).catch( () => undefined ),
-			] );
-			queryClient.prefetchQuery( referralCommissionPayoutQuery( agencyId ) );
+		if ( ! agencyId ) {
+			return {};
 		}
+		const [ referrals ] = await Promise.all( [
+			queryClient.ensureQueryData( referralsQuery( agencyId ) ),
+			queryClient.ensureQueryData( agencyProductsQuery( agencyId ) ).catch( () => undefined ),
+		] );
+		queryClient.prefetchQuery( referralCommissionPayoutQuery( agencyId ) );
+		return { referral: referrals.find( ( item ) => String( item.id ) === referralId ) };
 	},
 	component: Outlet,
 } );
@@ -1063,6 +1068,10 @@ const earnReferralPurchasesRoute = createRoute( {
 // `/sites/$siteSlug` – agency site detail (a layout that hosts the section routes)
 export const agencySiteRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_managed_sites' },
+	head: ( { params: { siteSlug } }: { params: { siteSlug: string } } ) => {
+		const site = queryClient.getQueryData< Site >( siteBySlugQuery( siteSlug ).queryKey );
+		return { meta: [ { title: site && getSiteDisplayName( site ) } ] };
+	},
 	getParentRoute: () => agencyRoute,
 	path: 'sites/$siteSlug',
 	beforeLoad: async ( { cause, params: { siteSlug }, matches } ) => {
