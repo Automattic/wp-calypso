@@ -5,9 +5,11 @@ import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
+import { toError } from '../../utils/to-error';
 import { InaccessibleJetpackNotice } from './notices';
 
-export default function Error( { error }: { error: Error } ) {
+export default function Error( { error: thrown }: { error: unknown } ) {
+	const error = toError( thrown );
 	if ( isInaccessibleJetpackError( error ) ) {
 		return <InaccessibleJetpackError error={ error } />;
 	}
