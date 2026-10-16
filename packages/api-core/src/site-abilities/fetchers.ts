@@ -18,7 +18,9 @@ export async function fetchSiteAbilities( siteId: number ): Promise< SiteAbility
 	for ( let page = 1; page <= MAX_PAGES; page++ ) {
 		const { data } = await wpcom.req.get( `/jetpack-blogs/${ siteId }/rest-api/`, {
 			path: '/wp-abilities/v1/abilities',
-			query: JSON.stringify( { per_page: PER_PAGE, page } ),
+			// _locale=user: labels and descriptions arrive in the viewer's language on
+			// the site rather than the site's default language.
+			query: JSON.stringify( { per_page: PER_PAGE, page, _locale: 'user' } ),
 		} );
 
 		if ( ! Array.isArray( data ) ) {

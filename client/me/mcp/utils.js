@@ -137,6 +137,17 @@ export function getRemoteAbilityGroupKey( name, annotations = {} ) {
 }
 
 /**
+ * The access-level page an ability belongs on: everything that isn't a strict
+ * read is treated as a write (destructive included) for display purposes.
+ * @param {string} name - Ability name
+ * @param {Object} [annotations] - Published annotations
+ * @returns {'read'|'write'} Access-level category
+ */
+export function getRemoteAbilityCategory( name, annotations = {} ) {
+	return getRemoteAbilityGroupKey( name, annotations ).startsWith( 'read:' ) ? 'read' : 'write';
+}
+
+/**
  * Merge account-level MCP abilities with site-level overrides
  * @param {Record<string, Object>} accountAbilities - Account-level abilities from getAccountMcpAbilities
  * @param {Record<string, boolean>} siteAbilities - Site-level overrides from getSiteMcpAbilities

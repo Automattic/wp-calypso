@@ -31,6 +31,7 @@ import {
 	isWriteTool,
 	sortTools,
 } from '../../../me/mcp/categories';
+import RemoteAbilitiesCard from '../remote-abilities-card';
 
 interface McpAbility {
 	title: string;
@@ -239,6 +240,7 @@ export default function SiteAIToolsWrite() {
 						</Card>
 					);
 				} ) }
+				<RemoteAbilitiesCard site={ site } category="write" />
 			</VStack>
 		</PageLayout>
 	);
