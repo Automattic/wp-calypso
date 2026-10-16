@@ -10,5 +10,15 @@ export type RecordTracksEvent = (
 	properties?: Record< string, unknown >
 ) => void;
 
-/** Selects a resource from a card or list row, given the click that selected it. */
-export type SelectResource = ( resource: AgencyEnablementResource, event: MouseEvent ) => void;
+/** Where a resource's details were opened from, for tracking. */
+export type ResourceSource = 'library' | 'recommended';
+
+/**
+ * Selects a resource from a card or list row, given the click that selected it
+ * and the list it was selected from.
+ */
+export type SelectResource = (
+	resource: AgencyEnablementResource,
+	event: MouseEvent,
+	source?: ResourceSource
+) => void;

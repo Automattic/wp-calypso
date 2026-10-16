@@ -190,6 +190,7 @@ describe( '<ResourceCenter>', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_resource_center_preview', {
 			resource_id: 2,
 			resource_name: 'Jetpack battle card',
+			source: 'library',
 		} );
 		expect( scope.isDone() ).toBe( false );
 
@@ -248,7 +249,7 @@ describe( '<ResourceCenter>', () => {
 	} );
 
 	test( 'shows the recommended resources, which open their details', async () => {
-		renderLibrary( {
+		const { recordTracksEvent } = renderLibrary( {
 			resources: [
 				...resources,
 				resource( { id: 4, name: 'Recommended guide', is_recommended: true } ),
@@ -259,6 +260,11 @@ describe( '<ResourceCenter>', () => {
 		await userEvent.click( within( section ).getByRole( 'link', { name: 'Recommended guide' } ) );
 
 		expect( await screen.findByRole( 'dialog', { name: 'Recommended guide' } ) ).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_resource_center_preview', {
+			resource_id: 4,
+			resource_name: 'Recommended guide',
+			source: 'recommended',
+		} );
 	} );
 
 	test( 'leaves out the recommendations when there are none', async () => {

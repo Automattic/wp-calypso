@@ -35,11 +35,12 @@ $resource-brands: (
 }
 
 // A row of branded tiles that scrolls sideways, a little over two at a time.
+// Padded so a tile's hover lift isn't clipped by the scroller.
 .dashboard-resources-learn__recommendations {
 	display: flex;
 	gap: $grid-unit-20;
-	margin: 0;
-	padding: 0;
+	margin: calc( -1 * #{$grid-unit-15} ) 0 calc( -1 * #{$grid-unit-20} );
+	padding: $grid-unit-15 0 $grid-unit-20;
 	list-style: none;
 	overflow-x: auto;
 	scroll-snap-type: x mandatory;
@@ -50,17 +51,146 @@ $resource-brands: (
 .dashboard-resources-learn__recommendation {
 	flex: 0 0 calc( ( 100% - #{$grid-unit-20} * 2 ) / 2.25 );
 	min-inline-size: 280px;
+	block-size: 280px;
 	scroll-snap-align: start;
 	border-radius: $radius-large;
 	overflow: hidden;
 
+	// The card header, on its product's solid color: the wordmark, title and
+	// description down one side and the illustration across the other.
 	.dashboard-resources-learn__card-header {
+		--resource-card-ink: #{$studio-white};
+
+		display: grid;
+		grid-template-columns: minmax( 0, 3fr ) minmax( 0, 2fr );
+		grid-template-rows: auto minmax( 0, 1fr ) auto;
+		gap: $grid-unit-15 20px;
 		block-size: 100%;
-		min-block-size: 240px;
+		padding: 20px;
+		isolation: isolate;
+		background: var( --resource-brand );
+
+		&:is( [data-product='pressable'], [data-product='wordpress-vip'] ) {
+			--resource-card-ink: #{$studio-gray-100};
+		}
+
+		// A faint pattern for the content type, drifting behind the content.
+		&::before {
+			content: '';
+			position: absolute;
+			inset: -12%;
+			z-index: -1;
+			opacity: 0.08;
+			background: radial-gradient( ellipse at 100% 0, currentColor, transparent 70% );
+			pointer-events: none;
+		}
+
+		&[data-content-type='guide']::before {
+			background: repeating-radial-gradient(
+				circle at 110% 10%,
+				transparent 0 28px,
+				currentColor 29px 30px,
+				transparent 31px 56px
+			);
+		}
+
+		&:is( [data-content-type='video'], [data-content-type='webinar'] )::before {
+			opacity: 0.18;
+			background: repeating-linear-gradient(
+				130deg,
+				transparent 0 12%,
+				currentColor 24%,
+				transparent 36% 48%
+			);
+		}
+
+		&[data-content-type='slide-deck']::before {
+			background:
+				linear-gradient( currentColor 1px, transparent 1px ),
+				linear-gradient( 90deg, currentColor 1px, transparent 1px );
+			background-size: 32px 32px;
+		}
+
+		&[data-content-type='checklist']::before {
+			background: repeating-linear-gradient(
+				-35deg,
+				transparent 0 30px,
+				currentColor 31px 32px,
+				transparent 33px 64px
+			);
+		}
+
+		&[data-content-type='one-pager']::before {
+			background: radial-gradient( circle at 100% 0, currentColor 0 35%, transparent 35.5% );
+		}
+
+		&[data-content-type='talk-track']::before {
+			background: radial-gradient( circle, currentColor 1px, transparent 2px );
+			background-size: 20px 20px;
+		}
+
+		&[data-content-type='case-study']::before {
+			background: linear-gradient(
+				155deg,
+				transparent 45%,
+				currentColor 45.5% 65%,
+				transparent 65.5%
+			);
+		}
+
+		.dashboard-resource-illustration {
+			position: static;
+			grid-area: 1 / 2 / 4 / 3;
+			align-self: center;
+			justify-self: center;
+			inline-size: min( 100%, 128px );
+			block-size: auto;
+			aspect-ratio: 1;
+		}
+
+		.dashboard-resources-learn__card-label {
+			grid-area: 1 / 1;
+			min-block-size: 0;
+			padding: 0;
+		}
+
+		.dashboard-resources-learn__card-title {
+			grid-area: 2 / 1;
+			align-self: end;
+		}
+	}
+
+	.dashboard-resources-learn__top-badge {
+		color: var( --resource-brand );
 	}
 
 	.dashboard-resources-learn__link::after {
 		border-radius: $radius-large;
+	}
+}
+
+.dashboard-resources-learn__recommendation-description {
+	grid-area: 3 / 1;
+}
+
+@media ( prefers-reduced-motion: no-preference ) {
+	.dashboard-resources-learn__recommendation .dashboard-resources-learn__card-header::before {
+		animation: dashboard-resources-learn__drift 24s ease-in-out infinite alternate;
+	}
+
+	.dashboard-resources-learn__recommendation:nth-child( even )
+		.dashboard-resources-learn__card-header::before {
+		animation-delay: -12s;
+		animation-direction: alternate-reverse;
+	}
+}
+
+@keyframes dashboard-resources-learn__drift {
+	from {
+		transform: translate( -3%, -2% ) rotate( -3deg );
+	}
+	to {
+		transform: translate( 3%, 2% ) rotate( 3deg );
 	}
 }
 

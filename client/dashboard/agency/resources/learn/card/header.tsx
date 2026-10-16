@@ -25,7 +25,11 @@ export default function ResourceCardHeader( {
 	children,
 }: ResourceCardHeaderProps ) {
 	return (
-		<div className="dashboard-resources-learn__card-header" data-product={ resource.product }>
+		<div
+			className="dashboard-resources-learn__card-header"
+			data-product={ resource.product }
+			data-content-type={ resource.content_type ?? undefined }
+		>
 			<ResourceIllustration resource={ resource } />
 			<VStack
 				spacing={ 2 }
