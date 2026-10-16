@@ -83,7 +83,7 @@ export const applyBlockEditsAbility: Ability = {
 					contrastFailures: {
 						type: 'number',
 						description:
-							'How many edited text blocks measured below WCAG AA contrast against what renders behind them.',
+							'How many text blocks the edit affects measured below WCAG AA contrast against what renders behind them.',
 					},
 					outcome: {
 						type: 'string',

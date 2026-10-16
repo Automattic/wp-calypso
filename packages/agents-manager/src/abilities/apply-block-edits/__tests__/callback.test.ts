@@ -656,7 +656,9 @@ describe( 'applyBlockEditsCallback', () => {
 				visualCheckClientIds: [ 'ref1' ],
 			} );
 
-			expect( describeTextContrast ).toHaveBeenCalledWith( [ 'resolved-a1' ] );
+			expect( describeTextContrast ).toHaveBeenCalledWith( [ 'resolved-a1' ], {
+				wholePage: false,
+			} );
 			expect( result.result.captureNotes ).toEqual( [
 				expect.stringContaining( 'named for comparison' ),
 				'Text contrast too low: …',
@@ -728,7 +730,9 @@ describe( 'applyBlockEditsCallback', () => {
 
 				const result = await applyBlockEditsCallback( { customCSS: 'p{}', toolCallId: 'call-1' } );
 
-				expect( describeTextContrast ).toHaveBeenCalledWith( [ 'p1', 'h1' ] );
+				expect( describeTextContrast ).toHaveBeenCalledWith( [ 'p1', 'h1' ], {
+					wholePage: true,
+				} );
 				expect( result.result.contrastFailures ).toBe( 1 );
 				expect( result.result.captureNotes ).toContain( 'Text contrast too low: …' );
 			} );
@@ -738,7 +742,9 @@ describe( 'applyBlockEditsCallback', () => {
 
 				await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
 
-				expect( describeTextContrast ).toHaveBeenCalledWith( [ 'resolved-a1', 'p1', 'h1' ] );
+				expect( describeTextContrast ).toHaveBeenCalledWith( [ 'resolved-a1', 'p1', 'h1' ], {
+					wholePage: true,
+				} );
 			} );
 		} );
 
@@ -747,7 +753,9 @@ describe( 'applyBlockEditsCallback', () => {
 
 			await applyBlockEditsCallback( input );
 
-			expect( describeTextContrast ).toHaveBeenCalledWith( [ 'resolved-a1' ] );
+			expect( describeTextContrast ).toHaveBeenCalledWith( [ 'resolved-a1' ], {
+				wholePage: false,
+			} );
 		} );
 
 		it( 'measures nothing without a capture', async () => {
