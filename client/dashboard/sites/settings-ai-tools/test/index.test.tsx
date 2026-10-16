@@ -279,13 +279,15 @@ describe( '<AIToolsSettings>', () => {
 		expect( telegramButton ).toHaveAttribute( 'aria-disabled', 'true' );
 
 		expect(
-			screen.queryByRole( 'heading', { name: 'External AI agent access' } )
+			screen.queryByRole( 'heading', { name: 'Access for ChatGPT, Claude, or other AI tools' } )
 		).not.toBeInTheDocument();
 		expect(
 			screen.queryByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
 		).not.toBeInTheDocument();
 		expect(
-			screen.queryByRole( 'link', { name: /^Connect external AI agent/ } )
+			screen.queryByRole( 'link', {
+				name: /^Connect to ChatGPT, Claude, and other external AI tools/,
+			} )
 		).not.toBeInTheDocument();
 	} );
 
@@ -293,21 +295,48 @@ describe( '<AIToolsSettings>', () => {
 		renderAIToolsSettings( '', true, site, true, true );
 
 		expect( await screen.findByText( 'Learn more' ) ).toBeVisible();
-		expect( screen.getByRole( 'heading', { name: 'External AI agent access' } ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'heading', { name: 'Access for ChatGPT, Claude, or other AI tools' } )
+		).toBeVisible();
 		expect(
 			screen.getByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
 		).toBeEnabled();
 		expect( screen.getByRole( 'link', { name: /^Read/ } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /^Write/ } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: /^Connect external AI agent/ } ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'link', {
+				name: /^Connect to ChatGPT, Claude, and other external AI tools/,
+			} )
+		).toBeVisible();
 		expect( screen.queryByText( 'Upgrade required' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the Connect row disabled until MCP access is on', async () => {
+		renderAIToolsSettings( '', true, site, true, false );
+
+		expect(
+			await screen.findByRole( 'heading', {
+				name: 'Access for ChatGPT, Claude, or other AI tools',
+			} )
+		).toBeVisible();
+		expect(
+			screen.getByRole( 'link', {
+				name: /^Connect to ChatGPT, Claude, and other external AI tools/,
+			} )
+		).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( screen.getByText( 'Turn on access above to get setup instructions.' ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: /^Read/ } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows MCP access and the Connect link above WordPress Agent', async () => {
 		renderAIToolsSettings( '', true, site, true, true );
 
-		const mcpHeading = await screen.findByRole( 'heading', { name: 'External AI agent access' } );
-		const connectLink = screen.getByRole( 'link', { name: /^Connect external AI agent/ } );
+		const mcpHeading = await screen.findByRole( 'heading', {
+			name: 'Access for ChatGPT, Claude, or other AI tools',
+		} );
+		const connectLink = screen.getByRole( 'link', {
+			name: /^Connect to ChatGPT, Claude, and other external AI tools/,
+		} );
 		const agentHeading = screen.getByRole( 'heading', { name: 'WordPress Agent' } );
 
 		expect(

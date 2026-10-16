@@ -392,53 +392,57 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		return (
 			<>
 				{ config.isEnabled( 'mcp-settings' ) && isAvailable && (
-					<>
-						<Card className="mcp-settings__access-card">
-							<CardBody>
-								<VStack spacing={ 4 }>
-									<SectionHeader
-										title={ __( 'External AI agent access' ) }
-										description={ __( 'Allow external AI agents to access this site via MCP.' ) }
-										level={ 3 }
-									/>
-									<ToggleControl
-										__nextHasNoMarginBottom
-										checked={ isMcpEnabled }
-										disabled={ mcpMutation.isPending }
-										label={ __( 'Enable MCP access for this site' ) }
-										onChange={ handleMcpToggle }
-									/>
-								</VStack>
-							</CardBody>
-							{ isMcpEnabled && (
-								<>
-									<CardDivider className="mcp-settings__sub-divider" />
-									<RouterLinkSummaryButton
-										to={ `/sites/${ siteSlug }/settings/ai-tools/read` }
-										density="medium"
-										title={ __( 'Read' ) }
-										decoration={ <Icon icon={ seen } size={ 24 } /> }
-										badges={ [ readBadge ] }
-									/>
-									<RouterLinkSummaryButton
-										to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
-										density="medium"
-										title={ __( 'Write' ) }
-										decoration={ <Icon icon={ pencil } size={ 24 } /> }
-										badges={ [ writeBadge ] }
-									/>
-								</>
-							) }
-						</Card>
+					<Card className="mcp-settings__access-card">
+						<CardBody>
+							<VStack spacing={ 4 }>
+								<SectionHeader
+									title={ __( 'Access for ChatGPT, Claude, or other AI tools' ) }
+									description={ __(
+										'Let the AI tools you already use read and update this site through MCP. Turn on access, then connect your tool.'
+									) }
+									level={ 3 }
+								/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ isMcpEnabled }
+									disabled={ mcpMutation.isPending }
+									label={ __( 'Enable MCP access for this site' ) }
+									onChange={ handleMcpToggle }
+								/>
+							</VStack>
+						</CardBody>
+						<CardDivider className="mcp-settings__sub-divider" />
+						<RouterLinkSummaryButton
+							to={ `/sites/${ siteSlug }/settings/ai-tools/setup` }
+							density="medium-low"
+							title={ __( 'Connect to ChatGPT, Claude, and other external AI tools' ) }
+							description={
+								isMcpEnabled
+									? __( 'Get step-by-step setup instructions for your AI tool.' )
+									: __( 'Turn on access above to get setup instructions.' )
+							}
+							decoration={ <Icon icon={ connection } size={ 24 } /> }
+							disabled={ ! isMcpEnabled }
+						/>
 						{ isMcpEnabled && (
-							<RouterLinkSummaryButton
-								to={ `/sites/${ siteSlug }/settings/ai-tools/setup` }
-								title={ __( 'Connect external AI agent' ) }
-								description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-								decoration={ <Icon icon={ connection } size={ 24 } /> }
-							/>
+							<>
+								<RouterLinkSummaryButton
+									to={ `/sites/${ siteSlug }/settings/ai-tools/read` }
+									density="medium"
+									title={ __( 'Read' ) }
+									decoration={ <Icon icon={ seen } size={ 24 } /> }
+									badges={ [ readBadge ] }
+								/>
+								<RouterLinkSummaryButton
+									to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
+									density="medium"
+									title={ __( 'Write' ) }
+									decoration={ <Icon icon={ pencil } size={ 24 } /> }
+									badges={ [ writeBadge ] }
+								/>
+							</>
 						) }
-					</>
+					</Card>
 				) }
 				<Card className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
 					<CardBody>
