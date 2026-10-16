@@ -21,9 +21,11 @@ import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
 	getGroupDescriptors,
+	getRemoteAbilityKey,
 	getSiteContextToolIds,
 	getSiteMcpAbilities,
 	getSiteRemoteGroups,
+	isRemoteAbilityEnabled,
 	mergeSiteMcpAbilities,
 } from '../../../../me/mcp/utils';
 import { useAnalytics } from '../../../app/analytics';
@@ -99,14 +101,23 @@ export default function SiteAIToolsRead() {
 		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
 		enabled: !! site.jetpack,
 	} );
-	const remoteKeys = [
-		...collectNamespaces( remoteAbilities, savedRemoteGroups, TOOL_CATEGORY ).values(),
-	].flatMap( ( group ) => group.keys );
+	const remoteNamespaces = collectNamespaces( remoteAbilities, savedRemoteGroups, TOOL_CATEGORY );
+	const remoteGroupKeys = [ ...remoteNamespaces.values() ].flatMap( ( group ) => group.keys );
+	const remoteAbilityKeys = [ ...remoteNamespaces.values() ].flatMap( ( group ) =>
+		group.abilities.map( ( ability ) =>
+			getRemoteAbilityKey( ability.name, ability.meta?.annotations )
+		)
+	);
 
 	const pageAllEnabled =
 		allTools.length > 0 &&
 		allTools.every( ( [ , tool ] ) => tool.enabled ) &&
-		remoteKeys.every( ( key ) => savedRemoteGroups[ key ] === true );
+		remoteGroupKeys.every( ( key ) => savedRemoteGroups[ key ] === true ) &&
+		[ ...remoteNamespaces.values() ].every( ( group ) =>
+			group.abilities.every( ( ability ) =>
+				isRemoteAbilityEnabled( savedRemoteGroups, ability.name, ability.meta?.annotations )
+			)
+		);
 
 	const mutation = useMutation(
 		withSnackbar( userSettingsMutation(), {
@@ -166,6 +177,9 @@ export default function SiteAIToolsRead() {
 		allTools.forEach( ( [ toolId ] ) => {
 			overrides[ toolId ] = enabled;
 		} );
+		// Enabling writes every group and ability key; disabling clears the group
+		// keys and leaves any ability-level entries dormant behind them.
+		const remoteKeys = enabled ? [ ...remoteGroupKeys, ...remoteAbilityKeys ] : remoteGroupKeys;
 		mutation.mutate(
 			{
 				mcp_abilities: {

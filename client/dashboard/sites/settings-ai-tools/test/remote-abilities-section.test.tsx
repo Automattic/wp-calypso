@@ -53,6 +53,12 @@ const catalog: SiteAbility[] = [
 		description: 'Check a comment for spam.',
 		meta: { annotations: {} },
 	},
+	{
+		name: 'akismet/delete-spam',
+		label: 'Delete spam',
+		description: 'Delete spam comments.',
+		meta: { annotations: {} },
+	},
 ];
 
 function seed( {
@@ -185,13 +191,13 @@ describe( '<RemoteAbilitiesSection>', () => {
 		expect( screen.queryByText( 'Destructive' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'an ability toggle saves only its own group key', async () => {
+	test( 'an ability toggle saves only its own ability key', async () => {
 		const user = userEvent.setup();
 		seed( { abilities: catalog } );
 		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
 
 		const saveScope = mockRemoteGroupsSave( JETPACK_SITE, {
-			'write:jetpack-forms': true,
+			'write:jetpack-forms/update-form': true,
 		} );
 		await user.click( getPluginExpander( 'Jetpack Forms' ) );
 		await user.click( screen.getByRole( 'checkbox', { name: 'Update form' } ) );
@@ -201,13 +207,24 @@ describe( '<RemoteAbilitiesSection>', () => {
 		} );
 	} );
 
-	test( 'a destructive ability toggle saves the destructive group key with no labeling', async () => {
+	test( 'enabling one ability does not enable the rest of its group', async () => {
+		const user = userEvent.setup();
+		seed( { abilities: catalog, remoteGroups: { 'write:akismet/check-comment': true } } );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
+
+		await user.click( getPluginExpander( 'Akismet' ) );
+
+		expect( screen.getByRole( 'checkbox', { name: 'Check comment' } ) ).toBeChecked();
+		expect( screen.getByRole( 'checkbox', { name: 'Delete spam' } ) ).not.toBeChecked();
+	} );
+
+	test( 'a destructive ability toggle saves the destructive ability key with no labeling', async () => {
 		const user = userEvent.setup();
 		seed( { abilities: catalog } );
 		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
 
 		const saveScope = mockRemoteGroupsSave( JETPACK_SITE, {
-			'destructive:jetpack-forms': true,
+			'destructive:jetpack-forms/delete-form': true,
 		} );
 		await user.click( getPluginExpander( 'Jetpack Forms' ) );
 		await user.click( screen.getByRole( 'checkbox', { name: 'Delete form' } ) );
@@ -218,7 +235,7 @@ describe( '<RemoteAbilitiesSection>', () => {
 		expect( screen.queryByText( 'Destructive' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'a plugin intent saves every group key the plugin has on the page', async () => {
+	test( 'a plugin intent enables every group and ability key the plugin has on the page', async () => {
 		const user = userEvent.setup();
 		seed( { abilities: catalog } );
 		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
@@ -226,6 +243,8 @@ describe( '<RemoteAbilitiesSection>', () => {
 		const saveScope = mockRemoteGroupsSave( JETPACK_SITE, {
 			'write:jetpack-forms': true,
 			'destructive:jetpack-forms': true,
+			'write:jetpack-forms/update-form': true,
+			'destructive:jetpack-forms/delete-form': true,
 		} );
 		await user.click( getPluginIntent( 'Jetpack Forms' ) );
 
@@ -234,6 +253,30 @@ describe( '<RemoteAbilitiesSection>', () => {
 		} );
 		await waitFor( () => {
 			expect( getPluginIntent( 'Jetpack Forms' ) ).toBeChecked();
+		} );
+	} );
+
+	test( 'a plugin intent disable clears only the group keys, leaving ability entries dormant', async () => {
+		const user = userEvent.setup();
+		seed( {
+			abilities: catalog,
+			remoteGroups: {
+				'write:akismet': true,
+				'write:akismet/check-comment': true,
+				'write:akismet/delete-spam': true,
+			},
+		} );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
+
+		expect( getPluginIntent( 'Akismet' ) ).toBeChecked();
+
+		const saveScope = mockRemoteGroupsSave( JETPACK_SITE, {
+			'write:akismet': false,
+		} );
+		await user.click( getPluginIntent( 'Akismet' ) );
+
+		await waitFor( () => {
+			expect( saveScope.isDone() ).toBe( true );
 		} );
 	} );
 

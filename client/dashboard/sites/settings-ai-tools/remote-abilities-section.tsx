@@ -11,7 +11,9 @@ import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
 	getRemoteAbilityCategory,
 	getRemoteAbilityGroupKey,
+	getRemoteAbilityKey,
 	getSiteRemoteGroups,
+	isRemoteAbilityEnabled,
 } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
@@ -162,7 +164,23 @@ export default function RemoteAbilitiesSection( {
 			</VStack>
 			{ [ ...namespaces.entries() ].map( ( [ namespace, group ] ) => {
 				const namespaceEnabled =
-					group.keys.length > 0 && group.keys.every( ( key ) => savedGroups[ key ] === true );
+					group.keys.length > 0 &&
+					group.keys.every( ( key ) => savedGroups[ key ] === true ) &&
+					group.abilities.every( ( ability ) =>
+						isRemoteAbilityEnabled( savedGroups, ability.name, ability.meta?.annotations )
+					);
+				// Enabling writes every group and ability key (no stale ability-level
+				// denies survive); disabling clears the group keys and leaves any
+				// ability-level entries dormant behind them.
+				const intentKeys = ( enabled: boolean ) =>
+					enabled
+						? [
+								...group.keys,
+								...group.abilities.map( ( ability ) =>
+									getRemoteAbilityKey( ability.name, ability.meta?.annotations )
+								),
+							]
+						: group.keys;
 				return (
 					<McpGroupCard
 						key={ namespace }
@@ -172,25 +190,28 @@ export default function RemoteAbilitiesSection( {
 						allEnabled={ namespaceEnabled }
 						disabled={ mutation.isPending }
 						onEnableAll={ ( checked ) =>
-							saveGroups( group.keys, checked, `${ category }:${ namespace }` )
+							saveGroups( intentKeys( checked ), checked, `${ category }:${ namespace }` )
 						}
 					>
 						{ group.abilities.length > 0 ? (
 							<VStack spacing={ 4 }>
 								{ group.abilities.map( ( ability ) => {
-									const groupKey = getRemoteAbilityGroupKey(
-										ability.name,
-										ability.meta?.annotations
-									);
+									const abilityKey = getRemoteAbilityKey( ability.name, ability.meta?.annotations );
 									return (
 										<div key={ ability.name } id={ ability.name }>
 											<ToggleControl
 												__nextHasNoMarginBottom
-												checked={ savedGroups[ groupKey ] === true }
+												checked={ isRemoteAbilityEnabled(
+													savedGroups,
+													ability.name,
+													ability.meta?.annotations
+												) }
 												disabled={ mutation.isPending }
 												label={ ability.label || ability.name }
 												help={ ability.description }
-												onChange={ ( checked ) => saveGroups( [ groupKey ], checked, groupKey ) }
+												onChange={ ( checked ) =>
+													saveGroups( [ abilityKey ], checked, abilityKey )
+												}
 											/>
 										</div>
 									);

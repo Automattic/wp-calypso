@@ -148,6 +148,36 @@ export function getRemoteAbilityCategory( name, annotations = {} ) {
 }
 
 /**
+ * The ability-level allowlist key of a remote ability: "{group}/{ability}"
+ * (e.g. "write:akismet/check-comment"). Wins over the group key in server-side
+ * resolution, so one ability can be allowed or denied inside its group.
+ * @param {string} name - Ability name
+ * @param {Object} [annotations] - Published annotations
+ * @returns {string} Ability-level key
+ */
+export function getRemoteAbilityKey( name, annotations = {} ) {
+	const namespace = String( name ).split( '/' )[ 0 ];
+	return `${ getRemoteAbilityGroupKey( name, annotations ) }${ String( name ).slice(
+		namespace.length
+	) }`.toLowerCase();
+}
+
+/**
+ * Whether a remote ability is enabled in a saved allowlist: the ability-level
+ * key when present, otherwise the group key.
+ * @param {Object} savedGroups - Saved remote-group map
+ * @param {string} name - Ability name
+ * @param {Object} [annotations] - Published annotations
+ * @returns {boolean}
+ */
+export function isRemoteAbilityEnabled( savedGroups, name, annotations = {} ) {
+	return (
+		savedGroups[ getRemoteAbilityKey( name, annotations ) ] ??
+		savedGroups[ getRemoteAbilityGroupKey( name, annotations ) ] === true
+	);
+}
+
+/**
  * Merge account-level MCP abilities with site-level overrides
  * @param {Record<string, Object>} accountAbilities - Account-level abilities from getAccountMcpAbilities
  * @param {Record<string, boolean>} siteAbilities - Site-level overrides from getSiteMcpAbilities
