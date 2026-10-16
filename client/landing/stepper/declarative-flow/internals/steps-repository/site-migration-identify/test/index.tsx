@@ -189,23 +189,32 @@ describe( 'SiteMigrationIdentify', () => {
 		);
 	} );
 
-	it( 'shows why host with us points', async () => {
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
+	it.each( [ false, true ] )(
+		'shows the source placeholder and hosting benefits (reprint: %s)',
+		( enabled ) => {
+			jest
+				.spyOn( config, 'isEnabled' )
+				.mockImplementation( ( flag ) =>
+					flag === 'migration/reprint-flow' ? enabled : originalIsEnabled( flag )
+				);
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
 
-		expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
-		expect(
-			screen.getByText(
-				/Blazing fast speeds with lightning-fast load times for a seamless experience/
-			)
-		).toBeVisible();
-		expect(
-			screen.getByText( /Unmatched reliability with 99.999% uptime and unmetered traffic./ )
-		).toBeVisible();
-		expect(
-			screen.getByText( /Round-the-clock security monitoring and DDoS protection./ )
-		).toBeVisible();
-	} );
+			expect( getInput() ).toHaveAttribute( 'placeholder', 'your-existing-site.com' );
+			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
+			expect(
+				screen.getByText(
+					/Blazing fast speeds with lightning-fast load times for a seamless experience/
+				)
+			).toBeVisible();
+			expect(
+				screen.getByText( /Unmatched reliability with 99.999% uptime and unmetered traffic./ )
+			).toBeVisible();
+			expect(
+				screen.getByText( /Round-the-clock security monitoring and DDoS protection./ )
+			).toBeVisible();
+		}
+	);
 
 	it( 'shows the back link when the "ref" param is set', () => {
 		render(
@@ -248,7 +257,7 @@ describe( 'SiteMigrationIdentify', () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeVisible();
-			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
+			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
 			expect(
 				screen.queryByRole( 'button', { name: /Only have a backup file/ } )
 			).not.toBeInTheDocument();
@@ -302,6 +311,7 @@ describe( 'SiteMigrationIdentify', () => {
 
 			expect( screen.getByRole( 'heading', { name: 'Checking your site' } ) ).toBeVisible();
 			expect( screen.getByText( 'Identifying your site platform' ) ).toBeVisible();
+			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
 			expect( screen.getByRole( 'link', { name: 'View site ↗' } ) ).toHaveAttribute(
 				'href',
 				'https://example.com'
@@ -314,6 +324,7 @@ describe( 'SiteMigrationIdentify', () => {
 				expect( screen.getByText( 'Checking your hosting provider' ) ).toBeVisible()
 			);
 			expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toBeVisible();
+			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
 			expect( submit ).not.toHaveBeenCalled();
 			await waitFor( () => expect( completeHost ).toEqual( expect.any( Function ) ) );
 			await act( async () => completeHost?.() );
