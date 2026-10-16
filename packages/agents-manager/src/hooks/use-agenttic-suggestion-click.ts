@@ -1,6 +1,6 @@
 import { useCallback } from '@wordpress/element';
-import getSuggestionClickPayload from '../components/agent-chat/get-suggestion-click-payload';
 import { getSuggestionClickContext } from '../utils/get-suggestion-click-context';
+import { getSuggestionClickPayload } from '../utils/get-suggestion-click-payload';
 import type { Suggestion } from '../types';
 
 export type SuggestionClickHandler = (
@@ -31,7 +31,7 @@ export function useAgentticSuggestionClick( {
 		( selectedSuggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
 			const { knownSuggestions, isInMessage } = getSuggestionClickContext( {
 				selectedSuggestion,
-				clickedSuggestions: availableSuggestions,
+				availableSuggestions,
 				footerSuggestions: suggestions,
 				hasMessages,
 			} );

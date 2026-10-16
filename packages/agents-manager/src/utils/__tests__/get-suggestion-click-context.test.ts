@@ -15,7 +15,7 @@ describe( 'getSuggestionClickContext', () => {
 			expect(
 				getSuggestionClickContext( {
 					selectedSuggestion,
-					clickedSuggestions: list,
+					availableSuggestions: list,
 					footerSuggestions: footer,
 					hasMessages,
 				} )

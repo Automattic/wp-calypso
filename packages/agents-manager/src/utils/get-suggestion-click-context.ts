@@ -3,7 +3,7 @@ import type { Suggestion } from '../types';
 interface SuggestionClickContextOptions {
 	selectedSuggestion: Suggestion | string;
 	/** The list Agenttic reports with the click. */
-	clickedSuggestions?: Suggestion[];
+	availableSuggestions?: Suggestion[];
 	/** The chips registered for the footer, before their labels are formatted. */
 	footerSuggestions: Suggestion[];
 	hasMessages: boolean;
@@ -23,7 +23,7 @@ interface SuggestionClickContext {
  */
 export function getSuggestionClickContext( {
 	selectedSuggestion,
-	clickedSuggestions,
+	availableSuggestions,
 	footerSuggestions,
 	hasMessages,
 }: SuggestionClickContextOptions ): SuggestionClickContext {
@@ -35,5 +35,5 @@ export function getSuggestionClickContext( {
 		return { knownSuggestions: footerSuggestions, isInMessage: false };
 	}
 
-	return { knownSuggestions: clickedSuggestions ?? footerSuggestions, isInMessage: hasMessages };
+	return { knownSuggestions: availableSuggestions ?? footerSuggestions, isInMessage: hasMessages };
 }

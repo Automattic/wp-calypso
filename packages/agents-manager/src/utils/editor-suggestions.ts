@@ -218,7 +218,7 @@ const BLOCK_SUGGESTIONS: Record< string, BlockSuggestionBuilder[] > = {
 };
 
 // The Jetpack AI sidebar has its own text and image actions, so where it loads
-// these give way to it, as Big Sky's did.
+// these give way to it.
 const JETPACK_AI_SIDEBAR_SUGGESTIONS = new Set( [ TEXT_SUGGESTIONS, IMAGE_SUGGESTIONS ] );
 
 /**
