@@ -1,7 +1,7 @@
 import { isInaccessibleJetpackError } from '@automattic/api-core';
+import { useParams } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import UnknownError from '../../app/500';
-import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -15,7 +15,7 @@ export default function Error( { error }: { error: Error } ) {
 }
 
 function InaccessibleJetpackError( { error }: { error: Error } ) {
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug } = useParams( { strict: false } );
 
 	return (
 		<PageLayout

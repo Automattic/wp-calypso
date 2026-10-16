@@ -3,12 +3,29 @@ import { Button, ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useContext, useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { useContactSupport } from '../../agency/support/use-contact-support';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { reauthRequiredLink, wpcomLink } from '../../utils/link';
 import { bumpStat } from '../analytics';
 import { AuthContext, useSessionStateQuery } from '../auth';
+import { useAppContext } from '../context';
+
+function ContactSupportLink() {
+	const { supports } = useAppContext();
+	const { openContactForm } = useContactSupport();
+
+	if ( supports.agency ) {
+		return (
+			<Button variant="link" onClick={ () => openContactForm() }>
+				{ __( 'Contact support' ) }
+			</Button>
+		);
+	}
+
+	return <ExternalLink href={ wpcomLink( '/help' ) }>{ __( 'Contact support' ) }</ExternalLink>;
+}
 
 function ReauthRedirect() {
 	useEffect( () => {
@@ -91,12 +108,7 @@ function PermissionError() {
 		<PageLayout
 			header={ <PageHeader title={ __( 'You don’t have access to this' ) } /> }
 			notices={
-				<Notice
-					variant="error"
-					actions={
-						<ExternalLink href={ wpcomLink( '/help' ) }>{ __( 'Contact support' ) }</ExternalLink>
-					}
-				>
+				<Notice variant="error" actions={ <ContactSupportLink /> }>
 					{ __( 'Your account doesn’t have permission to view this page.' ) }
 				</Notice>
 			}
@@ -132,7 +144,7 @@ function SessionError() {
 									{ __( 'Log in again' ) }
 								</Button>
 							) }
-							<ExternalLink href={ wpcomLink( '/help' ) }>{ __( 'Contact support' ) }</ExternalLink>
+							<ContactSupportLink />
 						</>
 					}
 				>
@@ -152,12 +164,7 @@ function GenericError( { error }: { error: Error } ) {
 				<PageHeader title={ __( '500 Error' ) } description={ __( 'Something wrong happened.' ) } />
 			}
 			notices={
-				<Notice
-					variant="error"
-					actions={
-						<ExternalLink href={ wpcomLink( '/help' ) }>{ __( 'Contact support' ) }</ExternalLink>
-					}
-				>
+				<Notice variant="error" actions={ <ContactSupportLink /> }>
 					{ error.message }
 				</Notice>
 			}

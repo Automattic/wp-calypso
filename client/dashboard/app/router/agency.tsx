@@ -51,7 +51,13 @@ import {
 	WOOPAYMENTS_PLUGIN,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
+import {
+	createRoute,
+	createLazyRoute,
+	lazyRouteComponent,
+	notFound,
+	Outlet,
+} from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { isReferralCheckoutUrl } from '../../agency/earn/referrals/lib/referral-checkout-url';
 import {
@@ -1108,6 +1114,7 @@ export const agencySiteRoute = createRoute( {
 		}
 		return site;
 	},
+	errorComponent: lazyRouteComponent( () => import( '../../sites/site/error' ) ),
 } ).lazy( () =>
 	import( '../../agency/sites/site' ).then( ( d ) =>
 		createLazyRoute( 'agency-site' )( {
