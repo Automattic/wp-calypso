@@ -16,7 +16,7 @@ jest.mock( '@wordpress/data', () => ( {
 import { act, renderHook } from '@testing-library/react';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import { useSuggestionTracking } from '../use-suggestion-tracking';
-import type { Suggestion } from '../../types';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 type Options = Parameters< typeof useSuggestionTracking >[ 0 ];
 

@@ -12,7 +12,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { errorResult, successResult } from '../ability-result';
 import { executeAbilityFromList } from '../execute-ability';
 import type { ToolProvider } from '../../extension-types';
-import type { Ability } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 type Args = Record< string, unknown >;
 

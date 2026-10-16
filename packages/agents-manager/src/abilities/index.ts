@@ -11,9 +11,9 @@ import { isEditorPage } from '../utils/is-editor-page';
 import { executeAbilityFromList } from './execute-ability';
 import { wpAdminNavigateAbility } from './wp-admin-navigate';
 import type { ToolProvider } from '../extension-types';
-import type { Ability } from './types';
 import type { CheckpointContextItem } from '../utils/checkpoints';
 import type { PageStructure } from '../utils/page-structure';
+import type { Ability } from '@wordpress/abilities';
 
 type EditorAbilitiesModule = typeof import( './editor-abilities' );
 

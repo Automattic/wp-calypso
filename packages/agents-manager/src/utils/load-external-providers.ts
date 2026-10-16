@@ -37,11 +37,10 @@ import type {
 	ContextProvider,
 	ClientContextType,
 	ContextEntry,
-	Suggestion,
 	BigSkyMessage,
 } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
-import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
+import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
 import type { ReactNode } from 'react';
 
 /**

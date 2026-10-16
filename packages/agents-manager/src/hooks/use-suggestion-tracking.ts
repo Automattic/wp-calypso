@@ -2,7 +2,7 @@ import { useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import formatSuggestionIds from '../utils/format-suggestion-ids';
 import { recordBigSkyTracksEvent } from '../utils/tracks';
-import type { Suggestion } from '../types';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 interface UseSuggestionTrackingOptions {
 	contextualSuggestionIds: Set< string >;

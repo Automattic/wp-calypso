@@ -1,5 +1,5 @@
 import { DEFAULT_EMPTY_VIEW_SUGGESTION_IDS } from '../hooks/use-empty-view-suggestions';
-import type { Suggestion } from '../types';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 const DEFAULT_EMPTY_VIEW_SUGGESTION_ID_SET = new Set< string >(
 	Object.values( DEFAULT_EMPTY_VIEW_SUGGESTION_IDS )

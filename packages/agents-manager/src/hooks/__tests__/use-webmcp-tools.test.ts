@@ -1,9 +1,9 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import apiFetch from '@wordpress/api-fetch';
 import useWebMcpTools from '../use-webmcp-tools';
-import type { Ability } from '../../abilities/types';
 import type { ToolProvider } from '../../extension-types';
 import type { WebMcpTool } from '../../webmcp/types';
+import type { Ability } from '@wordpress/abilities';
 
 jest.mock( '@wordpress/api-fetch' );
 
