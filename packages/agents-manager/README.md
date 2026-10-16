@@ -139,13 +139,22 @@ interactive UI naming; imported SDK types and protocol identifiers retain their
 A2UI names.
 
 The demo catalog supports `Text`, `TextField`, `Button`, `Column`, `Image`, `Icon`,
-`Row`, `List`, `Card`, `Divider`, `CheckBox`, `ChoicePicker`, and `DateTimeInput`.
+`Row`, `List`, `Card`, `Divider`, `CheckBox`, `ChoicePicker`, `DateTimeInput`,
+`Video`, `AudioPlayer`, `Tabs`, `Modal`, and `Slider`.
 Layouts use arrays of child IDs; cards wrap a single child and follow the chat
 theme colors. Icons map supported
 Basic catalog names to WordPress icons. Choice pickers support single and multiple
 selection and store selected values as string arrays. Bind input values and button
 action context to the same data paths to submit edits. Date/time inputs use local
 ISO date/time strings and enable date, time, or both with `enableDate`/`enableTime`.
+Text fields support `shortText`, `longText`, `number`, and `obscured` (password)
+variants; their values remain strings. Sliders store numbers and use `min` and
+`max` to set their range. Video and audio URLs support data bindings and render
+native players with playback controls. Tabs contain `{ title, child }` entries.
+Modals reference a `Button` trigger and a content component. The trigger opens
+the dialog locally instead of sending its action; buttons inside the dialog send
+actions normally. Dialog inputs share the surface data model and are disabled
+alongside the surface while the agent is processing.
 Input and choice-group labels use WordPress control typography and spacing.
 Interactive surfaces use `data-agenttic-isolated` so their controls retain their
 own typography while normal replies keep the chat's default typography reset.

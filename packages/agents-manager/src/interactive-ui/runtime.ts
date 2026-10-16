@@ -1,5 +1,6 @@
 import { basicCatalog } from '@a2ui/react/v0_9';
 import { Catalog, MessageProcessor } from '@a2ui/web_core/v0_9';
+import { AudioPlayer } from './audio-player';
 import Button from './button';
 import Card from './card';
 import CheckBox from './check-box';
@@ -10,9 +11,13 @@ import Divider from './divider';
 import Icon from './icon';
 import Image from './image';
 import List from './list';
+import { Modal } from './modal';
 import Row from './row';
+import { Slider } from './slider';
+import { Tabs } from './tabs';
 import Text from './text';
 import TextField from './text-field';
+import { Video } from './video';
 import type { ReactComponentImplementation } from '@a2ui/react/v0_9';
 import type { A2uiClientAction, A2uiMessage } from '@a2ui/web_core/v0_9';
 
@@ -33,6 +38,11 @@ const catalog = new Catalog(
 		CheckBox,
 		ChoicePicker,
 		DateTimeInput,
+		Video,
+		AudioPlayer,
+		Tabs,
+		Modal,
+		Slider,
 	],
 	[],
 	basicCatalog.themeSchema
