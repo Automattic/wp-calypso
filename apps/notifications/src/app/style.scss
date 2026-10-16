@@ -226,6 +226,11 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	margin-inline-start: 6px;
 }
 
+.wpnc-app__beta-badge,
+.wpnc-app__beta-badge:visited {
+	color: var(--wpds-color-foreground-content-neutral, #1e1e1e);
+}
+
 // Marks the gear while the simplified layout is the one in use.
 .wpnc-app__settings-toggle.is-simplified {
 	position: relative;
