@@ -167,6 +167,18 @@ describe( '<DifmOfferModal>', () => {
 		expect( screen.queryByRole( 'textbox', { name: /Name/ } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'shows the customer reviews on the request step only', async () => {
+		const user = userEvent.setup();
+		renderModal();
+
+		await screen.findByRole( 'button', { name: 'Tell us about your site' } );
+		expect( screen.queryByRole( 'region', { name: 'Customer reviews' } ) ).not.toBeInTheDocument();
+
+		await goToRequestStep( user );
+
+		expect( screen.getByRole( 'region', { name: 'Customer reviews' } ) ).toBeVisible();
+	} );
+
 	test( 'keeps the submit button disabled until the description has non-blank text', async () => {
 		const user = userEvent.setup();
 		renderModal();

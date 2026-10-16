@@ -1,0 +1,104 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+$difm-offer-reviews-fade: 0.4s;
+
+.difm-offer-reviews {
+	width: 100%;
+	max-width: 248px;
+}
+
+// The cards share one grid cell, so the slider keeps the height of the tallest card and
+// the modal does not change size when the review changes.
+.difm-offer-reviews__cards {
+	display: grid;
+	align-items: center;
+}
+
+.difm-offer-reviews__card {
+	grid-area: 1 / 1;
+	box-sizing: border-box;
+	min-width: 0;
+	margin: 0;
+	padding: $grid-unit-30;
+	border-radius: $radius-large;
+	background: $white;
+	color: $gray-900;
+	overflow-wrap: break-word;
+	opacity: 0;
+	visibility: hidden;
+	transition:
+		opacity $difm-offer-reviews-fade ease-in-out,
+		visibility 0s linear $difm-offer-reviews-fade;
+
+	&.is-active {
+		opacity: 1;
+		visibility: visible;
+		transition: opacity $difm-offer-reviews-fade ease-in-out;
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		transition: none;
+
+		&.is-active {
+			transition: none;
+		}
+	}
+}
+
+.difm-offer-reviews__stars {
+	display: flex;
+	gap: 1px;
+	margin-bottom: $grid-unit-20;
+}
+
+.difm-offer-reviews__star {
+	display: block;
+	width: $grid-unit-30;
+	height: $grid-unit-30;
+}
+
+.difm-offer-reviews__title {
+	margin: 0 0 $grid-unit-10;
+}
+
+.difm-offer-reviews__quote {
+	margin: 0 0 $grid-unit-30;
+
+	p {
+		margin: 0;
+	}
+}
+
+.difm-offer-reviews__source {
+	display: flex;
+	flex-direction: column;
+	gap: $grid-unit-05;
+}
+
+// Same size as the plain "Trustpilot" label on a card without a review URL.
+.difm-offer-reviews__link {
+	align-self: flex-start;
+	font-size: 12px;
+}
+
+.difm-offer-reviews__reviewer {
+	// Lighter than the quote, but dark enough for AA contrast on white.
+	color: $gray-700;
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
+}
+
+// The control sits below the cards at a fixed place, so the cards and the control do not
+// move when the review or the label changes.
+.difm-offer-reviews__controls {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: $grid-unit-10;
+}
+
+.difm-offer-reviews__toggle.components-button {
+	border-radius: $radius-full;
+	background: $white;
+	color: $gray-900;
+}

@@ -4,6 +4,7 @@ import { useAnalytics } from '../../app/analytics';
 import { DifmOfferModalFrame, DifmOfferProgress } from './frame';
 import { OfferStep } from './offer-step';
 import { RequestStep } from './request-step';
+import { DifmOfferReviews } from './reviews';
 import type { DifmOfferVariation } from '../../utils/difm-offer';
 import type { DifmOfferSource, Site } from '@automattic/api-core';
 
@@ -72,6 +73,18 @@ export default function DifmOfferModal( {
 			labelledBy={ titleId }
 			isBusy={ isBusy }
 			headerStart={ <DifmOfferProgress step={ step === 'offer' ? 1 : 2 } /> }
+			panel={
+				step === 'request' ? (
+					<DifmOfferReviews
+						onReviewLinkClick={ ( review ) =>
+							recordTracksEvent( 'calypso_difm_offer_review_click', {
+								...tracksProps,
+								review_id: review.id,
+							} )
+						}
+					/>
+				) : undefined
+			}
 			onRequestClose={ handleClose }
 		>
 			{ step === 'offer' ? (
