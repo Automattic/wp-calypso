@@ -15,7 +15,8 @@ const record = ( providedDependencies: Record< string, unknown > ) => {
 		step: 'sitePicker',
 		providedDependencies,
 	} );
-	return jest.mocked( recordTracksEvent ).mock.calls[ 0 ][ 1 ];
+	expect( recordTracksEvent ).toHaveBeenCalled();
+	return jest.mocked( recordTracksEvent ).mock.lastCall?.[ 1 ];
 };
 
 describe( 'recordStepNavigation', () => {
@@ -48,9 +49,12 @@ describe( 'recordStepNavigation', () => {
 			missing: null,
 		} );
 
-		expect( props ).not.toHaveProperty( 'query_params' );
-		expect( props ).not.toHaveProperty( 'products' );
-		expect( props ).toMatchObject( {
+		expect( props ).toEqual( {
+			device: 'desktop',
+			flow: 'site-migration',
+			step: 'sitePicker',
+			intent: '',
+			goals: '',
 			action: 'update-query',
 			host: 'other',
 			is_free: false,
@@ -58,9 +62,51 @@ describe( 'recordStepNavigation', () => {
 		} );
 	} );
 
-	it( 'still flattens the known plan dependency', () => {
-		expect( record( { plan: { product_slug: 'business-bundle' } } ) ).toMatchObject( {
-			plan: 'business-bundle',
+	it.each( [
+		[ { plan: { product_slug: 'business-bundle' } }, { plan: 'business-bundle' } ],
+		[ { currentPlan: { product_slug: 'personal-bundle' } }, { current_plan: 'personal-bundle' } ],
+		[ { selectedDesign: { slug: 'twentytwentyfour' } }, { selected_design: 'twentytwentyfour' } ],
+		[
+			{ domainItem: { product_slug: 'dotcom_domain', meta: 'example.com' } },
+			{ domain_item: 'product_slug:dotcom_domain,meta:example.com' },
+		],
+		[ { cartItems: 'business-bundle' }, { cart_items: 'business-bundle' } ],
+	] )( 'flattens the known dependency %j instead of dropping it', ( deps, expected ) => {
+		expect( record( deps ) ).toMatchObject( expected );
+	} );
+
+	it( 'records no plan slug when a free plan is selected', () => {
+		expect( record( { plan: null } ) ).toMatchObject( { plan: undefined } );
+	} );
+
+	it( 'never records credentials or domain cart internals', () => {
+		const props = record( {
+			password: 'hunter2',
+			password_confirm: 'hunter2',
+			bearer_token: 'abc',
+			token: 'abc',
+			domainCart: { a: 1 },
+			domainForm: { a: 1 },
+			suggestion: { a: 1 },
 		} );
+
+		expect( Object.values( props ) ).not.toContain( 'hunter2' );
+		expect( Object.values( props ) ).not.toContain( 'abc' );
+		[
+			'password',
+			'password_confirm',
+			'bearer_token',
+			'token',
+			'domain_cart',
+			'domain_form',
+		].forEach( ( key ) => expect( props ).not.toHaveProperty( key ) );
+	} );
+
+	it( 'records only whether an email was entered, never the address', () => {
+		const props = record( { email: 'a@example.com' } );
+
+		expect( props ).toMatchObject( { user_entered_email: true } );
+		expect( props ).not.toHaveProperty( 'email' );
+		expect( Object.values( props ) ).not.toContain( 'a@example.com' );
 	} );
 } );
