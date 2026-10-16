@@ -173,12 +173,14 @@ export function getLicenseActions( {
 			label: __( 'Assign to site' ),
 			isPrimary: true,
 			isEligible: ( item ) => isAssignable( item ) && ! isWpcomHostingLicense( item ),
-			modalHeader: __( 'Which site would you like to assign this license to?' ),
+			modalHeader: __( 'Assign a license to a site' ),
 			modalSize: 'medium',
 			RenderModal: ( { items, closeModal } ) => (
 				<AssignLicenseModal
 					licenseKey={ items[ 0 ].license_key }
 					productName={ getLicenseProductName( items[ 0 ] ) }
+					issuedAt={ items[ 0 ].issued_at }
+					clientEmail={ items[ 0 ].referral?.client?.email }
 					closeModal={ closeModal }
 					onAssigned={ onLicenseAssigned }
 				/>
