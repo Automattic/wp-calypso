@@ -1,6 +1,11 @@
 .pressable-return {
+	display: flex;
+	flex-direction: column;
+
 	.hosting-dashboard-layout__container {
-		height: 100%;
+		flex: 1;
+		width: 100%;
+		min-height: 0;
 	}
 
 	.hosting-dashboard-layout__body {
