@@ -73,9 +73,14 @@ export function recordStepNavigation( {
 				) &&
 				typeof propValue !== 'string'
 			) {
-				propValue = Object.entries( propValue || {} )
-					.map( ( pair ) => pair.join( ':' ) )
-					.join( ',' );
+				propValue = Array.isArray( propValue )
+					? propValue
+							.map( ( item ) => ( item as { product_slug?: string } | null )?.product_slug )
+							.filter( Boolean )
+							.join( ',' )
+					: Object.entries( propValue || {} )
+							.map( ( pair ) => pair.join( ':' ) )
+							.join( ',' );
 			}
 
 			if ( propName === 'site' && propValue && typeof propValue === 'object' ) {

@@ -71,6 +71,10 @@ describe( 'recordStepNavigation', () => {
 			{ domain_item: 'product_slug:dotcom_domain,meta:example.com' },
 		],
 		[ { cartItems: 'business-bundle' }, { cart_items: 'business-bundle' } ],
+		[
+			{ cartItems: [ { product_slug: 'business-bundle' }, { product_slug: 'jetpack_backup' } ] },
+			{ cart_items: 'business-bundle,jetpack_backup' },
+		],
 	] )( 'flattens the known dependency %j instead of dropping it', ( deps, expected ) => {
 		expect( record( deps ) ).toMatchObject( expected );
 	} );
