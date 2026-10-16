@@ -928,3 +928,36 @@ describe( 'the backdrops to fix, for the server', () => {
 		] );
 	} );
 } );
+
+describe( 'blocks with more runs than are read', () => {
+	it( 'leaves the unread block to the picture beside the pass for the rest', () => {
+		// The block past the run limit is counted as unmeasured, so the pass
+		// note covers only what was read, and the next note says so.
+		mountCanvas( [
+			section( [
+				text( 'ueo8' ),
+				{
+					clientId: 'long',
+					name: 'core/paragraph',
+					build: ( element, canvasDocument ) => {
+						for ( let index = 0; index < 21; index++ ) {
+							const run = canvasDocument.createElement( 'span' );
+							Object.assign( run.style, NAVY_TEXT );
+							run.append( `Run ${ index } ` );
+							element.append( run );
+						}
+					},
+				},
+			] ),
+		] );
+
+		expect( describeTextContrast( [ 'sect' ] ) ).toEqual( {
+			notes: [
+				'Text contrast: all 1 edited text block(s) measure at least 4.5:1 (3:1 for large text) against what renders behind them.',
+				UNMEASURED_ONE,
+			],
+			failures: 0,
+			backdrops: [],
+		} );
+	} );
+} );
