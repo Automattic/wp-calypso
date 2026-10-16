@@ -6,6 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { getScrollContainer } from '@wordpress/dom';
 import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -63,17 +64,31 @@ export default function OnboardingTourModal( {
 	}, [ currentSectionId, recordTracksEvent ] );
 
 	// Start each section at the top. The router restores the modal's saved scroll after every
-	// hash change, so reset it after that; the event's `hashChanged` is always false here.
+	// hash change, so reset it in the next frame, once every listener has run; the event's
+	// `hashChanged` is always false here. Only the modal's own scroll container is reset.
 	const router = useRouter();
 	const tourRef = useRef< HTMLDivElement >( null );
 	useEffect( () => {
 		let lastHash = router.state.location.hash;
-		return router.subscribe( 'onRendered', ( { toLocation } ) => {
-			if ( toLocation.hash !== lastHash ) {
-				lastHash = toLocation.hash;
-				tourRef.current?.scrollIntoView( { block: 'start' } );
+		let frame = 0;
+		const unsubscribe = router.subscribe( 'onRendered', ( { toLocation } ) => {
+			if ( toLocation.hash === lastHash ) {
+				return;
 			}
+			lastHash = toLocation.hash;
+			cancelAnimationFrame( frame );
+			frame = requestAnimationFrame( () => {
+				const tour = tourRef.current;
+				const container = getScrollContainer( tour );
+				if ( tour && container && tour.closest( '[role="dialog"]' )?.contains( container ) ) {
+					container.scrollTop = 0;
+				}
+			} );
 		} );
+		return () => {
+			unsubscribe();
+			cancelAnimationFrame( frame );
+		};
 	}, [ router ] );
 
 	const onNext = () => {
