@@ -665,3 +665,53 @@ describe( 'every run of text in a block', () => {
 		} );
 	} );
 } );
+
+describe( 'text a block holds besides its children', () => {
+	const BLACK_TEXT = { color: 'rgb(0, 0, 0)', fontSize: '16px' };
+
+	it( 'fails a details block whose summary is unreadable, though its paragraphs read well', () => {
+		mountCanvas( [
+			{
+				clientId: 'det',
+				name: 'core/details',
+				build: ( element, canvasDocument ) => {
+					const summary = canvasDocument.createElement( 'summary' );
+					Object.assign( summary.style, WHITE_TEXT );
+					summary.append( 'More about us' );
+					element.append( summary );
+				},
+				children: [ text( 'p1', BLACK_TEXT ), text( 'p2', BLACK_TEXT ) ],
+			},
+		] );
+
+		expect( describeTextContrast( [ 'det' ] ) ).toEqual( {
+			notes: [
+				'Text contrast too low: details (det) — #FFFFFF text on #FFFFFF, 1:1 (needs 4.5:1). The #FFFFFF comes from the page background.',
+			],
+			failures: 1,
+		} );
+	} );
+
+	it( 'measures a list item’s own text apart from its nested list, counting each block once', () => {
+		mountCanvas( [
+			{
+				...text( 'li1', BLACK_TEXT ),
+				name: 'core/list-item',
+				children: [
+					{
+						clientId: 'ul2',
+						name: 'core/list',
+						children: [ { ...text( 'li2', WHITE_TEXT ), name: 'core/list-item' } ],
+					},
+				],
+			},
+		] );
+
+		expect( describeTextContrast( [ 'li1' ] ) ).toEqual( {
+			notes: [
+				'Text contrast too low: list-item (li2) — #FFFFFF text on #FFFFFF, 1:1 (needs 4.5:1). The #FFFFFF comes from the page background.',
+			],
+			failures: 1,
+		} );
+	} );
+} );
