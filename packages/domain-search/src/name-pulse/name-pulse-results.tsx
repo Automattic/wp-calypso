@@ -87,8 +87,9 @@ export const NamePulseResults = () => {
 							</Button>
 						</DomainSearchNotice>
 					) }
-					{ /* A typed domain shares its row with the bundle; any other search, or a
-				     typed domain that is taken, gets the bundle under Top results. */ }
+					{ /* The exact domain (typed, or the name with the one ending the filter
+				     allows) shares its row with the bundle, or spans it when there is none;
+				     any other search, or a taken name, gets the bundle under Top results. */ }
 					{ exactMatch && (
 						<div className="name-pulse-featured" aria-busy={ ! exactMatch.availability }>
 							{ /* The card replaces its placeholder without moving focus, so the
@@ -106,6 +107,7 @@ export const NamePulseResults = () => {
 									domainName={ exactMatch.domainName }
 									tld={ exactMatch.tld }
 									availability={ exactMatch.availability }
+									isWide={ ! bundle && ! isLoadingBundle }
 								/>
 							) : (
 								<NamePulseExactMatchCardPlaceholder

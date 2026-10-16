@@ -52,6 +52,18 @@ html:has( .name-pulse-search-input ) {
 		min-width: 0;
 	}
 
+	// A filter can leave fewer results than columns; they share the width
+	// instead of leaving the rest of the row empty.
+	&--single {
+		grid-template-columns: minmax( 0, 1fr );
+	}
+
+	&--pair {
+		@media ( min-width: $break-small ) {
+			grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+		}
+	}
+
 	// Each result is its own card, so the cells take the frame and the grid
 	// only spaces them out.
 	&--cards {
@@ -358,6 +370,34 @@ html:has( .name-pulse-search-input ) {
 		&__cta .components-button {
 			width: 100%;
 			justify-content: center;
+		}
+	}
+}
+
+// Alone in its row, the card moves the price and button beside the name, as
+// the bundle card does under Top results.
+.name-pulse-exact-card--wide {
+	@media ( min-width: $break-small ) {
+		> .components-v-stack {
+			display: grid;
+			grid-template-columns: minmax( 0, 1fr ) auto;
+			column-gap: 24px;
+
+			> * {
+				grid-column: 1 / -1;
+			}
+		}
+
+		.name-pulse-exact-card__domain {
+			grid-column: 1;
+			align-self: center;
+		}
+
+		.name-pulse-exact-card__price-row {
+			grid-column: 2;
+			grid-row: 2;
+			gap: 40px;
+			margin-block-start: 0;
 		}
 	}
 }
