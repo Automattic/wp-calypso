@@ -196,6 +196,7 @@ describe( 'failures', () => {
 					name: 'core/group',
 					ownBackground: false,
 					textClientIds: [ 'ueo8', 'qalw' ],
+					readableText: '#FFFFFF',
 				},
 			],
 		} );
@@ -308,9 +309,27 @@ describe( 'failures', () => {
 			],
 			failures: 3,
 			backdrops: [
-				{ clientId: 'pd19', name: 'core/button', ownBackground: true, textClientIds: [ 'pd19' ] },
-				{ clientId: 'pz9d', name: 'core/button', ownBackground: true, textClientIds: [ 'pz9d' ] },
-				{ clientId: 'mnyk', name: 'core/button', ownBackground: true, textClientIds: [ 'mnyk' ] },
+				{
+					clientId: 'pd19',
+					name: 'core/button',
+					ownBackground: true,
+					textClientIds: [ 'pd19' ],
+					readableText: '#000000',
+				},
+				{
+					clientId: 'pz9d',
+					name: 'core/button',
+					ownBackground: true,
+					textClientIds: [ 'pz9d' ],
+					readableText: '#000000',
+				},
+				{
+					clientId: 'mnyk',
+					name: 'core/button',
+					ownBackground: true,
+					textClientIds: [ 'mnyk' ],
+					readableText: '#000000',
+				},
 			],
 		} );
 	} );
@@ -332,9 +351,27 @@ describe( 'failures', () => {
 			],
 			failures: 3,
 			backdrops: [
-				{ clientId: 'pd19', name: 'core/button', ownBackground: false, textClientIds: [ 'pd19' ] },
-				{ clientId: 'pz9d', name: 'core/button', ownBackground: false, textClientIds: [ 'pz9d' ] },
-				{ clientId: 'mnyk', name: 'core/button', ownBackground: false, textClientIds: [ 'mnyk' ] },
+				{
+					clientId: 'pd19',
+					name: 'core/button',
+					ownBackground: false,
+					textClientIds: [ 'pd19' ],
+					readableText: '#000000',
+				},
+				{
+					clientId: 'pz9d',
+					name: 'core/button',
+					ownBackground: false,
+					textClientIds: [ 'pz9d' ],
+					readableText: '#000000',
+				},
+				{
+					clientId: 'mnyk',
+					name: 'core/button',
+					ownBackground: false,
+					textClientIds: [ 'mnyk' ],
+					readableText: '#000000',
+				},
 			],
 		} );
 	} );
@@ -894,6 +931,7 @@ describe( 'the backdrops to fix, for the server', () => {
 			name: 'core/group',
 			ownBackground: false,
 			textClientIds: [ 'tg1' ],
+			readableText: '#FFFFFF',
 		} );
 		expect( contrast?.backdrops.slice( 5 ) ).toEqual(
 			[ 'b1', 'b2', 'b3' ].map( ( id ) => ( {
@@ -901,6 +939,7 @@ describe( 'the backdrops to fix, for the server', () => {
 				name: 'core/button',
 				ownBackground: true,
 				textClientIds: [ id ],
+				readableText: '#000000',
 			} ) )
 		);
 	} );
@@ -923,6 +962,46 @@ describe( 'the backdrops to fix, for the server', () => {
 		);
 	} );
 
+	it( 'offers black before white when both read, as on mid grey', () => {
+		// On any opaque backdrop black or white reaches 4.5:1; on this grey both do.
+		mountCanvas( [
+			{
+				clientId: 'grey',
+				name: 'core/group',
+				style: { backgroundColor: 'rgb(118, 118, 118)' },
+				children: [ text( 'p1', { color: 'rgb(130, 130, 130)', fontSize: '16px' } ) ],
+			},
+		] );
+
+		expect( describeTextContrast( [ 'grey' ] )?.backdrops ).toEqual( [
+			expect.objectContaining( { clientId: 'grey', readableText: '#000000' } ),
+		] );
+	} );
+
+	it.each( [
+		[ 'large text only', [ '32px' ], '#000000' ],
+		[ 'small text too', [ '32px', '16px' ], '#FFFFFF' ],
+	] )(
+		'holds the readable colour to the strictest threshold on it, with %s',
+		( _, sizes, readableText ) => {
+			// Black on rgb(90, 90, 90) is 3.04:1: enough for large text, not for small.
+			mountCanvas( [
+				{
+					clientId: 'dark',
+					name: 'core/group',
+					style: { backgroundColor: 'rgb(90, 90, 90)' },
+					children: sizes.map( ( fontSize, index ) =>
+						text( `t${ index }`, { color: 'rgb(60, 60, 60)', fontSize } )
+					),
+				},
+			] );
+
+			expect( describeTextContrast( [ 'dark' ] )?.backdrops[ 0 ]?.readableText ).toBe(
+				readableText
+			);
+		}
+	);
+
 	it( 'never names a block by its long id', () => {
 		mountCanvas( [
 			themeGroup( 'long-g', [ text( 'p1' ) ] ),
@@ -930,7 +1009,13 @@ describe( 'the backdrops to fix, for the server', () => {
 		] );
 
 		expect( describeTextContrast( [ 'long-g', 'g2' ] )?.backdrops ).toEqual( [
-			{ clientId: 'g2', name: 'core/group', ownBackground: false, textClientIds: [ 'p2' ] },
+			{
+				clientId: 'g2',
+				name: 'core/group',
+				ownBackground: false,
+				textClientIds: [ 'p2' ],
+				readableText: '#FFFFFF',
+			},
 		] );
 	} );
 } );
@@ -1011,8 +1096,15 @@ describe( 'a block failing against more than one backdrop', () => {
 				name: 'core/paragraph',
 				ownBackground: false,
 				textClientIds: [ 'para' ],
+				readableText: '#FFFFFF',
 			},
-			{ clientId: 'grp', name: 'core/group', ownBackground: false, textClientIds: [ 'para' ] },
+			{
+				clientId: 'grp',
+				name: 'core/group',
+				ownBackground: false,
+				textClientIds: [ 'para' ],
+				readableText: '#000000',
+			},
 		] );
 	} );
 } );
