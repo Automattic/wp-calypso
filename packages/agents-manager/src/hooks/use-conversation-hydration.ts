@@ -12,6 +12,10 @@ interface UseConversationHydrationOptions {
 	loadMessages: UseAgentChatReturn[ 'loadMessages' ];
 	/** Called with the fetched transcript, even when the live history is kept instead. */
 	onFetch: ( loadedMessages: Message[] ) => void;
+	/** Whether a turn is running; a running turn ends the wait for a reply. */
+	isProcessing: boolean;
+	/** Called with the unanswered question when the user picks Retry. */
+	onRetry: ( question: string ) => void;
 }
 
 /**
@@ -20,16 +24,21 @@ interface UseConversationHydrationOptions {
  * or a turn still running after a remount. `useConversation` skips Reader
  * Chat, which has no server history.
  *
- * Returns whether the conversation is still loading.
+ * Returns whether the conversation is still loading, and the notice to show
+ * while it waits for, or gives up on, a reply a page change left unanswered.
  */
 export function useConversationHydration( {
 	hadParkedNavigation,
 	loadMessages,
 	onFetch,
+	isProcessing,
+	onRetry,
 }: UseConversationHydrationOptions ) {
 	const { agentConfig } = useAgentsManagerContext();
 
-	const { isLoading } = useConversation( {
+	const { isLoading, notice } = useConversation( {
+		waitForReply: ! isProcessing,
+		onRetry,
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			const agentId = agentConfig!.agentId;
 
@@ -66,5 +75,5 @@ export function useConversationHydration( {
 		},
 	} );
 
-	return isLoading;
+	return { isLoading, notice };
 }
