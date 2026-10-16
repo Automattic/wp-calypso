@@ -274,6 +274,7 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 							<DataViewsEmptyStateLayout
 								title={ __( 'No sites to add' ) }
 								description={ __( 'Every site you can add is already managed by your agency.' ) }
+								isBorderless
 							/>
 						}
 					>

@@ -154,7 +154,7 @@ describe( '<ReferralCheckout>', () => {
 				checkout_url: 'https://wordpress.com/checkout/agency/referral?x=1',
 			} );
 		const user = userEvent.setup();
-		render( <ReferralCheckout /> );
+		const { router } = render( <ReferralCheckout /> );
 		await screen.findByText( 'VaultPress Backup 10GB' );
 
 		await user.type( screen.getByLabelText( 'Client’s email address' ), 'client@example.com' );
@@ -170,6 +170,12 @@ describe( '<ReferralCheckout>', () => {
 		await waitFor( () =>
 			expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBeNull()
 		);
+		expect( router.state.location.pathname ).toBe( '/referrals' );
+		expect( router.state.location.search ).toMatchObject( {
+			new_referral_order_email: 'client@example.com',
+			new_referral_order_checkout_url: 'https://wordpress.com/checkout/agency/referral?x=1',
+			flow_type: 'send',
+		} );
 	} );
 
 	test( 'refers the plan of a development site with its license, leaving the cart alone', async () => {

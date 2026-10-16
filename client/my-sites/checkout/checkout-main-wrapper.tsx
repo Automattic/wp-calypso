@@ -22,6 +22,7 @@ const logCheckoutError = ( error: Error ) => {
 export default function CheckoutMainWrapper( {
 	productAliasFromUrl,
 	productSourceFromUrl,
+	aiSessionIdFromUrl,
 	purchaseId,
 	selectedFeature,
 	couponCode,
@@ -42,6 +43,7 @@ export default function CheckoutMainWrapper( {
 }: {
 	productAliasFromUrl?: string;
 	productSourceFromUrl?: string;
+	aiSessionIdFromUrl?: string;
 	purchaseId?: number;
 	selectedFeature?: string;
 	couponCode?: string;
@@ -118,6 +120,7 @@ export default function CheckoutMainWrapper( {
 								siteId={ selectedSiteId }
 								productAliasFromUrl={ productAliasFromUrl }
 								productSourceFromUrl={ productSourceFromUrl }
+								aiSessionIdFromUrl={ aiSessionIdFromUrl }
 								purchaseId={ purchaseId }
 								couponCode={ couponCode }
 								redirectTo={ redirectTo }

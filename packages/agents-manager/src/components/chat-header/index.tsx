@@ -33,9 +33,13 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 	const showMinimize = dismissible && hasAiChatEntry && ! isDocked;
 
 	return (
-		<div className="agents-manager-chat-header">
+		// The `data-slot`s stop the floating panel from dragging on these buttons, as
+		// agenttic's header does. Otherwise a click leaves focus in the composer, and
+		// the menu opens with its first item highlighted.
+		<div className="agents-manager-chat-header" data-slot="chat-header">
 			{ onBack && (
 				<Button
+					data-slot="button"
 					className="agents-manager-chat-header__back-btn"
 					onClick={ onBack }
 					aria-label={ __( 'Go Back', __i18n_text_domain__ ) }
@@ -61,7 +65,7 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					{ __( 'A8C Only', __i18n_text_domain__ ) }
 				</span>
 			) }
-			<div className="agents-manager-chat-header__actions">
+			<div className="agents-manager-chat-header__actions" data-slot="button">
 				{ showMinimize && (
 					<Button
 						className="agents-manager-chat-header__minimize-btn"

@@ -93,6 +93,11 @@ export interface DomainSearchEvents {
 	onContinue: () => void;
 	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
 	onExternalDomainClick: ( domainName?: string ) => void;
+	/**
+	 * Shows the "Already have a site?" card on the initial state when provided. Left out of the
+	 * default events so flows without a migration entry point don't render the card.
+	 */
+	onMigrateSiteClick?: () => void;
 	onMakePrimaryAddressClick: ( domainName: string ) => void;
 	onMoveDomainToSiteClick: ( otherSiteDomain: string, domainName: string ) => void;
 	onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => void;
@@ -212,7 +217,7 @@ export interface DomainSearchConfig {
 	 * false, so bundles stay hidden unless a consumer opts in.
 	 */
 	showBundleSuggestions: boolean;
-	/** Set from the `domain-search/name-pulse` flag by the signup domain-only step. */
+	/** Set by the signup domain-only step. */
 	showNamePulseSearch: boolean;
 }
 

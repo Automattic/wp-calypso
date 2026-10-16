@@ -27,19 +27,19 @@ export const MAX_REPLY_WAIT_MS = 2 * 60_000;
 
 type ReplyWait = 'idle' | 'waiting' | 'timed-out';
 
+// At most this many history pages are loaded per conversation.
+const MAX_PAGES = 10;
+
 interface Config {
-	maxPages?: number;
-	enabled?: boolean;
 	/** Whether an unanswered question may be waited on; false while a turn runs. */
 	waitForReply?: boolean;
+	/** Called with the unanswered question when the user picks Retry. */
 	onRetry?: ( question: string ) => void;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
 
 interface Result {
-	data: { messages: Message[]; sessionId?: string } | undefined;
 	isLoading: boolean;
-	isError: boolean;
 	notice: NoticeConfig | undefined;
 }
 
@@ -50,8 +50,6 @@ interface Result {
  * it is reloaded until the reply lands, then offers Retry if none comes.
  */
 export default function useConversation( {
-	maxPages = 10,
-	enabled = true,
 	waitForReply = false,
 	onRetry,
 	onSuccess = () => {},
@@ -76,7 +74,7 @@ export default function useConversation( {
 	const queryKey = [ 'agents-manager-conversation', sessionId ];
 
 	// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
-	const { data, isLoading, isError, error } = useQuery( {
+	const { data, isLoading, error } = useQuery( {
 		queryKey,
 		queryFn: async () => {
 			const urlSearchParams = new URLSearchParams( window.location.search );
@@ -94,12 +92,12 @@ export default function useConversation( {
 				};
 			}
 
-			return await loadAllMessagesFromServer( sessionId, config, maxPages, true );
+			return await loadAllMessagesFromServer( sessionId, config, MAX_PAGES, true );
 		},
 		// Public Reader Chat does not expose conversation history, and the
 		// server-side history endpoint requires permissions public readers
 		// usually do not have.
-		enabled: enabled && !! sessionId && ! isUnsent && ! isReaderChatAgent( agentId ),
+		enabled: !! sessionId && ! isUnsent && ! isReaderChatAgent( agentId ),
 		refetchOnWindowFocus: false,
 		refetchInterval: replyWait === 'waiting' ? REPLY_POLL_INTERVAL_MS : false,
 		// The wait's cap keeps running in a background tab, so polling has to as well.
@@ -218,5 +216,5 @@ export default function useConversation( {
 		};
 	}
 
-	return { data, isLoading, isError, notice };
+	return { isLoading, notice };
 }

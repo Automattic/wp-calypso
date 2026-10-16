@@ -37,7 +37,6 @@
 		"dev/store-sandbox-helper": true,
 		"difm-offer/force-treatment": false,
 		"dolly/telegram": true,
-		"domain-search/name-pulse": false,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": false,
 		"marketplace-redesign": true,
