@@ -135,7 +135,7 @@ const getOrderPostsSuggestion: BlockSuggestionBuilder = ( block ) => {
 		return undefined;
 	}
 
-	// Newest first is the default, so offer the reverse of the current order.
+	// Offer the reverse of the current order; queries default to newest first.
 	const isNewestFirst = ( query.order ?? 'desc' ) === 'desc';
 	let prompt: string;
 
@@ -213,7 +213,8 @@ const BLOCK_SUGGESTIONS: Record< string, BlockSuggestionBuilder[] > = {
 };
 
 /**
- * The design actions for the empty view; read it once the theme has loaded.
+ * The empty view's design actions. Call it once the theme has loaded: some
+ * are Assembler-only.
  * @returns The suggestions.
  */
 export function getEditorEmptyViewSuggestions(): Suggestion[] {

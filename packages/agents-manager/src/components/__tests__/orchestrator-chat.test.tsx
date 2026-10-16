@@ -53,6 +53,7 @@ const mockSetCheckpointActionReverted = jest.fn(
 	}
 );
 let mockSelectedBlockType: string | undefined;
+let mockSelectedBlockClientId: string | undefined;
 let mockBlockEditorStoreThrows = false;
 // Simulates Agenttic's floating truncation in the `AgentChat` mock.
 let mockRenderedSuggestionsLimit: number | undefined;
@@ -81,6 +82,7 @@ const mockSelectDataStore = ( storeName: string ) => {
 		}
 		return {
 			getSelectedBlock: () => ( mockSelectedBlockType ? { name: mockSelectedBlockType } : null ),
+			getSelectedBlockClientId: () => mockSelectedBlockClientId ?? null,
 			getBlocks: () => mockEditorBlocks,
 		};
 	}
@@ -769,6 +771,7 @@ describe( 'OrchestratorChat', () => {
 		mockSiteKey = 'site-1';
 		mockCurrentUserId = 1;
 		mockSelectedBlockType = undefined;
+		mockSelectedBlockClientId = undefined;
 		mockBlockEditorStoreThrows = false;
 		mockRenderedSuggestionsLimit = undefined;
 		sessionStorage.clear();
@@ -1316,6 +1319,42 @@ describe( 'OrchestratorChat', () => {
 		);
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 2 );
 	} );
+
+	it.each( [
+		{
+			behavior: 'registers block chips again',
+			replaceEmptyViewSuggestions: true,
+			registrations: 2,
+		},
+		{
+			behavior: 'leaves other chips cleared',
+			replaceEmptyViewSuggestions: false,
+			registrations: 1,
+		},
+	] )(
+		'$behavior when another block is selected',
+		( { replaceEmptyViewSuggestions, registrations } ) => {
+			mockSelectedBlockClientId = 'paragraph-1';
+			const suggestions: Suggestion[] = [
+				{ id: 'change-tone', label: 'Change tone', prompt: 'Change the tone' },
+			];
+			const useSuggestions = jest.fn( () => ( { suggestions, replaceEmptyViewSuggestions } ) );
+			const registerSuggestions = jest.fn();
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { registerSuggestions } ) );
+
+			const { rerender } = render( chat( { useSuggestions } ) );
+			rerender( chat( { useSuggestions } ) );
+
+			expect( registerSuggestions ).toHaveBeenCalledTimes( 1 );
+
+			// A click cleared the chips; the next paragraph offers the same ones.
+			mockSelectedBlockClientId = 'paragraph-2';
+			rerender( chat( { useSuggestions } ) );
+
+			expect( registerSuggestions ).toHaveBeenCalledTimes( registrations );
+			expect( registerSuggestions ).toHaveBeenLastCalledWith( suggestions );
+		}
+	);
 
 	it( 'does not re-track lingering contextual suggestions when a block is deselected', () => {
 		mockSelectedBlockType = 'core/paragraph';
