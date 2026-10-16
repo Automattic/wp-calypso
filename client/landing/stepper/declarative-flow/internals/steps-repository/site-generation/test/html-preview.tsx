@@ -1,8 +1,10 @@
 /** @jest-environment jsdom */
 
-import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
+import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { BuildHtmlPreview } from '../stream/html-preview';
-import { htmlPreviewDocument } from '../stream/html-preview-document';
+import { htmlPreviewDocument, preparePreviewDocument } from '../stream/html-preview-document';
+import { createPreviewFrame, isPreviewFrameStatus } from '../stream/html-preview-frame';
+import * as previewAssetLoader from '../stream/preview-asset-loader';
 import { applyStreamEvent, initialStreamState, stateFromSnapshot } from '../stream/reducer';
 import { parseStreamInfo } from '../stream/types';
 import { useBuildHtmlPreview } from '../stream/use-build-html-preview';
@@ -159,42 +161,125 @@ it( 'keeps HTML and inline CSS while stripping active markup and external resour
 	expect( doc.querySelector( 'meta' )?.content ).toContain( "default-src 'none'" );
 } );
 
-it( 'renders in an iframe with an opaque origin and no scripts', async () => {
+it( 'uses an opaque frame with only a nonce-authorized bootstrap', async () => {
 	global.fetch = jest.fn().mockResolvedValue( { ok: true, json: async () => payload } );
-	render( <BuildHtmlPreview stream={ stream } /> );
+	render( <BuildHtmlPreview stream={ stream } isActive isGenerating isComplete={ false } /> );
 	const iframe = await screen.findByTitle( 'Site preview' );
-	expect( iframe.getAttribute( 'sandbox' ) ).toBe( '' );
-	expect( iframe.getAttribute( 'srcdoc' ) ).toContain( '<h1>Hello</h1>' );
+	expect( iframe.getAttribute( 'sandbox' ) ).toBe( 'allow-scripts' );
+	expect( iframe.getAttribute( 'sandbox' ) ).not.toContain( 'allow-same-origin' );
+	expect( iframe.getAttribute( 'srcdoc' ) ).toContain( "script-src 'nonce-" );
+	expect( iframe.getAttribute( 'srcdoc' ) ).not.toContain( payload.html );
 } );
 
-it( 'switches between streamed pages using the same authenticated endpoint', async () => {
+it( 'loads the homepage and named companion routes concurrently without a picker', async () => {
 	global.fetch = jest.fn().mockImplementation( async ( url: string ) => ( {
 		ok: true,
 		json: async () => ( { ...payload, route: new URL( url ).searchParams.get( 'route' ) } ),
 	} ) );
 	render(
 		<BuildHtmlPreview
+			isActive
+			isGenerating
+			isComplete={ false }
 			stream={ {
 				...stream,
 				state: {
 					...stream.state,
-					previews: {
-						'/': reference,
-						'/about/': { ...reference, route: '/about/' },
+					plan: {
+						status: 'developing',
+						title: 'Test',
+						direction: null,
+						palette: null,
+						typography: null,
+						images: null,
+						pages: [ { slug: 'about', title: 'Our story', sections: [] } ],
 					},
+					previews: { '/': reference, '/about/': { ...reference, route: '/about/' } },
 				},
 			} }
 		/>
 	);
-	await screen.findByTitle( 'Site preview' );
-	fireEvent.change( screen.getByLabelText( 'Page preview' ), { target: { value: '/about/' } } );
 	await waitFor( () =>
-		expect( global.fetch ).toHaveBeenLastCalledWith(
+		expect( global.fetch ).toHaveBeenCalledWith(
 			stream.info.previewUrl + '?run_id=run-1&route=%2Fabout%2F',
 			expect.anything()
 		)
 	);
+	expect( global.fetch ).toHaveBeenCalledWith(
+		stream.info.previewUrl + '?run_id=run-1&route=%2F',
+		expect.anything()
+	);
+	expect( screen.queryByRole( 'combobox' ) ).not.toBeInTheDocument();
+} );
+
+it( 'keeps the first non-home route from becoming the homepage', async () => {
+	const onHomeReady = jest.fn();
+	global.fetch = jest
+		.fn()
+		.mockResolvedValue( { ok: true, json: async () => ( { ...payload, route: '/about/' } ) } );
+	render(
+		<BuildHtmlPreview
+			stream={ {
+				...stream,
+				state: { ...stream.state, previews: { '/about/': { ...reference, route: '/about/' } } },
+			} }
+			isActive
+			isGenerating
+			isComplete={ false }
+			onHomeReady={ onHomeReady }
+		/>
+	);
 	await screen.findByTitle( 'Site preview' );
+	expect( onHomeReady ).not.toHaveBeenCalledWith( true );
+} );
+
+it( 'builds a fixed blob-only shell without generated content or external network access', () => {
+	const first = createPreviewFrame();
+	const second = createPreviewFrame();
+	const doc = new DOMParser().parseFromString( first.srcDoc, 'text/html' );
+	const script = doc.querySelector( 'script' )!;
+	const policy = doc.querySelector( 'meta' )!.content;
+	expect( doc.querySelectorAll( 'script' ) ).toHaveLength( 1 );
+	expect( policy ).toContain( `script-src 'nonce-${ script.getAttribute( 'nonce' ) }'` );
+	expect( policy ).toContain( 'img-src blob:' );
+	expect( policy ).toContain( 'font-src blob:' );
+	expect( policy ).toContain( "connect-src 'none'" );
+	expect( policy ).not.toContain( 'https:' );
+	expect( first.channel ).not.toBe( second.channel );
+	expect( script.dataset.parentOrigin ).toBe( window.location.origin );
+} );
+
+it( 'accepts only bounded private-port statuses on the current channel', () => {
+	expect(
+		isPreviewFrameStatus( { v: 1, channel: 'current', type: 'status', homeReady: true }, 'current' )
+	).toBe( true );
+	expect(
+		isPreviewFrameStatus( { v: 1, channel: 'stale', type: 'status', homeReady: true }, 'current' )
+	).toBe( false );
+	expect(
+		isPreviewFrameStatus(
+			{ v: 1, channel: 'current', type: 'status', homeReady: 'yes' },
+			'current'
+		)
+	).toBe( false );
+	expect(
+		isPreviewFrameStatus(
+			{ v: 1, channel: 'current', type: 'evicted', ids: [ 'a'.repeat( 64 ) ] },
+			'current'
+		)
+	).toBe( true );
+	expect(
+		isPreviewFrameStatus(
+			{ v: 1, channel: 'current', type: 'evicted', ids: Array( 97 ).fill( 'a'.repeat( 64 ) ) },
+			'current'
+		)
+	).toBe( false );
+	expect(
+		isPreviewFrameStatus(
+			{ v: 1, channel: 'current', type: 'rejected', ids: [ 'a'.repeat( 64 ) ] },
+			'current'
+		)
+	).toBe( true );
 } );
 
 const imageSource = '/wp-content/themes/test/assets/hero.png?v=abcdef12';
@@ -359,4 +444,142 @@ it( 'accepts no assets from a feed whose snapshot URL is itself an asset path', 
 	const { result } = renderHook( () => useBuildHtmlPreview( reference, view ) );
 	await waitFor( () => expect( result.current.html ).toBe( payload.html ) );
 	expect( result.current.assets ).toEqual( {} );
+} );
+
+it( 'sends only sanitized asset identities to the trusted runtime', () => {
+	const prepared = preparePreviewDocument(
+		`<html nonce="attacker"><head><style>:root{--hero:url('${ imageSource }')}</style><script nonce="attacker">alert(1)</script></head><body data-preview-loaded="forged"><header><h1>Brand header</h1></header><main class="site"><section id="welcome"><h1>A real homepage</h1><p>Enough actual content for a meaningful homepage preview.</p><img src="${ imageSource }" nonce="attacker" onerror="alert(1)" data-preview-image="forged"></section></main></body></html>`,
+		{ [ imageSource ]: imageAsset }
+	);
+	expect( prepared?.meaningful ).toBe( true );
+	const doc = new DOMParser().parseFromString( prepared!.html, 'text/html' );
+	expect(
+		doc.querySelector( 'script,[nonce],[onerror],[data-preview-loaded],img[src]' )
+	).toBeNull();
+	expect( doc.querySelector( 'img' )?.getAttribute( 'data-preview-image' ) ).toBe( imageAsset.id );
+	expect( prepared!.html ).toContain( `preview-asset:${ imageAsset.id }` );
+	expect( prepared!.html ).not.toContain( 'token=' );
+	expect(
+		preparePreviewDocument(
+			'<header><h1>A header by itself does not make a homepage preview.</h1></header>'
+		)?.meaningful
+	).toBe( false );
+} );
+
+it( 'keeps a slow asset request alive across document revisions and aborts on route unmount', async () => {
+	const load = jest.fn().mockReturnValue( new Promise( () => {} ) );
+	const factory = jest
+		.spyOn( previewAssetLoader, 'createPreviewAssetLoader' )
+		.mockReturnValue( { load, dispose: jest.fn() } );
+	global.fetch = jest.fn().mockResolvedValue( {
+		ok: true,
+		json: async () => ( { ...payload, assets: { [ imageSource ]: imageAsset } } ),
+	} );
+	const { rerender, unmount } = render(
+		<BuildHtmlPreview stream={ stream } isActive isGenerating isComplete={ false } />
+	);
+	await waitFor( () => expect( load ).toHaveBeenCalledTimes( 1 ) );
+	const signal = load.mock.calls[ 0 ][ 1 ] as AbortSignal;
+	rerender(
+		<BuildHtmlPreview
+			stream={ {
+				...stream,
+				state: {
+					...stream.state,
+					previews: { '/': { ...reference, documentId: 'b'.repeat( 64 ) } },
+				},
+			} }
+			isActive
+			isGenerating
+			isComplete={ false }
+		/>
+	);
+	await waitFor( () => expect( global.fetch ).toHaveBeenCalledTimes( 2 ) );
+	expect( signal.aborted ).toBe( false );
+	expect( load ).toHaveBeenCalledTimes( 1 );
+	unmount();
+	expect( signal.aborted ).toBe( true );
+	factory.mockRestore();
+} );
+
+it( 'offers a declined asset again only after capacity frees, within a budget', async () => {
+	const loaded = { id: imageAsset.id, mimeType: 'image/png', bytes: new ArrayBuffer( 1 ) };
+	const load = jest.fn().mockImplementation( async () => ( {
+		[ imageSource ]: { ...loaded, bytes: new ArrayBuffer( 1 ) },
+	} ) );
+	const factory = jest
+		.spyOn( previewAssetLoader, 'createPreviewAssetLoader' )
+		.mockReturnValue( { load, dispose: jest.fn() } );
+	const port = {
+		onmessage: null as ( ( event: MessageEvent ) => void ) | null,
+		postMessage: jest.fn(),
+		start: jest.fn(),
+		close: jest.fn(),
+	};
+	const previousChannel = global.MessageChannel;
+	global.MessageChannel = class {
+		port1 = port;
+		port2 = {};
+	} as unknown as typeof MessageChannel;
+	const contentWindow = jest
+		.spyOn( HTMLIFrameElement.prototype, 'contentWindow', 'get' )
+		.mockReturnValue( { postMessage: jest.fn() } as unknown as Window );
+	global.fetch = jest.fn().mockResolvedValue( {
+		ok: true,
+		json: async () => ( {
+			...payload,
+			html: `<html><body><main class="site"><section id="welcome"><h1>A real homepage</h1><p>Enough actual content for a meaningful homepage preview.</p><img src="${ imageSource }"></section></main></body></html>`,
+			assets: { [ imageSource ]: imageAsset },
+		} ),
+	} );
+	const { rerender } = render(
+		<BuildHtmlPreview stream={ stream } isActive isGenerating isComplete={ false } />
+	);
+	const iframe = await screen.findByTitle( 'Site preview' );
+	const channel = new DOMParser()
+		.parseFromString( iframe.getAttribute( 'srcdoc' )!, 'text/html' )
+		.querySelector( 'script' )!.dataset.channel!;
+	const reply = ( data: Record< string, unknown > ) =>
+		act( () =>
+			port.onmessage?.( new MessageEvent( 'message', { data: { v: 1, channel, ...data } } ) )
+		);
+	act( () => iframe.dispatchEvent( new Event( 'load' ) ) );
+	await reply( { type: 'ready' } );
+	await waitFor( () =>
+		expect( port.postMessage ).toHaveBeenCalledWith(
+			expect.objectContaining( { type: 'assets' } ),
+			expect.anything()
+		)
+	);
+	const loads = () => load.mock.calls.length;
+	const before = loads();
+	await reply( { type: 'rejected', ids: [ imageAsset.id ] } );
+	rerender(
+		<BuildHtmlPreview
+			stream={ {
+				...stream,
+				state: {
+					...stream.state,
+					previews: { '/': { ...reference, documentId: 'b'.repeat( 64 ) } },
+				},
+			} }
+			isActive
+			isGenerating
+			isComplete={ false }
+		/>
+	);
+	await waitFor( () => expect( global.fetch ).toHaveBeenCalledTimes( 2 ) );
+	expect( loads() ).toBe( before );
+	await reply( { type: 'evicted', ids: [ 'c'.repeat( 64 ) ] } );
+	await waitFor( () => expect( loads() ).toBe( before + 1 ) );
+	for ( let attempt = 0; attempt < 3; attempt++ ) {
+		await reply( { type: 'rejected', ids: [ imageAsset.id ] } );
+		await reply( { type: 'evicted', ids: [ 'c'.repeat( 64 ) ] } );
+	}
+	await waitFor( () => expect( loads() ).toBe( before + 3 ) );
+	await reply( { type: 'evicted', ids: [ 'c'.repeat( 64 ) ] } );
+	expect( loads() ).toBe( before + 3 );
+	contentWindow.mockRestore();
+	global.MessageChannel = previousChannel;
+	factory.mockRestore();
 } );
