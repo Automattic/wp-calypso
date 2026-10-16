@@ -13,7 +13,7 @@ export default function useInputValue< T extends string | number | boolean | str
 		const subscription = context.componentModel.onUpdated.subscribe( () => {
 			const nextValue = context.componentModel.properties.value;
 			if (
-				nextValue !== previousValue.current &&
+				JSON.stringify( nextValue ) !== JSON.stringify( previousValue.current ) &&
 				( typeof nextValue === 'string' ||
 					typeof nextValue === 'number' ||
 					typeof nextValue === 'boolean' ||
