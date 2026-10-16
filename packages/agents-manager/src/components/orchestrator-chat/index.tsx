@@ -28,6 +28,7 @@ import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestio
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useGatedRegenerateHandler } from '../../hooks/use-gated-regenerate-handler';
 import { useInlineSuggestionClick } from '../../hooks/use-inline-suggestion-click';
+import { useInteractiveUi } from '../../hooks/use-interactive-ui';
 import { useNavigationContinuation } from '../../hooks/use-navigation-continuation';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import { useResponseOutcomeTracking } from '../../hooks/use-response-outcome-tracking';
@@ -36,6 +37,7 @@ import { useShowComponentRetention } from '../../hooks/use-show-component-retent
 import useSourcesAction from '../../hooks/use-sources-action';
 import { useStreamedCheckpointMessages } from '../../hooks/use-streamed-checkpoint-messages';
 import { useSuggestionTracking } from '../../hooks/use-suggestion-tracking';
+import convertInteractiveUiMessagesToComponents from '../../interactive-ui/convert-interactive-ui-messages-to-components';
 import { markSessionSent } from '../../utils/agent-session';
 import { convertBigSkyMessageToUIMessage } from '../../utils/convert-big-sky-message';
 import convertToolMessagesToComponents, {
@@ -135,6 +137,7 @@ export default function OrchestratorChat( {
 
 	// Streamed task updates, recorded before the agent config's own `onTaskUpdate` runs.
 	const {
+		sessionIdentity,
 		streamGeneration,
 		isCurrentStreamGeneration,
 		recordTaskUpdate,
@@ -258,6 +261,7 @@ export default function OrchestratorChat( {
 		submitComposerMessage,
 		submitChatMessage,
 		submitHostMessage,
+		submitContextMessage,
 		stopResponse,
 	} = useChatComposer( {
 		isReaderChat,
@@ -338,7 +342,7 @@ export default function OrchestratorChat( {
 		return editor?.getCurrentPostId?.();
 	}, [] );
 
-	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
+	const convertedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		// Let the provider rewrite the whole raw transcript first, at display time,
 		// so a message restored from history is presented the same way as a new one.
 		let currentMessages: AgentsManagerUIMessage[] = transformMessages
@@ -384,6 +388,8 @@ export default function OrchestratorChat( {
 				isBuildingSite ? thinkingMessage : null
 			);
 		}
+
+		currentMessages = convertInteractiveUiMessagesToComponents( currentMessages );
 
 		currentMessages = convertToolMessagesToComponents( {
 			messages: currentMessages,
@@ -438,6 +444,16 @@ export default function OrchestratorChat( {
 		transformMessages,
 		withRetainedShowComponents,
 	] );
+
+	// Interactive UI forms in agent replies, and the actions they send.
+	const displayedMessages = useInteractiveUi( {
+		messages,
+		convertedMessages,
+		conversationId: sessionIdentity,
+		isProcessing: isProcessing || isUploadingImages,
+		agentConfig,
+		submitContextMessage,
+	} );
 
 	const messageCount = displayedMessages.length;
 	const hasMessages = messageCount > 0;

@@ -129,6 +129,15 @@ import type {
 
 `Ability` is re-exported from `@wordpress/abilities`, which owns its shape. The provider interfaces are documented in `src/extension-types.ts`.
 
+## Interactive chat surfaces
+
+The `wpcom/render-interactive-ui` tool returns an envelope with
+`tool_id: wpcom__render_interactive_ui` and an ordered array of A2UI v0.9 messages
+in `data`. Agents Manager also accepts raw A2UI message arrays. The renderer uses
+the A2UI SDK internally. Application helpers, components, and modules use
+interactive UI naming; imported SDK types and protocol identifiers retain their
+A2UI names.
+
 ## Development
 
 Calypso, the Dashboard and `apps/agents-manager` import `src/` directly (`calypso:src`), so no build is needed during development. See `AGENTS.md` → Testing for tests, type-checks, lint and sandbox testing. `yarn build`, `yarn watch` and `yarn clean`, run in this package, only manage `dist/`.
