@@ -34,12 +34,7 @@ import { errorResult } from '../ability-result';
 import { areUpdateEditsAlreadySatisfied } from './already-applied';
 import { applyEdits, type ApplyEditsOptions } from './apply-edits';
 import { getChangeType, getEditedMenuIds } from './change-type';
-import {
-	hasRequestedBlockEdits,
-	isCssOnly,
-	normalizeEdits,
-	type RawBlockEdits,
-} from './normalize-edits';
+import { hasRequestedBlockEdits, normalizeEdits, type RawBlockEdits } from './normalize-edits';
 import {
 	captureTargets,
 	getEditedClientIds,
@@ -395,8 +390,10 @@ export async function applyBlockEditsCallback(
 
 	// Captured after every path that reached the page, the no-change and
 	// failure ones most of all: there the block tree cannot say whether the
-	// user's problem is fixed. A CSS-only call gets the whole page; a request
-	// refused before any write, or a call stopped by a move, gets none.
+	// user's problem is fixed. A call that changes custom CSS gets the whole
+	// page, which the CSS can reach anywhere of, with or without block edits;
+	// a request refused before any write, or a call stopped by a move, gets
+	// none.
 	//
 	// A relative request — "make this match Project details" — cannot be checked
 	// from a picture of the edited side alone, so the blocks it is being compared
@@ -416,12 +413,13 @@ export async function applyBlockEditsCallback(
 				! changedClientIds.includes( clientId ) && all.indexOf( clientId ) === index
 		);
 
+	const wholePage = edits?.customCSS !== undefined;
 	const fileParts =
 		! edits || getBlockingMove()
 			? null
 			: await captureCanvas( {
 					clientIds: [ ...changedClientIds, ...referenceClientIds ],
-					fullPage: isCssOnly( edits ),
+					fullPage: wholePage,
 				} );
 
 	// Two separate facts about the pictures that came back. The shape says how
@@ -439,7 +437,6 @@ export async function applyBlockEditsCallback(
 	// the notes' wording, so the field is left out when no text was measured.
 	// Kept out of `message`, which the user may see as the reply.
 	if ( fileParts ) {
-		const wholePage = edits?.customCSS !== undefined;
 		const contrast = describeTextContrast(
 			wholePage ? [ ...changedClientIds, ...getPageClientIds() ] : changedClientIds,
 			{ wholePage }
