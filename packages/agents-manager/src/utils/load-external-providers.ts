@@ -202,29 +202,29 @@ export function mergeUseSuggestionsHooks(
 	}
 
 	return ( maxSuggestions?: number ) => {
+		const results = hooks.map( ( hook ) => hook( maxSuggestions ) );
+
+		// The first provider that replaces the empty view owns the contextual
+		// chips, including while it hides them, so a later one can't refill them.
+		const owner = results.find( ( result ) => result?.replaceEmptyViewSuggestions === true );
+
+		if ( owner ) {
+			return { suggestions: owner.suggestions, replaceEmptyViewSuggestions: true };
+		}
+
 		const combined: Suggestion[] = [];
 		const seenIds = new Set< string >();
-		const results = hooks.map( ( hook ) => hook( maxSuggestions ) );
-		const replaceEmptyViewSuggestions = results.some(
-			( result ) => result?.replaceEmptyViewSuggestions === true
-		);
 
 		for ( const result of results ) {
-			if ( ! result || ( replaceEmptyViewSuggestions && ! result.replaceEmptyViewSuggestions ) ) {
-				continue;
-			}
-			const suggestions = result.suggestions ?? [];
-			for ( const s of suggestions ) {
+			for ( const s of result?.suggestions ?? [] ) {
 				if ( ! seenIds.has( s.id ) ) {
 					seenIds.add( s.id );
 					combined.push( s );
 				}
 			}
 		}
-		return {
-			suggestions: combined,
-			...( replaceEmptyViewSuggestions && { replaceEmptyViewSuggestions: true } ),
-		};
+
+		return { suggestions: combined };
 	};
 }
 
@@ -849,7 +849,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		} ) as AbilitiesSetupHook;
 	}
 
-	// AM's block suggestions go last, so the Jetpack AI sidebar's own win the dedupe by id.
+	// AM's block suggestions go last, so a provider that claims the selected block
+	// (the Jetpack AI sidebar) owns its chips.
 	if ( editorSuggestions ) {
 		allUseSuggestions.push( editorSuggestions.useBlockSuggestions );
 	}

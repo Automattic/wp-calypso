@@ -972,30 +972,32 @@ describe( 'loadExternalProviders', () => {
 			expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
 		} );
 
-		it( "let a provider's block chips win the dedupe by id", async () => {
-			const sidebarTranslate = { id: 'translate', label: 'Translate', prompt: '' };
-			setAgentsManagerData( {
-				bigSkyEnabled: true,
-				agentProviders: [
-					{
-						useSuggestions: () => ( {
-							suggestions: [ sidebarTranslate ],
-							replaceEmptyViewSuggestions: true,
-						} ),
-					},
-				],
-			} );
+		it.each( [
+			[ 'shows', [ { id: 'translate', label: 'Translate', prompt: '' } ] ],
+			[ 'hides', [] ],
+		] )(
+			"leave the block's chips to a provider that claims it, while it %s them",
+			async ( _state, sidebarSuggestions ) => {
+				setAgentsManagerData( {
+					bigSkyEnabled: true,
+					agentProviders: [
+						{
+							useSuggestions: () => ( {
+								suggestions: sidebarSuggestions,
+								replaceEmptyViewSuggestions: true,
+							} ),
+						},
+					],
+				} );
 
-			const providers = await loadExternalProviders();
+				const providers = await loadExternalProviders();
 
-			expect( providers.useSuggestions?.() ).toEqual( {
-				suggestions: [
-					sidebarTranslate,
-					{ id: 'remove-image-background', label: 'Remove background', prompt: 'Remove it' },
-				],
-				replaceEmptyViewSuggestions: true,
-			} );
-		} );
+				expect( providers.useSuggestions?.() ).toEqual( {
+					suggestions: sidebarSuggestions,
+					replaceEmptyViewSuggestions: true,
+				} );
+			}
+		);
 
 		it( 'are not offered where Big Sky is off', async () => {
 			setAgentsManagerData( {
@@ -1256,6 +1258,20 @@ describe( 'mergeUseSuggestionsHooks', () => {
 
 		expect( firstHook ).toHaveBeenCalledWith( 3 );
 		expect( secondHook ).toHaveBeenCalledWith( 3 );
+	} );
+
+	it( 'leaves the contextual suggestions to the first provider that replaces the empty view', () => {
+		const firstHook = jest.fn( () => ( {
+			suggestions: [],
+			replaceEmptyViewSuggestions: true,
+		} ) ) as UseSuggestionsHook;
+		const secondHook = jest.fn( () => ( {
+			suggestions: [ { id: 'second', label: 'Second', prompt: 'Second prompt.' } ],
+			replaceEmptyViewSuggestions: true,
+		} ) ) as UseSuggestionsHook;
+		const merged = mergeUseSuggestionsHooks( [ firstHook, secondHook ] );
+
+		expect( merged?.() ).toEqual( { suggestions: [], replaceEmptyViewSuggestions: true } );
 	} );
 
 	it( 'uses only contextual suggestions when any provider replaces the empty view', () => {
