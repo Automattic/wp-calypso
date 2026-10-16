@@ -46,7 +46,6 @@ boot( {
 		plugins: false,
 		commandPalette: false,
 		domainOnlySites: false,
-		startStoreRoute: true,
 		colorScheme: false,
 		darkMode: false,
 	},

@@ -71,7 +71,6 @@ export type AppConfig = {
 		me: MeSupports | false;
 		commandPalette: boolean;
 		domainOnlySites: boolean;
-		startStoreRoute?: boolean;
 		colorScheme: boolean;
 		darkMode: boolean;
 	};
@@ -121,7 +120,6 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		me: false,
 		commandPalette: false,
 		domainOnlySites: false,
-		startStoreRoute: false,
 		colorScheme: false,
 		darkMode: false,
 	},
