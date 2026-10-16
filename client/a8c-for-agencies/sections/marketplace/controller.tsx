@@ -173,7 +173,7 @@ export const checkoutContext: Callback = ( context, next ) => {
 };
 export const pressableReturnContext: Callback = ( context, next ) => {
 	const { agency_id, receipt_id, order_id } = context.query;
-	context.secondary = null;
+	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<PressableReturn agencyId={ agency_id } receiptId={ receipt_id } orderId={ order_id } />
 	);
