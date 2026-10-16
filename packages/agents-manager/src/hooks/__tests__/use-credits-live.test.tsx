@@ -134,8 +134,7 @@ afterEach( () => {
 	jest.useRealTimers();
 } );
 
-const UPGRADE_URL =
-	'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fexample.wordpress.com';
+const UPGRADE_URL = 'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits';
 const ADD_CREDITS_URL =
 	'https://wordpress.com/checkout/example.wordpress.com/ai-credits-lifetime:-q-100000?source=wp_ai_credits&redirect_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fexample.wordpress.com&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fexample.wordpress.com';
 
@@ -211,12 +210,12 @@ describe( 'return address', () => {
 		expect( returnsOf( result.current ) ).toEqual( { redirectTo: returnUrl, cancelTo: returnUrl } );
 	} );
 
-	it( 'returns Upgrade to the open post on a Simple site only when leaving', async () => {
+	it( 'gives Upgrade no return address from the open post on a Simple site', async () => {
 		window._currentSiteType = 'simple';
 		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'premium' } ) ) );
 		const { result } = renderCredits();
 		await flush();
-		expect( returnsOf( result.current ) ).toEqual( { redirectTo: null, cancelTo: POST_RETURN } );
+		expect( returnsOf( result.current ) ).toEqual( { redirectTo: null, cancelTo: null } );
 	} );
 } );
 it.each( [ undefined, null, 'unsupported' ] )(
@@ -547,7 +546,7 @@ it( 'waits for matching site data and follows a domain change for the same site'
 	expect( props( view.result.current ).action?.href ).toBe( UPGRADE_URL );
 	view.rerender( { ...defaultOptions, site: { ID: '123', domain: 'mapped.example::blog' } } );
 	expect( props( view.result.current ).action?.href ).toBe(
-		'https://wordpress.com/plans/mapped.example%3A%3Ablog?source=wp_ai_credits&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fmapped.example%253A%253Ablog'
+		'https://wordpress.com/plans/mapped.example%3A%3Ablog?source=wp_ai_credits'
 	);
 } );
 it.each( [ '', '.', '..', ' ' ] )(
@@ -579,7 +578,7 @@ it( 'never uses a previous site destination during a site switch', async () => {
 	view.rerender( { ...next, site: { ID: 456, domain: 'second.wordpress.com' } } );
 	await act( async () => oldObserver?.( terminal( creditSnapshot( { plan_tier: 'commerce' } ) ) ) );
 	expect( props( view.result.current ).action?.href ).toBe(
-		'https://wordpress.com/plans/second.wordpress.com?source=wp_ai_credits&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fsecond.wordpress.com'
+		'https://wordpress.com/plans/second.wordpress.com?source=wp_ai_credits'
 	);
 } );
 it.each( [ { userId: 2 }, { agentConfig: { ...agentConfig, authProvider: jest.fn() } } ] )(
@@ -810,7 +809,7 @@ it( 'uses the meter destination as site details become available or change', asy
 	);
 	view.rerender( { ...defaultOptions, site: { ID: 123, domain: 'mapped.example' } } );
 	expect( view.result.current.notice?.action?.href ).toBe(
-		'https://wordpress.com/plans/mapped.example?source=wp_ai_credits&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fmapped.example'
+		'https://wordpress.com/plans/mapped.example?source=wp_ai_credits'
 	);
 } );
 

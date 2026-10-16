@@ -243,7 +243,7 @@ function getCreditsReturnUrl( siteFragment: string, isSimpleSite: boolean ): str
 
 /**
  * The plans page or the credits pack checkout, by the site's plan. Calypso's
- * plans and checkout routes take the site's domain or its ID. The return address is
+ * plans and checkout routes take the site's domain or its ID. Add credits returns to
  * the post open in a Simple site's editor, or else the site's home.
  */
 export function getCreditsPurchaseLink(
@@ -257,14 +257,17 @@ export function getCreditsPurchaseLink(
 	}
 
 	const siteFragment = encodeURIComponent( site );
-	const returnUrl = getCreditsReturnUrl( siteFragment, isSimpleSite );
 	if ( kind === 'upgrade' ) {
-		// No `redirect_to`: the plans page passes it on to checkout, which would then
-		// skip its own pages after a plan purchase.
-		const query = new URLSearchParams( { source: CREDITS_UPGRADE_SOURCE, cancel_to: returnUrl } );
-		return { kind, url: `https://wordpress.com/plans/${ siteFragment }?${ query }` };
+		// No return address: the plans page passes `redirect_to` on to checkout, which then
+		// skips its own pages after a plan purchase. Only the plans page's downgrade and
+		// renewal buttons read `cancel_to`.
+		return {
+			kind,
+			url: `https://wordpress.com/plans/${ siteFragment }?source=${ CREDITS_UPGRADE_SOURCE }`,
+		};
 	}
 
+	const returnUrl = getCreditsReturnUrl( siteFragment, isSimpleSite );
 	const query = new URLSearchParams( {
 		source: CREDITS_UPGRADE_SOURCE,
 		redirect_to: returnUrl,

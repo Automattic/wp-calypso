@@ -64,8 +64,7 @@ const EDITOR = { can_buy_credits: false, can_upgrade: false };
 const PLAN_OWNER_HINT =
 	'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.';
 
-const UPGRADE_URL =
-	'https://wordpress.com/plans/123?source=wp_ai_credits&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2F123';
+const UPGRADE_URL = 'https://wordpress.com/plans/123?source=wp_ai_credits';
 const ADD_CREDITS_URL =
 	'https://wordpress.com/checkout/123/ai-credits-lifetime:-q-100000?source=wp_ai_credits&redirect_to=https%3A%2F%2Fwordpress.com%2Fhome%2F123&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2F123';
 /** The purchase link; the dot and the notice each add a click handler that records the click. */
@@ -333,14 +332,14 @@ describe( 'useAiCredits', () => {
 			expect( result.current.notice?.action?.href ).toBe( result.current.meter?.action?.href );
 		} );
 
-		it( 'returns Upgrade to the open post on a Simple site only when leaving', async () => {
+		it( 'gives Upgrade no return address from the open post on a Simple site', async () => {
 			respondWith( { ai_credits: planSnapshot( 0 ), ...PLAN_BUYER } );
 			const { result } = renderCredits();
 			await waitFor( () => expect( result.current.notice ).toBeDefined() );
 
 			expect( returnsOf( result.current.meter?.action?.href ) ).toEqual( {
 				redirectTo: null,
-				cancelTo: POST_RETURN,
+				cancelTo: null,
 			} );
 			expect( result.current.notice?.action?.href ).toBe( result.current.meter?.action?.href );
 		} );
