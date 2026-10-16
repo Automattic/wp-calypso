@@ -11,7 +11,7 @@ import { useAnalytics } from '../../../app/analytics';
 import EmptyState from '../../../components/empty-state';
 import InlineSupportLink from '../../../components/inline-support-link';
 import RouterLinkButton from '../../../components/router-link-button';
-import { MARKETPLACE_PRODUCTS_ROUTE } from '../../marketplace/paths';
+import { MARKETPLACE_HOSTING_ROUTE } from '../../marketplace/paths';
 import { useMarketplaceType } from '../../marketplace/use-marketplace-type';
 import { getAccountStatus } from '../payout-settings/get-account-status';
 import tipaltiLogo from './lib/tipalti-logo';
@@ -80,7 +80,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 									variant={ hasPayeeAccount ? 'primary' : 'secondary' }
 									size="compact"
 									__next40pxDefaultSize
-									to={ MARKETPLACE_PRODUCTS_ROUTE }
+									to={ MARKETPLACE_HOSTING_ROUTE }
 									onClick={ () => {
 										updateMarketplaceType( 'referral' );
 										recordTracksEvent( 'calypso_a4a_referrals_get_started_button_click' );
