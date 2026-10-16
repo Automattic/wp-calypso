@@ -35,10 +35,12 @@ export function OfferStep( {
 	titleId,
 	tracksProps,
 	onContinue,
+	onHowItWorksClick,
 }: {
 	titleId: string;
 	tracksProps: Record< string, unknown >;
 	onContinue: () => void;
+	onHowItWorksClick: () => void;
 } ) {
 	const saving = useDifmOfferSaving();
 
@@ -96,7 +98,9 @@ export function OfferStep( {
 				</ul>
 			</VStack>
 			<div className="difm-offer-modal__footer">
-				<ExternalLink href={ DIFM_OFFER_FAQ_URL }>{ __( 'How it works' ) }</ExternalLink>
+				<ExternalLink href={ DIFM_OFFER_FAQ_URL } onClick={ onHowItWorksClick }>
+					{ __( 'How it works' ) }
+				</ExternalLink>
 				<Button variant="primary" __next40pxDefaultSize onClick={ onContinue }>
 					{ __( 'Tell us about your site' ) }
 				</Button>

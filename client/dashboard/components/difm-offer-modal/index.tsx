@@ -62,6 +62,11 @@ export default function DifmOfferModal( {
 		setStep( 'request' );
 	};
 
+	// A separate event, so the FAQ click does not count as a CTA click in the upsell funnel.
+	const handleHowItWorksClick = () => {
+		recordTracksEvent( 'calypso_difm_offer_how_it_works_click', tracksProps );
+	};
+
 	return (
 		<DifmOfferModalFrame
 			labelledBy={ titleId }
@@ -70,7 +75,12 @@ export default function DifmOfferModal( {
 			onRequestClose={ handleClose }
 		>
 			{ step === 'offer' ? (
-				<OfferStep titleId={ titleId } tracksProps={ tracksProps } onContinue={ handleContinue } />
+				<OfferStep
+					titleId={ titleId }
+					tracksProps={ tracksProps }
+					onContinue={ handleContinue }
+					onHowItWorksClick={ handleHowItWorksClick }
+				/>
 			) : (
 				<RequestStep
 					titleId={ titleId }

@@ -135,6 +135,22 @@ describe( '<DifmOfferModal>', () => {
 		expect( await screen.findByText( 'Limited-time offer' ) ).toBeVisible();
 	} );
 
+	test( 'records a click on the How it works link as its own event', async () => {
+		const user = userEvent.setup();
+		const { recordTracksEvent } = renderModal();
+
+		await user.click( await screen.findByRole( 'link', { name: /How it works/ } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_difm_offer_how_it_works_click',
+			expectedTracksProps
+		);
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_dashboard_upsell_click',
+			expect.anything()
+		);
+	} );
+
 	test( 'records a click on continue and shows the request form', async () => {
 		const user = userEvent.setup();
 		const { recordTracksEvent } = renderModal();
