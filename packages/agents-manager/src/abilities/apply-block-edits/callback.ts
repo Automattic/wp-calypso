@@ -9,6 +9,7 @@ import {
 	describeUnmoved,
 	getUnframedClientIds,
 	snapshotLayout,
+	type ContrastBackdrop,
 	type LayoutSnapshot,
 } from '../../utils/canvas-capture';
 import { checkpointKeys, sealCheckpointForSwap, withCheckpoint } from '../../utils/checkpoints';
@@ -69,6 +70,8 @@ interface ApplyBlockEditsResultData {
 	 * the whole page's when custom CSS changed. Absent when none were measured.
 	 */
 	contrastFailures?: number;
+	/** The blocks painting backgrounds that text fails contrast against, for the server to name in a correction. */
+	contrastBackdrops?: ContrastBackdrop[];
 	error?: string;
 	details?: Record< string, unknown >;
 	outcome?: ApplyBlockEditsOutcome;
@@ -453,6 +456,7 @@ export async function applyBlockEditsCallback(
 			...result,
 			...( captureNotes.length > 0 && { captureNotes } ),
 			...( typeof contrast?.failures === 'number' && { contrastFailures: contrast.failures } ),
+			...( contrast && contrast.backdrops.length > 0 && { contrastBackdrops: contrast.backdrops } ),
 		};
 	}
 

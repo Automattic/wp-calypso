@@ -22,6 +22,9 @@ const MAX_RUNS = 20;
 const MAX_VISITED = 300;
 const MAX_NOTES = 4;
 const MAX_NAMED = 3;
+// The server caps the backdrop list at the same sizes.
+const MAX_BACKDROPS = 12;
+const MAX_BACKDROP_TEXTS = 12;
 
 // WCAG 2.x: 4.5:1 for body text, 3:1 for large text, which is 24px, or
 // 18.66px (14pt) when bold.
@@ -54,6 +57,18 @@ interface Backdrop {
 	clientId?: string;
 }
 
+/** A block painting a background that failing text sits on, for a correction to target. */
+export interface ContrastBackdrop {
+	/** Short id of the block that paints the failing background, the same id the notes use. */
+	clientId: string;
+	/** Block name, e.g. `core/group`, `core/button`. */
+	name: string;
+	/** Whether the block sets its background itself, rather than taking it from the theme or global styles. */
+	ownBackground: boolean;
+	/** Short ids of the failing text blocks over this backdrop, not cut short as the notes are. */
+	textClientIds: string[];
+}
+
 /** The capture notes on the edited text's contrast, and how many of its blocks fall below their threshold. */
 export interface TextContrast {
 	notes: string[];
@@ -63,6 +78,8 @@ export interface TextContrast {
 	 * measured and readable.
 	 */
 	failures: number | null;
+	/** The blocks painting the backgrounds that failing text sits on, worst first; empty without failures. */
+	backdrops: ContrastBackdrop[];
 }
 
 /** One run of text: the colours it renders in, and the threshold it is held to. */
@@ -658,5 +675,49 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 		);
 	}
 
-	return { notes, failures: measured.length ? failing.length : null };
+	// For the server, which names the blocks to fix in a correction rather
+	// than leave the model to copy ids out of the notes. Every backdrop block
+	// under failing text, worst first, by the short ids the notes use; a
+	// block without one is left out rather than named by its long id, and so
+	// is the page background, which no edit can reach.
+	const byPainter = new Map< string, Measured[] >();
+
+	failing.forEach( ( item ) => {
+		const painter = item.backdrop.clientId;
+
+		if ( painter ) {
+			byPainter.set( painter, [ ...( byPainter.get( painter ) ?? [] ), item ] );
+		}
+	} );
+
+	const backdrops = [ ...byPainter ]
+		.map( ( [ painter, items ] ) => ( {
+			painter,
+			items,
+			worst: Math.min( ...items.map( ( item ) => item.ratio ) ),
+		} ) )
+		.sort( ( a, b ) => a.worst - b.worst )
+		.flatMap( ( { painter, items } ): ContrastBackdrop[] => {
+			const clientId = findShortId( painter );
+			const name = getBlock( painter )?.name;
+
+			if ( ! clientId || ! name ) {
+				return [];
+			}
+
+			return [
+				{
+					clientId,
+					name,
+					ownBackground: isOwnBackground( painter ),
+					textClientIds: items
+						.map( ( item ) => findShortId( item.clientId ) )
+						.filter( ( id ): id is string => !! id )
+						.slice( 0, MAX_BACKDROP_TEXTS ),
+				},
+			];
+		} )
+		.slice( 0, MAX_BACKDROPS );
+
+	return { notes, failures: measured.length ? failing.length : null, backdrops };
 }
