@@ -1365,6 +1365,93 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Route /start/launch-site', () => {
+		const query = { siteSlug: 'example.wordpress.com' };
+		const search = 'siteSlug=example.wordpress.com';
+
+		it( 'redirects to /setup/launch-site with the query', async () => {
+			const { response } = await app.run( {
+				request: {
+					url: '/start/launch-site',
+					query: { siteSlug: 'example.wordpress.com', back_to: '/sites' },
+				},
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				302,
+				'/setup/launch-site?siteSlug=example.wordpress.com&back_to=%2Fsites'
+			);
+		} );
+
+		it( 'records the hit without the full query', async () => {
+			const { request } = await app.run( {
+				request: {
+					url: '/start/launch-site/plans-launch',
+					query: { siteSlug: 'example.wordpress.com', ref: 'admin-bar', coupon: 'SECRET' },
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				{ path: '/start/launch-site/plans-launch', ref: 'admin-bar', query_source: undefined },
+				request
+			);
+		} );
+
+		it( 'still redirects when tracking throws', async () => {
+			app.getMocks().analytics.tracks.recordEvent.mockImplementationOnce( () => {
+				throw new Error( 'Fake error' );
+			} );
+			const { response } = await app.run( { request: { url: '/start/launch-site', query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, `/setup/launch-site?${ search }` );
+		} );
+
+		it( 'only records string caller hints', async () => {
+			const { request } = await app.run( {
+				request: {
+					url: '/start/launch-site',
+					query: { ...query, ref: [ 'a', 'b' ], source: { a: 'b' } },
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				{ path: '/start/launch-site', ref: undefined, query_source: undefined },
+				request
+			);
+		} );
+
+		it( 'leaves requests without a siteSlug to the signup section, but still records them', async () => {
+			const { response } = await app.run( { request: { url: '/start/launch-site' } } );
+			expect( response.redirect ).not.toHaveBeenCalledWith( 302, expect.anything() );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalled();
+		} );
+
+		it( 'does not record HEAD requests', async () => {
+			await app.run( { request: { url: '/start/launch-site', method: 'HEAD', query } } );
+			expect( app.getMocks().analytics.tracks.recordEvent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not record outside production', async () => {
+			const devApp = buildApp( 'development' );
+			devApp.withServerRender( '' );
+			devApp.withMockFilesystem();
+			devApp.withEvergreenBrowser();
+			const { response } = await devApp.run( { request: { url: '/start/launch-site', query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, `/setup/launch-site?${ search }` );
+			expect( devApp.getMocks().analytics.tracks.recordEvent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'drops legacy step and locale segments', async () => {
+			const { response } = await app.run( {
+				request: { url: '/start/launch-site/domains-launch/es/', query },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, `/setup/launch-site?${ search }` );
+		} );
+
+		it( 'leaves flows that only share the prefix alone', async () => {
+			const { response } = await app.run( { request: { url: '/start/launch-site-foo' } } );
+			expect( response.redirect ).not.toHaveBeenCalledWith( 302, expect.anything() );
+		} );
+	} );
+
 	describe( 'Route /cspreport', () => {
 		let customApp;
 
@@ -1652,6 +1739,24 @@ describe( 'dashboard app', () => {
 		expect( request.context.sectionName ).toBe( 'dashboard-dotcom' );
 		expect( response.statusCode ).not.toBe( 404 );
 		expect( app.getMocks().serverRender ).toHaveBeenCalled();
+	} );
+
+	// Logged-out requests skip the dashboard `/start` route anyway, since signup is isomorphic.
+	it( 'redirects legacy /start/launch-site ahead of the dashboard signup route', async () => {
+		app.withAuthenticatedUser();
+
+		const { response } = await app.run( {
+			request: {
+				url: '/start/launch-site',
+				hostname: 'my.wordpress.com',
+				query: { siteSlug: 'example.wordpress.com' },
+			},
+		} );
+
+		expect( response.redirect ).toHaveBeenCalledWith(
+			302,
+			'/setup/launch-site?siteSlug=example.wordpress.com'
+		);
 	} );
 
 	it( 'serves robots.txt that disallows all paths', async () => {

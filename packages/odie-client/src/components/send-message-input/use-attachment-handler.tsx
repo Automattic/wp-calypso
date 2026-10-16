@@ -81,12 +81,13 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 };
 
 export const useAttachmentHandler = () => {
-	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport } = useOdieAssistantContext();
+	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport, hasOpenZendeskChat } =
+		useOdieAssistantContext();
 	const [ attachmentPreviewFiles, setAttachmentPreviewFiles ] = useState< File[] >( [] );
 	const [ badFormatNotice, setBadFormatNotice ] = useState< typeof NOTICE_BAD_FORMAT >();
 
 	const { data: authData } = useAuthenticateZendeskMessaging(
-		isUserEligibleForPaidSupport,
+		isUserEligibleForPaidSupport || hasOpenZendeskChat,
 		'messenger'
 	);
 

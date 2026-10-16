@@ -1,6 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import type { AgencyProduct } from '@automattic/api-core';
 
+export const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
+
 export const PLAN_CATEGORY_STANDARD = 'standard';
 export const PLAN_CATEGORY_ENTERPRISE = 'enterprise';
 export const PLAN_CATEGORY_SIGNATURE = 'signature';

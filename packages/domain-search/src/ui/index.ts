@@ -1,3 +1,4 @@
+export { DomainSearchAlreadyHaveSiteCTA } from './domain-search-already-have-site-cta';
 export { DomainSearchAlreadyOwnDomainCTA } from './domain-search-already-own-domain-cta';
 export { DomainSearchNotice } from './domain-search-notice';
 export * from './domain-search-trademark-claims-modal';

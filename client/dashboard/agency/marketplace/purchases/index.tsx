@@ -30,6 +30,7 @@ import {
 	getLicenseId,
 	recordLicenseViewChanges,
 	toFetchOptions,
+	withLicenseColumnStyles,
 } from './dataviews';
 import { useCheckoutReturn } from './use-checkout-return';
 import { useProvisioningLicenses } from './use-provisioning-licenses';
@@ -53,6 +54,8 @@ export default function MarketplacePurchases() {
 		queryParams: currentSearchParams,
 		queryParamFilterFields: [ { field: 'status', operator: 'is' } ],
 	} );
+
+	const tableView = useMemo( () => withLicenseColumnStyles( view ), [ view ] );
 
 	const { data, isLoading, isPlaceholderData } = useQuery( {
 		...paginatedJetpackAgencyLicensesQuery( agencyId, toFetchOptions( view ) ),
@@ -144,7 +147,7 @@ export default function MarketplacePurchases() {
 					data={ data?.items ?? [] }
 					fields={ fields }
 					actions={ actions }
-					view={ view }
+					view={ tableView }
 					isLoading={ isLoading }
 					isPlaceholderData={ isPlaceholderData }
 					onChangeView={ onChangeView }

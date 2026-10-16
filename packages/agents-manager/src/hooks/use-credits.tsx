@@ -94,7 +94,7 @@ interface UseCreditsOptions {
 	isNoticeVisible: boolean;
 }
 
-interface UseCreditsResult {
+export interface UseCreditsResult {
 	chat: UseAgentChatReturn;
 	/** Dot + popover; hidden until this site returns valid allowance metadata. */
 	trailingActions?: TrailingActions;

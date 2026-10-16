@@ -1,6 +1,6 @@
 import InteractiveUi from './interactive-ui';
 import { getInteractiveUiMessagesFromText } from './interactive-ui-messages';
-import type { InteractiveUiPresentation } from './use-interactive-ui';
+import type { InteractiveUiPresentation } from '../hooks/use-interactive-ui';
 import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
 import type { ComponentType } from 'react';
 

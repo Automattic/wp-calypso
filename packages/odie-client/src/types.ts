@@ -20,6 +20,8 @@ export type OdieAssistantContextInterface = {
 	isLoadingZendeskHistory: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
+	// An open human chat can be reopened even without paid support.
+	hasOpenZendeskChat: boolean;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
@@ -46,6 +48,7 @@ export type OdieAssistantProviderProps = {
 	isLoadingCanConnectToZendesk?: boolean;
 	botName?: string;
 	isUserEligibleForPaidSupport?: boolean;
+	hasOpenZendeskChat?: boolean;
 	isMinimized?: boolean;
 	currentUser: CurrentUser;
 	selectedSiteId?: number | null;

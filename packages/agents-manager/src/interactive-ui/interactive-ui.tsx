@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import type { InteractiveUiPresentation } from './use-interactive-ui';
+import type { InteractiveUiPresentation } from '../hooks/use-interactive-ui';
 import type { ReactNode } from 'react';
 
 class SurfaceBoundary extends Component<

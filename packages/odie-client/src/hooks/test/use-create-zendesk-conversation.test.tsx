@@ -15,6 +15,7 @@ const mockSetChat = jest.fn();
 const mockSubmitUserFields = jest.fn();
 const mockAddEventToInteraction = jest.fn();
 const mockStartNewInteraction = jest.fn();
+const mockGetOdieTransferMessages = jest.fn().mockReturnValue( [] );
 let mockHasReachedLimit = false;
 
 jest.mock( 'smooch', () => ( {
@@ -68,7 +69,7 @@ jest.mock( '../use-open-interaction-status-map', () => ( {
 
 jest.mock( '../../constants', () => ( {
 	getErrorTryAgainLaterMessage: () => ( { content: 'try-again', role: 'bot', type: 'message' } ),
-	getOdieTransferMessages: () => [],
+	getOdieTransferMessages: ( ...args: unknown[] ) => mockGetOdieTransferMessages( ...args ),
 	getZendeskChatStartedMetaMessage: () => ( {
 		content: 'chat-started',
 		role: 'bot',
@@ -213,5 +214,43 @@ describe( 'useCreateZendeskConversation — Smooch-not-ready retry loop', () => 
 		expect( smoochCreateConversation ).toHaveBeenCalledTimes( 1 );
 		const error = lastTrackedProps( 'error_creating_zendesk_conversation' );
 		expect( error ).toMatchObject( { smooch_attempts: 1, smooch_waited_ms: 0 } );
+	} );
+} );
+
+describe( 'useCreateZendeskConversation — transfer messages', () => {
+	// Runs the chat update the hook queued once the conversation exists.
+	const applyChatUpdate = ( prevChat: { odieId: string | null } ) => {
+		const update = mockSetChat.mock.calls.at( -1 )?.[ 0 ];
+		return update( { ...prevChat, messages: [] } );
+	};
+
+	beforeEach( () => {
+		smoochCreateConversation.mockResolvedValueOnce( { id: 'conv-1', metadata: {} } );
+	} );
+
+	it( 'refers back to the Odie chat after a handoff', async () => {
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await result.current( { createdFrom: 'automatic_escalation' } );
+
+		applyChatUpdate( { odieId: 'odie-1' } );
+
+		expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith(
+			'wpcom-support-chat',
+			expect.any( Function ),
+			false
+		);
+	} );
+
+	it( 'uses the direct copy when the user went straight to a human', async () => {
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await result.current( { createdFrom: 'direct_url' } );
+
+		applyChatUpdate( { odieId: null } );
+
+		expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith(
+			'wpcom-support-chat',
+			expect.any( Function ),
+			true
+		);
 	} );
 } );
