@@ -605,7 +605,11 @@ const onboarding: FlowV2< typeof initialize > = {
 					// "Purchase a plan" on a domain that needs one before it can be connected:
 					// the customer asked for the grid, so the free shortcut does not apply.
 					return navigateAfterDomain( {
-						paidDomain: Boolean( providedDependencies?.skipToPlan ),
+						paidDomain: Boolean(
+							providedDependencies &&
+							'skipToPlan' in providedDependencies &&
+							providedDependencies.skipToPlan
+						),
 					} );
 				}
 				case 'plans': {
