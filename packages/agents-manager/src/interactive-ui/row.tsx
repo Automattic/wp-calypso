@@ -1,17 +1,7 @@
 import { createComponentImplementation } from '@a2ui/react/v0_9';
 import { RowApi, markChildRef } from '@a2ui/web_core/v0_9';
+import clsx from 'clsx';
 import { z } from 'zod';
-
-const justify = {
-	start: 'flex-start',
-	end: 'flex-end',
-	center: 'center',
-	spaceAround: 'space-around',
-	spaceBetween: 'space-between',
-	spaceEvenly: 'space-evenly',
-	stretch: 'stretch',
-};
-const align = { start: 'flex-start', end: 'flex-end', center: 'center', stretch: 'stretch' };
 
 export default createComponentImplementation(
 	{
@@ -22,13 +12,11 @@ export default createComponentImplementation(
 	},
 	( { props, buildChild } ) => (
 		<div
-			style={ {
-				display: 'flex',
-				gap: 8,
-				flexWrap: 'wrap',
-				justifyContent: justify[ props.justify ?? 'start' ],
-				alignItems: align[ props.align ?? 'stretch' ],
-			} }
+			className={ clsx(
+				'agents-manager-interactive-ui__row',
+				`agents-manager-interactive-ui__row--justify-${ props.justify ?? 'start' }`,
+				`agents-manager-interactive-ui__row--align-${ props.align ?? 'stretch' }`
+			) }
 		>
 			{ props.children.map( ( child ) =>
 				typeof child === 'string' ? buildChild( child ) : buildChild( child.id, child.basePath )

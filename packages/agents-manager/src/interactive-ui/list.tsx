@@ -1,8 +1,7 @@
 import { createComponentImplementation } from '@a2ui/react/v0_9';
 import { ListApi, markChildRef } from '@a2ui/web_core/v0_9';
+import clsx from 'clsx';
 import { z } from 'zod';
-
-const align = { start: 'flex-start', end: 'flex-end', center: 'center', stretch: 'stretch' };
 
 export default createComponentImplementation(
 	{
@@ -13,19 +12,17 @@ export default createComponentImplementation(
 	},
 	( { props, buildChild } ) => (
 		<ul
-			style={ {
-				display: 'flex',
-				flexDirection: props.direction === 'horizontal' ? 'row' : 'column',
-				alignItems: align[ props.align ?? 'stretch' ],
-				gap: 8,
-				margin: 0,
-				padding: 0,
-				listStyle: 'none',
-				overflow: 'auto',
-			} }
+			className={ clsx(
+				'agents-manager-interactive-ui__list',
+				`agents-manager-interactive-ui__list--${ props.direction ?? 'vertical' }`,
+				`agents-manager-interactive-ui__list--align-${ props.align ?? 'stretch' }`
+			) }
 		>
 			{ props.children.map( ( child ) => (
-				<li key={ typeof child === 'string' ? child : child.id } style={ { minWidth: 0 } }>
+				<li
+					key={ typeof child === 'string' ? child : child.id }
+					className="agents-manager-interactive-ui__list-item"
+				>
 					{ typeof child === 'string'
 						? buildChild( child )
 						: buildChild( child.id, child.basePath ) }

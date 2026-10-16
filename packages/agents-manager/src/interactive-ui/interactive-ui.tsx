@@ -57,7 +57,6 @@ export default function InteractiveUi( {
 				data-agenttic-isolated
 				className="agents-manager-interactive-ui"
 				disabled={ isDisabled }
-				style={ { border: 0, padding: 0, margin: 0, minWidth: 0 } }
 			>
 				<SurfaceBoundary revision={ revision }>
 					<InteractiveUiDisabledContext.Provider value={ isDisabled }>

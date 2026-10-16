@@ -39,7 +39,7 @@ export default createComponentImplementation(
 			);
 		}
 		return (
-			<fieldset style={ { border: 0, padding: 0, margin: 0 } }>
+			<fieldset className="agents-manager-interactive-ui__choice-picker">
 				{ props.label && (
 					<BaseControl.VisualLabel as="legend">{ props.label }</BaseControl.VisualLabel>
 				) }

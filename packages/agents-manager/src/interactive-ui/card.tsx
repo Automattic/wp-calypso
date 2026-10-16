@@ -5,12 +5,7 @@ import { Card, CardBody } from '@wordpress/components';
 export default createComponentImplementation(
 	{ name: CardApi.name, schema: CardApi.schema.pick( { child: true } ) },
 	( { props, buildChild } ) => (
-		<Card
-			style={ {
-				backgroundColor: 'var(--color-background, #fff)',
-				color: 'var(--color-foreground, #1e1e1e)',
-			} }
-		>
+		<Card className="agents-manager-interactive-ui__card">
 			<CardBody>{ buildChild( props.child ) }</CardBody>
 		</Card>
 	)

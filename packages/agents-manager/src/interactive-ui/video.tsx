@@ -16,7 +16,7 @@ export const Video = createComponentImplementation(
 			src={ props.url }
 			controls
 			preload="metadata"
-			style={ { maxWidth: '100%', height: 'auto', alignSelf: 'flex-start' } }
+			className="agents-manager-interactive-ui__video"
 		/>
 	)
 );

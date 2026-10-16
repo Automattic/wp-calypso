@@ -25,7 +25,6 @@ export const Modal = createComponentImplementation(
 							data-agenttic-isolated
 							className="agents-manager-interactive-ui"
 							disabled={ isDisabled }
-							style={ { border: 0, padding: 0, margin: 0, minWidth: 0 } }
 						>
 							{ buildChild( props.content ) }
 						</fieldset>

@@ -7,11 +7,7 @@ export default createComponentImplementation(
 		<div
 			role="separator"
 			aria-orientation={ props.axis ?? 'horizontal' }
-			style={ {
-				alignSelf: 'stretch',
-				borderTop: props.axis === 'vertical' ? undefined : '1px solid #ddd',
-				borderLeft: props.axis === 'vertical' ? '1px solid #ddd' : undefined,
-			} }
+			className="agents-manager-interactive-ui__divider"
 		/>
 	)
 );
