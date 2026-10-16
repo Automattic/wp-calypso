@@ -5,6 +5,7 @@ import {
 	captureCanvas,
 	describeCaptureShape,
 	describeMeasuredLayout,
+	describeTextContrast,
 	describeUnmoved,
 	getUnframedClientIds,
 	snapshotLayout,
@@ -412,12 +413,16 @@ export async function applyBlockEditsCallback(
 	// comparison can be judged from them at all. The measurements are what a
 	// picture cannot settle: an offset of a few dozen pixels, or an image
 	// sitting at the top of a centred block, or an edit that changed settings
-	// and moved nothing. Kept out of `message`, which the user may see as the
-	// reply.
+	// and moved nothing. The contrast is measured against what the canvas
+	// renders behind the text, not what the blocks set: an unstyled group can
+	// paint a theme colour the attributes never mention, and dark on dark is
+	// easy to miss in a scaled-down picture. Kept out of `message`, which the
+	// user may see as the reply.
 	if ( fileParts ) {
 		const captureNotes = [
 			describeCaptureShape( fileParts ),
 			describeReferenceFraming( referenceClientIds, getUnframedClientIds( referenceClientIds ) ),
+			...describeTextContrast( changedClientIds ),
 			...describeMeasuredLayout( changedClientIds ),
 			layoutBefore && result.outcome === 'updated' ? describeUnmoved( layoutBefore ) : '',
 		].filter( Boolean );

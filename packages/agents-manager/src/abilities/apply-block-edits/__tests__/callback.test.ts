@@ -3,12 +3,13 @@ jest.mock( '../../../utils/block-ids', () => ( {
 	resolveClientId: jest.fn(),
 } ) );
 jest.mock( '../../../utils/canvas-binding', () => ( { getBlockingMove: jest.fn() } ) );
-// The capture and the layout measurements are stubbed; the sentences describing
+// The capture and the canvas measurements are stubbed; the sentences describing
 // what came back are pure and stay real, so the assertions here exercise them.
 jest.mock( '../../../utils/canvas-capture', () => ( {
 	...jest.requireActual( '../../../utils/canvas-capture' ),
 	captureCanvas: jest.fn(),
 	describeMeasuredLayout: jest.fn(),
+	describeTextContrast: jest.fn(),
 	describeUnmoved: jest.fn(),
 	snapshotLayout: jest.fn(),
 } ) );
@@ -56,6 +57,7 @@ import { getBlockingMove } from '../../../utils/canvas-binding';
 import {
 	captureCanvas,
 	describeMeasuredLayout,
+	describeTextContrast,
 	describeUnmoved,
 	snapshotLayout,
 } from '../../../utils/canvas-capture';
@@ -142,6 +144,7 @@ beforeEach( () => {
 		.mockResolvedValue( { recoveredTargetIds: new Set(), insertedClientIds: [] } );
 	jest.mocked( captureCanvas ).mockResolvedValue( null );
 	jest.mocked( describeMeasuredLayout ).mockReturnValue( [] );
+	jest.mocked( describeTextContrast ).mockReturnValue( [] );
 	jest.mocked( snapshotLayout ).mockReturnValue( null );
 	jest.mocked( describeUnmoved ).mockReturnValue( '' );
 	// The checkpoint engine is exercised in its own suite; here it runs the write.
@@ -640,10 +643,30 @@ describe( 'applyBlockEditsCallback', () => {
 			expect( result.result.captureNotes ).toEqual( [ 'Row in group (abcd): …' ] );
 		} );
 
+		it( 'puts the text contrast between the reference note and the measured layout', async () => {
+			mountCanvasWith( [ 'resolved-ref1' ] );
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			jest.mocked( describeTextContrast ).mockReturnValue( [ 'Text contrast too low: …' ] );
+			jest.mocked( describeMeasuredLayout ).mockReturnValue( [ 'Row in group (abcd): …' ] );
+
+			const result = await applyBlockEditsCallback( {
+				...input,
+				visualCheckClientIds: [ 'ref1' ],
+			} );
+
+			expect( describeTextContrast ).toHaveBeenCalledWith( [ 'resolved-a1' ] );
+			expect( result.result.captureNotes ).toEqual( [
+				expect.stringContaining( 'named for comparison' ),
+				'Text contrast too low: …',
+				'Row in group (abcd): …',
+			] );
+		} );
+
 		it( 'measures nothing without a capture', async () => {
 			const result = await applyBlockEditsCallback( input );
 
 			expect( describeMeasuredLayout ).not.toHaveBeenCalled();
+			expect( describeTextContrast ).not.toHaveBeenCalled();
 			expect( result.result.captureNotes ).toBeUndefined();
 		} );
 
