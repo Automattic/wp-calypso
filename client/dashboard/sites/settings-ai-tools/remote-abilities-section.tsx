@@ -3,17 +3,16 @@ import {
 	userSettingsQuery,
 	siteAbilitiesQuery,
 } from '@automattic/api-queries';
+import languages from '@automattic/languages';
 import { useMutation, useSuspenseQuery, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
 	__experimentalHeading as Heading,
 	ToggleControl,
 	Spinner,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Fragment } from 'react';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
 	getRemoteAbilityCategory,
@@ -21,8 +20,9 @@ import {
 	getSiteRemoteGroups,
 } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
+import { useLocale } from '../../app/locale';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { Card, CardBody, CardDivider } from '../../components/card';
+import { Card, CardBody, CardHeader } from '../../components/card';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 import type { Site, SiteAbility } from '@automattic/api-core';
@@ -44,9 +44,9 @@ function formatNamespace( namespace: string ): string {
 
 /**
  * What one access-level page offers, keyed by namespace: the group keys its
- * toggle writes, and the abilities listed so the owner can see what the group
- * covers. Saved groups always render: their state lives on WordPress.com, so
- * it survives an unreachable site or an unpublished ability.
+ * card intent writes, and the abilities listed under it. Saved groups always
+ * render: their state lives on WordPress.com, so it survives an unreachable
+ * site or an unpublished ability.
  */
 function collectNamespaces(
 	abilities: SiteAbility[] | undefined,
@@ -90,7 +90,7 @@ function collectNamespaces(
 	return new Map( [ ...namespaces.entries() ].sort( ( [ a ], [ b ] ) => a.localeCompare( b ) ) );
 }
 
-export default function RemoteAbilitiesCard( {
+export default function RemoteAbilitiesSection( {
 	site,
 	category,
 }: {
@@ -99,8 +99,14 @@ export default function RemoteAbilitiesCard( {
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const tracksAudienceProps = useMcpTracksAudienceProps();
+	const localeSlug = useLocale();
+	const wpLocale = languages.find( ( { langSlug } ) => langSlug === localeSlug )?.wpLocale;
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
-	const { data: abilities, isLoading, isError } = useQuery( siteAbilitiesQuery( site.ID ) );
+	const {
+		data: abilities,
+		isLoading,
+		isError,
+	} = useQuery( siteAbilitiesQuery( site.ID, wpLocale || undefined ) );
 
 	const savedGroups = getSiteRemoteGroups( userSettings || {}, site.ID );
 	const namespaces = collectNamespaces( abilities, savedGroups, category );
@@ -145,80 +151,82 @@ export default function RemoteAbilitiesCard( {
 	const allEnabled = allKeys.length > 0 && allKeys.every( ( key ) => savedGroups[ key ] === true );
 
 	return (
-		<Card>
-			<CardBody>
-				<VStack spacing={ 4 }>
-					<SectionHeader
-						title={ __( 'Site-published abilities' ) }
-						description={ __(
-							'Advanced: choose which abilities published by this site’s plugins an external AI agent may use. Groups are off unless enabled here.'
-						) }
-						level={ 3 }
-						actions={
-							namespaces.size > 0 ? (
-								<ToggleControl
-									__nextHasNoMarginBottom
-									checked={ allEnabled }
-									disabled={ mutation.isPending }
-									label={ __( 'Enable all' ) }
-									onChange={ ( checked ) => saveGroups( allKeys, checked, 'all' ) }
-								/>
-							) : undefined
-						}
-					/>
-					{ isLoading && namespaces.size === 0 && <Spinner /> }
-					{ isError && (
-						<Notice density="medium">
-							{ __(
-								'This site’s abilities can’t be loaded right now. The site may be unreachable or too old to publish them. Your saved settings are shown and still apply.'
-							) }
-						</Notice>
+		<>
+			<VStack spacing={ 2 }>
+				<SectionHeader
+					title={ __( 'Site-published abilities' ) }
+					description={ __(
+						'Advanced: choose which abilities published by this site’s plugins an external AI agent may use. All are off unless enabled here.'
 					) }
-				</VStack>
-			</CardBody>
+					level={ 3 }
+					actions={
+						namespaces.size > 0 ? (
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ allEnabled }
+								disabled={ mutation.isPending }
+								label={ __( 'Enable all' ) }
+								onChange={ ( checked ) => saveGroups( allKeys, checked, 'all' ) }
+							/>
+						) : undefined
+					}
+				/>
+				{ isLoading && namespaces.size === 0 && <Spinner /> }
+				{ isError && (
+					<Notice density="medium">
+						{ __(
+							'This site’s abilities can’t be loaded right now. The site may be unreachable or too old to publish them. Your saved settings are shown and still apply.'
+						) }
+					</Notice>
+				) }
+			</VStack>
 			{ [ ...namespaces.entries() ].map( ( [ namespace, group ] ) => {
 				const namespaceEnabled =
 					group.keys.length > 0 && group.keys.every( ( key ) => savedGroups[ key ] === true );
 				return (
-					<Fragment key={ namespace }>
-						<CardDivider className="mcp-settings__sub-divider" />
-						<CardBody>
-							<VStack spacing={ 4 }>
-								<HStack justify="space-between" alignment="center">
-									<Heading level={ 4 } weight={ 600 } size={ 14 }>
-										{ formatNamespace( namespace ) }
-									</Heading>
-									<ToggleControl
-										__nextHasNoMarginBottom
-										checked={ namespaceEnabled }
-										disabled={ mutation.isPending }
-										label={ __( 'Enable all' ) }
-										onChange={ ( checked ) =>
-											saveGroups( group.keys, checked, `${ category }:${ namespace }` )
-										}
-									/>
-								</HStack>
-								{ group.abilities.length > 0 && (
-									<VStack spacing={ 3 }>
-										{ group.abilities.map( ( ability ) => (
-											<VStack key={ ability.name } spacing={ 1 }>
-												<Text as="p" weight={ 500 }>
-													{ ability.label || ability.name }
-												</Text>
-												{ ability.description && (
-													<Text as="p" variant="muted" size={ 13 }>
-														{ ability.description }
-													</Text>
-												) }
-											</VStack>
-										) ) }
-									</VStack>
-								) }
-							</VStack>
-						</CardBody>
-					</Fragment>
+					<Card key={ namespace }>
+						<CardHeader>
+							<HStack justify="space-between" alignment="center">
+								<Heading level={ 3 } weight={ 600 } size={ 14 }>
+									{ formatNamespace( namespace ) }
+								</Heading>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ namespaceEnabled }
+									disabled={ mutation.isPending }
+									label={ __( 'Enable all' ) }
+									onChange={ ( checked ) =>
+										saveGroups( group.keys, checked, `${ category }:${ namespace }` )
+									}
+								/>
+							</HStack>
+						</CardHeader>
+						{ group.abilities.length > 0 && (
+							<CardBody>
+								<VStack spacing={ 4 }>
+									{ group.abilities.map( ( ability ) => {
+										const groupKey = getRemoteAbilityGroupKey(
+											ability.name,
+											ability.meta?.annotations
+										);
+										return (
+											<ToggleControl
+												key={ ability.name }
+												__nextHasNoMarginBottom
+												checked={ savedGroups[ groupKey ] === true }
+												disabled={ mutation.isPending }
+												label={ ability.label || ability.name }
+												help={ ability.description }
+												onChange={ ( checked ) => saveGroups( [ groupKey ], checked, groupKey ) }
+											/>
+										);
+									} ) }
+								</VStack>
+							</CardBody>
+						) }
+					</Card>
 				);
 			} ) }
-		</Card>
+		</>
 	);
 }

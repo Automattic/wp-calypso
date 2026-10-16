@@ -13,7 +13,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import RemoteAbilitiesCard from '../remote-abilities-card';
+import RemoteAbilitiesSection from '../remote-abilities-section';
 import type { Site, SiteAbility, UserSettings } from '@automattic/api-core';
 
 const JETPACK_SITE = {
@@ -77,7 +77,8 @@ function seed( {
 	} as unknown as UserSettings );
 	queryClient.setQueryData( isAutomatticianQuery().queryKey, { number: 0, teams: [] } );
 	if ( abilities ) {
-		queryClient.setQueryData( siteAbilitiesQuery( activeSite.ID ).queryKey, abilities );
+		// The default test user's language is 'en', which maps to wpLocale 'en_US'.
+		queryClient.setQueryData( siteAbilitiesQuery( activeSite.ID, 'en_US' ).queryKey, abilities );
 	}
 }
 
@@ -112,15 +113,15 @@ function mockRemoteGroupsSave( activeSite: Site, expectedGroups: Record< string,
 		} );
 }
 
-function getNamespaceToggle( namespace: string ) {
-	const heading = screen.getByRole( 'heading', { name: namespace } );
+function getPluginIntent( plugin: string ) {
+	const heading = screen.getByRole( 'heading', { name: plugin } );
 	return within( heading.parentElement as HTMLElement ).getByRole( 'checkbox', {
 		name: 'Enable all',
 	} );
 }
 
-function getCardToggle() {
-	// The card-level Enable all precedes the per-namespace toggles in the document.
+function getSectionIntent() {
+	// The section-level Enable all precedes the per-plugin intents in the document.
 	return screen.getAllByRole( 'checkbox', { name: 'Enable all' } )[ 0 ];
 }
 
@@ -139,85 +140,117 @@ beforeEach( () => {
 	} );
 } );
 
-describe( '<RemoteAbilitiesCard>', () => {
-	test( 'read card lists read abilities with labels and descriptions, excluding writes', () => {
+describe( '<RemoteAbilitiesSection>', () => {
+	test( 'read page lists read abilities as toggles with descriptions, excluding writes', () => {
 		seed( { abilities: catalog, remoteGroups: { 'read:jetpack-forms': true } } );
-		render( <RemoteAbilitiesCard site={ JETPACK_SITE } category="read" />, { queryClient } );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="read" />, { queryClient } );
 
 		expect( screen.getByRole( 'heading', { name: 'Site-published abilities' } ) ).toBeVisible();
-		expect( getNamespaceToggle( 'Jetpack Forms' ) ).toBeChecked();
-		expect( screen.getByText( 'Get form' ) ).toBeVisible();
+		expect( getPluginIntent( 'Jetpack Forms' ) ).toBeChecked();
+		expect( screen.getByRole( 'checkbox', { name: 'Get form' } ) ).toBeChecked();
 		expect( screen.getByText( 'Read a single form.' ) ).toBeVisible();
-		expect( screen.queryByText( 'Update form' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Delete form' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'checkbox', { name: 'Update form' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: 'Akismet' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'write card lists write and destructive abilities with no destructive labeling', () => {
+	test( 'write page lists write and destructive abilities with no destructive labeling', () => {
 		seed( { abilities: catalog, remoteGroups: { 'write:akismet': true } } );
-		render( <RemoteAbilitiesCard site={ JETPACK_SITE } category="write" />, { queryClient } );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
 
-		expect( getNamespaceToggle( 'Akismet' ) ).toBeChecked();
-		expect( getNamespaceToggle( 'Jetpack Forms' ) ).not.toBeChecked();
-		expect( screen.getByText( 'Update form' ) ).toBeVisible();
+		expect( getPluginIntent( 'Akismet' ) ).toBeChecked();
+		expect( getPluginIntent( 'Jetpack Forms' ) ).not.toBeChecked();
+		expect( screen.getByRole( 'checkbox', { name: 'Update form' } ) ).toBeVisible();
 		expect( screen.getByText( 'Change a form’s fields.' ) ).toBeVisible();
-		expect( screen.getByText( 'Delete form' ) ).toBeVisible();
+		expect( screen.getByRole( 'checkbox', { name: 'Delete form' } ) ).toBeVisible();
 		expect( screen.getByText( 'Delete a form and its responses.' ) ).toBeVisible();
-		expect( screen.getByText( 'Check comment' ) ).toBeVisible();
-		expect( screen.queryByText( 'Get form' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'checkbox', { name: 'Check comment' } ) ).toBeChecked();
+		expect( screen.queryByRole( 'checkbox', { name: 'Get form' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Destructive' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'a namespace toggle saves every group key it covers, destructive included', async () => {
+	test( 'an ability toggle saves only its own group key', async () => {
 		const user = userEvent.setup();
 		seed( { abilities: catalog } );
-		render( <RemoteAbilitiesCard site={ JETPACK_SITE } category="write" />, { queryClient } );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
+
+		const saveScope = mockRemoteGroupsSave( JETPACK_SITE, {
+			'write:jetpack-forms': true,
+		} );
+		await user.click( screen.getByRole( 'checkbox', { name: 'Update form' } ) );
+
+		await waitFor( () => {
+			expect( saveScope.isDone() ).toBe( true );
+		} );
+	} );
+
+	test( 'a destructive ability toggle saves the destructive group key with no labeling', async () => {
+		const user = userEvent.setup();
+		seed( { abilities: catalog } );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
+
+		const saveScope = mockRemoteGroupsSave( JETPACK_SITE, {
+			'destructive:jetpack-forms': true,
+		} );
+		await user.click( screen.getByRole( 'checkbox', { name: 'Delete form' } ) );
+
+		await waitFor( () => {
+			expect( saveScope.isDone() ).toBe( true );
+		} );
+		expect( screen.queryByText( 'Destructive' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'a plugin intent saves every group key the plugin has on the page', async () => {
+		const user = userEvent.setup();
+		seed( { abilities: catalog } );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
 
 		const saveScope = mockRemoteGroupsSave( JETPACK_SITE, {
 			'write:jetpack-forms': true,
 			'destructive:jetpack-forms': true,
 		} );
-		await user.click( getNamespaceToggle( 'Jetpack Forms' ) );
+		await user.click( getPluginIntent( 'Jetpack Forms' ) );
 
 		await waitFor( () => {
 			expect( saveScope.isDone() ).toBe( true );
 		} );
 		await waitFor( () => {
-			expect( getNamespaceToggle( 'Jetpack Forms' ) ).toBeChecked();
+			expect( getPluginIntent( 'Jetpack Forms' ) ).toBeChecked();
+			expect( screen.getByRole( 'checkbox', { name: 'Update form' } ) ).toBeChecked();
+			expect( screen.getByRole( 'checkbox', { name: 'Delete form' } ) ).toBeChecked();
 		} );
 	} );
 
-	test( 'the card-level Enable all saves every group key on the page', async () => {
+	test( 'the section intent saves every group key on the page', async () => {
 		const user = userEvent.setup();
 		seed( { abilities: catalog, remoteGroups: { 'write:akismet': true } } );
-		render( <RemoteAbilitiesCard site={ JETPACK_SITE } category="write" />, { queryClient } );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
 
-		expect( getCardToggle() ).not.toBeChecked();
+		expect( getSectionIntent() ).not.toBeChecked();
 
 		const saveScope = mockRemoteGroupsSave( JETPACK_SITE, {
 			'write:akismet': true,
 			'write:jetpack-forms': true,
 			'destructive:jetpack-forms': true,
 		} );
-		await user.click( getCardToggle() );
+		await user.click( getSectionIntent() );
 
 		await waitFor( () => {
 			expect( saveScope.isDone() ).toBe( true );
 		} );
 		await waitFor( () => {
-			expect( getCardToggle() ).toBeChecked();
-			expect( getNamespaceToggle( 'Jetpack Forms' ) ).toBeChecked();
+			expect( getSectionIntent() ).toBeChecked();
+			expect( getPluginIntent( 'Jetpack Forms' ) ).toBeChecked();
 		} );
 	} );
 
 	test( 'shows saved groups with a notice when the catalog cannot be loaded', async () => {
 		seed( { remoteGroups: { 'write:akismet': true } } );
 		const failureScope = mockCatalogFailure( JETPACK_SITE );
-		render( <RemoteAbilitiesCard site={ JETPACK_SITE } category="write" />, { queryClient } );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
 
 		expect( await screen.findByText( /can’t be loaded right now/ ) ).toBeVisible();
-		expect( getNamespaceToggle( 'Akismet' ) ).toBeChecked();
-		expect( screen.queryByText( 'Check comment' ) ).not.toBeInTheDocument();
+		expect( getPluginIntent( 'Akismet' ) ).toBeChecked();
+		expect( screen.queryByRole( 'checkbox', { name: 'Check comment' } ) ).not.toBeInTheDocument();
 
 		await waitFor( () => {
 			expect( failureScope.isDone() ).toBe( true );
@@ -226,7 +259,7 @@ describe( '<RemoteAbilitiesCard>', () => {
 
 	test( 'hides when the site publishes nothing and nothing is saved', () => {
 		seed( { abilities: [] } );
-		render( <RemoteAbilitiesCard site={ JETPACK_SITE } category="read" />, { queryClient } );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="read" />, { queryClient } );
 
 		expect(
 			screen.queryByRole( 'heading', { name: 'Site-published abilities' } )
@@ -235,7 +268,7 @@ describe( '<RemoteAbilitiesCard>', () => {
 
 	test( 'hides on Simple sites', () => {
 		seed( { activeSite: SIMPLE_SITE, abilities: catalog } );
-		render( <RemoteAbilitiesCard site={ SIMPLE_SITE } category="read" />, { queryClient } );
+		render( <RemoteAbilitiesSection site={ SIMPLE_SITE } category="read" />, { queryClient } );
 
 		expect(
 			screen.queryByRole( 'heading', { name: 'Site-published abilities' } )
