@@ -35,7 +35,6 @@
 		"calypso/ai-site-builder-flow": true,
 		"catch-js-errors": true,
 		"ciab/allow-domain-features": true,
-		"ciab/custom-branding": true,
 		"cookie-banner": true,
 		"dark-mode": true,
 		"dashboard/account-recovery-interstitial": false,
