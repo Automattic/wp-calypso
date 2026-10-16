@@ -127,7 +127,7 @@ describe( 'injectScopedReset', () => {
 			'.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item[aria-disabled="true"]'
 		);
 		expect( css ).toContain( 'cursor: default !important;' );
-		expect( css ).toContain( 'opacity: 0.5 !important;' );
+		expect( css ).toContain( 'color: #949494 !important;' );
 	} );
 
 	it( 'does not inject duplicate reset styles', () => {

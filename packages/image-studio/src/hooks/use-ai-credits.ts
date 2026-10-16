@@ -15,8 +15,12 @@ import {
 	getImageStudioBlogId,
 	getImageStudioIsDevMode,
 	getImageStudioSiteType,
+	trackImageStudioCreditsMeterOpened,
 	trackImageStudioUpgradeNoticeShown,
 	trackImageStudioUpgradeNoticeClick,
+	type CreditsMeterDetails,
+	type CreditsMeterOpenedTrigger,
+	type UpgradeLinkTrigger,
 	type UpgradeNoticeCredits,
 	type UpgradeNoticeTrigger,
 } from '../utils/tracking';
@@ -48,16 +52,27 @@ export function getSiteCreditsLevel( remaining: number ): SiteCreditsLevel | nul
 	return remaining < CREDITS_LOW_BALANCE ? 'low' : null;
 }
 
+const CREDITS_STATE_BY_LEVEL = { out: 'zero', low: 'low' } as const;
+
+function getMeterDetails(
+	status: PaidCreditsStatus,
+	level: SiteCreditsLevel | null
+): CreditsMeterDetails {
+	return {
+		meter: 'site_credits',
+		state: level ? CREDITS_STATE_BY_LEVEL[ level ] : 'ok',
+		planTier: status.planTier ?? 'none',
+		creditsLeft: status.remaining,
+	};
+}
+
 function getNoticeCredits(
 	status: PaidCreditsStatus,
-	level: SiteCreditsLevel,
+	level: SiteCreditsLevel | null,
 	{ purchaseKind, askToUpgrade }: CreditsPurchaseOptions
 ): UpgradeNoticeCredits {
 	return {
-		meter: 'site_credits',
-		state: level === 'out' ? 'zero' : 'low',
-		planTier: status.planTier ?? 'none',
-		creditsLeft: status.remaining,
+		...getMeterDetails( status, level ),
 		ctaType: getCreditsCtaType( purchaseKind, askToUpgrade ),
 		ref: purchaseKind ? CREDITS_UPGRADE_SOURCE : 'none',
 	};
@@ -105,7 +120,7 @@ export interface AiCreditsState {
 	/** The Agent's credits dot, for sites on a paid plan. */
 	meter?: {
 		status: CreditsStatus;
-		/** Upgrade or Add credits, by the site's plan. */
+		/** Upgrade or Add credits, by the site's plan. Its click joins the notice's events. */
 		action?: CreditsPurchaseAction;
 		/** Shown instead of that button to people who can't buy it. */
 		purchaseHint?: string;
@@ -188,6 +203,22 @@ export function useAiCredits( {
 		}
 	} );
 
+	// Every opening records what caused it, so the Agent's `credits_meter_opened` has a twin here.
+	const openMeter = useEvent(
+		(
+			next: PaidCreditsStatus,
+			nextLevel: SiteCreditsLevel | null,
+			trigger: CreditsMeterOpenedTrigger
+		) => {
+			setIsMeterOpen( true );
+			trackImageStudioCreditsMeterOpened( {
+				mode,
+				trigger,
+				...getMeterDetails( next, nextLevel ),
+			} );
+		}
+	);
+
 	// The Agent's parser, so the notice, the send block and the dot always agree. An unreadable
 	// balance keeps whatever was known, so a fluke never clears or shows a notice.
 	const applyCredits = useEvent(
@@ -203,7 +234,7 @@ export function useAiCredits( {
 			const level = getSiteCreditsLevel( next.remaining );
 			// A known balance running out opens the dot's details once. The first read stays quiet.
 			if ( level === 'out' && shown.current.level !== undefined && shown.current.level !== 'out' ) {
-				setIsMeterOpen( true );
+				openMeter( next, level, 'exhausted' );
 			}
 			if ( level !== shown.current.level ) {
 				if ( ! level ) {
@@ -290,12 +321,36 @@ export function useAiCredits( {
 	);
 	const isNoticeHidden = level === 'low' && isLowNoticeDismissed;
 
+	// One handler for the notice and the credits popover; `trigger` says which showed the
+	// link. A popover click can report `state: ok`, since the popover opens on a healthy balance.
+	const trackUpgradeClick = useEvent( ( trigger: UpgradeLinkTrigger ) => {
+		// Callers pass it only with a link; this narrows the types.
+		if ( ! status || ! purchaseKind ) {
+			return;
+		}
+		trackImageStudioUpgradeNoticeClick( {
+			mode,
+			trigger,
+			...getNoticeCredits( status, level, { purchaseKind } ),
+		} );
+	} );
+
 	const beforeSubmit = useEvent( () => {
-		if ( level !== 'out' ) {
+		if ( ! status || level !== 'out' ) {
 			return true;
 		}
-		setIsMeterOpen( true );
+		// Every blocked send counts, even with the popover already open.
+		openMeter( status, level, 'submit_blocked' );
 		return false;
+	} );
+
+	// Only a click that opens the popover records; the hook's own openings record in `openMeter`.
+	const toggleMeter = useEvent( ( open: boolean ) => {
+		if ( open && ! isMeterOpen && status ) {
+			openMeter( status, level, 'click' );
+		} else {
+			setIsMeterOpen( open );
+		}
 	} );
 
 	// Memoised so the memoised chat doesn't re-render whenever the modal does.
@@ -308,10 +363,13 @@ export function useAiCredits( {
 			meter: status
 				? {
 						status,
-						action: purchaseAction,
+						action: purchaseAction && {
+							...purchaseAction,
+							onClick: () => trackUpgradeClick( 'popover' ),
+						},
 						purchaseHint,
 						isOpen: isMeterOpen,
-						onToggle: setIsMeterOpen,
+						onToggle: toggleMeter,
 					}
 				: undefined,
 			notice:
@@ -323,12 +381,7 @@ export function useAiCredits( {
 							onDismiss: () => setIsLowNoticeDismissed( true ),
 							action: purchaseAction && {
 								...purchaseAction,
-								onClick: () =>
-									trackImageStudioUpgradeNoticeClick( {
-										mode,
-										trigger: shown.current.trigger,
-										...getNoticeCredits( status, level, { purchaseKind } ),
-									} ),
+								onClick: () => trackUpgradeClick( shown.current.trigger ),
 							},
 						}
 					: undefined,
@@ -337,15 +390,15 @@ export function useAiCredits( {
 			status,
 			level,
 			purchaseAction,
-			purchaseKind,
 			askToUpgrade,
 			purchaseHint,
 			isNoticeHidden,
 			isMeterOpen,
 			isLoading,
-			mode,
 			onTaskUpdate,
 			beforeSubmit,
+			toggleMeter,
+			trackUpgradeClick,
 		]
 	);
 }

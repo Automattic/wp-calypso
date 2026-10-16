@@ -22,12 +22,14 @@ import {
 } from '../abilities';
 import { findAbilityByName } from '../abilities/ability-name';
 import { handlePageDesignTaskUpdate } from '../abilities/stream-page-design/stream';
+import { wooFallbackToolProvider } from '../abilities/woocommerce';
 import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
 import { bigSkyPageContextProvider, isBigSkyEnabled } from './big-sky-page-context';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isEditorPage } from './is-editor-page';
 import { isReaderChatAgent } from './is-reader-chat-agent';
+import { isWooAiProvider } from './is-woo-ai-provider';
 import { setLoadedProviderIds } from './loaded-provider-ids';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type {
@@ -717,6 +719,13 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		if ( module.suppressEmptyViewDefaults === true ) {
 			mergedSuppressEmptyViewDefaults = true;
 		}
+	}
+
+	// TODO: Remove with `abilities/woocommerce` (temporary, AM-110). Added last, so
+	// a provider's ability with the same name wins; skipped where WooCommerce AI
+	// loads, since it owns these abilities.
+	if ( ! isWooAiProvider( allProviderIds ) ) {
+		allToolProviders.push( wooFallbackToolProvider );
 	}
 
 	// Where AM's editor abilities run, it also describes the page, answers the

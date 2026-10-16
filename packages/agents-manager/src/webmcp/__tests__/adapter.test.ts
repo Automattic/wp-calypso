@@ -254,7 +254,6 @@ describe( 'WebMCP adapter', () => {
 			input: {
 				updates: input.updates,
 				reverseMap: {},
-				suppressAssistantMessage: true,
 			},
 		} );
 		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith(
@@ -262,7 +261,6 @@ describe( 'WebMCP adapter', () => {
 			{
 				updates: input.updates,
 				reverseMap: {},
-				suppressAssistantMessage: true,
 			}
 		);
 	} );
@@ -315,7 +313,6 @@ describe( 'WebMCP adapter', () => {
 					'group-1': 'group-1',
 					'paragraph-1': 'paragraph-1',
 				},
-				suppressAssistantMessage: true,
 			}
 		);
 	} );
@@ -375,7 +372,6 @@ describe( 'WebMCP adapter', () => {
 				],
 				summary: 'Inserted a pattern.',
 				reverseMap: {},
-				suppressAssistantMessage: true,
 			}
 		);
 		expect( blocks.parse ).toHaveBeenCalledWith( expect.stringContaining( 'Pattern heading' ) );

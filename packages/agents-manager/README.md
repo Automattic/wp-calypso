@@ -101,7 +101,7 @@ The host page URL can carry these query parameters:
 
 ### Exported Hooks and Utilities
 
-Feedback utilities are also exported: `useFeedbackAction`, `submitFeedback`, `rateMessage`, and the `FeedbackInput` component. Chat UI actions (`openAgentsManagerChat`, `closeAgentsManagerChat`, `isAgentsManagerChatVisible`), `recordAgentsManagerTracksEvent` and `getAgentsManagerInlineData()` (the server-injected `agentsManagerData` payload) are exported as well. A host rendering its own AI chat entry button reads `useAiChatEntryState()` for `isChatVisible` and wraps its label text in `<AiChatEntryLabel>`, which shows it only while the chat is hidden.
+Feedback utilities are also exported: `submitFeedback`, `rateMessage`, and the `FeedbackInput` component. Chat UI actions (`openAgentsManagerChat`, `closeAgentsManagerChat`, `isAgentsManagerChatVisible`), `recordAgentsManagerTracksEvent` and `getAgentsManagerInlineData()` (the server-injected `agentsManagerData` payload) are exported as well. A host rendering its own AI chat entry button reads `useAiChatEntryState()` for `isChatVisible` and wraps its label text in `<AiChatEntryLabel>`, which shows it only while the chat is hidden.
 
 Chats that show site credits use `formatCreditsShort()`, which gives an amount such as "800" or "8.5k" and rounds down, and `CREDITS_LOW_BALANCE`, the 10,000-credit paid-plan balance below which the credits dot turns red and the low-balance notice shows. Chats outside the dock that show the site credits dot use `CreditsMeter`, `parseLiveCreditsStatus` and `getCreditsPurchaseLink`, which picks the same link as the dock by the site's plan. Personal and Premium get Upgrade, to the plans page. Business and Commerce get Add credits, to checkout for one 100,000-credit pack. Both links carry `CREDITS_UPGRADE_SOURCE` as their `source`, and Tracks events send the same value as `ref`. Checkout refuses an upgrade from most people who didn't buy the plan, so these chats pass the link through `getCreditsPurchaseOptions()` with the flags `parseCreditsAccess()` reads from the `/ai/credits` response. It keeps an upgrade link only when the response says `can_upgrade: true`, and a credits pack link only when it says `can_buy_credits: true`. For people the response says can't buy, it gives a `purchaseHint` for `CreditsMeter` and a value to pass to `getCreditsNoticeMessage()` for the low and zero-balance notices. When the response doesn't say, it gives nothing. `getCreditsPurchaseAction()` turns a kept link into a button labelled Upgrade or Add credits that opens in a new tab. The notice's `action` and `CreditsMeter`'s `action` both take it, and a chat can add an `onClick` to record the click. `getCreditsCtaType()` turns the same result into the `cta_type` that Tracks events send.
 
@@ -119,8 +119,6 @@ import type {
 	BaseContextEntry,
 	ContextEntry,
 	Suggestion,
-	UseFeedbackActionConfig,
-	UseFeedbackActionReturn,
 	CreditsStatus,
 	CreditsAccess,
 	CreditsAskToUpgrade,
@@ -133,6 +131,15 @@ import type {
 ```
 
 `Ability` is re-exported from `@wordpress/abilities`, which owns its shape. The provider interfaces are documented in `src/extension-types.ts`.
+
+## Interactive chat surfaces
+
+The `wpcom/render-interactive-ui` tool returns an envelope with
+`tool_id: wpcom__render_interactive_ui` and an ordered array of A2UI v0.9 messages
+in `data`. Agents Manager also accepts raw A2UI message arrays. The renderer uses
+the A2UI SDK internally. Application helpers, components, and modules use
+interactive UI naming; imported SDK types and protocol identifiers retain their
+A2UI names.
 
 ## Development
 

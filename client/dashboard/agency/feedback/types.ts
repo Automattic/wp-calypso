@@ -1,5 +1,8 @@
 export type FeedbackType =
-	'team-member-invite-sent' | 'partner-directory-details-added' | 'purchase-completed';
+	| 'referral-completed'
+	| 'team-member-invite-sent'
+	| 'partner-directory-details-added'
+	| 'purchase-completed';
 
 export type FeedbackRating = 'bad' | 'neutral' | 'good';
 
