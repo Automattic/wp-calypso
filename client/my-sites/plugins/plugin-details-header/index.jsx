@@ -25,8 +25,8 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud, isMarketp
 	const { currentVersionsRange } = usePluginVersionInfo( plugin, selectedSite?.ID );
 
 	// Rating can be a valid number, 0 or null, discard undefined for easier comparison.
-	// Marketplace products have no ratings.
-	const rating = isMarketplaceProduct ? null : ( plugin.rating ?? null );
+	// Marketplace products carry their WooCommerce.com rating, and only show it when there is one.
+	const rating = isMarketplaceProduct ? plugin.rating || null : ( plugin.rating ?? null );
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsHeaderPlaceholder />;
@@ -116,7 +116,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud, isMarketp
 								) : (
 									<div>{ `${ formatPluginRating( rating, true ) }/5` }</div>
 								) ) }
-							{ getPluginReviewsLink() }
+							{ ! isMarketplaceProduct && getPluginReviewsLink() }
 						</div>
 					</div>
 				) }
