@@ -83,6 +83,10 @@ function getSiteCreditsBlogId(): number | null {
 	return getImageStudioSiteType() === 'jetpack' ? null : getImageStudioBlogId();
 }
 
+function getSitePurchaseLink( status: PaidCreditsStatus, blogId: number ) {
+	return getCreditsPurchaseLink( status, blogId, getImageStudioSiteType() === 'simple' );
+}
+
 /** Resolves to undefined when the site is not on AI credits or the request fails. */
 async function fetchSiteCredits(
 	blogId: number,
@@ -182,7 +186,7 @@ export function useAiCredits( {
 				return;
 			}
 			const purchaseOptions = getCreditsPurchaseOptions(
-				getCreditsPurchaseLink( next, blogId ),
+				getSitePurchaseLink( next, blogId ),
 				accessRef.current
 			);
 			trackImageStudioUpgradeNoticeShown( {
@@ -312,7 +316,7 @@ export function useAiCredits( {
 
 	const level = status ? getSiteCreditsLevel( status.remaining ) : null;
 	const { purchaseUrl, purchaseKind, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
-		status && blogId !== null ? getCreditsPurchaseLink( status, blogId ) : undefined,
+		status && blogId !== null ? getSitePurchaseLink( status, blogId ) : undefined,
 		access
 	);
 	const purchaseAction = useMemo(

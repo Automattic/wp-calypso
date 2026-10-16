@@ -134,8 +134,10 @@ afterEach( () => {
 	jest.useRealTimers();
 } );
 
+const UPGRADE_URL =
+	'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fexample.wordpress.com';
 const ADD_CREDITS_URL =
-	'https://wordpress.com/checkout/example.wordpress.com/ai-credits-lifetime:-q-100000?source=wp_ai_credits';
+	'https://wordpress.com/checkout/example.wordpress.com/ai-credits-lifetime:-q-100000?source=wp_ai_credits&redirect_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fexample.wordpress.com&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fexample.wordpress.com';
 
 it.each( [ 'personal', 'premium' ] as const )(
 	'offers the selected-site plans flow for %s through GET and terminal updates',
@@ -143,14 +145,10 @@ it.each( [ 'personal', 'premium' ] as const )(
 		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier } ) ) );
 		const { result } = renderCredits();
 		await flush();
-		expect( props( result.current ).action?.href ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
-		);
+		expect( props( result.current ).action?.href ).toBe( UPGRADE_URL );
 		expect( props( result.current ).onAction ).toBeUndefined();
 		await receive( { ...exhausted(), plan_tier } );
-		expect( props( result.current ).action?.href ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
-		);
+		expect( props( result.current ).action?.href ).toBe( UPGRADE_URL );
 		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
 		expect( result.current.notice?.action ).toEqual( {
 			label: 'Upgrade',
@@ -183,6 +181,44 @@ it.each( [ 'business', 'commerce' ] as const )(
 		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
 	}
 );
+describe( 'return address', () => {
+	const POST_RETURN = 'https://wordpress.com/post/example.wordpress.com/42';
+	const HOME_RETURN = 'https://wordpress.com/home/example.wordpress.com';
+	const returnsOf = ( value: ReturnType< typeof useCredits > ) => {
+		const { searchParams } = new URL( props( value ).action?.href ?? '' );
+		return {
+			redirectTo: searchParams.get( 'redirect_to' ),
+			cancelTo: searchParams.get( 'cancel_to' ),
+		};
+	};
+
+	beforeEach( () => {
+		window.history.replaceState( {}, '', '/wp-admin/post.php?post=42&action=edit' );
+	} );
+	afterEach( () => {
+		delete window._currentSiteType;
+	} );
+
+	it.each( [
+		[ 'the open post on a Simple site', 'simple', POST_RETURN ],
+		[ 'home on an Atomic site', 'atomic', HOME_RETURN ],
+		[ 'home when the page doesn’t name the site type', undefined, HOME_RETURN ],
+	] as const )( 'returns Add credits to %s', async ( _where, siteType, returnUrl ) => {
+		window._currentSiteType = siteType;
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'business' } ) ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( returnsOf( result.current ) ).toEqual( { redirectTo: returnUrl, cancelTo: returnUrl } );
+	} );
+
+	it( 'returns Upgrade to the open post on a Simple site only when leaving', async () => {
+		window._currentSiteType = 'simple';
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'premium' } ) ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( returnsOf( result.current ) ).toEqual( { redirectTo: null, cancelTo: POST_RETURN } );
+	} );
+} );
 it.each( [ undefined, null, 'unsupported' ] )(
 	'keeps the balance without a purchase link or fabricated guidance for tier %p',
 	async ( plan_tier ) => {
@@ -209,9 +245,7 @@ describe( 'purchase access', () => {
 		);
 		const { result } = renderCredits();
 		await flush();
-		expect( props( result.current ).action?.href ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
-		);
+		expect( props( result.current ).action?.href ).toBe( UPGRADE_URL );
 		expect( purchaseHint( result.current ) ).toBeUndefined();
 		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
 	} );
@@ -306,16 +340,15 @@ describe( 'purchase access', () => {
 		);
 		const { result } = renderCredits();
 		await flush();
-		const upgradeUrl = 'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits';
-		expect( props( result.current ).action?.href ).toBe( upgradeUrl );
+		expect( props( result.current ).action?.href ).toBe( UPGRADE_URL );
 		expect( purchaseHint( result.current ) ).toBeUndefined();
 		expect( result.current.notice?.message ).toBe( `${ localNumber( 1.9 ) }k credits left.` );
-		expect( result.current.notice?.action?.href ).toBe( upgradeUrl );
+		expect( result.current.notice?.action?.href ).toBe( UPGRADE_URL );
 		await receive( { ...exhausted(), plan_tier: 'personal' } );
-		expect( props( result.current ).action?.href ).toBe( upgradeUrl );
+		expect( props( result.current ).action?.href ).toBe( UPGRADE_URL );
 		expect( purchaseHint( result.current ) ).toBeUndefined();
 		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
-		expect( result.current.notice?.action?.href ).toBe( upgradeUrl );
+		expect( result.current.notice?.action?.href ).toBe( UPGRADE_URL );
 	} );
 
 	it( 'offers someone who can’t buy no guidance when the server can’t tell who bought the plan', async () => {
@@ -455,9 +488,7 @@ describe( 'purchase access', () => {
 		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
 		const view = renderCredits();
 		await flush();
-		expect( props( view.result.current ).action?.href ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
-		);
+		expect( props( view.result.current ).action?.href ).toBe( UPGRADE_URL );
 		fetchMock.mockResolvedValueOnce(
 			response( creditSnapshot( { blog_id: 456, plan_tier: 'personal' } ), false )
 		);
@@ -481,9 +512,7 @@ describe( 'purchase access', () => {
 		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
 		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
 		await flush();
-		expect( props( view.result.current ).action?.href ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
-		);
+		expect( props( view.result.current ).action?.href ).toBe( UPGRADE_URL );
 		expect( purchaseHint( view.result.current ) ).toBeUndefined();
 	} );
 
@@ -500,13 +529,9 @@ describe( 'purchase access', () => {
 		await flush();
 		expect( result.current.trailingActions ).toBeUndefined();
 		await receive( { ...exhausted(), plan_tier: 'personal' } );
-		expect( props( result.current ).action?.href ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
-		);
+		expect( props( result.current ).action?.href ).toBe( UPGRADE_URL );
 		expect( purchaseHint( result.current ) ).toBeUndefined();
-		expect( result.current.notice?.action?.href ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
-		);
+		expect( result.current.notice?.action?.href ).toBe( UPGRADE_URL );
 	} );
 } );
 
@@ -519,12 +544,10 @@ it( 'waits for matching site data and follows a domain change for the same site'
 	view.rerender( { ...defaultOptions, site: { ID: 456, domain: 'other.wordpress.com' } } );
 	expect( props( view.result.current ).action?.href ).toBeUndefined();
 	view.rerender( defaultOptions );
-	expect( props( view.result.current ).action?.href ).toBe(
-		'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
-	);
+	expect( props( view.result.current ).action?.href ).toBe( UPGRADE_URL );
 	view.rerender( { ...defaultOptions, site: { ID: '123', domain: 'mapped.example::blog' } } );
 	expect( props( view.result.current ).action?.href ).toBe(
-		'https://wordpress.com/plans/mapped.example%3A%3Ablog?source=wp_ai_credits'
+		'https://wordpress.com/plans/mapped.example%3A%3Ablog?source=wp_ai_credits&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fmapped.example%253A%253Ablog'
 	);
 } );
 it.each( [ '', '.', '..', ' ' ] )(
@@ -556,7 +579,7 @@ it( 'never uses a previous site destination during a site switch', async () => {
 	view.rerender( { ...next, site: { ID: 456, domain: 'second.wordpress.com' } } );
 	await act( async () => oldObserver?.( terminal( creditSnapshot( { plan_tier: 'commerce' } ) ) ) );
 	expect( props( view.result.current ).action?.href ).toBe(
-		'https://wordpress.com/plans/second.wordpress.com?source=wp_ai_credits'
+		'https://wordpress.com/plans/second.wordpress.com?source=wp_ai_credits&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fsecond.wordpress.com'
 	);
 } );
 it.each( [ { userId: 2 }, { agentConfig: { ...agentConfig, authProvider: jest.fn() } } ] )(
@@ -787,7 +810,7 @@ it( 'uses the meter destination as site details become available or change', asy
 	);
 	view.rerender( { ...defaultOptions, site: { ID: 123, domain: 'mapped.example' } } );
 	expect( view.result.current.notice?.action?.href ).toBe(
-		'https://wordpress.com/plans/mapped.example?source=wp_ai_credits'
+		'https://wordpress.com/plans/mapped.example?source=wp_ai_credits&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fmapped.example'
 	);
 } );
 
@@ -1250,14 +1273,10 @@ it.each( [
 		expect( props( view.result.current ).action?.href ).toBeUndefined();
 		read.resolve( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
 		await flush();
-		expect( props( view.result.current ).action?.href ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
-		);
+		expect( props( view.result.current ).action?.href ).toBe( UPGRADE_URL );
 		await receive( { ...exhausted(), plan_tier: 'personal' } );
 		expect( props( view.result.current ).isOpen ).toBe( true );
-		expect( view.result.current.notice?.action?.href ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
-		);
+		expect( view.result.current.notice?.action?.href ).toBe( UPGRADE_URL );
 		expect( fetchMock ).toHaveBeenCalledTimes( openingReads + 1 );
 	}
 );
@@ -1275,12 +1294,8 @@ it( 'does not read again after a task when the opening read already said who may
 	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 	expect( props( view.result.current ).status.remaining ).toBe( 0 );
 	expect( props( view.result.current ).isOpen ).toBe( true );
-	expect( props( view.result.current ).action?.href ).toBe(
-		'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
-	);
-	expect( view.result.current.notice?.action?.href ).toBe(
-		'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
-	);
+	expect( props( view.result.current ).action?.href ).toBe( UPGRADE_URL );
+	expect( view.result.current.notice?.action?.href ).toBe( UPGRADE_URL );
 } );
 it.each( [ 'no update', 'missing metadata', 'invalid metadata' ] )(
 	'reads again when a task ends with %s',

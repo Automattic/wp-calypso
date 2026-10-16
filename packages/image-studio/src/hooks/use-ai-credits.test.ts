@@ -64,9 +64,10 @@ const EDITOR = { can_buy_credits: false, can_upgrade: false };
 const PLAN_OWNER_HINT =
 	'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.';
 
-const UPGRADE_URL = 'https://wordpress.com/plans/123?source=wp_ai_credits';
+const UPGRADE_URL =
+	'https://wordpress.com/plans/123?source=wp_ai_credits&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2F123';
 const ADD_CREDITS_URL =
-	'https://wordpress.com/checkout/123/ai-credits-lifetime:-q-100000?source=wp_ai_credits';
+	'https://wordpress.com/checkout/123/ai-credits-lifetime:-q-100000?source=wp_ai_credits&redirect_to=https%3A%2F%2Fwordpress.com%2Fhome%2F123&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2F123';
 /** The purchase link; the dot and the notice each add a click handler that records the click. */
 const upgradeButton = {
 	label: 'Upgrade',
@@ -295,6 +296,54 @@ describe( 'useAiCredits', () => {
 		const { result } = renderCredits();
 
 		await waitFor( () => expect( result.current.notice?.message ).toBe( '1 credit left.' ) );
+	} );
+
+	describe( 'return address', () => {
+		const POST_RETURN = 'https://wordpress.com/post/123/42';
+		const HOME_RETURN = 'https://wordpress.com/home/123';
+		const returnsOf = ( href = '' ) => {
+			const { searchParams } = new URL( href );
+			return {
+				redirectTo: searchParams.get( 'redirect_to' ),
+				cancelTo: searchParams.get( 'cancel_to' ),
+			};
+		};
+
+		beforeEach( () => {
+			window.history.replaceState( {}, '', '/wp-admin/post.php?post=42&action=edit' );
+		} );
+		afterEach( () => {
+			window.history.replaceState( {}, '', '/' );
+		} );
+
+		it.each( [
+			{ where: 'the open post on a Simple site', siteType: 'simple', returnUrl: POST_RETURN },
+			{ where: 'the open post on a site named wpcom', siteType: 'wpcom', returnUrl: POST_RETURN },
+			{ where: 'home on an Atomic site', siteType: 'atomic', returnUrl: HOME_RETURN },
+		] as const )( 'returns Add credits to $where', async ( { siteType, returnUrl } ) => {
+			window.imageStudioData = { blogId: BLOG_ID, siteType };
+			respondWith( { ai_credits: planSnapshot( 0, { plan_tier: 'business' } ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			expect( returnsOf( result.current.meter?.action?.href ) ).toEqual( {
+				redirectTo: returnUrl,
+				cancelTo: returnUrl,
+			} );
+			expect( result.current.notice?.action?.href ).toBe( result.current.meter?.action?.href );
+		} );
+
+		it( 'returns Upgrade to the open post on a Simple site only when leaving', async () => {
+			respondWith( { ai_credits: planSnapshot( 0 ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			expect( returnsOf( result.current.meter?.action?.href ) ).toEqual( {
+				redirectTo: null,
+				cancelTo: POST_RETURN,
+			} );
+			expect( result.current.notice?.action?.href ).toBe( result.current.meter?.action?.href );
+		} );
 	} );
 
 	it( 'hides a dismissed low notice until the credits run out', async () => {

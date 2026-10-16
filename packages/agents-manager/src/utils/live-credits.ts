@@ -232,29 +232,48 @@ const CREDITS_PURCHASE_KIND_BY_TIER: Record< CreditsPlanTier, CreditsPurchaseKin
 	commerce: 'top_up',
 };
 
+// Copied from `getWPComRedirectToURL` in Jetpack's projects/js-packages/ai-client/src/hooks/use-ai-checkout/index.ts.
+function getCreditsReturnUrl( siteFragment: string, isSimpleSite: boolean ): string {
+	const postId = new URLSearchParams( window.location.search ).get( 'post' );
+	if ( isSimpleSite && postId !== null ) {
+		return `https://wordpress.com/post/${ siteFragment }/${ encodeURIComponent( postId ) }`;
+	}
+	return `https://wordpress.com/home/${ siteFragment }`;
+}
+
 /**
  * The plans page or the credits pack checkout, by the site's plan. Calypso's
- * plans and checkout routes take the site's domain or its ID.
+ * plans and checkout routes take the site's domain or its ID. The return address is
+ * the post open in a Simple site's editor, or else the site's home.
  */
 export function getCreditsPurchaseLink(
 	status: CreditsStatus,
-	site: string | number
+	site: string | number,
+	isSimpleSite: boolean
 ): CreditsPurchaseLink | undefined {
 	const kind = status.planTier && CREDITS_PURCHASE_KIND_BY_TIER[ status.planTier ];
+	if ( ! kind ) {
+		return undefined;
+	}
+
 	const siteFragment = encodeURIComponent( site );
+	const returnUrl = getCreditsReturnUrl( siteFragment, isSimpleSite );
 	if ( kind === 'upgrade' ) {
-		return {
-			kind,
-			url: `https://wordpress.com/plans/${ siteFragment }?source=${ CREDITS_UPGRADE_SOURCE }`,
-		};
+		// No `redirect_to`: the plans page passes it on to checkout, which would then
+		// skip its own pages after a plan purchase.
+		const query = new URLSearchParams( { source: CREDITS_UPGRADE_SOURCE, cancel_to: returnUrl } );
+		return { kind, url: `https://wordpress.com/plans/${ siteFragment }?${ query }` };
 	}
-	if ( kind === 'top_up' ) {
-		return {
-			kind,
-			url: `https://wordpress.com/checkout/${ siteFragment }/${ CREDITS_TOP_UP_PRODUCT }:-q-${ CREDITS_TOP_UP_AMOUNT }?source=${ CREDITS_UPGRADE_SOURCE }`,
-		};
-	}
-	return undefined;
+
+	const query = new URLSearchParams( {
+		source: CREDITS_UPGRADE_SOURCE,
+		redirect_to: returnUrl,
+		cancel_to: returnUrl,
+	} );
+	return {
+		kind,
+		url: `https://wordpress.com/checkout/${ siteFragment }/${ CREDITS_TOP_UP_PRODUCT }:-q-${ CREDITS_TOP_UP_AMOUNT }?${ query }`,
+	};
 }
 
 /** Bind the purchase destination to the same site as the authenticated balance. */
@@ -271,5 +290,5 @@ export function getLiveCreditsPurchaseLink(
 	) {
 		return undefined;
 	}
-	return getCreditsPurchaseLink( status, site.domain );
+	return getCreditsPurchaseLink( status, site.domain, window._currentSiteType === 'simple' );
 }

@@ -46,36 +46,112 @@ describe( 'getCreditsPurchaseLink', () => {
 		planTier,
 	} );
 
-	it.each( [ 'personal', 'premium' ] as const )( 'sends %s to the plans page', ( planTier ) => {
-		expect( getCreditsPurchaseLink( statusOn( planTier ), 'example.wordpress.com' ) ).toEqual( {
-			kind: 'upgrade',
-			url: 'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits',
-		} );
+	/** The link's page and its decoded query, so each return address reads as written. */
+	const partsOf = ( url = '' ) => {
+		const { origin, pathname, searchParams } = new URL( url );
+		return { page: `${ origin }${ pathname }`, query: Object.fromEntries( searchParams ) };
+	};
+	const HOME = 'https://wordpress.com/home/example.wordpress.com';
+	const SAVED_POST = '/wp-admin/post.php?post=42&action=edit';
+
+	afterEach( () => {
+		window.history.replaceState( {}, '', '/' );
 	} );
 
-	it.each( [ 'business', 'commerce' ] as const )(
-		'sends %s to checkout for one 100,000-credit pack',
+	it.each( [ 'personal', 'premium' ] as const )(
+		'sends %s to the plans page, with only a return for leaving it',
 		( planTier ) => {
-			expect( getCreditsPurchaseLink( statusOn( planTier ), 'example.wordpress.com' ) ).toEqual( {
-				kind: 'top_up',
-				url: 'https://wordpress.com/checkout/example.wordpress.com/ai-credits-lifetime:-q-100000?source=wp_ai_credits',
+			expect(
+				getCreditsPurchaseLink( statusOn( planTier ), 'example.wordpress.com', false )
+			).toEqual( {
+				kind: 'upgrade',
+				url: 'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fexample.wordpress.com',
 			} );
 		}
 	);
 
+	it.each( [ 'business', 'commerce' ] as const )(
+		'sends %s to checkout for one 100,000-credit pack, returning after buying or leaving',
+		( planTier ) => {
+			expect(
+				getCreditsPurchaseLink( statusOn( planTier ), 'example.wordpress.com', false )
+			).toEqual( {
+				kind: 'top_up',
+				url: 'https://wordpress.com/checkout/example.wordpress.com/ai-credits-lifetime:-q-100000?source=wp_ai_credits&redirect_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fexample.wordpress.com&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2Fexample.wordpress.com',
+			} );
+		}
+	);
+
+	describe.each( [
+		[
+			'a saved post on a Simple site',
+			SAVED_POST,
+			true,
+			'https://wordpress.com/post/example.wordpress.com/42',
+		],
+		[ 'a new post on a Simple site', '/wp-admin/post-new.php', true, HOME ],
+		[ 'a saved post on an Atomic site', SAVED_POST, false, HOME ],
+	] as const )( 'from %s', ( _page, path, isSimpleSite, returnUrl ) => {
+		beforeEach( () => {
+			window.history.replaceState( {}, '', path );
+		} );
+
+		it( `returns Add credits to ${ returnUrl } after buying or leaving`, () => {
+			const link = getCreditsPurchaseLink(
+				statusOn( 'business' ),
+				'example.wordpress.com',
+				isSimpleSite
+			);
+			expect( partsOf( link?.url ) ).toEqual( {
+				page: 'https://wordpress.com/checkout/example.wordpress.com/ai-credits-lifetime:-q-100000',
+				query: { source: 'wp_ai_credits', redirect_to: returnUrl, cancel_to: returnUrl },
+			} );
+		} );
+
+		it( `returns Upgrade to ${ returnUrl } only when leaving`, () => {
+			const link = getCreditsPurchaseLink(
+				statusOn( 'premium' ),
+				'example.wordpress.com',
+				isSimpleSite
+			);
+			expect( partsOf( link?.url ) ).toEqual( {
+				page: 'https://wordpress.com/plans/example.wordpress.com',
+				query: { source: 'wp_ai_credits', cancel_to: returnUrl },
+			} );
+		} );
+	} );
+
 	it.each( [
-		[ 'upgrade', 'personal', 'https://wordpress.com/plans/123?source=wp_ai_credits' ],
+		[ 'upgrade', 'personal', 'https://wordpress.com/plans/123', {} ],
 		[
 			'credits pack',
 			'business',
-			'https://wordpress.com/checkout/123/ai-credits-lifetime:-q-100000?source=wp_ai_credits',
+			'https://wordpress.com/checkout/123/ai-credits-lifetime:-q-100000',
+			{ redirect_to: 'https://wordpress.com/post/123/42' },
 		],
-	] as const )( 'links the %s by site ID', ( _kind, planTier, url ) => {
-		expect( getCreditsPurchaseLink( statusOn( planTier ), 123 )?.url ).toBe( url );
+	] as const )( 'links the %s and its return by site ID', ( _kind, planTier, page, redirect ) => {
+		window.history.replaceState( {}, '', SAVED_POST );
+		expect( partsOf( getCreditsPurchaseLink( statusOn( planTier ), 123, true )?.url ) ).toEqual( {
+			page,
+			query: {
+				source: 'wp_ai_credits',
+				...redirect,
+				cancel_to: 'https://wordpress.com/post/123/42',
+			},
+		} );
+	} );
+
+	it( 'keeps the encoded site in the return address', () => {
+		const link = getCreditsPurchaseLink( statusOn( 'business' ), 'mapped.example::blog', false );
+		expect( partsOf( link?.url ).query ).toMatchObject( {
+			redirect_to: 'https://wordpress.com/home/mapped.example%3A%3Ablog',
+			cancel_to: 'https://wordpress.com/home/mapped.example%3A%3Ablog',
+		} );
 	} );
 
 	it( 'gives an unknown plan no link', () => {
-		expect( getCreditsPurchaseLink( statusOn( undefined ), 123 ) ).toBeUndefined();
+		window.history.replaceState( {}, '', SAVED_POST );
+		expect( getCreditsPurchaseLink( statusOn( undefined ), 123, true ) ).toBeUndefined();
 	} );
 } );
 it.each( [
