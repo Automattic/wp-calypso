@@ -3,12 +3,14 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
 import { useSavePost } from 'calypso/reader/data/saved-posts';
+import { INITIAL_FETCH, PER_POLL } from 'calypso/reader/data/stream';
 import SavedPostsStream from '../main';
 import type { ReactNode } from 'react';
 
@@ -86,10 +88,12 @@ function savedPost( id: number ) {
 	};
 }
 
-function mockSavedEndpoint( posts: ReturnType< typeof savedPost >[] ) {
+// The stream's first page and the poll for new posts hit the same path, told
+// apart by the page size they ask for.
+function mockSavedEndpoint( posts: ReturnType< typeof savedPost >[], number = INITIAL_FETCH ) {
 	return nock( BASE )
 		.get( SAVED_PATH )
-		.query( true )
+		.query( ( query ) => query.number === String( number ) )
 		.reply( 200, { posts, number: posts.length, found: posts.length, date_range: {} } );
 }
 
@@ -143,8 +147,9 @@ describe( 'SavedPostsStream', () => {
 		await waitFor( () => expect( screen.getByText( 'No saved posts yet' ) ).toBeVisible() );
 	} );
 
-	it( 'refetches the stream after a post is unsaved, so its card goes away', async () => {
+	it( 'removes an unsaved post and does not offer it back as a new post', async () => {
 		mockSavedEndpoint( [ savedPost( 2 ), savedPost( 1 ) ] );
+		const poll = mockSavedEndpoint( [ savedPost( 2 ), savedPost( 1 ) ], PER_POLL );
 		const { wrapper } = renderSavedStream();
 		await waitFor( () => expect( screen.getByTestId( 'post-2' ) ).toBeVisible() );
 
@@ -160,5 +165,11 @@ describe( 'SavedPostsStream', () => {
 		expect( unsave.isDone() ).toBe( true );
 		expect( refetch.isDone() ).toBe( true );
 		expect( screen.getByTestId( 'post-1' ) ).toBeVisible();
+		expect( poll.isDone() ).toBe( false );
+
+		const updateNotice = screen.getByRole( 'button', { name: /new post/ } );
+		expect( updateNotice ).not.toHaveClass( 'is-active' );
+		await userEvent.setup().click( updateNotice );
+		expect( screen.queryByTestId( 'post-2' ) ).not.toBeInTheDocument();
 	} );
 } );
