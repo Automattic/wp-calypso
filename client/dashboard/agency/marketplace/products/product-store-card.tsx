@@ -15,7 +15,7 @@ import { getProductDescription } from './lib/product-descriptions';
 import { getItemProducts } from './lib/product-groups';
 import { getProductPriceInfo, getTermAvailabilityNote } from './lib/product-pricing';
 import { BACKUP_STORAGE_FAMILY_SLUG } from './lib/product-slugs';
-import { getProductShortTitle, getProductTitle } from './lib/product-title';
+import { getProductListTitle, getProductShortTitle } from './lib/product-title';
 import { getVendorInfo } from './lib/vendor-info';
 import ProductPrice from './product-price';
 import ProductTile from './product-tile';
@@ -57,13 +57,6 @@ function getCardByline( product: AgencyProduct ) {
 		: undefined;
 }
 
-// Out of their own section, the backup storage add-ons need their full name:
-// their short title is only the size.
-const getCardTitle = ( product: AgencyProduct, hasVariants: boolean ) =>
-	product.family_slug === BACKUP_STORAGE_FAMILY_SLUG
-		? getProductTitle( product.name )
-		: getProductShortTitle( product, hasVariants );
-
 export default function ProductStoreCard( {
 	item,
 	term,
@@ -84,7 +77,7 @@ export default function ProductStoreCard( {
 
 	return (
 		<BodyCard
-			title={ getCardTitle( product, variants.length > 1 ) }
+			title={ getProductListTitle( product, variants.length > 1 ) }
 			byline={ getCardByline( product ) }
 			description={ getProductDescription( product.slug ).description ?? undefined }
 			tile={ <ProductTile product={ product } /> }
