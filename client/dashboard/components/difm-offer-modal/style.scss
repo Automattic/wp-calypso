@@ -114,7 +114,7 @@
 	gap: $grid-unit-10 $grid-unit-30;
 	padding: $grid-unit-15 $grid-unit-15;
 	border-radius: $radius-medium;
-	// Dark mode sets the variable; light mode falls back to the design colour.
+	background: var(--wp-components-color-gray-200, $gray-100);
 	background: var(--wp-components-color-gray-200, #f4f4f4);
 }
 
