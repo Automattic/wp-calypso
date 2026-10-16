@@ -1,11 +1,10 @@
 /**
- * Unmocked sessionStorage integration for the WOOAI-872 path.
+ * Unmocked sessionStorage integration for the temporary session id.
  *
- * Unlike `agentManager.deliveryStatus.test.ts` (which mocks
+ * Unlike `agentManager.tempSession.test.ts` (which mocks
  * `storeConversation`), this file uses the real conversationStorage
- * round-trip so CI asserts the same claim the local demo harness does:
- * after a hanging/aborted stream, a `local-*` key exists in sessionStorage
- * and the last user message carries `deliveryStatus: 'pending'`.
+ * round-trip: after a hanging/aborted stream, a `local-*` key exists in
+ * sessionStorage and holds the user message.
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -35,7 +34,6 @@ const STORAGE_PREFIX = 'a8c_agenttic_conversation_history_';
 interface StoredMessage {
 	role: string;
 	content: string;
-	deliveryStatus?: string;
 }
 
 interface StoredConversation {
@@ -73,7 +71,7 @@ function readAgentticEntries(): Record< string, StoredConversation > {
 	return out;
 }
 
-describe( 'agentManager.sendMessageStream — real sessionStorage (WOOAI-872)', () => {
+describe( 'agentManager.sendMessageStream: real sessionStorage', () => {
 	let agentManager: AgentManager;
 	let mockClient: {
 		sendMessage: ReturnType< typeof vi.fn >;
@@ -109,7 +107,7 @@ describe( 'agentManager.sendMessageStream — real sessionStorage (WOOAI-872)', 
 		vi.mocked( clearToolResultPromises ).mockReturnValue();
 	} );
 
-	it( 'writes pending user message to a local-* sessionStorage key when the stream hangs', async () => {
+	it( 'writes the user message to a local-* sessionStorage key when the stream hangs', async () => {
 		mockClient.sendMessageStream.mockReturnValue( hangingStream() );
 
 		await agentManager.createAgent( 'k', testConfig );
@@ -136,7 +134,6 @@ describe( 'agentManager.sendMessageStream — real sessionStorage (WOOAI-872)', 
 		const last = stored.messages[ stored.messages.length - 1 ]!;
 		expect( last.role ).toBe( 'user' );
 		expect( last.content ).toBe( 'hello from sessionStorage integration' );
-		expect( last.deliveryStatus ).toBe( 'pending' );
 
 		agentManager.abortCurrentRequest( 'k' );
 	} );
