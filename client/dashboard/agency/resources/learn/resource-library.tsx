@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import {
 	Button,
 	__experimentalSpacer as Spacer,
@@ -140,12 +141,12 @@ export default function ResourceLibrary( {
 							{ sprintf(
 								/* translators: 1: Number of resources shown. 2: Number of matching resources. */
 								_n(
-									'Showing %1$d of %2$d resource',
-									'Showing %1$d of %2$d resources',
+									'Showing %1$s of %2$s resource',
+									'Showing %1$s of %2$s resources',
 									filteredData.length
 								),
-								visibleResources.length,
-								filteredData.length
+								formatNumber( visibleResources.length ),
+								formatNumber( filteredData.length )
 							) }
 						</Text>
 						{ hasMore && (
