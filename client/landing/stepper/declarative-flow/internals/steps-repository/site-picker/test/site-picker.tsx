@@ -228,6 +228,18 @@ describe( 'SitePicker', () => {
 		await expectSelectSiteSubmitTracked( submit );
 	} );
 
+	test( 'records one select-site submit when Continue is double-clicked', async () => {
+		const submit = renderTrackedPicker( '/site-migration/sitePicker' );
+		await userEvent.click( screen.getAllByRole( 'button', { name: 'Select this site' } )[ 0 ] );
+
+		await userEvent.dblClick( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		expect( submit ).toHaveBeenCalledTimes( 1 );
+		expect( recordStepNavigation ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	test( 'records the select-site submit immediately when confirmation is skipped', async () => {
 		const submit = renderTrackedPicker( '/site-migration/sitePicker', true );
 

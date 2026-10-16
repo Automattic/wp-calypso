@@ -30,6 +30,36 @@ const EXCLUDED_DEPENDENCIES = [
 const isPrimitive = ( value: unknown ) =>
 	value === null || ( typeof value !== 'object' && typeof value !== 'function' );
 
+// Tracks doesn't support nested properties, so join arrays of primitives and drop any other object.
+function toTracksProps( props: Record< string, unknown > ) {
+	const droppedProps: string[] = [];
+	const tracksProps = Object.entries( props ).reduce(
+		( result, [ propName, propValue ] ) => {
+			if ( Array.isArray( propValue ) && propValue.every( isPrimitive ) ) {
+				propValue = propValue.join( ',' );
+			}
+
+			if ( propValue !== null && typeof propValue === 'object' ) {
+				droppedProps.push( propName );
+				return result;
+			}
+
+			return { ...result, [ propName ]: propValue };
+		},
+		{} as Record< string, unknown >
+	);
+
+	if ( droppedProps.length > 0 && process.env.NODE_ENV !== 'production' ) {
+		// eslint-disable-next-line no-console
+		console.warn(
+			'Stepper: These object props were not recorded because Tracks does not support nested properties. Flatten them in recordStepNavigation() to record them:',
+			droppedProps.join( ', ' )
+		);
+	}
+
+	return tracksProps;
+}
+
 export function recordStepNavigation( {
 	event,
 	intent = '',
@@ -88,15 +118,6 @@ export function recordStepNavigation( {
 				propValue = ( propValue as { ID?: number } ).ID;
 			}
 
-			if ( Array.isArray( propValue ) && propValue.every( isPrimitive ) ) {
-				propValue = propValue.join( ',' );
-			}
-
-			// Tracks doesn't support nested properties, so drop any object left unflattened.
-			if ( propValue !== null && typeof propValue === 'object' ) {
-				return props;
-			}
-
 			return {
 				...props,
 				[ propName ]: propValue,
@@ -117,7 +138,7 @@ export function recordStepNavigation( {
 		{}
 	);
 
-	recordTracksEvent( event, {
+	const eventProps = toTracksProps( {
 		device,
 		flow,
 		variant,
@@ -128,17 +149,10 @@ export function recordStepNavigation( {
 		...additionalInputs,
 	} );
 
+	recordTracksEvent( event, eventProps );
+
 	const stepOldSlug = getStepOldSlug( step );
 	if ( stepOldSlug ) {
-		recordTracksEvent( event, {
-			device,
-			flow,
-			variant,
-			step: stepOldSlug,
-			intent,
-			goals: goals.join( ',' ),
-			...inputs,
-			...additionalInputs,
-		} );
+		recordTracksEvent( event, { ...eventProps, step: stepOldSlug } );
 	}
 }

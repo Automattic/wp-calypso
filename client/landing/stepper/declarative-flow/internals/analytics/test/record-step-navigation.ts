@@ -22,11 +22,17 @@ const record = ( providedDependencies: Record< string, unknown > ) => {
 describe( 'recordStepNavigation', () => {
 	beforeEach( () => {
 		jest.mocked( recordTracksEvent ).mockClear();
+		jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
 	} );
 
 	it( 'records a site object as its ID', () => {
 		const props = record( { action: 'select-site', site: { ID: 123, slug: 'example.com' } } );
 
+		expect( console.warn ).not.toHaveBeenCalled();
 		expect( props ).toMatchObject( { action: 'select-site', site_id: 123 } );
 		expect( props ).not.toHaveProperty( 'site' );
 	} );
@@ -62,6 +68,30 @@ describe( 'recordStepNavigation', () => {
 		} );
 	} );
 
+	it( 'drops object values passed as additional props', () => {
+		recordStepNavigation( {
+			event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
+			intent: '',
+			flow: 'site-migration',
+			step: 'sitePicker',
+			additionalProps: { filters: { a: 1 }, selectedFilters: 'blog' },
+		} );
+
+		const props = jest.mocked( recordTracksEvent ).mock.lastCall?.[ 1 ];
+		expect( props ).not.toHaveProperty( 'filters' );
+		expect( props ).toMatchObject( { selected_filters: 'blog' } );
+	} );
+
+	it( 'warns in development about the object props it drops', () => {
+		record( { queryParams: { search: 'foo' }, host: 'other' } );
+
+		expect( console.warn ).toHaveBeenCalledTimes( 1 );
+		expect( console.warn ).toHaveBeenCalledWith(
+			expect.stringContaining( 'Tracks does not support nested properties' ),
+			'query_params'
+		);
+	} );
+
 	it.each( [
 		[ { plan: { product_slug: 'business-bundle' } }, { plan: 'business-bundle' } ],
 		[ { currentPlan: { product_slug: 'personal-bundle' } }, { current_plan: 'personal-bundle' } ],
@@ -89,13 +119,14 @@ describe( 'recordStepNavigation', () => {
 			password_confirm: 'hunter2',
 			bearer_token: 'abc',
 			token: 'abc',
-			domainCart: { a: 1 },
-			domainForm: { a: 1 },
-			suggestion: { a: 1 },
+			domainCart: 'cart',
+			domainForm: 'form',
+			suggestion: 'example.com',
 		} );
 
 		expect( Object.values( props ) ).not.toContain( 'hunter2' );
 		expect( Object.values( props ) ).not.toContain( 'abc' );
+		expect( Object.values( props ) ).not.toContain( 'example.com' );
 		[
 			'password',
 			'password_confirm',
@@ -103,6 +134,7 @@ describe( 'recordStepNavigation', () => {
 			'token',
 			'domain_cart',
 			'domain_form',
+			'suggestion',
 		].forEach( ( key ) => expect( props ).not.toHaveProperty( key ) );
 	} );
 
