@@ -651,7 +651,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				case 'wow-funnel-handoff':
 					// Success replaces location with the built site itself, so the only thing
 					// that reaches navigation here is a failed or timed-out wait.
-					return navigate( STEPS.ERROR.slug );
+					return navigate( STEPS.ERROR.slug, { errorReason: 'wow_funnel_handoff_failed' } );
 				case 'post-checkout-onboarding': {
 					setShouldShowNotification( providedDependencies?.siteId as number );
 					return navigate( 'processing' );
@@ -692,7 +692,9 @@ const onboarding: FlowV2< typeof initialize > = {
 									site_slug: siteSlug,
 									site_id: siteId,
 								} );
-								return navigate( 'error' as typeof currentStepSlug );
+								return navigate( 'error' as typeof currentStepSlug, {
+									errorReason: 'build_wow_missing_site',
+								} );
 							}
 
 							try {
@@ -705,7 +707,9 @@ const onboarding: FlowV2< typeof initialize > = {
 									site_identifier: siteIdentifier,
 									error: error instanceof Error ? error.message : String( error ),
 								} );
-								return navigate( 'error' as typeof currentStepSlug );
+								return navigate( 'error' as typeof currentStepSlug, {
+									errorReason: 'build_wow_start_failed',
+								} );
 							}
 
 							window.location.assign(
@@ -872,7 +876,13 @@ const onboarding: FlowV2< typeof initialize > = {
 							window.location.replace( destination );
 						}
 					} else {
-						return navigate( 'error' as typeof currentStepSlug );
+						// NO_ACTION reaches here only without a siteSlug to send it back with.
+						return navigate( 'error' as typeof currentStepSlug, {
+							errorReason:
+								providedDependencies.processingResult === ProcessingResult.NO_ACTION
+									? 'processing_no_action'
+									: 'processing_failed',
+						} );
 					}
 					return;
 				}
