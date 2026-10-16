@@ -48,7 +48,7 @@ function formatNamespace( namespace: string ): string {
  * render: their state lives on WordPress.com, so it survives an unreachable
  * site or an unpublished ability.
  */
-function collectNamespaces(
+export function collectNamespaces(
 	abilities: SiteAbility[] | undefined,
 	savedGroups: Record< string, boolean >,
 	category: RemoteAbilityCategory

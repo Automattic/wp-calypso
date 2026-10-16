@@ -6,6 +6,7 @@ import {
 	bigSkyPluginQuery,
 	isAutomatticianQuery,
 	queryClient,
+	siteAbilitiesQuery,
 	siteBySlugQuery,
 	sitePostByEmailSettingsQuery,
 	userSettingsQuery,
@@ -301,6 +302,50 @@ describe( '<AIToolsSettings>', () => {
 		expect( screen.getByRole( 'link', { name: /^Write/ } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /^Connect external AI agent/ } ) ).toBeVisible();
 		expect( screen.queryByText( 'Upgrade required' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'counts site-published groups in the badges so they cannot claim All enabled while those are off', () => {
+		seedQueries( '', true, jetpackSite, true, true );
+		queryClient.setQueryData( userSettingsQuery().queryKey, {
+			mcp_abilities: {
+				account: {
+					'wpcom-mcp/posts-list': {
+						enabled: true,
+						readonly: true,
+						visible: true,
+						title: 'List posts',
+						description: 'List posts on your sites.',
+					},
+				},
+				sites: [
+					{
+						blog_id: jetpackSite.ID,
+						site_level_enabled: true,
+						abilities: { 'wpcom-mcp/posts-list': true },
+					},
+				],
+			},
+		} as unknown as UserSettings );
+		queryClient.setQueryData( siteAbilitiesQuery( jetpackSite.ID, 'en_US' ).queryKey, [
+			{
+				name: 'jetpack-forms/get-form',
+				label: 'Get form',
+				meta: { annotations: { readonly: true } },
+			},
+			{
+				name: 'akismet/check-comment',
+				label: 'Check comment',
+				meta: { annotations: {} },
+			},
+		] );
+
+		render( <AIToolsSettings siteSlug={ jetpackSite.slug } />, { queryClient } );
+
+		// The wpcom read tool is on; the site's read group is not, and the write
+		// side has nothing enabled at all.
+		expect( screen.getByText( '1 of 2 enabled' ) ).toBeVisible();
+		expect( screen.getByText( 'Disabled' ) ).toBeVisible();
+		expect( screen.queryByText( 'All enabled' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'manages the WordPress Agent email address on an Atomic site', async () => {
