@@ -6,12 +6,6 @@ $difm-offer-reviews-fade: 0.4s;
 .difm-offer-reviews {
 	width: 100%;
 	max-width: 248px;
-	border-radius: $radius-large;
-
-	&:focus-visible {
-		outline: var(--wp-admin-border-width-focus) solid var(--wp-admin-theme-color);
-		outline-offset: 2px;
-	}
 }
 
 // The cards share one grid cell, so the slider keeps the height of the tallest card and
@@ -87,4 +81,18 @@ $difm-offer-reviews-fade: 0.4s;
 	color: $gray-700;
 	letter-spacing: 0.5px;
 	text-transform: uppercase;
+}
+
+// The control sits below the cards at a fixed place, so the cards and the control do not
+// move when the review or the label changes.
+.difm-offer-reviews__controls {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: $grid-unit-10;
+}
+
+.difm-offer-reviews__toggle.components-button {
+	border-radius: $radius-full;
+	background: $white;
+	color: $gray-900;
 }

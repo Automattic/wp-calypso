@@ -62,16 +62,5 @@ export function getDifmOfferReviews(): DifmOfferReview[] {
 			),
 			reviewer: 'Pablo',
 		},
-		{
-			id: 'carla-zwahlen',
-			rating: 5,
-			/* translators: The title of a customer review of the site building service, from Trustpilot. */
-			title: __( 'The people made the experience great' ),
-			/* translators: A customer review of the site building service, from Trustpilot. */
-			quote: __(
-				"The people made the experience great. They are the design team that builds beautiful Websites. But they are more than technical engineers; they are listeners genuinely interested in finding solutions for clients who are technically challenged. When they designed and rebuilt my website they didn't lose my voice. They designed each page of the site on a clean, easy-to-read canvas. Working with this WordPress Web Design Team was a pleasure. Four Words for the WordPress Design Team: Thanks and well done!"
-			),
-			reviewer: 'Ms. Carla Zwahlen',
-		},
 	];
 }

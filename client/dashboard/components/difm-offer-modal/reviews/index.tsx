@@ -1,10 +1,11 @@
-import { VisuallyHidden } from '@wordpress/components';
+import { Button, VisuallyHidden } from '@wordpress/components';
 import { useReducedMotion } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { Text } from '../../text';
 import { DIFM_OFFER_REVIEW_MAX_RATING, getDifmOfferReviews } from './data';
+import { pauseIcon, playIcon } from './icons';
 import type { DifmOfferReview } from './data';
 
 import './style.scss';
@@ -80,8 +81,9 @@ function ReviewCard( { review, isActive }: { review: DifmOfferReview; isActive: 
 
 /**
  * Trustpilot reviews of the DIFM service, one card at a time. The cards fade from one to
- * the next, and stop while the pointer or focus is on them or when the user prefers
- * reduced motion. The cards do not link to Trustpilot, to keep the user in the modal.
+ * the next. The rotation stops while the pointer is on the cards and while the user has
+ * paused it. It starts paused when the user prefers reduced motion. The cards do not link
+ * to Trustpilot, to keep the user in the modal.
  */
 export function DifmOfferReviews( {
 	className,
@@ -92,12 +94,18 @@ export function DifmOfferReviews( {
 	interval?: number;
 } ) {
 	const reviews = getDifmOfferReviews();
+	const prefersReducedMotion = useReducedMotion();
 	const [ activeIndex, setActiveIndex ] = useState( 0 );
 	const [ isHovered, setIsHovered ] = useState( false );
-	const [ isFocused, setIsFocused ] = useState( false );
-	const prefersReducedMotion = useReducedMotion();
+	const [ isPaused, setIsPaused ] = useState( prefersReducedMotion );
 
-	const isRotating = ! prefersReducedMotion && ! isHovered && ! isFocused;
+	useEffect( () => {
+		if ( prefersReducedMotion ) {
+			setIsPaused( true );
+		}
+	}, [ prefersReducedMotion ] );
+
+	const isRotating = ! isPaused && ! isHovered;
 
 	useEffect( () => {
 		if ( ! isRotating ) {
@@ -113,19 +121,26 @@ export function DifmOfferReviews( {
 		<section
 			className={ clsx( 'difm-offer-reviews', className ) }
 			aria-label={ __( 'Customer reviews' ) }
-			// Focus pauses the rotation, so keyboard users can stop it to read a review.
-
-			tabIndex={ prefersReducedMotion ? undefined : 0 }
-			onMouseEnter={ () => setIsHovered( true ) }
-			onMouseLeave={ () => setIsHovered( false ) }
-			onFocus={ () => setIsFocused( true ) }
-			onBlur={ () => setIsFocused( false ) }
 		>
 			{ /* Each change is a rotation the user did not ask for, so it is not announced. */ }
-			<div className="difm-offer-reviews__cards" aria-live="off">
+			<div
+				className="difm-offer-reviews__cards"
+				aria-live="off"
+				onMouseEnter={ () => setIsHovered( true ) }
+				onMouseLeave={ () => setIsHovered( false ) }
+			>
 				{ reviews.map( ( review, index ) => (
 					<ReviewCard key={ review.id } review={ review } isActive={ index === activeIndex } />
 				) ) }
+			</div>
+			<div className="difm-offer-reviews__controls">
+				<Button
+					className="difm-offer-reviews__toggle"
+					icon={ isPaused ? playIcon : pauseIcon }
+					label={ isPaused ? __( 'Play reviews' ) : __( 'Pause reviews' ) }
+					size="small"
+					onClick={ () => setIsPaused( ! isPaused ) }
+				/>
 			</div>
 		</section>
 	);
