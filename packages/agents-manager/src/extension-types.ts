@@ -163,4 +163,10 @@ export interface BigSkyMessage {
 	 * Optional: whether to show icon (defaults to true)
 	 */
 	showIcon?: boolean;
+
+	/**
+	 * Optional: lists AM's editor empty-view suggestions under the message, e.g.
+	 * to offer next steps after a site build.
+	 */
+	hasEditorEmptyViewSuggestions?: boolean;
 }

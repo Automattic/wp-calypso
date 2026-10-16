@@ -326,7 +326,7 @@ export default function OrchestratorChat( {
 
 	// The optional hook call is safe: this component renders only after the
 	// providers load, so the hook never changes. Big Sky reads every handler but
-	// `isProcessing`; jetpack-ai-sidebar reads `clearSuggestions` and `isProcessing`.
+	// `clearSuggestions` and `isProcessing`; jetpack-ai-sidebar reads those two.
 	useProviderAbilitiesSetup?.( {
 		addMessage: ( message: BigSkyMessage ) =>
 			addMessage( convertBigSkyMessageToUIMessage( message ) ),
@@ -494,8 +494,12 @@ export default function OrchestratorChat( {
 	} );
 
 	const handleSuggestionClick = useCallback(
-		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
-			trackSuggestionClick( suggestion, availableSuggestions );
+		(
+			suggestion: Suggestion | string,
+			availableSuggestions?: Suggestion[],
+			isInMessage?: boolean
+		) => {
+			trackSuggestionClick( suggestion, availableSuggestions, isInMessage );
 			dispatchSuggestionClick( suggestion );
 		},
 		[ dispatchSuggestionClick, trackSuggestionClick ]
