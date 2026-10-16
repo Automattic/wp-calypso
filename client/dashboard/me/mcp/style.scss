@@ -1,0 +1,5 @@
+// The card already has its own border-block-end, so drop the last row's divider.
+// The Bypass row keeps it while open, since its select follows the button.
+.mcp-preferences__access-card .summary-button.components-button:last-child {
+	border-block-end: none;
+}
