@@ -230,12 +230,6 @@ export default function OrchestratorChat( {
 		onRegenerationEnd: finishCheckpointRegeneration,
 	} );
 
-	const chatError = useChatError( {
-		error,
-		isReaderChat,
-		takeRefusalCode: credits.takeRefusalCode,
-	} );
-
 	// Sending, and loading the saved conversation.
 	const { hadParkedNavigation, flushPendingNavigation } = useNavigationContinuation( {
 		isProcessing,
@@ -280,12 +274,22 @@ export default function OrchestratorChat( {
 		}
 	}, [ isProcessing, agentConfig?.sessionId ] );
 
-	const { isLoading: isLoadingConversation, notice: replyNotice } = useConversationHydration( {
+	const {
+		isLoading: isLoadingConversation,
+		notice: replyNotice,
+		hasFailedResume,
+	} = useConversationHydration( {
 		hadParkedNavigation,
 		loadMessages,
 		onFetch: invalidateLoadedCheckpoints,
 		isProcessing,
 		onRetry: submitRetryMessage,
+		onSubmit,
+	} );
+	const chatError = useChatError( {
+		error: hasFailedResume ? null : error,
+		isReaderChat,
+		takeRefusalCode: credits.takeRefusalCode,
 	} );
 
 	// Registered before the providers' ability setup below, whose effects may
