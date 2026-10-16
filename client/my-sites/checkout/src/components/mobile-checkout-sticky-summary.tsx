@@ -209,6 +209,8 @@ const TotalPriceGroup = styled.span`
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
+	white-space: nowrap;
+	flex-shrink: 0;
 `;
 
 /**

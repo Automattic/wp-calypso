@@ -228,6 +228,7 @@ function ImageStudioAgentChat( {
 						<CreditsMeter
 							status={ creditsMeter.status }
 							upgradeUrl={ creditsMeter.upgradeUrl }
+							onUpgradeClick={ creditsMeter.onUpgradeClick }
 							purchaseHint={ creditsMeter.purchaseHint }
 							isOpen={ creditsMeter.isOpen }
 							onToggle={ creditsMeter.onToggle }

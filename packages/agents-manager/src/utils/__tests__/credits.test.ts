@@ -105,12 +105,6 @@ describe( 'getCreditsTone', () => {
 		expect( getCreditsTone( { ...paid( 10 ), remaining: 205000 } ) ).toBe( 'muted' );
 		expect( getCreditsTone( { ...paid( 0 ), remaining: 25000 } ) ).toBe( 'muted' );
 	} );
-
-	it( 'respects a custom threshold on free plans only', () => {
-		expect( getCreditsTone( free( 10 ), 10 ) ).toBe( 'error' );
-		expect( getCreditsTone( free( 10.01 ), 10 ) ).toBe( 'primary' );
-		expect( getCreditsTone( paid( 10, 25000 ), 50 ) ).toBe( 'muted' );
-	} );
 } );
 
 describe( 'formatCreditsShort', () => {

@@ -18,6 +18,9 @@ const debug = debugFactory( 'notifications:standalone-app' );
 const localePattern = /[&?]locale=([\w_-]+)/;
 const match = localePattern.exec( document.location.search );
 const locale = match ? match[ 1 ] : 'en';
+const features =
+	new URLSearchParams( document.location.search ).get( 'features' )?.split( ',' ) ?? [];
+const isViewSettingsEnabled = features.includes( 'view-settings' );
 
 const fetchLocale = async ( localeSlug ) => {
 	try {
@@ -154,6 +157,21 @@ const NotesWrapper = ( { wpcom } ) => {
 	}, [] );
 
 	useEffect( () => {
+		if ( ! isShowing ) {
+			return;
+		}
+
+		const handleKeyDown = ( event ) => {
+			if ( event.key === 'Escape' && ! event.defaultPrevented ) {
+				store.dispatch( actions.ui.closePanel() );
+			}
+		};
+
+		document.addEventListener( 'keydown', handleKeyDown );
+		return () => document.removeEventListener( 'keydown', handleKeyDown );
+	}, [ isShowing ] );
+
+	useEffect( () => {
 		const handleMessages = ( { action, hidden, showing } ) => {
 			debug( 'message received', { action, hidden, showing } );
 
@@ -202,6 +220,8 @@ const NotesWrapper = ( { wpcom } ) => {
 			locale={ locale }
 			wpcom={ wpcom }
 			isDismissible={ isMobileViewport }
+			isViewSettingsEnabled={ isViewSettingsEnabled }
+			isSimplifiedNoteEnabled={ isViewSettingsEnabled }
 		/>
 	);
 };

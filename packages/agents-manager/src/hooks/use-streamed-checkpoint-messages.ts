@@ -131,7 +131,8 @@ function switchStreamedCheckpointSession(
  * the final prose that replaces it and the server transcript don't.
  *
  * Messages are keyed by session. Only those streamed in this page load are live:
- * a checkpoint from an earlier load can't be undone.
+ * a checkpoint from an earlier load can't be undone. Also returns the session
+ * key, so other per-session state can use the same one.
  */
 export function useStreamedCheckpointMessages() {
 	const { agentConfig, getTabSessionId, siteKey, currentUser } = useAgentsManagerContext();
@@ -272,6 +273,7 @@ export function useStreamedCheckpointMessages() {
 	}, [] );
 
 	return {
+		sessionIdentity,
 		streamGeneration: stateRef.current.streamGeneration,
 		isCurrentStreamGeneration,
 		recordTaskUpdate,
