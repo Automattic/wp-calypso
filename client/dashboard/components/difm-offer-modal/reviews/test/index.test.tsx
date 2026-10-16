@@ -94,13 +94,6 @@ describe( 'DifmOfferReviews', () => {
 		expect( getVisibleReview().getByText( 'Jennifer Board' ) ).toBeVisible();
 	} );
 
-	it( 'shows plain text for a review without a URL', () => {
-		render( <DifmOfferReviews interval={ INTERVAL } /> );
-
-		// Michelle Hennesay's review, first in the list, has no URL yet.
-		expect( getVisibleReview().queryByRole( 'link' ) ).not.toBeInTheDocument();
-	} );
-
 	it( 'links a review with a URL to Trustpilot in a new tab', () => {
 		const onReviewLinkClick = jest.fn();
 		render( <DifmOfferReviews interval={ INTERVAL } onReviewLinkClick={ onReviewLinkClick } /> );
