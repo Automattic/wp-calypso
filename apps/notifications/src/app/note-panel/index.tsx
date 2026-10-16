@@ -120,7 +120,6 @@ const NotePanel = ( {
 							</Heading>
 							{ isSimplified && (
 								<Badge
-									intent="draft"
 									render={
 										<a href="https://wp.me/p9zg7s-dv" target="_blank" rel="noopener noreferrer" />
 									}
