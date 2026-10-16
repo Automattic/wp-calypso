@@ -37,6 +37,16 @@ Or, if your project uses React and you want to opt in to additional React-specif
 }
 ```
 
+With a flat config (`eslint.config.js`, required by ESLint 10), spread the matching preset instead. The flat presets also need `@eslint/js`:
+
+```js
+const wpcalypso = require( 'eslint-plugin-wpcalypso' );
+
+module.exports = [
+	...wpcalypso.configs[ 'flat/react' ], // or 'flat/recommended'
+];
+```
+
 Any of the above options will:
 
 - Enable the plugin `wpcalypso`

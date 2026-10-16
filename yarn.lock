@@ -814,6 +814,7 @@ __metadata:
   resolution: "@automattic/calypso-eslint-overrides@workspace:packages/calypso-eslint-overrides"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    globals: "npm:^14.0.0"
   languageName: unknown
   linkType: soft
 
@@ -19977,12 +19978,16 @@ __metadata:
     eslint: "npm:^8.57.1"
   peerDependencies:
     "@babel/core": ">=7.27.1"
+    "@babel/eslint-parser": ">=7.27.1"
+    "@eslint/js": ">=9.0.0"
     eslint: ">=8.57.1"
     eslint-plugin-inclusive-language: ^2.2.1
     eslint-plugin-jsdoc: ^65.1.0
     eslint-plugin-react: ^7.37.5
     eslint-plugin-react-hooks: ^7.1.1
   peerDependenciesMeta:
+    "@eslint/js":
+      optional: true
     eslint-plugin-react:
       optional: true
     eslint-plugin-react-hooks:
