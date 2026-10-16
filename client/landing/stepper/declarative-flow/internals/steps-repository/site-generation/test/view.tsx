@@ -188,21 +188,49 @@ describe( 'SiteGenerationView wait estimate', () => {
 	};
 
 	it( 'promises up to 4 minutes on the DSL graph', () => {
-		render( <SiteGenerationView graph="dsl" onReload={ jest.fn() } state={ workingState } /> );
+		render(
+			<SiteGenerationView
+				graph="dsl"
+				isStoreBuild={ false }
+				onReload={ jest.fn() }
+				state={ workingState }
+			/>
+		);
 
 		expect( screen.getByText( /This can take up to 4 minutes\./ ) ).toBeInTheDocument();
 	} );
 
-	it.each( [ 'blocks-first' as const, undefined ] )(
-		'promises up to 10 minutes when the graph is %s',
-		( graph ) => {
-			render(
-				<SiteGenerationView graph={ graph } onReload={ jest.fn() } state={ workingState } />
-			);
+	it( 'promises no time on the DSL graph until the plan has loaded', () => {
+		render( <SiteGenerationView graph="dsl" onReload={ jest.fn() } state={ workingState } /> );
 
-			expect( screen.getByText( /This can take up to 10 minutes\./ ) ).toBeInTheDocument();
-		}
-	);
+		expect( screen.queryByText( /This can take up to/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'promises up to 8 minutes for a store on the DSL graph', () => {
+		render(
+			<SiteGenerationView graph="dsl" isStoreBuild onReload={ jest.fn() } state={ workingState } />
+		);
+
+		expect( screen.getByText( /This can take up to 8 minutes\./ ) ).toBeVisible();
+	} );
+
+	it.each( [
+		[ 'blocks-first' as const, false ],
+		[ 'blocks-first' as const, true ],
+		[ undefined, false ],
+		[ undefined, true ],
+	] )( 'promises up to 10 minutes when the graph is %s (store: %s)', ( graph, isStoreBuild ) => {
+		render(
+			<SiteGenerationView
+				graph={ graph }
+				isStoreBuild={ isStoreBuild }
+				onReload={ jest.fn() }
+				state={ workingState }
+			/>
+		);
+
+		expect( screen.getByText( /This can take up to 10 minutes\./ ) ).toBeVisible();
+	} );
 } );
 
 describe( 'SiteGenerationView server recovery', () => {
