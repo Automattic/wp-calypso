@@ -3,14 +3,20 @@
  */
 import { act, render } from '@testing-library/react';
 import { omnibarEvents } from '../events';
-import { useNotificationsPlugin } from '../plugin-notifications';
+import { useNotificationsNodeBuilder } from '../plugin-notifications';
 
 function NotificationsPlugin() {
-	const node = useNotificationsPlugin( {} );
+	const node = useNotificationsNodeBuilder( {} )( {
+		id: 'notes',
+		title: 'Notifications',
+		parent: 'top-secondary',
+		href: '',
+		group: false,
+	} );
 	return <div>{ node.icon }</div>;
 }
 
-describe( 'useNotificationsPlugin', () => {
+describe( 'useNotificationsNodeBuilder', () => {
 	it( 'pulses the bell when a subscriber note arrives', () => {
 		const { container } = render( <NotificationsPlugin /> );
 
