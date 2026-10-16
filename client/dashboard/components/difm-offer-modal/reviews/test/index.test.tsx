@@ -57,33 +57,41 @@ describe( 'DifmOfferReviews', () => {
 		act( () => jest.advanceTimersByTime( INTERVAL ) );
 		expect( getVisibleReview().getByText( 'Jennifer Board' ) ).toBeVisible();
 
-		act( () => jest.advanceTimersByTime( INTERVAL * 4 ) );
+		act( () => jest.advanceTimersByTime( INTERVAL * 3 ) );
 		expect( getVisibleReview().getByText( 'Michelle Hennesay' ) ).toBeVisible();
 	} );
 
 	it( 'stops while the pointer is over the reviews', () => {
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
-		const region = screen.getByRole( 'region', { name: 'Customer reviews' } );
 
-		fireEvent.mouseEnter( region );
+		fireEvent.mouseEnter( screen.getByRole( 'figure' ) );
 		act( () => jest.advanceTimersByTime( INTERVAL * 2 ) );
 		expect( getVisibleReview().getByText( 'Michelle Hennesay' ) ).toBeVisible();
 	} );
 
-	it( 'stops while the reviews have focus', () => {
+	it( 'stops when the user pauses and continues when the user plays', () => {
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
 
-		act( () => screen.getByRole( 'region', { name: 'Customer reviews' } ).focus() );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Pause reviews' } ) );
 		act( () => jest.advanceTimersByTime( INTERVAL * 2 ) );
 		expect( getVisibleReview().getByText( 'Michelle Hennesay' ) ).toBeVisible();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Play reviews' } ) );
+		act( () => jest.advanceTimersByTime( INTERVAL ) );
+		expect( getVisibleReview().getByText( 'Jennifer Board' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Pause reviews' } ) ).toBeVisible();
 	} );
 
-	it( 'does not change the review when the user prefers reduced motion', () => {
+	it( 'starts paused when the user prefers reduced motion, and plays on request', () => {
 		prefersReducedMotion = true;
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
 
 		act( () => jest.advanceTimersByTime( INTERVAL * 3 ) );
 		expect( getVisibleReview().getByText( 'Michelle Hennesay' ) ).toBeVisible();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Play reviews' } ) );
+		act( () => jest.advanceTimersByTime( INTERVAL ) );
+		expect( getVisibleReview().getByText( 'Jennifer Board' ) ).toBeVisible();
 	} );
 
 	it( 'does not link to Trustpilot', () => {
