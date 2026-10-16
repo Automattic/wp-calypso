@@ -125,11 +125,13 @@ export function useSuggestionTracking( {
 				? selectedBlockType
 				: undefined;
 
-			// The empty view hands over its untruncated list; what Agenttic reported as
-			// rendered is what was on screen, so it wins whenever it holds the chip.
-			const isRendered = renderedSuggestions.some(
-				( renderedSuggestion ) => renderedSuggestion.id === suggestion.id
-			);
+			// What Agenttic reported as rendered was on screen, so it wins while chips
+			// are fed. Agenttic keeps that set after they go.
+			const isRendered =
+				hasSuggestionsToRender &&
+				renderedSuggestions.some(
+					( renderedSuggestion ) => renderedSuggestion.id === suggestion.id
+				);
 			const shownSuggestions = isRendered ? renderedSuggestions : knownSuggestions;
 
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_suggestion_click', {
@@ -140,7 +142,7 @@ export function useSuggestionTracking( {
 				...( blockType ? { block_type: blockType } : {} ),
 			} );
 		},
-		[ contextualSuggestionIds, selectedBlockType ]
+		[ contextualSuggestionIds, hasSuggestionsToRender, selectedBlockType ]
 	);
 
 	return { onSuggestionsRendered, trackSuggestionClick };
