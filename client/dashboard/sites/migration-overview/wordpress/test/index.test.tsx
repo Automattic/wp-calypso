@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
 import { WordPressMigration } from '../index';
-import type { Site } from '@automattic/api-core';
+import type { Site, WordPressMigrationFinding } from '@automattic/api-core';
 
 const site = {
 	ID: 42,
@@ -28,9 +28,14 @@ const migration = ( status: string, extra = {} ) => ( {
 	...extra,
 } );
 
-const finding = ( code: string, severity: string ) => ( {
+const finding = (
+	code: string,
+	severity: WordPressMigrationFinding[ 'severity' ],
+	resolution: WordPressMigrationFinding[ 'resolution' ]
+): WordPressMigrationFinding => ( {
 	code,
 	severity,
+	resolution,
 	label: `${ code } label`,
 	message: `${ code } message`,
 } );
@@ -96,20 +101,22 @@ describe( 'WordPressMigration', () => {
 		const paused = migration( 'paused', {
 			phase: 'preflight',
 			findings: [
-				finding( 'destination_site_not_new', 'warning' ),
-				finding( 'source_woocommerce_active', 'warning' ),
+				finding( 'source_is_multisite', 'warning', 'accept' ),
+				finding( 'source_woocommerce_active', 'warning', 'accept' ),
 			],
 		} );
 		mockApi().get( statusPath ).query( true ).reply( 200, paused );
 
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
-		expect( await screen.findByText( 'destination_site_not_new label' ) ).toBeVisible();
+		expect( await screen.findByText( 'source_is_multisite label' ) ).toBeVisible();
 		expect( screen.getByText( 'source_woocommerce_active label' ) ).toBeVisible();
+		expect( screen.getByText( 'source_is_multisite message' ) ).toBeVisible();
+		expect( screen.getByText( 'source_woocommerce_active message' ) ).toBeVisible();
 
 		mockApi()
 			.post( runPath, {
-				accept_findings: [ 'destination_site_not_new', 'source_woocommerce_active' ],
+				accept_findings: [ 'source_is_multisite', 'source_woocommerce_active' ],
 			} )
 			.reply( 202, running );
 		mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
@@ -123,8 +130,9 @@ describe( 'WordPressMigration', () => {
 		const failed = migration( 'failed', {
 			phase: 'preflight',
 			findings: [
-				finding( 'source_woocommerce_active', 'warning' ),
-				{ ...finding( 'source_connection_failed', 'failure' ), resolution: 'retry' },
+				finding( 'source_woocommerce_active', 'warning', 'accept' ),
+				finding( 'source_tls_unverified', 'failure', 'accept' ),
+				finding( 'source_connection_failed', 'failure', 'retry' ),
 			],
 		} );
 		mockApi().get( statusPath ).query( true ).reply( 200, failed );
@@ -133,10 +141,19 @@ describe( 'WordPressMigration', () => {
 
 		expect( await screen.findByText( 'source_connection_failed label' ) ).toBeVisible();
 		expect( screen.getByText( 'source_woocommerce_active label' ) ).toBeVisible();
+		expect( screen.getByText( 'source_tls_unverified label' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'Reconnect your site' } )
+		).not.toBeInTheDocument();
 
 		const run = mockApi()
 			.post( runPath, {
-				accept_findings: [ 'source_woocommerce_active', 'source_connection_failed' ],
+				accept_findings: [
+					'source_woocommerce_active',
+					'source_tls_unverified',
+					'source_connection_failed',
+				],
 			} )
 			.reply( 202, running );
 		mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
@@ -146,29 +163,38 @@ describe( 'WordPressMigration', () => {
 		await waitFor( () => expect( run.isDone() ).toBe( true ) );
 	} );
 
-	it( 'sends a rejected connection back to the connect step', async () => {
-		const failed = migration( 'failed', {
-			phase: 'preflight',
-			started_at: '2026-10-13T10:00:00+00:00',
-			findings: [
-				{ ...finding( 'source_connection_failed', 'failure' ), resolution: 'reconnect' },
-			],
-		} );
-		mockApi().get( statusPath ).query( true ).reply( 200, failed );
-		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
+	it.each( [ 'source_tls_unverified', 'source_redirect' ] )(
+		'continues a failed migration when %s can be accepted',
+		async ( code ) => {
+			mockApi()
+				.get( statusPath )
+				.query( true )
+				.reply(
+					200,
+					migration( 'failed', {
+						phase: 'preflight',
+						findings: [ finding( code, 'failure', 'accept' ) ],
+					} )
+				);
 
-		render( <WordPressMigration site={ site } />, { queryClient } );
+			render( <WordPressMigration site={ site } />, { queryClient } );
 
-		expect( await screen.findByText( 'source_connection_failed label' ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
+			expect( await screen.findByText( `${ code } label` ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Reconnect your site' } ) );
+			const run = mockApi()
+				.post( runPath, { accept_findings: [ code ] } )
+				.reply( 202, running );
+			mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
 
-		expect(
-			await screen.findByRole( 'heading', { name: 'Install our plugin to start the migration' } )
-		).toBeVisible();
-		expect( screen.queryByText( 'source_connection_failed label' ) ).not.toBeInTheDocument();
-	} );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			expect(
+				await screen.findByRole( 'heading', { name: 'Migrating example.com' } )
+			).toBeVisible();
+			expect( run.isDone() ).toBe( true );
+		}
+	);
 
 	it( 'catches up with the migration when a run is refused', async () => {
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'paused' ) );
