@@ -546,47 +546,81 @@ function measureTextContrast( clientIds: string[] ): TextContrast | null {
 
 	const failing = measured.filter( ( item ) => item.ratio < item.needs );
 	const failures = new Map< string, Measured[] >();
+	const ownBackground = new Map< string, boolean >();
+	const isOwnBackground = ( clientId: string ): boolean => {
+		if ( ! ownBackground.has( clientId ) ) {
+			ownBackground.set( clientId, setsOwnBackground( clientId ) );
+		}
 
+		return ownBackground.get( clientId ) ?? false;
+	};
+
+	// Blocks that set the same background, as a row of buttons does, are one
+	// fix, so they share a note. A backdrop from the theme is grouped by the
+	// block it renders on, which is where a fix would go.
 	failing.forEach( ( item ) => {
+		const painter = item.backdrop.clientId;
 		const key = [
 			toHex( item.text ),
 			toHex( item.backdrop.colour ),
-			item.backdrop.clientId ?? '',
+			painter && isOwnBackground( painter ) ? 'own' : ( painter ?? '' ),
 		].join( '|' );
 
 		failures.set( key, [ ...( failures.get( key ) ?? [] ), item ] );
 	} );
 
-	const notes = [ ...failures.values() ]
+	const listed = [ ...failures.values() ]
 		.map( ( items ) => ( {
 			items,
 			worst: Math.min( ...items.map( ( item ) => item.ratio ) ),
 		} ) )
 		.sort( ( a, b ) => a.worst - b.worst )
-		.slice( 0, MAX_NOTES )
-		.map( ( { items, worst } ) => {
-			// One set of colours, so one ratio; the strictest threshold among them.
-			const [ { text, backdrop } ] = items;
-			const needs = Math.max( ...items.map( ( item ) => item.needs ) );
-			const backdropHex = toHex( backdrop.colour );
-			let source: string;
+		.slice( 0, MAX_NOTES );
 
-			if ( ! backdrop.clientId ) {
-				source = `The ${ backdropHex } comes from the page background.`;
-			} else if ( setsOwnBackground( backdrop.clientId ) ) {
-				source = `The ${ backdropHex } comes from ${ labelOf( backdrop.clientId ) }'s own background.`;
+	const notes = listed.map( ( { items, worst } ) => {
+		// One set of colours, so one ratio; the strictest threshold among them.
+		const [ { text, backdrop } ] = items;
+		const needs = Math.max( ...items.map( ( item ) => item.needs ) );
+		const backdropHex = toHex( backdrop.colour );
+		const painters = [ ...new Set( items.map( ( item ) => item.backdrop.clientId ?? '' ) ) ].filter(
+			Boolean
+		);
+		let source: string;
+
+		if ( ! backdrop.clientId ) {
+			source = `The ${ backdropHex } comes from the page background.`;
+		} else if ( isOwnBackground( backdrop.clientId ) ) {
+			if ( painters.length === 1 ) {
+				source = `The ${ backdropHex } comes from ${ labelOf( painters[ 0 ] ) }'s own background.`;
+			} else if ( items.every( ( item ) => item.backdrop.clientId === item.clientId ) ) {
+				source = `The ${ backdropHex } comes from each block's own background.`;
 			} else {
-				source = `The ${ backdropHex } comes from ${ labelOf(
-					backdrop.clientId
-				) }, which sets no background of its own, so the colour comes from the theme or global styles.`;
+				source = `The ${ backdropHex } comes from the own backgrounds of ${ listLabels(
+					painters.map( labelOf )
+				) }.`;
 			}
+		} else {
+			source = `The ${ backdropHex } comes from ${ labelOf(
+				backdrop.clientId
+			) }, which sets no background of its own, so the colour comes from the theme or global styles.`;
+		}
 
-			return `Text contrast too low: ${ listLabels(
-				items.map( ( item ) => labelOf( item.clientId ) )
-			) } — ${ toHex( text ) } text on ${ backdropHex }, ${ formatRatio( worst ) } (needs ${ formatRatio(
-				needs
-			) }). ${ source }`;
-		} );
+		return `Text contrast too low: ${ listLabels(
+			items.map( ( item ) => labelOf( item.clientId ) )
+		) } — ${ toHex( text ) } text on ${ backdropHex }, ${ formatRatio( worst ) } (needs ${ formatRatio(
+			needs
+		) }). ${ source }`;
+	} );
+
+	// So a count above the notes never comes with a list that looks complete.
+	const unlisted =
+		failing.length - listed.reduce( ( count, { items } ) => count + items.length, 0 );
+
+	if ( unlisted > 0 ) {
+		notes.push(
+			`Text contrast too low for ${ unlisted } more edited text block(s) not listed above.`
+		);
+	}
 
 	// Past either cap, some edited text went unread, so "all" would overclaim.
 	if ( ! notes.length && measured.length && ! capped ) {

@@ -273,6 +273,42 @@ describe( 'failures', () => {
 		] );
 	} );
 
+	it( 'gives a row of buttons with the same background of their own one note', () => {
+		// In the editor run this was written for, each button was its own note,
+		// and the cap dropped two of the three before the correction.
+		const button = ( clientId: string ): CanvasBlock => ( {
+			...text( clientId, WHITE_TEXT ),
+			name: 'core/button',
+			attributes: { backgroundColor: 'terracotta' },
+			style: { backgroundColor: 'rgb(201, 111, 74)' },
+		} );
+
+		mountCanvas( [ button( 'pd19' ), button( 'pz9d' ), button( 'mnyk' ) ] );
+
+		expect( describeTextContrast( [ 'pd19', 'pz9d', 'mnyk' ] ) ).toEqual( {
+			notes: [
+				"Text contrast too low: button (pd19), button (pz9d) and button (mnyk) — #FFFFFF text on #C96F4A, 3.58:1 (needs 4.5:1). The #C96F4A comes from each block's own background.",
+			],
+			failures: 3,
+		} );
+	} );
+
+	it( 'names each block whose own background a shared note comes from', () => {
+		const group = ( clientId: string, child: string ): CanvasBlock => ( {
+			clientId,
+			name: 'core/group',
+			attributes: { backgroundColor: 'contrast' },
+			style: { backgroundColor: NAVY },
+			children: [ text( child ) ],
+		} );
+
+		mountCanvas( [ group( 'g1', 'p1' ), group( 'g2', 'p2' ) ] );
+
+		expect( notesOf( [ 'g1', 'g2' ] ) ).toEqual( [
+			'Text contrast too low: paragraph (p1) and paragraph (p2) — #14213D text on #1D2630, 1.04:1 (needs 4.5:1). The #1D2630 comes from the own backgrounds of group (g1) and group (g2).',
+		] );
+	} );
+
 	it( 'puts the worst failure first and names at most three blocks in a note', () => {
 		mountCanvas( [
 			text( 'grey', GREY_TEXT ),
@@ -509,7 +545,7 @@ describe( 'overlays', () => {
 } );
 
 describe( 'limits', () => {
-	it( 'writes at most four failure notes', () => {
+	it( 'writes at most four failure notes, and counts the failures it leaves out', () => {
 		mountCanvas( [
 			{
 				clientId: 'c25n',
@@ -523,8 +559,11 @@ describe( 'limits', () => {
 
 		const notes = notesOf( [ 'c25n' ] );
 
-		expect( notes ).toHaveLength( 4 );
-		notes.forEach( ( note ) => expect( note ).toMatch( /^Text contrast too low/ ) );
+		expect( notes ).toHaveLength( 5 );
+		notes.slice( 0, 4 ).forEach( ( note ) => expect( note ).toMatch( /^Text contrast too low: / ) );
+		expect( notes[ 4 ] ).toBe(
+			'Text contrast too low for 1 more edited text block(s) not listed above.'
+		);
 	} );
 
 	it( 'claims no pass for all the text when there was more than it read', () => {
