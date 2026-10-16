@@ -9,7 +9,10 @@ import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_CLIENT_SUBSCRIPTIONS_LINK,
+	A4A_MARKETPLACE_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -58,7 +61,10 @@ function PressableReturnContent( params: ReturnParams ) {
 	);
 }
 
-export default function PressableReturn( params: ReturnParams ) {
+export default function PressableReturn( {
+	isClient = false,
+	...params
+}: ReturnParams & { isClient?: boolean } ) {
 	const dispatch = useDispatch();
 	const isNarrowView = useBreakpoint( '<660px' );
 
@@ -80,7 +86,9 @@ export default function PressableReturn( params: ReturnParams ) {
 				<LayoutHeader>
 					<Breadcrumb
 						items={ [
-							{ label: __( 'Marketplace' ), href: A4A_MARKETPLACE_LINK },
+							isClient
+								? { label: __( 'Your subscriptions' ), href: A4A_CLIENT_SUBSCRIPTIONS_LINK }
+								: { label: __( 'Marketplace' ), href: A4A_MARKETPLACE_LINK },
 							{ label: __( 'Checkout' ) },
 						] }
 					/>

@@ -7,6 +7,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useSelector } from 'calypso/state';
 import { getUserBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import ClientSidebar from '../../components/sidebar-menu/client';
+import PressableReturn from '../marketplace/pressable-return';
 import InvoicesOverview from '../purchases/invoices/invoices-overview';
 import PaymentMethodAdd from '../purchases/payment-methods/payment-method-add';
 import PaymentMethodOverview from '../purchases/payment-methods/payment-method-overview';
@@ -106,8 +107,23 @@ export const clientCheckoutV2Context: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Client > Checkout V2" path="/client/checkout/v2" />
-			<ClientCheckoutV2 />
+			<ClientCheckoutV2 skipActiveCart={ context.query.skip_active_cart === '1' } />
 		</>
+	);
+	next();
+};
+
+export const clientPressableReturnContext: Callback = ( context, next ) => {
+	const { agency_id, referral_id, receipt_id, order_id } = context.query;
+	context.secondary = <ClientSidebar path={ context.path } />;
+	context.primary = (
+		<PressableReturn
+			isClient
+			agencyId={ agency_id }
+			referralId={ referral_id }
+			receiptId={ receipt_id }
+			orderId={ order_id }
+		/>
 	);
 	next();
 };

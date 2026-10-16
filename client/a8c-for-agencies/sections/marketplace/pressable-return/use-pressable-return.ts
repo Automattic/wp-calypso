@@ -3,7 +3,12 @@ import { useEffect, useState } from 'react';
 import { fetchPressableReturn } from './lib';
 import type { ReturnParams } from './lib';
 
-export default function usePressableReturn( { agencyId, receiptId, orderId }: ReturnParams ) {
+export default function usePressableReturn( {
+	agencyId,
+	referralId,
+	receiptId,
+	orderId,
+}: ReturnParams ) {
 	const [ attempt, setAttempt ] = useState( 0 );
 	const { mutateAsync, isError } = useMutation( {
 		mutationFn: fetchPressableReturn,
@@ -13,7 +18,7 @@ export default function usePressableReturn( { agencyId, receiptId, orderId }: Re
 
 	useEffect( () => {
 		let active = true;
-		mutateAsync( { agencyId, receiptId, orderId } )
+		mutateAsync( { agencyId, referralId, receiptId, orderId } )
 			.then( ( url ) => {
 				if ( active ) {
 					window.location.assign( url );
@@ -25,7 +30,7 @@ export default function usePressableReturn( { agencyId, receiptId, orderId }: Re
 		return () => {
 			active = false;
 		};
-	}, [ agencyId, receiptId, orderId, attempt, mutateAsync ] );
+	}, [ agencyId, referralId, receiptId, orderId, attempt, mutateAsync ] );
 
 	return { isError, retry: () => setAttempt( ( value ) => value + 1 ) };
 }

@@ -3,6 +3,8 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
+import PressableCheckoutBack from 'calypso/a8c-for-agencies/sections/marketplace/billing-dragon-checkout/pressable-checkout-back';
+import usePressableCheckoutReturn from 'calypso/a8c-for-agencies/sections/marketplace/billing-dragon-checkout/use-pressable-return-paths';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutQueryClientProvider from 'calypso/my-sites/checkout/checkout-query-client-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
@@ -18,22 +20,34 @@ import './style.scss';
 /**
  * Client Checkout Component using the WordPress.com checkout
  */
-function ClientCheckoutContent() {
+function ClientCheckoutContent( { skipActiveCart }: { skipActiveCart: boolean } ) {
 	const translate = useTranslate();
 
-	const { isReady, error, emailMismatchWithReferralClient, referral, wpcomHostingProductSlug } =
-		useClientCheckout( {
-			expressMode: false,
-		} );
+	const {
+		isReady,
+		error,
+		emailMismatchWithReferralClient,
+		referral,
+		wpcomHostingProductSlug,
+		preparedCartContext,
+		products,
+	} = useClientCheckout( { expressMode: false, skipActiveCart } );
+	const { successPath, originalUrl } = usePressableCheckoutReturn(
+		products,
+		preparedCartContext?.agencyId,
+		skipActiveCart,
+		isReady,
+		preparedCartContext
+	);
 
 	const subscriptionsUrl = window.location.origin + '/client/subscriptions';
 	const redirectTo = getClientCheckoutRedirectUrl( subscriptionsUrl, wpcomHostingProductSlug );
 
-	if ( ! isReady ) {
-		return <ClientCheckoutV2Placeholder />;
-	}
-
-	if ( emailMismatchWithReferralClient ) {
+	if (
+		emailMismatchWithReferralClient &&
+		referral?.client?.email &&
+		( skipActiveCart || isReady )
+	) {
 		return (
 			<ClientCheckoutV2Error
 				title={ translate( 'Permission denied' ) }
@@ -53,29 +67,56 @@ function ClientCheckoutContent() {
 		);
 	}
 
-	if ( error ) {
+	if ( error && ! originalUrl ) {
 		return <ClientCheckoutV2Error title={ translate( 'Error' ) } message={ error } />;
 	}
+	if ( ! isReady && ! originalUrl ) {
+		return <ClientCheckoutV2Placeholder />;
+	}
 
-	return (
-		<div className="client-checkout-v2">
-			<div className="client-checkout-v2__top-bar">
-				<div className="client-checkout-v2__top-bar-logo">
-					<A4ALogo full size={ 14 } />
-				</div>
-			</div>
+	let checkoutContent = <ClientCheckoutV2Placeholder />;
+	if ( error ) {
+		checkoutContent = <ClientCheckoutV2Error title={ translate( 'Error' ) } message={ error } />;
+	} else if ( isReady ) {
+		checkoutContent = (
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
-				redirectTo={ redirectTo }
+				redirectTo={ successPath ?? redirectTo }
 				customizedPreviousPath="/client/subscriptions"
 				siteSlug=""
 				siteId={ 0 }
 			/>
+		);
+	}
+
+	return (
+		<div className="client-checkout-v2">
+			<div
+				className={
+					originalUrl ? 'client-checkout-v2-pressable-top-bar' : 'client-checkout-v2__top-bar'
+				}
+			>
+				{ originalUrl && preparedCartContext && (
+					<PressableCheckoutBack
+						key={ originalUrl }
+						agencyId={ preparedCartContext.agencyId }
+						afterPurchaseUrl={ originalUrl }
+					/>
+				) }
+				<div className="client-checkout-v2__top-bar-logo">
+					<A4ALogo full size={ 14 } />
+				</div>
+			</div>
+			{ checkoutContent }
 		</div>
 	);
 }
 
-export default function ClientCheckoutV2() {
+export default function ClientCheckoutV2( {
+	skipActiveCart = false,
+}: {
+	skipActiveCart?: boolean;
+} ) {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
 
@@ -89,7 +130,7 @@ export default function ClientCheckoutV2() {
 						fetchStripeConfiguration={ fetchStripeConfiguration }
 						locale={ locale }
 					>
-						<ClientCheckoutContent />
+						<ClientCheckoutContent skipActiveCart={ skipActiveCart } />
 					</StripeHookProvider>
 				</CalypsoShoppingCartProvider>
 			</CheckoutQueryClientProvider>
