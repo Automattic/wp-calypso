@@ -961,3 +961,52 @@ describe( 'blocks with more runs than are read', () => {
 		} );
 	} );
 } );
+
+describe( 'a block failing against more than one backdrop', () => {
+	it( 'lists every backdrop it fails against, and counts the block once', () => {
+		// Grey body text fails on the group's white, and black text fails on the
+		// paragraph's own black highlight: both are a fix.
+		mountCanvas( [
+			{
+				clientId: 'grp',
+				name: 'core/group',
+				style: { backgroundColor: 'rgb(255, 255, 255)' },
+				children: [
+					{
+						clientId: 'para',
+						name: 'core/paragraph',
+						build: ( element, canvasDocument ) => {
+							const body = canvasDocument.createElement( 'span' );
+							Object.assign( body.style, GREY_TEXT );
+							body.append( 'Body ' );
+
+							const highlight = canvasDocument.createElement( 'mark' );
+							Object.assign( highlight.style, {
+								color: 'rgb(0, 0, 0)',
+								backgroundColor: 'rgb(0, 0, 0)',
+								fontSize: '16px',
+							} );
+							highlight.append( 'Highlight' );
+
+							element.append( body, highlight );
+						},
+					},
+				],
+			},
+		] );
+
+		const contrast = describeTextContrast( [ 'grp' ] );
+
+		expect( contrast?.failures ).toBe( 1 );
+		expect( contrast?.notes ).toHaveLength( 1 );
+		expect( contrast?.backdrops ).toEqual( [
+			{
+				clientId: 'para',
+				name: 'core/paragraph',
+				ownBackground: false,
+				textClientIds: [ 'para' ],
+			},
+			{ clientId: 'grp', name: 'core/group', ownBackground: false, textClientIds: [ 'para' ] },
+		] );
+	} );
+} );
