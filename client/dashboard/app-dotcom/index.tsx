@@ -8,7 +8,6 @@ import {
 /* eslint-enable no-restricted-imports */
 import { isEnabled } from '@automattic/calypso-config';
 import boot from '../app/boot';
-import Logo from './logo';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
@@ -21,7 +20,7 @@ boot( {
 	unifiedAdminPageViewApp: 'msd',
 	basePath: '/',
 	mainRoute: '/sites',
-	Logo,
+	Logo: null,
 	supports: {
 		agency: false,
 		agencyClient: false,
