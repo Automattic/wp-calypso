@@ -1,46 +1,60 @@
 import '../style.scss';
 
-import { userSettingsQuery, userSettingsMutation, siteBySlugQuery } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import {
+	siteAbilitiesQuery,
+	userSettingsQuery,
+	userSettingsMutation,
+	siteBySlugQuery,
+} from '@automattic/api-queries';
+import languages from '@automattic/languages';
+import { useSuspenseQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	ToggleControl,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Fragment } from 'react';
+import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../me/mcp/groups';
+import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
+	getGroupDescriptors,
 	getSiteContextToolIds,
 	getSiteMcpAbilities,
+	getSiteRemoteGroups,
 	mergeSiteMcpAbilities,
 } from '../../../../me/mcp/utils';
+import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
+import { useLocale } from '../../../app/locale';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
+import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import {
-	CATEGORY_ORDER,
-	SUB_CATEGORY_ORDER,
-	getDisplayCategory,
-	getSubCategory,
-	isWriteTool,
-	sortTools,
-} from '../../../me/mcp/categories';
+import { isWriteTool, sortTools } from '../../../me/mcp/categories';
 import McpGroupCard from '../mcp-group-card';
-import RemoteAbilitiesSection from '../remote-abilities-section';
+import RemoteAbilitiesSection, { collectNamespaces } from '../remote-abilities-section';
+import type { McpAbility, McpGroupDescriptor } from '@automattic/api-core';
 
-interface McpAbility {
-	title: string;
-	description: string;
-	enabled: boolean;
-	category?: string;
-	category_label?: string;
-	type?: string;
-	readonly?: boolean;
-	visible?: boolean;
-	annotations?: Record< string, unknown >;
+const TOOL_CATEGORY = 'read' as const;
+
+interface ToolGroup {
+	group: McpGroupDescriptor | null;
+	label: string;
+	tools: Array< [ string, McpAbility ] >;
+}
+
+interface SubGroup {
+	subCategory: string | null;
+	tools: Array< [ string, McpAbility ] >;
 }
 
 export default function SiteAIToolsRead() {
+	const { recordTracksEvent } = useAnalytics();
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
@@ -69,10 +83,30 @@ export default function SiteAIToolsRead() {
 				] )
 			);
 
-	const allTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > ).filter(
-		( [ , tool ] ) => tool.visible !== false
-	);
-	const readTools = allTools.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
+	const allTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > )
+		.filter( ( [ , tool ] ) => tool.visible !== false )
+		.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
+
+	const groupDescriptors = getGroupDescriptors( userSettings || {} ) as McpGroupDescriptor[];
+	const groups = groupToolsByGroup( allTools, groupDescriptors ) as ToolGroup[];
+
+	// Site-published abilities on this page, for the page-level toggle and its
+	// state. Cached with the section's own query.
+	const localeSlug = useLocale();
+	const wpLocale = languages.find( ( { langSlug } ) => langSlug === localeSlug )?.wpLocale;
+	const savedRemoteGroups = getSiteRemoteGroups( userSettings || {}, site.ID );
+	const { data: remoteAbilities } = useQuery( {
+		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
+		enabled: !! site.jetpack,
+	} );
+	const remoteKeys = [
+		...collectNamespaces( remoteAbilities, savedRemoteGroups, TOOL_CATEGORY ).values(),
+	].flatMap( ( group ) => group.keys );
+
+	const pageAllEnabled =
+		allTools.length > 0 &&
+		allTools.every( ( [ , tool ] ) => tool.enabled ) &&
+		remoteKeys.every( ( key ) => savedRemoteGroups[ key ] === true );
 
 	const mutation = useMutation(
 		withSnackbar( userSettingsMutation(), {
@@ -107,9 +141,12 @@ export default function SiteAIToolsRead() {
 		} );
 	};
 
-	const handleEnableAll = ( categoryTools: Array< [ string, McpAbility ] >, enabled: boolean ) => {
+	const handleGroupEnableAll = (
+		groupTools: Array< [ string, McpAbility ] >,
+		enabled: boolean
+	) => {
 		const overrides: Record< string, boolean > = {};
-		categoryTools.forEach( ( [ toolId ] ) => {
+		groupTools.forEach( ( [ toolId ] ) => {
 			overrides[ toolId ] = enabled;
 		} );
 		mutation.mutate( {
@@ -124,15 +161,37 @@ export default function SiteAIToolsRead() {
 		} );
 	};
 
-	// Group tools by display category
-	const grouped: Record< string, Array< [ string, McpAbility ] > > = {};
-	readTools.forEach( ( [ toolId, tool ] ) => {
-		const category = getDisplayCategory( toolId, tool );
-		if ( ! grouped[ category ] ) {
-			grouped[ category ] = [];
-		}
-		grouped[ category ].push( [ toolId, tool ] );
-	} );
+	const handlePageToggle = ( enabled: boolean ) => {
+		const overrides: Record< string, boolean > = {};
+		allTools.forEach( ( [ toolId ] ) => {
+			overrides[ toolId ] = enabled;
+		} );
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					sites: [
+						{
+							blog_id: site.ID,
+							abilities: buildAbilities( overrides ),
+							...( remoteKeys.length > 0 && {
+								remote_groups: Object.fromEntries( remoteKeys.map( ( key ) => [ key, enabled ] ) ),
+							} ),
+						},
+					],
+				},
+			},
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_site_enable_all_toggled', {
+						...tracksAudienceProps,
+						category: TOOL_CATEGORY,
+						enabled,
+						site_id: site.ID,
+					} );
+				},
+			}
+		);
+	};
 
 	const renderToolToggles = ( tools: Array< [ string, McpAbility ] > ) =>
 		tools.map( ( [ toolId, tool ] ) => (
@@ -148,34 +207,12 @@ export default function SiteAIToolsRead() {
 			</div>
 		) );
 
-	const renderToolsContent = (
-		categoryTools: Array< [ string, McpAbility ] >,
-		categoryName: string
-	) => {
-		if ( ! SUB_CATEGORY_ORDER[ categoryName ] ) {
-			return <VStack spacing={ 4 }>{ renderToolToggles( sortTools( categoryTools ) ) }</VStack>;
-		}
-
-		const subGrouped: Record< string, Array< [ string, McpAbility ] > > = {};
-		categoryTools.forEach( ( [ toolId, tool ] ) => {
-			const sub = getSubCategory( toolId, tool ) ?? '';
-			if ( ! subGrouped[ sub ] ) {
-				subGrouped[ sub ] = [];
-			}
-			subGrouped[ sub ].push( [ toolId, tool ] );
-		} );
-
-		const order = SUB_CATEGORY_ORDER[ categoryName ] ?? [];
-		const subGroups = order.filter( ( sub ) => subGrouped[ sub ] && subGrouped[ sub ].length > 0 );
-		// Tools with no sub-category are appended at the end so they are never silently dropped.
-		const ungrouped = subGrouped[ '' ] ?? [];
-		const allGroups = ungrouped.length > 0 ? [ ...subGroups, '' ] : subGroups;
-
-		return (
-			<VStack spacing={ 4 }>
-				{ allGroups.map( ( subName, index ) => (
-					<Fragment key={ subName || '__ungrouped__' }>
-						{ index > 0 && (
+	const renderToolsContent = ( groupTools: Array< [ string, McpAbility ] > ) => (
+		<VStack spacing={ 4 }>
+			{ ( groupToolsBySubCategory( groupTools ) as SubGroup[] ).map(
+				( { subCategory, tools: subTools }, subIndex ) => (
+					<Fragment key={ subCategory ?? '__ungrouped__' }>
+						{ subIndex > 0 && (
 							<hr
 								style={ {
 									border: 'none',
@@ -184,14 +221,12 @@ export default function SiteAIToolsRead() {
 								} }
 							/>
 						) }
-						<VStack spacing={ 4 }>
-							{ renderToolToggles( sortTools( subGrouped[ subName ] ) ) }
-						</VStack>
+						<VStack spacing={ 4 }>{ renderToolToggles( sortTools( subTools ) ) }</VStack>
 					</Fragment>
-				) ) }
-			</VStack>
-		);
-	};
+				)
+			) }
+		</VStack>
+	);
 
 	return (
 		<PageLayout
@@ -206,29 +241,39 @@ export default function SiteAIToolsRead() {
 		>
 			<ComponentViewTracker eventName="calypso_dashboard_site_ai_tools_read_view" />
 			<VStack spacing={ 4 }>
-				{ CATEGORY_ORDER.map( ( categoryName ) => {
-					const categoryTools = grouped[ categoryName ];
-					if ( ! categoryTools || categoryTools.length === 0 ) {
-						return null;
-					}
-
-					const allEnabled = categoryTools.every( ( [ , tool ] ) => tool.enabled );
+				{ allTools.length > 0 && (
+					<Card>
+						<CardBody>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ pageAllEnabled }
+								disabled={ mutation.isPending }
+								label={ <Text weight="600">{ __( 'Enable all' ) }</Text> }
+								onChange={ handlePageToggle }
+							/>
+						</CardBody>
+					</Card>
+				) }
+				{ groups.map( ( { group: descriptor, label, tools: groupTools } ) => {
+					const groupKey = descriptor?.name ?? '__other__';
+					const allGroupEnabled = groupTools.every( ( [ , tool ] ) => tool.enabled );
 
 					return (
 						<McpGroupCard
-							key={ categoryName }
-							id={ categoryName.toLowerCase().replace( /\s+/g, '-' ) }
-							title={ categoryName }
-							toolAnchors={ categoryTools.map( ( [ toolId ] ) => toolId ) }
-							allEnabled={ allEnabled }
+							key={ groupKey }
+							id={ groupKey }
+							title={ label }
+							description={ descriptor?.description }
+							toolAnchors={ groupTools.map( ( [ toolId ] ) => toolId ) }
+							allEnabled={ allGroupEnabled }
 							disabled={ mutation.isPending }
-							onEnableAll={ ( checked ) => handleEnableAll( categoryTools, checked ) }
+							onEnableAll={ ( checked ) => handleGroupEnableAll( groupTools, checked ) }
 						>
-							{ renderToolsContent( categoryTools, categoryName ) }
+							{ renderToolsContent( groupTools ) }
 						</McpGroupCard>
 					);
 				} ) }
-				<RemoteAbilitiesSection site={ site } category="read" />
+				<RemoteAbilitiesSection site={ site } category={ TOOL_CATEGORY } />
 			</VStack>
 		</PageLayout>
 	);
