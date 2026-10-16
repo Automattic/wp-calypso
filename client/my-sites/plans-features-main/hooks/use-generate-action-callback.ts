@@ -26,19 +26,33 @@ import { useNonOwnerHandler } from './use-non-owner-handler';
 import type { PlansIntent, UseActionCallback } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
+/**
+ * Purchase attribution that arrived on the plans page URL (`source`,
+ * `ai_session_id`). Checkout reads both from its own URL, so the plans page
+ * forwards them to the checkout it opens.
+ */
+export interface CheckoutAttribution {
+	source?: string;
+	aiSessionId?: string;
+}
+
 function useUpgradeHandler( {
 	siteSlug,
 	coupon,
 	cartHandler,
 	redirectTo,
 	pluginSlug,
+	checkoutAttribution,
 }: {
 	siteSlug?: string | null;
 	coupon?: string;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectTo?: string;
 	pluginSlug?: string;
+	checkoutAttribution?: CheckoutAttribution;
 } ) {
+	const { source, aiSessionId } = checkoutAttribution ?? {};
+
 	const processCartItems = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
 			const cartItemForPlan = getPlanCartItem( cartItems );
@@ -72,14 +86,19 @@ function useUpgradeHandler( {
 			}
 
 			const checkoutUrlWithArgs = addQueryArgs(
-				{ ...( coupon && { coupon } ), ...( redirectTo && { redirect_to: redirectTo } ) },
+				{
+					...( coupon && { coupon } ),
+					...( redirectTo && { redirect_to: redirectTo } ),
+					...( source && { source } ),
+					...( aiSessionId && { ai_session_id: aiSessionId } ),
+				},
 				checkoutUrl
 			);
 
 			page( checkoutUrlWithArgs );
 			return;
 		},
-		[ siteSlug, coupon, cartHandler, redirectTo, pluginSlug ]
+		[ siteSlug, coupon, cartHandler, redirectTo, pluginSlug, source, aiSessionId ]
 	);
 
 	return useCallback(
@@ -168,6 +187,7 @@ function useGenerateActionCallback( {
 	coupon,
 	redirectTo,
 	pluginSlug,
+	checkoutAttribution,
 }: {
 	currentPlan: Plans.SitePlan | undefined;
 	eligibleForFreeHostingTrial: boolean;
@@ -180,6 +200,7 @@ function useGenerateActionCallback( {
 	coupon?: string;
 	redirectTo?: string;
 	pluginSlug?: string;
+	checkoutAttribution?: CheckoutAttribution;
 } ): UseActionCallback {
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 	const siteUrl = useSelector( ( state: IAppState ) => siteId && getSiteUrl( state, siteId ) );
@@ -199,6 +220,7 @@ function useGenerateActionCallback( {
 		cartHandler,
 		redirectTo,
 		pluginSlug,
+		checkoutAttribution,
 	} );
 	const handleDowngradeClick = useDowngradeHandler( {
 		siteSlug,
