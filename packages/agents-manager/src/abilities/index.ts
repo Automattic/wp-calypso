@@ -167,7 +167,7 @@ export async function preloadAmEditorContentContext(): Promise< void > {
  */
 export async function loadAmEditorSuggestions(): Promise< EditorSuggestions | null > {
 	try {
-		return ( await loadEditorAbilities() ) ?? null;
+		return await loadEditorAbilities();
 	} catch {
 		// Already logged; the chat goes without them.
 		return null;

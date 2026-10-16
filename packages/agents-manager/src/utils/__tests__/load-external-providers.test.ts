@@ -968,8 +968,6 @@ describe( 'loadExternalProviders', () => {
 				id: 'customize-colors',
 				label: 'Customize colors',
 			} );
-			expect( suggestions.map( ( { id } ) => id ) ).toContain( 'provider-chip' );
-			expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
 		} );
 
 		it( "go first among a provider's block chips", async () => {

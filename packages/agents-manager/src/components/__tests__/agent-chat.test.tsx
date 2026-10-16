@@ -11,6 +11,7 @@ import type { ComponentProps, ReactNode, Ref } from 'react';
 const mockSetFloatingPosition = jest.fn();
 const mockContainerProps = jest.fn();
 const mockContainerCallbacks = jest.fn();
+const mockContainerSuggestionClick = jest.fn();
 const mockSuggestionsProps = jest.fn();
 const mockInputProps = jest.fn();
 const mockImageUploaderProps = jest.fn();
@@ -45,6 +46,7 @@ jest.mock(
 		} ) {
 			mockContainerProps( { floatingChatState, triggerTitle } );
 			mockContainerCallbacks( { onSuggestionsRendered, onTypingStatusChange } );
+			mockContainerSuggestionClick.mockImplementation( onSuggestionClick ?? ( () => {} ) );
 			return (
 				<div>
 					{ emptyView }
@@ -403,6 +405,19 @@ describe( 'AgentChat', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Check grammar' } ) );
 
 		expect( onSuggestionClick ).toHaveBeenCalledWith( suggestion, [ suggestion ] );
+	} );
+
+	it( 'reports the list a transcript suggestion comes from', () => {
+		const footerSuggestion = { id: 'translate', label: 'Translate', prompt: 'Translate this' };
+		const listSuggestions = [
+			{ id: 'customize-colors', label: 'Customize colors', prompt: 'Show me palettes' },
+		];
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( { isOpen: true, suggestions: [ footerSuggestion ], onSuggestionClick } );
+		act( () => mockContainerSuggestionClick( listSuggestions[ 0 ], listSuggestions ) );
+
+		expect( onSuggestionClick ).toHaveBeenCalledWith( listSuggestions[ 0 ], listSuggestions );
 	} );
 
 	it( 'preserves the selected prompt from an inline dropdown suggestion', async () => {

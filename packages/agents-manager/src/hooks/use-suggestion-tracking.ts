@@ -111,8 +111,8 @@ export function useSuggestionTracking( {
 				return;
 			}
 
-			// A click routed through Agenttic's own container reports the footer list,
-			// which is empty while the chips live in the empty view.
+			// Agenttic reports the list a click came from; without one, fall back to
+			// what it reported as rendered.
 			const renderedSuggestions = renderedSuggestionsRef.current;
 			const knownSuggestions = availableSuggestions?.length
 				? availableSuggestions

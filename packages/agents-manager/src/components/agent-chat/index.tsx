@@ -225,10 +225,19 @@ export default function AgentChat( {
 		[ shouldFormatWritingSuggestions, suggestions ]
 	);
 	const handleDisplayedSuggestionClick = useCallback(
-		( selectedSuggestion: Suggestion | string ) => {
+		( selectedSuggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
+			// Footer chips map back to their unformatted originals; any other list
+			// (the empty view, a list in a message) reports its own suggestions.
+			const isFooterSuggestion =
+				typeof selectedSuggestion === 'string' ||
+				suggestions.some( ( suggestion ) => suggestion.id === selectedSuggestion.id );
+			const knownSuggestions = isFooterSuggestion
+				? suggestions
+				: ( availableSuggestions ?? suggestions );
+
 			onSuggestionClick?.(
-				getSuggestionClickPayload( selectedSuggestion, suggestions ),
-				suggestions
+				getSuggestionClickPayload( selectedSuggestion, knownSuggestions ),
+				knownSuggestions
 			);
 		},
 		[ onSuggestionClick, suggestions ]
