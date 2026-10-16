@@ -195,7 +195,6 @@ export default function AgentChat( {
 	beforeSubmit,
 	markdownComponents = {},
 	markdownExtensions = {},
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with `ZendeskChat`
 	onTypingStatusChange,
 	inputValue,
 	onInputChange,
@@ -328,6 +327,7 @@ export default function AgentChat( {
 			clearSuggestions={ clearSuggestions }
 			onSuggestionClick={ onSuggestionClick ? handleDisplayedSuggestionClick : undefined }
 			onSuggestionsRendered={ onSuggestionsRendered }
+			onTypingStatusChange={ onTypingStatusChange }
 			floatingChatState={ floatingChatState }
 			triggerTitle={ __( 'Agent', __i18n_text_domain__ ) }
 			onClose={ onClose }
