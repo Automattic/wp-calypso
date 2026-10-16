@@ -6,8 +6,8 @@
 import { select } from '@wordpress/data';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
-import type { Suggestion } from '../types';
 import type { EditorBlock } from './editor-blocks';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 type BlockSuggestionBuilder = ( block: EditorBlock ) => Suggestion | undefined;
 

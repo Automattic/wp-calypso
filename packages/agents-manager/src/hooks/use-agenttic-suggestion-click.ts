@@ -1,7 +1,7 @@
 import { useCallback } from '@wordpress/element';
 import { getSuggestionClickContext } from '../utils/get-suggestion-click-context';
 import { getSuggestionClickPayload } from '../utils/get-suggestion-click-payload';
-import type { Suggestion } from '../types';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 export type SuggestionClickHandler = (
 	selectedSuggestion: Suggestion | string,

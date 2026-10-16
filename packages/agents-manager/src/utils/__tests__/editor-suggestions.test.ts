@@ -1,7 +1,7 @@
 import { select } from '@wordpress/data';
 import { getBlockSuggestions, getEditorEmptyViewSuggestions } from '../editor-suggestions';
-import type { Suggestion } from '../../types';
 import type { EditorBlock } from '../editor-blocks';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 jest.mock( '@wordpress/data', () => ( { select: jest.fn() } ) );
 

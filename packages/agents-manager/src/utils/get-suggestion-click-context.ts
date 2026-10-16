@@ -1,4 +1,4 @@
-import type { Suggestion } from '../types';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 interface SuggestionClickContextOptions {
 	selectedSuggestion: Suggestion | string;

@@ -1,8 +1,8 @@
 import { useSelect } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import { getBlockSuggestions } from '../utils/editor-suggestions';
-import type { Suggestion } from '../types';
 import type { EditorBlock } from '../utils/editor-blocks';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 /**
  * The chips for the block selected in the editor. While there are any, they

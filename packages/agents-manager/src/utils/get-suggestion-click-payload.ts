@@ -1,4 +1,4 @@
-import type { Suggestion } from '../types';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 export function getSuggestionClickPayload(
 	selectedSuggestion: Suggestion | string,
