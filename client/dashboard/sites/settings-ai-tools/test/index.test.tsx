@@ -333,6 +333,11 @@ describe( '<AIToolsSettings>', () => {
 				meta: { annotations: { readonly: true } },
 			},
 			{
+				name: 'jetpack-forms/list-forms',
+				label: 'List forms',
+				meta: { annotations: { readonly: true } },
+			},
+			{
 				name: 'akismet/check-comment',
 				label: 'Check comment',
 				meta: { annotations: {} },
@@ -341,9 +346,9 @@ describe( '<AIToolsSettings>', () => {
 
 		render( <AIToolsSettings siteSlug={ jetpackSite.slug } />, { queryClient } );
 
-		// The wpcom read tool is on; the site's read group is not, and the write
-		// side has nothing enabled at all.
-		expect( screen.getByText( '1 of 2 enabled' ) ).toBeVisible();
+		// The wpcom read tool is on; the site's two read abilities (sharing one
+		// group key) are not, and the write side has nothing enabled at all.
+		expect( screen.getByText( '1 of 3 enabled' ) ).toBeVisible();
 		expect( screen.getByText( 'Disabled' ) ).toBeVisible();
 		expect( screen.queryByText( 'All enabled' ) ).not.toBeInTheDocument();
 	} );
