@@ -63,7 +63,11 @@ $difm-offer-reviews-fade: 0.4s;
 }
 
 .difm-offer-reviews__quote {
-	margin: 0 0 $grid-unit-30;
+	// Reset the global blockquote box (background, padding and top margin from _main.scss).
+	margin: 0 0 $grid-unit-20;
+	padding: 0;
+	border-radius: 0;
+	background: none;
 
 	p {
 		margin: 0;
@@ -76,16 +80,26 @@ $difm-offer-reviews-fade: 0.4s;
 	gap: $grid-unit-05;
 }
 
-// Same size as the plain "Trustpilot" label on a card without a review URL.
+// The link looks like the plain "Trustpilot" label, so it does not pull the user out of the
+// flow. It is there for credibility, for a user who wants to check the review.
 .difm-offer-reviews__link {
 	align-self: flex-start;
+	color: inherit;
 	font-size: 12px;
+	line-height: 16px;
+	text-decoration: none;
+
+	&:hover,
+	&:focus-visible {
+		color: inherit;
+		text-decoration: underline;
+	}
 }
 
 .difm-offer-reviews__reviewer {
 	// Lighter than the quote, but dark enough for AA contrast on white.
 	color: $gray-700;
-	letter-spacing: 0.5px;
+	letter-spacing: 0.006em;
 	text-transform: uppercase;
 }
 
