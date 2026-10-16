@@ -26,9 +26,11 @@ function renderToggle( referrals: unknown[] ) {
 describe( '<ReferralToggle>', () => {
 	beforeEach( () => {
 		nock.cleanAll();
+		sessionStorage.clear();
 	} );
 
-	test( 'shows the commission until the agency’s first referral', async () => {
+	test( 'shows the commission in referral mode until the agency’s first referral', async () => {
+		sessionStorage.setItem( 'marketplace-type', 'referral' );
 		renderToggle( [] );
 
 		expect( screen.getByRole( 'checkbox', { name: 'Refer to clients' } ) ).toBeVisible();
