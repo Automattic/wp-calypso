@@ -141,7 +141,7 @@ describe( 'domain throttle actions', () => {
 		const searchbox = {
 			inputValue: jest.fn( async () => '' ),
 			fill: jest.fn( async () => undefined ),
-			press: jest.fn( async () => undefined ),
+			press: jest.fn< ( value: string ) => Promise< void > >( async () => undefined ),
 		};
 		const heading = {};
 		const page = {

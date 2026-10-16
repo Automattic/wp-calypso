@@ -101,7 +101,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/react": "^10.6.2",
 		"@testing-library/dom": "^10.4.2",
-		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
 		"@testing-library/user-event": "^14.6.7",
 		"@types/canvas-confetti": "^1.6.0",
