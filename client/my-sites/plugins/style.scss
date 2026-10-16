@@ -733,14 +733,6 @@ body.is-section-plugins #primary {
 	}
 }
 
-.plugin-details__reviews {
-	margin-bottom: 40px;
-
-	@media screen and ( max-width: 1040px ) {
-		padding: 16px;
-	}
-}
-
 .full-width-section.plugins__marketplace-footer {
 	--scss-font-title-large: 2.5rem;
 	--scss-font-body: 1.375rem;

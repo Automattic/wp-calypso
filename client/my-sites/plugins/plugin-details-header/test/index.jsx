@@ -92,11 +92,23 @@ describe( 'PluginDetailsHeader', () => {
 		expect( ratingElement ).toHaveTextContent( '1.2/5' );
 	} );
 
-	test( 'should not render ratings if marketplace product', () => {
+	test( 'should render the rating without a review link if marketplace product', () => {
 		const props = {
 			...mockedProps,
 			isMarketplaceProduct: true,
-			plugin: { ...mockedProps.plugin, num_ratings: 1, rating: 23 },
+			plugin: { ...mockedProps.plugin, num_ratings: undefined, rating: 90 },
+		};
+		const { container } = render( <PluginDetailsHeader { ...props } /> );
+		const ratingElement = container.querySelector( '.plugin-details-header__info-value' );
+		expect( ratingElement ).toHaveTextContent( '4.5/5' );
+		expect( screen.queryByText( 'Add a review' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'should not render ratings if marketplace product without a rating', () => {
+		const props = {
+			...mockedProps,
+			isMarketplaceProduct: true,
+			plugin: { ...mockedProps.plugin, num_ratings: undefined, rating: '' },
 		};
 		render( <PluginDetailsHeader { ...props } /> );
 		expect( screen.queryByText( /^Ratings?$/ ) ).not.toBeInTheDocument();
