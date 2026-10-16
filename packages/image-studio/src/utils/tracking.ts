@@ -598,7 +598,7 @@ interface UpgradeNoticeEvent extends UpgradeNoticeCredits {
 	trigger: UpgradeNoticeTrigger;
 }
 
-/** What showed the Upgrade link: the notice's trigger, or the credits dot's popover. */
+/** What showed the Upgrade or Add credits link: the notice's trigger, or the credits dot's popover. */
 export type UpgradeLinkTrigger = UpgradeNoticeTrigger | 'popover';
 
 interface UpgradeNoticeClickEvent extends UpgradeNoticeCredits {
@@ -654,7 +654,7 @@ export function trackImageStudioCreditsMeterOpened( event: CreditsMeterOpenedEve
 }
 
 /**
- * Tracks a click on the Upgrade link, in the notice or in the credits dot's popover.
+ * Tracks a click on the Upgrade or Add credits link, in the notice or in the credits dot's popover.
  * For the Jetpack AI quota, also fires the product-wide `jetpack_ai_upgrade_button`
  * event so this surface appears in the same funnel as every other Jetpack AI
  * upgrade button.

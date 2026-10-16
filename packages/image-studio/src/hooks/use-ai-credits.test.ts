@@ -345,6 +345,13 @@ describe( 'useAiCredits', () => {
 				trigger: 'open',
 				...credits,
 			} );
+
+			result.current.meter?.action?.onClick?.();
+			expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenLastCalledWith( {
+				mode: ImageStudioMode.Edit,
+				trigger: 'popover',
+				...credits,
+			} );
 		} );
 
 		it( 'tells someone who can’t buy to ask a site admin, with no Add credits', async () => {
