@@ -254,8 +254,6 @@ async function createSiteOrAdoptPending( {
 			undefined, // sourceSlug.
 			undefined, // siteIntent.
 			undefined, // siteGoals.
-			null, // gardenName.
-			null, // gardenPartnerName.
 			undefined, // specId.
 			undefined, // ref.
 			undefined, // provisionTarget.
