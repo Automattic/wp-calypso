@@ -264,6 +264,11 @@ function PluginDetails( props ) {
 		if ( isMarketplaceProduct && marketplaceVersion ) {
 			merged.version = marketplaceVersion;
 		}
+		// Marketplace ratings come from WooCommerce.com via the wpcom catalog, not from WordPress.org
+		if ( isMarketplaceProduct ) {
+			merged.rating = wpcomPlugin.rating;
+			merged.num_ratings = wpcomPlugin.num_ratings;
+		}
 		return merged;
 	}, [
 		plugin,

@@ -66,6 +66,10 @@ describe( 'PluginDetailsHeader', () => {
 		plugin,
 	};
 
+	beforeEach( () => {
+		config.isEnabled.mockImplementation( () => false );
+	} );
+
 	test.each( [ { configEnabled: true }, { configEnabled: false } ] )(
 		'should render the correct author url (configEnabled: $configEnabled)',
 		( { configEnabled } ) => {
@@ -104,16 +108,19 @@ describe( 'PluginDetailsHeader', () => {
 		expect( screen.queryByText( 'Add a review' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'should not render ratings if marketplace product without a rating', () => {
-		const props = {
-			...mockedProps,
-			isMarketplaceProduct: true,
-			plugin: { ...mockedProps.plugin, num_ratings: undefined, rating: '' },
-		};
-		render( <PluginDetailsHeader { ...props } /> );
-		expect( screen.queryByText( /^Ratings?$/ ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Add a review' ) ).not.toBeInTheDocument();
-	} );
+	test.each( [ { rating: NaN }, { rating: 0 }, { rating: undefined } ] )(
+		'should not render ratings if marketplace product without a rating (rating: $rating)',
+		( { rating } ) => {
+			const props = {
+				...mockedProps,
+				isMarketplaceProduct: true,
+				plugin: { ...mockedProps.plugin, num_ratings: undefined, rating },
+			};
+			render( <PluginDetailsHeader { ...props } /> );
+			expect( screen.queryByText( /^Ratings?$/ ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Add a review' ) ).not.toBeInTheDocument();
+		}
+	);
 
 	test( 'should render "add a review" if dotOrg plugin with no ratings', () => {
 		const props = {
