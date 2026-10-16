@@ -356,7 +356,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const description = isAvailable
 		? createInterpolateElement(
 				__(
-					'Use ChatGPT, Claude, or the WordPress Agent to create content, update designs, and get help with your site. <learnMoreLink />'
+					'Use ChatGPT, Claude, or the WordPress Agent to edit content and design your site. <learnMoreLink />'
 				),
 				{
 					learnMoreLink: <InlineSupportLink supportContext="ai-tools" />,
