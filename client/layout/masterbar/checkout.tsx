@@ -46,17 +46,8 @@ const CheckoutMasterbar = ( {
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	const getCheckoutType = () => {
-		// Woo Hosted sites are supposed to default to WPcom colors, but without
-		// a logo. We should update this once we have a better way to identify
-		// Garden sites outside of the Hosting Dashboard.
-		if ( isJetpackNotAtomic && siteSlug?.endsWith( '.commerce-garden.com' ) ) {
-			return 'woo-hosted';
-		}
-
-		if ( window.location.pathname.startsWith( '/checkout/jetpack' ) || isJetpackNotAtomic ) {
-			return 'jetpack';
-		}
-
+		// Check the siteless brand paths first: they have no site, so the site
+		// props describe whichever site was last selected, not this checkout.
 		if ( window.location.pathname.startsWith( '/checkout/akismet' ) ) {
 			return 'akismet';
 		}
@@ -67,6 +58,17 @@ const CheckoutMasterbar = ( {
 
 		if ( window.location.pathname.startsWith( '/checkout/passport' ) ) {
 			return 'passport';
+		}
+
+		// Woo Hosted sites are supposed to default to WPcom colors, but without
+		// a logo. We should update this once we have a better way to identify
+		// Garden sites outside of the Hosting Dashboard.
+		if ( isJetpackNotAtomic && siteSlug?.endsWith( '.commerce-garden.com' ) ) {
+			return 'woo-hosted';
+		}
+
+		if ( window.location.pathname.startsWith( '/checkout/jetpack' ) || isJetpackNotAtomic ) {
+			return 'jetpack';
 		}
 
 		if ( isGravatarDomain ) {

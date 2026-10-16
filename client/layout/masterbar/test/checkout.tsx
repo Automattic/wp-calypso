@@ -71,6 +71,16 @@ describe( 'CheckoutMasterbar', () => {
 		).not.toBeInTheDocument();
 	} );
 
+	it( 'shows the Akismet logo even when the last selected site is a Jetpack site', () => {
+		window.history.pushState( {}, '', '/checkout/akismet/ak_plus_yearly_2' );
+		const { container } = render(
+			<CheckoutMasterbar title="Checkout" isLeavingAllowed isJetpackNotAtomic />
+		);
+
+		expect( container.querySelector( '.akismet-logo' ) ).toBeVisible();
+		expect( container.querySelector( '.jetpack-logo' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'shows the WordPress logo on the regular checkout', () => {
 		const { container } = renderAt( '/checkout/example.com' );
 
