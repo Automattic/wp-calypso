@@ -1,14 +1,12 @@
 import {
-	Button,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useMergeRefs, useResizeObserver } from '@wordpress/compose';
-import { __, isRTL } from '@wordpress/i18n';
-import { chevronLeft, chevronRight } from '@wordpress/icons';
-import { useId, useRef, useState } from 'react';
+import { __ } from '@wordpress/i18n';
+import { useId } from 'react';
+import { RowArrows, useRowScroll } from '../../components/showcase/row-arrows';
 import ResourceCardHeader from './card/header';
 import ResourceLink from './resource-link';
 import type { SelectResource } from './types';
@@ -52,88 +50,32 @@ interface ResourceRecommendationsProps {
 	onSelectResource: SelectResource;
 }
 
-/** A row of recommended resources, scrolled with its previous and next buttons. */
-export default function ResourceRecommendations( {
-	resources,
-	onSelectResource,
-}: ResourceRecommendationsProps ) {
+// Mounted only with resources to show, as the row's scroll tracking attaches on mount.
+function RecommendationsRow( { resources, onSelectResource }: ResourceRecommendationsProps ) {
 	const headingId = useId();
-	const listRef = useRef< HTMLUListElement >( null );
-	const [ edges, setEdges ] = useState( { atStart: true, atEnd: true } );
-
-	const updateEdges = () => {
-		const list = listRef.current;
-		if ( ! list ) {
-			return;
-		}
-
-		// scrollLeft runs negative in right-to-left layouts.
-		const position = Math.abs( list.scrollLeft );
-		const atStart = position <= 1;
-		const atEnd = position >= list.scrollWidth - list.clientWidth - 1;
-		setEdges( ( current ) =>
-			current.atStart === atStart && current.atEnd === atEnd ? current : { atStart, atEnd }
-		);
-	};
-
-	const resizeRef = useResizeObserver( updateEdges );
-	const ref = useMergeRefs( [ listRef, resizeRef ] );
-
-	// Moves the row along by one resource.
-	const scroll = ( direction: 1 | -1 ) => {
-		const list = listRef.current;
-		const item = list?.firstElementChild;
-		if ( ! list || ! item ) {
-			return;
-		}
-
-		const gap = parseFloat( getComputedStyle( list ).columnGap ) || 0;
-		list.scrollBy( {
-			left: direction * ( item.getBoundingClientRect().width + gap ) * ( isRTL() ? -1 : 1 ),
-			behavior: window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches
-				? 'instant'
-				: 'smooth',
-		} );
-	};
-
-	if ( ! resources.length ) {
-		return null;
-	}
+	const { rowRef, canScroll, page } = useRowScroll< HTMLUListElement >();
 
 	return (
-		<VStack as="section" spacing={ 3 } aria-labelledby={ headingId }>
+		<VStack
+			as="section"
+			spacing={ 3 }
+			aria-labelledby={ headingId }
+			className="dashboard-resources-learn__recommendations-section"
+		>
 			<HStack>
 				<Heading level={ 2 } size={ 15 } weight={ 500 } id={ headingId }>
 					{ __( 'Recommended for you' ) }
 				</Heading>
-				{ ! ( edges.atStart && edges.atEnd ) && (
-					<HStack spacing={ 1 } expanded={ false }>
-						<Button
-							__next40pxDefaultSize
-							size="compact"
-							icon={ isRTL() ? chevronRight : chevronLeft }
-							label={ __( 'Previous recommendations' ) }
-							disabled={ edges.atStart }
-							accessibleWhenDisabled
-							onClick={ () => scroll( -1 ) }
-						/>
-						<Button
-							__next40pxDefaultSize
-							size="compact"
-							icon={ isRTL() ? chevronLeft : chevronRight }
-							label={ __( 'Next recommendations' ) }
-							disabled={ edges.atEnd }
-							accessibleWhenDisabled
-							onClick={ () => scroll( 1 ) }
-						/>
-					</HStack>
-				) }
+				<RowArrows
+					canScroll={ canScroll }
+					page={ page }
+					labels={ {
+						previous: __( 'Previous recommendations' ),
+						next: __( 'Next recommendations' ),
+					} }
+				/>
 			</HStack>
-			<ul
-				ref={ ref }
-				className="dashboard-resources-learn__recommendations"
-				onScroll={ updateEdges }
-			>
+			<ul ref={ rowRef } className="dashboard-resources-learn__recommendations">
 				{ resources.map( ( resource ) => (
 					<RecommendedResource
 						key={ resource.id }
@@ -144,4 +86,9 @@ export default function ResourceRecommendations( {
 			</ul>
 		</VStack>
 	);
+}
+
+/** A row of recommended resources, scrolled with its previous and next buttons. */
+export default function ResourceRecommendations( props: ResourceRecommendationsProps ) {
+	return props.resources.length ? <RecommendationsRow { ...props } /> : null;
 }

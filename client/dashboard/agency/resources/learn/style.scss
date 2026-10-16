@@ -34,6 +34,11 @@ $resource-brands: (
 	display: contents;
 }
 
+// Doubles the page's gap, to set the row apart from the library under it.
+.dashboard-resources-learn__recommendations-section {
+	margin-block-end: $grid-unit-30;
+}
+
 // A row of branded tiles that scrolls sideways, a little over two at a time.
 // Padded so a tile's hover lift isn't clipped by the scroller.
 .dashboard-resources-learn__recommendations {
@@ -43,9 +48,14 @@ $resource-brands: (
 	padding: $grid-unit-15 0 $grid-unit-20;
 	list-style: none;
 	overflow-x: auto;
-	scroll-snap-type: x mandatory;
 	overscroll-behavior-inline: contain;
+	scroll-behavior: smooth;
+	scroll-snap-type: x mandatory;
 	scrollbar-width: thin;
+
+	@media ( prefers-reduced-motion: reduce ) {
+		scroll-behavior: auto;
+	}
 }
 
 .dashboard-resources-learn__recommendation {
