@@ -386,6 +386,76 @@ describe( 'Site Migration Flow', () => {
 			Object.assign( window.location, { pathname: '/', search: '', hash: '' } );
 		} );
 
+		it.each( [
+			[ '', 'move-lp' ],
+			[ '/', 'move-lp' ],
+			[ '/pt-br', 'pt-br/move-lp' ],
+			[ '/pt-br/', 'pt-br/move-lp' ],
+		] )(
+			'redirects the /move picker entry with suffix "%s", preserving context',
+			( suffix, ref ) => {
+				jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+				const query = new URLSearchParams( {
+					from: 'https://source.com/path?one=1&two=2#section',
+					ref,
+					source: 'marketing',
+					start: 'true',
+					platform: 'wordpress',
+					sessionId: 'abc',
+					flags: 'migration/reprint-flow',
+				} );
+				query.append( 'extra', 'one' );
+				query.append( 'extra', 'two' );
+				Object.assign( window.location, {
+					pathname: `/setup/site-migration/sitePicker${ suffix }`,
+					search: `?${ query }`,
+					hash: '#migration',
+				} );
+
+				expect( siteMigrationFlow.initialize() ).toBe( false );
+				const redirect = new URL(
+					window.location.replace.mock.calls[ 0 ][ 0 ],
+					originalLocation.href
+				);
+				expect( redirect.pathname ).toBe(
+					`/setup/site-migration/site-migration-identify${ suffix }`
+				);
+				expect( redirect.hash ).toBe( '#migration' );
+				query.delete( 'start' );
+				expect( [ ...redirect.searchParams ] ).toEqual( [ ...query ] );
+
+				window.location.replace.mockClear();
+				Object.assign( window.location, {
+					pathname: redirect.pathname,
+					search: redirect.search,
+					hash: redirect.hash,
+				} );
+				expect( siteMigrationFlow.initialize() ).not.toBe( false );
+				expect( window.location.replace ).not.toHaveBeenCalled();
+
+				window.location.pathname = `/setup/site-migration/sitePicker${ suffix }`;
+				expect( siteMigrationFlow.initialize() ).not.toBe( false );
+				expect( window.location.replace ).not.toHaveBeenCalled();
+			}
+		);
+
+		it.each( [
+			[ false, 'move-lp', 'true' ],
+			[ true, 'move-lp', '' ],
+			[ true, 'move-lp', 'false' ],
+			[ true, 'move-weebly-lp', 'true' ],
+			[ true, 'new-site-popover', 'true' ],
+		] )( 'keeps the picker for flag=%s, ref=%s, start=%s', ( enabled, ref, start ) => {
+			jest.spyOn( config, 'isEnabled' ).mockReturnValue( enabled );
+			Object.assign( window.location, {
+				pathname: '/setup/site-migration/sitePicker',
+				search: `?${ new URLSearchParams( { from: 'https://source.com', ref, start } ) }`,
+			} );
+
+			expect( siteMigrationFlow.initialize() ).not.toBe( false );
+			expect( window.location.replace ).not.toHaveBeenCalled();
+		} );
+
 		it( 'redirects direct plans entry without the flag, preserving context', () => {
 			jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
 			const search =
