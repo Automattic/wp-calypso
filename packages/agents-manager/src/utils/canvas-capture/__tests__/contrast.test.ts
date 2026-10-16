@@ -452,7 +452,7 @@ describe( 'what counts as text', () => {
 		expect( notesOf( [ 'img' ] ) ).toEqual( [] );
 	} );
 
-	it( 'measures the first visible text, past text that is hidden', () => {
+	it( 'skips hidden text in a block and measures the visible text', () => {
 		mountCanvas( [
 			{
 				clientId: 'c25n',
@@ -563,5 +563,66 @@ describe( 'limits', () => {
 			'Text contrast: all 1 edited text block(s) measure at least 4.5:1 (3:1 for large text) against what renders behind them.',
 			UNMEASURED_ONE,
 		] );
+	} );
+} );
+
+describe( 'every run of text in a block', () => {
+	/** A paragraph of runs in the given styles, in order, as the editor renders inline formats. */
+	const formatted = ( clientId: string, runs: { tag: string; style: Styles }[] ): CanvasBlock => ( {
+		clientId,
+		name: 'core/paragraph',
+		build: ( element, canvasDocument ) =>
+			runs.forEach( ( { tag, style }, index ) => {
+				const run = canvasDocument.createElement( tag );
+				Object.assign( run.style, style );
+				run.append( `Run ${ index } ` );
+				element.append( run );
+			} ),
+	} );
+
+	it( 'fails a paragraph whose white link sits on white after readable text', () => {
+		mountCanvas( [
+			formatted( 'mix', [
+				{ tag: 'span', style: { color: 'rgb(0, 0, 0)', fontSize: '16px' } },
+				{ tag: 'a', style: WHITE_TEXT },
+			] ),
+		] );
+
+		expect( describeTextContrast( [ 'mix' ] ) ).toEqual( {
+			notes: [
+				'Text contrast too low: paragraph (mix) — #FFFFFF text on #FFFFFF, 1:1 (needs 4.5:1). The #FFFFFF comes from the page background.',
+			],
+			failures: 1,
+		} );
+	} );
+
+	it( 'counts a block once, by its worst run, however many runs fail', () => {
+		mountCanvas( [
+			formatted( 'mix', [
+				{ tag: 'span', style: GREY_TEXT },
+				{ tag: 'a', style: WHITE_TEXT },
+			] ),
+		] );
+
+		expect( describeTextContrast( [ 'mix' ] ) ).toEqual( {
+			notes: [
+				expect.stringMatching( /^Text contrast too low: paragraph \(mix\) — #FFFFFF text/ ),
+			],
+			failures: 1,
+		} );
+	} );
+
+	it( 'claims no pass for a block with a run it could not read', () => {
+		mountCanvas( [
+			formatted( 'mix', [
+				{ tag: 'span', style: { color: 'rgb(0, 0, 0)', fontSize: '16px' } },
+				{ tag: 'mark', style: { ...NAVY_TEXT, opacity: '0.5' } },
+			] ),
+		] );
+
+		expect( describeTextContrast( [ 'mix' ] ) ).toEqual( {
+			notes: [ UNMEASURED_ONE ],
+			failures: null,
+		} );
 	} );
 } );
