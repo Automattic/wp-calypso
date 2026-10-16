@@ -40,9 +40,36 @@ and each needs its own guard:
 1. **Explicit events** — our code calls `invokeSurvicateEvent('migrationCompleted')`
    etc. from ~6 call sites (purchase cancel/refund flows, migration completion,
    checkout thank-you). Guarded inside `invoke-event.ts`.
+   wp-admin has no call sites of its own: `observeWpAdminPluginEvents()`
+   (`wp-admin-plugin-events.ts`, started by `apps/survicate`) maps core's own plugin
+   signals to `pluginActivated` / `pluginDeactivated` / `pluginUpdated`, see below.
 2. **Auto-campaigns** — Survicate's own targeting fires a survey on its own (URL match,
    "show after N seconds", etc.). This **never touches our code**, so an invoke-time
    guard can't catch it. The only universal hook is the SDK's `survey_displayed` event.
+
+## wp-admin plugin events (`wp-admin-plugin-events.ts`)
+
+wp-admin's plugin screens are server-rendered core pages, so the bundle infers the
+action from what core leaves behind and fires each event at most once per page (a
+bulk action over many plugins counts once):
+
+- **Full-page activate/deactivate** — `plugins.php` redirects to
+  `?activate=true`, `?activate-multi=true`, `?deactivate=true` or
+  `?deactivate-multi=true`. Core strips those args from the address bar in `<head>`
+  (`wp_admin_canonical_url()`), before this footer bundle runs, so they are read
+  from the navigation entry (`performance.getEntriesByType( 'navigation' )[0].name`),
+  not `location`. A reload or back/forward lands on the stripped URL and does not
+  fire again.
+- **AJAX** — `wp.updates` triggers jQuery events on `document`:
+  `wp-plugin-update-success` ("Update now" and bulk "Update" on `plugins.php`,
+  "Update now" on `plugin-install.php`) and `wp-plugin-activate-success`
+  ("Activate" on `plugin-install.php` cards). jQuery is read from `window`, not
+  imported, so the manifest still lists only `wp-data`.
+- **`update-core.php`** — `?action=do-plugin-upgrade` runs the updates in an
+  `update.php?action=update-selected` iframe; `pluginUpdated` fires on its `load`.
+
+It does nothing inside an iframe (thickbox, the update progress frame), so a survey
+never opens in a frame.
 
 ## Visit-count traits (area-based survey targeting)
 
@@ -271,6 +298,8 @@ race where a survey is already mid-display as a modal or the Help Center appears
   helper reused by the suppression call sites.
 - `visitor-traits.ts` — `setSurvicateVisitorTraits()`, `getAccountAgeInDays()`, and the
   global `window._sva` type declaration.
+- `wp-admin-plugin-events.ts` — `observeWpAdminPluginEvents()`: wp-admin's plugin
+  activate/deactivate/update events.
 - `index.ts` — public exports.
 
 ## Consumers
@@ -284,7 +313,8 @@ Three consumers, all funnelled through `shouldLoadSurvicate()`:
 - **wp-admin on Simple and Atomic** — `apps/survicate/survicate.js`, bundled to
   `https://widgets.wp.com/survicate/survicate.min.js` and enqueued by
   `class-survicate.php` in `jetpack-mu-wpcom`. PHP decides eligibility and emits
-  site-level traits on `window.wpcomSurvicateConfig`; the bundle does the rest.
+  site-level traits on `window.wpcomSurvicateConfig`; the bundle does the rest,
+  including the plugin events from `observeWpAdminPluginEvents()`.
   Ship a change to wp-admin with `install-plugin.sh survicate --release` on a
   sandbox followed by `deploy wpcom` — no Jetpack release needed.
 
