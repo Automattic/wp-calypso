@@ -68,7 +68,18 @@ export default function DifmOfferModal( {
 			labelledBy={ titleId }
 			isBusy={ isBusy }
 			headerStart={ <DifmOfferProgress step={ step === 'offer' ? 1 : 2 } /> }
-			panel={ step === 'request' ? <DifmOfferReviews /> : undefined }
+			panel={
+				step === 'request' ? (
+					<DifmOfferReviews
+						onReviewLinkClick={ ( review ) =>
+							recordTracksEvent( 'calypso_difm_offer_review_click', {
+								...tracksProps,
+								review_id: review.id,
+							} )
+						}
+					/>
+				) : undefined
+			}
 			onRequestClose={ handleClose }
 		>
 			{ step === 'offer' ? (

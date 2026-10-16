@@ -1,4 +1,4 @@
-import { Button, VisuallyHidden } from '@wordpress/components';
+import { Button, ExternalLink, VisuallyHidden } from '@wordpress/components';
 import { useReducedMotion } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
@@ -36,11 +36,21 @@ function TrustpilotStar() {
 	);
 }
 
-function ReviewCard( { review, isActive }: { review: DifmOfferReview; isActive: boolean } ) {
+function ReviewCard( {
+	review,
+	isActive,
+	onLinkClick,
+}: {
+	review: DifmOfferReview;
+	isActive: boolean;
+	onLinkClick?: ( review: DifmOfferReview ) => void;
+} ) {
 	return (
 		<figure
 			className={ clsx( 'difm-offer-reviews__card', { 'is-active': isActive } ) }
 			aria-hidden={ ! isActive }
+			// The hidden cards stay in the DOM for the fade, so keep their links out of the tab order.
+			inert={ ! isActive }
 		>
 			<div className="difm-offer-reviews__stars">
 				{ Array.from( { length: review.rating }, ( _, index ) => (
@@ -73,7 +83,22 @@ function ReviewCard( { review, isActive }: { review: DifmOfferReview; isActive: 
 				<Text className="difm-offer-reviews__reviewer" size={ 11 } weight={ 500 }>
 					{ review.reviewer }
 				</Text>
-				<Text size={ 12 }>Trustpilot</Text>
+				{ review.url ? (
+					<ExternalLink
+						className="difm-offer-reviews__link"
+						href={ review.url }
+						onClick={ () => onLinkClick?.( review ) }
+						aria-label={ sprintf(
+							/* translators: %s is the name of the person who wrote the review. */
+							__( 'Read the review by %s on Trustpilot (opens in a new tab)' ),
+							review.reviewer
+						) }
+					>
+						Trustpilot
+					</ExternalLink>
+				) : (
+					<Text size={ 12 }>Trustpilot</Text>
+				) }
 			</figcaption>
 		</figure>
 	);
@@ -82,16 +107,19 @@ function ReviewCard( { review, isActive }: { review: DifmOfferReview; isActive: 
 /**
  * Trustpilot reviews of the DIFM service, one card at a time. The cards fade from one to
  * the next. The rotation stops while the pointer is on the cards and while the user has
- * paused it. It starts paused when the user prefers reduced motion. The cards do not link
- * to Trustpilot, to keep the user in the modal.
+ * paused it. It starts paused when the user prefers reduced motion. A card with a review URL
+ * links to the review on Trustpilot in a new tab, so the modal stays open.
  */
 export function DifmOfferReviews( {
 	className,
 	interval = DEFAULT_INTERVAL,
+	onReviewLinkClick,
 }: {
 	className?: string;
 	/** Milliseconds each review shows before the next one. */
 	interval?: number;
+	/** Called when the user opens a review on Trustpilot. */
+	onReviewLinkClick?: ( review: DifmOfferReview ) => void;
 } ) {
 	const reviews = getDifmOfferReviews();
 	const prefersReducedMotion = useReducedMotion();
@@ -130,7 +158,12 @@ export function DifmOfferReviews( {
 				onMouseLeave={ () => setIsHovered( false ) }
 			>
 				{ reviews.map( ( review, index ) => (
-					<ReviewCard key={ review.id } review={ review } isActive={ index === activeIndex } />
+					<ReviewCard
+						key={ review.id }
+						review={ review }
+						isActive={ index === activeIndex }
+						onLinkClick={ onReviewLinkClick }
+					/>
 				) ) }
 			</div>
 			<div className="difm-offer-reviews__controls">

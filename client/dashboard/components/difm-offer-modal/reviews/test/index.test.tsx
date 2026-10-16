@@ -94,9 +94,38 @@ describe( 'DifmOfferReviews', () => {
 		expect( getVisibleReview().getByText( 'Jennifer Board' ) ).toBeVisible();
 	} );
 
-	it( 'does not link to Trustpilot', () => {
+	it( 'shows plain text for a review without a URL', () => {
+		render( <DifmOfferReviews interval={ INTERVAL } /> );
+
+		// Michelle Hennesay's review, first in the list, has no URL yet.
+		expect( getVisibleReview().queryByRole( 'link' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'links a review with a URL to Trustpilot in a new tab', () => {
+		const onReviewLinkClick = jest.fn();
+		render( <DifmOfferReviews interval={ INTERVAL } onReviewLinkClick={ onReviewLinkClick } /> );
+
+		act( () => jest.advanceTimersByTime( INTERVAL ) );
+		const link = getVisibleReview().getByRole( 'link', {
+			name: 'Read the review by Jennifer Board on Trustpilot (opens in a new tab)',
+		} );
+		expect( link ).toHaveAttribute(
+			'href',
+			'https://www.trustpilot.com/reviews/6a299679657786a2ef3a9cd3'
+		);
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+
+		fireEvent.click( link );
+		expect( onReviewLinkClick ).toHaveBeenCalledWith(
+			expect.objectContaining( { id: 'jennifer-board' } )
+		);
+	} );
+
+	it( 'keeps the links of hidden reviews out of the tab order', () => {
 		const { container } = render( <DifmOfferReviews interval={ INTERVAL } /> );
 
-		expect( container.querySelector( 'a' ) ).not.toBeInTheDocument();
+		// Pablo's review has a URL but is not the visible one.
+		const hiddenLink = container.querySelector( 'a[href*="69a4aa90075bf3d9b4fd87b0"]' );
+		expect( hiddenLink?.closest( 'figure' ) ).toHaveAttribute( 'inert' );
 	} );
 } );

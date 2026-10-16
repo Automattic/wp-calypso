@@ -76,6 +76,12 @@ $difm-offer-reviews-fade: 0.4s;
 	gap: $grid-unit-05;
 }
 
+// Same size as the plain "Trustpilot" label on a card without a review URL.
+.difm-offer-reviews__link {
+	align-self: flex-start;
+	font-size: 12px;
+}
+
 .difm-offer-reviews__reviewer {
 	// Lighter than the quote, but dark enough for AA contrast on white.
 	color: $gray-700;
