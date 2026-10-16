@@ -486,17 +486,21 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
     flightLayer.append(slot);
     const scale=page.scale;
     const assemblingHome=page.route==='/' && presentation==='building';
-    const displayScale=scale*(assemblingHome?1.04:1.08);
+    const displayScale=assemblingHome?Math.max(scale,Math.min(viewport.clientWidth*.82/naturalWidth,viewport.clientHeight*.68/naturalHeight,Math.max(scale*1.65,viewport.clientWidth*.62/naturalWidth),1.05)):scale*1.08;
     const centerX=(viewport.clientWidth-naturalWidth*displayScale)/2;
+    const centerY=viewport.scrollTop+(viewport.clientHeight-naturalHeight*displayScale)/2;
     const from='translate('+centerX+'px,'+(viewport.scrollTop-naturalHeight*displayScale-24)+'px) scale('+displayScale+')';
+    const spotlight='translate('+centerX+'px,'+centerY+'px) scale('+displayScale+')';
     const to='translate('+bounds.left+'px,'+targetTop+'px) scale('+scale+')';
     overlay.style.transform=to;
     const frames=assemblingHome?[
       {transform:from,opacity:.72,offset:0,easing:'cubic-bezier(.22,1,.36,1)'},
-      {transform:to,opacity:1,offset:.82},
+      {transform:spotlight,opacity:1,offset:.28},
+      {transform:spotlight,opacity:1,offset:.52,easing:'cubic-bezier(.4,0,.2,1)'},
+      {transform:to,opacity:1,offset:.9},
       {transform:to,opacity:1,offset:1}
     ]:[{transform:from,opacity:.72},{transform:to,opacity:1}];
-    return run(overlay,frames,{duration:assemblingHome?1000:800,easing:assemblingHome?'linear':'cubic-bezier(.16,1,.3,1)',fill:'backwards'}).then(() => {
+    return run(overlay,frames,{duration:assemblingHome?1700:800,easing:assemblingHome?'linear':'cubic-bezier(.16,1,.3,1)',fill:'backwards'}).then(() => {
       overlay.remove();slot.remove();node.style.visibility='';hidden.delete(node);
     });
   }
