@@ -562,16 +562,22 @@ function measureTextContrast( clientIds: string[] ): TextContrast | null {
 		return ownBackground.get( clientId ) ?? false;
 	};
 
-	// Blocks that set the same background, as a row of buttons does, are one
-	// fix, so they share a note. A backdrop from the theme is grouped by the
-	// block it renders on, which is where a fix would go.
+	// Blocks that set the same background are one fix, so they share a note,
+	// and so do blocks that paint the same theme background behind their own
+	// text, as a row of buttons styled by the theme does. Other text on a
+	// theme backdrop is grouped by the block that paints it, which is where a
+	// fix would go.
 	failing.forEach( ( item ) => {
 		const painter = item.backdrop.clientId;
-		const key = [
-			toHex( item.text ),
-			toHex( item.backdrop.colour ),
-			painter && isOwnBackground( painter ) ? 'own' : ( painter ?? '' ),
-		].join( '|' );
+		let source = painter ?? '';
+
+		if ( painter && isOwnBackground( painter ) ) {
+			source = 'own';
+		} else if ( painter === item.clientId ) {
+			source = 'self';
+		}
+
+		const key = [ toHex( item.text ), toHex( item.backdrop.colour ), source ].join( '|' );
 
 		failures.set( key, [ ...( failures.get( key ) ?? [] ), item ] );
 	} );
@@ -606,10 +612,12 @@ function measureTextContrast( clientIds: string[] ): TextContrast | null {
 					painters.map( labelOf )
 				) }.`;
 			}
-		} else {
+		} else if ( painters.length === 1 ) {
 			source = `The ${ backdropHex } comes from ${ labelOf(
 				backdrop.clientId
 			) }, which sets no background of its own, so the colour comes from the theme or global styles.`;
+		} else {
+			source = `The ${ backdropHex } comes from each block itself, which sets no background of its own, so the colour comes from the theme or global styles.`;
 		}
 
 		return `Text contrast too low: ${ listLabels(
