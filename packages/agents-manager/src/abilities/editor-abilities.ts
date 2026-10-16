@@ -84,6 +84,7 @@ export async function registerEditorAbilities(): Promise< void > {
 }
 
 // Re-exported for the facade.
+export { useBlockSuggestions } from '../hooks/use-block-suggestions';
 export { getAgentBlockId } from '../utils/block-ids';
 export { getAvailableCheckpoints } from '../utils/checkpoints';
 export {
@@ -91,6 +92,7 @@ export {
 	preloadEditorContentContext,
 } from '../utils/editor-content-context';
 export { getEditorPostContext } from '../utils/editor-post-context';
+export { getEditorEmptyViewSuggestions } from '../utils/editor-suggestions';
 export { getPageContentMarkup } from '../utils/page-content-markup';
 export { getPageStructure } from '../utils/page-structure';
 

@@ -44,7 +44,7 @@ declare const agentsManagerData:
 			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
 			emptyViewHelp?: string;
-			/** Set where Big Sky is enabled; AM then sends Big Sky's page context. */
+			/** Set where Big Sky is enabled; AM then sends Big Sky's page context and shows its editor suggestions. */
 			bigSkyEnabled?: boolean;
 	  }
 	| undefined;

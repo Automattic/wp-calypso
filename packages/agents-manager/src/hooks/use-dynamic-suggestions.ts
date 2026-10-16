@@ -13,7 +13,7 @@ interface UseDynamicSuggestionsOptions {
 }
 
 /**
- * Registers the providers' dynamic suggestions (e.g. Big Sky's block-based ones)
+ * Registers the dynamic suggestions (e.g. the selected block's actions)
  * with the chat whenever their content changes, and clears them when there are
  * none. `contextualSuggestionIds` lists the ones that replace the empty-view
  * suggestions, so tracking can tag them with the selected block.

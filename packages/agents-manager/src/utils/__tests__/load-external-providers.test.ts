@@ -938,6 +938,57 @@ describe( 'loadExternalProviders', () => {
 		} );
 	} );
 
+	describe( 'Big Sky editor suggestions', () => {
+		it( 'go first where Big Sky is enabled and win the dedupe by id', async () => {
+			setAgentsManagerData( {
+				bigSkyEnabled: true,
+				agentProviders: [
+					{
+						getEmptyViewSuggestions: () => [
+							{ id: 'customize-colors', label: 'Provider colors', prompt: 'Provider colors' },
+							{ id: 'provider-chip', label: 'Provider chip', prompt: 'Provider chip' },
+						],
+					},
+				],
+			} );
+
+			const providers = await loadExternalProviders();
+			const suggestions = providers.getEmptyViewSuggestions?.() ?? [];
+
+			expect( suggestions[ 0 ] ).toMatchObject( {
+				id: 'customize-colors',
+				label: 'Customize colors',
+			} );
+			expect( suggestions.map( ( { id } ) => id ) ).toContain( 'provider-chip' );
+			expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
+		} );
+
+		it( 'are not offered where Big Sky is off', async () => {
+			setAgentsManagerData( {
+				agentProviders: [ { contextProvider: { getClientContext: () => ( {} ) } } ],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.getEmptyViewSuggestions ).toBeUndefined();
+			expect( providers.useSuggestions ).toBeUndefined();
+		} );
+	} );
+
+	it( 'skips a provider whose empty view suggestions have not loaded yet', async () => {
+		const ready = { id: 'ready', label: 'Ready', prompt: 'Ready prompt.' };
+		setAgentsManagerData( {
+			agentProviders: [
+				{ getEmptyViewSuggestions: () => undefined },
+				{ getEmptyViewSuggestions: () => [ ready ] },
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.getEmptyViewSuggestions?.() ).toEqual( [ ready ] );
+	} );
+
 	it( 'merges empty view suggestions from multiple providers and dedupes by id', async () => {
 		setAgentsManagerData( {
 			agentProviders: [
