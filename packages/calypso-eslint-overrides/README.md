@@ -41,3 +41,14 @@ module.exports = {
 	]
 }
 ```
+
+With ESLint 9's flat config, add `flatNodeConfig` scoped to the same files. It treats them as CommonJS, so top-level `return` keeps working:
+
+```
+const { flatNodeConfig } = require( '@automattic/calypso-eslint-overrides' );
+
+module.exports = [
+	// ...your other config
+	{ ...flatNodeConfig, files: [ 'bin/**' ] },
+];
+```

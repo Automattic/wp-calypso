@@ -11,6 +11,11 @@
 
 const flat = require( './configs/flat' );
 
+module.exports.meta = {
+	name: 'eslint-plugin-wpcalypso',
+	version: require( '../package.json' ).version,
+};
+
 // import all rules in lib/rules
 module.exports.rules = require( './rules' );
 module.exports.configs = require( './configs' );

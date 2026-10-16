@@ -1,5 +1,10 @@
 const flat = require( './configs/flat' );
 
+module.exports.meta = {
+	name: '@automattic/eslint-plugin-json',
+	version: require( '../package.json' ).version,
+};
+
 module.exports.rules = require( './rules' );
 module.exports.configs = require( './configs' );
 

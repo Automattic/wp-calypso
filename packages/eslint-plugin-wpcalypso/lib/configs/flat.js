@@ -45,6 +45,8 @@ const react = ( plugin ) => {
 	const { ecmaFeatures, sourceType } = legacyReact.parserOptions;
 	return [
 		...recommended( plugin ),
+		// Flat config lints only `.js`-style files unless a config selects others.
+		{ name: 'wpcalypso/react/files', files: [ '**/*.jsx' ] },
 		{
 			name: 'wpcalypso/react',
 			languageOptions: { sourceType, parserOptions: { ecmaFeatures } },

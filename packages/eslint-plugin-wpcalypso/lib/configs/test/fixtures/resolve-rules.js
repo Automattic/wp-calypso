@@ -26,9 +26,10 @@ const normalize = ( rules ) =>
 	const flat = new Flat( {
 		cwd,
 		overrideConfigFile: true,
+		// The preset as documented; a consumer linting JSON selects it, as the flat presets don't.
 		overrideConfig: [
 			...plugin.configs[ `flat/${ legacyPreset }` ],
-			{ files: [ '**/*.jsx', '**/*.json' ] },
+			...( file.endsWith( '.json' ) ? [ { files: [ '**/*.json' ] } ] : [] ),
 		],
 	} );
 	const target = path.join( cwd, file );

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `flatNodeConfig`, a flat-config version of `nodeConfig`.
+- `flatNodeConfig`, a flat-config version of `nodeConfig` for ESLint 9. It treats files as CommonJS, so top-level `return` still works.
 
 ## [1.0.0]
 
