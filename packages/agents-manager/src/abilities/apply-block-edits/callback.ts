@@ -77,6 +77,15 @@ type ApplyBlockEditsResult = AbilityResult & { result: ApplyBlockEditsResultData
 const GLOBAL_STYLES_UNAVAILABLE_ERROR =
 	'Custom CSS could not be updated because global styles are unavailable.';
 
+/** The top-level blocks of the page and of each template part on it, in that order. */
+function getPageClientIds(): string[] {
+	const { blocks, templateParts } = getPageBlocks();
+
+	return [ ...blocks, ...templateParts.flatMap( ( part ) => part.blocks ) ].map(
+		( block ) => block.clientId
+	);
+}
+
 /**
  * The tool-result message the chat renders this apply from. `visualCheckPending`
  * is omitted rather than sent false, so a payload with no check pending keeps
@@ -418,12 +427,17 @@ export async function applyBlockEditsCallback(
 	// and moved nothing. The contrast is measured against what the canvas
 	// renders behind the text, not what the blocks set: an unstyled group can
 	// paint a theme colour the attributes never mention, and dark on dark is
-	// easy to miss in a scaled-down picture. The server acts on the failure
-	// count rather than the notes' wording, so the field is left out when no
-	// text was measured. Kept out of `message`, which the user may see as the
-	// reply.
+	// easy to miss in a scaled-down picture. Custom CSS can recolour any block
+	// on the page, edited or not, so with it the whole page is measured, the
+	// edited blocks first. The server acts on the failure count rather than
+	// the notes' wording, so the field is left out when no text was measured.
+	// Kept out of `message`, which the user may see as the reply.
 	if ( fileParts ) {
-		const contrast = describeTextContrast( changedClientIds );
+		const contrast = describeTextContrast(
+			edits?.customCSS !== undefined
+				? [ ...changedClientIds, ...getPageClientIds() ]
+				: changedClientIds
+		);
 		const captureNotes = [
 			describeCaptureShape( fileParts ),
 			describeReferenceFraming( referenceClientIds, getUnframedClientIds( referenceClientIds ) ),

@@ -706,6 +706,50 @@ describe( 'applyBlockEditsCallback', () => {
 			expect( result.result.captureNotes ).toEqual( [ 'Contrast could not be measured …' ] );
 		} );
 
+		describe( 'with custom CSS', () => {
+			const headerBlock = { ...paragraph( 'Header' ), clientId: 'h1' };
+
+			beforeEach( () => {
+				jest.mocked( captureCanvas ).mockResolvedValue( [ band( { fullPage: true } ) ] );
+				jest.mocked( getPageBlocks ).mockReturnValue( {
+					blocks: [ paragraph( 'Old' ) ],
+					templateParts: [ { slug: 'header', blocks: [ headerBlock ] } ],
+				} );
+				jest
+					.mocked( describeTextContrast )
+					.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 1 } );
+			} );
+
+			it( 'measures the whole page when only the CSS changed, with no edited block', async () => {
+				// The case a CSS-only edit hit: no updates or inserts, so no
+				// edited block to measure, though the CSS can recolour any of them.
+				jest.mocked( normalizeEdits ).mockReturnValue( edits( { updates: [], customCSS: 'p{}' } ) );
+				jest.mocked( getEditedClientIds ).mockReturnValue( [] );
+
+				const result = await applyBlockEditsCallback( { customCSS: 'p{}', toolCallId: 'call-1' } );
+
+				expect( describeTextContrast ).toHaveBeenCalledWith( [ 'p1', 'h1' ] );
+				expect( result.result.contrastFailures ).toBe( 1 );
+				expect( result.result.captureNotes ).toContain( 'Text contrast too low: …' );
+			} );
+
+			it( 'measures the edited blocks first, then the rest of the page', async () => {
+				jest.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'p{}' } ) );
+
+				await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
+
+				expect( describeTextContrast ).toHaveBeenCalledWith( [ 'resolved-a1', 'p1', 'h1' ] );
+			} );
+		} );
+
+		it( 'measures only the edited blocks when no CSS changed', async () => {
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+
+			await applyBlockEditsCallback( input );
+
+			expect( describeTextContrast ).toHaveBeenCalledWith( [ 'resolved-a1' ] );
+		} );
+
 		it( 'measures nothing without a capture', async () => {
 			const result = await applyBlockEditsCallback( input );
 
