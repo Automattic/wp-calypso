@@ -147,9 +147,6 @@ Basic catalog names to WordPress icons. Choice pickers support single and multip
 selection and store selected values as string arrays. Bind input values and button
 action context to the same data paths to submit edits. Date/time inputs use local
 ISO date/time strings and enable date, time, or both with `enableDate`/`enableTime`.
-Action buttons validate date/time inputs in their surface or dialog before
-dispatching. Invalid values show the field label and browser validation message;
-modal triggers still open locally.
 Text fields support `shortText`, `longText`, `number`, and `obscured` (password)
 variants; their values remain strings. Sliders store numbers and use `min` and
 `max` to set their range. Video and audio URLs support data bindings and render
