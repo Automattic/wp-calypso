@@ -202,29 +202,29 @@ export function mergeUseSuggestionsHooks(
 	}
 
 	return ( maxSuggestions?: number ) => {
-		const results = hooks.map( ( hook ) => hook( maxSuggestions ) );
-
-		// The first provider that replaces the empty view owns the contextual
-		// chips, including while it hides them, so a later one can't refill them.
-		const owner = results.find( ( result ) => result?.replaceEmptyViewSuggestions === true );
-
-		if ( owner ) {
-			return { suggestions: owner.suggestions, replaceEmptyViewSuggestions: true };
-		}
-
 		const combined: Suggestion[] = [];
 		const seenIds = new Set< string >();
+		const results = hooks.map( ( hook ) => hook( maxSuggestions ) );
+		const replaceEmptyViewSuggestions = results.some(
+			( result ) => result?.replaceEmptyViewSuggestions === true
+		);
 
 		for ( const result of results ) {
-			for ( const s of result?.suggestions ?? [] ) {
+			if ( ! result || ( replaceEmptyViewSuggestions && ! result.replaceEmptyViewSuggestions ) ) {
+				continue;
+			}
+			const suggestions = result.suggestions ?? [];
+			for ( const s of suggestions ) {
 				if ( ! seenIds.has( s.id ) ) {
 					seenIds.add( s.id );
 					combined.push( s );
 				}
 			}
 		}
-
-		return { suggestions: combined };
+		return {
+			suggestions: combined,
+			...( replaceEmptyViewSuggestions && { replaceEmptyViewSuggestions: true } ),
+		};
 	};
 }
 
@@ -673,9 +673,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 
 	const editorSuggestions = await editorSuggestionsPromise;
 
-	// AM's empty-view suggestions go first, so they win the dedupe by id.
+	// AM's suggestions go first, so they win the dedupe by id.
 	if ( editorSuggestions ) {
 		allGetEmptyViewSuggestions.push( editorSuggestions.getEditorEmptyViewSuggestions );
+		allUseSuggestions.push( editorSuggestions.useBlockSuggestions );
 	}
 
 	for ( const loadedModule of loadedModules ) {
@@ -848,14 +849,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		} ) as AbilitiesSetupHook;
 	}
 
-	// AM's block suggestions go last, so a provider that claims the selected block
-	// (the Jetpack AI sidebar) owns its chips.
-	if ( editorSuggestions ) {
-		allUseSuggestions.push( editorSuggestions.useBlockSuggestions );
-	}
-
-	// Merge useSuggestions: the first provider that replaces the empty view wins;
-	// otherwise combine them, deduped by id.
+	// Merge useSuggestions: combine from all providers, dedupe by id.
 	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
 
 	// Merge useCheckpoint: run every provider's hook, search all stores by id.

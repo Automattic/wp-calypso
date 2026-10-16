@@ -86,6 +86,31 @@ describe( 'getBlockSuggestions', () => {
 		}
 	);
 
+	describe( 'with the Jetpack AI sidebar on', () => {
+		beforeEach( () => {
+			( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData = {
+				jetpackAiSidebar: { enabled: true },
+			};
+		} );
+
+		afterEach( () => {
+			delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } )
+				.agentsManagerData;
+		} );
+
+		it.each( [
+			[ 'a paragraph', block( 'core/paragraph' ) ],
+			[ 'a heading', block( 'core/heading' ) ],
+			[ 'an image', block( 'core/image' ) ],
+		] )( 'leaves %s to the sidebar', ( _name, selectedBlock ) => {
+			expect( getBlockSuggestions( selectedBlock ) ).toEqual( [] );
+		} );
+
+		it( 'still offers the other blocks their actions', () => {
+			expect( getIds( getBlockSuggestions( block( 'core/button' ) ) ) ).toEqual( [ 'edit-link' ] );
+		} );
+	} );
+
 	it( 'builds the button prompt from its text', () => {
 		expect( getBlockSuggestions( block( 'core/button', { text: 'Buy now' } ) ) ).toEqual( [
 			{ id: 'edit-link', label: 'Edit link', prompt: 'Change the Buy now button link to:' },

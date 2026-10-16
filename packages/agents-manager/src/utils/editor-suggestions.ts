@@ -5,6 +5,7 @@
  */
 import { select } from '@wordpress/data';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import type { Suggestion } from '../types';
 import type { EditorBlock } from './editor-blocks';
 
@@ -24,6 +25,10 @@ const ASSEMBLER_ONLY_SUGGESTION_IDS = new Set( [ 'change-page-layout', 'edit-pag
 
 // What a query shows when it sets no `perPage`: WordPress's default posts per page.
 const DEFAULT_POSTS_PER_PAGE = 10;
+
+function isJetpackAiSidebarEnabled(): boolean {
+	return getAgentsManagerInlineData()?.jetpackAiSidebar?.enabled === true;
+}
 
 function isAssemblerTheme(): boolean {
 	const core = select( 'core' ) as {
@@ -212,6 +217,10 @@ const BLOCK_SUGGESTIONS: Record< string, BlockSuggestionBuilder[] > = {
 	'core/image': IMAGE_SUGGESTIONS,
 };
 
+// The Jetpack AI sidebar has its own text and image actions, so where it loads
+// these give way to it, as Big Sky's did.
+const JETPACK_AI_SIDEBAR_SUGGESTIONS = new Set( [ TEXT_SUGGESTIONS, IMAGE_SUGGESTIONS ] );
+
 /**
  * The empty view's design actions. Call it once the theme has loaded: some
  * are Assembler-only.
@@ -265,7 +274,13 @@ export function getEditorEmptyViewSuggestions(): Suggestion[] {
  * @returns The suggestions.
  */
 export function getBlockSuggestions( block: EditorBlock, maxSuggestions?: number ): Suggestion[] {
-	const suggestions = ( BLOCK_SUGGESTIONS[ block.name ] ?? [] )
+	const builders = BLOCK_SUGGESTIONS[ block.name ] ?? [];
+
+	if ( JETPACK_AI_SIDEBAR_SUGGESTIONS.has( builders ) && isJetpackAiSidebarEnabled() ) {
+		return [];
+	}
+
+	const suggestions = builders
 		.map( ( getSuggestion ) => getSuggestion( block ) )
 		.filter( ( suggestion ): suggestion is Suggestion => !! suggestion );
 

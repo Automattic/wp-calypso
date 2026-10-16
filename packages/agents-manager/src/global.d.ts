@@ -46,6 +46,8 @@ declare const agentsManagerData:
 			emptyViewHelp?: string;
 			/** Set where Big Sky is enabled; AM then sends Big Sky's page context and shows AM's editor suggestions. */
 			bigSkyEnabled?: boolean;
+			/** Set by Jetpack where the Jetpack AI sidebar loads; it then offers its own text and image actions. */
+			jetpackAiSidebar?: { enabled?: boolean };
 	  }
 	| undefined;
 
