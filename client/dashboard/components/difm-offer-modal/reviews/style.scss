@@ -58,13 +58,10 @@ $difm-offer-reviews-fade: 0.4s;
 	height: $grid-unit-30;
 }
 
-.difm-offer-reviews__title {
-	margin: 0 0 $grid-unit-10;
-}
-
 .difm-offer-reviews__quote {
 	// Reset the global blockquote box (background, padding and top margin from _main.scss).
-	margin: 0 0 $grid-unit-20;
+	// The gap under the title sits here, because the Text component resets the title's margin.
+	margin: $grid-unit-10 0 $grid-unit-20;
 	padding: 0;
 	border-radius: 0;
 	background: none;
@@ -97,8 +94,6 @@ $difm-offer-reviews-fade: 0.4s;
 }
 
 .difm-offer-reviews__reviewer {
-	// Lighter than the quote, but dark enough for AA contrast on white.
-	color: $gray-700;
 	letter-spacing: 0.006em;
 	text-transform: uppercase;
 }
