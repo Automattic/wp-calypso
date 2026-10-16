@@ -6,10 +6,15 @@
 .difm-offer-modal {
 	// Clip the illustration to the modal's rounded corners.
 	overflow: hidden;
+	// The modal portals to <body>, which is 16px on classic Calypso pages such as Themes.
+	// Set the body copy size here so every host renders it the same.
+	font-size: $font-size-medium;
+	line-height: $font-line-height-small;
+	text-wrap: pretty;
 
 	@include break-medium {
 		&.components-modal__frame {
-			width: 800px;
+			width: 840px;
 		}
 	}
 
@@ -40,7 +45,7 @@
 	display: flex;
 	flex: 1;
 	flex-direction: column;
-	gap: $grid-unit-30;
+	gap: $grid-unit-20;
 	min-width: 0;
 	padding: $grid-unit-30;
 }
@@ -72,9 +77,16 @@
 	flex-direction: column;
 	gap: $grid-unit-50;
 	justify-content: space-between;
+
+	&.is-request-step {
+		gap: $grid-unit-20;
+	}
 }
 
 .difm-offer-modal__features {
+	display: flex;
+	flex-direction: column;
+	gap: $grid-unit-05;
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -83,7 +95,11 @@
 		display: flex;
 		align-items: flex-start;
 		gap: $grid-unit-05;
-		line-height: $grid-unit-30;
+	}
+
+	// Centre the 24px icon on the first 20px line of text.
+	li > :not(svg) {
+		padding-block-start: 2px;
 	}
 
 	svg {
@@ -97,8 +113,9 @@
 	flex-wrap: wrap;
 	gap: $grid-unit-10 $grid-unit-30;
 	padding: $grid-unit-15 $grid-unit-15;
-	border-radius: $radius-small;
+	border-radius: $radius-medium;
 	background: var(--wp-components-color-gray-200, $gray-100);
+	background: var(--wp-components-color-gray-200, #f4f4f4);
 }
 
 .difm-offer-modal__footer {
@@ -106,4 +123,23 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: $grid-unit-10;
+}
+
+// On small screens the offer step stacks a full-width button above the centred link.
+.difm-offer-modal__body.is-offer-step .difm-offer-modal__footer {
+	flex-direction: column-reverse;
+	align-items: stretch;
+	gap: $grid-unit-20;
+	text-align: center;
+
+	.components-button {
+		justify-content: center;
+	}
+
+	@include break-medium {
+		flex-direction: row;
+		align-items: center;
+		gap: $grid-unit-10;
+		text-align: start;
+	}
 }

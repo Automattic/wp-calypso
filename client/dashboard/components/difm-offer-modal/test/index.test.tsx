@@ -161,7 +161,7 @@ describe( '<DifmOfferModal>', () => {
 			...expectedTracksProps,
 			step: 'offer',
 		} );
-		expect( screen.getByRole( 'heading', { name: 'Tell us about your project' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Tell us about your site' } ) ).toBeVisible();
 		expect( screen.getByText( 'example.wordpress.com', { exact: false } ) ).toBeVisible();
 		expect( screen.getByText( 'test@example.com', { exact: false } ) ).toBeVisible();
 		expect( screen.queryByRole( 'textbox', { name: /Name/ } ) ).not.toBeInTheDocument();

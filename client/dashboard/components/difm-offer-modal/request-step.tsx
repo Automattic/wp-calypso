@@ -146,11 +146,11 @@ export function RequestStep( {
 	};
 
 	return (
-		<form className="difm-offer-modal__body" onSubmit={ handleSubmit }>
+		<form className="difm-offer-modal__body is-request-step" onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
 				<VStack spacing={ 3 }>
 					<Text id={ titleId } as="h1" size={ 20 } weight={ 600 } lineHeight="24px">
-						{ __( 'Tell us about your project' ) }
+						{ __( 'Tell us about your site' ) }
 					</Text>
 					<Text>{ __( 'We’ll be in touch within 24 hours to go over your needs.' ) }</Text>
 				</VStack>
