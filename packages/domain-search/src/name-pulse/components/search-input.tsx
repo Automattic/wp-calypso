@@ -8,21 +8,11 @@ import { useNamePulseUrlQuery } from '../hooks/use-name-pulse-url-query';
 import { NamePulseFilter } from './filter';
 import './search-input.scss';
 
-// Off screen, the browser anchors scrolling to the results, so their reload pushes the page down.
-const keepNamePulseSearchBarInView = ( searchBar: HTMLElement | null ) => {
-	if ( ! searchBar || searchBar.getBoundingClientRect().top >= 0 ) {
-		return;
-	}
-
-	searchBar.scrollIntoView( { block: 'start' } );
-};
-
 export const NamePulseSearchInput = ( { showFilter = false }: { showFilter?: boolean } ) => {
 	const { __ } = useI18n();
 	const { query, setQuery, events } = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( query );
 	const inputRef = useRef< HTMLInputElement >( null );
-	const searchBarRef = useRef< HTMLDivElement >( null );
 
 	useNamePulseUrlQuery( query );
 
@@ -42,11 +32,7 @@ export const NamePulseSearchInput = ( { showFilter = false }: { showFilter?: boo
 	}, [ query ] );
 
 	return (
-		<HStack
-			ref={ searchBarRef }
-			className="domain-search__search-bar name-pulse-search-input"
-			spacing={ 4 }
-		>
+		<HStack className="domain-search__search-bar name-pulse-search-input" spacing={ 4 }>
 			<DomainSearchControls.Input
 				ref={ inputRef }
 				value={ localQuery }
@@ -57,7 +43,8 @@ export const NamePulseSearchInput = ( { showFilter = false }: { showFilter?: boo
 					setLocalQuery( value );
 
 					if ( trimmedValue ) {
-						keepNamePulseSearchBarInView( searchBarRef.current );
+						// Reloading results while scrolled down pushes the page further down.
+						window.scrollTo( { top: 0 } );
 						setQuery( trimmedValue, 'input_changed' );
 					} else {
 						if ( query ) {

@@ -101,20 +101,13 @@ describe( 'NamePulseSearchInput', () => {
 		expect( screen.getByRole( 'searchbox' ) ).toHaveValue( '' );
 	} );
 
-	it( 'scrolls the search bar back into view when editing it from above the viewport', async () => {
-		const scrollIntoView = jest.fn();
-		Element.prototype.scrollIntoView = scrollIntoView;
-		jest
-			.spyOn( HTMLElement.prototype, 'getBoundingClientRect' )
-			.mockReturnValue( { top: -120 } as DOMRect );
+	it( 'scrolls to the top of the page when the query is edited', async () => {
+		const scrollTo = jest.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
 		const { user, input } = renderInput();
 
 		await user.type( input, 'x' );
 
-		expect( scrollIntoView ).toHaveBeenCalledWith( { block: 'start' } );
-
-		// @ts-expect-error jsdom does not implement scrollIntoView.
-		delete Element.prototype.scrollIntoView;
-		jest.restoreAllMocks();
+		expect( scrollTo ).toHaveBeenCalledWith( { top: 0 } );
+		scrollTo.mockRestore();
 	} );
 } );
