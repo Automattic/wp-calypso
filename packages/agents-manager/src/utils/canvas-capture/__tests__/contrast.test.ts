@@ -293,6 +293,42 @@ describe( 'failures', () => {
 		} );
 	} );
 
+	it( 'gives a row of buttons coloured by the theme one note too', () => {
+		// Most block themes colour buttons from global styles, so the buttons
+		// set no background of their own and each paints the theme's behind its text.
+		const button = ( clientId: string ): CanvasBlock => ( {
+			...text( clientId, WHITE_TEXT ),
+			name: 'core/button',
+			style: { backgroundColor: 'rgb(201, 111, 74)' },
+		} );
+
+		mountCanvas( [ button( 'pd19' ), button( 'pz9d' ), button( 'mnyk' ) ] );
+
+		expect( describeTextContrast( [ 'pd19', 'pz9d', 'mnyk' ] ) ).toEqual( {
+			notes: [
+				'Text contrast too low: button (pd19), button (pz9d) and button (mnyk) — #FFFFFF text on #C96F4A, 3.58:1 (needs 4.5:1). The #C96F4A comes from each block itself, which sets no background of its own, so the colour comes from the theme or global styles.',
+			],
+			failures: 3,
+		} );
+	} );
+
+	it( 'keeps text on separate theme-painted groups in separate notes', () => {
+		// Each group is its own fix, as the inner groups were in WPAGENT-203.
+		const group = ( clientId: string, child: string ): CanvasBlock => ( {
+			clientId,
+			name: 'core/group',
+			style: { backgroundColor: NAVY },
+			children: [ text( child ) ],
+		} );
+
+		mountCanvas( [ group( 'g1', 'p1' ), group( 'g2', 'p2' ) ] );
+
+		expect( notesOf( [ 'g1', 'g2' ] ) ).toEqual( [
+			'Text contrast too low: paragraph (p1) — #14213D text on #1D2630, 1.04:1 (needs 4.5:1). The #1D2630 comes from group (g1), which sets no background of its own, so the colour comes from the theme or global styles.',
+			'Text contrast too low: paragraph (p2) — #14213D text on #1D2630, 1.04:1 (needs 4.5:1). The #1D2630 comes from group (g2), which sets no background of its own, so the colour comes from the theme or global styles.',
+		] );
+	} );
+
 	it( 'names each block whose own background a shared note comes from', () => {
 		const group = ( clientId: string, child: string ): CanvasBlock => ( {
 			clientId,
