@@ -160,16 +160,16 @@ export function DifmOfferReviews( {
 				{ reviews.map( ( review, index ) => (
 					<ReviewCard
 						key={ review.id }
+						review={ review }
+						isActive={ index === activeIndex }
+						onLinkClick={ onReviewLinkClick }
+					/>
+				) ) }
+			</div>
+			<div className="difm-offer-reviews__controls">
 				<Button
 					className="difm-offer-reviews__toggle"
 					__next40pxDefaultSize
-					icon={ isPaused ? playIcon : pauseIcon }
-					label={ isPaused ? __( 'Play reviews' ) : __( 'Pause reviews' ) }
-					size="small"
-					onClick={ () => setIsPaused( ! isPaused ) }
-				/>
-				<Button
-					className="difm-offer-reviews__toggle"
 					icon={ isPaused ? playIcon : pauseIcon }
 					label={ isPaused ? __( 'Play reviews' ) : __( 'Pause reviews' ) }
 					size="small"
