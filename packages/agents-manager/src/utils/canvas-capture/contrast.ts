@@ -17,6 +17,8 @@ import { getBlock, getBlocks } from '../editor-blocks';
 import { getCanvasDocument } from '../editor-canvas';
 
 const MAX_TEXT_BLOCKS = 40;
+// Text runs read in one block: a paragraph's links, spans and highlights.
+const MAX_RUNS = 20;
 const MAX_VISITED = 300;
 const MAX_NOTES = 4;
 const MAX_NAMED = 3;
@@ -63,12 +65,17 @@ export interface TextContrast {
 	failures: number | null;
 }
 
-interface Measured {
-	clientId: string;
+/** One run of text: the colours it renders in, and the threshold it is held to. */
+interface Run {
 	text: Rgba;
 	backdrop: Backdrop;
 	ratio: number;
 	needs: number;
+}
+
+/** A block, by the run that speaks for it: its worst failing one, or else its weakest. */
+interface Measured extends Run {
+	clientId: string;
 }
 
 const clamp = ( value: number, min: number, max: number ): number =>
@@ -191,11 +198,20 @@ function isUnseen( element: Element, view: Window ): boolean {
 const isDisplayed = ( element: Element, view: Window ): boolean =>
 	view.getComputedStyle( element ).display !== 'none';
 
-/** The element directly holding the block's first visible text, a button's link or a span among them. */
-function findTextElement( blockElement: Element, view: Window ): Element | null {
+/**
+ * The elements directly holding the block's visible text, each once, in
+ * document order: the block's own element, its links, spans and highlights,
+ * a button's link. `truncated` when the block held more than are read.
+ */
+function findTextElements(
+	blockElement: Element,
+	view: Window
+): { elements: Element[]; truncated: boolean } {
+	const elements = new Set< Element >();
+
 	for ( let element: Element | null = blockElement; element; element = element.parentElement ) {
 		if ( ! isDisplayed( element, view ) ) {
-			return null;
+			return { elements: [], truncated: false };
 		}
 	}
 
@@ -204,7 +220,12 @@ function findTextElement( blockElement: Element, view: Window ): Element | null 
 	for ( let node = walker.nextNode(); node; node = walker.nextNode() ) {
 		const parent = node.parentElement;
 
-		if ( ! node.textContent?.trim() || ! parent || parent.closest( EDITOR_UI ) ) {
+		if (
+			! node.textContent?.trim() ||
+			! parent ||
+			elements.has( parent ) ||
+			parent.closest( EDITOR_UI )
+		) {
 			continue;
 		}
 
@@ -221,12 +242,18 @@ function findTextElement( blockElement: Element, view: Window ): Element | null 
 			}
 		}
 
-		if ( ! hidden ) {
-			return parent;
+		if ( hidden ) {
+			continue;
 		}
+
+		if ( elements.size >= MAX_RUNS ) {
+			return { elements: [ ...elements ], truncated: true };
+		}
+
+		elements.add( parent );
 	}
 
-	return null;
+	return { elements: [ ...elements ], truncated: false };
 }
 
 const hasSize = ( rect: DOMRect ): boolean => rect.width > 0 && rect.height > 0;
@@ -350,6 +377,29 @@ function isLargeText( style: CSSStyleDeclaration ): boolean {
 	return size >= LARGE_SIZE || ( size >= LARGE_BOLD_SIZE && weight >= BOLD_WEIGHT );
 }
 
+/** A run's colours against what renders behind it, or `null` when either cannot be read. */
+function measureRun( element: Element, view: Window ): Run | null {
+	const style = view.getComputedStyle( element );
+	const colour = parseColour( style.color );
+	const backdrop = isFaded( element, view ) ? null : findBackdrop( element, view );
+
+	if ( ! colour || ! backdrop ) {
+		return null;
+	}
+
+	const text = composite( colour, backdrop.colour );
+
+	return {
+		text,
+		backdrop,
+		ratio: contrastRatio( text, backdrop.colour ),
+		needs: isLargeText( style ) ? MIN_LARGE_RATIO : MIN_RATIO,
+	};
+}
+
+// How far a run sits from its threshold: below 1 fails, and the lowest is the worst.
+const margin = ( run: Run ): number => run.ratio / run.needs;
+
 /** Whether the block sets a background of its own, rather than inheriting one from the theme. */
 function setsOwnBackground( clientId: string ): boolean {
 	const attributes = getBlock( clientId )?.attributes ?? {};
@@ -460,9 +510,11 @@ function measureTextContrast( clientIds: string[] ): TextContrast | null {
 
 	for ( const clientId of leaves ) {
 		const blockElement = canvasDocument.querySelector( `[data-block="${ clientId }"]` );
-		const textElement = blockElement && findTextElement( blockElement, view );
+		const { elements, truncated: tooManyRuns } = blockElement
+			? findTextElements( blockElement, view )
+			: { elements: [], truncated: false };
 
-		if ( ! textElement ) {
+		if ( ! elements.length ) {
 			continue;
 		}
 
@@ -471,24 +523,21 @@ function measureTextContrast( clientIds: string[] ): TextContrast | null {
 			break;
 		}
 
-		const style = view.getComputedStyle( textElement );
-		const colour = parseColour( style.color );
-		const backdrop = isFaded( textElement, view ) ? null : findBackdrop( textElement, view );
+		const runs = elements.map( ( element ) => measureRun( element, view ) );
+		const read = runs
+			.filter( ( run ): run is Run => !! run )
+			.sort( ( a, b ) => margin( a ) - margin( b ) );
+		const [ worst ] = read;
 
-		if ( ! colour || ! backdrop ) {
+		// One failing run fails the block. A block passes only when every run
+		// of it was read and passes; otherwise it is left to the picture.
+		if ( worst && margin( worst ) < 1 ) {
+			measured.push( { clientId, ...worst } );
+		} else if ( ! worst || read.length < runs.length || tooManyRuns ) {
 			unmeasured++;
-			continue;
+		} else {
+			measured.push( { clientId, ...worst } );
 		}
-
-		const text = composite( colour, backdrop.colour );
-
-		measured.push( {
-			clientId,
-			text,
-			backdrop,
-			ratio: contrastRatio( text, backdrop.colour ),
-			needs: isLargeText( style ) ? MIN_LARGE_RATIO : MIN_RATIO,
-		} );
 	}
 
 	if ( ! textBlocks ) {
