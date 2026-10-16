@@ -1,6 +1,7 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { getBrowserSafeLocale } from 'i18n-calypso';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
+import { getActiveSessionId } from './agent-session';
 import type { CreditsPlanTier, CreditsStatus } from './credits';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite } from '@automattic/data-stores';
@@ -241,15 +242,22 @@ function getCreditsReturnUrl( siteFragment: string, isSimpleSite: boolean ): str
 	return `https://wordpress.com/home/${ siteFragment }`;
 }
 
+/** An empty ID, or the Tracks standard's `none` for a missing one, names no session. */
+function getAiSessionQuery( aiSessionId?: string ): { ai_session_id?: string } {
+	return aiSessionId && aiSessionId !== 'none' ? { ai_session_id: aiSessionId } : {};
+}
+
 /**
  * The plans page or the credits pack checkout, by the site's plan. Calypso's
  * plans and checkout routes take the site's domain or its ID. The return address is
- * the post open in a Simple site's editor, or else the site's home.
+ * the post open in a Simple site's editor, or else the site's home. Pass the
+ * `ai_session_id` the chat's click event sends, so checkout can save it on the purchase.
  */
 export function getCreditsPurchaseLink(
 	status: CreditsStatus,
 	site: string | number,
-	isSimpleSite: boolean
+	isSimpleSite: boolean,
+	aiSessionId?: string
 ): CreditsPurchaseLink | undefined {
 	const kind = status.planTier && CREDITS_PURCHASE_KIND_BY_TIER[ status.planTier ];
 	if ( ! kind ) {
@@ -258,15 +266,16 @@ export function getCreditsPurchaseLink(
 
 	const siteFragment = encodeURIComponent( site );
 	const returnUrl = getCreditsReturnUrl( siteFragment, isSimpleSite );
+	const attribution = { source: CREDITS_UPGRADE_SOURCE, ...getAiSessionQuery( aiSessionId ) };
 	if ( kind === 'upgrade' ) {
 		// No `redirect_to`: the plans page passes it on to checkout, which would then
 		// skip its own pages after a plan purchase.
-		const query = new URLSearchParams( { source: CREDITS_UPGRADE_SOURCE, cancel_to: returnUrl } );
+		const query = new URLSearchParams( { ...attribution, cancel_to: returnUrl } );
 		return { kind, url: `https://wordpress.com/plans/${ siteFragment }?${ query }` };
 	}
 
 	const query = new URLSearchParams( {
-		source: CREDITS_UPGRADE_SOURCE,
+		...attribution,
 		redirect_to: returnUrl,
 		cancel_to: returnUrl,
 	} );
@@ -276,7 +285,10 @@ export function getCreditsPurchaseLink(
 	};
 }
 
-/** Bind the purchase destination to the same site as the authenticated balance. */
+/**
+ * Bind the purchase destination to the same site as the authenticated balance, and
+ * to the session the credits Tracks events send as `ai_session_id`.
+ */
 export function getLiveCreditsPurchaseLink(
 	status: CreditsStatus,
 	siteId: number | undefined,
@@ -290,5 +302,10 @@ export function getLiveCreditsPurchaseLink(
 	) {
 		return undefined;
 	}
-	return getCreditsPurchaseLink( status, site.domain, window._currentSiteType === 'simple' );
+	return getCreditsPurchaseLink(
+		status,
+		site.domain,
+		window._currentSiteType === 'simple',
+		getActiveSessionId()
+	);
 }

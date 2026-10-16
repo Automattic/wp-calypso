@@ -1,11 +1,20 @@
 /**
  * @jest-environment jsdom
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, renderHook } from '@testing-library/react';
 import { ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { localNumber } from '../../utils/__tests__/fixtures/local-number';
+import {
+	NO_SITE,
+	clearSessionId,
+	saveSessionId,
+	setSessionSiteKey,
+	setSessionUserId,
+} from '../../utils/agent-session';
 import { CREDITS_LOW_BALANCE, getCreditsLabel, getCreditsTone } from '../../utils/credits';
+import { setResolvedAgentId } from '../../utils/resolved-agent-id';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { useCredits } from '../use-credits';
 import type { AgentConfig } from '../../utils/create-agent-config';
@@ -41,6 +50,7 @@ jest.mock( '@wordpress/i18n', () => ( {
 } ) );
 jest.mock( '../../components/credits-meter', () => () => null );
 jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
+jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
 
 const authProvider = jest.fn();
 const agentConfig: AgentConfig = {
@@ -217,6 +227,101 @@ describe( 'return address', () => {
 		const { result } = renderCredits();
 		await flush();
 		expect( returnsOf( result.current ) ).toEqual( { redirectTo: null, cancelTo: POST_RETURN } );
+	} );
+} );
+describe( 'session', () => {
+	const LINKS = [
+		[ 'Upgrade', 'premium', UPGRADE_URL ],
+		[ 'Add credits', 'business', ADD_CREDITS_URL ],
+	] as const;
+	const sessionOf = ( href?: string ) => new URL( href ?? '' ).searchParams.get( 'ai_session_id' );
+	const hrefs = ( value: ReturnType< typeof useCredits > ) => ( {
+		notice: value.notice?.action?.href,
+		popover: props( value ).action?.href,
+	} );
+	const both = ( url: string ) => ( { notice: url, popover: url } );
+	const withSession = ( url: string, aiSessionId: string ) =>
+		url.replace( 'source=wp_ai_credits', `source=wp_ai_credits&ai_session_id=${ aiSessionId }` );
+
+	beforeEach( () => {
+		// The scope the chat publishes for its Tracks events.
+		setResolvedAgentId( 'wp-orchestrator' );
+		setSessionSiteKey( '123' );
+		setSessionUserId( 1 );
+	} );
+	afterEach( () => {
+		sessionStorage.clear();
+		setResolvedAgentId( undefined );
+		setSessionSiteKey( NO_SITE );
+		setSessionUserId( undefined );
+		jest.mocked( recordAgentsManagerTracksEvent ).mockReset();
+	} );
+
+	it.each( LINKS )(
+		'adds the chat’s session to %s in the notice and the popover, keeping the rest',
+		async ( _label, plan_tier, url ) => {
+			saveSessionId( 'session-a' );
+			fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier } ) );
+			const { result } = renderCredits();
+			await flush();
+			expect( hrefs( result.current ) ).toEqual( both( withSession( url, 'session-a' ) ) );
+		}
+	);
+
+	it.each( LINKS )(
+		'leaves %s without a session before the chat has one',
+		async ( _label, plan_tier, url ) => {
+			fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier } ) );
+			const { result } = renderCredits();
+			await flush();
+			expect( hrefs( result.current ) ).toEqual( both( url ) );
+		}
+	);
+
+	it( 'sends the click event the session its link carries', async () => {
+		const tracks =
+			jest.requireActual< typeof import( '../../utils/tracks' ) >( '../../utils/tracks' );
+		jest
+			.mocked( recordAgentsManagerTracksEvent )
+			.mockImplementation( tracks.recordAgentsManagerTracksEvent );
+		jest.mocked( recordTracksEvent ).mockClear();
+		saveSessionId( 'session-a' );
+		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'business' } ) );
+		const { result } = renderCredits();
+		await flush();
+
+		act( () => result.current.notice?.action?.onClick?.() );
+		act( () => props( result.current ).action?.onClick?.() );
+
+		const clicks = jest
+			.mocked( recordTracksEvent )
+			.mock.calls.filter( ( [ name ] ) => name === 'calypso_agents_manager_credits_cta_clicked' );
+		expect( clicks.map( ( [ , eventProps ] ) => eventProps?.ai_session_id ) ).toEqual( [
+			sessionOf( hrefs( result.current ).notice ),
+			sessionOf( hrefs( result.current ).popover ),
+		] );
+		expect( sessionOf( hrefs( result.current ).notice ) ).toBe( 'session-a' );
+	} );
+
+	it( 'follows a new conversation in the same tab', async () => {
+		saveSessionId( 'session-a' );
+		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'premium' } ) );
+		const view = renderCredits();
+		await flush();
+		expect( hrefs( view.result.current ) ).toEqual(
+			both( withSession( UPGRADE_URL, 'session-a' ) )
+		);
+
+		// A new chat clears the session, and the server assigns the next one in its first turn.
+		clearSessionId();
+		view.rerender( defaultOptions );
+		expect( hrefs( view.result.current ) ).toEqual( both( UPGRADE_URL ) );
+
+		saveSessionId( 'session-b' );
+		await receive( { ...exhausted(), plan_tier: 'premium' } );
+		expect( hrefs( view.result.current ) ).toEqual(
+			both( withSession( UPGRADE_URL, 'session-b' ) )
+		);
 	} );
 } );
 it.each( [ undefined, null, 'unsupported' ] )(

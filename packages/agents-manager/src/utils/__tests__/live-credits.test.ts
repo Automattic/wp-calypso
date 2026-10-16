@@ -153,6 +153,58 @@ describe( 'getCreditsPurchaseLink', () => {
 		window.history.replaceState( {}, '', SAVED_POST );
 		expect( getCreditsPurchaseLink( statusOn( undefined ), 123, true ) ).toBeUndefined();
 	} );
+
+	describe( 'the chat’s session', () => {
+		const LINKS = [
+			[ 'Upgrade', 'premium', 'https://wordpress.com/plans/example.wordpress.com', {} ],
+			[
+				'Add credits',
+				'business',
+				'https://wordpress.com/checkout/example.wordpress.com/ai-credits-lifetime:-q-100000',
+				{ redirect_to: HOME },
+			],
+		] as const;
+
+		it.each( LINKS )(
+			'goes on %s as ai_session_id, beside the source and returns',
+			( _label, planTier, page, redirect ) => {
+				const link = getCreditsPurchaseLink(
+					statusOn( planTier ),
+					'example.wordpress.com',
+					false,
+					'5c2b0b4e-session'
+				);
+				expect( partsOf( link?.url ) ).toEqual( {
+					page,
+					query: {
+						source: 'wp_ai_credits',
+						ai_session_id: '5c2b0b4e-session',
+						...redirect,
+						cancel_to: HOME,
+					},
+				} );
+			}
+		);
+
+		it.each(
+			LINKS.flatMap( ( [ label, planTier ] ) =>
+				[ undefined, '', 'none' ].map(
+					( aiSessionId ) => [ label, aiSessionId, planTier ] as const
+				)
+			)
+		)( 'leaves %s without ai_session_id for the session %p', ( _label, aiSessionId, planTier ) => {
+			const link = getCreditsPurchaseLink(
+				statusOn( planTier ),
+				'example.wordpress.com',
+				false,
+				aiSessionId
+			);
+			expect( partsOf( link?.url ).query ).not.toHaveProperty( 'ai_session_id' );
+			expect( link ).toEqual(
+				getCreditsPurchaseLink( statusOn( planTier ), 'example.wordpress.com', false )
+			);
+		} );
+	} );
 } );
 it.each( [
 	[ 'wpcom-site-monthly-v1', '2026-10-01T00:00:00Z', 'Oct 1' ],
