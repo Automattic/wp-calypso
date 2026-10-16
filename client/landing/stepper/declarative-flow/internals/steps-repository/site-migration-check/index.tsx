@@ -27,11 +27,13 @@ const SiteMigrationCheck: StepType< {
 		destinationPlanName?: string;
 		needsUpgrade?: boolean;
 		isLoadingDestination?: boolean;
+		canCopySite?: boolean;
 	};
 	submits:
 		| { action: 'back' }
 		| {
-				action: 'continue' | 'select-existing-site';
+				action:
+					'continue' | 'select-existing-site' | 'copy-site' | 'transfer-domain' | 'get-access';
 				from: string;
 				platform: 'wordpress';
 				host?: string;
@@ -43,6 +45,7 @@ const SiteMigrationCheck: StepType< {
 	destinationPlanName,
 	needsUpgrade,
 	isLoadingDestination,
+	canCopySite,
 } ) => {
 	const translate = useTranslate();
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
@@ -74,18 +77,21 @@ const SiteMigrationCheck: StepType< {
 	}
 	const choices = [
 		{
+			action: 'copy-site' as const,
 			title: translate( 'Make a copy of your site' ),
 			description: translate( 'Duplicate it to a new site you can work on.' ),
 		},
 		{
+			action: 'transfer-domain' as const,
 			title: translate( 'Transfer your domain to WordPress.com' ),
 			description: translate( 'Bring the registration across too.' ),
 		},
 		{
+			action: 'get-access' as const,
 			title: translate( 'Get access to your site' ),
 			description: translate( 'Get help accessing and managing your site.' ),
 		},
-	];
+	].filter( ( { action } ) => action !== 'copy-site' || canCopySite );
 	const returnToAddress = () => navigation.submit?.( { action: 'back' } );
 
 	useEffect( () => {
@@ -126,11 +132,13 @@ const SiteMigrationCheck: StepType< {
 				</div>
 				{ showChoices ? (
 					<div className="site-migration-check__card">
-						{ choices.map( ( { title, description } ) => (
+						{ choices.map( ( { action, title, description } ) => (
 							<Step.LinkButton
-								key={ String( title ) }
+								key={ action }
 								className="site-migration-check__choice"
-								disabled
+								onClick={ () =>
+									navigation.submit?.( { action, from, platform: 'wordpress', host } )
+								}
 							>
 								<span className="site-migration-check__choice-content">
 									<span className="site-migration-check__choice-title">{ title }</span>
