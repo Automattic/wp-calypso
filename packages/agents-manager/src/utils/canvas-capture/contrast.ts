@@ -296,6 +296,33 @@ const hasSize = ( rect: DOMRect ): boolean => rect.width > 0 && rect.height > 0;
 const intersects = ( a: DOMRect, b: DOMRect ): boolean =>
 	a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
 
+// Allowed for subpixel layout when one box should hold another.
+const COVER_TOLERANCE = 1;
+
+const contains = ( outer: DOMRect, inner: DOMRect ): boolean =>
+	outer.left <= inner.left + COVER_TOLERANCE &&
+	outer.top <= inner.top + COVER_TOLERANCE &&
+	outer.right >= inner.right - COVER_TOLERANCE &&
+	outer.bottom >= inner.bottom - COVER_TOLERANCE;
+
+/**
+ * Whether an ancestor's background is behind all of the text. Text that is
+ * positioned or overflows can sit outside its ancestor's box, over whatever
+ * is there instead. The root and body paint the whole canvas whatever their
+ * boxes, and a box that cannot be read is taken to cover.
+ */
+function paintsBehind( element: Element, textRect: DOMRect ): boolean {
+	const { documentElement, body } = element.ownerDocument;
+
+	if ( element === documentElement || element === body ) {
+		return true;
+	}
+
+	const rect = element.getBoundingClientRect();
+
+	return ! hasSize( rect ) || ! hasSize( textRect ) || contains( rect, textRect );
+}
+
 /**
  * Whether something off the text's own ancestry is laid out over the
  * element's background, behind the text: a positioned child that paints or
@@ -364,7 +391,8 @@ function isAltered( element: Element, view: Window ): boolean {
 /**
  * What renders behind an element: the backgrounds of it and its ancestors,
  * layered until one is solid, over white when none is. `null` when an image,
- * gradient or overlay sits in the way, or a colour cannot be read.
+ * gradient or overlay sits in the way, a colour cannot be read, or a
+ * background does not cover the text.
  */
 function findBackdrop( element: Element, view: Window ): Backdrop | null {
 	const layers: Rgba[] = [];
@@ -392,6 +420,10 @@ function findBackdrop( element: Element, view: Window ): Backdrop | null {
 
 		if ( background.a === 0 ) {
 			continue;
+		}
+
+		if ( ! paintsBehind( current, textRect ) ) {
+			return null;
 		}
 
 		painter ??= current;

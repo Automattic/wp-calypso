@@ -35,6 +35,8 @@ interface CanvasBlock {
 	attributes?: BlockAttributes;
 	/** Inline styles on the block's own element. */
 	style?: Styles;
+	/** The block's own box, which jsdom does not lay out. */
+	rect?: Rect;
 	/**
 	 * Computed styles on the block's own element, keyed by pseudo-element or
 	 * `''`, for what jsdom does not compute: gradients, newer colour syntax and
@@ -69,6 +71,10 @@ function mountCanvas( roots: CanvasBlock[] ) {
 		const element = canvasDocument.createElement( 'div' );
 		element.setAttribute( 'data-block', block.clientId );
 		Object.assign( element.style, block.style );
+
+		if ( block.rect ) {
+			withRect( element, block.rect );
+		}
 
 		if ( block.computed ) {
 			computed.set( element, block.computed );
@@ -1008,5 +1014,47 @@ describe( 'a block failing against more than one backdrop', () => {
 			},
 			{ clientId: 'grp', name: 'core/group', ownBackground: false, textClientIds: [ 'para' ] },
 		] );
+	} );
+} );
+
+describe( 'text outside the box of the background behind it', () => {
+	// A dark group with white text, which reads well over the group and not at
+	// all over the white page below it.
+	const groupWithText = ( textRect: Rect ): CanvasBlock => ( {
+		clientId: 'c25n',
+		name: 'core/group',
+		style: { backgroundColor: NAVY },
+		rect: { top: 0, left: 0, width: 400, height: 100 },
+		children: [ { ...text( 'qalw', WHITE_TEXT ), textRect } ],
+	} );
+
+	it( 'leaves text positioned outside its group’s box to the picture', () => {
+		mountCanvas( [ groupWithText( { top: 150, left: 0, width: 200, height: 20 } ) ] );
+
+		expect( describeTextContrast( [ 'c25n' ] ) ).toEqual( {
+			notes: [ UNMEASURED_ONE ],
+			failures: null,
+			backdrops: [],
+		} );
+	} );
+
+	it( 'measures text against the page background, whatever the body’s box', () => {
+		// The body's background fills the canvas, past its own box.
+		mountCanvas( [
+			{ ...text( 'qalw', WHITE_TEXT ), textRect: { top: 500, left: 0, width: 200, height: 20 } },
+		] );
+
+		const body = ( document.querySelector( 'iframe' ) as HTMLIFrameElement ).contentDocument
+			?.body as HTMLElement;
+		body.style.backgroundColor = NAVY;
+		withRect( body, { top: 0, left: 0, width: 400, height: 100 } );
+
+		expect( describeTextContrast( [ 'qalw' ] )?.failures ).toBe( 0 );
+	} );
+
+	it( 'measures text inside its group’s box against the group', () => {
+		mountCanvas( [ groupWithText( { top: 40, left: 10, width: 200, height: 20 } ) ] );
+
+		expect( describeTextContrast( [ 'c25n' ] )?.failures ).toBe( 0 );
 	} );
 } );
