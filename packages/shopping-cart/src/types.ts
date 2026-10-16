@@ -876,6 +876,11 @@ export type DomainBundleRole = 'primary' | 'companion';
 export interface ResponseCartProductExtra {
 	context?: string;
 	source?: string;
+	/**
+	 * The AI agent session that generated the checkout link. Recorded on the
+	 * purchase event so a sale joins exactly to the agent activity behind it.
+	 */
+	ai_session_id?: string;
 	premium?: boolean;
 	new_quantity?: number;
 	domain_to_bundle?: string;

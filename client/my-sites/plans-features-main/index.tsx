@@ -112,6 +112,7 @@ import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import { useRenewalPricingExperiment } from './hooks/use-renewal-price-experiment';
 import useSelectedFeature from './hooks/use-selected-feature';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
+import type { CheckoutAttribution } from './hooks/use-generate-action-callback';
 import type { PlanChangeLostFeature } from '@automattic/api-core';
 import type {
 	PlansIntent,
@@ -147,6 +148,8 @@ export interface PlansFeaturesMainProps {
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectTo?: string;
 	pluginSlug?: string;
+	/** Purchase attribution (`source`, `ai_session_id`) forwarded to the upgrade checkout. */
+	checkoutAttribution?: CheckoutAttribution;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -218,6 +221,11 @@ export interface PlansFeaturesMainProps {
 	deemphasizeFreePlan?: boolean;
 	renderFreePlanCtaInStepContainerV2?: boolean;
 
+	/**
+	 * Whether the plans render inside StepContainerV2. Defaults to what the flow name implies.
+	 */
+	isInStepContainerV2?: boolean;
+
 	selectedThemeType?: string;
 }
 
@@ -234,6 +242,7 @@ const PlansFeaturesMain = ( {
 	hidePlanTypeSelector,
 	redirectTo,
 	pluginSlug,
+	checkoutAttribution,
 	redirectToAddDomainFlow,
 	siteId,
 	selectedPlan,
@@ -265,6 +274,7 @@ const PlansFeaturesMain = ( {
 	showLegacyStorageFeature = false,
 	deemphasizeFreePlan,
 	renderFreePlanCtaInStepContainerV2 = false,
+	isInStepContainerV2,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
@@ -927,6 +937,7 @@ const PlansFeaturesMain = ( {
 		enableCategorisedFeatures: showSimplifiedFeatures,
 		redirectTo,
 		pluginSlug,
+		checkoutAttribution,
 		isDelayedDowngradePending,
 		delayedDowngradeToProductSlug,
 		onRenewCurrentPlan: renewCurrentPlanWithPendingDowngrade,
@@ -1546,6 +1557,7 @@ const PlansFeaturesMain = ( {
 					flowName={ flowName }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					renderFreePlanCtaInStepContainerV2={ renderFreePlanCtaInStepContainerV2 }
+					isInStepContainerV2={ isInStepContainerV2 }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
 					isPlansGridRedesign={ usePlansGridRedesign }

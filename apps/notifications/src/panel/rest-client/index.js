@@ -24,36 +24,38 @@ const settings = {
 	max_limit: 1000,
 };
 
-export function Client( { includeNoteContext = false } = {} ) {
-	this.noteList = [];
-	this.gettingNotes = false;
-	this.timeout = false;
-	this.isVisible = false;
-	this.isShowing = false;
-	this.lastSeenTime = 0;
-	// Latches once the server has no older notes left, so load-more stops paging.
-	this.allNotesLoaded = false;
-	// Active tab's server-side filter (e.g. `{ unread: 1 }`), or null for the
-	// unfiltered "all" list. When set, getFilteredNotes fetches matching notes.
-	this.filter = null;
-	// Active tab name; the cache key for its id list and load-more state.
-	this.filterName = 'all';
-	// Per-tab load-more exhaustion, keyed by tab name.
-	this.filteredHasMore = {};
-	this.gettingFilteredNotes = false;
-	this.retries = 0;
-	this.subscribeTry = 0;
-	this.subscribeTries = 3;
-	this.subscribing = false;
-	this.subscribed = false;
-	this.firstRender = true;
-	this.locale = null;
-	this.includeNoteContext = includeNoteContext;
-	this.inbox = [];
+export class Client {
+	constructor( { includeNoteContext = false } = {} ) {
+		this.noteList = [];
+		this.gettingNotes = false;
+		this.timeout = false;
+		this.isVisible = false;
+		this.isShowing = false;
+		this.lastSeenTime = 0;
+		// Latches once the server has no older notes left, so load-more stops paging.
+		this.allNotesLoaded = false;
+		// Active tab's server-side filter (e.g. `{ unread: 1 }`), or null for the
+		// unfiltered "all" list. When set, getFilteredNotes fetches matching notes.
+		this.filter = null;
+		// Active tab name; the cache key for its id list and load-more state.
+		this.filterName = 'all';
+		// Per-tab load-more exhaustion, keyed by tab name.
+		this.filteredHasMore = {};
+		this.gettingFilteredNotes = false;
+		this.retries = 0;
+		this.subscribeTry = 0;
+		this.subscribeTries = 3;
+		this.subscribing = false;
+		this.subscribed = false;
+		this.firstRender = true;
+		this.locale = null;
+		this.includeNoteContext = includeNoteContext;
+		this.inbox = [];
 
-	window.addEventListener( 'storage', handleStorageEvent.bind( this ) );
+		window.addEventListener( 'storage', handleStorageEvent.bind( this ) );
 
-	this.main( this );
+		this.main( this );
+	}
 }
 
 function main() {

@@ -11,10 +11,14 @@ function renderPrepareProducts( {
 	productAliasFromUrl,
 	purchaseId,
 	sitelessCheckoutType,
+	source,
+	aiSessionId,
 }: {
 	productAliasFromUrl?: string;
 	purchaseId?: string;
 	sitelessCheckoutType: SitelessCheckoutType;
+	source?: string;
+	aiSessionId?: string;
 } ) {
 	return renderHook( () =>
 		usePrepareProductsForCart( {
@@ -25,6 +29,8 @@ function renderPrepareProducts( {
 			// The siteless route controller always sets this, so the 'wpcom' branch
 			// has to beat the localStorage path.
 			isNoSiteCart: true,
+			source,
+			aiSessionId,
 		} )
 	);
 }
@@ -182,5 +188,31 @@ describe( 'usePrepareProductsForCart for Professional Email', () => {
 		} );
 
 		expect( result.current.productsForCart[ 0 ].extra.new_quantity ).toBeUndefined();
+	} );
+} );
+
+describe( 'usePrepareProductsForCart purchase attribution', () => {
+	it( 'records the checkout link source and AI session on the cart item', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'personal-bundle',
+			sitelessCheckoutType: 'wpcom',
+			source: 'wpcom-mcp-checkout-url',
+			aiSessionId: 'a755f9e8-8e0a-45be-81bc-524aaf8e2703',
+		} );
+
+		expect( result.current.productsForCart[ 0 ].extra ).toMatchObject( {
+			source: 'wpcom-mcp-checkout-url',
+			ai_session_id: 'a755f9e8-8e0a-45be-81bc-524aaf8e2703',
+		} );
+	} );
+
+	it( 'omits the AI session when the link has none', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'personal-bundle',
+			sitelessCheckoutType: 'wpcom',
+			source: 'wpcom-mcp-checkout-url',
+		} );
+
+		expect( result.current.productsForCart[ 0 ].extra.ai_session_id ).toBeUndefined();
 	} );
 } );

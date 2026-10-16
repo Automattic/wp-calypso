@@ -11,5 +11,4 @@ export const CIAB_DASHBOARD_SECTION_PATHS = [
 	'/plugins',
 	'/me',
 	'/oauth/token',
-	'/start-store',
 ];
