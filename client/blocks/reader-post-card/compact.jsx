@@ -10,6 +10,7 @@ import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_DISCOVER } from 'calypso/reader/follow-sources';
 import FeaturedAsset from './featured-asset';
 import { FreshlyPressedBadge } from './freshly-pressed-badge';
+import UnreadIndicator from './unread-indicator';
 
 /**
  * Rather than create complex logic to create context or pass props
@@ -36,6 +37,7 @@ const CompactPost = ( props ) => {
 		teams,
 		openSuggestedFollows,
 		freshlyPressedOn,
+		isUnread,
 	} = props;
 
 	const translate = useTranslate();
@@ -94,6 +96,8 @@ const CompactPost = ( props ) => {
 							{ freshlyPressedOn && <FreshlyPressedBadge displayedOn={ freshlyPressedOn } /> }
 							<AutoDirection>
 								<h2 className="reader-post-card__title">
+									{ /* Untitled posts get the dot on the byline; without this check they'd show two dots. */ }
+									{ isUnread && post.title && <UnreadIndicator /> }
 									<a className="reader-post-card__title-link" href={ post.URL }>
 										{ post.title }
 									</a>
@@ -136,6 +140,7 @@ CompactPost.propTypes = {
 	postByline: PropTypes.object,
 	openSuggestedFollows: PropTypes.func,
 	freshlyPressedOn: PropTypes.string,
+	isUnread: PropTypes.bool,
 };
 
 export default CompactPost;

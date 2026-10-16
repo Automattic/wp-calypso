@@ -96,36 +96,6 @@
 		}
 	}
 
-	&.is-unread {
-		.reader-post-card__byline,
-		&.is-compact .reader-post-card__title:not(:has(> a:empty)) {
-			position: relative;
-
-			&::before {
-				width: 8px;
-				height: 8px;
-				border-radius: 50%;
-				background: var(--color-primary);
-				content: "";
-				position: absolute;
-				left: -14px;
-				top: 50%;
-				transform: translateY(-50%);
-			}
-		}
-
-		// Compact cards have no avatar, so align the dot with the title's first line.
-		&.is-compact .reader-post-card__title:not(:has(> a:empty)) {
-			&::before {
-				top: 14px;
-			}
-
-			+ .reader-post-card__byline::before {
-				content: none;
-			}
-		}
-	}
-
 	&.has-thumbnail {
 		.reader-featured-image {
 			box-sizing: border-box;

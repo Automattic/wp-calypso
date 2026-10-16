@@ -193,6 +193,7 @@ class ReaderPostCard extends Component {
 				openSuggestedFollows={ this.openSuggestedFollowsModal }
 				compact={ compact }
 				showBylineSecondarySiteLink={ this.props.showBylineSecondarySiteLink }
+				isUnread={ this.props.isUnread && ! ( compact && post.title ) } // Compact cards with a title show the dot on the title instead.
 			/>
 		);
 
@@ -219,6 +220,7 @@ class ReaderPostCard extends Component {
 					postKey={ postKey }
 					postByline={ postByline }
 					freshlyPressedOn={ freshlyPressedOn }
+					isUnread={ this.props.isUnread }
 					onClick={ this.handleCardClick }
 					openSuggestedFollows={ this.openSuggestedFollowsModal }
 				>
