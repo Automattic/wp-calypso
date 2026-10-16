@@ -34,7 +34,11 @@ test( 'import rules check workspace packages from source', () => {
 			env: { ...process.env, ESLINT_USE_FLAT_CONFIG: 'false' },
 		}
 	);
-	expect( eslint.stderr ).not.toMatch( /^Error|Failed to load/m );
+	expect( eslint.error ).toBeUndefined();
+	// Exit 1 is the fixture's lint errors; 2 means ESLint itself failed, with the reason in stderr.
+	if ( eslint.status !== 1 ) {
+		throw new Error( `ESLint exited with ${ eslint.status }:\n${ eslint.stderr }` );
+	}
 	const [ result ] = JSON.parse( eslint.stdout );
 
 	expect(
