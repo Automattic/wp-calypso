@@ -97,9 +97,11 @@ function rewriteCssAssets(
 	);
 }
 
-// Generated markup is untrusted but contained: it only renders inside a
-// sandboxed frame whose CSP allows no script, network or navigation. This drops
-// only what would change how the page renders or fight the asset rewriting.
+// Generated markup is untrusted. The boundary is the frame: its sandbox and CSP
+// allow no script, network or popups, and the inert body stops clicks and keys
+// from navigating it. Dropping elements is not a boundary, since markup that
+// changes meaning when re-parsed can bring them back; it only removes what would
+// change how the page renders or fight the asset rewriting.
 const DROPPED_ELEMENTS = 'script, meta, base, link, noscript, template, iframe, object, embed';
 const DROPPED_ATTRIBUTES = [ 'nonce', 'srcset', 'sizes' ];
 
@@ -147,10 +149,8 @@ export function htmlPreviewDocument(
 	referrer.name = 'referrer';
 	referrer.content = 'no-referrer';
 	root.head.prepend( policy, referrer );
-	const inert = root.createElement( 'style' );
-	inert.textContent =
-		'a,area,button,input,select,textarea,summary,label{pointer-events:none!important}';
-	root.head.append( inert );
+	// Page CSS can turn pointer events back on, so links stay live unless inert.
+	root.body.setAttribute( 'inert', '' );
 	return '<!doctype html>' + root.documentElement.outerHTML;
 }
 

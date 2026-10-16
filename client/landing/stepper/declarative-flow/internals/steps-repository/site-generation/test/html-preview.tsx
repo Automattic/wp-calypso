@@ -133,7 +133,21 @@ it( 'never accepts a preview endpoint on another origin', () => {
 	expect( info?.previewUrl ).toBeUndefined();
 } );
 
-it( 'keeps HTML and inline CSS while stripping active markup and external resources', () => {
+it( 'keeps links inert even when page CSS or re-parsed markup re-enables them', () => {
+	const output = htmlPreviewDocument(
+		`<html><head><style>html a{pointer-events:auto!important}</style></head><body>
+		<a href="https://other.example"><span style="pointer-events:auto">Child</span></a>
+		<math><mtext><table><mglyph><style><a href="https://other.example">Re-parsed</a></style></mglyph></table></mtext></math>
+		</body></html>`
+	);
+	const doc = new DOMParser().parseFromString( output, 'text/html' );
+	expect( doc.body.hasAttribute( 'inert' ) ).toBe( true );
+	for ( const link of doc.querySelectorAll( 'a' ) ) {
+		expect( link.closest( '[inert]' ) ).toBe( doc.body );
+	}
+} );
+
+it( 'renders authored markup inert while dropping what loads or redirects', () => {
 	const output = htmlPreviewDocument( `<!doctype html><html><head>
 		<meta http-equiv="refresh" content="0;url=https://other.example">
 		<base href="https://other.example"><link rel="stylesheet" href="https://other.example/style.css">
@@ -146,11 +160,11 @@ it( 'keeps HTML and inline CSS while stripping active markup and external resour
 	const doc = new DOMParser().parseFromString( output, 'text/html' );
 	expect( doc.querySelector( 'h1' )?.textContent ).toBe( 'Hello' );
 	expect( doc.querySelector( 'style' )?.textContent ).toContain( 'color: red' );
-	expect(
-		doc.querySelector(
-			'script, iframe, form, img, svg, base, link, [onload], [href], [src], [ping]'
-		)
-	).toBeNull();
+	expect( doc.querySelector( 'script, iframe, img, base, link, [src]' ) ).toBeNull();
+	expect( doc.querySelector( 'a' )?.getAttribute( 'href' ) ).toBe( 'https://other.example' );
+	expect( doc.querySelector( 'form input' ) ).not.toBeNull();
+	expect( doc.querySelector( 'svg' ) ).not.toBeNull();
+	expect( doc.body.hasAttribute( 'inert' ) ).toBe( true );
 	expect( doc.head.firstElementChild?.getAttribute( 'http-equiv' ) ).toBe(
 		'Content-Security-Policy'
 	);
@@ -307,7 +321,7 @@ it( 'rewrites registered images, CSS backgrounds and bundled fonts with a scoped
 	expect( doc.querySelector( 'img' )?.getAttribute( 'src' ) ).toBe( imageAsset.url );
 	expect( doc.querySelector( 'img' )?.getAttribute( 'crossorigin' ) ).toBe( 'anonymous' );
 	expect( doc.querySelector( 'img' )?.getAttribute( 'referrerpolicy' ) ).toBe( 'no-referrer' );
-	expect( doc.querySelector( '[onerror], [srcset]' ) ).toBeNull();
+	expect( doc.querySelector( '[srcset]' ) ).toBeNull();
 	expect( doc.querySelector( 'style' )?.textContent ).toContain( fontAsset.url );
 	expect( doc.querySelector( 'style' )?.textContent ).toContain( imageAsset.url );
 	expect( doc.querySelector( '[style]' )?.getAttribute( 'style' ) ).toContain( imageAsset.url );
@@ -453,9 +467,7 @@ it( 'sends only sanitized asset identities to the trusted runtime', () => {
 	);
 	expect( prepared?.meaningful ).toBe( true );
 	const doc = new DOMParser().parseFromString( prepared!.html, 'text/html' );
-	expect(
-		doc.querySelector( 'script,[nonce],[onerror],[data-preview-loaded],img[src]' )
-	).toBeNull();
+	expect( doc.querySelector( 'script,[nonce],[data-preview-loaded],img[src]' ) ).toBeNull();
 	expect( doc.querySelector( 'img' )?.getAttribute( 'data-preview-image' ) ).toBe( imageAsset.id );
 	expect( prepared!.html ).toContain( `preview-asset:${ imageAsset.id }` );
 	expect( prepared!.html ).not.toContain( 'token=' );
@@ -475,7 +487,7 @@ it( 'preserves missing image slots and background references without allowing ne
 	expect( image.getAttribute( 'width' ) ).toBe( '400' );
 	expect( image.getAttribute( 'height' ) ).toBe( '300' );
 	expect( image.getAttribute( 'alt' ) ).toBe( 'Sourdough' );
-	expect( doc.querySelector( '[src],[onerror],[data-preview-loaded]' ) ).toBeNull();
+	expect( doc.querySelector( '[src],[data-preview-loaded]' ) ).toBeNull();
 	expect( pending.html ).toContain( 'preview-pending:image' );
 	expect( pending.html ).not.toContain( 'evil.example' );
 	expect( pending.html ).not.toContain( fontSource );
