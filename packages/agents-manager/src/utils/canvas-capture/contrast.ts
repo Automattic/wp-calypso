@@ -93,6 +93,8 @@ interface Run {
 /** A block, by the run that speaks for it: its worst failing one, or else its weakest. */
 interface Measured extends Run {
 	clientId: string;
+	/** Every run of it that fails, each over the backdrop a correction would target. */
+	failingRuns: Run[];
 }
 
 const clamp = ( value: number, min: number, max: number ): number =>
@@ -569,15 +571,16 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 			.filter( ( run ): run is Run => !! run )
 			.sort( ( a, b ) => margin( a ) - margin( b ) );
 		const [ worst ] = read;
+		const failingRuns = read.filter( ( run ) => margin( run ) < 1 );
 
 		// One failing run fails the block. A block passes only when every run
 		// of it was read and passes; otherwise it is left to the picture.
 		if ( worst && margin( worst ) < 1 ) {
-			measured.push( { clientId, ...worst } );
+			measured.push( { clientId, ...worst, failingRuns } );
 		} else if ( ! worst || read.length < runs.length || tooManyRuns ) {
 			unmeasured++;
 		} else {
-			measured.push( { clientId, ...worst } );
+			measured.push( { clientId, ...worst, failingRuns } );
 		}
 	}
 
@@ -688,25 +691,30 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 	// than leave the model to copy ids out of the notes. Every backdrop block
 	// under failing text, worst first, by the short ids the notes use; a
 	// block without one is left out rather than named by its long id, and so
-	// is the page background, which no edit can reach.
-	const byPainter = new Map< string, Measured[] >();
+	// is the page background, which no edit can reach. Every failing run
+	// counts, not only a block's worst: one paragraph can fail against its
+	// group and against its own highlight, and both are a fix.
+	const byPainter = new Map< string, { worst: number; texts: Set< string > } >();
 
-	failing.forEach( ( item ) => {
-		const painter = item.backdrop.clientId;
+	failing.forEach( ( item ) =>
+		item.failingRuns.forEach( ( run ) => {
+			const painter = run.backdrop.clientId;
 
-		if ( painter ) {
-			byPainter.set( painter, [ ...( byPainter.get( painter ) ?? [] ), item ] );
-		}
-	} );
+			if ( ! painter ) {
+				return;
+			}
+
+			const row = byPainter.get( painter ) ?? { worst: Infinity, texts: new Set< string >() };
+
+			row.worst = Math.min( row.worst, run.ratio );
+			row.texts.add( item.clientId );
+			byPainter.set( painter, row );
+		} )
+	);
 
 	const backdrops = [ ...byPainter ]
-		.map( ( [ painter, items ] ) => ( {
-			painter,
-			items,
-			worst: Math.min( ...items.map( ( item ) => item.ratio ) ),
-		} ) )
-		.sort( ( a, b ) => a.worst - b.worst )
-		.flatMap( ( { painter, items } ): ContrastBackdrop[] => {
+		.sort( ( [ , a ], [ , b ] ) => a.worst - b.worst )
+		.flatMap( ( [ painter, { texts } ] ): ContrastBackdrop[] => {
 			const clientId = findShortId( painter );
 			const name = getBlock( painter )?.name;
 
@@ -719,8 +727,8 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 					clientId,
 					name,
 					ownBackground: isOwnBackground( painter ),
-					textClientIds: items
-						.map( ( item ) => findShortId( item.clientId ) )
+					textClientIds: [ ...texts ]
+						.map( ( textClientId ) => findShortId( textClientId ) )
 						.filter( ( id ): id is string => !! id )
 						.slice( 0, MAX_BACKDROP_TEXTS ),
 				},
