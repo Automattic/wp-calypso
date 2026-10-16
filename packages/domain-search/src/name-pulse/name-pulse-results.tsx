@@ -2,10 +2,13 @@ import { Button, VisuallyHidden, __experimentalVStack as VStack } from '@wordpre
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDomainSearch } from '../page/context';
-import { DomainSearchNotice, DomainSuggestion } from '../ui';
-import { NamePulseBundleCard } from './components/bundle-card';
+import { DomainSearchNotice } from '../ui';
+import { NamePulseBundleCard, NamePulseBundleCardPlaceholder } from './components/bundle-card';
 import { NamePulseCart } from './components/cart';
-import { NamePulseExactMatchCard } from './components/exact-match-card';
+import {
+	NamePulseExactMatchCard,
+	NamePulseExactMatchCardPlaceholder,
+} from './components/exact-match-card';
 import { NamePulseSearchNotice } from './components/notice';
 import { NamePulseResultsSection } from './components/results-section';
 import { NamePulseSearchInput } from './components/search-input';
@@ -46,9 +49,19 @@ export const NamePulseResults = () => {
 	} = search;
 	const resultSet = useNamePulseSearchTracking( search );
 	const { bundle, isLoading: isLoadingBundle } = useNamePulseBundle( bundleAnchors );
-	const bundleCard = bundle ? (
-		<NamePulseBundleCard key={ bundle.bundle_group_id } bundle={ bundle } isWide={ ! exactMatch } />
-	) : null;
+	let bundleCard = null;
+
+	if ( bundle ) {
+		bundleCard = (
+			<NamePulseBundleCard
+				key={ bundle.bundle_group_id }
+				bundle={ bundle }
+				isWide={ ! exactMatch }
+			/>
+		);
+	} else if ( isLoadingBundle ) {
+		bundleCard = <NamePulseBundleCardPlaceholder isWide={ ! exactMatch } />;
+	}
 
 	return (
 		<NamePulseResultSetContext.Provider value={ resultSet }>
@@ -95,9 +108,12 @@ export const NamePulseResults = () => {
 									availability={ exactMatch.availability }
 								/>
 							) : (
-								<DomainSuggestion.Featured.Placeholder />
+								<NamePulseExactMatchCardPlaceholder
+									domainName={ exactMatch.domainName }
+									tld={ exactMatch.tld }
+								/>
 							) }
-							{ bundleCard ?? ( isLoadingBundle && <DomainSuggestion.Featured.Placeholder /> ) }
+							{ bundleCard }
 						</div>
 					) }
 					{ layout.top.show && ! hasTldsError && (

@@ -198,3 +198,69 @@ export const NamePulseExactMatchCard = ( {
 		</DomainSuggestionContainerContext.Provider>
 	);
 };
+
+/**
+ * Holds the card's place while the typed domain is checked, with the same
+ * stand-in text and skeleton bars as the bundle card placeholder.
+ */
+export const NamePulseExactMatchCardPlaceholder = ( {
+	domainName,
+	tld,
+}: {
+	domainName: string;
+	tld: string;
+} ) => {
+	const { __ } = useI18n();
+	const matchReason = useMemo(
+		() => parseMatchReasons( domainName, [ 'tld-exact' ] )[ 0 ],
+		[ domainName ]
+	);
+
+	return (
+		<div
+			className="name-pulse-exact-card name-pulse-exact-card--placeholder"
+			role="status"
+			aria-busy="true"
+			aria-label={ __( 'Loading exact match' ) }
+		>
+			<VStack spacing={ 4 } aria-hidden="true">
+				<HStack justify="flex-start" spacing={ 3 } expanded={ false } wrap>
+					<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
+						<span className="name-pulse-exact-card__skeleton name-pulse-exact-card__skeleton--icon" />
+						<Text size={ 14 } weight={ 500 }>
+							<span className="name-pulse-exact-card__skeleton">{ __( 'Exact match' ) }</span>
+						</Text>
+					</HStack>
+					<span className="name-pulse-exact-card__skeleton name-pulse-exact-card__skeleton--badge" />
+				</HStack>
+
+				<Text as="p" size={ 32 } className="name-pulse-exact-card__domain">
+					<span className="name-pulse-exact-card__skeleton">
+						{ domainName.slice( 0, -( tld.length + 1 ) ) }
+						<span className="name-pulse-exact-card__tld">.{ tld }</span>
+					</span>
+				</Text>
+
+				<div className="name-pulse-exact-card__price-row">
+					<Text size={ 24 }>
+						<span className="name-pulse-exact-card__skeleton">$00.00/year</span>
+					</Text>
+					<span className="name-pulse-exact-card__cta name-pulse-exact-card__skeleton name-pulse-exact-card__skeleton--cta" />
+				</div>
+
+				{ matchReason && (
+					<div className="name-pulse-exact-card__footer">
+						<ul className="domain-suggestion-match-reasons">
+							<li>
+								<Text className="domain-suggestion-match-reason__text">
+									<span className="name-pulse-exact-card__skeleton name-pulse-exact-card__skeleton--icon" />
+									<span className="name-pulse-exact-card__skeleton">{ matchReason }</span>
+								</Text>
+							</li>
+						</ul>
+					</div>
+				) }
+			</VStack>
+		</div>
+	);
+};
