@@ -180,7 +180,7 @@ export default function ReferralSummary( {
 								<Text weight={ 500 }>{ __( 'Total your client will pay' ) }</Text>
 								<Heading level={ 3 } size={ 20 }>
 									<TextBlur isBlurred={ ! isTotalReady }>
-										{ formatCurrency( total, currency ) }
+										{ formatCurrency( total, currency ) + suffix }
 									</TextBlur>
 								</Heading>
 							</HStack>
