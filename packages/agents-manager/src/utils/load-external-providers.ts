@@ -849,8 +849,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		} ) as AbilitiesSetupHook;
 	}
 
-	// AM's block suggestions go last, so a provider's own chips for the block
-	// (the Jetpack AI sidebar's) win the dedupe by id.
+	// AM's block suggestions go last, so the Jetpack AI sidebar's own win the dedupe by id.
 	if ( editorSuggestions ) {
 		allUseSuggestions.push( editorSuggestions.useBlockSuggestions );
 	}

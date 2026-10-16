@@ -5,9 +5,8 @@ import type { Suggestion } from '../types';
 import type { EditorBlock } from '../utils/editor-blocks';
 
 /**
- * The chat's contextual suggestions for the block selected in the editor; none
- * while no block is selected. While there are any, they replace the empty
- * view's suggestions.
+ * The chips for the block selected in the editor. While there are any, they
+ * replace the empty view's.
  * @param maxSuggestions - How many to return; all when omitted.
  * @returns The suggestions.
  */
