@@ -124,8 +124,11 @@ it.each( [ 'en', 'fr' ] )( 'passes checkout steps and a domain return URL in %s'
 	const back = new URL( checkout.searchParams.get( 'checkoutBackUrl' )! );
 	expect( back.origin ).toBe( window.location.origin );
 	expect( back.pathname ).toBe( `/setup/new-hosted-site/domains${ locale === 'en' ? '' : '/fr' }` );
-	expect( back.searchParams.get( 'plan' ) ).toBe( mockPlan!.product_slug );
+	expect( back.searchParams.has( 'plan' ) ).toBe( false );
+	expect( back.searchParams.get( 'siteSlug' ) ).toBe( mockSite.siteSlug );
+	expect( back.searchParams.has( 'showDomainStep' ) ).toBe( true );
 	expect( back.searchParams.get( 'showPurchaseSteps' ) ).toBe( 'true' );
+	expect( checkout.searchParams.get( 'checkoutBackUrlDomains' ) ).toBe( back.href );
 	expect( checkout.searchParams.get( 'redirect_to' ) ).toContain(
 		'/setup/transferring-hosted-site'
 	);
@@ -197,6 +200,11 @@ it( 'keeps the plan step when a visit chooses its plan from the grid', () => {
 	expect( new URL( checkout.searchParams.get( 'checkoutBackUrlDomains' )! ).pathname ).toBe(
 		'/setup/new-hosted-site/domains'
 	);
+	for ( const parameter of [ 'checkoutBackUrl', 'checkoutBackUrlDomains' ] ) {
+		const back = new URL( checkout.searchParams.get( parameter )! );
+		expect( back.searchParams.get( 'siteSlug' ) ).toBe( mockSite.siteSlug );
+		expect( back.searchParams.has( 'plan' ) ).toBe( false );
+	}
 } );
 
 it.each( [ true, false ] )(
@@ -219,6 +227,44 @@ it( 'preserves signup state for the shared checkout-return path', async () => {
 	await hosting.initialize( { dispatch: jest.fn(), getState: () => ( {} ) } as never );
 	expect( mockReset ).not.toHaveBeenCalled();
 	expect( mockClear ).not.toHaveBeenCalled();
+} );
+
+it( 'returns through plans on the same site without reseeding the entry plan', async () => {
+	const nav = navigation( 'processing' );
+	act( () =>
+		nav.submit( {
+			slug: 'processing',
+			providedDependencies: {
+				processingResult: ProcessingResult.SUCCESS,
+				...mockSite,
+				goToCheckout: true,
+			},
+		} as never )
+	);
+	const checkout = new URL(
+		jest.mocked( window.location.replace ).mock.calls[ 0 ][ 0 ] as string,
+		'https://wordpress.com'
+	);
+	const back = new URL( checkout.searchParams.get( 'checkoutBackUrlDomains' )! );
+	mockQuery = back.searchParams;
+	window.location.pathname = back.pathname;
+	mockCheckoutUnloaded = true;
+
+	const steps = await hosting.initialize( {
+		dispatch: jest.fn(),
+		getState: () => ( {} ),
+	} as never );
+	expect( mockReset ).not.toHaveBeenCalled();
+	expect( mockSeed ).not.toHaveBeenCalled();
+	expect( steps ).toContainEqual( expect.objectContaining( { slug: STEPS.UNIFIED_PLANS.slug } ) );
+	expect( mockQuery.get( 'siteSlug' ) ).toBe( mockSite.siteSlug );
+
+	const navigate = jest.fn();
+	const domainNav = navigation( 'domains', navigate );
+	act( () =>
+		domainNav.submit( { slug: 'domains', providedDependencies: { domainCart: [] } } as never )
+	);
+	expect( navigate ).toHaveBeenLastCalledWith( STEPS.UNIFIED_PLANS.slug );
 } );
 
 it.each( [ 'fresh', 'other-flow', 'without-progress', 'expired', 'flow-root', 'locale-root' ] )(

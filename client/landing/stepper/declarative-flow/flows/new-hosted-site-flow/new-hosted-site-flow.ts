@@ -267,16 +267,23 @@ const hosting: FlowV2< typeof initialize > = {
 							}
 							const purchaseStepArgs: Record< string, string | number > = {};
 							if ( showPurchaseSteps ) {
+								const checkoutBackArgs = {
+									...Object.fromEntries( query ),
+									plan: undefined,
+									siteSlug,
+								};
 								const domainBackUrl = new URL(
-									addQueryArgs( withLocale( '/setup/new-hosted-site/domains', locale ), {
-										...Object.fromEntries( query ),
-									} ),
+									addQueryArgs(
+										withLocale( '/setup/new-hosted-site/domains', locale ),
+										checkoutBackArgs
+									),
 									window.location.origin
 								).href;
 								const planBackUrl = new URL(
-									addQueryArgs( withLocale( '/setup/new-hosted-site/plans', locale ), {
-										...Object.fromEntries( query ),
-									} ),
+									addQueryArgs(
+										withLocale( '/setup/new-hosted-site/plans', locale ),
+										checkoutBackArgs
+									),
 									window.location.origin
 								).href;
 								const stepPosition = getOnboardingStepperPosition( 'checkout', shouldSkipPlans );
