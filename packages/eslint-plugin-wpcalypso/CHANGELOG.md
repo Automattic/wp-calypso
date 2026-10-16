@@ -1,5 +1,8 @@
 #### Unreleased
 
+- Breaking: Updated peer dependency `eslint-plugin-jsdoc` to 65.1.0 and `eslint-plugin-react-hooks` to 7.1.1. `jsdoc/check-param-names` now also checks the properties of object-typed parameters.
+- Turned off the rules `eslint-plugin-jsdoc` added to its recommended config after v50: `escape-inline-tags`, `reject-any-type`, `reject-function-type`, `require-throws-type`, `require-yields-type` and `ts-no-empty-object-type`.
+
 #### v8.0.0 (2023-09-14)
 
 - Breaking: Updated peer dependency `eslint-plugin-jsdoc` to 46.5.1, which
