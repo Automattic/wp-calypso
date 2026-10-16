@@ -675,7 +675,6 @@ describe( 'upgrade notice tracking', () => {
 	it( 'records the Jetpack AI quota click and keeps the product-wide upgrade button event', () => {
 		trackImageStudioUpgradeNoticeClick( {
 			mode: ImageStudioMode.Edit,
-			placement: 'notice',
 			trigger: 'error',
 			...jetpackAiQuota,
 		} );
@@ -684,7 +683,6 @@ describe( 'upgrade notice tracking', () => {
 			'jetpack_big_sky_image_studio_upgrade_notice_click',
 			expect.objectContaining( {
 				mode: 'edit',
-				placement: 'notice',
 				trigger: 'error',
 				meter: 'jetpack_ai',
 				state: 'zero',
@@ -699,25 +697,23 @@ describe( 'upgrade notice tracking', () => {
 		} );
 	} );
 
-	it( 'records a popover click with its placement and no notice trigger', () => {
+	it( 'records a popover click with the popover as its trigger', () => {
 		trackImageStudioUpgradeNoticeClick( {
 			mode: ImageStudioMode.Generate,
-			placement: 'popover',
-			trigger: 'none',
+			trigger: 'popover',
 			...siteCredits,
 			state: 'ok',
 		} );
 
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
 			'jetpack_big_sky_image_studio_upgrade_notice_click',
-			expect.objectContaining( { placement: 'popover', trigger: 'none', state: 'ok' } )
+			expect.objectContaining( { trigger: 'popover', state: 'ok' } )
 		);
 	} );
 
 	it( 'keeps site credits upgrades out of the Jetpack AI upgrade button funnel', () => {
 		trackImageStudioUpgradeNoticeClick( {
 			mode: ImageStudioMode.Edit,
-			placement: 'notice',
 			trigger: 'refresh',
 			...siteCredits,
 		} );

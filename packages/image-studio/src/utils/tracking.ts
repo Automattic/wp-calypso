@@ -598,14 +598,12 @@ interface UpgradeNoticeEvent extends UpgradeNoticeCredits {
 	trigger: UpgradeNoticeTrigger;
 }
 
-/** Where the Upgrade link was: in the notice, or in the credits dot's popover. */
-export type UpgradeLinkPlacement = 'notice' | 'popover';
+/** What showed the Upgrade link: the notice's trigger, or the credits dot's popover. */
+export type UpgradeLinkTrigger = UpgradeNoticeTrigger | 'popover';
 
 interface UpgradeNoticeClickEvent extends UpgradeNoticeCredits {
 	mode: ImageStudioMode;
-	placement: UpgradeLinkPlacement;
-	/** What showed the notice; `none` from the popover, which no notice opens. */
-	trigger: UpgradeNoticeTrigger | 'none';
+	trigger: UpgradeLinkTrigger;
 }
 
 function getUpgradeNoticeProperties( event: UpgradeNoticeEvent | UpgradeNoticeClickEvent ) {
@@ -660,13 +658,13 @@ export function trackImageStudioCreditsMeterOpened( event: CreditsMeterOpenedEve
  * For the Jetpack AI quota, also fires the product-wide `jetpack_ai_upgrade_button`
  * event so this surface appears in the same funnel as every other Jetpack AI
  * upgrade button.
- * @param event - The link's mode, placement, trigger and credit details
+ * @param event - The link's mode, trigger and credit details
  */
 export function trackImageStudioUpgradeNoticeClick( event: UpgradeNoticeClickEvent ): void {
-	recordImageStudioEvent( 'image_studio_upgrade_notice_click', {
-		...getUpgradeNoticeProperties( event ),
-		placement: event.placement,
-	} );
+	recordImageStudioEvent(
+		'image_studio_upgrade_notice_click',
+		getUpgradeNoticeProperties( event )
+	);
 	if ( event.meter === 'jetpack_ai' ) {
 		recordTracksEventBase( 'jetpack_ai_upgrade_button', {
 			placement: 'image-studio-limit-notice',

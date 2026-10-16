@@ -206,7 +206,6 @@ describe( 'useAiCredits', () => {
 		result.current.notice?.action?.onClick?.();
 		expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
 			mode: ImageStudioMode.Edit,
-			placement: 'notice',
 			trigger: 'open',
 			...noticeCredits( 'zero', 0 ),
 		} );
@@ -226,7 +225,7 @@ describe( 'useAiCredits', () => {
 		} );
 	} );
 
-	it( 'records a click on the popover’s Upgrade link with its placement', async () => {
+	it( 'records a click on the popover’s Upgrade link as a popover click', async () => {
 		respondWith( { ai_credits: planSnapshot( 0 ), ...PLAN_BUYER } );
 		const { result } = renderCredits( ImageStudioMode.Edit );
 		await waitFor( () => expect( result.current.notice ).toBeDefined() );
@@ -235,8 +234,7 @@ describe( 'useAiCredits', () => {
 		expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledTimes( 1 );
 		expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
 			mode: ImageStudioMode.Edit,
-			placement: 'popover',
-			trigger: 'none',
+			trigger: 'popover',
 			...noticeCredits( 'zero', 0 ),
 		} );
 	} );
@@ -250,8 +248,7 @@ describe( 'useAiCredits', () => {
 		result.current.meter?.onUpgradeClick?.();
 		expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
 			mode: ImageStudioMode.Generate,
-			placement: 'popover',
-			trigger: 'none',
+			trigger: 'popover',
 			meter: 'site_credits',
 			state: 'ok',
 			planTier: 'premium',

@@ -20,7 +20,7 @@ import {
 	trackImageStudioUpgradeNoticeClick,
 	type CreditsMeterDetails,
 	type CreditsMeterOpenedTrigger,
-	type UpgradeLinkPlacement,
+	type UpgradeLinkTrigger,
 	type UpgradeNoticeCredits,
 	type UpgradeNoticeTrigger,
 } from '../utils/tracking';
@@ -317,17 +317,16 @@ export function useAiCredits( {
 	);
 	const isNoticeHidden = level === 'low' && isLowNoticeDismissed;
 
-	// One handler for the notice and the credits popover; `placement` tells the clicks
-	// apart. A popover click has no notice trigger, and reports `state: ok` on a healthy balance.
-	const trackUpgradeClick = useEvent( ( placement: UpgradeLinkPlacement ) => {
+	// One handler for the notice and the credits popover; `trigger` says which showed the
+	// link. A popover click can report `state: ok`, since the popover opens on a healthy balance.
+	const trackUpgradeClick = useEvent( ( trigger: UpgradeLinkTrigger ) => {
 		// Callers pass it only with a link; this narrows the types.
 		if ( ! status || ! upgradeUrl ) {
 			return;
 		}
 		trackImageStudioUpgradeNoticeClick( {
 			mode,
-			placement,
-			trigger: placement === 'notice' ? shown.current.trigger : 'none',
+			trigger,
 			...getNoticeCredits( status, level, { upgradeUrl } ),
 		} );
 	} );
@@ -380,7 +379,7 @@ export function useAiCredits( {
 										href: upgradeUrl,
 										target: '_blank',
 										rel: 'noopener noreferrer',
-										onClick: () => trackUpgradeClick( 'notice' ),
+										onClick: () => trackUpgradeClick( shown.current.trigger ),
 									}
 								: undefined,
 						}
