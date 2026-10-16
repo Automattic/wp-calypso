@@ -303,6 +303,21 @@ describe( '<AIToolsSettings>', () => {
 		expect( screen.queryByText( 'Upgrade required' ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'shows MCP access and the Connect link above WordPress Agent', async () => {
+		renderAIToolsSettings( '', true, site, true, true );
+
+		const mcpHeading = await screen.findByRole( 'heading', { name: 'External AI agent access' } );
+		const connectLink = screen.getByRole( 'link', { name: /^Connect external AI agent/ } );
+		const agentHeading = screen.getByRole( 'heading', { name: 'WordPress Agent' } );
+
+		expect(
+			mcpHeading.compareDocumentPosition( agentHeading ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+		expect(
+			connectLink.compareDocumentPosition( agentHeading ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+	} );
+
 	test( 'manages the WordPress Agent email address on an Atomic site', async () => {
 		const user = userEvent.setup();
 		mockClipboard();

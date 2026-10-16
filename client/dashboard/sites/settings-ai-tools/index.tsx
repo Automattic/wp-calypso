@@ -358,7 +358,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const description = isAvailable
 		? createInterpolateElement(
 				__(
-					'Create content, transform designs, generate images, and get instant help with AI. <learnMoreLink />'
+					'Use ChatGPT, Claude, or WordPress Agent to create content, update designs, and get help with your site. <learnMoreLink />'
 				),
 				{
 					learnMoreLink: <InlineSupportLink supportContext="ai-tools" />,
@@ -391,6 +391,55 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const renderSettings = () => {
 		return (
 			<>
+				{ config.isEnabled( 'mcp-settings' ) && isAvailable && (
+					<>
+						<Card className="mcp-settings__access-card">
+							<CardBody>
+								<VStack spacing={ 4 }>
+									<SectionHeader
+										title={ __( 'External AI agent access' ) }
+										description={ __( 'Allow external AI agents to access this site via MCP.' ) }
+										level={ 3 }
+									/>
+									<ToggleControl
+										__nextHasNoMarginBottom
+										checked={ isMcpEnabled }
+										disabled={ mcpMutation.isPending }
+										label={ __( 'Enable MCP access for this site' ) }
+										onChange={ handleMcpToggle }
+									/>
+								</VStack>
+							</CardBody>
+							{ isMcpEnabled && (
+								<>
+									<CardDivider className="mcp-settings__sub-divider" />
+									<RouterLinkSummaryButton
+										to={ `/sites/${ siteSlug }/settings/ai-tools/read` }
+										density="medium"
+										title={ __( 'Read' ) }
+										decoration={ <Icon icon={ seen } size={ 24 } /> }
+										badges={ [ readBadge ] }
+									/>
+									<RouterLinkSummaryButton
+										to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
+										density="medium"
+										title={ __( 'Write' ) }
+										decoration={ <Icon icon={ pencil } size={ 24 } /> }
+										badges={ [ writeBadge ] }
+									/>
+								</>
+							) }
+						</Card>
+						{ isMcpEnabled && (
+							<RouterLinkSummaryButton
+								to={ `/sites/${ siteSlug }/settings/ai-tools/setup` }
+								title={ __( 'Connect external AI agent' ) }
+								description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+								decoration={ <Icon icon={ connection } size={ 24 } /> }
+							/>
+						) }
+					</>
+				) }
 				<Card className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
 					<CardBody>
 						<VStack spacing={ 4 }>
@@ -449,55 +498,6 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 							disabled={ ! isAvailable }
 						/>
 					</div>
-				) }
-				{ config.isEnabled( 'mcp-settings' ) && isAvailable && (
-					<>
-						<Card className="mcp-settings__access-card">
-							<CardBody>
-								<VStack spacing={ 4 }>
-									<SectionHeader
-										title={ __( 'External AI agent access' ) }
-										description={ __( 'Allow external AI agents to access this site via MCP.' ) }
-										level={ 3 }
-									/>
-									<ToggleControl
-										__nextHasNoMarginBottom
-										checked={ isMcpEnabled }
-										disabled={ mcpMutation.isPending }
-										label={ __( 'Enable MCP access for this site' ) }
-										onChange={ handleMcpToggle }
-									/>
-								</VStack>
-							</CardBody>
-							{ isMcpEnabled && (
-								<>
-									<CardDivider className="mcp-settings__sub-divider" />
-									<RouterLinkSummaryButton
-										to={ `/sites/${ siteSlug }/settings/ai-tools/read` }
-										density="medium"
-										title={ __( 'Read' ) }
-										decoration={ <Icon icon={ seen } size={ 24 } /> }
-										badges={ [ readBadge ] }
-									/>
-									<RouterLinkSummaryButton
-										to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
-										density="medium"
-										title={ __( 'Write' ) }
-										decoration={ <Icon icon={ pencil } size={ 24 } /> }
-										badges={ [ writeBadge ] }
-									/>
-								</>
-							) }
-						</Card>
-						{ isMcpEnabled && (
-							<RouterLinkSummaryButton
-								to={ `/sites/${ siteSlug }/settings/ai-tools/setup` }
-								title={ __( 'Connect external AI agent' ) }
-								description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-								decoration={ <Icon icon={ connection } size={ 24 } /> }
-							/>
-						) }
-					</>
 				) }
 				{ isFreeTrial && (
 					<ConfirmModal
