@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { setLocale } from '@automattic/number-formatters';
 import {
 	CANCEL_FLOW_TYPE,
 	getCancelIntentFromSearch,
@@ -693,6 +694,9 @@ describe( 'getStudioCodeAiCreditsTitle', () => {
 } );
 
 describe( 'getTitleForDisplay', () => {
+	beforeEach( () => setLocale( 'en' ) );
+	afterEach( () => setLocale( 'en' ) );
+
 	const priceTier = {
 		minimum_units: 1,
 		minimum_price: 0,
@@ -727,7 +731,11 @@ describe( 'getTitleForDisplay', () => {
 		}
 	);
 
-	test( 'shows request count for Akismet Pro', () => {
+	test.each( [
+		[ 'en', '1,000' ],
+		[ 'de', '1.000' ],
+	] )( 'formats the Akismet Pro request count in %s', ( locale, requests ) => {
+		setLocale( locale );
 		expect(
 			getTitleForDisplay(
 				makePurchase( {
@@ -736,7 +744,7 @@ describe( 'getTitleForDisplay', () => {
 					renewal_price_tier_usage_quantity: 2,
 				} )
 			)
-		).toBe( 'Akismet Pro (1000 requests/month)' );
+		).toBe( `Akismet Pro (${ requests } requests/month)` );
 	} );
 
 	test( 'shows request count for Jetpack AI', () => {
