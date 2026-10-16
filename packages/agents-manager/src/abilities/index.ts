@@ -12,6 +12,7 @@ import { executeAbilityFromList } from './execute-ability';
 import { wpAdminNavigateAbility } from './wp-admin-navigate';
 import type { ToolProvider } from '../extension-types';
 import type { Ability } from './types';
+import type { Suggestion } from '../types';
 import type { CheckpointContextItem } from '../utils/checkpoints';
 import type { PageStructure } from '../utils/page-structure';
 
@@ -172,6 +173,14 @@ export async function loadAmEditorSuggestions(): Promise< EditorSuggestions | nu
 		// Already logged; the chat goes without them.
 		return null;
 	}
+}
+
+/**
+ * AM's editor empty-view suggestions, or none until the editor abilities have
+ * loaded.
+ */
+export function getAmEditorEmptyViewSuggestions(): Suggestion[] {
+	return loadedEditorAbilities?.getEditorEmptyViewSuggestions() ?? [];
 }
 
 /**

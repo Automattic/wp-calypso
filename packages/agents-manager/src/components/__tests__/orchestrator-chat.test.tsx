@@ -54,6 +54,9 @@ const mockSetCheckpointActionReverted = jest.fn(
 );
 let mockSelectedBlockType: string | undefined;
 let mockSelectedBlockClientId: string | undefined;
+const mockEditorEmptyViewSuggestions = [
+	{ id: 'customize-colors', label: 'Customize colors', prompt: 'Customize the colors' },
+];
 let mockBlockEditorStoreThrows = false;
 // Simulates Agenttic's floating truncation in the `AgentChat` mock.
 let mockRenderedSuggestionsLimit: number | undefined;
@@ -391,6 +394,9 @@ const mockRegisteredActions: Record< string, unknown > = {};
 jest.mock( '../../hooks/custom-actions', () => ( {
 	useRegisterCustomActions: ( actions: Record< string, unknown > ) =>
 		Object.assign( mockRegisteredActions, actions ),
+} ) );
+jest.mock( '../../abilities', () => ( {
+	getAmEditorEmptyViewSuggestions: () => mockEditorEmptyViewSuggestions,
 } ) );
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
@@ -1355,6 +1361,17 @@ describe( 'OrchestratorChat', () => {
 			expect( registerSuggestions ).toHaveBeenLastCalledWith( suggestions );
 		}
 	);
+
+	it( 'offers the editor empty-view suggestions when a provider asks, e.g. after a site build', () => {
+		const registerSuggestions = jest.fn();
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { registerSuggestions } ) );
+		const useProviderAbilitiesSetup = jest.fn();
+
+		render( chat( { useProviderAbilitiesSetup } ) );
+		act( () => useProviderAbilitiesSetup.mock.lastCall[ 0 ].showEditorEmptyViewSuggestions() );
+
+		expect( registerSuggestions ).toHaveBeenLastCalledWith( mockEditorEmptyViewSuggestions );
+	} );
 
 	it( 'does not re-track lingering contextual suggestions when a block is deselected', () => {
 		mockSelectedBlockType = 'core/paragraph';
