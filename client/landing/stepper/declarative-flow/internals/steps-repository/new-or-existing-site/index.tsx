@@ -16,7 +16,6 @@ import { useSelect } from '@wordpress/data';
 import { globe } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -47,8 +46,6 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 	const hasDomainOperation = mergedCartItems.some( ( item ) =>
 		[ 'domain_transfer', 'domain_map' ].includes( item.product_slug )
 	);
-
-	const isCiab = useQuery().get( 'dashboard' ) === 'ciab';
 
 	const translate = useTranslate();
 	switch ( flowName ) {
@@ -141,7 +138,7 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 				},
 			];
 
-			if ( ! hasDomainOperation && ! isCiab ) {
+			if ( ! hasDomainOperation ) {
 				options.unshift( {
 					key: 'domain',
 					title: translate( 'Just buy a domain' ),

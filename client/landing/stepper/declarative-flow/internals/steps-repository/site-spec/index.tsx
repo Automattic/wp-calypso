@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Step } from '@automattic/onboarding';
 import { getSessionId as getPostHogSessionId } from '@automattic/posthog';
 import { useDispatch } from '@wordpress/data';
@@ -43,11 +42,9 @@ import { useSiteSpec } from 'calypso/lib/site-spec';
 import {
 	getBlueprintSiteSpecConfig,
 	getBuildWowSiteSpecConfig,
-	getCiabSiteSpecConfig,
 	getEarlyProvisionSiteSpecConfig,
 	type SiteSpecConfig,
 } from 'calypso/lib/site-spec/utils';
-import wpcom from 'calypso/lib/wp';
 import { buildEarlyProvisionDestination } from './early-provisioning';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -97,25 +94,20 @@ function getSpecId( specData: unknown ): string {
 	return getSpecId( specRecord.data ) || getSpecId( specRecord.detail );
 }
 
-type ActiveFlow = 'build-wow' | 'early-provision' | 'ciab' | 'default';
+type ActiveFlow = 'build-wow' | 'early-provision' | 'default';
 
 function getActiveFlow( {
 	shouldBuildWow,
 	shouldProvisionAtomicSite,
-	isCiab,
 }: {
 	shouldBuildWow: boolean;
 	shouldProvisionAtomicSite: boolean;
-	isCiab: boolean;
 } ): ActiveFlow {
 	if ( shouldBuildWow ) {
 		return 'build-wow';
 	}
 	if ( shouldProvisionAtomicSite ) {
 		return 'early-provision';
-	}
-	if ( isCiab ) {
-		return 'ciab';
 	}
 	return 'default';
 }
@@ -141,12 +133,11 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	const translate = useTranslate();
 	const queryParams = useQuery();
 	const querySource = queryParams.get( 'source' );
-	const isCiab = !! querySource && querySource.startsWith( 'ciab-' );
 	const shouldEarlyProvisionSite = queryParams.get( 'early_provision_site' ) === '1';
 	const shouldProvisionAtomicSite =
 		shouldEarlyProvisionSite || queryParams.get( 'provision_target' ) === 'wpcom-atomic';
 	const shouldBuildWow = queryParams.get( 'build_wow' ) === '1';
-	const activeFlow = getActiveFlow( { shouldBuildWow, shouldProvisionAtomicSite, isCiab } );
+	const activeFlow = getActiveFlow( { shouldBuildWow, shouldProvisionAtomicSite } );
 	const atomicProvisionSpecId = shouldProvisionAtomicSite
 		? ( queryParams.get( 'spec_id' ) ?? '' )
 		: '';
@@ -156,7 +147,6 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		siteId: queryParams.get( 'siteId' ),
 	} );
 
-	const ciabSiteCreationPromiseRef = useRef< Promise< number | null > | null >( null );
 	// A Simple-site blueprint build: the Playground import on the site itself, no Atomic
 	// transfer, and a hand-off to the site's own wp-admin. Everything else about the run — the
 	// blueprint-aware interview, the wait on the processing screen, the spec apply — is shared.
@@ -180,7 +170,6 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		siteSlug: queryParams.get( 'siteSlug' ),
 		siteId: queryParams.get( 'siteId' ),
 	} );
-	const messageCountRef = useRef( 0 );
 	const isSubmittingRef = useRef( false );
 	const blueprintImportStartedRef = useRef( false );
 	// A Simple build whose partner hand-off settled everything the blueprint's interview
@@ -215,69 +204,6 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		},
 		[ setSiteSetupError ]
 	);
-
-	const handleCiabMessage = useCallback( () => {
-		messageCountRef.current += 1;
-		if ( messageCountRef.current !== 1 ) {
-			return;
-		}
-		ciabSiteCreationPromiseRef.current = ( async () => {
-			try {
-				const response = ( await wpcom.req.post(
-					{
-						path: '/sites/new',
-						apiVersion: '1.1',
-					},
-					{},
-					{
-						client_id: config( 'wpcom_signup_id' ),
-						client_secret: config( 'wpcom_signup_key' ),
-						garden_name: 'commerce',
-						garden_partner_name: 'woo',
-						blog_title: '',
-						blog_name: '',
-						options: {
-							site_creation_flow: 'ai-site-builder',
-							trigger_backend_build: false,
-						},
-					}
-				) ) as { blog_details: { blogid: number } };
-
-				return response?.blog_details?.blogid ?? null;
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.error( 'Failed to create garden site:', error );
-				return null;
-			}
-		} )();
-	}, [] );
-
-	const handleCiabSpecConfirm = useCallback( async ( specData: unknown ) => {
-		if ( isSubmittingRef.current ) {
-			return;
-		}
-
-		isSubmittingRef.current = true;
-
-		const specId = getSpecId( specData );
-		const blogId = ciabSiteCreationPromiseRef.current
-			? await ciabSiteCreationPromiseRef.current
-			: null;
-
-		let url = `/setup/ai-site-builder/?create_garden_site=1&trigger_backend_build=0&spec_id=${ encodeURIComponent(
-			specId
-		) }`;
-		if ( blogId ) {
-			url += `&early_created_site=${ encodeURIComponent( blogId ) }`;
-		}
-
-		const phSessionId = getPostHogSessionId();
-		if ( phSessionId ) {
-			url += `&_ph=${ encodeURIComponent( phSessionId ) }`;
-		}
-
-		window.location.href = url;
-	}, [] );
 
 	const handleEarlyProvisionSpecConfirm = useCallback(
 		( specData: unknown ) => {
@@ -773,14 +699,6 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					specMeta: getSpecMetaFromQuery( queryParams ),
 				} ) }
 				onSpecConfirm={ handleBlueprintArchiveSpecConfirm }
-			/>
-		);
-	} else if ( activeFlow === 'ciab' ) {
-		siteSpecStep = (
-			<SiteSpecContainer
-				siteSpecConfig={ getCiabSiteSpecConfig() }
-				onMessage={ handleCiabMessage }
-				onSpecConfirm={ handleCiabSpecConfirm }
 			/>
 		);
 	}

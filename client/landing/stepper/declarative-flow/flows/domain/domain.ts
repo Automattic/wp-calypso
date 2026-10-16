@@ -1,12 +1,7 @@
 import { DotcomFeatures } from '@automattic/api-core';
 import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
-import {
-	DOMAIN_FLOW,
-	addProductsToCart,
-	clearStepPersistedState,
-	replaceProductsInCart,
-} from '@automattic/onboarding';
+import { DOMAIN_FLOW, addProductsToCart, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
@@ -97,7 +92,6 @@ const domain: FlowV2< typeof initialize > = {
 		);
 
 		const dashboard = useQuery().get( 'dashboard' ) || undefined;
-		const isCiab = dashboard === 'ciab';
 
 		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
 		const backTo = useQuery().get( 'back_to' ) || undefined;
@@ -130,14 +124,6 @@ const domain: FlowV2< typeof initialize > = {
 				if ( domain ) {
 					destination = dashboardLink( `/domains/${ domain }/domain-transfer-setup` );
 				}
-			}
-
-			// For CIAB domain registrations, include the purchased domain name
-			// in the redirect URL so the CIAB admin can show a setup notification.
-			if ( isCiab && domainCartItems?.length && domainCartItems[ 0 ].meta ) {
-				destination = addQueryArgs( destination, {
-					domain_purchased: domainCartItems[ 0 ].meta,
-				} );
 			}
 
 			// replace the location to delete processing step from history.
@@ -375,15 +361,7 @@ const domain: FlowV2< typeof initialize > = {
 								};
 							}
 
-							if ( isCiab ) {
-								await replaceProductsInCart( providedDependencies.siteSlug, domainCartItems );
-							} else {
-								await addProductsToCart(
-									providedDependencies.siteSlug,
-									this.name,
-									domainCartItems
-								);
-							}
+							await addProductsToCart( providedDependencies.siteSlug, this.name, domainCartItems );
 						}
 
 						return {
@@ -414,11 +392,7 @@ const domain: FlowV2< typeof initialize > = {
 								...( domainCartItems && domainCartItems.length > 0 ? domainCartItems : [] ),
 							];
 
-							if ( isCiab ) {
-								await replaceProductsInCart( siteSlug, aggregatedCartItems );
-							} else {
-								await addProductsToCart( siteSlug, this.name, aggregatedCartItems );
-							}
+							await addProductsToCart( siteSlug, this.name, aggregatedCartItems );
 
 							return {
 								siteSlug,

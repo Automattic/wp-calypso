@@ -8,7 +8,6 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import freeDomainForAYearPromoCiabImage from './graphic-ciab.svg';
 import freeDomainForAYearPromoImage from './graphic.svg';
 import type { ReactNode } from 'react';
 
@@ -16,7 +15,6 @@ import './style.scss';
 
 type FreeDomainForAYearPromoProps = {
 	textOnly?: boolean;
-	isCiab?: boolean;
 	title?: ReactNode;
 	subtitle?: ReactNode;
 	/** Rendered next to the title. */
@@ -25,7 +23,6 @@ type FreeDomainForAYearPromoProps = {
 
 export const FreeDomainForAYearPromo = ( {
 	textOnly = false,
-	isCiab = false,
 	title: titleOverride,
 	subtitle: subtitleOverride,
 	badge,
@@ -37,11 +34,7 @@ export const FreeDomainForAYearPromo = ( {
 	if ( textOnly ) {
 		return (
 			<Text>
-				{ isCiab
-					? __(
-							'With your annual plan purchase, the first year of domain registration is on us! Discount automatically applied at checkout.'
-						)
-					: __( 'Get your free domain when you check out and purchase any paid annual plan.' ) }
+				{ __( 'Get your free domain when you check out and purchase any paid annual plan.' ) }
 			</Text>
 		);
 	}
@@ -50,23 +43,14 @@ export const FreeDomainForAYearPromo = ( {
 
 	const subtitle =
 		subtitleOverride ??
-		( isCiab
-			? createInterpolateElement(
-					__(
-						'With your annual plan purchase, the first year of domain registration is on us!<br />Discount automatically applied at checkout.'
-					),
-					{
-						br: <br />,
-					}
-				)
-			: createInterpolateElement(
-					__(
-						"Choose a domain, then purchase an annual plan, and your first year's domain registration is on us!<br />Discount automatically applied at checkout."
-					),
-					{
-						br: <br />,
-					}
-				) );
+		createInterpolateElement(
+			__(
+				"Choose a domain, then purchase an annual plan, and your first year's domain registration is on us!<br />Discount automatically applied at checkout."
+			),
+			{
+				br: <br />,
+			}
+		);
 
 	const titleElement = (
 		<Text size={ 15 } weight={ 500 }>
@@ -80,7 +64,7 @@ export const FreeDomainForAYearPromo = ( {
 				<HStack spacing={ 6 } alignment="left">
 					{ activeQuery === 'large' && (
 						<img
-							src={ isCiab ? freeDomainForAYearPromoCiabImage : freeDomainForAYearPromoImage }
+							src={ freeDomainForAYearPromoImage }
 							alt=""
 							aria-hidden="true"
 							className="free-domain-for-a-year-promo__image"

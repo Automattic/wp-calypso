@@ -95,7 +95,7 @@ describe( 'fetchBundleMetadata', () => {
 				( query ) =>
 					query.with_bundles === '1' &&
 					query.quantity === '30' &&
-					query.vendor === 'ciab' &&
+					query.vendor === 'ecommerce' &&
 					query.exact_sld_matches_only === 'true' &&
 					query.query === 'example'
 			)
@@ -103,7 +103,7 @@ describe( 'fetchBundleMetadata', () => {
 
 		await fetchBundleMetadata( 'example', {
 			quantity: 30,
-			vendor: 'ciab',
+			vendor: 'ecommerce',
 			exact_sld_matches_only: true,
 		} );
 

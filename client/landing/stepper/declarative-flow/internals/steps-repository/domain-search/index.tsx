@@ -147,7 +147,6 @@ const DomainSearchStep: StepType< {
 	};
 	const showHelpCenter = isOnboardingFlow( flow );
 
-	const isCiab = dashboard === 'ciab';
 	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
 	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flow ) );
 	// WoW funnel: the site is always transferred to Atomic, so there is no free-subdomain
@@ -170,10 +169,7 @@ const DomainSearchStep: StepType< {
 	);
 	const shouldHidePlansStep = shouldSkipPlansStep( queryParams, planCartItem );
 
-	// For CIAB sites, prefer the site title over the slug for domain suggestions
-	// since the slug is often randomly generated.
-	const siteTitle = isCiab && site?.name?.trim() ? site.name.trim() : '';
-	const initialQuery = queryParamNew || siteTitle || storedSiteTitle;
+	const initialQuery = queryParamNew || storedSiteTitle;
 
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
@@ -207,7 +203,6 @@ const DomainSearchStep: StepType< {
 				isSignup:
 					! isDomainAndPlanFlow( flow ) && ! isCopySiteFlow( flow ) && ! isDomainFlow( flow ),
 				isDomainOnly: isDomainFlow( flow ),
-				isCiab,
 				isWooHostingSolutions,
 				flowName: flow,
 			} ),
@@ -253,7 +248,6 @@ const DomainSearchStep: StepType< {
 	}, [
 		__,
 		flow,
-		isCiab,
 		isWooHostingSolutions,
 		isWowFunnel,
 		wowSkipCopy,
@@ -386,9 +380,6 @@ const DomainSearchStep: StepType< {
 	// except if we're in a site context or in the 100-year plan or domain flow
 	const isFirstDomainFreeForFirstYear = useMemo( () => {
 		if ( isDomainFlow( flow ) ) {
-			if ( isCiab ) {
-				return !! site && siteHasPaidPlan( site );
-			}
 			return ! site || ! siteHasPaidPlan( site );
 		}
 
@@ -403,7 +394,7 @@ const DomainSearchStep: StepType< {
 		}
 
 		return true;
-	}, [ flow, isCiab, site, sourceSlug, planCartItem ] );
+	}, [ flow, site, sourceSlug, planCartItem ] );
 
 	// Launching an existing site keeps the promo, as legacy signup did, without the per-domain
 	// first-year-free pricing.
@@ -438,7 +429,6 @@ const DomainSearchStep: StepType< {
 
 				return (
 					<FreeDomainForAYearPromo
-						isCiab={ isCiab }
 						title={ freeDomainPromoTitle }
 						subtitle={ freeDomainPromoSubtitle }
 					/>
@@ -451,12 +441,11 @@ const DomainSearchStep: StepType< {
 
 				// The textOnly variant has a single-paragraph layout (no title/subtitle pair),
 				// so the promo title/subtitle props don't apply here.
-				return <FreeDomainForAYearPromo textOnly isCiab={ isCiab } />;
+				return <FreeDomainForAYearPromo textOnly />;
 			},
 		};
 	}, [
 		showFreeDomainPromo,
-		isCiab,
 		freeDomainPromoTitle,
 		freeDomainPromoSubtitle,
 		isCustomDomainBannerCopyVariation,
@@ -480,12 +469,8 @@ const DomainSearchStep: StepType< {
 			return __( 'Find the perfect domain' );
 		}
 
-		if ( isCiab ) {
-			return __( 'Make your store unforgettable' );
-		}
-
 		return __( 'Claim your space on the web' );
-	}, [ flow, isCiab, isWooHostingSolutions, __, headerTextOverride ] );
+	}, [ flow, isWooHostingSolutions, __, headerTextOverride ] );
 
 	const subHeaderText = useMemo( () => {
 		if ( subHeaderTextOverride ) {
@@ -507,12 +492,8 @@ const DomainSearchStep: StepType< {
 			return __( 'Secure your 100-Year domain and start building your legacy.' );
 		}
 
-		if ( isCiab ) {
-			return __( 'Choose a site address that puts your brand front and center.' );
-		}
-
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
-	}, [ flow, isCiab, isWooHostingSolutions, __, subHeaderTextOverride ] );
+	}, [ flow, isWooHostingSolutions, __, subHeaderTextOverride ] );
 
 	// Holding the search until the experiment is assigned keeps users from seeing control
 	// and then switching to their variation.
@@ -534,7 +515,7 @@ const DomainSearchStep: StepType< {
 			events={ events }
 			flowAllowsMultipleDomainsInCart={
 				isOnboardingFlow( flow ) ||
-				( isDomainFlow( flow ) && ! isCiab ) ||
+				isDomainFlow( flow ) ||
 				isNewHostedSiteCreationFlow( flow ) ||
 				isDomainAndPlanFlow( flow )
 			}
