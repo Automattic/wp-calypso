@@ -72,6 +72,7 @@ export interface DomainSummary {
 	expiry: string | null;
 	expired: boolean;
 	primary_domain: boolean;
+	primary_is_www?: boolean;
 	can_set_as_primary: boolean;
 	set_primary_domain_pending: boolean;
 	domain_status: {
@@ -82,6 +83,11 @@ export interface DomainSummary {
 	};
 	subscription_id: string | null;
 	tags: string[];
+}
+
+export interface WwwPrimaryDomainResponse {
+	enabled: boolean;
+	primary_domain: string | null;
 }
 
 export type BulkDomainsAction =

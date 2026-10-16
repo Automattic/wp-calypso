@@ -59,6 +59,7 @@ export const useFields = ( {
 						domain={ item }
 						site={ site }
 						value={ field.getValue( { item } ) }
+						showWwwPrefix={ !! site && item.primary_domain && !! item.primary_is_www }
 						showPrimaryDomainBadge={ showPrimaryDomainBadge }
 					/>
 				),
