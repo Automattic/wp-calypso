@@ -60,6 +60,13 @@ describe( 'PlaygroundSetupStep', () => {
 		expect( screen.getByRole( 'heading', { name: 'Packing up your site' } ) ).toBeVisible();
 	} );
 
+	it( 'calls a WooCommerce launch a store', async () => {
+		sessionStorage.setItem( 'entrepreneur_playground_woo_intent', '1' );
+		await renderDuring( { phase: 'packing' } );
+
+		expect( screen.getByRole( 'heading', { name: 'Packing up your store' } ) ).toBeVisible();
+	} );
+
 	it( 'shows the real upload percentage', async () => {
 		await renderDuring( { phase: 'uploading', percent: 40 } );
 
