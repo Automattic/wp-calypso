@@ -763,7 +763,11 @@ describe( 'NamePulseResults', () => {
 		await user.click( await screen.findByRole( 'option', { name: '.com' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Apply' } ) );
 
-		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.com' ] ) );
+		// One ending reads like typing that domain, so it gets the Exact match card.
+		await waitFor( () =>
+			expect( rowFor( 'icecream.com' ) ).toHaveClass( 'name-pulse-exact-card' )
+		);
+		expect( document.querySelector( '[data-section="top"]' ) ).toBeNull();
 		expect( document.querySelector( '[data-section="exact"]' ) ).toBeNull();
 		await waitFor( () =>
 			expect( domainsIn( 'suggestions' ) ).toEqual( [
@@ -803,6 +807,47 @@ describe( 'NamePulseResults', () => {
 		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.com' ] ) );
 		expect( ( await findExactMatchCard() ).getAttribute( 'data-domain' ) ).toBe( 'icecream.net' );
 		expect( document.querySelector( '[data-section="exact"]' ) ).toBeNull();
+	} );
+
+	it( 'spans the row with the exact-match card of the one filtered ending when there is no bundle', async () => {
+		const user = userEvent.setup();
+
+		render( <NamePulseTestSearch query="icecream" /> );
+
+		await findRow( 'icecream.com' );
+		await user.click( screen.getByRole( 'button', { name: 'Filter, no filters applied' } ) );
+		await user.click( await screen.findByRole( 'option', { name: '.com' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Apply' } ) );
+
+		const card = await findExactMatchCard();
+		expect( card ).toHaveAttribute( 'data-domain', 'icecream.com' );
+		expect( await within( card ).findByText( '$24.00' ) ).toBeVisible();
+		expect( card ).toHaveClass( 'name-pulse-exact-card--wide' );
+	} );
+
+	it( 'keeps a taken name with the one filtered ending in the grid, without a notice', async () => {
+		const user = userEvent.setup();
+
+		render(
+			<NamePulseTestSearch
+				query="icecream"
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						status: DomainAvailabilityStatus.TRANSFERRABLE,
+					} )
+				}
+			/>
+		);
+
+		await findRow( 'icecream.com' );
+		await user.click( screen.getByRole( 'button', { name: 'Filter, no filters applied' } ) );
+		await user.click( await screen.findByRole( 'option', { name: '.com' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Apply' } ) );
+
+		await waitFor( () => expect( document.querySelector( '.name-pulse-featured' ) ).toBeNull() );
+		expect( await findRow( 'icecream.com' ) ).not.toHaveClass( 'name-pulse-exact-card' );
+		expect( screen.queryByText( 'This domain is already registered.' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'filters Creative matches on the page, as their provider ignores the chosen endings', async () => {
@@ -978,6 +1023,24 @@ describe( 'NamePulseResults', () => {
 				expect.objectContaining( { bundle_group_id: 'icecream-group' } ),
 				'card'
 			);
+		} );
+
+		it( 'sits beside the exact-match card of the one filtered ending', async () => {
+			const user = userEvent.setup();
+
+			render( <NamePulseTestSearch query="icecream" showBundleSuggestions /> );
+
+			await findBundleCard();
+			await user.click( screen.getByRole( 'button', { name: 'Filter, no filters applied' } ) );
+			await user.click( await screen.findByRole( 'option', { name: '.com' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Apply' } ) );
+
+			await waitFor( () =>
+				expect(
+					document.querySelector( '.name-pulse-featured .name-pulse-bundle-card' )
+				).not.toBeNull()
+			);
+			expect( await findExactMatchCard() ).not.toHaveClass( 'name-pulse-exact-card--wide' );
 		} );
 
 		it( 'falls back to the first top result with a bundle when the typed ending has none', async () => {

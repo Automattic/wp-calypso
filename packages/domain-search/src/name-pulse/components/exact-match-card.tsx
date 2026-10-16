@@ -7,6 +7,7 @@ import {
 } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { Badge } from '@wordpress/ui';
+import clsx from 'clsx';
 import { useEffect, useMemo } from 'react';
 import { parseMatchReasons } from '../../helpers';
 import {
@@ -46,10 +47,13 @@ export const NamePulseExactMatchCard = ( {
 	domainName,
 	tld,
 	availability,
+	isWide = false,
 }: {
 	domainName: string;
 	tld: string;
 	availability: DomainAvailability;
+	/** Set when no bundle card shares the row, so the card spans it alone. */
+	isWide?: boolean;
 } ) => {
 	const { __ } = useI18n();
 	const { events } = useDomainSearch();
@@ -142,7 +146,11 @@ export const NamePulseExactMatchCard = ( {
 
 	return (
 		<DomainSuggestionContainerContext.Provider value={ containerContext }>
-			<div className="name-pulse-exact-card" data-domain={ domainName } ref={ containerRef }>
+			<div
+				className={ clsx( 'name-pulse-exact-card', isWide && 'name-pulse-exact-card--wide' ) }
+				data-domain={ domainName }
+				ref={ containerRef }
+			>
 				<VStack spacing={ 4 }>
 					<HStack justify="flex-start" spacing={ 3 } expanded={ false } wrap>
 						<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
