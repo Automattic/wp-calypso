@@ -52,10 +52,6 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	const isForbidden = isUnreadable && isWpError( error ) && error.statusCode === 403;
 	const sourceHost = getSourceHost( migration?.source_url );
 
-	// Going back to connect the source is remembered against the run that failed, so the next run starts clean.
-	const [ reconnectingRun, setReconnectingRun ] = useState< string | null >();
-	const isReconnecting = migration?.status === 'failed' && reconnectingRun === migration.started_at;
-
 	// The site is unlocked once the migration completes, so hand over to the overview. The router sends a site that
 	// still reads as migrating straight back here, so only leave once the site itself says it's done: reload it now,
 	// and keep checking in case it lags behind the migration's own status.
@@ -133,9 +129,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 							</MetadataItem>
 							{ migration && sourceHost && (
 								<MetadataItem>
-									<Text variant="muted">
-										{ getSummary( isReconnecting ? 'not_started' : migration.status, sourceHost ) }
-									</Text>
+									<Text variant="muted">{ getSummary( migration.status, sourceHost ) }</Text>
 								</MetadataItem>
 							) }
 						</MetadataList>
@@ -150,18 +144,13 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					description={ __( 'An administrator of this site can follow and manage it here.' ) }
 				/>
 			) }
-			{ ( migration?.status === 'not_started' || isReconnecting ) && <Connect site={ site } /> }
+			{ migration?.status === 'not_started' && <Connect site={ site } /> }
 			{ migration?.status === 'running' && (
 				<Running phase={ migration.phase } sourceHost={ sourceHost } />
 			) }
-			{ ( migration?.status === 'paused' || migration?.status === 'failed' ) &&
-				! isReconnecting && (
-					<Findings
-						site={ site }
-						migration={ migration }
-						onReconnect={ () => setReconnectingRun( migration.started_at ) }
-					/>
-				) }
+			{ ( migration?.status === 'paused' || migration?.status === 'failed' ) && (
+				<Findings site={ site } migration={ migration } />
+			) }
 			{ isCompleted && (
 				<MigrationCard
 					title={ __( 'Your site has been migrated' ) }

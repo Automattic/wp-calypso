@@ -11,11 +11,9 @@ import type { Site, WordPressMigrationStatus } from '@automattic/api-core';
 export function Findings( {
 	site,
 	migration,
-	onReconnect,
 }: {
 	site: Site;
 	migration: WordPressMigrationStatus;
-	onReconnect: () => void;
 } ) {
 	const { setShowHelpCenter } = useHelpCenter();
 	const run = useMutation(
@@ -29,7 +27,6 @@ export function Findings( {
 	const isFailed = migration.status === 'failed';
 	// Continuing past a `retry` finding only runs the same step again.
 	const isRetry = findings.some( ( { resolution } ) => resolution === 'retry' );
-	const isReconnect = findings.some( ( { resolution } ) => resolution === 'reconnect' );
 
 	const getDescription = () => {
 		if ( isFailed ) {
@@ -46,21 +43,15 @@ export function Findings( {
 			description={ getDescription() }
 			actions={
 				<>
-					{ isReconnect ? (
-						<Button __next40pxDefaultSize variant="primary" onClick={ onReconnect }>
-							{ __( 'Reconnect your site' ) }
-						</Button>
-					) : (
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							isBusy={ run.isPending }
-							disabled={ run.isPending }
-							onClick={ () => run.mutate( { accept_findings: codes } ) }
-						>
-							{ isRetry ? __( 'Try again' ) : __( 'Continue' ) }
-						</Button>
-					) }
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						isBusy={ run.isPending }
+						disabled={ run.isPending }
+						onClick={ () => run.mutate( { accept_findings: codes } ) }
+					>
+						{ isRetry ? __( 'Try again' ) : __( 'Continue' ) }
+					</Button>
 					<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
 						{ __( 'Contact us' ) }
 					</Button>
