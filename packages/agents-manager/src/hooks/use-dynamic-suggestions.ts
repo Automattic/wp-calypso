@@ -1,5 +1,6 @@
 import { useSelect } from '@wordpress/data';
-import { useEffect, useMemo } from '@wordpress/element';
+import { useCallback, useEffect, useMemo } from '@wordpress/element';
+import { loadAmEditorSuggestions } from '../abilities';
 import type { UseSuggestionsHook } from '../utils/load-external-providers';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
 
@@ -19,6 +20,8 @@ interface UseDynamicSuggestionsOptions {
  * chips register again for each newly selected block, even if unchanged.
  * `contextualSuggestionIds` lists the ones that replace the empty-view
  * suggestions, so tracking can tag them with the selected block.
+ * `showEditorEmptyViewSuggestions` registers AM's design chips instead, for a
+ * provider to offer next steps (Big Sky does after a site build).
  */
 export function useDynamicSuggestions( {
 	useSuggestions,
@@ -72,5 +75,18 @@ export function useDynamicSuggestions( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ dynamicSuggestionsKey, blockChipsClientId, registerSuggestions, clearSuggestions ] );
 
-	return { dynamicSuggestions, replaceEmptyViewSuggestions, contextualSuggestionIds };
+	const showEditorEmptyViewSuggestions = useCallback( async () => {
+		const editorSuggestions = await loadAmEditorSuggestions();
+
+		if ( editorSuggestions ) {
+			registerSuggestions( editorSuggestions.getEditorEmptyViewSuggestions() );
+		}
+	}, [ registerSuggestions ] );
+
+	return {
+		dynamicSuggestions,
+		replaceEmptyViewSuggestions,
+		contextualSuggestionIds,
+		showEditorEmptyViewSuggestions,
+	};
 }

@@ -7,7 +7,6 @@ import {
 import { useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { getAmEditorEmptyViewSuggestions } from '../../abilities';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
@@ -291,8 +290,12 @@ export default function OrchestratorChat( {
 
 	// Registered before the providers' ability setup below, whose effects may
 	// clear suggestions.
-	const { dynamicSuggestions, replaceEmptyViewSuggestions, contextualSuggestionIds } =
-		useDynamicSuggestions( { useSuggestions, isDocked, registerSuggestions, clearSuggestions } );
+	const {
+		dynamicSuggestions,
+		replaceEmptyViewSuggestions,
+		contextualSuggestionIds,
+		showEditorEmptyViewSuggestions,
+	} = useDynamicSuggestions( { useSuggestions, isDocked, registerSuggestions, clearSuggestions } );
 
 	// The actions under each agent message.
 	const getCheckpointActionsForMessage = useCheckpointAvailability( {
@@ -336,7 +339,7 @@ export default function OrchestratorChat( {
 		getSessionId: getTabSessionId,
 		setIsBuildingSite,
 		setThinkingMessage,
-		showEditorEmptyViewSuggestions: () => registerSuggestions( getAmEditorEmptyViewSuggestions() ),
+		showEditorEmptyViewSuggestions,
 	} );
 
 	useAbilitiesRegistration();

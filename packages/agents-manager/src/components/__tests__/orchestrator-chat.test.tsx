@@ -57,6 +57,7 @@ let mockSelectedBlockClientId: string | undefined;
 const mockEditorEmptyViewSuggestions = [
 	{ id: 'customize-colors', label: 'Customize colors', prompt: 'Customize the colors' },
 ];
+const mockLoadAmEditorSuggestions = jest.fn();
 let mockBlockEditorStoreThrows = false;
 // Simulates Agenttic's floating truncation in the `AgentChat` mock.
 let mockRenderedSuggestionsLimit: number | undefined;
@@ -396,7 +397,7 @@ jest.mock( '../../hooks/custom-actions', () => ( {
 		Object.assign( mockRegisteredActions, actions ),
 } ) );
 jest.mock( '../../abilities', () => ( {
-	getAmEditorEmptyViewSuggestions: () => mockEditorEmptyViewSuggestions,
+	loadAmEditorSuggestions: () => mockLoadAmEditorSuggestions(),
 } ) );
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
@@ -1362,16 +1363,30 @@ describe( 'OrchestratorChat', () => {
 		}
 	);
 
-	it( 'offers the editor empty-view suggestions when a provider asks, e.g. after a site build', () => {
-		const registerSuggestions = jest.fn();
-		mockUseAgentChat.mockReturnValue( agentChatReturn( { registerSuggestions } ) );
-		const useProviderAbilitiesSetup = jest.fn();
+	it.each( [
+		{
+			where: 'on the editor',
+			editorSuggestions: { getEditorEmptyViewSuggestions: () => mockEditorEmptyViewSuggestions },
+			registered: [ mockEditorEmptyViewSuggestions ],
+		},
+		{ where: 'off the editor', editorSuggestions: null, registered: [] },
+	] )(
+		'offers the editor empty-view suggestions when a provider asks, $where',
+		async ( { editorSuggestions, registered } ) => {
+			mockLoadAmEditorSuggestions.mockResolvedValue( editorSuggestions );
+			const registerSuggestions = jest.fn();
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { registerSuggestions } ) );
+			const useProviderAbilitiesSetup = jest.fn();
 
-		render( chat( { useProviderAbilitiesSetup } ) );
-		act( () => useProviderAbilitiesSetup.mock.lastCall[ 0 ].showEditorEmptyViewSuggestions() );
+			render( chat( { useProviderAbilitiesSetup } ) );
+			registerSuggestions.mockClear();
+			await act( () =>
+				useProviderAbilitiesSetup.mock.lastCall[ 0 ].showEditorEmptyViewSuggestions()
+			);
 
-		expect( registerSuggestions ).toHaveBeenLastCalledWith( mockEditorEmptyViewSuggestions );
-	} );
+			expect( registerSuggestions.mock.calls ).toEqual( registered.map( ( list ) => [ list ] ) );
+		}
+	);
 
 	it( 'does not re-track lingering contextual suggestions when a block is deselected', () => {
 		mockSelectedBlockType = 'core/paragraph';

@@ -103,18 +103,6 @@ describe( 'abilities facade', () => {
 		await expect( loadAmEditorSuggestions() ).resolves.toBeNull();
 	} );
 
-	it( 'offers the editor empty-view suggestions once the editor abilities load', async () => {
-		setEditorPage( true );
-		const { getAmEditorEmptyViewSuggestions, loadAmEditorSuggestions } = await load();
-
-		const editorSuggestions = await loadAmEditorSuggestions();
-
-		expect( getAmEditorEmptyViewSuggestions() ).not.toHaveLength( 0 );
-		expect( getAmEditorEmptyViewSuggestions() ).toEqual(
-			editorSuggestions?.getEditorEmptyViewSuggestions()
-		);
-	} );
-
 	it( 'registers the abilities when the chat mounts', async () => {
 		setEditorPage( true );
 		const { registerAmAbilities, registerAbility } = await load();
@@ -202,14 +190,13 @@ describe( 'abilities facade', () => {
 		}
 	} );
 
-	it( 'never loads the editor abilities just to read from them', async () => {
+	it( 'never loads the editor abilities just to read the checkpoint or the page context', async () => {
 		setEditorPage( true );
 		const {
 			getAmAgentBlockId,
 			getAmCheckpointActions,
 			getAmCheckpointContext,
 			getAmEditorContentContext,
-			getAmEditorEmptyViewSuggestions,
 			getAmEditorPostContext,
 			getAmPageContentMarkup,
 			getAmPageStructure,
@@ -222,7 +209,6 @@ describe( 'abilities facade', () => {
 		expect( getAmPageStructure() ).toBeNull();
 		expect( getAmEditorPostContext() ).toEqual( {} );
 		expect( getAmEditorContentContext() ).toEqual( {} );
-		expect( getAmEditorEmptyViewSuggestions() ).toEqual( [] );
 		expect( getAmAgentBlockId( 'uuid-hero' ) ).toBe( 'uuid-hero' );
 		// A load would resolve and register in a later task — let it settle.
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
