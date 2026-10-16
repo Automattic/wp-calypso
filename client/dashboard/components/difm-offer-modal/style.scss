@@ -51,7 +51,9 @@
 	box-sizing: border-box;
 	width: 340px;
 	padding: $grid-unit-30 46px;
-	overflow: hidden;
+	// The decorative arcs reach past the panel. Clip, not hidden: a hidden overflow can
+	// still scroll, and focusing the pause button scrolled the card out of view.
+	overflow: clip;
 	background:
 		radial-gradient(circle, rgba($white, 0.45) 1px, transparent 1.5px) 0 0 / 16px 16px,
 		radial-gradient(circle at 100% 100%, $white 0, rgba($white, 0) 45%),
