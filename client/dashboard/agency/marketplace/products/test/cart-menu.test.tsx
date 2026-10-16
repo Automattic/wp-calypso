@@ -20,6 +20,13 @@ const mockStorage = {
 	family_slug: 'jetpack-backup-storage',
 } as AgencyProduct;
 
+const mockWooProduct = {
+	name: 'WooCommerce Bookings',
+	slug: 'woocommerce-bookings',
+	product_id: 3001,
+	family_slug: 'woocommerce-products',
+} as AgencyProduct;
+
 let mockProduct = mockBackup;
 
 jest.mock( '../use-cart-lines', () => ( {
@@ -86,6 +93,13 @@ describe( 'CartMenu', () => {
 		renderCart( false, mockStorage );
 
 		const name = await screen.findByText( 'VaultPress Backup Add-on Storage 10GB' );
+		await waitFor( () => expect( name ).toBeVisible() );
+	} );
+
+	it( 'keeps the short name of a WooCommerce product', async () => {
+		renderCart( false, mockWooProduct );
+
+		const name = await screen.findByText( 'Bookings' );
 		await waitFor( () => expect( name ).toBeVisible() );
 	} );
 } );
