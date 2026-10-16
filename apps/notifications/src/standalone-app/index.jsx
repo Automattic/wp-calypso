@@ -18,6 +18,9 @@ const debug = debugFactory( 'notifications:standalone-app' );
 const localePattern = /[&?]locale=([\w_-]+)/;
 const match = localePattern.exec( document.location.search );
 const locale = match ? match[ 1 ] : 'en';
+const features =
+	new URLSearchParams( document.location.search ).get( 'features' )?.split( ',' ) ?? [];
+const isViewSettingsEnabled = features.includes( 'view-settings' );
 
 const fetchLocale = async ( localeSlug ) => {
 	try {
@@ -217,6 +220,8 @@ const NotesWrapper = ( { wpcom } ) => {
 			locale={ locale }
 			wpcom={ wpcom }
 			isDismissible={ isMobileViewport }
+			isViewSettingsEnabled={ isViewSettingsEnabled }
+			isSimplifiedNoteEnabled={ isViewSettingsEnabled }
 		/>
 	);
 };
