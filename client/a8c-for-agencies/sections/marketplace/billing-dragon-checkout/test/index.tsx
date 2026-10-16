@@ -20,6 +20,7 @@ jest.mock( 'calypso/state', () => ( {
 	useDispatch: () => jest.fn(),
 	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( {} ),
 } ) );
+jest.mock( 'calypso/state/analytics/actions', () => ( { recordTracksEvent: jest.fn() } ) );
 
 jest.mock( 'calypso/state/a8c-for-agencies/agency/selectors', () => ( {
 	getActiveAgency: () => ( { id: 42 } ),
