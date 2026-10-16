@@ -167,7 +167,7 @@ const education: FlowV2< typeof initialize > = {
 					const siteId = providedDependencies.siteId as number | undefined;
 
 					if ( ! siteSlug ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'processing_missing_site' } );
 					}
 
 					const destination = addQueryArgs( `/home/${ siteSlug }`, { ref: flowName } );

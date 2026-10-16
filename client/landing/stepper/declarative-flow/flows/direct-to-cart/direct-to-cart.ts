@@ -169,7 +169,12 @@ const flow: FlowV2< typeof initialize > = {
 
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies.processingResult !== ProcessingResult.SUCCESS ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, {
+							errorReason:
+								providedDependencies.processingResult === ProcessingResult.FAILURE
+									? 'processing_failed'
+									: 'processing_no_action',
+						} );
 					}
 
 					const { siteSlug, siteId } = providedDependencies;
@@ -183,7 +188,7 @@ const flow: FlowV2< typeof initialize > = {
 							extra: { flow: DIRECT_TO_CART_FLOW },
 							tags: [ 'direct_to_cart', 'calypso_direct_to_cart_missing_site_slug' ],
 						} );
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'processing_missing_site' } );
 					}
 
 					// Record resumability for future re-visits.

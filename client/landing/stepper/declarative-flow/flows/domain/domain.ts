@@ -477,7 +477,12 @@ const domain: FlowV2< typeof initialize > = {
 						// replace the location to delete processing step from history.
 						window.location.replace( destination );
 					} else {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, {
+							errorReason:
+								providedDependencies.processingResult === ProcessingResult.FAILURE
+									? 'processing_failed'
+									: 'processing_no_action',
+						} );
 					}
 					return;
 				}

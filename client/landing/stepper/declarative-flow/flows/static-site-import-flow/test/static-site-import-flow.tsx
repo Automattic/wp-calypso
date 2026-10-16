@@ -7,6 +7,7 @@ import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selector
 import { dispatch, select } from '@wordpress/data';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import {
+	getFlowLocation,
 	renderFlow,
 	runFlowNavigation,
 } from 'calypso/landing/stepper/declarative-flow/test/helpers';
@@ -245,6 +246,20 @@ describe( 'Static site import flow', () => {
 			} );
 
 			expect( destination ).toMatchDestination( { step, query: { domainChoice } } );
+		} );
+
+		it( 'names the cause when the site was not created', () => {
+			const destination = runNavigation( {
+				from: STEPS.PROCESSING,
+				dependencies: { siteCreated: false },
+				query: SESSION,
+			} );
+
+			expect( destination ).toMatchDestination( { step: STEPS.ERROR, query: null } );
+			expect( getFlowLocation().state ).toEqual( {
+				message: 'Site not created',
+				errorReason: 'site_not_created',
+			} );
 		} );
 
 		it( 'returns from checkout to the new site’s overview, which runs the move', () => {

@@ -21,6 +21,13 @@ import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 
+// Only a failed pending action stores an error. The reason tags every outcome, failure included.
+const PROCESSING_ERROR_REASONS: Record< ProcessingResult, string > = {
+	[ ProcessingResult.FAILURE ]: 'processing_failed',
+	[ ProcessingResult.NO_ACTION ]: 'processing_no_action',
+	[ ProcessingResult.SUCCESS ]: 'processing_missing_site',
+};
+
 function initialize() {
 	const { setHidePlansFeatureComparison, setIntent } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
@@ -127,7 +134,7 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 					}
 
 					// Fallback to error if no plan selected
-					return navigate( 'error' );
+					return navigate( 'error', { errorReason: 'no_plan_selected' } );
 				}
 
 				case 'post-checkout-onboarding':
@@ -153,14 +160,19 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 						window.location.replace( destination );
 					} else {
 						// Handle errors by navigating to error step
-						return navigate( 'error' );
+						return navigate( 'error', {
+							errorReason:
+								PROCESSING_ERROR_REASONS[
+									providedDependencies.processingResult as ProcessingResult
+								],
+						} );
 					}
 					return;
 				}
 
 				default:
 					// This shouldn't happen in this flow
-					return navigate( 'error' );
+					return navigate( 'error', { errorReason: 'unknown_step' } );
 			}
 		};
 
