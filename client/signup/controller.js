@@ -338,19 +338,6 @@ export default {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
 		}
 
-		if ( 'launch-site' === flowName ) {
-			// The dependency store persists between visits, and `back_to`, `redirect_to` and `ref` are
-			// optional, so an abandoned launch would otherwise decide where the next one leaves the user.
-			// Re-read them from the query the flow was entered with.
-			context.store.dispatch(
-				updateDependencies( {
-					back_to: query?.back_to ?? null,
-					redirect_to: query?.redirect_to ?? null,
-					refParameter: query?.ref ?? null,
-				} )
-			);
-		}
-
 		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
@@ -375,7 +362,7 @@ export default {
 		const signupDependencies = getSignupDependencyStore( getState() );
 		let siteIdOrSlug;
 
-		if ( 'woocommerce-install' === flowName || 'launch-site' === flowName ) {
+		if ( 'woocommerce-install' === flowName ) {
 			// forces query precedence on woocommerce-install
 			siteIdOrSlug = context.query?.siteSlug || signupDependencies?.siteSlug;
 		} else {

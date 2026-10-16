@@ -36,9 +36,6 @@ const useSteps = ( {
 	let steps: Step[] = [];
 
 	switch ( flowName ) {
-		case 'launch-site':
-			steps = [ { title: __( 'Your site will be live shortly.' ) } ]; // copy from 'packages/launch/src/focused-launch/success'
-			break;
 		case 'domain':
 			steps = [ { title: __( 'Preparing your domain' ) } ];
 			break;
