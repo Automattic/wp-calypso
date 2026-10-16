@@ -247,7 +247,7 @@ describe( '<AIToolsSettings>', () => {
 
 		expect( screen.getByText( 'Your dream site is just a prompt away' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Upgrade plan' } ) ).toBeEnabled();
-		expect( container.querySelectorAll( '.ai-tools-settings__locked-card' ) ).toHaveLength( 3 );
+		expect( container.querySelectorAll( '.ai-tools-settings__locked-card' ) ).toHaveLength( 1 );
 
 		expect( screen.getByRole( 'heading', { name: 'WordPress Agent' } ) ).toBeVisible();
 		const agentToggle = screen.getByRole( 'checkbox', { name: 'Enable WordPress Agent' } );
@@ -265,8 +265,9 @@ describe( '<AIToolsSettings>', () => {
 		expect(
 			screen.queryByText( 'Upgrade your plan to enable this setting.' )
 		).not.toBeInTheDocument();
+		// Email and Telegram live inside the WordPress Agent card, so it shows a single badge.
 		const upgradeBadges = screen.getAllByText( 'Upgrade required' );
-		expect( upgradeBadges ).toHaveLength( 3 );
+		expect( upgradeBadges ).toHaveLength( 1 );
 		await user.hover( upgradeBadges[ 0 ] );
 		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
 			'Upgrade your plan to enable this setting.'
@@ -326,6 +327,20 @@ describe( '<AIToolsSettings>', () => {
 		).toHaveAttribute( 'aria-disabled', 'true' );
 		expect( screen.getByText( 'Turn on access above to get setup instructions.' ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: /^Read/ } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'groups Email and Telegram inside the WordPress Agent card', async () => {
+		renderAIToolsSettings( '', true, site, true, true );
+
+		const agentCard = ( await screen.findByRole( 'heading', { name: 'WordPress Agent' } ) ).closest(
+			'.ai-tools-settings__agent-card'
+		);
+		expect( agentCard ).toContainElement(
+			screen.getByRole( 'heading', { name: 'Email WordPress Agent' } )
+		);
+		expect( agentCard ).toContainElement(
+			screen.getByRole( 'link', { name: /^Connect WordPress Agent to Telegram/ } )
+		);
 	} );
 
 	test( 'shows MCP access and the Connect link above WordPress Agent', async () => {

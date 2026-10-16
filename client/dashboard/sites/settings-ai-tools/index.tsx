@@ -36,6 +36,7 @@ import {
 	termDescription,
 } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
+import clsx from 'clsx';
 import { useState } from 'react';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
@@ -135,7 +136,7 @@ function UpgradeRequiredBadge() {
 
 const TELEGRAM_CONNECTION_PATH = '/me/agent';
 
-function EmailAssistantCard( {
+function EmailAssistantSection( {
 	site,
 	recordTracksEvent,
 	disabled = false,
@@ -208,60 +209,57 @@ function EmailAssistantCard( {
 	};
 
 	return (
-		<Card className={ disabled ? 'ai-tools-settings__locked-card' : undefined }>
-			<CardBody>
-				<VStack spacing={ 4 }>
-					<SectionHeader
-						title={ __( 'Email WordPress Agent' ) }
-						description={ __( 'Email this site’s WordPress Agent using a private address.' ) }
-						actions={ disabled ? <UpgradeRequiredBadge /> : undefined }
-						level={ 3 }
-					/>
-					<ToggleControl
-						__nextHasNoMarginBottom
-						checked={ isAgentEmailEnabled }
-						disabled={ isEmailAddressActionDisabled }
-						label={ __( 'Enable WordPress Agent email address' ) }
-						onChange={ handleEmailAddressToggle }
-					/>
-					<Notice density="medium">
-						{ __(
-							'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
-						) }
-					</Notice>
-					{ agentEmailAddress && (
-						<VStack spacing={ 3 }>
-							<ClipboardInputControl
-								label={ __( 'WordPress Agent email address' ) }
-								value={ agentEmailAddress }
-								readOnly
-								onCopy={ handleCopyAddress }
-							/>
-							<HStack justify="flex-start">
-								<Button
-									__next40pxDefaultSize
-									variant="secondary"
-									href={ vCardHref }
-									download={ vCardFileName }
-									onClick={ handleAddToContacts }
-								>
-									{ __( 'Add to contacts' ) }
-								</Button>
-								<Button
-									__next40pxDefaultSize
-									variant="secondary"
-									isBusy={ emailAddressMutation.isPending }
-									disabled={ isEmailAddressActionDisabled }
-									onClick={ handleRegenerateAddress }
-								>
-									{ __( 'Regenerate address' ) }
-								</Button>
-							</HStack>
-						</VStack>
+		<CardBody>
+			<VStack spacing={ 4 }>
+				<SectionHeader
+					title={ __( 'Email WordPress Agent' ) }
+					description={ __( 'Email this site’s WordPress Agent using a private address.' ) }
+					level={ 3 }
+				/>
+				<ToggleControl
+					__nextHasNoMarginBottom
+					checked={ isAgentEmailEnabled }
+					disabled={ isEmailAddressActionDisabled }
+					label={ __( 'Enable WordPress Agent email address' ) }
+					onChange={ handleEmailAddressToggle }
+				/>
+				<Notice density="medium">
+					{ __(
+						'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
 					) }
-				</VStack>
-			</CardBody>
-		</Card>
+				</Notice>
+				{ agentEmailAddress && (
+					<VStack spacing={ 3 }>
+						<ClipboardInputControl
+							label={ __( 'WordPress Agent email address' ) }
+							value={ agentEmailAddress }
+							readOnly
+							onCopy={ handleCopyAddress }
+						/>
+						<HStack justify="flex-start">
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								href={ vCardHref }
+								download={ vCardFileName }
+								onClick={ handleAddToContacts }
+							>
+								{ __( 'Add to contacts' ) }
+							</Button>
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								isBusy={ emailAddressMutation.isPending }
+								disabled={ isEmailAddressActionDisabled }
+								onClick={ handleRegenerateAddress }
+							>
+								{ __( 'Regenerate address' ) }
+							</Button>
+						</HStack>
+					</VStack>
+				) }
+			</VStack>
+		</CardBody>
 	);
 }
 
@@ -444,7 +442,11 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						) }
 					</Card>
 				) }
-				<Card className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
+				<Card
+					className={ clsx( 'ai-tools-settings__agent-card', {
+						'ai-tools-settings__locked-card': ! isAvailable,
+					} ) }
+				>
 					<CardBody>
 						<VStack spacing={ 4 }>
 							<SectionHeader
@@ -480,31 +482,33 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 							</VStack>
 						</CardFooter>
 					) }
+					<CardDivider className="mcp-settings__sub-divider" />
+					<EmailAssistantSection
+						site={ site }
+						recordTracksEvent={ recordTracksEvent }
+						disabled={ ! isAvailable }
+					/>
+					{ config.isEnabled( 'dolly/telegram' ) && (
+						<>
+							<CardDivider className="mcp-settings__sub-divider" />
+							<SummaryButton
+								href={ TELEGRAM_CONNECTION_PATH }
+								density="medium-low"
+								title={ __( 'Connect WordPress Agent to Telegram' ) }
+								description={ __(
+									'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
+								) }
+								decoration={ <Icon icon={ send } size={ 24 } /> }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_dashboard_ai_tool_connect_telegram_click', {
+										site_id: site.ID,
+									} );
+								} }
+								disabled={ ! isAvailable }
+							/>
+						</>
+					) }
 				</Card>
-				<EmailAssistantCard
-					site={ site }
-					recordTracksEvent={ recordTracksEvent }
-					disabled={ ! isAvailable }
-				/>
-				{ config.isEnabled( 'dolly/telegram' ) && (
-					<div className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
-						<SummaryButton
-							href={ TELEGRAM_CONNECTION_PATH }
-							title={ __( 'Connect WordPress Agent to Telegram' ) }
-							description={ __(
-								'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
-							) }
-							decoration={ <Icon icon={ send } size={ 24 } /> }
-							onClick={ () => {
-								recordTracksEvent( 'calypso_dashboard_ai_tool_connect_telegram_click', {
-									site_id: site.ID,
-								} );
-							} }
-							badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
-							disabled={ ! isAvailable }
-						/>
-					</div>
-				) }
 				{ isFreeTrial && (
 					<ConfirmModal
 						isOpen={ isConfirmModalOpen }
