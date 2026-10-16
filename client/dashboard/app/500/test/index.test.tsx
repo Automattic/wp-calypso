@@ -6,10 +6,13 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { useContactSupport } from '../../../agency/support/use-contact-support';
 import { render } from '../../../test-utils';
 import { bumpStat } from '../../analytics';
 import { AuthContext } from '../../auth';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
 import UnknownError from '../index';
+import type { AgencySupports } from '../../context';
 import type { User } from '@automattic/api-core';
 
 jest.mock( 'calypso/lib/logstash', () => ( {
@@ -19,6 +22,10 @@ jest.mock( 'calypso/lib/logstash', () => ( {
 jest.mock( '../../analytics', () => ( {
 	...jest.requireActual( '../../analytics' ),
 	bumpStat: jest.fn(),
+} ) );
+
+jest.mock( '../../../agency/support/use-contact-support', () => ( {
+	useContactSupport: jest.fn(),
 } ) );
 
 const mockedBumpStat = jest.mocked( bumpStat );
@@ -70,6 +77,14 @@ function renderWithLogout( error: Error, logout: () => Promise< void > ) {
 		</AuthContext.Provider>
 	);
 }
+
+const mockedOpenContactForm = jest.fn();
+jest.mocked( useContactSupport ).mockReturnValue( { openContactForm: mockedOpenContactForm } );
+
+const agencyConfig = {
+	...APP_CONTEXT_DEFAULT_CONFIG,
+	supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, agency: {} as AgencySupports },
+};
 
 describe( 'UnknownError', () => {
 	describe( 'when re-authentication is required', () => {
@@ -302,6 +317,29 @@ describe( 'UnknownError', () => {
 
 			await screen.findByText( 'Something specific broke' );
 			expect( mockedBumpStat ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'contacting support', () => {
+		it( 'sends WordPress.com users to WordPress.com help', async () => {
+			render( <UnknownError error={ new Error( 'Something specific broke' ) } /> );
+
+			expect( await screen.findByRole( 'link', { name: /contact support/i } ) ).toHaveAttribute(
+				'href',
+				'https://wordpress.com/help'
+			);
+		} );
+
+		it( 'opens the A4A contact form for agencies', async () => {
+			const user = userEvent.setup();
+			render( <UnknownError error={ new Error( 'Something specific broke' ) } />, {
+				config: agencyConfig,
+			} );
+
+			await user.click( await screen.findByRole( 'button', { name: /contact support/i } ) );
+
+			expect( screen.queryByRole( 'link', { name: /contact support/i } ) ).not.toBeInTheDocument();
+			expect( mockedOpenContactForm ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );
