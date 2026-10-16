@@ -20,7 +20,7 @@ import { createBlockRecursively, mergeAttributes, mergeBlocksRecursively } from 
 import { getReorderOperations, getUnmappedParentReorder } from './reorder';
 import type { ReorderOperation } from './reorder';
 import type { BlockData, BlockEdits, BlockInsert, BlockUpdate, ResolveClientId } from './types';
-import type { EditorBlock, UndoLevel } from '../../utils/editor-blocks';
+import type { EditorBlock, UndoLevel, WrittenList } from '../../utils/editor-blocks';
 
 export interface ApplyEditsOptions {
 	resolve: ResolveClientId;
@@ -53,8 +53,11 @@ const wait = ( ms: number ) => new Promise< void >( ( resolve ) => setTimeout( r
 // Every write checks the canvas first, before the undo level marks anything:
 // the batch yields between steps, and the user may leave the page while it does.
 const createWriters = ( level: UndoLevel ) => {
-	const guarded = < Args extends unknown[] >( write: ( ...args: Args ) => void ) => {
-		const inLevel = level.write( write );
+	const guarded = < Args extends unknown[] >(
+		write: ( ...args: Args ) => void,
+		writtenList: WrittenList< Args >
+	) => {
+		const inLevel = level.write( write, writtenList );
 
 		return ( ...args: Args ) => {
 			assertCanvasUnmoved();
@@ -63,11 +66,11 @@ const createWriters = ( level: UndoLevel ) => {
 	};
 
 	return {
-		insert: guarded( insertBlock ),
-		remove: guarded( removeBlock ),
-		replace: guarded( replaceBlock ),
-		replaceChildren: guarded( replaceInnerBlocks ),
-		updateAttributes: guarded( updateBlockAttributes ),
+		insert: guarded( insertBlock, ( _block, _index, rootClientId ) => rootClientId ),
+		remove: guarded( removeBlock, getBlockRootClientId ),
+		replace: guarded( replaceBlock, getBlockRootClientId ),
+		replaceChildren: guarded( replaceInnerBlocks, ( clientId ) => clientId ),
+		updateAttributes: guarded( updateBlockAttributes, getBlockRootClientId ),
 	};
 };
 

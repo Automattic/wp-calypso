@@ -6,11 +6,12 @@ import { arrowRight, Icon, lockOutline, plus, shield } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { getTld } from '../../helpers/get-tld';
 import { DOMAIN_BUNDLE_UNAVAILABLE_ERROR_CODE } from '../../page/constants';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchNotice } from '../../ui';
+import { NAME_PULSE_SKELETON_TIMEOUT_MS } from '../helpers';
 import type { BundleSuggestion } from '@automattic/api-core';
 
 import './bundle-card.scss';
@@ -202,6 +203,92 @@ export const NamePulseBundleCard = ( { bundle, isWide = false }: NamePulseBundle
 			<p className="name-pulse-bundle-card__footer">
 				<Icon icon={ shield } size={ 20 } />
 				{ __( 'Claim popular domain extensions to avoid copycats' ) }
+			</p>
+		</div>
+	);
+};
+
+/**
+ * Holds the bundle card's place while the bundle loads. Stand-in text sits in
+ * the card's own elements behind skeleton bars, so each line takes the height
+ * and wrapping of the text it stands for, and the card replaces it without
+ * moving the page.
+ */
+export const NamePulseBundleCardPlaceholder = ( { isWide = false }: { isWide?: boolean } ) => {
+	const { __ } = useI18n();
+	const [ hasTimedOut, setHasTimedOut ] = useState( false );
+
+	// A bundle that never answers must not hold the space forever.
+	useEffect( () => {
+		const timer = setTimeout( () => setHasTimedOut( true ), NAME_PULSE_SKELETON_TIMEOUT_MS );
+
+		return () => clearTimeout( timer );
+	}, [] );
+
+	if ( hasTimedOut ) {
+		return null;
+	}
+
+	const price = '$00.00';
+
+	return (
+		<div
+			className={ clsx(
+				'name-pulse-bundle-card',
+				'name-pulse-bundle-card--placeholder',
+				isWide && 'name-pulse-bundle-card--wide'
+			) }
+			role="status"
+			aria-busy="true"
+			aria-label={ __( 'Loading domain bundle' ) }
+		>
+			<div className="name-pulse-bundle-card__header" aria-hidden="true">
+				<span className="name-pulse-bundle-card__title">
+					<span className="name-pulse-bundle-card__skeleton name-pulse-bundle-card__skeleton--icon" />
+					<span className="name-pulse-bundle-card__skeleton">{ __( 'Protect your brand' ) }</span>
+				</span>
+				<span className="name-pulse-bundle-card__skeleton name-pulse-bundle-card__skeleton--badge" />
+			</div>
+
+			<div className="name-pulse-bundle-card__lineup" aria-hidden="true">
+				<p className="name-pulse-bundle-card__tlds">
+					<span className="name-pulse-bundle-card__skeleton">.com + .net + .org</span>
+				</p>
+				<p className="name-pulse-bundle-card__domains">
+					<span className="name-pulse-bundle-card__skeleton">
+						example.com, example.net, example.org
+					</span>
+				</p>
+			</div>
+
+			<div className="name-pulse-bundle-card__offer" aria-hidden="true">
+				<div className="name-pulse-bundle-card__price">
+					<p className="name-pulse-bundle-card__amounts">
+						<span className="name-pulse-bundle-card__skeleton">
+							{ price } { price }
+						</span>
+					</p>
+					<p className="name-pulse-bundle-card__renewal">
+						<span className="name-pulse-bundle-card__skeleton">
+							{ createInterpolateElement(
+								sprintf(
+									// translators: %(price)s is the renewal price of the domain bundle.
+									__( 'For first year. <span>%(price)s/year renewal.</span>' ),
+									{ price }
+								),
+								{ span: <span className="name-pulse-bundle-card__nowrap" /> }
+							) }
+						</span>
+					</p>
+				</div>
+				<span className="name-pulse-bundle-card__cta name-pulse-bundle-card__skeleton name-pulse-bundle-card__skeleton--cta" />
+			</div>
+
+			<p className="name-pulse-bundle-card__footer" aria-hidden="true">
+				<span className="name-pulse-bundle-card__skeleton name-pulse-bundle-card__skeleton--icon" />
+				<span className="name-pulse-bundle-card__skeleton">
+					{ __( 'Claim popular domain extensions to avoid copycats' ) }
+				</span>
 			</p>
 		</div>
 	);

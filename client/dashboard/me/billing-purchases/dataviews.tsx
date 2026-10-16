@@ -210,6 +210,32 @@ function OwnerInfo( {
 	return <BillingPurchaseInfoPopover>{ tooltipContent }</BillingPurchaseInfoPopover>;
 }
 
+// Only the purchaser can change how a purchase is paid for, and the backup
+// methods are the viewer's own, so show nothing for anyone else's purchase.
+function PurchasePaymentMethodCell( {
+	purchase,
+	isSiteMissing,
+	isBackupMethodAvailable,
+}: {
+	purchase: Purchase;
+	isSiteMissing: boolean;
+	isBackupMethodAvailable: boolean;
+} ) {
+	const { user } = useAuth();
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
+
+	return (
+		<HStack justify="flex-start" spacing={ 1 }>
+			<PurchasePaymentMethod purchase={ purchase } isSiteMissing={ isSiteMissing } />
+			{ isBackupMethodAvailable && mightStillAutoRenew( purchase ) && (
+				<BackupPaymentMethodNotice />
+			) }
+		</HStack>
+	);
+}
+
 function PurchaseSettingLink( {
 	purchase,
 	disabled,
@@ -477,12 +503,11 @@ export function getFields( {
 				}
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
-					<HStack justify="flex-start" spacing={ 1 }>
-						<PurchasePaymentMethod purchase={ item } isSiteMissing={ ! site } />
-						{ isBackupMethodAvailable && mightStillAutoRenew( item ) && (
-							<BackupPaymentMethodNotice />
-						) }
-					</HStack>
+					<PurchasePaymentMethodCell
+						purchase={ item }
+						isSiteMissing={ ! site }
+						isBackupMethodAvailable={ isBackupMethodAvailable }
+					/>
 				);
 			},
 		},

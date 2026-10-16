@@ -40,7 +40,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
-		"@jest/globals": "^29.7.0",
+		"@jest/globals": "^30.5.2",
 		"@types/node": "^24.12.2",
 		"nock": "^14.0.17",
 		"typescript": "^6.0.3"

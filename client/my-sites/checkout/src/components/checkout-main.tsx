@@ -87,6 +87,8 @@ export interface CheckoutMainProps {
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
 	productSourceFromUrl?: string;
+	/** The AI agent session that generated the checkout link, for purchase attribution. */
+	aiSessionIdFromUrl?: string;
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
 	plan?: string | undefined;
@@ -122,6 +124,7 @@ export default function CheckoutMain( {
 	siteId,
 	productAliasFromUrl,
 	productSourceFromUrl,
+	aiSessionIdFromUrl,
 	redirectTo,
 	feature,
 	plan,
@@ -261,6 +264,7 @@ export default function CheckoutMain( {
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
 		source: productSourceFromUrl,
+		aiSessionId: aiSessionIdFromUrl,
 		isGiftPurchase,
 		hostingIntent,
 	} );

@@ -845,4 +845,81 @@ describe( 'AgentDock', () => {
 			expect( chatClosedCalls() ).toEqual( [] );
 		} );
 	} );
+
+	describe( 'chat open and close window events', () => {
+		const dock = () => (
+			<MemoryRouter initialEntries={ [ '/chat' ] }>
+				<AgentDock />
+			</MemoryRouter>
+		);
+
+		const listen = ( eventName: string ) => {
+			const details: unknown[] = [];
+			const listener = ( event: Event ) => details.push( ( event as CustomEvent ).detail );
+			window.addEventListener( eventName, listener );
+			return {
+				details,
+				stop: () => window.removeEventListener( eventName, listener ),
+			};
+		};
+
+		it( 'broadcasts each open with who asked for it', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			const opened = listen( 'agents-manager-chat-opened' );
+			const { rerender } = render( dock() );
+
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			rerender( dock() );
+			markActionOrigin( 'open', 'host' );
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			rerender( dock() );
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+			opened.stop();
+
+			expect( opened.details ).toEqual( [
+				{ restored: true, trigger: 'restored' },
+				{ restored: false, trigger: 'host' },
+				{ restored: false, trigger: 'user' },
+			] );
+		} );
+
+		it( 'broadcasts each close with who asked for it', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			const closed = listen( 'agents-manager-chat-closed' );
+			const { rerender } = render( dock() );
+
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			rerender( dock() );
+
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+			markActionOrigin( 'close', 'host' );
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			rerender( dock() );
+			closed.stop();
+
+			expect( closed.details ).toEqual( [ { trigger: 'user' }, { trigger: 'host' } ] );
+		} );
+
+		it( 'does not broadcast a close when the chat is only minimized', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			const closed = listen( 'agents-manager-chat-closed' );
+			const { rerender } = render( dock() );
+
+			mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
+			rerender( dock() );
+			closed.stop();
+
+			expect( closed.details ).toEqual( [] );
+		} );
+	} );
 } );

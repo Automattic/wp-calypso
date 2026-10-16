@@ -211,6 +211,19 @@ describe( 'getLicenseActions eligibility', () => {
 		expect( onOpenHosting ).toHaveBeenCalledWith( pressable );
 	} );
 
+	it( 'offers Manage in Pressable for live Pressable licenses, add-ons included', () => {
+		const isEligible = setup( { isAgencyOwner: true } );
+		expect( isEligible( 'manage-in-pressable', pressable ) ).toBe( true );
+		expect( isEligible( 'manage-in-pressable', pressableAddon ) ).toBe( true );
+		expect(
+			isEligible(
+				'manage-in-pressable',
+				license( { ...pressable, revoked_at: '2026-01-03 00:00:00' } )
+			)
+		).toBe( false );
+		expect( isEligible( 'manage-in-pressable', unassigned ) ).toBe( false );
+	} );
+
 	it( 'never exposes the key of a Pressable license', () => {
 		const isEligible = setup();
 		expect( isEligible( 'copy-license-key', unassigned ) ).toBe( true );
@@ -300,7 +313,12 @@ describe( 'getLicenseActions eligibility', () => {
 	it( 'only lets the agency owner act on Pressable licenses', () => {
 		const ownerEligible = setup( { isAgencyOwner: true } );
 		const memberEligible = setup( { isAgencyOwner: false } );
-		for ( const id of [ 'upgrade', 'revoke-license', 'download-license-product' ] ) {
+		for ( const id of [
+			'manage-in-pressable',
+			'upgrade',
+			'revoke-license',
+			'download-license-product',
+		] ) {
 			expect( ownerEligible( id, pressable ) ).toBe( true );
 			expect( memberEligible( id, pressable ) ).toBe( false );
 		}

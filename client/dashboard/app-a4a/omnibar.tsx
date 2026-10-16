@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useAppContext } from '../app/context';
 import { omnibarEvents } from '../app/omnibar/events';
 import { InitialOmnibar } from '../app/omnibar/omnibar';
-import { useHelpCenterPlugin } from '../app/omnibar/plugin-help-center';
+import { useHelpCenterNodeBuilder } from '../app/omnibar/plugin-help-center';
 import { createLogoutNodeBuilder } from '../app/omnibar/plugin-logout';
 import {
 	RESPONSIVE_MENU_NODE_ID,
@@ -69,7 +69,7 @@ export default function A4AOmnibar( { user }: { user?: User } ) {
 	}, [] );
 
 	const authUser = useOmnibarUser( { user, enabled: hydrated } );
-	const helpCenterNode = useHelpCenterPlugin( { sectionName: 'dashboard', adminBarNodes: [] } );
+	const helpCenterNodeBuilder = useHelpCenterNodeBuilder( { sectionName: 'dashboard' } );
 
 	const nodes: OmnibarNodes = {
 		home: {
@@ -78,7 +78,21 @@ export default function A4AOmnibar( { user }: { user?: User } ) {
 			icon: <A4AOmnibarHomeIcon />,
 			href: mainRoute,
 		},
-		plugins: authUser && supports.help ? [ helpCenterNode ] : [],
+		plugins:
+			authUser && supports.help
+				? [
+						{
+							id: 'help-center',
+							...helpCenterNodeBuilder( {
+								id: 'help-center',
+								title: __( 'Help' ),
+								parent: 'top-secondary',
+								href: '',
+								group: false,
+							} ),
+						},
+					]
+				: [],
 		user: authUser ? buildUserNode( authUser ) : undefined,
 	};
 

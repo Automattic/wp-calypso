@@ -74,6 +74,27 @@ window.addEventListener( 'agents-manager-conversation-changed', resync );
 
 Dispatched by `OrchestratorChat` as the transcript changes. Prefer this over the provider contract for chat interactions — providers are reserved for agent setup.
 
+## Chat opened and closed
+
+Two window events say when the chat comes into view and when it is closed, for hosts that react to how the user uses the chat (e.g. pointing at the entry button after their first close). Minimizing is not a close: it hides the chat but leaves it open, and expanding it again is an open.
+
+| Event                        | `detail`                                 | Fires when                                                                               |
+| ---------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `agents-manager-chat-opened` | `{ restored: boolean, trigger: string }` | The chat came into view: opened, expanded from minimized, or restored open on page load. |
+| `agents-manager-chat-closed` | `{ trigger: string }`                    | The chat was closed.                                                                     |
+
+`trigger` says who asked: `host` for `setChatOpen` through this API, `restored` for a chat already open when the page loaded, and `user` for everything else — the entry buttons, the chat's own controls. A failed load never renders the dock, so neither event fires.
+
+```js
+window.addEventListener( 'agents-manager-chat-closed', ( event ) => {
+	if ( event.detail.trigger === 'user' ) {
+		// the merchant closed it themselves
+	}
+} );
+```
+
+Dispatched by `useChatOpenCloseEvents`, which also records `calypso_agents_manager_chat_opened` and `calypso_agents_manager_chat_closed` in Tracks with the same properties, plus `docked` on the close.
+
 ## Agent activity
 
 Three more window events say what the agent is _doing_, for hosts that render their own editing surface around the chat: whether a turn is in flight, and when an ability has finished, so anything it wrote has landed. Big Sky's easy mode, for example, holds its own navigation while the agent works, shows what changed once the turn ends, and follows an ability that moves the editor.

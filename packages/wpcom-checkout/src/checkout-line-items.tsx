@@ -78,6 +78,8 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 
 	.checkout-line-item__price {
 		position: relative;
+		white-space: nowrap;
+		flex-shrink: 0;
 	}
 `;
 
@@ -97,6 +99,8 @@ export const LineItem = styled( CheckoutLineItem )< {
 
 	.checkout-line-item__price {
 		position: relative;
+		white-space: nowrap;
+		flex-shrink: 0;
 
 		${ ( { shouldShowComparison } ) =>
 			shouldShowComparison &&
@@ -194,6 +198,7 @@ const LineItemPriceWrapper = styled.span`
 	gap: 4px;
 	margin-left: 12px;
 	font-size: inherit;
+	white-space: nowrap;
 
 	.rtl & {
 		margin-right: 12px;

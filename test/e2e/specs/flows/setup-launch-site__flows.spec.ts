@@ -60,7 +60,7 @@ test.describe(
 			await test.step( 'And I enter the launch-site flow', async function () {
 				await page.goto(
 					helperData.getCalypsoURL(
-						`/start/launch-site?siteSlug=${ newSiteDetails.blog_details.site_slug }`
+						`/setup/launch-site?siteSlug=${ newSiteDetails.blog_details.site_slug }`
 					)
 				);
 			} );
@@ -125,7 +125,7 @@ test.describe(
 			await test.step( 'And I enter the launch-site flow', async function () {
 				await page.goto(
 					helperData.getCalypsoURL(
-						`/start/launch-site?siteSlug=${ newSiteDetails.blog_details.site_slug }`
+						`/setup/launch-site?siteSlug=${ newSiteDetails.blog_details.site_slug }`
 					)
 				);
 			} );
@@ -185,7 +185,7 @@ test.describe(
 			await test.step( 'And I enter the launch-site flow', async function () {
 				await page.goto(
 					helperData.getCalypsoURL(
-						`/start/launch-site?siteSlug=${ newSiteDetails.blog_details.site_slug }`
+						`/setup/launch-site?siteSlug=${ newSiteDetails.blog_details.site_slug }`
 					)
 				);
 			} );
@@ -242,7 +242,7 @@ test.describe(
 			await test.step( 'And I enter the launch-site flow', async function () {
 				await page.goto(
 					helperData.getCalypsoURL(
-						`/start/launch-site?siteSlug=${ newSiteDetails.blog_details.site_slug }`
+						`/setup/launch-site?siteSlug=${ newSiteDetails.blog_details.site_slug }`
 					)
 				);
 			} );
@@ -314,7 +314,7 @@ test.describe(
 			await test.step( 'And I enter the launch-site flow', async function () {
 				await page.goto(
 					helperData.getCalypsoURL(
-						`/start/launch-site?siteSlug=${ newSiteDetails.blog_details.site_slug }`
+						`/setup/launch-site?siteSlug=${ newSiteDetails.blog_details.site_slug }`
 					)
 				);
 			} );
