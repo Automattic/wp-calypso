@@ -55,25 +55,6 @@ function isDashboardUrl( url: string ) {
 	}
 }
 
-/**
- * Whether `url` points at the site the flow loaded, e.g. the wp-admin screen a launch started from.
- * The host comes from the loaded site rather than from query args, so `back_to` can't name an
- * arbitrary host.
- */
-function isOnSiteHost( url: string, siteUrl?: string ) {
-	if ( ! url || ! siteUrl ) {
-		return false;
-	}
-
-	try {
-		const target = new URL( url );
-
-		return target.protocol === 'https:' && target.host === new URL( siteUrl ).host;
-	} catch {
-		return false;
-	}
-}
-
 const DomainSearchUI = (
 	props: StepProps & {
 		locale: string;
@@ -421,8 +402,7 @@ const DomainSearchUI = (
 			backLabelText = sitesBackLabelText;
 
 			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString() ?? '';
-			const isSafeBackTo =
-				isRelativeUrl( backTo ) || isDashboardUrl( backTo ) || isOnSiteHost( backTo, site?.URL );
+			const isSafeBackTo = isRelativeUrl( backTo ) || isDashboardUrl( backTo );
 
 			if ( isSafeBackTo ) {
 				backUrl = backTo;
@@ -435,7 +415,7 @@ const DomainSearchUI = (
 			backUrl,
 			backLabelText,
 		};
-	}, [ dashboardOptIn, flowName, previousStepName, goBack, userSiteCount, site?.URL, __ ] );
+	}, [ dashboardOptIn, flowName, previousStepName, goBack, userSiteCount, __ ] );
 
 	const getUseDomainIOwnLink = () => {
 		if ( ! query || ! config.allowsUsingOwnDomain ) {
