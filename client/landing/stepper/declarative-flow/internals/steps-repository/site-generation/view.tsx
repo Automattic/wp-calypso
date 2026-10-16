@@ -138,6 +138,9 @@ function WaitingCanvas( {
 	streamRequested,
 	imageBaseUrl,
 	activityLabel,
+	hostState,
+	isComplete,
+	onPreviewReady,
 	onPreviewTap,
 }: {
 	graph?: BuildWowGraph;
@@ -145,6 +148,9 @@ function WaitingCanvas( {
 	streamRequested: boolean;
 	imageBaseUrl?: string;
 	activityLabel?: string;
+	hostState?: string;
+	isComplete?: boolean;
+	onPreviewReady?: ( ready: boolean ) => void;
 	onPreviewTap: () => void;
 } ) {
 	const translate = useTranslate();
@@ -162,8 +168,11 @@ function WaitingCanvas( {
 			<div className="site-generation__waiting site-generation__waiting--live">
 				<BuildWowStreamCanvas
 					activityLabel={ activityLabel }
+					hostState={ hostState }
+					isComplete={ isComplete }
+					onPreviewReady={ onPreviewReady }
 					imageBaseUrl={ imageBaseUrl }
-					reassurance={ String( description ) }
+					reassurance={ String( translate( 'You’ll receive an email when your site is ready.' ) ) }
 					stream={ stream ?? null }
 				/>
 			</div>
@@ -308,6 +317,7 @@ export function SiteGenerationView( {
 	streamRequested = false,
 	siteSlug,
 	onReload,
+	onPreviewReady,
 }: {
 	state: SiteGenerationState;
 	graph?: BuildWowGraph;
@@ -315,6 +325,7 @@ export function SiteGenerationView( {
 	streamRequested?: boolean;
 	siteSlug?: string | null;
 	onReload: () => void;
+	onPreviewReady?: ( ready: boolean ) => void;
 } ) {
 	const translate = useTranslate();
 	const shouldReduceMotion = useReducedMotion();
@@ -336,6 +347,10 @@ export function SiteGenerationView( {
 			// The live canvas can still show image status when the site has no valid host.
 		}
 	}
+
+	const completionMessage = state.isLocalPreview
+		? translate( 'Your site is ready.' )
+		: translate( 'Your site is ready. Opening your editor…' );
 
 	return (
 		<main className="site-generation" data-generation-view={ state.status }>
@@ -372,6 +387,9 @@ export function SiteGenerationView( {
 					) : (
 						<WaitingCanvas
 							activityLabel={ activeStepLabel }
+							hostState={ state.hostState }
+							isComplete={ state.isComplete }
+							onPreviewReady={ onPreviewReady }
 							graph={ graph }
 							imageBaseUrl={ imageBaseUrl }
 							onPreviewTap={ cycleTint }
@@ -392,7 +410,11 @@ export function SiteGenerationView( {
 				</div>
 				<div className="site-generation__conversation">
 					<p className="site-generation__conversation-message">
-						{ translate( 'Hello! I’m the WordPress Agent, and I’m building your site right now.' ) }
+						{ state.isComplete
+							? completionMessage
+							: translate(
+									'Hello! I’m the WordPress Agent, and I’m building your site right now.'
+								) }
 					</p>
 					<BuildProgress state={ state } />
 				</div>

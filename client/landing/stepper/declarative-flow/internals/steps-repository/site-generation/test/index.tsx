@@ -42,6 +42,7 @@ describe( 'SiteGeneration recovery', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		useSiteGenerationMock.mockImplementation( () => mockState );
 		mockState = {
 			status: 'failed',
 			failureReason: 'build-failed',
@@ -91,7 +92,7 @@ describe( 'SiteGeneration recovery', () => {
 			query.set( 'editorUrl', editorUrl );
 		}
 		window.location.search = `?${ query }`;
-		useSiteGenerationMock.mockImplementationOnce(
+		useSiteGenerationMock.mockImplementation(
 			jest.requireActual( '../use-site-generation' ).useSiteGeneration
 		);
 		renderStep();

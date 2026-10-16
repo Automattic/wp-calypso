@@ -67,7 +67,10 @@ export function useBuildHtmlPreview(
 					body.route !== route ||
 					body.epoch !== epoch ||
 					body.format !== 'dsl-html' ||
+					typeof body.document_id !== 'string' ||
+					! /^[a-f0-9]{64}$/.test( body.document_id ) ||
 					typeof body.html !== 'string' ||
+					! body.html.trim() ||
 					new Blob( [ body.html ] ).size > MAX_PREVIEW_HTML_BYTES
 				) {
 					throw new Error( 'Invalid preview document' );

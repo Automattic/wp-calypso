@@ -149,7 +149,7 @@ function planFrom( data: Record< string, unknown >, status: StreamPlanStatus ): 
 	return {
 		status,
 		title: text( data.title, 100 ),
-		direction: text( data.direction ),
+		direction: text( data.direction, 65536 ),
 		palette: list( data.palette, parseSwatch ),
 		typography: list( data.typography, parseTypeface ),
 		pages: list( data.pages, parsePage ),

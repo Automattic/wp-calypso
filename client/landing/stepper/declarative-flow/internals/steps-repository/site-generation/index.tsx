@@ -1,5 +1,6 @@
+import { useReducedMotion } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import {
 	getBuildWowGraph,
@@ -36,7 +37,17 @@ const SiteGeneration: StepType = function SiteGeneration() {
 		],
 		[ translate ]
 	);
-	const state = useSiteGeneration( { siteIdentifier, source, specId, graph, streamEvents, steps } );
+	const [ previewReady, setPreviewReady ] = useState( false );
+	const shouldReduceMotion = useReducedMotion();
+	const state = useSiteGeneration( {
+		siteIdentifier,
+		source,
+		specId,
+		graph,
+		streamEvents,
+		steps,
+		completionDelayMs: previewReady && ! shouldReduceMotion ? 2600 : 0,
+	} );
 	const stream = useBuildWowStream( state.streamInfo ?? null );
 	// Keep the synthetic preview out of the initial render when the status
 	// response confirms a stream, even before the event subscription is ready.
@@ -52,6 +63,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 			<SiteGenerationView
 				graph={ graph }
 				onReload={ reload }
+				onPreviewReady={ setPreviewReady }
 				siteSlug={ siteSlug }
 				state={ state }
 				stream={ stream }

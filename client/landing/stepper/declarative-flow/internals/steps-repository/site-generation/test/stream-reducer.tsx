@@ -60,3 +60,19 @@ describe( 'Build Wow stream reducer image planning', () => {
 		} );
 	} );
 } );
+
+describe( 'design direction prose', () => {
+	const direction =
+		'A warm family bakery with a sunlit counter. '.repeat( 16 ) + 'A complete ending.';
+	it( 'keeps the complete brief from a streamed plan', () => {
+		const state = applyStreamEvent( initialStreamState( 'run-1' ), 'plan.updated', {
+			status: 'developing',
+			direction,
+		} );
+		expect( state.plan?.direction ).toBe( direction );
+	} );
+	it( 'keeps the complete brief when restoring a snapshot', () => {
+		const state = stateFromSnapshot( 'run-1', 12, { plan: { status: 'completed', direction } } );
+		expect( state.plan?.direction ).toBe( direction );
+	} );
+} );

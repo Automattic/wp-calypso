@@ -61,7 +61,8 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 		expect( screen.getByRole( 'region', { name: 'Live site build' } ) ).toBeVisible();
 		expect( screen.getByRole( 'heading', { name: 'Your site is taking shape' } ) ).toBeVisible();
-		expect( screen.getAllByText( 'Validate the exported DSL theme' ).length ).toBeGreaterThan( 0 );
+		// The host checklist owns progress; raw Engine step messages stay out of the canvas.
+		expect( screen.queryByText( 'Validate the exported DSL theme' ) ).not.toBeInTheDocument();
 		expect( container.querySelector( '.site-generation__page-preview' ) ).toBeNull();
 		expect( screen.queryByText( 'Colors' ) ).not.toBeInTheDocument();
 	} );
@@ -87,14 +88,17 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 			/>
 		);
 
-		expect( screen.getByRole( 'region', { name: 'Live site build' } ) ).toBeVisible();
-		expect( screen.getByText( 'Your idea, taking shape' ) ).toBeVisible();
-		expect( container.querySelector( '.site-generation-live__cards' ) ).toBeNull();
-		expect( container.querySelector( '.site-generation-live__dashes' ) ).toBeNull();
+		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
+		expect(
+			liveCanvas.getByRole( 'heading', { name: 'Your site is taking shape' } )
+		).toBeVisible();
+		expect( liveCanvas.getByRole( 'heading', { name: 'Typography' } ) ).toBeVisible();
+		expect( liveCanvas.getByRole( 'heading', { name: 'Palette' } ) ).toBeVisible();
+		expect( liveCanvas.queryByRole( 'button' ) ).not.toBeInTheDocument();
 		expect( container.querySelector( '.site-generation__page-preview' ) ).toBeNull();
 	} );
 
-	it( 'paginates the outline and previews ready image assets', async () => {
+	it( 'keeps page outlines and image slots out of the compact brief', () => {
 		const stream: BuildWowStreamView = {
 			...progressStream,
 			info: {
@@ -107,22 +111,20 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 					status: 'completed',
 					title: 'A garden for everyone',
 					direction: 'Quiet and welcoming',
-					palette: null,
-					typography: null,
+					palette: [],
+					typography: [],
 					images: [ { query: 'A sunlit garden path', aspectRatio: null } ],
-					pages: [
-						{ slug: 'home', title: 'Home', sections: [ 'Welcome' ] },
-						{ slug: 'about', title: 'About', sections: [ 'Our story' ] },
-					],
+					pages: [ { slug: 'home', title: 'Home', sections: [ 'Welcome' ] } ],
 				},
 				images: {
 					'hero-image.png': {
 						status: 'ready',
-						url: '/wp-content/themes/demo/assets/hero-image.png?v=abc12345',
+						url: '/wp-content/themes/demo/assets/hero-image.png',
 						query: 'A sunlit garden path',
 						aspectRatio: '16:9',
 					},
 				},
+				sections: { home: { 0: { kind: 'content', name: 'Welcome', partial: true } } },
 			},
 		};
 
@@ -130,129 +132,23 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 			<SiteGenerationView
 				onReload={ jest.fn() }
 				siteSlug="example.wpcomstaging.com"
-				state={ { ...idleState, status: 'working', steps: [] } }
-				stream={ stream }
-			/>
-		);
-
-		const liveCanvasElement = screen.getByRole( 'region', { name: 'Live site build' } );
-		const liveCanvas = within( liveCanvasElement );
-		expect( liveCanvas.getByText( 'Welcome' ) ).toBeVisible();
-		expect( liveCanvas.queryByText( 'Our story' ) ).not.toBeInTheDocument();
-		expect( liveCanvas.getByText( '1 of 1 images ready' ) ).toBeVisible();
-		expect( liveCanvasElement.querySelectorAll( '.site-generation-live__slot' ) ).toHaveLength( 1 );
-		const image = liveCanvas.getByRole( 'img', { name: 'A sunlit garden path' } );
-		expect( image ).toHaveAttribute(
-			'src',
-			'https://example.wpcomstaging.com/wp-content/themes/demo/assets/hero-image.png?v=abc12345'
-		);
-		expect( image.parentElement ).toHaveAttribute( 'data-loaded', 'false' );
-		fireEvent.load( image );
-		expect( image.parentElement ).toHaveAttribute( 'data-loaded', 'true' );
-
-		await userEvent.click( liveCanvas.getByRole( 'tab', { name: 'About' } ) );
-		expect( liveCanvas.getByText( 'Our story' ) ).toBeVisible();
-		expect( liveCanvas.queryByText( 'Welcome' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'explains missing previews when the host sends only image lifecycle data', () => {
-		render(
-			<SiteGenerationView
-				onReload={ jest.fn() }
-				siteSlug="example.wpcomstaging.com"
-				state={ { ...idleState, status: 'working', steps: [] } }
-				stream={ {
-					...progressStream,
-					state: {
-						...progressStream.state,
-						images: {
-							hero: { status: 'ready', url: null, query: 'A garden path', aspectRatio: null },
-						},
-					},
-				} }
-			/>
-		);
-
-		expect( screen.queryByRole( 'img', { name: 'A garden path' } ) ).not.toBeInTheDocument();
-		expect(
-			screen.getByText( 'Images are ready. Previews aren’t available for this build.' )
-		).toBeVisible();
-	} );
-
-	it( 'shows planned image slots before the image lifecycle events arrive', () => {
-		const stream: BuildWowStreamView = {
-			...progressStream,
-			info: { ...progressStream.info, capabilities: [ 'progress', 'planning' ] },
-			state: {
-				...progressStream.state,
-				plan: {
-					status: 'developing',
-					title: 'A garden for everyone',
-					direction: 'Quiet and welcoming',
-					palette: null,
-					typography: null,
-					pages: null,
-					images: [
-						{ query: 'A sunlit garden path', aspectRatio: '16:9' },
-						{ query: 'A hand-painted garden sign', aspectRatio: '1:1' },
-					],
-				},
-			},
-		};
-
-		const { container } = render(
-			<SiteGenerationView
-				onReload={ jest.fn() }
 				state={ { ...idleState, status: 'working', steps: [] } }
 				stream={ stream }
 			/>
 		);
 
 		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
-		expect( liveCanvas.getByText( '0 of 2 images ready' ) ).toBeVisible();
-		expect( liveCanvas.getByText( 'A sunlit garden path' ) ).toBeVisible();
-		expect( liveCanvas.getByText( 'A hand-painted garden sign' ) ).toBeVisible();
-		expect( container.querySelectorAll( '.site-generation-live__slot' ) ).toHaveLength( 2 );
-		expect(
-			container.querySelectorAll( '.site-generation-live__slot-mark[data-status="pending"]' )
-		).toHaveLength( 2 );
+		expect( liveCanvas.getByRole( 'heading', { name: 'A garden for everyone' } ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Quiet and welcoming' ) ).toBeVisible();
+		expect( liveCanvas.queryByText( 'Welcome' ) ).not.toBeInTheDocument();
+		expect( liveCanvas.queryByRole( 'img' ) ).not.toBeInTheDocument();
+		expect( liveCanvas.queryByRole( 'tab' ) ).not.toBeInTheDocument();
+		// [] means the plan decided on none, so nothing waits for these fields.
+		expect( liveCanvas.queryByRole( 'heading', { name: 'Typography' } ) ).not.toBeInTheDocument();
+		expect( liveCanvas.queryByRole( 'heading', { name: 'Palette' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'keeps failed image URLs graceful and hides opaque asset filenames', () => {
-		const stream: BuildWowStreamView = {
-			...progressStream,
-			state: {
-				...progressStream.state,
-				images: {
-					'26c513d4220b060ad-efa.png': {
-						status: 'ready',
-						url: '/wp-content/themes/demo/assets/26c513d4220b060ad-efa.png',
-						query: null,
-						aspectRatio: '16:9',
-					},
-				},
-			},
-		};
-
-		const { container } = render(
-			<SiteGenerationView
-				onReload={ jest.fn() }
-				siteSlug="example.wpcomstaging.com"
-				state={ { ...idleState, status: 'working', steps: [] } }
-				stream={ stream }
-			/>
-		);
-
-		const image = screen.getByRole( 'img', { name: 'Site image' } );
-		expect( screen.getByText( 'Site image' ) ).toBeVisible();
-		fireEvent.error( image );
-		expect( container.querySelector( '.site-generation-live__slot img' ) ).toBeNull();
-		expect(
-			container.querySelector( '.site-generation-live__slot-mark[data-status="ready"]' )
-		).toBeInTheDocument();
-	} );
-
-	it( 'reveals design and page details only when the graph advertises those capabilities', () => {
+	it( 'reveals design details only when the graph advertises those capabilities', () => {
 		const stream: BuildWowStreamView = {
 			...progressStream,
 			info: {
@@ -262,18 +158,6 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 			state: {
 				...progressStream.state,
 				directions: [ 'Garden journal' ],
-				images: {
-					hero: {
-						status: 'ready',
-						url: '/wp-content/themes/example/assets/hero.jpg',
-						query: 'Hero photograph',
-						aspectRatio: '16:9',
-					},
-					visit: { status: 'generating', url: null, query: 'Garden path', aspectRatio: null },
-				},
-				sections: {
-					home: { 0: { kind: 'content', name: 'A place to pause', partial: true } },
-				},
 				plan: {
 					status: 'developing',
 					title: 'A garden for everyone',
@@ -300,11 +184,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
 		expect( liveCanvas.getByRole( 'heading', { name: 'A garden for everyone' } ) ).toBeVisible();
 		expect( liveCanvas.getByText( 'Quiet and welcoming' ) ).toBeVisible();
-		expect( liveCanvas.getByText( 'Garden journal' ) ).toBeVisible();
 		expect( liveCanvas.getByLabelText( 'Accent, #176B45' ) ).toBeVisible();
-		expect( document.querySelector( '.site-generation-live' ) ).toHaveStyle( {
-			'--live-site-accent': '#176B45',
-		} );
 		const fontStylesheets = document.head.querySelectorAll(
 			'link[href^="https://fonts-api.wp.com/css2?"]'
 		);
@@ -315,27 +195,48 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		);
 		expect( fontStylesheets[ 1 ] ).toHaveAttribute( 'href', expect.stringContaining( 'DM+Sans' ) );
 		expect( liveCanvas.getByText( 'Source Serif 4' ) ).toBeVisible();
-		expect( liveCanvas.getByRole( 'heading', { name: 'A garden for everyone' } ) ).toHaveStyle( {
-			fontFamily: '"Source Serif 4", serif, var(--live-serif)',
-		} );
-		expect( liveCanvas.getByText( 'Welcome' ) ).toBeVisible();
-		expect( liveCanvas.getByText( 'Visit' ) ).toBeVisible();
-		expect(
-			document.querySelector( '.site-generation-live__slot-mark[data-status="generating"]' )
-		).toBeInTheDocument();
-		expect( liveCanvas.getByText( 'A place to pause' ) ).toBeVisible();
-		expect( liveCanvas.getByText( 'In progress' ) ).toBeVisible();
-		expect( liveCanvas.getByText( '1 of 2 images ready' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'DM Sans' ) ).toBeVisible();
+		expect( liveCanvas.queryByText( 'Welcome' ) ).not.toBeInTheDocument();
 
 		const sidebar = screen.getByRole( 'complementary', { name: 'Site generation progress' } );
 		expect( within( sidebar ).queryByText( 'A garden for everyone' ) ).not.toBeInTheDocument();
 		expect( within( sidebar ).queryByText( 'Quiet and welcoming' ) ).not.toBeInTheDocument();
-		expect( within( sidebar ).queryByText( 'Leaf, #176B45' ) ).not.toBeInTheDocument();
+		expect( within( sidebar ).queryByText( 'Accent, #176B45' ) ).not.toBeInTheDocument();
 		expect(
 			within( sidebar ).getByText(
 				'Hello! I’m the WordPress Agent, and I’m building your site right now.'
 			)
 		).toBeVisible();
+	} );
+
+	it( 'hides undecided design fields when the graph does not advertise design', () => {
+		render(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ { ...idleState, status: 'working', steps: [] } }
+				stream={ {
+					...progressStream,
+					info: { ...progressStream.info, capabilities: [ 'progress', 'planning' ] },
+					state: {
+						...progressStream.state,
+						directions: [ 'Garden journal' ],
+						plan: {
+							status: 'developing',
+							title: 'A garden for everyone',
+							direction: null,
+							palette: null,
+							typography: null,
+							pages: null,
+							images: null,
+						},
+					},
+				} }
+			/>
+		);
+
+		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
+		expect( liveCanvas.getByText( 'Garden journal' ) ).toBeVisible();
+		expect( liveCanvas.queryByText( 'Source Serif 4' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows structured Engine data when an older host advertises progress only', () => {
@@ -352,15 +253,6 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 					typography: [ { name: 'Fredoka', family: 'Fredoka', role: 'heading' } ],
 					pages: [ { slug: 'home', title: 'Home', sections: [ 'Welcome', 'Animal preview' ] } ],
 					images: null,
-				},
-				images: {
-					hero: {
-						status: 'ready',
-						url: '/wp-content/themes/example/assets/hero.jpg',
-						query: 'Hero photograph',
-						aspectRatio: '16:9',
-					},
-					goat: { status: 'generating', url: null, query: 'Goat portrait', aspectRatio: '1:1' },
 				},
 			},
 		};
@@ -382,14 +274,12 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		expect( liveCanvas.getByText( 'Playful editorial layouts' ) ).toBeVisible();
 		expect( liveCanvas.getByLabelText( 'Berry, #B91D60' ) ).toBeVisible();
 		expect( liveCanvas.getByText( 'Fredoka' ) ).toBeVisible();
-		expect( liveCanvas.getByText( 'Welcome' ) ).toBeVisible();
-		expect( liveCanvas.getByText( 'Animal preview' ) ).toBeVisible();
-		expect( liveCanvas.queryByText( 'In progress' ) ).not.toBeInTheDocument();
-		expect( liveCanvas.getByText( '1 of 2 images ready' ) ).toBeVisible();
-		expect( liveCanvas.getByText( 'Polishing your site' ) ).toBeVisible();
+		expect( liveCanvas.queryByText( 'Polishing your site' ) ).not.toBeInTheDocument();
+		const sidebar = screen.getByRole( 'complementary', { name: 'Site generation progress' } );
+		expect( within( sidebar ).getAllByText( 'Polishing your site' ).length ).toBeGreaterThan( 0 );
 	} );
 
-	it( 'clears the brief when a retry drops the previous plan and sections', () => {
+	it( 'clears the brief when a retry drops the previous plan', () => {
 		const stream: BuildWowStreamView = {
 			...progressStream,
 			info: {
@@ -407,9 +297,6 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 					pages: [ { slug: 'home', title: 'Home', sections: [ 'Welcome' ] } ],
 					images: null,
 				},
-				sections: {
-					home: { 0: { kind: 'content', name: 'Welcome', partial: false } },
-				},
 			},
 		};
 		const { rerender } = render(
@@ -422,7 +309,6 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 		expect( screen.getByRole( 'heading', { name: 'A garden for everyone' } ) ).toBeVisible();
 		expect( screen.getByLabelText( 'Leaf, #176B45' ) ).toBeVisible();
-		expect( screen.getByText( 'Welcome' ) ).toBeVisible();
 
 		rerender(
 			<SiteGenerationView
@@ -435,7 +321,6 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		expect( screen.getByRole( 'heading', { name: 'Your site is taking shape' } ) ).toBeVisible();
 		expect( screen.queryByText( 'A garden for everyone' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Quiet and welcoming' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Welcome' ) ).not.toBeInTheDocument();
 		expect( screen.queryByLabelText( 'Leaf, #176B45' ) ).not.toBeInTheDocument();
 	} );
 
