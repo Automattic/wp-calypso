@@ -41,6 +41,57 @@
 	}
 }
 
+// The request step shows the reviews over the illustration's background, without the photo.
+.difm-offer-modal__panel {
+	position: relative;
+	display: none;
+	flex: 0 0 340px;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 340px;
+	padding: $grid-unit-30 46px;
+	overflow: hidden;
+	background:
+		radial-gradient(circle, rgba($white, 0.45) 1px, transparent 1.5px) 0 0 / 16px 16px,
+		radial-gradient(circle at 100% 100%, $white 0, rgba($white, 0) 45%),
+		radial-gradient(circle at 100% 20%, #cecbfa 0, rgba(#cecbfa, 0) 60%),
+		linear-gradient(180deg, #a2acf2 0%, #b3b9f2 45%, #b4d8c2 85%, #d7ecdf 100%);
+
+	// The white arcs of the illustration.
+	&::before,
+	&::after {
+		content: "";
+		position: absolute;
+		border: 2px solid $white;
+		border-radius: 50%;
+		pointer-events: none;
+	}
+
+	&::before {
+		top: -260px;
+		inset-inline-start: -150px;
+		width: 340px;
+		height: 340px;
+	}
+
+	&::after {
+		inset-inline-end: -120px;
+		bottom: -300px;
+		width: 380px;
+		height: 380px;
+	}
+
+	> * {
+		position: relative;
+		z-index: 1;
+	}
+
+	@include break-medium {
+		display: flex;
+	}
+}
+
 .difm-offer-modal__main {
 	display: flex;
 	flex: 1;
