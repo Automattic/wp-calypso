@@ -2,9 +2,9 @@ import { formatNumber } from '@automattic/number-formatters';
 import { _n, sprintf } from '@wordpress/i18n';
 
 /**
- * Return the Studio Code AI Credits title with its credit count.
+ * Return the AI Credits product title with its credit count.
  */
-export function getStudioCodeAiCreditsTitle( productName: string, quantity: number ): string {
+export function getAiCreditsTitle( productName: string, quantity: number ): string {
 	// The full name is "AI credits", but since that is also in the product name, we just say
 	// "credits" here to avoid repetition on the same line
 	return sprintf(
