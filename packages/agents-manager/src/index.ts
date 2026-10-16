@@ -1,6 +1,5 @@
 // Main component exports
 export { default } from './components/agents-manager';
-export type { AgentsManagerProps } from './components/agents-manager';
 
 export { AGENTS_MANAGER_STORE } from './stores';
 
@@ -19,14 +18,14 @@ export {
 
 // Extension API types for other plugins to hook into
 export type {
-	Ability,
 	ToolProvider,
 	ContextProvider,
 	ClientContextType,
 	BaseContextEntry,
 	ContextEntry,
-	Suggestion,
 } from './types';
+export type { Ability } from '@wordpress/abilities';
+export type { Suggestion } from '@automattic/agenttic-ui';
 
 export { useAiChatEntryState } from './hooks/use-ai-chat-entry-state';
 export { default as AiChatEntryLabel } from './components/ai-chat-entry-label';
@@ -53,9 +52,4 @@ export {
 	parseCreditsAccess,
 } from './utils/credits-access';
 export type { CreditsStatus } from './utils/credits';
-export type {
-	CreditsAccess,
-	CreditsAskToUpgrade,
-	CreditsCtaType,
-	CreditsPurchaseOptions,
-} from './utils/credits-access';
+export type { CreditsAccess, CreditsCtaType, CreditsPurchaseOptions } from './utils/credits-access';

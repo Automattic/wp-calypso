@@ -9,7 +9,7 @@ import { getCanvasDocument } from '../../editor-canvas';
 import { recordBigSkyTracksEvent } from '../../tracks';
 import { captureCanvasFileParts } from '../capture';
 import { rasterizeCanvas, UnfaithfulCaptureError } from '../rasterizer';
-import type { FilePart } from '../capture';
+import type { FilePart } from '@automattic/agenttic-client';
 
 const mockGetCanvasDocument = jest.mocked( getCanvasDocument );
 const mockRasterizeCanvas = jest.mocked( rasterizeCanvas );

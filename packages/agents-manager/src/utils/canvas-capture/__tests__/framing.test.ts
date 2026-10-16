@@ -1,5 +1,5 @@
 import { describeCaptureShape, getUnframedClientIds } from '../framing';
-import type { FilePart } from '../capture';
+import type { FilePart } from '@automattic/agenttic-client';
 
 const part = ( metadata?: Record< string, unknown > ) =>
 	( {

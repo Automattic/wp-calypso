@@ -27,7 +27,7 @@ import { setSiteLogoAbility } from './set-site-logo';
 import { showComponentAbility } from './show-component';
 import { showTemplateAbility } from './show-template';
 import { streamPageDesignAbility } from './stream-page-design';
-import type { Ability } from './types';
+import type { Ability } from '@wordpress/abilities';
 
 // The editor abilities AM owns. Adding an ability = add its folder under
 // `abilities/` and list it here.

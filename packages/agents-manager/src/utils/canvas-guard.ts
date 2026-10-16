@@ -25,8 +25,9 @@ import {
 	isCurrentRequestBlocked,
 	type CanvasMove,
 } from './canvas-binding';
-import type { Ability, AbilityResult } from '../abilities/types';
+import type { AbilityResult } from '../abilities/types';
 import type { ContextProvider, ToolProvider } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 // Abilities that write to the page open in the editor. Site-wide writes and
 // `show-component` cannot be made wrong by a move between pages, and

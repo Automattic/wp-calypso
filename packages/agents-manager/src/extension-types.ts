@@ -5,12 +5,7 @@
  * the wp-calypso orchestrator agent with custom abilities and context.
  */
 
-import type { Ability } from './abilities/types';
-
-/**
- * Re-export `Ability` for use by external plugins.
- */
-export type { Ability } from './abilities/types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * Tool Provider Interface
@@ -126,9 +121,6 @@ export interface BaseContextEntry {
  *     }
  */
 export type ContextEntry = BaseContextEntry;
-
-// Re-export Suggestion from agenttic-ui for convenience
-export type { Suggestion } from '@automattic/agenttic-ui';
 
 /**
  * Big Sky Message Format

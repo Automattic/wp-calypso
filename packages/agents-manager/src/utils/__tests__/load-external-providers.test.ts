@@ -29,13 +29,13 @@ import {
 import { getLoadedProviderIds, setLoadedProviderIds } from '../loaded-provider-ids';
 import { getPageContentMarkup } from '../page-content-markup';
 import { getPageStructure } from '../page-structure';
-import type { Ability } from '../../extension-types';
 import type {
 	ProviderCapabilities,
 	UseCheckpointReturn,
 	UseSuggestionsHook,
 } from '../load-external-providers';
 import type { UIMessage } from '@automattic/agenttic-client';
+import type { Ability } from '@wordpress/abilities';
 
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
 	virtual: true,

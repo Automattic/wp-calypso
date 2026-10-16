@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from '@wordpress/element';
-import type { Suggestion } from '../types';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 // Shared with providers: Big Sky and WooCommerce AI dispatch it, and the Jetpack AI sidebar listens for it.
 const INLINE_SUGGESTION_CLICK_EVENT = 'big-sky-inline-suggestion-click';
