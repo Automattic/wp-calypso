@@ -19,6 +19,14 @@ jest.mock( 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled',
 	useIsMarketplaceRedesignEnabled: () => false,
 } ) );
 
+// The Jetpack Cloud variant receives the merged plugin as a prop, which lets the
+// rating tests read it without rendering the whole detail page.
+let mockPluginDetailsV2Props;
+jest.mock( 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2', () => ( props ) => {
+	mockPluginDetailsV2Props = props;
+	return null;
+} );
+
 // The tests drive the installed-plugins fetch lifecycle through the store, so
 // the query component must not start a real request.
 jest.mock( 'calypso/components/data/query-plugins', () => () => null );
@@ -26,12 +34,17 @@ jest.mock( 'calypso/components/data/query-plugins', () => () => null );
 // `localizePath` prefixes the locale for logged-out visitors on a magnificent
 // locale. The stub makes that prefix visible without loading translations.
 let mockLocalePrefix = '';
-jest.mock( 'calypso/my-sites/plugins/utils', () => ( {
-	...jest.requireActual( 'calypso/my-sites/plugins/utils' ),
-	useLocalizedPlugins: () => ( {
+// The real hook returns a stable `localizePath`; a fresh one per render would
+// re-run the breadcrumb effect on every render.
+jest.mock( 'calypso/my-sites/plugins/utils', () => {
+	const localizedPlugins = {
 		localizePath: ( path ) => `${ mockLocalePrefix }${ path }`,
-	} ),
-} ) );
+	};
+	return {
+		...jest.requireActual( 'calypso/my-sites/plugins/utils' ),
+		useLocalizedPlugins: () => localizedPlugins,
+	};
+} );
 
 import page from '@automattic/calypso-router';
 import { merge } from '@automattic/js-utils';
@@ -241,5 +254,34 @@ describe( 'PluginDetails retired product redirect', () => {
 		] );
 
 		expect( page.redirect ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'PluginDetails marketplace rating', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockLocalePrefix = '';
+		mockPluginDetailsV2Props = undefined;
+		window.__i18n_text_domain__ = JSON.stringify( 'default' );
+	} );
+
+	const renderJetpackCloud = ( stateOverrides ) => {
+		const store = createTestStore( merge( {}, jetpackSiteState, stateOverrides ) );
+		renderWithProvider( <PluginDetails pluginSlug={ PLUGIN_SLUG } isJetpackCloud />, { store } );
+	};
+
+	test( 'takes the rating from the wpcom catalog over WordPress.org data', () => {
+		mockWpComPlugin = {
+			data: { slug: PLUGIN_SLUG, rating: 90 },
+			isFetched: true,
+			isFetching: false,
+		};
+
+		renderJetpackCloud( {
+			plugins: { wporg: { items: { [ PLUGIN_SLUG ]: { rating: 40, num_ratings: 12 } } } },
+		} );
+
+		expect( mockPluginDetailsV2Props.fullPlugin.rating ).toBe( 90 );
+		expect( mockPluginDetailsV2Props.fullPlugin.num_ratings ).toBeUndefined();
 	} );
 } );
