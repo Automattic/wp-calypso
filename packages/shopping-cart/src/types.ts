@@ -976,6 +976,13 @@ export interface ResponseCartProductExtra {
 	a4a_pressable_site_domain?: string;
 
 	/**
+	 * A4A Pressable Titan inbox add-on identity, set by the WordPress.com
+	 * backend when it prepares the cart. Checkout uses them for display only.
+	 */
+	titan_domain?: string;
+	titan_plan?: string;
+
+	/**
 	 * Marketplace properties
 	 *
 	 * These extra properties are always set for marketplace products.

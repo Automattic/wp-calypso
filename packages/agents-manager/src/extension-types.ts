@@ -140,14 +140,9 @@ export interface BigSkyMessage {
 	role: 'user' | 'assistant';
 
 	/**
-	 * Message content array
+	 * Message content: text parts.
 	 */
-	content: Array< {
-		type: 'text' | 'component' | 'context';
-		text?: string;
-		component?: React.ComponentType;
-		componentProps?: Record< string, unknown >;
-	} >;
+	content: Array< { type: 'text'; text: string } >;
 
 	/**
 	 * Unix timestamp in seconds (converted to milliseconds for UI)
