@@ -51,6 +51,10 @@ export const isGravPoweredOAuth2Client = ( oauth2Client ) => {
 	return isGravatarOAuth2Client( oauth2Client ) || isWPJobManagerOAuth2Client( oauth2Client );
 };
 
+export const isSpacefastOAuth2Client = ( oauth2Client ) => {
+	return oauth2Client?.id === 137504 || oauth2Client?.source === 'spacefast';
+};
+
 export const isWooOAuth2Client = ( oauth2Client ) => {
 	// 50019 => WooCommerce Dev, 50915 => WooCommerce Staging, 50916 => WooCommerce Production.
 	return oauth2Client && [ 50019, 50915, 50916 ].includes( oauth2Client.id );
