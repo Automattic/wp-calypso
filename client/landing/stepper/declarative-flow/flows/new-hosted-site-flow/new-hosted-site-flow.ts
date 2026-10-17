@@ -1,9 +1,11 @@
 import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
+import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { clearStepPersistedState, NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { matchPath } from 'react-router';
 import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -18,33 +20,61 @@ import {
 	clearSignupCompleteFlowName,
 	clearSignupCompleteSlug,
 	clearSignupCompleteSiteID,
+	getSignupCompleteFlowName,
+	retrieveSignupDestination,
+	wasSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
+import { shouldSkipPlansStep } from '../../../utils/preselected-plan';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
+import { withLocale } from '../../helpers/with-locale';
 import { STEPS } from '../../internals/steps';
+import { hasPurchaseStepsParameter } from '../../internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import { getOnboardingStepperPosition } from '../onboarding/step-counter-config';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import type { Store } from 'redux';
 
+/**
+ * The step named in the URL, if any. A visit to the flow root carries none; a checkout return
+ * or browser Back always lands on a step.
+ */
+function getEntryStepFromURL(): string | undefined {
+	const step = matchPath( { path: '/setup/:flow/:step/:lang?' }, window.location.pathname ?? '' )
+		?.params?.step;
+
+	return step && ! getLanguageSlugs().includes( step ) ? step : undefined;
+}
+
 async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
-	await resetOnboardStore();
-	// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
-	reduxStore.dispatch( setSelectedSiteId( null ) );
-	clearStepPersistedState( NEW_HOSTED_SITE_FLOW );
-	clearSignupDestinationCookie();
-	clearSignupCompleteFlowName();
-	clearSignupCompleteSlug();
-	clearSignupCompleteSiteID();
-
 	const queryParams = getCurrentQueryParams();
+	// Like onboarding, only a step URL resumes; the flow root always starts over.
+	const isReturningFromCheckout =
+		!! getEntryStepFromURL() &&
+		hasPurchaseStepsParameter( queryParams ) &&
+		wasSignupCheckoutPageUnloaded() &&
+		getSignupCompleteFlowName() === NEW_HOSTED_SITE_FLOW &&
+		retrieveSignupDestination();
+
+	if ( ! isReturningFromCheckout ) {
+		await resetOnboardStore();
+		// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
+		reduxStore.dispatch( setSelectedSiteId( null ) );
+		clearStepPersistedState( NEW_HOSTED_SITE_FLOW );
+		clearSignupDestinationCookie();
+		clearSignupCompleteFlowName();
+		clearSignupCompleteSlug();
+		clearSignupCompleteSiteID();
+	}
 	const showDomainStep = queryParams.has( 'showDomainStep' );
 	const productSlug = queryParams.get( 'plan' );
 
@@ -116,12 +146,15 @@ const hosting: FlowV2< typeof initialize > = {
 
 		const query = useQuery();
 
+		const locale = useFlowLocale();
 		const utmSource = query.get( 'utm_source' );
 		const studioSiteId = query.get( 'studioSiteId' );
 		const autoOpenPush = query.get( 'autoOpenPush' );
 
 		const flowName = this.name;
 		const showDomainStep = query.has( 'showDomainStep' );
+		const showPurchaseSteps = hasPurchaseStepsParameter( query );
+		const shouldSkipPlans = shouldSkipPlansStep( query, planCartItem, NEW_HOSTED_SITE_FLOW );
 		const isWooPartner = useIsValidWooPartner();
 
 		const getGoBack = () => {
@@ -153,7 +186,7 @@ const hosting: FlowV2< typeof initialize > = {
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
-					if ( planCartItem ) {
+					if ( showPurchaseSteps ? shouldSkipPlans : planCartItem ) {
 						return navigate( STEPS.SITE_CREATION_STEP.slug );
 					}
 
@@ -192,12 +225,12 @@ const hosting: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_CREATION_STEP.slug:
-					return navigate( STEPS.PROCESSING.slug );
+					return navigate( STEPS.PROCESSING.slug, undefined, showPurchaseSteps );
 
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
-						setSignupCompleteSiteID( providedDependencies.siteId );
+						setSignupCompleteSiteID( showPurchaseSteps ? siteId : providedDependencies.siteId );
 						const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
 						const destinationParams: Record< string, string > = {
 							siteId,
@@ -232,14 +265,47 @@ const hosting: FlowV2< typeof initialize > = {
 							if ( couponCode ) {
 								resetCouponCode();
 							}
-							return window.location.assign(
-								addQueryArgs(
-									`/checkout/${ encodeURIComponent(
-										( providedDependencies?.siteSlug as string ) ?? ''
-									) }`,
-									{ redirect_to: destination, coupon: couponCode }
-								)
+							const purchaseStepArgs: Record< string, string | number > = {};
+							if ( showPurchaseSteps ) {
+								const checkoutBackArgs = {
+									...Object.fromEntries( query ),
+									plan: undefined,
+									siteSlug,
+								};
+								const domainBackUrl = new URL(
+									addQueryArgs(
+										withLocale( '/setup/new-hosted-site/domains', locale ),
+										checkoutBackArgs
+									),
+									window.location.origin
+								).href;
+								const planBackUrl = new URL(
+									addQueryArgs(
+										withLocale( '/setup/new-hosted-site/plans', locale ),
+										checkoutBackArgs
+									),
+									window.location.origin
+								).href;
+								const stepPosition = getOnboardingStepperPosition( 'checkout', shouldSkipPlans );
+								Object.assign( purchaseStepArgs, {
+									showPurchaseSteps: 'true',
+									checkoutBackUrl: shouldSkipPlans ? domainBackUrl : planBackUrl,
+									checkoutBackUrlDomains: domainBackUrl,
+									steps_current: stepPosition.current,
+									steps_total: stepPosition.total,
+								} );
+							}
+							const checkoutUrl = addQueryArgs(
+								`/checkout/${ encodeURIComponent( ( providedDependencies?.siteSlug as string ) ?? '' ) }`,
+								{
+									redirect_to: destination,
+									coupon: couponCode,
+									...purchaseStepArgs,
+								}
 							);
+							return showPurchaseSteps
+								? window.location.replace( checkoutUrl )
+								: window.location.assign( checkoutUrl );
 						}
 
 						return navigate( STEPS.UNIFIED_PLANS.slug );

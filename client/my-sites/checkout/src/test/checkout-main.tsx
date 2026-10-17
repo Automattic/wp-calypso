@@ -6,6 +6,7 @@ import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-pr
 import { ResponseCart } from '@automattic/shopping-cart';
 import { render, screen, within, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useViewportMatch } from '@wordpress/compose';
 import React from 'react';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -171,6 +172,28 @@ describe( 'CheckoutMain', () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
 		expect( navigate ).not.toHaveBeenCalled();
+	} );
+
+	it( 'omits the plan step for opted-in Commerce checkout', async () => {
+		const originalUrl = window.location.href;
+		window.history.replaceState(
+			null,
+			'',
+			'/checkout/foo.com?showPurchaseSteps=true&steps_current=2&steps_total=2&redirect_to=/setup/transferring-hosted-site'
+		);
+		const ViewportWidthProvider = useViewportMatch.__experimentalWidthProvider;
+		try {
+			render(
+				<ViewportWidthProvider value={ 1280 }>
+					<MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } />
+				</ViewportWidthProvider>
+			);
+			expect( await screen.findByText( 'Select a domain' ) ).toBeVisible();
+			expect( screen.getByText( 'Complete payment' ) ).toBeVisible();
+			expect( screen.queryByText( 'Select a plan' ) ).not.toBeInTheDocument();
+		} finally {
+			window.history.replaceState( null, '', originalUrl );
+		}
 	} );
 
 	it( 'removes a product from the cart after clicking to remove it', async () => {
