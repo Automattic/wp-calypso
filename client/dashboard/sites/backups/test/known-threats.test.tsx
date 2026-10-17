@@ -4,7 +4,7 @@
 
 import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -262,7 +262,11 @@ test( 'expands the threats table for Scan sites', async () => {
 	expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
 	await user.unhover( toggle );
 	expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
-	expect( toggle.querySelector( 'svg' ) ).toBeInTheDocument();
+	const pill = within( toggle ).getByText( 'Known threats (3)' );
+	expect( pill ).toHaveClass( 'dashboard-known-threats-badge' );
+	expect( pill.querySelector( 'svg' ) ).toBeInTheDocument();
+	expect( toggle.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
+	expect( toggle.querySelector( 'svg' )?.parentElement ).toBe( pill );
 	await user.click( toggle );
 
 	expect( await screen.findByText( 'Backdoor.PHP.Agent' ) ).toBeVisible();
@@ -320,9 +324,7 @@ test( 'shows the count only without Scan', async () => {
 	await waitFor( () => expect( screen.getAllByText( 'Known threats (3)' ) ).toHaveLength( 2 ) );
 	screen
 		.getAllByText( 'Known threats (3)' )
-		.forEach( ( badge ) =>
-			expect( badge.parentElement?.querySelector( 'svg' ) ).toBeInTheDocument()
-		);
+		.forEach( ( badge ) => expect( badge.querySelector( 'svg' ) ).toBeInTheDocument() );
 	expect( screen.queryByRole( 'button', { name: /show threats/i } ) ).not.toBeInTheDocument();
 	expect( threatsScope.isDone() ).toBe( false );
 } );

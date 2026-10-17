@@ -1,19 +1,17 @@
-import { __experimentalHStack as HStack, Button, Icon, Tooltip } from '@wordpress/components';
+import { Button, Icon, Tooltip } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { caution } from '@wordpress/icons';
-import { Badge } from '@wordpress/ui';
+import './known-threats-badge.scss';
 
 export function KnownThreatsBadge( { count }: { count: number } ) {
 	return (
-		<HStack spacing={ 1 } alignment="center" justify="flex-start" expanded={ false }>
-			<Icon icon={ caution } size={ 16 } aria-hidden="true" />
-			<Badge intent="medium">
-				{
-					/* translators: %d is the number of known security threats in a backup */
-					sprintf( __( 'Known threats (%d)' ), count )
-				}
-			</Badge>
-		</HStack>
+		<span className="dashboard-known-threats-badge">
+			<Icon icon={ caution } size={ 16 } fill="currentColor" aria-hidden="true" />
+			{
+				/* translators: %d is the number of known security threats in a backup */
+				sprintf( __( 'Known threats (%d)' ), count )
+			}
+		</span>
 	);
 }
 
@@ -37,6 +35,7 @@ export function KnownThreatsToggle( { count, isOpen, onToggle }: KnownThreatsTog
 				__next40pxDefaultSize
 				variant="tertiary"
 				size="compact"
+				className="dashboard-known-threats-toggle"
 				aria-label={ ariaLabel }
 				aria-expanded={ isOpen }
 				onClick={ onToggle }

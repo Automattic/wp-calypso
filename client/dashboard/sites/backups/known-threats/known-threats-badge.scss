@@ -1,0 +1,40 @@
+// Mirrors the @wordpress/ui Badge `medium` intent (same tokens), but allows an
+// icon inside the pill, which the Badge component does not support.
+.dashboard-known-threats-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: var( --wpds-dimension-gap-xs, 4px );
+	padding-block: var( --wpds-dimension-padding-xs, 4px );
+	padding-inline: var( --wpds-dimension-padding-sm, 8px );
+	border-radius: var( --wpds-border-radius-lg, 8px );
+	background-color: var( --wpds-color-background-surface-warning );
+	color: var( --wpds-color-foreground-content-warning );
+	font-family: var( --wpds-typography-font-family-body, inherit );
+	font-size: var( --wpds-typography-font-size-sm, 12px );
+	font-weight: var( --wpds-typography-font-weight-default, 400 );
+	line-height: var( --wpds-typography-line-height-xs, 16px );
+
+	svg {
+		flex-shrink: 0;
+		fill: currentColor;
+	}
+}
+
+// Visually just the pill: drop the tertiary Button's own colour and padding.
+.components-button.dashboard-known-threats-toggle {
+	height: auto;
+	padding: 0;
+	border-radius: var( --wpds-border-radius-lg, 8px );
+	color: inherit;
+
+	&:hover:not( :disabled ),
+	&:active:not( :disabled ) {
+		color: inherit;
+		background: transparent;
+	}
+
+	&:focus:not( :disabled ) {
+		color: inherit;
+		box-shadow: 0 0 0 var( --wp-admin-border-width-focus, 2px ) var( --wp-components-color-accent );
+	}
+}
