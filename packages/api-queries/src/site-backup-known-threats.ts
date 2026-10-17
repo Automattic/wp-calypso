@@ -2,9 +2,10 @@ import {
 	fetchSiteBackupsKnownThreatsPage,
 	fetchSiteBackupThreats,
 	getBackupPeriod,
+	getKnownThreatsForRewindId,
 } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import type { BackupKnownThreats } from '@automattic/api-core';
+import type { BackupKnownThreats, BackupsKnownThreatsPage } from '@automattic/api-core';
 
 const MAX_KNOWN_THREATS_PAGES = 30;
 
@@ -24,27 +25,27 @@ export const siteBackupKnownThreatsQuery = ( siteId: number, rewindId: string ) 
 			knownThreats: BackupKnownThreats | null;
 			latestWithoutKnownThreats: number | null;
 		} > => {
-			let latestWithoutKnownThreats: number | null = null;
-			let knownThreats: BackupKnownThreats | null = null;
+			if ( ! Number.isFinite( period ) || period <= 0 ) {
+				return { knownThreats: null, latestWithoutKnownThreats: null };
+			}
+
+			const pages: BackupsKnownThreatsPage[] = [];
 
 			for ( let page = 1; page <= MAX_KNOWN_THREATS_PAGES; page++ ) {
 				const result = await fetchSiteBackupsKnownThreatsPage( siteId, page );
-				if ( page === 1 ) {
-					latestWithoutKnownThreats = result.latestWithoutKnownThreats;
-				}
-				if ( result.byPeriod[ period ] ) {
-					knownThreats = result.byPeriod[ period ];
-					break;
-				}
+				pages.push( result );
 				if (
-					( result.oldestPeriod !== null && result.oldestPeriod < period ) ||
+					( result.oldestPeriod !== null && result.oldestPeriod <= period ) ||
 					page >= result.totalPages
 				) {
 					break;
 				}
 			}
 
-			return { knownThreats, latestWithoutKnownThreats };
+			return {
+				knownThreats: getKnownThreatsForRewindId( pages, period ),
+				latestWithoutKnownThreats: pages[ 0 ]?.latestWithoutKnownThreats ?? null,
+			};
 		},
 		staleTime: 60_000,
 		retry: false,

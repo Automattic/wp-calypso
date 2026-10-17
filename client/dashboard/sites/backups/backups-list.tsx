@@ -75,12 +75,7 @@ export function BackupsList( {
 
 	const { data: knownThreatsPage } = useQuery( siteBackupsKnownThreatsQuery( siteId ) );
 
-	const fields = getFields(
-		groupCountsData?.groups,
-		timezoneString,
-		gmtOffset,
-		knownThreatsPage?.byPeriod
-	);
+	const fields = getFields( groupCountsData?.groups, timezoneString, gmtOffset, knownThreatsPage );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( activityLog, view, fields );
 
 	useEffect( () => {

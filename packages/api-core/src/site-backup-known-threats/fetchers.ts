@@ -12,6 +12,30 @@ export const getBackupPeriod = ( rewindId: string | number ): number =>
 export const isFlagged = ( knownThreats?: BackupKnownThreats | null ): boolean =>
 	!! knownThreats && knownThreats.flagged > 0;
 
+export function getKnownThreatsForRewindId(
+	pages: BackupsKnownThreatsPage[] | BackupsKnownThreatsPage,
+	rewindId: string | number
+): BackupKnownThreats | null {
+	const period = getBackupPeriod( rewindId );
+	if ( ! Number.isFinite( period ) || period <= 0 ) {
+		return null;
+	}
+
+	let containingPeriod: number | null = null;
+	let knownThreats: BackupKnownThreats | null = null;
+
+	for ( const page of Array.isArray( pages ) ? pages : [ pages ] ) {
+		for ( const candidate of page.periods ) {
+			if ( candidate <= period && ( containingPeriod === null || candidate > containingPeriod ) ) {
+				containingPeriod = candidate;
+				knownThreats = page.byPeriod[ candidate ] ?? null;
+			}
+		}
+	}
+
+	return knownThreats;
+}
+
 export async function fetchSiteBackupsKnownThreatsPage(
 	siteId: number,
 	page: number
@@ -22,6 +46,7 @@ export async function fetchSiteBackupsKnownThreatsPage(
 	);
 
 	const byPeriod: Record< number, BackupKnownThreats > = {};
+	const periods: number[] = [];
 	let oldestPeriod: number | null = null;
 
 	for ( const backup of response.backups ?? [] ) {
@@ -33,6 +58,7 @@ export async function fetchSiteBackupsKnownThreatsPage(
 		if ( Number.isNaN( period ) ) {
 			continue;
 		}
+		periods.push( period );
 		if ( oldestPeriod === null || period < oldestPeriod ) {
 			oldestPeriod = period;
 		}
@@ -43,6 +69,7 @@ export async function fetchSiteBackupsKnownThreatsPage(
 
 	return {
 		byPeriod,
+		periods,
 		latestWithoutKnownThreats: response.latest_without_known_threats ?? null,
 		oldestPeriod,
 		totalPages: response.totalPages ?? 1,

@@ -63,6 +63,7 @@ describe( 'site backup known threats queries', () => {
 		expect( scope.isDone() ).toBe( true );
 		expect( result ).toEqual( {
 			byPeriod: { 300: counts( 2 ), 100: counts( 0 ) },
+			periods: [ 300, 200, 100 ],
 			latestWithoutKnownThreats: 200,
 			oldestPeriod: 100,
 			totalPages: 1,
@@ -113,6 +114,68 @@ describe( 'site backup known threats queries', () => {
 
 		expect( result.knownThreats ).toEqual( counts( 3 ) );
 	} );
+
+	it( 'uses the containing backup for a realtime rewind id', async () => {
+		mockPage( 1, page( 1, 1, [ backup( '300', counts( 1 ) ), backup( '200', counts( 2 ) ) ] ) );
+
+		const result = await run( '250.123' );
+
+		expect( result.knownThreats ).toEqual( counts( 2 ) );
+	} );
+
+	it( 'pages to the containing backup when it is on a later page', async () => {
+		const first = mockPage( 1, page( 1, 3, [ backup( '300', counts( 1 ) ) ] ) );
+		const second = mockPage( 2, page( 2, 3, [ backup( '200', counts( 4 ) ) ] ) );
+
+		const result = await run( '250' );
+
+		expect( first.isDone() ).toBe( true );
+		expect( second.isDone() ).toBe( true );
+		expect( result.knownThreats ).toEqual( counts( 4 ) );
+	} );
+
+	it( 'stops paging once a page reaches the period', async () => {
+		const first = mockPage( 1, page( 1, 3, [ backup( '300', counts( 1 ) ), backup( '200' ) ] ) );
+
+		const result = await run( '200' );
+
+		expect( first.isDone() ).toBe( true );
+		expect( nock.pendingMocks() ).toEqual( [] );
+		expect( result.knownThreats ).toBeNull();
+	} );
+
+	it( 'returns null for a rewind id older than every backup', async () => {
+		mockPage( 1, page( 1, 2, [ backup( '300', counts( 1 ) ) ] ) );
+		mockPage( 2, page( 2, 2, [ backup( '200', counts( 2 ) ) ] ) );
+
+		const result = await run( '100' );
+
+		expect( nock.pendingMocks() ).toEqual( [] );
+		expect( result.knownThreats ).toBeNull();
+	} );
+
+	it( 'returns null when the containing backup has no known threats', async () => {
+		mockPage( 1, page( 1, 1, [ backup( '300', counts( 1 ) ), backup( '200' ) ] ) );
+
+		const result = await run( '250' );
+
+		expect( result.knownThreats ).toBeNull();
+	} );
+
+	it.each( [ '', '0', '-5', 'abc' ] )(
+		'makes no request for the invalid rewind id %p',
+		async ( rewindId ) => {
+			const scope = nock( BASE )
+				.get( LIST_PATH )
+				.query( true )
+				.reply( 200, page( 1, 1, [] ) );
+
+			const result = await run( rewindId );
+
+			expect( scope.isDone() ).toBe( false );
+			expect( result ).toEqual( { knownThreats: null, latestWithoutKnownThreats: null } );
+		}
+	);
 
 	it( 'returns null counts before VaultPress ships', async () => {
 		mockPage( 1, page( 1, 1, [ backup( '300' ), backup( '200' ) ] ) );

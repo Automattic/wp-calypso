@@ -1,4 +1,4 @@
-import { getBackupPeriod, isFlagged } from '@automattic/api-core';
+import { getKnownThreatsForRewindId, isFlagged } from '@automattic/api-core';
 import { Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { FormattedTime } from '../../../components/formatted-time';
@@ -7,7 +7,7 @@ import { KnownThreatsBadge } from '../known-threats/known-threats-badge';
 import type {
 	ActivityLogEntry,
 	ActivityLogGroupCountResponse,
-	BackupKnownThreats,
+	BackupsKnownThreatsPage,
 } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
@@ -34,7 +34,7 @@ export function getFields(
 	activityLogTypes?: ActivityLogGroupCountResponse[ 'groups' ],
 	timezoneString?: string,
 	gmtOffset?: number,
-	knownThreatsByPeriod?: Record< number, BackupKnownThreats >
+	knownThreatsPage?: BackupsKnownThreatsPage
 ): Field< ActivityLogEntry >[] {
 	const activityLogTypeElements = activityLogTypes
 		? Object.entries( activityLogTypes )
@@ -70,9 +70,10 @@ export function getFields(
 				return item.summary + actor;
 			},
 			render: ( { item } ) => {
-				const knownThreats = item.rewind_id
-					? knownThreatsByPeriod?.[ getBackupPeriod( item.rewind_id ) ]
-					: undefined;
+				const knownThreats =
+					item.rewind_id && knownThreatsPage
+						? getKnownThreatsForRewindId( knownThreatsPage, item.rewind_id )
+						: null;
 				// translators: %s is the name of the person who performed the action
 				const actor = item.actor?.name ? ` ${ sprintf( __( 'by %s' ), item.actor.name ) }` : '';
 				const title = item.summary + actor;

@@ -33,6 +33,7 @@ export interface BackupThreats {
 
 export interface BackupsKnownThreatsPage {
 	byPeriod: Record< number, BackupKnownThreats >;
+	periods: number[];
 	latestWithoutKnownThreats: number | null;
 	oldestPeriod: number | null;
 	totalPages: number;
