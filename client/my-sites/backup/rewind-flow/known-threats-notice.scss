@@ -16,3 +16,9 @@
 .rewind-flow-known-threats__details {
 	align-self: stretch;
 }
+
+// `.rewind-flow-notice a` (0,1,1) bumps every banner link to the body size; keep the
+// restore link at the @wordpress/components link size it has on the other surfaces.
+.rewind-flow-known-threats .is-link {
+	font-size: 13px;
+}
