@@ -140,6 +140,12 @@ export interface AgentsApiChatState {
 	messages: AgentsApiMessage[];
 	sessions: AgentsApiSession[];
 	sessionId: string | null;
+	/** Whether the initial session-list request has settled, successfully or with an error. */
+	hasResolvedSessions: boolean;
+	/** Whether initial session discovery is in progress. Background refreshes do not set this. */
+	isLoadingSessions: boolean;
+	/** Whether a stored conversation transcript is being loaded. */
+	isLoadingTranscript: boolean;
 	isProcessing: boolean;
 	error: string | null;
 	sendMessage: ( message: string, files?: File[] ) => Promise< void >;
@@ -150,6 +156,8 @@ export interface AgentsApiChatState {
 
 export interface AgentsApiChatOptions {
 	adapter: AgentsApiChatAdapter;
+	/** Stable conversation scope. Changing it intentionally clears chat and session state. */
+	scopeKey?: string;
 	mediaUploadFn?: AgentsApiMediaUpload;
 	runAdapter?: AgentsApiRunAdapter;
 	getRunId?: ( metadata: Record< string, unknown > ) => string | null | undefined;
