@@ -25,7 +25,6 @@ import {
 	getIsOnboardingUnifiedFlow,
 } from 'calypso/state/signup/flow/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
-import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
@@ -137,7 +136,6 @@ export default function WPCheckoutOrderReview( {
 	}, [] );
 
 	const selectedSiteData = useSelector( getSelectedSite );
-	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	// A cart without a site in its key (eg: a renewal at `/checkout/renew/:id`)
@@ -189,16 +187,12 @@ export default function WPCheckoutOrderReview( {
 					<>
 						{ domainUrl && (
 							<SiteSummary className="checkout-review-order__site">
-								{ isCheckoutUiRedesignV1
-									? domainUrl
-									: translate( 'Site: %s', { args: domainUrl } ) }
+								{ translate( 'Site: %s', { args: domainUrl } ) }
 							</SiteSummary>
 						) }
 						{ currentUserEmail && ! isGiftPurchase && (
 							<EmailSummary className="checkout-review-order__email">
-								{ isCheckoutUiRedesignV1
-									? currentUserEmail
-									: translate( 'Account: %s', { args: currentUserEmail } ) }
+								{ translate( 'Account: %s', { args: currentUserEmail } ) }
 							</EmailSummary>
 						) }
 					</>
