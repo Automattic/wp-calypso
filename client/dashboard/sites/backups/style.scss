@@ -49,3 +49,15 @@
 		padding: 1.6em;
 	}
 }
+
+.dashboard-backups__known-threats-table {
+	width: 100%;
+	border-collapse: collapse;
+
+	th,
+	td {
+		padding: 8px 12px 8px 0;
+		text-align: start;
+		border-bottom: 1px solid var( --dashboard-surface__border-color );
+	}
+}

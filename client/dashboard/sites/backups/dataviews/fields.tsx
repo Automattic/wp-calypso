@@ -1,8 +1,14 @@
+import { getBackupPeriod, isFlagged } from '@automattic/api-core';
 import { Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { FormattedTime } from '../../../components/formatted-time';
 import { gridiconToWordPressIcon } from '../../../utils/gridicons';
-import type { ActivityLogEntry, ActivityLogGroupCountResponse } from '@automattic/api-core';
+import { KnownThreatsBadge } from '../known-threats/known-threats-badge';
+import type {
+	ActivityLogEntry,
+	ActivityLogGroupCountResponse,
+	BackupKnownThreats,
+} from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
 const getActivityLogTypeSlugFromName = ( name?: string ): string => {
@@ -27,7 +33,8 @@ const getActivityLogTypeDescriptionFromName = (
 export function getFields(
 	activityLogTypes?: ActivityLogGroupCountResponse[ 'groups' ],
 	timezoneString?: string,
-	gmtOffset?: number
+	gmtOffset?: number,
+	knownThreatsByPeriod?: Record< number, BackupKnownThreats >
 ): Field< ActivityLogEntry >[] {
 	const activityLogTypeElements = activityLogTypes
 		? Object.entries( activityLogTypes )
@@ -61,6 +68,21 @@ export function getFields(
 				// translators: %s is the name of the person who performed the action
 				const actor = item.actor?.name ? ` ${ sprintf( __( 'by %s' ), item.actor.name ) }` : '';
 				return item.summary + actor;
+			},
+			render: ( { item } ) => {
+				const knownThreats = item.rewind_id
+					? knownThreatsByPeriod?.[ getBackupPeriod( item.rewind_id ) ]
+					: undefined;
+				// translators: %s is the name of the person who performed the action
+				const actor = item.actor?.name ? ` ${ sprintf( __( 'by %s' ), item.actor.name ) }` : '';
+				const title = item.summary + actor;
+				return isFlagged( knownThreats ) && knownThreats ? (
+					<span>
+						{ title } <KnownThreatsBadge count={ knownThreats.flagged } />
+					</span>
+				) : (
+					<span>{ title }</span>
+				);
 			},
 			enableGlobalSearch: true,
 		},

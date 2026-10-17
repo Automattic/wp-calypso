@@ -1,0 +1,237 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import '@testing-library/jest-dom';
+import { HostingFeatures } from '@automattic/api-core';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import { render } from '../../../test-utils';
+import { BackupsListPage } from '../index';
+import type { ActivityLogEntry, Site } from '@automattic/api-core';
+
+const API_BASE = 'https://public-api.wordpress.com';
+const siteId = 123;
+const flaggedRewindId = '1792244294.123';
+const cleanRewindId = '1792240000.5';
+
+jest.mock( '@wordpress/react-i18n', () => ( {
+	useI18n: jest.fn(),
+} ) );
+
+jest.mock( '@wordpress/data', () => ( {
+	useDispatch: () => ( {
+		createSuccessNotice: jest.fn(),
+		createErrorNotice: jest.fn(),
+	} ),
+	useRegistry: () => ( {} ),
+	combineReducers: jest.fn(),
+	createReduxStore: jest.fn(),
+	register: jest.fn(),
+	createSelector: jest.fn( ( selector ) => selector ),
+	store: jest.fn(),
+	select: jest.fn(),
+	dispatch: jest.fn(),
+	keyedReducer: () => () => ( {} ),
+} ) );
+
+Element.prototype.scrollIntoView = jest.fn();
+
+jest.mock(
+	'../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
+	() => ( {
+		useFileBrowserContext: () => ( {
+			fileBrowserState: {
+				getCheckList: () => ( { includeList: [], excludeList: [], totalItems: 0 } ),
+			},
+			locale: 'en',
+			notices: { showError: jest.fn(), showSuccess: jest.fn() },
+		} ),
+	} )
+);
+
+const mockRouterParams: { siteSlug: string; rewindId?: string } = { siteSlug: 'test-site' };
+
+jest.mock( '@tanstack/react-router', () => ( {
+	...jest.requireActual( '@tanstack/react-router' ),
+	useParams: jest.fn( () => mockRouterParams ),
+} ) );
+
+jest.mock( '../../../app/router/sites', () => ( {
+	siteRoute: { useParams: () => ( { siteSlug: 'test-site' } ) },
+	siteBackupsRoute: { useSearch: () => ( {} ) },
+	siteBackupRestoreRoute: { fullPath: '/sites/$siteSlug/backups/$rewindId/restore' },
+} ) );
+
+const buildSite = ( withScan: boolean ) =>
+	( {
+		ID: siteId,
+		slug: 'test-site',
+		name: 'Test Site',
+		plan: {
+			expired: false,
+			features: {
+				active: [
+					HostingFeatures.BACKUPS_SELF_SERVE,
+					...( withScan ? [ HostingFeatures.SCAN_SELF_SERVE ] : [] ),
+				],
+			},
+		},
+		is_wpcom_atomic: true,
+	} ) as Site;
+
+const entries = [
+	{
+		activity_id: 'a1',
+		rewind_id: flaggedRewindId,
+		summary: 'Flagged backup',
+		content: { text: 'Flagged backup details' },
+		published: '2026-10-16T10:00:00Z',
+		name: 'rewind__backup_complete_full',
+		is_rewindable: true,
+	},
+	{
+		activity_id: 'a2',
+		rewind_id: cleanRewindId,
+		summary: 'Other backup',
+		content: { text: 'Other backup details' },
+		published: '2026-10-15T10:00:00Z',
+		name: 'rewind__backup_complete_full',
+		is_rewindable: true,
+	},
+] as unknown as ActivityLogEntry[];
+
+const knownThreats = ( flagged: number ) => ( {
+	malware: flagged,
+	database: 0,
+	vulnerable: 0,
+	ignored: 0,
+	flagged,
+	fixed: 0,
+} );
+
+function renderPage( {
+	withScan = false,
+	backups,
+	selected,
+}: {
+	withScan?: boolean;
+	backups: unknown[];
+	selected?: string;
+} ) {
+	mockRouterParams.rewindId = selected;
+	nock( API_BASE )
+		.get( '/rest/v1.1/sites/test-site' )
+		.query( true )
+		.reply( 200, buildSite( withScan ) );
+	nock( API_BASE )
+		.get( `/rest/v1.4/sites/${ siteId }/settings` )
+		.reply( 200, { settings: { gmt_offset: 0, timezone_string: '' } } );
+	nock( API_BASE )
+		.get( `/wpcom/v2/sites/${ siteId }/activity/rewindable` )
+		.query( true )
+		.times( 2 )
+		.reply( 200, {
+			current: { orderedItems: entries },
+			totalItems: entries.length,
+			totalPages: 1,
+		} );
+	nock( API_BASE )
+		.persist()
+		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
+		.reply( 200, { calypso_preferences: {} } );
+	const listScope = nock( API_BASE )
+		.persist()
+		.get( `/wpcom/v3/sites/${ siteId }/rewind/backups` )
+		.query( true )
+		.reply( 200, {
+			ok: true,
+			totalPages: 1,
+			latest_without_known_threats: 1792240000,
+			backups,
+		} );
+	return { ...render( <BackupsListPage /> ), listScope };
+}
+
+const flaggedBackups = [
+	{ object: { backup_period: '1792244294', known_threats: knownThreats( 3 ) } },
+	{ object: { backup_period: 1792240000, known_threats: knownThreats( 0 ) } },
+];
+
+test( 'shows the badge on flagged backups in the list', async () => {
+	renderPage( { backups: flaggedBackups } );
+
+	expect( await screen.findByText( 'Known threats (3)' ) ).toBeVisible();
+	expect( screen.getAllByText( /Known threats \(/ ) ).toHaveLength( 1 );
+} );
+
+test( 'shows no badge before VaultPress ships', async () => {
+	const consoleError = jest.spyOn( console, 'error' );
+	const { listScope } = renderPage( {
+		backups: [
+			{ object: { backup_period: '1792244294' } },
+			{ object: { backup_period: '1792240000' } },
+		],
+		selected: flaggedRewindId,
+	} );
+
+	expect( await screen.findAllByText( 'Flagged backup' ) ).not.toHaveLength( 0 );
+	await waitFor( () => expect( listScope.isDone() ).toBe( true ) );
+	expect( screen.queryByText( /Known threats/ ) ).not.toBeInTheDocument();
+	expect( consoleError ).not.toHaveBeenCalled();
+	consoleError.mockRestore();
+} );
+
+test( 'expands the threats table for Scan sites', async () => {
+	const user = userEvent.setup();
+	const threatsScope = nock( API_BASE )
+		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/${ flaggedRewindId }/threats` )
+		.reply( 200, {
+			backup_id: 1792244294,
+			cutoff: null,
+			summary: { ...knownThreats( 3 ), vulnerable: 2 },
+			count: 1,
+			truncated: false,
+			threats: [
+				{
+					id: 1,
+					state: 'fixed',
+					kind: 'malware',
+					signature: 'Backdoor.PHP.Agent',
+					path_kind: 'file',
+					type: 'file',
+					target: 'wp-content/uploads/evil.php',
+					status: null,
+					reported_on: '2026-09-01T00:00:00Z',
+					fixed_on: '2026-09-02T00:00:00Z',
+				},
+			],
+		} );
+	renderPage( { withScan: true, backups: flaggedBackups, selected: flaggedRewindId } );
+
+	await user.click( await screen.findByRole( 'button', { name: /Show threats/ } ) );
+
+	expect( await screen.findByText( 'Backdoor.PHP.Agent' ) ).toBeVisible();
+	expect( screen.getByText( 'wp-content/uploads/evil.php' ) ).toBeVisible();
+	expect( screen.getByText( /^Fixed / ) ).toBeVisible();
+	expect( screen.getByText( 'Also: 2 vulnerable plugin or theme versions.' ) ).toBeVisible();
+	expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveAttribute(
+		'href',
+		expect.stringContaining( '/backups/1792240000/restore' )
+	);
+	expect( threatsScope.isDone() ).toBe( true );
+	expect( screen.getByRole( 'button', { name: /Hide threats/ } ) ).toBeVisible();
+} );
+
+test( 'shows the count only without Scan', async () => {
+	const threatsScope = nock( API_BASE )
+		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/${ flaggedRewindId }/threats` )
+		.reply( 200, {} );
+	renderPage( { withScan: false, backups: flaggedBackups, selected: flaggedRewindId } );
+
+	await waitFor( () => expect( screen.getAllByText( 'Known threats (3)' ) ).toHaveLength( 2 ) );
+	expect( screen.queryByRole( 'button', { name: /Show threats/ } ) ).not.toBeInTheDocument();
+	expect( threatsScope.isDone() ).toBe( false );
+} );
