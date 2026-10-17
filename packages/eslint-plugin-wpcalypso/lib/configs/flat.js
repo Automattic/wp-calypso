@@ -42,7 +42,7 @@ const recommended = ( plugin ) => {
 const react = ( plugin ) => {
 	const { ecmaFeatures, sourceType } = legacyReact.parserOptions;
 	return [
-		...recommended( plugin ),
+		...plugin.configs[ 'flat/recommended' ],
 		{
 			name: 'wpcalypso/react',
 			languageOptions: { sourceType, parserOptions: { ecmaFeatures } },
