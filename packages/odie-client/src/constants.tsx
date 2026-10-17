@@ -63,10 +63,8 @@ export const getOdieForwardToZendeskMessage = ( userHasRecentOpenConversation: b
 				__i18n_text_domain__
 			);
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getFlowFromBotSlug( botSlug?: OdieAllBotSlugs ): string {
-	if ( botSlug === 'ciab-workflow-support_chat' ) {
-		return 'commerce-garden';
-	}
 	return 'wpcom';
 }
 
@@ -77,30 +75,6 @@ export const getOdieTransferMessages = (
 	isDirectChat = false
 ): Message[] => {
 	const isTestMode = isTestModeEnvironment();
-	const flow = getFlowFromBotSlug( botSlug );
-
-	// Commerce garden has a simplified, single-message flow
-	if ( flow === 'commerce-garden' ) {
-		return [
-			{
-				content:
-					( isTestMode ? '**STAGING VERSION OF ZENDESK** ⚠️\n\n' : '' ) +
-					__(
-						'You have started a chat in a staging version of Zendesk. This means you will not be redirected to a support agent, nor the ticket will appear in Zendesk production. To target Zendesk production, **you need to be unproxied and use a production environment.**',
-						__i18n_text_domain__
-					),
-				role: 'bot' as const,
-				type: 'message' as const,
-				context: {
-					flags: {
-						hide_disclaimer_content: true,
-						show_ai_avatar: false,
-					},
-					site_id: null,
-				},
-			},
-		];
-	}
 
 	const baseMessage = {
 		content:
@@ -470,4 +444,4 @@ export const ODIE_ALLOWED_BOTS = [
 	'automattic-chat-support_a4a',
 ];
 
-export const ODIE_ALL_BOT_SLUGS = [ ...ODIE_ALLOWED_BOTS, 'ciab-workflow-support_chat' ];
+export const ODIE_ALL_BOT_SLUGS = [ ...ODIE_ALLOWED_BOTS ];
