@@ -32,10 +32,19 @@ export const siteBackupRestoreInitiateMutation = ( siteId: number ) =>
 		mutationFn: ( {
 			timestamp,
 			config: restoreConfig,
+			acknowledgeThreats,
 		}: {
 			timestamp: string | number;
 			config?: RestoreConfig;
-		} ) => initiateSiteBackupRestore( siteId, timestamp, configApi( 'env_id' ), restoreConfig ),
+			acknowledgeThreats?: boolean;
+		} ) =>
+			initiateSiteBackupRestore(
+				siteId,
+				timestamp,
+				configApi( 'env_id' ),
+				restoreConfig,
+				acknowledgeThreats
+			),
 		onSuccess: ( restoreId ) => {
 			// Start polling restore progress
 			queryClient.prefetchQuery( siteBackupRestoreProgressQuery( siteId, restoreId ) );
