@@ -92,6 +92,7 @@ export function RestoreThatOneInsteadLink( {
 		<Button
 			__next40pxDefaultSize
 			variant="link"
+			className="backup-known-threats__restore-link"
 			href={ backupRestorePath( siteSlug, resolvedRewindId ) }
 		>
 			{ translate( 'Restore this one instead' ) }

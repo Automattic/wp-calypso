@@ -75,3 +75,9 @@
 		border-bottom: 1px solid var( --color-neutral-5 );
 	}
 }
+
+// `.card a:not(.components-external-link)` (0,2,1) strips link underlines on legacy cards; keep the
+// @wordpress/components link underline, as on the Dashboard.
+.backup-known-threats__restore-link.components-button.is-link {
+	text-decoration: underline;
+}
