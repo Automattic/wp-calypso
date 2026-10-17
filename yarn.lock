@@ -19976,7 +19976,6 @@ __metadata:
     "@babel/eslint-parser": "npm:^7.27.1"
     "@babel/parser": "npm:^7.27.2"
     "@eslint/js": "npm:^9.39.5"
-    eslint: "npm:^8.57.1"
   peerDependencies:
     "@babel/core": ">=7.27.1"
     "@babel/eslint-parser": ">=7.27.1"
@@ -20114,7 +20113,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.34.0, eslint@npm:^8.57.1":
+"eslint@npm:^8.34.0":
   version: 8.57.1
   resolution: "eslint@npm:8.57.1"
   dependencies:

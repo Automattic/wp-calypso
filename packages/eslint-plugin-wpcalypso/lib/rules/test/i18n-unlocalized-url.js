@@ -10,7 +10,8 @@
 //------------------------------------------------------------------------------
 
 const RuleTester = require( 'eslint' ).RuleTester;
-const rule = require( '../i18n-unlocalized-url' );
+const plugin = require( '../../..' );
+const { ERROR_MESSAGE } = require( '../i18n-unlocalized-url' );
 
 //------------------------------------------------------------------------------
 // Tests
@@ -50,12 +51,12 @@ const nonLocalizableUrls = [
 ];
 
 new RuleTester( {
-	parserOptions: {
+	languageOptions: {
 		sourceType: 'module',
-		ecmaFeatures: { jsx: true },
 		ecmaVersion: 6,
+		parserOptions: { ecmaFeatures: { jsx: true } },
 	},
-} ).run( 'i18n-unlocalized-url', rule, {
+} ).run( 'i18n-unlocalized-url', plugin.rules[ 'i18n-unlocalized-url' ], {
 	valid: [].concat(
 		localizableUrls.reduce( ( cases, url ) => {
 			return cases.concat( [
@@ -82,15 +83,15 @@ new RuleTester( {
 		return cases.concat( [
 			{
 				code: `const url = '${ url }'`,
-				errors: [ { message: rule.ERROR_MESSAGE } ],
+				errors: [ { message: ERROR_MESSAGE } ],
 			},
 			{
 				code: `const link = <a href={ '${ url }' }></a>;`,
-				errors: [ { message: rule.ERROR_MESSAGE } ],
+				errors: [ { message: ERROR_MESSAGE } ],
 			},
 			{
 				code: `isLink ? '${ url }' : ''`,
-				errors: [ { message: rule.ERROR_MESSAGE } ],
+				errors: [ { message: ERROR_MESSAGE } ],
 			},
 		] );
 	}, [] ),

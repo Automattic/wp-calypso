@@ -17,17 +17,7 @@ const resolveRules = ( preset, file ) => {
 	return JSON.parse( result.stdout );
 };
 
-// Legacy configs resolve `eslint:recommended` to ESLint 8's list; flat ones use `@eslint/js`.
-const eslintRecommendedChanges = {
-	'no-constant-binary-expression': [ undefined, [ 2 ] ],
-	'no-empty-static-block': [ undefined, [ 2 ] ],
-	'no-inner-declarations': [ [ 2 ], undefined ],
-	'no-new-native-nonconstructor': [ undefined, [ 2 ] ],
-	'no-new-symbol': [ [ 2 ], undefined ],
-	'no-unused-private-class-members': [ undefined, [ 2 ] ],
-};
-
-// Without this, the flat presets published for ESLint 10 can drift from the legacy ones.
+// Without this, the flat presets can drift from the legacy ones they're built from.
 test.each( [
 	[ 'react', 'src/component.jsx' ],
 	[ 'recommended', 'src/index.js' ],
@@ -37,19 +27,43 @@ test.each( [
 	'flat/%s resolves the same rules and options as the legacy preset for %s',
 	( preset, file ) => {
 		const { legacy, flat } = resolveRules( preset, file );
-		const rules = [
-			...new Set( [ ...Object.keys( legacy.rules ), ...Object.keys( flat.rules ) ] ),
-		];
-		const differences = Object.fromEntries(
-			rules
-				.filter(
-					( rule ) =>
-						JSON.stringify( legacy.rules[ rule ] ) !== JSON.stringify( flat.rules[ rule ] )
-				)
-				.map( ( rule ) => [ rule, [ legacy.rules[ rule ], flat.rules[ rule ] ] ] )
-		);
-		expect( differences ).toEqual( eslintRecommendedChanges );
-		expect( { ...flat, rules: null } ).toEqual( { ...legacy, rules: null } );
+		expect( flat ).toEqual( legacy );
 	},
 	30000
 );
+
+// Without this, a new `extends` entry, override or setting in a legacy preset slips past the test
+// above: its fixture flattens the legacy presets by hand, the way `../flat.js` builds them.
+test( 'the legacy presets have the shape the flat ones and the fixture assume', () => {
+	const recommended = require( '../recommended' );
+	const react = require( '../react' );
+
+	expect( Object.keys( recommended ).sort() ).toEqual( [
+		'env',
+		'extends',
+		'overrides',
+		'parser',
+		'parserOptions',
+		'plugins',
+		'rules',
+		'settings',
+	] );
+	expect( recommended.env ).toEqual( { es6: true } );
+	expect( recommended.extends ).toEqual( [ 'eslint:recommended', 'plugin:jsdoc/recommended' ] );
+	expect( recommended.overrides ).toEqual( [
+		{ files: [ '**/test/*', '*.json', '*.md' ], rules: expect.any( Object ) },
+	] );
+	expect( Object.keys( react ).sort() ).toEqual( [
+		'extends',
+		'parserOptions',
+		'plugins',
+		'rules',
+	] );
+	expect( react.extends ).toBe( 'plugin:wpcalypso/recommended' );
+	// The flat React preset takes only `ecmaFeatures` and `sourceType` from these.
+	expect( Object.keys( react.parserOptions ).sort() ).toEqual( [
+		'ecmaFeatures',
+		'ecmaVersion',
+		'sourceType',
+	] );
+} );
