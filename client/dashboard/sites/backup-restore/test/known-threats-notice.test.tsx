@@ -221,9 +221,10 @@ test( 'shows the restore link once when the threats are expanded', async () => {
 	mockBackups( { known_threats: knownThreats( 3 ) } );
 	renderForm();
 
-	await user.click( await screen.findByRole( 'button', { name: /Show threats/ } ) );
+	await user.click( await screen.findByRole( 'button', { name: 'Show threats' } ) );
 
 	expect( await screen.findByRole( 'columnheader', { name: 'Threat' } ) ).toBeVisible();
+	expect( screen.getByRole( 'button', { name: 'Hide threats' } ) ).toBeVisible();
 	expect( screen.getAllByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveLength( 1 );
 } );
 

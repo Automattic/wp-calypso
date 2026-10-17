@@ -240,7 +240,9 @@ test( 'expands the threats table for Scan sites', async () => {
 		} );
 	renderPage( { withScan: true, backups: flaggedBackups, selected: flaggedRewindId } );
 
-	await user.click( await screen.findByRole( 'button', { name: /Show threats/ } ) );
+	const toggle = await screen.findByRole( 'button', { name: 'Known threats (3) Show threats' } );
+	expect( toggle ).toHaveTextContent( 'Known threats (3) Show threats' );
+	await user.click( toggle );
 
 	expect( await screen.findByText( 'Backdoor.PHP.Agent' ) ).toBeVisible();
 	expect( screen.getByText( 'wp-content/uploads/evil.php' ) ).toBeVisible();
@@ -254,7 +256,7 @@ test( 'expands the threats table for Scan sites', async () => {
 		expect.stringContaining( '/backups/1792240000/restore' )
 	);
 	expect( threatsScope.isDone() ).toBe( true );
-	expect( screen.getByRole( 'button', { name: /Hide threats/ } ) ).toBeVisible();
+	expect( screen.getByRole( 'button', { name: 'Known threats (3) Hide threats' } ) ).toBeVisible();
 } );
 
 test( 'uses the singular vulnerable note for one version', async () => {

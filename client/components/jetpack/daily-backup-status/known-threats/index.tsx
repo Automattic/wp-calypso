@@ -180,8 +180,10 @@ export function BackupKnownThreats( {
 				aria-expanded={ isOpen }
 				onClick={ () => setIsOpen( ( open ) => ! open ) }
 			>
-				{ badge }
-				<span>{ isOpen ? translate( 'Hide threats' ) : translate( 'Show threats' ) }</span>
+				<span>
+					{ badge }{ ' ' }
+					<span>{ isOpen ? translate( 'Hide threats' ) : translate( 'Show threats' ) }</span>
+				</span>
 			</Button>
 			{ isOpen && threats && siteSlug && (
 				<BackupKnownThreatsTable

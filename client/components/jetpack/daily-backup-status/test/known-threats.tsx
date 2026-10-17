@@ -113,7 +113,10 @@ describe( 'BackupKnownThreats', () => {
 		const details = nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
 		renderIt();
 
-		const toggle = await screen.findByRole( 'button', { name: /Show threats/ } );
+		const toggle = await screen.findByRole( 'button', {
+			name: 'Known threats (1) Show threats',
+		} );
+		expect( toggle ).toHaveTextContent( 'Known threats (1) Show threats' );
 		expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
 		await userEvent.click( toggle );
 
@@ -126,10 +129,9 @@ describe( 'BackupKnownThreats', () => {
 			'href',
 			'/backup/example.wordpress.com/restore/150'
 		);
-		expect( screen.getByRole( 'button', { name: /Hide threats/ } ) ).toHaveAttribute(
-			'aria-expanded',
-			'true'
-		);
+		expect(
+			screen.getByRole( 'button', { name: 'Known threats (1) Hide threats' } )
+		).toHaveAttribute( 'aria-expanded', 'true' );
 		expect( details.isDone() ).toBe( true );
 	} );
 

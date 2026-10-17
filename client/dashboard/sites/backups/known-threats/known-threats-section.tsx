@@ -44,8 +44,9 @@ export function KnownThreatsSection( {
 				aria-expanded={ isOpen }
 				onClick={ () => setIsOpen( ( open ) => ! open ) }
 			>
-				{ badge }
-				<span>{ isOpen ? __( 'Hide threats' ) : __( 'Show threats' ) }</span>
+				<span>
+					{ badge } <span>{ isOpen ? __( 'Hide threats' ) : __( 'Show threats' ) }</span>
+				</span>
 			</Button>
 			{ isOpen && threats && (
 				<KnownThreatsTable

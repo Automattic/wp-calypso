@@ -197,6 +197,7 @@ describe( 'KnownThreatsNotice', () => {
 		renderWithProvider( <Harness /> );
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Show threats' } ) );
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Hide threats' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveAttribute(
 			'href',
 			'/backup/example.wordpress.com/restore/150'
