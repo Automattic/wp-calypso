@@ -343,8 +343,10 @@ describe( 'BackupRestoreFlow known threats gating', () => {
 	it( 'returns to the confirm screen with the box unticked after threats_not_acknowledged', async () => {
 		mockList( counts( 3 ) );
 		const store = createStore(
-			( state, action ) =>
-				action.type === 'TEST_PROGRESS_CHANGED' ? { ...state } : initialReducer( state, action ),
+			( state: ReturnType< typeof initialReducer > | undefined, action: { type: string } ) =>
+				action.type === 'TEST_PROGRESS_CHANGED'
+					? Object.assign( {}, state )
+					: initialReducer( state, action ),
 			undefined,
 			applyMiddleware( thunk )
 		);
