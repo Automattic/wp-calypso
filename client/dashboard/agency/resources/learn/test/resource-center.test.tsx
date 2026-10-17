@@ -292,4 +292,24 @@ describe( '<ResourceCenter>', () => {
 		expect( screen.queryByRole( 'button', { name: 'Load more' } ) ).not.toBeInTheDocument();
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_resource_center_load_more' );
 	} );
+
+	test( 'focuses the revealed card, not its recommended tile', async () => {
+		renderLibrary( {
+			resources: Array.from( { length: 30 }, ( _, index ) =>
+				resource( {
+					id: index + 1,
+					name: `Resource ${ index + 1 }`,
+					is_recommended: index + 1 === 25,
+				} )
+			),
+		} );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Load more' } ) );
+
+		const [ tile, card ] = screen.getAllByRole( 'link', { name: 'Resource 25' } );
+		expect(
+			within( screen.getByRole( 'region', { name: 'Recommended for you' } ) ).getByRole( 'link' )
+		).toBe( tile );
+		expect( card ).toHaveFocus();
+	} );
 } );
