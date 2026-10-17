@@ -132,7 +132,7 @@ if ( toPrettify.length ) {
 	for ( let i = 0; i < toPrettify.length; i += 500 ) {
 		const batch = toPrettify.slice( i, i + 500 );
 		execSync(
-			`./node_modules/.bin/prettier --ignore-path .eslintignore --write ${ batch.join( ' ' ) }`
+			`./node_modules/.bin/prettier --ignore-path .prettierignore --write ${ batch.join( ' ' ) }`
 		);
 		execSync( `git add ${ batch.join( ' ' ) }` );
 	}
@@ -204,7 +204,6 @@ if ( toEslint.length ) {
 	const lintResult = spawnSync( './node_modules/.bin/eslint', [ '--quiet', ...toEslint ], {
 		shell: true,
 		stdio: 'inherit',
-		env: { ...process.env, ESLINT_USE_FLAT_CONFIG: 'false' },
 	} );
 
 	if ( lintResult.status ) {

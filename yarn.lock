@@ -5891,6 +5891,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@eslint/compat@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@eslint/compat@npm:2.1.1"
+  dependencies:
+    "@eslint/core": "npm:^1.2.1"
+  peerDependencies:
+    eslint: ^8.40 || 9 || 10
+  peerDependenciesMeta:
+    eslint:
+      optional: true
+  checksum: c1856c72e09a767b74c930c1dc17155c479f8b9dd73067d634408ab26318335736265d5d0feee0466c31d796846939cbf68707a045f46f3a02b7c3ad3a093fc4
+  languageName: node
+  linkType: hard
+
 "@eslint/config-array@npm:^0.21.2":
   version: 0.21.2
   resolution: "@eslint/config-array@npm:0.21.2"
@@ -20114,7 +20128,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.34.0, eslint@npm:^8.57.1":
+"eslint@npm:^8.57.1":
   version: 8.57.1
   resolution: "eslint@npm:8.57.1"
   dependencies:
@@ -25340,7 +25354,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"markdown-eslint-parser@npm:^1.2.0":
+"markdown-eslint-parser@npm:^1.2.0, markdown-eslint-parser@npm:^1.2.1":
   version: 1.2.1
   resolution: "markdown-eslint-parser@npm:1.2.1"
   dependencies:
@@ -36236,6 +36250,7 @@ __metadata:
     "@babel/eslint-parser": "npm:^7.27.1"
     "@babel/register": "npm:^7.27.1"
     "@babel/runtime": "npm:^7.27.1"
+    "@eslint/compat": "npm:^2.1.1"
     "@gravatar-com/quick-editor": "npm:^0.8.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:0.5.15"
     "@signal-noise/stylelint-scales": "npm:^2.0.3"
@@ -36313,6 +36328,7 @@ __metadata:
     fsevents: "npm:^2.3.3"
     gettext-parser: "npm:^4.0.3"
     glob: "npm:^7.2.3"
+    globals: "npm:^14.0.0"
     globby: "npm:^10.0.2"
     http-proxy-middleware: "npm:^3.0.7"
     husky: "npm:^7.0.4"
@@ -36326,6 +36342,7 @@ __metadata:
     loader-utils: "npm:^1.4.2"
     lodash: "npm:^4.18.1"
     lottie-web: "npm:^5.9.6"
+    markdown-eslint-parser: "npm:^1.2.1"
     mixedindentlint: "npm:^1.2.0"
     moment: "npm:^2.30.1"
     ncp: "npm:^2.0.0"
@@ -36383,7 +36400,6 @@ __metadata:
     "@types/archiver": "npm:^5.3.1"
     archiver: "npm:^5.3.0"
     dotenv: "npm:^9.0.2"
-    eslint: "npm:^8.34.0"
     eslint-plugin-playwright: "npm:^2.10.1"
     form-data: "npm:^4.0.6"
     mailosaur: "npm:^8.4.0"
