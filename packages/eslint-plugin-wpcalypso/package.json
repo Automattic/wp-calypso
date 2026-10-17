@@ -23,8 +23,12 @@
 	"engines": {
 		"node": ">=v24.15.0"
 	},
+	"dependencies": {
+		"@eslint/js": "^9.39.5"
+	},
 	"peerDependencies": {
 		"@babel/core": ">=7.27.1",
+		"@babel/eslint-parser": ">=7.27.1",
 		"eslint": ">=8.57.1",
 		"eslint-plugin-inclusive-language": "^2.2.1",
 		"eslint-plugin-jsdoc": "^65.1.0",
