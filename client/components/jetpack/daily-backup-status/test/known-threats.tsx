@@ -266,6 +266,17 @@ describe( 'BackupKnownThreats', () => {
 		expect( screen.queryByRole( 'link', { name: 'Restore this one instead' } ) ).toBeNull();
 	} );
 
+	it( 'hides the restore link when the latest clean backup is the one containing this activity', async () => {
+		mockList( [ backupWith( counts( 1 ) ) ], { latest_without_known_threats: 200 } );
+		const activities = mockActivities( [ '200.817' ] );
+		renderWithProvider( <BackupKnownThreats siteId={ SITE_ID } rewindId="300.5" /> );
+
+		await screen.findByText( 'Known threats (1)' );
+		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+		expect( screen.queryByRole( 'link', { name: 'Restore this one instead' } ) ).toBeNull();
+		expect( activities.isDone() ).toBe( false );
+	} );
+
 	it( 'shows no restore link when no activity matches the backup period', async () => {
 		mockList( [ backupWith( counts( 1 ) ) ], { latest_without_known_threats: 1792247305 } );
 		const activities = mockActivities( [] );

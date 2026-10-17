@@ -10,7 +10,7 @@ interface KnownThreatsTableProps {
 	restoreLinkTo?: string;
 	threats: BackupThreats;
 	latestWithoutKnownThreats?: number | null;
-	currentRewindId?: string;
+	currentBackupPeriod?: number | null;
 	showRestoreLink?: boolean;
 }
 
@@ -19,7 +19,7 @@ export function KnownThreatsTable( {
 	restoreLinkTo,
 	threats,
 	latestWithoutKnownThreats,
-	currentRewindId,
+	currentBackupPeriod,
 	showRestoreLink = true,
 }: KnownThreatsTableProps ) {
 	const locale = useIntlLocale();
@@ -77,7 +77,7 @@ export function KnownThreatsTable( {
 					siteSlug={ siteSlug }
 					restoreLinkTo={ restoreLinkTo }
 					latestWithoutKnownThreats={ latestWithoutKnownThreats }
-					currentRewindId={ currentRewindId }
+					currentBackupPeriod={ currentBackupPeriod }
 				/>
 			) }
 		</div>

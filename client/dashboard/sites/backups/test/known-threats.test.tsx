@@ -315,7 +315,8 @@ test( 'hides the restore link when the latest clean backup is this one', async (
 		withScan: true,
 		backups: flaggedBackups,
 		selected: flaggedRewindId,
-		latestWithout: 1792244435,
+		// The selected activity (1792244435.274) belongs to the 1792244301 backup period.
+		latestWithout: 1792244301,
 	} );
 
 	await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );

@@ -89,7 +89,7 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 						siteId={ siteId }
 						siteSlug={ siteSlug }
 						latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-						currentRewindId={ rewindId }
+						currentBackupPeriod={ counts.backupPeriod }
 					/>
 				) }
 				{ hasScan && (
@@ -105,7 +105,7 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 								siteSlug={ siteSlug }
 								threats={ threats }
 								latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-								currentRewindId={ rewindId }
+								currentBackupPeriod={ counts.backupPeriod }
 								showRestoreLink={ false }
 							/>
 						) }

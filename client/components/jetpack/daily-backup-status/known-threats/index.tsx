@@ -1,4 +1,4 @@
-import { getBackupPeriod, isFlagged } from '@automattic/api-core';
+import { isFlagged } from '@automattic/api-core';
 import {
 	siteBackupKnownThreatsQuery,
 	siteBackupsKnownThreatsPageQuery,
@@ -26,22 +26,22 @@ interface RestoreThatOneInsteadLinkProps {
 	siteId: number;
 	siteSlug: string;
 	latestWithoutKnownThreats?: number | null;
-	currentRewindId?: string;
+	/** The backup period containing the backup being viewed, if known. */
+	currentBackupPeriod?: number | null;
 }
 
 export function RestoreThatOneInsteadLink( {
 	siteId,
 	siteSlug,
 	latestWithoutKnownThreats,
-	currentRewindId,
+	currentBackupPeriod,
 }: RestoreThatOneInsteadLinkProps ) {
 	const translate = useTranslate();
 
 	const hasTarget =
 		latestWithoutKnownThreats !== null &&
 		latestWithoutKnownThreats !== undefined &&
-		( currentRewindId === undefined ||
-			getBackupPeriod( currentRewindId ) !== latestWithoutKnownThreats );
+		currentBackupPeriod !== latestWithoutKnownThreats;
 
 	// The known backup periods (already cached by the known-threats lookup) bound the search: anything
 	// at or after the next backup period belongs to that later backup.
@@ -104,7 +104,8 @@ interface BackupKnownThreatsTableProps {
 	siteSlug: string;
 	threats: BackupThreats;
 	latestWithoutKnownThreats?: number | null;
-	currentRewindId?: string;
+	/** The backup period containing the backup being viewed, if known. */
+	currentBackupPeriod?: number | null;
 	showRestoreLink?: boolean;
 }
 
@@ -113,7 +114,7 @@ export function BackupKnownThreatsTable( {
 	siteSlug,
 	threats,
 	latestWithoutKnownThreats,
-	currentRewindId,
+	currentBackupPeriod,
 	showRestoreLink = true,
 }: BackupKnownThreatsTableProps ) {
 	const translate = useTranslate();
@@ -176,7 +177,7 @@ export function BackupKnownThreatsTable( {
 					siteId={ siteId }
 					siteSlug={ siteSlug }
 					latestWithoutKnownThreats={ latestWithoutKnownThreats }
-					currentRewindId={ currentRewindId }
+					currentBackupPeriod={ currentBackupPeriod }
 				/>
 			) }
 		</div>
@@ -213,6 +214,7 @@ export function useBackupKnownThreats( siteId: number, rewindId?: string | null 
 		threats,
 		siteSlug,
 		latestWithoutKnownThreats: counts?.latestWithoutKnownThreats,
+		backupPeriod: counts?.backupPeriod,
 	};
 }
 
@@ -318,7 +320,7 @@ export function BackupKnownThreatsToggle( { state, inToolbar }: BackupKnownThrea
 }
 
 export function BackupKnownThreatsRestoreLink( { state }: { state: BackupKnownThreatsState } ) {
-	const { flagged, siteId, siteSlug, latestWithoutKnownThreats, rewindId } = state;
+	const { flagged, siteId, siteSlug, latestWithoutKnownThreats, backupPeriod } = state;
 
 	if ( flagged === null || ! siteSlug ) {
 		return null;
@@ -329,7 +331,7 @@ export function BackupKnownThreatsRestoreLink( { state }: { state: BackupKnownTh
 			siteId={ siteId }
 			siteSlug={ siteSlug }
 			latestWithoutKnownThreats={ latestWithoutKnownThreats }
-			currentRewindId={ rewindId ?? undefined }
+			currentBackupPeriod={ backupPeriod }
 		/>
 	);
 }
@@ -344,7 +346,7 @@ export function BackupKnownThreatsDetails( { state }: { state: BackupKnownThreat
 		siteId,
 		siteSlug,
 		latestWithoutKnownThreats,
-		rewindId,
+		backupPeriod,
 	} = state;
 
 	if ( flagged === null || ! hasScan || ! isOpen || ! threats || ! siteSlug ) {
@@ -357,7 +359,7 @@ export function BackupKnownThreatsDetails( { state }: { state: BackupKnownThreat
 			siteSlug={ siteSlug }
 			threats={ threats }
 			latestWithoutKnownThreats={ latestWithoutKnownThreats }
-			currentRewindId={ rewindId ?? undefined }
+			currentBackupPeriod={ backupPeriod }
 			showRestoreLink={ false }
 		/>
 	);

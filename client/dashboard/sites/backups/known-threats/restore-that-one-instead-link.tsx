@@ -1,4 +1,3 @@
-import { getBackupPeriod } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import RouterLinkButton from '../../../components/router-link-button';
 
@@ -6,14 +5,15 @@ interface RestoreThatOneInsteadLinkProps {
 	siteSlug: string;
 	restoreLinkTo?: string;
 	latestWithoutKnownThreats?: number | null;
-	currentRewindId?: string;
+	/** The backup period containing the backup being viewed, if known. */
+	currentBackupPeriod?: number | null;
 }
 
 export function RestoreThatOneInsteadLink( {
 	siteSlug,
 	restoreLinkTo,
 	latestWithoutKnownThreats,
-	currentRewindId,
+	currentBackupPeriod,
 }: RestoreThatOneInsteadLinkProps ) {
 	if ( ! restoreLinkTo ) {
 		return null;
@@ -23,10 +23,7 @@ export function RestoreThatOneInsteadLink( {
 		return null;
 	}
 
-	if (
-		currentRewindId !== undefined &&
-		getBackupPeriod( currentRewindId ) === latestWithoutKnownThreats
-	) {
+	if ( currentBackupPeriod === latestWithoutKnownThreats ) {
 		return null;
 	}
 

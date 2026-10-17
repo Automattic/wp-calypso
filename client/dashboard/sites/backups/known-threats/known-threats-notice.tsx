@@ -68,7 +68,7 @@ export default function KnownThreatsNotice( {
 					siteSlug={ site.slug }
 					restoreLinkTo={ restoreLinkTo }
 					latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-					currentRewindId={ rewindId }
+					currentBackupPeriod={ counts.backupPeriod }
 				/>
 				{ hasScan && (
 					<div>
@@ -83,7 +83,7 @@ export default function KnownThreatsNotice( {
 								restoreLinkTo={ restoreLinkTo }
 								threats={ threats }
 								latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-								currentRewindId={ rewindId }
+								currentBackupPeriod={ counts.backupPeriod }
 								showRestoreLink={ false }
 							/>
 						) }
