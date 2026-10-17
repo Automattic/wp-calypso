@@ -60,4 +60,10 @@ test( 'the legacy presets have the shape the flat ones and the fixture assume', 
 		'rules',
 	] );
 	expect( react.extends ).toBe( 'plugin:wpcalypso/recommended' );
+	// The flat React preset takes only `ecmaFeatures` and `sourceType` from these.
+	expect( Object.keys( react.parserOptions ).sort() ).toEqual( [
+		'ecmaFeatures',
+		'ecmaVersion',
+		'sourceType',
+	] );
 } );
