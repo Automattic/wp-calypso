@@ -13,7 +13,7 @@ import type { ActivityLogEntry, Site } from '@automattic/api-core';
 
 const API_BASE = 'https://public-api.wordpress.com';
 const siteId = 123;
-const flaggedRewindId = '1792244294.123';
+const flaggedRewindId = '1792244435.274';
 const cleanRewindId = '1792240000.5';
 
 jest.mock( '@wordpress/react-i18n', () => ( {
@@ -163,7 +163,7 @@ const localDate = ( utcMs: number ) =>
 	new Intl.DateTimeFormat( 'en-US', { dateStyle: 'medium' } ).format( new Date( utcMs ) );
 
 const flaggedBackups = [
-	{ object: { backup_period: '1792244294', known_threats: knownThreats( 3 ) } },
+	{ object: { backup_period: '1792244301', known_threats: knownThreats( 3 ) } },
 	{ object: { backup_period: 1792240000, known_threats: knownThreats( 0 ) } },
 ];
 
@@ -200,7 +200,7 @@ test( 'shows no badge before VaultPress ships', async () => {
 	const consoleError = jest.spyOn( console, 'error' );
 	const { listScope } = renderPage( {
 		backups: [
-			{ object: { backup_period: '1792244294' } },
+			{ object: { backup_period: '1792244301' } },
 			{ object: { backup_period: '1792240000' } },
 		],
 		selected: flaggedRewindId,
@@ -216,9 +216,9 @@ test( 'shows no badge before VaultPress ships', async () => {
 test( 'expands the threats table for Scan sites', async () => {
 	const user = userEvent.setup();
 	const threatsScope = nock( API_BASE )
-		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/${ flaggedRewindId }/threats` )
+		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/1792244301/threats` )
 		.reply( 200, {
-			backup_id: 1792244294,
+			backup_id: 1792244301,
 			cutoff: null,
 			summary: { ...knownThreats( 3 ), vulnerable: 2 },
 			count: 1,
@@ -266,9 +266,9 @@ test( 'expands the threats table for Scan sites', async () => {
 test( 'uses the singular vulnerable note for one version', async () => {
 	const user = userEvent.setup();
 	nock( API_BASE )
-		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/${ flaggedRewindId }/threats` )
+		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/1792244301/threats` )
 		.reply( 200, {
-			backup_id: 1792244294,
+			backup_id: 1792244301,
 			cutoff: null,
 			summary: { ...knownThreats( 3 ), vulnerable: 1 },
 			count: 0,
@@ -284,7 +284,7 @@ test( 'uses the singular vulnerable note for one version', async () => {
 
 test( 'shows the count only without Scan', async () => {
 	const threatsScope = nock( API_BASE )
-		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/${ flaggedRewindId }/threats` )
+		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/1792244301/threats` )
 		.reply( 200, {} );
 	renderPage( { withScan: false, backups: flaggedBackups, selected: flaggedRewindId } );
 

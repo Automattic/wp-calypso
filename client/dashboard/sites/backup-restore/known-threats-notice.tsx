@@ -33,8 +33,8 @@ export default function KnownThreatsNotice( {
 	const hasScan = hasHostingFeature( site, HostingFeatures.SCAN_SELF_SERVE );
 	const { data: counts } = useQuery( siteBackupKnownThreatsQuery( site.ID, rewindId ) );
 	const { data: threats } = useQuery( {
-		...siteBackupThreatsQuery( site.ID, rewindId ),
-		enabled: hasScan && isOpen,
+		...siteBackupThreatsQuery( site.ID, counts?.backupPeriod ?? 0 ),
+		enabled: hasScan && isOpen && counts?.backupPeriod != null,
 	} );
 
 	const knownThreats = counts?.knownThreats;

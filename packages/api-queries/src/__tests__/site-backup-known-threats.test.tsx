@@ -123,6 +123,30 @@ describe( 'site backup known threats queries', () => {
 		expect( result.knownThreats ).toEqual( counts( 2 ) );
 	} );
 
+	it( 'returns the containing backup period for a realtime rewind id', async () => {
+		mockPage( 1, page( 1, 1, [ backup( '300', counts( 1 ) ), backup( '200', counts( 2 ) ) ] ) );
+
+		const result = await run( '250.123' );
+
+		expect( result.backupPeriod ).toBe( 200 );
+	} );
+
+	it( 'returns the same period for an exact match', async () => {
+		mockPage( 1, page( 1, 1, [ backup( '300', counts( 1 ) ), backup( '200', counts( 2 ) ) ] ) );
+
+		const result = await run( '200' );
+
+		expect( result.backupPeriod ).toBe( 200 );
+	} );
+
+	it( 'returns a null period when older than every backup', async () => {
+		mockPage( 1, page( 1, 1, [ backup( '300', counts( 1 ) ), backup( '200', counts( 2 ) ) ] ) );
+
+		const result = await run( '100.5' );
+
+		expect( result.backupPeriod ).toBeNull();
+	} );
+
 	it( 'pages to the containing backup when it is on a later page', async () => {
 		const first = mockPage( 1, page( 1, 3, [ backup( '300', counts( 1 ) ) ] ) );
 		const second = mockPage( 2, page( 2, 3, [ backup( '200', counts( 4 ) ) ] ) );
@@ -173,7 +197,11 @@ describe( 'site backup known threats queries', () => {
 			const result = await run( rewindId );
 
 			expect( scope.isDone() ).toBe( false );
-			expect( result ).toEqual( { knownThreats: null, latestWithoutKnownThreats: null } );
+			expect( result ).toEqual( {
+				knownThreats: null,
+				latestWithoutKnownThreats: null,
+				backupPeriod: null,
+			} );
 		}
 	);
 
@@ -182,7 +210,11 @@ describe( 'site backup known threats queries', () => {
 
 		const result = await run( '200' );
 
-		expect( result ).toEqual( { knownThreats: null, latestWithoutKnownThreats: null } );
+		expect( result ).toEqual( {
+			knownThreats: null,
+			latestWithoutKnownThreats: null,
+			backupPeriod: 200,
+		} );
 	} );
 
 	it( 'takes latestWithoutKnownThreats from page 1', async () => {
@@ -194,7 +226,11 @@ describe( 'site backup known threats queries', () => {
 
 		const result = await run( '200' );
 
-		expect( result ).toEqual( { knownThreats: counts( 2 ), latestWithoutKnownThreats: 250 } );
+		expect( result ).toEqual( {
+			knownThreats: counts( 2 ),
+			latestWithoutKnownThreats: 250,
+			backupPeriod: 200,
+		} );
 	} );
 
 	it( 'caches per-backup counts within the stale window', async () => {
@@ -262,7 +298,7 @@ describe( 'site backup known threats queries', () => {
 			.reply( 200, body );
 
 		const result = await new QueryClient().fetchQuery(
-			siteBackupThreatsQuery( SITE_ID, '1792244294' )
+			siteBackupThreatsQuery( SITE_ID, 1792244294 )
 		);
 
 		expect( scope.isDone() ).toBe( true );

@@ -12,28 +12,44 @@ export const getBackupPeriod = ( rewindId: string | number ): number =>
 export const isFlagged = ( knownThreats?: BackupKnownThreats | null ): boolean =>
 	!! knownThreats && knownThreats.flagged > 0;
 
-export function getKnownThreatsForRewindId(
+export function getContainingBackupPeriod(
 	pages: BackupsKnownThreatsPage[] | BackupsKnownThreatsPage,
 	rewindId: string | number
-): BackupKnownThreats | null {
+): number | null {
 	const period = getBackupPeriod( rewindId );
 	if ( ! Number.isFinite( period ) || period <= 0 ) {
 		return null;
 	}
 
 	let containingPeriod: number | null = null;
-	let knownThreats: BackupKnownThreats | null = null;
 
 	for ( const page of Array.isArray( pages ) ? pages : [ pages ] ) {
 		for ( const candidate of page.periods ) {
 			if ( candidate <= period && ( containingPeriod === null || candidate > containingPeriod ) ) {
 				containingPeriod = candidate;
-				knownThreats = page.byPeriod[ candidate ] ?? null;
 			}
 		}
 	}
 
-	return knownThreats;
+	return containingPeriod;
+}
+
+export function getKnownThreatsForRewindId(
+	pages: BackupsKnownThreatsPage[] | BackupsKnownThreatsPage,
+	rewindId: string | number
+): BackupKnownThreats | null {
+	const containingPeriod = getContainingBackupPeriod( pages, rewindId );
+	if ( containingPeriod === null ) {
+		return null;
+	}
+
+	for ( const page of Array.isArray( pages ) ? pages : [ pages ] ) {
+		if ( page.periods.includes( containingPeriod ) ) {
+			return page.byPeriod[ containingPeriod ] ?? null;
+		}
+	}
+
+	return null;
 }
 
 export async function fetchSiteBackupsKnownThreatsPage(

@@ -2,6 +2,7 @@ import {
 	fetchSiteBackupsKnownThreatsPage,
 	fetchSiteBackupThreats,
 	getBackupPeriod,
+	getContainingBackupPeriod,
 	getKnownThreatsForRewindId,
 } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
@@ -29,9 +30,10 @@ export const siteBackupKnownThreatsQuery = ( siteId: number, rewindId: string ) 
 		} ): Promise< {
 			knownThreats: BackupKnownThreats | null;
 			latestWithoutKnownThreats: number | null;
+			backupPeriod: number | null;
 		} > => {
 			if ( ! Number.isFinite( period ) || period <= 0 ) {
-				return { knownThreats: null, latestWithoutKnownThreats: null };
+				return { knownThreats: null, latestWithoutKnownThreats: null, backupPeriod: null };
 			}
 
 			const pages: BackupsKnownThreatsPage[] = [];
@@ -50,6 +52,7 @@ export const siteBackupKnownThreatsQuery = ( siteId: number, rewindId: string ) 
 			return {
 				knownThreats: getKnownThreatsForRewindId( pages, period ),
 				latestWithoutKnownThreats: pages[ 0 ]?.latestWithoutKnownThreats ?? null,
+				backupPeriod: getContainingBackupPeriod( pages, period ),
 			};
 		},
 		staleTime: 60_000,
@@ -57,10 +60,10 @@ export const siteBackupKnownThreatsQuery = ( siteId: number, rewindId: string ) 
 	} );
 };
 
-export const siteBackupThreatsQuery = ( siteId: number, rewindId: string ) =>
+export const siteBackupThreatsQuery = ( siteId: number, backupPeriod: number ) =>
 	queryOptions( {
-		queryKey: [ 'site', siteId, 'backup', getBackupPeriod( rewindId ), 'threats' ],
-		queryFn: () => fetchSiteBackupThreats( siteId, rewindId ),
+		queryKey: [ 'site', siteId, 'backup', backupPeriod, 'threats' ],
+		queryFn: () => fetchSiteBackupThreats( siteId, String( backupPeriod ) ),
 		staleTime: 60_000,
 		retry: false,
 	} );

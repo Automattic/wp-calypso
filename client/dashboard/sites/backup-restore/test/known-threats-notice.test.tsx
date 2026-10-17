@@ -14,7 +14,7 @@ import type { Site } from '@automattic/api-core';
 
 const API_BASE = 'https://public-api.wordpress.com';
 const siteId = 123;
-const rewindId = '1792244294.123';
+const rewindId = '1792244435.274';
 
 jest.mock( '@wordpress/react-i18n', () => ( {
 	useI18n: jest.fn(),
@@ -84,7 +84,7 @@ function mockBackups(
 			ok: true,
 			totalPages: 1,
 			latest_without_known_threats: latestWithout,
-			backups: [ { object: { backup_period: '1792244294', ...backup } } ],
+			backups: [ { object: { backup_period: '1792244301', ...backup } } ],
 		} );
 	nock( API_BASE )
 		.persist()
@@ -208,10 +208,10 @@ test( 'links to the latest backup without known threats', async () => {
 
 test( 'shows the restore link once when the threats are expanded', async () => {
 	const user = userEvent.setup();
-	nock( API_BASE )
-		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/${ rewindId }/threats` )
+	const threatsScope = nock( API_BASE )
+		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/1792244301/threats` )
 		.reply( 200, {
-			backup_id: 1792244294,
+			backup_id: 1792244301,
 			cutoff: null,
 			summary: knownThreats( 3 ),
 			count: 0,
@@ -228,6 +228,7 @@ test( 'shows the restore link once when the threats are expanded', async () => {
 	expect( await screen.findByRole( 'columnheader', { name: 'Threat' } ) ).toBeVisible();
 	expect( screen.getByRole( 'button', { name: 'Hide threats' } ) ).toBeVisible();
 	expect( screen.getAllByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveLength( 1 );
+	expect( threatsScope.isDone() ).toBe( true );
 } );
 
 test( 'shows no Show threats toggle without Scan', async () => {

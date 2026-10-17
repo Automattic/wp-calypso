@@ -18,7 +18,7 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 const BASE = 'https://public-api.wordpress.com';
 const SITE_ID = 123;
 const LIST_PATH = `/wpcom/v3/sites/${ SITE_ID }/rewind/backups`;
-const THREATS_PATH = `/wpcom/v2/sites/${ SITE_ID }/rewind/backups/200.5/threats`;
+const THREATS_PATH = `/wpcom/v2/sites/${ SITE_ID }/rewind/backups/200/threats`;
 
 const counts = ( flagged: number, vulnerable = 0 ) => ( {
 	malware: flagged,

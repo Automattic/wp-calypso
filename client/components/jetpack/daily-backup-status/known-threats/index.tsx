@@ -152,8 +152,8 @@ export function BackupKnownThreats( {
 		enabled: !! rewindId,
 	} );
 	const { data: threats } = useQuery( {
-		...siteBackupThreatsQuery( siteId, rewindId ?? '' ),
-		enabled: !! rewindId && hasScan && isOpen,
+		...siteBackupThreatsQuery( siteId, counts?.backupPeriod ?? 0 ),
+		enabled: !! rewindId && hasScan && isOpen && counts?.backupPeriod != null,
 	} );
 
 	if ( ! rewindId || ! counts?.knownThreats || ! isFlagged( counts.knownThreats ) ) {

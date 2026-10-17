@@ -53,8 +53,8 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 	);
 	const { data: counts } = useQuery( siteBackupKnownThreatsQuery( siteId, rewindId ) );
 	const { data: threats } = useQuery( {
-		...siteBackupThreatsQuery( siteId, rewindId ),
-		enabled: hasScan && isOpen,
+		...siteBackupThreatsQuery( siteId, counts?.backupPeriod ?? 0 ),
+		enabled: hasScan && isOpen && counts?.backupPeriod != null,
 	} );
 
 	const knownThreats = counts?.knownThreats;
