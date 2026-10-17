@@ -20,11 +20,22 @@
 
 	.gridicon {
 		flex-shrink: 0;
-		// Keep the icon at 16px even when global gridicon rules would resize it.
 		width: 16px;
 		height: 16px;
 		fill: currentColor;
 	}
+}
+
+// Inside a Calypso button, `.button.is-borderless.is-compact .gridicon` (and friends) resize and
+// nudge icons. Repeat the rule with more specificity so the pill's icon stays 16px and centred.
+.backup-known-threats__badge .gridicon,
+.button.is-borderless.is-compact.backup-known-threats__toggle .backup-known-threats__badge .gridicon,
+.components-button.backup-known-threats__toggle .backup-known-threats__badge .gridicon {
+	position: static;
+	top: 0;
+	margin-top: 0;
+	width: 16px;
+	height: 16px;
 }
 
 // Visually just the pill: drop the toggle button's own colour, padding and height.
