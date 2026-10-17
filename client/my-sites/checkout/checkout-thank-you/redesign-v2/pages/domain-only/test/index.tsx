@@ -338,12 +338,12 @@ describe( 'DomainOnly', () => {
 		} );
 
 		it( 'links to the site migration setup flow with dashboard query param if present', () => {
-			jest.mocked( getDashboardFromQuery ).mockReturnValue( 'ciab' );
+			jest.mocked( getDashboardFromQuery ).mockReturnValue( 'a4a' );
 			renderComponent();
 
 			expect( screen.getByRole( 'link', { name: /Migrate an existing site/ } ) ).toHaveAttribute(
 				'href',
-				`/setup/site-migration?dashboard=ciab&siteSlug=${ mockDomainPurchase.meta }`
+				`/setup/site-migration?dashboard=a4a&siteSlug=${ mockDomainPurchase.meta }`
 			);
 		} );
 

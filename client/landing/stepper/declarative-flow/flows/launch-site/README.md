@@ -26,7 +26,7 @@ Logged-out users log in first; the steps are then worked out for their site.
 
 - `ref` – Passed on to checkout. `wp-admin` (or `wp-admin/…`) lands the user on that wp-admin screen after launch, ahead of `back_to`.
 - `coupon` – Applied at checkout.
-- `dashboard` – Passed on to checkout when it is `a4a`, `ciab` or `dotcom`.
+- `dashboard` – Passed on to checkout when it is `a4a` or `dotcom`.
 - `new` – Pre-fills the domain search.
 
 ## After launch
