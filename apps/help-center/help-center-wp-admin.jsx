@@ -98,7 +98,7 @@ function AdminHelpCenterContent() {
 				return;
 			}
 			event.preventDefault();
-			setShowSupportDoc( event.target.href );
+			setShowSupportDoc( event.currentTarget.href );
 		},
 		[ setShowSupportDoc ]
 	);
