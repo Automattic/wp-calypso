@@ -2,17 +2,20 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import BackupDelta from '../index';
 
 jest.mock( 'calypso/state/selectors/site-has-feature' );
-jest.mock( 'calypso/components/activity-card', () => ( {
-	__esModule: true,
-	default: ( { activity } ) => <div data-testid="activity-card">{ activity.activityId }</div>,
-} ) );
+jest.mock( 'calypso/components/data/query-rewind-state', () => () => null );
+jest.mock( 'calypso/components/activity-card/toolbar/actions-button', () => () => (
+	<button>Actions</button>
+) );
+jest.mock( 'calypso/state/selectors/get-site-gmt-offset', () => () => 0 );
+jest.mock( 'calypso/state/selectors/get-site-timezone-value', () => () => 'UTC' );
 jest.mock( 'calypso/state/ui/selectors', () => ( {
 	...jest.requireActual( 'calypso/state/ui/selectors' ),
 	getSelectedSiteId: () => 123,
@@ -63,18 +66,74 @@ describe( 'BackupDelta known threats', () => {
 				backups: [ backup( 200, 3 ), backup( 100, 0 ) ],
 			} );
 
+		nock( BASE )
+			.get( '/wpcom/v2/sites/123/rewind/backups/200/threats' )
+			.query( true )
+			.reply( 200, {
+				backup_id: 200,
+				cutoff: 200,
+				summary: { malware: 3, database: 0, vulnerable: 0, ignored: 0, flagged: 3, fixed: 0 },
+				count: 1,
+				truncated: false,
+				threats: [
+					{
+						id: 1,
+						state: 'open',
+						kind: 'malware',
+						signature: 'Evil.Sig',
+						path_kind: 'file',
+						type: 'file',
+						target: 'wp-content/evil.php',
+						status: 'new',
+						reported_on: '2026-10-01 23:30:00',
+						fixed_on: null,
+					},
+				],
+			} );
+
 		renderWithProvider(
 			<BackupDelta
 				isToday
 				realtimeBackups={ [
-					{ activityId: 'a1', rewindId: '200.5' },
-					{ activityId: 'a2', rewindId: '100.5' },
+					{
+						activityId: 'a1',
+						rewindId: '200.5',
+						activityTs: 1,
+						activityIsRewindable: true,
+						activityDescription: [],
+						activityIcon: 'cloud',
+						activityName: 'rewind__backup_complete_full',
+						activityTitle: 'Backup complete',
+					},
+					{
+						activityId: 'a2',
+						rewindId: '100.5',
+						activityTs: 2,
+						activityIsRewindable: true,
+						activityDescription: [],
+						activityIcon: 'cloud',
+						activityName: 'rewind__backup_complete_full',
+						activityTitle: 'Backup complete',
+					},
 				] }
 			/>
 		);
 
-		expect( await screen.findAllByText( 'Known threats (3)' ) ).toHaveLength( 1 );
-		expect( screen.getAllByTestId( 'activity-card' ) ).toHaveLength( 2 );
+		const button = await screen.findByRole( 'button', {
+			name: /Known threats \(3\)\s*Show threats/,
+		} );
+		const cards = document.querySelectorAll( '.activity-card' );
+		expect( cards ).toHaveLength( 2 );
+		const toolbar = cards[ 0 ].querySelector( '.activity-card__toolbar--reverse' );
+		expect( toolbar ).toContainElement( button );
+		expect( toolbar.lastElementChild ).toContainElement( button );
+		expect( cards[ 1 ].querySelector( '.activity-card__toolbar--reverse' ) ).not.toBeNull();
+		expect( within( cards[ 1 ] ).queryByText( /Known threats/ ) ).toBeNull();
+
+		await userEvent.click( button );
+		expect( button ).toHaveAttribute( 'aria-expanded', 'true' );
+		expect( await within( cards[ 0 ] ).findByText( 'Evil.Sig' ) ).toBeVisible();
+		expect( within( cards[ 1 ] ).queryByText( 'Evil.Sig' ) ).toBeNull();
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 		expect( scope.isDone() ).toBe( true );
 		expect( scope.pendingMocks() ).toEqual( [] );

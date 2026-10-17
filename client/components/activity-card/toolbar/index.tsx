@@ -16,6 +16,7 @@ type OwnProps = {
 	onClickClone?: ( period: string ) => void;
 	hideExpandedContent?: boolean;
 	useSplitButton?: boolean;
+	extraContent?: React.ReactNode;
 };
 
 const Toolbar: React.FC< OwnProps > = ( {
@@ -27,6 +28,7 @@ const Toolbar: React.FC< OwnProps > = ( {
 	onClickClone,
 	hideExpandedContent = false,
 	useSplitButton = false,
+	extraContent,
 } ) => {
 	const isRewindable = isSuccessfulRealtimeBackup( activity );
 	const { streams } = activity;
@@ -58,6 +60,7 @@ const Toolbar: React.FC< OwnProps > = ( {
 					useSplitButton={ useSplitButton }
 				/>
 			) }
+			{ extraContent }
 		</div>
 	);
 };

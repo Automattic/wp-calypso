@@ -2,13 +2,33 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
-import { BackupKnownThreats } from 'calypso/components/jetpack/daily-backup-status/known-threats';
+import {
+	BackupKnownThreatsDetails,
+	BackupKnownThreatsToggle,
+	useBackupKnownThreats,
+} from 'calypso/components/jetpack/daily-backup-status/known-threats';
 import Pagination from 'calypso/components/pagination';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
 const BACKUPS_PER_PAGE = 10;
+
+function BackupDeltaRow( { siteId, activity } ) {
+	const knownThreats = useBackupKnownThreats( siteId, activity.rewindId );
+	const isFlagged = knownThreats.flagged !== null;
+
+	return (
+		<ActivityCard
+			activity={ activity }
+			toolbarExtraContent={
+				isFlagged ? <BackupKnownThreatsToggle state={ knownThreats } inToolbar /> : undefined
+			}
+		>
+			{ isFlagged && <BackupKnownThreatsDetails state={ knownThreats } /> }
+		</ActivityCard>
+	);
+}
 
 export default function BackupDelta( { realtimeBackups, isToday } ) {
 	const translate = useTranslate();
@@ -22,10 +42,7 @@ export default function BackupDelta( { realtimeBackups, isToday } ) {
 			realtimeBackups
 				.slice( ( currentPage - 1 ) * BACKUPS_PER_PAGE, currentPage * BACKUPS_PER_PAGE )
 				.map( ( activity ) => (
-					<div key={ activity.activityId }>
-						<ActivityCard activity={ activity } />
-						<BackupKnownThreats siteId={ siteId } rewindId={ activity.rewindId } />
-					</div>
+					<BackupDeltaRow key={ activity.activityId } siteId={ siteId } activity={ activity } />
 				) ),
 		[ currentPage, realtimeBackups, siteId ]
 	);
