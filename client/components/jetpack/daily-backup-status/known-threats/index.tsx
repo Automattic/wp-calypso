@@ -67,7 +67,8 @@ export function BackupKnownThreatsTable( {
 	const moment = useLocalizedMoment();
 	const rows = threats.threats.filter( ( threat ) => threat.kind !== 'vulnerable' );
 
-	const formatDate = ( value: string | null ) => ( value ? moment( value ).format( 'll' ) : '' );
+	const formatDate = ( value: string | null ) =>
+		value ? moment.utc( value ).local().format( 'll' ) : '';
 
 	const getWhere = ( threat: BackupThreat ) =>
 		threat.slug ? `${ threat.slug }@${ threat.version ?? '' }` : threat.target;

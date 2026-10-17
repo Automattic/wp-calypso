@@ -1,5 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { useIntlLocale } from '../../../app/locale';
+import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 import { RestoreThatOneInsteadLink } from './restore-that-one-instead-link';
 import './known-threats-table.scss';
 import type { BackupThreat, BackupThreats } from '@automattic/api-core';
@@ -22,8 +23,8 @@ export function KnownThreatsTable( {
 	const locale = useIntlLocale();
 	const rows = threats.threats.filter( ( threat ) => threat.kind !== 'vulnerable' );
 
-	const formatDate = ( value: string | null ) =>
-		value ? new Date( value ).toLocaleDateString( locale, { dateStyle: 'medium' } ) : '';
+	const formatThreatDate = ( value: string | null ) =>
+		value ? formatDate( parseDateAsUTC( value ), locale ) : '';
 
 	const getWhere = ( threat: BackupThreat ) =>
 		threat.slug ? `${ threat.slug }@${ threat.version ?? '' }` : threat.target;
@@ -31,7 +32,7 @@ export function KnownThreatsTable( {
 	const getStatus = ( threat: BackupThreat ) => {
 		if ( threat.state === 'fixed' ) {
 			/* translators: %s is a localised date */
-			return sprintf( __( 'Fixed %s' ), formatDate( threat.fixed_on ) );
+			return sprintf( __( 'Fixed %s' ), formatThreatDate( threat.fixed_on ) );
 		}
 		return threat.status === 'ignored' ? __( 'Ignored' ) : __( 'Open' );
 	};
@@ -58,7 +59,7 @@ export function KnownThreatsTable( {
 						<tr key={ threat.id }>
 							<td>{ threat.signature ?? threat.kind }</td>
 							<td>{ getWhere( threat ) }</td>
-							<td>{ formatDate( threat.reported_on ) }</td>
+							<td>{ formatThreatDate( threat.reported_on ) }</td>
 							<td>{ getStatus( threat ) }</td>
 						</tr>
 					) ) }

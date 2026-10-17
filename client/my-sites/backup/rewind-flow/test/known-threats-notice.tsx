@@ -112,7 +112,7 @@ const threatsBody = {
 			type: 'file',
 			target: 'wp-content/evil.php',
 			status: 'new',
-			reported_on: '2026-10-01T00:00:00Z',
+			reported_on: '2026-10-01 23:30:00',
 			fixed_on: null,
 		},
 	],

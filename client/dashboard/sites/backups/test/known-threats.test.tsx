@@ -159,6 +159,9 @@ afterEach( () => {
 	nock.cleanAll();
 } );
 
+const localDate = ( utcMs: number ) =>
+	new Intl.DateTimeFormat( 'en-US', { dateStyle: 'medium' } ).format( new Date( utcMs ) );
+
 const flaggedBackups = [
 	{ object: { backup_period: '1792244294', known_threats: knownThreats( 3 ) } },
 	{ object: { backup_period: 1792240000, known_threats: knownThreats( 0 ) } },
@@ -230,8 +233,8 @@ test( 'expands the threats table for Scan sites', async () => {
 					type: 'file',
 					target: 'wp-content/uploads/evil.php',
 					status: null,
-					reported_on: '2026-09-01T00:00:00Z',
-					fixed_on: '2026-09-02T00:00:00Z',
+					reported_on: '2026-09-01 23:30:00',
+					fixed_on: '2026-09-02 23:30:00',
 				},
 			],
 		} );
@@ -241,7 +244,10 @@ test( 'expands the threats table for Scan sites', async () => {
 
 	expect( await screen.findByText( 'Backdoor.PHP.Agent' ) ).toBeVisible();
 	expect( screen.getByText( 'wp-content/uploads/evil.php' ) ).toBeVisible();
-	expect( screen.getByText( /^Fixed / ) ).toBeVisible();
+	expect( screen.getByText( localDate( Date.UTC( 2026, 8, 1, 23, 30 ) ) ) ).toBeVisible();
+	expect(
+		screen.getByText( `Fixed ${ localDate( Date.UTC( 2026, 8, 2, 23, 30 ) ) }` )
+	).toBeVisible();
 	expect( screen.getByText( 'Also: 2 vulnerable plugin or theme versions.' ) ).toBeVisible();
 	expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveAttribute(
 		'href',

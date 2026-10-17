@@ -53,6 +53,9 @@ const backupWith = ( knownThreats?: ReturnType< typeof counts > ) => ( {
 	},
 } );
 
+const localDate = ( utcMs: number ) =>
+	new Intl.DateTimeFormat( 'en-US', { dateStyle: 'medium' } ).format( new Date( utcMs ) );
+
 const threatsBody = {
 	backup_id: 200,
 	cutoff: 200,
@@ -69,7 +72,7 @@ const threatsBody = {
 			type: 'file',
 			target: 'wp-content/evil.php',
 			status: 'new',
-			reported_on: '2026-10-01T00:00:00Z',
+			reported_on: '2026-10-01 23:30:00',
 			fixed_on: null,
 		},
 	],
@@ -117,6 +120,7 @@ describe( 'BackupKnownThreats', () => {
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
 		expect( screen.getByText( 'wp-content/evil.php' ) ).toBeVisible();
 		expect( screen.getByText( 'Open' ) ).toBeVisible();
+		expect( screen.getByText( localDate( Date.UTC( 2026, 9, 1, 23, 30 ) ) ) ).toBeVisible();
 		expect( screen.getByText( 'Also: 2 vulnerable plugin or theme versions.' ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveAttribute(
 			'href',
