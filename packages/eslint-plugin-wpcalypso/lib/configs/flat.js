@@ -22,7 +22,6 @@ const recommended = ( plugin ) => {
 				parserOptions: legacyRecommended.parserOptions,
 			},
 			plugins: {
-				jsdoc,
 				wpcalypso: plugin,
 				'inclusive-language': load( 'eslint-plugin-inclusive-language' ),
 			},
