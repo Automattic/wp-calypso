@@ -73,7 +73,13 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews, isL
 	return null;
 };
 
-const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
+const PluginsBrowser = ( {
+	trackPageViews = true,
+	category,
+	search,
+	path = '/plugins',
+	page = 1,
+} ) => {
 	const {
 		isAboveElement,
 		targetRef: searchHeaderRef,
@@ -130,6 +136,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 			return (
 				<PluginsSearchResultPage
 					search={ search }
+					path={ path }
+					page={ page }
+					isLoggedIn={ isLoggedIn }
 					setIsFetchingPluginsBySearchTerm={ setIsFetchingPluginsBySearchTerm }
 					siteSlug={ siteSlug }
 					siteId={ siteId }
@@ -147,7 +156,14 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 
 		if ( category ) {
 			return (
-				<PluginsCategoryResultsPage category={ category } sites={ sites } siteSlug={ siteSlug } />
+				<PluginsCategoryResultsPage
+					category={ category }
+					sites={ sites }
+					siteSlug={ siteSlug }
+					path={ path }
+					page={ page }
+					isLoggedIn={ isLoggedIn }
+				/>
 			);
 		}
 

@@ -1,5 +1,9 @@
 import config from '@automattic/calypso-config';
-import { getESPluginsInfiniteQueryParams } from 'calypso/data/marketplace/use-es-query';
+import { getPluginsPage } from 'calypso/data/marketplace/pagination';
+import {
+	getESPluginsInfiniteQueryParams,
+	getESPluginsQueryParams,
+} from 'calypso/data/marketplace/use-es-query';
 import {
 	getWPCOMFeaturedPluginsQueryParams,
 	getWPCOMPluginsQueryParams,
@@ -15,12 +19,19 @@ import { getPlugin as getWporgPluginSelector } from 'calypso/state/plugins/wporg
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { ALLOWED_CATEGORIES, getCategories } from './categories/use-categories';
-import { UNLISTED_PLUGINS } from './constants';
+import { UNLISTED_PLUGINS, WPBEGINNER_PLUGINS } from './constants';
 import { getCategoryForPluginsBrowser } from './controller';
 
 const PREFETCH_TIMEOUT = 2000;
 const PREFETCH_TIMEOUT_BOTS = 10000;
 const PREFETCH_TIMEOUT_ERROR = 'plugins prefetch timeout';
+
+export function setPluginsResultsPageSSR( context, next ) {
+	if ( context.query.s || getCategoryForPluginsBrowser( context ) ) {
+		context.serverSideRender = true;
+	}
+	next();
+}
 
 const formatCause = ( cause ) => {
 	if ( ! cause ) {
@@ -63,14 +74,35 @@ const prefetchPopularPlugins = ( queryClient, options ) => {
 	);
 };
 
-const prefetchCategoryPlugins = ( queryClient, options ) => {
-	const infinite = true;
-	return prefetchPluginsData(
-		queryClient,
-		getESPluginsInfiniteQueryParams( { ...options, infinite }, infinite ),
-		true
-	);
+const prefetchResultsPage = ( queryClient, options ) => {
+	let query;
+	if ( options.category === 'paid' ) {
+		query = getWPCOMPluginsQueryParams(
+			config.isEnabled( 'marketplace-fetch-all-dynamic-products' ) ? 'all' : 'launched',
+			options.searchTerm,
+			options.tag
+		);
+	} else if ( options.category === 'featured' ) {
+		query = getWPCOMFeaturedPluginsQueryParams();
+	} else {
+		query = getESPluginsQueryParams( options, options.locale );
+	}
+	return prefetchPluginsData( queryClient, query );
 };
+
+function getResultsPageOptions( context ) {
+	const searchTerm = context.query?.s;
+	const category = searchTerm ? undefined : getCategoryForPluginsBrowser( context );
+	const categoryTags = getCategories()[ category || '' ]?.tags || [ category ];
+	return {
+		locale: context.lang,
+		category,
+		searchTerm,
+		tag: categoryTags.join( ',' ),
+		slugs: category === 'wpbeginner' ? WPBEGINNER_PLUGINS : undefined,
+		page: getPluginsPage( context.query?.page ),
+	};
+}
 
 const prefetchFeaturedPlugins = ( queryClient ) =>
 	prefetchPluginsData( queryClient, getWPCOMFeaturedPluginsQueryParams() );
@@ -175,14 +207,21 @@ export async function fetchPlugins( context, next ) {
 	const options = {
 		...getQueryOptions( context ),
 	};
+	const lists = context.query?.s
+		? [
+				{
+					name: 'search-plugins',
+					promise: prefetchResultsPage( queryClient, getResultsPageOptions( context ) ),
+				},
+			]
+		: [
+				{ name: 'paid-plugins', promise: prefetchPaidPlugins( queryClient, options ) },
+				{ name: 'popular-plugins', promise: prefetchPopularPlugins( queryClient, options ) },
+				{ name: 'featured-plugins', promise: prefetchFeaturedPlugins( queryClient ) },
+			];
 
 	await prefetchTimebox(
-		[
-			{ name: 'products-list', promise: prefetchProductList( queryClient, store ) },
-			{ name: 'paid-plugins', promise: prefetchPaidPlugins( queryClient, options ) },
-			{ name: 'popular-plugins', promise: prefetchPopularPlugins( queryClient, options ) },
-			{ name: 'featured-plugins', promise: prefetchFeaturedPlugins( queryClient ) },
-		],
+		[ { name: 'products-list', promise: prefetchProductList( queryClient, store ) }, ...lists ],
 		context
 	);
 
@@ -196,23 +235,12 @@ export async function fetchCategoryPlugins( context, next ) {
 		return next();
 	}
 
-	const categories = getCategories();
-	const category = getCategoryForPluginsBrowser( context );
-
-	const categoryTags = categories[ category || '' ]?.tags || [ category ];
-	const tag = categoryTags.join( ',' );
-
-	const options = {
-		...getQueryOptions( context ),
-		category,
-		tag,
-	};
+	const options = getResultsPageOptions( context );
 
 	await prefetchTimebox(
 		[
 			{ name: 'products-list', promise: prefetchProductList( queryClient, store ) },
-			{ name: 'paid-plugins', promise: prefetchPaidPlugins( queryClient, options ) },
-			{ name: 'category-plugins', promise: prefetchCategoryPlugins( queryClient, options ) },
+			{ name: 'category-plugins', promise: prefetchResultsPage( queryClient, options ) },
 		],
 		context
 	);

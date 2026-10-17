@@ -88,6 +88,7 @@ export type SearchParams = {
 	category: string | undefined;
 	groupId: string;
 	pageHandle: string | undefined;
+	from?: number;
 	pageSize: number;
 	locale: string;
 	slugs?: string[] | undefined;

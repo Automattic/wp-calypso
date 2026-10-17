@@ -1,7 +1,9 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
+import { DEFAULT_PAGE_SIZE } from 'calypso/data/marketplace/constants';
+import { getPluginsPage } from 'calypso/data/marketplace/pagination';
 import { Plugin } from 'calypso/data/marketplace/types';
-import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
+import { useESPlugins, useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
 import {
 	useWPCOMFeaturedPlugins,
 	useWPCOMPluginsList,
@@ -26,6 +28,8 @@ interface WPCOMResponse {
 	data?: Plugin[];
 	isLoading: boolean;
 	fetchNextPage?: () => void;
+	isError: boolean;
+	refetch: () => void;
 }
 
 const usePlugins = ( {
@@ -34,12 +38,14 @@ const usePlugins = ( {
 	infinite = false,
 	locale = '',
 	slugs,
+	page,
 }: {
 	category: string;
 	search?: string;
 	infinite?: boolean;
 	locale?: string;
 	slugs?: string[];
+	page?: number;
 } ) => {
 	let plugins = [];
 	let isFetching = false;
@@ -65,11 +71,18 @@ const usePlugins = ( {
 		fetchNextPage,
 		hasNextPage,
 	} = useESPluginsInfinite( wporgPluginsOptions, {
-		enabled: !! search || ! [ 'paid', 'featured ' ].includes( category ),
+		enabled: page === undefined && ( !! search || ! [ 'paid', 'featured ' ].includes( category ) ),
 	} ) as ESResponse;
 
+	const pagedPlugins = useESPlugins(
+		{ ...wporgPluginsOptions, page },
+		{
+			enabled: page !== undefined && ! [ 'paid', 'featured' ].includes( category ),
+		}
+	);
+
 	// This is triggered only for paid plugins lists.
-	const { data: dotComPlugins = [], isLoading: isFetchingDotCom } = useWPCOMPluginsList(
+	const paidPluginsQuery = useWPCOMPluginsList(
 		config.isEnabled( 'marketplace-fetch-all-dynamic-products' ) ? 'all' : 'launched',
 		search,
 		tag,
@@ -77,12 +90,47 @@ const usePlugins = ( {
 			enabled: category === 'paid',
 		}
 	) as WPCOMResponse;
+	const { data: dotComPlugins = [], isLoading: isFetchingDotCom } = paidPluginsQuery;
 
 	// This is triggered only for featured plugins list in discover page.
-	const { data: featuredPlugins = [], isLoading: isFetchingDotComFeatured } =
-		useWPCOMFeaturedPlugins( {
-			enabled: category === 'featured',
-		} ) as WPCOMResponse;
+	const featuredPluginsQuery = useWPCOMFeaturedPlugins( {
+		enabled: category === 'featured',
+	} ) as WPCOMResponse;
+	const { data: featuredPlugins = [], isLoading: isFetchingDotComFeatured } = featuredPluginsQuery;
+
+	if ( page !== undefined ) {
+		if ( category !== 'paid' && category !== 'featured' ) {
+			return {
+				plugins: pagedPlugins.data?.plugins ?? [],
+				isFetching: pagedPlugins.isLoading,
+				isError: pagedPlugins.isError,
+				retry: pagedPlugins.refetch,
+				fetchNextPage: () => {},
+				pagination: pagedPlugins.data?.pagination ?? {
+					page: getPluginsPage( page ),
+					pages: 0,
+					results: 0,
+				},
+			};
+		}
+
+		const query = category === 'paid' ? paidPluginsQuery : featuredPluginsQuery;
+		const allPlugins = query.data ?? [];
+		const currentPage = getPluginsPage( page );
+		const offset = ( currentPage - 1 ) * DEFAULT_PAGE_SIZE;
+		return {
+			plugins: allPlugins.slice( offset, offset + DEFAULT_PAGE_SIZE ),
+			isFetching: query.isLoading,
+			isError: query.isError,
+			retry: query.refetch,
+			fetchNextPage: () => {},
+			pagination: {
+				page: currentPage,
+				pages: Math.ceil( allPlugins.length / DEFAULT_PAGE_SIZE ),
+				results: allPlugins.length,
+			},
+		};
+	}
 
 	switch ( category ) {
 		case 'paid':
@@ -113,7 +161,7 @@ const usePlugins = ( {
 			return;
 		}
 
-		fetchNextPage && fetchNextPage();
+		fetchNextPage?.();
 	}
 
 	return {
