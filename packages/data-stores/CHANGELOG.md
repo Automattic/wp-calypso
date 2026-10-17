@@ -5,6 +5,7 @@
 ### Breaking changes
 
 - Move the Launchpad query and mutation hooks (`useLaunchpad`, `useSortedLaunchpadTasks`, `updateLaunchpadSettings`, `useLaunchpadDismisser`, `fetchLaunchpad`, and their types) to `@automattic/launchpad`.
+- Remove the onboard store's garden state: `setGardenName`, `setGardenPartnerName`, `getGardenName` and `getGardenPartnerName`.
 
 ## 3.2.2
 

@@ -7,12 +7,7 @@ import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
-import {
-	setupSiteAfterCreation,
-	isTailoredSignupFlow,
-	HUNDRED_YEAR_PLAN_FLOW,
-	AI_SITE_BUILDER_FLOW,
-} from '../';
+import { setupSiteAfterCreation, isTailoredSignupFlow, HUNDRED_YEAR_PLAN_FLOW } from '../';
 import wpcomRequest from '../wpcom-request';
 import cartManagerClient from './create-cart-manager-client';
 import type { DomainSuggestion } from '@automattic/api-core';
@@ -159,8 +154,6 @@ export const createSite = async (
 	sourceSlug?: string,
 	siteIntent?: string,
 	siteGoals?: SiteGoal[],
-	gardenName?: string | null,
-	gardenPartnerName?: string | null,
 	specId?: string | null,
 	ref?: string,
 	provisionTarget?: string | null,
@@ -220,11 +213,6 @@ export const createSite = async (
 			lang_id: getLanguage( locale as string )?.value,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
-			...( gardenName &&
-				gardenPartnerName && {
-					garden_name: gardenName,
-					garden_partner_name: gardenPartnerName,
-				} ),
 			...( specId && {
 				spec_id: specId,
 			} ),
@@ -240,12 +228,6 @@ export const createSite = async (
 				// post-checkout path (direct, chooser, Big Sky return) converges on it. The
 				// option is in the WoA transfer allowlist, so it survives the Atomic transfer.
 				...( aiLaunchpadEnabled && { wpcom_ai_launchpad_enabled: true } ),
-				// Trigger backend build for ai-site-builder flow with commerce garden and spec_id
-				...( flowName === AI_SITE_BUILDER_FLOW &&
-					gardenName === 'commerce' &&
-					specId && {
-						trigger_backend_build: false,
-					} ),
 			},
 		}
 	);
@@ -253,15 +235,6 @@ export const createSite = async (
 	if ( ! siteCreationResponse.success ) {
 		// TODO ebuccelli: Manage siteCreationResponse.errors
 		return;
-	}
-
-	// TODO - This is a temporary fix to ensure garden site URLs use HTTPS.
-	// Ensure garden site URLs use HTTPS
-	if ( gardenName && siteCreationResponse?.blog_details?.url ) {
-		siteCreationResponse.blog_details.url = siteCreationResponse.blog_details.url.replace(
-			'http://',
-			'https://'
-		);
 	}
 
 	const parsedBlogURL = getUrlParts( siteCreationResponse?.blog_details.url );
