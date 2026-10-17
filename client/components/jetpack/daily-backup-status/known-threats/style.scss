@@ -1,21 +1,15 @@
-@import "@automattic/typography/styles/variables";
-
 .backup-known-threats {
 	margin: 8px 0 16px;
 }
 
 .backup-known-threats__badge {
-	display: inline-block;
-	padding: 2px 8px;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
 	margin-inline-end: 8px;
-	border-radius: 2px;
-	background: var( --color-warning-5 );
-	color: var( --color-warning-80 );
-	font-size: $font-body-small;
 
 	.gridicon {
-		margin-inline-end: 4px;
-		vertical-align: text-bottom;
+		flex-shrink: 0;
 	}
 }
 

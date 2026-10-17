@@ -240,8 +240,14 @@ test( 'expands the threats table for Scan sites', async () => {
 		} );
 	renderPage( { withScan: true, backups: flaggedBackups, selected: flaggedRewindId } );
 
-	const toggle = await screen.findByRole( 'button', { name: 'Known threats (3) Show threats' } );
-	expect( toggle ).toHaveTextContent( 'Known threats (3) Show threats' );
+	const toggle = await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
+	expect( toggle ).toHaveTextContent( 'Known threats (3)' );
+	expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
+	expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
+	expect( screen.queryByText( 'Show threats' ) ).not.toBeInTheDocument();
+	await user.hover( toggle );
+	expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
+	await user.unhover( toggle );
 	expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
 	expect( toggle.querySelector( 'svg' ) ).toBeInTheDocument();
 	await user.click( toggle );
@@ -261,7 +267,12 @@ test( 'expands the threats table for Scan sites', async () => {
 		'is-next-40px-default-size'
 	);
 	expect( threatsScope.isDone() ).toBe( true );
-	expect( screen.getByRole( 'button', { name: 'Known threats (3) Hide threats' } ) ).toBeVisible();
+	const expanded = screen.getByRole( 'button', { name: 'Known threats (3), hide threats' } );
+	expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
+	await user.unhover( expanded );
+	await user.hover( expanded );
+	expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
+	expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
 } );
 
 test( 'uses the singular vulnerable note for one version', async () => {
@@ -278,7 +289,7 @@ test( 'uses the singular vulnerable note for one version', async () => {
 		} );
 	renderPage( { withScan: true, backups: flaggedBackups, selected: flaggedRewindId } );
 
-	await user.click( await screen.findByRole( 'button', { name: /Show threats/ } ) );
+	await user.click( await screen.findByRole( 'button', { name: /show threats/ } ) );
 
 	expect( await screen.findByText( 'Also: 1 vulnerable plugin or theme version.' ) ).toBeVisible();
 } );
@@ -292,7 +303,9 @@ test( 'shows the count only without Scan', async () => {
 	await waitFor( () => expect( screen.getAllByText( 'Known threats (3)' ) ).toHaveLength( 2 ) );
 	screen
 		.getAllByText( 'Known threats (3)' )
-		.forEach( ( badge ) => expect( badge.querySelector( 'svg' ) ).toBeInTheDocument() );
-	expect( screen.queryByRole( 'button', { name: /Show threats/ } ) ).not.toBeInTheDocument();
+		.forEach( ( badge ) =>
+			expect( badge.parentElement?.querySelector( 'svg' ) ).toBeInTheDocument()
+		);
+	expect( screen.queryByRole( 'button', { name: /show threats/i } ) ).not.toBeInTheDocument();
 	expect( threatsScope.isDone() ).toBe( false );
 } );

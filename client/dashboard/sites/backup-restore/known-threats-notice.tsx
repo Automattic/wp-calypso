@@ -1,11 +1,12 @@
 import { HostingFeatures, isFlagged } from '@automattic/api-core';
 import { siteBackupKnownThreatsQuery, siteBackupThreatsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button, CheckboxControl, __experimentalVStack as VStack } from '@wordpress/components';
+import { CheckboxControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import Notice from '../../components/notice';
 import { hasHostingFeature } from '../../utils/site-features';
+import { KnownThreatsToggle } from '../backups/known-threats/known-threats-badge';
 import { KnownThreatsTable } from '../backups/known-threats/known-threats-table';
 import { RestoreThatOneInsteadLink } from '../backups/known-threats/restore-that-one-instead-link';
 import type { Site } from '@automattic/api-core';
@@ -70,14 +71,11 @@ export default function KnownThreatsNotice( {
 				/>
 				{ hasScan && (
 					<div>
-						<Button
-							__next40pxDefaultSize
-							variant="link"
-							aria-expanded={ isOpen }
-							onClick={ () => setIsOpen( ( open ) => ! open ) }
-						>
-							{ isOpen ? __( 'Hide threats' ) : __( 'Show threats' ) }
-						</Button>
+						<KnownThreatsToggle
+							count={ knownThreats.flagged }
+							isOpen={ isOpen }
+							onToggle={ () => setIsOpen( ( open ) => ! open ) }
+						/>
 						{ isOpen && threats && (
 							<KnownThreatsTable
 								siteSlug={ site.slug }

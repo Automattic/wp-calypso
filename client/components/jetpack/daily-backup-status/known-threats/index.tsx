@@ -1,9 +1,9 @@
 import { getBackupPeriod, isFlagged } from '@automattic/api-core';
 import { siteBackupKnownThreatsQuery, siteBackupThreatsQuery } from '@automattic/api-queries';
 import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
-import { Button as CalypsoButton, Gridicon } from '@automattic/components';
+import { Badge, Button as CalypsoButton, Gridicon } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import { Button, Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -165,58 +165,100 @@ export function useBackupKnownThreats( siteId: number, rewindId?: string | null 
 
 type BackupKnownThreatsState = ReturnType< typeof useBackupKnownThreats >;
 
+export function KnownThreatsBadge( { flagged }: { flagged: number } ) {
+	const translate = useTranslate();
+
+	return (
+		<Badge type="warning" className="backup-known-threats__badge">
+			<Gridicon icon="notice-outline" size={ 16 } aria-hidden="true" />
+			{ translate( 'Known threats (%d)', {
+				args: flagged,
+				comment: '%d is the number of known security threats in a backup',
+			} ) }
+		</Badge>
+	);
+}
+
 interface BackupKnownThreatsToggleProps {
 	state: BackupKnownThreatsState;
 	/** Render a compact borderless button, matching the buttons in the activity card toolbar. */
 	inToolbar?: boolean;
 }
 
-export function BackupKnownThreatsToggle( { state, inToolbar }: BackupKnownThreatsToggleProps ) {
+interface KnownThreatsToggleButtonProps {
+	flagged: number;
+	isOpen: boolean;
+	onToggle: () => void;
+	/** Render a compact borderless button, matching the buttons in the activity card toolbar. */
+	inToolbar?: boolean;
+}
+
+export function KnownThreatsToggleButton( {
+	flagged,
+	isOpen,
+	onToggle,
+	inToolbar,
+}: KnownThreatsToggleButtonProps ) {
 	const translate = useTranslate();
+	const actionLabel = isOpen ? translate( 'Hide threats' ) : translate( 'Show threats' );
+	const ariaLabel = isOpen
+		? translate( 'Known threats (%d), hide threats', {
+				args: flagged,
+				comment:
+					'%d is the number of known security threats in a backup; the button hides the list of threats',
+			} )
+		: translate( 'Known threats (%d), show threats', {
+				args: flagged,
+				comment:
+					'%d is the number of known security threats in a backup; the button shows the list of threats',
+			} );
+
+	return (
+		<Tooltip text={ String( actionLabel ) }>
+			{ inToolbar ? (
+				<CalypsoButton
+					compact
+					borderless
+					aria-label={ String( ariaLabel ) }
+					aria-expanded={ isOpen }
+					onClick={ onToggle }
+				>
+					<KnownThreatsBadge flagged={ flagged } />
+				</CalypsoButton>
+			) : (
+				<Button
+					__next40pxDefaultSize
+					variant="tertiary"
+					size="compact"
+					aria-label={ String( ariaLabel ) }
+					aria-expanded={ isOpen }
+					onClick={ onToggle }
+				>
+					<KnownThreatsBadge flagged={ flagged } />
+				</Button>
+			) }
+		</Tooltip>
+	);
+}
+
+export function BackupKnownThreatsToggle( { state, inToolbar }: BackupKnownThreatsToggleProps ) {
 	const { flagged, hasScan, isOpen, toggle } = state;
 
 	if ( flagged === null ) {
 		return null;
 	}
 
-	const badge = (
-		<span className="backup-known-threats__badge">
-			<Gridicon icon="notice-outline" size={ 16 } aria-hidden="true" />
-			{ translate( 'Known threats (%d)', {
-				args: flagged,
-				comment: '%d is the number of known security threats in a backup',
-			} ) }
-		</span>
-	);
-
 	if ( ! hasScan ) {
-		return badge;
-	}
-
-	const label = (
-		<span>
-			{ badge } <span>{ isOpen ? translate( 'Hide threats' ) : translate( 'Show threats' ) }</span>
-		</span>
-	);
-
-	if ( inToolbar ) {
-		return (
-			<CalypsoButton compact borderless aria-expanded={ isOpen } onClick={ toggle }>
-				{ label }
-			</CalypsoButton>
-		);
+		return <KnownThreatsBadge flagged={ flagged } />;
 	}
 
 	return (
-		<Button
-			__next40pxDefaultSize
-			variant="tertiary"
-			size="compact"
-			aria-expanded={ isOpen }
-			onClick={ toggle }
-		>
-			{ label }
-		</Button>
+		<KnownThreatsToggleButton
+			flagged={ flagged }
+			isOpen={ isOpen }
+			onToggle={ toggle }
+			inToolbar={ inToolbar }
+		/>
 	);
 }
 

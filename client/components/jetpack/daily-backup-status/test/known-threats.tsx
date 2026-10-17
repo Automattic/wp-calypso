@@ -114,9 +114,14 @@ describe( 'BackupKnownThreats', () => {
 		renderIt();
 
 		const toggle = await screen.findByRole( 'button', {
-			name: 'Known threats (1) Show threats',
+			name: 'Known threats (1), show threats',
 		} );
-		expect( toggle ).toHaveTextContent( 'Known threats (1) Show threats' );
+		expect( toggle ).toHaveTextContent( 'Known threats (1)' );
+		expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Show threats' ) ).not.toBeInTheDocument();
+		await userEvent.hover( toggle );
+		expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
+		await userEvent.unhover( toggle );
 		expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
 		expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
 		expect( toggle.querySelector( '.gridicons-notice-outline' ) ).toBeInTheDocument();
@@ -134,9 +139,11 @@ describe( 'BackupKnownThreats', () => {
 		expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveClass(
 			'is-next-40px-default-size'
 		);
-		expect(
-			screen.getByRole( 'button', { name: 'Known threats (1) Hide threats' } )
-		).toHaveAttribute( 'aria-expanded', 'true' );
+		const expanded = screen.getByRole( 'button', { name: 'Known threats (1), hide threats' } );
+		expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
+		await userEvent.unhover( expanded );
+		await userEvent.hover( expanded );
+		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
 		expect( details.isDone() ).toBe( true );
 	} );
 
@@ -148,7 +155,7 @@ describe( 'BackupKnownThreats', () => {
 			.reply( 200, { ...threatsBody, summary: counts( 1, 1 ) } );
 		renderIt();
 
-		await userEvent.click( await screen.findByRole( 'button', { name: /Show threats/ } ) );
+		await userEvent.click( await screen.findByRole( 'button', { name: /show threats/ } ) );
 
 		expect(
 			await screen.findByText( 'Also: 1 vulnerable plugin or theme version.' )
@@ -169,7 +176,7 @@ describe( 'BackupKnownThreats', () => {
 		renderWithProvider(
 			<BackupKnownThreats siteId={ SITE_ID } rewindId="200.5" showRestoreLink={ false } />
 		);
-		await userEvent.click( await screen.findByRole( 'button', { name: /Show threats/ } ) );
+		await userEvent.click( await screen.findByRole( 'button', { name: /show threats/ } ) );
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Restore that one instead' } ) ).toBeNull();
 	} );
@@ -184,7 +191,7 @@ describe( 'BackupKnownThreats', () => {
 		expect( badge ).toBeVisible();
 		expect( badge.querySelector( '.gridicons-notice-outline' ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( /Show threats/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /show threats/i ) ).not.toBeInTheDocument();
 		expect( details.isDone() ).toBe( false );
 	} );
 } );

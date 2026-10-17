@@ -1,11 +1,9 @@
 import { HostingFeatures, isFlagged } from '@automattic/api-core';
 import { siteBackupKnownThreatsQuery, siteBackupThreatsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { hasHostingFeature } from '../../../utils/site-features';
-import { KnownThreatsBadge } from './known-threats-badge';
+import { KnownThreatsBadge, KnownThreatsToggle } from './known-threats-badge';
 import { KnownThreatsTable } from './known-threats-table';
 import type { Site } from '@automattic/api-core';
 
@@ -38,17 +36,11 @@ export function KnownThreatsSection( {
 
 	return (
 		<div>
-			<Button
-				__next40pxDefaultSize
-				variant="tertiary"
-				size="compact"
-				aria-expanded={ isOpen }
-				onClick={ () => setIsOpen( ( open ) => ! open ) }
-			>
-				<span>
-					{ badge } <span>{ isOpen ? __( 'Hide threats' ) : __( 'Show threats' ) }</span>
-				</span>
-			</Button>
+			<KnownThreatsToggle
+				count={ counts.knownThreats.flagged }
+				isOpen={ isOpen }
+				onToggle={ () => setIsOpen( ( open ) => ! open ) }
+			/>
 			{ isOpen && threats && (
 				<KnownThreatsTable
 					siteSlug={ site.slug }

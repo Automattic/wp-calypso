@@ -120,7 +120,7 @@ describe( 'BackupDelta known threats', () => {
 		);
 
 		const button = await screen.findByRole( 'button', {
-			name: /Known threats \(3\)\s*Show threats/,
+			name: 'Known threats (3), show threats',
 		} );
 		const cards = document.querySelectorAll( '.activity-card' );
 		expect( cards ).toHaveLength( 2 );
@@ -130,8 +130,15 @@ describe( 'BackupDelta known threats', () => {
 		expect( cards[ 1 ].querySelector( '.activity-card__toolbar--reverse' ) ).not.toBeNull();
 		expect( within( cards[ 1 ] ).queryByText( /Known threats/ ) ).toBeNull();
 
+		expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).toBeNull();
+		await userEvent.hover( button );
+		expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
+		await userEvent.unhover( button );
 		await userEvent.click( button );
 		expect( button ).toHaveAttribute( 'aria-expanded', 'true' );
+		await userEvent.unhover( button );
+		await userEvent.hover( button );
+		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
 		expect( await within( cards[ 0 ] ).findByText( 'Evil.Sig' ) ).toBeVisible();
 		expect( within( cards[ 1 ] ).queryByText( 'Evil.Sig' ) ).toBeNull();
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );

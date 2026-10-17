@@ -195,12 +195,24 @@ describe( 'KnownThreatsNotice', () => {
 		mockList( counts( 3 ), { latest_without_known_threats: 150 } );
 		nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
 		renderWithProvider( <Harness /> );
-		const toggle = await screen.findByRole( 'button', { name: 'Show threats' } );
+		const toggle = await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
 		expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
+		expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
+		expect( toggle.querySelector( '.gridicons-notice-outline' ) ).toBeInTheDocument();
 		expect( toggle.parentElement ).toHaveClass( 'rewind-flow-known-threats__details' );
+		expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Show threats' ) ).not.toBeInTheDocument();
+		await userEvent.hover( toggle );
+		expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
+		await userEvent.unhover( toggle );
 		await userEvent.click( toggle );
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Hide threats' } ) ).toBeVisible();
+		const expanded = screen.getByRole( 'button', { name: 'Known threats (3), hide threats' } );
+		expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
+		await userEvent.unhover( expanded );
+		await userEvent.hover( expanded );
+		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveAttribute(
 			'href',
 			'/backup/example.wordpress.com/restore/150'

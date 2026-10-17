@@ -2,12 +2,13 @@ import { isFlagged } from '@automattic/api-core';
 import { siteBackupKnownThreatsQuery, siteBackupThreatsQuery } from '@automattic/api-queries';
 import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
 import { useQuery } from '@tanstack/react-query';
-import { Button, CheckboxControl } from '@wordpress/components';
+import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	BackupKnownThreatsTable,
+	KnownThreatsToggleButton,
 	RestoreThatOneInsteadLink,
 } from 'calypso/components/jetpack/daily-backup-status/known-threats';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -92,14 +93,11 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 			) }
 			{ hasScan && (
 				<div className="rewind-flow-known-threats__details">
-					<Button
-						__next40pxDefaultSize
-						variant="link"
-						aria-expanded={ isOpen }
-						onClick={ () => setIsOpen( ( open ) => ! open ) }
-					>
-						{ isOpen ? translate( 'Hide threats' ) : translate( 'Show threats' ) }
-					</Button>
+					<KnownThreatsToggleButton
+						flagged={ knownThreats.flagged }
+						isOpen={ isOpen }
+						onToggle={ () => setIsOpen( ( open ) => ! open ) }
+					/>
 					{ isOpen && threats && siteSlug && (
 						<BackupKnownThreatsTable
 							siteSlug={ siteSlug }

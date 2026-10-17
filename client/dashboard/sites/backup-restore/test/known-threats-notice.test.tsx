@@ -221,12 +221,23 @@ test( 'shows the restore link once when the threats are expanded', async () => {
 	mockBackups( { known_threats: knownThreats( 3 ) } );
 	renderForm();
 
-	const toggle = await screen.findByRole( 'button', { name: 'Show threats' } );
-	expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
+	const toggle = await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
+	expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
+	expect( toggle.querySelector( 'svg' ) ).toBeInTheDocument();
+	expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
+	expect( screen.queryByText( 'Show threats' ) ).not.toBeInTheDocument();
+	await user.hover( toggle );
+	expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
+	await user.unhover( toggle );
 	await user.click( toggle );
 
 	expect( await screen.findByRole( 'columnheader', { name: 'Threat' } ) ).toBeVisible();
-	expect( screen.getByRole( 'button', { name: 'Hide threats' } ) ).toBeVisible();
+	const expanded = screen.getByRole( 'button', { name: 'Known threats (3), hide threats' } );
+	expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
+	await user.unhover( expanded );
+	await user.hover( expanded );
+	expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
+	expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
 	expect( screen.getAllByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveLength( 1 );
 	expect( threatsScope.isDone() ).toBe( true );
 } );
@@ -245,7 +256,7 @@ test( 'shows no Show threats toggle without Scan', async () => {
 	);
 
 	expect( await screen.findByText( /known to contain 3/ ) ).toBeVisible();
-	expect( screen.queryByRole( 'button', { name: /Show threats/ } ) ).not.toBeInTheDocument();
+	expect( screen.queryByRole( 'button', { name: /show threats/i } ) ).not.toBeInTheDocument();
 	expect( screen.getByRole( 'checkbox', { name: /I understand/ } ) ).toBeVisible();
 } );
 
