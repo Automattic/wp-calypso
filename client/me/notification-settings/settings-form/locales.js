@@ -11,6 +11,7 @@ export const settingLabels = {
 	recommended_blog: () => i18n.translate( 'Blog recommendations' ),
 	new_comment: () => i18n.translate( 'Comments on my site' ),
 	post_like: () => i18n.translate( 'Likes on my posts' ),
+	reblog: () => i18n.translate( 'Reposts of my posts' ),
 	follow: () => i18n.translate( 'Subscriptions' ),
 	achievement: () => i18n.translate( 'Site achievements' ),
 	mentions: () => i18n.translate( 'Username mentions' ),

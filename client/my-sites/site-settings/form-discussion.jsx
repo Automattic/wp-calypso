@@ -405,7 +405,7 @@ class SiteSettingsFormDiscussion extends Component {
 				checked={ !! fields.social_notifications_reblog }
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleAutosavingToggle( 'social_notifications_reblog' ) }
-				label={ translate( 'Someone reblogs one of my posts' ) }
+				label={ translate( 'Someone reposts one of my posts' ) }
 			/>
 		);
 	}
