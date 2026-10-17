@@ -98,7 +98,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		expect( container.querySelector( '.site-generation__page-preview' ) ).toBeNull();
 	} );
 
-	it( 'keeps page outlines and image slots out of the compact brief', () => {
+	it( 'shows the planned pages and image slots in the brief, but not section names', () => {
 		const stream: BuildWowStreamView = {
 			...progressStream,
 			info: {
@@ -140,6 +140,10 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
 		expect( liveCanvas.getByRole( 'heading', { name: 'A garden for everyone' } ) ).toBeVisible();
 		expect( liveCanvas.getByText( 'Quiet and welcoming' ) ).toBeVisible();
+		expect( liveCanvas.getByRole( 'heading', { name: 'Pages' } ) ).toBeVisible();
+		expect( liveCanvas.getByText( '1 section' ) ).toBeVisible();
+		expect( liveCanvas.getByRole( 'heading', { name: 'Images' } ) ).toBeVisible();
+		expect( liveCanvas.getByText( '1 of 1 ready' ) ).toBeVisible();
 		expect( liveCanvas.queryByText( 'Welcome' ) ).not.toBeInTheDocument();
 		expect( liveCanvas.queryByRole( 'img' ) ).not.toBeInTheDocument();
 		expect( liveCanvas.queryByRole( 'tab' ) ).not.toBeInTheDocument();

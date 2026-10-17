@@ -187,6 +187,30 @@ it( 'renders authored markup inert while dropping what loads or redirects', () =
 	expect( doc.querySelector( 'meta' )?.content ).toContain( "default-src 'none'" );
 } );
 
+it( 'keeps the navigation menu toggle whole so the page can style or hide it', () => {
+	const html = `<!doctype html><html><head><style>h1 { color: red }</style></head><body>
+		<nav data-dsl-element="navigation"><div class="studio-navigation">
+			<button type="button" aria-label="Menu" aria-expanded="false"><span aria-hidden="true" class="studio-menu-icon">☰</span></button>
+			<ul><li><a href="/flavors/">Flavors</a></li></ul>
+		</div></nav><h1>Hello</h1></body></html>`;
+
+	const rendered = new DOMParser().parseFromString( htmlPreviewDocument( html ), 'text/html' );
+	expect(
+		rendered.querySelector( '.studio-navigation > button .studio-menu-icon' )
+	).not.toBeNull();
+	expect( rendered.querySelector( '.studio-navigation li a' )?.getAttribute( 'href' ) ).toBe(
+		'/flavors/'
+	);
+
+	const prepared = new DOMParser().parseFromString(
+		preparePreviewDocument( html )!.html,
+		'text/html'
+	);
+	expect(
+		prepared.querySelector( '.studio-navigation > button .studio-menu-icon' )
+	).not.toBeNull();
+} );
+
 it( 'uses an opaque frame with only a nonce-authorized bootstrap', async () => {
 	global.fetch = jest.fn().mockResolvedValue( { ok: true, json: async () => payload } );
 	render( <BuildHtmlPreview stream={ stream } isActive isGenerating isComplete={ false } /> );
@@ -543,6 +567,49 @@ it( 'keeps a slow asset request alive across document revisions and aborts on ro
 	expect( load ).toHaveBeenCalledTimes( 1 );
 	unmount();
 	expect( signal.aborted ).toBe( true );
+	factory.mockRestore();
+} );
+
+it( 'reports the generated images it loads, and releases them with the scene', async () => {
+	const created = jest.fn( () => 'blob:preview-image' );
+	const revoked = jest.fn();
+	Object.assign( URL, { createObjectURL: created, revokeObjectURL: revoked } );
+	const load = jest.fn().mockImplementation( async ( request: Record< string, unknown > ) => {
+		const source = Object.keys( request )[ 0 ];
+		return source === imageSource
+			? { [ source ]: { id: imageAsset.id, mimeType: 'image/png', bytes: new ArrayBuffer( 4 ) } }
+			: { [ source ]: { id: fontAsset.id, mimeType: 'font/woff2', bytes: new ArrayBuffer( 4 ) } };
+	} );
+	const factory = jest
+		.spyOn( previewAssetLoader, 'createPreviewAssetLoader' )
+		.mockReturnValue( { load, dispose: jest.fn() } );
+	global.fetch = jest.fn().mockResolvedValue( {
+		ok: true,
+		json: async () => ( {
+			...payload,
+			assets: { [ imageSource ]: imageAsset, [ fontSource ]: fontAsset },
+		} ),
+	} );
+	const onImages = jest.fn();
+	const { unmount } = render(
+		<BuildHtmlPreview
+			isActive
+			isComplete={ false }
+			isGenerating
+			onImages={ onImages }
+			stream={ stream }
+		/>
+	);
+	await waitFor( () =>
+		expect( onImages ).toHaveBeenCalledWith( { [ imageSource ]: 'blob:preview-image' } )
+	);
+	expect( created ).toHaveBeenCalledTimes( 1 );
+	expect( onImages ).not.toHaveBeenCalledWith(
+		expect.objectContaining( { [ fontSource ]: expect.anything() } )
+	);
+	unmount();
+	expect( revoked ).toHaveBeenCalledWith( 'blob:preview-image' );
+	expect( onImages ).toHaveBeenLastCalledWith( {} );
 	factory.mockRestore();
 } );
 
