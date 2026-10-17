@@ -59,6 +59,7 @@ import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import SignupExistingAccountNotice from './signup-existing-account-notice';
+import shouldShowContinueAsUser from './utils/should-show-continue-as-user';
 import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './style.scss';
@@ -86,6 +87,7 @@ class Login extends Component {
 		isUserAccountEmailUpdateRedirect: PropTypes.bool,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
+		lostPasswordLink: PropTypes.node,
 		linkingSocialService: PropTypes.string,
 		oauth2Client: PropTypes.object,
 		rebootAfterLogin: PropTypes.func.isRequired,
@@ -213,32 +215,7 @@ class Login extends Component {
 		this.handleTwoFactorRequested( 'link' );
 	};
 
-	showContinueAsUser = () => {
-		const {
-			isJetpack,
-			oauth2Client,
-			socialConnect,
-			twoStepNonce,
-			fromSite,
-			currentUser,
-			twoFactorEnabled,
-			loginEmailAddress,
-			isWCCOM,
-			isBlazePro,
-		} = this.props;
-
-		return (
-			! twoStepNonce &&
-			! socialConnect &&
-			// Show the continue as user flow WooCommerce and Blaze Pro but not for other OAuth2 clients
-			! ( oauth2Client && ! isWCCOM && ! isBlazePro ) &&
-			! isJetpack &&
-			! fromSite &&
-			! twoFactorEnabled &&
-			! loginEmailAddress &&
-			currentUser
-		);
-	};
+	showContinueAsUser = () => shouldShowContinueAsUser( this.props );
 
 	handleTwoFactorRequested = ( authType ) => {
 		if ( this.props.onTwoFactorRequested ) {
@@ -391,6 +368,7 @@ class Login extends Component {
 			userEmail,
 			handleUsernameChange,
 			signupUrl,
+			lostPasswordLink,
 			isWCCOM,
 			isBlazePro,
 			translate,
@@ -513,6 +491,7 @@ class Login extends Component {
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
+				lostPasswordLink={ lostPasswordLink }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isFromAkismet={ this.props.isFromAkismet }
 				isFromPassport={ this.props.isFromPassport }

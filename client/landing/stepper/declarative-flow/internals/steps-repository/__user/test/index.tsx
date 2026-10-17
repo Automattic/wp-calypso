@@ -29,12 +29,24 @@ import UserStep, { type UserStepAccepts } from '..';
 const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
 
-// Drives isMobileViewport = useViewportMatch( 'small', '<' ). Every other call
-// (e.g. useViewportMatch( 'large' )) resolves to false, i.e. not a wide viewport.
-const setViewport = ( { isMobile }: { isMobile: boolean } ) =>
-	mockUseViewportMatch.mockImplementation( ( breakpoint: string, operator?: string ) =>
-		breakpoint === 'small' && operator === '<' ? isMobile : false
-	);
+// isMobileViewport is useViewportMatch( 'small', '<' ) at 600px and isLargeViewport is
+// useViewportMatch( 'large' ) at 960px. Pass both to reach the band in between.
+const setViewport = ( {
+	isMobile,
+	isLarge = ! isMobile,
+}: {
+	isMobile: boolean;
+	isLarge?: boolean;
+} ) =>
+	mockUseViewportMatch.mockImplementation( ( breakpoint: string, operator?: string ) => {
+		if ( breakpoint === 'small' && operator === '<' ) {
+			return isMobile;
+		}
+		if ( breakpoint === 'large' ) {
+			return isLarge;
+		}
+		return false;
+	} );
 
 const noPartnerBranding = {
 	hasCustomBranding: false,
@@ -95,10 +107,12 @@ describe( 'User email signup step', () => {
 		} );
 
 		it.each( [
-			[ 'top-bar', '/onboarding/user', 'onboarding' ],
-			[ 'form', '/onboarding/user?ref=woo-hosting-solutions-flow', 'onboarding' ],
-			[ 'top-bar', '/test-flow/user', 'test-flow' ],
-		] )( 'records a click on the %s link at %s', ( origin, url, flow ) => {
+			[ 'form', '/onboarding/user', 'onboarding', false ],
+			[ 'top-bar', '/onboarding/user', 'onboarding', true ],
+			[ 'form', '/onboarding/user?ref=woo-hosting-solutions-flow', 'onboarding', false ],
+			[ 'top-bar', '/test-flow/user', 'test-flow', false ],
+		] )( 'records a click on the %s link at %s', ( origin, url, flow, isMobile ) => {
+			setViewport( { isMobile } );
 			renderUserStep( url, {}, flow );
 			fireEvent.click( screen.getByRole( 'link', { name: 'Log in' } ) );
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_login_link_click', {
@@ -193,6 +207,47 @@ describe( 'User email signup step', () => {
 				allowedSocialServices: [ 'google', 'apple' ],
 			} );
 			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+		} );
+	} );
+
+	describe( 'login link placement', () => {
+		const loginLinkSelector = '.signup-form-social-first__login-link';
+
+		it( 'answers "Have an account?" below the buttons rather than in the top bar', () => {
+			const { container } = renderUserStep();
+
+			expect( container.querySelector( loginLinkSelector ) ).toBeInTheDocument();
+			// One route to logging in, not two: the top bar no longer carries its own.
+			expect( screen.getAllByRole( 'link', { name: 'Log in' } ) ).toHaveLength( 1 );
+			expect(
+				screen.getByRole( 'link', { name: 'Log in' } ).closest( loginLinkSelector )
+			).toBeInTheDocument();
+		} );
+
+		it( 'leaves the compact mobile layout on its top-bar link', () => {
+			setViewport( { isMobile: true } );
+
+			const { container } = renderUserStep();
+
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+		} );
+
+		it( 'leaves the band between the breakpoints on its top-bar link', () => {
+			// Between 600px and 960px the login link stays in the top bar, matching login.
+			setViewport( { isMobile: false, isLarge: false } );
+
+			const { container } = renderUserStep();
+
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+		} );
+
+		it( 'drops the link entirely when hideLoginLink is set', () => {
+			const { container } = renderUserStep( '/onboarding/user', { hideLoginLink: true } );
+
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'link', { name: 'Log in' } ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

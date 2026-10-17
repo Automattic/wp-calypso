@@ -75,6 +75,19 @@ This document outlines all the analytics events tracked during the login process
 - `is_magic_login` (boolean): Whether magic login was used
 - `login_method` (string): The method used for login
 
+### `calypso_login_sign_up_link_click`
+
+**Description**: Tracks when user clicks a link from the login page to signup
+
+**Properties**:
+
+- `origin` (string): Which link was clicked
+  - `login-footer`: "Don't have an account? Sign up" below the buttons on the main login view, 960px and up
+  - `login-layout`: "Create an account" in the top bar, below 960px on the main login view and at every width on the 2FA, magic login, QR login and OAuth2 authorize views
+  - `login-notice`: the notice shown when signup finds an existing account
+
+Before the footer line existed, desktop clicks on the main login view reported `login-layout`.
+
 ### `calypso_login_logo_click`
 
 **Description**: Tracks when user clicks the WordPress.com logo in the top bar, which links to the homepage (plain WordPress.com logins only)

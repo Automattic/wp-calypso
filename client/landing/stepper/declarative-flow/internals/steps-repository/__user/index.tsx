@@ -63,9 +63,8 @@ export type UserStepAccepts = {
 	headerText?: string;
 	subHeaderText?: string;
 	/**
-	 * Hides the top-level "Log in" link (V2 top bar / V1 footer). The email-first
-	 * account-step variant keeps its own in-form "Have an account? Log in" link.
-	 * Existing users can still sign in via the social / email buttons either way.
+	 * Drops the step's own "Log in" link, wherever the layout puts it. The email-first
+	 * account-step variant keeps its in-form link regardless.
 	 */
 	hideLoginLink?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
@@ -182,7 +181,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		from: partnerConfig?.id ?? queryArgs.get( 'from' ) ?? undefined,
 	} );
 
-	// V1 and V2 both put the link in the top bar; `flow` tells the two layouts apart.
+	// `origin` says which placement was clicked; `flow` tells V1 and V2 apart.
 	const recordLoginLinkClick = ( origin: 'top-bar' | 'form' ) =>
 		recordTracksEvent( 'calypso_signup_login_link_click', { flow, step: stepName, origin } );
 
@@ -285,6 +284,12 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isMobileCompactLayout =
 		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig && ! isEditingEmail;
 
+	// Desktop V2 puts "Log in" below the buttons. Below 960px signup and login both keep the
+	// top-right link, the email-edit screen has no second account to offer, and V1 is the
+	// retiring layout.
+	const showsInFormLoginLink =
+		isStepContainerV2 && isLargeViewport && ! isEditingEmail && ! hideLoginLink;
+
 	const emailLabelText = isStepContainerV2 ? translate( 'Enter your email' ) : undefined;
 	// Partner branding always wins: isMobileCompactLayout is already false whenever
 	// partnerConfig is set, so the ! partnerConfig check here is belt-and-suspenders
@@ -325,6 +330,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				isEmailFirstVariant={ isEmailFirstVariant }
 				isEmailAtBottom={ isEmailAtBottom }
 				isMobileCompactVariant={ isMobileCompactLayout }
+				showLoginLink={ showsInFormLoginLink }
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
 				activationEmailFrom={ emailVerificationEnabled ? ACTIVATION_EMAIL_SOURCE : undefined }
@@ -410,7 +416,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				}
 				leftElement={ backButton }
 				rightElement={
-					hideLoginLink || isEmailFirstVariant || isEditingEmail ? null : (
+					hideLoginLink || isEmailFirstVariant || isEditingEmail || showsInFormLoginLink ? null : (
 						<Step.LinkButton href={ loginLink } onClick={ () => recordLoginLinkClick( 'top-bar' ) }>
 							{ translate( 'Log in' ) }
 						</Step.LinkButton>
