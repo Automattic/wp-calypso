@@ -643,10 +643,12 @@ const config = defineConfig( [
 
 	// Directory-specific settings. Directories with more than a few settings of their own
 	// have their own `eslint.config.mjs` instead.
-	...[ 'blaze-dashboard', 'notifications', 'o2-blocks', 'odyssey-stats' ].map( ( app ) => ( {
-		files: [ `apps/${ app }/**` ],
+	{
+		files: [ 'blaze-dashboard', 'notifications', 'o2-blocks', 'odyssey-stats' ].map(
+			( app ) => `apps/${ app }/**`
+		),
 		languageOptions: { globals: globals.browser },
-	} ) ),
+	},
 	{
 		files: [ 'apps/happy-blocks/**' ],
 		rules: {
