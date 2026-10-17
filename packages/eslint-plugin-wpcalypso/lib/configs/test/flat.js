@@ -31,3 +31,33 @@ test.each( [
 	},
 	30000
 );
+
+// Without this, a new `extends` entry, override or setting in a legacy preset slips past the test
+// above: its fixture flattens the legacy presets by hand, the way `../flat.js` builds them.
+test( 'the legacy presets have the shape the flat ones and the fixture assume', () => {
+	const recommended = require( '../recommended' );
+	const react = require( '../react' );
+
+	expect( Object.keys( recommended ).sort() ).toEqual( [
+		'env',
+		'extends',
+		'overrides',
+		'parser',
+		'parserOptions',
+		'plugins',
+		'rules',
+		'settings',
+	] );
+	expect( recommended.env ).toEqual( { es6: true } );
+	expect( recommended.extends ).toEqual( [ 'eslint:recommended', 'plugin:jsdoc/recommended' ] );
+	expect( recommended.overrides ).toEqual( [
+		{ files: [ '**/test/*', '*.json', '*.md' ], rules: expect.any( Object ) },
+	] );
+	expect( Object.keys( react ).sort() ).toEqual( [
+		'extends',
+		'parserOptions',
+		'plugins',
+		'rules',
+	] );
+	expect( react.extends ).toBe( 'plugin:wpcalypso/recommended' );
+} );
