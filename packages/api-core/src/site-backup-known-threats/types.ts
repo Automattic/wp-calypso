@@ -15,6 +15,7 @@ export interface BackupThreat {
 	path_kind: string;
 	type: string;
 	target: string;
+	path?: string;
 	slug?: string;
 	version?: string;
 	status: 'new' | 'notified' | 'ignored' | null;

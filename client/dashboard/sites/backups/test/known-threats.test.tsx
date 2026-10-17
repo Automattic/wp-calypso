@@ -221,9 +221,22 @@ test( 'expands the threats table for Scan sites', async () => {
 			backup_id: 1792244301,
 			cutoff: null,
 			summary: { ...knownThreats( 3 ), vulnerable: 2 },
-			count: 1,
+			count: 2,
 			truncated: false,
 			threats: [
+				{
+					id: 2,
+					state: 'open',
+					kind: 'malware',
+					signature: 'Eicar.Test',
+					path_kind: 'file',
+					type: 'file',
+					target: 'eicar-standard.php',
+					path: 'wp-content/plugins/rf-known-threats-test/eicar-standard.php',
+					status: 'new',
+					reported_on: '2026-09-01 23:30:00',
+					fixed_on: null,
+				},
 				{
 					id: 1,
 					state: 'fixed',
@@ -254,7 +267,11 @@ test( 'expands the threats table for Scan sites', async () => {
 
 	expect( await screen.findByText( 'Backdoor.PHP.Agent' ) ).toBeVisible();
 	expect( screen.getByText( 'wp-content/uploads/evil.php' ) ).toBeVisible();
-	expect( screen.getByText( localDate( Date.UTC( 2026, 8, 1, 23, 30 ) ) ) ).toBeVisible();
+	expect(
+		screen.getByText( 'wp-content/plugins/rf-known-threats-test/eicar-standard.php' )
+	).toBeVisible();
+	expect( screen.queryByText( 'eicar-standard.php' ) ).not.toBeInTheDocument();
+	expect( screen.getAllByText( localDate( Date.UTC( 2026, 8, 1, 23, 30 ) ) ) ).toHaveLength( 2 );
 	expect(
 		screen.getByText( `Fixed ${ localDate( Date.UTC( 2026, 8, 2, 23, 30 ) ) }` )
 	).toBeVisible();

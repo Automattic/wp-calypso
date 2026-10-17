@@ -29,7 +29,7 @@ export function KnownThreatsTable( {
 		value ? formatDate( parseDateAsUTC( value ), locale ) : '';
 
 	const getWhere = ( threat: BackupThreat ) =>
-		threat.slug ? `${ threat.slug }@${ threat.version ?? '' }` : threat.target;
+		threat.slug ? `${ threat.slug }@${ threat.version ?? '' }` : ( threat.path ?? threat.target );
 
 	const getStatus = ( threat: BackupThreat ) => {
 		if ( threat.state === 'fixed' ) {

@@ -73,7 +73,7 @@ export function BackupKnownThreatsTable( {
 		value ? moment.utc( value ).local().format( 'll' ) : '';
 
 	const getWhere = ( threat: BackupThreat ) =>
-		threat.slug ? `${ threat.slug }@${ threat.version ?? '' }` : threat.target;
+		threat.slug ? `${ threat.slug }@${ threat.version ?? '' }` : ( threat.path ?? threat.target );
 
 	const getStatus = ( threat: BackupThreat ) => {
 		if ( threat.state === 'fixed' ) {

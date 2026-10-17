@@ -60,9 +60,22 @@ const threatsBody = {
 	backup_id: 200,
 	cutoff: 200,
 	summary: counts( 1, 2 ),
-	count: 1,
+	count: 2,
 	truncated: false,
 	threats: [
+		{
+			id: 2,
+			state: 'open',
+			kind: 'malware',
+			signature: 'Eicar.Test',
+			path_kind: 'file',
+			type: 'file',
+			target: 'eicar-standard.php',
+			path: 'wp-content/plugins/rf-known-threats-test/eicar-standard.php',
+			status: 'ignored',
+			reported_on: '2026-10-01 23:30:00',
+			fixed_on: null,
+		},
 		{
 			id: 1,
 			state: 'open',
@@ -129,8 +142,13 @@ describe( 'BackupKnownThreats', () => {
 
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
 		expect( screen.getByText( 'wp-content/evil.php' ) ).toBeVisible();
+		expect(
+			screen.getByText( 'wp-content/plugins/rf-known-threats-test/eicar-standard.php' )
+		).toBeVisible();
+		expect( screen.queryByText( 'eicar-standard.php' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Open' ) ).toBeVisible();
-		expect( screen.getByText( localDate( Date.UTC( 2026, 9, 1, 23, 30 ) ) ) ).toBeVisible();
+		expect( screen.getByText( 'Ignored' ) ).toBeVisible();
+		expect( screen.getAllByText( localDate( Date.UTC( 2026, 9, 1, 23, 30 ) ) ) ).toHaveLength( 2 );
 		expect( screen.getByText( 'Also: 2 vulnerable plugin or theme versions.' ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveAttribute(
 			'href',
