@@ -16,7 +16,8 @@ import mdPackage from 'eslint-plugin-md/package.json' with { type: 'json' };
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import wpcalypso from 'eslint-plugin-wpcalypso';
 import globals from 'globals';
-import markdownParser from 'markdown-eslint-parser';
+import { parseForESLint } from 'markdown-eslint-parser';
+import markdownParserPackage from 'markdown-eslint-parser/package.json' with { type: 'json' };
 import clientPackage from './client/package.json' with { type: 'json' };
 
 const rootDir = import.meta.dirname;
@@ -76,7 +77,11 @@ const markdownCodeBlocks = [ 'js', 'javascript', 'cjs', 'ejs', 'jsx', 'tsx', 'ts
 	( lang ) => `**/*.md.${ lang }`
 );
 
-// Named, so `--cache` can identify it.
+// Named, so `--cache` can identify them.
+const markdownParser = {
+	meta: { name: 'markdown-eslint-parser', version: markdownParserPackage.version },
+	parseForESLint,
+};
 const markdownProcessor = {
 	meta: {
 		name: 'eslint-plugin-md/markdown',
