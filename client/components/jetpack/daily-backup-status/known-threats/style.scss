@@ -12,6 +12,11 @@
 	background: var( --color-warning-5 );
 	color: var( --color-warning-80 );
 	font-size: $font-body-small;
+
+	.gridicon {
+		margin-inline-end: 4px;
+		vertical-align: text-bottom;
+	}
 }
 
 .backup-known-threats__table {

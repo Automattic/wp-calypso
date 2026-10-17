@@ -1,7 +1,7 @@
 import { getBackupPeriod, isFlagged } from '@automattic/api-core';
 import { siteBackupKnownThreatsQuery, siteBackupThreatsQuery } from '@automattic/api-queries';
 import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
-import { Button as CalypsoButton } from '@automattic/components';
+import { Button as CalypsoButton, Gridicon } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -181,6 +181,7 @@ export function BackupKnownThreatsToggle( { state, inToolbar }: BackupKnownThrea
 
 	const badge = (
 		<span className="backup-known-threats__badge">
+			<Gridicon icon="notice-outline" size={ 16 } aria-hidden="true" />
 			{ translate( 'Known threats (%d)', {
 				args: flagged,
 				comment: '%d is the number of known security threats in a backup',

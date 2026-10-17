@@ -119,6 +119,7 @@ describe( 'BackupKnownThreats', () => {
 		expect( toggle ).toHaveTextContent( 'Known threats (1) Show threats' );
 		expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
 		expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
+		expect( toggle.querySelector( '.gridicons-notice-outline' ) ).toBeInTheDocument();
 		await userEvent.click( toggle );
 
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
@@ -179,7 +180,9 @@ describe( 'BackupKnownThreats', () => {
 		const details = nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
 		renderIt();
 
-		expect( await screen.findByText( 'Known threats (1)' ) ).toBeVisible();
+		const badge = await screen.findByText( 'Known threats (1)' );
+		expect( badge ).toBeVisible();
+		expect( badge.querySelector( '.gridicons-notice-outline' ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( /Show threats/ ) ).not.toBeInTheDocument();
 		expect( details.isDone() ).toBe( false );

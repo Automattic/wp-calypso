@@ -243,6 +243,7 @@ test( 'expands the threats table for Scan sites', async () => {
 	const toggle = await screen.findByRole( 'button', { name: 'Known threats (3) Show threats' } );
 	expect( toggle ).toHaveTextContent( 'Known threats (3) Show threats' );
 	expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
+	expect( toggle.querySelector( 'svg' ) ).toBeInTheDocument();
 	await user.click( toggle );
 
 	expect( await screen.findByText( 'Backdoor.PHP.Agent' ) ).toBeVisible();
@@ -289,6 +290,9 @@ test( 'shows the count only without Scan', async () => {
 	renderPage( { withScan: false, backups: flaggedBackups, selected: flaggedRewindId } );
 
 	await waitFor( () => expect( screen.getAllByText( 'Known threats (3)' ) ).toHaveLength( 2 ) );
+	screen
+		.getAllByText( 'Known threats (3)' )
+		.forEach( ( badge ) => expect( badge.querySelector( 'svg' ) ).toBeInTheDocument() );
 	expect( screen.queryByRole( 'button', { name: /Show threats/ } ) ).not.toBeInTheDocument();
 	expect( threatsScope.isDone() ).toBe( false );
 } );
