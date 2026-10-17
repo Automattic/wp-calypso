@@ -1367,7 +1367,7 @@ __metadata:
     esquery: "npm:^1.4.0"
     npm-package-json-lint: "npm:^8.0.0"
   peerDependencies:
-    eslint: ">=8.57.1"
+    eslint: ">=10.12.0"
   languageName: unknown
   linkType: soft
 
@@ -19812,9 +19812,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^65.1.0":
-  version: 65.3.6
-  resolution: "eslint-plugin-jsdoc@npm:65.3.6"
+"eslint-plugin-jsdoc@npm:^65.2.0":
+  version: 65.3.8
+  resolution: "eslint-plugin-jsdoc@npm:65.3.8"
   dependencies:
     "@es-joy/jsdoccomment": "npm:~0.98.0"
     "@es-joy/resolve.exports": "npm:1.2.0"
@@ -19837,7 +19837,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 0240bf50b4a7ce190f7eee782b3630214f1d738fd16ce7ca49cb8a54fdb5fc8ced06fbaafb6d4d021e449938e629db85f4debc5a7112d7b2631c2b9029315dda
+  checksum: 0d1a71c265faee5b897467d26bca81f6d667de0d67e94a0437c76cac74aa1e9e1421795c9c110f2c5afe8afe51b61aa7ff3297ca4a9d4573775dc7d5d7084c73
   languageName: node
   linkType: hard
 
@@ -19980,9 +19980,9 @@ __metadata:
   peerDependencies:
     "@babel/core": ">=7.27.1"
     "@babel/eslint-parser": ">=7.27.1"
-    eslint: ">=8.57.1"
+    eslint: ">=10.12.0"
     eslint-plugin-inclusive-language: ^2.2.1
-    eslint-plugin-jsdoc: ^65.1.0
+    eslint-plugin-jsdoc: ^65.2.0
     eslint-plugin-react: ^7.37.5
     eslint-plugin-react-hooks: ^7.1.1
   peerDependenciesMeta:
@@ -36303,7 +36303,7 @@ __metadata:
     eslint-plugin-import: "npm:^2.32.0"
     eslint-plugin-inclusive-language: "npm:^2.2.1"
     eslint-plugin-jest: "npm:^29.16.6"
-    eslint-plugin-jsdoc: "npm:^65.1.0"
+    eslint-plugin-jsdoc: "npm:^65.2.0"
     eslint-plugin-jsx-a11y: "npm:^6.10.2"
     eslint-plugin-md: "npm:^1.0.19"
     eslint-plugin-prettier: "npm:^5.5.6"
