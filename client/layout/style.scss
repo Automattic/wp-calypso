@@ -38,10 +38,10 @@ body.is-focus-sites {
 
 .layout__header-section-content {
 	box-sizing: border-box;
-	padding: 79px 32px 32px 32px;
+	padding: calc( var( --masterbar-height ) + 32px ) 32px 32px 32px;
 
 	@include breakpoint-deprecated( '<960px' ) {
-		padding: 71px 24px 24px 24px;
+		padding: calc( var( --masterbar-height ) + 24px ) 24px 24px 24px;
 	}
 }
 
@@ -52,7 +52,7 @@ body.is-focus-sites {
 	position: relative;
 	margin: 0;
 
-	--_layout__content-top-spacing: 79px;
+	--_layout__content-top-spacing: calc( var( --masterbar-height ) + 32px );
 
 	padding: var( --_layout__content-top-spacing ) 32px 32px
 		calc( var( --sidebar-width-max ) + 32px + 1px );
@@ -106,7 +106,7 @@ body.is-focus-sites {
 
 	.is-section-theme & {
 		.sites.main {
-			padding-top: calc( 79px - var( --masterbar-height ) );
+			padding-top: 32px;
 		}
 	}
 
@@ -117,12 +117,12 @@ body.is-focus-sites {
 	}
 
 	.is-section-plugins.is-logged-in.has-no-sidebar & {
-		padding: 79px 32px 32px;
+		padding: calc( var( --masterbar-height ) + 32px ) 32px 32px;
 	}
 
 	// Tablets
 	@include breakpoint-deprecated( '<960px' ) {
-		--_layout__content-top-spacing: 71px;
+		--_layout__content-top-spacing: calc( var( --masterbar-height ) + 24px );
 
 		padding: var( --_layout__content-top-spacing ) 24px 24px
 			calc( var( --sidebar-width-min ) + 24px + 1px );
@@ -142,7 +142,7 @@ body.is-focus-sites {
 		}
 
 		.is-section-plugins.has-no-sidebar.is-logged-in & {
-			padding: 71px 24px 24px;
+			padding: calc( var( --masterbar-height ) + 24px ) 24px 24px;
 		}
 	}
 
