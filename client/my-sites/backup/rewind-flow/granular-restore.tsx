@@ -42,6 +42,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { backupContentsPath } from '../paths';
 import Error from './error';
+import KnownThreatsNotice, { getKnownThreatsTracksProps } from './known-threats-notice';
 import GranularRestoreLoading from './loading-placeholder/granular-restore';
 import ProgressBar from './progress-bar';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
@@ -173,6 +174,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const browserSelectedList = fileBrowserState.getSelectedList( Number( rewindId ) );
 
 	const [ loading, setLoading ] = useState( true );
+	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
 
 	const requestRestore = useCallback( () => {
 		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -245,9 +247,11 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_granular_restore_confirm', {
 				has_credentials: hasCredentials,
+				...getKnownThreatsTracksProps( hasKnownThreats, false ),
 			} )
 		);
 	}, [
+		hasKnownThreats,
 		isPreflightEnabled,
 		credentialsAreValid,
 		dispatch,
@@ -483,6 +487,12 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					siteId={ siteId }
 					rewindId={ rewindId }
 					includesDatabase={ hasSelectedTables }
+				/>
+				<KnownThreatsNotice
+					siteId={ siteId }
+					rewindId={ rewindId }
+					requireAcknowledgement={ false }
+					onKnownThreatsChange={ setHasKnownThreats }
 				/>
 				<>
 					{ backupCurrentlyInProgress && (
