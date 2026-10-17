@@ -48,8 +48,7 @@ const react = ( plugin ) => {
 			name: 'wpcalypso/react',
 			languageOptions: { sourceType, parserOptions: { ecmaFeatures } },
 			plugins: {
-				// Some of its rules still call methods that ESLint 10 removed.
-				react: fixupPluginRules( load( 'eslint-plugin-react' ) ),
+				react: load( 'eslint-plugin-react' ),
 				'react-hooks': load( 'eslint-plugin-react-hooks' ),
 			},
 			rules: legacyReact.rules,
