@@ -2,11 +2,14 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
+import { applyMiddleware, createStore } from 'redux';
+import { thunk } from 'redux-thunk';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import initialReducer from 'calypso/state/reducer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import KnownThreatsNotice, {
@@ -43,7 +46,11 @@ jest.mock( 'calypso/state/selectors/get-does-rewind-need-credentials', () =>
 );
 jest.mock( 'calypso/state/selectors/get-in-progress-rewind-status', () => mockSelector( null ) );
 jest.mock( 'calypso/state/selectors/get-is-restore-in-progress', () => mockSelector( false ) );
-jest.mock( 'calypso/state/selectors/get-restore-progress', () => mockSelector( null ) );
+let mockRestoreProgress: unknown = null;
+jest.mock( 'calypso/state/selectors/get-restore-progress', () => ( {
+	__esModule: true,
+	default: () => mockRestoreProgress,
+} ) );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => mockSelector( true ) );
 jest.mock( 'calypso/blocks/jetpack-review-prompt', () => () => null );
 jest.mock( 'calypso/components/data/query-jetpack-credentials-status', () => () => null );
@@ -298,6 +305,7 @@ describe( 'getKnownThreatsTracksProps', () => {
 
 describe( 'BackupRestoreFlow known threats gating', () => {
 	beforeEach( () => {
+		mockRestoreProgress = null;
 		( siteHasFeature as jest.Mock ).mockReturnValue( true );
 		( recordTracksEvent as jest.Mock ).mockClear();
 	} );
@@ -330,5 +338,40 @@ describe( 'BackupRestoreFlow known threats gating', () => {
 				known_threats_acknowledged: true,
 			} )
 		);
+	} );
+
+	it( 'returns to the confirm screen with the box unticked after threats_not_acknowledged', async () => {
+		mockList( counts( 3 ) );
+		const store = createStore(
+			( state, action ) =>
+				action.type === 'TEST_PROGRESS_CHANGED' ? { ...state } : initialReducer( state, action ),
+			undefined,
+			applyMiddleware( thunk )
+		);
+		renderWithProvider(
+			<BackupRestoreFlow
+				backup={ {} }
+				backupDisplayDate="October 1, 2026"
+				rewindId="200.5"
+				siteId={ SITE_ID }
+				siteUrl="https://example.wordpress.com"
+			/>,
+			{ store }
+		);
+
+		await screen.findByText( NOTICE );
+		await userEvent.click( screen.getByRole( 'checkbox', { name: CHECKBOX } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Restore now' } ) );
+		expect( screen.queryByRole( 'button', { name: 'Restore now' } ) ).not.toBeInTheDocument();
+
+		mockRestoreProgress = { status: 'failed', errorCode: 'threats_not_acknowledged' };
+		act( () => {
+			store.dispatch( { type: 'TEST_PROGRESS_CHANGED' } );
+		} );
+
+		const restoreButton = await screen.findByRole( 'button', { name: 'Restore now' } );
+		expect( restoreButton ).toBeVisible();
+		expect( restoreButton ).toBeDisabled();
+		expect( screen.getByRole( 'checkbox', { name: CHECKBOX } ) ).not.toBeChecked();
 	} );
 } );

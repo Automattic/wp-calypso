@@ -7,7 +7,10 @@ import {
 	REWIND_CLONE,
 	REWIND_STAGING_CLONE,
 } from 'calypso/state/action-types';
-import { getRewindRestoreProgress } from 'calypso/state/activity-log/actions';
+import {
+	getRewindRestoreProgress,
+	updateRewindRestoreProgress,
+} from 'calypso/state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -61,17 +64,23 @@ export const receiveRestoreSuccess = ( { siteId }, restoreId ) => [
 
 export const receiveRestoreError = ( { siteId, timestamp }, error ) => {
 	if ( error.error === 'threats_not_acknowledged' ) {
-		return withAnalytics(
-			recordTracksEvent( 'calypso_rewind_to_threats_not_acknowledged', {
-				site_id: siteId,
-				timestamp,
-			} ),
-			errorNotice(
-				translate(
-					'This backup is known to contain security threats. Acknowledge them to restore it.'
+		return [
+			withAnalytics(
+				recordTracksEvent( 'calypso_rewind_to_threats_not_acknowledged', {
+					site_id: siteId,
+					timestamp,
+				} ),
+				errorNotice(
+					translate(
+						'This backup is known to contain security threats. Acknowledge them to restore it.'
+					)
 				)
-			)
-		);
+			),
+			updateRewindRestoreProgress( siteId, timestamp, null, {
+				status: 'failed',
+				errorCode: 'threats_not_acknowledged',
+			} ),
+		];
 	}
 
 	return error.hasOwnProperty( 'schemaErrors' )

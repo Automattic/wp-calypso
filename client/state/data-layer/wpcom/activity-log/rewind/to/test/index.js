@@ -1,5 +1,9 @@
 import { NOTICE_CREATE } from 'calypso/state/action-types';
-import { getRewindRestoreProgress, rewindRestore } from 'calypso/state/activity-log/actions';
+import {
+	getRewindRestoreProgress,
+	rewindRestore,
+	updateRewindRestoreProgress,
+} from 'calypso/state/activity-log/actions';
 import { requestRewindState } from 'calypso/state/rewind/state/actions';
 import { receiveRestoreError, receiveRestoreSuccess, requestRestore } from '../';
 
@@ -39,11 +43,17 @@ describe( 'receiveRestoreError', () => {
 		action.meta.analytics.map( ( { payload } ) => payload.name );
 
 	test( 'receiveRestoreError shows the known-threats notice for threats_not_acknowledged', () => {
-		const action = receiveRestoreError(
+		const [ action, progress ] = receiveRestoreError(
 			{ siteId, timestamp },
 			{ error: 'threats_not_acknowledged', statusCode: 409 }
 		);
 
+		expect( progress ).toEqual(
+			updateRewindRestoreProgress( siteId, timestamp, null, {
+				status: 'failed',
+				errorCode: 'threats_not_acknowledged',
+			} )
+		);
 		expect( action.type ).toBe( NOTICE_CREATE );
 		expect( action.notice ).toEqual(
 			expect.objectContaining( {

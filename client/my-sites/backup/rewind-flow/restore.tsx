@@ -113,7 +113,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	// 'finished' from a past session).
 	const previousRestoreStatus = usePrevious( inProgressRewindStatus );
 
-	const { message, percent, currentEntry, status } = useSelector(
+	const { message, percent, currentEntry, status, errorCode } = useSelector(
 		( state ) => getRestoreProgress( state, siteId ) || ( {} as RestoreProgress )
 	);
 
@@ -192,6 +192,15 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		siteId,
 		refetchPreflightStatus,
 	] );
+
+	useEffect( () => {
+		if ( restoreInitiated && errorCode === 'threats_not_acknowledged' ) {
+			setRestoreInitiated( false );
+			setUserHasRequestedRestore( false );
+			onAcknowledgedChange( false );
+			setShowConfirm( true );
+		}
+	}, [ errorCode, onAcknowledgedChange, restoreInitiated ] );
 
 	const onRetryClick = useCallback( () => {
 		// Reset the restore state
