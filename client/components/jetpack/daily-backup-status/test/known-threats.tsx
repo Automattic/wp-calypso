@@ -215,6 +215,57 @@ describe( 'BackupKnownThreats', () => {
 		expect( activities.isDone() ).toBe( true );
 	} );
 
+	it( 'only queries successful backups up to the next backup and never links to it', async () => {
+		const period = ( backup_period: string, knownThreats?: ReturnType< typeof counts > ) => ( {
+			...backupWith( knownThreats ),
+			object: {
+				backup_period,
+				...( knownThreats ? { known_threats: knownThreats } : {} ),
+			},
+		} );
+		mockList(
+			[ period( '1792333705', counts( 1 ) ), period( '1792290505' ), period( '1792247305' ) ],
+			{ latest_without_known_threats: 1792247305 }
+		);
+		let query: Record< string, string | string[] > = {};
+		const activities = nock( BASE )
+			.get( ACTIVITY_PATH )
+			.query( ( q ) => {
+				query = q as Record< string, string | string[] >;
+				return true;
+			} )
+			.reply( 200, {
+				itemsPerPage: 1000,
+				page: 1,
+				totalItems: 1,
+				totalPages: 1,
+				current: {
+					totalItems: 1,
+					orderedItems: [
+						{
+							activity_id: 'next-backup',
+							name: 'rewind__backup_complete_full',
+							summary: 'Backup complete',
+							published: '2026-10-17T14:28:00.000+00:00',
+							is_rewindable: true,
+							rewind_id: '1792290600.4',
+							type: 'Announce',
+						},
+					],
+				},
+			} );
+		renderWithProvider( <BackupKnownThreats siteId={ SITE_ID } rewindId="1792333800.1" /> );
+
+		await screen.findByText( 'Known threats (1)' );
+		await waitFor( () => expect( activities.isDone() ).toBe( true ) );
+		expect( query[ 'name[]' ] ).toContain( 'rewind__backup_complete_full' );
+		expect( query.aggregate ).toBe( 'false' );
+		expect( query.sort_order ).toBe( 'asc' );
+		expect( query.before ).toBe( new Date( 1792290505 * 1000 ).toISOString() );
+		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+		expect( screen.queryByRole( 'link', { name: 'Restore this one instead' } ) ).toBeNull();
+	} );
+
 	it( 'shows no restore link when no activity matches the backup period', async () => {
 		mockList( [ backupWith( counts( 1 ) ) ], { latest_without_known_threats: 1792247305 } );
 		const activities = mockActivities( [] );

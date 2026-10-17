@@ -1,5 +1,9 @@
 import { getBackupPeriod, isFlagged } from '@automattic/api-core';
-import { siteBackupKnownThreatsQuery, siteBackupThreatsQuery } from '@automattic/api-queries';
+import {
+	siteBackupKnownThreatsQuery,
+	siteBackupsKnownThreatsPageQuery,
+	siteBackupThreatsQuery,
+} from '@automattic/api-queries';
 import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
 import { Button as CalypsoButton, Gridicon } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
@@ -9,10 +13,11 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
+import { SUCCESSFUL_BACKUP_ACTIVITIES } from 'calypso/lib/jetpack/backup-utils';
 import { backupRestorePath } from 'calypso/my-sites/backup/paths';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { findRewindIdForBackupPeriod } from './find-rewind-id';
+import { findRewindIdForBackupPeriod, getNextBackupPeriod } from './find-rewind-id';
 import type { BackupThreat, BackupThreats } from '@automattic/api-core';
 
 import './style.scss';
@@ -38,26 +43,47 @@ export function RestoreThatOneInsteadLink( {
 		( currentRewindId === undefined ||
 			getBackupPeriod( currentRewindId ) !== latestWithoutKnownThreats );
 
+	// The known backup periods (already cached by the known-threats lookup) bound the search: anything
+	// at or after the next backup period belongs to that later backup.
+	const { data: firstPage, isFetched: hasFetchedPeriods } = useQuery( {
+		...siteBackupsKnownThreatsPageQuery( siteId, 1 ),
+		enabled: hasTarget && !! siteId,
+	} );
+	const knownPeriods = firstPage?.periods ?? [];
+	const dayAfter = hasTarget ? latestWithoutKnownThreats + 24 * 60 * 60 : 0;
+	const nextPeriod = hasTarget
+		? getNextBackupPeriod( latestWithoutKnownThreats, knownPeriods )
+		: null;
+	const before = nextPeriod !== null ? Math.min( nextPeriod, dayAfter ) : dayAfter;
+
 	// The legacy restore page looks up the Activity Log activity by its own rewind id, which differs
-	// from the bare backup period, so resolve it from the activities right after the period.
+	// from the bare backup period, so resolve it from the successful-backup activities right after it.
 	const { data: activities } = useRewindableActivityLogQuery(
 		siteId,
 		{
+			name: SUCCESSFUL_BACKUP_ACTIVITIES,
+			aggregate: false,
 			after: hasTarget ? new Date( latestWithoutKnownThreats * 1000 ).toISOString() : undefined,
-			before: hasTarget
-				? new Date( ( latestWithoutKnownThreats + 24 * 60 * 60 ) * 1000 ).toISOString()
-				: undefined,
+			before: hasTarget ? new Date( before * 1000 ).toISOString() : undefined,
 			sortOrder: 'asc',
-			number: 50,
+			number: 10,
 		},
-		{ enabled: hasTarget && !! siteId, refetchInterval: false }
+		{
+			enabled: hasTarget && !! siteId && hasFetchedPeriods,
+			refetchInterval: false,
+			staleTime: 60_000,
+		}
 	) as { data?: Parameters< typeof findRewindIdForBackupPeriod >[ 0 ] };
 
 	if ( ! hasTarget ) {
 		return null;
 	}
 
-	const resolvedRewindId = findRewindIdForBackupPeriod( activities, latestWithoutKnownThreats );
+	const resolvedRewindId = findRewindIdForBackupPeriod(
+		activities,
+		latestWithoutKnownThreats,
+		knownPeriods
+	);
 	if ( ! resolvedRewindId ) {
 		return null;
 	}
