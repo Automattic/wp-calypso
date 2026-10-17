@@ -167,8 +167,13 @@ const flaggedBackups = [
 test( 'shows the badge on flagged backups in the list', async () => {
 	renderPage( { backups: flaggedBackups } );
 
-	expect( await screen.findByText( 'Known threats (3)' ) ).toBeVisible();
-	expect( screen.getAllByText( /Known threats \(/ ) ).toHaveLength( 1 );
+	const titles = await screen.findAllByText(
+		( _, element ) => element?.textContent === 'Flagged backup Known threats (3)'
+	);
+	expect( titles[ 0 ] ).toBeVisible();
+	expect(
+		screen.queryAllByText( ( _, element ) => element?.textContent === 'Other backup' )
+	).not.toHaveLength( 0 );
 } );
 
 test( 'shows the badge on realtime restore points inside a flagged backup', async () => {

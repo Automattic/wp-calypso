@@ -209,6 +209,45 @@ describe( 'site backup known threats queries', () => {
 		expect( second ).toEqual( first );
 	} );
 
+	it( 'shares page 1 between the list and per-backup queries', async () => {
+		let requests = 0;
+		nock( BASE )
+			.persist()
+			.get( LIST_PATH )
+			.query( { number: 100, page: 1 } )
+			.reply( 200, () => {
+				requests++;
+				return page( 1, 2, [ backup( '300', counts( 1 ) ), backup( '200', counts( 2 ) ) ] );
+			} );
+		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+
+		await client.fetchQuery( siteBackupsKnownThreatsQuery( SITE_ID ) );
+		const result = await client.fetchQuery( siteBackupKnownThreatsQuery( SITE_ID, '250' ) );
+
+		expect( requests ).toBe( 1 );
+		expect( result.knownThreats ).toEqual( counts( 2 ) );
+	} );
+
+	it( 'fetches each page once across per-backup queries', async () => {
+		let requests = 0;
+		nock( BASE )
+			.persist()
+			.get( LIST_PATH )
+			.query( true )
+			.reply( 200, ( uri ) => {
+				requests++;
+				return uri.includes( 'page=1' )
+					? page( 1, 2, [ backup( '300', counts( 1 ) ) ] )
+					: page( 2, 2, [ backup( '200', counts( 2 ) ) ] );
+			} );
+		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+
+		await client.fetchQuery( siteBackupKnownThreatsQuery( SITE_ID, '310' ) );
+		await client.fetchQuery( siteBackupKnownThreatsQuery( SITE_ID, '250' ) );
+
+		expect( requests ).toBe( 2 );
+	} );
+
 	it( "fetches one backup's threats", async () => {
 		const body = {
 			backup_id: 1792244294,

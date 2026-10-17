@@ -9,19 +9,24 @@ import type { BackupKnownThreats, BackupsKnownThreatsPage } from '@automattic/ap
 
 const MAX_KNOWN_THREATS_PAGES = 30;
 
-export const siteBackupsKnownThreatsQuery = ( siteId: number ) =>
+export const siteBackupsKnownThreatsPageQuery = ( siteId: number, page: number ) =>
 	queryOptions( {
-		queryKey: [ 'site', siteId, 'backups', 'known-threats' ],
-		queryFn: () => fetchSiteBackupsKnownThreatsPage( siteId, 1 ),
+		queryKey: [ 'site', siteId, 'backups', 'known-threats', 'page', page ],
+		queryFn: () => fetchSiteBackupsKnownThreatsPage( siteId, page ),
 		staleTime: 60_000,
 		retry: false,
 	} );
+
+export const siteBackupsKnownThreatsQuery = ( siteId: number ) =>
+	siteBackupsKnownThreatsPageQuery( siteId, 1 );
 
 export const siteBackupKnownThreatsQuery = ( siteId: number, rewindId: string ) => {
 	const period = getBackupPeriod( rewindId );
 	return queryOptions( {
 		queryKey: [ 'site', siteId, 'backup', period, 'known-threats' ],
-		queryFn: async (): Promise< {
+		queryFn: async ( {
+			client,
+		} ): Promise< {
 			knownThreats: BackupKnownThreats | null;
 			latestWithoutKnownThreats: number | null;
 		} > => {
@@ -32,7 +37,7 @@ export const siteBackupKnownThreatsQuery = ( siteId: number, rewindId: string ) 
 			const pages: BackupsKnownThreatsPage[] = [];
 
 			for ( let page = 1; page <= MAX_KNOWN_THREATS_PAGES; page++ ) {
-				const result = await fetchSiteBackupsKnownThreatsPage( siteId, page );
+				const result = await client.fetchQuery( siteBackupsKnownThreatsPageQuery( siteId, page ) );
 				pages.push( result );
 				if (
 					( result.oldestPeriod !== null && result.oldestPeriod <= period ) ||
