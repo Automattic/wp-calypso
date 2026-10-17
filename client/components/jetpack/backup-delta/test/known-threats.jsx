@@ -63,6 +63,7 @@ describe( 'BackupDelta known threats', () => {
 				totalPages: 1,
 				page: 1,
 				itemsPerPage: 100,
+				latest_without_known_threats: 100,
 				backups: [ backup( 200, 3 ), backup( 100, 0 ) ],
 			} );
 
@@ -134,6 +135,14 @@ describe( 'BackupDelta known threats', () => {
 		await userEvent.hover( button );
 		expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
 		await userEvent.unhover( button );
+		const restoreLink = await within( cards[ 0 ] ).findByRole( 'link', {
+			name: 'Restore this one instead',
+		} );
+		expect( restoreLink ).toBeVisible();
+		expect( toolbar ).not.toContainElement( restoreLink );
+		expect(
+			within( cards[ 1 ] ).queryByRole( 'link', { name: 'Restore this one instead' } )
+		).toBeNull();
 		await userEvent.click( button );
 		expect( button ).toHaveAttribute( 'aria-expanded', 'true' );
 		await userEvent.unhover( button );
@@ -141,6 +150,9 @@ describe( 'BackupDelta known threats', () => {
 		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
 		expect( await within( cards[ 0 ] ).findByText( 'Evil.Sig' ) ).toBeVisible();
 		expect( within( cards[ 1 ] ).queryByText( 'Evil.Sig' ) ).toBeNull();
+		expect(
+			within( cards[ 0 ] ).getAllByRole( 'link', { name: 'Restore this one instead' } )
+		).toHaveLength( 1 );
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 		expect( scope.isDone() ).toBe( true );
 		expect( scope.pendingMocks() ).toEqual( [] );

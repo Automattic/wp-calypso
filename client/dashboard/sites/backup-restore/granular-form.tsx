@@ -10,8 +10,8 @@ import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
+import KnownThreatsNotice from '../backups/known-threats/known-threats-notice';
 import FileSectionPanelBody from './file-section-panel-body';
-import KnownThreatsNotice from './known-threats-notice';
 import WooSubscriptionsNotice from './woo-subscriptions-notice';
 import type { RestoreTrackingProps } from './types';
 import type { Site } from '@automattic/api-core';

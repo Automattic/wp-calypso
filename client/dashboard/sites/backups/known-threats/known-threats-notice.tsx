@@ -4,12 +4,12 @@ import { useQuery } from '@tanstack/react-query';
 import { CheckboxControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
-import Notice from '../../components/notice';
-import { Text } from '../../components/text';
-import { hasHostingFeature } from '../../utils/site-features';
-import { KnownThreatsToggle } from '../backups/known-threats/known-threats-badge';
-import { KnownThreatsTable } from '../backups/known-threats/known-threats-table';
-import { RestoreThatOneInsteadLink } from '../backups/known-threats/restore-that-one-instead-link';
+import Notice from '../../../components/notice';
+import { Text } from '../../../components/text';
+import { hasHostingFeature } from '../../../utils/site-features';
+import { KnownThreatsToggle } from './known-threats-badge';
+import { KnownThreatsTable } from './known-threats-table';
+import { RestoreThatOneInsteadLink } from './restore-that-one-instead-link';
 import type { Site } from '@automattic/api-core';
 
 interface KnownThreatsNoticeProps {

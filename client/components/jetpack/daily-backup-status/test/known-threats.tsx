@@ -138,6 +138,17 @@ describe( 'BackupKnownThreats', () => {
 		expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
 		expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
 		expect( toggle.querySelector( '.gridicons-notice-outline' ) ).toBeInTheDocument();
+		// The scss pins this icon to 16px with a rule scoped under the toggle; jsdom has no CSS.
+		expect( toggle ).toHaveClass( 'backup-known-threats__toggle' );
+		expect( toggle.querySelector( '.backup-known-threats__badge .gridicon' ) ).toHaveAttribute(
+			'width',
+			'16'
+		);
+		const restoreLink = screen.getByRole( 'link', { name: 'Restore this one instead' } );
+		expect( restoreLink ).toBeVisible();
+		expect(
+			restoreLink.compareDocumentPosition( toggle ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
 		await userEvent.click( toggle );
 
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
@@ -150,6 +161,7 @@ describe( 'BackupKnownThreats', () => {
 		expect( screen.getByText( 'Ignored' ) ).toBeVisible();
 		expect( screen.getAllByText( localDate( Date.UTC( 2026, 9, 1, 23, 30 ) ) ) ).toHaveLength( 2 );
 		expect( screen.getByText( 'Also: 2 vulnerable plugin or theme versions.' ) ).toBeVisible();
+		expect( screen.getAllByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveLength( 1 );
 		expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveAttribute(
 			'href',
 			'/backup/example.wordpress.com/restore/150'

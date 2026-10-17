@@ -9,7 +9,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
-import KnownThreatsNotice from './known-threats-notice';
+import KnownThreatsNotice from '../backups/known-threats/known-threats-notice';
 import WooSubscriptionsNotice from './woo-subscriptions-notice';
 import type { RestoreTrackingProps } from './types';
 import type { RestoreConfig, Site } from '@automattic/api-core';

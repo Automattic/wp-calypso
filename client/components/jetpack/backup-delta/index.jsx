@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
 import {
 	BackupKnownThreatsDetails,
+	BackupKnownThreatsRestoreLink,
 	BackupKnownThreatsToggle,
 	useBackupKnownThreats,
 } from 'calypso/components/jetpack/daily-backup-status/known-threats';
@@ -25,7 +26,12 @@ function BackupDeltaRow( { siteId, activity } ) {
 				isFlagged ? <BackupKnownThreatsToggle state={ knownThreats } inToolbar /> : undefined
 			}
 		>
-			{ isFlagged && <BackupKnownThreatsDetails state={ knownThreats } /> }
+			{ isFlagged && (
+				<>
+					<BackupKnownThreatsRestoreLink state={ knownThreats } />
+					<BackupKnownThreatsDetails state={ knownThreats } />
+				</>
+			) }
 		</ActivityCard>
 	);
 }

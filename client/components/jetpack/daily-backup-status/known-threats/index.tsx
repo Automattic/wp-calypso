@@ -264,15 +264,24 @@ export function BackupKnownThreatsToggle( { state, inToolbar }: BackupKnownThrea
 	);
 }
 
-interface BackupKnownThreatsDetailsProps {
-	state: BackupKnownThreatsState;
-	showRestoreLink?: boolean;
+export function BackupKnownThreatsRestoreLink( { state }: { state: BackupKnownThreatsState } ) {
+	const { flagged, siteSlug, latestWithoutKnownThreats, rewindId } = state;
+
+	if ( flagged === null || ! siteSlug ) {
+		return null;
+	}
+
+	return (
+		<RestoreThatOneInsteadLink
+			siteSlug={ siteSlug }
+			latestWithoutKnownThreats={ latestWithoutKnownThreats }
+			currentRewindId={ rewindId ?? undefined }
+		/>
+	);
 }
 
-export function BackupKnownThreatsDetails( {
-	state,
-	showRestoreLink = true,
-}: BackupKnownThreatsDetailsProps ) {
+/** The threats table, shown once expanded. The restore link lives in BackupKnownThreatsRestoreLink. */
+export function BackupKnownThreatsDetails( { state }: { state: BackupKnownThreatsState } ) {
 	const { flagged, hasScan, isOpen, threats, siteSlug, latestWithoutKnownThreats, rewindId } =
 		state;
 
@@ -286,7 +295,7 @@ export function BackupKnownThreatsDetails( {
 			threats={ threats }
 			latestWithoutKnownThreats={ latestWithoutKnownThreats }
 			currentRewindId={ rewindId ?? undefined }
-			showRestoreLink={ showRestoreLink }
+			showRestoreLink={ false }
 		/>
 	);
 }
@@ -310,8 +319,9 @@ export function BackupKnownThreats( {
 
 	return (
 		<div className="backup-known-threats">
+			{ showRestoreLink && <BackupKnownThreatsRestoreLink state={ state } /> }
 			<BackupKnownThreatsToggle state={ state } />
-			<BackupKnownThreatsDetails state={ state } showRestoreLink={ showRestoreLink } />
+			<BackupKnownThreatsDetails state={ state } />
 		</div>
 	);
 }

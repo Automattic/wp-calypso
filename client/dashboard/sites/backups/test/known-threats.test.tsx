@@ -115,10 +115,12 @@ function renderPage( {
 	withScan = false,
 	backups,
 	selected,
+	latestWithout = 1792240000,
 }: {
 	withScan?: boolean;
 	backups: unknown[];
 	selected?: string;
+	latestWithout?: number;
 } ) {
 	mockRouterParams.rewindId = selected;
 	nock( API_BASE )
@@ -149,7 +151,7 @@ function renderPage( {
 		.reply( 200, {
 			ok: true,
 			totalPages: 1,
-			latest_without_known_threats: 1792240000,
+			latest_without_known_threats: latestWithout,
 			backups,
 		} );
 	return { ...render( <BackupsListPage /> ), listScope };
@@ -267,6 +269,17 @@ test( 'expands the threats table for Scan sites', async () => {
 	expect( pill.querySelector( 'svg' ) ).toBeInTheDocument();
 	expect( toggle.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
 	expect( toggle.querySelector( 'svg' )?.parentElement ).toBe( pill );
+	expect(
+		screen.getByText(
+			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.'
+		)
+	).toBeVisible();
+	expect( screen.queryByRole( 'checkbox' ) ).toBeNull();
+	const restoreLink = screen.getByRole( 'link', { name: 'Restore this one instead' } );
+	expect( restoreLink ).toBeVisible();
+	expect(
+		restoreLink.compareDocumentPosition( toggle ) & Node.DOCUMENT_POSITION_FOLLOWING
+	).toBeTruthy();
 	await user.click( toggle );
 
 	expect( await screen.findByText( 'Backdoor.PHP.Agent' ) ).toBeVisible();
@@ -280,6 +293,7 @@ test( 'expands the threats table for Scan sites', async () => {
 		screen.getByText( `Fixed ${ localDate( Date.UTC( 2026, 8, 2, 23, 30 ) ) }` )
 	).toBeVisible();
 	expect( screen.getByText( 'Also: 2 vulnerable plugin or theme versions.' ) ).toBeVisible();
+	expect( screen.getAllByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveLength( 1 );
 	expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveAttribute(
 		'href',
 		expect.stringContaining( '/backups/1792240000/restore' )
@@ -294,6 +308,18 @@ test( 'expands the threats table for Scan sites', async () => {
 	await user.hover( expanded );
 	expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
 	expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
+} );
+
+test( 'hides the restore link when the latest clean backup is this one', async () => {
+	renderPage( {
+		withScan: true,
+		backups: flaggedBackups,
+		selected: flaggedRewindId,
+		latestWithout: 1792244435,
+	} );
+
+	await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
+	expect( screen.queryByRole( 'link', { name: 'Restore this one instead' } ) ).toBeNull();
 } );
 
 test( 'uses the singular vulnerable note for one version', async () => {
@@ -321,7 +347,12 @@ test( 'shows the count only without Scan', async () => {
 		.reply( 200, {} );
 	renderPage( { withScan: false, backups: flaggedBackups, selected: flaggedRewindId } );
 
-	await waitFor( () => expect( screen.getAllByText( 'Known threats (3)' ) ).toHaveLength( 2 ) );
+	expect(
+		await screen.findByText( /This backup is known to contain 3 security threats/ )
+	).toBeVisible();
+	await waitFor( () =>
+		expect( screen.getAllByText( 'Known threats (3)' ).length ).toBeGreaterThan( 0 )
+	);
 	screen
 		.getAllByText( 'Known threats (3)' )
 		.forEach( ( badge ) => expect( badge.querySelector( 'svg' ) ).toBeInTheDocument() );

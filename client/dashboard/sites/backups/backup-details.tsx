@@ -18,7 +18,7 @@ import Grid from '../../components/grid';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import { ImagePreview } from './image-preview';
-import { KnownThreatsSection } from './known-threats/known-threats-section';
+import KnownThreatsNotice from './known-threats/known-threats-notice';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
 
 interface BackupDetailsProps {
@@ -145,10 +145,11 @@ export function BackupDetails( {
 							</Text>
 						) }
 					</HStack>
-					<KnownThreatsSection
+					<KnownThreatsNotice
 						site={ site }
 						rewindId={ backup.rewind_id }
 						restoreLinkTo={ restoreLinkTo }
+						requireAcknowledgement={ false }
 					/>
 					<Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap="md">
 						{ backup.streams ? (
