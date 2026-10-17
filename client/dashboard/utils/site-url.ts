@@ -1,8 +1,4 @@
-import {
-	ProductUpgradeMap,
-	AkismetUpgradesProductMap,
-	SubscriptionBillPeriod,
-} from '@automattic/api-core';
+import { AkismetUpgradesProductMap, SubscriptionBillPeriod } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { getCurrentDashboard } from '../app/routing';
@@ -202,17 +198,13 @@ export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: stri
 		return url;
 	}
 
-	const upgradeProductSlug = ProductUpgradeMap[ purchase.product_slug ];
-	if ( upgradeProductSlug ) {
+	// The Jetpack store offers only bundles on sale, so it can retire or add upgrade targets.
+	if ( purchase.is_jetpack_plan_or_product ) {
 		const backUrl = redirectToDashboardLink( { supportBackport: true } );
-		return addQueryArgs( wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` ), {
-			redirect_to: backUrl,
+		return addQueryArgs( wpcomLink( `/plans/${ purchase.site_slug }` ), {
+			redirect_to: redirectTo ?? backUrl,
 			cancel_to: backUrl,
 		} );
-	}
-
-	if ( purchase.is_jetpack_plan_or_product ) {
-		return wpcomLink( `/plans/${ purchase.site_slug }` );
 	}
 
 	return buildSitePlanUpgradeUrl( {

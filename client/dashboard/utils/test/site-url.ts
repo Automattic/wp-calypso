@@ -90,6 +90,31 @@ describe( 'getSitePurchaseUpgradeUrl', () => {
 		expect( url ).not.toContain( '/plans/storage' );
 		expect( url ).toContain( '/plans/example.com' );
 	} );
+
+	test.each( [
+		'jetpack_starter_yearly',
+		'jetpack_security_t1_monthly',
+		'jetpack_growth_yearly',
+		'jetpack_growth_monthly',
+		'jetpack_pro_yearly',
+		'jetpack_pro_bi_yearly',
+	] )( 'sends %s to the Jetpack store, which offers only bundles on sale', ( productSlug ) => {
+		const url = getSitePurchaseUpgradeUrl( makePurchase( { product_slug: productSlug } ) );
+		expect( url ).toContain( '/plans/example.com' );
+		expect( url ).not.toContain( '/checkout/' );
+	} );
+
+	test( 'keeps the Dashboard return destinations for the store checkout', () => {
+		const url = new URL(
+			getSitePurchaseUpgradeUrl(
+				makePurchase( { product_slug: 'jetpack_growth_yearly' } ),
+				'/me/billing/purchases/1'
+			) as string,
+			'https://wordpress.com'
+		);
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe( '/me/billing/purchases/1' );
+		expect( url.searchParams.get( 'cancel_to' ) ).toBeTruthy();
+	} );
 } );
 
 describe( 'getWpcomPlanChangeUrl', () => {

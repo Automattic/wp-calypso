@@ -277,6 +277,10 @@ export const AkismetUpgradesProductMap: Record< string, string > = {
 	[ AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_25K_BI_YEARLY ]: 'https://akismet.com/enterprise',
 };
 
+/**
+ * @deprecated Calypso sends Jetpack bundle upgrades to the Jetpack store, which offers only
+ * bundles on sale. Kept for consumers of this package.
+ */
 export const ProductUpgradeMap: Record< string, string > = {
 	[ JetpackPlans.PLAN_JETPACK_STARTER_YEARLY ]: JetpackPlans.PLAN_JETPACK_SECURITY_T1_YEARLY,
 	[ JetpackPlans.PLAN_JETPACK_STARTER_MONTHLY ]: JetpackPlans.PLAN_JETPACK_SECURITY_T1_MONTHLY,
