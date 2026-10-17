@@ -206,6 +206,27 @@ test( 'links to the latest backup without known threats', async () => {
 	);
 } );
 
+test( 'shows the restore link once when the threats are expanded', async () => {
+	const user = userEvent.setup();
+	nock( API_BASE )
+		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/${ rewindId }/threats` )
+		.reply( 200, {
+			backup_id: 1792244294,
+			cutoff: null,
+			summary: knownThreats( 3 ),
+			count: 0,
+			truncated: false,
+			threats: [],
+		} );
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	renderForm();
+
+	await user.click( await screen.findByRole( 'button', { name: /Show threats/ } ) );
+
+	expect( await screen.findByRole( 'columnheader', { name: 'Threat' } ) ).toBeVisible();
+	expect( screen.getAllByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveLength( 1 );
+} );
+
 test( 'shows no Show threats toggle without Scan', async () => {
 	mockBackups( { known_threats: knownThreats( 3 ) } );
 	render(

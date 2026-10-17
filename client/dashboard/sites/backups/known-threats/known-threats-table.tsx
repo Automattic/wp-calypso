@@ -11,6 +11,7 @@ interface KnownThreatsTableProps {
 	threats: BackupThreats;
 	latestWithoutKnownThreats?: number | null;
 	currentRewindId?: string;
+	showRestoreLink?: boolean;
 }
 
 export function KnownThreatsTable( {
@@ -19,6 +20,7 @@ export function KnownThreatsTable( {
 	threats,
 	latestWithoutKnownThreats,
 	currentRewindId,
+	showRestoreLink = true,
 }: KnownThreatsTableProps ) {
 	const locale = useIntlLocale();
 	const rows = threats.threats.filter( ( threat ) => threat.kind !== 'vulnerable' );
@@ -70,12 +72,14 @@ export function KnownThreatsTable( {
 				</tbody>
 			</table>
 			{ threats.summary.vulnerable > 0 && <p>{ vulnerableNote }</p> }
-			<RestoreThatOneInsteadLink
-				siteSlug={ siteSlug }
-				restoreLinkTo={ restoreLinkTo }
-				latestWithoutKnownThreats={ latestWithoutKnownThreats }
-				currentRewindId={ currentRewindId }
-			/>
+			{ showRestoreLink && (
+				<RestoreThatOneInsteadLink
+					siteSlug={ siteSlug }
+					restoreLinkTo={ restoreLinkTo }
+					latestWithoutKnownThreats={ latestWithoutKnownThreats }
+					currentRewindId={ currentRewindId }
+				/>
+			) }
 		</div>
 	);
 }

@@ -84,6 +84,7 @@ export default function KnownThreatsNotice( {
 								threats={ threats }
 								latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
 								currentRewindId={ rewindId }
+								showRestoreLink={ false }
 							/>
 						) }
 					</div>
