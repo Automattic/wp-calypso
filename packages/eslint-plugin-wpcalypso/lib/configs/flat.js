@@ -1,4 +1,5 @@
 // Flat-config versions of the legacy presets, built from the same rule objects.
+const { fixupPluginRules } = require( '@eslint/compat' );
 const legacyReact = require( './react' );
 const legacyRecommended = require( './recommended' );
 
@@ -23,7 +24,8 @@ const recommended = ( plugin ) => {
 			},
 			plugins: {
 				wpcalypso: plugin,
-				'inclusive-language': load( 'eslint-plugin-inclusive-language' ),
+				// Its rule still calls a method that ESLint 10 removed.
+				'inclusive-language': fixupPluginRules( load( 'eslint-plugin-inclusive-language' ) ),
 			},
 			settings: legacyRecommended.settings,
 			rules: legacyRecommended.rules,
@@ -46,7 +48,8 @@ const react = ( plugin ) => {
 			name: 'wpcalypso/react',
 			languageOptions: { sourceType, parserOptions: { ecmaFeatures } },
 			plugins: {
-				react: load( 'eslint-plugin-react' ),
+				// Some of its rules still call methods that ESLint 10 removed.
+				react: fixupPluginRules( load( 'eslint-plugin-react' ) ),
 				'react-hooks': load( 'eslint-plugin-react-hooks' ),
 			},
 			rules: legacyReact.rules,

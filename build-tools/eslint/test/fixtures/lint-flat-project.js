@@ -12,7 +12,8 @@ const wpcalypso = require( 'eslint-plugin-wpcalypso' );
 // eslint-disable-next-line wpcalypso/i18n-unlocalized-url -- the input that rule should flag
 const url = 'https://wordpress.com/support/';
 const files = {
-	'index.js': `export const help = '${ url }';\n`,
+	// eslint-disable-next-line inclusive-language/use-inclusive-words -- the input that rule should flag
+	'index.js': `export const help = '${ url }';\n// whitelist\n`,
 	'component.jsx': 'export const Example = () => <div />;\n',
 	'test/index.js': `export const help = '${ url }';\n`,
 	'data.json': `{ "help": "${ url }" }\n`,
@@ -26,15 +27,10 @@ const config = defineConfig( [
 	{ files: [ '**/*.{js,jsx}' ], extends: [ wpcalypso.configs[ 'flat/react' ] ] },
 	{ files: [ '**/*.json' ], extends: [ json.configs[ 'flat/recommended' ] ] },
 	{ ...flatNodeConfig, files: [ 'bin/**' ] },
-	// Stands in for the Babel config a real project has.
+	// The parser this repo uses: the presets' Babel parser needs Babel 8 to run on ESLint 10.
 	{
 		files: [ '**/*.{js,jsx}' ],
-		languageOptions: {
-			parserOptions: {
-				requireConfigFile: false,
-				babelOptions: { presets: [ require.resolve( '@babel/preset-react' ) ] },
-			},
-		},
+		languageOptions: { parser: require( '@typescript-eslint/parser' ) },
 	},
 ] );
 
