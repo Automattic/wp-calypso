@@ -71,6 +71,7 @@ export const PageHeader = ( props: PageHeaderProps ) => {
 			{ ...props }
 			{ ...override }
 			level={ 1 }
+			inset
 			title={ override?.title ?? props.title ?? <PageTitle /> }
 			className="dashboard-page-header"
 		/>

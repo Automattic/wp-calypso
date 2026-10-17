@@ -17,9 +17,9 @@ const DashboardCard = forwardRef< HTMLElement, CardProps >(
 	( { size, children, ...rest }, ref ) => {
 		const isDesktop = useViewportMatch( 'medium' );
 
-		let computedSize = size || 'medium';
+		let computedSize = size || 'small';
 
-		// Default to small on mobile, unless the size is explicitly set to xSmall.
+		// Force small on mobile, unless the size is explicitly set to xSmall.
 		if ( ! isDesktop && size !== 'xSmall' ) {
 			computedSize = 'small';
 		}

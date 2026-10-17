@@ -165,6 +165,7 @@ export default function WordPressLabs() {
 					<VStack spacing={ 2 }>
 						<SectionHeader
 							level={ 3 }
+							inset
 							title={ __( 'Current experiments' ) }
 							description={ __( 'Beta features and tools you can try will show up here.' ) }
 						/>
@@ -201,6 +202,7 @@ export default function WordPressLabs() {
 							<VStack spacing={ 2 }>
 								<SectionHeader
 									level={ 3 }
+									inset
 									title={ __( 'Excluded sites' ) }
 									description={ __( 'WordPress Labs is disabled for these sites.' ) }
 								/>

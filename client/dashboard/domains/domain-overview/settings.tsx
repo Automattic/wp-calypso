@@ -141,7 +141,7 @@ export default function DomainOverviewSettings( {
 	return (
 		buttonListItems.length > 0 && (
 			<VStack spacing={ 3 }>
-				<SectionHeader title={ __( 'Settings' ) } level={ 3 } />
+				<SectionHeader title={ __( 'Settings' ) } level={ 3 } inset />
 				<SummaryButtonList>{ buttonListItems }</SummaryButtonList>
 			</VStack>
 		)

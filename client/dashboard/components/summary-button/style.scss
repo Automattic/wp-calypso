@@ -1,10 +1,7 @@
 @import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/breakpoints";
 
 .dashboard-summary-button {
-    @media (max-width: #{$break-medium - 1px}) {
-        padding-inline: $grid-unit-20 !important;
-    }
+    padding-inline: $grid-unit-20 !important;
 }
 
 // Avoid a double border when a summary button is the last child of a card —

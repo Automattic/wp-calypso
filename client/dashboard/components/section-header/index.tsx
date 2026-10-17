@@ -24,10 +24,18 @@ export const SectionHeader = ( {
 	prefix,
 	className,
 	level = 2,
+	inset = false,
 }: SectionHeaderProps ) => {
 	const HeadingTag = `h${ level }` as keyof JSX.IntrinsicElements;
 	return (
-		<VStack className={ clsx( 'dashboard-section-header', `is-level-${ level }`, className ) }>
+		<VStack
+			className={ clsx(
+				'dashboard-section-header',
+				`is-level-${ level }`,
+				{ 'is-inset': inset },
+				className
+			) }
+		>
 			{ prefix && <div className="dashboard-section-header__prefix">{ prefix }</div> }
 			<HStack
 				justify="flex-start"

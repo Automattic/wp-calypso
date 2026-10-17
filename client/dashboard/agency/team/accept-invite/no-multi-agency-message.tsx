@@ -79,7 +79,7 @@ export default function NoMultiAgencyMessage( {
 				/>
 			</ActionList>
 			<VStack spacing={ 3 } alignment="flex-start">
-				<SectionHeader level={ 3 } title={ __( 'Learn more about Agency membership' ) } />
+				<SectionHeader level={ 3 } title={ __( 'Learn more about Agency membership' ) } inset />
 				<InlineSupportLink
 					supportLink={ TEAM_MEMBERS_SUPPORT_URL }
 					forceOpenInHelpCenter

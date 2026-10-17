@@ -57,4 +57,10 @@ describe( 'SectionHeader', () => {
 		expect( screen.getByTestId( 'prefix' ) ).toBeVisible();
 		expect( screen.getByText( 'Prefix Content' ) ).toBeVisible();
 	} );
+	test( 'should only be inset when the inset prop is set', () => {
+		const { container, rerender } = render( <SectionHeader title="Test Title" /> );
+		expect( container.firstChild ).not.toHaveClass( 'is-inset' );
+		rerender( <SectionHeader title="Test Title" inset /> );
+		expect( container.firstChild ).toHaveClass( 'is-inset' );
+	} );
 } );

@@ -52,7 +52,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 		>
 			{ siteTypeSupports.settingsGeneral && (
 				<VStack spacing={ 3 }>
-					<SectionHeader title={ __( 'General' ) } level={ 3 } />
+					<SectionHeader title={ __( 'General' ) } level={ 3 } inset />
 					<SummaryButtonList>
 						{ siteTypeSupports.settingsGeneralDotcomSiteVisibility ? (
 							<SiteVisibilitySettingsSummary site={ site } />
@@ -72,7 +72,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 			) }
 			{ siteTypeSupports.settingsServer && (
 				<VStack spacing={ 3 }>
-					<SectionHeader title={ __( 'Server' ) } level={ 3 } />
+					<SectionHeader title={ __( 'Server' ) } level={ 3 } inset />
 					<SummaryButtonList>
 						<WordPressSettingsSummary site={ site } />
 						<PHPSettingsSummary site={ site } />
@@ -89,7 +89,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 			) }
 			{ siteTypeSupports.settingsSecurity && (
 				<VStack spacing={ 3 }>
-					<SectionHeader title={ __( 'Security' ) } level={ 3 } />
+					<SectionHeader title={ __( 'Security' ) } level={ 3 } inset />
 					<SummaryButtonList>
 						<WebApplicationFirewallSettingsSummary site={ site } />
 						<WpcomLoginSettingsSummary site={ site } />

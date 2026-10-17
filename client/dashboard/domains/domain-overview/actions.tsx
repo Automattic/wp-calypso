@@ -110,7 +110,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 
 	return (
 		<VStack spacing={ 4 }>
-			<SectionHeader level={ 3 } title={ __( 'Actions' ) } />
+			<SectionHeader level={ 3 } title={ __( 'Actions' ) } inset />
 			<ActionList>
 				{ availableActions.renew && purchase && (
 					<ActionList.ActionItem
