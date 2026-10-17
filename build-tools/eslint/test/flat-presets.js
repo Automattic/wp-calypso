@@ -1,61 +1,71 @@
 /**
  * @jest-environment node
  */
-const fs = require( 'fs' );
-const os = require( 'os' );
+const { spawnSync } = require( 'child_process' );
 const path = require( 'path' );
 const { flatNodeConfig } = require( '@automattic/calypso-eslint-overrides' );
-const jsonPlugin = require( '@automattic/eslint-plugin-json' );
 const { loadESLint } = require( 'eslint' );
 
 const repoRoot = path.resolve( __dirname, '../../..' );
 
-// Each preset spread as documented, with nothing the consumer would add.
-const lint = async ( overrideConfig, code, file ) => {
-	const ESLint = await loadESLint( { useFlatConfig: true } );
-	const eslint = new ESLint( { cwd: repoRoot, overrideConfigFile: true, overrideConfig } );
-	const [ result ] = await eslint.lintText( code, { filePath: path.join( repoRoot, file ) } );
-	return result.messages.map(
-		( { ruleId, fatal, message } ) => ruleId ?? ( fatal ? 'fatal' : message )
+// Without this, the flat presets can work in isolation yet break the documented setup:
+// skip JSX, parse JSON or Markdown as JavaScript, lose top-level `return`, or fail with `--cache`.
+test( 'the flat presets lint a project as their READMEs set them up', () => {
+	// A separate process: Jest can't require() ES-module plugins such as eslint-plugin-jsdoc.
+	const run = spawnSync(
+		process.execPath,
+		[ path.join( __dirname, 'fixtures/lint-flat-project.js' ) ],
+		{
+			encoding: 'utf8',
+		}
 	);
-};
+	if ( run.status !== 0 ) {
+		throw new Error( `lint-flat-project exited with ${ run.status }:\n${ run.stderr }` );
+	}
+	const { uncached, cached } = JSON.parse( run.stdout );
+	const clean = { fatal: false, rules: [] };
 
-test( 'the flat JSON preset lints JSON files, package.json rules included, and leaves JavaScript alone', async () => {
-	const preset = jsonPlugin.configs[ 'flat/recommended' ];
-	expect( await lint( preset, '{\n\t// note\n\t"a": 1\n}\n', 'src/data.json' ) ).toEqual( [
-		'json-es/no-comments',
-	] );
-	expect( await lint( preset, '{}\n', 'src/package.json' ) ).toContain(
-		'@automattic/json/require-name'
-	);
-	expect( await lint( preset, 'export default 1;\n', 'src/index.js' ) ).toEqual( [] );
-} );
-
-// Without this, `eslint --cache` can't hash a config that uses the JSON preset.
-test( 'the flat JSON preset works with the ESLint cache', async () => {
-	const ESLint = await loadESLint( { useFlatConfig: true } );
-	const cacheLocation = path.join( fs.mkdtempSync( path.join( os.tmpdir(), 'eslint-' ) ), 'cache' );
-	const eslint = new ESLint( {
-		cwd: repoRoot,
-		overrideConfigFile: true,
-		overrideConfig: jsonPlugin.configs[ 'flat/recommended' ],
-		cache: true,
-		cacheLocation,
+	expect( uncached ).toEqual( {
+		'index.js': { fatal: false, rules: [ 'wpcalypso/i18n-unlocalized-url' ] },
+		'component.jsx': clean,
+		// The test-file exception.
+		'test/index.js': clean,
+		// JSON gets the JSON parser and rules only; Markdown isn't linted at all.
+		'data.json': clean,
+		'package.json': {
+			fatal: false,
+			rules: [
+				'@automattic/json/require-author',
+				'@automattic/json/require-description',
+				'@automattic/json/require-license',
+				'@automattic/json/require-name',
+				'@automattic/json/require-version',
+			],
+		},
+		'bin/module.js': clean,
+		'bin/script.cjs': clean,
 	} );
-	await expect(
-		eslint.lintFiles( [ 'packages/eslint-plugin-package-json/package.json' ] )
-	).resolves.toHaveLength( 1 );
-} );
+	expect( cached ).toEqual( uncached );
+}, 60000 );
 
-test( 'the flat Node preset keeps ES modules and allows top-level return in scripts', async () => {
-	const config = [ flatNodeConfig, { rules: { 'no-undef': 'error' } } ];
-	const esModule = "import fs from 'node:fs';\nfs.readFileSync( process.argv[ 2 ] );\n";
-	expect( await lint( config, esModule, 'bin/script.js' ) ).toEqual( [] );
+// Without this, ESLint's default parser turns `globalReturn` off on the shared preset object
+// after one ES module, and later scripts in the same run reject top-level `return`.
+test( 'the flat Node preset keeps top-level return for scripts after linting an ES module', async () => {
+	const ESLint = await loadESLint( { useFlatConfig: true } );
+	const lint = async ( overrideConfig, code ) => {
+		const eslint = new ESLint( { cwd: repoRoot, overrideConfigFile: true, overrideConfig } );
+		const [ result ] = await eslint.lintText( code, {
+			filePath: path.join( repoRoot, 'bin/x.js' ),
+		} );
+		return result.messages.map( ( { ruleId, message } ) => ruleId ?? message );
+	};
+	expect(
+		await lint( [ flatNodeConfig ], "import fs from 'node:fs';\nfs.readFileSync( 'x' );\n" )
+	).toEqual( [] );
 	expect(
 		await lint(
-			[ { languageOptions: { sourceType: 'script' } }, ...config ],
-			'if ( ! process.env.CI ) {\n\treturn;\n}\n',
-			'bin/script.js'
+			[ { languageOptions: { sourceType: 'script' } }, flatNodeConfig ],
+			'if ( x ) {\n\treturn;\n}\n'
 		)
 	).toEqual( [] );
 } );

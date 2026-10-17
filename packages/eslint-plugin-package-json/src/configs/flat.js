@@ -19,7 +19,6 @@ const toFlatFiles = ( files ) =>
 const recommended = ( plugin ) => [
 	{
 		name: '@automattic/json/recommended',
-		files: [ '**/*.json' ],
 		// The JSON parser rejects flat config's defaults (`'latest'`, `'module'`); these are the legacy ones.
 		languageOptions: { parser, ecmaVersion: 5, sourceType: 'script' },
 		plugins: { 'json-es': jsonEs },

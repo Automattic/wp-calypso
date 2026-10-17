@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-- Added a flat-config `flat/recommended` preset for ESLint 9, built from the same rules as `recommended`. It applies to `.json` files and works with `--cache`.
+- Added a flat-config `flat/recommended` preset for ESLint 9, built from the same rules as `recommended`. Scope it to your JSON files with `files` and `extends`, as the README shows.
 
 ## 1.0.0
 

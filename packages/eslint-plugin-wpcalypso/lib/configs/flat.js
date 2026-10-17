@@ -29,8 +29,8 @@ const recommended = ( plugin ) => {
 			settings: legacyRecommended.settings,
 			rules: legacyRecommended.rules,
 		},
-		// The legacy override's test-file exception. Its `*.json` and `*.md` patterns would make a
-		// flat preset lint those files as JavaScript, so configs that lint them set their own.
+		// The legacy override's test-file exception. Its `*.json` and `*.md` patterns would select
+		// those files; consumers scope these presets to JavaScript with `files` instead.
 		{
 			name: 'wpcalypso/recommended/test-files',
 			files: [ '**/test/*' ],
@@ -43,8 +43,6 @@ const react = ( plugin ) => {
 	const { ecmaFeatures, sourceType } = legacyReact.parserOptions;
 	return [
 		...recommended( plugin ),
-		// Flat config lints only `.js`-style files unless a config selects others.
-		{ name: 'wpcalypso/react/files', files: [ '**/*.jsx' ] },
 		{
 			name: 'wpcalypso/react',
 			languageOptions: { sourceType, parserOptions: { ecmaFeatures } },

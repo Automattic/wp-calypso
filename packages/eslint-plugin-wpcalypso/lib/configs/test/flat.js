@@ -46,15 +46,3 @@ test.each( [
 	},
 	30000
 );
-
-// Without this, spreading a flat preset makes ESLint parse JSON and Markdown files as JavaScript.
-test.each( [
-	[ 'recommended', 'README.md' ],
-	[ 'react', 'src/data/strings.json' ],
-] )(
-	'flat/%s does not select %s for linting',
-	( preset, file ) => {
-		expect( resolveRules( preset, file ).flat ).toBeNull();
-	},
-	30000
-);

@@ -2,7 +2,7 @@
 
 - Breaking: Updated peer dependency `eslint-plugin-jsdoc` to 65.1.0 and `eslint-plugin-react-hooks` to 7.1.1. `jsdoc/check-param-names` now also checks the properties of object-typed parameters.
 - Turned off the rules `eslint-plugin-jsdoc` added to its recommended config after v50: `escape-inline-tags`, `reject-any-type`, `reject-function-type`, `require-throws-type`, `require-yields-type` and `ts-no-empty-object-type`.
-- Added flat-config presets `flat/recommended` and `flat/react` for ESLint 9, built from the same rules as the legacy presets. `flat/react` also lints `.jsx` files. Neither lints JSON or Markdown, so configs that do should set their own exceptions. ESLint 10 is not supported yet. They need `@eslint/js`, a new optional peer dependency. `@babel/eslint-parser`, which the legacy presets already required, is now a declared peer dependency.
+- Added flat-config presets `flat/recommended` and `flat/react` for ESLint 9, built from the same rules as the legacy presets. Scope them to your JavaScript files with `files` and `extends`, as the README shows. ESLint 10 is not supported yet. They need `@eslint/js`, a new optional peer dependency. `@babel/eslint-parser`, which the legacy presets already required, is now a declared peer dependency.
 
 #### v8.0.0 (2023-09-14)
 
