@@ -8,6 +8,7 @@ import { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
 import { getThemeTier, prependThemeFilterKeys } from 'calypso/state/themes/selectors';
 import {
 	normalizeJetpackTheme,
+	normalizeThemeSearchTerm,
 	normalizeWpcomTheme,
 	normalizeWporgTheme,
 } from 'calypso/state/themes/utils';
@@ -40,17 +41,24 @@ export function requestThemes( siteId, query = {}, locale ) {
 			query,
 		} );
 
+		// Only the outgoing request sees the rewritten search term. Everything keyed on
+		// `query` — the Redux cache, the search box, the tracks payload — stays on what
+		// the user actually typed.
+		const requestQuery = query.search
+			? { ...query, search: normalizeThemeSearchTerm( query.search ) }
+			: query;
+
 		let request;
 
 		if ( siteId === 'wporg' ) {
-			request = () => fetchWporgThemesList( query );
+			request = () => fetchWporgThemesList( requestQuery );
 		} else if ( siteId === 'wpcom' ) {
 			request = () =>
 				wpcom.req.get(
 					'/themes',
 					Object.assign(
 						{
-							...query,
+							...requestQuery,
 							apiNamespace: 'wpcom/v2',
 							// We should keep the blank-canvas-3 stay hidden according to below discussion
 							// https://github.com/Automattic/wp-calypso/issues/71911#issuecomment-1381284172
@@ -66,7 +74,8 @@ export function requestThemes( siteId, query = {}, locale ) {
 					)
 				);
 		} else if ( isAtomic || isJetpack ) {
-			request = () => wpcom.req.get( `/sites/${ siteId }/themes`, { ...query, apiVersion: '1' } );
+			request = () =>
+				wpcom.req.get( `/sites/${ siteId }/themes`, { ...requestQuery, apiVersion: '1' } );
 		} else {
 			request = () =>
 				wpcom.req.get( `/sites/${ siteId }/themes/activation-history`, {
