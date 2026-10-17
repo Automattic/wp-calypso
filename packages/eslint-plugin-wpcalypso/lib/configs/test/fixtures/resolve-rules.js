@@ -26,16 +26,17 @@ const normalize = ( rules ) =>
 	const flat = new Flat( {
 		cwd,
 		overrideConfigFile: true,
-		// The preset as documented; a consumer linting JSON selects it, as the flat presets don't.
-		overrideConfig: [
-			...plugin.configs[ `flat/${ legacyPreset }` ],
-			...( file.endsWith( '.json' ) ? [ { files: [ '**/*.json' ] } ] : [] ),
-		],
+		// The preset as documented, with nothing a consumer would add.
+		overrideConfig: plugin.configs[ `flat/${ legacyPreset }` ],
 	} );
 	const target = path.join( cwd, file );
 	const legacyRules = ( await legacy.calculateConfigForFile( target ) ).rules;
-	const flatRules = ( await flat.calculateConfigForFile( target ) ).rules;
+	// `undefined` when the flat preset doesn't lint the file at all.
+	const flatConfig = await flat.calculateConfigForFile( target );
 	process.stdout.write(
-		JSON.stringify( { legacy: normalize( legacyRules ), flat: normalize( flatRules ) } )
+		JSON.stringify( {
+			legacy: normalize( legacyRules ),
+			flat: flatConfig ? normalize( flatConfig.rules ) : null,
+		} )
 	);
 } )();

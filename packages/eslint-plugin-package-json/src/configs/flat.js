@@ -1,7 +1,16 @@
 // Flat-config version of the `recommended` preset, built from the same rule objects.
 const jsonEs = require( 'eslint-plugin-json-es' );
-const parser = require( '../parser' );
+const { parseForESLint } = require( '../parser' );
 const legacy = require( './recommended' );
+
+// ESLint identifies flat-config parsers by `meta` when caching or printing config.
+const parser = {
+	meta: {
+		name: '@automattic/eslint-plugin-json/parser',
+		version: require( '../../package.json' ).version,
+	},
+	parseForESLint,
+};
 
 // Legacy override globs without a slash match at any depth; flat ones are relative to the config.
 const toFlatFiles = ( files ) =>

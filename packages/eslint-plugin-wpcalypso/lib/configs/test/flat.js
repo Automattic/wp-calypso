@@ -31,9 +31,8 @@ const eslintRecommendedChanges = {
 test.each( [
 	[ 'react', 'src/component.jsx' ],
 	[ 'recommended', 'src/index.js' ],
-	// The legacy overrides for test and JSON files, converted to flat `files` globs.
+	// The legacy override's test-file exception.
 	[ 'recommended', 'src/test/index.js' ],
-	[ 'recommended', 'src/data/strings.json' ],
 ] )(
 	'flat/%s resolves the same rules as the legacy preset for %s',
 	( preset, file ) => {
@@ -44,6 +43,18 @@ test.each( [
 				.map( ( rule ) => [ rule, [ legacy[ rule ], flat[ rule ] ] ] )
 		);
 		expect( differences ).toEqual( eslintRecommendedChanges );
+	},
+	30000
+);
+
+// Without this, spreading a flat preset makes ESLint parse JSON and Markdown files as JavaScript.
+test.each( [
+	[ 'recommended', 'README.md' ],
+	[ 'react', 'src/data/strings.json' ],
+] )(
+	'flat/%s does not select %s for linting',
+	( preset, file ) => {
+		expect( resolveRules( preset, file ).flat ).toBeNull();
 	},
 	30000
 );

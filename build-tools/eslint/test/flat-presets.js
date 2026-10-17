@@ -1,6 +1,8 @@
 /**
  * @jest-environment node
  */
+const fs = require( 'fs' );
+const os = require( 'os' );
 const path = require( 'path' );
 const { flatNodeConfig } = require( '@automattic/calypso-eslint-overrides' );
 const jsonPlugin = require( '@automattic/eslint-plugin-json' );
@@ -29,9 +31,31 @@ test( 'the flat JSON preset lints JSON files, package.json rules included, and l
 	expect( await lint( preset, 'export default 1;\n', 'src/index.js' ) ).toEqual( [] );
 } );
 
-test( 'the flat Node preset allows top-level return and Node globals', async () => {
+// Without this, `eslint --cache` can't hash a config that uses the JSON preset.
+test( 'the flat JSON preset works with the ESLint cache', async () => {
+	const ESLint = await loadESLint( { useFlatConfig: true } );
+	const cacheLocation = path.join( fs.mkdtempSync( path.join( os.tmpdir(), 'eslint-' ) ), 'cache' );
+	const eslint = new ESLint( {
+		cwd: repoRoot,
+		overrideConfigFile: true,
+		overrideConfig: jsonPlugin.configs[ 'flat/recommended' ],
+		cache: true,
+		cacheLocation,
+	} );
+	await expect(
+		eslint.lintFiles( [ 'packages/eslint-plugin-package-json/package.json' ] )
+	).resolves.toHaveLength( 1 );
+} );
+
+test( 'the flat Node preset keeps ES modules and allows top-level return in scripts', async () => {
 	const config = [ flatNodeConfig, { rules: { 'no-undef': 'error' } } ];
+	const esModule = "import fs from 'node:fs';\nfs.readFileSync( process.argv[ 2 ] );\n";
+	expect( await lint( config, esModule, 'bin/script.js' ) ).toEqual( [] );
 	expect(
-		await lint( config, 'if ( ! process.env.CI ) {\n\treturn;\n}\n', 'bin/script.js' )
+		await lint(
+			[ { languageOptions: { sourceType: 'script' } }, ...config ],
+			'if ( ! process.env.CI ) {\n\treturn;\n}\n',
+			'bin/script.js'
+		)
 	).toEqual( [] );
 } );

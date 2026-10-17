@@ -8,10 +8,6 @@ const load = ( name ) => {
 	return module.default ?? module;
 };
 
-// Legacy override globs without a slash match at any depth; flat ones are relative to the config.
-const toFlatFiles = ( files ) =>
-	files.map( ( file ) => ( file.includes( '/' ) ? file : `**/${ file }` ) );
-
 const recommended = ( plugin ) => {
 	const jsdoc = load( 'eslint-plugin-jsdoc' );
 	return [
@@ -33,11 +29,13 @@ const recommended = ( plugin ) => {
 			settings: legacyRecommended.settings,
 			rules: legacyRecommended.rules,
 		},
-		...legacyRecommended.overrides.map( ( { files, ...rest }, index ) => ( {
-			name: `wpcalypso/recommended/overrides/${ index }`,
-			files: toFlatFiles( files ),
-			...rest,
-		} ) ),
+		// The legacy override's test-file exception. Its `*.json` and `*.md` patterns would make a
+		// flat preset lint those files as JavaScript, so configs that lint them set their own.
+		{
+			name: 'wpcalypso/recommended/test-files',
+			files: [ '**/test/*' ],
+			rules: legacyRecommended.overrides[ 0 ].rules,
+		},
 	];
 };
 
