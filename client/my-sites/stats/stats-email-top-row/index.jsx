@@ -1,11 +1,12 @@
 import { Gridicon } from '@automattic/components';
 import { Icon, send, seen, link } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { formatNumber, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import {
+	calculateClickRate,
 	isRateKnown,
 	toCount,
 } from 'calypso/my-sites/stats/features/modules/stats-emails/is-rate-known';
@@ -80,7 +81,13 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 						/>
 					</>
 				);
-			case 'clicks':
+			case 'clicks': {
+				const clickRate = calculateClickRate( {
+					uniqueClicks: counts?.unique_clicks,
+					totalClicks: counts?.total_clicks,
+					sends: counts?.total_sends,
+				} );
+
 				return (
 					<>
 						<TopCard
@@ -108,19 +115,23 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 						<TopCard
 							heading={ translate( 'Click rate' ) }
 							value={
-								isRateKnown( {
-									uniques: toCount( counts?.unique_clicks ),
-									totals: toCount( counts?.total_clicks ),
-									sends: toCount( counts?.total_sends ),
-								} )
-									? `${ Math.round( ( counts.clicks_rate ?? 0 ) * 100 ) }%`
+								clickRate !== null
+									? `${ formatNumber( clickRate, {
+											numberFormatOptions: { maximumFractionDigits: 2 },
+									  } ) }%`
 									: null
 							}
-							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'clicks_rate' ) }
+							isLoading={
+								isRequesting &&
+								( ! counts?.hasOwnProperty( 'total_sends' ) ||
+									( ! counts?.hasOwnProperty( 'unique_clicks' ) &&
+										! counts?.hasOwnProperty( 'total_clicks' ) ) )
+							}
 							icon={ <Gridicon icon="trending" /> }
 						/>
 					</>
 				);
+			}
 			default:
 				return null;
 		}
