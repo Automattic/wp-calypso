@@ -11,8 +11,8 @@
 	padding-block: var( --wpds-dimension-padding-xs, 4px );
 	padding-inline: var( --wpds-dimension-padding-sm, 8px );
 	border-radius: var( --wpds-border-radius-lg, 8px );
-	background-color: var( --wpds-color-background-surface-warning );
-	color: var( --wpds-color-foreground-content-warning );
+	background-color: var( --wpds-color-background-surface-warning, var( --color-warning-5 ) );
+	color: var( --wpds-color-foreground-content-warning, var( --color-warning-80 ) );
 	font-family: var( --wpds-typography-font-family-body, inherit );
 	font-size: var( --wpds-typography-font-size-sm, 12px );
 	font-weight: var( --wpds-typography-font-weight-default, 400 );
