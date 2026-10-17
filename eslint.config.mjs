@@ -938,6 +938,62 @@ const config = defineConfig( [
 			'import/no-extraneous-dependencies': 'off',
 		},
 	},
+	{
+		files: [ 'packages/calypso-e2e/**' ],
+		...nodeConfig,
+		rules: {
+			...nodeConfig.rules,
+
+			'jsdoc/require-jsdoc': [
+				'error',
+				{
+					require: {
+						FunctionDeclaration: true,
+						MethodDefinition: true,
+						ClassDeclaration: true,
+						ArrowFunctionExpression: false,
+						FunctionExpression: false,
+					},
+				},
+			],
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{ argsIgnorePattern: '^_', ignoreRestSiblings: true },
+			],
+			'jsdoc/tag-lines': [ 'off' ],
+		},
+	},
+	{
+		files: [ 'packages/wpcom.js/**' ],
+		languageOptions: { globals: globals.browser },
+		rules: {
+			'jsdoc/no-undefined-types': [
+				'error',
+				{
+					definedTypes: [ 'WPCOM' ],
+				},
+			],
+		},
+	},
+	nodeOverrides( [ 'packages/wpcom.js/examples/server/**', 'packages/wpcom.js/examples/node/**' ] ),
+	{
+		files: [ 'packages/wpcom.js/examples/**/package.json' ],
+		rules: {
+			'@automattic/json/require-repository-directory': 'off',
+			'@automattic/json/require-license': 'off',
+			'@automattic/json/valid-values-name-scope': 'off',
+			'@automattic/json/description-format': 'off',
+			'@automattic/json/valid-values-author': 'off',
+		},
+	},
+	{
+		files: [ 'packages/wpcom.js/test/**' ],
+		rules: {
+			// These files use a weird mixture of CJS and ESM. Disabling the rules for now until they can
+			// get refactored.
+			'import/default': 'off',
+		},
+	},
 ] );
 
 // Patterns stay relative to this file where nested configs import it.

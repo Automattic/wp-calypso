@@ -17,6 +17,7 @@ const parser = {
 const toFlatFiles = ( files ) =>
 	files.map( ( file ) => ( file.includes( '/' ) ? file : `**/${ file }` ) );
 
+/** @type {( plugin: import('eslint').ESLint.Plugin ) => import('eslint').Linter.Config[]} */
 const recommended = ( plugin ) => [
 	{
 		name: '@automattic/json/recommended',
