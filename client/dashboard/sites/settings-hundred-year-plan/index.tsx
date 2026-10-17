@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import ContactForm from './contact-form';
+import LegacyContact from './legacy-contact';
 import LockedModeForm from './locked-mode-form';
 
 export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: string } ) {
@@ -18,7 +18,7 @@ export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: strin
 				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Control your legacy' ) } />
 			}
 		>
-			<ContactForm site={ site } settings={ settings } />
+			<LegacyContact />
 			<LockedModeForm site={ site } settings={ settings } />
 		</PageLayout>
 	);
