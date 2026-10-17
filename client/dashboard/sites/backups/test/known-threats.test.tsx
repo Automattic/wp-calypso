@@ -274,7 +274,6 @@ test( 'expands the threats table for Scan sites', async () => {
 			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.'
 		)
 	).toBeVisible();
-	expect( screen.queryByRole( 'checkbox' ) ).toBeNull();
 	const restoreLink = screen.getByRole( 'link', { name: 'Restore this one instead' } );
 	expect( restoreLink ).toBeVisible();
 	expect(
@@ -359,4 +358,19 @@ test( 'shows the count only without Scan', async () => {
 		.forEach( ( badge ) => expect( badge.querySelector( 'svg' ) ).toBeInTheDocument() );
 	expect( screen.queryByRole( 'button', { name: /show threats/i } ) ).not.toBeInTheDocument();
 	expect( threatsScope.isDone() ).toBe( false );
+} );
+
+test( 'requires the acknowledgement before restoring a flagged backup from its details', async () => {
+	const user = userEvent.setup();
+	renderPage( { withScan: false, backups: flaggedBackups, selected: flaggedRewindId } );
+
+	const checkbox = await screen.findByRole( 'checkbox', {
+		name: 'I understand this backup contains known threats and want to restore it anyway.',
+	} );
+	const restore = screen.getByRole( 'button', { name: 'Restore to this point' } );
+	expect( restore ).toBeDisabled();
+
+	await user.click( checkbox );
+
+	expect( restore ).toBeEnabled();
 } );

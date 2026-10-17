@@ -7,7 +7,7 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useAnalytics } from '../../app/analytics';
@@ -93,6 +93,15 @@ export function BackupDetails( {
 		onGranularDownloadReady,
 	] );
 
+	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
+	// Keyed by backup, so selecting another backup asks again.
+	const [ acknowledgedRewindId, setAcknowledgedRewindId ] = useState< string | null >( null );
+	const acknowledged = acknowledgedRewindId === backup.rewind_id;
+	const handleAcknowledgedChange = useCallback(
+		( value: boolean ) => setAcknowledgedRewindId( value ? backup.rewind_id : null ),
+		[ backup.rewind_id ]
+	);
+
 	const hasSelectedFiles = selectedFilesCount > 0;
 	const showActions = !! ( onRequestRestore || onRequestDownload );
 	const actions =
@@ -115,6 +124,7 @@ export function BackupDetails( {
 					size={ isSmallViewport ? 'default' : 'compact' }
 					onClick={ onRequestRestore }
 					style={ { justifyContent: 'center' } }
+					disabled={ ! hasSelectedFiles && hasKnownThreats && ! acknowledged }
 				>
 					{ hasSelectedFiles
 						? _n( 'Restore selected file', 'Restore selected files', selectedFilesCount )
@@ -149,7 +159,10 @@ export function BackupDetails( {
 						site={ site }
 						rewindId={ backup.rewind_id }
 						restoreLinkTo={ restoreLinkTo }
-						requireAcknowledgement={ false }
+						requireAcknowledgement={ !! onRequestRestore && ! hasSelectedFiles }
+						acknowledged={ acknowledged }
+						onAcknowledgedChange={ handleAcknowledgedChange }
+						onKnownThreatsChange={ setHasKnownThreats }
 					/>
 					<Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap="md">
 						{ backup.streams ? (
