@@ -4,7 +4,7 @@ import {
 	useIsStepComplete,
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import { useI18n } from '@wordpress/react-i18n';
 import CreditCardLogos from './credit-card-logos';
 
 const Title = styled.span`
@@ -27,14 +27,14 @@ export default function PaymentMethodStepTitle( {
 	currency: string | null;
 	isMobileCheckoutStickySummary: boolean;
 } ) {
-	const translate = useTranslate();
+	const { __ } = useI18n();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
 	const availablePaymentMethodIds = useAvailablePaymentMethodIds();
 	const title =
 		isMobileCheckoutStickySummary || ( ! isActive && isComplete )
-			? translate( 'Payment method' )
-			: translate( 'Pick a payment method' );
+			? __( 'Payment method' )
+			: __( 'Pick a payment method' );
 
 	return (
 		<Title>

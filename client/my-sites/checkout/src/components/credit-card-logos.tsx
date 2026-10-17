@@ -9,8 +9,8 @@ const CompactCreditCardLogos = styled( PaymentMethodLogos )`
 
 	&.credit-card__logos svg {
 		position: static;
-		background: #fff;
-		border: 1px solid var( --wp-components-color-gray-200, #e0e0e0 );
+		background: var( --studio-white );
+		border: 1px solid var( --wp-components-color-gray-200, var( --color-border-subtle ) );
 		border-radius: 4px;
 		padding: 4px 6px;
 		box-sizing: border-box;
@@ -25,14 +25,14 @@ const CompactCreditCardLogos = styled( PaymentMethodLogos )`
 		min-width: 22px;
 		height: 22px;
 		padding: 0 6px;
-		background: #fff;
-		border: 1px solid var( --wp-components-color-gray-200, #e0e0e0 );
+		background: var( --studio-white );
+		border: 1px solid var( --wp-components-color-gray-200, var( --color-border-subtle ) );
 		border-radius: 4px;
 		box-sizing: border-box;
 		font-size: 11px;
 		font-weight: 500;
 		line-height: 20px;
-		color: var( --wp-components-color-gray-900, #1e1e1e );
+		color: var( --wp-components-color-gray-900, var( --studio-gray-90 ) );
 		flex: 0 0 auto;
 	}
 `;

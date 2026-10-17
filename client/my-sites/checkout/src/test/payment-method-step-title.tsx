@@ -11,6 +11,8 @@ import {
 } from '@automattic/composite-checkout';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { defaultI18n } from '@wordpress/i18n';
+import { I18nProvider } from '@wordpress/react-i18n';
 import CreditCardLogos from '../components/credit-card-logos';
 import PaymentMethodStepTitle from '../components/payment-method-step-title';
 import type { PaymentMethod } from '@automattic/composite-checkout';
@@ -76,7 +78,10 @@ function renderPaymentStep( {
 					editButtonAriaLabel="Edit the payment method"
 				/>
 			</CheckoutStepGroup>
-		</CheckoutProvider>
+		</CheckoutProvider>,
+		{
+			wrapper: ( { children } ) => <I18nProvider i18n={ defaultI18n }>{ children }</I18nProvider>,
+		}
 	);
 	return store;
 }
@@ -152,5 +157,33 @@ describe( 'PaymentMethodStepTitle', () => {
 			expect( getPaymentHeading().querySelector( '.credit-card__logos' ) ).not.toBeInTheDocument();
 		} );
 		expect( getPaymentHeading() ).toHaveTextContent( 'Pick a payment method' );
+	} );
+
+	it( 'updates both title variants when WordPress translations load', async () => {
+		const user = userEvent.setup();
+		const localeData = defaultI18n.getLocaleData();
+		const store = renderPaymentStep( { isContactComplete: true, isPaymentComplete: true } );
+		act( () => store.actions.setStepCompleteStatus( { 1: true, 2: true } ) );
+		await waitFor( () => expect( getPaymentHeading() ).toHaveTextContent( 'Payment method' ) );
+
+		try {
+			act( () => {
+				defaultI18n.setLocaleData( {
+					'': { domain: 'default', lang: 'de' },
+					'Payment method': [ 'Zahlungsmethode' ],
+					'Pick a payment method': [ 'Wählen Sie eine Zahlungsmethode aus' ],
+				} );
+			} );
+			expect( screen.getByRole( 'heading', { name: /Zahlungsmethode$/ } ) ).toBeVisible();
+
+			await user.click( screen.getByRole( 'button', { name: 'Edit the payment method' } ) );
+			await waitFor( () =>
+				expect(
+					screen.getByRole( 'heading', { name: /Wählen Sie eine Zahlungsmethode aus$/ } )
+				).toBeVisible()
+			);
+		} finally {
+			act( () => defaultI18n.resetLocaleData( localeData ) );
+		}
 	} );
 } );
