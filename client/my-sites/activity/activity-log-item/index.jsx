@@ -75,7 +75,10 @@ class ActivityLogItem extends Component {
 		this.props.confirmBackup( this.props.activity.rewindId, this.state.downloadArgs );
 
 	confirmRewind = () => {
-		const { knownThreatsRestorePath } = this.props;
+		const { knownThreatsCheckPending, knownThreatsRestorePath } = this.props;
+		if ( knownThreatsCheckPending ) {
+			return;
+		}
 		if ( knownThreatsRestorePath ) {
 			this.props.leaveRewindDialog();
 			page( knownThreatsRestorePath );
@@ -383,7 +386,11 @@ class ActivityLogItem extends Component {
 						onSettingsChange={ this.restoreSettingsChange }
 						supportLink="https://jetpack.com/support/how-to-rewind"
 						title={ translate( 'Restore Site' ) }
-						disableButton={ this.state.disableRestoreButton || disableRestore }
+						disableButton={
+							this.state.disableRestoreButton ||
+							disableRestore ||
+							this.props.knownThreatsCheckPending
+						}
 					>
 						{ translate( '{{time/}} is the selected point for your site restore.', {
 							components: {

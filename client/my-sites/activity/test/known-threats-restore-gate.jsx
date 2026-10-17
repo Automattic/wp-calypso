@@ -13,9 +13,10 @@ import ErrorBanner from '../activity-log-banner/error-banner';
 import ActivityLogItem from '../activity-log-item';
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
+let mockSiteSlug = 'example.wordpress.com';
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSite: () => ( { ID: 123, slug: 'example.wordpress.com' } ),
-	getSiteSlug: () => 'example.wordpress.com',
+	getSiteSlug: () => mockSiteSlug,
 } ) );
 jest.mock( 'calypso/state/selectors/get-rewind-state', () => ( {
 	__esModule: true,
@@ -52,25 +53,39 @@ const counts = ( flagged ) => ( {
 	fixed: 0,
 } );
 
-const mockBackups = ( knownThreats ) =>
-	nock( BASE )
-		.get( `/wpcom/v3/sites/${ SITE_ID }/rewind/backups` )
-		.query( true )
-		.reply( 200, {
-			ok: true,
-			totalItems: 1,
-			totalPages: 1,
-			page: 1,
-			itemsPerPage: 100,
-			backups: [
-				{
-					status: 'finished',
-					is_rewindable: true,
-					summary: '',
-					object: { backup_period: '200', known_threats: knownThreats },
-				},
-			],
-		} );
+const backupsBody = ( knownThreats ) => ( {
+	ok: true,
+	totalItems: 1,
+	totalPages: 1,
+	page: 1,
+	itemsPerPage: 100,
+	backups: [
+		{
+			status: 'finished',
+			is_rewindable: true,
+			summary: '',
+			object: {
+				backup_period: '200',
+				...( knownThreats ? { known_threats: knownThreats } : {} ),
+			},
+		},
+	],
+} );
+
+const backupsRequest = () =>
+	nock( BASE ).get( `/wpcom/v3/sites/${ SITE_ID }/rewind/backups` ).query( true );
+
+const mockBackups = ( knownThreats ) => backupsRequest().reply( 200, backupsBody( knownThreats ) );
+
+function mockPendingBackups() {
+	let release;
+	const released = new Promise( ( resolve ) => ( release = resolve ) );
+	backupsRequest().reply( async () => {
+		await released;
+		return [ 200, backupsBody( counts( 0 ) ) ];
+	} );
+	return release;
+}
 
 function makeStore() {
 	const actions = [];
@@ -103,6 +118,7 @@ const restoreActions = ( actions ) => actions.filter( ( { type } ) => type === R
 
 beforeEach( () => {
 	page.mockClear();
+	mockSiteSlug = 'example.wordpress.com';
 } );
 
 describe( 'Activity Log item restore', () => {
@@ -140,6 +156,64 @@ describe( 'Activity Log item restore', () => {
 	} );
 } );
 
+describe( 'Activity Log item restore while the check is not settled', () => {
+	it( 'disables Confirm Restore while the counts load', async () => {
+		const release = mockPendingBackups();
+		const { store, actions } = makeStore();
+		renderItem( store );
+
+		const confirm = screen.getByRole( 'button', { name: 'Confirm Restore' } );
+		expect( confirm ).toBeDisabled();
+		await userEvent.click( confirm );
+		expect( page ).not.toHaveBeenCalled();
+		expect( restoreActions( actions ) ).toHaveLength( 0 );
+
+		release();
+		await waitFor( () => expect( confirm ).toBeEnabled() );
+	} );
+
+	it( 'treats a missing site slug as still loading', async () => {
+		mockSiteSlug = null;
+		mockBackups( counts( 0 ) );
+		const { store, actions } = makeStore();
+		renderItem( store );
+
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		const confirm = screen.getByRole( 'button', { name: 'Confirm Restore' } );
+		expect( confirm ).toBeDisabled();
+		await userEvent.click( confirm );
+		expect( page ).not.toHaveBeenCalled();
+		expect( restoreActions( actions ) ).toHaveLength( 0 );
+	} );
+
+	it( 'sends the user to the restore page when the counts fail to load', async () => {
+		backupsRequest().reply( 500 );
+		const { store, actions } = makeStore();
+		renderItem( store );
+
+		const confirm = screen.getByRole( 'button', { name: 'Confirm Restore' } );
+		await waitFor( () => expect( confirm ).toBeEnabled() );
+		await userEvent.click( confirm );
+
+		expect( page ).toHaveBeenCalledWith( RESTORE_PATH );
+		expect( restoreActions( actions ) ).toHaveLength( 0 );
+	} );
+
+	it( 'restores directly when the backups carry no known-threats data', async () => {
+		mockBackups( undefined );
+		const { store, actions } = makeStore();
+		renderItem( store );
+
+		const confirm = screen.getByRole( 'button', { name: 'Confirm Restore' } );
+		await waitFor( () => expect( confirm ).toBeEnabled() );
+		await userEvent.click( confirm );
+
+		expect( page ).not.toHaveBeenCalled();
+		expect( restoreActions( actions ) ).toHaveLength( 1 );
+	} );
+} );
+
 describe( 'Activity Log error banner retry', () => {
 	const renderBanner = ( rewindRestore ) =>
 		renderWithProvider(
@@ -165,12 +239,29 @@ describe( 'Activity Log error banner retry', () => {
 		expect( rewindRestore ).not.toHaveBeenCalled();
 	} );
 
-	it( 'sends the user to the restore page while the counts are not loaded', async () => {
-		nock( BASE ).get( `/wpcom/v3/sites/${ SITE_ID }/rewind/backups` ).query( true ).reply( 500 );
+	it( 'disables Try again while the counts load', async () => {
+		const release = mockPendingBackups();
 		const rewindRestore = jest.fn();
 		renderBanner( rewindRestore );
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+		const retry = screen.getByRole( 'button', { name: 'Try again' } );
+		expect( retry ).toBeDisabled();
+		await userEvent.click( retry );
+		expect( page ).not.toHaveBeenCalled();
+		expect( rewindRestore ).not.toHaveBeenCalled();
+
+		release();
+		await waitFor( () => expect( retry ).toBeEnabled() );
+	} );
+
+	it( 'sends the user to the restore page when the counts fail to load', async () => {
+		backupsRequest().reply( 500 );
+		const rewindRestore = jest.fn();
+		renderBanner( rewindRestore );
+
+		const retry = screen.getByRole( 'button', { name: 'Try again' } );
+		await waitFor( () => expect( retry ).toBeEnabled() );
+		await userEvent.click( retry );
 
 		expect( page ).toHaveBeenCalledWith( RESTORE_PATH );
 		expect( rewindRestore ).not.toHaveBeenCalled();

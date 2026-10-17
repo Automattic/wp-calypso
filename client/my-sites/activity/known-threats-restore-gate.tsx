@@ -14,27 +14,37 @@ interface RestoreTarget {
 
 export interface KnownThreatsRestorePathProps {
 	knownThreatsRestorePath: string | null;
+	knownThreatsCheckPending: boolean;
 }
 
 /**
- * Returns the restore page path when a restore of `rewindId` must go through the
- * acknowledgement on that page: the backup has known threats, or its counts are not loaded yet.
- * Returns null when the backup can be restored directly.
+ * Decides whether a restore of `rewindId` must go through the acknowledgement on the restore
+ * page. `pending` is true until that can be decided; callers must not restore meanwhile.
+ * `restorePath` is set when the backup has known threats or its counts failed to load.
  */
-export function useKnownThreatsRestorePath( { siteId, rewindId, enabled }: RestoreTarget ) {
+export function useKnownThreatsRestorePath( { siteId, rewindId, enabled }: RestoreTarget ): {
+	pending: boolean;
+	restorePath: string | null;
+} {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const { data, isSuccess } = useQuery( {
+	const { data, isSuccess, isError } = useQuery( {
 		...siteBackupKnownThreatsQuery( siteId, rewindId ?? '' ),
 		enabled: enabled && !! rewindId,
 	} );
 
-	if ( ! enabled || ! rewindId || ! siteSlug ) {
-		return null;
+	if ( ! enabled || ! rewindId ) {
+		return { pending: false, restorePath: null };
 	}
 
-	return isSuccess && ! isFlagged( data.knownThreats )
-		? null
-		: backupRestorePath( siteSlug, rewindId );
+	if ( ! siteSlug || ( ! isSuccess && ! isError ) ) {
+		return { pending: true, restorePath: null };
+	}
+
+	return {
+		pending: false,
+		restorePath:
+			isError || isFlagged( data?.knownThreats ) ? backupRestorePath( siteSlug, rewindId ) : null,
+	};
 }
 
 export function withKnownThreatsRestorePath< P extends object >(
@@ -42,7 +52,13 @@ export function withKnownThreatsRestorePath< P extends object >(
 ) {
 	return ( Wrapped: ComponentType< P & KnownThreatsRestorePathProps > ) =>
 		function WithKnownThreatsRestorePath( props: P ) {
-			const knownThreatsRestorePath = useKnownThreatsRestorePath( getTarget( props ) );
-			return <Wrapped { ...props } knownThreatsRestorePath={ knownThreatsRestorePath } />;
+			const { pending, restorePath } = useKnownThreatsRestorePath( getTarget( props ) );
+			return (
+				<Wrapped
+					{ ...props }
+					knownThreatsRestorePath={ restorePath }
+					knownThreatsCheckPending={ pending }
+				/>
+			);
 		};
 }

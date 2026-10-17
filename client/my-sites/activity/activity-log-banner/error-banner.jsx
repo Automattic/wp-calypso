@@ -24,6 +24,7 @@ class ErrorBanner extends PureComponent {
 		createBackup: PropTypes.func,
 		rewindRestore: PropTypes.func,
 		knownThreatsRestorePath: PropTypes.string,
+		knownThreatsCheckPending: PropTypes.bool,
 
 		// connect
 		dismissRewindRestoreProgress: PropTypes.func.isRequired,
@@ -47,9 +48,13 @@ class ErrorBanner extends PureComponent {
 			rewindRestore,
 			createBackup,
 			knownThreatsRestorePath,
+			knownThreatsCheckPending,
 		} = this.props;
 		if ( downloadId ) {
 			return createBackup( siteId, downloadId );
+		}
+		if ( knownThreatsCheckPending ) {
+			return;
 		}
 		if ( knownThreatsRestorePath ) {
 			return page( knownThreatsRestorePath );
@@ -65,7 +70,8 @@ class ErrorBanner extends PureComponent {
 			: this.props.dismissDownloadError( this.props.siteId, this.props.downloadId );
 
 	render() {
-		const { errorCode, failureReason, timestamp, translate, downloadId } = this.props;
+		const { errorCode, failureReason, timestamp, translate, downloadId, knownThreatsCheckPending } =
+			this.props;
 		const strings =
 			typeof downloadId === 'undefined'
 				? {
@@ -101,7 +107,12 @@ class ErrorBanner extends PureComponent {
 					}
 				/>
 				<p>{ strings.details }</p>
-				<Button primary onClick={ this.handleClickRestart }>
+				<Button
+					primary
+					busy={ knownThreatsCheckPending }
+					disabled={ knownThreatsCheckPending }
+					onClick={ this.handleClickRestart }
+				>
 					{ translate( 'Try again' ) }
 				</Button>
 			</ActivityLogBanner>
