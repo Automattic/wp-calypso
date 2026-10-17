@@ -70,56 +70,57 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 	}
 
 	return (
-		<div className="rewind-flow-known-threats">
-			<RewindFlowNotice
-				gridicon="notice"
-				title={ translate(
-					'This backup is known to contain %d security threat. Restoring it may bring malware back to your site.',
-					'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.',
-					{
-						count: knownThreats.flagged,
-						args: knownThreats.flagged,
-						comment: '%d is the number of known security threats in the backup',
-					}
-				) }
-				type={ RewindFlowNoticeLevel.WARNING }
-			/>
-			{ siteSlug && (
-				<RestoreThatOneInsteadLink
-					siteSlug={ siteSlug }
-					latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-					currentRewindId={ rewindId }
-				/>
+		<RewindFlowNotice
+			gridicon="notice"
+			title={ translate(
+				'This backup is known to contain %d security threat. Restoring it may bring malware back to your site.',
+				'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.',
+				{
+					count: knownThreats.flagged,
+					args: knownThreats.flagged,
+					comment: '%d is the number of known security threats in the backup',
+				}
 			) }
-			{ hasScan && (
-				<div className="rewind-flow-known-threats__details">
-					<KnownThreatsToggleButton
-						flagged={ knownThreats.flagged }
-						isOpen={ isOpen }
-						onToggle={ () => setIsOpen( ( open ) => ! open ) }
+			type={ RewindFlowNoticeLevel.WARNING }
+		>
+			<div className="rewind-flow-known-threats">
+				{ siteSlug && (
+					<RestoreThatOneInsteadLink
+						siteSlug={ siteSlug }
+						latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
+						currentRewindId={ rewindId }
 					/>
-					{ isOpen && threats && siteSlug && (
-						<BackupKnownThreatsTable
-							siteSlug={ siteSlug }
-							threats={ threats }
-							latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-							currentRewindId={ rewindId }
-							showRestoreLink={ false }
+				) }
+				{ hasScan && (
+					<div className="rewind-flow-known-threats__details">
+						<KnownThreatsToggleButton
+							flagged={ knownThreats.flagged }
+							isOpen={ isOpen }
+							onToggle={ () => setIsOpen( ( open ) => ! open ) }
 						/>
-					) }
-				</div>
-			) }
-			{ requireAcknowledgement && (
-				<CheckboxControl
-					__nextHasNoMarginBottom
-					checked={ acknowledged }
-					onChange={ ( value ) => onAcknowledgedChange?.( value ) }
-					label={ translate(
-						'I understand this backup contains known threats and want to restore it anyway.'
-					) }
-				/>
-			) }
-		</div>
+						{ isOpen && threats && siteSlug && (
+							<BackupKnownThreatsTable
+								siteSlug={ siteSlug }
+								threats={ threats }
+								latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
+								currentRewindId={ rewindId }
+								showRestoreLink={ false }
+							/>
+						) }
+					</div>
+				) }
+				{ requireAcknowledgement && (
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						checked={ acknowledged }
+						onChange={ ( value ) => onAcknowledgedChange?.( value ) }
+						label={ translate(
+							'I understand this backup contains known threats and want to restore it anyway.'
+						) }
+					/>
+				) }
+			</div>
+		</RewindFlowNotice>
 	);
 };
 

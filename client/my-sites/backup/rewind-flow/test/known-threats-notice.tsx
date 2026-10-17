@@ -118,6 +118,8 @@ const threatsBody = {
 	],
 };
 
+const getBanner = () => screen.getByText( NOTICE ).closest( '.rewind-flow-notice' );
+
 function Harness( { onChange }: { onChange?: ( value: boolean ) => void } ) {
 	const [ acknowledged, setAcknowledged ] = useState( false );
 	return (
@@ -145,6 +147,7 @@ describe( 'KnownThreatsNotice', () => {
 
 		expect( await screen.findByText( NOTICE ) ).toBeVisible();
 		const checkbox = screen.getByRole( 'checkbox', { name: CHECKBOX } );
+		expect( checkbox.closest( '.rewind-flow-notice' ) ).toBe( getBanner() );
 		expect( checkbox ).not.toBeChecked();
 		await userEvent.click( checkbox );
 		expect( checkbox ).toBeChecked();
@@ -200,6 +203,10 @@ describe( 'KnownThreatsNotice', () => {
 		expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
 		expect( toggle.querySelector( '.gridicons-notice-outline' ) ).toBeInTheDocument();
 		expect( toggle.parentElement ).toHaveClass( 'rewind-flow-known-threats__details' );
+		const banner = screen.getByText( NOTICE ).closest( '.rewind-flow-notice' );
+		expect( banner ).toBeInTheDocument();
+		expect( banner ).toContainElement( toggle );
+		expect( banner ).toContainElement( screen.getByRole( 'checkbox', { name: CHECKBOX } ) );
 		expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Show threats' ) ).not.toBeInTheDocument();
 		await userEvent.hover( toggle );
@@ -213,10 +220,11 @@ describe( 'KnownThreatsNotice', () => {
 		await userEvent.hover( expanded );
 		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveAttribute(
-			'href',
-			'/backup/example.wordpress.com/restore/150'
-		);
+		const link = screen.getByRole( 'link', { name: 'Restore this one instead' } );
+		expect( link ).toHaveAttribute( 'href', '/backup/example.wordpress.com/restore/150' );
+		expect( banner ).toContainElement( link );
+		expect( banner ).toContainElement( screen.getByText( 'Evil.Sig' ) );
+		expect( screen.getAllByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveLength( 1 );
 	} );
 
 	it( 'has no expander and no details request without Scan, but keeps the checkbox', async () => {

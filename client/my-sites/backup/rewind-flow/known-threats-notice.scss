@@ -1,20 +1,15 @@
-.rewind-flow-known-threats {
+// Sits inside the RewindFlowNotice banner. The doubled class beats the banner's
+// generic `> div` flex rule so the controls stack at full width.
+.rewind-flow-notice > .rewind-flow-known-threats {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 8px;
-
-	> .rewind-flow-notice {
-		align-self: stretch;
-		margin-bottom: 0;
-	}
+	width: auto;
+	margin-top: 8px;
 
 	.backup-known-threats__details {
-		margin-top: 8px;
-	}
-
-	.components-checkbox-control {
-		margin-top: 8px;
+		margin-top: 0;
 	}
 }
 
