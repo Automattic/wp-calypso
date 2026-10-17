@@ -1,19 +1,24 @@
 import { getBackupPeriod } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
-import { siteBackupRestoreRoute } from '../../../app/router/sites';
 import RouterLinkButton from '../../../components/router-link-button';
 
 interface RestoreThatOneInsteadLinkProps {
 	siteSlug: string;
+	restoreLinkTo?: string;
 	latestWithoutKnownThreats?: number | null;
 	currentRewindId?: string;
 }
 
 export function RestoreThatOneInsteadLink( {
 	siteSlug,
+	restoreLinkTo,
 	latestWithoutKnownThreats,
 	currentRewindId,
 }: RestoreThatOneInsteadLinkProps ) {
+	if ( ! restoreLinkTo ) {
+		return null;
+	}
+
 	if ( latestWithoutKnownThreats === null || latestWithoutKnownThreats === undefined ) {
 		return null;
 	}
@@ -28,7 +33,7 @@ export function RestoreThatOneInsteadLink( {
 	return (
 		<RouterLinkButton
 			variant="link"
-			to={ siteBackupRestoreRoute.fullPath }
+			to={ restoreLinkTo }
 			params={ { siteSlug, rewindId: String( latestWithoutKnownThreats ) } }
 		>
 			{ __( 'Restore that one instead' ) }

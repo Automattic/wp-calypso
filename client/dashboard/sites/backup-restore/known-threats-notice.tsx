@@ -12,6 +12,7 @@ import type { Site } from '@automattic/api-core';
 
 interface KnownThreatsNoticeProps {
 	site: Site;
+	restoreLinkTo?: string;
 	rewindId: string;
 	requireAcknowledgement: boolean;
 	acknowledged?: boolean;
@@ -21,6 +22,7 @@ interface KnownThreatsNoticeProps {
 
 export default function KnownThreatsNotice( {
 	site,
+	restoreLinkTo,
 	rewindId,
 	requireAcknowledgement,
 	acknowledged = false,
@@ -60,6 +62,7 @@ export default function KnownThreatsNotice( {
 				</p>
 				<RestoreThatOneInsteadLink
 					siteSlug={ site.slug }
+					restoreLinkTo={ restoreLinkTo }
 					latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
 					currentRewindId={ rewindId }
 				/>
@@ -75,6 +78,7 @@ export default function KnownThreatsNotice( {
 						{ isOpen && threats && (
 							<KnownThreatsTable
 								siteSlug={ site.slug }
+								restoreLinkTo={ restoreLinkTo }
 								threats={ threats }
 								latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
 								currentRewindId={ rewindId }

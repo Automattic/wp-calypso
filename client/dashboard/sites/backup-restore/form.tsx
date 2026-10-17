@@ -54,12 +54,14 @@ const fields: Field< RestoreConfig >[] = [
 
 function SiteBackupRestoreForm( {
 	site,
+	restoreLinkTo,
 	siteId,
 	rewindId,
 	restorePointDate,
 	onRestoreInitiate,
 }: {
 	site: Site;
+	restoreLinkTo?: string;
 	siteId: number;
 	rewindId: string;
 	restorePointDate: string;
@@ -162,6 +164,7 @@ function SiteBackupRestoreForm( {
 
 				<KnownThreatsNotice
 					site={ site }
+					restoreLinkTo={ restoreLinkTo }
 					rewindId={ rewindId }
 					requireAcknowledgement
 					acknowledged={ acknowledged }

@@ -18,12 +18,14 @@ import type { Site } from '@automattic/api-core';
 
 function SiteBackupGranularRestoreForm( {
 	site,
+	restoreLinkTo,
 	siteId,
 	rewindId,
 	restorePointDate,
 	onRestoreInitiate,
 }: {
 	site: Site;
+	restoreLinkTo?: string;
 	siteId: number;
 	rewindId: string;
 	restorePointDate: string;
@@ -122,6 +124,7 @@ function SiteBackupGranularRestoreForm( {
 
 				<KnownThreatsNotice
 					site={ site }
+					restoreLinkTo={ restoreLinkTo }
 					rewindId={ rewindId }
 					requireAcknowledgement={ false }
 					onKnownThreatsChange={ handleKnownThreatsChange }

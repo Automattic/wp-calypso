@@ -149,6 +149,7 @@ jest.mock( '../../../app/router/sites', () => ( {
 	siteBackupsRoute: {
 		useSearch: () => ( {} ),
 	},
+	siteBackupRestoreRoute: { fullPath: '/sites/$siteSlug/backups/$rewindId/restore' },
 } ) );
 
 function renderBackupsListPage( {

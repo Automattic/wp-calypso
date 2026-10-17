@@ -9,7 +9,15 @@ import { KnownThreatsBadge } from './known-threats-badge';
 import { KnownThreatsTable } from './known-threats-table';
 import type { Site } from '@automattic/api-core';
 
-export function KnownThreatsSection( { site, rewindId }: { site: Site; rewindId: string } ) {
+export function KnownThreatsSection( {
+	site,
+	rewindId,
+	restoreLinkTo,
+}: {
+	site: Site;
+	rewindId: string;
+	restoreLinkTo?: string;
+} ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const hasScan = hasHostingFeature( site, HostingFeatures.SCAN_SELF_SERVE );
 	const { data: counts } = useQuery( siteBackupKnownThreatsQuery( site.ID, rewindId ) );
@@ -42,6 +50,7 @@ export function KnownThreatsSection( { site, rewindId }: { site: Site; rewindId:
 			{ isOpen && threats && (
 				<KnownThreatsTable
 					siteSlug={ site.slug }
+					restoreLinkTo={ restoreLinkTo }
 					threats={ threats }
 					latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
 					currentRewindId={ rewindId }

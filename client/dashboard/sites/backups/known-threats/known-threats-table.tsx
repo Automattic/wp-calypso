@@ -1,10 +1,12 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { useIntlLocale } from '../../../app/locale';
 import { RestoreThatOneInsteadLink } from './restore-that-one-instead-link';
+import './known-threats-table.scss';
 import type { BackupThreat, BackupThreats } from '@automattic/api-core';
 
 interface KnownThreatsTableProps {
 	siteSlug: string;
+	restoreLinkTo?: string;
 	threats: BackupThreats;
 	latestWithoutKnownThreats?: number | null;
 	currentRewindId?: string;
@@ -12,6 +14,7 @@ interface KnownThreatsTableProps {
 
 export function KnownThreatsTable( {
 	siteSlug,
+	restoreLinkTo,
 	threats,
 	latestWithoutKnownThreats,
 	currentRewindId,
@@ -64,6 +67,7 @@ export function KnownThreatsTable( {
 			{ threats.summary.vulnerable > 0 && <p>{ vulnerableNote }</p> }
 			<RestoreThatOneInsteadLink
 				siteSlug={ siteSlug }
+				restoreLinkTo={ restoreLinkTo }
 				latestWithoutKnownThreats={ latestWithoutKnownThreats }
 				currentRewindId={ currentRewindId }
 			/>

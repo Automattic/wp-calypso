@@ -101,6 +101,7 @@ const renderForm = () =>
 	render(
 		<SiteBackupRestoreForm
 			site={ site }
+			restoreLinkTo="/sites/$siteSlug/backups/$rewindId/restore"
 			siteId={ siteId }
 			rewindId={ rewindId }
 			restorePointDate="Oct 16"
@@ -199,6 +200,7 @@ test( 'shows no Show threats toggle without Scan', async () => {
 	render(
 		<SiteBackupRestoreForm
 			site={ { ...site, plan: { ...site.plan, features: { active: [] } } } as Site }
+			restoreLinkTo="/sites/$siteSlug/backups/$rewindId/restore"
 			siteId={ siteId }
 			rewindId={ rewindId }
 			restorePointDate="Oct 16"
@@ -216,6 +218,7 @@ test( 'granular form shows the notice without a checkbox', async () => {
 	render(
 		<SiteBackupGranularRestoreForm
 			site={ site }
+			restoreLinkTo="/sites/$siteSlug/backups/$rewindId/restore"
 			siteId={ siteId }
 			rewindId={ rewindId }
 			restorePointDate="Oct 16"
@@ -228,4 +231,22 @@ test( 'granular form shows the notice without a checkbox', async () => {
 		expect( screen.queryByRole( 'checkbox', { name: /I understand/ } ) ).not.toBeInTheDocument()
 	);
 	expect( screen.getByRole( 'button', { name: 'Restore selected file' } ) ).toBeEnabled();
+} );
+
+test( 'renders no link when the caller supplies no restore route', async () => {
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	render(
+		<SiteBackupRestoreForm
+			site={ site }
+			siteId={ siteId }
+			rewindId={ rewindId }
+			restorePointDate="Oct 16"
+			onRestoreInitiate={ jest.fn() }
+		/>
+	);
+
+	expect( await screen.findByText( /known to contain 3/ ) ).toBeVisible();
+	expect(
+		screen.queryByRole( 'link', { name: 'Restore that one instead' } )
+	).not.toBeInTheDocument();
 } );

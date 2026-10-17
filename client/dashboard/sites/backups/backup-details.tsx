@@ -24,6 +24,7 @@ import type { ActivityLogEntry, Site } from '@automattic/api-core';
 interface BackupDetailsProps {
 	backup: ActivityLogEntry;
 	site: Site;
+	restoreLinkTo?: string;
 	timezoneString?: string;
 	gmtOffset?: number;
 	onRequestRestore?: () => void;
@@ -34,6 +35,7 @@ interface BackupDetailsProps {
 export function BackupDetails( {
 	backup,
 	site,
+	restoreLinkTo,
 	timezoneString,
 	gmtOffset,
 	onRequestRestore,
@@ -143,7 +145,11 @@ export function BackupDetails( {
 							</Text>
 						) }
 					</HStack>
-					<KnownThreatsSection site={ site } rewindId={ backup.rewind_id } />
+					<KnownThreatsSection
+						site={ site }
+						rewindId={ backup.rewind_id }
+						restoreLinkTo={ restoreLinkTo }
+					/>
 					<Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap="md">
 						{ backup.streams ? (
 							backup.streams.map( ( item, index ) => (

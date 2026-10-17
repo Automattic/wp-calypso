@@ -19,7 +19,15 @@ import type { Site } from '@automattic/api-core';
 
 type RestoreStep = 'form' | 'progress' | 'success' | 'error';
 
-export function BackupRestoreFlow( { site, rewindId }: { site: Site; rewindId: string } ) {
+export function BackupRestoreFlow( {
+	site,
+	rewindId,
+	restoreLinkTo,
+}: {
+	site: Site;
+	rewindId: string;
+	restoreLinkTo?: string;
+} ) {
 	const { data: siteSettings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 	const gmtOffset = siteSettings.gmt_offset;
 	const timezoneString = siteSettings.timezone_string;
@@ -74,6 +82,7 @@ export function BackupRestoreFlow( { site, rewindId }: { site: Site; rewindId: s
 				return hasSelectedFiles && ! hasSelectedAllFiles ? (
 					<SiteBackupGranularRestoreForm
 						site={ site }
+						restoreLinkTo={ restoreLinkTo }
 						siteId={ site.ID }
 						rewindId={ rewindId }
 						restorePointDate={ restorePointDate }
@@ -82,6 +91,7 @@ export function BackupRestoreFlow( { site, rewindId }: { site: Site; rewindId: s
 				) : (
 					<SiteBackupRestoreForm
 						site={ site }
+						restoreLinkTo={ restoreLinkTo }
 						siteId={ site.ID }
 						rewindId={ rewindId }
 						restorePointDate={ restorePointDate }
