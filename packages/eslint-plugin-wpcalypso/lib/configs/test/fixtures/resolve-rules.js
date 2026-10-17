@@ -1,59 +1,83 @@
-// Prints what each preset format resolves for a file, as `{ legacy, flat }` JSON.
+// Prints what a flat preset resolves for a file, next to what its legacy preset declares, as
+// `{ legacy, flat }` JSON. Both go through the same ESLint, so default options fill in alike.
 const path = require( 'path' );
-// This package's ESLint 8 resolves rules as written; ESLint 9's flat mode fills in default options
-// that its legacy mode doesn't. `defineConfig` comes from the repo's ESLint 9, as ESLint 8 lacks it.
-const { loadESLint } = require( 'eslint' );
-const { defineConfig } = require(
-	require.resolve( 'eslint/config', { paths: [ path.resolve( __dirname, '../../../../../..' ) ] } )
-);
+const { ESLint } = require( 'eslint' );
+const { defineConfig } = require( 'eslint/config' );
 const plugin = require( '../../..' );
+const legacyReact = require( '../../react' );
+const legacyRecommended = require( '../../recommended' );
 
-const [ legacyPreset, file ] = process.argv.slice( 2 );
+const [ preset, file ] = process.argv.slice( 2 );
 const cwd = path.resolve( __dirname, '../../../..' );
+const load = ( name ) => {
+	const module = require( name );
+	return module.default ?? module;
+};
 
-// Severities as numbers, so `'error'` and `2` compare equal.
-const normalize = ( rules ) =>
-	Object.fromEntries(
-		Object.entries( rules ).map( ( [ name, value ] ) => {
-			const [ severity, ...options ] = Array.isArray( value ) ? value : [ value ];
-			return [ name, [ { off: 0, warn: 1, error: 2 }[ severity ] ?? severity, ...options ] ];
-		} )
-	);
+// The legacy preset's `extends` chain, flattened by hand: `eslint:recommended` (now `@eslint/js`),
+// `plugin:jsdoc/recommended`, its own settings, the React preset on top, and the test-file override.
+const legacyConfig = () => {
+	const jsdoc = load( 'eslint-plugin-jsdoc' );
+	const isReact = preset === 'react';
+	const isTest = /(^|\/)test\/[^/]+$/.test( file );
+	return {
+		files: [ '**/*.{js,jsx}' ],
+		languageOptions: {
+			parser: load( legacyRecommended.parser ),
+			parserOptions: {
+				...legacyRecommended.parserOptions,
+				...( isReact && { ecmaFeatures: legacyReact.parserOptions.ecmaFeatures } ),
+			},
+			// The Babel parser's default when the legacy preset sets none.
+			sourceType: isReact ? legacyReact.parserOptions.sourceType : 'module',
+		},
+		plugins: {
+			jsdoc,
+			wpcalypso: plugin,
+			'inclusive-language': load( 'eslint-plugin-inclusive-language' ),
+			...( isReact && {
+				react: load( 'eslint-plugin-react' ),
+				'react-hooks': load( 'eslint-plugin-react-hooks' ),
+			} ),
+		},
+		settings: legacyRecommended.settings,
+		rules: {
+			...load( '@eslint/js' ).configs.recommended.rules,
+			...jsdoc.configs.recommended.rules,
+			...legacyRecommended.rules,
+			...( isReact && legacyReact.rules ),
+			...( isTest && legacyRecommended.overrides[ 0 ].rules ),
+		},
+	};
+};
+
+const resolve = async ( overrideConfig ) => {
+	const eslint = new ESLint( { cwd, overrideConfigFile: true, overrideConfig } );
+	const config = await eslint.calculateConfigForFile( path.join( cwd, file ) );
+	return {
+		rules: Object.fromEntries(
+			Object.entries( config.rules ).map( ( [ name, value ] ) => {
+				const [ severity, ...options ] = Array.isArray( value ) ? value : [ value ];
+				return [ name, [ { off: 0, warn: 1, error: 2 }[ severity ] ?? severity, ...options ] ];
+			} )
+		),
+		settings: config.settings,
+		ecmaFeatures: config.languageOptions.parserOptions.ecmaFeatures,
+		sourceType: config.languageOptions.sourceType,
+		parser: config.languageOptions.parser.meta.name,
+	};
+};
 
 ( async () => {
-	const Legacy = await loadESLint( { useFlatConfig: false } );
-	const Flat = await loadESLint( { useFlatConfig: true } );
-	const legacy = new Legacy( {
-		cwd,
-		useEslintrc: false,
-		overrideConfig: { extends: [ `plugin:wpcalypso/${ legacyPreset }` ] },
-	} );
-	const flat = new Flat( {
-		cwd,
-		overrideConfigFile: true,
-		// The preset as the README sets it up.
-		overrideConfig: defineConfig( [
-			{ files: [ '**/*.{js,jsx}' ], extends: [ plugin.configs[ `flat/${ legacyPreset }` ] ] },
-		] ),
-	} );
-	const target = path.join( cwd, file );
-	const legacyConfig = await legacy.calculateConfigForFile( target );
-	const flatConfig = await flat.calculateConfigForFile( target );
 	process.stdout.write(
 		JSON.stringify( {
-			legacy: {
-				rules: normalize( legacyConfig.rules ),
-				settings: legacyConfig.settings,
-				ecmaFeatures: legacyConfig.parserOptions.ecmaFeatures,
-				// Unset, so the Babel parser's default.
-				sourceType: legacyConfig.parserOptions.sourceType ?? 'module',
-			},
-			flat: {
-				rules: normalize( flatConfig.rules ),
-				settings: flatConfig.settings,
-				ecmaFeatures: flatConfig.languageOptions.parserOptions.ecmaFeatures,
-				sourceType: flatConfig.languageOptions.sourceType,
-			},
+			legacy: await resolve( [ legacyConfig() ] ),
+			// The preset as the README sets it up.
+			flat: await resolve(
+				defineConfig( [
+					{ files: [ '**/*.{js,jsx}' ], extends: [ plugin.configs[ `flat/${ preset }` ] ] },
+				] )
+			),
 		} )
 	);
 } )();

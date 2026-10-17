@@ -10,14 +10,15 @@
 //------------------------------------------------------------------------------
 
 const RuleTester = require( 'eslint' ).RuleTester;
+const plugin = require( '../../..' );
 const rule = require( '../../../lib/rules/i18n-no-variables' );
-const config = { env: { es6: true } }; // support for string templates
+const config = { languageOptions: { ecmaVersion: 2015, sourceType: 'script' } }; // support for string templates
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( config ).run( 'i18n-no-variables', rule, {
+new RuleTester( config ).run( 'i18n-no-variables', plugin.rules[ 'i18n-no-variables' ], {
 	valid: [
 		{
 			code: "translate( 'Hello World' );",
@@ -111,7 +112,7 @@ new RuleTester( config ).run( 'i18n-no-variables', rule, {
 			],
 		},
 		{
-			code: '/*eslint-env es6*/ translate( `Hello ${World}!` );',
+			code: 'translate( `Hello ${World}!` );',
 			errors: [
 				{
 					message: rule.ERROR_MESSAGE,

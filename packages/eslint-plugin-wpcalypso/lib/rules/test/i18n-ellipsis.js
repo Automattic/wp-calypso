@@ -10,14 +10,15 @@
 //------------------------------------------------------------------------------
 
 const RuleTester = require( 'eslint' ).RuleTester;
+const plugin = require( '../../..' );
 const rule = require( '../../../lib/rules/i18n-ellipsis' );
-const config = { env: { es6: true } }; // support for string templates
+const config = { languageOptions: { ecmaVersion: 2015, sourceType: 'script' } }; // support for string templates
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( config ).run( 'i18n-ellipsis', rule, {
+new RuleTester( config ).run( 'i18n-ellipsis', plugin.rules[ 'i18n-ellipsis' ], {
 	valid: [
 		{
 			code: "translate( 'Hello World…' );",
@@ -42,9 +43,6 @@ new RuleTester( config ).run( 'i18n-ellipsis', rule, {
 		},
 		{
 			code: "( 0, translate )( 'Hello World…' );",
-		},
-		{
-			code: "translate( 'Hello World…' );",
 		},
 		{ code: "__( '…' );" },
 		{ code: "__( '…', 'dots-in-locale-fine...' );" },
@@ -143,15 +141,6 @@ new RuleTester( config ).run( 'i18n-ellipsis', rule, {
 				},
 			],
 			output: 'translate( `Hello ${ world }…` );',
-		},
-		{
-			code: "translate( 'Hello World...' );",
-			errors: [
-				{
-					message: rule.ERROR_MESSAGE,
-				},
-			],
-			output: "translate( 'Hello World…' );",
 		},
 		{
 			code: "translate( 'Hello World…', 'Hello Worlds...' );",
