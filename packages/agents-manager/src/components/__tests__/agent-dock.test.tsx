@@ -29,6 +29,11 @@ let mockAgentsManagerState: {
 } = { isOpen: true, isDocked: false };
 let mockHasAdminBar = false;
 
+// The lock only holds where the chat can dock.
+jest.mock( '../../utils/can-dock', () => ( {
+	...jest.requireActual( '../../utils/can-dock' ),
+	getCanDock: () => true,
+} ) );
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
