@@ -252,6 +252,7 @@ type ImageStudioErrorType =
 	| 'draft_cleanup_permission_denied'
 	| 'delete_permanently_failed'
 	| 'save_metadata_failed'
+	| 'transform_failed'
 	| 'other';
 
 interface TrackImageStudioErrorOptions {
@@ -331,7 +332,14 @@ export function trackImageStudioClosed( { mode }: TrackImageStudioClosedOptions 
  * @param action   - Optional action ('open' or 'close') for tools that toggle
  */
 export function trackImageStudioToolClick(
-	toolName: 'annotate' | 'alt_text' | 'media_library',
+	toolName:
+		| 'annotate'
+		| 'alt_text'
+		| 'media_library'
+		| 'rotate_left'
+		| 'rotate_right'
+		| 'flip_horizontal'
+		| 'flip_vertical',
 	action?: 'open' | 'close'
 ): void {
 	const properties: Record< string, string > = {};

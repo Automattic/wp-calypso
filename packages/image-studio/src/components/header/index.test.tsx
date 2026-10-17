@@ -415,6 +415,57 @@ describe( 'Header', () => {
 
 			expect( screen.getByLabelText( 'Select an area of the image to edit' ) ).toBeDisabled();
 			expect( screen.getByLabelText( 'View or edit information about the image' ) ).toBeDisabled();
+			expect( screen.getByLabelText( 'Rotate left' ) ).toBeDisabled();
+		} );
+
+		it.each( [
+			[ 'Rotate left', 'rotate_left', { type: 'rotate', direction: 'left' } ],
+			[ 'Rotate right', 'rotate_right', { type: 'rotate', direction: 'right' } ],
+			[ 'Flip horizontally', 'flip_horizontal', { type: 'flip', axis: 'horizontal' } ],
+			[ 'Flip vertically', 'flip_vertical', { type: 'flip', axis: 'vertical' } ],
+		] )( 'applies %s and tracks the click', async ( label, toolName, transform ) => {
+			const onTransform = jest.fn();
+			const user = userEvent.setup();
+
+			render(
+				<Header { ...defaultProps } mode={ ImageStudioMode.Edit } onTransform={ onTransform } />
+			);
+
+			await user.click( screen.getByLabelText( label ) );
+
+			expect( onTransform ).toHaveBeenCalledWith( transform );
+			expect( mockTrackImageStudioToolClick ).toHaveBeenCalledWith( toolName );
+		} );
+
+		it( 'disables rotate and flip in annotation mode', () => {
+			mockUseSelect.mockImplementation( ( selector: any ) => {
+				const result = selector( () => ( {
+					getImageStudioAiProcessing: () => false,
+					getHasUpdatedMetadata: () => false,
+					getIsAnnotationMode: () => true,
+					getDraftIds: () => [],
+					getHasUnsavedChanges: () => false,
+					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
+				} ) );
+				return result;
+			} );
+
+			render(
+				<Header
+					{ ...defaultProps }
+					mode={ ImageStudioMode.Edit }
+					activeToolbarOption={ ToolbarOption.Annotate }
+				/>
+			);
+
+			for ( const label of [
+				'Rotate left',
+				'Rotate right',
+				'Flip horizontally',
+				'Flip vertically',
+			] ) {
+				expect( screen.getByLabelText( label ) ).toBeDisabled();
+			}
 		} );
 
 		it( 'shows pressed state for active toolbar option', () => {
