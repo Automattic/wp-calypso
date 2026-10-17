@@ -124,4 +124,16 @@ describe( 'ResourceModal', () => {
 		expect( writeText ).toHaveBeenCalledWith( 'https://example.com/?resource=1' );
 		expect( screen.getByRole( 'button', { name: 'Link copied' } ) ).toBeVisible();
 	} );
+
+	test( 'says when the link couldn’t be copied', async () => {
+		Object.defineProperty( window.navigator, 'clipboard', {
+			value: { writeText: jest.fn().mockRejectedValue( new Error( 'Denied' ) ) },
+			configurable: true,
+		} );
+		renderModal();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Copy link' } ) );
+
+		expect( screen.getByRole( 'button', { name: 'Couldn’t copy link' } ) ).toBeVisible();
+	} );
 } );

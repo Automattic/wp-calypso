@@ -10,7 +10,7 @@ import {
 import { useReducedMotion, useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { check, chevronLeft, chevronRight, closeSmall } from '@wordpress/icons';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import ResourceBadges from './resource-badges';
 import ResourcePreview from './resource-preview';
 import type { AgencyEnablementResource } from '@automattic/api-core';
@@ -83,22 +83,34 @@ export default function ResourceModal( {
 	const fadeClassName =
 		resource.id !== openedId.current ? 'dashboard-resources-learn__modal-fade' : undefined;
 
-	// Keyed by resource, so moving on resets the confirmation.
-	const [ copiedId, setCopiedId ] = useState< number >();
-	const isCopied = copiedId === resource.id;
+	// Keyed by resource, so moving on resets the message.
+	const [ copyResult, setCopyResult ] = useState< { id: number; copied: boolean } >();
+	const copyResultTimeout = useRef< ReturnType< typeof setTimeout > >( undefined );
+	useEffect( () => () => clearTimeout( copyResultTimeout.current ), [] );
+
+	const showCopyResult = ( copied: boolean ) => {
+		setCopyResult( { id: resource.id, copied } );
+		speak( copied ? __( 'Link copied.' ) : __( 'Couldn’t copy the link.' ) );
+		clearTimeout( copyResultTimeout.current );
+		copyResultTimeout.current = setTimeout( () => setCopyResult( undefined ), 2000 );
+	};
+
 	const copyLink = async () => {
 		try {
 			// The same link the resource's card points to.
 			await navigator.clipboard.writeText(
 				new URL( `?resource=${ resource.id }`, window.location.href ).href
 			);
-			setCopiedId( resource.id );
-			speak( __( 'Link copied.' ) );
-			setTimeout( () => setCopiedId( undefined ), 2000 );
+			showCopyResult( true );
 		} catch {
-			// The address bar has the same link, so a failed write stays silent.
+			showCopyResult( false );
 		}
 	};
+
+	let copyLabel: string = __( 'Copy link' );
+	if ( copyResult?.id === resource.id ) {
+		copyLabel = copyResult.copied ? __( 'Link copied' ) : __( 'Couldn’t copy link' );
+	}
 
 	return (
 		<Modal
@@ -204,7 +216,7 @@ export default function ResourceModal( {
 								{ __( 'Open in new tab' ) }
 							</Button>
 							<Button variant="tertiary" onClick={ copyLink } __next40pxDefaultSize>
-								{ isCopied ? __( 'Link copied' ) : __( 'Copy link' ) }
+								{ copyLabel }
 							</Button>
 						</HStack>
 						<Button
