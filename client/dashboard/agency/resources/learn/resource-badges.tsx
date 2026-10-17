@@ -5,7 +5,10 @@ import { getAudienceLabel, getContentTypeLabel, getStageLabel } from './lib/labe
 import type { FilterResources } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
-/** A badge that filters the library by its value. */
+/**
+ * A badge that filters the library by its value. A plain button, as `Button`'s
+ * own size, padding and focus styles would draw a second shape around the badge.
+ */
 function FilterBadge( { label, onClick }: { label: string; onClick: () => void } ) {
 	return (
 		<button
