@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { sitePurchasesQuery } from '@automattic/api-queries';
+import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -10,12 +11,18 @@ import Modal from 'react-modal';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
+import {
+	getPlanExpiryUrgency,
+	hasPlanExpiryNotice,
+} from 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice';
+import { shouldShowExpiringNotice } from 'calypso/dashboard/me/billing-purchases/purchase-settings/should-show-expiring-notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { storeData } from 'calypso/my-sites/checkout/src/components/test/lib/fixtures';
 import { recordTracksEvent as recordReduxTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import UpcomingRenewalsReminder from '../upcoming-renewals-reminder';
 import type { Purchase } from '@automattic/api-core';
+import type { PlanExpiryUrgency } from 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice';
 import type { PartialCart } from 'calypso/my-sites/checkout/src/components/secondary-cart-promotions';
 
 import 'calypso/my-sites/checkout/src/test/util';
@@ -39,8 +46,22 @@ jest.mock( 'calypso/state/preferences/actions', () => ( {
 	setPreference: jest.fn( ( key, value ) => ( { type: 'PREFERENCE_SET', key, value } ) ),
 } ) );
 
+jest.mock( 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice', () => ( {
+	...jest.requireActual( 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice' ),
+	getPlanExpiryUrgency: jest.fn(),
+	hasPlanExpiryNotice: jest.fn(),
+} ) );
+
+jest.mock(
+	'calypso/dashboard/me/billing-purchases/purchase-settings/should-show-expiring-notice',
+	() => ( { shouldShowExpiringNotice: jest.fn() } )
+);
+
 const mockRecordTracksEvent = recordTracksEvent as unknown as jest.Mock;
 const mockSavePreference = savePreference as unknown as jest.Mock;
+const mockGetPlanExpiryUrgency = getPlanExpiryUrgency as unknown as jest.Mock;
+const mockHasPlanExpiryNotice = hasPlanExpiryNotice as unknown as jest.Mock;
+const mockShouldShowExpiringNotice = shouldShowExpiringNotice as unknown as jest.Mock;
 
 const SITE_ID = 123;
 const URGENT_DOMAIN_NAME = 'urgent-domain-1234.live';
@@ -101,6 +122,20 @@ function nonUrgentPlanPurchase( overrides = {} ) {
 		is_renewal: false,
 		is_rechargeable: true,
 		...overrides,
+	};
+}
+
+function expiringIn( days: number ) {
+	return { expiry_date: moment().add( days, 'days' ).format(), days_until_expiry: days };
+}
+
+function renewalCart( ...purchaseIds: number[] ): PartialCart {
+	return {
+		products: purchaseIds.map( ( purchaseId ) => ( {
+			...getEmptyResponseCartProduct(),
+			subscription_id: String( purchaseId ),
+			is_renewal: true,
+		} ) ),
 	};
 }
 
@@ -316,6 +351,91 @@ describe( 'UpcomingRenewalsReminder', () => {
 				purchases: [ nonUrgentPlanPurchase( { expiry_status: 'expired', days_until_expiry: -5 } ) ],
 			} );
 			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
+		} );
+	} );
+
+	describe( 'outside the 10-day window', () => {
+		const PLAN_ID = 20;
+		const OTHER_ID = 10;
+
+		type Scenario = {
+			// Urgency and days until expiry of each plan in the cart, with IDs
+			// counting up from PLAN_ID.
+			plans: [ PlanExpiryUrgency | null, number ][];
+			otherDays: number;
+			// How the other purchase's own page warns that it's expiring: the
+			// generic expiring notice, a warning-urgency plan expiry notice, or not at all.
+			otherNotice?: 'expiring' | 'warning' | null;
+		};
+
+		function renderScenario( { plans, otherDays, otherNotice = 'expiring' }: Scenario ) {
+			const planIds = plans.map( ( _plan, index ) => PLAN_ID + index );
+			const urgencyById = new Map< number, PlanExpiryUrgency | null >(
+				plans.map( ( [ urgency ], index ) => [ planIds[ index ], urgency ] )
+			);
+			if ( otherNotice === 'warning' ) {
+				urgencyById.set( OTHER_ID, 'warning' );
+			}
+			const urgencyOf = ( purchase: Purchase ) => urgencyById.get( purchase.ID ) ?? null;
+			mockGetPlanExpiryUrgency.mockImplementation( urgencyOf );
+			mockHasPlanExpiryNotice.mockImplementation( ( purchase ) => urgencyOf( purchase ) !== null );
+			mockShouldShowExpiringNotice.mockImplementation( () => otherNotice === 'expiring' );
+
+			renderReminder( {
+				purchases: [
+					...plans.map( ( [ , days ], index ) =>
+						nonUrgentPlanPurchase( { ID: planIds[ index ], is_plan: true, ...expiringIn( days ) } )
+					),
+					urgentDomainPurchase( expiringIn( otherDays ) ),
+				],
+				cart: renewalCart( ...planIds ),
+			} );
+		}
+
+		test.each< [ string, Scenario, boolean ] >( [
+			[
+				'auto-opens for a purchase expiring soon after an info-urgency plan',
+				{ plans: [ [ 'info', 200 ] ], otherDays: 20 },
+				true,
+			],
+			[
+				'keeps the dialog closed for a purchase near a plan with no expiry notice',
+				{ plans: [ [ null, 14 ] ], otherDays: 20 },
+				false,
+			],
+			[
+				'keeps the dialog closed for a purchase whose own page shows no expiring notice',
+				{ plans: [ [ 'warning', 14 ] ], otherDays: 20, otherNotice: null },
+				false,
+			],
+			[
+				'auto-opens for a purchase 60 days from expiry with a warning plan notice of its own',
+				{ plans: [ [ 'warning', 58 ] ], otherDays: 60, otherNotice: 'warning' },
+				true,
+			],
+			[
+				'keeps the dialog closed for a purchase over a week after the soonest plan',
+				{
+					plans: [
+						[ 'warning', 14 ],
+						[ 'warning', 50 ],
+					],
+					otherDays: 25,
+				},
+				false,
+			],
+			[
+				'auto-opens for a purchase in the 10-day window and near the plan, listing it once',
+				{ plans: [ [ 'warning', 14 ] ], otherDays: 5 },
+				true,
+			],
+		] )( '%s', async ( _label, scenario, opens ) => {
+			renderScenario( scenario );
+			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
+			const dialog = await screen.findByRole( 'dialog' ).catch( () => null );
+			expect( dialog ? within( dialog ).getAllByText( URGENT_DOMAIN_NAME ) : [] ).toHaveLength(
+				opens ? 1 : 0
+			);
 		} );
 	} );
 } );
