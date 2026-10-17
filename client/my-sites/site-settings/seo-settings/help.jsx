@@ -2,9 +2,11 @@ import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
+import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -14,11 +16,19 @@ export const SeoSettingsHelpCard = ( {
 	hasAdvancedSEOFeature,
 	siteId,
 	siteIsJetpack,
+	siteIsWpcom,
 	translate,
 } ) => {
-	const seoHelpLink = siteIsJetpack
-		? localizeUrl( 'https://jetpack.com/support/seo-tools/' )
-		: 'https://wpbizseo.wordpress.com/';
+	// WordPress.com sites (Simple and Atomic) get the WordPress.com doc in the Help Center.
+	const seoHelpLink = siteIsWpcom ? (
+		<InlineSupportLink
+			supportPostId={ 120916 }
+			supportLink={ localizeUrl( 'https://wordpress.com/support/seo/seo-tools/' ) }
+			showIcon={ false }
+		/>
+	) : (
+		<a href={ localizeUrl( 'https://jetpack.com/support/seo-tools/' ) } />
+	);
 
 	return (
 		<PanelCard>
@@ -33,7 +43,7 @@ export const SeoSettingsHelpCard = ( {
 								"to {{a}}optimize your site's SEO{{/a}}.",
 							{
 								components: {
-									a: <a href={ seoHelpLink } />,
+									a: seoHelpLink,
 									b: <strong />,
 								},
 							}
@@ -65,6 +75,7 @@ export default connect( ( state ) => {
 	return {
 		siteId,
 		siteIsJetpack,
+		siteIsWpcom: isSiteWpcom( state, siteId ),
 		hasAdvancedSEOFeature,
 	};
 } )( localize( SeoSettingsHelpCard ) );
