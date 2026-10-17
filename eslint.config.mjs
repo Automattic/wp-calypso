@@ -647,9 +647,6 @@ const config = defineConfig( [
 		files: [ `apps/${ app }/**` ],
 		languageOptions: { globals: globals.browser },
 	} ) ),
-	...[ 'blaze-dashboard', 'notifications', 'o2-blocks', 'odyssey-stats', 'wpcom-block-editor' ].map(
-		( app ) => nodeOverrides( [ `apps/${ app }/bin/**`, `apps/${ app }/webpack.config.js` ] )
-	),
 	{
 		files: [ 'apps/happy-blocks/**' ],
 		rules: {
