@@ -46,6 +46,7 @@ export const siteBackupKnownThreatsQuery = ( siteId: number, rewindId: string ) 
 
 			return { knownThreats, latestWithoutKnownThreats };
 		},
+		staleTime: 60_000,
 		retry: false,
 	} );
 };

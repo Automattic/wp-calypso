@@ -134,6 +134,18 @@ describe( 'site backup known threats queries', () => {
 		expect( result ).toEqual( { knownThreats: counts( 2 ), latestWithoutKnownThreats: 250 } );
 	} );
 
+	it( 'caches per-backup counts within the stale window', async () => {
+		const scope = mockPage( 1, page( 1, 1, [ backup( '200', counts( 2 ) ) ] ) );
+		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+
+		const first = await client.fetchQuery( siteBackupKnownThreatsQuery( SITE_ID, '200' ) );
+		const second = await client.fetchQuery( siteBackupKnownThreatsQuery( SITE_ID, '200' ) );
+
+		expect( scope.isDone() ).toBe( true );
+		expect( nock.pendingMocks() ).toEqual( [] );
+		expect( second ).toEqual( first );
+	} );
+
 	it( "fetches one backup's threats", async () => {
 		const body = {
 			backup_id: 1792244294,
