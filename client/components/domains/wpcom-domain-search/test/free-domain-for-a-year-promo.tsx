@@ -20,14 +20,6 @@ describe( 'FreeDomainForAYearPromo', () => {
 			expect( screen.getByText( /Claim your first domain—Free!/ ) ).toBeVisible();
 			expect( screen.getByText( /your first year's domain registration is on us/i ) ).toBeVisible();
 		} );
-
-		it( 'uses the CIAB subtitle when isCiab is true and no override is passed', () => {
-			render( <FreeDomainForAYearPromo isCiab /> );
-
-			expect(
-				screen.getByText( /With your annual plan purchase, the first year of domain registration/i )
-			).toBeVisible();
-		} );
 	} );
 
 	describe( 'title prop', () => {

@@ -74,46 +74,6 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	return false;
 }
 
-async function pollForGardenProvisioning(
-	siteId: number,
-	maxAttempts = 22,
-	delayMs = 5000,
-	initialDelayMs = 10000
-) {
-	// Initial delay to allow for site creation to settle.
-	if ( initialDelayMs > 0 ) {
-		await new Promise( ( resolve ) => setTimeout( resolve, initialDelayMs ) );
-	}
-
-	for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
-		try {
-			const siteResponse = ( await wpcom.req.get( {
-				path: `/sites/${ siteId }`,
-				apiVersion: '1.1',
-			} ) ) as { garden_is_provisioned?: boolean };
-
-			if ( siteResponse?.garden_is_provisioned ) {
-				return true;
-			}
-
-			if ( attempt < maxAttempts ) {
-				await new Promise( ( resolve ) => setTimeout( resolve, delayMs ) );
-			}
-		} catch ( error ) {
-			if ( attempt < maxAttempts ) {
-				await new Promise( ( resolve ) => setTimeout( resolve, delayMs ) );
-			}
-		}
-	}
-
-	// Throw an error to trigger the processing step's error handling
-	const error = new Error(
-		'We were unable to create your site. Please try again or contact support.'
-	) as Error & { code: string };
-	error.code = 'garden_provisioning_timeout';
-	throw error;
-}
-
 // Runs of the action still in progress, by the name asked for. The `createdSite` record in the
 // flow state is written only after /sites/new returns, so a second run of the action that starts
 // inside that wait reads nothing and would send its own request. This is where it joins the
@@ -154,8 +114,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		siteUrl,
 		progress,
 		partnerBundle,
-		gardenName,
-		gardenPartnerName,
 		blueprint,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
@@ -168,8 +126,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			siteUrl: select( ONBOARD_STORE ).getSiteUrl(),
 			progress: select( ONBOARD_STORE ).getProgress(),
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
-			gardenName: select( ONBOARD_STORE ).getGardenName(),
-			gardenPartnerName: select( ONBOARD_STORE ).getGardenPartnerName(),
 			blueprint: select( ONBOARD_STORE ).getBlueprint(),
 		} ),
 		[]
@@ -315,10 +271,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			if ( earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
 				const atomicSite = await pollForAtomicProvisioning( earlyCreatedSiteId );
 				siteSlug = atomicSite.siteSlug;
-			} else if ( gardenName ) {
-				// Poll until the provisioning is considered complete.
-				// Skip the initial delay since the site may have been provisioning for minutes already.
-				await pollForGardenProvisioning( earlyCreatedSiteId, 22, 5000, 0 );
 			}
 
 			return {
@@ -398,8 +350,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 						sourceSlug,
 						siteIntent,
 						undefined, // siteGoals
-						gardenName,
-						gardenPartnerName,
+						null, // gardenName
+						null, // gardenPartnerName
 						urlQueryParams.get( 'spec_id' ),
 						isPlaygroundPublish ? 'playground-publish' : undefined,
 						undefined, // provisionTarget
@@ -411,7 +363,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			}
 
 			// Recorded as soon as the site exists, ahead of the waits below rather than after them: the
-			// Atomic and garden polls run for minutes, and leaving during one is how someone comes back
+			// Atomic poll runs for minutes, and leaving during one is how someone comes back
 			// here with a site already made. The slug can still be the pre-transfer one, so the adopting
 			// run re-polls on the ID and settles it again.
 			if ( ! canReuseUnnamedSite || ! siteFromThisRun ) {
@@ -435,11 +387,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 			if ( additionalCartItems.length > 0 ) {
 				await addProductsToCart( site.siteSlug, flow, additionalCartItems );
-			}
-
-			// Poll for garden provisioning status if this is a garden site
-			if ( gardenName ) {
-				await pollForGardenProvisioning( site.siteId );
 			}
 
 			if ( isEntrepreneurFlow( flow ) ) {

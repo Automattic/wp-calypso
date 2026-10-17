@@ -1,13 +1,13 @@
 import { Onboard } from '@automattic/data-stores';
 import { addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { resolveSelect, useDispatch as useWpDataDispatch, useSelect } from '@wordpress/data';
+import { resolveSelect, useDispatch as useWpDataDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-blog-sticker-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
-import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
@@ -75,11 +75,9 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	useSideEffect() {
 		const dispatch = useDispatch();
-		const { setGardenName, setGardenPartnerName } = useWpDataDispatch( ONBOARD_STORE );
 		const queryParams = useQuery();
 		const siteId = queryParams.get( 'siteId' );
 		const prompt = queryParams.get( 'prompt' );
-		const createGardenSite = queryParams.get( 'create_garden_site' );
 
 		useEffect( () => {
 			if ( siteId ) {
@@ -92,30 +90,11 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 				window.sessionStorage.setItem( 'stored_ai_prompt', prompt );
 			}
 		}, [ prompt ] );
-
-		useEffect( () => {
-			// Set the garden values based on the query parameter
-			// The parameter should be exactly "1" to enable garden site creation
-			if ( createGardenSite === '1' ) {
-				setGardenName( 'commerce' );
-				setGardenPartnerName( 'woo' );
-			} else {
-				setGardenName( null );
-				setGardenPartnerName( null );
-			}
-		}, [ createGardenSite, setGardenName, setGardenPartnerName ] );
 	},
 	initialize,
 	useStepNavigation( _, navigate ) {
 		const { siteSlug: siteSlugFromSiteData, siteId: siteIdFromSiteData } = useSiteData();
 		const { setStaticHomepageOnSite, setIntentOnSite } = useWpDataDispatch( SITE_STORE );
-		const { gardenName } = useSelect(
-			( select ) => ( {
-				gardenName: ( select( ONBOARD_STORE ) as any ).getGardenName(),
-				gardenPartnerName: ( select( ONBOARD_STORE ) as any ).getGardenPartnerName(),
-			} ),
-			[]
-		);
 
 		const { addBlogSticker } = useAddBlogStickerMutation( {
 			onError: () => {
@@ -189,61 +168,34 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							/**
 							 * Redirect behavior after site creation:
 							 *
-							 * The `trigger_backend_build` parameter controls where the user is redirected
-							 * after site creation. The default behavior differs based on site type:
-							 *
-							 * NON-GARDEN SITES (no create_garden_site param):
-							 *   - Default: site-editor.php (triggerBackendBuild=false)
-							 *   - With trigger_backend_build=1: /wp-admin/
-							 *   - With trigger_backend_build=0: site-editor.php
-							 *
-							 * GARDEN SITES (create_garden_site=1):
-							 *   - Default: /wp-admin/ (triggerBackendBuild=true)
-							 *   - With trigger_backend_build=1: /wp-admin/
-							 *   - With trigger_backend_build=0: site-editor.php
-							 *
-							 * Full permutation matrix:
-							 * | create_garden_site | trigger_backend_build | Redirect destination                              |
-							 * |--------------------|----------------------|---------------------------------------------------|
-							 * | (not set)          | (not set)            | /wp-admin/site-editor.php?canvas=edit&ai-step=spec |
-							 * | (not set)          | 0                    | /wp-admin/site-editor.php?canvas=edit&ai-step=spec |
-							 * | (not set)          | 1                    | /wp-admin/                                        |
-							 * | 1                  | (not set)            | /wp-admin/                                        |
-							 * | 1                  | 0                    | /wp-admin/site-editor.php?canvas=edit&ai-step=spec |
-							 * | 1                  | 1                    | /wp-admin/                                        |
+							 * - Default (or trigger_backend_build=0): site-editor.php
+							 * - With trigger_backend_build=1: /wp-admin/
 							 *
 							 * WPCOM Atomic provision targets use Easy Site Editor instead of the legacy
 							 * Big Sky site-editor surface.
 							 */
-							const triggerBackendBuildParam = queryParams.get( 'trigger_backend_build' );
-							const triggerBackendBuild = gardenName
-								? triggerBackendBuildParam !== '0' // Garden sites: default to /wp-admin/, opt-out with =0
-								: triggerBackendBuildParam === '1'; // Non-garden: default to site-editor, opt-in with =1
+							const triggerBackendBuild = queryParams.get( 'trigger_backend_build' ) === '1';
 
 							const siteRequest = resolveSelect( SITE_STORE ).getSite( siteId );
-							let pageRequest: Promise< { id: number } > | undefined;
 
-							if ( ! gardenName ) {
-								// Add blog sticker - this runs independently and errors are handled by the mutation's onError callback (only for non-garden sites)
-								addBlogSticker( siteId, 'big-sky-free-trial' );
+							// Add blog sticker - this runs independently and errors are handled by the mutation's onError callback
+							addBlogSticker( siteId, 'big-sky-free-trial' );
 
-								// Create a new home page if one is not set yet (only for non-garden sites)
-								pageRequest = wpcom.req.post(
-									{
-										path: '/sites/' + siteId + '/pages',
-										apiNamespace: 'wp/v2',
-									},
-									{},
-									{
-										title: 'Home',
-										status: 'publish',
-										content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-									}
-								);
-							}
+							// Create a new home page if one is not set yet
+							const pageRequest: Promise< { id: number } > = wpcom.req.post(
+								{
+									path: '/sites/' + siteId + '/pages',
+									apiNamespace: 'wp/v2',
+								},
+								{},
+								{
+									title: 'Home',
+									status: 'publish',
+									content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+								}
+							);
 
-							// Only apply design and delete page for non-garden sites
-							const deletePageRequest = ! gardenName ? deletePage( siteId || '', 1 ) : undefined;
+							const deletePageRequest = deletePage( siteId || '', 1 );
 							const intentRequest = setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
 							const results = await Promise.all( [
 								siteRequest,
@@ -262,7 +214,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							}
 							const siteURL = siteData.URL;
 
-							// Handle page creation result (only exists for non-garden sites)
+							// Handle page creation result
 							if ( pageCreationResult && pageCreationResult.id ) {
 								const homePagePostId = pageCreationResult.id;
 								await setStaticHomepageOnSite( siteId, homePagePostId );

@@ -63,7 +63,6 @@ jest.mock( 'calypso/lib/logstash', () => ( {
 jest.mock( 'calypso/lib/site-spec/utils', () => ( {
 	getBlueprintSiteSpecConfig: jest.fn( () => ( { agentId: 'blueprint-site-spec' } ) ),
 	getBuildWowSiteSpecConfig: jest.fn( () => ( { agentId: 'build-wow-site-spec' } ) ),
-	getCiabSiteSpecConfig: jest.fn( () => ( { agentId: 'ciab-site-spec' } ) ),
 	getEarlyProvisionSiteSpecConfig: jest.fn( () => ( { agentId: 'early-provision-site-spec' } ) ),
 } ) );
 
