@@ -1,4 +1,8 @@
-import { activeAgencyQuery, paginatedJetpackAgencyLicensesQuery } from '@automattic/api-queries';
+import {
+	activeAgencyQuery,
+	paginatedJetpackAgencyLicensesQuery,
+	wooCommerceLicenseSitesQuery,
+} from '@automattic/api-queries';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
@@ -32,6 +36,7 @@ import {
 	toFetchOptions,
 	withLicenseColumnStyles,
 } from './dataviews';
+import { isWooCommerceSiteLicense, withWooCommerceSites } from './license-status';
 import { useCheckoutReturn } from './use-checkout-return';
 import { useProvisioningLicenses } from './use-provisioning-licenses';
 import type { JetpackLicense } from '@automattic/api-core';
@@ -62,6 +67,17 @@ export default function MarketplacePurchases() {
 		enabled: agencyId > 0,
 		placeholderData: keepPreviousData,
 	} );
+	// Fetched after the list renders, and only when a Woo license is on screen: it is slow,
+	// and the list shouldn't wait for it.
+	const hasWooCommerceSiteLicenses = !! data?.items.some( isWooCommerceSiteLicense );
+	const { data: wooCommerceSites, isLoading: isLoadingWooCommerceSites } = useQuery( {
+		...wooCommerceLicenseSitesQuery( agencyId ),
+		enabled: agencyId > 0 && hasWooCommerceSiteLicenses,
+	} );
+	const licenses = useMemo(
+		() => withWooCommerceSites( data?.items ?? [], wooCommerceSites, isLoadingWooCommerceSites ),
+		[ data?.items, wooCommerceSites, isLoadingWooCommerceSites ]
+	);
 	const { provisioningLicenseKeys, isProvisioning } = useProvisioningLicenses( agencyId );
 	const [ isFeedbackOpen, setIsFeedbackOpen ] = useState( false );
 	const { shouldAsk } = useMilestoneFeedback( 'purchase-completed' );
@@ -80,8 +96,15 @@ export default function MarketplacePurchases() {
 		[ shouldAsk ]
 	);
 	const fields = useMemo(
-		() => getLicenseFields( { locale, isAgencyOwner, provisioningLicenseKeys, onManageSite } ),
-		[ locale, isAgencyOwner, provisioningLicenseKeys, onManageSite ]
+		() =>
+			getLicenseFields( {
+				locale,
+				isAgencyOwner,
+				provisioningLicenseKeys,
+				isLoadingWooCommerceSites,
+				onManageSite,
+			} ),
+		[ locale, isAgencyOwner, provisioningLicenseKeys, isLoadingWooCommerceSites, onManageSite ]
 	);
 	const actions = useLicenseActions( {
 		agencyId,
@@ -144,7 +167,7 @@ export default function MarketplacePurchases() {
 			{ ! isLoading && <PerformanceTrackerStop /> }
 			<DataViewsCard>
 				<DataViews< JetpackLicense >
-					data={ data?.items ?? [] }
+					data={ licenses }
 					fields={ fields }
 					actions={ actions }
 					view={ tableView }

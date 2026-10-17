@@ -5,6 +5,7 @@ import {
 	fetchJetpackLicenseDownloadUrl,
 	fetchJetpackLicenses,
 	fetchJetpackLicensesPage,
+	fetchWooCommerceLicenseSites,
 	issueJetpackLicenses,
 	revokeJetpackLicense,
 } from '@automattic/api-core';
@@ -47,6 +48,13 @@ export const agencyDevLicensesQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', 'dev-licenses' ],
 		queryFn: () => fetchAgencyDevLicenses( agencyId ),
+	} );
+
+// Under the licenses key so assigning or revoking a license refreshes it too.
+export const wooCommerceLicenseSitesQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', 'woocommerce-sites' ],
+		queryFn: () => fetchWooCommerceLicenseSites( agencyId ),
 	} );
 
 export function invalidateAgencyLicenses( agencyId: number | undefined ) {

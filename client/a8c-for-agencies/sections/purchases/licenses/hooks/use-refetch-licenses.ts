@@ -1,3 +1,4 @@
+import { wooCommerceLicenseSitesQuery } from '@automattic/api-queries';
 import { useQueryClient } from '@tanstack/react-query';
 import { Context, useContext } from 'react';
 import { getFetchLicenseCountsQueryKey } from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
@@ -29,6 +30,9 @@ export default function useRefetchLicenses( context: Context< LicenseListContext
 				LICENSES_PER_PAGE,
 				agencyId
 			),
+		} );
+		queryClient.invalidateQueries( {
+			queryKey: wooCommerceLicenseSitesQuery( agencyId ?? 0 ).queryKey,
 		} );
 	};
 
