@@ -14,6 +14,7 @@ import {
 	getSectionRootClientId,
 	getSelectedBlockClientId,
 	getTemplatePartClientIds,
+	isTemplatePartLoaded,
 	TEMPLATE_PART_BLOCK,
 	type BlockAttributes,
 	type EditorBlock,
@@ -112,26 +113,36 @@ function getPageRegions(): PageBlock[] {
 	// would list everything inside it twice.
 	const footerRoot = widenedFooter === headerRoot ? footer : widenedFooter;
 
-	const toRegion = ( type: RegionType, clientId: string | undefined ): PageBlock[] => {
+	// `part` is the template part itself, which `clientId` may only wrap.
+	const toRegion = (
+		type: RegionType,
+		clientId: string | undefined,
+		part: string | undefined
+	): PageBlock[] => {
 		// Without the check, `getBlocks()` would answer with the whole document.
-		if ( ! clientId ) {
+		if ( ! clientId || ! part ) {
 			return [];
 		}
 
-		const innerBlocks = withControlledBlocks( getBlocks( clientId ) );
-		const block = getBlock( clientId );
+		// An empty part is still sent: the agent can only fill a region it sees,
+		// and the backend names the part by its `slug` and `theme`. One still
+		// loading is not, or the agent would plan against blocks yet to arrive.
+		if ( ! isTemplatePartLoaded( part ) ) {
+			return [];
+		}
 
-		return innerBlocks.length
-			? [
-					{
-						name: block?.name ?? TEMPLATE_PART_BLOCK,
-						type,
-						clientId,
-						attributes: block?.attributes ?? {},
-						innerBlocks,
-					},
-				]
-			: [];
+		const block = getBlock( clientId );
+		const innerBlocks = withControlledBlocks( getBlocks( clientId ) );
+
+		return [
+			{
+				name: block?.name ?? TEMPLATE_PART_BLOCK,
+				type,
+				clientId,
+				attributes: block?.attributes ?? {},
+				innerBlocks,
+			},
+		];
 	};
 
 	const content = withControlledBlocks(
@@ -141,14 +152,14 @@ function getPageRegions(): PageBlock[] {
 	);
 
 	return [
-		...toRegion( 'header', headerRoot ),
+		...toRegion( 'header', headerRoot, header ),
 		{
 			name: getBlock( sectionRoot )?.name,
 			type: 'content',
 			clientId: sectionRoot,
 			innerBlocks: content,
 		},
-		...toRegion( 'footer', footerRoot ),
+		...toRegion( 'footer', footerRoot, footer ),
 	];
 }
 
