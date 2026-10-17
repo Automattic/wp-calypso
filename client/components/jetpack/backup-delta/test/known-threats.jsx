@@ -163,7 +163,11 @@ describe( 'BackupDelta known threats', () => {
 			name: 'Restore this one instead',
 		} );
 		expect( restoreLink ).toBeVisible();
-		expect( toolbar ).not.toContainElement( restoreLink );
+		// Same order as the other surfaces: the link sits above the Known threats button.
+		expect( toolbar.lastElementChild ).toContainElement( restoreLink );
+		expect(
+			restoreLink.compareDocumentPosition( button ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
 		expect(
 			within( cards[ 1 ] ).queryByRole( 'link', { name: 'Restore this one instead' } )
 		).toBeNull();

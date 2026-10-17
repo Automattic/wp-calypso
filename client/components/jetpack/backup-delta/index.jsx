@@ -1,3 +1,4 @@
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -23,15 +24,15 @@ function BackupDeltaRow( { siteId, activity } ) {
 		<ActivityCard
 			activity={ activity }
 			toolbarExtraContent={
-				isFlagged ? <BackupKnownThreatsToggle state={ knownThreats } inToolbar /> : undefined
+				isFlagged ? (
+					<VStack spacing={ 2 } alignment="left">
+						<BackupKnownThreatsRestoreLink state={ knownThreats } />
+						<BackupKnownThreatsToggle state={ knownThreats } inToolbar />
+					</VStack>
+				) : undefined
 			}
 		>
-			{ isFlagged && (
-				<>
-					<BackupKnownThreatsRestoreLink state={ knownThreats } />
-					<BackupKnownThreatsDetails state={ knownThreats } />
-				</>
-			) }
+			{ isFlagged && <BackupKnownThreatsDetails state={ knownThreats } /> }
 		</ActivityCard>
 	);
 }
