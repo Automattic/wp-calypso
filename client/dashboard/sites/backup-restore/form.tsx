@@ -6,11 +6,13 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
+import KnownThreatsNotice from './known-threats-notice';
 import WooSubscriptionsNotice from './woo-subscriptions-notice';
-import type { RestoreConfig } from '@automattic/api-core';
+import type { RestoreTrackingProps } from './types';
+import type { RestoreConfig, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const fields: Field< RestoreConfig >[] = [
@@ -51,15 +53,17 @@ const fields: Field< RestoreConfig >[] = [
 ];
 
 function SiteBackupRestoreForm( {
+	site,
 	siteId,
 	rewindId,
 	restorePointDate,
 	onRestoreInitiate,
 }: {
+	site: Site;
 	siteId: number;
 	rewindId: string;
 	restorePointDate: string;
-	onRestoreInitiate: ( restoreId: number ) => void;
+	onRestoreInitiate: ( restoreId: number, trackingProps?: RestoreTrackingProps ) => void;
 } ) {
 	const { mutate: restoreMutation, isPending: isRestoreMutationPending } = useMutation(
 		siteBackupRestoreInitiateMutation( siteId )
@@ -74,6 +78,15 @@ function SiteBackupRestoreForm( {
 		sqls: true,
 		uploads: true,
 	} );
+
+	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
+	const [ acknowledged, setAcknowledged ] = useState( false );
+	const handleKnownThreatsChange = useCallback( ( value: boolean ) => {
+		setHasKnownThreats( value );
+		if ( ! value ) {
+			setAcknowledged( false );
+		}
+	}, [] );
 
 	const form = {
 		type: 'regular' as const,
@@ -92,7 +105,10 @@ function SiteBackupRestoreForm( {
 			},
 			{
 				onSuccess: ( restoreId ) => {
-					onRestoreInitiate( restoreId );
+					onRestoreInitiate( restoreId, {
+						known_threats_shown: hasKnownThreats,
+						known_threats_acknowledged: hasKnownThreats && acknowledged,
+					} );
 				},
 				onError: () => {
 					createErrorNotice( __( 'Failed to initiate restore. Please try again.' ), {
@@ -144,12 +160,23 @@ function SiteBackupRestoreForm( {
 					includesDatabase={ !! formData.sqls }
 				/>
 
+				<KnownThreatsNotice
+					site={ site }
+					rewindId={ rewindId }
+					requireAcknowledgement
+					acknowledged={ acknowledged }
+					onAcknowledgedChange={ setAcknowledged }
+					onKnownThreatsChange={ handleKnownThreatsChange }
+				/>
+
 				<ButtonStack justify="flex-start">
 					<Button
 						variant="primary"
 						type="submit"
 						isBusy={ isRestoreMutationPending }
-						disabled={ ! isFormValid || isRestoreMutationPending }
+						disabled={
+							! isFormValid || isRestoreMutationPending || ( hasKnownThreats && ! acknowledged )
+						}
 					>
 						{ __( 'Restore now' ) }
 					</Button>

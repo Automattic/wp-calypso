@@ -5,23 +5,29 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useCallback, useState } from 'react';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import FileSectionPanelBody from './file-section-panel-body';
+import KnownThreatsNotice from './known-threats-notice';
 import WooSubscriptionsNotice from './woo-subscriptions-notice';
+import type { RestoreTrackingProps } from './types';
+import type { Site } from '@automattic/api-core';
 
 function SiteBackupGranularRestoreForm( {
+	site,
 	siteId,
 	rewindId,
 	restorePointDate,
 	onRestoreInitiate,
 }: {
+	site: Site;
 	siteId: number;
 	rewindId: string;
 	restorePointDate: string;
-	onRestoreInitiate: ( restoreId: number ) => void;
+	onRestoreInitiate: ( restoreId: number, trackingProps?: RestoreTrackingProps ) => void;
 } ) {
 	const { mutate: restoreMutation, isPending: isRestoreMutationPending } = useMutation(
 		siteBackupGranularRestoreMutation( siteId )
@@ -31,6 +37,12 @@ function SiteBackupGranularRestoreForm( {
 	const { fileBrowserState } = useFileBrowserContext();
 	const browserCheckList = fileBrowserState.getCheckList( Number( rewindId ) );
 	const browserSelectedList = fileBrowserState.getSelectedList( Number( rewindId ) );
+
+	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
+	const handleKnownThreatsChange = useCallback(
+		( value: boolean ) => setHasKnownThreats( value ),
+		[]
+	);
 
 	const handleGranularRestore = () => {
 		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -46,7 +58,7 @@ function SiteBackupGranularRestoreForm( {
 			},
 			{
 				onSuccess: ( restoreId ) => {
-					onRestoreInitiate( restoreId );
+					onRestoreInitiate( restoreId, { known_threats_shown: hasKnownThreats } );
 				},
 				onError: () => {
 					createErrorNotice( __( 'Failed to initiate restore. Please try again.' ), {
@@ -106,6 +118,13 @@ function SiteBackupGranularRestoreForm( {
 					siteId={ siteId }
 					rewindId={ rewindId }
 					includesDatabase={ hasSelectedTables }
+				/>
+
+				<KnownThreatsNotice
+					site={ site }
+					rewindId={ rewindId }
+					requireAcknowledgement={ false }
+					onKnownThreatsChange={ handleKnownThreatsChange }
 				/>
 
 				<ButtonStack justify="flex-start">

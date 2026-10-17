@@ -1,8 +1,6 @@
-import { getBackupPeriod } from '@automattic/api-core';
 import { __, sprintf } from '@wordpress/i18n';
 import { useIntlLocale } from '../../../app/locale';
-import { siteBackupRestoreRoute } from '../../../app/router/sites';
-import RouterLinkButton from '../../../components/router-link-button';
+import { RestoreThatOneInsteadLink } from './restore-that-one-instead-link';
 import type { BackupThreat, BackupThreats } from '@automattic/api-core';
 
 interface KnownThreatsTableProps {
@@ -41,12 +39,6 @@ export function KnownThreatsTable( {
 		threats.summary.vulnerable
 	);
 
-	const showAlternative =
-		latestWithoutKnownThreats !== null &&
-		latestWithoutKnownThreats !== undefined &&
-		( currentRewindId === undefined ||
-			getBackupPeriod( currentRewindId ) !== latestWithoutKnownThreats );
-
 	return (
 		<div className="dashboard-backups__known-threats">
 			<table className="dashboard-backups__known-threats-table">
@@ -70,15 +62,11 @@ export function KnownThreatsTable( {
 				</tbody>
 			</table>
 			{ threats.summary.vulnerable > 0 && <p>{ vulnerableNote }</p> }
-			{ showAlternative && (
-				<RouterLinkButton
-					variant="link"
-					to={ siteBackupRestoreRoute.fullPath }
-					params={ { siteSlug, rewindId: String( latestWithoutKnownThreats ) } }
-				>
-					{ __( 'Restore that one instead' ) }
-				</RouterLinkButton>
-			) }
+			<RestoreThatOneInsteadLink
+				siteSlug={ siteSlug }
+				latestWithoutKnownThreats={ latestWithoutKnownThreats }
+				currentRewindId={ currentRewindId }
+			/>
 		</div>
 	);
 }

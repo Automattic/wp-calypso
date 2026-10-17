@@ -14,6 +14,7 @@ import SiteBackupRestoreForm from './form';
 import SiteBackupGranularRestoreForm from './granular-form';
 import SiteBackupRestoreProgress from './progress';
 import SiteBackupRestoreSuccess from './success';
+import type { RestoreTrackingProps } from './types';
 import type { Site } from '@automattic/api-core';
 
 type RestoreStep = 'form' | 'progress' | 'success' | 'error';
@@ -32,8 +33,8 @@ export function BackupRestoreFlow( { site, rewindId }: { site: Site; rewindId: s
 	const hasSelectedFiles = browserSelectedList.length > 0;
 	const hasSelectedAllFiles = browserSelectedList[ 0 ]?.path === '//';
 
-	const handleRestoreInitiate = ( newRestoreId: number ) => {
-		recordTracksEvent( 'calypso_dashboard_backups_restore_started' );
+	const handleRestoreInitiate = ( newRestoreId: number, trackingProps?: RestoreTrackingProps ) => {
+		recordTracksEvent( 'calypso_dashboard_backups_restore_started', trackingProps );
 		setCurrentStep( 'progress' );
 		setRestoreId( newRestoreId );
 	};
@@ -72,6 +73,7 @@ export function BackupRestoreFlow( { site, rewindId }: { site: Site; rewindId: s
 			case 'form':
 				return hasSelectedFiles && ! hasSelectedAllFiles ? (
 					<SiteBackupGranularRestoreForm
+						site={ site }
 						siteId={ site.ID }
 						rewindId={ rewindId }
 						restorePointDate={ restorePointDate }
@@ -79,6 +81,7 @@ export function BackupRestoreFlow( { site, rewindId }: { site: Site; rewindId: s
 					/>
 				) : (
 					<SiteBackupRestoreForm
+						site={ site }
 						siteId={ site.ID }
 						rewindId={ rewindId }
 						restorePointDate={ restorePointDate }
