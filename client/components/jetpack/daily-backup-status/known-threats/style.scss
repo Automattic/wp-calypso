@@ -2,14 +2,51 @@
 	margin: 8px 0 16px;
 }
 
+// Mirrors the dashboard known-threats badge (same tokens).
 .backup-known-threats__badge {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
+	gap: var( --wpds-dimension-gap-xs, 4px );
 	margin-inline-end: 8px;
+	padding-block: var( --wpds-dimension-padding-xs, 4px );
+	padding-inline: var( --wpds-dimension-padding-sm, 8px );
+	border-radius: var( --wpds-border-radius-lg, 8px );
+	background-color: var( --wpds-color-background-surface-warning );
+	color: var( --wpds-color-foreground-content-warning );
+	font-family: var( --wpds-typography-font-family-body, inherit );
+	font-size: var( --wpds-typography-font-size-sm, 12px );
+	font-weight: var( --wpds-typography-font-weight-default, 400 );
+	line-height: var( --wpds-typography-line-height-xs, 16px );
 
 	.gridicon {
 		flex-shrink: 0;
+		fill: currentColor;
+	}
+}
+
+// Visually just the pill: drop the toggle button's own colour, padding and height.
+.button.is-compact.is-borderless.backup-known-threats__toggle,
+.components-button.backup-known-threats__toggle {
+	height: auto;
+	min-width: 0;
+	padding: 0;
+	border-radius: var( --wpds-border-radius-lg, 8px );
+	color: inherit;
+
+	&:hover:not( :disabled ),
+	&:active:not( :disabled ) {
+		color: inherit;
+		background: transparent;
+	}
+
+	&:focus:not( :disabled ),
+	&:focus-visible:not( :disabled ) {
+		color: inherit;
+		box-shadow: 0 0 0 2px var( --color-accent );
+	}
+
+	.backup-known-threats__badge {
+		margin-inline-end: 0;
 	}
 }
 

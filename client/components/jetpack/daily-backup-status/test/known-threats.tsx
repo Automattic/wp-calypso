@@ -207,6 +207,7 @@ describe( 'BackupKnownThreats', () => {
 
 		const badge = await screen.findByText( 'Known threats (1)' );
 		expect( badge ).toBeVisible();
+		expect( badge ).toHaveClass( 'backup-known-threats__badge' );
 		expect( badge.querySelector( '.gridicons-notice-outline' ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( /show threats/i ) ).not.toBeInTheDocument();

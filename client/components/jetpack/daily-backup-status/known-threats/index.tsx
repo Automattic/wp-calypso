@@ -1,7 +1,7 @@
 import { getBackupPeriod, isFlagged } from '@automattic/api-core';
 import { siteBackupKnownThreatsQuery, siteBackupThreatsQuery } from '@automattic/api-queries';
 import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
-import { Badge, Button as CalypsoButton, Gridicon } from '@automattic/components';
+import { Button as CalypsoButton, Gridicon } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -169,13 +169,13 @@ export function KnownThreatsBadge( { flagged }: { flagged: number } ) {
 	const translate = useTranslate();
 
 	return (
-		<Badge type="warning" className="backup-known-threats__badge">
+		<span className="backup-known-threats__badge">
 			<Gridicon icon="notice-outline" size={ 16 } aria-hidden="true" />
 			{ translate( 'Known threats (%d)', {
 				args: flagged,
 				comment: '%d is the number of known security threats in a backup',
 			} ) }
-		</Badge>
+		</span>
 	);
 }
 
@@ -219,6 +219,7 @@ export function KnownThreatsToggleButton( {
 				<CalypsoButton
 					compact
 					borderless
+					className="backup-known-threats__toggle"
 					aria-label={ String( ariaLabel ) }
 					aria-expanded={ isOpen }
 					onClick={ onToggle }
@@ -230,6 +231,7 @@ export function KnownThreatsToggleButton( {
 					__next40pxDefaultSize
 					variant="tertiary"
 					size="compact"
+					className="backup-known-threats__toggle"
 					aria-label={ String( ariaLabel ) }
 					aria-expanded={ isOpen }
 					onClick={ onToggle }
