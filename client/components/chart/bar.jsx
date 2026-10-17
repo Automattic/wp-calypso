@@ -35,19 +35,21 @@ export default class ChartBar extends PureComponent {
 	}
 
 	mouseEnter = () => {
-		if (
-			! this.props.data.tooltipData ||
-			! this.props.data.tooltipData.length ||
-			this.props.isTouch
-		) {
+		if ( this.props.isTouch ) {
+			return null;
+		}
+
+		// Hide (rather than keep a stale neighbor's tooltip) when this bar has
+		// nothing to show. The tooltip is NOT hidden when leaving a bar — only
+		// the container's mouseleave does that — so crossing bars updates the
+		// mounted popover in place instead of unmounting and remounting it,
+		// which made the cursor flicker on every bar boundary.
+		if ( ! this.props.data.tooltipData || ! this.props.data.tooltipData.length ) {
+			this.props.setTooltip( null );
 			return null;
 		}
 
 		this.props.setTooltip( this.bar, this.computeTooltipPosition(), this.getTooltipData() );
-	};
-
-	mouseLeave = () => {
-		this.props.setTooltip( null );
 	};
 
 	getTooltipData() {
@@ -107,7 +109,6 @@ export default class ChartBar extends PureComponent {
 				aria-hidden="true"
 				onClick={ this.clickHandler }
 				onMouseEnter={ this.mouseEnter }
-				onMouseLeave={ this.mouseLeave }
 				className={ clsx( 'chart__bar', this.props.className ) }
 			>
 				{ this.renderBar() }

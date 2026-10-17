@@ -235,14 +235,15 @@ ul.module-tabs {
 
 .is-chart-tabs {
 
-	.chart__bars {
-		justify-content: space-between;
-	}
-	&.has-less-than-three-bars .chart__bars {
-		justify-content: space-around;
-	}
-	.chart__bar {
-		max-width: 156px;
+	// Cap the visible bar, not the .chart__bar column. The columns are the
+	// hover/click targets and the x-axis labels and tooltips assume every
+	// column spans chart-width / bar-count; capping the columns left dead
+	// gaps between them (cursor flicker, shrunken click targets, labels
+	// drifting off the bars). 106px keeps the previous visible width:
+	// the old 156px column cap times the bar's 68% inset width.
+	.chart__bar-section {
+		margin-inline: auto;
+		max-width: 106px;
 	}
 
 	/* styles border around chart for new date filtering design */
