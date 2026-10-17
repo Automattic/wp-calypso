@@ -6,14 +6,50 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import KnownThreatsNotice, {
 	getKnownThreatsTracksProps,
 	isRestoreDisabled,
 } from '../known-threats-notice';
+import BackupRestoreFlow from '../restore';
 
 jest.mock( 'calypso/state/selectors/site-has-feature' );
+jest.mock( 'calypso/state/analytics/actions/record', () => ( {
+	recordTracksEvent: jest.fn( () => ( { type: 'TEST_NOOP' } ) ),
+} ) );
+jest.mock( 'calypso/state/selectors/get-rewind-state', () => ( {
+	__esModule: true,
+	default: () => ( { state: 'active', canAutoconfigure: false } ),
+} ) );
+function mockSelector( value: unknown ) {
+	return { __esModule: true, default: () => value };
+}
+jest.mock( 'calypso/state/jetpack/credentials/selectors', () => ( {
+	areJetpackCredentialsInvalid: () => false,
+	hasJetpackCredentials: () => true,
+} ) );
+jest.mock( 'calypso/state/rewind/preflight/hooks', () => ( {
+	usePreflightStatusQuery: () => ( { refetch: jest.fn() } ),
+	useEnqueuePreflightCheck: () => ( { mutate: jest.fn() } ),
+} ) );
+jest.mock( 'calypso/state/rewind/preflight/selectors', () => ( {
+	getPreflightStatus: () => null,
+} ) );
+jest.mock( 'calypso/state/rewind/selectors', () => ( { getInProgressBackupForSite: () => null } ) );
+jest.mock( 'calypso/state/selectors/get-does-rewind-need-credentials', () =>
+	mockSelector( false )
+);
+jest.mock( 'calypso/state/selectors/get-in-progress-rewind-status', () => mockSelector( null ) );
+jest.mock( 'calypso/state/selectors/get-is-restore-in-progress', () => mockSelector( false ) );
+jest.mock( 'calypso/state/selectors/get-restore-progress', () => mockSelector( null ) );
+jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => mockSelector( true ) );
+jest.mock( 'calypso/blocks/jetpack-review-prompt', () => () => null );
+jest.mock( 'calypso/components/data/query-jetpack-credentials-status', () => () => null );
+jest.mock( 'calypso/components/data/query-rewind-backups', () => () => null );
+jest.mock( 'calypso/components/data/query-rewind-restore-status', () => () => null );
+jest.mock( 'calypso/components/data/query-rewind-state', () => () => null );
 jest.mock( 'calypso/state/ui/selectors', () => ( {
 	...jest.requireActual( 'calypso/state/ui/selectors' ),
 	getSelectedSiteSlug: () => 'example.wordpress.com',
@@ -174,6 +210,7 @@ describe( 'isRestoreDisabled', () => {
 		[ false, true, false, true ],
 		[ false, true, true, false ],
 		[ true, false, false, true ],
+		[ true, true, false, true ],
 		[ true, true, true, true ],
 	] )(
 		'noSelection=%s threats=%s acknowledged=%s -> %s',
@@ -197,5 +234,42 @@ describe( 'getKnownThreatsTracksProps', () => {
 			known_threats_shown: true,
 			known_threats_acknowledged: false,
 		} );
+	} );
+} );
+
+describe( 'BackupRestoreFlow known threats gating', () => {
+	beforeEach( () => {
+		( siteHasFeature as jest.Mock ).mockReturnValue( true );
+		( recordTracksEvent as jest.Mock ).mockClear();
+	} );
+	afterEach( () => nock.cleanAll() );
+
+	it( 'disables Restore now until acknowledged and records the Tracks props', async () => {
+		mockList( counts( 3 ) );
+		renderWithProvider(
+			<BackupRestoreFlow
+				backup={ {} }
+				backupDisplayDate="October 1, 2026"
+				rewindId="200.5"
+				siteId={ SITE_ID }
+				siteUrl="https://example.wordpress.com"
+			/>
+		);
+
+		const restoreButton = screen.getByRole( 'button', { name: 'Restore now' } );
+		await screen.findByText( NOTICE );
+		expect( restoreButton ).toBeDisabled();
+
+		await userEvent.click( screen.getByRole( 'checkbox', { name: CHECKBOX } ) );
+		expect( restoreButton ).toBeEnabled();
+
+		await userEvent.click( restoreButton );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_jetpack_backup_restore_confirm',
+			expect.objectContaining( {
+				known_threats_shown: true,
+				known_threats_acknowledged: true,
+			} )
+		);
 	} );
 } );
