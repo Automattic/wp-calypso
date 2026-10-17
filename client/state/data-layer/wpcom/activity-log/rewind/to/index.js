@@ -39,7 +39,11 @@ const requestRewind = ( action, payload ) =>
 		action
 	);
 
-const requestRestore = ( action ) => requestRewind( action, { types: action.args } );
+export const requestRestore = ( action ) =>
+	requestRewind( action, {
+		types: action.args,
+		...( action.acknowledgeThreats ? { acknowledge_threats: true } : {} ),
+	} );
 
 const requestGranularRestore = ( action ) =>
 	requestRewind( action, {
@@ -55,8 +59,22 @@ export const receiveRestoreSuccess = ( { siteId }, restoreId ) => [
 	requestRewindState( siteId ),
 ];
 
-export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
-	error.hasOwnProperty( 'schemaErrors' )
+export const receiveRestoreError = ( { siteId, timestamp }, error ) => {
+	if ( error.error === 'threats_not_acknowledged' ) {
+		return withAnalytics(
+			recordTracksEvent( 'calypso_rewind_to_threats_not_acknowledged', {
+				site_id: siteId,
+				timestamp,
+			} ),
+			errorNotice(
+				translate(
+					'This backup is known to contain security threats. Acknowledge them to restore it.'
+				)
+			)
+		);
+	}
+
+	return error.hasOwnProperty( 'schemaErrors' )
 		? withAnalytics(
 				recordTracksEvent( 'calypso_rewind_to_missing_restore_id', { site_id: siteId, timestamp } ),
 				errorNotice(
@@ -73,6 +91,7 @@ export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
 					)
 				)
 			);
+};
 
 const requestStagingClone = ( action ) =>
 	http(

@@ -118,8 +118,9 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	);
 
 	const requestRestore = useCallback(
-		() => dispatch( rewindRestore( siteId, rewindId, rewindConfig ) ),
-		[ dispatch, rewindConfig, rewindId, siteId ]
+		() =>
+			dispatch( rewindRestore( siteId, rewindId, rewindConfig, hasKnownThreats && acknowledged ) ),
+		[ acknowledged, dispatch, hasKnownThreats, rewindConfig, rewindId, siteId ]
 	);
 
 	const preflightStatus = useSelector( ( state ) => getPreflightStatus( state, siteId ) );

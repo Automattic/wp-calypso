@@ -83,14 +83,16 @@ export function rewindRequestDismiss( siteId ) {
  * @param {string|number} siteId the site ID
  * @param {string|number} timestamp Unix timestamp to restore site to
  * @param {Object} args Additional request params, such as `types`
+ * @param {boolean} acknowledgeThreats Whether the user acknowledged the backup's known threats
  * @returns {Object} action object
  */
-export function rewindRestore( siteId, timestamp, args ) {
+export function rewindRestore( siteId, timestamp, args, acknowledgeThreats = false ) {
 	return {
 		type: REWIND_RESTORE,
 		siteId,
 		timestamp,
 		args,
+		acknowledgeThreats,
 	};
 }
 
