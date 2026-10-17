@@ -76,8 +76,9 @@
 	}
 }
 
-// `.card a:not(.components-external-link)` (0,2,1) strips link underlines on legacy cards; keep the
-// @wordpress/components link underline, as on the Dashboard.
+// Legacy card and toolbar link rules (`.card a:not(.components-external-link)`, `.activity-card__toolbar--reverse a`)
+// strip the underline and resize links; keep the @wordpress/components link look, as on the Dashboard.
 .backup-known-threats__restore-link.components-button.is-link {
+	font-size: 13px;
 	text-decoration: underline;
 }
