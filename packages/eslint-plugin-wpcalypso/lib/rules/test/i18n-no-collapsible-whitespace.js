@@ -12,18 +12,18 @@
 const RuleTester = require( 'eslint' ).RuleTester;
 const plugin = require( '../../..' );
 const formatMessage = require( '../../../test-utils/format-message' );
-const rule = require( '../i18n-no-collapsible-whitespace' );
+const { ERROR_MESSAGE } = require( '../i18n-no-collapsible-whitespace' );
 const config = { languageOptions: { ecmaVersion: 2015, sourceType: 'script' } }; // support for string templates
 
 //------------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------------
 
-const NO_NEWLINES = formatMessage( rule.ERROR_MESSAGE, { problem: ' (\\n)' } );
-const NO_CONSECUTIVE_SPACES = formatMessage( rule.ERROR_MESSAGE, {
+const NO_NEWLINES = formatMessage( ERROR_MESSAGE, { problem: ' (\\n)' } );
+const NO_CONSECUTIVE_SPACES = formatMessage( ERROR_MESSAGE, {
 	problem: ' (consecutive spaces)',
 } );
-const NO_TABS = formatMessage( rule.ERROR_MESSAGE, { problem: ' (\\t)' } );
+const NO_TABS = formatMessage( ERROR_MESSAGE, { problem: ' (\\t)' } );
 
 //------------------------------------------------------------------------------
 // Tests

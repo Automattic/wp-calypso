@@ -11,7 +11,7 @@
 
 const RuleTester = require( 'eslint' ).RuleTester;
 const plugin = require( '../../..' );
-const rule = require( '../../../lib/rules/i18n-named-placeholders' );
+const { ERROR_MESSAGE } = require( '../../../lib/rules/i18n-named-placeholders' );
 const config = { languageOptions: { ecmaVersion: 2015, sourceType: 'script' } }; // support for string templates
 
 //------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ new RuleTester( config ).run(
 				code: "translate( '%s %s' );",
 				errors: [
 					{
-						message: rule.ERROR_MESSAGE,
+						message: ERROR_MESSAGE,
 					},
 				],
 			},
@@ -56,7 +56,7 @@ new RuleTester( config ).run(
 				code: 'translate( `%s %s` );',
 				errors: [
 					{
-						message: rule.ERROR_MESSAGE,
+						message: ERROR_MESSAGE,
 					},
 				],
 			},
@@ -64,7 +64,7 @@ new RuleTester( config ).run(
 				code: "translate( '%(greeting)s %s' );",
 				errors: [
 					{
-						message: rule.ERROR_MESSAGE,
+						message: ERROR_MESSAGE,
 					},
 				],
 			},
@@ -72,7 +72,7 @@ new RuleTester( config ).run(
 				code: "translate( 'Hello %s', '%s %s', { count: 2 } );",
 				errors: [
 					{
-						message: rule.ERROR_MESSAGE,
+						message: ERROR_MESSAGE,
 					},
 				],
 			},

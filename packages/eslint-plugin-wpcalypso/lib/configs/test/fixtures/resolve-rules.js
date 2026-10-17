@@ -55,12 +55,7 @@ const resolve = async ( overrideConfig ) => {
 	const eslint = new ESLint( { cwd, overrideConfigFile: true, overrideConfig } );
 	const config = await eslint.calculateConfigForFile( path.join( cwd, file ) );
 	return {
-		rules: Object.fromEntries(
-			Object.entries( config.rules ).map( ( [ name, value ] ) => {
-				const [ severity, ...options ] = Array.isArray( value ) ? value : [ value ];
-				return [ name, [ { off: 0, warn: 1, error: 2 }[ severity ] ?? severity, ...options ] ];
-			} )
-		),
+		rules: config.rules,
 		settings: config.settings,
 		ecmaFeatures: config.languageOptions.parserOptions.ecmaFeatures,
 		sourceType: config.languageOptions.sourceType,

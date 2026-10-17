@@ -11,7 +11,7 @@
 
 const RuleTester = require( 'eslint' ).RuleTester;
 const plugin = require( '../../..' );
-const rule = require( '../../../lib/rules/jsx-gridicon-size' );
+const { ERROR_MESSAGE } = require( '../../../lib/rules/jsx-gridicon-size' );
 
 //------------------------------------------------------------------------------
 // Tests
@@ -33,7 +33,7 @@ new RuleTester( {
 			code: '<Gridicon size={ 20 } />',
 			errors: [
 				{
-					message: rule.ERROR_MESSAGE,
+					message: ERROR_MESSAGE,
 				},
 			],
 		},

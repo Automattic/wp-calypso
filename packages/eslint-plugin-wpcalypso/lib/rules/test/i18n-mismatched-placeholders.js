@@ -11,7 +11,7 @@
 
 const RuleTester = require( 'eslint' ).RuleTester;
 const plugin = require( '../../..' );
-const rule = require( '../../../lib/rules/i18n-mismatched-placeholders' );
+const { ERROR_MESSAGE } = require( '../../../lib/rules/i18n-mismatched-placeholders' );
 const config = { languageOptions: { ecmaVersion: 2015, sourceType: 'script' } }; // support for string templates
 
 //------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ new RuleTester( config ).run(
 				code: "translate( 'One thing', '%s things', { count: 2 } );",
 				errors: [
 					{
-						message: rule.ERROR_MESSAGE,
+						message: ERROR_MESSAGE,
 					},
 				],
 			},
@@ -44,7 +44,7 @@ new RuleTester( config ).run(
 				code: "translate( '%s thing', 'Many things', { count: 2 } );",
 				errors: [
 					{
-						message: rule.ERROR_MESSAGE,
+						message: ERROR_MESSAGE,
 					},
 				],
 			},
@@ -52,7 +52,7 @@ new RuleTester( config ).run(
 				code: "translate( '%s%s', '%s', { count: 2 } );",
 				errors: [
 					{
-						message: rule.ERROR_MESSAGE,
+						message: ERROR_MESSAGE,
 					},
 				],
 			},
@@ -60,7 +60,7 @@ new RuleTester( config ).run(
 				code: 'translate( `%s%s`, `%s`, { count: 2 } );',
 				errors: [
 					{
-						message: rule.ERROR_MESSAGE,
+						message: ERROR_MESSAGE,
 					},
 				],
 			},

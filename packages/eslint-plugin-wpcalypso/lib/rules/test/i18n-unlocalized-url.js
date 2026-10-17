@@ -11,7 +11,7 @@
 
 const RuleTester = require( 'eslint' ).RuleTester;
 const plugin = require( '../../..' );
-const rule = require( '../i18n-unlocalized-url' );
+const { ERROR_MESSAGE } = require( '../i18n-unlocalized-url' );
 
 //------------------------------------------------------------------------------
 // Tests
@@ -83,15 +83,15 @@ new RuleTester( {
 		return cases.concat( [
 			{
 				code: `const url = '${ url }'`,
-				errors: [ { message: rule.ERROR_MESSAGE } ],
+				errors: [ { message: ERROR_MESSAGE } ],
 			},
 			{
 				code: `const link = <a href={ '${ url }' }></a>;`,
-				errors: [ { message: rule.ERROR_MESSAGE } ],
+				errors: [ { message: ERROR_MESSAGE } ],
 			},
 			{
 				code: `isLink ? '${ url }' : ''`,
-				errors: [ { message: rule.ERROR_MESSAGE } ],
+				errors: [ { message: ERROR_MESSAGE } ],
 			},
 		] );
 	}, [] ),

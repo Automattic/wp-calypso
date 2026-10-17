@@ -11,7 +11,7 @@
 
 const RuleTester = require( 'eslint' ).RuleTester;
 const plugin = require( '../../..' );
-const rule = require( '../../../lib/rules/i18n-no-variables' );
+const { ERROR_MESSAGE } = require( '../../../lib/rules/i18n-no-variables' );
 const config = { languageOptions: { ecmaVersion: 2015, sourceType: 'script' } }; // support for string templates
 
 //------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ new RuleTester( config ).run( 'i18n-no-variables', plugin.rules[ 'i18n-no-variab
 			code: 'translate( string );',
 			errors: [
 				{
-					message: rule.ERROR_MESSAGE,
+					message: ERROR_MESSAGE,
 				},
 			],
 		},
@@ -59,7 +59,7 @@ new RuleTester( config ).run( 'i18n-no-variables', plugin.rules[ 'i18n-no-variab
 			code: "translate( 'Hello World', plural, {} );",
 			errors: [
 				{
-					message: rule.ERROR_MESSAGE,
+					message: ERROR_MESSAGE,
 				},
 			],
 		},
@@ -67,7 +67,7 @@ new RuleTester( config ).run( 'i18n-no-variables', plugin.rules[ 'i18n-no-variab
 			code: "translate( 'Hello World', { context: aVariable } );",
 			errors: [
 				{
-					message: rule.ERROR_MESSAGE,
+					message: ERROR_MESSAGE,
 				},
 			],
 		},
@@ -75,7 +75,7 @@ new RuleTester( config ).run( 'i18n-no-variables', plugin.rules[ 'i18n-no-variab
 			code: "translate( 'Hello World', { context: aFunctionCall() } );",
 			errors: [
 				{
-					message: rule.ERROR_MESSAGE,
+					message: ERROR_MESSAGE,
 				},
 			],
 		},
@@ -83,7 +83,7 @@ new RuleTester( config ).run( 'i18n-no-variables', plugin.rules[ 'i18n-no-variab
 			code: "translate( 'Hello World', { comment: aVariable } );",
 			errors: [
 				{
-					message: rule.ERROR_MESSAGE,
+					message: ERROR_MESSAGE,
 				},
 			],
 		},
@@ -91,7 +91,7 @@ new RuleTester( config ).run( 'i18n-no-variables', plugin.rules[ 'i18n-no-variab
 			code: "translate( 'Hello ' + name );",
 			errors: [
 				{
-					message: rule.ERROR_MESSAGE,
+					message: ERROR_MESSAGE,
 				},
 			],
 		},
@@ -99,7 +99,7 @@ new RuleTester( config ).run( 'i18n-no-variables', plugin.rules[ 'i18n-no-variab
 			code: 'translate( { original: string } );',
 			errors: [
 				{
-					message: rule.ERROR_MESSAGE,
+					message: ERROR_MESSAGE,
 				},
 			],
 		},
@@ -107,7 +107,7 @@ new RuleTester( config ).run( 'i18n-no-variables', plugin.rules[ 'i18n-no-variab
 			code: 'translate( { original: { single: string } } );',
 			errors: [
 				{
-					message: rule.ERROR_MESSAGE,
+					message: ERROR_MESSAGE,
 				},
 			],
 		},
@@ -115,7 +115,7 @@ new RuleTester( config ).run( 'i18n-no-variables', plugin.rules[ 'i18n-no-variab
 			code: 'translate( `Hello ${World}!` );',
 			errors: [
 				{
-					message: rule.ERROR_MESSAGE,
+					message: ERROR_MESSAGE,
 				},
 			],
 		},
