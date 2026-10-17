@@ -27,6 +27,7 @@ function resource( overrides: Partial< AgencyEnablementResource > = {} ) {
 		content_type: 'guide',
 		format: 'pdf',
 		is_featured: false,
+		is_recommended: false,
 		created_at: '2026-01-01T00:00:00Z',
 		...overrides,
 	} satisfies AgencyEnablementResource;
@@ -197,6 +198,7 @@ describe( '<ResourceCenter>', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_resource_center_preview', {
 			resource_id: 2,
 			resource_name: 'Jetpack battle card',
+			source: 'library',
 		} );
 		expect( scope.isDone() ).toBe( false );
 
@@ -242,6 +244,34 @@ describe( '<ResourceCenter>', () => {
 		expect( onReadIdsChange ).toHaveBeenCalledWith( [ 2 ] );
 	} );
 
+	test( 'shows the recommended resources, which open their details', async () => {
+		const { recordTracksEvent } = renderLibrary( {
+			resources: [
+				...resources,
+				resource( { id: 4, name: 'Recommended guide', is_recommended: true } ),
+			],
+		} );
+
+		const section = await screen.findByRole( 'region', { name: 'Recommended for you' } );
+		await userEvent.click( within( section ).getByRole( 'link', { name: 'Recommended guide' } ) );
+
+		expect( await screen.findByRole( 'dialog', { name: 'Recommended guide' } ) ).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_resource_center_preview', {
+			resource_id: 4,
+			resource_name: 'Recommended guide',
+			source: 'recommended',
+		} );
+	} );
+
+	test( 'leaves out the recommendations when there are none', async () => {
+		renderLibrary();
+
+		expect( await screen.findByRole( 'link', { name: 'Woo case study' } ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'region', { name: 'Recommended for you' } )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'reveals more results on request', async () => {
 		const { recordTracksEvent } = renderLibrary( {
 			resources: Array.from( { length: 30 }, ( _, index ) =>
@@ -257,5 +287,25 @@ describe( '<ResourceCenter>', () => {
 		expect( screen.getByRole( 'link', { name: 'Resource 25' } ) ).toHaveFocus();
 		expect( screen.queryByRole( 'button', { name: 'Load more' } ) ).not.toBeInTheDocument();
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_resource_center_load_more' );
+	} );
+
+	test( 'focuses the revealed card, not its recommended tile', async () => {
+		renderLibrary( {
+			resources: Array.from( { length: 30 }, ( _, index ) =>
+				resource( {
+					id: index + 1,
+					name: `Resource ${ index + 1 }`,
+					is_recommended: index + 1 === 25,
+				} )
+			),
+		} );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Load more' } ) );
+
+		const [ tile, card ] = screen.getAllByRole( 'link', { name: 'Resource 25' } );
+		expect(
+			within( screen.getByRole( 'region', { name: 'Recommended for you' } ) ).getByRole( 'link' )
+		).toBe( tile );
+		expect( card ).toHaveFocus();
 	} );
 } );
