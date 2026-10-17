@@ -21,7 +21,9 @@ module.exports = {
 };
 ```
 
-With ESLint 9's flat config (`eslint.config.js`), extend `flat/recommended` for your JSON files. It doesn't choose files itself, so scope it with `files`. `extends` needs ESLint 9.22 or later:
+**ESLint 9 flat config.** In `eslint.config.js`, apply `flat/recommended` to your JSON files, using `files` and `extends` as shown below. Always set `files`: the preset doesn't pick files itself, so without `files`, it would also run on JavaScript files.
+
+Requires ESLint 9.22+ (for `extends`).
 
 ```js
 const json = require( '@automattic/eslint-plugin-json' );
