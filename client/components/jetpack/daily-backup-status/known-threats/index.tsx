@@ -53,6 +53,7 @@ interface BackupKnownThreatsTableProps {
 	threats: BackupThreats;
 	latestWithoutKnownThreats?: number | null;
 	currentRewindId?: string;
+	showRestoreLink?: boolean;
 }
 
 export function BackupKnownThreatsTable( {
@@ -60,6 +61,7 @@ export function BackupKnownThreatsTable( {
 	threats,
 	latestWithoutKnownThreats,
 	currentRewindId,
+	showRestoreLink = true,
 }: BackupKnownThreatsTableProps ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -110,34 +112,44 @@ export function BackupKnownThreatsTable( {
 					} ) }
 				</p>
 			) }
-			<RestoreThatOneInsteadLink
-				siteSlug={ siteSlug }
-				latestWithoutKnownThreats={ latestWithoutKnownThreats }
-				currentRewindId={ currentRewindId }
-			/>
+			{ showRestoreLink && (
+				<RestoreThatOneInsteadLink
+					siteSlug={ siteSlug }
+					latestWithoutKnownThreats={ latestWithoutKnownThreats }
+					currentRewindId={ currentRewindId }
+				/>
+			) }
 		</div>
 	);
 }
 
 interface BackupKnownThreatsProps {
 	siteId: number;
-	rewindId: string;
+	rewindId?: string | null;
+	showRestoreLink?: boolean;
 }
 
-export function BackupKnownThreats( { siteId, rewindId }: BackupKnownThreatsProps ) {
+export function BackupKnownThreats( {
+	siteId,
+	rewindId,
+	showRestoreLink = true,
+}: BackupKnownThreatsProps ) {
 	const translate = useTranslate();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const hasScan = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN_SELF_SERVE )
 	);
-	const { data: counts } = useQuery( siteBackupKnownThreatsQuery( siteId, rewindId ) );
+	const { data: counts } = useQuery( {
+		...siteBackupKnownThreatsQuery( siteId, rewindId ?? '' ),
+		enabled: !! rewindId,
+	} );
 	const { data: threats } = useQuery( {
-		...siteBackupThreatsQuery( siteId, rewindId ),
-		enabled: hasScan && isOpen,
+		...siteBackupThreatsQuery( siteId, rewindId ?? '' ),
+		enabled: !! rewindId && hasScan && isOpen,
 	} );
 
-	if ( ! counts?.knownThreats || ! isFlagged( counts.knownThreats ) ) {
+	if ( ! rewindId || ! counts?.knownThreats || ! isFlagged( counts.knownThreats ) ) {
 		return null;
 	}
 
@@ -171,6 +183,7 @@ export function BackupKnownThreats( { siteId, rewindId }: BackupKnownThreatsProp
 					threats={ threats }
 					latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
 					currentRewindId={ rewindId }
+					showRestoreLink={ showRestoreLink }
 				/>
 			) }
 		</div>

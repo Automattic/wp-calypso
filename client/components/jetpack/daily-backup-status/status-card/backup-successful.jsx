@@ -118,7 +118,11 @@ const BackupSuccessful = ( {
 				</div>
 			) }
 
-			<BackupKnownThreats siteId={ siteId } rewindId={ backup.rewindId } />
+			<BackupKnownThreats
+				siteId={ siteId }
+				rewindId={ actionableRewindId }
+				showRestoreLink={ ! isCloneFlow }
+			/>
 
 			{ isCloneFlow && (
 				<ActionButtons

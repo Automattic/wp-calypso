@@ -129,6 +129,25 @@ describe( 'BackupKnownThreats', () => {
 		expect( details.isDone() ).toBe( true );
 	} );
 
+	it( 'makes no request without a rewind id', async () => {
+		const scope = mockList( [ backupWith( counts( 1 ) ) ] );
+		const { container } = renderWithProvider( <BackupKnownThreats siteId={ SITE_ID } /> );
+		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+		expect( scope.isDone() ).toBe( false );
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	it( 'hides the restore link in the clone flow but keeps the table', async () => {
+		mockList( [ backupWith( counts( 1 ) ) ], { latest_without_known_threats: 150 } );
+		nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
+		renderWithProvider(
+			<BackupKnownThreats siteId={ SITE_ID } rewindId="200.5" showRestoreLink={ false } />
+		);
+		await userEvent.click( await screen.findByRole( 'button', { name: /Show threats/ } ) );
+		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Restore that one instead' } ) ).toBeNull();
+	} );
+
 	it( 'shows only the count without Scan and never requests details', async () => {
 		( siteHasFeature as jest.Mock ).mockReturnValue( false );
 		mockList( [ backupWith( counts( 1 ) ) ] );
