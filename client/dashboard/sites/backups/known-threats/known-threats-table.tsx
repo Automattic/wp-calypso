@@ -1,23 +1,24 @@
 import { getBackupPeriod } from '@automattic/api-core';
 import { __, sprintf } from '@wordpress/i18n';
 import { useIntlLocale } from '../../../app/locale';
-import { siteBackupRestoreRoute, siteRoute } from '../../../app/router/sites';
+import { siteBackupRestoreRoute } from '../../../app/router/sites';
 import RouterLinkButton from '../../../components/router-link-button';
 import type { BackupThreat, BackupThreats } from '@automattic/api-core';
 
 interface KnownThreatsTableProps {
+	siteSlug: string;
 	threats: BackupThreats;
 	latestWithoutKnownThreats?: number | null;
 	currentRewindId?: string;
 }
 
 export function KnownThreatsTable( {
+	siteSlug,
 	threats,
 	latestWithoutKnownThreats,
 	currentRewindId,
 }: KnownThreatsTableProps ) {
 	const locale = useIntlLocale();
-	const { siteSlug } = siteRoute.useParams();
 	const rows = threats.threats.filter( ( threat ) => threat.kind !== 'vulnerable' );
 
 	const formatDate = ( value: string | null ) =>

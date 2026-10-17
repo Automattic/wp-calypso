@@ -41,6 +41,7 @@ export function KnownThreatsSection( { site, rewindId }: { site: Site; rewindId:
 			</Button>
 			{ isOpen && threats && (
 				<KnownThreatsTable
+					siteSlug={ site.slug }
 					threats={ threats }
 					latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
 					currentRewindId={ rewindId }
