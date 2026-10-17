@@ -154,6 +154,12 @@ describe( '<ResourceCenter>', () => {
 		).toBeVisible();
 	} );
 
+	test( 'says when there are no resources at all', async () => {
+		renderLibrary( { resources: [] } );
+
+		expect( await screen.findByText( 'No resources yet' ) ).toBeVisible();
+	} );
+
 	test( 'links each resource to the resource itself, in a new tab', async () => {
 		renderLibrary();
 

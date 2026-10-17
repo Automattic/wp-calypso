@@ -168,10 +168,18 @@ export default function ResourceLibrary( {
 			) }
 			{ filteredData.length === 0 && (
 				<DataViewsEmptyStateLayout
-					title={ __( 'We couldn’t find any resources related to that.' ) }
-					description={ __(
-						'Try adjusting your search or exploring other resources to help your agency grow.'
-					) }
+					title={
+						resources.length
+							? __( 'We couldn’t find any resources related to that.' )
+							: __( 'No resources yet' )
+					}
+					description={
+						resources.length
+							? __(
+									'Try adjusting your search or exploring other resources to help your agency grow.'
+								)
+							: __( 'Check back soon for resources to help your agency grow.' )
+					}
 				/>
 			) }
 		</div>
