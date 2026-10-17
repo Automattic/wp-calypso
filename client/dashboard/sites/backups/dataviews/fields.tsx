@@ -77,12 +77,16 @@ export function getFields(
 				// translators: %s is the name of the person who performed the action
 				const actor = item.actor?.name ? ` ${ sprintf( __( 'by %s' ), item.actor.name ) }` : '';
 				const title = item.summary + actor;
-				return isFlagged( knownThreats ) && knownThreats ? (
+				// The always-mounted spans dodge a Google Translate DOM crash (react/react#11538).
+				return (
 					<span>
-						{ title } <KnownThreatsBadge count={ knownThreats.flagged } />
+						<span>{ title }</span>{ ' ' }
+						<span>
+							{ knownThreats && isFlagged( knownThreats ) && (
+								<KnownThreatsBadge count={ knownThreats.flagged } />
+							) }
+						</span>
 					</span>
-				) : (
-					<span>{ title }</span>
 				);
 			},
 			enableGlobalSearch: true,
