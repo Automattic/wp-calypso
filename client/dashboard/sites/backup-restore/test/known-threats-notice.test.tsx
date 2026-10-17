@@ -212,7 +212,7 @@ test( 'links to the latest backup without known threats', async () => {
 	mockBackups( { known_threats: knownThreats( 3 ) } );
 	renderForm();
 
-	expect( await screen.findByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveAttribute(
+	expect( await screen.findByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveAttribute(
 		'href',
 		expect.stringContaining( '/backups/1792240000/restore' )
 	);
@@ -250,7 +250,7 @@ test( 'shows the restore link once when the threats are expanded', async () => {
 	await user.hover( expanded );
 	expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
 	expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
-	expect( screen.getAllByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveLength( 1 );
+	expect( screen.getAllByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveLength( 1 );
 	expect( threatsScope.isDone() ).toBe( true );
 } );
 
@@ -306,6 +306,6 @@ test( 'renders no link when the caller supplies no restore route', async () => {
 
 	expect( await screen.findByText( /known to contain 3/ ) ).toBeVisible();
 	expect(
-		screen.queryByRole( 'link', { name: 'Restore that one instead' } )
+		screen.queryByRole( 'link', { name: 'Restore this one instead' } )
 	).not.toBeInTheDocument();
 } );

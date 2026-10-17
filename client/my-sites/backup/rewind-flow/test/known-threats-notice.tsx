@@ -213,7 +213,7 @@ describe( 'KnownThreatsNotice', () => {
 		await userEvent.hover( expanded );
 		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveAttribute(
 			'href',
 			'/backup/example.wordpress.com/restore/150'
 		);

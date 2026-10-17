@@ -150,11 +150,11 @@ describe( 'BackupKnownThreats', () => {
 		expect( screen.getByText( 'Ignored' ) ).toBeVisible();
 		expect( screen.getAllByText( localDate( Date.UTC( 2026, 9, 1, 23, 30 ) ) ) ).toHaveLength( 2 );
 		expect( screen.getByText( 'Also: 2 vulnerable plugin or theme versions.' ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveAttribute(
 			'href',
 			'/backup/example.wordpress.com/restore/150'
 		);
-		expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveClass(
+		expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveClass(
 			'is-next-40px-default-size'
 		);
 		const expanded = screen.getByRole( 'button', { name: 'Known threats (1), hide threats' } );
@@ -196,7 +196,7 @@ describe( 'BackupKnownThreats', () => {
 		);
 		await userEvent.click( await screen.findByRole( 'button', { name: /show threats/ } ) );
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: 'Restore that one instead' } ) ).toBeNull();
+		expect( screen.queryByRole( 'link', { name: 'Restore this one instead' } ) ).toBeNull();
 	} );
 
 	it( 'shows only the count without Scan and never requests details', async () => {

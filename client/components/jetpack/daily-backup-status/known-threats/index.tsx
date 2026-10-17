@@ -45,7 +45,7 @@ export function RestoreThatOneInsteadLink( {
 			variant="link"
 			href={ backupRestorePath( siteSlug, String( latestWithoutKnownThreats ) ) }
 		>
-			{ translate( 'Restore that one instead' ) }
+			{ translate( 'Restore this one instead' ) }
 		</Button>
 	);
 }

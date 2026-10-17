@@ -280,11 +280,11 @@ test( 'expands the threats table for Scan sites', async () => {
 		screen.getByText( `Fixed ${ localDate( Date.UTC( 2026, 8, 2, 23, 30 ) ) }` )
 	).toBeVisible();
 	expect( screen.getByText( 'Also: 2 vulnerable plugin or theme versions.' ) ).toBeVisible();
-	expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveAttribute(
+	expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveAttribute(
 		'href',
 		expect.stringContaining( '/backups/1792240000/restore' )
 	);
-	expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveClass(
+	expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveClass(
 		'is-next-40px-default-size'
 	);
 	expect( threatsScope.isDone() ).toBe( true );
