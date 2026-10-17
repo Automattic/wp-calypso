@@ -14,7 +14,7 @@ export interface ConsentTextProps {
  * <ConsentText>
  *   { translate( 'By continuing, you agree to our {{a}}Terms of Service{{/a}}.', {
  *     components: {
- *       a: <a href="https://wordpress.com/tos/" target="_blank" rel="noreferrer" />
+ *       a: <a href="https://automattic.com/tos/" target="_blank" rel="noreferrer" />
  *     }
  *   } ) }
  * </ConsentText>

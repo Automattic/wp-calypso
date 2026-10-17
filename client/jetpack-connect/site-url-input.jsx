@@ -94,7 +94,7 @@ class JetpackConnectSiteUrlInput extends Component {
 	}
 
 	getTermsOfServiceUrl() {
-		return localizeUrl( 'https://wordpress.com/tos/' );
+		return localizeUrl( 'https://automattic.com/tos/' );
 	}
 
 	isFormSubmitDisabled() {

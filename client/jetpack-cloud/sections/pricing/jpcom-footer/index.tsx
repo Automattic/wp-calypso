@@ -166,7 +166,7 @@ const JetpackComFooter: React.FC = () => {
 				items: [
 					{
 						label: translate( 'Terms of Service' ),
-						href: addQueryArgs( utmParams, localizeUrl( 'https://wordpress.com/tos/' ) ),
+						href: addQueryArgs( utmParams, localizeUrl( 'https://automattic.com/tos/' ) ),
 						trackId: 'terms_of_service',
 					},
 					{

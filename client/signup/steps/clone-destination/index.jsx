@@ -177,7 +177,7 @@ class CloneDestinationStep extends Component {
 							TOS: (
 								<ExternalLink
 									className="clone-destination__tos-link"
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+									href={ localizeUrl( 'https://automattic.com/tos/' ) }
 									target="_blank"
 								>
 									{ translate( 'Terms of Service.' ) }

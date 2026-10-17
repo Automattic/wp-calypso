@@ -90,7 +90,7 @@ export class JetpackConnectNotices extends Component {
 						components: {
 							a: (
 								<a
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+									href={ localizeUrl( 'https://automattic.com/tos/' ) }
 									rel="noopener noreferrer"
 									target="_blank"
 								/>
