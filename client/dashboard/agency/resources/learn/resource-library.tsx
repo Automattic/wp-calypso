@@ -19,7 +19,9 @@ import { useResourceFields } from './dataviews/fields';
 import { LAYOUT_FIELDS } from './dataviews/views';
 import ResourceGrid from './resource-grid';
 import ResourceLink from './resource-link';
+import ResourceModal from './resource-modal';
 import StageFilter from './stage-filter';
+import { getNeighbors, useResourceSelection } from './use-resource-selection';
 import { useRevealMore } from './use-reveal-more';
 import type { LayoutType } from './dataviews/views';
 import type { FilterResources } from './types';
@@ -32,16 +34,26 @@ interface ResourceLibraryProps {
 	resources: AgencyEnablementResource[];
 	view: View;
 	onChangeView: ( view: View ) => void;
+	onPreviewResource: ( resource: AgencyEnablementResource ) => void;
 	onOpenResource: ( resource: AgencyEnablementResource ) => void;
 	onLoadMore: () => void;
+	readIds: number[];
+	onSetRead: ( resource: AgencyEnablementResource, isRead: boolean ) => void;
+	selectedId: number | null;
+	onSelectedIdChange: ( id: number | null ) => void;
 }
 
 export default function ResourceLibrary( {
 	resources,
 	view,
 	onChangeView,
+	onPreviewResource,
 	onOpenResource,
 	onLoadMore,
+	readIds,
+	onSetRead,
+	selectedId,
+	onSelectedIdChange,
 }: ResourceLibraryProps ) {
 	// Stable across renders, so memoized cards don't re-render while searching.
 	const filterResources: FilterResources = useEvent( ( field, value ) =>
@@ -54,7 +66,12 @@ export default function ResourceLibrary( {
 		} )
 	);
 
-	const fields = useResourceFields( resources );
+	const selection = useResourceSelection( {
+		onSelectedIdChange,
+		onPreview: onPreviewResource,
+	} );
+
+	const fields = useResourceFields( resources, readIds );
 
 	// The library isn't paginated, so every match is shown.
 	const { data: filteredData, paginationInfo } = useMemo(
@@ -75,6 +92,14 @@ export default function ResourceLibrary( {
 
 	const isList = view.type === 'table';
 
+	// The modal moves through every match, not only those loaded so far.
+	const neighbors = getNeighbors( filteredData, selectedId );
+	// A shared link can name a resource the saved filters hide; show it anyway,
+	// without neighbors to move to.
+	const selected =
+		neighbors.selected ?? resources.find( ( resource ) => resource.id === selectedId );
+	const { previous, next } = neighbors;
+
 	return (
 		<div ref={ containerRef } className="dashboard-resources-learn__results">
 			<div className="dashboard-resources-learn__filters">
@@ -92,7 +117,7 @@ export default function ResourceLibrary( {
 							className={ clsx( props.className, 'dashboard-resources-learn__item-link' ) }
 							data-product={ item.product }
 							resource={ item }
-							onOpen={ onOpenResource }
+							onSelect={ selection.select }
 						/>
 					) }
 					search
@@ -132,7 +157,7 @@ export default function ResourceLibrary( {
 			{ ! isList && filteredData.length > 0 && (
 				<ResourceGrid
 					resources={ visibleResources }
-					onOpenResource={ onOpenResource }
+					onSelectResource={ selection.select }
 					onFilterResources={ filterResources }
 				/>
 			) }
@@ -165,6 +190,22 @@ export default function ResourceLibrary( {
 						) }
 					</VStack>
 				</Spacer>
+			) }
+			{ selected && (
+				<ResourceModal
+					resource={ selected }
+					origin={ selection.origin }
+					onClose={ selection.clear }
+					onPrevious={ previous && ( () => selection.preview( previous ) ) }
+					onNext={ next && ( () => selection.preview( next ) ) }
+					onOpen={ onOpenResource }
+					isRead={ readIds.includes( selected.id ) }
+					onToggleRead={ () => onSetRead( selected, ! readIds.includes( selected.id ) ) }
+					onFilter={ ( field, value ) => {
+						selection.clear();
+						filterResources( field, value );
+					} }
+				/>
 			) }
 			{ filteredData.length === 0 && (
 				<DataViewsEmptyStateLayout

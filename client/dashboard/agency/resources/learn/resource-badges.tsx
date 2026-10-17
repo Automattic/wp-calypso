@@ -9,7 +9,15 @@ import type { AgencyEnablementResource } from '@automattic/api-core';
  * A badge that filters the library by its value. A plain button, as `Button`'s
  * own size, padding and focus styles would draw a second shape around the badge.
  */
-function FilterBadge( { label, onClick }: { label: string; onClick: () => void } ) {
+function FilterBadge( {
+	label,
+	intent = 'draft',
+	onClick,
+}: {
+	label: string;
+	intent?: 'draft' | 'informational';
+	onClick: () => void;
+} ) {
 	return (
 		<button
 			type="button"
@@ -20,7 +28,7 @@ function FilterBadge( { label, onClick }: { label: string; onClick: () => void }
 			}
 			onClick={ onClick }
 		>
-			<Badge intent="draft">{ label }</Badge>
+			<Badge intent={ intent }>{ label }</Badge>
 		</button>
 	);
 }
@@ -28,14 +36,27 @@ function FilterBadge( { label, onClick }: { label: string; onClick: () => void }
 interface ResourceBadgesProps {
 	resource: AgencyEnablementResource;
 	onFilter: FilterResources;
+	/** Leads with "Top resource" for featured resources, where the header doesn't already show it. */
+	showFeatured?: boolean;
 }
 
 /** A resource's content type, audience and stage, each of which filters the library. */
-export default function ResourceBadges( { resource, onFilter }: ResourceBadgesProps ) {
+export default function ResourceBadges( {
+	resource,
+	onFilter,
+	showFeatured = false,
+}: ResourceBadgesProps ) {
 	const { content_type: contentType, audience, stage } = resource;
 
 	return (
 		<HStack spacing={ 1 } justify="flex-start" wrap>
+			{ showFeatured && resource.is_featured && (
+				<FilterBadge
+					label={ __( 'Top resource' ) }
+					intent="informational"
+					onClick={ () => onFilter( 'featured', 'featured' ) }
+				/>
+			) }
 			{ contentType && (
 				<FilterBadge
 					label={ getContentTypeLabel( contentType ) }

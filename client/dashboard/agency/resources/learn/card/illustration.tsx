@@ -247,7 +247,8 @@ const ILLUSTRATIONS: Partial< Record< AgencyResourceContentType, ComponentType >
 
 /**
  * An animated line drawing of the resource's content type. It inherits
- * `currentColor`, and plays while its card is hovered or focused.
+ * `currentColor`, and plays while its card is hovered or focused, or while its
+ * preview loads.
  */
 export default function ResourceIllustration( {
 	resource,
