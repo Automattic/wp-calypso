@@ -39,7 +39,7 @@ Or, if your project uses React and you want to opt in to additional React-specif
 
 **ESLint 9 flat config.** In `eslint.config.js`, apply `flat/react` (or `flat/recommended`) to your JavaScript files, using `files` and `extends` as shown below. Always set `files`: the presets don't pick files themselves, so without it they would also run on JSON or Markdown files.
 
-Requires ESLint 9.22+ (for `extends`). ESLint 10 isn't supported yet.
+Requires ESLint 9.22+ (for `extends`). ESLint 10 isn't supported yet: the Babel parser needs Babel 8 there, and `eslint-plugin-react` doesn't list ESLint 10 as a peer yet. The presets register `eslint-plugin-inclusive-language` in a wrapper for ESLint 10, so don't register that plugin yourself.
 
 ```js
 const { defineConfig } = require( 'eslint/config' );

@@ -127,7 +127,7 @@ If your package requires compilation, the `package.json` `build` script should c
 
 `package.json` is linted using ESLint. Run `yarn eslint packages/*/package.json apps/*/package.json` to validate them.
 
-If you need exceptions to linting rules, add a `./eslintrc.js` file to your app/package and disable the relevant rules.
+If you need exceptions to linting rules, add a block scoped to your app or package's directory to the root `eslint.config.mjs` and disable the relevant rules there. A directory with many settings of its own can have its own `eslint.config.mjs`, which has to include the root config (see `test/e2e/eslint.config.mjs`).
 
 ## Running Tests
 

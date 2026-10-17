@@ -47,12 +47,15 @@ const normalize = ( rules ) =>
 				ecmaFeatures: legacyConfig.parserOptions.ecmaFeatures,
 				// Unset, so the Babel parser's default.
 				sourceType: legacyConfig.parserOptions.sourceType ?? 'module',
+				// A resolved path, such as `…/node_modules/@babel/eslint-parser/lib/index.cjs`.
+				parser: legacyConfig.parser.match( /node_modules\/((?:@[^/]+\/)?[^/]+)\// )[ 1 ],
 			},
 			flat: {
 				rules: normalize( flatConfig.rules ),
 				settings: flatConfig.settings,
 				ecmaFeatures: flatConfig.languageOptions.parserOptions.ecmaFeatures,
 				sourceType: flatConfig.languageOptions.sourceType,
+				parser: flatConfig.languageOptions.parser.meta.name,
 			},
 		} )
 	);
