@@ -8,34 +8,57 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import { backupRestorePath } from 'calypso/my-sites/backup/paths';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { findRewindIdForBackupPeriod } from './find-rewind-id';
 import type { BackupThreat, BackupThreats } from '@automattic/api-core';
 
 import './style.scss';
 
 interface RestoreThatOneInsteadLinkProps {
+	siteId: number;
 	siteSlug: string;
 	latestWithoutKnownThreats?: number | null;
 	currentRewindId?: string;
 }
 
 export function RestoreThatOneInsteadLink( {
+	siteId,
 	siteSlug,
 	latestWithoutKnownThreats,
 	currentRewindId,
 }: RestoreThatOneInsteadLinkProps ) {
 	const translate = useTranslate();
 
-	if ( latestWithoutKnownThreats === null || latestWithoutKnownThreats === undefined ) {
+	const hasTarget =
+		latestWithoutKnownThreats !== null &&
+		latestWithoutKnownThreats !== undefined &&
+		( currentRewindId === undefined ||
+			getBackupPeriod( currentRewindId ) !== latestWithoutKnownThreats );
+
+	// The legacy restore page looks up the Activity Log activity by its own rewind id, which differs
+	// from the bare backup period, so resolve it from the activities right after the period.
+	const { data: activities } = useRewindableActivityLogQuery(
+		siteId,
+		{
+			after: hasTarget ? new Date( latestWithoutKnownThreats * 1000 ).toISOString() : undefined,
+			before: hasTarget
+				? new Date( ( latestWithoutKnownThreats + 24 * 60 * 60 ) * 1000 ).toISOString()
+				: undefined,
+			sortOrder: 'asc',
+			number: 50,
+		},
+		{ enabled: hasTarget && !! siteId, refetchInterval: false }
+	) as { data?: Parameters< typeof findRewindIdForBackupPeriod >[ 0 ] };
+
+	if ( ! hasTarget ) {
 		return null;
 	}
 
-	if (
-		currentRewindId !== undefined &&
-		getBackupPeriod( currentRewindId ) === latestWithoutKnownThreats
-	) {
+	const resolvedRewindId = findRewindIdForBackupPeriod( activities, latestWithoutKnownThreats );
+	if ( ! resolvedRewindId ) {
 		return null;
 	}
 
@@ -43,7 +66,7 @@ export function RestoreThatOneInsteadLink( {
 		<Button
 			__next40pxDefaultSize
 			variant="link"
-			href={ backupRestorePath( siteSlug, String( latestWithoutKnownThreats ) ) }
+			href={ backupRestorePath( siteSlug, resolvedRewindId ) }
 		>
 			{ translate( 'Restore this one instead' ) }
 		</Button>
@@ -51,6 +74,7 @@ export function RestoreThatOneInsteadLink( {
 }
 
 interface BackupKnownThreatsTableProps {
+	siteId: number;
 	siteSlug: string;
 	threats: BackupThreats;
 	latestWithoutKnownThreats?: number | null;
@@ -59,6 +83,7 @@ interface BackupKnownThreatsTableProps {
 }
 
 export function BackupKnownThreatsTable( {
+	siteId,
 	siteSlug,
 	threats,
 	latestWithoutKnownThreats,
@@ -122,6 +147,7 @@ export function BackupKnownThreatsTable( {
 			) }
 			{ showRestoreLink && (
 				<RestoreThatOneInsteadLink
+					siteId={ siteId }
 					siteSlug={ siteSlug }
 					latestWithoutKnownThreats={ latestWithoutKnownThreats }
 					currentRewindId={ currentRewindId }
@@ -152,6 +178,7 @@ export function useBackupKnownThreats( siteId: number, rewindId?: string | null 
 			: null;
 
 	return {
+		siteId,
 		rewindId,
 		flagged,
 		hasScan,
@@ -265,7 +292,7 @@ export function BackupKnownThreatsToggle( { state, inToolbar }: BackupKnownThrea
 }
 
 export function BackupKnownThreatsRestoreLink( { state }: { state: BackupKnownThreatsState } ) {
-	const { flagged, siteSlug, latestWithoutKnownThreats, rewindId } = state;
+	const { flagged, siteId, siteSlug, latestWithoutKnownThreats, rewindId } = state;
 
 	if ( flagged === null || ! siteSlug ) {
 		return null;
@@ -273,6 +300,7 @@ export function BackupKnownThreatsRestoreLink( { state }: { state: BackupKnownTh
 
 	return (
 		<RestoreThatOneInsteadLink
+			siteId={ siteId }
 			siteSlug={ siteSlug }
 			latestWithoutKnownThreats={ latestWithoutKnownThreats }
 			currentRewindId={ rewindId ?? undefined }
@@ -282,8 +310,16 @@ export function BackupKnownThreatsRestoreLink( { state }: { state: BackupKnownTh
 
 /** The threats table, shown once expanded. The restore link lives in BackupKnownThreatsRestoreLink. */
 export function BackupKnownThreatsDetails( { state }: { state: BackupKnownThreatsState } ) {
-	const { flagged, hasScan, isOpen, threats, siteSlug, latestWithoutKnownThreats, rewindId } =
-		state;
+	const {
+		flagged,
+		hasScan,
+		isOpen,
+		threats,
+		siteId,
+		siteSlug,
+		latestWithoutKnownThreats,
+		rewindId,
+	} = state;
 
 	if ( flagged === null || ! hasScan || ! isOpen || ! threats || ! siteSlug ) {
 		return null;
@@ -291,6 +327,7 @@ export function BackupKnownThreatsDetails( { state }: { state: BackupKnownThreat
 
 	return (
 		<BackupKnownThreatsTable
+			siteId={ siteId }
 			siteSlug={ siteSlug }
 			threats={ threats }
 			latestWithoutKnownThreats={ latestWithoutKnownThreats }

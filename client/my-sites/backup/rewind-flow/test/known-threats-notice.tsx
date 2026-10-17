@@ -58,6 +58,7 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 const BASE = 'https://public-api.wordpress.com';
 const SITE_ID = 123;
 const LIST_PATH = `/wpcom/v3/sites/${ SITE_ID }/rewind/backups`;
+const ACTIVITY_PATH = `/wpcom/v2/sites/${ SITE_ID }/activity/rewindable`;
 const THREATS_PATH = `/wpcom/v2/sites/${ SITE_ID }/rewind/backups/200/threats`;
 const NOTICE =
 	'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
@@ -196,6 +197,29 @@ describe( 'KnownThreatsNotice', () => {
 
 	it( 'expands the threats table for Scan sites', async () => {
 		mockList( counts( 3 ), { latest_without_known_threats: 150 } );
+		nock( BASE )
+			.get( ACTIVITY_PATH )
+			.query( true )
+			.reply( 200, {
+				itemsPerPage: 1000,
+				page: 1,
+				totalItems: 1,
+				totalPages: 1,
+				current: {
+					totalItems: 1,
+					orderedItems: [
+						{
+							activity_id: 'a-150',
+							name: 'rewind__backup_complete_full',
+							summary: 'Backup complete',
+							published: '2026-10-01T10:00:00.000+00:00',
+							is_rewindable: true,
+							rewind_id: '150.817',
+							type: 'Announce',
+						},
+					],
+				},
+			} );
 		nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
 		renderWithProvider( <Harness /> );
 		const toggle = await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
@@ -220,8 +244,8 @@ describe( 'KnownThreatsNotice', () => {
 		await userEvent.hover( expanded );
 		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
-		const link = screen.getByRole( 'link', { name: 'Restore this one instead' } );
-		expect( link ).toHaveAttribute( 'href', '/backup/example.wordpress.com/restore/150' );
+		const link = await screen.findByRole( 'link', { name: 'Restore this one instead' } );
+		expect( link ).toHaveAttribute( 'href', '/backup/example.wordpress.com/restore/150.817' );
 		expect( banner ).toContainElement( link );
 		expect( banner ).toContainElement( screen.getByText( 'Evil.Sig' ) );
 		expect( screen.getAllByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveLength( 1 );

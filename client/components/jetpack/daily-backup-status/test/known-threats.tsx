@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -18,6 +18,7 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 const BASE = 'https://public-api.wordpress.com';
 const SITE_ID = 123;
 const LIST_PATH = `/wpcom/v3/sites/${ SITE_ID }/rewind/backups`;
+const ACTIVITY_PATH = `/wpcom/v2/sites/${ SITE_ID }/activity/rewindable`;
 const THREATS_PATH = `/wpcom/v2/sites/${ SITE_ID }/rewind/backups/200/threats`;
 
 const counts = ( flagged: number, vulnerable = 0 ) => ( {
@@ -41,6 +42,29 @@ const mockList = ( backups: unknown[], extra = {} ) =>
 			itemsPerPage: 100,
 			backups,
 			...extra,
+		} );
+
+const mockActivities = ( rewindIds: string[] ) =>
+	nock( BASE )
+		.get( ACTIVITY_PATH )
+		.query( true )
+		.reply( 200, {
+			itemsPerPage: 1000,
+			page: 1,
+			totalItems: 1,
+			totalPages: 1,
+			current: {
+				totalItems: 1,
+				orderedItems: rewindIds.map( ( rewind_id ) => ( {
+					activity_id: `activity-${ rewind_id }`,
+					name: 'rewind__backup_complete_full',
+					summary: 'Backup complete',
+					published: '2026-10-17T14:28:00.000+00:00',
+					is_rewindable: true,
+					rewind_id,
+					type: 'Announce',
+				} ) ),
+			},
 		} );
 
 const backupWith = ( knownThreats?: ReturnType< typeof counts > ) => ( {
@@ -123,6 +147,7 @@ describe( 'BackupKnownThreats', () => {
 
 	it( 'expands a threats table for Scan sites', async () => {
 		mockList( [ backupWith( counts( 1, 2 ) ) ], { latest_without_known_threats: 150 } );
+		mockActivities( [ '150.817' ] );
 		const details = nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
 		renderIt();
 
@@ -144,7 +169,7 @@ describe( 'BackupKnownThreats', () => {
 			'width',
 			'16'
 		);
-		const restoreLink = screen.getByRole( 'link', { name: 'Restore this one instead' } );
+		const restoreLink = await screen.findByRole( 'link', { name: 'Restore this one instead' } );
 		expect( restoreLink ).toBeVisible();
 		expect(
 			restoreLink.compareDocumentPosition( toggle ) & Node.DOCUMENT_POSITION_FOLLOWING
@@ -164,7 +189,7 @@ describe( 'BackupKnownThreats', () => {
 		expect( screen.getAllByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveLength( 1 );
 		expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveAttribute(
 			'href',
-			'/backup/example.wordpress.com/restore/150'
+			'/backup/example.wordpress.com/restore/150.817'
 		);
 		expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveClass(
 			'is-next-40px-default-size'
@@ -175,6 +200,40 @@ describe( 'BackupKnownThreats', () => {
 		await userEvent.hover( expanded );
 		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
 		expect( details.isDone() ).toBe( true );
+	} );
+
+	it( 'links to the backup activity rewind id, not the bare period', async () => {
+		mockList( [ backupWith( counts( 1 ) ) ], { latest_without_known_threats: 1792247305 } );
+		const activities = mockActivities( [ '1792247404.817' ] );
+		renderIt();
+
+		const link = await screen.findByRole( 'link', { name: 'Restore this one instead' } );
+		expect( link ).toHaveAttribute(
+			'href',
+			'/backup/example.wordpress.com/restore/1792247404.817'
+		);
+		expect( activities.isDone() ).toBe( true );
+	} );
+
+	it( 'shows no restore link when no activity matches the backup period', async () => {
+		mockList( [ backupWith( counts( 1 ) ) ], { latest_without_known_threats: 1792247305 } );
+		const activities = mockActivities( [] );
+		renderIt();
+
+		await screen.findByText( 'Known threats (1)' );
+		await waitFor( () => expect( activities.isDone() ).toBe( true ) );
+		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+		expect( screen.queryByRole( 'link', { name: 'Restore this one instead' } ) ).toBeNull();
+	} );
+
+	it( 'does not query activities when the backup has no earlier clean backup', async () => {
+		mockList( [ backupWith( counts( 1 ) ) ] );
+		const activities = mockActivities( [ '1792247404.817' ] );
+		renderIt();
+
+		await screen.findByText( 'Known threats (1)' );
+		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+		expect( activities.isDone() ).toBe( false );
 	} );
 
 	it( 'uses the singular vulnerable note for one version', async () => {

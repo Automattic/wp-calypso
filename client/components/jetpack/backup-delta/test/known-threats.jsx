@@ -68,6 +68,30 @@ describe( 'BackupDelta known threats', () => {
 			} );
 
 		nock( BASE )
+			.get( '/wpcom/v2/sites/123/activity/rewindable' )
+			.query( true )
+			.reply( 200, {
+				itemsPerPage: 1000,
+				page: 1,
+				totalItems: 1,
+				totalPages: 1,
+				current: {
+					totalItems: 1,
+					orderedItems: [
+						{
+							activity_id: 'a-100',
+							name: 'rewind__backup_complete_full',
+							summary: 'Backup complete',
+							published: '2026-10-01T10:00:00.000+00:00',
+							is_rewindable: true,
+							rewind_id: '100.9',
+							type: 'Announce',
+						},
+					],
+				},
+			} );
+
+		nock( BASE )
 			.get( '/wpcom/v2/sites/123/rewind/backups/200/threats' )
 			.query( true )
 			.reply( 200, {

@@ -86,6 +86,7 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 			<div className="rewind-flow-known-threats">
 				{ siteSlug && (
 					<RestoreThatOneInsteadLink
+						siteId={ siteId }
 						siteSlug={ siteSlug }
 						latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
 						currentRewindId={ rewindId }
@@ -100,6 +101,7 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 						/>
 						{ isOpen && threats && siteSlug && (
 							<BackupKnownThreatsTable
+								siteId={ siteId }
 								siteSlug={ siteSlug }
 								threats={ threats }
 								latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
