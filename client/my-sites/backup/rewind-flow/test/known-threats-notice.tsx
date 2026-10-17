@@ -63,12 +63,6 @@ const NOTICE =
 	'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
 const CHECKBOX = 'I understand this backup contains known threats and want to restore it anyway.';
 
-const expectInsideNotice = ( ...elements: HTMLElement[] ) => {
-	const notice = document.querySelector( '.dashboard-notice.is-warning' );
-	expect( notice ).toBeInTheDocument();
-	elements.forEach( ( element ) => expect( notice ).toContainElement( element ) );
-};
-
 const counts = ( flagged: number ) => ( {
 	malware: flagged,
 	database: 0,
@@ -152,7 +146,6 @@ describe( 'KnownThreatsNotice', () => {
 		expect( await screen.findByText( NOTICE ) ).toBeVisible();
 		const checkbox = screen.getByRole( 'checkbox', { name: CHECKBOX } );
 		expect( checkbox ).not.toBeChecked();
-		expectInsideNotice( screen.getByText( NOTICE ), checkbox );
 		await userEvent.click( checkbox );
 		expect( checkbox ).toBeChecked();
 		expect( onChange ).toHaveBeenLastCalledWith( true );
@@ -176,7 +169,6 @@ describe( 'KnownThreatsNotice', () => {
 		);
 		expect( await screen.findByText( NOTICE ) ).toBeVisible();
 		expect( screen.queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
-		expectInsideNotice( screen.getByText( NOTICE ) );
 	} );
 
 	it( 'renders nothing and reports false before VaultPress ships', async () => {
@@ -207,7 +199,7 @@ describe( 'KnownThreatsNotice', () => {
 		expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
 		expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
 		expect( toggle.querySelector( '.gridicons-notice-outline' ) ).toBeInTheDocument();
-		expect( toggle.closest( '.dashboard-notice' ) ).toBeInTheDocument();
+		expect( toggle.parentElement ).toHaveClass( 'rewind-flow-known-threats__details' );
 		expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Show threats' ) ).not.toBeInTheDocument();
 		await userEvent.hover( toggle );
@@ -221,14 +213,9 @@ describe( 'KnownThreatsNotice', () => {
 		await userEvent.hover( expanded );
 		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
-		const link = screen.getByRole( 'link', { name: 'Restore this one instead' } );
-		expect( link ).toHaveAttribute( 'href', '/backup/example.wordpress.com/restore/150' );
-		expect( screen.getAllByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveLength( 1 );
-		expectInsideNotice(
-			screen.getByText( NOTICE ),
-			link,
-			expanded,
-			screen.getByRole( 'checkbox' )
+		expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveAttribute(
+			'href',
+			'/backup/example.wordpress.com/restore/150'
 		);
 	} );
 

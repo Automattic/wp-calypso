@@ -1,0 +1,23 @@
+.rewind-flow-known-threats {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
+
+	> .rewind-flow-notice {
+		align-self: stretch;
+		margin-bottom: 0;
+	}
+
+	.backup-known-threats__details {
+		margin-top: 8px;
+	}
+
+	.components-checkbox-control {
+		margin-top: 8px;
+	}
+}
+
+.rewind-flow-known-threats__details {
+	align-self: stretch;
+}
