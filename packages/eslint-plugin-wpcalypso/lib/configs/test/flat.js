@@ -34,15 +34,22 @@ test.each( [
 	// The legacy override's test-file exception.
 	[ 'recommended', 'src/test/index.js' ],
 ] )(
-	'flat/%s resolves the same rules as the legacy preset for %s',
+	'flat/%s resolves the same rules and options as the legacy preset for %s',
 	( preset, file ) => {
 		const { legacy, flat } = resolveRules( preset, file );
+		const rules = [
+			...new Set( [ ...Object.keys( legacy.rules ), ...Object.keys( flat.rules ) ] ),
+		];
 		const differences = Object.fromEntries(
-			[ ...new Set( [ ...Object.keys( legacy ), ...Object.keys( flat ) ] ) ]
-				.filter( ( rule ) => JSON.stringify( legacy[ rule ] ) !== JSON.stringify( flat[ rule ] ) )
-				.map( ( rule ) => [ rule, [ legacy[ rule ], flat[ rule ] ] ] )
+			rules
+				.filter(
+					( rule ) =>
+						JSON.stringify( legacy.rules[ rule ] ) !== JSON.stringify( flat.rules[ rule ] )
+				)
+				.map( ( rule ) => [ rule, [ legacy.rules[ rule ], flat.rules[ rule ] ] ] )
 		);
 		expect( differences ).toEqual( eslintRecommendedChanges );
+		expect( { ...flat, rules: null } ).toEqual( { ...legacy, rules: null } );
 	},
 	30000
 );

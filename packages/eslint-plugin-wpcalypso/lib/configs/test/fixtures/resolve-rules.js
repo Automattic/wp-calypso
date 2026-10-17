@@ -1,4 +1,4 @@
-// Prints the rules each preset format resolves for a file, as `{ legacy, flat }` JSON.
+// Prints what each preset format resolves for a file, as `{ legacy, flat }` JSON.
 const path = require( 'path' );
 // This package's ESLint 8 resolves rules as written; ESLint 9's flat mode fills in default options
 // that its legacy mode doesn't. `defineConfig` comes from the repo's ESLint 9, as ESLint 8 lacks it.
@@ -37,13 +37,23 @@ const normalize = ( rules ) =>
 		] ),
 	} );
 	const target = path.join( cwd, file );
-	const legacyRules = ( await legacy.calculateConfigForFile( target ) ).rules;
-	// `undefined` when the flat preset doesn't lint the file at all.
+	const legacyConfig = await legacy.calculateConfigForFile( target );
 	const flatConfig = await flat.calculateConfigForFile( target );
 	process.stdout.write(
 		JSON.stringify( {
-			legacy: normalize( legacyRules ),
-			flat: flatConfig ? normalize( flatConfig.rules ) : null,
+			legacy: {
+				rules: normalize( legacyConfig.rules ),
+				settings: legacyConfig.settings,
+				ecmaFeatures: legacyConfig.parserOptions.ecmaFeatures,
+				// Unset, so the Babel parser's default.
+				sourceType: legacyConfig.parserOptions.sourceType ?? 'module',
+			},
+			flat: {
+				rules: normalize( flatConfig.rules ),
+				settings: flatConfig.settings,
+				ecmaFeatures: flatConfig.languageOptions.parserOptions.ecmaFeatures,
+				sourceType: flatConfig.languageOptions.sourceType,
+			},
 		} )
 	);
 } )();

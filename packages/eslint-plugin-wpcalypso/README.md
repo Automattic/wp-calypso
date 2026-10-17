@@ -39,7 +39,7 @@ Or, if your project uses React and you want to opt in to additional React-specif
 
 **ESLint 9 flat config.** In `eslint.config.js`, apply `flat/react` (or `flat/recommended`) to your JavaScript files, using `files` and `extends` as shown below. Always set `files`: the presets don't pick files themselves, so without it they would also run on JSON or Markdown files.
 
-Requires ESLint 9.22+ (for `extends`) and `@eslint/js`. ESLint 10 isn't supported yet.
+Requires ESLint 9.22+ (for `extends`). ESLint 10 isn't supported yet.
 
 ```js
 const { defineConfig } = require( 'eslint/config' );

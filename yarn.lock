@@ -5970,7 +5970,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.39.5":
+"@eslint/js@npm:9.39.5, @eslint/js@npm:^9.39.5":
   version: 9.39.5
   resolution: "@eslint/js@npm:9.39.5"
   checksum: 49894e98ba313a7d3bfb1b20d55c0f9826be45a7db876fd84e533ac7f101b1d95b51cd22c6a6db3a45066b9c0d068c31b4a22fa0db8a6cc8744a25540efdb824
@@ -19975,19 +19975,17 @@ __metadata:
     "@babel/core": "npm:^7.27.1"
     "@babel/eslint-parser": "npm:^7.27.1"
     "@babel/parser": "npm:^7.27.2"
+    "@eslint/js": "npm:^9.39.5"
     eslint: "npm:^8.57.1"
   peerDependencies:
     "@babel/core": ">=7.27.1"
     "@babel/eslint-parser": ">=7.27.1"
-    "@eslint/js": ^9.0.0
     eslint: ">=8.57.1"
     eslint-plugin-inclusive-language: ^2.2.1
     eslint-plugin-jsdoc: ^65.1.0
     eslint-plugin-react: ^7.37.5
     eslint-plugin-react-hooks: ^7.1.1
   peerDependenciesMeta:
-    "@eslint/js":
-      optional: true
     eslint-plugin-react:
       optional: true
     eslint-plugin-react-hooks:
