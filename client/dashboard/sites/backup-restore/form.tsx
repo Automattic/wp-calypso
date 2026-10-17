@@ -104,6 +104,7 @@ function SiteBackupRestoreForm( {
 			{
 				timestamp: rewindId,
 				config: formData,
+				acknowledgeThreats: hasKnownThreats && acknowledged,
 			},
 			{
 				onSuccess: ( restoreId ) => {
@@ -112,7 +113,17 @@ function SiteBackupRestoreForm( {
 						known_threats_acknowledged: hasKnownThreats && acknowledged,
 					} );
 				},
-				onError: () => {
+				onError: ( error: Error & { error?: string } ) => {
+					if ( error.error === 'threats_not_acknowledged' ) {
+						setAcknowledged( false );
+						createErrorNotice(
+							__(
+								'This backup is known to contain security threats. Acknowledge them to restore it.'
+							),
+							{ type: 'snackbar' }
+						);
+						return;
+					}
 					createErrorNotice( __( 'Failed to initiate restore. Please try again.' ), {
 						type: 'snackbar',
 					} );
