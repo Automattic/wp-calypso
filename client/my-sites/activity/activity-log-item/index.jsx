@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Button, Gridicon, FoldableCard } from '@automattic/components';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
@@ -26,6 +27,7 @@ import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSite } from 'calypso/state/sites/selectors';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
+import { withKnownThreatsRestorePath } from '../known-threats-restore-gate';
 import ActivityActor from './activity-actor';
 import ActivityDescription from './activity-description';
 import ActivityIcon from './activity-icon';
@@ -72,12 +74,20 @@ class ActivityLogItem extends Component {
 	confirmBackup = () =>
 		this.props.confirmBackup( this.props.activity.rewindId, this.state.downloadArgs );
 
-	confirmRewind = () =>
+	confirmRewind = () => {
+		const { knownThreatsRestorePath } = this.props;
+		if ( knownThreatsRestorePath ) {
+			this.props.leaveRewindDialog();
+			page( knownThreatsRestorePath );
+			return;
+		}
+
 		this.props.confirmRewind(
 			this.props.activity.rewindId,
 			this.props.activity.activityName,
 			this.state.restoreArgs
 		);
+	};
 
 	restoreSettingsChange = ( { target: { name, checked } } ) => {
 		this.setState( {
@@ -473,6 +483,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 				rewindRequestDismiss( siteId )
 			)
 		),
+	leaveRewindDialog: () => dispatch( rewindRequestDismiss( siteId ) ),
 	confirmBackup: ( rewindId, downloadArgs ) => (
 		scrollTo( { x: 0, y: 0, duration: 250 } ),
 		dispatch(
@@ -501,6 +512,11 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 
 export default compose(
 	connect( mapStateToProps, mapDispatchToProps ),
+	withKnownThreatsRestorePath( ( { siteId, activity, mightRewind } ) => ( {
+		siteId,
+		rewindId: activity?.rewindId,
+		enabled: !! mightRewind,
+	} ) ),
 	withDesktopBreakpoint,
 	withLocalizedMoment,
 	localize
