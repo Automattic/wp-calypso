@@ -149,6 +149,7 @@ export default function ResourceModal( {
 							<Button
 								icon={ previousIcon }
 								label={ __( 'Previous resource' ) }
+								__next40pxDefaultSize
 								size="compact"
 								disabled={ ! onPrevious }
 								accessibleWhenDisabled
@@ -157,6 +158,7 @@ export default function ResourceModal( {
 							<Button
 								icon={ nextIcon }
 								label={ __( 'Next resource' ) }
+								__next40pxDefaultSize
 								size="compact"
 								disabled={ ! onNext }
 								accessibleWhenDisabled
@@ -167,6 +169,7 @@ export default function ResourceModal( {
 							className="dashboard-resources-learn__modal-close"
 							icon={ closeSmall }
 							label={ __( 'Close' ) }
+							__next40pxDefaultSize
 							size="compact"
 							onClick={ onClose }
 						/>
