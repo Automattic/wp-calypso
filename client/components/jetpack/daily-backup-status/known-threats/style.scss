@@ -1,0 +1,25 @@
+.backup-known-threats {
+	margin: 8px 0 16px;
+}
+
+.backup-known-threats__badge {
+	display: inline-block;
+	padding: 2px 8px;
+	margin-inline-end: 8px;
+	border-radius: 2px;
+	background: var( --color-warning-5 );
+	color: var( --color-warning-80 );
+	font-size: $font-body-small;
+}
+
+.backup-known-threats__table {
+	width: 100%;
+	border-collapse: collapse;
+
+	th,
+	td {
+		padding: 8px 12px 8px 0;
+		text-align: start;
+		border-bottom: 1px solid var( --color-neutral-5 );
+	}
+}

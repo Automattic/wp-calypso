@@ -16,6 +16,7 @@ import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-valu
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ActionButtons from '../action-buttons';
+import { BackupKnownThreats } from '../known-threats';
 import useGetDisplayDate from '../use-get-display-date';
 import { BackupLastFailed } from './backup-last-failed';
 import { BackupRealtimeMessage } from './backup-realtime-message';
@@ -116,6 +117,8 @@ const BackupSuccessful = ( {
 					</p>
 				</div>
 			) }
+
+			<BackupKnownThreats siteId={ siteId } rewindId={ backup.rewindId } />
 
 			{ isCloneFlow && (
 				<ActionButtons
