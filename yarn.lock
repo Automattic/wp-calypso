@@ -4886,7 +4886,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/notarize@npm:2.5.0, @electron/notarize@npm:^2.4.0":
+"@electron/notarize@npm:2.5.0, @electron/notarize@npm:^2.5.0":
   version: 2.5.0
   resolution: "@electron/notarize@npm:2.5.0"
   dependencies:
@@ -14449,7 +14449,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
-    "@electron/notarize": "npm:^2.4.0"
+    "@electron/notarize": "npm:^2.5.0"
     "@electron/rebuild": "npm:4.0.4"
     "@playwright/browser-chromium": "npm:1.57.0"
     archiver: "npm:^3.1.1"
