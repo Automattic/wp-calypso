@@ -15,6 +15,8 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import type { FunctionComponent } from 'react';
 
+import './known-threats-notice.scss';
+
 interface Props {
 	siteId: number;
 	rewindId: string;
@@ -89,7 +91,7 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 				/>
 			) }
 			{ hasScan && (
-				<div>
+				<div className="rewind-flow-known-threats__details">
 					<Button
 						__next40pxDefaultSize
 						variant="link"

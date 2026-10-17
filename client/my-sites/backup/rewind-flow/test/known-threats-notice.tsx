@@ -197,6 +197,7 @@ describe( 'KnownThreatsNotice', () => {
 		renderWithProvider( <Harness /> );
 		const toggle = await screen.findByRole( 'button', { name: 'Show threats' } );
 		expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
+		expect( toggle.parentElement ).toHaveClass( 'rewind-flow-known-threats__details' );
 		await userEvent.click( toggle );
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Hide threats' } ) ).toBeVisible();
