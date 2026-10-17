@@ -5,19 +5,26 @@ import debug from './debug';
  * Why a survey was suppressed. `modal` is the signal that measures this
  * package's modal-aware suppression; `help_center` is the pre-existing rule,
  * recorded alongside so the two can be compared. `support_session` covers a
- * Happiness Engineer working in the user's account.
+ * Happiness Engineer working in the user's account. `notifications` comes from a
+ * consumer-registered suppressor (see `suppressors.ts`).
  */
-export type SuppressionReason = 'modal' | 'help_center' | 'support_session';
+export type SuppressionReason = 'modal' | 'help_center' | 'support_session' | 'notifications';
 
 /**
  * Which suppression path fired:
  * - `survey_displayed` — a survey rendered and was closed (auto-campaigns).
  * - `modal_opened` — a modal opened on top of an already-visible survey.
  * - `help_center_opened` — the Help Center opened over an already-visible survey.
+ * - `suppressor_activated` — a registered suppressor became active over an
+ *   already-visible survey.
  * - `invoke_event` — an explicit `invokeSurvicateEvent()` was skipped.
  */
 export type SuppressionTrigger =
-	'survey_displayed' | 'modal_opened' | 'help_center_opened' | 'invoke_event';
+	| 'survey_displayed'
+	| 'modal_opened'
+	| 'help_center_opened'
+	| 'suppressor_activated'
+	| 'invoke_event';
 
 /**
  * Records that a survey was suppressed, so we can measure how often (and why)
