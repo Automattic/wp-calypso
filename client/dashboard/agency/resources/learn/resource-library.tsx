@@ -107,129 +107,132 @@ export default function ResourceLibrary( {
 	const { previous, next } = neighbors;
 
 	return (
-		<div ref={ containerRef } className="dashboard-resources-learn__results">
+		<>
+			{ /* Outside the results, so revealing more doesn't focus a recommended copy of a card. */ }
 			<ResourceRecommendations resources={ recommended } onSelectResource={ selection.select } />
-			<div className="dashboard-resources-learn__filters">
-				<DataViews< AgencyEnablementResource >
-					data={ visibleResources }
-					fields={ fields }
-					view={ view }
-					onChangeView={ onChangeView }
-					paginationInfo={ paginationInfo }
-					defaultLayouts={ { grid: {}, table: {} } }
-					getItemId={ ( item ) => String( item.id ) }
-					renderItemLink={ ( { item, ...props } ) => (
-						<ResourceLink
-							{ ...props }
-							className={ clsx( props.className, 'dashboard-resources-learn__item-link' ) }
-							data-product={ item.product }
-							resource={ item }
-							onSelect={ selection.select }
-						/>
-					) }
-					search
-				>
-					<HStack justify="space-between" wrap>
-						<HStack justify="flex-start" expanded={ false }>
-							<WPDataViews.Search label={ __( 'Search resources' ) } />
-							<ToggleGroupControl
-								className="dashboard-resources-learn__layout-toggle"
-								label={ __( 'Layout' ) }
-								value={ view.type }
-								hideLabelFromVision
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-								onChange={ ( value ) => {
-									const type: LayoutType = value === 'table' ? 'table' : 'grid';
-									onChangeView( { ...view, type, fields: LAYOUT_FIELDS[ type ] } );
-								} }
-							>
-								<ToggleGroupControlOption value="grid" label={ __( 'Grid' ) } />
-								<ToggleGroupControlOption value="table" label={ __( 'List' ) } />
-							</ToggleGroupControl>
-							<WPDataViews.FiltersToggle />
-						</HStack>
-						<StageFilter view={ view } onChangeView={ onChangeView } />
-					</HStack>
-					<Spacer marginBottom={ 4 }>
-						<WPDataViews.FiltersToggled className="dashboard-resources-learn__filters-toggled" />
-					</Spacer>
-					{ isList && filteredData.length > 0 && (
-						<Card>
-							<WPDataViews.Layout />
-						</Card>
-					) }
-				</DataViews>
-			</div>
-			{ ! isList && filteredData.length > 0 && (
-				<ResourceGrid
-					resources={ visibleResources }
-					onSelectResource={ selection.select }
-					onFilterResources={ filterResources }
-				/>
-			) }
-			{ filteredData.length > 0 && (
-				<Spacer marginTop={ 8 }>
-					<VStack spacing={ 3 } alignment="center">
-						<Text variant="muted" role="status">
-							{ sprintf(
-								/* translators: 1: Number of resources shown. 2: Number of matching resources. */
-								_n(
-									'Showing %1$s of %2$s resource',
-									'Showing %1$s of %2$s resources',
-									filteredData.length
-								),
-								formatNumber( visibleResources.length ),
-								formatNumber( filteredData.length )
-							) }
-						</Text>
-						{ hasMore && (
-							<Button
-								variant="secondary"
-								__next40pxDefaultSize
-								onClick={ () => {
-									revealMore();
-									onLoadMore();
-								} }
-							>
-								{ __( 'Load more' ) }
-							</Button>
+			<div ref={ containerRef } className="dashboard-resources-learn__results">
+				<div className="dashboard-resources-learn__filters">
+					<DataViews< AgencyEnablementResource >
+						data={ visibleResources }
+						fields={ fields }
+						view={ view }
+						onChangeView={ onChangeView }
+						paginationInfo={ paginationInfo }
+						defaultLayouts={ { grid: {}, table: {} } }
+						getItemId={ ( item ) => String( item.id ) }
+						renderItemLink={ ( { item, ...props } ) => (
+							<ResourceLink
+								{ ...props }
+								className={ clsx( props.className, 'dashboard-resources-learn__item-link' ) }
+								data-product={ item.product }
+								resource={ item }
+								onSelect={ selection.select }
+							/>
 						) }
-					</VStack>
-				</Spacer>
-			) }
-			{ selected && (
-				<ResourceModal
-					resource={ selected }
-					origin={ selection.origin }
-					onClose={ selection.clear }
-					onPrevious={ previous && ( () => selection.preview( previous ) ) }
-					onNext={ next && ( () => selection.preview( next ) ) }
-					onOpen={ onOpenResource }
-					isRead={ readIds.includes( selected.id ) }
-					onToggleRead={ () => onSetRead( selected, ! readIds.includes( selected.id ) ) }
-					onFilter={ ( field, value ) => {
-						selection.clear();
-						filterResources( field, value );
-					} }
-				/>
-			) }
-			{ filteredData.length === 0 && (
-				<DataViewsEmptyStateLayout
-					title={
-						resources.length
-							? __( 'We couldn’t find any resources related to that.' )
-							: __( 'No resources yet' )
-					}
-					description={
-						resources.length
-							? __(
-									'Try adjusting your search or exploring other resources to help your agency grow.'
-								)
-							: __( 'Check back soon for resources to help your agency grow.' )
-					}
-				/>
-			) }
-		</div>
+						search
+					>
+						<HStack justify="space-between" wrap>
+							<HStack justify="flex-start" expanded={ false }>
+								<WPDataViews.Search label={ __( 'Search resources' ) } />
+								<ToggleGroupControl
+									className="dashboard-resources-learn__layout-toggle"
+									label={ __( 'Layout' ) }
+									value={ view.type }
+									hideLabelFromVision
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+									onChange={ ( value ) => {
+										const type: LayoutType = value === 'table' ? 'table' : 'grid';
+										onChangeView( { ...view, type, fields: LAYOUT_FIELDS[ type ] } );
+									} }
+								>
+									<ToggleGroupControlOption value="grid" label={ __( 'Grid' ) } />
+									<ToggleGroupControlOption value="table" label={ __( 'List' ) } />
+								</ToggleGroupControl>
+								<WPDataViews.FiltersToggle />
+							</HStack>
+							<StageFilter view={ view } onChangeView={ onChangeView } />
+						</HStack>
+						<Spacer marginBottom={ 4 }>
+							<WPDataViews.FiltersToggled className="dashboard-resources-learn__filters-toggled" />
+						</Spacer>
+						{ isList && filteredData.length > 0 && (
+							<Card>
+								<WPDataViews.Layout />
+							</Card>
+						) }
+					</DataViews>
+				</div>
+				{ ! isList && filteredData.length > 0 && (
+					<ResourceGrid
+						resources={ visibleResources }
+						onSelectResource={ selection.select }
+						onFilterResources={ filterResources }
+					/>
+				) }
+				{ filteredData.length > 0 && (
+					<Spacer marginTop={ 8 }>
+						<VStack spacing={ 3 } alignment="center">
+							<Text variant="muted" role="status">
+								{ sprintf(
+									/* translators: 1: Number of resources shown. 2: Number of matching resources. */
+									_n(
+										'Showing %1$s of %2$s resource',
+										'Showing %1$s of %2$s resources',
+										filteredData.length
+									),
+									formatNumber( visibleResources.length ),
+									formatNumber( filteredData.length )
+								) }
+							</Text>
+							{ hasMore && (
+								<Button
+									variant="secondary"
+									__next40pxDefaultSize
+									onClick={ () => {
+										revealMore();
+										onLoadMore();
+									} }
+								>
+									{ __( 'Load more' ) }
+								</Button>
+							) }
+						</VStack>
+					</Spacer>
+				) }
+				{ selected && (
+					<ResourceModal
+						resource={ selected }
+						origin={ selection.origin }
+						onClose={ selection.clear }
+						onPrevious={ previous && ( () => selection.preview( previous ) ) }
+						onNext={ next && ( () => selection.preview( next ) ) }
+						onOpen={ onOpenResource }
+						isRead={ readIds.includes( selected.id ) }
+						onToggleRead={ () => onSetRead( selected, ! readIds.includes( selected.id ) ) }
+						onFilter={ ( field, value ) => {
+							selection.clear();
+							filterResources( field, value );
+						} }
+					/>
+				) }
+				{ filteredData.length === 0 && (
+					<DataViewsEmptyStateLayout
+						title={
+							resources.length
+								? __( 'We couldn’t find any resources related to that.' )
+								: __( 'No resources yet' )
+						}
+						description={
+							resources.length
+								? __(
+										'Try adjusting your search or exploring other resources to help your agency grow.'
+									)
+								: __( 'Check back soon for resources to help your agency grow.' )
+						}
+					/>
+				) }
+			</div>
+		</>
 	);
 }
