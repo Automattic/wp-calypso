@@ -209,6 +209,8 @@ describe( 'BackupKnownThreats', () => {
 		expect( badge ).toBeVisible();
 		expect( badge ).toHaveClass( 'backup-known-threats__badge' );
 		expect( badge.querySelector( '.gridicons-notice-outline' ) ).toBeInTheDocument();
+		expect( badge.querySelector( '.gridicons-notice-outline' ) ).toHaveAttribute( 'width', '16' );
+		expect( badge.querySelector( '.gridicons-notice-outline' ) ).toHaveAttribute( 'height', '16' );
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( /show threats/i ) ).not.toBeInTheDocument();
 		expect( details.isDone() ).toBe( false );

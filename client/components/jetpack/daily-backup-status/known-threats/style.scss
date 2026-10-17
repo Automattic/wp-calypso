@@ -20,6 +20,9 @@
 
 	.gridicon {
 		flex-shrink: 0;
+		// Keep the icon at 16px even when global gridicon rules would resize it.
+		width: 16px;
+		height: 16px;
 		fill: currentColor;
 	}
 }
