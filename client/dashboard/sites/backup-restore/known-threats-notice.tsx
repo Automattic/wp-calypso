@@ -5,6 +5,7 @@ import { CheckboxControl, __experimentalVStack as VStack } from '@wordpress/comp
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import Notice from '../../components/notice';
+import { Text } from '../../components/text';
 import { hasHostingFeature } from '../../utils/site-features';
 import { KnownThreatsToggle } from '../backups/known-threats/known-threats-badge';
 import { KnownThreatsTable } from '../backups/known-threats/known-threats-table';
@@ -52,7 +53,7 @@ export default function KnownThreatsNotice( {
 	return (
 		<Notice variant="warning">
 			<VStack spacing={ 3 }>
-				<p>
+				<Text>
 					{ sprintf(
 						// translators: %d is the number of known security threats in the backup
 						_n(
@@ -62,7 +63,7 @@ export default function KnownThreatsNotice( {
 						),
 						knownThreats.flagged
 					) }
-				</p>
+				</Text>
 				<RestoreThatOneInsteadLink
 					siteSlug={ site.slug }
 					restoreLinkTo={ restoreLinkTo }

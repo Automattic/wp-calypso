@@ -148,6 +148,18 @@ test( 'uses the singular for one threat', async () => {
 	).toBeVisible();
 } );
 
+test( 'renders the sentence without a raw paragraph so it lines up with the notice icon', async () => {
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	renderForm();
+
+	const sentence = await screen.findByText(
+		'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.'
+	);
+	expect( sentence.tagName ).not.toBe( 'P' );
+	expect( sentence.closest( 'p' ) ).toBeNull();
+	expect( sentence.closest( '.dashboard-notice__description' ) ).not.toBeNull();
+} );
+
 test( 'keeps other disabled reasons', async () => {
 	const user = userEvent.setup();
 	mockBackups( { known_threats: knownThreats( 3 ) } );
