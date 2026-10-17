@@ -252,7 +252,7 @@
 		"@types/ga-gtag": "^1.2.0",
 		"@types/gtag.js": "^0.0.20",
 		"@types/superagent": "^4.1.24",
-		"@types/wordpress__blocks": "^12.5.17",
+		"@types/wordpress__blocks": "^12.5.18",
 		"@typescript-eslint/eslint-plugin": "^8.71.1",
 		"@typescript-eslint/parser": "^8.71.1",
 		"@wordpress/eslint-plugin": "^25.4.0",
