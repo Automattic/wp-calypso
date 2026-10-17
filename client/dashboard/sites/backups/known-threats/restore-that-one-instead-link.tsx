@@ -32,6 +32,7 @@ export function RestoreThatOneInsteadLink( {
 
 	return (
 		<RouterLinkButton
+			__next40pxDefaultSize
 			variant="link"
 			to={ restoreLinkTo }
 			params={ { siteSlug, rewindId: String( latestWithoutKnownThreats ) } }

@@ -195,7 +195,9 @@ describe( 'KnownThreatsNotice', () => {
 		mockList( counts( 3 ), { latest_without_known_threats: 150 } );
 		nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
 		renderWithProvider( <Harness /> );
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Show threats' } ) );
+		const toggle = await screen.findByRole( 'button', { name: 'Show threats' } );
+		expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
+		await userEvent.click( toggle );
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Hide threats' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveAttribute(

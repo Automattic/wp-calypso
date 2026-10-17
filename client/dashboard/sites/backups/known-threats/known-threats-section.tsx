@@ -39,6 +39,7 @@ export function KnownThreatsSection( {
 	return (
 		<div>
 			<Button
+				__next40pxDefaultSize
 				variant="tertiary"
 				size="compact"
 				aria-expanded={ isOpen }

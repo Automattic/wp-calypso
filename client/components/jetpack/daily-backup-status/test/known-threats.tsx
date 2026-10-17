@@ -117,6 +117,7 @@ describe( 'BackupKnownThreats', () => {
 			name: 'Known threats (1) Show threats',
 		} );
 		expect( toggle ).toHaveTextContent( 'Known threats (1) Show threats' );
+		expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
 		expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
 		await userEvent.click( toggle );
 
@@ -128,6 +129,9 @@ describe( 'BackupKnownThreats', () => {
 		expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveAttribute(
 			'href',
 			'/backup/example.wordpress.com/restore/150'
+		);
+		expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveClass(
+			'is-next-40px-default-size'
 		);
 		expect(
 			screen.getByRole( 'button', { name: 'Known threats (1) Hide threats' } )

@@ -91,6 +91,7 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 			{ hasScan && (
 				<div>
 					<Button
+						__next40pxDefaultSize
 						variant="link"
 						aria-expanded={ isOpen }
 						onClick={ () => setIsOpen( ( open ) => ! open ) }

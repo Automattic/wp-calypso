@@ -242,6 +242,7 @@ test( 'expands the threats table for Scan sites', async () => {
 
 	const toggle = await screen.findByRole( 'button', { name: 'Known threats (3) Show threats' } );
 	expect( toggle ).toHaveTextContent( 'Known threats (3) Show threats' );
+	expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
 	await user.click( toggle );
 
 	expect( await screen.findByText( 'Backdoor.PHP.Agent' ) ).toBeVisible();
@@ -254,6 +255,9 @@ test( 'expands the threats table for Scan sites', async () => {
 	expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveAttribute(
 		'href',
 		expect.stringContaining( '/backups/1792240000/restore' )
+	);
+	expect( screen.getByRole( 'link', { name: 'Restore that one instead' } ) ).toHaveClass(
+		'is-next-40px-default-size'
 	);
 	expect( threatsScope.isDone() ).toBe( true );
 	expect( screen.getByRole( 'button', { name: 'Known threats (3) Hide threats' } ) ).toBeVisible();

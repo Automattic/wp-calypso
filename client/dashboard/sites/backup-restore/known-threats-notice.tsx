@@ -71,6 +71,7 @@ export default function KnownThreatsNotice( {
 				{ hasScan && (
 					<div>
 						<Button
+							__next40pxDefaultSize
 							variant="link"
 							aria-expanded={ isOpen }
 							onClick={ () => setIsOpen( ( open ) => ! open ) }
@@ -91,6 +92,7 @@ export default function KnownThreatsNotice( {
 				) }
 				{ requireAcknowledgement && (
 					<CheckboxControl
+						__nextHasNoMarginBottom
 						checked={ acknowledged }
 						onChange={ ( value ) => onAcknowledgedChange?.( value ) }
 						label={ __(

@@ -40,6 +40,7 @@ export function RestoreThatOneInsteadLink( {
 
 	return (
 		<Button
+			__next40pxDefaultSize
 			variant="link"
 			href={ backupRestorePath( siteSlug, String( latestWithoutKnownThreats ) ) }
 		>
@@ -175,6 +176,7 @@ export function BackupKnownThreats( {
 	return (
 		<div className="backup-known-threats">
 			<Button
+				__next40pxDefaultSize
 				variant="tertiary"
 				size="compact"
 				aria-expanded={ isOpen }
