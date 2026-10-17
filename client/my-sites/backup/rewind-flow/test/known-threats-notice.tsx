@@ -151,6 +151,17 @@ describe( 'KnownThreatsNotice', () => {
 		expect( onChange ).toHaveBeenLastCalledWith( true );
 	} );
 
+	it( 'uses the singular for one threat', async () => {
+		mockList( counts( 1 ) );
+		renderWithProvider( <Harness /> );
+
+		expect(
+			await screen.findByText(
+				'This backup is known to contain 1 security threat. Restoring it may bring malware back to your site.'
+			)
+		).toBeVisible();
+	} );
+
 	it( 'shows no checkbox when acknowledgement is not required', async () => {
 		mockList( counts( 3 ) );
 		renderWithProvider(

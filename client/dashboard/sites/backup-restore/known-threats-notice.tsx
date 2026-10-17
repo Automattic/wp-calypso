@@ -2,7 +2,7 @@ import { HostingFeatures, isFlagged } from '@automattic/api-core';
 import { siteBackupKnownThreatsQuery, siteBackupThreatsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Button, CheckboxControl, __experimentalVStack as VStack } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import Notice from '../../components/notice';
 import { hasHostingFeature } from '../../utils/site-features';
@@ -54,8 +54,10 @@ export default function KnownThreatsNotice( {
 				<p>
 					{ sprintf(
 						// translators: %d is the number of known security threats in the backup
-						__(
-							'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.'
+						_n(
+							'This backup is known to contain %d security threat. Restoring it may bring malware back to your site.',
+							'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.',
+							knownThreats.flagged
 						),
 						knownThreats.flagged
 					) }

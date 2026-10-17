@@ -71,8 +71,10 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 			<RewindFlowNotice
 				gridicon="notice"
 				title={ translate(
+					'This backup is known to contain %d security threat. Restoring it may bring malware back to your site.',
 					'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.',
 					{
+						count: knownThreats.flagged,
 						args: knownThreats.flagged,
 						comment: '%d is the number of known security threats in the backup',
 					}

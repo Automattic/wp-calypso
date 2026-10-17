@@ -137,6 +137,17 @@ test( 'disables Restore now until the box is ticked', async () => {
 	expect( restoreButton() ).toBeDisabled();
 } );
 
+test( 'uses the singular for one threat', async () => {
+	mockBackups( { known_threats: knownThreats( 1 ) } );
+	renderForm();
+
+	expect(
+		await screen.findByText(
+			'This backup is known to contain 1 security threat. Restoring it may bring malware back to your site.'
+		)
+	).toBeVisible();
+} );
+
 test( 'keeps other disabled reasons', async () => {
 	const user = userEvent.setup();
 	mockBackups( { known_threats: knownThreats( 3 ) } );

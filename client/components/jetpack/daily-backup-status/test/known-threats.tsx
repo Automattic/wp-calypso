@@ -133,6 +133,21 @@ describe( 'BackupKnownThreats', () => {
 		expect( details.isDone() ).toBe( true );
 	} );
 
+	it( 'uses the singular vulnerable note for one version', async () => {
+		mockList( [ backupWith( counts( 1, 1 ) ) ] );
+		nock( BASE )
+			.get( THREATS_PATH )
+			.query( true )
+			.reply( 200, { ...threatsBody, summary: counts( 1, 1 ) } );
+		renderIt();
+
+		await userEvent.click( await screen.findByRole( 'button', { name: /Show threats/ } ) );
+
+		expect(
+			await screen.findByText( 'Also: 1 vulnerable plugin or theme version.' )
+		).toBeVisible();
+	} );
+
 	it( 'makes no request without a rewind id', async () => {
 		const scope = mockList( [ backupWith( counts( 1 ) ) ] );
 		const { container } = renderWithProvider( <BackupKnownThreats siteId={ SITE_ID } /> );

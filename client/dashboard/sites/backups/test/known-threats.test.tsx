@@ -257,6 +257,25 @@ test( 'expands the threats table for Scan sites', async () => {
 	expect( screen.getByRole( 'button', { name: /Hide threats/ } ) ).toBeVisible();
 } );
 
+test( 'uses the singular vulnerable note for one version', async () => {
+	const user = userEvent.setup();
+	nock( API_BASE )
+		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/${ flaggedRewindId }/threats` )
+		.reply( 200, {
+			backup_id: 1792244294,
+			cutoff: null,
+			summary: { ...knownThreats( 3 ), vulnerable: 1 },
+			count: 0,
+			truncated: false,
+			threats: [],
+		} );
+	renderPage( { withScan: true, backups: flaggedBackups, selected: flaggedRewindId } );
+
+	await user.click( await screen.findByRole( 'button', { name: /Show threats/ } ) );
+
+	expect( await screen.findByText( 'Also: 1 vulnerable plugin or theme version.' ) ).toBeVisible();
+} );
+
 test( 'shows the count only without Scan', async () => {
 	const threatsScope = nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/${ flaggedRewindId }/threats` )

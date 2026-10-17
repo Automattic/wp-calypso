@@ -107,10 +107,15 @@ export function BackupKnownThreatsTable( {
 			</table>
 			{ threats.summary.vulnerable > 0 && (
 				<p>
-					{ translate( 'Also: %d vulnerable plugin or theme versions.', {
-						args: threats.summary.vulnerable,
-						comment: '%d is the number of vulnerable plugin or theme versions',
-					} ) }
+					{ translate(
+						'Also: %d vulnerable plugin or theme version.',
+						'Also: %d vulnerable plugin or theme versions.',
+						{
+							count: threats.summary.vulnerable,
+							args: threats.summary.vulnerable,
+							comment: '%d is the number of vulnerable plugin or theme versions',
+						}
+					) }
 				</p>
 			) }
 			{ showRestoreLink && (

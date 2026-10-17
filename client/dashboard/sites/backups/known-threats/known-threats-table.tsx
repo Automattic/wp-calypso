@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { useIntlLocale } from '../../../app/locale';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 import { RestoreThatOneInsteadLink } from './restore-that-one-instead-link';
@@ -39,7 +39,11 @@ export function KnownThreatsTable( {
 
 	const vulnerableNote = sprintf(
 		// translators: %d is the number of vulnerable plugin or theme versions
-		__( 'Also: %d vulnerable plugin or theme versions.' ),
+		_n(
+			'Also: %d vulnerable plugin or theme version.',
+			'Also: %d vulnerable plugin or theme versions.',
+			threats.summary.vulnerable
+		),
 		threats.summary.vulnerable
 	);
 
