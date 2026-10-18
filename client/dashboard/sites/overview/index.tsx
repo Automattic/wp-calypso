@@ -48,6 +48,10 @@ import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { EmailBlockNotice, getEmailBlock } from './email-block-notice';
 import { StorageWarningBanner, useShouldShowStorageWarningBanner } from './storage-warning-banner';
+import {
+	SuggestedPrimaryDomainNotice,
+	useSuggestedPrimaryDomain,
+} from './suggested-primary-domain-notice';
 import type { StaticSiteImportSearch } from '../overview-static-site-import';
 import type { Site } from '@automattic/api-core';
 import './style.scss';
@@ -198,6 +202,7 @@ function SiteOverview( {
 	const wpAdminButtonRef = useRef( null );
 
 	const isStorageWarningVisible = useShouldShowStorageWarningBanner( site );
+	const suggestedPrimaryDomain = useSuggestedPrimaryDomain( site );
 	const siteRequiresTwoStep = useSiteRequiresTwoStep( site );
 	const showTwoStepRequiredNotice = supports.me && siteRequiresTwoStep;
 	const importSearch: StaticSiteImportSearch = useSearch( { strict: false } );
@@ -278,6 +283,14 @@ function SiteOverview( {
 						{ showTwoStepRequiredNotice && <TwoStepRequiredNotice site={ site } /> }
 						{ !! getEmailBlock( site ) && <EmailBlockNotice site={ site } /> }
 						{ isStorageWarningVisible && <StorageWarningBanner site={ site } /> }
+						{ suggestedPrimaryDomain && (
+							// Keyed by site so dismissal and the impression latch reset on site switch.
+							<SuggestedPrimaryDomainNotice
+								key={ site.ID }
+								site={ site }
+								{ ...suggestedPrimaryDomain }
+							/>
+						) }
 					</SitesNoticeArbiter>
 				</>
 			}

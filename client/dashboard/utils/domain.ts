@@ -163,6 +163,40 @@ export function canSetAsPrimaryIgnoringSsl( {
 	return canSetAsPrimary( { domain, site, user } ) && ! ( site.options?.is_redirect ?? false );
 }
 
+/**
+ * Returns the custom domain to suggest as the site address, if the site still uses its
+ * default address and exactly one custom domain could replace it (e.g. right after buying one).
+ */
+export function getSuggestedPrimaryDomain( {
+	domains,
+	site,
+	user,
+}: {
+	domains: DomainSummary[];
+	site: Site;
+	user: User;
+} ): { domain: string; currentAddress: string } | undefined {
+	const currentPrimaryDomain = domains.find( ( domain ) => domain.primary_domain );
+	if (
+		currentPrimaryDomain?.subtype.id !== DomainSubtype.DEFAULT_ADDRESS ||
+		domains.some( isPendingPrimaryDomain ) ||
+		! hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN )
+	) {
+		return undefined;
+	}
+
+	const candidates = domains.filter(
+		( domain ) =>
+			( domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
+				domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) &&
+			canSetAsPrimaryIgnoringSsl( { domain, site, user } )
+	);
+
+	return candidates.length === 1
+		? { domain: candidates[ 0 ].domain, currentAddress: currentPrimaryDomain.domain }
+		: undefined;
+}
+
 export function hasGSuiteWithUs( domain: Domain ) {
 	const status = domain.google_apps_subscription?.status;
 	return !! status && ! [ 'no_subscription', 'other_provider' ].includes( status );

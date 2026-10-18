@@ -3,6 +3,7 @@
  */
 
 import { screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
@@ -54,6 +55,9 @@ let mediaStorageResponse: [ number, unknown ];
 // upsell card's no-good-suggestion fallback.
 let domainSuggestionsResponse: unknown;
 
+// Default: no domains. Tests can override to exercise the suggested primary domain notice.
+let allDomainsResponse: unknown[];
+
 function mockSite( mockedSite: Site ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ mockedSite.slug }` )
@@ -99,10 +103,11 @@ describe( '<SiteOverview>', () => {
 			.query( true )
 			.reply( () => [ agencyBlogResponse.status, agencyBlogResponse.body ] );
 
+		allDomainsResponse = [];
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/all-domains' )
 			.query( true )
-			.reply( 200, { domains: [] } );
+			.reply( () => [ 200, { domains: allDomainsResponse } ] );
 
 		domainSuggestionsResponse = [ { domain_name: 'test-site.com', product_slug: 'dotcom_domain' } ];
 		nock( 'https://public-api.wordpress.com' )
@@ -267,6 +272,84 @@ describe( '<SiteOverview>', () => {
 		expect( await getCard( 'Plan' ) ).toBeVisible();
 		expect( await getCard( 'Latest activity' ) ).toBeVisible();
 		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
+	} );
+
+	describe( 'suggested primary domain notice', () => {
+		const siteWithCustomDomainPlan = {
+			...site,
+			plan: {
+				...site.plan,
+				features: { active: [ ...site.plan!.features.active, 'set-primary-custom-domain' ] },
+			},
+		} as Site;
+
+		const userWithMeta = {
+			ID: 1,
+			username: 'testuser',
+			meta: { data: { flags: { active_flags: [] } } },
+		} as unknown as User;
+
+		const domainBase = {
+			blog_id: site.ID,
+			domain_status: { id: 'active', label: 'Active', type: 'success' },
+			set_primary_domain_pending: false,
+		};
+
+		beforeEach( () => {
+			allDomainsResponse = [
+				{
+					...domainBase,
+					domain: site.slug,
+					subtype: { id: 'default_address', label: 'Default Address' },
+					primary_domain: true,
+					can_set_as_primary: false,
+				},
+				{
+					...domainBase,
+					domain: 'mynewdomain.blog',
+					subtype: { id: 'domain_registration', label: 'Domain Registration' },
+					primary_domain: false,
+					can_set_as_primary: true,
+				},
+			];
+			mockSite( siteWithCustomDomainPlan );
+		} );
+
+		test( 'offers to make the only custom domain the primary site address', async () => {
+			const user = userEvent.setup();
+			const setPrimaryRequest = nock( 'https://public-api.wordpress.com' )
+				.post( `/rest/v1.1/sites/${ site.ID }/domains/primary`, { domain: 'mynewdomain.blog' } )
+				.reply( 200, {} );
+
+			render( <SiteOverview siteSlug={ site.slug } />, { user: userWithMeta } );
+
+			expect(
+				await screen.findByText( 'Make mynewdomain.blog your primary site address.' )
+			).toBeVisible();
+
+			await user.click(
+				screen.getByRole( 'button', { name: 'Make mynewdomain.blog primary site address' } )
+			);
+
+			await waitFor( () => expect( setPrimaryRequest.isDone() ).toBe( true ) );
+			await waitFor( () =>
+				expect(
+					screen.queryByText( 'Make mynewdomain.blog your primary site address.' )
+				).not.toBeInTheDocument()
+			);
+		} );
+
+		test( 'hides the notice for the rest of the visit on "Do it later"', async () => {
+			const user = userEvent.setup();
+
+			render( <SiteOverview siteSlug={ site.slug } />, { user: userWithMeta } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Do it later' } ) );
+
+			expect(
+				screen.queryByText( 'Make mynewdomain.blog your primary site address.' )
+			).not.toBeInTheDocument();
+		} );
 	} );
 
 	test( 'renders the overview of a site with a paid plan pending Atomic activation', async () => {

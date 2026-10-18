@@ -238,7 +238,7 @@ export const siteOverviewRoute = createRoute( {
 			source: asString( search.source ),
 		};
 	},
-	loader: async ( { params: { siteSlug }, preload } ) => {
+	loader: async ( { context, params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
 			const notGroup = getActivityLogHiddenGroups( site );
@@ -264,6 +264,13 @@ export const siteOverviewRoute = createRoute( {
 			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ).catch( () => {
 				// Error gets logged at ErrorBoundary.
 			} ),
+
+			// The suggested primary domain notice is decided from the domains list. Only sites
+			// that can set a custom primary domain can show it, so the rest don't wait for it.
+			hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN ) &&
+				queryClient.ensureQueryData( context.config.queries.domainsQuery() ).catch( () => {
+					// Error gets logged at ErrorBoundary.
+				} ),
 		] );
 	},
 } ).lazy( () =>
