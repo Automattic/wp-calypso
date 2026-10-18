@@ -1,4 +1,4 @@
-import { getBackupPeriod, isFlagged } from '@automattic/api-core';
+import { getKnownThreatsForRewindId, isFlagged } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -53,6 +53,9 @@ const getActivityLogTypeDescriptionFromName = (
 	const slug = getActivityLogTypeSlugFromName( name );
 	return activityLogTypes?.[ slug ]?.name ?? slug;
 };
+
+const isBackupCompleteRow = ( item: Activity ): boolean =>
+	item.activityIsRewindable && /^rewind__backup(_only)?_complete/.test( item.activityName ?? '' );
 
 export function useActivityFields( {
 	timezoneString,
@@ -125,11 +128,11 @@ export function useActivityFields( {
 					return `${ item.activityTitle }: ${ item.activityDescription.textDescription }`;
 				},
 				render: ( { item } ) => {
-					// Only the backup itself is marked, not every restore point after it.
+					// Only the backup's own row is marked, not every restore point after it.
 					const knownThreats =
-						item.activityIsRewindable && item.rewindId
-							? knownThreatsPage?.byPeriod[ getBackupPeriod( item.rewindId ) ]
-							: undefined;
+						knownThreatsPage && item.rewindId && isBackupCompleteRow( item )
+							? getKnownThreatsForRewindId( knownThreatsPage, item.rewindId )
+							: null;
 					if ( ! knownThreats || ! isFlagged( knownThreats ) ) {
 						return <ActivityEvent activity={ item } />;
 					}
