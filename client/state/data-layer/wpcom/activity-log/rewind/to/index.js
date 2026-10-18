@@ -48,11 +48,12 @@ export const requestRestore = ( action ) =>
 		...( action.acknowledgeThreats ? { acknowledge_threats: true } : {} ),
 	} );
 
-const requestGranularRestore = ( action ) =>
+export const requestGranularRestore = ( action ) =>
 	requestRewind( action, {
 		types: 'paths',
 		include_path_list: action.includePaths,
 		...( action.excludePaths ? { exclude_path_list: action.excludePaths } : {} ),
+		...( action.acknowledgeThreats ? { acknowledge_threats: true } : {} ),
 	} );
 
 const requestClone = ( action ) => requestRewind( action, action.payload );

@@ -1,4 +1,5 @@
 import {
+	REWIND_GRANULAR_RESTORE,
 	REWIND_RESTORE,
 	REWIND_RESTORE_DISMISS,
 	REWIND_RESTORE_DISMISS_PROGRESS,
@@ -47,6 +48,7 @@ const updateProgress = (
 export const restoreProgress = keyedReducer( 'siteId', ( state = {}, action ) => {
 	switch ( action.type ) {
 		case REWIND_RESTORE:
+		case REWIND_GRANULAR_RESTORE:
 			return startProgress( state, action );
 		case REWIND_RESTORE_DISMISS_PROGRESS:
 			return null;

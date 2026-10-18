@@ -1,11 +1,17 @@
 import { NOTICE_CREATE } from 'calypso/state/action-types';
 import {
 	getRewindRestoreProgress,
+	rewindGranularRestore,
 	rewindRestore,
 	updateRewindRestoreProgress,
 } from 'calypso/state/activity-log/actions';
 import { requestRewindState } from 'calypso/state/rewind/state/actions';
-import { receiveRestoreError, receiveRestoreSuccess, requestRestore } from '../';
+import {
+	receiveRestoreError,
+	receiveRestoreSuccess,
+	requestGranularRestore,
+	requestRestore,
+} from '../';
 
 const siteId = 77203074;
 const timestamp = 1496768464;
@@ -35,6 +41,35 @@ describe( 'requestRestore', () => {
 		expect( unacknowledged.body ).not.toHaveProperty( 'acknowledge_threats' );
 		expect( legacyCall.body ).not.toHaveProperty( 'acknowledge_threats' );
 		expect( legacyCall.body ).toEqual( expect.objectContaining( { types, force_rewind: true } ) );
+	} );
+} );
+
+describe( 'requestGranularRestore', () => {
+	test( 'sends acknowledge_threats when acknowledged', () => {
+		const { body } = requestGranularRestore(
+			rewindGranularRestore( siteId, timestamp, 'f1,f2', '', true )
+		);
+
+		expect( body ).toEqual(
+			expect.objectContaining( {
+				types: 'paths',
+				include_path_list: 'f1,f2',
+				acknowledge_threats: true,
+			} )
+		);
+	} );
+
+	test( 'omits acknowledge_threats otherwise', () => {
+		const unacknowledged = requestGranularRestore(
+			rewindGranularRestore( siteId, timestamp, 'f1', '', false )
+		);
+		const legacyCall = requestGranularRestore( rewindGranularRestore( siteId, timestamp, 'f1' ) );
+
+		expect( unacknowledged.body ).not.toHaveProperty( 'acknowledge_threats' );
+		expect( legacyCall.body ).not.toHaveProperty( 'acknowledge_threats' );
+		expect( legacyCall.body ).toEqual(
+			expect.objectContaining( { types: 'paths', include_path_list: 'f1', force_rewind: true } )
+		);
 	} );
 } );
 

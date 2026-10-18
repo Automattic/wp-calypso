@@ -2,6 +2,7 @@ import deepFreeze from 'deep-freeze';
 import {
 	dismissRewindRestoreProgress,
 	rewindRequestDismiss,
+	rewindGranularRestore,
 	rewindRequestRestore,
 	rewindRestore,
 } from '../../actions';
@@ -17,6 +18,23 @@ const TIMESTAMP = 1496926224;
 describe( 'restoreProgress', () => {
 	test( 'should start at 0% queued', () => {
 		const state = restoreProgress( undefined, rewindRestore( SITE_ID, TIMESTAMP ) );
+		expect( state[ SITE_ID ] ).toEqual( {
+			errorCode: '',
+			failureReason: '',
+			message: '',
+			percent: 0,
+			status: 'queued',
+			timestamp: TIMESTAMP,
+			rewindId: '',
+		} );
+	} );
+
+	test( 'should start a granular restore at 0% queued, dropping an earlier error', () => {
+		const prevState = deepFreeze( {
+			[ SITE_ID ]: { status: 'failed', errorCode: 'threats_not_acknowledged' },
+		} );
+
+		const state = restoreProgress( prevState, rewindGranularRestore( SITE_ID, TIMESTAMP, 'f1' ) );
 		expect( state[ SITE_ID ] ).toEqual( {
 			errorCode: '',
 			failureReason: '',
