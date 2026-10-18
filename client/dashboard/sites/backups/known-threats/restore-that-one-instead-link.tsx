@@ -34,7 +34,7 @@ export function RestoreThatOneInsteadLink( {
 			to={ restoreLinkTo }
 			params={ { siteSlug, rewindId: String( latestWithoutKnownThreats ) } }
 		>
-			{ __( 'Restore this one instead' ) }
+			{ __( 'Restore this backup instead' ) }
 		</RouterLinkButton>
 	);
 }

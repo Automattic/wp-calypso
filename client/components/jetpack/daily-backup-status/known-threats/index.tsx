@@ -95,7 +95,7 @@ export function RestoreThatOneInsteadLink( {
 			className="backup-known-threats__restore-link"
 			href={ backupRestorePath( siteSlug, resolvedRewindId ) }
 		>
-			{ translate( 'Restore this one instead' ) }
+			{ translate( 'Restore this backup instead' ) }
 		</Button>
 	);
 }
