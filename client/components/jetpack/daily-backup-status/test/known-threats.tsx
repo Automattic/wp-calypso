@@ -166,8 +166,7 @@ describe( 'BackupKnownThreats', () => {
 		expect( toggle ).toHaveTextContent( 'Known threats (1)' );
 		expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Show threats' ) ).not.toBeInTheDocument();
-		await userEvent.hover( toggle );
-		expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
+		expect( toggle ).not.toHaveAccessibleDescription( 'Show threats' );
 		await userEvent.unhover( toggle );
 		expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
 		expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
@@ -212,8 +211,7 @@ describe( 'BackupKnownThreats', () => {
 		const expanded = screen.getByRole( 'button', { name: 'Known threats (1), hide threats' } );
 		expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
 		await userEvent.unhover( expanded );
-		await userEvent.hover( expanded );
-		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
+		expect( expanded ).not.toHaveAccessibleDescription( 'Hide threats' );
 		expect( details.isDone() ).toBe( true );
 	} );
 

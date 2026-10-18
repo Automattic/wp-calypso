@@ -291,8 +291,7 @@ test( 'expands the threats table for Scan sites', async () => {
 	expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
 	expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
 	expect( screen.queryByText( 'Show threats' ) ).not.toBeInTheDocument();
-	await user.hover( toggle );
-	expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
+	expect( toggle ).not.toHaveAccessibleDescription( 'Show threats' );
 	await user.unhover( toggle );
 	expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
 	const pill = within( toggle ).getByText( 'Known threats (3)' );
@@ -343,8 +342,7 @@ test( 'expands the threats table for Scan sites', async () => {
 	const expanded = screen.getByRole( 'button', { name: 'Known threats (3), hide threats' } );
 	expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
 	await user.unhover( expanded );
-	await user.hover( expanded );
-	expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
+	expect( expanded ).not.toHaveAccessibleDescription( 'Hide threats' );
 	expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
 } );
 

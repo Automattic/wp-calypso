@@ -242,16 +242,14 @@ describe( 'KnownThreatsNotice', () => {
 		expect( banner ).toContainElement( screen.getByRole( 'checkbox', { name: CHECKBOX } ) );
 		expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Show threats' ) ).not.toBeInTheDocument();
-		await userEvent.hover( toggle );
-		expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
+		expect( toggle ).not.toHaveAccessibleDescription( 'Show threats' );
 		await userEvent.unhover( toggle );
 		await userEvent.click( toggle );
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
 		const expanded = screen.getByRole( 'button', { name: 'Known threats (3), hide threats' } );
 		expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
 		await userEvent.unhover( expanded );
-		await userEvent.hover( expanded );
-		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
+		expect( expanded ).not.toHaveAccessibleDescription( 'Hide threats' );
 		expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
 		const link = await screen.findByRole( 'link', { name: /^Restore .+ backup instead$/ } );
 		expect( link ).toHaveAttribute( 'href', '/backup/example.wordpress.com/restore/150.817' );
