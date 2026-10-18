@@ -47,7 +47,11 @@ describe( 'convertBigSkyMessageToUIMessage', () => {
 
 		expect( message.content ).toEqual( [
 			text,
-			{ type: 'component', component: expect.any( Function ) },
+			{
+				type: 'component',
+				component: expect.any( Function ),
+				componentProps: { messageId: 'message-3' },
+			},
 		] );
 	} );
 } );
