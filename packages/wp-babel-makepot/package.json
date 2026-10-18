@@ -37,7 +37,7 @@
 		"glob": "^7.2.3"
 	},
 	"devDependencies": {
-		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"i18n-calypso": "workspace:^",
 		"jest": "^30.5.2",
