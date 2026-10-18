@@ -73,7 +73,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
-		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-a11y": "^10.6.2",

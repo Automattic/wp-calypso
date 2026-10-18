@@ -61,7 +61,6 @@
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-eslint-config": "workspace:^",
-		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"@automattic/webpack-inline-constant-exports-plugin": "workspace:^",

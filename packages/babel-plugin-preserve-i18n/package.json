@@ -18,7 +18,6 @@
 	"license": "GPL-2.0-or-later",
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
-		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

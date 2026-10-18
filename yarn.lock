@@ -552,7 +552,6 @@ __metadata:
   resolution: "@automattic/babel-plugin-preserve-i18n@workspace:packages/babel-plugin-preserve-i18n"
   dependencies:
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
   languageName: unknown
   linkType: soft
@@ -567,7 +566,6 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
@@ -664,7 +662,6 @@ __metadata:
   resolution: "@automattic/calypso-apps-builder@workspace:packages/calypso-apps-builder"
   dependencies:
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     chokidar: "npm:^3.6.0"
     html-webpack-plugin: "npm:^5.6.3"
@@ -707,7 +704,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/webpack-rtl-plugin": "workspace:^"
@@ -752,7 +748,6 @@ __metadata:
   resolution: "@automattic/calypso-color-schemes@workspace:packages/calypso-color-schemes"
   dependencies:
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/color-studio": "npm:^4.1.0"
     "@types/chroma-js": "npm:^2.4.5"
@@ -785,7 +780,6 @@ __metadata:
   resolution: "@automattic/calypso-doctor@workspace:packages/calypso-doctor"
   dependencies:
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     chalk: "npm:^4.1.2"
     yargs: "npm:^17.0.1"
@@ -799,7 +793,6 @@ __metadata:
   resolution: "@automattic/calypso-e2e@workspace:packages/calypso-e2e"
   dependencies:
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
@@ -841,7 +834,6 @@ __metadata:
   resolution: "@automattic/calypso-jest@workspace:packages/calypso-jest"
   dependencies:
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": "npm:^7.27.1"
     "@mswjs/interceptors": "npm:^0.41.0"
@@ -859,7 +851,6 @@ __metadata:
   resolution: "@automattic/calypso-package-generator@workspace:packages/calypso-package-generator"
   dependencies:
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     plop: "npm:^3.1.2"
   bin:
@@ -944,7 +935,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@storybook/addon-docs": "npm:^10.6.2"
     "@storybook/addon-themes": "npm:^10.6.2"
@@ -1301,7 +1291,6 @@ __metadata:
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
@@ -1386,7 +1375,6 @@ __metadata:
   resolution: "@automattic/eslint-plugin-json@workspace:packages/eslint-plugin-package-json"
   dependencies:
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@wordpress/npm-package-json-lint-config": "npm:^5.48.0"
     eslint-plugin-json-es: "npm:^1.6.0"
@@ -1783,7 +1771,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     jest: "npm:^30.5.2"
     postcss: "npm:^8.5.15"
@@ -1908,7 +1895,6 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -1962,7 +1948,6 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@wordpress/api-fetch": "npm:^7.48.0"
     "@wordpress/base-styles": "npm:^9.1.0"
     "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch"
@@ -2056,7 +2041,6 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
@@ -2683,7 +2667,6 @@ __metadata:
   resolution: "@automattic/webpack-inline-constant-exports-plugin@workspace:packages/webpack-inline-constant-exports-plugin"
   dependencies:
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     rimraf: "npm:^3.0.2"
     webpack: "npm:^5.99.8"
@@ -2713,7 +2696,6 @@ __metadata:
   dependencies:
     "@automattic/babel-plugin-i18n-calypso": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/cli": "npm:^7.27.2"
     "@babel/core": "npm:^7.27.1"
@@ -2740,7 +2722,6 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@babel/runtime": "npm:^7.27.1"
@@ -14446,7 +14427,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@electron/notarize": "npm:^2.4.0"
     "@electron/rebuild": "npm:4.0.4"
     "@playwright/browser-chromium": "npm:1.57.0"
@@ -16058,7 +16038,6 @@ __metadata:
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-paypal": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
@@ -22462,7 +22441,6 @@ __metadata:
   resolution: "i18n-calypso-cli@workspace:packages/i18n-calypso-cli"
   dependencies:
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     commander: "npm:^5.1.0"
     debug: "npm:^4.4.1"
@@ -36289,7 +36267,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-e2e": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@playwright/browser-chromium": "npm:1.57.0"
     "@playwright/test": "npm:1.57.0"
@@ -36329,7 +36306,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/runtime": "npm:^7.27.1"
     debug: "npm:^4.4.1"
@@ -36360,7 +36336,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": "npm:^7.27.1"
     "@babel/runtime": "npm:^7.27.1"
