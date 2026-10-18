@@ -419,7 +419,13 @@ test( 'shows no Show threats toggle without Scan', async () => {
 	expect( screen.getByRole( 'checkbox', { name: /I understand/ } ) ).toBeVisible();
 } );
 
-test( 'granular form shows the notice without a checkbox', async () => {
+test( 'granular form requires the acknowledgement before restoring selected files', async () => {
+	const user = userEvent.setup();
+	const onRestoreInitiate = jest.fn();
+	const restoreScope = nock( API_BASE )
+		.post( new RegExp( `/activity-log/${ siteId }/rewind/to/` ) )
+		.query( true )
+		.reply( 200, { restore_id: '42' } );
 	mockBackups( { known_threats: knownThreats( 3 ) } );
 	render(
 		<SiteBackupGranularRestoreForm
@@ -428,15 +434,41 @@ test( 'granular form shows the notice without a checkbox', async () => {
 			siteId={ siteId }
 			rewindId={ rewindId }
 			restorePointDate="Oct 16"
-			onRestoreInitiate={ jest.fn() }
+			onRestoreInitiate={ onRestoreInitiate }
 		/>
 	);
 
-	expect( await screen.findByText( /known to contain 3/ ) ).toBeVisible();
-	await waitFor( () =>
-		expect( screen.queryByRole( 'checkbox', { name: /I understand/ } ) ).not.toBeInTheDocument()
+	const checkbox = await screen.findByRole( 'checkbox', {
+		name: 'I understand this backup contains known threats and want to restore it anyway.',
+	} );
+	const restore = screen.getByRole( 'button', { name: 'Restore selected file' } );
+	expect( restore ).toHaveAttribute( 'aria-disabled', 'true' );
+	expect( restore ).toHaveAccessibleDescription(
+		'To restore this backup, confirm that you understand it contains known threats.'
 	);
-	expect( screen.getByRole( 'button', { name: 'Restore selected file' } ) ).toBeEnabled();
+	await user.hover( restore );
+	expect( await screen.findByRole( 'tooltip', {}, { timeout: 2000 } ) ).toHaveTextContent(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
+	await user.unhover( restore );
+
+	await user.click( restore );
+	expect( restoreScope.isDone() ).toBe( false );
+	expect( onRestoreInitiate ).not.toHaveBeenCalled();
+
+	await user.click( checkbox );
+	expect( speak ).toHaveBeenLastCalledWith( 'You can now restore this backup.' );
+	expect( restore ).toBeEnabled();
+	expect( restore ).not.toHaveAttribute( 'aria-disabled' );
+	expect( restore ).not.toHaveAccessibleDescription();
+
+	await user.click( restore );
+	await waitFor( () =>
+		expect( onRestoreInitiate ).toHaveBeenCalledWith( 42, {
+			known_threats_shown: true,
+			known_threats_acknowledged: true,
+		} )
+	);
 } );
 
 test( 'renders no link when the caller supplies no restore route', async () => {

@@ -45,12 +45,18 @@ jest.mock( '@wordpress/data', () => ( {
 
 Element.prototype.scrollIntoView = jest.fn();
 
+let mockSelectedFilesCount = 0;
+
 jest.mock(
 	'../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
 	() => ( {
 		useFileBrowserContext: () => ( {
 			fileBrowserState: {
-				getCheckList: () => ( { includeList: [], excludeList: [], totalItems: 0 } ),
+				getCheckList: () => ( {
+					includeList: [],
+					excludeList: [],
+					totalItems: mockSelectedFilesCount,
+				} ),
 			},
 			locale: 'en',
 			notices: { showError: jest.fn(), showSuccess: jest.fn() },
@@ -166,6 +172,7 @@ function renderPage( {
 
 afterEach( () => {
 	nock.cleanAll();
+	mockSelectedFilesCount = 0;
 } );
 
 // No Activity Log mock, so the clean backup's completion time is unknown.
@@ -450,5 +457,34 @@ test( 'requires the acknowledgement before restoring a flagged backup from its d
 	).toBeTruthy();
 	expect( speak ).toHaveBeenLastCalledWith(
 		'You can now restore this backup with "Restore to this point", at the top of this panel.'
+	);
+} );
+
+test( 'requires the acknowledgement before restoring selected files from its details', async () => {
+	const user = userEvent.setup();
+	mockSelectedFilesCount = 2;
+	renderPage( { withScan: false, backups: flaggedBackups, selected: flaggedRewindId } );
+
+	const checkbox = await screen.findByRole( 'checkbox', {
+		name: 'I understand this backup contains known threats and want to restore it anyway.',
+	} );
+	const restore = screen.getByRole( 'button', { name: 'Restore selected files' } );
+	expect( restore ).toHaveAttribute( 'aria-disabled', 'true' );
+	expect( restore ).toHaveAccessibleDescription(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
+	await user.hover( restore );
+	expect( await screen.findByRole( 'tooltip', {}, { timeout: 2000 } ) ).toHaveTextContent(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
+	await user.unhover( restore );
+
+	await user.click( checkbox );
+
+	expect( restore ).toBeEnabled();
+	expect( restore ).not.toHaveAttribute( 'aria-disabled' );
+	expect( restore ).not.toHaveAccessibleDescription();
+	expect( speak ).toHaveBeenLastCalledWith(
+		'You can now restore this backup with "Restore selected files", at the top of this panel.'
 	);
 } );
