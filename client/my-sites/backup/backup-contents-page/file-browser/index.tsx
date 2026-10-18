@@ -36,6 +36,8 @@ interface FileBrowserProps {
 	// Optional site data props
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
+	/** Why Restore is held back for now; shown as its tooltip and description. */
+	restoreDisabledHint?: string;
 	/**
 	 * @deprecated This prop will be removed once the new Staging Sync Modal
 	 * in the V2 dashboard (client/dashboard/sites/staging-site-sync-modal/index.tsx) is live.
@@ -60,6 +62,7 @@ function FileBrowser( {
 	siteSlug,
 	hasCredentials,
 	isRestoreEnabled,
+	restoreDisabledHint,
 	displayBackupDate,
 	onTrackEvent,
 	source = 'calypso',
@@ -109,6 +112,7 @@ function FileBrowser( {
 				siteSlug={ siteSlug }
 				hasCredentials={ hasCredentials }
 				isRestoreEnabled={ isRestoreEnabled }
+				restoreDisabledHint={ restoreDisabledHint }
 				onTrackEvent={ onTrackEvent }
 				source={ source }
 				onRequestGranularRestore={ onRequestGranularRestore }

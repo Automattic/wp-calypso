@@ -3,12 +3,14 @@ import {
 	Card,
 	Button,
 	CardBody,
+	Tooltip,
+	VisuallyHidden,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useEffect } from 'react';
+import { useEffect, useId } from 'react';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { Text } from 'calypso/dashboard/components/text';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
@@ -28,6 +30,7 @@ interface FileInfoCardProps {
 	siteSlug: string;
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
+	restoreDisabledHint?: string;
 	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
 	source: 'calypso' | 'dashboard';
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
@@ -42,12 +45,15 @@ function FileInfoCard( {
 	siteSlug,
 	hasCredentials,
 	isRestoreEnabled,
+	restoreDisabledHint,
 	onTrackEvent,
 	source,
 	onRequestGranularRestore,
 }: FileInfoCardProps ) {
 	const { fileBrowserState, locale, notices } = useFileBrowserContext();
 	const { setNodeCheckState } = fileBrowserState;
+	const restoreHintId = useId();
+	const isRestoreHeldBack = !! isRestoreEnabled && !! restoreDisabledHint;
 
 	const {
 		isSuccess,
@@ -374,14 +380,21 @@ function FileInfoCard( {
 							<ButtonStack style={ { width: 'auto', flexShrink: 0 } } alignment="top">
 								{ renderDownloadButton() }
 								{ item.type !== 'wordpress' && (
-									<Button
-										disabled={ ! isRestoreEnabled }
-										onClick={ restoreFile }
-										variant="primary"
-										size="compact"
-									>
-										{ __( 'Restore' ) }
-									</Button>
+									<Tooltip text={ isRestoreHeldBack ? restoreDisabledHint : undefined }>
+										<Button
+											disabled={ ! isRestoreEnabled || isRestoreHeldBack }
+											accessibleWhenDisabled={ isRestoreHeldBack }
+											aria-describedby={ isRestoreHeldBack ? restoreHintId : undefined }
+											onClick={ restoreFile }
+											variant="primary"
+											size="compact"
+										>
+											{ __( 'Restore' ) }
+										</Button>
+									</Tooltip>
+								) }
+								{ isRestoreHeldBack && (
+									<VisuallyHidden id={ restoreHintId }>{ restoreDisabledHint }</VisuallyHidden>
 								) }
 							</ButtonStack>
 						) }
