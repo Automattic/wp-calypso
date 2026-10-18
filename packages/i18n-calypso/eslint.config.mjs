@@ -2,7 +2,7 @@ import calypso from '@automattic/calypso-eslint-config';
 
 /** @type {import('eslint').Linter.Config[]} */
 const config = [
-	...calypso,
+	...calypso( import.meta.dirname ),
 	{
 		files: [ '**/*.md.jsx', '**/*.md.js' ],
 		rules: {

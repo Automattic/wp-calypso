@@ -2,7 +2,7 @@ import calypso, { browserGlobals, nodeConfig } from '@automattic/calypso-eslint-
 
 /** @type {import('eslint').Linter.Config[]} */
 const config = [
-	...calypso,
+	...calypso( import.meta.dirname ),
 	{
 		languageOptions: { globals: browserGlobals },
 		rules: {

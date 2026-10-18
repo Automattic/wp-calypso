@@ -2,7 +2,7 @@ import path from 'node:path';
 import calypso, { nodeConfig } from './index.mjs';
 
 export default [
-	...calypso,
+	...calypso( import.meta.dirname ),
 	{
 		...nodeConfig,
 		rules: {

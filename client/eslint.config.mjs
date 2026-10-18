@@ -9,7 +9,7 @@ const [ , { patterns } ] = restrictedImports;
 
 /** @type {import('eslint').Linter.Config[]} */
 const config = [
-	...calypso,
+	...calypso( import.meta.dirname ),
 	{
 		name: 'calypso/client',
 		// Allow fetch api function usage (and similar)

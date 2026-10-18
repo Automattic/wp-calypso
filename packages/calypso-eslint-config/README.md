@@ -8,7 +8,7 @@ import calypso from '@automattic/calypso-eslint-config';
 
 /** @type {import('eslint').Linter.Config[]} */
 const config = [
-	...calypso,
+	...calypso( import.meta.dirname ),
 	{
 		rules: {
 			// This directory's settings. File patterns are relative to this directory.

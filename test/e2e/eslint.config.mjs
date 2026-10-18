@@ -4,7 +4,7 @@ import playwright from 'eslint-plugin-playwright';
 
 /** @type {import('eslint').Linter.Config[]} */
 const config = defineConfig( [
-	...calypso,
+	...calypso( import.meta.dirname ),
 	{
 		...nodeConfig,
 		name: 'calypso/e2e',
