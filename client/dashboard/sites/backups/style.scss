@@ -50,14 +50,9 @@
 	}
 }
 
-// Same placement as the Activity Log: after the text, centred on its line.
-.dashboard-backups__content {
-	white-space: normal;
-}
-
+// The list column is too narrow for the badge beside the content line, so it gets its own
+// line, lined up with the text above it.
 .dashboard-backups__known-threats {
-	display: inline-block;
-	margin-inline-start: 8px;
-	margin-block: -4px;
-	vertical-align: middle;
+	display: block;
+	margin-block-start: 4px;
 }

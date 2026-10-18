@@ -99,10 +99,10 @@ export function getFields(
 					item.rewind_id && knownThreatsPage
 						? getKnownThreatsForRewindId( knownThreatsPage, item.rewind_id )
 						: null;
-				// Follows the content line, as in the Activity Log; the title is truncated to one line.
+				// Under the content line: the title is truncated to one line in the list.
 				// The always-mounted spans dodge a Google Translate DOM crash (react/react#11538).
 				return (
-					<span className="dashboard-backups__content">
+					<span>
 						<span>{ item.content.text }</span>
 						<span>
 							{ knownThreats && isFlagged( knownThreats ) && (
