@@ -15,7 +15,7 @@ const item = {
 	activity_id: 'a1',
 	rewind_id: '1792244294.123',
 	summary: 'Flagged backup',
-	content: { text: '' },
+	content: { text: '42 plugins, 5 themes' },
 	published: '2026-10-16T10:00:00Z',
 	name: 'rewind__backup_complete_full',
 } as unknown as ActivityLogEntry;
@@ -40,34 +40,34 @@ const renderCell = ( id: string, knownThreatsPage?: BackupsKnownThreatsPage ) =>
 	return <div data-testid={ id }>{ renderFieldCell( { item } ) }</div>;
 };
 
-test( 'shows the badge on the date line, not in the title', async () => {
+test( 'shows the badge after the content line, not in the title', async () => {
 	render(
 		<>
 			{ renderCell( 'title', page ) }
-			{ renderCell( 'date', page ) }
+			{ renderCell( 'content_text', page ) }
 		</>
 	);
 
-	expect( await screen.findByTestId( 'date' ) ).toHaveTextContent( 'Known threats (3)' );
+	expect( await screen.findByTestId( 'content_text' ) ).toHaveTextContent( 'Known threats (3)' );
 	expect( screen.getByTestId( 'title' ) ).not.toHaveTextContent( 'Known threats' );
 } );
 
-function DateCellWithToggle() {
+function ContentCellWithToggle() {
 	const [ knownThreatsPage, setKnownThreatsPage ] = useState< BackupsKnownThreatsPage >();
 	return (
 		<>
 			<button onClick={ () => setKnownThreatsPage( knownThreatsPage ? undefined : page ) }>
 				toggle
 			</button>
-			{ renderCell( 'date', knownThreatsPage ) }
+			{ renderCell( 'content_text', knownThreatsPage ) }
 		</>
 	);
 }
 
-test( 'keeps the date node mounted when the badge appears', async () => {
+test( 'keeps the content node mounted when the badge appears', async () => {
 	const user = userEvent.setup();
-	render( <DateCellWithToggle /> );
-	const date = ( await screen.findByTestId( 'date' ) ).firstChild as HTMLElement;
+	render( <ContentCellWithToggle /> );
+	const date = ( await screen.findByTestId( 'content_text' ) ).firstChild as HTMLElement;
 	const dateText = date.firstChild;
 
 	await user.click( screen.getByRole( 'button', { name: 'toggle' } ) );
