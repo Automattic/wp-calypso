@@ -9,7 +9,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useState } from 'react';
 import Notice from '../../../components/notice';
 import { Text } from '../../../components/text';
 import { hasHostingFeature } from '../../../utils/site-features';
@@ -17,6 +17,7 @@ import { getKnownThreatsWarning, KnownThreatsToggle } from './known-threats-badg
 import { KnownThreatsTable } from './known-threats-table';
 import { RestoreThatOneInsteadLink } from './restore-that-one-instead-link';
 import type { Site } from '@automattic/api-core';
+import type { MutableRefObject } from 'react';
 
 interface KnownThreatsNoticeProps {
 	site: Site;
@@ -26,6 +27,8 @@ interface KnownThreatsNoticeProps {
 	acknowledged?: boolean;
 	onAcknowledgedChange?: ( value: boolean ) => void;
 	onKnownThreatsChange?: ( hasKnownThreats: boolean ) => void;
+	/** Set to the acknowledgement checkbox, so the caller can move focus to it. */
+	acknowledgementRef?: MutableRefObject< HTMLInputElement | null >;
 }
 
 export default function KnownThreatsNotice( {
@@ -36,9 +39,19 @@ export default function KnownThreatsNotice( {
 	acknowledged = false,
 	onAcknowledgedChange,
 	onKnownThreatsChange,
+	acknowledgementRef,
 }: KnownThreatsNoticeProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const threatsRegionId = useId();
+	// CheckboxControl doesn't forward a ref to its input.
+	const acknowledgementWrapperRef = useCallback(
+		( wrapper: HTMLDivElement | null ) => {
+			if ( acknowledgementRef ) {
+				acknowledgementRef.current = wrapper?.querySelector( 'input' ) ?? null;
+			}
+		},
+		[ acknowledgementRef ]
+	);
 	const hasScan = hasHostingFeature( site, HostingFeatures.SCAN_SELF_SERVE );
 	const { data: counts } = useQuery( siteBackupKnownThreatsQuery( site.ID, rewindId ) );
 	const { data: threats, isError: isThreatsError } = useQuery( {
@@ -112,14 +125,16 @@ export default function KnownThreatsNotice( {
 					currentBackupPeriod={ counts.backupPeriod }
 				/>
 				{ requireAcknowledgement && (
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						checked={ acknowledged }
-						onChange={ ( value ) => onAcknowledgedChange?.( value ) }
-						label={ __(
-							'I understand this backup contains known threats and want to restore it anyway.'
-						) }
-					/>
+					<div ref={ acknowledgementWrapperRef }>
+						<CheckboxControl
+							__nextHasNoMarginBottom
+							checked={ acknowledged }
+							onChange={ ( value ) => onAcknowledgedChange?.( value ) }
+							label={ __(
+								'I understand this backup contains known threats and want to restore it anyway.'
+							) }
+						/>
+					</div>
 				) }
 			</VStack>
 		</Notice>

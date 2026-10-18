@@ -468,6 +468,7 @@ test( 'shows the known-threats message on threats_not_acknowledged', async () =>
 	);
 	expect( checkbox ).not.toBeChecked();
 	expect( restoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+	await waitFor( () => expect( checkbox ).toHaveFocus() );
 } );
 
 test( 'keeps the generic message for other restore errors', async () => {

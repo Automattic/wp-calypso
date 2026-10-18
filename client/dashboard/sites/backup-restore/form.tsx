@@ -6,7 +6,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useId, useRef, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import KnownThreatsNotice from '../backups/known-threats/known-threats-notice';
@@ -83,6 +83,7 @@ function SiteBackupRestoreForm( {
 
 	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
 	const [ acknowledged, setAcknowledged ] = useState( false );
+	const acknowledgementRef = useRef< HTMLInputElement | null >( null );
 	const handleKnownThreatsChange = useCallback( ( value: boolean ) => {
 		setHasKnownThreats( value );
 		if ( ! value ) {
@@ -116,6 +117,7 @@ function SiteBackupRestoreForm( {
 				onError: ( error: Error & { error?: string } ) => {
 					if ( error.error === 'threats_not_acknowledged' ) {
 						setAcknowledged( false );
+						acknowledgementRef.current?.focus();
 						createErrorNotice(
 							__(
 								'This backup is known to contain security threats. Acknowledge them to restore it.'
@@ -187,6 +189,7 @@ function SiteBackupRestoreForm( {
 					acknowledged={ acknowledged }
 					onAcknowledgedChange={ setAcknowledged }
 					onKnownThreatsChange={ handleKnownThreatsChange }
+					acknowledgementRef={ acknowledgementRef }
 				/>
 
 				<ButtonStack justify="flex-start">

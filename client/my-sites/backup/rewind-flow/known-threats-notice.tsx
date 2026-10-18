@@ -4,7 +4,7 @@ import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
 import { useQuery } from '@tanstack/react-query';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	BackupKnownThreatsTable,
@@ -16,7 +16,7 @@ import {
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-import type { FunctionComponent } from 'react';
+import type { FunctionComponent, MutableRefObject } from 'react';
 
 import './known-threats-notice.scss';
 
@@ -27,6 +27,8 @@ interface Props {
 	acknowledged?: boolean;
 	onAcknowledgedChange?: ( value: boolean ) => void;
 	onKnownThreatsChange?: ( hasKnownThreats: boolean ) => void;
+	/** Set to the acknowledgement checkbox, so the caller can move focus to it. */
+	acknowledgementRef?: MutableRefObject< HTMLInputElement | null >;
 }
 
 export const isRestoreDisabled = (
@@ -47,10 +49,20 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 	acknowledged = false,
 	onAcknowledgedChange,
 	onKnownThreatsChange,
+	acknowledgementRef,
 } ) => {
 	const translate = useTranslate();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const threatsRegionId = useId();
+	// CheckboxControl doesn't forward a ref to its input.
+	const acknowledgementWrapperRef = useCallback(
+		( wrapper: HTMLDivElement | null ) => {
+			if ( acknowledgementRef ) {
+				acknowledgementRef.current = wrapper?.querySelector( 'input' ) ?? null;
+			}
+		},
+		[ acknowledgementRef ]
+	);
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const hasScan = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN_SELF_SERVE )
@@ -112,14 +124,16 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 					/>
 				) }
 				{ requireAcknowledgement && (
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						checked={ acknowledged }
-						onChange={ ( value ) => onAcknowledgedChange?.( value ) }
-						label={ translate(
-							'I understand this backup contains known threats and want to restore it anyway.'
-						) }
-					/>
+					<div ref={ acknowledgementWrapperRef }>
+						<CheckboxControl
+							__nextHasNoMarginBottom
+							checked={ acknowledged }
+							onChange={ ( value ) => onAcknowledgedChange?.( value ) }
+							label={ translate(
+								'I understand this backup contains known threats and want to restore it anyway.'
+							) }
+						/>
+					</div>
 				) }
 			</div>
 		</RewindFlowNotice>

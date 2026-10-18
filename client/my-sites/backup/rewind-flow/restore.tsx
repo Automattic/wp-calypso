@@ -5,7 +5,7 @@ import { usePrevious } from '@wordpress/compose';
 import { useEffect } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback, useId, useState } from 'react';
+import { FunctionComponent, useCallback, useId, useRef, useState } from 'react';
 import restoreSuccessImage from 'calypso/assets/images/illustrations/jetpack-restore-success.svg';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
@@ -194,14 +194,26 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		refetchPreflightStatus,
 	] );
 
+	const acknowledgementRef = useRef< HTMLInputElement | null >( null );
+	const shouldFocusAcknowledgementRef = useRef( false );
+
 	useEffect( () => {
 		if ( restoreInitiated && errorCode === 'threats_not_acknowledged' ) {
 			setRestoreInitiated( false );
 			setUserHasRequestedRestore( false );
 			onAcknowledgedChange( false );
 			setShowConfirm( true );
+			shouldFocusAcknowledgementRef.current = true;
 		}
 	}, [ errorCode, onAcknowledgedChange, restoreInitiated ] );
+
+	// The confirm screen, and its checkbox, mount again after the refusal.
+	useEffect( () => {
+		if ( shouldFocusAcknowledgementRef.current && acknowledgementRef.current ) {
+			shouldFocusAcknowledgementRef.current = false;
+			acknowledgementRef.current.focus();
+		}
+	} );
 
 	const onRetryClick = useCallback( () => {
 		// Reset the restore state
@@ -341,6 +353,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					acknowledged={ acknowledged }
 					onAcknowledgedChange={ onAcknowledgedChange }
 					onKnownThreatsChange={ setHasKnownThreats }
+					acknowledgementRef={ acknowledgementRef }
 				/>
 				<>
 					{ backupCurrentlyInProgress && (

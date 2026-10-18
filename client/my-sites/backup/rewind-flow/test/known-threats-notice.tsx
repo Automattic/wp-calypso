@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { act, screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
@@ -416,6 +416,8 @@ describe( 'BackupRestoreFlow known threats gating', () => {
 		const restoreButton = await screen.findByRole( 'button', { name: 'Restore now' } );
 		expect( restoreButton ).toBeVisible();
 		expect( restoreButton ).toHaveAttribute( 'aria-disabled', 'true' );
-		expect( screen.getByRole( 'checkbox', { name: CHECKBOX } ) ).not.toBeChecked();
+		const checkbox = screen.getByRole( 'checkbox', { name: CHECKBOX } );
+		expect( checkbox ).not.toBeChecked();
+		await waitFor( () => expect( checkbox ).toHaveFocus() );
 	} );
 } );
