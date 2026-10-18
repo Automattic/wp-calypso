@@ -7,6 +7,7 @@ const { flatNodeConfig } = require( '@automattic/calypso-eslint-overrides' );
 const json = require( '@automattic/eslint-plugin-json' );
 const { loadESLint } = require( 'eslint' );
 const { defineConfig } = require( 'eslint/config' );
+const react = require( 'eslint-plugin-react' );
 const wpcalypso = require( 'eslint-plugin-wpcalypso' );
 
 // eslint-disable-next-line wpcalypso/i18n-unlocalized-url -- the input that rule should flag
@@ -26,6 +27,8 @@ const config = defineConfig( [
 	{ files: [ '**/*.{js,jsx}' ], extends: [ wpcalypso.configs[ 'flat/react' ] ] },
 	{ files: [ '**/*.json' ], extends: [ json.configs[ 'flat/recommended' ] ] },
 	{ ...flatNodeConfig, files: [ 'bin/**' ] },
+	// Projects often add the React plugin's own config; the preset must register the same plugin.
+	{ files: [ '**/*.{js,jsx}' ], ...react.configs.flat[ 'jsx-runtime' ] },
 	// Stands in for the Babel config a real project has.
 	{
 		files: [ '**/*.{js,jsx}' ],

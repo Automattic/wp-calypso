@@ -1,4 +1,5 @@
 // Flat-config version of the `recommended` preset, built from the same rule objects.
+const { fixupPluginRules } = require( '@eslint/compat' );
 const jsonEs = require( 'eslint-plugin-json-es' );
 const { parseForESLint } = require( '../parser' );
 const legacy = require( './recommended' );
@@ -16,12 +17,14 @@ const parser = {
 const toFlatFiles = ( files ) =>
 	files.map( ( file ) => ( file.includes( '/' ) ? file : `**/${ file }` ) );
 
+/** @type {( plugin: import('eslint').ESLint.Plugin ) => import('eslint').Linter.Config[]} */
 const recommended = ( plugin ) => [
 	{
 		name: '@automattic/json/recommended',
 		// The JSON parser rejects flat config's defaults (`'latest'`, `'module'`); these are the legacy ones.
 		languageOptions: { parser, ecmaVersion: 5, sourceType: 'script' },
-		plugins: { 'json-es': jsonEs },
+		// Its rules still call context methods that ESLint 10 removed.
+		plugins: { 'json-es': fixupPluginRules( jsonEs ) },
 		rules: { ...jsonEs.configs.recommended.rules, ...legacy.rules },
 	},
 	...legacy.overrides.map( ( { files, plugins, ...rest }, index ) => ( {

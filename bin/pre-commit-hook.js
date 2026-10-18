@@ -45,7 +45,7 @@ function parseGitDiffToPathArray( command ) {
 	return execSync( command, { encoding: 'utf8' } )
 		.split( '\n' )
 		.map( ( name ) => name.trim() )
-		.filter( ( name ) => /(?:\.json|\.[jt]sx?|\.scss|\.php)$/.test( name ) );
+		.filter( ( name ) => /(?:\.json|\.[cm]?[jt]sx?|\.scss|\.php)$/.test( name ) );
 }
 
 function getPathForCommand( command ) {
