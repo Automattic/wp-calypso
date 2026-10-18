@@ -10,14 +10,6 @@ const { defineConfig } = require( 'eslint/config' );
 const react = require( 'eslint-plugin-react' );
 const wpcalypso = require( 'eslint-plugin-wpcalypso' );
 
-const eslintMajor = Number( require( 'eslint/package.json' ).version.split( '.' )[ 0 ] );
-// The copy the JSON plugin itself loads, which isn't a direct dependency here.
-const jsonEs = require(
-	require.resolve( 'eslint-plugin-json-es', {
-		paths: [ require.resolve( '@automattic/eslint-plugin-json' ) ],
-	} )
-);
-
 // eslint-disable-next-line wpcalypso/i18n-unlocalized-url -- the input that rule should flag
 const url = 'https://wordpress.com/support/';
 const files = {
@@ -38,25 +30,12 @@ const config = defineConfig( [
 	{ ...flatNodeConfig, files: [ 'bin/**' ] },
 	// Projects often add the React plugin's own config; the preset must register the same plugin.
 	{ files: [ '**/*.{js,jsx}' ], ...react.configs.flat[ 'jsx-runtime' ] },
-	// Before ESLint 10, the presets register the plugins they wrap there as is, so projects can too.
-	...( eslintMajor < 10
-		? [
-				{
-					files: [ '**/*.{js,jsx}' ],
-					plugins: { 'inclusive-language': require( 'eslint-plugin-inclusive-language' ) },
-				},
-				{ files: [ '**/*.json' ], plugins: { 'json-es': jsonEs } },
-			]
-		: [] ),
-	// Stands in for the Babel config a real project has.
+	// As this repo lints: the presets' Babel parser needs Babel 8 to run on ESLint 10, and
+	// `react/jsx-tag-spacing` crashes there, so Prettier's config turns it off.
 	{
 		files: [ '**/*.{js,jsx}' ],
-		languageOptions: {
-			parserOptions: {
-				requireConfigFile: false,
-				babelOptions: { presets: [ require.resolve( '@babel/preset-react' ) ] },
-			},
-		},
+		languageOptions: { parser: require( '@typescript-eslint/parser' ) },
+		rules: { 'react/jsx-tag-spacing': 'off' },
 	},
 ] );
 

@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { flatNodeConfig } from '@automattic/calypso-eslint-overrides';
 import json from '@automattic/eslint-plugin-json';
-import { includeIgnoreFile } from '@eslint/compat';
+import { fixupPluginRules, includeIgnoreFile } from '@eslint/compat';
 import tanstackQuery from '@tanstack/eslint-plugin-query';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
@@ -121,7 +121,8 @@ const config = defineConfig( [
 	tanstackQuery.configs[ 'flat/recommended' ],
 	{
 		name: 'md/prettier',
-		plugins: { md },
+		// Its rule still calls methods that ESLint 10 removed.
+		plugins: { md: fixupPluginRules( md ) },
 		rules: md.configs.prettier.rules,
 	},
 	{
@@ -156,7 +157,8 @@ const config = defineConfig( [
 			},
 		},
 		plugins: {
-			import: importPlugin,
+			// Its rules still call methods that ESLint 10 removed.
+			import: fixupPluginRules( importPlugin ),
 			'@typescript-eslint': typescriptEslint,
 			'@wordpress': wordpress,
 		},
