@@ -221,10 +221,18 @@ test( 'announces the warning once when it appears', async () => {
 	const sentence =
 		'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
 	await screen.findByText( sentence );
-	await user.click( screen.getByRole( 'checkbox', { name: /I understand/ } ) );
-
 	expect( speak ).toHaveBeenCalledTimes( 1 );
 	expect( speak ).toHaveBeenCalledWith( sentence );
+
+	// Ticking the box says the restore is open, without repeating the warning; unticking says nothing.
+	const checkbox = screen.getByRole( 'checkbox', { name: /I understand/ } );
+	await user.click( checkbox );
+	expect( speak ).toHaveBeenCalledTimes( 2 );
+	expect( speak ).toHaveBeenLastCalledWith( 'You can now restore this backup.' );
+	expect( checkbox ).toHaveFocus();
+
+	await user.click( checkbox );
+	expect( speak ).toHaveBeenCalledTimes( 2 );
 } );
 
 test( 'uses the singular for one threat', async () => {

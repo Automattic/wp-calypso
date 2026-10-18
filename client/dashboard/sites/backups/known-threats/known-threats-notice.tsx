@@ -131,7 +131,13 @@ export default function KnownThreatsNotice( {
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							checked={ acknowledged }
-							onChange={ ( value ) => onAcknowledgedChange?.( value ) }
+							onChange={ ( value ) => {
+								onAcknowledgedChange?.( value );
+								// Focus stays on the checkbox; say that the restore it was blocking is open.
+								if ( value ) {
+									speak( __( 'You can now restore this backup.' ) );
+								}
+							} }
 							label={ __(
 								'I understand this backup contains known threats and want to restore it anyway.'
 							) }
