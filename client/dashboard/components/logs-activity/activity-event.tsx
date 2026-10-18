@@ -34,8 +34,12 @@ export function ActivityEvent( {
 				className="site-activity-logs__event-content"
 			>
 				<strong className="site-activity-logs__event-title">{ activityTitle }</strong>
-				{ formattedContent && <span>{ formattedContent }</span> }
-				{ badge && <span className="site-activity-logs__event-badge">{ badge }</span> }
+				{ ( formattedContent || badge ) && (
+					<span>
+						{ formattedContent }
+						{ badge && <span className="site-activity-logs__event-badge">{ badge }</span> }
+					</span>
+				) }
 			</HStack>
 		</HStack>
 	);
