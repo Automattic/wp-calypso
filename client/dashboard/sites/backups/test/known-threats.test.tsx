@@ -424,9 +424,14 @@ test( 'requires the acknowledgement before restoring a flagged backup from its d
 		name: 'I understand this backup contains known threats and want to restore it anyway.',
 	} );
 	const restore = screen.getByRole( 'button', { name: 'Restore to this point' } );
-	expect( restore ).toBeDisabled();
+	expect( restore ).toHaveAttribute( 'aria-disabled', 'true' );
+	expect( restore ).toHaveAccessibleDescription(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
 
 	await user.click( checkbox );
 
 	expect( restore ).toBeEnabled();
+	expect( restore ).not.toHaveAttribute( 'aria-disabled' );
+	expect( restore ).not.toHaveAccessibleDescription();
 } );

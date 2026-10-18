@@ -348,10 +348,21 @@ describe( 'BackupRestoreFlow known threats gating', () => {
 
 		const restoreButton = screen.getByRole( 'button', { name: 'Restore now' } );
 		await screen.findByText( NOTICE );
-		expect( restoreButton ).toBeDisabled();
+		expect( restoreButton ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( restoreButton ).not.toHaveAttribute( 'disabled' );
+		expect( restoreButton ).toHaveAccessibleDescription(
+			'To restore this backup, confirm that you understand it contains known threats.'
+		);
+		await userEvent.click( restoreButton );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_jetpack_backup_restore_confirm',
+			expect.anything()
+		);
 
 		await userEvent.click( screen.getByRole( 'checkbox', { name: CHECKBOX } ) );
 		expect( restoreButton ).toBeEnabled();
+		expect( restoreButton ).not.toHaveAttribute( 'aria-disabled' );
+		expect( restoreButton ).not.toHaveAccessibleDescription();
 
 		await userEvent.click( restoreButton );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(

@@ -1,10 +1,11 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
-import { ExternalLink } from '@wordpress/components';
+import { ExternalLink, VisuallyHidden } from '@wordpress/components';
 import { usePrevious } from '@wordpress/compose';
 import { useEffect } from '@wordpress/element';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback, useState } from 'react';
+import { FunctionComponent, useCallback, useId, useState } from 'react';
 import restoreSuccessImage from 'calypso/assets/images/illustrations/jetpack-restore-success.svg';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
@@ -251,6 +252,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		hasKnownThreats,
 		acknowledged
 	);
+	const awaitingAcknowledgement = hasKnownThreats && ! acknowledged;
+	const acknowledgementHintId = useId();
 
 	const selectedDate = moment( rewindId, 'X' );
 	const baseBackupDate = backup.baseRewindId ? moment.unix( backup.baseRewindId ) : null;
@@ -349,13 +352,24 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 						{ translate( 'Go back' ) }
 					</Button>
 					<Button
-						className="rewind-flow__primary-button"
+						className={ clsx( 'rewind-flow__primary-button', {
+							disabled: awaitingAcknowledgement,
+						} ) }
 						primary
-						onClick={ onConfirm }
-						disabled={ disableRestore }
+						onClick={ disableRestore ? undefined : onConfirm }
+						disabled={ disableRestore && ! awaitingAcknowledgement }
+						aria-disabled={ awaitingAcknowledgement || undefined }
+						aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
 					>
 						{ translate( 'Restore now' ) }
 					</Button>
+					{ awaitingAcknowledgement && (
+						<VisuallyHidden id={ acknowledgementHintId }>
+							{ translate(
+								'To restore this backup, confirm that you understand it contains known threats.'
+							) }
+						</VisuallyHidden>
+					) }
 				</div>
 				<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
 			</>

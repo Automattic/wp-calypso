@@ -163,13 +163,50 @@ test( 'disables Restore now until the box is ticked', async () => {
 			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.'
 		)
 	).toBeVisible();
-	expect( restoreButton() ).toBeDisabled();
+	expect( restoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+	expect( restoreButton() ).toHaveAccessibleDescription(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
 
 	await user.click( checkbox );
 	expect( restoreButton() ).toBeEnabled();
+	expect( restoreButton() ).not.toHaveAttribute( 'aria-disabled' );
+	expect( restoreButton() ).not.toHaveAccessibleDescription();
 
 	await user.click( checkbox );
-	expect( restoreButton() ).toBeDisabled();
+	expect( restoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+} );
+
+test( 'keeps the unacknowledged Restore now focusable but inert', async () => {
+	const user = userEvent.setup();
+	const onRestoreInitiate = jest.fn();
+	const restoreScope = nock( API_BASE )
+		.post( new RegExp( `/activity-log/${ siteId }/rewind/to/` ) )
+		.query( true )
+		.reply( 200, {} );
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	render(
+		<SiteBackupRestoreForm
+			site={ site }
+			siteId={ siteId }
+			rewindId={ rewindId }
+			restorePointDate="Oct 16"
+			onRestoreInitiate={ onRestoreInitiate }
+		/>
+	);
+
+	await screen.findByRole( 'checkbox', { name: /I understand/ } );
+	restoreButton().focus();
+	expect( restoreButton() ).toHaveFocus();
+	await user.click( restoreButton() );
+	await user.keyboard( '{Enter}' );
+
+	expect( restoreScope.isDone() ).toBe( false );
+	expect( onRestoreInitiate ).not.toHaveBeenCalled();
+
+	await user.click( screen.getByRole( 'checkbox', { name: /I understand/ } ) );
+	await user.click( restoreButton() );
+	await waitFor( () => expect( restoreScope.isDone() ).toBe( true ) );
 } );
 
 test( 'announces the warning once when it appears', async () => {

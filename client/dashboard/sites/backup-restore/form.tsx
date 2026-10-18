@@ -1,12 +1,12 @@
 import { siteBackupRestoreInitiateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Button, __experimentalVStack as VStack } from '@wordpress/components';
+import { Button, VisuallyHidden, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useCallback, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import KnownThreatsNotice from '../backups/known-threats/known-threats-notice';
@@ -121,8 +121,16 @@ function SiteBackupRestoreForm( {
 		);
 	};
 
+	const isFormValid = Object.values( formData ).some( ( value ) => value );
+	const awaitingAcknowledgement = hasKnownThreats && ! acknowledged;
+	const isRestoreDisabled = ! isFormValid || isRestoreMutationPending || awaitingAcknowledgement;
+	const acknowledgementHintId = useId();
+
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		if ( isRestoreDisabled ) {
+			return;
+		}
 		handleRestore();
 	};
 
@@ -133,8 +141,6 @@ function SiteBackupRestoreForm( {
 		: __(
 				'This action will replace the selected content with the content from the selected restore point.'
 			);
-
-	const isFormValid = Object.values( formData ).some( ( value ) => value );
 
 	return (
 		<form onSubmit={ handleSubmit }>
@@ -177,12 +183,19 @@ function SiteBackupRestoreForm( {
 						variant="primary"
 						type="submit"
 						isBusy={ isRestoreMutationPending }
-						disabled={
-							! isFormValid || isRestoreMutationPending || ( hasKnownThreats && ! acknowledged )
-						}
+						disabled={ isRestoreDisabled }
+						accessibleWhenDisabled={ awaitingAcknowledgement }
+						aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
 					>
 						{ __( 'Restore now' ) }
 					</Button>
+					{ awaitingAcknowledgement && (
+						<VisuallyHidden id={ acknowledgementHintId }>
+							{ __(
+								'To restore this backup, confirm that you understand it contains known threats.'
+							) }
+						</VisuallyHidden>
+					) }
 				</ButtonStack>
 			</VStack>
 		</form>
