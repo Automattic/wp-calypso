@@ -25,3 +25,5 @@ subdirectory builds on its parent directory's config instead. ESLint reads a con
 the config it loaded, so a config that others build on sets `basePath: import.meta.dirname` on its entries.
 
 The ESLint plugins it loads are the repository root's `devDependencies`.
+
+Configs import this package by name, so a git worktree without its own `yarn install` runs the copy in the checkout whose `node_modules` it resolves. Install in the worktree before editing this package there.
