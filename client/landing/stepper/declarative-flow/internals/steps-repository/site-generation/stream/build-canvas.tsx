@@ -1,5 +1,5 @@
 import { formatNumber } from '@automattic/number-formatters';
-import { Card, CardBody } from '@wordpress/components';
+import { Card, CardBody, Tooltip, VisuallyHidden } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useCallback, useEffect, useState } from 'react';
@@ -287,19 +287,17 @@ function DesignBrief( {
 									{ palette.length > 0
 										? palette.map( ( swatch ) => (
 												<li
-													aria-label={ `${ swatch.name }, ${ swatch.color }` }
 													className="site-generation-canvas__swatch is-revealed"
 													key={ `${ swatch.name }-${ swatch.color }` }
-													title={ `${ swatch.name } · ${ swatch.color }` }
 												>
-													<span
-														aria-hidden="true"
-														className="site-generation-canvas__swatch-chip"
-														style={ { backgroundColor: swatch.color } }
-													/>
-													<span aria-hidden="true" className="site-generation-canvas__swatch-name">
-														{ swatch.name }
-													</span>
+													<Tooltip delay={ 200 } text={ `${ swatch.name } · ${ swatch.color }` }>
+														<span
+															aria-hidden="true"
+															className="site-generation-canvas__swatch-chip"
+															style={ { backgroundColor: swatch.color } }
+														/>
+													</Tooltip>
+													<VisuallyHidden>{ `${ swatch.name }, ${ swatch.color }` }</VisuallyHidden>
 												</li>
 											) )
 										: [ 0, 1, 2, 3, 4 ].map( ( index ) => (

@@ -188,7 +188,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
 		expect( liveCanvas.getByRole( 'heading', { name: 'A garden for everyone' } ) ).toBeVisible();
 		expect( liveCanvas.getByText( 'Quiet and welcoming' ) ).toBeVisible();
-		expect( liveCanvas.getByLabelText( 'Accent, #176B45' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Accent, #176B45' ) ).toBeVisible();
 		const fontStylesheets = document.head.querySelectorAll(
 			'link[href^="https://fonts-api.wp.com/css2?"]'
 		);
@@ -276,7 +276,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
 		expect( liveCanvas.getByRole( 'heading', { name: 'Goat Moat' } ) ).toBeVisible();
 		expect( liveCanvas.getByText( 'Playful editorial layouts' ) ).toBeVisible();
-		expect( liveCanvas.getByLabelText( 'Berry, #B91D60' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Berry, #B91D60' ) ).toBeVisible();
 		expect( liveCanvas.getByText( 'Fredoka' ) ).toBeVisible();
 		expect( liveCanvas.queryByText( 'Polishing your site' ) ).not.toBeInTheDocument();
 		const sidebar = screen.getByRole( 'complementary', { name: 'Site generation progress' } );
@@ -312,7 +312,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		);
 
 		expect( screen.getByRole( 'heading', { name: 'A garden for everyone' } ) ).toBeVisible();
-		expect( screen.getByLabelText( 'Leaf, #176B45' ) ).toBeVisible();
+		expect( screen.getByText( 'Leaf, #176B45' ) ).toBeVisible();
 
 		rerender(
 			<SiteGenerationView
@@ -325,7 +325,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		expect( screen.getByRole( 'heading', { name: 'Your site is taking shape' } ) ).toBeVisible();
 		expect( screen.queryByText( 'A garden for everyone' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Quiet and welcoming' ) ).not.toBeInTheDocument();
-		expect( screen.queryByLabelText( 'Leaf, #176B45' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Leaf, #176B45' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows an accessible elapsed time for the active step and updates it every second', () => {

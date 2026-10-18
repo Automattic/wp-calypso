@@ -77,7 +77,7 @@ it( 'starts on the compact design brief built from streamed plan fields', () => 
 	expect( screen.getByRole( 'heading', { name: 'Mamma Mia' } ) ).toBeVisible();
 	expect( screen.getByText( 'A pastel bakery with a warm welcome.' ) ).toBeVisible();
 	expect( screen.getByText( 'Fraunces' ) ).toBeVisible();
-	expect( screen.getByLabelText( 'Accent, #814b60' ) ).toBeVisible();
+	expect( screen.getByText( 'Accent, #814b60' ) ).toBeVisible();
 	expect( screen.getByRole( 'region', { name: 'Live site build' } ) ).toHaveAttribute(
 		'data-view',
 		'design'
@@ -88,6 +88,15 @@ it( 'starts on the compact design brief built from streamed plan fields', () => 
 	);
 	expect( previewProps.current?.isActive ).toBe( false );
 	expect( previewProps.current?.isGenerating ).toBe( true );
+} );
+
+it( 'keeps palette names for screen readers and shows them in a tooltip on hover', async () => {
+	const user = userEvent.setup();
+	const { container } = render( <BuildWowStreamCanvas stream={ streamView() } /> );
+	expect( container.querySelector( '.site-generation-canvas__swatch-name' ) ).toBeNull();
+	expect( screen.queryByRole( 'tooltip' ) ).not.toBeInTheDocument();
+	await user.hover( container.querySelector( '.site-generation-canvas__swatch-chip' )! );
+	expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( 'Accent · #814b60' );
 } );
 
 it( 'hands off to the site once the homepage is ready and reports it', () => {
