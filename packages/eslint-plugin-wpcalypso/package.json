@@ -24,7 +24,6 @@
 		"node": ">=v24.15.0"
 	},
 	"dependencies": {
-		"@eslint/compat": "^2.1.1",
 		"@eslint/js": "^9.39.5"
 	},
 	"peerDependencies": {

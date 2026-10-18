@@ -18,7 +18,6 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
-		"@eslint/compat": "^2.1.1",
 		"@wordpress/npm-package-json-lint-config": "^5.48.0",
 		"eslint-plugin-json-es": "^1.6.0",
 		"esquery": "^1.4.0",

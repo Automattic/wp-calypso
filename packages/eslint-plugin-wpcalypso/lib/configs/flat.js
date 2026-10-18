@@ -1,5 +1,4 @@
 // Flat-config versions of the legacy presets, built from the same rule objects.
-const { fixupPluginRules } = require( '@eslint/compat' );
 const legacyReact = require( './react' );
 const legacyRecommended = require( './recommended' );
 
@@ -8,6 +7,24 @@ const load = ( name ) => {
 	const module = require( name );
 	return module.default ?? module;
 };
+
+// The plugin's rules call `context.getSourceCode()`, which ESLint 10 removed. `context.sourceCode`
+// replaces it from ESLint 8.40 on.
+const withGetSourceCode = ( plugin ) => ( {
+	...plugin,
+	rules: Object.fromEntries(
+		Object.entries( plugin.rules ).map( ( [ name, rule ] ) => [
+			name,
+			{
+				...rule,
+				create: ( context ) =>
+					rule.create(
+						Object.create( context, { getSourceCode: { value: () => context.sourceCode } } )
+					),
+			},
+		] )
+	),
+} );
 
 const recommended = ( plugin ) => {
 	const jsdoc = load( 'eslint-plugin-jsdoc' );
@@ -24,8 +41,7 @@ const recommended = ( plugin ) => {
 			},
 			plugins: {
 				wpcalypso: plugin,
-				// Its rule still calls a method that ESLint 10 removed.
-				'inclusive-language': fixupPluginRules( load( 'eslint-plugin-inclusive-language' ) ),
+				'inclusive-language': withGetSourceCode( load( 'eslint-plugin-inclusive-language' ) ),
 			},
 			settings: legacyRecommended.settings,
 			rules: legacyRecommended.rules,

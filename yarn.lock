@@ -1362,7 +1362,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@eslint/compat": "npm:^2.1.1"
     "@wordpress/npm-package-json-lint-config": "npm:^5.48.0"
     eslint-plugin-json-es: "npm:^1.6.0"
     esquery: "npm:^1.4.0"
@@ -5878,7 +5877,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/compat@npm:^2.0.0, @eslint/compat@npm:^2.1.1":
+"@eslint/compat@npm:^2.0.0":
   version: 2.1.1
   resolution: "@eslint/compat@npm:2.1.1"
   dependencies:
@@ -19934,7 +19933,6 @@ __metadata:
     "@babel/core": "npm:^7.27.1"
     "@babel/eslint-parser": "npm:^7.27.1"
     "@babel/parser": "npm:^7.27.2"
-    "@eslint/compat": "npm:^2.1.1"
     "@eslint/js": "npm:^9.39.5"
   peerDependencies:
     "@babel/core": ">=7.27.1"
