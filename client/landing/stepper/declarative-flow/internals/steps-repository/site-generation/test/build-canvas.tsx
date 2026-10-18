@@ -130,21 +130,8 @@ describe( 'switching between the design and the site', () => {
 		render( <BuildWowStreamCanvas stream={ streamView() } /> );
 		expect( screen.queryByRole( 'radiogroup', { name: 'Preview view' } ) ).not.toBeInTheDocument();
 		act( () => previewProps.current?.onHomeReady?.( true ) );
-		expect( screen.getByRole( 'radio', { name: 'Pages' } ) ).toBeChecked();
+		expect( screen.getByRole( 'radio', { name: 'Preview' } ) ).toBeChecked();
 		expect( screen.getByRole( 'radio', { name: 'Design' } ) ).not.toBeChecked();
-	} );
-
-	it( 'names the second view after the pages being built', () => {
-		const plan = streamView().state.plan!;
-		const withPages = ( slugs: string[] ) =>
-			streamView( {
-				plan: { ...plan, pages: slugs.map( ( slug ) => ( { slug, title: slug, sections: [] } ) ) },
-			} );
-		const { rerender } = render( <BuildWowStreamCanvas stream={ withPages( [ 'home' ] ) } /> );
-		act( () => previewProps.current?.onHomeReady?.( true ) );
-		expect( screen.getByRole( 'radio', { name: 'Page' } ) ).toBeVisible();
-		rerender( <BuildWowStreamCanvas stream={ withPages( [ 'home', 'about' ] ) } /> );
-		expect( screen.getByRole( 'radio', { name: 'Pages' } ) ).toBeVisible();
 	} );
 
 	it( 'goes back to the design brief and returns to the site without remounting the preview', async () => {
@@ -163,7 +150,7 @@ describe( 'switching between the design and the site', () => {
 		expect( previewProps.current?.isActive ).toBe( false );
 		expect( onPreviewReady ).toHaveBeenLastCalledWith( false );
 
-		await user.click( screen.getByRole( 'radio', { name: 'Pages' } ) );
+		await user.click( screen.getByRole( 'radio', { name: 'Preview' } ) );
 		expect( screen.getByRole( 'region', { name: 'Live site build' } ) ).toHaveAttribute(
 			'data-view',
 			'site'
@@ -177,13 +164,13 @@ describe( 'switching between the design and the site', () => {
 		const user = userEvent.setup();
 		render( <BuildWowStreamCanvas stream={ streamView() } /> );
 		act( () => previewProps.current?.onHomeReady?.( true ) );
-		screen.getByRole( 'radio', { name: 'Pages' } ).focus();
+		screen.getByRole( 'radio', { name: 'Preview' } ).focus();
 		await user.keyboard( '{ArrowLeft}' );
 		expect( screen.getByRole( 'radio', { name: 'Design' } ) ).toBeChecked();
 		expect( screen.getByRole( 'radio', { name: 'Design' } ) ).toHaveFocus();
 		await user.keyboard( '{ArrowRight}' );
-		expect( screen.getByRole( 'radio', { name: 'Pages' } ) ).toBeChecked();
-		expect( screen.getByRole( 'radio', { name: 'Pages' } ) ).toHaveFocus();
+		expect( screen.getByRole( 'radio', { name: 'Preview' } ) ).toBeChecked();
+		expect( screen.getByRole( 'radio', { name: 'Preview' } ) ).toHaveFocus();
 	} );
 
 	it( 'keeps the chosen view when the homepage re-renders', async () => {
@@ -204,7 +191,7 @@ describe( 'switching between the design and the site', () => {
 		const { rerender } = render( <BuildWowStreamCanvas stream={ streamView() } /> );
 		act( () => previewProps.current?.onHomeReady?.( true ) );
 		await user.click( screen.getByRole( 'radio', { name: 'Design' } ) );
-		await user.click( screen.getByRole( 'radio', { name: 'Pages' } ) );
+		await user.click( screen.getByRole( 'radio', { name: 'Preview' } ) );
 		rerender(
 			<BuildWowStreamCanvas
 				stream={ streamView( {

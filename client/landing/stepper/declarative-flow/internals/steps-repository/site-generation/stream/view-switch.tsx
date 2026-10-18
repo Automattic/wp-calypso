@@ -1,5 +1,5 @@
 import { Icon } from '@wordpress/components';
-import { __, _n } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { desktop, styles } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef } from 'react';
@@ -10,11 +10,9 @@ export type CanvasView = 'design' | 'site';
 /** Switches the canvas between the design brief and the page renders. */
 export function ViewSwitch( {
 	view,
-	pages,
 	onChange,
 }: {
 	view: CanvasView;
-	pages: number;
 	onChange: ( view: CanvasView ) => void;
 } ) {
 	const options = useRef< Record< CanvasView, HTMLButtonElement | null > >( {
@@ -23,7 +21,7 @@ export function ViewSwitch( {
 	} );
 	const items: { value: CanvasView; label: string; icon: typeof styles }[] = [
 		{ value: 'design', label: __( 'Design' ), icon: styles },
-		{ value: 'site', label: _n( 'Page', 'Pages', pages ), icon: desktop },
+		{ value: 'site', label: __( 'Preview' ), icon: desktop },
 	];
 
 	// Two options, so any arrow key moves to the other one, as in a radio group.

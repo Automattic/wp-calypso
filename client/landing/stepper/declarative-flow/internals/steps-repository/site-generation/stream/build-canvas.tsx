@@ -460,13 +460,7 @@ function Canvas( {
 				</p>
 			) }
 
-			{ handedOff && canPreview && (
-				<ViewSwitch
-					onChange={ setChosenView }
-					pages={ stream?.state.plan?.pages?.length ?? 0 }
-					view={ view }
-				/>
-			) }
+			{ handedOff && canPreview && <ViewSwitch onChange={ setChosenView } view={ view } /> }
 
 			<div className="site-generation-canvas__body">
 				<div
