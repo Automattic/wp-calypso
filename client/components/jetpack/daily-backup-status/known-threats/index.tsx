@@ -7,9 +7,9 @@ import {
 import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
 import { Button as CalypsoButton, Gridicon } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Tooltip, VisuallyHidden } from '@wordpress/components';
+import { Button, Spinner, Tooltip, VisuallyHidden } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useApplySiteOffset } from 'calypso/components/site-offset';
@@ -20,6 +20,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { findRewindIdForBackupPeriod, getNextBackupPeriod } from './find-rewind-id';
 import type { BackupThreat, BackupThreats } from '@automattic/api-core';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -199,8 +200,41 @@ export function BackupKnownThreatsTable( {
 	);
 }
 
+interface KnownThreatsRegionProps {
+	id: string;
+	isError: boolean;
+	/** The threats table, once loaded. */
+	children?: ReactNode;
+}
+
+/** What an open Known threats toggle controls: the table, or why it isn't there yet. */
+export function KnownThreatsRegion( { id, isError, children }: KnownThreatsRegionProps ) {
+	const translate = useTranslate();
+
+	let content = children;
+	if ( ! content ) {
+		content = isError ? (
+			<p className="backup-known-threats__status">
+				{ translate( "Couldn't load the threats. Try again later." ) }
+			</p>
+		) : (
+			<p className="backup-known-threats__status">
+				<Spinner />
+				<span>{ translate( 'Loading threats…' ) }</span>
+			</p>
+		);
+	}
+
+	return (
+		<div id={ id } className="backup-known-threats__region">
+			{ content }
+		</div>
+	);
+}
+
 export function useBackupKnownThreats( siteId: number, rewindId?: string | null ) {
 	const [ isOpen, setIsOpen ] = useState( false );
+	const detailsId = useId();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const hasScan = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN_SELF_SERVE )
@@ -209,7 +243,7 @@ export function useBackupKnownThreats( siteId: number, rewindId?: string | null 
 		...siteBackupKnownThreatsQuery( siteId, rewindId ?? '' ),
 		enabled: !! rewindId,
 	} );
-	const { data: threats } = useQuery( {
+	const { data: threats, isError: isThreatsError } = useQuery( {
 		...siteBackupThreatsQuery( siteId, counts?.backupPeriod ?? 0 ),
 		enabled: !! rewindId && hasScan && isOpen && counts?.backupPeriod != null,
 	} );
@@ -227,6 +261,8 @@ export function useBackupKnownThreats( siteId: number, rewindId?: string | null 
 		isOpen,
 		toggle: () => setIsOpen( ( open ) => ! open ),
 		threats,
+		isThreatsError,
+		detailsId,
 		siteSlug,
 		latestWithoutKnownThreats: counts?.latestWithoutKnownThreats,
 		backupPeriod: counts?.backupPeriod,
@@ -259,6 +295,8 @@ interface KnownThreatsToggleButtonProps {
 	flagged: number;
 	isOpen: boolean;
 	onToggle: () => void;
+	/** The id of the region the toggle shows; referenced only while it is open. */
+	controlsId?: string;
 	/** Render a compact borderless button, matching the buttons in the activity card toolbar. */
 	inToolbar?: boolean;
 }
@@ -267,6 +305,7 @@ export function KnownThreatsToggleButton( {
 	flagged,
 	isOpen,
 	onToggle,
+	controlsId,
 	inToolbar,
 }: KnownThreatsToggleButtonProps ) {
 	const translate = useTranslate();
@@ -292,6 +331,7 @@ export function KnownThreatsToggleButton( {
 					className="backup-known-threats__toggle"
 					aria-label={ String( ariaLabel ) }
 					aria-expanded={ isOpen }
+					aria-controls={ isOpen ? controlsId : undefined }
 					onClick={ onToggle }
 				>
 					<KnownThreatsBadge flagged={ flagged } />
@@ -304,6 +344,7 @@ export function KnownThreatsToggleButton( {
 					className="backup-known-threats__toggle"
 					aria-label={ String( ariaLabel ) }
 					aria-expanded={ isOpen }
+					aria-controls={ isOpen ? controlsId : undefined }
 					onClick={ onToggle }
 				>
 					<KnownThreatsBadge flagged={ flagged } />
@@ -314,7 +355,7 @@ export function KnownThreatsToggleButton( {
 }
 
 export function BackupKnownThreatsToggle( { state, inToolbar }: BackupKnownThreatsToggleProps ) {
-	const { flagged, hasScan, isOpen, toggle } = state;
+	const { flagged, hasScan, isOpen, toggle, detailsId } = state;
 
 	if ( flagged === null ) {
 		return null;
@@ -329,6 +370,7 @@ export function BackupKnownThreatsToggle( { state, inToolbar }: BackupKnownThrea
 			flagged={ flagged }
 			isOpen={ isOpen }
 			onToggle={ toggle }
+			controlsId={ detailsId }
 			inToolbar={ inToolbar }
 		/>
 	);
@@ -358,25 +400,31 @@ export function BackupKnownThreatsDetails( { state }: { state: BackupKnownThreat
 		hasScan,
 		isOpen,
 		threats,
+		isThreatsError,
+		detailsId,
 		siteId,
 		siteSlug,
 		latestWithoutKnownThreats,
 		backupPeriod,
 	} = state;
 
-	if ( flagged === null || ! hasScan || ! isOpen || ! threats || ! siteSlug ) {
+	if ( flagged === null || ! hasScan || ! isOpen ) {
 		return null;
 	}
 
 	return (
-		<BackupKnownThreatsTable
-			siteId={ siteId }
-			siteSlug={ siteSlug }
-			threats={ threats }
-			latestWithoutKnownThreats={ latestWithoutKnownThreats }
-			currentBackupPeriod={ backupPeriod }
-			showRestoreLink={ false }
-		/>
+		<KnownThreatsRegion id={ detailsId } isError={ isThreatsError || ! siteSlug }>
+			{ threats && siteSlug && (
+				<BackupKnownThreatsTable
+					siteId={ siteId }
+					siteSlug={ siteSlug }
+					threats={ threats }
+					latestWithoutKnownThreats={ latestWithoutKnownThreats }
+					currentBackupPeriod={ backupPeriod }
+					showRestoreLink={ false }
+				/>
+			) }
+		</KnownThreatsRegion>
 	);
 }
 

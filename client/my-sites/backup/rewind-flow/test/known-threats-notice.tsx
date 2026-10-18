@@ -263,6 +263,25 @@ describe( 'KnownThreatsNotice', () => {
 		);
 	} );
 
+	it( 'points the toggle at a loading, then failed, threats region while open', async () => {
+		mockList( counts( 3 ) );
+		nock( BASE ).get( THREATS_PATH ).query( true ).delay( 300 ).reply( 500, {} );
+		renderWithProvider( <Harness /> );
+
+		const toggle = await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
+		expect( toggle ).not.toHaveAttribute( 'aria-controls' );
+		await userEvent.click( toggle );
+
+		const region = () => document.getElementById( toggle.getAttribute( 'aria-controls' ) ?? '' );
+		expect( region() ).toContainElement( await screen.findByText( 'Loading threats…' ) );
+		expect( region() ).toContainElement(
+			await screen.findByText( "Couldn't load the threats. Try again later." )
+		);
+
+		await userEvent.click( toggle );
+		expect( toggle ).not.toHaveAttribute( 'aria-controls' );
+	} );
+
 	it( 'has no expander and no details request without Scan, but keeps the checkbox', async () => {
 		( siteHasFeature as jest.Mock ).mockReturnValue( false );
 		mockList( counts( 3 ) );

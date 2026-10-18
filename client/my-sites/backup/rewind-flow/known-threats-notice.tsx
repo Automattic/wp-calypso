@@ -4,10 +4,11 @@ import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
 import { useQuery } from '@tanstack/react-query';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	BackupKnownThreatsTable,
+	KnownThreatsRegion,
 	KnownThreatsToggleButton,
 	RestoreThatOneInsteadLink,
 } from 'calypso/components/jetpack/daily-backup-status/known-threats';
@@ -48,12 +49,13 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 	const [ isOpen, setIsOpen ] = useState( false );
+	const threatsRegionId = useId();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const hasScan = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN_SELF_SERVE )
 	);
 	const { data: counts } = useQuery( siteBackupKnownThreatsQuery( siteId, rewindId ) );
-	const { data: threats } = useQuery( {
+	const { data: threats, isError: isThreatsError } = useQuery( {
 		...siteBackupThreatsQuery( siteId, counts?.backupPeriod ?? 0 ),
 		enabled: hasScan && isOpen && counts?.backupPeriod != null,
 	} );
@@ -90,16 +92,21 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 							flagged={ knownThreats.flagged }
 							isOpen={ isOpen }
 							onToggle={ () => setIsOpen( ( open ) => ! open ) }
+							controlsId={ threatsRegionId }
 						/>
-						{ isOpen && threats && siteSlug && (
-							<BackupKnownThreatsTable
-								siteId={ siteId }
-								siteSlug={ siteSlug }
-								threats={ threats }
-								latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-								currentBackupPeriod={ counts.backupPeriod }
-								showRestoreLink={ false }
-							/>
+						{ isOpen && (
+							<KnownThreatsRegion id={ threatsRegionId } isError={ isThreatsError || ! siteSlug }>
+								{ threats && siteSlug && (
+									<BackupKnownThreatsTable
+										siteId={ siteId }
+										siteSlug={ siteSlug }
+										threats={ threats }
+										latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
+										currentBackupPeriod={ counts.backupPeriod }
+										showRestoreLink={ false }
+									/>
+								) }
+							</KnownThreatsRegion>
 						) }
 					</div>
 				) }

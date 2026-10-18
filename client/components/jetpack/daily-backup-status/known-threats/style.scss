@@ -5,7 +5,7 @@
 	gap: 8px;
 	margin: 8px 0 16px;
 
-	.backup-known-threats__details {
+	.backup-known-threats__region {
 		align-self: stretch;
 	}
 }
@@ -69,6 +69,17 @@
 
 	.backup-known-threats__badge {
 		margin-inline-end: 0;
+	}
+}
+
+.backup-known-threats__status {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+
+	.components-spinner {
+		margin: 0;
 	}
 }
 

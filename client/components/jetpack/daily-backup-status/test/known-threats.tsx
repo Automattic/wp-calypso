@@ -217,6 +217,40 @@ describe( 'BackupKnownThreats', () => {
 		expect( details.isDone() ).toBe( true );
 	} );
 
+	it( 'points the toggle at the threats region only while it is open, and shows it loading', async () => {
+		mockList( [ backupWith( counts( 1 ) ) ] );
+		nock( BASE ).get( THREATS_PATH ).query( true ).delay( 300 ).reply( 200, threatsBody );
+		renderIt();
+
+		const toggle = await screen.findByRole( 'button', { name: 'Known threats (1), show threats' } );
+		expect( toggle ).not.toHaveAttribute( 'aria-controls' );
+		await userEvent.click( toggle );
+
+		const loading = await screen.findByText( 'Loading threats…' );
+		const region = document.getElementById( toggle.getAttribute( 'aria-controls' ) ?? '' );
+		expect( region ).toContainElement( loading );
+		expect( region ).toContainElement( await screen.findByText( 'Evil.Sig' ) );
+		expect( screen.queryByText( 'Loading threats…' ) ).not.toBeInTheDocument();
+
+		await userEvent.click( toggle );
+		expect( toggle ).not.toHaveAttribute( 'aria-controls' );
+	} );
+
+	it( 'says so when the threats fail to load', async () => {
+		mockList( [ backupWith( counts( 1 ) ) ] );
+		nock( BASE ).get( THREATS_PATH ).query( true ).reply( 500, {} );
+		renderIt();
+
+		const toggle = await screen.findByRole( 'button', { name: 'Known threats (1), show threats' } );
+		await userEvent.click( toggle );
+
+		const error = await screen.findByText( "Couldn't load the threats. Try again later." );
+		expect( error ).toBeVisible();
+		expect(
+			document.getElementById( toggle.getAttribute( 'aria-controls' ) ?? '' )
+		).toContainElement( error );
+	} );
+
 	it( 'links to the backup activity rewind id, not the bare period', async () => {
 		mockList( [ backupWith( counts( 1 ) ) ], { latest_without_known_threats: 1792247305 } );
 		const activities = mockActivities( [ '1792247404.817' ] );
