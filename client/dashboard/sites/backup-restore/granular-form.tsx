@@ -1,11 +1,17 @@
 import { siteBackupGranularRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Button, __experimentalVStack as VStack, Panel } from '@wordpress/components';
+import {
+	Button,
+	Panel,
+	Tooltip,
+	VisuallyHidden,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useCallback, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
@@ -41,10 +47,13 @@ function SiteBackupGranularRestoreForm( {
 	const browserSelectedList = fileBrowserState.getSelectedList( Number( rewindId ) );
 
 	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
-	const handleKnownThreatsChange = useCallback(
-		( value: boolean ) => setHasKnownThreats( value ),
-		[]
-	);
+	const [ acknowledged, setAcknowledged ] = useState( false );
+	const handleKnownThreatsChange = useCallback( ( value: boolean ) => {
+		setHasKnownThreats( value );
+		if ( ! value ) {
+			setAcknowledged( false );
+		}
+	}, [] );
 
 	const handleGranularRestore = () => {
 		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -60,7 +69,10 @@ function SiteBackupGranularRestoreForm( {
 			},
 			{
 				onSuccess: ( restoreId ) => {
-					onRestoreInitiate( restoreId, { known_threats_shown: hasKnownThreats } );
+					onRestoreInitiate( restoreId, {
+						known_threats_shown: hasKnownThreats,
+						known_threats_acknowledged: hasKnownThreats && acknowledged,
+					} );
 				},
 				onError: () => {
 					createErrorNotice( __( 'Failed to initiate restore. Please try again.' ), {
@@ -71,8 +83,18 @@ function SiteBackupGranularRestoreForm( {
 		);
 	};
 
+	const awaitingAcknowledgement = hasKnownThreats && ! acknowledged;
+	const isRestoreDisabled = isRestoreMutationPending || awaitingAcknowledgement;
+	const acknowledgementHintId = useId();
+	const acknowledgementHint = __(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
+
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		if ( isRestoreDisabled ) {
+			return;
+		}
 		handleGranularRestore();
 	};
 
@@ -126,19 +148,33 @@ function SiteBackupGranularRestoreForm( {
 					site={ site }
 					restoreLinkTo={ restoreLinkTo }
 					rewindId={ rewindId }
-					requireAcknowledgement={ false }
+					requireAcknowledgement
+					acknowledged={ acknowledged }
+					onAcknowledgedChange={ setAcknowledged }
 					onKnownThreatsChange={ handleKnownThreatsChange }
 				/>
 
 				<ButtonStack justify="flex-start">
-					<Button
-						variant="primary"
-						type="submit"
-						isBusy={ isRestoreMutationPending }
-						disabled={ isRestoreMutationPending }
-					>
-						{ _n( 'Restore selected file', 'Restore selected files', browserCheckList.totalItems ) }
-					</Button>
+					{ /* The tooltip shows the hint on hover and focus; screen readers get it from the description. */ }
+					<Tooltip text={ awaitingAcknowledgement ? acknowledgementHint : undefined }>
+						<Button
+							variant="primary"
+							type="submit"
+							isBusy={ isRestoreMutationPending }
+							disabled={ isRestoreDisabled }
+							accessibleWhenDisabled={ awaitingAcknowledgement }
+							aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
+						>
+							{ _n(
+								'Restore selected file',
+								'Restore selected files',
+								browserCheckList.totalItems
+							) }
+						</Button>
+					</Tooltip>
+					{ awaitingAcknowledgement && (
+						<VisuallyHidden id={ acknowledgementHintId }>{ acknowledgementHint }</VisuallyHidden>
+					) }
 				</ButtonStack>
 			</VStack>
 		</form>
