@@ -1,5 +1,9 @@
 import { ActivityLogParams, LogType } from '@automattic/api-core';
-import { siteActivityLogQuery, siteActivityLogGroupCountsQuery } from '@automattic/api-queries';
+import {
+	siteActivityLogQuery,
+	siteActivityLogGroupCountsQuery,
+	siteBackupsKnownThreatsQuery,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { View, Field, Filter } from '@wordpress/dataviews';
@@ -123,10 +127,12 @@ function SiteActivityLogsDataViews( {
 		paginationInfo.totalPages = 0; // this will hide the pagination controls in DataViews, an alternative to this approach would be to use Free Form composition, but that would require us to match the UI we have on the other log pages.
 	}
 
+	const { data: knownThreatsPage } = useQuery( siteBackupsKnownThreatsQuery( site.ID ) );
+
 	const fields = useActivityFields(
 		timezoneString
-			? { gmtOffset, timezoneString, activityLogTypes: groupCountsData?.groups }
-			: { gmtOffset, activityLogTypes: groupCountsData?.groups }
+			? { gmtOffset, timezoneString, activityLogTypes: groupCountsData?.groups, knownThreatsPage }
+			: { gmtOffset, activityLogTypes: groupCountsData?.groups, knownThreatsPage }
 	);
 
 	const actions = useActivityActions( { isLoading: isFetching, site } );

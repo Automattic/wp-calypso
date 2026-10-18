@@ -139,10 +139,14 @@ const mockActivityLogsData = {
 };
 
 function renderActivityLogsDataViews(
-	{ activityLogs }: { activityLogs: unknown[] } = {
+	{ activityLogs, backups = [] }: { activityLogs: unknown[]; backups?: unknown[] } = {
 		activityLogs: mockActivityLogsData.activityLogs,
 	}
 ) {
+	nock( API_BASE )
+		.get( `/wpcom/v3/sites/${ mockSiteId }/rewind/backups` )
+		.query( true )
+		.reply( 200, { backups, totalPages: 1 } );
 	nock( API_BASE )
 		.get( '/rest/v1.1/me/preferences' )
 		.query( true )
@@ -231,4 +235,35 @@ test( 'data is properly displayed', async () => {
 		'href',
 		'/plugins/jetpack/testsite-slug'
 	);
+} );
+
+test( 'marks a backup known to contain threats', async () => {
+	renderActivityLogsDataViews( {
+		activityLogs: [
+			{
+				...mockActivityLogsData.activityLogs[ 1 ],
+				rewind_id: '1792244435.274',
+				summary: 'Backup and scan complete',
+			},
+			mockActivityLogsData.activityLogs[ 0 ],
+		],
+		backups: [
+			{
+				object: {
+					backup_period: '1792244435',
+					known_threats: {
+						malware: 3,
+						database: 0,
+						vulnerable: 1,
+						ignored: 0,
+						flagged: 3,
+						fixed: 3,
+					},
+				},
+			},
+		],
+	} );
+
+	expect( await screen.findByText( 'Backup and scan complete' ) ).toBeInTheDocument();
+	expect( await screen.findAllByText( /Known threats/ ) ).toHaveLength( 1 );
 } );
