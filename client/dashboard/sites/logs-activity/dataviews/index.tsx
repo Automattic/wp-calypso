@@ -1,4 +1,4 @@
-import { ActivityLogParams, LogType } from '@automattic/api-core';
+import { ActivityLogParams, HostingFeatures, LogType } from '@automattic/api-core';
 import {
 	siteActivityLogQuery,
 	siteActivityLogGroupCountsQuery,
@@ -16,7 +16,7 @@ import { useLocale } from '../../../app/locale';
 import { PerformanceTrackerStop } from '../../../app/performance-tracking';
 import { DataViews, DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { formatDate } from '../../../utils/datetime';
-import { getActivityLogHiddenGroups } from '../../../utils/site-features';
+import { getActivityLogHiddenGroups, hasHostingFeature } from '../../../utils/site-features';
 import { buildTimeRangeInSeconds } from '../../logs/utils';
 import { ActivityLogsCallout } from '../activity-logs-callout';
 import { transformActivityLogEntry } from '../activity-transformer';
@@ -127,7 +127,11 @@ function SiteActivityLogsDataViews( {
 		paginationInfo.totalPages = 0; // this will hide the pagination controls in DataViews, an alternative to this approach would be to use Free Form composition, but that would require us to match the UI we have on the other log pages.
 	}
 
-	const { data: knownThreatsPage } = useQuery( siteBackupsKnownThreatsQuery( site.ID ) );
+	// Only sites with backups have backup rows to mark.
+	const { data: knownThreatsPage } = useQuery( {
+		...siteBackupsKnownThreatsQuery( site.ID ),
+		enabled: hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ),
+	} );
 
 	const fields = useActivityFields(
 		timezoneString
