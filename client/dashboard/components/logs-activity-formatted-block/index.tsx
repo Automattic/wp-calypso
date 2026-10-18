@@ -17,6 +17,7 @@ import { ExternalLink } from '@wordpress/components';
 import { Fragment, type MouseEvent, type ReactNode } from 'react';
 import isA8CForAgencies from '../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../lib/jetpack/is-jetpack-cloud';
+import { getCurrentDashboard } from '../../app/routing';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import type { ActivityBlockContent, ActivityBlockNode, ActivityBlockMeta } from './types';
@@ -217,9 +218,20 @@ const Theme: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	);
 };
 
-const Backup: BlockRenderer = ( { content, children, onClick, meta } ) => {
-	const { url, siteSlug, activity, intent, section } = content;
+// In the dashboard itself, a range naming one backup opens that backup's details.
+const isInDotcomDashboard = () =>
+	! isDashboardBackport() &&
+	! isJetpackCloud() &&
+	! isA8CForAgencies() &&
+	getCurrentDashboard() === 'dotcom';
 
+const Backup: BlockRenderer = ( { content, children, onClick, meta } ) => {
+	const { url, siteSlug, rewindId, activity, intent, section } = content;
+
+	const backupDetailsPath =
+		! url && siteSlug && rewindId && isInDotcomDashboard()
+			? `/sites/${ siteSlug }/backups/${ rewindId }`
+			: null;
 	const href = url ?? ( siteSlug ? `/backup/${ siteSlug }` : null );
 
 	if ( ! href ) {
@@ -228,7 +240,7 @@ const Backup: BlockRenderer = ( { content, children, onClick, meta } ) => {
 
 	return (
 		<a
-			href={ getWpcomHref( href ) }
+			href={ backupDetailsPath ?? getWpcomHref( href ) }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section ?? 'backups' }

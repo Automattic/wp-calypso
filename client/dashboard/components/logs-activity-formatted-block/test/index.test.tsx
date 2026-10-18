@@ -141,6 +141,41 @@ describe( 'Link blocks', () => {
 	);
 } );
 
+describe( 'Backup blocks', () => {
+	const backup = {
+		type: 'backup',
+		text: 'October 17, 1:38 pm',
+		siteSlug: 'example.com',
+		rewindId: '1792244435.274',
+		children: [ 'October 17, 1:38 pm' ],
+	};
+
+	beforeEach( () => {
+		mockedIsJetpackCloud.mockReturnValue( false );
+		mockedIsA8CForAgencies.mockReturnValue( false );
+	} );
+
+	test( "opens the backup's details in the dashboard", () => {
+		mockedIsDashboardBackport.mockReturnValue( false );
+		renderFormatted( backup );
+
+		expect( screen.getByRole( 'link', { name: 'October 17, 1:38 pm' } ) ).toHaveAttribute(
+			'href',
+			'/sites/example.com/backups/1792244435.274'
+		);
+	} );
+
+	test( 'opens the Backup page outside the dashboard', () => {
+		mockedIsDashboardBackport.mockReturnValue( true );
+		renderFormatted( backup );
+
+		expect( screen.getByRole( 'link', { name: 'October 17, 1:38 pm' } ) ).toHaveAttribute(
+			'href',
+			expect.stringMatching( /\/backup\/example\.com$/ )
+		);
+	} );
+} );
+
 describe( 'Post blocks', () => {
 	beforeEach( () => {
 		mockedIsJetpackCloud.mockReturnValue( false );
