@@ -364,6 +364,11 @@ describe( 'BackupRestoreFlow known threats gating', () => {
 		expect( restoreButton ).toHaveAccessibleDescription(
 			'To restore this backup, confirm that you understand it contains known threats.'
 		);
+		// Mouse users see the same hint as a tooltip.
+		await userEvent.hover( restoreButton );
+		expect( await screen.findByRole( 'tooltip', {}, { timeout: 2000 } ) ).toHaveTextContent(
+			'To restore this backup, confirm that you understand it contains known threats.'
+		);
 		await userEvent.click( restoreButton );
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
 			'calypso_jetpack_backup_restore_confirm',

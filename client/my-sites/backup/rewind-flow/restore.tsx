@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { speak } from '@wordpress/a11y';
-import { ExternalLink, VisuallyHidden } from '@wordpress/components';
+import { ExternalLink, Tooltip, VisuallyHidden } from '@wordpress/components';
 import { usePrevious } from '@wordpress/compose';
 import { useEffect } from '@wordpress/element';
 import clsx from 'clsx';
@@ -293,6 +293,9 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	);
 	const awaitingAcknowledgement = hasKnownThreats && ! acknowledged;
 	const acknowledgementHintId = useId();
+	const acknowledgementHint = translate(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	) as string;
 
 	const selectedDate = moment( rewindId, 'X' );
 	const baseBackupDate = backup.baseRewindId ? moment.unix( backup.baseRewindId ) : null;
@@ -396,24 +399,23 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					>
 						{ translate( 'Go back' ) }
 					</Button>
-					<Button
-						className={ clsx( 'rewind-flow__primary-button', {
-							disabled: awaitingAcknowledgement,
-						} ) }
-						primary
-						onClick={ disableRestore ? undefined : onConfirm }
-						disabled={ disableRestore && ! awaitingAcknowledgement }
-						aria-disabled={ awaitingAcknowledgement || undefined }
-						aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
-					>
-						{ translate( 'Restore now' ) }
-					</Button>
+					{ /* The tooltip shows the hint on hover and focus; screen readers get it from the description. */ }
+					<Tooltip text={ awaitingAcknowledgement ? acknowledgementHint : undefined }>
+						<Button
+							className={ clsx( 'rewind-flow__primary-button', {
+								disabled: awaitingAcknowledgement,
+							} ) }
+							primary
+							onClick={ disableRestore ? undefined : onConfirm }
+							disabled={ disableRestore && ! awaitingAcknowledgement }
+							aria-disabled={ awaitingAcknowledgement || undefined }
+							aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
+						>
+							{ translate( 'Restore now' ) }
+						</Button>
+					</Tooltip>
 					{ awaitingAcknowledgement && (
-						<VisuallyHidden id={ acknowledgementHintId }>
-							{ translate(
-								'To restore this backup, confirm that you understand it contains known threats.'
-							) }
-						</VisuallyHidden>
+						<VisuallyHidden id={ acknowledgementHintId }>{ acknowledgementHint }</VisuallyHidden>
 					) }
 				</div>
 				<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />

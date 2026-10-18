@@ -172,11 +172,19 @@ test( 'disables Restore now until the box is ticked', async () => {
 	expect( restoreButton() ).toHaveAccessibleDescription(
 		'To restore this backup, confirm that you understand it contains known threats.'
 	);
+	// Mouse users see the same hint as a tooltip.
+	await user.hover( restoreButton() );
+	expect( await screen.findByRole( 'tooltip', {}, { timeout: 2000 } ) ).toHaveTextContent(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
+	await user.unhover( restoreButton() );
 
 	await user.click( checkbox );
 	expect( restoreButton() ).toBeEnabled();
 	expect( restoreButton() ).not.toHaveAttribute( 'aria-disabled' );
 	expect( restoreButton() ).not.toHaveAccessibleDescription();
+	await user.hover( restoreButton() );
+	expect( screen.queryByRole( 'tooltip' ) ).not.toBeInTheDocument();
 
 	await user.click( checkbox );
 	expect( restoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
