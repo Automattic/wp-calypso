@@ -62,10 +62,19 @@ export const siteBackupGranularRestoreMutation = ( siteId: number ) =>
 		mutationFn: ( {
 			timestamp,
 			config: granularConfig,
+			acknowledgeThreats,
 		}: {
 			timestamp: string | number;
 			config: GranularRestoreConfig;
-		} ) => initiateSiteGranularRestore( siteId, timestamp, configApi( 'env_id' ), granularConfig ),
+			acknowledgeThreats?: boolean;
+		} ) =>
+			initiateSiteGranularRestore(
+				siteId,
+				timestamp,
+				configApi( 'env_id' ),
+				granularConfig,
+				acknowledgeThreats
+			),
 		onSuccess: ( restoreId ) => {
 			// Start polling restore progress
 			queryClient.prefetchQuery( siteBackupRestoreProgressQuery( siteId, restoreId ) );

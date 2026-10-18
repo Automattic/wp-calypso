@@ -1,5 +1,5 @@
 import nock from 'nock';
-import { initiateSiteBackupRestore } from '..';
+import { initiateSiteBackupRestore, initiateSiteGranularRestore } from '..';
 
 const BASE = 'https://public-api.wordpress.com';
 const PATH = '/rest/v1/activity-log/123/rewind/to/1792244435.274';
@@ -34,5 +34,43 @@ describe( 'initiateSiteBackupRestore', () => {
 		expect( bodies[ 1 ] ).not.toHaveProperty( 'acknowledge_threats' );
 		expect( bodies[ 2 ] ).not.toHaveProperty( 'acknowledge_threats' );
 		expect( bodies[ 2 ] ).toEqual( { types: config, calypso_env: 'test', force_rewind: true } );
+	} );
+} );
+
+describe( 'initiateSiteGranularRestore', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'sends acknowledge_threats only when acknowledged', async () => {
+		const bodies: Record< string, unknown >[] = [];
+		const scope = nock( BASE )
+			.post( PATH, ( body ) => {
+				bodies.push( body );
+				return true;
+			} )
+			.times( 3 )
+			.reply( 200, { restore_id: '42' } );
+		const granularConfig = { includePaths: 'f1,f2' };
+
+		await expect(
+			initiateSiteGranularRestore( 123, '1792244435.274', 'test', granularConfig, true )
+		).resolves.toBe( 42 );
+		await initiateSiteGranularRestore( 123, '1792244435.274', 'test', granularConfig, false );
+		await initiateSiteGranularRestore( 123, '1792244435.274', 'test', granularConfig );
+
+		expect( scope.isDone() ).toBe( true );
+		expect( bodies[ 0 ] ).toEqual( {
+			types: 'paths',
+			include_path_list: 'f1,f2',
+			calypso_env: 'test',
+			force_rewind: true,
+			acknowledge_threats: true,
+		} );
+		expect( bodies[ 1 ] ).not.toHaveProperty( 'acknowledge_threats' );
+		expect( bodies[ 2 ] ).toEqual( {
+			types: 'paths',
+			include_path_list: 'f1,f2',
+			calypso_env: 'test',
+			force_rewind: true,
+		} );
 	} );
 } );
