@@ -28,6 +28,8 @@ interface KnownThreatsNoticeProps {
 	acknowledged?: boolean;
 	onAcknowledgedChange?: ( value: boolean ) => void;
 	onKnownThreatsChange?: ( hasKnownThreats: boolean ) => void;
+	/** Said when the box is ticked; say where the restore button is if it isn't the next stop. */
+	acknowledgedMessage?: string;
 }
 
 export default function KnownThreatsNotice( {
@@ -38,6 +40,7 @@ export default function KnownThreatsNotice( {
 	acknowledged = false,
 	onAcknowledgedChange,
 	onKnownThreatsChange,
+	acknowledgedMessage,
 }: KnownThreatsNoticeProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const threatsRegionId = useId();
@@ -122,7 +125,7 @@ export default function KnownThreatsNotice( {
 								onAcknowledgedChange?.( value );
 								// Focus stays on the checkbox; say that the restore it was blocking is open.
 								if ( value ) {
-									speak( __( 'You can now restore this backup.' ) );
+									speak( acknowledgedMessage ?? __( 'You can now restore this backup.' ) );
 								}
 							} }
 							label={ __(

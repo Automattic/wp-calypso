@@ -6,6 +6,7 @@ import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { speak } from '@wordpress/a11y';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import { BackupsListPage } from '../index';
@@ -437,4 +438,11 @@ test( 'requires the acknowledgement before restoring a flagged backup from its d
 	expect( restore ).toBeEnabled();
 	expect( restore ).not.toHaveAttribute( 'aria-disabled' );
 	expect( restore ).not.toHaveAccessibleDescription();
+	// The button sits above the checkbox, so the announcement says where it is.
+	expect(
+		restore.compareDocumentPosition( checkbox ) & Node.DOCUMENT_POSITION_FOLLOWING
+	).toBeTruthy();
+	expect( speak ).toHaveBeenLastCalledWith(
+		'You can now restore this backup with "Restore to this point", at the top of this panel.'
+	);
 } );
