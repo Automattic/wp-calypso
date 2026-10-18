@@ -1,10 +1,11 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
-import { Button as WordPressButton } from '@wordpress/components';
+import { Tooltip, VisuallyHidden, Button as WordPressButton } from '@wordpress/components';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { Icon, arrowLeft, backup, chevronDown, chevronRight } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useId } from 'react';
 import restoreSuccessImage from 'calypso/assets/images/illustrations/jetpack-restore-success.svg';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
@@ -175,6 +176,17 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 	const [ loading, setLoading ] = useState( true );
 	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
+	const [ acknowledgedRewindId, setAcknowledgedRewindId ] = useState< string | null >( null );
+	const acknowledged = acknowledgedRewindId === rewindId;
+	const onAcknowledgedChange = useCallback(
+		( value: boolean ) => setAcknowledgedRewindId( value ? rewindId : null ),
+		[ rewindId ]
+	);
+	const awaitingAcknowledgement = hasKnownThreats && ! acknowledged;
+	const acknowledgementHintId = useId();
+	const acknowledgementHint = translate(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	) as string;
 
 	const requestRestore = useCallback( () => {
 		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -247,10 +259,11 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_granular_restore_confirm', {
 				has_credentials: hasCredentials,
-				...getKnownThreatsTracksProps( hasKnownThreats, false ),
+				...getKnownThreatsTracksProps( hasKnownThreats, acknowledged ),
 			} )
 		);
 	}, [
+		acknowledged,
 		hasKnownThreats,
 		isPreflightEnabled,
 		credentialsAreValid,
@@ -491,8 +504,14 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				<KnownThreatsNotice
 					siteId={ siteId }
 					rewindId={ rewindId }
-					requireAcknowledgement={ false }
+					requireAcknowledgement
+					acknowledged={ acknowledged }
+					onAcknowledgedChange={ onAcknowledgedChange }
 					onKnownThreatsChange={ setHasKnownThreats }
+					// "Cancel" comes between the checkbox and the restore button.
+					acknowledgedMessage={
+						translate( 'You can now restore this backup with "Restore now", below.' ) as string
+					}
 				/>
 				<>
 					{ backupCurrentlyInProgress && (
@@ -509,9 +528,23 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					<Button className="rewind-flow__back-button" href={ goBackUrl } onClick={ onCancel }>
 						{ translate( 'Cancel' ) }
 					</Button>
-					<Button className="rewind-flow__primary-button" primary onClick={ onConfirm }>
-						{ translate( 'Restore now' ) }
-					</Button>
+					{ /* The tooltip shows the hint on hover and focus; screen readers get it from the description. */ }
+					<Tooltip text={ awaitingAcknowledgement ? acknowledgementHint : undefined }>
+						<Button
+							className={ clsx( 'rewind-flow__primary-button', {
+								disabled: awaitingAcknowledgement,
+							} ) }
+							primary
+							onClick={ awaitingAcknowledgement ? undefined : onConfirm }
+							aria-disabled={ awaitingAcknowledgement || undefined }
+							aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
+						>
+							{ translate( 'Restore now' ) }
+						</Button>
+					</Tooltip>
+					{ awaitingAcknowledgement && (
+						<VisuallyHidden id={ acknowledgementHintId }>{ acknowledgementHint }</VisuallyHidden>
+					) }
 				</div>
 				<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
 			</>

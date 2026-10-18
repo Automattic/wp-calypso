@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import BackupGranularRestoreFlow from '../granular-restore';
 import KnownThreatsNotice, {
 	getKnownThreatsTracksProps,
 	isRestoreDisabled,
@@ -24,10 +25,11 @@ jest.mock( '@wordpress/a11y', () => ( {
 jest.mock( 'calypso/state/analytics/actions/record', () => ( {
 	recordTracksEvent: jest.fn( () => ( { type: 'TEST_NOOP' } ) ),
 } ) );
-jest.mock( 'calypso/state/selectors/get-rewind-state', () => ( {
-	__esModule: true,
-	default: () => ( { state: 'active', canAutoconfigure: false } ),
-} ) );
+jest.mock( 'calypso/state/selectors/get-rewind-state', () => {
+	// The same object every time, as the real selector returns from the store.
+	const rewindState = { state: 'active', canAutoconfigure: false };
+	return { __esModule: true, default: () => rewindState };
+} );
 function mockSelector( value: unknown ) {
 	return { __esModule: true, default: () => value };
 }
@@ -55,6 +57,21 @@ jest.mock( 'calypso/components/data/query-jetpack-credentials-status', () => () 
 jest.mock( 'calypso/components/data/query-rewind-backups', () => () => null );
 jest.mock( 'calypso/components/data/query-rewind-restore-status', () => () => null );
 jest.mock( 'calypso/components/data/query-rewind-state', () => () => null );
+jest.mock(
+	'calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context',
+	() => ( {
+		useFileBrowserContext: () => ( {
+			fileBrowserState: {
+				getCheckList: () => ( {
+					includeList: [ { id: 'f1', path: '/wp-content/a.php' } ],
+					excludeList: [],
+					totalItems: 1,
+				} ),
+				getSelectedList: () => [ { id: 'f1', type: 'file', path: '/wp-content/a.php' } ],
+			},
+		} ),
+	} )
+);
 jest.mock( 'calypso/state/ui/selectors', () => ( {
 	...jest.requireActual( 'calypso/state/ui/selectors' ),
 	getSelectedSiteSlug: () => 'example.wordpress.com',
@@ -384,6 +401,66 @@ describe( 'BackupRestoreFlow known threats gating', () => {
 		await userEvent.click( restoreButton );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_jetpack_backup_restore_confirm',
+			expect.objectContaining( {
+				known_threats_shown: true,
+				known_threats_acknowledged: true,
+			} )
+		);
+	} );
+} );
+
+describe( 'BackupGranularRestoreFlow known threats gating', () => {
+	beforeEach( () => {
+		( siteHasFeature as jest.Mock ).mockReturnValue( true );
+		( recordTracksEvent as jest.Mock ).mockClear();
+	} );
+	afterEach( () => nock.cleanAll() );
+
+	it( 'disables Restore now until acknowledged and records the Tracks props', async () => {
+		mockList( counts( 3 ) );
+		renderWithProvider(
+			<BackupGranularRestoreFlow
+				backupDisplayDate="October 1, 2026"
+				rewindId="200.5"
+				siteId={ SITE_ID }
+				siteUrl="https://example.wordpress.com"
+			/>
+		);
+
+		await screen.findByText( NOTICE );
+		const restoreButton = screen.getByRole( 'button', { name: 'Restore now' } );
+		expect( restoreButton ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( restoreButton ).not.toHaveAttribute( 'disabled' );
+		expect( restoreButton ).toHaveAccessibleDescription(
+			'To restore this backup, confirm that you understand it contains known threats.'
+		);
+		await userEvent.hover( restoreButton );
+		expect( await screen.findByRole( 'tooltip', {}, { timeout: 2000 } ) ).toHaveTextContent(
+			'To restore this backup, confirm that you understand it contains known threats.'
+		);
+		await userEvent.click( restoreButton );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_jetpack_granular_restore_confirm',
+			expect.anything()
+		);
+
+		await userEvent.click( screen.getByRole( 'checkbox', { name: CHECKBOX } ) );
+		expect( restoreButton ).toBeEnabled();
+		expect( restoreButton ).not.toHaveAttribute( 'aria-disabled' );
+		expect( restoreButton ).not.toHaveAccessibleDescription();
+		// "Cancel" is the next stop, so the announcement says where Restore now is.
+		expectInOrder(
+			screen.getByRole( 'checkbox', { name: CHECKBOX } ),
+			screen.getByRole( 'link', { name: 'Cancel' } ),
+			restoreButton
+		);
+		expect( speak ).toHaveBeenLastCalledWith(
+			'You can now restore this backup with "Restore now", below.'
+		);
+
+		await userEvent.click( restoreButton );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_jetpack_granular_restore_confirm',
 			expect.objectContaining( {
 				known_threats_shown: true,
 				known_threats_acknowledged: true,
