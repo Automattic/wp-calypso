@@ -105,7 +105,7 @@ export function BackupDetails( {
 	);
 
 	const hasSelectedFiles = selectedFilesCount > 0;
-	const awaitingAcknowledgement = ! hasSelectedFiles && hasKnownThreats && ! acknowledged;
+	const awaitingAcknowledgement = hasKnownThreats && ! acknowledged;
 	const acknowledgementHintId = useId();
 	const acknowledgementHint = __(
 		'To restore this backup, confirm that you understand it contains known threats.'
@@ -174,14 +174,22 @@ export function BackupDetails( {
 						site={ site }
 						rewindId={ backup.rewind_id }
 						restoreLinkTo={ restoreLinkTo }
-						requireAcknowledgement={ !! onRequestRestore && ! hasSelectedFiles }
+						requireAcknowledgement={ !! onRequestRestore }
 						acknowledged={ acknowledged }
 						onAcknowledgedChange={ handleAcknowledgedChange }
 						onKnownThreatsChange={ setHasKnownThreats }
 						// The restore button comes before the checkbox, in the panel header.
-						acknowledgedMessage={ __(
-							'You can now restore this backup with "Restore to this point", at the top of this panel.'
-						) }
+						acknowledgedMessage={
+							hasSelectedFiles
+								? _n(
+										'You can now restore this backup with "Restore selected file", at the top of this panel.',
+										'You can now restore this backup with "Restore selected files", at the top of this panel.',
+										selectedFilesCount
+									)
+								: __(
+										'You can now restore this backup with "Restore to this point", at the top of this panel.'
+									)
+						}
 					/>
 					<Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap="md">
 						{ backup.streams ? (
@@ -200,6 +208,7 @@ export function BackupDetails( {
 								siteId={ site.ID }
 								siteSlug={ site.slug }
 								isRestoreEnabled={ !! onRequestRestore }
+								restoreDisabledHint={ awaitingAcknowledgement ? acknowledgementHint : undefined }
 								onTrackEvent={ recordTracksEvent }
 								source="dashboard"
 								onRequestGranularRestore={ onRequestRestore }
