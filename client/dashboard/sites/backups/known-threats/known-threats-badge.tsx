@@ -19,9 +19,16 @@ interface KnownThreatsToggleProps {
 	count: number;
 	isOpen: boolean;
 	onToggle: () => void;
+	/** The id of the region the toggle shows; referenced only while it is open. */
+	controlsId?: string;
 }
 
-export function KnownThreatsToggle( { count, isOpen, onToggle }: KnownThreatsToggleProps ) {
+export function KnownThreatsToggle( {
+	count,
+	isOpen,
+	onToggle,
+	controlsId,
+}: KnownThreatsToggleProps ) {
 	const actionLabel = isOpen ? __( 'Hide threats' ) : __( 'Show threats' );
 	const ariaLabel = isOpen
 		? /* translators: %d is the number of known security threats in a backup; the button hides the list of threats */
@@ -38,6 +45,7 @@ export function KnownThreatsToggle( { count, isOpen, onToggle }: KnownThreatsTog
 				className="dashboard-known-threats-toggle"
 				aria-label={ ariaLabel }
 				aria-expanded={ isOpen }
+				aria-controls={ isOpen ? controlsId : undefined }
 				onClick={ onToggle }
 			>
 				<KnownThreatsBadge count={ count } />

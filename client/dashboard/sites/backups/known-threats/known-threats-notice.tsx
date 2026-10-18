@@ -1,9 +1,14 @@
 import { HostingFeatures, isFlagged } from '@automattic/api-core';
 import { siteBackupKnownThreatsQuery, siteBackupThreatsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { CheckboxControl, __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	CheckboxControl,
+	__experimentalHStack as HStack,
+	Spinner,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import Notice from '../../../components/notice';
 import { Text } from '../../../components/text';
 import { hasHostingFeature } from '../../../utils/site-features';
@@ -32,9 +37,10 @@ export default function KnownThreatsNotice( {
 	onKnownThreatsChange,
 }: KnownThreatsNoticeProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
+	const threatsRegionId = useId();
 	const hasScan = hasHostingFeature( site, HostingFeatures.SCAN_SELF_SERVE );
 	const { data: counts } = useQuery( siteBackupKnownThreatsQuery( site.ID, rewindId ) );
-	const { data: threats } = useQuery( {
+	const { data: threats, isError: isThreatsError } = useQuery( {
 		...siteBackupThreatsQuery( site.ID, counts?.backupPeriod ?? 0 ),
 		enabled: hasScan && isOpen && counts?.backupPeriod != null,
 	} );
@@ -70,17 +76,31 @@ export default function KnownThreatsNotice( {
 							count={ knownThreats.flagged }
 							isOpen={ isOpen }
 							onToggle={ () => setIsOpen( ( open ) => ! open ) }
+							controlsId={ threatsRegionId }
 						/>
-						{ isOpen && threats && (
-							<KnownThreatsTable
-								siteId={ site.ID }
-								siteSlug={ site.slug }
-								restoreLinkTo={ restoreLinkTo }
-								threats={ threats }
-								latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-								currentBackupPeriod={ counts.backupPeriod }
-								showRestoreLink={ false }
-							/>
+						{ isOpen && (
+							<div id={ threatsRegionId }>
+								{ threats && (
+									<KnownThreatsTable
+										siteId={ site.ID }
+										siteSlug={ site.slug }
+										restoreLinkTo={ restoreLinkTo }
+										threats={ threats }
+										latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
+										currentBackupPeriod={ counts.backupPeriod }
+										showRestoreLink={ false }
+									/>
+								) }
+								{ ! threats && isThreatsError && (
+									<Text>{ __( "Couldn't load the threats. Try again later." ) }</Text>
+								) }
+								{ ! threats && ! isThreatsError && (
+									<HStack alignment="left" spacing={ 2 }>
+										<Spinner style={ { margin: 0 } } />
+										<Text>{ __( 'Loading threats…' ) }</Text>
+									</HStack>
+								) }
+							</div>
 						) }
 					</div>
 				) }

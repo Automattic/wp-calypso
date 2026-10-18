@@ -334,6 +334,28 @@ test( 'expands the threats table for Scan sites', async () => {
 	expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
 } );
 
+test( 'points the toggle at a loading, then failed, threats region while open', async () => {
+	const user = userEvent.setup();
+	nock( API_BASE )
+		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/1792244301/threats` )
+		.delay( 300 )
+		.reply( 500, {} );
+	renderPage( { withScan: true, backups: flaggedBackups, selected: flaggedRewindId } );
+
+	const toggle = await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
+	expect( toggle ).not.toHaveAttribute( 'aria-controls' );
+	await user.click( toggle );
+
+	const region = () => document.getElementById( toggle.getAttribute( 'aria-controls' ) ?? '' );
+	expect( region() ).toContainElement( await screen.findByText( 'Loading threats…' ) );
+	expect( region() ).toContainElement(
+		await screen.findByText( "Couldn't load the threats. Try again later." )
+	);
+
+	await user.click( toggle );
+	expect( toggle ).not.toHaveAttribute( 'aria-controls' );
+} );
+
 test( 'hides the restore link when the latest clean backup is this one', async () => {
 	renderPage( {
 		withScan: true,
