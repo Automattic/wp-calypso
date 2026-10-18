@@ -125,7 +125,8 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 								// Focus stays on the checkbox; say that the restore it was blocking is open.
 								if ( value ) {
 									speak(
-										acknowledgedMessage ?? ( translate( 'You can now restore this backup.' ) as string )
+										acknowledgedMessage ??
+											( translate( 'You can now restore this backup.' ) as string )
 									);
 								}
 							} }
