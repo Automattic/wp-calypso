@@ -1,6 +1,7 @@
 import { HostingFeatures, isFlagged } from '@automattic/api-core';
 import { siteBackupKnownThreatsQuery, siteBackupThreatsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { speak } from '@wordpress/a11y';
 import {
 	CheckboxControl,
 	__experimentalHStack as HStack,
@@ -48,9 +49,28 @@ export default function KnownThreatsNotice( {
 	const knownThreats = counts?.knownThreats;
 	const hasKnownThreats = !! knownThreats && isFlagged( knownThreats );
 
+	const warning = hasKnownThreats
+		? sprintf(
+				// translators: %d is the number of known security threats in the backup
+				_n(
+					'This backup is known to contain %d security threat. Restoring it may bring malware back to your site.',
+					'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.',
+					knownThreats.flagged
+				),
+				knownThreats.flagged
+			)
+		: '';
+
 	useEffect( () => {
 		onKnownThreatsChange?.( hasKnownThreats );
 	}, [ hasKnownThreats, onKnownThreatsChange ] );
+
+	// The warning arrives after the page has rendered, so screen readers would otherwise miss it.
+	useEffect( () => {
+		if ( hasKnownThreats ) {
+			speak( warning );
+		}
+	}, [ hasKnownThreats, warning ] );
 
 	if ( ! knownThreats || ! hasKnownThreats ) {
 		return null;
@@ -59,17 +79,7 @@ export default function KnownThreatsNotice( {
 	return (
 		<Notice variant="warning">
 			<VStack spacing={ 3 }>
-				<Text>
-					{ sprintf(
-						// translators: %d is the number of known security threats in the backup
-						_n(
-							'This backup is known to contain %d security threat. Restoring it may bring malware back to your site.',
-							'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.',
-							knownThreats.flagged
-						),
-						knownThreats.flagged
-					) }
-				</Text>
+				<Text>{ warning }</Text>
 				{ hasScan && (
 					<div>
 						<KnownThreatsToggle

@@ -6,6 +6,7 @@ import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { speak } from '@wordpress/a11y';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import SiteBackupRestoreForm from '../form';
@@ -18,6 +19,11 @@ const rewindId = '1792244435.274';
 
 jest.mock( '@wordpress/react-i18n', () => ( {
 	useI18n: jest.fn(),
+} ) );
+
+jest.mock( '@wordpress/a11y', () => ( {
+	...jest.requireActual( '@wordpress/a11y' ),
+	speak: jest.fn(),
 } ) );
 
 jest.mock( '@wordpress/data', () => ( {
@@ -141,6 +147,7 @@ const restoreButton = () => screen.getByRole( 'button', { name: 'Restore now' } 
 
 afterEach( () => {
 	nock.cleanAll();
+	jest.mocked( speak ).mockClear();
 } );
 
 test( 'disables Restore now until the box is ticked', async () => {
@@ -163,6 +170,20 @@ test( 'disables Restore now until the box is ticked', async () => {
 
 	await user.click( checkbox );
 	expect( restoreButton() ).toBeDisabled();
+} );
+
+test( 'announces the warning once when it appears', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	renderForm();
+
+	const sentence =
+		'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
+	await screen.findByText( sentence );
+	await user.click( screen.getByRole( 'checkbox', { name: /I understand/ } ) );
+
+	expect( speak ).toHaveBeenCalledTimes( 1 );
+	expect( speak ).toHaveBeenCalledWith( sentence );
 } );
 
 test( 'uses the singular for one threat', async () => {

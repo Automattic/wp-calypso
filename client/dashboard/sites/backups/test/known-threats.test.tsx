@@ -20,6 +20,12 @@ jest.mock( '@wordpress/react-i18n', () => ( {
 	useI18n: jest.fn(),
 } ) );
 
+// The live region would repeat the warning on the page.
+jest.mock( '@wordpress/a11y', () => ( {
+	...jest.requireActual( '@wordpress/a11y' ),
+	speak: jest.fn(),
+} ) );
+
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: jest.fn(),
