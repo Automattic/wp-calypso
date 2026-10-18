@@ -18,6 +18,8 @@ import { KnownThreatsTable } from './known-threats-table';
 import { RestoreThatOneInsteadLink } from './restore-that-one-instead-link';
 import type { Site } from '@automattic/api-core';
 
+import './known-threats-notice.scss';
+
 interface KnownThreatsNoticeProps {
 	site: Site;
 	restoreLinkTo?: string;
@@ -112,14 +114,16 @@ export default function KnownThreatsNotice( {
 					currentBackupPeriod={ counts.backupPeriod }
 				/>
 				{ requireAcknowledgement && (
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						checked={ acknowledged }
-						onChange={ ( value ) => onAcknowledgedChange?.( value ) }
-						label={ __(
-							'I understand this backup contains known threats and want to restore it anyway.'
-						) }
-					/>
+					<div className="known-threats-notice__acknowledgement">
+						<CheckboxControl
+							__nextHasNoMarginBottom
+							checked={ acknowledged }
+							onChange={ ( value ) => onAcknowledgedChange?.( value ) }
+							label={ __(
+								'I understand this backup contains known threats and want to restore it anyway.'
+							) }
+						/>
+					</div>
 				) }
 			</VStack>
 		</Notice>

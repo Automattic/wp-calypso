@@ -112,14 +112,16 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 					/>
 				) }
 				{ requireAcknowledgement && (
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						checked={ acknowledged }
-						onChange={ ( value ) => onAcknowledgedChange?.( value ) }
-						label={ translate(
-							'I understand this backup contains known threats and want to restore it anyway.'
-						) }
-					/>
+					<div className="rewind-flow-known-threats__acknowledgement">
+						<CheckboxControl
+							__nextHasNoMarginBottom
+							checked={ acknowledged }
+							onChange={ ( value ) => onAcknowledgedChange?.( value ) }
+							label={ translate(
+								'I understand this backup contains known threats and want to restore it anyway.'
+							) }
+						/>
+					</div>
 				) }
 			</div>
 		</RewindFlowNotice>
