@@ -42,7 +42,7 @@ module.exports = {
 		'max-len': [ 'error', { code: 100 } ],
 		'new-cap': [
 			'error',
-			{ capIsNew: false, newIsCap: true, newIsCapExceptions: [ 'constructor' ] },
+			{ capIsNew: false, newIsCap: true, newIsCapExceptions: [ 'this.constructor' ] },
 		],
 		'no-cond-assign': 'error',
 		'no-const-assign': 'error',
