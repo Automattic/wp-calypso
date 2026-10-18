@@ -21,7 +21,8 @@ const jsonEs = require(
 // eslint-disable-next-line wpcalypso/i18n-unlocalized-url -- the input that rule should flag
 const url = 'https://wordpress.com/support/';
 const files = {
-	'index.js': `export const help = '${ url }';\n`,
+	// eslint-disable-next-line inclusive-language/use-inclusive-words -- the input that rule should flag
+	'index.js': `export const help = '${ url }';\n// whitelist\n`,
 	'component.jsx': 'export const Example = () => <div />;\n',
 	'test/index.js': `export const help = '${ url }';\n`,
 	'data.json': `{ "help": "${ url }" }\n`,
