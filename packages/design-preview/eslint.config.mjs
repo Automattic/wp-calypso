@@ -1,7 +1,7 @@
 import calypso from '@automattic/calypso-eslint-config';
+import { defineConfig } from 'eslint/config';
 
-/** @type {import('eslint').Linter.Config[]} */
-const config = [
+export default defineConfig( [
 	...calypso( import.meta.dirname ),
 	{
 		files: [ '**/__tests__/**' ],
@@ -25,6 +25,4 @@ const config = [
 			],
 		},
 	},
-];
-
-export default config;
+] );

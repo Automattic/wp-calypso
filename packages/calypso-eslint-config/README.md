@@ -5,21 +5,19 @@ with settings of its own adds an `eslint.config.mjs` that builds on it:
 
 ```js
 import calypso from '@automattic/calypso-eslint-config';
+import { defineConfig } from 'eslint/config';
 
-/** @type {import('eslint').Linter.Config[]} */
-const config = [
+export default defineConfig( [
 	...calypso( import.meta.dirname ),
 	{
 		rules: {
 			// This directory's settings. File patterns are relative to this directory.
 		},
 	},
-];
-
-export default config;
+] );
 ```
 
-The type keeps package type checks passing where a package's `tsconfig.json` includes the config file.
+`defineConfig` also gives the export a type, which package type checks need where a package's `tsconfig.json` includes the config file.
 
 A workspace that does this lists `@automattic/calypso-eslint-config` in its `devDependencies`. ESLint
 uses the nearest `eslint.config.mjs` to each file and doesn't merge parent configs, so a config in a

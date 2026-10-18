@@ -1,7 +1,7 @@
 import calypso, { browserGlobals, nodeConfig } from '@automattic/calypso-eslint-config';
+import { defineConfig } from 'eslint/config';
 
-/** @type {import('eslint').Linter.Config[]} */
-const config = [
+export default defineConfig( [
 	...calypso( import.meta.dirname ),
 	{
 		languageOptions: { globals: browserGlobals },
@@ -33,6 +33,4 @@ const config = [
 			'import/default': 'off',
 		},
 	},
-];
-
-export default config;
+] );

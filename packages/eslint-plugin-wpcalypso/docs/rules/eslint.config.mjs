@@ -1,7 +1,7 @@
+import { defineConfig } from 'eslint/config';
 import parent from '../../eslint.config.mjs';
 
-/** @type {import('eslint').Linter.Config[]} */
-const config = [
+export default defineConfig( [
 	...parent,
 	{
 		rules: {
@@ -9,6 +9,4 @@ const config = [
 			'wpcalypso/i18n-ellipsis': 'off',
 		},
 	},
-];
-
-export default config;
+] );

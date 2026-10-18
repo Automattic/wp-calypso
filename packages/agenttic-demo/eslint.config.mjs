@@ -1,7 +1,7 @@
 import calypso from '@automattic/calypso-eslint-config';
+import { defineConfig } from 'eslint/config';
 
-/** @type {import('eslint').Linter.Config[]} */
-const config = [
+export default defineConfig( [
 	...calypso( import.meta.dirname ),
 	{
 		rules: {
@@ -9,6 +9,4 @@ const config = [
 			'no-console': 'off',
 		},
 	},
-];
-
-export default config;
+] );

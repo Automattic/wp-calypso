@@ -1,7 +1,7 @@
 import calypso, { nodeConfig } from '@automattic/calypso-eslint-config';
+import { defineConfig } from 'eslint/config';
 
-/** @type {import('eslint').Linter.Config[]} */
-const config = [
+export default defineConfig( [
 	...calypso( import.meta.dirname ),
 	{
 		...nodeConfig,
@@ -27,6 +27,4 @@ const config = [
 			'jsdoc/tag-lines': [ 'off' ],
 		},
 	},
-];
-
-export default config;
+] );

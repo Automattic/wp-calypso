@@ -1,7 +1,8 @@
 import path from 'node:path';
+import { defineConfig } from 'eslint/config';
 import calypso, { nodeConfig } from './index.mjs';
 
-export default [
+export default defineConfig( [
 	...calypso( import.meta.dirname ),
 	{
 		...nodeConfig,
@@ -14,4 +15,4 @@ export default [
 			],
 		},
 	},
-];
+] );

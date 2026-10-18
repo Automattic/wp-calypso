@@ -1,10 +1,10 @@
 import { restrictedImports } from '@automattic/calypso-eslint-config';
+import { defineConfig } from 'eslint/config';
 import parent from '../eslint.config.mjs';
 
 const [ severity, { paths, patterns } ] = restrictedImports;
 
-/** @type {import('eslint').Linter.Config[]} */
-const config = [
+export default defineConfig( [
 	...parent,
 	{
 		rules: {
@@ -15,6 +15,4 @@ const config = [
 			],
 		},
 	},
-];
-
-export default config;
+] );

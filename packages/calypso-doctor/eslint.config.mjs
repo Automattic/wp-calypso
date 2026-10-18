@@ -1,7 +1,7 @@
 import calypso, { nodeConfig } from '@automattic/calypso-eslint-config';
+import { defineConfig } from 'eslint/config';
 
-/** @type {import('eslint').Linter.Config[]} */
-const config = [
+export default defineConfig( [
 	...calypso( import.meta.dirname ),
 	{
 		...nodeConfig,
@@ -15,6 +15,4 @@ const config = [
 			'jest/no-test-callback': 'off',
 		},
 	},
-];
-
-export default config;
+] );
