@@ -49,3 +49,15 @@
 		padding: 1.6em;
 	}
 }
+
+// Same placement as the Activity Log: after the text, centred on its line.
+.dashboard-backups__content {
+	white-space: normal;
+}
+
+.dashboard-backups__known-threats {
+	display: inline-block;
+	margin-inline-start: 8px;
+	margin-block: -4px;
+	vertical-align: middle;
+}

@@ -82,35 +82,38 @@ export function getFields(
 			getValue: ( { item } ) => {
 				return item.published || item.last_published;
 			},
-			render: ( { item } ) => {
-				const knownThreats =
-					item.rewind_id && knownThreatsPage
-						? getKnownThreatsForRewindId( knownThreatsPage, item.rewind_id )
-						: null;
-				// The badge sits on the date line: the title is truncated to one line in the list.
-				// The always-mounted spans dodge a Google Translate DOM crash (react/react#11538).
-				return (
-					<span className="dashboard-backups__date">
-						<span>
-							<FormattedTime
-								timestamp={ item.published || item.last_published }
-								timezoneString={ timezoneString }
-								gmtOffset={ gmtOffset }
-							/>
-						</span>
-						<span>
-							{ knownThreats && isFlagged( knownThreats ) && (
-								<KnownThreatsBadge count={ knownThreats.flagged } />
-							) }
-						</span>
-					</span>
-				);
-			},
+			render: ( { item } ) => (
+				<FormattedTime
+					timestamp={ item.published || item.last_published }
+					timezoneString={ timezoneString }
+					gmtOffset={ gmtOffset }
+				/>
+			),
 		},
 		{
 			id: 'content_text',
 			label: __( 'Content' ),
 			getValue: ( { item } ) => item.content.text,
+			render: ( { item } ) => {
+				const knownThreats =
+					item.rewind_id && knownThreatsPage
+						? getKnownThreatsForRewindId( knownThreatsPage, item.rewind_id )
+						: null;
+				// Follows the content line, as in the Activity Log; the title is truncated to one line.
+				// The always-mounted spans dodge a Google Translate DOM crash (react/react#11538).
+				return (
+					<span className="dashboard-backups__content">
+						<span>{ item.content.text }</span>
+						<span>
+							{ knownThreats && isFlagged( knownThreats ) && (
+								<span className="dashboard-backups__known-threats">
+									<KnownThreatsBadge count={ knownThreats.flagged } />
+								</span>
+							) }
+						</span>
+					</span>
+				);
+			},
 			enableGlobalSearch: true,
 		},
 		{

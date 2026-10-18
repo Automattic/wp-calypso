@@ -36,7 +36,10 @@
 	font-weight: 500;
 }
 
-// The badge pill is taller than a text line; pull it up to sit centred on the first line.
+// Follows the event text on its line; the pill is taller than a line, so it sits on the text's middle.
 .site-activity-logs__event-badge {
-	margin-block: -2px;
+	display: inline-block;
+	margin-inline-start: 8px;
+	margin-block: -4px;
+	vertical-align: middle;
 }
