@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { SITE_CONTEXT_VIEW } from '../../../domains/dataviews/views';
@@ -85,6 +85,19 @@ const primaryCandidateDomain = {
 	can_set_as_primary: true,
 };
 
+const siteWithCustomDomainPlan = {
+	...site,
+	plan: { is_free: false, features: { active: [ 'set-primary-custom-domain' ] } },
+} as unknown as Site;
+
+const newlyRegisteredDomain = {
+	...domain,
+	domain: 'mynewdomain.blog',
+	primary_domain: false,
+	can_set_as_primary: true,
+	set_primary_domain_pending: false,
+};
+
 const ownerUser = {
 	ID: OWNER_USER_ID,
 	username: 'owner',
@@ -105,15 +118,17 @@ function mockApis( {
 	domains = [ domain, defaultAddressDomain ],
 	ssl,
 	preferences = {},
+	siteResponse = site,
 }: {
 	domains?: unknown[];
 	ssl?: { domain: string; certificate_provisioned: boolean };
 	preferences?: Record< string, unknown >;
+	siteResponse?: Site;
 } = {} ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ site.slug }` )
 		.query( true )
-		.reply( 200, site );
+		.reply( 200, siteResponse );
 
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.2/all-domains' )
@@ -206,6 +221,49 @@ describe( '<SiteDomains>', () => {
 		await screen.findByRole( 'heading', { name: 'Domains' } );
 
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'offers to make the only custom domain the site address in one click', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( {
+			domains: [ { ...defaultAddressDomain, primary_domain: true }, newlyRegisteredDomain ],
+			siteResponse: siteWithCustomDomainPlan,
+		} );
+
+		const setPrimaryRequest = nock( 'https://public-api.wordpress.com' )
+			.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'mynewdomain.blog' } )
+			.reply( 200, {} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect(
+			await screen.findByText( 'mynewdomain.blog isn’t your site address yet' )
+		).toBeVisible();
+		expect( screen.queryByText( 'Change primary site address' ) ).not.toBeInTheDocument();
+
+		await user.click(
+			screen.getByRole( 'button', { name: 'Make mynewdomain.blog my site address' } )
+		);
+
+		await waitFor( () => expect( setPrimaryRequest.isDone() ).toBe( true ) );
+	} );
+
+	test( 'keeps the dropdown when several domains could become the site address', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [
+				{ ...defaultAddressDomain, primary_domain: true },
+				newlyRegisteredDomain,
+				{ ...newlyRegisteredDomain, domain: 'second.camera' },
+			],
+			siteResponse: siteWithCustomDomainPlan,
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByText( 'Change primary site address' ) ).toBeVisible();
+		expect( screen.queryByText( /isn’t your site address yet/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'hides "Make primary site address" action while SSL is still pending', async () => {
