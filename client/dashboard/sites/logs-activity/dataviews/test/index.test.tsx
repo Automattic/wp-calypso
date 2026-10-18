@@ -242,15 +242,23 @@ test( 'marks a backup known to contain threats', async () => {
 		activityLogs: [
 			{
 				...mockActivityLogsData.activityLogs[ 1 ],
+				name: 'rewind__backup_complete_full',
 				rewind_id: '1792244435.274',
 				summary: 'Backup and scan complete',
+			},
+			{
+				...mockActivityLogsData.activityLogs[ 1 ],
+				activity_id: 'activity-2',
+				name: 'rewind__complete',
+				rewind_id: '1792244500.1',
+				summary: 'Restore complete',
 			},
 			mockActivityLogsData.activityLogs[ 0 ],
 		],
 		backups: [
 			{
 				object: {
-					backup_period: '1792244435',
+					backup_period: '1792244301',
 					known_threats: {
 						malware: 3,
 						database: 0,
