@@ -11,7 +11,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useId, useRef, useState } from 'react';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
@@ -48,6 +48,7 @@ function SiteBackupGranularRestoreForm( {
 
 	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
 	const [ acknowledged, setAcknowledged ] = useState( false );
+	const acknowledgementRef = useRef< HTMLInputElement | null >( null );
 	const handleKnownThreatsChange = useCallback( ( value: boolean ) => {
 		setHasKnownThreats( value );
 		if ( ! value ) {
@@ -66,6 +67,7 @@ function SiteBackupGranularRestoreForm( {
 					includePaths,
 					excludePaths,
 				},
+				acknowledgeThreats: hasKnownThreats && acknowledged,
 			},
 			{
 				onSuccess: ( restoreId ) => {
@@ -74,7 +76,18 @@ function SiteBackupGranularRestoreForm( {
 						known_threats_acknowledged: hasKnownThreats && acknowledged,
 					} );
 				},
-				onError: () => {
+				onError: ( error: Error & { error?: string } ) => {
+					if ( error.error === 'threats_not_acknowledged' ) {
+						setAcknowledged( false );
+						acknowledgementRef.current?.focus();
+						createErrorNotice(
+							__(
+								'This backup is known to contain security threats. Acknowledge them to restore it.'
+							),
+							{ type: 'snackbar' }
+						);
+						return;
+					}
 					createErrorNotice( __( 'Failed to initiate restore. Please try again.' ), {
 						type: 'snackbar',
 					} );
@@ -152,6 +165,7 @@ function SiteBackupGranularRestoreForm( {
 					acknowledged={ acknowledged }
 					onAcknowledgedChange={ setAcknowledged }
 					onKnownThreatsChange={ handleKnownThreatsChange }
+					acknowledgementRef={ acknowledgementRef }
 				/>
 
 				<ButtonStack justify="flex-start">
