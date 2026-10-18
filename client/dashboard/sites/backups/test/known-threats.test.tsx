@@ -432,6 +432,12 @@ test( 'requires the acknowledgement before restoring a flagged backup from its d
 	expect( restore ).toHaveAccessibleDescription(
 		'To restore this backup, confirm that you understand it contains known threats.'
 	);
+	// Mouse users see the same hint as a tooltip.
+	await user.hover( restore );
+	expect( await screen.findByRole( 'tooltip', {}, { timeout: 2000 } ) ).toHaveTextContent(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
+	await user.unhover( restore );
 
 	await user.click( checkbox );
 

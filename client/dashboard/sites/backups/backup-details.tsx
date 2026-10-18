@@ -4,6 +4,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
+	Tooltip,
 	VisuallyHidden,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -106,6 +107,9 @@ export function BackupDetails( {
 	const hasSelectedFiles = selectedFilesCount > 0;
 	const awaitingAcknowledgement = ! hasSelectedFiles && hasKnownThreats && ! acknowledged;
 	const acknowledgementHintId = useId();
+	const acknowledgementHint = __(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
 	const showActions = !! ( onRequestRestore || onRequestDownload );
 	const actions =
 		showActions && backup.rewind_id ? (
@@ -122,25 +126,24 @@ export function BackupDetails( {
 						? _n( 'Download selected file', 'Download selected files', selectedFilesCount )
 						: __( 'Download backup' ) }
 				</Button>
-				<Button
-					variant="primary"
-					size={ isSmallViewport ? 'default' : 'compact' }
-					onClick={ onRequestRestore }
-					style={ { justifyContent: 'center' } }
-					disabled={ awaitingAcknowledgement }
-					accessibleWhenDisabled
-					aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
-				>
-					{ hasSelectedFiles
-						? _n( 'Restore selected file', 'Restore selected files', selectedFilesCount )
-						: __( 'Restore to this point' ) }
-				</Button>
+				{ /* The tooltip shows the hint on hover and focus; screen readers get it from the description. */ }
+				<Tooltip text={ awaitingAcknowledgement ? acknowledgementHint : undefined }>
+					<Button
+						variant="primary"
+						size={ isSmallViewport ? 'default' : 'compact' }
+						onClick={ onRequestRestore }
+						style={ { justifyContent: 'center' } }
+						disabled={ awaitingAcknowledgement }
+						accessibleWhenDisabled
+						aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
+					>
+						{ hasSelectedFiles
+							? _n( 'Restore selected file', 'Restore selected files', selectedFilesCount )
+							: __( 'Restore to this point' ) }
+					</Button>
+				</Tooltip>
 				{ awaitingAcknowledgement && (
-					<VisuallyHidden id={ acknowledgementHintId }>
-						{ __(
-							'To restore this backup, confirm that you understand it contains known threats.'
-						) }
-					</VisuallyHidden>
+					<VisuallyHidden id={ acknowledgementHintId }>{ acknowledgementHint }</VisuallyHidden>
 				) }
 			</ButtonStack>
 		) : null;

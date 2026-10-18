@@ -1,6 +1,11 @@
 import { siteBackupRestoreInitiateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Button, VisuallyHidden, __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	Button,
+	Tooltip,
+	VisuallyHidden,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -126,6 +131,9 @@ function SiteBackupRestoreForm( {
 	const awaitingAcknowledgement = hasKnownThreats && ! acknowledged;
 	const isRestoreDisabled = ! isFormValid || isRestoreMutationPending || awaitingAcknowledgement;
 	const acknowledgementHintId = useId();
+	const acknowledgementHint = __(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -183,22 +191,21 @@ function SiteBackupRestoreForm( {
 				/>
 
 				<ButtonStack justify="flex-start">
-					<Button
-						variant="primary"
-						type="submit"
-						isBusy={ isRestoreMutationPending }
-						disabled={ isRestoreDisabled }
-						accessibleWhenDisabled={ awaitingAcknowledgement }
-						aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
-					>
-						{ __( 'Restore now' ) }
-					</Button>
+					{ /* The tooltip shows the hint on hover and focus; screen readers get it from the description. */ }
+					<Tooltip text={ awaitingAcknowledgement ? acknowledgementHint : undefined }>
+						<Button
+							variant="primary"
+							type="submit"
+							isBusy={ isRestoreMutationPending }
+							disabled={ isRestoreDisabled }
+							accessibleWhenDisabled={ awaitingAcknowledgement }
+							aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
+						>
+							{ __( 'Restore now' ) }
+						</Button>
+					</Tooltip>
 					{ awaitingAcknowledgement && (
-						<VisuallyHidden id={ acknowledgementHintId }>
-							{ __(
-								'To restore this backup, confirm that you understand it contains known threats.'
-							) }
-						</VisuallyHidden>
+						<VisuallyHidden id={ acknowledgementHintId }>{ acknowledgementHint }</VisuallyHidden>
 					) }
 				</ButtonStack>
 			</VStack>
