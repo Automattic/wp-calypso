@@ -112,7 +112,7 @@ export function RestoreThatOneInsteadLink( {
 		return null;
 	}
 
-	let label = __( 'Restore the latest backup without known threats instead' );
+	let label: string = __( 'Restore the latest backup without known threats instead' );
 	if ( completedAt ) {
 		const timezoneString = siteSettings.timezone_string || undefined;
 		const format = ( options: Intl.DateTimeFormatOptions ) =>
