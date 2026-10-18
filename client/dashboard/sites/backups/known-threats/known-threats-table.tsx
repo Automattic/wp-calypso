@@ -6,6 +6,7 @@ import './known-threats-table.scss';
 import type { BackupThreat, BackupThreats } from '@automattic/api-core';
 
 interface KnownThreatsTableProps {
+	siteId: number;
 	siteSlug: string;
 	restoreLinkTo?: string;
 	threats: BackupThreats;
@@ -15,6 +16,7 @@ interface KnownThreatsTableProps {
 }
 
 export function KnownThreatsTable( {
+	siteId,
 	siteSlug,
 	restoreLinkTo,
 	threats,
@@ -74,6 +76,7 @@ export function KnownThreatsTable( {
 			{ threats.summary.vulnerable > 0 && <p>{ vulnerableNote }</p> }
 			{ showRestoreLink && (
 				<RestoreThatOneInsteadLink
+					siteId={ siteId }
 					siteSlug={ siteSlug }
 					restoreLinkTo={ restoreLinkTo }
 					latestWithoutKnownThreats={ latestWithoutKnownThreats }

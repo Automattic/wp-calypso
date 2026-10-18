@@ -95,6 +95,34 @@ function mockBackups(
 		.get( new RegExp( `/rest/v1.1/sites/${ siteId }/rewind/backups/.*` ) )
 		.query( true )
 		.reply( 200, {} );
+	nock( API_BASE )
+		.persist()
+		.get( `/rest/v1.4/sites/${ siteId }/settings` )
+		.query( true )
+		.reply( 200, { settings: { timezone_string: 'UTC', gmt_offset: 0 } } );
+	// The clean backup's "Backup complete" entry, a few minutes after its period.
+	nock( API_BASE )
+		.persist()
+		.get( `/wpcom/v2/sites/${ siteId }/activity` )
+		.query( true )
+		.reply( 200, {
+			current: {
+				orderedItems: [
+					{
+						activity_id: 'backup-clean',
+						name: 'rewind__backup_complete_full',
+						rewind_id: '1792240135.5',
+						is_rewindable: true,
+						published: '2026-10-17T12:28:55.500+00:00',
+						summary: 'Backup and scan complete',
+						content: { text: '' },
+						actor: { name: 'Jetpack' },
+					},
+				],
+			},
+			totalItems: 1,
+			totalPages: 1,
+		} );
 }
 
 const renderForm = () =>
@@ -213,7 +241,7 @@ test( 'links to the latest backup without known threats', async () => {
 	renderForm();
 
 	expect(
-		await screen.findByRole( 'link', { name: 'Restore this backup instead' } )
+		await screen.findByRole( 'link', { name: 'Restore Oct 17, 2026 - 12:28 PM backup instead' } )
 	).toHaveAttribute( 'href', expect.stringContaining( '/backups/1792240000/restore' ) );
 } );
 
@@ -249,9 +277,9 @@ test( 'shows the restore link once when the threats are expanded', async () => {
 	await user.hover( expanded );
 	expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
 	expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
-	expect( screen.getAllByRole( 'link', { name: 'Restore this backup instead' } ) ).toHaveLength(
-		1
-	);
+	expect(
+		await screen.findAllByRole( 'link', { name: /^Restore .+ backup instead$/ } )
+	).toHaveLength( 1 );
 	expect( threatsScope.isDone() ).toBe( true );
 } );
 
@@ -307,6 +335,6 @@ test( 'renders no link when the caller supplies no restore route', async () => {
 
 	expect( await screen.findByText( /known to contain 3/ ) ).toBeVisible();
 	expect(
-		screen.queryByRole( 'link', { name: 'Restore this backup instead' } )
+		screen.queryByRole( 'link', { name: /^Restore .+ backup instead$/ } )
 	).not.toBeInTheDocument();
 } );
