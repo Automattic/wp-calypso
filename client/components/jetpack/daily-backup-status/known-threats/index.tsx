@@ -93,9 +93,7 @@ export function RestoreThatOneInsteadLink( {
 
 	// The backup's "Backup complete" time, in the site's timezone: the time the backup lists show.
 	const completedAt = moment( Number( resolvedRewindId ) * 1000 );
-	const backupLabel = ( applySiteOffset ? applySiteOffset( completedAt ) : completedAt ).format(
-		'll - LT'
-	);
+	const siteCompletedAt = applySiteOffset ? applySiteOffset( completedAt ) : completedAt;
 
 	return (
 		<Button
@@ -104,9 +102,10 @@ export function RestoreThatOneInsteadLink( {
 			className="backup-known-threats__restore-link"
 			href={ backupRestorePath( siteSlug, resolvedRewindId ) }
 		>
-			{ translate( 'Restore %(backup)s backup instead', {
-				args: { backup: backupLabel },
-				comment: '%(backup)s is the date and time of a backup, e.g. "Oct 17, 2026 - 2:30 PM"',
+			{ translate( 'Restore %(date)s at %(time)s backup instead', {
+				args: { date: siteCompletedAt.format( 'll' ), time: siteCompletedAt.format( 'LT' ) },
+				comment:
+					'%(date)s is the date of a backup, e.g. "Oct 17, 2026"; %(time)s its time, e.g. "2:30 PM". Reads "Restore Oct 17, 2026 at 2:30 PM backup instead".',
 			} ) }
 		</Button>
 	);

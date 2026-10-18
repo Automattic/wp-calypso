@@ -241,7 +241,7 @@ test( 'links to the latest backup without known threats', async () => {
 	renderForm();
 
 	expect(
-		await screen.findByRole( 'link', { name: 'Restore Oct 17, 2026 - 12:28 PM backup instead' } )
+		await screen.findByRole( 'link', { name: 'Restore Oct 17, 2026 at 12:28 PM backup instead' } )
 	).toHaveAttribute( 'href', expect.stringContaining( '/backups/1792240000/restore' ) );
 } );
 
@@ -334,7 +334,5 @@ test( 'renders no link when the caller supplies no restore route', async () => {
 	);
 
 	expect( await screen.findByText( /known to contain 3/ ) ).toBeVisible();
-	expect(
-		screen.queryByRole( 'link', { name: /^Restore .+ backup instead$/ } )
-	).not.toBeInTheDocument();
+	expect( screen.queryByRole( 'link', { name: /^Restore .+ instead$/ } ) ).not.toBeInTheDocument();
 } );

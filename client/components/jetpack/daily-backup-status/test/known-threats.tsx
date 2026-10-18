@@ -210,7 +210,7 @@ describe( 'BackupKnownThreats', () => {
 		renderIt();
 
 		const link = await screen.findByRole( 'link', {
-			name: 'Restore Oct 17, 2026 - 2:30 PM backup instead',
+			name: 'Restore Oct 17, 2026 at 2:30 PM backup instead',
 		} );
 		expect( link ).toHaveAttribute(
 			'href',

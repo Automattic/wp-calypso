@@ -98,9 +98,7 @@ test( 'links to the agency restore route, not the sites one', async () => {
 
 	render( <AgencySiteBackupRestore /> );
 
-	expect(
-		await screen.findByRole( 'link', { name: /^Restore .+ backup instead$/ } )
-	).toHaveAttribute(
+	expect( await screen.findByRole( 'link', { name: /^Restore .+ instead$/ } ) ).toHaveAttribute(
 		'href',
 		expect.stringContaining( '/agency/sites/test-site/backups/1792240000/restore' )
 	);

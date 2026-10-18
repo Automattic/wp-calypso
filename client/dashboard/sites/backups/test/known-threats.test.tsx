@@ -161,6 +161,9 @@ afterEach( () => {
 	nock.cleanAll();
 } );
 
+// No Activity Log mock, so the clean backup's completion time is unknown.
+const fallbackRestoreLink = 'Restore the latest backup without known threats instead';
+
 const localDate = ( utcMs: number ) =>
 	new Intl.DateTimeFormat( 'en-US', { dateStyle: 'medium' } ).format( new Date( utcMs ) );
 
@@ -283,7 +286,7 @@ test( 'expands the threats table for Scan sites', async () => {
 			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.'
 		)
 	).toBeVisible();
-	const restoreLink = screen.getByRole( 'link', { name: /^Restore .+ backup instead$/ } );
+	const restoreLink = screen.getByRole( 'link', { name: fallbackRestoreLink } );
 	expect( restoreLink ).toBeVisible();
 	expect(
 		restoreLink.compareDocumentPosition( toggle ) & Node.DOCUMENT_POSITION_FOLLOWING
@@ -301,14 +304,12 @@ test( 'expands the threats table for Scan sites', async () => {
 		screen.getByText( `Fixed ${ localDate( Date.UTC( 2026, 8, 2, 23, 30 ) ) }` )
 	).toBeVisible();
 	expect( screen.getByText( 'Also: 2 vulnerable plugin or theme versions.' ) ).toBeVisible();
-	expect( screen.getAllByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toHaveLength(
-		1
-	);
-	expect( screen.getByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toHaveAttribute(
+	expect( screen.getAllByRole( 'link', { name: fallbackRestoreLink } ) ).toHaveLength( 1 );
+	expect( screen.getByRole( 'link', { name: fallbackRestoreLink } ) ).toHaveAttribute(
 		'href',
 		expect.stringContaining( '/backups/1792240000/restore' )
 	);
-	expect( screen.getByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toHaveClass(
+	expect( screen.getByRole( 'link', { name: fallbackRestoreLink } ) ).toHaveClass(
 		'is-next-40px-default-size'
 	);
 	expect( threatsScope.isDone() ).toBe( true );
@@ -330,7 +331,7 @@ test( 'hides the restore link when the latest clean backup is this one', async (
 	} );
 
 	await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
-	expect( screen.queryByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toBeNull();
+	expect( screen.queryByRole( 'link', { name: /^Restore .+ instead$/ } ) ).toBeNull();
 } );
 
 test( 'uses the singular vulnerable note for one version', async () => {
