@@ -160,16 +160,16 @@ describe( 'BackupDelta known threats', () => {
 		expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
 		await userEvent.unhover( button );
 		const restoreLink = await within( cards[ 0 ] ).findByRole( 'link', {
-			name: 'Restore this backup instead',
+			name: /^Restore .+ backup instead$/,
 		} );
 		expect( restoreLink ).toBeVisible();
-		// Same order as the other surfaces: the link sits above the Known threats button.
+		// In the card toolbar the Known threats button sits above the link.
 		expect( toolbar.lastElementChild ).toContainElement( restoreLink );
 		expect(
-			restoreLink.compareDocumentPosition( button ) & Node.DOCUMENT_POSITION_FOLLOWING
+			button.compareDocumentPosition( restoreLink ) & Node.DOCUMENT_POSITION_FOLLOWING
 		).toBeTruthy();
 		expect(
-			within( cards[ 1 ] ).queryByRole( 'link', { name: 'Restore this backup instead' } )
+			within( cards[ 1 ] ).queryByRole( 'link', { name: /^Restore .+ backup instead$/ } )
 		).toBeNull();
 		await userEvent.click( button );
 		expect( button ).toHaveAttribute( 'aria-expanded', 'true' );
@@ -179,7 +179,7 @@ describe( 'BackupDelta known threats', () => {
 		expect( await within( cards[ 0 ] ).findByText( 'Evil.Sig' ) ).toBeVisible();
 		expect( within( cards[ 1 ] ).queryByText( 'Evil.Sig' ) ).toBeNull();
 		expect(
-			within( cards[ 0 ] ).getAllByRole( 'link', { name: 'Restore this backup instead' } )
+			within( cards[ 0 ] ).getAllByRole( 'link', { name: /^Restore .+ backup instead$/ } )
 		).toHaveLength( 1 );
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 		expect( scope.isDone() ).toBe( true );

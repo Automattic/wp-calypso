@@ -1,7 +1,24 @@
-import { __ } from '@wordpress/i18n';
+import {
+	siteActivityLogQuery,
+	siteBackupsKnownThreatsQuery,
+	siteSettingsQuery,
+} from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import { __, sprintf } from '@wordpress/i18n';
+import { useIntlLocale } from '../../../app/locale';
 import RouterLinkButton from '../../../components/router-link-button';
+import { formatDate, formatDateWithOffset } from '../../../utils/datetime';
+
+// The Activity Log entries a successful backup ends with.
+const BACKUP_COMPLETE_ACTIVITIES = [
+	'rewind__backup_complete_full',
+	'rewind__backup_complete_initial',
+	'rewind__backup_only_complete_full',
+	'rewind__backup_only_complete_initial',
+];
 
 interface RestoreThatOneInsteadLinkProps {
+	siteId: number;
 	siteSlug: string;
 	restoreLinkTo?: string;
 	latestWithoutKnownThreats?: number | null;
@@ -9,22 +26,82 @@ interface RestoreThatOneInsteadLinkProps {
 	currentBackupPeriod?: number | null;
 }
 
+/**
+ * When a backup finished: its "backup complete" Activity Log entry, which is the time the backup
+ * lists show. A backup's period is when it started, and anything from the next period on belongs
+ * to the next backup.
+ */
+function useBackupCompletedAt( siteId: number, period: number | null ): Date | null | undefined {
+	const { data: page } = useQuery( {
+		...siteBackupsKnownThreatsQuery( siteId ),
+		enabled: !! period,
+	} );
+	const nextPeriod = period
+		? ( page?.periods ?? [] ).filter( ( candidate ) => candidate > period ).sort()[ 0 ]
+		: undefined;
+	const before = period ? Math.min( nextPeriod ?? Infinity, period + 24 * 60 * 60 ) : 0;
+	const { data, isError } = useQuery( {
+		...siteActivityLogQuery( siteId, {
+			name: BACKUP_COMPLETE_ACTIVITIES,
+			aggregate: false,
+			after: period ? new Date( period * 1000 ).toISOString() : undefined,
+			before: period ? new Date( before * 1000 ).toISOString() : undefined,
+			sort_order: 'asc',
+			number: 10,
+		} ),
+		enabled: !! period && !! page,
+	} );
+
+	if ( isError ) {
+		return null;
+	}
+	if ( ! data ) {
+		return undefined;
+	}
+	const entry = data.activityLogs.find(
+		( activity ) =>
+			activity.rewind_id && Math.floor( Number( activity.rewind_id ) ) >= ( period ?? 0 )
+	);
+	return entry ? new Date( Number( entry.rewind_id ) * 1000 ) : null;
+}
+
 export function RestoreThatOneInsteadLink( {
+	siteId,
 	siteSlug,
 	restoreLinkTo,
 	latestWithoutKnownThreats,
 	currentBackupPeriod,
 }: RestoreThatOneInsteadLinkProps ) {
-	if ( ! restoreLinkTo ) {
+	const locale = useIntlLocale();
+	const hasTarget =
+		!! restoreLinkTo &&
+		latestWithoutKnownThreats !== null &&
+		latestWithoutKnownThreats !== undefined &&
+		currentBackupPeriod !== latestWithoutKnownThreats;
+	const { data: siteSettings } = useQuery( { ...siteSettingsQuery( siteId ), enabled: hasTarget } );
+	const completedAt = useBackupCompletedAt(
+		siteId,
+		hasTarget ? ( latestWithoutKnownThreats as number ) : null
+	);
+
+	// Wait for the lookup rather than flash a label that then changes.
+	if ( ! hasTarget || completedAt === undefined || ! siteSettings ) {
 		return null;
 	}
 
-	if ( latestWithoutKnownThreats === null || latestWithoutKnownThreats === undefined ) {
-		return null;
-	}
-
-	if ( currentBackupPeriod === latestWithoutKnownThreats ) {
-		return null;
+	let label = __( 'Restore this backup instead' );
+	if ( completedAt ) {
+		const timezoneString = siteSettings.timezone_string || undefined;
+		const format = ( options: Intl.DateTimeFormatOptions ) =>
+			timezoneString
+				? formatDate( completedAt, locale, { ...options, timeZone: timezoneString } )
+				: formatDateWithOffset( completedAt, siteSettings.gmt_offset ?? 0, locale, options );
+		label = sprintf(
+			// translators: %1$s is a backup's date, e.g. "Oct 17, 2026"; %2$s its time, e.g. "2:30 PM".
+			__( 'Restore %1$s - %2$s backup instead' ),
+			format( { dateStyle: 'medium' } ),
+			format( { timeStyle: 'short' } )
+		);
 	}
 
 	return (
@@ -34,7 +111,7 @@ export function RestoreThatOneInsteadLink( {
 			to={ restoreLinkTo }
 			params={ { siteSlug, rewindId: String( latestWithoutKnownThreats ) } }
 		>
-			{ __( 'Restore this backup instead' ) }
+			{ label }
 		</RouterLinkButton>
 	);
 }

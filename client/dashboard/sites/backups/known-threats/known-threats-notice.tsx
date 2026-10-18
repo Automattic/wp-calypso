@@ -65,6 +65,7 @@ export default function KnownThreatsNotice( {
 					) }
 				</Text>
 				<RestoreThatOneInsteadLink
+					siteId={ site.ID }
 					siteSlug={ site.slug }
 					restoreLinkTo={ restoreLinkTo }
 					latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
@@ -79,6 +80,7 @@ export default function KnownThreatsNotice( {
 						/>
 						{ isOpen && threats && (
 							<KnownThreatsTable
+								siteId={ site.ID }
 								siteSlug={ site.slug }
 								restoreLinkTo={ restoreLinkTo }
 								threats={ threats }
