@@ -13,6 +13,10 @@ import type { User, UserSettings } from '@automattic/api-core';
 const settings = {
 	first_name: 'John',
 	last_name: 'Doe',
+	display_name: 'John Doe',
+	user_URL: 'https://example.com',
+	description: 'Hello world',
+	avatar_URL: 'https://gravatar.com/avatar/test',
 	user_login: 'johndoe',
 	user_email: 'john@example.com',
 	email_verified: true,
@@ -69,7 +73,7 @@ describe( '<PersonalDetailsSection>', () => {
 		mockIsAutomattician( false );
 
 		render( <PersonalDetailsSection /> );
-		await screen.findByRole( 'heading', { name: 'Personal details' }, { timeout: 2000 } );
+		await screen.findByRole( 'textbox', { name: 'Email address' }, { timeout: 2000 } );
 
 		expect( screen.getByRole( 'textbox', { name: 'First name' } ) ).toHaveValue( 'John' );
 		expect( screen.getByRole( 'textbox', { name: 'Last name' } ) ).toHaveValue( 'Doe' );
@@ -77,6 +81,11 @@ describe( '<PersonalDetailsSection>', () => {
 		expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toHaveValue(
 			'john@example.com'
 		);
+		expect( screen.getByRole( 'textbox', { name: 'Display name' } ) ).toHaveValue( 'John Doe' );
+		expect( screen.getByRole( 'textbox', { name: 'Web address' } ) ).toHaveValue(
+			'https://example.com'
+		);
+		expect( screen.getByRole( 'textbox', { name: 'About me' } ) ).toHaveValue( 'Hello world' );
 		const firstNameInput = screen.getByRole( 'textbox', { name: 'First name' } );
 		await user.clear( firstNameInput );
 		await user.type( firstNameInput, 'Jane' );
@@ -89,6 +98,14 @@ describe( '<PersonalDetailsSection>', () => {
 		await user.clear( emailInput );
 		await user.type( emailInput, 'jane@example.com' );
 
+		const displayNameInput = screen.getByRole( 'textbox', { name: 'Display name' } );
+		await user.clear( displayNameInput );
+		await user.type( displayNameInput, 'Jane Smith' );
+
+		const descriptionInput = screen.getByRole( 'textbox', { name: 'About me' } );
+		await user.clear( descriptionInput );
+		await user.type( descriptionInput, 'Updated bio' );
+
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/settings', ( body ) => {
 				expect( body ).toEqual(
@@ -96,6 +113,8 @@ describe( '<PersonalDetailsSection>', () => {
 						first_name: 'Jane',
 						last_name: 'Smith',
 						user_email: 'jane@example.com',
+						display_name: 'Jane Smith',
+						description: 'Updated bio',
 					} )
 				);
 				return true;
@@ -105,6 +124,8 @@ describe( '<PersonalDetailsSection>', () => {
 				first_name: 'Jane',
 				last_name: 'Smith',
 				user_email: 'jane@example.com',
+				display_name: 'Jane Smith',
+				description: 'Updated bio',
 			} );
 
 		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
@@ -390,6 +411,80 @@ describe( '<PersonalDetailsSection>', () => {
 			await waitFor( () => {
 				expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
 			} );
+		} );
+	} );
+	describe( 'profile photo', () => {
+		test( 'HTML entities get decoded before avatar URL is rendered', async () => {
+			mockUserSettings( {
+				...settings,
+				avatar_URL: 'https://gravatar.com/avatar/abc123?s=96&amp;d=mm&amp;r=G',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+
+			const avatarImg = screen.getByAltText( 'Gravatar' );
+			expect( avatarImg ).toBeVisible();
+			expect( avatarImg ).toHaveAttribute(
+				'src',
+				expect.stringContaining( 'https://gravatar.com/avatar/abc123?s=96&d=mm&r=G' )
+			);
+		} );
+
+		test( 'keeps the avatar src stable while typing in other fields', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+
+			const srcBefore = screen.getByAltText( 'Gravatar' ).getAttribute( 'src' );
+
+			await user.type( screen.getByRole( 'textbox', { name: 'Display name' } ), 'abc' );
+
+			expect( screen.getByAltText( 'Gravatar' ) ).toHaveAttribute( 'src', srcBefore );
+		} );
+	} );
+
+	describe( 'display name field', () => {
+		test( 'disables save when display name exceeds 250 characters', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+
+			const displayNameInput = screen.getByRole( 'textbox', { name: 'Display name' } );
+			await user.clear( displayNameInput );
+			await user.paste( 'a'.repeat( 251 ) );
+			await user.tab();
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
+				expect( screen.getByText( 'Display name must be 250 characters or less.' ) ).toBeVisible();
+			} );
+		} );
+	} );
+
+	describe( 'web address field', () => {
+		test( 'disables save when URL is invalid', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+
+			const urlInput = screen.getByRole( 'textbox', { name: 'Web address' } );
+			await user.clear( urlInput );
+			await user.type( urlInput, 'not-a-url' );
+			await user.tab();
+
+			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
+			expect( screen.getByText( 'Please enter a valid URL.' ) ).toBeVisible();
 		} );
 	} );
 } );

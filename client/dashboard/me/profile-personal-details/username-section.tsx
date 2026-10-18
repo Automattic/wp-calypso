@@ -71,7 +71,9 @@ export default function UsernameSection( {
 				return __( 'Username can be changed once your email address is verified.' );
 			}
 
-			return null;
+			return __(
+				'Your unique @handle. You can sign in with it, people use it to @mention you, and it’s part of your Gravatar and author page addresses. Changing it is permanent.'
+			);
 		}
 
 		// Success state

@@ -170,7 +170,7 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 					</div>
 				</button>
 				<Button variant="tertiary" onClick={ openGravatarEditor }>
-					{ __( 'Update avatar' ) }
+					{ __( 'Change profile photo' ) }
 				</Button>
 			</ButtonStack>
 

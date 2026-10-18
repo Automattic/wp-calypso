@@ -125,7 +125,7 @@ export default function UsernameUpdateForm( {
 			{ showRadioOptions && (
 				<VStack spacing={ 3 }>
 					<RadioControl
-						label={ __( 'Would you like a matching blog address too?' ) }
+						label={ __( 'Do you also want a new site with a matching address?' ) }
 						selected={ usernameAction }
 						options={ Object.entries( actions ).map( ( [ value, label ] ) => ( {
 							value,
