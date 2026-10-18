@@ -4,6 +4,7 @@
 
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { speak } from '@wordpress/a11y';
 import nock from 'nock';
 import { useState } from 'react';
 import { applyMiddleware, createStore } from 'redux';
@@ -19,6 +20,10 @@ import KnownThreatsNotice, {
 import BackupRestoreFlow from '../restore';
 
 jest.mock( 'calypso/state/selectors/site-has-feature' );
+jest.mock( '@wordpress/a11y', () => ( {
+	...jest.requireActual( '@wordpress/a11y' ),
+	speak: jest.fn(),
+} ) );
 jest.mock( 'calypso/state/analytics/actions/record', () => ( {
 	recordTracksEvent: jest.fn( () => ( { type: 'TEST_NOOP' } ) ),
 } ) );
@@ -249,16 +254,14 @@ describe( 'KnownThreatsNotice', () => {
 		expect( banner ).toContainElement( screen.getByRole( 'checkbox', { name: CHECKBOX } ) );
 		expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Show threats' ) ).not.toBeInTheDocument();
-		await userEvent.hover( toggle );
-		expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
+		expect( toggle ).not.toHaveAccessibleDescription( 'Show threats' );
 		await userEvent.unhover( toggle );
 		await userEvent.click( toggle );
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
 		const expanded = screen.getByRole( 'button', { name: 'Known threats (3), hide threats' } );
 		expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
 		await userEvent.unhover( expanded );
-		await userEvent.hover( expanded );
-		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
+		expect( expanded ).not.toHaveAccessibleDescription( 'Hide threats' );
 		expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
 		const link = await screen.findByRole( 'link', { name: /^Restore .+ backup instead$/ } );
 		expect( link ).toHaveAttribute( 'href', '/backup/example.wordpress.com/restore/150.817' );
@@ -371,6 +374,15 @@ describe( 'BackupRestoreFlow known threats gating', () => {
 		expect( restoreButton ).toBeEnabled();
 		expect( restoreButton ).not.toHaveAttribute( 'aria-disabled' );
 		expect( restoreButton ).not.toHaveAccessibleDescription();
+		// "Go back" is the next stop, so the announcement says where Restore now is.
+		expectInOrder(
+			screen.getByRole( 'checkbox', { name: CHECKBOX } ),
+			screen.getByRole( 'link', { name: 'Go back' } ),
+			restoreButton
+		);
+		expect( speak ).toHaveBeenLastCalledWith(
+			'You can now restore this backup with "Restore now", below.'
+		);
 
 		await userEvent.click( restoreButton );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(

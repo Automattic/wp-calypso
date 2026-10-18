@@ -334,7 +334,6 @@ export function KnownThreatsToggleButton( {
 }: KnownThreatsToggleButtonProps ) {
 	const translate = useTranslate();
 	const warningId = useId();
-	const actionLabel = isOpen ? translate( 'Hide threats' ) : translate( 'Show threats' );
 	// In the card toolbar the warning isn't shown nearby, so screen readers get it as the description.
 	const warning = inToolbar ? getKnownThreatsWarning( translate, flagged ) : null;
 	const ariaLabel = isOpen
@@ -349,37 +348,36 @@ export function KnownThreatsToggleButton( {
 					'%d is the number of known security threats in a backup; the button shows the list of threats',
 			} );
 
+	// No tooltip: it could only repeat the label.
 	return (
 		<>
-			<Tooltip text={ String( actionLabel ) }>
-				{ inToolbar ? (
-					<CalypsoButton
-						compact
-						borderless
-						className="backup-known-threats__toggle"
-						aria-label={ String( ariaLabel ) }
-						aria-expanded={ isOpen }
-						aria-controls={ isOpen ? controlsId : undefined }
-						aria-describedby={ warningId }
-						onClick={ onToggle }
-					>
-						<KnownThreatsBadge flagged={ flagged } />
-					</CalypsoButton>
-				) : (
-					<Button
-						__next40pxDefaultSize
-						variant="tertiary"
-						size="compact"
-						className="backup-known-threats__toggle"
-						aria-label={ String( ariaLabel ) }
-						aria-expanded={ isOpen }
-						aria-controls={ isOpen ? controlsId : undefined }
-						onClick={ onToggle }
-					>
-						<KnownThreatsBadge flagged={ flagged } />
-					</Button>
-				) }
-			</Tooltip>
+			{ inToolbar ? (
+				<CalypsoButton
+					compact
+					borderless
+					className="backup-known-threats__toggle"
+					aria-label={ String( ariaLabel ) }
+					aria-expanded={ isOpen }
+					aria-controls={ isOpen ? controlsId : undefined }
+					aria-describedby={ warningId }
+					onClick={ onToggle }
+				>
+					<KnownThreatsBadge flagged={ flagged } />
+				</CalypsoButton>
+			) : (
+				<Button
+					__next40pxDefaultSize
+					variant="tertiary"
+					size="compact"
+					className="backup-known-threats__toggle"
+					aria-label={ String( ariaLabel ) }
+					aria-expanded={ isOpen }
+					aria-controls={ isOpen ? controlsId : undefined }
+					onClick={ onToggle }
+				>
+					<KnownThreatsBadge flagged={ flagged } />
+				</Button>
+			) }
 			{ warning && <VisuallyHidden id={ warningId }>{ warning }</VisuallyHidden> }
 		</>
 	);

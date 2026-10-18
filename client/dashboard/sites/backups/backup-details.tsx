@@ -175,6 +175,10 @@ export function BackupDetails( {
 						acknowledged={ acknowledged }
 						onAcknowledgedChange={ handleAcknowledgedChange }
 						onKnownThreatsChange={ setHasKnownThreats }
+						// The restore button comes before the checkbox, in the panel header.
+						acknowledgedMessage={ __(
+							'You can now restore this backup with "Restore to this point", at the top of this panel.'
+						) }
 					/>
 					<Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap="md">
 						{ backup.streams ? (

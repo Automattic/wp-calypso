@@ -56,9 +56,11 @@ export async function fetchSiteBackupsKnownThreatsPage(
 	siteId: number,
 	page: number
 ): Promise< BackupsKnownThreatsPage > {
+	// `known_threats_only` asks for just the fields read here (no per-backup stats), which keeps
+	// the response small; servers that don't know it yet ignore it.
 	const response: BackupsKnownThreatsResponse = await wpcom.req.get(
 		{ path: `/sites/${ siteId }/rewind/backups`, apiNamespace: 'wpcom/v3' },
-		{ number: 100, page }
+		{ number: 100, page, known_threats_only: true }
 	);
 
 	const byPeriod: Record< number, BackupKnownThreats > = {};

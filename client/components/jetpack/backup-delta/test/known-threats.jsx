@@ -160,8 +160,7 @@ describe( 'BackupDelta known threats', () => {
 			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
 		expect( button ).toHaveAccessibleDescription( warning );
 		expect( button ).not.toHaveAttribute( 'title' );
-		await userEvent.hover( button );
-		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( /^Show threats$/ );
+		expect( button ).not.toHaveAccessibleDescription( 'Show threats' );
 		await userEvent.unhover( button );
 		const restoreLink = await within( cards[ 0 ] ).findByRole( 'link', {
 			name: /^Restore .+ backup instead$/,
@@ -178,8 +177,7 @@ describe( 'BackupDelta known threats', () => {
 		await userEvent.click( button );
 		expect( button ).toHaveAttribute( 'aria-expanded', 'true' );
 		await userEvent.unhover( button );
-		await userEvent.hover( button );
-		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( /^Hide threats$/ );
+		expect( button ).not.toHaveAccessibleDescription( 'Hide threats' );
 		expect( await within( cards[ 0 ] ).findByText( 'Evil.Sig' ) ).toBeVisible();
 		// The table opens right below the toggle's row, full width, and above the link.
 		const table = within( cards[ 0 ] ).getByRole( 'table', {

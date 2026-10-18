@@ -3,6 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
+import { HostingFeatures } from '@automattic/api-core';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -66,6 +67,11 @@ jest.mock( '../../../../app/router/sites', () => ( {
 const mockSite: DeepPartial< Site > = {
 	ID: mockSiteId,
 	slug: 'test-site',
+};
+
+const mockSiteWithBackups: DeepPartial< Site > = {
+	...mockSite,
+	plan: { features: { active: [ HostingFeatures.BACKUPS_SELF_SERVE ] } },
 };
 
 const mockActivityLogsData = {
@@ -140,7 +146,11 @@ const mockActivityLogsData = {
 };
 
 function renderActivityLogsDataViews(
-	{ activityLogs, backups = [] }: { activityLogs: unknown[]; backups?: unknown[] } = {
+	{
+		activityLogs,
+		backups = [],
+		site = mockSite,
+	}: { activityLogs: unknown[]; backups?: unknown[]; site?: DeepPartial< Site > } = {
 		activityLogs: mockActivityLogsData.activityLogs,
 	}
 ) {
@@ -167,7 +177,7 @@ function renderActivityLogsDataViews(
 		<SiteActivityLogsDataViews
 			gmtOffset={ -8 }
 			timezoneString="America/Los_Angeles"
-			site={ mockSite as Site }
+			site={ site as Site }
 			dateRange={ { start: new Date(), end: new Date() } }
 			autoRefresh={ false }
 			setAutoRefresh={ jest.fn() }
@@ -240,6 +250,7 @@ test( 'data is properly displayed', async () => {
 
 test( 'marks a backup known to contain threats', async () => {
 	renderActivityLogsDataViews( {
+		site: mockSiteWithBackups,
 		activityLogs: [
 			{
 				...mockActivityLogsData.activityLogs[ 1 ],
@@ -283,4 +294,12 @@ test( 'marks a backup known to contain threats', async () => {
 	expect( badges[ 0 ] ).not.toHaveAttribute( 'title' );
 	await userEvent.hover( badges[ 0 ] );
 	expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( warning );
+} );
+
+test( "doesn't look up known threats for a site without backups", async () => {
+	renderActivityLogsDataViews();
+
+	expect( await screen.findByText( 'Backup completed' ) ).toBeInTheDocument();
+	expect( nock.pendingMocks() ).toContainEqual( expect.stringContaining( '/rewind/backups' ) );
+	expect( screen.queryByText( /Known threats/ ) ).not.toBeInTheDocument();
 } );

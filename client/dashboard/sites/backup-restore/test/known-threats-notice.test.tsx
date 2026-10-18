@@ -4,6 +4,7 @@
 
 import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
+import { useRouterState } from '@tanstack/react-router';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { speak } from '@wordpress/a11y';
@@ -327,6 +328,35 @@ test( 'links to the latest backup without known threats', async () => {
 	);
 } );
 
+test( 'moves focus to the restore point after opening the clean backup', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	// Stands in for the restore route, whose rewind id comes from the URL.
+	function RoutedForm() {
+		const pathname = useRouterState( { select: ( state ) => state.location.pathname } );
+		const opened = pathname.match( /\/backups\/(\d+)\/restore/ )?.[ 1 ];
+		return (
+			<SiteBackupRestoreForm
+				site={ site }
+				restoreLinkTo="/sites/$siteSlug/backups/$rewindId/restore"
+				siteId={ siteId }
+				rewindId={ opened ?? rewindId }
+				restorePointDate={ opened ? 'Oct 17' : 'Oct 16' }
+				onRestoreInitiate={ jest.fn() }
+			/>
+		);
+	}
+	render( <RoutedForm /> );
+
+	const link = await screen.findByRole( 'link', { name: /^Restore .+ backup instead$/ } );
+	expect( screen.getByText( /Choose what to restore/ ) ).not.toHaveFocus();
+	await user.click( link );
+
+	await waitFor( () => expect( screen.getByText( /Choose what to restore/ ) ).toHaveFocus() );
+	expect( screen.getByText( /Choose what to restore/ ) ).toHaveTextContent( 'Oct 17' );
+	expect( link ).not.toBeInTheDocument();
+} );
+
 test( 'shows the restore link once when the threats are expanded', async () => {
 	const user = userEvent.setup();
 	const threatsScope = nock( API_BASE )
@@ -347,8 +377,7 @@ test( 'shows the restore link once when the threats are expanded', async () => {
 	expect( toggle.querySelector( 'svg' ) ).toBeInTheDocument();
 	expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
 	expect( screen.queryByText( 'Show threats' ) ).not.toBeInTheDocument();
-	await user.hover( toggle );
-	expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
+	expect( toggle ).not.toHaveAccessibleDescription( 'Show threats' );
 	await user.unhover( toggle );
 	await user.click( toggle );
 
@@ -356,8 +385,7 @@ test( 'shows the restore link once when the threats are expanded', async () => {
 	const expanded = screen.getByRole( 'button', { name: 'Known threats (3), hide threats' } );
 	expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
 	await user.unhover( expanded );
-	await user.hover( expanded );
-	expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
+	expect( expanded ).not.toHaveAccessibleDescription( 'Hide threats' );
 	expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
 	expect(
 		await screen.findAllByRole( 'link', { name: /^Restore .+ backup instead$/ } )

@@ -19,9 +19,15 @@ interface KnownThreatsBadgeProps {
 	count: number;
 	/** Explain the badge in a tooltip and to screen readers, where the warning isn't shown nearby. */
 	showWarning?: boolean;
+	/** Set to false where the tooltip can't be reached, e.g. under a clickable row. */
+	withTooltip?: boolean;
 }
 
-export function KnownThreatsBadge( { count, showWarning = false }: KnownThreatsBadgeProps ) {
+export function KnownThreatsBadge( {
+	count,
+	showWarning = false,
+	withTooltip = true,
+}: KnownThreatsBadgeProps ) {
 	const badge = (
 		<span className="dashboard-known-threats-badge">
 			<Icon icon={ caution } size={ 16 } fill="currentColor" aria-hidden="true" />
@@ -39,7 +45,7 @@ export function KnownThreatsBadge( { count, showWarning = false }: KnownThreatsB
 	const warning = getKnownThreatsWarning( count );
 	return (
 		<>
-			<Tooltip text={ warning }>{ badge }</Tooltip>
+			{ withTooltip ? <Tooltip text={ warning }>{ badge }</Tooltip> : badge }
 			<VisuallyHidden as="span">{ warning }</VisuallyHidden>
 		</>
 	);
@@ -59,27 +65,25 @@ export function KnownThreatsToggle( {
 	onToggle,
 	controlsId,
 }: KnownThreatsToggleProps ) {
-	const actionLabel = isOpen ? __( 'Hide threats' ) : __( 'Show threats' );
 	const ariaLabel = isOpen
 		? /* translators: %d is the number of known security threats in a backup; the button hides the list of threats */
 			sprintf( __( 'Known threats (%d), hide threats' ), count )
 		: /* translators: %d is the number of known security threats in a backup; the button shows the list of threats */
 			sprintf( __( 'Known threats (%d), show threats' ), count );
 
+	// No tooltip: it could only repeat the label.
 	return (
-		<Tooltip text={ actionLabel }>
-			<Button
-				__next40pxDefaultSize
-				variant="tertiary"
-				size="compact"
-				className="dashboard-known-threats-toggle"
-				aria-label={ ariaLabel }
-				aria-expanded={ isOpen }
-				aria-controls={ isOpen ? controlsId : undefined }
-				onClick={ onToggle }
-			>
-				<KnownThreatsBadge count={ count } />
-			</Button>
-		</Tooltip>
+		<Button
+			__next40pxDefaultSize
+			variant="tertiary"
+			size="compact"
+			className="dashboard-known-threats-toggle"
+			aria-label={ ariaLabel }
+			aria-expanded={ isOpen }
+			aria-controls={ isOpen ? controlsId : undefined }
+			onClick={ onToggle }
+		>
+			<KnownThreatsBadge count={ count } />
+		</Button>
 	);
 }

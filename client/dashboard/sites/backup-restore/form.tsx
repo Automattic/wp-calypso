@@ -10,6 +10,7 @@ import { useCallback, useId, useRef, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import KnownThreatsNotice from '../backups/known-threats/known-threats-notice';
+import { useRestoreInsteadFocusRef } from '../backups/known-threats/restore-that-one-instead-link';
 import WooSubscriptionsNotice from './woo-subscriptions-notice';
 import type { RestoreTrackingProps } from './types';
 import type { RestoreConfig, Site } from '@automattic/api-core';
@@ -147,6 +148,9 @@ function SiteBackupRestoreForm( {
 		handleRestore();
 	};
 
+	// Opened from "Restore … backup instead": land on the line naming the backup now being restored.
+	const restorePointRef = useRestoreInsteadFocusRef( rewindId );
+
 	const restoreWarning = formData.sqls
 		? __(
 				'This action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
@@ -158,7 +162,7 @@ function SiteBackupRestoreForm( {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				<p>
+				<p ref={ restorePointRef } tabIndex={ -1 }>
 					{ createInterpolateElement(
 						__( 'Choose what to restore from your <restorePointDate /> backup:' ),
 						{ restorePointDate: <strong>{ restorePointDate }</strong> }
