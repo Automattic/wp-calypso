@@ -124,7 +124,10 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 					/>
 				) }
 				{ requireAcknowledgement && (
-					<div ref={ acknowledgementWrapperRef }>
+					<div
+						className="rewind-flow-known-threats__acknowledgement"
+						ref={ acknowledgementWrapperRef }
+					>
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							checked={ acknowledged }

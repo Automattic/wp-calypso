@@ -19,6 +19,8 @@ import { RestoreThatOneInsteadLink } from './restore-that-one-instead-link';
 import type { Site } from '@automattic/api-core';
 import type { MutableRefObject } from 'react';
 
+import './known-threats-notice.scss';
+
 interface KnownThreatsNoticeProps {
 	site: Site;
 	restoreLinkTo?: string;
@@ -125,7 +127,7 @@ export default function KnownThreatsNotice( {
 					currentBackupPeriod={ counts.backupPeriod }
 				/>
 				{ requireAcknowledgement && (
-					<div ref={ acknowledgementWrapperRef }>
+					<div className="known-threats-notice__acknowledgement" ref={ acknowledgementWrapperRef }>
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							checked={ acknowledged }
