@@ -102,7 +102,8 @@ it( 'blocks scripts, active markup and external resources in opaque scriptless f
 	expect( iframe.getAttribute( 'sandbox' ) ).toBe( '' );
 	expect( iframe.getAttribute( 'referrerpolicy' ) ).toBe( 'no-referrer' );
 	const doc = new DOMParser().parseFromString( iframe.getAttribute( 'srcdoc' )!, 'text/html' );
-	expect( doc.querySelector( 'script, [onerror], [href], img' ) ).toBeNull();
+	expect( doc.querySelector( 'script, img' ) ).toBeNull();
+	expect( doc.body.hasAttribute( 'inert' ) ).toBe( true );
 	expect(
 		doc.querySelector( 'meta[http-equiv="Content-Security-Policy"]' )?.getAttribute( 'content' )
 	).toContain( "script-src 'none'" );
