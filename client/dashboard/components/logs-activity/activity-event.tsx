@@ -3,8 +3,16 @@ import { Icon } from '@wordpress/icons';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
 import { renderFormattedContent } from '../logs-activity-formatted-block';
 import type { Activity } from './types';
+import type { ReactNode } from 'react';
 import './activity-event.scss';
-export function ActivityEvent( { activity }: { activity: Activity } ) {
+export function ActivityEvent( {
+	activity,
+	badge,
+}: {
+	activity: Activity;
+	/** Shown after the event text, on the same line. */
+	badge?: ReactNode;
+} ) {
 	const { activityDescription, activityIcon, activityTitle } = activity;
 	const formattedContent = activityDescription.items.length
 		? renderFormattedContent( { items: activityDescription.items } )
@@ -27,6 +35,7 @@ export function ActivityEvent( { activity }: { activity: Activity } ) {
 			>
 				<strong className="site-activity-logs__event-title">{ activityTitle }</strong>
 				{ formattedContent && <span>{ formattedContent }</span> }
+				{ badge && <span className="site-activity-logs__event-badge">{ badge }</span> }
 			</HStack>
 		</HStack>
 	);

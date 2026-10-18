@@ -70,24 +70,9 @@ export function getFields(
 				return item.summary + actor;
 			},
 			render: ( { item } ) => {
-				const knownThreats =
-					item.rewind_id && knownThreatsPage
-						? getKnownThreatsForRewindId( knownThreatsPage, item.rewind_id )
-						: null;
 				// translators: %s is the name of the person who performed the action
 				const actor = item.actor?.name ? ` ${ sprintf( __( 'by %s' ), item.actor.name ) }` : '';
-				const title = item.summary + actor;
-				// The always-mounted spans dodge a Google Translate DOM crash (react/react#11538).
-				return (
-					<span>
-						<span>{ title }</span>{ ' ' }
-						<span>
-							{ knownThreats && isFlagged( knownThreats ) && (
-								<KnownThreatsBadge count={ knownThreats.flagged } />
-							) }
-						</span>
-					</span>
-				);
+				return <span>{ item.summary + actor }</span>;
 			},
 			enableGlobalSearch: true,
 		},
@@ -97,13 +82,30 @@ export function getFields(
 			getValue: ( { item } ) => {
 				return item.published || item.last_published;
 			},
-			render: ( { item } ) => (
-				<FormattedTime
-					timestamp={ item.published || item.last_published }
-					timezoneString={ timezoneString }
-					gmtOffset={ gmtOffset }
-				/>
-			),
+			render: ( { item } ) => {
+				const knownThreats =
+					item.rewind_id && knownThreatsPage
+						? getKnownThreatsForRewindId( knownThreatsPage, item.rewind_id )
+						: null;
+				// The badge sits on the date line: the title is truncated to one line in the list.
+				// The always-mounted spans dodge a Google Translate DOM crash (react/react#11538).
+				return (
+					<span className="dashboard-backups__date">
+						<span>
+							<FormattedTime
+								timestamp={ item.published || item.last_published }
+								timezoneString={ timezoneString }
+								gmtOffset={ gmtOffset }
+							/>
+						</span>
+						<span>
+							{ knownThreats && isFlagged( knownThreats ) && (
+								<KnownThreatsBadge count={ knownThreats.flagged } />
+							) }
+						</span>
+					</span>
+				);
+			},
 		},
 		{
 			id: 'content_text',

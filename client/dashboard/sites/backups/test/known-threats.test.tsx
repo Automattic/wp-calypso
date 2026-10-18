@@ -164,6 +164,15 @@ afterEach( () => {
 const localDate = ( utcMs: number ) =>
 	new Intl.DateTimeFormat( 'en-US', { dateStyle: 'medium' } ).format( new Date( utcMs ) );
 
+// The text of the smallest ancestor holding a backup title: the badge's own list row.
+const closestRowText = ( element: HTMLElement ): string => {
+	let node: HTMLElement | null = element;
+	while ( node && ! /backup/.test( node.textContent ?? '' ) ) {
+		node = node.parentElement;
+	}
+	return node?.textContent ?? '';
+};
+
 const flaggedBackups = [
 	{ object: { backup_period: '1792244301', known_threats: knownThreats( 3 ) } },
 	{ object: { backup_period: 1792240000, known_threats: knownThreats( 0 ) } },
@@ -172,10 +181,10 @@ const flaggedBackups = [
 test( 'shows the badge on flagged backups in the list', async () => {
 	renderPage( { backups: flaggedBackups } );
 
-	const titles = await screen.findAllByText(
-		( _, element ) => element?.textContent === 'Flagged backup Known threats (3)'
-	);
-	expect( titles[ 0 ] ).toBeVisible();
+	const [ badge ] = await screen.findAllByText( 'Known threats (3)' );
+	expect( badge ).toBeVisible();
+	expect( closestRowText( badge ) ).toContain( 'Flagged backup' );
+	expect( closestRowText( badge ) ).not.toContain( 'Other backup' );
 	expect(
 		screen.queryAllByText( ( _, element ) => element?.textContent === 'Other backup' )
 	).not.toHaveLength( 0 );
@@ -189,10 +198,10 @@ test( 'shows the badge on realtime restore points inside a flagged backup', asyn
 		],
 	} );
 
-	const titles = await screen.findAllByText(
-		( _, element ) => element?.textContent === 'Flagged backup Known threats (3)'
-	);
-	expect( titles[ 0 ] ).toBeVisible();
+	const [ badge ] = await screen.findAllByText( 'Known threats (3)' );
+	expect( badge ).toBeVisible();
+	expect( closestRowText( badge ) ).toContain( 'Flagged backup' );
+	expect( closestRowText( badge ) ).not.toContain( 'Other backup' );
 	expect(
 		screen.queryAllByText( ( _, element ) => element?.textContent === 'Other backup' )
 	).not.toHaveLength( 0 );

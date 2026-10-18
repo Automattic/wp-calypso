@@ -2,7 +2,11 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
+import { render } from '../../../../test-utils';
 import { getFields } from '../fields';
 import type { ActivityLogEntry, BackupsKnownThreatsPage } from '@automattic/api-core';
 import type { ReactNode } from 'react';
@@ -26,31 +30,54 @@ const page: BackupsKnownThreatsPage = {
 	totalPages: 1,
 };
 
-const renderTitle = ( knownThreatsPage?: BackupsKnownThreatsPage ) => {
-	const field = getFields( undefined, undefined, undefined, knownThreatsPage ).find(
-		( { id } ) => id === 'title'
+const renderCell = ( id: string, knownThreatsPage?: BackupsKnownThreatsPage ) => {
+	const field = getFields( undefined, undefined, 0, knownThreatsPage ).find(
+		( field ) => field.id === id
 	);
-	const renderTitleCell = field!.render as unknown as ( props: {
+	const renderFieldCell = field!.render as unknown as ( props: {
 		item: ActivityLogEntry;
 	} ) => ReactNode;
-	return <div>{ renderTitleCell( { item } ) }</div>;
+	return <div data-testid={ id }>{ renderFieldCell( { item } ) }</div>;
 };
 
-test( 'keeps the title node mounted when the badge appears', () => {
-	const { rerender } = render( renderTitle() );
-	const title = screen.getByText( 'Flagged backup' );
-	const titleText = title.firstChild;
+test( 'shows the badge on the date line, not in the title', async () => {
+	render(
+		<>
+			{ renderCell( 'title', page ) }
+			{ renderCell( 'date', page ) }
+		</>
+	);
 
-	rerender( renderTitle( page ) );
+	expect( await screen.findByTestId( 'date' ) ).toHaveTextContent( 'Known threats (3)' );
+	expect( screen.getByTestId( 'title' ) ).not.toHaveTextContent( 'Known threats' );
+} );
+
+function DateCellWithToggle() {
+	const [ knownThreatsPage, setKnownThreatsPage ] = useState< BackupsKnownThreatsPage >();
+	return (
+		<>
+			<button onClick={ () => setKnownThreatsPage( knownThreatsPage ? undefined : page ) }>
+				toggle
+			</button>
+			{ renderCell( 'date', knownThreatsPage ) }
+		</>
+	);
+}
+
+test( 'keeps the date node mounted when the badge appears', async () => {
+	const user = userEvent.setup();
+	render( <DateCellWithToggle /> );
+	const date = ( await screen.findByTestId( 'date' ) ).firstChild as HTMLElement;
+	const dateText = date.firstChild;
+
+	await user.click( screen.getByRole( 'button', { name: 'toggle' } ) );
 
 	expect( screen.getByText( 'Known threats (3)' ) ).toBeVisible();
-	expect( title ).toBeInTheDocument();
-	expect( title.textContent ).toBe( 'Flagged backup' );
-	expect( title.firstChild ).toBe( titleText );
+	expect( date ).toBeInTheDocument();
+	expect( date.firstChild ).toBe( dateText );
 
-	rerender( renderTitle() );
+	await user.click( screen.getByRole( 'button', { name: 'toggle' } ) );
 
 	expect( screen.queryByText( 'Known threats (3)' ) ).not.toBeInTheDocument();
-	expect( title ).toBeInTheDocument();
-	expect( title.firstChild ).toBe( titleText );
+	expect( date.firstChild ).toBe( dateText );
 } );
