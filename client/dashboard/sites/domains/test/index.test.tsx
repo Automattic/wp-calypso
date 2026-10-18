@@ -284,8 +284,7 @@ describe( '<SiteDomains>', () => {
 		expect( screen.queryByText( 'Make primary site address' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows "Make primary site address" action once SSL is active', async () => {
-		const user = userEvent.setup();
+	test( 'shows "Make primary site address" as an inline row action once SSL is active', async () => {
 		nock.cleanAll();
 		mockApis( {
 			domains: [ primaryCandidateDomain ],
@@ -296,9 +295,8 @@ describe( '<SiteDomains>', () => {
 
 		await screen.findByText( 'SSL active' );
 
-		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
-		await user.click( actionsButtons[ 0 ] );
-
-		expect( screen.getByText( 'Make primary site address' ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'button', { name: 'Make primary site address' } )
+		).toBeVisible();
 	} );
 } );
