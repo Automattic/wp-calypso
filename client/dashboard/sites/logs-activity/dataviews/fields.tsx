@@ -1,6 +1,5 @@
 import { getKnownThreatsForRewindId, isFlagged } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
-import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -133,14 +132,15 @@ export function useActivityFields( {
 						knownThreatsPage && item.rewindId && isBackupCompleteRow( item )
 							? getKnownThreatsForRewindId( knownThreatsPage, item.rewindId )
 							: null;
-					if ( ! knownThreats || ! isFlagged( knownThreats ) ) {
-						return <ActivityEvent activity={ item } />;
-					}
 					return (
-						<HStack spacing={ 2 } justify="flex-start" wrap>
-							<ActivityEvent activity={ item } />
-							<KnownThreatsBadge count={ knownThreats.flagged } />
-						</HStack>
+						<ActivityEvent
+							activity={ item }
+							badge={
+								knownThreats && isFlagged( knownThreats ) ? (
+									<KnownThreatsBadge count={ knownThreats.flagged } />
+								) : null
+							}
+						/>
 					);
 				},
 				filterBy: { operators: [] },
