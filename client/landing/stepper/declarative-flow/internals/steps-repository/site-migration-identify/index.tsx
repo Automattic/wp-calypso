@@ -17,6 +17,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { urlToDomain } from 'calypso/lib/url';
 import { ChecklistCard } from '../../components/checklist-card';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
+import { getSiteUrlToAnalyze } from './get-site-url-to-analyze';
 import warningIcon from './warning.svg';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -56,7 +57,7 @@ export const Analyzer: FC< Props > = ( {
 		isFetched,
 		refetch,
 		error,
-	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
+	} = useAnalyzeUrlQuery( getSiteUrlToAnalyze( siteURL ), siteURL !== '' );
 
 	const errorHealth =
 		error &&
@@ -127,10 +128,6 @@ export const Analyzer: FC< Props > = ( {
 		onVisibilityChange?.( ! isScanning, connectionIssue );
 	}, [ isScanning, connectionIssue, onVisibilityChange ] );
 
-	if ( isScanning && ! isReprintFlow ) {
-		return <ScanningStep />;
-	}
-
 	const enteredURL = /^https?:\/\//i.test( siteURL ) ? siteURL : `https://${ siteURL }`;
 	const sourceURL = ! hasError && siteInfo ? siteInfo.url : enteredURL;
 	const { hostname } = getUrlParts( sourceURL );
@@ -172,6 +169,7 @@ export const Analyzer: FC< Props > = ( {
 
 	return (
 		<>
+			{ isScanning && ! isReprintFlow && <ScanningStep /> }
 			{ isReprintFlow && ( isScanning || connectionIssue ) && (
 				<div className="site-migration-identify__checking">
 					<div className="site-migration-identify__summary">
@@ -252,7 +250,7 @@ export const Analyzer: FC< Props > = ( {
 			) }
 			<div
 				className="import__capture-container"
-				hidden={ isReprintFlow && ( isScanning || !! connectionIssue ) }
+				hidden={ isScanning || ( isReprintFlow && !! connectionIssue ) }
 			>
 				{ isReprintFlow && siteURL && hasError && ! isScanning && ! connectionIssue && (
 					<Notice
@@ -265,7 +263,7 @@ export const Analyzer: FC< Props > = ( {
 				) }
 				<CaptureInput
 					onInputEnter={ ( url ) => {
-						if ( isReprintFlow && url === siteURL ) {
+						if ( url === siteURL ) {
 							refetch();
 						} else {
 							onSiteURLChange( url );
@@ -291,7 +289,7 @@ export const Analyzer: FC< Props > = ( {
 					nextLabelText={ isReprintFlow ? translate( 'Continue' ) : translate( 'Check my site' ) }
 				/>
 			</div>
-			{ ! isReprintFlow && (
+			{ ! isReprintFlow && ! isScanning && (
 				<ChecklistCard
 					title={ translate( 'Why should you host with us?' ) }
 					items={ hostingDetailItems }
