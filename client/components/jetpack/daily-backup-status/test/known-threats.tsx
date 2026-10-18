@@ -263,6 +263,14 @@ describe( 'BackupKnownThreats', () => {
 			'href',
 			'/backup/example.wordpress.com/restore/1792247404.817'
 		);
+		expect( link ).toHaveAccessibleDescription(
+			"It's the most recent backup with no known security threats."
+		);
+		await userEvent.hover( link );
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+			"It's the most recent backup with no known security threats."
+		);
+		expect( link ).not.toHaveAttribute( 'title' );
 		expect( activities.isDone() ).toBe( true );
 	} );
 

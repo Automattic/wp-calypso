@@ -261,9 +261,21 @@ test( 'links to the latest backup without known threats', async () => {
 	mockBackups( { known_threats: knownThreats( 3 ) } );
 	renderForm();
 
-	expect(
-		await screen.findByRole( 'link', { name: 'Restore Oct 17, 2026 at 12:28 PM backup instead' } )
-	).toHaveAttribute( 'href', expect.stringContaining( '/backups/1792240000/restore' ) );
+	const link = await screen.findByRole( 'link', {
+		name: 'Restore Oct 17, 2026 at 12:28 PM backup instead',
+	} );
+	expect( link ).toHaveAttribute(
+		'href',
+		expect.stringContaining( '/backups/1792240000/restore' )
+	);
+	expect( link ).toHaveAccessibleDescription(
+		"It's the most recent backup with no known security threats."
+	);
+	expect( link ).not.toHaveAttribute( 'title' );
+	await userEvent.setup().hover( link );
+	expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+		"It's the most recent backup with no known security threats."
+	);
 } );
 
 test( 'shows the restore link once when the threats are expanded', async () => {

@@ -41,6 +41,7 @@ export function RestoreThatOneInsteadLink( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const applySiteOffset = useApplySiteOffset();
+	const descriptionId = useId();
 
 	const hasTarget =
 		latestWithoutKnownThreats !== null &&
@@ -96,19 +97,27 @@ export function RestoreThatOneInsteadLink( {
 	const completedAt = moment( Number( resolvedRewindId ) * 1000 );
 	const siteCompletedAt = applySiteOffset ? applySiteOffset( completedAt ) : completedAt;
 
+	const reason = translate( "It's the most recent backup with no known security threats." );
+
 	return (
-		<Button
-			__next40pxDefaultSize
-			variant="link"
-			className="backup-known-threats__restore-link"
-			href={ backupRestorePath( siteSlug, resolvedRewindId ) }
-		>
-			{ translate( 'Restore %(date)s at %(time)s backup instead', {
-				args: { date: siteCompletedAt.format( 'll' ), time: siteCompletedAt.format( 'LT' ) },
-				comment:
-					'%(date)s is the date of a backup, e.g. "Oct 17, 2026"; %(time)s its time, e.g. "2:30 PM". Reads "Restore Oct 17, 2026 at 2:30 PM backup instead".',
-			} ) }
-		</Button>
+		<>
+			<Tooltip text={ String( reason ) }>
+				<Button
+					__next40pxDefaultSize
+					variant="link"
+					className="backup-known-threats__restore-link"
+					aria-describedby={ descriptionId }
+					href={ backupRestorePath( siteSlug, resolvedRewindId ) }
+				>
+					{ translate( 'Restore %(date)s at %(time)s backup instead', {
+						args: { date: siteCompletedAt.format( 'll' ), time: siteCompletedAt.format( 'LT' ) },
+						comment:
+							'%(date)s is the date of a backup, e.g. "Oct 17, 2026"; %(time)s its time, e.g. "2:30 PM". Reads "Restore Oct 17, 2026 at 2:30 PM backup instead".',
+					} ) }
+				</Button>
+			</Tooltip>
+			<VisuallyHidden id={ descriptionId }>{ reason }</VisuallyHidden>
+		</>
 	);
 }
 

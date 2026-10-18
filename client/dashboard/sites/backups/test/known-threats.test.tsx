@@ -304,6 +304,9 @@ test( 'expands the threats table for Scan sites', async () => {
 	const restoreLink = screen.getByRole( 'link', { name: fallbackRestoreLink } );
 	expect( restoreLink ).toBeVisible();
 	expectInOrder( toggle, restoreLink );
+	expect( restoreLink ).toHaveAccessibleDescription(
+		"It's the most recent backup with no known security threats."
+	);
 	await user.click( toggle );
 
 	expect( await screen.findByText( 'Backdoor.PHP.Agent' ) ).toBeVisible();
