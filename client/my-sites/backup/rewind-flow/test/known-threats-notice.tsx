@@ -469,6 +469,7 @@ describe( 'BackupRestoreFlow known threats gating', () => {
 
 describe( 'BackupGranularRestoreFlow known threats gating', () => {
 	beforeEach( () => {
+		mockRestoreProgress = null;
 		( siteHasFeature as jest.Mock ).mockReturnValue( true );
 		( recordTracksEvent as jest.Mock ).mockClear();
 	} );
@@ -524,5 +525,59 @@ describe( 'BackupGranularRestoreFlow known threats gating', () => {
 				known_threats_acknowledged: true,
 			} )
 		);
+	} );
+	it( 'sends the acknowledgement and returns to the box after threats_not_acknowledged', async () => {
+		mockList( counts( 3 ) );
+		const actions: { type: string; acknowledgeThreats?: boolean }[] = [];
+		const store = createStore(
+			(
+				state: ReturnType< typeof initialReducer > | undefined,
+				action: { type: string; acknowledgeThreats?: boolean }
+			) => {
+				actions.push( action );
+				return action.type === 'TEST_PROGRESS_CHANGED'
+					? Object.assign( {}, state )
+					: initialReducer( state, action );
+			},
+			undefined,
+			applyMiddleware( thunk )
+		);
+		renderWithProvider(
+			<BackupGranularRestoreFlow
+				backupDisplayDate="October 1, 2026"
+				rewindId="200.5"
+				siteId={ SITE_ID }
+				siteUrl="https://example.wordpress.com"
+			/>,
+			{ store }
+		);
+
+		await screen.findByText( NOTICE );
+		await userEvent.click( screen.getByRole( 'checkbox', { name: CHECKBOX } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Restore now' } ) );
+		expect( screen.queryByRole( 'button', { name: 'Restore now' } ) ).not.toBeInTheDocument();
+		expect( actions ).toContainEqual(
+			expect.objectContaining( { type: 'REWIND_GRANULAR_RESTORE', acknowledgeThreats: true } )
+		);
+
+		mockRestoreProgress = { status: 'failed', errorCode: 'threats_not_acknowledged' };
+		act( () => {
+			store.dispatch( { type: 'TEST_PROGRESS_CHANGED' } );
+		} );
+
+		const restoreButton = await screen.findByRole( 'button', { name: 'Restore now' } );
+		expect( restoreButton ).toHaveAttribute( 'aria-disabled', 'true' );
+		const checkbox = screen.getByRole( 'checkbox', { name: CHECKBOX } );
+		expect( checkbox ).not.toBeChecked();
+		await waitFor( () => expect( checkbox ).toHaveFocus() );
+
+		const refusal =
+			"The restore didn't start because this backup is known to contain security threats. To restore it anyway, check the box.";
+		expect( screen.getByText( refusal ) ).toBeVisible();
+		expect( checkbox ).toHaveAccessibleDescription( refusal );
+		expect( speak ).toHaveBeenCalledWith( refusal, 'assertive' );
+
+		await userEvent.click( checkbox );
+		expect( screen.queryByText( refusal ) ).not.toBeInTheDocument();
 	} );
 } );
