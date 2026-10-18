@@ -2,6 +2,7 @@ import { isFlagged } from '@automattic/api-core';
 import { siteBackupKnownThreatsQuery, siteBackupThreatsQuery } from '@automattic/api-queries';
 import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
 import { useQuery } from '@tanstack/react-query';
+import { speak } from '@wordpress/a11y';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useId, useState } from 'react';
@@ -116,7 +117,13 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							checked={ acknowledged }
-							onChange={ ( value ) => onAcknowledgedChange?.( value ) }
+							onChange={ ( value ) => {
+								onAcknowledgedChange?.( value );
+								// Focus stays on the checkbox; say that the restore it was blocking is open.
+								if ( value ) {
+									speak( translate( 'You can now restore this backup.' ) as string );
+								}
+							} }
 							label={ translate(
 								'I understand this backup contains known threats and want to restore it anyway.'
 							) }
