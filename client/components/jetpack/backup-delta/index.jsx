@@ -26,8 +26,8 @@ function BackupDeltaRow( { siteId, activity } ) {
 			toolbarExtraContent={
 				isFlagged ? (
 					<VStack spacing={ 2 } alignment="left">
-						<BackupKnownThreatsRestoreLink state={ knownThreats } />
 						<BackupKnownThreatsToggle state={ knownThreats } inToolbar />
+						<BackupKnownThreatsRestoreLink state={ knownThreats } />
 					</VStack>
 				) : undefined
 			}
