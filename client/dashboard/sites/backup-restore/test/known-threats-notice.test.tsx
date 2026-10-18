@@ -6,6 +6,7 @@ import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { speak } from '@wordpress/a11y';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import SiteBackupRestoreForm from '../form';
@@ -18,6 +19,11 @@ const rewindId = '1792244435.274';
 
 jest.mock( '@wordpress/react-i18n', () => ( {
 	useI18n: jest.fn(),
+} ) );
+
+jest.mock( '@wordpress/a11y', () => ( {
+	...jest.requireActual( '@wordpress/a11y' ),
+	speak: jest.fn(),
 } ) );
 
 const mockCreateErrorNotice = jest.fn();
@@ -143,6 +149,7 @@ const restoreButton = () => screen.getByRole( 'button', { name: 'Restore now' } 
 
 afterEach( () => {
 	nock.cleanAll();
+	jest.mocked( speak ).mockClear();
 } );
 
 const restorePath = `/rest/v1/activity-log/${ siteId }/rewind/to/${ rewindId }`;
@@ -160,13 +167,64 @@ test( 'disables Restore now until the box is ticked', async () => {
 			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.'
 		)
 	).toBeVisible();
-	expect( restoreButton() ).toBeDisabled();
+	expect( restoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+	expect( restoreButton() ).toHaveAccessibleDescription(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
 
 	await user.click( checkbox );
 	expect( restoreButton() ).toBeEnabled();
+	expect( restoreButton() ).not.toHaveAttribute( 'aria-disabled' );
+	expect( restoreButton() ).not.toHaveAccessibleDescription();
 
 	await user.click( checkbox );
-	expect( restoreButton() ).toBeDisabled();
+	expect( restoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+} );
+
+test( 'keeps the unacknowledged Restore now focusable but inert', async () => {
+	const user = userEvent.setup();
+	const onRestoreInitiate = jest.fn();
+	const restoreScope = nock( API_BASE )
+		.post( new RegExp( `/activity-log/${ siteId }/rewind/to/` ) )
+		.query( true )
+		.reply( 200, {} );
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	render(
+		<SiteBackupRestoreForm
+			site={ site }
+			siteId={ siteId }
+			rewindId={ rewindId }
+			restorePointDate="Oct 16"
+			onRestoreInitiate={ onRestoreInitiate }
+		/>
+	);
+
+	await screen.findByRole( 'checkbox', { name: /I understand/ } );
+	restoreButton().focus();
+	expect( restoreButton() ).toHaveFocus();
+	await user.click( restoreButton() );
+	await user.keyboard( '{Enter}' );
+
+	expect( restoreScope.isDone() ).toBe( false );
+	expect( onRestoreInitiate ).not.toHaveBeenCalled();
+
+	await user.click( screen.getByRole( 'checkbox', { name: /I understand/ } ) );
+	await user.click( restoreButton() );
+	await waitFor( () => expect( restoreScope.isDone() ).toBe( true ) );
+} );
+
+test( 'announces the warning once when it appears', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	renderForm();
+
+	const sentence =
+		'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
+	await screen.findByText( sentence );
+	await user.click( screen.getByRole( 'checkbox', { name: /I understand/ } ) );
+
+	expect( speak ).toHaveBeenCalledTimes( 1 );
+	expect( speak ).toHaveBeenCalledWith( sentence );
 } );
 
 test( 'uses the singular for one threat', async () => {
@@ -244,9 +302,21 @@ test( 'links to the latest backup without known threats', async () => {
 	mockBackups( { known_threats: knownThreats( 3 ) } );
 	renderForm();
 
-	expect(
-		await screen.findByRole( 'link', { name: 'Restore Oct 17, 2026 - 12:28 PM backup instead' } )
-	).toHaveAttribute( 'href', expect.stringContaining( '/backups/1792240000/restore' ) );
+	const link = await screen.findByRole( 'link', {
+		name: 'Restore Oct 17, 2026 at 12:28 PM backup instead',
+	} );
+	expect( link ).toHaveAttribute(
+		'href',
+		expect.stringContaining( '/backups/1792240000/restore' )
+	);
+	expect( link ).toHaveAccessibleDescription(
+		"It's the most recent backup with no known security threats."
+	);
+	expect( link ).not.toHaveAttribute( 'title' );
+	await userEvent.setup().hover( link );
+	expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+		"It's the most recent backup with no known security threats."
+	);
 } );
 
 test( 'shows the restore link once when the threats are expanded', async () => {
@@ -338,9 +408,7 @@ test( 'renders no link when the caller supplies no restore route', async () => {
 	);
 
 	expect( await screen.findByText( /known to contain 3/ ) ).toBeVisible();
-	expect(
-		screen.queryByRole( 'link', { name: /^Restore .+ backup instead$/ } )
-	).not.toBeInTheDocument();
+	expect( screen.queryByRole( 'link', { name: /^Restore .+ instead$/ } ) ).not.toBeInTheDocument();
 } );
 
 describe( 'sends acknowledge_threats only when acknowledged', () => {
@@ -399,7 +467,7 @@ test( 'shows the known-threats message on threats_not_acknowledged', async () =>
 		)
 	);
 	expect( checkbox ).not.toBeChecked();
-	expect( restoreButton() ).toBeDisabled();
+	expect( restoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
 } );
 
 test( 'keeps the generic message for other restore errors', async () => {

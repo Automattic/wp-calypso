@@ -137,7 +137,7 @@ export function useActivityFields( {
 							activity={ item }
 							badge={
 								knownThreats && isFlagged( knownThreats ) ? (
-									<KnownThreatsBadge count={ knownThreats.flagged } />
+									<KnownThreatsBadge count={ knownThreats.flagged } showWarning />
 								) : null
 							}
 						/>

@@ -4,10 +4,11 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
+	VisuallyHidden,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { useCallback, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useAnalytics } from '../../app/analytics';
@@ -103,6 +104,8 @@ export function BackupDetails( {
 	);
 
 	const hasSelectedFiles = selectedFilesCount > 0;
+	const awaitingAcknowledgement = ! hasSelectedFiles && hasKnownThreats && ! acknowledged;
+	const acknowledgementHintId = useId();
 	const showActions = !! ( onRequestRestore || onRequestDownload );
 	const actions =
 		showActions && backup.rewind_id ? (
@@ -124,12 +127,21 @@ export function BackupDetails( {
 					size={ isSmallViewport ? 'default' : 'compact' }
 					onClick={ onRequestRestore }
 					style={ { justifyContent: 'center' } }
-					disabled={ ! hasSelectedFiles && hasKnownThreats && ! acknowledged }
+					disabled={ awaitingAcknowledgement }
+					accessibleWhenDisabled
+					aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
 				>
 					{ hasSelectedFiles
 						? _n( 'Restore selected file', 'Restore selected files', selectedFilesCount )
 						: __( 'Restore to this point' ) }
 				</Button>
+				{ awaitingAcknowledgement && (
+					<VisuallyHidden id={ acknowledgementHintId }>
+						{ __(
+							'To restore this backup, confirm that you understand it contains known threats.'
+						) }
+					</VisuallyHidden>
+				) }
 			</ButtonStack>
 		) : null;
 

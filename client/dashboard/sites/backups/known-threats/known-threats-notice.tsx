@@ -1,13 +1,19 @@
 import { HostingFeatures, isFlagged } from '@automattic/api-core';
 import { siteBackupKnownThreatsQuery, siteBackupThreatsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { CheckboxControl, __experimentalVStack as VStack } from '@wordpress/components';
-import { __, _n, sprintf } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { speak } from '@wordpress/a11y';
+import {
+	CheckboxControl,
+	__experimentalHStack as HStack,
+	Spinner,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { useEffect, useId, useState } from 'react';
 import Notice from '../../../components/notice';
 import { Text } from '../../../components/text';
 import { hasHostingFeature } from '../../../utils/site-features';
-import { KnownThreatsToggle } from './known-threats-badge';
+import { getKnownThreatsWarning, KnownThreatsToggle } from './known-threats-badge';
 import { KnownThreatsTable } from './known-threats-table';
 import { RestoreThatOneInsteadLink } from './restore-that-one-instead-link';
 import type { Site } from '@automattic/api-core';
@@ -32,9 +38,10 @@ export default function KnownThreatsNotice( {
 	onKnownThreatsChange,
 }: KnownThreatsNoticeProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
+	const threatsRegionId = useId();
 	const hasScan = hasHostingFeature( site, HostingFeatures.SCAN_SELF_SERVE );
 	const { data: counts } = useQuery( siteBackupKnownThreatsQuery( site.ID, rewindId ) );
-	const { data: threats } = useQuery( {
+	const { data: threats, isError: isThreatsError } = useQuery( {
 		...siteBackupThreatsQuery( site.ID, counts?.backupPeriod ?? 0 ),
 		enabled: hasScan && isOpen && counts?.backupPeriod != null,
 	} );
@@ -42,9 +49,18 @@ export default function KnownThreatsNotice( {
 	const knownThreats = counts?.knownThreats;
 	const hasKnownThreats = !! knownThreats && isFlagged( knownThreats );
 
+	const warning = hasKnownThreats ? getKnownThreatsWarning( knownThreats.flagged ) : '';
+
 	useEffect( () => {
 		onKnownThreatsChange?.( hasKnownThreats );
 	}, [ hasKnownThreats, onKnownThreatsChange ] );
+
+	// The warning arrives after the page has rendered, so screen readers would otherwise miss it.
+	useEffect( () => {
+		if ( hasKnownThreats ) {
+			speak( warning );
+		}
+	}, [ hasKnownThreats, warning ] );
 
 	if ( ! knownThreats || ! hasKnownThreats ) {
 		return null;
@@ -53,17 +69,41 @@ export default function KnownThreatsNotice( {
 	return (
 		<Notice variant="warning">
 			<VStack spacing={ 3 }>
-				<Text>
-					{ sprintf(
-						// translators: %d is the number of known security threats in the backup
-						_n(
-							'This backup is known to contain %d security threat. Restoring it may bring malware back to your site.',
-							'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.',
-							knownThreats.flagged
-						),
-						knownThreats.flagged
-					) }
-				</Text>
+				<Text>{ warning }</Text>
+				{ hasScan && (
+					<div>
+						<KnownThreatsToggle
+							count={ knownThreats.flagged }
+							isOpen={ isOpen }
+							onToggle={ () => setIsOpen( ( open ) => ! open ) }
+							controlsId={ threatsRegionId }
+						/>
+						{ isOpen && (
+							<div id={ threatsRegionId }>
+								{ threats && (
+									<KnownThreatsTable
+										siteId={ site.ID }
+										siteSlug={ site.slug }
+										restoreLinkTo={ restoreLinkTo }
+										threats={ threats }
+										latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
+										currentBackupPeriod={ counts.backupPeriod }
+										showRestoreLink={ false }
+									/>
+								) }
+								{ ! threats && isThreatsError && (
+									<Text>{ __( "Couldn't load the threats. Try again later." ) }</Text>
+								) }
+								{ ! threats && ! isThreatsError && (
+									<HStack alignment="left" spacing={ 2 }>
+										<Spinner style={ { margin: 0 } } />
+										<Text>{ __( 'Loading threats…' ) }</Text>
+									</HStack>
+								) }
+							</div>
+						) }
+					</div>
+				) }
 				<RestoreThatOneInsteadLink
 					siteId={ site.ID }
 					siteSlug={ site.slug }
@@ -71,26 +111,6 @@ export default function KnownThreatsNotice( {
 					latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
 					currentBackupPeriod={ counts.backupPeriod }
 				/>
-				{ hasScan && (
-					<div>
-						<KnownThreatsToggle
-							count={ knownThreats.flagged }
-							isOpen={ isOpen }
-							onToggle={ () => setIsOpen( ( open ) => ! open ) }
-						/>
-						{ isOpen && threats && (
-							<KnownThreatsTable
-								siteId={ site.ID }
-								siteSlug={ site.slug }
-								restoreLinkTo={ restoreLinkTo }
-								threats={ threats }
-								latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-								currentBackupPeriod={ counts.backupPeriod }
-								showRestoreLink={ false }
-							/>
-						) }
-					</div>
-				) }
 				{ requireAcknowledgement && (
 					<CheckboxControl
 						__nextHasNoMarginBottom

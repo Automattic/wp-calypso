@@ -77,6 +77,15 @@ const backupWith = ( knownThreats?: ReturnType< typeof counts > ) => ( {
 	},
 } );
 
+const expectInOrder = ( ...elements: HTMLElement[] ) =>
+	elements
+		.slice( 1 )
+		.forEach( ( element, index ) =>
+			expect(
+				elements[ index ].compareDocumentPosition( element ) & Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy()
+		);
+
 const localDate = ( utcMs: number ) =>
 	new Intl.DateTimeFormat( 'en-US', { dateStyle: 'medium' } ).format( new Date( utcMs ) );
 
@@ -171,12 +180,16 @@ describe( 'BackupKnownThreats', () => {
 		);
 		const restoreLink = await screen.findByRole( 'link', { name: /^Restore .+ backup instead$/ } );
 		expect( restoreLink ).toBeVisible();
-		expect(
-			restoreLink.compareDocumentPosition( toggle ) & Node.DOCUMENT_POSITION_FOLLOWING
-		).toBeTruthy();
+		expectInOrder( toggle, restoreLink );
 		await userEvent.click( toggle );
 
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
+		expect( screen.getByRole( 'table', { name: 'Known threats in this backup' } ) ).toBeVisible();
+		expectInOrder(
+			toggle,
+			screen.getByRole( 'table', { name: 'Known threats in this backup' } ),
+			screen.getByRole( 'link', { name: /^Restore .+ backup instead$/ } )
+		);
 		expect( screen.getByText( 'wp-content/evil.php' ) ).toBeVisible();
 		expect(
 			screen.getByText( 'wp-content/plugins/rf-known-threats-test/eicar-standard.php' )
@@ -204,18 +217,60 @@ describe( 'BackupKnownThreats', () => {
 		expect( details.isDone() ).toBe( true );
 	} );
 
+	it( 'points the toggle at the threats region only while it is open, and shows it loading', async () => {
+		mockList( [ backupWith( counts( 1 ) ) ] );
+		nock( BASE ).get( THREATS_PATH ).query( true ).delay( 300 ).reply( 200, threatsBody );
+		renderIt();
+
+		const toggle = await screen.findByRole( 'button', { name: 'Known threats (1), show threats' } );
+		expect( toggle ).not.toHaveAttribute( 'aria-controls' );
+		await userEvent.click( toggle );
+
+		const loading = await screen.findByText( 'Loading threats…' );
+		const region = document.getElementById( toggle.getAttribute( 'aria-controls' ) ?? '' );
+		expect( region ).toContainElement( loading );
+		expect( region ).toContainElement( await screen.findByText( 'Evil.Sig' ) );
+		expect( screen.queryByText( 'Loading threats…' ) ).not.toBeInTheDocument();
+
+		await userEvent.click( toggle );
+		expect( toggle ).not.toHaveAttribute( 'aria-controls' );
+	} );
+
+	it( 'says so when the threats fail to load', async () => {
+		mockList( [ backupWith( counts( 1 ) ) ] );
+		nock( BASE ).get( THREATS_PATH ).query( true ).reply( 500, {} );
+		renderIt();
+
+		const toggle = await screen.findByRole( 'button', { name: 'Known threats (1), show threats' } );
+		await userEvent.click( toggle );
+
+		const error = await screen.findByText( "Couldn't load the threats. Try again later." );
+		expect( error ).toBeVisible();
+		expect(
+			document.getElementById( toggle.getAttribute( 'aria-controls' ) ?? '' )
+		).toContainElement( error );
+	} );
+
 	it( 'links to the backup activity rewind id, not the bare period', async () => {
 		mockList( [ backupWith( counts( 1 ) ) ], { latest_without_known_threats: 1792247305 } );
 		const activities = mockActivities( [ '1792247404.817' ] );
 		renderIt();
 
 		const link = await screen.findByRole( 'link', {
-			name: 'Restore Oct 17, 2026 - 2:30 PM backup instead',
+			name: 'Restore Oct 17, 2026 at 2:30 PM backup instead',
 		} );
 		expect( link ).toHaveAttribute(
 			'href',
 			'/backup/example.wordpress.com/restore/1792247404.817'
 		);
+		expect( link ).toHaveAccessibleDescription(
+			"It's the most recent backup with no known security threats."
+		);
+		await userEvent.hover( link );
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+			"It's the most recent backup with no known security threats."
+		);
+		expect( link ).not.toHaveAttribute( 'title' );
 		expect( activities.isDone() ).toBe( true );
 	} );
 

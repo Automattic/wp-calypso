@@ -4,7 +4,9 @@ import {
 	siteSettingsQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { Tooltip, VisuallyHidden } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { useId } from 'react';
 import { useIntlLocale } from '../../../app/locale';
 import RouterLinkButton from '../../../components/router-link-button';
 import { formatDate, formatDateWithOffset } from '../../../utils/datetime';
@@ -73,6 +75,7 @@ export function RestoreThatOneInsteadLink( {
 	currentBackupPeriod,
 }: RestoreThatOneInsteadLinkProps ) {
 	const locale = useIntlLocale();
+	const descriptionId = useId();
 	const hasTarget =
 		!! restoreLinkTo &&
 		latestWithoutKnownThreats !== null &&
@@ -89,7 +92,7 @@ export function RestoreThatOneInsteadLink( {
 		return null;
 	}
 
-	let label = __( 'Restore this backup instead' );
+	let label = __( 'Restore the latest backup without known threats instead' );
 	if ( completedAt ) {
 		const timezoneString = siteSettings.timezone_string || undefined;
 		const format = ( options: Intl.DateTimeFormatOptions ) =>
@@ -97,21 +100,29 @@ export function RestoreThatOneInsteadLink( {
 				? formatDate( completedAt, locale, { ...options, timeZone: timezoneString } )
 				: formatDateWithOffset( completedAt, siteSettings.gmt_offset ?? 0, locale, options );
 		label = sprintf(
-			// translators: %1$s is a backup's date, e.g. "Oct 17, 2026"; %2$s its time, e.g. "2:30 PM".
-			__( 'Restore %1$s - %2$s backup instead' ),
+			// translators: %1$s is a backup's date, e.g. "Oct 17, 2026"; %2$s its time, e.g. "2:30 PM". Reads "Restore Oct 17, 2026 at 2:30 PM backup instead".
+			__( 'Restore %1$s at %2$s backup instead' ),
 			format( { dateStyle: 'medium' } ),
 			format( { timeStyle: 'short' } )
 		);
 	}
 
+	const reason = __( "It's the most recent backup with no known security threats." );
+
 	return (
-		<RouterLinkButton
-			__next40pxDefaultSize
-			variant="link"
-			to={ restoreLinkTo }
-			params={ { siteSlug, rewindId: String( latestWithoutKnownThreats ) } }
-		>
-			{ label }
-		</RouterLinkButton>
+		<>
+			<Tooltip text={ reason }>
+				<RouterLinkButton
+					__next40pxDefaultSize
+					variant="link"
+					to={ restoreLinkTo }
+					params={ { siteSlug, rewindId: String( latestWithoutKnownThreats ) } }
+					aria-describedby={ descriptionId }
+				>
+					{ label }
+				</RouterLinkButton>
+			</Tooltip>
+			<VisuallyHidden id={ descriptionId }>{ reason }</VisuallyHidden>
+		</>
 	);
 }

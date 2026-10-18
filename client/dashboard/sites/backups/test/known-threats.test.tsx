@@ -20,6 +20,12 @@ jest.mock( '@wordpress/react-i18n', () => ( {
 	useI18n: jest.fn(),
 } ) );
 
+// The live region would repeat the warning on the page.
+jest.mock( '@wordpress/a11y', () => ( {
+	...jest.requireActual( '@wordpress/a11y' ),
+	speak: jest.fn(),
+} ) );
+
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: jest.fn(),
@@ -161,13 +167,25 @@ afterEach( () => {
 	nock.cleanAll();
 } );
 
+// No Activity Log mock, so the clean backup's completion time is unknown.
+const fallbackRestoreLink = 'Restore the latest backup without known threats instead';
+
+const expectInOrder = ( ...elements: HTMLElement[] ) =>
+	elements
+		.slice( 1 )
+		.forEach( ( element, index ) =>
+			expect(
+				elements[ index ].compareDocumentPosition( element ) & Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy()
+		);
+
 const localDate = ( utcMs: number ) =>
 	new Intl.DateTimeFormat( 'en-US', { dateStyle: 'medium' } ).format( new Date( utcMs ) );
 
 // The text of the smallest ancestor holding a backup title: the badge's own list row.
 const closestRowText = ( element: HTMLElement ): string => {
 	let node: HTMLElement | null = element;
-	while ( node && ! /backup/.test( node.textContent ?? '' ) ) {
+	while ( node && ! /(Flagged|Other) backup/.test( node.textContent ?? '' ) ) {
 		node = node.parentElement;
 	}
 	return node?.textContent ?? '';
@@ -183,6 +201,10 @@ test( 'shows the badge on flagged backups in the list', async () => {
 
 	const [ badge ] = await screen.findAllByText( 'Known threats (3)' );
 	expect( badge ).toBeVisible();
+	const warning =
+		'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
+	expect( badge.parentElement ).toHaveTextContent( warning );
+	expect( badge ).not.toHaveAttribute( 'title' );
 	expect( closestRowText( badge ) ).toContain( 'Flagged backup' );
 	expect( closestRowText( badge ) ).not.toContain( 'Other backup' );
 	expect(
@@ -280,17 +302,25 @@ test( 'expands the threats table for Scan sites', async () => {
 	expect( toggle.querySelector( 'svg' )?.parentElement ).toBe( pill );
 	expect(
 		screen.getByText(
-			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.'
+			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.',
+			{ ignore: 'script, style, .components-visually-hidden' }
 		)
 	).toBeVisible();
-	const restoreLink = screen.getByRole( 'link', { name: /^Restore .+ backup instead$/ } );
+	const restoreLink = screen.getByRole( 'link', { name: fallbackRestoreLink } );
 	expect( restoreLink ).toBeVisible();
-	expect(
-		restoreLink.compareDocumentPosition( toggle ) & Node.DOCUMENT_POSITION_FOLLOWING
-	).toBeTruthy();
+	expectInOrder( toggle, restoreLink );
+	expect( restoreLink ).toHaveAccessibleDescription(
+		"It's the most recent backup with no known security threats."
+	);
 	await user.click( toggle );
 
 	expect( await screen.findByText( 'Backdoor.PHP.Agent' ) ).toBeVisible();
+	expect( screen.getByRole( 'table', { name: 'Known threats in this backup' } ) ).toBeVisible();
+	expectInOrder(
+		toggle,
+		screen.getByRole( 'table', { name: 'Known threats in this backup' } ),
+		screen.getByRole( 'link', { name: fallbackRestoreLink } )
+	);
 	expect( screen.getByText( 'wp-content/uploads/evil.php' ) ).toBeVisible();
 	expect(
 		screen.getByText( 'wp-content/plugins/rf-known-threats-test/eicar-standard.php' )
@@ -301,14 +331,12 @@ test( 'expands the threats table for Scan sites', async () => {
 		screen.getByText( `Fixed ${ localDate( Date.UTC( 2026, 8, 2, 23, 30 ) ) }` )
 	).toBeVisible();
 	expect( screen.getByText( 'Also: 2 vulnerable plugin or theme versions.' ) ).toBeVisible();
-	expect( screen.getAllByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toHaveLength(
-		1
-	);
-	expect( screen.getByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toHaveAttribute(
+	expect( screen.getAllByRole( 'link', { name: fallbackRestoreLink } ) ).toHaveLength( 1 );
+	expect( screen.getByRole( 'link', { name: fallbackRestoreLink } ) ).toHaveAttribute(
 		'href',
 		expect.stringContaining( '/backups/1792240000/restore' )
 	);
-	expect( screen.getByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toHaveClass(
+	expect( screen.getByRole( 'link', { name: fallbackRestoreLink } ) ).toHaveClass(
 		'is-next-40px-default-size'
 	);
 	expect( threatsScope.isDone() ).toBe( true );
@@ -318,6 +346,28 @@ test( 'expands the threats table for Scan sites', async () => {
 	await user.hover( expanded );
 	expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
 	expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
+} );
+
+test( 'points the toggle at a loading, then failed, threats region while open', async () => {
+	const user = userEvent.setup();
+	nock( API_BASE )
+		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/1792244301/threats` )
+		.delay( 300 )
+		.reply( 500, {} );
+	renderPage( { withScan: true, backups: flaggedBackups, selected: flaggedRewindId } );
+
+	const toggle = await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
+	expect( toggle ).not.toHaveAttribute( 'aria-controls' );
+	await user.click( toggle );
+
+	const region = () => document.getElementById( toggle.getAttribute( 'aria-controls' ) ?? '' );
+	expect( region() ).toContainElement( await screen.findByText( 'Loading threats…' ) );
+	expect( region() ).toContainElement(
+		await screen.findByText( "Couldn't load the threats. Try again later." )
+	);
+
+	await user.click( toggle );
+	expect( toggle ).not.toHaveAttribute( 'aria-controls' );
 } );
 
 test( 'hides the restore link when the latest clean backup is this one', async () => {
@@ -330,7 +380,7 @@ test( 'hides the restore link when the latest clean backup is this one', async (
 	} );
 
 	await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
-	expect( screen.queryByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toBeNull();
+	expect( screen.queryByRole( 'link', { name: /^Restore .+ instead$/ } ) ).toBeNull();
 } );
 
 test( 'uses the singular vulnerable note for one version', async () => {
@@ -379,9 +429,14 @@ test( 'requires the acknowledgement before restoring a flagged backup from its d
 		name: 'I understand this backup contains known threats and want to restore it anyway.',
 	} );
 	const restore = screen.getByRole( 'button', { name: 'Restore to this point' } );
-	expect( restore ).toBeDisabled();
+	expect( restore ).toHaveAttribute( 'aria-disabled', 'true' );
+	expect( restore ).toHaveAccessibleDescription(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
 
 	await user.click( checkbox );
 
 	expect( restore ).toBeEnabled();
+	expect( restore ).not.toHaveAttribute( 'aria-disabled' );
+	expect( restore ).not.toHaveAccessibleDescription();
 } );

@@ -8,4 +8,8 @@
 		text-align: start;
 		border-bottom: 1px solid var( --dashboard-surface__border-color );
 	}
+
+	td {
+		overflow-wrap: anywhere;
+	}
 }

@@ -7,9 +7,9 @@ import {
 import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
 import { Button as CalypsoButton, Gridicon } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Tooltip } from '@wordpress/components';
+import { Button, Spinner, Tooltip, VisuallyHidden } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useApplySiteOffset } from 'calypso/components/site-offset';
@@ -20,6 +20,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { findRewindIdForBackupPeriod, getNextBackupPeriod } from './find-rewind-id';
 import type { BackupThreat, BackupThreats } from '@automattic/api-core';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -40,6 +41,7 @@ export function RestoreThatOneInsteadLink( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const applySiteOffset = useApplySiteOffset();
+	const descriptionId = useId();
 
 	const hasTarget =
 		latestWithoutKnownThreats !== null &&
@@ -93,22 +95,29 @@ export function RestoreThatOneInsteadLink( {
 
 	// The backup's "Backup complete" time, in the site's timezone: the time the backup lists show.
 	const completedAt = moment( Number( resolvedRewindId ) * 1000 );
-	const backupLabel = ( applySiteOffset ? applySiteOffset( completedAt ) : completedAt ).format(
-		'll - LT'
-	);
+	const siteCompletedAt = applySiteOffset ? applySiteOffset( completedAt ) : completedAt;
+
+	const reason = translate( "It's the most recent backup with no known security threats." );
 
 	return (
-		<Button
-			__next40pxDefaultSize
-			variant="link"
-			className="backup-known-threats__restore-link"
-			href={ backupRestorePath( siteSlug, resolvedRewindId ) }
-		>
-			{ translate( 'Restore %(backup)s backup instead', {
-				args: { backup: backupLabel },
-				comment: '%(backup)s is the date and time of a backup, e.g. "Oct 17, 2026 - 2:30 PM"',
-			} ) }
-		</Button>
+		<>
+			<Tooltip text={ String( reason ) }>
+				<Button
+					__next40pxDefaultSize
+					variant="link"
+					className="backup-known-threats__restore-link"
+					aria-describedby={ descriptionId }
+					href={ backupRestorePath( siteSlug, resolvedRewindId ) }
+				>
+					{ translate( 'Restore %(date)s at %(time)s backup instead', {
+						args: { date: siteCompletedAt.format( 'll' ), time: siteCompletedAt.format( 'LT' ) },
+						comment:
+							'%(date)s is the date of a backup, e.g. "Oct 17, 2026"; %(time)s its time, e.g. "2:30 PM". Reads "Restore Oct 17, 2026 at 2:30 PM backup instead".',
+					} ) }
+				</Button>
+			</Tooltip>
+			<VisuallyHidden id={ descriptionId }>{ reason }</VisuallyHidden>
+		</>
 	);
 }
 
@@ -153,6 +162,9 @@ export function BackupKnownThreatsTable( {
 	return (
 		<div className="backup-known-threats__details">
 			<table className="backup-known-threats__table">
+				<VisuallyHidden as="caption">
+					{ translate( 'Known threats in this backup' ) }
+				</VisuallyHidden>
 				<thead>
 					<tr>
 						<th>{ translate( 'Threat' ) }</th>
@@ -197,8 +209,41 @@ export function BackupKnownThreatsTable( {
 	);
 }
 
+interface KnownThreatsRegionProps {
+	id: string;
+	isError: boolean;
+	/** The threats table, once loaded. */
+	children?: ReactNode;
+}
+
+/** What an open Known threats toggle controls: the table, or why it isn't there yet. */
+export function KnownThreatsRegion( { id, isError, children }: KnownThreatsRegionProps ) {
+	const translate = useTranslate();
+
+	let content = children;
+	if ( ! content ) {
+		content = isError ? (
+			<p className="backup-known-threats__status">
+				{ translate( "Couldn't load the threats. Try again later." ) }
+			</p>
+		) : (
+			<p className="backup-known-threats__status">
+				<Spinner />
+				<span>{ translate( 'Loading threats…' ) }</span>
+			</p>
+		);
+	}
+
+	return (
+		<div id={ id } className="backup-known-threats__region">
+			{ content }
+		</div>
+	);
+}
+
 export function useBackupKnownThreats( siteId: number, rewindId?: string | null ) {
 	const [ isOpen, setIsOpen ] = useState( false );
+	const detailsId = useId();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const hasScan = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN_SELF_SERVE )
@@ -207,7 +252,7 @@ export function useBackupKnownThreats( siteId: number, rewindId?: string | null 
 		...siteBackupKnownThreatsQuery( siteId, rewindId ?? '' ),
 		enabled: !! rewindId,
 	} );
-	const { data: threats } = useQuery( {
+	const { data: threats, isError: isThreatsError } = useQuery( {
 		...siteBackupThreatsQuery( siteId, counts?.backupPeriod ?? 0 ),
 		enabled: !! rewindId && hasScan && isOpen && counts?.backupPeriod != null,
 	} );
@@ -225,6 +270,8 @@ export function useBackupKnownThreats( siteId: number, rewindId?: string | null 
 		isOpen,
 		toggle: () => setIsOpen( ( open ) => ! open ),
 		threats,
+		isThreatsError,
+		detailsId,
 		siteSlug,
 		latestWithoutKnownThreats: counts?.latestWithoutKnownThreats,
 		backupPeriod: counts?.backupPeriod,
@@ -247,6 +294,21 @@ export function KnownThreatsBadge( { flagged }: { flagged: number } ) {
 	);
 }
 
+export function getKnownThreatsWarning(
+	translate: ReturnType< typeof useTranslate >,
+	count: number
+) {
+	return translate(
+		'This backup is known to contain %d security threat. Restoring it may bring malware back to your site.',
+		'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.',
+		{
+			count,
+			args: count,
+			comment: '%d is the number of known security threats in the backup',
+		}
+	);
+}
+
 interface BackupKnownThreatsToggleProps {
 	state: BackupKnownThreatsState;
 	/** Render a compact borderless button, matching the buttons in the activity card toolbar. */
@@ -257,6 +319,8 @@ interface KnownThreatsToggleButtonProps {
 	flagged: number;
 	isOpen: boolean;
 	onToggle: () => void;
+	/** The id of the region the toggle shows; referenced only while it is open. */
+	controlsId?: string;
 	/** Render a compact borderless button, matching the buttons in the activity card toolbar. */
 	inToolbar?: boolean;
 }
@@ -265,10 +329,21 @@ export function KnownThreatsToggleButton( {
 	flagged,
 	isOpen,
 	onToggle,
+	controlsId,
 	inToolbar,
 }: KnownThreatsToggleButtonProps ) {
 	const translate = useTranslate();
+	const warningId = useId();
 	const actionLabel = isOpen ? translate( 'Hide threats' ) : translate( 'Show threats' );
+	// In the card toolbar the warning isn't shown nearby, so the toggle carries it.
+	const warning = inToolbar ? getKnownThreatsWarning( translate, flagged ) : null;
+	const tooltip = warning
+		? translate( '%(warning)s %(action)s.', {
+				args: { warning, action: actionLabel },
+				comment:
+					'%(warning)s is the known threats warning; %(action)s is "Show threats" or "Hide threats"',
+			} )
+		: actionLabel;
 	const ariaLabel = isOpen
 		? translate( 'Known threats (%d), hide threats', {
 				args: flagged,
@@ -282,37 +357,43 @@ export function KnownThreatsToggleButton( {
 			} );
 
 	return (
-		<Tooltip text={ String( actionLabel ) }>
-			{ inToolbar ? (
-				<CalypsoButton
-					compact
-					borderless
-					className="backup-known-threats__toggle"
-					aria-label={ String( ariaLabel ) }
-					aria-expanded={ isOpen }
-					onClick={ onToggle }
-				>
-					<KnownThreatsBadge flagged={ flagged } />
-				</CalypsoButton>
-			) : (
-				<Button
-					__next40pxDefaultSize
-					variant="tertiary"
-					size="compact"
-					className="backup-known-threats__toggle"
-					aria-label={ String( ariaLabel ) }
-					aria-expanded={ isOpen }
-					onClick={ onToggle }
-				>
-					<KnownThreatsBadge flagged={ flagged } />
-				</Button>
-			) }
-		</Tooltip>
+		<>
+			<Tooltip text={ String( tooltip ) }>
+				{ inToolbar ? (
+					<CalypsoButton
+						compact
+						borderless
+						className="backup-known-threats__toggle"
+						aria-label={ String( ariaLabel ) }
+						aria-expanded={ isOpen }
+						aria-controls={ isOpen ? controlsId : undefined }
+						aria-describedby={ warningId }
+						onClick={ onToggle }
+					>
+						<KnownThreatsBadge flagged={ flagged } />
+					</CalypsoButton>
+				) : (
+					<Button
+						__next40pxDefaultSize
+						variant="tertiary"
+						size="compact"
+						className="backup-known-threats__toggle"
+						aria-label={ String( ariaLabel ) }
+						aria-expanded={ isOpen }
+						aria-controls={ isOpen ? controlsId : undefined }
+						onClick={ onToggle }
+					>
+						<KnownThreatsBadge flagged={ flagged } />
+					</Button>
+				) }
+			</Tooltip>
+			{ warning && <VisuallyHidden id={ warningId }>{ warning }</VisuallyHidden> }
+		</>
 	);
 }
 
 export function BackupKnownThreatsToggle( { state, inToolbar }: BackupKnownThreatsToggleProps ) {
-	const { flagged, hasScan, isOpen, toggle } = state;
+	const { flagged, hasScan, isOpen, toggle, detailsId } = state;
 
 	if ( flagged === null ) {
 		return null;
@@ -327,6 +408,7 @@ export function BackupKnownThreatsToggle( { state, inToolbar }: BackupKnownThrea
 			flagged={ flagged }
 			isOpen={ isOpen }
 			onToggle={ toggle }
+			controlsId={ detailsId }
 			inToolbar={ inToolbar }
 		/>
 	);
@@ -356,25 +438,31 @@ export function BackupKnownThreatsDetails( { state }: { state: BackupKnownThreat
 		hasScan,
 		isOpen,
 		threats,
+		isThreatsError,
+		detailsId,
 		siteId,
 		siteSlug,
 		latestWithoutKnownThreats,
 		backupPeriod,
 	} = state;
 
-	if ( flagged === null || ! hasScan || ! isOpen || ! threats || ! siteSlug ) {
+	if ( flagged === null || ! hasScan || ! isOpen ) {
 		return null;
 	}
 
 	return (
-		<BackupKnownThreatsTable
-			siteId={ siteId }
-			siteSlug={ siteSlug }
-			threats={ threats }
-			latestWithoutKnownThreats={ latestWithoutKnownThreats }
-			currentBackupPeriod={ backupPeriod }
-			showRestoreLink={ false }
-		/>
+		<KnownThreatsRegion id={ detailsId } isError={ isThreatsError || ! siteSlug }>
+			{ threats && siteSlug && (
+				<BackupKnownThreatsTable
+					siteId={ siteId }
+					siteSlug={ siteSlug }
+					threats={ threats }
+					latestWithoutKnownThreats={ latestWithoutKnownThreats }
+					currentBackupPeriod={ backupPeriod }
+					showRestoreLink={ false }
+				/>
+			) }
+		</KnownThreatsRegion>
 	);
 }
 
@@ -397,9 +485,9 @@ export function BackupKnownThreats( {
 
 	return (
 		<div className="backup-known-threats">
-			{ showRestoreLink && <BackupKnownThreatsRestoreLink state={ state } /> }
 			<BackupKnownThreatsToggle state={ state } />
 			<BackupKnownThreatsDetails state={ state } />
+			{ showRestoreLink && <BackupKnownThreatsRestoreLink state={ state } /> }
 		</div>
 	);
 }

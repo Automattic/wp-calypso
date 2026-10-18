@@ -71,6 +71,15 @@ const NOTICE =
 	'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
 const CHECKBOX = 'I understand this backup contains known threats and want to restore it anyway.';
 
+const expectInOrder = ( ...elements: HTMLElement[] ) =>
+	elements
+		.slice( 1 )
+		.forEach( ( element, index ) =>
+			expect(
+				elements[ index ].compareDocumentPosition( element ) & Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy()
+		);
+
 const counts = ( flagged: number ) => ( {
 	malware: flagged,
 	database: 0,
@@ -255,9 +264,29 @@ describe( 'KnownThreatsNotice', () => {
 		expect( link ).toHaveAttribute( 'href', '/backup/example.wordpress.com/restore/150.817' );
 		expect( banner ).toContainElement( link );
 		expect( banner ).toContainElement( screen.getByText( 'Evil.Sig' ) );
+		expectInOrder( expanded, screen.getByText( 'Evil.Sig' ), link );
 		expect( screen.getAllByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toHaveLength(
 			1
 		);
+	} );
+
+	it( 'points the toggle at a loading, then failed, threats region while open', async () => {
+		mockList( counts( 3 ) );
+		nock( BASE ).get( THREATS_PATH ).query( true ).delay( 300 ).reply( 500, {} );
+		renderWithProvider( <Harness /> );
+
+		const toggle = await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
+		expect( toggle ).not.toHaveAttribute( 'aria-controls' );
+		await userEvent.click( toggle );
+
+		const region = () => document.getElementById( toggle.getAttribute( 'aria-controls' ) ?? '' );
+		expect( region() ).toContainElement( await screen.findByText( 'Loading threats…' ) );
+		expect( region() ).toContainElement(
+			await screen.findByText( "Couldn't load the threats. Try again later." )
+		);
+
+		await userEvent.click( toggle );
+		expect( toggle ).not.toHaveAttribute( 'aria-controls' );
 	} );
 
 	it( 'has no expander and no details request without Scan, but keeps the checkbox', async () => {
@@ -327,10 +356,21 @@ describe( 'BackupRestoreFlow known threats gating', () => {
 
 		const restoreButton = screen.getByRole( 'button', { name: 'Restore now' } );
 		await screen.findByText( NOTICE );
-		expect( restoreButton ).toBeDisabled();
+		expect( restoreButton ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( restoreButton ).not.toHaveAttribute( 'disabled' );
+		expect( restoreButton ).toHaveAccessibleDescription(
+			'To restore this backup, confirm that you understand it contains known threats.'
+		);
+		await userEvent.click( restoreButton );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_jetpack_backup_restore_confirm',
+			expect.anything()
+		);
 
 		await userEvent.click( screen.getByRole( 'checkbox', { name: CHECKBOX } ) );
 		expect( restoreButton ).toBeEnabled();
+		expect( restoreButton ).not.toHaveAttribute( 'aria-disabled' );
+		expect( restoreButton ).not.toHaveAccessibleDescription();
 
 		await userEvent.click( restoreButton );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -375,7 +415,7 @@ describe( 'BackupRestoreFlow known threats gating', () => {
 
 		const restoreButton = await screen.findByRole( 'button', { name: 'Restore now' } );
 		expect( restoreButton ).toBeVisible();
-		expect( restoreButton ).toBeDisabled();
+		expect( restoreButton ).toHaveAttribute( 'aria-disabled', 'true' );
 		expect( screen.getByRole( 'checkbox', { name: CHECKBOX } ) ).not.toBeChecked();
 	} );
 } );

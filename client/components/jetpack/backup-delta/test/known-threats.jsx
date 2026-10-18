@@ -156,15 +156,21 @@ describe( 'BackupDelta known threats', () => {
 		expect( within( cards[ 1 ] ).queryByText( /Known threats/ ) ).toBeNull();
 
 		expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).toBeNull();
+		const warning =
+			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
+		expect( button ).toHaveAccessibleDescription( warning );
+		expect( button ).not.toHaveAttribute( 'title' );
 		await userEvent.hover( button );
-		expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+			`${ warning } Show threats.`
+		);
 		await userEvent.unhover( button );
 		const restoreLink = await within( cards[ 0 ] ).findByRole( 'link', {
 			name: /^Restore .+ backup instead$/,
 		} );
 		expect( restoreLink ).toBeVisible();
-		// In the card toolbar the Known threats button sits above the link.
-		expect( toolbar.lastElementChild ).toContainElement( restoreLink );
+		// The toggle stays in the card toolbar; the link sits below it, under the toolbar row.
+		expect( toolbar ).not.toContainElement( restoreLink );
 		expect(
 			button.compareDocumentPosition( restoreLink ) & Node.DOCUMENT_POSITION_FOLLOWING
 		).toBeTruthy();
@@ -175,8 +181,19 @@ describe( 'BackupDelta known threats', () => {
 		expect( button ).toHaveAttribute( 'aria-expanded', 'true' );
 		await userEvent.unhover( button );
 		await userEvent.hover( button );
-		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+			`${ warning } Hide threats.`
+		);
 		expect( await within( cards[ 0 ] ).findByText( 'Evil.Sig' ) ).toBeVisible();
+		// The table opens right below the toggle's row, full width, and above the link.
+		const table = within( cards[ 0 ] ).getByRole( 'table', {
+			name: 'Known threats in this backup',
+		} );
+		expect( toolbar ).not.toContainElement( table );
+		expect( toolbar.nextElementSibling ).toContainElement( table );
+		expect(
+			table.compareDocumentPosition( restoreLink ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
 		expect( within( cards[ 1 ] ).queryByText( 'Evil.Sig' ) ).toBeNull();
 		expect(
 			within( cards[ 0 ] ).getAllByRole( 'link', { name: /^Restore .+ backup instead$/ } )
