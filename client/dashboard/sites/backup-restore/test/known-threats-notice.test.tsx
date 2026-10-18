@@ -4,6 +4,7 @@
 
 import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
+import { useRouterState } from '@tanstack/react-router';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { speak } from '@wordpress/a11y';
@@ -321,6 +322,35 @@ test( 'links to the latest backup without known threats', async () => {
 	expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
 		"It's the most recent backup with no known security threats."
 	);
+} );
+
+test( 'moves focus to the restore point after opening the clean backup', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	// Stands in for the restore route, whose rewind id comes from the URL.
+	function RoutedForm() {
+		const pathname = useRouterState( { select: ( state ) => state.location.pathname } );
+		const opened = pathname.match( /\/backups\/(\d+)\/restore/ )?.[ 1 ];
+		return (
+			<SiteBackupRestoreForm
+				site={ site }
+				restoreLinkTo="/sites/$siteSlug/backups/$rewindId/restore"
+				siteId={ siteId }
+				rewindId={ opened ?? rewindId }
+				restorePointDate={ opened ? 'Oct 17' : 'Oct 16' }
+				onRestoreInitiate={ jest.fn() }
+			/>
+		);
+	}
+	render( <RoutedForm /> );
+
+	const link = await screen.findByRole( 'link', { name: /^Restore .+ backup instead$/ } );
+	expect( screen.getByText( /Choose what to restore/ ) ).not.toHaveFocus();
+	await user.click( link );
+
+	await waitFor( () => expect( screen.getByText( /Choose what to restore/ ) ).toHaveFocus() );
+	expect( screen.getByText( /Choose what to restore/ ) ).toHaveTextContent( 'Oct 17' );
+	expect( link ).not.toBeInTheDocument();
 } );
 
 test( 'shows the restore link once when the threats are expanded', async () => {

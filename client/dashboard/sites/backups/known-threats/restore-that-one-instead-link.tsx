@@ -6,7 +6,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { Tooltip, VisuallyHidden } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useId } from 'react';
+import { useCallback, useId } from 'react';
 import { useIntlLocale } from '../../../app/locale';
 import RouterLinkButton from '../../../components/router-link-button';
 import { formatDate, formatDateWithOffset } from '../../../utils/datetime';
@@ -18,6 +18,26 @@ const BACKUP_COMPLETE_ACTIVITIES = [
 	'rewind__backup_only_complete_full',
 	'rewind__backup_only_complete_initial',
 ];
+
+// The rewind id the link last opened, until the page for it takes focus.
+let rewindIdAwaitingFocus: string | null = null;
+
+/**
+ * The link, and the warning it sits in, are gone on the backup it opens, which would leave focus
+ * on the page body. Returns a ref for the element that should take focus there instead; give that
+ * element `tabIndex={ -1 }`.
+ */
+export function useRestoreInsteadFocusRef( rewindId: string ) {
+	return useCallback(
+		( node: HTMLElement | null ) => {
+			if ( node && rewindIdAwaitingFocus === rewindId ) {
+				rewindIdAwaitingFocus = null;
+				node.focus();
+			}
+		},
+		[ rewindId ]
+	);
+}
 
 interface RestoreThatOneInsteadLinkProps {
 	siteId: number;
@@ -118,6 +138,9 @@ export function RestoreThatOneInsteadLink( {
 					to={ restoreLinkTo }
 					params={ { siteSlug, rewindId: String( latestWithoutKnownThreats ) } }
 					aria-describedby={ descriptionId }
+					onClick={ () => {
+						rewindIdAwaitingFocus = String( latestWithoutKnownThreats );
+					} }
 				>
 					{ label }
 				</RouterLinkButton>
