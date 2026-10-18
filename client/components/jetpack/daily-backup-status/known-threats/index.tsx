@@ -12,6 +12,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useApplySiteOffset } from 'calypso/components/site-offset';
 import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import { SUCCESSFUL_BACKUP_ACTIVITIES } from 'calypso/lib/jetpack/backup-utils';
 import { backupRestorePath } from 'calypso/my-sites/backup/paths';
@@ -37,6 +38,8 @@ export function RestoreThatOneInsteadLink( {
 	currentBackupPeriod,
 }: RestoreThatOneInsteadLinkProps ) {
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+	const applySiteOffset = useApplySiteOffset();
 
 	const hasTarget =
 		latestWithoutKnownThreats !== null &&
@@ -88,6 +91,12 @@ export function RestoreThatOneInsteadLink( {
 		return null;
 	}
 
+	// The backup's "Backup complete" time, in the site's timezone: the time the backup lists show.
+	const completedAt = moment( Number( resolvedRewindId ) * 1000 );
+	const backupLabel = ( applySiteOffset ? applySiteOffset( completedAt ) : completedAt ).format(
+		'll - LT'
+	);
+
 	return (
 		<Button
 			__next40pxDefaultSize
@@ -95,7 +104,10 @@ export function RestoreThatOneInsteadLink( {
 			className="backup-known-threats__restore-link"
 			href={ backupRestorePath( siteSlug, resolvedRewindId ) }
 		>
-			{ translate( 'Restore this backup instead' ) }
+			{ translate( 'Restore %(backup)s backup instead', {
+				args: { backup: backupLabel },
+				comment: '%(backup)s is the date and time of a backup, e.g. "Oct 17, 2026 - 2:30 PM"',
+			} ) }
 		</Button>
 	);
 }
