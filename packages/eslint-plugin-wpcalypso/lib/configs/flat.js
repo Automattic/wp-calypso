@@ -8,6 +8,32 @@ const load = ( name ) => {
 	return module.default ?? module;
 };
 
+// The plugin's rules call `context.getSourceCode()`, which ESLint 10 removed. `context.sourceCode`
+// replaces it from ESLint 8.40 on. Earlier ESLint versions get the plugin itself, so configs that
+// also register it still work.
+const removedGetSourceCode =
+	Number( require( 'eslint/package.json' ).version.split( '.' )[ 0 ] ) >= 10;
+const withGetSourceCode = ( plugin ) => {
+	if ( ! removedGetSourceCode ) {
+		return plugin;
+	}
+	return {
+		...plugin,
+		rules: Object.fromEntries(
+			Object.entries( plugin.rules ).map( ( [ name, rule ] ) => [
+				name,
+				{
+					...rule,
+					create: ( context ) =>
+						rule.create(
+							Object.create( context, { getSourceCode: { value: () => context.sourceCode } } )
+						),
+				},
+			] )
+		),
+	};
+};
+
 const recommended = ( plugin ) => {
 	const jsdoc = load( 'eslint-plugin-jsdoc' );
 	return [
@@ -23,7 +49,7 @@ const recommended = ( plugin ) => {
 			},
 			plugins: {
 				wpcalypso: plugin,
-				'inclusive-language': load( 'eslint-plugin-inclusive-language' ),
+				'inclusive-language': withGetSourceCode( load( 'eslint-plugin-inclusive-language' ) ),
 			},
 			settings: legacyRecommended.settings,
 			rules: legacyRecommended.rules,

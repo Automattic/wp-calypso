@@ -40,7 +40,10 @@ module.exports = {
 		'key-spacing': 'error',
 		'keyword-spacing': 'error',
 		'max-len': [ 'error', { code: 100 } ],
-		'new-cap': [ 'error', { capIsNew: false, newIsCap: true } ],
+		'new-cap': [
+			'error',
+			{ capIsNew: false, newIsCap: true, newIsCapExceptions: [ 'this.constructor' ] },
+		],
 		'no-cond-assign': 'error',
 		'no-const-assign': 'error',
 		'no-console': 'error',
