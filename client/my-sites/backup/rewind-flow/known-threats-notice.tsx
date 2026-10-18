@@ -28,6 +28,8 @@ interface Props {
 	acknowledged?: boolean;
 	onAcknowledgedChange?: ( value: boolean ) => void;
 	onKnownThreatsChange?: ( hasKnownThreats: boolean ) => void;
+	/** Said when the box is ticked; say where the restore button is if it isn't the next stop. */
+	acknowledgedMessage?: string;
 }
 
 export const isRestoreDisabled = (
@@ -48,6 +50,7 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 	acknowledged = false,
 	onAcknowledgedChange,
 	onKnownThreatsChange,
+	acknowledgedMessage,
 } ) => {
 	const translate = useTranslate();
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -121,7 +124,9 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 								onAcknowledgedChange?.( value );
 								// Focus stays on the checkbox; say that the restore it was blocking is open.
 								if ( value ) {
-									speak( translate( 'You can now restore this backup.' ) as string );
+									speak(
+										acknowledgedMessage ?? ( translate( 'You can now restore this backup.' ) as string )
+									);
 								}
 							} }
 							label={ translate(

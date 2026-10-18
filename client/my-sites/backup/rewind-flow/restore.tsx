@@ -331,6 +331,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					acknowledged={ acknowledged }
 					onAcknowledgedChange={ onAcknowledgedChange }
 					onKnownThreatsChange={ setHasKnownThreats }
+					// "Go back" comes between the checkbox and the restore button.
+					acknowledgedMessage={
+						translate( 'You can now restore this backup with "Restore now", below.' ) as string
+					}
 				/>
 				<>
 					{ backupCurrentlyInProgress && (
