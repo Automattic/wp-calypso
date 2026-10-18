@@ -169,7 +169,7 @@ describe( 'BackupKnownThreats', () => {
 			'width',
 			'16'
 		);
-		const restoreLink = await screen.findByRole( 'link', { name: 'Restore this one instead' } );
+		const restoreLink = await screen.findByRole( 'link', { name: 'Restore this backup instead' } );
 		expect( restoreLink ).toBeVisible();
 		expect(
 			restoreLink.compareDocumentPosition( toggle ) & Node.DOCUMENT_POSITION_FOLLOWING
@@ -186,12 +186,14 @@ describe( 'BackupKnownThreats', () => {
 		expect( screen.getByText( 'Ignored' ) ).toBeVisible();
 		expect( screen.getAllByText( localDate( Date.UTC( 2026, 9, 1, 23, 30 ) ) ) ).toHaveLength( 2 );
 		expect( screen.getByText( 'Also: 2 vulnerable plugin or theme versions.' ) ).toBeVisible();
-		expect( screen.getAllByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveLength( 1 );
-		expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveAttribute(
+		expect( screen.getAllByRole( 'link', { name: 'Restore this backup instead' } ) ).toHaveLength(
+			1
+		);
+		expect( screen.getByRole( 'link', { name: 'Restore this backup instead' } ) ).toHaveAttribute(
 			'href',
 			'/backup/example.wordpress.com/restore/150.817'
 		);
-		expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveClass(
+		expect( screen.getByRole( 'link', { name: 'Restore this backup instead' } ) ).toHaveClass(
 			'is-next-40px-default-size'
 		);
 		const expanded = screen.getByRole( 'button', { name: 'Known threats (1), hide threats' } );
@@ -207,7 +209,7 @@ describe( 'BackupKnownThreats', () => {
 		const activities = mockActivities( [ '1792247404.817' ] );
 		renderIt();
 
-		const link = await screen.findByRole( 'link', { name: 'Restore this one instead' } );
+		const link = await screen.findByRole( 'link', { name: 'Restore this backup instead' } );
 		expect( link ).toHaveAttribute(
 			'href',
 			'/backup/example.wordpress.com/restore/1792247404.817'
@@ -263,7 +265,7 @@ describe( 'BackupKnownThreats', () => {
 		expect( query.sort_order ).toBe( 'asc' );
 		expect( query.before ).toBe( new Date( 1792290505 * 1000 ).toISOString() );
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
-		expect( screen.queryByRole( 'link', { name: 'Restore this one instead' } ) ).toBeNull();
+		expect( screen.queryByRole( 'link', { name: 'Restore this backup instead' } ) ).toBeNull();
 	} );
 
 	it( 'hides the restore link when the latest clean backup is the one containing this activity', async () => {
@@ -273,7 +275,7 @@ describe( 'BackupKnownThreats', () => {
 
 		await screen.findByText( 'Known threats (1)' );
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
-		expect( screen.queryByRole( 'link', { name: 'Restore this one instead' } ) ).toBeNull();
+		expect( screen.queryByRole( 'link', { name: 'Restore this backup instead' } ) ).toBeNull();
 		expect( activities.isDone() ).toBe( false );
 	} );
 
@@ -285,7 +287,7 @@ describe( 'BackupKnownThreats', () => {
 		await screen.findByText( 'Known threats (1)' );
 		await waitFor( () => expect( activities.isDone() ).toBe( true ) );
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
-		expect( screen.queryByRole( 'link', { name: 'Restore this one instead' } ) ).toBeNull();
+		expect( screen.queryByRole( 'link', { name: 'Restore this backup instead' } ) ).toBeNull();
 	} );
 
 	it( 'does not query activities when the backup has no earlier clean backup', async () => {
@@ -329,7 +331,7 @@ describe( 'BackupKnownThreats', () => {
 		);
 		await userEvent.click( await screen.findByRole( 'button', { name: /show threats/ } ) );
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: 'Restore this one instead' } ) ).toBeNull();
+		expect( screen.queryByRole( 'link', { name: 'Restore this backup instead' } ) ).toBeNull();
 	} );
 
 	it( 'shows only the count without Scan and never requests details', async () => {

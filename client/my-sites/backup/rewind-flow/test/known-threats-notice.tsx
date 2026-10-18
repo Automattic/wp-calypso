@@ -244,11 +244,13 @@ describe( 'KnownThreatsNotice', () => {
 		await userEvent.hover( expanded );
 		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
-		const link = await screen.findByRole( 'link', { name: 'Restore this one instead' } );
+		const link = await screen.findByRole( 'link', { name: 'Restore this backup instead' } );
 		expect( link ).toHaveAttribute( 'href', '/backup/example.wordpress.com/restore/150.817' );
 		expect( banner ).toContainElement( link );
 		expect( banner ).toContainElement( screen.getByText( 'Evil.Sig' ) );
-		expect( screen.getAllByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveLength( 1 );
+		expect( screen.getAllByRole( 'link', { name: 'Restore this backup instead' } ) ).toHaveLength(
+			1
+		);
 	} );
 
 	it( 'has no expander and no details request without Scan, but keeps the checkbox', async () => {

@@ -283,7 +283,7 @@ test( 'expands the threats table for Scan sites', async () => {
 			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.'
 		)
 	).toBeVisible();
-	const restoreLink = screen.getByRole( 'link', { name: 'Restore this one instead' } );
+	const restoreLink = screen.getByRole( 'link', { name: 'Restore this backup instead' } );
 	expect( restoreLink ).toBeVisible();
 	expect(
 		restoreLink.compareDocumentPosition( toggle ) & Node.DOCUMENT_POSITION_FOLLOWING
@@ -301,12 +301,14 @@ test( 'expands the threats table for Scan sites', async () => {
 		screen.getByText( `Fixed ${ localDate( Date.UTC( 2026, 8, 2, 23, 30 ) ) }` )
 	).toBeVisible();
 	expect( screen.getByText( 'Also: 2 vulnerable plugin or theme versions.' ) ).toBeVisible();
-	expect( screen.getAllByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveLength( 1 );
-	expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveAttribute(
+	expect( screen.getAllByRole( 'link', { name: 'Restore this backup instead' } ) ).toHaveLength(
+		1
+	);
+	expect( screen.getByRole( 'link', { name: 'Restore this backup instead' } ) ).toHaveAttribute(
 		'href',
 		expect.stringContaining( '/backups/1792240000/restore' )
 	);
-	expect( screen.getByRole( 'link', { name: 'Restore this one instead' } ) ).toHaveClass(
+	expect( screen.getByRole( 'link', { name: 'Restore this backup instead' } ) ).toHaveClass(
 		'is-next-40px-default-size'
 	);
 	expect( threatsScope.isDone() ).toBe( true );
@@ -328,7 +330,7 @@ test( 'hides the restore link when the latest clean backup is this one', async (
 	} );
 
 	await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
-	expect( screen.queryByRole( 'link', { name: 'Restore this one instead' } ) ).toBeNull();
+	expect( screen.queryByRole( 'link', { name: 'Restore this backup instead' } ) ).toBeNull();
 } );
 
 test( 'uses the singular vulnerable note for one version', async () => {
