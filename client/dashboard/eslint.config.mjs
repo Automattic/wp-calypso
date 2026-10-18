@@ -1,8 +1,8 @@
-import { defineConfig } from 'eslint/config';
-import client from '../eslint.config.mjs';
+import parent from '../eslint.config.mjs';
 
-export default defineConfig( [
-	...client,
+/** @type {import('eslint').Linter.Config[]} */
+const config = [
+	...parent,
 	{
 		name: 'calypso/dashboard',
 		rules: {
@@ -223,4 +223,6 @@ export default defineConfig( [
 			],
 		},
 	},
-] );
+];
+
+export default config;

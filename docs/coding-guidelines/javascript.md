@@ -736,7 +736,7 @@ Resources:
 
 ## ESLint
 
-To help encourage developers to follow our coding standards, we include an [ESLint](http://eslint.org/) configuration file [`eslint.config.mjs`](../../eslint.config.mjs) that configures [ESLint](http://eslint.org/) to detect code that doesn't follow the guidelines. ESLint also catches basic syntax errors, and natively supports both ES6 and JSX. It can be extended by plugins, such as [`eslint-plugin-wpcalypso`](https://github.com/Automattic/eslint-plugin-wpcalypso), which we use in our configuration.
+To help encourage developers to follow our coding standards, we include an [ESLint](http://eslint.org/) configuration, [`@automattic/calypso-eslint-config`](../../packages/calypso-eslint-config/README.md), that configures [ESLint](http://eslint.org/) to detect code that doesn't follow the guidelines. ESLint also catches basic syntax errors, and natively supports both ES6 and JSX. It can be extended by plugins, such as [`eslint-plugin-wpcalypso`](https://github.com/Automattic/eslint-plugin-wpcalypso), which we use in our configuration.
 
 There are [integrations](http://eslint.org/docs/user-guide/integrations) for many editors that will automatically detect the configuration file and run the checks.
 

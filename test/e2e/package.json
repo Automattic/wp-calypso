@@ -33,6 +33,7 @@
 		"test:pw:p2": "yarn playwright test --project=chrome --grep @p2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"eslint-plugin-playwright": "^2.10.1"

@@ -40,6 +40,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"jest": "^30.5.2",

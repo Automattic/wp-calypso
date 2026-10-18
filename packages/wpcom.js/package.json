@@ -57,6 +57,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@babel/core": "^7.27.1",

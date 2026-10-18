@@ -53,6 +53,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"postcss": "^8.5.15",

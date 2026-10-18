@@ -34,6 +34,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@electron/notarize": "^2.4.0",
 		"@electron/rebuild": "4.0.4",

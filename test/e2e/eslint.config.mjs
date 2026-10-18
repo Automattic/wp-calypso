@@ -1,9 +1,10 @@
+import calypso, { nodeConfig } from '@automattic/calypso-eslint-config';
 import { defineConfig } from 'eslint/config';
 import playwright from 'eslint-plugin-playwright';
-import root, { nodeConfig } from '../../eslint.config.mjs';
 
-export default defineConfig( [
-	...root,
+/** @type {import('eslint').Linter.Config[]} */
+const config = defineConfig( [
+	...calypso,
 	{
 		...nodeConfig,
 		name: 'calypso/e2e',
@@ -36,3 +37,5 @@ export default defineConfig( [
 		},
 	},
 ] );
+
+export default config;

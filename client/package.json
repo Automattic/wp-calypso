@@ -225,6 +225,7 @@
 		"wpcom-xhr-request": "workspace:^"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@sentry/webpack-plugin": "^1.21.0",
 		"@tanstack/query-sync-storage-persister": "^5.83.0",

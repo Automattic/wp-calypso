@@ -232,6 +232,7 @@
 		"fsevents": "^2.3.3"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-jest": "workspace:^",
 		"@automattic/calypso-package-generator": "workspace:^",

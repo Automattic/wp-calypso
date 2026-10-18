@@ -22,6 +22,7 @@
 		"yargs": "^17.0.1"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^"
 	}

@@ -1,11 +1,15 @@
 import path from 'node:path';
-import { defineConfig } from 'eslint/config';
-import root, { browserGlobals, nodeConfig, restrictedImports } from '../eslint.config.mjs';
+import calypso, {
+	browserGlobals,
+	nodeConfig,
+	restrictedImports,
+} from '@automattic/calypso-eslint-config';
 
-const [ severity, { paths, patterns } ] = restrictedImports;
+const [ , { patterns } ] = restrictedImports;
 
-export default defineConfig( [
-	...root,
+/** @type {import('eslint').Linter.Config[]} */
+const config = [
+	...calypso,
 	{
 		name: 'calypso/client',
 		// Allow fetch api function usage (and similar)
@@ -60,17 +64,9 @@ export default defineConfig( [
 			'import/no-extraneous-dependencies': 'off',
 		},
 	},
-	{
-		// The server can use `superagent`.
-		files: [ 'server/**' ],
-		rules: {
-			'no-restricted-imports': [
-				severity,
-				{
-					paths: paths.filter( ( { name } ) => name !== 'superagent' ),
-					patterns,
-				},
-			],
-		},
-	},
-] );
+].map(
+	// Directories below build on this config: keep its patterns relative to this directory.
+	( entry ) => ( { basePath: import.meta.dirname, ...entry } )
+);
+
+export default config;

@@ -395,6 +395,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agenttic-client@workspace:packages/agenttic-client"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@types/react": "npm:^18.0.0 || ^19.0.0"
     "@types/react-dom": "npm:^18.0.0 || ^19.0.0"
     "@wordpress/api-fetch": "npm:^7.0.0"
@@ -426,6 +427,7 @@ __metadata:
   dependencies:
     "@automattic/agenttic-client": "workspace:^"
     "@automattic/agenttic-ui": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@types/react": "npm:^18.0.0 || ^19.0.0"
     "@types/react-dom": "npm:^18.0.0 || ^19.0.0"
     "@vitejs/plugin-react": "npm:^4.0.0"
@@ -440,6 +442,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agenttic-ui@workspace:packages/agenttic-ui"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/charts": "npm:^1.10.0"
     "@mdx-js/react": "npm:^3.1.1"
     "@radix-ui/react-popover": "npm:^1.1.15"
@@ -536,6 +539,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     gettext-parser: "npm:^4.0.3"
   peerDependencies:
@@ -547,6 +551,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/babel-plugin-preserve-i18n@workspace:packages/babel-plugin-preserve-i18n"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
   languageName: unknown
@@ -561,6 +566,7 @@ __metadata:
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
@@ -606,6 +612,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/block-renderer@workspace:packages/block-renderer"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/global-styles": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
@@ -656,6 +663,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-apps-builder@workspace:packages/calypso-apps-builder"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     chokidar: "npm:^3.6.0"
@@ -698,6 +706,7 @@ __metadata:
   resolution: "@automattic/calypso-build@workspace:packages/calypso-build"
   dependencies:
     "@automattic/calypso-babel-config": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/languages": "workspace:^"
@@ -742,6 +751,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-color-schemes@workspace:packages/calypso-color-schemes"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/color-studio": "npm:^4.1.0"
@@ -774,6 +784,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-doctor@workspace:packages/calypso-doctor"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     chalk: "npm:^4.1.2"
@@ -787,6 +798,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-e2e@workspace:packages/calypso-e2e"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/languages": "workspace:^"
@@ -809,6 +821,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-eslint-config@workspace:^, @automattic/calypso-eslint-config@workspace:packages/calypso-eslint-config":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-eslint-config@workspace:packages/calypso-eslint-config"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/calypso-eslint-overrides@workspace:^, @automattic/calypso-eslint-overrides@workspace:packages/calypso-eslint-overrides":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-eslint-overrides@workspace:packages/calypso-eslint-overrides"
@@ -822,6 +840,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-jest@workspace:packages/calypso-jest"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": "npm:^7.27.1"
@@ -839,6 +858,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-package-generator@workspace:packages/calypso-package-generator"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     plop: "npm:^3.1.2"
@@ -923,6 +943,7 @@ __metadata:
   resolution: "@automattic/calypso-storybook@workspace:packages/calypso-storybook"
   dependencies:
     "@automattic/calypso-babel-config": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@storybook/addon-docs": "npm:^10.6.2"
@@ -1043,6 +1064,7 @@ __metadata:
     "@ariakit/test": "npm:0.4.15"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
@@ -1190,6 +1212,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/design-types": "workspace:^"
@@ -1233,6 +1256,7 @@ __metadata:
   resolution: "@automattic/design-preview@workspace:packages/design-preview"
   dependencies:
     "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/global-styles": "workspace:^"
@@ -1276,6 +1300,7 @@ __metadata:
   dependencies:
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
@@ -1360,6 +1385,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/eslint-plugin-json@workspace:packages/eslint-plugin-package-json"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@wordpress/npm-package-json-lint-config": "npm:^5.48.0"
@@ -1424,6 +1450,7 @@ __metadata:
   resolution: "@automattic/global-styles@workspace:packages/global-styles"
   dependencies:
     "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-sentry": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -1580,6 +1607,7 @@ __metadata:
   resolution: "@automattic/i18n-utils@workspace:packages/i18n-utils"
   dependencies:
     "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/languages": "workspace:^"
@@ -1754,6 +1782,7 @@ __metadata:
   resolution: "@automattic/languages@workspace:packages/languages"
   dependencies:
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     jest: "npm:^30.5.2"
@@ -1878,6 +1907,7 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
@@ -1931,6 +1961,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@wordpress/api-fetch": "npm:^7.48.0"
     "@wordpress/base-styles": "npm:^9.1.0"
@@ -2024,6 +2055,7 @@ __metadata:
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
@@ -2151,6 +2183,7 @@ __metadata:
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
@@ -2567,6 +2600,7 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@types/wordpress__block-editor": "npm:^11.5.16"
@@ -2648,6 +2682,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/webpack-inline-constant-exports-plugin@workspace:packages/webpack-inline-constant-exports-plugin"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     rimraf: "npm:^3.0.2"
@@ -2661,6 +2696,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/webpack-rtl-plugin@workspace:packages/webpack-rtl-plugin"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     css-loader: "npm:^6.11.0"
     mini-css-extract-plugin: "npm:^2.10.2"
@@ -2676,6 +2712,7 @@ __metadata:
   resolution: "@automattic/wp-babel-makepot@workspace:packages/wp-babel-makepot"
   dependencies:
     "@automattic/babel-plugin-i18n-calypso": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/cli": "npm:^7.27.2"
@@ -2702,6 +2739,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/typography": "workspace:^"
@@ -14407,6 +14445,7 @@ __metadata:
   resolution: "WordPressDesktop@workspace:desktop"
   dependencies:
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@electron/notarize": "npm:^2.4.0"
     "@electron/rebuild": "npm:4.0.4"
@@ -16018,6 +16057,7 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-paypal": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
@@ -19929,6 +19969,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "eslint-plugin-wpcalypso@workspace:packages/eslint-plugin-wpcalypso"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": "npm:^7.27.1"
     "@babel/eslint-parser": "npm:^7.27.1"
@@ -21804,6 +21845,7 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
@@ -22419,6 +22461,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "i18n-calypso-cli@workspace:packages/i18n-calypso-cli"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     commander: "npm:^5.1.0"
@@ -22434,6 +22477,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "i18n-calypso@workspace:packages/i18n-calypso"
   dependencies:
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/interpolate-components": "workspace:^"
     "@babel/runtime": "npm:^7.27.1"
@@ -36072,6 +36116,7 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-doctor": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-jest": "workspace:^"
     "@automattic/calypso-package-generator": "workspace:^"
@@ -36243,6 +36288,7 @@ __metadata:
   resolution: "wp-e2e-tests@workspace:test/e2e"
   dependencies:
     "@automattic/calypso-e2e": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@playwright/browser-chromium": "npm:1.57.0"
@@ -36282,6 +36328,7 @@ __metadata:
   resolution: "wpcom-proxy-request@workspace:packages/wpcom-proxy-request"
   dependencies:
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/runtime": "npm:^7.27.1"
@@ -36312,6 +36359,7 @@ __metadata:
   resolution: "wpcom@workspace:packages/wpcom.js"
   dependencies:
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": "npm:^7.27.1"

@@ -63,6 +63,7 @@
 		"yargs": "^17.7.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"gettext-parser": "^6.0.0"
