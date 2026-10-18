@@ -1,3 +1,4 @@
+import { VisuallyHidden } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useIntlLocale } from '../../../app/locale';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
@@ -54,6 +55,7 @@ export function KnownThreatsTable( {
 	return (
 		<div className="dashboard-backups__known-threats">
 			<table className="dashboard-backups__known-threats-table">
+				<VisuallyHidden as="caption">{ __( 'Known threats in this backup' ) }</VisuallyHidden>
 				<thead>
 					<tr>
 						<th>{ __( 'Threat' ) }</th>

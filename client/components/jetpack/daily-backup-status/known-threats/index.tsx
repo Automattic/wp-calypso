@@ -7,7 +7,7 @@ import {
 import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
 import { Button as CalypsoButton, Gridicon } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Tooltip } from '@wordpress/components';
+import { Button, Tooltip, VisuallyHidden } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -152,6 +152,9 @@ export function BackupKnownThreatsTable( {
 	return (
 		<div className="backup-known-threats__details">
 			<table className="backup-known-threats__table">
+				<VisuallyHidden as="caption">
+					{ translate( 'Known threats in this backup' ) }
+				</VisuallyHidden>
 				<thead>
 					<tr>
 						<th>{ translate( 'Threat' ) }</th>

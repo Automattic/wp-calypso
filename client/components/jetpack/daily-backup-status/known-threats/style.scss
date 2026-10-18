@@ -74,6 +74,10 @@
 		text-align: start;
 		border-bottom: 1px solid var( --color-neutral-5 );
 	}
+
+	td {
+		overflow-wrap: anywhere;
+	}
 }
 
 // Legacy card and toolbar link rules (`.card a:not(.components-external-link)`, `.activity-card__toolbar--reverse a`)

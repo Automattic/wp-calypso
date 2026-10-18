@@ -177,6 +177,7 @@ describe( 'BackupKnownThreats', () => {
 		await userEvent.click( toggle );
 
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
+		expect( screen.getByRole( 'table', { name: 'Known threats in this backup' } ) ).toBeVisible();
 		expect( screen.getByText( 'wp-content/evil.php' ) ).toBeVisible();
 		expect(
 			screen.getByText( 'wp-content/plugins/rf-known-threats-test/eicar-standard.php' )

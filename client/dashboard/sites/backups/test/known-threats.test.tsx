@@ -294,6 +294,7 @@ test( 'expands the threats table for Scan sites', async () => {
 	await user.click( toggle );
 
 	expect( await screen.findByText( 'Backdoor.PHP.Agent' ) ).toBeVisible();
+	expect( screen.getByRole( 'table', { name: 'Known threats in this backup' } ) ).toBeVisible();
 	expect( screen.getByText( 'wp-content/uploads/evil.php' ) ).toBeVisible();
 	expect(
 		screen.getByText( 'wp-content/plugins/rf-known-threats-test/eicar-standard.php' )
