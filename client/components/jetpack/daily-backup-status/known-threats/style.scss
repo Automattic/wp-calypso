@@ -1,5 +1,13 @@
 .backup-known-threats {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
 	margin: 8px 0 16px;
+
+	.backup-known-threats__details {
+		align-self: stretch;
+	}
 }
 
 // Mirrors the dashboard known-threats badge (same tokens).

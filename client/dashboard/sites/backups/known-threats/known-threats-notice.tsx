@@ -64,13 +64,6 @@ export default function KnownThreatsNotice( {
 						knownThreats.flagged
 					) }
 				</Text>
-				<RestoreThatOneInsteadLink
-					siteId={ site.ID }
-					siteSlug={ site.slug }
-					restoreLinkTo={ restoreLinkTo }
-					latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-					currentBackupPeriod={ counts.backupPeriod }
-				/>
 				{ hasScan && (
 					<div>
 						<KnownThreatsToggle
@@ -91,6 +84,13 @@ export default function KnownThreatsNotice( {
 						) }
 					</div>
 				) }
+				<RestoreThatOneInsteadLink
+					siteId={ site.ID }
+					siteSlug={ site.slug }
+					restoreLinkTo={ restoreLinkTo }
+					latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
+					currentBackupPeriod={ counts.backupPeriod }
+				/>
 				{ requireAcknowledgement && (
 					<CheckboxControl
 						__nextHasNoMarginBottom

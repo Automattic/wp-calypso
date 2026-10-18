@@ -84,14 +84,6 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 			type={ RewindFlowNoticeLevel.WARNING }
 		>
 			<div className="rewind-flow-known-threats">
-				{ siteSlug && (
-					<RestoreThatOneInsteadLink
-						siteId={ siteId }
-						siteSlug={ siteSlug }
-						latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-						currentBackupPeriod={ counts.backupPeriod }
-					/>
-				) }
 				{ hasScan && (
 					<div className="rewind-flow-known-threats__details">
 						<KnownThreatsToggleButton
@@ -110,6 +102,14 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 							/>
 						) }
 					</div>
+				) }
+				{ siteSlug && (
+					<RestoreThatOneInsteadLink
+						siteId={ siteId }
+						siteSlug={ siteSlug }
+						latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
+						currentBackupPeriod={ counts.backupPeriod }
+					/>
 				) }
 				{ requireAcknowledgement && (
 					<CheckboxControl

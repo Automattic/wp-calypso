@@ -399,9 +399,9 @@ export function BackupKnownThreats( {
 
 	return (
 		<div className="backup-known-threats">
-			{ showRestoreLink && <BackupKnownThreatsRestoreLink state={ state } /> }
 			<BackupKnownThreatsToggle state={ state } />
 			<BackupKnownThreatsDetails state={ state } />
+			{ showRestoreLink && <BackupKnownThreatsRestoreLink state={ state } /> }
 		</div>
 	);
 }

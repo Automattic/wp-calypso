@@ -164,6 +164,15 @@ afterEach( () => {
 // No Activity Log mock, so the clean backup's completion time is unknown.
 const fallbackRestoreLink = 'Restore the latest backup without known threats instead';
 
+const expectInOrder = ( ...elements: HTMLElement[] ) =>
+	elements
+		.slice( 1 )
+		.forEach( ( element, index ) =>
+			expect(
+				elements[ index ].compareDocumentPosition( element ) & Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy()
+		);
+
 const localDate = ( utcMs: number ) =>
 	new Intl.DateTimeFormat( 'en-US', { dateStyle: 'medium' } ).format( new Date( utcMs ) );
 
@@ -288,13 +297,16 @@ test( 'expands the threats table for Scan sites', async () => {
 	).toBeVisible();
 	const restoreLink = screen.getByRole( 'link', { name: fallbackRestoreLink } );
 	expect( restoreLink ).toBeVisible();
-	expect(
-		restoreLink.compareDocumentPosition( toggle ) & Node.DOCUMENT_POSITION_FOLLOWING
-	).toBeTruthy();
+	expectInOrder( toggle, restoreLink );
 	await user.click( toggle );
 
 	expect( await screen.findByText( 'Backdoor.PHP.Agent' ) ).toBeVisible();
 	expect( screen.getByRole( 'table', { name: 'Known threats in this backup' } ) ).toBeVisible();
+	expectInOrder(
+		toggle,
+		screen.getByRole( 'table', { name: 'Known threats in this backup' } ),
+		screen.getByRole( 'link', { name: fallbackRestoreLink } )
+	);
 	expect( screen.getByText( 'wp-content/uploads/evil.php' ) ).toBeVisible();
 	expect(
 		screen.getByText( 'wp-content/plugins/rf-known-threats-test/eicar-standard.php' )

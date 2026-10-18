@@ -64,6 +64,15 @@ const NOTICE =
 	'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
 const CHECKBOX = 'I understand this backup contains known threats and want to restore it anyway.';
 
+const expectInOrder = ( ...elements: HTMLElement[] ) =>
+	elements
+		.slice( 1 )
+		.forEach( ( element, index ) =>
+			expect(
+				elements[ index ].compareDocumentPosition( element ) & Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy()
+		);
+
 const counts = ( flagged: number ) => ( {
 	malware: flagged,
 	database: 0,
@@ -248,6 +257,7 @@ describe( 'KnownThreatsNotice', () => {
 		expect( link ).toHaveAttribute( 'href', '/backup/example.wordpress.com/restore/150.817' );
 		expect( banner ).toContainElement( link );
 		expect( banner ).toContainElement( screen.getByText( 'Evil.Sig' ) );
+		expectInOrder( expanded, screen.getByText( 'Evil.Sig' ), link );
 		expect( screen.getAllByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toHaveLength(
 			1
 		);

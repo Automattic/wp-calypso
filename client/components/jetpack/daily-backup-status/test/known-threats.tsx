@@ -77,6 +77,15 @@ const backupWith = ( knownThreats?: ReturnType< typeof counts > ) => ( {
 	},
 } );
 
+const expectInOrder = ( ...elements: HTMLElement[] ) =>
+	elements
+		.slice( 1 )
+		.forEach( ( element, index ) =>
+			expect(
+				elements[ index ].compareDocumentPosition( element ) & Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy()
+		);
+
 const localDate = ( utcMs: number ) =>
 	new Intl.DateTimeFormat( 'en-US', { dateStyle: 'medium' } ).format( new Date( utcMs ) );
 
@@ -171,13 +180,16 @@ describe( 'BackupKnownThreats', () => {
 		);
 		const restoreLink = await screen.findByRole( 'link', { name: /^Restore .+ backup instead$/ } );
 		expect( restoreLink ).toBeVisible();
-		expect(
-			restoreLink.compareDocumentPosition( toggle ) & Node.DOCUMENT_POSITION_FOLLOWING
-		).toBeTruthy();
+		expectInOrder( toggle, restoreLink );
 		await userEvent.click( toggle );
 
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
 		expect( screen.getByRole( 'table', { name: 'Known threats in this backup' } ) ).toBeVisible();
+		expectInOrder(
+			toggle,
+			screen.getByRole( 'table', { name: 'Known threats in this backup' } ),
+			screen.getByRole( 'link', { name: /^Restore .+ backup instead$/ } )
+		);
 		expect( screen.getByText( 'wp-content/evil.php' ) ).toBeVisible();
 		expect(
 			screen.getByText( 'wp-content/plugins/rf-known-threats-test/eicar-standard.php' )
