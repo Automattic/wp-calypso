@@ -107,7 +107,12 @@ export function getFields(
 						<span>
 							{ knownThreats && isFlagged( knownThreats ) && (
 								<span className="dashboard-backups__known-threats">
-									<KnownThreatsBadge count={ knownThreats.flagged } showWarning />
+									{ /* The row's click target covers the badge, so a tooltip can't be reached. */ }
+									<KnownThreatsBadge
+										count={ knownThreats.flagged }
+										showWarning
+										withTooltip={ false }
+									/>
 								</span>
 							) }
 						</span>

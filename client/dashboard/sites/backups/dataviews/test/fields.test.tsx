@@ -81,3 +81,15 @@ test( 'keeps the content node mounted when the badge appears', async () => {
 	expect( screen.queryByText( 'Known threats (3)' ) ).not.toBeInTheDocument();
 	expect( date.firstChild ).toBe( dateText );
 } );
+
+test( 'explains the badge to screen readers without an unreachable tooltip', async () => {
+	const user = userEvent.setup();
+	render( renderCell( 'content_text', page ) );
+
+	const badge = await screen.findByText( 'Known threats (3)' );
+	expect( screen.getByTestId( 'content_text' ) ).toHaveTextContent(
+		'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.'
+	);
+	await user.hover( badge );
+	expect( screen.queryByRole( 'tooltip' ) ).not.toBeInTheDocument();
+} );
