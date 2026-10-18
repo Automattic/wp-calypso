@@ -161,9 +161,7 @@ describe( 'BackupDelta known threats', () => {
 		expect( button ).toHaveAccessibleDescription( warning );
 		expect( button ).not.toHaveAttribute( 'title' );
 		await userEvent.hover( button );
-		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
-			`${ warning } Show threats.`
-		);
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( /^Show threats$/ );
 		await userEvent.unhover( button );
 		const restoreLink = await within( cards[ 0 ] ).findByRole( 'link', {
 			name: /^Restore .+ backup instead$/,
@@ -181,9 +179,7 @@ describe( 'BackupDelta known threats', () => {
 		expect( button ).toHaveAttribute( 'aria-expanded', 'true' );
 		await userEvent.unhover( button );
 		await userEvent.hover( button );
-		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
-			`${ warning } Hide threats.`
-		);
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( /^Hide threats$/ );
 		expect( await within( cards[ 0 ] ).findByText( 'Evil.Sig' ) ).toBeVisible();
 		// The table opens right below the toggle's row, full width, and above the link.
 		const table = within( cards[ 0 ] ).getByRole( 'table', {
@@ -191,6 +187,12 @@ describe( 'BackupDelta known threats', () => {
 		} );
 		expect( toolbar ).not.toContainElement( table );
 		expect( toolbar.nextElementSibling ).toContainElement( table );
+		// Opened, the card shows the warning above the table.
+		const shownWarning = within( toolbar.nextElementSibling ).getByText( warning );
+		expect( shownWarning ).toBeVisible();
+		expect( shownWarning.compareDocumentPosition( table ) ).toBe(
+			Node.DOCUMENT_POSITION_FOLLOWING
+		);
 		expect(
 			table.compareDocumentPosition( restoreLink ) & Node.DOCUMENT_POSITION_FOLLOWING
 		).toBeTruthy();

@@ -335,15 +335,8 @@ export function KnownThreatsToggleButton( {
 	const translate = useTranslate();
 	const warningId = useId();
 	const actionLabel = isOpen ? translate( 'Hide threats' ) : translate( 'Show threats' );
-	// In the card toolbar the warning isn't shown nearby, so the toggle carries it.
+	// In the card toolbar the warning isn't shown nearby, so screen readers get it as the description.
 	const warning = inToolbar ? getKnownThreatsWarning( translate, flagged ) : null;
-	const tooltip = warning
-		? translate( '%(warning)s %(action)s.', {
-				args: { warning, action: actionLabel },
-				comment:
-					'%(warning)s is the known threats warning; %(action)s is "Show threats" or "Hide threats"',
-			} )
-		: actionLabel;
 	const ariaLabel = isOpen
 		? translate( 'Known threats (%d), hide threats', {
 				args: flagged,
@@ -358,7 +351,7 @@ export function KnownThreatsToggleButton( {
 
 	return (
 		<>
-			<Tooltip text={ String( tooltip ) }>
+			<Tooltip text={ String( actionLabel ) }>
 				{ inToolbar ? (
 					<CalypsoButton
 						compact
@@ -432,7 +425,15 @@ export function BackupKnownThreatsRestoreLink( { state }: { state: BackupKnownTh
 }
 
 /** The threats table, shown once expanded. The restore link lives in BackupKnownThreatsRestoreLink. */
-export function BackupKnownThreatsDetails( { state }: { state: BackupKnownThreatsState } ) {
+export function BackupKnownThreatsDetails( {
+	state,
+	showWarning = false,
+}: {
+	state: BackupKnownThreatsState;
+	/** Show the warning above the table, where it isn't shown nearby. */
+	showWarning?: boolean;
+} ) {
+	const translate = useTranslate();
 	const {
 		flagged,
 		hasScan,
@@ -451,18 +452,25 @@ export function BackupKnownThreatsDetails( { state }: { state: BackupKnownThreat
 	}
 
 	return (
-		<KnownThreatsRegion id={ detailsId } isError={ isThreatsError || ! siteSlug }>
-			{ threats && siteSlug && (
-				<BackupKnownThreatsTable
-					siteId={ siteId }
-					siteSlug={ siteSlug }
-					threats={ threats }
-					latestWithoutKnownThreats={ latestWithoutKnownThreats }
-					currentBackupPeriod={ backupPeriod }
-					showRestoreLink={ false }
-				/>
+		<>
+			{ showWarning && (
+				<p className="backup-known-threats__warning">
+					{ getKnownThreatsWarning( translate, flagged ) }
+				</p>
 			) }
-		</KnownThreatsRegion>
+			<KnownThreatsRegion id={ detailsId } isError={ isThreatsError || ! siteSlug }>
+				{ threats && siteSlug && (
+					<BackupKnownThreatsTable
+						siteId={ siteId }
+						siteSlug={ siteSlug }
+						threats={ threats }
+						latestWithoutKnownThreats={ latestWithoutKnownThreats }
+						currentBackupPeriod={ backupPeriod }
+						showRestoreLink={ false }
+					/>
+				) }
+			</KnownThreatsRegion>
+		</>
 	);
 }
 
