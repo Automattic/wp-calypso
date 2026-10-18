@@ -431,5 +431,16 @@ describe( 'BackupRestoreFlow known threats gating', () => {
 		const checkbox = screen.getByRole( 'checkbox', { name: CHECKBOX } );
 		expect( checkbox ).not.toBeChecked();
 		await waitFor( () => expect( checkbox ).toHaveFocus() );
+
+		// The refusal is explained next to the checkbox, tied to it, and said aloud.
+		const refusal =
+			"The restore didn't start because this backup is known to contain security threats. To restore it anyway, check the box.";
+		expect( screen.getByText( refusal ) ).toBeVisible();
+		expect( checkbox ).toHaveAccessibleDescription( refusal );
+		expect( speak ).toHaveBeenCalledWith( refusal, 'assertive' );
+
+		await userEvent.click( checkbox );
+		expect( screen.queryByText( refusal ) ).not.toBeInTheDocument();
+		expect( checkbox ).not.toHaveAccessibleDescription();
 	} );
 } );

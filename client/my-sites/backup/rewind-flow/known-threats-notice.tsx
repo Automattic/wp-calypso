@@ -32,6 +32,8 @@ interface Props {
 	acknowledgementRef?: MutableRefObject< HTMLInputElement | null >;
 	/** Said when the box is ticked; say where the restore button is if it isn't the next stop. */
 	acknowledgedMessage?: string;
+	/** Why the restore was held back, shown under the checkbox and tied to it. */
+	acknowledgementError?: string | null;
 }
 
 export const isRestoreDisabled = (
@@ -54,6 +56,7 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 	onKnownThreatsChange,
 	acknowledgementRef,
 	acknowledgedMessage,
+	acknowledgementError,
 } ) => {
 	const translate = useTranslate();
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -148,6 +151,14 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 							label={ translate(
 								'I understand this backup contains known threats and want to restore it anyway.'
 							) }
+							// The help text is what the checkbox's aria-describedby points at.
+							help={
+								acknowledgementError ? (
+									<span className="rewind-flow-known-threats__acknowledgement-error">
+										{ acknowledgementError }
+									</span>
+								) : undefined
+							}
 						/>
 					</div>
 				) }

@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
+import { speak } from '@wordpress/a11y';
 import { ExternalLink, VisuallyHidden } from '@wordpress/components';
 import { usePrevious } from '@wordpress/compose';
 import { useEffect } from '@wordpress/element';
@@ -196,16 +197,32 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	const acknowledgementRef = useRef< HTMLInputElement | null >( null );
 	const shouldFocusAcknowledgementRef = useRef( false );
+	// Set when the server refused to restore without the acknowledgement; shown under the checkbox.
+	const [ refusalMessage, setRefusalMessage ] = useState< string | null >( null );
+	const onAcknowledgementChange = useCallback(
+		( value: boolean ) => {
+			onAcknowledgedChange( value );
+			if ( value ) {
+				setRefusalMessage( null );
+			}
+		},
+		[ onAcknowledgedChange ]
+	);
 
 	useEffect( () => {
 		if ( restoreInitiated && errorCode === 'threats_not_acknowledged' ) {
+			const refusal = translate(
+				"The restore didn't start because this backup is known to contain security threats. To restore it anyway, check the box."
+			) as string;
 			setRestoreInitiated( false );
 			setUserHasRequestedRestore( false );
 			onAcknowledgedChange( false );
 			setShowConfirm( true );
+			setRefusalMessage( refusal );
+			speak( refusal, 'assertive' );
 			shouldFocusAcknowledgementRef.current = true;
 		}
-	}, [ errorCode, onAcknowledgedChange, restoreInitiated ] );
+	}, [ errorCode, onAcknowledgedChange, restoreInitiated, translate ] );
 
 	// The confirm screen, and its checkbox, mount again after the refusal.
 	useEffect( () => {
@@ -351,9 +368,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					rewindId={ rewindId }
 					requireAcknowledgement
 					acknowledged={ acknowledged }
-					onAcknowledgedChange={ onAcknowledgedChange }
+					onAcknowledgedChange={ onAcknowledgementChange }
 					onKnownThreatsChange={ setHasKnownThreats }
 					acknowledgementRef={ acknowledgementRef }
+					acknowledgementError={ refusalMessage }
 					// "Go back" comes between the checkbox and the restore button.
 					acknowledgedMessage={
 						translate( 'You can now restore this backup with "Restore now", below.' ) as string
