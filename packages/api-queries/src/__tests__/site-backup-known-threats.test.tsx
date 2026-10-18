@@ -40,7 +40,10 @@ const page = ( page: number, totalPages: number, backups: unknown[], extra = {} 
 } );
 
 const mockPage = ( n: number, body: unknown ) =>
-	nock( BASE ).get( LIST_PATH ).query( { number: 100, page: n } ).reply( 200, body );
+	nock( BASE )
+		.get( LIST_PATH )
+		.query( { number: 100, page: n, known_threats_only: 'true' } )
+		.reply( 200, body );
 
 const run = ( rewindId: string ) =>
 	new QueryClient( { defaultOptions: { queries: { retry: false } } } ).fetchQuery(
@@ -250,7 +253,7 @@ describe( 'site backup known threats queries', () => {
 		nock( BASE )
 			.persist()
 			.get( LIST_PATH )
-			.query( { number: 100, page: 1 } )
+			.query( { number: 100, page: 1, known_threats_only: 'true' } )
 			.reply( 200, () => {
 				requests++;
 				return page( 1, 2, [ backup( '300', counts( 1 ) ), backup( '200', counts( 2 ) ) ] );
