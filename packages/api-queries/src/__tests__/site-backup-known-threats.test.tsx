@@ -45,12 +45,30 @@ const mockPage = ( n: number, body: unknown ) =>
 		.query( { number: 100, page: n, known_threats_only: 'true' } )
 		.reply( 200, body );
 
+const threatsPath = ( period: number ) =>
+	`/wpcom/v2/sites/${ SITE_ID }/rewind/backups/${ period }/threats`;
+
+const threatsBody = (
+	period: number,
+	summary: ReturnType< typeof counts >,
+	cutoff: string | null = '2026-10-17 12:00:00'
+) => ( {
+	backup_id: period,
+	cutoff,
+	summary,
+	threats: [],
+	count: 0,
+	truncated: false,
+} );
+
 const run = ( rewindId: string ) =>
 	new QueryClient( { defaultOptions: { queries: { retry: false } } } ).fetchQuery(
 		siteBackupKnownThreatsQuery( SITE_ID, rewindId )
 	);
 
 describe( 'site backup known threats queries', () => {
+	beforeAll( () => nock.disableNetConnect() );
+	afterAll( () => nock.enableNetConnect() );
 	afterEach( () => nock.cleanAll() );
 
 	it( 'maps a page of backups by period', async () => {
@@ -285,6 +303,78 @@ describe( 'site backup known threats queries', () => {
 		await client.fetchQuery( siteBackupKnownThreatsQuery( SITE_ID, '250' ) );
 
 		expect( requests ).toBe( 2 );
+	} );
+
+	it( 'asks the per-backup endpoint about a backup older than page 1', async () => {
+		const first = mockPage(
+			1,
+			page( 1, 3, [ backup( '300', counts( 1 ) ) ], { latest_without_known_threats: 250 } )
+		);
+		const threats = nock( BASE )
+			.get( threatsPath( 200 ) )
+			.reply( 200, threatsBody( 200, counts( 4 ) ) );
+
+		const result = await run( '200' );
+
+		expect( first.isDone() ).toBe( true );
+		expect( threats.isDone() ).toBe( true );
+		expect( nock.pendingMocks() ).toEqual( [] );
+		expect( result ).toEqual( {
+			knownThreats: counts( 4 ),
+			latestWithoutKnownThreats: 250,
+			backupPeriod: 200,
+		} );
+	} );
+
+	it( 'has no verdict when the per-backup endpoint has no cutoff', async () => {
+		mockPage( 1, page( 1, 3, [ backup( '300', counts( 1 ) ) ] ) );
+		nock( BASE )
+			.get( threatsPath( 200 ) )
+			.reply( 200, threatsBody( 200, counts( 0 ), null ) );
+
+		const result = await run( '200' );
+
+		expect( result ).toEqual( {
+			knownThreats: null,
+			latestWithoutKnownThreats: null,
+			backupPeriod: 200,
+		} );
+	} );
+
+	it.each( [
+		[ 403, 'scan_required' ],
+		[ 404, 'unknown_backup' ],
+	] )( 'pages through when the per-backup endpoint answers %d', async ( status, code ) => {
+		mockPage( 1, page( 1, 3, [ backup( '300', counts( 1 ) ) ] ) );
+		const second = mockPage( 2, page( 2, 3, [ backup( '200', counts( 2 ) ) ] ) );
+		nock( BASE ).get( threatsPath( 250 ) ).reply( status, { code, message: code } );
+
+		const result = await run( '250.123' );
+
+		expect( second.isDone() ).toBe( true );
+		expect( result.knownThreats ).toEqual( counts( 2 ) );
+		expect( result.backupPeriod ).toBe( 200 );
+	} );
+
+	it( 'leaves out the per-backup endpoint when page 1 holds the backup', async () => {
+		mockPage( 1, page( 1, 2, [ backup( '300', counts( 1 ) ), backup( '200', counts( 2 ) ) ] ) );
+		const threats = nock( BASE )
+			.get( threatsPath( 200 ) )
+			.reply( 200, threatsBody( 200, counts( 9 ) ) );
+
+		const result = await run( '200' );
+
+		expect( threats.isDone() ).toBe( false );
+		expect( result.knownThreats ).toEqual( counts( 2 ) );
+	} );
+
+	it( 'fails when page 1 fails', async () => {
+		nock( BASE ).get( LIST_PATH ).query( true ).reply( 500 );
+		nock( BASE )
+			.get( threatsPath( 200 ) )
+			.reply( 200, threatsBody( 200, counts( 2 ) ) );
+
+		await expect( run( '200' ) ).rejects.toBeTruthy();
 	} );
 
 	it( "fetches one backup's threats", async () => {
