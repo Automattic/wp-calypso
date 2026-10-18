@@ -4,7 +4,7 @@
 - Turned off the rules `eslint-plugin-jsdoc` added to its recommended config after v50: `escape-inline-tags`, `reject-any-type`, `reject-function-type`, `require-throws-type`, `require-yields-type` and `ts-no-empty-object-type`.
 - Added flat-config presets `flat/recommended` and `flat/react` for ESLint 9, built from the same rules as the legacy presets. Scope them to your JavaScript files with `files` and `extends`, as the README shows. ESLint 10 is not supported yet. They use `@eslint/js`, a new dependency. `@babel/eslint-parser`, which the legacy presets already required, is now a declared peer dependency.
 - The `i18n-ellipsis` and `jsx-async-load-require-top-level` rules use `context.sourceCode` instead of `context.getSourceCode()`, which ESLint 10 removed.
-- The flat presets give `eslint-plugin-inclusive-language`'s rule `context.getSourceCode()`, which ESLint 10 removed. ESLint 10 still isn't supported, as the README explains. `new-cap` allows `new this.constructor()`, which ESLint 10 started reporting.
+- On ESLint 10, the flat presets give `eslint-plugin-inclusive-language`'s rule `context.getSourceCode()`, which ESLint 10 removed. ESLint 10 still isn't supported, as the README explains. `new-cap` allows `new this.constructor()`, which ESLint 10 started reporting.
 
 #### v8.0.0 (2023-09-14)
 

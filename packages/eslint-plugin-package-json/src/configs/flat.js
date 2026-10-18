@@ -13,22 +13,30 @@ const parser = {
 };
 
 // The plugin's rules call `context.getSourceCode()`, which ESLint 10 removed. `context.sourceCode`
-// replaces it from ESLint 8.40 on.
-const withGetSourceCode = ( plugin ) => ( {
-	...plugin,
-	rules: Object.fromEntries(
-		Object.entries( plugin.rules ).map( ( [ name, rule ] ) => [
-			name,
-			{
-				...rule,
-				create: ( context ) =>
-					rule.create(
-						Object.create( context, { getSourceCode: { value: () => context.sourceCode } } )
-					),
-			},
-		] )
-	),
-} );
+// replaces it from ESLint 8.40 on. Earlier ESLint versions get the plugin itself, so configs that
+// also register it still work.
+const removedGetSourceCode =
+	Number( require( 'eslint/package.json' ).version.split( '.' )[ 0 ] ) >= 10;
+const withGetSourceCode = ( plugin ) => {
+	if ( ! removedGetSourceCode ) {
+		return plugin;
+	}
+	return {
+		...plugin,
+		rules: Object.fromEntries(
+			Object.entries( plugin.rules ).map( ( [ name, rule ] ) => [
+				name,
+				{
+					...rule,
+					create: ( context ) =>
+						rule.create(
+							Object.create( context, { getSourceCode: { value: () => context.sourceCode } } )
+						),
+				},
+			] )
+		),
+	};
+};
 
 // Legacy override globs without a slash match at any depth; flat ones are relative to the config.
 const toFlatFiles = ( files ) =>
