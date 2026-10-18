@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { Button, Gridicon, FoldableCard } from '@automattic/components';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
@@ -27,7 +26,10 @@ import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSite } from 'calypso/state/sites/selectors';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
-import { withKnownThreatsRestorePath } from '../known-threats-restore-gate';
+import {
+	goToKnownThreatsRestorePath,
+	withKnownThreatsRestorePath,
+} from '../known-threats-restore-gate';
 import ActivityActor from './activity-actor';
 import ActivityDescription from './activity-description';
 import ActivityIcon from './activity-icon';
@@ -75,13 +77,14 @@ class ActivityLogItem extends Component {
 		this.props.confirmBackup( this.props.activity.rewindId, this.state.downloadArgs );
 
 	confirmRewind = () => {
-		const { knownThreatsCheckPending, knownThreatsRestorePath } = this.props;
+		const { knownThreatsCheckPending, knownThreatsRestorePath, knownThreatsRestoreHint } =
+			this.props;
 		if ( knownThreatsCheckPending ) {
 			return;
 		}
 		if ( knownThreatsRestorePath ) {
 			this.props.leaveRewindDialog();
-			page( knownThreatsRestorePath );
+			goToKnownThreatsRestorePath( knownThreatsRestorePath, knownThreatsRestoreHint );
 			return;
 		}
 
@@ -386,11 +389,9 @@ class ActivityLogItem extends Component {
 						onSettingsChange={ this.restoreSettingsChange }
 						supportLink="https://jetpack.com/support/how-to-rewind"
 						title={ translate( 'Restore Site' ) }
-						disableButton={
-							this.state.disableRestoreButton ||
-							disableRestore ||
-							this.props.knownThreatsCheckPending
-						}
+						disableButton={ this.state.disableRestoreButton || disableRestore }
+						confirmPending={ this.props.knownThreatsCheckPending }
+						confirmDescription={ this.props.knownThreatsRestoreHint }
 					>
 						{ translate( '{{time/}} is the selected point for your site restore.', {
 							components: {

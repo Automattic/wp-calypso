@@ -5,6 +5,7 @@
 import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { speak } from '@wordpress/a11y';
 import nock from 'nock';
 import { applyMiddleware, createStore } from 'redux';
 import { REWIND_RESTORE } from 'calypso/state/action-types';
@@ -13,6 +14,10 @@ import ErrorBanner from '../activity-log-banner/error-banner';
 import ActivityLogItem from '../activity-log-item';
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
+jest.mock( '@wordpress/a11y', () => ( {
+	...jest.requireActual( '@wordpress/a11y' ),
+	speak: jest.fn(),
+} ) );
 let mockSiteSlug = 'example.wordpress.com';
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSite: () => ( { ID: 123, slug: 'example.wordpress.com' } ),
@@ -116,8 +121,22 @@ const renderItem = ( store ) =>
 
 const restoreActions = ( actions ) => actions.filter( ( { type } ) => type === REWIND_RESTORE );
 
+const FLAGGED_HINT =
+	"This backup contains known security threats. You'll review them before restoring.";
+const UNCHECKED_HINT =
+	"This backup couldn't be checked for known security threats. You'll continue on the restore page.";
+const PENDING_HINT = 'Checking this backup for known security threats…';
+
+// Inert while the check runs, but still focusable so its description says why.
+const expectPending = ( button ) => {
+	expect( button ).toBeEnabled();
+	expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
+	expect( button ).toHaveAccessibleDescription( PENDING_HINT );
+};
+
 beforeEach( () => {
 	page.mockClear();
+	speak.mockClear();
 	mockSiteSlug = 'example.wordpress.com';
 } );
 
@@ -128,9 +147,11 @@ describe( 'Activity Log item restore', () => {
 		renderItem( store );
 
 		const confirm = screen.getByRole( 'button', { name: 'Confirm Restore' } );
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+		await waitFor( () => expect( confirm ).toHaveAccessibleDescription( FLAGGED_HINT ) );
+		expect( confirm ).not.toHaveAttribute( 'aria-disabled' );
 		await userEvent.click( confirm );
 
+		expect( speak ).toHaveBeenCalledWith( FLAGGED_HINT, 'assertive' );
 		expect( page ).toHaveBeenCalledWith( RESTORE_PATH );
 		expect( restoreActions( actions ) ).toHaveLength( 0 );
 	} );
@@ -142,9 +163,12 @@ describe( 'Activity Log item restore', () => {
 
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Confirm Restore' } ) );
+		const confirm = screen.getByRole( 'button', { name: 'Confirm Restore' } );
+		expect( confirm ).not.toHaveAccessibleDescription();
+		await userEvent.click( confirm );
 
 		expect( page ).not.toHaveBeenCalled();
+		expect( speak ).not.toHaveBeenCalled();
 		expect( restoreActions( actions ) ).toEqual( [
 			expect.objectContaining( {
 				siteId: SITE_ID,
@@ -157,19 +181,20 @@ describe( 'Activity Log item restore', () => {
 } );
 
 describe( 'Activity Log item restore while the check is not settled', () => {
-	it( 'disables Confirm Restore while the counts load', async () => {
+	it( 'holds Confirm Restore while the counts load', async () => {
 		const release = mockPendingBackups();
 		const { store, actions } = makeStore();
 		renderItem( store );
 
 		const confirm = screen.getByRole( 'button', { name: 'Confirm Restore' } );
-		expect( confirm ).toBeDisabled();
+		expectPending( confirm );
 		await userEvent.click( confirm );
 		expect( page ).not.toHaveBeenCalled();
 		expect( restoreActions( actions ) ).toHaveLength( 0 );
 
 		release();
-		await waitFor( () => expect( confirm ).toBeEnabled() );
+		await waitFor( () => expect( confirm ).not.toHaveAttribute( 'aria-disabled' ) );
+		expect( confirm ).not.toHaveAccessibleDescription();
 	} );
 
 	it( 'treats a missing site slug as still loading', async () => {
@@ -181,7 +206,7 @@ describe( 'Activity Log item restore while the check is not settled', () => {
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 		const confirm = screen.getByRole( 'button', { name: 'Confirm Restore' } );
-		expect( confirm ).toBeDisabled();
+		expectPending( confirm );
 		await userEvent.click( confirm );
 		expect( page ).not.toHaveBeenCalled();
 		expect( restoreActions( actions ) ).toHaveLength( 0 );
@@ -193,9 +218,10 @@ describe( 'Activity Log item restore while the check is not settled', () => {
 		renderItem( store );
 
 		const confirm = screen.getByRole( 'button', { name: 'Confirm Restore' } );
-		await waitFor( () => expect( confirm ).toBeEnabled() );
+		await waitFor( () => expect( confirm ).toHaveAccessibleDescription( UNCHECKED_HINT ) );
 		await userEvent.click( confirm );
 
+		expect( speak ).toHaveBeenCalledWith( UNCHECKED_HINT, 'assertive' );
 		expect( page ).toHaveBeenCalledWith( RESTORE_PATH );
 		expect( restoreActions( actions ) ).toHaveLength( 0 );
 	} );
@@ -206,7 +232,7 @@ describe( 'Activity Log item restore while the check is not settled', () => {
 		renderItem( store );
 
 		const confirm = screen.getByRole( 'button', { name: 'Confirm Restore' } );
-		await waitFor( () => expect( confirm ).toBeEnabled() );
+		await waitFor( () => expect( confirm ).not.toHaveAttribute( 'aria-disabled' ) );
 		await userEvent.click( confirm );
 
 		expect( page ).not.toHaveBeenCalled();
@@ -232,26 +258,29 @@ describe( 'Activity Log error banner retry', () => {
 		const rewindRestore = jest.fn();
 		renderBanner( rewindRestore );
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+		const retry = screen.getByRole( 'button', { name: 'Try again' } );
+		await waitFor( () => expect( retry ).toHaveAccessibleDescription( FLAGGED_HINT ) );
+		await userEvent.click( retry );
 
+		expect( speak ).toHaveBeenCalledWith( FLAGGED_HINT, 'assertive' );
 		expect( page ).toHaveBeenCalledWith( RESTORE_PATH );
 		expect( rewindRestore ).not.toHaveBeenCalled();
 	} );
 
-	it( 'disables Try again while the counts load', async () => {
+	it( 'holds Try again while the counts load', async () => {
 		const release = mockPendingBackups();
 		const rewindRestore = jest.fn();
 		renderBanner( rewindRestore );
 
 		const retry = screen.getByRole( 'button', { name: 'Try again' } );
-		expect( retry ).toBeDisabled();
+		expectPending( retry );
 		await userEvent.click( retry );
 		expect( page ).not.toHaveBeenCalled();
 		expect( rewindRestore ).not.toHaveBeenCalled();
 
 		release();
-		await waitFor( () => expect( retry ).toBeEnabled() );
+		await waitFor( () => expect( retry ).not.toHaveAttribute( 'aria-disabled' ) );
+		expect( retry ).not.toHaveAccessibleDescription();
 	} );
 
 	it( 'sends the user to the restore page when the counts fail to load', async () => {
@@ -260,7 +289,7 @@ describe( 'Activity Log error banner retry', () => {
 		renderBanner( rewindRestore );
 
 		const retry = screen.getByRole( 'button', { name: 'Try again' } );
-		await waitFor( () => expect( retry ).toBeEnabled() );
+		await waitFor( () => expect( retry ).toHaveAccessibleDescription( UNCHECKED_HINT ) );
 		await userEvent.click( retry );
 
 		expect( page ).toHaveBeenCalledWith( RESTORE_PATH );

@@ -1,5 +1,5 @@
-import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -9,7 +9,11 @@ import {
 	dismissRewindBackupProgress,
 	dismissRewindRestoreProgress as dismissRewindRestoreProgressAction,
 } from 'calypso/state/activity-log/actions';
-import { withKnownThreatsRestorePath } from '../known-threats-restore-gate';
+import {
+	goToKnownThreatsRestorePath,
+	KnownThreatsRestoreHint,
+	withKnownThreatsRestorePath,
+} from '../known-threats-restore-gate';
 import ActivityLogBanner from './index';
 
 class ErrorBanner extends PureComponent {
@@ -25,6 +29,8 @@ class ErrorBanner extends PureComponent {
 		rewindRestore: PropTypes.func,
 		knownThreatsRestorePath: PropTypes.string,
 		knownThreatsCheckPending: PropTypes.bool,
+		knownThreatsRestoreHint: PropTypes.string,
+		knownThreatsRestoreHintId: PropTypes.string,
 
 		// connect
 		dismissRewindRestoreProgress: PropTypes.func.isRequired,
@@ -57,7 +63,10 @@ class ErrorBanner extends PureComponent {
 			return;
 		}
 		if ( knownThreatsRestorePath ) {
-			return page( knownThreatsRestorePath );
+			return goToKnownThreatsRestorePath(
+				knownThreatsRestorePath,
+				this.props.knownThreatsRestoreHint
+			);
 		}
 		if ( requestedRestoreId ) {
 			return rewindRestore( siteId, requestedRestoreId );
@@ -70,8 +79,16 @@ class ErrorBanner extends PureComponent {
 			: this.props.dismissDownloadError( this.props.siteId, this.props.downloadId );
 
 	render() {
-		const { errorCode, failureReason, timestamp, translate, downloadId, knownThreatsCheckPending } =
-			this.props;
+		const {
+			errorCode,
+			failureReason,
+			timestamp,
+			translate,
+			downloadId,
+			knownThreatsCheckPending,
+			knownThreatsRestoreHint,
+			knownThreatsRestoreHintId,
+		} = this.props;
 		const strings =
 			typeof downloadId === 'undefined'
 				? {
@@ -107,14 +124,21 @@ class ErrorBanner extends PureComponent {
 					}
 				/>
 				<p>{ strings.details }</p>
+				{ /* While pending, stay focusable (aria-disabled) so the description can say why. */ }
 				<Button
 					primary
+					className={ clsx( { disabled: knownThreatsCheckPending } ) }
 					busy={ knownThreatsCheckPending }
-					disabled={ knownThreatsCheckPending }
+					aria-disabled={ knownThreatsCheckPending || undefined }
+					aria-describedby={ knownThreatsRestoreHint ? knownThreatsRestoreHintId : undefined }
 					onClick={ this.handleClickRestart }
 				>
 					{ translate( 'Try again' ) }
 				</Button>
+				<KnownThreatsRestoreHint
+					id={ knownThreatsRestoreHintId }
+					hint={ knownThreatsRestoreHint }
+				/>
 			</ActivityLogBanner>
 		);
 	}
