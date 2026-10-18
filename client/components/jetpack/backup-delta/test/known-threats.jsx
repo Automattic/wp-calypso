@@ -156,8 +156,14 @@ describe( 'BackupDelta known threats', () => {
 		expect( within( cards[ 1 ] ).queryByText( /Known threats/ ) ).toBeNull();
 
 		expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).toBeNull();
+		const warning =
+			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
+		expect( button ).toHaveAccessibleDescription( warning );
+		expect( button ).not.toHaveAttribute( 'title' );
 		await userEvent.hover( button );
-		expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+			`${ warning } Show threats.`
+		);
 		await userEvent.unhover( button );
 		const restoreLink = await within( cards[ 0 ] ).findByRole( 'link', {
 			name: /^Restore .+ backup instead$/,
@@ -175,7 +181,9 @@ describe( 'BackupDelta known threats', () => {
 		expect( button ).toHaveAttribute( 'aria-expanded', 'true' );
 		await userEvent.unhover( button );
 		await userEvent.hover( button );
-		expect( await screen.findByText( 'Hide threats' ) ).toBeVisible();
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+			`${ warning } Hide threats.`
+		);
 		expect( await within( cards[ 0 ] ).findByText( 'Evil.Sig' ) ).toBeVisible();
 		expect( within( cards[ 1 ] ).queryByText( 'Evil.Sig' ) ).toBeNull();
 		expect(

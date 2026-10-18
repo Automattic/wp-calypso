@@ -107,7 +107,7 @@ export function getFields(
 						<span>
 							{ knownThreats && isFlagged( knownThreats ) && (
 								<span className="dashboard-backups__known-threats">
-									<KnownThreatsBadge count={ knownThreats.flagged } />
+									<KnownThreatsBadge count={ knownThreats.flagged } showWarning />
 								</span>
 							) }
 						</span>

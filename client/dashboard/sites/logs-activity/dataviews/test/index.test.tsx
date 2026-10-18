@@ -33,6 +33,7 @@ jest.mock( '@wordpress/data', () => ( {
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_x: ( text: string ) => text,
+	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
 	isRTL: () => false,
 	sprintf: ( text: string ) => text,
 } ) );
@@ -273,5 +274,13 @@ test( 'marks a backup known to contain threats', async () => {
 	} );
 
 	expect( await screen.findByText( 'Backup and scan complete' ) ).toBeInTheDocument();
-	expect( await screen.findAllByText( /Known threats/ ) ).toHaveLength( 1 );
+	const badges = await screen.findAllByText( /Known threats/ );
+	expect( badges ).toHaveLength( 1 );
+	// `sprintf` is mocked, so the count stays a placeholder.
+	const warning =
+		/This backup is known to contain .+ security threats\. Restoring it may bring malware back to your site\./;
+	expect( badges[ 0 ].parentElement ).toHaveTextContent( warning );
+	expect( badges[ 0 ] ).not.toHaveAttribute( 'title' );
+	await userEvent.hover( badges[ 0 ] );
+	expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( warning );
 } );

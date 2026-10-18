@@ -294,6 +294,21 @@ export function KnownThreatsBadge( { flagged }: { flagged: number } ) {
 	);
 }
 
+export function getKnownThreatsWarning(
+	translate: ReturnType< typeof useTranslate >,
+	count: number
+) {
+	return translate(
+		'This backup is known to contain %d security threat. Restoring it may bring malware back to your site.',
+		'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.',
+		{
+			count,
+			args: count,
+			comment: '%d is the number of known security threats in the backup',
+		}
+	);
+}
+
 interface BackupKnownThreatsToggleProps {
 	state: BackupKnownThreatsState;
 	/** Render a compact borderless button, matching the buttons in the activity card toolbar. */
@@ -318,7 +333,17 @@ export function KnownThreatsToggleButton( {
 	inToolbar,
 }: KnownThreatsToggleButtonProps ) {
 	const translate = useTranslate();
+	const warningId = useId();
 	const actionLabel = isOpen ? translate( 'Hide threats' ) : translate( 'Show threats' );
+	// In the card toolbar the warning isn't shown nearby, so the toggle carries it.
+	const warning = inToolbar ? getKnownThreatsWarning( translate, flagged ) : null;
+	const tooltip = warning
+		? translate( '%(warning)s %(action)s.', {
+				args: { warning, action: actionLabel },
+				comment:
+					'%(warning)s is the known threats warning; %(action)s is "Show threats" or "Hide threats"',
+			} )
+		: actionLabel;
 	const ariaLabel = isOpen
 		? translate( 'Known threats (%d), hide threats', {
 				args: flagged,
@@ -332,34 +357,38 @@ export function KnownThreatsToggleButton( {
 			} );
 
 	return (
-		<Tooltip text={ String( actionLabel ) }>
-			{ inToolbar ? (
-				<CalypsoButton
-					compact
-					borderless
-					className="backup-known-threats__toggle"
-					aria-label={ String( ariaLabel ) }
-					aria-expanded={ isOpen }
-					aria-controls={ isOpen ? controlsId : undefined }
-					onClick={ onToggle }
-				>
-					<KnownThreatsBadge flagged={ flagged } />
-				</CalypsoButton>
-			) : (
-				<Button
-					__next40pxDefaultSize
-					variant="tertiary"
-					size="compact"
-					className="backup-known-threats__toggle"
-					aria-label={ String( ariaLabel ) }
-					aria-expanded={ isOpen }
-					aria-controls={ isOpen ? controlsId : undefined }
-					onClick={ onToggle }
-				>
-					<KnownThreatsBadge flagged={ flagged } />
-				</Button>
-			) }
-		</Tooltip>
+		<>
+			<Tooltip text={ String( tooltip ) }>
+				{ inToolbar ? (
+					<CalypsoButton
+						compact
+						borderless
+						className="backup-known-threats__toggle"
+						aria-label={ String( ariaLabel ) }
+						aria-expanded={ isOpen }
+						aria-controls={ isOpen ? controlsId : undefined }
+						aria-describedby={ warningId }
+						onClick={ onToggle }
+					>
+						<KnownThreatsBadge flagged={ flagged } />
+					</CalypsoButton>
+				) : (
+					<Button
+						__next40pxDefaultSize
+						variant="tertiary"
+						size="compact"
+						className="backup-known-threats__toggle"
+						aria-label={ String( ariaLabel ) }
+						aria-expanded={ isOpen }
+						aria-controls={ isOpen ? controlsId : undefined }
+						onClick={ onToggle }
+					>
+						<KnownThreatsBadge flagged={ flagged } />
+					</Button>
+				) }
+			</Tooltip>
+			{ warning && <VisuallyHidden id={ warningId }>{ warning }</VisuallyHidden> }
+		</>
 	);
 }
 

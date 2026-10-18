@@ -1,10 +1,28 @@
-import { Button, Icon, Tooltip } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { Button, Icon, Tooltip, VisuallyHidden } from '@wordpress/components';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { caution } from '@wordpress/icons';
 import './known-threats-badge.scss';
 
-export function KnownThreatsBadge( { count }: { count: number } ) {
-	return (
+export function getKnownThreatsWarning( count: number ) {
+	return sprintf(
+		// translators: %d is the number of known security threats in the backup
+		_n(
+			'This backup is known to contain %d security threat. Restoring it may bring malware back to your site.',
+			'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.',
+			count
+		),
+		count
+	);
+}
+
+interface KnownThreatsBadgeProps {
+	count: number;
+	/** Explain the badge in a tooltip and to screen readers, where the warning isn't shown nearby. */
+	showWarning?: boolean;
+}
+
+export function KnownThreatsBadge( { count, showWarning = false }: KnownThreatsBadgeProps ) {
+	const badge = (
 		<span className="dashboard-known-threats-badge">
 			<Icon icon={ caution } size={ 16 } fill="currentColor" aria-hidden="true" />
 			{
@@ -12,6 +30,18 @@ export function KnownThreatsBadge( { count }: { count: number } ) {
 				sprintf( __( 'Known threats (%d)' ), count )
 			}
 		</span>
+	);
+
+	if ( ! showWarning ) {
+		return badge;
+	}
+
+	const warning = getKnownThreatsWarning( count );
+	return (
+		<>
+			<Tooltip text={ warning }>{ badge }</Tooltip>
+			<VisuallyHidden as="span">{ warning }</VisuallyHidden>
+		</>
 	);
 }
 

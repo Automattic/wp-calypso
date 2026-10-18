@@ -185,7 +185,7 @@ const localDate = ( utcMs: number ) =>
 // The text of the smallest ancestor holding a backup title: the badge's own list row.
 const closestRowText = ( element: HTMLElement ): string => {
 	let node: HTMLElement | null = element;
-	while ( node && ! /backup/.test( node.textContent ?? '' ) ) {
+	while ( node && ! /(Flagged|Other) backup/.test( node.textContent ?? '' ) ) {
 		node = node.parentElement;
 	}
 	return node?.textContent ?? '';
@@ -201,6 +201,10 @@ test( 'shows the badge on flagged backups in the list', async () => {
 
 	const [ badge ] = await screen.findAllByText( 'Known threats (3)' );
 	expect( badge ).toBeVisible();
+	const warning =
+		'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
+	expect( badge.parentElement ).toHaveTextContent( warning );
+	expect( badge ).not.toHaveAttribute( 'title' );
 	expect( closestRowText( badge ) ).toContain( 'Flagged backup' );
 	expect( closestRowText( badge ) ).not.toContain( 'Other backup' );
 	expect(
@@ -298,7 +302,8 @@ test( 'expands the threats table for Scan sites', async () => {
 	expect( toggle.querySelector( 'svg' )?.parentElement ).toBe( pill );
 	expect(
 		screen.getByText(
-			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.'
+			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.',
+			{ ignore: 'script, style, .components-visually-hidden' }
 		)
 	).toBeVisible();
 	const restoreLink = screen.getByRole( 'link', { name: fallbackRestoreLink } );

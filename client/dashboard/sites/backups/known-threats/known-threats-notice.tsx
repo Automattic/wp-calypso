@@ -8,12 +8,12 @@ import {
 	Spinner,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useEffect, useId, useState } from 'react';
 import Notice from '../../../components/notice';
 import { Text } from '../../../components/text';
 import { hasHostingFeature } from '../../../utils/site-features';
-import { KnownThreatsToggle } from './known-threats-badge';
+import { getKnownThreatsWarning, KnownThreatsToggle } from './known-threats-badge';
 import { KnownThreatsTable } from './known-threats-table';
 import { RestoreThatOneInsteadLink } from './restore-that-one-instead-link';
 import type { Site } from '@automattic/api-core';
@@ -49,17 +49,7 @@ export default function KnownThreatsNotice( {
 	const knownThreats = counts?.knownThreats;
 	const hasKnownThreats = !! knownThreats && isFlagged( knownThreats );
 
-	const warning = hasKnownThreats
-		? sprintf(
-				// translators: %d is the number of known security threats in the backup
-				_n(
-					'This backup is known to contain %d security threat. Restoring it may bring malware back to your site.',
-					'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.',
-					knownThreats.flagged
-				),
-				knownThreats.flagged
-			)
-		: '';
+	const warning = hasKnownThreats ? getKnownThreatsWarning( knownThreats.flagged ) : '';
 
 	useEffect( () => {
 		onKnownThreatsChange?.( hasKnownThreats );

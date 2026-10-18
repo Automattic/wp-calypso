@@ -8,6 +8,7 @@ import { useEffect, useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	BackupKnownThreatsTable,
+	getKnownThreatsWarning,
 	KnownThreatsRegion,
 	KnownThreatsToggleButton,
 	RestoreThatOneInsteadLink,
@@ -74,15 +75,7 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 	return (
 		<RewindFlowNotice
 			gridicon="notice"
-			title={ translate(
-				'This backup is known to contain %d security threat. Restoring it may bring malware back to your site.',
-				'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.',
-				{
-					count: knownThreats.flagged,
-					args: knownThreats.flagged,
-					comment: '%d is the number of known security threats in the backup',
-				}
-			) }
+			title={ getKnownThreatsWarning( translate, knownThreats.flagged ) }
 			type={ RewindFlowNoticeLevel.WARNING }
 		>
 			<div className="rewind-flow-known-threats">
