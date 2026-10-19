@@ -24,6 +24,14 @@ const CHUNK_URL =
 const chunkLoadError = ( request?: string ) =>
 	Object.assign( new Error( 'chunk blocked' ), { name: 'ChunkLoadError', request } );
 const requireReject = () => Promise.reject( chunkLoadError( CHUNK_URL ) );
+const requireOtherReject = () =>
+	Promise.reject(
+		chunkLoadError( 'https://example.com/calypso/evergreen/async-load-other.abc123.min.js' )
+	);
+const requireLogstashReject = () =>
+	Promise.reject(
+		chunkLoadError( 'https://example.com/calypso/evergreen/async-load-logstash.abc123.min.js' )
+	);
 const requireEvalError = () => Promise.reject( new TypeError( 'module eval boom' ) );
 const requireThrowSync = (): Promise< never > => {
 	throw chunkLoadError();
@@ -90,11 +98,6 @@ describe( 'AsyncLoad', () => {
 	} );
 
 	test( 'logs each failed chunk to logstash once per page session', async () => {
-		const requireOtherReject = () =>
-			Promise.reject(
-				chunkLoadError( 'https://example.com/calypso/evergreen/async-load-other.abc123.min.js' )
-			);
-
 		const { unmount } = render(
 			<AsyncLoad
 				require={ requireOtherReject }
@@ -120,10 +123,6 @@ describe( 'AsyncLoad', () => {
 
 	test( 'renders loadFailureFallback when logstash rejects', async () => {
 		jest.mocked( logToLogstash ).mockRejectedValueOnce( new Error( 'logstash blocked' ) );
-		const requireLogstashReject = () =>
-			Promise.reject(
-				chunkLoadError( 'https://example.com/calypso/evergreen/async-load-logstash.abc123.min.js' )
-			);
 
 		render(
 			<AsyncLoad
