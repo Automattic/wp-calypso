@@ -4,6 +4,7 @@ import { __experimentalHStack as HStack, ToggleControl } from '@wordpress/compon
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
+import { useApprovalGate } from '../approval-gate';
 import {
 	HOSTING_REFERRAL_COMMISSION_PERCENTAGE,
 	PRODUCTS_REFERRAL_COMMISSION_PERCENTAGE,
@@ -12,6 +13,7 @@ import { useReferralToggle } from './use-referral-toggle';
 
 export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting' } ) {
 	const { checked, disabled, onChange } = useReferralToggle();
+	const approvalGate = useApprovalGate( 'referral' );
 
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { data: referrals } = useQuery( referralsQuery( agency?.id ?? 0 ) );
@@ -22,12 +24,13 @@ export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting'
 
 	return (
 		<HStack spacing={ 2 } expanded={ false } alignment="center">
+			{ approvalGate.gate }
 			<ToggleControl
 				__nextHasNoMarginBottom
 				checked={ checked }
-				disabled={ disabled }
+				disabled={ disabled && ! approvalGate.isGated }
 				label={ __( 'Refer to clients' ) }
-				onChange={ onChange }
+				onChange={ approvalGate.isGated ? approvalGate.openGate : onChange }
 			/>
 			{ showEarnings && (
 				<Badge intent="informational">

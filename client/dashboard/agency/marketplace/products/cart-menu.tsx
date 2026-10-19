@@ -3,7 +3,6 @@ import { useLocation } from '@tanstack/react-router';
 import {
 	Button,
 	Dropdown,
-	Tooltip,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -14,6 +13,7 @@ import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import RouterLinkButton from '../../../components/router-link-button';
 import { TextBlur } from '../../../components/text-blur';
+import { useApprovalGate } from '../../approval-gate';
 import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
 import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../paths';
 import { getCheckoutUrl, getLegacyCheckoutUrl } from './lib/checkout-url';
@@ -72,10 +72,12 @@ export default function CartMenu( {
 		siteDomain: item.siteDomain,
 	} ) );
 
+	const approvalGate = useApprovalGate( 'purchase' );
+
 	const checkoutButtonProps = {
 		variant: 'primary' as const,
 		__next40pxDefaultSize: true,
-		disabled: ! isAgencyApproved || ! isTotalReady,
+		disabled: ( ! isAgencyApproved && ! approvalGate.isGated ) || ! isTotalReady,
 		style: { justifyContent: 'center' },
 		onClick: () => {
 			recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
@@ -86,7 +88,7 @@ export default function CartMenu( {
 		},
 		children: __( 'Checkout' ),
 	};
-	const checkoutButton = isReferralMode ? (
+	let checkoutButton = isReferralMode ? (
 		<RouterLinkButton
 			{ ...checkoutButtonProps }
 			to={ MARKETPLACE_REFERRAL_CHECKOUT_ROUTE }
@@ -102,6 +104,18 @@ export default function CartMenu( {
 			}
 		/>
 	);
+	if ( approvalGate.isGated ) {
+		checkoutButton = (
+			<Button
+				{ ...checkoutButtonProps }
+				onClick={ () => {
+					checkoutButtonProps.onClick();
+					onToggle?.( false );
+					approvalGate.openGate();
+				} }
+			/>
+		);
+	}
 
 	return (
 		<Dropdown
@@ -112,27 +126,31 @@ export default function CartMenu( {
 			focusOnMount
 			expandOnMobile
 			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button
-					icon={ cart }
-					label={
-						items.length > 0
-							? sprintf(
-									/* translators: %d is the number of items in the cart. */
-									_n( 'Shopping cart, %d item', 'Shopping cart, %d items', items.length ),
-									items.length
-								)
-							: __( 'Shopping cart' )
-					}
-					aria-expanded={ isOpen }
-					text={ items.length > 0 ? String( items.length ) : undefined }
-					onClick={ () => {
-						recordTracksEvent( 'calypso_a4a_marketplace_toggle_cart', {
-							purchase_mode: isReferralMode ? 'referral' : 'regular',
-							term_pricing: term,
-						} );
-						onToggle();
-					} }
-				/>
+				<>
+					{ /* The gate is a modal, so it renders over the page from here too. */ }
+					{ approvalGate.gate }
+					<Button
+						icon={ cart }
+						label={
+							items.length > 0
+								? sprintf(
+										/* translators: %d is the number of items in the cart. */
+										_n( 'Shopping cart, %d item', 'Shopping cart, %d items', items.length ),
+										items.length
+									)
+								: __( 'Shopping cart' )
+						}
+						aria-expanded={ isOpen }
+						text={ items.length > 0 ? String( items.length ) : undefined }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_a4a_marketplace_toggle_cart', {
+								purchase_mode: isReferralMode ? 'referral' : 'regular',
+								term_pricing: term,
+							} );
+							onToggle();
+						} }
+					/>
+				</>
 			) }
 			renderContent={ () => (
 				<VStack spacing={ 3 } className="dashboard-marketplace-products__cart">
@@ -240,17 +258,7 @@ export default function CartMenu( {
 									</Text>
 								</HStack>
 							) }
-							{ isAgencyApproved ? (
-								checkoutButton
-							) : (
-								<Tooltip
-									text={ __(
-										'Your agency is not yet approved. Please wait for approval before making a purchase.'
-									) }
-								>
-									<span>{ checkoutButton }</span>
-								</Tooltip>
-							) }
+							{ checkoutButton }
 						</>
 					) }
 				</VStack>
