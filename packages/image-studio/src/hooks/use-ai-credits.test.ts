@@ -2,8 +2,10 @@
  * Tests for useAiCredits and its reader of the `ai_credits` snapshot that
  * WordPress.com sends for sites on AI credits.
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { ImageStudioMode } from '../types';
+import { getSessionId } from '../utils/session';
 import {
 	trackImageStudioCreditsMeterOpened,
 	trackImageStudioUpgradeNoticeShown,
@@ -34,7 +36,11 @@ jest.mock( '../utils/tracking', () => ( {
 	trackImageStudioUpgradeNoticeClick: jest.fn(),
 } ) );
 
+jest.mock( '../utils/session', () => ( { getSessionId: jest.fn() } ) );
+
 const BLOG_ID = 123;
+/** The session Image Studio's events send as `ai_session_id`. */
+const SESSION_ID = 'image-studio-session';
 const NOTHING = { notice: undefined, isLimitReached: false, isLoading: false };
 
 const planSnapshot = ( remaining: number, overrides: Record< string, unknown > = {} ) => ( {
@@ -64,9 +70,10 @@ const EDITOR = { can_buy_credits: false, can_upgrade: false };
 const PLAN_OWNER_HINT =
 	'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.';
 
-const UPGRADE_URL = 'https://wordpress.com/plans/123?source=wp_ai_credits';
+const UPGRADE_URL =
+	'https://wordpress.com/plans/123?source=wp_ai_credits&ai_session_id=image-studio-session';
 const ADD_CREDITS_URL =
-	'https://wordpress.com/checkout/123/ai-credits-lifetime:-q-100000?source=wp_ai_credits&redirect_to=https%3A%2F%2Fwordpress.com%2Fhome%2F123&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2F123';
+	'https://wordpress.com/checkout/123/ai-credits-lifetime:-q-100000?source=wp_ai_credits&ai_session_id=image-studio-session&redirect_to=https%3A%2F%2Fwordpress.com%2Fhome%2F123&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2F123';
 /** The purchase link; the dot and the notice each add a click handler that records the click. */
 const upgradeButton = {
 	label: 'Upgrade',
@@ -153,6 +160,7 @@ describe( 'useAiCredits', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		jest.mocked( getSessionId ).mockReturnValue( SESSION_ID );
 		fetchMock = jest.fn();
 		window.fetch = fetchMock;
 		window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple' };
@@ -342,6 +350,90 @@ describe( 'useAiCredits', () => {
 				cancelTo: null,
 			} );
 			expect( result.current.notice?.action?.href ).toBe( result.current.meter?.action?.href );
+		} );
+	} );
+
+	describe( 'session', () => {
+		const LINKS = [
+			[ 'Upgrade', 'premium', UPGRADE_URL ],
+			[ 'Add credits', 'business', ADD_CREDITS_URL ],
+		] as const;
+		const sessionOf = ( href = '' ) => new URL( href ).searchParams.get( 'ai_session_id' );
+		const hrefs = ( value: ReturnType< typeof useAiCredits > ) => ( {
+			notice: value.notice?.action?.href,
+			popover: value.meter?.action?.href,
+		} );
+		const both = ( url: string ) => ( { notice: url, popover: url } );
+		const withSession = ( url: string, sessionId: string ) => url.replace( SESSION_ID, sessionId );
+		const withoutSession = ( url: string ) => url.replace( `&ai_session_id=${ SESSION_ID }`, '' );
+
+		afterEach( () => {
+			jest.mocked( trackImageStudioUpgradeNoticeClick ).mockReset();
+		} );
+
+		it.each( LINKS )(
+			'adds the session to %s in the notice and the popover, keeping the rest',
+			async ( _label, plan_tier, url ) => {
+				respondWith( { ai_credits: planSnapshot( 0, { plan_tier } ), ...PLAN_BUYER } );
+				const { result } = renderCredits();
+				await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+				expect( hrefs( result.current ) ).toEqual( both( url ) );
+				expect( sessionOf( url ) ).toBe( SESSION_ID );
+			}
+		);
+
+		it.each(
+			LINKS.flatMap( ( [ label, planTier, url ] ) =>
+				[ '', 'none' ].map( ( sessionId ) => [ label, sessionId, planTier, url ] as const )
+			)
+		)( 'leaves %s without a session for %p', async ( _label, sessionId, plan_tier, url ) => {
+			jest.mocked( getSessionId ).mockReturnValue( sessionId );
+			respondWith( { ai_credits: planSnapshot( 0, { plan_tier } ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			expect( hrefs( result.current ) ).toEqual( both( withoutSession( url ) ) );
+		} );
+
+		it( 'sends the click event the session its link carries', async () => {
+			jest
+				.mocked( trackImageStudioUpgradeNoticeClick )
+				.mockImplementation(
+					jest.requireActual< typeof import( '../utils/tracking' ) >( '../utils/tracking' )
+						.trackImageStudioUpgradeNoticeClick
+				);
+			respondWith( { ai_credits: planSnapshot( 0, { plan_tier: 'business' } ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			result.current.notice?.action?.onClick?.();
+			result.current.meter?.action?.onClick?.();
+
+			const clicks = jest
+				.mocked( recordTracksEvent )
+				.mock.calls.filter(
+					( [ name ] ) => name === 'jetpack_big_sky_image_studio_upgrade_notice_click'
+				);
+			expect( clicks.map( ( [ , eventProps ] ) => eventProps?.ai_session_id ) ).toEqual( [
+				sessionOf( hrefs( result.current ).notice ),
+				sessionOf( hrefs( result.current ).popover ),
+			] );
+			expect( sessionOf( hrefs( result.current ).notice ) ).toBe( SESSION_ID );
+		} );
+
+		it( 'follows a new session on the next render', async () => {
+			respondWith( { ai_credits: planSnapshot( 0 ), ...PLAN_BUYER } );
+			const { result, rerender } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+			expect( hrefs( result.current ) ).toEqual( both( UPGRADE_URL ) );
+
+			jest.mocked( getSessionId ).mockReturnValue( 'next-session' );
+			rerender( { mode: ImageStudioMode.Generate, authProvider } );
+
+			expect( hrefs( result.current ) ).toEqual(
+				both( withSession( UPGRADE_URL, 'next-session' ) )
+			);
 		} );
 	} );
 
