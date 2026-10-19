@@ -153,10 +153,11 @@ export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: 
 		'/reports/referrers',
 		linkRange
 	);
+	// The home page row has no post page on the dashboard; it opens the posts report, where it is a row.
 	const postHref = ( item: HighLightItem ) =>
 		statsLink(
 			`${ statsBaseUrl }/stats/post/${ item.id }/${ siteId }`,
-			item.id > 0 ? `/post/${ item.id }` : null,
+			item.id > 0 ? `/post/${ item.id }` : '/reports/posts',
 			linkRange
 		);
 	const referrerHref = ( item: HighLightItem ) => item.url || item.href;

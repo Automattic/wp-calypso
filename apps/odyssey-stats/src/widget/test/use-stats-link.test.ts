@@ -60,6 +60,26 @@ describe( 'useStatsLink', () => {
 		}
 	);
 
+	it( 'serves the route from the page the script data names', () => {
+		mockSite( undefined, false );
+		( window as unknown as { JetpackScriptData: { analytics: object } } ).JetpackScriptData = {
+			analytics: { enabled: true, can_view: true, page_slug: 'jetpack-analytics' },
+		};
+
+		expect( statsLink( STATS_URL, '/post/12' ) ).toBe(
+			'https://example.com/wp-admin/admin.php?page=jetpack-analytics&p=%2Fpost%2F12'
+		);
+	} );
+
+	it( 'keeps the known page when the script data has no usable slug', () => {
+		mockSite( undefined, false );
+		( window as unknown as { JetpackScriptData: { analytics: object } } ).JetpackScriptData = {
+			analytics: { enabled: true, can_view: true, page_slug: '' },
+		};
+
+		expect( statsLink( STATS_URL, '/post/12' ) ).toBe( DASHBOARD_URL );
+	} );
+
 	it( 'opens the dashboard route when the site has Premium Analytics switched on', () => {
 		mockSite( true );
 
