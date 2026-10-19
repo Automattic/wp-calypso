@@ -85,7 +85,10 @@ describe( '<PurchaseHeaderActions />', () => {
 		async ( isProOnSale, path ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.get( '/rest/v1.1/products/' )
-				.reply( 200, { jetpack_pro_yearly: { available: isProOnSale, price_tier_list: [] } } );
+				.reply( 200, {
+					jetpack_pro_yearly: { available: isProOnSale, price_tier_list: [] },
+					jetpack_security_t1_yearly: { available: true, price_tier_list: [] },
+				} );
 
 			render(
 				<PurchaseHeaderActions

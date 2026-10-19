@@ -1,4 +1,5 @@
 import {
+	JetpackPlans,
 	ProductUpgradeMap,
 	AkismetUpgradesProductMap,
 	SubscriptionBillPeriod,
@@ -181,14 +182,14 @@ export function getUpgradedPurchaseRedirectUrl( purchase: Purchase ): string {
 }
 
 /**
- * @param purchase           The purchase to upgrade.
- * @param redirectTo         Where checkout returns after a successful upgrade.
- * @param isJetpackProOnSale Whether Jetpack Pro is on sale; `undefined` while unknown.
+ * @param purchase   The purchase to upgrade.
+ * @param redirectTo Where checkout returns after a successful upgrade.
+ * @param isOnSale   Whether a product is on sale; `undefined` while unknown.
  */
 export function getSitePurchaseUpgradeUrl(
 	purchase: Purchase,
 	redirectTo?: string,
-	isJetpackProOnSale?: boolean
+	isOnSale?: ( productSlug: string ) => boolean
 ) {
 	// Titan plans upgrade through the email tier grid, not the generic checkout.
 	if ( config.isEnabled( 'emails/titan-tiers' ) && isTitanMail( purchase ) && purchase.meta ) {
@@ -211,12 +212,17 @@ export function getSitePurchaseUpgradeUrl(
 		return url;
 	}
 
-	/* Until Pro launches, upgrade straight to the next bundle. After launch, or while that is
-	 * unknown, the Jetpack store decides, since it offers only bundles on sale. */
-	const upgradeProductSlug =
-		isJetpackProOnSale === false ? ProductUpgradeMap[ purchase.product_slug ] : undefined;
-	if ( upgradeProductSlug ) {
-		const backUrl = redirectToDashboardLink( { supportBackport: true } );
+	const backUrl = redirectToDashboardLink( { supportBackport: true } );
+
+	/* Until Pro launches, upgrade straight to the next bundle while it is on sale. Otherwise, or
+	 * while availability is unknown, the Jetpack store decides, since it offers only bundles on sale. */
+	const upgradeProductSlug = ProductUpgradeMap[ purchase.product_slug ];
+	if (
+		upgradeProductSlug &&
+		isOnSale &&
+		! isOnSale( JetpackPlans.PLAN_JETPACK_PRO_YEARLY ) &&
+		isOnSale( upgradeProductSlug )
+	) {
 		return addQueryArgs( wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` ), {
 			redirect_to: redirectTo ?? backUrl,
 			cancel_to: backUrl,
@@ -224,7 +230,6 @@ export function getSitePurchaseUpgradeUrl(
 	}
 
 	if ( purchase.is_jetpack_plan_or_product ) {
-		const backUrl = redirectToDashboardLink( { supportBackport: true } );
 		return addQueryArgs( wpcomLink( `/plans/${ purchase.site_slug }` ), {
 			redirect_to: redirectTo ?? backUrl,
 			cancel_to: backUrl,
@@ -235,8 +240,8 @@ export function getSitePurchaseUpgradeUrl(
 		siteSlug: purchase.site_slug,
 		isTrial: purchase.is_trial_plan,
 		isWooHosted: purchase.is_woo_hosted_product,
-		redirectTo: redirectTo ?? redirectToDashboardLink( { supportBackport: true } ),
-		cancelTo: redirectToDashboardLink( { supportBackport: true } ),
+		redirectTo: redirectTo ?? backUrl,
+		cancelTo: backUrl,
 	} );
 }
 

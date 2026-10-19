@@ -102,7 +102,7 @@ describe( 'getSitePurchaseUpgradeUrl', () => {
 		const url = getSitePurchaseUpgradeUrl(
 			makePurchase( { product_slug: productSlug } ),
 			undefined,
-			true
+			() => true
 		);
 		expect( url ).toContain( '/plans/example.com' );
 		expect( url ).not.toContain( '/checkout/' );
@@ -126,7 +126,7 @@ describe( 'getSitePurchaseUpgradeUrl', () => {
 			getSitePurchaseUpgradeUrl(
 				makePurchase( { product_slug: productSlug } ),
 				REDIRECT_TO,
-				false
+				( slug ) => slug !== 'jetpack_pro_yearly'
 			) as string,
 			'https://wordpress.com'
 		);
@@ -138,9 +138,19 @@ describe( 'getSitePurchaseUpgradeUrl', () => {
 		const url = getSitePurchaseUpgradeUrl(
 			makePurchase( { product_slug: 'jetpack_security_t1_yearly' } ),
 			undefined,
-			false
+			( slug ) => slug !== 'jetpack_pro_yearly'
 		);
 		expect( url ).toContain( '/plans/example.com' );
+	} );
+
+	test( 'sends Starter to the store when Pro and Security T1 are both off sale', () => {
+		const url = getSitePurchaseUpgradeUrl(
+			makePurchase( { product_slug: 'jetpack_starter_yearly' } ),
+			undefined,
+			() => false
+		);
+		expect( url ).toContain( '/plans/example.com' );
+		expect( url ).not.toContain( '/checkout/' );
 	} );
 
 	test( 'keeps the Dashboard return destinations for the store checkout', () => {

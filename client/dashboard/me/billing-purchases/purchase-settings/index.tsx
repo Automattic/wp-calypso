@@ -4,7 +4,6 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 	DomainTransferStatus,
-	JetpackPlans,
 } from '@automattic/api-core';
 import {
 	domainQuery,
@@ -149,22 +148,24 @@ function renewPurchase( purchase: Purchase ): void {
 }
 
 /**
- * Whether Jetpack Pro is on sale, `undefined` until known. Fetched only for Jetpack purchases.
+ * Whether a product is on sale, `undefined` until known. Fetched only for Jetpack purchases.
  */
-function useIsJetpackProOnSale( purchase: Purchase ): boolean | undefined {
+function useIsOnSale( purchase: Purchase ): ( ( productSlug: string ) => boolean ) | undefined {
 	const { data, isError, isFetching } = useQuery( {
 		...productsQuery(),
 		enabled: purchase.is_jetpack_plan_or_product,
-		select: ( products ) => Boolean( products[ JetpackPlans.PLAN_JETPACK_PRO_YEARLY ]?.available ),
 	} );
 	// Stale data, kept while refreshing or after a failed refresh, may predate the launch.
-	return isError || isFetching ? undefined : data;
+	if ( ! data || isError || isFetching ) {
+		return undefined;
+	}
+	return ( productSlug ) => Boolean( data[ productSlug ]?.available );
 }
 
 /** Where to send anything that isn't a WordPress.com plan to upgrade. */
 function getNonPlanUpgradeAction(
 	purchase: Purchase,
-	isJetpackProOnSale?: boolean
+	isOnSale?: ( productSlug: string ) => boolean
 ): { href: string; title: string } | undefined {
 	if ( ! purchase.is_upgradable ) {
 		return undefined;
@@ -182,7 +183,7 @@ function getNonPlanUpgradeAction(
 	const href = getSitePurchaseUpgradeUrl(
 		purchase,
 		getUpgradedPurchaseRedirectUrl( purchase ),
-		isJetpackProOnSale
+		isOnSale
 	);
 	return href
 		? {
@@ -239,7 +240,7 @@ function getUpgradeControlLabel(
  */
 function getHeaderUpgradeAction(
 	purchase: Purchase,
-	isJetpackProOnSale?: boolean
+	isOnSale?: ( productSlug: string ) => boolean
 ): { href: string; title: string } | undefined {
 	// WordPress.com plans go through the shared helper. A plan that gets nothing
 	// back has no upgrade to offer, and the non-plan path rejects it too.
@@ -251,7 +252,7 @@ function getHeaderUpgradeAction(
 		return { href: planAction.href, title: planAction.title };
 	}
 
-	return getNonPlanUpgradeAction( purchase, isJetpackProOnSale );
+	return getNonPlanUpgradeAction( purchase, isOnSale );
 }
 
 function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
@@ -315,7 +316,7 @@ function usePurchaseHeaderActions( purchase: Purchase ): PurchaseHeaderAction[] 
 	const hasEnTranslation = useHasEnTranslation();
 	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
-	const isJetpackProOnSale = useIsJetpackProOnSale( purchase );
+	const isOnSale = useIsOnSale( purchase );
 
 	// The purchase list gates its renewal link on ownership too.
 	if ( String( user.ID ) !== String( purchase.user_id ) ) {
@@ -323,7 +324,7 @@ function usePurchaseHeaderActions( purchase: Purchase ): PurchaseHeaderAction[] 
 	}
 
 	const actions: PurchaseHeaderAction[] = [];
-	const upgradeAction = getHeaderUpgradeAction( purchase, isJetpackProOnSale );
+	const upgradeAction = getHeaderUpgradeAction( purchase, isOnSale );
 	const storageUpgradeUrl = getSitePurchaseStorageUpgradeUrl( purchase );
 
 	if ( upgradeAction ) {
@@ -642,7 +643,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 	const hasEnTranslation = useHasEnTranslation();
 	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
-	const isJetpackProOnSale = useIsJetpackProOnSale( purchase );
+	const isOnSale = useIsOnSale( purchase );
 
 	if ( String( user.ID ) !== String( purchase.user_id ) ) {
 		return null;
@@ -689,7 +690,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 		);
 	}
 
-	const upgradeAction = getNonPlanUpgradeAction( purchase, isJetpackProOnSale );
+	const upgradeAction = getNonPlanUpgradeAction( purchase, isOnSale );
 	if ( ! upgradeAction ) {
 		return null;
 	}
