@@ -11,6 +11,7 @@ import {
 } from '@automattic/agents-manager';
 import { useEvent } from '@wordpress/compose';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import { getSessionId } from '../utils/session';
 import {
 	getImageStudioBlogId,
 	getImageStudioIsDevMode,
@@ -83,8 +84,14 @@ function getSiteCreditsBlogId(): number | null {
 	return getImageStudioSiteType() === 'jetpack' ? null : getImageStudioBlogId();
 }
 
+/** The link carries the session the click event sends as `ai_session_id`. */
 function getSitePurchaseLink( status: PaidCreditsStatus, blogId: number ) {
-	return getCreditsPurchaseLink( status, blogId, getImageStudioSiteType() === 'simple' );
+	return getCreditsPurchaseLink(
+		status,
+		blogId,
+		getImageStudioSiteType() === 'simple',
+		getSessionId()
+	);
 }
 
 /** Resolves to undefined when the site is not on AI credits or the request fails. */
