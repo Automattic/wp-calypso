@@ -153,12 +153,13 @@ function renewPurchase( purchase: Purchase ): void {
  * Whether Jetpack Pro is on sale, `undefined` until known. Fetched only for Jetpack purchases.
  */
 function useIsJetpackProOnSale( purchase: Purchase ): boolean | undefined {
-	const { data } = useQuery( {
+	const { data, isError } = useQuery( {
 		...productsQuery(),
 		enabled: purchase.is_jetpack_plan_or_product,
 		select: ( products ) => Boolean( products[ JetpackPlans.PLAN_JETPACK_PRO_YEARLY ]?.available ),
 	} );
-	return data;
+	// A failed refresh keeps stale data, which may predate the launch.
+	return isError ? undefined : data;
 }
 
 function getNonPlanUpgradeAction(

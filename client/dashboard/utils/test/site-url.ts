@@ -122,12 +122,16 @@ describe( 'getSitePurchaseUpgradeUrl', () => {
 		[ 'jetpack_growth_yearly', 'jetpack_complete' ],
 		[ 'jetpack_growth_monthly', 'jetpack_complete_monthly' ],
 	] )( 'upgrades %s straight to %s before Pro is on sale', ( productSlug, upgradeSlug ) => {
-		const url = getSitePurchaseUpgradeUrl(
-			makePurchase( { product_slug: productSlug } ),
-			undefined,
-			false
+		const url = new URL(
+			getSitePurchaseUpgradeUrl(
+				makePurchase( { product_slug: productSlug } ),
+				REDIRECT_TO,
+				false
+			) as string,
+			'https://wordpress.com'
 		);
-		expect( url ).toContain( `/checkout/example.com/${ upgradeSlug }` );
+		expect( url.pathname ).toBe( `/checkout/example.com/${ upgradeSlug }` );
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe( REDIRECT_TO );
 	} );
 
 	test( 'sends a Jetpack bundle without a direct upgrade to the store before Pro is on sale', () => {

@@ -218,7 +218,7 @@ export function getSitePurchaseUpgradeUrl(
 	if ( upgradeProductSlug ) {
 		const backUrl = redirectToDashboardLink( { supportBackport: true } );
 		return addQueryArgs( wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` ), {
-			redirect_to: backUrl,
+			redirect_to: redirectTo ?? backUrl,
 			cancel_to: backUrl,
 		} );
 	}
