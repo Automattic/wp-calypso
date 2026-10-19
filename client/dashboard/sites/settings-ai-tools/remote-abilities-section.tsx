@@ -5,8 +5,14 @@ import {
 	siteAbilitiesQuery,
 } from '@automattic/api-queries';
 import languages from '@automattic/languages';
+import { useFuzzySearch } from '@automattic/search';
 import { useMutation, useSuspenseQuery, useQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, ToggleControl, Spinner } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+	ToggleControl,
+	Spinner,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
@@ -21,6 +27,7 @@ import { useLocale } from '../../app/locale';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
+import AnchorCopyButton from './anchor-copy-button';
 import McpGroupCard from './mcp-group-card';
 import type { Site, SiteAbility } from '@automattic/api-core';
 
@@ -94,9 +101,11 @@ export function collectNamespaces(
 export default function RemoteAbilitiesSection( {
 	site,
 	category,
+	search = '',
 }: {
 	site: Site;
 	category: RemoteAbilityCategory;
+	search?: string;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const tracksAudienceProps = useMcpTracksAudienceProps();
@@ -115,7 +124,26 @@ export default function RemoteAbilitiesSection( {
 	} );
 
 	const savedGroups = getSiteRemoteGroups( userSettings || {}, site.ID );
-	const namespaces = collectNamespaces( abilities, savedGroups, category );
+	const query = search.trim();
+	const filteredAbilities = useFuzzySearch( {
+		data: abilities ?? [],
+		keys: [ 'label', 'description', 'name' ],
+		query,
+	} );
+	const namespaces = collectNamespaces( filteredAbilities, savedGroups, category );
+	if ( query ) {
+		// A saved-only card (no catalog abilities to match against) stays only
+		// when its own name matches the query.
+		[ ...namespaces.keys() ].forEach( ( namespace ) => {
+			const group = namespaces.get( namespace ) as NamespaceGroup;
+			const textMatch =
+				namespace.toLowerCase().includes( query.toLowerCase() ) ||
+				formatNamespace( namespace ).toLowerCase().includes( query.toLowerCase() );
+			if ( group.abilities.length === 0 && ! textMatch ) {
+				namespaces.delete( namespace );
+			}
+		} );
+	}
 
 	const mutation = useMutation(
 		withSnackbar( userSettingsMutation(), {
@@ -193,6 +221,7 @@ export default function RemoteAbilitiesSection( {
 						toolAnchors={ group.abilities.map( ( ability ) => ability.name ) }
 						allEnabled={ namespaceEnabled }
 						disabled={ mutation.isPending }
+						forceOpen={ query.length > 0 }
 						onEnableAll={ ( checked ) =>
 							saveGroups( intentKeys, checked, `${ category }:${ namespace }` )
 						}
@@ -203,20 +232,25 @@ export default function RemoteAbilitiesSection( {
 									const abilityKey = getRemoteAbilityKey( ability.name, ability.meta?.annotations );
 									return (
 										<div key={ ability.name } id={ ability.name }>
-											<ToggleControl
-												__nextHasNoMarginBottom
-												checked={ isRemoteAbilityEnabled(
-													savedGroups,
-													ability.name,
-													ability.meta?.annotations
-												) }
-												disabled={ mutation.isPending }
-												label={ ability.label || ability.name }
-												help={ ability.description }
-												onChange={ ( checked ) =>
-													saveGroups( [ abilityKey ], checked, abilityKey )
-												}
-											/>
+											<HStack justify="space-between" alignment="flex-start" spacing={ 2 }>
+												<div style={ { flex: 1, minWidth: 0 } }>
+													<ToggleControl
+														__nextHasNoMarginBottom
+														checked={ isRemoteAbilityEnabled(
+															savedGroups,
+															ability.name,
+															ability.meta?.annotations
+														) }
+														disabled={ mutation.isPending }
+														label={ ability.label || ability.name }
+														help={ ability.description }
+														onChange={ ( checked ) =>
+															saveGroups( [ abilityKey ], checked, abilityKey )
+														}
+													/>
+												</div>
+												<AnchorCopyButton anchor={ ability.name } />
+											</HStack>
 										</div>
 									);
 								} ) }

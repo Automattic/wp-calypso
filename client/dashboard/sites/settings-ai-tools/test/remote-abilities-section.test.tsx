@@ -9,7 +9,7 @@ import {
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import '@testing-library/jest-dom';
-import { act, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -335,6 +335,36 @@ describe( '<RemoteAbilitiesSection>', () => {
 		await waitFor( () => {
 			expect( screen.getByRole( 'checkbox', { name: 'Update form' } ) ).toBeVisible();
 		} );
+	} );
+
+	test( 'search filters abilities and opens matching cards without expanding', () => {
+		seed( { abilities: catalog } );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" search="Delete" />, {
+			queryClient,
+		} );
+
+		expect( screen.getByRole( 'checkbox', { name: 'Delete form' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'checkbox', { name: 'Update form' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'checkbox', { name: 'Check comment' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'the card anchor button copies the anchor URL', () => {
+		const writeText = jest.fn().mockResolvedValue( undefined );
+		Object.defineProperty( window.navigator, 'clipboard', {
+			value: { writeText },
+			configurable: true,
+		} );
+		seed( { abilities: catalog } );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
+
+		const card = getPluginCard( 'Jetpack Forms' );
+		fireEvent.click(
+			within( card ).getAllByRole( 'button', { name: 'Copy link to this setting' } )[ 0 ]
+		);
+
+		expect( writeText ).toHaveBeenCalledWith(
+			`${ window.location.origin }${ window.location.pathname }#jetpack-forms`
+		);
 	} );
 
 	test( 'shows saved groups with a notice when the catalog cannot be loaded', async () => {

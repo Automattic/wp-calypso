@@ -113,6 +113,15 @@ describe( '<SiteAIToolsRead>', () => {
 		expect( screen.queryByRole( 'heading', { name: 'Site' } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'a tool anchor in the URL seeds the search with the tool label', () => {
+		window.location.hash = '#wpcom-mcp/posts-list';
+		seed();
+		render( <SiteAIToolsRead />, { queryClient } );
+
+		expect( screen.getByRole( 'searchbox' ) ).toHaveValue( 'List posts' );
+		expect( screen.getByRole( 'checkbox', { name: 'List posts' } ) ).toBeVisible();
+	} );
+
 	test( 'the page-level Enable all saves every tool and remote group on the page', async () => {
 		const user = userEvent.setup();
 		seed();

@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useEffect, useRef, useState } from 'react';
 import { Card, CardBody, CardDivider } from '../../components/card';
+import AnchorCopyButton from './anchor-copy-button';
 import type { ReactNode } from 'react';
 
 /**
@@ -29,6 +30,7 @@ export default function McpGroupCard( {
 	allEnabled,
 	onEnableAll,
 	disabled,
+	forceOpen = false,
 	children,
 }: {
 	id: string;
@@ -38,11 +40,14 @@ export default function McpGroupCard( {
 	allEnabled: boolean;
 	onEnableAll: ( enabled: boolean ) => void;
 	disabled?: boolean;
+	/** Renders the tools open regardless of the collapsed state (e.g. while searching). */
+	forceOpen?: boolean;
 	children?: ReactNode;
 } ) {
 	const location = useLocation();
 	const hash = ( location.hash ?? '' ).replace( /^#/, '' );
 	const [ isOpen, setIsOpen ] = useState( false );
+	const open = isOpen || forceOpen;
 	// Auto-open once per matching hash value, so a manual collapse afterwards
 	// isn't fought, but a fresh anchor link opens the card again.
 	const handledHash = useRef( '' );
@@ -78,17 +83,18 @@ export default function McpGroupCard( {
 						label={ __( 'Enable all' ) }
 						onChange={ onEnableAll }
 					/>
+					<AnchorCopyButton anchor={ id } />
 					{ children != null && (
 						<Button
-							icon={ isOpen ? chevronUp : chevronDown }
-							label={ isOpen ? __( 'Hide operations' ) : __( 'Show operations' ) }
-							aria-expanded={ isOpen }
+							icon={ open ? chevronUp : chevronDown }
+							label={ open ? __( 'Hide operations' ) : __( 'Show operations' ) }
+							aria-expanded={ open }
 							onClick={ () => setIsOpen( ! isOpen ) }
 						/>
 					) }
 				</HStack>
 			</CardBody>
-			{ isOpen && children != null && (
+			{ open && children != null && (
 				<>
 					<CardDivider className="mcp-settings__sub-divider" />
 					<CardBody>{ children }</CardBody>

@@ -8,15 +8,18 @@ import {
 	siteBySlugQuery,
 } from '@automattic/api-queries';
 import languages from '@automattic/languages';
+import { useFuzzySearch } from '@automattic/search';
 import { useSuspenseQuery, useMutation, useQuery } from '@tanstack/react-query';
-import { useParams } from '@tanstack/react-router';
+import { useLocation, useParams } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	ToggleControl,
+	SearchControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Fragment } from 'react';
+import { Fragment, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../me/mcp/groups';
 import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import {
@@ -37,6 +40,7 @@ import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { isWriteTool, sortTools } from '../../../me/mcp/categories';
+import AnchorCopyButton from '../anchor-copy-button';
 import McpGroupCard from '../mcp-group-card';
 import RemoteAbilitiesSection, { collectNamespaces } from '../remote-abilities-section';
 import type { McpAbility, McpGroupDescriptor } from '@automattic/api-core';
@@ -89,8 +93,26 @@ export default function SiteAIToolsRead() {
 		.filter( ( [ , tool ] ) => tool.visible !== false )
 		.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
 
+	// Tool search: fuzzy-filters the wpcom tools on this page and is passed down
+	// to the site-published section. A tool anchor in the URL seeds the search
+	// with the anchored tool's label so it lands visible and open.
+	const locationHash = ( useLocation().hash ?? '' ).replace( /^#/, '' );
+	const [ search, setSearch ] = useState( '' );
+	const anchorSeeded = useRef( false );
+	const deferredSearch = useDeferredValue( search );
+	const query = deferredSearch.trim();
+
 	const groupDescriptors = getGroupDescriptors( userSettings || {} ) as McpGroupDescriptor[];
-	const groups = groupToolsByGroup( allTools, groupDescriptors ) as ToolGroup[];
+	const searchableTools = allTools.map( ( [ toolId, tool ] ) => ( { toolId, tool } ) );
+	const filteredSearchable = useFuzzySearch( {
+		data: searchableTools,
+		keys: [ 'tool.title', 'tool.description' ],
+		query,
+	} );
+	const filteredTools = filteredSearchable.map(
+		( { toolId, tool } ) => [ toolId, tool ] as [ string, McpAbility ]
+	);
+	const groups = groupToolsByGroup( filteredTools, groupDescriptors ) as ToolGroup[];
 
 	// Site-published abilities on this page, for the page-level toggle and its
 	// state. Staff-gated like the server-side remote: path (AI-1328) and cached
@@ -98,20 +120,40 @@ export default function SiteAIToolsRead() {
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const localeSlug = useLocale();
 	const wpLocale = languages.find( ( { langSlug } ) => langSlug === localeSlug )?.wpLocale;
-	const savedRemoteGroups = isAutomattician
-		? getSiteRemoteGroups( userSettings || {}, site.ID )
-		: {};
+	const savedRemoteGroups = useMemo(
+		() => ( isAutomattician ? getSiteRemoteGroups( userSettings || {}, site.ID ) : {} ),
+		[ isAutomattician, userSettings, site.ID ]
+	);
 	const { data: remoteAbilities } = useQuery( {
 		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
 		enabled: !! site.jetpack && !! isAutomattician,
 	} );
-	const remoteNamespaces: ReturnType< typeof collectNamespaces > = isAutomattician
-		? collectNamespaces( remoteAbilities, savedRemoteGroups, TOOL_CATEGORY )
-		: new Map();
+	const remoteNamespaces: ReturnType< typeof collectNamespaces > = useMemo(
+		() =>
+			isAutomattician
+				? collectNamespaces( remoteAbilities, savedRemoteGroups, TOOL_CATEGORY )
+				: new Map(),
+		[ isAutomattician, remoteAbilities, savedRemoteGroups ]
+	);
 	const remoteGroupKeys = [ ...remoteNamespaces.values() ].flatMap( ( group ) => group.keys );
 	const remoteAbilityKeys = [ ...remoteNamespaces.values() ].flatMap(
 		( group ) => group.abilityKeys
 	);
+
+	useEffect( () => {
+		if ( anchorSeeded.current || search || ! locationHash ) {
+			return;
+		}
+		anchorSeeded.current = true;
+		const wpcomHit = allTools.find( ( [ toolId ] ) => toolId === locationHash );
+		const remoteHit = [ ...remoteNamespaces.values() ]
+			.flatMap( ( group ) => group.abilities )
+			.find( ( ability ) => ability.name === locationHash );
+		const label = wpcomHit?.[ 1 ].title ?? remoteHit?.label;
+		if ( label ) {
+			setSearch( label );
+		}
+	}, [ search, locationHash, allTools, remoteNamespaces ] );
 
 	const pageAllEnabled =
 		allTools.length > 0 &&
@@ -216,14 +258,19 @@ export default function SiteAIToolsRead() {
 	const renderToolToggles = ( tools: Array< [ string, McpAbility ] > ) =>
 		tools.map( ( [ toolId, tool ] ) => (
 			<div key={ toolId } id={ toolId }>
-				<ToggleControl
-					__nextHasNoMarginBottom
-					checked={ tool.enabled }
-					disabled={ mutation.isPending }
-					label={ tool.title }
-					help={ tool.description }
-					onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-				/>
+				<HStack justify="space-between" alignment="flex-start" spacing={ 2 }>
+					<div style={ { flex: 1, minWidth: 0 } }>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							checked={ tool.enabled }
+							disabled={ mutation.isPending }
+							label={ tool.title }
+							help={ tool.description }
+							onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+						/>
+					</div>
+					<AnchorCopyButton anchor={ toolId } />
+				</HStack>
 			</div>
 		) );
 
@@ -274,6 +321,12 @@ export default function SiteAIToolsRead() {
 						</CardBody>
 					</Card>
 				) }
+				<SearchControl
+					value={ search }
+					placeholder={ __( 'Search tools' ) }
+					onChange={ ( value: string ) => setSearch( value ) }
+					__nextHasNoMarginBottom
+				/>
 				{ groups.map( ( { group: descriptor, label, tools: groupTools } ) => {
 					const groupKey = descriptor?.name ?? '__other__';
 					const allGroupEnabled = groupTools.every( ( [ , tool ] ) => tool.enabled );
@@ -287,13 +340,14 @@ export default function SiteAIToolsRead() {
 							toolAnchors={ groupTools.map( ( [ toolId ] ) => toolId ) }
 							allEnabled={ allGroupEnabled }
 							disabled={ mutation.isPending }
+							forceOpen={ query.length > 0 }
 							onEnableAll={ ( checked ) => handleGroupEnableAll( groupTools, checked ) }
 						>
 							{ renderToolsContent( groupTools ) }
 						</McpGroupCard>
 					);
 				} ) }
-				<RemoteAbilitiesSection site={ site } category={ TOOL_CATEGORY } />
+				<RemoteAbilitiesSection site={ site } category={ TOOL_CATEGORY } search={ query } />
 			</VStack>
 		</PageLayout>
 	);
