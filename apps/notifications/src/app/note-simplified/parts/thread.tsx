@@ -40,48 +40,31 @@ const ThreadItem = ( {
 	);
 
 	return (
-		<HStack
-			as="li"
-			className="wpnc-simplified__thread-item"
-			alignment="top"
-			justify="flex-start"
-			spacing={ 3 }
-		>
-			{ authorUrl ? (
-				// The name beside it links to the same profile, so the photo stays out of the tab order.
-				<a
-					className="wpnc-simplified__photo"
-					href={ authorUrl }
-					target="_blank"
-					rel="noreferrer"
-					tabIndex={ -1 }
-					aria-hidden="true"
-				>
-					{ photo }
-				</a>
-			) : (
-				photo
-			) }
-			<VStack spacing={ 1 } style={ { width: '100%' } }>
-				<HStack className="wpnc-simplified__thread-header">
-					<HStack alignment="baseline" spacing={ 2 }>
-						<HStack
-							className="wpnc-simplified__quiet-links"
-							alignment="baseline"
-							justify="flex-start"
-							spacing={ 2 }
-							wrap
-							style={ { rowGap: 0 } }
-						>
-							{ name }
-							{ meta }
-						</HStack>
-						{ status }
-					</HStack>
-				</HStack>
-				{ children }
-			</VStack>
-		</HStack>
+		<VStack as="li" spacing={ 3 }>
+			<HStack alignment="top" justify="flex-start" spacing={ 3 }>
+				{ authorUrl ? (
+					// The name beside it links to the same profile, so the photo stays out of the tab order.
+					<a
+						className="wpnc-simplified__photo"
+						href={ authorUrl }
+						target="_blank"
+						rel="noreferrer"
+						tabIndex={ -1 }
+						aria-hidden="true"
+					>
+						{ photo }
+					</a>
+				) : (
+					photo
+				) }
+				<VStack className="wpnc-simplified__quiet-links" spacing={ 0 } style={ { flex: 1 } }>
+					{ name }
+					{ meta }
+				</VStack>
+				{ status }
+			</HStack>
+			{ children }
+		</VStack>
 	);
 };
 
