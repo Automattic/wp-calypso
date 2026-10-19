@@ -12,6 +12,7 @@ import {
 	getCreditsTone,
 	isCreditsExhausted,
 } from '../../utils/credits';
+import type { CreditsPurchaseAction } from '../../utils/credits-access';
 import './style.scss';
 
 interface Props {
@@ -20,11 +21,9 @@ interface Props {
 	onToggle: ( willOpen: boolean ) => void;
 	/** Mock CTA: Upgrade on free plans, Add credits on paid ones. */
 	onAction?: () => void;
-	/** Plans page for a live balance with a supported upgradeable tier. */
-	upgradeUrl?: string;
-	/** Runs when that link is clicked, for example to record the click. */
-	onUpgradeClick?: () => void;
-	/** Shown instead of a CTA to people who can't upgrade the site themselves. */
+	/** The live balance's Upgrade or Add credits link. */
+	action?: CreditsPurchaseAction;
+	/** Shown instead of a CTA to people who can't buy for the site themselves. */
 	purchaseHint?: string;
 	/** Full balance and purchases page, when available. */
 	manageUrl?: string;
@@ -127,8 +126,7 @@ export default function CreditsMeter( {
 	isOpen,
 	onToggle,
 	onAction,
-	upgradeUrl,
-	onUpgradeClick,
+	action,
 	purchaseHint,
 	manageUrl,
 }: Props ) {
@@ -195,17 +193,27 @@ export default function CreditsMeter( {
 					{ purchaseHint && (
 						<p className="agents-manager-credits-meter__message">{ purchaseHint }</p>
 					) }
-					{ ( upgradeUrl || onAction ) && (
+					{ action && (
 						<Button
 							className="agents-manager-credits-meter__cta"
-							variant={ upgradeUrl || isFree ? 'primary' : 'secondary' }
-							onClick={ upgradeUrl ? onUpgradeClick : onAction }
-							href={ upgradeUrl }
-							target={ upgradeUrl ? '_blank' : undefined }
-							rel={ upgradeUrl ? 'noopener noreferrer' : undefined }
+							variant="primary"
+							onClick={ action.onClick }
+							href={ action.href }
+							target={ action.target }
+							rel={ action.rel }
 							__next40pxDefaultSize
 						>
-							{ upgradeUrl || isFree
+							{ action.label }
+						</Button>
+					) }
+					{ ! action && onAction && (
+						<Button
+							className="agents-manager-credits-meter__cta"
+							variant={ isFree ? 'primary' : 'secondary' }
+							onClick={ onAction }
+							__next40pxDefaultSize
+						>
+							{ isFree
 								? __( 'Upgrade', __i18n_text_domain__ )
 								: __( 'Add credits', __i18n_text_domain__ ) }
 						</Button>
