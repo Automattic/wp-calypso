@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { preparePreviewDocument } from './html-preview-document';
+import { IMAGE_MIMES, preparePreviewDocument } from './html-preview-document';
 import { BuildHtmlPreviewFallback } from './html-preview-fallback';
 import { createPreviewFrame, isPreviewFrameStatus } from './html-preview-frame';
 import { createPreviewAssetLoader } from './preview-asset-loader';
@@ -18,6 +18,8 @@ export type BuildHtmlPreviewProps = {
 	isGenerating: boolean;
 	isComplete: boolean;
 	onHomeReady?: ( ready: boolean ) => void;
+	/** Object URLs of the generated images the preview has loaded, by theme asset path. */
+	onImages?: ( images: Record< string, string > ) => void;
 };
 
 type DocumentPacket = {
@@ -97,6 +99,7 @@ function PreviewScene( {
 	isGenerating,
 	isComplete,
 	onHomeReady,
+	onImages,
 }: BuildHtmlPreviewProps ) {
 	const iframe = useRef< HTMLIFrameElement >( null );
 	const port = useRef< MessagePort | null >( null );
@@ -113,6 +116,10 @@ function PreviewScene( {
 	const handshakeTimer = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
 	const callback = useRef( onHomeReady );
 	callback.current = onHomeReady;
+	const imagesCallback = useRef( onImages );
+	imagesCallback.current = onImages;
+	const imageUrls = useRef( new Map< string, string >() );
+	const imageSources = useRef( new Map< string, string >() );
 	const [ frame, setFrame ] = useState< ReturnType< typeof createPreviewFrame > | null >( null );
 	const [ unavailable, setUnavailable ] = useState( false );
 	const [ failures, setFailures ] = useState< Record< string, boolean > >( {} );
@@ -202,6 +209,19 @@ function PreviewScene( {
 		},
 		[ post ]
 	);
+	// The runtime takes ownership of the bytes it is sent, so a copy is kept first.
+	const captureImage = useCallback( ( source: string, loaded: LoadedPreviewAsset ) => {
+		if ( ! IMAGE_MIMES.includes( loaded.mimeType ) ) {
+			return;
+		}
+		let url = imageUrls.current.get( loaded.id );
+		if ( ! url ) {
+			url = URL.createObjectURL( new Blob( [ loaded.bytes ], { type: loaded.mimeType } ) );
+			imageUrls.current.set( loaded.id, url );
+		}
+		imageSources.current.set( source, url );
+		imagesCallback.current?.( Object.fromEntries( imageSources.current ) );
+	}, [] );
 	const onAsset = useCallback(
 		( reference: StreamPreview, source: string, asset: PreviewAsset, signal: AbortSignal ) => {
 			const requestKey = `${ reference.route }:${ reference.epoch }:${ asset.id }`;
@@ -232,6 +252,7 @@ function PreviewScene( {
 						if ( ! loaded ) {
 							return;
 						}
+						captureImage( source, loaded );
 						const size = Array.from( pendingAssets.current.values() ).reduce(
 							( total, item ) => total + item.bytes.byteLength,
 							0
@@ -246,7 +267,7 @@ function PreviewScene( {
 			retryAssets.current.set( asset.id, request );
 			request();
 		},
-		[ flushAssets ]
+		[ flushAssets, captureImage ]
 	);
 	const retryRejectedAssets = useCallback( () => {
 		const ids = Array.from( rejectedAssets.current );
@@ -341,6 +362,8 @@ function PreviewScene( {
 		}
 		loader.current = createPreviewAssetLoader( stream.info.snapshotUrl );
 		callback.current?.( false );
+		const urls = imageUrls.current;
+		const sources = imageSources.current;
 		return () => {
 			loader.current?.dispose();
 			if ( port.current ) {
@@ -350,6 +373,13 @@ function PreviewScene( {
 			connected.current = false;
 			clearTimeout( handshakeTimer.current );
 			callback.current?.( false );
+			const hadImages = urls.size > 0;
+			urls.forEach( ( url ) => URL.revokeObjectURL( url ) );
+			urls.clear();
+			sources.clear();
+			if ( hadImages ) {
+				imagesCallback.current?.( {} );
+			}
 		};
 	}, [ stream.info.snapshotUrl ] );
 	useEffect( () => {
