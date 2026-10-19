@@ -364,7 +364,7 @@ describe( '<RemoteAbilitiesSection>', () => {
 		expect( screen.queryByRole( 'checkbox', { name: 'Check comment' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'the card anchor button copies the anchor URL', () => {
+	test( 'an ability anchor button copies that ability’s anchor URL', () => {
 		const writeText = jest.fn().mockResolvedValue( undefined );
 		Object.defineProperty( window.navigator, 'clipboard', {
 			value: { writeText },
@@ -373,13 +373,19 @@ describe( '<RemoteAbilitiesSection>', () => {
 		seed( { abilities: catalog } );
 		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
 
+		// Group headers carry no anchor button; the ability rows do.
 		const card = getPluginCard( 'Jetpack Forms' );
+		expect(
+			within( card ).queryByRole( 'button', { name: 'Copy link to this setting' } )
+		).not.toBeInTheDocument();
+
+		fireEvent.click( getPluginExpander( 'Jetpack Forms' ) );
 		fireEvent.click(
 			within( card ).getAllByRole( 'button', { name: 'Copy link to this setting' } )[ 0 ]
 		);
 
 		expect( writeText ).toHaveBeenCalledWith(
-			`${ window.location.origin }${ window.location.pathname }#jetpack-forms`
+			`${ window.location.origin }${ window.location.pathname }#jetpack-forms/update-form`
 		);
 	} );
 

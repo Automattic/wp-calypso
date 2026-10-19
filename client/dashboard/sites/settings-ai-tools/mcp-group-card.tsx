@@ -11,7 +11,6 @@ import { __ } from '@wordpress/i18n';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useEffect, useRef, useState } from 'react';
 import { Card, CardBody, CardDivider } from '../../components/card';
-import AnchorCopyButton from './anchor-copy-button';
 import type { ReactNode } from 'react';
 
 /**
@@ -83,7 +82,6 @@ export default function McpGroupCard( {
 						label={ __( 'Enable all' ) }
 						onChange={ onEnableAll }
 					/>
-					<AnchorCopyButton anchor={ id } />
 					{ children != null && (
 						<Button
 							icon={ open ? chevronUp : chevronDown }
