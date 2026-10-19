@@ -2,13 +2,13 @@
  * @jest-environment jsdom
  */
 import { readSavedKeysQuery } from '@automattic/api-queries';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { QueryClient } from '@tanstack/react-query';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { recordTrackForPost } from 'calypso/reader/stats';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderSaveButton from '../index';
 
 jest.mock( 'calypso/reader/stats', () => ( {
@@ -18,12 +18,43 @@ jest.mock( 'calypso/reader/stats', () => ( {
 } ) );
 
 const BASE = 'https://public-api.wordpress.com';
+const KEYS_PATH = '/wpcom/v2/read/saved/keys';
 const POST = { ID: 1, site_ID: 100, feed_ID: 50, feed_item_ID: 9001, is_external: false };
 const SAVED_KEY = { blog_id: 100, post_id: 1, date_saved: '2026-10-01T00:00:00+00:00' };
 const WRITE_BODY = { blog_id: 100, post_id: 1, source: 'reader-web' };
 
-function mockKeys( keys: Array< typeof SAVED_KEY > ) {
-	return nock( BASE ).get( '/wpcom/v2/read/saved/keys' ).reply( 200, { keys, total: keys.length } );
+// Pass `times: 2` to cover the refetch after a save or unsave settles.
+function mockKeys( keys: Array< typeof SAVED_KEY >, times = 1 ) {
+	return nock( BASE ).get( KEYS_PATH ).times( times ).reply( 200, { keys, total: keys.length } );
+}
+
+function writeResponse( action: 'new' | 'delete' ) {
+	return {
+		saved: action === 'new',
+		key: { blog_id: 100, post_id: 1 },
+		total: action === 'new' ? 1 : 0,
+	};
+}
+
+function mockWrite(
+	action: 'new' | 'delete',
+	status = 200,
+	body: object = writeResponse( action )
+) {
+	return nock( BASE ).post( `/wpcom/v2/read/saved/${ action }`, WRITE_BODY ).reply( status, body );
+}
+
+// A reply that waits until `finish()` is called.
+function deferredReply( body: object ) {
+	let finish = () => {};
+	const finished = new Promise< void >( ( resolve ) => ( finish = resolve ) );
+	return {
+		reply: async (): Promise< [ number, object ] > => {
+			await finished;
+			return [ 200, body ];
+		},
+		finish: () => finish(),
+	};
 }
 
 function renderButton() {
@@ -31,13 +62,7 @@ function renderButton() {
 	const store = createStore( ( state = {} ) => state );
 	const dispatch = jest.spyOn( store, 'dispatch' );
 
-	render(
-		<QueryClientProvider client={ queryClient }>
-			<Provider store={ store }>
-				<ReaderSaveButton post={ POST } />
-			</Provider>
-		</QueryClientProvider>
-	);
+	renderWithProvider( <ReaderSaveButton post={ POST } />, { store, queryClient } );
 
 	return { dispatch, queryClient };
 }
@@ -74,14 +99,8 @@ describe( 'ReaderSaveButton', () => {
 
 	it( 'ignores clicks until the saved keys load', async () => {
 		const user = userEvent.setup();
-		let finishKeys = () => {};
-		const keysFinished = new Promise< void >( ( resolve ) => ( finishKeys = resolve ) );
-		nock( BASE )
-			.get( '/wpcom/v2/read/saved/keys' )
-			.reply( async () => {
-				await keysFinished;
-				return [ 200, { keys: [ SAVED_KEY ], total: 1 } ];
-			} );
+		const keys = deferredReply( { keys: [ SAVED_KEY ], total: 1 } );
+		nock( BASE ).get( KEYS_PATH ).reply( keys.reply );
 		renderButton();
 
 		const button = screen.getByRole( 'button', { name: 'Save to read later' } );
@@ -89,14 +108,14 @@ describe( 'ReaderSaveButton', () => {
 		await user.click( button );
 
 		expect( recordTrackForPost ).not.toHaveBeenCalled();
-		finishKeys();
+		keys.finish();
 		await waitFor( () => expect( button ).toHaveAccessibleName( 'Saved' ) );
 		expect( button ).toHaveAttribute( 'aria-disabled', 'false' );
 	} );
 
 	it( 'stays disabled when the saved keys fail to load', async () => {
 		const user = userEvent.setup();
-		nock( BASE ).get( '/wpcom/v2/read/saved/keys' ).reply( 500, { code: 'internal_error' } );
+		nock( BASE ).get( KEYS_PATH ).reply( 500, { code: 'internal_error' } );
 		const { queryClient } = renderButton();
 		await waitFor( () =>
 			expect( queryClient.getQueryState( readSavedKeysQuery().queryKey )?.status ).toBe( 'error' )
@@ -112,9 +131,7 @@ describe( 'ReaderSaveButton', () => {
 	it( 'saves the post and records the save', async () => {
 		const user = userEvent.setup();
 		mockKeys( [] );
-		const save = nock( BASE )
-			.post( '/wpcom/v2/read/saved/new', WRITE_BODY )
-			.reply( 200, { saved: true, key: { blog_id: 100, post_id: 1 }, total: 1 } );
+		const save = mockWrite( 'new' );
 		const refetch = mockKeys( [ SAVED_KEY ] );
 		await renderLoadedButton();
 
@@ -129,9 +146,7 @@ describe( 'ReaderSaveButton', () => {
 	it( 'unsaves a saved post and records the unsave', async () => {
 		const user = userEvent.setup();
 		mockKeys( [ SAVED_KEY ] );
-		const unsave = nock( BASE )
-			.post( '/wpcom/v2/read/saved/delete', WRITE_BODY )
-			.reply( 200, { saved: false, key: { blog_id: 100, post_id: 1 }, total: 0 } );
+		const unsave = mockWrite( 'delete' );
 		const refetch = mockKeys( [] );
 		await renderLoadedButton();
 
@@ -146,14 +161,8 @@ describe( 'ReaderSaveButton', () => {
 	it( 'ignores clicks while a save is in flight', async () => {
 		const user = userEvent.setup();
 		mockKeys( [] );
-		let finishSave = () => {};
-		const saveFinished = new Promise< void >( ( resolve ) => ( finishSave = resolve ) );
-		nock( BASE )
-			.post( '/wpcom/v2/read/saved/new', WRITE_BODY )
-			.reply( async () => {
-				await saveFinished;
-				return [ 200, { saved: true, key: { blog_id: 100, post_id: 1 }, total: 1 } ];
-			} );
+		const save = deferredReply( writeResponse( 'new' ) );
+		nock( BASE ).post( '/wpcom/v2/read/saved/new', WRITE_BODY ).reply( save.reply );
 		const refetch = mockKeys( [ SAVED_KEY ] );
 		await renderLoadedButton();
 
@@ -163,7 +172,7 @@ describe( 'ReaderSaveButton', () => {
 		await user.click( button );
 
 		expect( recordTrackForPost ).toHaveBeenCalledTimes( 1 );
-		finishSave();
+		save.finish();
 		await waitFor( () => expect( refetch.isDone() ).toBe( true ) );
 		await waitFor( () => expect( button ).toHaveAttribute( 'aria-disabled', 'false' ) );
 		expect( button ).toHaveAccessibleName( 'Saved' );
@@ -171,11 +180,8 @@ describe( 'ReaderSaveButton', () => {
 
 	it( 'shows a notice and restores the button when a save fails', async () => {
 		const user = userEvent.setup();
-		mockKeys( [] );
-		nock( BASE )
-			.post( '/wpcom/v2/read/saved/new', WRITE_BODY )
-			.reply( 500, { code: 'reader_saved_db_error', message: 'Could not update saved posts.' } );
-		mockKeys( [] );
+		mockKeys( [], 2 );
+		mockWrite( 'new', 500, { code: 'reader_saved_db_error' } );
 		const { dispatch } = await renderLoadedButton();
 
 		await user.click( screen.getByRole( 'button', { name: 'Save to read later' } ) );
@@ -188,11 +194,8 @@ describe( 'ReaderSaveButton', () => {
 
 	it( 'explains when the saved posts limit is reached', async () => {
 		const user = userEvent.setup();
-		mockKeys( [] );
-		nock( BASE )
-			.post( '/wpcom/v2/read/saved/new', WRITE_BODY )
-			.reply( 403, { code: 'saved_limit_reached', message: 'Saved posts limit reached.' } );
-		mockKeys( [] );
+		mockKeys( [], 2 );
+		mockWrite( 'new', 403, { code: 'saved_limit_reached' } );
 		const { dispatch } = await renderLoadedButton();
 
 		await user.click( screen.getByRole( 'button', { name: 'Save to read later' } ) );
@@ -205,11 +208,8 @@ describe( 'ReaderSaveButton', () => {
 
 	it( 'shows a notice and restores the button when an unsave fails', async () => {
 		const user = userEvent.setup();
-		mockKeys( [ SAVED_KEY ] );
-		nock( BASE )
-			.post( '/wpcom/v2/read/saved/delete', WRITE_BODY )
-			.reply( 500, { code: 'reader_saved_db_error', message: 'Could not update saved posts.' } );
-		mockKeys( [ SAVED_KEY ] );
+		mockKeys( [ SAVED_KEY ], 2 );
+		mockWrite( 'delete', 500, { code: 'reader_saved_db_error' } );
 		const { dispatch } = await renderLoadedButton();
 
 		await user.click( screen.getByRole( 'button', { name: 'Saved' } ) );

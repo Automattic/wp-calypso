@@ -6,6 +6,7 @@ import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { Post } from 'calypso/reader/data/post';
 import type { TrackPostData } from 'calypso/state/reader/analytics/types';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
@@ -13,8 +14,6 @@ interface ReaderSaveButtonProps {
 	post: Post;
 	iconSize?: number;
 }
-
-const NOTICE_OPTIONS = { duration: 5000 };
 
 // wpcom surfaces the WP REST error code on `.code` (proxy) or `.error` (xhr).
 function getErrorCode( error: unknown ) {
@@ -51,6 +50,8 @@ export default function ReaderSaveButton( { post, iconSize = 24 }: ReaderSaveBut
 	const { savePost, unsavePost, isPending } = useSavePost();
 	// Until the saved keys load, a click can't tell a save from an unsave.
 	const isDisabled = isPending || saved === undefined;
+	const showError = ( message: TranslateResult ) =>
+		dispatch( errorNotice( message, { duration: 5000 } ) );
 
 	const handleClick = () => {
 		if ( isDisabled ) {
@@ -59,32 +60,24 @@ export default function ReaderSaveButton( { post, iconSize = 24 }: ReaderSaveBut
 
 		if ( saved ) {
 			unsavePost( post, {
-				onError: () => {
-					dispatch(
-						errorNotice(
-							translate(
-								'Sorry, there was a problem removing that post from Saved. Please try again.'
-							),
-							NOTICE_OPTIONS
+				onError: () =>
+					showError(
+						translate(
+							'Sorry, there was a problem removing that post from Saved. Please try again.'
 						)
-					);
-				},
+					),
 			} );
 			recordAction( 'unsaved_post' );
 			recordGaEvent( 'Clicked Unsave Post' );
 			recordTrackForPost( 'calypso_reader_article_unsaved', post as unknown as TrackPostData );
 		} else {
 			savePost( post, {
-				onError: ( error ) => {
-					dispatch(
-						errorNotice(
-							getErrorCode( error ) === 'saved_limit_reached'
-								? translate( 'You’ve saved as many posts as you can. Remove some to save more.' )
-								: translate( 'Sorry, there was a problem saving that post. Please try again.' ),
-							NOTICE_OPTIONS
-						)
-					);
-				},
+				onError: ( error ) =>
+					showError(
+						getErrorCode( error ) === 'saved_limit_reached'
+							? translate( 'You’ve saved as many posts as you can. Remove some to save more.' )
+							: translate( 'Sorry, there was a problem saving that post. Please try again.' )
+					),
 			} );
 			recordAction( 'saved_post' );
 			recordGaEvent( 'Clicked Save Post' );

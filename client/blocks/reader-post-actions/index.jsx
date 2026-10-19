@@ -8,6 +8,7 @@ import CommentButton from 'calypso/blocks/comment-button';
 import ReaderSaveButton from 'calypso/blocks/reader-save-button';
 import ShareButton from 'calypso/blocks/reader-share';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
+import { canSavePost } from 'calypso/reader/data/saved-posts';
 import LikeButton from 'calypso/reader/like-button';
 import {
 	isCommentsOpen,
@@ -49,8 +50,7 @@ const ReaderPostActions = ( {
 	const showReblog = isRebloggable( post, hasSites );
 	const showComments = isCommentsOpen( post ) || post.discussion?.comment_count > 0;
 	const showLikes = isLikeable( post );
-	// `/read/saved` doesn't list RSS posts yet (READ-801).
-	const showSave = isEnabled( 'reader/saved-posts' ) && isLoggedIn && ! post.is_external;
+	const showSave = isEnabled( 'reader/saved-posts' ) && isLoggedIn && canSavePost( post );
 	const listClassnames = clsx( 'reader-post-actions', className, {
 		'is-discreet': variant === 'discreet',
 		'is-split': split,

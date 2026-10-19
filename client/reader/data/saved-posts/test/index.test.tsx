@@ -5,7 +5,7 @@ import { readSavedKeysQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { savedKeyForPost, useIsPostSaved, useSavePost } from '..';
+import { canSavePost, savedKeyForPost, useIsPostSaved, useSavePost } from '..';
 import type { ReadSavedKeysResponse } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
@@ -50,6 +50,17 @@ describe( 'savedKeyForPost', () => {
 		expect( savedKeyForPost( { ID: 1 } ) ).toBeNull();
 		expect( savedKeyForPost( { site_ID: 100 } ) ).toBeNull();
 		expect( savedKeyForPost( { is_external: true } ) ).toBeNull();
+	} );
+} );
+
+describe( 'canSavePost', () => {
+	it( 'allows a WordPress.com post', () => {
+		expect( canSavePost( WPCOM_POST ) ).toBe( true );
+	} );
+
+	it( 'does not allow an RSS post or a post without the IDs the API needs', () => {
+		expect( canSavePost( RSS_POST ) ).toBe( false );
+		expect( canSavePost( { ID: 1 } ) ).toBe( false );
 	} );
 } );
 
