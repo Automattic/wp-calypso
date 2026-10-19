@@ -81,7 +81,7 @@ export default function Thread( {
 	children?: ReactNode;
 } ) {
 	return (
-		<VStack as="ol" className="wpnc-simplified__thread" spacing={ 3 }>
+		<VStack as="ol" className="wpnc-simplified__thread" spacing={ 4 }>
 			{ repliedTo && (
 				<ThreadItem
 					avatar={ repliedTo.author_avatar }
