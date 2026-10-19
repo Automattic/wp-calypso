@@ -77,7 +77,6 @@ import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/src/components/checkout-order-banner';
-import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
 import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
@@ -667,7 +666,6 @@ export default function CheckoutMainContent( {
 	const isStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
 
-	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter, showHelpIcon } =
@@ -1139,16 +1137,7 @@ export default function CheckoutMainContent( {
 	if ( ! isStepContainerV2 ) {
 		return (
 			<SubmitButtonSlotContext.Provider value={ submitButtonSlotValue }>
-				<WPCheckoutWrapper
-					className="checkout-wrapper"
-					isLargeViewport={ isLargeViewport }
-					isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
-				>
-					{ isCheckoutUiRedesignV1 && ! isLargeViewport && (
-						<WPCheckoutTitle className="checkout__main-title checkout__redesign-header">
-							{ translate( 'Checkout' ) }
-						</WPCheckoutTitle>
-					) }
+				<WPCheckoutWrapper className="checkout-wrapper" isLargeViewport={ isLargeViewport }>
 					{ checkoutSummary }
 					{ checkoutMainContent }
 				</WPCheckoutWrapper>
@@ -1160,7 +1149,6 @@ export default function CheckoutMainContent( {
 		<SubmitButtonSlotContext.Provider value={ submitButtonSlotValue }>
 			<StepContainerV2CheckoutFixer
 				isLargeViewport={ isLargeViewport }
-				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
 				isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 			>
 				<Step.TwoColumnLayout
@@ -1226,9 +1214,6 @@ export default function CheckoutMainContent( {
 						return (
 							<>
 								{ topBar }
-								{ isCheckoutUiRedesignV1 && (
-									<Step.Heading text={ translate( 'Checkout' ) } align="left" size="small" />
-								) }
 								{ ! isMobileCheckoutStickySummary && checkoutSummary }
 							</>
 						);
@@ -1262,8 +1247,7 @@ export default function CheckoutMainContent( {
  * Styles for the mobile sticky order summary experiment
  * (`calypso_mobile_checkout_sticky_summary_v1_1`).
  *
- * Interpolated last in `StepContainerV2CheckoutFixer` so that for a user
- * enrolled in both this and the checkout UI redesign, these rules win the
+ * Interpolated last in `StepContainerV2CheckoutFixer` so these rules win the
  * cascade. `isMobileCheckoutStickySummary` is already false above the `small`
  * breakpoint, so no additional viewport guard is needed here.
  */
@@ -1686,7 +1670,6 @@ const mobileCheckoutStickySummaryStyles = css`
 
 const StepContainerV2CheckoutFixer = styled.div< {
 	isLargeViewport: boolean;
-	isCheckoutUiRedesignV1?: boolean;
 	isMobileCheckoutStickySummary?: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
@@ -1900,292 +1883,6 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			 */
 			.checkout__summary-area > * {
 				flex-shrink: 0;
-			}
-		` }
-	${ ( props ) =>
-		props.isCheckoutUiRedesignV1 &&
-		! props.isLargeViewport &&
-		css`
-			.checkout-sidebar-content {
-				background: ${ colorStudio.colors[ 'White' ] };
-			}
-			.checkout__summary-area {
-				background: #f5f5f5;
-				border: 1px solid ${ colorStudio.colors[ 'Gray 10' ] };
-				border-radius: 8px;
-				margin: 12px 16px;
-				overflow: hidden;
-				width: calc( 100% - 32px );
-			}
-			.checkout__summary-button {
-				background: transparent;
-				border-bottom: none;
-			}
-			.checkout__summary-body {
-				padding-block-start: 0;
-			}
-			.wp-checkout-order-summary__section-title {
-				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
-				padding-top: 20px;
-			}
-			.step-container-v2__top-bar-wrapper .step-container-v2__heading {
-				padding-inline: 16px;
-				margin-bottom: 4px;
-			}
-			.checkout-main-content .step-container-v2__heading {
-				display: none;
-			}
-			.checkout-step {
-				padding: 16px 16px 48px 16px;
-			}
-		` }
-	${ ( props ) =>
-		props.isCheckoutUiRedesignV1 &&
-		css`
-			.checkout__main-title,
-			.step-container-v2__heading h1 {
-				font-size: 28px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-			}
-			.checkout__summary-card {
-				background: transparent;
-				box-shadow: none;
-				padding: 0;
-				padding-inline-end: 22px;
-				margin-bottom: 0;
-			}
-			.promo-card.checkout-sidebar-plan-upsell {
-				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
-				border-radius: 8px;
-				margin: 0;
-				max-width: none;
-				width: 100%;
-			}
-			.checkout-sidebar-plan-upsell__plan-grid > div {
-				border-top: none;
-			}
-			.item-variation-picker {
-				background: #ffffff;
-				border: 1px solid #e0e0e0;
-				border-radius: 8px;
-				overflow: hidden;
-				padding: 0;
-			}
-			.item-variation-picker > li {
-				margin: 0;
-				border-bottom: 1px solid #f0f0f0;
-			}
-			.item-variation-picker > li:last-child {
-				border-bottom: none;
-			}
-			.item-variation-picker > li > div.is-checked {
-				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
-			}
-			.item-variation-picker > li > div::before,
-			.item-variation-picker > li > div:hover::before {
-				border: none;
-			}
-			.item-variation-picker > li > div > label {
-				min-height: 52px;
-			}
-			.checkout-step__stepper > div > div:first-child {
-				border: 1px solid ${ colorStudio.colors[ 'Gray 90' ] };
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-				font-weight: 600;
-			}
-			.checkout-payment-methods {
-				background: #ffffff;
-				border: 1px solid #e0e0e0;
-				border-radius: 8px;
-				overflow: hidden;
-				padding-top: 0;
-			}
-			.checkout-payment-methods .has-highlight,
-			.item-variation-picker > li > div {
-				border-radius: 0;
-			}
-			.checkout-payment-methods .has-highlight {
-				margin: 0;
-				border-bottom: 1px solid #f0f0f0;
-			}
-			.checkout-payment-methods .has-highlight:last-child {
-				border-bottom: none;
-			}
-			.checkout-payment-methods .has-highlight.is-checked {
-				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
-			}
-			.checkout-payment-methods .has-highlight::before,
-			.checkout-payment-methods .has-highlight:hover::before {
-				border: none;
-			}
-			.checkout-payment-methods .has-highlight > label {
-				min-height: 52px;
-				font-size: 13px;
-				font-weight: 400;
-			}
-			.checkout-payment-methods .payment-logos {
-				display: flex;
-				filter: none;
-			}
-			.checkout-payment-methods .StripeElement {
-				background-color: field;
-			}
-			div:has( > .credit-card-fields-inner-wrapper ) {
-				padding: 0 16px 16px 16px;
-			}
-			.checkout-steps__step-complete-content .checkout-payment-methods {
-				background: white;
-				padding: 12px 16px;
-				min-height: 52px;
-				display: flex;
-				align-items: center;
-				box-sizing: border-box;
-				font-size: 15px;
-				font-weight: 500;
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-			}
-			.checkout-contact-form-step .checkout-steps__step-complete-content {
-				font-weight: 500;
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-			}
-			.checkout-contact-form-step .checkout-steps__step-complete-content ul:empty {
-				display: none;
-			}
-			.checkout-contact-form-step .checkout-steps__step-complete-content ul {
-				margin-top: 0;
-			}
-			.checkout-step__edit-button {
-				padding: 4px;
-				display: flex;
-				align-items: center;
-				line-height: 1;
-			}
-			.checkout-step__header h2 {
-				font-size: 15px;
-			}
-			.checkout-step__header h2 > span {
-				font-weight: 590;
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-			}
-			.checkout-step--active .checkout-step__header,
-			.checkout-step--complete .checkout-step__header {
-				margin-block-end: 24px;
-			}
-			.wp-checkout__review-order-step .checkout-step__header h2 > span {
-				font-weight: 500;
-			}
-			.wp-checkout-order-review__show-coupon-field-button {
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-				font-weight: 500;
-				text-decoration: none;
-			}
-			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
-				margin-block-start: -4px;
-				padding-block-start: 0;
-			}
-			.wp-checkout__review-order-step .checkout-step__stepper {
-				@media ( max-width: 699px ) {
-					display: none;
-				}
-			}
-			.wp-checkout__review-order-step .checkout-step__header h2 {
-				font-size: 20px;
-			}
-			.wp-checkout__review-order-step .checkout-line-item {
-				font-size: 15px;
-			}
-			.wp-checkout__review-order-step .order-review-line-items {
-				margin-top: 0;
-			}
-			.wp-checkout__review-order-step .checkout-review-order__site {
-				font-size: 13px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 40' ] };
-				@media ( ${ props.theme.breakpoints.tabletUp } ) {
-					margin-top: 0;
-				}
-			}
-			.checkout-contact-form-step .checkout-steps__step-content > p {
-				font-size: 12px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 40' ] };
-			}
-			.checkout__terms strong {
-				font-size: 16px;
-				font-weight: 500;
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-			}
-			.checkout__terms-item {
-				font-size: 12px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 40' ] };
-			}
-			.checkout__summary-title {
-				font-size: 13px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-			}
-			.checkout__summary-body {
-				color: ${ colorStudio.colors[ 'Gray 70' ] };
-			}
-			.wp-checkout-order-summary__subtotal,
-			.wp-checkout-order-summary__total {
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-				font-size: 13px;
-				line-height: 20px;
-			}
-			.wp-checkout-order-summary__subtotal .wp-checkout-order-summary__subtotal-price {
-				font-size: 13px;
-			}
-			.wp-checkout-order-summary__line-item,
-			.wp-checkout-order-summary__tax-not-calculated {
-				font-size: 13px;
-			}
-			.wp-checkout-order-summary__section-title {
-				margin-bottom: 0;
-			}
-			.wp-checkout-order-summary__section-title > span {
-				display: none;
-			}
-			.cost-overrides-list-product-wrapper,
-			:has( > .cost-overrides-list-item--coupon ) {
-				padding-inline-start: 0;
-			}
-			.cost-overrides-list-product-wrapper > svg[aria-hidden='true'],
-			:has( > .cost-overrides-list-item--coupon ) > svg[aria-hidden='true'] {
-				display: none;
-			}
-			.wp-checkout-order-summary__amount-wrapper {
-				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
-			}
-			.wp-checkout-order-summary__subtotal-section {
-				border-bottom: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
-			}
-			.checkout-terms-and-checkboxes {
-				padding-block-start: 24px;
-			}
-			.checkout-terms-and-checkboxes > *:first-child {
-				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
-			}
-			.checkout-steps__submit-footer-wrapper > div {
-				margin-top: 8px;
-			}
-			.checkout-steps__submit-footer-wrapper > div > svg {
-				display: none;
-			}
-			.checkout-steps__submit-footer-wrapper > div > p {
-				font-size: 13px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 70' ] };
-			}
-		` }
-	${ ( props ) =>
-		props.isCheckoutUiRedesignV1 &&
-		props.isLargeViewport &&
-		css`
-			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
-				padding-block-start: 24px;
 			}
 		` }
 	${ ( props ) => props.isMobileCheckoutStickySummary && mobileCheckoutStickySummaryStyles }
@@ -2573,7 +2270,6 @@ const SubmitButtonHeaderWrapper = styled.div`
 
 const WPCheckoutWrapper = styled.div< {
 	isLargeViewport?: boolean;
-	isCheckoutUiRedesignV1?: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
@@ -2601,18 +2297,14 @@ const WPCheckoutWrapper = styled.div< {
 		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
 
-	${ ( props ) =>
-		! props.isCheckoutUiRedesignV1 &&
-		css`
-			/* Flat sidebar cards: a hairline one step lighter than the plan
-			   option borders (Gray 10), with the same 3px radius. */
-			.checkout__summary-card,
-			.checkout-sidebar-plan-upsell.card {
-				box-shadow: none;
-				border: 1px solid var( --studio-gray-5 );
-				border-radius: 3px;
-			}
-		` }
+	/* Flat sidebar cards: a hairline one step lighter than the plan
+	   option borders (Gray 10), with the same 3px radius. */
+	.checkout__summary-card,
+	.checkout-sidebar-plan-upsell.card {
+		box-shadow: none;
+		border: 1px solid var( --studio-gray-5 );
+		border-radius: 3px;
+	}
 
 	.checkout__summary-area {
 		position: sticky;
@@ -2657,341 +2349,6 @@ const WPCheckoutWrapper = styled.div< {
 			 */
 			.checkout__summary-area > * {
 				flex-shrink: 0;
-			}
-		` }
-	${ ( props ) =>
-		props.isCheckoutUiRedesignV1 &&
-		! props.isLargeViewport &&
-		css`
-			grid-template-areas:
-				'checkout-title-area'
-				'sidebar-content'
-				'main-content';
-			.checkout-sidebar-content {
-				background: ${ colorStudio.colors[ 'White' ] };
-			}
-			.checkout__summary-area {
-				background: #f5f5f5;
-				border: 1px solid ${ colorStudio.colors[ 'Gray 10' ] };
-				border-radius: 8px;
-				margin: 12px 16px;
-				overflow: hidden;
-				width: calc( 100% - 32px );
-			}
-			.checkout__summary-button {
-				background: transparent;
-				border-bottom: none;
-			}
-			.checkout__summary-body {
-				padding-block-start: 0;
-			}
-			.wp-checkout-order-summary__section-title {
-				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
-				padding-top: 20px;
-			}
-			.checkout__redesign-header {
-				grid-area: checkout-title-area;
-				margin-top: var( --masterbar-checkout-height );
-				margin-bottom: 12px;
-				padding-inline: 16px;
-			}
-			.checkout-sidebar-content {
-				margin-top: 0;
-			}
-			.checkout-main-content .checkout__main-title {
-				display: none;
-			}
-			.checkout-main-content {
-				margin-top: 12px;
-			}
-			.wp-checkout__review-order-step {
-				padding-block-start: 0;
-			}
-			.checkout-step {
-				padding: 16px 16px 48px 16px;
-			}
-		` }
-	${ ( props ) =>
-		props.isCheckoutUiRedesignV1 &&
-		css`
-			.checkout__main-title,
-			.step-container-v2__heading h1 {
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-
-				@media ( max-width: 699px ) {
-					font-size: 28px;
-				}
-			}
-			.checkout__summary-card {
-				background: transparent;
-				box-shadow: none;
-				padding: 0;
-				margin-bottom: 0;
-			}
-			@media ( ${ props.theme.breakpoints.desktopUp } ) {
-				.checkout__summary-card {
-					background: ${ colorStudio.colors[ 'White' ] };
-					border: 1px solid ${ colorStudio.colors[ 'Gray 5' ] };
-					border-radius: 8px;
-					padding: 24px;
-				}
-			}
-			.promo-card.checkout-sidebar-plan-upsell {
-				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
-				border-radius: 8px;
-				margin: 0;
-				max-width: none;
-				width: 100%;
-			}
-			.checkout-sidebar-plan-upsell__plan-grid > div {
-				border-top: none;
-			}
-			.item-variation-picker {
-				background: #ffffff;
-				border: 1px solid #e0e0e0;
-				border-radius: 8px;
-				overflow: hidden;
-				padding: 0;
-			}
-			.item-variation-picker > li {
-				margin: 0;
-				border-bottom: 1px solid #f0f0f0;
-			}
-			.item-variation-picker > li:last-child {
-				border-bottom: none;
-			}
-			.item-variation-picker > li > div.is-checked {
-				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
-			}
-			.item-variation-picker > li > div::before,
-			.item-variation-picker > li > div:hover::before {
-				border: none;
-			}
-			.item-variation-picker > li > div > label {
-					min-height: 64px;
-					padding-top: 2px;
-					padding-bottom: 0;
-				@media ( ${ props.theme.breakpoints.desktopUp } ) {
-					min-height: 72px;
-				}
-			}
-			.checkout-step__stepper > div > div:first-child {
-				border: 1px solid ${ colorStudio.colors[ 'Gray 90' ] };
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-				font-weight: 600;
-			}
-			.checkout-payment-methods {
-				background: #ffffff;
-				border: 1px solid #e0e0e0;
-				border-radius: 8px;
-				overflow: hidden;
-				padding-top: 0;
-			}
-			.checkout-payment-methods .has-highlight,
-			.item-variation-picker > li > div {
-				border-radius: 0;
-			}
-			.checkout-payment-methods .has-highlight {
-				margin: 0;
-				border-bottom: 1px solid #f0f0f0;
-			}
-			.checkout-payment-methods .has-highlight:last-child {
-				border-bottom: none;
-			}
-			.checkout-payment-methods .has-highlight.is-checked {
-				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
-			}
-			.checkout-payment-methods .has-highlight::before,
-			.checkout-payment-methods .has-highlight:hover::before {
-				border: none;
-			}
-			.checkout-payment-methods .has-highlight > label {
-				font-size: 13px;
-				font-weight: 400;
-			}
-			.checkout-payment-methods .payment-logos {
-				display: flex;
-				filter: none;
-			}
-			.checkout-payment-methods .StripeElement {
-				background-color: field;
-			}
-			div:has( > .credit-card-fields-inner-wrapper ) {
-				padding: 0 16px 16px 16px;
-			}
-			.checkout-steps__step-complete-content .checkout-payment-methods {
-				background: white;
-				padding: 12px 16px;
-				min-height: 52px;
-				display: flex;
-				align-items: center;
-				box-sizing: border-box;
-				font-size: 15px;
-				font-weight: 500;
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-			}
-			.checkout-contact-form-step .checkout-steps__step-complete-content {
-				font-weight: 500;
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-			}
-			.checkout-contact-form-step .checkout-steps__step-complete-content ul:empty {
-				display: none;
-			}
-			.checkout-contact-form-step .checkout-steps__step-complete-content ul {
-				margin-top: 0;
-			}
-			.checkout-step__edit-button {
-				padding: 4px;
-				display: flex;
-				align-items: center;
-				line-height: 1;
-			}
-
-			.checkout-step__header h2 > span {
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-				font-size: 18px;
-					@media ( ${ props.theme.breakpoints.desktopUp } ) {
-						font-size: 20px;
-					}
-				}
-
-			.checkout-step__header {
-				margin-bottom: 16px;
-			}
-
-			.wp-checkout__review-order-step .checkout-step__header {
-				margin-bottom: 0;
-			}
-
-			.checkout-line-item {
-				padding-top: 24px;
-				padding-bottom: 0;
-			}
-
-			.wp-checkout__review-order-step .checkout-step__header h2 > span {
-				font-weight: 500;
-			}
-			.wp-checkout-order-review__show-coupon-field-button {
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-				font-weight: 500;
-				text-decoration: none;
-			}
-			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
-				margin-block-start: -4px;
-				padding-block-start: 0;
-			}
-			.wp-checkout__review-order-step .checkout-step__stepper {
-				@media ( max-width: 699px ) {
-					display: none;
-				}
-			}
-			.wp-checkout__review-order-step .checkout-step__header h2 {
-				font-size: 20px;
-			}
-			.wp-checkout__review-order-step .checkout-line-item {
-				font-size: 15px;
-			}
-			.wp-checkout__review-order-step .order-review-line-items {
-				margin-top: 0;
-			}
-			.wp-checkout__review-order-step .checkout-review-order__site {
-				font-size: 14px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 50' ] };
-				@media ( ${ props.theme.breakpoints.tabletUp } ) {
-					margin-top: 0;
-				}
-			}
-			.checkout-contact-form-step .checkout-steps__step-content > p {
-				font-size: 12px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 40' ] };
-			}
-			.checkout__terms strong {
-				font-size: 16px;
-				font-weight: 500;
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-			}
-			.checkout__terms-item {
-				font-size: 12px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 40' ] };
-			}
-			.checkout__summary-title {
-				font-size: 13px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-			}
-			.checkout__summary-body {
-				color: ${ colorStudio.colors[ 'Gray 70' ] };
-			}
-			.wp-checkout-order-summary__subtotal,
-			.wp-checkout-order-summary__total {
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-				font-size: 16px;
-				line-height: 20px;
-				margin-bottom: 0;
-			}
-			.wp-checkout-order-summary__subtotal:first-child,
-			.wp-checkout-order-summary__total:first-child {
-				margin-bottom: 4px;
-			}
-			.wp-checkout-order-summary__subtotal .wp-checkout-order-summary__subtotal-price {
-				font-size: 14px;
-			}
-			.wp-checkout-order-summary__line-item,
-			.wp-checkout-order-summary__tax-not-calculated {
-				font-size: 13px;
-			}
-			.wp-checkout-order-summary__section-title {
-				margin-bottom: 0;
-			}
-			.wp-checkout-order-summary__section-title > span {
-				display: none;
-			}
-			.cost-overrides-list-product-wrapper,
-			:has( > .cost-overrides-list-item--coupon ) {
-				padding-inline-start: 0;
-			}
-			.cost-overrides-list-product-wrapper > svg[aria-hidden='true'],
-			:has( > .cost-overrides-list-item--coupon ) > svg[aria-hidden='true'] {
-				display: none;
-			}
-			.wp-checkout-order-summary__amount-wrapper {
-				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };
-			}
-			.wp-checkout-order-summary__subtotal-section {
-				border-top: 0;
-				border-bottom: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };S
-			}
-			.checkout-terms-and-checkboxes {
-				padding-block-start: 24px;
-			}
-			.checkout-terms-and-checkboxes > *:first-child {
-				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };
-			}
-			.checkout-steps__submit-footer-wrapper > div {
-				margin-top: 8px;
-			}
-			.checkout-steps__submit-footer-wrapper > div > svg {
-				display: none;
-			}
-			.checkout-steps__submit-footer-wrapper > div > p {
-				font-size: 13px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 70' ] };
-			}
-		` }
-	${ ( props ) =>
-		props.isCheckoutUiRedesignV1 &&
-		props.isLargeViewport &&
-		css`
-			.checkout__summary-area {
-				padding-top: 50px;
-			}
-			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
-				padding-block-start: 24px;
 			}
 		` }
 `;
