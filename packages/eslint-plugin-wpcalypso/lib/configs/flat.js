@@ -58,7 +58,7 @@ const react = ( plugin ) => [
 	...plugin.configs.recommended,
 	{
 		name: 'wpcalypso/react',
-		languageOptions: { sourceType: 'module', parserOptions: { ecmaFeatures: { jsx: true } } },
+		languageOptions: { sourceType: 'module' },
 		plugins: {
 			react: load( 'eslint-plugin-react' ),
 			'react-hooks': load( 'eslint-plugin-react-hooks' ),
