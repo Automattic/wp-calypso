@@ -7,7 +7,7 @@ The WordPress journey is gated by `migration/reprint-flow`, which defaults to fa
 ## Entry points
 
 - `/setup/site-migration`: the user enters their site address.
-- `/setup/site-migration/site-migration-identify?from=<url>&start=true`: hands over an address the user already submitted elsewhere, such as a landing page. With the flag on, identify checks it right away and drops `start`, so going back shows the address form.
+- `/setup/site-migration/site-migration-identify?from=<url>&start=true`: hands over an address the user already submitted elsewhere, such as a landing page. With the flag on, identify checks it once on arrival; going back to identify shows the address form.
 - Landing pages built with landpack's `url-analyzer` block (e.g. `/move`) currently run their own analysis and link WordPress sources to `sitePicker?from=<url>&platform=wordpress&start=true`. With the flag on, `initialize` rewrites those to identify. Once the flag ships, point the block at identify and drop its routing and this rewrite.
 
 ## Handoff

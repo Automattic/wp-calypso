@@ -97,7 +97,8 @@ function initialize() {
 		matchPath( '/setup/:flow/sitePicker/:lang?', pathname ) &&
 		query.get( 'start' ) === 'true' &&
 		query.get( 'platform' ) === 'wordpress' &&
-		query.get( 'from' )
+		query.get( 'from' ) &&
+		! query.get( 'sessionId' )
 	) {
 		window.history.replaceState(
 			null,
@@ -194,14 +195,22 @@ const siteMigration: FlowV2< typeof initialize > = {
 	useStepsProps() {
 		const { __ } = useI18n();
 		const { siteId, siteSlug, site } = useSiteData();
-		const { isError: hasSiteError } = useSiteQuery();
+		const { isError: hasSiteError, refetch: refetchSite } = useSiteQuery();
 		const query = useQuery();
-		const handoff = useFlowState().get( 'migrationHandoff' );
+		const flowState = useFlowState();
+		const handoff = flowState.get( 'migrationHandoff' );
 		const hasDestination =
 			config.isEnabled( 'migration/reprint-flow' ) &&
 			query.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
 			!! ( siteId || siteSlug );
 		return {
+			'site-migration-identify': {
+				// A landing page hands over an address the user already submitted, so check it once on arrival.
+				checkOnArrival:
+					config.isEnabled( 'migration/reprint-flow' ) &&
+					query.get( 'start' ) === 'true' &&
+					! flowState.get( 'migrationArrivalChecked' ),
+			},
 			sitePicker: {
 				skipConfirmation:
 					config.isEnabled( 'migration/reprint-flow' ) &&
@@ -229,6 +238,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 				needsUpgrade: hasDestination && !! site?.plan && ! canInstallPlugins( site ),
 				isLoadingDestination: hasDestination && ! site?.plan && ! hasSiteError,
 				destinationFailed: hasDestination && hasSiteError,
+				onRetryDestination: refetchSite,
 			},
 			plans: {
 				headerText: __( 'Ready to migrate' ),
@@ -446,6 +456,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 						host?: string;
 						isWpcom?: boolean;
 					};
+					if ( slug === STEPS.SITE_MIGRATION_IDENTIFY.slug && ! get( 'migrationArrivalChecked' ) ) {
+						queryClient.setQueryData< Partial< FlowStateManifest > >( queryKey, ( state ) => ( {
+							...state,
+							migrationArrivalChecked: true,
+						} ) );
+					}
 					if (
 						slug === STEPS.SITE_MIGRATION_CHECK.slug &&
 						( action === 'back' ||

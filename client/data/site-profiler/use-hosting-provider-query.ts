@@ -13,15 +13,16 @@ export const useHostingProviderQuery = ( domain: string, isValid?: boolean, time
 			if ( ! timeout ) {
 				return request;
 			}
+			let timer: ReturnType< typeof setTimeout > | undefined;
 			return Promise.race( [
 				request,
-				new Promise< never >( ( _resolve, reject ) =>
-					setTimeout(
+				new Promise< never >( ( _resolve, reject ) => {
+					timer = setTimeout(
 						() => reject( new Error( 'The hosting provider lookup timed out.' ) ),
 						timeout
-					)
-				),
-			] );
+					);
+				} ),
+			] ).finally( () => clearTimeout( timer ) );
 		},
 		meta: {
 			persist: false,

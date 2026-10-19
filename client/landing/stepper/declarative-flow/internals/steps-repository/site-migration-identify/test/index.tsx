@@ -6,7 +6,7 @@ import config from '@automattic/calypso-config';
 import { act, configure, getConfig, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { MemoryRouter, useLocation } from 'react-router';
+import { MemoryRouter } from 'react-router';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import SiteMigrationIdentify from '..';
 import { UrlData } from '../../../../../../../blocks/import/types';
@@ -365,23 +365,16 @@ describe( 'SiteMigrationIdentify', () => {
 			);
 		} );
 
-		it( 'checks a landing page address right away and drops the start marker', async () => {
+		it( 'checks a handed-over address right away', async () => {
 			const submit = jest.fn();
-			const LocationSearch = () => <output data-testid="search">{ useLocation().search }</output>;
 			mockAnalysis( API_RESPONSE_WORDPRESS_PLATFORM );
 			mockHost();
 			renderStep(
-				<>
-					<SiteMigrationIdentify { ...mockStepProps( { navigation: { submit } } ) } />
-					<LocationSearch />
-				</>,
+				<SiteMigrationIdentify { ...mockStepProps( { navigation: { submit } } ) } checkOnArrival />,
 				{ initialEntry: '/some-path?from=https://example.com&start=true&platform=wordpress' }
 			);
 
 			expect( screen.getByRole( 'heading', { name: 'Checking your site' } ) ).toBeVisible();
-			expect( screen.getByTestId( 'search' ) ).toHaveTextContent(
-				'?from=https%3A%2F%2Fexample.com&platform=wordpress'
-			);
 			await waitFor( () =>
 				expect( submit ).toHaveBeenCalledWith( {
 					action: 'continue',
@@ -390,6 +383,18 @@ describe( 'SiteMigrationIdentify', () => {
 					host: 'bluehost',
 				} )
 			);
+		} );
+
+		it( 'leaves a handed-over address in the form unless the flow asks for a check', () => {
+			const submit = jest.fn();
+			render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=https://example.com&start=true&platform=wordpress' }
+			);
+
+			expect( screen.getByRole( 'heading', { name: "Let's find your site" } ) ).toBeVisible();
+			expect( getInput() ).toHaveValue( 'https://example.com' );
+			expect( submit ).not.toHaveBeenCalled();
 		} );
 
 		it( 'keeps a quick check on screen for a moment before its outcome', async () => {
@@ -427,8 +432,8 @@ describe( 'SiteMigrationIdentify', () => {
 
 		it( 'shows the form for an invalid landing page address', () => {
 			const submit = jest.fn();
-			render(
-				{ navigation: { submit } },
+			renderStep(
+				<SiteMigrationIdentify { ...mockStepProps( { navigation: { submit } } ) } checkOnArrival />,
 				{ initialEntry: '/some-path?from=not%20a%20url&start=true' }
 			);
 

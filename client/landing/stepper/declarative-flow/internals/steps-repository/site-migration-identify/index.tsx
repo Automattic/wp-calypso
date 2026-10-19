@@ -7,13 +7,13 @@ import { next, published, shield } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
 import { CAPTURE_URL_RGX, convertPlatformName } from 'calypso/blocks/import/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { urlToDomain } from 'calypso/lib/url';
 import { ChecklistCard } from '../../components/checklist-card';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
@@ -291,6 +291,7 @@ export const Analyzer: FC< Props > = ( {
 export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
 
 const SiteMigrationIdentify: StepType< {
+	accepts: { checkOnArrival?: boolean };
 	submits:
 		| {
 				action: SiteMigrationIdentifyAction;
@@ -300,7 +301,7 @@ const SiteMigrationIdentify: StepType< {
 				isWpcom?: boolean;
 		  }
 		| undefined;
-} > = function ( { navigation, flow } ) {
+} > = function ( { navigation, flow, checkOnArrival = false } ) {
 	const translate = useTranslate();
 	const isReprintFlow = config.isEnabled( 'migration/reprint-flow' );
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
@@ -322,25 +323,14 @@ const SiteMigrationIdentify: StepType< {
 		[ navigation, createScreenshots ]
 	);
 
-	const [ urlQueryParams, setUrlQueryParams ] = useSearchParams();
-	// Landing pages hand over an address the user already submitted there, so check it right away.
-	const isLandingPageEntry = isReprintFlow && urlQueryParams.get( 'start' ) === 'true';
+	const urlQueryParams = useQuery();
 
 	const [ siteURL, setSiteURL ] = useState( () => {
 		const from = urlQueryParams.get( 'from' ) || '';
-		return isLandingPageEntry && CAPTURE_URL_RGX.test( from ) ? from : '';
+		return checkOnArrival && CAPTURE_URL_RGX.test( from ) ? from : '';
 	} );
 	const [ isVisible, setIsVisible ] = useState( ! siteURL );
 	const [ connectionIssue, setConnectionIssue ] = useState< ConnectionIssue >();
-
-	// Drop the one-shot marker so returning to this step shows the form instead of re-checking.
-	useEffect( () => {
-		if ( isLandingPageEntry ) {
-			const params = new URLSearchParams( urlQueryParams );
-			params.delete( 'start' );
-			setUrlQueryParams( params, { replace: true } );
-		}
-	}, [ isLandingPageEntry, urlQueryParams, setUrlQueryParams ] );
 
 	useEffect( () => {
 		const onPageShow = ( event: PageTransitionEvent ) => {

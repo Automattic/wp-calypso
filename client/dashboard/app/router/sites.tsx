@@ -1773,10 +1773,6 @@ export const siteMigrationOverviewRoute = createRoute( {
 		if ( ! isSiteMigrationInProgress( site ) ) {
 			throw dashboardRedirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
 		}
-
-		return {
-			site,
-		};
 	},
 	loader: async ( { params: { siteSlug } } ) => ( {
 		site: await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),

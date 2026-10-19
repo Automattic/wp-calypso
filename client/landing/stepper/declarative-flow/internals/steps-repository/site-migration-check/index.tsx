@@ -11,7 +11,7 @@ import type { Step as StepType } from '../../types';
 
 import './style.scss';
 
-const COMPARISON_PREVIEW_OPTIONS = {
+const PREVIEW_OPTIONS = {
 	vpw: 1200,
 	vph: 800,
 	w: 1200,
@@ -28,6 +28,7 @@ const SiteMigrationCheck: StepType< {
 		needsUpgrade?: boolean;
 		isLoadingDestination?: boolean;
 		destinationFailed?: boolean;
+		onRetryDestination?: () => void;
 	};
 	submits:
 		| { action: 'back' }
@@ -45,6 +46,7 @@ const SiteMigrationCheck: StepType< {
 	needsUpgrade,
 	isLoadingDestination,
 	destinationFailed,
+	onRetryDestination,
 } ) => {
 	const translate = useTranslate();
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
@@ -57,7 +59,7 @@ const SiteMigrationCheck: StepType< {
 	const { protocol, hostname } = getUrlParts( from );
 	const hasSource =
 		!! hostname && ( protocol === 'http:' || protocol === 'https:' ) && platform === 'wordpress';
-	const hasDestination = ! showChoices && !! destinationSiteSlug;
+	const hasDestination = ! showChoices && ( !! destinationSiteSlug || !! destinationFailed );
 	const showUpgrade = hasDestination && needsUpgrade;
 	const showComparison = hasDestination && ! needsUpgrade;
 	let continueLabel = translate( 'Continue' );
@@ -148,6 +150,11 @@ const SiteMigrationCheck: StepType< {
 							>
 								{ translate( 'Use a different site' ) }
 							</Step.PrimaryButton>
+							{ onRetryDestination && (
+								<Step.LinkButton onClick={ onRetryDestination }>
+									{ translate( 'Try again' ) }
+								</Step.LinkButton>
+							) }
 						</div>
 					</div>
 				) }
@@ -200,7 +207,7 @@ const SiteMigrationCheck: StepType< {
 										<SitePreview
 											url={ from }
 											label={ translate( 'Source site to be copied' ) }
-											mshotsOptions={ COMPARISON_PREVIEW_OPTIONS }
+											mshotsOptions={ PREVIEW_OPTIONS }
 										/>
 										<p className="site-migration-check__preview-description">
 											{ translate(
@@ -232,7 +239,7 @@ const SiteMigrationCheck: StepType< {
 										<SitePreview
 											url={ destinationSiteUrl || `https://${ destinationSiteSlug }` }
 											label={ translate( 'Current destination site' ) }
-											mshotsOptions={ COMPARISON_PREVIEW_OPTIONS }
+											mshotsOptions={ PREVIEW_OPTIONS }
 										/>
 										<p className="site-migration-check__preview-description">
 											{ translate( 'All of the content on this site will be replaced.' ) }
@@ -240,7 +247,7 @@ const SiteMigrationCheck: StepType< {
 									</div>
 								</div>
 							) : (
-								<SitePreview />
+								<SitePreview mshotsOptions={ PREVIEW_OPTIONS } />
 							) }
 							<div className="site-migration-check__card">
 								{ showUpgrade && (

@@ -91,13 +91,15 @@ describe( 'SiteMigrationCheck', () => {
 		} );
 	} );
 
-	it( 'offers another site when the destination can’t be loaded', async () => {
+	it( 'offers another site or a retry when the destination can’t be loaded', async () => {
 		const submit = jest.fn();
+		const retry = jest.fn();
 		renderStep(
 			<SiteMigrationCheck
 				{ ...mockStepProps( { navigation: { submit } } ) }
 				destinationSiteSlug="destination.wordpress.com"
 				destinationFailed
+				onRetryDestination={ retry }
 			/>,
 			{ initialEntry: '/site-migration-check?from=https://example.com&platform=wordpress' }
 		);
@@ -108,6 +110,9 @@ describe( 'SiteMigrationCheck', () => {
 		expect(
 			screen.queryByRole( 'img', { name: 'Source site to be copied' } )
 		).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Migrate example.com' } ) ).toBeVisible();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+		expect( retry ).toHaveBeenCalledTimes( 1 );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Use a different site' } ) );
 		expect( submit ).toHaveBeenCalledWith( {
 			action: 'select-existing-site',
@@ -170,6 +175,10 @@ describe( 'SiteMigrationCheck', () => {
 		expect( screen.getByRole( 'heading', { name: 'We can copy your whole site' } ) ).toBeVisible();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'Site preview' ) ).toBeVisible();
+		expect( screen.getByRole( 'img', { name: 'Site preview' } ) ).toHaveAttribute(
+			'data-viewport',
+			'1200x800'
+		);
 		expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toHaveAttribute(
 			'href',
 			'https://example.com'
