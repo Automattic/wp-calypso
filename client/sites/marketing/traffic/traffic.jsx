@@ -46,8 +46,9 @@ const loadVisibilityNotice = () =>
 		/* webpackChunkName: "async-load-calypso-my-sites-site-settings-seo-settings-visibility-notice" */ 'calypso/my-sites/site-settings/seo-settings/visibility-notice'
 	);
 
-// The new Jetpack › SEO page covers SEO, Sitemaps and Site verification. The site's
-// admin menu lists it only once the page is live there, so it follows the site's own rollout.
+// Temporary: detects the new Jetpack › SEO page from the site's admin menu, which lists it
+// only once the page is live there. The page covers SEO, Sitemaps and Site verification, so
+// once a rollback is unlikely, remove this check and the legacy cards it hides.
 export const isJetpackSeoPageAvailable = ( state, siteId ) => {
 	const menu = getAdminMenu( state, siteId ) ?? [];
 
