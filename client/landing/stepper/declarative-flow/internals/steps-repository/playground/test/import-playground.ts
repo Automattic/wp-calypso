@@ -4,7 +4,11 @@
 import wpcomRequest from 'wpcom-proxy-request';
 import { updateImporter, uploadExportFile } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
-import { importPlaygroundSite, startPlaygroundImportIfReady } from '../lib/import-playground';
+import {
+	ImportFailureError,
+	importPlaygroundSite,
+	startPlaygroundImportIfReady,
+} from '../lib/import-playground';
 import type { ImportJob } from 'calypso/blocks/importer/types';
 
 jest.mock( 'calypso/state/imports/actions', () => ( {
@@ -109,9 +113,7 @@ describe( 'importPlaygroundSite', () => {
 		} );
 		const onProgress = jest.fn();
 
-		await expect(
-			importPlaygroundSite( 'slug', siteId, { waitForCompletion: true, onProgress } )
-		).resolves.toBe( 'import-id' );
+		await expect( importPlaygroundSite( 'slug', siteId, onProgress ) ).resolves.toBe( 'import-id' );
 
 		expect( onProgress.mock.calls.map( ( [ progress ] ) => progress ) ).toEqual( [
 			{ phase: 'packing' },
@@ -152,7 +154,7 @@ describe( 'importPlaygroundSite', () => {
 		jest.useFakeTimers();
 		const onProgress = jest.fn();
 
-		const result = importPlaygroundSite( 'slug', siteId, { waitForCompletion: true, onProgress } );
+		const result = importPlaygroundSite( 'slug', siteId, onProgress );
 		await jest.runAllTimersAsync();
 		await expect( result ).resolves.toBe( 'import-id' );
 		jest.useRealTimers();
@@ -198,7 +200,7 @@ describe( 'importPlaygroundSite', () => {
 		jest.useFakeTimers();
 		const onProgress = jest.fn();
 
-		const result = importPlaygroundSite( 'slug', siteId, { waitForCompletion: true, onProgress } );
+		const result = importPlaygroundSite( 'slug', siteId, onProgress );
 		await jest.runAllTimersAsync();
 		await expect( result ).resolves.toBe( 'import-id' );
 		jest.useRealTimers();
@@ -210,12 +212,17 @@ describe( 'importPlaygroundSite', () => {
 		expect( updateImporterMock ).not.toHaveBeenCalled();
 	} );
 
-	it( 'stops reporting after the upload when it does not wait for completion', async () => {
-		const onProgress = jest.fn();
+	it( 'fails when the server reports an import failure', async () => {
+		wpcomRequestMock.mockResolvedValue( {
+			importId: 'import-id',
+			importStatus: 'importFailure',
+			importerFileType: 'playground',
+			type: 'wordpress',
+			siteId,
+		} );
 
-		await importPlaygroundSite( 'slug', siteId, { onProgress } );
-
-		expect( onProgress ).toHaveBeenLastCalledWith( { phase: 'uploading', percent: undefined } );
-		expect( wpcomRequestMock ).not.toHaveBeenCalled();
+		await expect( importPlaygroundSite( 'slug', siteId ) ).rejects.toBeInstanceOf(
+			ImportFailureError
+		);
 	} );
 } );

@@ -137,29 +137,18 @@ foreach ( $plugins as $slug ) {
 }
 
 /**
- * Export the current Playground state and import it to a wp.com site.
- *
- * Pass waitForCompletion: true when the caller has no surrounding Redux
- * importer machinery (e.g. the entrepreneur flow). The default path starts
- * ready uploads immediately, then routes to importerWordpress for fallback
- * state transitions and completion monitoring.
+ * Export the current Playground state, import it to a wp.com site, and wait
+ * until the import finishes.
  *
  * onProgress reports each phase as it happens: packing the Playground site,
- * uploading it (with the browser's upload percentage when known), and, when
- * waiting for completion, the wait for the start trigger followed by every
- * polled import job status.
+ * uploading it (with the browser's upload percentage when known), waiting for
+ * the import to start, and then every polled import job status.
  */
 export async function importPlaygroundSite(
 	playgroundSlug: string,
 	siteId: number,
-	{
-		waitForCompletion = false,
-		onProgress,
-	}: {
-		waitForCompletion?: boolean;
-		onProgress?: ( progress: PlaygroundImportProgress ) => void;
-	} = {}
-): Promise< string | undefined > {
+	onProgress?: ( progress: PlaygroundImportProgress ) => void
+): Promise< string > {
 	onProgress?.( { phase: 'packing' } );
 	const siteZip = await getSiteZip( playgroundSlug );
 
@@ -175,19 +164,9 @@ export async function importPlaygroundSite(
 			} ),
 	} );
 	const importerStatus = toImportJob( importer );
-	let started = isImporting( importerStatus );
-
-	try {
-		started ||= await startPlaygroundImportIfReady( siteId, importerStatus );
-	} catch ( error ) {
-		if ( waitForCompletion ) {
-			throw error;
-		}
-	}
-
-	if ( ! waitForCompletion ) {
-		return importer.importId;
-	}
+	let started =
+		isImporting( importerStatus ) ||
+		( await startPlaygroundImportIfReady( siteId, importerStatus ) );
 
 	const importId: string = importer.importId;
 	onProgress?.( { phase: 'starting' } );
