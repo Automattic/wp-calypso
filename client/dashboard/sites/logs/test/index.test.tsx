@@ -90,36 +90,30 @@ describe( 'SiteLogs page', () => {
 	} );
 
 	test( 'URL from/to params are normalized from ms to seconds', async () => {
-		const replaceSpy = jest.spyOn( window.history, 'replaceState' );
-		const msFrom = 1730000000000; // ms
-		const msTo = 1730086400000; // ms
-		const originalHref = window.location.href;
-		Object.defineProperty( window, 'location', {
-			value: { href: `https://example.com?from=${ msFrom }&to=${ msTo }` },
-			writable: true,
+		const msFrom = Date.UTC( 2024, 9, 27, 0, 0, 0 );
+		const msTo = Date.UTC( 2024, 9, 28, 23, 59, 59 );
+		window.history.pushState( {}, '', `/?from=${ msFrom }&to=${ msTo }` );
+
+		const { router } = render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
+
+		await waitFor( () => {
+			expect( router.state.location.search ).toMatchObject( {
+				from: msFrom / 1000,
+				to: msTo / 1000,
+			} );
 		} );
+	} );
+
+	test( 'date range picker shows the dates from ms URL params', async () => {
+		const msFrom = Date.UTC( 2024, 9, 27, 0, 0, 0 );
+		const msTo = Date.UTC( 2024, 9, 28, 23, 59, 59 );
+		window.history.pushState( {}, '', `/?from=${ msFrom }&to=${ msTo }` );
 
 		render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
 
-		// Wait for the specific normalization to land. Waiting on a bare
-		// `replaceSpy.toHaveBeenCalled()` is flaky because the router fires
-		// its own `replaceState` during initial navigation, which can
-		// satisfy the waiter before the normalization effect has run.
-		await waitFor( () => {
-			const hrefArgs = replaceSpy.mock.calls
-				.map( ( call ) => call?.[ 2 ] )
-				.filter( ( v ): v is string => typeof v === 'string' );
-			expect(
-				hrefArgs.some( ( h ) => h.includes( `from=${ Math.floor( msFrom / 1000 ) }` ) )
-			).toBe( true );
-			expect( hrefArgs.some( ( h ) => h.includes( `to=${ Math.floor( msTo / 1000 ) }` ) ) ).toBe(
-				true
-			);
-		} );
-
-		// restore
-		Object.defineProperty( window, 'location', { value: { href: originalHref } } );
-		replaceSpy.mockRestore();
+		expect(
+			await screen.findByRole( 'button', { name: /^Date range:.*Oct 27, 2024.*Oct 28, 2024/ } )
+		).toBeVisible();
 	} );
 
 	test( 'auto-refresh is blocked for non-last-7 range and shows warning notice', async () => {

@@ -12,6 +12,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import fastDeepEqual from 'fast-deep-equal/es6';
 import { useMemo, useEffect, useCallback, useRef, useLayoutEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { parseUnixSecondsParam } from '../../../app/hooks/use-date-range';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../../app/performance-tracking';
 import { DataViews, DataViewsEmptyStateLayout } from '../../../components/dataviews';
@@ -92,22 +93,8 @@ function SiteLogsDataViews( {
 	// We want to parse 'from' and 'to' from the URL.
 	const parseUrlSeconds = useMemo( () => {
 		const searchParams = new URLSearchParams( search );
-
-		const readSeconds = ( key: 'from' | 'to' ) => {
-			const raw = searchParams.get( key );
-			if ( ! raw ) {
-				return null;
-			}
-			const number = Number.parseInt( raw, 10 );
-			if ( ! Number.isFinite( number ) ) {
-				return null;
-			}
-			// Enforce seconds-only here. The page-level normalizer will rewrite ms→s on mount.
-			return number > 1e11 ? null : number;
-		};
-
-		const from = readSeconds( 'from' );
-		const to = readSeconds( 'to' );
+		const from = parseUnixSecondsParam( searchParams.get( 'from' ) );
+		const to = parseUnixSecondsParam( searchParams.get( 'to' ) );
 		return from != null && to != null ? { from, to } : null;
 	}, [ search ] );
 

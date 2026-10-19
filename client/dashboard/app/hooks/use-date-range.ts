@@ -29,6 +29,23 @@ export function useDateRange( {
 
 	const lastUrlRangeRef = useRef< { from: number; to: number } | null >( null );
 
+	// Rewrite millisecond from/to params (older shared links) to canonical Unix seconds.
+	useEffect( () => {
+		const url = new URL( window.location.href );
+		let changed = false;
+		( [ 'from', 'to' ] as const ).forEach( ( key ) => {
+			const raw = url.searchParams.get( key );
+			const seconds = parseUnixSecondsParam( raw );
+			if ( seconds !== null && String( seconds ) !== raw ) {
+				url.searchParams.set( key, String( seconds ) );
+				changed = true;
+			}
+		} );
+		if ( changed ) {
+			window.history.replaceState( null, '', url.pathname + url.search + url.hash );
+		}
+	}, [] );
+
 	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
 		setDateRange( next );
 
@@ -106,14 +123,28 @@ export function getDefaultDateRange(
 }
 
 /**
+ * Parse a `from`/`to` URL param as Unix seconds. Values above 1e12 are treated as
+ * milliseconds, which older versions of the logs page used in shared links.
+ */
+export function parseUnixSecondsParam( raw?: string | null ): number | null {
+	if ( ! raw ) {
+		return null;
+	}
+	const num = Number.parseInt( raw, 10 );
+	if ( ! Number.isFinite( num ) ) {
+		return null;
+	}
+	return num > 1e12 ? Math.floor( num / 1000 ) : num;
+}
+
+/**
  * Get the initial date range from the URL search parameters.
  */
 export function getInitialDateRangeFromSearch( search: string ): { start: Date; end: Date } | null {
 	const params = new URLSearchParams( search );
-	const valueAsNumber = ( value?: string | null ) => ( value ? Number( value ) : NaN );
-	const toDate = ( dateString?: string | null ) => {
-		const num = valueAsNumber( dateString );
-		if ( ! Number.isFinite( num ) ) {
+	const toDate = ( raw: string | null ) => {
+		const num = parseUnixSecondsParam( raw );
+		if ( num === null ) {
 			return undefined;
 		}
 		const date = fromUnixTime( num );
