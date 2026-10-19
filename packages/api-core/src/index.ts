@@ -112,6 +112,7 @@ export * from './read-organizations';
 export * from './read-post';
 export * from './read-profile-settings';
 export * from './read-related-posts';
+export * from './read-saved';
 export * from './read-seen-posts';
 export * from './read-site-recommendations';
 export * from './read-sites';

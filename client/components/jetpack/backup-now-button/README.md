@@ -1,8 +1,8 @@
 ## Usage
 
 ```jsx
-import BackupNowButton from 'calypso/components/jetpack/backup-now-button';
 import { useSelector } from 'react-redux';
+import BackupNowButton from 'calypso/components/jetpack/backup-now-button';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function render() {

@@ -1,5 +1,5 @@
 import { DEFAULT_EMPTY_VIEW_SUGGESTION_IDS } from '../hooks/use-empty-view-suggestions';
-import type { Suggestion } from '../types';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 const DEFAULT_EMPTY_VIEW_SUGGESTION_ID_SET = new Set< string >(
 	Object.values( DEFAULT_EMPTY_VIEW_SUGGESTION_IDS )
@@ -43,7 +43,7 @@ export function mergeEmptyViewSuggestions(
 interface GetDisplayedEmptyViewSuggestionsOptions {
 	/** Whether the layout shows the chat; Agenttic can't tell when it's hidden. */
 	isVisible: boolean;
-	/** Loaded, with no messages and no draft: typing swaps the empty-view chips for the registered ones. */
+	/** Loaded, with no messages: the empty-view chips stay until a message is sent. */
 	isChatEmpty: boolean;
 	emptyViewSuggestions: Suggestion[];
 	registeredSuggestions: Suggestion[];

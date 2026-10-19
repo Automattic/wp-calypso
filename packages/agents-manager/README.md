@@ -111,7 +111,6 @@ Hosts that own a dedicated AI experience can set the [document-scoped presentati
 
 ```tsx
 import type {
-	AgentsManagerProps,
 	Ability,
 	ToolProvider,
 	ContextProvider,
@@ -121,13 +120,12 @@ import type {
 	Suggestion,
 	CreditsStatus,
 	CreditsAccess,
-	CreditsAskToUpgrade,
 	CreditsCtaType,
 	CreditsPurchaseOptions,
 } from '@automattic/agents-manager';
 ```
 
-`Ability` is re-exported from `@wordpress/abilities`, which owns its shape. The provider interfaces are documented in `src/extension-types.ts`.
+`Ability` and `Suggestion` are re-exported from `@wordpress/abilities` and `@automattic/agenttic-ui`, which own their shapes. The provider interfaces are documented in `src/extension-types.ts`.
 
 ## Interactive chat surfaces
 

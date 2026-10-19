@@ -40,20 +40,10 @@ describe( 'useValidCheckoutBackUrl', () => {
 		( getSiteId as jest.Mock ).mockReturnValue( siteId );
 	} );
 
-	it( 'returns a jetpack pricing back url for non-commerce jetpack sites', () => {
+	it( 'returns a jetpack pricing back url for jetpack sites', () => {
 		const { result } = renderWithSite( { jetpack: true } );
 
 		expect( result.current ).toBe( `https://cloud.jetpack.com/pricing/${ siteSlug }` );
-	} );
-
-	it( 'returns no back url for commerce garden jetpack sites', () => {
-		const { result } = renderWithSite( {
-			jetpack: true,
-			is_garden: true,
-			garden_name: 'commerce',
-		} );
-
-		expect( result.current ).toBeUndefined();
 	} );
 
 	it( 'returns no back url for atomic sites', () => {

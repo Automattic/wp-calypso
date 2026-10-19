@@ -2,7 +2,7 @@ import { useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import formatSuggestionIds from '../utils/format-suggestion-ids';
 import { recordBigSkyTracksEvent } from '../utils/tracks';
-import type { Suggestion } from '../types';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 interface UseSuggestionTrackingOptions {
 	contextualSuggestionIds: Set< string >;
@@ -106,13 +106,17 @@ export function useSuggestionTracking( {
 	}, [ hasSuggestionsToRender, trackRenderedSuggestions ] );
 
 	const trackSuggestionClick = useCallback(
-		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
+		(
+			suggestion: Suggestion | string,
+			availableSuggestions?: Suggestion[],
+			isInMessage = false
+		) => {
 			if ( typeof suggestion === 'string' ) {
 				return;
 			}
 
-			// A click routed through Agenttic's own container reports the footer list,
-			// which is empty while the chips live in the empty view.
+			// Agenttic reports the list a click came from; without one, fall back to
+			// what it reported as rendered.
 			const renderedSuggestions = renderedSuggestionsRef.current;
 			const knownSuggestions = availableSuggestions?.length
 				? availableSuggestions
@@ -125,11 +129,13 @@ export function useSuggestionTracking( {
 				? selectedBlockType
 				: undefined;
 
-			// The empty view hands over its untruncated list; what Agenttic reported as
-			// rendered is what was on screen, so it wins whenever it holds the chip.
-			const isRendered = renderedSuggestions.some(
-				( renderedSuggestion ) => renderedSuggestion.id === suggestion.id
-			);
+			// What Agenttic reported as rendered was on screen, so it wins, except for a
+			// list in a message, which Agenttic doesn't report.
+			const isRendered =
+				! isInMessage &&
+				renderedSuggestions.some(
+					( renderedSuggestion ) => renderedSuggestion.id === suggestion.id
+				);
 			const shownSuggestions = isRendered ? renderedSuggestions : knownSuggestions;
 
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_suggestion_click', {

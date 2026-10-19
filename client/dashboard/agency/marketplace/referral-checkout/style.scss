@@ -32,22 +32,6 @@
 	padding-inline: 24px;
 }
 
-.referral-checkout__title-check {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 40px;
-	height: 40px;
-	flex-shrink: 0;
-	border-radius: 50%;
-	background: var( --color-success );
-	color: var( --color-text-inverted );
-
-	svg {
-		fill: currentColor;
-	}
-}
-
 .referral-checkout__line-check {
 	color: var( --color-success );
 }
