@@ -30,20 +30,27 @@ export function useDateRange( {
 	const lastUrlRangeRef = useRef< { from: number; to: number } | null >( null );
 
 	// Rewrite millisecond from/to params (older shared links) to canonical Unix seconds.
+	// Go through the router so this composes with navigations queued by child views on mount.
 	useEffect( () => {
-		const url = new URL( window.location.href );
-		let changed = false;
-		( [ 'from', 'to' ] as const ).forEach( ( key ) => {
-			const raw = url.searchParams.get( key );
-			const seconds = parseUnixSecondsParam( raw );
-			if ( seconds !== null && String( seconds ) !== raw ) {
-				url.searchParams.set( key, String( seconds ) );
-				changed = true;
-			}
-		} );
-		if ( changed ) {
-			window.history.replaceState( null, '', url.pathname + url.search + url.hash );
+		const toSeconds = ( value: unknown ) => {
+			const seconds = parseUnixSecondsParam( value == null ? null : String( value ) );
+			return seconds ?? value;
+		};
+		const { from, to } = router.state.location.search as Record< string, unknown >;
+		if ( toSeconds( from ) === from && toSeconds( to ) === to ) {
+			return;
 		}
+		router.navigate( {
+			to: '.',
+			search: ( prev: Record< string, unknown > ) => ( {
+				...prev,
+				from: toSeconds( prev.from ),
+				to: toSeconds( prev.to ),
+			} ),
+			replace: true,
+			resetScroll: false,
+		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- normalize once on mount
 	}, [] );
 
 	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
@@ -123,7 +130,7 @@ export function getDefaultDateRange(
 }
 
 /**
- * Parse a `from`/`to` URL param as Unix seconds. Values above 1e12 are treated as
+ * Parse a `from`/`to` URL param as Unix seconds. Values of 1e12 and above are treated as
  * milliseconds, which older versions of the logs page used in shared links.
  */
 export function parseUnixSecondsParam( raw?: string | null ): number | null {
@@ -134,7 +141,7 @@ export function parseUnixSecondsParam( raw?: string | null ): number | null {
 	if ( ! Number.isFinite( num ) ) {
 		return null;
 	}
-	return num > 1e12 ? Math.floor( num / 1000 ) : num;
+	return num >= 1e12 ? Math.floor( num / 1000 ) : num;
 }
 
 /**

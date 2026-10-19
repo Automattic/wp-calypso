@@ -18,6 +18,10 @@ describe( 'parseUnixSecondsParam', () => {
 		expect( parseUnixSecondsParam( String( FROM_SEC * 1000 + 999 ) ) ).toBe( FROM_SEC );
 	} );
 
+	test( 'treats exactly 1e12 as milliseconds', () => {
+		expect( parseUnixSecondsParam( '1000000000000' ) ).toBe( 1_000_000_000 );
+	} );
+
 	test.each( [ null, undefined, '', 'abc' ] )( 'returns null for %p', ( raw ) => {
 		expect( parseUnixSecondsParam( raw ) ).toBeNull();
 	} );

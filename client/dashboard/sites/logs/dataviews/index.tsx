@@ -95,7 +95,7 @@ function SiteLogsDataViews( {
 		const searchParams = new URLSearchParams( search );
 		const from = parseUnixSecondsParam( searchParams.get( 'from' ) );
 		const to = parseUnixSecondsParam( searchParams.get( 'to' ) );
-		return from != null && to != null ? { from, to } : null;
+		return from != null && to != null && from <= to ? { from, to } : null;
 	}, [ search ] );
 
 	const computed = useMemo(
