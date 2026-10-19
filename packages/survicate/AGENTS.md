@@ -45,6 +45,13 @@ and each needs its own guard:
    dropped as `modal`. It waits (via `observeModals`) for every modal to close,
    then resumes targeting (the SDK ignores events while `disableTargeting` is set)
    and invokes as usual; after a 3s timeout it invokes anyway and is suppressed.
+   When the moment already has a Tracks event recorded on success, add it to
+   `SURVICATE_TRACKS_EVENTS` (`tracks-events.ts`) instead of adding a call site:
+   `loadSurvicateScript()` forwards those events, by their Tracks name and
+   without properties, once the SDK is ready. Set `afterModalsClose` for events
+   recorded while the confirmation modal is still mounted. Don't list `*_click`
+   events (they fire before the action succeeds) or `calypso_survicate_*` ones
+   (a suppressed invoke records one, so it would forward itself).
 2. **Auto-campaigns** — Survicate's own targeting fires a survey on its own (URL match,
    "show after N seconds", etc.). This **never touches our code**, so an invoke-time
    guard can't catch it. The only universal hook is the SDK's `survey_displayed` event.
@@ -270,6 +277,8 @@ race where a survey is already mid-display as a modal or the Help Center appears
   `MODAL_SELECTOR`.
 - `targeting.ts` — `pauseSurvicateTargeting()` / `resumeSurvicateTargeting()`:
   gate the SDK's auto-campaign targeting via the `disableTargeting` flag.
+- `tracks-events.ts` — `SURVICATE_TRACKS_EVENTS`, the Tracks events forwarded to
+  Survicate, and `forwardTracksEventsToSurvicate()`, wired by `load-script.ts`.
 - `track-suppression.ts` — `recordSurveySuppressed()`: the
   `calypso_survicate_survey_suppressed` Tracks event.
 - `close-survey.ts` — `closeSurvicateSurvey()`: the single, guarded `_sva.closeSurvey()`

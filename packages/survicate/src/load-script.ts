@@ -5,6 +5,7 @@ import { getSuppressionReason, observeHelpCenter, shouldSuppressSurvey } from '.
 import { isSurveyVisible, observeModals } from './modal-detection';
 import { pauseSurvicateTargeting, resumeSurvicateTargeting } from './targeting';
 import { recordSurveySuppressed } from './track-suppression';
+import { forwardTracksEventsToSurvicate } from './tracks-events';
 
 /**
  * Checks whether the Survicate script is already loaded on the page.
@@ -77,6 +78,7 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 
 		const disconnectModalObserver = observeModals( onModalOpened, resumeIfClear );
 		const unsubscribeHelpCenter = observeHelpCenter( onHelpCenterOpened, resumeIfClear );
+		const stopForwardingTracksEvents = forwardTracksEventsToSurvicate();
 
 		// A modal or the Help Center already open when the SDK becomes ready
 		// (e.g. an onboarding modal shown at page load) pauses targeting up
@@ -91,6 +93,7 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 				window._sva?.removeEventListener?.( 'survey_displayed', onSurveyDisplayed );
 				disconnectModalObserver();
 				unsubscribeHelpCenter();
+				stopForwardingTracksEvents();
 				// Don't leave the SDK paused with nothing left to resume it.
 				resumeSurvicateTargeting();
 			},

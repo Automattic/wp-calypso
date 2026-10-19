@@ -9,3 +9,9 @@
  * `window.wpcomSurvicateConfig`, the bundle records nothing.
  */
 export function recordTracksEvent() {}
+
+// Nothing records Tracks events here, so there is nothing to forward to Survicate.
+export const analyticsEvents = {
+	on() {},
+	off() {},
+};
