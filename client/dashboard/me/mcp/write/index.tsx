@@ -29,6 +29,8 @@ import PageLayout from '../../../components/page-layout';
 import { isWriteTool } from '../categories';
 import type { McpAbility, McpGroupDescriptor } from '@automattic/api-core';
 
+import '../toolbar.scss';
+
 const TOOL_CATEGORY = 'write' as const;
 
 interface ToolGroup {
@@ -231,28 +233,30 @@ export default function McpWrite() {
 				eventName="calypso_dashboard_mcp_write_view"
 				properties={ tracksAudienceProps }
 			/>
-			<VStack spacing={ 4 }>
-				<Card>
-					<CardBody>
-						<ToggleControl
-							__nextHasNoMarginBottom
-							checked={ pageAllEnabled }
-							disabled={ mutation.isPending || allTools.length === 0 }
-							label={ <Text weight="600">{ __( 'Enable all' ) }</Text> }
-							onChange={ handlePageToggle }
-						/>
-					</CardBody>
-				</Card>
+			<div className="mcp-tools-page">
+				<div className="mcp-tools-toolbar">
+					<Card>
+						<CardBody>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ pageAllEnabled }
+								disabled={ mutation.isPending || allTools.length === 0 }
+								label={ <Text weight="600">{ __( 'Enable all' ) }</Text> }
+								onChange={ handlePageToggle }
+							/>
+						</CardBody>
+					</Card>
 
-				<SearchControl
-					value={ search }
-					placeholder={ __( 'Search tools' ) }
-					onChange={ ( value: string ) => {
-						setSearch( value );
-						setAnchorTool( null );
-					} }
-					__nextHasNoMarginBottom
-				/>
+					<SearchControl
+						value={ search }
+						placeholder={ __( 'Search tools' ) }
+						onChange={ ( value: string ) => {
+							setSearch( value );
+							setAnchorTool( null );
+						} }
+						__nextHasNoMarginBottom
+					/>
+				</div>
 
 				{ groups.length > 0 ? (
 					<VStack spacing={ 3 }>
@@ -386,7 +390,7 @@ export default function McpWrite() {
 						</CardBody>
 					</Card>
 				) }
-			</VStack>
+			</div>
 		</PageLayout>
 	);
 }
