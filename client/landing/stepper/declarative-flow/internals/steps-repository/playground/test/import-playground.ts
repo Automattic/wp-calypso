@@ -169,6 +169,47 @@ describe( 'importPlaygroundSite', () => {
 		);
 	} );
 
+	it( 'reports server progress at once when the upload already started the import', async () => {
+		uploadExportFileMock.mockResolvedValue( {
+			importId: 'import-id',
+			importStatus: 'importing',
+			importerFileType: 'playground',
+			type: 'wordpress',
+			siteId,
+			progress: { steps: { completed: 0, total: 9 } },
+		} );
+		wpcomRequestMock
+			.mockResolvedValueOnce( {
+				importId: 'import-id',
+				importStatus: 'importing',
+				importerFileType: 'playground',
+				type: 'wordpress',
+				siteId,
+				customData: { current_step: 'download_archive' },
+				progress: { steps: { completed: 1, total: 9 } },
+			} )
+			.mockResolvedValueOnce( {
+				importId: 'import-id',
+				importStatus: 'importSuccess',
+				importerFileType: 'playground',
+				type: 'wordpress',
+				siteId,
+			} );
+		jest.useFakeTimers();
+		const onProgress = jest.fn();
+
+		const result = importPlaygroundSite( 'slug', siteId, { waitForCompletion: true, onProgress } );
+		await jest.runAllTimersAsync();
+		await expect( result ).resolves.toBe( 'import-id' );
+		jest.useRealTimers();
+
+		expect( onProgress ).toHaveBeenCalledWith( {
+			phase: 'importing',
+			job: expect.objectContaining( { customData: { current_step: 'download_archive' } } ),
+		} );
+		expect( updateImporterMock ).not.toHaveBeenCalled();
+	} );
+
 	it( 'stops reporting after the upload when it does not wait for completion', async () => {
 		const onProgress = jest.fn();
 

@@ -45,6 +45,14 @@ export class ImportFailureError extends Error {
 	}
 }
 
+/**
+ * Whether the server is already running the import, for example because the
+ * upload was sent with autoStart.
+ */
+function isImporting( status: ImportJob ): boolean {
+	return status.importerState === appStates.IMPORTING;
+}
+
 export async function startPlaygroundImportIfReady(
 	siteId: number,
 	status: ImportJob
@@ -167,10 +175,10 @@ export async function importPlaygroundSite(
 			} ),
 	} );
 	const importerStatus = toImportJob( importer );
-	let started = false;
+	let started = isImporting( importerStatus );
 
 	try {
-		started = await startPlaygroundImportIfReady( siteId, importerStatus );
+		started ||= await startPlaygroundImportIfReady( siteId, importerStatus );
 	} catch ( error ) {
 		if ( waitForCompletion ) {
 			throw error;
@@ -207,11 +215,11 @@ export async function importPlaygroundSite(
 		}
 
 		if ( ! started ) {
-			started = await startPlaygroundImportIfReady( siteId, status );
+			started = isImporting( status ) || ( await startPlaygroundImportIfReady( siteId, status ) );
 		}
 
-		// Report server-side progress only once the start trigger has been sent;
-		// until then the import cannot proceed without this window.
+		// Report server-side progress only once the import has started; until
+		// then it cannot proceed without this window.
 		if ( started ) {
 			onProgress?.( { phase: 'importing', job: status } );
 		}
