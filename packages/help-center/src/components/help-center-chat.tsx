@@ -58,7 +58,7 @@ export function HelpCenterChat( {
 	const externalChatProvider = params.get( 'externalChatProvider' );
 	const externalChatId = params.get( 'externalChatId' );
 
-	const userFieldFlowName = featureConfig.chat.flowName || data?.eligibility?.user_field_flow_name;
+	const userFieldFlowName = data?.eligibility?.user_field_flow_name;
 
 	const { forceEmailSupport, isChatRestricted } = useChatStatus();
 

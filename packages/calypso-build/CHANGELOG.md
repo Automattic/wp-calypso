@@ -297,6 +297,8 @@
     Code relying on this plugin will need to be modified for compatibility before it can be bundled
     with `calypso-build`. For example:
 
+    <!-- eslint-skip -->
+
     ```js
     // Code relying on @babel/plugin-proposal-export-default-from
     export someExportedName from 'some-module';
