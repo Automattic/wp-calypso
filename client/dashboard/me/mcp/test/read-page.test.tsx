@@ -4,7 +4,7 @@
 
 import { isAutomatticianQuery, queryClient, userSettingsQuery } from '@automattic/api-queries';
 import '@testing-library/jest-dom';
-import { fireEvent, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import McpRead from '../read';
@@ -103,13 +103,14 @@ describe( '<McpRead> search and anchors', () => {
 		expect( document.getElementById( 'wpcom-mcp/pages-list' ) ).not.toBeNull();
 	} );
 
-	test( 'an anchor copy button copies that tool’s anchor URL', () => {
+	test( 'an anchor copy button copies that tool’s anchor URL', async () => {
+		const user = userEvent.setup();
 		const writeText = mockClipboard();
 		seed();
 		render( <McpRead />, { queryClient } );
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Show operations' } ) );
-		fireEvent.click( screen.getAllByRole( 'button', { name: 'Copy link to this setting' } )[ 0 ] );
+		await user.click( screen.getByRole( 'button', { name: 'Show operations' } ) );
+		await user.click( screen.getAllByRole( 'button', { name: 'Copy link to this setting' } )[ 0 ] );
 
 		expect( writeText ).toHaveBeenCalledWith(
 			`${ window.location.origin }${ window.location.pathname }#wpcom-mcp/posts-list`
