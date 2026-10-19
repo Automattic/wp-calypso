@@ -28,7 +28,7 @@ describe( 'useProductsToCompare', () => {
 		] );
 	} );
 
-	it( 'keeps only Free when product data is missing', () => {
+	it( 'keeps only Free when nothing is offered', () => {
 		expect( columnsWhenOnSale() ).toEqual( [ 'FREE' ] );
 	} );
 } );

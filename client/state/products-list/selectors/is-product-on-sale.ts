@@ -23,10 +23,6 @@ export function getFreshProductsList( state: AppState ): ListedAvailability | un
 	return state.productsList?.sessionListStatus === 'full' ? state.productsList.items : undefined;
 }
 
-export function hasProductsListRequestFailed( state: AppState ): boolean {
-	return state.productsList?.sessionListStatus === 'failed';
-}
-
 export function isProductOnSale( state: AppState, productSlug: string ): boolean {
 	return isListedProductOnSale( getFreshProductsList( state ), productSlug );
 }

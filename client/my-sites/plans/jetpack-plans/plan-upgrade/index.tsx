@@ -1,4 +1,3 @@
-import { isJetpackPlanSlug } from '@automattic/calypso-products';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
@@ -8,7 +7,6 @@ import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from '../constants';
 import ProductCard from '../product-card';
 import ProductGridSection from '../product-grid/section';
 import slugToSelectorProduct from '../slug-to-selector-product';
-import useIsOnSale from '../use-is-on-sale';
 import { getItemSlugByDuration } from './utils';
 import type { PlanRecommendation } from './types';
 import type { Duration, PurchaseCallback, PurchaseURLCallback, SelectorProduct } from '../types';
@@ -33,18 +31,11 @@ const PlanUpgradeSection: FC< Props > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const isOnSale = useIsOnSale();
 
 	let [ legacyPlan, newPlans ] = planRecommendation;
 
 	legacyPlan = getItemSlugByDuration( legacyPlan, duration );
-	newPlans = newPlans
-		.map( ( p ) => getItemSlugByDuration( p, duration ) )
-		.filter( ( p ) => ! isJetpackPlanSlug( p ) || isOnSale( p ) );
-
-	if ( newPlans.length === 0 ) {
-		return null;
-	}
+	newPlans = newPlans.map( ( p ) => getItemSlugByDuration( p, duration ) );
 
 	const legacyItem = slugToSelectorProduct( legacyPlan ) as SelectorProduct;
 	const newItems = newPlans.map( slugToSelectorProduct ) as SelectorProduct[];
