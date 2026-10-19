@@ -9,11 +9,10 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { LoadingCopy, styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import useCartKey from '../../../use-cart-key';
 import type { WPCOMProductVariant } from './types';
 
-const Discount = styled.span< { isMobileCheckoutStickySummary?: boolean } >`
+const Discount = styled.span`
 	text-align: center;
 	color: ${ colorStudio.colors[ 'Green 80' ] };
 
@@ -28,40 +27,13 @@ const Discount = styled.span< { isMobileCheckoutStickySummary?: boolean } >`
 		margin-right: 0;
 		margin-left: 8px;
 	}
-
-	${ ( props ) =>
-		props.isMobileCheckoutStickySummary &&
-		`
-		color: ${ colorStudio.colors[ 'Green 80' ] };
-		background-color: rgba( 184, 230, 191, 0.68 );
-		border: 1px solid rgba( 0, 0, 0, 0.08 );
-		border-radius: 2px;
-		padding: 0 8px;
-		font-size: 11px;
-		font-weight: 500;
-		letter-spacing: -0.08px;
-	` }
 `;
 
-const Price = styled.span< {
-	isMobileCheckoutStickySummary?: boolean;
-} >`
+const Price = styled.span`
 	color: ${ colorStudio.colors[ 'Black' ] };
-	${ ( props ) =>
-		props.isMobileCheckoutStickySummary &&
-		`
-		color: var( --studio-gray-100 );
-		font-size: 13px;
-		font-weight: 500;
-		line-height: 20px;
-	` }
 `;
 
-const PriceSuffix = styled.span`
-	font-weight: 400;
-`;
-
-const Variant = styled.div< { isMobileCheckoutStickySummary?: boolean } >`
+const Variant = styled.div`
 	align-items: center;
 	display: flex;
 	font-size: 14px;
@@ -69,14 +41,6 @@ const Variant = styled.div< { isMobileCheckoutStickySummary?: boolean } >`
 	justify-content: space-between;
 	line-height: 20px;
 	width: 100%;
-
-	${ ( props ) =>
-		props.isMobileCheckoutStickySummary &&
-		`
-		color: var( --studio-gray-100 );
-		font-size: 13px;
-		line-height: 20px;
-	` }
 `;
 
 const VariantTermLabel = styled.span`
@@ -85,21 +49,20 @@ const VariantTermLabel = styled.span`
 	gap: 2px;
 `;
 
-const PriceArea = styled.span< { inlineDiscount?: boolean } >`
+const PriceArea = styled.span`
 	text-align: right;
 	display: flex;
-	flex-direction: ${ ( props ) => ( props.inlineDiscount ? 'row' : 'row-reverse' ) };
+	flex-direction: row-reverse;
 	gap: 8px;
 	align-items: center;
 `;
 
 const DiscountPercentage: FunctionComponent< {
 	percent: number;
-	isMobileCheckoutStickySummary?: boolean;
-} > = ( { percent, isMobileCheckoutStickySummary } ) => {
+} > = ( { percent } ) => {
 	const translate = useTranslate();
 	return (
-		<Discount isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
+		<Discount>
 			{ translate( 'Save %(percent)s%%', {
 				args: {
 					percent,
@@ -117,7 +80,6 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	const cartKey = useCartKey();
 	const { couponStatus } = useShoppingCart( cartKey );
 	const isApplyingCoupon = couponStatus === 'pending';
-	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
 	const variantInfo = fromVariantPriceData( variant );
 	const discountPercentage = compareToInfo
@@ -140,47 +102,23 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 		isSmallestUnit: true,
 	} );
 
-	const priceDisplay = ( () => {
-		if ( isMobileCheckoutStickySummary ) {
-			// Render the suffix in its own span so the medium weight on
-			// <Price> doesn't bleed into "/mo" (Figma 2392:15326 wants
-			// regular).
-			return (
-				<>
-					{ pricePerMonthFormatted }
-					<PriceSuffix>{ translate( '/mo' ) }</PriceSuffix>
-				</>
-			);
-		}
-		return translate( '%(pricePerMonth)s /mo', {
-			args: {
-				pricePerMonth: pricePerMonthFormatted,
-			},
-		} );
-	} )();
+	const priceDisplay = translate( '%(pricePerMonth)s /mo', {
+		args: {
+			pricePerMonth: pricePerMonthFormatted,
+		},
+	} );
 	const label =
 		variant.termIntervalInMonths === 1 ? translate( 'Month' ) : variant.variantLabel.noun;
-	const showInlineDiscount = isMobileCheckoutStickySummary && discountPercentage > 0;
 	return (
-		<Variant isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
+		<Variant>
 			<VariantTermLabel>{ label }</VariantTermLabel>
-			<PriceArea inlineDiscount={ showInlineDiscount }>
+			<PriceArea>
 				{ isApplyingCoupon ? (
 					<LoadingCopy width="70px" height="16px" noMargin />
 				) : (
 					<>
-						{ showInlineDiscount && (
-							<DiscountPercentage
-								percent={ discountPercentage }
-								isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
-							/>
-						) }
-						<Price isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
-							{ priceDisplay }
-						</Price>
-						{ ! isMobileCheckoutStickySummary && discountPercentage > 0 && (
-							<DiscountPercentage percent={ discountPercentage } />
-						) }
+						<Price>{ priceDisplay }</Price>
+						{ discountPercentage > 0 && <DiscountPercentage percent={ discountPercentage } /> }
 					</>
 				) }
 			</PriceArea>
