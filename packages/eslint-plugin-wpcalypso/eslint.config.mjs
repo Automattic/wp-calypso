@@ -10,7 +10,7 @@ export default defineConfig(
 			},
 		},
 		{
-			files: [ '**/*.md.js', '**/*.md.jsx' ],
+			files: [ '**/*.md/*.js', '**/*.md/*.jsx' ],
 			rules: {
 				'wpcalypso/i18n-mismatched-placeholders': 'off',
 				'wpcalypso/i18n-named-placeholders': 'off',
