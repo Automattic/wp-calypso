@@ -13,8 +13,8 @@
  */
 import { broadcastAbilityCompleted } from './agent-activity-events';
 import { recordAgentsManagerTracksEvent } from './tracks';
-import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * Whether an ability answered that it did not do what it was asked.

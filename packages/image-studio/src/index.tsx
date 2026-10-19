@@ -25,7 +25,7 @@ import type { JSX } from 'react';
 
 interface ImageStudioData {
 	enabled?: boolean | string;
-	environment?: 'wp-admin' | 'ciab-admin';
+	environment?: 'wp-admin';
 	isDevMode?: boolean;
 	canGenerateVideoClips?: boolean;
 	blogId?: number | string;

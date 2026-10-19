@@ -7,6 +7,12 @@ const studioCredits = {
 	product_name: 'Studio Code AI Credits',
 };
 
+const aiCredits = {
+	...getEmptyResponseCartProduct(),
+	product_slug: 'ai-credits-lifetime',
+	product_name: 'AI Credits',
+};
+
 describe( 'getLabel', () => {
 	describe( 'Studio Code AI Credits', () => {
 		it( 'includes the credit quantity', () => {
@@ -31,6 +37,12 @@ describe( 'getLabel', () => {
 			expect( getLabel( { ...studioCredits, quantity: null } ) ).toBe(
 				'Studio Code AI Credits (0 credits)'
 			);
+		} );
+	} );
+
+	describe( 'AI Credits', () => {
+		it( 'includes the credit quantity', () => {
+			expect( getLabel( { ...aiCredits, quantity: 1000 } ) ).toBe( 'AI Credits (1,000 credits)' );
 		} );
 	} );
 

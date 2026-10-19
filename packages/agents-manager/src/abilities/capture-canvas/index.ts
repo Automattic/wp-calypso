@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { captureCanvasCallback } from './callback';
-import type { Ability } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * Lets the agent look at the page whenever it needs to: `apply-block-edits`

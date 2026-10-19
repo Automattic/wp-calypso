@@ -58,7 +58,7 @@
 	"devDependencies": {
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@microsoft/api-extractor": "^7.59.3",
+		"@microsoft/api-extractor": "^7.59.4",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
@@ -69,8 +69,8 @@
 		"postcss-modules": "^6.0.1",
 		"sass-embedded": "^1.89.0",
 		"storybook": "^10.6.2",
-		"stylelint": "^16.15.0",
-		"stylelint-plugin-logical-css": "^1.2.3",
+		"stylelint": "^17.16.0",
+		"stylelint-plugin-logical-css": "^2.1.0",
 		"tsup": "^8.5.1",
 		"typescript": "^6.0.3"
 	},

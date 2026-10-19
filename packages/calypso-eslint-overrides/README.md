@@ -41,3 +41,14 @@ module.exports = {
 	]
 }
 ```
+
+With ESLint 9's flat config, add `flatNodeConfig` scoped to the same files. Like `nodeConfig`, it keeps your source type: ES modules still work, and top-level `return` works in scripts and `.cjs` files:
+
+```
+const { flatNodeConfig } = require( '@automattic/calypso-eslint-overrides' );
+
+module.exports = [
+	// ...your other config
+	{ ...flatNodeConfig, files: [ 'bin/**' ] },
+];
+```

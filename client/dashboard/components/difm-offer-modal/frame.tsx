@@ -8,14 +8,16 @@ import type { ReactNode } from 'react';
 import './style.scss';
 
 /**
- * The shared layout of the DIFM offer modals: an illustration panel on the left, and a
- * main column with an optional header item, a close button and the content.
+ * The shared layout of the DIFM offer modals: a panel on the left, and a main column with
+ * an optional header item, a close button and the content. The panel shows the
+ * illustration, or the `panel` content over the illustration background.
  */
 export function DifmOfferModalFrame( {
 	className,
 	labelledBy,
 	isBusy = false,
 	headerStart,
+	panel,
 	onRequestClose,
 	children,
 }: {
@@ -23,6 +25,7 @@ export function DifmOfferModalFrame( {
 	labelledBy: string;
 	isBusy?: boolean;
 	headerStart?: ReactNode;
+	panel?: ReactNode;
 	onRequestClose: () => void;
 	children: ReactNode;
 } ) {
@@ -38,7 +41,11 @@ export function DifmOfferModalFrame( {
 			size="large"
 		>
 			<div className="difm-offer-modal__layout">
-				<img className="difm-offer-modal__illustration" src={ illustrationUrl } alt="" />
+				{ panel ? (
+					<div className="difm-offer-modal__panel">{ panel }</div>
+				) : (
+					<img className="difm-offer-modal__illustration" src={ illustrationUrl } alt="" />
+				) }
 				<div className="difm-offer-modal__main">
 					<div className="difm-offer-modal__header">
 						{ headerStart ?? <span /> }

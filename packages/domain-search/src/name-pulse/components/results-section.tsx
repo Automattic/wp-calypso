@@ -75,7 +75,9 @@ export const NamePulseResultsSection = ( {
 	const skeletons =
 		isLoading && ! skeletonsTimedOut ? Math.max( 0, skeletonCount - visible.length ) : 0;
 
-	if ( visible.length === 0 && skeletons === 0 ) {
+	const cellCount = visible.length + skeletons;
+
+	if ( cellCount === 0 ) {
 		return null;
 	}
 
@@ -87,7 +89,11 @@ export const NamePulseResultsSection = ( {
 				</Text>
 			) }
 			<div
-				className={ clsx( 'name-pulse-grid', layout === 'card' && 'name-pulse-grid--cards' ) }
+				className={ clsx( 'name-pulse-grid', {
+					'name-pulse-grid--cards': layout === 'card',
+					'name-pulse-grid--single': cellCount === 1,
+					'name-pulse-grid--pair': cellCount === 2,
+				} ) }
 				role="list"
 			>
 				{ visible.map( ( result, index ) => (

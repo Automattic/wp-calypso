@@ -68,10 +68,12 @@ describe( 'SiteMigrationIdentify', () => {
 	} );
 	afterEach( () => jest.restoreAllMocks() );
 
-	it( 'continues for WordPress and resubmits refreshed hosting data', async () => {
+	it( 'allows retrying failed submissions and restores the form on cached Back', async () => {
 		jest.mocked( useSiteSlug ).mockReturnValue( MOCK_WORDPRESS_SITE_SLUG );
 
-		const submit = jest.fn();
+		const submit = jest.fn().mockImplementationOnce( () => {
+			throw new Error( 'Navigation failed' );
+		} );
 		const { rerender } = render( { navigation: { submit } } );
 
 		mockApi()
@@ -109,7 +111,10 @@ describe( 'SiteMigrationIdentify', () => {
 		await userEvent.type( getInput(), 'https://example.com' );
 		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
 		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 2 ) );
-		await screen.findByRole( 'button', { name: /Check my site/ } );
+		expect( screen.getByRole( 'heading', { name: 'Scanning your site' } ) ).toBeVisible();
+
+		act( () => window.dispatchEvent( new PageTransitionEvent( 'pageshow', { persisted: true } ) ) );
+		expect( getInput() ).toBeVisible();
 		expect( submit ).toHaveBeenCalledTimes( 2 );
 		expect( submit ).toHaveBeenLastCalledWith( expect.objectContaining( { host: 'wpengine' } ) );
 	} );

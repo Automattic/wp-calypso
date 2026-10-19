@@ -9,6 +9,7 @@
 		"gettext-parser": "^4.0.3"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"peerDependencies": {

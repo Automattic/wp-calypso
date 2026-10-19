@@ -230,12 +230,6 @@ export default function OrchestratorChat( {
 		onRegenerationEnd: finishCheckpointRegeneration,
 	} );
 
-	const chatError = useChatError( {
-		error,
-		isReaderChat,
-		takeRefusalCode: credits.takeRefusalCode,
-	} );
-
 	// Sending, and loading the saved conversation.
 	const { hadParkedNavigation, flushPendingNavigation } = useNavigationContinuation( {
 		isProcessing,
@@ -249,7 +243,7 @@ export default function OrchestratorChat( {
 		},
 	} );
 
-	// A ref: the prompts on screen are derived below from the composer's `inputValue`.
+	// A ref, as the prompts on screen are derived after this hook.
 	const suggestionPromptsRef = useRef< Set< string > >( new Set() );
 	const {
 		inputValue,
@@ -261,6 +255,7 @@ export default function OrchestratorChat( {
 		submitComposerMessage,
 		submitChatMessage,
 		submitHostMessage,
+		submitRetryMessage,
 		submitContextMessage,
 		stopResponse,
 	} = useChatComposer( {
@@ -279,10 +274,22 @@ export default function OrchestratorChat( {
 		}
 	}, [ isProcessing, agentConfig?.sessionId ] );
 
-	const isLoadingConversation = useConversationHydration( {
+	const {
+		isLoading: isLoadingConversation,
+		notice: replyNotice,
+		hasFailedResume,
+	} = useConversationHydration( {
 		hadParkedNavigation,
 		loadMessages,
 		onFetch: invalidateLoadedCheckpoints,
+		isProcessing,
+		onRetry: submitRetryMessage,
+		onSubmit,
+	} );
+	const chatError = useChatError( {
+		error: hasFailedResume ? null : error,
+		isReaderChat,
+		takeRefusalCode: credits.takeRefusalCode,
 	} );
 
 	// Registered before the providers' ability setup below, whose effects may
@@ -319,7 +326,7 @@ export default function OrchestratorChat( {
 
 	// The optional hook call is safe: this component renders only after the
 	// providers load, so the hook never changes. Big Sky reads every handler but
-	// `isProcessing`; jetpack-ai-sidebar reads `clearSuggestions` and `isProcessing`.
+	// `clearSuggestions` and `isProcessing`; jetpack-ai-sidebar reads those two.
 	useProviderAbilitiesSetup?.( {
 		addMessage: ( message: BigSkyMessage ) =>
 			addMessage( convertBigSkyMessageToUIMessage( message ) ),
@@ -471,7 +478,7 @@ export default function OrchestratorChat( {
 	// Empty-view suggestions and their tracking.
 	const displayedEmptyViewSuggestions = getDisplayedEmptyViewSuggestions( {
 		isVisible: suggestionsVisible,
-		isChatEmpty: ! isLoadingConversation && ! hasMessages && inputValue.length === 0,
+		isChatEmpty: ! isLoadingConversation && ! hasMessages,
 		emptyViewSuggestions,
 		registeredSuggestions: suggestions,
 		dynamicSuggestions,
@@ -487,8 +494,12 @@ export default function OrchestratorChat( {
 	} );
 
 	const handleSuggestionClick = useCallback(
-		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
-			trackSuggestionClick( suggestion, availableSuggestions );
+		(
+			suggestion: Suggestion | string,
+			availableSuggestions?: Suggestion[],
+			isInMessage?: boolean
+		) => {
+			trackSuggestionClick( suggestion, availableSuggestions, isInMessage );
 			dispatchSuggestionClick( suggestion );
 		},
 		[ dispatchSuggestionClick, trackSuggestionClick ]
@@ -536,7 +547,7 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ isPageOrSiteEditorSurface }
 			imageUpload={ imageUpload }
-			notice={ credits.notice }
+			notice={ credits.notice ?? replyNotice }
 			trailingActions={ credits.trailingActions }
 			beforeSubmit={ credits.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }

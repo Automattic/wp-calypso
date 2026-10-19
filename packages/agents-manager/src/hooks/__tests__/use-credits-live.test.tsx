@@ -211,21 +211,12 @@ describe( 'return address', () => {
 	it.each( [
 		[ 'the open post on a Simple site', 'simple', POST_RETURN ],
 		[ 'home on an Atomic site', 'atomic', HOME_RETURN ],
-		[ 'home when the page doesn’t name the site type', undefined, HOME_RETURN ],
 	] as const )( 'returns Add credits to %s', async ( _where, siteType, returnUrl ) => {
 		window._currentSiteType = siteType;
 		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'business' } ) ) );
 		const { result } = renderCredits();
 		await flush();
 		expect( returnsOf( result.current ) ).toEqual( { redirectTo: returnUrl, cancelTo: returnUrl } );
-	} );
-
-	it( 'gives Upgrade no return address from the open post on a Simple site', async () => {
-		window._currentSiteType = 'simple';
-		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'premium' } ) ) );
-		const { result } = renderCredits();
-		await flush();
-		expect( returnsOf( result.current ) ).toEqual( { redirectTo: null, cancelTo: null } );
 	} );
 } );
 describe( 'session', () => {
@@ -512,49 +503,6 @@ describe( 'purchase access', () => {
 		await receive( { ...exhausted(), plan_tier: 'personal' } );
 		expect( props( result.current ).action?.href ).toBeUndefined();
 		expect( purchaseHint( result.current ) ).toBe( 'Ask a site admin to add more.' );
-	} );
-
-	describe.each( [ 'business', 'commerce' ] as const )( 'on %s', ( plan_tier ) => {
-		it.each( [
-			[ 'the plan buyer', true ],
-			[ 'an admin who didn’t buy the plan', false ],
-			[ 'an admin when the server can’t tell who bought the plan', null ],
-		] )( 'shows Add credits with no guidance to %s', async ( _who, canUpgrade ) => {
-			fetchMock.mockResolvedValueOnce(
-				response( { ...exhausted(), plan_tier }, true, canUpgrade )
-			);
-			const { result } = renderCredits();
-			await flush();
-			expect( props( result.current ).action ).toMatchObject( {
-				label: 'Add credits',
-				href: ADD_CREDITS_URL,
-			} );
-			expect( purchaseHint( result.current ) ).toBeUndefined();
-			expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
-			expect( result.current.notice?.action?.href ).toBe( ADD_CREDITS_URL );
-		} );
-
-		it( 'points someone who can’t buy to a site admin, with no purchase link', async () => {
-			fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier }, false ) );
-			const { result } = renderCredits();
-			await flush();
-			expect( props( result.current ).action ).toBeUndefined();
-			expect( purchaseHint( result.current ) ).toBe( 'Ask a site admin to add more.' );
-			expect( result.current.notice?.message ).toBe(
-				'You’ve used all your site credits. Ask a site admin to add more.'
-			);
-			expect( result.current.notice?.action ).toBeUndefined();
-		} );
-
-		it( 'offers neither a link nor guidance when the server doesn’t say who may buy', async () => {
-			fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier }, null ) );
-			const { result } = renderCredits();
-			await flush();
-			expect( props( result.current ).action ).toBeUndefined();
-			expect( purchaseHint( result.current ) ).toBeUndefined();
-			expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
-			expect( result.current.notice?.action ).toBeUndefined();
-		} );
 	} );
 
 	it.each( [

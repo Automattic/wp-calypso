@@ -10,6 +10,8 @@ import type { UseCreditsResult } from './use-credits';
 import type { SubmitOptions, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { RefObject } from 'react';
 
+type SendMessageOptions = { withImages?: boolean };
+
 interface UseChatComposerOptions {
 	isReaderChat: boolean;
 	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
@@ -26,10 +28,10 @@ interface UseChatComposerOptions {
 
 /**
  * The chat composer: its input, the image upload that runs before a send, and
- * every path a user message is sent through — the composer, context cards and
- * the host bridge, and interactive UI actions, sent as hidden context messages.
- * A send that is dropped, stopped or fails leaves the composer as it was, so the
- * user can retry without retyping.
+ * every path a user message is sent through — the composer, context cards, the
+ * host bridge and Retry — and interactive UI actions, sent as hidden context
+ * messages. A send that is dropped, stopped or fails leaves the composer as it
+ * was, so the user can retry without retyping.
  */
 export function useChatComposer( {
 	isReaderChat,
@@ -49,8 +51,8 @@ export function useChatComposer( {
 	const uploadImagesToWordPress = imageUpload?.uploadImagesToWordPress;
 	const isUploadingImages = imageUpload?.isUploadingImages ?? false;
 
-	// Whether the last `submitComposerMessage` call dispatched. Dropped, stopped and
-	// failed sends leave the composer intact on purpose.
+	// Whether the last `sendMessage` call dispatched. Dropped, stopped and failed
+	// sends leave the composer intact on purpose.
 	const wasLastSendDispatchedRef = useRef( false );
 
 	// Synchronous lock for the upload phase: same-tick re-entry (double-click,
@@ -73,8 +75,10 @@ export function useChatComposer( {
 		}
 	}, [] );
 
-	const submitComposerMessage = useCallback(
-		async ( message: string ) => {
+	const sendMessage = useCallback(
+		// Retry asks an earlier question again, so it leaves the composer's images
+		// for the draft.
+		async ( message: string, { withImages = true }: SendMessageOptions = {} ) => {
 			wasLastSendDispatchedRef.current = false;
 
 			// Taken before the drop below, so a dropped send never labels the next one.
@@ -95,12 +99,12 @@ export function useChatComposer( {
 			startTurn();
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message', {
 				message_length: message?.length || 0,
-				has_images: pendingImages.length > 0,
+				has_images: withImages && pendingImages.length > 0,
 				source,
 			} );
 
 			let imageUrls: SubmitOptions[ 'imageUrls' ];
-			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
+			if ( withImages && pendingImages.length > 0 && uploadImagesToWordPress ) {
 				isUploadingRef.current = true;
 
 				try {
@@ -165,9 +169,9 @@ export function useChatComposer( {
 			// aborts on sight if the user has since navigated), and that turn's leftover
 			// block would refuse its writes.
 			//
-			// Done here, not in `submitChatMessage`: the composer calls this callback
-			// directly, and the early returns above must not reset a binding that a
-			// running request still owns.
+			// Done here, not in `submitChatMessage`: the composer reaches this through
+			// `submitComposerMessage`, and the early returns above must not reset a
+			// binding that a running request still owns.
 			startNewUserRequest();
 
 			wasLastSendDispatchedRef.current = true;
@@ -200,6 +204,13 @@ export function useChatComposer( {
 		]
 	);
 
+	// Agenttic types the second `onSubmit` argument as the composer's files; images
+	// come from `pendingImages`, so `sendMessage`'s options stay out of reach.
+	const submitComposerMessage = useCallback(
+		( message: string ) => sendMessage( message ),
+		[ sendMessage ]
+	);
+
 	const stopResponse = useCallback( () => {
 		// `abortUpload` reports whether it stopped an in-flight batch, so a stop
 		// that lands just after the upload settles still aborts the agent request.
@@ -214,27 +225,27 @@ export function useChatComposer( {
 	}, [ abortCurrentRequest, imageUpload ] );
 
 	const submitChatMessage = useCallback(
-		async ( message: string ) => {
+		async ( message: string, options?: SendMessageOptions ) => {
 			if ( ! message.trim() ) {
 				return;
 			}
 
-			// Agenttic gates composer sends before `submitComposerMessage`; context cards and
-			// the host bridge come here, so gate them too. A blocked send consumes
-			// any origin the bridge marked, so it can't label the next send.
+			// Agenttic gates composer sends before `sendMessage`; context cards, the
+			// host bridge and Retry come here, so gate them too. A blocked send
+			// consumes any origin they marked, so it can't label the next send.
 			if ( ! beforeSubmit() ) {
 				takeActionOrigin( 'send' );
 				return;
 			}
 
-			await submitComposerMessage( message );
+			await sendMessage( message, options );
 
 			// Clear only a dispatched message, and only if no new draft replaced it.
 			if ( wasLastSendDispatchedRef.current ) {
 				setInputValue( ( currentValue ) => ( currentValue === message ? '' : currentValue ) );
 			}
 		},
-		[ beforeSubmit, submitComposerMessage ]
+		[ beforeSubmit, sendMessage ]
 	);
 
 	const submitHostMessage = useCallback(
@@ -244,11 +255,20 @@ export function useChatComposer( {
 				return;
 			}
 
-			// Only the host bridge marks its sends; every other path goes out unmarked.
+			// Only the host bridge and Retry (`submitRetryMessage`) mark their sends;
+			// every other path goes out unmarked.
 			markActionOrigin( 'send', 'host' );
 			await submitChatMessage( submittedMessage );
 		},
 		[ inputValue, submitChatMessage ]
+	);
+
+	const submitRetryMessage = useCallback(
+		async ( message: string ) => {
+			markActionOrigin( 'send', 'retry' );
+			await submitChatMessage( message, { withImages: false } );
+		},
+		[ submitChatMessage ]
 	);
 
 	// Sends a hidden context message, such as an interactive UI action, behind
@@ -278,6 +298,7 @@ export function useChatComposer( {
 		submitComposerMessage,
 		submitChatMessage,
 		submitHostMessage,
+		submitRetryMessage,
 		submitContextMessage,
 		stopResponse,
 	};

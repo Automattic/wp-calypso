@@ -10,24 +10,28 @@
 //------------------------------------------------------------------------------
 
 const RuleTester = require( 'eslint' ).RuleTester;
-const rule = require( '../../../lib/rules/i18n-no-this-translate' );
+const plugin = require( '../../..' );
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester().run( 'i18n-no-this-translate', rule, {
-	valid: [ "i18n.translate('hello')", "translate('hello')", "this.props.translate('hello')" ],
+new RuleTester( { languageOptions: { ecmaVersion: 5, sourceType: 'script' } } ).run(
+	'i18n-no-this-translate',
+	plugin.rules[ 'i18n-no-this-translate' ],
+	{
+		valid: [ "i18n.translate('hello')", "translate('hello')", "this.props.translate('hello')" ],
 
-	invalid: [
-		{
-			code: "this.translate('hello')",
-			errors: [
-				{
-					message:
-						'Use localize( ReactComponent ) instead of this.translate. See https://git.io/vSwRi',
-				},
-			],
-		},
-	],
-} );
+		invalid: [
+			{
+				code: "this.translate('hello')",
+				errors: [
+					{
+						message:
+							'Use localize( ReactComponent ) instead of this.translate. See https://git.io/vSwRi',
+					},
+				],
+			},
+		],
+	}
+);
