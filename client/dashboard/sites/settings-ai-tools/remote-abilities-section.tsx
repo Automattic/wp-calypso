@@ -25,9 +25,9 @@ import {
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
+import AnchorCopyButton from '../../components/anchor-copy-button';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
-import AnchorCopyButton from './anchor-copy-button';
 import McpGroupCard from './mcp-group-card';
 import type { Site, SiteAbility } from '@automattic/api-core';
 
