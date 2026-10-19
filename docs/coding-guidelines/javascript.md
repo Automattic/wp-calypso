@@ -195,6 +195,7 @@ When a statement is too long to fit on one line, line breaks must occur after an
 const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c
 	+ ' is ' + ( a + b + c );
 ```
+
 ```js
 // Good
 const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c + ' is ' + ( a + b + c );
@@ -438,7 +439,7 @@ Note that the `in` operator checks all inherited properties of an object prototy
 Instead, use [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty).
 
 ```js
-( {}.hasOwnProperty( 'valueOf' ) ); // false
+( {} ).hasOwnProperty( 'valueOf' ); // false
 ```
 
 [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) is also recommended for testing the presence of an object key using variable input:
@@ -767,7 +768,7 @@ If you are using Sublime Text, you can use the `SublimeLinter-eslint` plugin to 
 Before following these instructions, you'll want to globally install ESLint and related dependencies by running the following command in your terminal:
 
 ```bash
-yarn global add eslint @babel/core @babel/eslint-parser eslint-plugin-react eslint-plugin-wpcalypso
+yarn global add eslint eslint-plugin-react eslint-plugin-wpcalypso
 ```
 
 #### Identifying Spaces with Sublime Text

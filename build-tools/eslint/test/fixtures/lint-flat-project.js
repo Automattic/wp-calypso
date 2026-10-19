@@ -16,6 +16,8 @@ const files = {
 	// eslint-disable-next-line inclusive-language/use-inclusive-words -- the input that rule should flag
 	'index.js': `export const help = '${ url }';\n// whitelist\n`,
 	'component.jsx': 'export const Example = () => <div />;\n',
+	// Multiline arguments without a trailing comma, as WordPress's Prettier style prints them.
+	'call.js': 'export const sum = ( a, b ) => a + b;\nsum(\n\t1,\n\t2\n);\n',
 	'test/index.js': `export const help = '${ url }';\n`,
 	'data.json': `{ "help": "${ url }" }\n`,
 	'package.json': '{}\n',
@@ -25,18 +27,11 @@ const files = {
 };
 
 const config = defineConfig( [
-	{ files: [ '**/*.{js,jsx}' ], extends: [ wpcalypso.configs[ 'flat/react' ] ] },
+	{ files: [ '**/*.{js,jsx,cjs}' ], extends: [ wpcalypso.configs.react ] },
 	{ files: [ '**/*.json' ], extends: [ json.configs[ 'flat/recommended' ] ] },
 	{ ...flatNodeConfig, files: [ 'bin/**' ] },
 	// Projects often add the React plugin's own config; the preset must register the same plugin.
 	{ files: [ '**/*.{js,jsx}' ], ...react.configs.flat[ 'jsx-runtime' ] },
-	// As this repo lints: the presets' Babel parser needs Babel 8 to run on ESLint 10, and
-	// `react/jsx-tag-spacing` crashes there, so Prettier's config turns it off.
-	{
-		files: [ '**/*.{js,jsx}' ],
-		languageOptions: { parser: require( '@typescript-eslint/parser' ) },
-		rules: { 'react/jsx-tag-spacing': 'off' },
-	},
 ] );
 
 ( async () => {
