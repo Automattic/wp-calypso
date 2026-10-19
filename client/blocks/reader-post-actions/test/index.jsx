@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { readTeamsQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -36,9 +37,10 @@ const createMockStore = ( initialState = {} ) => {
 	return createStore( reducer );
 };
 
-const createQueryClient = () => {
+const createQueryClient = ( teams = [ { slug: 'a8c', title: 'Automattic' } ] ) => {
 	const client = new QueryClient();
 	client.setDefaultOptions( { queries: { retry: false } } );
+	client.setQueryData( readTeamsQuery().queryKey, { number: teams.length, teams } );
 	return client;
 };
 
@@ -146,9 +148,10 @@ describe( 'ReaderPostActions', () => {
 		const renderActions = ( {
 			post = defaultProps.post,
 			state = { currentUser: { id: 1 } },
+			teams,
 		} = {} ) =>
 			render(
-				<QueryClientProvider client={ createQueryClient() }>
+				<QueryClientProvider client={ createQueryClient( teams ) }>
 					<Provider store={ createMockStore( state ) }>
 						<ReaderPostActions { ...defaultProps } post={ post } />
 					</Provider>
@@ -159,7 +162,7 @@ describe( 'ReaderPostActions', () => {
 			mockSavedPostsEnabled = true;
 		} );
 
-		it( 'shows for a logged-in user', () => {
+		it( 'shows for a logged-in Automattician', () => {
 			renderActions();
 
 			expect( screen.getByTestId( 'save-button' ) ).toBeVisible();
@@ -169,6 +172,12 @@ describe( 'ReaderPostActions', () => {
 			mockSavedPostsEnabled = false;
 
 			renderActions();
+
+			expect( screen.queryByTestId( 'save-button' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'is hidden from someone who isn’t an Automattician', () => {
+			renderActions( { teams: [ { slug: 'okapi', title: 'Okapi' } ] } );
 
 			expect( screen.queryByTestId( 'save-button' ) ).not.toBeInTheDocument();
 		} );

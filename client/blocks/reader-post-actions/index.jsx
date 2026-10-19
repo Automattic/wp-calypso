@@ -1,4 +1,6 @@
+import { readTeamsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { category } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -9,6 +11,7 @@ import ReaderSaveButton from 'calypso/blocks/reader-save-button';
 import ShareButton from 'calypso/blocks/reader-share';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import { canSavePost } from 'calypso/reader/data/saved-posts';
+import { isSavedPostsEnabled } from 'calypso/reader/lib/teams';
 import LikeButton from 'calypso/reader/like-button';
 import {
 	isCommentsOpen,
@@ -46,11 +49,12 @@ const ReaderPostActions = ( {
 	} );
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { data: teamsData } = useQuery( { ...readTeamsQuery(), enabled: isLoggedIn } );
 	const showShare = isSharable( post );
 	const showReblog = isRebloggable( post, hasSites );
 	const showComments = isCommentsOpen( post ) || post.discussion?.comment_count > 0;
 	const showLikes = isLikeable( post );
-	const showSave = isEnabled( 'reader/saved-posts' ) && isLoggedIn && canSavePost( post );
+	const showSave = isLoggedIn && isSavedPostsEnabled( teamsData?.teams ) && canSavePost( post );
 	const listClassnames = clsx( 'reader-post-actions', className, {
 		'is-discreet': variant === 'discreet',
 		'is-split': split,

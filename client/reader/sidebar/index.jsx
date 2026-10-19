@@ -25,7 +25,7 @@ import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
 import ReaderManageSubscriptionsIcon from 'calypso/reader/components/icons/manage-subscriptions-icon';
 import ReaderSavedIcon from 'calypso/reader/components/icons/saved-icon';
 import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import { isAutomatticTeamMember, isSavedPostsEnabled } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -273,7 +273,7 @@ export class ReaderSidebar extends Component {
 						</span>
 					</li>
 
-					{ isEnabled( 'reader/saved-posts' ) && (
+					{ isSavedPostsEnabled( teams ) && (
 						<SidebarItem
 							label={ translate( 'Saved' ) }
 							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.saved ) }

@@ -101,6 +101,36 @@ describe( 'ReaderSidebar', () => {
 		} );
 	} );
 
+	describe( 'Saved', () => {
+		const a8cProps = { ...defaultProps, teams: [ { slug: 'a8c', title: 'Automattic' } ] };
+
+		beforeEach( () => {
+			jest
+				.mocked( isEnabled )
+				.mockImplementation( ( feature: string ) => feature === 'reader/saved-posts' );
+		} );
+
+		it( 'is shown to Automattic team members', () => {
+			render( new ReaderSidebar( a8cProps ).renderSidebarMenu() );
+
+			expect( screen.getByText( 'Saved' ) ).toBeVisible();
+		} );
+
+		it( 'is hidden from everyone else', () => {
+			render( new ReaderSidebar( defaultProps ).renderSidebarMenu() );
+
+			expect( screen.queryByText( 'Saved' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'is hidden when the saved posts feature is off', () => {
+			jest.mocked( isEnabled ).mockReturnValue( false );
+
+			render( new ReaderSidebar( a8cProps ).renderSidebarMenu() );
+
+			expect( screen.queryByText( 'Saved' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'title actions', () => {
 		it( 'links to the new subscription page and to search', () => {
 			const instance = new ReaderSidebar( defaultProps );
