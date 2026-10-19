@@ -1,4 +1,8 @@
-import { AkismetUpgradesProductMap, SubscriptionBillPeriod } from '@automattic/api-core';
+import {
+	ProductUpgradeMap,
+	AkismetUpgradesProductMap,
+	SubscriptionBillPeriod,
+} from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { getCurrentDashboard } from '../app/routing';
@@ -176,7 +180,16 @@ export function getUpgradedPurchaseRedirectUrl( purchase: Purchase ): string {
 	return withPurchaseNotice( getPurchaseSettingsRedirectBase( purchase ), 'upgraded' );
 }
 
-export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: string ) {
+/**
+ * @param purchase           The purchase to upgrade.
+ * @param redirectTo         Where checkout returns after a successful upgrade.
+ * @param isJetpackProOnSale Whether Jetpack Pro is on sale; `undefined` while unknown.
+ */
+export function getSitePurchaseUpgradeUrl(
+	purchase: Purchase,
+	redirectTo?: string,
+	isJetpackProOnSale?: boolean
+) {
 	// Titan plans upgrade through the email tier grid, not the generic checkout.
 	if ( config.isEnabled( 'emails/titan-tiers' ) && isTitanMail( purchase ) && purchase.meta ) {
 		return dashboardLink( `/emails/choose-email-solution/${ purchase.meta }?intent=upgrade` );
@@ -198,7 +211,18 @@ export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: stri
 		return url;
 	}
 
-	// The Jetpack store offers only bundles on sale, so it can retire or add upgrade targets.
+	/* Until Pro launches, upgrade straight to the next bundle. After launch, or while that is
+	 * unknown, the Jetpack store decides, since it offers only bundles on sale. */
+	const upgradeProductSlug =
+		isJetpackProOnSale === false ? ProductUpgradeMap[ purchase.product_slug ] : undefined;
+	if ( upgradeProductSlug ) {
+		const backUrl = redirectToDashboardLink( { supportBackport: true } );
+		return addQueryArgs( wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` ), {
+			redirect_to: backUrl,
+			cancel_to: backUrl,
+		} );
+	}
+
 	if ( purchase.is_jetpack_plan_or_product ) {
 		const backUrl = redirectToDashboardLink( { supportBackport: true } );
 		return addQueryArgs( wpcomLink( `/plans/${ purchase.site_slug }` ), {

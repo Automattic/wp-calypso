@@ -98,10 +98,45 @@ describe( 'getSitePurchaseUpgradeUrl', () => {
 		'jetpack_growth_monthly',
 		'jetpack_pro_yearly',
 		'jetpack_pro_bi_yearly',
-	] )( 'sends %s to the Jetpack store, which offers only bundles on sale', ( productSlug ) => {
-		const url = getSitePurchaseUpgradeUrl( makePurchase( { product_slug: productSlug } ) );
+	] )( 'sends %s to the Jetpack store once Pro is on sale', ( productSlug ) => {
+		const url = getSitePurchaseUpgradeUrl(
+			makePurchase( { product_slug: productSlug } ),
+			undefined,
+			true
+		);
 		expect( url ).toContain( '/plans/example.com' );
 		expect( url ).not.toContain( '/checkout/' );
+	} );
+
+	test( 'sends Jetpack bundles to the store while Pro availability is unknown', () => {
+		const url = getSitePurchaseUpgradeUrl(
+			makePurchase( { product_slug: 'jetpack_growth_yearly' } )
+		);
+		expect( url ).toContain( '/plans/example.com' );
+		expect( url ).not.toContain( '/checkout/' );
+	} );
+
+	test.each( [
+		[ 'jetpack_starter_yearly', 'jetpack_security_t1_yearly' ],
+		[ 'jetpack_starter_monthly', 'jetpack_security_t1_monthly' ],
+		[ 'jetpack_growth_yearly', 'jetpack_complete' ],
+		[ 'jetpack_growth_monthly', 'jetpack_complete_monthly' ],
+	] )( 'upgrades %s straight to %s before Pro is on sale', ( productSlug, upgradeSlug ) => {
+		const url = getSitePurchaseUpgradeUrl(
+			makePurchase( { product_slug: productSlug } ),
+			undefined,
+			false
+		);
+		expect( url ).toContain( `/checkout/example.com/${ upgradeSlug }` );
+	} );
+
+	test( 'sends a Jetpack bundle without a direct upgrade to the store before Pro is on sale', () => {
+		const url = getSitePurchaseUpgradeUrl(
+			makePurchase( { product_slug: 'jetpack_security_t1_yearly' } ),
+			undefined,
+			false
+		);
+		expect( url ).toContain( '/plans/example.com' );
 	} );
 
 	test( 'keeps the Dashboard return destinations for the store checkout', () => {

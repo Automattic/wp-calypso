@@ -4,6 +4,7 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 	DomainTransferStatus,
+	JetpackPlans,
 } from '@automattic/api-core';
 import {
 	domainQuery,
@@ -14,6 +15,7 @@ import {
 	siteJetpackKeysQuery,
 	reinstallMarketplacePluginsQuery,
 	siteBySlugQuery,
+	productsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
@@ -147,8 +149,21 @@ function renewPurchase( purchase: Purchase ): void {
 }
 
 /** Where to send anything that isn't a WordPress.com plan to upgrade. */
+/**
+ * Whether Jetpack Pro is on sale, `undefined` until known. Fetched only for Jetpack purchases.
+ */
+function useIsJetpackProOnSale( purchase: Purchase ): boolean | undefined {
+	const { data } = useQuery( {
+		...productsQuery(),
+		enabled: purchase.is_jetpack_plan_or_product,
+		select: ( products ) => Boolean( products[ JetpackPlans.PLAN_JETPACK_PRO_YEARLY ]?.available ),
+	} );
+	return data;
+}
+
 function getNonPlanUpgradeAction(
-	purchase: Purchase
+	purchase: Purchase,
+	isJetpackProOnSale?: boolean
 ): { href: string; title: string } | undefined {
 	if ( ! purchase.is_upgradable ) {
 		return undefined;
@@ -163,7 +178,11 @@ function getNonPlanUpgradeAction(
 	if ( isEmailPlanAtHighestTier( purchase ) ) {
 		return undefined;
 	}
-	const href = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl( purchase ) );
+	const href = getSitePurchaseUpgradeUrl(
+		purchase,
+		getUpgradedPurchaseRedirectUrl( purchase ),
+		isJetpackProOnSale
+	);
 	return href
 		? {
 				href,
@@ -217,7 +236,10 @@ function getUpgradeControlLabel(
  * Label and destination for the header CTA and quick-actions menu, which promote
  * upgrades only — offering downgrades is the body action's job.
  */
-function getHeaderUpgradeAction( purchase: Purchase ): { href: string; title: string } | undefined {
+function getHeaderUpgradeAction(
+	purchase: Purchase,
+	isJetpackProOnSale?: boolean
+): { href: string; title: string } | undefined {
 	// WordPress.com plans go through the shared helper. A plan that gets nothing
 	// back has no upgrade to offer, and the non-plan path rejects it too.
 	const planAction = getPlanChangeAction( purchase, {
@@ -228,7 +250,7 @@ function getHeaderUpgradeAction( purchase: Purchase ): { href: string; title: st
 		return { href: planAction.href, title: planAction.title };
 	}
 
-	return getNonPlanUpgradeAction( purchase );
+	return getNonPlanUpgradeAction( purchase, isJetpackProOnSale );
 }
 
 function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
@@ -292,6 +314,7 @@ function usePurchaseHeaderActions( purchase: Purchase ): PurchaseHeaderAction[] 
 	const hasEnTranslation = useHasEnTranslation();
 	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
+	const isJetpackProOnSale = useIsJetpackProOnSale( purchase );
 
 	// The purchase list gates its renewal link on ownership too.
 	if ( String( user.ID ) !== String( purchase.user_id ) ) {
@@ -299,7 +322,7 @@ function usePurchaseHeaderActions( purchase: Purchase ): PurchaseHeaderAction[] 
 	}
 
 	const actions: PurchaseHeaderAction[] = [];
-	const upgradeAction = getHeaderUpgradeAction( purchase );
+	const upgradeAction = getHeaderUpgradeAction( purchase, isJetpackProOnSale );
 	const storageUpgradeUrl = getSitePurchaseStorageUpgradeUrl( purchase );
 
 	if ( upgradeAction ) {
@@ -618,6 +641,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 	const hasEnTranslation = useHasEnTranslation();
 	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
+	const isJetpackProOnSale = useIsJetpackProOnSale( purchase );
 
 	if ( String( user.ID ) !== String( purchase.user_id ) ) {
 		return null;
@@ -664,7 +688,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 		);
 	}
 
-	const upgradeAction = getNonPlanUpgradeAction( purchase );
+	const upgradeAction = getNonPlanUpgradeAction( purchase, isJetpackProOnSale );
 	if ( ! upgradeAction ) {
 		return null;
 	}
