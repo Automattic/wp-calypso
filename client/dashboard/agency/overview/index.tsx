@@ -1,4 +1,5 @@
 import { activeAgencyQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
@@ -6,6 +7,7 @@ import { useLocale } from '../../app/locale';
 import FlashMessage from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { a4aLink, calypsoLiveRedirectorLink } from '../../utils/link';
 import { AgencyNotices } from '../components/agency-notices';
 import PaymentRiskNotice, { hasPaymentRiskNotice } from '../components/payment-risk-notice';
 import PressableUsageLimitNotice, {
@@ -54,6 +56,12 @@ export default function AgencyOverview() {
 	if ( ! agency ) {
 		return <PageLayout header={ <PageHeader title={ __( 'Overview' ) } /> } />;
 	}
+
+	const leadMatchingPath = `${ PARTNER_DIRECTORY_ROUTE }/lead-matching`;
+	const leadMatchingPreviewHref = isEnabled( 'a4a-lead-matching-design-preview' )
+		? ( calypsoLiveRedirectorLink( leadMatchingPath, 'a8c-for-agencies' ) ??
+			a4aLink( leadMatchingPath ) )
+		: undefined;
 
 	return (
 		<PageLayout
@@ -120,6 +128,7 @@ export default function AgencyOverview() {
 					woopayments: '/woopayments',
 					marketplace: '/marketplace',
 					partnerDirectory: PARTNER_DIRECTORY_ROUTE,
+					leadMatching: leadMatchingPreviewHref,
 					contactSupport: () => openContactForm(),
 					aiMcp: '/agency/ai',
 					pressableHosting: getMarketplaceHostingSectionRoute( 'pressable' ),

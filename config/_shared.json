@@ -8,7 +8,9 @@
 	"checkout_additional_allowed_redirect_hosts": [],
 	"client_slug": false,
 	"facebook_api_key": false,
-	"features": {},
+	"features": {
+		"a4a-lead-matching-design-preview": false
+	},
 	"google_recaptcha_site_key": false,
 	"hotjar_enabled": false,
 	"survicate_enabled": false,

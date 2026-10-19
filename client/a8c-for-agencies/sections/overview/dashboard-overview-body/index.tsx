@@ -10,11 +10,13 @@ import {
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+	A4A_PARTNER_DIRECTORY_LINK,
 	A4A_REFERRALS_DASHBOARD,
 	A4A_SITES_LINK,
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
+import { PARTNER_DIRECTORY_LEAD_MATCHING_SLUG } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import {
 	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
 	PROGRAM_INCENTIVES_URL,
@@ -72,6 +74,7 @@ function DashboardOverviewBodyContent( {
 				woopayments: A4A_WOOPAYMENTS_LINK,
 				marketplace: A4A_MARKETPLACE_PRODUCTS_LINK,
 				partnerDirectory: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+				leadMatching: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
 				contactSupport: CONTACT_URL_HASH_FRAGMENT,
 				aiMcp: A4A_AI_MCP_LINK,
 				pressableHosting: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
