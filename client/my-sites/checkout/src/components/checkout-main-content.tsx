@@ -669,11 +669,6 @@ export default function CheckoutMainContent( {
 
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
-	const originalPriceForHeader = responseCart.products.reduce(
-		( sum, product ) => sum + product.item_original_subtotal_integer,
-		0
-	);
-	const hasDiscountForHeader = originalPriceForHeader > responseCart.total_cost_integer;
 
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter, showHelpIcon } =
 		useCheckoutHelpCenter();
@@ -800,39 +795,7 @@ export default function CheckoutMainContent( {
 							errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
 							onError={ onSummaryError }
 						>
-							{ ! isMobileCheckoutStickySummary && isCheckoutUiRedesignV1 && (
-								<CheckoutSummaryTitleLinkRedesign
-									className="checkout__summary-button"
-									onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
-								>
-									<CheckoutSummaryTitleContentRedesign className="checkout__summary-title">
-										<CheckoutSummaryTitle>
-											<CheckoutSummaryBagIconWrapper>
-												<MaterialIcon icon="shopping_cart" size={ 24 } />
-											</CheckoutSummaryBagIconWrapper>
-											{ translate( 'Purchase details' ) }
-										</CheckoutSummaryTitle>
-										<CheckoutSummaryPricesWrapper>
-											{ hasDiscountForHeader && (
-												<CheckoutSummaryOriginalPrice>
-													{ formatCurrency( originalPriceForHeader, responseCart.currency, {
-														isSmallestUnit: true,
-														stripZeros: true,
-													} ) }
-												</CheckoutSummaryOriginalPrice>
-											) }
-											<CheckoutSummaryCurrentPrice>
-												{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
-													isSmallestUnit: true,
-													stripZeros: true,
-												} ) }
-											</CheckoutSummaryCurrentPrice>
-											<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
-										</CheckoutSummaryPricesWrapper>
-									</CheckoutSummaryTitleContentRedesign>
-								</CheckoutSummaryTitleLinkRedesign>
-							) }
-							{ ! isMobileCheckoutStickySummary && ! isCheckoutUiRedesignV1 && (
+							{ ! isMobileCheckoutStickySummary && (
 								<CheckoutSummaryTitleLink
 									className="checkout__summary-button"
 									onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
@@ -865,22 +828,12 @@ export default function CheckoutMainContent( {
 								) }
 
 								<WPCheckoutOrderSummary />
-								{ ! isCheckoutUiRedesignV1 && (
-									<CheckoutSidebarNudge
-										addItemToCart={ addItemToCart }
-										areThereDomainProductsInCart={ areThereDomainProductsInCart }
-									/>
-								) }
-							</CheckoutSummaryBody>
-						</CheckoutErrorBoundary>
-						{ isCheckoutUiRedesignV1 && ( isSummaryVisible || isLargeViewport ) && (
-							<CheckoutSummaryNudgeArea>
 								<CheckoutSidebarNudge
 									addItemToCart={ addItemToCart }
 									areThereDomainProductsInCart={ areThereDomainProductsInCart }
 								/>
-							</CheckoutSummaryNudgeArea>
-						) }
+							</CheckoutSummaryBody>
+						</CheckoutErrorBoundary>
 					</CheckoutSummaryArea>
 				</>
 			) }
@@ -3297,71 +3250,5 @@ const WPCheckoutTitle = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0;
-	}
-`;
-
-// Redesign V1 styled components for summary header
-const CheckoutSummaryTitleLinkRedesign = styled.button`
-	background: transparent;
-	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	width: 100%;
-
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		display: none;
-	}
-`;
-
-const CheckoutSummaryTitleContentRedesign = styled.span`
-	color: ${ ( props ) => props.theme.colors.textColor };
-	display: flex;
-	font-size: 13px;
-	font-weight: 400;
-	justify-content: space-between;
-	align-items: center;
-	margin: 0 auto;
-	padding: 16px;
-	max-width: 600px;
-
-	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 16px 0;
-	}
-`;
-
-const CheckoutSummaryPricesWrapper = styled.span`
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 4px;
-`;
-
-const CheckoutSummaryOriginalPrice = styled.s`
-	color: ${ ( props ) => props.theme.colors.textColorLight };
-	font-weight: ${ ( props ) => props.theme.weights.normal };
-	font-size: 13px;
-`;
-
-const CheckoutSummaryCurrentPrice = styled.span`
-	font-weight: ${ ( props ) => props.theme.weights.bold };
-`;
-
-const CheckoutSummaryBagIconWrapper = styled.span`
-	opacity: 0.5;
-	display: flex;
-	align-items: center;
-	margin-inline-end: 6px;
-	& svg {
-		width: 16px;
-		height: 16px;
-	}
-`;
-
-const CheckoutSummaryNudgeArea = styled.div`
-	margin: 8px 16px 12px;
-	flex-shrink: 0;
-
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		margin-inline: 0;
-		margin-block-start: 24px;
-		max-width: 288px;
 	}
 `;
