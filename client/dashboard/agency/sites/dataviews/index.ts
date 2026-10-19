@@ -9,10 +9,12 @@ import {
 	getSiteUrlField,
 	withoutLaunchNag,
 } from './site';
+import { getStatusField } from './status-field';
 import type { AgencySite, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export { getAgencyActions, useAgencyActions } from './actions';
+export { getStatusFilter } from './status-field';
 
 export function useAgencyFields( {
 	viewType,
@@ -34,6 +36,7 @@ export function useAgencyFields( {
 			getSiteNameField( onSiteClick ),
 			getSiteUrlField(),
 			getSiteIconField( viewType ),
+			getStatusField(),
 			shared( 'subscribers_count' ),
 			shared( 'backup' ),
 			shared( 'plan' ),
