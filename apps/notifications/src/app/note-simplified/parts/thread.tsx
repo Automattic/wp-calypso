@@ -40,7 +40,7 @@ const ThreadItem = ( {
 
 	return (
 		<VStack as="li" spacing={ 3 }>
-			<HStack justify="flex-start" spacing={ 3 }>
+			<HStack alignment="top" justify="flex-start" spacing={ 3 }>
 				{ authorUrl ? (
 					// The name beside it links to the same profile, so the photo stays out of the tab order.
 					<a
