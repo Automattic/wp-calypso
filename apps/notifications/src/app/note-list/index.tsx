@@ -116,7 +116,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 			isModifierClickRef.current = false;
 			const note = visibleNotes.find( ( { id } ) => id.toString() === noteId );
 			if ( note ) {
-				window.open( note.url, '_blank' );
+				window.open( note.url, '_blank', 'noopener,noreferrer' );
 			}
 			return;
 		}
