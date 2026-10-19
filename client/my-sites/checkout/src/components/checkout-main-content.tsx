@@ -78,7 +78,6 @@ import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/src/components/checkout-order-banner';
-import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import {
@@ -120,12 +119,10 @@ import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { handleProgressStepSelect } from './handle-progress-step-select';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
-import { MobileCheckoutStickySummary } from './mobile-checkout-sticky-summary';
 import { mobileCheckoutStickySummaryRadioDotStyles } from './mobile-checkout-sticky-summary-styles';
 import { NonRenewableDomain, SearchForNewDomainButton } from './non-renewable-domain';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import { PaymentMethodFilter } from './payment-methods-filter';
-import { getRefundWindowCopy } from './refund-policies';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview, { CouponFieldArea } from './wp-checkout-order-review';
 import {
@@ -656,8 +653,6 @@ export default function CheckoutMainContent( {
 	const isStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
 
-	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
-
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter, showHelpIcon } =
 		useCheckoutHelpCenter();
 
@@ -697,7 +692,7 @@ export default function CheckoutMainContent( {
 		return (
 			<WPCheckoutWrapper>
 				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
-				<WPCheckoutMainContent isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
+				<WPCheckoutMainContent>
 					<PerformanceTrackerStop />
 					<WPCheckoutTitle className="checkout__main-title">
 						{ translate( 'Checkout' ) }
@@ -716,7 +711,7 @@ export default function CheckoutMainContent( {
 		return (
 			<WPCheckoutWrapper>
 				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
-				<WPCheckoutMainContent isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
+				<WPCheckoutMainContent>
 					<PerformanceTrackerStop />
 					<WPCheckoutTitle className="checkout__main-title">
 						{ translate( 'Checkout' ) }
@@ -741,7 +736,7 @@ export default function CheckoutMainContent( {
 		return (
 			<WPCheckoutWrapper>
 				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
-				<WPCheckoutMainContent isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
+				<WPCheckoutMainContent>
 					<PerformanceTrackerStop />
 					<WPCheckoutTitle className="checkout__main-title">
 						{ translate( 'Checkout' ) }
@@ -783,28 +778,26 @@ export default function CheckoutMainContent( {
 							errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
 							onError={ onSummaryError }
 						>
-							{ ! isMobileCheckoutStickySummary && (
-								<CheckoutSummaryTitleLink
-									className="checkout__summary-button"
-									onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
-								>
-									<CheckoutSummaryTitleContent className="checkout__summary-title">
-										<CheckoutSummaryTitle>
-											{ ! isStepContainerV2 && (
-												<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
-											) }
-											{ translate( 'Purchase Details' ) }
-											<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
-										</CheckoutSummaryTitle>
-										<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-											{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
-												isSmallestUnit: true,
-												stripZeros: true,
-											} ) }
-										</CheckoutSummaryTitlePrice>
-									</CheckoutSummaryTitleContent>
-								</CheckoutSummaryTitleLink>
-							) }
+							<CheckoutSummaryTitleLink
+								className="checkout__summary-button"
+								onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+							>
+								<CheckoutSummaryTitleContent className="checkout__summary-title">
+									<CheckoutSummaryTitle>
+										{ ! isStepContainerV2 && (
+											<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
+										) }
+										{ translate( 'Purchase Details' ) }
+										<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+									</CheckoutSummaryTitle>
+									<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
+										{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+											isSmallestUnit: true,
+											stripZeros: true,
+										} ) }
+									</CheckoutSummaryTitlePrice>
+								</CheckoutSummaryTitleContent>
+							</CheckoutSummaryTitleLink>
 
 							<CheckoutSummaryBody className="checkout__summary-body">
 								{ shouldShowSitePreview && (
@@ -855,22 +848,9 @@ export default function CheckoutMainContent( {
 			{ blackboxChallengeHeader }
 		</>
 	);
-	// Refund copy, no icon, that continues the secure-encryption notice at payment
-	// entry. getRefundWindowCopy is null when no refund window applies; mirror
-	// CheckoutMoneyBackGuarantee's all-domains guard.
-	const refundWindowCopy = getRefundWindowCopy( responseCart, translate );
-	const allCartItemsAreDomains = responseCart.products.every(
-		( product ) => product.is_domain_registration === true
-	);
-	const paymentStepRefundCopy =
-		refundWindowCopy && ! allCartItemsAreDomains ? refundWindowCopy : null;
-
 	const checkoutMainContent = (
 		<RestorableProductsProvider>
-			<WPCheckoutMainContent
-				className="checkout-main-content"
-				isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
-			>
+			<WPCheckoutMainContent className="checkout-main-content">
 				<CheckoutOrderBanner />
 				<DIFMOfferRequestNotice responseCart={ responseCart } />
 				{ isStepContainerV2 ? (
@@ -1057,25 +1037,6 @@ export default function CheckoutMainContent( {
 						validatingButtonAriaLabel={ validatingButtonText }
 						onPageLoadError={ onPageLoadError }
 						waitForPaymentMethodIds={ [ 'apple-pay', 'google-pay' ] }
-						{ ...( isMobileCheckoutStickySummary && {
-							/* Figma 3971:13237 — the active heading reads "Payment method"
-							   under the experiment (vs. composite-checkout's default
-							   "Pick a payment method"). */
-							titleContent: <>{ translate( 'Payment method' ) }</>,
-							/* Figma 3971:13239 — secure-encryption notice sits as a
-							   13/regular/Gray 60 paragraph between the step heading
-							   and the methods card. activeStepHeader renders directly
-							   above activeStepContent, so the default methods card is
-							   left untouched. */
-							activeStepHeader: (
-								<p className="checkout-payment-method__secure-notice">
-									{ translate( 'All transactions are secure and encrypted.' ) }
-									{ /* getRefundWindowCopy is a badge label (no terminal stop), so it
-									     needs one to sit in prose here. */ }
-									{ paymentStepRefundCopy ? <> { paymentStepRefundCopy }.</> : null }
-								</p>
-							),
-						} ) }
 						isCompleteCallback={ () => {
 							// We want to consider this step complete only if there is a
 							// payment method selected and it does not have required fields.
@@ -1103,8 +1064,7 @@ export default function CheckoutMainContent( {
 						isSubmitted={ isSubmitted }
 						isLargeViewport={ isLargeViewport }
 					/>
-					{ isLargeViewport ||
-					( isStepContainerV2 && ! isLargeViewport && isMobileCheckoutStickySummary ) ? (
+					{ isLargeViewport ? (
 						<PortaledCheckoutFormSubmit
 							validateForm={ validateForm }
 							submitButtonHeader={ portaledSubmitButtonHeader }
@@ -1137,10 +1097,7 @@ export default function CheckoutMainContent( {
 
 	return (
 		<SubmitButtonSlotContext.Provider value={ submitButtonSlotValue }>
-			<StepContainerV2CheckoutFixer
-				isLargeViewport={ isLargeViewport }
-				isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
-			>
+			<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
 				<Step.TwoColumnLayout
 					firstColumnWidth={ 8 }
 					secondColumnWidth={ 4 }
@@ -1204,7 +1161,7 @@ export default function CheckoutMainContent( {
 						return (
 							<>
 								{ topBar }
-								{ ! isMobileCheckoutStickySummary && checkoutSummary }
+								{ checkoutSummary }
 							</>
 						);
 					} }
@@ -1219,12 +1176,7 @@ export default function CheckoutMainContent( {
 							);
 						}
 
-						return (
-							<>
-								{ checkoutMainContent }
-								{ isMobileCheckoutStickySummary && <MobileCheckoutStickySummary /> }
-							</>
-						);
+						return checkoutMainContent;
 					} }
 				</Step.TwoColumnLayout>
 				<LeaveCheckoutModal { ...leaveModalProps } />
