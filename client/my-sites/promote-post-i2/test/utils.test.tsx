@@ -3,7 +3,30 @@
  */
 import config from '@automattic/calypso-config';
 import { SiteDetails } from '@automattic/data-stores';
-import { getShortDateString, isRunningInWpAdmin } from '../utils';
+import {
+	campaignStatus,
+	canPromoteAgainCampaign,
+	getShortDateString,
+	isRunningInWpAdmin,
+} from '../utils';
+
+describe( 'canPromoteAgainCampaign', () => {
+	test.each( [
+		[ campaignStatus.SCHEDULED, false ],
+		[ campaignStatus.CREATED, true ],
+		[ campaignStatus.REJECTED, false ],
+		[ campaignStatus.APPROVED, false ],
+		[ campaignStatus.ACTIVE, true ],
+		[ campaignStatus.CANCELED, true ],
+		[ campaignStatus.FINISHED, true ],
+		[ campaignStatus.PROCESSING, true ],
+		[ campaignStatus.SUSPENDED, false ],
+		[ '', false ],
+		[ 'unknown', false ],
+	] )( 'returns %s eligibility as %s', ( status, expected ) => {
+		expect( canPromoteAgainCampaign( status ) ).toBe( expected );
+	} );
+} );
 
 describe( 'Promote Post Utils', () => {
 	const timestamp = 1687521600000; // 2023-06-23 12:00:00 GMT+0000
