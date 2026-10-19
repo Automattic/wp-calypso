@@ -1,5 +1,5 @@
 import { ProgressBar } from '@automattic/components';
-import { Hooray, Progress, SubTitle, Title } from '@automattic/onboarding';
+import { Progress, SubTitle, Title } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useRef, useEffect, useState } from 'react';
@@ -25,7 +25,7 @@ import type { PlaygroundImportProgress } from '../../lib/import-playground';
 import type { PlaygroundClient } from '../../lib/types';
 import './style.scss';
 
-type ImportResult = { status: 'done' } | { status: 'error'; reason: 'timeout' | 'import_failure' };
+type ImportResult = { status: 'error'; reason: 'timeout' | 'import_failure' };
 
 export const PlaygroundSetupStep: Step< {
 	submits: {
@@ -118,7 +118,8 @@ export const PlaygroundSetupStep: Step< {
 			return;
 		}
 
-		setResult( { status: 'done' } );
+		// The site is what the user launched, so show it as soon as it is live.
+		window.location.assign( siteSlug ? `https://${ siteSlug }` : `/home/${ siteId }` );
 	};
 
 	const retryImport = () => {
@@ -145,25 +146,6 @@ export const PlaygroundSetupStep: Step< {
 	);
 
 	const getStatus = () => {
-		if ( result?.status === 'done' ) {
-			return (
-				<Hooray>
-					<div className="import__heading import__heading-center">
-						<Title>{ __( 'Your site is ready' ) }</Title>
-						<SubTitle>{ __( 'Your Playground site is now on WordPress.com.' ) }</SubTitle>
-						<div className="playground-setup__actions">
-							<Button variant="primary" href={ `/home/${ siteSlug }` }>
-								{ __( 'Go to dashboard' ) }
-							</Button>
-							<Button variant="secondary" href={ `https://${ siteSlug }` }>
-								{ __( 'View site' ) }
-							</Button>
-						</div>
-					</div>
-				</Hooray>
-			);
-		}
-
 		if ( result?.status === 'error' ) {
 			return (
 				<div className="import-layout__center">

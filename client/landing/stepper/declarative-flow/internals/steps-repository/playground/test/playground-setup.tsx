@@ -133,20 +133,19 @@ describe( 'PlaygroundSetupStep', () => {
 		).toBeVisible();
 	} );
 
-	it( 'finishes a site launch on this screen', async () => {
+	it( 'opens the site when a site launch finishes', async () => {
+		const originalLocation = window.location;
+		const assign = jest.fn();
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			value: { ...window.location, assign },
+		} );
 		importPlaygroundSiteMock.mockResolvedValue( 'import-id' );
 		const props = await renderSetupStep();
 
-		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Go to dashboard' } ) ).toHaveAttribute(
-			'href',
-			'/home/example.wordpress.com'
-		);
-		expect( screen.getByRole( 'link', { name: 'View site' } ) ).toHaveAttribute(
-			'href',
-			'https://example.wordpress.com'
-		);
+		expect( assign ).toHaveBeenCalledWith( 'https://example.wordpress.com' );
 		expect( props.navigation.submit ).not.toHaveBeenCalled();
+		Object.defineProperty( window, 'location', { configurable: true, value: originalLocation } );
 	} );
 
 	it( 'hands a WooCommerce publish launch back to its flow when the import finishes', async () => {
