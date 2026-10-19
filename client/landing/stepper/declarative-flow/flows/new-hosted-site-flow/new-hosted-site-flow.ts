@@ -20,9 +20,6 @@ import {
 	clearSignupCompleteFlowName,
 	clearSignupCompleteSlug,
 	clearSignupCompleteSiteID,
-	getSignupCompleteFlowName,
-	retrieveSignupDestination,
-	wasSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -57,15 +54,11 @@ async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
 	const queryParams = getCurrentQueryParams();
-	// Like onboarding, only a step URL resumes; the flow root always starts over.
-	const isReturningFromCheckout =
-		!! getEntryStepFromURL() &&
-		hasPurchaseStepsParameter( queryParams ) &&
-		wasSignupCheckoutPageUnloaded() &&
-		getSignupCompleteFlowName() === NEW_HOSTED_SITE_FLOW &&
-		retrieveSignupDestination();
+	// Like onboarding, opted-in step URLs preserve state; the flow root starts over.
+	const shouldPreserveSignupState =
+		hasPurchaseStepsParameter( queryParams ) && !! getEntryStepFromURL();
 
-	if ( ! isReturningFromCheckout ) {
+	if ( ! shouldPreserveSignupState ) {
 		await resetOnboardStore();
 		// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
 		reduxStore.dispatch( setSelectedSiteId( null ) );

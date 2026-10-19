@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { renderHook, act } from '@testing-library/react';
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
@@ -25,9 +24,6 @@ const mockReset = jest.fn();
 const mockSeed = jest.fn();
 const mockClear = jest.fn();
 const mockSite = { siteSlug: 'example.wordpress.com', siteId: '123' };
-let mockSavedFlow = NEW_HOSTED_SITE_FLOW;
-let mockCheckoutUnloaded = false;
-let mockDestination: string | undefined = '/setup/transferring-hosted-site';
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: ( callback: ( select: () => unknown ) => unknown ) =>
@@ -62,9 +58,6 @@ jest.mock( 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial', ()
 jest.mock( 'calypso/signup/storageUtils', () => ( {
 	getSignupCompleteSiteID: () => mockSite.siteId,
 	getSignupCompleteSlug: () => mockSite.siteSlug,
-	getSignupCompleteFlowName: () => mockSavedFlow,
-	wasSignupCheckoutPageUnloaded: () => mockCheckoutUnloaded,
-	retrieveSignupDestination: () => mockDestination,
 	clearSignupDestinationCookie: () => mockClear(),
 	clearSignupCompleteFlowName: jest.fn(),
 	clearSignupCompleteSlug: jest.fn(),
@@ -78,9 +71,6 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 beforeEach( () => {
 	jest.clearAllMocks();
 	mockLocale = 'en';
-	mockCheckoutUnloaded = false;
-	mockSavedFlow = NEW_HOSTED_SITE_FLOW;
-	mockDestination = '/setup/transferring-hosted-site';
 	mockPlan = { product_slug: 'ecommerce-bundle-2y' };
 	mockQuery = new URLSearchParams( {
 		plan: mockPlan.product_slug,
@@ -222,12 +212,15 @@ it.each( [ true, false ] )(
 	}
 );
 
-it( 'preserves signup state for the shared checkout-return path', async () => {
-	mockCheckoutUnloaded = true;
-	await hosting.initialize( { dispatch: jest.fn(), getState: () => ( {} ) } as never );
-	expect( mockReset ).not.toHaveBeenCalled();
-	expect( mockClear ).not.toHaveBeenCalled();
-} );
+it.each( [ 'domains', 'plans', 'domains/fr', 'plans/fr' ] )(
+	'preserves signup state on opted-in %s entries without checkout markers',
+	async ( step ) => {
+		window.location.pathname = `/setup/new-hosted-site/${ step }`;
+		await hosting.initialize( { dispatch: jest.fn(), getState: () => ( {} ) } as never );
+		expect( mockReset ).not.toHaveBeenCalled();
+		expect( mockClear ).not.toHaveBeenCalled();
+	}
+);
 
 it( 'returns through plans on the same site without reseeding the entry plan', async () => {
 	const nav = navigation( 'processing' );
@@ -248,7 +241,6 @@ it( 'returns through plans on the same site without reseeding the entry plan', a
 	const back = new URL( checkout.searchParams.get( 'checkoutBackUrlDomains' )! );
 	mockQuery = back.searchParams;
 	window.location.pathname = back.pathname;
-	mockCheckoutUnloaded = true;
 
 	const steps = await hosting.initialize( {
 		dispatch: jest.fn(),
@@ -267,27 +259,20 @@ it( 'returns through plans on the same site without reseeding the entry plan', a
 	expect( navigate ).toHaveBeenLastCalledWith( STEPS.UNIFIED_PLANS.slug );
 } );
 
-it.each( [ 'fresh', 'other-flow', 'without-progress', 'expired', 'flow-root', 'locale-root' ] )(
-	'resets signup state for %s visits',
-	async ( entry ) => {
-		mockCheckoutUnloaded = entry !== 'fresh';
-		if ( entry === 'other-flow' ) {
-			mockSavedFlow = 'onboarding';
-		}
-		if ( entry === 'without-progress' ) {
-			mockQuery.delete( 'showPurchaseSteps' );
-		}
-		if ( entry === 'expired' ) {
-			mockDestination = undefined;
-		}
-		if ( entry === 'flow-root' ) {
-			window.location.pathname = '/setup/new-hosted-site';
-		}
-		if ( entry === 'locale-root' ) {
-			window.location.pathname = '/setup/new-hosted-site/fr';
-		}
-		await hosting.initialize( { dispatch: jest.fn(), getState: () => ( {} ) } as never );
-		expect( mockReset ).toHaveBeenCalled();
-		expect( mockClear ).toHaveBeenCalled();
+it.each( [
+	[ 'without progress', '/setup/new-hosted-site/domains', undefined ],
+	[ 'disabled progress', '/setup/new-hosted-site/domains', 'false' ],
+	[ 'localized without progress', '/setup/new-hosted-site/domains/fr', undefined ],
+	[ 'flow root', '/setup/new-hosted-site', 'true' ],
+	[ 'localized flow root', '/setup/new-hosted-site/fr', 'true' ],
+] )( 'resets signup state for %s entries', async ( _entry, pathname, progress ) => {
+	window.location.pathname = pathname;
+	if ( progress === undefined ) {
+		mockQuery.delete( 'showPurchaseSteps' );
+	} else {
+		mockQuery.set( 'showPurchaseSteps', progress );
 	}
-);
+	await hosting.initialize( { dispatch: jest.fn(), getState: () => ( {} ) } as never );
+	expect( mockReset ).toHaveBeenCalled();
+	expect( mockClear ).toHaveBeenCalled();
+} );
