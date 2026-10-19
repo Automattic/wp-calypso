@@ -3,6 +3,7 @@ import path from 'node:path';
 import { flatNodeConfig } from '@automattic/calypso-eslint-overrides';
 import json from '@automattic/eslint-plugin-json';
 import { fixupPluginRules, includeIgnoreFile } from '@eslint/compat';
+import markdown from '@eslint/markdown';
 import tanstackQuery from '@tanstack/eslint-plugin-query';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
@@ -12,13 +13,9 @@ import eslintConfigPrettier from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
 import jest from 'eslint-plugin-jest';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
-import md from 'eslint-plugin-md';
-import mdPackage from 'eslint-plugin-md/package.json' with { type: 'json' };
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import wpcalypso from 'eslint-plugin-wpcalypso';
 import globals from 'globals';
-import { parseForESLint } from 'markdown-eslint-parser';
-import markdownParserPackage from 'markdown-eslint-parser/package.json' with { type: 'json' };
 
 // Shared with `client/server`, which allows `superagent`.
 export const restrictedImports = [
@@ -70,22 +67,20 @@ export const restrictedImports = [
 	},
 ];
 
-// Code blocks in Markdown files are linted as virtual files named `<name>.md.<lang>`.
-const markdownCodeBlocks = [ 'js', 'javascript', 'cjs', 'ejs', 'jsx', 'tsx', 'ts' ].map(
-	( lang ) => `**/*.md.${ lang }`
+// Code blocks in Markdown files are linted as virtual files named `<name>.md/<index>.<ext>`.
+const markdownCodeBlocks = [ 'js', 'cjs', 'ejs', 'jsx', 'ts', 'tsx' ].map(
+	( ext ) => `**/*.md/*.${ ext }`
 );
 
-// Named, so `--cache` can identify them.
-const markdownParser = {
-	meta: { name: 'markdown-eslint-parser', version: markdownParserPackage.version },
-	parseForESLint,
-};
+// Blocks tagged `typescript`, unlike `ts`, have never been linted: most are incomplete snippets. The
+// processor names both `.ts`, so rename that tag to one no config matches, keeping its length so
+// positions in the file still line up.
+const codeBlocks = markdown.processors.markdown;
 const markdownProcessor = {
-	meta: {
-		name: 'eslint-plugin-md/markdown',
-		version: mdPackage.version,
-	},
-	...md.processors[ '.md' ],
+	...codeBlocks,
+	meta: { name: 'calypso/markdown', version: codeBlocks.meta.version },
+	preprocess: ( text, filename ) =>
+		codeBlocks.preprocess( text.replace( /^(\s*```)typescript\b/gm, '$1snippet-ts' ), filename ),
 };
 
 // `flatNodeConfig` without its top-level `return` support: every file here is an ES module.
@@ -128,18 +123,6 @@ function build( rootDir ) {
 		jest.configs[ 'flat/recommended' ],
 		prettierRecommended,
 		tanstackQuery.configs[ 'flat/recommended' ],
-		{
-			name: 'md/prettier',
-			// Its rule still calls methods that ESLint 10 removed.
-			plugins: { md: fixupPluginRules( md ) },
-			rules: md.configs.prettier.rules,
-		},
-		{
-			name: 'md/prettier/markdown',
-			files: [ '**/*.md' ],
-			languageOptions: { parser: markdownParser },
-			rules: md.configs.prettier.overrides[ 0 ].rules,
-		},
 
 		{
 			name: 'calypso/base',
@@ -383,7 +366,7 @@ function build( rootDir ) {
 			// Code blocks inside markdown are illustrative snippets, not real
 			// components. Rules that depend on lexical context (hook call sites,
 			// unused vars, undefined globals, etc.) produce noise without value.
-			files: [ '**/*.md.{js,jsx,ts,tsx}' ],
+			files: [ '**/*.md/*.{js,jsx,ts,tsx}' ],
 			rules: {
 				'react-hooks/rules-of-hooks': 'off',
 				'react-hooks/exhaustive-deps': 'off',
@@ -393,30 +376,10 @@ function build( rootDir ) {
 			},
 		},
 		{
+			// Lints the code blocks in Markdown files, not the Markdown itself.
+			name: 'calypso/markdown',
 			files: [ '**/*.md' ],
-			languageOptions: { parser: markdownParser },
 			processor: markdownProcessor,
-			rules: {
-				'md/remark': [
-					'error',
-					{
-						plugins: [
-							// The ruleset from `plugin:md/prettier`, repeated because rule options don't merge.
-							...md.configs.prettier.rules[ 'md/remark' ][ 1 ].plugins,
-
-							// Disabled because they don't make a lot of sense or they are buggy
-							[ 'lint-maximum-heading-length', false ],
-							[ 'lint-no-duplicate-headings', false ],
-
-							// Rules we would like to enable eventually. Violations needs to be fixed manually before enabling the rule.
-							[ 'lint-fenced-code-flag', false ],
-
-							// This special plugin is used to allow the syntax <!--eslint ignore <rule>-->. It has to come last.
-							[ 'message-control', { name: 'eslint', source: 'remark-lint' } ],
-						],
-					},
-				],
-			},
 		},
 		{
 			files: [ 'packages/**' ],
@@ -559,7 +522,6 @@ function build( rootDir ) {
 				'jsdoc/require-param': 'off',
 				'jsdoc/check-param-names': 'off',
 				'@typescript-eslint/no-empty-function': 'off',
-				'prettier/prettier': [ 'error', { parser: 'babel' } ],
 			},
 		},
 		{

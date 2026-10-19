@@ -45,7 +45,7 @@ function parseGitDiffToPathArray( command ) {
 	return execSync( command, { encoding: 'utf8' } )
 		.split( '\n' )
 		.map( ( name ) => name.trim() )
-		.filter( ( name ) => /(?:\.json|\.[cm]?[jt]sx?|\.scss|\.php)$/.test( name ) );
+		.filter( ( name ) => /(?:\.json|\.[cm]?[jt]sx?|\.md|\.scss|\.php)$/.test( name ) );
 }
 
 function getPathForCommand( command ) {
@@ -168,13 +168,13 @@ if ( toPHPCBF.length ) {
 	}
 }
 
-// Now run the linters over everything staged to commit (excepting JSON), even if they are partially staged
+// Now run the linters over everything staged to commit (excepting JSON and Markdown), even if they are partially staged
 const {
 	toEslint = [],
 	toStylelint = [],
 	toPHPCS = [],
 } = groupBy(
-	files.filter( ( file ) => ! file.endsWith( '.json' ) ),
+	files.filter( ( file ) => ! file.endsWith( '.json' ) && ! file.endsWith( '.md' ) ),
 	( file ) => {
 		switch ( true ) {
 			case file.endsWith( '.scss' ):
