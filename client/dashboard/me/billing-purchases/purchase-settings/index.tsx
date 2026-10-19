@@ -148,7 +148,6 @@ function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
 }
 
-/** Where to send anything that isn't a WordPress.com plan to upgrade. */
 /**
  * Whether Jetpack Pro is on sale, `undefined` until known. Fetched only for Jetpack purchases.
  */
@@ -162,6 +161,7 @@ function useIsJetpackProOnSale( purchase: Purchase ): boolean | undefined {
 	return isError || isFetching ? undefined : data;
 }
 
+/** Where to send anything that isn't a WordPress.com plan to upgrade. */
 function getNonPlanUpgradeAction(
 	purchase: Purchase,
 	isJetpackProOnSale?: boolean
