@@ -3,6 +3,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import NoteIcon from '../../note-icon';
 import { NoteTime } from './note-meta';
 import type { NoteActor, NoteParentComment } from '../../types';
@@ -86,12 +87,14 @@ const ThreadItem = ( {
 
 export default function Thread( {
 	repliedTo,
+	isRepliedToClamped = false,
 	commenter,
 	meta,
 	status,
 	children,
 }: {
 	repliedTo?: NoteParentComment;
+	isRepliedToClamped?: boolean;
 	commenter?: NoteActor;
 	meta?: ReactNode;
 	status?: ReactNode;
@@ -112,7 +115,13 @@ export default function Thread( {
 						)
 					}
 				>
-					<div className="wpnc-simplified__parent-text">{ repliedTo.text }</div>
+					<div
+						className={ clsx( 'wpnc-simplified__parent-text', {
+							'is-clamped': isRepliedToClamped,
+						} ) }
+					>
+						{ repliedTo.text }
+					</div>
 				</ThreadItem>
 			) }
 			{ commenter && (
