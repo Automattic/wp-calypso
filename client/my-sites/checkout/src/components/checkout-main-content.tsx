@@ -42,6 +42,7 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import {
 	useCallback,
+	useEffect,
 	useMemo,
 	useRef,
 	useState,
@@ -446,11 +447,13 @@ export default function CheckoutMainContent( {
 	customizedPreviousPath,
 	loadingHeader,
 	onStepChanged,
+	onSubmittingChange,
 	showSitePreview = false,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changeSelection: OnChangeItemVariant;
 	onStepChanged?: StepChangedCallback;
+	onSubmittingChange?: ( isSubmitting: boolean ) => void;
 	countriesList: CountryListItem[];
 	createUserAndSiteBeforeTransaction: boolean;
 	infoMessage?: JSX.Element;
@@ -595,6 +598,11 @@ export default function CheckoutMainContent( {
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
 	const { formStatus } = useFormStatus();
 	const isLoading = formStatus === FormStatus.LOADING;
+
+	useEffect( () => {
+		// Preserve the last status if cart clearing unmounts checkout before navigation.
+		onSubmittingChange?.( formStatus === FormStatus.SUBMITTING );
+	}, [ formStatus, onSubmittingChange ] );
 
 	const onReviewError = useCallback(
 		( error: Error ) =>

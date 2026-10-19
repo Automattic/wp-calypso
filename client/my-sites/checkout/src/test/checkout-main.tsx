@@ -3,6 +3,7 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
+import { useTransactionStatus } from '@automattic/composite-checkout';
 import { ResponseCart } from '@automattic/shopping-cart';
 import { render, screen, within, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -12,6 +13,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
+import * as PrePurchaseNotices from '../components/prepurchase-notices';
 import { contactDetailsActions, resetCheckoutStores } from '../lib/checkout-stores';
 import {
 	domainProduct,
@@ -89,6 +91,47 @@ describe( 'CheckoutMain', () => {
 					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 		} );
+	} );
+
+	it( 'reports actual payment submission and failure without unlocking on unmount', async () => {
+		function TransactionControls() {
+			const { setTransactionPending, setTransactionError } = useTransactionStatus();
+			return (
+				<>
+					<button onClick={ setTransactionPending }>Start test payment</button>
+					<button onClick={ () => setTransactionError( 'Test payment failed' ) }>
+						Fail test payment
+					</button>
+				</>
+			);
+		}
+		const notices = jest
+			.spyOn( PrePurchaseNotices, 'default' )
+			.mockImplementation( TransactionControls );
+		const onSubmittingChange = jest.fn();
+		const user = userEvent.setup();
+		try {
+			const { unmount } = render(
+				<MockCheckout
+					initialCart={ initialCart }
+					setCart={ mockSetCartEndpoint }
+					additionalProps={ { onSubmittingChange } }
+				/>
+			);
+			await user.click( await screen.findByRole( 'button', { name: 'Start test payment' } ) );
+			await waitFor( () => expect( onSubmittingChange ).toHaveBeenLastCalledWith( true ) );
+
+			await user.click( screen.getByRole( 'button', { name: 'Fail test payment' } ) );
+			await waitFor( () => expect( onSubmittingChange ).toHaveBeenLastCalledWith( false ) );
+
+			await user.click( screen.getByRole( 'button', { name: 'Start test payment' } ) );
+			await waitFor( () => expect( onSubmittingChange ).toHaveBeenLastCalledWith( true ) );
+			onSubmittingChange.mockClear();
+			unmount();
+			expect( onSubmittingChange ).not.toHaveBeenCalled();
+		} finally {
+			notices.mockRestore();
+		}
 	} );
 
 	it( 'renders the line items with prices when logged-out', async () => {

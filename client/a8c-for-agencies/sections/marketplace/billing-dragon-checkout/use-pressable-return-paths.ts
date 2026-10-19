@@ -1,40 +1,52 @@
 import { useEffect, useState } from 'react';
-import { getOriginalReturnUrl, getPressableReturnPath } from '../pressable-return/lib';
-import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import { getPressableReturnUrls } from './lib/pressable-return';
+import type { PressableReturnUrls } from './lib/pressable-return';
+import type { CartKey, ResponseCartProduct } from '@automattic/shopping-cart';
 
 export default function usePressableCheckoutReturn(
 	products: ResponseCartProduct[],
 	agencyId: number | undefined,
 	isPreparedCart: boolean,
-	isReady: boolean
+	isReady: boolean,
+	cartKey: CartKey
 ) {
-	const [ context, setContext ] = useState< { agencyId: number; url: string } >();
-	const originalUrl =
-		isPreparedCart && isReady && agencyId ? getOriginalReturnUrl( products, agencyId ) : undefined;
+	const [ context, setContext ] = useState<
+		PressableReturnUrls & { agencyId: number; cartKey: CartKey }
+	>();
+	const { successUrl, cancelUrl } =
+		( isPreparedCart && isReady && agencyId
+			? getPressableReturnUrls( products, agencyId )
+			: undefined ) ?? {};
 
 	useEffect( () => {
-		if ( ! agencyId ) {
+		if ( ! agencyId || ! isPreparedCart || ( isReady && ! successUrl ) ) {
+			setContext( undefined );
 			return;
 		}
-		if ( originalUrl ) {
-			setContext( { agencyId, url: originalUrl } );
-		} else if ( ! isPreparedCart || isReady ) {
-			setContext( undefined );
+		if ( successUrl && cancelUrl ) {
+			setContext( { agencyId, cartKey, successUrl, cancelUrl } );
+			return;
 		}
-	}, [ agencyId, isPreparedCart, isReady, originalUrl ] );
+		setContext( ( current ) =>
+			current?.agencyId === agencyId && current.cartKey === cartKey ? current : undefined
+		);
+	}, [ agencyId, cartKey, isPreparedCart, isReady, successUrl, cancelUrl ] );
 
-	// Keep the original cart URL available if this checkout reports an error.
-	const checkoutUrl =
-		originalUrl ??
-		( isPreparedCart && ! isReady && context && context.agencyId === agencyId
-			? context.url
-			: undefined );
-	if ( ! agencyId || ! checkoutUrl ) {
+	if ( ! isPreparedCart || ! agencyId ) {
 		return {};
 	}
-	return {
-		// A4A payment completion passes through the pending page on WordPress.com.
-		successPath: `${ window.location.origin }${ getPressableReturnPath( agencyId ) }`,
-		originalUrl: checkoutUrl,
-	};
+	if ( successUrl && cancelUrl ) {
+		return { successUrl, cancelUrl };
+	}
+	if (
+		isReady &&
+		products.some( ( { extra } ) => 'titan_domain' in extra || 'pressableCancelUrl' in extra )
+	) {
+		return { isInvalid: true };
+	}
+	// Cart clearing and load errors must not discard this checkout's destinations.
+	if ( ! isReady && context?.agencyId === agencyId && context.cartKey === cartKey ) {
+		return { successUrl: context.successUrl, cancelUrl: context.cancelUrl };
+	}
+	return {};
 }

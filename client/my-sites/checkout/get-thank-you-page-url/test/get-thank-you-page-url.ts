@@ -2014,6 +2014,22 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	describe( 'A4A client checkout', () => {
+		it( 'preserves the signed Pressable SUCCESS URL before and after the cart clears', () => {
+			const successUrl =
+				'https://my.pressable.com/titan_email/checkout_return?agency_id=42&checkout_status=SUCCESS&signature=a%2Bb%2fc%3D';
+			const product = { ...getEmptyResponseCartProduct(), extra: { afterPurchaseUrl: successUrl } };
+			for ( const products of [ [ product ], [] ] ) {
+				expect(
+					getThankYouPageUrl( {
+						...defaultArgs,
+						sitelessCheckoutType: 'a4a',
+						redirectTo: successUrl,
+						cart: { ...getMockCart(), products },
+					} )
+				).toBe( successUrl );
+			}
+		} );
+
 		it( 'should return the redirectTo URL when provided for A4A client checkout', () => {
 			const result = getThankYouPageUrl( {
 				sitelessCheckoutType: 'a4a',

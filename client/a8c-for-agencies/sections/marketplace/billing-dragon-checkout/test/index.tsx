@@ -2,9 +2,12 @@
  * @jest-environment jsdom
  */
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
+import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import BillingDragonCheckout from '..';
 import type { ReactNode } from 'react';
+
+let mockAgencyId: number | undefined = 42;
 
 jest.mock( '@automattic/shopping-cart', () => ( {
 	...jest.requireActual( '@automattic/shopping-cart' ),
@@ -23,7 +26,7 @@ jest.mock( 'calypso/state', () => ( {
 jest.mock( 'calypso/state/analytics/actions', () => ( { recordTracksEvent: jest.fn() } ) );
 
 jest.mock( 'calypso/state/a8c-for-agencies/agency/selectors', () => ( {
-	getActiveAgency: () => ( { id: 42 } ),
+	getActiveAgency: () => ( mockAgencyId ? { id: mockAgencyId } : undefined ),
 } ) );
 jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserLocale: () => 'en',
@@ -43,11 +46,31 @@ jest.mock( '@automattic/composite-checkout', () => ( { CheckoutErrorBoundary: pa
 jest.mock( 'calypso/my-sites/checkout/calypso-shopping-cart-provider', () => passthrough );
 jest.mock( 'calypso/my-sites/checkout/checkout-query-client-provider', () => passthrough );
 jest.mock( 'calypso/my-sites/checkout/src/components/cart-message-cleanup', () => () => null );
-jest.mock( 'calypso/my-sites/checkout/src/components/checkout-main', () => () => (
-	<div data-testid="checkout-main" />
-) );
+jest.mock( 'calypso/my-sites/checkout/src/components/checkout-main', () =>
+	jest.fn( () => <div data-testid="checkout-main" /> )
+);
 
 const replaceProductsInCart = jest.fn();
+const successUrl =
+	'https://my.pressable.com/titan_email/checkout_return?agency_id=42&checkout_status=SUCCESS&signature=a%2Bb%2fc%3D';
+const cancelUrl =
+	'https://my.pressable.com/titan_email/checkout_return?agency_id=42&checkout_status=CANCELED&signature=d%2Be%2ff%3D';
+const pressableProduct = {
+	extra: {
+		isA4ASitelessCheckout: true,
+		agency_id: 42,
+		titan_domain: 'example.com',
+		titan_plan: 'standard',
+		afterPurchaseUrl: successUrl,
+		pressableCancelUrl: cancelUrl,
+	},
+};
+
+function setSubmitting( isSubmitting: boolean ) {
+	act( () => {
+		jest.mocked( CheckoutMain ).mock.calls.at( -1 )?.[ 0 ].onSubmittingChange?.( isSubmitting );
+	} );
+}
 
 function mockCart( {
 	isLoading = false,
@@ -73,6 +96,8 @@ function renderPrepared() {
 describe( 'BillingDragonCheckout in prepared cart mode', () => {
 	beforeEach( () => {
 		replaceProductsInCart.mockReset();
+		jest.mocked( CheckoutMain ).mockClear();
+		mockAgencyId = 42;
 	} );
 
 	it( 'shows the placeholder while the prepared cart loads', () => {
@@ -105,5 +130,82 @@ describe( 'BillingDragonCheckout in prepared cart mode', () => {
 
 		expect( screen.getByText( 'Unable to load your prepared order.' ) ).toBeInTheDocument();
 		expect( container.querySelector( '.client-checkout-placeholder' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'uses the signed success destination and renders cancellation as an unchanged link', () => {
+		mockCart( { products: [ pressableProduct ] } );
+		renderPrepared();
+
+		expect( jest.mocked( CheckoutMain ).mock.calls.at( -1 )?.[ 0 ].redirectTo ).toBe( successUrl );
+		expect( screen.getByRole( 'link', { name: 'Back to Pressable' } ) ).toHaveAttribute(
+			'href',
+			cancelUrl
+		);
+	} );
+
+	it( 'disables Back during submission and re-enables it after payment failure', () => {
+		mockCart( { products: [ pressableProduct ] } );
+		renderPrepared();
+
+		setSubmitting( true );
+		const back = screen.getByRole( 'button', { name: 'Back to Pressable' } );
+		expect( back ).toBeDisabled();
+		expect( back ).not.toHaveAttribute( 'href' );
+
+		setSubmitting( false );
+		expect( screen.getByRole( 'link', { name: 'Back to Pressable' } ) ).toHaveAttribute(
+			'href',
+			cancelUrl
+		);
+	} );
+
+	it( 'retains disabled Back when submission clears the cart and unmounts checkout', () => {
+		mockCart( { products: [ pressableProduct ] } );
+		const { rerender } = renderPrepared();
+		setSubmitting( true );
+
+		mockCart( {} );
+		rerender( <BillingDragonCheckout cartItems={ [] } skipActiveCart withA8cLogo={ false } /> );
+
+		expect( screen.queryByTestId( 'checkout-main' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Back to Pressable' } ) ).toBeDisabled();
+	} );
+
+	it( 'keeps Back usable after a cart load error and discards it when the agency changes', () => {
+		mockCart( { products: [ pressableProduct ] } );
+		const { rerender } = renderPrepared();
+		mockCart( { loadingError: 'boom' } );
+		rerender( <BillingDragonCheckout cartItems={ [] } skipActiveCart withA8cLogo={ false } /> );
+		expect( screen.getByRole( 'link', { name: 'Back to Pressable' } ) ).toHaveAttribute(
+			'href',
+			cancelUrl
+		);
+
+		mockAgencyId = undefined;
+		rerender( <BillingDragonCheckout cartItems={ [] } skipActiveCart withA8cLogo={ false } /> );
+		mockAgencyId = 42;
+		rerender( <BillingDragonCheckout cartItems={ [] } skipActiveCart withA8cLogo={ false } /> );
+		expect( screen.queryByRole( 'link', { name: 'Back to Pressable' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not use Pressable navigation for ordinary prepared carts', () => {
+		mockCart( { products: [ { extra: { isA4ASitelessCheckout: true, agency_id: 42 } } ] } );
+		renderPrepared();
+
+		expect( jest.mocked( CheckoutMain ).mock.calls.at( -1 )?.[ 0 ].redirectTo ).toBe(
+			`${ window.location.origin }/purchases/licenses`
+		);
+		expect( screen.queryByText( 'Back to Pressable' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not let an invalid Pressable SUCCESS URL reach the cart redirect fallback', () => {
+		mockCart( {
+			products: [ { extra: { ...pressableProduct.extra, afterPurchaseUrl: cancelUrl } } ],
+		} );
+		renderPrepared();
+
+		expect( screen.getByText( 'We could not find your prepared order.' ) ).toBeVisible();
+		expect( screen.queryByTestId( 'checkout-main' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Back to Pressable' ) ).not.toBeInTheDocument();
 	} );
 } );

@@ -955,6 +955,7 @@ export interface ResponseCartProductExtra {
 	purchaseType?: string;
 
 	afterPurchaseUrl?: string;
+	pressableCancelUrl?: string;
 	isJetpackCheckout?: boolean;
 	isAkismetSitelessCheckout?: boolean;
 	isMarketplaceSitelessCheckout?: boolean;

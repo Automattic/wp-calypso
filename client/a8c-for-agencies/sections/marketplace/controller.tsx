@@ -19,7 +19,6 @@ import { getPressableOwnershipType } from './lib/get-pressable-ownership-type';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
 import { PLAN_CATEGORY_ENTERPRISE, PLAN_CATEGORY_PREMIUM } from './pressable-overview/constants';
-import PressableReturn from './pressable-return';
 import DownloadProducts from './primary/download-products';
 import ProductsOverview from './products-overview';
 import ReferHosting from './refer-hosting';
@@ -168,14 +167,6 @@ export const checkoutContext: Callback = ( context, next ) => {
 				skipActiveCart={ skipActiveCart }
 			/>
 		</>
-	);
-	next();
-};
-export const pressableReturnContext: Callback = ( context, next ) => {
-	const { agency_id, receipt_id, order_id } = context.query;
-	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	context.primary = (
-		<PressableReturn agencyId={ agency_id } receiptId={ receipt_id } orderId={ order_id } />
 	);
 	next();
 };

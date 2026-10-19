@@ -53,6 +53,7 @@ function BillingDragonCheckoutContent( {
 	const translate = useTranslate();
 	const [ isFilled, setIsFilled ] = useState( false );
 	const [ fillError, setFillError ] = useState< string | null >( null );
+	const [ isCheckoutSubmitting, setIsCheckoutSubmitting ] = useState( false );
 
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
@@ -79,13 +80,20 @@ function BillingDragonCheckoutContent( {
 	// in the URL). Load it as it is; the fill flows below must not run.
 	const prepared = usePreparedCart( cartKey, skipActiveCart );
 	const isReady = skipActiveCart ? prepared.isReady : isFilled;
-	const error = skipActiveCart ? prepared.error : fillError;
-	const { successPath, originalUrl } = usePressableCheckoutReturn(
+	const { successUrl, cancelUrl, isInvalid } = usePressableCheckoutReturn(
 		responseCart.products,
 		agency?.id,
 		skipActiveCart && ! isPlanCheckout,
-		isReady
+		isReady,
+		cartKey
 	);
+	const error =
+		( skipActiveCart ? prepared.error : fillError ) ??
+		( isInvalid ? translate( 'We could not find your prepared order.' ) : null );
+
+	useEffect( () => {
+		setIsCheckoutSubmitting( false );
+	}, [ agency?.id, cartKey, skipActiveCart, planSlug, cancelUrl ] );
 
 	const {
 		productsForCart,
@@ -263,11 +271,11 @@ function BillingDragonCheckoutContent( {
 
 	// An error is checked first: a prepared cart that failed is never ready, and there is no
 	// timeout to force the checkout open, so the placeholder would otherwise show forever.
-	if ( error && ! originalUrl ) {
+	if ( error && ! cancelUrl ) {
 		return <ClientCheckoutError title={ translate( 'Error' ) } message={ error } />;
 	}
 
-	if ( ! isReady && ! originalUrl ) {
+	if ( ! isReady && ! cancelUrl ) {
 		return <ClientCheckoutPlaceholder />;
 	}
 	let checkoutContent = <ClientCheckoutPlaceholder />;
@@ -278,7 +286,7 @@ function BillingDragonCheckoutContent( {
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
 				redirectTo={
-					successPath ??
+					successUrl ??
 					getSuccessRedirectUrl(
 						window.location.origin,
 						shouldClearCartOnSuccess && ! isPlanCheckout,
@@ -286,6 +294,7 @@ function BillingDragonCheckoutContent( {
 					)
 				}
 				customizedPreviousPath="/marketplace"
+				onSubmittingChange={ cancelUrl ? setIsCheckoutSubmitting : undefined }
 				siteSlug={ siteSlug ?? '' }
 				siteId={ siteId ?? 0 }
 			/>
@@ -294,18 +303,14 @@ function BillingDragonCheckoutContent( {
 
 	return (
 		<div className="client-checkout-v2">
-			{ ( withA8cLogo || originalUrl ) && (
+			{ ( withA8cLogo || cancelUrl ) && (
 				<div
 					className={
-						originalUrl ? 'client-checkout-v2-pressable-top-bar' : 'client-checkout-v2__top-bar'
+						cancelUrl ? 'client-checkout-v2-pressable-top-bar' : 'client-checkout-v2__top-bar'
 					}
 				>
-					{ originalUrl && agency && (
-						<PressableCheckoutBack
-							key={ originalUrl }
-							agencyId={ agency.id }
-							afterPurchaseUrl={ originalUrl }
-						/>
+					{ cancelUrl && (
+						<PressableCheckoutBack cancelUrl={ cancelUrl } isSubmitting={ isCheckoutSubmitting } />
 					) }
 					{ withA8cLogo && (
 						<div className="client-checkout-v2__top-bar-logo">
