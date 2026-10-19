@@ -13,7 +13,6 @@ export type HelpCenterFeatureConfig = {
 		/** Filter chat history to only show conversations matching the current bot slug. */
 		filterByBotSlug: boolean;
 		/** Override the flow name for the Odie provider. */
-		flowName: string | null;
 		/** Treat the user as having premium support (bypass eligibility checks). */
 		hasPremiumSupport: boolean;
 		/** Skip fetching support status. */
