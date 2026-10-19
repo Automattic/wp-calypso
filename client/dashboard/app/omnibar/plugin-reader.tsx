@@ -1,6 +1,5 @@
-import { __ } from '@wordpress/i18n';
-import { wpcomLink } from '../../utils/link';
-import type { OmnibarNode } from '@automattic/omnibar';
+import { parseAdminBarTitle } from '@automattic/omnibar';
+import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-reader.scss';
 
@@ -18,13 +17,16 @@ function ReaderIcon() {
 	);
 }
 
-export function useReaderPlugin( { sectionGroup }: { sectionGroup?: string } ): OmnibarNode {
-	return {
-		id: 'reader',
-		title: __( 'Reader' ),
-		icon: <ReaderIcon />,
-		className: 'omnibar__reader',
-		href: wpcomLink( '/reader' ),
-		active: sectionGroup === 'reader',
+export function createReaderNodeBuilder( { sectionGroup }: { sectionGroup?: string } ) {
+	return ( adminBarNode: AdminBarNode ): Partial< OmnibarNode > => {
+		const { text, tooltip } = parseAdminBarTitle( adminBarNode );
+
+		return {
+			title: text,
+			tooltip,
+			icon: <ReaderIcon />,
+			className: 'omnibar__reader',
+			active: sectionGroup === 'reader',
+		};
 	};
 }

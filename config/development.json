@@ -5,15 +5,7 @@
 	"client_slug": "browser",
 	"protocol": "http",
 	"hostname": "calypso.localhost",
-	"hostname_allowlist": [ "calypso.localhost", "my.localhost", "my.woo.localhost" ],
-	"hostname_overrides": {
-		"my.woo.localhost": {
-			"oauth_client_id": 134404,
-			"wpcom_login_url": "/connect",
-			"logout_url": "http://my.woo.localhost:{{port}}",
-			"features": { "oauth": true }
-		}
-	},
+	"hostname_allowlist": [ "calypso.localhost", "my.localhost" ],
 	"port": 3000,
 	"i18n_default_locale_slug": "en",
 	"siftscience_key": "e00e878351",
@@ -143,7 +135,6 @@
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
 		"marketplace-redesign": true,
-		"marketplace-reviews-notification": false,
 		"marketplace-test": true,
 		"mcp-settings": true,
 		"me/account-close": true,

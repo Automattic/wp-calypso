@@ -14,6 +14,10 @@ import {
 import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import {
+	useAgentticSuggestionClick,
+	type SuggestionClickHandler,
+} from '../../hooks/use-agenttic-suggestion-click';
 import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-suggestions';
 import useFloatingPanelProps from '../../hooks/use-floating-panel-props';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
@@ -28,7 +32,6 @@ import ChatMessageSkeleton from '../chat-message-skeleton';
 import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
-import getSuggestionClickPayload from './get-suggestion-click-payload';
 import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
@@ -72,11 +75,8 @@ interface Props {
 	onExpand: () => void;
 	/** Called to clear the suggestions. */
 	clearSuggestions?: () => void;
-	/** Called when a suggestion is clicked. */
-	onSuggestionClick?: (
-		selectedSuggestion: Suggestion | string,
-		availableSuggestions?: Suggestion[]
-	) => void;
+	/** Called when a suggestion is clicked; `isInMessage` for a list inside a message. */
+	onSuggestionClick?: SuggestionClickHandler;
 	/** Called with the suggestions Agenttic actually renders (after truncation, only while visible). */
 	onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 	/** Called when the typing status changes. */
@@ -195,7 +195,6 @@ export default function AgentChat( {
 	beforeSubmit,
 	markdownComponents = {},
 	markdownExtensions = {},
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with `ZendeskChat`
 	onTypingStatusChange,
 	inputValue,
 	onInputChange,
@@ -225,15 +224,11 @@ export default function AgentChat( {
 		() => formatWritingSuggestionLabels( suggestions, shouldFormatWritingSuggestions ),
 		[ shouldFormatWritingSuggestions, suggestions ]
 	);
-	const handleDisplayedSuggestionClick = useCallback(
-		( selectedSuggestion: Suggestion | string ) => {
-			onSuggestionClick?.(
-				getSuggestionClickPayload( selectedSuggestion, suggestions ),
-				suggestions
-			);
-		},
-		[ onSuggestionClick, suggestions ]
-	);
+	const handleDisplayedSuggestionClick = useAgentticSuggestionClick( {
+		suggestions,
+		hasMessages: messages.length > 0,
+		onSuggestionClick,
+	} );
 
 	const messageRenderer = useMemo(
 		() =>
@@ -328,6 +323,7 @@ export default function AgentChat( {
 			clearSuggestions={ clearSuggestions }
 			onSuggestionClick={ onSuggestionClick ? handleDisplayedSuggestionClick : undefined }
 			onSuggestionsRendered={ onSuggestionsRendered }
+			onTypingStatusChange={ onTypingStatusChange }
 			floatingChatState={ floatingChatState }
 			triggerTitle={ __( 'Agent', __i18n_text_domain__ ) }
 			onClose={ onClose }

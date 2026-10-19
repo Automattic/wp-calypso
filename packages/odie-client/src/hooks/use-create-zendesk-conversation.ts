@@ -267,11 +267,7 @@ export const useCreateZendeskConversation = () => {
 				messages: [
 					...prevChat.messages,
 					// Without an Odie chat, the user went straight to a human.
-					...getOdieTransferMessages(
-						currentSupportInteraction?.bot_slug,
-						hasEnTranslation,
-						! prevChat.odieId
-					),
+					...getOdieTransferMessages( hasEnTranslation, ! prevChat.odieId ),
 					getZendeskChatStartedMetaMessage(),
 				],
 				provider: 'zendesk',

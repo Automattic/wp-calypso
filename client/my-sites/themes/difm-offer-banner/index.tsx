@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Banner from 'calypso/components/banner';
 import { AnalyticsProvider } from 'calypso/dashboard/app/analytics';
 import DifmOfferModal from 'calypso/dashboard/components/difm-offer-modal';
-import illustrationUrl from 'calypso/dashboard/sites/overview-difm-offer-card/difm-offer-illustration.svg';
 import { getDifmOfferCopy, useDifmOffer } from 'calypso/dashboard/utils/difm-offer';
 import { useDifmOfferEngagementTracking } from 'calypso/dashboard/utils/use-difm-offer-engagement-tracking';
 import { useAnalyticsClient } from 'calypso/sites/v2/hooks/use-analytics-client';
@@ -14,6 +13,8 @@ import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/prefe
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { getSite } from 'calypso/state/sites/selectors';
 import { isUpsellCardDisplayed } from 'calypso/state/themes/selectors';
+import thumbnailMobileUrl from './thumbnail-mobile.webp';
+import thumbnailUrl from './thumbnail.webp';
 
 import './style.scss';
 
@@ -94,7 +95,11 @@ export default function DifmOfferBanner( { siteId }: DifmOfferBannerProps ) {
 						dispatch( savePreference( DISMISSED_PREFERENCE, new Date().toISOString() ) )
 					}
 				>
-					<img className="themes__difm-offer-banner-image" src={ illustrationUrl } alt="" />
+					{ /* The mobile layout uses a taller crop of the thumbnail. */ }
+					<picture className="themes__difm-offer-banner-image">
+						<source media="(max-width: 480px)" srcSet={ thumbnailMobileUrl } />
+						<img src={ thumbnailUrl } alt="" />
+					</picture>
 				</Banner>
 			</div>
 			{ isModalOpen && userEmail && (

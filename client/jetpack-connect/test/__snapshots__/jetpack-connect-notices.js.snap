@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`JetpackConnectNotices Should render non-terminal notice if callback supplied 1`] = `
 <div>

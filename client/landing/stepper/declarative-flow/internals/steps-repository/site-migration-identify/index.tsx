@@ -97,10 +97,7 @@ export const Analyzer: FC< Props > = ( {
 
 	// Update loading state to include hosting check
 	const isScanning =
-		! connectionIssue &&
-		( isFetching ||
-			isFetchingHosting ||
-			( isFetched && ! hasError && ! hostingProviderData && ! hasHostingError ) );
+		! connectionIssue && ( isFetching || isFetchingHosting || ( isFetched && ! hasError ) );
 
 	useEffect( () => {
 		// Only complete when we have both site info AND hosting info (or hosting check failed)
@@ -245,7 +242,7 @@ export const Analyzer: FC< Props > = ( {
 								</div>
 							</div>
 							<p>
-								{ translate( 'We’re looking at %(site)s to see what we can copy.', {
+								{ translate( 'We’re looking at %(site)s to see what we can move.', {
 									args: { site: hostname },
 								} ) }
 							</p>
@@ -343,6 +340,17 @@ const SiteMigrationIdentify: StepType< {
 	const [ isVisible, setIsVisible ] = useState( true );
 	const [ connectionIssue, setConnectionIssue ] = useState< ConnectionIssue >();
 	const [ siteURL, setSiteURL ] = useState( '' );
+
+	useEffect( () => {
+		const onPageShow = ( event: PageTransitionEvent ) => {
+			if ( event.persisted ) {
+				setSiteURL( '' );
+			}
+		};
+		window.addEventListener( 'pageshow', onPageShow );
+		return () => window.removeEventListener( 'pageshow', onPageShow );
+	}, [] );
+
 	const isChecking = isReprintFlow && ! isVisible;
 	const goBack = isChecking || connectionIssue ? () => setSiteURL( '' ) : navigation?.goBack;
 	let title = isChecking ? translate( 'Checking your site' ) : translate( "Let's find your site" );
@@ -369,7 +377,7 @@ const SiteMigrationIdentify: StepType< {
 					from: url,
 					host: hostingProviderSlug,
 					...( isReprintFlow && platform_data?.is_wpcom ? { isWpcom: true } : {} ),
-				} )
+				} ).catch( () => setSiteURL( '' ) )
 			}
 			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
 			onSkip={ ( from ) =>

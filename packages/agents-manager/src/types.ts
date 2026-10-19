@@ -6,13 +6,11 @@ import type { ServerConversationListItem } from '@automattic/agenttic-client';
 import type Smooch from 'smooch';
 
 export type {
-	Ability,
 	ToolProvider,
 	ContextProvider,
 	ClientContextType,
 	BaseContextEntry,
 	ContextEntry,
-	Suggestion,
 	BigSkyMessage,
 } from './extension-types';
 

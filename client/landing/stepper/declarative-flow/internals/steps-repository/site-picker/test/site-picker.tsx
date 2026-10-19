@@ -11,6 +11,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import preferencesReducer from 'calypso/state/preferences/reducer';
 import SitePickerStep from '..';
@@ -189,32 +190,64 @@ describe( 'SitePicker', () => {
 		expect( recordStepNavigation ).not.toHaveBeenCalled();
 	} );
 
-	test.each( [ undefined, true ] )(
-		'selecting a destination preserves tracking with skipConfirmation=%s',
-		async ( skipConfirmation ) => {
-			const submit = renderTrackedPicker( '/site-migration/sitePicker', skipConfirmation );
-			await userEvent.click( screen.getAllByRole( 'button', { name: 'Select this site' } )[ 0 ] );
-			expect( screen.queryByRole( 'dialog' ) !== null ).toBe( ! skipConfirmation );
-			expect( submit ).toHaveBeenCalledTimes( skipConfirmation ? 1 : 0 );
-			if ( ! skipConfirmation ) {
-				await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-			}
-			await waitFor( () =>
-				expect( submit ).toHaveBeenCalledWith(
-					expect.objectContaining( {
-						action: 'select-site',
-						site: expect.objectContaining( { ID: 1 } ),
-					} )
-				)
-			);
-			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_import_site_picker_select_site', {
-				id: 1,
-				slug: 'example.wordpress.com',
-				title: 'A Test Site',
-			} );
-			expect( recordStepNavigation ).not.toHaveBeenCalled();
-		}
-	);
+	const expectSelectSiteSubmitTracked = async ( submit: jest.Mock ) => {
+		await waitFor( () =>
+			expect( submit ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					action: 'select-site',
+					site: expect.objectContaining( { ID: 1 } ),
+				} )
+			)
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_import_site_picker_select_site', {
+			id: 1,
+			slug: 'example.wordpress.com',
+			title: 'A Test Site',
+		} );
+		expect( recordStepNavigation ).toHaveBeenCalledTimes( 1 );
+		expect( recordStepNavigation ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
+				providedDependencies: expect.objectContaining( {
+					action: 'select-site',
+					site: expect.objectContaining( { ID: 1 } ),
+				} ),
+			} )
+		);
+	};
+
+	test( 'records the select-site submit after confirming the destination', async () => {
+		const submit = renderTrackedPicker( '/site-migration/sitePicker' );
+
+		await userEvent.click( screen.getAllByRole( 'button', { name: 'Select this site' } )[ 0 ] );
+		expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+		expect( submit ).not.toHaveBeenCalled();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		await expectSelectSiteSubmitTracked( submit );
+	} );
+
+	test( 'records one select-site submit when Continue is double-clicked', async () => {
+		const submit = renderTrackedPicker( '/site-migration/sitePicker' );
+		await userEvent.click( screen.getAllByRole( 'button', { name: 'Select this site' } )[ 0 ] );
+
+		await userEvent.dblClick( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		expect( submit ).toHaveBeenCalledTimes( 1 );
+		expect( recordStepNavigation ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'records the select-site submit immediately when confirmation is skipped', async () => {
+		const submit = renderTrackedPicker( '/site-migration/sitePicker', true );
+
+		await userEvent.click( screen.getAllByRole( 'button', { name: 'Select this site' } )[ 0 ] );
+
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		await expectSelectSiteSubmitTracked( submit );
+	} );
 
 	test( 'renders with correctly sorted list of sites', () => {
 		const state = {

@@ -20,8 +20,8 @@ const mockSites = [
 	{
 		ID: 2,
 		name: 'Online Store',
-		slug: 'casually-left-cherryblossom.commerce-garden.com',
-		URL: 'https://casually-left-cherryblossom.commerce-garden.com',
+		slug: 'mystore.wordpress.com',
+		URL: 'https://mystore.wordpress.com',
 		capabilities: { manage_options: true },
 		site_migration: { migration_status: '' },
 	},
@@ -66,7 +66,7 @@ describe( '<SelectSite>', () => {
 		await screen.findByText( 'My Blog' );
 
 		const searchInput = screen.getByRole( 'searchbox' );
-		await user.type( searchInput, 'casually-left-cherryblossom' );
+		await user.type( searchInput, 'mystore' );
 
 		await waitFor( () => {
 			expect( screen.getByText( 'Online Store' ) ).toBeVisible();

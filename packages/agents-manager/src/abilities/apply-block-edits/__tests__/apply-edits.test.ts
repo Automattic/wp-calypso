@@ -81,11 +81,14 @@ const onReplaced = jest.fn();
 const beforeWrite = jest.fn( async () => {} );
 // Every write goes through the level; which ones, in what order, is what it records.
 const writes: unknown[] = [];
+// The block list each write names as the one it changes.
+const writtenLists: ( string | undefined )[] = [];
 const level: UndoLevel = {
 	write:
-		( write ) =>
+		( write, writtenList ) =>
 		( ...args ) => {
 			writes.push( write );
+			writtenLists.push( writtenList( ...args ) );
 			write( ...args );
 		},
 	close: jest.fn(),
@@ -111,6 +114,7 @@ beforeEach( () => {
 	parents = {};
 	controlled = {};
 	writes.length = 0;
+	writtenLists.length = 0;
 
 	jest.mocked( createBlock ).mockImplementation( ( name, attributes = {}, innerBlocks = [] ) => ( {
 		clientId: `new-${ name }`,
@@ -765,4 +769,21 @@ it( 'writes inserts, then updates, then deletes, all through the undo level', as
 
 	expect( writes ).toHaveLength( 3 );
 	expect( order ).toEqual( [ ...order ].sort( ( a, b ) => a - b ) );
+} );
+
+it( 'names the block list each write changes', async () => {
+	useTree( [
+		block( 'tp', 'core/template-part', { slug: 'header' }, [
+			block( 'g', 'core/group', {}, [ block( 'h', 'core/heading', { content: 'Hi' } ) ] ),
+			block( 'p', 'core/paragraph' ),
+		] ),
+	] );
+
+	await run( {
+		inserts: [ { parentClientId: 'ref-tp', index: 1, block: { name: 'core/separator' } } ],
+		updates: [ { clientId: 'ref-h', name: 'core/heading', attributes: { content: 'Hey' } } ],
+		deletes: [ 'ref-p' ],
+	} );
+
+	expect( writtenLists ).toEqual( [ 'tp', 'g', 'tp' ] );
 } );

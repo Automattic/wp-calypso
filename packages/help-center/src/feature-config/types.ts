@@ -14,8 +14,6 @@ export type HelpCenterFeatureConfig = {
 		enabled: boolean;
 		/** Filter chat history to only show conversations matching the current bot slug. */
 		filterByBotSlug: boolean;
-		/** Override the flow name for the Odie provider. */
-		flowName: string | null;
 		/** Treat the user as having premium support (bypass eligibility checks). */
 		hasPremiumSupport: boolean;
 		/** Skip fetching support status. */
@@ -55,4 +53,4 @@ export type HelpCenterFeatureConfig = {
  * Product identifier for the help center.
  * Each product gets a preset feature configuration.
  */
-export type HelpCenterProduct = 'wpcom' | 'a4a' | 'commerce-garden' | 'woo';
+export type HelpCenterProduct = 'wpcom' | 'a4a' | 'woo';

@@ -8,7 +8,6 @@ const wpcomPreset: HelpCenterFeatureConfig = {
 	chat: {
 		enabled: true,
 		filterByBotSlug: false,
-		flowName: null,
 		hasPremiumSupport: false,
 		skipSupportStatus: false,
 		zendeskIntegrationKey: null,
@@ -40,7 +39,6 @@ const a4aPreset: HelpCenterFeatureConfig = {
 	chat: {
 		enabled: false,
 		filterByBotSlug: false,
-		flowName: null,
 		hasPremiumSupport: false,
 		skipSupportStatus: false,
 		zendeskIntegrationKey: null,
@@ -64,38 +62,6 @@ const a4aPreset: HelpCenterFeatureConfig = {
 	},
 };
 
-/** Commerce Garden: chat enabled with filtered history, no dotcom-specific links. */
-const commerceGardenPreset: HelpCenterFeatureConfig = {
-	header: {
-		ellipsisMenu: true,
-	},
-	chat: {
-		enabled: true,
-		filterByBotSlug: true,
-		flowName: 'messaging_flow_commerce_in_a_box',
-		hasPremiumSupport: true,
-		skipSupportStatus: true,
-		zendeskIntegrationKey: null,
-		zendeskConversationTags: [],
-	},
-	home: {
-		recentConversations: true,
-	},
-	contextualCta: {
-		enabled: false,
-	},
-	moreResources: {
-		visible: true,
-		supportHistory: true,
-		courses: false,
-		productUpdates: false,
-		supportGuidesUrl: 'https://ciabattasupportguides.wpcomstaging.com/',
-	},
-	contactForm: {
-		variant: 'standard',
-	},
-};
-
 /** WooCommerce.com: chat enabled with filtered history, Woo docs instead of dotcom-specific links. */
 const wooPreset: HelpCenterFeatureConfig = {
 	header: {
@@ -104,7 +70,6 @@ const wooPreset: HelpCenterFeatureConfig = {
 	chat: {
 		enabled: true,
 		filterByBotSlug: true,
-		flowName: null,
 		// Testing: open to all in sandbox. Production will gate on WordPress.com connection.
 		hasPremiumSupport: true,
 		skipSupportStatus: true,
@@ -133,6 +98,5 @@ const wooPreset: HelpCenterFeatureConfig = {
 export const PRODUCT_PRESETS: Record< HelpCenterProduct, HelpCenterFeatureConfig > = {
 	wpcom: wpcomPreset,
 	a4a: a4aPreset,
-	'commerce-garden': commerceGardenPreset,
 	woo: wooPreset,
 };

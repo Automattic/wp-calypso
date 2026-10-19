@@ -13,11 +13,10 @@ import { SectionHeader } from '../../../components/section-header';
 import { OWNER_ROLE } from '../../team/constants';
 import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { calculateEffectiveCapacity } from './lib/pressable-capacity';
-import { getPressablePlanInfo } from './lib/pressable-plans';
+import { PRESSABLE_AGENCY_URL, getPressablePlanInfo } from './lib/pressable-plans';
 import PressableUsageStats from './pressable-usage-stats';
 import type { AgencyProduct } from '@automattic/api-core';
 
-const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
 const formatTrialEndDate = ( date: string, locale: string ) =>
 	new Intl.DateTimeFormat( locale, { month: 'long', day: 'numeric', timeZone: 'UTC' } ).format(
 		new Date( date )

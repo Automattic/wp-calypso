@@ -70,6 +70,17 @@ export function getSiteVisibilityURL( site: Site ) {
 }
 
 /**
+ * Returns the URL of the site's Jetpack AI MCP settings page in wp-admin,
+ * or undefined when the site's admin URL is unknown.
+ */
+export function getSiteJetpackMcpSettingsUrl( site: Site ) {
+	const adminUrl = site.options?.admin_url;
+	return adminUrl
+		? `${ adminUrl.replace( /\/?$/, '/' ) }admin.php?page=jetpack-ai#/mcp`
+		: undefined;
+}
+
+/**
  * Given a site and its current plan's purchase (if any), this function does the following:
  *
  * - If the site is a wpcom site without a purchase, returns the URL to upgrade the site plan.

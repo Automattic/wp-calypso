@@ -17,7 +17,6 @@ import { useAppContext } from '../../app/context';
 import { useLocale } from '../../app/locale';
 import { purchasesRoute } from '../../app/router/me';
 import Grid from '../../components/grid';
-import { commerceGardenPlan } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { getPurchaseExpiryStatusText } from '../../components/purchase-expiry-status';
 import RouterLinkButton from '../../components/router-link-button';
@@ -28,7 +27,7 @@ import {
 	getSitePlanDisplayName,
 	JETPACK_PRODUCTS,
 } from '../../utils/site-plan';
-import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSitePlanUrl } from '../../utils/site-url';
 import SiteBandwidthStat from './site-bandwidth-stat';
 import SiteStorageStat from './site-storage-stat';
@@ -239,31 +238,6 @@ function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean }
 	);
 }
 
-function CommerceGardenPlanCard( {
-	site,
-	purchase,
-	isLoading,
-}: {
-	site: Site;
-	purchase?: Purchase;
-	isLoading: boolean;
-} ) {
-	const locale = useLocale();
-	const planLinkProps = usePlanLinkProps( site, purchase );
-
-	return (
-		<OverviewCard
-			title={ __( 'Plan' ) }
-			icon={ commerceGardenPlan }
-			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, locale, purchase ) }
-			{ ...planLinkProps }
-			tracksId="plan"
-			isLoading={ isLoading }
-		/>
-	);
-}
-
 export default function PlanCard( { site }: { site: Site } ) {
 	const { data: plan, isLoading: isLoadingPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: purchases, isLoading: isLoadingPurchases } = useQuery(
@@ -275,10 +249,6 @@ export default function PlanCard( { site }: { site: Site } ) {
 
 	if ( site.is_a4a_dev_site ) {
 		return <AgencyPlanCard site={ site } isLoading={ isLoading } />;
-	}
-
-	if ( isCommerceGarden( site ) ) {
-		return <CommerceGardenPlanCard site={ site } purchase={ purchase } isLoading={ isLoading } />;
 	}
 
 	if ( isSelfHostedJetpackConnected( site ) ) {

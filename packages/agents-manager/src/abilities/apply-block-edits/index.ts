@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { applyBlockEditsCallback } from './callback';
-import type { Ability } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * Never called by the model directly: the backend's block-editing tools
@@ -38,10 +38,6 @@ export const applyBlockEditsAbility: Ability = {
 				type: 'boolean',
 				description:
 					'Deprecated. This tool always returns to the agent with a success or error message.',
-			},
-			suppressAssistantMessage: {
-				type: 'boolean',
-				description: 'Whether to suppress assistant message',
 			},
 			visualCheckPending: {
 				type: 'boolean',

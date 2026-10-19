@@ -44,7 +44,7 @@ function searchPage( {
 } ) {
 	const searchbox = {
 		inputValue: jest.fn( async () => prefill ),
-		fill: jest.fn( async () => undefined ),
+		fill: jest.fn< ( value: string ) => Promise< void > >( async () => undefined ),
 		press: jest.fn( async () => undefined ),
 	};
 	const remainingTitles = [ ...titles ];
