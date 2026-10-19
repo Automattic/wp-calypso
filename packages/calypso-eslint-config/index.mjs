@@ -521,7 +521,7 @@ function build( rootDir ) {
 		},
 		{
 			files: [ '**/*.json' ],
-			extends: [ json.configs[ 'flat/recommended' ] ],
+			extends: [ json.configs.recommended ],
 			rules: {
 				// JSON doesn't allow dangle comma or comments
 				'comma-dangle': 'off',

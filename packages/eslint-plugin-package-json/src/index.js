@@ -6,12 +6,12 @@ module.exports.meta = {
 };
 
 module.exports.rules = require( './rules' );
-module.exports.configs = require( './configs' );
+module.exports.configs = {};
 
-// Built on first use, like the legacy presets that ESLint loads by name.
+// Built on first use, since they reference this plugin object.
 for ( const name of Object.keys( flat ) ) {
 	let built;
-	Object.defineProperty( module.exports.configs, `flat/${ name }`, {
+	Object.defineProperty( module.exports.configs, name, {
 		enumerable: true,
 		get: () => ( built ??= flat[ name ]( module.exports ) ),
 	} );
