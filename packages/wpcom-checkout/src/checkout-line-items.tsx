@@ -1618,7 +1618,7 @@ function GSuiteDiscountCallout( { product }: { product: ResponseCartProduct } ) 
 
 	if (
 		isGSuiteOrGoogleWorkspaceProductSlug( product.product_slug ) &&
-		product.item_original_subtotal_integer < product.item_original_subtotal_integer &&
+		product.item_subtotal_integer < product.item_original_subtotal_integer &&
 		product.is_sale_coupon_applied
 	) {
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
