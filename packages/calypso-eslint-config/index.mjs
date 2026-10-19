@@ -113,10 +113,10 @@ function build( rootDir ) {
 			linterOptions: { reportUnusedDisableDirectives: 'off' },
 		},
 
-		wpcalypso.configs[ 'flat/react' ],
+		wpcalypso.configs.react,
 		{
-			// The legacy preset's exception for JSON and Markdown, which its flat version leaves to us.
-			files: [ '**/*.json', '**/*.md' ],
+			// JSON files, such as config, may hold unlocalized URLs.
+			files: [ '**/*.json' ],
 			rules: { 'wpcalypso/i18n-unlocalized-url': 'off' },
 		},
 		jsxA11y.flatConfigs.recommended,
@@ -128,11 +128,6 @@ function build( rootDir ) {
 			name: 'calypso/base',
 			languageOptions: {
 				parser: typescriptParser,
-				parserOptions: {
-					babelOptions: {
-						configFile: path.join( rootDir, 'babel.config.js' ),
-					},
-				},
 				globals: {
 					...globals.jest,
 					...globals.node,

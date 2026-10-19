@@ -2919,7 +2919,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/eslint-parser@npm:^7.27.1, @babel/eslint-parser@npm:^7.28.6":
+"@babel/eslint-parser@npm:^7.28.6":
   version: 7.29.7
   resolution: "@babel/eslint-parser@npm:7.29.7"
   dependencies:
@@ -3147,7 +3147,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.20.7, @babel/parser@npm:^7.23.9, @babel/parser@npm:^7.24.4, @babel/parser@npm:^7.27.2, @babel/parser@npm:^7.29.7, @babel/parser@npm:^7.29.8, @babel/parser@npm:^7.5.5, @babel/parser@npm:^7.8.4":
+"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.20.7, @babel/parser@npm:^7.23.9, @babel/parser@npm:^7.24.4, @babel/parser@npm:^7.29.7, @babel/parser@npm:^7.29.8, @babel/parser@npm:^7.5.5, @babel/parser@npm:^7.8.4":
   version: 7.29.9
   resolution: "@babel/parser@npm:7.29.9"
   dependencies:
@@ -19855,14 +19855,10 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/core": "npm:^7.27.1"
-    "@babel/eslint-parser": "npm:^7.27.1"
-    "@babel/parser": "npm:^7.27.2"
     "@eslint/js": "npm:^9.39.5"
+    espree: "npm:^11.2.0"
   peerDependencies:
-    "@babel/core": ">=7.27.1"
-    "@babel/eslint-parser": ">=7.27.1"
-    eslint: ">=8.57.1"
+    eslint: ^10.0.0
     eslint-plugin-inclusive-language: ^2.2.1
     eslint-plugin-jsdoc: ^65.1.0
     eslint-plugin-react: ^7.37.5
@@ -34789,7 +34785,6 @@ __metadata:
     "@automattic/wpcom-template-parts": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@babel/core": "npm:^7.27.1"
-    "@babel/eslint-parser": "npm:^7.27.1"
     "@babel/register": "npm:^7.27.1"
     "@babel/runtime": "npm:^7.27.1"
     "@eslint/compat": "npm:^2.1.1"

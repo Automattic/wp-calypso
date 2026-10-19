@@ -31,6 +31,7 @@ test( 'the flat presets lint a project as their READMEs set them up', () => {
 			rules: [ 'inclusive-language/use-inclusive-words', 'wpcalypso/i18n-unlocalized-url' ],
 		},
 		'component.jsx': clean,
+		'call.js': clean,
 		// The test-file exception.
 		'test/index.js': clean,
 		// JSON gets the JSON parser and rules only; Markdown isn't linted at all.
