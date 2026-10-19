@@ -27,7 +27,7 @@
 		"@eslint/js": "^9.39.5"
 	},
 	"peerDependencies": {
-		"eslint": "^10.0.0",
+		"eslint": "^10.13.0",
 		"eslint-plugin-inclusive-language": "^2.2.1",
 		"eslint-plugin-jsdoc": "^65.1.0",
 		"eslint-plugin-react": "^7.37.5",
