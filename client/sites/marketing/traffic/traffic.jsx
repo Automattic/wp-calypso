@@ -45,6 +45,11 @@ const loadVisibilityNotice = () =>
 		/* webpackChunkName: "async-load-calypso-my-sites-site-settings-seo-settings-visibility-notice" */ 'calypso/my-sites/site-settings/seo-settings/visibility-notice'
 	);
 
+// The new Jetpack › SEO page covers SEO, Sitemaps and Site verification.
+export const isJetpackSeoPageAvailable = ( state, siteId ) => {
+	return siteHasFeature( state, siteId, 'seo-admin-ui' );
+};
+
 export const shouldShowBlazeAdvertisingOption = ( state, siteId ) => {
 	return isBlazeEnabled( state, siteId ) || isSiteComingSoon( state, siteId );
 };
@@ -70,6 +75,7 @@ const SiteSettingsTraffic = ( {
 	siteId,
 	siteSlug,
 	shouldShowAdvertisingOption,
+	showSeoSettings,
 	showSeoVisibilityNotice,
 	translate,
 } ) => {
@@ -112,7 +118,7 @@ const SiteSettingsTraffic = ( {
 						<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 					) }
 					<JetpackDevModeNotice />
-					{ isAdmin && showSeoVisibilityNotice && (
+					{ isAdmin && showSeoSettings && showSeoVisibilityNotice && (
 						<AsyncLoad require={ loadVisibilityNotice } placeholder={ null } />
 					) }
 					{ isAdmin && shouldShowAdvertisingOption && (
@@ -130,10 +136,12 @@ const SiteSettingsTraffic = ( {
 							href={ blazeAdvertisingUrl }
 						/>
 					) }
-					{ isAdmin && (
+					{ isAdmin && showSeoSettings && (
 						<SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } />
 					) }
-					{ isAdmin && <AsyncLoad key={ siteId } require={ loadForm } placeholder={ null } /> }
+					{ isAdmin && showSeoSettings && (
+						<AsyncLoad key={ siteId } require={ loadForm } placeholder={ null } />
+					) }
 					{ isJetpackAdmin && (
 						<JetpackSiteStats
 							handleAutosavingToggle={ handleAutosavingToggle }
@@ -154,14 +162,14 @@ const SiteSettingsTraffic = ( {
 							onSubmitForm={ handleSubmitForm }
 						/>
 					) }
-					{ isAdmin && (
+					{ isAdmin && showSeoSettings && (
 						<Sitemaps
 							isSavingSettings={ isSavingSettings }
 							isRequestingSettings={ isRequestingSettings }
 							fields={ fields }
 						/>
 					) }
-					{ isAdmin && <SiteVerification /> }
+					{ isAdmin && showSeoSettings && <SiteVerification /> }
 				</div>
 			</Page>
 			<JetpackFooter />
@@ -184,6 +192,7 @@ const connectComponent = connect( ( state ) => {
 		isJetpackAdmin,
 		siteSlug,
 		shouldShowAdvertisingOption: showAdvertisingOption,
+		showSeoSettings: ! isJetpackSeoPageAvailable( state, siteId ),
 		showSeoVisibilityNotice:
 			siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
 			( isPrivateSite( state, siteId ) || isHiddenSite( state, siteId ) ),

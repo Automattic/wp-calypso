@@ -1,8 +1,13 @@
-import { getBlazeAdvertisingUrl, shouldShowBlazeAdvertisingOption } from '../traffic';
+import {
+	getBlazeAdvertisingUrl,
+	isJetpackSeoPageAvailable,
+	shouldShowBlazeAdvertisingOption,
+} from '../traffic';
 
 const siteId = 123;
 
 const getState = ( {
+	activeFeatures = [],
 	canBlaze,
 	isComingSoon = false,
 	isSiteKnown = true,
@@ -21,6 +26,11 @@ const getState = ( {
 	return {
 		sites: {
 			items: isSiteKnown ? { [ siteId ]: site } : {},
+			features: {
+				[ siteId ]: {
+					data: { active: activeFeatures },
+				},
+			},
 		},
 		siteSettings: {
 			items: {
@@ -82,5 +92,19 @@ describe( 'getBlazeAdvertisingUrl', () => {
 				wpAdminAdvertisingUrl,
 			} )
 		).toBe( wpAdminAdvertisingUrl );
+	} );
+} );
+
+describe( 'isJetpackSeoPageAvailable', () => {
+	test( 'returns true when the site has the seo-admin-ui feature', () => {
+		const state = getState( { activeFeatures: [ 'seo-admin-ui' ] } );
+
+		expect( isJetpackSeoPageAvailable( state, siteId ) ).toBe( true );
+	} );
+
+	test( 'returns false when the site does not have the seo-admin-ui feature', () => {
+		const state = getState( { activeFeatures: [ 'advanced-seo' ] } );
+
+		expect( isJetpackSeoPageAvailable( state, siteId ) ).toBe( false );
 	} );
 } );
