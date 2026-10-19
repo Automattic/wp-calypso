@@ -15,6 +15,16 @@ function isChunkLoadError( error: unknown ): boolean {
 	);
 }
 
+function getChunkName( error: Error ): string {
+	/* Webpack sets `request` to the URL of the chunk that failed to load. */
+	const request = ( error as { request?: unknown } ).request;
+	if ( typeof request !== 'string' ) {
+		return 'async-load';
+	}
+
+	return request.split( '?' )[ 0 ].split( '/' ).pop()?.split( '.' )[ 0 ] || 'async-load';
+}
+
 type AsyncLoadProps = {
 	placeholder?: ReactNode;
 	loadFailureFallback?: ReactNode;
@@ -43,7 +53,7 @@ export default function AsyncLoad( {
 							throw error;
 						}
 
-						bumpStat( 'calypso_chunk_error', 'async-load' );
+						bumpStat( 'calypso_chunk_error', getChunkName( error ) );
 
 						return { default: () => <>{ loadFailureFallback }</> };
 					} );

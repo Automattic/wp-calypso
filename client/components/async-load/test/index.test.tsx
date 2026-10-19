@@ -15,9 +15,11 @@ const Boom = () => {
 
 const requireLoaded = () => Promise.resolve( { default: Loaded } );
 const requireBoom = () => Promise.resolve( { default: Boom } );
-const chunkLoadError = () =>
-	Object.assign( new Error( 'chunk blocked' ), { name: 'ChunkLoadError' } );
-const requireReject = () => Promise.reject( chunkLoadError() );
+const CHUNK_URL =
+	'https://example.com/calypso/evergreen/async-load-calypso-blocks-privacy-prefs.abc123.min.js?v=1';
+const chunkLoadError = ( request?: string ) =>
+	Object.assign( new Error( 'chunk blocked' ), { name: 'ChunkLoadError', request } );
+const requireReject = () => Promise.reject( chunkLoadError( CHUNK_URL ) );
 const requireEvalError = () => Promise.reject( new TypeError( 'module eval boom' ) );
 const requireThrowSync = (): Promise< never > => {
 	throw chunkLoadError();
@@ -53,6 +55,7 @@ describe( 'AsyncLoad', () => {
 		render( <AsyncLoad require={ requireLoaded } placeholder={ null } /> );
 
 		expect( await screen.findByText( 'loaded' ) ).toBeVisible();
+		expect( bumpStat ).not.toHaveBeenCalled();
 	} );
 
 	test( 'renders loadFailureFallback when the import rejects', async () => {
@@ -65,7 +68,10 @@ describe( 'AsyncLoad', () => {
 		);
 
 		expect( await screen.findByText( 'fallback' ) ).toBeVisible();
-		expect( bumpStat ).toHaveBeenCalledWith( 'calypso_chunk_error', 'async-load' );
+		expect( bumpStat ).toHaveBeenCalledWith(
+			'calypso_chunk_error',
+			'async-load-calypso-blocks-privacy-prefs'
+		);
 	} );
 
 	test( 'renders loadFailureFallback when require throws synchronously', async () => {
@@ -78,6 +84,7 @@ describe( 'AsyncLoad', () => {
 		);
 
 		expect( await screen.findByText( 'fallback' ) ).toBeVisible();
+		expect( bumpStat ).toHaveBeenCalledWith( 'calypso_chunk_error', 'async-load' );
 	} );
 
 	test( 'propagates non-chunk import errors even when a fallback is provided', async () => {
@@ -110,6 +117,11 @@ describe( 'AsyncLoad', () => {
 		await waitForElementToBeRemoved( () => screen.queryByText( 'placeholder' ) );
 
 		expect( screen.queryByText( /^boundary:/ ) ).not.toBeInTheDocument();
+		expect( bumpStat ).toHaveBeenCalledTimes( 1 );
+		expect( bumpStat ).toHaveBeenCalledWith(
+			'calypso_chunk_error',
+			'async-load-calypso-blocks-privacy-prefs'
+		);
 	} );
 
 	test( 'propagates the import rejection when no fallback is provided', async () => {
