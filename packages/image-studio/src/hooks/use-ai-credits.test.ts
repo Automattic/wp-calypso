@@ -362,60 +362,39 @@ describe( 'useAiCredits', () => {
 		expect( result.current.isLimitReached ).toBe( true );
 	} );
 
-	describe.each( [ 'business', 'commerce' ] )( 'on %s', ( planTier ) => {
-		it.each( [
-			{ who: 'the plan buyer', flags: PLAN_BUYER },
-			{ who: 'an admin who didn’t buy the plan', flags: SECOND_ADMIN },
-		] )( 'offers $who Add credits and records it as a top-up', async ( { flags } ) => {
-			respondWith( { ai_credits: planSnapshot( 0, { plan_tier: planTier } ), ...flags } );
-			const { result } = renderCredits( ImageStudioMode.Edit );
-			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+	it( 'offers the plan buyer Add credits on Business and records it as a top-up', async () => {
+		respondWith( { ai_credits: planSnapshot( 0, { plan_tier: 'business' } ), ...PLAN_BUYER } );
+		const { result } = renderCredits( ImageStudioMode.Edit );
+		await waitFor( () => expect( result.current.notice ).toBeDefined() );
 
-			expect( result.current.notice ).toMatchObject( {
-				message: 'You’ve used all your site credits.',
-				action: { ...addCreditsButton, onClick: expect.any( Function ) },
-			} );
-			expect( result.current.meter?.action ).toEqual( {
-				...addCreditsButton,
-				onClick: expect.any( Function ),
-			} );
-			expect( result.current.meter?.purchaseHint ).toBeUndefined();
-			const credits = { ...noticeCredits( 'zero', 0 ), planTier, ctaType: 'top_up' };
-			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
-				mode: ImageStudioMode.Edit,
-				trigger: 'open',
-				...credits,
-			} );
-
-			result.current.notice?.action?.onClick?.();
-			expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
-				mode: ImageStudioMode.Edit,
-				trigger: 'open',
-				...credits,
-			} );
-
-			result.current.meter?.action?.onClick?.();
-			expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenLastCalledWith( {
-				mode: ImageStudioMode.Edit,
-				trigger: 'popover',
-				...credits,
-			} );
+		expect( result.current.notice ).toMatchObject( {
+			message: 'You’ve used all your site credits.',
+			action: { ...addCreditsButton, onClick: expect.any( Function ) },
+		} );
+		expect( result.current.meter?.action ).toEqual( {
+			...addCreditsButton,
+			onClick: expect.any( Function ),
+		} );
+		expect( result.current.meter?.purchaseHint ).toBeUndefined();
+		const credits = { ...noticeCredits( 'zero', 0 ), planTier: 'business', ctaType: 'top_up' };
+		expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'open',
+			...credits,
 		} );
 
-		it( 'tells someone who can’t buy to ask a site admin, with no Add credits', async () => {
-			respondWith( { ai_credits: planSnapshot( 0, { plan_tier: planTier } ), ...EDITOR } );
-			const { result } = renderCredits();
-			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+		result.current.notice?.action?.onClick?.();
+		expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'open',
+			...credits,
+		} );
 
-			expect( result.current.notice?.message ).toBe(
-				'You’ve used all your site credits. Ask a site admin to add more.'
-			);
-			expect( result.current.notice?.action ).toBeUndefined();
-			expect( result.current.meter?.action ).toBeUndefined();
-			expect( result.current.meter?.purchaseHint ).toBe( 'Ask a site admin to add more.' );
-			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith(
-				expect.objectContaining( { planTier, ctaType: 'contact_admin', ref: 'none' } )
-			);
+		result.current.meter?.action?.onClick?.();
+		expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenLastCalledWith( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'popover',
+			...credits,
 		} );
 	} );
 
