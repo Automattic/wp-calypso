@@ -30,16 +30,6 @@ const config = defineConfig( [
 	{ ...flatNodeConfig, files: [ 'bin/**' ] },
 	// Projects often add the React plugin's own config; the preset must register the same plugin.
 	{ files: [ '**/*.{js,jsx}' ], ...react.configs.flat[ 'jsx-runtime' ] },
-	// Stands in for the Babel config a real project has, without reading this repo's.
-	{
-		files: [ '**/*.{js,jsx}' ],
-		languageOptions: {
-			parserOptions: {
-				requireConfigFile: false,
-				babelOptions: { configFile: false, babelrc: false, parserOpts: { plugins: [ 'jsx' ] } },
-			},
-		},
-	},
 ] );
 
 ( async () => {

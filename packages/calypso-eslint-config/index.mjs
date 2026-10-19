@@ -115,8 +115,8 @@ function build( rootDir ) {
 
 		wpcalypso.configs.react,
 		{
-			// The legacy preset's exception for JSON and Markdown, which its flat version leaves to us.
-			files: [ '**/*.json', '**/*.md' ],
+			// JSON files, such as config, may hold unlocalized URLs.
+			files: [ '**/*.json' ],
 			rules: { 'wpcalypso/i18n-unlocalized-url': 'off' },
 		},
 		jsxA11y.flatConfigs.recommended,

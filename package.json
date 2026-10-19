@@ -239,7 +239,6 @@
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/eslint-plugin-json": "workspace:^",
 		"@babel/core": "^7.27.1",
-		"@babel/eslint-parser": "^7.27.1",
 		"@babel/register": "^7.27.1",
 		"@babel/runtime": "^7.27.1",
 		"@eslint/compat": "^2.1.1",

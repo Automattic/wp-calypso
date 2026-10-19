@@ -27,8 +27,6 @@
 		"@eslint/js": "^9.39.5"
 	},
 	"peerDependencies": {
-		"@babel/core": "^8.0.0",
-		"@babel/eslint-parser": "^8.0.0",
 		"eslint": "^10.0.0",
 		"eslint-plugin-inclusive-language": "^2.2.1",
 		"eslint-plugin-jsdoc": "^65.1.0",
@@ -46,8 +44,6 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@babel/core": "^8.0.7",
-		"@babel/eslint-parser": "^8.0.7",
 		"espree": "^11.2.0"
 	}
 }

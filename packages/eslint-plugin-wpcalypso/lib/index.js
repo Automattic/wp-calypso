@@ -20,8 +20,9 @@ module.exports.meta = {
 module.exports.rules = require( './rules' );
 module.exports.configs = {};
 
-// Built on first use, since they reference this plugin object. `flat/*` are the names they had
-// next to the eslintrc presets, which ESLint 10 can't load.
+// Built on first use: they reference this plugin object, and `react` loads the optional React
+// plugins, which `recommended` users may not have. `flat/*` are the names they had next to the
+// eslintrc presets.
 for ( const name of Object.keys( flat ) ) {
 	let built;
 	const get = () => ( built ??= flat[ name ]( module.exports ) );

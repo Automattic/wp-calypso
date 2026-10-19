@@ -5,10 +5,10 @@ This package also includes custom ESLint rules for the [WordPress.com Calypso pr
 
 ## Installation
 
-Install [ESLint](http://eslint.org) 10, `@babel/core` and `@babel/eslint-parser` 8, and `eslint-plugin-wpcalypso`:
+Install [ESLint](http://eslint.org) 10, `eslint-plugin-wpcalypso` and the plugins its presets use:
 
 ```
-$ yarn add --dev eslint @babel/core @babel/eslint-parser eslint-plugin-wpcalypso
+$ yarn add --dev eslint eslint-plugin-wpcalypso eslint-plugin-jsdoc eslint-plugin-inclusive-language
 ```
 
 If you're planning to use the React superset of rules, you should also install `eslint-plugin-react` and `eslint-plugin-react-hooks`:
@@ -17,13 +17,23 @@ If you're planning to use the React superset of rules, you should also install `
 yarn add --dev eslint-plugin-react eslint-plugin-react-hooks
 ```
 
+`eslint-plugin-react` doesn't list ESLint 10 as a peer yet. Yarn only warns about it; npm refuses to install unless your `package.json` overrides that peer:
+
+```json
+{
+	"overrides": {
+		"eslint-plugin-react": { "eslint": "$eslint" }
+	}
+}
+```
+
 ## Usage
 
 ### Recommended rules
 
 In `eslint.config.js`, apply `recommended` (or, for React projects, `react`) to your JavaScript files, using `files` and `extends` as shown below. Always set `files`: the presets don't pick files themselves, so without it they would also run on JSON or Markdown files.
 
-The presets parse with `@babel/eslint-parser`, which reads your project's Babel config. They register a wrapped `eslint-plugin-inclusive-language`, so don't register that plugin yourself.
+The presets use ESLint's own parser, with JSX enabled. If your code has Flow, TypeScript or proposal syntax, set `languageOptions.parser` (for example to `@babel/eslint-parser` or `@typescript-eslint/parser`) in a config entry after them. They register a wrapped `eslint-plugin-inclusive-language`, so don't register that plugin yourself.
 
 ```js
 const { defineConfig } = require( 'eslint/config' );

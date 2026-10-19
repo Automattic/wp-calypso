@@ -2,7 +2,7 @@
 const reactRules = require( './react' );
 const recommendedRules = require( './recommended' );
 
-// ES-module-only plugins and parsers come back as a namespace object.
+// ES-module-only plugins come back as a namespace object.
 const load = ( name ) => {
 	const module = require( name );
 	return module.default ?? module;
@@ -33,12 +33,8 @@ const recommended = ( plugin ) => {
 		jsdoc.configs[ 'flat/recommended' ],
 		{
 			name: 'wpcalypso/recommended',
-			languageOptions: {
-				// The ES2015 globals; the Babel parser handles the syntax.
-				ecmaVersion: 2015,
-				parser: load( '@babel/eslint-parser' ),
-				parserOptions: { ecmaFeatures: { jsx: true } },
-			},
+			// ESLint's own parser. Projects with Flow, TypeScript or proposal syntax set theirs after this.
+			languageOptions: { parserOptions: { ecmaFeatures: { jsx: true } } },
 			plugins: {
 				wpcalypso: plugin,
 				'inclusive-language': withGetSourceCode( load( 'eslint-plugin-inclusive-language' ) ),
