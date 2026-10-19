@@ -227,6 +227,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	);
 	const urlQueryParams = useQuery();
 	const platform = urlQueryParams.get( 'platform' ) || '';
+	// Purchase attribution from the signup URL, carried onto the cart so checkout records it.
+	const purchaseSource = urlQueryParams.get( 'source' );
 	const useThemeHeadstart =
 		! isNewHostedSiteCreationFlow( flow ) && ! isNewSiteMigrationFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
@@ -246,7 +248,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				...mergedDomainCartItems,
 			];
 			if ( manageFlowCartItems.length > 0 && slug ) {
-				await addProductsToCart( slug, flow, manageFlowCartItems );
+				await addProductsToCart( slug, flow, manageFlowCartItems, purchaseSource );
 			}
 
 			return {
@@ -292,7 +294,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				...mergedDomainCartItems,
 			];
 			if ( funnelCartItems.length > 0 ) {
-				await addProductsToCart( funnelSite.siteSlug, flow, funnelCartItems );
+				await addProductsToCart( funnelSite.siteSlug, flow, funnelCartItems, purchaseSource );
 			}
 
 			return {
@@ -434,7 +436,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			];
 
 			if ( additionalCartItems.length > 0 ) {
-				await addProductsToCart( site.siteSlug, flow, additionalCartItems );
+				await addProductsToCart( site.siteSlug, flow, additionalCartItems, purchaseSource );
 			}
 
 			// Poll for garden provisioning status if this is a garden site

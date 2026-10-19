@@ -280,10 +280,15 @@ export const createSite = async (
 	return providedDependencies;
 };
 
-function prepareItemForAddingToCart( item: MinimalRequestCartProduct, lastKnownFlow?: string ) {
+function prepareItemForAddingToCart(
+	item: MinimalRequestCartProduct,
+	lastKnownFlow?: string,
+	source?: string | null
+) {
 	return {
 		...item,
 		extra: {
+			...( source && { source } ),
 			...item.extra,
 			context: 'signup',
 			...( lastKnownFlow && { signup_flow: lastKnownFlow } ),
@@ -308,14 +313,22 @@ export async function replaceProductsInCart(
 	}
 }
 
+/**
+ * Add the signup's products to the site's cart.
+ *
+ * `source` is the purchase attribution that arrived on the signup URL (for example, the app
+ * that sent the visitor). Checkout records it on the purchase event, so a sale can be joined to
+ * the referral behind it. An item that already carries its own source keeps it.
+ */
 export async function addProductsToCart(
 	siteSlug: string,
 	flowName: string,
-	cartItems: MinimalRequestCartProduct[] | null
+	cartItems: MinimalRequestCartProduct[] | null,
+	source?: string | null
 ) {
 	if ( Array.isArray( cartItems ) ) {
 		const cartItemsToAdd = cartItems.map( ( cartItem ) =>
-			prepareItemForAddingToCart( cartItem, flowName )
+			prepareItemForAddingToCart( cartItem, flowName, source )
 		);
 
 		debug( 'adding products to cart', cartItems );
