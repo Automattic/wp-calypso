@@ -21,6 +21,7 @@ import {
 import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-suggestions';
 import useFloatingPanelProps from '../../hooks/use-floating-panel-props';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
+import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../../utils/accepted-upload-types';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
@@ -134,15 +135,6 @@ const EditorHistoryBridge = lazyComponent(
 	() => import( /* webpackChunkName: "am-editor-history-bridge" */ '../editor-history-bridge' )
 );
 
-const DEFAULT_ACCEPTED_IMAGE_TYPES = [
-	'image/jpeg',
-	'image/png',
-	'image/heic',
-	'image/heif',
-	'image/heic-sequence',
-	'image/heif-sequence',
-];
-
 /**
  * Returns the empty-view greeting: the host's `agentsManagerData.emptyViewHeading`,
  * else the Reader chat or orchestrator default.
@@ -201,7 +193,7 @@ export default function AgentChat( {
 	isChatInputDisabled,
 	isCompactMode = false,
 	imageUpload,
-	acceptedImageFileTypes = DEFAULT_ACCEPTED_IMAGE_TYPES,
+	acceptedImageFileTypes = DEFAULT_ACCEPTED_UPLOAD_TYPES,
 	showFeedbackInput = false,
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
