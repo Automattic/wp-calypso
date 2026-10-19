@@ -285,15 +285,6 @@
 		}
 	}
 
-	.site-migration-identify__status-title {
-		display: flex;
-		align-items: center;
-		gap: 2px;
-		font-size: 0.875rem;
-		line-height: 1.43;
-		font-weight: 500;
-	}
-
 	.site-migration-identify__connection-issue {
 		align-items: flex-start;
 		font-size: $font-size-medium;
@@ -351,39 +342,6 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 10px;
-	}
-
-	.site-migration-identify__spinner {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex: none;
-		width: 20px;
-		height: 20px;
-
-		.components-spinner {
-			width: 12px;
-			height: 12px;
-			margin: 0;
-			color: var( --color-link );
-		}
-	}
-
-	.site-migration-identify__progress {
-		display: flex;
-		gap: 8px;
-		padding-block: 16px 8px;
-		font-size: 0.75rem;
-		line-height: 1.33;
-		color: var( --color-neutral-50 );
-
-		> div {
-			display: flex;
-			flex: 1;
-			min-width: 0;
-			flex-direction: column;
-			gap: 8px;
-		}
 	}
 
 	.site-migration-identify__progress-bar {
