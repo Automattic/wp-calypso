@@ -227,10 +227,18 @@ $resource-brands: (
 }
 
 // A resource's link, stretched with ::after over its card so the whole of it is
-// clickable, and drawing the focus ring around it.
+// clickable, and drawing the focus ring around it. It keeps its card's ink in
+// every state, over the classic dashboard's global link colors.
 .dashboard-resources-learn__link {
-	color: inherit;
 	text-decoration: none;
+
+	&,
+	&:visited,
+	&:hover,
+	&:focus,
+	&:active {
+		color: inherit;
+	}
 
 	&::after {
 		content: '';
