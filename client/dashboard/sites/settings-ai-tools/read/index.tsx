@@ -1,6 +1,7 @@
 import '../style.scss';
 
 import {
+	isAutomatticianQuery,
 	siteAbilitiesQuery,
 	userSettingsQuery,
 	userSettingsMutation,
@@ -92,13 +93,17 @@ export default function SiteAIToolsRead() {
 	const groups = groupToolsByGroup( allTools, groupDescriptors ) as ToolGroup[];
 
 	// Site-published abilities on this page, for the page-level toggle and its
-	// state. Cached with the section's own query.
+	// state. Staff-gated like the server-side remote: path (AI-1328) and cached
+	// with the section's own query.
+	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const localeSlug = useLocale();
 	const wpLocale = languages.find( ( { langSlug } ) => langSlug === localeSlug )?.wpLocale;
-	const savedRemoteGroups = getSiteRemoteGroups( userSettings || {}, site.ID );
+	const savedRemoteGroups = isAutomattician
+		? getSiteRemoteGroups( userSettings || {}, site.ID )
+		: {};
 	const { data: remoteAbilities } = useQuery( {
 		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
-		enabled: !! site.jetpack,
+		enabled: !! site.jetpack && !! isAutomattician,
 	} );
 	const remoteNamespaces = collectNamespaces( remoteAbilities, savedRemoteGroups, TOOL_CATEGORY );
 	const remoteGroupKeys = [ ...remoteNamespaces.values() ].flatMap( ( group ) => group.keys );

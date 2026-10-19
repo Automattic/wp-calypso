@@ -65,10 +65,12 @@ function seed( {
 	activeSite = JETPACK_SITE,
 	remoteGroups = {},
 	abilities,
+	isAutomattician = true,
 }: {
 	activeSite?: Site;
 	remoteGroups?: Record< string, boolean >;
 	abilities?: SiteAbility[];
+	isAutomattician?: boolean;
 } ) {
 	queryClient.setQueryData( userSettingsQuery().queryKey, {
 		mcp_abilities: {
@@ -81,7 +83,10 @@ function seed( {
 			],
 		},
 	} as unknown as UserSettings );
-	queryClient.setQueryData( isAutomatticianQuery().queryKey, { number: 0, teams: [] } );
+	queryClient.setQueryData( isAutomatticianQuery().queryKey, {
+		number: 0,
+		teams: isAutomattician ? [ { slug: 'a8c' } ] : [],
+	} );
 	if ( abilities ) {
 		// The default test user's language is 'en', which maps to wpLocale 'en_US'.
 		queryClient.setQueryData( siteAbilitiesQuery( activeSite.ID, 'en_US' ).queryKey, abilities );
@@ -361,6 +366,19 @@ describe( '<RemoteAbilitiesSection>', () => {
 	test( 'hides on Simple sites', () => {
 		seed( { activeSite: SIMPLE_SITE, abilities: catalog } );
 		render( <RemoteAbilitiesSection site={ SIMPLE_SITE } category="read" />, { queryClient } );
+
+		expect(
+			screen.queryByRole( 'heading', { name: 'Site-published abilities' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'hides for non-Automattician users until launch', () => {
+		seed( {
+			abilities: catalog,
+			remoteGroups: { 'write:akismet': true },
+			isAutomattician: false,
+		} );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
 
 		expect(
 			screen.queryByRole( 'heading', { name: 'Site-published abilities' } )

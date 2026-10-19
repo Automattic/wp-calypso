@@ -306,6 +306,11 @@ describe( '<AIToolsSettings>', () => {
 
 	test( 'counts site-published groups in the badges so they cannot claim All enabled while those are off', () => {
 		seedQueries( '', true, jetpackSite, true, true );
+		// The remote section is staff-gated; the badge math applies for Automatticians.
+		queryClient.setQueryData( isAutomatticianQuery().queryKey, {
+			number: 0,
+			teams: [ { slug: 'a8c' } ],
+		} );
 		queryClient.setQueryData( userSettingsQuery().queryKey, {
 			mcp_abilities: {
 				account: {
