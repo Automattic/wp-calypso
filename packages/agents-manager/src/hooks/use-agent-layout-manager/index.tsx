@@ -154,8 +154,8 @@ export default function useAgentLayoutManager( {
 		if ( ! portalRef.current ) {
 			portalRef.current = document.createElement( 'div' );
 			portalRef.current.className = CHAT_PORTAL_CLASS;
-			// Only the package stylesheet reveals it (`chat-ui.scss`): without the
-			// stylesheet, no chat beats an unstyled one over the page (TAGENT-2186).
+			// Hidden until the package stylesheet reveals it (`chat-ui.scss`), so a page
+			// without the stylesheet shows no chat instead of an unstyled one (TAGENT-2186).
 			portalRef.current.style.display = 'none';
 			container.appendChild( portalRef.current );
 

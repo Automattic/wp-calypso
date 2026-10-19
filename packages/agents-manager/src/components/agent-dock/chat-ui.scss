@@ -1,6 +1,6 @@
-// Reveals the chat: `useAgentLayoutManager` creates the portal node hidden
-// inline, so without this stylesheet there is no chat instead of an unstyled
-// one over the page. Only `!important` beats an inline style.
+// Reveals the chat: `useAgentLayoutManager` creates the portal node with an
+// inline `display: none`, which only `!important` overrides, so a page without
+// this stylesheet shows no chat instead of an unstyled one.
 .agents-manager-chat {
 	display: block !important;
 }
