@@ -108,12 +108,21 @@ describe( 'getSitePurchaseUpgradeUrl', () => {
 		expect( url ).not.toContain( '/checkout/' );
 	} );
 
-	test( 'sends Jetpack bundles to the store while Pro availability is unknown', () => {
+	test( 'upgrades Jetpack bundles straight to checkout while Pro availability is unknown', () => {
 		const url = getSitePurchaseUpgradeUrl(
 			makePurchase( { product_slug: 'jetpack_growth_yearly' } )
 		);
-		expect( url ).toContain( '/plans/example.com' );
-		expect( url ).not.toContain( '/checkout/' );
+		expect( url ).toContain( '/checkout/example.com/jetpack_complete' );
+	} );
+
+	test( 'keeps a plain store link until Pro is on sale', () => {
+		expect(
+			getSitePurchaseUpgradeUrl(
+				makePurchase(),
+				REDIRECT_TO,
+				( slug ) => slug !== 'jetpack_pro_yearly'
+			)
+		).toBe( 'https://wordpress.com/plans/example.com' );
 	} );
 
 	test.each( [
@@ -131,7 +140,7 @@ describe( 'getSitePurchaseUpgradeUrl', () => {
 			'https://wordpress.com'
 		);
 		expect( url.pathname ).toBe( `/checkout/example.com/${ upgradeSlug }` );
-		expect( url.searchParams.get( 'redirect_to' ) ).toBe( REDIRECT_TO );
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe( url.searchParams.get( 'cancel_to' ) );
 	} );
 
 	test( 'sends a Jetpack bundle without a direct upgrade to the store before Pro is on sale', () => {
@@ -157,7 +166,8 @@ describe( 'getSitePurchaseUpgradeUrl', () => {
 		const url = new URL(
 			getSitePurchaseUpgradeUrl(
 				makePurchase( { product_slug: 'jetpack_growth_yearly' } ),
-				'/me/billing/purchases/1'
+				'/me/billing/purchases/1',
+				() => true
 			) as string,
 			'https://wordpress.com'
 		);

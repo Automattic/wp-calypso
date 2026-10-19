@@ -356,7 +356,7 @@ export const purchaseSettingsIndexRoute = createRoute( {
 			await queryClient.ensureQueryData( domainQuery( purchase.meta ) ).catch( () => {} );
 		}
 
-		// Jetpack upgrade destinations depend on what is on sale; the store is the safe default.
+		// Jetpack upgrades go through the store only once Pro is known to be on sale.
 		if ( purchase.is_jetpack_plan_or_product ) {
 			queryClient.prefetchQuery( productsQuery() );
 		}

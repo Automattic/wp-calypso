@@ -213,27 +213,23 @@ export function getSitePurchaseUpgradeUrl(
 	}
 
 	const backUrl = redirectToDashboardLink( { supportBackport: true } );
+	const isProOnSale = isOnSale?.( JetpackPlans.PLAN_JETPACK_PRO_YEARLY ) === true;
 
-	/* Until Pro launches, upgrade straight to the next bundle while it is on sale. Otherwise, or
-	 * while availability is unknown, the Jetpack store decides, since it offers only bundles on sale. */
+	/* Until Pro is known to be on sale, upgrade straight to the next bundle, unless that bundle is
+	 * known to be off sale. Afterwards the Jetpack store decides, since it offers Pro. */
 	const upgradeProductSlug = ProductUpgradeMap[ purchase.product_slug ];
-	if (
-		upgradeProductSlug &&
-		isOnSale &&
-		! isOnSale( JetpackPlans.PLAN_JETPACK_PRO_YEARLY ) &&
-		isOnSale( upgradeProductSlug )
-	) {
+	if ( upgradeProductSlug && ! isProOnSale && isOnSale?.( upgradeProductSlug ) !== false ) {
 		return addQueryArgs( wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` ), {
-			redirect_to: redirectTo ?? backUrl,
+			redirect_to: backUrl,
 			cancel_to: backUrl,
 		} );
 	}
 
 	if ( purchase.is_jetpack_plan_or_product ) {
-		return addQueryArgs( wpcomLink( `/plans/${ purchase.site_slug }` ), {
-			redirect_to: redirectTo ?? backUrl,
-			cancel_to: backUrl,
-		} );
+		const storeUrl = wpcomLink( `/plans/${ purchase.site_slug }` );
+		return isProOnSale
+			? addQueryArgs( storeUrl, { redirect_to: redirectTo ?? backUrl, cancel_to: backUrl } )
+			: storeUrl;
 	}
 
 	return buildSitePlanUpgradeUrl( {

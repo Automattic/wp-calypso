@@ -71,7 +71,7 @@ export const isUpgradeableToYearly = (
 	selectedTerm === TERM_ANNUALLY &&
 	ownedItem.term === TERM_MONTHLY &&
 	ownedItem.type === ITEM_TYPE_PLAN &&
-	// A retired plan keeps its monthly renewals but cannot be bought yearly.
+	// Holds a Pro monthly owner back until Pro yearly is on sale.
 	isOnSale( getYearlySlugFromMonthly( ownedItem.productSlug ) ?? '' );
 
 export const useStoreItemInfo = ( {
