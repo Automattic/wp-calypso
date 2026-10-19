@@ -49,9 +49,11 @@ export default function ReaderSaveButton( { post, iconSize = 24 }: ReaderSaveBut
 	const dispatch = useDispatch();
 	const saved = useIsPostSaved( post );
 	const { savePost, unsavePost, isPending } = useSavePost();
+	// Until the saved keys load, a click can't tell a save from an unsave.
+	const isDisabled = isPending || saved === undefined;
 
 	const handleClick = () => {
-		if ( isPending ) {
+		if ( isDisabled ) {
 			return;
 		}
 
@@ -97,10 +99,10 @@ export default function ReaderSaveButton( { post, iconSize = 24 }: ReaderSaveBut
 			className={ clsx( 'reader-save-button', 'tooltip', { 'is-saved': saved } ) }
 			onClick={ handleClick }
 			aria-label={ tooltip }
-			aria-disabled={ isPending }
+			aria-disabled={ isDisabled }
 			data-tooltip={ tooltip }
 		>
-			<SaveIcon iconSize={ iconSize } saved={ saved } />
+			<SaveIcon iconSize={ iconSize } saved={ !! saved } />
 		</button>
 	);
 }

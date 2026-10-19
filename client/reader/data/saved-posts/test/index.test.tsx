@@ -75,6 +75,7 @@ describe( 'useIsPostSaved', () => {
 			{ wrapper: makeWrapper( client ) }
 		);
 
+		expect( result.current.wpcom ).toBeUndefined();
 		await waitFor( () => expect( result.current.wpcom ).toBe( true ) );
 		expect( request.isDone() ).toBe( true );
 		expect( result.current.rss ).toBe( true );
@@ -93,7 +94,7 @@ describe( 'useIsPostSaved', () => {
 			{ wrapper: makeWrapper( client ) }
 		);
 
-		expect( result.current ).toEqual( { disabled: false, noKey: false, noPost: false } );
+		expect( result.current ).toEqual( { disabled: undefined, noKey: false, noPost: false } );
 		expect( client.getQueryState( readSavedKeysQuery().queryKey )?.fetchStatus ).toBe( 'idle' );
 	} );
 

@@ -72,6 +72,43 @@ describe( 'ReaderSaveButton', () => {
 		expect( await screen.findByRole( 'button', { name: 'Saved' } ) ).toBeVisible();
 	} );
 
+	it( 'ignores clicks until the saved keys load', async () => {
+		const user = userEvent.setup();
+		let finishKeys = () => {};
+		const keysFinished = new Promise< void >( ( resolve ) => ( finishKeys = resolve ) );
+		nock( BASE )
+			.get( '/wpcom/v2/read/saved/keys' )
+			.reply( async () => {
+				await keysFinished;
+				return [ 200, { keys: [ SAVED_KEY ], total: 1 } ];
+			} );
+		renderButton();
+
+		const button = screen.getByRole( 'button', { name: 'Save to read later' } );
+		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
+		await user.click( button );
+
+		expect( recordTrackForPost ).not.toHaveBeenCalled();
+		finishKeys();
+		await waitFor( () => expect( button ).toHaveAccessibleName( 'Saved' ) );
+		expect( button ).toHaveAttribute( 'aria-disabled', 'false' );
+	} );
+
+	it( 'stays disabled when the saved keys fail to load', async () => {
+		const user = userEvent.setup();
+		nock( BASE ).get( '/wpcom/v2/read/saved/keys' ).reply( 500, { code: 'internal_error' } );
+		const { queryClient } = renderButton();
+		await waitFor( () =>
+			expect( queryClient.getQueryState( readSavedKeysQuery().queryKey )?.status ).toBe( 'error' )
+		);
+
+		const button = screen.getByRole( 'button', { name: 'Save to read later' } );
+		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
+		await user.click( button );
+
+		expect( recordTrackForPost ).not.toHaveBeenCalled();
+	} );
+
 	it( 'saves the post and records the save', async () => {
 		const user = userEvent.setup();
 		mockKeys( [] );
