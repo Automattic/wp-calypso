@@ -76,11 +76,41 @@ describe( 'SiteMigrationCheck', () => {
 		const { submit } = renderDestination( true );
 		expectSiteComparison();
 		expect( submit ).not.toHaveBeenCalled();
-		expect( screen.getByText( /Personal plan, which can’t run plugins/ ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				'The destination site is on the Personal plan, which doesn’t support plugins. Upgrade it to continue the migration.'
+			)
+		).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Upgrade and continue' } ) );
 		expect( submit ).toHaveBeenCalledWith( {
 			action: 'continue',
+			from: 'https://example.com',
+			platform: 'wordpress',
+			host: undefined,
+		} );
+	} );
+
+	it( 'offers another site when the destination can’t be loaded', async () => {
+		const submit = jest.fn();
+		renderStep(
+			<SiteMigrationCheck
+				{ ...mockStepProps( { navigation: { submit } } ) }
+				destinationSiteSlug="destination.wordpress.com"
+				destinationFailed
+			/>,
+			{ initialEntry: '/site-migration-check?from=https://example.com&platform=wordpress' }
+		);
+
+		expect(
+			screen.getAllByText( /We couldn’t load destination\.wordpress\.com/ )[ 0 ]
+		).toBeVisible();
+		expect(
+			screen.queryByRole( 'img', { name: 'Source site to be copied' } )
+		).not.toBeInTheDocument();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Use a different site' } ) );
+		expect( submit ).toHaveBeenCalledWith( {
+			action: 'select-existing-site',
 			from: 'https://example.com',
 			platform: 'wordpress',
 			host: undefined,

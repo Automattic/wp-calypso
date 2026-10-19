@@ -27,6 +27,7 @@ const SiteMigrationCheck: StepType< {
 		destinationPlanName?: string;
 		needsUpgrade?: boolean;
 		isLoadingDestination?: boolean;
+		destinationFailed?: boolean;
 	};
 	submits:
 		| { action: 'back' }
@@ -43,6 +44,7 @@ const SiteMigrationCheck: StepType< {
 	destinationPlanName,
 	needsUpgrade,
 	isLoadingDestination,
+	destinationFailed,
 } ) => {
 	const translate = useTranslate();
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
@@ -126,172 +128,191 @@ const SiteMigrationCheck: StepType< {
 						</Step.LinkButton>
 					</div>
 				) }
-				{ showChoices ? (
+				{ destinationFailed && (
 					<div className="site-migration-check__card">
-						{ choices.map( ( { title, description } ) => (
-							<Step.LinkButton
-								key={ String( title ) }
-								className="site-migration-check__choice"
-								disabled
+						<Notice status="error" isDismissible={ false }>
+							{ destinationSiteSlug
+								? translate( 'We couldn’t load %(site)s.', { args: { site: destinationSiteSlug } } )
+								: translate( 'We couldn’t load the destination site.' ) }
+						</Notice>
+						<div className="site-migration-check__actions">
+							<Step.PrimaryButton
+								onClick={ () =>
+									navigation.submit?.( {
+										action: 'select-existing-site',
+										from,
+										platform: 'wordpress',
+										host,
+									} )
+								}
 							>
-								<span className="site-migration-check__choice-content">
-									<span className="site-migration-check__choice-title">{ title }</span>
-									<span className="site-migration-check__choice-description">{ description }</span>
-								</span>
-								<span className="site-migration-check__choice-arrow" aria-hidden="true">
-									›
-								</span>
-							</Step.LinkButton>
-						) ) }
-						<Step.LinkButton onClick={ returnToAddress }>
-							{ translate( 'Not the site you meant? Enter a different URL' ) }
-						</Step.LinkButton>
+								{ translate( 'Use a different site' ) }
+							</Step.PrimaryButton>
+						</div>
 					</div>
-				) : (
-					<>
-						{ hasDestination ? (
-							<div className="site-migration-check__comparison">
-								<div className="site-migration-check__comparison-site">
-									<div className="site-migration-check__preview-label">
-										<span className="site-migration-check__preview-heading">
-											{ translate( 'Source' ) }
-										</span>
-										<a
-											className="site-migration-check__preview-address"
-											href={ from }
-											target="_blank"
-											rel="noopener noreferrer"
-											title={ hostname }
-										>
-											<span className="site-migration-check__preview-address-text">
-												{ hostname }
-											</span>{ ' ' }
-											↗
-										</a>
-									</div>
-									<SitePreview
-										url={ from }
-										label={ translate( 'Source site to be copied' ) }
-										mshotsOptions={ COMPARISON_PREVIEW_OPTIONS }
-									/>
-									<p className="site-migration-check__preview-description">
-										{ translate(
-											'The content on this site will be copied. No changes will be made to the site itself.'
-										) }
-									</p>
-								</div>
-								<span className="site-migration-check__comparison-arrow" aria-hidden="true">
-									→
-								</span>
-								<div className="site-migration-check__comparison-site">
-									<div className="site-migration-check__preview-label">
-										<span className="site-migration-check__preview-heading">
-											{ translate( 'Destination' ) }
-										</span>
-										<a
-											className="site-migration-check__preview-address"
-											href={ destinationSiteUrl || `https://${ destinationSiteSlug }` }
-											target="_blank"
-											rel="noopener noreferrer"
-											title={ destinationSiteSlug }
-										>
-											<span className="site-migration-check__preview-address-text">
-												{ destinationSiteSlug }
-											</span>{ ' ' }
-											↗
-										</a>
-									</div>
-									<SitePreview
-										url={ destinationSiteUrl || `https://${ destinationSiteSlug }` }
-										label={ translate( 'Current destination site' ) }
-										mshotsOptions={ COMPARISON_PREVIEW_OPTIONS }
-									/>
-									<p className="site-migration-check__preview-description">
-										{ translate( 'All of the content on this site will be replaced.' ) }
-									</p>
-								</div>
-							</div>
-						) : (
-							<SitePreview />
-						) }
+				) }
+				{ ! destinationFailed &&
+					( showChoices ? (
 						<div className="site-migration-check__card">
-							{ showUpgrade && (
-								<p className="site-migration-check__upgrade-description">
-									{ destinationPlanName
-										? translate(
-												'%(destination)s is on the %(plan)s plan, which can’t run plugins. Upgrade it, and we prepare its hosting and copy %(source)s into it.',
-												{
-													args: {
-														destination: destinationSiteSlug,
-														plan: destinationPlanName,
-														source: hostname,
-													},
-												}
-											)
-										: translate(
-												'%(destination)s can’t run plugins on its current plan. Upgrade it, and we prepare its hosting and copy %(source)s into it.',
-												{ args: { destination: destinationSiteSlug, source: hostname } }
-											) }
-								</p>
-							) }
-							{ showComparison && (
-								<p className="site-migration-check__upgrade-description">
-									{ translate(
-										'The destination site will keep its current domain. Once the migration is finished, we’ll help you switch it to %(source)s when you’re ready.',
-										{ args: { source: hostname } }
-									) }
-								</p>
-							) }
-							{ ! hasDestination && (
-								<Notice status="success" isDismissible={ false }>
-									<img src={ successIcon } alt="" width={ 24 } height={ 24 } />
-									<span>
-										{ translate(
-											'%(site)s runs on WordPress, so we copy all of it: pages, posts, media, theme, plugins, and settings.',
-											{ args: { site: hostname } }
-										) }
-									</span>
-								</Notice>
-							) }
-							<div className="site-migration-check__actions">
-								<Step.PrimaryButton
-									onClick={ () => {
-										if ( showComparison ) {
-											setIsSubmitting( true );
-										}
-										navigation.submit?.( {
-											action: 'continue',
-											from,
-											platform: 'wordpress',
-											host,
-										} );
-									} }
+							{ choices.map( ( { title, description } ) => (
+								<Step.LinkButton
+									key={ String( title ) }
+									className="site-migration-check__choice"
+									disabled
 								>
-									{ continueLabel }
-								</Step.PrimaryButton>
+									<span className="site-migration-check__choice-content">
+										<span className="site-migration-check__choice-title">{ title }</span>
+										<span className="site-migration-check__choice-description">
+											{ description }
+										</span>
+									</span>
+									<span className="site-migration-check__choice-arrow" aria-hidden="true">
+										›
+									</span>
+								</Step.LinkButton>
+							) ) }
+							<Step.LinkButton onClick={ returnToAddress }>
+								{ translate( 'Not the site you meant? Enter a different URL' ) }
+							</Step.LinkButton>
+						</div>
+					) : (
+						<>
+							{ hasDestination ? (
+								<div className="site-migration-check__comparison">
+									<div className="site-migration-check__comparison-site">
+										<div className="site-migration-check__preview-label">
+											<span className="site-migration-check__preview-heading">
+												{ translate( 'Source' ) }
+											</span>
+											<a
+												className="site-migration-check__preview-address"
+												href={ from }
+												target="_blank"
+												rel="noopener noreferrer"
+												title={ hostname }
+											>
+												<span className="site-migration-check__preview-address-text">
+													{ hostname }
+												</span>{ ' ' }
+												↗
+											</a>
+										</div>
+										<SitePreview
+											url={ from }
+											label={ translate( 'Source site to be copied' ) }
+											mshotsOptions={ COMPARISON_PREVIEW_OPTIONS }
+										/>
+										<p className="site-migration-check__preview-description">
+											{ translate(
+												'The content on this site will be copied. No changes will be made to the site itself.'
+											) }
+										</p>
+									</div>
+									<span className="site-migration-check__comparison-arrow" aria-hidden="true">
+										→
+									</span>
+									<div className="site-migration-check__comparison-site">
+										<div className="site-migration-check__preview-label">
+											<span className="site-migration-check__preview-heading">
+												{ translate( 'Destination' ) }
+											</span>
+											<a
+												className="site-migration-check__preview-address"
+												href={ destinationSiteUrl || `https://${ destinationSiteSlug }` }
+												target="_blank"
+												rel="noopener noreferrer"
+												title={ destinationSiteSlug }
+											>
+												<span className="site-migration-check__preview-address-text">
+													{ destinationSiteSlug }
+												</span>{ ' ' }
+												↗
+											</a>
+										</div>
+										<SitePreview
+											url={ destinationSiteUrl || `https://${ destinationSiteSlug }` }
+											label={ translate( 'Current destination site' ) }
+											mshotsOptions={ COMPARISON_PREVIEW_OPTIONS }
+										/>
+										<p className="site-migration-check__preview-description">
+											{ translate( 'All of the content on this site will be replaced.' ) }
+										</p>
+									</div>
+								</div>
+							) : (
+								<SitePreview />
+							) }
+							<div className="site-migration-check__card">
+								{ showUpgrade && (
+									<p className="site-migration-check__upgrade-description">
+										{ destinationPlanName
+											? translate(
+													'The destination site is on the %(plan)s plan, which doesn’t support plugins. Upgrade it to continue the migration.',
+													{ args: { plan: destinationPlanName } }
+												)
+											: translate(
+													'The destination site’s plan doesn’t support plugins. Upgrade it to continue the migration.'
+												) }
+									</p>
+								) }
 								{ showComparison && (
-									<Step.LinkButton
-										onClick={ () =>
+									<p className="site-migration-check__upgrade-description">
+										{ translate(
+											'The destination site will keep its current domain. Once the migration is finished, we’ll help you switch it to %(source)s when you’re ready.',
+											{ args: { source: hostname } }
+										) }
+									</p>
+								) }
+								{ ! hasDestination && (
+									<Notice status="success" isDismissible={ false }>
+										<img src={ successIcon } alt="" width={ 24 } height={ 24 } />
+										<span>
+											{ translate(
+												'%(site)s runs on WordPress, so we copy all of it: pages, posts, media, theme, plugins, and settings.',
+												{ args: { site: hostname } }
+											) }
+										</span>
+									</Notice>
+								) }
+								<div className="site-migration-check__actions">
+									<Step.PrimaryButton
+										onClick={ () => {
+											if ( showComparison ) {
+												setIsSubmitting( true );
+											}
 											navigation.submit?.( {
-												action: 'select-existing-site',
+												action: 'continue',
 												from,
 												platform: 'wordpress',
 												host,
-											} )
-										}
+											} );
+										} }
 									>
-										{ translate( 'Use a different site' ) }
+										{ continueLabel }
+									</Step.PrimaryButton>
+									{ showComparison && (
+										<Step.LinkButton
+											onClick={ () =>
+												navigation.submit?.( {
+													action: 'select-existing-site',
+													from,
+													platform: 'wordpress',
+													host,
+												} )
+											}
+										>
+											{ translate( 'Use a different site' ) }
+										</Step.LinkButton>
+									) }
+								</div>
+								{ ! hasDestination && (
+									<Step.LinkButton disabled>
+										{ translate( 'Rather have us do it? Talk to a migration expert' ) }
 									</Step.LinkButton>
 								) }
 							</div>
-							{ ! hasDestination && (
-								<Step.LinkButton disabled>
-									{ translate( 'Rather have us do it? Talk to a migration expert' ) }
-								</Step.LinkButton>
-							) }
-						</div>
-					</>
-				) }
+						</>
+					) ) }
 			</Step.CenteredColumnLayout>
 		</>
 	);

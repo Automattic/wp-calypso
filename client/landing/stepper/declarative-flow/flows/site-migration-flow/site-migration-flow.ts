@@ -25,6 +25,7 @@ import { goToImporter } from 'calypso/landing/stepper/declarative-flow/migration
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
+import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
@@ -193,6 +194,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 	useStepsProps() {
 		const { __ } = useI18n();
 		const { siteId, siteSlug, site } = useSiteData();
+		const { isError: hasSiteError } = useSiteQuery();
 		const query = useQuery();
 		const handoff = useFlowState().get( 'migrationHandoff' );
 		const hasDestination =
@@ -225,7 +227,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 				destinationSiteUrl: hasDestination ? site?.URL : undefined,
 				destinationPlanName: site?.plan?.product_name_short || site?.plan?.product_name,
 				needsUpgrade: hasDestination && !! site?.plan && ! canInstallPlugins( site ),
-				isLoadingDestination: hasDestination && ! site?.plan,
+				isLoadingDestination: hasDestination && ! site?.plan && ! hasSiteError,
+				destinationFailed: hasDestination && hasSiteError,
 			},
 			plans: {
 				headerText: __( 'Ready to migrate' ),
@@ -475,6 +478,21 @@ const siteMigration: FlowV2< typeof initialize > = {
 						);
 					}
 
+					const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
+					const isHostingSupported = isHostingSupportedForSSHMigration( host );
+					const canUseSSHMigration =
+						isSSHMigrationAvailable && isHostingSupported && locale === 'en';
+
+					// Track hosting provider detection
+					const recordHostingDetected = ( redirectedToSSH: boolean ) =>
+						recordTracksEvent( 'calypso_site_migration_hosting_detected', {
+							hosting_provider: host || 'unknown',
+							is_ssh_supported: isHostingSupported,
+							ssh_feature_enabled: isSSHMigrationAvailable,
+							is_english_locale: locale === 'en',
+							redirected_to_ssh: redirectedToSSH,
+						} );
+
 					if (
 						slug === STEPS.SITE_MIGRATION_IDENTIFY.slug &&
 						config.isEnabled( 'migration/reprint-flow' ) &&
@@ -482,6 +500,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						platform === 'wordpress' &&
 						from
 					) {
+						recordHostingDetected( false );
 						return navigate(
 							paths.siteCheckPath( { from, platform, host: host ?? '', isWpcom: !! isWpcom } )
 						);
@@ -498,23 +517,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						}
 						return navigate( paths.plansPath( { from } ) );
 					}
-					const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
-
-					// Check if hosting provider is supported for SSH migration
-					const isHostingSupported = isHostingSupportedForSSHMigration( host );
-
-					// Track hosting provider detection
-					recordTracksEvent( 'calypso_site_migration_hosting_detected', {
-						hosting_provider: host || 'unknown',
-						is_ssh_supported: isHostingSupported,
-						ssh_feature_enabled: isSSHMigrationAvailable,
-						is_english_locale: locale === 'en',
-						redirected_to_ssh: isSSHMigrationAvailable && isHostingSupported && locale === 'en',
-					} );
-
-					// SSH migration is ONLY available if feature flag is enabled AND hosting is supported AND locale is English
-					const canUseSSHMigration =
-						isSSHMigrationAvailable && isHostingSupported && locale === 'en';
+					recordHostingDetected( canUseSSHMigration );
 
 					if ( canUseSSHMigration ) {
 						if ( hasDestinationSite && siteCanInstallPlugins ) {
