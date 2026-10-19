@@ -16,7 +16,7 @@ import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import SummaryChart from '../stats-summary';
 import { getPublishMonthKey } from './publish-month';
-import { clampRangeEnd } from './range-end';
+import { clampRangeEnd, getRangeEndCeiling } from './range-end';
 
 import './style.scss';
 
@@ -181,12 +181,21 @@ class StatsPostSummary extends Component {
 				// paginating into fake empty bars; post-publish months with
 				// zero views are kept, consistent with Days/Weeks paging.
 				// Both boundaries are site-local month keys: the site's current
-				// month and the publish month.
-				const currentMonth = this.props.momentSiteZone().format( 'YYYY-MM' );
+				// month (floored at the newest month with views) and the publish month.
+				const records = [ ...statsByMonth( stats, moment ) ];
+				const newestMonthWithViews = records.reduce(
+					( newest, record ) => ( record.value > 0 ? record.startDate : newest ),
+					undefined
+				);
+				const lastMonth = getRangeEndCeiling(
+					this.props.momentSiteZone(),
+					newestMonthWithViews,
+					'YYYY-MM'
+				);
 				const publishMonth = getPublishMonthKey( stats.post, this.props.momentSiteZone );
-				return [ ...statsByMonth( stats, moment ) ].filter(
+				return records.filter(
 					( record ) =>
-						record.startDate.slice( 0, 7 ) <= currentMonth &&
+						record.startDate.slice( 0, 7 ) <= lastMonth &&
 						( ! publishMonth || record.startDate.slice( 0, 7 ) >= publishMonth )
 				);
 			}
