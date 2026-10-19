@@ -69,6 +69,8 @@ export default function PluginsList() {
 	);
 	const isEmpty =
 		! sitesPluginsLoading && ! pluginsQueryError && !! sitesById && allPlugins.length === 0;
+	// A direct plugin link can still be installed from its "Available on" tab, as long as there is a site to install it on.
+	const showEmptyState = isEmpty && ( ! pluginSlug || ! hasSites );
 	const selectedPluginSlug = pluginSlug || plugins[ 0 ]?.slug;
 	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
 
@@ -139,7 +141,7 @@ export default function PluginsList() {
 		enabled: ! isSmallViewport,
 	} );
 
-	if ( isEmpty ) {
+	if ( showEmptyState ) {
 		return (
 			<PageLayout
 				size="large"

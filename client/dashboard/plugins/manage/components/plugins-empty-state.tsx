@@ -58,7 +58,7 @@ function NoPluginsEmptyState() {
 	return (
 		<DataViewsEmptyStateLayout
 			title={ __( 'No plugins installed yet' ) }
-			description={ __( 'Plugins you install on your sites will appear here.' ) }
+			description={ __( 'Plugins on sites you can manage will appear here.' ) }
 		>
 			<EmptyState.ActionList>
 				<EmptyState.ActionItem

@@ -74,4 +74,18 @@ describe( '<PluginsList> empty states', () => {
 		expect( screen.getByRole( 'link', { name: 'Browse plugins' } ) ).toBeVisible();
 		expect( screen.queryByText( 'Plugin not found' ) ).not.toBeInTheDocument();
 	} );
+
+	test( 'does not list plugins from sites the user cannot manage', async () => {
+		mockApiEndpoints( {
+			sites: [ { ...pluginSite, capabilities: { update_plugins: false } } ],
+			plugins: { '1': [ { slug: 'test-plugin', name: 'Test Plugin' } ] },
+		} );
+
+		render( <PluginsList /> );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'No plugins installed yet' } )
+		).toBeVisible();
+		expect( screen.getByText( 'Plugins on sites you can manage will appear here.' ) ).toBeVisible();
+	} );
 } );
