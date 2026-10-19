@@ -22,7 +22,7 @@ export default [
 ];
 ```
 
-If there is some section of the code that is meant to be run by Node.js (eg: a `./bin/` directory with some scripts), add `flatNodeConfig` scoped to those files. It keeps your source type: ES modules still work, and top-level `return` works in scripts and `.cjs` files:
+If there is some section of the code that is meant to be run by Node.js (eg: a `./bin/` directory with some scripts), add `flatNodeConfig` scoped to those files. Its rules include `import/no-nodejs-modules`, so register `eslint-plugin-import` as `import` in your config, as the example above needs too. It keeps your source type: ES modules still work, and top-level `return` works in scripts and `.cjs` files:
 
 ```js
 import { flatNodeConfig } from '@automattic/calypso-eslint-overrides';
