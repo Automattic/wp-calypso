@@ -159,7 +159,7 @@ function useIsOnSale( purchase: Purchase ): ( ( productSlug: string ) => boolean
 	if ( ! data || isError || isFetching ) {
 		return undefined;
 	}
-	return ( productSlug ) => Boolean( data[ productSlug ]?.available );
+	return ( productSlug ) => data[ productSlug ]?.available === true;
 }
 
 /** Where to send anything that isn't a WordPress.com plan to upgrade. */
