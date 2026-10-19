@@ -40,12 +40,14 @@ $resource-brands: (
 }
 
 // A row of branded tiles that scrolls sideways, a little over two at a time.
-// Padded so a tile's hover lift isn't clipped by the scroller.
+// Padded all round, and pulled back out by as much, so a tile's hover lift
+// isn't clipped by the scroller, and doesn't widen it into showing a scrollbar.
 .dashboard-resources-learn__recommendations {
 	display: flex;
 	gap: $grid-unit-20;
-	margin: calc( -1 * #{$grid-unit-15} ) 0 calc( -1 * #{$grid-unit-20} );
-	padding: $grid-unit-15 0 $grid-unit-20;
+	margin: calc( -1 * #{$grid-unit-15} ) calc( -1 * #{$grid-unit-15} ) calc( -1 * #{$grid-unit-20} );
+	padding: $grid-unit-15 $grid-unit-15 $grid-unit-20;
+	scroll-padding-inline: $grid-unit-15;
 	list-style: none;
 	overflow-x: auto;
 	overscroll-behavior-inline: contain;
