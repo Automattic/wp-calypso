@@ -356,9 +356,9 @@ export const purchaseSettingsIndexRoute = createRoute( {
 			await queryClient.ensureQueryData( domainQuery( purchase.meta ) ).catch( () => {} );
 		}
 
-		// Jetpack upgrade destinations depend on what is on sale.
+		// Jetpack upgrade destinations depend on what is on sale; the store is the safe default.
 		if ( purchase.is_jetpack_plan_or_product ) {
-			await queryClient.ensureQueryData( productsQuery() ).catch( () => {} );
+			queryClient.prefetchQuery( productsQuery() );
 		}
 	},
 } ).lazy( () =>
