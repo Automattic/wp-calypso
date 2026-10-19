@@ -1,3 +1,6 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
+import { useQuery as useDataQuery } from '@tanstack/react-query';
 import { useReducedMotion } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
@@ -48,10 +51,14 @@ const SiteGeneration: StepType = function SiteGeneration() {
 		steps,
 		completionDelayMs: previewReady && ! shouldReduceMotion ? 2600 : 0,
 	} );
-	const stream = useBuildWowStream( state.streamInfo ?? null );
-	// Keep the synthetic preview out of the initial render when the status
-	// response confirms a stream, even before the event subscription is ready.
-	const streamRequested = streamEvents || Boolean( state.streamInfo );
+	const streamingEnabled = config.isEnabled( 'site-spec/build-wow-streaming' );
+	const { data: isAutomattician = false } = useDataQuery( {
+		...isAutomatticianQuery(),
+		enabled: streamingEnabled,
+	} );
+	const streamingAllowed = streamingEnabled && isAutomattician;
+	const stream = useBuildWowStream( streamingAllowed ? ( state.streamInfo ?? null ) : null );
+	const streamRequested = streamingAllowed && ( streamEvents || Boolean( state.streamInfo ) );
 
 	const reload = () => {
 		window.location.reload();
@@ -66,7 +73,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 				onPreviewReady={ setPreviewReady }
 				siteSlug={ siteSlug }
 				state={ state }
-				stream={ stream }
+				stream={ streamingAllowed ? stream : null }
 				streamRequested={ streamRequested }
 			/>
 		</>
