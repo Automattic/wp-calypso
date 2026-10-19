@@ -24,6 +24,10 @@ interface OneLoginFooterProps {
 	 */
 	loginLink?: JSX.Element;
 	/**
+	 * Shows "Don't have an account? Sign up" below the buttons at 960px and up.
+	 */
+	showSignupPrompt?: boolean;
+	/**
 	 * Passed through to the signup link so an explicit `?signup_url` is honoured.
 	 */
 	signupUrl?: string;
@@ -68,6 +72,7 @@ const OneLoginFooter = ( {
 	lostPasswordLink,
 	lostPasswordLinkMobileOnly,
 	loginLink,
+	showSignupPrompt,
 	signupUrl,
 	isLoginView,
 	supportLink,
@@ -87,7 +92,7 @@ const OneLoginFooter = ( {
 				>
 					{ lostPasswordLink }
 				</div>
-				<SignUpPrompt signupUrl={ signupUrl } />
+				{ showSignupPrompt && <SignUpPrompt signupUrl={ signupUrl } /> }
 				<div className="one-login__footer-links-wrapper">
 					{ oauth2Client && (
 						<LoggedOutFormBackLink

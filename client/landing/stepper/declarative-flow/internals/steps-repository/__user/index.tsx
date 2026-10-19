@@ -24,6 +24,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
+import useEntryClarityExperiment from 'calypso/lib/signup/use-entry-clarity-experiment';
 import wpcom from 'calypso/lib/wp';
 import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
@@ -48,7 +49,6 @@ import {
 	useIsPostPlanSelectionEmailVerification,
 	useEmailVerificationGate,
 } from './use-email-verification-gate';
-import useEntryClarityExperiment from './use-entry-clarity-experiment';
 import { useSocialService } from './use-social-service';
 import { useUpdateEmail } from './use-update-email';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
@@ -122,7 +122,11 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const { isEmailFirstVariant: isEmailFirstFromExperiment, isEmailAtBottom } =
 		useAccountCreationExperiment( { flow } );
 	const isEmailFirstVariant = isWooReferrer || isEmailFirstFromExperiment;
-	const isEntryClarityTreatment = useEntryClarityExperiment( flow );
+	// The experiment runs on onboarding only. Woo referrers are left out: their email-first layout
+	// already has the in-form link and no email button, so the treatment would not change it.
+	const isEntryClarityTreatment = useEntryClarityExperiment(
+		flow === ONBOARDING_FLOW && ! isWooReferrer
+	);
 
 	// Load the new account's token and refresh the current user. Depends only on the
 	// account-create response, so gate/navigation state changes don't repeat it.

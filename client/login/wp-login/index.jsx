@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
 import PasswordResetSuccessNotice from 'calypso/blocks/login/password-reset-success-notice';
 import SignupExistingAccountNotice from 'calypso/blocks/login/signup-existing-account-notice';
-import shouldShowContinueAsUser from 'calypso/blocks/login/utils/should-show-continue-as-user';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
@@ -27,6 +26,7 @@ import {
 import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login, lostPassword } from 'calypso/lib/paths';
+import useEntryClarityExperiment from 'calypso/lib/signup/use-entry-clarity-experiment';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -35,7 +35,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
-import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
+import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -75,6 +75,7 @@ export class Login extends Component {
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
 		isWoo: PropTypes.bool,
+		isEntryClarityTreatment: PropTypes.bool,
 	};
 
 	static defaultProps = { isJetpack: false, isLoginView: true };
@@ -239,20 +240,6 @@ export class Login extends Component {
 		);
 	}
 
-	showsContinueAsUser() {
-		return shouldShowContinueAsUser( {
-			socialConnect: this.props.socialConnect,
-			oauth2Client: this.props.oauth2Client,
-			isWCCOM: this.props.isWCCOM,
-			isBlazePro: this.props.isBlazePro,
-			isJetpack: this.props.isJetpack,
-			fromSite: this.props.fromSite,
-			twoFactorEnabled: this.props.twoFactorEnabled,
-			loginEmailAddress: this.props.currentQuery?.email_address,
-			isLoggedIn: this.props.isUserLoggedIn,
-		} );
-	}
-
 	getLoginLink() {
 		return (
 			<a
@@ -305,6 +292,7 @@ export class Login extends Component {
 			action,
 			currentRoute,
 			isLoginView,
+			isEntryClarityTreatment,
 		} = this.props;
 
 		// It's used to toggle UIs for the login page of Gravatar powered clients only (excluding 2FA relevant pages).
@@ -317,10 +305,9 @@ export class Login extends Component {
 			! currentRoute.startsWith( '/log-in/webauthn' ) &&
 			! currentRoute.startsWith( '/log-in/backup' );
 
-		// Main login view only. Gravatar-powered clients and Woo render their own
-		// lost-password link.
+		// Gravatar-powered clients and Woo render their own lost-password link.
 		const lostPasswordFormLink =
-			isLoginView && ! isGravPoweredClient && ! this.props.isWoo
+			isEntryClarityTreatment && ! isGravPoweredClient && ! this.props.isWoo
 				? this.getLostPasswordFormLink()
 				: undefined;
 
@@ -346,6 +333,7 @@ export class Login extends Component {
 						<OneLoginFooter
 							isLoginView={ isLoginView }
 							signupUrl={ signupUrl }
+							showSignupPrompt={ isEntryClarityTreatment }
 							lostPasswordLink={ this.getLostPasswordLink() }
 							lostPasswordLinkMobileOnly={ !! lostPasswordFormLink }
 							loginLink={ this.getLoginLink() }
@@ -391,7 +379,7 @@ export class Login extends Component {
 			isGenericOauth,
 			isGravPoweredClient,
 			isJetpack,
-			isLoginView,
+			isEntryClarityTreatment,
 			action,
 			partnerConfig,
 		} = this.props;
@@ -453,9 +441,8 @@ export class Login extends Component {
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
-						// Main login view only, and only when the block renders its footer: the
-						// "Continue as" screen has none, so it keeps the top-bar link.
-						signupLinkMobileOnly={ isLoginView && ! this.showsContinueAsUser() }
+						// The footer carries the route to signup on desktop instead.
+						signupLinkMobileOnly={ isEntryClarityTreatment }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
 						notice={ notices }
@@ -545,6 +532,11 @@ const LoginWithContext = ( props ) => {
 		props,
 		translate
 	);
+	// Logged-out visitors on the main login view, the same audience as the signup step. Gravatar-
+	// powered logins have their own layout, which the treatment does not change.
+	const isEntryClarityTreatment = useEntryClarityExperiment(
+		props.isLoginView && ! props.isUserLoggedIn && ! props.isGravPoweredClient
+	);
 
 	return (
 		<LoginContextProvider
@@ -552,7 +544,11 @@ const LoginWithContext = ( props ) => {
 			initialSubHeading={ subHeadingPrimary }
 			initialSubHeadingSecondary={ subHeadingSecondary }
 		>
-			<Login { ...props } translate={ translate } />
+			<Login
+				{ ...props }
+				translate={ translate }
+				isEntryClarityTreatment={ isEntryClarityTreatment }
+			/>
 		</LoginContextProvider>
 	);
 };
@@ -619,7 +615,6 @@ export default connect(
 			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 			isUserLoggedIn: isUserLoggedIn( state ),
-			twoFactorEnabled: isTwoFactorEnabled( state ),
 			isWooPaymentsFlow: isWooCommercePaymentsOnboardingFlow( state ),
 		};
 	},

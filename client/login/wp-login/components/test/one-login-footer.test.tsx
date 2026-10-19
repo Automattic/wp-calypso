@@ -19,9 +19,14 @@ const renderFooter = ( props: Partial< React.ComponentProps< typeof OneLoginFoot
 	);
 
 describe( 'OneLoginFooter', () => {
-	test( 'renders the route to signup on the main login view', () => {
-		renderFooter();
+	test( 'renders the route to signup when showSignupPrompt is set', () => {
+		renderFooter( { showSignupPrompt: true } );
 		expect( screen.getByRole( 'link', { name: 'Sign up' } ) ).toBeVisible();
+	} );
+
+	test( 'omits the route to signup when showSignupPrompt is unset', () => {
+		renderFooter();
+		expect( screen.queryByRole( 'link', { name: 'Sign up' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'keeps the lost-password link at every width unless the form carries its own', () => {
