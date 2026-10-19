@@ -5,6 +5,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { updateImporter, uploadExportFile } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importPlaygroundSite, startPlaygroundImportIfReady } from '../lib/import-playground';
+import type { ImportJob } from 'calypso/blocks/importer/types';
 
 jest.mock( 'calypso/state/imports/actions', () => ( {
 	uploadExportFile: jest.fn(),
@@ -35,7 +36,7 @@ describe( 'startPlaygroundImportIfReady', () => {
 		importerFileType: 'playground',
 		type: 'importer-type-wordpress',
 		site: { ID: siteId },
-	};
+	} as ImportJob;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -117,6 +118,7 @@ describe( 'importPlaygroundSite', () => {
 			{ phase: 'uploading' },
 			{ phase: 'uploading', percent: 25 },
 			{ phase: 'uploading', percent: undefined },
+			{ phase: 'starting' },
 			{
 				phase: 'importing',
 				job: expect.objectContaining( {
@@ -126,6 +128,45 @@ describe( 'importPlaygroundSite', () => {
 				} ),
 			},
 		] );
+	} );
+
+	it( 'reports server progress only after the start trigger is sent', async () => {
+		uploadExportFileMock.mockResolvedValue( {
+			importId: 'import-id',
+			importStatus: 'uploadProcessing',
+			importerFileType: 'playground',
+			type: 'wordpress',
+			siteId,
+		} );
+		const poll = ( importStatus: string ) => ( {
+			importId: 'import-id',
+			importStatus,
+			importerFileType: 'playground',
+			type: 'wordpress',
+			siteId,
+		} );
+		wpcomRequestMock
+			.mockResolvedValueOnce( poll( 'uploadProcessing' ) )
+			.mockResolvedValueOnce( poll( 'uploadSuccess' ) )
+			.mockResolvedValueOnce( poll( 'importSuccess' ) );
+		jest.useFakeTimers();
+		const onProgress = jest.fn();
+
+		const result = importPlaygroundSite( 'slug', siteId, { waitForCompletion: true, onProgress } );
+		await jest.runAllTimersAsync();
+		await expect( result ).resolves.toBe( 'import-id' );
+		jest.useRealTimers();
+
+		const phases = onProgress.mock.calls.map( ( [ progress ] ) => progress.phase );
+		expect( phases.slice( phases.indexOf( 'starting' ) ) ).toEqual( [
+			'starting',
+			'importing',
+			'importing',
+		] );
+		expect( updateImporterMock ).toHaveBeenCalledTimes( 1 );
+		expect( updateImporterMock.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			onProgress.mock.invocationCallOrder[ phases.indexOf( 'importing' ) ]
+		);
 	} );
 
 	it( 'stops reporting after the upload when it does not wait for completion', async () => {

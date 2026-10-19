@@ -4,6 +4,7 @@ import { fromApi, toApi } from 'calypso/state/imports/api';
 import { appStates } from 'calypso/state/imports/constants';
 import { PLAYGROUND_HOST } from './constants';
 import type { PlaygroundClient } from './types';
+import type { ImportJob } from 'calypso/blocks/importer/types';
 
 const POLL_INTERVAL_MS = 5000;
 // 120 attempts × 5 s = 10 min. Atomic restores typically finish in 2–4 min;
@@ -20,7 +21,15 @@ const EXPORT_EXCLUDE_PATTERNS = [
 export type PlaygroundImportProgress =
 	| { phase: 'packing' }
 	| { phase: 'uploading'; percent?: number }
-	| { phase: 'importing'; job: ReturnType< typeof fromApi > };
+	| { phase: 'starting' }
+	| { phase: 'importing'; job: ImportJob };
+
+/**
+ * Normalize an import status API response into the importer's ImportJob shape.
+ */
+function toImportJob( raw: unknown ): ImportJob {
+	return fromApi( raw ) as ImportJob;
+}
 
 export class ImportTimeoutError extends Error {
 	constructor() {
@@ -38,7 +47,7 @@ export class ImportFailureError extends Error {
 
 export async function startPlaygroundImportIfReady(
 	siteId: number,
-	status: ReturnType< typeof fromApi >
+	status: ImportJob
 ): Promise< boolean > {
 	if (
 		status.importerState !== appStates.UPLOAD_SUCCESS ||
@@ -129,7 +138,8 @@ foreach ( $plugins as $slug ) {
  *
  * onProgress reports each phase as it happens: packing the Playground site,
  * uploading it (with the browser's upload percentage when known), and, when
- * waiting for completion, every polled import job status.
+ * waiting for completion, the wait for the start trigger followed by every
+ * polled import job status.
  */
 export async function importPlaygroundSite(
 	playgroundSlug: string,
@@ -156,7 +166,7 @@ export async function importPlaygroundSite(
 				percent: event.lengthComputable ? ( 100 * event.loaded ) / event.total : undefined,
 			} ),
 	} );
-	const importerStatus = fromApi( importer );
+	const importerStatus = toImportJob( importer );
 	let started = false;
 
 	try {
@@ -172,6 +182,7 @@ export async function importPlaygroundSite(
 	}
 
 	const importId: string = importer.importId;
+	onProgress?.( { phase: 'starting' } );
 
 	// Poll until the import completes. After uploadSuccess, send the start trigger
 	// — the backup_import job requires an explicit POST before beginning the
@@ -184,19 +195,25 @@ export async function importPlaygroundSite(
 			method: 'GET',
 		} );
 
-		const status = fromApi( raw );
-		onProgress?.( { phase: 'importing', job: status } );
+		const status = toImportJob( raw );
 
 		if ( status.importerState === appStates.IMPORT_FAILURE ) {
 			throw new ImportFailureError();
 		}
 
 		if ( status.importerState === appStates.IMPORT_SUCCESS ) {
+			onProgress?.( { phase: 'importing', job: status } );
 			return importId;
 		}
 
 		if ( ! started ) {
 			started = await startPlaygroundImportIfReady( siteId, status );
+		}
+
+		// Report server-side progress only once the start trigger has been sent;
+		// until then the import cannot proceed without this window.
+		if ( started ) {
+			onProgress?.( { phase: 'importing', job: status } );
 		}
 
 		if ( attempt < MAX_POLL_ATTEMPTS - 1 ) {

@@ -21,7 +21,6 @@ import { PlaygroundIframe } from '../playground-iframe';
 import type { Step } from '../../../../types';
 import type { PlaygroundImportProgress } from '../../lib/import-playground';
 import type { PlaygroundClient } from '../../lib/types';
-import type { ImportJob } from 'calypso/blocks/importer/types';
 import './style.scss';
 
 export const PlaygroundSetupStep: Step< {
@@ -115,7 +114,19 @@ export const PlaygroundSetupStep: Step< {
 
 	const getStatus = () => {
 		if ( progress?.phase === 'importing' ) {
-			return <ProgressScreen job={ progress.job as ImportJob } showHeading />;
+			return (
+				<ProgressScreen
+					job={ progress.job }
+					showHeading
+					subtitle={ __(
+						'This usually takes a few minutes. Keep this window open until your site is ready.'
+					) }
+				/>
+			);
+		}
+
+		if ( progress?.phase === 'starting' ) {
+			return <Loading title={ __( 'Starting the import' ) } />;
 		}
 
 		if ( progress?.phase === 'uploading' ) {
