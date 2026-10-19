@@ -70,7 +70,8 @@ export class TestAccount {
 		if ( saved ) {
 			this.log( 'Found fresh cookies, skipping log in' );
 			await browserContext.addCookies( saved );
-			await page.goto( getCalypsoURL( '/home' ) );
+			// Not 'load': the landing redirect can fire first and abort the goto with net::ERR_ABORTED.
+			await page.goto( getCalypsoURL( '/home' ), { waitUntil: 'commit' } );
 		}
 
 		// Freshness is read off the cookie file's age, but the session behind it can be gone
@@ -132,7 +133,7 @@ export class TestAccount {
 				return;
 			}
 
-			await page.goto( getCalypsoURL( '/home' ) );
+			await page.goto( getCalypsoURL( '/home' ), { waitUntil: 'commit' } );
 			if ( ! TestAccount.isLoginPage( page.url() ) ) {
 				return;
 			}

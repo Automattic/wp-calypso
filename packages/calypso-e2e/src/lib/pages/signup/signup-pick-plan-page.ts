@@ -53,7 +53,8 @@ export class SignupPickPlanPage {
 				/.*\/sites\/new\?.*/,
 				async ( route ) => {
 					try {
-						const response = await route.fetch();
+						// Creating a site routinely outlasts the 10s actionTimeout that route.fetch inherits.
+						const response = await route.fetch( { timeout: 60 * 1000 } );
 						const body = await response.body();
 						await route.fulfill( { response } );
 
