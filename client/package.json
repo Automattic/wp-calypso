@@ -25,7 +25,6 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-paypal": "workspace:^",
-		"@automattic/calypso-polyfills": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/calypso-router": "workspace:^",
 		"@automattic/calypso-sentry": "workspace:^",
