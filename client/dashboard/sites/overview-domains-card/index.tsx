@@ -18,7 +18,7 @@ import {
 } from '../../domains/dataviews';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { isCommerceGarden, isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import DomainTransferUpsellCard from '../overview-domain-transfer-upsell-card';
 import DomainUpsellCard from '../overview-domain-upsell-card';
 
@@ -102,7 +102,6 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 
 export default function DomainsCard( { site }: { site: Site } ) {
 	const { queries } = useAppContext();
-	const isCommerceGardenSite = isCommerceGarden( site );
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: siteDomains } = useQuery( {
 		...queries.domainsQuery(),
@@ -116,8 +115,7 @@ export default function DomainsCard( { site }: { site: Site } ) {
 	if ( ! sitePlan || ! siteDomains ) {
 		// Given that the SiteDomainsDataViews is disabled for the backport,
 		// we skip rendering the skeleton here as it might not result in any component being rendered at all.
-		// For CIAB (hideUpsells), we also skip the skeleton to avoid CLS when it turns out there are no domains.
-		if ( isDashboardBackport() || isCommerceGardenSite ) {
+		if ( isDashboardBackport() ) {
 			return null;
 		}
 
@@ -128,16 +126,10 @@ export default function DomainsCard( { site }: { site: Site } ) {
 		isSelfHostedJetpackConnected( site ) &&
 		siteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
 	) {
-		if ( isCommerceGardenSite ) {
-			return null;
-		}
 		return <DomainTransferUpsellCard />;
 	}
 
 	if ( ! siteDomains.find( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS ) ) {
-		if ( isCommerceGardenSite ) {
-			return null;
-		}
 		return <DomainUpsellCard site={ site } />;
 	}
 

@@ -246,6 +246,13 @@ export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
 
 export const PRODUCT_STUDIO_CODE_AI_CREDITS = 'studio-code-ai-credits';
 
+export const PRODUCT_AI_CREDITS_LIFETIME = 'ai-credits-lifetime';
+
+export const AI_CREDITS_PRODUCTS: readonly string[] = [
+	PRODUCT_STUDIO_CODE_AI_CREDITS,
+	PRODUCT_AI_CREDITS_LIFETIME,
+];
+
 export const OFFSITE_REDIRECT = 'offsite_redirect';
 
 export const AkismetUpgradesProductMap: Record< string, string > = {

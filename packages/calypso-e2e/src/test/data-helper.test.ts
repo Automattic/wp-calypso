@@ -3,6 +3,7 @@ import {
 	getRandomInteger,
 	getAccountCredential,
 	getCalypsoURL,
+	toCalypsoURL,
 	getAccountSiteURL,
 	getNewTestUser,
 	toTitleCase,
@@ -113,6 +114,18 @@ describe( 'DataHelper Tests', function () {
 				expect( getCalypsoURL( route, queryStrings ) ).toBe( expected );
 			}
 		);
+	} );
+
+	describe( 'Test: toCalypsoURL', function () {
+		test.each`
+			href                                                            | expected
+			${ 'https://wordpress.com/themes/site.wordpress.com?ref=menu' } | ${ 'http://calypso.localhost:3000/themes/site.wordpress.com?ref=menu' }
+			${ 'https://wordpress.com/reader?origin_site_id=1#top' }        | ${ 'http://calypso.localhost:3000/reader?origin_site_id=1#top' }
+			${ 'https://site.wordpress.com/wp-admin/site-editor.php' }      | ${ 'https://site.wordpress.com/wp-admin/site-editor.php' }
+			${ 'https://public-api.wordpress.com/wp-admin/rest-proxy/' }    | ${ 'https://public-api.wordpress.com/wp-admin/rest-proxy/' }
+		`( 'Returns $expected if toCalypsoURL is called with $href', function ( { href, expected } ) {
+			expect( toCalypsoURL( href ) ).toBe( expected );
+		} );
 	} );
 
 	describe( 'Test: getAccountCredential', function () {

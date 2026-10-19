@@ -18,6 +18,7 @@ import {
 	getAmCheckpointContext,
 	getAmPageContentMarkup,
 	getAmPageStructure,
+	loadAmEditorSuggestions,
 	preloadAmEditorContentContext,
 } from '../abilities';
 import { findAbilityByName } from '../abilities/ability-name';
@@ -37,11 +38,10 @@ import type {
 	ContextProvider,
 	ClientContextType,
 	ContextEntry,
-	Suggestion,
 	BigSkyMessage,
 } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
-import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
+import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
 import type { ReactNode } from 'react';
 
 /**
@@ -157,8 +157,8 @@ export interface LoadedProviders {
 	providerIds?: string[];
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
-	/** Function to get empty view suggestions. Called when component is ready. */
-	getEmptyViewSuggestions?: () => Suggestion[];
+	/** The empty view's suggestions; `undefined` until a lazily loaded provider's bundle has run. */
+	getEmptyViewSuggestions?: () => Suggestion[] | undefined;
 	/**
 	 * Opt out of the built-in empty-view default suggestions ("Getting started
 	 * with WordPress" etc.) for this provider's surfaces. When any loaded
@@ -598,7 +598,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		};
 	}
 
-	// A Big Sky site needs AM's abilities and page context even with no provider.
+	// A Big Sky site needs AM's abilities, page context and editor suggestions even with no provider.
 	const isBigSkySite = isBigSkyEnabled();
 
 	if ( agentProviders.length === 0 && ! isBigSkySite ) {
@@ -610,8 +610,11 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		void preloadAmEditorContentContext();
 	}
 
+	// AM's editor suggestions, loaded alongside the providers; `null` off editor pages.
+	const editorSuggestionsPromise = isBigSkySite ? loadAmEditorSuggestions() : null;
+
 	let mergedToolProvider: ToolProvider | undefined;
-	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] ) | undefined;
+	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] | undefined ) | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
@@ -633,7 +636,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allTransformMessages: TransformMessages[] = [];
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
-	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
+	const allGetEmptyViewSuggestions: ( () => Suggestion[] | undefined )[] = [];
 	const allUseCheckpoints: UseCheckpointHook[] = [];
 	const allProviderIds: string[] = [];
 
@@ -666,6 +669,14 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			}
 		} )
 	) ) as ( LoadedProviderModule | null )[];
+
+	const editorSuggestions = await editorSuggestionsPromise;
+
+	// AM's suggestions go first, so they win the dedupe by id.
+	if ( editorSuggestions ) {
+		allGetEmptyViewSuggestions.push( editorSuggestions.getEditorEmptyViewSuggestions );
+		allUseSuggestions.push( editorSuggestions.useBlockSuggestions );
+	}
 
 	for ( const loadedModule of loadedModules ) {
 		if ( ! loadedModule ) {
@@ -856,7 +867,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			const combined: Suggestion[] = [];
 			const seenIds = new Set< string >();
 			for ( const fn of allGetEmptyViewSuggestions ) {
-				for ( const s of fn() ) {
+				for ( const s of fn() ?? [] ) {
 					if ( ! seenIds.has( s.id ) ) {
 						seenIds.add( s.id );
 						combined.push( s );

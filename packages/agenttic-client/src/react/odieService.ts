@@ -232,21 +232,17 @@ export async function loadAllMessagesFromServer(
 		}
 
 		return {
+			...firstPage,
 			messages: allMessages,
 			pagination: {
 				...firstPage.pagination,
 				currentPage: totalPagesToLoad,
 				hasMore: totalPagesToLoad < firstPage.pagination.totalPages,
 			},
-			chatId: firstPage.chatId,
 		};
 	} catch ( error ) {
 		logger( 'Failed to load all pages: %O', error );
 		// Return what we have so far
-		return {
-			messages: allMessages,
-			pagination: firstPage.pagination,
-			chatId: firstPage.chatId,
-		};
+		return { ...firstPage, messages: allMessages };
 	}
 }

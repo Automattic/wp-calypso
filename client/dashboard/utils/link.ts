@@ -46,8 +46,6 @@ export function dashboardOrigins(): string[] {
 	const origins = [
 		`http://my.localhost:${ port }`,
 		'https://my.wordpress.com',
-		`http://my.woo.localhost:${ port }`,
-		'https://my.woo.ai',
 		`http://my.a4a.localhost:${ port }`,
 		'https://agencies-beta.automattic.com',
 	];
@@ -69,21 +67,8 @@ export function dashboardOrigins(): string[] {
  *
  * For example, the value is set to `calypso.localhost:3000` in `config/dashboard-development.json`,
  * so that the link points to the local Calypso dev server.
- *
- * Exception: for CIAB dashboard, we will use the dashboard origin to serve signup, stepper, and checkout links.
- * This is a temporary measure until we reimplement the screen natively in the dashboard.
  */
 export function wpcomLink( path: string ) {
-	if (
-		[ '/start', '/setup', '/checkout' ].some(
-			( prefix ) => path === prefix || path.startsWith( prefix + '/' )
-		)
-	) {
-		const dashboard = getCurrentDashboard();
-		if ( dashboard === 'ciab' ) {
-			return path;
-		}
-	}
 	if ( A4A_SIGNUP_PATHS.some( ( prefix ) => path === prefix || path.startsWith( prefix + '/' ) ) ) {
 		const dashboard = getCurrentDashboard();
 		if ( dashboard === 'a4a' ) {

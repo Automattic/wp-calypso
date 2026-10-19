@@ -15,9 +15,6 @@ import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
-import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
-import { isCommerceGarden } from 'calypso/dashboard/utils/site-types';
 import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -150,9 +147,7 @@ export default function CheckoutMain( {
 	const translate = useTranslate();
 
 	const { data: site, isLoading: isSiteLoading } = useCheckoutSite( siteId );
-	const isJetpackNotAtomic =
-		( isJetpackNotAtomicSite( site ) && ! ( site && isCommerceGarden( site ) ) ) ||
-		sitelessCheckoutType === 'jetpack';
+	const isJetpackNotAtomic = isJetpackNotAtomicSite( site ) || sitelessCheckoutType === 'jetpack';
 	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
 	const cartKey = useCartKey();
 
@@ -853,15 +848,14 @@ export default function CheckoutMain( {
 		paymentMethods
 	);
 
-	const dashboard = getDashboardFromHostname( window?.location?.hostname );
 	const stepContainerV2Context = useMemo(
 		() => ( {
 			flowName: '',
 			stepName: '',
 			recordTracksEvent: () => {},
-			logo: getDashboardStepperLogo( dashboard ),
+			logo: null,
 		} ),
-		[ dashboard ]
+		[]
 	);
 
 	return (

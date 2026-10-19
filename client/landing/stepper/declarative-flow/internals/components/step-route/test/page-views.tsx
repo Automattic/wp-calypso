@@ -3,7 +3,6 @@
  */
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
-import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
 import { recordUnifiedAdminPageView } from 'calypso/lib/analytics/record-admin-page-view';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -12,7 +11,6 @@ import { recordStepperPageView } from '../../../analytics/record-page-view';
 import type { Flow } from '../../../types';
 import type { ComponentProps } from 'react';
 
-jest.mock( 'calypso/dashboard/app-ciab/routing' );
 jest.mock( 'calypso/lib/analytics/record-admin-page-view' );
 jest.mock( 'calypso/state/current-user/selectors' );
 jest.mock( '../hooks/use-step-route-tracking' );
@@ -98,7 +96,6 @@ describe( 'Stepper unified admin page views', () => {
 			jest.mocked( recordStepperPageView ).mockImplementation( record );
 		} );
 		jest.mocked( isUserLoggedIn ).mockReturnValue( true );
-		jest.mocked( isAllowedCiabDashboardHostname ).mockReturnValue( false );
 	} );
 
 	afterEach( () => {
@@ -191,12 +188,5 @@ describe( 'Stepper unified admin page views', () => {
 		rerender( { renderStep: () => null } );
 		rerender( {} );
 		expect( recordUnifiedAdminPageView ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	it( 'excludes Stepper on CIAB hosts', () => {
-		jest.mocked( isAllowedCiabDashboardHostname ).mockReturnValue( true );
-		renderSteps();
-
-		expect( recordUnifiedAdminPageView ).not.toHaveBeenCalled();
 	} );
 } );

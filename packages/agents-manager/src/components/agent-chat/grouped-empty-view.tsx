@@ -10,8 +10,8 @@ import {
 	WHAT_ELSE_CAN_I_DO_SUGGESTION_ID,
 	WRITING_SUGGESTION_IDS,
 } from '../../hooks/use-empty-view-suggestions';
+import { getSuggestionClickPayload } from '../../utils/get-suggestion-click-payload';
 import { isEditorPage } from '../../utils/is-editor-page';
-import getSuggestionClickPayload from './get-suggestion-click-payload';
 import './grouped-empty-view.scss';
 
 interface Props {

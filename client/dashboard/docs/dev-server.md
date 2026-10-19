@@ -12,9 +12,6 @@ Runs the entire Calypso, including the multi-site dashboard. These URLs are serv
 - `my.localhost:3000`
   - The main dashboard app.
   - It corresponds to `my.wordpress.com` in production.
-- `my.woo.localhost:3000`
-  - The CIAB variant of the dashboard app.
-  - It corresponds to `my.woo.ai` in production.
 
 ## `yarn start-dashboard`
 
