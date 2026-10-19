@@ -178,6 +178,8 @@ export interface Agency {
 	};
 	notifications?: AgencyNotification[];
 	payment_notice?: AgencyPaymentNotice | null;
+	/** The partner manager the agency's HubSpot record assigns; null when none is assigned. */
+	partner_manager?: AgencyPartnerManager | null;
 }
 
 export interface AgencyPaymentNotice {
@@ -193,6 +195,11 @@ export interface AgencyPaymentNotice {
 	secondary_action_label?: string;
 	secondary_action_url?: string;
 	can_current_user_manage_payment_method?: boolean;
+}
+
+export interface AgencyPartnerManager {
+	name: string;
+	avatar_url?: string | null;
 }
 
 export interface AgencyPressableUsage {
