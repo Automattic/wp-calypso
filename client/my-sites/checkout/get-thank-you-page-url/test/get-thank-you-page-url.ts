@@ -950,7 +950,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to thank-you page with dashboard query param if present', () => {
-		jest.mocked( getDashboardFromQuery ).mockReturnValue( 'ciab' );
+		jest.mocked( getDashboardFromQuery ).mockReturnValue( 'a4a' );
 		const cart = {
 			...getMockCart(),
 			cart_key: 'no-site' as CartKey,
@@ -967,7 +967,7 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			receiptId: samplePurchaseId,
 		} );
-		expect( url ).toBe( `/checkout/thank-you/no-site/${ samplePurchaseId }?dashboard=ciab` );
+		expect( url ).toBe( `/checkout/thank-you/no-site/${ samplePurchaseId }?dashboard=a4a` );
 	} );
 
 	it( 'redirects to thank-you page followed by purchase id if no cookie url is set, there is no site, and there is no receipt', () => {

@@ -17,7 +17,6 @@ import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import useShouldLoadAgentsManager from 'calypso/dashboard/app/agents-manager/use-should-load-agents-manager';
-import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import { installKonamiListener } from 'calypso/layout/arcade-mode/detect';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
@@ -543,7 +542,6 @@ class Layout extends Component {
 
 export default withCurrentRoute(
 	connect( ( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
-		const dashboard = getDashboardFromHostname( window?.location?.hostname );
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 
@@ -584,7 +582,6 @@ export default withCurrentRoute(
 		const noMasterbarForSection =
 			// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
 			! sectionName ||
-			( dashboard === 'ciab' && isCheckoutSection ) ||
 			( ! isWooJPC && ! isBlazePro && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
 		const isFromAutomatticForAgenciesPlugin =
 			'automattic-for-agencies-client' === currentQuery?.from;
