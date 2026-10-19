@@ -5,7 +5,7 @@ This package also includes custom ESLint rules for the [WordPress.com Calypso pr
 
 ## Installation
 
-Install [ESLint](http://eslint.org) 10.13 or later, `eslint-plugin-wpcalypso` and the plugins its presets use:
+Install [ESLint](http://eslint.org) 10.13 or later within 10.x, `eslint-plugin-wpcalypso` and the plugins its presets use:
 
 ```
 $ yarn add --dev eslint eslint-plugin-wpcalypso eslint-plugin-jsdoc eslint-plugin-inclusive-language
