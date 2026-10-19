@@ -152,7 +152,6 @@ describe( 'change site address action', () => {
 	test( 'is shown for a Simple site', async () => {
 		await openMenu( {} );
 
-		// The popover fades in, so the item is only visible once the animation ends.
 		await waitFor( () => expect( screen.getByText( 'Change site address' ) ).toBeVisible() );
 	} );
 

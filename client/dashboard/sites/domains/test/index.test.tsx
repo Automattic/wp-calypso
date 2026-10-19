@@ -200,7 +200,6 @@ describe( '<SiteDomains>', () => {
 		const table = await screen.findByRole( 'table' );
 		expect( within( table ).getByText( 'test-site.wordpress.com' ) ).toBeVisible();
 
-		// "Change site address" is the default address's only action, so the row has no actions menu.
 		expect( screen.queryByLabelText( 'Actions' ) ).not.toBeInTheDocument();
 	} );
 
