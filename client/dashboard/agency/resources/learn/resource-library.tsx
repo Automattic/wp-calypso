@@ -82,8 +82,12 @@ export default function ResourceLibrary( {
 		[ resources ]
 	);
 
-	// The modal moves through every match, not only those loaded so far.
-	const neighbors = getNeighbors( filteredData, selectedId );
+	// The modal moves through the recommendations when opened from them, and
+	// otherwise through every match, not only those loaded so far.
+	const neighbors = getNeighbors(
+		selection.source === 'recommended' ? recommended : filteredData,
+		selectedId
+	);
 	// A shared link can name a resource the saved filters hide; show it anyway,
 	// without neighbors to move to.
 	const selected =

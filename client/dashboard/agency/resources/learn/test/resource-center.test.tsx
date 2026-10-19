@@ -267,6 +267,29 @@ describe( '<ResourceCenter>', () => {
 		} );
 	} );
 
+	test( 'moves through the recommendations when opened from them', async () => {
+		renderLibrary( {
+			resources: [
+				...resources,
+				// Newest, so the library has the Jetpack battle card after it.
+				resource( {
+					id: 4,
+					name: 'Recommended guide',
+					is_recommended: true,
+					created_at: '2026-03-01T00:00:00Z',
+				} ),
+				resource( { id: 5, name: 'Recommended deck', is_recommended: true } ),
+			],
+		} );
+
+		const section = await screen.findByRole( 'region', { name: 'Recommended for you' } );
+		await userEvent.click( within( section ).getByRole( 'link', { name: 'Recommended guide' } ) );
+		const dialog = await screen.findByRole( 'dialog', { name: 'Recommended guide' } );
+		await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Next resource' } ) );
+
+		expect( await screen.findByRole( 'dialog', { name: 'Recommended deck' } ) ).toBeVisible();
+	} );
+
 	test( 'leaves out the recommendations when there are none', async () => {
 		renderLibrary();
 

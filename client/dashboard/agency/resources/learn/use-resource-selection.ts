@@ -1,4 +1,5 @@
 import { useEvent } from '@wordpress/compose';
+import { useState } from 'react';
 import type { ResourceSource, SelectResource } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
@@ -8,28 +9,35 @@ interface UseResourceSelectionOptions {
 	onPreview: ( resource: AgencyEnablementResource, source: ResourceSource ) => void;
 }
 
-/** Opens resources in the details modal. */
+/**
+ * Opens resources in the details modal, noting which list each was opened from
+ * so the modal can move through that list.
+ */
 export function useResourceSelection( {
 	onSelectedIdChange,
 	onPreview,
 }: UseResourceSelectionOptions ) {
-	const preview = ( resource: AgencyEnablementResource, source: ResourceSource = 'library' ) => {
+	const [ source, setSource ] = useState< ResourceSource >( 'library' );
+
+	// Moving between resources stays in the list they were opened from.
+	const preview = ( resource: AgencyEnablementResource, nextSource: ResourceSource = source ) => {
+		setSource( nextSource );
 		onSelectedIdChange( resource.id );
-		onPreview( resource, source );
+		onPreview( resource, nextSource );
 	};
 
 	// Stable across renders, so memoized cards don't re-render while searching.
-	const select: SelectResource = useEvent( ( resource, event, source ) => {
+	const select: SelectResource = useEvent( ( resource, event, from = 'library' ) => {
 		// Modified clicks follow the link, opening the details in a new tab or window.
 		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
 			return;
 		}
 
 		event.preventDefault();
-		preview( resource, source );
+		preview( resource, from );
 	} );
 
-	return { select, preview, clear: () => onSelectedIdChange( null ) };
+	return { source, select, preview, clear: () => onSelectedIdChange( null ) };
 }
 
 /** The selected resource and its neighbors among the current results. */
