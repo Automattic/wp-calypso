@@ -21,11 +21,9 @@ module.exports.rules = require( './rules' );
 module.exports.configs = {};
 
 // Built on first use: they reference this plugin object, and `react` loads the optional React
-// plugins, which `recommended` users may not have. `flat/*` are the names they had next to the
-// eslintrc presets.
+// plugins, which `recommended` users may not have.
 for ( const name of Object.keys( flat ) ) {
 	let built;
 	const get = () => ( built ??= flat[ name ]( module.exports ) );
 	Object.defineProperty( module.exports.configs, name, { enumerable: true, get } );
-	Object.defineProperty( module.exports.configs, `flat/${ name }`, { enumerable: true, get } );
 }

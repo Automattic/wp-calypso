@@ -47,7 +47,7 @@ export default defineConfig( [
 ] );
 ```
 
-`flat/recommended` and `flat/react` are the same presets under their earlier names. For the eslintrc presets (`plugin:wpcalypso/recommended`), use version 8.
+For the eslintrc presets (`plugin:wpcalypso/recommended`), use version 8.
 
 Either preset will:
 

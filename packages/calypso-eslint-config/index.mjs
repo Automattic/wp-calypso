@@ -128,11 +128,6 @@ function build( rootDir ) {
 			name: 'calypso/base',
 			languageOptions: {
 				parser: typescriptParser,
-				parserOptions: {
-					babelOptions: {
-						configFile: path.join( rootDir, 'babel.config.js' ),
-					},
-				},
 				globals: {
 					...globals.jest,
 					...globals.node,
