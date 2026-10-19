@@ -1,4 +1,4 @@
-import { ODIE_ALLOWED_BOTS, ODIE_ALL_BOT_SLUGS } from './constants';
+import { ODIE_ALLOWED_BOTS } from './constants';
 import type { CheckoutSupportVariation } from '@automattic/data-stores';
 import type { ZendeskConversation } from '@automattic/zendesk-client';
 import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
@@ -209,7 +209,6 @@ export type Chat = OdieChat & {
 };
 
 export type OdieAllowedBots = ( typeof ODIE_ALLOWED_BOTS )[ number ];
-export type OdieAllBotSlugs = ( typeof ODIE_ALL_BOT_SLUGS )[ number ];
 
 export type SupportProvider = 'zendesk' | 'odie' | 'zendesk-staging' | 'help-center';
 

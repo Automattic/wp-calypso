@@ -2,7 +2,7 @@ import { HelpCenter } from '@automattic/data-stores';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { __, sprintf } from '@wordpress/i18n';
 import { PLANS_PRESALES_INTRO_MESSAGE } from './presales-constants';
-import type { Context, Message, OdieAllowedBots, OdieAllBotSlugs } from './types';
+import type { Context, Message, OdieAllowedBots } from './types';
 declare const __i18n_text_domain__: string;
 
 type HasEnTranslation = ( single: string, context?: string, domain?: string ) => boolean;
@@ -63,13 +63,7 @@ export const getOdieForwardToZendeskMessage = ( userHasRecentOpenConversation: b
 				__i18n_text_domain__
 			);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function getFlowFromBotSlug( botSlug?: OdieAllBotSlugs ): string {
-	return 'wpcom';
-}
-
 export const getOdieTransferMessages = (
-	botSlug?: OdieAllBotSlugs,
 	hasEnTranslation: HasEnTranslation = () => true,
 	// The user went straight to a human, so there's no request or AI chat to refer back to.
 	isDirectChat = false
@@ -443,5 +437,3 @@ export const ODIE_ALLOWED_BOTS = [
 	'wpcom-plan-support',
 	'automattic-chat-support_a4a',
 ];
-
-export const ODIE_ALL_BOT_SLUGS = [ ...ODIE_ALLOWED_BOTS ];

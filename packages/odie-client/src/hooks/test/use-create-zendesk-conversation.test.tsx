@@ -234,11 +234,7 @@ describe( 'useCreateZendeskConversation — transfer messages', () => {
 
 		applyChatUpdate( { odieId: 'odie-1' } );
 
-		expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith(
-			'wpcom-support-chat',
-			expect.any( Function ),
-			false
-		);
+		expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith( expect.any( Function ), false );
 	} );
 
 	it( 'uses the direct copy when the user went straight to a human', async () => {
@@ -247,10 +243,6 @@ describe( 'useCreateZendeskConversation — transfer messages', () => {
 
 		applyChatUpdate( { odieId: null } );
 
-		expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith(
-			'wpcom-support-chat',
-			expect.any( Function ),
-			true
-		);
+		expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith( expect.any( Function ), true );
 	} );
 } );
