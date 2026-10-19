@@ -18,15 +18,11 @@ import { ONBOARD_STORE, USER_STORE } from '../../../stores';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
-
-// Only a failed pending action stores an error. The reason tags every outcome, failure included.
-const PROCESSING_ERROR_REASONS: Record< ProcessingResult, string > = {
-	[ ProcessingResult.FAILURE ]: 'processing_failed',
-	[ ProcessingResult.NO_ACTION ]: 'processing_no_action',
-	[ ProcessingResult.SUCCESS ]: 'processing_missing_site',
-};
 
 function initialize() {
 	const { setHidePlansFeatureComparison, setIntent } = dispatch( ONBOARD_STORE ) as OnboardActions;
@@ -161,10 +157,7 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 					} else {
 						// Handle errors by navigating to error step
 						return navigate( 'error', {
-							errorReason:
-								PROCESSING_ERROR_REASONS[
-									providedDependencies.processingResult as ProcessingResult
-								],
+							errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
 						} );
 					}
 					return;

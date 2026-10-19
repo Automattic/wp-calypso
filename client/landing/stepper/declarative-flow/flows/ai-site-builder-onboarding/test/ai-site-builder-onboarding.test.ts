@@ -411,16 +411,49 @@ describe( 'ai-site-builder-onboarding flow', () => {
 		} );
 
 		it.each( [
-			[ 'the query params are missing', {}, 'commerce_atomic_missing_params' ],
+			[
+				'siteSlug is missing',
+				{ redirect_to: 'https://example.wordpress.com/wp-admin/site-editor.php' },
+				'commerce_atomic_missing_site_slug',
+			],
+			[
+				'redirect_to is missing',
+				{ siteSlug: 'example.wordpress.com' },
+				'commerce_atomic_missing_redirect',
+			],
 			[
 				'redirect_to is not a URL',
 				{ siteSlug: 'example.wordpress.com', redirect_to: 'not a url' },
 				'commerce_atomic_invalid_redirect',
 			],
 			[
+				'siteSlug is not a wordpress.com subdomain',
+				{ siteSlug: 'example.com', redirect_to: 'https://example.com/wp-admin/site-editor.php' },
+				'commerce_atomic_unexpected_site_slug',
+			],
+			[
+				'redirect_to is not https',
+				{
+					siteSlug: 'example.wordpress.com',
+					redirect_to: 'http://example.wordpress.com/wp-admin/site-editor.php',
+				},
+				'commerce_atomic_editor_url_not_https',
+			],
+			[
+				'redirect_to is on another host',
+				{
+					siteSlug: 'example.wordpress.com',
+					redirect_to: 'https://evil.example/wp-admin/site-editor.php',
+				},
+				'commerce_atomic_editor_host_mismatch',
+			],
+			[
 				'redirect_to is not the site editor',
-				{ siteSlug: 'example.wordpress.com', redirect_to: 'https://evil.example/wp-admin/' },
-				'commerce_atomic_unexpected_editor_url',
+				{
+					siteSlug: 'example.wordpress.com',
+					redirect_to: 'https://example.wordpress.com/wp-admin/',
+				},
+				'commerce_atomic_editor_path_mismatch',
 			],
 		] )(
 			'names the cause when the Commerce wait ends but %s',
@@ -433,6 +466,16 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				expect( window.location.replace ).not.toHaveBeenCalled();
 			}
 		);
+
+		it( 'names the cause when processing fails', async () => {
+			const navigate = await submitFrom( STEPS.PROCESSING.slug, {
+				processingResult: ProcessingResult.FAILURE,
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug, {
+				errorReason: 'processing_failed',
+			} );
+		} );
 
 		it( 'names the cause when processing succeeds without a site', async () => {
 			const navigate = await submitFrom( STEPS.PROCESSING.slug, {

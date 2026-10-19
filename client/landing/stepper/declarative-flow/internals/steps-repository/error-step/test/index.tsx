@@ -136,6 +136,8 @@ describe( 'ErrorStep', () => {
 	} );
 
 	const loggedError = () => ( logToLogstash as jest.Mock ).mock.calls[ 0 ][ 0 ].properties.error;
+	const loggedExtraReason = () =>
+		( logToLogstash as jest.Mock ).mock.calls[ 0 ][ 0 ].extra.error_reason;
 
 	it( 'logs the errorReason from the step data when nothing is stored', () => {
 		( useSiteSetupError as jest.Mock ).mockReturnValue( { error: undefined, message: undefined } );
@@ -171,6 +173,7 @@ describe( 'ErrorStep', () => {
 		} );
 
 		expect( loggedError() ).toBe( 'history_back_forward' );
+		expect( loggedExtraReason() ).toBeUndefined();
 	} );
 
 	describe( 'when the error step is the only route mounted in the document', () => {
@@ -209,6 +212,17 @@ describe( 'ErrorStep', () => {
 			render( { data: { previousStep: 'processing', errorReason: 'processing_failed' } } );
 
 			expect( loggedError() ).toBe( 'document_reload' );
+			expect( loggedExtraReason() ).toBeUndefined();
+		} );
+
+		it( 'does not log a persisted errorReason next to a stored error', () => {
+			( useSiteSetupError as jest.Mock ).mockReturnValue( { error: 'Unsupported plan' } );
+			setNavigationType( 'navigate' );
+
+			render( { data: { previousStep: 'processing', errorReason: 'processing_failed' } } );
+
+			expect( loggedError() ).toBe( 'Unsupported plan' );
+			expect( loggedExtraReason() ).toBeUndefined();
 		} );
 
 		it( 'logs document_back_forward for a history arrival', () => {

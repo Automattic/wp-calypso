@@ -6,6 +6,7 @@ import config from '@automattic/calypso-config';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { dispatch, select } from '@wordpress/data';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
+import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import {
 	getFlowLocation,
 	renderFlow,
@@ -248,19 +249,26 @@ describe( 'Static site import flow', () => {
 			expect( destination ).toMatchDestination( { step, query: { domainChoice } } );
 		} );
 
-		it( 'names the cause when the site was not created', () => {
-			const destination = runNavigation( {
-				from: STEPS.PROCESSING,
-				dependencies: { siteCreated: false },
-				query: SESSION,
-			} );
+		it.each( [
+			[ ProcessingResult.SUCCESS, 'site_not_created' ],
+			[ ProcessingResult.NO_ACTION, 'processing_no_action' ],
+			[ ProcessingResult.FAILURE, 'processing_failed' ],
+		] )(
+			'names the cause when processing ends with %s and no site',
+			( processingResult, errorReason ) => {
+				const destination = runNavigation( {
+					from: STEPS.PROCESSING,
+					dependencies: { siteCreated: false, processingResult },
+					query: SESSION,
+				} );
 
-			expect( destination ).toMatchDestination( { step: STEPS.ERROR, query: null } );
-			expect( getFlowLocation().state ).toEqual( {
-				message: 'Site not created',
-				errorReason: 'site_not_created',
-			} );
-		} );
+				expect( destination ).toMatchDestination( { step: STEPS.ERROR, query: null } );
+				expect( getFlowLocation().state ).toEqual( {
+					message: 'Site not created',
+					errorReason,
+				} );
+			}
+		);
 
 		it( 'returns from checkout to the new site’s overview, which runs the move', () => {
 			runNavigation( {

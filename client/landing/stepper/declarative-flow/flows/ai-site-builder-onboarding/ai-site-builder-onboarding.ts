@@ -65,6 +65,26 @@ function getBuildWowDestination( {
 	return specId ? addQueryArgs( specUrl, { spec_id: specId } ) : specUrl;
 }
 
+/**
+ * The error-step reason for the first check that the commerce Atomic editor URL fails, or null
+ * when the URL is safe to open. One reason per check shows which check failed in the logs.
+ */
+function getCommerceAtomicEditorUrlError( siteSlug: string, editorUrl: URL ): string | null {
+	if ( ! siteSlug.endsWith( '.wordpress.com' ) ) {
+		return 'commerce_atomic_unexpected_site_slug';
+	}
+	if ( editorUrl.protocol !== 'https:' ) {
+		return 'commerce_atomic_editor_url_not_https';
+	}
+	if ( editorUrl.hostname !== siteSlug ) {
+		return 'commerce_atomic_editor_host_mismatch';
+	}
+	if ( editorUrl.pathname !== '/wp-admin/site-editor.php' ) {
+		return 'commerce_atomic_editor_path_mismatch';
+	}
+	return null;
+}
+
 async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
@@ -191,8 +211,15 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 
 					const siteSlug = query.get( 'siteSlug' );
 					const destination = query.get( 'redirect_to' );
-					if ( ! siteSlug || ! destination ) {
-						return navigate( STEPS.ERROR.slug, { errorReason: 'commerce_atomic_missing_params' } );
+					if ( ! siteSlug ) {
+						return navigate( STEPS.ERROR.slug, {
+							errorReason: 'commerce_atomic_missing_site_slug',
+						} );
+					}
+					if ( ! destination ) {
+						return navigate( STEPS.ERROR.slug, {
+							errorReason: 'commerce_atomic_missing_redirect',
+						} );
 					}
 
 					// Only for checkouts started before build-wow skipped this wait, which
@@ -211,15 +238,9 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 							errorReason: 'commerce_atomic_invalid_redirect',
 						} );
 					}
-					if (
-						! siteSlug.endsWith( '.wordpress.com' ) ||
-						editorUrl.protocol !== 'https:' ||
-						editorUrl.hostname !== siteSlug ||
-						editorUrl.pathname !== '/wp-admin/site-editor.php'
-					) {
-						return navigate( STEPS.ERROR.slug, {
-							errorReason: 'commerce_atomic_unexpected_editor_url',
-						} );
+					const editorUrlError = getCommerceAtomicEditorUrlError( siteSlug, editorUrl );
+					if ( editorUrlError ) {
+						return navigate( STEPS.ERROR.slug, { errorReason: editorUrlError } );
 					}
 
 					window.location.replace( editorUrl.toString() );
@@ -263,7 +284,7 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies.processingResult === ProcessingResult.FAILURE ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'processing_failed' } );
 					}
 
 					if ( providedDependencies.processingResult !== ProcessingResult.SUCCESS ) {

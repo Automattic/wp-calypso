@@ -7,14 +7,11 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import { FlowV2 } from '../../internals/types';
-
-const PROCESSING_ERROR_REASONS: Record< ProcessingResult, string > = {
-	[ ProcessingResult.FAILURE ]: 'processing_failed',
-	[ ProcessingResult.NO_ACTION ]: 'processing_no_action',
-	[ ProcessingResult.SUCCESS ]: 'processing_no_redirect',
-};
 
 function initialize() {
 	// Check if site-spec feature flag is enabled
@@ -105,8 +102,10 @@ const aiSiteBuilderSpec: FlowV2< typeof initialize > = {
 						return navigate(
 							'error',
 							{
-								errorReason:
-									PROCESSING_ERROR_REASONS[ result.processingResult as ProcessingResult ],
+								errorReason: getProcessingErrorReason(
+									result.processingResult,
+									'processing_no_redirect'
+								),
 							},
 							true
 						);

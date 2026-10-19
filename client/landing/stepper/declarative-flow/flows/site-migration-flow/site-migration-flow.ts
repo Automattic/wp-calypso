@@ -18,6 +18,10 @@ import {
 	isPlatformImportable,
 	getFullImporterUrl,
 } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/helper';
+import {
+	getProcessingErrorReason,
+	type ProcessingResult,
+} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import { type CopySiteEligibility } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-check';
 import { type SiteMigrationIdentifyAction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-identify';
 import { isHostingSupportedForSSHMigration } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-ssh-share-access/utils/hosting-provider-validation';
@@ -882,16 +886,19 @@ const siteMigration: FlowV2< typeof initialize > = {
 						}
 						return replace( recoveryPlansPath );
 					}
-					const { siteCreated, siteId, siteSlug } = providedDependencies as {
+					const { siteCreated, siteId, siteSlug, processingResult } = providedDependencies as {
 						siteCreated: boolean;
 						siteId: number;
 						siteSlug: string;
+						processingResult?: ProcessingResult;
 					};
 
 					if ( ! siteCreated ) {
+						// A reload of the processing step drops the pending action and submits
+						// NO_ACTION, which says nothing about whether the site exists.
 						return navigate( STEPS.ERROR.slug, {
 							message: 'Site not created',
-							errorReason: 'site_not_created',
+							errorReason: getProcessingErrorReason( processingResult, 'site_not_created' ),
 						} );
 					}
 

@@ -160,7 +160,7 @@ const education: FlowV2< typeof initialize > = {
 					}
 
 					if ( providedDependencies.processingResult !== ProcessingResult.SUCCESS ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'processing_failed' } );
 					}
 
 					const siteSlug = providedDependencies.siteSlug as string | undefined;

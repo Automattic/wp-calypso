@@ -75,6 +75,7 @@ describe( 'direct-to-cart flow — navigation', () => {
 	it.each( [
 		[ ProcessingResult.FAILURE, 'processing_failed' ],
 		[ ProcessingResult.NO_ACTION, 'processing_no_action' ],
+		[ undefined, 'processing_failed' ],
 	] )( 'names the cause when processing ends with %s', ( processingResult, errorReason ) => {
 		const navigate = submitProcessing( { processingResult } );
 

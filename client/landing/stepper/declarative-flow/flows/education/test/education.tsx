@@ -222,6 +222,7 @@ describe( 'Education Flow', () => {
 			step: STEPS.ERROR,
 			query: null,
 		} );
+		expect( getFlowLocation().state ).toEqual( { errorReason: 'processing_failed' } );
 	} );
 
 	it( 'names the cause when processing succeeds without a site', () => {
