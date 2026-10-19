@@ -11,16 +11,6 @@ jest.mock( 'calypso/data/marketplace/use-es-query', () => ( {
 	useESPlugin: () => ( { data: {} } ),
 } ) );
 
-jest.mock( 'calypso/data/marketplace/use-marketplace-reviews', () => ( {
-	useMarketplaceReviewsQuery: () => ( { data: [] } ),
-	useInfiniteMarketplaceReviewsQuery: () => ( { data: { pages: [] }, fetchNextPage: () => {} } ),
-	useMarketplaceReviewsStatsQuery: () => ( { data: undefined } ),
-	useCreateMarketplaceReviewMutation: () => ( { mutate: () => {} } ),
-	useUpdateMarketplaceReviewMutation: () => ( { mutate: () => {} } ),
-	useDeleteMarketplaceReviewMutation: () => ( { mutate: () => {} } ),
-	useIsUserAllowedToReview: () => ( { data: false } ),
-} ) );
-
 jest.mock( 'calypso/my-sites/plugins/use-plugin-is-maintained', () => ( {
 	usePluginIsMaintained: () => true,
 } ) );

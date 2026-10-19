@@ -229,7 +229,7 @@ export const Analyzer: FC< Props > = ( {
 								aria-label={ translate( 'Checking your site' ) }
 							/>
 							<p>
-								{ translate( 'We’re looking at %(site)s to see what we can copy.', {
+								{ translate( 'We’re looking at %(site)s to see what we can move.', {
 									args: { site: hostname },
 								} ) }
 							</p>

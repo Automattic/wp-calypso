@@ -69,28 +69,36 @@ describe( 'DifmOfferReviews', () => {
 		expect( getVisibleReview().getByText( 'Michelle Hennesay' ) ).toBeVisible();
 	} );
 
-	it( 'stops when the user pauses and continues when the user plays', () => {
+	it( 'stops while the focus is in the reviews', () => {
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Pause reviews' } ) );
+		act( () => screen.getByRole( 'button', { name: 'Show review 1 of 4' } ).focus() );
 		act( () => jest.advanceTimersByTime( INTERVAL * 2 ) );
 		expect( getVisibleReview().getByText( 'Michelle Hennesay' ) ).toBeVisible();
-
-		fireEvent.click( screen.getByRole( 'button', { name: 'Play reviews' } ) );
-		act( () => jest.advanceTimersByTime( INTERVAL ) );
-		expect( getVisibleReview().getByText( 'Jennifer Board' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Pause reviews' } ) ).toBeVisible();
 	} );
 
-	it( 'starts paused when the user prefers reduced motion, and plays on request', () => {
+	it( 'shows the review the user picks with a dot, and stops the rotation', () => {
+		render( <DifmOfferReviews interval={ INTERVAL } /> );
+
+		const dot = screen.getByRole( 'button', { name: 'Show review 3 of 4' } );
+		fireEvent.click( dot );
+		expect( getVisibleReview().getByText( 'Steve Sonn' ) ).toBeVisible();
+		expect( dot ).toHaveAttribute( 'aria-pressed', 'true' );
+
+		// Move the focus out, so only the pick can stop the rotation.
+		act( () => dot.blur() );
+		act( () => jest.advanceTimersByTime( INTERVAL * 2 ) );
+		expect( getVisibleReview().getByText( 'Steve Sonn' ) ).toBeVisible();
+	} );
+
+	it( 'does not rotate when the user prefers reduced motion, but the dots still work', () => {
 		prefersReducedMotion = true;
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
 
 		act( () => jest.advanceTimersByTime( INTERVAL * 3 ) );
 		expect( getVisibleReview().getByText( 'Michelle Hennesay' ) ).toBeVisible();
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Play reviews' } ) );
-		act( () => jest.advanceTimersByTime( INTERVAL ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show review 2 of 4' } ) );
 		expect( getVisibleReview().getByText( 'Jennifer Board' ) ).toBeVisible();
 	} );
 

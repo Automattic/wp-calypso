@@ -49,6 +49,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@emotion/react": "^11.11.1",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/react": "^16.3.3",

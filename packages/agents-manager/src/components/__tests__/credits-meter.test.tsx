@@ -49,6 +49,13 @@ const freeOut: CreditsStatus = {
 	pools: [ { id: 'free', label: 'Free credits', percent: 0 } ],
 };
 
+const upgrade = {
+	label: 'Upgrade',
+	href: 'https://wordpress.com/plans/example.wordpress.com',
+	target: '_blank',
+	rel: 'noopener noreferrer',
+};
+
 // Shaped like buildLiveCreditsStatus output for an 80,000-credit plan.
 const livePaid = ( remaining: number ): CreditsStatus => {
 	const percent = ( 100 * remaining ) / 80000;
@@ -71,57 +78,58 @@ const livePaid = ( remaining: number ): CreditsStatus => {
 };
 
 describe( 'CreditsMeter', () => {
-	it( 'uses a primary Upgrade CTA on paid plans while preserving the current editor', () => {
-		render(
-			<CreditsMeter
-				status={ paid }
-				isOpen
-				onToggle={ () => {} }
-				upgradeUrl="https://wordpress.com/plans/example.wordpress.com"
-			/>
-		);
-		const action = screen.getByRole( 'link', { name: 'Upgrade' } );
-		expect( action ).toHaveAttribute( 'href', 'https://wordpress.com/plans/example.wordpress.com' );
-		expect( action ).toHaveAttribute( 'target', '_blank' );
-		expect( action ).toHaveAttribute( 'rel', 'noopener noreferrer' );
-		expect( action ).toHaveClass( 'is-primary' );
-		expect( screen.queryByRole( 'button', { name: 'Add credits' } ) ).not.toBeInTheDocument();
-		expect( screen.getByText( 'Resets 17 Oct' ) ).toBeInTheDocument();
-	} );
+	it.each( [
+		[ 'Upgrade', upgrade ],
+		[
+			'Add credits',
+			{
+				...upgrade,
+				label: 'Add credits',
+				href: 'https://wordpress.com/checkout/example.wordpress.com/ai-credits-lifetime:-q-100000',
+			},
+		],
+	] )(
+		'shows the %s action as a primary link while preserving the current editor',
+		( name, action ) => {
+			render( <CreditsMeter status={ paid } isOpen onToggle={ () => {} } action={ action } /> );
+			const link = screen.getByRole( 'link', { name } );
+			expect( link ).toHaveAttribute( 'href', action.href );
+			expect( link ).toHaveAttribute( 'target', '_blank' );
+			expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+			expect( link ).toHaveClass( 'is-primary' );
+			expect( screen.getAllByRole( 'link' ) ).toHaveLength( 1 );
+			expect(
+				screen.queryByRole( 'button', { name: /Upgrade|Add credits/ } )
+			).not.toBeInTheDocument();
+			expect( screen.getByText( 'Resets 17 Oct' ) ).toBeInTheDocument();
+		}
+	);
 
-	it( 'reports a click on the Upgrade link without stopping the link from opening', () => {
-		const onUpgradeClick = jest.fn();
+	it( 'runs the action’s click handler without stopping the link from opening', () => {
+		const onClick = jest.fn();
 		render(
 			<CreditsMeter
 				status={ livePaid( 0 ) }
 				isOpen
 				onToggle={ () => {} }
-				upgradeUrl="https://wordpress.com/plans/example.wordpress.com"
-				onUpgradeClick={ onUpgradeClick }
+				action={ { ...upgrade, onClick } }
 			/>
 		);
-		const action = screen.getByRole( 'link', { name: 'Upgrade' } );
-		expect( fireEvent.click( action ) ).toBe( true );
-		expect( onUpgradeClick ).toHaveBeenCalledTimes( 1 );
-		expect( action ).toHaveAttribute( 'href', 'https://wordpress.com/plans/example.wordpress.com' );
-		expect( action ).toHaveAttribute( 'target', '_blank' );
+		const link = screen.getByRole( 'link', { name: 'Upgrade' } );
+		expect( fireEvent.click( link ) ).toBe( true );
+		expect( onClick ).toHaveBeenCalledTimes( 1 );
+		expect( link ).toHaveAttribute( 'href', upgrade.href );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
 	} );
 
-	it( 'keeps the demo CTA on its own handler, with no Upgrade link to report', () => {
+	it( 'keeps the demo CTA on its own handler, with no link', () => {
 		const onAction = jest.fn();
-		const onUpgradeClick = jest.fn();
 		render(
-			<CreditsMeter
-				status={ freeOut }
-				isOpen
-				onToggle={ () => {} }
-				onAction={ onAction }
-				onUpgradeClick={ onUpgradeClick }
-			/>
+			<CreditsMeter status={ freeOut } isOpen onToggle={ () => {} } onAction={ onAction } />
 		);
 		fireEvent.click( screen.getByRole( 'button', { name: 'Upgrade' } ) );
 		expect( onAction ).toHaveBeenCalledTimes( 1 );
-		expect( onUpgradeClick ).not.toHaveBeenCalled();
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 	} );
 
 	it.each( [ 'click', 'Enter', 'Space' ] )(
@@ -135,7 +143,7 @@ describe( 'CreditsMeter', () => {
 						status={ paid }
 						isOpen={ isOpen }
 						onToggle={ setIsOpen }
-						upgradeUrl="https://wordpress.com/plans/example.wordpress.com"
+						action={ upgrade }
 					/>
 				);
 			}
@@ -222,12 +230,7 @@ describe( 'CreditsMeter', () => {
 
 	it( 'replaces the detail with the used-all message on a paid plan at exactly zero', () => {
 		render(
-			<CreditsMeter
-				status={ livePaid( 0 ) }
-				isOpen
-				onToggle={ () => {} }
-				upgradeUrl="https://wordpress.com/plans/example.wordpress.com"
-			/>
+			<CreditsMeter status={ livePaid( 0 ) } isOpen onToggle={ () => {} } action={ upgrade } />
 		);
 		expect(
 			screen.getByRole( 'button', { name: `${ localNumber( 0 ) } credits left` } )
@@ -273,12 +276,7 @@ describe( 'CreditsMeter', () => {
 
 	it( 'keeps the detail and neutral percent on a paid plan with one credit left', () => {
 		render(
-			<CreditsMeter
-				status={ livePaid( 1 ) }
-				isOpen
-				onToggle={ () => {} }
-				upgradeUrl="https://wordpress.com/plans/example.wordpress.com"
-			/>
+			<CreditsMeter status={ livePaid( 1 ) } isOpen onToggle={ () => {} } action={ upgrade } />
 		);
 		expect( screen.getByText( '<1%' ) ).not.toHaveClass( 'is-exhausted' );
 		expect(
