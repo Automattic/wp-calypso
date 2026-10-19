@@ -17,6 +17,7 @@ import {
 	type CreditsAccess,
 	getCreditsCtaType,
 	getCreditsNoticeMessage,
+	getCreditsPurchaseAction,
 	getCreditsPurchaseOptions,
 	parseCreditsAccess,
 } from '../utils/credits-access';
@@ -33,7 +34,7 @@ import {
 	CREDITS_UPGRADE_SOURCE,
 	buildLiveCreditsStatus,
 	getLiveCreditSiteId,
-	getLiveCreditsUpgradeUrl,
+	getLiveCreditsPurchaseLink,
 	parseCreditSnapshot,
 } from '../utils/live-credits';
 import type { AgentConfig } from '../utils/create-agent-config';
@@ -400,12 +401,13 @@ export function useCredits( {
 
 	const isExhausted = status ? isCreditsExhausted( status ) : false;
 	const isLow = status ? isCreditsLow( status ) : false;
-	const planUpgradeUrl = status ? getLiveCreditsUpgradeUrl( status, siteId, site ) : undefined;
+	const planPurchaseLink = status ? getLiveCreditsPurchaseLink( status, siteId, site ) : undefined;
 	const access = upgradeAccess?.scope === scope ? upgradeAccess : undefined;
-	const { upgradeUrl, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
-		planUpgradeUrl,
+	const { purchaseUrl, purchaseKind, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
+		planPurchaseLink,
 		access
 	);
+	const ctaType = getCreditsCtaType( purchaseKind, askToUpgrade );
 	// Mock and free balances send no events.
 	liveCredits.current = siteId && status ? { status, siteId, agentConfig } : undefined;
 
@@ -452,13 +454,21 @@ export function useCredits( {
 		[ isPopoverOpen, recordCreditsEvent, setIsPopoverOpen ]
 	);
 
-	// Every click counts; the link opens in a new tab without waiting for the event.
-	const recordUpgradeClick = useCallback( () => {
-		recordCreditsEvent( 'calypso_agents_manager_credits_cta_clicked', {
-			cta_type: 'upgrade',
-			ref: CREDITS_UPGRADE_SOURCE,
-		} );
-	}, [ recordCreditsEvent ] );
+	// One action for the notice and the popover. Every click counts; the link opens
+	// in a new tab without waiting for the event.
+	const purchaseAction = useMemo( () => {
+		const action = getCreditsPurchaseAction( { purchaseUrl, purchaseKind } );
+		return (
+			action && {
+				...action,
+				onClick: () =>
+					recordCreditsEvent( 'calypso_agents_manager_credits_cta_clicked', {
+						cta_type: ctaType,
+						ref: CREDITS_UPGRADE_SOURCE,
+					} ),
+			}
+		);
+	}, [ purchaseUrl, purchaseKind, ctaType, recordCreditsEvent ] );
 
 	const trailingActions = useMemo< TrailingActions | undefined >( () => {
 		if ( ! status ) {
@@ -470,39 +480,20 @@ export function useCredits( {
 				isOpen={ isPopoverOpen }
 				onToggle={ toggleMeter }
 				onAction={ siteId ? undefined : handleAction }
-				upgradeUrl={ upgradeUrl }
-				onUpgradeClick={ recordUpgradeClick }
+				action={ purchaseAction }
 				purchaseHint={ purchaseHint }
 			/>
 		);
-	}, [
-		status,
-		isPopoverOpen,
-		toggleMeter,
-		handleAction,
-		siteId,
-		upgradeUrl,
-		recordUpgradeClick,
-		purchaseHint,
-	] );
+	}, [ status, isPopoverOpen, toggleMeter, handleAction, siteId, purchaseAction, purchaseHint ] );
 
 	const notice = useMemo< NoticeConfig | undefined >( () => {
 		if ( siteId && status?.plan === 'paid' ) {
-			const action = upgradeUrl
-				? {
-						label: __( 'Upgrade', __i18n_text_domain__ ),
-						href: upgradeUrl,
-						target: '_blank',
-						rel: 'noopener noreferrer',
-						onClick: recordUpgradeClick,
-					}
-				: undefined;
 			// A dismissed low notice must not hide the exhausted state.
 			if ( isExhausted ) {
 				return {
 					icon: false,
 					message: getCreditsNoticeMessage( 'out', status.remaining, askToUpgrade ),
-					action,
+					action: purchaseAction,
 					dismissible: false,
 				};
 			}
@@ -510,7 +501,7 @@ export function useCredits( {
 				return {
 					icon: false,
 					message: getCreditsNoticeMessage( 'low', status.remaining, askToUpgrade ),
-					action,
+					action: purchaseAction,
 					dismissible: true,
 					onDismiss: dismissLowNotice,
 				};
@@ -547,8 +538,7 @@ export function useCredits( {
 	}, [
 		status,
 		siteId,
-		upgradeUrl,
-		recordUpgradeClick,
+		purchaseAction,
 		askToUpgrade,
 		isExhausted,
 		isLow,
@@ -561,7 +551,6 @@ export function useCredits( {
 	const shownNoticeState: CreditsState | undefined =
 		siteId && status && notice && isNoticeVisible ? getCreditsState( status ) : undefined;
 	const userRole = getCreditsUserRole( access?.canBuyCredits );
-	const ctaType = getCreditsCtaType( !! upgradeUrl, askToUpgrade );
 	useEffect( () => {
 		if ( ! shownNoticeState ) {
 			return;
