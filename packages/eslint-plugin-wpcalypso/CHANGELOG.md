@@ -2,9 +2,10 @@
 
 - Breaking: Updated peer dependency `eslint-plugin-jsdoc` to 65.1.0 and `eslint-plugin-react-hooks` to 7.1.1. `jsdoc/check-param-names` now also checks the properties of object-typed parameters.
 - Turned off the rules `eslint-plugin-jsdoc` added to its recommended config after v50: `escape-inline-tags`, `reject-any-type`, `reject-function-type`, `require-throws-type`, `require-yields-type` and `ts-no-empty-object-type`.
-- Added flat-config presets `flat/recommended` and `flat/react` for ESLint 9, built from the same rules as the legacy presets. Scope them to your JavaScript files with `files` and `extends`, as the README shows. ESLint 10 is not supported yet. They use `@eslint/js`, a new dependency. `@babel/eslint-parser`, which the legacy presets already required, is now a declared peer dependency.
+- Breaking: Requires ESLint 10, with `@babel/core` and `@babel/eslint-parser` 8. The presets are flat config only: `recommended` and `react`, also exported as `flat/recommended` and `flat/react`. The eslintrc presets `plugin:wpcalypso/recommended` and `plugin:wpcalypso/react` are removed, since ESLint 10 can't load eslintrc; stay on 8.x to keep using them. Scope the presets to your JavaScript files with `files` and `extends`, as the README shows. They use `@eslint/js`, a new dependency.
+- Breaking: `react` no longer turns on `react/jsx-curly-spacing` and `react/jsx-tag-spacing`, which crash on ESLint 10. Prettier covers the spacing they checked.
 - The `i18n-ellipsis` and `jsx-async-load-require-top-level` rules use `context.sourceCode` instead of `context.getSourceCode()`, which ESLint 10 removed.
-- On ESLint 10, the flat presets give `eslint-plugin-inclusive-language`'s rule `context.getSourceCode()`, which ESLint 10 removed. ESLint 10 still isn't supported, as the README explains. `new-cap` allows `new this.constructor()`, which ESLint 10 started reporting.
+- The presets give `eslint-plugin-inclusive-language`'s rule `context.getSourceCode()`, which ESLint 10 removed, so don't register that plugin yourself next to them. `new-cap` allows `new this.constructor()`, which ESLint 10 started reporting.
 
 #### v8.0.0 (2023-09-14)
 

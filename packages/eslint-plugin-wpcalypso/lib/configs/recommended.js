@@ -1,15 +1,5 @@
+// The rules and settings `recommended` adds on top of `@eslint/js` and `eslint-plugin-jsdoc`.
 module.exports = {
-	env: {
-		es6: true,
-	},
-	parser: '@babel/eslint-parser',
-	parserOptions: {
-		ecmaFeatures: {
-			jsx: true,
-		},
-	},
-	extends: [ 'eslint:recommended', 'plugin:jsdoc/recommended' ],
-	plugins: [ 'jsdoc', 'wpcalypso', 'inclusive-language' ],
 	settings: {
 		jsdoc: {
 			preferredTypes: {
@@ -172,12 +162,8 @@ module.exports = {
 		// Ensure our codebases use inclusive language
 		'inclusive-language/use-inclusive-words': 'error',
 	},
-	overrides: [
-		{
-			files: [ '**/test/*', '*.json', '*.md' ],
-			rules: {
-				'wpcalypso/i18n-unlocalized-url': 'off',
-			},
-		},
-	],
+	// Test files may link to unlocalized URLs.
+	testFileRules: {
+		'wpcalypso/i18n-unlocalized-url': 'off',
+	},
 };

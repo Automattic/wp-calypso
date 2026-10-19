@@ -18,13 +18,13 @@ module.exports.meta = {
 
 // import all rules in lib/rules
 module.exports.rules = require( './rules' );
-module.exports.configs = require( './configs' );
+module.exports.configs = {};
 
-// Flat presets load their plugins on first use, so legacy-only users never need them.
+// Built on first use, since they reference this plugin object. `flat/*` are the names they had
+// next to the eslintrc presets, which ESLint 10 can't load.
 for ( const name of Object.keys( flat ) ) {
 	let built;
-	Object.defineProperty( module.exports.configs, `flat/${ name }`, {
-		enumerable: true,
-		get: () => ( built ??= flat[ name ]( module.exports ) ),
-	} );
+	const get = () => ( built ??= flat[ name ]( module.exports ) );
+	Object.defineProperty( module.exports.configs, name, { enumerable: true, get } );
+	Object.defineProperty( module.exports.configs, `flat/${ name }`, { enumerable: true, get } );
 }

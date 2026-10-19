@@ -25,17 +25,20 @@ const files = {
 };
 
 const config = defineConfig( [
-	{ files: [ '**/*.{js,jsx}' ], extends: [ wpcalypso.configs[ 'flat/react' ] ] },
+	{ files: [ '**/*.{js,jsx}' ], extends: [ wpcalypso.configs.react ] },
 	{ files: [ '**/*.json' ], extends: [ json.configs[ 'flat/recommended' ] ] },
 	{ ...flatNodeConfig, files: [ 'bin/**' ] },
 	// Projects often add the React plugin's own config; the preset must register the same plugin.
 	{ files: [ '**/*.{js,jsx}' ], ...react.configs.flat[ 'jsx-runtime' ] },
-	// As this repo lints: the presets' Babel parser needs Babel 8 to run on ESLint 10, and
-	// `react/jsx-tag-spacing` crashes there, so Prettier's config turns it off.
+	// Stands in for the Babel config a real project has, without reading this repo's.
 	{
 		files: [ '**/*.{js,jsx}' ],
-		languageOptions: { parser: require( '@typescript-eslint/parser' ) },
-		rules: { 'react/jsx-tag-spacing': 'off' },
+		languageOptions: {
+			parserOptions: {
+				requireConfigFile: false,
+				babelOptions: { configFile: false, babelrc: false, parserOpts: { plugins: [ 'jsx' ] } },
+			},
+		},
 	},
 ] );
 

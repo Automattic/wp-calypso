@@ -5,10 +5,10 @@ This package also includes custom ESLint rules for the [WordPress.com Calypso pr
 
 ## Installation
 
-Install [ESLint](http://eslint.org) and `eslint-plugin-wpcalypso`
+Install [ESLint](http://eslint.org) 10, `@babel/core` and `@babel/eslint-parser` 8, and `eslint-plugin-wpcalypso`:
 
 ```
-$ yarn add --dev eslint eslint-plugin-wpcalypso
+$ yarn add --dev eslint @babel/core @babel/eslint-parser eslint-plugin-wpcalypso
 ```
 
 If you're planning to use the React superset of rules, you should also install `eslint-plugin-react` and `eslint-plugin-react-hooks`:
@@ -21,25 +21,9 @@ yarn add --dev eslint-plugin-react eslint-plugin-react-hooks
 
 ### Recommended rules
 
-Simply extend the configuration from your project's `.eslintrc` configuration file:
+In `eslint.config.js`, apply `recommended` (or, for React projects, `react`) to your JavaScript files, using `files` and `extends` as shown below. Always set `files`: the presets don't pick files themselves, so without it they would also run on JSON or Markdown files.
 
-```json
-{
-	"extends": [ "plugin:wpcalypso/recommended" ]
-}
-```
-
-Or, if your project uses React and you want to opt in to additional React-specific rules, extend the React superset:
-
-```json
-{
-	"extends": [ "plugin:wpcalypso/react" ]
-}
-```
-
-**ESLint 9 flat config.** In `eslint.config.js`, apply `flat/react` (or `flat/recommended`) to your JavaScript files, using `files` and `extends` as shown below. Always set `files`: the presets don't pick files themselves, so without it they would also run on JSON or Markdown files.
-
-Requires ESLint 9.22+ (for `extends`). ESLint 10 isn't supported yet: the Babel parser needs Babel 8 there, and `eslint-plugin-react` doesn't list ESLint 10 as a peer yet. On ESLint 10, the presets register a wrapped `eslint-plugin-inclusive-language`, so don't register that plugin yourself there.
+The presets parse with `@babel/eslint-parser`, which reads your project's Babel config. They register a wrapped `eslint-plugin-inclusive-language`, so don't register that plugin yourself.
 
 ```js
 const { defineConfig } = require( 'eslint/config' );
@@ -48,12 +32,14 @@ const wpcalypso = require( 'eslint-plugin-wpcalypso' );
 module.exports = defineConfig( [
 	{
 		files: [ '**/*.{js,jsx}' ],
-		extends: [ wpcalypso.configs[ 'flat/react' ] ], // or 'flat/recommended'
+		extends: [ wpcalypso.configs.react ], // or wpcalypso.configs.recommended
 	},
 ] );
 ```
 
-Any of the above options will:
+`flat/recommended` and `flat/react` are the same presets under their earlier names. For the eslintrc presets (`plugin:wpcalypso/recommended`), use version 8.
+
+Either preset will:
 
 - Enable the plugin `wpcalypso`
 - Enable the recommended set of rules to match WordPress.com's "Calypso" [JavaScript Coding Guidelines][2]
@@ -61,24 +47,21 @@ Any of the above options will:
 
 ### Custom rules
 
-If you are not interesetd in the recommended set of rules but only on some of the custom rules, you can enable them individually.
+If you are not interested in the recommended set of rules but only in some of the custom rules, register the plugin and enable them individually:
 
-First, add `wpcalypso` to the plugins section of your `.eslintrc` configuration file:
+```js
+const { defineConfig } = require( 'eslint/config' );
+const wpcalypso = require( 'eslint-plugin-wpcalypso' );
 
-```json
-{
-	"plugins": [ "wpcalypso" ]
-}
-```
-
-Then configure the rules you want to use under the rules section.
-
-```json
-{
-	"rules": {
-		"wpcalypso/rule-name": "error"
-	}
-}
+module.exports = defineConfig( [
+	{
+		files: [ '**/*.{js,jsx}' ],
+		plugins: { wpcalypso },
+		rules: {
+			'wpcalypso/rule-name': 'error',
+		},
+	},
+] );
 ```
 
 ## Supported Rules

@@ -113,7 +113,7 @@ function build( rootDir ) {
 			linterOptions: { reportUnusedDisableDirectives: 'off' },
 		},
 
-		wpcalypso.configs[ 'flat/react' ],
+		wpcalypso.configs.react,
 		{
 			// The legacy preset's exception for JSON and Markdown, which its flat version leaves to us.
 			files: [ '**/*.json', '**/*.md' ],
