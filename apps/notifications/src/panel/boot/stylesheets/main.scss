@@ -861,6 +861,10 @@ $with-sidebar-min-page-width: 1114px;
 		padding-top: $wpnc__padding-small;
 	}
 
+	.wpnc__new_post .wpnc__body .wpnc__body-content {
+		font-size: 15px;
+	}
+
 	.wpnc__blogging_prompts_note {
 		svg.gridicons-bell-off {
 			position: absolute;
