@@ -88,6 +88,22 @@ new RuleTester( config ).run( 'i18n-no-variables', plugin.rules[ 'i18n-no-variab
 			],
 		},
 		{
+			code: "translate( 'Hello World', { comment: 'A literal', context: aVariable } );",
+			errors: [
+				{
+					message: ERROR_MESSAGE,
+				},
+			],
+		},
+		{
+			code: "translate( { original: { single: 'Hello World', plural: string } } );",
+			errors: [
+				{
+					message: ERROR_MESSAGE,
+				},
+			],
+		},
+		{
 			code: "translate( 'Hello ' + name );",
 			errors: [
 				{
