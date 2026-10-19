@@ -3,7 +3,9 @@ import { logBuildWowEvent, requestBuildWowSite } from 'calypso/landing/stepper/u
 import { pollForBuildWowStatus } from './build-status-poller';
 import { getEditorUrlFromStatus } from './editor-url';
 import { getBuildWowApiOverride } from './poller';
+import { isStreamInfoEqual } from './stream/types';
 import type { BuildWowUi } from './build-status-poller';
+import type { BuildWowStreamInfo } from './stream/types';
 import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 
 export type SiteGenerationStep = {
@@ -18,12 +20,17 @@ export type SiteGenerationFailureReason =
 
 export type SiteGenerationState = {
 	status: 'working' | 'failed';
+	hostState?: string;
+	isComplete?: boolean;
+	isLocalPreview?: boolean;
 	failureReason?: SiteGenerationFailureReason;
 	failureLabel?: string;
 	failureDetail?: string;
 	steps: SiteGenerationStep[];
 	retryBuild: ( () => void ) | null;
 	isRetryingBuild: boolean;
+	// The live feed the status endpoint advertises for this run, while working.
+	streamInfo?: BuildWowStreamInfo | null;
 };
 
 const GENERATION_TIMEOUT_MS = 30 * 60 * 1000;
@@ -100,6 +107,8 @@ export function useSiteGeneration( {
 	source,
 	specId,
 	graph,
+	streamEvents = false,
+	completionDelayMs = 0,
 	steps,
 }: {
 	siteIdentifier: string | null;
@@ -107,6 +116,9 @@ export function useSiteGeneration( {
 	specId?: string | null;
 	/** Graph the build was queued with, so a retry rebuilds on the same one. */
 	graph?: BuildWowGraph;
+	/** The live-feed opt-in, so a retry asks for it again. */
+	streamEvents?: boolean;
+	completionDelayMs?: number;
 	steps: Array< Pick< SiteGenerationStep, 'id' | 'label' > >;
 } ): SiteGenerationState {
 	const [ serverSteps, setServerSteps ] = useState< SiteGenerationStep[] | null >( null );
@@ -114,7 +126,13 @@ export function useSiteGeneration( {
 	const [ failure, setFailure ] = useState< GenerationFailure | null >( null );
 	const [ buildAttempt, setBuildAttempt ] = useState( 0 );
 	const [ isRetryingBuild, setIsRetryingBuild ] = useState( false );
+	const [ streamInfo, setStreamInfo ] = useState< BuildWowStreamInfo | null >( null );
 	const isRetryingRef = useRef( false );
+	const completionDelayRef = useRef( completionDelayMs );
+	completionDelayRef.current = completionDelayMs;
+	const [ hostState, setHostState ] = useState< string >();
+	const [ isComplete, setIsComplete ] = useState( false );
+	const [ isLocalPreview, setIsLocalPreview ] = useState( false );
 	const hasRequiredParameters = Boolean( siteIdentifier );
 	const generationTimeoutMs = graph === 'dsl' ? DSL_GENERATION_TIMEOUT_MS : GENERATION_TIMEOUT_MS;
 
@@ -123,6 +141,12 @@ export function useSiteGeneration( {
 			return;
 		}
 
+		setIsComplete( false );
+		setIsLocalPreview( false );
+		setHostState( undefined );
+		let redirectTimer: ReturnType< typeof setTimeout > | undefined;
+		let ready = false;
+		let lastStreamInfo: BuildWowStreamInfo | null = null;
 		const generationTimeout = window.setTimeout(
 			() => setFailure( ( previous ) => previous ?? { reason: 'timed-out' } ),
 			generationTimeoutMs
@@ -130,19 +154,40 @@ export function useSiteGeneration( {
 		const stopStatusPolling = pollForBuildWowStatus( {
 			siteIdentifier,
 			onReady: ( response ) => {
-				clearStoredStepTimer( siteIdentifier );
-				// A build followed from a local status server has no site to open. The
-				// timeout stays armed otherwise and would fail a screen that finished.
-				if ( getBuildWowApiOverride() ) {
-					window.clearTimeout( generationTimeout );
+				if ( ready ) {
 					return;
 				}
-				const destination = getEditorUrlFromStatus( response.site_editor_url, source );
-				if ( ! destination ) {
+				ready = true;
+				window.clearTimeout( generationTimeout );
+				clearStoredStepTimer( siteIdentifier );
+				const isLocalBuild = Boolean( getBuildWowApiOverride() );
+				const destination = isLocalBuild
+					? null
+					: getEditorUrlFromStatus( response.site_editor_url, source );
+				if ( ! isLocalBuild && ! destination ) {
 					setFailure( { reason: 'editor-unavailable' } );
 					return;
 				}
-				window.location.assign( destination );
+				setHostState( 'ready' );
+				setIsLocalPreview( isLocalBuild );
+				setIsComplete( true );
+				if ( lastStreamInfo ) {
+					const finalStreamInfo = lastStreamInfo;
+					setStreamInfo( ( previous ) =>
+						isStreamInfoEqual( previous, finalStreamInfo ) ? previous : finalStreamInfo
+					);
+				}
+				if ( ! destination ) {
+					return;
+				}
+				const delay = document.hidden
+					? 0
+					: Math.min( 2600, Math.max( 0, completionDelayRef.current ) );
+				if ( delay ) {
+					redirectTimer = setTimeout( () => window.location.assign( destination ), delay );
+				} else {
+					window.location.assign( destination );
+				}
 			},
 			onFailed: ( status, ui ) => {
 				clearStoredStepTimer( siteIdentifier );
@@ -153,6 +198,7 @@ export function useSiteGeneration( {
 				setFailure( ui ? { reason: 'build-failed', ui } : { reason: 'timed-out' } );
 			},
 			onUpdate: ( ui ) => {
+				setHostState( ui.state );
 				const now = Date.now();
 				setServerSteps( ( previousSteps ) => {
 					const nextSteps = getStepsFromServer(
@@ -165,6 +211,14 @@ export function useSiteGeneration( {
 					return nextSteps.length > 0 ? nextSteps : previousSteps;
 				} );
 			},
+			onStream: ( nextStreamInfo ) => {
+				if ( nextStreamInfo && ! isStreamInfoEqual( lastStreamInfo, nextStreamInfo ) ) {
+					lastStreamInfo = nextStreamInfo;
+				}
+				setStreamInfo( ( previous ) =>
+					isStreamInfoEqual( previous, nextStreamInfo ) ? previous : nextStreamInfo
+				);
+			},
 			onRequestError: ( reason ) =>
 				logBuildWowEvent( 'site_generation_status_request_failed', {
 					site_identifier: siteIdentifier,
@@ -174,6 +228,7 @@ export function useSiteGeneration( {
 
 		return () => {
 			window.clearTimeout( generationTimeout );
+			clearTimeout( redirectTimer );
 			stopStatusPolling();
 		};
 	}, [ buildAttempt, source, failure, fallbackStartedAt, generationTimeoutMs, siteIdentifier ] );
@@ -189,8 +244,16 @@ export function useSiteGeneration( {
 			spec_id: specId,
 		} );
 		try {
-			await requestBuildWowSite( siteIdentifier, specId, graph );
+			if ( streamEvents ) {
+				await requestBuildWowSite( siteIdentifier, specId, graph, undefined, true );
+			} else {
+				await requestBuildWowSite( siteIdentifier, specId, graph );
+			}
 			clearStoredStepTimer( siteIdentifier );
+			setStreamInfo( null );
+			setHostState( undefined );
+			setIsComplete( false );
+			setIsLocalPreview( false );
 			setFallbackStartedAt( Date.now() );
 			setServerSteps( null );
 			setFailure( null );
@@ -205,7 +268,7 @@ export function useSiteGeneration( {
 			isRetryingRef.current = false;
 			setIsRetryingBuild( false );
 		}
-	}, [ siteIdentifier, specId, graph ] );
+	}, [ siteIdentifier, specId, graph, streamEvents ] );
 
 	let failureReason: SiteGenerationFailureReason | undefined;
 	if ( ! hasRequiredParameters ) {
@@ -219,6 +282,9 @@ export function useSiteGeneration( {
 
 	return {
 		status: failureReason ? 'failed' : 'working',
+		hostState,
+		isComplete: ! failureReason && isComplete,
+		isLocalPreview,
 		failureReason,
 		failureLabel: failedUi?.label,
 		failureDetail: failedUi?.detail,
@@ -231,5 +297,6 @@ export function useSiteGeneration( {
 			} ) ),
 		retryBuild: canRetryBuild ? retryBuild : null,
 		isRetryingBuild,
+		streamInfo: failureReason ? null : streamInfo,
 	};
 }

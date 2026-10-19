@@ -47,6 +47,8 @@ import {
 import {
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
+	getBuildWowStreamQueryArgs,
+	isBuildWowStreamRequested,
 	logBuildWowEvent,
 	requestBuildWowSite,
 	type BuildWowGraph,
@@ -629,8 +631,14 @@ const onboarding: FlowV2< typeof initialize > = {
 					// A fully free order never reaches checkout, so the post-plan-selection gate is met here,
 					// right after the plan is chosen, before the site is created.
 					if ( postPlanSelectionEmailVerification && ! pickedPlan ) {
+						const streamArgs = getBuildWowStreamQueryArgs(
+							isBuildWowStreamRequested( queryParams )
+						);
 						return navigate(
-							'email-verification?next=create-site' as typeof currentStepSlug,
+							addQueryArgs( 'email-verification', {
+								...streamArgs,
+								next: addQueryArgs( 'create-site', streamArgs ),
+							} ) as typeof currentStepSlug,
 							undefined,
 							false
 						);
@@ -644,7 +652,14 @@ const onboarding: FlowV2< typeof initialize > = {
 					// entry behind it. Pushed, Back off the destination lands here again, and the
 					// step advances on sight of a verified account without being asked — into site
 					// creation, under the name the site it just went back past already holds.
-					return navigate( next as typeof currentStepSlug, undefined, true );
+					return navigate(
+						addQueryArgs(
+							next,
+							getBuildWowStreamQueryArgs( isBuildWowStreamRequested( queryParams ) )
+						) as typeof currentStepSlug,
+						undefined,
+						true
+					);
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
@@ -718,6 +733,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									siteId,
 									ref: refParameter,
 									graph,
+									streamEvents: isBuildWowStreamRequested( queryParams ),
 								} )
 							);
 							return;
@@ -753,6 +769,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
 								siteSlug: siteSlugParam,
 								...( refParameter ? { ref: refParameter } : {} ),
+								...getBuildWowStreamQueryArgs( isBuildWowStreamRequested( queryParams ) ),
 							} )
 						);
 						return;
@@ -797,6 +814,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											{
 												siteSlug,
 												...( refParameter ? { ref: refParameter } : {} ),
+												...getBuildWowStreamQueryArgs( isBuildWowStreamRequested( queryParams ) ),
 											}
 										);
 
@@ -810,6 +828,7 @@ const onboarding: FlowV2< typeof initialize > = {
 										next: 'post-checkout-onboarding',
 										siteSlug,
 										...( refParameter ? { ref: refParameter } : {} ),
+										...getBuildWowStreamQueryArgs( isBuildWowStreamRequested( queryParams ) ),
 									}
 								);
 							}
