@@ -105,7 +105,9 @@ export default function SiteAIToolsRead() {
 		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
 		enabled: !! site.jetpack && !! isAutomattician,
 	} );
-	const remoteNamespaces = collectNamespaces( remoteAbilities, savedRemoteGroups, TOOL_CATEGORY );
+	const remoteNamespaces = isAutomattician
+		? collectNamespaces( remoteAbilities, savedRemoteGroups, TOOL_CATEGORY )
+		: new Map();
 	const remoteGroupKeys = [ ...remoteNamespaces.values() ].flatMap( ( group ) => group.keys );
 	const remoteAbilityKeys = [ ...remoteNamespaces.values() ].flatMap(
 		( group ) => group.abilityKeys

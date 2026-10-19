@@ -320,8 +320,12 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	} );
 	// Count published abilities individually; an ability counts as enabled when
 	// its group key is allowed. Saved-only groups (catalog unreachable) fall
-	// back to counting their keys.
+	// back to counting their keys. Gated at the computation level: even a
+	// previously cached catalog must not leak into the totals for other users.
 	const remoteCounts = ( category: 'read' | 'write' ) => {
+		if ( ! isAutomattician ) {
+			return { total: 0, enabled: 0 };
+		}
 		let total = 0;
 		let enabled = 0;
 		collectNamespaces( remoteAbilities, savedRemoteGroups, category ).forEach( ( group ) => {

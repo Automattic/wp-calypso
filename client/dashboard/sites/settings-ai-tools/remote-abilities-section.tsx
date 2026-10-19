@@ -109,7 +109,10 @@ export default function RemoteAbilitiesSection( {
 		data: abilities,
 		isLoading,
 		isError,
-	} = useQuery( siteAbilitiesQuery( site.ID, wpLocale || undefined ) );
+	} = useQuery( {
+		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
+		enabled: !! isAutomattician,
+	} );
 
 	const savedGroups = getSiteRemoteGroups( userSettings || {}, site.ID );
 	const namespaces = collectNamespaces( abilities, savedGroups, category );
