@@ -3027,12 +3027,18 @@ const getPlanJetpackProDetails = (): IncompleteJetpackPlan => ( {
 			FEATURE_JETPACK_BACKUP_T1_BI_YEARLY,
 			FEATURE_JETPACK_BACKUP_T1_YEARLY,
 			FEATURE_JETPACK_BACKUP_T1_MONTHLY,
+			FEATURE_BACKUP_ARCHIVE_30,
 			...( getPlanJetpackCompleteDetails().getIncludedFeatures?.() ?? [] ).filter(
 				( feature ) =>
 					feature !== FEATURE_JETPACK_BACKUP_T2_YEARLY &&
-					feature !== FEATURE_JETPACK_BACKUP_T2_MONTHLY
+					feature !== FEATURE_JETPACK_BACKUP_T2_MONTHLY &&
+					feature !== FEATURE_BACKUP_ARCHIVE_UNLIMITED
 			),
 		] ),
+	getInferiorFeatures: () =>
+		( getPlanJetpackCompleteDetails().getInferiorFeatures?.() ?? [] ).filter(
+			( feature ) => feature !== FEATURE_BACKUP_ARCHIVE_30
+		),
 } );
 
 const getPlanJetpackGrowthDetails = (): IncompleteJetpackPlan => ( {
