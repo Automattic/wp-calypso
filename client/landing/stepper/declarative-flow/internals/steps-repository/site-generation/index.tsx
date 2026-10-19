@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useReducedMotion } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
@@ -48,10 +49,9 @@ const SiteGeneration: StepType = function SiteGeneration() {
 		steps,
 		completionDelayMs: previewReady && ! shouldReduceMotion ? 2600 : 0,
 	} );
-	const stream = useBuildWowStream( state.streamInfo ?? null );
-	// Keep the synthetic preview out of the initial render when the status
-	// response confirms a stream, even before the event subscription is ready.
-	const streamRequested = streamEvents || Boolean( state.streamInfo );
+	const streamingEnabled = config.isEnabled( 'site-spec/build-wow-streaming' );
+	const stream = useBuildWowStream( streamingEnabled ? ( state.streamInfo ?? null ) : null );
+	const streamRequested = streamingEnabled && ( streamEvents || Boolean( state.streamInfo ) );
 
 	const reload = () => {
 		window.location.reload();
