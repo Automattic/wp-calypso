@@ -87,7 +87,10 @@ export const DomainsTableRowActions = ( {
 	const canTransferToWPCOM =
 		domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer;
 	const canChangeSiteAddress =
-		! isAllSitesView && isSimpleSite && isFreeUrlDomainName( domain.name );
+		! isAllSitesView &&
+		isSimpleSite &&
+		! domain.isSuspendedSite &&
+		isFreeUrlDomainName( domain.name );
 	const canRenewDomain = isDomainRenewable( domain );
 	const handleMenuItemClick = ( event: React.MouseEvent ) => {
 		const url = ( event.target as HTMLElement ).parentElement?.getAttribute( 'href' );

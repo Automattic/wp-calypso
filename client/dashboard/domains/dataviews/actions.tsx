@@ -351,7 +351,10 @@ export const useActions = ( {
 				isEligible: ( item: DomainSummary ) => {
 					const site = sitesByBlogId[ item.blog_id ];
 					return (
-						!! site && ! site?.is_wpcom_atomic && item.subtype.id === DomainSubtype.DEFAULT_ADDRESS
+						!! site &&
+						! site?.is_wpcom_atomic &&
+						! item.is_suspended_site &&
+						item.subtype.id === DomainSubtype.DEFAULT_ADDRESS
 					);
 				},
 				RenderModal: ( { items, closeModal = noop } ) => {
