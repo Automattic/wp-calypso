@@ -13,7 +13,7 @@ import {
 	TestAccount,
 	envVariables,
 } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Notifications: General Interactions', { tag: [ tags.CALYPSO_PR ] }, () => {
 	const comment = DataHelper.getRandomPhrase() + ' notification-actions-spec';
@@ -96,6 +96,26 @@ test.describe( 'Notifications: General Interactions', { tag: [ tags.CALYPSO_PR ]
 			} );
 
 			await notificationsUser.authenticate( page );
+		} );
+
+		// The site uses the Classic interface, so logging in lands in wp-admin, whose
+		// notifications panel is the legacy widget. The panel under test is Calypso's.
+		await test.step( 'Open the Reader from the admin bar', async () => {
+			const readerLink = page.locator( '#wp-admin-bar-reader a' );
+			await expect( readerLink ).toHaveAttribute( 'href', /\/reader/ );
+			const href = ( await readerLink.getAttribute( 'href' ) ) as string;
+
+			// Reader onboarding opens over the stream, at any point while the Reader loads,
+			// until the account has dismissed it once.
+			const dismissOnboarding = page
+				.getByRole( 'dialog' )
+				.getByRole( 'button', { name: 'Do it later' } );
+			await page.addLocatorHandler( dismissOnboarding, () => dismissOnboarding.click() );
+
+			await page.goto( DataHelper.toCalypsoURL( href ) );
+
+			// The admin bar links the Reader to production; the build under test must serve it.
+			expect( new URL( page.url() ).origin ).toBe( new URL( DataHelper.getCalypsoURL() ).origin );
 		} );
 
 		await test.step( 'Open Notifications panel', async () => {
