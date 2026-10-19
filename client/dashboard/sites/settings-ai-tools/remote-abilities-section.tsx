@@ -102,10 +102,13 @@ export default function RemoteAbilitiesSection( {
 	site,
 	category,
 	search = '',
+	anchorTool = null,
 }: {
 	site: Site;
 	category: RemoteAbilityCategory;
 	search?: string;
+	/** Exact ability-name filter from a URL anchor; beats the fuzzy search. */
+	anchorTool?: string | null;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const tracksAudienceProps = useMcpTracksAudienceProps();
@@ -130,8 +133,18 @@ export default function RemoteAbilitiesSection( {
 		keys: [ 'label', 'description', 'name' ],
 		query,
 	} );
-	const namespaces = collectNamespaces( filteredAbilities, savedGroups, category );
-	if ( query ) {
+	const visibleAbilities = anchorTool
+		? ( abilities ?? [] ).filter( ( ability ) => ability.name === anchorTool )
+		: filteredAbilities;
+	const namespaces = collectNamespaces( visibleAbilities, savedGroups, category );
+	if ( anchorTool ) {
+		// An exact anchor shows just its own card; anything without the tool goes.
+		[ ...namespaces.keys() ].forEach( ( namespace ) => {
+			if ( ( namespaces.get( namespace ) as NamespaceGroup ).abilities.length === 0 ) {
+				namespaces.delete( namespace );
+			}
+		} );
+	} else if ( query ) {
 		// A saved-only card (no catalog abilities to match against) stays only
 		// when its own name matches the query.
 		[ ...namespaces.keys() ].forEach( ( namespace ) => {
@@ -221,7 +234,7 @@ export default function RemoteAbilitiesSection( {
 						toolAnchors={ group.abilities.map( ( ability ) => ability.name ) }
 						allEnabled={ namespaceEnabled }
 						disabled={ mutation.isPending }
-						forceOpen={ query.length > 0 }
+						forceOpen={ query.length > 0 || anchorTool !== null }
 						onEnableAll={ ( checked ) =>
 							saveGroups( intentKeys, checked, `${ category }:${ namespace }` )
 						}

@@ -41,6 +41,14 @@ function seed() {
 					description: 'List posts on your sites.',
 					group: 'content-authoring',
 				},
+				'wpcom-mcp/pages-list': {
+					enabled: false,
+					readonly: true,
+					visible: true,
+					title: 'List pages',
+					description: 'List pages on your sites.',
+					group: 'content-authoring',
+				},
 			},
 			groups: [
 				{
@@ -72,7 +80,7 @@ function mockPageSave() {
 			expect( body.mcp_abilities.sites ).toHaveLength( 1 );
 			expect( body.mcp_abilities.sites[ 0 ] ).toEqual( {
 				blog_id: JETPACK_SITE.ID,
-				abilities: { 'wpcom-mcp/posts-list': true },
+				abilities: { 'wpcom-mcp/posts-list': true, 'wpcom-mcp/pages-list': true },
 				remote_groups: { 'read:jetpack-forms': true },
 			} );
 			return true;
@@ -83,7 +91,7 @@ function mockPageSave() {
 					{
 						blog_id: JETPACK_SITE.ID,
 						site_level_enabled: true,
-						abilities: { 'wpcom-mcp/posts-list': true },
+						abilities: { 'wpcom-mcp/posts-list': true, 'wpcom-mcp/pages-list': true },
 						remote_groups: { 'read:jetpack-forms': true },
 					},
 				],
@@ -113,13 +121,14 @@ describe( '<SiteAIToolsRead>', () => {
 		expect( screen.queryByRole( 'heading', { name: 'Site' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'a tool anchor in the URL seeds the search with the tool label', () => {
+	test( 'a tool anchor in the URL loads just that setting', () => {
 		window.location.hash = '#wpcom-mcp/posts-list';
 		seed();
 		render( <SiteAIToolsRead />, { queryClient } );
 
 		expect( screen.getByRole( 'searchbox' ) ).toHaveValue( 'List posts' );
 		expect( screen.getByRole( 'checkbox', { name: 'List posts' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'checkbox', { name: 'List pages' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'the page-level Enable all saves every tool and remote group on the page', async () => {

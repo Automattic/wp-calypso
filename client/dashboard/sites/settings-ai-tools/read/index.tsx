@@ -98,6 +98,8 @@ export default function SiteAIToolsRead() {
 	// with the anchored tool's label so it lands visible and open.
 	const locationHash = ( useLocation().hash ?? '' ).replace( /^#/, '' );
 	const [ search, setSearch ] = useState( '' );
+	// A tool anchor filters to exactly that tool until the user edits the search.
+	const [ anchorTool, setAnchorTool ] = useState< string | null >( null );
 	const anchorSeeded = useRef( false );
 	const deferredSearch = useDeferredValue( search );
 	const query = deferredSearch.trim();
@@ -109,9 +111,9 @@ export default function SiteAIToolsRead() {
 		keys: [ 'tool.title', 'tool.description' ],
 		query,
 	} );
-	const filteredTools = filteredSearchable.map(
-		( { toolId, tool } ) => [ toolId, tool ] as [ string, McpAbility ]
-	);
+	const filteredTools = anchorTool
+		? allTools.filter( ( [ toolId ] ) => toolId === anchorTool )
+		: filteredSearchable.map( ( { toolId, tool } ) => [ toolId, tool ] as [ string, McpAbility ] );
 	const groups = groupToolsByGroup( filteredTools, groupDescriptors ) as ToolGroup[];
 
 	// Site-published abilities on this page, for the page-level toggle and its
@@ -152,6 +154,7 @@ export default function SiteAIToolsRead() {
 		const label = wpcomHit?.[ 1 ].title ?? remoteHit?.label;
 		if ( label ) {
 			setSearch( label );
+			setAnchorTool( locationHash );
 		}
 	}, [ search, locationHash, allTools, remoteNamespaces ] );
 
@@ -324,7 +327,10 @@ export default function SiteAIToolsRead() {
 				<SearchControl
 					value={ search }
 					placeholder={ __( 'Search tools' ) }
-					onChange={ ( value: string ) => setSearch( value ) }
+					onChange={ ( value: string ) => {
+						setSearch( value );
+						setAnchorTool( null );
+					} }
 					__nextHasNoMarginBottom
 				/>
 				{ groups.map( ( { group: descriptor, label, tools: groupTools } ) => {
@@ -347,7 +353,12 @@ export default function SiteAIToolsRead() {
 						</McpGroupCard>
 					);
 				} ) }
-				<RemoteAbilitiesSection site={ site } category={ TOOL_CATEGORY } search={ query } />
+				<RemoteAbilitiesSection
+					site={ site }
+					category={ TOOL_CATEGORY }
+					search={ query }
+					anchorTool={ anchorTool }
+				/>
 			</VStack>
 		</PageLayout>
 	);

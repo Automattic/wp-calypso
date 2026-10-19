@@ -337,6 +337,22 @@ describe( '<RemoteAbilitiesSection>', () => {
 		} );
 	} );
 
+	test( 'an exact anchor tool shows just that ability in just its card', () => {
+		seed( { abilities: catalog } );
+		render(
+			<RemoteAbilitiesSection
+				site={ JETPACK_SITE }
+				category="write"
+				anchorTool="jetpack-forms/delete-form"
+			/>,
+			{ queryClient }
+		);
+
+		expect( screen.getByRole( 'checkbox', { name: 'Delete form' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'checkbox', { name: 'Update form' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'heading', { name: 'Akismet' } ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'search filters abilities and opens matching cards without expanding', () => {
 		seed( { abilities: catalog } );
 		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" search="Delete" />, {
