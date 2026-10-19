@@ -63,10 +63,7 @@ export default function loadHelpCenter() {
 					hasPurchases={ false }
 					onboardingUrl="https://wordpress.com/start"
 					handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
-					product={
-						helpCenterData.product ??
-						( helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined )
-					}
+					product={ helpCenterData.product }
 					{ ...customProps }
 				/>
 			</QueryClientProvider>
