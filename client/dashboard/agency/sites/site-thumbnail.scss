@@ -1,0 +1,43 @@
+.agency-sites-list .dataviews-column-primary__media {
+	inline-size: 112px;
+	block-size: 63px;
+	min-inline-size: 112px;
+	min-block-size: 63px;
+	aspect-ratio: 16 / 9;
+}
+
+.agency-sites-list .dataviews-view-grid__media {
+	aspect-ratio: 16 / 9;
+}
+
+.agency-site-thumbnail {
+	inline-size: 112px;
+	block-size: 63px;
+	flex-shrink: 0;
+	overflow: hidden;
+	border-radius: 4px;
+	background: var( --color-surface-backdrop );
+}
+
+.agency-site-thumbnail[data-grid='true'] {
+	inline-size: 100%;
+	block-size: 100%;
+	aspect-ratio: 16 / 9;
+}
+
+.agency-site-thumbnail .dashboard-amplify-site-shot {
+	display: block;
+	inline-size: 100%;
+	block-size: 100%;
+	min-block-size: 0;
+}
+
+.agency-sites-list .agency-site-thumbnail .dashboard-amplify-site-shot img {
+	display: block;
+	inline-size: 100%;
+	block-size: auto;
+	max-block-size: none;
+	aspect-ratio: auto;
+	object-fit: contain;
+	object-position: center top;
+}

@@ -30,6 +30,7 @@ export function toAgencyField( field: Field< Site > ): Field< AgencySite > {
 	function HydratedCell( { item }: { item: AgencySite } ) {
 		const { data: site, isPending } = useQuery( {
 			...siteByIdQuery( item.blog_id ),
+			enabled: item.blog_id > 0,
 			staleTime: 5 * 60 * 1000,
 		} );
 		// The wrapper stays mounted across the swap below: page translators
@@ -40,7 +41,7 @@ export function toAgencyField( field: Field< Site > ): Field< AgencySite > {
 				{ site ? (
 					<SiteFieldRender item={ site } field={ delegateField } />
 				) : (
-					<PlaceholderCell isPending={ isPending } />
+					<PlaceholderCell isPending={ item.blog_id > 0 && isPending } />
 				) }
 			</span>
 		);

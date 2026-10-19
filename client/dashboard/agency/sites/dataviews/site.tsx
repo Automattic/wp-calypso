@@ -1,30 +1,31 @@
 import { Link } from '@tanstack/react-router';
 import { ExternalLink, __experimentalHStack as HStack } from '@wordpress/components';
-import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { titleFieldTextOverflowStyles } from '../../../sites/site-fields';
-import SitePreview from '../../../sites/site-preview';
 import { getSiteVisibility, getVisibilityLabels } from '../../../utils/site-visibility';
-import AgencySiteIcon from '../site-icon';
+import SiteScreenshot from '../../amplify/site-screenshot';
+import '../site-thumbnail.scss';
 import { getDisplayUrl, getSiteName, getSiteUrl } from './site-data';
 import type { AgencySite, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export function getSiteIconField( viewType?: string ): Field< AgencySite > {
-	const isGrid = viewType === 'grid';
 	return {
 		id: 'site_icon',
-		label: __( 'Site icon' ),
+		label: __( 'Site preview' ),
 		enableSorting: false,
-		render: ( { item } ) =>
-			isGrid ? (
-				<HStack alignment="center" justify="center" style={ { width: '100%', height: '100%' } }>
-					<AgencySiteIcon site={ item } size={ 64 } />
-				</HStack>
-			) : (
-				<AgencySiteIcon site={ item } size={ 48 } />
-			),
+		render: ( { item } ) => (
+			<div className="agency-site-thumbnail" data-grid={ viewType === 'grid' }>
+				<SiteScreenshot
+					key={ getSiteUrl( item ) }
+					url={ getSiteUrl( item ) }
+					alt=""
+					compact
+					decorative
+				/>
+			</div>
+		),
 	};
 }
 
@@ -78,35 +79,15 @@ export function getSiteUrlField(): Field< AgencySite > {
 	};
 }
 
-function Preview( { site }: { site: AgencySite } ) {
-	const [ resizeListener, { width } ] = useResizeObserver();
-	return (
-		<div
-			style={ {
-				display: 'block',
-				height: '100%',
-				width: '100%',
-				borderRadius: 'inherit',
-				overflow: 'hidden',
-			} }
-		>
-			{ resizeListener }
-			{ width && (
-				<SitePreview
-					url={ getSiteUrl( site ).replace( /\/$/, '' ) }
-					scale={ width / 1200 }
-					height={ 1200 }
-				/>
-			) }
-		</div>
-	);
-}
-
 export function getPreviewField(): Field< AgencySite > {
 	return {
 		id: 'preview',
 		label: __( 'Preview' ),
-		render: ( { item } ) => <Preview site={ item } />,
+		render: ( { item } ) => (
+			<div className="agency-site-thumbnail" data-grid="true">
+				<SiteScreenshot key={ getSiteUrl( item ) } url={ getSiteUrl( item ) } alt="" decorative />
+			</div>
+		),
 		enableHiding: false,
 		enableSorting: false,
 	};

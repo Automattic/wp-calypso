@@ -10,4 +10,5 @@ export type ConnectSiteAction = Extract<
 
 export interface AddNewSiteProps {
 	onSelectAction: ( action: AddNewSiteAction ) => void;
+	preview?: { availableDevSites: number };
 }

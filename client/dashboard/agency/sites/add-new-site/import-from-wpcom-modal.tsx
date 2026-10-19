@@ -93,13 +93,14 @@ function getImportNotice( importedCount: number, failedCount: number ): string {
 
 interface ImportFromWPCOMModalProps {
 	onClose: () => void;
+	preview?: { sites: Site[]; onImport: ( ids: number[] ) => void };
 }
 
 /**
  * Brings sites the user already owns on WordPress.com, or has connected with
  * Jetpack or the A4A plugin, under the agency's management.
  */
-export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalProps ) {
+export default function ImportFromWPCOMModal( { onClose, preview }: ImportFromWPCOMModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { queries } = useAppContext();
 	const queryClient = useQueryClient();
@@ -119,14 +120,17 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 		data: sites,
 		isLoading: isLoadingSites,
 		isError: isSitesError,
-	} = useQuery( queries.sitesQuery( { site_visibility: 'all', include_a8c_owned: false } ) );
+	} = useQuery( {
+		...queries.sitesQuery( { site_visibility: 'all', include_a8c_owned: false } ),
+		enabled: ! preview,
+	} );
 	const {
 		data: managedSiteIds,
 		isLoading: isLoadingManagedSites,
 		isError: isManagedSitesError,
 	} = useQuery( {
 		...agencyManagedSiteIdsQuery( agencyId ),
-		enabled: !! agencyId,
+		enabled: !! agencyId && ! preview,
 	} );
 
 	const [ selection, setSelection ] = useState< string[] >( [] );
@@ -171,16 +175,19 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 		[ locale ]
 	);
 
-	const isLoading = isLoadingSites || isLoadingAgency || ( !! agencyId && isLoadingManagedSites );
+	const isLoading =
+		! preview && ( isLoadingSites || isLoadingAgency || ( !! agencyId && isLoadingManagedSites ) );
 
 	// Without the agency there is nothing to import into, and without the
 	// managed list a site the agency already has would show up as importable.
 	// Offer nothing rather than something wrong.
-	const hasLoadError = isAgencyError || isSitesError || isManagedSitesError;
+	const hasLoadError = ! preview && ( isAgencyError || isSitesError || isManagedSitesError );
 
 	const importableSites = useMemo(
-		() => ( isLoading || hasLoadError ? [] : getImportableSites( sites, managedSiteIds ) ),
-		[ isLoading, hasLoadError, sites, managedSiteIds ]
+		() =>
+			preview?.sites ??
+			( isLoading || hasLoadError ? [] : getImportableSites( sites, managedSiteIds ) ),
+		[ preview?.sites, isLoading, hasLoadError, sites, managedSiteIds ]
 	);
 
 	const { data: shownSites, paginationInfo } = useMemo(
@@ -190,6 +197,12 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 
 	const handleAddSites = () => {
 		const blogIds = selection.map( Number );
+		if ( preview ) {
+			preview.onImport( blogIds );
+			createSuccessNotice( getImportNotice( blogIds.length, 0 ), { type: 'snackbar' } );
+			onClose();
+			return;
+		}
 
 		recordTracksEvent( 'calypso_dashboard_agency_sites_import_wpcom_sites_click', {
 			site_count: blogIds.length,

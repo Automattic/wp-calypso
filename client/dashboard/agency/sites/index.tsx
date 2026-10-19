@@ -5,7 +5,7 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { Button, Modal } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
 import { useCallback, useState } from 'react';
@@ -22,13 +22,15 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../compo
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
+import DesignPreviewControls, { useDesignPreview } from '../design-preview';
+import useSiteSimulation from '../design-preview/use-site-simulation';
 import { DevSiteConfigurationModal } from '../marketplace/purchases/site-configuration-modal';
-import AddNewSite from './add-new-site';
 import ConnectSiteModal from './add-new-site/connect-site-modal';
 import ImportFromWPCOMModal from './add-new-site/import-from-wpcom-modal';
 import { useAgencyFields, useAgencyActions } from './dataviews';
 import { hasWpcomLicenseWithoutSite } from './lib';
 import ProvisioningSiteNotices from './provisioning-notice';
+import SiteWizard from './site-wizard';
 import type { AddNewSiteAction } from './add-new-site/types';
 import type { AgencySite, FetchAgencySitesOptions } from '@automattic/api-core';
 import type { SupportedLayouts, View } from '@wordpress/dataviews';
@@ -111,10 +113,22 @@ function NeedsSetupDescription( { count }: { count: number } ) {
 }
 
 export default function AgencySites() {
+	const preview = useDesignPreview();
+	// A persona switch closes any open flow before its handlers can change from
+	// simulated actions to live account mutations (or vice versa).
+	return <AgencySitesContent key={ preview.sitesRevision } />;
+}
+
+function AgencySitesContent() {
 	const { recordTracksEvent } = useAnalytics();
-	const licensesReadyToSetUp = useLicensesReadyToSetUp();
+	const preview = useDesignPreview();
+	const simulation = useSiteSimulation();
+	const liveLicensesReadyToSetUp = useLicensesReadyToSetUp();
+	const licensesReadyToSetUp = preview.sitesActive ? 0 : liveLicensesReadyToSetUp;
 	const currentSearchParams = agencySitesRoute.useSearch();
-	const [ activeModal, setActiveModal ] = useState< 'menu' | AddNewSiteAction | null >( null );
+	const [ activeModal, setActiveModal ] = useState< AddNewSiteAction | null >( null );
+	const [ wizardOpen, setWizardOpen ] = useState( false );
+	const [ wizardRevision, setWizardRevision ] = useState( 0 );
 
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const capabilities = agency?.user?.capabilities ?? [];
@@ -131,13 +145,34 @@ export default function AgencySites() {
 		sanitizeFields: removeLegacyFields,
 	} );
 
-	const { data, isLoading, isPlaceholderData } = useQuery( {
+	const {
+		data,
+		isLoading: liveLoading,
+		isPlaceholderData,
+	} = useQuery( {
 		...paginatedAgencySitesQuery( toAgencyFetchOptions( view ) ),
 		placeholderData: keepPreviousData,
 	} );
 
-	const sites = data?.sites ?? [];
-	const totalItems = data?.total ?? 0;
+	const isLoading = preview.sitesActive ? preview.sites === 'loading' : liveLoading;
+	const filteredSamples = preview.siteRows
+		.filter( ( site ) =>
+			`${ site.blogname } ${ site.url }`
+				.toLowerCase()
+				.includes( ( view.search ?? '' ).toLowerCase() )
+		)
+		.sort(
+			( a, b ) => ( view.sort?.direction === 'desc' ? -1 : 1 ) * a.url.localeCompare( b.url )
+		);
+	const sites = preview.sitesActive
+		? filteredSamples.slice(
+				( ( view.page ?? 1 ) - 1 ) * ( view.perPage ?? 50 ),
+				( view.page ?? 1 ) * ( view.perPage ?? 50 )
+			)
+		: ( data?.sites ?? [] );
+	const totalItems = preview.sitesActive ? filteredSamples.length : ( data?.total ?? 0 );
+	const showEmptyState = ! isLoading && totalItems === 0 && ! view.search && ! view.filters?.length;
+	const showWizard = showEmptyState || wizardOpen;
 
 	const handleSiteClick = useCallback(
 		( site: AgencySite ) =>
@@ -153,6 +188,10 @@ export default function AgencySites() {
 	};
 
 	const closeModal = () => setActiveModal( null );
+	const closeWizard = () => {
+		setWizardOpen( false );
+		setWizardRevision( ( revision ) => revision + 1 );
+	};
 
 	const paginationInfo = {
 		totalItems,
@@ -162,71 +201,97 @@ export default function AgencySites() {
 	return (
 		<PageLayout
 			header={
-				<PageHeader
-					title={ __( 'Sites' ) }
-					description={
-						licensesReadyToSetUp > 0 ? (
-							<NeedsSetupDescription count={ licensesReadyToSetUp } />
-						) : undefined
-					}
-					actions={
-						<Button
-							variant="primary"
-							onClick={ () => {
-								recordTracksEvent( 'calypso_dashboard_agency_sites_add_new_site_clicked' );
-								setActiveModal( 'menu' );
-							} }
-							__next40pxDefaultSize
-						>
-							{ __( 'Add new site' ) }
-						</Button>
-					}
-				/>
+				! showWizard && (
+					<PageHeader
+						title={ __( 'Sites' ) }
+						description={
+							licensesReadyToSetUp > 0 ? (
+								<NeedsSetupDescription count={ licensesReadyToSetUp } />
+							) : undefined
+						}
+						actions={
+							! showWizard && (
+								<Button
+									variant="primary"
+									onClick={ () => {
+										recordTracksEvent( 'calypso_dashboard_agency_sites_add_new_site_clicked' );
+										setWizardOpen( true );
+									} }
+									__next40pxDefaultSize
+								>
+									{ __( 'Add new site' ) }
+								</Button>
+							)
+						}
+					/>
+				)
 			}
-			notices={ <ProvisioningSiteNotices /> }
+			notices={ <>{ ! preview.sitesActive && <ProvisioningSiteNotices /> }</> }
 		>
-			{ activeModal === 'menu' && (
-				<Modal title={ __( 'Add new site' ) } onRequestClose={ closeModal }>
-					<AddNewSite onSelectAction={ setActiveModal } />
-				</Modal>
-			) }
+			<DesignPreviewControls surface="sites" />
 			{ activeModal === 'dev-site-configurations' && (
-				<DevSiteConfigurationModal closeModal={ closeModal } />
+				<DevSiteConfigurationModal closeModal={ closeModal } preview={ simulation?.development } />
 			) }
 			{ ( activeModal === 'a4a-connection' || activeModal === 'jetpack-connection' ) && (
-				<ConnectSiteModal action={ activeModal } onClose={ closeModal } />
-			) }
-			{ activeModal === 'import-from-wpcom' && <ImportFromWPCOMModal onClose={ closeModal } /> }
-			{ ! isLoading && <PerformanceTrackerStop /> }
-			<DataViewsCard>
-				<DataViews< AgencySite >
-					getItemId={ ( item ) => item.blog_id.toString() }
-					data={ sites }
-					fields={ fields }
-					actions={ actions }
-					view={ view }
-					isLoading={ isLoading }
-					isPlaceholderData={ isPlaceholderData }
-					onChangeView={ handleViewChange }
-					onReset={ resetView }
-					defaultLayouts={ AGENCY_LAYOUTS }
-					paginationInfo={ paginationInfo }
-					config={ DEFAULT_CONFIG }
-					empty={
-						view.search ? (
-							<DataViewsEmptyStateLayout
-								title={ __( 'No sites match your search' ) }
-								description={ __( 'Try a different search term.' ) }
-							/>
-						) : (
-							<DataViewsEmptyStateLayout
-								title={ __( 'No sites' ) }
-								description={ __( 'No agency-managed sites were found.' ) }
-							/>
-						)
-					}
+				<ConnectSiteModal
+					action={ activeModal }
+					onClose={ closeModal }
+					onPreviewConnect={ simulation?.onConnect }
 				/>
-			</DataViewsCard>
+			) }
+			{ activeModal === 'import-from-wpcom' && (
+				<ImportFromWPCOMModal onClose={ closeModal } preview={ simulation?.import } />
+			) }
+			{ ! isLoading && <PerformanceTrackerStop /> }
+			{ showWizard ? (
+				<SiteWizard
+					key={ wizardRevision }
+					isFirstSite={ showEmptyState }
+					simulation={ simulation }
+					onStart={ () => setWizardOpen( true ) }
+					onClose={ closeWizard }
+					onSelectAction={ setActiveModal }
+				/>
+			) : (
+				<div
+					onClickCapture={ ( event ) => {
+						if ( preview.sitesActive && ( event.target as HTMLElement ).closest( 'a' ) ) {
+							event.preventDefault();
+							event.stopPropagation();
+						}
+					} }
+				>
+					<DataViewsCard className="agency-sites-list">
+						<DataViews< AgencySite >
+							getItemId={ ( item ) => item.blog_id.toString() }
+							data={ sites }
+							fields={ fields }
+							actions={ preview.sitesActive ? [] : actions }
+							view={ view }
+							isLoading={ isLoading }
+							isPlaceholderData={ ! preview.sitesActive && isPlaceholderData }
+							onChangeView={ handleViewChange }
+							onReset={ resetView }
+							defaultLayouts={ AGENCY_LAYOUTS }
+							paginationInfo={ paginationInfo }
+							config={ DEFAULT_CONFIG }
+							empty={
+								view.search ? (
+									<DataViewsEmptyStateLayout
+										title={ __( 'No sites match your search' ) }
+										description={ __( 'Try a different search term.' ) }
+									/>
+								) : (
+									<DataViewsEmptyStateLayout
+										title={ __( 'No sites' ) }
+										description={ __( 'No agency-managed sites were found.' ) }
+									/>
+								)
+							}
+						/>
+					</DataViewsCard>
+				</div>
+			) }
 		</PageLayout>
 	);
 }

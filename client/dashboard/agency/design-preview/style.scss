@@ -1,0 +1,18 @@
+.agency-design-preview-panel .components-input-control__backdrop {
+	background: var( --color-neutral-90 );
+	border-color: var( --color-neutral-50 );
+}
+.agency-design-preview-panel .components-select-control__input {
+	color: var( --color-neutral-0 );
+}
+.agency-design-preview-panel details {
+	margin-block-start: 12px;
+}
+.agency-design-preview-panel summary {
+	cursor: pointer;
+	margin-block-end: 8px;
+}
+.dashboard-amplify-dev-controls__show {
+	width: auto;
+	cursor: pointer;
+}

@@ -30,12 +30,6 @@ const FAQS = [
 		),
 	},
 	{
-		question: __( 'What can I do with the prompts?' ),
-		answer: __(
-			'Findings include prompts you can bring to an AI agent to explore or implement a fix. Review the result against the site and your client’s goals before making a change.'
-		),
-	},
-	{
 		question: __( 'Can I share a report with a client?' ),
 		answer: __(
 			'Yes. Download the completed report as a PDF to bring to a pitch or share during a client check-in.'
@@ -96,18 +90,30 @@ function CategoriesGraphic() {
 	);
 }
 
-function PromptGraphic() {
+function EvidenceGraphic() {
 	return (
-		<div className="dashboard-amplify-story__prompt" aria-hidden="true">
-			<p>
-				{ __(
-					'Rewrite the homepage headline so it clearly names who this business serves and the outcome it delivers.'
-				) }
-				<span className="dashboard-amplify-story__prompt-caret" />
-			</p>
-			<div className="dashboard-amplify-story__prompt-actions">
-				<span>+</span>
-				<span className="dashboard-amplify-story__prompt-send">↑</span>
+		<div className="dashboard-amplify-story__evidence" aria-hidden="true">
+			<div className="dashboard-amplify-story__evidence-page">
+				<i className="dashboard-amplify-story__evidence-nav" />
+				<i className="dashboard-amplify-story__evidence-heading" />
+				<i className="dashboard-amplify-story__evidence-copy" />
+				<i className="dashboard-amplify-story__evidence-button" />
+				<span className="dashboard-amplify-story__evidence-marker dashboard-amplify-story__evidence-marker--one">
+					1
+				</span>
+				<span className="dashboard-amplify-story__evidence-marker dashboard-amplify-story__evidence-marker--two">
+					2
+				</span>
+			</div>
+			<div className="dashboard-amplify-story__evidence-notes">
+				<p>
+					<strong>1</strong>
+					<span>{ __( 'Make the primary action clearer.' ) }</span>
+				</p>
+				<p>
+					<strong>2</strong>
+					<span>{ __( 'Add recognizable proof.' ) }</span>
+				</p>
 			</div>
 		</div>
 	);
@@ -297,17 +303,20 @@ export default function AmplifyOverviewStory() {
 				</div>
 			</section>
 
-			<section className="dashboard-amplify-story__section" aria-labelledby="amplify-prompts-title">
+			<section
+				className="dashboard-amplify-story__section"
+				aria-labelledby="amplify-evidence-title"
+			>
 				<div className="dashboard-amplify-story__graphic">
-					<PromptGraphic />
+					<EvidenceGraphic />
 				</div>
 				<div className="dashboard-amplify-story__copy">
-					<Heading id="amplify-prompts-title" level={ 2 }>
-						{ __( 'Bring a concrete next step to the pitch' ) }
+					<Heading id="amplify-evidence-title" level={ 2 }>
+						{ __( 'Show what the report saw' ) }
 					</Heading>
 					<p>
 						{ __(
-							'Each finding explains what needs attention and includes a prompt you can take to an AI agent. Use it to explore a fix, then apply your own judgment before sharing or publishing the result.'
+							'Reports include the homepage views used during analysis. Numbered markers connect visible opportunities to clear notes and a prioritized action plan, so clients can see what needs attention and why.'
 						) }
 					</p>
 				</div>

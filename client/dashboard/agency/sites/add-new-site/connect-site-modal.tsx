@@ -47,6 +47,7 @@ function getConnection( action: ConnectSiteAction ): Connection {
 interface ConnectSiteModalProps {
 	action: ConnectSiteAction;
 	onClose: () => void;
+	onPreviewConnect?: ( site: string ) => void;
 }
 
 /**
@@ -54,7 +55,11 @@ interface ConnectSiteModalProps {
  * or to Jetpack connect, in a new tab. Nothing is connected from here; the site
  * shows up in the dashboard once the remote install completes.
  */
-export default function ConnectSiteModal( { action, onClose }: ConnectSiteModalProps ) {
+export default function ConnectSiteModal( {
+	action,
+	onClose,
+	onPreviewConnect,
+}: ConnectSiteModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const [ site, setSite ] = useState( '' );
 	const submitRef = useRef< HTMLAnchorElement >( null );
@@ -70,7 +75,13 @@ export default function ConnectSiteModal( { action, onClose }: ConnectSiteModalP
 		submitRef.current?.click();
 	};
 
-	const onOpenInstaller = () => {
+	const onOpenInstaller = ( event: React.MouseEvent ) => {
+		if ( onPreviewConnect ) {
+			event.preventDefault();
+			onPreviewConnect( site );
+			onClose();
+			return;
+		}
 		recordTracksEvent( trackEventName, { site: site.trim() } );
 		onClose();
 	};
