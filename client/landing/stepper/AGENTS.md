@@ -269,11 +269,11 @@ Auto-injected by `stepsWithRequiredLogin()` — it is **not** in the flow's `ini
 so its props are passed under a reserved `user` key of `useStepsProps()` (the return type is
 widened via `MapStepsToTheirAcceptedProps<[ typeof PRIVATE_STEPS.USER ]>`).
 
-| Prop                           | Type       | What it does                                                   |
-| ------------------------------ | ---------- | -------------------------------------------------------------- |
-| `headerText` / `subHeaderText` | `string`   | Override the "Create your account" heading / add a sub-heading |
-| `hideLoginLink`                | `boolean`  | Hide the top-level "Log in" link (V2 top bar / V1 footer)      |
-| `allowedSocialServices`        | `string[]` | Restrict which social sign-in providers are offered            |
+| Prop                           | Type       | What it does                                                    |
+| ------------------------------ | ---------- | --------------------------------------------------------------- |
+| `headerText` / `subHeaderText` | `string`   | Override the "Create your account" heading / add a sub-heading  |
+| `hideLoginLink`                | `boolean`  | Hide the "Log in" link (V2 top bar or in-form line / V1 footer) |
+| `allowedSocialServices`        | `string[]` | Restrict which social sign-in providers are offered             |
 
 ```ts
 const myFlow: FlowV2< typeof initialize > = {

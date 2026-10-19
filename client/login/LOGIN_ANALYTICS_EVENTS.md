@@ -83,7 +83,7 @@ This document outlines all the analytics events tracked during the login process
 
 - `origin` (string): Which link was clicked
   - `login-footer`: "Don't have an account? Sign up" below the buttons on the main login view, 960px and up
-  - `login-layout`: "Create an account" in the top bar, below 960px on the main login view and at every width on the 2FA, magic login, QR login and OAuth2 authorize views
+  - `login-layout`: "Create an account" in the top bar, below 960px on the main login view and at every width on the "Continue as" screen and the 2FA, magic login, QR login and OAuth2 authorize views
   - `login-notice`: the notice shown when signup finds an existing account
 
 Before the footer line existed, desktop clicks on the main login view reported `login-layout`.

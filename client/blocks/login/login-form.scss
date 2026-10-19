@@ -32,8 +32,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 	margin-bottom: 8px;
 }
 
-// Desktop only: below 960px the footer carries the lost-password link. Hardcoded fallback
-// rather than a `--wpds-*` token, for the reason given on the badge above.
+// Desktop only: below 960px the footer carries the lost-password link.
 .login__form-password-label-row {
 	display: flex;
 	align-items: baseline;
@@ -47,12 +46,12 @@ $breakpoint-mobile: 782px; //Mobile size.
 	display: none;
 	font-size: 0.75rem;
 	line-height: 16px;
-	color: var(--color-link, #3858e9);
+	color: var(--color-link);
 	text-decoration: underline;
 
 	&:hover,
 	&:focus {
-		color: var(--color-link-dark, #1d35b4);
+		color: var(--color-link-dark);
 	}
 
 	@include break-large {

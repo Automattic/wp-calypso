@@ -216,7 +216,7 @@ describe( 'LoginForm', () => {
 			initialState: { login: { authAccountType: 'regular' } },
 		} );
 
-		expect( screen.getByLabelText( /^password$/i ) ).toBeInTheDocument();
+		expect( screen.getByLabelText( /^password$/i ) ).toBeVisible();
 		expect( container.getElementsByClassName( 'login__form-password-label-row' ) ).toHaveLength(
 			0
 		);

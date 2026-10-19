@@ -115,8 +115,8 @@ describe( 'SignupFormSocialFirst', () => {
 			render( <SignupFormSocialFirst { ...defaultProps } /> );
 
 			const emailButton = screen.getByText( /Continue with email/i ).closest( 'button' );
-			expect( emailButton ).toBeInTheDocument();
-			expect( emailButton?.querySelector( '.social-icons__envelope' ) ).toBeInTheDocument();
+			expect( emailButton ).toBeVisible();
+			expect( emailButton?.querySelector( '.social-icons__envelope' ) ).toBeVisible();
 			// The logo renders with the bare `social-icons` class, so count the icons to catch a
 			// regression that leaves both in the button.
 			expect( emailButton?.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
@@ -141,7 +141,7 @@ describe( 'SignupFormSocialFirst', () => {
 			const { container } = render( <SignupFormSocialFirst { ...defaultProps } showLoginLink /> );
 
 			const loginLink = container.querySelector( loginLinkSelector );
-			expect( loginLink ).toBeInTheDocument();
+			expect( loginLink ).toBeVisible();
 			expect( within( loginLink as HTMLElement ).getByRole( 'link' ) ).toHaveAttribute(
 				'href',
 				'/log-in'
@@ -154,9 +154,9 @@ describe( 'SignupFormSocialFirst', () => {
 			await userEvent.click( screen.getByRole( 'button', { name: /Continue with email/i } ) );
 
 			const visibleScreen = container.querySelector( '.signup-form-social-first-screen.visible' );
-			expect( visibleScreen?.querySelector( 'input[type="email"]' ) ).toBeInTheDocument();
+			expect( visibleScreen?.querySelector( 'input[type="email"]' ) ).toBeVisible();
 			const loginLink = container.querySelector( loginLinkSelector );
-			expect( loginLink ).toBeInTheDocument();
+			expect( loginLink ).toBeVisible();
 			expect( loginLink?.closest( '.signup-form-social-first-screen' ) ).toBeNull();
 		} );
 
@@ -171,7 +171,7 @@ describe( 'SignupFormSocialFirst', () => {
 				<SignupFormSocialFirst { ...defaultProps } isEmailFirstVariant />
 			);
 
-			expect( container.querySelector( loginLinkSelector ) ).toBeInTheDocument();
+			expect( container.querySelector( loginLinkSelector ) ).toBeVisible();
 		} );
 
 		test( 'renders one paragraph, not two, when both conditions hold', () => {

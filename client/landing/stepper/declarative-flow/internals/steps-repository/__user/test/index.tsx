@@ -216,12 +216,12 @@ describe( 'User email signup step', () => {
 		it( 'answers "Have an account?" below the buttons rather than in the top bar', () => {
 			const { container } = renderUserStep();
 
-			expect( container.querySelector( loginLinkSelector ) ).toBeInTheDocument();
+			expect( container.querySelector( loginLinkSelector ) ).toBeVisible();
 			// One route to logging in, not two: the top bar no longer carries its own.
 			expect( screen.getAllByRole( 'link', { name: 'Log in' } ) ).toHaveLength( 1 );
 			expect(
 				screen.getByRole( 'link', { name: 'Log in' } ).closest( loginLinkSelector )
-			).toBeInTheDocument();
+			).toBeVisible();
 		} );
 
 		it( 'leaves the compact mobile layout on its top-bar link', () => {

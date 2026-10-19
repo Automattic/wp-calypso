@@ -10,8 +10,8 @@ import './one-login-footer.scss';
 
 interface OneLoginFooterProps {
 	/**
-	 * When `isLoginView` is true, the "lost password" link. Shown below 960px only; desktop puts
-	 * it beside the password field.
+	 * When `isLoginView` is true, the "lost password" link. See `lostPasswordLinkMobileOnly`
+	 * for when it is hidden on desktop.
 	 */
 	lostPasswordLink?: JSX.Element;
 	/**

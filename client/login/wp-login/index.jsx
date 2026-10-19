@@ -186,7 +186,7 @@ export class Login extends Component {
 	};
 
 	/**
-	 * Where "Lost your password?" goes, shared by its footer and top-bar copies.
+	 * Where "Lost your password?" goes, shared by its footer and password label row copies.
 	 *
 	 * Jetpack, Woo and OAuth2 sign-ins stay on the Calypso screen: it carries the
 	 * passwordless magic-link branch and the client context, and wp-login.php has neither.
