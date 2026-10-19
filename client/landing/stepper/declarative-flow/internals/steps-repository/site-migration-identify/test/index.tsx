@@ -410,7 +410,14 @@ describe( 'SiteMigrationIdentify', () => {
 			render( { navigation: { submit } } );
 
 			await checkSite( url );
-			// Move the clock up to just short of the hold in small steps, with real ticks for the answers to land.
+			// Let both answers arrive without moving the clock, however long the machine takes.
+			while ( ! ( analysis.isDone() && host.isDone() ) ) {
+				await act( async () => {
+					jest.advanceTimersByTime( 0 );
+					await realTick();
+				} );
+			}
+			// Then move the clock up to just short of the hold in small steps, with real ticks for the answers to land.
 			for ( let elapsed = 0; elapsed < 1400; elapsed += 50 ) {
 				await act( async () => {
 					jest.advanceTimersByTime( 50 );
@@ -420,7 +427,6 @@ describe( 'SiteMigrationIdentify', () => {
 				} );
 			}
 
-			expect( analysis.isDone() && host.isDone() ).toBe( true );
 			expect( screen.getByRole( 'heading', { name: 'Checking your site' } ) ).toBeVisible();
 			expect( submit ).not.toHaveBeenCalled();
 
