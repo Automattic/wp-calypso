@@ -168,13 +168,13 @@ if ( toPHPCBF.length ) {
 	}
 }
 
-// Now run the linters over everything staged to commit (excepting JSON), even if they are partially staged
+// Now run the linters over everything staged to commit (excepting JSON and Markdown), even if they are partially staged
 const {
 	toEslint = [],
 	toStylelint = [],
 	toPHPCS = [],
 } = groupBy(
-	files.filter( ( file ) => ! file.endsWith( '.json' ) ),
+	files.filter( ( file ) => ! file.endsWith( '.json' ) && ! file.endsWith( '.md' ) ),
 	( file ) => {
 		switch ( true ) {
 			case file.endsWith( '.scss' ):
