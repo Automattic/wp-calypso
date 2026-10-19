@@ -31,15 +31,15 @@ yarn add --dev eslint-plugin-react eslint-plugin-react-hooks
 
 ### Recommended rules
 
-In `eslint.config.js`, apply `recommended` (or, for React projects, `react`) to your JavaScript files, using `files` and `extends` as shown below. Always set `files`: the presets don't pick files themselves, so without it they would also run on JSON or Markdown files.
+In `eslint.config.mjs`, apply `recommended` (or, for React projects, `react`) to your JavaScript files, using `files` and `extends` as shown below. Always set `files`: the presets don't pick files themselves, so without it they would also run on JSON or Markdown files.
 
 The presets use ESLint's own parser, with JSX enabled. If your code has Flow, TypeScript or proposal syntax, set `languageOptions.parser` in a config entry after them, for example to `@typescript-eslint/parser`, or to `@babel/eslint-parser` 8 with `@babel/core` 8 (version 7 doesn't run on ESLint 10). They register a wrapped `eslint-plugin-inclusive-language`, so don't register that plugin yourself.
 
 ```js
-const { defineConfig } = require( 'eslint/config' );
-const wpcalypso = require( 'eslint-plugin-wpcalypso' );
+import { defineConfig } from 'eslint/config';
+import wpcalypso from 'eslint-plugin-wpcalypso';
 
-module.exports = defineConfig( [
+export default defineConfig( [
 	{
 		files: [ '**/*.{js,jsx}' ],
 		extends: [ wpcalypso.configs.react ], // or wpcalypso.configs.recommended
@@ -60,13 +60,14 @@ Either preset will:
 If you are not interested in the recommended set of rules but only in some of the custom rules, register the plugin and enable them individually:
 
 ```js
-const { defineConfig } = require( 'eslint/config' );
-const wpcalypso = require( 'eslint-plugin-wpcalypso' );
+import { defineConfig } from 'eslint/config';
+import wpcalypso from 'eslint-plugin-wpcalypso';
 
-module.exports = defineConfig( [
+export default defineConfig( [
 	{
 		files: [ '**/*.{js,jsx}' ],
 		plugins: { wpcalypso },
+		languageOptions: { parserOptions: { ecmaFeatures: { jsx: true } } },
 		rules: {
 			'wpcalypso/rule-name': 'error',
 		},

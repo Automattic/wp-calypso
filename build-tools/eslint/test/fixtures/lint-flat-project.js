@@ -27,7 +27,7 @@ const files = {
 };
 
 const config = defineConfig( [
-	{ files: [ '**/*.{js,jsx}' ], extends: [ wpcalypso.configs.react ] },
+	{ files: [ '**/*.{js,jsx,cjs}' ], extends: [ wpcalypso.configs.react ] },
 	{ files: [ '**/*.json' ], extends: [ json.configs[ 'flat/recommended' ] ] },
 	{ ...flatNodeConfig, files: [ 'bin/**' ] },
 	// Projects often add the React plugin's own config; the preset must register the same plugin.
