@@ -88,6 +88,9 @@ describe( 'WordPressMigration', () => {
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
 		expect( screen.getByText( 'migrating from example.com' ) ).toBeVisible();
+		expect(
+			screen.getAllByRole( 'progressbar' ).map( ( bar ) => bar.getAttribute( 'aria-label' ) )
+		).toEqual( [ 'Verifying', 'Copying', 'Finishing' ] );
 		expect( configure.isDone() ).toBe( true );
 		expect( run.isDone() ).toBe( true );
 	} );
