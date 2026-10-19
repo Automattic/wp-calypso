@@ -87,14 +87,14 @@ const ThreadItem = ( {
 
 export default function Thread( {
 	repliedTo,
-	isRepliedToClamped = false,
+	truncate = false,
 	commenter,
 	meta,
 	status,
 	children,
 }: {
 	repliedTo?: NoteParentComment;
-	isRepliedToClamped?: boolean;
+	truncate?: boolean;
 	commenter?: NoteActor;
 	meta?: ReactNode;
 	status?: ReactNode;
@@ -117,7 +117,7 @@ export default function Thread( {
 				>
 					<div
 						className={ clsx( 'wpnc-simplified__parent-text', {
-							'is-clamped': isRepliedToClamped,
+							'is-truncated': truncate,
 						} ) }
 					>
 						{ repliedTo.text }

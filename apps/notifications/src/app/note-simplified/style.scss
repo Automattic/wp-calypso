@@ -82,7 +82,7 @@
 .wpnc-simplified__parent-text {
 	white-space: pre-line;
 
-	&.is-clamped {
+	&.is-truncated {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;

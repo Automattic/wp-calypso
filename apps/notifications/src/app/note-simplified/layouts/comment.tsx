@@ -15,7 +15,7 @@ export default function CommentNote( { note }: { note: Note } ) {
 			{ post && <PostCard post={ post } site={ site } /> }
 			<Thread
 				repliedTo={ repliedTo }
-				isRepliedToClamped
+				truncate
 				commenter={ actor }
 				meta={ <NoteMeta note={ note } /> }
 				status={ isPendingApproval && <PendingApproval note={ note } /> }
