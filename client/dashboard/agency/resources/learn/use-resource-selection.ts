@@ -11,21 +11,25 @@ interface UseResourceSelectionOptions {
 
 /**
  * Opens resources in the details modal, noting where each was opened from so
- * the modal can grow out of that card or row.
+ * the modal can grow out of that card or row, and which list it was opened
+ * from so the modal can move through that list.
  */
 export function useResourceSelection( {
 	onSelectedIdChange,
 	onPreview,
 }: UseResourceSelectionOptions ) {
 	const [ origin, setOrigin ] = useState< DOMRect >();
+	const [ source, setSource ] = useState< ResourceSource >( 'library' );
 
-	const preview = ( resource: AgencyEnablementResource, source: ResourceSource = 'library' ) => {
+	// Moving between resources stays in the list they were opened from.
+	const preview = ( resource: AgencyEnablementResource, nextSource: ResourceSource = source ) => {
+		setSource( nextSource );
 		onSelectedIdChange( resource.id );
-		onPreview( resource, source );
+		onPreview( resource, nextSource );
 	};
 
 	// Stable across renders, so memoized cards don't re-render while searching.
-	const select: SelectResource = useEvent( ( resource, event, originElement, source ) => {
+	const select: SelectResource = useEvent( ( resource, event, originElement, from = 'library' ) => {
 		// Modified clicks follow the link, opening the details in a new tab or window.
 		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
 			return;
@@ -35,10 +39,10 @@ export function useResourceSelection( {
 		const target = event.currentTarget as Element;
 		// DataViews renders the list's rows, so a row is found from its link.
 		setOrigin( ( originElement ?? target.closest( 'tr' ) ?? target ).getBoundingClientRect() );
-		preview( resource, source );
+		preview( resource, from );
 	} );
 
-	return { origin, select, preview, clear: () => onSelectedIdChange( null ) };
+	return { origin, source, select, preview, clear: () => onSelectedIdChange( null ) };
 }
 
 /** The selected resource and its neighbors among the current results. */
