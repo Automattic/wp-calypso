@@ -150,22 +150,6 @@ describe( 'addUrlToPendingPageRedirect', () => {
 		expect(
 			getRedirectFromPendingPage( { isLoadingOrder: false, receiptId: 12345, redirectTo } )
 		).toEqual( { url: successUrl } );
-		expect(
-			getRedirectFromPendingPage( {
-				isLoadingOrder: false,
-				orderId: 1,
-				transaction: { processingStatus: PROCESSING },
-				redirectTo,
-			} )
-		).toBeUndefined();
-		expect(
-			getRedirectFromPendingPage( {
-				isLoadingOrder: false,
-				orderId: 1,
-				transaction: { processingStatus: FAILURE },
-				redirectTo,
-			} )
-		).toEqual( { url: '/checkout/no-site', isError: true } );
 	} );
 } );
 

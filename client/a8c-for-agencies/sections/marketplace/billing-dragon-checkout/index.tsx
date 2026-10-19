@@ -23,7 +23,6 @@ import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
 import getPurchasedWPCOMPlanSlug from './lib/get-purchased-wpcom-plan-slug';
 import getSuccessRedirectUrl from './lib/get-success-redirect-url';
-import { getPressableReturnUrls } from './lib/pressable-return';
 import PressableCheckoutBack from './pressable-checkout-back';
 import usePreparedCart from './use-prepared-cart';
 import type { ShoppingCartItem } from '../types';
@@ -266,10 +265,21 @@ function BillingDragonCheckoutContent( {
 		return <ClientCheckoutPlaceholder />;
 	}
 
-	const { successUrl, cancelUrl } =
-		( skipActiveCart && ! isPlanCheckout && agency
-			? getPressableReturnUrls( responseCart.products, agency.id )
-			: undefined ) ?? {};
+	const extra = responseCart.products[ 0 ]?.extra;
+	const pressableExtra =
+		skipActiveCart &&
+		! isPlanCheckout &&
+		extra &&
+		agency &&
+		Number( extra.agency_id ) === agency.id &&
+		'pressableCancelUrl' in extra
+			? extra
+			: undefined;
+	const successUrl = pressableExtra?.afterPurchaseUrl;
+	const cancelUrl =
+		typeof pressableExtra?.pressableCancelUrl === 'string'
+			? pressableExtra.pressableCancelUrl
+			: undefined;
 
 	return (
 		<div className="client-checkout-v2">

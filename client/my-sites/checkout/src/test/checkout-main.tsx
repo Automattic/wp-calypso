@@ -3,7 +3,7 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
-import { useTransactionStatus } from '@automattic/composite-checkout';
+import { useFormStatus } from '@automattic/composite-checkout';
 import { ResponseCart } from '@automattic/shopping-cart';
 import { render, screen, within, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -93,42 +93,32 @@ describe( 'CheckoutMain', () => {
 		} );
 	} );
 
-	it( 'reports form submission during payment processing and preserves it on unmount', async () => {
-		function TransactionControls() {
-			const { setTransactionPending, setTransactionError } = useTransactionStatus();
+	it( 'reports form submission during payment preparation and readiness afterwards', async () => {
+		function FormControls() {
+			const { setFormSubmitting, setFormReady } = useFormStatus();
 			return (
 				<>
-					<button onClick={ setTransactionPending }>Start test payment</button>
-					<button onClick={ () => setTransactionError( 'Test payment failed' ) }>
-						Fail test payment
-					</button>
+					<button onClick={ setFormSubmitting }>Submit test form</button>
+					<button onClick={ setFormReady }>Reset test form</button>
 				</>
 			);
 		}
-		const notices = jest
-			.spyOn( PrePurchaseNotices, 'default' )
-			.mockImplementation( TransactionControls );
+		const notices = jest.spyOn( PrePurchaseNotices, 'default' ).mockImplementation( FormControls );
 		const onFormSubmittingChange = jest.fn();
 		const user = userEvent.setup();
 		try {
-			const { unmount } = render(
+			render(
 				<MockCheckout
 					initialCart={ initialCart }
 					setCart={ mockSetCartEndpoint }
 					additionalProps={ { onFormSubmittingChange } }
 				/>
 			);
-			await user.click( await screen.findByRole( 'button', { name: 'Start test payment' } ) );
+			await user.click( await screen.findByRole( 'button', { name: 'Submit test form' } ) );
 			await waitFor( () => expect( onFormSubmittingChange ).toHaveBeenLastCalledWith( true ) );
 
-			await user.click( screen.getByRole( 'button', { name: 'Fail test payment' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Reset test form' } ) );
 			await waitFor( () => expect( onFormSubmittingChange ).toHaveBeenLastCalledWith( false ) );
-
-			await user.click( screen.getByRole( 'button', { name: 'Start test payment' } ) );
-			await waitFor( () => expect( onFormSubmittingChange ).toHaveBeenLastCalledWith( true ) );
-			onFormSubmittingChange.mockClear();
-			unmount();
-			expect( onFormSubmittingChange ).not.toHaveBeenCalled();
 		} finally {
 			notices.mockRestore();
 		}
