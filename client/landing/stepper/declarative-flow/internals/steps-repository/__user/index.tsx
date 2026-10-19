@@ -48,6 +48,7 @@ import {
 	useIsPostPlanSelectionEmailVerification,
 	useEmailVerificationGate,
 } from './use-email-verification-gate';
+import useEntryClarityExperiment from './use-entry-clarity-experiment';
 import { useSocialService } from './use-social-service';
 import { useUpdateEmail } from './use-update-email';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
@@ -121,6 +122,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const { isEmailFirstVariant: isEmailFirstFromExperiment, isEmailAtBottom } =
 		useAccountCreationExperiment( { flow } );
 	const isEmailFirstVariant = isWooReferrer || isEmailFirstFromExperiment;
+	const isEntryClarityTreatment = useEntryClarityExperiment( flow );
 
 	// Load the new account's token and refresh the current user. Depends only on the
 	// account-create response, so gate/navigation state changes don't repeat it.
@@ -284,11 +286,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isMobileCompactLayout =
 		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig && ! isEditingEmail;
 
-	// Desktop V2 puts "Log in" below the buttons. Below 960px signup and login both keep the
-	// top-right link, the email-edit screen has no second account to offer, and V1 is the
-	// retiring layout.
-	const showsInFormLoginLink =
-		isStepContainerV2 && isLargeViewport && ! isEditingEmail && ! hideLoginLink;
+	// The email-edit screen has no second account to offer.
+	const showsInFormLoginLink = isEntryClarityTreatment && ! isEditingEmail && ! hideLoginLink;
 
 	const emailLabelText = isStepContainerV2 ? translate( 'Enter your email' ) : undefined;
 	// Partner branding always wins: isMobileCompactLayout is already false whenever
@@ -331,6 +330,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				isEmailAtBottom={ isEmailAtBottom }
 				isMobileCompactVariant={ isMobileCompactLayout }
 				showLoginLink={ showsInFormLoginLink }
+				showEnvelopeIcon={ isEntryClarityTreatment }
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
 				activationEmailFrom={ emailVerificationEnabled ? ACTIVATION_EMAIL_SOURCE : undefined }
@@ -454,6 +454,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			<Step.CenteredColumnLayout
 				className={ clsx( 'step-container-v2--user', {
 					'step-container-v2--user-mobile': isMobileCompactLayout,
+					'step-container-v2--user-entry-clarity': isEntryClarityTreatment,
 				} ) }
 				verticalAlign="center"
 				columnWidth={ 4 }

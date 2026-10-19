@@ -12,15 +12,15 @@ import './style.scss';
 type UsernameOrEmailButtonProps = {
 	onClick: () => void;
 	/**
-	 * Shows the WordPress.com logo on the email button. Signup opts out so email reads as a
-	 * peer of Google and Apple rather than the house pick.
+	 * Shows an envelope instead of the WordPress.com logo, so email reads as a peer of Google
+	 * and Apple rather than the house pick.
 	 */
-	showWordPressLogo?: boolean;
+	showEnvelopeIcon?: boolean;
 };
 
 export const UsernameOrEmailButton = ( {
 	onClick,
-	showWordPressLogo = true,
+	showEnvelopeIcon = false,
 }: UsernameOrEmailButtonProps ) => {
 	const { __ } = useI18n();
 	const isDisabled = useSelector( isFormDisabled );
@@ -33,15 +33,7 @@ export const UsernameOrEmailButton = ( {
 			variant="secondary"
 			__next40pxDefaultSize
 		>
-			{ showWordPressLogo ? (
-				<WordPressLogo
-					className={ clsx(
-						'social-icons',
-						isDisabled ? 'social-icons--disabled' : 'social-icons--enabled'
-					) }
-					size={ 20 }
-				/>
-			) : (
+			{ showEnvelopeIcon ? (
 				// 20 to match the other icons' box; the glyph is scaled up in CSS instead.
 				<Icon
 					icon={ envelope }
@@ -50,6 +42,14 @@ export const UsernameOrEmailButton = ( {
 						'social-icons--disabled': isDisabled,
 						'social-icons--enabled': ! isDisabled,
 					} ) }
+				/>
+			) : (
+				<WordPressLogo
+					className={ clsx(
+						'social-icons',
+						isDisabled ? 'social-icons--disabled' : 'social-icons--enabled'
+					) }
+					size={ 20 }
 				/>
 			) }
 			<span className="social-buttons__service-name">{ __( 'Continue with email' ) }</span>

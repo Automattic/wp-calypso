@@ -110,27 +110,32 @@ describe( 'SignupFormSocialFirst', () => {
 		} );
 	} );
 
-	describe( 'email button icon', () => {
-		test( 'uses the envelope icon, not the WordPress logo, so email reads as a peer of the social options', () => {
-			render( <SignupFormSocialFirst { ...defaultProps } /> );
+	describe( 'showEnvelopeIcon', () => {
+		const emailButton = () => screen.getByText( /Continue with email/i ).closest( 'button' );
 
-			const emailButton = screen.getByText( /Continue with email/i ).closest( 'button' );
-			expect( emailButton ).toBeVisible();
-			expect( emailButton?.querySelector( '.social-icons__envelope' ) ).toBeVisible();
+		test( 'swaps the WordPress logo for an envelope, so email reads as a peer of the social options', () => {
+			render( <SignupFormSocialFirst { ...defaultProps } showEnvelopeIcon /> );
+
+			expect( emailButton() ).toBeVisible();
+			expect( emailButton()?.querySelector( '.social-icons__envelope' ) ).toBeVisible();
 			// The logo renders with the bare `social-icons` class, so count the icons to catch a
 			// regression that leaves both in the button.
-			expect( emailButton?.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
+			expect( emailButton()?.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'carries the enabled-state class the disabled styling keys off', () => {
-			render( <SignupFormSocialFirst { ...defaultProps } /> );
+			render( <SignupFormSocialFirst { ...defaultProps } showEnvelopeIcon /> );
 
-			const icon = screen
-				.getByText( /Continue with email/i )
-				.closest( 'button' )
-				?.querySelector( '.social-icons__envelope' );
+			const icon = emailButton()?.querySelector( '.social-icons__envelope' );
 			expect( icon ).toHaveClass( 'social-icons', 'social-icons--enabled' );
 			expect( icon ).not.toHaveClass( 'social-icons--disabled' );
+		} );
+
+		test( 'keeps the WordPress logo when unset', () => {
+			render( <SignupFormSocialFirst { ...defaultProps } /> );
+
+			expect( emailButton()?.querySelector( '.social-icons__envelope' ) ).toBeNull();
+			expect( emailButton()?.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
 		} );
 	} );
 

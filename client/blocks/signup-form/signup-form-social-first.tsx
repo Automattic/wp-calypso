@@ -58,6 +58,10 @@ interface SignupFormSocialFirst {
 	 * always render it.
 	 */
 	showLoginLink?: boolean;
+	/**
+	 * Shows an envelope instead of the WordPress.com logo on the email button.
+	 */
+	showEnvelopeIcon?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 	activationEmailFrom?: string;
@@ -126,6 +130,7 @@ const SignupFormSocialFirst = ( {
 	isEmailAtBottom,
 	isMobileCompactVariant,
 	showLoginLink,
+	showEnvelopeIcon,
 	allowedSocialServices,
 	customTosElement,
 	activationEmailFrom,
@@ -357,6 +362,7 @@ const SignupFormSocialFirst = ( {
 					compact
 					isSocialFirst={ isSocialFirst }
 					shouldShowEmailButton={ ! isEmailFirstVariant }
+					showEnvelopeIcon={ showEnvelopeIcon }
 					allowedSocialServices={ allowedSocialServices }
 				/>
 				{ emailLoginBlock && isEmailAtBottom && (

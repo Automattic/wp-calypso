@@ -16,10 +16,16 @@ jest.mock( '@wordpress/compose', () => ( {
 	useViewportMatch: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/lib/explat', () => {
+	const actual = jest.requireActual( 'calypso/lib/explat' );
+	return { ...actual, useExperiment: jest.fn( actual.useExperiment ) };
+} );
+
 import { fireEvent, screen } from '@testing-library/dom';
 import { useViewportMatch } from '@wordpress/compose';
 import { MemoryRouter } from 'react-router-dom';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
@@ -28,6 +34,27 @@ import UserStep, { type UserStepAccepts } from '..';
 
 const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
+const mockUseExperiment = useExperiment as unknown as jest.Mock;
+
+const ENTRY_CLARITY_EXPERIMENT = 'calypso_account_step_entry_clarity_202609';
+
+// Answers for the entry-clarity experiment only, the way ExPlat does: no assignment for an
+// ineligible user. The step's other experiments keep the real hook.
+const setEntryClarityArm = ( variationName: 'control' | 'treatment', isLoading = false ) =>
+	mockUseExperiment.mockImplementation( ( name: string, options?: { isEligible?: boolean } ) => {
+		if ( name !== ENTRY_CLARITY_EXPERIMENT ) {
+			return jest.requireActual( 'calypso/lib/explat' ).useExperiment( name, options );
+		}
+		if ( options?.isEligible === false ) {
+			return [ false, null ];
+		}
+		return [ isLoading, isLoading ? null : { variationName } ];
+	} );
+
+const isEligibleForEntryClarity = () =>
+	mockUseExperiment.mock.calls
+		.filter( ( [ name ] ) => name === ENTRY_CLARITY_EXPERIMENT )
+		.at( -1 )?.[ 1 ]?.isEligible;
 
 // isMobileViewport is useViewportMatch( 'small', '<' ) at 600px and isLargeViewport is
 // useViewportMatch( 'large' ) at 960px. Pass both to reach the band in between.
@@ -59,6 +86,8 @@ describe( 'User email signup step', () => {
 	beforeEach( () => {
 		setViewport( { isMobile: false } );
 		mockUsePartnerBranding.mockReturnValue( noPartnerBranding );
+		mockUseExperiment.mockClear();
+		setEntryClarityArm( 'treatment' );
 	} );
 
 	const renderUserStep = (
@@ -210,10 +239,13 @@ describe( 'User email signup step', () => {
 		} );
 	} );
 
-	describe( 'login link placement', () => {
+	describe( 'entry clarity experiment', () => {
 		const loginLinkSelector = '.signup-form-social-first__login-link';
+		const gapClass = 'step-container-v2--user-entry-clarity';
+		const emailButtonIcon = () =>
+			screen.getByRole( 'button', { name: /Continue with email/i } ).querySelector( 'svg' );
 
-		it( 'answers "Have an account?" below the buttons rather than in the top bar', () => {
+		it( 'gives treatment the in-form "Log in", the envelope and the login heading gap', () => {
 			const { container } = renderUserStep();
 
 			expect( container.querySelector( loginLinkSelector ) ).toBeVisible();
@@ -222,25 +254,52 @@ describe( 'User email signup step', () => {
 			expect(
 				screen.getByRole( 'link', { name: 'Log in' } ).closest( loginLinkSelector )
 			).toBeVisible();
+			expect( emailButtonIcon() ).toHaveClass( 'social-icons__envelope' );
+			expect( container.getElementsByClassName( gapClass ) ).toHaveLength( 1 );
 		} );
 
-		it( 'leaves the compact mobile layout on its top-bar link', () => {
-			setViewport( { isMobile: true } );
+		it.each( [
+			[ 'control', false ],
+			[ 'treatment while the assignment loads', true ],
+		] )( 'keeps the current experience for %s', ( _label, isLoading ) => {
+			setEntryClarityArm( isLoading ? 'treatment' : 'control', isLoading );
 
 			const { container } = renderUserStep();
 
 			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
 			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+			expect( emailButtonIcon() ).not.toHaveClass( 'social-icons__envelope' );
+			expect( container.getElementsByClassName( gapClass ) ).toHaveLength( 0 );
 		} );
 
-		it( 'leaves the band between the breakpoints on its top-bar link', () => {
+		it( 'leaves the compact mobile layout out of the experiment', () => {
+			setViewport( { isMobile: true } );
+
+			const { container } = renderUserStep();
+
+			expect( isEligibleForEntryClarity() ).toBe( false );
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+		} );
+
+		it( 'leaves the band between the breakpoints out of the experiment', () => {
 			// Between 600px and 960px the login link stays in the top bar, matching login.
 			setViewport( { isMobile: false, isLarge: false } );
 
 			const { container } = renderUserStep();
 
+			expect( isEligibleForEntryClarity() ).toBe( false );
 			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
 			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+		} );
+
+		it.each( [
+			[ 'other flows', '/site-setup/user', 'site-setup' ],
+			[ 'Woo-referrer users', '/onboarding/user?ref=woo-hosting-solutions-flow', 'onboarding' ],
+		] )( 'leaves %s out of the experiment', ( _label, url, flow ) => {
+			renderUserStep( url, {}, flow );
+
+			expect( isEligibleForEntryClarity() ).toBe( false );
 		} );
 
 		it( 'drops the link entirely when hideLoginLink is set', () => {
