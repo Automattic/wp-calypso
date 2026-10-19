@@ -4,9 +4,13 @@
 import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import { Component, type ReactNode } from 'react';
 import { bumpStat } from 'calypso/lib/analytics/mc';
+import { logToLogstash } from 'calypso/lib/logstash';
 import AsyncLoad from '../index';
 
 jest.mock( 'calypso/lib/analytics/mc', () => ( { bumpStat: jest.fn() } ) );
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn( () => Promise.resolve() ),
+} ) );
 
 const Loaded = () => <div>loaded</div>;
 const Boom = () => {
@@ -49,6 +53,7 @@ describe( 'AsyncLoad', () => {
 	afterEach( () => {
 		consoleError.mockRestore();
 		jest.mocked( bumpStat ).mockClear();
+		jest.mocked( logToLogstash ).mockClear();
 	} );
 
 	test( 'renders the loaded component on success', async () => {
@@ -56,6 +61,7 @@ describe( 'AsyncLoad', () => {
 
 		expect( await screen.findByText( 'loaded' ) ).toBeVisible();
 		expect( bumpStat ).not.toHaveBeenCalled();
+		expect( logToLogstash ).not.toHaveBeenCalled();
 	} );
 
 	test( 'renders loadFailureFallback when the import rejects', async () => {
@@ -72,6 +78,63 @@ describe( 'AsyncLoad', () => {
 			'calypso_chunk_error',
 			'async-load-calypso-blocks-privacy-prefs'
 		);
+		expect( logToLogstash ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				feature: 'calypso_client',
+				properties: expect.objectContaining( {
+					type: 'calypso_chunk_error',
+					chunk: 'async-load-calypso-blocks-privacy-prefs',
+				} ),
+			} )
+		);
+	} );
+
+	test( 'logs each failed chunk to logstash once per page session', async () => {
+		const requireOtherReject = () =>
+			Promise.reject(
+				chunkLoadError( 'https://example.com/calypso/evergreen/async-load-other.abc123.min.js' )
+			);
+
+		const { unmount } = render(
+			<AsyncLoad
+				require={ requireOtherReject }
+				placeholder={ null }
+				loadFailureFallback={ <div>fallback</div> }
+			/>
+		);
+		expect( await screen.findByText( 'fallback' ) ).toBeVisible();
+		unmount();
+
+		render(
+			<AsyncLoad
+				require={ requireOtherReject }
+				placeholder={ null }
+				loadFailureFallback={ <div>fallback again</div> }
+			/>
+		);
+		expect( await screen.findByText( 'fallback again' ) ).toBeVisible();
+
+		expect( bumpStat ).toHaveBeenCalledTimes( 2 );
+		expect( logToLogstash ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'renders loadFailureFallback when logstash rejects', async () => {
+		jest.mocked( logToLogstash ).mockRejectedValueOnce( new Error( 'logstash blocked' ) );
+		const requireLogstashReject = () =>
+			Promise.reject(
+				chunkLoadError( 'https://example.com/calypso/evergreen/async-load-logstash.abc123.min.js' )
+			);
+
+		render(
+			<AsyncLoad
+				require={ requireLogstashReject }
+				placeholder={ null }
+				loadFailureFallback={ <div>fallback</div> }
+			/>
+		);
+
+		expect( await screen.findByText( 'fallback' ) ).toBeVisible();
+		expect( logToLogstash ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'renders loadFailureFallback when require throws synchronously', async () => {
@@ -101,6 +164,7 @@ describe( 'AsyncLoad', () => {
 		expect( await screen.findByText( 'boundary: module eval boom' ) ).toBeVisible();
 		expect( screen.queryByText( 'fallback' ) ).not.toBeInTheDocument();
 		expect( bumpStat ).not.toHaveBeenCalled();
+		expect( logToLogstash ).not.toHaveBeenCalled();
 	} );
 
 	test( 'renders nothing and swallows the rejection when loadFailureFallback is null', async () => {

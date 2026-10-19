@@ -1,5 +1,7 @@
+import config from '@automattic/calypso-config';
 import { lazy, useMemo, Suspense, type ComponentType, type ReactNode } from 'react';
 import { bumpStat } from 'calypso/lib/analytics/mc';
+import { logToLogstash } from 'calypso/lib/logstash';
 
 import './style.scss';
 
@@ -23,6 +25,29 @@ function getChunkName( error: Error ): string {
 	}
 
 	return request.split( '?' )[ 0 ].split( '/' ).pop()?.split( '.' )[ 0 ] || 'async-load';
+}
+
+const loggedChunkErrors = new Set< string >();
+
+/* Content blockers that block chunks usually block pixel.wp.com too, so also log through the REST API, at most once per chunk per page session. */
+function reportChunkLoadError( chunkName: string ) {
+	bumpStat( 'calypso_chunk_error', chunkName );
+
+	if ( loggedChunkErrors.has( chunkName ) ) {
+		return;
+	}
+	loggedChunkErrors.add( chunkName );
+
+	logToLogstash( {
+		feature: 'calypso_client',
+		message: 'AsyncLoad chunk failed to load',
+		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+		properties: {
+			type: 'calypso_chunk_error',
+			chunk: chunkName,
+			env: config( 'env_id' ),
+		},
+	} ).catch( () => {} );
 }
 
 type AsyncLoadProps = {
@@ -53,7 +78,7 @@ export default function AsyncLoad( {
 							throw error;
 						}
 
-						bumpStat( 'calypso_chunk_error', getChunkName( error ) );
+						reportChunkLoadError( getChunkName( error ) );
 
 						return { default: () => <>{ loadFailureFallback }</> };
 					} );
