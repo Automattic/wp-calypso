@@ -11,9 +11,10 @@ jest.mock( '@wordpress/data', () => ( {
 	subscribe: jest.fn( () => jest.fn() ),
 } ) );
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
-} ) );
+jest.mock( '@automattic/calypso-analytics', () => {
+	const { EventEmitter } = jest.requireActual( 'events' );
+	return { recordTracksEvent: jest.fn(), analyticsEvents: new EventEmitter() };
+} );
 
 // This suite covers the modal and Help Center suppressors only: the script is
 // never loaded in a support session, so `load-script.ts` can never see one.
@@ -21,10 +22,11 @@ jest.mock( '@automattic/calypso-support-session', () => ( {
 	isSupportSession: () => false,
 } ) );
 
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { analyticsEvents, recordTracksEvent } from '@automattic/calypso-analytics';
 import { loadScript } from '@automattic/load-script';
 import { select, subscribe } from '@wordpress/data';
 import { loadSurvicateScript } from '../load-script';
+import { SURVICATE_TRACKS_EVENTS } from '../tracks-events';
 
 const mockSelect = select as jest.Mock;
 const mockSubscribe = subscribe as unknown as jest.Mock;
@@ -403,5 +405,28 @@ describe( 'loadSurvicateScript', () => {
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'should forward allowlisted Tracks events once the SDK is ready, until the consumer aborts', async () => {
+		const invokeEvent = jest.fn();
+		const [ eventName ] = Object.keys( SURVICATE_TRACKS_EVENTS );
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		analyticsEvents.emit( 'record-event', eventName, {} );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		window._sva = { invokeEvent, addEventListener: jest.fn() };
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+		analyticsEvents.emit( 'record-event', eventName, {} );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
+		expect( invokeEvent ).toHaveBeenCalledWith( eventName );
+
+		controller.abort();
+		analyticsEvents.emit( 'record-event', eventName, {} );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
