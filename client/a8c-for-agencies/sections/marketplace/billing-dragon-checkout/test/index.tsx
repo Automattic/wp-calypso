@@ -103,12 +103,15 @@ describe( 'BillingDragonCheckout in prepared cart mode', () => {
 		mockAgencyId = 42;
 	} );
 
-	it( 'shows the placeholder while the prepared cart loads', () => {
-		mockCart( { isLoading: true } );
-		const { container } = renderPrepared();
+	it( 'hides Back while the prepared cart loads even if products are available', () => {
+		mockCart( { products: [ pressableProduct ] } );
+		const { container, rerender } = renderPrepared();
+		mockCart( { isLoading: true, products: [ pressableProduct ] } );
+		rerender( <BillingDragonCheckout cartItems={ [] } skipActiveCart withA8cLogo={ false } /> );
 
 		expect( container.querySelector( '.client-checkout-placeholder' ) ).toBeInTheDocument();
 		expect( screen.queryByTestId( 'checkout-main' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Back to Pressable' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows the checkout once the prepared cart has loaded, without replacing it', () => {
@@ -127,12 +130,16 @@ describe( 'BillingDragonCheckout in prepared cart mode', () => {
 		expect( container.querySelector( '.client-checkout-placeholder' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'shows the error card when the prepared cart fails to load', () => {
-		mockCart( { loadingError: 'boom' } );
-		const { container } = renderPrepared();
+	it( 'shows the error card and hides Back when the prepared cart fails to reload', () => {
+		mockCart( { products: [ pressableProduct ] } );
+		const { container, rerender } = renderPrepared();
+		mockCart( { loadingError: 'boom', products: [ pressableProduct ] } );
+		rerender( <BillingDragonCheckout cartItems={ [] } skipActiveCart withA8cLogo={ false } /> );
 
 		expect( screen.getByText( 'Unable to load your prepared order.' ) ).toBeInTheDocument();
 		expect( container.querySelector( '.client-checkout-placeholder' ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'checkout-main' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Back to Pressable' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'uses the signed success destination and renders cancellation as an unchanged link', () => {
@@ -162,7 +169,7 @@ describe( 'BillingDragonCheckout in prepared cart mode', () => {
 		);
 	} );
 
-	it( 'retains disabled Back when form submission clears the cart and unmounts checkout', () => {
+	it( 'hides Back when form submission clears the cart and unmounts checkout', () => {
 		mockCart( { products: [ pressableProduct ] } );
 		const { rerender } = renderPrepared();
 		setFormSubmitting( true );
@@ -171,24 +178,29 @@ describe( 'BillingDragonCheckout in prepared cart mode', () => {
 		rerender( <BillingDragonCheckout cartItems={ [] } skipActiveCart withA8cLogo={ false } /> );
 
 		expect( screen.queryByTestId( 'checkout-main' ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Back to Pressable' } ) ).toBeDisabled();
+		expect( screen.queryByText( 'Back to Pressable' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'keeps Back usable after a cart load error and discards it when the agency changes', () => {
+	it( 'derives Back from the current agency and cart', () => {
 		mockCart( { products: [ pressableProduct ] } );
 		const { rerender } = renderPrepared();
-		mockCart( { loadingError: 'boom' } );
+		mockAgencyId = 43;
+		rerender( <BillingDragonCheckout cartItems={ [] } skipActiveCart withA8cLogo={ false } /> );
+		expect( screen.queryByText( 'Back to Pressable' ) ).not.toBeInTheDocument();
+
+		mockAgencyId = 42;
 		rerender( <BillingDragonCheckout cartItems={ [] } skipActiveCart withA8cLogo={ false } /> );
 		expect( screen.getByRole( 'link', { name: 'Back to Pressable' } ) ).toHaveAttribute(
 			'href',
 			cancelUrl
 		);
 
-		mockAgencyId = undefined;
+		mockCart( { products: [ { extra: { isA4ASitelessCheckout: true, agency_id: 42 } } ] } );
 		rerender( <BillingDragonCheckout cartItems={ [] } skipActiveCart withA8cLogo={ false } /> );
-		mockAgencyId = 42;
-		rerender( <BillingDragonCheckout cartItems={ [] } skipActiveCart withA8cLogo={ false } /> );
-		expect( screen.queryByRole( 'link', { name: 'Back to Pressable' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Back to Pressable' ) ).not.toBeInTheDocument();
+		expect( jest.mocked( CheckoutMain ).mock.calls.at( -1 )?.[ 0 ].redirectTo ).toBe(
+			`${ window.location.origin }/purchases/licenses`
+		);
 	} );
 
 	it( 'does not use Pressable navigation for ordinary prepared carts', () => {
@@ -201,14 +213,16 @@ describe( 'BillingDragonCheckout in prepared cart mode', () => {
 		expect( screen.queryByText( 'Back to Pressable' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'does not let an invalid Pressable SUCCESS URL reach the cart redirect fallback', () => {
+	it( 'hides Back and passes the ordinary fallback to checkout for an invalid signed pair', () => {
 		mockCart( {
 			products: [ { extra: { ...pressableProduct.extra, afterPurchaseUrl: cancelUrl } } ],
 		} );
 		renderPrepared();
 
-		expect( screen.getByText( 'We could not find your prepared order.' ) ).toBeVisible();
-		expect( screen.queryByTestId( 'checkout-main' ) ).not.toBeInTheDocument();
+		expect( screen.getByTestId( 'checkout-main' ) ).toBeVisible();
+		expect( jest.mocked( CheckoutMain ).mock.calls.at( -1 )?.[ 0 ].redirectTo ).toBe(
+			`${ window.location.origin }/purchases/licenses`
+		);
 		expect( screen.queryByText( 'Back to Pressable' ) ).not.toBeInTheDocument();
 	} );
 } );

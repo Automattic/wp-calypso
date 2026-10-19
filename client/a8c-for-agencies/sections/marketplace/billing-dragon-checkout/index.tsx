@@ -23,9 +23,9 @@ import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
 import getPurchasedWPCOMPlanSlug from './lib/get-purchased-wpcom-plan-slug';
 import getSuccessRedirectUrl from './lib/get-success-redirect-url';
+import { getPressableReturnUrls } from './lib/pressable-return';
 import PressableCheckoutBack from './pressable-checkout-back';
 import usePreparedCart from './use-prepared-cart';
-import usePressableCheckoutReturn from './use-pressable-return-paths';
 import type { ShoppingCartItem } from '../types';
 
 import './style.scss';
@@ -80,20 +80,7 @@ function BillingDragonCheckoutContent( {
 	// in the URL). Load it as it is; the fill flows below must not run.
 	const prepared = usePreparedCart( cartKey, skipActiveCart );
 	const isReady = skipActiveCart ? prepared.isReady : isFilled;
-	const { successUrl, cancelUrl, isInvalid } = usePressableCheckoutReturn(
-		responseCart.products,
-		agency?.id,
-		skipActiveCart && ! isPlanCheckout,
-		isReady,
-		cartKey
-	);
-	const error =
-		( skipActiveCart ? prepared.error : fillError ) ??
-		( isInvalid ? translate( 'We could not find your prepared order.' ) : null );
-
-	useEffect( () => {
-		setIsCheckoutFormSubmitting( false );
-	}, [ agency?.id, cartKey, skipActiveCart, planSlug, cancelUrl ] );
+	const error = skipActiveCart ? prepared.error : fillError;
 
 	const {
 		productsForCart,
@@ -271,35 +258,18 @@ function BillingDragonCheckoutContent( {
 
 	// An error is checked first: a prepared cart that failed is never ready, and there is no
 	// timeout to force the checkout open, so the placeholder would otherwise show forever.
-	if ( error && ! cancelUrl ) {
+	if ( error ) {
 		return <ClientCheckoutError title={ translate( 'Error' ) } message={ error } />;
 	}
 
-	if ( ! isReady && ! cancelUrl ) {
+	if ( ! isReady ) {
 		return <ClientCheckoutPlaceholder />;
 	}
-	let checkoutContent = <ClientCheckoutPlaceholder />;
-	if ( error ) {
-		checkoutContent = <ClientCheckoutError title={ translate( 'Error' ) } message={ error } />;
-	} else if ( isReady ) {
-		checkoutContent = (
-			<CheckoutMain
-				sitelessCheckoutType="a4a"
-				redirectTo={
-					successUrl ??
-					getSuccessRedirectUrl(
-						window.location.origin,
-						shouldClearCartOnSuccess && ! isPlanCheckout,
-						isPlanCheckout ? null : getPurchasedWPCOMPlanSlug( cartItems )
-					)
-				}
-				customizedPreviousPath="/marketplace"
-				onFormSubmittingChange={ cancelUrl ? setIsCheckoutFormSubmitting : undefined }
-				siteSlug={ siteSlug ?? '' }
-				siteId={ siteId ?? 0 }
-			/>
-		);
-	}
+
+	const { successUrl, cancelUrl } =
+		( skipActiveCart && ! isPlanCheckout && agency
+			? getPressableReturnUrls( responseCart.products, agency.id )
+			: undefined ) ?? {};
 
 	return (
 		<div className="client-checkout-v2">
@@ -322,7 +292,21 @@ function BillingDragonCheckoutContent( {
 					) }
 				</div>
 			) }
-			{ checkoutContent }
+			<CheckoutMain
+				sitelessCheckoutType="a4a"
+				redirectTo={
+					successUrl ??
+					getSuccessRedirectUrl(
+						window.location.origin,
+						shouldClearCartOnSuccess && ! isPlanCheckout,
+						isPlanCheckout ? null : getPurchasedWPCOMPlanSlug( cartItems )
+					)
+				}
+				customizedPreviousPath="/marketplace"
+				onFormSubmittingChange={ cancelUrl ? setIsCheckoutFormSubmitting : undefined }
+				siteSlug={ siteSlug ?? '' }
+				siteId={ siteId ?? 0 }
+			/>
 		</div>
 	);
 }
