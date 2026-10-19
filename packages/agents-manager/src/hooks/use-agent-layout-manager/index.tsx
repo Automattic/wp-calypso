@@ -154,7 +154,17 @@ export default function useAgentLayoutManager( {
 		if ( ! portalRef.current ) {
 			portalRef.current = document.createElement( 'div' );
 			portalRef.current.className = CHAT_PORTAL_CLASS;
+			// Only the package stylesheet reveals it (`chat-ui.scss`): without the
+			// stylesheet, no chat beats an unstyled one over the page (TAGENT-2186).
+			portalRef.current.style.display = 'none';
 			container.appendChild( portalRef.current );
+
+			if ( getComputedStyle( portalRef.current ).display === 'none' ) {
+				// eslint-disable-next-line no-console
+				console.error(
+					'[AgentsManager] The Agents Manager stylesheet is not applied; the chat stays hidden until it is.'
+				);
+			}
 
 			// Apply initial classes
 			if ( shouldRenderSidebar ) {

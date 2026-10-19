@@ -1,3 +1,10 @@
+// Reveals the chat: `useAgentLayoutManager` creates the portal node hidden
+// inline, so without this stylesheet there is no chat instead of an unstyled
+// one over the page. Only `!important` beats an inline style.
+.agents-manager-chat {
+	display: block !important;
+}
+
 /* Docked chat base */
 // A hidden, fixed strip at the right edge, plus the FAB that reopens a
 // closed docked chat.
