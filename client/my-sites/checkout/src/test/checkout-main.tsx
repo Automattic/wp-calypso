@@ -93,7 +93,7 @@ describe( 'CheckoutMain', () => {
 		} );
 	} );
 
-	it( 'reports actual payment submission and failure without unlocking on unmount', async () => {
+	it( 'reports form submission during payment processing and preserves it on unmount', async () => {
 		function TransactionControls() {
 			const { setTransactionPending, setTransactionError } = useTransactionStatus();
 			return (
@@ -108,27 +108,27 @@ describe( 'CheckoutMain', () => {
 		const notices = jest
 			.spyOn( PrePurchaseNotices, 'default' )
 			.mockImplementation( TransactionControls );
-		const onSubmittingChange = jest.fn();
+		const onFormSubmittingChange = jest.fn();
 		const user = userEvent.setup();
 		try {
 			const { unmount } = render(
 				<MockCheckout
 					initialCart={ initialCart }
 					setCart={ mockSetCartEndpoint }
-					additionalProps={ { onSubmittingChange } }
+					additionalProps={ { onFormSubmittingChange } }
 				/>
 			);
 			await user.click( await screen.findByRole( 'button', { name: 'Start test payment' } ) );
-			await waitFor( () => expect( onSubmittingChange ).toHaveBeenLastCalledWith( true ) );
+			await waitFor( () => expect( onFormSubmittingChange ).toHaveBeenLastCalledWith( true ) );
 
 			await user.click( screen.getByRole( 'button', { name: 'Fail test payment' } ) );
-			await waitFor( () => expect( onSubmittingChange ).toHaveBeenLastCalledWith( false ) );
+			await waitFor( () => expect( onFormSubmittingChange ).toHaveBeenLastCalledWith( false ) );
 
 			await user.click( screen.getByRole( 'button', { name: 'Start test payment' } ) );
-			await waitFor( () => expect( onSubmittingChange ).toHaveBeenLastCalledWith( true ) );
-			onSubmittingChange.mockClear();
+			await waitFor( () => expect( onFormSubmittingChange ).toHaveBeenLastCalledWith( true ) );
+			onFormSubmittingChange.mockClear();
 			unmount();
-			expect( onSubmittingChange ).not.toHaveBeenCalled();
+			expect( onFormSubmittingChange ).not.toHaveBeenCalled();
 		} finally {
 			notices.mockRestore();
 		}

@@ -53,7 +53,7 @@ function BillingDragonCheckoutContent( {
 	const translate = useTranslate();
 	const [ isFilled, setIsFilled ] = useState( false );
 	const [ fillError, setFillError ] = useState< string | null >( null );
-	const [ isCheckoutSubmitting, setIsCheckoutSubmitting ] = useState( false );
+	const [ isCheckoutFormSubmitting, setIsCheckoutFormSubmitting ] = useState( false );
 
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
@@ -92,7 +92,7 @@ function BillingDragonCheckoutContent( {
 		( isInvalid ? translate( 'We could not find your prepared order.' ) : null );
 
 	useEffect( () => {
-		setIsCheckoutSubmitting( false );
+		setIsCheckoutFormSubmitting( false );
 	}, [ agency?.id, cartKey, skipActiveCart, planSlug, cancelUrl ] );
 
 	const {
@@ -294,7 +294,7 @@ function BillingDragonCheckoutContent( {
 					)
 				}
 				customizedPreviousPath="/marketplace"
-				onSubmittingChange={ cancelUrl ? setIsCheckoutSubmitting : undefined }
+				onFormSubmittingChange={ cancelUrl ? setIsCheckoutFormSubmitting : undefined }
 				siteSlug={ siteSlug ?? '' }
 				siteId={ siteId ?? 0 }
 			/>
@@ -310,7 +310,10 @@ function BillingDragonCheckoutContent( {
 					}
 				>
 					{ cancelUrl && (
-						<PressableCheckoutBack cancelUrl={ cancelUrl } isSubmitting={ isCheckoutSubmitting } />
+						<PressableCheckoutBack
+							cancelUrl={ cancelUrl }
+							isFormSubmitting={ isCheckoutFormSubmitting }
+						/>
 					) }
 					{ withA8cLogo && (
 						<div className="client-checkout-v2__top-bar-logo">

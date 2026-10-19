@@ -66,9 +66,12 @@ const pressableProduct = {
 	},
 };
 
-function setSubmitting( isSubmitting: boolean ) {
+function setFormSubmitting( isFormSubmitting: boolean ) {
 	act( () => {
-		jest.mocked( CheckoutMain ).mock.calls.at( -1 )?.[ 0 ].onSubmittingChange?.( isSubmitting );
+		jest
+			.mocked( CheckoutMain )
+			.mock.calls.at( -1 )?.[ 0 ]
+			.onFormSubmittingChange?.( isFormSubmitting );
 	} );
 }
 
@@ -143,26 +146,26 @@ describe( 'BillingDragonCheckout in prepared cart mode', () => {
 		);
 	} );
 
-	it( 'disables Back during submission and re-enables it after payment failure', () => {
+	it( 'disables Back during form submission and re-enables it after payment failure', () => {
 		mockCart( { products: [ pressableProduct ] } );
 		renderPrepared();
 
-		setSubmitting( true );
+		setFormSubmitting( true );
 		const back = screen.getByRole( 'button', { name: 'Back to Pressable' } );
 		expect( back ).toBeDisabled();
 		expect( back ).not.toHaveAttribute( 'href' );
 
-		setSubmitting( false );
+		setFormSubmitting( false );
 		expect( screen.getByRole( 'link', { name: 'Back to Pressable' } ) ).toHaveAttribute(
 			'href',
 			cancelUrl
 		);
 	} );
 
-	it( 'retains disabled Back when submission clears the cart and unmounts checkout', () => {
+	it( 'retains disabled Back when form submission clears the cart and unmounts checkout', () => {
 		mockCart( { products: [ pressableProduct ] } );
 		const { rerender } = renderPrepared();
-		setSubmitting( true );
+		setFormSubmitting( true );
 
 		mockCart( {} );
 		rerender( <BillingDragonCheckout cartItems={ [] } skipActiveCart withA8cLogo={ false } /> );

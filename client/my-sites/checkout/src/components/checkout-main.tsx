@@ -102,7 +102,8 @@ export interface CheckoutMainProps {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
-	onSubmittingChange?: ( isSubmitting: boolean ) => void;
+	/** Reports whether the form is SUBMITTING, including payment preparation and transaction processing. */
+	onFormSubmittingChange?: ( isFormSubmitting: boolean ) => void;
 	connectAfterCheckout?: boolean;
 	/**
 	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
@@ -139,7 +140,7 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
-	onSubmittingChange,
+	onFormSubmittingChange,
 	connectAfterCheckout,
 	fromSiteSlug,
 	adminUrl,
@@ -889,7 +890,7 @@ export default function CheckoutMain( {
 							<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
 						}
 						onStepChanged={ handleStepChanged }
-						onSubmittingChange={ onSubmittingChange }
+						onFormSubmittingChange={ onFormSubmittingChange }
 						customizedPreviousPath={ customizedPreviousPath }
 						isRemovingProductFromCart={ isRemovingProductFromCart }
 						areThereErrors={ areThereErrors }

@@ -447,13 +447,13 @@ export default function CheckoutMainContent( {
 	customizedPreviousPath,
 	loadingHeader,
 	onStepChanged,
-	onSubmittingChange,
+	onFormSubmittingChange,
 	showSitePreview = false,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changeSelection: OnChangeItemVariant;
 	onStepChanged?: StepChangedCallback;
-	onSubmittingChange?: ( isSubmitting: boolean ) => void;
+	onFormSubmittingChange?: ( isFormSubmitting: boolean ) => void;
 	countriesList: CountryListItem[];
 	createUserAndSiteBeforeTransaction: boolean;
 	infoMessage?: JSX.Element;
@@ -601,8 +601,8 @@ export default function CheckoutMainContent( {
 
 	useEffect( () => {
 		// Preserve the last status if cart clearing unmounts checkout before navigation.
-		onSubmittingChange?.( formStatus === FormStatus.SUBMITTING );
-	}, [ formStatus, onSubmittingChange ] );
+		onFormSubmittingChange?.( formStatus === FormStatus.SUBMITTING );
+	}, [ formStatus, onFormSubmittingChange ] );
 
 	const onReviewError = useCallback(
 		( error: Error ) =>

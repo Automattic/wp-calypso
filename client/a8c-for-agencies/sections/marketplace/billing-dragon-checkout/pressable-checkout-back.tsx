@@ -6,10 +6,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export default function PressableCheckoutBack( {
 	cancelUrl,
-	isSubmitting,
+	isFormSubmitting,
 }: {
 	cancelUrl: string;
-	isSubmitting: boolean;
+	isFormSubmitting: boolean;
 } ) {
 	const dispatch = useDispatch();
 	return (
@@ -18,7 +18,7 @@ export default function PressableCheckoutBack( {
 			variant="tertiary"
 			icon={ arrowLeft }
 			href={ cancelUrl }
-			disabled={ isSubmitting }
+			disabled={ isFormSubmitting }
 			onClick={ () => dispatch( recordTracksEvent( 'calypso_a4a_pressable_checkout_back' ) ) }
 		>
 			{ __( 'Back to Pressable' ) }
