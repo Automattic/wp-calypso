@@ -10,10 +10,6 @@ export function getSavedPosts( state: AppState ): SavedPostItem[] {
 	return getItems( state );
 }
 
-export function getSavedPostsCount( state: AppState ): number {
-	return getItems( state ).length;
-}
-
 export function isPostSaved( state: AppState, postKey: PostKey ): boolean {
 	const key = keyToString( postKey );
 	return getItems( state ).some( ( item ) => keyToString( item.postKey ) === key );
