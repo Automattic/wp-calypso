@@ -16,6 +16,8 @@ const files = {
 	// eslint-disable-next-line inclusive-language/use-inclusive-words -- the input that rule should flag
 	'index.js': `export const help = '${ url }';\n// whitelist\n`,
 	'component.jsx': 'export const Example = () => <div />;\n',
+	// Multiline arguments without a trailing comma, as WordPress's Prettier style prints them.
+	'call.js': 'export const sum = ( a, b ) => a + b;\nsum(\n\t1,\n\t2\n);\n',
 	'test/index.js': `export const help = '${ url }';\n`,
 	'data.json': `{ "help": "${ url }" }\n`,
 	'package.json': '{}\n',

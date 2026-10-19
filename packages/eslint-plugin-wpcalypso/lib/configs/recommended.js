@@ -13,7 +13,18 @@ module.exports = {
 		'array-bracket-spacing': [ 'error', 'always' ],
 		'brace-style': [ 'error', '1tbs' ],
 		camelcase: 'error',
-		'comma-dangle': [ 'error', 'always-multiline' ],
+		// `functions` stays off, as it was before ES2017: WordPress's Prettier style leaves function
+		// arguments without a trailing comma.
+		'comma-dangle': [
+			'error',
+			{
+				arrays: 'always-multiline',
+				objects: 'always-multiline',
+				imports: 'always-multiline',
+				exports: 'always-multiline',
+				functions: 'ignore',
+			},
+		],
 		'comma-spacing': 'error',
 		'comma-style': 'error',
 		'computed-property-spacing': [ 'error', 'always' ],

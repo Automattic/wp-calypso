@@ -33,7 +33,7 @@ yarn add --dev eslint-plugin-react eslint-plugin-react-hooks
 
 In `eslint.config.js`, apply `recommended` (or, for React projects, `react`) to your JavaScript files, using `files` and `extends` as shown below. Always set `files`: the presets don't pick files themselves, so without it they would also run on JSON or Markdown files.
 
-The presets use ESLint's own parser, with JSX enabled. If your code has Flow, TypeScript or proposal syntax, set `languageOptions.parser` (for example to `@babel/eslint-parser` or `@typescript-eslint/parser`) in a config entry after them. They register a wrapped `eslint-plugin-inclusive-language`, so don't register that plugin yourself.
+The presets use ESLint's own parser, with JSX enabled. If your code has Flow, TypeScript or proposal syntax, set `languageOptions.parser` in a config entry after them, for example to `@typescript-eslint/parser`, or to `@babel/eslint-parser` 8 with `@babel/core` 8 (version 7 doesn't run on ESLint 10). They register a wrapped `eslint-plugin-inclusive-language`, so don't register that plugin yourself.
 
 ```js
 const { defineConfig } = require( 'eslint/config' );
