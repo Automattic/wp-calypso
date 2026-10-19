@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import VideoSummary from '../video-summary';
@@ -109,11 +110,11 @@ describe( 'VideoSummary header range', () => {
 			'2026-07-02',
 			'2026-07-03',
 		],
-	] )( '%s', ( _, periods, siteToday, chartEnd ) => {
+	] )( '%s', async ( _, periods, siteToday, chartEnd ) => {
 		mockSiteToday = siteToday;
 		renderSummary( periods.map( ( period ) => ( { period, plays: 1, retention_rate: 50 } ) ) );
 
-		fireEvent.click( screen.getByText( 'Months' ) );
+		await userEvent.click( screen.getByText( 'Months' ) );
 
 		expect( mockDateLabelProps.dateRange ).toEqual( { chartStart: '2026-07-01', chartEnd } );
 	} );

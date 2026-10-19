@@ -16,6 +16,7 @@ import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import SummaryChart from '../stats-summary';
 import { getPublishMonthKey } from './publish-month';
+import { clampRangeEnd } from './range-end';
 
 import './style.scss';
 
@@ -179,12 +180,8 @@ class StatsPostSummary extends Component {
 				// months before the post was published. Drop both rather than
 				// paginating into fake empty bars; post-publish months with
 				// zero views are kept, consistent with Days/Weeks paging.
-				// The month buckets are site-local, so both boundaries resolve
-				// in the site's timezone: the current month from the site's
-				// "now" (a viewer a day behind the site must not hide the
-				// site's current month) and the publish boundary via
-				// getPublishMonthKey. Comparing YYYY-MM keys keeps the trim
-				// independent of the viewer's zone.
+				// Both boundaries are site-local month keys: the site's current
+				// month and the publish month.
 				const currentMonth = this.props.momentSiteZone().format( 'YYYY-MM' );
 				const publishMonth = getPublishMonthKey( stats.post, this.props.momentSiteZone );
 				return [ ...statsByMonth( stats, moment ) ].filter(
@@ -227,21 +224,15 @@ class StatsPostSummary extends Component {
 				break;
 		}
 
-		// Don't extend the range into the future when the last bar is still
-		// the current, in-progress period (e.g. this month before it ends).
-		// "Today" is the site's, not the viewer's — the bars are site-local
-		// days, so a viewer behind the site's timezone must not clamp the
-		// range a day short (or vice versa). But never clamp below the newest
-		// bucket actually charted: after a timezone change the data can hold
-		// buckets past the site's current clock, and the header must still
-		// cover the bars it labels. Comparing date keys sidesteps mixed-zone
-		// moment math; callers only format() the result.
-		const siteTodayKey = this.props.momentSiteZone().format( 'YYYY-MM-DD' );
-		const newestBucketKey = chartData[ chartData.length - 1 ].startDate;
-		const clampKey = siteTodayKey > newestBucketKey ? siteTodayKey : newestBucketKey;
-		if ( end.format( 'YYYY-MM-DD' ) > clampKey ) {
-			end = moment( clampKey );
-		}
+		// Don't extend an in-progress period past the site's today, floored at
+		// the newest bar charted. Callers only format() the result.
+		end = moment(
+			clampRangeEnd(
+				end.format( 'YYYY-MM-DD' ),
+				this.props.momentSiteZone(),
+				chartData[ chartData.length - 1 ].startDate
+			)
+		);
 
 		return { start, end };
 	}
