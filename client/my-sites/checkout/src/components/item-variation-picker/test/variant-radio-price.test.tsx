@@ -14,9 +14,6 @@ jest.mock( '@automattic/shopping-cart', () => ( {
 	useShoppingCart: jest.fn(),
 } ) );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key', () => () => 'no-site' );
-jest.mock( '../../../hooks/use-checkout-ui-redesign-experiment', () => ( {
-	useCheckoutUiRedesignExperiment: () => [ false, false ],
-} ) );
 jest.mock( '../../../hooks/use-mobile-checkout-sticky-summary-experiment', () => ( {
 	useMobileCheckoutStickySummaryExperiment: jest.fn(),
 } ) );
