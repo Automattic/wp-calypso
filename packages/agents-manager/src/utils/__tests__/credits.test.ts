@@ -7,7 +7,7 @@ import {
 	formatCreditsShort,
 	formatPercent,
 	getCreditsLabel,
-	getCreditsTone,
+	isCreditsAlert,
 	isCreditsExhausted,
 	isCreditsLow,
 } from '../credits';
@@ -78,32 +78,32 @@ describe( 'credit states', () => {
 	} );
 } );
 
-describe( 'getCreditsTone', () => {
+describe( 'isCreditsAlert', () => {
 	it.each( [
-		[ 100, 'primary' ],
-		[ 20.01, 'primary' ],
-		[ 20, 'error' ],
-		[ 19.99, 'error' ],
-		[ 0.4, 'error' ],
-		[ 0, 'error' ],
-	] as const )( 'uses the unrounded free share at %s%%', ( percent, tone ) => {
-		expect( getCreditsTone( free( percent ) ) ).toBe( tone );
+		[ 100, false ],
+		[ 20.01, false ],
+		[ 20, true ],
+		[ 19.99, true ],
+		[ 0.4, true ],
+		[ 0, true ],
+	] )( 'uses the unrounded free share at %s%%', ( percent, isAlert ) => {
+		expect( isCreditsAlert( free( percent ) ) ).toBe( isAlert );
 	} );
 
 	it.each( [
-		[ 25000, 'muted' ],
-		[ 10000, 'muted' ],
-		[ 9999, 'error' ],
-		[ 800, 'error' ],
-		[ 1, 'error' ],
-		[ 0, 'error' ],
-	] as const )( 'uses the paid amount at %i credits', ( remaining, tone ) => {
-		expect( getCreditsTone( paid( 100, remaining ) ) ).toBe( tone );
+		[ 25000, false ],
+		[ 10000, false ],
+		[ 9999, true ],
+		[ 800, true ],
+		[ 1, true ],
+		[ 0, true ],
+	] )( 'uses the paid amount at %i credits', ( remaining, isAlert ) => {
+		expect( isCreditsAlert( paid( 100, remaining ) ) ).toBe( isAlert );
 	} );
 
 	it( 'ignores the plan share on paid plans', () => {
-		expect( getCreditsTone( { ...paid( 10 ), remaining: 205000 } ) ).toBe( 'muted' );
-		expect( getCreditsTone( { ...paid( 0 ), remaining: 25000 } ) ).toBe( 'muted' );
+		expect( isCreditsAlert( { ...paid( 10 ), remaining: 205000 } ) ).toBe( false );
+		expect( isCreditsAlert( { ...paid( 0 ), remaining: 25000 } ) ).toBe( false );
 	} );
 } );
 

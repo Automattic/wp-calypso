@@ -1,6 +1,6 @@
-import { StatusIndicator } from '@automattic/agenttic-ui';
 import { Button, Dropdown } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { caution, info } from '@wordpress/icons';
 import {
 	type CreditsPool,
 	type CreditsStatus,
@@ -9,7 +9,7 @@ import {
 	formatCreditsLeft,
 	formatPercent,
 	getCreditsLabel,
-	getCreditsTone,
+	isCreditsAlert,
 	isCreditsExhausted,
 } from '../../utils/credits';
 import type { CreditsPurchaseAction } from '../../utils/credits-access';
@@ -114,12 +114,12 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
 }
 
 /**
- * The composer's credits indicator: a dot in the trailing slot, red when the
- * balance is low or used up, a tooltip on hover or focus, and a popover on
- * click listing each credit pool with a single CTA. The tooltip gives a paid
- * site's credits left as an amount and a free plan's as a percentage. Each
- * pool row leads with its percentage, except top-ups, which have no allowance
- * and show their balance alone.
+ * The composer's credits indicator: an info icon in the trailing slot that
+ * becomes an alert icon on a red tint when the balance is low or used up, a
+ * tooltip on hover or focus, and a popover on click listing each credit pool
+ * with a single CTA. The tooltip gives a paid site's credits left as an amount
+ * and a free plan's as a percentage. Each pool row leads with its percentage,
+ * except top-ups, which have no allowance and show their balance alone.
  */
 export default function CreditsMeter( {
 	status,
@@ -131,7 +131,7 @@ export default function CreditsMeter( {
 	manageUrl,
 }: Props ) {
 	const label = getCreditsLabel( status );
-	const tone = getCreditsTone( status );
+	const isAlert = isCreditsAlert( status );
 	const isExhausted = isCreditsExhausted( status );
 	const isFree = status.plan === 'free';
 
@@ -152,9 +152,13 @@ export default function CreditsMeter( {
 			} }
 			renderToggle={ ( { onToggle: toggle } ) => (
 				<Button
-					className="agents-manager-credits-meter__toggle"
-					icon={ <StatusIndicator tone={ tone } /> }
-					iconSize={ 12 }
+					className={
+						isAlert
+							? 'agents-manager-credits-meter__toggle is-alert'
+							: 'agents-manager-credits-meter__toggle'
+					}
+					icon={ isAlert ? caution : info }
+					iconSize={ 24 }
 					label={ label }
 					showTooltip={ ! isOpen }
 					aria-expanded={ isOpen }

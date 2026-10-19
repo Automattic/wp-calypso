@@ -1,5 +1,4 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
-import type { StatusIndicatorTone } from '@automattic/agenttic-ui';
 
 export type CreditsPlan = 'free' | 'paid';
 export type CreditsPlanTier = 'personal' | 'premium' | 'business' | 'commerce';
@@ -29,7 +28,7 @@ export type CreditsPool =
 interface CreditsStatusBase {
 	/** Known paid tier supplied by the server; absent for older or unsupported metadata. */
 	planTier?: CreditsPlanTier;
-	/** Overall remaining share, 0–100; drives the free-plan dot, tooltip and notice. */
+	/** Overall remaining share, 0–100; drives the free-plan meter, tooltip and notice. */
 	percent: number;
 	pools: CreditsPool[];
 }
@@ -46,10 +45,10 @@ export type CreditsStatus =
 			remaining: number;
 	  } );
 
-/** Free-plan low-balance percentage, for the dot tone and the notice. */
+/** Free-plan low-balance percentage, for the meter tone and the notice. */
 const CREDITS_LOW_THRESHOLD = 20;
 
-/** Paid balance, in credits, below which the dot turns red and the low-balance notice shows. */
+/** Paid balance, in credits, below which the meter shows its alert icon and the low-balance notice. */
 export const CREDITS_LOW_BALANCE = 10000;
 
 export function clampPercent( percent: number ): number {
@@ -95,17 +94,9 @@ export function isCreditsLow( status: CreditsStatus ): boolean {
 		: status.percent <= CREDITS_LOW_THRESHOLD;
 }
 
-/**
- * Low or exhausted balances use the error tone, by the same rule as the
- * credits notices. Otherwise paid plans stay muted and free plans use the
- * primary tone.
- */
-export function getCreditsTone( status: CreditsStatus ): StatusIndicatorTone {
-	if ( isCreditsLow( status ) || isCreditsExhausted( status ) ) {
-		return 'error';
-	}
-
-	return status.plan === 'paid' ? 'muted' : 'primary';
+/** Whether the meter shows its alert icon: low or exhausted, by the same rule as the credits notices. */
+export function isCreditsAlert( status: CreditsStatus ): boolean {
+	return isCreditsLow( status ) || isCreditsExhausted( status );
 }
 
 /**
@@ -134,7 +125,7 @@ export function formatCreditsLeft( credits: number ): string {
 	);
 }
 
-/** Tooltip and screen-reader sentence for the dot button. */
+/** Tooltip and screen-reader sentence for the meter toggle. */
 export function getCreditsLabel( status: CreditsStatus ): string {
 	if ( status.plan === 'paid' ) {
 		// The combined balance across the plan and top-ups, not the monthly allowance alone.

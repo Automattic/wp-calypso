@@ -9,10 +9,25 @@
 		min-width: 32px;
 		padding: 0;
 		border-radius: 50%;
+		color: var( --color-muted-foreground );
 
 		&:hover:not( :disabled ),
 		&[aria-expanded='true'] {
 			background-color: var( --color-muted );
+			color: var( --color-foreground );
+		}
+
+		// Low or out: the alert icon on a 20% red tint, per the Figma spec. The glyph
+		// takes `--color-error`, the red that stays readable on the tint in dark mode.
+		&.is-alert {
+			background-color: color-mix( in srgb, var( --color-error-accent ) 20%, transparent );
+			color: var( --color-error );
+
+			&:hover:not( :disabled ),
+			&[aria-expanded='true'] {
+				background-color: color-mix( in srgb, var( --color-error-accent ) 30%, transparent );
+				color: var( --color-error );
+			}
 		}
 
 		// Show the focus ring for keyboard focus only.

@@ -570,7 +570,7 @@ export function trackImageStudioError( {
 /** What showed the notice: the credits check on open, a re-check after a turn, or a failed request. */
 export type UpgradeNoticeTrigger = 'open' | 'refresh' | 'error';
 
-/** What opened the credits dot's popover, as the Agent's `credits_meter_opened` event names it. */
+/** What opened the credits meter's popover, as the Agent's `credits_meter_opened` event names it. */
 export type CreditsMeterOpenedTrigger = 'click' | 'exhausted' | 'submit_blocked';
 
 /**
@@ -598,7 +598,7 @@ interface UpgradeNoticeEvent extends UpgradeNoticeCredits {
 	trigger: UpgradeNoticeTrigger;
 }
 
-/** What showed the Upgrade or Add credits link: the notice's trigger, or the credits dot's popover. */
+/** What showed the Upgrade or Add credits link: the notice's trigger, or the credits meter's popover. */
 export type UpgradeLinkTrigger = UpgradeNoticeTrigger | 'popover';
 
 interface UpgradeNoticeClickEvent extends UpgradeNoticeCredits {
@@ -637,7 +637,7 @@ interface CreditsMeterOpenedEvent extends CreditsMeterDetails {
 }
 
 /**
- * Tracks the credits dot's popover opening: a click on the dot, a known balance
+ * Tracks the credits meter's popover opening: a click on the meter, a known balance
  * running out, or a blocked Send at zero. Mirrors the Agent's
  * `calypso_agents_manager_credits_meter_opened`.
  * @param event - The popover's mode, trigger and balance details
@@ -654,7 +654,7 @@ export function trackImageStudioCreditsMeterOpened( event: CreditsMeterOpenedEve
 }
 
 /**
- * Tracks a click on the Upgrade or Add credits link, in the notice or in the credits dot's popover.
+ * Tracks a click on the Upgrade or Add credits link, in the notice or in the credits meter's popover.
  * For the Jetpack AI quota, also fires the product-wide `jetpack_ai_upgrade_button`
  * event so this surface appears in the same funnel as every other Jetpack AI
  * upgrade button.
