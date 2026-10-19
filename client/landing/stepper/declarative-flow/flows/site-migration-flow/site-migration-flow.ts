@@ -86,6 +86,26 @@ function initialize() {
 		);
 		return false as const;
 	}
+	// Landing pages (e.g. /move) analyze the URL themselves and deep link WordPress sources to the
+	// site picker; send them through the site checks and plans instead. The router hasn't mounted
+	// yet, so rewriting the URL in place avoids a second page load. Remove once landing pages link
+	// to identify directly (see README).
+	const query = new URLSearchParams( search );
+	if (
+		config.isEnabled( 'migration/reprint-flow' ) &&
+		matchPath( '/setup/:flow/sitePicker/:lang?', pathname ) &&
+		query.get( 'start' ) === 'true' &&
+		query.get( 'platform' ) === 'wordpress' &&
+		query.get( 'from' )
+	) {
+		window.history.replaceState(
+			null,
+			'',
+			pathname.replace( /\/sitePicker(?=\/|$)/, `/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }` ) +
+				search +
+				hash
+		);
+	}
 	if ( matchPath( '/setup/:flow/site-migration-import-or-migrate/:lang?', pathname ) ) {
 		window.location.replace(
 			pathname.replace(

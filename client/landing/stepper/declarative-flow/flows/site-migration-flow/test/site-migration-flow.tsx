@@ -401,6 +401,52 @@ describe( 'Site Migration Flow', () => {
 			);
 		} );
 
+		describe( 'landing page site picker entry', () => {
+			const landingPageSearch =
+				'?from=https%3A%2F%2Fexample.com&ref=move-lp&start=true&platform=wordpress';
+			let replaceState: jest.SpyInstance;
+
+			beforeEach( () => {
+				replaceState = jest.spyOn( window.history, 'replaceState' ).mockImplementation( () => {} );
+			} );
+
+			it( 'rewrites WordPress sources to the site checks in place with the flag', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+				Object.assign( window.location, {
+					pathname: '/setup/site-migration/sitePicker',
+					search: landingPageSearch,
+				} );
+
+				expect( siteMigrationFlow.initialize() ).not.toBe( false );
+				expect( replaceState ).toHaveBeenCalledWith(
+					null,
+					'',
+					`/setup/site-migration/site-migration-identify${ landingPageSearch }`
+				);
+				expect( window.location.replace ).not.toHaveBeenCalled();
+			} );
+
+			it.each( [
+				[ 'the flag is off', false, landingPageSearch ],
+				[ 'it is not a landing page entry', true, landingPageSearch.replace( '&start=true', '' ) ],
+				[
+					'the source is not WordPress',
+					true,
+					landingPageSearch.replace( 'wordpress', 'blogger' ),
+				],
+			] )( 'keeps the site picker when %s', ( _, flagEnabled, search ) => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flagEnabled && flag === 'migration/reprint-flow' );
+				Object.assign( window.location, { pathname: '/setup/site-migration/sitePicker', search } );
+
+				expect( siteMigrationFlow.initialize() ).not.toBe( false );
+				expect( replaceState ).not.toHaveBeenCalled();
+			} );
+		} );
+
 		it.each( [ '', '/', '/pt-br', '/pt-br/' ] )(
 			'redirects the legacy choice URL with suffix "%s" while preserving context',
 			( suffix ) => {

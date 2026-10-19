@@ -5,7 +5,7 @@ import config from '@automattic/calypso-config';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter, useLocation } from 'react-router';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import SiteMigrationIdentify from '..';
 import { UrlData } from '../../../../../../../blocks/import/types';
@@ -171,9 +171,14 @@ describe( 'SiteMigrationIdentify', () => {
 	} );
 
 	it( 'sets the input value to the site url when the "from" param is set', () => {
-		render( {}, { initialEntry: '/some-path?from=existent-site.com' } );
+		const submit = jest.fn();
+		render(
+			{ navigation: { submit } },
+			{ initialEntry: '/some-path?from=existent-site.com&start=true&platform=wordpress' }
+		);
 
 		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'existent-site.com' );
+		expect( submit ).not.toHaveBeenCalled();
 	} );
 
 	it( 'sends again the same value set on the url', async () => {
@@ -330,6 +335,45 @@ describe( 'SiteMigrationIdentify', () => {
 					host: 'bluehost',
 				} )
 			);
+		} );
+
+		it( 'checks a landing page address right away and drops the start marker', async () => {
+			const submit = jest.fn();
+			const LocationSearch = () => <output data-testid="search">{ useLocation().search }</output>;
+			mockAnalysis( API_RESPONSE_WORDPRESS_PLATFORM );
+			mockHost();
+			renderStep(
+				<>
+					<SiteMigrationIdentify { ...mockStepProps( { navigation: { submit } } ) } />
+					<LocationSearch />
+				</>,
+				{ initialEntry: '/some-path?from=https://example.com&start=true&platform=wordpress' }
+			);
+
+			expect( screen.getByRole( 'heading', { name: 'Checking your site' } ) ).toBeVisible();
+			expect( screen.getByTestId( 'search' ) ).toHaveTextContent(
+				'?from=https%3A%2F%2Fexample.com&platform=wordpress'
+			);
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith( {
+					action: 'continue',
+					from: 'https://example.com',
+					platform: 'wordpress',
+					host: 'bluehost',
+				} )
+			);
+		} );
+
+		it( 'shows the form for an invalid landing page address', () => {
+			const submit = jest.fn();
+			render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=not%20a%20url&start=true' }
+			);
+
+			expect( screen.getByRole( 'heading', { name: "Let's find your site" } ) ).toBeVisible();
+			expect( getInput() ).toHaveValue( 'not a url' );
+			expect( submit ).not.toHaveBeenCalled();
 		} );
 
 		it( 'explains generic analysis failures and allows retrying the same address', async () => {
