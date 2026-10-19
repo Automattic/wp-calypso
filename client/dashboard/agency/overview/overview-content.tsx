@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -8,6 +9,7 @@ import EventCard, { SingleEventCard } from './event-card';
 import { getLeadMatchingContactAnnouncement } from './events';
 import GrowthCard from './growth-card';
 import HelpfulLinksCard from './helpful-links-card';
+import MatchingProfilePreview from './matching-profile-preview';
 import ReferralEarningsCard from './referral-earnings-card';
 import TierOverviewCard from './tier-overview-card';
 import WooPaymentsRevenueCard from './woopayments-revenue-card';
@@ -127,6 +129,9 @@ export default function AgencyOverviewContent( {
 						partnerManager={ partnerManager }
 						recordTracksEvent={ recordTracksEvent }
 					/>
+				) }
+				{ isEnabled( 'a4a-lead-matching-design-preview' ) && links.leadMatching && (
+					<MatchingProfilePreview key={ agencyId } href={ links.leadMatching } />
 				) }
 				{ showContactOptionsAnnouncement && links.leadMatching && (
 					<SingleEventCard
