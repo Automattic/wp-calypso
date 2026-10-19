@@ -100,54 +100,56 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 
 	return (
 		<>
-			<CardHeader
-				size="small"
-				style={ {
-					position: 'sticky',
-					top: 0,
-					background: 'var( --color-surface, #fff )',
-					zIndex: 1,
-				} }
-			>
-				<HStack>
-					<HStack justify="flex-start">
-						{ ! isLargeScreen && (
-							<Button
-								size="small"
-								icon={ isRTL() ? chevronRight : chevronLeft }
-								label={ __( 'Back' ) }
-								onClick={ goBack }
-							/>
-						) }
-						<Heading level={ 3 } size={ 15 } weight={ 500 }>
-							{ isSimplifiedNote ? getTemporaryNoteTitle( note ) : note.title }
-						</Heading>
-					</HStack>
-					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>
-						{ ! isLargeScreen && (
-							<>
+			{ ! ( isSimplified && isLargeScreen ) && (
+				<CardHeader
+					size="small"
+					style={ {
+						position: 'sticky',
+						top: 0,
+						background: 'var( --color-surface, #fff )',
+						zIndex: 1,
+					} }
+				>
+					<HStack>
+						<HStack justify="flex-start">
+							{ ! isLargeScreen && (
 								<Button
 									size="small"
-									icon={ arrowUp }
-									label={ __( 'Previous notification' ) }
-									onClick={ noteNavigation.goToPreviousNote }
-									disabled={ ! noteNavigation.hasPreviousNote }
-									accessibleWhenDisabled
+									icon={ isRTL() ? chevronRight : chevronLeft }
+									label={ __( 'Back' ) }
+									onClick={ goBack }
 								/>
-								<Button
-									size="small"
-									icon={ arrowDown }
-									label={ __( 'Next notification' ) }
-									onClick={ noteNavigation.goToNextNote }
-									disabled={ ! noteNavigation.hasNextNote }
-									accessibleWhenDisabled
-								/>
-							</>
-						) }
-						{ isDismissible && <CloseButton /> }
+							) }
+							<Heading level={ 3 } size={ 15 } weight={ 500 }>
+								{ isSimplifiedNote ? getTemporaryNoteTitle( note ) : note.title }
+							</Heading>
+						</HStack>
+						<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>
+							{ ! isLargeScreen && (
+								<>
+									<Button
+										size="small"
+										icon={ arrowUp }
+										label={ __( 'Previous notification' ) }
+										onClick={ noteNavigation.goToPreviousNote }
+										disabled={ ! noteNavigation.hasPreviousNote }
+										accessibleWhenDisabled
+									/>
+									<Button
+										size="small"
+										icon={ arrowDown }
+										label={ __( 'Next notification' ) }
+										onClick={ noteNavigation.goToNextNote }
+										disabled={ ! noteNavigation.hasNextNote }
+										accessibleWhenDisabled
+									/>
+								</>
+							) }
+							{ isDismissible && <CloseButton /> }
+						</HStack>
 					</HStack>
-				</HStack>
-			</CardHeader>
+				</CardHeader>
+			) }
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>
 				<VStack justify="flex-start" spacing={ isSimplifiedNote ? 6 : 4 }>
 					{ isSimplifiedNote && <SimplifiedNote note={ note } /> }
