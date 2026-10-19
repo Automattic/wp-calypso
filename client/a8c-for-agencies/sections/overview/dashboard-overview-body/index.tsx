@@ -98,6 +98,7 @@ function DashboardOverviewBodyContent( {
 			onScheduleCall={ scheduleCall }
 			isSchedulingCall={ isSchedulingCall }
 			onRelaunchTour={ handleRelaunchTour }
+			partnerManager={ agency.partner_manager }
 			recordTracksEvent={ handleRecordTracksEvent }
 		/>
 	);
