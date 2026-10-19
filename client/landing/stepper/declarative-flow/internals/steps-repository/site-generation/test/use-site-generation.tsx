@@ -151,6 +151,72 @@ describe( 'useSiteGeneration', () => {
 		expect( result.current.failureReason ).toBe( 'timed-out' );
 	} );
 
+	it( 'gives up on a DSL store build after 10 minutes', () => {
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				graph: 'dsl',
+				isStoreBuild: true,
+				steps: STEPS,
+			} )
+		);
+
+		act( () => {
+			jest.advanceTimersByTime( 10 * 60 * 1000 - 1 );
+		} );
+		expect( result.current.status ).toBe( 'working' );
+
+		act( () => {
+			jest.advanceTimersByTime( 1 );
+		} );
+		expect( result.current.status ).toBe( 'failed' );
+		expect( result.current.failureReason ).toBe( 'timed-out' );
+	} );
+
+	it( 'switches to the store timeout when the plan loads after the screen', () => {
+		const { result, rerender } = renderHook(
+			( { isStoreBuild } ) =>
+				useSiteGeneration( {
+					siteIdentifier: '123',
+					graph: 'dsl',
+					isStoreBuild,
+					steps: STEPS,
+				} ),
+			{ initialProps: { isStoreBuild: false } }
+		);
+
+		act( () => {
+			jest.advanceTimersByTime( 2000 );
+		} );
+		rerender( { isStoreBuild: true } );
+		act( () => {
+			jest.advanceTimersByTime( 10 * 60 * 1000 - 2000 - 1 );
+		} );
+		expect( result.current.status ).toBe( 'working' );
+		expect( statusPollMock ).toHaveBeenCalledTimes( 1 );
+
+		act( () => {
+			jest.advanceTimersByTime( 1 );
+		} );
+		expect( result.current.failureReason ).toBe( 'timed-out' );
+	} );
+
+	it( 'keeps waiting on a store build past 10 minutes on other graphs', () => {
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				graph: 'blocks-first',
+				isStoreBuild: true,
+				steps: STEPS,
+			} )
+		);
+
+		act( () => {
+			jest.advanceTimersByTime( 30 * 60 * 1000 - 1 );
+		} );
+		expect( result.current.status ).toBe( 'working' );
+	} );
+
 	it( 'keeps waiting past 5 minutes on other graphs', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {

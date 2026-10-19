@@ -5,6 +5,7 @@ import { check, wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { BuildVisualization } from './build-visualization';
+import { getGenerationWait } from './use-site-generation';
 import type { SiteGenerationState } from './use-site-generation';
 import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 import type { CSSProperties } from 'react';
@@ -132,20 +133,29 @@ function ElapsedTime( { startedAt }: { startedAt: number } ) {
 
 function WaitingCanvas( {
 	graph,
+	isStoreBuild,
 	onPreviewTap,
 }: {
 	graph?: BuildWowGraph;
+	isStoreBuild?: boolean;
 	onPreviewTap: () => void;
 } ) {
 	const translate = useTranslate();
+	const { promisedMinutes } = getGenerationWait( graph, isStoreBuild );
+	const descriptions = {
+		4: translate(
+			'This can take up to 4 minutes. No worries, you’ll receive an email when the site is ready.'
+		),
+		8: translate(
+			'This can take up to 8 minutes. No worries, you’ll receive an email when the site is ready.'
+		),
+		10: translate(
+			'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
+		),
+	};
+	// Stores get a longer promise, so a DSL build shows none until that is known.
 	const description =
-		graph === 'dsl'
-			? translate(
-					'This can take up to 4 minutes. No worries, you’ll receive an email when the site is ready.'
-				)
-			: translate(
-					'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
-				);
+		graph === 'dsl' && isStoreBuild === undefined ? null : descriptions[ promisedMinutes ];
 
 	return (
 		<div className="site-generation__waiting">
@@ -281,10 +291,13 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 export function SiteGenerationView( {
 	state,
 	graph,
+	isStoreBuild,
 	onReload,
 }: {
 	state: SiteGenerationState;
 	graph?: BuildWowGraph;
+	/** Undefined while the site's plan is still loading. */
+	isStoreBuild?: boolean;
 	onReload: () => void;
 } ) {
 	const translate = useTranslate();
@@ -329,7 +342,11 @@ export function SiteGenerationView( {
 					{ state.status === 'failed' ? (
 						<ErrorCanvas state={ state } onReload={ onReload } />
 					) : (
-						<WaitingCanvas graph={ graph } onPreviewTap={ cycleTint } />
+						<WaitingCanvas
+							graph={ graph }
+							isStoreBuild={ isStoreBuild }
+							onPreviewTap={ cycleTint }
+						/>
 					) }
 				</div>
 			</section>
