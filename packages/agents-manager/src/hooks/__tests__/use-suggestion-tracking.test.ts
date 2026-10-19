@@ -16,7 +16,7 @@ jest.mock( '@wordpress/data', () => ( {
 import { act, renderHook } from '@testing-library/react';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import { useSuggestionTracking } from '../use-suggestion-tracking';
-import type { Suggestion } from '../../types';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 type Options = Parameters< typeof useSuggestionTracking >[ 0 ];
 
@@ -113,6 +113,27 @@ describe( 'useSuggestionTracking', () => {
 		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith(
 			'jetpack_big_sky_chat_suggestions_rendered',
 			{ suggestions: '|change-tone|check-grammar|', block_type: 'core/heading' }
+		);
+	} );
+
+	it( 'tracks a click in a message with its own list', () => {
+		const design: Suggestion[] = [
+			'customize-colors',
+			'change-page-layout',
+			'choose-new-fonts',
+			'edit-pages',
+		].map( ( id ) => ( { id, label: id, prompt: id } ) );
+		const { result } = renderTracking( blockOptions() );
+		act( () => result.current.onSuggestionsRendered( design.slice( 0, 3 ) ) );
+		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+
+		act( () => result.current.trackSuggestionClick( design[ 0 ], design, true ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			expect.objectContaining( {
+				available_suggestions: '|customize-colors|change-page-layout|choose-new-fonts|edit-pages|',
+			} )
 		);
 	} );
 } );

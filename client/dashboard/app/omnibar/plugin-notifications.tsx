@@ -1,10 +1,9 @@
-import { __ } from '@wordpress/i18n';
+import { parseAdminBarTitle } from '@automattic/omnibar';
 import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
-import { wpcomLink } from '../../utils/link';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { omnibarEvents, useOmnibarEvent } from './events';
 import type { User } from '@automattic/api-core';
-import type { OmnibarNode } from '@automattic/omnibar';
+import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-notifications.scss';
 
@@ -19,7 +18,7 @@ function BellIcon( { hasUnread }: { hasUnread: boolean } ) {
 	);
 }
 
-export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode {
+export function useNotificationsNodeBuilder( { user }: { user?: User } ) {
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState(
 		!! user?.has_unseen_notes
 	);
@@ -46,27 +45,34 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 		omnibarEvents.notificationsAnchor.emit( bellRef.current?.closest( 'a' ) ?? null );
 	} );
 
-	return {
-		id: 'notifications',
-		className: 'omnibar__notifications',
-		label: __( 'Notifications' ),
-		icon: (
-			<span
-				key={ subscriberAlertPulse }
-				ref={ bellRef }
-				className={ clsx(
-					'omnibar__notifications-icon',
-					subscriberAlertPulse > 0 && 'omnibar__notifications-icon--subscriber-pulse'
-				) }
-			>
-				<BellIcon hasUnread={ hasUnseenNotifications } />
-			</span>
-		),
-		href: wpcomLink( '/notifications' ),
-		onClick: ( event ) => {
-			event.preventDefault();
-			event.stopPropagation();
-			omnibarEvents.notifications.emit();
+	return useCallback(
+		( adminBarNode: AdminBarNode ): Partial< OmnibarNode > => {
+			const { text, tooltip } = parseAdminBarTitle( adminBarNode );
+
+			return {
+				title: undefined,
+				className: 'omnibar__notifications',
+				label: tooltip ?? text,
+				tooltip,
+				icon: (
+					<span
+						key={ subscriberAlertPulse }
+						ref={ bellRef }
+						className={ clsx(
+							'omnibar__notifications-icon',
+							subscriberAlertPulse > 0 && 'omnibar__notifications-icon--subscriber-pulse'
+						) }
+					>
+						<BellIcon hasUnread={ hasUnseenNotifications } />
+					</span>
+				),
+				onClick: ( event ) => {
+					event.preventDefault();
+					event.stopPropagation();
+					omnibarEvents.notifications.emit();
+				},
+			};
 		},
-	};
+		[ hasUnseenNotifications, subscriberAlertPulse ]
+	);
 }

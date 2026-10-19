@@ -5,7 +5,7 @@ import { render, renderHook } from '@testing-library/react';
 import { useAnalytics } from '../../analytics';
 import { useHelpCenter } from '../../help-center';
 import { adminBarIcon } from '../admin-bar-icon';
-import { useHelpCenterPlugin } from '../plugin-help-center';
+import { useHelpCenterNodeBuilder } from '../plugin-help-center';
 import type { AdminBarNode } from '@automattic/omnibar';
 
 jest.mock( '@automattic/api-queries', () => ( { omnibarSiteIdQuery: jest.fn( () => ( {} ) ) } ) );
@@ -43,14 +43,17 @@ const node = ( id: string, extra: Partial< AdminBarNode > = {} ): AdminBarNode =
 } );
 
 const HELP_CENTER_NODE = node( 'help-center', {
+	title: '<span title="Help Center"><svg class="ab-icon"></svg></span>',
 	href: 'https://wordpress.com/help',
 	meta: { icon: ICON, class: 'menupop', target: '_blank' },
 } );
 
-const renderPlugin = ( adminBarNodes: AdminBarNode[] ) =>
-	renderHook( () => useHelpCenterPlugin( { sectionName: 'sites', adminBarNodes } ) ).result.current;
+const renderPlugin = ( adminBarNode: AdminBarNode = HELP_CENTER_NODE ) =>
+	renderHook( () => useHelpCenterNodeBuilder( { sectionName: 'sites' } ) ).result.current(
+		adminBarNode
+	);
 
-describe( 'useHelpCenterPlugin', () => {
+describe( 'useHelpCenterNodeBuilder', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		jest.mocked( useAnalytics ).mockReturnValue( {
@@ -64,13 +67,13 @@ describe( 'useHelpCenterPlugin', () => {
 	} );
 
 	it( 'does not track an unrendered node', () => {
-		renderPlugin( [] );
+		renderPlugin();
 
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'tracks an impression only when the icon renders', () => {
-		const result = renderPlugin( [] );
+		const result = renderPlugin();
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 
 		render( result.icon as React.ReactElement );
@@ -83,12 +86,11 @@ describe( 'useHelpCenterPlugin', () => {
 		} );
 	} );
 
-	it( 'toggles the Help Center when the payload has no help center node', () => {
-		const result = renderPlugin( [] );
+	it( 'takes its label from a plain-text title', () => {
+		const result = renderPlugin( node( 'help-center', { title: 'Help' } ) );
 
 		const { container } = render( result.icon as React.ReactElement );
 
-		expect( result.id ).toBe( 'help-center' );
 		expect( result.label ).toBe( 'Help' );
 		expect( result.title ).toBeUndefined();
 		expect( result.children ).toBeUndefined();
@@ -101,13 +103,13 @@ describe( 'useHelpCenterPlugin', () => {
 	} );
 
 	it( 'stays icon only when the Help Center node carries no menu title', () => {
-		const result = renderPlugin( [ HELP_CENTER_NODE ] );
+		const result = renderPlugin( HELP_CENTER_NODE );
 		render( result.icon as React.ReactElement );
 
-		expect( result.id ).toBe( 'help-center' );
-		expect( result.label ).toBe( 'Help' );
+		expect( result.label ).toBe( 'Help Center' );
 		expect( result.title ).toBeUndefined();
-		expect( result.tooltip ).toBeUndefined();
+		expect( result.tooltip ).toBe( 'Help Center' );
+		expect( result.href ).toBeUndefined();
 		expect( result.children ).toBeUndefined();
 		expect( adminBarIcon ).toHaveBeenLastCalledWith( ICON, 'omnibar__help-icon' );
 
@@ -116,12 +118,12 @@ describe( 'useHelpCenterPlugin', () => {
 	} );
 
 	it( 'shows the entry label the backend sends as the menu title', () => {
-		const result = renderPlugin( [
+		const result = renderPlugin(
 			node( 'help-center', {
 				...HELP_CENTER_NODE,
 				meta: { ...HELP_CENTER_NODE.meta, menu_title: 'Get Help' },
-			} ),
-		] );
+			} )
+		);
 
 		expect( result.title ).toBe( 'Get Help' );
 		expect( result.tooltip ).toBe( 'Get Help' );

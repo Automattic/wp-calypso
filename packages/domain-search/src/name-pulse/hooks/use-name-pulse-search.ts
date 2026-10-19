@@ -10,6 +10,7 @@ import {
 	generateExactMatches,
 	getAiTopResults,
 	getNamePulseExactMatch,
+	getNamePulseExactTarget,
 	getNamePulseNotice,
 	getResultsLayout,
 	getTopResults,
@@ -197,18 +198,26 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	// The bulk check is zone-file based: it says a domain is taken, not why.
 	// Both wait for the query to settle, so half-typed input is not checked or flagged.
-	const typedDomain = isSettled ? ( layout.fqdn?.fullDomain ?? '' ) : '';
-	const { data: typedDomainAvailability, isError: isTypedDomainError } = useQuery( {
-		...queries.domainAvailability( typedDomain ),
-		enabled: Boolean( typedDomain ),
+	const exactTarget = useMemo(
+		() => getNamePulseExactTarget( layout, filter.tlds ),
+		[ layout, filter.tlds ]
+	);
+	const exactDomain = isSettled ? ( exactTarget?.fullDomain ?? '' ) : '';
+	const { data: exactDomainAvailability, isError: isExactDomainError } = useQuery( {
+		...queries.domainAvailability( exactDomain ),
+		enabled: Boolean( exactDomain ),
 	} );
+	// Only a typed domain gets a notice; a filtered one that is taken just stays
+	// in the grid.
+	const typedDomainAvailability = layout.fqdn ? exactDomainAvailability : undefined;
+	const isTypedDomainError = Boolean( layout.fqdn ) && isExactDomainError;
 
-	// The typed domain leaves the grid for its own card while it is checked, so
+	// The exact domain leaves the grid for its own card while it is checked, so
 	// neither its row nor Top results quote a bulk price and a cart button the
 	// notice may be about to contradict. A taken name comes back to the grid.
 	const exactMatch = useMemo(
-		() => getNamePulseExactMatch( layout.fqdn, typedDomainAvailability, isTypedDomainError ),
-		[ layout.fqdn, typedDomainAvailability, isTypedDomainError ]
+		() => getNamePulseExactMatch( exactTarget, exactDomainAvailability, isExactDomainError ),
+		[ exactTarget, exactDomainAvailability, isExactDomainError ]
 	);
 	const exactMatchName = exactMatch?.domainName;
 

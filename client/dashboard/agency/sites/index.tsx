@@ -221,11 +221,13 @@ export default function AgencySites() {
 					empty={
 						view.search ? (
 							<DataViewsEmptyStateLayout
+								isBorderless
 								title={ __( 'No sites match your search' ) }
 								description={ __( 'Try a different search term.' ) }
 							/>
 						) : (
 							<DataViewsEmptyStateLayout
+								isBorderless
 								title={ __( 'No sites' ) }
 								description={ __( 'No agency-managed sites were found.' ) }
 							/>

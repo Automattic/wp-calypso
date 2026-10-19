@@ -1,9 +1,9 @@
 /**
  * Who asked for the next chat open, close or send: the merchant in the chat's
- * own UI, a suggestion chip, or a host through the actions bridge. The caller
- * marks the origin right before the action and the event that records the
- * action takes it, so each mark labels exactly one event and everything
- * unmarked keeps the default.
+ * own UI, a suggestion chip, or a host through the actions bridge, or Retry on
+ * a reply that never arrived. The caller marks the origin right before the
+ * action and the event that records the action takes it, so each mark labels
+ * exactly one event and everything unmarked keeps the default.
  */
 type ChatAction = 'open' | 'close' | 'send';
 

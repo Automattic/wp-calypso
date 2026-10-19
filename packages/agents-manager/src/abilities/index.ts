@@ -11,13 +11,18 @@ import { isEditorPage } from '../utils/is-editor-page';
 import { executeAbilityFromList } from './execute-ability';
 import { wpAdminNavigateAbility } from './wp-admin-navigate';
 import type { ToolProvider } from '../extension-types';
-import type { Ability } from './types';
 import type { CheckpointContextItem } from '../utils/checkpoints';
 import type { PageStructure } from '../utils/page-structure';
+import type { Ability } from '@wordpress/abilities';
 
 type EditorAbilitiesModule = typeof import( './editor-abilities' );
 
 type CheckpointActions = EditorAbilitiesModule[ 'checkpointActions' ];
+
+type EditorSuggestions = Pick<
+	EditorAbilitiesModule,
+	'getEditorEmptyViewSuggestions' | 'useBlockSuggestions'
+>;
 
 let editorAbilitiesPromise: Promise< EditorAbilitiesModule > | null = null;
 let loadedEditorAbilities: EditorAbilitiesModule | null = null;
@@ -153,6 +158,19 @@ export async function preloadAmEditorContentContext(): Promise< void > {
 		( await loadEditorAbilities() )?.preloadEditorContentContext();
 	} catch {
 		// Already logged; the next facade call retries the load.
+	}
+}
+
+/**
+ * AM's editor suggestions, from the editor abilities chunk. `null` off editor
+ * pages, or when the chunk fails to load.
+ */
+export async function loadAmEditorSuggestions(): Promise< EditorSuggestions | null > {
+	try {
+		return await loadEditorAbilities();
+	} catch {
+		// Already logged; the chat goes without them.
+		return null;
 	}
 }
 

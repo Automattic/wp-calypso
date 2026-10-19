@@ -129,7 +129,8 @@ const findNotice = () => findElement( '.name-pulse-notice' );
 
 const findExactMatchCard = () => findElement( '.name-pulse-exact-card[data-domain]' );
 
-const findBundleCard = () => findElement( '.name-pulse-bundle-card' );
+const findBundleCard = () =>
+	findElement( '.name-pulse-bundle-card:not(.name-pulse-bundle-card--placeholder)' );
 
 const isAfterTopResults = ( element: HTMLElement ) =>
 	Boolean(
@@ -569,7 +570,7 @@ describe( 'NamePulseResults', () => {
 		// The bulk check offers the typed name, but its own check is still running:
 		// it waits in the card's slot rather than as a priced row.
 		const placeholder = await screen.findByRole( 'status', {
-			name: 'Loading featured domain suggestion',
+			name: 'Loading exact match',
 		} );
 		expect( placeholder.closest( '.name-pulse-featured' ) ).toHaveAttribute( 'aria-busy', 'true' );
 		await findRow( 'icecream.org' );
@@ -763,7 +764,11 @@ describe( 'NamePulseResults', () => {
 		await user.click( await screen.findByRole( 'option', { name: '.com' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Apply' } ) );
 
-		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.com' ] ) );
+		// One ending reads like typing that domain, so it gets the Exact match card.
+		await waitFor( () =>
+			expect( rowFor( 'icecream.com' ) ).toHaveClass( 'name-pulse-exact-card' )
+		);
+		expect( document.querySelector( '[data-section="top"]' ) ).toBeNull();
 		expect( document.querySelector( '[data-section="exact"]' ) ).toBeNull();
 		await waitFor( () =>
 			expect( domainsIn( 'suggestions' ) ).toEqual( [
@@ -803,6 +808,47 @@ describe( 'NamePulseResults', () => {
 		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.com' ] ) );
 		expect( ( await findExactMatchCard() ).getAttribute( 'data-domain' ) ).toBe( 'icecream.net' );
 		expect( document.querySelector( '[data-section="exact"]' ) ).toBeNull();
+	} );
+
+	it( 'spans the row with the exact-match card of the one filtered ending when there is no bundle', async () => {
+		const user = userEvent.setup();
+
+		render( <NamePulseTestSearch query="icecream" /> );
+
+		await findRow( 'icecream.com' );
+		await user.click( screen.getByRole( 'button', { name: 'Filter, no filters applied' } ) );
+		await user.click( await screen.findByRole( 'option', { name: '.com' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Apply' } ) );
+
+		const card = await findExactMatchCard();
+		expect( card ).toHaveAttribute( 'data-domain', 'icecream.com' );
+		expect( await within( card ).findByText( '$24.00' ) ).toBeVisible();
+		expect( card ).toHaveClass( 'name-pulse-exact-card--wide' );
+	} );
+
+	it( 'keeps a taken name with the one filtered ending in the grid, without a notice', async () => {
+		const user = userEvent.setup();
+
+		render(
+			<NamePulseTestSearch
+				query="icecream"
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						status: DomainAvailabilityStatus.TRANSFERRABLE,
+					} )
+				}
+			/>
+		);
+
+		await findRow( 'icecream.com' );
+		await user.click( screen.getByRole( 'button', { name: 'Filter, no filters applied' } ) );
+		await user.click( await screen.findByRole( 'option', { name: '.com' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Apply' } ) );
+
+		await waitFor( () => expect( document.querySelector( '.name-pulse-featured' ) ).toBeNull() );
+		expect( await findRow( 'icecream.com' ) ).not.toHaveClass( 'name-pulse-exact-card' );
+		expect( screen.queryByText( 'This domain is already registered.' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'filters Creative matches on the page, as their provider ignores the chosen endings', async () => {
@@ -980,6 +1026,24 @@ describe( 'NamePulseResults', () => {
 			);
 		} );
 
+		it( 'sits beside the exact-match card of the one filtered ending', async () => {
+			const user = userEvent.setup();
+
+			render( <NamePulseTestSearch query="icecream" showBundleSuggestions /> );
+
+			await findBundleCard();
+			await user.click( screen.getByRole( 'button', { name: 'Filter, no filters applied' } ) );
+			await user.click( await screen.findByRole( 'option', { name: '.com' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Apply' } ) );
+
+			await waitFor( () =>
+				expect(
+					document.querySelector( '.name-pulse-featured .name-pulse-bundle-card' )
+				).not.toBeNull()
+			);
+			expect( await findExactMatchCard() ).not.toHaveClass( 'name-pulse-exact-card--wide' );
+		} );
+
 		it( 'falls back to the first top result with a bundle when the typed ending has none', async () => {
 			const bundleForDomain = jest.fn( async ( fqdn: string ) => buildNamePulseBundle( fqdn ) );
 
@@ -1043,9 +1107,42 @@ describe( 'NamePulseResults', () => {
 			);
 
 			await waitFor( () => expect( bundleForDomain ).toHaveBeenCalledWith( 'icecream.com' ) );
+			await waitFor( () =>
+				expect( document.querySelector( '.name-pulse-bundle-card' ) ).toBeNull()
+			);
 
 			expect( bundleForDomain ).toHaveBeenCalledTimes( 1 );
-			expect( document.querySelector( '.name-pulse-bundle-card' ) ).toBeNull();
+		} );
+
+		it( 'holds its place under Top results while the bundle loads', async () => {
+			render(
+				<NamePulseTestSearch
+					query="icecream"
+					showBundleSuggestions
+					bundleForDomain={ () => new Promise( () => {} ) }
+				/>
+			);
+
+			const placeholder = await screen.findByRole( 'status', { name: 'Loading domain bundle' } );
+
+			expect( placeholder ).toHaveClass( 'name-pulse-bundle-card--wide' );
+			expect( isAfterTopResults( placeholder ) ).toBe( true );
+		} );
+
+		it( 'holds its place beside the exact-match card while the bundle loads', async () => {
+			render(
+				<NamePulseTestSearch
+					query="icecream.com"
+					showBundleSuggestions
+					bundleForDomain={ () => new Promise( () => {} ) }
+				/>
+			);
+
+			await findExactMatchCard();
+			const placeholder = screen.getByRole( 'status', { name: 'Loading domain bundle' } );
+
+			expect( placeholder.closest( '.name-pulse-featured' ) ).not.toBeNull();
+			expect( placeholder ).not.toHaveClass( 'name-pulse-bundle-card--wide' );
 		} );
 
 		it( 'adds every member to the cart in one go, and explains a bundle that is gone', async () => {

@@ -116,4 +116,44 @@ describe( 'NamePulseResultsSection', () => {
 		expect( document.querySelector( '.name-pulse-grid--cards' ) ).not.toBeInTheDocument();
 		expect( document.querySelector( '.name-pulse-row--card' ) ).not.toBeInTheDocument();
 	} );
+
+	it.each( [
+		[ 1, 'row', 'name-pulse-grid--single' ],
+		[ 2, 'row', 'name-pulse-grid--pair' ],
+		[ 1, 'card', 'name-pulse-grid--single' ],
+		[ 2, 'card', 'name-pulse-grid--pair' ],
+	] as const )( 'widens %i %s result(s) to fill the row', ( count, variant, modifier ) => {
+		render(
+			<TestDomainSearch>
+				<NamePulseResultsSection
+					id="top"
+					title="Top results"
+					results={ [] }
+					isLoading
+					skeletonCount={ count }
+					variant={ variant }
+				/>
+			</TestDomainSearch>
+		);
+
+		expect( document.querySelector( '.name-pulse-grid' ) ).toHaveClass( modifier );
+	} );
+
+	it( 'keeps the columns for a full row', () => {
+		render(
+			<TestDomainSearch>
+				<NamePulseResultsSection
+					id="exact"
+					title="Exact match"
+					results={ [] }
+					isLoading
+					skeletonCount={ 3 }
+				/>
+			</TestDomainSearch>
+		);
+
+		const grid = document.querySelector( '.name-pulse-grid' );
+		expect( grid ).not.toHaveClass( 'name-pulse-grid--single' );
+		expect( grid ).not.toHaveClass( 'name-pulse-grid--pair' );
+	} );
 } );

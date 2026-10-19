@@ -33,4 +33,25 @@ describe( 'convertBigSkyMessageToUIMessage', () => {
 
 		expect( message ).toMatchObject( { id: 'message-2', role: 'user', content, context } );
 	} );
+
+	it( 'lists the editor empty-view suggestions under a message that asks for them', () => {
+		const text = { type: 'text' as const, text: 'Your site is ready!' };
+
+		const message = convertBigSkyMessageToUIMessage( {
+			id: 'message-3',
+			role: 'assistant',
+			content: [ text ],
+			created_at: 1700000000,
+			hasEditorEmptyViewSuggestions: true,
+		} );
+
+		expect( message.content ).toEqual( [
+			text,
+			{
+				type: 'component',
+				component: expect.any( Function ),
+				componentProps: { messageId: 'message-3' },
+			},
+		] );
+	} );
 } );

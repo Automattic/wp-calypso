@@ -1,7 +1,5 @@
 import type { FilePart } from '@automattic/agenttic-client';
 
-export type { Ability } from '@wordpress/abilities';
-
 export interface AbilityResult {
 	result: {
 		success: boolean;

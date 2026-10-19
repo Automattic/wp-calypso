@@ -1,9 +1,9 @@
 import * as blocks from '@wordpress/blocks';
 import { createWebMcpAdapter, normalizeInputSchema, shouldExposeWebMcpAbility } from '../adapter';
 import { WEBMCP_SERVER_ABILITY_NAMES } from '../contracts';
-import type { Ability } from '../../abilities/types';
 import type { ToolProvider } from '../../extension-types';
 import type { WebMcpModelContext, WebMcpTool } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 jest.mock( '@wordpress/blocks', () => ( {
 	...jest.requireActual( '@wordpress/blocks' ),
