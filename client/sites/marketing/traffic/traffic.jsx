@@ -24,6 +24,7 @@ import SiteVerification from 'calypso/my-sites/site-settings/seo-settings/site-v
 import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
 import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
+import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isBlazeEnabled from 'calypso/state/selectors/is-blaze-enabled';
 import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
@@ -45,9 +46,12 @@ const loadVisibilityNotice = () =>
 		/* webpackChunkName: "async-load-calypso-my-sites-site-settings-seo-settings-visibility-notice" */ 'calypso/my-sites/site-settings/seo-settings/visibility-notice'
 	);
 
-// The new Jetpack › SEO page covers SEO, Sitemaps and Site verification.
+// The new Jetpack › SEO page covers SEO, Sitemaps and Site verification. The site's
+// admin menu lists it only once the page is live there, so it follows the site's own rollout.
 export const isJetpackSeoPageAvailable = ( state, siteId ) => {
-	return siteHasFeature( state, siteId, 'seo-admin-ui' );
+	const menu = getAdminMenu( state, siteId ) ?? [];
+
+	return menu.some( ( item ) => item.children?.some( ( child ) => child.slug === 'jetpack-seo' ) );
 };
 
 export const shouldShowBlazeAdvertisingOption = ( state, siteId ) => {
