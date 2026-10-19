@@ -4,8 +4,7 @@ import { clearStepPersistedState, NEW_HOSTED_SITE_FLOW } from '@automattic/onboa
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect } from 'react';
-import { matchPath } from 'react-router';
+import { useEffect, useRef } from 'react';
 import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -21,6 +20,7 @@ import {
 	clearSignupCompleteSlug,
 	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
@@ -39,74 +39,62 @@ import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import type { Store } from 'redux';
 
-/**
- * The step named in the URL, if any. A visit to the flow root carries none; a checkout return
- * or browser Back always lands on a step.
- */
-function getEntryStepFromURL(): string | undefined {
-	const step = matchPath( { path: '/setup/:flow/:step/:lang?' }, window.location.pathname ?? '' )
-		?.params?.step;
-
-	return step && ! getLanguageSlugs().includes( step ) ? step : undefined;
-}
-
-async function initialize( reduxStore: Store ) {
+function initializeSignupState(
+	reduxDispatch: Store[ 'dispatch' ],
+	queryParams: URLSearchParams,
+	eligibleForFreeHostingTrial: boolean,
+	shouldReset: boolean
+) {
 	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
-
-	const queryParams = getCurrentQueryParams();
-	// Like onboarding, opted-in step URLs preserve state; the flow root starts over.
-	const shouldPreserveSignupState =
-		hasPurchaseStepsParameter( queryParams ) && !! getEntryStepFromURL();
-
-	if ( ! shouldPreserveSignupState ) {
-		await resetOnboardStore();
+	if ( shouldReset ) {
+		resetOnboardStore();
 		// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
-		reduxStore.dispatch( setSelectedSiteId( null ) );
+		reduxDispatch( setSelectedSiteId( null ) );
 		clearStepPersistedState( NEW_HOSTED_SITE_FLOW );
 		clearSignupDestinationCookie();
 		clearSignupCompleteFlowName();
 		clearSignupCompleteSlug();
 		clearSignupCompleteSiteID();
 	}
-	const showDomainStep = queryParams.has( 'showDomainStep' );
-	const productSlug = queryParams.get( 'plan' );
 
+	const productSlug = queryParams.get( 'plan' );
+	const utmSource = queryParams.get( 'utm_source' );
+	if (
+		productSlug &&
+		isDotComPlan( { product_slug: productSlug } ) &&
+		( ! isFreeHostingTrial( productSlug ) || eligibleForFreeHostingTrial )
+	) {
+		setPlanCartItem( {
+			product_slug: productSlug,
+			extra: {
+				...( utmSource && { hideProductVariants: utmSource === 'wordcamp' } ),
+			},
+		} );
+	}
+}
+
+async function initialize( reduxStore: Store ) {
+	const queryParams = getCurrentQueryParams();
 	const eligibleForFreeHostingTrial = isUserEligibleForFreeHostingTrial( reduxStore.getState() );
 
-	const steps = [];
+	if ( ! hasPurchaseStepsParameter( queryParams ) ) {
+		initializeSignupState( reduxStore.dispatch, queryParams, eligibleForFreeHostingTrial, true );
+	}
 
-	if ( showDomainStep ) {
+	const productSlug = queryParams.get( 'plan' );
+	const steps = [];
+	if ( queryParams.has( 'showDomainStep' ) ) {
 		steps.push( STEPS.DOMAIN_SEARCH );
 	}
-
-	const utmSource = queryParams.get( 'utm_source' );
-
 	if ( ! productSlug || ! isDotComPlan( { product_slug: productSlug } ) ) {
 		steps.push( STEPS.UNIFIED_PLANS, STEPS.TRIAL_ACKNOWLEDGE );
-	} else if ( ! isFreeHostingTrial( productSlug ) ) {
-		await setPlanCartItem( {
-			product_slug: productSlug,
-			extra: {
-				...( utmSource && {
-					hideProductVariants: utmSource === 'wordcamp',
-				} ),
-			},
-		} );
-	} else if ( eligibleForFreeHostingTrial ) {
-		await setPlanCartItem( {
-			product_slug: productSlug,
-			extra: {
-				...( utmSource && {
-					hideProductVariants: utmSource === 'wordcamp',
-				} ),
-			},
-		} );
-
-		steps.push( STEPS.TRIAL_ACKNOWLEDGE, STEPS.UNIFIED_PLANS );
-	} else {
-		steps.push( STEPS.UNIFIED_PLANS );
+	} else if ( isFreeHostingTrial( productSlug ) ) {
+		if ( eligibleForFreeHostingTrial ) {
+			steps.push( STEPS.TRIAL_ACKNOWLEDGE, STEPS.UNIFIED_PLANS );
+		} else {
+			steps.push( STEPS.UNIFIED_PLANS );
+		}
 	}
-
 	steps.push( STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
 
 	return stepsWithRequiredLogin( steps );
@@ -313,6 +301,25 @@ const hosting: FlowV2< typeof initialize > = {
 		};
 	},
 	useSideEffect( currentStepSlug ) {
+		const reduxDispatch = useReduxDispatch();
+		const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
+		const signupStateInitialized = useRef( false );
+		useEffect( () => {
+			if ( signupStateInitialized.current ) {
+				return;
+			}
+			signupStateInitialized.current = true;
+			const query = getCurrentQueryParams();
+			if ( hasPurchaseStepsParameter( query ) ) {
+				initializeSignupState(
+					reduxDispatch,
+					query,
+					eligibleForFreeHostingTrial,
+					! currentStepSlug || getLanguageSlugs().includes( currentStepSlug )
+				);
+			}
+		}, [ currentStepSlug, reduxDispatch, eligibleForFreeHostingTrial ] );
+
 		const studioSiteId = useQuery().get( 'studioSiteId' );
 		const autoOpenPush = useQuery().get( 'autoOpenPush' );
 		const section = useQuery().get( 'section' );

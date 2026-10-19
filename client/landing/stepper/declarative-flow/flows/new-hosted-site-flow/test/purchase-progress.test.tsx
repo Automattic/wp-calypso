@@ -11,19 +11,28 @@ jest.mock( '@automattic/onboarding', () => ( {
 	clearStepPersistedState: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-products', () => ( {
-	isDotComPlan: () => true,
-	isFreeHostingTrial: () => false,
-} ) );
 jest.mock( 'calypso/landing/stepper/stores', () => ( { ONBOARD_STORE: 'ONBOARD_STORE' } ) );
 
 let mockQuery = new URLSearchParams();
 let mockLocale = 'en';
+let mockTrialPlan = false;
+let mockValidPlan = true;
+let mockEligibleForTrial = true;
 let mockPlan: { product_slug: string } | null = { product_slug: 'ecommerce-bundle-2y' };
 const mockReset = jest.fn();
 const mockSeed = jest.fn();
 const mockClear = jest.fn();
+const mockReduxDispatch = jest.fn();
 const mockSite = { siteSlug: 'example.wordpress.com', siteId: '123' };
+
+jest.mock( '@automattic/calypso-products', () => ( {
+	isDotComPlan: () => mockValidPlan,
+	isFreeHostingTrial: () => mockTrialPlan,
+} ) );
+jest.mock( 'calypso/state', () => ( {
+	useDispatch: () => mockReduxDispatch,
+	useSelector: () => mockEligibleForTrial,
+} ) );
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: ( callback: ( select: () => unknown ) => unknown ) =>
@@ -53,7 +62,7 @@ jest.mock( 'calypso/landing/stepper/hooks/use-is-valid-woo-partner', () => ( {
 	useIsValidWooPartner: () => false,
 } ) );
 jest.mock( 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial', () => ( {
-	isUserEligibleForFreeHostingTrial: () => true,
+	isUserEligibleForFreeHostingTrial: () => mockEligibleForTrial,
 } ) );
 jest.mock( 'calypso/signup/storageUtils', () => ( {
 	getSignupCompleteSiteID: () => mockSite.siteId,
@@ -71,6 +80,9 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 beforeEach( () => {
 	jest.clearAllMocks();
 	mockLocale = 'en';
+	mockTrialPlan = false;
+	mockValidPlan = true;
+	mockEligibleForTrial = true;
 	mockPlan = { product_slug: 'ecommerce-bundle-2y' };
 	mockQuery = new URLSearchParams( {
 		plan: mockPlan.product_slug,
@@ -87,6 +99,11 @@ beforeEach( () => {
 		writable: true,
 	} );
 } );
+
+const sideEffect = ( step: string ) =>
+	renderHook( ( { stepSlug } ) => hosting.useSideEffect?.( stepSlug as never, jest.fn() ), {
+		initialProps: { stepSlug: step },
+	} );
 
 const navigation = ( step: string, navigate = jest.fn() ) =>
 	renderHook( () => hosting.useStepNavigation( step as never, navigate ) ).result.current;
@@ -212,11 +229,12 @@ it.each( [ true, false ] )(
 	}
 );
 
-it.each( [ 'domains', 'plans', 'domains/fr', 'plans/fr' ] )(
+it.each( [ 'domains', 'plans' ] )(
 	'preserves signup state on opted-in %s entries without checkout markers',
 	async ( step ) => {
-		window.location.pathname = `/setup/new-hosted-site/${ step }`;
+		window.location.pathname = '/a-different-route-format';
 		await hosting.initialize( { dispatch: jest.fn(), getState: () => ( {} ) } as never );
+		sideEffect( step );
 		expect( mockReset ).not.toHaveBeenCalled();
 		expect( mockClear ).not.toHaveBeenCalled();
 	}
@@ -241,6 +259,7 @@ it( 'returns through plans on the same site without reseeding the entry plan', a
 	const back = new URL( checkout.searchParams.get( 'checkoutBackUrlDomains' )! );
 	mockQuery = back.searchParams;
 	window.location.pathname = back.pathname;
+	sideEffect( 'domains' );
 
 	const steps = await hosting.initialize( {
 		dispatch: jest.fn(),
@@ -260,19 +279,62 @@ it( 'returns through plans on the same site without reseeding the entry plan', a
 } );
 
 it.each( [
-	[ 'without progress', '/setup/new-hosted-site/domains', undefined ],
-	[ 'disabled progress', '/setup/new-hosted-site/domains', 'false' ],
-	[ 'localized without progress', '/setup/new-hosted-site/domains/fr', undefined ],
-	[ 'flow root', '/setup/new-hosted-site', 'true' ],
-	[ 'localized flow root', '/setup/new-hosted-site/fr', 'true' ],
-] )( 'resets signup state for %s entries', async ( _entry, pathname, progress ) => {
-	window.location.pathname = pathname;
+	[ 'without progress', 'domains', undefined ],
+	[ 'disabled progress', 'domains', 'false' ],
+	[ 'localized without progress', 'domains', undefined ],
+	[ 'flow root', '', 'true' ],
+	[ 'localized flow root', 'fr', 'true' ],
+] )( 'resets signup state for %s entries', async ( _entry, step, progress ) => {
 	if ( progress === undefined ) {
 		mockQuery.delete( 'showPurchaseSteps' );
 	} else {
 		mockQuery.set( 'showPurchaseSteps', progress );
 	}
 	await hosting.initialize( { dispatch: jest.fn(), getState: () => ( {} ) } as never );
-	expect( mockReset ).toHaveBeenCalled();
-	expect( mockClear ).toHaveBeenCalled();
+	sideEffect( step );
+	expect( mockReset ).toHaveBeenCalledTimes( 1 );
+	expect( mockClear ).toHaveBeenCalledTimes( 1 );
+	expect( mockSeed ).toHaveBeenCalledTimes( 1 );
+	expect( mockReset.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+		mockSeed.mock.invocationCallOrder[ 0 ]
+	);
 } );
+
+it( 'does not reset or reseed when moving from the root to another step', () => {
+	const { rerender } = sideEffect( '' );
+	expect( mockReset ).toHaveBeenCalledTimes( 1 );
+	expect( mockSeed ).toHaveBeenCalledTimes( 1 );
+	rerender( { stepSlug: 'domains' } );
+	rerender( { stepSlug: 'plans' } );
+	expect( mockReset ).toHaveBeenCalledTimes( 1 );
+	expect( mockSeed ).toHaveBeenCalledTimes( 1 );
+} );
+
+it.each( [ true, false ] )(
+	'keeps plan and trial initialization with progress=%s',
+	async ( enabled ) => {
+		mockQuery.set( 'showPurchaseSteps', String( enabled ) );
+		for ( const [ trial, eligible, valid, shouldSeed, trialStep ] of [
+			[ false, true, true, true, false ],
+			[ true, true, true, true, true ],
+			[ true, false, true, false, false ],
+			[ false, true, false, false, true ],
+		] ) {
+			jest.clearAllMocks();
+			mockTrialPlan = trial;
+			mockEligibleForTrial = eligible;
+			mockValidPlan = valid;
+			const steps = await hosting.initialize( {
+				dispatch: mockReduxDispatch,
+				getState: () => ( {} ),
+			} as never );
+			const hook = sideEffect( '' );
+			expect( mockReset ).toHaveBeenCalledTimes( 1 );
+			expect( mockSeed ).toHaveBeenCalledTimes( shouldSeed ? 1 : 0 );
+			expect( steps.some( ( step ) => step.slug === STEPS.TRIAL_ACKNOWLEDGE.slug ) ).toBe(
+				trialStep
+			);
+			hook.unmount();
+		}
+	}
+);
