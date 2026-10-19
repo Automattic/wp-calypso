@@ -17,6 +17,7 @@ import {
 } from 'calypso/reader/post/capabilities';
 import { useShelfPicker } from 'calypso/reader/shelves/subscribe-with-shelf/use-shelf-picker';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import './style.scss';
 
@@ -43,10 +44,13 @@ const ReaderPostActions = ( {
 		source: 'post_actions',
 	} );
 	const hasSites = !! useSelector( getPrimarySiteId );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const showShare = isSharable( post );
 	const showReblog = isRebloggable( post, hasSites );
 	const showComments = isCommentsOpen( post ) || post.discussion?.comment_count > 0;
 	const showLikes = isLikeable( post );
+	// `/read/saved` doesn't list RSS posts yet (READ-801).
+	const showSave = isEnabled( 'reader/saved-posts' ) && isLoggedIn && ! post.is_external;
 	const listClassnames = clsx( 'reader-post-actions', className, {
 		'is-discreet': variant === 'discreet',
 		'is-split': split,
@@ -83,7 +87,7 @@ const ReaderPostActions = ( {
 						/>
 					</li>
 				) }
-				{ isEnabled( 'reader/saved-posts' ) && (
+				{ showSave && (
 					<li className="reader-post-actions__item">
 						<ReaderSaveButton post={ post } iconSize={ iconSize } />
 					</li>
