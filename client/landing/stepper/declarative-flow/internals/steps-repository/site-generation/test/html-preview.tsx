@@ -211,6 +211,73 @@ it( 'keeps the navigation menu toggle whole so the page can style or hide it', (
 	).not.toBeNull();
 } );
 
+const svgElements = ( doc: Document, name: string ) =>
+	Array.from( doc.querySelectorAll( 'svg *' ) ).filter(
+		( element ) => element.localName.toLowerCase() === name
+	);
+const previewSvg = ( svg: string ) =>
+	new DOMParser().parseFromString(
+		htmlPreviewDocument( `<html><head></head><body>${ svg }</body></html>` ),
+		'text/html'
+	);
+
+it( 'keeps inline SVG icon sprites that reference the same document', () => {
+	const doc = previewSvg(
+		'<svg><symbol id="a" viewBox="0 0 10 10"><path d="M0 0h10v10z"/></symbol></svg><svg><use href="#a"/></svg>'
+	);
+	expect( svgElements( doc, 'symbol' ) ).toHaveLength( 1 );
+	const use = svgElements( doc, 'use' );
+	expect( use ).toHaveLength( 1 );
+	expect( use[ 0 ].getAttribute( 'href' ) ).toBe( '#a' );
+} );
+
+it( 'removes references to other documents from SVG elements that fetch them', () => {
+	const doc = previewSvg(
+		`<svg>
+			<image href="https://other.example/a.png"/>
+			<image xlink:href="https://other.example/b.png"/>
+			<use href="https://other.example/sprite.svg#a"/>
+			<use xlink:href="https://other.example/sprite.svg#a"/>
+			<filter id="f"><feImage href="https://other.example/c.png"/></filter>
+		</svg>`
+	);
+	for ( const name of [ 'image', 'use', 'feimage' ] ) {
+		const elements = svgElements( doc, name );
+		expect( elements.length ).toBeGreaterThan( 0 );
+		for ( const element of elements ) {
+			expect( element.hasAttribute( 'href' ) ).toBe( false );
+			expect( element.hasAttribute( 'xlink:href' ) ).toBe( false );
+		}
+	}
+	expect( doc.documentElement.outerHTML ).not.toContain( 'other.example' );
+} );
+
+it( 'removes script URLs from SVG links but keeps the link content', () => {
+	const doc = previewSvg(
+		'<svg><a href="javascript:alert(1)"><text>One</text></a><a xlink:href="javascript:alert(2)"><text>Two</text></a></svg>'
+	);
+	const links = svgElements( doc, 'a' );
+	expect( links ).toHaveLength( 2 );
+	for ( const link of links ) {
+		expect( link.hasAttribute( 'href' ) ).toBe( false );
+		expect( link.hasAttribute( 'xlink:href' ) ).toBe( false );
+	}
+	expect( doc.body.textContent ).toContain( 'One' );
+	expect( doc.body.textContent ).toContain( 'Two' );
+	expect( doc.documentElement.outerHTML ).not.toContain( 'javascript:' );
+} );
+
+it( 'rewrites network URLs in SVG style elements', () => {
+	const doc = previewSvg(
+		'<svg><style>.mark{fill:red;background:url(https://other.example/track)}</style><rect class="mark" width="10" height="10"/></svg>'
+	);
+	const style = svgElements( doc, 'style' );
+	expect( style ).toHaveLength( 1 );
+	expect( style[ 0 ].textContent ).toContain( 'fill:red' );
+	expect( style[ 0 ].textContent ).toContain( 'url("")' );
+	expect( doc.documentElement.outerHTML ).not.toContain( 'other.example' );
+} );
+
 it( 'uses an opaque frame with only a nonce-authorized bootstrap', async () => {
 	global.fetch = jest.fn().mockResolvedValue( { ok: true, json: async () => payload } );
 	render( <BuildHtmlPreview stream={ stream } isActive isGenerating isComplete={ false } /> );

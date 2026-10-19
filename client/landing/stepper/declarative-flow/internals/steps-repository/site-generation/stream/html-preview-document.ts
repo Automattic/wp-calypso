@@ -1,3 +1,6 @@
+import DOMPurify from 'dompurify';
+import type { Config } from 'dompurify';
+
 export const MAX_PREVIEW_HTML_BYTES = 262144;
 
 export type PreviewAsset = { id: string; mime_type: string; url: string };
@@ -99,19 +102,53 @@ function rewriteCssAssets(
 
 // Generated markup is untrusted. The boundary is the frame: its sandbox and CSP
 // allow no script, network or popups, and the inert body stops clicks and keys
-// from navigating it. Dropping only removes what would change how the page
-// renders or fight the asset rewriting.
+// from navigating it. DOMPurify is a second layer that keeps forms, buttons,
+// links and inline SVG as authored; the drops below remove what would change
+// how the page renders or fight the asset rewriting.
+const SANITIZER_CONFIG: Config = {
+	WHOLE_DOCUMENT: true,
+	USE_PROFILES: { html: true, svg: true, svgFilters: true },
+	// DOMPurify disallows <use> by default; same-document references are put back
+	// below, and any other reference is removed.
+	ADD_TAGS: [ 'style', 'use' ],
+	FORBID_TAGS: [ 'base', 'meta', 'link', 'script', 'iframe', 'object', 'embed', 'source', 'audio' ],
+	FORBID_ATTR: [
+		'srcset',
+		'action',
+		'formaction',
+		'ping',
+		'background',
+		'poster',
+		'nonce',
+		'is',
+		'autofocus',
+	],
+};
 const DROPPED_ELEMENTS = 'script, meta, base, link, noscript, template, iframe, object, embed';
 const DROPPED_ATTRIBUTES = [ 'nonce', 'srcset', 'sizes' ];
+// SVG elements that fetch what their href names. Only a fragment of the same
+// document may stay; DOMPurify lets other https references through.
+const SVG_REFERENCE_ELEMENTS = [ 'image', 'use', 'feimage' ];
+const SVG_REFERENCE_ATTRIBUTES = [ 'href', 'xlink:href' ];
 const MAX_DROP_PASSES = 4;
 
 function parseWithoutDropped( html: string ): Document {
-	const root = new DOMParser().parseFromString( html, 'text/html' );
+	const root = new DOMParser().parseFromString(
+		DOMPurify.sanitize( html, SANITIZER_CONFIG ),
+		'text/html'
+	);
 	root.querySelectorAll( DROPPED_ELEMENTS ).forEach( ( node ) => node.remove() );
 	for ( const element of root.querySelectorAll( '*' ) ) {
 		DROPPED_ATTRIBUTES.forEach( ( name ) => element.removeAttribute( name ) );
 		if ( element.tagName !== 'IMG' ) {
 			element.removeAttribute( 'src' );
+		}
+		if ( SVG_REFERENCE_ELEMENTS.includes( element.localName.toLowerCase() ) ) {
+			for ( const name of SVG_REFERENCE_ATTRIBUTES ) {
+				if ( ! element.getAttribute( name )?.trim().startsWith( '#' ) ) {
+					element.removeAttribute( name );
+				}
+			}
 		}
 	}
 	return root;
