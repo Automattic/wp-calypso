@@ -36,7 +36,7 @@ import {
 import { css, keyframes } from '@emotion/react';
 import { Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { help, pencil } from '@wordpress/icons';
+import { help } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -1041,10 +1041,7 @@ export default function CheckoutMainContent( {
 								</>
 							}
 							titleContent={ <ContactFormTitle /> }
-							editButtonText={ isCheckoutUiRedesignV1 ? undefined : String( translate( 'Edit' ) ) }
-							editButtonElement={
-								isCheckoutUiRedesignV1 ? <Icon icon={ pencil } size={ 18 } /> : undefined
-							}
+							editButtonText={ String( translate( 'Edit' ) ) }
 							editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
 							nextStepButtonText={ nextStepButtonText }
 							nextStepButtonAriaLabel={ String(
@@ -1062,10 +1059,7 @@ export default function CheckoutMainContent( {
 							/>
 						}
 						canEditStep={ canEditPaymentStep() }
-						editButtonText={ isCheckoutUiRedesignV1 ? undefined : String( translate( 'Edit' ) ) }
-						editButtonElement={
-							isCheckoutUiRedesignV1 ? <Icon icon={ pencil } size={ 18 } /> : undefined
-						}
+						editButtonText={ String( translate( 'Edit' ) ) }
 						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
 						nextStepButtonText={ String( translate( 'Continue' ) ) }
 						nextStepButtonAriaLabel={ String(
