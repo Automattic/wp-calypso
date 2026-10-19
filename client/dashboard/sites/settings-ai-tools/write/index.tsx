@@ -45,6 +45,8 @@ import McpGroupCard from '../mcp-group-card';
 import RemoteAbilitiesSection, { collectNamespaces } from '../remote-abilities-section';
 import type { McpAbility, McpGroupDescriptor } from '@automattic/api-core';
 
+import '../../../me/mcp/toolbar.scss';
+
 const TOOL_CATEGORY = 'write' as const;
 
 interface ToolGroup {
@@ -310,37 +312,39 @@ export default function SiteAIToolsWrite() {
 			}
 		>
 			<ComponentViewTracker eventName="calypso_dashboard_site_ai_tools_write_view" />
-			<VStack spacing={ 4 }>
-				{ allTools.length > 0 ? (
-					<Card>
-						<CardBody>
-							<ToggleControl
-								__nextHasNoMarginBottom
-								checked={ pageAllEnabled }
-								disabled={ mutation.isPending }
-								label={ <Text weight="600">{ __( 'Enable all' ) }</Text> }
-								onChange={ handlePageToggle }
-							/>
-						</CardBody>
-					</Card>
-				) : (
-					<Card>
-						<CardBody>
-							<Text variant="muted">
-								{ __( 'No write tools are available for your account.' ) }
-							</Text>
-						</CardBody>
-					</Card>
-				) }
-				<SearchControl
-					value={ search }
-					placeholder={ __( 'Search tools' ) }
-					onChange={ ( value: string ) => {
-						setSearch( value );
-						setAnchorTool( null );
-					} }
-					__nextHasNoMarginBottom
-				/>
+			<div className="mcp-tools-page">
+				<div className="mcp-tools-toolbar">
+					{ allTools.length > 0 ? (
+						<Card>
+							<CardBody>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ pageAllEnabled }
+									disabled={ mutation.isPending }
+									label={ <Text weight="600">{ __( 'Enable all' ) }</Text> }
+									onChange={ handlePageToggle }
+								/>
+							</CardBody>
+						</Card>
+					) : (
+						<Card>
+							<CardBody>
+								<Text variant="muted">
+									{ __( 'No write tools are available for your account.' ) }
+								</Text>
+							</CardBody>
+						</Card>
+					) }
+					<SearchControl
+						value={ search }
+						placeholder={ __( 'Search tools' ) }
+						onChange={ ( value: string ) => {
+							setSearch( value );
+							setAnchorTool( null );
+						} }
+						__nextHasNoMarginBottom
+					/>
+				</div>
 				{ groups.map( ( { group: descriptor, label, tools: groupTools } ) => {
 					const groupKey = descriptor?.name ?? '__other__';
 					const allGroupEnabled = groupTools.every( ( [ , tool ] ) => tool.enabled );
@@ -367,7 +371,7 @@ export default function SiteAIToolsWrite() {
 					search={ query }
 					anchorTool={ anchorTool }
 				/>
-			</VStack>
+			</div>
 		</PageLayout>
 	);
 }
