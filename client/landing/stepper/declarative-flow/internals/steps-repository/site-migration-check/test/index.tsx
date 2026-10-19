@@ -53,9 +53,23 @@ describe( 'SiteMigrationCheck', () => {
 			expect( preview ).toHaveAttribute( 'data-url', url );
 			expect( preview ).toHaveAttribute( 'data-viewport', '1200x800' );
 		}
+		expect( screen.getByText( 'Source' ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
+			'href',
+			'https://example.com'
+		);
 		expect(
-			screen.getByText( /Its posts, pages, media, theme, plugins, and settings are replaced/ )
+			screen.getByText(
+				'The content on this site will be copied. No changes will be made to the site itself.'
+			)
 		).toBeVisible();
+		expect( screen.getByText( 'Destination' ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'destination.wordpress.com' } ) ).toHaveAttribute(
+			'href',
+			'https://destination.wordpress.com'
+		);
+		expect( screen.getByText( /All of the content on this site will be replaced/ ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'WordPress site ↗' } ) ).not.toBeInTheDocument();
 	};
 
 	it( 'offers an upgrade for an ineligible destination', async () => {
@@ -85,6 +99,11 @@ describe( 'SiteMigrationCheck', () => {
 	it( 'offers another destination or submits replacement once for an eligible site', async () => {
 		const { submit, goBack } = renderDestination();
 		expectSiteComparison();
+		expect(
+			screen.getByText(
+				'The destination site will keep its current domain. Once the migration is finished, we’ll help you switch it to example.com when you’re ready.'
+			)
+		).toBeVisible();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
 		expect( goBack ).toHaveBeenCalledTimes( 1 );
 		expect( submit ).not.toHaveBeenCalled();

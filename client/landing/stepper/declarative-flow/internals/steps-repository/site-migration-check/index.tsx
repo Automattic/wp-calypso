@@ -67,7 +67,7 @@ const SiteMigrationCheck: StepType< {
 	let title: TranslateResult = translate( 'We can copy your whole site' );
 	let subTitle: TranslateResult | undefined;
 	if ( hasDestination ) {
-		title = translate( 'Migrate %(site)s here', { args: { site: hostname } } );
+		title = translate( 'Migrate %(site)s', { args: { site: hostname } } );
 	} else if ( isWpcom ) {
 		title = translate( 'Your site is already on WordPress.com' );
 		subTitle = translate( 'Let’s figure out your next step together.' );
@@ -118,12 +118,14 @@ const SiteMigrationCheck: StepType< {
 				}
 				heading={ <Step.Heading text={ title } subText={ subTitle } /> }
 			>
-				<div className="site-migration-check__summary">
-					<span>{ hasDestination ? `${ hostname } → ${ destinationSiteSlug }` : hostname }</span>
-					<Step.LinkButton href={ from } target="_blank" rel="noopener noreferrer">
-						{ translate( 'WordPress site ↗' ) }
-					</Step.LinkButton>
-				</div>
+				{ ! hasDestination && (
+					<div className="site-migration-check__summary">
+						<span>{ hostname }</span>
+						<Step.LinkButton href={ from } target="_blank" rel="noopener noreferrer">
+							{ translate( 'WordPress site ↗' ) }
+						</Step.LinkButton>
+					</div>
+				) }
 				{ showChoices ? (
 					<div className="site-migration-check__card">
 						{ choices.map( ( { title, description } ) => (
@@ -150,29 +152,23 @@ const SiteMigrationCheck: StepType< {
 						{ hasDestination ? (
 							<div className="site-migration-check__comparison">
 								<div className="site-migration-check__comparison-site">
-									<p className="site-migration-check__preview-label">
-										{ translate( '%(site)s today', { args: { site: destinationSiteSlug } } ) }
-									</p>
-									<SitePreview
-										url={ destinationSiteUrl || `https://${ destinationSiteSlug }` }
-										label={ translate( 'Current destination site' ) }
-										mshotsOptions={ COMPARISON_PREVIEW_OPTIONS }
-									/>
-									<p className="site-migration-check__preview-description">
-										{ translate(
-											'Its posts, pages, media, theme, plugins, and settings are replaced.'
-										) }
-									</p>
-								</div>
-								<span className="site-migration-check__comparison-arrow" aria-hidden="true">
-									→
-								</span>
-								<div className="site-migration-check__comparison-site">
-									<p className="site-migration-check__preview-label">
-										{ translate( '%(site)s after the migration', {
-											args: { site: destinationSiteSlug },
-										} ) }
-									</p>
+									<div className="site-migration-check__preview-label">
+										<span className="site-migration-check__preview-heading">
+											{ translate( 'Source' ) }
+										</span>
+										<a
+											className="site-migration-check__preview-address"
+											href={ from }
+											target="_blank"
+											rel="noopener noreferrer"
+											title={ hostname }
+										>
+											<span className="site-migration-check__preview-address-text">
+												{ hostname }
+											</span>{ ' ' }
+											↗
+										</a>
+									</div>
 									<SitePreview
 										url={ from }
 										label={ translate( 'Source site to be copied' ) }
@@ -180,9 +176,38 @@ const SiteMigrationCheck: StepType< {
 									/>
 									<p className="site-migration-check__preview-description">
 										{ translate(
-											'%(site)s’s posts, pages, media, theme, plugins, and settings are copied in.',
-											{ args: { site: hostname } }
+											'The content on this site will be copied. No changes will be made to the site itself.'
 										) }
+									</p>
+								</div>
+								<span className="site-migration-check__comparison-arrow" aria-hidden="true">
+									→
+								</span>
+								<div className="site-migration-check__comparison-site">
+									<div className="site-migration-check__preview-label">
+										<span className="site-migration-check__preview-heading">
+											{ translate( 'Destination' ) }
+										</span>
+										<a
+											className="site-migration-check__preview-address"
+											href={ destinationSiteUrl || `https://${ destinationSiteSlug }` }
+											target="_blank"
+											rel="noopener noreferrer"
+											title={ destinationSiteSlug }
+										>
+											<span className="site-migration-check__preview-address-text">
+												{ destinationSiteSlug }
+											</span>{ ' ' }
+											↗
+										</a>
+									</div>
+									<SitePreview
+										url={ destinationSiteUrl || `https://${ destinationSiteSlug }` }
+										label={ translate( 'Current destination site' ) }
+										mshotsOptions={ COMPARISON_PREVIEW_OPTIONS }
+									/>
+									<p className="site-migration-check__preview-description">
+										{ translate( 'All of the content on this site will be replaced.' ) }
 									</p>
 								</div>
 							</div>
@@ -211,7 +236,10 @@ const SiteMigrationCheck: StepType< {
 							) }
 							{ showComparison && (
 								<p className="site-migration-check__upgrade-description">
-									{ translate( 'Your plan and the site’s address stay the same.' ) }
+									{ translate(
+										'The destination site will keep its current domain. Once the migration is finished, we’ll help you switch it to %(source)s when you’re ready.',
+										{ args: { source: hostname } }
+									) }
 								</p>
 							) }
 							{ ! hasDestination && (
