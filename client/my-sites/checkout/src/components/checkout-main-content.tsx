@@ -208,28 +208,19 @@ function ConditionalContactDetailsMessage( {
 	contactDetailsType: ContactDetailsType;
 } ) {
 	const translate = useTranslate();
-	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 	if ( contactDetailsType !== 'domain' ) {
 		return null;
 	}
 	return (
 		<ContactDetailsFormDescription>
-			{ isMobileCheckoutStickySummary ? (
-				translate(
-					'Required for domain registration. Your details are protected for eligible domains.'
-				)
-			) : (
-				<>
-					{ translate(
-						'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-					) }{ ' ' }
-					<InlineSupportLink
-						supportContext="domain-contact-information-requirements"
-						showText={ false }
-						linkTitle={ translate( 'Learn more' ) }
-					/>
-				</>
-			) }
+			{ translate(
+				'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
+			) }{ ' ' }
+			<InlineSupportLink
+				supportContext="domain-contact-information-requirements"
+				showText={ false }
+				linkTitle={ translate( 'Learn more' ) }
+			/>
 		</ContactDetailsFormDescription>
 	);
 }
@@ -258,13 +249,8 @@ const ContactFormTitle = () => {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const contactDetailsType = getContactDetailsType( responseCart );
-	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	if ( contactDetailsType === 'domain' ) {
-		if ( isMobileCheckoutStickySummary ) {
-			return <>{ String( translate( 'Contact information' ) ) }</>;
-		}
-
 		const titleText =
 			! isActive && isComplete
 				? translate( 'Contact information' )
@@ -308,14 +294,7 @@ const ContactFormTitle = () => {
 
 const OrderReviewTitle = () => {
 	const translate = useTranslate();
-	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
-	return (
-		<>
-			{ String(
-				isMobileCheckoutStickySummary ? translate( 'Order details' ) : translate( 'Your order' )
-			) }
-		</>
-	);
+	return <>{ String( translate( 'Your order' ) ) }</>;
 };
 
 const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
