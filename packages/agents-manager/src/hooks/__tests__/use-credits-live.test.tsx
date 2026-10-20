@@ -1838,6 +1838,111 @@ describe( 'credits Tracks events', () => {
 		} );
 	} );
 
+	describe( 'when a turn’s balance comes before any read says who may buy', () => {
+		const lowOn = ( plan_tier: string ) => ( { ...low(), plan_tier } );
+		const failedRead = { ok: false, status: 503 };
+		// The chat re-renders as agenttic starts and finishes a turn.
+		const setProcessing = (
+			view: ReturnType< typeof renderCredits >,
+			scope: ReturnType< typeof freshScope >,
+			isProcessing: boolean
+		) => {
+			mockIsProcessing = isProcessing;
+			view.rerender( { ...defaultOptions, ...scope } );
+		};
+		const runTurn = async (
+			view: ReturnType< typeof renderCredits >,
+			scope: ReturnType< typeof freshScope >,
+			snapshot: unknown
+		) => {
+			setProcessing( view, scope, true );
+			await receive( snapshot );
+			setProcessing( view, scope, false );
+			await flush();
+		};
+
+		it.each( [
+			[ 'upgrade', 'personal', 'the opening read failed' ],
+			[ 'top_up', 'business', 'the opening read failed' ],
+			[ 'upgrade', 'personal', 'the turn cancelled the opening read' ],
+			[ 'top_up', 'business', 'the turn cancelled the opening read' ],
+		] as const )(
+			'records the %s call to action for a %s plan only once the read after the turn answers, when %s',
+			async ( ctaType, plan_tier, cause ) => {
+				const scope = freshScope();
+				if ( cause === 'the opening read failed' ) {
+					fetchMock.mockResolvedValueOnce( failedRead );
+				}
+				const view = renderCredits( scope );
+				await flush();
+				const read = deferred< ReturnType< typeof response > >();
+				fetchMock.mockReturnValueOnce( read.promise );
+
+				await runTurn( view, scope, lowOn( plan_tier ) );
+				expect( view.result.current.notice ).toBeDefined();
+				expect( creditsEvents() ).toEqual( [] );
+
+				read.resolve( response( lowOn( plan_tier ) ) );
+				await flush();
+				expect( creditsEvents() ).toEqual( [
+					[
+						'calypso_agents_manager_credits_notice_shown',
+						{
+							...base,
+							state: 'low',
+							credits_left: 5,
+							plan_tier,
+							user_role: 'admin',
+							cta_type: ctaType,
+						},
+					],
+				] );
+			}
+		);
+
+		it.each( [
+			[ 'a failed read', () => Promise.resolve( failedRead ) ],
+			[ 'a network error', () => Promise.reject( new Error( 'Offline' ) ) ],
+		] )(
+			'records nothing when the read after the turn ends in %s, since the notice hides',
+			async ( _case, read ) => {
+				const scope = freshScope();
+				fetchMock.mockResolvedValueOnce( failedRead );
+				const view = renderCredits( scope );
+				await flush();
+				fetchMock.mockImplementationOnce( read );
+
+				await runTurn( view, scope, low() );
+				expect( view.result.current.notice ).toBeUndefined();
+				expect( creditsEvents() ).toEqual( [] );
+			}
+		);
+
+		it( 'keeps waiting when the next turn cancels the read, and records once the read after that turn answers', async () => {
+			const scope = freshScope();
+			fetchMock.mockResolvedValueOnce( failedRead );
+			const view = renderCredits( scope );
+			await flush();
+			await runTurn( view, scope, low() );
+
+			setProcessing( view, scope, true );
+			await flush();
+			expect( fetchMock.mock.calls.at( -1 )?.[ 1 ].signal.aborted ).toBe( true );
+			expect( creditsEvents() ).toEqual( [] );
+
+			fetchMock.mockResolvedValueOnce( response( low() ) );
+			await receive( low() );
+			setProcessing( view, scope, false );
+			await flush();
+			expect( creditsEvents() ).toEqual( [
+				[
+					'calypso_agents_manager_credits_notice_shown',
+					expect.objectContaining( { state: 'low', user_role: 'admin', cta_type: 'upgrade' } ),
+				],
+			] );
+		} );
+	} );
+
 	it( 'waits until the chat draws the notice', async () => {
 		const scope = freshScope();
 		fetchMock.mockResolvedValueOnce( response( low() ) );
