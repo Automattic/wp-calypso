@@ -116,6 +116,7 @@ const NotesWrapper = ( { wpcom } ) => {
 		if ( ! isShowing ) {
 			// Unselect the note so key handlers don't steal keystrokes while hidden.
 			store.dispatch( actions.ui.unselectNote() );
+			store.dispatch( actions.ui.closeShortcutsPopover() );
 		}
 		store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
 	}, [ isShowing, isVisible ] );
