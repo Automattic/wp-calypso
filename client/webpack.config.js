@@ -12,7 +12,6 @@ const {
 	shouldTranspileDependency,
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
-const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
 const SentryCliPlugin = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
@@ -393,7 +392,6 @@ const webpackConfig = {
 			endYear: 2030,
 			cacheDir: path.resolve( cachePath, 'moment-timezone' ),
 		} ),
-		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		shouldBuildChunksMap &&
 			new GenerateChunksMapPlugin( {
 				output: path.resolve( './public/chunks-map.json' ),
