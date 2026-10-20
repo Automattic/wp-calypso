@@ -1,0 +1,9 @@
+.woo-top-bar-logo {
+	display: flex;
+	align-items: center;
+	height: var( --step-container-v2-top-bar-content-height );
+}
+
+.woo-top-bar-logo__svg {
+	display: block;
+}
