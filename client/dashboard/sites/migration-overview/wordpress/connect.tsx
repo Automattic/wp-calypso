@@ -3,6 +3,7 @@ import {
 	siteWordPressMigrationConfigureMutation,
 	siteWordPressMigrationRunMutation,
 } from '@automattic/api-queries';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -66,7 +67,10 @@ export function Connect( { site, failure }: { site: Site; failure?: WordPressMig
 	const startMigration = () =>
 		configure.mutate(
 			{ source_connection: { method: MANUAL_INSTALL } },
-			{ onSuccess: () => run.mutate( {} ) }
+			{
+				onSuccess: () =>
+					run.mutate( {}, { onSuccess: () => invokeSurvicateEvent( 'migrationStarted' ) } ),
+			}
 		);
 
 	return (

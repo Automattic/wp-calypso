@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { translate, useTranslate } from 'i18n-calypso';
 import { useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -87,11 +88,14 @@ export const SiteMigrationSupportInstructions: StepType = () => {
 			automated_migration: true,
 		} );
 
-		sendTicket( {
-			locale,
-			blog_url: siteSlug,
-			from_url: fromUrl,
-		} );
+		sendTicket(
+			{
+				locale,
+				blog_url: siteSlug,
+				from_url: fromUrl,
+			},
+			{ onSuccess: () => invokeSurvicateEvent( 'migrationStarted' ) }
+		);
 	}, [ sendTicket, locale, siteSlug, fromUrl ] );
 
 	const headerText = translate( 'We’ll take it from here!' );

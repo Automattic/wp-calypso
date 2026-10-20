@@ -1,4 +1,5 @@
 import { Step } from '@automattic/onboarding';
+import { queueSurvicateEvent } from '@automattic/survicate';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -55,6 +56,7 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 
 	useEffect( () => {
 		if ( isStoreApplicationPasswordSuccess ) {
+			queueSurvicateEvent( 'migrationStarted' );
 			siteId && dispatch( resetSite( siteId ) );
 			navigation?.submit?.( { action: 'migration-started' } );
 		}

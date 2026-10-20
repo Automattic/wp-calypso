@@ -79,6 +79,7 @@ describe( 'SiteMigrationCredentials', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		( wp.req.get as jest.Mock ).mockResolvedValue( baseSiteInfo );
+		document.cookie = 'survicate_pending_migrationStarted=; path=/; max-age=0';
 	} );
 
 	it( 'starts the authorization flow when using application password', async () => {
@@ -131,6 +132,7 @@ describe( 'SiteMigrationCredentials', () => {
 				action: 'submit',
 			} );
 		} );
+		expect( document.cookie ).toContain( 'survicate_pending_migrationStarted=1' );
 	} );
 
 	it( 'sets a migration as pending automatically', async () => {
@@ -144,6 +146,7 @@ describe( 'SiteMigrationCredentials', () => {
 				} )
 			);
 		} );
+		expect( document.cookie ).not.toContain( 'survicate_pending_migrationStarted' );
 	} );
 
 	it( 'skips the credential creation when the user does not fill the fields', async () => {
