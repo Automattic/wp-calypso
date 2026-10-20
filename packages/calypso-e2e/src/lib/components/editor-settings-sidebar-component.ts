@@ -20,8 +20,6 @@ const selectors = {
 
 	// Schedule
 	scheduleButton: 'button.editor-post-schedule__dialog-toggle',
-	dataFormDropdownCloseButton:
-		'.dataforms-layouts-panel__dropdown-header button[aria-label="Close"]',
 	schedulePopoverCloseButton:
 		'[data-wp-component="Popover"][aria-label="Change publish date"] [aria-label="Close"]',
 	scheduleInput: ( name: string ) => `.editor-post-schedule__dialog label:has-text("${ name }")`,
@@ -340,7 +338,8 @@ export class EditorSettingsSidebarComponent {
 
 		const editorParent = await this.editor.parent();
 
-		const dataFormClose = editorParent.locator( selectors.dataFormDropdownCloseButton );
+		// The DataForm summary closes from its own header, not by re-clicking the toggle.
+		const dataFormClose = editorParent.getByRole( 'button', { name: 'Close', exact: true } );
 		if ( await dataFormClose.count() ) {
 			await dataFormClose.click();
 			return;
@@ -363,6 +362,7 @@ export class EditorSettingsSidebarComponent {
 	async setScheduleDetails( date: ArticlePublishSchedule ): Promise< void > {
 		const editorParent = await this.editor.parent();
 
+		// The DataForm control is a single datetime-local input (YYYY-MM-DDTHH:mm).
 		// TODO: Drop the legacy inputs once the DataForm post summary ships in stable Gutenberg.
 		const dateTimeInput = editorParent.getByLabel( 'Date time', { exact: true } );
 		const legacyInput = editorParent.locator( selectors.scheduleInput( 'year' ) );
