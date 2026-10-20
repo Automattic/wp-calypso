@@ -494,12 +494,7 @@ class Layout extends Component {
 							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
 						/>
 					) }
-					<AsyncLoad
-						require={ loadGlobalNotices }
-						placeholder={ null }
-						loadFailureFallback={ null }
-						id="notices"
-					/>
+					<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 					{ ! ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) && (
 						<>
 							<div id="secondary" className="layout__secondary" role="navigation">
