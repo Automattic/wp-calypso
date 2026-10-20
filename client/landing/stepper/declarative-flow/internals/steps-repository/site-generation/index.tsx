@@ -58,7 +58,10 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	} );
 	const streamingAllowed = streamingEnabled && isAutomattician;
 	const stream = useBuildWowStream( streamingAllowed ? ( state.streamInfo ?? null ) : null );
-	const streamRequested = streamingAllowed && ( streamEvents || Boolean( state.streamInfo ) );
+	// The URL opt-in only asks for a feed; the server may decline it. Show the
+	// live canvas once the status response advertises a stream, even before the
+	// event subscription delivers its first state.
+	const streamRequested = streamingAllowed && Boolean( state.streamInfo );
 
 	const reload = () => {
 		window.location.reload();

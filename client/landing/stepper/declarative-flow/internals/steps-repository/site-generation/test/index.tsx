@@ -152,18 +152,31 @@ describe( 'SiteGeneration recovery', () => {
 		] );
 	} );
 
-	it.each( [ true, false ] )( 'gates the URL opt-in with streaming enabled: %s', ( enabled ) => {
-		jest.mocked( config.isEnabled ).mockReturnValue( enabled );
+	it.each( [ true, false ] )(
+		'waits for the server to advertise a stream after the URL opt-in with streaming enabled: %s',
+		( enabled ) => {
+			jest.mocked( config.isEnabled ).mockReturnValue( enabled );
+			window.location.search = '?build_wow=1&build_wow_stream=1&siteSlug=example.wordpress.com';
+			mockState = { ...mockState, status: 'working', streamInfo: null };
+			renderStep();
+
+			expect( SiteGenerationView ).toHaveBeenCalledWith(
+				expect.objectContaining( { streamRequested: false, siteSlug: 'example.wordpress.com' } ),
+				undefined
+			);
+			expect( useBuildWowStream ).toHaveBeenCalledWith( null );
+			expect( useDataQuery ).toHaveBeenCalledWith( expect.objectContaining( { enabled } ) );
+		}
+	);
+
+	it( 'passes the URL opt-in to the build request', () => {
 		window.location.search = '?build_wow=1&build_wow_stream=1&siteSlug=example.wordpress.com';
 		mockState = { ...mockState, status: 'working' };
 		renderStep();
 
-		expect( SiteGenerationView ).toHaveBeenCalledWith(
-			expect.objectContaining( { streamRequested: enabled, siteSlug: 'example.wordpress.com' } ),
-			undefined
+		expect( useSiteGenerationMock ).toHaveBeenCalledWith(
+			expect.objectContaining( { streamEvents: true } )
 		);
-		expect( useBuildWowStream ).toHaveBeenCalledWith( null );
-		expect( useDataQuery ).toHaveBeenCalledWith( expect.objectContaining( { enabled } ) );
 	} );
 
 	it.each( [ true, false ] )(
