@@ -1,0 +1,118 @@
+// DataViews paints its own surface; its public theming variable lets the card be the
+// surface instead, so the card's rounded border shows at the bottom.
+.a4a-news {
+	--wp-dataviews-color-background: transparent;
+}
+
+.a4a-news-logo {
+	flex-shrink: 0;
+	display: block;
+	border-radius: 4px;
+}
+
+// Text columns beside a logo take the remaining width, so long words wrap.
+.a4a-news-text {
+	flex: 1;
+	min-width: 0;
+}
+
+.a4a-news-balance {
+	text-wrap: balance;
+}
+
+.a4a-news-pretty {
+	margin: 0;
+	text-wrap: pretty;
+}
+
+// The filter pills: the Marketplace category tile (agency/components/showcase/spot-tiles.scss)
+// made short: the same Card surface and outline, the same 1px inset accent ring on hover
+// and the same 2px focus outline. Changed from the tile: 8px 12px padding instead of
+// 20px 12px (about 32px tall instead of about 100px), no icon, a 16px radius so it reads
+// as a pill, and the selected ring. The tile's 2px ring is too heavy on a pill, so the
+// selected pill takes DataViews' selected filter chip instead: a 1px ring
+// (--wpds-border-width-xs) and accent text, which also tells it apart from a hovered one.
+.a4a-news .a4a-news-filter {
+	border-radius: 16px;
+	cursor: pointer;
+
+	&:hover:not( :focus-visible, .is-selected ) {
+		box-shadow: 0 0 0 1px var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) inset;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+		outline-offset: 2px;
+	}
+
+	&.is-selected {
+		box-shadow: 0 0 0 var( --wpds-border-width-xs, 1px )
+			var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) inset;
+
+		.a4a-news-filter-label,
+		.a4a-news-filter-count {
+			color: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+		}
+	}
+
+	&.is-selected:focus-visible {
+		outline: none;
+	}
+}
+
+.a4a-news .a4a-news-filter-body {
+	padding: 8px 12px;
+	white-space: nowrap;
+}
+
+// The whole summary is the toggle.
+.a4a-news-row-toggle {
+	display: block;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+	border-radius: 2px;
+
+	&:focus-visible {
+		outline: 2px solid var( --wp-admin-theme-color );
+		outline-offset: 4px;
+	}
+
+	&:hover .a4a-news-chevron {
+		fill: var( --wp-admin-theme-color );
+	}
+}
+
+.a4a-news-chevron {
+	flex-shrink: 0;
+	fill: var( --color-neutral-50 );
+}
+
+// The date column: right-aligned, so dates scan down the list without competing with the logo.
+.a4a-news-date {
+	display: flex;
+	flex-direction: column;
+	flex-shrink: 0;
+	align-items: flex-end;
+	min-width: 72px;
+	text-align: end;
+}
+
+// The open row's image, description and actions line up with its text, past the logo.
+.a4a-news-row-panel {
+	margin-block-start: 16px;
+	padding-inline-start: 44px;
+}
+
+.a4a-news-image {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: 4px;
+}
