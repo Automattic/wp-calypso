@@ -5,6 +5,7 @@ import { renderHook, act } from '@testing-library/react';
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import hosting from '../new-hosted-site-flow';
+import type { BaseNavigationControls } from '../../../internals/types';
 
 jest.mock( '@automattic/onboarding', () => ( {
 	NEW_HOSTED_SITE_FLOW: 'new-hosted-site',
@@ -106,7 +107,8 @@ const sideEffect = ( step: string ) =>
 	} );
 
 const navigation = ( step: string, navigate = jest.fn() ) =>
-	renderHook( () => hosting.useStepNavigation( step as never, navigate ) ).result.current;
+	renderHook( () => hosting.useStepNavigation( step as never, navigate ) ).result
+		.current as ReturnType< typeof hosting.useStepNavigation > & BaseNavigationControls;
 
 it.each( [ 'en', 'fr' ] )( 'passes checkout steps and a domain return URL in %s', ( locale ) => {
 	mockLocale = locale;
@@ -338,3 +340,20 @@ it.each( [ true, false ] )(
 		}
 	}
 );
+
+it( 'registers the domain step for opted-in entries without showDomainStep', async () => {
+	mockQuery.delete( 'showDomainStep' );
+	const steps = await hosting.initialize( {
+		dispatch: jest.fn(),
+		getState: () => ( {} ),
+	} as never );
+	expect( steps ).toContainEqual( expect.objectContaining( { slug: STEPS.DOMAIN_SEARCH.slug } ) );
+} );
+
+it( 'returns from plans to domains on opted-in entries without showDomainStep', () => {
+	mockQuery.delete( 'showDomainStep' );
+	mockQuery.delete( 'plan' );
+	const navigate = jest.fn();
+	navigation( 'plans', navigate ).goBack?.();
+	expect( navigate ).toHaveBeenCalledWith( STEPS.DOMAIN_SEARCH.slug );
+} );

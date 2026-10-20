@@ -83,7 +83,7 @@ async function initialize( reduxStore: Store ) {
 
 	const productSlug = queryParams.get( 'plan' );
 	const steps = [];
-	if ( queryParams.has( 'showDomainStep' ) ) {
+	if ( queryParams.has( 'showDomainStep' ) || hasPurchaseStepsParameter( queryParams ) ) {
 		steps.push( STEPS.DOMAIN_SEARCH );
 	}
 	if ( ! productSlug || ! isDotComPlan( { product_slug: productSlug } ) ) {
@@ -133,8 +133,8 @@ const hosting: FlowV2< typeof initialize > = {
 		const autoOpenPush = query.get( 'autoOpenPush' );
 
 		const flowName = this.name;
-		const showDomainStep = query.has( 'showDomainStep' );
 		const showPurchaseSteps = hasPurchaseStepsParameter( query );
+		const showDomainStep = query.has( 'showDomainStep' ) || showPurchaseSteps;
 		const shouldSkipPlans = shouldSkipPlansStep( query, planCartItem, NEW_HOSTED_SITE_FLOW );
 		const isWooPartner = useIsValidWooPartner();
 
