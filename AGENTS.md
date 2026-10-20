@@ -1,5 +1,9 @@
 # AGENTS.md
 
+## Confidentiality
+
+CRITICAL: This is a **public repository**. Never put an internal link or hostname in a PR description, review comment, commit message, code comment, or any other public-facing text: no wordpress.com URLs (internal sites and P2s), no Slack, Linear, HackerOne, private GitHub repository, or GitHub Enterprise URLs, and no other internal tool URLs. Use shortlinks instead: `PCYsg-hS-p2` for a P2 post, `p<message>-slack-<channel>` for a Slack message (`p<message>/<thread>-slack-<channel>` for a reply in a thread), and the bare issue key (`LIN-123`) for Linear.
+
 ## Repository layout
 
 - client/ — main application clients, deployed as single-page React apps.
@@ -102,5 +106,4 @@ If it fails, fix the type errors at the source — do not silence them with `// 
 - In the PR description:
   - Use Linear issue IDs (e.g., `LIN-123`) instead of full Linear URLs.
   - Avoid mentioning people's names.
-  - Do not link to wordpress.com URLs.
   - Include all checklist items from .github/PULL_REQUEST_TEMPLATE.md. Only mark items as completed (`[x]`) if they actually apply; leave inapplicable items unchecked (`[ ]`).
