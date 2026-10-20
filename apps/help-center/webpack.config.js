@@ -61,13 +61,6 @@ function getIndividualConfig( options = {} ) {
 					if ( request === '@wordpress/react-i18n' ) {
 						return null;
 					}
-
-					// Bundle @wordpress/dataviews and @wordpress/ui instead of externalizing.
-					// These are only used by HelpCenterA4AContactForm which is lazy-loaded,
-					// so we don't want them listed as dependencies for the main entry point.
-					if ( request === '@wordpress/dataviews' || request === '@wordpress/ui' ) {
-						return null;
-					}
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
