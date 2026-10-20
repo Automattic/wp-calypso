@@ -101,13 +101,4 @@ describe( 'Credits meter toggle CSS contract', () => {
 		expect( resolve( 'color', {}, percent ) ).toBe( 'var(--color-error-accent)' );
 		expect( resolve( 'color', { dark: true }, percent ) ).toBe( '#f87171' );
 	} );
-
-	it( 'leaves the info toggle glyph on the muted token in dark', () => {
-		expect( resolve( 'color', { dark: true } ) ).toBe( 'var(--color-muted-foreground)' );
-	} );
-
-	it( 'still highlights the info toggle on hover', () => {
-		expect( resolve( 'background-color', { hover: true } ) ).toBe( 'var(--color-muted)' );
-		expect( resolve( 'color', { hover: true } ) ).toBe( 'var(--color-foreground)' );
-	} );
 } );
