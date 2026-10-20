@@ -15,7 +15,7 @@ export interface LaunchParams {
 	dashboard?: string | null;
 }
 
-const DASHBOARDS: DashboardType[] = [ 'a4a', 'ciab', 'dotcom' ];
+const DASHBOARDS: DashboardType[] = [ 'a4a', 'dotcom' ];
 
 function getOrigin( url: string ) {
 	try {

@@ -97,6 +97,12 @@ describe( 'abilities facade', () => {
 		expect( error ).toHaveBeenCalled();
 	} );
 
+	it( 'offers no editor suggestions off the editor', async () => {
+		const { loadAmEditorSuggestions } = await load();
+
+		await expect( loadAmEditorSuggestions() ).resolves.toBeNull();
+	} );
+
 	it( 'registers the abilities when the chat mounts', async () => {
 		setEditorPage( true );
 		const { registerAmAbilities, registerAbility } = await load();
@@ -241,7 +247,7 @@ describe( 'abilities facade', () => {
 		}
 	} );
 
-	it( 'degrades to the all-surface abilities when the chunk fails to load', async () => {
+	it( 'degrades to the all-surface abilities and no suggestions when the chunk fails to load', async () => {
 		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		setEditorPage( true );
 		jest.resetModules();
@@ -250,12 +256,13 @@ describe( 'abilities facade', () => {
 		} );
 
 		try {
-			const { registerAmAbilities, amToolProvider } = await import( '..' );
+			const { registerAmAbilities, amToolProvider, loadAmEditorSuggestions } = await import( '..' );
 
 			await expect( registerAmAbilities() ).resolves.toBeUndefined();
 			await expect( ownedAbilityNames( amToolProvider ) ).resolves.toEqual(
 				ALL_SURFACE_ABILITY_NAMES
 			);
+			await expect( loadAmEditorSuggestions() ).resolves.toBeNull();
 			expect( error ).toHaveBeenCalledWith(
 				'[AgentsManager] Failed to load the editor abilities:',
 				expect.any( Error )

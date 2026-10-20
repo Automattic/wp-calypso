@@ -10,19 +10,19 @@
 //------------------------------------------------------------------------------
 
 import { RuleTester } from 'eslint';
-import rule, { ERROR_MESSAGE } from '../jsx-classname-namespace';
+import plugin from '../../..';
+import { ERROR_MESSAGE } from '../jsx-classname-namespace';
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
 new RuleTester( {
-	parser: require.resolve( '@babel/eslint-parser' ),
-	parserOptions: {
-		ecmaFeatures: { jsx: true },
+	languageOptions: {
 		sourceType: 'module',
+		parserOptions: { ecmaFeatures: { jsx: true } },
 	},
-} ).run( 'jsx-classname-namespace', rule, {
+} ).run( 'jsx-classname-namespace', plugin.rules[ 'jsx-classname-namespace' ], {
 	valid: [
 		{
 			code: 'export default function() { return <Foo className="quux foo" />; }',

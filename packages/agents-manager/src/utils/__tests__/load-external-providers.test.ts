@@ -29,13 +29,13 @@ import {
 import { getLoadedProviderIds, setLoadedProviderIds } from '../loaded-provider-ids';
 import { getPageContentMarkup } from '../page-content-markup';
 import { getPageStructure } from '../page-structure';
-import type { Ability } from '../../extension-types';
 import type {
 	ProviderCapabilities,
 	UseCheckpointReturn,
 	UseSuggestionsHook,
 } from '../load-external-providers';
 import type { UIMessage } from '@automattic/agenttic-client';
+import type { Ability } from '@wordpress/abilities';
 
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
 	virtual: true,
@@ -67,6 +67,15 @@ jest.mock( '../checkpoints', () => ( {
 // The temporary WooCommerce abilities would join every ability list below.
 jest.mock( '../../abilities/woocommerce', () => ( {
 	wooFallbackToolProvider: { getAbilities: () => Promise.resolve( [] ), executeAbility: jest.fn() },
+} ) );
+jest.mock( '../../hooks/use-block-suggestions', () => ( {
+	useBlockSuggestions: () => ( {
+		suggestions: [
+			{ id: 'translate', label: 'Translate content', prompt: 'Translate this to:' },
+			{ id: 'remove-image-background', label: 'Remove background', prompt: 'Remove it' },
+		],
+		replaceEmptyViewSuggestions: true,
+	} ),
 } ) );
 
 // The abilities facade only loads the editor abilities on editor pages —
@@ -936,6 +945,81 @@ describe( 'loadExternalProviders', () => {
 			expect( providers.contextProvider?.getClientContext() ).toEqual( context );
 			expect( waitForEditedGlobalStyles ).not.toHaveBeenCalled();
 		} );
+	} );
+
+	describe( 'Big Sky editor suggestions', () => {
+		it( 'go first where Big Sky is enabled and win the dedupe by id', async () => {
+			setAgentsManagerData( {
+				bigSkyEnabled: true,
+				agentProviders: [
+					{
+						getEmptyViewSuggestions: () => [
+							{ id: 'customize-colors', label: 'Provider colors', prompt: 'Provider colors' },
+							{ id: 'provider-chip', label: 'Provider chip', prompt: 'Provider chip' },
+						],
+					},
+				],
+			} );
+
+			const providers = await loadExternalProviders();
+			const suggestions = providers.getEmptyViewSuggestions?.() ?? [];
+
+			expect( suggestions[ 0 ] ).toMatchObject( {
+				id: 'customize-colors',
+				label: 'Customize colors',
+			} );
+		} );
+
+		it( "go first among a provider's block chips", async () => {
+			const providerChip = { id: 'provider-chip', label: 'Provider chip', prompt: 'Provider' };
+			setAgentsManagerData( {
+				bigSkyEnabled: true,
+				agentProviders: [
+					{
+						useSuggestions: () => ( {
+							suggestions: [ providerChip ],
+							replaceEmptyViewSuggestions: true,
+						} ),
+					},
+				],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.useSuggestions?.() ).toEqual( {
+				suggestions: [
+					expect.objectContaining( { id: 'translate' } ),
+					expect.objectContaining( { id: 'remove-image-background' } ),
+					providerChip,
+				],
+				replaceEmptyViewSuggestions: true,
+			} );
+		} );
+
+		it( 'are not offered where Big Sky is off', async () => {
+			setAgentsManagerData( {
+				agentProviders: [ { contextProvider: { getClientContext: () => ( {} ) } } ],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.getEmptyViewSuggestions ).toBeUndefined();
+			expect( providers.useSuggestions ).toBeUndefined();
+		} );
+	} );
+
+	it( 'skips a provider whose empty view suggestions have not loaded yet', async () => {
+		const ready = { id: 'ready', label: 'Ready', prompt: 'Ready prompt.' };
+		setAgentsManagerData( {
+			agentProviders: [
+				{ getEmptyViewSuggestions: () => undefined },
+				{ getEmptyViewSuggestions: () => [ ready ] },
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.getEmptyViewSuggestions?.() ).toEqual( [ ready ] );
 	} );
 
 	it( 'merges empty view suggestions from multiple providers and dedupes by id', async () => {

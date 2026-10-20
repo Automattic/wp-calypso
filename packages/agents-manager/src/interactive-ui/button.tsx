@@ -1,7 +1,9 @@
 import { createComponentImplementation, MarkdownContext } from '@a2ui/react/v0_9';
 import { ButtonApi, DataBindingSchema } from '@a2ui/web_core/v0_9';
 import { Button as GutenbergButton } from '@wordpress/components';
+import { useContext } from '@wordpress/element';
 import { z } from 'zod';
+import { ModalTriggerContext } from './context';
 
 const actionContextValue = z.union( [
 	z.string(),
@@ -29,10 +31,11 @@ const buttonApi = {
 };
 
 const Button = createComponentImplementation( buttonApi, ( { props, buildChild } ) => {
+	const openModal = useContext( ModalTriggerContext );
 	return (
 		<GutenbergButton
 			variant={ props.variant === 'primary' ? 'primary' : 'secondary' }
-			onClick={ () => props.action() }
+			onClick={ openModal ?? ( () => props.action() ) }
 		>
 			<MarkdownContext.Provider value={ undefined }>
 				{ buildChild( props.child ) }
