@@ -15,7 +15,6 @@ This is the new hosting dashboard for WordPress.com.
   1. If the behavior depends on the **site** (e.g. available features, capabilities), use `siteTypeSupportsFeature()` or extend `SiteTypeFeatureSupports` in `utils/site-type-feature-support.ts`.
   2. If the behavior genuinely differs per dashboard variant, add a property to `AppConfig` that each variant provides, and branch on that property instead of the name.
   3. Before doing either, ask: if this UX is better for one variant, wouldn't it be better for all users? Prefer a single code path when possible.
-- For a page-level empty state (no items at all, as opposed to a search with no results), use `DataViewsEmptyStateLayout` with `EmptyState.ActionList` items, like `domains/index.tsx`. Record action clicks with an `action` property.
 
 ### Mutation snackbars
 

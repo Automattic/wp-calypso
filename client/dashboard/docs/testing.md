@@ -25,7 +25,7 @@ Use `@testing-library/react` to test whole slices of the front-end dashboard and
 
 Use the `render()` function from `client/dashboard/test-utils.tsx`, which will render your component with context providers so that hooks work as expected. You can also avoid some manual mocking by using `nock` to mock and assert against network requests.
 
-`render()` mounts the component under a single root route. Route params are not available (`useParams()` returns nothing), and the app's route objects are not registered, so code that builds a URL from one (e.g. `pluginRoute.to`) throws. Behavior that depends on the current route can't be unit-tested this way yet; verify it in the browser instead.
+`render()` only registers a root route, so `useParams()` has no params and links built from the app's route objects (e.g. `pluginRoute.to`) fail. For code that needs real routes or params, build the route tree and a test router yourself, as `domains/dataviews/test/field-domain-name.test.tsx` does.
 
 ### Mocking Network Requests
 
