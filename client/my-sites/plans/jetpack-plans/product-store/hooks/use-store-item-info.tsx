@@ -8,6 +8,7 @@ import {
 	TERM_MONTHLY,
 	isSupersedingJetpackItem,
 	JETPACK_COMPLETE_PLANS,
+	JETPACK_PRO_PLANS,
 	JETPACK_SECURITY_PLANS,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
@@ -140,16 +141,18 @@ export const useStoreItemInfo = ( {
 
 	const getIsIncludedInPlan = useCallback(
 		( item: SelectorProduct ) => {
-			// If user owns the Jetpack Complete Plan/bundle, then JetPack Security plan/bundle should
-			// be considered as included in the Complete plan ("Part of the current plan").
-			const siteHasCompletePlan =
+			// If user owns the Jetpack Complete or Pro Plan/bundle, then JetPack Security plan/bundle should
+			// be considered as included in that plan ("Part of the current plan").
+			const siteHasCompleteOrProPlan =
 				sitePlan?.product_slug &&
-				( JETPACK_COMPLETE_PLANS as ReadonlyArray< string > ).includes( sitePlan.product_slug );
+				( [ ...JETPACK_COMPLETE_PLANS, ...JETPACK_PRO_PLANS ] as ReadonlyArray< string > ).includes(
+					sitePlan.product_slug
+				);
 			const itemIsSecurity = ( JETPACK_SECURITY_PLANS as ReadonlyArray< string > ).includes(
 				item.productSlug
 			);
 
-			if ( siteHasCompletePlan && itemIsSecurity ) {
+			if ( siteHasCompleteOrProPlan && itemIsSecurity ) {
 				return true;
 			}
 			return ! getIsOwned( item ) && getIsPlanFeature( item );
