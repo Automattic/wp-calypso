@@ -48,6 +48,9 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 				step: 'playground',
 				blueprint: getBlueprintLabelForTracking( query ),
 				intent: DEFAULT_PLAN_INTENT,
+				// URL only, like the flow's routing to the WooCommerce trial; the
+				// sessionStorage fallback used for the button label isn't checked there.
+				is_woocommerce_intent: query.get( 'intent' ) === 'woocommerce',
 			} );
 
 			submit();
