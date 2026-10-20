@@ -35,9 +35,11 @@ import {
 	INDIRECT_CHECKOUT_PRODUCTS_LIST,
 	ITEM_TYPE_PLAN,
 } from '../../constants';
+import { getYearlySlugFromMonthly } from '../../convert-slug-terms';
 import { buildCheckoutURL } from '../../get-purchase-url-callback';
 import productButtonLabel from '../../product-card/product-button-label';
-import { SelectorProduct } from '../../types';
+import { Duration, SelectorProduct } from '../../types';
+import useIsOnSale from '../../use-is-on-sale';
 import { UseStoreItemInfoProps } from '../types';
 import { useShoppingCartTracker } from './use-shopping-cart-tracker';
 const getIsDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
@@ -61,6 +63,17 @@ const getIsMultisiteCompatible = ( item: SelectorProduct ) => {
 	 ).includes( item.productSlug );
 };
 
+export const isUpgradeableToYearly = (
+	ownedItem: SelectorProduct,
+	selectedTerm: Duration,
+	isOnSale: ( productSlug: string ) => boolean
+) =>
+	selectedTerm === TERM_ANNUALLY &&
+	ownedItem.term === TERM_MONTHLY &&
+	ownedItem.type === ITEM_TYPE_PLAN &&
+	// Holds a Pro monthly owner back until Pro yearly is on sale.
+	isOnSale( getYearlySlugFromMonthly( ownedItem.productSlug ) ?? '' );
+
 export const useStoreItemInfo = ( {
 	createCheckoutURL,
 	duration: selectedTerm,
@@ -76,6 +89,7 @@ export const useStoreItemInfo = ( {
 	);
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const dispatch = useDispatch();
+	const isOnSale = useIsOnSale();
 
 	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 	const translate = useTranslate();
@@ -126,11 +140,8 @@ export const useStoreItemInfo = ( {
 	//Once the feature is enabled, remove the last condition to enable the upgrade button
 	const getIsUpgradeableToYearly = useCallback(
 		( item: SelectorProduct ) =>
-			getIsOwned( item ) &&
-			selectedTerm === TERM_ANNUALLY &&
-			item.term === TERM_MONTHLY &&
-			item.type === ITEM_TYPE_PLAN,
-		[ getIsOwned, selectedTerm ]
+			getIsOwned( item ) && isUpgradeableToYearly( item, selectedTerm, isOnSale ),
+		[ getIsOwned, selectedTerm, isOnSale ]
 	);
 
 	const getIsPlanFeature = useCallback(
