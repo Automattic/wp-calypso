@@ -355,6 +355,11 @@ export const purchaseSettingsIndexRoute = createRoute( {
 		if ( purchase.meta && purchase.is_domain ) {
 			await queryClient.ensureQueryData( domainQuery( purchase.meta ) ).catch( () => {} );
 		}
+
+		// Jetpack upgrades go through the store only once Pro is known to be on sale.
+		if ( purchase.is_jetpack_plan_or_product ) {
+			queryClient.prefetchQuery( productsQuery() );
+		}
 	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/purchase-settings' ).then( ( d ) =>

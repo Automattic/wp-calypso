@@ -10,7 +10,7 @@ const textFieldApi = {
 	schema: TextFieldApi.schema.pick( { label: true, value: true, variant: true } ).extend( {
 		label: dynamicString,
 		value: dynamicString.optional(),
-		variant: z.enum( [ 'shortText', 'longText' ] ).optional(),
+		variant: z.enum( [ 'shortText', 'longText', 'number', 'obscured' ] ).optional(),
 	} ),
 };
 const TextField = createComponentImplementation( textFieldApi, ( { props, context } ) => {
@@ -41,11 +41,15 @@ const TextField = createComponentImplementation( textFieldApi, ( { props, contex
 		value,
 		onChange,
 	};
+	let type: 'number' | 'text' | 'password' = props.variant === 'number' ? 'number' : 'text';
+	if ( props.variant === 'obscured' ) {
+		type = 'password';
+	}
 
 	return props.variant === 'longText' ? (
 		<TextareaControl { ...inputProps } />
 	) : (
-		<TextControl { ...inputProps } />
+		<TextControl { ...inputProps } type={ type } />
 	);
 } );
 

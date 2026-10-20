@@ -16,6 +16,12 @@ describe( 'renderTransactionQuantitySummary', () => {
 		);
 	} );
 
+	test( 'shows credit quantity for AI Credits', () => {
+		expect( renderTransactionQuantitySummary( item( 'ai-credits-lifetime', 1000 ) ) ).toEqual(
+			'Purchase of 1,000 AI credits'
+		);
+	} );
+
 	test( 'uses the singular form for one credit', () => {
 		expect( renderTransactionQuantitySummary( item( 'studio-code-ai-credits', 1 ) ) ).toEqual(
 			'Purchase of 1 AI credit'

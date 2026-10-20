@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
-import { init as initStore, store } from '../panel/state';
+import { store } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
@@ -139,7 +139,6 @@ const NotificationApp = ( {
 	isSimplifiedNoteEnabled = false,
 	preferences,
 	onPreferenceChange,
-	customEnhancer,
 	actionHandlers = {},
 	wpcom,
 }: {
@@ -149,7 +148,6 @@ const NotificationApp = ( {
 	isSimplifiedNoteEnabled?: boolean;
 	preferences?: NotificationPreferences;
 	onPreferenceChange?: ( key: string, value: unknown ) => Promise< unknown >;
-	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
 } ) => {
@@ -179,12 +177,6 @@ const NotificationApp = ( {
 		hasResolvedPreferences = true;
 		applyPreferences( preferences );
 	}, [ preferences ] );
-
-	useEffect( () => {
-		if ( customEnhancer ) {
-			initStore( { customEnhancer } );
-		}
-	}, [ customEnhancer ] );
 
 	useEffect( () => {
 		getClient()?.setLocale( locale );

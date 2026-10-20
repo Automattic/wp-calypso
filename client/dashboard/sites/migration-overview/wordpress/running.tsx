@@ -13,8 +13,7 @@ export function Running( { phase, sourceHost }: { phase: Phase; sourceHost: stri
 	const { setShowHelpCenter } = useHelpCenter();
 
 	const steps: { label: string; phases: Phase[] }[] = [
-		{ label: __( 'Connected' ), phases: [ 'prepare-source', 'prepare-destination' ] },
-		{ label: __( 'Preflight' ), phases: [ 'preflight' ] },
+		{ label: __( 'Verifying' ), phases: [ 'prepare-source', 'prepare-destination', 'preflight' ] },
 		{ label: __( 'Copying' ), phases: [ 'migration' ] },
 		{ label: __( 'Finishing' ), phases: [ 'cleanup' ] },
 	];

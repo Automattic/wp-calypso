@@ -606,7 +606,6 @@ function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Recei
 							formattedAmount
 						) }
 					</Text>
-					{ receipt.credit && <Text>{ __( 'Refund' ) }</Text> }
 				</VStack>
 			</HStack>
 			{ shouldShowDiscount && (

@@ -48,8 +48,8 @@ jest.mock( '@automattic/zendesk-client', () => ( {
 	} ),
 	fetchMessagingAuth: jest.fn(),
 	isTestModeEnvironment: jest.fn().mockReturnValue( false ),
-	SMOOCH_INTEGRATION_ID: 'integration-id',
-	SMOOCH_INTEGRATION_ID_STAGING: 'integration-id-staging',
+	getSmoochIntegrationId: ( key?: string | null ) =>
+		key ? `integration-id-${ key }` : 'integration-id',
 	useCanConnectToZendeskMessaging: () => ( { data: true } ),
 } ) );
 
@@ -62,6 +62,8 @@ jest.mock( '@automattic/data-stores', () => ( {
 
 // Changed by the open human chat tests.
 let mockIsEligibleForChat = true;
+// Changed by the integration tests.
+let mockZendeskIntegrationKey: string | null = null;
 
 // Mock the real on-disk modules that are transitively loaded via src/hooks.
 // Without these, the entire dependency graph tries to load, pulling in
@@ -75,7 +77,9 @@ jest.mock( '../../stores', () => ( {
 } ) );
 
 jest.mock( '../../contexts/HelpCenterContext', () => ( {
-	useFeatureConfig: () => ( { chat: { hasPremiumSupport: false } } ),
+	useFeatureConfig: () => ( {
+		chat: { hasPremiumSupport: false, zendeskIntegrationKey: mockZendeskIntegrationKey },
+	} ),
 	useHelpCenterContext: () => ( { currentUser: { ID: 1 } } ),
 } ) );
 
@@ -271,5 +275,41 @@ describe( 'HelpCenterSmooch – open human chats', () => {
 		} );
 
 		expect( mockSmooch.init ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'HelpCenterSmooch – messaging integration', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockSmooch.render.mockImplementation( () => {} );
+		mockSmooch.init.mockResolvedValue( undefined );
+	} );
+
+	afterEach( () => {
+		mockZendeskIntegrationKey = null;
+	} );
+
+	it( 'initializes Smooch on the default integration', async () => {
+		await act( async () => {
+			render( <HelpCenterSmooch enableAuth /> );
+			await new Promise( ( r ) => setTimeout( r, 0 ) );
+		} );
+
+		expect( mockSmooch.init ).toHaveBeenCalledWith(
+			expect.objectContaining( { integrationId: 'integration-id' } )
+		);
+	} );
+
+	it( "initializes Smooch on the product's integration", async () => {
+		mockZendeskIntegrationKey = 'woo';
+
+		await act( async () => {
+			render( <HelpCenterSmooch enableAuth /> );
+			await new Promise( ( r ) => setTimeout( r, 0 ) );
+		} );
+
+		expect( mockSmooch.init ).toHaveBeenCalledWith(
+			expect.objectContaining( { integrationId: 'integration-id-woo' } )
+		);
 	} );
 } );

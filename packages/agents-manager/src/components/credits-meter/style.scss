@@ -133,7 +133,7 @@
 		}
 	}
 
-	// Add credits uses a filled muted button, not wp's outlined secondary.
+	// The demo's Add credits uses a filled muted button, not wp's outlined secondary.
 	&.is-secondary {
 		background-color: var( --color-muted );
 		color: var( --color-foreground );

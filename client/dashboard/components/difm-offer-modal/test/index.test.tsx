@@ -135,6 +135,22 @@ describe( '<DifmOfferModal>', () => {
 		expect( await screen.findByText( 'Limited-time offer' ) ).toBeVisible();
 	} );
 
+	test( 'records a click on the How it works link as its own event', async () => {
+		const user = userEvent.setup();
+		const { recordTracksEvent } = renderModal();
+
+		await user.click( await screen.findByRole( 'link', { name: /How it works/ } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_difm_offer_how_it_works_click',
+			expectedTracksProps
+		);
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_dashboard_upsell_click',
+			expect.anything()
+		);
+	} );
+
 	test( 'records a click on continue and shows the request form', async () => {
 		const user = userEvent.setup();
 		const { recordTracksEvent } = renderModal();
@@ -145,10 +161,22 @@ describe( '<DifmOfferModal>', () => {
 			...expectedTracksProps,
 			step: 'offer',
 		} );
-		expect( screen.getByRole( 'heading', { name: 'Tell us about your project' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Tell us about your site' } ) ).toBeVisible();
 		expect( screen.getByText( 'example.wordpress.com', { exact: false } ) ).toBeVisible();
 		expect( screen.getByText( 'test@example.com', { exact: false } ) ).toBeVisible();
 		expect( screen.queryByRole( 'textbox', { name: /Name/ } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the customer reviews on the request step only', async () => {
+		const user = userEvent.setup();
+		renderModal();
+
+		await screen.findByRole( 'button', { name: 'Tell us about your site' } );
+		expect( screen.queryByRole( 'region', { name: 'Customer reviews' } ) ).not.toBeInTheDocument();
+
+		await goToRequestStep( user );
+
+		expect( screen.getByRole( 'region', { name: 'Customer reviews' } ) ).toBeVisible();
 	} );
 
 	test( 'keeps the submit button disabled until the description has non-blank text', async () => {
