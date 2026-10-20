@@ -24,6 +24,7 @@ import {
 import { findAbilityByName } from '../abilities/ability-name';
 import { handlePageDesignTaskUpdate } from '../abilities/stream-page-design/stream';
 import { wooFallbackToolProvider } from '../abilities/woocommerce';
+import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../constants';
 import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
 import { bigSkyPageContextProvider, isBigSkyEnabled } from './big-sky-page-context';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
@@ -148,6 +149,22 @@ export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilitie
 	if ( caps.supportsRegenerateAction === true ) {
 		merged.supportsRegenerateAction = true;
 	}
+}
+
+/** Tells the agent which files the user can attach, so it never asks for one the composer rejects. */
+function withAcceptedUploadTypes(
+	contextProvider: ContextProvider | undefined
+): ContextProvider | undefined {
+	if ( ! contextProvider ) {
+		return contextProvider;
+	}
+
+	return {
+		getClientContext: () => ( {
+			...contextProvider.getClientContext(),
+			acceptedUploadTypes: DEFAULT_ACCEPTED_UPLOAD_TYPES,
+		} ),
+	};
 }
 
 export interface LoadedProviders {
@@ -743,8 +760,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// chat's Undo first and paints the page-design stream.
 	const isEditor = isEditorPage();
 	const contextProvider = mergeContextProviders( allContextProviders );
-	const mergedContextProvider = withCanvasBinding(
-		isEditor ? withPageContext( contextProvider ) : contextProvider
+	const mergedContextProvider = withAcceptedUploadTypes(
+		withCanvasBinding( isEditor ? withPageContext( contextProvider ) : contextProvider )
 	);
 	const mergedMarkdownComponents = mergeMarkdownComponentsFromProviders( allMarkdownComponents );
 	const mergedMarkdownExtensions = mergeMarkdownExtensionsFromProviders( allMarkdownExtensions );

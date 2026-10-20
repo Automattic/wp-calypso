@@ -36,7 +36,7 @@ function getEmailPlanInterval( purchase: Purchase ): IntervalLength {
  */
 function getPerMailboxPriceInteger( purchase: Purchase ): number {
 	const quantity = purchase.renewal_price_tier_usage_quantity || 1;
-	return Math.round( purchase.price_integer / quantity );
+	return Math.round( purchase.regular_price_integer / quantity );
 }
 
 function useAddMailboxesNavigation( purchase: Purchase ) {

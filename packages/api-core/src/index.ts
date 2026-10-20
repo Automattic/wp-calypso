@@ -99,6 +99,7 @@ export * from './payment-methods';
 export * from './plugins';
 export * from './post-likes';
 export * from './products';
+export * from './purchase-site-transfer';
 export * from './plans';
 export * from './read-achievements';
 export * from './read-achievements-settings';
