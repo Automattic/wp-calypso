@@ -17,7 +17,11 @@ import PaymentRiskNotice, { hasPaymentRiskNotice } from '../../components/paymen
 import PressableUsageLimitNotice, {
 	usePressableUsageLimit,
 } from '../../components/pressable-usage-limit-notice';
-import { MilestoneFeedbackModal, useMilestoneFeedback } from '../../feedback';
+import {
+	MilestoneFeedbackModal,
+	isWithinFeedbackWindow,
+	useMilestoneFeedback,
+} from '../../feedback';
 import { OWNER_ROLE } from '../../team/constants';
 import { useLicenseActions } from './actions';
 import {
@@ -26,6 +30,7 @@ import {
 	getLicenseId,
 	recordLicenseViewChanges,
 	toFetchOptions,
+	withLicenseColumnStyles,
 } from './dataviews';
 import { useCheckoutReturn } from './use-checkout-return';
 import { useProvisioningLicenses } from './use-provisioning-licenses';
@@ -50,16 +55,14 @@ export default function MarketplacePurchases() {
 		queryParamFilterFields: [ { field: 'status', operator: 'is' } ],
 	} );
 
+	const tableView = useMemo( () => withLicenseColumnStyles( view ), [ view ] );
+
 	const { data, isLoading, isPlaceholderData } = useQuery( {
 		...paginatedJetpackAgencyLicensesQuery( agencyId, toFetchOptions( view ) ),
 		enabled: agencyId > 0,
 		placeholderData: keepPreviousData,
 	} );
 	const { provisioningLicenseKeys, isProvisioning } = useProvisioningLicenses( agencyId );
-	const fields = useMemo(
-		() => getLicenseFields( { locale, isAgencyOwner, provisioningLicenseKeys } ),
-		[ locale, isAgencyOwner, provisioningLicenseKeys ]
-	);
 	const [ isFeedbackOpen, setIsFeedbackOpen ] = useState( false );
 	const { shouldAsk } = useMilestoneFeedback( 'purchase-completed' );
 	// Memoised: useLicenseActions keys its actions off this callback's identity.
@@ -68,6 +71,18 @@ export default function MarketplacePurchases() {
 			setIsFeedbackOpen( true );
 		}
 	}, [ shouldAsk ] );
+	const onManageSite = useCallback(
+		( license: JetpackLicense ) => {
+			if ( shouldAsk && isWithinFeedbackWindow( license.attached_at ) ) {
+				setIsFeedbackOpen( true );
+			}
+		},
+		[ shouldAsk ]
+	);
+	const fields = useMemo(
+		() => getLicenseFields( { locale, isAgencyOwner, provisioningLicenseKeys, onManageSite } ),
+		[ locale, isAgencyOwner, provisioningLicenseKeys, onManageSite ]
+	);
 	const actions = useLicenseActions( {
 		agencyId,
 		canRevoke,
@@ -132,7 +147,7 @@ export default function MarketplacePurchases() {
 					data={ data?.items ?? [] }
 					fields={ fields }
 					actions={ actions }
-					view={ view }
+					view={ tableView }
 					isLoading={ isLoading }
 					isPlaceholderData={ isPlaceholderData }
 					onChangeView={ onChangeView }

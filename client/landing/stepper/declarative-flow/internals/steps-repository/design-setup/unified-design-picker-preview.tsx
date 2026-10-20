@@ -10,8 +10,7 @@ import { Onboard, useStarterDesignBySlug } from '@automattic/data-stores';
 import { getDesignPreviewUrl, getThemeIdFromDesign } from '@automattic/design-picker';
 import DesignPreview, { useScreens, type DesignPreviewProps } from '@automattic/design-preview';
 import { StepContainer, Step } from '@automattic/onboarding';
-import { Modal } from '@wordpress/components';
-import { Navigator } from '@wordpress/components/build-types/navigator/types';
+import { Modal, type useNavigator } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -47,6 +46,8 @@ import DesignPickerDesignTitle from './design-picker-design-title';
 import type { GlobalStyles, OnboardSelect } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
+
+type Navigator = ReturnType< typeof useNavigator >;
 
 const SiteIntent = Onboard.SiteIntent;
 

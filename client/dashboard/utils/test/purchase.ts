@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { getAiCreditsTitle } from '../ai-credits';
 import {
 	CANCEL_FLOW_TYPE,
 	getCancelIntentFromSearch,
@@ -23,8 +24,8 @@ import {
 	isWithinRefundWindowDowngradeEligible,
 	isA4ASubscriptionMeta,
 	isA4ABillingDragonPurchase,
+	isJetpackCrmProduct,
 } from '../purchase';
-import { getStudioCodeAiCreditsTitle } from '../studio-code-ai-credits';
 import type { Purchase } from '@automattic/api-core';
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
@@ -676,19 +677,17 @@ describe( 'isWithinRefundWindowDowngradeEligible', () => {
 	} );
 } );
 
-describe( 'getStudioCodeAiCreditsTitle', () => {
-	const STUDIO_NAME = 'Studio Code AI Credits';
+describe( 'getAiCreditsTitle', () => {
+	const PRODUCT_NAME = 'Studio Code AI Credits';
 
 	test( 'uses a separator for thousands of credits', () => {
-		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 1000 ) ).toBe(
+		expect( getAiCreditsTitle( PRODUCT_NAME, 1000 ) ).toBe(
 			'Studio Code AI Credits (1,000 credits)'
 		);
 	} );
 
 	test( 'uses the singular form for one credit', () => {
-		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 1 ) ).toBe(
-			'Studio Code AI Credits (1 credit)'
-		);
+		expect( getAiCreditsTitle( PRODUCT_NAME, 1 ) ).toBe( 'Studio Code AI Credits (1 credit)' );
 	} );
 } );
 
@@ -710,6 +709,18 @@ describe( 'getTitleForDisplay', () => {
 				} )
 			)
 		).toBe( 'Studio Code AI Credits (500 credits)' );
+	} );
+
+	test( 'shows credit count for an AI Credits purchase', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_slug: 'ai-credits-lifetime',
+					product_name: 'AI Credits',
+					renewal_price_tier_usage_quantity: 1000,
+				} )
+			)
+		).toBe( 'AI Credits (1,000 credits)' );
 	} );
 
 	test.each( [ null, undefined, 0 ] )(
@@ -837,5 +848,26 @@ describe( 'getDelayedDowngradeRenewalPriceText', () => {
 				() => false
 			)
 		).toBeNull();
+	} );
+} );
+
+describe( 'isJetpackCrmProduct', () => {
+	it.each( [
+		'jetpack_complete',
+		'jetpack-complete_abc123',
+		'jetpack_pro_yearly',
+		'jetpack_pro_bi_yearly',
+		'jetpack-pro_abc123',
+		'jetpack_crm',
+	] )( 'returns true for %s', ( keyOrSlug ) => {
+		expect( isJetpackCrmProduct( keyOrSlug ) ).toBe( true );
+	} );
+
+	it.each( [
+		'jetpack_professional',
+		'jetpack-professional_abc123',
+		'jetpack_security_t1_yearly',
+	] )( 'returns false for %s', ( keyOrSlug ) => {
+		expect( isJetpackCrmProduct( keyOrSlug ) ).toBe( false );
 	} );
 } );

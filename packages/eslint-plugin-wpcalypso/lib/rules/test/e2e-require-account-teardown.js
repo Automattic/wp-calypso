@@ -8,17 +8,17 @@
 //------------------------------------------------------------------------------
 
 const RuleTester = require( 'eslint' ).RuleTester;
-const rule = require( '../../../lib/rules/e2e-require-account-teardown' );
+const plugin = require( '../../..' );
 
 const ruleTester = new RuleTester( {
-	parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
+	languageOptions: { ecmaVersion: 2022, sourceType: 'module' },
 } );
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-ruleTester.run( 'e2e-require-account-teardown', rule, {
+ruleTester.run( 'e2e-require-account-teardown', plugin.rules[ 'e2e-require-account-teardown' ], {
 	valid: [
 		// getNewTestUser + signup + afterAll that calls apiCloseAccount.
 		{

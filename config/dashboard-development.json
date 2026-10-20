@@ -5,7 +5,7 @@
 	"client_slug": "browser",
 	"survicate_enabled": true,
 	"hostname": "my.localhost",
-	"hostname_allowlist": [ "my.localhost", "my.woo.localhost", "my.a4a.localhost" ],
+	"hostname_allowlist": [ "my.localhost", "my.a4a.localhost" ],
 	"hostname_overrides": {
 		"my.a4a.localhost": {
 			"favicon_url": "/calypso/images/favicons/favicon-a4a-dev.ico",
@@ -21,11 +21,6 @@
 				"checkout/stripe-upi": true,
 				"upgrades/redirect-payments": true
 			}
-		},
-		"my.woo.localhost": {
-			"oauth_client_id": 134404,
-			"wpcom_login_url": false,
-			"features": { "oauth": true }
 		}
 	},
 	"i18n_default_locale_slug": "en",
@@ -51,7 +46,6 @@
 		"dev/store-sandbox-helper": true,
 		"difm-offer/force-treatment": false,
 		"dolly/telegram": true,
-		"domain-search/name-pulse": true,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": true,
 		"marketplace-redesign": true,

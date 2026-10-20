@@ -65,7 +65,11 @@ import {
 } from '../../utils/site-features';
 import { isInJetpackCriticalErrorState } from '../../utils/site-jetpack-critical-error';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/site-status';
+import {
+	getSiteMigrationState,
+	isSiteMigrationInProgress,
+	isWordPressMigration,
+} from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
@@ -1731,7 +1735,10 @@ export const siteMigrationOverviewRoute = createRoute( {
 	head: ( { loaderData }: { loaderData?: { site: Site } } ) => {
 		const migrationState = loaderData && getSiteMigrationState( loaderData.site );
 		let title;
-		if ( migrationState?.status === 'pending' ) {
+		if ( loaderData && isWordPressMigration( loaderData.site ) ) {
+			// One page walks a WordPress migration through all of its states, so the title can't name just one.
+			title = __( 'Your migration' );
+		} else if ( migrationState?.status === 'pending' ) {
 			title = __( 'Your WordPress site is ready to be migrated' );
 		} else if ( migrationState?.type === 'difm' ) {
 			title = __( 'We’ve received your migration request' );
@@ -1766,11 +1773,10 @@ export const siteMigrationOverviewRoute = createRoute( {
 		if ( ! isSiteMigrationInProgress( site ) ) {
 			throw dashboardRedirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
 		}
-
-		return {
-			site,
-		};
 	},
+	loader: async ( { params: { siteSlug } } ) => ( {
+		site: await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+	} ),
 } ).lazy( () =>
 	import( '../../sites/migration-overview' ).then( ( d ) =>
 		createLazyRoute( 'migration-overview' )( {

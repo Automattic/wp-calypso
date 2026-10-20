@@ -1,6 +1,5 @@
 import { GlobalStylesProvider, useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
 import { NavigatorScreenObject } from '@automattic/onboarding';
-import { Navigator } from '@wordpress/components/build-types/navigator/types';
 import { useViewportMatch } from '@wordpress/compose';
 import { Element } from '@wordpress/element';
 import clsx from 'clsx';
@@ -8,9 +7,13 @@ import { MutableRefObject, useMemo, useState } from 'react';
 import { useInlineCss } from '../hooks';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
-import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
+import type { Category, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
+import type { useNavigator } from '@wordpress/components';
+
 import './style.scss';
+
+type Navigator = ReturnType< typeof useNavigator >;
 
 export interface DesignPreviewProps {
 	previewUrl: string;

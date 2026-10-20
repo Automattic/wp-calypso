@@ -37,7 +37,7 @@ export default function DifmOfferDeepLink( { site }: { site: Site } ) {
 			return;
 		}
 
-		if ( variation === 'treatment' ) {
+		if ( variation !== 'control' ) {
 			setModalSource( getDeepLinkSource( source ) );
 		}
 
@@ -52,7 +52,7 @@ export default function DifmOfferDeepLink( { site }: { site: Site } ) {
 		} );
 	}, [ isRequested, isLoading, variation, source, navigate ] );
 
-	if ( ! modalSource || variation !== 'treatment' ) {
+	if ( ! modalSource || variation === 'control' ) {
 		return null;
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Tracks props for the site credits notice, its dismissal and the credits popover.
+ * Tracks props for the site credits notice, its dismissal, the credits popover and their Upgrade and Add credits clicks.
  */
 import { type CreditsStatus, isCreditsExhausted, isCreditsLow } from './credits';
 import { recordAgentsManagerTracksEvent } from './tracks';
@@ -10,7 +10,8 @@ export type CreditsState = 'ok' | 'low' | 'zero';
 export type CreditsTracksEventName =
 	| 'calypso_agents_manager_credits_notice_shown'
 	| 'calypso_agents_manager_credits_notice_dismissed'
-	| 'calypso_agents_manager_credits_meter_opened';
+	| 'calypso_agents_manager_credits_meter_opened'
+	| 'calypso_agents_manager_credits_cta_clicked';
 
 /** By the same rules as the dot and the notices, so it follows `CREDITS_LOW_BALANCE`. */
 export function getCreditsState( status: CreditsStatus ): CreditsState {
@@ -28,24 +29,6 @@ export function getCreditsUserRole( canBuyCredits?: boolean ): 'admin' | 'non_ad
 	}
 
 	return canBuyCredits ? 'admin' : 'non_admin';
-}
-
-/** The call to action the notice shows: the Upgrade link, or who to ask. */
-export function getCreditsCtaType(
-	hasUpgradeLink: boolean,
-	askToUpgrade?: 'site-admin' | 'plan-owner'
-): 'upgrade' | 'contact_admin' | 'contact_plan_owner' | 'none' {
-	if ( hasUpgradeLink ) {
-		return 'upgrade';
-	}
-	if ( askToUpgrade === 'site-admin' ) {
-		return 'contact_admin';
-	}
-	if ( askToUpgrade === 'plan-owner' ) {
-		return 'contact_plan_owner';
-	}
-
-	return 'none';
 }
 
 /**

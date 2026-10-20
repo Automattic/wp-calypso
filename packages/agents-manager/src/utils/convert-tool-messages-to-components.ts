@@ -4,15 +4,19 @@ import ChatResponseRenderedTracker, {
 } from '../components/chat-response-tracking';
 import { EscalationButton } from '../components/escalation-button';
 import OpenHelpCenterButton from '../components/open-help-center-button';
+import { isContextOnlyMessage } from './context-only-message';
+import { getLatestUserMessageIndex } from './latest-message';
 import lazyComponent from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
 import {
 	APPLY_BLOCK_EDITS_TOOL_ID,
 	getApplyBlockEditsOutcome,
 	getDisplayMessageFromToolData,
+	getToolMessageData,
 	isBlockEditToolId,
 	isDisplayableToolMessageTool,
 	isVisualCheckPending,
+	parseToolMessageText,
 } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
 import type { OPEN_HELP_CENTER_BUTTON_TYPE } from '../abilities/open-help-center';
@@ -64,59 +68,18 @@ interface Options {
 	retriedToolCallIds?: ReadonlySet< string >;
 }
 
-interface MessageWithContextFlags extends UIMessage {
-	context?: {
-		flags?: {
-			context_only?: boolean;
-		};
-	};
-}
-
-export function isContextOnlyMessage( message: UIMessage ): boolean {
-	return (
-		( message as MessageWithContextFlags ).context?.flags?.context_only === true ||
-		message.content?.some( ( content ) => {
-			if ( content.type === 'context' ) {
-				return true;
-			}
-
-			const flags =
-				content.type === 'data' ? ( content.data?.flags as { context_only?: boolean } ) : undefined;
-			return flags?.context_only === true;
-		} )
-	);
-}
-
 function getShowComponentSummary( message: UIMessage ): string | undefined {
-	const firstText = message.content?.[ 0 ]?.text;
-	if ( ! firstText ) {
+	const toolData = getToolMessageData( message );
+	if ( ! isShowComponentTool( toolData?.toolId ) ) {
 		return undefined;
 	}
 
-	try {
-		const parsed = JSON.parse( firstText );
-		if ( ! isShowComponentTool( parsed?.tool_id ) ) {
-			return undefined;
-		}
-
-		const summary = parsed?.data?.summary;
-		return typeof summary === 'string' ? summary.trim() || undefined : undefined;
-	} catch ( _error ) {
-		return undefined;
-	}
+	const summary = toolData?.summary;
+	return typeof summary === 'string' ? summary.trim() || undefined : undefined;
 }
 
 function isBlockEditToolMessage( message: UIMessage ): boolean {
-	const firstText = message.content?.[ 0 ]?.text;
-	if ( ! hasAgentRole( message ) || ! firstText ) {
-		return false;
-	}
-
-	try {
-		return isBlockEditToolId( JSON.parse( firstText )?.tool_id );
-	} catch ( _error ) {
-		return false;
-	}
+	return hasAgentRole( message ) && isBlockEditToolId( getToolMessageData( message )?.toolId );
 }
 
 function hasAgentRole( message: UIMessage ): boolean {
@@ -159,17 +122,9 @@ function hasLaterAgentToolMessageInSameTurn(
 			continue;
 		}
 
-		const laterText = laterMessage.content?.[ 0 ]?.text;
-		if ( ! laterText ) {
-			continue;
+		if ( typeof getToolMessageData( laterMessage )?.toolId === 'string' ) {
+			return true;
 		}
-
-		try {
-			const laterData = JSON.parse( laterText );
-			if ( typeof laterData?.tool_id === 'string' ) {
-				return true;
-			}
-		} catch ( _error ) {}
 	}
 
 	return false;
@@ -204,15 +159,6 @@ function hasLaterApplyBlockEditsOutcome(
 	return false;
 }
 
-// Hidden context messages (e.g. navigation continuations) do not start a turn.
-function isInLatestTurn( messages: UIMessage[], currentIndex: number ): boolean {
-	return ! messages
-		.slice( currentIndex + 1 )
-		.some(
-			( laterMessage ) => laterMessage.role === 'user' && ! isContextOnlyMessage( laterMessage )
-		);
-}
-
 /**
  * Whether the deferred reply for a promised visual check is still outstanding.
  *
@@ -233,11 +179,9 @@ function isAwaitingVisualCheckReply( messages: UIMessage[], currentIndex: number
 			continue;
 		}
 
-		try {
-			if ( typeof JSON.parse( laterText )?.tool_id === 'string' ) {
-				continue;
-			}
-		} catch ( _error ) {}
+		if ( typeof parseToolMessageText( laterText )?.toolId === 'string' ) {
+			continue;
+		}
 
 		return false;
 	}
@@ -293,6 +237,8 @@ export default function convertToolMessagesToComponents( {
 	canEscalateToHuman = true,
 	retriedToolCallIds,
 }: Options ): AgentsManagerUIMessage[] {
+	const latestUserMessageIndex = getLatestUserMessageIndex( messages );
+
 	const convertMessage = (
 		message: UIMessage,
 		index: number,
@@ -405,13 +351,8 @@ export default function convertToolMessagesToComponents( {
 			}
 
 			// A picker only stays interactive until the user replies past it — after
-			// that it documents a previous step. Hidden context messages (e.g.
-			// navigation continuations) are not real replies.
-			const hasUserReplied = array
-				.slice( index + 1 )
-				.some(
-					( laterMessage ) => laterMessage.role === 'user' && ! isContextOnlyMessage( laterMessage )
-				);
+			// that it documents a previous step.
+			const hasUserReplied = latestUserMessageIndex > index;
 
 			// In the site editor, React-Query caching keeps past conversations alive when the
 			// user navigates to a different page. Compare the picker's `postId` with the
@@ -487,6 +428,7 @@ export default function convertToolMessagesToComponents( {
 			const blockEditOutcome = getApplyBlockEditsOutcome( textData.tool_id, textData.data );
 			const isLegacySuccessfulApplyBlockEditsResult =
 				textData.tool_id === APPLY_BLOCK_EDITS_TOOL_ID && textData.data?.result?.success === true;
+
 			if (
 				isBlockEditToolId( textData.tool_id ) &&
 				! blockEditOutcome &&
@@ -494,6 +436,7 @@ export default function convertToolMessagesToComponents( {
 			) {
 				return [];
 			}
+
 			// Retries are known only from the live stream: rehydrated history has no
 			// `retryingToolCallId`, so after a reload a retried no-change reappears. A
 			// later edit in the same turn is not proof of a retry, so none is inferred.
@@ -504,21 +447,26 @@ export default function convertToolMessagesToComponents( {
 			) {
 				return [];
 			}
+
 			// The server may answer a no-change with a retry, which would hide the
 			// summary again; withhold it until the turn ends so it never flashes.
-			if ( isProcessing && blockEditOutcome === 'no-changes' && isInLatestTurn( array, index ) ) {
+			const isInLatestTurn = latestUserMessageIndex <= index;
+			if ( isProcessing && blockEditOutcome === 'no-changes' && isInLatestTurn ) {
 				return [];
 			}
+
 			const summary = getDisplayMessageFromToolData( textData.data );
 			if ( ! summary && blockEditOutcome !== 'no-changes' ) {
 				return [];
 			}
+
 			if (
 				typeof textData.tool_call_id === 'string' &&
 				hasLaterApplyBlockEditsOutcome( array, index, textData.tool_call_id )
 			) {
 				return [];
 			}
+
 			// While a promised check is still running, the transient thinking indicator
 			// already reads as the agent working, so the summary is withheld rather than
 			// replaced by a second, static one. The summary returns as soon as any
@@ -531,6 +479,7 @@ export default function convertToolMessagesToComponents( {
 			) {
 				return [];
 			}
+
 			const content =
 				blockEditOutcome === 'no-changes'
 					? [

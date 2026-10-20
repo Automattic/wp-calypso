@@ -2,6 +2,7 @@ import { Outlet } from '@tanstack/react-router';
 import { PageNoticesProvider } from '../components/page-layout';
 import { AgencyNotices, SharedNoticesProvider } from './components/agency-notices';
 import EmailVerificationNotice, { useEmailToVerify } from './components/email-verification-notice';
+import AgencyOnboardingTour from './onboarding-tour';
 
 // Pages with notices of their own get the shared ones through `AgencyNotices`.
 export default function AgencyLayout() {
@@ -19,7 +20,9 @@ export default function AgencyLayout() {
 			] }
 		>
 			<PageNoticesProvider notices={ <AgencyNotices /> }>
-				<Outlet />
+				<AgencyOnboardingTour>
+					<Outlet />
+				</AgencyOnboardingTour>
 			</PageNoticesProvider>
 		</SharedNoticesProvider>
 	);

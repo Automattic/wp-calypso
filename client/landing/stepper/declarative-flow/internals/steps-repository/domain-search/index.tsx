@@ -12,6 +12,8 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isOnboardingFlow,
+	LAUNCH_SITE_FLOW,
+	SITE_MIGRATION_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -27,14 +29,14 @@ import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-searc
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
-import { isRelativeUrl } from 'calypso/dashboard/utils/url';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { shouldSkipPlansStep } from 'calypso/landing/stepper/utils/preselected-plan';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { getSafeUrl } from 'calypso/lib/site-launch/destination';
 import {
 	domainAddNew,
 	domainManagementList,
@@ -166,7 +168,7 @@ const DomainSearchStep: StepType< {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 		[]
 	);
-	const shouldHidePlansStep = shouldSkipPlansStep( queryParams, planCartItem );
+	const shouldHidePlansStep = shouldSkipPlansStep( queryParams, planCartItem, flow );
 
 	// For CIAB sites, prefer the site title over the slug for domain suggestions
 	// since the slug is often randomly generated.
@@ -237,7 +239,8 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
-				! isDomainAndPlanFlow( flow ),
+				! isDomainAndPlanFlow( flow ) &&
+				flow !== LAUNCH_SITE_FLOW,
 			allowedTlds: resolvedAllowedTlds,
 			includeOwnedDomainInSuggestions: true,
 			allowsUsingOwnDomain:
@@ -338,6 +341,17 @@ const DomainSearchStep: StepType< {
 					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
 				} );
 			},
+			// Omitted (not `undefined`) outside onboarding: the WPCOM wrapper wraps every event
+			// key in a function, which would render the card in other flows.
+			...( isOnboardingFlow( flow ) && {
+				onMigrateSiteClick: () => {
+					recordTracksEvent( 'calypso_domain_search_migrate_site_button_click', {
+						section: 'signup',
+						flow_name: flow,
+					} );
+					window.location.assign( `/setup/${ SITE_MIGRATION_FLOW }?ref=${ flow }` );
+				},
+			} ),
 			onContinue: ( domainCart: MinimalRequestCartProduct[] ) => {
 				const domainItem = domainCart[ 0 ];
 
@@ -391,10 +405,15 @@ const DomainSearchStep: StepType< {
 		return true;
 	}, [ flow, isCiab, site, sourceSlug, planCartItem ] );
 
+	// Launching an existing site keeps the promo, as legacy signup did, without the per-domain
+	// first-year-free pricing.
+	const showFreeDomainPromo =
+		! hideFreeDomainPromo && ( isFirstDomainFreeForFirstYear || flow === LAUNCH_SITE_FLOW );
+
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
-				if ( hideFreeDomainPromo || ! isFirstDomainFreeForFirstYear ) {
+				if ( ! showFreeDomainPromo ) {
 					return null;
 				}
 
@@ -426,7 +445,7 @@ const DomainSearchStep: StepType< {
 				);
 			},
 			BeforeFullCartItems: () => {
-				if ( hideFreeDomainPromo || ! isFirstDomainFreeForFirstYear ) {
+				if ( ! showFreeDomainPromo ) {
 					return null;
 				}
 
@@ -436,9 +455,8 @@ const DomainSearchStep: StepType< {
 			},
 		};
 	}, [
-		isFirstDomainFreeForFirstYear,
+		showFreeDomainPromo,
 		isCiab,
-		hideFreeDomainPromo,
 		freeDomainPromoTitle,
 		freeDomainPromoSubtitle,
 		isCustomDomainBannerCopyVariation,
@@ -558,6 +576,20 @@ const DomainSearchStep: StepType< {
 				return;
 			}
 
+			// Matches legacy /start/launch-site, which ignores `source` and also follows a `back_to` on
+			// the site, such as the wp-admin screen the launch started from.
+			if ( flow === LAUNCH_SITE_FLOW ) {
+				const launchBackTo = getSafeUrl( backTo, site?.URL );
+
+				return (
+					<Step.BackButton href={ launchBackTo ?? defaultBackUrl }>
+						{ launchBackTo ? __( 'Back' ) : sitesBackLabelText }
+					</Step.BackButton>
+				);
+			}
+
+			const isSafeBackTo = !! getSafeUrl( backTo );
+
 			let backDestination: string | typeof navigation.goBack = '';
 			let backLabelText = '';
 
@@ -570,24 +602,18 @@ const DomainSearchStep: StepType< {
 			} else if ( 'general-settings' === source && siteSlug ) {
 				backDestination = `/settings/general/${ siteSlug }`;
 				backLabelText = __( 'Back to General Settings' );
+			} else if ( isSafeBackTo ) {
+				backDestination = backTo;
+				backLabelText = __( 'Back' );
+			} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
+				backDestination = navigation.goBack;
+				backLabelText = __( 'Back' );
 			} else {
-				const isSafeBackTo =
-					isRelativeUrl( backTo ) ||
-					dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
-
-				if ( isSafeBackTo ) {
-					backDestination = backTo;
-					backLabelText = __( 'Back' );
-				} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
-					backDestination = navigation.goBack;
-					backLabelText = __( 'Back' );
-				} else {
-					if ( ! isLoggedIn || ! userSiteCount ) {
-						return;
-					}
-					backDestination = defaultBackUrl;
-					backLabelText = __( 'Back' );
+				if ( ! isLoggedIn || ! userSiteCount ) {
+					return;
 				}
+				backDestination = defaultBackUrl;
+				backLabelText = __( 'Back' );
 			}
 
 			return (

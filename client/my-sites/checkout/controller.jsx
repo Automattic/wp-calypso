@@ -217,6 +217,7 @@ function sitelessCheckout( context, next, extraProps ) {
 				purchaseId={ purchaseId ?? subscriptionId }
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
+				aiSessionIdFromUrl={ context.query.ai_session_id }
 				couponCode={ couponCode }
 				isComingFromUpsell={ !! context.query.upgrade }
 				redirectTo={ context.query.redirect_to || getStudioRedirectTo( context ) }
@@ -449,6 +450,7 @@ export function checkout( context, next ) {
 			<CheckoutMainWrapper
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
+				aiSessionIdFromUrl={ context.query.ai_session_id }
 				purchaseId={ purchaseId }
 				selectedFeature={ feature }
 				couponCode={ couponCode }

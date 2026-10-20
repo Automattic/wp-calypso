@@ -6,10 +6,13 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
+import { useDomainSearch } from '../../page/context';
 import {
 	NAME_PULSE_PAGE_SIZE,
 	NAME_PULSE_SKELETON_TIMEOUT_MS,
+	getNamePulseResultGroup,
 	type NamePulseDomainResult,
+	type NamePulseSectionId,
 } from '../helpers';
 import {
 	NamePulseResultRow,
@@ -18,7 +21,7 @@ import {
 } from './result-row';
 
 interface NamePulseResultsSectionProps {
-	id: string;
+	id: NamePulseSectionId;
 	/** Omitted while the heading text is not known yet (the skeletons still render). */
 	title?: string;
 	results: NamePulseDomainResult[];
@@ -44,6 +47,8 @@ export const NamePulseResultsSection = ( {
 	onReveal,
 	variant = 'row',
 }: NamePulseResultsSectionProps ) => {
+	const { events } = useDomainSearch();
+	const group = getNamePulseResultGroup( id );
 	const [ visibleCount, setVisibleCount ] = useState( NAME_PULSE_PAGE_SIZE );
 	const [ skeletonsTimedOut, setSkeletonsTimedOut ] = useState( false );
 	const isPhone = useViewportMatch( 'small', '<' );
@@ -70,7 +75,9 @@ export const NamePulseResultsSection = ( {
 	const skeletons =
 		isLoading && ! skeletonsTimedOut ? Math.max( 0, skeletonCount - visible.length ) : 0;
 
-	if ( visible.length === 0 && skeletons === 0 ) {
+	const cellCount = visible.length + skeletons;
+
+	if ( cellCount === 0 ) {
 		return null;
 	}
 
@@ -82,12 +89,21 @@ export const NamePulseResultsSection = ( {
 				</Text>
 			) }
 			<div
-				className={ clsx( 'name-pulse-grid', layout === 'card' && 'name-pulse-grid--cards' ) }
+				className={ clsx( 'name-pulse-grid', {
+					'name-pulse-grid--cards': layout === 'card',
+					'name-pulse-grid--single': cellCount === 1,
+					'name-pulse-grid--pair': cellCount === 2,
+				} ) }
 				role="list"
 			>
 				{ visible.map( ( result, index ) => (
 					<div role="listitem" key={ result.domain_name }>
-						<NamePulseResultRow result={ result } position={ index } variant={ layout } />
+						<NamePulseResultRow
+							result={ result }
+							group={ group }
+							position={ index }
+							variant={ layout }
+						/>
 					</div>
 				) ) }
 				{ Array.from( { length: skeletons }, ( _, index ) => (
@@ -102,6 +118,7 @@ export const NamePulseResultsSection = ( {
 						variant="link"
 						onClick={ () => {
 							const nextCount = visibleCount + NAME_PULSE_PAGE_SIZE;
+							events.onShowMoreResults( nextCount / NAME_PULSE_PAGE_SIZE, { result_group: group } );
 							onReveal?.( results.slice( visibleCount, nextCount ) );
 							setVisibleCount( nextCount );
 						} }

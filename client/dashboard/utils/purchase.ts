@@ -1,11 +1,11 @@
 import {
+	AI_CREDITS_PRODUCTS,
 	AkismetPlans,
 	DomainProductSlugs,
 	JetpackPlans,
 	GoogleWorkspaceSlugs,
 	JetpackSearchProducts,
 	PRODUCT_1GB_SPACE,
-	PRODUCT_STUDIO_CODE_AI_CREDITS,
 	SubscriptionBillPeriod,
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
@@ -15,12 +15,12 @@ import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, parseISO, startOfDay } from 'date-fns';
+import { getAiCreditsTitle } from './ai-credits';
 import { isAkismetPro500Plan } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
 import { getPurchaseSettingsRedirectBase } from './site-url';
-import { getStudioCodeAiCreditsTitle } from './studio-code-ai-credits';
 import type { MonetizeSubscription, Product, Purchase } from '@automattic/api-core';
 
 export const CANCEL_FLOW_TYPE = {
@@ -458,13 +458,10 @@ export function getTitleForDisplay( purchase: Purchase, includeProductType = tru
 	}
 
 	if (
-		PRODUCT_STUDIO_CODE_AI_CREDITS === purchase.product_slug &&
+		AI_CREDITS_PRODUCTS.includes( purchase.product_slug ) &&
 		purchase.renewal_price_tier_usage_quantity
 	) {
-		return getStudioCodeAiCreditsTitle(
-			purchase.product_name,
-			purchase.renewal_price_tier_usage_quantity
-		);
+		return getAiCreditsTitle( purchase.product_name, purchase.renewal_price_tier_usage_quantity );
 	}
 
 	if (
@@ -602,6 +599,8 @@ export function isJetpackCrmProduct( keyOrSlug: string ): boolean {
 	return (
 		keyOrSlug.startsWith( 'jetpack-complete' ) ||
 		keyOrSlug.startsWith( 'jetpack_complete' ) ||
+		keyOrSlug.startsWith( 'jetpack-pro_' ) ||
+		keyOrSlug.startsWith( 'jetpack_pro_' ) ||
 		keyOrSlug.startsWith( 'jetpack-crm' ) ||
 		keyOrSlug.startsWith( 'jetpack_crm' )
 	);
