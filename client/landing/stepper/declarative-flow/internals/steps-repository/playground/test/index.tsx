@@ -31,13 +31,15 @@ const renderPlaygroundStep = (
 	props?: Partial< StepProps >,
 	renderOptions?: RenderStepOptions
 ) => {
-	const combinedProps = { ...mockStepProps( props ) };
+	const combinedProps = {
+		...mockStepProps( { flow: 'onboarding', stepName: 'playground', ...props } ),
+	};
 
 	return renderStep( <PlaygroundStep { ...combinedProps } />, renderOptions );
 };
 
 const getLaunchButton = () => screen.getByRole( 'button', { name: 'Launch on WordPress.com' } );
-const getFreeTrialButton = () => screen.getByRole( 'button', { name: 'Launch free trial' } );
+const getSaveStoreButton = () => screen.getByRole( 'button', { name: 'Save my store' } );
 
 describe( 'Playground', () => {
 	beforeEach( () => {
@@ -86,7 +88,7 @@ describe( 'Playground', () => {
 			expect( getLaunchButton() ).toBeDisabled();
 		} );
 
-		it( 'should show free trial button when intent is woocommerce', async () => {
+		it( 'should show the save store button when intent is woocommerce', async () => {
 			await act( async () => {
 				renderPlaygroundStep(
 					{},
@@ -97,7 +99,7 @@ describe( 'Playground', () => {
 				);
 			} );
 
-			expect( getFreeTrialButton() ).toBeVisible();
+			expect( getSaveStoreButton() ).toBeVisible();
 		} );
 	} );
 
