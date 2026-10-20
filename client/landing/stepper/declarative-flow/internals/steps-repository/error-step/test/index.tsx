@@ -98,6 +98,7 @@ describe( 'ErrorStep', () => {
 				variant: undefined,
 				previous_step: 'processing',
 				error_reason: undefined,
+				step_data_persisted: false,
 			},
 			properties: {
 				flow: 'onboarding',
@@ -126,6 +127,7 @@ describe( 'ErrorStep', () => {
 				variant: undefined,
 				previous_step: 'processing',
 				error_reason: undefined,
+				step_data_persisted: false,
 			},
 			properties: {
 				flow: 'onboarding',
@@ -137,7 +139,6 @@ describe( 'ErrorStep', () => {
 
 	const loggedError = () => ( logToLogstash as jest.Mock ).mock.calls[ 0 ][ 0 ].properties.error;
 	const loggedExtra = () => ( logToLogstash as jest.Mock ).mock.calls[ 0 ][ 0 ].extra;
-	const loggedExtraReason = () => loggedExtra().error_reason;
 
 	it( 'logs the errorReason from the step data when nothing is stored', () => {
 		( useSiteSetupError as jest.Mock ).mockReturnValue( { error: undefined, message: undefined } );
@@ -174,10 +175,9 @@ describe( 'ErrorStep', () => {
 
 		expect( loggedError() ).toBe( 'history_back_forward' );
 		expect( loggedExtra() ).toMatchObject( {
-			previous_step: undefined,
-			error_reason: undefined,
-			persisted_previous_step: 'setup-your-site-ai',
-			persisted_error_reason: 'build_wow_start_failed',
+			previous_step: 'setup-your-site-ai',
+			error_reason: 'build_wow_start_failed',
+			step_data_persisted: true,
 		} );
 	} );
 
@@ -191,8 +191,7 @@ describe( 'ErrorStep', () => {
 		expect( loggedExtra() ).toMatchObject( {
 			previous_step: 'processing',
 			error_reason: 'processing_no_redirect',
-			persisted_previous_step: undefined,
-			persisted_error_reason: undefined,
+			step_data_persisted: false,
 		} );
 	} );
 
@@ -233,21 +232,23 @@ describe( 'ErrorStep', () => {
 
 			expect( loggedError() ).toBe( 'document_reload' );
 			expect( loggedExtra() ).toMatchObject( {
-				previous_step: undefined,
-				error_reason: undefined,
-				persisted_previous_step: 'processing',
-				persisted_error_reason: 'processing_failed',
+				previous_step: 'processing',
+				error_reason: 'processing_failed',
+				step_data_persisted: true,
 			} );
 		} );
 
-		it( 'does not log a persisted errorReason next to a stored error', () => {
+		it( 'logs the persisted errorReason with a stored error on a document arrival', () => {
 			( useSiteSetupError as jest.Mock ).mockReturnValue( { error: 'Unsupported plan' } );
 			setNavigationType( 'navigate' );
 
 			render( { data: { previousStep: 'processing', errorReason: 'processing_failed' } } );
 
 			expect( loggedError() ).toBe( 'Unsupported plan' );
-			expect( loggedExtraReason() ).toBeUndefined();
+			expect( loggedExtra() ).toMatchObject( {
+				error_reason: 'processing_failed',
+				step_data_persisted: true,
+			} );
 		} );
 
 		it( 'logs document_back_forward for a history arrival', () => {
