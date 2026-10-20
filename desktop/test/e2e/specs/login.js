@@ -44,6 +44,43 @@ if ( process.platform === 'linux' ) {
 const skipIfOAuthLogin = config.oauthLoginEnabled ? it.skip : it;
 const runIfOAuthLogin = config.oauthLoginEnabled ? it : it.skip;
 
+const BOT_CHALLENGE_MARKERS = [
+	'Confirm you are human',
+	'Checking your browser',
+	'Verify you are human',
+	'cf-challenge',
+	'cf_chl_opt',
+];
+
+async function assertLoadedExpectedPage( window ) {
+	const url = window.url();
+	const title = await window.title();
+	const body = await window.evaluate( () => document.body?.innerText ?? '' ).catch( () => '' );
+	const html = await window.content().catch( () => '' );
+
+	const challenge = BOT_CHALLENGE_MARKERS.find(
+		( marker ) => body.includes( marker ) || title.includes( marker ) || html.includes( marker )
+	);
+	if ( challenge ) {
+		throw new Error(
+			`Expected the desktop login page but got a bot challenge ("${ challenge }") at ${ url }.\n` +
+				'The runner is being challenged instead of served the login page. This is unexpected: ' +
+				'the suite sets WP_DESKTOP_E2E so the app marks its user agent with `wp-e2e-tests`, ' +
+				'which the edge allowlists. Has that user agent customization changed, or are there ' +
+				'new human-verification rules in the backend?'
+		);
+	}
+
+	// The app shows a local error page when the remote page fails to load.
+	if ( url.startsWith( 'file://' ) ) {
+		throw new Error(
+			`Expected the desktop login page at ${ BASE_URL } but the window is showing a local page ` +
+				`(${ url }). The app likely failed to load the remote URL, or the main window could not ` +
+				'be identified.'
+		);
+	}
+}
+
 describe( 'User Can log in', () => {
 	jest.setTimeout( 60000 );
 
@@ -65,6 +102,7 @@ describe( 'User Can log in', () => {
 			env: {
 				...process.env,
 				WP_DESKTOP_BASE_URL: BASE_URL,
+				WP_DESKTOP_E2E: 'true', // Marks the user agent so the edge does not serve a bot challenge.
 				WP_DEBUG_LOG, // This will override logging path from the Electron main process.
 				// Ensure other CI-specific overrides (such as disabling the auto-updater)
 				DEBUG: true,
@@ -95,6 +133,8 @@ describe( 'User Can log in', () => {
 		for ( const [ , frame ] of mainWindow.frames().entries() ) {
 			await frame.waitForLoadState();
 		}
+
+		await assertLoadedExpectedPage( mainWindow );
 	} );
 
 	runIfOAuthLogin( 'Start the OAuth login flow', async function () {

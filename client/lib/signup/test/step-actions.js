@@ -6,6 +6,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import nock from 'nock';
 import flows from 'calypso/signup/config/flows';
@@ -52,7 +53,7 @@ describe( 'createSiteWithCart()', () => {
 			};
 		} );
 
-	test( 'should find available url if siteUrl is empty and enable auto generated blog name', async () => {
+	test( 'sends an empty blog_name and finds an available url when siteUrl is empty', async () => {
 		expect.assertions( 1 );
 		const fakeStore = {
 			getState: () => ( {
@@ -62,7 +63,10 @@ describe( 'createSiteWithCart()', () => {
 
 		await testCreateSite(
 			( response ) => {
-				expect( response.requestBody.find_available_url ).toBe( true );
+				expect( response.requestBody ).toMatchObject( {
+					blog_name: '',
+					find_available_url: true,
+				} );
 			},
 			[],
 			{ siteUrl: undefined },
@@ -82,47 +86,6 @@ describe( 'createSiteWithCart()', () => {
 			},
 			[],
 			{ siteUrl: 'mysite' },
-			fakeStore
-		);
-	} );
-
-	test( 'use username for blog_name if user data available and enable auto generated blog name', async () => {
-		expect.assertions( 1 );
-		const fakeStore = {
-			getState: () => ( {
-				currentUser: {
-					user: {
-						username: 'alex',
-					},
-				},
-				signup: { dependencyStore: { shouldHideFreePlan: true } },
-			} ),
-		};
-
-		await testCreateSite(
-			( response ) => {
-				expect( response.requestBody.blog_name ).toBe( 'alex' );
-			},
-			[],
-			{ siteUrl: undefined },
-			fakeStore
-		);
-	} );
-
-	test( "use username from dependency store for blog_name if user data isn't available and enable auto generated blog name", async () => {
-		expect.assertions( 1 );
-		const fakeStore = {
-			getState: () => ( {
-				signup: { dependencyStore: { username: 'alex', shouldHideFreePlan: true } },
-			} ),
-		};
-
-		await testCreateSite(
-			( response ) => {
-				expect( response.requestBody.blog_name ).toBe( 'alex' );
-			},
-			[],
-			{ siteUrl: undefined },
 			fakeStore
 		);
 	} );
@@ -262,6 +225,23 @@ describe( 'isPlanFulfilled()', () => {
 		const nextProps = {
 			isPaidPlan: false,
 			sitePlanSlug: 'sitePlanSlug',
+			submitSignupStep,
+		};
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+
+		isPlanFulfilled( stepName, undefined, nextProps );
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should not remove a step for a free trial plan', () => {
+		const stepName = 'plans';
+		const nextProps = {
+			isPaidPlan: true,
+			sitePlanSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
 			submitSignupStep,
 		};
 

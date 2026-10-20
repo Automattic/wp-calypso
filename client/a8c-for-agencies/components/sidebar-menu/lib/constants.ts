@@ -11,7 +11,6 @@ export const A4A_SITES_LINK_FAVORITE = '/sites?is_favorite';
 export const A4A_SITES_LINK_DEVELOPMENT = '/sites?is_development';
 export const A4A_SITES_LINK_WALKTHROUGH_TOUR = `${ A4A_SITES_LINK }?tour=sites-walkthrough`;
 export const A4A_SITES_LINK_ADD_NEW_SITE_TOUR = '/sites?tour=add-new-site';
-export const A4A_SITES_CONNECT_URL_LINK = '/sites/connect-url';
 export const A4A_PLUGINS_LINK = '/plugins';
 export const A4A_MARKETPLACE_LINK = '/marketplace';
 export const A4A_MARKETPLACE_PRODUCTS_LINK = `${ A4A_MARKETPLACE_LINK }/products`;
@@ -63,8 +62,10 @@ export const A4A_LEARN_LINK = `${ A4A_RESOURCES_LINK }/learn`;
 export const A4A_AGENT_STUDIO_LINK = `${ A4A_RESOURCES_LINK }/agent-studio`;
 export const A4A_DEV_TOOLS_LINK = `${ A4A_RESOURCES_LINK }/dev-tools`;
 export const A4A_AI_MCP_LINK = `${ A4A_RESOURCES_LINK }/ai-mcp`;
-export const A4A_AI_MCP_AVAILABLE_TOOLS_LINK = `${ A4A_AI_MCP_LINK }/tools`;
+export const A4A_AI_MCP_READ_TOOLS_LINK = `${ A4A_AI_MCP_LINK }/read`;
+export const A4A_AI_MCP_WRITE_TOOLS_LINK = `${ A4A_AI_MCP_LINK }/write`;
 export const A4A_AI_MCP_CONNECT_LINK = `${ A4A_AI_MCP_LINK }/connect`;
+export const A4A_AI_MCP_STARTER_PROMPTS_LINK = `${ A4A_AI_MCP_LINK }/prompts`;
 export const A4A_BENCHMARKS_LINK = `${ A4A_RESOURCES_LINK }/benchmarks`;
 
 // Client

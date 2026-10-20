@@ -10,7 +10,7 @@ import {
 import * as page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
 import { COMPARE_PLANS_QUERY_PARAM } from '../../plans/jetpack-plans/plan-upgrade/constants';
-import { redirectJetpackLegacyPlans } from '../controller';
+import { checkoutWpcomSiteless, redirectJetpackLegacyPlans } from '../controller';
 import * as utils from '../utils';
 
 jest.mock( '@automattic/calypso-router' );
@@ -65,5 +65,24 @@ describe( 'redirectJetpackLegacyPlans', () => {
 
 		expect( spy ).toHaveBeenCalledWith( redirectUrl );
 		expect( next ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'checkoutWpcomSiteless', () => {
+	it( 'renders checkout with the wpcom siteless type', () => {
+		const next = jest.fn();
+		const context = {
+			params: { productSlug: 'ak_pro5h_yearly' },
+			query: {},
+			store: mockStore( { currentUser: { id: 7 } } ),
+		};
+
+		checkoutWpcomSiteless( context, next );
+
+		const wrapper = context.primary.props.children[ 1 ];
+		expect( wrapper.props.sitelessCheckoutType ).toBe( 'wpcom' );
+		expect( wrapper.props.productAliasFromUrl ).toBe( 'ak_pro5h_yearly' );
+		expect( wrapper.props.isNoSiteCart ).toBe( true );
+		expect( next ).toHaveBeenCalled();
 	} );
 } );

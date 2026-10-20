@@ -1,18 +1,22 @@
 import page from '@automattic/calypso-router';
-import { getCancelIntentFromQuery } from 'calypso/lib/purchases/utils';
-import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
 import CrmDownloads from 'calypso/my-sites/purchases/crm-downloads';
-import {
-	Purchases,
-	PurchaseDetails,
-	PurchaseCancel,
-	PurchaseCancelDomain,
-	PurchaseChangePaymentMethod,
-} from 'calypso/my-sites/purchases/main';
-import {
-	PaymentMethods,
-	SiteLevelAddNewPaymentMethod,
-} from 'calypso/my-sites/purchases/payment-methods';
+import SitePurchasesBackport from 'calypso/my-sites/purchases/v2/main';
+
+/**
+ * Serve a site-level purchases route with the Dashboard's own billing screens.
+ * @param {string|undefined} section Section tab to highlight, for the three top-level pages.
+ * @returns {Function} A page.js handler.
+ */
+const dashboardBackport = ( section ) => ( context, next ) => {
+	context.primary = (
+		<SitePurchasesBackport
+			path={ context.path }
+			section={ section }
+			siteSlug={ context.params.site }
+		/>
+	);
+	next();
+};
 
 export function redirectToPurchases( context ) {
 	const siteDomain = context.params.site;
@@ -24,78 +28,40 @@ export function redirectToPurchases( context ) {
 	return page.redirect( '/purchases' );
 }
 
-export const purchases = ( context, next ) => {
-	context.primary = <Purchases />;
-	next();
-};
+export const purchases = dashboardBackport( 'activeUpgrades' );
 
-export const purchaseDetails = ( context, next ) => {
-	context.primary = (
-		<PurchaseDetails
-			siteSlug={ context.params.site }
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-		/>
-	);
-	next();
-};
+export const purchaseDetails = dashboardBackport();
 
-export const purchaseCancel = ( context, next ) => {
-	context.primary = (
-		<PurchaseCancel
-			siteSlug={ context.params.site }
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			intent={ getCancelIntentFromQuery( context.query ?? {} ) }
-		/>
-	);
-	next();
-};
+export const purchaseCancel = dashboardBackport();
 
-export const purchaseCancelDomain = ( context, next ) => {
-	context.primary = (
-		<PurchaseCancelDomain
-			siteSlug={ context.params.site }
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-		/>
-	);
-	next();
-};
+export const purchaseChangePaymentMethod = dashboardBackport();
 
-export const purchaseChangePaymentMethod = ( context, next ) => {
-	context.primary = (
-		<PurchaseChangePaymentMethod
-			siteSlug={ context.params.site }
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-		/>
-	);
-	next();
-};
+export const purchaseSiteActions = dashboardBackport();
 
-export const paymentMethods = ( context, next ) => {
-	context.primary = <PaymentMethods siteSlug={ context.params.site } />;
-	next();
-};
+export const paymentMethods = dashboardBackport( 'paymentMethods' );
 
-export const addPaymentMethod = ( context, next ) => {
-	context.primary = <SiteLevelAddNewPaymentMethod siteSlug={ context.params.site } />;
-	next();
-};
+export const addPaymentMethod = dashboardBackport();
 
-export const billingHistory = ( context, next ) => {
-	context.primary = <BillingHistory siteSlug={ context.params.site } />;
-	next();
-};
+export const billingHistory = dashboardBackport( 'billingHistory' );
 
-export const receiptView = ( context, next ) => {
-	context.primary = (
-		<ReceiptView
-			receiptId={ parseInt( context.params.receiptId, 10 ) }
-			siteSlug={ context.params.site }
-		/>
-	);
-	next();
-};
+export const receiptView = dashboardBackport();
 
 export const crmDownloads = ( context, next ) => {
 	context.primary = <CrmDownloads subscription={ context.params.subscription } />;
 	next();
+};
+
+export const redirectToPurchaseCancel = ( context ) => {
+	const { site, purchaseId } = context.params;
+	return page.redirect( `/purchases/subscriptions/${ site }/${ purchaseId }/cancel` );
+};
+
+export const redirectToAddPaymentMethod = ( context ) =>
+	page.redirect( `/purchases/payment-methods/${ context.params.site }/add` );
+
+export const redirectToChangePaymentMethod = ( context ) => {
+	const { site, purchaseId } = context.params;
+	return page.redirect(
+		`/purchases/subscriptions/${ site }/${ purchaseId }/payment-method/change`
+	);
 };

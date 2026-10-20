@@ -11,18 +11,21 @@ import type { EmailAccount } from '@automattic/api-core';
 
 const DOMAIN = 'example.com';
 
-function mockApi() {
+function mockApi( { accounts }: { accounts?: EmailAccount[] } = {} ) {
 	// Eligible forwarding domain so the form renders.
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1/me/mailboxes' )
 		.query( true )
-		.reply( 200, [
-			{
-				account_type: EmailProvider.Forwarding,
-				can_user_add_email: true,
-				domains: [ { domain: DOMAIN } ],
-			},
-		] as EmailAccount[] );
+		.reply(
+			200,
+			accounts ?? [
+				{
+					account_type: EmailProvider.Forwarding,
+					can_user_add_email: true,
+					domains: [ { domain: DOMAIN } ],
+				},
+			]
+		);
 
 	// Existing forwarders for the eligible domain (queried on render).
 	nock( 'https://public-api.wordpress.com' )
@@ -76,5 +79,34 @@ describe( '<AddEmailForwarder>', () => {
 		expect( screen.getByText( 'first@example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'second@example.com' ) ).toBeVisible();
 		expect( screen.queryByText( 'Please enter a valid email address.' ) ).not.toBeInTheDocument();
+	} );
+
+	// DOTMSD-1477
+	test( 'offers a domain the user cannot buy paid email for', async () => {
+		mockApi( {
+			accounts: [
+				{
+					account_type: EmailProvider.Forwarding,
+					can_user_add_email: false,
+					domains: [ { domain: DOMAIN } ],
+				} as EmailAccount,
+			],
+		} );
+		render( <AddEmailForwarder /> );
+
+		expect( await screen.findByLabelText( 'Forward to' ) ).toBeVisible();
+		expect( screen.getByRole( 'option', { name: DOMAIN } ) ).toBeInTheDocument();
+		expect(
+			screen.queryByText( 'You do not have any domains eligible for email forwarding.' )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'keeps the empty state when no domain supports forwarding', async () => {
+		mockApi( { accounts: [] } );
+		render( <AddEmailForwarder /> );
+
+		expect(
+			await screen.findByText( 'You do not have any domains eligible for email forwarding.' )
+		).toBeVisible();
 	} );
 } );

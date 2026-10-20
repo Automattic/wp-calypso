@@ -27,9 +27,25 @@ import { filterVisibleTools } from './categories';
 import { getOverridesToMatch, groupIntentKey } from './group-intents';
 import { groupToolsByGroup, groupToolsBySubCategory } from './groups';
 import { useMcpPageChrome } from './mcp-page-header';
+import { useMcpTracksAudienceProps } from './tracks';
 import { getAccountMcpAbilities, getGroupDescriptors } from './utils';
 
 import './style.scss';
+
+// Hardcoded full event names (no runtime assembly) so each one stays
+// greppable, per the Tracks naming conventions.
+const TRACKS_EVENTS = {
+	read: {
+		groupToggled: 'calypso_dashboard_mcp_read_group_toggled',
+		toolToggled: 'calypso_dashboard_mcp_read_tool_toggled',
+		enableAllToggled: 'calypso_dashboard_mcp_read_enable_all_toggled',
+	},
+	write: {
+		groupToggled: 'calypso_dashboard_mcp_write_group_toggled',
+		toolToggled: 'calypso_dashboard_mcp_write_tool_toggled',
+		enableAllToggled: 'calypso_dashboard_mcp_write_enable_all_toggled',
+	},
+};
 
 /**
  * @param {Object} props
@@ -60,9 +76,9 @@ export default function McpToolsSubpage( {
 	const [ reauthRequired, setReauthRequired ] = useState( false );
 	const openGroupsRef = useRef( new Set() );
 	const [ openGroups, setOpenGroups ] = useState( () => openGroupsRef.current );
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 
-	const eventPrefix =
-		toolCategory === 'write' ? 'calypso_dashboard_mcp_write' : 'calypso_dashboard_mcp_read';
+	const tracksEvents = TRACKS_EVENTS[ toolCategory ];
 
 	const toggleGroupOpen = ( groupKey, groupName ) => {
 		const willBeOpen = ! openGroupsRef.current.has( groupKey );
@@ -72,7 +88,9 @@ export default function McpToolsSubpage( {
 			openGroupsRef.current.delete( groupKey );
 		}
 		setOpenGroups( new Set( openGroupsRef.current ) );
-		recordTracksEvent( `${ eventPrefix }_group_toggled`, {
+		recordTracksEvent( tracksEvents.groupToggled, {
+			...tracksAudienceProps,
+			path,
 			group: groupName ?? 'other',
 			is_open: willBeOpen,
 		} );
@@ -116,8 +134,10 @@ export default function McpToolsSubpage( {
 			},
 			{
 				onSuccess: () => {
-					recordTracksEvent( `${ eventPrefix }_tool_toggled`, {
-						tool_id: toolId,
+					recordTracksEvent( tracksEvents.toolToggled, {
+						...tracksAudienceProps,
+						path,
+						ability_name: toolId,
 						enabled,
 						group: groupName ?? 'other',
 					} );
@@ -147,7 +167,12 @@ export default function McpToolsSubpage( {
 			},
 			{
 				onSuccess: () => {
-					recordTracksEvent( `${ eventPrefix }_enable_all_toggled`, { enabled, scope: 'page' } );
+					recordTracksEvent( tracksEvents.enableAllToggled, {
+						...tracksAudienceProps,
+						path,
+						enabled,
+						scope: 'page',
+					} );
 				},
 			}
 		);
@@ -179,7 +204,9 @@ export default function McpToolsSubpage( {
 			},
 			{
 				onSuccess: () => {
-					recordTracksEvent( `${ eventPrefix }_enable_all_toggled`, {
+					recordTracksEvent( tracksEvents.enableAllToggled, {
+						...tracksAudienceProps,
+						path,
 						enabled,
 						scope: 'group',
 						group: groupName ?? 'other',

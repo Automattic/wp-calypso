@@ -27,9 +27,4 @@
 	justify-content: space-between;
 	margin-block-end: 16px;
 	align-items: center;
-
-	.badge.badge--info {
-		@include body-small;
-		background-color: var( --color-neutral-0 );
-	}
 }

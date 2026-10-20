@@ -1,4 +1,5 @@
 import {
+	AI_CREDITS_PRODUCTS,
 	AkismetPlans,
 	DomainProductSlugs,
 	JetpackPlans,
@@ -10,16 +11,17 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 } from '@automattic/api-core';
-import { formatNumber } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, parseISO, startOfDay } from 'date-fns';
+import { getAiCreditsTitle } from './ai-credits';
 import { isAkismetPro500Plan } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
-import { encodeProductForUrl } from './wpcom-checkout';
-import type { Product, Purchase } from '@automattic/api-core';
+import { getPurchaseSettingsRedirectBase } from './site-url';
+import type { MonetizeSubscription, Product, Purchase } from '@automattic/api-core';
 
 export const CANCEL_FLOW_TYPE = {
 	REMOVE: 'remove',
@@ -30,6 +32,18 @@ export const CANCEL_FLOW_TYPE = {
 	CANCEL_AUTORENEW: 'cancel_autorenew',
 } as const;
 export type CancelFlowType = ( typeof CANCEL_FLOW_TYPE )[ keyof typeof CANCEL_FLOW_TYPE ];
+
+/**
+ * Once expiration is this close, a subscription that will not renew itself is a
+ * problem worth raising rather than a date still comfortably far off.
+ */
+export const EXPIRY_WARNING_DAYS = 60;
+
+/**
+ * Once expiration is this close, losing the subscription is the most likely
+ * outcome rather than a distant possibility.
+ */
+export const EXPIRY_ERROR_DAYS = 7;
 
 /**
  * Returns true if the purchase is auto-renewing and not yet expired.
@@ -78,6 +92,45 @@ export function isExpiredAndInGracePeriod( purchase: Purchase ): boolean {
  */
 export function isRemoved( purchase: Purchase ): boolean {
 	return 'active' !== purchase.subscription_status;
+}
+
+/**
+ * Returns true if any purchase still needs to be canceled before the account can be closed.
+ */
+export function hasCancelablePurchases( purchases: Purchase[] ): boolean {
+	return purchases.some( ( purchase ) => {
+		// Skip only fully-removed purchases. An expired-but-still-active purchase
+		// (in its grace period) can still be renewed, so it should require action
+		// before the account is deleted.
+		if ( isRemoved( purchase ) ) {
+			return false;
+		}
+		if ( purchase.product_slug === 'premium_theme' && ! purchase.is_refundable ) {
+			return false;
+		}
+		return Boolean( purchase.is_cancelable );
+	} );
+}
+
+/**
+ * Returns true if any newsletter subscription still needs to be canceled before the account can be closed.
+ */
+export function hasRenewableMonetizeSubscriptions(
+	subscriptions: MonetizeSubscription[]
+): boolean {
+	return subscriptions.some(
+		( subscription ) => subscription.status === 'active' && Boolean( subscription.is_renewable )
+	);
+}
+
+/**
+ * Returns true if the customer can refund, cancel or remove this purchase themselves.
+ *
+ * Defaults to true when the field is missing, so a server that predates it keeps
+ * today's behavior instead of locking every purchase.
+ */
+export function isManageableByUser( purchase: Purchase ): boolean {
+	return purchase.is_manageable_by_user !== false;
 }
 
 /**
@@ -157,8 +210,8 @@ export function isAkismetProduct( product: Purchase ): boolean {
 export function isRecentMonthlyPurchase( purchase: Purchase ): boolean {
 	return Boolean(
 		purchase.subscribed_date &&
-			isWithinLast( new Date( purchase.subscribed_date ), 7, 'days' ) &&
-			purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
+		isWithinLast( new Date( purchase.subscribed_date ), 7, 'days' ) &&
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
 	);
 }
 
@@ -180,8 +233,27 @@ export function isCloseToExpiration( purchase: Purchase ): boolean {
 	return isWithinNext( new Date( purchase.expiry_date ), threshold, 'days' );
 }
 
+// An early renewal pushes expiry_date past the trial's end_date while
+// is_within_period remains true; comparing the two dates catches that.
+// Both are day-granular UTC from the same backend arithmetic, so they
+// compare exactly for an un-renewed trial.
+export function isFreeTrialEndingOnExpiryDate( purchase: Purchase ): boolean {
+	const offer = purchase.introductory_offer;
+	if ( ! offer?.is_within_period || offer.cost_per_interval !== 0 ) {
+		return false;
+	}
+	if ( ! purchase.expiry_date || ! offer.end_date ) {
+		return false;
+	}
+	return ! isAfter( parseISO( purchase.expiry_date ), parseISO( offer.end_date ) );
+}
+
 export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boolean {
 	if ( 'credit_card' !== purchase.payment_type ) {
+		return false;
+	}
+	// Some purchases have no expiry date, so there is nothing to compare against.
+	if ( ! purchase.expiry_date ) {
 		return false;
 	}
 	// For 100 years plans, the credit card will probably always expire before
@@ -249,8 +321,28 @@ export function isTransferredOwnership(
 	);
 }
 
+/**
+ * Subscription meta marker for purchases billed through Automattic for Agencies.
+ *
+ * The marker is either the bare value or the value followed by a separator and an instance key,
+ * such as `is-a4a:example.com`, for products that can be bought more than once on the same site.
+ */
+const A4A_SUBSCRIPTION_META = 'is-a4a';
+const A4A_SUBSCRIPTION_META_SEPARATOR = ':';
+
+export function isA4ASubscriptionMeta( meta: string | null | undefined ): boolean {
+	if ( ! meta ) {
+		return false;
+	}
+
+	return (
+		meta === A4A_SUBSCRIPTION_META ||
+		meta.startsWith( A4A_SUBSCRIPTION_META + A4A_SUBSCRIPTION_META_SEPARATOR )
+	);
+}
+
 export function isA4ABillingDragonPurchase( purchase: Purchase ): boolean {
-	return purchase.meta === 'is-a4a';
+	return isA4ASubscriptionMeta( purchase.meta );
 }
 
 export function isA4AHoldingSitePurchase( purchase: Purchase ): boolean {
@@ -273,6 +365,10 @@ export function isMarketplaceHoldingSitePurchase( purchase: Purchase ): boolean 
 
 export function isJetpackHoldingSitePurchase( purchase: Purchase ): boolean {
 	return purchase.is_attached_to_holding_site && purchase.product_type === 'jetpack';
+}
+
+export function isStudioCodeHoldingSitePurchase( purchase: Purchase ): boolean {
+	return purchase.is_attached_to_holding_site && purchase.product_type === 'studio_code';
 }
 
 /**
@@ -331,7 +427,7 @@ export function getBillPeriodLabel( purchase: Purchase ): string {
  * differently. For example, domains are displayed with the domain name as the
  * title and the product name as the subtitle (see `getSubtitleForDisplay`).
  */
-export function getTitleForDisplay( purchase: Purchase ): string {
+export function getTitleForDisplay( purchase: Purchase, includeProductType = true ): string {
 	if ( purchase.is_hundred_year_domain ) {
 		return __( '100-Year Domain Registration' );
 	}
@@ -362,6 +458,13 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	}
 
 	if (
+		AI_CREDITS_PRODUCTS.includes( purchase.product_slug ) &&
+		purchase.renewal_price_tier_usage_quantity
+	) {
+		return getAiCreditsTitle( purchase.product_name, purchase.renewal_price_tier_usage_quantity );
+	}
+
+	if (
 		'wordpress_com_1gb_space_addon_yearly' === purchase.product_slug &&
 		purchase.renewal_price_tier_usage_quantity
 	) {
@@ -389,16 +492,19 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	}
 
 	if ( purchase.is_plan ) {
-		/* translators: %(productName)s is the product name "WordPress.com Personal" */
-		return sprintf( __( '%(productName)s Plan' ), {
-			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
-		} );
+		if ( includeProductType ) {
+			/* translators: %(productName)s is the product name "WordPress.com Personal" */
+			return sprintf( __( '%(productName)s Plan' ), {
+				productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
+			} );
+		}
+		return purchase.product_name.replace( /\s*\(.*$/, '' ).trim();
 	}
 
 	return purchase.product_name;
 }
 
-export function getTitleForListDisplay( purchase: Purchase ): string {
+export function getTitleForListDisplay( purchase: Purchase, includeProductType = true ): string {
 	if ( purchase.is_domain_registration && purchase.meta ) {
 		if ( purchase.is_hundred_year_domain ) {
 			// translators: %s is the domain name, e.g. "100-Year Domain Registration: example.com"
@@ -407,7 +513,7 @@ export function getTitleForListDisplay( purchase: Purchase ): string {
 		// translators: %s is the domain name, e.g. "Domain Registration: example.com"
 		return sprintf( __( 'Domain Registration: %s' ), purchase.meta );
 	}
-	return getTitleForDisplay( purchase );
+	return getTitleForDisplay( purchase, includeProductType );
 }
 
 /**
@@ -493,6 +599,8 @@ export function isJetpackCrmProduct( keyOrSlug: string ): boolean {
 	return (
 		keyOrSlug.startsWith( 'jetpack-complete' ) ||
 		keyOrSlug.startsWith( 'jetpack_complete' ) ||
+		keyOrSlug.startsWith( 'jetpack-pro_' ) ||
+		keyOrSlug.startsWith( 'jetpack_pro_' ) ||
 		keyOrSlug.startsWith( 'jetpack-crm' ) ||
 		keyOrSlug.startsWith( 'jetpack_crm' )
 	);
@@ -529,10 +637,6 @@ export function isDomainMapping( purchase: Purchase | ObjectWithProductSlug ): b
 
 export function isSiteRedirect( purchase: Purchase ): boolean {
 	return purchase.product_slug === OFFSITE_REDIRECT;
-}
-
-export function isWpcomFlexSubscription( purchase: Purchase ): boolean {
-	return purchase.product_slug === 'flex-hosting-plan-monthly';
 }
 
 /**
@@ -615,53 +719,40 @@ function getServicePathForCheckoutFromPurchase( purchase: Purchase ): string {
 	return '';
 }
 
-function getCheckoutProductSlugFromPurchase( purchase: Purchase ): string {
-	const productSlug = encodeProductForUrl( purchase.product_slug );
-	const productDomain = purchase.meta ? encodeProductForUrl( purchase.meta ) : undefined;
-	const checkoutProductSlug = productDomain ? `${ productSlug }:${ productDomain }` : productSlug;
-	return checkoutProductSlug;
+export function getRenewalUrlFromPurchase( purchase: Purchase, backUrl?: string ): string {
+	return getRenewUrlForPurchases( [ purchase ], backUrl );
 }
 
-function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
-	if ( isAkismetProduct( purchase ) ) {
-		// Akismet checkout never uses a site slug.
-		return '';
-	}
-	return purchase.site_slug || '';
-}
-
-export function getRenewalUrlFromPurchase(
-	purchase: Purchase,
-	checkoutSiteSlugForUrl?: string
-): string {
-	return getRenewUrlForPurchases( [ purchase ], checkoutSiteSlugForUrl );
-}
-
-export function getRenewUrlForPurchases(
-	purchases: Purchase[],
-	checkoutSiteSlugForUrl?: string
-): string {
+/**
+ * `backUrl` is where checkout returns to, whether the renewal goes through or is
+ * abandoned. It defaults to the dashboard page the user is on, so surfaces
+ * outside the dashboard have to say where they are.
+ *
+ * Checkout turns a renewal of a removed subscription into a new purchase, so by
+ * default a successful one returns to the new subscription's page rather than
+ * to the removed one.
+ */
+export function getRenewUrlForPurchases( purchases: Purchase[], backUrl?: string ): string {
 	if ( purchases.length < 1 ) {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
 	}
-	const firstPurchase = purchases[ 0 ];
-	const checkoutProductSlug = purchases
-		.map( ( purchase ) => getCheckoutProductSlugFromPurchase( purchase ) )
-		.join( ',' );
-	const checkoutSiteSlug =
-		checkoutSiteSlugForUrl || getCheckoutSiteSlugForPurchase( firstPurchase );
-	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
-	const backUrl = redirectToDashboardLink();
-	return addQueryArgs(
-		wpcomLink(
-			`/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchaseIds }/${ checkoutSiteSlug }`
-		),
-		{
-			cancel_to: backUrl,
-			redirect_to: backUrl,
-		}
-	);
+	// Siteless Akismet and Marketplace renewals keep the service in the path
+	// because the route is what selects the service-specific checkout
+	// experience. Everything else renews from the subscription ID alone.
+	const servicePath = getServicePathForCheckoutFromPurchase( purchases[ 0 ] );
+
+	const cancelTo = backUrl ?? redirectToDashboardLink( { supportBackport: true } );
+	const redirectTo =
+		backUrl ??
+		( purchases.length === 1 && isRemoved( purchases[ 0 ] )
+			? getPurchaseSettingsRedirectBase( purchases[ 0 ] )
+			: cancelTo );
+
+	return addQueryArgs( wpcomLink( `/checkout/${ servicePath }renew/${ purchaseIds }` ), {
+		cancel_to: cancelTo,
+		redirect_to: redirectTo,
+	} );
 }
 
 /**
@@ -691,8 +782,8 @@ export function needsToRenewSoon( purchase: Purchase ): boolean {
 
 export function isPartnerPurchase(
 	purchase: Purchase
-): purchase is Purchase & { partnerType: string } {
-	return !! purchase?.partner_name;
+): purchase is Purchase & { partner_name: string } {
+	return !! purchase.partner_name;
 }
 
 export function isAgencyPartnerType( partnerType: string ) {
@@ -765,13 +856,14 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 }
 
 /**
- * Returns true if the plan is eligible for an instant, self-serve downgrade: the
- * plan is still within its initial refund window (not a renewal) and has neither
- * expired nor entered its post-expiry grace period.
+ * Returns true if the plan is eligible for an instant, self-serve downgrade,
+ * performed now via the cancel endpoint rather than scheduled for renewal.
  *
- * Note: this intentionally does NOT require a refundable amount. Instant
- * downgrades are also offered for plans that were paid with credits or are
- * otherwise free, where no money would be refunded.
+ * The server answers this directly through `is_instant_downgrade_available`,
+ * which already accounts for expiry and for receipts worth nothing (a comped
+ * plan or a 100%-off coupon downgrades instantly and simply issues no refund).
+ * Do not reintroduce a `is_refundable` check here: that asks a different
+ * question and gave the wrong answer for zero-cost purchases.
  *
  * This is distinct from {@link isExpiredAndInGracePeriod}, which gates the
  * downgrade-to-checkout flow for plans whose expiry date has already passed.
@@ -780,9 +872,19 @@ export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boo
 	return (
 		purchase.is_plan_type_downgradable &&
 		purchase.is_plan &&
-		purchase.is_within_initial_refund_window &&
-		! isExpiredOrRemoved( purchase )
+		purchase.is_instant_downgrade_available
 	);
+}
+
+/**
+ * Whether to offer this purchase downgrade options as well as upgrades. Covers
+ * three downgrade flows: past expiry (downgrade-to-checkout), within refund
+ * window (instant downgrade), and active downgradable plan (delayed downgrade).
+ *
+ * Only ever true for WordPress.com plans.
+ */
+export function isPurchaseDowngradeEligible( purchase: Purchase ): boolean {
+	return purchase.is_plan && purchase.is_plan_type_downgradable;
 }
 
 /**
@@ -900,3 +1002,38 @@ export const hasMarketplaceProduct = ( productsList: Product[], searchSlug: stri
 			// SaaS products are also considered marketplace products
 			( product_type.startsWith( 'marketplace' ) || product_type === 'saas_plugin' )
 	);
+
+/**
+ * Sentence naming what the next renewal will actually charge when a delayed
+ * downgrade is scheduled, since the purchase's own renewal price is still the
+ * current plan's. Returns null when there is no downgrade price to show, or
+ * when the sentence isn't translated into the user's language yet.
+ */
+export function getDelayedDowngradeRenewalPriceText(
+	purchase: Purchase,
+	hasEnTranslation: ( single: string ) => boolean
+): string | null {
+	if (
+		! purchase.is_delayed_downgrade_pending ||
+		purchase.delayed_downgrade_price_integer == null
+	) {
+		return null;
+	}
+	if (
+		! hasEnTranslation(
+			'Because of your scheduled downgrade, your next renewal will be %(price)s.'
+		)
+	) {
+		return null;
+	}
+	return sprintf(
+		/* translators: %(price)s is a monetary amount, e.g. $20 */
+		__( 'Because of your scheduled downgrade, your next renewal will be %(price)s.' ),
+		{
+			price: formatCurrency( purchase.delayed_downgrade_price_integer, purchase.currency_code, {
+				isSmallestUnit: true,
+				stripZeros: true,
+			} ),
+		}
+	);
+}

@@ -26,7 +26,7 @@ export default function useWPCOMPlanDescription( slug: string ) {
 
 		features2 = [
 			translate( 'Priority support 24/7' ),
-			translate( 'DDOS mitigation' ),
+			translate( 'DDoS mitigation' ),
 			translate( 'Free staging environment' ),
 			translate( 'Isolated site infrastructure' ),
 			translate( 'Malware detection & removal' ),

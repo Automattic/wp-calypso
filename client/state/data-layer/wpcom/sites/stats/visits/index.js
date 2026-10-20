@@ -3,7 +3,7 @@ import { STATS_CHART_COUNTS_REQUEST } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { receiveChartCounts } from 'calypso/state/stats/chart-tabs/actions';
+import { receiveChartCounts, failChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import fromApi from './from-api';
 
 export const fetch = ( action ) => {
@@ -46,7 +46,7 @@ export const fetch = ( action ) => {
 					stat_fields: currentTabFields.join( ',' ),
 				},
 			},
-			action
+			{ ...action, statFields: currentTabFields }
 		),
 		http(
 			{
@@ -61,7 +61,7 @@ export const fetch = ( action ) => {
 					stat_fields: otherTabFields.join( ',' ),
 				},
 			},
-			action
+			{ ...action, statFields: otherTabFields }
 		),
 	];
 };
@@ -69,12 +69,14 @@ export const fetch = ( action ) => {
 export const onSuccess = ( { siteId, period, date, quantity }, data ) =>
 	receiveChartCounts( siteId, date, period, quantity, data );
 
+export const onError = ( action ) => failChartCounts( action );
+
 registerHandlers( 'state/data-layer/wpcom/sites/stats/visits/index.js', {
 	[ STATS_CHART_COUNTS_REQUEST ]: [
 		dispatchRequest( {
 			fetch,
 			onSuccess,
-			onError: () => {},
+			onError,
 			fromApi,
 		} ),
 	],

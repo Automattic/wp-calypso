@@ -4,6 +4,7 @@
 import { ReadList } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { getListStreamKey } from 'calypso/reader/list/controller';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderSidebarListsListItem from '../list-item';
 
@@ -13,22 +14,15 @@ jest.mock( 'calypso/reader/stats', () => ( {
 } ) );
 
 const mockMarkAllAsSeen = jest.fn();
+let mockSeenPostsUiEnabled = true;
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
 	useMarkAllAsSeenMutation: () => ( { mutate: mockMarkAllAsSeen } ),
+	useSeenPostsPreferenceEnabled: () => mockSeenPostsUiEnabled,
 } ) );
 
 const mockRecordReaderTracksEvent = jest.fn();
 jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
-} ) );
-
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
-	isAutomatticianQuery: () => ( {
-		queryKey: [ 'is-automattician' ],
-		queryFn: () => true,
-		initialData: true,
-	} ),
 } ) );
 
 const list: ReadList = {
@@ -47,6 +41,7 @@ describe( 'ReaderSidebarListsListItem', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockSeenPostsUiEnabled = true;
 		// jsdom does not implement scrollIntoView.
 		scrollIntoView = jest.fn();
 		window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
@@ -126,6 +121,23 @@ describe( 'ReaderSidebarListsListItem', () => {
 
 			expect( container.querySelector( '.a8c-count' ) ).toHaveTextContent( '5' );
 		} );
+
+		it( 'hides the unseen count when seen posts UI is disabled', () => {
+			mockSeenPostsUiEnabled = false;
+			const listWithUnseen: ReadList = {
+				...list,
+				feeds: [
+					{ feed_id: 1, unseen_count: 2 },
+					{ feed_id: 2, unseen_count: 3 },
+				],
+			};
+
+			const { container } = renderWithProvider(
+				<ReaderSidebarListsListItem list={ listWithUnseen } path="/reader" />
+			);
+
+			expect( container.querySelector( '.a8c-count' ) ).toBeNull();
+		} );
 	} );
 
 	describe( 'mark all as read', () => {
@@ -145,7 +157,7 @@ describe( 'ReaderSidebarListsListItem', () => {
 			await user.click( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) );
 
 			expect( mockMarkAllAsSeen ).toHaveBeenCalledWith( {
-				identifier: 'sidebar-list',
+				identifier: getListStreamKey( listWithUnseen.owner, listWithUnseen.slug ),
 				feedIds: [ 1, 2 ],
 				feedUrls: [],
 			} );

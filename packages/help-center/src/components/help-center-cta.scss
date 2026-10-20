@@ -34,6 +34,42 @@
 	}
 }
 
+.help-center-cta__banner--link {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: inherit;
+	text-decoration: none;
+
+	.help-center-cta__banner-content {
+		flex: 1;
+	}
+
+	.help-center-cta__title,
+	.help-center-cta__description {
+		display: block;
+		margin: 0;
+	}
+
+	.help-center-cta__title {
+		color: $help-center-blue;
+	}
+
+	svg {
+		fill: $help-center-blue;
+		flex-shrink: 0;
+	}
+
+	&:hover .help-center-cta__title {
+		text-decoration: underline;
+	}
+
+	&:focus-visible {
+		outline: $help-center-blue solid 2px;
+		outline-offset: 2px;
+	}
+}
+
 .help-center-cta__resource-item {
 	.help-center-link__cell a svg:first-child {
 		fill: $help-center-blue;

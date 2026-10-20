@@ -18,7 +18,10 @@ import './style.scss';
  * Example: given routeId `/sites/$siteSlug` and screen paths `['/', '/sites/$siteSlug', '/me']`,
  * it tries `/sites` (no match), then `/` (match) → returns `/`.
  */
-function findParentPath( routeId: string, screenPaths: string[] ): string | undefined {
+function findParentPath( routeId: string | undefined, screenPaths: string[] ): string | undefined {
+	if ( ! routeId ) {
+		return undefined;
+	}
 	const parts = routeId.split( '/' );
 	while ( parts.length > 1 ) {
 		parts.pop();
@@ -76,9 +79,7 @@ function UnforwardedSidebarNavigator(
 
 	const previousPath = usePrevious( activePath );
 	const isBack =
-		previousPath !== undefined &&
-		activePath !== previousPath &&
-		activePath === findParentPath( previousPath, screenPaths );
+		activePath !== previousPath && activePath === findParentPath( previousPath, screenPaths );
 
 	const contextValue = useMemo( () => ( { activePath, isBack } ), [ activePath, isBack ] );
 

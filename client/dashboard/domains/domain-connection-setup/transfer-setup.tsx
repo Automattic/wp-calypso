@@ -42,9 +42,10 @@ export default function DomainTransferSetup() {
 	const { data: domainConnectionSetupInfo } = useSuspenseQuery(
 		domainConnectionSetupInfoQuery( domainName, domain.blog_id )
 	);
-	const { data: purchase } = useQuery(
-		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
-	);
+	const { data: purchase } = useQuery( {
+		...purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) ),
+		enabled: !! domain.subscription_id,
+	} );
 	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
 
 	const registrar = domainConnectionSetupInfo?.registrar || null;

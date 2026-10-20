@@ -43,6 +43,16 @@ Any addition classes to pass to the card component.
 
 This function will fire when a user clicks on the cross icon
 
+### `onCardClick`
+
+<table>
+	<tr><td>Type</td><td>Function</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+	<tr><td>Default</td><td><code>undefined</code></td></tr>
+</table>
+
+This function will fire when a user clicks on the card body (but not on the cross icon).
+
 ### `preferenceName`
 
 <table>

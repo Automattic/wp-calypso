@@ -71,9 +71,12 @@ export const loginUser =
 					} );
 				}
 
+				// Carried through state so the two-step request can forward it
+				// without collecting a new session.
 				return dispatch( {
 					type: LOGIN_REQUEST_SUCCESS,
 					data: response.body && response.body.data,
+					blackboxSessionId,
 				} );
 			} )
 			.catch( ( httpError ) => {

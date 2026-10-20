@@ -13,8 +13,11 @@ export interface ReviewerMetadata {
 }
 
 interface ReviewerChipProps {
-	/** The display name exactly as it appears in the review payload. */
-	name: string;
+	/**
+	 * The display name exactly as it appears in the review payload. Model
+	 * output, so it may not be a usable string; the chip renders nothing then.
+	 */
+	name?: string | null;
 	/** Server-provided metadata keyed by name; may be missing for some reviewers. */
 	metadata?: ReviewerMetadata | null;
 	/** Optional tooltip content. Default: the bio (if present) or display name. */
@@ -68,6 +71,12 @@ export default function ReviewerChip( {
 	title,
 	variant = 'inline',
 }: ReviewerChipProps ) {
+	// The name is model output and may not be a usable string; without one
+	// there is nothing to show, and hashName() would throw.
+	if ( typeof name !== 'string' || name.trim() === '' ) {
+		return null;
+	}
+
 	const tooltip = title ?? metadata?.bio ?? name;
 	const avatarUrl = safeImageUrl( metadata?.avatar_url );
 

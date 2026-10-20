@@ -1,0 +1,431 @@
+/**
+ * @jest-environment jsdom
+ */
+import { DomainAvailabilityStatus } from '@automattic/api-core';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { useViewportMatch } from '@wordpress/compose';
+import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
+import { buildAvailability } from '../../../test-helpers/factories/availability';
+import { buildCart } from '../../../test-helpers/factories/cart';
+import { withNamePulseQueries } from '../../../test-helpers/factories/name-pulse';
+import { queryClient } from '../../../test-helpers/renderer';
+import { NamePulseDomainStatus, type NamePulseDomainResult } from '../../helpers';
+import { NamePulseResultSetContext } from '../../hooks/use-name-pulse-result-set';
+import { NamePulseResultRow, type NamePulseResultRowVariant } from '../result-row';
+import type { DomainAvailability } from '@automattic/api-core';
+
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn(),
+} ) );
+
+const mockUseViewportMatch = jest.mocked( useViewportMatch );
+
+beforeEach( () => {
+	mockUseViewportMatch.mockReturnValue( false );
+} );
+
+const LONG_DOMAIN = 'icecreamshopnearsuratairport.boutique';
+
+const mockLabelLayout = ( labelWidth: number ) => {
+	jest
+		.spyOn( Element.prototype, 'getBoundingClientRect' )
+		.mockReturnValue( { width: labelWidth, right: 0 } as DOMRect );
+	jest.spyOn( HTMLCanvasElement.prototype, 'getContext' ).mockReturnValue( {
+		measureText: ( text: string ) => ( { width: text.length * 10 } ),
+	} as unknown as CanvasRenderingContext2D );
+};
+
+afterEach( () => {
+	jest.restoreAllMocks();
+} );
+
+const buildResult = ( overrides: Partial< NamePulseDomainResult > ): NamePulseDomainResult => ( {
+	domain_name: 'icecream.net',
+	suffix: 'net',
+	status: NamePulseDomainStatus.AVAILABLE,
+	source: 'exact',
+	...overrides,
+} );
+
+/**
+ * A premium exact match as the bulk check reports it: flagged premium, priced
+ * at the standard .co rate.
+ */
+const buildPremiumResult = ( overrides: Partial< NamePulseDomainResult > = {} ) =>
+	buildResult( {
+		domain_name: 'icecream.co',
+		suffix: 'co',
+		cost: '$35.00',
+		raw_price: 35,
+		currency_code: 'USD',
+		is_premium: true,
+		...overrides,
+	} );
+
+const buildPremiumAvailability = ( domainName: string, isSupported: boolean ) =>
+	buildAvailability( {
+		domain_name: domainName,
+		tld: 'co',
+		status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+		is_supported_premium_domain: isSupported,
+		cost: '$3,500.00',
+		raw_price: 3500,
+	} );
+
+const notUsed = () => Promise.reject( new Error( 'not used' ) );
+
+const renderRow = (
+	result: NamePulseDomainResult,
+	domainAvailability: ( domainName: string ) => Promise< DomainAvailability > = notUsed,
+	cart = buildCart(),
+	variant?: NamePulseResultRowVariant
+) => {
+	const fetcher = jest.fn( domainAvailability );
+
+	const Wrapper = () => {
+		const contextValue = useDomainSearchContextValue( {
+			cart,
+			config: { showNamePulseSearch: true },
+		} );
+
+		return (
+			<QueryClientProvider client={ queryClient }>
+				<DomainSearchContext.Provider
+					value={ withNamePulseQueries( contextValue, {
+						availability: notUsed,
+						suggestions: notUsed,
+						tlds: notUsed,
+						domainAvailability: fetcher,
+					} ) }
+				>
+					<NamePulseResultRow result={ result } group="exact" position={ 0 } variant={ variant } />
+				</DomainSearchContext.Provider>
+			</QueryClientProvider>
+		);
+	};
+
+	return { ...render( <Wrapper /> ), fetcher };
+};
+
+describe( 'NamePulseResultRow', () => {
+	beforeEach( () => {
+		queryClient.clear();
+	} );
+
+	it( 'gives each name its own railcar when several show in the same slot', () => {
+		const onSuggestionRender = jest.fn();
+		const resultSet = { id: 'set-1', rendered: new Map() };
+
+		const Wrapper = ( { result }: { result: NamePulseDomainResult } ) => {
+			const contextValue = useDomainSearchContextValue( {
+				cart: buildCart(),
+				events: { onSuggestionRender },
+				config: { showNamePulseSearch: true },
+			} );
+
+			return (
+				<QueryClientProvider client={ queryClient }>
+					<DomainSearchContext.Provider value={ contextValue }>
+						<NamePulseResultSetContext.Provider value={ resultSet }>
+							<NamePulseResultRow
+								key={ result.domain_name }
+								result={ result }
+								group="top"
+								position={ 2 }
+							/>
+						</NamePulseResultSetContext.Provider>
+					</DomainSearchContext.Provider>
+				</QueryClientProvider>
+			);
+		};
+
+		const { rerender } = render(
+			<Wrapper result={ buildResult( { domain_name: 'test.art' } ) } />
+		);
+		rerender( <Wrapper result={ buildResult( { domain_name: 'test.store' } ) } /> );
+
+		expect( onSuggestionRender.mock.calls.map( ( [ , , props ] ) => props.railcar ) ).toEqual( [
+			'set-1-0',
+			'set-1-1',
+		] );
+	} );
+
+	it( 'falls back to the server-formatted cost, without a sale, when currency_code is missing', () => {
+		renderRow( buildResult( { cost: '€22.00', raw_price: 22, sale_cost: 6 } ) );
+
+		expect( screen.getByText( '€22.00' ) ).toBeInTheDocument();
+		expect( screen.getByText( '/year' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( '/first year' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'announces the waiting skeleton', () => {
+		renderRow( buildResult( { status: NamePulseDomainStatus.WAITING } ) );
+
+		expect( screen.getByRole( 'img', { name: 'Checking…' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'truncates a long name on desktop to the space it has', () => {
+		// 100px at 10px per character fits 4 + "…" + 4.
+		mockLabelLayout( 100 );
+
+		const { container } = renderRow(
+			buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } )
+		);
+
+		expect( container.querySelector( '.name-pulse-row__domain--wrap' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'icec…port' ) ).toBeInTheDocument();
+		expect( screen.getByText( '.boutique' ) ).toBeInTheDocument();
+	} );
+
+	it( 'shows the full long name on desktop when it fits', () => {
+		mockLabelLayout( 1000 );
+
+		renderRow( buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } ) );
+
+		expect( screen.getByText( 'icecreamshopnearsuratairport' ) ).toBeInTheDocument();
+	} );
+
+	it( 'uses the free space on the left of the name in RTL', () => {
+		mockLabelLayout( 100 );
+		// 900px free on the left of a 100px label; none on the right.
+		jest.spyOn( Element.prototype, 'getBoundingClientRect' ).mockImplementation( function (
+			this: Element
+		) {
+			return (
+				this.classList.contains( 'name-pulse-row__name' )
+					? { left: 0, right: 1000, width: 1000 }
+					: { left: 900, right: 1000, width: 100 }
+			) as DOMRect;
+		} );
+		const getComputedStyle = window.getComputedStyle;
+		jest.spyOn( window, 'getComputedStyle' ).mockImplementation(
+			( element ) =>
+				new Proxy( getComputedStyle( element ), {
+					get: ( style, property ) =>
+						property === 'direction' ? 'rtl' : Reflect.get( style, property ),
+				} )
+		);
+
+		renderRow( buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } ) );
+
+		expect( screen.getByText( 'icecreamshopnearsuratairport' ) ).toBeInTheDocument();
+	} );
+
+	it( 'shows the full long name below desktop', () => {
+		mockUseViewportMatch.mockReturnValue( true );
+
+		renderRow( buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } ) );
+
+		expect( screen.getByText( 'icecreamshopnearsuratairport' ) ).toBeInTheDocument();
+		expect( screen.getByText( '.boutique' ) ).toBeInTheDocument();
+	} );
+
+	it( 'wraps the full long name below the large breakpoint, where the two-column row is too tight to truncate', () => {
+		mockUseViewportMatch.mockImplementation(
+			( breakpoint, operator ) => breakpoint === 'large' && operator === '<'
+		);
+
+		const { container } = renderRow(
+			buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } )
+		);
+
+		expect( container.querySelector( '.name-pulse-row__domain--wrap' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'icecreamshopnearsuratairport' ) ).toBeInTheDocument();
+		expect( screen.getByText( '.boutique' ) ).toBeInTheDocument();
+	} );
+
+	it( 'replaces the bulk price of a premium exact match with the per-domain one', async () => {
+		const { fetcher } = renderRow( buildPremiumResult(), async ( domainName ) =>
+			buildPremiumAvailability( domainName, true )
+		);
+
+		expect( screen.getByRole( 'img', { name: 'Checking price…' } ) ).toBeInTheDocument();
+		expect( screen.queryByText( '$35' ) ).not.toBeInTheDocument();
+
+		expect( await screen.findByText( '$3,500' ) ).toBeInTheDocument();
+		expect( screen.getByText( '/year' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Premium' ) ).toBeInTheDocument();
+		expect( fetcher ).toHaveBeenCalledWith( 'icecream.co' );
+	} );
+
+	it( 'marks a premium exact match its TLD cannot sell as unavailable', async () => {
+		renderRow( buildPremiumResult(), async ( domainName ) =>
+			buildPremiumAvailability( domainName, false )
+		);
+
+		expect( await screen.findByText( 'Unavailable' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Premium' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( '$3,500' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'keeps a premium exact match on its badge alone when the per-domain check fails', async () => {
+		renderRow( buildPremiumResult(), () =>
+			Promise.reject( new Error( 'Availability check failed' ) )
+		);
+
+		await waitFor( () =>
+			expect( screen.queryByRole( 'img', { name: 'Checking price…' } ) ).not.toBeInTheDocument()
+		);
+		expect( screen.getByText( 'Premium' ) ).toBeInTheDocument();
+		expect( screen.queryByText( '$35' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'prices a premium suggestion from the suggestions response, without a per-domain check', () => {
+		const { fetcher } = renderRow(
+			buildPremiumResult( {
+				domain_name: 'gelato.io',
+				suffix: 'io',
+				source: 'keyword',
+				cost: '$350.00',
+				raw_price: 350,
+			} )
+		);
+
+		expect( screen.getByText( 'Premium' ) ).toBeInTheDocument();
+		expect( screen.getByText( '$350' ) ).toBeInTheDocument();
+		expect( fetcher ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'card variant', () => {
+		const renderCard = ( result: NamePulseDomainResult ) =>
+			renderRow( result, notUsed, buildCart(), 'card' );
+
+		it( 'shows the regular price struck through, the sale price and the renewal on one line', () => {
+			renderCard(
+				buildResult( {
+					domain_name: 'icecream.blog',
+					suffix: 'blog',
+					cost: '$33.00',
+					raw_price: 33,
+					sale_cost: 3.3,
+					currency_code: 'USD',
+				} )
+			);
+
+			const price = document.querySelector( '.name-pulse-row__price--card' ) as HTMLElement;
+
+			expect( document.querySelector( '.name-pulse-row--card' ) ).toBeInTheDocument();
+			expect( within( price ).getByText( '$33' ).tagName ).toBe( 'S' );
+			expect( within( price ).getByText( '$3.30' ) ).toBeInTheDocument();
+			expect( within( price ).getByText( '/first year' ) ).toBeInTheDocument();
+			expect( within( price ).getByText( '$33/year renewal' ) ).toBeInTheDocument();
+		} );
+
+		it( 'shows the yearly price alone when there is no sale', () => {
+			renderCard( buildResult( { cost: '$29.00', raw_price: 29, currency_code: 'USD' } ) );
+
+			const price = document.querySelector( '.name-pulse-row__price--card' ) as HTMLElement;
+
+			expect( within( price ).getByText( '$29' ) ).toBeInTheDocument();
+			expect( within( price ).getByText( '/year' ) ).toBeInTheDocument();
+			expect( price.querySelector( 's' ) ).not.toBeInTheDocument();
+			expect( within( price ).queryByText( /renewal/ ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'keeps the table row layout by default', () => {
+			renderRow( buildResult( { cost: '$29.00', raw_price: 29, currency_code: 'USD' } ) );
+
+			expect( document.querySelector( '.name-pulse-row--card' ) ).not.toBeInTheDocument();
+			expect( document.querySelector( '.name-pulse-row__price--card' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	it( 'shows no Sale badge on a sale', () => {
+		renderRow( buildResult( { sale_cost: 3.3, currency_code: 'USD' } ) );
+
+		expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
+	} );
+
+	describe( 'policy notices', () => {
+		const POLICY_NOTICES = [
+			{
+				type: 'identity_verification',
+				label: 'Special requirements',
+				message: '.in domains may require identity verification by the registry.',
+			},
+		];
+
+		const available = () =>
+			Promise.resolve(
+				buildAvailability( {
+					domain_name: 'icecream.in',
+					tld: 'in',
+					status: DomainAvailabilityStatus.AVAILABLE,
+				} )
+			);
+
+		const buildPolicyResult = () =>
+			buildResult( { domain_name: 'icecream.in', suffix: 'in', policy_notices: POLICY_NOTICES } );
+
+		it( 'keeps the notice off the row', () => {
+			renderRow( buildPolicyResult() );
+
+			expect( screen.queryByText( 'Special requirements' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( POLICY_NOTICES[ 0 ].message ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'confirms the notice in a dialog before adding the name', async () => {
+			const { fetcher } = renderRow( buildPolicyResult(), available );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
+
+			const dialog = await screen.findByRole( 'dialog', { name: 'Special requirements' } );
+			expect( dialog ).toHaveTextContent( POLICY_NOTICES[ 0 ].message );
+			await waitFor( () => expect( dialog ).toHaveFocus() );
+			expect( fetcher ).not.toHaveBeenCalled();
+
+			await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Add to cart' } ) );
+
+			await waitFor( () => expect( fetcher ).toHaveBeenCalled() );
+		} );
+
+		it( 'keeps the dialog open until the name is in the cart', async () => {
+			let finishAdding = () => {};
+			const cart = buildCart( {
+				onAddItem: jest.fn(
+					() => new Promise< void >( ( resolve ) => ( finishAdding = resolve ) )
+				),
+			} );
+			renderRow( buildPolicyResult(), available, cart );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
+			const dialog = await screen.findByRole( 'dialog', { name: 'Special requirements' } );
+			await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Add to cart' } ) );
+
+			await waitFor( () => expect( cart.onAddItem ).toHaveBeenCalled() );
+			expect( dialog ).toBeInTheDocument();
+			expect( within( dialog ).getByRole( 'button', { name: 'Cancel' } ) ).toHaveAttribute(
+				'aria-disabled',
+				'true'
+			);
+
+			finishAdding();
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+		} );
+
+		it( 'keeps the name out of the cart when the dialog is canceled', async () => {
+			const { fetcher } = renderRow( buildPolicyResult(), available );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
+			const dialog = await screen.findByRole( 'dialog', { name: 'Special requirements' } );
+			await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Cancel' } ) );
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+			expect( fetcher ).not.toHaveBeenCalled();
+		} );
+
+		it( 'adds a name without notices straight away', async () => {
+			const { fetcher } = renderRow( buildResult( {} ), available );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
+
+			await waitFor( () => expect( fetcher ).toHaveBeenCalled() );
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		} );
+	} );
+} );

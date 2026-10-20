@@ -88,7 +88,7 @@ export default function WPCOMSitesTable( {
 							id: site.ID,
 							site: urlToSlug( site.URL ),
 							date: site.options?.created_at || '',
-					  }
+						}
 					: undefined
 			)
 			.filter( Boolean ) as SiteItem[];
@@ -146,7 +146,7 @@ export default function WPCOMSitesTable( {
 							enableHiding: false,
 							enableSorting: false,
 						},
-				  ]
+					]
 				: [
 						{
 							id: 'site',
@@ -191,7 +191,7 @@ export default function WPCOMSitesTable( {
 							enableHiding: false,
 							enableSorting: false,
 						},
-				  ],
+					],
 		[ isDesktop, items.length, onSelectAllSites, onSelectSite, selectedSites, translate ]
 	);
 

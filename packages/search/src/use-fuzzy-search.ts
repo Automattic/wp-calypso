@@ -9,10 +9,10 @@ const defaultOptions = {
 type KeysProp< T > = T extends string
 	? {
 			keys?: never;
-	  }
+		}
 	: {
 			keys: Fuse.IFuseOptions< T >[ 'keys' ];
-	  };
+		};
 
 export type UseFuzzySearchOptions< T > = {
 	data: T[];

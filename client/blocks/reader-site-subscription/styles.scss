@@ -70,7 +70,7 @@
 					overflow: hidden;
 					text-overflow: ellipsis;
 
-					&:not(.external-link) {
+					&:not(.site-subscription-header__site-link) {
 						min-width: max-content;
 					}
 				}
@@ -151,16 +151,6 @@
 
 		&__loading {
 			margin-bottom: 20px;
-		}
-
-		.badge {
-			margin: 0 8px 0 0;
-			border-radius: 4px;
-			font-size: rem(12px);
-		}
-		.badge--success {
-			background-color: $studio-green-5;
-			color: $studio-green-100;
 		}
 	}
 

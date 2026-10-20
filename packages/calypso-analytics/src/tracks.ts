@@ -39,13 +39,15 @@ const EVENT_NAME_EXCEPTIONS = [
 	'wpcom_support_free_migration_request_click',
 	// Help Center Menu Panel
 	'wpcom_help_center_icon_interaction',
+	// Unified page view tracking.
+	'wpcom_unified_admin_page_view',
 ];
 
 let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 if ( typeof document !== 'undefined' ) {
-	_loadTracksResult = loadScript( '//stats.wp.com/w.js?67' );
+	_loadTracksResult = loadScript( '//stats.wp.com/w.js?69' );
 }
 
 function createRandomId( randomBytesLength = 9 ): string {

@@ -17,11 +17,14 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
-import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/automated-transfer/constants';
+import {
+	eligibilityHolds as eligibilityHoldsConstants,
+	type EligibilityHold,
+} from 'calypso/state/automated-transfer/constants';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import SupportCard from '../store-address/support-card';
 import type { Step } from '../../types';
-import type { SiteSelect } from '@automattic/data-stores';
+
 import './style.scss';
 
 const ActionSection = styled.div`
@@ -54,7 +57,7 @@ const WarningsOrHoldsSection = styled.div`
 	margin-bottom: 40px;
 `;
 
-const TRANSFERRING_NOT_BLOCKERS = [
+const TRANSFERRING_NOT_BLOCKERS: EligibilityHold[] = [
 	eligibilityHoldsConstants.NO_BUSINESS_PLAN, // Plans are upgraded in the install flow.
 	eligibilityHoldsConstants.TRANSFER_ALREADY_EXISTS, // Already Atomic sites are handled in the install flow.
 ];
@@ -68,7 +71,7 @@ const BundleConfirm: Step< { submits: { checkoutUrl: string } } > = function Bun
 	const siteId = site && site?.ID;
 	const pluginSlug = useSitePluginSlug();
 	const isAtomicSite = useSelect(
-		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( siteId ),
+		( select ) => siteId && select( SITE_STORE ).isSiteAtomic( siteId ),
 		[ siteId ]
 	);
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
@@ -89,12 +92,11 @@ const BundleConfirm: Step< { submits: { checkoutUrl: string } } > = function Bun
 	const warnings =
 		eligibilityWarnings?.filter( ( { id } ) => id !== 'wordpress_subdomain' ) ?? null;
 	const latestAtomicTransfer = useSelect(
-		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransfer( siteId || 0 ),
+		( select ) => select( SITE_STORE ).getSiteLatestAtomicTransfer( siteId || 0 ),
 		[ siteId ]
 	);
 	const latestAtomicTransferError = useSelect(
-		( select ) =>
-			( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransferError( siteId || 0 ),
+		( select ) => select( SITE_STORE ).getSiteLatestAtomicTransferError( siteId || 0 ),
 		[ siteId ]
 	);
 	const productsList = useSelect(
@@ -102,7 +104,7 @@ const BundleConfirm: Step< { submits: { checkoutUrl: string } } > = function Bun
 		[]
 	);
 	const requiresUpgrade = useSelect(
-		( select ) => ( select( SITE_STORE ) as SiteSelect ).requiresUpgrade( siteId ),
+		( select ) => select( SITE_STORE ).requiresUpgrade( siteId ),
 		[ siteId ]
 	);
 

@@ -61,11 +61,12 @@ export const noteLikes = ( state = {}, { type, noteId, isLiked } ) => {
 	return state;
 };
 
-// Ordered id list backing the server-filtered "Unread" view. Holds the server's
-// answer for which notes are unread; the notes themselves live in `allNotes`.
-export const unreadNoteIds = ( state = [], { type, noteIds } ) => {
-	if ( types.SET_UNREAD_NOTE_IDS === type ) {
-		return noteIds;
+// Ordered id lists for the filtered tabs, keyed by tab name so each keeps its own
+// last result. Absent key = never fetched (show the loader); present (even []) =
+// loaded. The notes themselves live in `allNotes`.
+export const filteredNoteIds = ( state = {}, { type, filterKey, noteIds } ) => {
+	if ( types.SET_FILTERED_NOTE_IDS === type ) {
+		return { ...state, [ filterKey ]: noteIds };
 	}
 
 	return state;
@@ -93,7 +94,7 @@ export const filteredNoteReads = ( state = [], { type, noteId } ) => {
 
 export default combineReducers( {
 	allNotes,
-	unreadNoteIds,
+	filteredNoteIds,
 	hiddenNoteIds,
 	noteApprovals,
 	noteLikes,

@@ -21,7 +21,6 @@ type Story = StoryObj< typeof HelpCenterCTA >;
 
 const sampleArgs = {
 	ctaId: 'onboarding-call-v1',
-	placement: 'help-center-home',
 	url: 'https://calendly.example.com/onboarding',
 	title: 'Get set up with a free onboarding call',
 	description: 'Talk one-on-one with a Happiness Engineer and get your new site off the ground.',
@@ -108,6 +107,21 @@ export const BannerWithoutAction: Story = {
 	args: {
 		...sampleArgs,
 		variant: 'banner',
+	},
+	render: ( args ) => (
+		<PanelChrome>
+			<HelpCenterCTA { ...args } />
+		</PanelChrome>
+	),
+};
+
+/** What the v1 campaign ships: title-only banner, the whole thing is the link. */
+export const BannerTitleOnly: Story = {
+	args: {
+		...sampleArgs,
+		variant: 'banner',
+		title: 'Book Your Free Onboarding Call',
+		description: undefined,
 	},
 	render: ( args ) => (
 		<PanelChrome>

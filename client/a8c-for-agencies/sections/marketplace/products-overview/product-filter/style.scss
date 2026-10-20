@@ -2,49 +2,23 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+.product-filter-container {
+	display: none;
+
+	@include break-large {
+		display: flex;
+		flex-direction: row;
+		gap: 8px;
+	}
+}
+
 .product-filter {
 	max-height: 33px;
 	max-width: 33px;
 }
 
-.product-filter-container {
-	display: flex;
-	flex-direction: row;
-	gap: 8px;
-}
-
-.components-popover.is-product-filter {
-	border-radius: 4px;
-	border: 1px solid var(--color-neutral-5);
-	z-index: 10;
-}
-
 .product-filter__group {
 	padding: 8px;
-}
-
-.product-filter__group .components-menu-item__button.components-button {
-	border-radius: 4px;
-	padding: 8px 12px;
-
-	&:focus,
-	&:focus-visible,
-	&:focus-within,
-	&:hover:not(:disabled) {
-		border: none;
-		box-shadow: none;
-		// 37.0.0 moved the focus ring from box-shadow to outline; suppress it too.
-		outline: none;
-	}
-
-	&:hover:not(:disabled) {
-		background-color: var(--color-neutral-0);
-	}
-}
-
-.product-filter__group .components-menu-item__item {
-	display: flex;
-	gap: 8px;
 }
 
 .product-filter-button {
@@ -80,5 +54,21 @@
 
 	@include break-huge {
 		display: block;
+	}
+}
+
+.product-filter-select__menu .popover__menu-item.popover__menu-item.popover__menu-item {
+	&:focus,
+	&:focus-visible,
+	&:hover {
+		background: none;
+		color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		svg {
+			fill: var(--color-accent-60);
+		}
+	}
+
+	&:focus-visible {
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 	}
 }

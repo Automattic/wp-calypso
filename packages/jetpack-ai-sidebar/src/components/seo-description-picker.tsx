@@ -17,7 +17,9 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import { revealSidebarField } from '../utils/reveal-sidebar-field';
 import BaseSuggestionPicker from './base-suggestion-picker';
+import type { OnResponseAction } from '../utils/response-action';
 
 /**
  * Jetpack SEO post meta key for the custom HTML <meta> description.
@@ -34,18 +36,16 @@ interface SeoDescriptionOption {
 }
 
 interface SeoDescriptionPickerProps {
-	descriptions: SeoDescriptionOption[];
+	descriptions?: SeoDescriptionOption[];
 	onComplete?: () => void;
+	onResponseAction?: OnResponseAction;
 }
 
-/**
- * SeoDescriptionPicker component for the chat sidebar.
- * @param {SeoDescriptionPickerProps} props - Component props.
- * @returns {import('react').ReactElement} The rendered component.
- */
+/** Renders SEO description suggestions and applies the selection to post meta. */
 export default function SeoDescriptionPicker( {
 	descriptions,
 	onComplete,
+	onResponseAction,
 }: SeoDescriptionPickerProps ) {
 	const { editPost } = useDispatch( 'core/editor' );
 	const currentDescription = useSelect( ( select ) => {
@@ -60,18 +60,31 @@ export default function SeoDescriptionPicker( {
 	const handleApply = useCallback(
 		( description: string ) => {
 			editPost( { meta: { [ SEO_DESCRIPTION_META_KEY ]: description } } );
-			onComplete?.();
+			revealSidebarField( 'seo' );
 		},
-		[ editPost, onComplete ]
+		[ editPost ]
 	);
+
+	// The props arrive from an orchestrator tool payload, so guard the shape
+	// instead of trusting the TypeScript type.
+	const options = Array.isArray( descriptions )
+		? descriptions
+				.map( ( option ) => option?.description )
+				.filter(
+					( description ): description is string =>
+						typeof description === 'string' && description.trim() !== ''
+				)
+		: [];
 
 	return (
 		<BaseSuggestionPicker
 			intro={ __( 'Choose an SEO description for your post:', 'jetpack' ) }
-			options={ descriptions.map( ( option ) => option.description ) }
+			options={ options }
 			onApply={ handleApply }
+			onComplete={ onComplete }
 			appliedMessage={ __( 'SEO description updated.', 'jetpack' ) }
 			currentValue={ typeof currentDescription === 'string' ? currentDescription : undefined }
+			onResponseAction={ onResponseAction }
 		/>
 	);
 }

@@ -19,13 +19,32 @@ import type { AmplifyApiError, AmplifyMode } from 'calypso/a8c-for-agencies/data
 
 import './style.scss';
 
-function isSiteUnreachableError( error: AmplifyApiError | null ) {
-	return (
-		error?.code === 'site_unreachable' ||
-		Object.values( error?.data?.details ?? {} ).some(
-			( detail ) => detail.code === 'site_unreachable'
-		)
-	);
+// WordPress reports a failed `validate_callback` as `rest_invalid_param` and
+// keeps the real code under the parameter it rejected.
+function getErrorCode( error: AmplifyApiError | null ): string | null {
+	if ( 'rest_invalid_param' === error?.code ) {
+		return error.data?.details?.url?.code ?? error.code;
+	}
+	return error?.code ?? null;
+}
+
+function getErrorMessage( error: AmplifyApiError | null ) {
+	switch ( getErrorCode( error ) ) {
+		case 'a4a_amplify_bad_url':
+			return __(
+				'We can’t analyze that address. It needs to be a public http:// or https:// URL on a standard port.'
+			);
+		case 'site_unreachable':
+			return __(
+				'We couldn’t reach this site to analyze it. Make sure it’s online and publicly accessible, then try again.'
+			);
+		case 'amplify_report_rate_limited':
+			return __(
+				'You’ve reached the limit of 10 Amplify reports in a 24-hour period. Try again after one of your earlier reports is more than 24 hours old.'
+			);
+		default:
+			return __( 'Could not start the analysis. Please try again.' );
+	}
 }
 
 export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void } ) {
@@ -43,11 +62,7 @@ export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void 
 		// to the progress view instead of showing a notice.
 		onSuccess: () => setInProgress( true ),
 		onError: ( error ) => {
-			const message = isSiteUnreachableError( error )
-				? __(
-						'We couldn’t reach this site to analyze it. Make sure it’s online and publicly accessible, then try again.'
-				  )
-				: __( 'Could not start the analysis. Please try again.' );
+			const message = getErrorMessage( error );
 			dispatch(
 				errorNotice( message, {
 					id: 'amplify-analysis-error',

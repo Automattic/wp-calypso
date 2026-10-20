@@ -98,7 +98,7 @@ export function MastodonAuthorProfilePanel( {
 					count: profile.data.counts.posts,
 					label: translate( 'post', 'posts', { count: profile.data.counts.posts } ),
 				},
-		  ]
+			]
 		: [];
 
 	// `.mutate` is the only stable handle on the useMutation result; depending
@@ -406,13 +406,13 @@ export function MastodonAuthorProfilePanel( {
 									translate( '@%(handle)s hasn’t posted yet.', {
 										args: { handle: emptyHandle },
 									} )
-							  )
+								)
 					}
 					emptyLine={
 						isLockedEmpty
 							? String(
 									translate( 'You need to follow this account on Mastodon to see their posts.' )
-							  )
+								)
 							: String( translate( 'Their feed is empty.' ) )
 					}
 					emptyActionLabel={ String( translate( 'View on Mastodon' ) ) }

@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { updateNonce } from 'calypso/state/login/actions';
 import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 import {
+	getConsumedBlackboxSessionId,
 	getTwoFactorAuthNonce,
 	getTwoFactorPushToken,
 	getTwoFactorUserId,
@@ -16,6 +17,11 @@ async function request( state ) {
 	const url = localizeUrl(
 		'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint'
 	);
+	// An approval reports a two-step success on the wpcom side, which is recorded
+	// against the session the password step spent. Without it that success is
+	// dropped and the login reads downstream as a second factor never completed.
+	const blackboxSessionId = getConsumedBlackboxSessionId( state );
+
 	const body = new URLSearchParams( {
 		user_id: getTwoFactorUserId( state ),
 		auth_type: 'push',
@@ -24,6 +30,7 @@ async function request( state ) {
 		two_step_push_token: getTwoFactorPushToken( state ),
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
+		...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
 	} );
 
 	const response = await fetch( url, {

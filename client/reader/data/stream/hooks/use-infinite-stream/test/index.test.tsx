@@ -57,6 +57,7 @@ interface ApiPost {
 	global_ID?: string;
 	URL?: string;
 	date_liked?: string;
+	date_saved?: string;
 	xPostMetadata?: { blogId: number; postId: number };
 	railcar?: Record< string, unknown >;
 }
@@ -195,6 +196,48 @@ describe( 'useInfiniteStream — fetching', () => {
 		await waitFor( () => expect( result.current.lastPage ).toBe( true ) );
 		expect( result.current.hasNextPage ).toBe( false );
 		expect( result.current.items ).toHaveLength( 1 );
+		expect( nock.isDone() ).toBe( true );
+	} );
+
+	it( 'pages the saved stream by `next_page_handle` and ends when it is missing', async () => {
+		const SAVED_PATH = '/rest/v1.2/read/saved';
+		nock( BASE )
+			.get( SAVED_PATH )
+			.query( ( q: Record< string, string | string[] | undefined > ) => ! ( 'page_handle' in q ) )
+			.reply( 200, {
+				posts: [ apiPost( 1, { date_saved: '2026-10-02T00:00:00+00:00' } ) ],
+				date_range: { before: '2026-10-02T00:00:00+00:00', after: '2026-10-02T00:00:00+00:00' },
+				next_page_handle: 'HANDLE',
+			} );
+
+		nock( BASE )
+			.get( SAVED_PATH )
+			.query( ( q: Record< string, string | string[] | undefined > ) => q.page_handle === 'HANDLE' )
+			.reply( 200, {
+				posts: [ apiPost( 2, { date_saved: '2026-10-01T00:00:00+00:00' } ) ],
+				// The last page still has a date range; it must not become a `before` cursor.
+				date_range: { before: '2026-10-01T00:00:00+00:00', after: '2026-10-01T00:00:00+00:00' },
+			} );
+
+		const queryClient = makeQueryClient();
+		const { Wrapper } = makeWrapper( queryClient );
+		const { result } = renderHook( () => useInfiniteStream( { streamKey: 'saved' } ), {
+			wrapper: Wrapper,
+		} );
+
+		await waitFor( () => expect( result.current.items ).toHaveLength( 1 ) );
+		expect( result.current.lastPage ).toBe( false );
+
+		act( () => {
+			result.current.fetchNextPage();
+		} );
+
+		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
+		expect( result.current.lastPage ).toBe( true );
+		expect( result.current.items.map( ( item ) => item.date ) ).toEqual( [
+			'2026-10-02T00:00:00+00:00',
+			'2026-10-01T00:00:00+00:00',
+		] );
 		expect( nock.isDone() ).toBe( true );
 	} );
 
@@ -421,5 +464,43 @@ describe( 'useInfiniteStream — local removals', () => {
 		await waitFor( () => expect( result.current.items ).toHaveLength( 1 ) );
 		expect( result.current.items[ 0 ] ).toMatchObject( postKey( 2 ) );
 		expect( result.current.pages[ 0 ].posts ).toHaveLength( 1 );
+	} );
+} );
+
+describe( 'useInfiniteStream — de-duplication', () => {
+	it( 'renders a post once when consecutive pages overlap', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( ( q: Record< string, string | string[] | undefined > ) => ! ( 'before' in q ) )
+			.reply( 200, {
+				posts: [ apiPost( 1 ), apiPost( 2 ) ],
+				date_range: { after: '2026-04-01', before: null },
+			} );
+
+		// Offset-paginated recommendation and search streams re-rank between
+		// requests, so successive windows can return the same post twice.
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( ( q: Record< string, string | string[] | undefined > ) => q.before === '2026-04-01' )
+			.reply( 200, {
+				posts: [ apiPost( 2 ), apiPost( 3 ) ],
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const { Wrapper } = makeWrapper( queryClient );
+		const { result } = renderHook( () => useInfiniteStream( { streamKey: 'likes' } ), {
+			wrapper: Wrapper,
+		} );
+
+		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
+
+		act( () => {
+			result.current.fetchNextPage();
+		} );
+
+		await waitFor( () => expect( result.current.lastPage ).toBe( true ) );
+		expect( result.current.items ).toHaveLength( 3 );
+		expect( result.current.items ).toMatchObject( [ postKey( 1 ), postKey( 2 ), postKey( 3 ) ] );
 	} );
 } );

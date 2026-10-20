@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports -- TODO: convert the hero images below to WebP, then drop this. */
 import {
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PLAN_JETPACK_COMPLETE,
@@ -8,6 +9,8 @@ import {
 	PLAN_JETPACK_GROWTH_MONTHLY,
 	PLAN_JETPACK_GROWTH_YEARLY,
 	PLAN_JETPACK_GROWTH_BI_YEARLY,
+	PLAN_JETPACK_PRO_YEARLY,
+	PLAN_JETPACK_PRO_BI_YEARLY,
 } from '@automattic/calypso-products';
 import CompleteHorizontalMd from 'calypso/assets/images/jetpack/hero-complete-horizontal-md.jpg';
 import CompleteHorizontalMd2x from 'calypso/assets/images/jetpack/hero-complete-horizontal-md@2x.jpg';
@@ -64,6 +67,8 @@ const HERO_IMAGES: Record< string, HeroImagePathProps > = {
 	[ PLAN_JETPACK_GROWTH_MONTHLY ]: HERO_IMAGES_GROWTH,
 	[ PLAN_JETPACK_GROWTH_YEARLY ]: HERO_IMAGES_GROWTH,
 	[ PLAN_JETPACK_GROWTH_BI_YEARLY ]: HERO_IMAGES_GROWTH,
+	[ PLAN_JETPACK_PRO_YEARLY ]: HERO_IMAGES_COMPLETE,
+	[ PLAN_JETPACK_PRO_BI_YEARLY ]: HERO_IMAGES_COMPLETE,
 };
 
 const HERO_IMAGES_API_FAMILY: Record< string, HeroImagePathProps > = {
@@ -117,7 +122,7 @@ export const HeroImageAPIFamily: React.FC< HeroImageAPIFamilyProps > = ( { item 
 	const mediumScreenImage =
 		isDense && HERO_IMAGES_API_FAMILY[ item.slug ]?.md2x
 			? HERO_IMAGES_API_FAMILY[ item.slug ]?.md2x
-			: HERO_IMAGES_API_FAMILY[ item.slug ]?.md ?? largeScreenImage;
+			: ( HERO_IMAGES_API_FAMILY[ item.slug ]?.md ?? largeScreenImage );
 
 	if ( ! smallScreenImage || ! mediumScreenImage || ! largeScreenImage ) {
 		return null;
@@ -141,7 +146,7 @@ export const HeroImage: React.FC< HeroImageProps > = ( { item } ) => {
 	const mediumScreenImage =
 		isDense && HERO_IMAGES[ item.productSlug ]?.md2x
 			? HERO_IMAGES[ item.productSlug ]?.md2x
-			: HERO_IMAGES[ item.productSlug ]?.md ?? largeScreenImage;
+			: ( HERO_IMAGES[ item.productSlug ]?.md ?? largeScreenImage );
 
 	if ( ! smallScreenImage || ! mediumScreenImage || ! largeScreenImage ) {
 		return null;

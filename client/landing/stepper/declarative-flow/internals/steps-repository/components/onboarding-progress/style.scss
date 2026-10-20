@@ -1,5 +1,11 @@
 @import '@wordpress/theme/design-tokens.css';
 
+// The stepper carries its own vertical spacing, so drop the wrapper's
+// top padding to avoid doubling up the space above it.
+.step-container-v2__content-wrapper.axis-vertical:has( .onboarding-progress ) {
+	padding-top: 0;
+}
+
 .onboarding-progress {
 	display: flex;
 	justify-content: center;

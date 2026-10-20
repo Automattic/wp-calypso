@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import {
 	Button,
@@ -10,6 +9,7 @@ import {
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { download } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
@@ -25,12 +25,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import ArchiveReportConfirmationDialog from './archive-report-confirmation-dialog';
 import useAmplifyReportRows, { AmplifyReportRow } from './use-report-rows';
-import type { BadgeType } from '@automattic/components';
 import type { Action, Field } from '@wordpress/dataviews';
 import type { AmplifyMode } from 'calypso/a8c-for-agencies/data/amplify/types';
-import type { ReactNode } from 'react';
-
-import './reports-content.scss';
+import type { ComponentProps, ReactNode } from 'react';
 
 function modeLabel( mode: AmplifyMode ): string {
 	switch ( mode ) {
@@ -45,12 +42,6 @@ function modeLabel( mode: AmplifyMode ): string {
 	}
 }
 
-const MODE_BADGE_TYPE: Record< AmplifyMode, BadgeType > = {
-	human: 'info-blue',
-	ai: 'info-purple',
-	full: 'info-green',
-};
-
 function formatTimestamp( iso: string ): string {
 	return new Date( iso ).toLocaleString( undefined, {
 		month: 'short',
@@ -64,16 +55,16 @@ function ScoreBadge( { score, label }: { score: number | null; label: string } )
 	if ( score === null ) {
 		return null;
 	}
-	let type: BadgeType;
+	let intent: NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 	if ( score >= 80 ) {
-		type = 'success';
+		intent = 'stable';
 	} else if ( score >= 50 ) {
-		type = 'warning';
+		intent = 'medium';
 	} else {
-		type = 'error';
+		intent = 'high';
 	}
 	return (
-		<Badge type={ type }>
+		<Badge intent={ intent }>
 			{ sprintf(
 				/* translators: %1$s is the score label (e.g. Human), %2$d is the numeric score */
 				__( '%1$s %2$d' ),
@@ -132,12 +123,7 @@ export default function AmplifyReportsContent() {
 				label: __( 'Analysis type' ),
 				getValue: ( { item }: { item: AmplifyReportRow } ) => modeLabel( item.mode ),
 				render: ( { item }: { item: AmplifyReportRow } ): ReactNode => (
-					<Badge
-						type={ MODE_BADGE_TYPE[ item.mode ] }
-						className={ `amplify-report-mode-badge is-${ item.mode }` }
-					>
-						{ modeLabel( item.mode ) }
-					</Badge>
+					<Badge intent="draft">{ modeLabel( item.mode ) }</Badge>
 				),
 				enableHiding: true,
 				enableSorting: true,
@@ -190,7 +176,7 @@ export default function AmplifyReportsContent() {
 				render: ( { item }: { item: AmplifyReportRow } ): ReactNode => {
 					if ( item.rowStatus === 'failed' ) {
 						return (
-							<Badge type="error" title={ item.failureReason }>
+							<Badge intent="high" title={ item.failureReason }>
 								{ __( 'Analysis failed' ) }
 							</Badge>
 						);

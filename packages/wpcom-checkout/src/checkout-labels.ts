@@ -1,3 +1,4 @@
+import { AI_CREDITS_PRODUCTS } from '@automattic/api-core';
 import {
 	isAddOn,
 	isPlan,
@@ -124,6 +125,21 @@ export function getLabel( product: ResponseCartProduct ): string {
 
 	if ( isAkismetPro500( product ) ) {
 		return getAkismetPro500ProductDisplayName( product.product_name, quantity );
+	}
+
+	if ( AI_CREDITS_PRODUCTS.includes( product.product_slug ) ) {
+		return translate(
+			'%(productName)s (%(quantity)s credit)',
+			'%(productName)s (%(quantity)s credits)',
+			{
+				count: quantity,
+				args: {
+					productName: product.product_name,
+					quantity: formatNumber( quantity, { decimals: 0 } ),
+				},
+				textOnly: true,
+			}
+		);
 	}
 
 	return product.product_name || '';

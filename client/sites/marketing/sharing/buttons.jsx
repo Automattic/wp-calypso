@@ -117,7 +117,7 @@ class SharingButtons extends Component {
 				? {
 						// Like button should be disabled if the Likes Jetpack module is deactivated.
 						disabled_likes: true,
-				  }
+					}
 				: {};
 
 		return Object.assign( {}, settings, disabledSettings, this.state.values );
@@ -172,7 +172,7 @@ class SharingButtons extends Component {
 								? translate( 'Adding sharing buttons requires your site to be marked as Public.' )
 								: translate(
 										'Adding sharing buttons needs the Sharing Buttons module from Jetpack to be enabled.'
-								  )
+									)
 						}
 					>
 						<NoticeAction
@@ -219,28 +219,29 @@ class SharingButtons extends Component {
 }
 
 const withSharingButtons = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
-		const siteId = useSelector( getSelectedSiteId );
-		const { data: buttons } = useSharingButtonsQuery( siteId );
-		const {
-			saveSharingButtons,
-			isLoading: isSavingButtons,
-			isSuccess: isSaveButtonsSuccessful,
-		} = useSaveSharingButtonsMutation( siteId );
-		const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
-		const isBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
+	( Wrapped ) =>
+		function WithSharingButtons( props ) {
+			const siteId = useSelector( getSelectedSiteId );
+			const { data: buttons } = useSharingButtonsQuery( siteId );
+			const {
+				saveSharingButtons,
+				isLoading: isSavingButtons,
+				isSuccess: isSaveButtonsSuccessful,
+			} = useSaveSharingButtonsMutation( siteId );
+			const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
+			const isBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
 
-		return (
-			<Wrapped
-				{ ...props }
-				buttons={ buttons }
-				saveSharingButtons={ saveSharingButtons }
-				isSavingButtons={ isSavingButtons }
-				isSaveButtonsSuccessful={ isSaveButtonsSuccessful }
-				isBlockTheme={ isBlockTheme }
-			/>
-		);
-	},
+			return (
+				<Wrapped
+					{ ...props }
+					buttons={ buttons }
+					saveSharingButtons={ saveSharingButtons }
+					isSavingButtons={ isSavingButtons }
+					isSaveButtonsSuccessful={ isSaveButtonsSuccessful }
+					isBlockTheme={ isBlockTheme }
+				/>
+			);
+		},
 	'WithSharingButtons'
 );
 

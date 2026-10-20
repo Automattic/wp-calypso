@@ -36,7 +36,7 @@ export default function ClipboardInputControl( {
 				/* translators: %s is the field to copy */
 				__( 'Copy %s' ),
 				String( props.label )
-		  )
+			)
 		: __( 'Copy' );
 
 	return (

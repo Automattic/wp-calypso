@@ -1,5 +1,4 @@
 import fs from 'fs';
-import { mockProcessStdout } from 'jest-mock-process';
 import mockFs from 'mock-fs';
 
 let mockStdout;
@@ -7,7 +6,7 @@ let getLogger;
 
 beforeEach( () => {
 	( { getLogger } = require( '../index' ) );
-	mockStdout = mockProcessStdout();
+	mockStdout = jest.spyOn( process.stdout, 'write' ).mockImplementation( () => true );
 	mockFs( {
 		'/tmp': {
 			'calypso.log': '',

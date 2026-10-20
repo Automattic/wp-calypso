@@ -31,10 +31,10 @@ const Subscribers: Step = function ( { navigation } ) {
 	const subtitleText = hasSubscriberLimit
 		? translate(
 				'Bring up to 100 subscribers for free — or add some individually — to start spreading the news.'
-		  )
+			)
 		: translate(
 				'Bring your subscribers with you — or add some individually — to start spreading the news.'
-		  );
+			);
 
 	const submitButtonText = isImportValid
 		? translate( 'Add and continue' )

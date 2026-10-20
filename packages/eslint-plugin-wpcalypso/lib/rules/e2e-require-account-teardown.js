@@ -139,13 +139,13 @@ function isPromiseAllArgument( array ) {
 	const call = array.parent;
 	return Boolean(
 		call &&
-			call.type === 'CallExpression' &&
-			call.arguments.includes( array ) &&
-			call.callee.type === 'MemberExpression' &&
-			call.callee.object.type === 'Identifier' &&
-			call.callee.object.name === 'Promise' &&
-			call.callee.property.type === 'Identifier' &&
-			( call.callee.property.name === 'all' || call.callee.property.name === 'allSettled' )
+		call.type === 'CallExpression' &&
+		call.arguments.includes( array ) &&
+		call.callee.type === 'MemberExpression' &&
+		call.callee.object.type === 'Identifier' &&
+		call.callee.object.name === 'Promise' &&
+		call.callee.property.type === 'Identifier' &&
+		( call.callee.property.name === 'all' || call.callee.property.name === 'allSettled' )
 	);
 }
 

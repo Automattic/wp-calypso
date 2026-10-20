@@ -27,7 +27,7 @@ const useGoToCheckoutWithPlan = () => {
 
 	const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
 	const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-	const isWooExpressTrial = purchase?.isWooExpressTrial;
+	const isWooExpressTrial = purchase?.is_woo_express_trial;
 
 	const [ targetPlan, trackEvent ] = getTargetPlanAndTrackEvent(
 		isEcommerceTrial,

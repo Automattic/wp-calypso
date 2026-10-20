@@ -1,6 +1,11 @@
-/* eslint-disable import/order -- mocks must be registered before importing the converter */
 function mockEscalationButton() {
 	return null;
+}
+
+const mockResponseAction = jest.fn();
+
+function mockCreateChatResponseActionCallback() {
+	return mockResponseAction;
 }
 
 jest.mock(
@@ -15,11 +20,36 @@ jest.mock(
 jest.mock( '../../components/escalation-button', () => ( {
 	EscalationButton: mockEscalationButton,
 } ) );
-jest.mock( '../is-editor-page' );
+jest.mock( '../../components/button-picker', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
+} ) );
+jest.mock( '../../components/color-picker', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
+} ) );
+jest.mock( '../../components/font-picker', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
+} ) );
+jest.mock( '../../components/open-help-center-button', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
+} ) );
+jest.mock( '../../components/chat-response-tracking', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
+	createChatResponseActionCallback: mockCreateChatResponseActionCallback,
+} ) );
 
-import UnavailableToolMessage from '../../components/unavailable-tool-message';
+import { render, waitFor } from '@testing-library/react';
+import { createElement } from '@wordpress/element';
+import ButtonPicker from '../../components/button-picker';
+import ChatResponseRenderedTracker from '../../components/chat-response-tracking';
+import ColorPicker from '../../components/color-picker';
+import FontPicker from '../../components/font-picker';
+import OpenHelpCenterButton from '../../components/open-help-center-button';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
-import { isEditorPage } from '../is-editor-page';
 import {
 	BIG_SKY_SHOW_COMPONENT_TOOL_ID,
 	JETPACK_AI_SHOW_COMPONENT_TOOL_ID,
@@ -28,8 +58,6 @@ import type { UIMessage } from '@automattic/agenttic-client';
 
 const MockComponent = jest.fn();
 const SHOW_COMPONENT_TOOL_ID = JETPACK_AI_SHOW_COMPONENT_TOOL_ID;
-const LEGACY_SHOW_COMPONENT_TOOL_ID = BIG_SKY_SHOW_COMPONENT_TOOL_ID;
-
 const createMessage = ( overrides: Partial< UIMessage > = {} ): UIMessage =>
 	( {
 		id: 'msg-1',
@@ -48,9 +76,28 @@ const createToolMessage = (
 		...overrides,
 	} );
 
+const createApplyBlockEditsMessage = (
+	toolCallId: string,
+	data: object,
+	overrides?: Partial< UIMessage >
+): UIMessage =>
+	createMessage( {
+		content: [
+			{
+				type: 'text',
+				text: JSON.stringify( {
+					tool_id: 'big_sky__apply_block_edits',
+					tool_call_id: toolCallId,
+					data,
+				} ),
+			},
+		],
+		...overrides,
+	} );
+
 describe( 'convertToolMessagesToComponents', () => {
 	beforeEach( () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( true );
+		jest.clearAllMocks();
 	} );
 
 	it( 'passes through user messages unchanged', () => {
@@ -122,11 +169,23 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'renders tool messages as components', () => {
-		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
-			type: 'my-component',
-			props: { name: 'test' },
-			summary: 'Choose one of these options.',
-			isCurrent: true,
+		const message = createMessage( {
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify( {
+						tool_id: SHOW_COMPONENT_TOOL_ID,
+						tool_call_id: 'tool-call-1',
+						data: {
+							type: 'my-component',
+							props: { name: 'test' },
+							responseTrackingProperties: { suggested_edit_count: 2 },
+							summary: 'Choose one of these options.',
+							isCurrent: true,
+						},
+					} ),
+				},
+			],
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
@@ -147,12 +206,24 @@ describe( 'convertToolMessagesToComponents', () => {
 				name: 'test',
 				summary: 'Choose one of these options.',
 				contentType: 'my-component',
+				toolCallId: 'tool-call-1',
+				onResponseAction: mockResponseAction,
+			},
+		} );
+		expect( result[ 0 ].content[ 2 ] ).toMatchObject( {
+			type: 'component',
+			component: ChatResponseRenderedTracker,
+			componentProps: {
+				componentType: 'my-component',
+				toolId: SHOW_COMPONENT_TOOL_ID,
+				toolCallId: 'tool-call-1',
+				responseTrackingProperties: { suggested_edit_count: 2 },
 			},
 		} );
 	} );
 
-	it( 'renders legacy Big Sky show-component messages during migration', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+	it( 'renders a provider show-component type through `getChatComponent`', () => {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			props: { name: 'test' },
 			isCurrent: true,
@@ -185,13 +256,16 @@ describe( 'convertToolMessagesToComponents', () => {
 			getChatComponent,
 		} );
 
-		expect( result[ 0 ].content ).toHaveLength( 1 );
+		expect( result[ 0 ].content ).toHaveLength( 2 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { type: 'component' } );
 		expect( result[ 0 ].content[ 0 ].componentProps.summary ).toBeUndefined();
+		expect( result[ 0 ].content[ 1 ] ).toMatchObject( {
+			component: ChatResponseRenderedTracker,
+		} );
 	} );
 
 	it( 'does not suppress the thinking indicator for component messages with follow-up tasks', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			followUpTasks: true,
 			isCurrent: true,
@@ -206,8 +280,40 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].suppressThinking ).toBe( false );
 	} );
 
-	it( 'filters out unregistered components', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+	it( 'renders a provider component disabled for history rows', () => {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
+			type: 'title-picker',
+			props: { titles: [] },
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+		// History rows carry no `isCurrent`, so the message renders inert.
+		expect( result[ 0 ].disabled ).toBe( true );
+		expect( result[ 0 ].content ).toHaveLength( 1 );
+	} );
+
+	it( 'renders the notice for prototype-member component types', () => {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
+			type: 'toString',
+			props: { name: 'test' },
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result[ 0 ].content ).toEqual( [
+			{ type: 'text', text: 'This option is no longer available.' },
+		] );
+	} );
+
+	it( 'renders a short notice when no component resolves on either side', () => {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'unknown-component',
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( null );
@@ -217,7 +323,10 @@ describe( 'convertToolMessagesToComponents', () => {
 			getChatComponent,
 		} );
 
-		expect( result ).toEqual( [] );
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content ).toEqual( [
+			{ type: 'text', text: 'This option is no longer available.' },
+		] );
 	} );
 
 	it( 'renders consecutive follow-up pickers as components', () => {
@@ -229,8 +338,8 @@ describe( 'convertToolMessagesToComponents', () => {
 
 		const result = convertToolMessagesToComponents( {
 			messages: [
-				createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-1', actions } ),
-				createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-2', actions } ),
+				createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-1', actions } ),
+				createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-2', actions } ),
 			],
 			getChatComponent,
 		} );
@@ -239,39 +348,8 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result.map( ( message ) => message.id ) ).toEqual( [ 'msg-1', 'msg-2' ] );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
 		expect( result[ 1 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
-	} );
-
-	it( 'renders `UnavailableToolMessage` when not on an editor page', () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( false );
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, { type: 'my-component' } );
-
-		const result = convertToolMessagesToComponents( {
-			messages: [ message ],
-		} );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'component',
-			component: UnavailableToolMessage,
-			componentProps: { type: 'picker' },
-		} );
-	} );
-
-	it( 'renders `UnavailableToolMessage` for the start-over tool', () => {
-		const message = createToolMessage( 'big_sky__client_assistants', {
-			assistantId: 'big-sky-site-admin',
-		} );
-
-		const result = convertToolMessagesToComponents( {
-			messages: [ message ],
-		} );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'component',
-			component: UnavailableToolMessage,
-			componentProps: { type: 'start-over' },
-		} );
+		// Message actions are resolved before conversion and must survive it.
+		expect( result[ 0 ].actions ).toEqual( actions );
 	} );
 
 	it.each( [
@@ -291,15 +369,12 @@ describe( 'convertToolMessagesToComponents', () => {
 			expected: 'Updated the heading and added a new paragraph.',
 		},
 		{
-			name: 'apply-block-edits structured result',
+			name: 'legacy apply-block-edits structured result',
 			toolId: 'big_sky__apply_block_edits',
 			data: {
 				result: {
 					success: true,
 					message: 'Updated the header and footer.',
-					details: {
-						changes: { added: [], removed: [], modified: [] },
-					},
 				},
 			},
 			expected: 'Updated the header and footer.',
@@ -345,6 +420,295 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
+	it.each( [ 'big_sky__apply_block_edits', 'wpcom__update_block_content' ] )(
+		'hides a request-shaped %s message until the client reports its outcome',
+		( toolId ) => {
+			const message = createToolMessage( toolId, {
+				summary: 'Corrected the grammar in the selected paragraph.',
+				updates: [ { clientId: 'block-1' } ],
+			} );
+
+			expect( convertToolMessagesToComponents( { messages: [ message ] } ) ).toEqual( [] );
+		}
+	);
+
+	it( 'hides a successful Jetpack result without an explicit outcome', () => {
+		const message = createToolMessage( 'wpcom__update_block_content', {
+			result: {
+				success: true,
+				message: 'Corrected the grammar in the selected paragraph.',
+			},
+		} );
+
+		expect( convertToolMessagesToComponents( { messages: [ message ] } ) ).toEqual( [] );
+	} );
+
+	it.each( [ 'big_sky__apply_block_edits', 'wpcom__update_block_content' ] )(
+		'keeps only the concrete summary for a successful %s edit',
+		( toolId ) => {
+			const message = createToolMessage( toolId, {
+				result: {
+					success: true,
+					message: 'Corrected the grammar in the selected paragraph.',
+					outcome: 'updated',
+					details: { appliedOperations: { modified: 1 } },
+				},
+			} );
+
+			const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'Corrected the grammar in the selected paragraph.' },
+			] );
+		}
+	);
+
+	it.each( [ 'big_sky__apply_block_edits', 'wpcom__update_block_content' ] )(
+		'replaces a successful no-op %s summary with a clear outcome',
+		( toolId ) => {
+			const message = createToolMessage( toolId, {
+				result: {
+					success: true,
+					message: 'Corrected the grammar in the selected paragraph.',
+					outcome: 'no-changes',
+				},
+			} );
+
+			const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+			expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
+		}
+	);
+
+	it( 'renders an explicit Jetpack no-op outcome even when no summary was provided', () => {
+		const message = createToolMessage( 'wpcom__update_block_content', {
+			result: {
+				success: true,
+				outcome: 'no-changes',
+			},
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
+	} );
+
+	it( 'replaces the requested edit payload with its authoritative applied outcome', () => {
+		const requestedEdit = createApplyBlockEditsMessage(
+			'tool-call-1',
+			{
+				updates: [ { clientId: 'block-1' } ],
+				summary: 'Corrected one misspelling.',
+				followUpTasks: false,
+			},
+			{ id: 'requested-edit' }
+		);
+		const appliedOutcome = createApplyBlockEditsMessage(
+			'tool-call-1',
+			{
+				result: {
+					success: true,
+					message: 'Corrected one misspelling.',
+					outcome: 'updated',
+				},
+				followUpTasks: false,
+			},
+			{ id: 'applied-outcome' }
+		);
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ requestedEdit, appliedOutcome ],
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].id ).toBe( 'applied-outcome' );
+		expect( result[ 0 ].content ).toEqual( [
+			{ type: 'text', text: 'Corrected one misspelling.' },
+		] );
+	} );
+
+	it( 'suppresses trailing prose after a terminal no-change outcome', () => {
+		const noChangeOutcome = createApplyBlockEditsMessage(
+			'tool-call-1',
+			{
+				result: {
+					success: true,
+					message: 'The requested changes were already applied.',
+					outcome: 'no-changes',
+				},
+				followUpTasks: false,
+			},
+			{ id: 'no-change-outcome' }
+		);
+		const prose = createMessage( {
+			id: 'prose',
+			content: [
+				{
+					type: 'text',
+					text: 'The paragraph reads well overall, with some optional style advice.',
+				},
+			],
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ noChangeOutcome, prose ],
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].id ).toBe( 'no-change-outcome' );
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
+	} );
+
+	it( 'suppresses duplicate trailing prose after a terminal applied outcome', () => {
+		const appliedOutcome = createApplyBlockEditsMessage(
+			'tool-call-1',
+			{
+				result: {
+					success: true,
+					message: 'Corrected one misspelling.',
+					outcome: 'updated',
+				},
+				followUpTasks: false,
+			},
+			{ id: 'applied-outcome' }
+		);
+		const prose = createMessage( {
+			id: 'prose',
+			content: [
+				{
+					type: 'text',
+					text: 'I corrected one misspelling in the selected paragraph.',
+				},
+			],
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ appliedOutcome, prose ],
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].id ).toBe( 'applied-outcome' );
+		expect( result[ 0 ].content ).toEqual( [
+			{ type: 'text', text: 'Corrected one misspelling.' },
+		] );
+	} );
+
+	describe( 'pending visual check', () => {
+		const pendingCheckOutcome = ( overrides?: Partial< UIMessage > ) =>
+			createApplyBlockEditsMessage(
+				'tool-call-1',
+				{
+					result: {
+						success: true,
+						message: 'Corrected one misspelling.',
+						outcome: 'updated',
+					},
+					followUpTasks: false,
+					visualCheckPending: true,
+				},
+				{ id: 'applied-outcome', ...overrides }
+			);
+
+		it( 'withholds the summary while the reply is outstanding', () => {
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome() ],
+				isProcessing: true,
+			} );
+
+			expect( result ).toEqual( [] );
+		} );
+
+		it( 'restores the summary and keeps the deferred reply once it arrives', () => {
+			const prose = createMessage( {
+				id: 'prose',
+				content: [
+					{ type: 'text', text: 'I looked at the result and the heading is aligned now.' },
+				],
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome(), prose ],
+				isProcessing: true,
+			} );
+
+			expect( result ).toHaveLength( 2 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'Corrected one misspelling.' },
+			] );
+			expect( result[ 1 ].id ).toBe( 'prose' );
+		} );
+
+		it( 'restores the summary when the turn ends without a reply', () => {
+			const nextTurn = createMessage( {
+				id: 'next-turn',
+				role: 'user',
+				content: [ { type: 'text', text: 'Now change the footer.' } ],
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome(), nextTurn ],
+				isProcessing: true,
+			} );
+
+			expect( result ).toHaveLength( 2 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'Corrected one misspelling.' },
+			] );
+		} );
+
+		// The flag can promise a check the ability will not run — the per-turn look
+		// budget is invisible to it — so a stopped stream must not swallow the edit.
+		it( 'restores the summary once the stream stops', () => {
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome() ],
+				isProcessing: false,
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'Corrected one misspelling.' },
+			] );
+		} );
+
+		it( 'keeps waiting across an intervening tool message', () => {
+			const laterTool = createToolMessage(
+				'big_sky__editor_navigate',
+				{ summary: 'Opened the homepage.' },
+				{ id: 'later-tool' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome(), laterTool ],
+				isProcessing: true,
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].id ).toBe( 'later-tool' );
+		} );
+
+		it( 'ignores the flag for a no-change outcome once the turn ends', () => {
+			const noChangeOutcome = createApplyBlockEditsMessage(
+				'tool-call-1',
+				{
+					result: {
+						success: true,
+						message: 'The requested changes were already applied.',
+						outcome: 'no-changes',
+					},
+					visualCheckPending: true,
+				},
+				{ id: 'no-change-outcome' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ noChangeOutcome ],
+				isProcessing: false,
+			} );
+
+			expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
+		} );
+	} );
+
 	it( 'filters out unsuccessful apply-block-edits tool summaries', () => {
 		const message = createToolMessage( 'big_sky__apply_block_edits', {
 			success: false,
@@ -358,10 +722,291 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
-	it( 'suppresses transient thinking for converted apply-block-edits messages', () => {
+	it( 'keeps transient thinking visible after converted apply-block-edits messages', () => {
 		const message = createToolMessage( 'big_sky__apply_block_edits', {
 			followUpTasks: true,
-			summary: 'Updated the header and footer.',
+			result: {
+				success: true,
+				message: 'Updated the header and footer.',
+				outcome: 'updated',
+			},
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+		} );
+
+		expect( result[ 0 ].suppressThinking ).toBe( false );
+	} );
+
+	it( 'keeps transient thinking visible after a no-changes block edit', () => {
+		const message = createToolMessage( 'big_sky__apply_block_edits', {
+			result: {
+				success: true,
+				outcome: 'no-changes',
+			},
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+		} );
+
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
+		expect( result[ 0 ].suppressThinking ).toBe( false );
+	} );
+
+	it( 'withholds a no-changes summary until the turn ends', () => {
+		const noChangeOutcome = createApplyBlockEditsMessage( 'tool-call-1', {
+			result: { success: true, outcome: 'no-changes' },
+		} );
+
+		expect(
+			convertToolMessagesToComponents( { messages: [ noChangeOutcome ], isProcessing: true } )
+		).toEqual( [] );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ noChangeOutcome ],
+			isProcessing: false,
+		} );
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
+	} );
+
+	it( 'still shows an applied block edit summary while the turn runs', () => {
+		const appliedOutcome = createApplyBlockEditsMessage( 'tool-call-1', {
+			result: { success: true, message: 'Made the paragraph red.', outcome: 'updated' },
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ appliedOutcome ],
+			isProcessing: true,
+		} );
+
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: 'Made the paragraph red.' } ] );
+	} );
+
+	describe( 'transient thinking in a mixed turn', () => {
+		const logoSummary = createToolMessage(
+			'big_sky__set_site_logo',
+			{ summary: 'Set the site logo.' },
+			{ id: 'logo-summary' }
+		);
+
+		it( 'keeps thinking visible when a retried block edit follows a summary that suppresses it', () => {
+			const retried = createApplyBlockEditsMessage(
+				'tool-call-retried',
+				{ result: { success: true, outcome: 'no-changes' } },
+				{ id: 'retried' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ logoSummary, retried ],
+				isProcessing: true,
+				retriedToolCallIds: new Set( [ 'tool-call-retried' ] ),
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].id ).toBe( 'logo-summary' );
+			expect( result[ 0 ].suppressThinking ).toBe( false );
+		} );
+
+		it( 'keeps thinking visible while a no-changes summary is withheld', () => {
+			const noChangeOutcome = createApplyBlockEditsMessage(
+				'tool-call-1',
+				{ result: { success: true, outcome: 'no-changes' } },
+				{ id: 'no-change-outcome' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ logoSummary, noChangeOutcome ],
+				isProcessing: true,
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].suppressThinking ).toBe( false );
+		} );
+
+		it( 'keeps thinking visible after a failed block edit', () => {
+			const failed = createApplyBlockEditsMessage(
+				'tool-call-1',
+				{ success: false, summary: 'Could not update the header.' },
+				{ id: 'failed' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ logoSummary, failed ],
+				isProcessing: true,
+			} );
+
+			expect( result[ 0 ].suppressThinking ).toBe( false );
+		} );
+
+		it( 'restores suppression once the turn ends', () => {
+			const retried = createApplyBlockEditsMessage(
+				'tool-call-retried',
+				{ result: { success: true, outcome: 'no-changes' } },
+				{ id: 'retried' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ logoSummary, retried ],
+				isProcessing: false,
+				retriedToolCallIds: new Set( [ 'tool-call-retried' ] ),
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].suppressThinking ).toBe( true );
+		} );
+
+		it( 'leaves suppression alone when the summary is the latest message', () => {
+			const result = convertToolMessagesToComponents( {
+				messages: [ logoSummary ],
+				isProcessing: true,
+			} );
+
+			expect( result[ 0 ].suppressThinking ).toBe( true );
+		} );
+
+		it( 'leaves suppression alone when the hidden block edit precedes the summary', () => {
+			const retried = createApplyBlockEditsMessage(
+				'tool-call-retried',
+				{ result: { success: true, outcome: 'no-changes' } },
+				{ id: 'retried' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ retried, logoSummary ],
+				isProcessing: true,
+				retriedToolCallIds: new Set( [ 'tool-call-retried' ] ),
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].suppressThinking ).toBe( true );
+		} );
+	} );
+
+	it( 'keeps a no-changes summary when an unrelated block edit follows in the same turn', () => {
+		const noChangeOutcome = createApplyBlockEditsMessage(
+			'tool-call-1',
+			{ result: { success: true, outcome: 'no-changes' } },
+			{ id: 'no-change-outcome' }
+		);
+		const otherOutcome = createApplyBlockEditsMessage(
+			'tool-call-2',
+			{ result: { success: true, message: 'Made the heading red.', outcome: 'updated' } },
+			{ id: 'other-outcome' }
+		);
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ noChangeOutcome, otherOutcome ],
+		} );
+
+		expect( result.map( ( message ) => message.id ) ).toEqual( [
+			'no-change-outcome',
+			'other-outcome',
+		] );
+	} );
+
+	it( 'keeps a no-changes summary when the next block edit is in a later turn', () => {
+		const noChangeOutcome = createApplyBlockEditsMessage(
+			'tool-call-1',
+			{ result: { success: true, outcome: 'no-changes' } },
+			{ id: 'no-change-outcome' }
+		);
+		const userMessage = createMessage( {
+			id: 'user',
+			role: 'user',
+			content: [ { type: 'text', text: 'Now make it bold.' } ],
+		} );
+		const laterOutcome = createApplyBlockEditsMessage(
+			'tool-call-2',
+			{ result: { success: true, message: 'Made it bold.', outcome: 'updated' } },
+			{ id: 'later-outcome' }
+		);
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ noChangeOutcome, userMessage, laterOutcome ],
+		} );
+
+		expect( result.map( ( message ) => message.id ) ).toEqual( [
+			'no-change-outcome',
+			'user',
+			'later-outcome',
+		] );
+
+		const resultWhileProcessing = convertToolMessagesToComponents( {
+			messages: [ noChangeOutcome, userMessage, laterOutcome ],
+			isProcessing: true,
+		} );
+
+		expect( resultWhileProcessing.map( ( message ) => message.id ) ).toEqual( [
+			'no-change-outcome',
+			'user',
+			'later-outcome',
+		] );
+	} );
+
+	it( 'keeps an earlier turn’s no-changes summary while a later request runs', () => {
+		const noChangeOutcome = createApplyBlockEditsMessage(
+			'tool-call-1',
+			{ result: { success: true, outcome: 'no-changes' } },
+			{ id: 'no-change-outcome' }
+		);
+		const userMessage = createMessage( {
+			id: 'user',
+			role: 'user',
+			content: [ { type: 'text', text: 'Now make it bold.' } ],
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ noChangeOutcome, userMessage ],
+			isProcessing: true,
+		} );
+
+		expect( result.map( ( message ) => message.id ) ).toEqual( [ 'no-change-outcome', 'user' ] );
+	} );
+
+	it( 'still withholds a no-changes summary when only a context message follows', () => {
+		const noChangeOutcome = createApplyBlockEditsMessage( 'tool-call-1', {
+			result: { success: true, outcome: 'no-changes' },
+		} );
+		const contextMessage = createMessage( {
+			id: 'context',
+			role: 'user',
+			content: [ { type: 'text', text: 'Navigated to the About page.' } ],
+			context: { flags: { context_only: true } },
+		} as Partial< UIMessage > );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ noChangeOutcome, contextMessage ],
+			isProcessing: true,
+		} );
+
+		expect( result ).toEqual( [] );
+	} );
+
+	it( 'hides a block edit summary the server replaced with a retry', () => {
+		const retried = createApplyBlockEditsMessage( 'tool-call-retried', {
+			result: { success: true, outcome: 'no-changes' },
+		} );
+		const other = createApplyBlockEditsMessage( 'tool-call-other', {
+			result: { success: true, outcome: 'no-changes' },
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ retried, other ],
+			retriedToolCallIds: new Set( [ 'tool-call-retried' ] ),
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].id ).toBe( other.id );
+	} );
+
+	it( 'suppresses transient thinking for other converted tool summaries', () => {
+		const message = createToolMessage( 'big_sky__set_site_logo', {
+			result: {
+				success: true,
+				message: 'Updated the site logo.',
+			},
 		} );
 
 		const result = convertToolMessagesToComponents( {
@@ -381,7 +1026,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			{ id: 'tool-1' }
 		);
 		const finalMessage = createToolMessage(
-			LEGACY_SHOW_COMPONENT_TOOL_ID,
+			BIG_SKY_SHOW_COMPONENT_TOOL_ID,
 			{
 				type: 'color-picker',
 				summary: 'Pick a blue palette.',
@@ -404,7 +1049,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
-	it( 'renders `EscalationButton` when `forward_to_human_support` flag is set', () => {
+	it( 'renders `EscalationButton` when human escalation is available', () => {
 		const message = createMessage( {
 			content: [
 				{ type: 'text', text: 'Hello' },
@@ -417,6 +1062,7 @@ describe( 'convertToolMessagesToComponents', () => {
 
 		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
+			canEscalateToHuman: true,
 		} );
 
 		expect( result ).toHaveLength( 1 );
@@ -427,6 +1073,28 @@ describe( 'convertToolMessagesToComponents', () => {
 				messageId: 'msg-1',
 			},
 		} );
+	} );
+
+	it( 'keeps the agent reply when human escalation is unavailable', () => {
+		const message = createMessage( {
+			content: [
+				{ type: 'text', text: 'You can contact our support team for more help.' },
+				{
+					type: 'data',
+					data: { flags: { forward_to_human_support: true } },
+				},
+			],
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			canEscalateToHuman: false,
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content ).toEqual( [
+			{ type: 'text', text: 'You can contact our support team for more help.' },
+		] );
 	} );
 
 	it( 'filters out unhandled tool messages', () => {
@@ -466,7 +1134,13 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const toolMessage = createToolMessage(
 			'big_sky__apply_block_edits',
-			{ result: { success: true, message: 'Updated the header.' } },
+			{
+				result: {
+					success: true,
+					message: 'Updated the header.',
+					outcome: 'updated',
+				},
+			},
 			{ id: 'tool-1' }
 		);
 
@@ -538,6 +1212,12 @@ describe( 'convertToolMessagesToComponents', () => {
 			disabled: false,
 		},
 		{
+			name: 'stays enabled when a number `postId` matches a string `currentPostId`',
+			data: { type: 'my-component', isCurrent: true, postId: 10 },
+			currentPostId: '10',
+			disabled: false,
+		},
+		{
 			name: 'stays enabled when `postId` is missing from the tool message',
 			data: { type: 'my-component', isCurrent: true },
 			currentPostId: 20,
@@ -586,7 +1266,7 @@ describe( 'convertToolMessagesToComponents', () => {
 
 			const result = convertToolMessagesToComponents( {
 				messages: [
-					createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, data, { id: 'tool-1' } ),
+					createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, data, { id: 'tool-1' } ),
 					...laterMessages,
 				],
 				getChatComponent,
@@ -595,6 +1275,152 @@ describe( 'convertToolMessagesToComponents', () => {
 
 			expect( result[ 0 ] ).toMatchObject( { disabled } );
 			expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+			const componentProps = (
+				result[ 0 ].content[ 0 ] as {
+					componentProps?: {
+						isMessageStale?: boolean;
+						onResponseAction?: typeof mockResponseAction;
+					};
+				}
+			 ).componentProps;
+			expect( componentProps?.isMessageStale === true ).toBe( disabled );
+			expect( componentProps?.onResponseAction ).toBe( disabled ? undefined : mockResponseAction );
+			expect(
+				result[ 0 ].content.some(
+					( content ) =>
+						content.type === 'component' && content.component === ChatResponseRenderedTracker
+				)
+			).toBe( ! disabled );
 		}
 	);
+
+	it( 'replaces a provider-supplied action callback with the host callback', () => {
+		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+			type: 'my-component',
+			props: { onResponseAction: 'untrusted-value' },
+			isCurrent: true,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+
+		expect( result[ 0 ].content[ 0 ].componentProps.onResponseAction ).toBe( mockResponseAction );
+	} );
+
+	it( 'removes a provider-supplied action callback from stale responses', () => {
+		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+			type: 'my-component',
+			props: { onResponseAction: 'untrusted-value' },
+			isCurrent: false,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+
+		expect( result[ 0 ].content[ 0 ].componentProps.onResponseAction ).toBeUndefined();
+	} );
+
+	describe( 'AM-owned components', () => {
+		// The AM components are lazy wrappers, so the assertion renders the
+		// resolved component and waits for the picker chunk to arrive.
+		it.each( [
+			[ 'button-picker', ButtonPicker ],
+			[ 'color-picker', ColorPicker ],
+			[ 'font-picker', FontPicker ],
+			[ 'open-help-center-button', OpenHelpCenterButton ],
+		] )( 'resolves %s to its AM component', async ( type, picker ) => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type,
+				props: { variations: [] },
+				isCurrent: true,
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ message ],
+			} );
+
+			const content = result[ 0 ].content[ 0 ] as {
+				type: string;
+				component: React.ComponentType;
+			};
+			expect( content.type ).toBe( 'component' );
+
+			render( createElement( content.component ) );
+			await waitFor( () => expect( picker ).toHaveBeenCalled() );
+		} );
+
+		it( 'passes props without `contentType`', () => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type: 'color-picker',
+				props: { variations: [ { title: 'Bold' } ] },
+				isCurrent: true,
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ message ],
+			} );
+
+			expect( result[ 0 ].content[ 0 ].componentProps ).toEqual( {
+				variations: [ { title: 'Bold' } ],
+			} );
+		} );
+
+		it( 'renders the stored summary for deprecated component types', () => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type: 'pattern-picker',
+				props: { layouts: [] },
+				summary: 'Here are some layouts to choose from.',
+				isCurrent: true,
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ message ],
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'Here are some layouts to choose from.' },
+			] );
+			expect( result[ 0 ].suppressThinking ).toBe( true );
+		} );
+
+		it( 'renders a short notice for deprecated component types without a summary', () => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type: 'unknown',
+				props: {},
+				isCurrent: true,
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ message ],
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'This option is no longer available.' },
+			] );
+		} );
+
+		it( 'does not call `getChatComponent`', () => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type: 'color-picker',
+				props: { variations: [] },
+				isCurrent: true,
+			} );
+			const getChatComponent = jest.fn().mockReturnValue( jest.fn() );
+
+			convertToolMessagesToComponents( {
+				messages: [ message ],
+				getChatComponent,
+			} );
+
+			expect( getChatComponent ).not.toHaveBeenCalled();
+		} );
+	} );
 } );

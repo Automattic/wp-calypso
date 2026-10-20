@@ -49,7 +49,7 @@ export const sendLoginEmail = ( action ) => {
 						token_type: tokenType,
 						flow: flow,
 					} ),
-			  ]
+				]
 			: [] ),
 		...( loginFormFlow
 			? [
@@ -57,7 +57,7 @@ export const sendLoginEmail = ( action ) => {
 						token_type: tokenType,
 						flow: flow,
 					} ),
-			  ]
+				]
 			: [] ),
 		...( createAccount
 			? [
@@ -68,7 +68,7 @@ export const sendLoginEmail = ( action ) => {
 							flow: flow,
 						}
 					),
-			  ]
+				]
 			: [] ),
 		http(
 			{
@@ -115,7 +115,7 @@ export const onSuccess = (
 		? [
 				{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS, response },
 				{ type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE, email },
-		  ]
+			]
 		: [] ),
 	...( requestLoginEmailFormFlow
 		? [
@@ -123,7 +123,7 @@ export const onSuccess = (
 					token_type: tokenType,
 					flow: flow,
 				} ),
-		  ]
+			]
 		: [] ),
 	...( loginFormFlow
 		? [
@@ -131,7 +131,7 @@ export const onSuccess = (
 					token_type: tokenType,
 					flow: flow,
 				} ),
-		  ]
+			]
 		: [] ),
 	// Default Global Notice Handling
 	...( showGlobalNotices
@@ -140,7 +140,7 @@ export const onSuccess = (
 				successNotice( translate( 'Email Sent. Check your mail app!' ), {
 					duration: 4000,
 				} ),
-		  ]
+			]
 		: [] ),
 ];
 
@@ -161,7 +161,7 @@ export const onError = (
 					type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
 					error: { code: error.error, message: error.message },
 				},
-		  ]
+			]
 		: [] ),
 	...( requestLoginEmailFormFlow
 		? [
@@ -171,7 +171,7 @@ export const onError = (
 					token_type: tokenType,
 					flow: flow,
 				} ),
-		  ]
+			]
 		: [] ),
 	...( loginFormFlow
 		? [
@@ -181,7 +181,7 @@ export const onError = (
 					token_type: tokenType,
 					flow: flow,
 				} ),
-		  ]
+			]
 		: [] ),
 	// Default Global Notice Handling
 	...( showGlobalNotices
@@ -190,7 +190,7 @@ export const onError = (
 				errorNotice( translate( 'Sorry, we couldn’t send the email.' ), {
 					duration: 4000,
 				} ),
-		  ]
+			]
 		: [] ),
 ];
 

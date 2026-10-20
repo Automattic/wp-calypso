@@ -36,6 +36,19 @@ const useSitesMenuItems = ( path: string ) => {
 			},
 		];
 
+		if ( shouldAddNeedsSetup ) {
+			items.push( {
+				id: 'sites-needs-setup-menu-item',
+				icon: tool,
+				path: A4A_SITES_LINK,
+				link: A4A_SITES_LINK_NEEDS_SETUP,
+				title: translate( 'Needs setup' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Sites / Needs Setup',
+				},
+			} );
+		}
+
 		// Only add additional menu items if we have an active site.
 		if ( ! noActiveSite ) {
 			items.push( {
@@ -48,19 +61,6 @@ const useSitesMenuItems = ( path: string ) => {
 					menu_item: 'Automattic for Agencies / Sites / Needs attention',
 				},
 			} );
-
-			if ( shouldAddNeedsSetup ) {
-				items.push( {
-					id: 'sites-needs-setup-menu-item',
-					icon: tool,
-					path: A4A_SITES_LINK,
-					link: A4A_SITES_LINK_NEEDS_SETUP,
-					title: translate( 'Needs setup' ),
-					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Sites / Needs Setup',
-					},
-				} );
-			}
 
 			items.push( {
 				id: 'sites-development-menu-item',

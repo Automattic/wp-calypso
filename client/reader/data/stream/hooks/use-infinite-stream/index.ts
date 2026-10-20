@@ -12,6 +12,7 @@ import {
 } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post/cache';
+import { keyToString } from 'calypso/reader/post-key';
 import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from '../../build-query-params';
 import { extractPageHandle, normalizeStreamPage } from '../../normalization';
@@ -181,9 +182,18 @@ export const useInfiniteStream = ( {
 	const items: StreamItem[] = useMemo( () => {
 		const pages = query.data?.pages ?? [];
 		const collected: StreamItem[] = [];
+		// Stream endpoints can return the same post in more than one page, so we need to deduplicate them here.
+		const uniqueItems = new Set< string >();
 		for ( const page of pages ) {
 			const { streamItems } = normalizeStreamPage( page as ReadStreamResponse, streamType );
 			for ( const item of streamItems ) {
+				const id = keyToString( item );
+				if ( id !== null ) {
+					if ( uniqueItems.has( id ) ) {
+						continue;
+					}
+					uniqueItems.add( id );
+				}
 				collected.push( item );
 			}
 		}
@@ -207,6 +217,16 @@ export const useInfiniteStream = ( {
 		queryClient.invalidateQueries( { queryKey, refetchType: 'none' } );
 	}, [ queryClient, queryKey ] );
 
+	// `cancelRefetch` defaults to true, which aborts an in-flight page request and
+	// starts another. `<InfiniteList>` gates on `fetchingNextPage`, a React prop
+	// that only flips after a commit, so its rAF-driven scroll check can call this
+	// again before the guard catches up — firing several identical requests for the
+	// same page. `false` makes a repeat call join the in-flight promise instead.
+	const { fetchNextPage: fetchNextStreamPage } = query;
+	const fetchNextPage = useCallback( () => {
+		fetchNextStreamPage( { cancelRefetch: false } );
+	}, [ fetchNextStreamPage ] );
+
 	return {
 		items,
 		posts,
@@ -218,7 +238,7 @@ export const useInfiniteStream = ( {
 		hasNextPage: !! query.hasNextPage,
 		lastPage: ! query.hasNextPage && ! query.isFetchingNextPage && query.isFetched,
 		error: query.error,
-		fetchNextPage: query.fetchNextPage,
+		fetchNextPage,
 		refetch: query.refetch,
 		invalidate,
 	};

@@ -1,21 +1,27 @@
 /**
  * @jest-environment jsdom
  */
-import { isAutomatticianQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ComponentProps } from 'react';
-import { MoreMenuActions } from '../index';
+import MoreMenuActions from '../index';
 
 const mockMarkAllAsSeen = jest.fn();
+let mockSeenPostsUiEnabled = true;
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
 	useMarkAllAsSeenMutation: () => ( { mutate: mockMarkAllAsSeen } ),
+	useSeenPostsPreferenceEnabled: () => mockSeenPostsUiEnabled,
 } ) );
 
 const mockRecordReaderTracksEvent = jest.fn();
 jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
+} ) );
+
+const mockUnsubscribeWithUndo = jest.fn();
+jest.mock( 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo', () => ( {
+	useUnsubscribeWithUndo: () => mockUnsubscribeWithUndo,
 } ) );
 
 const defaultProps: ComponentProps< typeof MoreMenuActions > = {
@@ -24,6 +30,17 @@ const defaultProps: ComponentProps< typeof MoreMenuActions > = {
 	feedIds: [ 1, 2 ],
 	feedUrls: [ 'https://example.com/feed', 'https://another.example.com/feed' ],
 	unseenCount: 3,
+	source: 'testing',
+};
+
+const singleFeedProps: ComponentProps< typeof MoreMenuActions > = {
+	identifier: 'feed:1',
+	isSingleFeed: true,
+	feedIds: [ 1 ],
+	feedUrls: [ 'https://example.com/feed' ],
+	siteName: 'Example Blog',
+	source: 'testing',
+	unseenCount: 0,
 };
 
 function renderMoreMenuActions( props = {} ) {
@@ -31,11 +48,6 @@ function renderMoreMenuActions( props = {} ) {
 		defaultOptions: {
 			queries: { retry: false },
 		},
-	} );
-
-	queryClient.setQueryData( isAutomatticianQuery().queryKey, {
-		number: 1,
-		teams: [ { slug: 'a8c', title: 'Automattic' } ],
 	} );
 
 	return render(
@@ -52,6 +64,7 @@ async function openMoreActionsMenu( user: ReturnType< typeof userEvent.setup > )
 describe( 'MoreMenuActions', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockSeenPostsUiEnabled = true;
 	} );
 
 	test( 'renders the mark all as read action', async () => {
@@ -65,6 +78,17 @@ describe( 'MoreMenuActions', () => {
 		expect( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) ).toBeEnabled();
 	} );
 
+	test( 'hides mark as read when seen posts UI is disabled', async () => {
+		const user = userEvent.setup();
+		mockSeenPostsUiEnabled = false;
+		renderMoreMenuActions( singleFeedProps );
+
+		await openMoreActionsMenu( user );
+
+		expect( screen.queryByRole( 'menuitem', { name: 'Mark as read' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Unsubscribe' } ) ).toBeEnabled();
+	} );
+
 	test( 'marks all posts as seen and records the tracks event', async () => {
 		const user = userEvent.setup();
 		renderMoreMenuActions();
@@ -74,7 +98,7 @@ describe( 'MoreMenuActions', () => {
 
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_mark_all_as_seen_clicked',
-			{ source: defaultProps.identifier }
+			{ source: defaultProps.source }
 		);
 		expect( mockMarkAllAsSeen ).toHaveBeenCalledWith( {
 			identifier: defaultProps.identifier,
@@ -131,6 +155,51 @@ describe( 'MoreMenuActions', () => {
 			expect(
 				screen.queryByRole( 'menuitem', { name: 'Mark all as read' } )
 			).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'unsubscribe', () => {
+		test( 'renders the action for a single feed', async () => {
+			const user = userEvent.setup();
+			renderMoreMenuActions( singleFeedProps );
+
+			await openMoreActionsMenu( user );
+
+			expect( screen.getByRole( 'menuitem', { name: 'Unsubscribe' } ) ).toBeEnabled();
+		} );
+
+		test( 'is hidden on a section header', async () => {
+			const user = userEvent.setup();
+			renderMoreMenuActions( { ...singleFeedProps, isSingleFeed: false } );
+
+			await openMoreActionsMenu( user );
+
+			expect( screen.queryByRole( 'menuitem', { name: 'Unsubscribe' } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'is hidden when there is no feed URL', async () => {
+			const user = userEvent.setup();
+			renderMoreMenuActions( { ...singleFeedProps, feedUrls: [] } );
+
+			await openMoreActionsMenu( user );
+
+			expect( screen.queryByRole( 'menuitem', { name: 'Unsubscribe' } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'unsubscribes the feed and notifies the host', async () => {
+			const user = userEvent.setup();
+			const onUnsubscribed = jest.fn();
+			renderMoreMenuActions( { ...singleFeedProps, onUnsubscribed } );
+
+			await openMoreActionsMenu( user );
+			await user.click( screen.getByRole( 'menuitem', { name: 'Unsubscribe' } ) );
+
+			expect( mockUnsubscribeWithUndo ).toHaveBeenCalledWith( {
+				feedUrl: singleFeedProps.feedUrls[ 0 ],
+				siteName: singleFeedProps.siteName,
+				source: singleFeedProps.source,
+			} );
+			expect( onUnsubscribed ).toHaveBeenCalled();
 		} );
 	} );
 } );

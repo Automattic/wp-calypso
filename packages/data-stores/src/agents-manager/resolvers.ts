@@ -37,18 +37,23 @@ type AgentsManagerStateResponse = {
 	agents_manager_last_activity?: PerSiteLastActivity;
 };
 
-export function* getAgentsManagerState() {
+export function* getAgentsManagerState( shouldUsePersistedState: () => boolean ) {
+	if ( ! shouldUsePersistedState() ) {
+		yield setHasLoaded( true );
+		return;
+	}
+
 	yield setIsLoading( true );
 	try {
 		const state: AgentsManagerStateResponse = canAccessWpcomApis()
 			? yield wpcomRequest( {
 					path: '/agents-manager/state',
 					apiNamespace: 'wpcom/v2',
-			  } )
+				} )
 			: yield apiFetch( {
 					global: true,
 					path: '/agents-manager/open-state',
-			  } as APIFetchOptions );
+				} as APIFetchOptions );
 
 		const activityMap = state.agents_manager_last_activity;
 		if ( activityMap ) {

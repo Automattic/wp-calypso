@@ -7,13 +7,27 @@ export {
 } from './use-authenticate-zendesk-messaging';
 export { useZendeskMessagingAvailability } from './use-zendesk-messaging-availability';
 export { useRateChat } from './use-rate-chat';
+export { useRateSurveyResponse } from './use-rate-survey-response';
+export type { SurveyReasonOption, SurveyReasonQuestion } from './use-rate-survey-response';
 export { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
 export { useAttachFileToConversation } from './use-attach-file';
 export { useGetUnreadConversations } from './use-get-unread-conversations';
 export { useGetZendeskConversation } from './use-get-zendesk-conversation';
+export {
+	useGetZendeskConversationHistory,
+	getZendeskConversationHistoryQueryKey,
+} from './use-get-zendesk-conversation-history';
 export { calculateUnread } from './use-get-unread-conversations';
 
-export { isTestModeEnvironment, getBadRatingReasons } from './util';
+export {
+	isTestModeEnvironment,
+	getSmoochIntegrationId,
+	getBadRatingReasons,
+	isCsatTriggerMessage,
+	isZendeskSurveyMessage,
+	getZendeskSurveyResponseId,
+	getSurveyResponseRatingMetadataKey,
+} from './util';
 
 export {
 	ZENDESK_CUSTOM_FIELD_AI_CHAT_ID,
@@ -23,6 +37,7 @@ export {
 	ZENDESK_STAGING_SUPPORT_CHAT_KEY,
 	ZENDESK_SUPPORT_CHAT_KEY,
 	SMOOCH_INTEGRATION_ID,
+	SMOOCH_INTEGRATION_ID_CUSTOM,
 	SMOOCH_INTEGRATION_ID_STAGING,
 } from './constants';
 export type * from './types';

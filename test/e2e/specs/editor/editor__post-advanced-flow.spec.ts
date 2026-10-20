@@ -33,7 +33,7 @@ test.describe(
 			test.setTimeout( 300 * 1000 );
 
 			// Post content setup. The title must be unique across the parallel
-			// projects (chrome, pixel) sharing the same site, and across retries:
+			// projects (chrome, mobile) sharing the same site, and across retries:
 			// the post is located by title on the Posts page list.
 			const postTitle = `Post Life Cycle: ${ DataHelper.getTimestamp() } ${ DataHelper.getRandomPhrase() }`;
 			const originalContent = DataHelper.getRandomPhrase();

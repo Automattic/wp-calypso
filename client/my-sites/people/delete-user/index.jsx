@@ -137,11 +137,11 @@ class DeleteUser extends Component {
 										username: user.name,
 									},
 								}
-						  )
+							)
 						: translate(
 								'If you remove this user, he or she will no longer be able to access this site, ' +
 									'but any content that was created by this user will remain on the site.'
-						  ) }
+							) }
 				</p>
 				<p>{ translate( 'Would you still like to remove this user?' ) }</p>
 			</div>,
@@ -239,11 +239,11 @@ class DeleteUser extends Component {
 											username: this.props.user.name,
 										},
 									}
-							  )
+								)
 							: translate(
 									'You have the option of reassigning all content created by ' +
 										'this user, or deleting the content entirely.'
-							  ) }
+								) }
 					</p>
 
 					<FormFieldset>
@@ -273,7 +273,7 @@ class DeleteUser extends Component {
 												args: {
 													username: this.props.user.name ? this.props.user.name : '',
 												},
-										  } )
+											} )
 										: translate( 'Delete all content created by this user' )
 								}
 							/>
@@ -360,23 +360,24 @@ const getContributorType = ( externalContributors, userId ) => {
 };
 
 const withExternalContributor = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
-		const { siteId, user } = props;
-		const { data: externalContributors } = useExternalContributorsQuery( siteId );
-		const { removeExternalContributor } = useRemoveExternalContributorMutation();
-		const contributorType = getContributorType(
-			externalContributors,
-			user?.linked_user_ID ?? user?.ID
-		);
+	( Wrapped ) =>
+		function WithExternalContributor( props ) {
+			const { siteId, user } = props;
+			const { data: externalContributors } = useExternalContributorsQuery( siteId );
+			const { removeExternalContributor } = useRemoveExternalContributorMutation();
+			const contributorType = getContributorType(
+				externalContributors,
+				user?.linked_user_ID ?? user?.ID
+			);
 
-		return (
-			<Wrapped
-				{ ...props }
-				contributorType={ contributorType }
-				removeExternalContributor={ removeExternalContributor }
-			/>
-		);
-	},
+			return (
+				<Wrapped
+					{ ...props }
+					contributorType={ contributorType }
+					removeExternalContributor={ removeExternalContributor }
+				/>
+			);
+		},
 	'WithExternalContributor'
 );
 

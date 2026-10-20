@@ -1,13 +1,13 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { useSelect } from '@wordpress/data';
 import TaxFields from 'calypso/my-sites/checkout/src/components/tax-fields';
 import useCountryList from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { CountrySpecificPaymentFields } from '../../components/country-specific-payment-fields';
-import { CardFieldState } from './types';
-import type { WpcomCreditCardSelectors } from './store';
+import { useCreditCardStoreState } from './store';
+import type { CardStoreType } from './types';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 export default function ContactFields( {
+	store,
 	getFieldValue,
 	setFieldValue,
 	setForBusinessUse,
@@ -15,6 +15,7 @@ export default function ContactFields( {
 	shouldUseEbanx,
 	shouldShowTaxFields,
 }: {
+	store: CardStoreType;
 	getFieldValue: ( key: string ) => string;
 	setFieldValue: ( key: string, value: string ) => void;
 	setForBusinessUse: ( newValue: boolean ) => void;
@@ -25,14 +26,8 @@ export default function ContactFields( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList();
-	const fields: CardFieldState = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
-		[]
-	);
-	const isForBusiness: boolean | undefined = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForBusiness(),
-		[]
-	);
+	const fields = useCreditCardStoreState( store, ( state ) => state.fields );
+	const isForBusiness = useCreditCardStoreState( store, ( state ) => state.useForBusiness );
 	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
 		setFieldValue( 'countryCode', newInfo.countryCode?.value ?? '' );
 		setFieldValue( 'postalCode', newInfo.postalCode?.value ?? '' );

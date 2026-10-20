@@ -4,23 +4,16 @@ import { useGetUnreadConversations } from './use-get-unread-conversations';
 import { zendeskMessageConverter } from './zendesk-message-converter';
 import type { ZendeskMessage } from './types';
 
-const parseResponse = ( conversation: Conversation ) => {
-	let clientId;
+export const convertZendeskMessages = ( messages: ZendeskMessage[] ) =>
+	messages
+		// exclude form and formResponses messages from being rendered
+		.filter( ( message ) => message.type !== 'form' && message.type !== 'formResponse' )
+		.map( zendeskMessageConverter );
 
-	const messages = conversation?.messages
-		.filter( ( message: ZendeskMessage ) => {
-			// exclude form and formResponses messages from being rendered
-			return message.type !== 'form' && message.type !== 'formResponse';
-		} )
-		.map( ( message: ZendeskMessage ) => {
-			if ( message.source?.id ) {
-				clientId = message.source?.id;
-			}
-			return zendeskMessageConverter( message );
-		} );
-
-	return { ...conversation, clientId, messages };
-};
+const parseResponse = ( conversation: Conversation ) => ( {
+	...conversation,
+	messages: convertZendeskMessages( conversation?.messages ),
+} );
 
 /**
  * Get the conversation for the Zendesk conversation.

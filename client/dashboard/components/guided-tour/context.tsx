@@ -5,7 +5,6 @@ import {
 	useCallback,
 	useMemo,
 	useState,
-	useEffect,
 	useRef,
 	type JSX,
 	type ReactNode,
@@ -26,7 +25,7 @@ type GuidedTourContextType = {
 	isCompleted: boolean;
 	isSkippable?: boolean;
 	startTour: () => void;
-	endTour: () => void;
+	endTour: ( isCompleted: boolean ) => void;
 	previousStep: () => void;
 	nextStep: () => void;
 };
@@ -80,14 +79,17 @@ export const GuidedTourContextProvider = ( {
 		}
 	}, [ isStartedRef, tourId, recordTracksEvent ] );
 
-	const endTour = useCallback( () => {
-		// Save the dismissed timestamp so we can show the new steps that are added after it in the future.
-		updateCompletedTimestamp( new Date().toISOString() );
-		recordTracksEvent( 'calypso_dashboard_end_tour', {
-			tour_id: tourId,
-			is_completed: currentStep === guidedTours.length,
-		} );
-	}, [ tourId, updateCompletedTimestamp, recordTracksEvent, currentStep, guidedTours.length ] );
+	const endTour = useCallback(
+		( isCompleted: boolean ) => {
+			// Save the dismissed timestamp so we can show the new steps that are added after it in the future.
+			updateCompletedTimestamp( new Date().toISOString() );
+			recordTracksEvent( 'calypso_dashboard_end_tour', {
+				tour_id: tourId,
+				is_completed: isCompleted,
+			} );
+		},
+		[ tourId, updateCompletedTimestamp, recordTracksEvent ]
+	);
 
 	const previousStep = useCallback( () => {
 		setCurrentStep( ( step ) => {
@@ -102,18 +104,18 @@ export const GuidedTourContextProvider = ( {
 	}, [ tourId, recordTracksEvent ] );
 
 	const nextStep = useCallback( () => {
-		setCurrentStep( ( step ) => {
-			const nextStep = step + 1;
-			if ( nextStep < guidedTours.length ) {
-				recordTracksEvent( 'calypso_dashboard_tour_next_step', {
-					tour_id: tourId,
-					to: nextStep,
-				} );
-			}
-
-			return nextStep;
-		} );
-	}, [ tourId, guidedTours.length, recordTracksEvent ] );
+		const next = currentStep + 1;
+		if ( next < guidedTours.length ) {
+			recordTracksEvent( 'calypso_dashboard_tour_next_step', {
+				tour_id: tourId,
+				to: next,
+			} );
+			setCurrentStep( next );
+		} else {
+			// Advancing past the last step is the completion event.
+			endTour( true );
+		}
+	}, [ currentStep, guidedTours.length, recordTracksEvent, tourId, endTour ] );
 
 	const value = useMemo(
 		() => ( {
@@ -138,12 +140,6 @@ export const GuidedTourContextProvider = ( {
 			nextStep,
 		]
 	);
-
-	useEffect( () => {
-		if ( currentStep === guidedTours.length && ! isCompleted ) {
-			endTour();
-		}
-	}, [ currentStep, guidedTours, isCompleted, endTour ] );
 
 	if ( isLoading || isCompleted ) {
 		return null;

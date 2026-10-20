@@ -36,7 +36,7 @@ const LicenseLightboxLink: FunctionComponent< Props > = ( {
 					? customText
 					: translate( 'More about {{productName/}}', {
 							components: { productName: noWrapProductName },
-					  } ) }
+						} ) }
 			</span>
 
 			{ showIcon && <img className="license-lightbox-link-icon" src={ ModalLinkIcon } alt="" /> }

@@ -3,9 +3,10 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
+import { normalizePurchase, type Product } from '@automattic/api-core';
+import { productsQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { checkoutTheme } from '@automattic/composite-checkout';
-import { RawAPIProductsList, StoreProductSlug } from '@automattic/data-stores/src/products-list';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -15,7 +16,6 @@ import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
-import { WpcomRequestParams } from 'wpcom-proxy-request';
 import {
 	mockGetCartEndpointWith,
 	mockSetCartEndpointWith,
@@ -30,7 +30,7 @@ jest.mock( '@automattic/calypso-config', () => {
 	return mock;
 } );
 
-const mockProductsEndpointResponse: RawAPIProductsList = {
+const products: Record< string, Product > = {
 	'personal-bundle': {
 		available: true,
 		combined_cost_display: '10',
@@ -45,24 +45,27 @@ const mockProductsEndpointResponse: RawAPIProductsList = {
 		price_tiers: '',
 		product_id: 1234,
 		product_name: 'Personal',
-		product_slug: 'personal-bundle' as StoreProductSlug,
+		product_slug: 'personal-bundle',
 		product_type: 'something',
 	},
 };
 
-// The useProducts hook is in an external package that uses
-// `wpcom-proxy-request` directly to fetch data, so using `nock` will not be
-// able to mock its request. Instead we have to mock the module directly.
-jest.mock( 'wpcom-proxy-request', () => async ( data: WpcomRequestParams ) => {
-	switch ( data.path ) {
-		case '/products':
-			return mockProductsEndpointResponse;
-	}
-} );
+function createSeededQueryClient() {
+	const queryClient = new QueryClient();
+	const { ui, purchases } = storeData();
+	// The fixture holds the API's raw response, so run it through the same
+	// normalization the fetcher applies before the component sees it.
+	queryClient.setQueryData(
+		sitePurchasesQuery( ui.selectedSiteId ).queryKey,
+		purchases.data.map( normalizePurchase )
+	);
+	queryClient.setQueryData( productsQuery().queryKey, products );
+	return queryClient;
+}
 
 function TestWrapper( { children, initialCart } ) {
 	const [ reduxStore ] = useState( () => applyMiddleware( thunk )( createStore )( storeData ) );
-	const [ queryClient ] = useState( () => new QueryClient() );
+	const [ queryClient ] = useState( createSeededQueryClient );
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
 		currency: initialCart.currency,
 		locale: initialCart.locale,

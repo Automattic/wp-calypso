@@ -115,4 +115,26 @@ describe( '#signupStep User', () => {
 			);
 		} );
 	} );
+	describe( 'top bar logo', () => {
+		const renderUserStep = ( flowName ) =>
+			renderWithProvider( createElement( User, { flowName, saveSignupStep: noop, translate } ), {
+				initialPath: '/start/account',
+			} );
+
+		test( 'links the logo to the homepage in the account flow', () => {
+			const { getByRole } = renderUserStep( 'account' );
+
+			expect( getByRole( 'link', { name: 'WordPress.com home' } ) ).toHaveAttribute(
+				'href',
+				'https://wordpress.com/'
+			);
+		} );
+
+		test( 'does not link the logo in other flows', () => {
+			const { getByRole, queryByRole } = renderUserStep( 'someOtherFlow' );
+
+			expect( getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+			expect( queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
+		} );
+	} );
 } );

@@ -1,14 +1,14 @@
+import { sendEmailVerificationMutation } from '@automattic/api-queries';
 import { isP2Plus, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { useMutation } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useState } from 'react';
 import { connect } from 'react-redux';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
@@ -16,11 +16,6 @@ import { getSiteOptions, getSiteUrl, getSiteWooCommerceUrl } from 'calypso/state
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ThankYouPlanProduct from '../products/plan-product';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
-
-const RESEND_ERROR = 'RESEND_ERROR';
-const RESEND_NOT_SENT = 'RESEND_NOT_SENT';
-const RESEND_PENDING = 'RESEND_PENDING';
-const RESEND_SUCCESS = 'RESEND_SUCCESS';
 
 interface PlanOnlyThankYouProps {
 	primaryPurchase: ReceiptPurchase;
@@ -56,37 +51,31 @@ const PlanOnlyThankYou = ( {
 		( state ) => getSiteOptions( state, siteId ?? 0 )?.created_at
 	);
 
-	const [ resendStatus, setResendStatus ] = useState( RESEND_NOT_SENT );
+	const resendMutation = useMutation( sendEmailVerificationMutation() );
 
 	const verifyEmailNoticeId = 'ecommerce-verify-email-notice';
 	const resendEmail = () => {
 		removeNotice( verifyEmailNoticeId );
 
-		if ( RESEND_PENDING === resendStatus ) {
+		if ( resendMutation.isPending ) {
 			return;
 		}
 
-		setResendStatus( RESEND_PENDING );
-
-		wpcom.req.post( '/me/send-verification-email', ( error: Error ) => {
-			if ( error ) {
+		resendMutation.mutate( undefined, {
+			onError: () => {
 				errorNotice( translate( "Couldn't resend verification email. Please try again." ), {
 					id: verifyEmailNoticeId,
 					duration: 5000,
 				} );
-
-				setResendStatus( RESEND_ERROR );
-				return;
-			}
-
-			successNotice( translate( 'Email sent' ), { id: verifyEmailNoticeId, duration: 5000 } );
-
-			setResendStatus( RESEND_SUCCESS );
+			},
+			onSuccess: () => {
+				successNotice( translate( 'Email sent' ), { id: verifyEmailNoticeId, duration: 5000 } );
+			},
 		} );
 	};
 
 	const resendButtonText = () => {
-		if ( resendStatus === RESEND_PENDING ) {
+		if ( resendMutation.isPending ) {
 			return translate( 'Sending…' );
 		}
 
@@ -125,13 +114,11 @@ const PlanOnlyThankYou = ( {
 				}
 			);
 
-			const isSendingEmail = resendStatus === RESEND_PENDING;
-
 			headerButtons = (
 				<Button
 					onClick={ resendEmail }
-					busy={ isSendingEmail }
-					disabled={ isSendingEmail || resendStatus === RESEND_SUCCESS }
+					busy={ resendMutation.isPending }
+					disabled={ resendMutation.isPending || resendMutation.isSuccess }
 				>
 					{ resendButtonText() }
 				</Button>

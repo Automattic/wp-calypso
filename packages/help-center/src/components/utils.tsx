@@ -1,5 +1,11 @@
 import { getConversationIdFromInteraction } from '@automattic/odie-client/src/utils';
-import { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
+import {
+	getSurveyResponseRatingMetadataKey,
+	getZendeskSurveyResponseId,
+	isZendeskSurveyMessage,
+	ZendeskConversation,
+	ZendeskMessage,
+} from '@automattic/zendesk-client';
 import Smooch from 'smooch';
 import type { OdieConversation, OdieMessage, SupportInteraction } from '@automattic/odie-client';
 
@@ -99,10 +105,54 @@ export const getZendeskConversations = () => {
 	}
 };
 
-export const getClientId = ( conversations: ZendeskConversation[] ): string =>
+/**
+ * Returns the rated outcome of a conversation's `zd:surveys` CSAT Survey Response, if it has one
+ * and it's already been rated -- persisted on the conversation's own metadata by
+ * useSurveyResponseRating (in @automattic/odie-client), keyed by survey_response_id.
+ */
+export const getZendeskSurveyRating = (
+	conversation: OdieConversation | ZendeskConversation
+): 'good' | 'bad' | undefined => {
+	if ( ! Array.isArray( conversation.messages ) ) {
+		return undefined;
+	}
+
+	const surveyMessage = ( conversation.messages as ( OdieMessage | ZendeskMessage )[] ).find(
+		( message ): message is ZendeskMessage =>
+			'source' in message && isZendeskSurveyMessage( message )
+	);
+	const surveyResponseId = surveyMessage?.actions?.[ 0 ]?.uri
+		? getZendeskSurveyResponseId( surveyMessage.actions[ 0 ].uri )
+		: null;
+
+	if ( ! surveyResponseId ) {
+		return undefined;
+	}
+
+	const rating = ( conversation as ZendeskConversation ).metadata?.[
+		getSurveyResponseRatingMetadataKey( surveyResponseId )
+	];
+
+	return rating === 'good' || rating === 'bad' ? rating : undefined;
+};
+
+/**
+ * The Smooch client this browser uses on `integrationId`. Smooch keeps one client per integration
+ * but lists conversations from every integration in the app, so skip clients from other ones.
+ * Messages that don't say which integration they came from still count.
+ */
+export const getClientId = (
+	conversations: ZendeskConversation[],
+	integrationId: string
+): string =>
 	conversations
 		.flatMap( ( conversation ) => conversation.messages )
-		.find( ( message ) => message.source?.type === 'web' && message.source?.id )?.source?.id || '';
+		.find(
+			( { source } ) =>
+				source?.type === 'web' &&
+				source.id &&
+				( ! source.integrationId || source.integrationId === integrationId )
+		)?.source?.id || '';
 
 export const matchSupportInteractionId = (
 	getConversations: () => ZendeskConversation[],

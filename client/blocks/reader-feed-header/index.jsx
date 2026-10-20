@@ -26,8 +26,6 @@ class ReaderFeedHeader extends Component {
 		site: PropTypes.object,
 		feed: PropTypes.object,
 		streamKey: PropTypes.string,
-		isWPForTeamsItem: PropTypes.bool,
-		hasOrganization: PropTypes.bool,
 	};
 
 	render() {

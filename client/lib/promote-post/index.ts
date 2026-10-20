@@ -222,7 +222,7 @@ export async function showDSP(
 					? {
 							apiRoot: config( 'api_root' ),
 							headerNonce: config( 'nonce' ),
-					  }
+						}
 					: undefined,
 				jetpackVersion,
 				blazeAdsVersion,
@@ -449,6 +449,6 @@ export const useJetpackBlazeVersionCheck = (
 
 	return Boolean(
 		( siteJetpackVersion && versionCompare( siteJetpackVersion, minJetpackVersion, '>=' ) ) ||
-			( blazeAdsVersion && versionCompare( blazeAdsVersion, minBlazeAdsVersion, '>=' ) )
+		( blazeAdsVersion && versionCompare( blazeAdsVersion, minBlazeAdsVersion, '>=' ) )
 	);
 };

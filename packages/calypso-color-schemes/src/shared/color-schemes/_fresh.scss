@@ -36,7 +36,7 @@
 	/* WP Admin Default Theme */
 	--theme-text-color: #f0f0f1; /* Direct from wp-admin */
 	--theme-base-color: #1d2327; /* Direct from wp-admin */
-	--theme-submenu-background-color: #131619; /* $menu-submenu-background */
+	--theme-submenu-background-color: #2c3338; /* $menu-submenu-background */
 	--theme-submenu-text-color: #c3c4c7; /* $menu-submenu-text */
 	--theme-icon-color: rgba(240, 246, 252, 0.6); /* $icon-color */
 	--theme-highlight-color: #72aee6; /* $highlight-color */
@@ -44,11 +44,13 @@
 
 	/* Masterbar */
 	--color-masterbar-background: var(--theme-base-color);
-	--color-masterbar-border: #8c8f94; /* $adminbar-avatar-frame */
+	--color-masterbar-border: #2c353b; /* $adminbar-avatar-frame */
+	--color-masterbar-avatar-background: #f0f0f1; /* Direct from wp-admin */
 	--color-masterbar-text: var(--theme-text-color);
 	--color-masterbar-submenu-text: var(--theme-submenu-text-color);
 	--color-masterbar-icon: var(--theme-icon-color);
 	--color-masterbar-highlight: var(--theme-highlight-color);
+	--color-masterbar-submenu-group-background: #3c434a; /* Direct from wp-admin */
 	--color-masterbar-unread-dot-background: var(--color-accent-20);
 
 	--color-masterbar-item-hover-background: #2c3338; /* $menu-submenu-background: darken( $base-color, 7% ) */
@@ -74,10 +76,10 @@
 	--color-sidebar-menu-hover-text: #00b9eb; /* theme-default */
 
 	/* Sidebar Submenu - Nav Unification */
-	--color-sidebar-submenu-background: #32373c; /* theme-default */
+	--color-sidebar-submenu-background: var(--theme-submenu-background-color);
 	--color-sidebar-submenu-text: #b4b9be;
 	--color-sidebar-submenu-hover-background: transparent; /* theme-default */
-	--color-sidebar-submenu-hover-text: #00b9eb; /* theme-default */
+	--color-sidebar-submenu-hover-text: var(--theme-highlight-color);
 	--color-sidebar-submenu-selected-background: transparent; /* theme-default */
 	--color-sidebar-submenu-selected-text: var(--color-text-inverted); /* theme-default */
 
@@ -89,5 +91,6 @@
 
 	/* Gutenberg components */
 	--wp-admin-theme-color: var(--color-accent);
+	--wp-admin-theme-color-darker-10: var(--color-accent-60);
 	--wp-admin-theme-color-darker-20: var(--color-accent-60);
 }

@@ -1,0 +1,7 @@
+@import "@automattic/typography/styles/variables";
+
+.email-new-posts-toggle__hint {
+	color: var(--color-text-subtle);
+	font-size: $font-body-extra-small;
+	margin-block: 4px 0;
+}

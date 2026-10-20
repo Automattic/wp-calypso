@@ -22,6 +22,15 @@ describe( 'DomainSearchControlsFilterPopover', () => {
 		expect( screen.getByText( 'Apply' ) ).toBeInTheDocument();
 	} );
 
+	it( 'hides the exact matches checkbox when showExactMatchesOnly is false', () => {
+		render(
+			<DomainSearchControlsFilterPopover { ...defaultProps } showExactMatchesOnly={ false } />
+		);
+
+		expect( screen.queryByLabelText( 'Show exact matches only' ) ).not.toBeInTheDocument();
+		expect( screen.getByPlaceholderText( 'Search for an ending' ) ).toBeInTheDocument();
+	} );
+
 	it( 'displays available TLDs', () => {
 		render( <DomainSearchControlsFilterPopover { ...defaultProps } /> );
 

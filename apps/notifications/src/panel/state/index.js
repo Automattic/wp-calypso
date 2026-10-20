@@ -21,6 +21,7 @@ const withMiddleware = () =>
 		createStore
 	);
 
+/** @type {any} */
 let store = null;
 store = init();
 

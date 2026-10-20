@@ -6,7 +6,12 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import config from '@automattic/calypso-config';
 import { isInSupportSession } from '@automattic/data-stores';
-import { isTestModeEnvironment } from '../src/util';
+import {
+	SMOOCH_INTEGRATION_ID,
+	SMOOCH_INTEGRATION_ID_CUSTOM,
+	SMOOCH_INTEGRATION_ID_STAGING,
+} from '../src/constants';
+import { getSmoochIntegrationId, isTestModeEnvironment } from '../src/util';
 
 // Mock the config module - must be hoisted before imports
 jest.mock( '@automattic/calypso-config', () => {
@@ -41,19 +46,11 @@ describe( 'isTestModeEnvironment', () => {
 		} );
 	} );
 
-	describe( 'Test environments (development, horizon, stage)', () => {
+	describe( 'Test environments (development, staging)', () => {
 		const testConfigFiles = [
-			'stage',
-			'horizon',
 			'dashboard-development',
-			'dashboard-horizon',
-			'dashboard-stage',
 			'jetpack-cloud-development',
-			'jetpack-cloud-horizon',
-			'jetpack-cloud-stage',
 			'a8c-for-agencies-development',
-			'a8c-for-agencies-horizon',
-			'a8c-for-agencies-stage',
 		];
 
 		testConfigFiles.forEach( ( configFile ) => {
@@ -77,13 +74,21 @@ describe( 'isTestModeEnvironment', () => {
 		} );
 	} );
 
-	describe( 'Production environments', () => {
+	describe( 'Production environments (including stage, horizon)', () => {
 		const productionConfigFiles = [
 			'production',
 			'wpcalypso',
 			'dashboard-production',
 			'jetpack-cloud-production',
 			'a8c-for-agencies-production',
+			'stage',
+			'horizon',
+			'dashboard-horizon',
+			'dashboard-stage',
+			'jetpack-cloud-horizon',
+			'jetpack-cloud-stage',
+			'a8c-for-agencies-horizon',
+			'a8c-for-agencies-stage',
 		];
 
 		productionConfigFiles.forEach( ( configFile ) => {
@@ -122,7 +127,21 @@ describe( 'isTestModeEnvironment', () => {
 			expect( isTestModeEnvironment() ).toBe( false );
 		} );
 
-		test( 'should automatically treat new test environment as test mode', () => {
+		test( 'should automatically treat new "-development"/"-staging" environment as test mode', () => {
+			( config as unknown as jest.Mock ).mockImplementation( ( key: string ) => {
+				if ( key === 'env_id' ) {
+					return 'new-product-staging';
+				}
+				if ( key === 'env' ) {
+					return 'production';
+				}
+				return undefined;
+			} );
+
+			expect( isTestModeEnvironment() ).toBe( true );
+		} );
+
+		test( 'should automatically treat new "-stage" environment as production', () => {
 			( config as unknown as jest.Mock ).mockImplementation( ( key: string ) => {
 				if ( key === 'env_id' ) {
 					return 'new-product-stage';
@@ -133,7 +152,7 @@ describe( 'isTestModeEnvironment', () => {
 				return undefined;
 			} );
 
-			expect( isTestModeEnvironment() ).toBe( true );
+			expect( isTestModeEnvironment() ).toBe( false );
 		} );
 
 		test( 'should default to production when config is unavailable (env undefined)', () => {
@@ -158,5 +177,36 @@ describe( 'isTestModeEnvironment', () => {
 
 			expect( isTestModeEnvironment() ).toBe( true );
 		} );
+	} );
+} );
+
+describe( 'getSmoochIntegrationId', () => {
+	const mockEnv = ( env: string ) =>
+		( config as unknown as jest.Mock ).mockImplementation( ( key: string ) =>
+			key === 'env_id' || key === 'env' ? env : undefined
+		);
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		( isInSupportSession as jest.Mock ).mockReturnValue( false );
+	} );
+
+	test( 'uses the WordPress.com integration without a key', () => {
+		mockEnv( 'production' );
+
+		expect( getSmoochIntegrationId() ).toBe( SMOOCH_INTEGRATION_ID );
+		expect( getSmoochIntegrationId( null ) ).toBe( SMOOCH_INTEGRATION_ID );
+	} );
+
+	test( 'uses the dedicated integration for a key', () => {
+		mockEnv( 'production' );
+
+		expect( getSmoochIntegrationId( 'woo' ) ).toBe( SMOOCH_INTEGRATION_ID_CUSTOM.woo );
+	} );
+
+	test( 'uses the staging integration in test mode, even with a key', () => {
+		mockEnv( 'development' );
+
+		expect( getSmoochIntegrationId( 'woo' ) ).toBe( SMOOCH_INTEGRATION_ID_STAGING );
 	} );
 } );

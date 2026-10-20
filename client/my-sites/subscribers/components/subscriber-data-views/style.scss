@@ -3,21 +3,36 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/theme/design-tokens.css';
 @import '@wordpress/dataviews/build-style/style.css';
+@import 'calypso/components/jetpack-page-layout/admin-ui-page';
 
 $padding-standard: 16px;
 
-// Prevent layout shift when the DataViews actions dropdown opens.
-// Ariakit's modal dropdown sets overflow:hidden on the body to lock
-// scrolling, which hides the viewport scrollbar and jerks the content.
-// This page uses a fixed viewport height with internal scrolling,
-// so body-level scrolling is unnecessary.
+// Prevent layout shift when the DataViews actions dropdown opens. Ariakit's modal
+// dropdown sets overflow:hidden on the body to lock scrolling, which hides the
+// viewport scrollbar and jerks the content; reserving the gutter keeps it still.
+//
+// The gutter belongs on the root element: `scrollbar-gutter` applies to scroll
+// containers, and with body scrolling restored below, the body is not one. The
+// viewport's scrollbar is the root element's.
+html:has( > body.is-section-subscribers:not( .is-global ) ),
+html:has( > body.theme-jetpack-cloud.is-group-jetpack-cloud.is-section-jetpack-subscribers ) {
+	scrollbar-gutter: stable;
+}
+
+// Body scrolling has to stay available: when the site's menu is taller than the
+// window, `syncSidebarHeight` in client/layout/utils.ts grows `#content` to the
+// sidebar's height and relies on the window scrolling to reach it. Locking the body
+// here left the page unable to scroll, which put the DataViews footer, and with it
+// pagination and bulk actions, permanently out of reach.
 //
 // Scoped with :not( .is-global ) so the rule only applies to the
 // subscribers data-view page; the global site picker at /subscribers
 // keeps default body scrolling, since its list can exceed the viewport.
 body.is-section-subscribers:not( .is-global ),
 .theme-jetpack-cloud.is-group-jetpack-cloud.is-section-jetpack-subscribers {
-	overflow: hidden;
+	// Pins .layout__primary to the viewport so the page body scrolls
+	// internally, independent of the shell's sidebar height.
+	@include admin-ui-page-sticky-footer;
 
 	.layout:not( .has-no-sidebar ),
 	.has-no-masterbar {
@@ -93,15 +108,6 @@ body.is-section-subscribers:not( .is-global ),
 				overflow: hidden;
 				display: flex;
 				flex-direction: column;
-
-				// DataViews' height: 100% doesn't resolve inside the
-				// Page content flex layout. Use flex to fill remaining
-				// space so the internal scroll container works.
-				.dataviews-wrapper {
-					height: auto;
-					flex-grow: 1;
-					min-height: 0;
-				}
 
 				.navigation-header {
 					padding: $padding-standard 24px;

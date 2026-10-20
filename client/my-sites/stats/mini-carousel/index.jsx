@@ -93,9 +93,15 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 			return;
 		} else if ( dotPagerIndex >= viewEvents.length ) {
 			// Prevent out of bounds index when switching sites.
-			recordTracksEvent( viewEvents[ viewEvents.length - 1 ], { site_id: selectedSiteId } );
+			recordTracksEvent( viewEvents[ viewEvents.length - 1 ], {
+				blog_id: selectedSiteId,
+				site_id: selectedSiteId,
+			} );
 		} else {
-			recordTracksEvent( viewEvents[ dotPagerIndex ], { site_id: selectedSiteId } );
+			recordTracksEvent( viewEvents[ dotPagerIndex ], {
+				blog_id: selectedSiteId,
+				site_id: selectedSiteId,
+			} );
 		}
 	}, [ viewEvents, dotPagerIndex, selectedSiteId ] );
 
@@ -114,7 +120,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					'Changing your site from private to public helps people find you and get more visitors. Don’t worry, you can keep working on your site.'
 				) }
 				ctaText={ translate( 'Launch your site' ) }
-				href={ getCalypsoUrl( `/settings/general/${ slug }` ) }
+				href={ getCalypsoUrl( `/sites/${ slug }/settings/site-visibility` ) }
 				key="launch-your-site"
 			/>
 		);

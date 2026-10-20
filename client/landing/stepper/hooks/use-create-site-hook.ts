@@ -4,8 +4,6 @@ import { addProductsToCart, getNewSiteParams, setThemeOnSite } from '@automattic
 import { useMutation } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { useFlowState } from '../declarative-flow/internals/state-manager/store';
 import { getFlowFromURL } from '../utils/get-flow-from-url';
 import type { DomainSuggestion } from '@automattic/api-core';
@@ -20,7 +18,6 @@ type Params = {
 	siteTitle: string;
 	siteAccentColor: string;
 	useThemeHeadstart: boolean;
-	username: string;
 	domainCartItems: MinimalRequestCartProduct[];
 	partnerBundle?: string | null;
 	domainItem?: DomainSuggestion;
@@ -37,7 +34,6 @@ export const createSite = async ( {
 	siteTitle,
 	siteAccentColor,
 	useThemeHeadstart,
-	username,
 	domainCartItems,
 	partnerBundle = null,
 	domainItem,
@@ -52,7 +48,6 @@ export const createSite = async ( {
 		siteAccentColor,
 		useThemeHeadstart,
 		siteVisibility,
-		username,
 		sourceSlug,
 		siteIntent,
 		partnerBundle,
@@ -103,7 +98,6 @@ export const useCreateSite = () => {
 	const flowName = getFlowFromURL();
 	const { get, set } = useFlowState();
 	const domains = get( 'domains' );
-	const username = useSelector( getCurrentUserName );
 	const planCartItems = get( 'plans' )?.cartItems;
 	const createdSite = get( 'site' );
 	const siteTitle = get( 'newsletterSetup' )?.siteTitle as string;
@@ -156,7 +150,6 @@ export const useCreateSite = () => {
 				// Ideally should remove this and update code downstream to handle this.
 				siteAccentColor: '#113AF5',
 				useThemeHeadstart: true,
-				username,
 				domainCartItems: mergedDomainCartItems,
 				partnerBundle: null,
 				domainItem: domains?.domainItem as DomainSuggestion | undefined,

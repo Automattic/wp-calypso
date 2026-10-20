@@ -1,8 +1,9 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import filesize from 'filesize';
+import { useIntlLocale } from '../../app/locale';
 import { Stat } from '../../components/stat';
+import { formatStorage } from '../../utils/site-storage';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
 
@@ -23,6 +24,7 @@ function getCurrentMonthRangeTimestamps() {
 }
 
 export default function SiteBandwidthStat( { site }: { site: Site } ) {
+	const locale = useIntlLocale();
 	const { startInSeconds, endInSeconds } = getCurrentMonthRangeTimestamps();
 	const { data: bandwidth, isLoading: isLoadingBandwidth } = useQuery( {
 		...siteMetricsQuery( site.ID, {
@@ -52,7 +54,7 @@ export default function SiteBandwidthStat( { site }: { site: Site } ) {
 			density="high"
 			strapline={ __( 'Bandwidth' ) }
 			metric={
-				bandwidth && site.is_wpcom_atomic ? filesize( bandwidth, { round: 1 } ) : __( 'Unlimited' )
+				bandwidth && site.is_wpcom_atomic ? formatStorage( bandwidth, locale ) : __( 'Unlimited' )
 			}
 			description={ site.is_wpcom_atomic ? __( 'Unlimited' ) : undefined }
 			progressValue={ 100 }

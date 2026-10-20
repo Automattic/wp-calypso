@@ -1,3 +1,4 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
@@ -17,6 +18,7 @@ import {
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { useQuery } from '@tanstack/react-query';
 import {
 	MenuItem,
 	Dropdown,
@@ -28,9 +30,9 @@ import {
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { chevronDown, chevronUp, Icon, external } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { hasQueryArg } from '@wordpress/url';
+import { addQueryArgs, hasQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize, getLocaleSlug, useTranslate } from 'i18n-calypso';
 import photon from 'photon';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -59,7 +61,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import {
 	localizeThemesPath,
@@ -125,7 +126,6 @@ import {
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { ReviewsModal } from '../marketplace/components/reviews-modal';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import ThemeActiveBadge from './theme-active-badge';
 import ThemeDownloadCard from './theme-download-card';
@@ -151,6 +151,72 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 const { Badge } = unlock( privateApis );
 
 const SiteIntent = Onboard.SiteIntent;
+
+/**
+ * Secondary Theme Sheet CTA: when the wpcom theme API marks a theme with a
+ * matching blueprint archive (has_blueprint / blueprint_id), offer to build a
+ * new WoA site from it via the onboarding blueprint flow.
+ *
+ * A function component (rather than a ThemeSheet method) so it can read the
+ * Automattician check via the `isAutomatticianQuery` hook. Gated to
+ * Automatticians for now, behind the `themes/blueprint-cta` feature flag.
+ */
+function BlueprintCtaButton( {
+	hasBlueprint,
+	blueprintId,
+	themeId,
+	themeType,
+	themeTier,
+	isLoading,
+	recordTracksEvent: recordCtaTracksEvent,
+} ) {
+	const translate = useTranslate();
+	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
+
+	if (
+		! config.isEnabled( 'themes/blueprint-cta' ) ||
+		! isAutomattician ||
+		! hasBlueprint ||
+		! blueprintId
+	) {
+		return null;
+	}
+
+	// The onboarding blueprint step accepts a blueprint-library post id or slug via ?blueprint=.
+	// wow_funnel=blueprint builds the Atomic site from the blueprint's archive *before* checkout,
+	// so the finished site is waiting the moment the customer pays; dest=site-spec hands them to
+	// the AI site-spec afterwards. The step falls back to the legacy Simple-site runner when the
+	// blueprint has no archive.
+	// from_wfm=1 opts this CTA into the WoW fleet: /sites/new hands out a
+	// pre-provisioned Atomic site instead of building one, so the customer skips
+	// the provision wait. Purely an opt-in hint — the server falls back to the
+	// ordinary funnel build when the fleet is disabled, empty, or contended.
+	const href = addQueryArgs( '/setup/onboarding/blueprint', {
+		blueprint: blueprintId,
+		wow_funnel: 'blueprint',
+		from_wfm: 1,
+		dest: 'site-spec',
+		ref: `theme-${ themeId }`,
+	} );
+
+	return (
+		<Button
+			className="theme__sheet-blueprint-button"
+			href={ href }
+			onClick={ () =>
+				recordCtaTracksEvent( 'calypso_theme_sheet_blueprint_button_click', {
+					theme: themeId,
+					theme_type: themeType,
+					theme_tier: themeTier?.slug,
+					blueprint_id: blueprintId,
+				} )
+			}
+			disabled={ isLoading }
+		>
+			{ translate( 'Build a site with this blueprint' ) }
+		</Button>
+	);
+}
 
 class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
@@ -188,6 +254,11 @@ class ThemeSheet extends Component {
 		backPath: PropTypes.string,
 		isWpcomTheme: PropTypes.bool,
 		softLaunched: PropTypes.bool,
+		// eslint-disable-next-line camelcase -- passed through from the wpcom theme API.
+		has_blueprint: PropTypes.bool,
+		// A dotcomblueprints post slug (string); numeric blueprint-library ids are also tolerated.
+		// eslint-disable-next-line camelcase -- passed through from the wpcom theme API.
+		blueprint_id: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		defaultOption: PropTypes.shape( {
 			label: PropTypes.string,
 			action: PropTypes.func,
@@ -218,7 +289,6 @@ class ThemeSheet extends Component {
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
 		isRedirectingToEditorWebPreview: false,
-		isReviewsModalVisible: false,
 		isSiteSelectorModalVisible: false,
 		isActivationModalVisible: false,
 		isWide: isWithinBreakpoint( '>960px' ),
@@ -708,6 +778,7 @@ class ThemeSheet extends Component {
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
+						{ this.renderBlueprintButton() }
 					</div>
 					{ this.renderDisclaimer() }
 				</div>
@@ -737,37 +808,6 @@ class ThemeSheet extends Component {
 					) }
 				</span>
 			</Badge>
-		);
-	};
-
-	renderReviews = () => {
-		const { name, themeId } = this.props;
-		const { isReviewsModalVisible } = this.state;
-
-		return (
-			<div className="theme__sheet-reviews-summary">
-				<ReviewsModal
-					isVisible={ isReviewsModalVisible }
-					onClose={ () => {
-						this.setState( {
-							isReviewsModalVisible: false,
-						} );
-					} }
-					productName={ name }
-					slug={ themeId }
-					productType="theme"
-				/>
-				<ReviewsSummary
-					slug={ themeId }
-					productName={ name }
-					productType="theme"
-					onReviewsClick={ () => {
-						this.setState( {
-							isReviewsModalVisible: true,
-						} );
-					} }
-				/>
-			</div>
 		);
 	};
 
@@ -815,7 +855,7 @@ class ThemeSheet extends Component {
 							learnMoreLink: <InlineSupportLink supportContext="themes-retired" />,
 						},
 					}
-			  )
+				)
 			: this.props.translate(
 					'This theme has been retired and will only receive security updates. It is no longer available to sites that are not already using it. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 					{
@@ -828,7 +868,7 @@ class ThemeSheet extends Component {
 							),
 						},
 					}
-			  );
+				);
 
 		return (
 			<div className="theme__sheet-retired-notice">
@@ -965,7 +1005,7 @@ class ThemeSheet extends Component {
 								tierFilter: tier,
 								styleVariationSlug,
 								themeTier,
-						  } )
+							} )
 						: null
 				}
 				onClick={ ( event ) => {
@@ -986,6 +1026,26 @@ class ThemeSheet extends Component {
 			>
 				{ this.isLoaded() ? label : placeholder }
 			</Button>
+		);
+	};
+
+	// Secondary CTA: when the theme has a matching blueprint archive on
+	// blueprintlibrary.wordpress.com (surfaced by the wpcom theme API as
+	// has_blueprint / blueprint_id), offer to build a new WoA site from it via the
+	// onboarding blueprint flow. Gated by the themes/blueprint-cta feature flag.
+	renderBlueprintButton = () => {
+		return (
+			<BlueprintCtaButton
+				// eslint-disable-next-line camelcase -- passed through from the wpcom theme API.
+				hasBlueprint={ this.props.has_blueprint }
+				// eslint-disable-next-line camelcase -- passed through from the wpcom theme API.
+				blueprintId={ this.props.blueprint_id }
+				themeId={ this.props.themeId }
+				themeType={ this.props.themeType }
+				themeTier={ this.props.themeTier }
+				isLoading={ this.isLoading() }
+				recordTracksEvent={ this.props.recordTracksEvent }
+			/>
 		);
 	};
 
@@ -1201,7 +1261,7 @@ class ThemeSheet extends Component {
 			? seo_title
 			: translate( '%(themeName)s Theme', {
 					args: { themeName },
-			  } );
+				} );
 
 		const metas = [
 			{ property: 'og:title', content: title },
@@ -1293,7 +1353,6 @@ class ThemeSheet extends Component {
 						{ this.renderStagingPaidThemeNotice() }
 						{ this.renderNotice() }
 						{ this.renderHeader() }
-						{ this.renderReviews() }
 					</div>
 					<div className="theme__sheet-column-left">{ this.renderSectionContent( section ) }</div>
 					{ ! isRemoved && (
@@ -1457,7 +1516,7 @@ export default connect(
 		const error = theme
 			? false
 			: getThemeRequestErrors( state, themeId, 'wpcom' ) ||
-			  getThemeRequestErrors( state, themeId, siteId );
+				getThemeRequestErrors( state, themeId, siteId );
 		const englishUrl = 'https://wordpress.com' + getThemeDetailsUrl( state, themeId );
 
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );

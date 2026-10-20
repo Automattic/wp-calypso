@@ -1,9 +1,9 @@
+import { setLocale as setNumberFormattersLocale } from '@automattic/number-formatters';
 import { defaultI18n, type I18n, type LocaleData } from '@wordpress/i18n';
 import { I18nProvider as WPI18nProvider } from '@wordpress/react-i18n';
 import { useEffect, useState, type PropsWithChildren } from 'react';
-import { useAuth } from './auth';
-import { useSessionLocale } from './locale/session-locale';
-import { getUserLanguage } from './shared-locale-loader';
+import { getIntlLocale } from '../utils/locale';
+import { useLocaleSlug } from './locale';
 
 async function fetchLocaleData(
 	language: string,
@@ -142,14 +142,6 @@ async function switchWebpackCSS( isRTL: boolean ) {
 	}
 }
 
-// Determine the locale to use. A session locale (set by the omnibar language
-// switcher) takes precedence over the logged-in user's saved locale.
-function useLocaleSlug() {
-	const { user } = useAuth();
-	const sessionLocale = useSessionLocale();
-	return sessionLocale ?? getUserLanguage( user );
-}
-
 export function I18nProvider( { children }: PropsWithChildren ) {
 	const language = useLocaleSlug();
 	const [ loadedLocale, setLoadedLocale ] = useState< string | null >( null );
@@ -162,6 +154,7 @@ export function I18nProvider( { children }: PropsWithChildren ) {
 		fetchLocaleData( language, abortController.signal )
 			.then( ( [ realLanguage, data ] ) => {
 				i18n.resetLocaleData( data );
+				setNumberFormattersLocale( getIntlLocale( realLanguage ) );
 				// `realLanguage` can be different from `language` when loading language data fails
 				// and it falls back to `en`.
 				setLoadedLocale( realLanguage );

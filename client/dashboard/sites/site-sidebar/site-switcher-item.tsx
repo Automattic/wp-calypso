@@ -25,7 +25,7 @@ export default function SiteSwitcherItem( { site }: { site: Site } ) {
 			components.siteSwitcher
 				? ( lazy( components.siteSwitcher ) as React.LazyExoticComponent<
 						React.FC< SiteSwitcherProps >
-				  > )
+					> )
 				: null,
 		[ components ]
 	);

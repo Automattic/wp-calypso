@@ -1,10 +1,7 @@
-import {
-	getPlanBusinessTitle,
-	getPlanPersonalTitle,
-	getPlanPremiumTitle,
-} from '@automattic/calypso-products';
+import { getPlan, getPlanBusinessTitle } from '@automattic/calypso-products';
 import { subscribe, useSelect } from '@wordpress/data';
 import { useEffect, useState } from 'react';
+import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import wpcom from 'calypso/lib/wp';
 import {
 	currentlyPreviewingTheme,
@@ -90,10 +87,10 @@ export const usePreviewingTheme = () => {
 			previewingThemePlan = getPlanBusinessTitle();
 			break;
 		case PREMIUM_THEME:
-			previewingThemePlan = getPlanPremiumTitle();
-			break;
 		case PERSONAL_THEME:
-			previewingThemePlan = getPlanPersonalTitle();
+			previewingThemePlan = getPlan(
+				THEME_TIERS[ previewingThemeType ].minimumUpsellPlan
+			)?.getTitle();
 			break;
 	}
 

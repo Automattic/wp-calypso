@@ -450,12 +450,12 @@ import './style.scss';
 								y: dropdownHiddenOffset,
 								scale: dropdownHiddenScale,
 							},
-					  }
+						}
 					: {
 							height: currentDropdownHeight,
 							opacity: currentDropdownOpacity,
 							transform: currentDropdownTransform,
-					  },
+						},
 				contents: {
 					opacity: isHidden
 						? $.xMapPlainObject( currentDropdownContentOpacity, 0 )
@@ -473,7 +473,7 @@ import './style.scss';
 								y: dropdownHiddenOffset,
 								scale: dropdownHiddenScale,
 							},
-					  }
+						}
 					: {
 							height: dropdownContentHeights[ name ],
 							opacity: 1,
@@ -482,13 +482,13 @@ import './style.scss';
 								y: 0,
 								scale: 1,
 							},
-					  },
+						},
 				contents: {
 					opacity: isHiding
 						? currentDropdownContentOpacity
 						: $.xMapPlainObject( currentDropdownContentOpacity, function ( key ) {
 								return name === key ? 1 : 0;
-						  } ),
+							} ),
 				},
 			};
 

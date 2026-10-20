@@ -105,6 +105,21 @@ describe( 'Feedback List card CSS contract', () => {
 	} );
 } );
 
+describe( 'Split Screen Guide layout CSS contract', () => {
+	const css = compileStylesheet( 'split-screen-guide.scss' );
+
+	it( 'spaces the copy and action independently of parent paragraph margins', () => {
+		const guide = getDeclarations( css, '.jetpack-ai-split-screen-guide' );
+		const message = getDeclarations( css, '.jetpack-ai-split-screen-guide__message' );
+
+		expect( guide.get( 'display' ) ).toBe( 'flex' );
+		expect( guide.get( 'flex-direction' ) ).toBe( 'column' );
+		expect( guide.get( 'gap' ) ).toBe( 'var(--spacing-6)' );
+		expect( message.get( 'margin' ) ).toBe( '0' );
+		expect( message.get( 'padding-inline' ) ).toBe( 'var(--spacing-4)' );
+	} );
+} );
+
 describe( 'AI Editorial Review conflict-card CSS contract', () => {
 	const css = compileStylesheet( 'ai-editorial-review.scss' );
 

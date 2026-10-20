@@ -317,7 +317,7 @@ The prompt **must be self-contained** — the agent has no access to this conver
 - **Constraints**:
   - Fix the test's stability; do not touch product code unless the failure is clearly a product bug, in which case **stop and report the bug back instead of applying a fix**.
   - Do not delete, `.skip(...)`, quarantine, or mute the test.
-  - Follow `test/e2e/docs-new/creating_reliable_tests.md` and `test/e2e/docs-new/new_style_guide.md`.
+  - Follow `test/e2e/docs/creating_reliable_tests.md` and `test/e2e/docs/style_guide.md`.
   - **Use only `LS`, `Glob`, `Read`, `Grep`, `Edit`, `MultiEdit`, and `Write`** for analysis and edits. Do **not** call `browser_evaluate`, `test_run`, `test_debug`, or any other `mcp__playwright-test__*` tool — those trigger permission prompts and are unnecessary: the failure details above are the authoritative signal. Rely on code-level analysis, not on running the test.
 - **Expected return**: a short summary of (a) why the test was failing (root cause, one paragraph) and (b) what the fix does (one paragraph), plus the edits applied under `$WORKTREE_DIR`. Capture both paragraphs — they become the commit body and PR body.
 

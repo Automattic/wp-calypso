@@ -14,7 +14,9 @@ import {
 	isNewHostedSiteCreationFlow,
 	isOnboardingFlow,
 	isTailoredSignupFlow,
+	LAUNCH_SITE_FLOW,
 	ONBOARDING_FLOW,
+	SITE_MIGRATION_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -28,6 +30,7 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import { parse as parseQs } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
@@ -71,6 +74,7 @@ export interface UnifiedPlansStepProps {
 	hideFreePlan?: boolean;
 	hidePersonalPlan?: boolean;
 	hidePremiumPlan?: boolean;
+	hideBusinessPlan?: boolean;
 	hideEnterprisePlan?: boolean;
 	hideEcommercePlan?: boolean;
 	hidePlanTypeSelector?: boolean;
@@ -125,8 +129,10 @@ export interface UnifiedPlansStepProps {
 		Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >
 	>;
 	headerText?: string;
-	subHeaderText?: string;
+	subHeaderText?: TranslateResult;
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	fallbackHeaderText?: string;
 	deemphasizeFreePlan?: boolean;
 	useStepperWrapper?: boolean;
@@ -223,6 +229,7 @@ function UnifiedPlansStep( {
 	hideEcommercePlan,
 	hidePersonalPlan,
 	hidePremiumPlan,
+	hideBusinessPlan,
 	hideEnterprisePlan,
 	hidePlanTypeSelector,
 	saveSignupStep: saveSignupStepFromProps,
@@ -247,6 +254,8 @@ function UnifiedPlansStep( {
 	headerText,
 	subHeaderText,
 	highlightLabelOverrides,
+	titleBadgeOverrides,
+	taglineOverrides,
 	useEmailOnboardingSubheader,
 	onPlanIntervalUpdate,
 	positionInFlow,
@@ -681,6 +690,9 @@ function UnifiedPlansStep( {
 				customerType={ customerType }
 				deemphasizeFreePlan={ deemphasizeFreePlan }
 				renderFreePlanCtaInStepContainerV2={ shouldUseModalBackedFreePlanCTA }
+				// Legacy /start/launch-site shares its flow name with the Stepper flow, so the name
+				// alone can't tell which container the plans render in.
+				isInStepContainerV2={ flowName === LAUNCH_SITE_FLOW ? !! useStepContainerV2 : undefined }
 				plansWithScroll={ isDesktop }
 				intent={ intent }
 				flowName={ flowName }
@@ -688,10 +700,13 @@ function UnifiedPlansStep( {
 				hideFreePlan={ hideFreePlan && ! deemphasizeFreePlan }
 				hidePersonalPlan={ hidePersonalPlan }
 				hidePremiumPlan={ hidePremiumPlan }
+				hideBusinessPlan={ hideBusinessPlan }
 				hideEcommercePlan={ shouldHideEcommercePlan() }
 				hideEnterprisePlan={ hideEnterprisePlan }
 				hidePlanTypeSelector={ hidePlanTypeSelector }
 				highlightLabelOverrides={ highlightLabelOverrides }
+				titleBadgeOverrides={ titleBadgeOverrides }
+				taglineOverrides={ taglineOverrides }
 				removePaidDomain={ handleRemovePaidDomain }
 				setSiteUrlAsFreeDomainSuggestion={ handleSetSiteUrlAsFreeDomainSuggestion }
 				coupon={ coupon ?? undefined }
@@ -716,6 +731,7 @@ function UnifiedPlansStep( {
 
 		return (
 			<>
+				{ flowName === SITE_MIGRATION_FLOW && <DocumentHead title={ headerText } /> }
 				{ /*
 				 * The layout mounts hidden (CSS: visibility:hidden + position:absolute) so
 				 * PlansFeaturesMain's data-fetching hooks run immediately. Step.Loading

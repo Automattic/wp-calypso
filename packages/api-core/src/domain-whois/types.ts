@@ -33,6 +33,17 @@ export type DomainContactValidationRequestExtraFields = {
 		trademark_number?: string;
 		siren_siret?: string;
 	};
+	in?: {
+		nexus_declaration?: boolean;
+		nexus_connection_type?: string;
+	};
+	es?: {
+		registrant_entity_type?: string;
+		registrant_identification_number?: string;
+		admin_identification_number?: string;
+		red_es_agreement_accepted?: boolean;
+		red_es_agreement_version?: string;
+	};
 	is_for_business?: boolean;
 };
 
@@ -74,6 +85,17 @@ export type ContactValidationResponseMessagesExtra = {
 		trademark_number?: string[];
 		siren_siret?: string[];
 	};
+	in?: {
+		nexus_declaration?: string[];
+		nexus_connection_type?: string[];
+	};
+	es?: {
+		registrant_entity_type?: string[];
+		registrant_identification_number?: string[];
+		admin_identification_number?: string[];
+		red_es_agreement_accepted?: string[];
+		red_es_agreement_version?: string[];
+	};
 	is_for_business?: boolean;
 };
 
@@ -97,6 +119,43 @@ export type ContactValidationResponseMessages = {
 
 export type RawContactValidationResponseMessages = Record< string, string[] >;
 
+export type DomainContactValidationRequest = {
+	contact_information: ContactValidationRequestContactInformation;
+};
+
+/**
+ * The wire shape of a contact validation response, before the dot-qualified
+ * message keys (for example `extra.ca.lang`) are expanded into nested objects.
+ */
+export type RawDomainContactValidationResponse =
+	| { success: true }
+	| {
+			success: false;
+			messages: RawContactValidationResponseMessages;
+			messages_simple: string[];
+	  };
+
+/**
+ * The contact details saved for the current user by `/me/domain-contact-information`.
+ */
+export interface RawCachedDomainContactDetails {
+	first_name?: string;
+	last_name?: string;
+	organization?: string;
+	email?: string;
+	phone?: string;
+	phone_number_country?: string;
+	address_1?: string;
+	address_2?: string;
+	city?: string;
+	state?: string;
+	postal_code?: string;
+	country_code?: string;
+	fax?: string;
+	vat_id?: string;
+	extra?: DomainContactValidationRequestExtraFields;
+}
+
 export type DomainContactValidationResponse =
 	| { success: true }
 	| {
@@ -109,6 +168,8 @@ export type DomainContactDetailsExtra = {
 	ca?: CaDomainContactExtraDetails | null;
 	uk?: UkDomainContactExtraDetails | null;
 	fr?: FrDomainContactExtraDetails | null;
+	in?: InDomainContactExtraDetails | null;
+	es?: EsDomainContactExtraDetails | null;
 };
 
 export type CaDomainContactExtraDetails = {
@@ -137,6 +198,19 @@ export type FrDomainContactExtraDetails = {
  * names and differ per TLD, so this stays deliberately loose.
  */
 export type WhoisContactExtra = Record< string, string >;
+
+export type InDomainContactExtraDetails = {
+	nexusDeclaration?: boolean;
+	nexusConnectionType?: string;
+};
+
+export type EsDomainContactExtraDetails = {
+	registrantEntityType?: string;
+	registrantIdentificationNumber?: string;
+	adminIdentificationNumber?: string;
+	redEsAgreementAccepted?: boolean;
+	redEsAgreementVersion?: string;
+};
 
 export interface WhoisDataEntry {
 	fname: string;

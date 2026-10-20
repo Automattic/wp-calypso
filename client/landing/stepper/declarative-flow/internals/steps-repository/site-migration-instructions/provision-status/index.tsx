@@ -23,10 +23,10 @@ export const ProvisionStatus: FC< ProvisionStatusProps > = ( { status } ) => {
 			migrationKeyStatus === 'error'
 				? translate(
 						'Your new site is ready! Retrieve your migration key and enter it into your old site to start your migration.'
-				  )
+					)
 				: translate(
 						'Your new site is ready! Enter your migration key into your old site to start your migration.'
-				  );
+					);
 		return (
 			<div className="migration-instructions-provisioning">
 				<div className="migration-instructions-provisioning__success">

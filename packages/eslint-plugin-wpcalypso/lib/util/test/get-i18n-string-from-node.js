@@ -5,14 +5,11 @@
  * See LICENSE.md file in root directory for full license.
  */
 
-const parser = require( '@babel/eslint-parser' );
+const { parse } = require( 'espree' );
 const getTextContentFromNode = require( '../../../lib/util/get-text-content-from-node.js' );
 
 function parseCode( code ) {
-	const programNode = parser.parse( code, {
-		requireConfigFile: false,
-		babelOptions: { configFile: false },
-	} );
+	const programNode = parse( code, { ecmaVersion: 'latest' } );
 	// Espree thinks it's parsing a whole program, so we just need to peel away
 	// the 'Program' packaging.
 	return programNode.body[ 0 ];

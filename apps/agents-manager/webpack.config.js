@@ -22,7 +22,7 @@ function applyPostCssConfig( rules, config ) {
 								config,
 							},
 						},
-				  }
+					}
 				: loader
 		),
 	} ) );
@@ -32,7 +32,15 @@ function getIndividualConfig( options = {} ) {
 	const { name, env, argv, injectPolyfill = true } = options;
 
 	const outputPath = path.join( __dirname, 'dist' );
-	const webpackConfig = getBaseWebpackConfig( env, argv );
+	// Every entry emits into the shared `dist/`, so chunk files (JS and the
+	// CSS the base config derives from this name) must be entry-unique —
+	// same-named files from another entry's build would overwrite these. The
+	// content hash busts CDN caches: chunk URLs carry no `?ver` query, unlike
+	// the entries enqueued via `asset.json`.
+	const webpackConfig = getBaseWebpackConfig( env, {
+		...argv,
+		'output-chunk-filename': `${ name }.[name].[contenthash:8].min.js`,
+	} );
 
 	return {
 		...webpackConfig,
@@ -42,6 +50,10 @@ function getIndividualConfig( options = {} ) {
 			...webpackConfig.output,
 			path: outputPath,
 			filename: '[name].min.js',
+			// Entries loaded on the same page (e.g. wp-admin + image-studio)
+			// must not share a chunk-loading runtime global.
+			chunkLoadingGlobal: `webpackChunk_${ name.replace( /-/g, '_' ) }`,
+			uniqueName: name,
 			library: 'agentsManager',
 		},
 		module: {
@@ -57,15 +69,6 @@ function getIndividualConfig( options = {} ) {
 						filename: 'images/[name].[contenthash:8][ext]',
 					},
 				},
-				// Handle image assets from block-notes package
-				{
-					test: /\.(webp|png|jpg|jpeg|gif|svg)$/i,
-					include: /block-notes/,
-					type: 'asset/resource',
-					generator: {
-						filename: 'images/[name].[contenthash:8][ext]',
-					},
-				},
 			],
 		},
 		resolve: {
@@ -74,7 +77,6 @@ function getIndividualConfig( options = {} ) {
 				...( webpackConfig.resolve?.alias || {} ),
 				// Share one Smooch instance with the Help Center bundle when both load
 				// together (e.g. the Site Editor). See smooch-shim.js.
-				// TODO: Remove once Agents Manager takes over the Help Center.
 				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
 			},
 		},
@@ -107,14 +109,10 @@ function getIndividualConfig( options = {} ) {
 					}
 					// TODO: Remove this override when @wordpress/abilities ships with
 					// WordPress core (expected in WP 7.0).
-					// Bundle @wordpress/abilities into image-studio so it works on
-					// self-hosted sites where the package isn't registered as a script.
-					if (
-						( name === 'image-studio' ||
-							name === 'block-notes' ||
-							name === 'jetpack-ai-sidebar' ) &&
-						request === '@wordpress/abilities'
-					) {
+					// Bundle @wordpress/abilities so bundles work on sites where the
+					// package isn't registered as a script — WP_Scripts silently skips
+					// scripts with unregistered dependencies.
+					if ( request === '@wordpress/abilities' ) {
 						return null;
 					}
 					// Bundle @wordpress/ui: neither WordPress core nor the Gutenberg
@@ -125,6 +123,12 @@ function getIndividualConfig( options = {} ) {
 					if ( request === '@wordpress/ui' ) {
 						return null;
 					}
+					// No branch for @wordpress/router or @wordpress/private-apis —
+					// core registers both handles and they must stay external. Each
+					// keeps module-scope state the editor already owns (the router's
+					// history, `unlock()`'s WeakMap); a bundled second copy forks it
+					// and silently breaks `editor-navigate`.
+
 					// The plugin maps `react`/`react-dom` but not this deep import,
 					// so it would get bundled — a second react-dom copy (v19) that
 					// crashes against the page's external React. WordPress's
@@ -158,7 +162,12 @@ function getIndividualConfig( options = {} ) {
 function getReaderConfig( options = {} ) {
 	const { env, argv } = options;
 	const outputPath = path.join( __dirname, 'dist' );
-	const webpackConfig = getBaseWebpackConfig( env, argv );
+	// Chunk files must be entry-unique and content-hashed in the shared
+	// `dist/` — see `getIndividualConfig`.
+	const webpackConfig = getBaseWebpackConfig( env, {
+		...argv,
+		'output-chunk-filename': 'reader-chat.[name].[contenthash:8].min.js',
+	} );
 
 	return {
 		...webpackConfig,
@@ -189,12 +198,14 @@ function getReaderConfig( options = {} ) {
 			...webpackConfig.resolve,
 			alias: {
 				...( webpackConfig.resolve?.alias || {} ),
-				// Share one Smooch instance across bundles (see smooch-shim.js).
-				// TODO: Remove once Agents Manager takes over the Help Center.
-				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
+				// Keep libvips' inlined WASM out of the frontend bundle. See
+				// reader-chat-vips-stub.js.
+				'@wordpress/vips/worker$': path.join( __dirname, 'reader-chat-vips-stub.js' ),
+				// Keep the Zendesk client and Smooch out of the frontend bundle. See
+				// reader-chat-zendesk-client-stub.js.
+				'@automattic/zendesk-client$': path.join( __dirname, 'reader-chat-zendesk-client-stub.js' ),
 				'../agent-history': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../support-guide': path.join( __dirname, 'reader-chat-route-stub.js' ),
-				'../support-guides': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../zendesk-chat': path.join( __dirname, 'reader-chat-route-stub.js' ),
 			},
 		},
@@ -255,9 +266,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'image-studio' } ),
 		getIndividualConfig( { env, argv, name: 'jetpack-ai-sidebar' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
-		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
-		getIndividualConfig( { env, argv, name: 'block-notes' } ),
-		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wooai' } ),
 		getReaderConfig( { env, argv } ),
 	];

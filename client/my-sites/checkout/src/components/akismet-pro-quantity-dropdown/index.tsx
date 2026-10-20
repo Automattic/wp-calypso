@@ -363,7 +363,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 								%(actualAmountDisplay)s is the localized total price, e.g. "$30.75".
 							`,
 						}
-				  )
+					)
 				: translate(
 						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s per license = %(actualAmountDisplay)s{{/span}}',
 						{
@@ -381,7 +381,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 								%(actualAmountDisplay)s is the localized total price, e.g. "$30.75".
 							`,
 						}
-				  );
+					);
 		}
 
 		return actualAmountDisplay;

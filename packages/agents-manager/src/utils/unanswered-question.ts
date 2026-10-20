@@ -1,0 +1,85 @@
+import type { Message } from '@automattic/agenttic-client';
+
+const serverIdOf = ( message: Message | undefined ): number => {
+	const id = message?.metadata?.serverId;
+	return typeof id === 'number' ? id : 0;
+};
+
+// By server id, which grows with every stored message.
+const newestOf = ( messages: Message[] ): Message | undefined =>
+	messages.reduce< Message | undefined >(
+		( newest, message ) => ( serverIdOf( message ) > serverIdOf( newest ) ? message : newest ),
+		undefined
+	);
+
+const textOf = ( message: Message ): string =>
+	message.parts
+		.map( ( part ) => ( part.type === 'text' ? part.text : '' ) )
+		.join( '' )
+		.trim();
+
+// The server stores tool results as agent rows whose text is JSON with a `tool_id`.
+const isToolResult = ( message: Message ): boolean => {
+	try {
+		return typeof JSON.parse( textOf( message ) )?.tool_id === 'string';
+	} catch {
+		return false;
+	}
+};
+
+/**
+ * The highest server id in a loaded conversation.
+ * @param messages The loaded conversation.
+ * @returns The id, or 0 when no message has one.
+ */
+export function getNewestServerId( messages: Message[] ): number {
+	return serverIdOf( newestOf( messages ) );
+}
+
+/**
+ * The user's last question, while the conversation has no reply to it yet.
+ * @param messages The loaded conversation.
+ * @returns The question, whether it had attachments, and when the conversation last
+ * changed, or `undefined`.
+ */
+export function getUnansweredQuestion(
+	messages: Message[]
+): { text: string; hasFiles: boolean; lastActivityAt: number } | undefined {
+	const newest = newestOf( messages );
+	if ( ! newest || ( newest.role !== 'user' && ! isToolResult( newest ) ) ) {
+		return undefined;
+	}
+
+	const question = newestOf( messages.filter( ( message ) => message.role === 'user' ) );
+	const text = question ? textOf( question ) : '';
+	const hasFiles = !! question?.parts.some( ( part ) => part.type === 'file' );
+	if ( ! text && ! hasFiles ) {
+		return undefined;
+	}
+
+	const lastActivityAt = newest.metadata?.timestamp;
+
+	return {
+		text,
+		hasFiles,
+		lastActivityAt: typeof lastActivityAt === 'number' ? lastActivityAt : 0,
+	};
+}
+
+/**
+ * A conversation with its newest page reloaded: the page replaces the rows it
+ * covers and keeps the older ones, in the order the full load returns them.
+ * @param loaded     The conversation as loaded before, newest page first.
+ * @param newestPage The reloaded newest page.
+ * @returns The merged conversation.
+ */
+export function mergeNewestPage( loaded: Message[], newestPage: Message[] ): Message[] {
+	const ids = newestPage.map( serverIdOf ).filter( ( id ) => id > 0 );
+	const oldestOnPage = ids.length ? Math.min( ...ids ) : Infinity;
+	const older = loaded.filter( ( message ) => {
+		const id = serverIdOf( message );
+		return id > 0 && id < oldestOnPage;
+	} );
+
+	return [ ...newestPage, ...older ];
+}

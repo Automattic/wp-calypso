@@ -50,7 +50,7 @@ export default function HostingFeatures( {
 					title: translate( 'Security' ),
 					items: [
 						translate( 'Real-time backups' ),
-						translate( 'DDOS protection and mitigation' ),
+						translate( 'DDoS protection and mitigation' ),
 						translate( 'Brute-force protection' ),
 						translate( 'Malware detection & removal' ),
 						translate( 'Spam protection with Akismet' ),

@@ -12,7 +12,11 @@ export function redirectToJetpackNewsletterSettings( context ) {
 	const siteId = getSelectedSiteId( state );
 	const siteUrl = getSiteUrl( state, siteId );
 
-	navigate( `${ siteUrl }/wp-admin/admin.php?page=jetpack-newsletter` );
+	navigate(
+		`${ siteUrl }/wp-admin/admin.php?page=jetpack-newsletter&p=${ encodeURIComponent(
+			'/?tab=settings'
+		) }`
+	);
 }
 
 /**

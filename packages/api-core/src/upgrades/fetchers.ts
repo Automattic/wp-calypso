@@ -20,6 +20,7 @@ export function normalizePurchase( rawPurchase: RawPurchase ): Purchase {
 		user_id: parseInt( String( rawPurchase.user_id ), 10 ),
 		is_domain: Boolean( rawPurchase.is_domain ),
 		is_domain_registration: Boolean( rawPurchase.is_domain_registration ),
+		renew_date: rawPurchase.renew_date || undefined,
 	};
 }
 

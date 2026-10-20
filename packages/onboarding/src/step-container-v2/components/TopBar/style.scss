@@ -73,3 +73,14 @@
 		}
 	}
 }
+
+a.step-container-v2__top-bar-wordpress-logo-wrapper {
+	color: inherit;
+	text-decoration: none;
+	border-radius: 2px;
+
+	&:focus-visible {
+		outline: var( --wp-admin-border-width-focus, 2px ) solid var( --wp-admin-theme-color, #3858e9 );
+		outline-offset: 2px;
+	}
+}

@@ -36,7 +36,7 @@ export function Terms100Year( { cart, type }: { cart: ResponseCart; type: TermsT
 								),
 							},
 						}
-				  )
+					)
 				: translate(
 						'You acknowledge that you have read and understand {{supportLink}}these details about the %(planName)s{{/supportLink}}, including feature changes that could occur during the life of your plan.',
 						{
@@ -55,7 +55,7 @@ export function Terms100Year( { cart, type }: { cart: ResponseCart; type: TermsT
 								planName,
 							},
 						}
-				  ) }
+					) }
 		</CheckoutTermsItem>
 	);
 }

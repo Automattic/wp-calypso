@@ -272,7 +272,13 @@ export default function () {
 		domainManagementController.domainManagementEdit,
 		[
 			setupPreferences,
-			maybeRedirectToMultiSiteDashboard( ( params ) => `/domains/${ params.domain }` ),
+			maybeRedirectToMultiSiteDashboard( ( { domain, site } ) => {
+				if ( site && domain.endsWith( '.wordpress.com' ) ) {
+					return `/sites/${ site }/domains?action=change-site-address`;
+				}
+
+				return `/domains/${ domain }`;
+			} ),
 		]
 	);
 

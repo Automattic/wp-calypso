@@ -68,6 +68,48 @@ describe( 'fetchBundleMetadata', () => {
 		expect( scope.isDone() ).toBe( true );
 	} );
 
+	it( 'sends the plain suggestion defaults so the wrapped request matches the plain one', async () => {
+		const scope = nock( BASE )
+			.get( '/rest/v1.1/domains/suggestions' )
+			.query(
+				( query ) =>
+					query.with_bundles === '1' &&
+					query.include_wordpressdotcom === 'false' &&
+					query.include_dotblogsubdomain === 'false' &&
+					query.only_wordpressdotcom === 'false' &&
+					query.quantity === '5' &&
+					query.vendor === 'variation2_front' &&
+					query.query === 'example'
+			)
+			.reply( 200, { domain_suggestions: [], bundle_suggestion: null, bundle_triggers: [] } );
+
+		await fetchBundleMetadata( 'example' );
+
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'forwards caller params over the defaults', async () => {
+		const scope = nock( BASE )
+			.get( '/rest/v1.1/domains/suggestions' )
+			.query(
+				( query ) =>
+					query.with_bundles === '1' &&
+					query.quantity === '30' &&
+					query.vendor === 'ciab' &&
+					query.exact_sld_matches_only === 'true' &&
+					query.query === 'example'
+			)
+			.reply( 200, { domain_suggestions: [], bundle_suggestion: null, bundle_triggers: [] } );
+
+		await fetchBundleMetadata( 'example', {
+			quantity: 30,
+			vendor: 'ciab',
+			exact_sld_matches_only: true,
+		} );
+
+		expect( scope.isDone() ).toBe( true );
+	} );
+
 	it( 'normalises a missing bundle suggestion to null and missing triggers to []', async () => {
 		nock( BASE ).get( '/rest/v1.1/domains/suggestions' ).query( true ).reply( 200, {
 			domain_suggestions: [],

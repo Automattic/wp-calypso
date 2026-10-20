@@ -34,11 +34,20 @@ export interface SettingsParams {
 	[ key: string ]: string | number;
 }
 
+export interface SiteSettingsParams {
+	[ key: string ]: string | number | boolean;
+}
+
 export interface NewCommentParams {
 	content: string;
 }
 
 /* Response Interfaces */
+
+export interface SiteSettingsResponse {
+	name: string;
+	settings: { [ key: string ]: unknown };
+}
 
 export interface BearerTokenResponse {
 	success: true;
@@ -84,6 +93,10 @@ export interface NewUserResponse {
 		user_id: number;
 		username: string;
 		bearer_token: string;
+		// A refused signup answers in this same envelope: the HTTP status is 200,
+		// the refusal is the enveloped `code`, and these two say what it was.
+		error?: string;
+		message?: string;
 	};
 }
 
@@ -117,6 +130,35 @@ export interface Purchase {
 }
 
 export type AllPurchasesResponse = Array< Purchase >;
+
+// helpers read and post it back.
+// helpers read it. Products keep their untyped fields when posted back.
+export interface CartProduct {
+	product_slug: string;
+	product_id?: number;
+	meta?: string;
+	extra?: Record< string, unknown >;
+	volume?: number;
+	quantity?: number | null;
+}
+
+export interface CartTaxLocation {
+	country_code?: string;
+	postal_code?: string;
+	subdivision_code?: string;
+	vat_id?: string;
+	organization?: string;
+	address?: string;
+	city?: string;
+	is_for_business?: boolean;
+}
+
+export interface ShoppingCartResponse {
+	blog_id: number;
+	coupon: string;
+	products: CartProduct[];
+	tax: { location: CartTaxLocation };
+}
 
 export interface PurchaseCancelParams {
 	product_id: string | number;

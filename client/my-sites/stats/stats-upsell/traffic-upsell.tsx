@@ -19,7 +19,7 @@ const TrafficUpsell: React.FC = () => {
 				translate( 'Unlimited pages, posts, users, and visitors' ),
 				translate( 'Free domain for one year' ),
 				translate( 'Ad-free browsing experience for your visitors' ),
-				translate( 'Dozens of premium themes' ),
+				translate( 'All premium themes' ),
 				translate( 'Fast support from our expert team' ),
 				translate( 'Customize fonts and colors sitewide' ),
 			] }

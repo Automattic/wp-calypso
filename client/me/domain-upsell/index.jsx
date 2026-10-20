@@ -180,10 +180,10 @@ export function RenderDomainUpsell( {
 		! isFreePlan && ! isMonthlyPlan
 			? translate(
 					'Your plan includes a free domain for the first year. Stake your claim on the web with a domain name that boosts your brand.'
-			  )
+				)
 			: translate(
 					"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
-			  );
+				);
 
 	return (
 		<Card className="profile-domain-upsell__card customer-home__card">

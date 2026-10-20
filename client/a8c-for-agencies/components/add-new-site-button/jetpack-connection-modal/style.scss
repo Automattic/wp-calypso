@@ -26,6 +26,8 @@
 	}
 
 	.button {
+		display: flex;
+		white-space: nowrap;
 		flex-grow: 1;
 	}
 

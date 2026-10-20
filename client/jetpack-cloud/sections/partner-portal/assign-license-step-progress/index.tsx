@@ -34,11 +34,7 @@ function CheckMarkOrNumber( { currentStep, step }: { currentStep: number; step: 
 }
 
 type StepKey =
-	| 'issueLicense'
-	| 'reviewLicense'
-	| 'addPaymentMethod'
-	| 'assignLicense'
-	| 'downloadProducts';
+	'issueLicense' | 'reviewLicense' | 'addPaymentMethod' | 'assignLicense' | 'downloadProducts';
 
 interface Step {
 	key: StepKey;

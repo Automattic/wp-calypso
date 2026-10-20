@@ -1,21 +1,23 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
-import { useSelect } from '@wordpress/data';
 import { hasOnlyRenewalItems } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { useContactDetails } from '../lib/checkout-stores';
 import { SummaryLine, SummaryDetails } from './summary-details';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const GridRow = styled.div`
-	display: -ms-grid;
 	display: grid;
 	width: 100%;
-	-ms-grid-columns: 48% 4% 48%;
-	grid-template-columns: 48% 48%;
-	grid-column-gap: 4%;
+	grid-template-columns: 1fr;
+	gap: 8px;
 	justify-items: stretch;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+		grid-template-columns: 48% 48%;
+		column-gap: 4%;
+	}
 `;
 
 export default function WPContactFormSummary( {
@@ -27,7 +29,7 @@ export default function WPContactFormSummary( {
 	isGSuiteInCart: boolean;
 	isLoggedOutCart: boolean;
 } ) {
-	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
+	const contactInfo = useContactDetails();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isRenewal = hasOnlyRenewalItems( responseCart );
@@ -41,6 +43,16 @@ export default function WPContactFormSummary( {
 		' ',
 		contactInfo.firstName?.value,
 		contactInfo.lastName?.value
+	);
+
+	const hasFullAddress = areThereDomainProductsInCart && ! isRenewal;
+	const addressSummary = (
+		<AddressSummary
+			responseCart={ responseCart }
+			isRenewal={ isRenewal }
+			contactInfo={ contactInfo }
+			areThereDomainProductsInCart={ areThereDomainProductsInCart }
+		/>
 	);
 
 	return (
@@ -68,13 +80,9 @@ export default function WPContactFormSummary( {
 						) }
 				</SummaryDetails>
 
-				<AddressSummary
-					responseCart={ responseCart }
-					isRenewal={ isRenewal }
-					contactInfo={ contactInfo }
-					areThereDomainProductsInCart={ areThereDomainProductsInCart }
-				/>
+				{ ! hasFullAddress && addressSummary }
 			</div>
+			{ hasFullAddress && <div>{ addressSummary }</div> }
 		</GridRow>
 	);
 }

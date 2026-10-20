@@ -1,7 +1,9 @@
+import config from '@automattic/calypso-config';
+import { isEcommercePlan } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { AI_SITE_BUILDER_ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useDispatch, dispatch, resolveSelect } from '@wordpress/data';
+import { useDispatch, dispatch, resolveSelect, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { pathToUrl } from 'calypso/lib/url';
@@ -21,15 +23,59 @@ import {
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
+import {
+	BUILD_WOW_SITE_SPEC_PATH,
+	commerceUsesBuildWow,
+	getBuildWowSiteSpecUrl,
+	getBuildWowStreamQueryArgs,
+	isBuildWowStreamRequested,
+} from '../../../utils/build-wow';
+import { planSupportsBuildWow } from '../../../utils/build-wow-plans';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
-import type { OnboardActions } from '@automattic/data-stores';
+import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import type { Store } from 'redux';
 
 const SiteIntent = Onboard.SiteIntent;
+
+/**
+ * The build-wow site spec, entered straight from checkout. The build-wow
+ * endpoint provisions the Atomic site and queues the build when the spec is
+ * confirmed there, so no site preparation is needed on the way in. A spec_id
+ * carried from entry confirms that spec on arrival instead of asking again.
+ */
+function getBuildWowDestination( {
+	siteSlug,
+	siteId,
+	ref,
+	source,
+	prompt,
+	specId,
+	streamEvents,
+}: {
+	siteSlug: string;
+	siteId: number | string;
+	ref: string | null;
+	source: string | null;
+	prompt: string;
+	specId: string | null;
+	streamEvents: boolean;
+} ): string {
+	const specUrl = getBuildWowSiteSpecUrl( {
+		siteSlug,
+		siteId,
+		ref,
+		source,
+		prompt,
+		graph: 'dsl',
+		streamEvents,
+	} );
+
+	return specId ? addQueryArgs( specUrl, { spec_id: specId } ) : specUrl;
+}
 
 async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore } = dispatch( ONBOARD_STORE ) as OnboardActions;
@@ -48,6 +94,7 @@ async function initialize( reduxStore: Store ) {
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
+		STEPS.WAIT_FOR_COMMERCE_ATOMIC,
 		STEPS.ERROR,
 	] );
 }
@@ -79,11 +126,113 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 
 		const query = useQuery();
 		const flowName = this.name;
+		const planCartItem = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			[]
+		);
+		/**
+		 * Prepare the freshly created site for Big Sky and return the site editor
+		 * URL that launches the Site Spec experience: publish a Home page, set it
+		 * as the static homepage, and set the AI Assembler intent so the editor
+		 * opens on a real page rather than the index template. Reuse an existing
+		 * Home page if the site was already prepared so a re-entry doesn't create
+		 * duplicates.
+		 */
+		async function prepareSiteEditorDestination( {
+			site,
+			siteId,
+			siteSlug,
+			prompt,
+			source,
+			specId,
+		}: {
+			site: { URL: string };
+			siteId: number | string;
+			siteSlug: string;
+			prompt: string;
+			source: string | null;
+			specId: string | null;
+		} ): Promise< string > {
+			try {
+				const existingPages = await wpcom.req.get(
+					{ path: '/sites/' + siteId + '/pages', apiNamespace: 'wp/v2' },
+					{ slug: 'home', status: 'publish', _fields: 'id' }
+				);
+				let homePageId = existingPages?.[ 0 ]?.id as number | undefined;
+
+				if ( ! homePageId ) {
+					const homePage = await wpcom.req.post(
+						{ path: '/sites/' + siteId + '/pages', apiNamespace: 'wp/v2' },
+						{},
+						{
+							title: 'Home',
+							status: 'publish',
+							content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+						}
+					);
+					homePageId = homePage?.id;
+				}
+
+				await setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
+				if ( homePageId ) {
+					await setStaticHomepageOnSite( siteId, homePageId );
+				}
+			} catch ( error ) {
+				// Fail silently — Big Sky can still launch without the prepared page.
+			}
+
+			return addQueryArgs( `${ site.URL }/wp-admin/site-editor.php`, {
+				canvas: 'edit',
+				'ai-step': 'spec',
+				referrer: AI_SITE_BUILDER_ONBOARDING_FLOW,
+				...( prompt && { prompt } ),
+				...( source && { source } ),
+				...( specId && { spec_id: specId } ),
+				checkout: 'success',
+			} );
+		}
 
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 
 			switch ( slug ) {
+				case STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug: {
+					if ( ! providedDependencies.ready ) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
+					const siteSlug = query.get( 'siteSlug' );
+					const destination = query.get( 'redirect_to' );
+					if ( ! siteSlug || ! destination ) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
+					// Only for checkouts started before build-wow skipped this wait, which
+					// persisted it as the destination. The signup destination cookie lives 24h
+					// and redirect payments return later, so remove it a few days after deploy.
+					if ( destination.startsWith( `${ BUILD_WOW_SITE_SPEC_PATH }?` ) ) {
+						window.location.replace( destination );
+						return;
+					}
+
+					let editorUrl: URL;
+					try {
+						editorUrl = new URL( destination );
+					} catch {
+						return navigate( STEPS.ERROR.slug );
+					}
+					if (
+						! siteSlug.endsWith( '.wordpress.com' ) ||
+						editorUrl.protocol !== 'https:' ||
+						editorUrl.hostname !== siteSlug ||
+						editorUrl.pathname !== '/wp-admin/site-editor.php'
+					) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
+					window.location.replace( editorUrl.toString() );
+					return;
+				}
 				case STEPS.DOMAIN_SEARCH.slug: {
 					if ( ! providedDependencies ) {
 						throw new Error( 'No provided dependencies found' );
@@ -146,56 +295,44 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					// Prepare the freshly created site for Big Sky: publish a Home page,
-					// set it as the static homepage, and set the AI Assembler intent so the
-					// editor launches the Site Spec experience on a real page rather than
-					// the index template. Reuse an existing Home page if the site was
-					// already prepared so a re-entry doesn't create duplicates.
-					try {
-						const existingPages = await wpcom.req.get(
-							{ path: '/sites/' + siteId + '/pages', apiNamespace: 'wp/v2' },
-							{ slug: 'home', status: 'publish', _fields: 'id' }
-						);
-						let homePageId = existingPages?.[ 0 ]?.id as number | undefined;
-
-						if ( ! homePageId ) {
-							const homePage = await wpcom.req.post(
-								{ path: '/sites/' + siteId + '/pages', apiNamespace: 'wp/v2' },
-								{},
-								{
-									title: 'Home',
-									status: 'publish',
-									content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-								}
-							);
-							homePageId = homePage?.id;
-						}
-
-						await setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
-						if ( homePageId ) {
-							await setStaticHomepageOnSite( siteId, homePageId );
-						}
-					} catch ( error ) {
-						// Fail silently — Big Sky can still launch without the prepared page.
-					}
+					// The build-wow endpoint prepares the site itself, so the Big Sky editor
+					// preparation is only for the legacy site editor destination. The build-wow
+					// destination lives in the ai-site-builder-spec flow, which bounces to plain
+					// onboarding without the site-spec feature.
+					const isCommerce = !! planCartItem && isEcommercePlan( planCartItem.product_slug );
+					const useBuildWow =
+						config.isEnabled( 'site-spec' ) &&
+						( planSupportsBuildWow( planCartItem?.product_slug ) ||
+							( isCommerce && ( await commerceUsesBuildWow( siteId ) ) ) );
 
 					const prompt =
 						query.get( 'prompt' ) || window.sessionStorage.getItem( 'stored_ai_prompt' ) || '';
 					const source = query.get( 'source' );
+					const ref = query.get( 'ref' );
 					const specId = query.get( 'spec_id' );
+					const streamEvents = isBuildWowStreamRequested( query );
 					window.sessionStorage.removeItem( 'stored_ai_prompt' );
 
-					const specEditorUrl = `${ site.URL }/wp-admin/site-editor.php`;
-					const specUrl = addQueryArgs( specEditorUrl, {
-						canvas: 'edit',
-						'ai-step': 'spec',
-						referrer: AI_SITE_BUILDER_ONBOARDING_FLOW,
-						...( prompt && { prompt } ),
-						...( source && { source } ),
-						...( specId && { spec_id: specId } ),
-						checkout: 'success',
-					} );
-					// On checkout exit we must not drop the user into Big Sky (the
+					const destination = useBuildWow
+						? getBuildWowDestination( {
+								siteSlug,
+								siteId,
+								ref,
+								source,
+								prompt,
+								specId,
+								streamEvents,
+							} )
+						: await prepareSiteEditorDestination( {
+								site,
+								siteId,
+								siteSlug,
+								prompt,
+								source,
+								specId,
+							} );
+
+					// On checkout exit we must not drop the user into the AI builder (the
 					// success destination) before they've paid. Send them back into
 					// the flow instead: keeping the cart returns to the plan step,
 					// while emptying the cart returns to the domain step (handled by
@@ -204,7 +341,9 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						siteSlug,
 						...( prompt && { prompt } ),
 						...( source && { source } ),
+						...( ref && { ref } ),
 						...( specId && { spec_id: specId } ),
+						...getBuildWowStreamQueryArgs( streamEvents ),
 					};
 					const checkoutBackUrl = pathToUrl(
 						addQueryArgs(
@@ -219,14 +358,24 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						)
 					);
 
-					persistSignupDestination( specUrl );
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					setSignupCompleteSiteID( siteId );
 
+					// Only the legacy editor lives on the site, so only it waits for the
+					// Commerce transfer. Build-wow reuses that transfer and builds once it ends.
+					const checkoutDestination =
+						isCommerce && ! useBuildWow
+							? addQueryArgs(
+									`/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }/${ STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug }`,
+									{ siteId, siteSlug, redirect_to: destination }
+								)
+							: destination;
+					persistSignupDestination( checkoutDestination );
+
 					return window.location.assign(
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-							redirect_to: specUrl,
+							redirect_to: checkoutDestination,
 							checkoutBackUrl,
 							checkoutBackUrlDomains,
 							signup: 1,

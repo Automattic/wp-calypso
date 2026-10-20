@@ -10,8 +10,9 @@ import type { AgentsManagerSelect } from '@automattic/data-stores';
  *
  * Reader-chat runs on public blog frontends where `AGENTS_MANAGER_STORE` is
  * in-memory only, so a fresh page load resets `isOpen` to false. Mirror the
- * flag in `localStorage`: restore it on first mount and write it on every
- * toggle. No-op for other agents, whose state is server-backed.
+ * flag in `sessionStorage` (per tab, like the chat session): restore it on
+ * first mount and write it on every toggle. No-op for other agents, whose
+ * state is server-backed.
  */
 export default function useReaderChatPersistence(): void {
 	const { agentConfig } = useAgentsManagerContext();
@@ -34,7 +35,7 @@ export default function useReaderChatPersistence(): void {
 		}
 
 		try {
-			if ( localStorage.getItem( storageKey ) === '1' && ! isOpen ) {
+			if ( sessionStorage.getItem( storageKey ) === '1' && ! isOpen ) {
 				setIsOpen( true, false );
 			}
 		} catch {
@@ -51,9 +52,9 @@ export default function useReaderChatPersistence(): void {
 
 		try {
 			if ( isOpen ) {
-				localStorage.setItem( storageKey, '1' );
+				sessionStorage.setItem( storageKey, '1' );
 			} else {
-				localStorage.removeItem( storageKey );
+				sessionStorage.removeItem( storageKey );
 			}
 		} catch {
 			// ignore

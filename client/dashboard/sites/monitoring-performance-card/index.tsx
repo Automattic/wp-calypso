@@ -1,5 +1,6 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
 import { type DataPointDate, LineChart, SeriesData } from '@automattic/charts';
+import { formatNumber } from '@automattic/number-formatters';
 import '@automattic/charts/style.css';
 import { useQuery } from '@tanstack/react-query';
 import { GlyphDiamond, GlyphCircle } from '@visx/glyph';
@@ -7,7 +8,7 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { useLocale } from '../../app/locale';
+import { useIntlLocale } from '../../app/locale';
 import { Text } from '../../components/text';
 import {
 	convertTimeRangeToUnix,
@@ -77,7 +78,7 @@ export default function MonitoringPerformanceCard( {
 	timeRange: number;
 } ) {
 	const { requestsData, responseTimeData, isLoading } = useSiteMetricsData( site.ID, timeRange );
-	const locale = useLocale();
+	const locale = useIntlLocale();
 
 	const requestsPerMinuteLabel = __( 'Requests per minute' );
 	const averageResponseTimeLabel = __( 'Average response time (ms)' );
@@ -198,7 +199,12 @@ export default function MonitoringPerformanceCard( {
 												</svg>
 												{ series.key }
 											</Text>
-											<Text weight="normal">{ series.datum.value }</Text>
+											<Text weight="normal">
+												{ series.datum.value !== null &&
+													formatNumber( series.datum.value, {
+														numberFormatOptions: { maximumFractionDigits: 2 },
+													} ) }
+											</Text>
 										</div>
 									) ) }
 								</div>

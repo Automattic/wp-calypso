@@ -1,4 +1,4 @@
-import { buildSummaryUrl, getPathWithUpdatedQueryString } from '../utils';
+import { buildSummaryUrl, getPathWithUpdatedQueryString, normalizeChartDateParam } from '../utils';
 
 describe( 'getPathWithUpdatedQueryString', () => {
 	it( 'should return the path with the updated query string', () => {
@@ -25,6 +25,25 @@ describe( 'getPathWithUpdatedQueryString', () => {
 		expect(
 			getPathWithUpdatedQueryString( { h: 'i' }, '/a/b/c?h=k?page=stats?page=stats?page=stats' )
 		).toEqual( '/a/b/c?h=i' );
+	} );
+} );
+
+describe( 'normalizeChartDateParam', () => {
+	it( 'zero-pads an unpadded month and/or day', () => {
+		expect( normalizeChartDateParam( '2026-7-28' ) ).toEqual( '2026-07-28' );
+		expect( normalizeChartDateParam( '2026-7-8' ) ).toEqual( '2026-07-08' );
+		expect( normalizeChartDateParam( '2026-12-8' ) ).toEqual( '2026-12-08' );
+	} );
+
+	it( 'leaves an already-padded date unchanged', () => {
+		expect( normalizeChartDateParam( '2026-07-28' ) ).toEqual( '2026-07-28' );
+	} );
+
+	it( 'leaves non-date-only strings, non-strings, and empty values unchanged', () => {
+		expect( normalizeChartDateParam( '2026-07-28T10:00:00Z' ) ).toEqual( '2026-07-28T10:00:00Z' );
+		expect( normalizeChartDateParam( 'not-a-date' ) ).toEqual( 'not-a-date' );
+		expect( normalizeChartDateParam( undefined ) ).toBeUndefined();
+		expect( normalizeChartDateParam( null ) ).toBeNull();
 	} );
 } );
 

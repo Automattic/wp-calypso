@@ -59,7 +59,7 @@ test.describe(
 
 			await test.step( 'User lands in CrowdSignal dashboard', async () => {
 				// This will be a production site instead of staging or wpcalypso.
-				await page.waitForSelector( 'div.welcome-main' );
+				await page.waitForSelector( 'div.welcome-main', { timeout: 30 * 1000 } );
 			} );
 
 			await test.step( 'Get activation link', async () => {
@@ -81,7 +81,7 @@ test.describe(
 				// Waiting for `load` is required so Calypso loading won't swallow up
 				// the click on navbar in the Close Account steps.
 				await Promise.all( [
-					page.waitForURL( '**/sites', { waitUntil: 'load' } ),
+					page.waitForURL( /\/sites(\?|$)/, { waitUntil: 'load' } ),
 					page.goto( DataHelper.getCalypsoURL() ),
 				] );
 			} );

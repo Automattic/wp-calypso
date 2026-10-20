@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import { useExperiment } from 'calypso/lib/explat';
 
-const EXPERIMENT_NAME = 'calypso_mobile_checkout_sticky_summary_v1';
+const EXPERIMENT_NAME = 'calypso_mobile_checkout_sticky_summary_v1_1';
 const QUERY_PARAM = 'mobile_checkout_sticky_summary';
 
 export interface MobileCheckoutStickySummaryExperiment {

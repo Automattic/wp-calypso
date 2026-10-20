@@ -40,7 +40,7 @@ export default function UpgradeLink( { isInline = false } ) {
 					? translate( 'Upgrade (%(price)s/m)', {
 							args: { price },
 							comment: '%price is the price of the upgrade, e.g. $5/m where m is "month"',
-					  } )
+						} )
 					: translate( 'Upgrade' ) }
 			</span>
 		</Button>

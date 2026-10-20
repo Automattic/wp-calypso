@@ -49,7 +49,7 @@ export default function CancelButton( {
 		: getButtonLabels( {
 				purchase,
 				intent: displayVariant,
-		  } ).primary;
+			} ).primary;
 
 	return (
 		<Button

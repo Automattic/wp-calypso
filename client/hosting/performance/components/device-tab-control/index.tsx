@@ -1,7 +1,7 @@
 import { SegmentedControl } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { TabType } from 'calypso/performance-profiler/components/header';
+import { TabType } from 'calypso/hosting/performance/contexts/device-tab-context';
 
 import './style.scss';
 

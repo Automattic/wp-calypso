@@ -6,14 +6,20 @@ jest.mock( 'calypso/lib/partner-branding', () => ( {
 	usePartnerBranding: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
+	recordTracksEvent: jest.fn(),
+} ) );
+
 jest.mock( '@wordpress/compose', () => ( {
 	...jest.requireActual( '@wordpress/compose' ),
 	useViewportMatch: jest.fn(),
 } ) );
 
-import { screen } from '@testing-library/dom';
+import { fireEvent, screen } from '@testing-library/dom';
 import { useViewportMatch } from '@wordpress/compose';
 import { MemoryRouter } from 'react-router-dom';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
@@ -45,20 +51,63 @@ describe( 'User email signup step', () => {
 
 	const renderUserStep = (
 		url = '/onboarding/user?user_email=test@example.com',
-		props: Partial< UserStepAccepts > = {}
+		props: Partial< UserStepAccepts > = {},
+		flow = 'onboarding'
 	) => {
 		return renderWithProvider(
 			<MemoryRouter initialEntries={ [ url ] }>
-				<UserStep
-					flow="onboarding"
-					stepName="user"
-					navigation={ { submit: jest.fn() } }
-					{ ...props }
-				/>
+				<UserStep flow={ flow } stepName="user" navigation={ { submit: jest.fn() } } { ...props } />
 			</MemoryRouter>,
 			{ reducers: { login: loginReducer, route: routeReducer } }
 		);
 	};
+
+	describe( 'top bar logo', () => {
+		it( 'links the logo to the homepage in the onboarding flow', () => {
+			renderUserStep();
+			expect( screen.getByRole( 'link', { name: 'WordPress.com home' } ) ).toHaveAttribute(
+				'href',
+				'https://wordpress.com/'
+			);
+		} );
+
+		it( 'does not link the logo in other flows', () => {
+			renderUserStep( '/site-setup/user', {}, 'site-setup' );
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'link', { name: 'WordPress.com home' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'does not link the logo with partner branding', () => {
+			mockUsePartnerBranding.mockReturnValue( { ...noPartnerBranding, hasCustomBranding: true } );
+			renderUserStep();
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'link', { name: 'WordPress.com home' } )
+			).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Log in link tracking', () => {
+		beforeEach( () => {
+			( recordTracksEvent as jest.Mock ).mockClear();
+		} );
+
+		it.each( [
+			[ 'top-bar', '/onboarding/user', 'onboarding' ],
+			[ 'form', '/onboarding/user?ref=woo-hosting-solutions-flow', 'onboarding' ],
+			[ 'top-bar', '/test-flow/user', 'test-flow' ],
+		] )( 'records a click on the %s link at %s', ( origin, url, flow ) => {
+			renderUserStep( url, {}, flow );
+			fireEvent.click( screen.getByRole( 'link', { name: 'Log in' } ) );
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_login_link_click', {
+				flow,
+				step: 'user',
+				origin,
+			} );
+		} );
+	} );
 
 	it( 'passes userEmail from user_email query param to SignupFormSocialFirst', () => {
 		renderUserStep( '/onboarding/user?user_email=hello@wp.com' );

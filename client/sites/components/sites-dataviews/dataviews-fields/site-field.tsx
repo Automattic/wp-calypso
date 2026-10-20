@@ -107,7 +107,7 @@ const SiteField = ( { site, sitePreviewPane }: Props ) => {
 			onNavigate={ onSiteClick }
 		>
 			<NameRenderer
-				badge={ getBadge() }
+				badges={ [ getBadge() ] }
 				muted={ !! site.is_deleted }
 				value={ getSiteDisplayName( site ) }
 			/>

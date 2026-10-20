@@ -36,10 +36,6 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 	font-family: $font-sf-pro-display;
 }
 
-.stats {
-	--color-link: var(--color-accent);
-	--color-link-dark: var(--color-accent-dark);
-}
 
 // Module container
 @include breakpoint-deprecated( ">960px" ) {

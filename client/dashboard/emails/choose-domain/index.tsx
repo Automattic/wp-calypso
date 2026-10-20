@@ -28,8 +28,10 @@ export default function ChooseDomain() {
 	const router = useRouter();
 
 	const { data: allDomains, isLoading: isLoading } = useQuery( queries.domainsQuery() );
+	// Non-owners are allowed through: the next step explains what they can't buy via
+	// EmailNonDomainOwnerNotice rather than hiding the domain outright.
 	const eligibleDomains = ( allDomains ?? [] ).filter(
-		( d ) => d.current_user_is_owner && d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+		( d ) => d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
 
 	const { recordTracksEvent } = useAnalytics();

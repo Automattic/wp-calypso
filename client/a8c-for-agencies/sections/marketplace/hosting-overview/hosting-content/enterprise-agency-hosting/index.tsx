@@ -64,10 +64,10 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 												},
 											}
 										)
-								  )
+									)
 								: translate(
 										'Combine the ease of WordPress with enterprise-grade security and scalability.'
-								  ) }
+									) }
 						</div>
 					</div>
 

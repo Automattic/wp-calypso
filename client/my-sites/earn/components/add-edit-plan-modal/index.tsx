@@ -245,7 +245,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		) {
 			return;
 		}
-		const name = editedPostIsTier ? defaultNameTier : defaultNames[ `${ editedSchedule }` ] ?? '';
+		const name = editedPostIsTier
+			? defaultNameTier
+			: ( defaultNames[ `${ editedSchedule }` ] ?? '' );
 
 		setEditedProductName( name );
 	}, [ editedSchedule, editedPostIsTier, product, nameWasEdited ] );

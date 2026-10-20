@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -254,7 +255,12 @@ const HomeContent = ( {
 			isFetchingDomainDiagnostics ||
 			! emailDnsDiagnostics ||
 			emailDnsDiagnostics.code === 'domain_not_mapped_to_atomic_site' ||
-			emailDnsDiagnostics.all_essential_email_dns_records_are_correct
+			emailDnsDiagnostics.all_essential_email_dns_records_are_correct ||
+			// When WordPress.com controls the domain's DNS and can restore the records
+			// automatically, don't alarm the user on the dashboard. The Diagnostics card
+			// in domain settings still surfaces the issue with a one-click fix.
+			( emailDnsDiagnostics.is_using_wpcom_name_servers &&
+				emailDnsDiagnostics.should_offer_automatic_fixes )
 		) {
 			return null;
 		}
@@ -325,6 +331,7 @@ const HomeContent = ( {
 
 	return (
 		<div className="customer-home__main">
+			{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 			{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }

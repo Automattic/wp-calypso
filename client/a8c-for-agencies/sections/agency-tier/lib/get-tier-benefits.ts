@@ -118,7 +118,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 	{
 		title: translate( 'Pre-qualified sales leads' ),
 		description: translate(
-			'Pro Partners eligible to receive pre-qualified leads from Automattic sales teams when opportunities arise as well as leads generated through agency directory listings.'
+			'Pro Partners are eligible to receive pre-qualified leads from Automattic sales teams when opportunities arise, as well as leads generated through agency directory listings.'
 		),
 		features: [],
 		isComingSoon: false,

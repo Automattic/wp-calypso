@@ -5,13 +5,18 @@
 
 .domain-transfer-or-connect {
 	&--redesign {
-		max-width: 600px;
 		margin: 0 auto;
 
 		.domain-transfer-or-connect__content {
-			display: flex;
-			flex-direction: column;
-			gap: 24px;
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 16px;
+			align-items: start;
+
+			@include break-small {
+				grid-template-columns: 1fr 1fr;
+				gap: 24px;
+			}
 		}
 	}
 

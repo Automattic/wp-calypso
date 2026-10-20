@@ -78,7 +78,7 @@ const ConnectedDomainDetails = ( {
 			? translate(
 					'Domain connection will be auto-renewed with your plan on %(expirationDate)s',
 					args
-			  )
+				)
 			: translate( 'Domain connection expires with your plan on %(expirationDate)s', args );
 
 		const expireWithoutBundledMessage = domain.isAutoRenewing

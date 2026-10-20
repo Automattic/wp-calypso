@@ -128,7 +128,7 @@ export const SitesDashboardProvider = ( {
 				? {}
 				: {
 						filters: buildFilters( { issueTypes } ),
-				  } ),
+					} ),
 			...( siteUrlInitialState ? {} : { search: searchQuery } ),
 			...( siteUrlInitialState ? {} : { sort } ),
 			...( siteUrlInitialState ? {} : { selectedItem: undefined } ),

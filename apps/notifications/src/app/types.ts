@@ -2,6 +2,8 @@ import type { getFilters } from '../panel/templates/filters';
 
 export type FilterName = keyof ReturnType< typeof getFilters >;
 
+export type LayoutStyle = 'detailed' | 'simplified';
+
 type Range = {
 	type: string;
 	indices: [ number, number ];
@@ -29,6 +31,33 @@ export type Subject = {
 	text: string;
 	ranges?: Range[];
 	media?: Media[];
+};
+
+export type NotePost = {
+	title: string;
+	url: string;
+	date: string | null;
+	author_name: string;
+};
+
+export type NoteSite = {
+	name: string;
+	icon: string;
+};
+
+export type NoteParentComment = {
+	text: string;
+	author_name: string;
+	author_avatar: string | null;
+	author_url?: string | null;
+	date: string | null;
+	url: string;
+};
+
+export type NoteActor = {
+	name: string;
+	avatar: string;
+	url?: string | null;
 };
 
 type PostActions = { 'replyto-comment'?: boolean; 'like-post'?: boolean };
@@ -76,6 +105,7 @@ export type Block = {
 	type?: 'post' | 'comment' | 'user';
 	nest_level?: number;
 	edit_comment_link?: string;
+	moderate_comments_link?: string;
 };
 
 export type BlockWithSignature = {
@@ -100,6 +130,7 @@ export type Note = {
 			post?: number;
 			comment?: number;
 			reply_comment?: number;
+			parent_comment?: number;
 			user?: number;
 		};
 		links?: {
@@ -110,6 +141,13 @@ export type Note = {
 			user?: string;
 			home?: string;
 		};
+		post?: NotePost;
+		site?: NoteSite;
+		parent_comment?: NoteParentComment;
+		actor?: NoteActor;
+		actor_count?: number;
+		summary?: Subject;
+		heading?: string;
 	};
 	title: string;
 	note_hash: number;
@@ -131,7 +169,7 @@ export interface Client {
 	isShowing: boolean;
 	lastSeenTime: number;
 	filter: Record< string, unknown > | null;
-	filteredHasMore: boolean;
+	filteredHasMore: Record< string, boolean >;
 	gettingFilteredNotes: boolean;
 	retries: number;
 	subscribeTry: number;
@@ -147,11 +185,11 @@ export interface Client {
 	getNote: ( note_id: number ) => void;
 	getNotes: () => void;
 	getNotesList: () => void;
-	getFilteredNotes: () => void;
-	setFilter: ( filter: Record< string, unknown > | null ) => void;
+	getFilteredNotes: ( before?: number ) => void;
+	setFilter: ( filterName: FilterName ) => void;
 	updateLastSeenTime: ( proposedTime: number, fromStorage: boolean ) => boolean;
 	loadMore: () => void;
-	hasMoreNotes: () => boolean;
+	hasMoreNotes: ( filterName?: FilterName ) => boolean;
 	refreshNotes: () => void;
 	setVisibility: ( { isShowing, isVisible }: { isShowing: boolean; isVisible: boolean } ) => void;
 }

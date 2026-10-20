@@ -290,7 +290,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	const description = hasPlanFeature( site, HostingFeatures.CACHING )
 		? createInterpolateElement( __( 'Manage your site’s server-side caching. <learnMoreLink />' ), {
 				learnMoreLink: <InlineSupportLink supportContext="hosting-edge-cache" />,
-		  } )
+			} )
 		: createInterpolateElement(
 				sprintf(
 					/* translators: %s: plan name. Eg. 'Personal' */
@@ -302,7 +302,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 				{
 					learnMoreLink: <InlineSupportLink supportContext="hosting-edge-cache" />,
 				}
-		  );
+			);
 
 	return (
 		<PageLayout

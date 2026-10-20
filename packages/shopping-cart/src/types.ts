@@ -759,8 +759,7 @@ export interface ResponseCartProductVariant {
 	price_before_discounts_integer: number;
 	introductory_offer_discount_integer: number;
 	introductory_offer_terms:
-		| Record< string, never >
-		| Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
+		Record< string, never > | Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
 	volume?: number;
 }
 
@@ -877,6 +876,11 @@ export type DomainBundleRole = 'primary' | 'companion';
 export interface ResponseCartProductExtra {
 	context?: string;
 	source?: string;
+	/**
+	 * The AI agent session that generated the checkout link. Recorded on the
+	 * purchase event so a sale joins exactly to the agent activity behind it.
+	 */
+	ai_session_id?: string;
 	premium?: boolean;
 	new_quantity?: number;
 	domain_to_bundle?: string;
@@ -933,6 +937,12 @@ export interface ResponseCartProductExtra {
 	is_art_promo?: boolean;
 
 	/**
+	 * True on a Business plan added from the free DIFM (Do it for me) offer.
+	 * Checkout uses it to show the DIFM offer next steps.
+	 */
+	difm_offer?: boolean;
+
+	/**
 	 * Set to 'renewal' if requesting a renewal.
 	 *
 	 * Often this does not need to be explicitly set because the shopping cart
@@ -954,10 +964,23 @@ export interface ResponseCartProductExtra {
 	agency_id?: number;
 
 	/**
+	 * Position of the line among identical A4A products, so the store keeps
+	 * one cart item per unit instead of merging them.
+	 */
+	cart_item_index?: number;
+
+	/**
 	 * A4A Pressable PHP Memory add-on target domain.
 	 * Sent with checkout cart items so WPCOM can provision the add-on for the selected Pressable site.
 	 */
 	a4a_pressable_site_domain?: string;
+
+	/**
+	 * A4A Pressable Titan inbox add-on identity, set by the WordPress.com
+	 * backend when it prepares the cart. Checkout uses them for display only.
+	 */
+	titan_domain?: string;
+	titan_plan?: string;
 
 	/**
 	 * Marketplace properties
@@ -987,13 +1010,7 @@ export interface ResponseCartGiftDetails {
 }
 
 export type SitelessCheckoutType =
-	| 'domainonly'
-	| 'jetpack'
-	| 'akismet'
-	| 'marketplace'
-	| 'a4a'
-	| 'unified'
-	| undefined;
+	'domainonly' | 'jetpack' | 'akismet' | 'marketplace' | 'a4a' | 'unified' | 'wpcom' | undefined;
 
 /**
  * Miscellaneous data requested to be added to the shopping cart item in a
@@ -1022,6 +1039,11 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 * Marks a product as having been added by the siteless `/checkout/unified` route.
 	 */
 	isUnifiedSitelessCheckout?: boolean;
+
+	/**
+	 * Marks a product as having been added by the siteless `/checkout/wpcom` route.
+	 */
+	isWpcomSitelessCheckout?: boolean;
 
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
@@ -1118,6 +1140,8 @@ export type DomainContactDetailsExtra = {
 	ca?: CaDomainContactExtraDetails | null;
 	uk?: UkDomainContactExtraDetails | null;
 	fr?: FrDomainContactExtraDetails | null;
+	in?: InDomainContactExtraDetails | null;
+	es?: EsDomainContactExtraDetails | null;
 };
 
 export type CaDomainContactExtraDetails = {
@@ -1137,6 +1161,19 @@ export type FrDomainContactExtraDetails = {
 	registrantVatId?: string;
 	trademarkNumber?: string;
 	sirenSiret?: string;
+};
+
+export type InDomainContactExtraDetails = {
+	nexusDeclaration?: boolean;
+	nexusConnectionType?: string;
+};
+
+export type EsDomainContactExtraDetails = {
+	registrantEntityType?: string;
+	registrantIdentificationNumber?: string;
+	adminIdentificationNumber?: string;
+	redEsAgreementAccepted?: boolean;
+	redEsAgreementVersion?: string;
 };
 
 export interface TermsOfServiceRecord {

@@ -1,7 +1,8 @@
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Badge, Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -21,6 +22,7 @@ import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import {
 	isPressableAddonProduct,
 	isPressableHostingProduct,
+	isPressableTitanProduct,
 	isWPCOMHostingProduct,
 } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import ClientSite from 'calypso/a8c-for-agencies/sections/sites/needs-setup-sites/client-site';
@@ -118,6 +120,8 @@ export default function LicensePreview( {
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const isPressableAddonLicense =
 		isPressableAddonProduct( licenseKey ) || isPressableAddonProduct( license.product );
+	const isTitanLicense =
+		isPressableTitanProduct( licenseKey ) || isPressableTitanProduct( license.product );
 	const isWPCOMLicense = isWPCOMHostingProduct( licenseKey );
 
 	const isOwner = useSelector( isAgencyOwner );
@@ -168,7 +172,7 @@ export default function LicensePreview( {
 			return;
 		}
 
-		page.redirect( redirectUrl );
+		page( redirectUrl );
 	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, referral, translate, dispatch ] );
 
 	useEffect( () => {
@@ -179,18 +183,38 @@ export default function LicensePreview( {
 		}
 	}, [ isHighlighted ] );
 
-	const isParentLicense = quantity && parentLicenseId;
+	// A Titan quantity is the inbox count on a single subscription, not a bundle of child licenses.
+	const isBundle = !! quantity && ! isTitanLicense;
+	const isParentLicense = isBundle && parentLicenseId;
 
 	const isSiteAtomic = site?.is_wpcom_atomic;
 
+	const titanDomain = isTitanLicense ? meta?.titanDomain : undefined;
+
+	// Set whenever the product carries an introductory offer, whether or not that offer is
+	// still running. The backend reports no trial rather than a guessed date when the
+	// subscription cannot be resolved.
+	const trialEnd = license.subscription?.trialEnd;
+	const isActiveTrial = Boolean( license.subscription?.isActiveTrial );
+
 	const bundleCountContent = quantity && (
-		<Badge className="license-preview__license-count" type="info">
-			{ translate( '%(quantity)d License Bundle', {
-				context: 'bundle license count',
-				args: {
-					quantity,
-				},
-			} ) }
+		<Badge className="license-preview__license-count" intent="draft">
+			{ isTitanLicense
+				? translate( '%(quantity)d Inbox', '%(quantity)d Inboxes', {
+						context: 'Titan inbox count',
+						count: quantity,
+						args: {
+							quantity,
+						},
+						textOnly: true,
+					} )
+				: translate( '%(quantity)d License Bundle', {
+						context: 'bundle license count',
+						args: {
+							quantity,
+						},
+						textOnly: true,
+					} ) }
 		</Badge>
 	);
 
@@ -217,7 +241,7 @@ export default function LicensePreview( {
 				ref={ wrapperRef }
 				onActivate={ () => setShowPopover( true ) }
 			>
-				<Badge className="license-preview__migration-badge" type="info-green">
+				<Badge className="license-preview__migration-badge" intent="stable">
 					{ translate( 'Transferred' ) }
 				</Badge>
 				{ showPopover && (
@@ -286,11 +310,26 @@ export default function LicensePreview( {
 						<div className="license-preview__product-title">
 							{ productTitle }
 							{ referral && (
-								<Badge className="license-preview__client-badge" type="info">
+								<Badge className="license-preview__client-badge" intent="draft">
 									{ translate( 'Referral' ) }
 								</Badge>
 							) }
 						</div>
+						{ isTitanLicense && trialEnd && (
+							<div className="license-preview__trial-notice">
+								{ isActiveTrial
+									? translate( '90-day trial ends {{date/}}', {
+											components: {
+												date: <FormattedDate date={ trialEnd } format="YYYY-MM-DD" />,
+											},
+										} )
+									: translate( '90-day trial expired {{date/}}', {
+											components: {
+												date: <FormattedDate date={ trialEnd } format="YYYY-MM-DD" />,
+											},
+										} ) }
+							</div>
+						) }
 						{ referral && (
 							<div className="license-preview__client-email">
 								<ClientSite referral={ referral } />
@@ -300,7 +339,7 @@ export default function LicensePreview( {
 				</div>
 
 				<div>
-					{ quantity ? (
+					{ isBundle ? (
 						<div className="license-preview__bundle">
 							<EmptyValueIndicator className="license-preview__no-value" />
 							<div className="license-preview__product-small">{ productName }</div>
@@ -309,13 +348,13 @@ export default function LicensePreview( {
 					) : (
 						<>
 							<div className="license-preview__product-small">{ productName }</div>
-							{ domain }
-							{ isPressableLicense && ! revokedAt && (
+							{ titanDomain || domain }
+							{ isPressableLicense && ! isTitanLicense && ! revokedAt && (
 								<ManageInPressable attachedAt={ attachedAt } />
 							) }
 							{ ! domain && licenseState === LicenseState.Detached && ! isPressableAddonLicense && (
 								<span className="license-preview__unassigned">
-									<Badge type="warning">{ translate( 'Unassigned' ) }</Badge>
+									<Badge intent="medium">{ translate( 'Unassigned' ) }</Badge>
 									{ licenseType === LicenseType.Partner && ! isPressableAddonLicense && (
 										<Button
 											className="license-preview__assign-button"
@@ -330,7 +369,7 @@ export default function LicensePreview( {
 							) }
 							{ revokedAt && (
 								<span>
-									<Badge type="error">{ translate( 'Revoked' ) }</Badge>
+									<Badge intent="high">{ translate( 'Revoked' ) }</Badge>
 								</span>
 							) }
 						</>
@@ -338,7 +377,7 @@ export default function LicensePreview( {
 				</div>
 
 				<div>
-					{ quantity ? (
+					{ isBundle ? (
 						<EmptyValueIndicator className="license-preview__no-value" />
 					) : (
 						<>
@@ -375,10 +414,12 @@ export default function LicensePreview( {
 					</div>
 				) }
 
-				<div className="license-preview__badge-container">
-					{ !! isParentLicense && bundleCountContent }
-					{ isDevelopmentSite && <Badge type="info-purple">{ translate( 'Development' ) }</Badge> }
-					{ shouldShowTransferredBadge() && <TransferredBadge /> }
+				<div className="license-preview__badge-container-wrapper">
+					<div className="license-preview__badge-container">
+						{ ( !! isParentLicense || isTitanLicense ) && bundleCountContent }
+						{ isDevelopmentSite && <Badge intent="draft">{ translate( 'Development' ) }</Badge> }
+						{ shouldShowTransferredBadge() && <TransferredBadge /> }
+					</div>
 				</div>
 
 				<div>
@@ -442,32 +483,22 @@ export function LicensePreviewPlaceholder() {
 		<div className="license-preview license-preview--placeholder">
 			<LicenseListItem className="license-preview__card">
 				<div>
-					<h3 className="license-preview__domain">{ translate( 'Loading' ) }</h3>
-
-					<div className="license-preview__product" />
+					<div className="license-preview__placeholder-bar">{ translate( 'Loading' ) }</div>
 				</div>
 
 				<div>
-					<div className="license-preview__label">{ translate( 'Issued on:' ) }</div>
-
-					<div />
+					<div className="license-preview__placeholder-bar" />
 				</div>
 
 				<div>
-					<div className="license-preview__label">{ translate( 'Assigned on:' ) }</div>
-
-					<div />
+					<div className="license-preview__placeholder-bar" />
 				</div>
 
 				<div>
-					<div className="license-preview__label">{ translate( 'Revoked on:' ) }</div>
-
-					<div />
+					<div className="license-preview__placeholder-bar" />
 				</div>
 
-				<div>
-					<div className="license-preview__copy-license-key" />
-				</div>
+				<div />
 
 				<div />
 			</LicenseListItem>

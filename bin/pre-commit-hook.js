@@ -6,6 +6,10 @@ const chalk = require( 'chalk' );
 
 const phpcsPath = getPathForCommand( 'phpcs' );
 const phpcbfPath = getPathForCommand( 'phpcbf' );
+// WPCS < 3.4.1 passes untrusted code through eval() in this sniff (GHSA-3pwp-g2mj-5p3v).
+// --no-cache is load-bearing: PHPCS discards all --exclude restrictions when caching is on.
+// Remove both once wp-coding-standards/wpcs >= 3.4.1 is installable.
+const phpcsExclusions = [ '--exclude=WordPress.WP.EnqueuedResourceParameters', '--no-cache' ];
 
 // Groups an array's items into an object keyed by the iteratee's return value.
 function groupBy( collection, iteratee ) {
@@ -41,7 +45,7 @@ function parseGitDiffToPathArray( command ) {
 	return execSync( command, { encoding: 'utf8' } )
 		.split( '\n' )
 		.map( ( name ) => name.trim() )
-		.filter( ( name ) => /(?:\.json|\.[jt]sx?|\.scss|\.php)$/.test( name ) );
+		.filter( ( name ) => /(?:\.json|\.[cm]?[jt]sx?|\.md|\.scss|\.php)$/.test( name ) );
 }
 
 function getPathForCommand( command ) {
@@ -128,7 +132,7 @@ if ( toPrettify.length ) {
 	for ( let i = 0; i < toPrettify.length; i += 500 ) {
 		const batch = toPrettify.slice( i, i + 500 );
 		execSync(
-			`./node_modules/.bin/prettier --ignore-path .eslintignore --write ${ batch.join( ' ' ) }`
+			`./node_modules/.bin/prettier --ignore-path .prettierignore --write ${ batch.join( ' ' ) }`
 		);
 		execSync( `git add ${ batch.join( ' ' ) }` );
 	}
@@ -146,7 +150,11 @@ toPHPCBF.forEach( ( file ) => console.log( `PHPCBF formatting staged file: ${ fi
 if ( toPHPCBF.length ) {
 	if ( phpcs ) {
 		try {
-			execSync( `${ quotedPath( phpcbfPath ) } --standard=WordPress ${ toPHPCBF.join( ' ' ) }` );
+			execSync(
+				`${ quotedPath( phpcbfPath ) } --standard=WordPress ${ phpcsExclusions.join(
+					' '
+				) } ${ toPHPCBF.join( ' ' ) }`
+			);
 		} catch ( error ) {
 			// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
 			// https://github.com/squizlabs/PHP_CodeSniffer/blob/HEAD/src/Runner.php#L210
@@ -160,13 +168,13 @@ if ( toPHPCBF.length ) {
 	}
 }
 
-// Now run the linters over everything staged to commit (excepting JSON), even if they are partially staged
+// Now run the linters over everything staged to commit (excepting JSON and Markdown), even if they are partially staged
 const {
 	toEslint = [],
 	toStylelint = [],
 	toPHPCS = [],
 } = groupBy(
-	files.filter( ( file ) => ! file.endsWith( '.json' ) ),
+	files.filter( ( file ) => ! file.endsWith( '.json' ) && ! file.endsWith( '.md' ) ),
 	( file ) => {
 		switch ( true ) {
 			case file.endsWith( '.scss' ):
@@ -196,7 +204,6 @@ if ( toEslint.length ) {
 	const lintResult = spawnSync( './node_modules/.bin/eslint', [ '--quiet', ...toEslint ], {
 		shell: true,
 		stdio: 'inherit',
-		env: { ...process.env, ESLINT_USE_FLAT_CONFIG: 'false' },
 	} );
 
 	if ( lintResult.status ) {
@@ -207,10 +214,14 @@ if ( toEslint.length ) {
 // and finally PHPCS
 if ( toPHPCS.length ) {
 	if ( phpcs ) {
-		const lintResult = spawnSync( quotedPath( phpcsPath ), [ '--standard=WordPress', ...toPHPCS ], {
-			shell: true,
-			stdio: 'inherit',
-		} );
+		const lintResult = spawnSync(
+			quotedPath( phpcsPath ),
+			[ '--standard=WordPress', ...phpcsExclusions, ...toPHPCS ],
+			{
+				shell: true,
+				stdio: 'inherit',
+			}
+		);
 
 		if ( lintResult.status ) {
 			linterFailure();

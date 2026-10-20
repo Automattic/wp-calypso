@@ -63,9 +63,14 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 
 	// Per the STATS-296 spec the thumbnail links to the video in the media
 	// library: wp-admin's upload.php in Odyssey, the /media route in Calypso
-	// (which itself forwards default-interface sites to upload.php). The
-	// video's stats id is its attachment id.
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	// (which itself forwards default-interface sites to upload.php). Unlike the
+	// VideoPress details page, upload.php exists regardless of the site's plan,
+	// so the link survives a downgrade. Detect wp-admin with `is_odyssey`, not
+	// `is_running_in_jetpack_site` — the latter only signals which API the app
+	// calls and is false on Simple sites, where the Calypso-relative path would
+	// resolve against the site's own domain and 404. The video's stats id is
+	// its attachment id.
+	const isOdysseyStats = config.isEnabled( 'is_odyssey' );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const mediaLibraryUrl = isOdysseyStats

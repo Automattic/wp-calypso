@@ -7,6 +7,7 @@ import { useCallback, useMemo, type JSX } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
 import { useMomentInSite } from '../../hooks/use-moment-site-zone';
 import StatsEmptyState from '../../stats-empty-state';
+import { formatDatumPeriod } from './format-datum-period';
 
 import './styles.scss';
 
@@ -54,7 +55,7 @@ function StatsLineChart( {
 					month: 'short',
 					day: 'numeric',
 				} );
-		  };
+			};
 
 	const formatValue = ( value: number ) => {
 		return value < 100_000
@@ -196,9 +197,7 @@ function StatsLineChart( {
 			if ( datum && datum.date ) {
 				onClick?.( {
 					data: {
-						period: `${ datum.date.getFullYear() }-${
-							datum.date.getMonth() + 1
-						}-${ datum.date.getDate() }`,
+						period: formatDatumPeriod( datum.date ),
 					},
 				} );
 			}

@@ -1,33 +1,53 @@
-/* eslint-disable require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc */
 import crypto from 'crypto';
 import path from 'path';
-import { getMag16Locales, getViewports } from './data-helper';
-import { TEST_ACCOUNT_NAMES } from './secrets';
+import { getViewports } from './data-helper';
 import { SupportedEnvVariables, JetpackTarget, AtomicVariation } from './types/env-variables.types';
-import { TestAccountName } from '.';
+
+// The concrete variations a mixed run picks from. `mixed` is not one of them: it is the request
+// to pick one.
+export const ATOMIC_VARIATIONS: AtomicVariation[] = [
+	'default',
+	'php-old',
+	'php-new',
+	'wp-beta',
+	'wp-previous',
+	'private',
+	'ecomm-plan',
+];
+
+// Spec files are recognised by name: `blocks__jetpack-other.spec.ts` in a frame such as
+// `at Object.<anonymous> (/agent/test/e2e/specs/blocks/blocks__jetpack-other.spec.ts:19:5)`.
+const SPEC_FRAME = /([^/\\\s(]+\.spec\.ts):\d+:\d+/;
+
+// What a mixed run resolves per spec file.
+const SPEC_SCOPED: ReadonlyArray< keyof SupportedEnvVariables > = [ 'ATOMIC_VARIATION', 'RUN_ID' ];
+
+// The spec file of the test the worker is running, recorded by a Playwright fixture.
+let runningSpecFile: string | undefined;
+
+/**
+ * Records the spec file of the running test, for mixed Atomic runs resolved from code
+ * that is not in a spec file, such as fixtures.
+ */
+export function setRunningSpecFile( file: string | undefined ): void {
+	runningSpecFile = file;
+}
 
 class EnvVariables implements SupportedEnvVariables {
 	private _defaultEnvVariables: SupportedEnvVariables = {
 		A8C_FOR_AGENCIES_URL: 'https://agencies.automattic.com',
-		ALLURE_RESULTS_PATH: '',
-		ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
 		ATOMIC_VARIATION: 'default',
-		AUTHENTICATE_ACCOUNTS: [],
-		BROWSER_NAME: 'chromium',
 		CALYPSO_BASE_URL: `http://calypso.localhost:${ process.env.PORT || 3000 }`,
 		COBLOCKS_EDGE: false,
 		COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
 		DASHBOARD_BASE_URL: `http://my.localhost:${ process.env.PORT || 3000 }`,
 		GUTENBERG_EDGE: false,
 		GUTENBERG_NIGHTLY: false,
-		HEADLESS: false,
 		MAILOSAUR_LIMIT_REACHED: false,
 		JETPACK_TARGET: 'wpcom-production',
 		PARTNER_DIRECTORY_BASE_URL: 'https://wordpress.com/development-services',
-		RETRY_COUNT: 0,
 		RUN_ID: '',
-		SLOW_MO: 0,
-		TEST_LOCALES: [ ...getMag16Locales() ],
 		TEST_ON_ATOMIC: false,
 		TIMEOUT: 15000,
 		VIEWPORT_NAME: 'desktop',
@@ -48,34 +68,6 @@ class EnvVariables implements SupportedEnvVariables {
 			);
 		}
 		return value;
-	}
-
-	get TEST_LOCALES(): string[] {
-		const value = process.env.TEST_LOCALES;
-		if ( ! value ) {
-			return this._defaultEnvVariables.TEST_LOCALES;
-		}
-
-		const parsedLocales = value.split( ',' );
-		const supportedValues = getMag16Locales() as ReadonlyArray< string >;
-		if ( ! parsedLocales.every( ( v ) => supportedValues.includes( v ) ) ) {
-			throw new Error(
-				`Unknown TEST_LOCALES value: ${ value }.\nSupported values: ${ supportedValues.join(
-					' | '
-				) }`
-			);
-		}
-		return parsedLocales;
-	}
-
-	get HEADLESS(): boolean {
-		const value = process.env.HEADLESS;
-		return value ? castAsBoolean( 'HEADLESS', value ) : this._defaultEnvVariables.HEADLESS;
-	}
-
-	get SLOW_MO(): number {
-		const value = process.env.SLOW_MO;
-		return value ? castAsNumber( 'SLOW_MO', value ) : this._defaultEnvVariables.SLOW_MO;
 	}
 
 	get TIMEOUT(): number {
@@ -111,30 +103,9 @@ class EnvVariables implements SupportedEnvVariables {
 			: this._defaultEnvVariables.COBLOCKS_EDGE;
 	}
 
-	get AUTHENTICATE_ACCOUNTS(): TestAccountName[] {
-		const value = process.env.AUTHENTICATE_ACCOUNTS;
-		if ( ! value ) {
-			return this._defaultEnvVariables.AUTHENTICATE_ACCOUNTS;
-		}
-
-		const parsedAccounts: TestAccountName[] = value.split( ',' ) as TestAccountName[];
-		const supportedValues = new Set< TestAccountName >( TEST_ACCOUNT_NAMES );
-		if ( ! parsedAccounts.every( ( account ) => supportedValues.has( account ) ) ) {
-			throw new Error(
-				`Unknown AUTHENTICATE_ACCOUNTS value: ${ value }.\nSupported values: ${ TEST_ACCOUNT_NAMES }`
-			);
-		}
-		return parsedAccounts;
-	}
-
 	get COOKIES_PATH(): string {
 		const value = process.env.COOKIES_PATH;
 		return value ? value : this._defaultEnvVariables.COOKIES_PATH;
-	}
-
-	get ARTIFACTS_PATH(): string {
-		const value = process.env.ARTIFACTS_PATH;
-		return value ? value : this._defaultEnvVariables.ARTIFACTS_PATH;
 	}
 
 	get TEST_ON_ATOMIC(): boolean {
@@ -150,16 +121,7 @@ class EnvVariables implements SupportedEnvVariables {
 			return this._defaultEnvVariables.ATOMIC_VARIATION;
 		}
 
-		const supportedValues: AtomicVariation[] = [
-			'default',
-			'php-old',
-			'php-new',
-			'wp-beta',
-			'wp-previous',
-			'private',
-			'ecomm-plan',
-			'mixed',
-		];
+		const supportedValues: AtomicVariation[] = [ ...ATOMIC_VARIATIONS, 'mixed' ];
 		if ( ! supportedValues.includes( value as AtomicVariation ) ) {
 			throw new Error(
 				`Unknown ATOMIC_VARIATION value: ${ value }.\nSupported values: ${ supportedValues.join(
@@ -169,7 +131,7 @@ class EnvVariables implements SupportedEnvVariables {
 		}
 
 		if ( value === 'mixed' ) {
-			return getAtomicVariationInMixedRun();
+			return getAtomicVariationInMixedRun( getAtomicVariationKey(), getCurrentSpecFile() );
 		}
 
 		return value as AtomicVariation;
@@ -205,12 +167,12 @@ class EnvVariables implements SupportedEnvVariables {
 	private getValidatedUrlEnvVar( envVarName: keyof SupportedEnvVariables ): string {
 		const value = process.env[ envVarName as string ];
 		const defaultValue = this._defaultEnvVariables[ envVarName ];
-		const url = value ?? defaultValue;
+		const url = value || defaultValue;
 
 		try {
 			// eslint-disable-next-line no-new
 			new URL( url as string );
-		} catch ( error ) {
+		} catch {
 			throw new Error( `Invalid ${ envVarName } value: ${ url }.\nYou must provide a valid URL.` );
 		}
 		return url as string;
@@ -256,16 +218,6 @@ class EnvVariables implements SupportedEnvVariables {
 		return this.getValidatedUrlEnvVar( 'WPCOM_BASE_URL' );
 	}
 
-	get BROWSER_NAME(): string {
-		const value = process.env.BROWSER_NAME;
-		return value ? value : this._defaultEnvVariables.BROWSER_NAME;
-	}
-
-	get ALLURE_RESULTS_PATH(): string {
-		const value = process.env.ALLURE_RESULTS_PATH;
-		return value ? value : this._defaultEnvVariables.ALLURE_RESULTS_PATH;
-	}
-
 	get RUN_ID(): string {
 		const value = process.env.RUN_ID;
 		// Support our Jetpack "mixed" atomic test strategy.
@@ -277,48 +229,89 @@ class EnvVariables implements SupportedEnvVariables {
 		return value ? value : this._defaultEnvVariables.RUN_ID;
 	}
 
-	get RETRY_COUNT(): number {
-		const value = process.env.RETRY_COUNT;
-		return value ? castAsNumber( 'RETRY_COUNT', value ) : this._defaultEnvVariables.RETRY_COUNT;
-	}
-
 	validate() {
+		// A mixed run resolves these per spec file, and none is loaded yet: check the key,
+		// and leave the resolution to the specs.
+		const isMixedRun = process.env.ATOMIC_VARIATION === 'mixed';
+		if ( isMixedRun ) {
+			getAtomicVariationKey();
+		}
+
 		for ( const property in this._defaultEnvVariables ) {
 			const envVarName = property as keyof SupportedEnvVariables;
+			if ( isMixedRun && SPEC_SCOPED.includes( envVarName ) ) {
+				continue;
+			}
+
 			// Access each property
 			// Any validation errors within the getter will throw an exception here.
-			this[ envVarName ];
+			void this[ envVarName ];
 		}
 	}
 }
 
-function getAtomicVariationInMixedRun() {
-	const allVariations: AtomicVariation[] = [
-		'default',
-		'php-old',
-		'php-new',
-		'wp-beta',
-		'wp-previous',
-		'private',
-		'ecomm-plan',
-	];
-	// The goal here is controlled randomness to include multiple variations within a single run.
-	// By using the current day of the month and the test file name hash, we can get a
-	// lot of variation throughout the week while also ensuring the same variation is used on a failed retry.
-	const currentDayOfMonth = new Date().getDate();
-	const currentTestFileName = global.testFileName || '';
-	const fileHash = hashTestFileName( currentTestFileName );
-	const variationIndex = ( currentDayOfMonth + fileHash ) % allVariations.length;
-	return allVariations[ variationIndex ];
+function getAtomicVariationKey(): string {
+	const value = process.env.ATOMIC_VARIATION_KEY;
+	if ( ! value ) {
+		throw new Error(
+			`ATOMIC_VARIATION=mixed requires ATOMIC_VARIATION_KEY: set it to the commit SHA, or set ATOMIC_VARIATION to one of ${ ATOMIC_VARIATIONS.join(
+				' | '
+			) }.`
+		);
+	}
+
+	return value;
 }
 
-function hashTestFileName( testFileName: string ): number {
-	return Math.abs( crypto.createHash( 'md5' ).update( testFileName ).digest().readInt8() );
+// The spec file reading the variation, by name only so every agent checkout agrees. A spec on
+// the call stack covers its module load, hooks and test bodies; the recorded file covers
+// fixtures and tests declared in shared helpers. During a test both must name the same file,
+// or the test would read one site's variation while its fixtures log in to another. Hooks
+// have only the stack: a hook helper that loses it, through a timer say, throws.
+function getCurrentSpecFile(): string {
+	// V8 captures the frames on construction, so the limit can go back before `.stack` runs
+	// Playwright's stack rewriting.
+	const stackTraceLimit = Error.stackTraceLimit;
+	Error.stackTraceLimit = Infinity;
+	const error = new Error();
+	Error.stackTraceLimit = stackTraceLimit;
+	const stack = error.stack ?? '';
+
+	const stackFile = stack.match( SPEC_FRAME )?.[ 1 ];
+	const runningFile = runningSpecFile && path.basename( runningSpecFile );
+	if ( stackFile && runningFile && stackFile !== runningFile ) {
+		throw new Error(
+			`ATOMIC_VARIATION=mixed resolves a variation per spec file, but ${ stackFile } is read while a test of ${ runningFile } runs: its fixtures would pick another site. Move the shared code out of the spec file.`
+		);
+	}
+
+	const file = stackFile ?? runningFile;
+	if ( ! file ) {
+		throw new Error(
+			'ATOMIC_VARIATION=mixed resolves a variation per spec file, but none is loading or running: read it from a spec file, a test, or a test fixture.'
+		);
+	}
+
+	return path.basename( file );
+}
+
+// Keyed on the run and the spec file, so a run spreads its spec files over every Atomic site
+// instead of sending every worker to one. A spec resolves its variation once when Playwright
+// collects it and again in the worker that runs it, and both see the same key and file name.
+function getAtomicVariationInMixedRun( key: string, specFile: string ): AtomicVariation {
+	// Hashed, not counted: a re-run of the same commit has to repeat the variation that failed.
+	const hash = crypto
+		.createHash( 'md5' )
+		.update( `${ key }:${ specFile }` )
+		.digest()
+		.readUInt8( 0 );
+
+	return ATOMIC_VARIATIONS[ hash % ATOMIC_VARIATIONS.length ];
 }
 
 function castAsNumber( name: string, value: string ): number {
 	const output = Number( value );
-	if ( Number.isNaN( output ) ) {
+	if ( ! Number.isFinite( output ) ) {
 		throw new Error( `Incorrect type of the ${ name } variable - expecting number` );
 	}
 	return output;

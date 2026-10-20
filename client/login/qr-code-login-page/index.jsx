@@ -45,7 +45,7 @@ function QrCodeLoginPage( { locale, redirectTo, isJetpack = false } ) {
 	);
 
 	return (
-		<OneLoginLayout isJetpack={ isJetpack } columnWidth={ 8 }>
+		<OneLoginLayout isJetpack={ isJetpack } columnWidth={ 8 } linkLogoToHome>
 			{ mainContent }
 		</OneLoginLayout>
 	);

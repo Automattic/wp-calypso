@@ -1,4 +1,3 @@
-import { fetchTwoStep } from '@automattic/api-core';
 import {
 	accountRecoveryQuery,
 	allowedPaymentMethodsQuery,
@@ -17,6 +16,7 @@ import {
 	purchaseQuery,
 	queryClient,
 	rawUserPreferencesQuery,
+	readTeamsQuery,
 	receiptQuery,
 	siteBySlugQuery,
 	siteFeaturesQuery,
@@ -47,7 +47,6 @@ import {
 import { getAppSetupTitle, getSMSSetupTitle } from '../../me/security-two-step-auth/title';
 import { isOptInToggleVisible } from '../../utils/hosting-dashboard-enrollment';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { reauthRequiredLink } from '../../utils/link';
 import {
 	getTitleForDisplay,
 	getPurchaseCancellationFlowType,
@@ -59,7 +58,7 @@ import {
 	type CancelIntent,
 } from '../../utils/purchase';
 import { AUTH_QUERY_KEY } from '../auth';
-import { dashboardRedirect } from './redirect';
+import { dashboardRedirect, redirectIfTwoStepReauthRequired } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { Purchase, User } from '@automattic/api-core';
@@ -77,12 +76,8 @@ export const meRoute = createRoute( {
 	path: 'me',
 	loader: () => queryClient.ensureQueryData( userSettingsQuery() ),
 	beforeLoad: async ( { cause } ) => {
-		if ( cause !== 'enter' ) {
-			return;
-		}
-		const twoStep = await fetchTwoStep();
-		if ( twoStep.two_step_reauthorization_required ) {
-			window.location.href = reauthRequiredLink();
+		if ( cause === 'enter' ) {
+			await redirectIfTwoStepReauthRequired();
 		}
 	},
 	component: Outlet,
@@ -135,7 +130,10 @@ export const preferencesRoute = createRoute( {
 export const preferencesIndexRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: '/',
-	loader: async () => {
+	loader: async ( { context } ) => {
+		if ( context.config.supports.reader ) {
+			queryClient.prefetchQuery( readTeamsQuery() );
+		}
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
@@ -189,6 +187,20 @@ export const billingHistoryIndexRoute = createRoute( {
 	path: '/',
 	loader: () => {
 		queryClient.prefetchQuery( userReceiptsQuery() );
+		queryClient.prefetchQuery( allSitesQuery() );
+	},
+	validateSearch: (
+		search
+	): {
+		page?: number;
+		search?: string;
+		site?: number;
+	} => {
+		return {
+			page: typeof search.page === 'number' ? search.page : undefined,
+			search: typeof search.search === 'string' ? search.search : undefined,
+			site: typeof search.site === 'number' ? search.site : undefined,
+		};
 	},
 } ).lazy( () =>
 	import( '../../me/billing-history' ).then( ( d ) =>
@@ -332,7 +344,9 @@ export const purchaseSettingsIndexRoute = createRoute( {
 					// Some sites cannot be reached; like disconnected Jetpack sites. We can safely ignore those.
 				} ),
 				isDotcomPlan( purchase )
-					? queryClient.ensureQueryData( siteMediaStorageQuery( purchase.blog_id ) )
+					? queryClient.ensureQueryData( siteMediaStorageQuery( purchase.blog_id ) ).catch( () => {
+							// Error gets logged at ErrorBoundary.
+						} )
 					: undefined,
 			] );
 		}
@@ -340,6 +354,11 @@ export const purchaseSettingsIndexRoute = createRoute( {
 		// Preload domain data to avoid layout shift for the "Attach to a site" card
 		if ( purchase.meta && purchase.is_domain ) {
 			await queryClient.ensureQueryData( domainQuery( purchase.meta ) ).catch( () => {} );
+		}
+
+		// Jetpack upgrades go through the store only once Pro is known to be on sale.
+		if ( purchase.is_jetpack_plan_or_product ) {
+			queryClient.prefetchQuery( productsQuery() );
 		}
 	},
 } ).lazy( () =>
@@ -471,9 +490,13 @@ export const cancelPurchaseRoute = createRoute( {
 		await Promise.all( [
 			...( hasQueryableSite( purchase )
 				? [
-						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
-						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
-				  ]
+						// `hasQueryableSite` only rules out holding sites. The owner can also
+						// have been removed from a real site — a disconnected Jetpack site, or a
+						// deleted one — and those requests 403. Load the flow without this data
+						// rather than failing the whole route (SHILL-1442).
+						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ).catch( () => {} ),
+						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ).catch( () => {} ),
+					]
 				: [] ),
 			queryClient.ensureQueryData( productsQuery() ),
 			queryClient.ensureQueryData( plansQuery() ),
@@ -1045,6 +1068,27 @@ export const blockedSitesRoute = createRoute( {
 	)
 );
 
+export const preferencesReaderRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Reader' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'reader',
+	loader: async () => {
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/reader' ).then( ( d ) =>
+		createLazyRoute( 'preferences-reader' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const hostingDashboardRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1071,6 +1115,35 @@ export const hostingDashboardRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/hosting-dashboard' ).then( ( d ) =>
 		createLazyRoute( 'hosting-dashboard' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const wordpressLabsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress Labs' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'wordpress-labs',
+	beforeLoad: async () => {
+		if ( ! isEnabled( 'wordpress-labs' ) ) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			queryClient.prefetchQuery( allSitesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/wordpress-labs' ).then( ( d ) =>
+		createLazyRoute( 'wordpress-labs' )( {
 			component: d.default,
 		} )
 	)
@@ -1149,8 +1222,8 @@ export const wordpressDefaultsRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../me/wordpress-defaults' ).then( ( d ) =>
-		createLazyRoute( 'wordpress-defaults' )( {
+	import( '../../me/preferences-defaults' ).then( ( d ) =>
+		createLazyRoute( 'preferences-defaults' )( {
 			component: d.default,
 		} )
 	)
@@ -1206,6 +1279,44 @@ export const profileLegacyRedirectRoute = createRoute( {
 	},
 } );
 
+const validateAgentConnectionSearch = (
+	search: Record< string, unknown >
+): {
+	pair_token?: string;
+	slack?: string;
+	telegram_id?: string;
+	token?: string;
+	ts?: string;
+	bot?: string;
+} => ( {
+	...( typeof search.pair_token === 'string' ? { pair_token: search.pair_token } : {} ),
+	...( typeof search.slack === 'string' ? { slack: search.slack } : {} ),
+	...( typeof search.telegram_id === 'string' ? { telegram_id: search.telegram_id } : {} ),
+	...( typeof search.token === 'string' ? { token: search.token } : {} ),
+	...( typeof search.ts === 'string' ? { ts: search.ts } : {} ),
+	...( typeof search.bot === 'string' ? { bot: search.bot } : {} ),
+} );
+
+export const agentRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress Agent' ),
+			},
+		],
+	} ),
+	getParentRoute: () => meRoute,
+	path: 'agent',
+	validateSearch: validateAgentConnectionSearch,
+	loader: async () => queryClient.ensureQueryData( isAutomatticianQuery() ),
+} ).lazy( () =>
+	import( '../../me/agent' ).then( ( d ) =>
+		createLazyRoute( 'agent' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const mcpRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1217,7 +1328,11 @@ export const mcpRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: 'mcp',
 	loader: async () => {
-		await queryClient.ensureQueryData( userSettingsQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			// The MCP Tracks audience props read Automattician status on first render (view events).
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+		] );
 	},
 } );
 
@@ -1326,9 +1441,13 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	];
 	if ( config.supports.reader ) {
 		preferencesChildren.push( blockedSitesRoute );
+		preferencesChildren.push( preferencesReaderRoute );
 	}
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );
+	}
+	if ( isEnabled( 'wordpress-labs' ) ) {
+		preferencesChildren.push( wordpressLabsRoute );
 	}
 	if ( config.supports.darkMode && config.supports.colorScheme ) {
 		preferencesChildren.push( appearanceRoute );
@@ -1366,7 +1485,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 							monetizeSubscriptionsIndexRoute,
 							monetizeSubscriptionRoute,
 						] ),
-				  ]
+					]
 				: [] ),
 			purchasesRoute.addChildren( [
 				purchasesIndexRoute,
@@ -1404,7 +1523,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 							securityLegacyContactIndexRoute,
 							securityLegacyContactPrintRoute,
 						] ),
-				  ]
+					]
 				: [] ),
 		] )
 	);
@@ -1421,6 +1540,10 @@ export const createMeRoutes = ( config: AppConfig ) => {
 
 	if ( config.supports.me.apps ) {
 		meRoutes.push( appsRoute );
+	}
+
+	if ( isEnabled( 'mcp-settings' ) ) {
+		meRoutes.push( agentRoute );
 	}
 
 	return [ meRoute.addChildren( meRoutes ) ];

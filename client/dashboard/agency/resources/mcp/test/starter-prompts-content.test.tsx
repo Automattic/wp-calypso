@@ -22,24 +22,33 @@ beforeEach( () => {
 } );
 
 describe( '<McpStarterPrompts>', () => {
-	test( 'shows a collapsed FAQ item per prompt with the prompt text hidden', () => {
+	test( 'shows a collapsed card per prompt with the prompt text hidden', () => {
 		render( <McpStarterPrompts /> );
 
-		expect( screen.getByText( 'Starter prompts' ) ).toBeVisible();
-		expect( screen.getByText( 'Program health snapshot' ) ).toBeVisible();
-		expect( screen.getByText( 'Portfolio health summary' ) ).toBeVisible();
-		expect( screen.getByText( 'Recurring weekly report' ) ).toBeVisible();
+		for ( const prompt of STARTER_PROMPTS ) {
+			expect( screen.getByText( prompt.title ) ).toBeVisible();
+			expect( screen.getByText( prompt.description ) ).toBeVisible();
+		}
 
-		// The prompt text stays out of the way until the item is expanded.
+		// The prompt text stays out of the way until the card is expanded.
 		expect( screen.queryByText( STARTER_PROMPTS[ 0 ].prompt ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'expands an item to reveal its prompt', async () => {
+	test( 'expands a card to reveal its prompt', async () => {
 		render( <McpStarterPrompts /> );
 
-		await userEvent.click( screen.getByText( 'Program health snapshot' ) );
+		await userEvent.click( screen.getByText( STARTER_PROMPTS[ 0 ].title ) );
 
 		expect( screen.getByText( STARTER_PROMPTS[ 0 ].prompt ) ).toBeVisible();
+	} );
+
+	test( 'expands each card independently', async () => {
+		render( <McpStarterPrompts /> );
+
+		await userEvent.click( screen.getByText( STARTER_PROMPTS[ 1 ].title ) );
+
+		expect( screen.getByText( STARTER_PROMPTS[ 1 ].prompt ) ).toBeVisible();
+		expect( screen.queryByText( STARTER_PROMPTS[ 0 ].prompt ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'copies the raw prompt text and records a tracks event', async () => {
@@ -48,7 +57,7 @@ describe( '<McpStarterPrompts>', () => {
 
 		const firstPrompt = STARTER_PROMPTS[ 0 ];
 		await userEvent.click( screen.getByText( firstPrompt.title ) );
-		await userEvent.click( screen.getByRole( 'button', { name: /copy prompt/i } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Copy prompt' } ) );
 
 		expect( clipboardWriteText ).toHaveBeenCalledWith( firstPrompt.prompt );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_ai_mcp_starter_prompt_copied', {
@@ -56,11 +65,12 @@ describe( '<McpStarterPrompts>', () => {
 		} );
 	} );
 
-	test( 'items cannot be expanded when disabled', async () => {
-		render( <McpStarterPrompts disabled /> );
+	test( 'confirms the copy on the button itself', async () => {
+		render( <McpStarterPrompts /> );
 
-		await userEvent.click( screen.getByText( 'Program health snapshot' ) );
+		await userEvent.click( screen.getByText( STARTER_PROMPTS[ 0 ].title ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Copy prompt' } ) );
 
-		expect( screen.queryByText( STARTER_PROMPTS[ 0 ].prompt ) ).not.toBeInTheDocument();
+		expect( await screen.findByRole( 'button', { name: 'Copied' } ) ).toBeVisible();
 	} );
 } );

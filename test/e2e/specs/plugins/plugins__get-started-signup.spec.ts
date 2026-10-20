@@ -19,12 +19,11 @@ test.describe(
 		const pluginSlug = 'sensei-pro';
 		const pluginName = 'Sensei Pro';
 
-		let siteCreatedFlag = false;
 		let newSiteDetails: NewSiteResponse | undefined;
 		let accountUsed: TestAccount;
 
 		test.afterAll( 'Delete the created site', async () => {
-			if ( ! siteCreatedFlag || ! newSiteDetails || ! accountUsed ) {
+			if ( ! newSiteDetails || ! accountUsed ) {
 				return;
 			}
 
@@ -75,7 +74,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I skip domain selection', async () => {
-				await componentDomainSearch.search( 'foo' );
+				await componentDomainSearch.search( helperData.getBlogName() );
 				await componentDomainSearch.skipPurchase();
 			} );
 
@@ -88,8 +87,14 @@ test.describe(
 			} );
 
 			await test.step( `When I select the ${ planName } plan`, async () => {
-				newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
-				siteCreatedFlag = true;
+				try {
+					newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				} finally {
+					// selectPlan throws if the flow doesn't reach checkout in time, but the
+					// site is created before that. Take it from the page object so afterAll
+					// deletes it instead of leaking it onto the shared account.
+					newSiteDetails ??= pageSignupPickPlan.createdSite;
+				}
 			} );
 
 			await test.step( `Then checkout contains the ${ planName } plan and the ${ pluginName } plugin`, async () => {

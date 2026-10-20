@@ -182,7 +182,7 @@ export function FollowersView( { connectionId, actor }: Props ) {
 								}
 							);
 						},
-				  },
+					},
 		};
 	};
 

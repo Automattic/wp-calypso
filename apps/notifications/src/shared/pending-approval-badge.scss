@@ -1,21 +1,16 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
 // Legacy standalone panel (rendered under `.wpnc__main`, where `.wpnc__note`
-// wraps `.wpnc__body`). Left untouched to avoid regressing the old widget.
+// wraps `.wpnc__body`). The new app overrides this in its own note styles.
 .wpnc__note .wpnc__body .wpnc__pending-approval-section {
-	margin: 0;
-	box-shadow: inset 3px 0 0 var(--color-warning);
+	// Lines up with the comment below: same indent, same rule width.
+	margin: 0 0 0 14px;
+	box-shadow: inset 4px 0 0 var(--color-warning);
 }
 
-// New notifications app (Dashboard + redesigned standalone widget), scoped to
-// the `.wpnc-app` root where `.wpnc__note` is a sibling of `.wpnc__body`.
-.wpnc-app .wpnc__pending-approval-section {
-	box-shadow: inset 3px 0 0 var(--color-warning);
-
-	// Match the badge text's lighter warning foreground in dark mode.
-	@include ui-mixins.when-dark-theme {
-		box-shadow: inset 3px 0 0 var(--dashboard__foreground-color-warning, #f5c15c);
-	}
+// The panel's reset (`.wpnc__main div`) outranks a single class.
+.wpnc__main .wpnc-pending-approval-badge {
+	padding: 12px;
 }
 
 .wpnc-pending-approval-badge {

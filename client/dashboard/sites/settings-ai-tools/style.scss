@@ -1,4 +1,12 @@
-@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
+
+.ai-tools-settings__locked-card {
+	opacity: 0.6;
+}
+
+.ai-tools-settings__locked-card .summary-button.components-button[aria-disabled='true'] {
+	opacity: 1;
+}
 
 .ai-tools-settings__features-footer {
 	background: color-mix( in srgb, var( --dashboard-surface__background-color ) 98%, #000 );

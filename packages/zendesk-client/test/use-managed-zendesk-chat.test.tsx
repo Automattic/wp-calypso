@@ -1,11 +1,13 @@
 /**
  * @jest-environment jsdom
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Smooch from 'smooch';
-import { useManagedZendeskChat } from '../src/use-managed-zendesk-chat';
+import { fetchMessagingAuth } from '../src/use-authenticate-zendesk-messaging';
+import { useGetZendeskConversations, useManagedZendeskChat } from '../src/use-managed-zendesk-chat';
 
 jest.mock(
 	'@automattic/agenttic-ui',
@@ -37,13 +39,17 @@ jest.mock( 'smooch', () => ( {
 		init: jest.fn(),
 		createConversation: jest.fn(),
 		getConversationById: jest.fn(),
+		getConversations: jest.fn( () => [] ),
 		loadConversation: jest.fn(),
 		on: jest.fn(),
 		off: jest.fn(),
+		startTyping: jest.fn(),
+		stopTyping: jest.fn(),
 	},
 } ) );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
+	...jest.requireActual( '@automattic/calypso-analytics' ),
 	recordTracksEvent: jest.fn(),
 } ) );
 
@@ -87,6 +93,8 @@ jest.mock( '../src/util', () => ( {
 		disabled: false,
 	} ) ),
 	getSmoochContainer: () => globalThis.document.createElement( 'div' ),
+	isCsatTriggerMessage: ( message: { metadata?: { type?: string } } ) =>
+		message?.metadata?.type === 'csat',
 	isSupportedImageType: ( type: string ) =>
 		[ 'image/jpeg', 'image/jpg', 'image/png', 'image/gif' ].includes( type ),
 	isTestModeEnvironment: () => false,
@@ -98,12 +106,28 @@ const smooch = Smooch as unknown as {
 	createConversation: jest.Mock;
 	getConversationById: jest.Mock;
 	loadConversation: jest.Mock;
+	on: jest.Mock;
+	off: jest.Mock;
+	startTyping: jest.Mock;
+	stopTyping: jest.Mock;
 };
+
+type SmoochInitOptions = { delegate: { onInvalidAuth: () => Promise< string > } };
+
+/** The listener currently registered for `eventName`, i.e. the most recent registration. */
+function getSmoochListener( eventName: string ) {
+	const listener = smooch.on.mock.calls
+		.filter( ( [ registeredEvent ] ) => registeredEvent === eventName )
+		.at( -1 )?.[ 1 ];
+	expect( listener ).toBeDefined();
+	return listener as () => void;
+}
 
 function renderUseManagedZendeskChat( {
 	conversationId,
 	conversationTags = [],
 	conversationTicketFields,
+	siteId,
 	startedFromAiChatId,
 	startedFromChatSessionId,
 	startedFromMessageId,
@@ -114,6 +138,7 @@ function renderUseManagedZendeskChat( {
 		string | number,
 		string | number | boolean | null | undefined
 	>;
+	siteId?: number;
 	startedFromAiChatId?: number;
 	startedFromChatSessionId?: string;
 	startedFromMessageId?: string;
@@ -132,12 +157,18 @@ function renderUseManagedZendeskChat( {
 					startedFromAiChatId,
 					startedFromChatSessionId,
 					startedFromMessageId,
-			  },
+				},
 	};
 
 	return renderHook(
-		() => useManagedZendeskChat( { conversationTags, conversationTicketFields } ),
+		( { currentSiteId }: { currentSiteId?: number } ) =>
+			useManagedZendeskChat( {
+				conversationTags,
+				conversationTicketFields,
+				siteId: currentSiteId,
+			} ),
 		{
+			initialProps: { currentSiteId: siteId },
 			wrapper: ( { children } ) => (
 				<QueryClientProvider client={ queryClient }>
 					<MemoryRouter initialEntries={ [ initialEntry ] }>{ children }</MemoryRouter>
@@ -236,5 +267,253 @@ describe( 'useManagedZendeskChat', () => {
 		);
 
 		expect( smooch.createConversation ).not.toHaveBeenCalled();
+	} );
+
+	it( 'signals typing on the loaded conversation', async () => {
+		const { result } = renderUseManagedZendeskChat( { conversationId: 'conversation-1' } );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+
+		result.current.onTypingStatusChange( true );
+		result.current.onTypingStatusChange( false );
+
+		expect( smooch.startTyping ).toHaveBeenCalledWith( 'conversation-1' );
+		expect( smooch.stopTyping ).toHaveBeenCalledWith( 'conversation-1' );
+	} );
+
+	it( 'does not signal typing before the conversation exists', async () => {
+		smooch.createConversation.mockReturnValue( new Promise( () => {} ) );
+		const { result } = renderUseManagedZendeskChat( {} );
+
+		await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
+
+		result.current.onTypingStatusChange( true );
+		result.current.onTypingStatusChange( false );
+
+		expect( smooch.startTyping ).not.toHaveBeenCalled();
+		expect( smooch.stopTyping ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'site context on Smooch auth errors', () => {
+		// Smooch is a singleton, so the site must survive whichever hook installs the auth
+		// delegate and whichever one unmounts later.
+		function makeWrapper() {
+			const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+			return ( { children }: { children: React.ReactNode } ) => (
+				<QueryClientProvider client={ queryClient }>
+					<MemoryRouter initialEntries={ [ { pathname: '/zendesk', state: {} } ] }>
+						{ children }
+					</MemoryRouter>
+				</QueryClientProvider>
+			);
+		}
+
+		async function triggerAuthError() {
+			( fetchMessagingAuth as jest.Mock ).mockResolvedValue( { jwt: 'refreshed-jwt' } );
+			const { delegate } = smooch.init.mock.calls[ 0 ][ 0 ] as SmoochInitOptions;
+			await delegate.onInvalidAuth();
+		}
+
+		it( 'reports the chat site when the conversation list initialised Smooch first', async () => {
+			const wrapper = makeWrapper();
+
+			renderHook( () => useGetZendeskConversations( true ), { wrapper } );
+			await waitFor( () => expect( smooch.init ).toHaveBeenCalled() );
+
+			renderHook( () => useManagedZendeskChat( { siteId: 123 } ), { wrapper } );
+			await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
+
+			await triggerAuthError();
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_auth_error', {
+				blog_id: 123,
+				site_context_source: 'chat_site',
+			} );
+		} );
+
+		it( 'reports the site when the conversation list is the only Smooch owner', async () => {
+			const wrapper = makeWrapper();
+
+			renderHook( () => useGetZendeskConversations( true, undefined, 456 ), { wrapper } );
+			await waitFor( () => expect( smooch.init ).toHaveBeenCalled() );
+
+			await triggerAuthError();
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_auth_error', {
+				blog_id: 456,
+				site_context_source: 'chat_site',
+			} );
+		} );
+
+		it( 'keeps the remaining owner site after another owner unmounts', async () => {
+			const wrapper = makeWrapper();
+
+			const list = renderHook( () => useGetZendeskConversations( true, undefined, 456 ), {
+				wrapper,
+			} );
+			await waitFor( () => expect( smooch.init ).toHaveBeenCalled() );
+
+			const chat = renderHook( () => useManagedZendeskChat( { siteId: 456 } ), { wrapper } );
+			await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
+			chat.unmount();
+
+			await triggerAuthError();
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_auth_error', {
+				blog_id: 456,
+				site_context_source: 'chat_site',
+			} );
+
+			list.unmount();
+		} );
+
+		it( 'keeps a valid owner site when another owner has an unusable one', async () => {
+			const wrapper = makeWrapper();
+
+			const list = renderHook( () => useGetZendeskConversations( true, undefined, 456 ), {
+				wrapper,
+			} );
+			await waitFor( () => expect( smooch.init ).toHaveBeenCalled() );
+
+			renderHook( () => useManagedZendeskChat( { siteId: 0 } ), { wrapper } );
+			await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
+
+			await triggerAuthError();
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_auth_error', {
+				blog_id: 456,
+				site_context_source: 'chat_site',
+			} );
+
+			list.unmount();
+		} );
+
+		it( 'omits the site once every owner has unmounted', async () => {
+			const wrapper = makeWrapper();
+
+			const list = renderHook( () => useGetZendeskConversations( true, undefined, 456 ), {
+				wrapper,
+			} );
+			await waitFor( () => expect( smooch.init ).toHaveBeenCalled() );
+			list.unmount();
+
+			await triggerAuthError();
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_auth_error', {
+				site_context_source: 'none',
+			} );
+		} );
+	} );
+
+	it( 'adds the support site to connection lifecycle events', async () => {
+		const { result } = renderUseManagedZendeskChat( {
+			conversationId: 'conversation-1',
+			siteId: 123,
+		} );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+		const disconnectedListener = getSmoochListener( 'disconnected' );
+		const connectedListener = getSmoochListener( 'connected' );
+
+		await act( async () => {
+			disconnectedListener();
+			connectedListener();
+			await Promise.resolve();
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_disconnected', {
+			blog_id: 123,
+			site_context_source: 'chat_site',
+		} );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_connected', {
+			blog_id: 123,
+			site_context_source: 'chat_site',
+		} );
+	} );
+
+	it( 'marks lifecycle events as site-less when no support site is provided', async () => {
+		const { result } = renderUseManagedZendeskChat( { conversationId: 'conversation-1' } );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+		const disconnectedListener = getSmoochListener( 'disconnected' );
+
+		act( () => disconnectedListener() );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_disconnected', {
+			site_context_source: 'none',
+		} );
+	} );
+
+	it( 'does not re-register listeners when the connection status changes', async () => {
+		const { result } = renderUseManagedZendeskChat( {
+			conversationId: 'conversation-1',
+			siteId: 123,
+		} );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+		const disconnectedListener = getSmoochListener( 'disconnected' );
+		const connectedListener = getSmoochListener( 'connected' );
+		const registrationCount = smooch.on.mock.calls.length;
+		const removalCount = smooch.off.mock.calls.length;
+
+		await act( async () => {
+			disconnectedListener();
+			await Promise.resolve();
+		} );
+
+		expect( getSmoochListener( 'disconnected' ) ).toBe( disconnectedListener );
+		expect( getSmoochListener( 'connected' ) ).toBe( connectedListener );
+		expect( smooch.on ).toHaveBeenCalledTimes( registrationCount );
+		expect( smooch.off ).toHaveBeenCalledTimes( removalCount );
+	} );
+
+	it( 'records a recovered connection after a disconnect', async () => {
+		const { result } = renderUseManagedZendeskChat( {
+			conversationId: 'conversation-1',
+			siteId: 123,
+		} );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+		const connectedListener = getSmoochListener( 'connected' );
+
+		// A 'connected' event on page load, with no preceding disconnect, is not a recovery.
+		await act( async () => {
+			connectedListener();
+			await Promise.resolve();
+		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_smooch_messenger_connected',
+			expect.anything()
+		);
+
+		await act( async () => {
+			getSmoochListener( 'disconnected' )();
+			connectedListener();
+			await Promise.resolve();
+		} );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_connected', {
+			blog_id: 123,
+			site_context_source: 'chat_site',
+		} );
+	} );
+
+	it( 'uses the current support site after it changes', async () => {
+		const { result, rerender } = renderUseManagedZendeskChat( {
+			conversationId: 'conversation-1',
+			siteId: 123,
+		} );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+		rerender( { currentSiteId: 456 } );
+
+		await act( async () => {
+			getSmoochListener( 'disconnected' )();
+			await Promise.resolve();
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_disconnected', {
+			blog_id: 456,
+			site_context_source: 'chat_site',
+		} );
 	} );
 } );

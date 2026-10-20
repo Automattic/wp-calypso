@@ -67,6 +67,7 @@
 }
 
 .comments__comment-author {
+	align-items: baseline;
 	color: var(--color-text);
 	display: flex;
 	flex-wrap: wrap;
@@ -82,7 +83,6 @@
 
 .comments__comment-username {
 	color: var(--color-text);
-	height: 21px;
 	margin-right: 7px;
 	white-space: nowrap;
 	overflow: hidden;
@@ -92,7 +92,6 @@
 
 a.comments__comment-username {
 	color: var(--color-link);
-	height: 21px;
 
 	&:hover {
 		color: var(--color-link-light);

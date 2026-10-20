@@ -40,13 +40,13 @@ export const getMailboxCost = ( {
 		if ( doesAdditionalPriceMatchStandardPrice( product, purchaseCost ) ) {
 			const message = isMonthlyBilling
 				? // Translators: %(price)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50).
-				  __(
+					__(
 						'You can purchase new mailboxes at the regular price of <strong>%(price)s</strong> per mailbox per month.'
-				  )
+					)
 				: // Translators: %(price)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50).
-				  __(
+					__(
 						'You can purchase new mailboxes at the regular price of <strong>%(price)s</strong> per mailbox per year.'
-				  );
+					);
 
 			return {
 				amount: purchaseCost.amount,
@@ -80,27 +80,27 @@ export const getMailboxCost = ( {
 					message += isMonthlyBilling
 						? __(
 								'This is less than the first year discounted price because you are only charged for the remainder of the current month.'
-						  )
+							)
 						: __(
 								'This is less than the first year discounted price because you are only charged for the remainder of the current year.'
-						  );
+							);
 				} else {
 					message += isMonthlyBilling
 						? __(
 								'This is less than the regular price because you are only charged for the remainder of the current month.'
-						  )
+							)
 						: __(
 								'This is less than the regular price because you are only charged for the remainder of the current year.'
-						  );
+							);
 				}
 			} else {
 				message += isMonthlyBilling
 					? __(
 							'This is more than the regular price because you are charged for the remainder of the current month plus any additional month until renewal.'
-					  )
+						)
 					: __(
 							'This is more than the regular price because you are charged for the remainder of the current year plus any additional year until renewal.'
-					  );
+						);
 			}
 
 			const nextExpiryDate = formatDate(
@@ -160,13 +160,13 @@ export const getMailboxCost = ( {
 		};
 		const message = isMonthlyBilling
 			? // Translators: %(cost)s is the displayed cost, %(termLocalized)s is the localized term (e.g. "year"), %(endDate)s is the date the trial ends (e.g. "October 26, 2005").
-			  __(
+				__(
 					'Try free today - renews at the regular price of %(cost)s per %(termLocalized)s (excl. taxes) when your free trial ends on %(endDate)s.'
-			  )
+				)
 			: // Translators: %(firstRenewalPrice)s is the price the product gets renewed at, %(cost)s is the displayed cost, %(termLocalized)s is the localized term (e.g. "year"), %(endDate)s is the date the trial ends (e.g. "October 26, 2005").
-			  __(
+				__(
 					'Try free today - first renewal at %(firstRenewalPrice)s (excl. taxes) after your free trial ends on %(endDate)s, regular price %(cost)s per %(termLocalized)s (excl. taxes).'
-			  );
+				);
 		const renewalMonths = product.introductory_offer?.interval_unit === 'year' ? 12 : 9;
 		return {
 			amount: 0,

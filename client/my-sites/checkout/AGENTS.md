@@ -17,7 +17,7 @@ client/my-sites/checkout/
 │   ├── payment-methods/               # One UI component per processor
 │   ├── hooks/use-create-payment-methods/  # Generates PaymentMethod[] from cart + server config
 │   └── lib/
-│       ├── wpcom-store.ts               # @wordpress/data store (not Redux — checkout-specific state)
+│       ├── checkout-stores.ts           # Checkout form state (contact details, VAT, reCAPTCHA id)
 │       ├── leave-checkout.ts            # navigate() trap — see pitfall #6
 │       └── *-processor.ts              # One per payment method (13 files)
 ├── get-thank-you-page-url/          # 800+ lines, exhaustive tests — see pitfall #5
@@ -42,8 +42,11 @@ The sidebar/summary view is NOT a step — visibility is manually managed via
 ### Checkout State
 
 - **Redux** — global state (site, user, notices)
-- **`@wordpress/data` store** (`wpcom-store.ts`) — checkout-specific: contact details, VAT,
-  domain validation results, form touched fields
+- **Checkout stores** (`checkout-stores.ts`) — module-level value stores (`value-store.ts`)
+  for checkout-specific form state: contact details (including touched fields and domain
+  validation errors; read with `useContactDetails()`, changed with `contactDetailsActions`),
+  the VAT details in the form, and the reCAPTCHA client id. Tests call
+  `resetCheckoutStores()` in `beforeEach`. Don't use `@wordpress/data` for new state.
 - **`useFormStatus()`** from `composite-checkout` — LOADING, READY, SUBMITTING
 - **`useTransactionStatus()`** — NOT_STARTED, PENDING, COMPLETE, REDIRECTING, ERROR
 

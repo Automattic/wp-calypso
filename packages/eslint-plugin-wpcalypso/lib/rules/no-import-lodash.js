@@ -36,7 +36,7 @@ module.exports = {
 		docs: {
 			description: 'Disallow importing lodash',
 			category: 'Best Practices',
-			// Not part of `plugin:wpcalypso/recommended`: banning lodash is a
+			// Not part of the `recommended` preset: banning lodash is a
 			// wp-calypso-specific policy, enabled explicitly in the repo root config.
 			recommended: false,
 		},

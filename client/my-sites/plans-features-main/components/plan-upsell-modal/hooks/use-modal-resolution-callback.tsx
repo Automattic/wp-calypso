@@ -3,7 +3,6 @@ import { FREE_THEME } from '@automattic/design-picker';
 import { DOMAIN_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useCallback } from '@wordpress/element';
 import {
-	FREE_PLAN_FREE_DOMAIN_DIALOG,
 	FREE_PLAN_PAID_DOMAIN_DIALOG,
 	PAID_PLAN_PAID_DOMAIN_DIALOG,
 	PAID_PLAN_IS_REQUIRED_DIALOG,
@@ -12,6 +11,7 @@ import {
 
 type Props = {
 	isCustomDomainAllowedOnFreePlan?: boolean | null;
+	isDomainRetainedOnFreePlan?: boolean;
 	flowName?: string | null;
 	paidDomainName?: string | null;
 	intent?: string | null;
@@ -23,6 +23,7 @@ type Props = {
  */
 export function useModalResolutionCallback( {
 	isCustomDomainAllowedOnFreePlan,
+	isDomainRetainedOnFreePlan,
 	flowName,
 	paidDomainName,
 	intent,
@@ -45,7 +46,13 @@ export function useModalResolutionCallback( {
 				if ( paidDomainName ) {
 					return FREE_PLAN_PAID_DOMAIN_DIALOG;
 				}
-				return FREE_PLAN_FREE_DOMAIN_DIALOG;
+				return null;
+			}
+
+			// The domain can still be purchased on the free plan (as a non-primary
+			// address), so show the dialog that keeps it in the cart.
+			if ( paidDomainName && isDomainRetainedOnFreePlan ) {
+				return FREE_PLAN_PAID_DOMAIN_DIALOG;
 			}
 
 			// TODO: look into decoupling the flowName from here as well.
@@ -61,6 +68,13 @@ export function useModalResolutionCallback( {
 
 			return null;
 		},
-		[ isCustomDomainAllowedOnFreePlan, flowName, paidDomainName, intent, selectedThemeType ]
+		[
+			isCustomDomainAllowedOnFreePlan,
+			isDomainRetainedOnFreePlan,
+			flowName,
+			paidDomainName,
+			intent,
+			selectedThemeType,
+		]
 	);
 }

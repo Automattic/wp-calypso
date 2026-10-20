@@ -26,6 +26,7 @@ import { filterVisibleTools, isReadTool, isWriteTool } from './categories';
 import { getOverridesToMatch, groupIntentKey } from './group-intents';
 import { getAccessSummaryBadge, getWriteAccessBadge } from './hub-helpers';
 import { useMcpPageChrome } from './mcp-page-header';
+import { useMcpTracksAudienceProps } from './tracks';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
@@ -40,6 +41,7 @@ function McpComponent( { path } ) {
 	const { documentTitle, navigationHeaderProps } = useMcpPageChrome();
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const {
 		data: userSettings,
 		isLoading: isLoadingUserSettings,
@@ -119,7 +121,11 @@ function McpComponent( { path } ) {
 			},
 			{
 				onSuccess: () => {
-					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
+					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', {
+						...tracksAudienceProps,
+						path,
+						enabled,
+					} );
 				},
 			}
 		);
@@ -192,7 +198,7 @@ function McpComponent( { path } ) {
 									decoration={
 										<Icon className="mcp-hub__summary-icon" icon={ connection } size={ 24 } />
 									}
-									badges={ [ { text: mcpAddSiteBadgeText } ] }
+									badges={ [ { text: mcpAddSiteBadgeText, intent: 'draft' } ] }
 									density="medium"
 								/>
 							) }
@@ -224,8 +230,8 @@ function McpComponent( { path } ) {
 							}
 							badges={
 								disabledSiteCount > 0
-									? [ { text: mcpSiteExceptionsBadgeText, intent: 'warning' } ]
-									: [ { text: translate( 'No exceptions' ) } ]
+									? [ { text: mcpSiteExceptionsBadgeText, intent: 'low' } ]
+									: [ { text: translate( 'No exceptions' ), intent: 'draft' } ]
 							}
 							density="medium"
 						/>

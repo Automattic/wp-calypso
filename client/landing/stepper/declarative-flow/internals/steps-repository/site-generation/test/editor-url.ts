@@ -2,46 +2,69 @@
  * @jest-environment jsdom
  */
 
-import { getSafeEditorUrl } from '../editor-url';
+import { getEditorUrlFromStatus } from '../editor-url';
 
-describe( 'getSafeEditorUrl', () => {
-	it( 'returns null for a missing value', () => {
-		expect( getSafeEditorUrl( null ) ).toBeNull();
-		expect( getSafeEditorUrl( '' ) ).toBeNull();
-	} );
+describe( 'getEditorUrlFromStatus', () => {
+	it.each( [ 'example.wordpress.com', 'example.wpcomstaging.com', 'custom-domain.com' ] )(
+		'preserves the API editor route on %s and adds source',
+		( host ) => {
+			const live = `https://${ host }/wp-admin/site-editor.php?easy-mode=true&from=site-generation&p=%2Fpage%2F12&canvas=edit`;
+			expect( getEditorUrlFromStatus( live, 'sites-dashboard' ) ).toBe(
+				`${ live }&source=sites-dashboard`
+			);
+			expect( getEditorUrlFromStatus( live ) ).toBe( live );
+		}
+	);
 
-	it( 'resolves relative paths against the current origin', () => {
-		expect( getSafeEditorUrl( '/wp-admin/site-editor.php?spec_id=spec-1' ) ).toBe(
-			'https://example.com/wp-admin/site-editor.php?spec_id=spec-1'
-		);
-	} );
-
-	it( 'allows wordpress.com and its subdomains', () => {
-		expect( getSafeEditorUrl( 'https://wordpress.com/setup' ) ).toBe(
-			'https://wordpress.com/setup'
-		);
-		expect( getSafeEditorUrl( 'https://example.wordpress.com/wp-admin/site-editor.php' ) ).toBe(
-			'https://example.wordpress.com/wp-admin/site-editor.php'
-		);
-	} );
-
-	it( 'allows wpcomstaging.com subdomains', () => {
-		expect( getSafeEditorUrl( 'https://example.wpcomstaging.com/wp-admin/' ) ).toBe(
-			'https://example.wpcomstaging.com/wp-admin/'
-		);
-	} );
-
-	it( 'rejects javascript: and data: schemes', () => {
+	it.each( [
+		undefined,
+		null,
+		'',
+		42,
+		'not a URL',
+		'/wp-admin/site-editor.php',
+		'//custom-domain.com/wp-admin/site-editor.php',
+		'http://example.com/wp-admin/site-editor.php',
+		'http://example.wordpress.com/wp-admin/site-editor.php',
 		// eslint-disable-next-line no-script-url
-		expect( getSafeEditorUrl( 'javascript:alert(1)' ) ).toBeNull();
+		'javascript:alert(1)',
 		// eslint-disable-next-line no-script-url
-		expect( getSafeEditorUrl( 'javascript://wordpress.com/%0aalert(1)' ) ).toBeNull();
-		expect( getSafeEditorUrl( 'data:text/html,<script>alert(1)</script>' ) ).toBeNull();
+		'javascript://wordpress.com/%0aalert(1)',
+		'data:text/html,<script>alert(1)</script>',
+	] )( 'rejects an unusable API destination: %p', ( url ) => {
+		expect( getEditorUrlFromStatus( url ) ).toBeNull();
 	} );
 
-	it( 'rejects hosts outside the allowlist', () => {
-		expect( getSafeEditorUrl( 'https://evil.example/phishing' ) ).toBeNull();
-		expect( getSafeEditorUrl( 'https://evilwordpress.com/' ) ).toBeNull();
-		expect( getSafeEditorUrl( 'https://wordpress.com.evil.example/' ) ).toBeNull();
+	it( 'allows HTTP for the current host during local HTTP development', () => {
+		const originalLocation = window.location;
+		Object.defineProperty( window, 'location', {
+			value: { hostname: 'localhost', protocol: 'http:' },
+			configurable: true,
+		} );
+		try {
+			expect( getEditorUrlFromStatus( 'http://localhost:3000/wp-admin/site-editor.php' ) ).toBe(
+				'http://localhost:3000/wp-admin/site-editor.php'
+			);
+			expect(
+				getEditorUrlFromStatus( 'http://custom-domain.com/wp-admin/site-editor.php' )
+			).toBeNull();
+		} finally {
+			Object.defineProperty( window, 'location', {
+				value: originalLocation,
+				configurable: true,
+			} );
+		}
+	} );
+
+	it( 'preserves an API-provided source', () => {
+		const live = 'https://example.com/wp-admin/site-editor.php?source=api';
+		expect( getEditorUrlFromStatus( live, 'sites-dashboard' ) ).toBe( live );
+	} );
+
+	it( 'encodes source as one parameter without injecting editor settings', () => {
+		const live = 'https://example.com/wp-admin/site-editor.php';
+		const url = new URL( getEditorUrlFromStatus( live, 'dashboard&spec_id=untrusted' ) ?? '' );
+		expect( url.searchParams.get( 'source' ) ).toBe( 'dashboard&spec_id=untrusted' );
+		expect( url.searchParams.has( 'spec_id' ) ).toBe( false );
 	} );
 } );

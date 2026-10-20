@@ -248,7 +248,7 @@ function OnePagerOutputDetail( { output }: Props ) {
 										count: variants.length,
 										activeIndex: safeIndex,
 										onSelect: setActiveIndex,
-								  }
+									}
 								: undefined
 						}
 						isAnnotating={ isAnnotating }

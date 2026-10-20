@@ -16,6 +16,11 @@ export const useCreateNewMailbox = ( {
 } ) => {
 	const { user } = useAuth();
 
+	// The password reset email must live on a different domain than the mailbox.
+	const passwordResetEmail = user.email?.toLowerCase().endsWith( `@${ domainName.toLowerCase() }` )
+		? ''
+		: user.email;
+
 	return () => {
 		const mailbox = new MailboxFormEntity< MailboxProvider >(
 			provider,
@@ -27,7 +32,7 @@ export const useCreateNewMailbox = ( {
 
 		// Set initial values
 		Object.entries( {
-			[ FIELD_PASSWORD_RESET_EMAIL ]: user.email,
+			[ FIELD_PASSWORD_RESET_EMAIL ]: passwordResetEmail,
 		} ).forEach( ( [ fieldName, value ] ) => {
 			mailbox.setFieldValue( fieldName as FormFieldNames, value );
 		} );

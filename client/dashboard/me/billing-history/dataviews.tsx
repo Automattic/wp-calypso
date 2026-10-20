@@ -1,7 +1,9 @@
 import { sendReceiptEmailMutation } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo, type JSX } from 'react';
 import { receiptRoute } from '../../app/router/me';
@@ -17,7 +19,7 @@ import {
 	summarizeReceiptItems,
 	transactionIncludesTax,
 } from './utils';
-import type { CountryListItem, Receipt } from '@automattic/api-core';
+import type { CountryListItem, Receipt, Site } from '@automattic/api-core';
 import type { Fields, Operator, SortDirection, View } from '@wordpress/dataviews';
 
 import './styles.scss';
@@ -93,13 +95,74 @@ export function useActions() {
 	);
 }
 
+type ReceiptComparator = ( firstReceipt: Receipt, secondReceipt: Receipt ) => number;
+
+const RECEIPT_COMPARATORS: Record< string, ReceiptComparator > = {
+	date: ( firstReceipt, secondReceipt ) =>
+		new Date( firstReceipt.date ).getTime() - new Date( secondReceipt.date ).getTime(),
+	service: ( firstReceipt, secondReceipt ) =>
+		summarizeReceiptItems( firstReceipt.items ).label.localeCompare(
+			summarizeReceiptItems( secondReceipt.items ).label
+		),
+	amount: ( firstReceipt, secondReceipt ) =>
+		firstReceipt.amount_integer - secondReceipt.amount_integer,
+};
+
+/**
+ * Wraps `filterSortAndPaginate()` to sort by the full receipt where a field's
+ * `getValue()` is shaped for filtering rather than sorting. DataViews passes
+ * `getValue()` results, not items, to a field's custom `sort()`.
+ */
+export function filterSortAndPaginateReceipts(
+	receipts: Receipt[],
+	view: View,
+	fields: Fields< Receipt >
+) {
+	const compare = view.sort ? RECEIPT_COMPARATORS[ view.sort.field ] : undefined;
+	if ( ! view.sort || ! compare ) {
+		return filterSortAndPaginate( receipts, view, fields );
+	}
+	const factor = view.sort.direction === 'asc' ? 1 : -1;
+	const sortedReceipts = [ ...receipts ].sort( ( a, b ) => factor * compare( a, b ) );
+	return filterSortAndPaginate( sortedReceipts, { ...view, sort: undefined }, fields );
+}
+
 export function getFields(
 	receipts: Receipt[],
 	countryList: CountryListItem[] = [],
 	visibleFields: string[] = WIDE_FIELDS,
-	locale: string
+	locale: string,
+	sites: Site[] = [],
+	siteFilter?: number,
+	canFilterBySite: boolean = true
 ): Fields< Receipt > {
+	// No point in having a filter if there's only one site, or if the host has
+	// already scoped this screen to one site.
+	const shouldAllowSiteFilter = canFilterBySite && sites.length > 1;
+
 	return [
+		{
+			id: 'site',
+			label: __( 'Site' ),
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: false,
+			enableHiding: false,
+			...( shouldAllowSiteFilter
+				? {
+						elements: sites.map( ( site ) => {
+							return { value: String( site.ID ), label: `${ site.name } (${ site.slug })` };
+						} ),
+						filterBy: {
+							operators: [ 'isAny' as Operator ],
+							...( siteFilter && { isPrimary: true } ),
+						},
+					}
+				: { filterBy: false } ),
+			getValue: ( { item }: { item: Receipt } ) => {
+				return getReceiptSiteIds( item );
+			},
+		},
 		{
 			id: 'date',
 			label: __( 'Date' ),
@@ -107,11 +170,6 @@ export function getFields(
 			enableHiding: false,
 			enableGlobalSearch: true,
 			enableSorting: true,
-			sort: ( firstReceipt: Receipt, secondReceipt: Receipt, direction: string ) => {
-				return direction === 'asc'
-					? new Date( firstReceipt.date ).getTime() - new Date( secondReceipt.date ).getTime()
-					: new Date( secondReceipt.date ).getTime() - new Date( firstReceipt.date ).getTime();
-			},
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
@@ -130,13 +188,6 @@ export function getFields(
 			enableHiding: false,
 			enableGlobalSearch: true,
 			enableSorting: true,
-			sort: ( firstReceipt: Receipt, secondReceipt: Receipt, direction: string ) => {
-				const { label: firstLabel } = summarizeReceiptItems( firstReceipt.items );
-				const { label: secondLabel } = summarizeReceiptItems( secondReceipt.items );
-				return direction === 'asc'
-					? String( firstLabel ).localeCompare( String( secondLabel ) )
-					: String( secondLabel ).localeCompare( String( firstLabel ) );
-			},
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
@@ -189,11 +240,6 @@ export function getFields(
 			enableHiding: false,
 			enableGlobalSearch: true,
 			enableSorting: true,
-			sort: ( firstReceipt: Receipt, secondReceipt: Receipt, direction: string ) => {
-				return direction === 'asc'
-					? firstReceipt.amount_integer - secondReceipt.amount_integer
-					: secondReceipt.amount_integer - firstReceipt.amount_integer;
-			},
 			filterBy: false,
 			getValue: ( { item }: { item: Receipt } ) => {
 				// Since we aren't using this value for sorting, filtering, or
@@ -311,6 +357,10 @@ function formatReceiptDate( receipt: Receipt, locale: string ): string {
 	} );
 }
 
+function getReceiptSiteIds( receipt: Receipt ): string[] {
+	return [ ...new Set( receipt.items.map( ( item ) => String( item.site_id ) ) ) ];
+}
+
 function getServicesForFiltering( receipts: Receipt[] ): Array< { value: string; label: string } > {
 	return [ ...new Set( receipts.map( getServiceForFiltering ) ) ].sort().map( ( service ) => ( {
 		value: service,
@@ -339,11 +389,11 @@ function renderServiceNameDescription( receipt: Receipt ) {
 		receiptItem.licensed_quantity && isAkismetPro500Plan( receiptItem.wpcom_product_slug );
 	const displayLabel = isAkismet
 		? sprintf(
-				/* translators: 1: product name like "Akismet Pro", 2: number of requests per month */
-				__( '%1$s (%2$d requests/month)' ),
+				/* translators: 1: product name like "Akismet Pro", 2: formatted number of requests per month */
+				__( '%1$s (%2$s requests/month)' ),
 				label.replace( /\s*\(.*$/, '' ).trim(),
-				500 * parseInt( String( receiptItem.licensed_quantity ) )
-		  )
+				formatNumber( 500 * parseInt( String( receiptItem.licensed_quantity ) ) )
+			)
 		: label;
 
 	return (
@@ -436,12 +486,12 @@ function renderReceiptAmount( receipt: Receipt, taxName?: string ) {
 				/* translators: taxAmount is a localized price like $12.34, taxName is a tax name like VAT or GST */
 				__( '(includes %(taxAmount)s %(taxName)s)' ),
 				{ taxAmount, taxName }
-		  )
+			)
 		: sprintf(
 				/* translators: %s is a localized price, like $12.34 */
 				__( '(includes %s tax)' ),
 				taxAmount
-		  );
+			);
 
 	return (
 		<VStack spacing={ 1 }>

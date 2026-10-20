@@ -7,6 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import type { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
 const DomainUpsellHeader: React.FunctionComponent = () => {
@@ -57,7 +58,7 @@ const DomainUpsellHeader: React.FunctionComponent = () => {
 
 const PlansHeader: React.FunctionComponent< {
 	domainFromHomeUpsellFlow?: string;
-	subHeaderText?: string;
+	subHeaderText?: TranslateResult;
 } > = ( { domainFromHomeUpsellFlow, subHeaderText } ) => {
 	const translate = useTranslate();
 	const plansDescription =

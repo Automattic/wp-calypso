@@ -8,6 +8,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
+	STATIC_SITE_IMPORT_FLOW,
 	ENTREPRENEUR_FLOW,
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -23,7 +24,9 @@ import {
 	ART_PROMO_FLOW,
 	DIRECT_TO_CART_FLOW,
 	WRITE_ON_FLOW,
+	WRITE_NEW_SITE_FLOW,
 	EDUCATION_FLOW,
+	LAUNCH_SITE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -78,6 +81,12 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ WRITE_ON_FLOW ]: () =>
 		import( /* webpackChunkName: "write-on-flow" */ './flows/write-on/write-on' ),
+
+	[ WRITE_NEW_SITE_FLOW ]: () =>
+		import( /* webpackChunkName: "write-new-site-flow" */ './flows/write-new-site/write-new-site' ),
+
+	[ LAUNCH_SITE_FLOW ]: () =>
+		import( /* webpackChunkName: "launch-site-flow" */ './flows/launch-site/launch-site' ),
 };
 
 /**
@@ -152,7 +161,17 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any 
 	config.isEnabled( 'calypso/ai-site-builder-flow' )
 		? {
 				[ AI_SITE_BUILDER_FLOW ]: () => import( './flows/ai-site-builder/ai-site-builder' ),
-		  }
+			}
+		: {};
+
+const staticSiteImportFlow: Record< string, () => Promise< { default: FlowV2< any > } > > =
+	config.isEnabled( 'migration/non-wordpress-source' )
+		? {
+				[ STATIC_SITE_IMPORT_FLOW ]: () =>
+					import(
+						/* webpackChunkName: "static-site-import-flow" */ './flows/static-site-import-flow/static-site-import-flow'
+					),
+			}
 		: {};
 
 const aiSiteBuilderOnboardingFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
@@ -180,4 +199,5 @@ export default {
 	...hundredYearDomainFlow,
 	...aiSiteBuilderFlows,
 	...aiSiteBuilderOnboardingFlows,
+	...staticSiteImportFlow,
 };

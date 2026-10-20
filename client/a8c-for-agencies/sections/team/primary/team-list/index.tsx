@@ -45,6 +45,9 @@ export default function TeamList() {
 	const canRemove = useSelector( ( state: A4AStore ) =>
 		hasAgencyCapability( state, 'a4a_remove_users' )
 	);
+	const canInvite = useSelector( ( state: A4AStore ) =>
+		hasAgencyCapability( state, 'a4a_edit_user_invites' )
+	);
 	const currentUser = useSelector( getCurrentUser );
 
 	const handleMemberAction = useHandleMemberAction( { onRefetchList: refetch } );
@@ -61,6 +64,7 @@ export default function TeamList() {
 
 	const actions = useTeamActions( {
 		canRemove,
+		canInvite,
 		currentUserEmail: currentUser?.email,
 		onResendInvite,
 		onConfirmAction: setActiveRequest,

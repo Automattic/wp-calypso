@@ -11,6 +11,7 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const onBackLinkClick = ( event ) => {
+		event.preventDefault();
 		recordTracksEvent( 'calypso_courses_mobile_back_click', {
 			course: course?.slug,
 		} );
@@ -45,7 +46,7 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 					'videos-ui__course-completed': isCourseComplete,
 				} ) }
 			>
-				<a href="/" className="videos-ui__back-button" onClick={ onBackLinkClick }>
+				<a href="/home" className="videos-ui__back-button" onClick={ onBackLinkClick }>
 					<Gridicon icon="chevron-left" size={ 24 } />
 					<span>{ translate( 'Back' ) }</span>
 				</a>

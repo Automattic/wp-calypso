@@ -99,8 +99,14 @@ const ScaledBlockRendererContainer = ( {
 
 	const scriptAssets = useParsedAssets( scripts );
 
+	// Memoized so the `dangerouslySetInnerHTML` objects keep a stable identity; React 19
+	// reassigns `innerHTML` whenever that object identity changes, even for identical markup.
 	const svgFilters = useMemo( () => {
-		return [ ...( duotone?.default ?? [] ), ...( duotone?.theme ?? [] ) ];
+		const presets = [ ...( duotone?.default ?? [] ), ...( duotone?.theme ?? [] ) ];
+		return presets.map( ( preset ) => ( {
+			slug: preset.slug,
+			markup: { __html: getDuotoneFilter( `wp-duotone-${ preset.slug }`, preset.colors ) },
+		} ) );
 	}, [ duotone ] );
 
 	const contentRef = useRefEffect< HTMLBodyElement >( ( bodyElement ) => {
@@ -163,13 +169,11 @@ const ScaledBlockRendererContainer = ( {
 				{ isLoaded ? contentResizeListener : null }
 				{
 					/* Filters need to be rendered before children to avoid Safari rendering issues. */
-					svgFilters.map( ( preset ) => (
+					svgFilters.map( ( filter ) => (
 						<div
-							key={ preset.slug }
+							key={ filter.slug }
 							// eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML={ {
-								__html: getDuotoneFilter( `wp-duotone-${ preset.slug }`, preset.colors ),
-							} }
+							dangerouslySetInnerHTML={ filter.markup }
 						/>
 					) )
 				}

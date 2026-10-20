@@ -4,6 +4,21 @@ export enum EmailProvider {
 	Titan = 'titan',
 }
 
+/**
+ * Sections of Titan's control panel that the auto-login URL can deep-link to.
+ */
+export const TitanControlPanelContext = {
+	CONFIGURE_CATCH_ALL_EMAIL: 'configure_catch_all_email',
+	CONFIGURE_DESKTOP_APP: 'configure_desktop_app',
+	CONFIGURE_INTERNAL_FORWARDING: 'configure_internal_forwarding',
+	CREATE_EMAIL: 'create_email_account',
+	GET_MOBILE_APP: 'get_mobile_app',
+	IMPORT_EMAIL_DATA: 'import_email_data',
+} as const;
+
+export type TitanControlPanelContext =
+	( typeof TitanControlPanelContext )[ keyof typeof TitanControlPanelContext ];
+
 export interface Mailbox {
 	account_type: EmailProvider;
 	domain: string;

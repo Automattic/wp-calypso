@@ -148,7 +148,7 @@ export const ExpandableSidebarMenu = ( menuProps: ExpandableSidebarMenuProps ) =
 							? ( event ) => {
 									setSubmenuHovered( false );
 									onClick( event );
-							  }
+								}
 							: undefined
 					}
 					customIcon={ customIcon }

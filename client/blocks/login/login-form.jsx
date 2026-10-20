@@ -63,6 +63,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
+import { getParamFromUrlOrOauth2Redirect } from 'calypso/state/selectors/get-param-from-url-or-oauth2-redirect';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ErrorNotice from './error-notice';
@@ -109,6 +110,7 @@ export class LoginForm extends Component {
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
 		isJetpack: PropTypes.bool,
+		isUserAccountEmailUpdateRedirect: PropTypes.bool,
 		loginButtonText: PropTypes.string,
 		isGravatarFixedAccountLogin: PropTypes.bool.isRequired,
 		isGravPoweredClient: PropTypes.bool,
@@ -342,6 +344,10 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
+		if ( this.props.blackbox.isSubmitBlocked ) {
+			return;
+		}
+
 		if ( ! this.props.hasAccountTypeLoaded ) {
 			// Google Chrome on iOS will autofill without sending events, leading the user
 			// to see a filled box but getting an error. We fetch the value directly from
@@ -480,10 +486,6 @@ export class LoginForm extends Component {
 	renderUsernameorEmailLabel() {
 		if ( this.props.currentQuery?.username_only === 'true' ) {
 			return this.props.translate( 'Your username' );
-		}
-
-		if ( this.isPasswordView() ) {
-			return this.renderChangeUsername();
 		}
 
 		return (
@@ -703,6 +705,7 @@ export class LoginForm extends Component {
 			isGravPoweredClient,
 			isGravatarFixedAccountLogin,
 			isSocialFirst,
+			isUserAccountEmailUpdateRedirect,
 		} = this.props;
 
 		const isLastUsedPassword =
@@ -750,13 +753,22 @@ export class LoginForm extends Component {
 			);
 		};
 
+		const renderUserAccountEmailUpdateNotice = () => {
+			return (
+				<Notice variant="info">
+					{ this.props.translate(
+						'Please log in using the original email address for your account, not the updated email address you are verifying.'
+					) }
+				</Notice>
+			);
+		};
+
 		const renderSocialLinkingNotice = () => {
 			return (
-				<Notice variant="error">
+				<Notice variant="info">
 					{ this.props.translate(
-						'We found a WordPress.com account with the email address "%(email)s". ' +
-							'Log in to this account to connect it to your %(service)s profile, ' +
-							'or choose a different %(service)s profile.',
+						'There’s already a WordPress.com account for "%(email)s" that isn’t connected to %(service)s yet. ' +
+							'Log in to it and you’ll be able to connect your %(service)s account.',
 						{
 							args: {
 								email: this.props.socialAccountLinkEmail,
@@ -774,6 +786,9 @@ export class LoginForm extends Component {
 
 				<div className="login__form-userdata">
 					{ linkingSocialUser && renderSocialLinkingNotice() }
+					{ isUserAccountEmailUpdateRedirect && renderUserAccountEmailUpdateNotice() }
+
+					{ this.isPasswordView() && this.renderChangeUsername() }
 
 					<FormLabel
 						htmlFor="usernameOrEmail"
@@ -1047,7 +1062,7 @@ export default connect(
 			userEmail:
 				props.userEmail ||
 				getInitialQueryArguments( state )?.email_address ||
-				getCurrentQueryArguments( state )?.email_address,
+				getParamFromUrlOrOauth2Redirect( state, 'email_address' ),
 			socialService: getInitialQueryArguments( state )?.service,
 			wccomFrom: getWccomFrom( state ),
 			currentQuery,

@@ -1,4 +1,4 @@
-import { Icon, menu } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/ui';
 
 import './omnibar-responsive-menu.scss';
@@ -12,10 +12,10 @@ export function OmnibarResponsiveMenu( {
 		<Button
 			variant="unstyled"
 			className="omnibar__menu omnibar__responsive-menu"
-			aria-label="Menu"
+			aria-label={ __( 'Menu' ) }
 			onClick={ onClickResponsiveMenu }
 		>
-			<Icon icon={ menu } />
+			<span className="dashicons-before dashicons-menu-alt" />
 		</Button>
 	);
 }
