@@ -10,9 +10,8 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, download } from '@wordpress/icons';
 import clsx from 'clsx';
 import { fixMe, useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
@@ -28,12 +27,9 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
-import { useMarketplaceReviewsQuery } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
-import { MarketplaceReviewsCards } from 'calypso/my-sites/marketplace/components/reviews-cards';
-import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
@@ -57,8 +53,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
-import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { canPublishProductReviews } from 'calypso/state/marketplace/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getPluginOnSites,
 	isRequestingForAllSites,
@@ -132,7 +127,6 @@ function PluginDetails( props ) {
 				? canCurrentUser( state, selectedSite?.ID, 'manage_options' )
 				: canCurrentUserManagePlugins( state ) )
 	);
-	const [ isReviewsModalVisible, setIsReviewsModalVisible ] = useState( false );
 
 	// Site type.
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -270,6 +264,11 @@ function PluginDetails( props ) {
 		if ( isMarketplaceProduct && marketplaceVersion ) {
 			merged.version = marketplaceVersion;
 		}
+		// Marketplace ratings come from WooCommerce.com via the wpcom catalog, not from WordPress.org
+		if ( isMarketplaceProduct ) {
+			merged.rating = wpcomPlugin.rating;
+			merged.num_ratings = wpcomPlugin.num_ratings;
+		}
 		return merged;
 	}, [
 		plugin,
@@ -314,18 +313,6 @@ function PluginDetails( props ) {
 		fullPlugin,
 		requestingPluginsForSites,
 	] );
-
-	const canPublishReview = useSelector( ( state ) =>
-		canPublishProductReviews( state, 'plugin', fullPlugin.slug, fullPlugin.variations )
-	);
-	const currentUserId = useSelector( getCurrentUserId );
-	const { data: userReviews = [] } = useMarketplaceReviewsQuery( {
-		productType: 'plugin',
-		slug: fullPlugin.slug,
-		perPage: 1,
-		author: currentUserId ?? undefined,
-		status: 'all',
-	} );
 
 	const setBreadcrumbs = ( breadcrumbs = [] ) => {
 		if ( breadcrumbs?.length === 0 ) {
@@ -516,31 +503,8 @@ function PluginDetails( props ) {
 						</NoticeAction>
 					</Notice>
 				) }
-				<ReviewsModal
-					isVisible={ isReviewsModalVisible }
-					onClose={ () => setIsReviewsModalVisible( false ) }
-					productName={ fullPlugin.name }
-					slug={ fullPlugin.slug }
-					variations={ fullPlugin.variations }
-					productType="plugin"
-				/>
 				<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
 			</FullWidthSection>
-			{ userReviews.length === 0 &&
-				canPublishReview &&
-				isMarketplaceProduct &&
-				! showPlaceholder && (
-					<Banner
-						className="plugin-details__reviews-banner"
-						title={ translate( 'Review this plugin!' ) }
-						description={ translate(
-							'Please help other users by sharing your experience with this plugin.'
-						) }
-						onClick={ () => setIsReviewsModalVisible( true ) }
-						disableHref
-						event="calypso_marketplace_reviews_plugin_banner"
-					/>
-				) }
 			<FullWidthSection
 				className="plugin-details__main-section"
 				enabled={ isMarketplaceRedesignEnabled }
@@ -551,7 +515,6 @@ function PluginDetails( props ) {
 							<PluginDetailsHeader
 								plugin={ fullPlugin }
 								isPlaceholder={ showPlaceholder }
-								onReviewsClick={ () => setIsReviewsModalVisible( true ) }
 								isMarketplaceProduct={ isMarketplaceProduct }
 							/>
 						</div>
@@ -652,13 +615,6 @@ function PluginDetails( props ) {
 			</FullWidthSection>
 			{ isMarketplaceRedesignEnabled && relatedPlugins }
 
-			{ ! showPlaceholder && (
-				<MarketplaceReviewsCards
-					slug={ fullPlugin.slug }
-					productType="plugin"
-					showMarketplaceReviews={ () => setIsReviewsModalVisible( true ) }
-				/>
-			) }
 			{ isMarketplaceProduct && ! showPlaceholder && (
 				<FullWidthSection
 					className="plugins__marketplace-footer"

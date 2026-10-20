@@ -70,7 +70,8 @@ test.describe(
 			await test.step( 'Navigate to Full Site Editor', async () => {
 				fullSiteEditorPage = new FullSiteEditorPage( page );
 
-				// Explicitly doing sidebar navigation to ensure Calypso navigation is intact.
+				// Explicitly navigating the site's menu (Calypso's sidebar, or wp-admin's on Classic
+				// sites) to ensure that navigation is intact.
 				const sidebarComponent = new SidebarComponent( page );
 				await sidebarComponent.navigate( 'Appearance', 'Editor' );
 			} );

@@ -3,6 +3,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import NoteIcon from '../../note-icon';
 import { NoteTime } from './note-meta';
 import type { NoteActor, NoteParentComment } from '../../types';
@@ -67,48 +68,65 @@ const ThreadItem = ( {
 	);
 };
 
-export default function Thread( {
-	repliedTo,
+export function ThreadParent( {
+	comment,
+	truncate = false,
+}: {
+	comment: NoteParentComment;
+	truncate?: boolean;
+} ) {
+	return (
+		<ThreadItem
+			avatar={ comment.author_avatar }
+			author={ comment.author_name }
+			authorUrl={ comment.author_url }
+			meta={
+				comment.date && (
+					<Text className="wpnc-simplified__quiet-links" size={ 12 } variant="muted">
+						<NoteTime timestamp={ comment.date } url={ comment.url } />
+					</Text>
+				)
+			}
+		>
+			<div
+				className={ clsx( 'wpnc-simplified__parent-text', {
+					'is-truncated': truncate,
+				} ) }
+			>
+				{ comment.text }
+			</div>
+		</ThreadItem>
+	);
+}
+
+export function ThreadReply( {
 	commenter,
 	meta,
 	status,
 	children,
 }: {
-	repliedTo?: NoteParentComment;
-	commenter?: NoteActor;
+	commenter: NoteActor;
 	meta?: ReactNode;
 	status?: ReactNode;
-	children?: ReactNode;
+	children: ReactNode;
 } ) {
 	return (
+		<ThreadItem
+			avatar={ commenter.avatar }
+			author={ commenter.name }
+			authorUrl={ commenter.url }
+			meta={ meta }
+			status={ status }
+		>
+			{ children }
+		</ThreadItem>
+	);
+}
+
+export default function Thread( { children }: { children: ReactNode } ) {
+	return (
 		<VStack as="ol" className="wpnc-simplified__thread" spacing={ 4 }>
-			{ repliedTo && (
-				<ThreadItem
-					avatar={ repliedTo.author_avatar }
-					author={ repliedTo.author_name }
-					authorUrl={ repliedTo.author_url }
-					meta={
-						repliedTo.date && (
-							<Text className="wpnc-simplified__quiet-links" size={ 12 } variant="muted">
-								<NoteTime timestamp={ repliedTo.date } url={ repliedTo.url } />
-							</Text>
-						)
-					}
-				>
-					<div className="wpnc-simplified__parent-text">{ repliedTo.text }</div>
-				</ThreadItem>
-			) }
-			{ commenter && (
-				<ThreadItem
-					avatar={ commenter.avatar }
-					author={ commenter.name }
-					authorUrl={ commenter.url }
-					meta={ meta }
-					status={ status }
-				>
-					{ children }
-				</ThreadItem>
-			) }
+			{ children }
 		</VStack>
 	);
 }

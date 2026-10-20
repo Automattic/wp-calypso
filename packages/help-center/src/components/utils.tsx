@@ -136,10 +136,23 @@ export const getZendeskSurveyRating = (
 	return rating === 'good' || rating === 'bad' ? rating : undefined;
 };
 
-export const getClientId = ( conversations: ZendeskConversation[] ): string =>
+/**
+ * The Smooch client this browser uses on `integrationId`. Smooch keeps one client per integration
+ * but lists conversations from every integration in the app, so skip clients from other ones.
+ * Messages that don't say which integration they came from still count.
+ */
+export const getClientId = (
+	conversations: ZendeskConversation[],
+	integrationId: string
+): string =>
 	conversations
 		.flatMap( ( conversation ) => conversation.messages )
-		.find( ( message ) => message.source?.type === 'web' && message.source?.id )?.source?.id || '';
+		.find(
+			( { source } ) =>
+				source?.type === 'web' &&
+				source.id &&
+				( ! source.integrationId || source.integrationId === integrationId )
+		)?.source?.id || '';
 
 export const matchSupportInteractionId = (
 	getConversations: () => ZendeskConversation[],

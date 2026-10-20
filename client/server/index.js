@@ -1,5 +1,4 @@
 import 'source-map-support/register';
-import '@automattic/calypso-polyfills';
 
 import fs from 'fs';
 import config from '@automattic/calypso-config';

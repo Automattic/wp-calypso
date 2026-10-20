@@ -1,9 +1,0 @@
-{
-	"extends": "@automattic/calypso-typescript-config/js-package.json",
-	"compilerOptions": {
-		"types": [ "node" ],
-		// webpack 5.104's types pull in @types/eslint-scope 3, written for ESLint 9's scope types.
-		// Drop this once webpack no longer depends on it (5.112 doesn't).
-		"skipLibCheck": true
-	}
-}

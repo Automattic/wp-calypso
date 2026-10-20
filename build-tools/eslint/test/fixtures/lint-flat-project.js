@@ -28,7 +28,7 @@ const files = {
 
 const config = defineConfig( [
 	{ files: [ '**/*.{js,jsx,cjs}' ], extends: [ wpcalypso.configs.react ] },
-	{ files: [ '**/*.json' ], extends: [ json.configs[ 'flat/recommended' ] ] },
+	{ files: [ '**/*.json' ], extends: [ json.configs.recommended ] },
 	{ ...flatNodeConfig, files: [ 'bin/**' ] },
 	// Projects often add the React plugin's own config; the preset must register the same plugin.
 	{ files: [ '**/*.{js,jsx}' ], ...react.configs.flat[ 'jsx-runtime' ] },

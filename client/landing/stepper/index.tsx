@@ -1,4 +1,3 @@
-import '@automattic/calypso-polyfills';
 import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
