@@ -26,8 +26,8 @@ function readScriptData(): AnalyticsScriptData | undefined {
  * Picks where a widget link goes: the Premium Analytics route when the dashboard is on for this user
  * (per Jetpack's script data, else the site setting), the classic Stats URL otherwise.
  * @param siteId The site the widget shows.
- * @returns A function from the classic URL, the matching dashboard route (null for a link the
- * dashboard has no page for) and the days the classic link shows, to the URL to link to.
+ * @returns A function from the classic URL, the matching dashboard route and the days the classic
+ * link shows, to the URL to link to.
  */
 export default function useStatsLink( siteId: number ) {
 	const scriptData = readScriptData();
@@ -47,8 +47,8 @@ export default function useStatsLink( siteId: number ) {
 	// Absent before Jetpack sent it, and empty for a site set to a fixed UTC offset.
 	const timezone = optionalConfig( 'timezone' );
 
-	return ( statsUrl: string, route: string | null, range?: PremiumAnalyticsRange ): string =>
-		isPremiumAnalyticsEnabled && adminUrl && route !== null
+	return ( statsUrl: string, route: string, range?: PremiumAnalyticsRange ): string =>
+		isPremiumAnalyticsEnabled && adminUrl
 			? `${ adminUrl }${ getPremiumAnalyticsPath(
 					route,
 					range && { ...range, timezone: typeof timezone === 'string' ? timezone : undefined },

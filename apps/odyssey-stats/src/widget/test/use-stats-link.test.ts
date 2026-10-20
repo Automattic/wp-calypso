@@ -94,12 +94,6 @@ describe( 'useStatsLink', () => {
 		expect( statsLink( STATS_URL, '/post/12' ) ).toBe( STATS_URL );
 	} );
 
-	it( 'keeps the Stats URL for a link the dashboard has no page for', () => {
-		mockSite( true );
-
-		expect( statsLink( STATS_URL, null ) ).toBe( STATS_URL );
-	} );
-
 	it( 'keeps the Stats URL for a user who cannot read the site settings', () => {
 		mockSite( true, false );
 
