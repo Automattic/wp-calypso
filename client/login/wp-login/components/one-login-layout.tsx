@@ -44,6 +44,12 @@ interface OneLoginLayoutProps {
 	isSectionSignup?: boolean;
 	loginUrl?: string;
 	isLostPasswordView?: boolean;
+	/**
+	 * Keeps the "Create an account" link in the top bar below 960px only. The main login view
+	 * passes this in the entry clarity treatment, where its footer carries the route to signup on
+	 * desktop.
+	 */
+	signupLinkMobileOnly?: boolean;
 	noThanksRedirectUrl?: string;
 	/**
 	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`. Defaults to 6.
@@ -82,6 +88,7 @@ const OneLoginLayout = ( {
 	isSectionSignup,
 	loginUrl,
 	isLostPasswordView,
+	signupLinkMobileOnly,
 	noThanksRedirectUrl,
 	columnWidth,
 	showLogo = true,
@@ -168,9 +175,17 @@ const OneLoginLayout = ( {
 	};
 
 	const topBar = (): JSX.Element => {
+		const signupOrLoginLink = isSectionSignup ? renderLoginLink() : renderSignUpLink();
+
+		// Hidden in CSS rather than by a viewport hook: the page is server-rendered, so a hook
+		// would render the mobile arrangement and jump on hydration.
 		const rightElement = (
 			<nav className="wp-login__one-login-layout-top-right">
-				{ isSectionSignup ? renderLoginLink() : renderSignUpLink() }
+				{ signupLinkMobileOnly ? (
+					<span className="wp-login__top-right-mobile">{ signupOrLoginLink }</span>
+				) : (
+					signupOrLoginLink
+				) }
 				{ renderNoThanksLink() }
 			</nav>
 		);
