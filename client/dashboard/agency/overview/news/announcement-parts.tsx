@@ -164,7 +164,7 @@ function CtaButton( {
 	shouldUseRouterLink,
 }: {
 	cta: AnnouncementCta;
-	variant: 'primary' | 'secondary';
+	variant: 'secondary' | 'tertiary';
 	onClick: () => void;
 	shouldUseRouterLink?: boolean;
 } ) {
@@ -195,6 +195,10 @@ function CtaButton( {
 	);
 }
 
+/**
+ * The open item's actions: secondary, then tertiary, so the Overview keeps one primary
+ * button (Schedule a check-in) and the news never competes with it.
+ */
 export function AnnouncementCtas( {
 	announcement,
 	shouldUseRouterLink = true,
@@ -205,14 +209,14 @@ export function AnnouncementCtas( {
 		<ButtonStack justify="flex-start" wrap>
 			<CtaButton
 				cta={ primaryCta }
-				variant="primary"
+				variant="secondary"
 				shouldUseRouterLink={ shouldUseRouterLink }
 				onClick={ () => trackCta( recordTracksEvent, announcement, 'primary' ) }
 			/>
 			{ secondaryCta && (
 				<CtaButton
 					cta={ secondaryCta }
-					variant="secondary"
+					variant="tertiary"
 					shouldUseRouterLink={ shouldUseRouterLink }
 					onClick={ () => trackCta( recordTracksEvent, announcement, 'secondary' ) }
 				/>
