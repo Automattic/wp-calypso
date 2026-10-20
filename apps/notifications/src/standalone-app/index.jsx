@@ -5,6 +5,7 @@ import { setLocale } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import NotificationApp, { refreshNotes } from '../app';
+import { store } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
 import { createClient } from '../standalone/client';
@@ -38,16 +39,6 @@ const fetchLocale = async ( localeSlug ) => {
 		setLocale( localeData );
 	} catch {}
 };
-
-// The notifications app (src/app) owns its Redux store internally and exposes
-// no isShowing/isVisible props (it is built for popover hosts where mount means
-// "open"). The standalone widget instead lives in a long-lived iframe whose
-// host toggles it open/closed via postMessage, so we keep a reference to that
-// store through a custom enhancer and drive the open/visibility state into it
-// directly — the same effect the old panel component performed via props.
-let store = { dispatch: () => {}, getState: () => {} };
-const customEnhancer = ( next ) => ( reducer, initialState ) =>
-	( store = next( reducer, initialState ) );
 
 const ACTION_HANDLERS = {
 	APP_RENDER_NOTES: [
@@ -201,8 +192,6 @@ const NotesWrapper = ( { wpcom } ) => {
 		window.addEventListener( 'message', receiveMessage( handleMessages ) );
 
 		// Let the host know the iframe has booted and is ready to be toggled.
-		// The app dispatches APP_IS_READY into a transient store created before
-		// our custom enhancer takes over, so we signal readiness directly here.
 		sendMessage( { action: 'iFrameReady' } );
 
 		sendMessage( { action: 'widescreen', widescreen: true } );
@@ -214,7 +203,6 @@ const NotesWrapper = ( { wpcom } ) => {
 
 	return (
 		<NotificationApp
-			customEnhancer={ customEnhancer }
 			actionHandlers={ ACTION_HANDLERS }
 			locale={ locale }
 			wpcom={ wpcom }
