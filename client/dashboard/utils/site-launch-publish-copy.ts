@@ -1,4 +1,5 @@
 import { useExperiment } from 'calypso/lib/explat';
+import { useAppContext } from '../app/context';
 
 /**
  * Registered on the calypso platform. jetpack-mu-wpcom assigns the same experiment on the
@@ -45,7 +46,9 @@ export function isEligibleForSiteLaunchPublishCopy( {
 export function useSiteLaunchPublishCopy(
 	input: SiteLaunchPublishCopyInput
 ): SiteLaunchPublishCopyResult {
-	const isEligible = isEligibleForSiteLaunchPublishCopy( input );
+	// Agencies launch through their own flow, so the agency dashboard keeps today's copy.
+	const isAgencyDashboard = !! useAppContext().supports.agency;
+	const isEligible = ! isAgencyDashboard && isEligibleForSiteLaunchPublishCopy( input );
 
 	// Always call the hook. Keep ineligible users out of the experiment.
 	const [ isLoading, experimentAssignment ] = useExperiment( SITE_LAUNCH_PUBLISH_COPY_EXPERIMENT, {

@@ -4,6 +4,7 @@
 
 import { renderHook } from '@testing-library/react';
 import { useExperiment } from 'calypso/lib/explat';
+import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../app/context';
 import {
 	SITE_LAUNCH_PUBLISH_COPY_EXPERIMENT,
 	isEligibleForSiteLaunchPublishCopy,
@@ -58,6 +59,23 @@ describe( 'useSiteLaunchPublishCopy', () => {
 		const { result } = renderHook( () =>
 			useSiteLaunchPublishCopy( { ...eligibleInput, launchStatus: 'launched' } )
 		);
+
+		expect( mockUseExperiment ).toHaveBeenCalledWith( SITE_LAUNCH_PUBLISH_COPY_EXPERIMENT, {
+			isEligible: false,
+		} );
+		expect( result.current ).toEqual( { isLoading: false, usePublishCopy: false } );
+	} );
+
+	it( 'keeps agency dashboard users out of the experiment', () => {
+		mockUseExperiment.mockReturnValue( [ false, createExperimentAssignment( 'treatment' ) ] );
+		const config = {
+			...APP_CONTEXT_DEFAULT_CONFIG,
+			supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, agency: {} },
+		} as typeof APP_CONTEXT_DEFAULT_CONFIG;
+
+		const { result } = renderHook( () => useSiteLaunchPublishCopy( eligibleInput ), {
+			wrapper: ( { children } ) => <AppProvider config={ config }>{ children }</AppProvider>,
+		} );
 
 		expect( mockUseExperiment ).toHaveBeenCalledWith( SITE_LAUNCH_PUBLISH_COPY_EXPERIMENT, {
 			isEligible: false,
