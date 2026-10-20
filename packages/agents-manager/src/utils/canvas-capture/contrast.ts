@@ -381,10 +381,12 @@ function isAltered( element: Element, view: Window ): boolean {
 	for ( let current: Element | null = element; current; current = current.parentElement ) {
 		const style = view.getComputedStyle( current );
 
+		// A backdrop filter shows only through a background that lets it, and
+		// themes put one on opaque buttons for a glass look.
 		if (
 			parseFloat( style.opacity ) < 1 ||
 			isSet( style.filter ) ||
-			isSet( style.backdropFilter ) ||
+			( isSet( style.backdropFilter ) && ( readBackground( style )?.a ?? 0 ) < 1 ) ||
 			isSet( style.mixBlendMode )
 		) {
 			return true;

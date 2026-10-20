@@ -570,6 +570,35 @@ describe( 'text it cannot measure', () => {
 		expect( notesOf( [ 'altered' ] ) ).toEqual( [ UNMEASURED_ONE ] );
 	} );
 
+	it( 'measures text on an opaque button behind a backdrop filter', () => {
+		// A theme's glass-style buttons blur what is behind them, which their own
+		// background hides.
+		mountCanvas( [
+			{
+				...text( 'btn', { color: 'rgb(20, 35, 59)', fontSize: '16px' } ),
+				name: 'core/button',
+				style: { backgroundColor: 'rgb(194, 65, 12)' },
+				computed: { '': { backdropFilter: 'blur(30px)' } },
+			},
+		] );
+
+		expect( describeTextContrast( [ 'btn' ] ) ).toEqual( {
+			notes: [
+				'Text contrast too low: button (btn) — #14233B text on #C2410C, 3.04:1 (needs 4.5:1). The #C2410C comes from button (btn), which sets no background of its own, so the colour comes from the theme or global styles.',
+			],
+			failures: 1,
+			backdrops: [
+				{
+					clientId: 'btn',
+					name: 'core/button',
+					ownBackground: false,
+					textClientIds: [ 'btn' ],
+					readableText: '#FFFFFF',
+				},
+			],
+		} );
+	} );
+
 	it( 'reads the text fill colour the glyphs are painted in, over `color`', () => {
 		mountCanvas( [
 			{
