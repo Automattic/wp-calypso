@@ -20,9 +20,9 @@ export default createComponentImplementation(
 			src={ props.url }
 			alt={ props.description ?? '' }
 			className={ clsx(
-				'automattic-interactive-ui__image',
-				`automattic-interactive-ui__image--${ props.variant ?? 'mediumFeature' }`,
-				`automattic-interactive-ui__image--fit-${ props.fit ?? 'contain' }`
+				'agents-manager-interactive-ui__image',
+				`agents-manager-interactive-ui__image--${ props.variant ?? 'mediumFeature' }`,
+				`agents-manager-interactive-ui__image--fit-${ props.fit ?? 'contain' }`
 			) }
 		/>
 	)

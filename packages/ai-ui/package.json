@@ -15,13 +15,13 @@
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
 		},
-		"./style.css": {
-			"calypso:src": "./src/style.css",
-			"default": "./dist/esm/style.css"
+		"./style.scss": {
+			"calypso:src": "./src/style.scss",
+			"default": "./dist/esm/style.scss"
 		}
 	},
 	"sideEffects": [
-		"*.css"
+		"*.scss"
 	],
 	"repository": {
 		"type": "git",
@@ -39,7 +39,7 @@
 	"types": "dist/types",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && cp src/style.css dist/esm/style.css && cp src/style.css dist/cjs/style.css",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && yarn run -T copy-assets",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
@@ -47,6 +47,7 @@
 		"@a2ui/markdown-it": "0.2.0",
 		"@a2ui/react": "0.12.0",
 		"@a2ui/web_core": "0.12.0",
+		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/icons": "^13.3.0",

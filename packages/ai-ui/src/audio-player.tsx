@@ -20,7 +20,7 @@ export const AudioPlayer = createComponentImplementation(
 			aria-label={ props.description }
 			controls
 			preload="metadata"
-			className="automattic-interactive-ui__audio-player"
+			className="agents-manager-interactive-ui__audio-player"
 		/>
 	)
 );
