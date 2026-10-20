@@ -20,9 +20,6 @@ const selectors = {
 
 	// Schedule
 	scheduleButton: 'button.editor-post-schedule__dialog-toggle',
-	// Gutenberg trunk renders the post summary with DataForm (panel layout).
-	dataFormDateButton: 'button[aria-label="Edit Date"]',
-	dataFormDateTimeInput: '.dataforms-layouts-panel__field-dropdown input[type="datetime-local"]',
 	dataFormDropdownCloseButton:
 		'.dataforms-layouts-panel__dropdown-header button[aria-label="Close"]',
 	schedulePopoverCloseButton:
@@ -315,14 +312,14 @@ export class EditorSettingsSidebarComponent {
 	}
 
 	/**
-	 * Returns the button that toggles the schedule picker. This is the
-	 * DataForm "Edit Date" button on Gutenberg trunk, or the legacy
-	 * schedule dialog toggle on older versions.
+	 * Returns the button that toggles the schedule picker.
 	 */
 	private async getScheduleToggle(): Promise< Locator > {
 		const editorParent = await this.editor.parent();
+		// The label gains an " (has errors)" suffix when the date fails validation.
+		// TODO: Drop the legacy selector once the DataForm post summary ships in stable Gutenberg.
 		return editorParent
-			.locator( selectors.dataFormDateButton )
+			.getByRole( 'button', { name: /^Edit Date/ } )
 			.or( editorParent.locator( selectors.scheduleButton ) )
 			.first();
 	}
@@ -343,7 +340,6 @@ export class EditorSettingsSidebarComponent {
 
 		const editorParent = await this.editor.parent();
 
-		// DataForm dropdown (Gutenberg trunk) has its own Close button.
 		const dataFormClose = editorParent.locator( selectors.dataFormDropdownCloseButton );
 		if ( await dataFormClose.count() ) {
 			await dataFormClose.click();
@@ -367,9 +363,8 @@ export class EditorSettingsSidebarComponent {
 	async setScheduleDetails( date: ArticlePublishSchedule ): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		// Gutenberg trunk: DataForm datetime control, a single
-		// `datetime-local` input that takes `YYYY-MM-DDTHH:mm`.
-		const dateTimeInput = editorParent.locator( selectors.dataFormDateTimeInput );
+		// TODO: Drop the legacy inputs once the DataForm post summary ships in stable Gutenberg.
+		const dateTimeInput = editorParent.getByLabel( 'Date time', { exact: true } );
 		const legacyInput = editorParent.locator( selectors.scheduleInput( 'year' ) );
 		await dateTimeInput.or( legacyInput ).first().waitFor();
 
@@ -565,10 +560,9 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async enterUrlSlug( slug: string ) {
 		const editorParent = await this.editor.parent();
-		// Gutenberg trunk renders the summary with DataForm ("Edit Slug");
-		// older versions use the "Change link:" button.
+		// TODO: Drop "Change link:" once the DataForm post summary ships in stable Gutenberg.
 		await editorParent
-			.getByRole( 'button', { name: /^(Change link:.*|Edit Slug)$/ } )
+			.getByRole( 'button', { name: /^(Change link:|Edit Slug)/ } )
 			.first()
 			.click();
 		await editorParent.getByRole( 'textbox', { name: /^(Link|Slug)$/ } ).fill( slug );

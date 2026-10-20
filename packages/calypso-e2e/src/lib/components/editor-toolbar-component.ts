@@ -281,10 +281,10 @@ export class EditorToolbarComponent {
 
 		await Promise.race( [
 			( async () => {
-				// Works with Gutenberg >=v18.2.0, including the DataForm
-				// post summary ("Edit Status") on Gutenberg trunk.
+				// Works with Gutenberg >=v18.2.0
+				// TODO: Drop the legacy selector once the DataForm post summary ships in stable Gutenberg.
 				await editorParent
-					.getByRole( 'button', { name: 'Edit Status', exact: true } )
+					.getByRole( 'button', { name: /^Edit Status/ } )
 					.or( editorParent.locator( selectors.postStatusButton ) )
 					.first()
 					.click();
