@@ -7,3 +7,19 @@
 		border: none;
 	}
 }
+
+// Payout settings as its own page: what the status means, and Tipalti one click away.
+.earn-payout-settings-summary {
+	flex: 1;
+	min-inline-size: 240px;
+	max-inline-size: 560px;
+	text-wrap: pretty;
+}
+
+// The Tipalti mark at the height of the text beside it.
+.earn-payout-settings-tipalti {
+	align-self: flex-start;
+	inline-size: auto;
+	block-size: 20px;
+	margin-block-end: 8px;
+}

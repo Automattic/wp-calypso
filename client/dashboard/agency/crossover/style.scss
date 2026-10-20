@@ -1,0 +1,89 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+// The modal's own content padding with its header hidden; the handoff pulls into it.
+$modal-padding: $grid-unit-30;
+
+// Wide enough for the checkbox, Cancel and "Continue to WordPress.com" on one line.
+.a4a-crossover-handoff {
+	inline-size: 560px;
+	max-inline-size: calc( 100% + #{$modal-padding * 2} );
+	margin: -$modal-padding;
+}
+
+// Takes no height, so the field still starts at the top.
+.a4a-crossover-close {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	justify-content: flex-end;
+	block-size: 0;
+	padding-inline-end: $grid-unit-10;
+	translate: 0 $grid-unit-10;
+}
+
+// The onboarding tour's field: the A4A glow (set inline) on its tint.
+.a4a-crossover-field {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	block-size: 168px;
+	background-color: var( --dashboard-marketplace-referral__tint-color );
+	background-position: center;
+	background-size: cover;
+}
+
+.a4a-crossover-product {
+	inline-size: 160px;
+	text-align: center;
+}
+
+// The product marks share one height; a wordmark (Tipalti) runs wider.
+.a4a-crossover-mark {
+	display: block;
+	inline-size: auto;
+	block-size: 64px;
+
+	&.is-agencies {
+		inline-size: 64px;
+		object-fit: contain;
+	}
+}
+
+.a4a-crossover-path {
+	display: flex;
+	align-items: center;
+	block-size: 64px;
+	color: $gray-700;
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.a4a-crossover-content {
+	padding: $modal-padding $modal-padding 0;
+}
+
+.a4a-crossover-rows {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		text-wrap: pretty;
+	}
+}
+
+.a4a-crossover-row-icon {
+	flex-shrink: 0;
+	fill: $gray-700;
+}
+
+.a4a-crossover-actions {
+	margin-block-start: $modal-padding;
+	padding: 16px $modal-padding $modal-padding;
+	border-block-start: 1px solid $gray-100;
+}
