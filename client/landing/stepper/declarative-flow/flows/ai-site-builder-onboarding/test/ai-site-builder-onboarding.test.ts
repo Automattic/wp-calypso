@@ -479,19 +479,23 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				processingResult: ProcessingResult.FAILURE,
 			} );
 
-			expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug, {
-				errorReason: 'processing_failed',
-			} );
+			expect( navigate ).toHaveBeenCalledWith(
+				STEPS.ERROR.slug,
+				{ errorReason: 'processing_failed' },
+				true
+			);
 		} );
 
-		it( 'names the cause when a reload drops the pending action', async () => {
+		it( 'replaces processing with the error step when a reload drops the pending action', async () => {
 			const navigate = await submitFrom( STEPS.PROCESSING.slug, {
 				processingResult: ProcessingResult.NO_ACTION,
 			} );
 
-			expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug, {
-				errorReason: 'processing_no_action',
-			} );
+			expect( navigate ).toHaveBeenCalledWith(
+				STEPS.ERROR.slug,
+				{ errorReason: 'processing_no_action' },
+				true
+			);
 		} );
 
 		it( 'names the cause when processing succeeds without a site', async () => {

@@ -286,12 +286,18 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					return navigate( STEPS.PROCESSING.slug );
 
 				case STEPS.PROCESSING.slug: {
-					// NO_ACTION follows a reload. The processing step has no timeout, so returning
-					// here would leave the customer on the spinner.
+					// NO_ACTION follows a reload or a Back from checkout. The processing step has no
+					// timeout, so returning here would leave the customer on the spinner. The error
+					// step replaces processing, or each Back would land on processing and push the
+					// error step again.
 					if ( providedDependencies.processingResult !== ProcessingResult.SUCCESS ) {
-						return navigate( STEPS.ERROR.slug, {
-							errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
-						} );
+						return navigate(
+							STEPS.ERROR.slug,
+							{
+								errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
+							},
+							true
+						);
 					}
 
 					if ( ! providedDependencies.goToCheckout ) {
