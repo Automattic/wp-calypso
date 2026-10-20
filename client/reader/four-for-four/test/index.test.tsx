@@ -230,7 +230,7 @@ describe( 'FourForFour', () => {
 
 		renderWithProvider( <FourForFour />, { initialState } );
 
-		expect( await screen.findByText( 'No new writers to show right now.' ) ).toBeVisible();
+		expect( await screen.findByText( "We're still finding new writers for you." ) ).toBeVisible();
 		await user.click( screen.getByRole( 'button', { name: 'Check again' } ) );
 
 		expect( await screen.findByTestId( 'list-item-2' ) ).toHaveTextContent( 'Second Site' );
@@ -383,6 +383,19 @@ describe( 'FourForFour', () => {
 		} );
 	} );
 
+	it( 'does not report an empty list to someone who has already finished', async () => {
+		mockStatus( 'completed', [ 2, 3, 4, 5 ] );
+		mockCandidates( [] );
+
+		renderWithProvider( <FourForFour />, { initialState } );
+
+		expect( await screen.findByRole( 'status' ) ).toHaveTextContent( "You're in!" );
+		expect(
+			screen.queryByText( "We're still finding new writers for you." )
+		).not.toBeInTheDocument();
+		expect( screen.getByText( "That's everyone we have for you right now." ) ).toBeVisible();
+	} );
+
 	describe( 'a follow the server refuses', () => {
 		it( 'names the site and does not count it toward the total', async () => {
 			const user = userEvent.setup();
@@ -447,7 +460,7 @@ describe( 'FourForFour', () => {
 
 			renderWithProvider( <FourForFour />, { initialState } );
 
-			expect( await screen.findByText( 'No new writers to show right now.' ) ).toBeVisible();
+			expect( await screen.findByText( "We're still finding new writers for you." ) ).toBeVisible();
 			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
 				'calypso_reader_four_for_four_candidates_shown',
 				{ count: 0, participant_count: 0 }

@@ -107,6 +107,12 @@ export function FourForFour() {
 	const failedSite = candidates.find( ( candidate ) => candidate.blogId === failedBlogIds[ 0 ] );
 
 	const isComplete = status === 'completed';
+	const hasCandidates = candidates.length > 0;
+	// An empty pool should be a brief gap while the server refills it, not a
+	// dead end, and someone who has already finished shouldn't be told there
+	// is nothing to show.
+	const isSearchingForCandidates =
+		! hasCandidates && ! isLoadingCandidates && ! isCandidatesError && ! isComplete;
 	const progressCount = Math.min( followedCount, FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS );
 	const progressLabel = String(
 		translate( '%(count)d of %(total)d subscribed', {
@@ -199,13 +205,9 @@ export function FourForFour() {
 						</HStack>
 					) }
 
-					<div className="subscribe-modal__columns">
-						<div className="subscribe-modal__site-list-column">
-							{ isLoadingCandidates && (
-								<div className="four-for-four-modal__loading">
-									<Spinner />
-								</div>
-							) }
+					{ ! hasCandidates && (
+						<div className="four-for-four-modal__no-candidates">
+							{ isLoadingCandidates && <Spinner /> }
 							{ isCandidatesError && (
 								<EmptyContent
 									isCompact
@@ -214,16 +216,28 @@ export function FourForFour() {
 									actionCallback={ () => refetchCandidates() }
 								/>
 							) }
-							{ ! isLoadingCandidates && ! isCandidatesError && candidates.length === 0 && (
+							{ isSearchingForCandidates && (
 								<EmptyContent
 									isCompact
-									title={ translate( 'No new writers to show right now.' ) }
+									title={ translate( "We're still finding new writers for you." ) }
 									line={ translate( 'The list refreshes as new writers publish.' ) }
 									action={ translate( 'Check again' ) }
 									actionCallback={ () => refetchCandidates() }
 								/>
 							) }
-							{ candidates.length > 0 && (
+							{ isComplete && ! isLoadingCandidates && ! isCandidatesError && (
+								<EmptyContent
+									isCompact
+									title={ translate( "That's everyone we have for you right now." ) }
+									line={ translate( 'The list refreshes as new writers publish.' ) }
+								/>
+							) }
+						</div>
+					) }
+
+					{ hasCandidates && (
+						<div className="subscribe-modal__columns">
+							<div className="subscribe-modal__site-list-column">
 								<div className="subscribe-modal__recommended-sites">
 									{ candidates.map( ( candidate ) => (
 										<ConnectedReaderSubscriptionListItem
@@ -243,55 +257,55 @@ export function FourForFour() {
 										/>
 									) ) }
 								</div>
-							) }
-						</div>
-						<div className="subscribe-modal__preview-column">
-							<div className="subscribe-modal__preview-placeholder">
-								{ selectedCandidate && (
-									<>
-										<div className="subscribe-modal__preview-stream-header">
-											<div className="subscribe-modal__preview-site">
-												<SiteIcon size={ 36 } iconUrl={ selectedCandidate.icon ?? undefined } />
-												<span className="subscribe-modal__preview-site-title">
-													{ selectedCandidate.name }
-												</span>
-											</div>
-											<ReaderFollowButton
-												key={ selectedCandidate.blogId }
-												siteUrl={ selectedCandidate.feedUrl || selectedCandidate.url }
-												feedId={ selectedCandidate.feedId ?? undefined }
-												siteId={ selectedCandidate.blogId }
-												followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
-												followSource={ READER_FOUR_FOR_FOUR }
-												hasButtonStyle
-												followIcon={ <></> }
-												followingIcon={
-													<Icon
-														key="following"
-														className="reader-following-feed"
-														icon={ check }
-														size={ 18 }
-													/>
-												}
-											/>
-										</div>
-										<div className="subscribe-modal__preview-stream-container" ref={ previewRef }>
-											<div className="subscribe-modal__preview-stream-inner" inert>
-												<TypedStream
-													streamKey={ selectedCandidate.streamKey }
-													className="is-site-stream subscribe-modal__preview-stream no-padding"
+							</div>
+							<div className="subscribe-modal__preview-column">
+								<div className="subscribe-modal__preview-placeholder">
+									{ selectedCandidate && (
+										<>
+											<div className="subscribe-modal__preview-stream-header">
+												<div className="subscribe-modal__preview-site">
+													<SiteIcon size={ 36 } iconUrl={ selectedCandidate.icon ?? undefined } />
+													<span className="subscribe-modal__preview-site-title">
+														{ selectedCandidate.name }
+													</span>
+												</div>
+												<ReaderFollowButton
+													key={ selectedCandidate.blogId }
+													siteUrl={ selectedCandidate.feedUrl || selectedCandidate.url }
+													feedId={ selectedCandidate.feedId ?? undefined }
+													siteId={ selectedCandidate.blogId }
+													followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
 													followSource={ READER_FOUR_FOR_FOUR }
-													useCompactCards
-													showBylineSecondarySiteLink={ false }
-													trackScrollPage={ trackScrollPage }
+													hasButtonStyle
+													followIcon={ <></> }
+													followingIcon={
+														<Icon
+															key="following"
+															className="reader-following-feed"
+															icon={ check }
+															size={ 18 }
+														/>
+													}
 												/>
 											</div>
-										</div>
-									</>
-								) }
+											<div className="subscribe-modal__preview-stream-container" ref={ previewRef }>
+												<div className="subscribe-modal__preview-stream-inner" inert>
+													<TypedStream
+														streamKey={ selectedCandidate.streamKey }
+														className="is-site-stream subscribe-modal__preview-stream no-padding"
+														followSource={ READER_FOUR_FOR_FOUR }
+														useCompactCards
+														showBylineSecondarySiteLink={ false }
+														trackScrollPage={ trackScrollPage }
+													/>
+												</div>
+											</div>
+										</>
+									) }
+								</div>
 							</div>
 						</div>
-					</div>
+					) }
 				</div>
 			</div>
 			<div className="reader-onboarding-modal__footer">

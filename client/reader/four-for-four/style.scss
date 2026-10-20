@@ -48,6 +48,15 @@
 		fill: var( --color-accent );
 	}
 
+	&__no-candidates {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex: 1;
+		min-height: 240px;
+		padding: 24px;
+	}
+
 	&__loading {
 		padding: 24px 12px;
 		text-align: center;
