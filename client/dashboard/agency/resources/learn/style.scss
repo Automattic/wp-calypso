@@ -516,3 +516,29 @@ $resource-brands: (
 		}
 	}
 }
+
+@media ( max-width: $break-mobile ) {
+	.dashboard-resources-learn__toolbar {
+		display: grid;
+		grid-template-columns: auto auto minmax( 0, 1fr );
+		gap: $grid-unit-20;
+		.dashboard-resources-learn__toolbar-main {
+			display: contents;
+		}
+		.dashboard-resources-learn__search {
+			grid-column: 1 / -1;
+			min-inline-size: 0;
+			> * {
+				inline-size: 100%;
+				max-inline-size: none;
+			}
+		}
+		.dashboard-resources-learn__stage {
+			justify-self: end;
+			min-inline-size: 0;
+		}
+		.dashboard-resources-learn__layout-toggle {
+			margin-inline-end: 0;
+		}
+	}
+}

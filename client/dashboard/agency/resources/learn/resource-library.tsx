@@ -135,9 +135,15 @@ export default function ResourceLibrary( {
 						) }
 						search
 					>
-						<HStack justify="space-between" wrap>
-							<HStack justify="flex-start" expanded={ false }>
-								<WPDataViews.Search label={ __( 'Search resources' ) } />
+						<HStack className="dashboard-resources-learn__toolbar" justify="space-between" wrap>
+							<HStack
+								className="dashboard-resources-learn__toolbar-main"
+								justify="flex-start"
+								expanded={ false }
+							>
+								<div className="dashboard-resources-learn__search">
+									<WPDataViews.Search label={ __( 'Search resources' ) } />
+								</div>
 								<ToggleGroupControl
 									className="dashboard-resources-learn__layout-toggle"
 									label={ __( 'Layout' ) }
@@ -155,7 +161,9 @@ export default function ResourceLibrary( {
 								</ToggleGroupControl>
 								<WPDataViews.FiltersToggle />
 							</HStack>
-							<StageFilter view={ view } onChangeView={ onChangeView } />
+							<div className="dashboard-resources-learn__stage">
+								<StageFilter view={ view } onChangeView={ onChangeView } />
+							</div>
 						</HStack>
 						<Spacer marginBottom={ 4 }>
 							<WPDataViews.FiltersToggled className="dashboard-resources-learn__filters-toggled" />
