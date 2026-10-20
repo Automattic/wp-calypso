@@ -1,8 +1,13 @@
-import { getBlazeAdvertisingUrl, shouldShowBlazeAdvertisingOption } from '../traffic';
+import {
+	getBlazeAdvertisingUrl,
+	isJetpackSeoPageAvailable,
+	shouldShowBlazeAdvertisingOption,
+} from '../traffic';
 
 const siteId = 123;
 
 const getState = ( {
+	adminMenu,
 	canBlaze,
 	isComingSoon = false,
 	isSiteKnown = true,
@@ -19,6 +24,9 @@ const getState = ( {
 	};
 
 	return {
+		adminMenu: {
+			menus: adminMenu ? { [ siteId ]: adminMenu } : {},
+		},
 		sites: {
 			items: isSiteKnown ? { [ siteId ]: site } : {},
 		},
@@ -82,5 +90,33 @@ describe( 'getBlazeAdvertisingUrl', () => {
 				wpAdminAdvertisingUrl,
 			} )
 		).toBe( wpAdminAdvertisingUrl );
+	} );
+} );
+
+describe( 'isJetpackSeoPageAvailable', () => {
+	const getJetpackMenu = ( childSlugs ) => [
+		{ slug: 'index-php', children: [ { parent: 'index.php', slug: 'index-php' } ] },
+		{
+			slug: 'jetpack',
+			children: childSlugs.map( ( slug ) => ( { parent: 'jetpack', slug } ) ),
+		},
+	];
+
+	test( 'returns true when the admin menu lists the Jetpack SEO page', () => {
+		const state = getState( { adminMenu: getJetpackMenu( [ 'stats', 'jetpack-seo' ] ) } );
+
+		expect( isJetpackSeoPageAvailable( state, siteId ) ).toBe( true );
+	} );
+
+	test( 'returns false when the admin menu does not list the Jetpack SEO page', () => {
+		const state = getState( { adminMenu: getJetpackMenu( [ 'stats' ] ) } );
+
+		expect( isJetpackSeoPageAvailable( state, siteId ) ).toBe( false );
+	} );
+
+	test( 'returns false when the admin menu has not loaded', () => {
+		const state = getState( {} );
+
+		expect( isJetpackSeoPageAvailable( state, siteId ) ).toBe( false );
 	} );
 } );
