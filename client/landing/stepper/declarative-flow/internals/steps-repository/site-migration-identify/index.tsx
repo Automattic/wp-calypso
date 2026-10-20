@@ -2,14 +2,14 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
-import { Notice, ProgressBar, Spinner } from '@wordpress/components';
+import { Notice, ProgressBar } from '@wordpress/components';
 import { next, published, shield } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback, useRef } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
-import { convertPlatformName } from 'calypso/blocks/import/util';
+import { CAPTURE_URL_RGX, convertPlatformName } from 'calypso/blocks/import/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
@@ -23,7 +23,10 @@ import type { UrlData } from 'calypso/blocks/import/types';
 
 import './style.scss';
 
-type ConnectionIssue = 'unreachable' | 'http';
+type ConnectionIssue = 'unreachable';
+
+// How long checking a site stays on screen at least, so a quick answer doesn't flash past.
+const MINIMUM_CHECK_DURATION_MS = 1500;
 
 interface Props {
 	hasError?: boolean;
@@ -67,23 +70,23 @@ export const Analyzer: FC< Props > = ( {
 			? error.data.site_health
 			: undefined;
 	const siteHealth = hasError ? errorHealth : siteInfo?.site_health;
+	// The health is from our own fetch of the homepage, not from how the migration will reach the site.
+	let isUnhealthy = typeof siteHealth === 'string' && siteHealth !== 'ok';
+	// A site we know is WordPress can still be migrated when its homepage is a 404.
+	if ( isUnhealthy && ! hasError && siteInfo?.platform === 'wordpress' ) {
+		isUnhealthy = siteHealth !== 'not_found';
+	}
 	let connectionIssue: ConnectionIssue | undefined;
 	if ( isReprintFlow && siteURL && ! isFetching ) {
 		if (
 			( ! siteInfo || hasError || [ 'wordpress', 'unknown' ].includes( siteInfo.platform ) ) &&
-			( ( typeof siteHealth === 'string' && siteHealth !== 'ok' ) ||
+			( isUnhealthy ||
 				( hasError &&
 					error &&
 					'code' in error &&
 					( error.code === 'http_request_failed' || error.code === 'rest_invalid_param' ) ) )
 		) {
 			connectionIssue = 'unreachable';
-		} else if (
-			! hasError &&
-			siteInfo?.platform === 'wordpress' &&
-			getUrlParts( siteInfo.url ).protocol === 'http:'
-		) {
-			connectionIssue = 'http';
 		}
 	}
 
@@ -93,17 +96,37 @@ export const Analyzer: FC< Props > = ( {
 		data: hostingProviderData,
 		isFetching: isFetchingHosting,
 		isError: hasHostingError,
-	} = useHostingProviderQuery( domain, !! domain );
+	} = useHostingProviderQuery( domain, !! domain, isReprintFlow ? 5000 : undefined );
+
+	// Each new address or retry keeps the check on screen for a moment before its outcome shows.
+	const [ isHeld, setIsHeld ] = useState( false );
+	useEffect( () => {
+		setIsHeld( isReprintFlow && !! siteURL );
+	}, [ isReprintFlow, siteURL ] );
+	useEffect( () => {
+		if ( isReprintFlow && siteURL && isFetching ) {
+			setIsHeld( true );
+		}
+	}, [ isReprintFlow, siteURL, isFetching ] );
+	useEffect( () => {
+		if ( ! isHeld ) {
+			return;
+		}
+		const timeout = setTimeout( () => setIsHeld( false ), MINIMUM_CHECK_DURATION_MS );
+		return () => clearTimeout( timeout );
+	}, [ isHeld ] );
+	const shownIssue = isHeld ? undefined : connectionIssue;
 
 	// Update loading state to include hosting check
 	const isScanning =
-		! connectionIssue && ( isFetching || isFetchingHosting || ( isFetched && ! hasError ) );
+		! shownIssue && ( isHeld || isFetching || isFetchingHosting || ( isFetched && ! hasError ) );
 
 	useEffect( () => {
 		// Only complete when we have both site info AND hosting info (or hosting check failed)
 		if (
 			siteURL &&
 			siteInfo &&
+			! isHeld &&
 			! connectionIssue &&
 			! hasError &&
 			! isFetching &&
@@ -115,6 +138,7 @@ export const Analyzer: FC< Props > = ( {
 	}, [
 		siteURL,
 		siteInfo,
+		isHeld,
 		hostingProviderData,
 		hasHostingError,
 		hasError,
@@ -124,8 +148,8 @@ export const Analyzer: FC< Props > = ( {
 	] );
 
 	useEffect( () => {
-		onVisibilityChange?.( ! isScanning, connectionIssue );
-	}, [ isScanning, connectionIssue, onVisibilityChange ] );
+		onVisibilityChange?.( ! isScanning, shownIssue );
+	}, [ isScanning, shownIssue, onVisibilityChange ] );
 
 	if ( isScanning && ! isReprintFlow ) {
 		return <ScanningStep />;
@@ -138,10 +162,6 @@ export const Analyzer: FC< Props > = ( {
 		siteInfo?.platform && siteInfo.platform !== 'unknown'
 			? convertPlatformName( siteInfo.platform )
 			: undefined;
-	const hasIdentifiedPlatform = !! siteInfo && ! isFetching;
-	const checkStatus = hasIdentifiedPlatform
-		? translate( 'Checking your hosting provider' )
-		: translate( 'Identifying your site platform' );
 
 	const hostingDetailItems = [
 		{
@@ -172,7 +192,7 @@ export const Analyzer: FC< Props > = ( {
 
 	return (
 		<>
-			{ isReprintFlow && ( isScanning || connectionIssue ) && (
+			{ isReprintFlow && ( isScanning || shownIssue ) && (
 				<div className="site-migration-identify__checking">
 					<div className="site-migration-identify__summary">
 						<span>{ hostname }</span>
@@ -182,34 +202,21 @@ export const Analyzer: FC< Props > = ( {
 								: translate( 'View site ↗' ) }
 						</Step.LinkButton>
 					</div>
-					{ connectionIssue ? (
+					{ shownIssue ? (
 						<div className="site-migration-identify__status site-migration-identify__connection-issue">
 							<Notice status="warning" isDismissible={ false }>
 								<img src={ warningIcon } alt="" width={ 24 } height={ 24 } />
-								<span>
-									{ connectionIssue === 'http'
-										? translate( '%(site)s uses plain HTTP', { args: { site: hostname } } )
-										: translate( 'Couldn’t connect' ) }
-								</span>
+								<span>{ translate( 'Couldn’t connect' ) }</span>
 							</Notice>
 							<p>
-								{ connectionIssue === 'http'
-									? translate(
-											'Turn on HTTPS at your host, most offer it free, then try again. If you typed http:// by mistake and the site redirects to https, we pick that up on our own.'
-										)
-									: translate(
-											'Check the address and try again. If your site is down, our team can take a look and help you migrate it once it’s back.'
-										) }
+								{ translate(
+									'Check the address and try again. If your site is down, our team can take a look and help you migrate it once it’s back.'
+								) }
 							</p>
 							<div className="site-migration-identify__actions">
 								<Step.PrimaryButton onClick={ () => refetch() }>
 									{ translate( 'Try again' ) }
 								</Step.PrimaryButton>
-								{ connectionIssue === 'http' && (
-									<Step.SecondaryButton disabled>
-										{ translate( 'How to enable HTTPS ↗' ) }
-									</Step.SecondaryButton>
-								) }
 							</div>
 							<Step.LinkButton onClick={ () => onSkip( sourceURL ) }>
 								{ translate( 'pick your current platform from a list' ) }
@@ -217,30 +224,10 @@ export const Analyzer: FC< Props > = ( {
 						</div>
 					) : (
 						<div className="site-migration-identify__status" role="status" aria-live="polite">
-							<div className="site-migration-identify__status-title">
-								<span className="site-migration-identify__spinner">
-									<Spinner />
-								</span>
-								<span>{ checkStatus }</span>
-							</div>
-							<div className="site-migration-identify__progress">
-								<div>
-									<ProgressBar
-										className="site-migration-identify__progress-bar"
-										value={ hasIdentifiedPlatform ? 100 : undefined }
-										aria-label={ translate( 'Site platform' ) }
-									/>
-									<span>{ translate( 'Site platform' ) }</span>
-								</div>
-								<div>
-									<ProgressBar
-										className="site-migration-identify__progress-bar"
-										value={ hasIdentifiedPlatform ? undefined : 0 }
-										aria-label={ translate( 'Hosting provider' ) }
-									/>
-									<span>{ translate( 'Hosting provider' ) }</span>
-								</div>
-							</div>
+							<ProgressBar
+								className="site-migration-identify__progress-bar"
+								aria-label={ translate( 'Checking your site' ) }
+							/>
 							<p>
 								{ translate( 'We’re looking at %(site)s to see what we can move.', {
 									args: { site: hostname },
@@ -252,9 +239,9 @@ export const Analyzer: FC< Props > = ( {
 			) }
 			<div
 				className="import__capture-container"
-				hidden={ isReprintFlow && ( isScanning || !! connectionIssue ) }
+				hidden={ isReprintFlow && ( isScanning || !! shownIssue ) }
 			>
-				{ isReprintFlow && siteURL && hasError && ! isScanning && ! connectionIssue && (
+				{ isReprintFlow && siteURL && hasError && ! isScanning && ! shownIssue && (
 					<Notice
 						status="error"
 						isDismissible={ false }
@@ -280,7 +267,7 @@ export const Analyzer: FC< Props > = ( {
 						}
 						onSkip( /^https?:\/\//i.test( url ) ? url : `https://${ url }` );
 					} }
-					placeholder={ translate( 'mygreatnewblog.com' ) }
+					placeholder={ translate( 'your-existing-site.com' ) }
 					label={ translate( 'Site address' ) }
 					dontHaveSiteAddressLabel={ translate(
 						'Or <button>pick your current platform from a list</button>'
@@ -291,12 +278,10 @@ export const Analyzer: FC< Props > = ( {
 					nextLabelText={ isReprintFlow ? translate( 'Continue' ) : translate( 'Check my site' ) }
 				/>
 			</div>
-			{ ! isReprintFlow && (
-				<ChecklistCard
-					title={ translate( 'Why should you host with us?' ) }
-					items={ hostingDetailItems }
-				/>
-			) }
+			<ChecklistCard
+				title={ translate( 'Why should you host with us?' ) }
+				items={ hostingDetailItems }
+			/>
 		</>
 	);
 };
@@ -304,6 +289,7 @@ export const Analyzer: FC< Props > = ( {
 export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
 
 const SiteMigrationIdentify: StepType< {
+	accepts: { checkOnArrival?: boolean };
 	submits:
 		| {
 				action: SiteMigrationIdentifyAction;
@@ -313,7 +299,7 @@ const SiteMigrationIdentify: StepType< {
 				isWpcom?: boolean;
 		  }
 		| undefined;
-} > = function ( { navigation, flow } ) {
+} > = function ( { navigation, flow, checkOnArrival = false } ) {
 	const translate = useTranslate();
 	const isReprintFlow = config.isEnabled( 'migration/reprint-flow' );
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
@@ -337,9 +323,12 @@ const SiteMigrationIdentify: StepType< {
 
 	const urlQueryParams = useQuery();
 
-	const [ isVisible, setIsVisible ] = useState( true );
+	const [ siteURL, setSiteURL ] = useState( () => {
+		const from = urlQueryParams.get( 'from' ) || '';
+		return checkOnArrival && CAPTURE_URL_RGX.test( from ) ? from : '';
+	} );
+	const [ isVisible, setIsVisible ] = useState( ! siteURL );
 	const [ connectionIssue, setConnectionIssue ] = useState< ConnectionIssue >();
-	const [ siteURL, setSiteURL ] = useState( '' );
 
 	useEffect( () => {
 		const onPageShow = ( event: PageTransitionEvent ) => {
@@ -357,12 +346,7 @@ const SiteMigrationIdentify: StepType< {
 	let subTitle = isChecking
 		? undefined
 		: translate( 'Enter your current site address below to get started.' );
-	if ( connectionIssue === 'http' ) {
-		title = translate( 'Your site isn’t on HTTPS' );
-		subTitle = translate(
-			'We only migrate sites over a secure connection, so nothing is sent unencrypted. Nothing has changed on your site.'
-		);
-	} else if ( connectionIssue === 'unreachable' ) {
+	if ( connectionIssue === 'unreachable' ) {
 		title = translate( 'We couldn’t reach your site' );
 		subTitle = translate(
 			'It may be offline, behind a login, or blocking automated visitors. Nothing has changed on your site.'

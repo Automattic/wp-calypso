@@ -54,7 +54,11 @@ describe( 'StaticSiteImportResults', () => {
 		expect( button ).toBeDisabled();
 		await waitFor( () => expect( button ).toBeEnabled() );
 		expect( screen.getByRole( 'heading', { name: 'We can move your site' } ) ).toBeVisible();
-		expect( screen.getByText( 'High confidence. Everything can come with you.' ) ).toBeVisible();
+		expect(
+			screen.getByText( 'High confidence. Everything can come with you.', {
+				selector: '.components-notice__content > span',
+			} )
+		).toBeVisible();
 		expect( screen.getByText( '12 pages' ) ).toBeVisible();
 
 		await userEvent.click( button );
@@ -74,7 +78,9 @@ describe( 'StaticSiteImportResults', () => {
 			await screen.findByRole( 'heading', { name: 'We can move almost all of your site' } )
 		).toBeVisible();
 		expect(
-			screen.getByText( 'Good confidence. 1 thing to set up after the move.' )
+			screen.getByText( 'Good confidence. 1 thing to set up after the move.', {
+				selector: '.components-notice__content > span',
+			} )
 		).toBeVisible();
 		expect( screen.getByText( 'Your contact form' ) ).toBeVisible();
 	} );

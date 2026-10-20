@@ -1,4 +1,8 @@
+import type { SMOOCH_INTEGRATION_ID_CUSTOM } from './constants';
 import type React from 'react';
+
+/** Selects a dedicated Smooch integration from `SMOOCH_INTEGRATION_ID_CUSTOM`. */
+export type SmoochIntegrationKey = keyof typeof SMOOCH_INTEGRATION_ID_CUSTOM;
 
 export type ZendeskConfigName =
 	| 'zendesk_support_chat_key'

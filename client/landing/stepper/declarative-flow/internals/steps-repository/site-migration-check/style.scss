@@ -118,6 +118,37 @@
 		line-height: 1.5;
 	}
 
+	.site-migration-check__preview-label {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.site-migration-check__preview-heading {
+		font-size: 1rem;
+		font-weight: 500;
+	}
+
+	.site-migration-check__preview-address {
+		display: flex;
+		gap: 4px;
+		max-width: 100%;
+		align-self: flex-start;
+		white-space: nowrap;
+		color: var( --color-neutral-50 );
+		text-decoration: none;
+
+		&:hover,
+		&:focus-visible {
+			color: var( --color-link );
+			text-decoration: underline;
+		}
+	}
+
+	.site-migration-check__preview-address-text {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
 	.site-migration-check__preview-description {
 		color: var( --color-neutral-50 );
 	}

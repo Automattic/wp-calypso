@@ -246,3 +246,35 @@ describe( 'useCreateZendeskConversation — transfer messages', () => {
 		expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith( expect.any( Function ), true );
 	} );
 } );
+
+describe( 'useCreateZendeskConversation — conversation tags', () => {
+	beforeEach( () => {
+		smoochCreateConversation.mockResolvedValueOnce( { id: 'conv-1', metadata: {} } );
+	} );
+
+	it( 'writes the configured tags on the conversation', async () => {
+		const context = ( useOdieAssistantContext as jest.Mock )();
+		( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+			...context,
+			zendeskConversationTags: [ 'woo_support_flow_help_center', 'second_tag' ],
+		} );
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await result.current( { createdFrom: 'automatic_escalation' } );
+
+		expect( smoochCreateConversation ).toHaveBeenCalledWith( {
+			metadata: expect.objectContaining( {
+				'zen:ticket:tags': 'woo_support_flow_help_center,second_tag',
+			} ),
+		} );
+	} );
+
+	it( 'writes no tags when none are configured', async () => {
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await result.current( { createdFrom: 'automatic_escalation' } );
+
+		expect( smoochCreateConversation.mock.calls[ 0 ][ 0 ].metadata ).not.toHaveProperty(
+			'zen:ticket:tags'
+		);
+	} );
+} );
