@@ -8,6 +8,7 @@ import { useEffect, useRef } from 'react';
 import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { pathToUrl } from 'calypso/lib/url';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -246,42 +247,27 @@ const hosting: FlowV2< typeof initialize > = {
 							if ( couponCode ) {
 								resetCouponCode();
 							}
-							const purchaseStepArgs: Record< string, string | number > = {};
-							if ( showPurchaseSteps ) {
-								const checkoutBackArgs = {
-									...Object.fromEntries( query ),
-									plan: undefined,
-									siteSlug,
-								};
-								const domainBackUrl = new URL(
-									addQueryArgs(
-										withLocale( '/setup/new-hosted-site/domains', locale ),
-										checkoutBackArgs
-									),
-									window.location.origin
-								).href;
-								const planBackUrl = new URL(
-									addQueryArgs(
-										withLocale( '/setup/new-hosted-site/plans', locale ),
-										checkoutBackArgs
-									),
-									window.location.origin
-								).href;
-								const stepPosition = getOnboardingStepperPosition( 'checkout', shouldSkipPlans );
-								Object.assign( purchaseStepArgs, {
-									showPurchaseSteps: 'true',
-									checkoutBackUrl: shouldSkipPlans ? domainBackUrl : planBackUrl,
-									checkoutBackUrlDomains: domainBackUrl,
-									steps_current: stepPosition.current,
-									steps_total: stepPosition.total,
-								} );
-							}
+							const checkoutBackUrl = ( step: 'domains' | 'plans' ) =>
+								pathToUrl(
+									addQueryArgs( withLocale( `/setup/${ flowName }/${ step }`, locale ), {
+										...Object.fromEntries( query ),
+										plan: undefined,
+										siteSlug,
+									} )
+								);
+							const stepPosition = getOnboardingStepperPosition( 'checkout', shouldSkipPlans );
 							const checkoutUrl = addQueryArgs(
 								`/checkout/${ encodeURIComponent( ( providedDependencies?.siteSlug as string ) ?? '' ) }`,
 								{
 									redirect_to: destination,
 									coupon: couponCode,
-									...purchaseStepArgs,
+									...( showPurchaseSteps && {
+										showPurchaseSteps: 'true',
+										checkoutBackUrl: checkoutBackUrl( shouldSkipPlans ? 'domains' : 'plans' ),
+										checkoutBackUrlDomains: checkoutBackUrl( 'domains' ),
+										steps_current: stepPosition.current,
+										steps_total: stepPosition.total,
+									} ),
 								}
 							);
 							return showPurchaseSteps

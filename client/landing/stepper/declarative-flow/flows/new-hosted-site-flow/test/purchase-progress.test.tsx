@@ -65,6 +65,10 @@ jest.mock( 'calypso/landing/stepper/hooks/use-is-valid-woo-partner', () => ( {
 jest.mock( 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial', () => ( {
 	isUserEligibleForFreeHostingTrial: () => mockEligibleForTrial,
 } ) );
+jest.mock( 'calypso/lib/url', () => ( {
+	...jest.requireActual( 'calypso/lib/url' ),
+	pathToUrl: ( path: string ) => `https://wordpress.com${ path }`,
+} ) );
 jest.mock( 'calypso/signup/storageUtils', () => ( {
 	getSignupCompleteSiteID: () => mockSite.siteId,
 	getSignupCompleteSlug: () => mockSite.siteSlug,
@@ -131,7 +135,7 @@ it.each( [ 'en', 'fr' ] )( 'passes checkout steps and a domain return URL in %s'
 	expect( checkout.searchParams.get( 'steps_current' ) ).toBe( '2' );
 	expect( checkout.searchParams.get( 'steps_total' ) ).toBe( '2' );
 	const back = new URL( checkout.searchParams.get( 'checkoutBackUrl' )! );
-	expect( back.origin ).toBe( window.location.origin );
+	expect( back.origin ).toBe( 'https://wordpress.com' );
 	expect( back.pathname ).toBe( `/setup/new-hosted-site/domains${ locale === 'en' ? '' : '/fr' }` );
 	expect( back.searchParams.has( 'plan' ) ).toBe( false );
 	expect( back.searchParams.get( 'siteSlug' ) ).toBe( mockSite.siteSlug );
@@ -283,7 +287,6 @@ it( 'returns through plans on the same site without reseeding the entry plan', a
 it.each( [
 	[ 'without progress', 'domains', undefined ],
 	[ 'disabled progress', 'domains', 'false' ],
-	[ 'localized without progress', 'domains', undefined ],
 	[ 'flow root', '', 'true' ],
 	[ 'localized flow root', 'fr', 'true' ],
 ] )( 'resets signup state for %s entries', async ( _entry, step, progress ) => {
