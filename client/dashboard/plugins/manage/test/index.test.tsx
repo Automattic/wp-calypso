@@ -17,9 +17,11 @@ const pluginSite = {
 function mockApiEndpoints( {
 	sites,
 	plugins,
+	pluginsStatus = 200,
 }: {
 	sites: Record< string, unknown >[];
 	plugins: Record< string, unknown[] >;
+	pluginsStatus?: number;
 } ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.2/me/sites' )
@@ -29,7 +31,7 @@ function mockApiEndpoints( {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/sites/plugins' )
 		.query( true )
-		.reply( 200, { sites: plugins } );
+		.reply( pluginsStatus, { sites: plugins } );
 
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/wpcom/v2/marketplace/products' )
@@ -78,7 +80,9 @@ describe( '<PluginsList> empty states', () => {
 	test( 'does not list plugins from sites the user cannot manage', async () => {
 		mockApiEndpoints( {
 			sites: [ { ...pluginSite, capabilities: { update_plugins: false } } ],
-			plugins: { '1': [ { slug: 'test-plugin', name: 'Test Plugin' } ] },
+			plugins: {
+				'1': [ { id: 'test-plugin/test-plugin.php', slug: 'test-plugin', name: 'Test Plugin' } ],
+			},
 		} );
 
 		render( <PluginsList /> );
@@ -87,5 +91,18 @@ describe( '<PluginsList> empty states', () => {
 			await screen.findByRole( 'heading', { name: 'No plugins installed yet' } )
 		).toBeVisible();
 		expect( screen.getByText( 'Plugins on sites you can manage will appear here.' ) ).toBeVisible();
+	} );
+
+	test( 'does not show an empty state when plugins fail to load', async () => {
+		mockApiEndpoints( { sites: [ pluginSite ], plugins: {}, pluginsStatus: 500 } );
+
+		render( <PluginsList /> );
+
+		expect(
+			await screen.findByText( 'Couldn’t load your plugins. Please try again later.' )
+		).toBeVisible();
+		expect(
+			screen.queryByRole( 'heading', { name: 'No plugins installed yet' } )
+		).not.toBeInTheDocument();
 	} );
 } );
