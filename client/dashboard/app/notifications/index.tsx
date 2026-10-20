@@ -96,6 +96,10 @@ export default function Notifications( {
 		handleToggle( false );
 	};
 
+	const openInNewTab = ( store: unknown, { href }: { href: string } ) => {
+		window.open( href, '_blank', 'noopener,noreferrer' );
+	};
+
 	const actionHandlers = {
 		APP_RENDER_NOTES: [
 			( store: unknown, { newNoteCount }: { newNoteCount: number } ) => {
@@ -119,6 +123,10 @@ export default function Notifications( {
 				window.open( href, '_blank' );
 			},
 		],
+		OPEN_LINK: [ openInNewTab ],
+		OPEN_POST: [ openInNewTab ],
+		OPEN_COMMENT: [ openInNewTab ],
+		OPEN_SITE: [ openInNewTab ],
 		CLOSE_PANEL: [ handleClose ],
 	};
 
