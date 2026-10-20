@@ -275,7 +275,10 @@ function BillingDragonCheckoutContent( {
 		'pressableCancelUrl' in extra
 			? extra
 			: undefined;
-	const successUrl = pressableExtra?.afterPurchaseUrl;
+	const successUrl =
+		typeof pressableExtra?.afterPurchaseUrl === 'string'
+			? pressableExtra.afterPurchaseUrl
+			: undefined;
 	const cancelUrl =
 		typeof pressableExtra?.pressableCancelUrl === 'string'
 			? pressableExtra.pressableCancelUrl
