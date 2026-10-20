@@ -48,7 +48,7 @@ export const getHosts = (): Record< HostingSection, Host > => ( {
 			__( 'From 1 to 500+ WordPress installs' ),
 			__( 'Free staging site' ),
 			__( 'Unmetered bandwidth' ),
-			__( 'Premium plans up to 10M visits per month' ),
+			__( 'Performance plans up to 10M visits per month' ),
 			__( 'Auto-scaling PHP workers' ),
 			__( 'Free managed migrations' ),
 		],
