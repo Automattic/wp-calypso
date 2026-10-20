@@ -2,10 +2,64 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+	Outlet,
+	RouterProvider,
+	createMemoryHistory,
+	createRootRoute,
+	createRoute,
+	createRouter,
+} from '@tanstack/react-router';
+import { render as testingLibraryRender, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { AnalyticsProvider } from '../../../app/analytics';
+import { AuthContext } from '../../../app/auth';
+import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
+import { createPluginsRoutes } from '../../../app/router/plugins';
+import { rootRoute } from '../../../app/router/root';
 import { render } from '../../../test-utils';
 import PluginsList from '../index';
+import type { User } from '@automattic/api-core';
+
+// Plugin rows link to `pluginRoute`, whose path is only resolved once a router
+// builds the real route tree. The router is never navigated.
+beforeAll( () => {
+	createRouter( {
+		routeTree: rootRoute.addChildren( createPluginsRoutes() ),
+		context: { config: APP_CONTEXT_DEFAULT_CONFIG },
+	} );
+} );
+
+// The shared test-utils router has no `$pluginId` route, so render a direct
+// plugin link with a router of its own.
+function renderAtPluginUrl( pluginSlug: string ) {
+	const root = createRootRoute( { component: Outlet } );
+	const pluginUrlRoute = createRoute( {
+		getParentRoute: () => root,
+		path: 'plugins/manage/$pluginId',
+		component: PluginsList,
+	} );
+	const router = createRouter( {
+		routeTree: root.addChildren( [ pluginUrlRoute ] ),
+		history: createMemoryHistory( { initialEntries: [ `/plugins/manage/${ pluginSlug }` ] } ),
+	} );
+
+	return testingLibraryRender(
+		<QueryClientProvider
+			client={ new QueryClient( { defaultOptions: { queries: { retry: false } } } ) }
+		>
+			<AppProvider config={ APP_CONTEXT_DEFAULT_CONFIG }>
+				<AnalyticsProvider client={ { recordTracksEvent: jest.fn(), recordPageView: jest.fn() } }>
+					<AuthContext.Provider value={ { user: { ID: 1 } as User, logout: jest.fn() } }>
+						<RouterProvider router={ router } />
+					</AuthContext.Provider>
+				</AnalyticsProvider>
+			</AppProvider>
+		</QueryClientProvider>
+	);
+}
 
 const pluginSite = {
 	ID: 1,
@@ -101,6 +155,50 @@ describe( '<PluginsList> empty states', () => {
 		expect(
 			await screen.findByText( 'Couldn’t load your plugins. Please try again later.' )
 		).toBeVisible();
+		expect(
+			screen.queryByRole( 'heading', { name: 'No plugins installed yet' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'keeps the plugin details on a direct plugin link when the user has sites', async () => {
+		mockApiEndpoints( { sites: [ pluginSite ], plugins: { '1': [] } } );
+
+		renderAtPluginUrl( 'akismet' );
+
+		// Wait for the loaded plugin list so the assertions don't run against the loading state.
+		expect( await screen.findByText( 'No plugins found.' ) ).toBeVisible();
+		expect( screen.getByRole( 'tab', { name: /Available on/ } ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'heading', { name: 'No plugins installed yet' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'asks users without a site to create one on a direct plugin link', async () => {
+		mockApiEndpoints( { sites: [], plugins: {} } );
+
+		renderAtPluginUrl( 'akismet' );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'You need a site to install a plugin' } )
+		).toBeVisible();
+	} );
+
+	test( 'keeps the plugin list when a search has no matches', async () => {
+		const user = userEvent.setup();
+		mockApiEndpoints( {
+			sites: [ { ...pluginSite, site_migration: {} } ],
+			plugins: {
+				'1': [ { id: 'test-plugin/test-plugin.php', slug: 'test-plugin', name: 'Test Plugin' } ],
+			},
+		} );
+
+		render( <PluginsList /> );
+
+		expect( ( await screen.findAllByText( 'Test Plugin' ) )[ 0 ] ).toBeVisible();
+
+		await user.type( screen.getAllByRole( 'searchbox' )[ 0 ], 'zzznotarealplugin' );
+
+		expect( await screen.findByText( 'No plugins found.' ) ).toBeVisible();
 		expect(
 			screen.queryByRole( 'heading', { name: 'No plugins installed yet' } )
 		).not.toBeInTheDocument();
