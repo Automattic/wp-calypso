@@ -20,6 +20,8 @@ const selectors = {
 
 	// Schedule
 	scheduleButton: 'button.editor-post-schedule__dialog-toggle',
+	dataFormDropdownCloseButton:
+		'.dataforms-layouts-panel__field-dropdown .dataforms-layouts-panel__dropdown-header button[aria-label="Close"]',
 	schedulePopoverCloseButton:
 		'[data-wp-component="Popover"][aria-label="Change publish date"] [aria-label="Close"]',
 	scheduleInput: ( name: string ) => `.editor-post-schedule__dialog label:has-text("${ name }")`,
@@ -339,7 +341,7 @@ export class EditorSettingsSidebarComponent {
 		const editorParent = await this.editor.parent();
 
 		// The DataForm summary closes from its own header, not by re-clicking the toggle.
-		const dataFormClose = editorParent.getByRole( 'button', { name: 'Close', exact: true } );
+		const dataFormClose = editorParent.locator( selectors.dataFormDropdownCloseButton );
 		if ( await dataFormClose.count() ) {
 			await dataFormClose.click();
 			return;
@@ -566,6 +568,12 @@ export class EditorSettingsSidebarComponent {
 			.first()
 			.click();
 		await editorParent.getByRole( 'textbox', { name: /^(Link|Slug)$/ } ).fill( slug );
+
+		const dataFormClose = editorParent.locator( selectors.dataFormDropdownCloseButton );
+		if ( await dataFormClose.count() ) {
+			await dataFormClose.click();
+			return;
+		}
 		await editorParent.getByRole( 'button', { name: 'Close', exact: true } ).click();
 	}
 }
