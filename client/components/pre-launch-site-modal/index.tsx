@@ -19,6 +19,8 @@ interface PreLaunchSiteModalProps {
 	// Where launch is handed off to. The caller owns this so the destination
 	// (and the `/setup/launch-site` path) stays explicit at each call site.
 	launchUrl: string;
+	// Says "Publish" instead of "Launch", for the site launch copy experiment.
+	usePublishCopy?: boolean;
 }
 
 /**
@@ -33,6 +35,7 @@ function PreLaunchSiteModalContent( {
 	isOpen,
 	onClose,
 	launchUrl,
+	usePublishCopy = false,
 }: PreLaunchSiteModalProps ) {
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
 	const [ previewResizeListener, { width: previewWidth, height: previewHeight } ] =
@@ -99,6 +102,7 @@ function PreLaunchSiteModalContent( {
 			siteDomain={ siteDomain }
 			planName={ planName }
 			isLaunching={ isRedirecting }
+			usePublishCopy={ usePublishCopy }
 			onClose={ onClose }
 			onLaunch={ () => {
 				setIsRedirecting( true );

@@ -44,7 +44,64 @@ const mockLaunchApi = () =>
 		.post( /\/sites\/1\/launch$/ )
 		.reply( 200, {} );
 
+// ExPlat reads a cached assignment from localStorage before asking the server.
+const assignPublishCopyVariation = ( variationName: string ) =>
+	window.localStorage.setItem(
+		'explat-experiment--calypso_site_launch_publish_copy_202610_v1',
+		JSON.stringify( {
+			experimentName: 'calypso_site_launch_publish_copy_202610_v1',
+			variationName,
+			retrievedTimestamp: Date.now(),
+			ttl: 3600,
+		} )
+	);
+
 describe( '<SiteLaunchButton>', () => {
+	afterEach( () => {
+		window.localStorage.clear();
+	} );
+
+	test( 'says "Publish" on the button and in the pre-launch modal in the copy experiment treatment', async () => {
+		const user = userEvent.setup();
+		assignPublishCopyVariation( 'treatment' );
+		mockDomainsApi( [
+			createMockDomain( 'kaonashi.wordpress.com', false ),
+			createMockDomain( 'kaonashi.com' ),
+		] );
+
+		render(
+			<SiteLaunchButton
+				site={ createMockSite( {
+					capabilities: { manage_options: true } as Site[ 'capabilities' ],
+				} ) }
+				tracksContext="test"
+			/>
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: 'Publish your site' } ) );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Publishing makes your site public' } )
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Yes, publish site!' } ) ).toBeVisible();
+	} );
+
+	test( 'says "Launch" in the copy experiment control', async () => {
+		assignPublishCopyVariation( 'control' );
+		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
+
+		render(
+			<SiteLaunchButton
+				site={ createMockSite( {
+					capabilities: { manage_options: true } as Site[ 'capabilities' ],
+				} ) }
+				tracksContext="test"
+			/>
+		);
+
+		expect( await screen.findByRole( 'link', { name: 'Launch your site' } ) ).toBeVisible();
+	} );
+
 	test( 'opens the pre-launch modal instead of launching immediately for a paid site with a custom domain', async () => {
 		const user = userEvent.setup();
 		mockDomainsApi( [

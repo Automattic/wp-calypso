@@ -18,6 +18,8 @@ export interface PreLaunchModalProps {
 	siteDomain: string;
 	planName: string;
 	isLaunching: boolean;
+	/** Says "Publish" instead of "Launch", for the site launch copy experiment. */
+	usePublishCopy?: boolean;
 	preview?: ReactNode;
 	onLaunch: () => void;
 	onClose: () => void;
@@ -28,17 +30,33 @@ export default function PreLaunchModal( {
 	siteDomain,
 	planName,
 	isLaunching,
+	usePublishCopy = false,
 	preview,
 	onLaunch,
 	onClose,
 }: PreLaunchModalProps ) {
+	// Each __() is its own unconditional call: terser folds `cond ? __( a ) : __( b )` into
+	// `__( cond ? a : b )`, which breaks i18n-check-webpack-plugin in Jetpack's production build.
 	const launchingTitle = __( 'Launching site…' );
 	const readyTitle = __( 'Launching makes your site public' );
+	const launchDescription = __(
+		'Share your work, connect with your audience, and take the next step toward your goals. Do you want to launch?'
+	);
+	const launchButtonLabel = __( 'Yes, launch site!' );
+	const publishingTitle = __( 'Publishing site…' );
+	const publishReadyTitle = __( 'Publishing makes your site public' );
+	const publishDescription = __(
+		'Share your work, connect with your audience, and take the next step toward your goals. Do you want to publish your site?'
+	);
+	const publishButtonLabel = __( 'Yes, publish site!' );
+
+	const busyTitle = usePublishCopy ? publishingTitle : launchingTitle;
+	const confirmTitle = usePublishCopy ? publishReadyTitle : readyTitle;
 
 	return (
 		<Modal
 			className="site-launch-pre-launch-modal"
-			title={ isLaunching ? launchingTitle : readyTitle }
+			title={ isLaunching ? busyTitle : confirmTitle }
 			size="medium"
 			onRequestClose={ onClose }
 		>
@@ -48,11 +66,7 @@ export default function PreLaunchModal( {
 					spacing={ 6 }
 					aria-hidden={ isLaunching }
 				>
-					<Text as="p">
-						{ __(
-							'Share your work, connect with your audience, and take the next step toward your goals. Do you want to launch?'
-						) }
-					</Text>
+					<Text as="p">{ usePublishCopy ? publishDescription : launchDescription }</Text>
 					<HStack
 						className="site-launch-pre-launch-modal__preview-card"
 						spacing={ 4 }
@@ -76,7 +90,7 @@ export default function PreLaunchModal( {
 					</HStack>
 					<HStack justify="flex-end">
 						<Button variant="primary" onClick={ onLaunch }>
-							{ __( 'Yes, launch site!' ) }
+							{ usePublishCopy ? publishButtonLabel : launchButtonLabel }
 						</Button>
 					</HStack>
 				</VStack>

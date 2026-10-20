@@ -61,6 +61,7 @@ jest.mock( '@automattic/site-launch-modals', () => ( {
 		siteDomain,
 		planName,
 		isLaunching,
+		usePublishCopy,
 		onLaunch,
 		onClose,
 	}: {
@@ -68,10 +69,15 @@ jest.mock( '@automattic/site-launch-modals', () => ( {
 		siteDomain: string;
 		planName: string;
 		isLaunching: boolean;
+		usePublishCopy?: boolean;
 		onLaunch: () => void;
 		onClose: () => void;
 	} ) => (
-		<div data-testid="pre-launch-modal" data-launching={ isLaunching }>
+		<div
+			data-testid="pre-launch-modal"
+			data-launching={ isLaunching }
+			data-publish-copy={ !! usePublishCopy }
+		>
 			<span>{ siteName }</span>
 			<span>{ siteDomain }</span>
 			<span>{ planName }</span>
@@ -166,6 +172,24 @@ describe( 'PreLaunchSiteModal', () => {
 
 		expect( assign ).toHaveBeenCalledWith( LAUNCH_URL );
 		expect( screen.getByTestId( 'pre-launch-modal' ) ).toHaveAttribute( 'data-launching', 'true' );
+	} );
+
+	it( 'passes the publish copy through to the modal', async () => {
+		renderBridge( { usePublishCopy: true } );
+
+		expect( await screen.findByTestId( 'pre-launch-modal' ) ).toHaveAttribute(
+			'data-publish-copy',
+			'true'
+		);
+	} );
+
+	it( 'defaults the modal to the launch copy', async () => {
+		renderBridge();
+
+		expect( await screen.findByTestId( 'pre-launch-modal' ) ).toHaveAttribute(
+			'data-publish-copy',
+			'false'
+		);
 	} );
 
 	it( 'passes the caller onClose through to the modal', async () => {

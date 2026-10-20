@@ -82,7 +82,24 @@ function LaunchHarness( {
 }
 
 describe( 'useLaunchSiteNodeBuilder', () => {
-	afterEach( () => nock.cleanAll() );
+	// The site is in the "Publish" copy experiment. ExPlat reads a cached assignment from
+	// localStorage before asking the server, so this pins the control (today's copy).
+	beforeEach( () =>
+		window.localStorage.setItem(
+			'explat-experiment--calypso_site_launch_publish_copy_202610_v1',
+			JSON.stringify( {
+				experimentName: 'calypso_site_launch_publish_copy_202610_v1',
+				variationName: 'control',
+				retrievedTimestamp: Date.now(),
+				ttl: 3600,
+			} )
+		)
+	);
+
+	afterEach( () => {
+		nock.cleanAll();
+		window.localStorage.clear();
+	} );
 
 	test( 'renders the pre-launch modal panel when a paid, custom-domain site is launched from the omnibar', async () => {
 		const user = userEvent.setup();

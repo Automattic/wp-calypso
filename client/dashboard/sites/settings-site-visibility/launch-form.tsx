@@ -15,7 +15,9 @@ import { getSiteLaunchCheckoutUrl } from '../../agency/marketplace/products/lib/
 import { useAppContext } from '../../app/context';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
+import { TextBlur } from '../../components/text-blur';
 import { a4aLink } from '../../utils/link';
+import { useSiteLaunchPublishCopy } from '../../utils/site-launch-publish-copy';
 import { SiteLaunchButton } from '../site-launch-button';
 import AgencyDevelopmentSiteLaunchModal from '../site-launch-button/agency-development-site-launch-modal';
 import TrialUpsellNotice from './trial-upsell-notice';
@@ -147,11 +149,23 @@ export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 }
 
 export function LaunchForm( { site }: { site: Site } ) {
+	const { isLoading: isPublishCopyLoading, usePublishCopy } = useSiteLaunchPublishCopy( {
+		launchStatus: site.launch_status,
+		canManageOptions: site.capabilities?.manage_options,
+		isA4ADevSite: site.is_a4a_dev_site,
+	} );
+
 	return (
 		<>
 			<TrialUpsellNotice site={ site } />
 			<Notice
-				title={ __( 'Your site hasn’t been launched yet' ) }
+				title={
+					<TextBlur isBlurred={ isPublishCopyLoading }>
+						{ usePublishCopy
+							? __( 'Your site hasn’t been published yet' )
+							: __( 'Your site hasn’t been launched yet' ) }
+					</TextBlur>
+				}
 				actions={
 					<SiteLaunchButton
 						site={ site }
@@ -160,7 +174,15 @@ export function LaunchForm( { site }: { site: Site } ) {
 					/>
 				}
 			>
-				{ __( 'It is hidden from visitors behind a “Coming Soon” notice until it is launched.' ) }
+				<TextBlur isBlurred={ isPublishCopyLoading }>
+					{ usePublishCopy
+						? __(
+								'It is hidden from visitors behind a “Coming Soon” notice until it is published.'
+							)
+						: __(
+								'It is hidden from visitors behind a “Coming Soon” notice until it is launched.'
+							) }
+				</TextBlur>
 			</Notice>
 		</>
 	);

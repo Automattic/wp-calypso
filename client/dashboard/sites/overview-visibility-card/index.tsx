@@ -5,6 +5,7 @@ import { lockOutline, published } from '@wordpress/icons';
 import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { wpcomLink } from '../../utils/link';
+import { useSiteLaunchPublishCopy } from '../../utils/site-launch-publish-copy';
 import { getSiteVisibilityURL } from '../../utils/site-url';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import JetpackConnectionWarningCard from '../overview-jetpack-connection-warning-card';
@@ -47,15 +48,22 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 		enabled: ! isAiLaunchpad && ! isNoGuidance,
 	} );
 
-	// No-guidance sites get no setup guidance: a plain coming-soon card.
-	if ( isNoGuidance ) {
-		return <VisibilityCardComingSoon site={ site } />;
-	}
-
 	const tasks = ( isAiLaunchpad ? aiTasks : launchpad?.checklist ) ?? [];
 	const numberOfTasks = tasks.length;
 	const completedTasks = tasks.filter( ( task ) => task.completed ).length;
 	const isLaunchpadCompleted = completedTasks && completedTasks === numberOfTasks;
+
+	const { isLoading: isPublishCopyLoading, usePublishCopy } = useSiteLaunchPublishCopy( {
+		launchStatus: site.launch_status,
+		canManageOptions: site.capabilities?.manage_options,
+		isA4ADevSite: site.is_a4a_dev_site,
+		isEntryPointShown: ! isNoGuidance && !! isLaunchpadCompleted,
+	} );
+
+	// No-guidance sites get no setup guidance: a plain coming-soon card.
+	if ( isNoGuidance ) {
+		return <VisibilityCardComingSoon site={ site } />;
+	}
 
 	const setupLink = setupUrl ?? wpcomLink( `/home/${ site.slug }` );
 
@@ -64,9 +72,10 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 			{ ...CARD_PROPS }
 			{ ...( isLaunchpadCompleted
 				? {
-						heading: __( 'Launch site' ),
+						heading: usePublishCopy ? __( 'Publish site' ) : __( 'Launch site' ),
 						description: __( 'Ready to go public?' ),
 						link: getSiteVisibilityURL( site ),
+						isLoading: isPublishCopyLoading,
 					}
 				: {
 						heading: __( 'Coming soon' ),

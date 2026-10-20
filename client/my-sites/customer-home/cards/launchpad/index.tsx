@@ -7,17 +7,18 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { useMyHomeCardLaunchpad } from './use-my-home-card-launchpad';
 import './style.scss';
-import type { EventHandlers } from '@automattic/launchpad';
+import type { EventHandlers, Task } from '@automattic/launchpad';
 
 interface CustomerHomeLaunchpadProps extends Pick<
 	EventHandlers,
 	'onSiteLaunched' | 'onTaskClick'
 > {
 	checklistSlug: string;
+	onPostFilterTasks?: ( tasks: Task[] ) => Task[];
 }
 
 const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( props ) => {
-	const { checklistSlug, onSiteLaunched, onTaskClick } = props;
+	const { checklistSlug, onSiteLaunched, onTaskClick, onPostFilterTasks } = props;
 	const launchpadContext = 'customer-home';
 	const translate = useTranslate();
 
@@ -89,6 +90,7 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( props ) => {
 				launchpadContext={ launchpadContext }
 				onTaskClick={ onTaskClick }
 				onSiteLaunched={ onSiteLaunched }
+				onPostFilterTasks={ onPostFilterTasks }
 			/>
 		</div>
 	);

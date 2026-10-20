@@ -47,15 +47,16 @@ bundle the other.
 Renders the launch confirmation. While `isLaunching` is true it swaps the
 confirmation for a spinner and updates the title.
 
-| Prop          | Type                   | Description                                                         |
-| ------------- | ---------------------- | ------------------------------------------------------------------- |
-| `siteName`    | `string`               | The site's display name.                                            |
-| `siteDomain`  | `string`               | The domain (or slug) shown next to the globe icon.                  |
-| `planName`    | `string`               | The plan's display name shown next to the payment icon.             |
-| `isLaunching` | `boolean`              | When true, shows the launching spinner instead of the confirmation. |
-| `preview`     | `ReactNode` (optional) | A node rendered inside the preview card (e.g. a site thumbnail).    |
-| `onLaunch`    | `() => void`           | Called when the user confirms the launch.                           |
-| `onClose`     | `() => void`           | Called when the modal requests to close.                            |
+| Prop             | Type                   | Description                                                         |
+| ---------------- | ---------------------- | ------------------------------------------------------------------- |
+| `siteName`       | `string`               | The site's display name.                                            |
+| `siteDomain`     | `string`               | The domain (or slug) shown next to the globe icon.                  |
+| `planName`       | `string`               | The plan's display name shown next to the payment icon.             |
+| `isLaunching`    | `boolean`              | When true, shows the launching spinner instead of the confirmation. |
+| `usePublishCopy` | `boolean` (optional)   | Says "Publish" instead of "Launch". Defaults to false.              |
+| `preview`        | `ReactNode` (optional) | A node rendered inside the preview card (e.g. a site thumbnail).    |
+| `onLaunch`       | `() => void`           | Called when the user confirms the launch.                           |
+| `onClose`        | `() => void`           | Called when the modal requests to close.                            |
 
 The consumer owns the `preview` node and its styling (the package does not ship a
 site preview). Use the class `site-launch-pre-launch-modal__thumbnail` if you want

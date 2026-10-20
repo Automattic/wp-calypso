@@ -111,6 +111,22 @@ describe( 'CustomerHomeLaunchPad', () => {
 		expect( await screen.findByText( 'Task 2' ) ).toBeVisible();
 	} );
 
+	it( 'renders the tasks returned by onPostFilterTasks', async () => {
+		render(
+			<CustomerHomeLaunchPad
+				checklistSlug="some-check-list"
+				onPostFilterTasks={ ( tasks ) =>
+					tasks.map( ( task ) =>
+						task.id === 'setup_general' ? { ...task, title: 'Renamed task' } : task
+					)
+				}
+			/>
+		);
+
+		expect( await screen.findByText( 'Renamed task' ) ).toBeVisible();
+		expect( screen.queryByText( 'Task 1' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'dismiss the launchpad using the dismiss settings menu', async () => {
 		render( <CustomerHomeLaunchPad checklistSlug="some-check-list" /> );
 		userEvent.click( await screen.findByTitle( 'Dismiss settings' ) );

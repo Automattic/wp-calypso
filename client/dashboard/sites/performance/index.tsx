@@ -9,6 +9,8 @@ import EmptyState from '../../components/empty-state';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { TextBlur } from '../../components/text-blur';
+import { useSiteLaunchPublishCopy } from '../../utils/site-launch-publish-copy';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import { SiteLaunchButton } from '../site-launch-button';
@@ -16,10 +18,17 @@ import { getPerformanceCalloutProps } from './performance-callout';
 
 export function SitePerformanceContent( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const isUnpublished = site.is_coming_soon || site.is_private;
+	const { isLoading: isPublishCopyLoading, usePublishCopy } = useSiteLaunchPublishCopy( {
+		launchStatus: site.launch_status,
+		canManageOptions: site.capabilities?.manage_options,
+		isA4ADevSite: site.is_a4a_dev_site,
+		isEntryPointShown: isUnpublished,
+	} );
 
 	return (
 		<HostingFeatureGatedWithCallout site={ site } fullPage { ...getPerformanceCalloutProps() }>
-			{ site.is_coming_soon || site.is_private ? (
+			{ isUnpublished ? (
 				<PageLayout
 					size="small"
 					header={
@@ -37,7 +46,11 @@ export function SitePerformanceContent( { siteSlug }: { siteSlug: string } ) {
 					<EmptyState.Wrapper>
 						<EmptyState.Header>
 							<EmptyState.Title>
-								{ __( 'Launch your site to start measuring performance' ) }
+								<TextBlur isBlurred={ isPublishCopyLoading }>
+									{ usePublishCopy
+										? __( 'Publish your site to start measuring performance' )
+										: __( 'Launch your site to start measuring performance' ) }
+								</TextBlur>
 							</EmptyState.Title>
 							<EmptyState.Description>
 								{ __( 'Performance statistics are only available for public sites.' ) }
