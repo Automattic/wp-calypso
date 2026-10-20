@@ -12,7 +12,6 @@ import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
-import { getPromptSource } from './prompt-source';
 import { getClientConstructorArguments, getSiteEditorActions } from './site-editor-context';
 import { getAgentsManagerSurface, getIsA11n, getIsTest } from './tracks';
 import { getTurnId } from './turn-id';
@@ -149,23 +148,6 @@ function getTrackingContext(): {
 }
 
 /**
- * The prompt source declared for the send in flight, merged into the context's
- * `metadata`, which the server stores on the user message.
- */
-function getPromptSourceContext( context?: unknown ): {
-	metadata?: Record< string, unknown >;
-} {
-	const promptSource = getPromptSource();
-	if ( ! promptSource ) {
-		return {};
-	}
-	const existing = ( context as { metadata?: unknown } | undefined )?.metadata;
-	const metadata =
-		existing && typeof existing === 'object' ? ( existing as Record< string, unknown > ) : {};
-	return { metadata: { ...metadata, promptSource } };
-}
-
-/**
  * Create a context provider that resolves context entries.
  */
 async function createWrappedContextProvider(
@@ -219,7 +201,6 @@ async function createWrappedContextProvider(
 				} ),
 				...getProviderIdsContext( providerIds ),
 				...getTrackingContext(),
-				...getPromptSourceContext( resolvedContext ),
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...getClientConstructorArguments( environment, currentRoute ),
@@ -281,7 +262,6 @@ async function createDefaultContextProvider(
 				...( contextEntries ? { contextEntries } : {} ),
 				...getProviderIdsContext( providerIds ),
 				...getTrackingContext(),
-				...getPromptSourceContext(),
 				// TODO: Remove once agenttic-client supports top-level constructorArguments
 				...( Object.keys( constructorArguments ).length && { constructorArguments } ),
 			};

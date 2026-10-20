@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { getPromptSource, takePromptSource } from '../prompt-source';
+import { consumePromptSource } from '../prompt-source';
 import {
-	isSiteSetupChat,
+	getSiteSetupStartedTasks,
 	isSiteSetupChecklistEnabled,
 	toChecklistItems,
 } from '../site-setup-checklist';
@@ -76,38 +76,57 @@ describe( 'toChecklistItems', () => {
 		expect( items[ 1 ].status ).toBe( 'done' );
 	} );
 
-	it( 'declares the prompt source for the task prompt before it is sent', async () => {
+	it( 'declares where the task prompt comes from before it is sent', async () => {
 		const [ item ] = toChecklistItems( TASKS, new Set() );
 
 		expect( await item.action?.() ).toBe( true );
-
-		takePromptSource( item.prompt as string );
-		expect( getPromptSource() ).toBe( 'site-setup-checklist' );
+		expect( consumePromptSource( item.prompt as string ) ).toEqual( {
+			source: 'site-setup-checklist',
+			id: 'design',
+		} );
 	} );
 } );
 
-describe( 'isSiteSetupChat', () => {
-	const message = ( role: 'user' | 'agent', promptSource?: string ): UIMessage => ( {
-		id: role,
+describe( 'getSiteSetupStartedTasks', () => {
+	const message = (
+		role: 'user' | 'agent',
+		data?: { promptSource: string; promptSourceId?: string }
+	): UIMessage => ( {
+		id: `${ role }-${ data?.promptSourceId ?? '' }`,
 		role,
 		timestamp: 0,
 		archived: false,
 		showIcon: false,
 		content: [
 			{ type: 'text', text: 'hi' },
-			...( promptSource ? [ { type: 'data' as const, data: { promptSource } } ] : [] ),
+			...( data ? [ { type: 'data' as const, data } ] : [] ),
 		],
 	} );
-
-	it( 'is true when a user message carries the checklist prompt source', () => {
-		expect(
-			isSiteSetupChat( [ message( 'user', 'site-setup-checklist' ), message( 'agent' ) ] )
-		).toBe( true );
+	const checklist = ( promptSourceId?: string ) => ( {
+		promptSource: 'site-setup-checklist',
+		promptSourceId,
 	} );
 
-	it( 'ignores other sources, agent messages and plain chats', () => {
-		expect( isSiteSetupChat( [ message( 'user', 'background' ) ] ) ).toBe( false );
-		expect( isSiteSetupChat( [ message( 'agent', 'site-setup-checklist' ) ] ) ).toBe( false );
-		expect( isSiteSetupChat( [ message( 'user' ) ] ) ).toBe( false );
+	it( 'names the tasks picked from the checklist, live or restored', () => {
+		const started = getSiteSetupStartedTasks( [
+			message( 'user', checklist( 'theme' ) ),
+			message( 'agent' ),
+			message( 'user', checklist( 'about' ) ),
+			message( 'user', checklist( 'theme' ) ),
+		] );
+
+		expect( started && [ ...started ].sort() ).toEqual( [ 'about', 'theme' ] );
+	} );
+
+	it( 'still marks the chat as started when the stored message has no task id', () => {
+		expect( getSiteSetupStartedTasks( [ message( 'user', checklist() ) ] )?.size ).toBe( 0 );
+	} );
+
+	it( 'is null for other sources, agent messages and plain chats', () => {
+		expect(
+			getSiteSetupStartedTasks( [ message( 'user', { promptSource: 'background' } ) ] )
+		).toBeNull();
+		expect( getSiteSetupStartedTasks( [ message( 'agent', checklist( 'theme' ) ) ] ) ).toBeNull();
+		expect( getSiteSetupStartedTasks( [ message( 'user' ) ] ) ).toBeNull();
 	} );
 } );

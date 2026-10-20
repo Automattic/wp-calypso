@@ -3,14 +3,16 @@ import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import './style.scss';
+import type { SiteSetupChecklistVariant } from '../../hooks/use-site-setup-checklist';
 
 export interface SiteSetupChecklistProps {
 	items: ChecklistItem[];
-	/** Read once, on mount: the list opens folded once a task has been picked. */
-	collapsedByDefault: boolean;
-	onSelect: ( item: ChecklistItem ) => void;
-	/** Pinned above the message list, instead of in the empty view. */
-	pinned?: boolean;
+	/** In a new chat's empty view, open; pinned above the messages, folded. */
+	variant: SiteSetupChecklistVariant;
+	/** A turn is running: tasks look and act inert. */
+	busy?: boolean;
+	/** The pinned list takes the focus the list it replaced had. */
+	focusHeaderOnMount?: boolean;
 }
 
 /**
@@ -22,10 +24,11 @@ export interface SiteSetupChecklistProps {
  */
 export default function SiteSetupChecklist( {
 	items,
-	collapsedByDefault,
-	onSelect,
-	pinned = false,
+	variant,
+	busy = false,
+	focusHeaderOnMount = false,
 }: SiteSetupChecklistProps ) {
+	const pinned = variant === 'pinned';
 	const [ isEntered, setIsEntered ] = useState( false );
 
 	useEffect( () => {
@@ -41,8 +44,9 @@ export default function SiteSetupChecklist( {
 		<AgentUIChecklist
 			title={ __( 'Site Setup', __i18n_text_domain__ ) }
 			items={ items }
-			defaultCollapsed={ collapsedByDefault }
-			onSelect={ onSelect }
+			defaultCollapsed={ pinned }
+			busy={ busy }
+			focusHeaderOnMount={ focusHeaderOnMount }
 		/>
 	);
 

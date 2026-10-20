@@ -26,6 +26,7 @@ export interface ServerMessageContext {
 	sources?: unknown;
 	flags?: Record< string, unknown >;
 	promptSource?: string;
+	promptSourceId?: string;
 	[ key: string ]: unknown;
 }
 
@@ -196,6 +197,9 @@ export function serverMessageToMessage( serverMessage: ServerMessage ): Message 
 			}
 			if ( hasPromptSource ) {
 				data.promptSource = ctx.promptSource;
+				if ( typeof ctx.promptSourceId === 'string' && ctx.promptSourceId !== '' ) {
+					data.promptSourceId = ctx.promptSourceId;
+				}
 			}
 			parts.push( {
 				type: 'data',

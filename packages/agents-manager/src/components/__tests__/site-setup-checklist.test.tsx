@@ -1,16 +1,20 @@
 /**
  * @jest-environment jsdom
  */
+const mockAgentUIChecklist = jest.fn< ReactElement, [ unknown ] >( () => (
+	<div data-testid="checklist" />
+) );
 jest.mock(
 	'@automattic/agenttic-ui',
 	() => ( {
-		AgentUIChecklist: () => <div data-testid="checklist" />,
+		AgentUIChecklist: ( props: unknown ) => mockAgentUIChecklist( props ),
 	} ),
 	{ virtual: true }
 );
 
 import { act, render, screen } from '@testing-library/react';
 import SiteSetupChecklist from '../site-setup-checklist';
+import type { ReactElement } from 'react';
 
 const nextFrame = () =>
 	act( async () => {
@@ -18,18 +22,22 @@ const nextFrame = () =>
 	} );
 
 describe( 'SiteSetupChecklist', () => {
-	it( 'renders the bare checklist in the empty view', () => {
-		const { container } = render(
-			<SiteSetupChecklist items={ [] } collapsedByDefault={ false } onSelect={ jest.fn() } />
-		);
+	it( 'renders the bare checklist, open, in the empty view', () => {
+		const { container } = render( <SiteSetupChecklist items={ [] } variant="empty" busy /> );
 
 		expect( screen.getByTestId( 'checklist' ) ).toBeInTheDocument();
 		expect( container.querySelector( '.agents-manager-site-setup-checklist--pinned' ) ).toBeNull();
+		expect( mockAgentUIChecklist ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { defaultCollapsed: false, busy: true, focusHeaderOnMount: false } )
+		);
 	} );
 
-	it( 'unfolds the pinned block on the frame after it mounts', async () => {
+	it( 'unfolds the pinned block, folded and focused, on the frame after it mounts', async () => {
 		const { container } = render(
-			<SiteSetupChecklist items={ [] } collapsedByDefault onSelect={ jest.fn() } pinned />
+			<SiteSetupChecklist items={ [] } variant="pinned" focusHeaderOnMount />
+		);
+		expect( mockAgentUIChecklist ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { defaultCollapsed: true, focusHeaderOnMount: true } )
 		);
 		const block = container.querySelector( '.agents-manager-site-setup-checklist--pinned' );
 

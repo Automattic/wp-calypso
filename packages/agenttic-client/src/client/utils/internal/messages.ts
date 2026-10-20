@@ -64,7 +64,9 @@ export function enhanceMessageWithContext(
 	const contextOnly = message.parts.some(
 		( part ) => part.type === 'text' && part.metadata?.contentType === 'context'
 	);
-	if ( ! contextProvider && ! contextOnly ) {
+	const promptSource = message.metadata?.promptSource;
+	const hasPromptSource = typeof promptSource === 'string' && promptSource !== '';
+	if ( ! contextProvider && ! contextOnly && ! hasPromptSource ) {
 		return message;
 	}
 
@@ -82,6 +84,21 @@ export function enhanceMessageWithContext(
 					? clientContext.flags
 					: {} ),
 				context_only: true,
+			},
+		};
+	}
+	// The prompt source lives in the message's client metadata (see
+	// `SubmitOptions.promptSource`); the server reads it from the context.
+	if ( hasPromptSource ) {
+		const promptSourceId = message.metadata?.promptSourceId;
+		clientContext = {
+			...clientContext,
+			metadata: {
+				...( typeof clientContext.metadata === 'object' && clientContext.metadata !== null
+					? clientContext.metadata
+					: {} ),
+				promptSource,
+				...( typeof promptSourceId === 'string' && promptSourceId !== '' && { promptSourceId } ),
 			},
 		};
 	}

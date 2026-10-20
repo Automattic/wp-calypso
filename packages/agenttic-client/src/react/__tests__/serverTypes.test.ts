@@ -14,6 +14,7 @@ describe( 'serverMessageToMessage', () => {
 		const message = serverMessageToMessage(
 			buildServerMessage( {
 				promptSource: 'site-setup-checklist',
+				promptSourceId: 'design',
 				source: 'sitespec',
 				url: 'https://example.com',
 			} )
@@ -21,7 +22,7 @@ describe( 'serverMessageToMessage', () => {
 
 		expect( message.parts ).toEqual( [
 			{ type: 'text', text: 'hello' },
-			{ type: 'data', data: { promptSource: 'site-setup-checklist' } },
+			{ type: 'data', data: { promptSource: 'site-setup-checklist', promptSourceId: 'design' } },
 		] );
 	} );
 
