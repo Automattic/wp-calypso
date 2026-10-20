@@ -69,6 +69,6 @@
 	},
 	"peerDependencies": {
 		"postcss": "^8.5.15",
-		"webpack": "^5.111.1"
+		"webpack": "^5.99.8"
 	}
 }

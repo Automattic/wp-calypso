@@ -732,7 +732,7 @@ __metadata:
     yargs: "npm:^17.7.2"
   peerDependencies:
     postcss: ^8.5.15
-    webpack: ^5.111.1
+    webpack: ^5.99.8
   bin:
     build-app-languages: ./bin/build-app-languages.js
     calypso-build: ./bin/calypso-build.js
@@ -2644,7 +2644,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     semver: "npm:^7.7.2"
   peerDependencies:
-    webpack: ^5.111.1
+    webpack: ^5.99.8
   languageName: unknown
   linkType: soft
 
@@ -2659,7 +2659,7 @@ __metadata:
     rtlcss: "npm:^3.1.2"
     webpack: "npm:^5.111.1"
   peerDependencies:
-    webpack: ^5.111.1
+    webpack: ^5.99.8
   languageName: unknown
   linkType: soft
 
