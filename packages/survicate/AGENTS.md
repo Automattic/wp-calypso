@@ -261,6 +261,9 @@ race where a survey is already mid-display as a modal or the Help Center appears
   `survey_displayed` safety net; `isSurvicateScriptLoaded()`.
 - `invoke-event.ts` — `invokeSurvicateEvent()`, `isHelpCenterOpen()`,
   `observeHelpCenter()`, `getSuppressionReason()`, and `shouldSuppressSurvey()`.
+- `pending-event.ts` — `queueSurvicateEvent()` / `invokeQueuedSurvicateEvent()`: carry an
+  event across a full-page navigation (including to my.wordpress.com) via a short-lived
+  `.wordpress.com` cookie, then fire it once on the landing page.
 - `modal-detection.ts` — `isModalOpen()`, `isSurveyVisible()`, `observeModals()`,
   `MODAL_SELECTOR`.
 - `targeting.ts` — `pauseSurvicateTargeting()` / `resumeSurvicateTargeting()`:

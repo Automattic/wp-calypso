@@ -1,5 +1,5 @@
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { invokeSurvicateEvent } from '@automattic/survicate';
+import { invokeQueuedSurvicateEvent } from '@automattic/survicate';
 import { globe, group, scheduled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -12,7 +12,7 @@ export const MigrationStartedDIFM = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
-	useEffect( () => invokeSurvicateEvent( 'migrationStarted' ), [] );
+	useEffect( () => invokeQueuedSurvicateEvent( 'migrationStarted' ), [] );
 
 	const title = translate( "We've received your migration request" );
 	const subTitle = hasEnTranslation(

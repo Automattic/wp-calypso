@@ -32,7 +32,7 @@ jest.mock( '@wordpress/data', () => ( {
 	keyedReducer: () => () => ( {} ),
 } ) );
 
-jest.mock( '@automattic/survicate', () => ( { invokeSurvicateEvent: jest.fn() } ) );
+jest.mock( '@automattic/survicate', () => ( { invokeQueuedSurvicateEvent: jest.fn() } ) );
 
 const site = {
 	ID: 123,

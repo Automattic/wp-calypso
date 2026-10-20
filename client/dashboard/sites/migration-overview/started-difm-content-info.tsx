@@ -3,7 +3,7 @@ import {
 	cancelSiteMigrationQuery,
 	siteBySlugQuery,
 } from '@automattic/api-queries';
-import { invokeSurvicateEvent } from '@automattic/survicate';
+import { invokeQueuedSurvicateEvent } from '@automattic/survicate';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -134,7 +134,7 @@ function CancellationModal( {
 export function StartedDIFMContentInfo( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
 
-	useEffect( () => invokeSurvicateEvent( 'migrationStarted' ), [] );
+	useEffect( () => invokeQueuedSurvicateEvent( 'migrationStarted' ), [] );
 
 	const [ isCancellationModalOpen, setIsCancellationModalOpen ] = useState( false );
 	const { data: ticketId } = useQuery( {

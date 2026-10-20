@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
+import { queueSurvicateEvent } from '@automattic/survicate';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
@@ -146,6 +147,7 @@ const SiteMigrationCredentials: StepType< {
 				from_url: fromUrl,
 				blog_url: siteSlug,
 			} );
+			queueSurvicateEvent( 'migrationStarted' );
 
 			// Reset the site in the state to ensure the correct overview screen is shown.
 			siteId && dispatch( resetSite( siteId ) );

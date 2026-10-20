@@ -1,5 +1,6 @@
 import { isWpError } from '@automattic/api-core';
 import { siteQueryFilter, siteWordPressMigrationStatusQuery } from '@automattic/api-queries';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, ExternalLink } from '@wordpress/components';
@@ -63,6 +64,12 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	// and keep checking in case it lags behind the migration's own status.
 	const isCompleted = migration?.status === 'completed';
 	const isSiteUnlocked = ! isSiteMigrationInProgress( site );
+
+	useEffect( () => {
+		if ( isCompleted ) {
+			return invokeSurvicateEvent( 'migrationCompleted' );
+		}
+	}, [ isCompleted ] );
 
 	// The site should unlock within moments of this page seeing the migration complete. Past that, offer a way out.
 	const [ isUnlockOverdue, setIsUnlockOverdue ] = useState( false );

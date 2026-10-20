@@ -1,5 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
+import { queueSurvicateEvent } from '@automattic/survicate';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import emailValidator from 'email-validator';
@@ -178,6 +179,7 @@ const SiteMigrationSshShareAccess: StepType< {
 
 			// Update migration status to pending DIY
 			await updateMigrationStatus( { status: MigrationStatus.STARTED_DIFM } );
+			queueSurvicateEvent( 'migrationStarted' );
 
 			// Reset the site in the state to ensure the correct overview screen is shown.
 			if ( siteId ) {
@@ -275,6 +277,7 @@ const SiteMigrationSshShareAccess: StepType< {
 			},
 			{
 				onSuccess: () => {
+					queueSurvicateEvent( 'migrationStarted' );
 					onMigrationStarted();
 					setMigrationStarted( true );
 				},

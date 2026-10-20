@@ -7,6 +7,7 @@ export {
 	getSuppressionReason,
 	observeHelpCenter,
 } from './invoke-event';
+export { invokeQueuedSurvicateEvent, queueSurvicateEvent } from './pending-event';
 export { isModalOpen, isSurveyVisible, observeModals, MODAL_SELECTOR } from './modal-detection';
 export { pauseSurvicateTargeting, resumeSurvicateTargeting } from './targeting';
 export { getAccountAgeInDays, setSurvicateVisitorTraits } from './visitor-traits';

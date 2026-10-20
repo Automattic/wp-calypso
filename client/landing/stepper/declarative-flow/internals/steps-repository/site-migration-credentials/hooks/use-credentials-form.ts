@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
+import { queueSurvicateEvent } from '@automattic/survicate';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { UrlData } from 'calypso/blocks/import/types';
@@ -147,6 +148,7 @@ export const useCredentialsForm = (
 					bypassVerification: canBypassVerification,
 				};
 				await requestAutomatedMigration( payload );
+				queueSurvicateEvent( 'migrationStarted' );
 				recordTracksEvent( 'calypso_site_migration_automated_request_success', {
 					migration_type: data.migrationType,
 				} );

@@ -1,3 +1,4 @@
+import { queueSurvicateEvent } from '@automattic/survicate';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -56,6 +57,7 @@ export const useFallbackCredentialsForm = ( onSubmit: ( from?: string ) => void 
 				bypassVerification: isLoginFailed,
 			};
 			await requestAutomatedMigration( payload );
+			queueSurvicateEvent( 'migrationStarted' );
 			recordTracksEvent( 'calypso_site_migration_automated_request_success' );
 			onSubmit( importSiteQueryParam );
 		} catch ( error ) {

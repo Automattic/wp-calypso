@@ -1,5 +1,5 @@
 import { Step } from '@automattic/onboarding';
-import { invokeSurvicateEvent } from '@automattic/survicate';
+import { invokeQueuedSurvicateEvent } from '@automattic/survicate';
 import { ProgressBar } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -23,7 +23,7 @@ const SiteMigrationSshInProgress: StepType< {
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? null;
 
-	useEffect( () => invokeSurvicateEvent( 'migrationStarted' ), [] );
+	useEffect( () => invokeQueuedSurvicateEvent( 'migrationStarted' ), [] );
 
 	const { data: migrationStatus } = useSSHMigrationStatus( {
 		siteId,

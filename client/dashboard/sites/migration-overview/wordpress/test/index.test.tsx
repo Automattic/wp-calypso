@@ -58,12 +58,15 @@ describe( 'WordPressMigration', () => {
 	// The site only reads as locked by its own state while the flow is switched on.
 	beforeEach( () => config.enable( 'migration/reprint-flow' ) );
 	afterEach( () => {
+		window._sva = undefined;
 		config.disable( 'migration/reprint-flow' );
 		queryClient.clear();
 		window.history.replaceState( {}, '', '/' );
 	} );
 
 	it( 'shows the key to install, then follows the migration once it starts', async () => {
+		const invokeEvent = jest.fn();
+		window._sva = { invokeEvent };
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'not_started' ) );
 		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
 
@@ -93,6 +96,7 @@ describe( 'WordPressMigration', () => {
 		).toEqual( [ 'Verifying', 'Copying', 'Finishing' ] );
 		expect( configure.isDone() ).toBe( true );
 		expect( run.isDone() ).toBe( true );
+		expect( invokeEvent ).toHaveBeenCalledWith( 'migrationStarted' );
 	} );
 
 	it( 'continues a paused migration by accepting its warnings', async () => {
@@ -213,11 +217,14 @@ describe( 'WordPressMigration', () => {
 
 	it( 'waits on a completed migration whose site is still locked, then offers a way out', async () => {
 		jest.useFakeTimers( { advanceTimers: true } );
+		const invokeEvent = jest.fn();
+		window._sva = { invokeEvent };
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'completed' ) );
 
 		const { router } = render( <WordPressMigration site={ site } />, { queryClient } );
 
 		expect( await screen.findByText( 'migrated from example.com' ) ).toBeVisible();
+		expect( invokeEvent ).toHaveBeenCalledWith( 'migrationCompleted' );
 		expect( screen.getByText( /One moment while we finish up/ ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Reload' } ) ).not.toBeInTheDocument();
 		expect( router.state.location.pathname ).toBe( '/' );
