@@ -163,18 +163,41 @@ describe( 'SetupYourSiteAIStep', () => {
 			} );
 		} );
 
-		it( 'tags the selection with the ref the step was reached with', () => {
-			mockQueryParams = new URLSearchParams( { ref: SITE_SELECTED_REF } );
+		it.each( [
+			{
+				selection: 'blank-site',
+				choose: () =>
+					fireEvent.click( screen.getByRole( 'button', { name: 'Start with a pre-made design' } ) ),
+				properties: { selection: 'blank-site' },
+			},
+			{
+				selection: 'generate-theme',
+				choose: () => clickCustomDesign(),
+				properties: { selection: 'generate-theme', graph: 'dsl' },
+			},
+			{
+				selection: 'build-with-ai',
+				plan: 'pro-plan',
+				choose: () => clickCustomDesign(),
+				properties: { selection: 'build-with-ai', has_prompt: false },
+			},
+		] )(
+			'tags the $selection selection with the ref the step was reached with',
+			( { plan, choose, properties } ) => {
+				mockQueryParams = new URLSearchParams( { ref: SITE_SELECTED_REF } );
+				if ( plan ) {
+					setSitePlan( plan );
+				}
 
-			renderStep();
+				renderStep();
+				choose();
 
-			fireEvent.click( screen.getByRole( 'button', { name: 'Start with a pre-made design' } ) );
-
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_onboarding_setup_your_site_with_ai_selection',
-				{ selection: 'blank-site', ref: SITE_SELECTED_REF }
-			);
-		} );
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_onboarding_setup_your_site_with_ai_selection',
+					{ ...properties, ref: SITE_SELECTED_REF }
+				);
+			}
+		);
 
 		it( 'submits the generate-theme choice from the custom design card on an Atomic-capable plan', () => {
 			renderStep();

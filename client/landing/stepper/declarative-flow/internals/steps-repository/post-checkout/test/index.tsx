@@ -9,6 +9,10 @@ import PostCheckoutOnboarding from '../post-checkout-onboarding';
 
 const mockGetSite = jest.fn();
 const mockSetPendingAction = jest.fn();
+const mockSetIntentOnSite = jest.fn();
+const mockSetGoalsOnSite = jest.fn();
+const mockOnboardState = { intent: '', goals: [] as string[] };
+const mockSiteTransferStatus = { isTransferring: false };
 
 // A spread would read every export while these modules are still loading (both are required back
 // through their own dependencies), so override the exports lazily.
@@ -28,8 +32,23 @@ jest.mock( '@automattic/api-queries', () =>
 
 jest.mock( '@wordpress/data', () =>
 	withOverrides( jest.requireActual( '@wordpress/data' ), {
-		useSelect: () => undefined,
-		useDispatch: () => ( { setPendingAction: mockSetPendingAction } ),
+		// Mirrors the real onboard store's empty state; anything else this tree selects is unset.
+		useSelect: ( selector: ( select: () => unknown ) => unknown ) =>
+			selector(
+				() =>
+					new Proxy(
+						{
+							getIntent: () => mockOnboardState.intent,
+							getGoals: () => mockOnboardState.goals,
+						} as Record< string, () => unknown >,
+						{ get: ( target, key: string ) => target[ key ] ?? ( () => undefined ) }
+					)
+			),
+		useDispatch: () => ( {
+			setPendingAction: mockSetPendingAction,
+			setIntentOnSite: mockSetIntentOnSite,
+			setGoalsOnSite: mockSetGoalsOnSite,
+		} ),
 	} )
 );
 
@@ -47,11 +66,19 @@ jest.mock( 'calypso/landing/stepper/hooks/use-marketplace-theme-products', () =>
 } ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site-transfer-status-query', () => ( {
-	useSiteTransferStatusQuery: () => ( { data: undefined, isLoading: false, isError: false } ),
+	useSiteTransferStatusQuery: () => ( {
+		data: mockSiteTransferStatus,
+		isLoading: false,
+		isError: false,
+	} ),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-wait-for-atomic', () => ( {
-	useWaitForAtomic: () => ( {} ),
+	useWaitForAtomic: () => ( {
+		waitForTransfer: async () => {},
+		waitForFeature: async () => {},
+		waitForLatestSiteData: async () => {},
+	} ),
 } ) );
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
@@ -67,7 +94,19 @@ const siteWithPlan = ( product_slug: string, active: string[] = [] ) => ( {
 describe( 'PostCheckoutOnboarding', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockOnboardState.intent = '';
+		mockOnboardState.goals = [];
+		mockSiteTransferStatus.isTransferring = false;
 	} );
+
+	const renderWithFreshSite = ( site: unknown ) => {
+		mockGetSite.mockResolvedValue( site );
+		const props = mockStepProps( { flow: 'onboarding', stepName: 'post-checkout-onboarding' } );
+		renderStep( <PostCheckoutOnboarding { ...props } />, {
+			queryClient: new QueryClient( { defaultOptions: { queries: { retry: false } } } ),
+		} );
+		return props;
+	};
 
 	it( 'decides on the chooser from a fresh fetch rather than a cached pre-purchase site', async () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
@@ -89,7 +128,40 @@ describe( 'PostCheckoutOnboarding', () => {
 
 		await waitFor( () => expect( props.navigation.submit ).toHaveBeenCalled() );
 
-		const pendingAction = mockSetPendingAction.mock.lastCall[ 0 ];
+		// Deciding once, from the fresh site, is the contract: a decision from the cached site
+		// would also be followed by one from the fresh site.
+		expect( props.navigation.submit ).toHaveBeenCalledTimes( 1 );
+		expect( mockSetPendingAction ).toHaveBeenCalledTimes( 1 );
+
+		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
 		await expect( pendingAction() ).resolves.toMatchObject( { postCheckoutBigSky: true } );
+	} );
+
+	describe( 'while the site is moving to Atomic', () => {
+		beforeEach( () => {
+			mockSiteTransferStatus.isTransferring = true;
+		} );
+
+		it( 'leaves the intent and goals of a site handed over with an empty store alone', async () => {
+			const props = renderWithFreshSite( siteWithPlan( 'business-bundle' ) );
+			await waitFor( () => expect( props.navigation.submit ).toHaveBeenCalled() );
+
+			await mockSetPendingAction.mock.calls[ 0 ][ 0 ]();
+
+			expect( mockSetIntentOnSite ).not.toHaveBeenCalled();
+			expect( mockSetGoalsOnSite ).not.toHaveBeenCalled();
+		} );
+
+		it( 'applies the intent and goals picked earlier in the run', async () => {
+			mockOnboardState.intent = 'build';
+			mockOnboardState.goals = [ 'write' ];
+			const props = renderWithFreshSite( siteWithPlan( 'business-bundle' ) );
+			await waitFor( () => expect( props.navigation.submit ).toHaveBeenCalled() );
+
+			await mockSetPendingAction.mock.calls[ 0 ][ 0 ]();
+
+			expect( mockSetIntentOnSite ).toHaveBeenCalledWith( 'example.wordpress.com', 'build' );
+			expect( mockSetGoalsOnSite ).toHaveBeenCalledWith( 'example.wordpress.com', [ 'write' ] );
+		} );
 	} );
 } );

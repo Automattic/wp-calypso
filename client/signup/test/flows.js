@@ -151,19 +151,34 @@ describe( 'Signup Flows Configuration', () => {
 					localeSlug
 				);
 
-		test( 'hands a paid plan purchase over to the onboarding post-checkout step', () => {
-			expect(
-				getDestination( {
-					siteSlug: 'example.com',
-					cartItems: [ { product_slug: 'personal-bundle' } ],
-				} )
-			).toBe( '/setup/onboarding/post-checkout-onboarding?siteSlug=example.com&ref=site-selected' );
+		test.each( [
+			'personal-bundle',
+			'personal-bundle-monthly',
+			'value_bundle',
+			'value_bundle-2y',
+			'business-bundle',
+			'business-bundle-monthly',
+		] )( 'hands a %s purchase over to the onboarding post-checkout step', ( product_slug ) => {
+			expect( getDestination( { siteSlug: 'example.com', cartItems: [ { product_slug } ] } ) ).toBe(
+				'/setup/onboarding/post-checkout-onboarding?siteSlug=example.com&ref=site-selected'
+			);
+		} );
+
+		test.each( [
+			[ 'the free plan', [ { product_slug: 'free_plan' } ] ],
+			[ 'a plan without Big Sky', [ { product_slug: 'ecommerce-bundle' } ] ],
+			[ 'an empty cart', [] ],
+			[ 'no cart', null ],
+		] )( 'lands on My Home with %s', ( _label, cartItems ) => {
+			expect( getDestination( { siteSlug: 'example.com', cartItems } ) ).toBe(
+				'/home/example.com?ref=site-selected'
+			);
 		} );
 
 		test( 'keeps the locale on the post-checkout step', () => {
 			expect(
 				getDestination(
-					{ siteSlug: 'example.com', cartItems: [ { product_slug: 'value_bundle' } ] },
+					{ siteSlug: 'example.com', cartItems: [ { product_slug: 'personal-bundle' } ] },
 					'fr'
 				)
 			).toBe(
@@ -171,31 +186,7 @@ describe( 'Signup Flows Configuration', () => {
 			);
 		} );
 
-		test( 'lands on My Home when the free plan is picked', () => {
-			expect(
-				getDestination( {
-					siteSlug: 'example.com',
-					cartItems: [ { product_slug: 'free_plan' } ],
-				} )
-			).toBe( '/home/example.com?ref=site-selected' );
-		} );
-
-		test( 'lands on My Home when a plan without Big Sky is picked', () => {
-			expect(
-				getDestination( {
-					siteSlug: 'example.com',
-					cartItems: [ { product_slug: 'ecommerce-bundle' } ],
-				} )
-			).toBe( '/home/example.com?ref=site-selected' );
-		} );
-
-		test( 'lands on My Home without a plan in the cart', () => {
-			expect( getDestination( { siteSlug: 'example.com', cartItems: [] } ) ).toBe(
-				'/home/example.com?ref=site-selected'
-			);
-		} );
-
-		test( 'prefers redirect_to', () => {
+		test( 'lands on redirect_to instead of the chooser when one is given', () => {
 			expect(
 				getDestination( {
 					siteSlug: 'example.com',

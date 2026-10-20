@@ -158,20 +158,41 @@ describe( 'onboarding flow side effects', () => {
 
 			expect( mockResetOnboardStore ).not.toHaveBeenCalled();
 		} );
+
+		// The ref stays in the URL past post-checkout-onboarding, and a reset there would also
+		// clear the pending action that step just set for processing to run.
+		it.each( [ 'processing', 'setup-your-site-ai' ] )(
+			'keeps the store on %s after the hand-off',
+			( step ) => {
+				window.history.replaceState(
+					null,
+					'',
+					`/setup/onboarding/${ step }?siteSlug=example.com&ref=site-selected`
+				);
+
+				renderSideEffect( step );
+
+				expect( mockResetOnboardStore ).not.toHaveBeenCalled();
+			}
+		);
 	} );
 } );
 
 describe( 'onboarding flow post-checkout processing', () => {
 	const originalLocation = window.location;
+	const navigate = jest.fn();
 
-	const submitProcessing = async ( search: string ) => {
+	const submitProcessing = async (
+		search: string,
+		providedDependencies: Record< string, unknown > = {}
+	) => {
 		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( search ) );
 
 		const { result } = renderHook( () =>
 			onboarding.useStepNavigation.call(
 				onboarding,
 				'processing' as Parameters< typeof onboarding.useStepNavigation >[ 0 ],
-				jest.fn()
+				navigate
 			)
 		);
 
@@ -180,6 +201,7 @@ describe( 'onboarding flow post-checkout processing', () => {
 			providedDependencies: {
 				processingResult: ProcessingResult.SUCCESS,
 				siteSlug: 'example.com',
+				...providedDependencies,
 			},
 		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
 	};
@@ -201,6 +223,15 @@ describe( 'onboarding flow post-checkout processing', () => {
 			writable: true,
 			configurable: true,
 		} );
+	} );
+
+	it( 'sends a site-selected purchase with Big Sky to the setup-your-site-ai chooser', async () => {
+		await submitProcessing( '?siteSlug=example.com&ref=site-selected', {
+			postCheckoutBigSky: true,
+		} );
+
+		expect( navigate ).toHaveBeenCalledWith( 'setup-your-site-ai' );
+		expect( window.location.replace ).not.toHaveBeenCalled();
 	} );
 
 	it( 'keeps a site-selected purchase attributed to that flow', async () => {
