@@ -1,6 +1,7 @@
 import { Button, Dropdown } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { caution, info } from '@wordpress/icons';
+import clsx from 'clsx';
 import {
 	type CreditsPool,
 	type CreditsStatus,
@@ -153,11 +154,7 @@ export default function CreditsMeter( {
 			} }
 			renderToggle={ ( { onToggle: toggle } ) => (
 				<Button
-					className={
-						isAlert
-							? 'agents-manager-credits-meter__toggle is-alert'
-							: 'agents-manager-credits-meter__toggle'
-					}
+					className={ clsx( 'agents-manager-credits-meter__toggle', { 'is-alert': isAlert } ) }
 					icon={ isAlert ? caution : info }
 					iconSize={ 24 }
 					label={ label }

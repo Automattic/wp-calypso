@@ -45,7 +45,7 @@ export type CreditsStatus =
 			remaining: number;
 	  } );
 
-/** Free-plan low-balance percentage, for the meter tone and the notice. */
+/** Free-plan low-balance percentage, for the alert icon and the notice. */
 const CREDITS_LOW_THRESHOLD = 20;
 
 /** Paid balance, in credits, below which the meter shows its alert icon and the low-balance notice. */
