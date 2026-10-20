@@ -6,6 +6,7 @@ import {
 	type WPCOM_PRODUCTS,
 	type WPCOM_PLANS,
 	type PLAN_JETPACK_FREE,
+	type PLAN_JETPACK_PRO_MONTHLY,
 	type JETPACK_PRODUCTS_LIST,
 	type JETPACK_LEGACY_PLANS,
 	type JETPACK_MONTHLY_LEGACY_PLANS,
@@ -177,9 +178,13 @@ export type JetpackYearlyLegacyPlanSlug = ( typeof JETPACK_YEARLY_LEGACY_PLANS )
 export type JetpackMonthlyLegacyPlanSlug = ( typeof JETPACK_MONTHLY_LEGACY_PLANS )[ number ];
 export type JetpackResetPlanSlug = ( typeof JETPACK_RESET_PLANS )[ number ];
 export type JetpackPlanSlug =
-	typeof PLAN_JETPACK_FREE | JetpackLegacyPlanSlug | JetpackResetPlanSlug;
+	| typeof PLAN_JETPACK_FREE
+	| typeof PLAN_JETPACK_PRO_MONTHLY
+	| JetpackLegacyPlanSlug
+	| JetpackResetPlanSlug;
 export type JetpackPurchasableItemSlug =
-	JetpackProductSlug | Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
+	| JetpackProductSlug
+	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE | typeof PLAN_JETPACK_PRO_MONTHLY >;
 
 /**
  * WooCommerce

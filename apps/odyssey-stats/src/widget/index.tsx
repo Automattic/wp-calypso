@@ -1,4 +1,3 @@
-import '@automattic/calypso-polyfills';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot } from '@wordpress/element';
 import { trendingUp } from '@wordpress/icons';

@@ -9,6 +9,8 @@ import {
 	PLAN_JETPACK_GROWTH_MONTHLY,
 	PLAN_JETPACK_GROWTH_YEARLY,
 	PLAN_JETPACK_GROWTH_BI_YEARLY,
+	PLAN_JETPACK_PRO_YEARLY,
+	PLAN_JETPACK_PRO_BI_YEARLY,
 } from '@automattic/calypso-products';
 import CompleteHorizontalMd from 'calypso/assets/images/jetpack/hero-complete-horizontal-md.jpg';
 import CompleteHorizontalMd2x from 'calypso/assets/images/jetpack/hero-complete-horizontal-md@2x.jpg';
@@ -65,6 +67,8 @@ const HERO_IMAGES: Record< string, HeroImagePathProps > = {
 	[ PLAN_JETPACK_GROWTH_MONTHLY ]: HERO_IMAGES_GROWTH,
 	[ PLAN_JETPACK_GROWTH_YEARLY ]: HERO_IMAGES_GROWTH,
 	[ PLAN_JETPACK_GROWTH_BI_YEARLY ]: HERO_IMAGES_GROWTH,
+	[ PLAN_JETPACK_PRO_YEARLY ]: HERO_IMAGES_COMPLETE,
+	[ PLAN_JETPACK_PRO_BI_YEARLY ]: HERO_IMAGES_COMPLETE,
 };
 
 const HERO_IMAGES_API_FAMILY: Record< string, HeroImagePathProps > = {

@@ -26,8 +26,12 @@ test( 'the flat presets lint a project as their READMEs set them up', () => {
 	const clean = { fatal: false, rules: [] };
 
 	expect( uncached ).toEqual( {
-		'index.js': { fatal: false, rules: [ 'wpcalypso/i18n-unlocalized-url' ] },
+		'index.js': {
+			fatal: false,
+			rules: [ 'inclusive-language/use-inclusive-words', 'wpcalypso/i18n-unlocalized-url' ],
+		},
 		'component.jsx': clean,
+		'call.js': clean,
 		// The test-file exception.
 		'test/index.js': clean,
 		// JSON gets the JSON parser and rules only; Markdown isn't linted at all.

@@ -167,10 +167,10 @@ describe( 'useCredits', () => {
 		const meter = () =>
 			result.current.trailingActions as React.ReactElement< {
 				onToggle: ( open: boolean ) => void;
-				onUpgradeClick?: () => void;
+				action?: { onClick?: () => void };
 			} >;
 		act( () => meter().props.onToggle( true ) );
-		act( () => meter().props.onUpgradeClick?.() );
+		act( () => meter().props.action?.onClick?.() );
 		act( () => result.current.notice?.onDismiss?.() );
 		completeRequest( rerender );
 		completeRequest( rerender );

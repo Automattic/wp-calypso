@@ -113,13 +113,11 @@ export type FindPredicate = (
 export function getDomainPurchaseTypeAndPredicate(
 	purchases: ReceiptPurchase[]
 ): [ string, FindPredicate ] {
-	const hasDomainMapping = purchases.some( isDomainMapping );
-
-	if ( hasDomainMapping && purchases.some( isDomainRegistration ) ) {
+	if ( purchases.some( isDomainRegistration ) ) {
 		return [ 'REGISTRATION', isDomainRegistration ];
 	}
 
-	if ( hasDomainMapping ) {
+	if ( purchases.some( isDomainMapping ) ) {
 		return [ 'MAPPING', isDomainMapping ];
 	}
 
