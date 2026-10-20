@@ -1,6 +1,7 @@
 import { formatNumber } from '@automattic/number-formatters';
 import {
 	Button,
+	__experimentalHeading as Heading,
 	__experimentalSpacer as Spacer,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -8,7 +9,7 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
-import { useEvent } from '@wordpress/compose';
+import { useEvent, useViewportMatch } from '@wordpress/compose';
 import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
@@ -17,6 +18,7 @@ import { Card } from '../../../components/card';
 import { DataViews, DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { useResourceFields } from './dataviews/fields';
 import { LAYOUT_FIELDS } from './dataviews/views';
+import ResourceBadges from './resource-badges';
 import ResourceGrid from './resource-grid';
 import ResourceLink from './resource-link';
 import ResourceModal from './resource-modal';
@@ -92,6 +94,7 @@ export default function ResourceLibrary( {
 	);
 
 	const isList = view.type === 'table';
+	const isMobile = useViewportMatch( 'mobile', '<' );
 
 	const recommended = useMemo(
 		() => resources.filter( ( resource ) => resource.is_recommended ),
@@ -135,9 +138,15 @@ export default function ResourceLibrary( {
 						) }
 						search
 					>
-						<HStack justify="space-between" wrap>
-							<HStack justify="flex-start" expanded={ false }>
-								<WPDataViews.Search label={ __( 'Search resources' ) } />
+						<HStack className="dashboard-resources-learn__toolbar" justify="space-between" wrap>
+							<HStack
+								className="dashboard-resources-learn__toolbar-main"
+								justify="flex-start"
+								expanded={ false }
+							>
+								<div className="dashboard-resources-learn__search">
+									<WPDataViews.Search label={ __( 'Search resources' ) } />
+								</div>
 								<ToggleGroupControl
 									className="dashboard-resources-learn__layout-toggle"
 									label={ __( 'Layout' ) }
@@ -155,14 +164,30 @@ export default function ResourceLibrary( {
 								</ToggleGroupControl>
 								<WPDataViews.FiltersToggle />
 							</HStack>
-							<StageFilter view={ view } onChangeView={ onChangeView } />
+							<div className="dashboard-resources-learn__stage">
+								<StageFilter view={ view } onChangeView={ onChangeView } />
+							</div>
 						</HStack>
 						<Spacer marginBottom={ 4 }>
 							<WPDataViews.FiltersToggled className="dashboard-resources-learn__filters-toggled" />
 						</Spacer>
 						{ isList && filteredData.length > 0 && (
 							<Card>
-								<WPDataViews.Layout />
+								{ isMobile ? (
+									<ul className="dashboard-resources-learn__mobile-list">
+										{ visibleResources.map( ( resource ) => (
+											<li key={ resource.id }>
+												<Heading level={ 3 }>
+													<ResourceLink resource={ resource } onSelect={ selection.select } />
+												</Heading>
+												<p>{ resource.description }</p>
+												<ResourceBadges resource={ resource } onFilter={ filterResources } />
+											</li>
+										) ) }
+									</ul>
+								) : (
+									<WPDataViews.Layout />
+								) }
 							</Card>
 						) }
 					</DataViews>
