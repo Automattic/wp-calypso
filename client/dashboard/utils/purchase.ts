@@ -599,6 +599,8 @@ export function isJetpackCrmProduct( keyOrSlug: string ): boolean {
 	return (
 		keyOrSlug.startsWith( 'jetpack-complete' ) ||
 		keyOrSlug.startsWith( 'jetpack_complete' ) ||
+		keyOrSlug.startsWith( 'jetpack-pro_' ) ||
+		keyOrSlug.startsWith( 'jetpack_pro_' ) ||
 		keyOrSlug.startsWith( 'jetpack-crm' ) ||
 		keyOrSlug.startsWith( 'jetpack_crm' )
 	);
