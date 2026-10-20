@@ -89,7 +89,7 @@ describe( 'Credits meter toggle CSS contract', () => {
 	} );
 
 	it.each( alertStates )( 'draws the light alert glyph in the error red %s', ( _, state ) => {
-		expect( resolve( 'color', { alert: true, ...state } ) ).toBe( 'var(--color-error)' );
+		expect( resolve( 'color', { alert: true, ...state } ) ).toBe( 'var(--color-error-accent)' );
 	} );
 
 	it.each( alertStates )( 'draws the dark alert glyph in the Figma red %s', ( _, state ) => {
