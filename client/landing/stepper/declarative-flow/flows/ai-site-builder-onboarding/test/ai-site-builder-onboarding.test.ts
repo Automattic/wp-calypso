@@ -253,18 +253,20 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				expect( redirectTo.searchParams.get( 'spec_id' ) ).toBe( 'spec-42' );
 			} );
 
-			it.each( [ 'personal-bundle', 'value_bundle', 'business-bundle-monthly' ] )(
-				'is used for the %s plan',
-				async ( productSlug ) => {
-					setPlan( productSlug );
+			it.each( [
+				'personal-bundle',
+				'value_bundle',
+				'business-bundle-monthly',
+				'ecommerce-bundle-2y',
+			] )( 'is used for the %s plan', async ( productSlug ) => {
+				setPlan( productSlug );
 
-					await runProcessingSubmit();
+				await runProcessingSubmit();
 
-					expect( new URL( getRedirectTo(), 'https://wordpress.com' ).pathname ).toBe(
-						'/setup/ai-site-builder-spec/site-spec'
-					);
-				}
-			);
+				expect( new URL( getRedirectTo(), 'https://wordpress.com' ).pathname ).toBe(
+					'/setup/ai-site-builder-spec/site-spec'
+				);
+			} );
 
 			it( 'sends a Commerce checkout to the build-wow site spec with ref, source, prompt and spec carried over', async () => {
 				setPlan( 'ecommerce-bundle' );
@@ -301,6 +303,16 @@ describe( 'ai-site-builder-onboarding flow', () => {
 
 				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
 				expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
+			} );
+
+			it( 'sends a Commerce checkout straight to the legacy editor when the site-spec feature is off', async () => {
+				isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec' );
+				setPlan( 'ecommerce-bundle' );
+
+				await runProcessingSubmit();
+
+				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
+				expect( persistSignupDestination ).toHaveBeenCalledWith( getRedirectTo() );
 			} );
 		} );
 	} );
