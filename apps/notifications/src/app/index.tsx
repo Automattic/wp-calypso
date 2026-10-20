@@ -29,6 +29,7 @@ export type NotificationPreferences = {
 };
 
 let hasResolvedPreferences = false;
+let hasCustomStore = false;
 
 const applyPreferences = ( { layoutStyle, viewSettingsSeen }: NotificationPreferences ) => {
 	// Unset means never chosen, and those people get the simplified rows. Where the picker
@@ -169,6 +170,13 @@ const NotificationApp = ( {
 		};
 	}, [ wpcom, isSimplifiedNoteEnabled, isViewSettingsEnabled ] );
 
+	useEffect( () => {
+		if ( customEnhancer && ! hasCustomStore ) {
+			hasCustomStore = true;
+			initStore( { customEnhancer } );
+		}
+	}, [ customEnhancer ] );
+
 	// Seeded once, whenever the host resolves them. A later value would overwrite
 	// whatever the picker has since saved.
 	useEffect( () => {
@@ -179,12 +187,6 @@ const NotificationApp = ( {
 		hasResolvedPreferences = true;
 		applyPreferences( preferences );
 	}, [ preferences ] );
-
-	useEffect( () => {
-		if ( customEnhancer ) {
-			initStore( { customEnhancer } );
-		}
-	}, [ customEnhancer ] );
 
 	useEffect( () => {
 		getClient()?.setLocale( locale );
