@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../../hooks/use-module-data-query';
 import config, { optionalConfig } from '../../lib/config-api';
@@ -134,11 +135,11 @@ describe( 'Modules', () => {
 			expect( screen.getByRole( 'button', { name: 'Install' } ) ).toBeInTheDocument();
 		} );
 
-		it( 'installs Akismet through the My Jetpack products route', () => {
+		it( 'installs Akismet through the My Jetpack products route', async () => {
 			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_installed' ) } );
 			renderModules();
 
-			fireEvent.click( screen.getByRole( 'button', { name: 'Install' } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Install' } ) );
 
 			expect( wpcom.req.post ).toHaveBeenCalledWith(
 				{ apiNamespace: 'my-jetpack/v1', path: '/site/products/activate' },
