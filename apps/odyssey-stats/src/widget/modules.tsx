@@ -126,10 +126,13 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 			.post( { path: '/settings', apiNamespace: 'jetpack/v4' }, { protect: true } )
 			.then( protect.refetch );
 
-	// Installs the Akismet plugin when it is missing.
+	// My Jetpack installs the Akismet plugin first when it is missing.
 	const activateAkismet = () =>
 		wpcom.req
-			.post( { apiNamespace: 'my-jetpack/v1', path: '/site/products/anti-spam' } )
+			.post(
+				{ apiNamespace: 'my-jetpack/v1', path: '/site/products/activate' },
+				{ products: [ 'anti-spam' ] }
+			)
 			.then( akismet.refetch );
 
 	// Registered by the Akismet plugin, so it exists only while Akismet is active.

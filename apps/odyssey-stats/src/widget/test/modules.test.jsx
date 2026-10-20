@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../../hooks/use-module-data-query';
 import config, { optionalConfig } from '../../lib/config-api';
 import canCurrentUser from '../../lib/selectors/can-current-user';
@@ -13,6 +14,7 @@ jest.mock( '../../lib/config-api', () => {
 	return { __esModule: true, default: configApi, optionalConfig: jest.fn() };
 } );
 jest.mock( '../../hooks/use-module-data-query' );
+jest.mock( 'calypso/lib/wp', () => ( { req: { post: jest.fn( () => Promise.resolve( {} ) ) } } ) );
 jest.mock( '../../lib/selectors/can-current-user' );
 
 const SITE_ID = 123;
@@ -130,6 +132,18 @@ describe( 'Modules', () => {
 
 			expect( screen.getByText( 'Blocked spam comments' ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: 'Install' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'installs Akismet through the My Jetpack products route', () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_installed' ) } );
+			renderModules();
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Install' } ) );
+
+			expect( wpcom.req.post ).toHaveBeenCalledWith(
+				{ apiNamespace: 'my-jetpack/v1', path: '/site/products/activate' },
+				{ products: [ 'anti-spam' ] }
+			);
 		} );
 
 		it.each( [ 'not_installed', 'not_active' ] )(
