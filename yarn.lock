@@ -1911,7 +1911,6 @@ __metadata:
     react-redux: "npm:^9.2.0"
     redux: "npm:^5.0.1"
     redux-thunk: "npm:^3.1.0"
-    terser-webpack-plugin: "npm:^5.6.1"
     webpack: "npm:^5.111.1"
     webpack-bundle-analyzer: "npm:^4.10.2"
     wpcom: "workspace:^"
@@ -14451,7 +14450,6 @@ __metadata:
     react-dom: "npm:^18.3.1"
     semver: "npm:^7.7.2"
     superagent: "npm:^3.8.3"
-    terser-webpack-plugin: "npm:^5.6.1"
     webpack: "npm:^5.111.1"
     webpack-cli: "npm:^4.10.0"
     winston: "npm:^3.3.3"
@@ -34473,7 +34471,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5, webpack@npm:^5.111.1":
+"webpack@npm:5.111.1":
   version: 5.111.1
   resolution: "webpack@npm:5.111.1"
   dependencies:

@@ -334,6 +334,7 @@
 		"@tanstack/store": "0.7.7",
 		"react": "19.2.7",
 		"react-dom": "19.2.7",
+		"webpack": "5.111.1",
 		"@types/react": "19.2.16",
 		"@types/react-dom": "19.2.3",
 		"@types/wordpress__block-editor": "npm:noop-package@1.0.0",
