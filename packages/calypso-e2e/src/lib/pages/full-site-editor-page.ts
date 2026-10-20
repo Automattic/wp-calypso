@@ -474,20 +474,6 @@ export class FullSiteEditorPage {
 	/**
 	 * Click the editor document actions icon.
 	 */
-	async openDocumentActionsDropdown(): Promise< void > {
-		await this.editorToolbarComponent.clickDocumentActionsIcon();
-	}
-
-	/**
-	 * Click on an item in the document actions dropdown.
-	 */
-	async clickDocumentActionsDropdownItem( itemSelector: string ): Promise< void > {
-		await this.editorToolbarComponent.clickDocumentActionsDropdownItem( itemSelector );
-	}
-
-	/**
-	 * Click the editor document actions icon.
-	 */
 
 	//#endregion
 
@@ -539,22 +525,6 @@ export class FullSiteEditorPage {
 	 */
 	async closeSiteStyles(): Promise< void > {
 		await this.editorSiteStylesComponent.closeSiteStyles();
-	}
-
-	/**
-	 * Clicks a navigation menu item/button in the site styles sidebar/panel.
-	 *
-	 * @param {string} buttonName Name on the menu item/button.
-	 */
-	async clickStylesMenuButton( buttonName: string ): Promise< void > {
-		await this.editorSiteStylesComponent.clickMenuButton( buttonName );
-	}
-
-	/**
-	 * Returns to the top menu level of the styles sidebar/panel.
-	 */
-	async returnToStylesTopMenu(): Promise< void > {
-		await this.editorSiteStylesComponent.returnToTopMenu();
 	}
 
 	/**

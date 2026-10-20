@@ -24,3 +24,4 @@ export {
 } from './throttle-flags';
 export type { ThrottleId } from './throttle-flags';
 export { withDeadline } from './with-deadline';
+export { watchImportFailure } from './import-failure';

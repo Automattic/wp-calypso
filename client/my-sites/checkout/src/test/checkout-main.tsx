@@ -6,16 +6,14 @@ import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-pr
 import { ResponseCart } from '@automattic/shopping-cart';
 import { render, screen, within, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { dispatch } from '@wordpress/data';
+import { useViewportMatch } from '@wordpress/compose';
 import React from 'react';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { isCommerceGardenSite, isJetpackSite } from 'calypso/state/sites/selectors';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { contactDetailsActions, resetCheckoutStores } from '../lib/checkout-stores';
 import {
 	domainProduct,
 	planWithoutDomain,
@@ -33,8 +31,6 @@ import {
 import { MockCheckout } from './util/mock-checkout';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
-jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
@@ -59,7 +55,7 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	beforeEach( () => {
-		dispatch( CHECKOUT_STORE ).reset();
+		resetCheckoutStores();
 		jest.clearAllMocks();
 		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
@@ -72,8 +68,6 @@ describe( 'CheckoutMain', () => {
 		} );
 		mockGetSiteDomainsEndpoint( [] );
 		( isMarketplaceProduct as jest.Mock ).mockImplementation( () => false );
-		( isJetpackSite as jest.Mock ).mockImplementation( () => false );
-		( isCommerceGardenSite as jest.Mock ).mockImplementation( () => false );
 		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 
 		mockGetPaymentMethodsEndpoint( [] );
@@ -178,6 +172,28 @@ describe( 'CheckoutMain', () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
 		expect( navigate ).not.toHaveBeenCalled();
+	} );
+
+	it( 'omits the plan step for opted-in Commerce checkout', async () => {
+		const originalUrl = window.location.href;
+		window.history.replaceState(
+			null,
+			'',
+			'/checkout/foo.com?showDomainStep&showPurchaseSteps=true&steps_current=2&steps_total=2&redirect_to=/setup/transferring-hosted-site'
+		);
+		const ViewportWidthProvider = useViewportMatch.__experimentalWidthProvider;
+		try {
+			render(
+				<ViewportWidthProvider value={ 1280 }>
+					<MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } />
+				</ViewportWidthProvider>
+			);
+			expect( await screen.findByText( 'Select a domain' ) ).toBeVisible();
+			expect( screen.getByText( 'Complete payment' ) ).toBeVisible();
+			expect( screen.queryByText( 'Select a plan' ) ).not.toBeInTheDocument();
+		} finally {
+			window.history.replaceState( null, '', originalUrl );
+		}
 	} );
 
 	it( 'removes a product from the cart after clicking to remove it', async () => {
@@ -356,13 +372,11 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'adds the product to the cart when the url has a jetpack product', async () => {
-		( isJetpackSite as jest.Mock ).mockImplementation( () => true );
-		( isAtomicSite as jest.Mock ).mockImplementation( () => false );
-
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan' };
 		render(
 			<MockCheckout
+				site={ { jetpack: true } }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -381,13 +395,11 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'adds two products to the cart when the url has two jetpack products', async () => {
-		( isJetpackSite as jest.Mock ).mockImplementation( () => true );
-		( isAtomicSite as jest.Mock ).mockImplementation( () => false );
-
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan,jetpack_backup_daily' };
 		render(
 			<MockCheckout
+				site={ { jetpack: true } }
 				initialCart={ initialCart }
 				setCart={ mockSetCartEndpoint }
 				cartChanges={ cartChanges }
@@ -826,7 +838,7 @@ describe( 'CheckoutMain', () => {
 		};
 
 		// For A4A, we supply email during pre-load.
-		dispatch( CHECKOUT_STORE ).updateEmail( 'test@example.com' );
+		contactDetailsActions.updateEmail( 'test@example.com' );
 
 		render(
 			<MockCheckout

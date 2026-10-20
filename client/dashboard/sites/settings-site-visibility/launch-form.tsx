@@ -1,6 +1,7 @@
 import { siteAgencyBlogQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
+import { useLocation } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -9,7 +10,11 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../../agency/marketplace/paths';
+import { getSiteLaunchCheckoutUrl } from '../../agency/marketplace/products/lib/checkout-url';
+import { useAppContext } from '../../app/context';
 import Notice from '../../components/notice';
+import RouterLinkButton from '../../components/router-link-button';
 import { a4aLink } from '../../utils/link';
 import { SiteLaunchButton } from '../site-launch-button';
 import AgencyDevelopmentSiteLaunchModal from '../site-launch-button/agency-development-site-launch-modal';
@@ -77,6 +82,10 @@ function getAgencyBillingMessage(
 }
 
 export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
+	const location = useLocation();
+	// This form is shared with the WordPress.com dashboard, which has no agency
+	// routes. There the buttons keep opening the checkouts on agencies.automattic.com.
+	const hasAgencyCheckouts = !! useAppContext().supports.agency;
 	const { data, isError } = useQuery( siteAgencyBlogQuery( site.ID ) );
 	const isBillingTypeBD = data?.billing_system === 'billingdragon';
 	const billingMessage = getAgencyBillingMessage( data ?? undefined, isError, isBillingTypeBD );
@@ -94,21 +103,36 @@ export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 						tracksContext="agency_site_settings"
 						{ ...( isBillingTypeBD
 							? {
-									launchUrl: a4aLink(
-										`/marketplace/checkout/${ site.slug }/a4a_wp_bundle_business_yearly`
-									),
+									launchUrl: hasAgencyCheckouts
+										? getSiteLaunchCheckoutUrl( site.slug )
+										: a4aLink(
+												`/marketplace/checkout/${ site.slug }/a4a_wp_bundle_business_yearly`
+											),
 								}
 							: { LaunchModal: AgencyDevelopmentSiteLaunchModal } ) }
 					/>
-					{ shouldShowReferClientButton && (
-						<Button
-							size="compact"
-							variant="secondary"
-							href={ `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ site.ID }` }
-						>
-							{ __( 'Refer a client' ) }
-						</Button>
-					) }
+					{ shouldShowReferClientButton &&
+						( hasAgencyCheckouts ? (
+							<RouterLinkButton
+								size="compact"
+								variant="secondary"
+								to={ MARKETPLACE_REFERRAL_CHECKOUT_ROUTE }
+								search={ {
+									referral_blog_id: site.ID,
+									from: location.pathname + location.searchStr,
+								} }
+							>
+								{ __( 'Refer a client' ) }
+							</RouterLinkButton>
+						) : (
+							<Button
+								size="compact"
+								variant="secondary"
+								href={ a4aLink( `/marketplace/checkout?referral_blog_id=${ site.ID }` ) }
+							>
+								{ __( 'Refer a client' ) }
+							</Button>
+						) ) }
 				</>
 			}
 		>

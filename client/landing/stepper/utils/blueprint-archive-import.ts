@@ -5,6 +5,15 @@ import { transferStates, TransferStates } from 'calypso/state/automated-transfer
 
 export const BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE = '1';
 
+/**
+ * `build_dest=simple` on a blueprint CTA: build the blueprint on a Simple site — no Atomic
+ * transfer, no plan — and still run the blueprint's spec interview and apply. The site-spec step
+ * starts the Simple blueprint import (the Playground runner, through the v1.1 library import)
+ * instead of the archive restore, and hands over to the site's own wp-admin.
+ */
+export const BLUEPRINT_SIMPLE_IMPORT_QUERY_PARAM = 'blueprint_simple_import';
+export const BLUEPRINT_BUILD_DEST_SIMPLE = 'simple';
+
 // Reuse the flow that already hosts the AI site-spec step.
 const BLUEPRINT_ARCHIVE_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
 
@@ -14,6 +23,74 @@ export function getStandaloneBlueprintArchiveSlug(
 	buildDest: string | null
 ): string | null {
 	return ! playgroundId && buildDest === 'wow' ? blueprint : null;
+}
+
+/**
+ * The blueprint a `build_dest=simple` run builds on a Simple site, or null when this is not one.
+ * Same shape as the archive slug: a Playground id means the Playground importer owns the run.
+ */
+export function getStandaloneBlueprintSimpleSlug(
+	blueprint: string | null,
+	playgroundId: string | null,
+	buildDest: string | null
+): string | null {
+	return ! playgroundId && buildDest === BLUEPRINT_BUILD_DEST_SIMPLE ? blueprint : null;
+}
+
+/**
+ * Entry-URL parameters an embedding page may hand to the site-spec widget as spec meta, which
+ * wpcom stamps into the stored spec verbatim (see `Spec_Meta` on the wpcom side: only allow-listed
+ * keys are kept, and each is sanitised there). Carried from the CTA through to the site-spec URL,
+ * since the stepper's redirects do not keep them otherwise.
+ */
+export const SPEC_META_QUERY_PARAMS = [ 'zoom_booking_url', 'site_title' ] as const;
+
+export type SpecMeta = Partial< Record< ( typeof SPEC_META_QUERY_PARAMS )[ number ], string > >;
+
+/**
+ * A link the widget may well render as one. wpcom owns the allow list and the sanitising of
+ * what is stored, but that runs after the value has been through the browser, so anything
+ * that is not a web URL is dropped here.
+ */
+function isWebUrl( value: string ): boolean {
+	try {
+		return [ 'https:', 'http:' ].includes( new URL( value ).protocol );
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * One line of plain text, as a partner names a business or a person: no markup, a sane length.
+ */
+function isPlainTitle( value: string ): boolean {
+	return value.length <= 120 && ! /[<>\n\r]/.test( value );
+}
+
+/**
+ * What each allow-listed entry has to look like to be forwarded at all. wpcom sanitises again
+ * when it stores the value; this keeps anything hostile from reaching the widget.
+ */
+const SPEC_META_ACCEPTS: Record<
+	( typeof SPEC_META_QUERY_PARAMS )[ number ],
+	( value: string ) => boolean
+> = {
+	zoom_booking_url: isWebUrl,
+	site_title: isPlainTitle,
+};
+
+/**
+ * The spec meta present on a query string: the allow-listed keys whose value passes its check.
+ */
+export function getSpecMetaFromQuery( query: URLSearchParams ): SpecMeta {
+	const meta: SpecMeta = {};
+	for ( const key of SPEC_META_QUERY_PARAMS ) {
+		const value = query.get( key )?.trim();
+		if ( value && SPEC_META_ACCEPTS[ key ]( value ) ) {
+			meta[ key ] = value;
+		}
+	}
+	return meta;
 }
 
 type ImportStatusResponse = {
@@ -90,6 +167,8 @@ export function getBlueprintArchiveSiteSpecUrl( {
 	source,
 	wowFunnel,
 	customThemeBuild,
+	simpleImport,
+	specMeta,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
@@ -98,9 +177,19 @@ export function getBlueprintArchiveSiteSpecUrl( {
 	source?: string | null;
 	wowFunnel?: string | null;
 	customThemeBuild?: boolean;
+	/**
+	 * A Simple-site build: the site-spec step runs the Simple blueprint import rather than the
+	 * Atomic archive restore. Carried as its own parameter, not a value of the archive one, so a
+	 * site-spec that predates it ignores the run instead of starting a transfer.
+	 */
+	simpleImport?: boolean;
+	/** Spec meta from the entry URL, for the widget's collector. */
+	specMeta?: SpecMeta;
 } ): string {
 	return addQueryArgs( BLUEPRINT_ARCHIVE_SITE_SPEC_PATH, {
-		blueprint_archive_import: BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE,
+		...( simpleImport
+			? { [ BLUEPRINT_SIMPLE_IMPORT_QUERY_PARAM ]: BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE }
+			: { blueprint_archive_import: BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE } ),
 		blueprint_slug: blueprintSlug,
 		...( siteSlug ? { siteSlug } : {} ),
 		...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
@@ -113,11 +202,18 @@ export function getBlueprintArchiveSiteSpecUrl( {
 		...( customThemeBuild
 			? { [ BLUEPRINT_BUILD_QUERY_PARAM ]: BLUEPRINT_BUILD_CUSTOM_THEME }
 			: {} ),
+		...( specMeta ?? {} ),
 	} );
 }
 
 export type BlueprintArchiveLookup = {
 	exists: boolean;
+	/**
+	 * The spec-meta names a partner's entry link can supply up front, as the blueprint declares
+	 * them. When the link carries all of them the flow needs no site-spec step: the import
+	 * confirms the spec itself. Empty when the blueprint declares none, or on an older wpcom.
+	 */
+	prefill: string[];
 	/**
 	 * The blueprint's display name (e.g. "Punk"), as plain text, for naming it to the customer.
 	 * Empty when the server does not send one.
@@ -138,25 +234,41 @@ type BlueprintArchiveLookupResponse = {
 	suggested_plans?: unknown;
 	// Absent on a wpcom that predates the field.
 	title?: unknown;
+	// Absent on a wpcom that predates the field.
+	prefill?: unknown;
 };
 
 /**
- * Look a blueprint up on the host site by post ID or slug: whether it has a
- * usable archive, and which plans it suggests. Never throws; a missing blueprint
+ * What the blueprint will be built on, which decides what the lookup requires of it: `atomic`
+ * (the default) needs a Playground export archive to restore; `simple` runs from the blueprint
+ * itself, so any published blueprint will do.
+ */
+export type BlueprintLookupTarget = 'atomic' | 'simple';
+
+/**
+ * Look a blueprint up on the host site by post ID or slug: whether it is usable
+ * for the target, and which plans it suggests. Never throws; a missing blueprint
  * (or any request failure) reads as "does not exist".
  */
 export async function lookupBlueprintArchive(
-	blueprintSlug: string
+	blueprintSlug: string,
+	{ target }: { target?: BlueprintLookupTarget } = {}
 ): Promise< BlueprintArchiveLookup > {
 	if ( ! blueprintSlug ) {
-		return { exists: false, title: '', suggestedPlans: [] };
+		return { exists: false, title: '', suggestedPlans: [], prefill: [] };
 	}
 
 	try {
-		const response = ( await wpcom.req.get( {
-			path: `/blueprint-archive/${ encodeURIComponent( blueprintSlug ) }`,
-			apiNamespace: 'wpcom/v2',
-		} ) ) as BlueprintArchiveLookupResponse;
+		const response = ( await wpcom.req.get(
+			{
+				path: `/blueprint-archive/${ encodeURIComponent( blueprintSlug ) }`,
+				apiNamespace: 'wpcom/v2',
+			},
+			// Only sent when asked for: a wpcom that predates the parameter rejects unknown
+			// query args on this route no more than any other, but the default is the
+			// archive lookup either way, so there is nothing to send for it.
+			target === 'simple' ? { target } : undefined
+		) ) as BlueprintArchiveLookupResponse;
 
 		const suggestedPlans = Array.isArray( response?.suggested_plans )
 			? response.suggested_plans.filter(
@@ -166,19 +278,103 @@ export async function lookupBlueprintArchive(
 
 		const title = typeof response?.title === 'string' ? response.title.trim() : '';
 
-		return { exists: true, title, suggestedPlans };
+		const prefill = Array.isArray( response?.prefill )
+			? response.prefill.filter(
+					( name ): name is string => typeof name === 'string' && name !== ''
+				)
+			: [];
+
+		return { exists: true, title, suggestedPlans, prefill };
 	} catch {
-		return { exists: false, title: '', suggestedPlans: [] };
+		return { exists: false, title: '', suggestedPlans: [], prefill: [] };
 	}
+}
+
+/**
+ * Whether the partner's entry link settled everything the blueprint's interview would ask: the
+ * blueprint declares at least one prefill name, and the spec meta carries every one of them.
+ */
+export function isPrefillComplete( prefill: string[], specMeta: SpecMeta ): boolean {
+	return (
+		prefill.length > 0 &&
+		prefill.every( ( name ) => typeof specMeta[ name as keyof SpecMeta ] === 'string' )
+	);
 }
 
 /**
  * Pre-checkout validation: does the blueprint slug resolve to a usable archive
  * on the host site? Resolves true/false; never throws.
  */
-export async function checkBlueprintExists( blueprintSlug: string ): Promise< boolean > {
-	const { exists } = await lookupBlueprintArchive( blueprintSlug );
+export async function checkBlueprintExists(
+	blueprintSlug: string,
+	options: { target?: BlueprintLookupTarget } = {}
+): Promise< boolean > {
+	const { exists } = await lookupBlueprintArchive( blueprintSlug, options );
 	return exists;
+}
+
+/**
+ * Start the Simple-site blueprint import: the v1.1 library import, which queues the Playground
+ * runner against the site (`playground_apply_blueprint`) and tracks it on the same import record
+ * `waitForBlueprintImportComplete()` polls. The endpoint also records the blueprint on the site, so
+ * the later apply resolves it even without the slug.
+ *
+ * Needs the numeric blog id: the endpoint checks the id inside `importStatus` against the site
+ * in the path, so a slug alone cannot start one. Fetched when the caller has only a slug.
+ */
+export async function startBlueprintSimpleImport(
+	siteIdentifier: string,
+	blueprintSlug: string,
+	siteId?: number | null,
+	siteValues: SpecMeta = {},
+	{ applySpec = false }: { applySpec?: boolean } = {}
+): Promise< ImportStatusResponse > {
+	const blogId = siteId && siteId > 0 ? siteId : await getSiteBlogId( siteIdentifier );
+
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdentifier }/imports/library/new`,
+			apiVersion: '1.1',
+			formData: [
+				[
+					'importStatus',
+					JSON.stringify( {
+						importStatus: 'importer-ready-for-upload',
+						siteId: blogId,
+						type: 'wordpress',
+					} ),
+				],
+				[ 'blueprint', blueprintSlug ],
+				// What the entry URL already knows (a booking page, say) travels with the
+				// import: the job writes it into the blueprint content's `{{site.<name>}}`
+				// placeholders once that content has landed, with no agent involved. wpcom
+				// keeps only allow-listed names it can sanitise.
+				...Object.entries( siteValues )
+					.filter( ( entry ): entry is [ string, string ] => typeof entry[ 1 ] === 'string' )
+					.map( ( [ name, value ] ) => [ `site_values[${ name }]`, value ] ),
+				// No site-spec step will follow: the import confirms the partner's spec itself
+				// once the content is in (identity, provenance, the configuration passes).
+				...( applySpec ? [ [ 'apply_spec', '1' ] as [ string, string ] ] : [] ),
+			],
+		},
+		{}
+	);
+}
+
+async function getSiteBlogId( siteIdentifier: string ): Promise< number > {
+	const site = ( await wpcom.req.get(
+		{
+			path: `/sites/${ siteIdentifier }`,
+			apiVersion: '1.1',
+		},
+		{ fields: 'ID' }
+	) ) as { ID?: number };
+
+	if ( ! site?.ID ) {
+		throw new Error( `Could not resolve the blog id for ${ siteIdentifier }` );
+	}
+
+	return site.ID;
 }
 
 /**
@@ -472,6 +668,20 @@ export function getSiteEditorUrl(
 	const editorUrl = Object.keys( args ).length > 0 ? addQueryArgs( url, args ) : url;
 
 	return withJetpackSso( editorUrl );
+}
+
+/**
+ * The Site Editor URL for a Simple site, reached directly.
+ *
+ * A Simple site's wp-admin is WordPress.com itself, so the customer's WordPress.com session
+ * already signs them in; the Jetpack SSO hop getSiteEditorUrl() adds is for Atomic sites, and its
+ * host rewrite (`.wordpress.com` → `.wpcomstaging.com`) would point at a host that does not exist
+ * for a Simple site. No Big Sky parameters either: the assistant is a paid feature, and a free
+ * Simple build lands in the standard editor.
+ */
+export function getSimpleSiteEditorUrl( adminUrl: string ): string {
+	const base = adminUrl.endsWith( '/' ) ? adminUrl : `${ adminUrl }/`;
+	return `${ base }site-editor.php`;
 }
 
 /**

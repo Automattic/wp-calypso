@@ -22,10 +22,8 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
-import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import { A4AOmnibarHomeIcon } from 'calypso/dashboard/app-a4a/omnibar-home-icon';
 import { A4A_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-a4a/section';
-import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
 import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
@@ -73,6 +71,7 @@ class Document extends Component {
 			sectionName,
 			storeSandboxHelper,
 			blackboxHelper,
+			subscriptionManagementSubkey,
 			target,
 			user,
 			useTranslationChunks,
@@ -95,6 +94,11 @@ class Document extends Component {
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
+			( subscriptionManagementSubkey
+				? `var subscriptionManagementSubkey = ${ jsonStringifyForHtml(
+						subscriptionManagementSubkey
+					) };\n`
+				: '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( isSSP ? 'var isSSP = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
@@ -117,13 +121,11 @@ class Document extends Component {
 
 		const isDashboardSection =
 			sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
-			sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name ||
 			sectionName === A4A_DASHBOARD_SECTION_DEFINITION.name;
 
 		const isDashboardOmnibarPage =
 			( isDashboardEnv() || env === 'development' ) &&
 			( sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
-				sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name ||
 				sectionName === A4A_DASHBOARD_SECTION_DEFINITION.name );
 
 		// Hostname overrides only reach the request's client data, not the base config.
@@ -365,9 +367,9 @@ function LoadingPlaceholder( {
 			flowName: '',
 			stepName: '',
 			recordTracksEvent: () => {},
-			logo: getDashboardStepperLogo( dashboard ),
+			logo: null,
 		} ),
-		[ dashboard ]
+		[]
 	);
 
 	if ( shouldNotShowLoadingLogo ) {

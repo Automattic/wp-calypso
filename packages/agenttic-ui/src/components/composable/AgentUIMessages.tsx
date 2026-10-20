@@ -11,6 +11,7 @@ export function AgentUIMessages( { className }: AgentUIMessagesProps = {} ) {
 		messages,
 		isProcessing,
 		isStreaming,
+		isReplying,
 		error,
 		emptyView,
 		messageRenderer,
@@ -24,6 +25,7 @@ export function AgentUIMessages( { className }: AgentUIMessagesProps = {} ) {
 			messages={ messages }
 			isProcessing={ isProcessing }
 			isStreaming={ isStreaming }
+			isReplying={ isReplying }
 			error={ error }
 			emptyView={ emptyView }
 			messageRenderer={ messageRenderer }

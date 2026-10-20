@@ -14,11 +14,7 @@ import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
 	WOO_HOSTING_SOLUTIONS_REF,
 } from 'calypso/landing/stepper/constants';
-import {
-	getLaunchpadPersonalizationDestination,
-	resolveLaunchpadPersonalizationVariation,
-	type LaunchpadPersonalizationVariation,
-} from 'calypso/lib/ai-launchpad';
+import { getLaunchpadDestination } from 'calypso/lib/ai-launchpad';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -43,12 +39,16 @@ import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import {
 	getBlueprintArchiveSiteSpecUrl,
+	getSpecMetaFromQuery,
 	getStandaloneBlueprintArchiveSlug,
+	getStandaloneBlueprintSimpleSlug,
 	isBlueprintCustomThemeBuild,
 } from '../../../utils/blueprint-archive-import';
 import {
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
+	getBuildWowStreamQueryArgs,
+	isBuildWowStreamRequested,
 	logBuildWowEvent,
 	requestBuildWowSite,
 	type BuildWowGraph,
@@ -374,7 +374,6 @@ const onboarding: FlowV2< typeof initialize > = {
 		const shouldSkipPlans = shouldSkipPlansStep( queryParams, planCartItem );
 		const coupon = queryParams.get( 'coupon' );
 		const refParameter = queryParams.get( 'ref' );
-		const diyLaunchpad = queryParams.get( 'diy-launchpad' );
 		const siteSlugParam = queryParams.get( 'siteSlug' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
@@ -386,17 +385,25 @@ const onboarding: FlowV2< typeof initialize > = {
 			playgroundId,
 			buildDest
 		);
+		// build_dest=simple: the blueprint goes onto the Simple site the flow creates, on the free
+		// plan, and the spec interview still runs. No plans grid and no checkout — the run is
+		// decided by the CTA, the way a preselected plan decides it for the paid flows.
+		const blueprintSimpleSlug = getStandaloneBlueprintSimpleSlug(
+			blueprint,
+			playgroundId,
+			buildDest
+		);
 		const wowFunnelSlug = getWowFunnelSlug( queryParams );
 		const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
 
 		/**
-		 * Returns [destination, backDestination] for the post-checkout destination.
+		 * Returns where to land after checkout, or `defaultDestination` when nothing overrides it.
 		 */
 		const getPostCheckoutDestination = async (
 			providedDependencies: ProvidedDependencies,
 			planCartItem: MinimalRequestCartProduct | null,
-			launchpadPersonalizationVariation: LaunchpadPersonalizationVariation
-		): Promise< [ string, string | null, string | null ] > => {
+			defaultDestination: string
+		): Promise< string > => {
 			// Every funnel ends on the built site. A funnel with Calypso-side work hops to that
 			// interstitial first; the interstitial owns the readiness wait and the hand-off, via
 			// the same helpers used below, so a funnel's terminal behaviour is identical either
@@ -416,24 +423,20 @@ const onboarding: FlowV2< typeof initialize > = {
 					dest: wowFunnelDest,
 				} );
 
-				return [
-					getWowFunnelPostCheckoutDestination( {
-						funnelSlug: wowFunnelSlug,
-						dest: wowFunnelDest,
-						siteSlug,
-						siteId,
-						blueprintSlug: queryParams.get( 'blueprint' ),
-						customThemeBuild: isBlueprintCustomThemeBuild( queryParams ),
-						ref: refParameter,
-						locale,
-					} ),
-					null,
-					null,
-				];
+				return getWowFunnelPostCheckoutDestination( {
+					funnelSlug: wowFunnelSlug,
+					dest: wowFunnelDest,
+					siteSlug,
+					siteId,
+					blueprintSlug: queryParams.get( 'blueprint' ),
+					customThemeBuild: isBlueprintCustomThemeBuild( queryParams ),
+					ref: refParameter,
+					locale,
+				} );
 			}
 
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
-				return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
+				return `/home/${ providedDependencies.siteSlug }`;
 			}
 
 			if ( playgroundId || blueprint ) {
@@ -443,7 +446,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 				if ( isFree && playgroundId ) {
 					// Redirect free plan users to a home page
-					return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
+					return `/home/${ providedDependencies.siteSlug }`;
 				}
 
 				const params: Record< string, string | number > = {
@@ -451,23 +454,34 @@ const onboarding: FlowV2< typeof initialize > = {
 					siteId: providedDependencies.siteId as number,
 				};
 
+				// build_dest=simple: land on the AI site-spec too, which starts the Simple
+				// blueprint import on the site just created and, on confirm, waits for it,
+				// applies the spec and hands over to the site's own editor. The blueprint step
+				// already verified the blueprint exists for a Simple build.
+				if ( blueprintSimpleSlug ) {
+					return getBlueprintArchiveSiteSpecUrl( {
+						siteSlug: providedDependencies.siteSlug as string,
+						siteId: providedDependencies.siteId as number,
+						blueprintSlug: blueprintSimpleSlug,
+						ref: refParameter,
+						simpleImport: true,
+						specMeta: getSpecMetaFromQuery( queryParams ),
+					} );
+				}
+
 				// build_dest=wow: skip the Playground-based importer and land on the AI
 				// site-spec, which kicks off the background transfer-to-Atomic +
 				// blueprint-archive import and, on confirm, polls the import and
 				// redirects to the Site Editor. The blueprint step already verified the
 				// archive exists (and stripped build_dest when it does not).
 				if ( blueprintArchiveSlug ) {
-					return [
-						getBlueprintArchiveSiteSpecUrl( {
-							siteSlug: providedDependencies.siteSlug as string,
-							siteId: providedDependencies.siteId as number,
-							blueprintSlug: blueprintArchiveSlug,
-							ref: refParameter,
-							customThemeBuild: isBlueprintCustomThemeBuild( queryParams ),
-						} ),
-						null,
-						null,
-					];
+					return getBlueprintArchiveSiteSpecUrl( {
+						siteSlug: providedDependencies.siteSlug as string,
+						siteId: providedDependencies.siteId as number,
+						blueprintSlug: blueprintArchiveSlug,
+						ref: refParameter,
+						customThemeBuild: isBlueprintCustomThemeBuild( queryParams ),
+					} );
 				}
 
 				if ( playgroundId ) {
@@ -476,43 +490,28 @@ const onboarding: FlowV2< typeof initialize > = {
 					params.blueprint = blueprint;
 				}
 
-				return [
-					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), params ),
-					null,
-					null,
-				];
+				return addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), params );
 			}
 
 			if ( refParameter === WOO_HOSTING_SOLUTIONS_REF && providedDependencies.siteSlug ) {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
-				return [ `${ adminUrl }admin.php?page=wc-admin`, null, null ];
+				return `${ adminUrl }admin.php?page=wc-admin`;
 			}
 
-			// Launchpad-personalization treatments replace only the default My Home landing:
-			// ai_launchpad lands in Site Setup, no_guidance on the wp-admin dashboard. The
-			// functional handoffs above (plugin install, playground/blueprint import, Woo)
-			// keep their destinations regardless of the assigned variation.
-			if ( launchpadPersonalizationVariation !== 'control' && providedDependencies.siteSlug ) {
+			// AI Launchpad and no-guidance sites land in wp-admin instead of My Home.
+			if ( providedDependencies.siteSlug ) {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
-				const destination = getLaunchpadPersonalizationDestination( {
-					variation: launchpadPersonalizationVariation,
-					adminUrl,
-					enableAiLaunchpad: true,
-				} );
+				const destination = getLaunchpadDestination( site?.options, adminUrl );
 				if ( destination ) {
-					return [ destination, null, null ];
+					return destination;
 				}
 			}
 
-			return getOnboardingPostCheckoutDestination( {
-				flowName,
-				locale,
-				siteSlug: providedDependencies.siteSlug as string,
-			} );
+			return defaultDestination;
 		};
 
 		/**
@@ -520,7 +519,32 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * goes straight to site creation. The free-plan and email-verification branches in the
 		 * plans handler below only apply when no plan was picked, so nothing is skipped here.
 		 */
-		const navigateAfterDomain = () => {
+		const navigateAfterDomain = ( { requiresPaidPlan = false } = {} ) => {
+			// A Simple blueprint build is a free-plan run by definition, so the plans grid has
+			// nothing to ask either. Same bookkeeping as the free branch of the plans handler
+			// below, including its email-verification gate: a fully free order never reaches
+			// checkout, so this is where the gate is met. A connected or transferred domain is
+			// the exception: it needs a paid plan, so that run still picks one on the grid and
+			// reaches the same destination through checkout's redirect.
+			if ( blueprintSimpleSlug && ! requiresPaidPlan ) {
+				setPlanCartItem( null );
+				setProductCartItems( [] );
+				setSignupDomainOrigin(
+					signupDomainOrigin === 'choose-later' ? signupDomainOrigin : SIGNUP_DOMAIN_ORIGIN.FREE
+				);
+				setSignupCompleteFlowName( flowName );
+
+				if ( postPlanSelectionEmailVerification ) {
+					return navigate(
+						'email-verification?next=create-site' as typeof currentStepSlug,
+						undefined,
+						false
+					);
+				}
+
+				return navigate( 'create-site', undefined, false );
+			}
+
 			if ( ! shouldSkipPlans ) {
 				return navigate( 'plans' );
 			}
@@ -575,6 +599,8 @@ const onboarding: FlowV2< typeof initialize > = {
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 						setHideFreePlan( true );
 						setDomainCartItem( providedDependencies.domainCartItem );
+
+						return navigateAfterDomain( { requiresPaidPlan: true } );
 					}
 
 					return navigateAfterDomain();
@@ -605,8 +631,14 @@ const onboarding: FlowV2< typeof initialize > = {
 					// A fully free order never reaches checkout, so the post-plan-selection gate is met here,
 					// right after the plan is chosen, before the site is created.
 					if ( postPlanSelectionEmailVerification && ! pickedPlan ) {
+						const streamArgs = getBuildWowStreamQueryArgs(
+							isBuildWowStreamRequested( queryParams )
+						);
 						return navigate(
-							'email-verification?next=create-site' as typeof currentStepSlug,
+							addQueryArgs( 'email-verification', {
+								...streamArgs,
+								next: addQueryArgs( 'create-site', streamArgs ),
+							} ) as typeof currentStepSlug,
 							undefined,
 							false
 						);
@@ -620,14 +652,21 @@ const onboarding: FlowV2< typeof initialize > = {
 					// entry behind it. Pushed, Back off the destination lands here again, and the
 					// step advances on sight of a verified account without being asked — into site
 					// creation, under the name the site it just went back past already holds.
-					return navigate( next as typeof currentStepSlug, undefined, true );
+					return navigate(
+						addQueryArgs(
+							next,
+							getBuildWowStreamQueryArgs( isBuildWowStreamRequested( queryParams ) )
+						) as typeof currentStepSlug,
+						undefined,
+						true
+					);
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'wow-funnel-handoff':
 					// Success replaces location with the built site itself, so the only thing
 					// that reaches navigation here is a failed or timed-out wait.
-					return navigate( STEPS.ERROR.slug );
+					return navigate( STEPS.ERROR.slug, { errorReason: 'wow_funnel_handoff_failed' } );
 				case 'post-checkout-onboarding': {
 					setShouldShowNotification( providedDependencies?.siteId as number );
 					return navigate( 'processing' );
@@ -668,7 +707,9 @@ const onboarding: FlowV2< typeof initialize > = {
 									site_slug: siteSlug,
 									site_id: siteId,
 								} );
-								return navigate( 'error' as typeof currentStepSlug );
+								return navigate( 'error' as typeof currentStepSlug, {
+									errorReason: 'build_wow_missing_site',
+								} );
 							}
 
 							try {
@@ -681,7 +722,9 @@ const onboarding: FlowV2< typeof initialize > = {
 									site_identifier: siteIdentifier,
 									error: error instanceof Error ? error.message : String( error ),
 								} );
-								return navigate( 'error' as typeof currentStepSlug );
+								return navigate( 'error' as typeof currentStepSlug, {
+									errorReason: 'build_wow_start_failed',
+								} );
 							}
 
 							window.location.assign(
@@ -690,36 +733,23 @@ const onboarding: FlowV2< typeof initialize > = {
 									siteId,
 									ref: refParameter,
 									graph,
+									streamEvents: isBuildWowStreamRequested( queryParams ),
 								} )
 							);
 							return;
 						}
 						case 'blank-site': {
+							const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+							const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+
 							if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
-								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
-								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
 								window.location.assign( `${ adminUrl }admin.php?page=wc-admin` );
 								return;
 							}
 
-							// Launchpad-personalization treatments land in wp-admin instead of My Home
-							// (which would bounce them there anyway, one redirect later).
-							const variation = await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
-							if ( variation !== 'control' ) {
-								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
-								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
-								const destination = getLaunchpadPersonalizationDestination( {
-									variation,
-									adminUrl,
-									enableAiLaunchpad: true,
-								} );
-								if ( destination ) {
-									window.location.assign( destination );
-									return;
-								}
-							}
-
-							window.location.assign( `/home/${ siteSlug }` );
+							window.location.assign(
+								getLaunchpadDestination( site?.options, adminUrl ) ?? `/home/${ siteSlug }`
+							);
 							return;
 						}
 						default:
@@ -739,22 +769,25 @@ const onboarding: FlowV2< typeof initialize > = {
 							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
 								siteSlug: siteSlugParam,
 								...( refParameter ? { ref: refParameter } : {} ),
-								...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
+								...getBuildWowStreamQueryArgs( isBuildWowStreamRequested( queryParams ) ),
 							} )
 						);
 						return;
 					}
 
-					const launchpadPersonalizationVariation =
-						playgroundId || blueprint
-							? 'control'
-							: await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
-					const [ destination, backDestination, backDestinationDomains ] =
-						await getPostCheckoutDestination(
-							providedDependencies,
-							planCartItem,
-							launchpadPersonalizationVariation
-						);
+					// Widened because `siteSlug` is only typed on the success result, checked below.
+					const dependencies: ProvidedDependencies = providedDependencies;
+					const [ defaultDestination, backDestination, backDestinationDomains ] =
+						getOnboardingPostCheckoutDestination( {
+							flowName,
+							locale,
+							siteSlug: dependencies.siteSlug as string,
+						} );
+					const destination = await getPostCheckoutDestination(
+						providedDependencies,
+						planCartItem,
+						defaultDestination
+					);
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( flowName );
@@ -781,7 +814,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											{
 												siteSlug,
 												...( refParameter ? { ref: refParameter } : {} ),
-												...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
+												...getBuildWowStreamQueryArgs( isBuildWowStreamRequested( queryParams ) ),
 											}
 										);
 
@@ -795,7 +828,7 @@ const onboarding: FlowV2< typeof initialize > = {
 										next: 'post-checkout-onboarding',
 										siteSlug,
 										...( refParameter ? { ref: refParameter } : {} ),
-										...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
+										...getBuildWowStreamQueryArgs( isBuildWowStreamRequested( queryParams ) ),
 									}
 								);
 							}
@@ -812,7 +845,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									// straight from checkout to their destination — no
 									// post-checkout-onboarding hop, no chooser.
 									redirect_to:
-										blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug )
+										blueprintArchiveSlug || blueprintSimpleSlug || isKnownWowFunnel( wowFunnelSlug )
 											? destination
 											: redirectTo,
 									signup: 1,
@@ -820,18 +853,20 @@ const onboarding: FlowV2< typeof initialize > = {
 									// A skipping visit's last screen was the domain step, so that is where
 									// leaving checkout belongs.
 									checkoutBackUrl: pathToUrl(
-										( shouldSkipPlans ? backDestinationDomains : backDestination ) ?? ''
+										shouldSkipPlans ? backDestinationDomains : backDestination
 									),
-									...( backDestinationDomains
-										? { checkoutBackUrlDomains: pathToUrl( backDestinationDomains ) }
-										: {} ),
+									checkoutBackUrlDomains: pathToUrl( backDestinationDomains ),
 									coupon,
 									steps_current: checkoutStepperPosition.current,
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug ) ) {
-							// build_dest=wow and the WoW funnel never show the
+						} else if (
+							blueprintArchiveSlug ||
+							blueprintSimpleSlug ||
+							isKnownWowFunnel( wowFunnelSlug )
+						) {
+							// build_dest=wow, build_dest=simple and the WoW funnel never show the
 							// setup-your-site-ai chooser; go straight to their destination.
 							// This can stay ahead of the domain branches below: a connected or
 							// transferred domain forces a paid plan (use-my-domain hides the free
@@ -860,7 +895,13 @@ const onboarding: FlowV2< typeof initialize > = {
 							window.location.replace( destination );
 						}
 					} else {
-						return navigate( 'error' as typeof currentStepSlug );
+						// NO_ACTION reaches here only without a siteSlug to send it back with.
+						return navigate( 'error' as typeof currentStepSlug, {
+							errorReason:
+								providedDependencies.processingResult === ProcessingResult.NO_ACTION
+									? 'processing_no_action'
+									: 'processing_failed',
+						} );
 					}
 					return;
 				}
@@ -999,7 +1040,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					// that does not need one. Resume only while it is still unpaid.
 					const site = await resolveSelect( SITE_STORE )
 						.getSite( remembered.siteSlug )
-						.catch( () => null );
+						.catch( () => undefined );
 
 					if ( ! wowFunnelSiteIsPaid( site ) ) {
 						return;

@@ -10,8 +10,11 @@ import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { saveSessionId } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
+import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { getClientConstructorArguments, getSiteEditorActions } from './site-editor-context';
+import { getAgentsManagerSurface, getIsA11n, getIsTest } from './tracks';
+import { getTurnId } from './turn-id';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
@@ -37,9 +40,8 @@ export interface CreateAgentConfigOptions {
 	/** Override the agent version (e.g., from query string). Passed via constructorArguments. */
 	version?: string;
 	/**
-	 * Streamed task-update callback (from a provider). Forwarded to useAgentChat's
-	 * `onTaskUpdate` so streamed tool-argument deltas reach the provider — e.g. to
-	 * paint streamed page-design markup into the editor as it arrives.
+	 * Streamed task-update callback, forwarded to useAgentChat's `onTaskUpdate` —
+	 * paints streamed page-design markup into the editor as it arrives.
 	 */
 	onTaskUpdate?: ( update: unknown ) => void | Promise< void >;
 }
@@ -123,6 +125,29 @@ function getProviderIdsContext( providerIds?: string[] ): { loadedProviderIds?: 
 }
 
 /**
+ * Only the host's explicit opt-in is sent: the server records nothing without it.
+ * `surface` is the browser events' value, so the server's events carry the same one.
+ */
+function getTrackingContext(): {
+	isTrackingAllowed?: boolean;
+	turnId?: string;
+	isTest: boolean;
+	isA11n?: boolean;
+	surface: string;
+} {
+	const isTrackingAllowed = getAgentsManagerInlineData()?.isTrackingAllowed;
+	const turnId = getTurnId();
+	const isA11n = getIsA11n();
+	return {
+		...( typeof isTrackingAllowed === 'boolean' && { isTrackingAllowed } ),
+		...( turnId && { turnId } ),
+		isTest: getIsTest(),
+		...( isA11n !== undefined && { isA11n } ),
+		surface: getAgentsManagerSurface(),
+	};
+}
+
+/**
  * Create a context provider that resolves context entries.
  */
 async function createWrappedContextProvider(
@@ -175,6 +200,7 @@ async function createWrappedContextProvider(
 					siteEditorActions: mergedSiteEditorActions,
 				} ),
 				...getProviderIdsContext( providerIds ),
+				...getTrackingContext(),
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...getClientConstructorArguments( environment, currentRoute ),
@@ -235,6 +261,7 @@ async function createDefaultContextProvider(
 				...( hostData.siteUrl ? { siteUrl: hostData.siteUrl } : {} ),
 				...( contextEntries ? { contextEntries } : {} ),
 				...getProviderIdsContext( providerIds ),
+				...getTrackingContext(),
 				// TODO: Remove once agenttic-client supports top-level constructorArguments
 				...( Object.keys( constructorArguments ).length && { constructorArguments } ),
 			};

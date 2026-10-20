@@ -43,6 +43,14 @@ describe( 'isModalOpen', () => {
 		expect( isModalOpen() ).toBe( true );
 	} );
 
+	test( 'should detect a wp-admin UI overlay modal', () => {
+		const overlay = makeRendered( document.createElement( 'div' ) );
+		overlay.setAttribute( 'data-wp-ui-overlay-modal', '' );
+		document.body.appendChild( overlay );
+
+		expect( isModalOpen() ).toBe( true );
+	} );
+
 	test( 'should detect a WordPress popover', () => {
 		const popover = makeRendered( document.createElement( 'div' ) );
 		popover.className = 'components-popover';

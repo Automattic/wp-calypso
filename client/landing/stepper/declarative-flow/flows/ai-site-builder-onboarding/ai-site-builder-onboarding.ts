@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isEcommercePlan } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { AI_SITE_BUILDER_ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -22,7 +23,13 @@ import {
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
-import { getBuildWowSiteSpecUrl } from '../../../utils/build-wow';
+import {
+	BUILD_WOW_SITE_SPEC_PATH,
+	commerceUsesBuildWow,
+	getBuildWowSiteSpecUrl,
+	getBuildWowStreamQueryArgs,
+	isBuildWowStreamRequested,
+} from '../../../utils/build-wow';
 import { planSupportsBuildWow } from '../../../utils/build-wow-plans';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
@@ -47,6 +54,7 @@ function getBuildWowDestination( {
 	source,
 	prompt,
 	specId,
+	streamEvents,
 }: {
 	siteSlug: string;
 	siteId: number | string;
@@ -54,8 +62,17 @@ function getBuildWowDestination( {
 	source: string | null;
 	prompt: string;
 	specId: string | null;
+	streamEvents: boolean;
 } ): string {
-	const specUrl = getBuildWowSiteSpecUrl( { siteSlug, siteId, ref, source, prompt, graph: 'dsl' } );
+	const specUrl = getBuildWowSiteSpecUrl( {
+		siteSlug,
+		siteId,
+		ref,
+		source,
+		prompt,
+		graph: 'dsl',
+		streamEvents,
+	} );
 
 	return specId ? addQueryArgs( specUrl, { spec_id: specId } ) : specUrl;
 }
@@ -77,6 +94,7 @@ async function initialize( reduxStore: Store ) {
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
+		STEPS.WAIT_FOR_COMMERCE_ATOMIC,
 		STEPS.ERROR,
 	] );
 }
@@ -178,6 +196,43 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 			const { slug, providedDependencies } = submittedStep;
 
 			switch ( slug ) {
+				case STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug: {
+					if ( ! providedDependencies.ready ) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
+					const siteSlug = query.get( 'siteSlug' );
+					const destination = query.get( 'redirect_to' );
+					if ( ! siteSlug || ! destination ) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
+					// Only for checkouts started before build-wow skipped this wait, which
+					// persisted it as the destination. The signup destination cookie lives 24h
+					// and redirect payments return later, so remove it a few days after deploy.
+					if ( destination.startsWith( `${ BUILD_WOW_SITE_SPEC_PATH }?` ) ) {
+						window.location.replace( destination );
+						return;
+					}
+
+					let editorUrl: URL;
+					try {
+						editorUrl = new URL( destination );
+					} catch {
+						return navigate( STEPS.ERROR.slug );
+					}
+					if (
+						! siteSlug.endsWith( '.wordpress.com' ) ||
+						editorUrl.protocol !== 'https:' ||
+						editorUrl.hostname !== siteSlug ||
+						editorUrl.pathname !== '/wp-admin/site-editor.php'
+					) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
+					window.location.replace( editorUrl.toString() );
+					return;
+				}
 				case STEPS.DOMAIN_SEARCH.slug: {
 					if ( ! providedDependencies ) {
 						throw new Error( 'No provided dependencies found' );
@@ -244,18 +299,30 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					// preparation is only for the legacy site editor destination. The build-wow
 					// destination lives in the ai-site-builder-spec flow, which bounces to plain
 					// onboarding without the site-spec feature.
+					const isCommerce = !! planCartItem && isEcommercePlan( planCartItem.product_slug );
 					const useBuildWow =
-						config.isEnabled( 'site-spec' ) && planSupportsBuildWow( planCartItem?.product_slug );
+						config.isEnabled( 'site-spec' ) &&
+						( planSupportsBuildWow( planCartItem?.product_slug ) ||
+							( isCommerce && ( await commerceUsesBuildWow( siteId ) ) ) );
 
 					const prompt =
 						query.get( 'prompt' ) || window.sessionStorage.getItem( 'stored_ai_prompt' ) || '';
 					const source = query.get( 'source' );
 					const ref = query.get( 'ref' );
 					const specId = query.get( 'spec_id' );
+					const streamEvents = isBuildWowStreamRequested( query );
 					window.sessionStorage.removeItem( 'stored_ai_prompt' );
 
 					const destination = useBuildWow
-						? getBuildWowDestination( { siteSlug, siteId, ref, source, prompt, specId } )
+						? getBuildWowDestination( {
+								siteSlug,
+								siteId,
+								ref,
+								source,
+								prompt,
+								specId,
+								streamEvents,
+							} )
 						: await prepareSiteEditorDestination( {
 								site,
 								siteId,
@@ -276,6 +343,7 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						...( source && { source } ),
 						...( ref && { ref } ),
 						...( specId && { spec_id: specId } ),
+						...getBuildWowStreamQueryArgs( streamEvents ),
 					};
 					const checkoutBackUrl = pathToUrl(
 						addQueryArgs(
@@ -290,14 +358,24 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						)
 					);
 
-					persistSignupDestination( destination );
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					setSignupCompleteSiteID( siteId );
 
+					// Only the legacy editor lives on the site, so only it waits for the
+					// Commerce transfer. Build-wow reuses that transfer and builds once it ends.
+					const checkoutDestination =
+						isCommerce && ! useBuildWow
+							? addQueryArgs(
+									`/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }/${ STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug }`,
+									{ siteId, siteSlug, redirect_to: destination }
+								)
+							: destination;
+					persistSignupDestination( checkoutDestination );
+
 					return window.location.assign(
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-							redirect_to: destination,
+							redirect_to: checkoutDestination,
 							checkoutBackUrl,
 							checkoutBackUrlDomains,
 							signup: 1,

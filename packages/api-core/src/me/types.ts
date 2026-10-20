@@ -1,4 +1,4 @@
-export type UserFlags = 'calypso_allow_nonprimary_domains_without_plan' | 'wpcom-flex';
+export type UserFlags = 'calypso_allow_nonprimary_domains_without_plan';
 
 export interface SocialLoginConnection {
 	service: string;
@@ -26,7 +26,6 @@ export interface User {
 	email: string;
 	email_bouncing?: boolean;
 	email_verified: boolean;
-	garden_site_count: number;
 	had_hosting_trial: boolean;
 	has_jetpack_partner_access?: boolean;
 	has_unseen_notes: boolean;
@@ -75,11 +74,6 @@ export interface User {
 	 * @deprecated Use `locale_variant` instead.
 	 */
 	localeVariant?: string;
-
-	/**
-	 * The subkey for Subscription Management.
-	 */
-	subscriptionManagementSubkey?: string;
 
 	/**
 	 * Whether the user was bootstrapped (injected server-side).

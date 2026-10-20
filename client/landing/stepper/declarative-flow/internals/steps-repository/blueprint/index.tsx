@@ -8,6 +8,7 @@ import Loading from 'calypso/components/loading';
 import { getBlueprintArchiveIdentifier } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/blueprint';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import {
+	BLUEPRINT_BUILD_DEST_SIMPLE,
 	checkBlueprintExists,
 	logBlueprintArchiveEvent,
 } from 'calypso/landing/stepper/utils/blueprint-archive-import';
@@ -38,6 +39,25 @@ export const BlueprintStep: StepType = ( { navigation } ) => {
 
 			if ( ! id ) {
 				return;
+			}
+
+			// build_dest=simple builds the blueprint on a Simple site, which needs no archive,
+			// only a published blueprint. Verified against that rule; when missing, the same
+			// fallback as below — the legacy Simple-site import, which fails on its own terms.
+			if ( BLUEPRINT_BUILD_DEST_SIMPLE === buildDestParam ) {
+				const exists = await checkBlueprintExists( id, { target: 'simple' } );
+
+				if ( ! exists ) {
+					recordTracksEvent( 'calypso_blueprint_build_dest_simple_blueprint_missing', {
+						blueprint: id,
+					} );
+					logBlueprintArchiveEvent( 'simple_blueprint_missing', { blueprint: id } );
+
+					const sanitized = new URLSearchParams( query );
+					sanitized.delete( 'build_dest' );
+					setQuery( sanitized, { replace: true } );
+					return;
+				}
 			}
 
 			// Both Atomic paths restore the blueprint's pre-built archive, so both need that

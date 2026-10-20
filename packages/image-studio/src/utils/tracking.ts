@@ -13,6 +13,7 @@ import { store as imageStudioStore, ImageStudioEntryPoint } from '../store';
 import { ImageStudioMode, type MetadataField } from '../types';
 import { getSessionId } from '../utils/session';
 import { parseErrorUrl } from './parse-error-url';
+import type { CreditsCtaType } from '@automattic/agents-manager';
 
 const TRACKS_PREFIX = 'jetpack_big_sky';
 const SITE_TYPES = [ 'simple', 'atomic', 'jetpack' ] as const;
@@ -58,7 +59,7 @@ function getImageStudioWindowData(): ImageStudioTrackingData | undefined {
 	return ( window as unknown as { imageStudioData?: ImageStudioTrackingData } ).imageStudioData;
 }
 
-function getTrackingBlogId(): number | null {
+export function getImageStudioBlogId(): number | null {
 	const blogId = getImageStudioWindowData()?.blogId;
 
 	if ( typeof blogId !== 'number' && typeof blogId !== 'string' ) {
@@ -70,7 +71,13 @@ function getTrackingBlogId(): number | null {
 	return Number.isFinite( parsedBlogId ) && parsedBlogId > 0 ? parsedBlogId : null;
 }
 
-function getTrackingSiteType(): ImageStudioSiteType {
+/** Whether the page says it's in dev mode, or undefined when it doesn't say. */
+export function getImageStudioIsDevMode(): boolean | undefined {
+	const isDevMode = getImageStudioWindowData()?.isDevMode;
+	return typeof isDevMode === 'boolean' ? isDevMode : undefined;
+}
+
+export function getImageStudioSiteType(): ImageStudioSiteType {
 	const siteType = getImageStudioWindowData()?.siteType;
 
 	if ( SITE_TYPES.includes( siteType as ImageStudioSiteType ) ) {
@@ -110,8 +117,8 @@ function recordImageStudioEvent(
 	properties: Record< string, string | number | boolean > = {}
 ): void {
 	const entryPoint = getImageStudioEntryPoint();
-	const blogId = getTrackingBlogId();
-	const siteType = getTrackingSiteType();
+	const blogId = getImageStudioBlogId();
+	const siteType = getImageStudioSiteType();
 	const imageStudioWindowData = getImageStudioWindowData();
 	const sessionId = getSessionId();
 	const baseProps: Record< string, string | number | boolean > = {
@@ -560,27 +567,109 @@ export function trackImageStudioError( {
 	recordImageStudioEvent( 'image_studio_error', properties );
 }
 
+/** What showed the notice: the credits check on open, a re-check after a turn, or a failed request. */
+export type UpgradeNoticeTrigger = 'open' | 'refresh' | 'error';
+
+/** What opened the credits dot's popover, as the Agent's `credits_meter_opened` event names it. */
+export type CreditsMeterOpenedTrigger = 'click' | 'exhausted' | 'submit_blocked';
+
 /**
- * Tracks when the limit-reached upgrade notice is shown
- * @param options      - Tracking options
- * @param options.mode - 'edit' or 'generate'
+ * The balance behind a credits event, so it joins the Agent's credits events.
+ * `none` marks a detail that doesn't apply.
  */
-export function trackImageStudioUpgradeNoticeShown( { mode }: { mode: ImageStudioMode } ): void {
-	recordImageStudioEvent( 'image_studio_upgrade_notice_shown', { mode } );
+export interface CreditsMeterDetails {
+	/** Site AI credits, or the old Jetpack AI request quota. */
+	meter: 'site_credits' | 'jetpack_ai';
+	/** `ok` only from the credits popover, which also opens on a healthy balance. */
+	state: 'ok' | 'low' | 'zero';
+	planTier: string;
+	creditsLeft: number | 'none';
+}
+
+export interface UpgradeNoticeCredits extends CreditsMeterDetails {
+	/** The Upgrade or Add credits link, who to ask, or `none`. */
+	ctaType: CreditsCtaType;
+	/** The purchase link's `source`, which checkout copies onto the purchase. */
+	ref: string;
+}
+
+interface UpgradeNoticeEvent extends UpgradeNoticeCredits {
+	mode: ImageStudioMode;
+	trigger: UpgradeNoticeTrigger;
+}
+
+/** What showed the Upgrade or Add credits link: the notice's trigger, or the credits dot's popover. */
+export type UpgradeLinkTrigger = UpgradeNoticeTrigger | 'popover';
+
+interface UpgradeNoticeClickEvent extends UpgradeNoticeCredits {
+	mode: ImageStudioMode;
+	trigger: UpgradeLinkTrigger;
+}
+
+function getUpgradeNoticeProperties( event: UpgradeNoticeEvent | UpgradeNoticeClickEvent ) {
+	return {
+		mode: event.mode,
+		trigger: event.trigger,
+		meter: event.meter,
+		state: event.state,
+		plan_tier: event.planTier,
+		credits_left: event.creditsLeft,
+		cta_type: event.ctaType,
+		ref: event.ref,
+	};
 }
 
 /**
- * Tracks a click on the upgrade notice action. Also fires the product-wide
- * `jetpack_ai_upgrade_button` event so this surface appears in the same
- * funnel as every other Jetpack AI upgrade button.
- * @param options      - Tracking options
- * @param options.mode - 'edit' or 'generate'
+ * Tracks when an upgrade notice is shown: low or out of site credits, or out
+ * of the Jetpack AI quota. `state` and `meter` tell them apart.
+ * @param event - The notice's mode, trigger and credit details
  */
-export function trackImageStudioUpgradeNoticeClick( { mode }: { mode: ImageStudioMode } ): void {
-	recordImageStudioEvent( 'image_studio_upgrade_notice_click', { mode } );
-	recordTracksEventBase( 'jetpack_ai_upgrade_button', {
-		placement: 'image-studio-limit-notice',
+export function trackImageStudioUpgradeNoticeShown( event: UpgradeNoticeEvent ): void {
+	recordImageStudioEvent(
+		'image_studio_upgrade_notice_shown',
+		getUpgradeNoticeProperties( event )
+	);
+}
+
+interface CreditsMeterOpenedEvent extends CreditsMeterDetails {
+	mode: ImageStudioMode;
+	trigger: CreditsMeterOpenedTrigger;
+}
+
+/**
+ * Tracks the credits dot's popover opening: a click on the dot, a known balance
+ * running out, or a blocked Send at zero. Mirrors the Agent's
+ * `calypso_agents_manager_credits_meter_opened`.
+ * @param event - The popover's mode, trigger and balance details
+ */
+export function trackImageStudioCreditsMeterOpened( event: CreditsMeterOpenedEvent ): void {
+	recordImageStudioEvent( 'image_studio_credits_meter_opened', {
+		mode: event.mode,
+		trigger: event.trigger,
+		meter: event.meter,
+		state: event.state,
+		plan_tier: event.planTier,
+		credits_left: event.creditsLeft,
 	} );
+}
+
+/**
+ * Tracks a click on the Upgrade or Add credits link, in the notice or in the credits dot's popover.
+ * For the Jetpack AI quota, also fires the product-wide `jetpack_ai_upgrade_button`
+ * event so this surface appears in the same funnel as every other Jetpack AI
+ * upgrade button.
+ * @param event - The link's mode, trigger and credit details
+ */
+export function trackImageStudioUpgradeNoticeClick( event: UpgradeNoticeClickEvent ): void {
+	recordImageStudioEvent(
+		'image_studio_upgrade_notice_click',
+		getUpgradeNoticeProperties( event )
+	);
+	if ( event.meter === 'jetpack_ai' ) {
+		recordTracksEventBase( 'jetpack_ai_upgrade_button', {
+			placement: 'image-studio-limit-notice',
+		} );
+	}
 }
 
 /**

@@ -15,6 +15,7 @@ import {
 	fetchReadRecent,
 	fetchReadRecommendationsPosts,
 	fetchReadRecommendationsSites,
+	fetchReadSaved,
 	fetchReadSearch,
 	fetchReadSiteFeatured,
 	fetchReadSitePosts,
@@ -111,6 +112,8 @@ export const fetchReadStream = (
 			return fetchReadConversations( queryParams );
 		case 'likes':
 			return fetchReadLiked( queryParams );
+		case 'saved':
+			return fetchReadSaved( queryParams );
 		case 'recommendations_posts':
 		case 'custom_recs_posts_with_images':
 			return fetchReadRecommendationsPosts( queryParams );

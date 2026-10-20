@@ -4,6 +4,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useEffect, useRef, createRef } from 'react';
 import { connect } from 'react-redux';
+import { useBlackboxProtection } from 'calypso/blocks/login/use-blackbox-protection';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import { navigate } from 'calypso/lib/navigate';
@@ -32,11 +33,19 @@ const VerifyLoginCode = ( {
 	redirectTo,
 	translate,
 	onResendEmail,
+	isNewAccount,
 } ) => {
+	const { challenge, getSessionId, isSubmitBlocked } = useBlackboxProtection( {
+		feature: 'blackbox-signup',
+		suspended: ! isNewAccount,
+		resetOnError: authError,
+	} );
 	// Create an array of 6 empty strings for our verification code
 	const [ codeCharacters, setCodeCharacters ] = useState( Array( CODE_LENGTH ).fill( '' ) );
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
 	const [ showError, setShowError ] = useState( false );
+	const [ isCollectingSession, setIsCollectingSession ] = useState( false );
+	const isCollectingSessionRef = useRef( false );
 	const dispatch = useDispatch();
 	const { setHeaders } = useLoginContext();
 
@@ -163,8 +172,12 @@ const VerifyLoginCode = ( {
 		inputRefs.current[ nextIndex ].current.focus();
 	};
 
-	const onSubmit = ( event ) => {
+	const onSubmit = async ( event ) => {
 		event.preventDefault();
+
+		if ( isSubmitBlocked || isCollectingSessionRef.current ) {
+			return;
+		}
 
 		const verificationCode = getVerificationCode();
 		if ( ! verificationCode || verificationCode.length !== CODE_LENGTH || ! publicToken ) {
@@ -180,8 +193,20 @@ const VerifyLoginCode = ( {
 
 		// Format: publicToken:code
 		const loginToken = `${ publicToken }:${ btoa( verificationCode ) }`;
-
-		authenticate( loginToken, redirectTo, null, true );
+		const shouldCollect = !! isNewAccount;
+		if ( shouldCollect ) {
+			isCollectingSessionRef.current = true;
+			setIsCollectingSession( true );
+		}
+		try {
+			const blackboxSessionId = await getSessionId();
+			authenticate( loginToken, redirectTo, null, true, blackboxSessionId );
+		} finally {
+			if ( shouldCollect ) {
+				isCollectingSessionRef.current = false;
+				setIsCollectingSession( false );
+			}
+		}
 	};
 
 	const handleResendEmail = () => {
@@ -196,8 +221,14 @@ const VerifyLoginCode = ( {
 		onResendEmail();
 	};
 
-	const isDisabled = isValidating || isRedirecting;
-	const submitEnabled = getVerificationCode().length === CODE_LENGTH && ! isDisabled && ! showError;
+	const isSubmittingCode = isCollectingSession || isValidating || isRedirecting;
+	// A challenge raised by this submit's collect holds the request, so stop spinning while it is up.
+	const isButtonBusy = isSubmittingCode && ! isSubmitBlocked;
+	const canSubmit =
+		getVerificationCode().length === CODE_LENGTH &&
+		! isSubmittingCode &&
+		! showError &&
+		! isSubmitBlocked;
 
 	return (
 		<>
@@ -216,7 +247,7 @@ const VerifyLoginCode = ( {
 									ref={ inputRefs.current[ index ] }
 									autoCapitalize="off"
 									className="magic-login__verify-code-character-field"
-									disabled={ isDisabled }
+									disabled={ isSubmittingCode }
 									maxLength={ 1 }
 									value={ codeCharacters[ index ] }
 									onChange={ ( event ) => onCodeCharacterChange( index, event.target.value ) }
@@ -238,15 +269,17 @@ const VerifyLoginCode = ( {
 							</div>
 						) }
 
+						{ challenge }
+
 						<div className="magic-login__form-action">
 							<Button
 								variant="primary"
-								disabled={ ! submitEnabled && ! isDisabled }
-								isBusy={ isDisabled }
+								disabled={ ! canSubmit }
+								isBusy={ isButtonBusy }
 								type="submit"
 								__next40pxDefaultSize
 							>
-								{ isDisabled ? translate( 'Verifying code…' ) : translate( 'Verify code' ) }
+								{ isButtonBusy ? translate( 'Verifying code…' ) : translate( 'Verify code' ) }
 							</Button>
 						</div>
 					</LoggedOutForm>
@@ -264,7 +297,7 @@ const VerifyLoginCode = ( {
 										className="one-login__footer-link"
 										variant="link"
 										onClick={ handleResendEmail }
-										disabled={ isRedirecting }
+										disabled={ isRedirecting || isCollectingSession }
 									/>
 								),
 								link: <a className="one-login__footer-link" href="/log-in/jetpack" />,
@@ -287,6 +320,7 @@ VerifyLoginCode.propTypes = {
 	fetchMagicLoginAuthenticate: PropTypes.func.isRequired,
 	redirectTo: PropTypes.string,
 	onResendEmail: PropTypes.func,
+	isNewAccount: PropTypes.bool,
 };
 
 const mapState = ( state ) => ( {

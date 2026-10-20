@@ -1,6 +1,6 @@
 jest.mock( '../../tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
 
-import type { FilePart } from '..';
+import type { FilePart } from '@automattic/agenttic-client';
 
 const screenshot: FilePart = {
 	type: 'file',

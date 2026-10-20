@@ -1,8 +1,15 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
+import { useQuery as useDataQuery } from '@tanstack/react-query';
+import { useReducedMotion } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getBuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
-import { getSafeEditorUrl } from './editor-url';
+import {
+	getBuildWowGraph,
+	isBuildWowStreamRequested,
+} from 'calypso/landing/stepper/utils/build-wow';
+import { useBuildWowStream } from './stream/use-build-wow-stream';
 import { useSiteGeneration } from './use-site-generation';
 import { SiteGenerationView } from './view';
 import type { Step as StepType } from '../../types';
@@ -12,9 +19,11 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const translate = useTranslate();
 	const query = useMemo( () => new URLSearchParams( window.location.search ), [] );
 	const siteIdentifier = query.get( 'siteId' ) || query.get( 'siteSlug' );
-	const editorUrl = getSafeEditorUrl( query.get( 'editorUrl' ) );
+	const siteSlug = query.get( 'siteSlug' );
+	const source = query.get( 'source' );
 	const specId = query.get( 'specId' );
 	const graph = getBuildWowGraph( query );
+	const streamEvents = isBuildWowStreamRequested( query );
 	// Fallback checklist only: the server-computed ui.steps from the status
 	// endpoint is authoritative (labels included, already localized). This
 	// list covers the moments before the first response arrives, and backends
@@ -31,7 +40,25 @@ const SiteGeneration: StepType = function SiteGeneration() {
 		],
 		[ translate ]
 	);
-	const state = useSiteGeneration( { siteIdentifier, editorUrl, specId, graph, steps } );
+	const [ previewReady, setPreviewReady ] = useState( false );
+	const shouldReduceMotion = useReducedMotion();
+	const state = useSiteGeneration( {
+		siteIdentifier,
+		source,
+		specId,
+		graph,
+		streamEvents,
+		steps,
+		completionDelayMs: previewReady && ! shouldReduceMotion ? 2600 : 0,
+	} );
+	const streamingEnabled = config.isEnabled( 'site-spec/build-wow-streaming' );
+	const { data: isAutomattician = false } = useDataQuery( {
+		...isAutomatticianQuery(),
+		enabled: streamingEnabled,
+	} );
+	const streamingAllowed = streamingEnabled && isAutomattician;
+	const stream = useBuildWowStream( streamingAllowed ? ( state.streamInfo ?? null ) : null );
+	const streamRequested = streamingAllowed && ( streamEvents || Boolean( state.streamInfo ) );
 
 	const reload = () => {
 		window.location.reload();
@@ -40,7 +67,15 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	return (
 		<>
 			<DocumentHead title={ translate( 'Generating your site' ) } />
-			<SiteGenerationView graph={ graph } onReload={ reload } state={ state } />
+			<SiteGenerationView
+				graph={ graph }
+				onReload={ reload }
+				onPreviewReady={ setPreviewReady }
+				siteSlug={ siteSlug }
+				state={ state }
+				stream={ streamingAllowed ? stream : null }
+				streamRequested={ streamRequested }
+			/>
 		</>
 	);
 };

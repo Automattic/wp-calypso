@@ -35,7 +35,9 @@ import {
 	isUnlimitedThemes,
 	isVideoPress,
 	isWpComBloggerPlan,
+	isWpComBusinessPlan,
 	isWpComFreePlan,
+	isWpComMonthlyPlan,
 	TITAN_MAIL_MONTHLY_SLUG,
 	TITAN_MAIL_YEARLY_SLUG,
 	isAkismetProduct,
@@ -87,6 +89,20 @@ export function getRenewalItems( cart: ObjectWithProducts ): ResponseCartProduct
  */
 export function hasDIFMProduct( cart: ObjectWithProducts ): boolean {
 	return cart && getAllCartItems( cart ).some( isDIFMProduct );
+}
+
+/**
+ * Determines whether the shopping cart has a Business plan added from the free DIFM offer.
+ * The offer requires a WordPress.com Business plan billed yearly or longer, so a flagged
+ * monthly plan does not count.
+ */
+export function hasDIFMOfferPlan( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).some(
+		( product ) =>
+			isWpComBusinessPlan( product.product_slug ) &&
+			! isWpComMonthlyPlan( product.product_slug ) &&
+			product.extra?.difm_offer === true
+	);
 }
 
 /**

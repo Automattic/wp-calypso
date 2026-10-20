@@ -4,6 +4,7 @@ import {
 	isCompletePlan,
 	isSecurityDailyPlan,
 	isSecurityRealTimePlan,
+	JETPACK_PRO_PLANS,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
@@ -89,7 +90,8 @@ const JetpackBenefits: React.FC< Props > = ( { siteId, productSlug } ) => {
 					) }
 				/>
 			) }
-			{ isSecurityDailyPlan( productSlug ) && (
+			{ ( isSecurityDailyPlan( productSlug ) ||
+				( JETPACK_PRO_PLANS as ReadonlyArray< string > ).includes( productSlug ) ) && (
 				<JetpackBenefitsCard
 					headline={ translate( 'Activity Log' ) }
 					description={ translate(

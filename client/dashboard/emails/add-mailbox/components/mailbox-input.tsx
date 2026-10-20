@@ -3,12 +3,11 @@ import {
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ComponentProps } from 'react';
 import { Text } from '../../../components/text';
 import { MailboxForm as MailboxFormEntity } from '../../entities/mailbox-form';
 import { MailboxFormFieldBase, TextMailboxFormField } from '../../entities/types';
 import { MailboxProvider } from '../../types';
-import type { InputControlProps } from '@wordpress/components/build-types/input-control/types';
 
 export const MailboxInput = ( {
 	fieldName,
@@ -27,7 +26,7 @@ export const MailboxInput = ( {
 		field: MailboxFormFieldBase< string >;
 		lowerCaseChangeValue?: boolean;
 	} ) => void;
-} & Omit< InputControlProps, 'onBlur' | 'onChange' > ) => {
+} & Omit< ComponentProps< typeof InputControl >, 'onBlur' | 'onChange' > ) => {
 	// @ts-expect-error -- mailboxEntity.formFields will never include firstName or lastName for Titan.
 	const originalField = mailboxEntity.formFields[ fieldName ] as TextMailboxFormField;
 

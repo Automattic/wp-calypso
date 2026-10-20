@@ -5,9 +5,12 @@
  */
 
 import { recordBigSkyTracksEvent } from '../tracks';
-import type { CanvasCaptureOptions, FilePart } from './capture';
+import type { CanvasCaptureOptions } from './capture';
+import type { FilePart } from '@automattic/agenttic-client';
 
-export type { CanvasCaptureOptions, FilePart };
+export { describeCaptureShape, getUnframedClientIds } from './framing';
+export { describeMeasuredLayout, describeUnmoved, snapshotLayout } from './measurements';
+export type { LayoutSnapshot } from './measurements';
 
 type CaptureModule = typeof import( './capture' );
 

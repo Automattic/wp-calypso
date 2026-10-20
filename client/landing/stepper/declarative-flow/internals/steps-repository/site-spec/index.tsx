@@ -4,24 +4,32 @@ import { getSessionId as getPostHogSessionId } from '@automattic/posthog';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import {
 	applyBlueprintSpec,
+	BLUEPRINT_SIMPLE_IMPORT_QUERY_PARAM,
 	getBlueprintArchiveSiteIdentifier,
+	getSimpleSiteEditorUrl,
 	getSiteAdminUrl,
 	getSiteEditorUrl,
+	getSpecMetaFromQuery,
+	isPrefillComplete,
+	lookupBlueprintArchive,
 	isBlueprintCustomThemeBuild,
 	logBlueprintArchiveEvent,
 	startBlueprintArchiveImport,
+	startBlueprintSimpleImport,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
 } from 'calypso/landing/stepper/utils/blueprint-archive-import';
 import {
 	getBuildWowGraph,
 	getBuildWowSiteIdentifier,
+	getBuildWowStreamQueryArgs,
+	isBuildWowStreamRequested,
 	logBuildWowEvent,
 	requestBuildWowSite,
 } from 'calypso/landing/stepper/utils/build-wow';
@@ -44,6 +52,11 @@ import {
 import wpcom from 'calypso/lib/wp';
 import { buildEarlyProvisionDestination } from './early-provisioning';
 import type { Step as StepType } from '../../types';
+import './style.scss';
+
+// How long the Simple build waits for the blueprint lookup before it runs the interview
+// regardless. The lookup is one small GET; the interview must not hang on it.
+const LOOKUP_TIMEOUT_MS = 8000;
 
 function SiteSpecContainer( {
 	siteSpecConfig,
@@ -56,7 +69,7 @@ function SiteSpecContainer( {
 } ) {
 	useSiteSpec( { siteSpecConfig, onMessage, onSpecConfirm } );
 
-	return <div id="site-spec-container" style={ { height: '100vh' } } />;
+	return <div id="site-spec-container" className="site-spec-step__container" />;
 }
 
 function getSpecId( specData: unknown ): string {
@@ -146,7 +159,12 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	} );
 
 	const ciabSiteCreationPromiseRef = useRef< Promise< number | null > | null >( null );
-	const shouldImportBlueprint = queryParams.get( 'blueprint_archive_import' ) === '1';
+	// A Simple-site blueprint build: the Playground import on the site itself, no Atomic
+	// transfer, and a hand-off to the site's own wp-admin. Everything else about the run — the
+	// blueprint-aware interview, the wait on the processing screen, the spec apply — is shared.
+	const isSimpleImport = queryParams.get( BLUEPRINT_SIMPLE_IMPORT_QUERY_PARAM ) === '1';
+	const shouldImportBlueprint =
+		queryParams.get( 'blueprint_archive_import' ) === '1' || isSimpleImport;
 	// A wow-funnel run already started the import server-side, before checkout. This page still
 	// waits on it and hands over, but must not start a second one.
 	// An unregistered slug is not a funnel run: the server never enrolled the blog, so nothing
@@ -167,6 +185,21 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	const messageCountRef = useRef( 0 );
 	const isSubmittingRef = useRef( false );
 	const blueprintImportStartedRef = useRef( false );
+	// A Simple build whose partner hand-off settled everything the blueprint's interview
+	// would ask has no interview: the import confirms the spec itself and this page only
+	// waits and hands over. Null until the blueprint lookup has said which it is, so the
+	// interview widget never mounts on a run that will not use it.
+	// Undecided only on a run the kickoff below will actually start; any other Simple run
+	// (a funnel hand-off, a missing slug or site) mounts the interview as it always has.
+	const [ isPartnerSpecRun, setIsPartnerSpecRun ] = useState< boolean | null >(
+		isSimpleImport &&
+			shouldImportBlueprint &&
+			! isWowFunnelRun &&
+			blueprintArchiveSlug &&
+			blueprintArchiveSiteIdentifier
+			? null
+			: false
+	);
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setSiteSetupError } = useDispatch( SITE_STORE );
 	// Held in a ref so the spec-confirm callback stays referentially stable: the flow hands
@@ -308,6 +341,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 			const elapsedMs = () => Date.now() - specConfirmStartTime;
 			let responseBlogId: number | undefined;
 			const graph = getBuildWowGraph( queryParams );
+			const streamEvents = isBuildWowStreamRequested( queryParams );
 
 			try {
 				logBuildWowEvent( 'spec_confirm_request_start', {
@@ -315,7 +349,13 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					site_identifier: buildWowSiteIdentifier,
 				} );
 
-				const response = await requestBuildWowSite( buildWowSiteIdentifier, specId, graph );
+				const response = await requestBuildWowSite(
+					buildWowSiteIdentifier,
+					specId,
+					graph,
+					undefined,
+					streamEvents
+				);
 				responseBlogId = response.blog_id;
 
 				logBuildWowEvent(
@@ -333,16 +373,8 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					response.blog_id
 				);
 
-				if ( ! response.site_editor_url ) {
-					throw new Error( 'Build-wow response is missing the Site Editor URL.' );
-				}
-
 				const ref = queryParams.get( 'ref' );
 				const source = queryParams.get( 'source' );
-				// No spec_id on the editor URL: that param asks the editor plugin
-				// to build the site itself, and this build already ran on the
-				// server. A second build on the canvas wipes the generated pages.
-				const destination = addQueryArgs( response.site_editor_url, source ? { source } : {} );
 
 				logBuildWowEvent(
 					'site_generation_redirect',
@@ -358,10 +390,10 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					...( response.blog_id ? { siteId: response.blog_id } : {} ),
 					siteSlug: buildWowSiteIdentifier,
 					specId,
-					editorUrl: destination,
 					...( ref ? { ref } : {} ),
 					...( source ? { source } : {} ),
 					...( graph ? { graph } : {} ),
+					...getBuildWowStreamQueryArgs( streamEvents ),
 				} );
 			} catch ( error ) {
 				const message = error instanceof Error ? error.message : String( error );
@@ -469,12 +501,15 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					// As a funnel interstitial this step owns the funnel's readiness wait, so it
 					// goes through the shared helper — one definition of "ready" per funnel, and one
 					// timeout. Outside a funnel this is a plain blueprint-archive run, which keeps
-					// its own unbounded waits.
+					// its own unbounded waits. A Simple build has no transfer to wait for: the
+					// import record is the whole story.
 					if ( wowFunnelSlug ) {
 						await waitForWowFunnelReady( {
 							funnelSlug: wowFunnelSlug,
 							siteIdentifier: blueprintArchiveSiteIdentifier,
 						} );
+					} else if ( isSimpleImport ) {
+						await waitForBlueprintImportComplete( blueprintArchiveSiteIdentifier );
 					} else {
 						await waitForAtomicTransferComplete( blueprintArchiveSiteIdentifier );
 						await waitForBlueprintImportComplete( blueprintArchiveSiteIdentifier );
@@ -494,12 +529,9 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 							blueprintArchiveSiteIdentifier,
 							specId,
 							getBuildWowGraph( queryParams ),
-							blueprintArchiveSlug
+							blueprintArchiveSlug,
+							isBuildWowStreamRequested( queryParams )
 						);
-						if ( ! response.site_editor_url ) {
-							throw new Error( 'Build-wow response is missing the Site Editor URL.' );
-						}
-
 						logBlueprintArchiveEvent( 'redirect_site_generation', {
 							site_identifier: blueprintArchiveSiteIdentifier,
 							build_status: response.build?.status,
@@ -512,8 +544,8 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 								...( response.blog_id ? { siteId: response.blog_id } : {} ),
 								siteSlug: blueprintArchiveSiteIdentifier,
 								specId,
-								editorUrl: response.site_editor_url,
 								...( ref ? { ref } : {} ),
+								...getBuildWowStreamQueryArgs( isBuildWowStreamRequested( queryParams ) ),
 							} ),
 						};
 					}
@@ -537,16 +569,27 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					// saves a /sites/<id> round trip here — on the one path where the customer is
 					// watching a spinner. Null on an older wpcom, or when the apply failed, in which
 					// case the helper fetches it as before.
-					const siteEditorUrl = wowFunnelSlug
-						? await getWowFunnelHandoffUrl( {
-								dest: wowFunnelDest,
-								siteIdentifier: blueprintArchiveSiteIdentifier,
-								adminUrl,
-							} )
-						: getSiteEditorUrl(
-								adminUrl ?? ( await getSiteAdminUrl( blueprintArchiveSiteIdentifier ) ),
-								{ canvasEdit: applied }
-							);
+					//
+					// A Simple site is reached directly: its wp-admin is WordPress.com, so the
+					// customer is already signed in, and the Atomic SSO hop would point at a host
+					// the site does not have.
+					let siteEditorUrl: string;
+					if ( wowFunnelSlug ) {
+						siteEditorUrl = await getWowFunnelHandoffUrl( {
+							dest: wowFunnelDest,
+							siteIdentifier: blueprintArchiveSiteIdentifier,
+							adminUrl,
+						} );
+					} else if ( isSimpleImport ) {
+						siteEditorUrl = getSimpleSiteEditorUrl(
+							adminUrl ?? ( await getSiteAdminUrl( blueprintArchiveSiteIdentifier ) )
+						);
+					} else {
+						siteEditorUrl = getSiteEditorUrl(
+							adminUrl ?? ( await getSiteAdminUrl( blueprintArchiveSiteIdentifier ) ),
+							{ canvasEdit: applied }
+						);
+					}
 
 					logBlueprintArchiveEvent( 'redirect_site_editor', {
 						site_identifier: blueprintArchiveSiteIdentifier,
@@ -576,6 +619,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 			wowFunnelSlug,
 			wowFunnelDest,
 			isCustomThemeBuild,
+			isSimpleImport,
 			queryParams,
 			setPendingAction,
 		]
@@ -600,9 +644,83 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 
 		logBlueprintArchiveEvent( 'start_request', {
 			site_identifier: blueprintArchiveSiteIdentifier,
+			simple: isSimpleImport,
 		} );
 
-		startBlueprintArchiveImport( blueprintArchiveSiteIdentifier, blueprintArchiveSlug )
+		// A Simple build runs the Playground import on the site itself; the archive restore
+		// converts the site to Atomic, which a Simple build must never do.
+		const siteId = Number( queryParams.get( 'siteId' ) ) || null;
+		const specMeta = getSpecMetaFromQuery( queryParams );
+
+		// Whether the partner's hand-off already settled the whole spec. If it did, the
+		// import is asked to confirm it, and once the import is under way this page waits
+		// on it and hands over, the way a confirmed brief would, with nothing to ask.
+		const startSimpleBuild = async () => {
+			// A lookup that fails, or does not answer in time, means an interview, as before:
+			// the interview is never gated on this call for longer than a few seconds.
+			let partnerSpec = false;
+			try {
+				const { prefill } = await Promise.race( [
+					lookupBlueprintArchive( blueprintArchiveSlug, { target: 'simple' } ),
+					new Promise< never >( ( _, reject ) =>
+						setTimeout( () => reject( new Error( 'lookup timed out' ) ), LOOKUP_TIMEOUT_MS )
+					),
+				] );
+				partnerSpec = isPrefillComplete( prefill, specMeta );
+			} catch {
+				// Interview.
+			}
+			setIsPartnerSpecRun( partnerSpec );
+
+			let started;
+			try {
+				started = await startBlueprintSimpleImport(
+					blueprintArchiveSiteIdentifier,
+					blueprintArchiveSlug,
+					siteId,
+					specMeta,
+					{ applySpec: partnerSpec }
+				);
+			} catch ( error ) {
+				// Nothing is going to apply the spec now. The interview is the way forward
+				// that reports the failure to the customer (its wait on the import ends on
+				// the error step), rather than a loading screen with no way out.
+				setIsPartnerSpecRun( false );
+				throw error;
+			}
+
+			if ( partnerSpec ) {
+				setPendingAction( async () => {
+					try {
+						await waitForBlueprintImportComplete( blueprintArchiveSiteIdentifier );
+						const siteEditorUrl = getSimpleSiteEditorUrl(
+							await getSiteAdminUrl( blueprintArchiveSiteIdentifier )
+						);
+						logBlueprintArchiveEvent( 'redirect_site_editor', {
+							site_identifier: blueprintArchiveSiteIdentifier,
+							partner_spec: true,
+						} );
+						return { redirectTo: siteEditorUrl };
+					} catch ( error ) {
+						logBlueprintArchiveEvent( 'partner_spec_error', {
+							site_identifier: blueprintArchiveSiteIdentifier,
+							error: error instanceof Error ? error.message : String( error ),
+						} );
+						// Rethrown for the processing step to report.
+						throw error;
+					}
+				} );
+				submitRef.current?.();
+			}
+
+			return started;
+		};
+
+		const start = isSimpleImport
+			? startSimpleBuild()
+			: startBlueprintArchiveImport( blueprintArchiveSiteIdentifier, blueprintArchiveSlug );
+
+		start
 			.then( () => {
 				logBlueprintArchiveEvent( 'start_success', {
 					site_identifier: blueprintArchiveSiteIdentifier,
@@ -617,8 +735,11 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	}, [
 		shouldImportBlueprint,
 		isWowFunnelRun,
+		isSimpleImport,
 		blueprintArchiveSlug,
 		blueprintArchiveSiteIdentifier,
+		queryParams,
+		setPendingAction,
 	] );
 
 	let siteSpecStep = <SiteSpecContainer />;
@@ -636,6 +757,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					ref: queryParams.get( 'ref' ),
 					source: querySource,
 					graph: getBuildWowGraph( queryParams ),
+					streamEvents: isBuildWowStreamRequested( queryParams ),
 				} ) }
 				onSpecConfirm={ handleBuildWowSpecConfirm }
 			/>
@@ -647,6 +769,10 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 				onSpecConfirm={ handleEarlyProvisionSpecConfirm }
 			/>
 		);
+	} else if ( shouldImportBlueprint && isSimpleImport && isPartnerSpecRun !== false ) {
+		// Undecided, or decided that there is nothing to ask: no interview widget, which
+		// would only open a spec session and flash its chat before the hand-off.
+		siteSpecStep = <Step.Loading />;
 	} else if ( shouldImportBlueprint ) {
 		siteSpecStep = (
 			<SiteSpecContainer
@@ -655,6 +781,9 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 				// design brief.
 				siteSpecConfig={ getBlueprintSiteSpecConfig( {
 					blueprintId: isCustomThemeBuild ? undefined : blueprintArchiveSlug,
+					// What the entry URL already knows (a booking page, say), stamped into
+					// the spec for the blueprint's configuration pass to use.
+					specMeta: getSpecMetaFromQuery( queryParams ),
 				} ) }
 				onSpecConfirm={ handleBlueprintArchiveSpecConfirm }
 			/>

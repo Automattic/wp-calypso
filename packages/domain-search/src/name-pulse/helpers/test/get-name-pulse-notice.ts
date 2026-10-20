@@ -1,4 +1,6 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
+import { render } from '@testing-library/react';
+import { createElement } from 'react';
 import { getNamePulseNotice, getResultsLayout, type NamePulseAvailabilityVerdict } from '..';
 
 const TLDS = [ 'blog', 'com', 'net', 'org' ];
@@ -127,6 +129,27 @@ describe( 'getNamePulseNotice', () => {
 			status: 'error',
 			message: '.net domains are not available for registration on WordPress.com.',
 		} );
+	} );
+
+	it( 'explains a premium domain WordPress.com does not sell', () => {
+		const notice = getNamePulseNotice( layoutFor( 'icecream.com' ), {
+			...verdict( DomainAvailabilityStatus.AVAILABLE_PREMIUM ),
+			is_supported_premium_domain: false,
+		} );
+
+		expect( notice?.status ).toBe( 'error' );
+		expect( render( createElement( 'p', null, notice?.message ) ).container.innerHTML ).toBe(
+			"<p>Sorry, <strong>icecream.com</strong> is a premium domain. We don't support purchasing this premium domain on WordPress.com.</p>"
+		);
+	} );
+
+	it( 'leaves a premium domain WordPress.com sells to its card', () => {
+		expect(
+			getNamePulseNotice( layoutFor( 'icecream.com' ), {
+				...verdict( DomainAvailabilityStatus.AVAILABLE_PREMIUM ),
+				is_supported_premium_domain: true,
+			} )
+		).toBeNull();
 	} );
 
 	it( 'prefers the availability verdict over the dropped subdomain', () => {

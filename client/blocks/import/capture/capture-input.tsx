@@ -22,7 +22,7 @@ interface Props {
 	initialUrl?: string;
 	label?: ReactNode;
 	nextLabelText?: string;
-	onDontHaveSiteAddressClick?: () => void;
+	onDontHaveSiteAddressClick?: ( url?: string ) => void;
 	onInputChange?: OnInputChange;
 	onInputEnter: OnInputEnter;
 	placeholder?: string;
@@ -150,7 +150,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 						{
 							button: createElement( Button, {
 								borderless: true,
-								onClick: onDontHaveSiteAddressClick,
+								onClick: () => onDontHaveSiteAddressClick( isValid ? urlValue : undefined ),
 							} ),
 						}
 					) }

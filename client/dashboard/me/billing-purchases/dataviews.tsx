@@ -9,7 +9,7 @@ import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import { useAuth } from '../../app/auth';
-import { purchaseSettingsRoute } from '../../app/router/me';
+import { paymentMethodsRoute, purchaseSettingsRoute } from '../../app/router/me';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import SiteIcon from '../../components/site-icon';
 import {
@@ -168,7 +168,7 @@ function BackupPaymentMethodNotice() {
 	const noticeText = createInterpolateElement(
 		__( 'If the renewal fails, a <link>backup payment method</link> may be used.' ),
 		{
-			link: <Link to="/me/billing/payment-methods" />,
+			link: <Link to={ paymentMethodsRoute.fullPath } />,
 		}
 	);
 	return <BillingPurchaseInfoPopover>{ noticeText }</BillingPurchaseInfoPopover>;
@@ -208,6 +208,32 @@ function OwnerInfo( {
 	);
 
 	return <BillingPurchaseInfoPopover>{ tooltipContent }</BillingPurchaseInfoPopover>;
+}
+
+// Only the purchaser can change how a purchase is paid for, and the backup
+// methods are the viewer's own, so show nothing for anyone else's purchase.
+function PurchasePaymentMethodCell( {
+	purchase,
+	isSiteMissing,
+	isBackupMethodAvailable,
+}: {
+	purchase: Purchase;
+	isSiteMissing: boolean;
+	isBackupMethodAvailable: boolean;
+} ) {
+	const { user } = useAuth();
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
+
+	return (
+		<HStack justify="flex-start" spacing={ 1 }>
+			<PurchasePaymentMethod purchase={ purchase } isSiteMissing={ isSiteMissing } />
+			{ isBackupMethodAvailable && mightStillAutoRenew( purchase ) && (
+				<BackupPaymentMethodNotice />
+			) }
+		</HStack>
+	);
 }
 
 function PurchaseSettingLink( {
@@ -477,12 +503,11 @@ export function getFields( {
 				}
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
-					<HStack justify="flex-start" spacing={ 1 }>
-						<PurchasePaymentMethod purchase={ item } isSiteMissing={ ! site } />
-						{ isBackupMethodAvailable && mightStillAutoRenew( item ) && (
-							<BackupPaymentMethodNotice />
-						) }
-					</HStack>
+					<PurchasePaymentMethodCell
+						purchase={ item }
+						isSiteMissing={ ! site }
+						isBackupMethodAvailable={ isBackupMethodAvailable }
+					/>
 				);
 			},
 		},

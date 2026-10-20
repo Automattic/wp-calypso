@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { FeaturedSuggestionWithReason } from '../../helpers/partition-suggestions';
 import { FeaturedDomainSuggestionsList } from '../../ui';
+import { SuggestionErrorBoundary } from '../suggestion-error-boundary';
 import { FeaturedSearchResultsItem } from './item';
 import { FeaturedSearchResultsPlaceholder } from './placeholder';
 
@@ -19,12 +20,13 @@ const FeaturedSearchResults = ( {
 	return (
 		<FeaturedDomainSuggestionsList>
 			{ suggestions.map( ( { reason, suggestion } ) => (
-				<FeaturedSearchResultsItem
-					key={ suggestion }
-					domainName={ suggestion }
-					reason={ reason }
-					isSingleFeaturedSuggestion={ isSingleFeaturedSuggestion }
-				/>
+				<SuggestionErrorBoundary key={ suggestion }>
+					<FeaturedSearchResultsItem
+						domainName={ suggestion }
+						reason={ reason }
+						isSingleFeaturedSuggestion={ isSingleFeaturedSuggestion }
+					/>
+				</SuggestionErrorBoundary>
 			) ) }
 			{ children }
 		</FeaturedDomainSuggestionsList>

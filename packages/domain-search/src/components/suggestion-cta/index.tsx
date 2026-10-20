@@ -1,6 +1,7 @@
+import { isDomainMoveInternal } from '@automattic/calypso-products';
 import { useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { envelope, plus } from '@wordpress/icons';
+import { arrowRight, envelope, plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
 import { useSuggestion } from '../../hooks/use-suggestion';
@@ -91,7 +92,19 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 		return <DomainSuggestionContinueCTA disabled={ isMutating } onClick={ events.onContinue } />;
 	}
 
-	const selectLabel = config.showSelectCta ? __( 'Select' ) : undefined;
+	// Moving a domain the user already owns is a choice rather than a purchase.
+	const isDomainMove = isDomainMoveInternal( suggestion );
+
+	let selectIcon;
+	let selectLabel;
+
+	if ( config.showSelectCta ) {
+		selectIcon = plus;
+		selectLabel = __( 'Select' );
+	} else if ( isDomainMove ) {
+		selectIcon = arrowRight;
+		selectLabel = __( 'Move' );
+	}
 
 	const errorMessage = isCurrentMutation && error?.message;
 
@@ -114,7 +127,7 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 					events.onSuggestionInteract( suggestion );
 					addToCart( { acceptedTrademarkClaim: false } );
 				} }
-				icon={ config.showSelectCta ? plus : undefined }
+				icon={ selectIcon }
 				label={ selectLabel }
 			>
 				{ selectLabel }

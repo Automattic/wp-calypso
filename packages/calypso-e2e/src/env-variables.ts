@@ -16,6 +16,24 @@ export const ATOMIC_VARIATIONS: AtomicVariation[] = [
 	'ecomm-plan',
 ];
 
+// Spec files are recognised by name: `blocks__jetpack-other.spec.ts` in a frame such as
+// `at Object.<anonymous> (/agent/test/e2e/specs/blocks/blocks__jetpack-other.spec.ts:19:5)`.
+const SPEC_FRAME = /([^/\\\s(]+\.spec\.ts):\d+:\d+/;
+
+// What a mixed run resolves per spec file.
+const SPEC_SCOPED: ReadonlyArray< keyof SupportedEnvVariables > = [ 'ATOMIC_VARIATION', 'RUN_ID' ];
+
+// The spec file of the test the worker is running, recorded by a Playwright fixture.
+let runningSpecFile: string | undefined;
+
+/**
+ * Records the spec file of the running test, for mixed Atomic runs resolved from code
+ * that is not in a spec file, such as fixtures.
+ */
+export function setRunningSpecFile( file: string | undefined ): void {
+	runningSpecFile = file;
+}
+
 class EnvVariables implements SupportedEnvVariables {
 	private _defaultEnvVariables: SupportedEnvVariables = {
 		A8C_FOR_AGENCIES_URL: 'https://agencies.automattic.com',
@@ -113,7 +131,7 @@ class EnvVariables implements SupportedEnvVariables {
 		}
 
 		if ( value === 'mixed' ) {
-			return getAtomicVariationInMixedRun();
+			return getAtomicVariationInMixedRun( getAtomicVariationKey(), getCurrentSpecFile() );
 		}
 
 		return value as AtomicVariation;
@@ -212,8 +230,19 @@ class EnvVariables implements SupportedEnvVariables {
 	}
 
 	validate() {
+		// A mixed run resolves these per spec file, and none is loaded yet: check the key,
+		// and leave the resolution to the specs.
+		const isMixedRun = process.env.ATOMIC_VARIATION === 'mixed';
+		if ( isMixedRun ) {
+			getAtomicVariationKey();
+		}
+
 		for ( const property in this._defaultEnvVariables ) {
 			const envVarName = property as keyof SupportedEnvVariables;
+			if ( isMixedRun && SPEC_SCOPED.includes( envVarName ) ) {
+				continue;
+			}
+
 			// Access each property
 			// Any validation errors within the getter will throw an exception here.
 			void this[ envVarName ];
@@ -221,10 +250,7 @@ class EnvVariables implements SupportedEnvVariables {
 	}
 }
 
-// Keyed on the run rather than on anything a spec can see: a spec resolves its variation once
-// when Playwright collects it and again in the worker that runs it, and the two must agree, or
-// the worker declares a different suite than was collected.
-function getAtomicVariationInMixedRun(): AtomicVariation {
+function getAtomicVariationKey(): string {
 	const value = process.env.ATOMIC_VARIATION_KEY;
 	if ( ! value ) {
 		throw new Error(
@@ -234,8 +260,51 @@ function getAtomicVariationInMixedRun(): AtomicVariation {
 		);
 	}
 
+	return value;
+}
+
+// The spec file reading the variation, by name only so every agent checkout agrees. A spec on
+// the call stack covers its module load, hooks and test bodies; the recorded file covers
+// fixtures and tests declared in shared helpers. During a test both must name the same file,
+// or the test would read one site's variation while its fixtures log in to another. Hooks
+// have only the stack: a hook helper that loses it, through a timer say, throws.
+function getCurrentSpecFile(): string {
+	// V8 captures the frames on construction, so the limit can go back before `.stack` runs
+	// Playwright's stack rewriting.
+	const stackTraceLimit = Error.stackTraceLimit;
+	Error.stackTraceLimit = Infinity;
+	const error = new Error();
+	Error.stackTraceLimit = stackTraceLimit;
+	const stack = error.stack ?? '';
+
+	const stackFile = stack.match( SPEC_FRAME )?.[ 1 ];
+	const runningFile = runningSpecFile && path.basename( runningSpecFile );
+	if ( stackFile && runningFile && stackFile !== runningFile ) {
+		throw new Error(
+			`ATOMIC_VARIATION=mixed resolves a variation per spec file, but ${ stackFile } is read while a test of ${ runningFile } runs: its fixtures would pick another site. Move the shared code out of the spec file.`
+		);
+	}
+
+	const file = stackFile ?? runningFile;
+	if ( ! file ) {
+		throw new Error(
+			'ATOMIC_VARIATION=mixed resolves a variation per spec file, but none is loading or running: read it from a spec file, a test, or a test fixture.'
+		);
+	}
+
+	return path.basename( file );
+}
+
+// Keyed on the run and the spec file, so a run spreads its spec files over every Atomic site
+// instead of sending every worker to one. A spec resolves its variation once when Playwright
+// collects it and again in the worker that runs it, and both see the same key and file name.
+function getAtomicVariationInMixedRun( key: string, specFile: string ): AtomicVariation {
 	// Hashed, not counted: a re-run of the same commit has to repeat the variation that failed.
-	const hash = crypto.createHash( 'md5' ).update( value ).digest().readUInt8( 0 );
+	const hash = crypto
+		.createHash( 'md5' )
+		.update( `${ key }:${ specFile }` )
+		.digest()
+		.readUInt8( 0 );
 
 	return ATOMIC_VARIATIONS[ hash % ATOMIC_VARIATIONS.length ];
 }
