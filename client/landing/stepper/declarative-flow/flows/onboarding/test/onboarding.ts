@@ -178,6 +178,25 @@ describe( 'onboarding flow side effects', () => {
 	} );
 } );
 
+describe( 'onboarding flow step props', () => {
+	const renderStepsProps = ( search: string ) => {
+		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( search ) );
+		return renderHook( () => onboarding.useStepsProps?.call( onboarding ) ).result.current;
+	};
+
+	it( 'skips the processing completion of a site-selected hand-off, which signup already recorded', () => {
+		expect( renderStepsProps( '?siteSlug=example.com&ref=site-selected' ) ).toEqual( {
+			processing: { skipSignupComplete: true },
+		} );
+	} );
+
+	it( 'records the processing completion of an onboarding run', () => {
+		expect( renderStepsProps( '?siteSlug=example.com' ) ).toEqual( {
+			processing: { skipSignupComplete: false },
+		} );
+	} );
+} );
+
 describe( 'onboarding flow post-checkout processing', () => {
 	const originalLocation = window.location;
 	const navigate = jest.fn();

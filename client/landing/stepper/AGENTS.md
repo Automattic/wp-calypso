@@ -258,6 +258,7 @@ step" → Worked example** section of [`README.md`](README.md); the tables below
 | -------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `title` / `subtitle` | `string`                     | Override the single visible frame; these win over the carousel                                                            |
 | `loadingMessages`    | `ProcessingLoadingMessage[]` | Replace the rotating loading-carousel copy. `duration` is optional per message — one without a usable duration is held 5s |
+| `skipSignupComplete` | `boolean`                    | Don't record `calypso_signup_complete` when the pending action succeeds, for a run whose completion was recorded earlier  |
 
 Applies to the generic V1 `StepContainer` / `Loading` and V2 `Step.Loading` paths only. The
 tailored (`TailoredFlowPreCheckoutScreen`, newsletter / update-design) and hundred-year

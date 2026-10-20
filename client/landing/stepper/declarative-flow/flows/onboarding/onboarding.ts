@@ -345,6 +345,15 @@ const onboarding: FlowV2< typeof initialize > = {
 			[ preselectedPlan, couponParam, storageParam ]
 		);
 	},
+	useStepsProps() {
+		// The site-selected signup flow records its own completion before checkout, so the
+		// hand-off's processing pass must not record a second one.
+		const isSiteSelectedHandOff = useQuery().get( 'ref' ) === SITE_SELECTED_REF;
+
+		return {
+			[ STEPS.PROCESSING.slug ]: { skipSignupComplete: isSiteSelectedHandOff },
+		};
+	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 		// Variant B: the account step doesn't gate; the verification step is met after the free plan
