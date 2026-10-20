@@ -6,8 +6,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import {
+	BUILD_WOW_STREAMING_FLAG,
 	getBuildWowGraph,
-	isBuildWowStreamRequested,
 } from 'calypso/landing/stepper/utils/build-wow';
 import { useBuildWowStream } from './stream/use-build-wow-stream';
 import { useSiteGeneration } from './use-site-generation';
@@ -23,7 +23,6 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const source = query.get( 'source' );
 	const specId = query.get( 'specId' );
 	const graph = getBuildWowGraph( query );
-	const streamEvents = isBuildWowStreamRequested( query );
 	// Fallback checklist only: the server-computed ui.steps from the status
 	// endpoint is authoritative (labels included, already localized). This
 	// list covers the moments before the first response arrives, and backends
@@ -47,19 +46,18 @@ const SiteGeneration: StepType = function SiteGeneration() {
 		source,
 		specId,
 		graph,
-		streamEvents,
 		steps,
 		completionDelayMs: previewReady && ! shouldReduceMotion ? 2600 : 0,
 	} );
-	const streamingEnabled = config.isEnabled( 'site-spec/build-wow-streaming' );
+	const streamingEnabled = config.isEnabled( BUILD_WOW_STREAMING_FLAG );
 	const { data: isAutomattician = false } = useDataQuery( {
 		...isAutomatticianQuery(),
 		enabled: streamingEnabled,
 	} );
 	const streamingAllowed = streamingEnabled && isAutomattician;
 	const stream = useBuildWowStream( streamingAllowed ? ( state.streamInfo ?? null ) : null );
-	// The URL opt-in only asks for a feed; the server may decline it. Show the
-	// live canvas once the status response advertises a stream, even before the
+	// The build only asks for a feed; the server may decline it. Show the live
+	// canvas once the status response advertises a stream, even before the
 	// event subscription delivers its first state.
 	const streamRequested = streamingAllowed && Boolean( state.streamInfo );
 

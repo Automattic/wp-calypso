@@ -153,10 +153,10 @@ describe( 'SiteGeneration recovery', () => {
 	} );
 
 	it.each( [ true, false ] )(
-		'waits for the server to advertise a stream after the URL opt-in with streaming enabled: %s',
+		'waits for the server to advertise a stream with streaming enabled: %s',
 		( enabled ) => {
 			jest.mocked( config.isEnabled ).mockReturnValue( enabled );
-			window.location.search = '?build_wow=1&build_wow_stream=1&siteSlug=example.wordpress.com';
+			window.location.search = '?build_wow=1&siteSlug=example.wordpress.com';
 			mockState = { ...mockState, status: 'working', streamInfo: null };
 			renderStep();
 
@@ -168,16 +168,6 @@ describe( 'SiteGeneration recovery', () => {
 			expect( useDataQuery ).toHaveBeenCalledWith( expect.objectContaining( { enabled } ) );
 		}
 	);
-
-	it( 'passes the URL opt-in to the build request', () => {
-		window.location.search = '?build_wow=1&build_wow_stream=1&siteSlug=example.wordpress.com';
-		mockState = { ...mockState, status: 'working' };
-		renderStep();
-
-		expect( useSiteGenerationMock ).toHaveBeenCalledWith(
-			expect.objectContaining( { streamEvents: true } )
-		);
-	} );
 
 	it.each( [ true, false ] )(
 		'gates a server-advertised stream with streaming enabled: %s',
@@ -215,7 +205,7 @@ describe( 'SiteGeneration recovery', () => {
 		( { enabled, isAutomattician } ) => {
 			jest.mocked( config.isEnabled ).mockReturnValue( enabled );
 			useDataQueryMock.mockReturnValue( { data: isAutomattician } );
-			window.location.search = '?build_wow=1&build_wow_stream=1&siteId=123';
+			window.location.search = '?build_wow=1&siteId=123';
 			mockState = {
 				...mockState,
 				status: 'working',
