@@ -1,5 +1,5 @@
-// The muted token is 4.49:1 on the popover; a touch of foreground clears 4.5:1.
-$credits-popover-muted: color-mix(
+// The light muted token is 4.49:1 on the popover; a touch of foreground clears 4.5:1.
+$credits-meter-muted-foreground: color-mix(
 	in srgb,
 	var( --color-muted-foreground ) 95%,
 	var( --color-foreground )
@@ -29,7 +29,7 @@ $credits-popover-muted: color-mix(
 		&.is-alert:hover:not( :disabled ),
 		&.is-alert[aria-expanded='true'] {
 			background-color: color-mix( in srgb, var( --color-error-accent ) 20%, transparent );
-			color: var( --color-error-emphasis );
+			color: var( --color-error-strong );
 		}
 
 		// Show the focus ring for keyboard focus only.
@@ -72,7 +72,7 @@ $credits-popover-muted: color-mix(
 .agents-manager-credits-meter__manage.components-button {
 	height: auto;
 	padding: 0;
-	color: $credits-popover-muted;
+	color: $credits-meter-muted-foreground;
 	font-size: 13px;
 	text-decoration: none;
 
@@ -101,12 +101,12 @@ $credits-popover-muted: color-mix(
 
 // A balance-only row leads with its amount, so its label is muted instead.
 .agents-manager-credits-meter__pool.is-balance-only .agents-manager-credits-meter__pool-label {
-	color: $credits-popover-muted;
+	color: $credits-meter-muted-foreground;
 }
 
 .agents-manager-credits-meter__pool-date,
 .agents-manager-credits-meter__pool-detail {
-	color: $credits-popover-muted;
+	color: $credits-meter-muted-foreground;
 	font-size: 12px;
 }
 
@@ -114,7 +114,7 @@ $credits-popover-muted: color-mix(
 	font-weight: 600;
 
 	&.is-exhausted {
-		color: var( --color-error-emphasis );
+		color: var( --color-error-strong );
 	}
 }
 
@@ -133,7 +133,7 @@ $credits-popover-muted: color-mix(
 
 .agents-manager-credits-meter__message {
 	margin: 0;
-	color: $credits-popover-muted;
+	color: $credits-meter-muted-foreground;
 	font-size: 12px;
 }
 

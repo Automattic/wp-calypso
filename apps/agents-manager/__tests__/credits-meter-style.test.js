@@ -6,7 +6,7 @@ const path = require( 'path' );
 const postcss = require( 'postcss' );
 const sass = require( 'sass' );
 
-describe( 'Credits meter toggle CSS contract', () => {
+describe( 'Credits meter CSS contract', () => {
 	const rules = [];
 	const tokens = { light: {}, dark: {} };
 

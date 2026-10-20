@@ -82,11 +82,9 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
 					<span className="agents-manager-credits-meter__pool-date">{ pool.dateLabel }</span>
 				) }
 				<span
-					className={
-						isExhausted
-							? 'agents-manager-credits-meter__pool-percent is-exhausted'
-							: 'agents-manager-credits-meter__pool-percent'
-					}
+					className={ clsx( 'agents-manager-credits-meter__pool-percent', {
+						'is-exhausted': isExhausted,
+					} ) }
 				>
 					{ isExhausted
 						? sprintf(
