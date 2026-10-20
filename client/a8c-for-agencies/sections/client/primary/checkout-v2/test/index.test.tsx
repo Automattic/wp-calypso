@@ -2,86 +2,34 @@
  * @jest-environment jsdom
  * @jest-environment-options {"url":"http://agencies.localhost:3000"}
  */
-import {
-	getEmptyResponseCart,
-	getEmptyResponseCartProduct,
-	useShoppingCart,
-} from '@automattic/shopping-cart';
-import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { navigate } from 'calypso/lib/navigate';
-import wpcom from 'calypso/lib/wp';
+import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import { act, render, screen } from '@testing-library/react';
+import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import useClientCheckout from '../../../hooks/use-client-checkout';
 import ClientCheckoutV2 from '../index';
 import type { ReactNode } from 'react';
 
-jest.mock( '@automattic/calypso-stripe', () => ( {
-	StripeHookProvider: ( { children }: { children: ReactNode } ) => children,
-} ) );
-jest.mock( '@automattic/composite-checkout', () => ( {
-	CheckoutErrorBoundary: ( { children }: { children: ReactNode } ) => children,
-} ) );
-jest.mock(
-	'calypso/my-sites/checkout/calypso-shopping-cart-provider',
-	() =>
-		( { children }: { children: ReactNode } ) =>
-			children
-);
-jest.mock( 'calypso/my-sites/checkout/checkout-query-client-provider', () => {
-	const { QueryClient, QueryClientProvider } = jest.requireActual( '@tanstack/react-query' );
-	const { useState } = jest.requireActual( 'react' );
-	return ( { children }: { children: ReactNode } ) => {
-		const [ client ] = useState( () => new QueryClient() );
-		return <QueryClientProvider client={ client }>{ children }</QueryClientProvider>;
-	};
-} );
+const passthrough = ( { children }: { children?: ReactNode } ) => <>{ children }</>;
+jest.mock( '@automattic/calypso-stripe', () => ( { StripeHookProvider: passthrough } ) );
+jest.mock( '@automattic/composite-checkout', () => ( { CheckoutErrorBoundary: passthrough } ) );
+jest.mock( 'calypso/my-sites/checkout/calypso-shopping-cart-provider', () => passthrough );
+jest.mock( 'calypso/my-sites/checkout/checkout-query-client-provider', () => passthrough );
 jest.mock( 'calypso/a8c-for-agencies/components/a4a-logo', () => () => null );
 jest.mock( 'calypso/state', () => ( { useSelector: () => 'en', useDispatch: () => jest.fn() } ) );
 jest.mock( 'calypso/state/analytics/actions', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( 'calypso/lib/wp', () => ( {
-	__esModule: true,
-	default: { req: { post: jest.fn() } },
-} ) );
-jest.mock( '@automattic/shopping-cart', () => ( {
-	...jest.requireActual( '@automattic/shopping-cart' ),
-	useShoppingCart: jest.fn(),
-} ) );
-jest.mock( 'calypso/my-sites/checkout/use-cart-key', () => () => 'no-site' );
-jest.mock(
-	'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url',
-	() => () => undefined
-);
-jest.mock( 'calypso/lib/navigate', () => ( { navigate: jest.fn() } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( 'calypso/signup/storageUtils', () => ( {
-	getSignupCompleteFlowName: () => undefined,
-} ) );
 jest.mock( '../../../hooks/use-client-checkout', () => jest.fn() );
 jest.mock( '../../../checkout-v2-error', () => ( { message }: { message: ReactNode } ) => (
 	<div role="alert">{ message }</div>
 ) );
 jest.mock( '../../../checkout-v2-placeholder', () => () => <div data-testid="loading" /> );
-jest.mock( 'calypso/my-sites/checkout/src/components/checkout-main', () => {
-	const useRemoveFromCartAndRedirect = jest.requireActual(
-		'calypso/my-sites/checkout/src/hooks/use-remove-from-cart-and-redirect'
-	).default;
-	return ( props: { redirectTo: string; customizedPreviousPath: string } ) => {
-		const { removeProductFromCartAndMaybeRedirect } = useRemoveFromCartAndRedirect(
-			'',
-			false,
-			props.customizedPreviousPath
-		);
-		return (
-			<div
-				data-testid="checkout"
-				data-redirect={ props.redirectTo }
-				data-previous={ props.customizedPreviousPath }
-			>
-				<button onClick={ () => removeProductFromCartAndMaybeRedirect( 'uuid' ) }>Remove</button>
-			</div>
-		);
-	};
-} );
+jest.mock( 'calypso/my-sites/checkout/src/components/checkout-main', () =>
+	jest.fn( () => <div data-testid="checkout" /> )
+);
 
+const successUrl =
+	'https://my.pressable.com/titan_email/checkout_return?agency_id=42-cli-7&checkout_status=SUCCESS&signature=a%2Bb%2fc%3D';
+const cancelUrl =
+	'https://my.pressable.com/titan_email/checkout_return?agency_id=42-cli-7&checkout_status=CANCELED&signature=d%2Be%2ff%3D';
 const product = {
 	...getEmptyResponseCartProduct(),
 	product_id: 3262,
@@ -92,15 +40,10 @@ const product = {
 		referral_id: 99,
 		titan_domain: 'example.com',
 		titan_plan: 'standard',
-		afterPurchaseUrl:
-			'https://my.pressable.com/titan_email/checkout_return?agency_id=42-cli-7&email=client%40example.com&domain=example.com&quantity=2&signature=original',
+		afterPurchaseUrl: successUrl,
+		pressableCancelUrl: cancelUrl,
 	},
 };
-
-const post = wpcom.req.post as jest.Mock;
-const assign = jest.fn();
-const originalLocation = window.location;
-const signedUrl = `${ product.extra.afterPurchaseUrl }&checkout_status=CANCELED&timestamp=123`;
 const checkoutState = {
 	isReady: true,
 	error: null,
@@ -110,56 +53,49 @@ const checkoutState = {
 	preparedCartContext: { agencyId: 42, referralId: 99, clientId: 7 },
 };
 
-beforeAll( () => {
-	Object.defineProperty( window, 'location', {
-		value: {
-			origin: originalLocation.origin,
-			href: `${ originalLocation.origin }/client/checkout/v2?skip_active_cart=1`,
-			search: '?skip_active_cart=1',
-			assign,
-		},
-		configurable: true,
+function setFormSubmitting( isFormSubmitting: boolean ) {
+	act( () => {
+		jest
+			.mocked( CheckoutMain )
+			.mock.calls.at( -1 )?.[ 0 ]
+			.onFormSubmittingChange?.( isFormSubmitting );
 	} );
-} );
-afterAll( () => {
-	Object.defineProperty( window, 'location', { value: originalLocation, configurable: true } );
-} );
+}
+
 beforeEach( () => {
 	jest.clearAllMocks();
-	post.mockReset();
-	( useShoppingCart as jest.Mock ).mockReturnValue( { removeProductFromCart: jest.fn() } );
 	( useClientCheckout as jest.Mock ).mockReturnValue( checkoutState );
 } );
 
-it( 'uses client SUCCESS and signs CANCELED only after clicking Back with the original URL', async () => {
-	post.mockResolvedValue( { afterPurchaseUrl: signedUrl } );
+it( 'preserves both signed destinations and disables Back through the checkout submission callback', () => {
 	render( <ClientCheckoutV2 skipActiveCart /> );
-	expect( screen.getByTestId( 'checkout' ) ).toHaveAttribute(
-		'data-redirect',
-		'http://agencies.localhost:3000/client/pressable-return?agency_id=42&referral_id=99&receipt_id=:receiptId'
+	expect( jest.mocked( CheckoutMain ).mock.calls.at( -1 )?.[ 0 ].redirectTo ).toBe( successUrl );
+	expect( screen.getByRole( 'link', { name: 'Back to Pressable' } ) ).toHaveAttribute(
+		'href',
+		cancelUrl
 	);
-	expect( screen.getByTestId( 'checkout' ) ).toHaveAttribute(
-		'data-previous',
-		'/client/subscriptions'
+
+	setFormSubmitting( true );
+	const back = screen.getByRole( 'button', { name: 'Back to Pressable' } );
+	expect( back ).toBeDisabled();
+	expect( back ).not.toHaveAttribute( 'href' );
+
+	setFormSubmitting( false );
+	expect( screen.getByRole( 'link', { name: 'Back to Pressable' } ) ).toHaveAttribute(
+		'href',
+		cancelUrl
 	);
-	expect( post ).not.toHaveBeenCalled();
-	fireEvent.click( screen.getByRole( 'button', { name: 'Back to Pressable' } ) );
-	await waitFor( () => expect( assign ).toHaveBeenCalledWith( signedUrl ) );
-	expect( post ).toHaveBeenCalledWith( {
-		apiNamespace: 'wpcom/v2',
-		path: '/agency/pressable/titan-checkout-return',
-		method: 'POST',
-		body: {
-			agency_id: 42,
-			checkout_status: 'CANCELED',
-			afterPurchaseUrl: product.extra.afterPurchaseUrl,
-		},
-	} );
+	expect( product.quantity ).toBe( 5 );
 } );
 
-it( 'keeps Back and the original signed URL after this checkout reports an error', async () => {
-	post.mockResolvedValue( { afterPurchaseUrl: signedUrl } );
+it( 'hides Back while loading and after a prepared cart error without retaining its URL', () => {
 	const { rerender } = render( <ClientCheckoutV2 skipActiveCart /> );
+	( useClientCheckout as jest.Mock ).mockReturnValue( { ...checkoutState, isReady: false } );
+	rerender( <ClientCheckoutV2 skipActiveCart /> );
+	expect( screen.getByTestId( 'loading' ) ).toBeVisible();
+	expect( screen.queryByTestId( 'checkout' ) ).not.toBeInTheDocument();
+	expect( screen.queryByText( 'Back to Pressable' ) ).not.toBeInTheDocument();
+
 	( useClientCheckout as jest.Mock ).mockReturnValue( {
 		...checkoutState,
 		isReady: false,
@@ -168,28 +104,10 @@ it( 'keeps Back and the original signed URL after this checkout reports an error
 	} );
 	rerender( <ClientCheckoutV2 skipActiveCart /> );
 	expect( screen.getByRole( 'alert' ) ).toHaveTextContent( 'Unable to load your prepared order.' );
-	expect( screen.queryByTestId( 'checkout' ) ).not.toBeInTheDocument();
-	expect( post ).not.toHaveBeenCalled();
-	fireEvent.click( screen.getByRole( 'button', { name: 'Back to Pressable' } ) );
-	await waitFor( () => expect( assign ).toHaveBeenCalledWith( signedUrl ) );
-	expect( post.mock.calls[ 0 ][ 0 ].body.afterPurchaseUrl ).toBe( product.extra.afterPurchaseUrl );
+	expect( screen.queryByText( 'Back to Pressable' ) ).not.toBeInTheDocument();
 } );
 
-it( 'retries client cancellation with a fresh signing request after failure', async () => {
-	post
-		.mockRejectedValueOnce( new Error( 'Unavailable.' ) )
-		.mockResolvedValueOnce( { afterPurchaseUrl: signedUrl } );
-	const { container } = render( <ClientCheckoutV2 skipActiveCart /> );
-	fireEvent.click( screen.getByRole( 'button', { name: 'Back to Pressable' } ) );
-	await within( container ).findByText( 'We couldn’t return you to Pressable. Please try again.' );
-	expect( assign ).not.toHaveBeenCalled();
-	fireEvent.click( screen.getByRole( 'button', { name: 'Back to Pressable' } ) );
-	await waitFor( () => expect( assign ).toHaveBeenCalledWith( signedUrl ) );
-	expect( post ).toHaveBeenCalledTimes( 2 );
-	expect( post.mock.calls[ 1 ][ 0 ].body.afterPurchaseUrl ).toBe( product.extra.afterPurchaseUrl );
-} );
-
-it( 'denies the wrong account even after valid return context was retained', () => {
+it( 'denies the wrong account after a valid prepared checkout was shown', () => {
 	const { rerender } = render( <ClientCheckoutV2 skipActiveCart /> );
 	( useClientCheckout as jest.Mock ).mockReturnValue( {
 		...checkoutState,
@@ -201,60 +119,17 @@ it( 'denies the wrong account even after valid return context was retained', () 
 		'This referral is not intended for your account.'
 	);
 	expect( screen.queryByTestId( 'checkout' ) ).not.toBeInTheDocument();
-	expect( screen.queryByRole( 'button', { name: 'Back to Pressable' } ) ).not.toBeInTheDocument();
-	expect( post ).not.toHaveBeenCalled();
+	expect( screen.queryByText( 'Back to Pressable' ) ).not.toBeInTheDocument();
 } );
 
-it( 'uses normal subscriptions navigation after last-item removal without signing cancellation', async () => {
-	let completeRemoval: ( cart: ReturnType< typeof getEmptyResponseCart > ) => void = () => {};
-	const removeProductFromCart = jest.fn(
-		() =>
-			new Promise( ( resolve ) => {
-				completeRemoval = resolve;
-			} )
-	);
-	( useShoppingCart as jest.Mock ).mockReturnValue( { removeProductFromCart } );
-	const { rerender } = render( <ClientCheckoutV2 skipActiveCart /> );
-	fireEvent.click( screen.getByRole( 'button', { name: 'Remove' } ) );
-	( useClientCheckout as jest.Mock ).mockReturnValue( {
-		...checkoutState,
-		isReady: false,
-		error: 'We could not find your prepared order.',
-		products: [],
-	} );
-	rerender( <ClientCheckoutV2 skipActiveCart /> );
-	expect( screen.queryByTestId( 'checkout' ) ).not.toBeInTheDocument();
-	await act( async () => completeRemoval( getEmptyResponseCart() ) );
-	expect( removeProductFromCart ).toHaveBeenCalledWith( 'uuid' );
-	expect( navigate ).toHaveBeenCalledWith( '/client/subscriptions' );
-	expect( post ).not.toHaveBeenCalled();
-	expect( assign ).not.toHaveBeenCalled();
-} );
-
-it( 'renders a prepared cart load failure without a stale Back action on a fresh mount', () => {
-	( useClientCheckout as jest.Mock ).mockReturnValue( {
-		...checkoutState,
-		isReady: false,
-		error: 'Unable to load your prepared order.',
-		products: [],
-	} );
-	render( <ClientCheckoutV2 skipActiveCart /> );
-	expect( screen.getByRole( 'alert' ) ).toHaveTextContent( 'Unable to load your prepared order.' );
-	expect( screen.queryByTestId( 'loading' ) ).not.toBeInTheDocument();
-	expect( screen.queryByTestId( 'checkout' ) ).not.toBeInTheDocument();
-	expect( screen.queryByRole( 'button', { name: 'Back to Pressable' } ) ).not.toBeInTheDocument();
-} );
-
-it( 'retains subscriptions navigation for ordinary referral checkout without a Pressable action', () => {
+it( 'retains subscriptions navigation for ordinary referrals without a Pressable action', () => {
 	render( <ClientCheckoutV2 /> );
-	expect( screen.getByTestId( 'checkout' ) ).toHaveAttribute(
-		'data-redirect',
-		'http://agencies.localhost:3000/client/subscriptions?client_purchase_completed=true'
+	expect( jest.mocked( CheckoutMain ).mock.calls.at( -1 )?.[ 0 ] ).toEqual(
+		expect.objectContaining( {
+			redirectTo:
+				'http://agencies.localhost:3000/client/subscriptions?client_purchase_completed=true',
+			customizedPreviousPath: '/client/subscriptions',
+		} )
 	);
-	expect( screen.getByTestId( 'checkout' ) ).toHaveAttribute(
-		'data-previous',
-		'/client/subscriptions'
-	);
-	expect( screen.queryByRole( 'button', { name: 'Back to Pressable' } ) ).not.toBeInTheDocument();
-	expect( post ).not.toHaveBeenCalled();
+	expect( screen.queryByText( 'Back to Pressable' ) ).not.toBeInTheDocument();
 } );

@@ -62,11 +62,4 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-	page(
-		'/client/pressable-return',
-		requireClientAccessContext,
-		controller.clientPressableReturnContext,
-		makeLayout,
-		clientRender
-	);
 }

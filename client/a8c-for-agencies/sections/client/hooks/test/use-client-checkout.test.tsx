@@ -32,7 +32,9 @@ const product = {
 		titan_domain: 'example.com',
 		titan_plan: 'standard',
 		afterPurchaseUrl:
-			'https://my.pressable.com/titan_email/checkout_return?agency_id=42-cli-7&email=client%40example.com&domain=example.com&quantity=2&signature=original',
+			'https://my.pressable.com/titan_email/checkout_return?agency_id=42-cli-7&checkout_status=SUCCESS&signature=a%2Bb%2fc%3D',
+		pressableCancelUrl:
+			'https://my.pressable.com/titan_email/checkout_return?agency_id=42-cli-7&checkout_status=CANCELED&signature=d%2Be%2ff%3D',
 	},
 };
 
@@ -78,17 +80,12 @@ it( 'blocks a different authenticated client without replacing their cart', () =
 	expect( replaceProductsInCart ).not.toHaveBeenCalled();
 } );
 
-it.each( [
-	{ loadingError: 'Cart failed.' },
-	{ responseCart: { products: [] } },
-	{ responseCart: { products: [ { ...product, extra: { ...product.extra, referral_id: 98 } } ] } },
-] )( 'fails closed for an invalid prepared cart %p', ( changes ) => {
+it( 'rejects a cart for another referral without rebuilding it', () => {
 	( useShoppingCart as jest.Mock ).mockReturnValue( {
 		isLoading: false,
 		loadingError: null,
-		responseCart: { products: [ product ] },
+		responseCart: { products: [ { ...product, extra: { ...product.extra, referral_id: 98 } } ] },
 		replaceProductsInCart,
-		...changes,
 	} );
 	const { result } = renderHook( () => useClientCheckout( { skipActiveCart: true } ) );
 	expect( result.current.isReady ).toBe( false );

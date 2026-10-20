@@ -6,11 +6,12 @@ import usePreparedCart from 'calypso/a8c-for-agencies/sections/marketplace/billi
 import useProductsById from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-products-by-id';
 import { getClientReferralQueryArgs } from 'calypso/a8c-for-agencies/sections/marketplace/lib/get-client-referral-query-args';
 import { isWPCOMHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
-import { parsePositiveId } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-return/lib';
 import { contactDetailsActions } from 'calypso/my-sites/checkout/src/lib/checkout-stores';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import getPreparedTitanClientContext from '../lib/get-prepared-titan-client-context';
+import getPreparedTitanClientContext, {
+	parsePositiveId,
+} from '../lib/get-prepared-titan-client-context';
 import useFetchClientReferral from './use-fetch-client-referral';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -47,7 +48,6 @@ export default function useClientCheckout( {
 	const prepared = usePreparedCart( 'no-site', skipActiveCart );
 	const agencyId = parsePositiveId( queryArgs.agencyId );
 	const referralId = parsePositiveId( queryArgs.referralId );
-	const clientId = parsePositiveId( referral?.client?.id );
 	const preparedContext = skipActiveCart
 		? getPreparedTitanClientContext( responseCart.products, { agencyId, referralId }, referral )
 		: undefined;
@@ -171,10 +171,7 @@ export default function useClientCheckout( {
 		emailMismatchWithReferralClient,
 		referral,
 		wpcomHostingProductSlug,
-		preparedCartContext:
-			skipActiveCart && agencyId && referralId && clientId
-				? { agencyId, referralId, clientId }
-				: undefined,
+		preparedCartContext: preparedContext,
 		products: responseCart.products,
 	};
 }
