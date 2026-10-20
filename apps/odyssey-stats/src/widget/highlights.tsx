@@ -165,13 +165,13 @@ export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: 
 		data: topPostsAndPages = [],
 		isPending: isPendingPostsAndPages,
 		isError: isPostsAndPagesError,
-	} = useTopPostsQuery( siteId, range );
+	} = useTopPostsQuery( siteId, range, HIGHLIGHT_ITEMS_LIMIT );
 
 	const {
 		data: topReferrers = [],
 		isPending: isPendingReferrers,
 		isError: isReferrersError,
-	} = useReferrersQuery( siteId, range );
+	} = useReferrersQuery( siteId, range, HIGHLIGHT_ITEMS_LIMIT );
 
 	// Held here rather than left to TabPanel, which remounts when the section comes back after
 	// an empty range and reports its initial tab as it does; only a change is a user's click.
