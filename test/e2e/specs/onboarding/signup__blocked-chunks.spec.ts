@@ -1,40 +1,24 @@
 import { DataHelper } from '@automattic/calypso-e2e';
+import { COOKIE_BANNER_CHUNK, GLOBAL_NOTICES_CHUNK, blockChunk } from '../../lib/blocked-chunks';
 import { expect, tags, test } from '../../lib/pw-base';
 
 /**
- * Content blockers ("EasyList - Cookie Notices" and similar) can block
- * non-essential chunks. Their `AsyncLoad` must then render nothing instead of
- * rejecting up the tree and blanking the logged-out signup page.
+ * A blocked non-essential chunk must not blank the logged-out signup page,
+ * which Stepper renders.
  */
-const BLOCKED_CHUNKS = [
-	{
-		name: 'cookie banner',
-		pattern: /\/async-load-calypso-blocks-privacy-prefs\.[^/]*\.(js|css)(\?|$)/,
-	},
-	{
-		name: 'global notices',
-		pattern: /\/async-load-calypso-components-global-notices\.[^/]*\.(js|css)(\?|$)/,
-	},
-];
-
 test.describe(
 	DataHelper.createSuiteTitle( 'Signup: Non-essential chunks blocked by a content blocker' ),
 	{ tag: [ tags.CALYPSO_PR ] },
 	() => {
-		for ( const chunk of BLOCKED_CHUNKS ) {
+		for ( const chunk of [ COOKIE_BANNER_CHUNK, GLOBAL_NOTICES_CHUNK ] ) {
 			test( `As a logged-out user, I can still use the signup step when the ${ chunk.name } cannot load`, async ( {
 				page,
 				viewportName,
 			} ) => {
-				const blockedChunks: string[] = [];
-				const pageErrors: Error[] = [];
+				let blocked: Awaited< ReturnType< typeof blockChunk > >;
 
 				await test.step( `Given the ${ chunk.name }'s JavaScript and CSS are blocked`, async function () {
-					await page.route( chunk.pattern, ( route ) => {
-						blockedChunks.push( route.request().url() );
-						return route.abort( 'blockedbyclient' );
-					} );
-					page.on( 'pageerror', ( error ) => pageErrors.push( error ) );
+					blocked = await blockChunk( page, chunk.pattern );
 				} );
 
 				await test.step( 'When I visit the onboarding user step', async function () {
@@ -58,9 +42,7 @@ test.describe(
 				} );
 
 				await test.step( `And the ${ chunk.name }'s chunks were requested and blocked`, async function () {
-					await expect
-						.poll( () => blockedChunks.some( ( url ) => /\.js(\?|$)/.test( url ) ) )
-						.toBe( true );
+					await expect.poll( () => blocked.wasJsBlocked() ).toBe( true );
 				} );
 
 				await test.step( 'And I can enter my email address', async function () {
@@ -70,7 +52,7 @@ test.describe(
 				} );
 
 				await test.step( 'And the blocked chunk raised no uncaught errors', async function () {
-					expect( pageErrors.map( ( error ) => error.message ) ).toEqual( [] );
+					expect( blocked.pageErrorMessages() ).toEqual( [] );
 				} );
 			} );
 		}
