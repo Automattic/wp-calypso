@@ -11,7 +11,6 @@ The dashboard supports multiple entry points:
 
 - WordPress.com (dotcom) at `my.wordpress.com`
 - Automattic for Agencies (A4A) at `agencies-beta.automattic.com`
-- CIAB at `my.woo.ai`
 
 This multi-entry point approach allows us to reuse the same codebase while tailoring the user experience to specific products and user types.
 
@@ -31,19 +30,19 @@ import Logo from './logo';
 import './style.scss';
 
 boot( {
-  basePath: '/newproduct',
-  mainRoute: '/sites', // Or whichever route should be the default
-  Logo,
-  supports: {
-    overview: true,
-    sites: true,
-    domains: false,
-    emails: false,
-    reader: false,
-    help: true,
-    notifications: false,
-    me: true,
-  },
+	basePath: '/newproduct',
+	mainRoute: '/sites', // Or whichever route should be the default
+	Logo,
+	supports: {
+		overview: true,
+		sites: true,
+		domains: false,
+		emails: false,
+		reader: false,
+		help: true,
+		notifications: false,
+		me: true,
+	},
 } );
 ```
 
@@ -71,23 +70,27 @@ export default Logo;
 
 ### 2. Create and Register the Routing
 
-There is only a single dashboard instance for all entry points. The dashboard will route requests based on the request hostname and/or paths. See the following examples for CIAB, and follow similarly for the new entry point:
+There is only a single dashboard instance for all entry points. The dashboard will route requests based on the request hostname and/or paths. See the following examples for A4A, and follow similarly for the new entry point:
 
-- `client/dashboard/app-ciab/routing.ts`
-- `client/dashboard/app-ciab/section.ts`
+- `client/dashboard/app-a4a/routing.ts`
+- `client/dashboard/app-a4a/section.ts`
 
-Then, we need to register the routing in `client/server/pages/index.js`. Look for the following code which registers `app-ciab`:
+Then, we need to register the routing in `client/server/pages/index.js`. Look for the `DASHBOARD_VARIANTS` list, which registers `app-a4a`:
 
 ```js
-CIAB_DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-	handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-ciab', ( req ) =>
-		isAllowedCiabDashboardHostname( req.hostname )
-	);
-} );
-handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
-	return isAllowedDotcomDashboardHostname( req.hostname );
-} );
+const DASHBOARD_VARIANTS = [
+	// ...
+	{
+		definition: A4A_DASHBOARD_SECTION_DEFINITION,
+		paths: A4A_DASHBOARD_SECTION_PATHS,
+		entrypoint: 'entry-dashboard-a4a',
+		devEnv: 'a8c-for-agencies-development',
+		isAllowedHostname: isAllowedA4ADashboardHostname,
+	},
+];
 ```
+
+Finally, add the `entry-dashboard-newproduct` entry to `client/webpack.config.js`.
 
 ## Customizing Branding
 
@@ -121,7 +124,6 @@ For example, you can override theme variables or add entry point-specific stylin
 	// Secondary menu
 	--dashboard-secondary-menu-item__color: #{$gray-900};
 }
-
 ```
 
 ## Customizing Content and Features

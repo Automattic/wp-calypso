@@ -33,7 +33,7 @@ import {
 	getTotalLineItemFromCart,
 	getCreditsLineItemFromCart,
 } from '@automattic/wpcom-checkout';
-import { css, keyframes } from '@emotion/react';
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
@@ -45,7 +45,6 @@ import useEquivalentMonthlyTotals, {
 	getSubtotalBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import { getActivePlanSlug, useCheckoutSite } from '../hooks/use-checkout-site';
-import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
@@ -158,7 +157,6 @@ function CheckoutSummaryPriceList() {
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
 	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
-	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const { setSlotEl } = useSubmitButtonSlot();
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
 	const { formStatus } = useFormStatus();
@@ -181,7 +179,6 @@ function CheckoutSummaryPriceList() {
 					<CheckoutSummarySubtotal
 						key="checkout-summary-line-item-subtotal"
 						className="wp-checkout-order-summary__subtotal"
-						isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
 					>
 						<span>{ translate( 'Subtotal' ) }</span>
 						{ isCartUpdating ? (
@@ -894,21 +891,12 @@ export const PriceLoadingIndicator = styled.span< { width?: string; height?: str
 	vertical-align: middle;
 `;
 
-const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )< {
-	isCheckoutUiRedesignV1?: boolean;
-} >`
+const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 24px;
 	margin-bottom: 0px;
 	font-size: 16px;
-	${ ( { isCheckoutUiRedesignV1 } ) =>
-		isCheckoutUiRedesignV1 &&
-		css`
-			& > span:first-child {
-				font-size: 14px;
-			}
-		` }
 	& .wp-checkout-order-summary__subtotal-price {
 		font-size: 14px;
 

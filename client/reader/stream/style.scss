@@ -35,10 +35,6 @@
 	transition: all 0.1s ease-in-out;
 	margin-bottom: 15px;
 
-	&.is-seen {
-		opacity: 0.65;
-	}
-
 	&.is-selected,
 	&.is-x-post.is-selected,
 	&.tag-afk.is-selected {

@@ -107,8 +107,20 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		client?.setFilter( filterName );
 	}, [ client, filterName ] );
 
+	const isModifierClickRef = useRef( false );
+
 	const onChangeSelection = ( selection: string[] ) => {
 		const noteId = selection[ 0 ];
+
+		if ( isModifierClickRef.current ) {
+			isModifierClickRef.current = false;
+			const note = visibleNotes.find( ( { id } ) => id.toString() === noteId );
+			if ( note ) {
+				window.open( note.url, '_blank', 'noopener,noreferrer' );
+			}
+			return;
+		}
+
 		// Toggle off when selecting the same note.
 		setSelectedNoteId( noteId !== selectedNoteId ? noteId : undefined );
 	};
@@ -215,7 +227,13 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	}
 
 	return (
-		<div ref={ noteListRef } className="wpnc__note-list">
+		<div
+			ref={ noteListRef }
+			className="wpnc__note-list"
+			onClickCapture={ ( event ) => {
+				isModifierClickRef.current = event.metaKey || event.ctrlKey || event.shiftKey;
+			} }
+		>
 			<SelectedNoteIdContext.Provider value={ selectedNoteId }>
 				<DataViews< Note >
 					data={ data }

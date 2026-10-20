@@ -245,7 +245,7 @@ export default function OrchestratorChat( {
 		},
 	} );
 
-	// A ref: the prompts on screen are derived below from the composer's `inputValue`.
+	// A ref, as the prompts on screen are derived after this hook.
 	const suggestionPromptsRef = useRef< Set< string > >( new Set() );
 	const {
 		inputValue,
@@ -491,7 +491,7 @@ export default function OrchestratorChat( {
 	// Empty-view suggestions and their tracking.
 	const displayedEmptyViewSuggestions = getDisplayedEmptyViewSuggestions( {
 		isVisible: suggestionsVisible,
-		isChatEmpty: ! isPreparingConversation && ! hasMessages && inputValue.length === 0,
+		isChatEmpty: ! isPreparingConversation && ! hasMessages,
 		emptyViewSuggestions,
 		registeredSuggestions: suggestions,
 		dynamicSuggestions,

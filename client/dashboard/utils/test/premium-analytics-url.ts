@@ -15,6 +15,12 @@ describe( 'getPremiumAnalyticsPath', () => {
 		);
 	} );
 
+	it( 'serves the route from the page it is given', () => {
+		expect( getPremiumAnalyticsPath( '/', undefined, 'jetpack-analytics' ) ).toBe(
+			'admin.php?page=jetpack-analytics&p=%2F'
+		);
+	} );
+
 	it( 'opens the route on whole days in the site offset', () => {
 		expect(
 			route(

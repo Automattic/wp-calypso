@@ -24,6 +24,7 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"devDependencies": {
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"css-loader": "^6.11.0",
 		"mini-css-extract-plugin": "^2.10.2",

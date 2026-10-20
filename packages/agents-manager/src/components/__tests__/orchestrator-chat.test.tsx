@@ -474,16 +474,6 @@ jest.mock( '../../hooks/use-credits', () => ( {
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
 	default: jest.fn( ( { messages }: { messages: unknown[] } ) => messages ),
-	isContextOnlyMessage: ( message: {
-		context?: { flags?: { context_only?: boolean } };
-		content?: Array< { type?: string; data?: { flags?: { context_only?: boolean } } } >;
-	} ) =>
-		message.context?.flags?.context_only === true ||
-		message.content?.some(
-			( content ) =>
-				content.type === 'context' ||
-				( content.type === 'data' && content.data?.flags?.context_only === true )
-		),
 } ) );
 jest.mock( '../../utils/external-context', () => ( {
 	consumeNextMessageExternalContextEntries: jest.fn(),
@@ -1406,6 +1396,17 @@ describe( 'OrchestratorChat', () => {
 		const useSuggestions = jest.fn( () => ( { suggestions: [] } ) );
 
 		render( chat( { emptyViewSuggestions: staticDefaults, useSuggestions: useSuggestions } ) );
+
+		expect( screen.getByText( 'Getting started with WordPress' ) ).toBeTruthy();
+	} );
+
+	it( 'keeps the empty-view suggestions while the user types', () => {
+		const staticDefaults: Suggestion[] = [
+			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
+		];
+
+		render( chat( { emptyViewSuggestions: staticDefaults } ) );
+		fireEvent.click( screen.getByText( 'Type message' ) );
 
 		expect( screen.getByText( 'Getting started with WordPress' ) ).toBeTruthy();
 	} );
