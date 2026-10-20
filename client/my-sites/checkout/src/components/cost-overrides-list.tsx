@@ -29,6 +29,7 @@ import {
 import styled from '@emotion/styled';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { parseIsoCalendarDate } from 'calypso/dashboard/utils/datetime';
 import useEquivalentMonthlyTotals, {
 	getSimulatedCostBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
@@ -198,7 +199,7 @@ function LineItemIntroOfferCostOverrideDetail( {
 				{ shouldShowDueDate &&
 					translate( 'Billed %(dueDate)s: %(price)s', {
 						args: {
-							dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
+							dueDate: parseIsoCalendarDate( dueDate ).toLocaleDateString( undefined, {
 								dateStyle: 'long',
 							} ),
 							price: formatCurrency( dueAmount, product.currency, {

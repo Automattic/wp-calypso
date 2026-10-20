@@ -11,7 +11,12 @@ import { useAuth } from '../../app/auth';
 import { useHelpCenter } from '../../app/help-center';
 import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
-import { formatDate, getCalendarDaysUntil, getRelativeDayString } from '../../utils/datetime';
+import {
+	formatDate,
+	getCalendarDaysUntil,
+	getRelativeDayString,
+	parseIsoCalendarDate,
+} from '../../utils/datetime';
 import { getDowngradeTargetProductName } from '../../utils/downgrade-target-name';
 import {
 	EXPIRY_ERROR_DAYS,
@@ -43,7 +48,7 @@ import type { Purchase } from '@automattic/api-core';
 function FormattedExpiryDate( { locale, purchase }: { locale: string; purchase: Purchase } ) {
 	return (
 		<span style={ { display: 'inline-block' } }>
-			{ formatDate( new Date( purchase.expiry_date ), locale, {
+			{ formatDate( parseIsoCalendarDate( purchase.expiry_date ), locale, {
 				dateStyle: 'long',
 			} ) }
 		</span>
@@ -66,7 +71,9 @@ function UrgentExpiryText( {
 	return (
 		<Text
 			intent={ copy.intent }
-			title={ formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ) }
+			title={ formatDate( parseIsoCalendarDate( purchase.expiry_date ), locale, {
+				dateStyle: 'long',
+			} ) }
 		>
 			{ copy.text ?? untranslatedFallbackText }
 		</Text>
@@ -111,8 +118,8 @@ function UrgentExpiryStatus( {
 
 	// The wording drops the expiry date to keep the column short, so it moves to
 	// a tooltip rather than disappearing.
-	const daysUntilExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
-	const expiryDateTitle = formatDate( new Date( purchase.expiry_date ), locale, {
+	const daysUntilExpiry = getCalendarDaysUntil( parseIsoCalendarDate( purchase.expiry_date ) );
+	const expiryDateTitle = formatDate( parseIsoCalendarDate( purchase.expiry_date ), locale, {
 		dateStyle: 'long',
 	} );
 
@@ -350,7 +357,9 @@ function describePurchaseExpiry(
 					'Free trial ends on %(date)s, renews automatically at %(amount)s <excludeTaxStringAbbreviation />'
 				),
 				{
-					date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
+					date: formatDate( parseIsoCalendarDate( purchase.expiry_date ), locale, {
+						dateStyle: 'long',
+					} ),
 					amount: formatCurrency( purchase.price_integer, purchase.currency_code, {
 						isSmallestUnit: true,
 						stripZeros: true,
@@ -371,7 +380,9 @@ function describePurchaseExpiry(
 				{
 					// translators: %(date)s: a formatted date
 					sprintf( __( 'Free trial ends on %(date)s' ), {
-						date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
+						date: formatDate( parseIsoCalendarDate( purchase.expiry_date ), locale, {
+							dateStyle: 'long',
+						} ),
 					} )
 				}
 			</span>
@@ -390,7 +401,7 @@ function describePurchaseExpiry(
 					// translators: %(date)s: a formatted date
 					__( 'Credit card expires before your next renewal on %(date)s' ),
 					{
-						date: formatDate( new Date( purchase.renew_date ?? '' ), locale, {
+						date: formatDate( parseIsoCalendarDate( purchase.renew_date ?? '' ), locale, {
 							dateStyle: 'long',
 						} ),
 					}
@@ -406,7 +417,7 @@ function describePurchaseExpiry(
 		const targetPlanName = getDowngradeTargetProductName(
 			purchase.delayed_downgrade_to_product_slug
 		);
-		const renewalDate = formatDate( new Date( purchase.renew_date ?? '' ), locale, {
+		const renewalDate = formatDate( parseIsoCalendarDate( purchase.renew_date ?? '' ), locale, {
 			dateStyle: 'long',
 		} );
 		if ( targetPlanName ) {
@@ -437,7 +448,9 @@ function describePurchaseExpiry(
 				isSmallestUnit: true,
 				stripZeros: true,
 			} ),
-			date: formatDate( new Date( purchase.renew_date ?? '' ), locale, { dateStyle: 'long' } ),
+			date: formatDate( parseIsoCalendarDate( purchase.renew_date ?? '' ), locale, {
+				dateStyle: 'long',
+			} ),
 		};
 		const translateComponents = {
 			excludeTaxStringAbbreviation: (
@@ -498,7 +511,7 @@ function describePurchaseExpiry(
 	}
 
 	if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
-		const copy = getExpiringSoonCopy( new Date( purchase.expiry_date ) );
+		const copy = getExpiringSoonCopy( parseIsoCalendarDate( purchase.expiry_date ) );
 
 		if ( ! copy ) {
 			return createInterpolateElement(
@@ -517,7 +530,10 @@ function describePurchaseExpiry(
 				// translators: timeUntilExpiry is a formatted expiration string like "in 30 days" and date is a formatted expiry date
 				__( 'Expires %(timeUntilExpiry)s on <date />' ),
 				{
-					timeUntilExpiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
+					timeUntilExpiry: getRelativeDayString(
+						parseIsoCalendarDate( purchase.expiry_date ),
+						'upcoming'
+					),
 				}
 			),
 			{
@@ -530,14 +546,14 @@ function describePurchaseExpiry(
 	if ( isExpiredOrRemoved( purchase ) && 'concierge-session' === purchase.product_slug ) {
 		// translators: %s is a formatted expiry date
 		return sprintf( __( 'Session used on %s' ), [
-			formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
+			formatDate( parseIsoCalendarDate( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 		] );
 	}
 
 	if ( isExpiredOrRemoved( purchase ) ) {
 		return {
 			kind: 'urgent',
-			copy: getExpiredCopy( new Date( purchase.expiry_date ) ),
+			copy: getExpiredCopy( parseIsoCalendarDate( purchase.expiry_date ) ),
 			hasExpired: true,
 		};
 	}

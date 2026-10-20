@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment <rootDir>/../test/client/jest-environment-timezone.js
  */
 import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
@@ -136,6 +136,34 @@ describe( '<PurchaseExpiryStatus>', () => {
 			render( <PurchaseExpiryStatus purchase={ freeTrial() } /> );
 
 			expect( screen.getByText( /free trial ends on march 26, 2026/i ) ).toBeVisible();
+		} );
+
+		describe( 'for a viewer west of UTC', () => {
+			const originalTZ = process.env.TZ;
+			beforeAll( () => {
+				process.env.TZ = 'America/Argentina/Buenos_Aires';
+			} );
+			afterAll( () => {
+				process.env.TZ = originalTZ;
+			} );
+
+			test( 'shows the same end date the API sends', () => {
+				const endDate = '2027-01-16T00:00:00+00:00';
+				render(
+					<PurchaseExpiryStatus
+						purchase={ freeTrial( {
+							expiry_date: endDate,
+							introductory_offer: {
+								cost_per_interval: 0,
+								end_date: endDate,
+								is_within_period: true,
+							},
+						} as Partial< Purchase > ) }
+					/>
+				);
+
+				expect( screen.getByText( /free trial ends on january 16, 2027/i ) ).toBeVisible();
+			} );
 		} );
 
 		test( 'is described by its expiry once an early renewal has paid past the trial', () => {

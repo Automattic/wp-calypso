@@ -18,6 +18,19 @@ export function formatDate(
 	return new Intl.DateTimeFormat( getIntlLocale( locale ), formatOptions ).format( date );
 }
 
+/**
+ * Parse the calendar day (YYYY-MM-DD) of an ISO 8601 string as local midnight,
+ * ignoring its time and offset.
+ *
+ * wpcom sends date-only values (like purchase expiry dates) as UTC midnight,
+ * e.g. "2027-01-16T00:00:00+00:00". `new Date()` on that string renders as the
+ * previous day for viewers west of UTC.
+ */
+export function parseIsoCalendarDate( isoDate: string ): Date {
+	const [ year, month, day ] = isoDate.slice( 0, 10 ).split( '-' ).map( Number );
+	return new Date( year, month - 1, day );
+}
+
 const msPerHour = 60 * 60 * 1000;
 const msPerDay = 24 * msPerHour;
 

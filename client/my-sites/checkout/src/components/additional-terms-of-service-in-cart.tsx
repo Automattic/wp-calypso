@@ -15,6 +15,7 @@ import { hasTranslation } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
+import { parseIsoCalendarDate } from 'calypso/dashboard/utils/datetime';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
@@ -53,11 +54,7 @@ export default function AdditionalTermsOfServiceInCart() {
 }
 
 export function formatDate( isoDate: string, locale: string ): string {
-	// Parse only the date portion (YYYY-MM-DD) and construct via the local-time
-	// Date constructor to avoid the UTC-midnight-to-local-time shift that causes
-	// dates to appear one day off for users behind UTC.
-	const [ year, month, day ] = isoDate.slice( 0, 10 ).split( '-' ).map( Number );
-	return getShortDateString( new Date( year, month - 1, day ).getTime(), locale );
+	return getShortDateString( parseIsoCalendarDate( isoDate ).getTime(), locale );
 }
 
 function MessageForTermsOfServiceRecordUnknown( {

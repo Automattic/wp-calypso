@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment <rootDir>/../test/client/jest-environment-timezone.js
  */
 
 import config from '@automattic/calypso-config';
@@ -23,13 +23,16 @@ import {
 } from 'calypso/my-sites/checkout/src/test/util';
 import {
 	BundleProductAndCostOverridesList,
+	LineItemCostOverrides,
 	ProductsAndCostOverridesList,
 } from '../cost-overrides-list';
 import { storeData } from './lib/fixtures';
 import type {
+	IntroductoryOfferTerms,
 	ResponseCart,
 	ResponseCartCostOverride,
 	ResponseCartProduct,
+	TermsOfServiceRecord,
 } from '@automattic/shopping-cart';
 import type { CartBundleLineItem } from '@automattic/wpcom-checkout';
 
@@ -235,5 +238,80 @@ describe( 'ProductsAndCostOverridesList', () => {
 		expect( screen.queryByText( 'Domain Bundle' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
+	} );
+} );
+
+describe( 'LineItemCostOverrides', () => {
+	const originalTZ = process.env.TZ;
+	beforeAll( () => {
+		process.env.TZ = 'America/Argentina/Buenos_Aires';
+	} );
+	afterAll( () => {
+		process.env.TZ = originalTZ;
+	} );
+
+	it( 'shows the billing date the API sends for a viewer west of UTC', async () => {
+		const product: ResponseCartProduct = {
+			...getEmptyResponseCartProduct(),
+			product_id: 1234,
+			meta: '',
+			currency: 'USD',
+			months_per_bill_period: 12,
+			item_subtotal_integer: 0,
+			introductory_offer_terms: {
+				enabled: true,
+				interval_unit: 'month',
+				interval_count: 3,
+			} as IntroductoryOfferTerms,
+			cost_overrides: [
+				{
+					human_readable_reason: 'Free trial',
+					override_code: 'introductory-offer',
+					old_subtotal_integer: 3500,
+					new_subtotal_integer: 0,
+					does_override_original_cost: false,
+					percentage: 100,
+					first_unit_only: false,
+				},
+			],
+		};
+		const responseCart: ResponseCart = {
+			...getEmptyResponseCart(),
+			currency: 'USD',
+			products: [ product ],
+			terms_of_service: [
+				{
+					key: 'product_id:1234',
+					code: 'introductory_offer_renewal',
+					args: {
+						subscription_auto_renew_date: '2027-01-16T00:00:00+00:00',
+						renewal_price_integer: 3500,
+						regular_renewal_price_integer: 3500,
+					},
+				} as TermsOfServiceRecord,
+			],
+		};
+
+		render(
+			<TestWrapper initialCart={ responseCart }>
+				<LineItemCostOverrides
+					product={ product }
+					shouldShowDiscount
+					costOverridesList={ [
+						{
+							humanReadableReason: 'Free trial',
+							overrideCode: 'introductory-offer',
+							discountAmount: 3500,
+						},
+					] }
+				/>
+			</TestWrapper>
+		);
+
+		// The component formats with the runtime's default locale.
+		const expectedDate = new Date( 2027, 0, 16 ).toLocaleDateString( undefined, {
+			dateStyle: 'long',
+		} );
+		expect( await screen.findByText( `Billed ${ expectedDate }: $35` ) ).toBeVisible();
 	} );
 } );

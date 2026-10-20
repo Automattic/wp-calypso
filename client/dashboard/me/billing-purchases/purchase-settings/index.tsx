@@ -76,7 +76,7 @@ import { getPlanExpiryUrgency, hasPlanExpiryNotice } from '../../../components/p
 import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
-import { formatDate } from '../../../utils/datetime';
+import { formatDate, parseIsoCalendarDate } from '../../../utils/datetime';
 import { isJetpackCloud } from '../../../utils/jetpack';
 import { wpcomLink } from '../../../utils/link';
 import {
@@ -526,7 +526,7 @@ export function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase }
 	// Use non-breaking spaces in the date so it doesn't wrap mid-date
 	// (e.g. "April\n16, 2027") in narrow viewports.
 	const expiryDateFormatted = purchase.expiry_date
-		? formatDate( new Date( purchase.expiry_date ), locale, {
+		? formatDate( parseIsoCalendarDate( purchase.expiry_date ), locale, {
 				dateStyle: 'long',
 			} ).replace( / /g, '\u00A0' )
 		: '';
@@ -959,13 +959,13 @@ function getFields( {
 					) {
 						// translators: %(date)s is a formatted date string
 						return sprintf( __( 'You will be billed on %(date)s' ), {
-							date: formatDate( new Date( purchase.renew_date ?? '' ), locale, {
+							date: formatDate( parseIsoCalendarDate( purchase.renew_date ?? '' ), locale, {
 								dateStyle: 'long',
 							} ),
 						} );
 					}
 					if ( ! purchase.is_auto_renew_enabled && purchase.expiry_date ) {
-						const date = formatDate( new Date( purchase.expiry_date ), locale, {
+						const date = formatDate( parseIsoCalendarDate( purchase.expiry_date ), locale, {
 							dateStyle: 'long',
 						} );
 						if ( isExpiredOrRemoved( purchase ) ) {
@@ -1007,7 +1007,7 @@ function getFields( {
 										{
 											expireDate: (
 												<span>
-													{ formatDate( new Date( purchase.expiry_date ), locale, {
+													{ formatDate( parseIsoCalendarDate( purchase.expiry_date ), locale, {
 														dateStyle: 'long',
 													} ) }
 												</span>

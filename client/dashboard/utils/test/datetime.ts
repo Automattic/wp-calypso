@@ -1,3 +1,6 @@
+/**
+ * @jest-environment <rootDir>/../test/client/jest-environment-timezone.js
+ */
 import { dateI18n } from '@wordpress/date';
 import MockDate from 'mockdate';
 import {
@@ -7,9 +10,32 @@ import {
 	getCalendarDaysUntil,
 	getRelativeTimeString,
 	getRelativeDayString,
+	parseIsoCalendarDate,
 } from '../datetime';
 
 describe( 'datetime utils (site-time)', () => {
+	describe( 'parseIsoCalendarDate', () => {
+		const originalTZ = process.env.TZ;
+		beforeAll( () => {
+			process.env.TZ = 'America/Argentina/Buenos_Aires';
+		} );
+		afterAll( () => {
+			process.env.TZ = originalTZ;
+		} );
+
+		it( 'keeps the calendar day of a UTC midnight timestamp west of UTC', () => {
+			const d = parseIsoCalendarDate( '2027-01-16T00:00:00+00:00' );
+			expect( d.getFullYear() ).toBe( 2027 );
+			expect( d.getMonth() ).toBe( 0 );
+			expect( d.getDate() ).toBe( 16 );
+			expect( d.getHours() ).toBe( 0 );
+		} );
+
+		it( 'returns an invalid date for an empty string', () => {
+			expect( isNaN( parseIsoCalendarDate( '' ).getTime() ) ).toBe( true );
+		} );
+	} );
+
 	describe( 'parseYmdLocal', () => {
 		it( 'parses valid YYYY-MM-DD to a local Date at midnight', () => {
 			const d = parseYmdLocal( '2025-08-13' )!;
