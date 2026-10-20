@@ -259,6 +259,8 @@ const webpackConfig = {
 		runtimeChunk: { name: 'runtime' },
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'deterministic',
+		// webpack 5.112 inlines short exports by default, which makes chunk ids and hashes vary between builds.
+		inlineExports: false,
 		minimize: shouldMinify,
 		minimizer: Minify(),
 	},
