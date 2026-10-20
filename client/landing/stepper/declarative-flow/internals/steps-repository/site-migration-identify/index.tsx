@@ -267,7 +267,7 @@ export const Analyzer: FC< Props > = ( {
 						}
 						onSkip( /^https?:\/\//i.test( url ) ? url : `https://${ url }` );
 					} }
-					placeholder={ translate( 'mygreatnewblog.com' ) }
+					placeholder={ translate( 'your-existing-site.com' ) }
 					label={ translate( 'Site address' ) }
 					dontHaveSiteAddressLabel={ translate(
 						'Or <button>pick your current platform from a list</button>'
@@ -278,12 +278,10 @@ export const Analyzer: FC< Props > = ( {
 					nextLabelText={ isReprintFlow ? translate( 'Continue' ) : translate( 'Check my site' ) }
 				/>
 			</div>
-			{ ! isReprintFlow && (
-				<ChecklistCard
-					title={ translate( 'Why should you host with us?' ) }
-					items={ hostingDetailItems }
-				/>
-			) }
+			<ChecklistCard
+				title={ translate( 'Why should you host with us?' ) }
+				items={ hostingDetailItems }
+			/>
 		</>
 	);
 };
