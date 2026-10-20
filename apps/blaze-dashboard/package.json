@@ -28,7 +28,6 @@
 	"dependencies": {
 		"@automattic/accessible-focus": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
-		"@automattic/calypso-polyfills": "workspace:^",
 		"@automattic/calypso-router": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/components": "workspace:^",

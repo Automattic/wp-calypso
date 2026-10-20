@@ -31,7 +31,6 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
-		"@automattic/calypso-polyfills": "workspace:^",
 		"@automattic/calypso-router": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/charts": "^1.9.0",

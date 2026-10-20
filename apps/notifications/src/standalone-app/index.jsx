@@ -1,4 +1,3 @@
-import '@automattic/calypso-polyfills';
 import { useViewportMatch } from '@wordpress/compose';
 import { setLocaleData } from '@wordpress/i18n';
 import debugFactory from 'debug';

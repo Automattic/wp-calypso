@@ -566,7 +566,6 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -871,15 +870,6 @@ __metadata:
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
-  languageName: unknown
-  linkType: soft
-
-"@automattic/calypso-polyfills@workspace:^, @automattic/calypso-polyfills@workspace:packages/calypso-polyfills":
-  version: 0.0.0-use.local
-  resolution: "@automattic/calypso-polyfills@workspace:packages/calypso-polyfills"
-  dependencies:
-    "@automattic/calypso-typescript-config": "workspace:^"
-    core-js: "npm:^3.42.0"
   languageName: unknown
   linkType: soft
 
@@ -1894,7 +1884,6 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -2040,7 +2029,6 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/charts": "npm:^1.9.0"
@@ -16015,7 +16003,6 @@ __metadata:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-paypal": "workspace:^"
-    "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-sentry": "workspace:^"
@@ -17249,7 +17236,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.30.0, core-js@npm:^3.31.0, core-js@npm:^3.38.1, core-js@npm:^3.42.0, core-js@npm:^3.6.4":
+"core-js@npm:^3.30.0, core-js@npm:^3.31.0, core-js@npm:^3.38.1, core-js@npm:^3.6.4":
   version: 3.48.0
   resolution: "core-js@npm:3.48.0"
   checksum: 6c3115900dd7cce9fab74c07cb262b3517fc250d02e8fd2ff34f80bda5f43a28482a909dbc4491dc6e1ddd9807f57a7df4c3eeecd1f202b7d9c8bfe25f9d680c
