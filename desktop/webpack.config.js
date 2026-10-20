@@ -39,7 +39,7 @@ module.exports = {
 	externals: [ 'superagent', 'ws' ],
 	mode: DEVELOPMENT ? 'development' : 'production',
 	optimization: {
-		// webpack 5.104's default minimizer, which later webpack versions replaced.
+		// webpack 5.104's default; later defaults also rewrite the copied HTML and CSS.
 		minimizer: [ new TerserPlugin( { terserOptions: { compress: { passes: 2 } } } ) ],
 	},
 };
