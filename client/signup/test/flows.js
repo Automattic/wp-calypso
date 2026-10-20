@@ -157,9 +157,7 @@ describe( 'Signup Flows Configuration', () => {
 					siteSlug: 'example.com',
 					cartItems: [ { product_slug: 'personal-bundle' } ],
 				} )
-			).toBe(
-				'/setup/onboarding/post-checkout-onboarding?siteSlug=example.com&from=site-selected'
-			);
+			).toBe( '/setup/onboarding/post-checkout-onboarding?siteSlug=example.com&ref=site-selected' );
 		} );
 
 		test( 'keeps the locale on the post-checkout step', () => {
@@ -169,7 +167,7 @@ describe( 'Signup Flows Configuration', () => {
 					'fr'
 				)
 			).toBe(
-				'/setup/onboarding/post-checkout-onboarding/fr?siteSlug=example.com&from=site-selected'
+				'/setup/onboarding/post-checkout-onboarding/fr?siteSlug=example.com&ref=site-selected'
 			);
 		} );
 
@@ -322,7 +320,7 @@ describe( 'Signup Flows Configuration', () => {
 				cartItems: [ { product_slug: 'personal-bundle' } ],
 			};
 			const destination =
-				'/setup/onboarding/post-checkout-onboarding?siteSlug=test-site&from=site-selected';
+				'/setup/onboarding/post-checkout-onboarding?siteSlug=test-site&ref=site-selected';
 
 			const result = filterDestination( destination, dependencies, 'site-selected', 'en' );
 			const { checkoutBackUrl, redirect_to } = Object.fromEntries(

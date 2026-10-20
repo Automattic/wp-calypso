@@ -13,6 +13,7 @@ import {
 import { isURL } from '@wordpress/url';
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { SITE_SELECTED_REF } from 'calypso/landing/stepper/constants';
 import { getOnboardingPostCheckoutDestination } from 'calypso/landing/stepper/declarative-flow/helpers/get-onboarding-post-checkout-destination';
 import { withLocale } from 'calypso/landing/stepper/declarative-flow/helpers/with-locale';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
@@ -157,7 +158,7 @@ function getSiteSelectedDestination( dependencies, localeSlug ) {
 	}
 
 	return addQueryArgs(
-		{ siteSlug, from: 'site-selected' },
+		{ siteSlug, ref: SITE_SELECTED_REF },
 		withLocale( `/setup/${ ONBOARDING_FLOW }/post-checkout-onboarding`, localeSlug )
 	);
 }

@@ -2,10 +2,12 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
-import { useSelect } from '@wordpress/data';
+import { resolveSelect, useSelect } from '@wordpress/data';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { setSignupCompleteFlowName } from 'calypso/signup/storageUtils';
+import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import onboarding from '../onboarding';
 
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
@@ -137,7 +139,7 @@ describe( 'onboarding flow side effects', () => {
 			window.history.replaceState(
 				null,
 				'',
-				'/setup/onboarding/post-checkout-onboarding?siteSlug=example.com&from=site-selected'
+				'/setup/onboarding/post-checkout-onboarding?siteSlug=example.com&ref=site-selected'
 			);
 
 			renderSideEffect( 'post-checkout-onboarding' );
@@ -156,6 +158,63 @@ describe( 'onboarding flow side effects', () => {
 
 			expect( mockResetOnboardStore ).not.toHaveBeenCalled();
 		} );
+	} );
+} );
+
+describe( 'onboarding flow post-checkout processing', () => {
+	const originalLocation = window.location;
+
+	const submitProcessing = async ( search: string ) => {
+		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( search ) );
+
+		const { result } = renderHook( () =>
+			onboarding.useStepNavigation.call(
+				onboarding,
+				'processing' as Parameters< typeof onboarding.useStepNavigation >[ 0 ],
+				jest.fn()
+			)
+		);
+
+		await result.current.submit?.( {
+			slug: 'processing',
+			providedDependencies: {
+				processingResult: ProcessingResult.SUCCESS,
+				siteSlug: 'example.com',
+			},
+		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
+	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		// A site without the Launchpad options lands on My Home.
+		( resolveSelect as jest.Mock ).mockReturnValue( { getSite: async () => ( { options: {} } ) } );
+		Object.defineProperty( window, 'location', {
+			value: { ...originalLocation, replace: jest.fn() },
+			writable: true,
+			configurable: true,
+		} );
+	} );
+
+	afterAll( () => {
+		Object.defineProperty( window, 'location', {
+			value: originalLocation,
+			writable: true,
+			configurable: true,
+		} );
+	} );
+
+	it( 'keeps a site-selected purchase attributed to that flow', async () => {
+		await submitProcessing( '?siteSlug=example.com&ref=site-selected' );
+
+		expect( window.location.replace ).toHaveBeenCalledWith( '/home/example.com?ref=site-selected' );
+		expect( setSignupCompleteFlowName ).toHaveBeenCalledWith( 'site-selected' );
+	} );
+
+	it( 'attributes an onboarding purchase to onboarding', async () => {
+		await submitProcessing( '?siteSlug=example.com' );
+
+		expect( window.location.replace ).toHaveBeenCalledWith( '/home/example.com?ref=onboarding' );
+		expect( setSignupCompleteFlowName ).toHaveBeenCalledWith( 'onboarding' );
 	} );
 } );
 
