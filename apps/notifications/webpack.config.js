@@ -7,6 +7,7 @@ const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
+const TerserPlugin = require( 'terser-webpack-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
@@ -49,6 +50,8 @@ function buildConfig( env, { entry, outputPath, publicPath, withStats } ) {
 		...webpackConfig,
 		optimization: {
 			concatenateModules: ! shouldEmitStats,
+			// webpack 5.104's default; later defaults also minify the HTML pages.
+			minimizer: [ new TerserPlugin( { terserOptions: { compress: { passes: 2 } } } ) ],
 		},
 		plugins: [
 			...webpackConfig.plugins,

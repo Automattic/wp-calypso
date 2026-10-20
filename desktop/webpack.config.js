@@ -1,5 +1,6 @@
 const path = require( 'path' );
 const CopyPlugin = require( 'copy-webpack-plugin' );
+const TerserPlugin = require( 'terser-webpack-plugin' );
 
 const DEVELOPMENT = process.env.NODE_ENV === 'development';
 
@@ -37,4 +38,8 @@ module.exports = {
 	},
 	externals: [ 'superagent', 'ws' ],
 	mode: DEVELOPMENT ? 'development' : 'production',
+	optimization: {
+		// webpack 5.104's default minimizer, which later webpack versions replaced.
+		minimizer: [ new TerserPlugin( { terserOptions: { compress: { passes: 2 } } } ) ],
+	},
 };
