@@ -2,9 +2,10 @@ import { useViewportMatch } from '@wordpress/compose';
 import { setLocaleData } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import { setLocale } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import NotificationApp, { refreshNotes } from '../app';
+import { logError } from '../panel/helpers/log-error';
 import { store } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
@@ -97,6 +98,7 @@ const ACTION_HANDLERS = {
 const NotesWrapper = ( { wpcom } ) => {
 	const [ isShowing, setIsShowing ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( document.visibilityState === 'visible' );
+	const [ preferences, setPreferences ] = useState();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	if ( locale && 'en' !== locale ) {
@@ -197,6 +199,28 @@ const NotesWrapper = ( { wpcom } ) => {
 		sendMessage( { action: 'widescreen', widescreen: true } );
 	}, [] );
 
+	useEffect( () => {
+		if ( ! isViewSettingsEnabled ) {
+			return;
+		}
+
+		wpcom.req
+			.get( '/me/preferences' )
+			.then( ( { calypso_preferences } ) =>
+				setPreferences( {
+					layoutStyle: calypso_preferences?.[ 'notifications-layout-style' ],
+					viewSettingsSeen: calypso_preferences?.[ 'notifications-view-settings-seen' ],
+				} )
+			)
+			.catch( logError );
+	}, [ wpcom ] );
+
+	const handlePreferenceChange = useCallback(
+		( key, value ) =>
+			wpcom.req.post( '/me/preferences', { calypso_preferences: { [ key ]: value } } ),
+		[ wpcom ]
+	);
+
 	if ( ! isShowing ) {
 		return null;
 	}
@@ -209,6 +233,8 @@ const NotesWrapper = ( { wpcom } ) => {
 			isDismissible={ isMobileViewport }
 			isViewSettingsEnabled={ isViewSettingsEnabled }
 			isSimplifiedNoteEnabled={ isViewSettingsEnabled }
+			preferences={ preferences }
+			onPreferenceChange={ handlePreferenceChange }
 		/>
 	);
 };
