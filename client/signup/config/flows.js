@@ -1,14 +1,21 @@
+import { PLAN_FREE } from '@automattic/calypso-products';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
 	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
-import { DOMAIN_FOR_GRAVATAR_FLOW, isDomainForGravatarFlow } from '@automattic/onboarding';
+import {
+	DOMAIN_FOR_GRAVATAR_FLOW,
+	isDomainForGravatarFlow,
+	ONBOARDING_FLOW,
+} from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { getOnboardingPostCheckoutDestination } from 'calypso/landing/stepper/declarative-flow/helpers/get-onboarding-post-checkout-destination';
+import { withLocale } from 'calypso/landing/stepper/declarative-flow/helpers/with-locale';
+import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
@@ -122,6 +129,29 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 	} );
 
 	return redirectTo;
+}
+
+/**
+ * A site that already exists (e.g. a domain-only site turned into a full one) lands on the same
+ * post-checkout step as the onboarding flow once a paid plan is bought, so it gets the
+ * setup-your-site-ai chooser when its plan includes Big Sky instead of going straight to My Home,
+ * which sends AI Launchpad sites on to wp-admin.
+ * @param {Object} dependencies the signup dependency store
+ * @param {string} localeSlug the signup locale
+ * @returns {string} the URL to land on after checkout
+ */
+function getSiteSelectedDestination( dependencies, localeSlug ) {
+	const { siteSlug, redirect_to, cartItems } = dependencies;
+	const planCartItem = getPlanCartItem( cartItems );
+
+	if ( redirect_to || ! siteSlug || ! planCartItem || planCartItem.product_slug === PLAN_FREE ) {
+		return getSignupDestination( dependencies );
+	}
+
+	return addQueryArgs(
+		{ siteSlug, from: 'site-selected' },
+		withLocale( `/setup/${ ONBOARDING_FLOW }/post-checkout-onboarding`, localeSlug )
+	);
 }
 
 /**
@@ -273,6 +303,7 @@ function getHostingFlowDestination( { stepperHostingFlow } ) {
 const flows = generateFlows( {
 	getRedirectDestination,
 	getSignupDestination,
+	getSiteSelectedDestination,
 	getLaunchDestination,
 	getDomainSignupFlowDestination,
 	getEmailSignupFlowDestination,

@@ -138,6 +138,67 @@ describe( 'Signup Flows Configuration', () => {
 		} );
 	} );
 
+	describe( 'site-selected destination', () => {
+		beforeAll( () => {
+			jest.restoreAllMocks();
+		} );
+
+		const getDestination = ( dependencies, localeSlug ) =>
+			flows
+				.getFlows()
+				[ 'site-selected' ].destination(
+					{ flowName: 'site-selected', ...dependencies },
+					localeSlug
+				);
+
+		test( 'hands a paid plan purchase over to the onboarding post-checkout step', () => {
+			expect(
+				getDestination( {
+					siteSlug: 'example.com',
+					cartItems: [ { product_slug: 'personal-bundle' } ],
+				} )
+			).toBe(
+				'/setup/onboarding/post-checkout-onboarding?siteSlug=example.com&from=site-selected'
+			);
+		} );
+
+		test( 'keeps the locale on the post-checkout step', () => {
+			expect(
+				getDestination(
+					{ siteSlug: 'example.com', cartItems: [ { product_slug: 'value_bundle' } ] },
+					'fr'
+				)
+			).toBe(
+				'/setup/onboarding/post-checkout-onboarding/fr?siteSlug=example.com&from=site-selected'
+			);
+		} );
+
+		test( 'lands on My Home when the free plan is picked', () => {
+			expect(
+				getDestination( {
+					siteSlug: 'example.com',
+					cartItems: [ { product_slug: 'free_plan' } ],
+				} )
+			).toBe( '/home/example.com?ref=site-selected' );
+		} );
+
+		test( 'lands on My Home without a plan in the cart', () => {
+			expect( getDestination( { siteSlug: 'example.com', cartItems: [] } ) ).toBe(
+				'/home/example.com?ref=site-selected'
+			);
+		} );
+
+		test( 'prefers redirect_to', () => {
+			expect(
+				getDestination( {
+					siteSlug: 'example.com',
+					redirect_to: '/sites/example.com',
+					cartItems: [ { product_slug: 'personal-bundle' } ],
+				} )
+			).toBe( '/sites/example.com' );
+		} );
+	} );
+
 	describe( 'getLaunchReturnUrl', () => {
 		test( 'returns to the exact wp-admin screen back_to names', () => {
 			expect(

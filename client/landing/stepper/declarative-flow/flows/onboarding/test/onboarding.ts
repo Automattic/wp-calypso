@@ -127,6 +127,36 @@ describe( 'onboarding flow side effects', () => {
 
 		expect( clearSessionStorageQuery ).not.toHaveBeenCalled();
 	} );
+
+	describe( 'post-checkout hand-off from the site-selected signup flow', () => {
+		afterEach( () => {
+			window.history.replaceState( null, '', '/' );
+		} );
+
+		it( 'drops store state left behind by an earlier onboarding run', () => {
+			window.history.replaceState(
+				null,
+				'',
+				'/setup/onboarding/post-checkout-onboarding?siteSlug=example.com&from=site-selected'
+			);
+
+			renderSideEffect( 'post-checkout-onboarding' );
+
+			expect( mockResetOnboardStore ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'keeps the store for an onboarding run returning from its own checkout', () => {
+			window.history.replaceState(
+				null,
+				'',
+				'/setup/onboarding/post-checkout-onboarding?siteSlug=example.com'
+			);
+
+			renderSideEffect( 'post-checkout-onboarding' );
+
+			expect( mockResetOnboardStore ).not.toHaveBeenCalled();
+		} );
+	} );
 } );
 
 describe( 'onboarding flow use-my-domain navigation', () => {

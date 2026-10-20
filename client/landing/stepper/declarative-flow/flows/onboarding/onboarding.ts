@@ -987,6 +987,21 @@ const onboarding: FlowV2< typeof initialize > = {
 		] );
 
 		/**
+		 * The `site-selected` signup flow hands its purchase over to post-checkout-onboarding
+		 * without ever entering this flow, so whatever the store still holds belongs to some
+		 * earlier, unfinished run. Left in place, a stale connected-domain cart item would send
+		 * processing to that domain's setup page instead of the chooser.
+		 */
+		useEffect( () => {
+			if (
+				currentStepSlug === STEPS.POST_CHECKOUT_ONBOARDING.slug &&
+				getCurrentQueryParams().get( 'from' ) === 'site-selected'
+			) {
+				resetOnboardStore();
+			}
+		}, [ currentStepSlug, resetOnboardStore ] );
+
+		/**
 		 * Load Survicate and set visitor traits on each step navigation.
 		 *
 		 * This runs on every step change to ensure:
