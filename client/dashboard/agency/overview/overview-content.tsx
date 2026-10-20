@@ -2,11 +2,10 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import Grid from '../../components/grid';
-import { useCertification } from '../certification/use-certification';
 import { PendingTierCard, RejectedTierCard } from './application-status-cards';
-import EventCard from './event-card';
 import GrowthCard from './growth-card';
 import HelpfulLinksCard from './helpful-links-card';
+import NewsCard from './news';
 import ReferralEarningsCard from './referral-earnings-card';
 import TierOverviewCard from './tier-overview-card';
 import WooPaymentsRevenueCard from './woopayments-revenue-card';
@@ -73,8 +72,6 @@ export default function AgencyOverviewContent( {
 	approvalStatus,
 	capabilities,
 	hasPartnerDirectoryListing,
-	isEligibleForPressableIntroOffer,
-	isEligibleForPressableExpansionOffer,
 	links,
 	shouldUseRouterLink,
 	onScheduleCall,
@@ -83,7 +80,6 @@ export default function AgencyOverviewContent( {
 	onRelaunchTour,
 	tourLabel,
 	hidesPendingCard,
-	onCertificationShareCopy,
 	recordTracksEvent,
 }: AgencyOverviewContentProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
@@ -94,7 +90,6 @@ export default function AgencyOverviewContent( {
 	// A rejection is already spelled out by the tier card, so only pending accounts get the note.
 	const isLocked = isPending || isRejected || ! canAccessEarnings;
 	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
-	const certification = useCertification();
 
 	return (
 		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
@@ -153,22 +148,16 @@ export default function AgencyOverviewContent( {
 				/>
 			</VStack>
 			<VStack spacing={ spacing } justify="flex-start">
-				<HelpfulLinksCard links={ links.helpful } recordTracksEvent={ recordTracksEvent } />
-				<EventCard
-					isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
-					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
-					isEligibleForCertificationOffer={ certification.isEligible && certification.isPromo }
-					certificationOffer={ {
-						discount: certification.discount,
-						shareMessage: certification.shareMessage,
+				<NewsCard
+					links={ {
+						aiMcp: links.aiMcp,
+						pressableHosting: links.pressableHosting,
+						referrals: links.referrals,
 					} }
-					onCertificationShareCopy={ onCertificationShareCopy }
-					aiMcpHref={ links.aiMcp }
-					tiersHref={ links.tiers }
-					pressableHostingHref={ links.pressableHosting }
 					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }
 				/>
+				<HelpfulLinksCard links={ links.helpful } recordTracksEvent={ recordTracksEvent } />
 			</VStack>
 		</Grid>
 	);
