@@ -134,6 +134,18 @@
 		overflow-wrap: anywhere;
 	}
 
+	&[data-product='automattic-for-agencies'] {
+		background: color-mix(
+			in srgb,
+			var( --dashboard-marketplace-referral__color ) 10%,
+			#{$studio-white}
+		);
+
+		.dashboard-resource-illustration {
+			color: var( --dashboard-marketplace-referral__color );
+		}
+	}
+
 	&[data-product='automattic-for-agencies'],
 	&[data-product='pressable'] {
 		.dashboard-resources-learn__card-title {
