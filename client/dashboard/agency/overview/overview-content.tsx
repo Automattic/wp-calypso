@@ -11,7 +11,7 @@ import TierOverviewCard from './tier-overview-card';
 import WooPaymentsRevenueCard from './woopayments-revenue-card';
 import type { HelpfulLink } from './helpful-links-card';
 import type { AgencyTierType, RecordTracksEvent } from '../tiers/types';
-import type { AgencyApprovalStatus } from '@automattic/api-core';
+import type { AgencyApprovalStatus, AgencyPartnerManager } from '@automattic/api-core';
 
 // The WooPayments routes gate on the referrals capability too (see
 // a8c-for-agencies/lib/permission.ts), so one capability locks both earning cards.
@@ -49,6 +49,7 @@ export interface AgencyOverviewContentProps {
 	shouldUseRouterLink?: boolean;
 	onScheduleCall?: () => void;
 	isSchedulingCall?: boolean;
+	partnerManager?: AgencyPartnerManager | null;
 	onRelaunchTour?: () => void;
 	/** What the Pending card's tour button says. */
 	tourLabel?: string;
@@ -75,6 +76,7 @@ export default function AgencyOverviewContent( {
 	shouldUseRouterLink,
 	onScheduleCall,
 	isSchedulingCall,
+	partnerManager,
 	onRelaunchTour,
 	tourLabel,
 	hidesPendingCard,
@@ -113,6 +115,7 @@ export default function AgencyOverviewContent( {
 						shouldUseRouterLink={ shouldUseRouterLink }
 						onScheduleCall={ onScheduleCall }
 						isSchedulingCall={ isSchedulingCall }
+						partnerManager={ partnerManager }
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }

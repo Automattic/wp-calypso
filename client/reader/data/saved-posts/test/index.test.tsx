@@ -5,7 +5,7 @@ import { readSavedKeysQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { savedKeyForPost, useIsPostSaved, useSavePost } from '..';
+import { canSavePost, savedKeyForPost, useIsPostSaved, useSavePost } from '..';
 import type { ReadSavedKeysResponse } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
@@ -53,6 +53,17 @@ describe( 'savedKeyForPost', () => {
 	} );
 } );
 
+describe( 'canSavePost', () => {
+	it( 'allows a WordPress.com post', () => {
+		expect( canSavePost( WPCOM_POST ) ).toBe( true );
+	} );
+
+	it( 'does not allow an RSS post or a post without the IDs the API needs', () => {
+		expect( canSavePost( RSS_POST ) ).toBe( false );
+		expect( canSavePost( { ID: 1 } ) ).toBe( false );
+	} );
+} );
+
 describe( 'useIsPostSaved', () => {
 	it( 'fetches the keys and reports which posts are saved', async () => {
 		const request = nock( BASE )
@@ -75,6 +86,7 @@ describe( 'useIsPostSaved', () => {
 			{ wrapper: makeWrapper( client ) }
 		);
 
+		expect( result.current.wpcom ).toBeUndefined();
 		await waitFor( () => expect( result.current.wpcom ).toBe( true ) );
 		expect( request.isDone() ).toBe( true );
 		expect( result.current.rss ).toBe( true );
@@ -93,7 +105,7 @@ describe( 'useIsPostSaved', () => {
 			{ wrapper: makeWrapper( client ) }
 		);
 
-		expect( result.current ).toEqual( { disabled: false, noKey: false, noPost: false } );
+		expect( result.current ).toEqual( { disabled: undefined, noKey: false, noPost: false } );
 		expect( client.getQueryState( readSavedKeysQuery().queryKey )?.fetchStatus ).toBe( 'idle' );
 	} );
 

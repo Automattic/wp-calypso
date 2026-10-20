@@ -29,13 +29,14 @@ function getSavedKeyIds( data: ReadSavedKeysResponse ) {
 }
 
 /**
- * Whether the current user has saved the post. Reflects a save or unsave as
+ * Whether the current user has saved the post: `undefined` until the saved keys
+ * load, and `false` for a post the API can't save. Reflects a save or unsave as
  * soon as it starts, since the mutations update the keys query optimistically.
  */
 export function useIsPostSaved(
 	post: Post | null | undefined,
 	options?: SavedPostKeysQueryOptions
-): boolean {
+): boolean | undefined {
 	const key = post ? savedKeyForPost( post ) : null;
 	const keyId = key ? getReadSavedKeyId( key ) : null;
 	// Selecting a boolean means a card only re-renders when its own post flips.
@@ -43,12 +44,12 @@ export function useIsPostSaved(
 		( data: ReadSavedKeysResponse ) => keyId !== null && getSavedKeyIds( data ).has( keyId ),
 		[ keyId ]
 	);
-	const { data: isSaved = false } = useQuery( {
+	const { data: isSaved } = useQuery( {
 		...readSavedKeysQuery(),
 		...options,
 		select,
 		enabled: keyId !== null && ( options?.enabled ?? true ),
 	} );
 
-	return isSaved;
+	return keyId === null ? false : isSaved;
 }
