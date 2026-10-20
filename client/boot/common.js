@@ -168,7 +168,7 @@ function authorizePath() {
 const JP_CLOUD_PUBLIC_ROUTES = [ '/pricing', '/plans', '/features/comparison' ];
 const A4A_PUBLIC_ROUTES = [ '/signup' ];
 
-export const oauthTokenMiddleware = () => {
+const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
 		const loggedOutRoutes = [ '/start', '/api/oauth/token', '/connect' ];
 
