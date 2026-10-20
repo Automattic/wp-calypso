@@ -130,7 +130,7 @@ describe( '<AgencySites>', () => {
 					'hosting-dashboard-dataviews-view-agency-sites': {
 						type: 'table',
 						titleField: 'name',
-						filters: [ { field: 'status', operator: 'is', value: 'site_down' } ],
+						filters: [ { field: 'issues', operator: 'is', value: 'site_down' } ],
 					},
 				},
 			} );

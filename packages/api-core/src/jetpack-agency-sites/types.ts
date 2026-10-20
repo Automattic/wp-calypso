@@ -1,3 +1,5 @@
+import type { SiteIssue } from '../site-health';
+
 export interface AgencySite {
 	blog_id: number;
 	a4a_site_id?: number;
@@ -24,29 +26,7 @@ export interface AgencySite {
 	hosting_provider_guess?: string;
 	is_atomic?: boolean;
 	is_simple?: boolean;
-	latest_backup_status?: string;
-	latest_scan_threats_found?: string[];
-	awaiting_plugin_updates?: string[];
-	monitor_settings?: {
-		monitor_active: boolean;
-		monitor_site_status: boolean;
-	};
-	monitor_last_status_change?: string;
 }
-
-// The issues the endpoint filters by, each sent as its own `<issue>=true` flag.
-// `all_issues` matches a site with any of them.
-export const AGENCY_SITE_ISSUES = [
-	'all_issues',
-	'backup_failed',
-	'backup_warning',
-	'threats_found',
-	'site_disconnected',
-	'site_down',
-	'plugin_updates',
-] as const;
-
-export type AgencySiteIssue = ( typeof AGENCY_SITE_ISSUES )[ number ];
 
 export interface FetchAgencySitesOptions {
 	search?: string;
@@ -55,7 +35,8 @@ export interface FetchAgencySitesOptions {
 	page?: number;
 	per_page?: number;
 	not_multisite?: boolean;
-	issue?: AgencySiteIssue;
+	// Sent as its own `<issue>=true` flag.
+	issue?: SiteIssue;
 }
 
 export interface FetchAgencySitesResponse {

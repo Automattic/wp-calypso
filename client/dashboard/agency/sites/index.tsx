@@ -22,12 +22,13 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../compo
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
+import { isSiteIssue } from '../../sites/site-fields/site-health';
 import { AgencyNotices } from '../components/agency-notices';
 import { DevSiteConfigurationModal } from '../marketplace/purchases/site-configuration-modal';
 import AddNewSite from './add-new-site';
 import ConnectSiteModal from './add-new-site/connect-site-modal';
 import ImportFromWPCOMModal from './add-new-site/import-from-wpcom-modal';
-import { useAgencyFields, useAgencyActions, getStatusFilter } from './dataviews';
+import { useAgencyFields, useAgencyActions } from './dataviews';
 import { hasWpcomLicenseWithoutSite } from './lib';
 import ProvisioningSiteNotices from './provisioning-notice';
 import type { AddNewSiteAction } from './add-new-site/types';
@@ -58,7 +59,7 @@ const DEFAULT_VIEW = {
 	mediaField: 'site_icon',
 	titleField: 'name',
 	descriptionField: 'URL',
-	fields: [ 'status', 'visibility', 'plan' ],
+	fields: [ 'issues', 'visibility', 'plan' ],
 	sort: { field: 'URL', direction: 'asc' },
 } as View;
 
@@ -71,13 +72,14 @@ const removeLegacyFields = ( fields: View[ 'fields' ] ) =>
 const SORT_FIELD_MAP: Record< string, 'url' > = { URL: 'url' };
 
 function toAgencyFetchOptions( view: View ): FetchAgencySitesOptions {
+	const issue = view.filters?.find( ( filter ) => filter.field === 'issues' )?.value;
 	return {
 		search: view.search,
 		sort_field: view.sort?.field ? SORT_FIELD_MAP[ view.sort.field ] : undefined,
 		sort_direction: view.sort?.direction,
 		page: view.page,
 		per_page: view.perPage,
-		issue: getStatusFilter( view ),
+		issue: isSiteIssue( issue ) ? issue : undefined,
 	};
 }
 

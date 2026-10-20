@@ -497,4 +497,36 @@ describe( '<Sites>', () => {
 			expect( await screen.findByText( 'My Staging Site' ) ).toBeVisible();
 		} );
 	} );
+
+	test( 'asks the endpoint for sites with the chosen status', async () => {
+		nock.cleanAll();
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/read/teams' )
+			.query( true )
+			.reply( 200, { teams: [] } );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/preferences' )
+			.query( true )
+			.reply( 200, {
+				calypso_preferences: {
+					'hosting-dashboard-dataviews-view-sites': {
+						...getDefaultView( {
+							siteCount: mockSites.length,
+							isAutomattician: false,
+							isRestoringAccount: false,
+						} ),
+						filters: [ { field: 'issues', operator: 'is', value: 'site_down' } ],
+					},
+				},
+			} );
+		const filteredSites = nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.3/me/sites' )
+			.query( ( query ) => query.issue === 'site_down' )
+			.reply( 200, { sites: [ mockSites[ 0 ] ], total: 1 } );
+		render( <Sites />, { user: { site_count: mockSites.length } as User } );
+
+		await waitFor( () => expect( filteredSites.isDone() ).toBe( true ) );
+		expect( await screen.findByText( 'My First Site' ) ).toBeVisible();
+	} );
 } );

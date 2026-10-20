@@ -47,6 +47,7 @@ import {
 } from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNoticeArbiter } from './notice-arbiter';
+import { isSiteIssue } from './site-fields/site-health';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -116,6 +117,8 @@ const getFetchPaginatedSitesOptions = (
 			options.plan = filter.value.map( ( v: string ) => planSlugsByName?.[ v ] ).flat();
 		} else if ( filter.field === 'visibility' && filter.value ) {
 			options.visibility = filter.value;
+		} else if ( filter.field === 'issues' && isSiteIssue( filter.value ) ) {
+			options.issue = filter.value;
 		}
 	} );
 

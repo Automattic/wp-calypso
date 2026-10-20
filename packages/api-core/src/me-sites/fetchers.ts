@@ -1,6 +1,7 @@
 import { JOINED_SITE_FIELDS, JOINED_SITE_OPTIONS } from '../site';
 import { wpcom } from '../wpcom-fetcher';
 import type { Site } from '../site';
+import type { SiteIssue } from '../site-health';
 
 export type FetchSiteType = 'atomic' | 'jetpack' | 'wpcom' | 'jetpack-full';
 
@@ -21,6 +22,7 @@ export interface FetchPaginatedSitesOptions extends FetchSitesOptions {
 	search?: string;
 	plan?: string[];
 	visibility?: string[];
+	issue?: SiteIssue;
 	sort_field?: string;
 	sort_direction?: string;
 	page?: number;
@@ -66,6 +68,7 @@ export async function fetchPaginatedSites(
 		search,
 		plan,
 		visibility,
+		issue,
 		sort_field,
 		sort_direction,
 		page,
@@ -90,6 +93,7 @@ export async function fetchPaginatedSites(
 			search,
 			plan,
 			visibility,
+			issue,
 			sort_field,
 			sort_direction,
 			page,
