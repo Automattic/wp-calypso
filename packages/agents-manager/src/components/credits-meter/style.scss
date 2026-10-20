@@ -1,3 +1,6 @@
+// Dark `--color-error` is a pale pink; Figma's dark alert red has no token.
+$credits-alert-dark: #f87171;
+
 .agents-manager-credits-meter {
 	display: inline-flex;
 
@@ -24,9 +27,8 @@
 			background-color: color-mix( in srgb, var( --color-error-accent ) 20%, transparent );
 			color: var( --color-error );
 
-			// Dark `--color-error` is a pale pink; Figma's dark glyph red has no token.
 			.agenttic.dark & {
-				color: #f87171;
+				color: $credits-alert-dark;
 			}
 		}
 
@@ -113,6 +115,10 @@
 
 	&.is-exhausted {
 		color: var( --color-error-accent );
+
+		.agenttic.dark & {
+			color: $credits-alert-dark;
+		}
 	}
 }
 

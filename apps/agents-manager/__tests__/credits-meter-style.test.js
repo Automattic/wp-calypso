@@ -30,14 +30,20 @@ describe( 'Credits meter toggle CSS contract', () => {
 		selector.replace( /:not\(([^)]*)\)/g, '$1' ).match( /\.[\w-]+|\[[^\]]+\]|:[\w-]+/g )?.length ??
 		0;
 
-	// The winning value of `prop` on the toggle; `[data-hover]` stands in for `:hover`.
-	const resolve = ( prop, { dark = false, alert = false, hover = false, open = false } = {} ) => {
+	// The winning value of `prop` on `target`; `[data-hover]` stands in for `:hover`.
+	const resolve = (
+		prop,
+		{ dark = false, alert = false, hover = false, open = false } = {},
+		target = 'button'
+	) => {
 		const root = document.createElement( 'div' );
 		root.className = dark ? 'agenttic dark' : 'agenttic';
 		root.innerHTML = `<div class="agents-manager-credits-meter"><button class="agents-manager-credits-meter__toggle components-button${
 			alert ? ' is-alert' : ''
-		}" aria-expanded="${ open }"${ hover ? ' data-hover' : '' }></button></div>`;
-		const toggle = root.querySelector( 'button' );
+		}" aria-expanded="${ open }"${
+			hover ? ' data-hover' : ''
+		}></button><span class="agents-manager-credits-meter__pool-percent is-exhausted"></span></div>`;
+		const toggle = root.querySelector( target );
 
 		let winner;
 		rules.forEach( ( rule, order ) => {
@@ -88,6 +94,12 @@ describe( 'Credits meter toggle CSS contract', () => {
 
 	it.each( alertStates )( 'draws the dark alert glyph in the Figma red %s', ( _, state ) => {
 		expect( resolve( 'color', { alert: true, dark: true, ...state } ) ).toBe( '#f87171' );
+	} );
+
+	it( 'draws the popover’s 0% left in the same red as the alert glyph', () => {
+		const percent = '.agents-manager-credits-meter__pool-percent';
+		expect( resolve( 'color', {}, percent ) ).toBe( 'var(--color-error-accent)' );
+		expect( resolve( 'color', { dark: true }, percent ) ).toBe( '#f87171' );
 	} );
 
 	it( 'leaves the info toggle glyph on the muted token in dark', () => {
