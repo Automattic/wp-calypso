@@ -45,7 +45,7 @@ export function canSiteReceivePurchase( purchase: Purchase, site: Site ): boolea
 		return false;
 	}
 
-	if ( site.is_wpcom_staging_site || site.is_vip || site.is_garden || site.is_a4a_dev_site ) {
+	if ( site.is_wpcom_staging_site || site.is_vip || site.is_a4a_dev_site ) {
 		return false;
 	}
 

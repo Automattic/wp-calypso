@@ -24,7 +24,6 @@ function makeSite( overrides: Partial< Site > = {} ): Site {
 		is_wpcom_atomic: false,
 		is_wpcom_staging_site: false,
 		is_vip: false,
-		is_garden: false,
 		is_a4a_dev_site: false,
 		plan: { is_free: true },
 		...overrides,
