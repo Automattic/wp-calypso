@@ -2,7 +2,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
 
 export function hasPurchaseStepsParameter( query: URLSearchParams ): boolean {
-	return query.get( 'showPurchaseSteps' ) === 'true';
+	return query.get( 'showPurchaseSteps' ) === 'true' && query.has( 'showDomainStep' );
 }
 
 /**

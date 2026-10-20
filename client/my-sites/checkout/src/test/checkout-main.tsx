@@ -179,7 +179,7 @@ describe( 'CheckoutMain', () => {
 		window.history.replaceState(
 			null,
 			'',
-			'/checkout/foo.com?showPurchaseSteps=true&steps_current=2&steps_total=2&redirect_to=/setup/transferring-hosted-site'
+			'/checkout/foo.com?showDomainStep&showPurchaseSteps=true&steps_current=2&steps_total=2&redirect_to=/setup/transferring-hosted-site'
 		);
 		const ViewportWidthProvider = useViewportMatch.__experimentalWidthProvider;
 		try {

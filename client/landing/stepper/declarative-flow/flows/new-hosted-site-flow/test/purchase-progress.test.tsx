@@ -142,6 +142,7 @@ it.each( [ 'en', 'fr' ] )( 'passes checkout steps and a domain return URL in %s'
 	expect( back.searchParams.has( 'showDomainStep' ) ).toBe( true );
 	expect( back.searchParams.get( 'showPurchaseSteps' ) ).toBe( 'true' );
 	expect( checkout.searchParams.get( 'checkoutBackUrlDomains' ) ).toBe( back.href );
+	expect( checkout.searchParams.has( 'showDomainStep' ) ).toBe( true );
 	expect( checkout.searchParams.get( 'redirect_to' ) ).toContain(
 		'/setup/transferring-hosted-site'
 	);
@@ -344,19 +345,31 @@ it.each( [ true, false ] )(
 	}
 );
 
-it( 'registers the domain step for opted-in entries without showDomainStep', async () => {
+it( 'treats purchase progress without the domain step as a plain visit', async () => {
 	mockQuery.delete( 'showDomainStep' );
 	const steps = await hosting.initialize( {
 		dispatch: jest.fn(),
 		getState: () => ( {} ),
 	} as never );
-	expect( steps ).toContainEqual( expect.objectContaining( { slug: STEPS.DOMAIN_SEARCH.slug } ) );
-} );
+	expect( steps ).not.toContainEqual(
+		expect.objectContaining( { slug: STEPS.DOMAIN_SEARCH.slug } )
+	);
+	expect( mockReset ).toHaveBeenCalledTimes( 1 );
 
-it( 'returns from plans to domains on opted-in entries without showDomainStep', () => {
-	mockQuery.delete( 'showDomainStep' );
-	mockQuery.delete( 'plan' );
-	const navigate = jest.fn();
-	navigation( 'plans', navigate ).goBack?.();
-	expect( navigate ).toHaveBeenCalledWith( STEPS.DOMAIN_SEARCH.slug );
+	const nav = navigation( 'processing' );
+	act( () =>
+		nav.submit( {
+			slug: 'processing',
+			providedDependencies: {
+				processingResult: ProcessingResult.SUCCESS,
+				...mockSite,
+				goToCheckout: true,
+			},
+		} as never )
+	);
+	const checkout = new URL(
+		jest.mocked( window.location.assign ).mock.calls[ 0 ][ 0 ] as string,
+		'https://wordpress.com'
+	);
+	expect( checkout.searchParams.has( 'showPurchaseSteps' ) ).toBe( false );
 } );

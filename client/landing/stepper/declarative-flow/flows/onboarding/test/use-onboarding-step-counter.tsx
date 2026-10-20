@@ -22,7 +22,7 @@ describe( 'useOnboardingStepCounter', () => {
 	} );
 
 	it( 'lets another flow opt in through the parameter', () => {
-		window.history.replaceState( {}, '', '/?showPurchaseSteps=true' );
+		window.history.replaceState( {}, '', '/?showDomainStep&showPurchaseSteps=true' );
 		const { result, rerender } = renderHook( () =>
 			useOnboardingStepCounter( 'new-hosted-site', 'domains' )
 		);
