@@ -1,9 +1,9 @@
 import { isBusinessPlan, isPersonalPlan, isPremiumPlan } from '@automattic/calypso-products';
 
 /**
- * Which plans the post-checkout AI setup chooser sends to build-wow from its
- * "Create a custom design" card. Commerce is left out here: the AI site builder
- * onboarding sends a Commerce checkout to build-wow on its own.
+ * Which plans route the AI build through build-wow, in the post-checkout AI
+ * setup chooser and the AI site builder onboarding. Commerce is left out here:
+ * the onboarding adds it on its own, and the chooser keeps it on the legacy builder.
  */
 export function planSupportsBuildWow( planSlug: string | null | undefined ): boolean {
 	return (
