@@ -1782,7 +1782,11 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 		getTitle: () =>
 			i18n.translate(
-				'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)'
+				'Fee on paid subscriptions and payments (+\u00A0Stripe processing\u00A0fee)'
+			),
+		getDescription: () =>
+			i18n.translate(
+				'Our share of what you earn from paid subscriptions, paid posts and other payments. It drops as you upgrade, to 0% on Commerce. Stripe’s processing fee is separate.'
 			),
 	},
 	[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: {
@@ -2447,7 +2451,9 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PAID_SUBSCRIBERS_JP,
 		getTitle: () => i18n.translate( 'Paid subscribers' ),
 		getDescription: () =>
-			i18n.translate( 'Turn site visitors into subscribers, with built-in subscription tools.' ),
+			i18n.translate(
+				'Charge readers monthly or yearly for your newsletter or premium posts. Available on every plan, including Free.'
+			),
 	},
 	[ FEATURE_PREMIUM_CONTENT_JP ]: {
 		getSlug: () => FEATURE_PREMIUM_CONTENT_JP,
