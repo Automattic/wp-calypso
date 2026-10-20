@@ -162,6 +162,8 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 		launchStatus: site?.launch_status,
 		canManageOptions: site?.capabilities?.manage_options,
 		isA4ADevSite: site?.is_a4a_dev_site,
+		// The page renders nothing for other sites, and a public site shows its report instead.
+		isEntryPointShown: ( !! isSiteAtomic || !! isSiteFlex ) && ! isSitePublic,
 	} );
 
 	// A free, already-public, or A4A dev site never qualifies, so skip the bridge

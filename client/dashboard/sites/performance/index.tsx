@@ -1,3 +1,4 @@
+import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
@@ -10,6 +11,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { TextBlur } from '../../components/text-blur';
+import { hasHostingFeature } from '../../utils/site-features';
 import { useSiteLaunchPublishCopy } from '../../utils/site-launch-publish-copy';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { SitesNoticeArbiter } from '../notice-arbiter';
@@ -23,7 +25,8 @@ export function SitePerformanceContent( { siteSlug }: { siteSlug: string } ) {
 		launchStatus: site.launch_status,
 		canManageOptions: site.capabilities?.manage_options,
 		isA4ADevSite: site.is_a4a_dev_site,
-		isEntryPointShown: isUnpublished,
+		// Without the feature the page shows an upsell instead of the launch button.
+		isEntryPointShown: isUnpublished && hasHostingFeature( site, HostingFeatures.PERFORMANCE ),
 	} );
 
 	return (
