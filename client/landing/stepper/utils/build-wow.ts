@@ -1,3 +1,5 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
@@ -20,19 +22,31 @@ export function getBuildWowGraph( queryParams: URLSearchParams ): BuildWowGraph 
 	return BUILD_WOW_GRAPHS.find( ( graph ) => graph === requested );
 }
 
+export const BUILD_WOW_STREAMING_FLAG = 'site-spec/build-wow-streaming';
+
 /**
- * Asks for the optional live build feed. It only requests it: the server
+ * Whether a build asks for the optional live feed: only where the streaming
+ * flag is on, and only for Automatticians. It only requests it: the server
  * decides eligibility and pins the choice to the run, and the status
  * endpoint's `stream` block says whether this run actually streams.
  */
-export const BUILD_WOW_STREAM_QUERY_ARG = 'build_wow_stream';
+async function shouldRequestBuildWowStream(): Promise< boolean > {
+	if ( ! config.isEnabled( BUILD_WOW_STREAMING_FLAG ) ) {
+		return false;
+	}
 
-export function isBuildWowStreamRequested( queryParams: URLSearchParams ): boolean {
-	return queryParams.get( BUILD_WOW_STREAM_QUERY_ARG ) === '1';
-}
-
-export function getBuildWowStreamQueryArgs( streamEvents?: boolean ): Record< string, string > {
-	return streamEvents ? { [ BUILD_WOW_STREAM_QUERY_ARG ]: '1' } : {};
+	try {
+		// Loaded on demand so this module does not pull in Calypso's state setup.
+		const { getCalypsoQueryClient } = await import( 'calypso/state/query-client' );
+		const queryClient = getCalypsoQueryClient();
+		if ( ! queryClient ) {
+			return false;
+		}
+		const query = isAutomatticianQuery();
+		return query.select?.( await queryClient.fetchQuery( query ) ) ?? false;
+	} catch {
+		return false;
+	}
 }
 
 type BuildWowAtomicState = {
@@ -92,7 +106,6 @@ export function getBuildWowSiteSpecUrl( {
 	source,
 	prompt,
 	graph,
-	streamEvents,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
@@ -100,7 +113,6 @@ export function getBuildWowSiteSpecUrl( {
 	source?: string | null;
 	prompt?: string | null;
 	graph?: BuildWowGraph;
-	streamEvents?: boolean;
 } ): string {
 	return addQueryArgs( BUILD_WOW_SITE_SPEC_PATH, {
 		build_wow: '1',
@@ -110,7 +122,6 @@ export function getBuildWowSiteSpecUrl( {
 		...( source ? { source } : {} ),
 		...( prompt ? { prompt } : {} ),
 		...( graph ? { graph } : {} ),
-		...getBuildWowStreamQueryArgs( streamEvents ),
 	} );
 }
 
@@ -142,9 +153,11 @@ export async function requestBuildWowSite(
 	siteIdentifier: string,
 	specId?: string,
 	graph?: BuildWowGraph,
-	blueprintId?: string,
-	streamEvents?: boolean
+	blueprintId?: string
 ): Promise< BuildWowResponse > {
+	// Like graph, only a call that queues a build carries the opt-in.
+	const streamEvents = Boolean( specId ) && ( await shouldRequestBuildWowStream() );
+
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteIdentifier }/big-sky/build-wow`,
@@ -156,8 +169,7 @@ export async function requestBuildWowSite(
 			// queues a build: the server records the graph with that build, and a
 			// call without a spec queues nothing to record it against.
 			...( specId && graph ? { graph } : {} ),
-			// Like graph, only a call that queues a build carries the opt-in.
-			...( specId && streamEvents ? { stream_events: true } : {} ),
+			...( streamEvents ? { stream_events: true } : {} ),
 			// The blueprint hybrid: the blueprint onboarding already put the site on Atomic, which
 			// the server otherwise refuses as somebody's established site.
 			...( blueprintId ? { blueprint_id: blueprintId } : {} ),

@@ -105,6 +105,25 @@ describe( 'ConversationList', () => {
 		expect( onSelect ).toHaveBeenCalledWith( expect.objectContaining( { postId: 200 } ) );
 	} );
 
+	it( 'shows the new count only on conversations with unread notes', () => {
+		renderList();
+
+		expect( screen.getByRole( 'button', { name: /^Unread post/ } ) ).toHaveTextContent( '2 new' );
+		expect( screen.getByRole( 'button', { name: /^Read post/ } ) ).not.toHaveTextContent( 'new' );
+	} );
+
+	it( 'marks only the selected conversation as current', () => {
+		renderList( { selectedKey: conversations[ 1 ].key } );
+
+		expect( screen.getByRole( 'button', { name: /^Read post/ } ) ).toHaveAttribute(
+			'aria-current',
+			'true'
+		);
+		expect( screen.getByRole( 'button', { name: /^Unread post/ } ) ).not.toHaveAttribute(
+			'aria-current'
+		);
+	} );
+
 	it( 'shows filter and settings as disabled until they are built', () => {
 		renderList();
 

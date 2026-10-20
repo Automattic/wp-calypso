@@ -12,6 +12,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
+import { withoutHttp } from 'calypso/lib/url';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -24,13 +25,14 @@ import {
 	getIsOnboardingAffiliateFlow,
 	getIsOnboardingUnifiedFlow,
 } from 'calypso/state/signup/flow/selectors';
-import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { useCheckoutSite } from '../hooks/use-checkout-site';
 import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
-import type { SiteDetails } from '@automattic/data-stores';
+import type { Site } from '@automattic/api-core';
 import type {
 	ResponseCart,
 	RemoveProductFromCart,
@@ -135,7 +137,8 @@ export default function WPCheckoutOrderReview( {
 		} );
 	}, [] );
 
-	const selectedSiteData = useSelector( getSelectedSite );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const { data: selectedSite } = useCheckoutSite( selectedSiteId );
 	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	// A cart without a site in its key (eg: a renewal at `/checkout/renew/:id`)
@@ -143,13 +146,14 @@ export default function WPCheckoutOrderReview( {
 	const cartBlogId = Number( responseCart.blog_id ) || 0;
 	const { data: cartSite } = useQuery( {
 		...siteByIdQuery( cartBlogId ),
-		enabled: ! selectedSiteData && cartBlogId > 0,
+		enabled: ! selectedSiteId && cartBlogId > 0,
 	} );
 
 	// This is what will be displayed at the top of checkout prefixed by "Site: ".
 	const domainUrl = getDomainToDisplayInCheckoutHeader(
 		responseCart,
-		selectedSiteData,
+		selectedSiteId,
+		selectedSite,
 		siteUrl,
 		cartSite?.slug
 	);
@@ -197,10 +201,10 @@ export default function WPCheckoutOrderReview( {
 						) }
 					</>
 				) }
-				{ planIsP2Plus && selectedSiteData?.name && (
+				{ planIsP2Plus && selectedSite?.name && (
 					<SiteSummary className="checkout-review-order__site">
 						{ translate( 'Upgrade: {{strong}}%s{{/strong}}', {
-							args: selectedSiteData.name,
+							args: selectedSite.name,
 							components: {
 								strong: <strong />,
 							},
@@ -293,7 +297,8 @@ export function CouponFieldArea( {
 
 function getDomainToDisplayInCheckoutHeader(
 	responseCart: ResponseCart,
-	selectedSiteData: SiteDetails | undefined | null,
+	selectedSiteId: number | null,
+	selectedSite: Site | undefined,
 	sitelessCheckoutSlug: string | undefined,
 	cartSiteSlug: string | undefined
 ): string | undefined {
@@ -301,14 +306,11 @@ function getDomainToDisplayInCheckoutHeader(
 		return undefined;
 	}
 
-	const primaryDomainForMapping = selectedSiteData?.options?.is_mapped_domain
-		? selectedSiteData?.domain
-		: undefined;
-	if ( primaryDomainForMapping ) {
-		return primaryDomainForMapping;
+	if ( selectedSite?.options?.is_mapped_domain ) {
+		return selectedSite.options.is_redirect ? selectedSite.slug : withoutHttp( selectedSite.URL );
 	}
 
-	const domainUrl = getDomainProductUrlToDisplayInCheckoutHeader( responseCart, selectedSiteData );
+	const domainUrl = getDomainProductUrlToDisplayInCheckoutHeader( responseCart, selectedSiteId );
 	if ( domainUrl ) {
 		return domainUrl;
 	}
@@ -330,7 +332,7 @@ function getDomainToDisplayInCheckoutHeader(
 
 function getDomainProductUrlToDisplayInCheckoutHeader(
 	responseCart: ResponseCart,
-	selectedSiteData: SiteDetails | undefined | null
+	selectedSiteId: number | null
 ): string | undefined {
 	const domainProducts = responseCart.products.filter(
 		( product ) =>
@@ -339,7 +341,7 @@ function getDomainProductUrlToDisplayInCheckoutHeader(
 
 	const firstDomainProduct = domainProducts.length > 0 ? domainProducts[ 0 ] : undefined;
 
-	const isPurchaseSiteless = ! selectedSiteData;
+	const isPurchaseSiteless = ! selectedSiteId;
 
 	if ( ! firstDomainProduct?.meta ) {
 		return undefined;

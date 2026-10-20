@@ -23,8 +23,9 @@ import {
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MasterbarStyled from '../../checkout-thank-you/redesign-v2/masterbar-styled';
+import { useCheckoutSite } from '../../src/hooks/use-checkout-site';
 import ProfessionalEmailUpsellPlaceholder from './placeholder';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
@@ -79,9 +80,9 @@ const ProfessionalEmailUpsell = ( {
 	const translate = useTranslate();
 	const [ selectedIntervalLength, setSelectedIntervalLength ] = useState( intervalLength );
 
-	const selectedSite = useSelector( getSelectedSite );
-	const isDomainOnlySite =
-		selectedSite === null ? true : ( selectedSite?.options?.is_domain_only ?? false );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const { data: site } = useCheckoutSite( selectedSiteId );
+	const isDomainOnlySite = ! site || ( site.options?.is_domain_only ?? false );
 
 	const isMobileView = useBreakpoint( MOBILE_BREAKPOINT );
 
@@ -117,9 +118,9 @@ const ProfessionalEmailUpsell = ( {
 			/>
 
 			<MasterbarStyled
-				onClick={ () => page( `/home/${ selectedSite?.slug ?? '' }` ) }
+				onClick={ () => page( `/home/${ site?.slug ?? '' }` ) }
 				backText={ translate( 'Back to dashboard' ) }
-				canGoBack={ !! selectedSite?.ID }
+				canGoBack={ !! site }
 				showContact
 			/>
 

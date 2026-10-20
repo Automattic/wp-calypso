@@ -19,6 +19,15 @@
 		fill: inherit;
 	}
 
+	// WPDS icons carry no fill of their own, so they take the label's colour here. The brand
+	// marks keep their own fills. WPDS draws the envelope inset in its 24x24 canvas, so it is
+	// scaled to match the brand marks; a transform rather than a bigger box, because the label's
+	// negative margin is tuned to a 20px icon.
+	> svg.social-icons__envelope {
+		fill: currentColor;
+		transform: scale(1.3);
+	}
+
 	> span {
 		font-feature-settings: "clig" off, "liga" off;
 		margin-inline: -20px auto;
