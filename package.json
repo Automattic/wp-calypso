@@ -57,6 +57,7 @@
 		"yarn": "^4.0.0"
 	},
 	"scripts": {
+		"audit-content-blocker-chunks": "node bin/audit-content-blocker-chunks.js",
 		"analyze-bundles": "yarn run build-client-stats && webpack-bundle-analyzer client/stats.json public/evergreen -h 127.0.0.1 -p 9898 -s gzip",
 		"analyze-bundles:server": "yarn run build-server-stats && webpack-bundle-analyzer client/stats-server.json build -h 127.0.0.1 -p 9898 -s parsed",
 		"analyze-icfy": "yarn run build-client-stats && node --max-old-space-size=6144 bin/icfy-analyze.js",
