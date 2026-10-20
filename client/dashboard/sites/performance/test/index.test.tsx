@@ -34,7 +34,10 @@ beforeEach( () => {
 		.query( true )
 		.reply( 200, site );
 } );
-afterEach( () => mockCandidate.mockReturnValue( null ) );
+afterEach( () => {
+	mockCandidate.mockReturnValue( null );
+	window.localStorage.clear();
+} );
 
 describe( '<SitePerformanceContent>', () => {
 	test( 'keeps the launch message when an urgent notice takes the slot', async () => {
@@ -77,7 +80,5 @@ describe( '<SitePerformanceContent>', () => {
 			await screen.findByText( 'Publish your site to start measuring performance' )
 		).toBeVisible();
 		expect( await screen.findByRole( 'link', { name: 'Publish your site' } ) ).toBeVisible();
-
-		window.localStorage.clear();
 	} );
 } );
