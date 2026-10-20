@@ -168,54 +168,54 @@ export class Login extends Component {
 		return <LocaleSuggestions locale={ locale } path={ path } />;
 	}
 
+	handleLostPasswordClick = ( event ) => {
+		event.preventDefault();
+		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+		page(
+			login( {
+				redirectTo: this.props.redirectTo,
+				locale: this.props.locale,
+				action:
+					this.props.isWooJPC || this.props.isJetpack ? 'jetpack/lostpassword' : 'lostpassword',
+				oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+				from: this.props.currentQuery?.from,
+			} )
+		);
+	};
+
+	/**
+	 * Where "Lost your password?" goes, shared by its footer and password label row copies.
+	 *
+	 * Jetpack, Woo and OAuth2 sign-ins stay on the Calypso screen: it carries the
+	 * passwordless magic-link branch and the client context, and wp-login.php has neither.
+	 */
+	getLostPasswordLinkProps() {
+		const keepCalypsoForm =
+			this.props.isWooJPC || this.props.isJetpack || !! this.props.oauth2Client;
+
+		if ( keepCalypsoForm ) {
+			return { href: '/', onClick: this.handleLostPasswordClick };
+		}
+
+		return {
+			// No redirect_to. wp-login.php honours it in place of checkemail=confirm, and
+			// the recovery-email and SMS steps hang off checkemail=confirm.
+			href: lostPassword( { locale: this.props.locale } ),
+			rel: 'external',
+			onClick: () => this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' ),
+		};
+	}
+
+	/**
+	 * The footer's copy, which is where this link lives below 960px.
+	 */
 	getLostPasswordLink() {
 		if ( this.props.twoFactorAuthType ) {
 			return null;
 		}
 
-		// Jetpack, Woo and OAuth2 sign-ins stay on the Calypso screen: it carries the
-		// passwordless magic-link branch and the client context, and wp-login.php has neither.
-		const keepCalypsoForm =
-			this.props.isWooJPC || this.props.isJetpack || !! this.props.oauth2Client;
-
-		if ( ! keepCalypsoForm ) {
-			return (
-				<a
-					className="one-login__footer-link"
-					// No redirect_to. wp-login.php honours it in place of checkemail=confirm, and
-					// the recovery-email and SMS steps hang off checkemail=confirm.
-					href={ lostPassword( { locale: this.props.locale } ) }
-					rel="external"
-					onClick={ () =>
-						this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' )
-					}
-				>
-					{ this.props.translate( 'Lost your password?' ) }
-				</a>
-			);
-		}
-
 		return (
-			<a
-				className="one-login__footer-link"
-				href="/"
-				onClick={ ( event ) => {
-					event.preventDefault();
-					this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
-					page(
-						login( {
-							redirectTo: this.props.redirectTo,
-							locale: this.props.locale,
-							action:
-								this.props.isWooJPC || this.props.isJetpack
-									? 'jetpack/lostpassword'
-									: 'lostpassword',
-							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-							from: this.props.currentQuery?.from,
-						} )
-					);
-				} }
-			>
+			<a className="one-login__footer-link" { ...this.getLostPasswordLinkProps() }>
 				{ this.props.translate( 'Lost your password?' ) }
 			</a>
 		);
