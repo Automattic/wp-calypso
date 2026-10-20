@@ -53,7 +53,7 @@ const PostCheckoutOnboarding: StepType< {
 	const siteSlug = useSiteSlugParam() ?? '';
 	const {
 		data: site,
-		isLoading: isLoadingSite,
+		isFetchedAfterMount: isSiteFetchedAfterMount,
 		isError: isErrorSite,
 	} = useQuery( {
 		...siteBySlugQuery( siteSlug ),
@@ -177,7 +177,9 @@ const PostCheckoutOnboarding: StepType< {
 			hasError ||
 			! site ||
 			! siteSlug ||
-			isLoadingSite ||
+			// The site can come from the persisted query cache with its pre-purchase plan, which
+			// would hide the chooser, so wait for a fetch made after checkout.
+			! isSiteFetchedAfterMount ||
 			isLoadingMarketplaceThemeProducts ||
 			isLoadingSiteTransferStatusData
 		) {
@@ -221,7 +223,7 @@ const PostCheckoutOnboarding: StepType< {
 		hasError,
 		site,
 		siteSlug,
-		isLoadingSite,
+		isSiteFetchedAfterMount,
 		isLoadingMarketplaceThemeProducts,
 		isLoadingSiteTransferStatusData,
 		isJetpackOrAtomic,
