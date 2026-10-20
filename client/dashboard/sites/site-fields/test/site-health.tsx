@@ -40,13 +40,31 @@ describe( '<SiteHealth>', () => {
 		expect( screen.getByText( '3 plugin updates' ) ).toBeVisible();
 	} );
 
-	test( 'does not ask for the health of a site without Jetpack', async () => {
+	test( 'shows the issues of a site connected without the Jetpack plugin', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/sites/1/dashboard/site-health' )
+			.query( true )
+			.reply( 200, {
+				site_down: false,
+				site_disconnected: false,
+				backup_failed: false,
+				backup_warning: false,
+				threats_found: 0,
+				plugin_updates: 1,
+			} );
+
+		render( <SiteHealth site={ { ...site, jetpack: false, jetpack_connection: true } } /> );
+
+		expect( await screen.findByText( '1 plugin update' ) ).toBeVisible();
+	} );
+
+	test( 'does not ask for the health of a site without a Jetpack connection', async () => {
 		const health = nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/sites/1/dashboard/site-health' )
 			.query( true )
 			.reply( 200, {} );
 
-		render( <SiteHealth site={ { ...site, jetpack: false } } /> );
+		render( <SiteHealth site={ { ...site, jetpack: false, jetpack_connection: false } } /> );
 
 		await waitFor( () => expect( screen.getByText( '-' ) ).toBeVisible() );
 		expect( health.isDone() ).toBe( false );

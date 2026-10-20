@@ -72,10 +72,11 @@ function getSiteIssueBadges( health: SiteHealthData ): SiteIssueBadge[] {
 	return badges;
 }
 
-// Only Jetpack-connected sites, Atomic included, can have an issue.
+// Only Jetpack-connected sites, Atomic included, can have an issue. A site
+// connected without the Jetpack plugin has `jetpack: false` but still counts.
 export function SiteHealth( { site }: { site: Site } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
-	const isEligible = site.jetpack;
+	const isEligible = site.jetpack || site.jetpack_connection;
 
 	const { data: health, isLoading } = useQuery( {
 		...siteHealthQuery( site.ID ),
