@@ -15,6 +15,8 @@ Note: If `disabledThankYouPage` is `true`, then `onPurchaseSuccess` should also 
 
 ## Example
 
+<!-- eslint-skip -->
+
 ```jsx
 const YourComponent = () => {
 

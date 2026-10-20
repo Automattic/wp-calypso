@@ -3,14 +3,15 @@ import {
 	CREDITS_UPGRADE_SOURCE,
 	getCreditsCtaType,
 	getCreditsNoticeMessage,
+	getCreditsPurchaseAction,
+	getCreditsPurchaseLink,
 	getCreditsPurchaseOptions,
-	getCreditsUpgradeUrl,
 	parseCreditsAccess,
 	parseLiveCreditsStatus,
 } from '@automattic/agents-manager';
 import { useEvent } from '@wordpress/compose';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { getSessionId } from '../utils/session';
 import {
 	getImageStudioBlogId,
 	getImageStudioIsDevMode,
@@ -27,6 +28,7 @@ import {
 import type { ImageStudioMode } from '../types';
 import type {
 	CreditsAccess,
+	CreditsPurchaseAction,
 	CreditsPurchaseOptions,
 	CreditsStatus,
 } from '@automattic/agents-manager';
@@ -68,18 +70,28 @@ function getMeterDetails(
 function getNoticeCredits(
 	status: PaidCreditsStatus,
 	level: SiteCreditsLevel | null,
-	{ upgradeUrl, askToUpgrade }: CreditsPurchaseOptions
+	{ purchaseKind, askToUpgrade }: CreditsPurchaseOptions
 ): UpgradeNoticeCredits {
 	return {
 		...getMeterDetails( status, level ),
-		ctaType: getCreditsCtaType( !! upgradeUrl, askToUpgrade ),
-		ref: upgradeUrl ? CREDITS_UPGRADE_SOURCE : 'none',
+		ctaType: getCreditsCtaType( purchaseKind, askToUpgrade ),
+		ref: purchaseKind ? CREDITS_UPGRADE_SOURCE : 'none',
 	};
 }
 
 /** Only Simple and Atomic sites can be on AI credits, so self-hosted sites skip the check. */
 function getSiteCreditsBlogId(): number | null {
 	return getImageStudioSiteType() === 'jetpack' ? null : getImageStudioBlogId();
+}
+
+/** The link carries the session the click event sends as `ai_session_id`. */
+function getSitePurchaseLink( status: PaidCreditsStatus, blogId: number ) {
+	return getCreditsPurchaseLink(
+		status,
+		blogId,
+		getImageStudioSiteType() === 'simple',
+		getSessionId()
+	);
 }
 
 /** Resolves to undefined when the site is not on AI credits or the request fails. */
@@ -119,10 +131,9 @@ export interface AiCreditsState {
 	/** The Agent's credits dot, for sites on a paid plan. */
 	meter?: {
 		status: CreditsStatus;
-		upgradeUrl?: string;
-		/** Records a click on that link, so popover clicks join the notice's events. */
-		onUpgradeClick?: () => void;
-		/** Shown instead of Upgrade to people who can't upgrade the plan. */
+		/** Upgrade or Add credits, by the site's plan. Its click joins the notice's events. */
+		action?: CreditsPurchaseAction;
+		/** Shown instead of that button to people who can't buy it. */
 		purchaseHint?: string;
 		isOpen: boolean;
 		onToggle: ( isOpen: boolean ) => void;
@@ -158,8 +169,8 @@ export function useAiCredits( {
 	// Cancelled when the credentials change or the modal closes, so an older check's answer is dropped.
 	const checkToken = useRef( { isCancelled: false } );
 	// A notice event waits for a running check to answer or fail, so it can say whether
-	// Upgrade shows; a skipped check leaves nothing to wait for. The opening check's 5-second
-	// timeout doesn't count: a late answer can still add Upgrade.
+	// Upgrade or Add credits shows; a skipped check leaves nothing to wait for. The opening
+	// check's 5-second timeout doesn't count: a late answer can still add the button.
 	const isAccessSettled = useRef( isRequestSkipped );
 	const heldNotice = useRef< { level: SiteCreditsLevel; trigger: UpgradeNoticeTrigger } | null >(
 		null
@@ -182,7 +193,7 @@ export function useAiCredits( {
 				return;
 			}
 			const purchaseOptions = getCreditsPurchaseOptions(
-				getCreditsUpgradeUrl( next, blogId ),
+				getSitePurchaseLink( next, blogId ),
 				accessRef.current
 			);
 			trackImageStudioUpgradeNoticeShown( {
@@ -311,9 +322,13 @@ export function useAiCredits( {
 	} );
 
 	const level = status ? getSiteCreditsLevel( status.remaining ) : null;
-	const { upgradeUrl, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
-		status && blogId !== null ? getCreditsUpgradeUrl( status, blogId ) : undefined,
+	const { purchaseUrl, purchaseKind, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
+		status && blogId !== null ? getSitePurchaseLink( status, blogId ) : undefined,
 		access
+	);
+	const purchaseAction = useMemo(
+		() => getCreditsPurchaseAction( { purchaseUrl, purchaseKind } ),
+		[ purchaseUrl, purchaseKind ]
 	);
 	const isNoticeHidden = level === 'low' && isLowNoticeDismissed;
 
@@ -321,13 +336,13 @@ export function useAiCredits( {
 	// link. A popover click can report `state: ok`, since the popover opens on a healthy balance.
 	const trackUpgradeClick = useEvent( ( trigger: UpgradeLinkTrigger ) => {
 		// Callers pass it only with a link; this narrows the types.
-		if ( ! status || ! upgradeUrl ) {
+		if ( ! status || ! purchaseKind ) {
 			return;
 		}
 		trackImageStudioUpgradeNoticeClick( {
 			mode,
 			trigger,
-			...getNoticeCredits( status, level, { upgradeUrl } ),
+			...getNoticeCredits( status, level, { purchaseKind } ),
 		} );
 	} );
 
@@ -359,8 +374,10 @@ export function useAiCredits( {
 			meter: status
 				? {
 						status,
-						upgradeUrl,
-						onUpgradeClick: upgradeUrl ? () => trackUpgradeClick( 'popover' ) : undefined,
+						action: purchaseAction && {
+							...purchaseAction,
+							onClick: () => trackUpgradeClick( 'popover' ),
+						},
 						purchaseHint,
 						isOpen: isMeterOpen,
 						onToggle: toggleMeter,
@@ -373,22 +390,17 @@ export function useAiCredits( {
 							message: getCreditsNoticeMessage( level, status.remaining, askToUpgrade ),
 							dismissible: level === 'low',
 							onDismiss: () => setIsLowNoticeDismissed( true ),
-							action: upgradeUrl
-								? {
-										label: __( 'Upgrade', __i18n_text_domain__ ),
-										href: upgradeUrl,
-										target: '_blank',
-										rel: 'noopener noreferrer',
-										onClick: () => trackUpgradeClick( shown.current.trigger ),
-									}
-								: undefined,
+							action: purchaseAction && {
+								...purchaseAction,
+								onClick: () => trackUpgradeClick( shown.current.trigger ),
+							},
 						}
 					: undefined,
 		} ),
 		[
 			status,
 			level,
-			upgradeUrl,
+			purchaseAction,
 			askToUpgrade,
 			purchaseHint,
 			isNoticeHidden,

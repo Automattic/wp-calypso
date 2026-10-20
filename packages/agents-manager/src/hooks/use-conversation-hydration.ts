@@ -1,9 +1,12 @@
 import {
 	getAgentManager,
 	type Message,
+	type ToolResultInput,
+	type TurnToolCall,
 	type UseAgentChatReturn,
 } from '@automattic/agenttic-client';
 import { useAgentsManagerContext } from '../contexts';
+import { hasNewAgentReply } from '../utils/tool-call-resume';
 import useConversation from './use-conversation';
 
 interface UseConversationHydrationOptions {
@@ -12,6 +15,12 @@ interface UseConversationHydrationOptions {
 	loadMessages: UseAgentChatReturn[ 'loadMessages' ];
 	/** Called with the fetched transcript, even when the live history is kept instead. */
 	onFetch: ( loadedMessages: Message[] ) => void;
+	/** Whether a turn is running; a running turn ends the wait for a reply. */
+	isProcessing: boolean;
+	/** Called with the unanswered question when the user picks Retry. */
+	onRetry: ( question: string ) => void;
+	/** Sends the tool results that resume a turn paused before a page change. */
+	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
 }
 
 /**
@@ -20,16 +29,44 @@ interface UseConversationHydrationOptions {
  * or a turn still running after a remount. `useConversation` skips Reader
  * Chat, which has no server history.
  *
- * Returns whether the conversation is still loading.
+ * A turn paused on a browser tool whose page went away has no one left to
+ * answer it, so this page answers it and the reply streams in here.
+ *
+ * Returns whether the conversation is still loading, the notice to show while
+ * it waits for, picks up or gives up on a reply a page change left unanswered,
+ * and whether a resume failed (`hasFailedResume`).
  */
 export function useConversationHydration( {
 	hadParkedNavigation,
 	loadMessages,
 	onFetch,
+	isProcessing,
+	onRetry,
+	onSubmit,
 }: UseConversationHydrationOptions ) {
 	const { agentConfig } = useAgentsManagerContext();
 
-	const { isLoading } = useConversation( {
+	// Answers the browser tool calls a turn paused on before a page change, so the
+	// reply streams in here; resolves to whether one did.
+	async function resumeToolCalls( toolResults: ToolResultInput[], turnToolCalls: TurnToolCall[] ) {
+		const agentManager = getAgentManager();
+		const agentId = agentConfig!.agentId;
+		const messageIdsBeforeResume = new Set(
+			agentManager.getConversationHistory( agentId ).map( ( { messageId } ) => messageId )
+		);
+
+		await onSubmit( '', { type: 'tool_results', toolResults, turnToolCalls } );
+
+		return hasNewAgentReply(
+			messageIdsBeforeResume,
+			agentManager.getConversationHistory( agentId )
+		);
+	}
+
+	const { isLoading, notice, hasFailedResume } = useConversation( {
+		waitForReply: ! isProcessing,
+		onRetry,
+		onResume: resumeToolCalls,
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			const agentId = agentConfig!.agentId;
 
@@ -66,5 +103,5 @@ export function useConversationHydration( {
 		},
 	} );
 
-	return isLoading;
+	return { isLoading, notice, hasFailedResume };
 }

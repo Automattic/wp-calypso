@@ -23,7 +23,7 @@ beforeEach( () => {
 
 describe( 'getOdieTransferMessages', () => {
 	it( 'refers back to the AI chat after a handoff from Odie', () => {
-		expect( contents( 'wpcom-workflow-support_chat' ) ).toEqual( [
+		expect( contents() ).toEqual( [
 			'No problem. Help is on the way!',
 			'A Happiness Engineer will reply as soon as they are available, either here or by email.',
 			'They can see this conversation, so please add any other details that may help.',
@@ -31,7 +31,7 @@ describe( 'getOdieTransferMessages', () => {
 	} );
 
 	it( 'asks for the details when the user went straight to a human', () => {
-		expect( contents( 'wpcom-workflow-support_chat', () => true, true ) ).toEqual( [
+		expect( contents( () => true, true ) ).toEqual( [
 			'A Happiness Engineer will reply as soon as they are available, either here or by email.',
 			ASK_FOR_DETAILS,
 		] );
@@ -40,7 +40,7 @@ describe( 'getOdieTransferMessages', () => {
 	it( 'leaves out the request for details until it is translated', () => {
 		const hasEnTranslation = ( text: string ) => text !== ASK_FOR_DETAILS;
 
-		expect( contents( 'wpcom-workflow-support_chat', hasEnTranslation, true ) ).toEqual( [
+		expect( contents( hasEnTranslation, true ) ).toEqual( [
 			'A Happiness Engineer will reply as soon as they are available, either here or by email.',
 		] );
 	} );
@@ -48,7 +48,7 @@ describe( 'getOdieTransferMessages', () => {
 	it( 'shows the sandbox notice instead of the reply promise in test mode', () => {
 		( isTestModeEnvironment as jest.Mock ).mockReturnValue( true );
 
-		const messages = contents( 'wpcom-workflow-support_chat', () => true, true );
+		const messages = contents( () => true, true );
 
 		expect( messages ).toHaveLength( 2 );
 		expect( messages[ 0 ] ).toMatch( /^This is the Sandbox version of Zendesk/ );

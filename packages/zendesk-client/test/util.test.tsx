@@ -6,7 +6,12 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import config from '@automattic/calypso-config';
 import { isInSupportSession } from '@automattic/data-stores';
-import { isTestModeEnvironment } from '../src/util';
+import {
+	SMOOCH_INTEGRATION_ID,
+	SMOOCH_INTEGRATION_ID_CUSTOM,
+	SMOOCH_INTEGRATION_ID_STAGING,
+} from '../src/constants';
+import { getSmoochIntegrationId, isTestModeEnvironment } from '../src/util';
 
 // Mock the config module - must be hoisted before imports
 jest.mock( '@automattic/calypso-config', () => {
@@ -172,5 +177,36 @@ describe( 'isTestModeEnvironment', () => {
 
 			expect( isTestModeEnvironment() ).toBe( true );
 		} );
+	} );
+} );
+
+describe( 'getSmoochIntegrationId', () => {
+	const mockEnv = ( env: string ) =>
+		( config as unknown as jest.Mock ).mockImplementation( ( key: string ) =>
+			key === 'env_id' || key === 'env' ? env : undefined
+		);
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		( isInSupportSession as jest.Mock ).mockReturnValue( false );
+	} );
+
+	test( 'uses the WordPress.com integration without a key', () => {
+		mockEnv( 'production' );
+
+		expect( getSmoochIntegrationId() ).toBe( SMOOCH_INTEGRATION_ID );
+		expect( getSmoochIntegrationId( null ) ).toBe( SMOOCH_INTEGRATION_ID );
+	} );
+
+	test( 'uses the dedicated integration for a key', () => {
+		mockEnv( 'production' );
+
+		expect( getSmoochIntegrationId( 'woo' ) ).toBe( SMOOCH_INTEGRATION_ID_CUSTOM.woo );
+	} );
+
+	test( 'uses the staging integration in test mode, even with a key', () => {
+		mockEnv( 'development' );
+
+		expect( getSmoochIntegrationId( 'woo' ) ).toBe( SMOOCH_INTEGRATION_ID_STAGING );
 	} );
 } );

@@ -65,12 +65,12 @@ function mockEndpoints( {
 const newReferralButton = () => screen.queryByRole( 'link', { name: 'New referral' } );
 
 describe( '<EarnReferrals>', () => {
-	test( 'offers a new referral to an approved agency, on Products in referral mode', async () => {
+	test( 'offers a new referral to an approved agency, on Hosting in referral mode', async () => {
 		mockEndpoints();
 		const { recordTracksEvent } = render( <EarnReferrals /> );
 
 		const button = await screen.findByRole( 'link', { name: 'New referral' } );
-		expect( button ).toHaveAttribute( 'href', '/products' );
+		expect( button ).toHaveAttribute( 'href', '/hosting' );
 		await userEvent.click( button );
 
 		expect( sessionStorage.getItem( 'marketplace-type' ) ).toBe( 'referral' );
@@ -79,16 +79,16 @@ describe( '<EarnReferrals>', () => {
 		);
 	} );
 
-	test( 'sends an agency with no referrals to Products in referral mode', async () => {
+	test( 'sends an agency with no referrals to Hosting in referral mode', async () => {
 		mockEndpoints( { referrals: [] } );
 		render( <EarnReferrals /> );
 
 		expect( await screen.findByRole( 'link', { name: 'Make a referral' } ) ).toHaveAttribute(
 			'href',
-			'/products'
+			'/hosting'
 		);
 		const getStarted = screen.getByRole( 'link', { name: 'Get started' } );
-		expect( getStarted ).toHaveAttribute( 'href', '/products' );
+		expect( getStarted ).toHaveAttribute( 'href', '/hosting' );
 		await userEvent.click( getStarted );
 
 		expect( sessionStorage.getItem( 'marketplace-type' ) ).toBe( 'referral' );

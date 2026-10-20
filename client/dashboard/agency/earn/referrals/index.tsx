@@ -16,7 +16,7 @@ import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { AgencyNotices } from '../../components/agency-notices';
 import { isAgencyApproved } from '../../marketplace/is-agency-approved';
-import { MARKETPLACE_PRODUCTS_ROUTE } from '../../marketplace/paths';
+import { MARKETPLACE_HOSTING_ROUTE } from '../../marketplace/paths';
 import { useMarketplaceType } from '../../marketplace/use-marketplace-type';
 import MissingPaymentSettingsNotice, {
 	useMissingPaymentSettings,
@@ -66,7 +66,7 @@ export default function EarnReferrals() {
 							<RouterLinkButton
 								variant="primary"
 								__next40pxDefaultSize
-								to={ MARKETPLACE_PRODUCTS_ROUTE }
+								to={ MARKETPLACE_HOSTING_ROUTE }
 								onClick={ () => {
 									updateMarketplaceType( 'referral' );
 									recordTracksEvent( 'calypso_a4a_referrals_make_a_referral_button_click' );

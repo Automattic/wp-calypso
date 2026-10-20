@@ -718,7 +718,7 @@ object CheckCodeStyleBranch : BuildType({
 				# Find lintable files touched in this branch, except those deleted
 				function _find_files_to_lint() {
 					git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD \
-						| grep -E '(\.[jt]sx?|\.json|\.md)${'$'}' \
+						| grep -E '(\.[cm]?[jt]sx?|\.json|\.md)${'$'}' \
 						|| true
 				}
 

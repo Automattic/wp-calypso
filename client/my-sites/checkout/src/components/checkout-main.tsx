@@ -15,9 +15,6 @@ import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
-import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
-import { isCommerceGarden } from 'calypso/dashboard/utils/site-types';
 import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -31,7 +28,6 @@ import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import { isJetpackNotAtomicSite, useCheckoutSite } from '../hooks/use-checkout-site';
-import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
@@ -150,9 +146,7 @@ export default function CheckoutMain( {
 	const translate = useTranslate();
 
 	const { data: site, isLoading: isSiteLoading } = useCheckoutSite( siteId );
-	const isJetpackNotAtomic =
-		( isJetpackNotAtomicSite( site ) && ! ( site && isCommerceGarden( site ) ) ) ||
-		sitelessCheckoutType === 'jetpack';
+	const isJetpackNotAtomic = isJetpackNotAtomicSite( site ) || sitelessCheckoutType === 'jetpack';
 	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
 	const cartKey = useCartKey();
 
@@ -657,7 +651,6 @@ export default function CheckoutMain( {
 		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
 	};
 
-	const [ isCheckoutUiRedesignLoading ] = useCheckoutUiRedesignExperiment();
 	const { isLoading: isMobileCheckoutStickySummaryLoading } =
 		useMobileCheckoutStickySummaryExperiment();
 
@@ -687,7 +680,7 @@ export default function CheckoutMain( {
 		{ name: translate( 'Loading Site' ), isLoading: isSiteLoading },
 		{
 			name: translate( 'Loading checkout' ),
-			isLoading: isCheckoutUiRedesignLoading || isMobileCheckoutStickySummaryLoading,
+			isLoading: isMobileCheckoutStickySummaryLoading,
 		},
 	];
 
@@ -853,15 +846,14 @@ export default function CheckoutMain( {
 		paymentMethods
 	);
 
-	const dashboard = getDashboardFromHostname( window?.location?.hostname );
 	const stepContainerV2Context = useMemo(
 		() => ( {
 			flowName: '',
 			stepName: '',
 			recordTracksEvent: () => {},
-			logo: getDashboardStepperLogo( dashboard ),
+			logo: null,
 		} ),
-		[ dashboard ]
+		[]
 	);
 
 	return (

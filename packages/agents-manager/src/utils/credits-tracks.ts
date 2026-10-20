@@ -1,5 +1,5 @@
 /**
- * Tracks props for the site credits notice, its dismissal, the credits popover and their Upgrade clicks.
+ * Tracks props for the site credits notice, its dismissal, the credits popover and their Upgrade and Add credits clicks.
  */
 import { type CreditsStatus, isCreditsExhausted, isCreditsLow } from './credits';
 import { recordAgentsManagerTracksEvent } from './tracks';

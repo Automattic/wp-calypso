@@ -1,6 +1,5 @@
 // Main component exports
 export { default } from './components/agents-manager';
-export type { AgentsManagerProps } from './components/agents-manager';
 
 export { AGENTS_MANAGER_STORE } from './stores';
 
@@ -19,14 +18,14 @@ export {
 
 // Extension API types for other plugins to hook into
 export type {
-	Ability,
 	ToolProvider,
 	ContextProvider,
 	ClientContextType,
 	BaseContextEntry,
 	ContextEntry,
-	Suggestion,
 } from './types';
+export type { Ability } from '@wordpress/abilities';
+export type { Suggestion } from '@automattic/agenttic-ui';
 
 export { useAiChatEntryState } from './hooks/use-ai-chat-entry-state';
 export { default as AiChatEntryLabel } from './components/ai-chat-entry-label';
@@ -42,20 +41,22 @@ export { CREDITS_LOW_BALANCE, formatCreditsShort } from './utils/credits';
 export { default as CreditsMeter } from './components/credits-meter';
 export {
 	CREDITS_UPGRADE_SOURCE,
-	getCreditsUpgradeUrl,
+	getCreditsPurchaseLink,
 	parseLiveCreditsStatus,
 } from './utils/live-credits';
-// Who may buy, and what to tell everyone else, so every chat offers Upgrade the same way
+// Who may buy, and what to tell everyone else, so every chat offers Upgrade or Add credits the same way
 export {
 	getCreditsCtaType,
 	getCreditsNoticeMessage,
+	getCreditsPurchaseAction,
 	getCreditsPurchaseOptions,
 	parseCreditsAccess,
 } from './utils/credits-access';
 export type { CreditsStatus } from './utils/credits';
+export type { CreditsPurchaseKind, CreditsPurchaseLink } from './utils/live-credits';
 export type {
 	CreditsAccess,
-	CreditsAskToUpgrade,
 	CreditsCtaType,
+	CreditsPurchaseAction,
 	CreditsPurchaseOptions,
 } from './utils/credits-access';
