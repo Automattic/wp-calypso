@@ -125,7 +125,7 @@ export function formatCreditsLeft( credits: number ): string {
 	);
 }
 
-/** Tooltip and screen-reader sentence for the meter toggle. */
+/** Credits left as a sentence: an amount on paid plans, a percentage on free ones. */
 export function getCreditsLabel( status: CreditsStatus ): string {
 	if ( status.plan === 'paid' ) {
 		// The combined balance across the plan and top-ups, not the monthly allowance alone.
@@ -137,6 +137,26 @@ export function getCreditsLabel( status: CreditsStatus ): string {
 		__( '%s%% of free credits left', __i18n_text_domain__ ),
 		formatPercent( status.percent )
 	);
+}
+
+/** The meter toggle's label and tooltip: the amount, led by the state when low or out. */
+export function getCreditsToggleLabel( status: CreditsStatus ): string {
+	const label = getCreditsLabel( status );
+	if ( isCreditsExhausted( status ) ) {
+		return sprintf(
+			/* translators: %s: credits left, e.g. "0 credits left" or "0% of free credits left" */
+			__( 'Out of credits: %s', __i18n_text_domain__ ),
+			label
+		);
+	}
+	if ( isCreditsLow( status ) ) {
+		return sprintf(
+			/* translators: %s: credits left, e.g. "9.9k credits left" or "15% of free credits left" */
+			__( 'Low on credits: %s', __i18n_text_domain__ ),
+			label
+		);
+	}
+	return label;
 }
 
 export function formatCreditsDetail( pool: CreditsPool ): string | undefined {

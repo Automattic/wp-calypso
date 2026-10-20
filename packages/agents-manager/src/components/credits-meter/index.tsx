@@ -8,7 +8,7 @@ import {
 	formatCreditsDetail,
 	formatCreditsLeft,
 	formatPercent,
-	getCreditsLabel,
+	getCreditsToggleLabel,
 	isCreditsAlert,
 	isCreditsExhausted,
 } from '../../utils/credits';
@@ -118,8 +118,9 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
  * becomes an alert icon on a red tint when the balance is low or used up, a
  * tooltip on hover or focus, and a popover on click listing each credit pool
  * with a single CTA. The tooltip gives a paid site's credits left as an amount
- * and a free plan's as a percentage. Each pool row leads with its percentage,
- * except top-ups, which have no allowance and show their balance alone.
+ * and a free plan's as a percentage, led by the state when low or out. Each
+ * pool row leads with its percentage, except top-ups, which have no allowance
+ * and show their balance alone.
  */
 export default function CreditsMeter( {
 	status,
@@ -130,7 +131,7 @@ export default function CreditsMeter( {
 	purchaseHint,
 	manageUrl,
 }: Props ) {
-	const label = getCreditsLabel( status );
+	const label = getCreditsToggleLabel( status );
 	const isAlert = isCreditsAlert( status );
 	const isExhausted = isCreditsExhausted( status );
 	const isFree = status.plan === 'free';

@@ -7,6 +7,7 @@ import {
 	formatCreditsShort,
 	formatPercent,
 	getCreditsLabel,
+	getCreditsToggleLabel,
 	isCreditsAlert,
 	isCreditsExhausted,
 	isCreditsLow,
@@ -149,6 +150,28 @@ describe( 'getCreditsLabel', () => {
 		expect( getCreditsLabel( paid( 0, 1 ) ) ).toBe( `${ localNumber( 1 ) } credit left` );
 		expect( getCreditsLabel( paid( 0 ) ) ).toBe( `${ localNumber( 0 ) } credits left` );
 		expect( getCreditsLabel( paid( 0, 2 ) ) ).toBe( `${ localNumber( 2 ) } credits left` );
+	} );
+} );
+
+describe( 'getCreditsToggleLabel', () => {
+	it( 'gives the amount alone while credits are fine', () => {
+		expect( getCreditsToggleLabel( paid( 0, 12000 ) ) ).toBe(
+			`${ localNumber( 12 ) }k credits left`
+		);
+		expect( getCreditsToggleLabel( free( 55 ) ) ).toBe( '55% of free credits left' );
+	} );
+
+	it( 'leads with the state when credits are low or out', () => {
+		expect( getCreditsToggleLabel( paid( 0, 9999 ) ) ).toBe(
+			`Low on credits: ${ localNumber( 9.9 ) }k credits left`
+		);
+		expect( getCreditsToggleLabel( free( 0.4 ) ) ).toBe(
+			'Low on credits: <1% of free credits left'
+		);
+		expect( getCreditsToggleLabel( paid( 0 ) ) ).toBe(
+			`Out of credits: ${ localNumber( 0 ) } credits left`
+		);
+		expect( getCreditsToggleLabel( free( 0 ) ) ).toBe( 'Out of credits: 0% of free credits left' );
 	} );
 } );
 

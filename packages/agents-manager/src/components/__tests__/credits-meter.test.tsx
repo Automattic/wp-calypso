@@ -181,6 +181,7 @@ describe( 'CreditsMeter', () => {
 		const toggle = screen.getByRole( 'button', { name: `${ localNumber( 11.6 ) }k credits left` } );
 		expect( toggle ).not.toHaveClass( 'is-alert' );
 		expect( togglePath( toggle ) ).toBe( iconPath( info ) );
+		expect( toggle ).not.toHaveAccessibleDescription();
 		fireEvent.click( toggle );
 		expect( onToggle ).toHaveBeenCalledWith( true );
 	} );
@@ -194,13 +195,16 @@ describe( 'CreditsMeter', () => {
 	} );
 
 	it.each( [
-		[ 'low', livePaid( 9999 ), `${ localNumber( 9.9 ) }k credits left` ],
-		[ 'out', livePaid( 0 ), `${ localNumber( 0 ) } credits left` ],
-	] )( 'switches to the alert icon when credits are %s', ( _state, status, name ) => {
+		[ 'low', livePaid( 9999 ), `Low on credits: ${ localNumber( 9.9 ) }k credits left` ],
+		[ 'out', livePaid( 0 ), `Out of credits: ${ localNumber( 0 ) } credits left` ],
+	] )( 'switches to the alert icon when credits are %s', async ( _state, status, name ) => {
 		render( <CreditsMeter status={ status } isOpen={ false } onToggle={ () => {} } /> );
 		const toggle = screen.getByRole( 'button', { name } );
 		expect( toggle ).toHaveClass( 'is-alert' );
 		expect( togglePath( toggle ) ).toBe( iconPath( caution ) );
+		await userEvent.hover( toggle );
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( name );
+		expect( toggle ).not.toHaveAccessibleDescription();
 	} );
 
 	it( 'lists each pool with its figures and a secondary CTA on paid plans', () => {
@@ -238,7 +242,7 @@ describe( 'CreditsMeter', () => {
 		};
 		render( <CreditsMeter status={ status } isOpen onToggle={ () => {} } /> );
 		expect(
-			screen.getByRole( 'button', { name: `${ localNumber( 1 ) } credit left` } )
+			screen.getByRole( 'button', { name: `Low on credits: ${ localNumber( 1 ) } credit left` } )
 		).toBeInTheDocument();
 		expect( screen.getByText( '<1%' ) ).toBeInTheDocument();
 		expect(
@@ -257,7 +261,7 @@ describe( 'CreditsMeter', () => {
 			<CreditsMeter status={ livePaid( 0 ) } isOpen onToggle={ () => {} } action={ upgrade } />
 		);
 		expect(
-			screen.getByRole( 'button', { name: `${ localNumber( 0 ) } credits left` } )
+			screen.getByRole( 'button', { name: `Out of credits: ${ localNumber( 0 ) } credits left` } )
 		).toHaveClass( 'is-alert' );
 		expect( screen.getByText( '0% left' ) ).toHaveClass( 'is-exhausted' );
 		expect( screen.getByText( 'You’ve used all your site credits.' ) ).toHaveClass(
@@ -452,7 +456,7 @@ describe( 'CreditsMeter', () => {
 		};
 		render( <CreditsMeter status={ freeFraction } isOpen onToggle={ () => {} } /> );
 		expect(
-			screen.getByRole( 'button', { name: '<1% of free credits left' } )
+			screen.getByRole( 'button', { name: 'Low on credits: <1% of free credits left' } )
 		).toBeInTheDocument();
 		expect( screen.getByText( '<1%' ) ).toBeInTheDocument();
 		expect( screen.queryByText( /used all your free credits/ ) ).not.toBeInTheDocument();
