@@ -18920,7 +18920,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enhanced-resolve@npm:^5.26.0":
+"enhanced-resolve@npm:^5.25.0":
   version: 5.26.0
   resolution: "enhanced-resolve@npm:5.26.0"
   dependencies:
@@ -26142,7 +26142,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimizer-webpack-plugin@npm:^5.13.0":
+"minimizer-webpack-plugin@npm:^5.7.0":
   version: 5.13.1
   resolution: "minimizer-webpack-plugin@npm:5.13.1"
   dependencies:
@@ -30872,21 +30872,16 @@ __metadata:
   linkType: hard
 
 "schema-utils@npm:^4.0.0, schema-utils@npm:^4.2.0, schema-utils@npm:^4.3.0, schema-utils@npm:^4.3.3, schema-utils@npm:^4.5.0, schema-utils@npm:^4.6.0":
-  version: 4.8.1
-  resolution: "schema-utils@npm:4.8.1"
+  version: 4.7.0
+  resolution: "schema-utils@npm:4.7.0"
   dependencies:
     "@types/json-schema": "npm:^7.0.15"
     ajv: "npm:^8.20.0"
     ajv-formats: "npm:^3.0.1"
     ajv-keywords: "npm:^5.1.0"
-  peerDependencies:
-    webpack: ^5.112.0
-  peerDependenciesMeta:
-    webpack:
-      optional: true
   bin:
     schema-utils: bin/schema-utils.js
-  checksum: b18b816e5628adb6a703883dbbb672aa3368e6462e16097c9df16d9ca192e41191b98c1b63b6cf18b0ee17a7223268ec9ca76935e8c50337cfa8484d3d289eea
+  checksum: 95281b6aba62e4c4fcff3fbf4cdf72f3775c8bfa03bfc3f20f3ce985235f802dcac94a7e85d5e221938482a5e16bf3a72f1a5d1fe473e6d1418354693ec3f03b
   languageName: node
   linkType: hard
 
@@ -34278,7 +34273,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"watchpack@npm:^2.6.1":
+"watchpack@npm:^2.5.2":
   version: 2.6.3
   resolution: "watchpack@npm:2.6.3"
   dependencies:
@@ -34464,7 +34459,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-sources@npm:^2.0.0 || ^3.0.0, webpack-sources@npm:^3.6.0":
+"webpack-sources@npm:^2.0.0 || ^3.0.0, webpack-sources@npm:^3.5.1":
   version: 3.6.0
   resolution: "webpack-sources@npm:3.6.0"
   checksum: c7ec73fc07177421eff4ab9f6ec100d7923d3864fb62d271ff4b264328e5ab0122fa50345450646f3631b5a1ed6330b53bb8f78fa9b5d3c0a655dea836e79bcc
@@ -34479,8 +34474,8 @@ __metadata:
   linkType: hard
 
 "webpack@npm:5, webpack@npm:^5.111.1":
-  version: 5.112.0
-  resolution: "webpack@npm:5.112.0"
+  version: 5.111.1
+  resolution: "webpack@npm:5.111.1"
   dependencies:
     "@types/estree": "npm:^1.0.8"
     "@types/json-schema": "npm:^7.0.15"
@@ -34489,22 +34484,22 @@ __metadata:
     "@webassemblyjs/wasm-parser": "npm:^1.14.1"
     browserslist: "npm:^4.28.1"
     chrome-trace-event: "npm:^1.0.2"
-    enhanced-resolve: "npm:^5.26.0"
+    enhanced-resolve: "npm:^5.25.0"
     es-module-lexer: "npm:^2.1.0"
     events: "npm:^3.2.0"
     graceful-fs: "npm:^4.2.11"
     mime-db: "npm:^1.54.0"
-    minimizer-webpack-plugin: "npm:^5.13.0"
+    minimizer-webpack-plugin: "npm:^5.7.0"
     schema-utils: "npm:^4.5.0"
     tapable: "npm:^2.3.0"
-    watchpack: "npm:^2.6.1"
-    webpack-sources: "npm:^3.6.0"
+    watchpack: "npm:^2.5.2"
+    webpack-sources: "npm:^3.5.1"
   peerDependenciesMeta:
     webpack-cli:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: dee2e7ad612138536e1b8d5dc306955fc5b110146085061e43ed5e100293ebeb23d3521a1b400da9f4e11e99396305bba8aabb5fc35be9480c15c38759c163f9
+  checksum: e14333a01f4a547950d4844f3da9de7311be3644ec6fedede569f203aa4289a2dab7323cdb88f746e2d3cbc7f8c465bd2b030b30292c2d6ef1e5d2ead39cead2
   languageName: node
   linkType: hard
 
