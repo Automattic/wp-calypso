@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -42,12 +43,15 @@ const TYPE_LABELS: Record< AnnouncementType, string > = {
 const TYPE_ORDER: AnnouncementType[] = [ 'event', 'announcement', 'blog' ];
 
 /**
- * Prototype switches, until the announcements API exists: `?items=1|4|12` how many items the
- * server returned, `?tab=event|announcement|blog` the filter it starts on, `?page=2` the
- * page it starts on, `?first=<id>` the item marketing sent first.
+ * Prototype switches, in development builds only, until the announcements API exists:
+ * `?items=1|4|12` how many items the server returned, `?tab=event|announcement|blog` the
+ * filter it starts on, `?page=2` the page it starts on, `?first=<id>` the item marketing
+ * sent first. Everywhere else the URL is ignored and the defaults apply.
  */
 function readSwitches() {
-	const params = new URLSearchParams( typeof window === 'undefined' ? '' : window.location.search );
+	const params = new URLSearchParams(
+		config( 'env' ) === 'development' && typeof window !== 'undefined' ? window.location.search : ''
+	);
 	const count = Math.min( Math.max( Number( params.get( 'items' ) ) || 12, 1 ), 12 );
 	const filter: NewsFilter = TYPE_ORDER.find( ( type ) => type === params.get( 'tab' ) ) ?? 'all';
 	const page = Math.max( Number( params.get( 'page' ) ) || 1, 1 );
