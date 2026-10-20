@@ -14,7 +14,6 @@ import {
 	isNewHostedSiteCreationFlow,
 	isOnboardingFlow,
 	isTailoredSignupFlow,
-	LAUNCH_SITE_FLOW,
 	ONBOARDING_FLOW,
 	SITE_MIGRATION_FLOW,
 	Step,
@@ -690,9 +689,6 @@ function UnifiedPlansStep( {
 				customerType={ customerType }
 				deemphasizeFreePlan={ deemphasizeFreePlan }
 				renderFreePlanCtaInStepContainerV2={ shouldUseModalBackedFreePlanCTA }
-				// Legacy /start/launch-site shares its flow name with the Stepper flow, so the name
-				// alone can't tell which container the plans render in.
-				isInStepContainerV2={ flowName === LAUNCH_SITE_FLOW ? !! useStepContainerV2 : undefined }
 				plansWithScroll={ isDesktop }
 				intent={ intent }
 				flowName={ flowName }

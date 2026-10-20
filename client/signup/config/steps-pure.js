@@ -11,54 +11,12 @@ export function generateSteps( {
 	createAccount = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	addDomainToCart = noop,
-	launchSiteApi = noop,
 	isPlanFulfilled = noop,
-	isDomainFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	createSiteAndAddDIFMToCart = noop,
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
-		'domains-launch': {
-			stepName: 'domains-launch',
-			apiRequestFunction: addDomainToCart,
-			fulfilledStepCallback: isDomainFulfilled,
-			isReadyForFulfillmentCheck: ( stepName, defaultDependencies, props ) =>
-				props.hasLoadedSiteDomains && ! props.isRequestingSiteDomains,
-			providesDependencies: [
-				'domainItem',
-				'shouldHideFreePlan',
-				'signupDomainOrigin',
-				'siteUrl',
-				'lastDomainSearched',
-				'isManageSiteFlow',
-				'siteId',
-				'siteSlug',
-				'themeItem',
-				'useThemeHeadstart',
-				'domainCart',
-			],
-			optionalDependencies: [
-				'shouldHideFreePlan',
-				'signupDomainOrigin',
-				'siteUrl',
-				'lastDomainSearched',
-				'isManageSiteFlow',
-				'siteId',
-				'siteSlug',
-				'themeItem',
-				'useThemeHeadstart',
-			],
-			props: {
-				isDomainOnly: false,
-				showExampleSuggestions: false,
-				includeWordPressDotCom: false,
-				showSkipButton: true,
-			},
-			dependencies: [ 'siteSlug' ],
-		},
-
 		'plans-site-selected': {
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,
@@ -231,22 +189,6 @@ export function generateSteps( {
 			defaultDependencies: {
 				cartItem: PLAN_ECOMMERCE,
 				themeSlugWithRepo: 'pub/twentytwentytwo',
-			},
-		},
-
-		'plans-launch': {
-			stepName: 'plans-launch',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			isReadyForFulfillmentCheck: ( stepName, defaultDependencies, props ) =>
-				props.isPaidPlan != null,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			props: {
-				isLaunchPage: true,
-				isCustomDomainAllowedOnFreePlan: true,
-				deemphasizeFreePlan: true,
 			},
 		},
 
@@ -544,15 +486,6 @@ export function generateSteps( {
 		'clone-cloning': {
 			stepName: 'clone-cloning',
 			providesDependencies: [],
-		},
-
-		launch: {
-			stepName: 'launch',
-			apiRequestFunction: launchSiteApi,
-			dependencies: [ 'siteSlug' ],
-			props: {
-				nonInteractive: true,
-			},
 		},
 
 		'plans-ecommerce-monthly': {

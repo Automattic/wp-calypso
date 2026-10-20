@@ -1,8 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import flows, { getLaunchReturnUrl } from 'calypso/signup/config/flows';
-import { generateFlows } from 'calypso/signup/config/flows-pure';
+import flows from 'calypso/signup/config/flows';
 import mockedFlows from './fixtures/flows';
 
 describe( 'Signup Flows Configuration', () => {
@@ -35,137 +34,6 @@ describe( 'Signup Flows Configuration', () => {
 		} );
 	} );
 
-	describe( 'getLaunchDestination', () => {
-		test( 'should add celebrateLaunch=true query parameter to the destination URL', () => {
-			const mockGetLaunchDestination = jest.fn( ( dependencies ) => {
-				// Import the actual function from flows.js
-				const { addQueryArgs } = require( 'calypso/lib/url' );
-				return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
-			} );
-
-			const testFlows = generateFlows( {
-				getLaunchDestination: mockGetLaunchDestination,
-			} );
-
-			const launchSiteFlow = testFlows[ 'launch-site' ];
-			const dependencies = { siteSlug: 'test-site' };
-			const destination = launchSiteFlow.destination( dependencies );
-
-			expect( destination ).toBe( '/home/test-site?celebrateLaunch=true' );
-		} );
-	} );
-
-	describe( 'launch-site destination', () => {
-		beforeAll( () => {
-			// The suites above stub `getFlows` with fixtures; these assertions need the real config.
-			jest.restoreAllMocks();
-		} );
-
-		const getDestination = ( dependencies ) =>
-			flows.getFlows()[ 'launch-site' ].destination( dependencies );
-
-		test( 'returns the user to where the flow was started from', () => {
-			expect(
-				getDestination( {
-					siteSlug: 'test-site',
-					back_to: '/sites/test-site/settings/site-visibility',
-				} )
-			).toBe( '/sites/test-site/settings/site-visibility?celebrateLaunch=true' );
-		} );
-
-		test( 'prefers redirect_to, so the post-launch landing can differ from where Back goes', () => {
-			expect(
-				getDestination( {
-					siteSlug: 'test-site',
-					back_to: '/sites/test-site/settings/site-visibility',
-					redirect_to: '/sites/test-site',
-				} )
-			).toBe( '/sites/test-site?celebrateLaunch=true' );
-		} );
-
-		test( 'falls back to back_to when redirect_to was cleared on flow entry', () => {
-			expect(
-				getDestination( {
-					siteSlug: 'test-site',
-					back_to: '/sites/test-site/settings/site-visibility',
-					redirect_to: null,
-				} )
-			).toBe( '/sites/test-site/settings/site-visibility?celebrateLaunch=true' );
-		} );
-
-		test( 'lands a wp-admin launch on the wp-admin root, where wp-admin celebrates it', () => {
-			expect(
-				getDestination( {
-					siteSlug: 'test-site.wordpress.com',
-					refParameter: 'wp-admin',
-					back_to: 'https://test-site.wordpress.com/wp-admin/tools.php',
-				} )
-			).toBe( 'https://test-site.wordpress.com/wp-admin?celebrate-launch=true' );
-		} );
-
-		test( 'lands a wp-admin launch on the screen its ref names', () => {
-			expect(
-				getDestination( {
-					siteSlug: 'test-site.wordpress.com',
-					refParameter: 'wp-admin/options-reading.php',
-					back_to: 'https://test-site.wordpress.com/wp-admin/options-reading.php',
-				} )
-			).toBe(
-				'https://test-site.wordpress.com/wp-admin/options-reading.php?celebrate-launch=true'
-			);
-		} );
-
-		test( 'uses the wp-admin celebration argument for a wp-admin back_to without ref', () => {
-			expect(
-				getDestination( {
-					siteSlug: 'test-site.wordpress.com',
-					back_to: 'https://test-site.wordpress.com/wp-admin/options-reading.php',
-				} )
-			).toBe(
-				'https://test-site.wordpress.com/wp-admin/options-reading.php?celebrate-launch=true'
-			);
-		} );
-
-		test( 'lands a wp-admin launch without back_to on the screen its ref names', () => {
-			expect(
-				getDestination( {
-					siteSlug: 'test-site.wordpress.com',
-					refParameter: 'wp-admin/options-reading.php',
-				} )
-			).toBe(
-				'https://test-site.wordpress.com/wp-admin/options-reading.php?celebrate-launch=true'
-			);
-		} );
-	} );
-
-	describe( 'getLaunchReturnUrl', () => {
-		test( 'returns to the exact wp-admin screen back_to names', () => {
-			expect(
-				getLaunchReturnUrl( {
-					siteSlug: 'test-site.wordpress.com',
-					refParameter: 'wp-admin',
-					back_to: 'https://test-site.wordpress.com/wp-admin/post.php?post=1&action=edit',
-				} )
-			).toBe( 'https://test-site.wordpress.com/wp-admin/post.php?post=1&action=edit' );
-		} );
-
-		test( 'falls back to the screen ref names without back_to', () => {
-			expect(
-				getLaunchReturnUrl( {
-					siteSlug: 'test-site.wordpress.com',
-					refParameter: 'wp-admin/options-reading.php',
-					back_to: null,
-				} )
-			).toBe( 'https://test-site.wordpress.com/wp-admin/options-reading.php' );
-		} );
-
-		test( 'falls back to My Home without back_to or ref', () => {
-			expect(
-				getLaunchReturnUrl( { siteSlug: 'test-site', back_to: null, refParameter: null } )
-			).toBe( '/home/test-site' );
-		} );
-	} );
-
 	describe( 'filterDestination with checkout URLs', () => {
 		// Mock the required modules
 		beforeAll( () => {
@@ -181,28 +49,7 @@ describe( 'Signup Flows Configuration', () => {
 			} ) );
 		} );
 
-		test( 'should add celebrateLaunch=true to checkout back URL when flow is launch-site', () => {
-			// Import the actual filterDestination function
-			const flowsModule = require( 'calypso/signup/config/flows' );
-			const { filterDestination } = flowsModule.default;
-
-			const dependencies = {
-				siteSlug: 'test-site',
-				cartItem: 'premium_plan', // This will trigger checkout redirect
-			};
-			const destination = '/home/test-site';
-			const flowName = 'launch-site';
-			const localeSlug = 'en';
-
-			const result = filterDestination( destination, dependencies, flowName, localeSlug );
-
-			// The result should be a checkout URL with celebrateLaunch in the checkoutBackUrl
-			expect( result ).toContain( '/checkout/test-site' );
-			expect( result ).toContain( 'checkoutBackUrl=' );
-			expect( result ).toContain( 'celebrateLaunch%3Dtrue' ); // URL encoded celebrateLaunch=true
-		} );
-
-		test( 'should not add celebrateLaunch=true to non-launch-site flows', () => {
+		test( 'should not add celebrateLaunch=true to the checkout back URL', () => {
 			const flowsModule = require( 'calypso/signup/config/flows' );
 			const { filterDestination } = flowsModule.default;
 
