@@ -187,7 +187,7 @@ describe( 'SecondaryCartPromotions', () => {
 				);
 			} );
 
-			test( 'does not fetch the cart site when a site is selected', async () => {
+			test( 'uses the selected site over the cart site', async () => {
 				const queryClient = createSeededQueryClient();
 				const cart = { ...responseCartWithRenewal, blog_id: CART_SITE_ID };
 				render(
@@ -204,7 +204,7 @@ describe( 'SecondaryCartPromotions', () => {
 			} );
 
 			describe( 'when no site is selected', () => {
-				test( 'displays the reminder for the site the server assigned to the cart', async () => {
+				test( 'displays the reminder for the cart site', async () => {
 					const cart = { ...responseCartWithRenewal, blog_id: CART_SITE_ID };
 					render(
 						<TestWrapper
@@ -223,7 +223,7 @@ describe( 'SecondaryCartPromotions', () => {
 					expect( screen.getByText( /for cart-site\.example that are available/ ) ).toBeVisible();
 				} );
 
-				test( 'does not display the reminder when the cart has no site', async () => {
+				test( 'hides the reminder for a siteless cart', async () => {
 					const queryClient = createSeededQueryClient();
 					const cart = { ...responseCartWithRenewal, blog_id: 0 };
 					render(
@@ -243,7 +243,7 @@ describe( 'SecondaryCartPromotions', () => {
 					expectSiteNeverFetched( queryClient, 0 );
 				} );
 
-				test( 'does not display the reminder while the cart site is unavailable', async () => {
+				test( 'hides the reminder when the cart site fails to load', async () => {
 					const cart = { ...responseCartWithRenewal, blog_id: CART_SITE_ID };
 					render(
 						<TestWrapper
