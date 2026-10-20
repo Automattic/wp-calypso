@@ -53,6 +53,20 @@ function isImporting( status: ImportJob ): boolean {
 	return status.importerState === appStates.IMPORTING;
 }
 
+/**
+ * Only a Playground export can be started from here. If the server recognizes
+ * the upload as another file type, fail now instead of waiting for a start that
+ * never comes.
+ */
+function assertPlaygroundExport( status: ImportJob ): void {
+	if (
+		status.importerState === appStates.UPLOAD_SUCCESS &&
+		status.importerFileType !== 'playground'
+	) {
+		throw new ImportFailureError();
+	}
+}
+
 export async function startPlaygroundImportIfReady(
 	siteId: number,
 	status: ImportJob
@@ -164,6 +178,7 @@ export async function importPlaygroundSite(
 			} ),
 	} );
 	const importerStatus = toImportJob( importer );
+	assertPlaygroundExport( importerStatus );
 	let started =
 		isImporting( importerStatus ) ||
 		( await startPlaygroundImportIfReady( siteId, importerStatus ) );
@@ -194,6 +209,7 @@ export async function importPlaygroundSite(
 		}
 
 		if ( ! started ) {
+			assertPlaygroundExport( status );
 			started = isImporting( status ) || ( await startPlaygroundImportIfReady( siteId, status ) );
 		}
 

@@ -133,23 +133,13 @@ describe( 'PlaygroundSetupStep', () => {
 		).toBeVisible();
 	} );
 
-	it( 'opens the site when a site launch finishes', async () => {
-		const originalLocation = window.location;
-		const assign = jest.fn();
-		Object.defineProperty( window, 'location', {
-			configurable: true,
-			value: { ...window.location, assign },
-		} );
-		importPlaygroundSiteMock.mockResolvedValue( 'import-id' );
-		const props = await renderSetupStep();
-
-		expect( assign ).toHaveBeenCalledWith( 'https://example.wordpress.com' );
-		expect( props.navigation.submit ).not.toHaveBeenCalled();
-		Object.defineProperty( window, 'location', { configurable: true, value: originalLocation } );
-	} );
-
-	it( 'hands a WooCommerce publish launch back to its flow when the import finishes', async () => {
-		sessionStorage.setItem( 'entrepreneur_from_playground_publish', '1' );
+	it.each( [
+		[ 'a site launch', null ],
+		[ 'a WooCommerce publish launch', 'entrepreneur_from_playground_publish' ],
+	] )( 'hands %s back to its flow when the import finishes', async ( _name, flag ) => {
+		if ( flag ) {
+			sessionStorage.setItem( flag, '1' );
+		}
 		importPlaygroundSiteMock.mockResolvedValue( 'import-id' );
 		const props = await renderSetupStep();
 
@@ -174,10 +164,15 @@ describe( 'PlaygroundSetupStep', () => {
 		expect( screen.queryByText( 'Your site could not be imported' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'says a timed-out import may still finish', async () => {
+	it( 'offers the dashboard instead of a retry when the import times out', async () => {
 		importPlaygroundSiteMock.mockRejectedValue( new ImportTimeoutError() );
 		await renderSetupStep();
 
 		expect( screen.getByText( /may still finish/ ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Go to dashboard' } ) ).toHaveAttribute(
+			'href',
+			'/home/example.wordpress.com'
+		);
 	} );
 } );

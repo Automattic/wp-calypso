@@ -225,4 +225,20 @@ describe( 'importPlaygroundSite', () => {
 			ImportFailureError
 		);
 	} );
+
+	it( 'fails at once when the upload is not recognized as a Playground export', async () => {
+		uploadExportFileMock.mockResolvedValue( {
+			importId: 'import-id',
+			importStatus: 'uploadSuccess',
+			importerFileType: 'content',
+			type: 'wordpress',
+			siteId,
+		} );
+
+		await expect( importPlaygroundSite( 'slug', siteId ) ).rejects.toBeInstanceOf(
+			ImportFailureError
+		);
+		expect( updateImporterMock ).not.toHaveBeenCalled();
+		expect( wpcomRequestMock ).not.toHaveBeenCalled();
+	} );
 } );

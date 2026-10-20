@@ -82,8 +82,7 @@ export const PlaygroundSetupStep: Step< {
 		setProgress( null );
 
 		// The Playground publish flow (entrepreneur) exports a WooCommerce sandbox
-		// that carries sandbox-only plugins, and leaves through its own submit
-		// redirect once the import finishes.
+		// that carries sandbox-only plugins.
 		const isPublishFlow = sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
 		const eventPrefix = isPublishFlow
 			? 'calypso_playground_woo_import'
@@ -113,13 +112,8 @@ export const PlaygroundSetupStep: Step< {
 			duration_seconds: durationSeconds(),
 		} );
 
-		if ( isPublishFlow ) {
-			submit( { siteSlug, siteId } );
-			return;
-		}
-
-		// The site is what the user launched, so show it as soon as it is live.
-		window.location.assign( siteSlug ? `https://${ siteSlug }` : `/home/${ siteId }` );
+		// Each flow owns where the user goes once the site is ready.
+		submit( { siteSlug, siteId } );
 	};
 
 	const retryImport = () => {
@@ -154,17 +148,22 @@ export const PlaygroundSetupStep: Step< {
 						<SubTitle>
 							{ result.reason === 'timeout'
 								? __(
-										'The import is taking longer than expected and may still finish. Check your dashboard in a few minutes, or try again.'
+										'The import is taking longer than expected and may still finish. Check your dashboard in a few minutes.'
 									)
 								: __(
 										'Something went wrong while importing your Playground site. Please try again.'
 									) }
 						</SubTitle>
 						<div className="playground-setup__actions">
-							<Button variant="primary" onClick={ retryImport }>
-								{ __( 'Try again' ) }
-							</Button>
-							<Button variant="secondary" href={ `/home/${ siteSlug }` }>
+							{ result.reason !== 'timeout' && (
+								<Button variant="primary" onClick={ retryImport }>
+									{ __( 'Try again' ) }
+								</Button>
+							) }
+							<Button
+								variant={ result.reason === 'timeout' ? 'primary' : 'secondary' }
+								href={ `/home/${ siteSlug || siteId }` }
+							>
 								{ __( 'Go to dashboard' ) }
 							</Button>
 						</div>
