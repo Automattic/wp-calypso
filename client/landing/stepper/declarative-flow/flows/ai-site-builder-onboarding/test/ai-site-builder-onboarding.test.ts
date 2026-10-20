@@ -388,6 +388,8 @@ describe( 'ai-site-builder-onboarding flow', () => {
 	} );
 
 	describe( 'error reasons', () => {
+		const originalLocation = window.location;
+
 		const submitFrom = async ( slug: string, providedDependencies: Record< string, unknown > ) => {
 			const navigate = jest.fn();
 			const { submit } = aiSiteBuilderOnboarding.useStepNavigation( slug as never, navigate );
@@ -408,6 +410,11 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				value: { assign: jest.fn(), replace: jest.fn() },
 				writable: true,
 			} );
+		} );
+
+		afterEach( () => {
+			( resolveSelect as jest.Mock ).mockReset();
+			Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
 		} );
 
 		it.each( [
@@ -474,6 +481,16 @@ describe( 'ai-site-builder-onboarding flow', () => {
 
 			expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug, {
 				errorReason: 'processing_failed',
+			} );
+		} );
+
+		it( 'names the cause when a reload drops the pending action', async () => {
+			const navigate = await submitFrom( STEPS.PROCESSING.slug, {
+				processingResult: ProcessingResult.NO_ACTION,
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug, {
+				errorReason: 'processing_no_action',
 			} );
 		} );
 

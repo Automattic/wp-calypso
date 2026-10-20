@@ -85,7 +85,10 @@ import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
 import { useIsPostPlanSelectionEmailVerification } from '../../internals/steps-repository/__user/use-email-verification-gate';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import { getOnboardingStepperPosition } from './step-counter-config';
 import type { WowFunnelDest } from '../../../utils/wow-funnel';
@@ -890,10 +893,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					} else {
 						// NO_ACTION reaches here only without a siteSlug to send it back with.
 						return navigate( 'error' as typeof currentStepSlug, {
-							errorReason:
-								providedDependencies.processingResult === ProcessingResult.NO_ACTION
-									? 'processing_no_action'
-									: 'processing_failed',
+							errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
 						} );
 					}
 					return;

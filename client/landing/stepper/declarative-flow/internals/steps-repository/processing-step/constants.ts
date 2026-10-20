@@ -4,6 +4,9 @@ export enum ProcessingResult {
 	FAILURE = 'failure',
 }
 
+type ProcessingSuccessReason =
+	'processing_missing_site' | 'processing_no_redirect' | 'site_not_created';
+
 /**
  * The error-step reason for a processing result that sends the customer to the error step.
  * NO_ACTION means the pending action was gone, as after a reload. SUCCESS means the result
@@ -11,9 +14,9 @@ export enum ProcessingResult {
  * unexpected result in the same bucket.
  */
 export const getProcessingErrorReason = (
-	result: unknown,
-	successReason = 'processing_missing_site'
-) => {
+	result: ProcessingResult | undefined,
+	successReason: ProcessingSuccessReason = 'processing_missing_site'
+): 'processing_no_action' | 'processing_failed' | ProcessingSuccessReason => {
 	switch ( result ) {
 		case ProcessingResult.NO_ACTION:
 			return 'processing_no_action';

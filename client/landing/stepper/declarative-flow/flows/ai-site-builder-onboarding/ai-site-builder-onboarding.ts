@@ -31,7 +31,10 @@ import {
 import { planSupportsBuildWow } from '../../../utils/build-wow-plans';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
@@ -283,12 +286,12 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					return navigate( STEPS.PROCESSING.slug );
 
 				case STEPS.PROCESSING.slug: {
-					if ( providedDependencies.processingResult === ProcessingResult.FAILURE ) {
-						return navigate( STEPS.ERROR.slug, { errorReason: 'processing_failed' } );
-					}
-
+					// NO_ACTION follows a reload. The processing step has no timeout, so returning
+					// here would leave the customer on the spinner.
 					if ( providedDependencies.processingResult !== ProcessingResult.SUCCESS ) {
-						return;
+						return navigate( STEPS.ERROR.slug, {
+							errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
+						} );
 					}
 
 					if ( ! providedDependencies.goToCheckout ) {

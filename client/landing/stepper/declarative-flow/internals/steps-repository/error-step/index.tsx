@@ -86,7 +86,8 @@ const ErrorStep: StepType< {
 		bumpStat( 'calypso_stepper_error_step', `${ flow }_${ localeBucket }` );
 
 		// Only a flow navigation writes the step data. After a document load or a history arrival,
-		// the persisted errorReason can come from an earlier arrival, even in another flow.
+		// the persisted step data can come from an earlier arrival, even in another flow, so it
+		// goes under separate keys.
 		const isFlowArrival = ! isOnlyStepMounted( 'error' ) && navigationType !== NavigationType.Pop;
 
 		// Some flows navigate here without storing an error. Log those arrivals too,
@@ -99,8 +100,10 @@ const ErrorStep: StepType< {
 				message,
 				flow,
 				variant: variantSlug,
-				previous_step: previousStep,
+				previous_step: isFlowArrival ? previousStep : undefined,
 				error_reason: isFlowArrival ? errorReason : undefined,
+				persisted_previous_step: isFlowArrival ? undefined : previousStep,
+				persisted_error_reason: isFlowArrival ? undefined : errorReason,
 			},
 			properties: {
 				flow,

@@ -136,8 +136,8 @@ describe( 'ErrorStep', () => {
 	} );
 
 	const loggedError = () => ( logToLogstash as jest.Mock ).mock.calls[ 0 ][ 0 ].properties.error;
-	const loggedExtraReason = () =>
-		( logToLogstash as jest.Mock ).mock.calls[ 0 ][ 0 ].extra.error_reason;
+	const loggedExtra = () => ( logToLogstash as jest.Mock ).mock.calls[ 0 ][ 0 ].extra;
+	const loggedExtraReason = () => loggedExtra().error_reason;
 
 	it( 'logs the errorReason from the step data when nothing is stored', () => {
 		( useSiteSetupError as jest.Mock ).mockReturnValue( { error: undefined, message: undefined } );
@@ -173,7 +173,27 @@ describe( 'ErrorStep', () => {
 		} );
 
 		expect( loggedError() ).toBe( 'history_back_forward' );
-		expect( loggedExtraReason() ).toBeUndefined();
+		expect( loggedExtra() ).toMatchObject( {
+			previous_step: undefined,
+			error_reason: undefined,
+			persisted_previous_step: 'setup-your-site-ai',
+			persisted_error_reason: 'build_wow_start_failed',
+		} );
+	} );
+
+	it( 'logs the errorReason for a flow arrival that replaces the history entry', () => {
+		( useSiteSetupError as jest.Mock ).mockReturnValue( { error: undefined, message: undefined } );
+		( useNavigationType as jest.Mock ).mockReturnValue( NavigationType.Replace );
+
+		render( { data: { previousStep: 'processing', errorReason: 'processing_no_redirect' } } );
+
+		expect( loggedError() ).toBe( 'processing_no_redirect' );
+		expect( loggedExtra() ).toMatchObject( {
+			previous_step: 'processing',
+			error_reason: 'processing_no_redirect',
+			persisted_previous_step: undefined,
+			persisted_error_reason: undefined,
+		} );
 	} );
 
 	describe( 'when the error step is the only route mounted in the document', () => {
@@ -212,7 +232,12 @@ describe( 'ErrorStep', () => {
 			render( { data: { previousStep: 'processing', errorReason: 'processing_failed' } } );
 
 			expect( loggedError() ).toBe( 'document_reload' );
-			expect( loggedExtraReason() ).toBeUndefined();
+			expect( loggedExtra() ).toMatchObject( {
+				previous_step: undefined,
+				error_reason: undefined,
+				persisted_previous_step: 'processing',
+				persisted_error_reason: 'processing_failed',
+			} );
 		} );
 
 		it( 'does not log a persisted errorReason next to a stored error', () => {
