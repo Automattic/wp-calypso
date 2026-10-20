@@ -281,8 +281,13 @@ export class EditorToolbarComponent {
 
 		await Promise.race( [
 			( async () => {
-				// Works with Gutenberg >=v18.2.0
-				await editorParent.locator( selectors.postStatusButton ).click();
+				// Works with Gutenberg >=v18.2.0, including the DataForm
+				// post summary ("Edit Status") on Gutenberg trunk.
+				await editorParent
+					.getByRole( 'button', { name: 'Edit Status', exact: true } )
+					.or( editorParent.locator( selectors.postStatusButton ) )
+					.first()
+					.click();
 				await editorParent.getByRole( 'radio', { name: 'Draft' } ).click();
 			} )(),
 			( async () => {
