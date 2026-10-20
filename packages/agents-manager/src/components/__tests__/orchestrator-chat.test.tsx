@@ -173,6 +173,8 @@ const mockAgentChat = jest.fn(
 		onContextCardAction,
 	}: {
 		messages?: unknown[];
+		pinnedContent?: unknown;
+		emptyViewContent?: unknown;
 		onSuggestionClick: (
 			suggestion: Suggestion | string,
 			availableSuggestions?: Suggestion[]
@@ -439,6 +441,12 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
+const noSiteSetupChecklist = { isLoading: false, emptyViewContent: null, pinnedContent: null };
+const mockUseSiteSetupChecklist = jest.fn( (): unknown => noSiteSetupChecklist );
+jest.mock( '../../hooks/use-site-setup-checklist', () => ( {
+	__esModule: true,
+	default: () => mockUseSiteSetupChecklist(),
+} ) );
 // Returns `undefined` after a mock reset, which the wrapper reads as allowed.
 const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
 const mockCreditsVisibility = jest.fn();
@@ -513,6 +521,7 @@ jest.mock( '../agent-chat', () => {
 
 import { getSessionId } from '../../utils/agent-session';
 import { takeActionOrigin } from '../../utils/action-origin';
+import { getPromptSource, markNextPromptSource } from '../../utils/prompt-source';
 import {
 	bindToNavigationTarget,
 	bindToOpenCanvas,
@@ -4514,6 +4523,63 @@ describe( 'OrchestratorChat', () => {
 			} );
 
 			expect( replied ).toBe( false );
+		} );
+	} );
+
+	describe( 'Site Setup checklist', () => {
+		afterEach( () => {
+			mockUseSiteSetupChecklist.mockReturnValue( noSiteSetupChecklist );
+		} );
+
+		it( 'hands the empty-view checklist to the chat, which stays empty', () => {
+			const emptyViewContent = <div data-testid="empty-view-checklist" />;
+			mockUseSiteSetupChecklist.mockReturnValue( { ...noSiteSetupChecklist, emptyViewContent } );
+			mockUseAgentChat.mockReturnValue( agentChatReturn() );
+			const onHasMessagesChange = jest.fn();
+			render( chat( { onHasMessagesChange } ) );
+
+			expect( mockAgentChat.mock.calls.at( -1 )![ 0 ].emptyViewContent ).toBe( emptyViewContent );
+			expect( onHasMessagesChange ).toHaveBeenLastCalledWith( false );
+		} );
+
+		it( 'keeps the chat loading while the list is read', () => {
+			mockUseSiteSetupChecklist.mockReturnValue( { ...noSiteSetupChecklist, isLoading: true } );
+			mockUseAgentChat.mockReturnValue( agentChatReturn() );
+			render( chat( { emptyViewSuggestions: [ { id: 'a', label: 'A' } ] } ) );
+
+			const props = mockAgentChat.mock.calls.at( -1 )![ 0 ];
+			expect( props.isLoadingConversation ).toBe( true );
+			expect( props.emptyViewSuggestions ).toEqual( [] );
+		} );
+
+		it( 'labels the send of a task prompt with its prompt source, then clears it', async () => {
+			const seenSources: ( string | null )[] = [];
+			const onSubmit = jest.fn( async () => {
+				seenSources.push( getPromptSource() );
+			} );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+			const { onSubmit: submit } = mockAgentChat.mock.calls.at( -1 )![ 0 ];
+
+			markNextPromptSource( 'site-setup-checklist', 'Help me with this task' );
+			await act( async () => {
+				await submit( 'Help me with this task' );
+			} );
+			await act( async () => {
+				await submit( 'And now something else' );
+			} );
+
+			expect( seenSources ).toEqual( [ 'site-setup-checklist', null ] );
+			expect( getPromptSource() ).toBeNull();
+		} );
+
+		it( 'hands the pinned checklist to the chat', () => {
+			const pinnedContent = <div data-testid="pinned-checklist" />;
+			mockUseSiteSetupChecklist.mockReturnValue( { ...noSiteSetupChecklist, pinnedContent } );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { messages: [ userMessage ] } ) );
+			render( chat() );
+
+			expect( mockAgentChat.mock.calls.at( -1 )![ 0 ].pinnedContent ).toBe( pinnedContent );
 		} );
 	} );
 } );

@@ -48,6 +48,8 @@ declare const agentsManagerData:
 			bigSkyEnabled?: boolean;
 			/** Set by Jetpack where the Jetpack AI sidebar loads; it then offers its own text and image actions. */
 			jetpackAiSidebar?: { enabled?: boolean };
+			/** Shows the Site Setup checklist at the top of editor chats. */
+			siteSetupChecklist?: boolean;
 	  }
 	| undefined;
 

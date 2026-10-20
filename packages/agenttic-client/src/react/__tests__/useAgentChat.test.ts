@@ -192,6 +192,16 @@ describe( 'useAgentChat', () => {
 			expect( result?.content ).toEqual( [ { type: 'data', data: { flags } } ] );
 		} );
 
+		it( 'preserves `promptSource` data parts', () => {
+			const result = transformClientMessageToUI(
+				buildMessage( [ { type: 'data', data: { promptSource: 'site-setup-checklist' } } ] )
+			);
+
+			expect( result?.content ).toEqual( [
+				{ type: 'data', data: { promptSource: 'site-setup-checklist' } },
+			] );
+		} );
+
 		it( 'keeps `text` content and drops unknown `data` in the same message', () => {
 			const result = transformClientMessageToUI(
 				buildMessage( [

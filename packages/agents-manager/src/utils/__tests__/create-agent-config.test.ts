@@ -20,6 +20,7 @@ import { canConnectToZendesk } from '../can-connect-to-zendesk';
 import { clearSiteEditorActions, setSiteEditorAction } from '../site-editor-context';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import { getSessionId } from '../agent-session';
+import { clearPromptSource, markNextPromptSource, takePromptSource } from '../prompt-source';
 import { getTurnId } from '../turn-id';
 
 const mockCanConnectToZendesk = canConnectToZendesk as jest.Mock;
@@ -291,6 +292,37 @@ describe( 'createAgentConfig', () => {
 			} )
 		);
 	} );
+	it( 'adds the prompt source declared for the send in flight to the context metadata', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
+			contextProvider: {
+				getClientContext: () => ( {
+					url: 'https://example.com/wp-admin/',
+					pathname: '/wp-admin/',
+					search: '',
+					environment: 'wp-admin',
+					metadata: { keep: true },
+				} ),
+			},
+		} );
+
+		expect( config.contextProvider?.getClientContext() ).not.toHaveProperty(
+			'metadata.promptSource'
+		);
+
+		markNextPromptSource( 'site-setup-checklist', 'Start' );
+		takePromptSource( 'Start' );
+		expect( config.contextProvider?.getClientContext() ).toEqual(
+			expect.objectContaining( { metadata: { keep: true, promptSource: 'site-setup-checklist' } } )
+		);
+
+		clearPromptSource();
+		expect( config.contextProvider?.getClientContext() ).not.toHaveProperty(
+			'metadata.promptSource'
+		);
+	} );
+
 	const clientContexts = [
 		[ 'default', undefined ],
 		[

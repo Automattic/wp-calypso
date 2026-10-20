@@ -252,6 +252,14 @@ export const transformClientMessageToUI = (
 						data,
 					};
 				}
+				// Preserve where a client said a prompt came from (restored from the
+				// stored context), so hosts can tell how a conversation started.
+				if ( typeof data.promptSource === 'string' && data.promptSource !== '' ) {
+					return {
+						type: 'data' as const,
+						data,
+					};
+				}
 				// Unknown `data` shapes are internal metadata. Drop them so
 				// they don't show up as raw JSON. Add a handler above to
 				// render a new shape.

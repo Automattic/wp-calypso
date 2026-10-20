@@ -34,6 +34,7 @@ import useRegenerateAction from '../../hooks/use-regenerate-action';
 import { useResponseOutcomeTracking } from '../../hooks/use-response-outcome-tracking';
 import { useRetriedToolCalls } from '../../hooks/use-retried-tool-calls';
 import { useShowComponentRetention } from '../../hooks/use-show-component-retention';
+import useSiteSetupChecklist from '../../hooks/use-site-setup-checklist';
 import useSourcesAction from '../../hooks/use-sources-action';
 import { useStreamedCheckpointMessages } from '../../hooks/use-streamed-checkpoint-messages';
 import { useSuggestionTracking } from '../../hooks/use-suggestion-tracking';
@@ -52,6 +53,7 @@ import {
 	hasDisabledCheckpointAction,
 	withComputedActions,
 } from '../../utils/message-actions';
+import { isSiteSetupChat } from '../../utils/site-setup-checklist';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -286,6 +288,17 @@ export default function OrchestratorChat( {
 		onRetry: submitRetryMessage,
 		onSubmit,
 	} );
+	const isStartedFromChecklist = useMemo( () => isSiteSetupChat( messages ), [ messages ] );
+	const siteSetupChecklist = useSiteSetupChecklist( {
+		enabled: ! isReaderChat,
+		isProcessing,
+		isLoadingConversation,
+		hasConversationMessages: messages.length > 0,
+		isStartedFromChecklist,
+	} );
+	// The empty view waits for the checklist too, or it flashes before the list.
+	const isPreparingConversation = isLoadingConversation || siteSetupChecklist.isLoading;
+
 	const chatError = useChatError( {
 		error: hasFailedResume ? null : error,
 		isReaderChat,
@@ -478,7 +491,7 @@ export default function OrchestratorChat( {
 	// Empty-view suggestions and their tracking.
 	const displayedEmptyViewSuggestions = getDisplayedEmptyViewSuggestions( {
 		isVisible: suggestionsVisible,
-		isChatEmpty: ! isLoadingConversation && ! hasMessages && inputValue.length === 0,
+		isChatEmpty: ! isPreparingConversation && ! hasMessages && inputValue.length === 0,
 		emptyViewSuggestions,
 		registeredSuggestions: suggestions,
 		dynamicSuggestions,
@@ -490,7 +503,7 @@ export default function OrchestratorChat( {
 
 	const { onSuggestionsRendered, trackSuggestionClick } = useSuggestionTracking( {
 		contextualSuggestionIds,
-		hasSuggestionsToRender: ! isLoadingConversation && displayedEmptyViewSuggestions.length > 0,
+		hasSuggestionsToRender: ! isPreparingConversation && displayedEmptyViewSuggestions.length > 0,
 	} );
 
 	const handleSuggestionClick = useCallback(
@@ -531,7 +544,9 @@ export default function OrchestratorChat( {
 			error={ chatError || uploadError }
 			onSubmit={ submitComposerMessage }
 			onAbort={ stopResponse }
-			isLoadingConversation={ isLoadingConversation }
+			isLoadingConversation={ isPreparingConversation }
+			pinnedContent={ siteSetupChecklist.pinnedContent }
+			emptyViewContent={ siteSetupChecklist.emptyViewContent }
 			isDocked={ isDocked }
 			isOpen={ isOpen }
 			onClose={ onClose }

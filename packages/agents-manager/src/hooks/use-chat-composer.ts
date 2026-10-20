@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { markActionOrigin, takeActionOrigin } from '../utils/action-origin';
 import { startNewUserRequest } from '../utils/canvas-binding';
 import { consumeNextMessageExternalContextEntries } from '../utils/external-context';
+import { clearPromptSource, takePromptSource } from '../utils/prompt-source';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../utils/tracks';
 import { startTurn } from '../utils/turn-id';
 import { useImageUpload } from './use-image-upload';
@@ -175,6 +176,9 @@ export function useChatComposer( {
 			startNewUserRequest();
 
 			wasLastSendDispatchedRef.current = true;
+			// The client context built for this send carries the prompt source a
+			// checklist click declared for this exact prompt.
+			takePromptSource( message );
 			try {
 				// First, so this message follows the parked call's tool result. Never throws.
 				await flushPendingNavigation();
@@ -188,6 +192,8 @@ export function useChatComposer( {
 				wasLastSendDispatchedRef.current = false;
 				setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
 				return;
+			} finally {
+				clearPromptSource();
 			}
 
 			consumeNextMessageExternalContextEntries();

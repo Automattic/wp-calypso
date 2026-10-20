@@ -36,7 +36,7 @@ import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
 import type { UIMessage as Message } from '@automattic/agenttic-client';
-import type { ComponentProps, RefObject } from 'react';
+import type { ComponentProps, ReactNode, RefObject } from 'react';
 
 interface Props {
 	/** Chat messages to display. */
@@ -61,6 +61,10 @@ interface Props {
 	thinkingMessage?: string | null;
 	/** Indicates if a conversation is being loaded. */
 	isLoadingConversation: boolean;
+	/** Rendered between the header and the message list, outside the list's scroll. */
+	pinnedContent?: ReactNode;
+	/** Rendered in the empty view in place of the suggestion chips. */
+	emptyViewContent?: ReactNode;
 	/** Indicates if the chat is docked in the sidebar. */
 	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
@@ -181,6 +185,8 @@ export default function AgentChat( {
 	isReplying,
 	thinkingMessage,
 	isLoadingConversation,
+	pinnedContent,
+	emptyViewContent,
 	isDocked,
 	isOpen,
 	onSubmit,
@@ -344,7 +350,10 @@ export default function AgentChat( {
 				) : (
 					<GroupedEmptyView
 						heading={ getEmptyViewHeading() }
-						help={ emptyViewSuggestions.length > 0 ? getEmptyViewHelp() : undefined }
+						help={
+							emptyViewSuggestions.length > 0 || emptyViewContent ? getEmptyViewHelp() : undefined
+						}
+						content={ emptyViewContent }
 						suggestions={ emptyViewSuggestions }
 						groupWritingSuggestions={ groupWritingSuggestions }
 						onSuggestionClick={ onSuggestionClick }
@@ -355,6 +364,7 @@ export default function AgentChat( {
 			<AgentUI.ConversationView ref={ conversationViewRef }>
 				{ isSiteEditorContext() && <EditorHistoryBridge /> }
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
+				{ pinnedContent }
 				{ isLoadingConversation && messages.length === 0 ? (
 					<ChatMessageSkeleton count={ 3 } />
 				) : (
