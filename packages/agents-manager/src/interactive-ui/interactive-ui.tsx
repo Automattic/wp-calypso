@@ -1,31 +1,7 @@
 import { Button } from '@wordpress/components';
-import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { InteractiveUiDisabledContext } from './context';
 import type { InteractiveUiPresentation } from '../hooks/use-interactive-ui';
-import type { ReactNode } from 'react';
 import './style.scss';
-
-class SurfaceBoundary extends Component<
-	{ children: ReactNode; revision: number },
-	{ failed: boolean }
-> {
-	state = { failed: false };
-
-	static getDerivedStateFromError() {
-		return { failed: true };
-	}
-
-	componentDidUpdate( previous: Readonly< { children: ReactNode; revision: number } > ) {
-		if ( this.state.failed && previous.revision !== this.props.revision ) {
-			this.setState( { failed: false } );
-		}
-	}
-
-	render() {
-		return this.state.failed ? null : this.props.children;
-	}
-}
 
 export default function InteractiveUi( {
 	messageId,
@@ -48,24 +24,16 @@ export default function InteractiveUi( {
 	if ( ! runtime || ! sdk ) {
 		return null;
 	}
-	const { InteractiveUiSurface: Surface, MarkdownContext, renderMarkdown } = sdk;
+	const { InteractiveUiSurface: Surface } = sdk;
 	return runtime.getSurfaceIds( messageId ).map( ( surfaceId ) => {
 		const surface = runtime.getSurface( surfaceId );
-		return surface?.componentsModel.has( surface.rootId ) ? (
-			<fieldset
+		return surface ? (
+			<Surface
 				key={ surfaceId }
-				data-agenttic-isolated
-				className="agents-manager-interactive-ui"
-				disabled={ isDisabled }
-			>
-				<SurfaceBoundary revision={ revision }>
-					<InteractiveUiDisabledContext.Provider value={ isDisabled }>
-						<MarkdownContext.Provider value={ renderMarkdown }>
-							<Surface surface={ surface } />
-						</MarkdownContext.Provider>
-					</InteractiveUiDisabledContext.Provider>
-				</SurfaceBoundary>
-			</fieldset>
+				surface={ surface }
+				revision={ revision }
+				isDisabled={ isDisabled }
+			/>
 		) : null;
 	} );
 }

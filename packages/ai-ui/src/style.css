@@ -1,0 +1,147 @@
+.automattic-interactive-ui {
+	border: 0;
+	padding: 0;
+	margin: 0;
+	min-width: 0;
+}
+.automattic-interactive-ui .automattic-interactive-ui__audio-player {
+	width: 100%;
+}
+.automattic-interactive-ui .automattic-interactive-ui__card {
+	background-color: var( --color-background, #fff );
+	color: var( --color-foreground, #1e1e1e );
+}
+.automattic-interactive-ui .automattic-interactive-ui__choice-picker {
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+.automattic-interactive-ui
+	.automattic-interactive-ui__date-time-input--error
+	.components-base-control__help {
+	color: #cc1818;
+}
+.automattic-interactive-ui .automattic-interactive-ui__divider {
+	align-self: stretch;
+	border-top: 1px solid #ddd;
+}
+.automattic-interactive-ui .automattic-interactive-ui__divider[aria-orientation='vertical'] {
+	border-top: 0;
+	border-left: 1px solid #ddd;
+}
+.automattic-interactive-ui .automattic-interactive-ui__image {
+	display: block;
+	max-width: 100%;
+}
+.automattic-interactive-ui .automattic-interactive-ui__image--icon {
+	width: 24px;
+	height: 24px;
+}
+.automattic-interactive-ui .automattic-interactive-ui__image--avatar {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+}
+.automattic-interactive-ui .automattic-interactive-ui__image--smallFeature {
+	width: 100px;
+}
+.automattic-interactive-ui .automattic-interactive-ui__image--mediumFeature {
+	width: 240px;
+}
+.automattic-interactive-ui .automattic-interactive-ui__image--largeFeature,
+.automattic-interactive-ui .automattic-interactive-ui__image--header {
+	width: 400px;
+}
+.automattic-interactive-ui .automattic-interactive-ui__image--header {
+	height: 200px;
+}
+.automattic-interactive-ui .automattic-interactive-ui__image--fit-contain {
+	object-fit: contain;
+}
+.automattic-interactive-ui .automattic-interactive-ui__image--fit-cover {
+	object-fit: cover;
+}
+.automattic-interactive-ui .automattic-interactive-ui__image--fit-fill {
+	object-fit: fill;
+}
+.automattic-interactive-ui .automattic-interactive-ui__image--fit-none {
+	object-fit: none;
+}
+.automattic-interactive-ui .automattic-interactive-ui__image--fit-scaleDown {
+	object-fit: scale-down;
+}
+.automattic-interactive-ui .automattic-interactive-ui__row,
+.automattic-interactive-ui .automattic-interactive-ui__list {
+	display: flex;
+	gap: 8px;
+}
+.automattic-interactive-ui .automattic-interactive-ui__row--align-start,
+.automattic-interactive-ui .automattic-interactive-ui__list--align-start {
+	align-items: flex-start;
+}
+.automattic-interactive-ui .automattic-interactive-ui__row--align-end,
+.automattic-interactive-ui .automattic-interactive-ui__list--align-end {
+	align-items: flex-end;
+}
+.automattic-interactive-ui .automattic-interactive-ui__row--align-center,
+.automattic-interactive-ui .automattic-interactive-ui__list--align-center {
+	align-items: center;
+}
+.automattic-interactive-ui .automattic-interactive-ui__row--align-stretch,
+.automattic-interactive-ui .automattic-interactive-ui__list--align-stretch {
+	align-items: stretch;
+}
+.automattic-interactive-ui .automattic-interactive-ui__list {
+	flex-direction: column;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	overflow: auto;
+}
+.automattic-interactive-ui .automattic-interactive-ui__list--horizontal {
+	flex-direction: row;
+}
+.automattic-interactive-ui .automattic-interactive-ui__list-item {
+	min-width: 0;
+}
+.automattic-interactive-ui .automattic-interactive-ui__row {
+	flex-wrap: wrap;
+}
+.automattic-interactive-ui .automattic-interactive-ui__row--justify-start {
+	justify-content: flex-start;
+}
+.automattic-interactive-ui .automattic-interactive-ui__row--justify-end {
+	justify-content: flex-end;
+}
+.automattic-interactive-ui .automattic-interactive-ui__row--justify-center {
+	justify-content: center;
+}
+.automattic-interactive-ui .automattic-interactive-ui__row--justify-spaceAround {
+	justify-content: space-around;
+}
+.automattic-interactive-ui .automattic-interactive-ui__row--justify-spaceBetween {
+	justify-content: space-between;
+}
+.automattic-interactive-ui .automattic-interactive-ui__row--justify-spaceEvenly {
+	justify-content: space-evenly;
+}
+.automattic-interactive-ui .automattic-interactive-ui__row--justify-stretch {
+	justify-content: stretch;
+}
+.automattic-interactive-ui .automattic-interactive-ui__video {
+	max-width: 100%;
+	height: auto;
+	align-self: flex-start;
+}
+.automattic-interactive-ui .components-checkbox-control__label,
+.automattic-interactive-ui .components-radio-control__label {
+	font-size: 13px;
+	line-height: 20px;
+}
+.automattic-interactive-ui .components-checkbox-control .components-h-stack {
+	align-items: center;
+}
+
+.automattic-interactive-ui-modal {
+	z-index: var( --automattic-interactive-ui-modal-z-index, 100000 );
+}

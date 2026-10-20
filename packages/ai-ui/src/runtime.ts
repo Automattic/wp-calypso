@@ -53,20 +53,20 @@ export function createInteractiveUiRuntime(
 ) {
 	const processor = new MessageProcessor< ReactComponentImplementation >( [ catalog ], onAction );
 	const placements = new Map< string, string >();
-	let messageId = '';
+	let currentOwnerId = '';
 	const created = processor.onSurfaceCreated( ( surface ) =>
-		placements.set( surface.id, messageId )
+		placements.set( surface.id, currentOwnerId )
 	);
 	const deleted = processor.onSurfaceDeleted( ( id ) => placements.delete( id ) );
 
 	return {
-		processMessages: ( messages: A2uiMessage[], ownerMessageId: string ) => {
-			messageId = ownerMessageId;
+		processMessages: ( messages: A2uiMessage[], ownerId: string ) => {
+			currentOwnerId = ownerId;
 			processor.processMessages( messages );
 		},
 		getSurface: ( id: string ) => processor.getSurface( id ),
-		getSurfaceIds: ( ownerMessageId: string ) =>
-			[ ...placements ].flatMap( ( [ id, owner ] ) => ( owner === ownerMessageId ? [ id ] : [] ) ),
+		getSurfaceIds: ( ownerId: string ) =>
+			[ ...placements ].flatMap( ( [ id, owner ] ) => ( owner === ownerId ? [ id ] : [] ) ),
 		dispose: () => {
 			created.unsubscribe();
 			deleted.unsubscribe();

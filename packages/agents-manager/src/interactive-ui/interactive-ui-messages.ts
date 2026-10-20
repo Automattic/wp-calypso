@@ -1,7 +1,9 @@
-import type { A2uiMessage } from '@a2ui/web_core/v0_9';
 import type { UIMessage } from '@automattic/agenttic-client';
+import type { InteractiveUiMessage } from '@automattic/ai-ui';
 
-export function getInteractiveUiMessagesFromText( text?: string ): A2uiMessage[] | undefined {
+export function getInteractiveUiMessagesFromText(
+	text?: string
+): InteractiveUiMessage[] | undefined {
 	if ( ! text ) {
 		return undefined;
 	}

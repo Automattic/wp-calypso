@@ -134,30 +134,15 @@ import type {
 
 The `wpcom/render-interactive-ui` tool returns an envelope with
 `tool_id: wpcom__render_interactive_ui` and an ordered array of A2UI v0.9 messages
-in `data`. Agents Manager also accepts raw A2UI message arrays. The renderer uses
-the A2UI SDK internally. Application helpers, components, and modules use
-interactive UI naming; imported SDK types and protocol identifiers retain their
-A2UI names.
+in `data`. Agents Manager also accepts raw A2UI message arrays.
 
-The demo catalog supports `Text`, `TextField`, `Button`, `Column`, `Image`, `Icon`,
-`Row`, `List`, `Card`, `Divider`, `CheckBox`, `ChoicePicker`, `DateTimeInput`,
-`Video`, `AudioPlayer`, `Tabs`, `Modal`, and `Slider`.
-Layouts use arrays of child IDs; cards wrap a single child and follow the chat
-theme colors. Icons map supported
-Basic catalog names to WordPress icons. Choice pickers support single and multiple
-selection and store selected values as string arrays. Bind input values and button
-action context to the same data paths to submit edits. Date/time inputs use local
-ISO date/time strings and enable date, time, or both with `enableDate`/`enableTime`.
-Date/time inputs show the browser's validation message below the field on blur.
-Text fields support `shortText`, `longText`, `number`, and `obscured` (password)
-variants; their values remain strings. Sliders store numbers and use `min` and
-`max` to set their range. Video and audio URLs support data bindings and render
-native players with playback controls. Tabs contain `{ title, child }` entries.
-Modals reference a `Button` trigger and a content component. The trigger opens
-the dialog locally instead of sending its action; buttons inside the dialog send
-actions normally. Dialog inputs share the surface data model and are disabled
-alongside the surface while the agent is processing.
-Input and choice-group labels use WordPress control typography and spacing.
+The catalog, data bindings, surface renderer, and styles live in
+[`@automattic/ai-ui`](../ai-ui/README.md). Agents Manager loads
+that package on demand, associates surfaces with transcript messages, maintains
+one runtime per conversation, and submits actions through the conversation's
+context-message flow. Controls are disabled while the agent is processing.
+The shared package has no dependency on Agents Manager or its message format.
+
 Interactive surfaces use `data-agenttic-isolated` so their controls retain their
 own typography while normal replies keep the chat's default typography reset.
 Choice-label alignment is scoped to the interactive surface because other chat

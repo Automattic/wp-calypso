@@ -21,7 +21,7 @@ export const Slider = createComponentImplementation(
 		);
 		return (
 			<RangeControl
-				label={ props.label ?? __( 'Value', __i18n_text_domain__ ) }
+				label={ props.label ?? __( 'Value', 'default' ) }
 				min={ props.min ?? 0 }
 				max={ props.max }
 				value={ value }
