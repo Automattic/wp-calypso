@@ -1,6 +1,7 @@
-const ConstDependency = require( 'webpack/lib/dependencies/ConstDependency' );
-const HarmonyImportSideEffectDependency = require( 'webpack/lib/dependencies/HarmonyImportSideEffectDependency' );
-const HarmonyImportSpecifierDependency = require( 'webpack/lib/dependencies/HarmonyImportSpecifierDependency' );
+// Matched by `type`: webpack 5.112 moved and renamed these classes (`HarmonyImport*` became
+// `esm/ESMImport*`), and doesn't export them publicly.
+const IMPORT_SIDE_EFFECT = 'harmony side effect evaluation';
+const IMPORT_SPECIFIER = 'harmony import specifier';
 
 function addConstantExport( module, name, value ) {
 	if ( ! module.constantExports ) {
@@ -32,6 +33,7 @@ class InlineConstantExportsPlugin {
 	}
 
 	apply( compiler ) {
+		const { ConstDependency } = compiler.webpack.dependencies;
 		compiler.hooks.compilation.tap(
 			'InlineConstantExportsPlugin',
 			( compilation, { normalModuleFactory } ) => {
@@ -129,7 +131,7 @@ class InlineConstantExportsPlugin {
 							 * That means that we treat constant modules as side-effect free, i.e., we can safely
 							 * remove the import.
 							 */
-							if ( dep instanceof HarmonyImportSideEffectDependency ) {
+							if ( dep.type === IMPORT_SIDE_EFFECT ) {
 								importSideEffectDependencies.set( dependencyModule, dep );
 							}
 
@@ -166,7 +168,7 @@ class InlineConstantExportsPlugin {
 							 * But this plugin does not support them. If a dependency has multiple IDs it means it is a
 							 * re-exported dep (eg: `api.FOO`), so we skip it.
 							 */
-							if ( dep instanceof HarmonyImportSpecifierDependency && dep.ids.length === 1 ) {
+							if ( dep.type === IMPORT_SPECIFIER && dep.ids.length === 1 ) {
 								const depId = dep.ids[ 0 ];
 								if (
 									dependencyModule.constantExports &&
