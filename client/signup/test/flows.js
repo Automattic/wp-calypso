@@ -182,6 +182,15 @@ describe( 'Signup Flows Configuration', () => {
 			).toBe( '/home/example.com?ref=site-selected' );
 		} );
 
+		test( 'lands on My Home when a plan without Big Sky is picked', () => {
+			expect(
+				getDestination( {
+					siteSlug: 'example.com',
+					cartItems: [ { product_slug: 'ecommerce-bundle' } ],
+				} )
+			).toBe( '/home/example.com?ref=site-selected' );
+		} );
+
 		test( 'lands on My Home without a plan in the cart', () => {
 			expect( getDestination( { siteSlug: 'example.com', cartItems: [] } ) ).toBe(
 				'/home/example.com?ref=site-selected'
@@ -302,6 +311,30 @@ describe( 'Signup Flows Configuration', () => {
 			expect( result ).toContain( 'plugin%3Dsensei-pro' );
 			expect( result ).toContain( 'billing_period%3DANNUALLY' );
 			expect( result ).toContain( 'intervalType%3Dyearly' );
+		} );
+
+		test( 'should return to My Home instead of the post-checkout step for the site-selected flow', () => {
+			const flowsModule = require( 'calypso/signup/config/flows' );
+			const { filterDestination } = flowsModule.default;
+
+			const dependencies = {
+				siteSlug: 'test-site',
+				cartItems: [ { product_slug: 'personal-bundle' } ],
+			};
+			const destination =
+				'/setup/onboarding/post-checkout-onboarding?siteSlug=test-site&from=site-selected';
+
+			const result = filterDestination( destination, dependencies, 'site-selected', 'en' );
+			const { checkoutBackUrl, redirect_to } = Object.fromEntries(
+				new URL( result, 'https://wordpress.com' ).searchParams
+			);
+
+			const backUrl = new URL( checkoutBackUrl );
+
+			expect( backUrl.pathname + backUrl.search ).toBe(
+				'/home/test-site?ref=site-selected&skippedCheckout=1'
+			);
+			expect( redirect_to ).toBe( destination );
 		} );
 
 		test( 'should still include an empty billing_period for a free plugin', () => {

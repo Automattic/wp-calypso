@@ -1,4 +1,4 @@
-import { PLAN_FREE } from '@automattic/calypso-products';
+import { isBusiness, isPersonal, isPremium } from '@automattic/calypso-products';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
@@ -52,6 +52,10 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 			},
 			`/start/with-plugin/plans-with-plugin${ localeSlug ? `/${ localeSlug }` : '' }`
 		);
+	} else if ( flowName === 'site-selected' ) {
+		// site-selected: its destination is the post-checkout step, which would treat leaving
+		// checkout as a purchase, so land on My Home instead.
+		backDestination = getSignupDestination( { ...dependencies, localeSlug, flowName } );
 	}
 
 	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
@@ -133,9 +137,9 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 
 /**
  * A site that already exists (e.g. a domain-only site turned into a full one) lands on the same
- * post-checkout step as the onboarding flow once a paid plan is bought, so it gets the
- * setup-your-site-ai chooser when its plan includes Big Sky instead of going straight to My Home,
- * which sends AI Launchpad sites on to wp-admin.
+ * post-checkout step as the onboarding flow once it buys a plan that can include Big Sky, so it
+ * gets the setup-your-site-ai chooser. Other plans, such as Commerce with its Atomic transfer,
+ * go straight to My Home.
  * @param {Object} dependencies the signup dependency store
  * @param {string} localeSlug the signup locale
  * @returns {string} the URL to land on after checkout
@@ -144,7 +148,11 @@ function getSiteSelectedDestination( dependencies, localeSlug ) {
 	const { siteSlug, redirect_to, cartItems } = dependencies;
 	const planCartItem = getPlanCartItem( cartItems );
 
-	if ( redirect_to || ! siteSlug || ! planCartItem || planCartItem.product_slug === PLAN_FREE ) {
+	const canIncludeBigSky =
+		!! planCartItem &&
+		( isPersonal( planCartItem ) || isPremium( planCartItem ) || isBusiness( planCartItem ) );
+
+	if ( redirect_to || ! siteSlug || ! canIncludeBigSky ) {
 		return getSignupDestination( dependencies );
 	}
 

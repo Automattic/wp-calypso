@@ -107,8 +107,14 @@ const PostCheckoutOnboarding: StepType< {
 
 	const waitForAtomic = async () => {
 		await waitForTransfer();
-		await setIntentOnSite( siteSlug, intent );
-		await setGoalsOnSite( siteSlug, goals );
+		// An existing site handed over from another flow arrives with an empty store; don't let
+		// that overwrite the intent and goals the site already has.
+		if ( intent ) {
+			await setIntentOnSite( siteSlug, intent );
+		}
+		if ( goals.length ) {
+			await setGoalsOnSite( siteSlug, goals );
+		}
 		await waitForFeature();
 		await waitForLatestSiteData();
 	};
