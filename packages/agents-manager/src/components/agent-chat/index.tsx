@@ -14,6 +14,7 @@ import {
 import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../../constants';
 import {
 	useAgentticSuggestionClick,
 	type SuggestionClickHandler,
@@ -21,7 +22,6 @@ import {
 import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-suggestions';
 import useFloatingPanelProps from '../../hooks/use-floating-panel-props';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
-import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../../utils/accepted-upload-types';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';

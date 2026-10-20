@@ -17,7 +17,7 @@ import { showTemplateAbility } from '../../abilities/show-template';
 import { streamPageDesignAbility } from '../../abilities/stream-page-design';
 import { setStreamHandler } from '../../abilities/stream-page-design/stream';
 import { wpAdminNavigateAbility } from '../../abilities/wp-admin-navigate';
-import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../accepted-upload-types';
+import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../../constants';
 import * as canvasBinding from '../canvas-binding';
 import { getAvailableCheckpoints } from '../checkpoints';
 import { getEditorPostContext } from '../editor-post-context';

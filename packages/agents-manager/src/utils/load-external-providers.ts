@@ -24,8 +24,8 @@ import {
 import { findAbilityByName } from '../abilities/ability-name';
 import { handlePageDesignTaskUpdate } from '../abilities/stream-page-design/stream';
 import { wooFallbackToolProvider } from '../abilities/woocommerce';
+import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../constants';
 import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
-import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from './accepted-upload-types';
 import { bigSkyPageContextProvider, isBigSkyEnabled } from './big-sky-page-context';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
