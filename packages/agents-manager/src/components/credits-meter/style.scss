@@ -1,5 +1,9 @@
-// Figma's dark alert red; no agenttic token matches it.
-$credits-alert-dark: #f87171;
+// The muted token is 4.49:1 on the popover; a touch of foreground clears 4.5:1.
+$credits-popover-muted: color-mix(
+	in srgb,
+	var( --color-muted-foreground ) 95%,
+	var( --color-foreground )
+);
 
 .agents-manager-credits-meter {
 	display: inline-flex;
@@ -25,11 +29,7 @@ $credits-alert-dark: #f87171;
 		&.is-alert:hover:not( :disabled ),
 		&.is-alert[aria-expanded='true'] {
 			background-color: color-mix( in srgb, var( --color-error-accent ) 20%, transparent );
-			color: var( --color-error-accent );
-
-			.agenttic.dark & {
-				color: $credits-alert-dark;
-			}
+			color: var( --color-error-emphasis );
 		}
 
 		// Show the focus ring for keyboard focus only.
@@ -72,7 +72,7 @@ $credits-alert-dark: #f87171;
 .agents-manager-credits-meter__manage.components-button {
 	height: auto;
 	padding: 0;
-	color: var( --color-muted-foreground );
+	color: $credits-popover-muted;
 	font-size: 13px;
 	text-decoration: none;
 
@@ -101,12 +101,12 @@ $credits-alert-dark: #f87171;
 
 // A balance-only row leads with its amount, so its label is muted instead.
 .agents-manager-credits-meter__pool.is-balance-only .agents-manager-credits-meter__pool-label {
-	color: var( --color-muted-foreground );
+	color: $credits-popover-muted;
 }
 
 .agents-manager-credits-meter__pool-date,
 .agents-manager-credits-meter__pool-detail {
-	color: var( --color-muted-foreground );
+	color: $credits-popover-muted;
 	font-size: 12px;
 }
 
@@ -114,11 +114,7 @@ $credits-alert-dark: #f87171;
 	font-weight: 600;
 
 	&.is-exhausted {
-		color: var( --color-error-accent );
-
-		.agenttic.dark & {
-			color: $credits-alert-dark;
-		}
+		color: var( --color-error-emphasis );
 	}
 }
 
@@ -137,7 +133,7 @@ $credits-alert-dark: #f87171;
 
 .agents-manager-credits-meter__message {
 	margin: 0;
-	color: var( --color-muted-foreground );
+	color: $credits-popover-muted;
 	font-size: 12px;
 }
 
