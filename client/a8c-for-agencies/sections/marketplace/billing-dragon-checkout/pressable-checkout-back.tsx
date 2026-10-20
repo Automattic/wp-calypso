@@ -20,9 +20,7 @@ export default function PressableCheckoutBack( {
 			href={ cancelUrl }
 			disabled={ isFormSubmitting }
 			onClick={ () =>
-				dispatch(
-					recordTracksEvent( 'calypso_a4a_pressable_checkout_back', { use_beacon: true } )
-				)
+				dispatch( recordTracksEvent( 'calypso_a4a_pressable_checkout_back', { use_beacon: true } ) )
 			}
 		>
 			{ __( 'Back to Pressable' ) }
