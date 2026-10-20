@@ -147,7 +147,9 @@ const RedesignedNotifications = ( {
 
 		import( '@automattic/notifications/src/app/client' ).then( ( { subscribeUnseenCount } ) => {
 			if ( ! cancelled ) {
-				unsubscribe = subscribeUnseenCount( wpcom, updateUnseenCount );
+				unsubscribe = subscribeUnseenCount( wpcom, updateUnseenCount, undefined, {
+					includeNoteContext: isViewSettingsEnabled,
+				} );
 			}
 		} );
 
