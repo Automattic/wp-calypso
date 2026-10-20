@@ -97,7 +97,7 @@ export default function Notifications( {
 	};
 
 	const openInNewTab = ( store: unknown, { href }: { href: string } ) => {
-		window.open( href, '_blank', 'noopener,noreferrer' );
+		window.open( href, '_blank', 'noopener' );
 	};
 
 	const actionHandlers = {
