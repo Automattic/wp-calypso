@@ -4,6 +4,7 @@
 // Otherwise, we'd add a fair amount to the bundle size when we don't really need
 // it for every single request.
 import config from '@automattic/calypso-config';
+import { isCalypsoLiveHostname } from '@automattic/calypso-url';
 import { makeLogstashMirrorTransport } from './logstash-transport';
 import type * as SentryApi from '@sentry/react';
 
@@ -137,6 +138,11 @@ function shouldEnableSentry( sampleRate: number = 0.1 ): boolean {
 	// This flag overrides the other settings, always enabling Sentry:
 	if ( config.isEnabled( 'always-enable-sentry' ) ) {
 		return true;
+	}
+
+	// calypso.live runs unreleased PR builds, whose errors shouldn't be reported.
+	if ( isCalypsoLiveHostname( window.location.hostname ) ) {
+		return false;
 	}
 
 	// By default, only load for 10% of requests when Sentry is enabled in the environment:
