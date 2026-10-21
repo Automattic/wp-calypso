@@ -113,16 +113,8 @@ export default function Notifications( {
 				window.open( dashboardLink( '/me/notifications' ), '_blank' );
 			},
 		],
-		EDIT_COMMENT: [
-			( store: unknown, { href }: { href: string } ) => {
-				window.open( href, '_blank' );
-			},
-		],
-		ANSWER_PROMPT: [
-			( store: unknown, { href }: { href: string } ) => {
-				window.open( href, '_blank' );
-			},
-		],
+		EDIT_COMMENT: [ openInNewTab ],
+		ANSWER_PROMPT: [ openInNewTab ],
 		OPEN_LINK: [ openInNewTab ],
 		OPEN_POST: [ openInNewTab ],
 		OPEN_COMMENT: [ openInNewTab ],
