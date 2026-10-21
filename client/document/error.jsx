@@ -18,7 +18,11 @@ export default function ErrorPage( { entrypoint, preset, lang, faviconUrl } ) {
 			>
 				{ chunkCssLinks( entrypoint, isRTL ) }
 			</Head>
-			<body className={ clsx( 'theme-a8c-for-agencies accessible-focus', { rtl: isRTL } ) }>
+			<body
+				className={ clsx( 'a4a-error-document theme-a8c-for-agencies accessible-focus', {
+					rtl: isRTL,
+				} ) }
+			>
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<div id="wpcom" className="wpcom-site">
 					<div className="layout has-no-sidebar has-no-masterbar">
