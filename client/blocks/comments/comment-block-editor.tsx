@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { loadCommentEditor } from './load-comment-editor';
 import type { SiteCommentsEditorSettings } from '@automattic/api-core';
-import type { KeyboardEvent } from 'react';
 
 import './comment-block-editor.scss';
 
@@ -13,7 +12,8 @@ type Props = {
 	takeFocus?: boolean;
 	onChange: ( content: string ) => void;
 	onError: ( error: unknown ) => void;
-	onKeyDown?: ( event: KeyboardEvent< HTMLDivElement > ) => void;
+	/** Native, not synthetic: the editor renders in its own React root, which React's events never leave. */
+	onKeyDown?: ( event: KeyboardEvent ) => void;
 	onFocus?: () => void;
 };
 
@@ -34,8 +34,8 @@ export default function CommentBlockEditor( {
 }: Props ) {
 	const container = useRef< HTMLDivElement >( null );
 	// The editor keeps the callbacks it was mounted with, so it reads the latest through a ref.
-	const callbacks = useRef( { onChange, onError } );
-	callbacks.current = { onChange, onError };
+	const callbacks = useRef( { onChange, onError, onKeyDown, onFocus } );
+	callbacks.current = { onChange, onError, onKeyDown, onFocus };
 
 	useEffect( () => {
 		const element = container.current;
@@ -45,6 +45,10 @@ export default function CommentBlockEditor( {
 
 		let unmount: ( () => void ) | void;
 		let gone = false;
+		const keydown = ( event: KeyboardEvent ) => callbacks.current.onKeyDown?.( event );
+		const focusin = () => callbacks.current.onFocus?.();
+		element.addEventListener( 'keydown', keydown );
+		element.addEventListener( 'focusin', focusin );
 
 		loadCommentEditor( settings ).then(
 			( { mountEditor } ) => {
@@ -69,18 +73,15 @@ export default function CommentBlockEditor( {
 
 		return () => {
 			gone = true;
+			element.removeEventListener( 'keydown', keydown );
+			element.removeEventListener( 'focusin', focusin );
 			unmount?.();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- mounted once, with the content of that moment.
 	}, [] );
 
 	return (
-		// eslint-disable-next-line jsx-a11y/no-static-element-interactions -- keyboard shortcuts for the editor inside.
-		<div
-			className="comments__block-editor jetpack-comments jetpack-comments__box is-open"
-			onKeyDown={ onKeyDown }
-			onFocus={ onFocus }
-		>
+		<div className="comments__block-editor jetpack-comments jetpack-comments__box is-open">
 			<div
 				ref={ container }
 				className="jetpack-comments__editor"

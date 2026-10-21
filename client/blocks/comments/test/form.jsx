@@ -191,6 +191,31 @@ describe( 'PostCommentForm', () => {
 			expect( onUpdateCommentText ).toHaveBeenCalledWith( markup );
 		} );
 
+		it( 'submits on Cmd+Enter from inside the editor', async () => {
+			mockEditorSettings();
+			const mountEditor = mockLoader();
+			const request = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/sites/456/posts/123/replies/new', { content: markup } )
+				.reply( 200, {
+					ID: 4,
+					content: markup,
+					date: '2026-05-02T00:00:00.000Z',
+					parent: false,
+					post: { ID: 123 },
+					status: 'approved',
+				} );
+
+			renderForm( { commentText: markup } );
+			await waitFor( () => expect( mountEditor ).toHaveBeenCalled() );
+
+			const container = mountEditor.mock.calls[ 0 ][ 0 ];
+			container.dispatchEvent(
+				new KeyboardEvent( 'keydown', { keyCode: 13, metaKey: true, bubbles: true } )
+			);
+
+			await waitFor( () => expect( request.isDone() ).toBe( true ) );
+		} );
+
 		it( 'keeps the textarea when the site has no block editor', async () => {
 			const { request } = mockEditorSettings( 404 );
 

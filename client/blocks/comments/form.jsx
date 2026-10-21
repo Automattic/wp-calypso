@@ -60,7 +60,7 @@ class PostCommentForm extends Component {
 		// Use Ctrl+Enter to submit comment
 		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
 			event.preventDefault();
-			this.submit();
+			this.handleSubmit( event );
 		}
 
 		// Use ESC to remove the erroneous comment placeholder and just start over
