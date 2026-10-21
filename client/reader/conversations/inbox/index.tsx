@@ -35,16 +35,16 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		}
 	}, [ selectedKey, conversations ] );
 
-	const selectedUnreadIds = selected?.unreadNoteIds.join( ',' );
-	useEffect( () => {
-		if ( selectedUnreadIds ) {
-			markRead( selectedUnreadIds.split( ',' ).map( Number ) );
+	const openConversation = ( conversation: Conversation ) => {
+		if ( conversation.unreadNoteIds.length ) {
+			markRead( conversation.unreadNoteIds );
 		}
-	}, [ selectedUnreadIds, markRead ] );
+		page.show( getConversationPath( conversation ) );
+	};
 
 	const goTo = ( index: number ) => {
 		const target = conversations[ index ];
-		return target ? () => page.show( getConversationPath( target ) ) : undefined;
+		return target ? () => openConversation( target ) : undefined;
 	};
 
 	return (
@@ -55,7 +55,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					conversations={ conversations }
 					isLoading={ isLoading }
 					selectedKey={ selectedKey }
-					onSelect={ ( conversation ) => page.show( getConversationPath( conversation ) ) }
+					onSelect={ openConversation }
 				/>
 				{ siteId && postId && (
 					<ConversationDetail
