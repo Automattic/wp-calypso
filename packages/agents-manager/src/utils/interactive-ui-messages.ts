@@ -96,9 +96,18 @@ export function getInteractiveUiBatches( messages: UIMessage[] ): InteractiveUiB
 	} );
 }
 
-// Every A2UI message holds one operation, keyed by its name, on one surface.
-function getSurfaceId( { version: _version, ...operation }: InteractiveUiMessage ): unknown {
-	return Object.values( operation )[ 0 ]?.surfaceId;
+// Every A2UI message holds one operation, keyed by its name, on one surface. The agent's messages
+// aren't validated, so any entry may be malformed.
+function getSurfaceId( message: unknown ): unknown {
+	if ( typeof message !== 'object' || message === null ) {
+		return undefined;
+	}
+
+	const operation = Object.entries( message ).find( ( [ key ] ) => key !== 'version' )?.[ 1 ];
+
+	return typeof operation === 'object' && operation !== null && 'surfaceId' in operation
+		? operation.surfaceId
+		: undefined;
 }
 
 interface StaleInteractiveUiSurfaceOptions {

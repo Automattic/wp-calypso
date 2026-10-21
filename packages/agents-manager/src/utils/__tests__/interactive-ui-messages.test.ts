@@ -127,6 +127,17 @@ describe( 'getStaleInteractiveUiSurfaceIds', () => {
 		);
 	} );
 
+	it( 'skips malformed operations', () => {
+		const batch = {
+			...createBatch( 1 ),
+			operations: [ ...operations, null ] as unknown as InteractiveUiBatch[ 'operations' ],
+		};
+
+		expect( getStaleInteractiveUiSurfaceIds( [ batch ], { latestUserMessageIndex: 2 } ) ).toEqual(
+			new Set( [ 'test-surface' ] )
+		);
+	} );
+
 	it( 'judges a surface by the last batch that changed it', () => {
 		const staleSurfaceIds = getStaleInteractiveUiSurfaceIds(
 			[ createBatch( 1 ), createBatch( 3 ) ],
