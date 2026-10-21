@@ -429,7 +429,10 @@ flows keep working unchanged:
   override applies to both the V2 `Step.Loading` and V1 `StepContainer` render paths; the tailored (`TailoredFlowPreCheckoutScreen`,
   newsletter / update-design) and hundred-year processing screens short-circuit earlier and keep
   their own dedicated copy, so they are intentionally out of scope. The pre-existing `title` /
-  `subtitle` props still override the single visible frame and win over the carousel. See
+  `subtitle` props still override the single visible frame and win over the carousel.
+  `skipSignupComplete` stops the step recording `calypso_signup_complete` when its pending action
+  succeeds, for a run whose completion was already recorded elsewhere (e.g. the legacy
+  `site-selected` signup flow handing its purchase to onboarding's post-checkout steps). See
   [`steps-repository/processing-step/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/processing-step/index.tsx).
 
 #### Renaming steps

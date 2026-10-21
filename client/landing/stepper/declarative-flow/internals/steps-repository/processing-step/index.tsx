@@ -91,6 +91,8 @@ const ProcessingStep: StepType< {
 		title?: string;
 		subtitle?: string;
 		loadingMessages?: ProcessingLoadingMessage[];
+		// For a run whose signup completion was already recorded before it reached this step.
+		skipSignupComplete?: boolean;
 	};
 } > = function ( props ) {
 	const { submit } = props.navigation;
@@ -240,7 +242,7 @@ const ProcessingStep: StepType< {
 
 			if ( availableFlows[ flow ] && ! isNewSiteMigrationFlow( flow ) ) {
 				availableFlows[ flow ]().then( ( flowExport ) => {
-					if ( flowExport.default.isSignupFlow ) {
+					if ( flowExport.default.isSignupFlow && ! props.skipSignupComplete ) {
 						recordSignupComplete( { ...destinationState } );
 					}
 				} );
