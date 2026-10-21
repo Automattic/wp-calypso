@@ -11,7 +11,15 @@ import { useAppContext } from '../../context';
 import { formatDate } from '../format-note-time';
 import type { NotePost, NoteSite } from '../../types';
 
-export default function PostCard( { post, site }: { post: NotePost; site?: NoteSite } ) {
+export default function PostCard( {
+	post,
+	site,
+	url = post.url,
+}: {
+	post: NotePost;
+	site?: NoteSite;
+	url?: string;
+} ) {
 	const { locale } = useAppContext();
 	const byline = [ post.author_name, post.date && formatDate( post.date, locale ) ]
 		.filter( Boolean )
@@ -27,7 +35,7 @@ export default function PostCard( { post, site }: { post: NotePost; site?: NoteS
 		<Card
 			as="a"
 			className="wpnc-simplified__card"
-			href={ post.url }
+			href={ url }
 			target="_blank"
 			rel="noreferrer"
 			size="small"
