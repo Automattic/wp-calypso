@@ -69,7 +69,11 @@ export const useCheckoutHelpCenter = (): {
 	);
 
 	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
+	const {
+		responseCart,
+		isLoading: isCartLoading,
+		isPendingUpdate: isCartUpdating,
+	} = useShoppingCart( cartKey );
 
 	const {
 		hasPremiumSupport,
@@ -83,6 +87,8 @@ export const useCheckoutHelpCenter = (): {
 	// Only the WordPress.com checkout itself is in the checkout support experiment: not the pending
 	// and thank-you pages, which share this hook, not checkouts for other brands, whose buyers
 	// shouldn't be sent to WordPress.com support, and not carts that already go straight to a human.
+	// Both of those read the cart, so nobody joins until it's ready: a renewal's cart is empty
+	// until its product is added.
 	const isOtherBrandCheckout =
 		isJetpackNotAtomic ||
 		isOtherBrandCheckoutPath( window.location.pathname ) ||
@@ -91,6 +97,8 @@ export const useCheckoutHelpCenter = (): {
 		config.isEnabled( 'checkout/support-routing' ) &&
 		sectionName === 'checkout' &&
 		isLoggedIn &&
+		! isCartLoading &&
+		! isCartUpdating &&
 		! isOtherBrandCheckout &&
 		! hasPremiumSupport;
 
@@ -114,6 +122,8 @@ export const useCheckoutHelpCenter = (): {
 
 	// Counts toggles, plus one when checkout unmounts. An open that waited for the assignment
 	// only goes ahead if nothing changed meanwhile: not another click, and not leaving checkout.
+	// The checkout top bar can stay mounted when paying moves on to the pending page, so the
+	// page path is checked too.
 	const toggleCountRef = useRef( 0 );
 	useEffect( () => {
 		const toggleCount = toggleCountRef;
@@ -124,6 +134,7 @@ export const useCheckoutHelpCenter = (): {
 
 	const toggleHelpCenter = async () => {
 		const toggle = ++toggleCountRef.current;
+		const pathname = window.location.pathname;
 
 		recordTracksEvent( `calypso_thank_you_inlinehelp_${ isShowingHelpCenter ? 'close' : 'show' }`, {
 			force_site_id: true,
@@ -154,7 +165,7 @@ export const useCheckoutHelpCenter = (): {
 			isOpening && canJoinCheckoutSupportExperiment
 				? await loadCheckoutSupportVariation()
 				: undefined;
-		if ( toggle !== toggleCountRef.current ) {
+		if ( toggle !== toggleCountRef.current || window.location.pathname !== pathname ) {
 			return;
 		}
 

@@ -18,6 +18,8 @@ let mockSectionName = 'checkout';
 let mockIsJetpackSite = false;
 let mockIsAtomicSite = false;
 let mockCartProducts: { product_slug: string }[] = [];
+let mockIsCartLoading = false;
+let mockIsCartUpdating = false;
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
@@ -50,7 +52,11 @@ jest.mock( '@automattic/onboarding', () => ( {
 } ) );
 
 jest.mock( '@automattic/shopping-cart', () => ( {
-	useShoppingCart: () => ( { responseCart: { products: mockCartProducts } } ),
+	useShoppingCart: () => ( {
+		responseCart: { products: mockCartProducts },
+		isLoading: mockIsCartLoading,
+		isPendingUpdate: mockIsCartUpdating,
+	} ),
 } ) );
 
 jest.mock( '@wordpress/data', () => ( {
@@ -132,6 +138,8 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 		mockIsJetpackSite = false;
 		mockIsAtomicSite = false;
 		mockCartProducts = [ { product_slug: 'personal-bundle' } ];
+		mockIsCartLoading = false;
+		mockIsCartUpdating = false;
 		window.history.replaceState( null, '', '/checkout/example.wordpress.com' );
 		mockIsEnabled.mockImplementation( ( flag: string ) => flag === 'checkout/support-routing' );
 		mockUseProductsWithPremiumSupport.mockReturnValue( {
@@ -196,6 +204,21 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 		[
 			'when renewing a legacy Jetpack plan',
 			() => ( mockCartProducts = [ { product_slug: 'jetpack_personal' } ] ),
+		],
+		[
+			'while the cart loads',
+			() => {
+				mockIsCartLoading = true;
+				mockCartProducts = [];
+			},
+		],
+		[
+			'while the renewal is added to the cart',
+			() => {
+				window.history.replaceState( null, '', '/checkout/renew/123' );
+				mockIsCartUpdating = true;
+				mockCartProducts = [];
+			},
 		],
 		[
 			'when renewing an Akismet product',
@@ -329,6 +352,24 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 			expect( mockSetShowHelpCenter ).toHaveBeenCalledTimes( 1 );
 			expect( mockSetNavigateToRoute ).toHaveBeenCalledTimes( 1 );
 			expect( shownWith() ).toMatchObject( { checkoutSupportVariation: 'human_only' } );
+		} );
+
+		it( "doesn't open the Help Center after paying moves on to the pending page", async () => {
+			const { result } = renderHook( () => useCheckoutHelpCenter() );
+
+			await act( async () => {
+				const click = result.current.toggleHelpCenter();
+				window.history.replaceState(
+					null,
+					'',
+					'/checkout/thank-you/example.wordpress.com/pending'
+				);
+				resolveAssignment( 'human_only' );
+				await click;
+			} );
+
+			expect( mockSetShowHelpCenter ).not.toHaveBeenCalled();
+			expect( mockSetNavigateToRoute ).not.toHaveBeenCalled();
 		} );
 
 		it( "doesn't open the Help Center after the user leaves checkout", async () => {
