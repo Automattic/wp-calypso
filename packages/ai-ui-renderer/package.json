@@ -1,6 +1,7 @@
 {
 	"name": "@automattic/ai-ui-renderer",
 	"version": "1.0.0",
+	"private": true,
 	"description": "Render AI-generated A2UI messages with WordPress components.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -27,9 +28,6 @@
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/ai-ui-renderer"
-	},
-	"publishConfig": {
-		"access": "public"
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [
