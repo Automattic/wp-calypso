@@ -25,6 +25,19 @@ import { CommentEditorContext } from './comment-editor-context';
 
 const noop = () => {};
 
+// The words of the editor's block markup, for the textarea it falls back to. An inert document,
+// so nothing in the markup runs or loads.
+const blocksToText = ( markup ) =>
+	new DOMParser()
+		.parseFromString(
+			markup
+				.replace( /<\/(p|pre|blockquote|figcaption|ul|ol)>/gi, '$&\n\n' )
+				.replace( /<\/li>/gi, '$&\n' ),
+			'text/html'
+		)
+		.body.textContent.replace( /\n{3,}/g, '\n\n' )
+		.trim();
+
 function PostCommentFormError( { type } ) {
 	const translate = useTranslate();
 
@@ -82,8 +95,15 @@ class PostCommentForm extends Component {
 
 	handleEditorError = () => {
 		this.setState( { editorFailed: true } );
-		// The textarea cannot show block markup.
-		this.resetCommentText();
+		// The textarea cannot show block markup, so it gets the words instead.
+		const text = this.getCommentText();
+		if ( text.includes( '<!-- wp:' ) ) {
+			this.props.onUpdateCommentText( blocksToText( text ) );
+		}
+	};
+
+	handleBlur = () => {
+		this.setState( { haveFocus: false } );
 	};
 
 	handleTextChange = ( event ) => {
@@ -252,7 +272,7 @@ class PostCommentForm extends Component {
 							settings={ this.props.editorSettings }
 							value={ this.getCommentText() }
 							placeholder={ placeholder }
-							label={ isReply ? translate( 'Reply' ) : translate( 'Comment' ) }
+							label={ isReply ? translate( 'Reply' ) : translate( 'Comment', { context: 'noun' } ) }
 							// Settings that arrive after a focus keep it.
 							takeFocus={ isReply || this.state.haveFocus }
 							onChange={ this.updateCommentText }
@@ -276,7 +296,13 @@ class PostCommentForm extends Component {
 					{ composer ? (
 						<div className="comments__form-actions">
 							{ ! this.props.placeholderId && (
-								<WPButton __next40pxDefaultSize variant="tertiary" onClick={ this.handleCancel }>
+								<WPButton
+									__next40pxDefaultSize
+									variant="tertiary"
+									// A reply closes; a root composer only has a draft to discard.
+									disabled={ ! isReply && ! this.hasCommentText() }
+									onClick={ this.handleCancel }
+								>
 									{ translate( 'Cancel' ) }
 								</WPButton>
 							) }
