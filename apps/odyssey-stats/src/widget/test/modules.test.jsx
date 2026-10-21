@@ -136,29 +136,30 @@ describe( 'Modules', () => {
 			expect( screen.getByRole( 'button', { name: 'Install' } ) ).toBeInTheDocument();
 		} );
 
-		it( 'installs Akismet through the My Jetpack products route', async () => {
+		it( 'installs Akismet through the My Jetpack per-product route where it still exists', async () => {
 			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_installed' ) } );
 			renderModules();
 
 			await userEvent.click( screen.getByRole( 'button', { name: 'Install' } ) );
 
-			expect( wpcom.req.post ).toHaveBeenCalledWith(
-				{ apiNamespace: 'my-jetpack/v1', path: '/site/products/activate' },
-				{ products: [ 'anti-spam' ] }
-			);
+			expect( wpcom.req.post ).toHaveBeenCalledTimes( 1 );
+			expect( wpcom.req.post ).toHaveBeenCalledWith( {
+				apiNamespace: 'my-jetpack/v1',
+				path: '/site/products/anti-spam',
+			} );
 		} );
 
-		it( 'falls back to the per-product route on a Jetpack that predates the products one', async () => {
+		it( 'moves on to the products route once Jetpack no longer has the per-product one', async () => {
 			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_installed' ) } );
 			wpcom.req.post.mockRejectedValueOnce( { code: 'rest_no_route', status: 404 } );
 			renderModules();
 
 			await userEvent.click( screen.getByRole( 'button', { name: 'Install' } ) );
 
-			expect( wpcom.req.post ).toHaveBeenLastCalledWith( {
-				apiNamespace: 'my-jetpack/v1',
-				path: '/site/products/anti-spam',
-			} );
+			expect( wpcom.req.post ).toHaveBeenLastCalledWith(
+				{ apiNamespace: 'my-jetpack/v1', path: '/site/products/activate' },
+				{ products: [ 'anti-spam' ] }
+			);
 		} );
 
 		it( 'leaves any other failure to the button, which re-enables itself', async () => {
