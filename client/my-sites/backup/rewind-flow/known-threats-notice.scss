@@ -6,10 +6,10 @@
 	align-items: flex-start;
 	gap: 8px;
 	width: auto;
-	margin-top: 8px;
+	margin-block-start: 8px;
 
 	.backup-known-threats__details {
-		margin-top: 0;
+		margin-block-start: 0;
 	}
 }
 
@@ -27,9 +27,9 @@
 // rule, away from the clean-backup link above it.
 .rewind-flow-known-threats__acknowledgement {
 	align-self: stretch;
-	margin-top: 4px;
-	padding-top: 16px;
-	border-top: 1px solid var( --color-warning-10 );
+	margin-block-start: 4px;
+	padding-block-start: 16px;
+	border-block-start: 1px solid var( --color-warning-10 );
 
 	.components-checkbox-control__label {
 		font-weight: 600;
