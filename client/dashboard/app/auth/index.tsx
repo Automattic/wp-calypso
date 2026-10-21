@@ -16,7 +16,6 @@ import {
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
 import { wpcomLink } from '../../utils/link';
 import { bumpStat } from '../analytics';
-import { useAppContext } from '../context';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import type { WPError } from '@automattic/api-core';
 
@@ -130,12 +129,10 @@ function getOAuthAuthorizeUrl( {
 	state,
 	next = '',
 	isLogout = false,
-	isNewUser = false,
 }: {
 	state: string;
 	next?: string;
 	isLogout?: boolean;
-	isNewUser?: boolean;
 } ): string {
 	const redirectUri = new URL( OAUTH_CALLBACK_PATH, window.location.origin );
 
@@ -152,7 +149,6 @@ function getOAuthAuthorizeUrl( {
 		blog_id: '0',
 		state,
 		...( isLogout === true ? { implicit: 'false' } : {} ),
-		...( isNewUser === true ? { 'new-user': '1' } : {} ),
 	} ).toString();
 
 	return authUri.toString();
@@ -215,7 +211,6 @@ function getAuthErrorReason( error: unknown ): string {
  */
 export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	const authErrorHandled = useRef( false );
-	const { supports } = useAppContext();
 	const queryClient = useQueryClient();
 	const {
 		data: user,
@@ -243,43 +238,35 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		};
 	}, [ user ] );
 
-	const handleAuthError = useCallback(
-		( reason: string ) => {
-			// Prevents repeated calls to redirect
-			if ( authErrorHandled.current ) {
-				return;
-			}
+	const handleAuthError = useCallback( ( reason: string ) => {
+		// Prevents repeated calls to redirect
+		if ( authErrorHandled.current ) {
+			return;
+		}
 
-			authErrorHandled.current = true;
+		authErrorHandled.current = true;
 
-			bumpStat( 'dashboard-auth', `bounce:${ reason }` );
-			trackAuthBounceLoop();
+		bumpStat( 'dashboard-auth', `bounce:${ reason }` );
+		trackAuthBounceLoop();
 
-			if ( config.isEnabled( 'oauth' ) ) {
-				const state = crypto.randomUUID();
-				sessionStorage.setItem( 'wpcom_oauth_state', state );
+		if ( config.isEnabled( 'oauth' ) ) {
+			const state = crypto.randomUUID();
+			sessionStorage.setItem( 'wpcom_oauth_state', state );
 
-				// Default to the signup screen rather than the login screen for certain routes.
-				const isNewUser =
-					supports.startStoreRoute === true && window.location.pathname === '/start-store';
+			window.location.replace(
+				getOAuthAuthorizeUrl( {
+					state,
+					next: window.location.pathname + window.location.search,
+				} )
+			);
+			return;
+		}
 
-				window.location.replace(
-					getOAuthAuthorizeUrl( {
-						state,
-						isNewUser,
-						next: window.location.pathname + window.location.search,
-					} )
-				);
-				return;
-			}
-
-			const currentPath = window.location.href;
-			const path = config( 'wpcom_login_url' ) || wpcomLink( '/log-in' );
-			const loginUrl = `${ path }?redirect_to=${ encodeURIComponent( currentPath ) }`;
-			window.location.href = loginUrl;
-		},
-		[ supports.startStoreRoute ]
-	);
+		const currentPath = window.location.href;
+		const path = config( 'wpcom_login_url' ) || wpcomLink( '/log-in' );
+		const loginUrl = `${ path }?redirect_to=${ encodeURIComponent( currentPath ) }`;
+		window.location.href = loginUrl;
+	}, [] );
 
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.

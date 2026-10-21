@@ -3,26 +3,32 @@ import {
 	CREDITS_UPGRADE_SOURCE,
 	getCreditsCtaType,
 	getCreditsNoticeMessage,
+	getCreditsPurchaseAction,
+	getCreditsPurchaseLink,
 	getCreditsPurchaseOptions,
-	getCreditsUpgradeUrl,
 	parseCreditsAccess,
 	parseLiveCreditsStatus,
 } from '@automattic/agents-manager';
 import { useEvent } from '@wordpress/compose';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { getSessionId } from '../utils/session';
 import {
 	getImageStudioBlogId,
 	getImageStudioIsDevMode,
 	getImageStudioSiteType,
+	trackImageStudioCreditsMeterOpened,
 	trackImageStudioUpgradeNoticeShown,
 	trackImageStudioUpgradeNoticeClick,
+	type CreditsMeterDetails,
+	type CreditsMeterOpenedTrigger,
+	type UpgradeLinkTrigger,
 	type UpgradeNoticeCredits,
 	type UpgradeNoticeTrigger,
 } from '../utils/tracking';
 import type { ImageStudioMode } from '../types';
 import type {
 	CreditsAccess,
+	CreditsPurchaseAction,
 	CreditsPurchaseOptions,
 	CreditsStatus,
 } from '@automattic/agents-manager';
@@ -47,24 +53,45 @@ export function getSiteCreditsLevel( remaining: number ): SiteCreditsLevel | nul
 	return remaining < CREDITS_LOW_BALANCE ? 'low' : null;
 }
 
-function getNoticeCredits(
+const CREDITS_STATE_BY_LEVEL = { out: 'zero', low: 'low' } as const;
+
+function getMeterDetails(
 	status: PaidCreditsStatus,
-	level: SiteCreditsLevel,
-	{ upgradeUrl, askToUpgrade }: CreditsPurchaseOptions
-): UpgradeNoticeCredits {
+	level: SiteCreditsLevel | null
+): CreditsMeterDetails {
 	return {
 		meter: 'site_credits',
-		state: level === 'out' ? 'zero' : 'low',
+		state: level ? CREDITS_STATE_BY_LEVEL[ level ] : 'ok',
 		planTier: status.planTier ?? 'none',
 		creditsLeft: status.remaining,
-		ctaType: getCreditsCtaType( !! upgradeUrl, askToUpgrade ),
-		ref: upgradeUrl ? CREDITS_UPGRADE_SOURCE : 'none',
+	};
+}
+
+function getNoticeCredits(
+	status: PaidCreditsStatus,
+	level: SiteCreditsLevel | null,
+	{ purchaseKind, askToUpgrade }: CreditsPurchaseOptions
+): UpgradeNoticeCredits {
+	return {
+		...getMeterDetails( status, level ),
+		ctaType: getCreditsCtaType( purchaseKind, askToUpgrade ),
+		ref: purchaseKind ? CREDITS_UPGRADE_SOURCE : 'none',
 	};
 }
 
 /** Only Simple and Atomic sites can be on AI credits, so self-hosted sites skip the check. */
 function getSiteCreditsBlogId(): number | null {
 	return getImageStudioSiteType() === 'jetpack' ? null : getImageStudioBlogId();
+}
+
+/** The link carries the session the click event sends as `ai_session_id`. */
+function getSitePurchaseLink( status: PaidCreditsStatus, blogId: number ) {
+	return getCreditsPurchaseLink(
+		status,
+		blogId,
+		getImageStudioSiteType() === 'simple',
+		getSessionId()
+	);
 }
 
 /** Resolves to undefined when the site is not on AI credits or the request fails. */
@@ -99,13 +126,14 @@ export interface AiCreditsState {
 	isLoading: boolean;
 	/** For the chat config: a turn's final update carries the new balance. */
 	onTaskUpdate: ( update: TaskUpdate ) => void;
-	/** For the chat container: at zero, blocks Send and opens the dot's details, keeping the draft. */
+	/** For the chat container: at zero, blocks Send and opens the meter's details, keeping the draft. */
 	beforeSubmit: () => boolean;
-	/** The Agent's credits dot, for sites on a paid plan. */
+	/** The Agent's credits meter, for sites on a paid plan. */
 	meter?: {
 		status: CreditsStatus;
-		upgradeUrl?: string;
-		/** Shown instead of Upgrade to people who can't upgrade the plan. */
+		/** Upgrade or Add credits, by the site's plan. Its click joins the notice's events. */
+		action?: CreditsPurchaseAction;
+		/** Shown instead of that button to people who can't buy it. */
 		purchaseHint?: string;
 		isOpen: boolean;
 		onToggle: ( isOpen: boolean ) => void;
@@ -141,8 +169,8 @@ export function useAiCredits( {
 	// Cancelled when the credentials change or the modal closes, so an older check's answer is dropped.
 	const checkToken = useRef( { isCancelled: false } );
 	// A notice event waits for a running check to answer or fail, so it can say whether
-	// Upgrade shows; a skipped check leaves nothing to wait for. The opening check's 5-second
-	// timeout doesn't count: a late answer can still add Upgrade.
+	// Upgrade or Add credits shows; a skipped check leaves nothing to wait for. The opening
+	// check's 5-second timeout doesn't count: a late answer can still add the button.
 	const isAccessSettled = useRef( isRequestSkipped );
 	const heldNotice = useRef< { level: SiteCreditsLevel; trigger: UpgradeNoticeTrigger } | null >(
 		null
@@ -165,7 +193,7 @@ export function useAiCredits( {
 				return;
 			}
 			const purchaseOptions = getCreditsPurchaseOptions(
-				getCreditsUpgradeUrl( next, blogId ),
+				getSitePurchaseLink( next, blogId ),
 				accessRef.current
 			);
 			trackImageStudioUpgradeNoticeShown( {
@@ -186,7 +214,23 @@ export function useAiCredits( {
 		}
 	} );
 
-	// The Agent's parser, so the notice, the send block and the dot always agree. An unreadable
+	// Every opening records what caused it, so the Agent's `credits_meter_opened` has a twin here.
+	const openMeter = useEvent(
+		(
+			next: PaidCreditsStatus,
+			nextLevel: SiteCreditsLevel | null,
+			trigger: CreditsMeterOpenedTrigger
+		) => {
+			setIsMeterOpen( true );
+			trackImageStudioCreditsMeterOpened( {
+				mode,
+				trigger,
+				...getMeterDetails( next, nextLevel ),
+			} );
+		}
+	);
+
+	// The Agent's parser, so the notice, the send block and the meter always agree. An unreadable
 	// balance keeps whatever was known, so a fluke never clears or shows a notice.
 	const applyCredits = useEvent(
 		( snapshot: unknown, trigger: UpgradeNoticeTrigger, holdNotice = false ) => {
@@ -199,9 +243,9 @@ export function useAiCredits( {
 			}
 			latestStatus.current = next;
 			const level = getSiteCreditsLevel( next.remaining );
-			// A known balance running out opens the dot's details once. The first read stays quiet.
+			// A known balance running out opens the meter's details once. The first read stays quiet.
 			if ( level === 'out' && shown.current.level !== undefined && shown.current.level !== 'out' ) {
-				setIsMeterOpen( true );
+				openMeter( next, level, 'exhausted' );
 			}
 			if ( level !== shown.current.level ) {
 				if ( ! level ) {
@@ -278,18 +322,46 @@ export function useAiCredits( {
 	} );
 
 	const level = status ? getSiteCreditsLevel( status.remaining ) : null;
-	const { upgradeUrl, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
-		status && blogId !== null ? getCreditsUpgradeUrl( status, blogId ) : undefined,
+	const { purchaseUrl, purchaseKind, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
+		status && blogId !== null ? getSitePurchaseLink( status, blogId ) : undefined,
 		access
+	);
+	const purchaseAction = useMemo(
+		() => getCreditsPurchaseAction( { purchaseUrl, purchaseKind } ),
+		[ purchaseUrl, purchaseKind ]
 	);
 	const isNoticeHidden = level === 'low' && isLowNoticeDismissed;
 
+	// One handler for the notice and the credits popover; `trigger` says which showed the
+	// link. A popover click can report `state: ok`, since the popover opens on a healthy balance.
+	const trackUpgradeClick = useEvent( ( trigger: UpgradeLinkTrigger ) => {
+		// Callers pass it only with a link; this narrows the types.
+		if ( ! status || ! purchaseKind ) {
+			return;
+		}
+		trackImageStudioUpgradeNoticeClick( {
+			mode,
+			trigger,
+			...getNoticeCredits( status, level, { purchaseKind } ),
+		} );
+	} );
+
 	const beforeSubmit = useEvent( () => {
-		if ( level !== 'out' ) {
+		if ( ! status || level !== 'out' ) {
 			return true;
 		}
-		setIsMeterOpen( true );
+		// Every blocked send counts, even with the popover already open.
+		openMeter( status, level, 'submit_blocked' );
 		return false;
+	} );
+
+	// Only a click that opens the popover records; the hook's own openings record in `openMeter`.
+	const toggleMeter = useEvent( ( open: boolean ) => {
+		if ( open && ! isMeterOpen && status ) {
+			openMeter( status, level, 'click' );
+		} else {
+			setIsMeterOpen( open );
+		}
 	} );
 
 	// Memoised so the memoised chat doesn't re-render whenever the modal does.
@@ -300,7 +372,16 @@ export function useAiCredits( {
 			onTaskUpdate,
 			beforeSubmit,
 			meter: status
-				? { status, upgradeUrl, purchaseHint, isOpen: isMeterOpen, onToggle: setIsMeterOpen }
+				? {
+						status,
+						action: purchaseAction && {
+							...purchaseAction,
+							onClick: () => trackUpgradeClick( 'popover' ),
+						},
+						purchaseHint,
+						isOpen: isMeterOpen,
+						onToggle: toggleMeter,
+					}
 				: undefined,
 			notice:
 				status && level && ! isNoticeHidden
@@ -309,35 +390,26 @@ export function useAiCredits( {
 							message: getCreditsNoticeMessage( level, status.remaining, askToUpgrade ),
 							dismissible: level === 'low',
 							onDismiss: () => setIsLowNoticeDismissed( true ),
-							action: upgradeUrl
-								? {
-										label: __( 'Upgrade', __i18n_text_domain__ ),
-										href: upgradeUrl,
-										target: '_blank',
-										rel: 'noopener noreferrer',
-										onClick: () =>
-											trackImageStudioUpgradeNoticeClick( {
-												mode,
-												trigger: shown.current.trigger,
-												...getNoticeCredits( status, level, { upgradeUrl } ),
-											} ),
-									}
-								: undefined,
+							action: purchaseAction && {
+								...purchaseAction,
+								onClick: () => trackUpgradeClick( shown.current.trigger ),
+							},
 						}
 					: undefined,
 		} ),
 		[
 			status,
 			level,
-			upgradeUrl,
+			purchaseAction,
 			askToUpgrade,
 			purchaseHint,
 			isNoticeHidden,
 			isMeterOpen,
 			isLoading,
-			mode,
 			onTaskUpdate,
 			beforeSubmit,
+			toggleMeter,
+			trackUpgradeClick,
 		]
 	);
 }

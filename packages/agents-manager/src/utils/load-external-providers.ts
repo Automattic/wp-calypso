@@ -18,16 +18,20 @@ import {
 	getAmCheckpointContext,
 	getAmPageContentMarkup,
 	getAmPageStructure,
+	loadAmEditorSuggestions,
 	preloadAmEditorContentContext,
 } from '../abilities';
 import { findAbilityByName } from '../abilities/ability-name';
 import { handlePageDesignTaskUpdate } from '../abilities/stream-page-design/stream';
+import { wooFallbackToolProvider } from '../abilities/woocommerce';
+import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../constants';
 import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
 import { bigSkyPageContextProvider, isBigSkyEnabled } from './big-sky-page-context';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isEditorPage } from './is-editor-page';
 import { isReaderChatAgent } from './is-reader-chat-agent';
+import { isWooAiProvider } from './is-woo-ai-provider';
 import { setLoadedProviderIds } from './loaded-provider-ids';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type {
@@ -35,11 +39,11 @@ import type {
 	ContextProvider,
 	ClientContextType,
 	ContextEntry,
-	Suggestion,
 	BigSkyMessage,
 } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
-import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
+import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
+import type { InteractiveUiCatalogOptions } from '@automattic/ai-ui-renderer';
 import type { ReactNode } from 'react';
 
 /**
@@ -148,6 +152,22 @@ export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilitie
 	}
 }
 
+/** Tells the agent which files the user can attach, so it never asks for one the composer rejects. */
+function withAcceptedUploadTypes(
+	contextProvider: ContextProvider | undefined
+): ContextProvider | undefined {
+	if ( ! contextProvider ) {
+		return contextProvider;
+	}
+
+	return {
+		getClientContext: () => ( {
+			...contextProvider.getClientContext(),
+			acceptedUploadTypes: DEFAULT_ACCEPTED_UPLOAD_TYPES,
+		} ),
+	};
+}
+
 export interface LoadedProviders {
 	/** Optional stable provider identifier exported by a provider module. */
 	providerId?: string;
@@ -155,8 +175,8 @@ export interface LoadedProviders {
 	providerIds?: string[];
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
-	/** Function to get empty view suggestions. Called when component is ready. */
-	getEmptyViewSuggestions?: () => Suggestion[];
+	/** The empty view's suggestions; `undefined` until a lazily loaded provider's bundle has run. */
+	getEmptyViewSuggestions?: () => Suggestion[] | undefined;
 	/**
 	 * Opt out of the built-in empty-view default suggestions ("Getting started
 	 * with WordPress" etc.) for this provider's surfaces. When any loaded
@@ -168,6 +188,8 @@ export interface LoadedProviders {
 	suppressEmptyViewDefaults?: boolean;
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
+	/** Interactive UI components and functions, added to Agents Manager's catalog. */
+	interactiveUi?: Pick< InteractiveUiCatalogOptions, 'components' | 'functions' >;
 	useAbilitiesSetup?: AbilitiesSetupHook;
 	useSuggestions?: UseSuggestionsHook;
 	getChatComponent?: GetChatComponent;
@@ -596,7 +618,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		};
 	}
 
-	// A Big Sky site needs AM's abilities and page context even with no provider.
+	// A Big Sky site needs AM's abilities, page context and editor suggestions even with no provider.
 	const isBigSkySite = isBigSkyEnabled();
 
 	if ( agentProviders.length === 0 && ! isBigSkySite ) {
@@ -608,8 +630,11 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		void preloadAmEditorContentContext();
 	}
 
+	// AM's editor suggestions, loaded alongside the providers; `null` off editor pages.
+	const editorSuggestionsPromise = isBigSkySite ? loadAmEditorSuggestions() : null;
+
 	let mergedToolProvider: ToolProvider | undefined;
-	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] ) | undefined;
+	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] | undefined ) | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
@@ -627,11 +652,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allContextProviders: ContextProvider[] = isBigSkySite ? [ bigSkyPageContextProvider ] : [];
 	const allMarkdownComponents: MarkdownComponents[] = [];
 	const allMarkdownExtensions: MarkdownExtensions[] = [];
+	const allInteractiveUi: NonNullable< LoadedProviders[ 'interactiveUi' ] >[] = [];
 	const allGetChatComponents: GetChatComponent[] = [];
 	const allTransformMessages: TransformMessages[] = [];
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
-	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
+	const allGetEmptyViewSuggestions: ( () => Suggestion[] | undefined )[] = [];
 	const allUseCheckpoints: UseCheckpointHook[] = [];
 	const allProviderIds: string[] = [];
 
@@ -664,6 +690,14 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			}
 		} )
 	) ) as ( LoadedProviderModule | null )[];
+
+	const editorSuggestions = await editorSuggestionsPromise;
+
+	// AM's suggestions go first, so they win the dedupe by id.
+	if ( editorSuggestions ) {
+		allGetEmptyViewSuggestions.push( editorSuggestions.getEditorEmptyViewSuggestions );
+		allUseSuggestions.push( editorSuggestions.useBlockSuggestions );
+	}
 
 	for ( const loadedModule of loadedModules ) {
 		if ( ! loadedModule ) {
@@ -704,6 +738,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		if ( module.markdownExtensions ) {
 			allMarkdownExtensions.push( module.markdownExtensions );
 		}
+		if ( module.interactiveUi ) {
+			allInteractiveUi.push( module.interactiveUi );
+		}
 
 		// First-write-wins for the singleton export.
 		if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
@@ -719,12 +756,19 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 	}
 
+	// TODO: Remove with `abilities/woocommerce` (temporary, AM-110). Added last, so
+	// a provider's ability with the same name wins; skipped where WooCommerce AI
+	// loads, since it owns these abilities.
+	if ( ! isWooAiProvider( allProviderIds ) ) {
+		allToolProviders.push( wooFallbackToolProvider );
+	}
+
 	// Where AM's editor abilities run, it also describes the page, answers the
 	// chat's Undo first and paints the page-design stream.
 	const isEditor = isEditorPage();
 	const contextProvider = mergeContextProviders( allContextProviders );
-	const mergedContextProvider = withCanvasBinding(
-		isEditor ? withPageContext( contextProvider ) : contextProvider
+	const mergedContextProvider = withAcceptedUploadTypes(
+		withCanvasBinding( isEditor ? withPageContext( contextProvider ) : contextProvider )
 	);
 	const mergedMarkdownComponents = mergeMarkdownComponentsFromProviders( allMarkdownComponents );
 	const mergedMarkdownExtensions = mergeMarkdownExtensionsFromProviders( allMarkdownExtensions );
@@ -847,7 +891,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			const combined: Suggestion[] = [];
 			const seenIds = new Set< string >();
 			for ( const fn of allGetEmptyViewSuggestions ) {
-				for ( const s of fn() ) {
+				for ( const s of fn() ?? [] ) {
 					if ( ! seenIds.has( s.id ) ) {
 						seenIds.add( s.id );
 						combined.push( s );
@@ -858,6 +902,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		};
 	}
 
+	// Merge interactiveUi: every provider's components and functions, in registration order.
+	const mergedInteractiveUi = {
+		components: allInteractiveUi.flatMap( ( { components = [] } ) => components ),
+		functions: allInteractiveUi.flatMap( ( { functions = [] } ) => functions ),
+	};
+
 	setLoadedProviderIds( allProviderIds );
 
 	return {
@@ -866,6 +916,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		getEmptyViewSuggestions: mergedGetEmptyViewSuggestions,
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: { ...defaultMarkdownExtensions, ...mergedMarkdownExtensions },
+		interactiveUi: mergedInteractiveUi,
 		providerIds: allProviderIds.length ? allProviderIds : undefined,
 		useAbilitiesSetup: mergedAbilitiesSetup,
 		onTaskUpdate: isEditor ? handlePageDesignTaskUpdate : undefined,

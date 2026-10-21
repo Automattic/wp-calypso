@@ -1,3 +1,4 @@
+import { useRouter } from '@tanstack/react-router';
 import {
 	Button,
 	__experimentalHeading as Heading,
@@ -5,10 +6,11 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { getScrollContainer } from '@wordpress/dom';
 import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Notice } from '../../components/notice';
 import PageDots from '../../components/page-dots';
@@ -60,6 +62,34 @@ export default function OnboardingTourModal( {
 			section: currentSectionId,
 		} );
 	}, [ currentSectionId, recordTracksEvent ] );
+
+	// Start each section at the top. The router restores the modal's saved scroll after every
+	// hash change, so reset it in the next frame, once every listener has run; the event's
+	// `hashChanged` is always false here. Only the modal's own scroll container is reset.
+	const router = useRouter();
+	const tourRef = useRef< HTMLDivElement >( null );
+	useEffect( () => {
+		let lastHash = router.state.location.hash;
+		let frame = 0;
+		const unsubscribe = router.subscribe( 'onRendered', ( { toLocation } ) => {
+			if ( toLocation.hash === lastHash ) {
+				return;
+			}
+			lastHash = toLocation.hash;
+			cancelAnimationFrame( frame );
+			frame = requestAnimationFrame( () => {
+				const tour = tourRef.current;
+				const container = getScrollContainer( tour );
+				if ( tour && container && tour.closest( '[role="dialog"]' )?.contains( container ) ) {
+					container.scrollTop = 0;
+				}
+			} );
+		} );
+		return () => {
+			unsubscribe();
+			cancelAnimationFrame( frame );
+		};
+	}, [ router ] );
 
 	const onNext = () => {
 		recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
@@ -139,7 +169,7 @@ export default function OnboardingTourModal( {
 			shouldCloseOnClickOutside={ false }
 			__experimentalHideHeader
 		>
-			<div className="a4a-onboarding-tour">
+			<div className="a4a-onboarding-tour" ref={ tourRef }>
 				{ ! isMobile && (
 					<div className="a4a-onboarding-tour-aside">
 						<VStack
@@ -171,6 +201,16 @@ export default function OnboardingTourModal( {
 				) }
 
 				<div className="a4a-onboarding-tour-main">
+					<div className="a4a-onboarding-tour-close">
+						<Button
+							icon={ close }
+							label={ __( 'Close' ) }
+							onClick={ () => {
+								recordTracksEvent( 'calypso_onboarding_tour_modal_close_button_click' );
+								onClose();
+							} }
+						/>
+					</div>
 					<div
 						className="a4a-onboarding-tour-field"
 						style={ { backgroundImage: `url(${ glow })` } }
@@ -185,14 +225,6 @@ export default function OnboardingTourModal( {
 								alt=""
 							/>
 						) ) }
-						<Button
-							icon={ close }
-							label={ __( 'Close' ) }
-							onClick={ () => {
-								recordTracksEvent( 'calypso_onboarding_tour_modal_close_button_click' );
-								onClose();
-							} }
-						/>
 					</div>
 					<div className="a4a-onboarding-tour-content">
 						<VStack spacing={ 4 } justify="flex-start">
@@ -228,29 +260,34 @@ export default function OnboardingTourModal( {
 								</div>
 							</VStack>
 
-							{ isMobile ? (
-								<VStack spacing={ 2 }>
-									{ primaryAction }
-									{ secondaryAction }
-									<PageDots
-										count={ sections.length }
-										current={ currentIndex }
-										label={ __( 'Tour sections' ) }
-										getDotLabel={ ( index ) => sections[ index ].title }
-										onChange={ ( index ) => {
-											recordTracksEvent( 'calypso_onboarding_tour_modal_section_menu_item_swipe', {
-												section: sections[ index ].id,
-											} );
-											goToSection( sections[ index ].id );
-										} }
-									/>
-								</VStack>
-							) : (
-								<ButtonStack justify="flex-end">
-									{ secondaryAction }
-									{ primaryAction }
-								</ButtonStack>
-							) }
+							<div className="a4a-onboarding-tour-actions">
+								{ isMobile ? (
+									<VStack spacing={ 2 }>
+										{ primaryAction }
+										{ secondaryAction }
+										<PageDots
+											count={ sections.length }
+											current={ currentIndex }
+											label={ __( 'Tour sections' ) }
+											getDotLabel={ ( index ) => sections[ index ].title }
+											onChange={ ( index ) => {
+												recordTracksEvent(
+													'calypso_onboarding_tour_modal_section_menu_item_swipe',
+													{
+														section: sections[ index ].id,
+													}
+												);
+												goToSection( sections[ index ].id );
+											} }
+										/>
+									</VStack>
+								) : (
+									<ButtonStack justify="flex-end">
+										{ secondaryAction }
+										{ primaryAction }
+									</ButtonStack>
+								) }
+							</div>
 						</VStack>
 					</div>
 				</div>

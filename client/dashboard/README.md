@@ -1,6 +1,6 @@
 # Multi-site Dashboard
 
-This is the new hosting dashboard for WordPress.com. It serves the WordPress.com dashboard (at my.wordpress.com) and Commerce-in-a-Box dashboard (CIAB, at my.woo.ai).
+This is the new hosting dashboard for WordPress.com. It serves the WordPress.com dashboard (at my.wordpress.com) and the Automattic for Agencies dashboard (A4A).
 
 This dashboard uses TanStack Query and TanStack Router.
 

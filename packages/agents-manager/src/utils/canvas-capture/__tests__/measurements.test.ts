@@ -28,6 +28,8 @@ interface CanvasBlock {
 	/** A lone image, as the block's only content. */
 	image?: Rect;
 	text?: string;
+	/** Inline styles, for a block that paints its own box. */
+	style?: Partial< CSSStyleDeclaration >;
 	/** Builds the block's own markup instead, for the editor's real nesting. */
 	build?: ( element: HTMLElement, canvasDocument: Document ) => void;
 	children?: CanvasBlock[];
@@ -53,6 +55,7 @@ function mountCanvas( roots: CanvasBlock[] ) {
 	const mount = ( block: CanvasBlock, container: HTMLElement, parent?: string ) => {
 		const element = withRect( canvasDocument.createElement( 'div' ), block.rect );
 		element.setAttribute( 'data-block', block.clientId );
+		Object.assign( element.style, block.style );
 
 		if ( block.image ) {
 			element.append( withRect( canvasDocument.createElement( 'img' ), block.image ) );
@@ -291,6 +294,61 @@ it( 'says nothing of children stacked one above the other', () => {
 	] );
 
 	expect( describeMeasuredLayout( [ 'stack' ] ) ).toEqual( [] );
+} );
+
+describe( 'with cards of different content', () => {
+	// Three pricing cards, level and equal in height, with six list items in
+	// one and four and five in the others.
+	const cards = ( style?: Partial< CSSStyleDeclaration > ): CanvasBlock => ( {
+		clientId: 'cols',
+		name: 'core/columns',
+		rect: { top: 0, left: 0, width: 960, height: 500 },
+		children: [
+			[ 'basic', 314 ],
+			[ 'plus', 341 ],
+			[ 'full', 368 ],
+		].map( ( [ clientId, contentHeight ], index ) => ( {
+			clientId: clientId as string,
+			name: 'core/column',
+			rect: { top: 51, left: index * 320, width: 300, height: 399 },
+			style,
+			children: [
+				{
+					clientId: `${ clientId }-list`,
+					name: 'core/list',
+					rect: { top: 75, left: index * 320 + 24, width: 252, height: contentHeight as number },
+					text: 'Feature',
+				},
+			],
+		} ) ),
+	} );
+
+	it.each( [
+		[ 'background', { backgroundColor: 'rgb(255, 255, 255)' } ],
+		[ 'background image', { backgroundImage: 'url(card.png)' } ],
+		[ 'border', { border: '1px solid rgb(0, 0, 0)' } ],
+		[ 'shadow', { boxShadow: '0 1px 2px rgb(0, 0, 0)' } ],
+	] )( 'measures cards that paint a %s by their own boxes', ( _, style ) => {
+		mountCanvas( [ cards( style ) ] );
+
+		const row = describeMeasuredLayout( [ 'cols' ] ).find( ( note ) =>
+			note.startsWith( 'Row in columns (cols)' )
+		);
+
+		expect( row ).toContain( 'column (basic) 51–450, column (plus) 51–450, column (full) 51–450' );
+		expect( row ).toContain( 'are level' );
+	} );
+
+	it( 'measures unpainted columns by what their children show', () => {
+		mountCanvas( [ cards( { backgroundColor: 'rgba(0, 0, 0, 0)' } ) ] );
+
+		const row = describeMeasuredLayout( [ 'cols' ] ).find( ( note ) =>
+			note.startsWith( 'Row in columns (cols)' )
+		);
+
+		expect( row ).toContain( 'column (basic) 75–389, column (plus) 75–416, column (full) 75–443' );
+		expect( row ).toContain( 'not level' );
+	} );
 } );
 
 it( 'gives nothing when the canvas is not mounted', () => {

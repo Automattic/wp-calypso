@@ -21,11 +21,11 @@ import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
+import { useChatOpenCloseEvents } from '../../hooks/use-chat-open-close-events';
 import useRaiseOnFocus from '../../hooks/use-raise-on-focus';
 import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
-import { takeActionOrigin } from '../../utils/action-origin';
 import { saveSessionId } from '../../utils/agent-session';
 import { getChatPresentation } from '../../utils/chat-presentation';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
@@ -44,6 +44,7 @@ import ZendeskChat from '../zendesk-chat';
 import type {
 	AbilitiesSetupHook,
 	GetChatComponent,
+	LoadedProviders,
 	UseSuggestionsHook,
 	SiteBuildUtils,
 	TransformMessages,
@@ -73,6 +74,8 @@ interface Props {
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
+	/** The providers' interactive UI components and functions. */
+	interactiveUi?: LoadedProviders[ 'interactiveUi' ];
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
 	transformMessages?: TransformMessages;
@@ -88,6 +91,7 @@ export default function AgentDock( {
 	markdownExtensions = {},
 	useProviderAbilitiesSetup,
 	getChatComponent,
+	interactiveUi,
 	useSuggestions,
 	siteBuildUtils,
 	transformMessages,
@@ -407,42 +411,7 @@ export default function AgentDock( {
 
 	useRaiseOnFocus( isChatVisible && ! isDocked ? portalNode : null, chatIsOpen );
 
-	// Recorded here rather than from the entry buttons: the dock only renders once
-	// the providers have loaded, so `provider_ids` is always set. `restored` marks
-	// a chat that was already open when the page loaded; `trigger` says who
-	// opened it otherwise (the merchant, or a host through the actions bridge).
-	const wasChatOpenRef = useRef< boolean | null >( null );
-	useEffect( () => {
-		const wasChatOpen = wasChatOpenRef.current;
-		wasChatOpenRef.current = chatIsOpen;
-		if ( chatIsOpen && wasChatOpen !== true ) {
-			const restored = wasChatOpen === null;
-			// Always take, even on restore: a leftover host mark must not
-			// label the next merchant open.
-			const origin = takeActionOrigin( 'open' );
-			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_opened', {
-				restored,
-				trigger: restored ? 'restored' : origin,
-			} );
-		}
-	}, [ chatIsOpen ] );
-
-	// The unified counterpart of Big Sky's two close events (`sidebar_close_click`
-	// docked, `dock_back_button_click` floating), so a close stays visible once
-	// those names stop firing. Watches the persisted state, not `chatIsOpen`:
-	// minimizing hides the chat without closing it and has its own event.
-	// `trigger` says who closed it, as on `chat_opened`.
-	const wasPersistedOpenRef = useRef< boolean | null >( null );
-	useEffect( () => {
-		const wasPersistedOpen = wasPersistedOpenRef.current;
-		wasPersistedOpenRef.current = isPersistedOpen;
-		if ( ! isPersistedOpen && wasPersistedOpen === true ) {
-			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_closed', {
-				docked: isDocked,
-				trigger: takeActionOrigin( 'close' ),
-			} );
-		}
-	}, [ isPersistedOpen, isDocked ] );
+	useChatOpenCloseEvents( { chatIsOpen, isPersistedOpen, isDocked } );
 
 	const OrchestratorChatRoute = (
 		<OrchestratorChat
@@ -459,6 +428,7 @@ export default function AgentDock( {
 			useProviderAbilitiesSetup={ useProviderAbilitiesSetup }
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
+			interactiveUi={ interactiveUi }
 			siteBuildUtils={ siteBuildUtils }
 			transformMessages={ transformMessages }
 			useCheckpoint={ useCheckpoint }

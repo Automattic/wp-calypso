@@ -18,6 +18,12 @@ export function buildOmnibarNodesFromAdminBarNodes(
 
 	const nodeMap = new Map< string, OmnibarNode >();
 	for ( const node of adminBarNodes ) {
+		const builder = builders?.[ node.id ];
+		const built = builder?.( node );
+		if ( built === null ) {
+			continue;
+		}
+
 		const omnibarNode: OmnibarNode = {
 			id: node.id,
 			title: node.meta?.menu_title || node.title || '',
@@ -98,7 +104,8 @@ export function buildOmnibarNodesFromAdminBarNodes(
 				siteActionNodes.push( omnibarNode );
 				break;
 			}
-			case 'stats': {
+			case 'stats':
+			case 'launch-site': {
 				siteActionNodes.push( omnibarNode );
 				break;
 			}
@@ -140,14 +147,12 @@ export function buildOmnibarNodesFromAdminBarNodes(
 			}
 		}
 
-		const builder = builders?.[ node.id ];
 		if ( builder ) {
-			Object.assign( omnibarNode, builder( node ) );
+			Object.assign( omnibarNode, built );
+		}
 
-			// The tree walk skips `top-secondary`, so a builder is what surfaces those nodes.
-			if ( node.parent === 'top-secondary' ) {
-				pluginNodes.push( omnibarNode );
-			}
+		if ( node.parent === 'top-secondary' && omnibarNode !== omnibarNodes.user ) {
+			pluginNodes.push( omnibarNode );
 		}
 
 		nodeMap.set( node.id, omnibarNode );
@@ -179,4 +184,12 @@ export function buildOmnibarNodesFromAdminBarNodes(
 	}
 
 	return omnibarNodes;
+}
+
+export function parseAdminBarTitle( node: AdminBarNode ) {
+	const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
+	return {
+		text: doc.body.textContent?.trim() || undefined,
+		tooltip: doc.querySelector( '[title]' )?.getAttribute( 'title' )?.trim() || undefined,
+	};
 }

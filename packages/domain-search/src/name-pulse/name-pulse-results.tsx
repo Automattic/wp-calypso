@@ -2,10 +2,13 @@ import { Button, VisuallyHidden, __experimentalVStack as VStack } from '@wordpre
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDomainSearch } from '../page/context';
-import { DomainSearchNotice, DomainSuggestion } from '../ui';
-import { NamePulseBundleCard } from './components/bundle-card';
+import { DomainSearchNotice } from '../ui';
+import { NamePulseBundleCard, NamePulseBundleCardPlaceholder } from './components/bundle-card';
 import { NamePulseCart } from './components/cart';
-import { NamePulseExactMatchCard } from './components/exact-match-card';
+import {
+	NamePulseExactMatchCard,
+	NamePulseExactMatchCardPlaceholder,
+} from './components/exact-match-card';
 import { NamePulseSearchNotice } from './components/notice';
 import { NamePulseResultsSection } from './components/results-section';
 import { NamePulseSearchInput } from './components/search-input';
@@ -46,9 +49,19 @@ export const NamePulseResults = () => {
 	} = search;
 	const resultSet = useNamePulseSearchTracking( search );
 	const { bundle, isLoading: isLoadingBundle } = useNamePulseBundle( bundleAnchors );
-	const bundleCard = bundle ? (
-		<NamePulseBundleCard key={ bundle.bundle_group_id } bundle={ bundle } isWide={ ! exactMatch } />
-	) : null;
+	let bundleCard = null;
+
+	if ( bundle ) {
+		bundleCard = (
+			<NamePulseBundleCard
+				key={ bundle.bundle_group_id }
+				bundle={ bundle }
+				isWide={ ! exactMatch }
+			/>
+		);
+	} else if ( isLoadingBundle ) {
+		bundleCard = <NamePulseBundleCardPlaceholder isWide={ ! exactMatch } />;
+	}
 
 	return (
 		<NamePulseResultSetContext.Provider value={ resultSet }>
@@ -74,8 +87,9 @@ export const NamePulseResults = () => {
 							</Button>
 						</DomainSearchNotice>
 					) }
-					{ /* A typed domain shares its row with the bundle; any other search, or a
-				     typed domain that is taken, gets the bundle under Top results. */ }
+					{ /* The exact domain (typed, or the name with the one ending the filter
+				     allows) shares its row with the bundle, or spans it when there is none;
+				     any other search, or a taken name, gets the bundle under Top results. */ }
 					{ exactMatch && (
 						<div className="name-pulse-featured" aria-busy={ ! exactMatch.availability }>
 							{ /* The card replaces its placeholder without moving focus, so the
@@ -93,11 +107,15 @@ export const NamePulseResults = () => {
 									domainName={ exactMatch.domainName }
 									tld={ exactMatch.tld }
 									availability={ exactMatch.availability }
+									isWide={ ! bundle && ! isLoadingBundle }
 								/>
 							) : (
-								<DomainSuggestion.Featured.Placeholder />
+								<NamePulseExactMatchCardPlaceholder
+									domainName={ exactMatch.domainName }
+									tld={ exactMatch.tld }
+								/>
 							) }
-							{ bundleCard ?? ( isLoadingBundle && <DomainSuggestion.Featured.Placeholder /> ) }
+							{ bundleCard }
 						</div>
 					) }
 					{ layout.top.show && ! hasTldsError && (

@@ -42,7 +42,7 @@ module.exports = {
 };
 
 function isDefinedAtTopLevel( context, node ) {
-	const scope = context.getSourceCode().getScope( node );
+	const scope = context.sourceCode.getScope( node );
 	const ref = scope.references.find( ( r ) => r.identifier === node );
 	if ( ! ref || ! ref.resolved ) {
 		return false;

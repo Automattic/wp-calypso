@@ -68,6 +68,7 @@ import type { PlanSlug } from '@automattic/calypso-products';
 import type { Context } from '@automattic/calypso-router';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { WithShoppingCartProps } from '@automattic/shopping-cart';
+import type { CheckoutAttribution } from 'calypso/my-sites/plans-features-main/hooks/use-generate-action-callback';
 import type { AppState } from 'calypso/types';
 import type { LocalizeProps } from 'i18n-calypso';
 
@@ -87,6 +88,7 @@ const isSupportedIntervalType = ( interval: string | null | undefined ): interva
 	SUPPORTED_INTERVAL_TYPES.some( ( supported ) => supported === interval );
 
 interface OwnProps {
+	checkoutAttribution?: CheckoutAttribution;
 	context: Context;
 	coupon?: string;
 	currentPlan: CurrentPlan;
@@ -228,6 +230,7 @@ class PlansComponent extends Component< Props > {
 				selectedPlan={ this.props.selectedPlan }
 				redirectTo={ this.props.redirectTo }
 				pluginSlug={ this.props.pluginSlug }
+				checkoutAttribution={ this.props.checkoutAttribution }
 				coupon={ this.props.coupon }
 				discountEndDate={ this.props.discountEndDate }
 				siteId={ selectedSite?.ID }
@@ -319,6 +322,7 @@ class PlansComponent extends Component< Props > {
 				coupon={ this.props.coupon }
 				redirectTo={ this.props.redirectTo }
 				pluginSlug={ this.props.pluginSlug }
+				checkoutAttribution={ this.props.checkoutAttribution }
 				discountEndDate={ this.props.discountEndDate }
 			/>
 		);

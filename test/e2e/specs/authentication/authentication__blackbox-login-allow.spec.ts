@@ -1,5 +1,5 @@
 import { TestAccount } from '@automattic/calypso-e2e';
-import { useBlackboxTestKeyForCollect } from '../../lib/blackbox-test-key';
+import { captureLoginEndpoint, useBlackboxTestKeyForCollect } from '../../lib/blackbox-test-key';
 import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Authentication: Blackbox login allow', { tag: [ tags.AUTHENTICATION ] }, () => {
@@ -41,24 +41,13 @@ test.describe( 'Authentication: Blackbox login allow', { tag: [ tags.AUTHENTICAT
 				await pageLogin.clickSubmit();
 				await pageLogin.fillPassword( credentials.password );
 
-				const loginResponse = page.waitForResponse(
-					( response ) =>
-						response.request().method() === 'POST' &&
-						response.url().includes( 'action=login-endpoint' )
-				);
-				const loginRequest = page.waitForRequest(
-					( request ) =>
-						request.method() === 'POST' && request.url().includes( 'action=login-endpoint' )
-				);
+				const loginEndpoint = captureLoginEndpoint( page );
 
 				await pageLogin.clickSubmit();
-				const request = await loginRequest;
-				const response = await loginResponse;
-				const body = await response.json();
-				const postData = new URLSearchParams( request.postData() ?? '' );
+				const { postData, status, body } = await loginEndpoint;
 
 				expect( postData.get( 'blackbox_session_id' ) ).toBe( 'bbtest_allow__________' );
-				expect( response.status() ).toBe( 200 );
+				expect( status ).toBe( 200 );
 				expect( body?.success ).toBe( true );
 			} );
 

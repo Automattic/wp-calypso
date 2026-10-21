@@ -20,7 +20,10 @@ interface Props {
 export default function ConversationListItem( { conversation, onClick }: Props ) {
 	const disabled = ! conversation.session_id && ! conversation.conversation_id;
 	const title = generateConversationTitle( conversation.first_message?.content || '' );
-	const subtitle = generateConversationSubtitle( conversation.first_message?.created_at || '' );
+	const subtitle = generateConversationSubtitle(
+		conversation.first_message?.created_at || '',
+		conversation.is_zendesk
+	);
 
 	return (
 		<button

@@ -11,8 +11,6 @@ import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 
 export const READER_CHAT_AGENT_IDS = [ 'reader-chat', 'p2-reader-chat' ] as const;
 
-type ReaderChatAgentId = ( typeof READER_CHAT_AGENT_IDS )[ number ];
-
 /**
  * True if the given agentId is a reader-chat variant.
  */
@@ -32,5 +30,3 @@ export function isReaderChatHost(): boolean {
 
 	return isReaderChatAgent( getAgentsManagerInlineData()?.agentId );
 }
-
-export type { ReaderChatAgentId };

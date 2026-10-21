@@ -1,5 +1,4 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
-import type { StatusIndicatorTone } from '@automattic/agenttic-ui';
 
 export type CreditsPlan = 'free' | 'paid';
 export type CreditsPlanTier = 'personal' | 'premium' | 'business' | 'commerce';
@@ -29,7 +28,7 @@ export type CreditsPool =
 interface CreditsStatusBase {
 	/** Known paid tier supplied by the server; absent for older or unsupported metadata. */
 	planTier?: CreditsPlanTier;
-	/** Overall remaining share, 0–100; drives the free-plan dot, tooltip and notice. */
+	/** Overall remaining share, 0–100; drives the free-plan meter, tooltip and notice. */
 	percent: number;
 	pools: CreditsPool[];
 }
@@ -46,10 +45,10 @@ export type CreditsStatus =
 			remaining: number;
 	  } );
 
-/** Free-plan low-balance percentage, for the dot tone and the notice. */
-export const CREDITS_LOW_THRESHOLD = 20;
+/** Free-plan low-balance percentage, for the alert icon and the notice. */
+const CREDITS_LOW_THRESHOLD = 20;
 
-/** Paid balance, in credits, below which the dot turns red and the low-balance notice shows. */
+/** Paid balance, in credits, below which the meter shows its alert icon and the low-balance notice. */
 export const CREDITS_LOW_BALANCE = 10000;
 
 export function clampPercent( percent: number ): number {
@@ -83,35 +82,21 @@ export function isCreditsExhausted( status: CreditsStatus ): boolean {
 
 /**
  * Low but not exhausted: paid plans by the combined balance against
- * `CREDITS_LOW_BALANCE`, free plans by percentage against `threshold`.
+ * `CREDITS_LOW_BALANCE`, free plans by percentage against `CREDITS_LOW_THRESHOLD`.
  */
-export function isCreditsLow(
-	status: CreditsStatus,
-	threshold: number = CREDITS_LOW_THRESHOLD
-): boolean {
+export function isCreditsLow( status: CreditsStatus ): boolean {
 	if ( isCreditsExhausted( status ) ) {
 		return false;
 	}
 
 	return status.plan === 'paid'
 		? status.remaining < CREDITS_LOW_BALANCE
-		: status.percent <= threshold;
+		: status.percent <= CREDITS_LOW_THRESHOLD;
 }
 
-/**
- * Low or exhausted balances use the error tone, by the same rule as the
- * credits notices. Otherwise paid plans stay muted and free plans use the
- * primary tone.
- */
-export function getCreditsTone(
-	status: CreditsStatus,
-	threshold: number = CREDITS_LOW_THRESHOLD
-): StatusIndicatorTone {
-	if ( isCreditsLow( status, threshold ) || isCreditsExhausted( status ) ) {
-		return 'error';
-	}
-
-	return status.plan === 'paid' ? 'muted' : 'primary';
+/** Whether the meter shows its alert icon: low or exhausted, by the same rule as the credits notices. */
+export function isCreditsAlert( status: CreditsStatus ): boolean {
+	return isCreditsLow( status ) || isCreditsExhausted( status );
 }
 
 /**
@@ -140,7 +125,7 @@ export function formatCreditsLeft( credits: number ): string {
 	);
 }
 
-/** Tooltip and screen-reader sentence for the dot button. */
+/** Credits left as a sentence: an amount on paid plans, a percentage on free ones. */
 export function getCreditsLabel( status: CreditsStatus ): string {
 	if ( status.plan === 'paid' ) {
 		// The combined balance across the plan and top-ups, not the monthly allowance alone.
@@ -152,6 +137,26 @@ export function getCreditsLabel( status: CreditsStatus ): string {
 		__( '%s%% of free credits left', __i18n_text_domain__ ),
 		formatPercent( status.percent )
 	);
+}
+
+/** The meter toggle's label and tooltip: the amount, led by the state when low or out. */
+export function getCreditsToggleLabel( status: CreditsStatus ): string {
+	const label = getCreditsLabel( status );
+	if ( isCreditsExhausted( status ) ) {
+		return sprintf(
+			/* translators: %s: credits left, e.g. "0 credits left" or "0% of free credits left" */
+			__( 'Out of credits: %s', __i18n_text_domain__ ),
+			label
+		);
+	}
+	if ( isCreditsLow( status ) ) {
+		return sprintf(
+			/* translators: %s: credits left, e.g. "9.9k credits left" or "15% of free credits left" */
+			__( 'Low on credits: %s', __i18n_text_domain__ ),
+			label
+		);
+	}
+	return label;
 }
 
 export function formatCreditsDetail( pool: CreditsPool ): string | undefined {

@@ -2,7 +2,7 @@ import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-que
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { close } from '@wordpress/icons';
+import { closeSmall } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
@@ -13,7 +13,7 @@ import UpsellCTAButton from '../../components/upsell-cta-button';
 import { getDifmOfferCopy, useDifmOffer } from '../../utils/difm-offer';
 import { useDifmOfferEngagementTracking } from '../../utils/use-difm-offer-engagement-tracking';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
-import illustrationUrl from './difm-offer-illustration.svg';
+import illustrationUrl from './difm-offer-illustration.webp';
 import type { Site } from '@automattic/api-core';
 
 import './style.scss';
@@ -96,9 +96,13 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 			<Callout
 				title={ copy.title }
 				titleAs="h2"
-				description={ <Text variant="muted">{ copy.description }</Text> }
+				description={
+					<Text variant="muted" className="dashboard-difm-offer-card__description">
+						{ copy.description }
+					</Text>
+				}
 				image={ illustrationUrl }
-				imageAlt={ __( 'A designer edits a website in the site editor' ) }
+				imageAlt={ __( 'A smiling woman works on a laptop, surrounded by design tools' ) }
 				imageVariant="full-bleed"
 				actions={
 					<UpsellCTAButton
@@ -114,7 +118,7 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 			/>
 			<Button
 				className="dashboard-difm-offer-card__dismiss"
-				icon={ close }
+				icon={ closeSmall }
 				label={ __( 'Dismiss' ) }
 				size="small"
 				onClick={ handleDismiss }
