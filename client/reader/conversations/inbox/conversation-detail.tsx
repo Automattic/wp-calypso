@@ -1,4 +1,11 @@
-import { Button, Spinner } from '@wordpress/components';
+import {
+	Button,
+	Spinner,
+	__experimentalHeading as Heading,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import Comments from 'calypso/blocks/comments';
@@ -27,65 +34,83 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 	const author = post?.author as { name?: string } | undefined;
 
 	return (
-		<div className="conversations-inbox__detail-pane">
-			<header className="conversations-inbox__detail-header">
-				<h2 className="conversations-inbox__pane-title">{ translate( 'You follow this' ) }</h2>
-				<div>
+		<VStack spacing={ 0 } className="conversations-inbox__detail-pane">
+			<HStack as="header" expanded={ false } className="conversations-inbox__detail-header">
+				<Heading level={ 2 } size={ 20 } weight={ 500 } color="inherit">
+					{ translate( 'You follow this' ) }
+				</Heading>
+				<HStack spacing={ 0 } expanded={ false }>
 					<Button
+						__next40pxDefaultSize
 						icon={ chevronUp }
 						label={ translate( 'Previous conversation' ) }
 						disabled={ ! onPrevious }
 						onClick={ onPrevious }
 					/>
 					<Button
+						__next40pxDefaultSize
 						icon={ chevronDown }
 						label={ translate( 'Next conversation' ) }
 						disabled={ ! onNext }
 						onClick={ onNext }
 					/>
-				</div>
-			</header>
+				</HStack>
+			</HStack>
 			<div className="conversations-inbox__detail-body">
-				{ isLoading && ! post && <Spinner /> }
-				{ post && ! post.is_error && (
-					<>
-						<a className="conversations-inbox__post-card" href={ getPostUrl( post ) }>
-							<span className="conversations-inbox__post-meta">
-								{ !! post.site_icon && (
-									<img
-										src={ ( post.site_icon as { img?: string } )?.img }
-										alt=""
-										width={ 24 }
-										height={ 24 }
-									/>
-								) }
-								<strong>{ String( post.site_name ?? '' ) }</strong>
-								{ author?.name && <span>{ author.name }</span> }
-								{ !! post.date && <span>· { moment( String( post.date ) ).format( 'll' ) }</span> }
-							</span>
-							<span className="conversations-inbox__post-title">
-								{ String( post.title ?? conversation?.title ?? '' ) }
-							</span>
-							<span className="conversations-inbox__post-excerpt">
-								{ String( post.better_excerpt_no_html ?? post.excerpt_no_html ?? '' ) }
-							</span>
-						</a>
+				<VStack spacing={ 10 } className="conversations-inbox__detail-content">
+					{ isLoading && ! post && <Spinner /> }
+					{ post && ! post.is_error && (
+						<>
+							<VStack
+								as="a"
+								spacing={ 3 }
+								className="conversations-inbox__post-card"
+								href={ getPostUrl( post ) }
+							>
+								<HStack
+									as="span"
+									justify="flex-start"
+									wrap
+									className="conversations-inbox__post-meta"
+								>
+									{ !! post.site_icon && (
+										<img
+											src={ ( post.site_icon as { img?: string } )?.img }
+											alt=""
+											width={ 24 }
+											height={ 24 }
+										/>
+									) }
+									<strong>{ String( post.site_name ?? '' ) }</strong>
+									{ author?.name && <span>{ author.name }</span> }
+									{ !! post.date && (
+										<span>· { moment( String( post.date ) ).format( 'll' ) }</span>
+									) }
+								</HStack>
+								<Heading level={ 3 } size={ 20 } weight={ 500 } color="inherit">
+									{ String( post.title ?? conversation?.title ?? '' ) }
+								</Heading>
+								<Text truncate numberOfLines={ 1 } color="var(--color-text-subtle)">
+									{ String( post.better_excerpt_no_html ?? post.excerpt_no_html ?? '' ) }
+								</Text>
+							</VStack>
 
-						<Comments
-							key={ `${ siteId }-${ postId }` }
-							showNestingReplyArrow
-							post={ post }
-							initialSize={ commentCount || 10 }
-							pageSize={ 25 }
-							startingCommentId={ conversation?.latestCommentId }
-							commentCount={ commentCount }
-							maxDepth={ 1 }
-							commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-							shouldHighlightNew
-						/>
-					</>
-				) }
+							<Comments
+								key={ `${ siteId }-${ postId }` }
+								showNestingReplyArrow
+								post={ post }
+								initialSize={ commentCount || 10 }
+								pageSize={ 25 }
+								startingCommentId={ conversation?.latestCommentId }
+								commentCount={ commentCount }
+								maxDepth={ 1 }
+								commentsFilterDisplay={ COMMENTS_FILTER_ALL }
+								shouldHighlightNew
+							/>
+						</>
+					) }
+				</VStack>
 			</div>
-		</div>
+		</VStack>
 	);
 }

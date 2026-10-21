@@ -1,12 +1,13 @@
 import page from '@automattic/calypso-router';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useCommentNotes, useMarkNotesRead } from 'calypso/reader/data/notifications';
 import { ConversationDetail } from './conversation-detail';
 import { ConversationList } from './conversation-list';
 import { getConversationKey, groupNotesByPost, type Conversation } from './group-notes';
-import { useCommentNotes, useMarkNotesRead } from './use-comment-notes';
 
 import './style.scss';
 
@@ -34,28 +35,27 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		}
 	}, [ selectedKey, conversations ] );
 
-	const selectedUnreadIds = selected?.unreadNoteIds.join( ',' );
-	useEffect( () => {
-		if ( selectedUnreadIds ) {
-			markRead( selectedUnreadIds.split( ',' ).map( Number ) );
+	const openConversation = ( conversation: Conversation ) => {
+		if ( conversation.unreadNoteIds.length ) {
+			markRead( conversation.unreadNoteIds );
 		}
-	}, [ selectedUnreadIds, markRead ] );
+		page.show( getConversationPath( conversation ) );
+	};
 
 	const goTo = ( index: number ) => {
 		const target = conversations[ index ];
-		return target ? () => page.show( getConversationPath( target ) ) : undefined;
+		return target ? () => openConversation( target ) : undefined;
 	};
 
 	return (
 		<ReaderMain className="conversations-inbox-main no-padding" wideLayout>
 			<DocumentHead title={ translate( 'Conversations' ) } />
-			<div className="conversations-inbox">
+			<HStack spacing={ 0 } alignment="stretch" className="conversations-inbox">
 				<ConversationList
 					conversations={ conversations }
 					isLoading={ isLoading }
 					selectedKey={ selectedKey }
-					onSelect={ ( conversation ) => page.show( getConversationPath( conversation ) ) }
-					onMarkAllRead={ markRead }
+					onSelect={ openConversation }
 				/>
 				{ siteId && postId && (
 					<ConversationDetail
@@ -66,7 +66,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 						onNext={ selectedIndex >= 0 ? goTo( selectedIndex + 1 ) : undefined }
 					/>
 				) }
-			</div>
+			</HStack>
 		</ReaderMain>
 	);
 }
