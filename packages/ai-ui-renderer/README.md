@@ -27,9 +27,9 @@ const titlePicker: InteractiveUiComponentDefinition< TitlePickerProps > = {
 `schema` builds with the renderer's `zod`, A2UI's `ActionSchema` and `DataBindingSchema`, and
 value schemas that take a literal or a data binding (`StringValueSchema`, `NumberValueSchema`,
 `BooleanValueSchema`). The component gets resolved props: bound values read from the data model,
-a `set<Prop>` setter for each, and actions as functions to call. A function definition has a
-`name`, `returnType`, `schema` and `execute( args )`, which may be async; its arguments come from
-the agent, so treat them as untrusted.
+a `set<Prop>` setter for each, actions as functions to call, and the host's `hostProps`. A
+function definition has a `name`, `returnType`, `schema` and `execute( args )`, which may be
+async; its arguments come from the agent, so treat them as untrusted.
 
 Create a runtime with `createInteractiveUiRuntime({ catalogs, onAction, onError })` and pass it
 ordered batches with `runtime.processMessages(messages, ownerId)`. The owner is what
@@ -41,7 +41,9 @@ Render each of an owner's surfaces (`runtime.getSurfaceIds(ownerId)`, then
 `processMessages()` call. It adds the `ai-ui-renderer` root fieldset and Markdown, waits
 for the surface's root component, hides a surface that uses a component its catalog lacks
 (reporting it through `onError`), and hides a surface that fails to render until its `revision`
-changes. Pass `disabled` to disable its controls, including an open modal's.
+changes. Pass `disabled` to disable its controls, including an open modal's, and `hostProps` to
+give the components that definitions add props of your own, such as chat state. The host's props
+override the surface's props of the same name; pass a stable object to avoid re-renders.
 
 Import `@automattic/ai-ui-renderer/style.scss` and the WordPress components stylesheet.
 Hosts need Sass support and supply their own stacking rule for `.ai-ui-renderer__modal`.

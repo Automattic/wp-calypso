@@ -1,7 +1,8 @@
 import { createComponentImplementation } from '@a2ui/react/v0_9';
 import { ActionSchema, DataBindingSchema } from '@a2ui/web_core/v0_9';
-import { createElement } from '@wordpress/element';
+import { createElement, useContext } from '@wordpress/element';
 import { z } from 'zod';
+import { InteractiveUiHostPropsContext } from './context';
 import type { ReactComponentImplementation } from '@a2ui/react/v0_9';
 import type { FunctionImplementation } from '@a2ui/web_core/v0_9';
 import type { ComponentType } from 'react';
@@ -26,7 +27,7 @@ export interface InteractiveUiComponentDefinition< Props = Record< string, unkno
 	name: string;
 	/**
 	 * Builds the props schema. The component gets bound values resolved, a `set<Prop>` setter for
-	 * each, and actions as functions to call.
+	 * each, actions as functions to call, and the host's props.
 	 */
 	schema: ( kit: InteractiveUiSchemaKit ) => z.AnyZodObject;
 	component: ComponentType< Props >;
@@ -51,8 +52,16 @@ export function toComponentImplementation( {
 	schema,
 	component,
 }: AnyInteractiveUiComponentDefinition ): ReactComponentImplementation {
-	return createComponentImplementation( { name, schema: schema( SCHEMA_KIT ) }, ( { props } ) =>
-		createElement( component, props )
+	function DefinitionComponent( { props }: { props: Record< string, unknown > } ) {
+		const hostProps = useContext( InteractiveUiHostPropsContext );
+
+		// The host's props win, so a surface can't override host state such as staleness.
+		return createElement( component, { ...props, ...hostProps } );
+	}
+
+	return createComponentImplementation(
+		{ name, schema: schema( SCHEMA_KIT ) },
+		DefinitionComponent
 	);
 }
 
