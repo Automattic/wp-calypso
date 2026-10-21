@@ -101,6 +101,23 @@ describe( 'Playground', () => {
 
 			expect( getSaveStoreButton() ).toBeVisible();
 		} );
+
+		it.each( [
+			[ 'a new Woo Playground', '?intent=woocommerce', true ],
+			[ 'a restored Woo Playground', '?intent=woocommerce&playground=1', false ],
+			[ 'a new Playground without the Woo intent', '', false ],
+		] )( 'intro visibility for %s', async ( _label, search, shown ) => {
+			initializeWordPressPlayground.mockReturnValue( new Promise( () => {} ) );
+
+			await act( async () => {
+				renderPlaygroundStep( {}, { initialEntry: `/setup/onboarding/playground${ search }` } );
+			} );
+
+			const heading = screen.queryByRole( 'heading', {
+				name: 'Build first, choose hosting later',
+			} );
+			expect( Boolean( heading ) ).toBe( shown );
+		} );
 	} );
 
 	describe( 'PlaygroundIframe error handling', () => {

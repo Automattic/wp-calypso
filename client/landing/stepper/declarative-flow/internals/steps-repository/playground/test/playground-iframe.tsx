@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PlaygroundIframe } from '../components/playground-iframe';
 import { initializeWordPressPlayground } from '../lib/initialize-playground';
@@ -73,4 +73,62 @@ describe( 'PlaygroundIframe acquisition retry', () => {
 			expect( initializeWordPressPlayground ).toHaveBeenCalledTimes( 1 );
 		}
 	);
+} );
+
+describe( 'PlaygroundIframe intro', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockSearchParams = new URLSearchParams( { intent: 'woocommerce' } );
+	} );
+
+	const renderIframe = ( showIntro: boolean ) =>
+		render(
+			<PlaygroundIframe
+				hasPlaygroundClient={ false }
+				setPlaygroundClient={ jest.fn() }
+				showIntro={ showIntro }
+			/>
+		);
+
+	const getIntroHeading = () =>
+		screen.queryByRole( 'heading', { name: 'Build first, choose hosting later' } );
+
+	it( 'follows the boot progress and is removed once the Playground is ready', async () => {
+		let resolveBoot: ( value: unknown ) => void = () => {};
+		jest.mocked( initializeWordPressPlayground ).mockReturnValue(
+			new Promise( ( resolve ) => {
+				resolveBoot = resolve;
+			} ) as ReturnType< typeof initializeWordPressPlayground >
+		);
+
+		renderIframe( true );
+
+		expect( getIntroHeading() ).toBeVisible();
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Downloading WordPress' );
+
+		const onBootProgress = jest.mocked( initializeWordPressPlayground ).mock.calls[ 0 ][ 4 ]!;
+		act( () => onBootProgress( { stage: 'woocommerce', value: 60 } ) );
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Downloading WooCommerce' );
+
+		await act( async () => resolveBoot( { blueprint: null, client: {} } ) );
+		expect( getIntroHeading() ).not.toBeInTheDocument();
+	} );
+
+	it( 'gives way to the error screen when the boot fails', async () => {
+		jest.mocked( initializeWordPressPlayground ).mockRejectedValue( new Error( 'boot failed' ) );
+
+		renderIframe( true );
+
+		expect( await screen.findByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
+		expect( getIntroHeading() ).not.toBeInTheDocument();
+	} );
+
+	it( 'is not shown or fed progress without showIntro', () => {
+		jest.mocked( initializeWordPressPlayground ).mockReturnValue( new Promise( () => {} ) );
+
+		renderIframe( false );
+
+		expect( getIntroHeading() ).not.toBeInTheDocument();
+		expect( jest.mocked( initializeWordPressPlayground ).mock.calls[ 0 ][ 4 ] ).toBeUndefined();
+	} );
 } );
