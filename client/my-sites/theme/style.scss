@@ -150,7 +150,7 @@ $button-border: 4px;
 	grid-template-rows: auto 1fr;
 	margin: 0 auto;
 	max-width: $theme-sheet-content-max-width;
-	padding: $theme-sheet-content-padding-y $theme-sheet-content-padding-x;
+	padding: 0 $theme-sheet-content-padding-x $theme-sheet-content-padding-y;
 
 	@include breakpoint-deprecated( '<960px' ) {
 		display: flex;
