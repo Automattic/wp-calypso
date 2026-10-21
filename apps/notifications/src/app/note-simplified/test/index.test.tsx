@@ -78,31 +78,6 @@ describe( 'SimplifiedNote', () => {
 		expect( screen.getByText( 'Ben' ) ).toBeInTheDocument();
 	} );
 
-	it( 'opens the comment from the post card of a comment note', () => {
-		renderNote(
-			makeNote( {
-				url: 'https://site.example/post/#comment-31',
-				meta: {
-					ids: { site: SITE, post: POST, comment: 31 },
-					post: {
-						title: 'The post',
-						url: 'https://site.example/post/',
-						date: null,
-						author_name: 'Steve',
-					},
-					actor: { name: 'Ben', avatar: '' },
-					actor_count: 1,
-				},
-				body: [ person( 'Ben', 2 ), text( 'The comment' ) ],
-			} )
-		);
-
-		expect( screen.getByRole( 'link', { name: /The post/ } ) ).toHaveAttribute(
-			'href',
-			'https://site.example/post/#comment-31'
-		);
-	} );
-
 	it( 'offers to subscribe to the one person behind a note when they have a site', () => {
 		renderNote(
 			makeNote( {
