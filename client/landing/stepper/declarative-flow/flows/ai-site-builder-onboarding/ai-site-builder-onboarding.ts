@@ -314,13 +314,13 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					const siteSlug = ( providedDependencies.siteSlug || getSignupCompleteSlug() ) as string;
 
 					if ( ! siteId || ! siteSlug ) {
-						return navigate( STEPS.ERROR.slug, { errorReason: 'processing_missing_site' } );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'processing_missing_site' }, true );
 					}
 
 					const site = await resolveSelect( SITE_STORE ).getSite( siteId );
 
 					if ( ! site || ! site.URL ) {
-						return navigate( STEPS.ERROR.slug, { errorReason: 'site_lookup_failed' } );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'site_lookup_failed' }, true );
 					}
 
 					// The build-wow endpoint prepares the site itself, so the Big Sky editor

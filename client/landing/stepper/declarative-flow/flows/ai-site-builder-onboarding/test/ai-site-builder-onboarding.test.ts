@@ -507,9 +507,11 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				goToCheckout: true,
 			} );
 
-			expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug, {
-				errorReason: 'processing_missing_site',
-			} );
+			expect( navigate ).toHaveBeenCalledWith(
+				STEPS.ERROR.slug,
+				{ errorReason: 'processing_missing_site' },
+				true
+			);
 		} );
 
 		it( 'names the cause when the created site cannot be loaded', async () => {
@@ -524,9 +526,11 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				siteSlug: 'example.wordpress.com',
 			} );
 
-			expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug, {
-				errorReason: 'site_lookup_failed',
-			} );
+			expect( navigate ).toHaveBeenCalledWith(
+				STEPS.ERROR.slug,
+				{ errorReason: 'site_lookup_failed' },
+				true
+			);
 		} );
 	} );
 } );
