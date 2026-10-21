@@ -4,11 +4,12 @@ export type FilterName = keyof ReturnType< typeof getFilters >;
 
 export type LayoutStyle = 'detailed' | 'simplified';
 
-type Range = {
+export type Range = {
 	type: string;
 	indices: [ number, number ];
 	id: string | number;
 	parent: string | number | null;
+	value?: string;
 	url?: string;
 	site_id?: number;
 	post_id?: number;

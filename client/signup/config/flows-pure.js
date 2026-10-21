@@ -193,21 +193,6 @@ export function generateFlows( {
 			disallowResume: true,
 		},
 		{
-			name: 'clone-site',
-			steps: [
-				'clone-start',
-				'clone-destination',
-				'clone-credentials',
-				'clone-point',
-				'clone-ready',
-				'clone-cloning',
-			],
-			destination: '/activity-log',
-			description: 'Allow Jetpack users to clone a site via Rewind (alternate restore)',
-			lastModified: '2018-05-28',
-			disallowResume: true,
-		},
-		{
 			name: 'ecommerce',
 			steps: [ userSocialStep, 'domains', 'plans-ecommerce-fulfilled' ],
 			destination: getSignupDestination,
