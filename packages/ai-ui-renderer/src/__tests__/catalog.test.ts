@@ -1,30 +1,39 @@
-import { basicCatalog, createComponentImplementation } from '@a2ui/react/v0_9';
-import { z } from 'zod';
+import { basicCatalog } from '@a2ui/react/v0_9';
 import { createInteractiveUiCatalog } from '../catalog';
+import type {
+	InteractiveUiComponentDefinition,
+	InteractiveUiFunctionDefinition,
+} from '../definitions';
 
-function createHostComponent( name: string ) {
-	return createComponentImplementation( { name, schema: z.object( {} ) }, () => null );
+function createHostComponent( name: string ): InteractiveUiComponentDefinition {
+	return { name, schema: ( { z } ) => z.object( {} ), component: () => null };
 }
 
-const hostFunction = {
+const hostFunction: InteractiveUiFunctionDefinition = {
 	name: 'hostOpenHelpCenter',
-	returnType: 'void' as const,
-	schema: z.object( {} ),
+	returnType: 'void',
+	schema: ( { z } ) => z.object( {} ),
 	execute: jest.fn(),
 };
 
-it( 'adds the host components and functions to the basic ones under the Basic catalog ID', () => {
-	const HostColorPicker = createHostComponent( 'HostColorPicker' );
-
+it( 'adds the host components and functions to the basic ones and A2UI’s built-in functions', () => {
 	const catalog = createInteractiveUiCatalog( {
-		components: [ HostColorPicker ],
+		id: 'urn:host:catalog:v1',
+		components: [ createHostComponent( 'HostColorPicker' ) ],
 		functions: [ hostFunction ],
 	} );
 
-	expect( catalog.id ).toBe( basicCatalog.id );
-	expect( catalog.components.has( 'Text' ) ).toBe( true );
-	expect( catalog.components.get( 'HostColorPicker' ) ).toBe( HostColorPicker );
-	expect( catalog.functions.get( 'hostOpenHelpCenter' ) ).toBe( hostFunction );
+	expect( catalog.id ).toBe( 'urn:host:catalog:v1' );
+	expect( [ ...catalog.components.keys() ] ).toEqual(
+		expect.arrayContaining( [ 'Text', 'HostColorPicker' ] )
+	);
+	expect( [ ...catalog.functions.keys() ] ).toEqual(
+		expect.arrayContaining( [ 'formatString', 'hostOpenHelpCenter' ] )
+	);
+} );
+
+it( 'uses the Basic catalog ID by default', () => {
+	expect( createInteractiveUiCatalog().id ).toBe( basicCatalog.id );
 } );
 
 it.each( [
@@ -35,10 +44,10 @@ it.each( [
 	},
 	{
 		kind: 'function',
-		name: 'hostOpenHelpCenter',
-		options: { functions: [ hostFunction, hostFunction ] },
+		name: 'formatString',
+		options: { functions: [ { ...hostFunction, name: 'formatString' } ] },
 	},
-] )( 'rejects a duplicate $kind name', ( { kind, name, options } ) => {
+] )( 'rejects a $kind named like an existing one', ( { kind, name, options } ) => {
 	expect( () => createInteractiveUiCatalog( options ) ).toThrow(
 		`Duplicate interactive UI ${ kind } name: ${ name }`
 	);
