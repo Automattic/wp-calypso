@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
-import { chevronLeft, chevronRight, arrowUp, arrowDown, envelope } from '@wordpress/icons';
+import { chevronLeft, chevronRight, arrowUp, arrowDown, bellUnread } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -136,7 +136,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>
 						<Button
 							size="small"
-							icon={ envelope }
+							icon={ bellUnread }
 							label={ __( 'Mark as unread' ) }
 							onClick={ markAsUnread }
 						/>
