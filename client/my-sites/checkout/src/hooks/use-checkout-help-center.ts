@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import { isAkismetProduct, isJetpackPurchasableItem } from '@automattic/calypso-products';
 import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import {
 	useProductsCustomOptions,
@@ -13,6 +14,7 @@ import {
 } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useRef } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
@@ -32,6 +34,21 @@ const OTHER_BRAND_CHECKOUT_PATHS = [
 	'/checkout/marketplace',
 	'/checkout/passport',
 ];
+
+const isOtherBrandCheckoutPath = ( pathname: string ) =>
+	OTHER_BRAND_CHECKOUT_PATHS.some(
+		( path ) => pathname === path || pathname.startsWith( `${ path }/` )
+	);
+
+// Renewals of other brands go through /checkout/renew/:subscriptionId with no site selected,
+// so only the cart tells them apart.
+const isOtherBrandCart = ( products: { product_slug: string }[] ) =>
+	products.length > 0 &&
+	products.every(
+		( product ) =>
+			isJetpackPurchasableItem( product.product_slug, { includeLegacy: true } ) ||
+			isAkismetProduct( product )
+	);
 
 // Checkout has no admin bar node to read the arm from, so it asks ExPlat itself.
 const GET_HELP_EXPERIMENT = 'calypso_help_center_get_help_chat_forward';
@@ -68,7 +85,8 @@ export const useCheckoutHelpCenter = (): {
 	// shouldn't be sent to WordPress.com support, and not carts that already go straight to a human.
 	const isOtherBrandCheckout =
 		isJetpackNotAtomic ||
-		OTHER_BRAND_CHECKOUT_PATHS.some( ( path ) => window.location.pathname.startsWith( path ) );
+		isOtherBrandCheckoutPath( window.location.pathname ) ||
+		isOtherBrandCart( responseCart.products );
 	const canJoinCheckoutSupportExperiment =
 		config.isEnabled( 'checkout/support-routing' ) &&
 		sectionName === 'checkout' &&
@@ -85,7 +103,20 @@ export const useCheckoutHelpCenter = (): {
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
 		[]
 	);
+
+	// Counts toggles, plus one when checkout unmounts. An open that waited for the assignment
+	// only goes ahead if nothing changed meanwhile: not another click, and not leaving checkout.
+	const toggleCountRef = useRef( 0 );
+	useEffect( () => {
+		const toggleCount = toggleCountRef;
+		return () => {
+			toggleCount.current++;
+		};
+	}, [] );
+
 	const toggleHelpCenter = async () => {
+		const toggle = ++toggleCountRef.current;
+
 		recordTracksEvent( `calypso_thank_you_inlinehelp_${ isShowingHelpCenter ? 'close' : 'show' }`, {
 			force_site_id: true,
 			location: 'thank-you-help-center',
@@ -106,6 +137,9 @@ export const useCheckoutHelpCenter = (): {
 			! isShowingHelpCenter && canJoinCheckoutSupportExperiment
 				? await loadCheckoutSupportVariation()
 				: undefined;
+		if ( toggle !== toggleCountRef.current ) {
+			return;
+		}
 
 		setShowHelpCenter( ! isShowingHelpCenter, {
 			hasPremiumSupport,

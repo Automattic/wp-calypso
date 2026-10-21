@@ -14,6 +14,7 @@ let mockIsLoggedIn = true;
 let mockSectionName = 'checkout';
 let mockIsJetpackSite = false;
 let mockIsAtomicSite = false;
+let mockCartProducts: { product_slug: string }[] = [];
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
@@ -22,6 +23,14 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 jest.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
 	default: { isEnabled: jest.fn() },
+} ) );
+
+// The package's UI imports don't load with the mocked data module, so stand in for its slug checks.
+jest.mock( '@automattic/calypso-products', () => ( {
+	isAkismetProduct: ( { product_slug }: { product_slug: string } ) =>
+		product_slug === 'ak_plus_yearly_1',
+	isJetpackPurchasableItem: ( slug: string, { includeLegacy = false } = {} ) =>
+		slug === 'jetpack_backup_t1_yearly' || ( includeLegacy && slug === 'jetpack_personal' ),
 } ) );
 
 jest.mock( '@automattic/data-stores', () => ( {
@@ -38,7 +47,7 @@ jest.mock( '@automattic/onboarding', () => ( {
 } ) );
 
 jest.mock( '@automattic/shopping-cart', () => ( {
-	useShoppingCart: () => ( { responseCart: { products: [] } } ),
+	useShoppingCart: () => ( { responseCart: { products: mockCartProducts } } ),
 } ) );
 
 jest.mock( '@wordpress/data', () => ( {
@@ -111,6 +120,7 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 		mockSectionName = 'checkout';
 		mockIsJetpackSite = false;
 		mockIsAtomicSite = false;
+		mockCartProducts = [ { product_slug: 'personal-bundle' } ];
 		window.history.replaceState( null, '', '/checkout/example.wordpress.com' );
 		mockIsEnabled.mockImplementation( ( flag: string ) => flag === 'checkout/support-routing' );
 		mockUseProductsWithPremiumSupport.mockReturnValue( {
@@ -165,6 +175,21 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 			() => window.history.replaceState( null, '', '/checkout/agency/purchase' ),
 		],
 		[ 'for a Jetpack site', () => ( mockIsJetpackSite = true ) ],
+		[
+			'when renewing a Jetpack product',
+			() => {
+				window.history.replaceState( null, '', '/checkout/renew/123' );
+				mockCartProducts = [ { product_slug: 'jetpack_backup_t1_yearly' } ];
+			},
+		],
+		[
+			'when renewing a legacy Jetpack plan',
+			() => ( mockCartProducts = [ { product_slug: 'jetpack_personal' } ] ),
+		],
+		[
+			'when renewing an Akismet product',
+			() => ( mockCartProducts = [ { product_slug: 'ak_plus_yearly_1' } ] ),
+		],
 	] )( 'leaves users out of the experiment %s', async ( _case, setUp ) => {
 		setUp();
 
@@ -173,6 +198,33 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 		expect( mockLoadCheckoutSupportVariation ).not.toHaveBeenCalled();
 		expect( shownWith() ).toMatchObject( { checkoutSupportVariation: undefined } );
 		expect( route() ).toBe( '/odie' );
+	} );
+
+	it.each( [
+		[
+			'a site whose address starts with a brand name',
+			() => window.history.replaceState( null, '', '/checkout/agencynews.wordpress.com/personal' ),
+		],
+		[
+			'a WordPress.com renewal',
+			() => window.history.replaceState( null, '', '/checkout/renew/123' ),
+		],
+		[
+			'a cart with a WordPress.com plan and a Jetpack product',
+			() =>
+				( mockCartProducts = [
+					{ product_slug: 'personal-bundle' },
+					{ product_slug: 'jetpack_backup_t1_yearly' },
+				] ),
+		],
+	] )( 'keeps %s in the experiment', async ( _case, setUp ) => {
+		setUp();
+		mockLoadCheckoutSupportVariation.mockResolvedValue( 'human_only' );
+
+		await openHelpCenter();
+
+		expect( mockLoadCheckoutSupportVariation ).toHaveBeenCalled();
+		expect( shownWith() ).toMatchObject( { checkoutSupportVariation: 'human_only' } );
 	} );
 
 	it( 'keeps Atomic sites in the experiment', async () => {
@@ -208,5 +260,46 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 
 		expect( mockLoadCheckoutSupportVariation ).not.toHaveBeenCalled();
 		expect( mockSetShowHelpCenter.mock.calls.at( -1 )?.[ 0 ] ).toBe( false );
+	} );
+
+	describe( 'while the assignment loads', () => {
+		let resolveAssignment: ( variation: string ) => void;
+
+		beforeEach( () => {
+			mockLoadCheckoutSupportVariation.mockReturnValue(
+				new Promise( ( resolve ) => {
+					resolveAssignment = resolve;
+				} )
+			);
+		} );
+
+		it( 'opens the Help Center once when the button is clicked again', async () => {
+			const { result } = renderHook( () => useCheckoutHelpCenter() );
+
+			await act( async () => {
+				const firstClick = result.current.toggleHelpCenter();
+				const secondClick = result.current.toggleHelpCenter();
+				resolveAssignment( 'human_only' );
+				await Promise.all( [ firstClick, secondClick ] );
+			} );
+
+			expect( mockSetShowHelpCenter ).toHaveBeenCalledTimes( 1 );
+			expect( mockSetNavigateToRoute ).toHaveBeenCalledTimes( 1 );
+			expect( shownWith() ).toMatchObject( { checkoutSupportVariation: 'human_only' } );
+		} );
+
+		it( "doesn't open the Help Center after the user leaves checkout", async () => {
+			const { result, unmount } = renderHook( () => useCheckoutHelpCenter() );
+
+			await act( async () => {
+				const click = result.current.toggleHelpCenter();
+				unmount();
+				resolveAssignment( 'human_only' );
+				await click;
+			} );
+
+			expect( mockSetShowHelpCenter ).not.toHaveBeenCalled();
+			expect( mockSetNavigateToRoute ).not.toHaveBeenCalled();
+		} );
 	} );
 } );
