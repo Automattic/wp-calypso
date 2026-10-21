@@ -101,15 +101,6 @@ function SiteLogsDataViews( {
 	const startSec = parseUrlSeconds ? parseUrlSeconds.from : computed.startSec;
 	const endSec = parseUrlSeconds ? parseUrlSeconds.to : computed.endSec;
 
-	// Sync URL when time change.
-	useEffect( () => {
-		const url = new URL( window.location.href );
-		// Always set canonical time params (seconds)
-		url.searchParams.set( 'from', String( startSec ) );
-		url.searchParams.set( 'to', String( endSec ) );
-		window.history.replaceState( null, '', url.toString() );
-	}, [ startSec, endSec, logType ] );
-
 	// Derived from the persisted view, not the merged one, so that advancing
 	// `startPosition` doesn't churn the query params.
 	const filter = useMemo(
@@ -267,12 +258,6 @@ function SiteLogsDataViews( {
 			next.perPage !== view.perPage ||
 			next.sort?.direction !== view.sort?.direction ||
 			! fastDeepEqual( nextFilter, filter );
-
-		const url = new URL( window.location.href );
-		// Always keep canonical time range params
-		url.searchParams.set( 'from', String( startSec ) );
-		url.searchParams.set( 'to', String( endSec ) );
-		window.history.replaceState( null, '', url.pathname + url.search );
 
 		if ( datasetChanged ) {
 			// Clear prior infinite data for old sort/filter so we don't show an empty state.

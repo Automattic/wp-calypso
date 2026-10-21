@@ -33,9 +33,10 @@ export default function AgencySiteActivity() {
 	} );
 	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );
 
-	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
-		handleDateRangeChange( next );
-		setDateRangeVersion( ( v ) => v + 1 );
+	const handleDateRangeChangeWrapper = async ( next: { start: Date; end: Date } ) => {
+		if ( await handleDateRangeChange( next ) ) {
+			setDateRangeVersion( ( v ) => v + 1 );
+		}
 	};
 
 	const hasActivityLogAccess =

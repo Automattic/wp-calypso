@@ -98,11 +98,14 @@ function SiteLogsContent( {
 		gmtOffset,
 		autoRefresh,
 		defaultDays: logType === LogType.ACTIVITY ? 30 : 7,
+		initializeUrl:
+			( logType === LogType.PHP || logType === LogType.SERVER ) &&
+			hasHostingFeature( site, HostingFeatures.LOGS ),
 	} );
 	// this is used to track changes across the dateRange to ensure the components can react to changes when they are triggered by a change in the DateRangePicker
 	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );
 
-	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
+	const handleDateRangeChangeWrapper = async ( next: { start: Date; end: Date } ) => {
 		if ( autoRefresh && ! isLast7Days( next, timezoneString, gmtOffset ) ) {
 			setAutoRefresh( false );
 			setAutoRefreshDisabledReason( __( 'Auto-refresh only works with "Last 7 days" preset' ) );
@@ -111,9 +114,9 @@ function SiteLogsContent( {
 			setAutoRefreshDisabledReason( null );
 		}
 
-		handleDateRangeChange( next );
-
-		setDateRangeVersion( ( v ) => v + 1 );
+		if ( await handleDateRangeChange( next ) ) {
+			setDateRangeVersion( ( v ) => v + 1 );
+		}
 	};
 
 	const handleAutoRefreshToggle = ( isChecked: boolean ) => {
