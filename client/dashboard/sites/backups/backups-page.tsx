@@ -27,6 +27,7 @@ interface BackupsPageProps {
 	site: Site;
 	navigation: BackupsNavigation;
 	rewindId?: string;
+	backupsPath: string;
 	searchParams?: Record< string, unknown >;
 	hasBackups?: boolean;
 	extraNotices?: ReactNode;
@@ -36,6 +37,7 @@ export function BackupsPage( {
 	site,
 	navigation,
 	rewindId,
+	backupsPath,
 	searchParams,
 	hasBackups = true,
 	extraNotices,
@@ -51,6 +53,7 @@ export function BackupsPage( {
 		timezoneString,
 		gmtOffset,
 		defaultDays: 30,
+		selectionPath: backupsPath,
 	} );
 
 	const { activityLog, isLoadingActivityLog, selectedBackup, isSmallViewport } =
@@ -65,12 +68,6 @@ export function BackupsPage( {
 	const isMobileDetailsView = isSmallViewport && !! selectedBackup;
 	const shouldShowActions = hasBackups && ! isMobileDetailsView;
 
-	const handleDateRangeChangeWrapper = async ( next: { start: Date; end: Date } ) => {
-		if ( await handleDateRangeChange( next ) ) {
-			navigation.selectBackup( null );
-		}
-	};
-
 	const actions = (
 		<>
 			{ /* This div is required to fix a layout width issue when the DateRangePicker is placed together with the BackupNowButton. */ }
@@ -82,7 +79,7 @@ export function BackupsPage( {
 					timezoneString={ timezoneString }
 					locale={ locale }
 					defaultFallbackPreset="last-30-days"
-					onChange={ handleDateRangeChangeWrapper }
+					onChange={ handleDateRangeChange }
 				/>
 			</div>
 			<BackupNowButton site={ site } backupState={ backupState } />

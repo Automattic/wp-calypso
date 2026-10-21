@@ -69,6 +69,10 @@ export function BackupsListPage() {
 		<BackupsPage
 			site={ site }
 			navigation={ navigation }
+			backupsPath={
+				router.buildLocation( { to: siteBackupsIndexRoute.fullPath, params: { siteSlug } } )
+					.pathname
+			}
 			rewindId={ rewindId }
 			searchParams={ searchParams }
 			hasBackups={ hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) }

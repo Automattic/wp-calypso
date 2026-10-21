@@ -30,14 +30,8 @@ export default function AgencySiteActivity() {
 		timezoneString,
 		gmtOffset,
 		autoRefresh,
+		resetPageOnChange: true,
 	} );
-	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );
-
-	const handleDateRangeChangeWrapper = async ( next: { start: Date; end: Date } ) => {
-		if ( await handleDateRangeChange( next ) ) {
-			setDateRangeVersion( ( v ) => v + 1 );
-		}
-	};
 
 	const hasActivityLogAccess =
 		hasHostingFeature( site, HostingFeatures.ACTIVITY_LOG ) ||
@@ -61,7 +55,7 @@ export default function AgencySiteActivity() {
 							gmtOffset={ gmtOffset }
 							timezoneString={ timezoneString }
 							locale={ locale }
-							onChange={ handleDateRangeChangeWrapper }
+							onChange={ handleDateRangeChange }
 						/>
 					}
 				/>
@@ -72,7 +66,6 @@ export default function AgencySiteActivity() {
 					<SiteActivityLogsDataViews
 						logType={ LogType.ACTIVITY }
 						dateRange={ dateRange }
-						dateRangeVersion={ dateRangeVersion }
 						autoRefresh={ autoRefresh }
 						setAutoRefresh={ setAutoRefresh }
 						gmtOffset={ gmtOffset }
