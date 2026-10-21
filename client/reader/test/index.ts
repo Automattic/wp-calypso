@@ -36,7 +36,6 @@ jest.mock( 'calypso/controller', () => ( {
 	redirectLoggedOut: jest.fn(),
 	redirectLoggedOutToSignup: jest.fn(),
 	render: jest.fn(),
-	setSelectedSiteIdByOrigin: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/utils', () => ( {

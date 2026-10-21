@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
-	setSelectedSiteIdByOrigin,
 	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
@@ -70,7 +69,6 @@ export default function () {
 		maybeRemoveCheckoutSuccessNotice,
 		sanitizeQueryParameters,
 		navigation,
-		setSelectedSiteIdByOrigin,
 		sitesDashboard,
 		makeLayout,
 		clientRender
@@ -84,7 +82,6 @@ export default function () {
 		maybeRedirectToMultiSiteDashboard(),
 		sanitizeQueryParameters,
 		navigation,
-		setSelectedSiteIdByOrigin,
 		sitesDashboard,
 		makeLayout,
 		clientRender
