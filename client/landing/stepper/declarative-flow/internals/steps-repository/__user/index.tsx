@@ -39,6 +39,7 @@ import { Step as StepType } from '../../types';
 import EmailVerificationGate from './email-verification';
 import { claimGateConfirmation, gateScope } from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
+import SelectedPlanCard from './selected-plan-card';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
 import { useBackoffPoll } from './use-backoff-poll';
@@ -48,6 +49,7 @@ import {
 	useIsPostPlanSelectionEmailVerification,
 	useEmailVerificationGate,
 } from './use-email-verification-gate';
+import useSelectedPlanCard from './use-selected-plan-card';
 import { useSocialService } from './use-social-service';
 import { useUpdateEmail } from './use-update-email';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
@@ -122,6 +124,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const { isEmailFirstVariant: isEmailFirstFromExperiment, isEmailAtBottom } =
 		useAccountCreationExperiment( { flow } );
 	const isEmailFirstVariant = isWooReferrer || isEmailFirstFromExperiment;
+
+	const { showPlanCard, planSlug: preselectedPlanSlug } = useSelectedPlanCard( { flow } );
 
 	// Load the new account's token and refresh the current user. Depends only on the
 	// account-create response, so gate/navigation state changes don't repeat it.
@@ -272,6 +276,13 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		/>
 	);
 
+	const planCard = showPlanCard && preselectedPlanSlug && ! isEditingEmail && (
+		<SelectedPlanCard
+			planSlug={ preselectedPlanSlug }
+			coupon={ queryArgs.get( 'coupon' ) ?? undefined }
+		/>
+	);
+
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
 	const isLargeViewport = useViewportMatch( 'large' );
 	const isMobileViewport = useViewportMatch( 'small', '<' );
@@ -384,6 +395,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
 				{ localeSuggestions }
+				{ planCard }
 				<Step.Heading
 					text={ headingText }
 					subText={ headingSubText }
@@ -472,6 +484,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				goBack={ navigation.goBack }
 				stepContent={
 					<>
+						{ planCard }
 						<FormattedHeader
 							align="center"
 							headerText={ headerText ?? translate( 'Create your account' ) }
