@@ -94,6 +94,13 @@ export function getErrorPreset( querystring: string, __: typeof translate ): Err
 			subtitle: __( 'Your agency must be approved before purchasing inboxes.' ),
 			...pressableAction,
 		},
+		a4a_pressable_titan_billing_dragon_required: {
+			title: accessTitle,
+			subtitle: __(
+				'Your agency’s current billing system does not support Pressable add-ons. Please contact A4A Support for help.'
+			),
+			...pressableAction,
+		},
 		a4a_pressable_titan_subscription_owner_mismatch: {
 			title: accessTitle,
 			subtitle: __( 'Only the subscription owner can update these inboxes.' ),
