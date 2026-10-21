@@ -4,7 +4,7 @@
 	z-index: $agents-manager-z-index-focused + 1;
 }
 
-// Matches Agenttic's look for a disabled message.
+// A stale surface among current ones, in Agenttic's look for a disabled message.
 .agents-manager-interactive-ui-surfaces__surface.is-stale {
 	filter: grayscale( 50% );
 	opacity: 0.6;

@@ -45,9 +45,11 @@ const surfacesPart = {
 function createPresentation( {
 	surfaceOwnerId,
 	hasLoadError = false,
+	staleSurfaceIds = [],
 }: {
 	surfaceOwnerId?: string;
 	hasLoadError?: boolean;
+	staleSurfaceIds?: string[];
 } ): InteractiveUiPresentation {
 	const runtime = createInteractiveUiRuntime( {
 		catalogs: [ createInteractiveUiCatalog() ],
@@ -67,7 +69,7 @@ function createPresentation( {
 		retryLoad: jest.fn(),
 		revision: 0,
 		isDisabled: false,
-		staleSurfaceIds: new Set(),
+		staleSurfaceIds: new Set( staleSurfaceIds ),
 	};
 }
 
@@ -103,8 +105,25 @@ describe( 'attachInteractiveUiPresentation', () => {
 		const [ attached ] = attachInteractiveUiPresentation( [ message ], presentation );
 
 		expect( attached.content ).toEqual( [
-			{ ...surfacesPart, componentProps: { messageId: 'agent', presentation } },
+			{
+				...surfacesPart,
+				componentProps: { messageId: 'agent', presentation, isMessageStale: false },
+			},
 		] );
+	} );
+
+	it( 'disables a message whose surfaces are all stale', () => {
+		const presentation = createPresentation( {
+			surfaceOwnerId: 'agent',
+			staleSurfaceIds: [ 'surface' ],
+		} );
+
+		const [ attached ] = attachInteractiveUiPresentation( [ message ], presentation );
+
+		expect( attached ).toMatchObject( {
+			disabled: true,
+			content: [ { componentProps: { isMessageStale: true } } ],
+		} );
 	} );
 
 	it( 'drops the surfaces part while its message has no surface yet', () => {

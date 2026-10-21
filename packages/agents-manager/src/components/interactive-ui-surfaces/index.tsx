@@ -12,10 +12,12 @@ const CURRENT_HOST_PROPS = { isMessageStale: false };
 interface Props {
 	messageId: string;
 	presentation: InteractiveUiPresentation;
+	/** Every surface is stale, so Agenttic greys out the whole message. */
+	isMessageStale: boolean;
 }
 
 /** Shows a message's interactive UI surfaces, or a retry when the renderer failed to load. */
-export function InteractiveUiSurfaces( { messageId, presentation }: Props ) {
+export function InteractiveUiSurfaces( { messageId, presentation, isMessageStale }: Props ) {
 	const {
 		runtime,
 		renderer,
@@ -65,7 +67,7 @@ export function InteractiveUiSurfaces( { messageId, presentation }: Props ) {
 					<div
 						key={ surfaceId }
 						className={ clsx( 'agents-manager-interactive-ui-surfaces__surface', {
-							'is-stale': isStale,
+							'is-stale': isStale && ! isMessageStale,
 						} ) }
 					>
 						<InteractiveUiSurface
