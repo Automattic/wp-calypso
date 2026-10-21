@@ -37,10 +37,9 @@ const createMockStore = ( initialState = {} ) => {
 	return createStore( reducer );
 };
 
-const createQueryClient = ( teams = [ { slug: 'a8c', title: 'Automattic' } ] ) => {
+const createQueryClient = () => {
 	const client = new QueryClient();
 	client.setDefaultOptions( { queries: { retry: false } } );
-	client.setQueryData( readTeamsQuery().queryKey, { number: teams.length, teams } );
 	return client;
 };
 
@@ -148,15 +147,19 @@ describe( 'ReaderPostActions', () => {
 		const renderActions = ( {
 			post = defaultProps.post,
 			state = { currentUser: { id: 1 } },
-			teams,
-		} = {} ) =>
-			render(
-				<QueryClientProvider client={ createQueryClient( teams ) }>
+			teams = [ { slug: 'a8c', title: 'Automattic' } ],
+		} = {} ) => {
+			const queryClient = createQueryClient();
+			queryClient.setQueryData( readTeamsQuery().queryKey, { number: teams.length, teams } );
+
+			return render(
+				<QueryClientProvider client={ queryClient }>
 					<Provider store={ createMockStore( state ) }>
 						<ReaderPostActions { ...defaultProps } post={ post } />
 					</Provider>
 				</QueryClientProvider>
 			);
+		};
 
 		beforeEach( () => {
 			mockSavedPostsEnabled = true;

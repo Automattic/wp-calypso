@@ -17,15 +17,15 @@ describe( 'isAutomatticTeamMember', () => {
 describe( 'isSavedPostsEnabled', () => {
 	const A8C = [ { slug: 'a8c' } ];
 
-	test( 'should return true for Automatticians when the flag is on', () => {
+	beforeEach( () => {
 		isEnabled.mockImplementation( ( flag ) => flag === 'reader/saved-posts' );
+	} );
 
+	test( 'should return true for Automatticians when the flag is on', () => {
 		expect( isSavedPostsEnabled( A8C ) ).toBe( true );
 	} );
 
 	test( 'should return false for everyone else', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'reader/saved-posts' );
-
 		expect( isSavedPostsEnabled( [ { slug: 'okapi' } ] ) ).toBe( false );
 		expect( isSavedPostsEnabled( undefined ) ).toBe( false );
 	} );
