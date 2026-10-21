@@ -6,17 +6,19 @@ import {
 import { createInteractiveUiCatalogs } from '../utils/interactive-ui-catalogs';
 import {
 	applyInteractiveUiBatch,
-	createInteractiveUiHistory,
 	getInteractiveUiBatches,
 	getStaleInteractiveUiSurfaceIds,
 	INTERACTIVE_UI_VERSION,
-	trackInteractiveUiHistory,
 } from '../utils/interactive-ui-messages';
+import {
+	getInteractiveUiSession,
+	trackInteractiveUiHistory,
+} from '../utils/interactive-ui-session';
 import { getLatestUserMessageIndex } from '../utils/latest-message';
 import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
 import type { AgentConfig } from '../utils/create-agent-config';
 import type { InteractiveUiRenderer } from '../utils/interactive-ui-catalogs';
-import type { InteractiveUiBatch } from '../utils/interactive-ui-messages';
+import type { InteractiveUiSession } from '../utils/interactive-ui-session';
 import type { LoadedProviders } from '../utils/load-external-providers';
 import type { UIMessage, SubmitOptions } from '@automattic/agenttic-client';
 import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
@@ -24,7 +26,9 @@ import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 interface UseInteractiveUiOptions {
 	convertedMessages: AgentsManagerUIMessage[];
 	messages: UIMessage[];
-	conversationId: string;
+	/** The site, user and agent the conversation belongs to. */
+	scopeIdentity: string;
+	sessionId: string;
 	isProcessing: boolean;
 	agentConfig: AgentConfig | null;
 	submitContextMessage: ( message: string, options: SubmitOptions ) => Promise< void >;
@@ -57,7 +61,8 @@ export interface InteractiveUiPresentation {
 export function useInteractiveUi( {
 	messages,
 	convertedMessages,
-	conversationId,
+	scopeIdentity,
+	sessionId,
 	isProcessing,
 	agentConfig,
 	submitContextMessage,
@@ -77,17 +82,10 @@ export function useInteractiveUi( {
 	const [ failedLoadAttempt, setFailedLoadAttempt ] = useState< number >();
 	const [ runtimeRevision, setRuntimeRevision ] = useState( 0 );
 
-	const conversationSession = useMemo(
-		() => ( {
-			conversationId,
-			runtime: undefined as InteractiveUiRuntime | undefined,
-			appliedBatches: [] as InteractiveUiBatch[],
-			history: createInteractiveUiHistory(),
-		} ),
-		[ conversationId ]
-	);
+	const sessionRef = useRef< InteractiveUiSession | undefined >( undefined );
+	sessionRef.current = getInteractiveUiSession( sessionRef.current, scopeIdentity, sessionId );
+	const conversationSession = sessionRef.current;
 
-	// Each conversation switch starts a new session, a return to an earlier one included.
 	useEffect( () => {
 		trackInteractiveUiHistory( conversationSession.history, {
 			isProcessing,

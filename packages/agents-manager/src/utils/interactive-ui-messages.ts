@@ -119,48 +119,6 @@ export function applyInteractiveUiBatch(
 	};
 }
 
-/** Where a chat session's history ends, so its surfaces can be told apart from new ones. */
-interface InteractiveUiHistory {
-	/** The signatures of batches restored from history, such as a past chat's. */
-	restoredSignatures: Set< string >;
-	/** The transcript's length when the session was last idle, once it has been. */
-	idleMessageCount?: number;
-	hasStartedTurn: boolean;
-}
-
-export function createInteractiveUiHistory(): InteractiveUiHistory {
-	return { restoredSignatures: new Set(), hasStartedTurn: false };
-}
-
-/**
- * Records the batches restored from history: those in the transcript before the session's first
- * turn. A turn starts only when the transcript changes while processing, so neither an image
- * upload the user cancels nor the previous conversation's reply, still in progress right after a
- * switch, counts as one.
- */
-export function trackInteractiveUiHistory(
-	history: InteractiveUiHistory,
-	{
-		isProcessing,
-		messageCount,
-		batches,
-	}: { isProcessing: boolean; messageCount: number; batches: InteractiveUiBatch[] }
-) {
-	if ( history.hasStartedTurn ) {
-		return;
-	}
-
-	if ( ! isProcessing ) {
-		history.idleMessageCount = messageCount;
-		batches.forEach( ( batch ) => history.restoredSignatures.add( batch.signature ) );
-	} else if (
-		history.idleMessageCount !== undefined &&
-		messageCount !== history.idleMessageCount
-	) {
-		history.hasStartedTurn = true;
-	}
-}
-
 // Every A2UI message holds one operation, keyed by its name, on one surface. The agent's messages
 // aren't validated, so any entry may be malformed.
 function getOperation( message: unknown ): { name: string; surfaceId: string } | undefined {

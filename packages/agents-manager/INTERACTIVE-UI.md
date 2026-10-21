@@ -36,6 +36,8 @@ come.
   - `src/utils/interactive-ui-messages.ts` and
     `src/utils/convert-interactive-ui-messages-to-components.ts` find surfaces in the transcript
     and which of them are stale.
+  - `src/utils/interactive-ui-session.ts` keeps each conversation's session, through a new chat's
+    bootstrap, and tells surfaces restored from history from new ones.
   - `src/utils/interactive-ui-catalogs.ts` builds the catalogs.
 - **Providers** declare their components and functions in the provider contract's `interactiveUi`
   field (`LoadedProviders` in `src/utils/load-external-providers.ts`).
