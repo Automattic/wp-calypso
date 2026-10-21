@@ -93,6 +93,12 @@
 			color: var( --color-text-subtle, var( --studio-gray-50 ) );
 		}
 	}
+
+	// The terms on their own get the signup step's size, so the two screens line up.
+	&:not( .is-secondary ):has( > .wp-login__one-login-layout-tos ) {
+		font-size: $font-body-small;
+		line-height: 20px;
+	}
 }
 
 .wp-login__one-login-header-client-name {
