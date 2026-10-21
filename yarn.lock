@@ -404,7 +404,7 @@ __metadata:
     postcss: "npm:^8.4.0"
     react: "npm:^18.0.0"
     react-dom: "npm:^18.0.0"
-    typescript: "npm:^5.0.0"
+    typescript: "npm:^5.9.3"
     unified: "npm:^11.0.5"
     vite: "npm:^6.4.3"
     vite-plugin-lib-inject-css: "npm:^2.2.2"
@@ -433,7 +433,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:^4.0.0"
     react: "npm:^18.0.0"
     react-dom: "npm:^18.0.0"
-    typescript: "npm:^5.0.0"
+    typescript: "npm:^5.9.3"
     vite: "npm:^6.4.3"
   languageName: unknown
   linkType: soft
@@ -472,7 +472,7 @@ __metadata:
     react-textarea-autosize: "npm:^8.5.9"
     remark-gfm: "npm:^4.0.1"
     storybook: "npm:^10.6.2"
-    typescript: "npm:^5.0.0"
+    typescript: "npm:^5.9.3"
     unified: "npm:^11.0.5"
     use-debounce: "npm:^10.0.6"
     vite: "npm:^6.4.3"
@@ -33146,7 +33146,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.9.3, typescript@npm:^5.0.0":
+"typescript@npm:5.9.3, typescript@npm:^5.9.3":
   version: 5.9.3
   resolution: "typescript@npm:5.9.3"
   bin:
@@ -33166,7 +33166,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.0.0#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.9.3#optional!builtin<compat/typescript>":
   version: 5.9.3
   resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=e012d7"
   bin:
