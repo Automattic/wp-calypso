@@ -58,7 +58,7 @@ function collectAssetsFromPage( html, pageUrl ) {
 	};
 
 	const chunkMaps =
-		/\.(u|miniCssF)=\w+=>""\+\(\((\{[^}]*\})\)\[\w+\]\|\|\w+\)\+"\."\+\(?(\{[^}]*\})\)?\[\w+\]\+"([^"]+)"/g;
+		/\.(u|miniCssF)=\w+=>(?:""\+)?\(\((\{[^}]*\})\)\[\w+\]\|\|\w+\)\+"\."\+\(?(\{[^}]*\})\)?\[\w+\]\+"([^"]+)"/g;
 	let found = 0;
 	for ( const [ , kind, namesSource, hashesSource, suffix ] of html.matchAll( chunkMaps ) ) {
 		const names = parseObjectLiteral( namesSource );

@@ -34,6 +34,12 @@ Exit codes: `0` nothing blocked, `1` at least one asset blocked, `2` the control
 
 The lists are downloaded on first use and then reused, so repeated runs compare against the same rules. Pass `--refresh` to pick up new rules; the list versions are printed on every run and recorded in the JSON report.
 
+## Scheduled run
+
+The TeamCity build "Content-blocker chunk audit" (`ContentBlockerChunkAudit` in `.teamcity/_self/projects/WebApp.kt`) runs the `--page` form every six hours against what wordpress.com serves, with `--refresh` so each run uses the current lists. It audits one page per webpack entry point, since each entry point inlines its own chunk maps: `/setup/onboarding/user` (Stepper), `/log-in` (login) and `/themes` (the main Calypso bundle). A failed run, whether an asset is blocked or the control was not, posts to `#dotcom-quake`. The JSON report, including the list versions, is kept as the build artifact `artifacts/content-blocker-audit.json`.
+
+The build does not install dependencies: the audit only needs Node and the files in this directory.
+
 ## The control
 
 `filter-lists.json` lists names that are known to be blocked: the original cookie-banner chunk. Every run checks them alongside the real assets. If a control is not blocked, the lists changed, a download returned something unexpected, or the matcher regressed — in any of those cases a clean result would mean nothing, so the run fails with exit code `2`. Keep at least one control, and only replace it with another name that the agreed lists block today.

@@ -28,6 +28,7 @@ object WebApp : Project({
 	buildType(PlaywrightTestDashboardPRMatrix)
 	buildType(PlaywrightTestA4APRMatrix)
 	buildType(AuthenticationE2ETests)
+	buildType(ContentBlockerChunkAudit)
 })
 
 object BuildDockerImage : BuildType({
@@ -1219,5 +1220,71 @@ object AuthenticationE2ETests : BuildType({
 			triggerBuild = always()
 			withPendingChangesOnly = true
 		}
+	}
+})
+
+object ContentBlockerChunkAudit : BuildType({
+	id("calypso_WebApp_Content_Blocker_Chunk_Audit")
+	uuid = "6d486fce-f075-4241-a1a2-0c06e9fe4f6a"
+	name = "Content-blocker chunk audit"
+	description = "Checks the JavaScript and CSS chunk names deployed to wordpress.com against common content-blocker filter lists, so a chunk name a blocker would refuse is reported before it blanks a page (DOTOBRD-569)."
+
+	artifactRules = """
+		artifacts => artifacts
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Audit deployed chunk names"
+			scriptContent = """
+				mkdir -p artifacts
+
+				# The audit only needs Node and the files in build-tools/, so there is no yarn install.
+				# Each entry point inlines its own chunk maps, so one page per entry point is audited.
+				# --refresh downloads the current filter lists; the versions used are in the JSON report.
+				node bin/audit-content-blocker-chunks.js \
+					--refresh \
+					--json artifacts/content-blocker-audit.json \
+					--page https://wordpress.com/setup/onboarding/user \
+					--page https://wordpress.com/log-in \
+					--page https://wordpress.com/themes
+			"""
+		}
+	}
+
+	features {
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#dotcom-quake"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
+	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = cron {
+				hours = "*/6"
+			}
+			branchFilter = "+:<default>"
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 15
 	}
 })

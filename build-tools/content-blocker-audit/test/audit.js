@@ -82,6 +82,15 @@ describe( 'collectAssetsFromPage', () => {
 		] );
 	} );
 
+	test( 'reads the chunk maps when the minifier drops the leading empty string', () => {
+		// Production serves `.u=e=>(({…})[e]||e)+"."+({…})[e]+".min.js"`.
+		const minified = html.replaceAll( '""+', '' );
+		expect( minified ).not.toBe( html );
+		expect( collectAssetsFromPage( minified, PAGE_URL ).assets ).toEqual(
+			collectAssetsFromPage( html, PAGE_URL ).assets
+		);
+	} );
+
 	test( 'fails loudly when the runtime cannot be parsed', () => {
 		expect( () => collectAssetsFromPage( '<html></html>', PAGE_URL ) ).toThrow(
 			'Could not find the webpack public path'
