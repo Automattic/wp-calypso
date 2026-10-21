@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Messages } from './Messages';
+import styles from './Messages.module.css';
 import type { Message as MessageType } from '../../types';
 
 ( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
@@ -125,5 +126,53 @@ describe( 'Messages', () => {
 		} );
 
 		expect( thinking() ).not.toBeNull();
+	} );
+
+	it( 'renders `errorNotice` with its link action in the message list', async () => {
+		const onClick = vi.fn();
+		await render( {
+			messages: [ userMessage( 'Make it orange' ) ],
+			errorNotice: {
+				message: 'You’re out of site credits.',
+				action: { label: 'Add credits', href: '/checkout/credits', onClick },
+			},
+		} );
+
+		const notice = container.querySelector( '[data-slot="messages"] [data-slot="notice"]' );
+		expect( notice?.textContent ).toContain( 'You’re out of site credits.' );
+		expect( notice?.classList.contains( styles.errorNotice ) ).toBe( true );
+		const link = notice!.querySelector( 'a' )!;
+		expect( link.textContent ).toBe( 'Add credits' );
+		expect( link.getAttribute( 'href' ) ).toBe( '/checkout/credits' );
+		link.addEventListener( 'click', ( event ) => event.preventDefault() );
+		await act( async () => link.click() );
+		expect( onClick ).toHaveBeenCalledOnce();
+	} );
+
+	it( 'renders no notice without `errorNotice`', async () => {
+		await render( {
+			messages: [ userMessage( 'Make it orange' ) ],
+			error: 'Something went wrong.',
+		} );
+
+		expect( container.querySelector( '[data-slot="messages"] [data-slot="notice"]' ) ).toBeNull();
+		expect( container.querySelector( '.error-message' )?.textContent ).toBe(
+			'Something went wrong.'
+		);
+	} );
+
+	it( 'renders `error` and `errorNotice` together', async () => {
+		await render( {
+			messages: [ userMessage( 'Make it orange' ) ],
+			error: 'Something went wrong.',
+			errorNotice: { message: 'You’re out of site credits.' },
+		} );
+
+		expect( container.querySelector( '.error-message' )?.textContent ).toBe(
+			'Something went wrong.'
+		);
+		expect(
+			container.querySelector( '[data-slot="messages"] [data-slot="notice"]' )?.textContent
+		).toBe( 'You’re out of site credits.' );
 	} );
 } );

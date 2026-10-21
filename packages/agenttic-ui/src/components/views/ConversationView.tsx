@@ -27,6 +27,7 @@ interface ConversationViewProps extends InputHandlers {
 	isStreaming?: boolean;
 	isReplying?: boolean;
 	error?: string | null;
+	errorNotice?: NoticeConfig;
 
 	// UI state
 	fromCompact?: boolean;
@@ -59,6 +60,7 @@ interface ConversationViewProps extends InputHandlers {
 export function ConversationView( {
 	messages,
 	error,
+	errorNotice,
 	inputValue,
 	onInputChange,
 	onSubmit,
@@ -112,6 +114,7 @@ export function ConversationView( {
 				isStreaming={ isStreaming }
 				isReplying={ isReplying }
 				error={ error }
+				errorNotice={ errorNotice }
 				emptyView={ emptyView }
 				messageRenderer={ messageRenderer }
 				showAgentIcon={ showAgentIcon }

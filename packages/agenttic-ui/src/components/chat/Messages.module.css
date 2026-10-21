@@ -17,6 +17,12 @@
 	}
 }
 
+/* Outweighs the notice's own .container rule, whichever module loads last. */
+.container .errorNotice {
+	margin: 0;
+	border-radius: var( --radius-lg );
+}
+
 /* Hide scrollbar visually during animations */
 /* stylelint-disable-next-line selector-pseudo-class-no-unknown -- CSS Modules :global */
 :global( .animating ) .container::-webkit-scrollbar {

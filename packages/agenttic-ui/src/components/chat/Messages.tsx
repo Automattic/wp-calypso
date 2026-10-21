@@ -7,8 +7,9 @@ import { getLatestTurnStartIndex, getVisibleMessages } from '../../utils/message
 import { SourcesCard } from '../sources';
 import { Message } from './Message';
 import styles from './Messages.module.css';
+import { Notice } from './Notice';
 import { ThinkingMessage } from './ThinkingMessage';
-import type { Message as MessageType } from '../../types';
+import type { Message as MessageType, NoticeConfig } from '../../types';
 import type { ComponentType } from 'react';
 
 interface MessagesProps {
@@ -19,6 +20,7 @@ interface MessagesProps {
 	/** Whether reply text is streaming in. When set, it drives the thinking indicator. */
 	isReplying?: boolean;
 	error?: string | null;
+	errorNotice?: NoticeConfig;
 	emptyView?: React.ReactNode;
 	messageRenderer?: ComponentType< { children: string } >;
 	thinkingMessage?: string;
@@ -52,6 +54,7 @@ export function Messages( {
 	isStreaming = isProcessing,
 	isReplying,
 	error,
+	errorNotice,
 	emptyView,
 	messageRenderer,
 	thinkingMessage,
@@ -193,6 +196,12 @@ export function Messages( {
 							} }
 						>
 							{ error }
+						</div>
+					) }
+					{ /* A DOM element for the ref AnimatePresence's popLayout measures with. */ }
+					{ errorNotice && (
+						<div key="error-notice">
+							<Notice { ...errorNotice } className={ styles.errorNotice } />
 						</div>
 					) }
 				</AnimatePresence>

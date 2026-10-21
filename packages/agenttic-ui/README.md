@@ -220,6 +220,7 @@ interface AgentUIProps {
 	isStreaming?: boolean; // Whether the latest reply is still streaming, when that differs from `isProcessing` (the default)
 	isReplying?: boolean; // Whether reply text is streaming in. When set, it drives the thinking indicator
 	error?: string | null;
+	errorNotice?: NoticeConfig; // An error shown as a notice in the message list, alongside or instead of `error`
 	onSubmit: ( message: string ) => void;
 	onStop?: () => void;
 
