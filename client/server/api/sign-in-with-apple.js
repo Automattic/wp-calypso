@@ -6,6 +6,7 @@ import wpcom from 'calypso/lib/wp';
 
 export const ALLOWED_ORIGINS = [
 	'https://my.wordpress.com',
+	'https://horizon.my.wordpress.com',
 	'https://agencies-beta.automattic.com',
 ];
 

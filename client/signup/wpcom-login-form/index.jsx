@@ -9,6 +9,7 @@ export const CALYPSO_ONLY_HOSTNAMES = [
 	'wpcalypso.wordpress.com',
 	'horizon.wordpress.com',
 	'my.wordpress.com',
+	'horizon.my.wordpress.com',
 	'agencies-beta.automattic.com',
 ];
 
