@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { JETPACK_PRO_PLANS, PLAN_JETPACK_PRO_YEARLY } from '@automattic/calypso-products';
 import { useCallback } from 'react';
 import { useSelector } from 'calypso/state';
 import {
@@ -7,11 +9,25 @@ import {
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
 
+type ProductsList = Parameters< typeof isListedProductOnSale >[ 0 ];
+
+/* Every bundle follows the catalog once Pro is on sale, or while the flag previews that.
+ * Until then only Pro does, so today's lineup stays exactly as it was. */
+const isGatingEveryBundle = ( productsList: ProductsList ) =>
+	config.isEnabled( 'jetpack/pro-bundles' ) ||
+	isListedProductOnSale( productsList, PLAN_JETPACK_PRO_YEARLY );
+
+/**
+ * Whether a bundle may be offered.
+ */
 export default function useIsOnSale() {
 	const productsList = useSelector( getFreshProductsList );
 
 	return useCallback(
-		( productSlug: string ) => isListedProductOnSale( productsList, productSlug ),
+		( productSlug: string ) =>
+			( ! isGatingEveryBundle( productsList ) &&
+				! ( JETPACK_PRO_PLANS as ReadonlyArray< string > ).includes( productSlug ) ) ||
+			isListedProductOnSale( productsList, productSlug ),
 		[ productsList ]
 	);
 }
@@ -25,6 +41,10 @@ export function useOnSaleStatus( productSlug?: string ): 'unknown' | 'on-sale' |
 	const hasFailed = useSelector(
 		( state ) => hasProductsListRequestFailed( state ) && ! isProductsListFetching( state )
 	);
+
+	if ( ! isGatingEveryBundle( productsList ) ) {
+		return 'on-sale';
+	}
 
 	if ( ! productsList && ! hasFailed ) {
 		return 'unknown';

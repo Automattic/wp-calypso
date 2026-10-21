@@ -81,7 +81,7 @@ describe( '<PlanUpgradeSection />', () => {
 		expect( antiSpamHeader.outerHTML ).toContain( 'Anti-spam' );
 		expect( backupDailyHeader.outerHTML ).toContain( 'Backup <span>Daily</span>' );
 	} );
-	it( 'drops a recommended bundle that is off sale', () => {
+	it( 'drops a recommended bundle that is off sale once Pro is on sale', () => {
 		renderWithProvider(
 			<PlanUpgradeSection
 				planRecommendation={ [
@@ -98,7 +98,10 @@ describe( '<PlanUpgradeSection />', () => {
 					productsList: {
 						isFetching: false,
 						sessionListStatus: 'full',
-						items: { jetpack_security_t1_yearly: { available: false } },
+						items: {
+							jetpack_pro_yearly: { available: true },
+							jetpack_security_t1_yearly: { available: false },
+						},
 					},
 				},
 				reducers: { purchases, productsList },
@@ -111,7 +114,7 @@ describe( '<PlanUpgradeSection />', () => {
 		expect( productHeaders[ 1 ].outerHTML ).toContain( 'VideoPress' );
 	} );
 
-	it( 'renders nothing when every recommended bundle is off sale', () => {
+	it( 'renders nothing when every recommended bundle is off sale once Pro is on sale', () => {
 		const { container } = renderWithProvider(
 			<PlanUpgradeSection
 				planRecommendation={ [ 'jetpack_business', [ 'jetpack_complete' ] ] }
@@ -119,7 +122,17 @@ describe( '<PlanUpgradeSection />', () => {
 				filterBar={ null }
 				onSelectProduct={ () => null }
 			/>,
-			{ initialState, reducers: { purchases, productsList } }
+			{
+				initialState: {
+					...initialState,
+					productsList: {
+						isFetching: false,
+						sessionListStatus: 'full',
+						items: { jetpack_pro_yearly: { available: true } },
+					},
+				},
+				reducers: { purchases, productsList },
+			}
 		);
 
 		expect( container ).toBeEmptyDOMElement();
