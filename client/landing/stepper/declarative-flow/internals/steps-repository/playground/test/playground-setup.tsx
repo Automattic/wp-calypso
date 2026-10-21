@@ -195,4 +195,13 @@ describe( 'PlaygroundSetupStep', () => {
 			'/home/example.wordpress.com'
 		);
 	} );
+
+	it( 'offers only the dashboard when the upload is not a Playground export', async () => {
+		importPlaygroundSiteMock.mockRejectedValue( new UnsupportedExportError( 'content' ) );
+		await renderSetupStep();
+
+		expect( screen.getByText( /did not recognize this Playground site/ ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Go to dashboard' } ) ).toBeVisible();
+	} );
 } );

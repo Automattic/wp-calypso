@@ -151,29 +151,33 @@ export const PlaygroundSetupStep: Step< {
 		</div>
 	);
 
+	const failureMessages: Record< ImportFailureReason, string > = {
+		timeout: __(
+			'The import is taking longer than expected and may still finish. Check your dashboard in a few minutes.'
+		),
+		unsupported_file_type: __(
+			'WordPress.com did not recognize this Playground site as a site export, so it could not be imported.'
+		),
+		import_failure: __(
+			'Something went wrong while importing your Playground site. Please try again.'
+		),
+	};
+
 	const getStatus = () => {
 		if ( failureReason ) {
 			return (
 				<div className="import-layout__center">
 					<div className="import__heading import__heading-center">
 						<Title>{ __( 'Your site could not be imported' ) }</Title>
-						<SubTitle>
-							{ failureReason === 'timeout'
-								? __(
-										'The import is taking longer than expected and may still finish. Check your dashboard in a few minutes.'
-									)
-								: __(
-										'Something went wrong while importing your Playground site. Please try again.'
-									) }
-						</SubTitle>
+						<SubTitle>{ failureMessages[ failureReason ] }</SubTitle>
 						<div className="playground-setup__actions">
-							{ failureReason !== 'timeout' && (
+							{ failureReason === 'import_failure' && (
 								<Button variant="primary" onClick={ retryImport }>
 									{ __( 'Try again' ) }
 								</Button>
 							) }
 							<Button
-								variant={ failureReason === 'timeout' ? 'primary' : 'secondary' }
+								variant={ failureReason === 'import_failure' ? 'secondary' : 'primary' }
 								href={ `/home/${ siteSlug || siteId }` }
 							>
 								{ __( 'Go to dashboard' ) }
