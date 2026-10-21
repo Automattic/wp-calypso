@@ -15,7 +15,6 @@ export interface SiteCommentsEditorSettings {
 	/** The versioned loader script, which sets `window.JetpackCommentsEditor`. */
 	loaderUrl: string;
 	maxLength: number;
-	blocks: boolean;
 	/** Core's translations of the editor's strings, keyed as its script translations are. */
 	editorLocale: Record< string, unknown >;
 	editor: SiteCommentsEditorLabels;

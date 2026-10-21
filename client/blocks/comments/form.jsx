@@ -353,13 +353,7 @@ const withCommentsEditorSettings = ( WrappedComponent ) => {
 		const query = siteCommentsEditorQuery( props.post?.site_ID );
 		const { data } = useQuery( { ...query, enabled: blockEditor && query.enabled } );
 
-		return (
-			<WrappedComponent
-				{ ...props }
-				composer={ blockEditor }
-				editorSettings={ data?.blocks ? data : undefined }
-			/>
-		);
+		return <WrappedComponent { ...props } composer={ blockEditor } editorSettings={ data } />;
 	};
 
 	WithCommentsEditorSettings.displayName = `withCommentsEditorSettings(${
