@@ -1,3 +1,4 @@
+import { getRefusedKnownThreats } from '@automattic/api-core';
 import { siteBackupGranularRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -11,7 +12,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useCallback, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
@@ -20,7 +21,7 @@ import KnownThreatsNotice from '../backups/known-threats/known-threats-notice';
 import FileSectionPanelBody from './file-section-panel-body';
 import WooSubscriptionsNotice from './woo-subscriptions-notice';
 import type { RestoreTrackingProps } from './types';
-import type { Site } from '@automattic/api-core';
+import type { BackupKnownThreats, Site } from '@automattic/api-core';
 
 function SiteBackupGranularRestoreForm( {
 	site,
@@ -49,6 +50,13 @@ function SiteBackupGranularRestoreForm( {
 	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
 	const [ acknowledged, setAcknowledged ] = useState( false );
 	const acknowledgementRef = useRef< HTMLInputElement | null >( null );
+	const shouldFocusAcknowledgementRef = useRef( false );
+	const [ refusedCounts, setRefusedCounts ] = useState< {
+		rewindId: string;
+		knownThreats: BackupKnownThreats;
+	} | null >( null );
+	const refusedKnownThreats =
+		refusedCounts?.rewindId === rewindId ? refusedCounts.knownThreats : null;
 	const handleKnownThreatsChange = useCallback( ( value: boolean ) => {
 		setHasKnownThreats( value );
 		if ( ! value ) {
@@ -76,10 +84,15 @@ function SiteBackupGranularRestoreForm( {
 						known_threats_acknowledged: hasKnownThreats && acknowledged,
 					} );
 				},
-				onError: ( error: Error & { error?: string } ) => {
+				onError: ( error: Error & { error?: string; data?: { known_threats?: unknown } } ) => {
 					if ( error.error === 'threats_not_acknowledged' ) {
 						setAcknowledged( false );
-						acknowledgementRef.current?.focus();
+						// Shows the checkbox even if the notice's own lookup missed the threats.
+						setRefusedCounts( {
+							rewindId,
+							knownThreats: getRefusedKnownThreats( error.data?.known_threats ),
+						} );
+						shouldFocusAcknowledgementRef.current = true;
 						createErrorNotice(
 							__(
 								'This backup is known to contain security threats. Acknowledge them to restore it.'
@@ -95,6 +108,14 @@ function SiteBackupGranularRestoreForm( {
 			}
 		);
 	};
+
+	// The checkbox may mount only once the refusal has rendered.
+	useEffect( () => {
+		if ( shouldFocusAcknowledgementRef.current && acknowledgementRef.current ) {
+			shouldFocusAcknowledgementRef.current = false;
+			acknowledgementRef.current.focus();
+		}
+	} );
 
 	const awaitingAcknowledgement = hasKnownThreats && ! acknowledged;
 	const isRestoreDisabled = isRestoreMutationPending || awaitingAcknowledgement;
@@ -166,6 +187,7 @@ function SiteBackupGranularRestoreForm( {
 					onAcknowledgedChange={ setAcknowledged }
 					onKnownThreatsChange={ handleKnownThreatsChange }
 					acknowledgementRef={ acknowledgementRef }
+					refusedKnownThreats={ refusedKnownThreats }
 				/>
 
 				<ButtonStack justify="flex-start">

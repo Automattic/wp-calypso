@@ -639,3 +639,38 @@ test( 'granular form shows the known-threats message on threats_not_acknowledged
 	expect( granularRestoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
 	await waitFor( () => expect( checkbox ).toHaveFocus() );
 } );
+
+test.each( [
+	[ 'form', renderForm, restoreButton ],
+	[ 'granular form', renderGranularForm, granularRestoreButton ],
+] )(
+	'%s asks for the acknowledgement when refused for threats its own lookup missed',
+	async ( _, renderRestoreForm, getRestoreButton ) => {
+		const user = userEvent.setup();
+		mockBackups( { known_threats: knownThreats( 0 ) } );
+		nock( API_BASE )
+			.post( restorePath, ( body ) => ! body.acknowledge_threats )
+			.reply( 409, {
+				error: 'threats_not_acknowledged',
+				message: 'This backup contains known threats.',
+				data: { known_threats: knownThreats( 3 ), backup_period: 1792244301 },
+			} );
+		const acknowledgedScope = nock( API_BASE )
+			.post( restorePath, ( body ) => body.acknowledge_threats === true )
+			.reply( 200, { restore_id: '42' } );
+		renderRestoreForm();
+
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 200 ) ) );
+		expect( screen.queryByRole( 'checkbox', { name: /I understand/ } ) ).not.toBeInTheDocument();
+		await user.click( getRestoreButton() );
+
+		const checkbox = await screen.findByRole( 'checkbox', { name: /I understand/ } );
+		expect( screen.getByText( /known to contain 3 security threats/ ) ).toBeVisible();
+		await waitFor( () => expect( checkbox ).toHaveFocus() );
+		expect( getRestoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+
+		await user.click( checkbox );
+		await user.click( getRestoreButton() );
+		await waitFor( () => expect( acknowledgedScope.isDone() ).toBe( true ) );
+	}
+);
