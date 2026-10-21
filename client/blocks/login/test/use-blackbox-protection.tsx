@@ -43,6 +43,9 @@ describe( 'useBlackboxProtection resetOnError', () => {
 			configure: jest.fn(),
 			collect: jest.fn(),
 			getSessionId: jest.fn(),
+			flush: jest.fn(),
+			getSnapshot: jest.fn(),
+			subscribe: jest.fn(),
 			reset,
 		};
 		( getBlackboxSessionId as jest.Mock ).mockReset();
