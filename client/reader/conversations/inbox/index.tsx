@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -49,13 +50,12 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	return (
 		<ReaderMain className="conversations-inbox-main no-padding" wideLayout>
 			<DocumentHead title={ translate( 'Conversations' ) } />
-			<div className="conversations-inbox">
+			<HStack spacing={ 0 } alignment="stretch" className="conversations-inbox">
 				<ConversationList
 					conversations={ conversations }
 					isLoading={ isLoading }
 					selectedKey={ selectedKey }
 					onSelect={ ( conversation ) => page.show( getConversationPath( conversation ) ) }
-					onMarkAllRead={ markRead }
 				/>
 				{ siteId && postId && (
 					<ConversationDetail
@@ -66,7 +66,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 						onNext={ selectedIndex >= 0 ? goTo( selectedIndex + 1 ) : undefined }
 					/>
 				) }
-			</div>
+			</HStack>
 		</ReaderMain>
 	);
 }

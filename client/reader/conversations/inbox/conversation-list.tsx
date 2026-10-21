@@ -1,4 +1,12 @@
-import { Button, SearchControl, Spinner } from '@wordpress/components';
+import {
+	Button,
+	SearchControl,
+	Spinner,
+	__experimentalHeading as Heading,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { Icon, cog, funnel } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -14,16 +22,9 @@ interface Props {
 	isLoading: boolean;
 	selectedKey?: string;
 	onSelect: ( conversation: Conversation ) => void;
-	onMarkAllRead: ( noteIds: number[] ) => void;
 }
 
-export function ConversationList( {
-	conversations,
-	isLoading,
-	selectedKey,
-	onSelect,
-	onMarkAllRead,
-}: Props ) {
+export function ConversationList( { conversations, isLoading, selectedKey, onSelect }: Props ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const [ tab, setTab ] = useState< InboxTab >( 'all' );
@@ -70,31 +71,50 @@ export function ConversationList( {
 	];
 
 	return (
-		<div className="conversations-inbox__list-pane">
-			<h1 className="conversations-inbox__pane-title">{ translate( 'Conversations' ) }</h1>
-			<div className="conversations-inbox__tabs" role="tablist">
+		<VStack spacing={ 0 } className="conversations-inbox__list-pane">
+			<Heading
+				level={ 1 }
+				size={ 20 }
+				weight={ 500 }
+				color="inherit"
+				className="conversations-inbox__pane-title"
+			>
+				{ translate( 'Conversations' ) }
+			</Heading>
+			<HStack
+				justify="flex-start"
+				expanded={ false }
+				className="conversations-inbox__tabs"
+				role="tablist"
+			>
 				{ tabs.map( ( { name, label, count } ) => (
-					<button
+					<HStack
+						as="button"
 						key={ name }
+						spacing={ 1.5 }
+						justify="flex-start"
+						expanded={ false }
 						type="button"
 						role="tab"
 						aria-selected={ tab === name }
 						className={ clsx( 'conversations-inbox__tab', { 'is-active': tab === name } ) }
 						onClick={ () => setTab( name ) }
 					>
-						{ label }
+						<span>{ label }</span>
 						{ !! count && <span className="conversations-inbox__badge">{ count }</span> }
-					</button>
+					</HStack>
 				) ) }
-			</div>
-			<div className="conversations-inbox__toolbar">
+			</HStack>
+			<HStack spacing={ 1 } expanded={ false } className="conversations-inbox__toolbar">
 				<SearchControl
+					__next40pxDefaultSize
 					__nextHasNoMarginBottom
 					value={ search }
 					onChange={ setSearch }
 					label={ translate( 'Search conversations' ) }
 				/>
 				<Button
+					__next40pxDefaultSize
 					icon={ <Icon icon={ funnel } /> }
 					label={ translate( 'Filters are coming soon' ) }
 					showTooltip
@@ -102,39 +122,34 @@ export function ConversationList( {
 					accessibleWhenDisabled
 				/>
 				<Button
+					__next40pxDefaultSize
 					icon={ <Icon icon={ cog } /> }
 					label={ translate( 'Settings are coming soon' ) }
 					showTooltip
 					disabled
 					accessibleWhenDisabled
 				/>
-			</div>
-			{ unreadNoteIds.length > 0 && (
-				<Button
-					variant="link"
-					className="conversations-inbox__mark-read"
-					onClick={ () => onMarkAllRead( unreadNoteIds ) }
-				>
-					<span>
-						{ translate( 'Mark {{b}}%(count)d{{/b}} as read', {
-							args: { count: unreadNoteIds.length },
-							components: { b: <strong /> },
-						} ) }
-					</span>
-				</Button>
-			) }
+			</HStack>
 			<div className="conversations-inbox__list">
 				{ isLoading && <Spinner /> }
 				{ ! isLoading && visible.length === 0 && (
-					<p className="conversations-inbox__empty">
+					<Text as="p" color="var(--color-text-subtle)" className="conversations-inbox__empty">
 						{ tab === 'yours'
 							? translate( 'Conversations you commented on will show up here.' )
 							: translate( 'No conversations yet.' ) }
-					</p>
+					</Text>
 				) }
 				{ sections.map( ( { label, items } ) => (
 					<section key={ label }>
-						<h2 className="conversations-inbox__day">{ label }</h2>
+						<Heading
+							level={ 2 }
+							size={ 14 }
+							weight={ 500 }
+							color="inherit"
+							className="conversations-inbox__day"
+						>
+							{ label }
+						</Heading>
 						<ul>
 							{ items.map( ( conversation ) => (
 								<ConversationListItem
@@ -148,6 +163,6 @@ export function ConversationList( {
 					</section>
 				) ) }
 			</div>
-		</div>
+		</VStack>
 	);
 }

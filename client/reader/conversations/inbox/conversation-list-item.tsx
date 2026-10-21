@@ -1,3 +1,8 @@
+import {
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -24,7 +29,9 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 
 	return (
 		<li>
-			<button
+			<VStack
+				as="button"
+				spacing={ 2.5 }
 				type="button"
 				className={ clsx( 'conversations-inbox__item', {
 					'is-selected': isSelected,
@@ -33,19 +40,24 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 				aria-current={ isSelected || undefined }
 				onClick={ () => onSelect( conversation ) }
 			>
-				<span className="conversations-inbox__item-header">
+				<HStack as="span" className="conversations-inbox__item-header">
 					<span className="conversations-inbox__item-title">{ title }</span>
-					<span className="conversations-inbox__item-time">
+					<Text size={ 14 } color="var(--color-text-subtle)">
 						{ moment( timestamp ).fromNow( true ) }
-					</span>
-				</span>
+					</Text>
+				</HStack>
 				{ firstCommenter && (
-					<span className="conversations-inbox__item-commenters">
-						<span className="conversations-inbox__avatars">
+					<HStack as="span" justify="flex-start" className="conversations-inbox__item-commenters">
+						<HStack
+							as="span"
+							spacing={ 0 }
+							expanded={ false }
+							className="conversations-inbox__avatars"
+						>
 							{ commenters.slice( 0, MAX_AVATARS ).map( ( { name, avatar } ) => (
 								<img key={ name } src={ avatar } alt="" width={ 24 } height={ 24 } />
 							) ) }
-						</span>
+						</HStack>
 						<span>
 							{ othersCount > 0 ? (
 								translate(
@@ -61,17 +73,17 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 								<strong>{ firstCommenter.name }</strong>
 							) }
 						</span>
-					</span>
+					</HStack>
 				) }
-				<span className="conversations-inbox__item-footer">
+				<HStack as="span" className="conversations-inbox__item-footer">
 					<span className="conversations-inbox__item-excerpt">{ excerpt }</span>
 					{ unreadCount > 0 && (
-						<span className="conversations-inbox__item-new">
+						<Text color="var(--color-primary)" className="conversations-inbox__item-new">
 							{ translate( '%(count)d new', { args: { count: unreadCount } } ) }
-						</span>
+						</Text>
 					) }
-				</span>
-			</button>
+				</HStack>
+			</VStack>
 		</li>
 	);
 }
