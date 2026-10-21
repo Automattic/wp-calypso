@@ -3,9 +3,9 @@ import {
 	siteBackupsQuery,
 	siteBySlugQuery,
 	sitePendingWordPressVersionQuery,
+	siteWordPressTrackVersionsQuery,
 	siteWordPressVersionQuery,
 	siteWordPressVersionMutation,
-	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
@@ -57,11 +57,10 @@ export interface VersionSwitchState {
 }
 
 export function useVersionSwitch( site: Site ): VersionSwitchState {
-	// When the public latest and beta releases point to the same version, switching
-	// between them is a no-op — skip the backup flow. Primed by the route loader.
-	const { data: latestVersion } = useSuspenseQuery( wpOrgCoreVersionQuery() );
-	const { data: betaVersion } = useSuspenseQuery( wpOrgCoreVersionQuery( 'beta' ) );
-	const versionsMatch = !! latestVersion && latestVersion === betaVersion;
+	// When the latest and beta tracks serve the same version, switching between
+	// them is a no-op, so skip the backup flow. Primed by the route loader.
+	const { data: trackVersions } = useSuspenseQuery( siteWordPressTrackVersionsQuery( site.ID ) );
+	const versionsMatch = !! trackVersions.latest && trackVersions.latest === trackVersions.beta;
 
 	const deferUntilBackupComplete =
 		isEnabled( 'dashboard/wp-beta-program' ) && ! site.is_wpcom_staging_site && ! versionsMatch;
