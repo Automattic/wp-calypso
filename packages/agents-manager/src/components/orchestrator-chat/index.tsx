@@ -37,9 +37,9 @@ import { useShowComponentRetention } from '../../hooks/use-show-component-retent
 import useSourcesAction from '../../hooks/use-sources-action';
 import { useStreamedCheckpointMessages } from '../../hooks/use-streamed-checkpoint-messages';
 import { useSuggestionTracking } from '../../hooks/use-suggestion-tracking';
-import convertInteractiveUiMessagesToComponents from '../../interactive-ui/convert-interactive-ui-messages-to-components';
 import { markSessionSent } from '../../utils/agent-session';
 import { convertBigSkyMessageToUIMessage } from '../../utils/convert-big-sky-message';
+import { convertInteractiveUiMessagesToComponents } from '../../utils/convert-interactive-ui-messages-to-components';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
 } from '../../utils/convert-tool-messages-to-components';
@@ -452,7 +452,7 @@ export default function OrchestratorChat( {
 		withRetainedShowComponents,
 	] );
 
-	// Interactive UI forms in agent replies, and the actions they send.
+	// Interactive UI surfaces in agent replies, and the actions they send.
 	const displayedMessages = useInteractiveUi( {
 		messages,
 		convertedMessages,
