@@ -77,12 +77,16 @@ module.exports = function storybookDefaultConfig( {
 			const cssRule = config.module.rules.find(
 				( rule ) => String( rule?.test ) === String( /\.css$/ )
 			);
-			if ( ! cssRule ) {
+			const [ styleLoader, cssLoader ] = cssRule?.use ?? [];
+			const loaderPath = ( loader ) => ( typeof loader === 'string' ? loader : loader?.loader );
+			if (
+				! /[\\/]style-loader[\\/]/.test( loaderPath( styleLoader ) ) ||
+				! /[\\/]css-loader[\\/]/.test( loaderPath( cssLoader ) )
+			) {
 				throw new Error(
-					'calypso-storybook: Storybook no longer provides a .css rule to extend for .scss'
+					"calypso-storybook: Storybook's .css rule no longer starts with style-loader and css-loader to extend for .scss"
 				);
 			}
-			const [ styleLoader, cssLoader ] = cssRule.use;
 			config.module.rules = [
 				...config.module.rules,
 				{
@@ -97,7 +101,9 @@ module.exports = function storybookDefaultConfig( {
 								// would prepend `sassPrelude` to them.
 								importLoaders: 0,
 								// Components import `*.module.scss` as a default object (`styles.tablist`),
-								// which css-loader 7 no longer exports by default.
+								// which css-loader 7 no longer exports by default. Without `as-is`, it would
+								// only export camel-cased keys, and kebab-case lookups like
+								// `styles[ 'is-current' ]` would be undefined.
 								modules: { auto: true, namedExport: false, exportLocalsConvention: 'as-is' },
 							},
 						},
