@@ -8,6 +8,11 @@ import { MemoryRouter } from 'react-router-dom';
 const mockSetIsMinimized = jest.fn();
 let mockIsInternalOnly = false;
 
+// The lock only holds where the chat can dock.
+jest.mock( '../../utils/can-dock', () => ( {
+	...jest.requireActual( '../../utils/can-dock' ),
+	getCanDock: () => true,
+} ) );
 jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
 		children,
