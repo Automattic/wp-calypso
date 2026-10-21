@@ -4,9 +4,9 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { ConversationList } from '../conversation-list';
-import { groupNotesByPost } from '../group-notes';
-import { makeNote } from './helpers';
+import { ConversationList } from '..';
+import { groupNotesByPost } from '../../group-notes';
+import { makeNote } from '../../test/helpers';
 
 const conversations = groupNotesByPost( [
 	makeNote( { id: 1, postId: 100, title: 'Unread post', commenter: 'Ana', read: 0 } ),

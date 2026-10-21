@@ -1,21 +1,18 @@
 import {
-	Button,
-	SearchControl,
 	Spinner,
 	__experimentalHeading as Heading,
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { Icon, cog, funnel } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { ConversationListItem } from './conversation-list-item';
-import type { Conversation } from './group-notes';
+import { ConversationListItem } from './list-item';
+import { ConversationListTabs, type InboxTab } from './tabs';
+import { ConversationListToolbar } from './toolbar';
+import type { Conversation } from '../group-notes';
 
-export type InboxTab = 'all' | 'unread' | 'yours';
+import './style.scss';
 
 interface Props {
 	conversations: Conversation[];
@@ -30,7 +27,10 @@ export function ConversationList( { conversations, isLoading, selectedKey, onSel
 	const [ tab, setTab ] = useState< InboxTab >( 'all' );
 	const [ search, setSearch ] = useState( '' );
 
-	const unreadNoteIds = conversations.flatMap( ( { unreadNoteIds: ids } ) => ids );
+	const unreadCount = conversations.reduce(
+		( total, { unreadNoteIds: ids } ) => total + ids.length,
+		0
+	);
 
 	const visible = useMemo( () => {
 		if ( tab === 'yours' ) {
@@ -64,12 +64,6 @@ export function ConversationList( { conversations, isLoading, selectedKey, onSel
 		return result;
 	}, [ visible, moment, translate ] );
 
-	const tabs: { name: InboxTab; label: string; count?: number }[] = [
-		{ name: 'all', label: translate( 'All' ) },
-		{ name: 'unread', label: translate( 'Unread' ), count: unreadNoteIds.length },
-		{ name: 'yours', label: translate( 'Your comments' ) },
-	];
-
 	return (
 		<VStack spacing={ 0 } className="conversations-inbox__list-pane">
 			<Heading
@@ -81,55 +75,8 @@ export function ConversationList( { conversations, isLoading, selectedKey, onSel
 			>
 				{ translate( 'Conversations' ) }
 			</Heading>
-			<HStack
-				justify="flex-start"
-				expanded={ false }
-				className="conversations-inbox__tabs"
-				role="tablist"
-			>
-				{ tabs.map( ( { name, label, count } ) => (
-					<HStack
-						as="button"
-						key={ name }
-						spacing={ 1.5 }
-						justify="flex-start"
-						expanded={ false }
-						type="button"
-						role="tab"
-						aria-selected={ tab === name }
-						className={ clsx( 'conversations-inbox__tab', { 'is-active': tab === name } ) }
-						onClick={ () => setTab( name ) }
-					>
-						<span>{ label }</span>
-						{ !! count && <span className="conversations-inbox__badge">{ count }</span> }
-					</HStack>
-				) ) }
-			</HStack>
-			<HStack spacing={ 1 } expanded={ false } className="conversations-inbox__toolbar">
-				<SearchControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					value={ search }
-					onChange={ setSearch }
-					label={ translate( 'Search conversations' ) }
-				/>
-				<Button
-					__next40pxDefaultSize
-					icon={ <Icon icon={ funnel } /> }
-					label={ translate( 'Filters are coming soon' ) }
-					showTooltip
-					disabled
-					accessibleWhenDisabled
-				/>
-				<Button
-					__next40pxDefaultSize
-					icon={ <Icon icon={ cog } /> }
-					label={ translate( 'Settings are coming soon' ) }
-					showTooltip
-					disabled
-					accessibleWhenDisabled
-				/>
-			</HStack>
+			<ConversationListTabs tab={ tab } unreadCount={ unreadCount } onChange={ setTab } />
+			<ConversationListToolbar search={ search } onSearchChange={ setSearch } />
 			<div className="conversations-inbox__list">
 				{ isLoading && <Spinner /> }
 				{ ! isLoading && visible.length === 0 && (

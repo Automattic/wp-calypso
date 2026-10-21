@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { usePost } from 'calypso/reader/data/post';
-import type { Conversation } from './group-notes';
+import type { Conversation } from '../group-notes';
 
 interface Props {
 	conversation: Conversation;
