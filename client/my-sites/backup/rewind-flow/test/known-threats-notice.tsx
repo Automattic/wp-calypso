@@ -581,3 +581,83 @@ describe( 'BackupGranularRestoreFlow known threats gating', () => {
 		expect( screen.queryByText( refusal ) ).not.toBeInTheDocument();
 	} );
 } );
+
+describe( 'known threats refusal the lookup missed', () => {
+	beforeEach( () => {
+		mockRestoreProgress = null;
+		( siteHasFeature as jest.Mock ).mockReturnValue( true );
+	} );
+	afterEach( () => nock.cleanAll() );
+
+	it.each( [
+		[
+			'BackupRestoreFlow',
+			'REWIND_RESTORE',
+			<BackupRestoreFlow
+				backup={ {} }
+				backupDisplayDate="October 1, 2026"
+				rewindId="200.5"
+				siteId={ SITE_ID }
+				siteUrl="https://example.wordpress.com"
+			/>,
+		],
+		[
+			'BackupGranularRestoreFlow',
+			'REWIND_GRANULAR_RESTORE',
+			<BackupGranularRestoreFlow
+				backupDisplayDate="October 1, 2026"
+				rewindId="200.5"
+				siteId={ SITE_ID }
+				siteUrl="https://example.wordpress.com"
+			/>,
+		],
+	] )( '%s asks for the acknowledgement and sends it on retry', async ( _, type, flow ) => {
+		const scope = mockList( counts( 0 ) );
+		const actions: { type: string; acknowledgeThreats?: boolean }[] = [];
+		const store = createStore(
+			(
+				state: ReturnType< typeof initialReducer > | undefined,
+				action: { type: string; acknowledgeThreats?: boolean }
+			) => {
+				actions.push( action );
+				return action.type === 'TEST_PROGRESS_CHANGED'
+					? Object.assign( {}, state )
+					: initialReducer( state, action );
+			},
+			undefined,
+			applyMiddleware( thunk )
+		);
+		renderWithProvider( flow, { store } );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 50 ) ) );
+		expect( screen.queryByRole( 'checkbox', { name: CHECKBOX } ) ).not.toBeInTheDocument();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Restore now' } ) );
+		expect( actions ).toContainEqual(
+			expect.objectContaining( { type, acknowledgeThreats: false } )
+		);
+
+		mockRestoreProgress = {
+			status: 'failed',
+			errorCode: 'threats_not_acknowledged',
+			knownThreats: counts( 3 ),
+		};
+		act( () => {
+			store.dispatch( { type: 'TEST_PROGRESS_CHANGED' } );
+		} );
+
+		const checkbox = await screen.findByRole( 'checkbox', { name: CHECKBOX } );
+		expect( screen.getByText( NOTICE ) ).toBeVisible();
+		await waitFor( () => expect( checkbox ).toHaveFocus() );
+		const restoreButton = screen.getByRole( 'button', { name: 'Restore now' } );
+		expect( restoreButton ).toHaveAttribute( 'aria-disabled', 'true' );
+
+		// The retry's request clears the refusal from the store.
+		mockRestoreProgress = null;
+		await userEvent.click( checkbox );
+		await userEvent.click( restoreButton );
+		expect( actions ).toContainEqual(
+			expect.objectContaining( { type, acknowledgeThreats: true } )
+		);
+	} );
+} );
