@@ -65,9 +65,10 @@ export function BackupsPage( {
 	const isMobileDetailsView = isSmallViewport && !! selectedBackup;
 	const shouldShowActions = hasBackups && ! isMobileDetailsView;
 
-	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
-		handleDateRangeChange( next );
-		navigation.selectBackup( null );
+	const handleDateRangeChangeWrapper = async ( next: { start: Date; end: Date } ) => {
+		if ( await handleDateRangeChange( next ) ) {
+			navigation.selectBackup( null );
+		}
 	};
 
 	const actions = (

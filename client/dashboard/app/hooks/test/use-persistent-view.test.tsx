@@ -3,7 +3,13 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createRouter, RouterProvider, createRootRoute, createRoute } from '@tanstack/react-router';
+import {
+	createRouter,
+	RouterProvider,
+	createRootRoute,
+	createRoute,
+	createMemoryHistory,
+} from '@tanstack/react-router';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Suspense } from 'react';
@@ -18,7 +24,7 @@ const defaultView: View = {
 };
 const slug = 'sites';
 
-function createTestWrapper() {
+function createTestWrapper( search: Record< string, unknown > = {} ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	let router: ReturnType< typeof createRouter > | undefined;
 
@@ -32,6 +38,11 @@ function createTestWrapper() {
 
 		router = createRouter( {
 			routeTree: rootRoute.addChildren( [ indexRoute ] ),
+			history: createMemoryHistory( {
+				initialEntries: [
+					`/?${ new URLSearchParams( Object.entries( search ).map( ( [ key, value ] ) => [ key, String( value ) ] ) ) }`,
+				],
+			} ),
 		} );
 
 		return (
@@ -114,9 +125,9 @@ describe( 'usePersistentView', () => {
 				'hosting-dashboard-dataviews-view-sites': persistedView,
 			} );
 
-			const { Wrapper } = createTestWrapper();
-
 			const queryParams = { 'current-param': 'current-value', page: 2, search: 'test' };
+
+			const { Wrapper } = createTestWrapper( queryParams );
 			const { result } = renderHook(
 				() => usePersistentView( { slug, defaultView, queryParams } ),
 				{
@@ -144,14 +155,14 @@ describe( 'usePersistentView', () => {
 				'hosting-dashboard-dataviews-view-sites': persistedView,
 			} );
 
-			const { Wrapper } = createTestWrapper();
-
 			const queryParams = {
 				'current-param': 'current-value',
 				page: 2,
 				search: 'test',
 				domainName: 'example.com',
 			};
+
+			const { Wrapper } = createTestWrapper( queryParams );
 			const queryParamFilterFields = [ 'domainName' ];
 			const { result } = renderHook(
 				() =>
@@ -182,9 +193,9 @@ describe( 'usePersistentView', () => {
 		it( 'should lock the transient filters when `lockQueryParamFilters` is set', async () => {
 			mockGetCalypsoPreferences( {} );
 
-			const { Wrapper } = createTestWrapper();
-
 			const queryParams = { domainName: 'example.com' };
+
+			const { Wrapper } = createTestWrapper( queryParams );
 			const queryParamFilterFields = [ 'domainName' ];
 			const { result } = renderHook(
 				() =>
@@ -208,9 +219,9 @@ describe( 'usePersistentView', () => {
 		it( 'should build a bare-value filter for a field whose operator is single-selection', async () => {
 			mockGetCalypsoPreferences( {} );
 
-			const { Wrapper } = createTestWrapper();
-
 			const queryParams = { status: 'unassigned' };
+
+			const { Wrapper } = createTestWrapper( queryParams );
 			const queryParamFilterFields: QueryParamFilterField[] = [
 				{ field: 'status', operator: 'is' },
 			];
@@ -235,9 +246,9 @@ describe( 'usePersistentView', () => {
 		it( 'should convert "true"/"false" query param values into a boolean `is` filter', async () => {
 			mockGetCalypsoPreferences( {} );
 
-			const { Wrapper } = createTestWrapper();
-
 			const queryParams = { is_deleted: 'true' };
+
+			const { Wrapper } = createTestWrapper( queryParams );
 			const queryParamFilterFields = [ 'is_deleted' ];
 			const { result } = renderHook(
 				() =>
@@ -316,6 +327,30 @@ describe( 'usePersistentView', () => {
 	} );
 
 	describe( 'updateView', () => {
+		test( 'preserves newer dates when removing a filter from a stale view', async () => {
+			mockGetCalypsoPreferences( {} );
+			const queryParams = { from: 100, to: 200, status: 'unassigned' };
+			const { Wrapper, getRouter } = createTestWrapper( queryParams );
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams,
+						queryParamFilterFields: [ 'status' ],
+					} ),
+				{ wrapper: Wrapper }
+			);
+			await waitFor( () => expect( result.current.view.filters ).toHaveLength( 1 ) );
+			act( () => {
+				getRouter()?.history.replace( '/?from=300&to=400&status=unassigned' );
+				result.current.updateView( { ...result.current.view, filters: [] } );
+			} );
+			await waitFor( () =>
+				expect( getRouter()?.state.location.search ).toEqual( { from: 300, to: 400 } )
+			);
+		} );
+
 		it( 'should persist the new view', async () => {
 			mockGetCalypsoPreferences( {} );
 
@@ -422,9 +457,9 @@ describe( 'usePersistentView', () => {
 			mockGetCalypsoPreferences( {} );
 			mockUpdateCalypsoPreferences();
 
-			const { Wrapper, getRouter } = createTestWrapper();
-
 			const queryParams = { 'current-param': 'current-value' };
+
+			const { Wrapper, getRouter } = createTestWrapper( queryParams );
 			const { result } = renderHook(
 				() => usePersistentView( { slug, defaultView, queryParams } ),
 				{
@@ -463,9 +498,9 @@ describe( 'usePersistentView', () => {
 			mockGetCalypsoPreferences( {} );
 			mockUpdateCalypsoPreferences();
 
-			const { Wrapper, getRouter } = createTestWrapper();
-
 			const queryParams = { 'current-param': 'current-value', domainName: 'active' };
+
+			const { Wrapper, getRouter } = createTestWrapper( queryParams );
 			const queryParamFilterFields = [ 'domainName' ];
 			const { result } = renderHook(
 				() => usePersistentView( { slug, defaultView, queryParams, queryParamFilterFields } ),
@@ -497,9 +532,9 @@ describe( 'usePersistentView', () => {
 			mockGetCalypsoPreferences( {} );
 			mockUpdateCalypsoPreferences();
 
-			const { Wrapper, getRouter } = createTestWrapper();
-
 			const queryParams = { 'current-param': 'current-value', status: 'unassigned' };
+
+			const { Wrapper, getRouter } = createTestWrapper( queryParams );
 			const queryParamFilterFields: QueryParamFilterField[] = [
 				{ field: 'status', operator: 'is' },
 			];
@@ -577,9 +612,9 @@ describe( 'usePersistentView', () => {
 			} );
 			mockUpdateCalypsoPreferences();
 
-			const { Wrapper, getRouter } = createTestWrapper();
-
 			const queryParams = { 'current-param': 'current-value', page: 2, search: 'test' };
+
+			const { Wrapper, getRouter } = createTestWrapper( queryParams );
 			const { result } = renderHook(
 				() => usePersistentView( { slug, defaultView, queryParams } ),
 				{

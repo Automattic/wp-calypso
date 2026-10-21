@@ -1,15 +1,17 @@
-import { useSearch } from '@tanstack/react-router';
+import { useRouter, useSearch } from '@tanstack/react-router';
 import { getUnixTime, fromUnixTime, isValid as isValidDate, subDays, isSameSecond } from 'date-fns';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { buildTimeRangeInSeconds } from '../../sites/logs/utils';
 import { formatYmd, parseYmdLocal } from '../../utils/datetime';
 import type { DateRangeSearch } from '../../utils/date-range-search';
+import type { AnyRouter } from '@tanstack/react-router';
 
 interface UseDateRangeOptions {
 	timezoneString?: string;
 	gmtOffset?: number;
 	autoRefresh?: boolean;
 	defaultDays?: number;
+	initializeUrl?: boolean;
 }
 
 export function useDateRange( {
@@ -17,7 +19,9 @@ export function useDateRange( {
 	gmtOffset,
 	autoRefresh = false,
 	defaultDays = 7,
+	initializeUrl = false,
 }: UseDateRangeOptions ) {
+	const router = useRouter();
 	const search = useSearch( { strict: false } );
 
 	const initial = getDefaultDateRange( timezoneString, gmtOffset, defaultDays );
@@ -27,13 +31,48 @@ export function useDateRange( {
 		() => initialFromUrl ?? initial
 	);
 
-	const lastUrlRangeRef = useRef< { from: number; to: number } | null >( null );
+	const initializedUrl = useRef( false );
 
-	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
-		setDateRange( next );
+	const syncUrl = useCallback(
+		( from: number, to: number ) => {
+			const current = router.latestLocation.search;
+			if ( current.from === from && current.to === to ) {
+				return;
+			}
+			return router.navigate< AnyRouter, string >( {
+				// Match search can lag behind a pending view navigation.
+				search: () => ( { ...router.latestLocation.search, from, to } ),
+				replace: true,
+				resetScroll: false,
+			} );
+		},
+		[ router ]
+	);
+
+	// PHP/server logs have always pinned their default range in the URL.
+	useEffect( () => {
+		if ( ! initializeUrl || initializedUrl.current ) {
+			return;
+		}
+		initializedUrl.current = true;
+		// Use validated bounds so restored URLs also canonicalize legacy or invalid values.
+		if ( search.from !== undefined && search.to !== undefined ) {
+			void syncUrl( search.from, search.to );
+			return;
+		}
+		const { startSec, endSec } = buildTimeRangeInSeconds(
+			dateRange.start,
+			dateRange.end,
+			timezoneString,
+			gmtOffset
+		);
+		void syncUrl( startSec, endSec );
+	}, [ initializeUrl, search, dateRange, timezoneString, gmtOffset, syncUrl ] );
+
+	const handleDateRangeChange = async ( next: { start: Date; end: Date } ) => {
+		const pathname = router.latestLocation.pathname;
 
 		// Sync from/to to the URL as UNIX seconds
-		const url = new URL( window.location.href );
 		const { startSec, endSec } = buildTimeRangeInSeconds(
 			next.start,
 			next.end,
@@ -41,9 +80,17 @@ export function useDateRange( {
 			gmtOffset
 		);
 
-		url.searchParams.set( 'from', String( startSec ) );
-		url.searchParams.set( 'to', String( endSec ) );
-		window.history.replaceState( null, '', url.pathname + url.search );
+		await syncUrl( startSec, endSec );
+		const current = router.latestLocation;
+		if (
+			current.pathname !== pathname ||
+			current.search.from !== startSec ||
+			current.search.to !== endSec
+		) {
+			return false;
+		}
+		setDateRange( next );
+		return true;
 	};
 
 	// Auto-refresh effect for live updating
@@ -52,7 +99,11 @@ export function useDateRange( {
 			return;
 		}
 
+		const pathname = router.latestLocation.pathname;
 		const tick = () => {
+			if ( router.latestLocation.pathname !== pathname ) {
+				return;
+			}
 			const end = new Date();
 			const start = subDays( end, defaultDays - 1 );
 
@@ -63,22 +114,14 @@ export function useDateRange( {
 			const from = getUnixTime( start );
 			const to = getUnixTime( end );
 
-			const last = lastUrlRangeRef.current;
-			// Only sync URL when from/to change to avoid unnecessary history updates
-			if ( ! last || last.from !== from || last.to !== to ) {
-				const url = new URL( window.location.href );
-				url.searchParams.set( 'from', String( from ) );
-				url.searchParams.set( 'to', String( to ) );
-				window.history.replaceState( null, '', url.pathname + url.search );
-				lastUrlRangeRef.current = { from, to };
-			}
+			void syncUrl( from, to );
 		};
 
 		// Run immediately, then every 10s
 		tick();
 		const intervalId = setInterval( tick, 10 * 1000 );
 		return () => clearInterval( intervalId );
-	}, [ autoRefresh, defaultDays, timezoneString, gmtOffset ] );
+	}, [ autoRefresh, defaultDays, timezoneString, gmtOffset, router, syncUrl ] );
 
 	return {
 		dateRange,

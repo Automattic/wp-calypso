@@ -1,10 +1,10 @@
 import { userPreferenceQuery, userPreferenceOptimisticMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { useNavigate, useMatches } from '@tanstack/react-router';
+import { useRouter, useMatches } from '@tanstack/react-router';
 import fastDeepEqual from 'fast-deep-equal/es6';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { setTransientQueryParamsAtPathname } from '../transient-query-params';
-import type { AnyRouteMatch } from '@tanstack/react-router';
+import type { AnyRouteMatch, AnyRouter } from '@tanstack/react-router';
 import type { Filter, Operator, View } from '@wordpress/dataviews';
 
 /**
@@ -69,12 +69,42 @@ export interface UseViewOptions {
  * while the rest of the properties is persisted to Calypso preferences.
  */
 export function usePersistentView( options: UseViewOptions ) {
-	const navigate = useNavigate();
+	const router = useRouter();
 	const matches = useMatches();
+
+	// Keep the object-based navigation contract for classic page.js callers.
+	// React matches can still contain the old range after a date navigation resolves.
+	const navigateView = useCallback(
+		( {
+			search,
+			...navigationOptions
+		}: {
+			search: Record< string, unknown >;
+			replace?: boolean;
+			resetScroll?: boolean;
+		} ) => {
+			const previous = options.queryParams ?? {};
+			void router.navigate< AnyRouter, string >( {
+				...navigationOptions,
+				search: () => {
+					const next: Record< string, unknown > = { ...router.latestLocation.search };
+					for ( const key of Object.keys( { ...previous, ...search } ) ) {
+						if ( ! Object.hasOwn( search, key ) ) {
+							delete next[ key ];
+						} else if ( ! fastDeepEqual( previous[ key ], search[ key ] ) ) {
+							next[ key ] = search[ key ];
+						}
+					}
+					return next;
+				},
+			} );
+		},
+		[ router, options.queryParams ]
+	);
 
 	return useBasePersistentView( {
 		...options,
-		navigate,
+		navigate: navigateView,
 		matches,
 	} );
 }
