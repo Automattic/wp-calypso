@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
-import { attachInteractiveUiPresentation } from '../interactive-ui/convert-interactive-ui-messages-to-components';
-import { getInteractiveUiBatches } from '../interactive-ui/interactive-ui-messages';
+import { attachInteractiveUiPresentation } from '../utils/convert-interactive-ui-messages-to-components';
+import { createInteractiveUiCatalogs } from '../utils/interactive-ui-catalogs';
+import { getInteractiveUiBatches, INTERACTIVE_UI_VERSION } from '../utils/interactive-ui-messages';
 import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
 import type { AgentConfig } from '../utils/create-agent-config';
+import type { InteractiveUiRenderer } from '../utils/interactive-ui-catalogs';
+import type { LoadedProviders } from '../utils/load-external-providers';
 import type { UIMessage, SubmitOptions } from '@automattic/agenttic-client';
 import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
@@ -13,25 +16,26 @@ interface UseInteractiveUiOptions {
 	isProcessing: boolean;
 	agentConfig: AgentConfig | null;
 	submitContextMessage: ( message: string, options: SubmitOptions ) => Promise< void >;
+	/** The providers' interactive UI components and functions. */
+	interactiveUi: LoadedProviders[ 'interactiveUi' ];
 }
 
 export interface InteractiveUiPresentation {
 	runtime: InteractiveUiRuntime | undefined;
-	sdk: typeof import( '@automattic/ai-ui-renderer' ) | undefined;
+	renderer: InteractiveUiRenderer | undefined;
 	hasLoadError: boolean;
+	isRetryingLoad: boolean;
 	retryLoad: () => void;
 	revision: number;
 	isDisabled: boolean;
 }
 
 /**
- * Runs the interactive UI forms in agent replies: loads the SDK on demand, so
- * chats without a form don't pay for it; feeds the runtime the message batches
- * only after the stream ends, so a form is never applied mid-stream; sends the
- * forms' actions without showing them as chat messages; and returns the
- * transcript with the forms attached. Keeps the user's input when new messages
- * arrive, and rebuilds the UI if earlier messages change. Reports SDK loading
- * failures so forms can offer a retry.
+ * Runs the interactive UI surfaces in agent replies and returns the transcript with them
+ * attached. Loads the renderer once a reply has a surface, applies surfaces after the reply
+ * has streamed so none changes mid-stream, and sends their actions to the agent as hidden
+ * context messages. Keeps the user's input as messages arrive, rebuilds the surfaces when
+ * an earlier reply changes, and reports a failed load so the chat can offer a retry.
  */
 export function useInteractiveUi( {
 	messages,
@@ -40,13 +44,14 @@ export function useInteractiveUi( {
 	isProcessing,
 	agentConfig,
 	submitContextMessage,
+	interactiveUi,
 }: UseInteractiveUiOptions ) {
 	const actionInputsRef = useRef( { agentConfig, isProcessing, submitContextMessage } );
 	actionInputsRef.current = { agentConfig, isProcessing, submitContextMessage };
 
-	const [ interactiveUiSdk, setInteractiveUiSdk ] =
-		useState< typeof import( '@automattic/ai-ui-renderer' ) >();
-	const [ hasLoadError, setHasLoadError ] = useState( false );
+	const [ renderer, setRenderer ] = useState< InteractiveUiRenderer >();
+	const [ loadAttempt, setLoadAttempt ] = useState( 0 );
+	const [ failedLoadAttempt, setFailedLoadAttempt ] = useState< number >();
 	const [ runtimeRevision, setRuntimeRevision ] = useState( 0 );
 
 	const messageBatches = useMemo( () => getInteractiveUiBatches( messages ), [ messages ] );
@@ -54,31 +59,41 @@ export function useInteractiveUi( {
 
 	const conversationSession = useMemo(
 		() => ( {
-			conversationId: conversationId,
+			conversationId,
 			runtime: undefined as InteractiveUiRuntime | undefined,
 			processedBatchSignatures: [] as string[],
 		} ),
 		[ conversationId ]
 	);
 
-	// Load the interactive UI SDK dynamically to reduce the initial bundle size.
+	// Load the renderer on demand to keep it out of the initial bundle. A retry starts a new
+	// attempt while the error stays on screen, so the retry button can show it's busy.
 	useEffect( () => {
-		if ( ! hasMessageBatches || interactiveUiSdk || hasLoadError ) {
+		if ( ! hasMessageBatches || renderer ) {
 			return;
 		}
 
-		let isUiLoadCancelled = false;
+		let isLoadCancelled = false;
+
 		void import( /* webpackChunkName: "am-interactive-ui" */ '@automattic/ai-ui-renderer' ).then(
-			( interactiveUiModule ) => ! isUiLoadCancelled && setInteractiveUiSdk( interactiveUiModule ),
-			() => ! isUiLoadCancelled && setHasLoadError( true )
+			( rendererModule ) => ! isLoadCancelled && setRenderer( rendererModule ),
+			() => ! isLoadCancelled && setFailedLoadAttempt( loadAttempt )
 		);
 
 		return () => {
-			isUiLoadCancelled = true;
+			isLoadCancelled = true;
 		};
-	}, [ hasMessageBatches, interactiveUiSdk, hasLoadError ] );
+	}, [ hasMessageBatches, renderer, loadAttempt ] );
 
-	// Dispose of the interactive UI runtime when the conversation session changes or the component unmounts.
+	const hasLoadError = ! renderer && failedLoadAttempt !== undefined;
+	const isRetryingLoad = hasLoadError && failedLoadAttempt < loadAttempt;
+
+	const catalogs = useMemo(
+		() => renderer && createInteractiveUiCatalogs( renderer, interactiveUi ),
+		[ renderer, interactiveUi ]
+	);
+
+	// Dispose of the runtime when the conversation changes or the chat unmounts.
 	useEffect( () => {
 		return () => {
 			conversationSession.runtime?.dispose();
@@ -87,45 +102,53 @@ export function useInteractiveUi( {
 		};
 	}, [ conversationSession ] );
 
-	// Update the interactive UI runtime when new message batches arrive or the processing state changes.
+	// Apply new batches once the reply has streamed, so a surface never changes mid-stream.
 	useEffect( () => {
-		if ( ! interactiveUiSdk || isProcessing ) {
+		if ( ! renderer || ! catalogs || isProcessing ) {
 			return;
 		}
 
-		// Dispose of the current runtime if any of the processed batch signatures have changed.
-		if (
-			conversationSession.processedBatchSignatures.some(
-				( signature, index ) => signature !== messageBatches[ index ]?.signature
-			)
-		) {
+		// Start over when an earlier batch changed.
+		const hasChangedBatches = conversationSession.processedBatchSignatures.some(
+			( signature, index ) => signature !== messageBatches[ index ]?.signature
+		);
+
+		if ( hasChangedBatches ) {
 			conversationSession.runtime?.dispose();
 			conversationSession.runtime = undefined;
 			conversationSession.processedBatchSignatures = [];
 		}
 
-		// Create a new runtime if there are message batches and no current runtime.
-		if ( messageBatches.length > 0 && ! conversationSession.runtime ) {
-			conversationSession.runtime = interactiveUiSdk.createInteractiveUiRuntime(
-				async ( action ) => {
+		const newBatches = messageBatches.slice( conversationSession.processedBatchSignatures.length );
+		if ( ! hasChangedBatches && newBatches.length === 0 ) {
+			return;
+		}
+
+		if ( newBatches.length > 0 && ! conversationSession.runtime ) {
+			conversationSession.runtime = renderer.createInteractiveUiRuntime( {
+				catalogs,
+				onAction: async ( action ) => {
 					const latestInputs = actionInputsRef.current;
 
 					if ( ! latestInputs.agentConfig || latestInputs.isProcessing ) {
 						return;
 					}
 
-					await latestInputs.submitContextMessage( JSON.stringify( { version: 'v0.9', action } ), {
+					const actionMessage = JSON.stringify( { version: INTERACTIVE_UI_VERSION, action } );
+
+					await latestInputs.submitContextMessage( actionMessage, {
 						type: 'context',
 						sessionId: latestInputs.agentConfig.sessionId,
 					} );
-				}
-			);
+				},
+				onError: ( error ) => {
+					// eslint-disable-next-line no-console
+					console.error( '[AgentsManager] Interactive UI error:', error );
+				},
+			} );
 		}
 
-		// Process any new message batches that have not been attempted yet.
-		for ( const batch of messageBatches.slice(
-			conversationSession.processedBatchSignatures.length
-		) ) {
+		for ( const batch of newBatches ) {
 			try {
 				conversationSession.runtime?.processMessages( batch.operations, batch.messageId );
 			} catch ( error ) {
@@ -138,18 +161,26 @@ export function useInteractiveUi( {
 			( batch ) => batch.signature
 		);
 		setRuntimeRevision( ( currentRevision ) => currentRevision + 1 );
-	}, [ messageBatches, isProcessing, interactiveUiSdk, conversationSession ] );
+	}, [ messageBatches, isProcessing, renderer, catalogs, conversationSession ] );
 
 	const presentation = useMemo< InteractiveUiPresentation >(
 		() => ( {
 			runtime: conversationSession.runtime,
-			sdk: interactiveUiSdk,
+			renderer,
 			hasLoadError,
-			retryLoad: () => setHasLoadError( false ),
+			isRetryingLoad,
+			retryLoad: () => setLoadAttempt( ( attempt ) => attempt + 1 ),
 			revision: runtimeRevision,
 			isDisabled: isProcessing,
 		} ),
-		[ conversationSession.runtime, interactiveUiSdk, hasLoadError, runtimeRevision, isProcessing ]
+		[
+			conversationSession.runtime,
+			renderer,
+			hasLoadError,
+			isRetryingLoad,
+			runtimeRevision,
+			isProcessing,
+		]
 	);
 
 	return useMemo(
