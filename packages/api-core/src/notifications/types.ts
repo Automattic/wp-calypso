@@ -2,6 +2,7 @@ export interface NotificationRange {
 	type: string;
 	indices: [ number, number ];
 	id?: string | number;
+	parent?: string | number | null;
 	url?: string;
 }
 
