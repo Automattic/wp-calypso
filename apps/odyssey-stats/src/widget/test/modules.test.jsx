@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../../hooks/use-module-data-query';
@@ -64,6 +64,7 @@ describe( 'Modules', () => {
 		canCurrentUser.mockReturnValue( true );
 		moduleStates( { protect: ok( 12345 ), akismet: ok( 9520 ) } );
 		useModuleDataQuery.mockClear();
+		wpcom.req.post.mockClear();
 	} );
 
 	afterEach( () => optionalConfig.mockReset() );
@@ -145,6 +146,32 @@ describe( 'Modules', () => {
 				{ apiNamespace: 'my-jetpack/v1', path: '/site/products/activate' },
 				{ products: [ 'anti-spam' ] }
 			);
+		} );
+
+		it( 'falls back to the per-product route on a Jetpack that predates the products one', async () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_installed' ) } );
+			wpcom.req.post.mockRejectedValueOnce( { code: 'rest_no_route', status: 404 } );
+			renderModules();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Install' } ) );
+
+			expect( wpcom.req.post ).toHaveBeenLastCalledWith( {
+				apiNamespace: 'my-jetpack/v1',
+				path: '/site/products/anti-spam',
+			} );
+		} );
+
+		it( 'leaves any other failure to the button, which re-enables itself', async () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_installed' ) } );
+			wpcom.req.post.mockRejectedValueOnce( { code: 'rest_forbidden', status: 403 } );
+			renderModules();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Install' } ) );
+
+			await waitFor( () =>
+				expect( screen.getByRole( 'button', { name: 'Install' } ) ).not.toHaveClass( 'is-busy' )
+			);
+			expect( wpcom.req.post ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it.each( [ 'not_installed', 'not_active' ] )(

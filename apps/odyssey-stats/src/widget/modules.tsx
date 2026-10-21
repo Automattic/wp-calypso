@@ -126,13 +126,23 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 			.post( { path: '/settings', apiNamespace: 'jetpack/v4' }, { protect: true } )
 			.then( protect.refetch );
 
-	// My Jetpack installs the Akismet plugin first when it is missing.
+	// Either route installs Akismet first when it is missing; Jetpack before 14.3 has only the
+	// per-product one, and the widget is served from the CDN to every version.
 	const activateAkismet = () =>
 		wpcom.req
 			.post(
 				{ apiNamespace: 'my-jetpack/v1', path: '/site/products/activate' },
 				{ products: [ 'anti-spam' ] }
 			)
+			.catch( ( error: { code?: string } ) => {
+				if ( error?.code !== 'rest_no_route' ) {
+					throw error;
+				}
+				return wpcom.req.post( {
+					apiNamespace: 'my-jetpack/v1',
+					path: '/site/products/anti-spam',
+				} );
+			} )
 			.then( akismet.refetch );
 
 	// Registered by the Akismet plugin, so it exists only while Akismet is active.
