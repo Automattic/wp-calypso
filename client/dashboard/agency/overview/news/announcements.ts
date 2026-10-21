@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import A4ALogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg';
 import AvalaraLogo from 'calypso/assets/images/a8c-for-agencies/events/avalara-logo.svg';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
@@ -68,6 +68,7 @@ interface AnnouncementLinks {
 	aiMcp: string;
 	pressableHosting: string;
 	referrals: string;
+	tiers: string;
 }
 
 const BLOG = 'https://automattic.com/for-agencies/blog';
@@ -77,7 +78,7 @@ const UPLOADS = 'https://automattic.com/wp-content/uploads';
 
 /**
  * Placeholder items for the design prototype, in the order a server would
- * return them: four events, five announcements (one an offer), three posts.
+ * return them: four events, six announcements (two of them offers), three posts.
  */
 export const getPlaceholderAnnouncements = ( links: AnnouncementLinks ): Announcement[] => [
 	{
@@ -137,6 +138,28 @@ export const getPlaceholderAnnouncements = ( links: AnnouncementLinks ): Announc
 			isExternal: true,
 		},
 		when: { kind: 'ends', date: '2026-11-30' },
+	},
+	{
+		id: 'developer-certification',
+		type: 'announcement',
+		logo: 'wordpress',
+		eyebrow: __( 'Limited time offer' ),
+		headline: __( 'Certify your developers at double the discount' ),
+		subtitle: __( 'Automattic for Agencies & WordPress Certifications' ),
+		description: sprintf(
+			/* translators: %d is the highest discount on the exam, a percentage */
+			__(
+				'Until March 31, 2027, your agency’s code takes twice the usual discount off the Advanced Professional WordPress Developer exam, up to %d%% for Premier Partners.'
+			),
+			50
+		),
+		primaryCta: { label: __( 'Get your code' ), url: `${ links.tiers }#certification` },
+		secondaryCta: {
+			label: __( 'About the exam' ),
+			url: 'https://wordpresscertifications.com/advanced-professional-wordpress-developer/',
+			isExternal: true,
+		},
+		when: { kind: 'ends', date: '2027-03-31' },
 	},
 	{
 		id: 'pressable-office-hours',
