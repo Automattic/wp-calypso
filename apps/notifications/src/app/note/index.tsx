@@ -136,6 +136,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>
 						<Button
 							size="small"
+							className="wpnc__mark-unread"
 							icon={ bellUnread }
 							label={ __( 'Mark as unread' ) }
 							onClick={ markAsUnread }

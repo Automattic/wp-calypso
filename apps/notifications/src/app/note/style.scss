@@ -416,6 +416,10 @@
 	flex-shrink: 0;
 }
 
+.wpnc__mark-unread.components-button {
+	color: var(--wp-components-color-gray-600, #{$gray-600});
+}
+
 .wpnc__actions-menu .components-menu-group + .components-menu-group {
 	border-top-color: var( --wpnc-divider__color, #{$gray-100} );
 }
