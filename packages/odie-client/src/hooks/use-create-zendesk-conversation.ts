@@ -19,6 +19,9 @@ import { useCurrentSupportInteraction } from '../data/use-current-support-intera
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { useOpenInteractionStatusMap } from './use-open-interaction-status-map';
 
+// Zendesk routes and prioritizes the checkout support experiment's chats by this tag.
+const CHECKOUT_SUPPORT_TAG = 'wpcom_checkout_chat';
+
 export const useCreateZendeskConversation = () => {
 	const {
 		selectedSiteId,
@@ -30,6 +33,7 @@ export const useCreateZendeskConversation = () => {
 		chat,
 		trackEvent,
 		isChatLoaded,
+		checkoutSupportVariation,
 	} = useOdieAssistantContext();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
@@ -186,6 +190,16 @@ export const useCreateZendeskConversation = () => {
 				: {} ),
 		};
 
+		// Chats in the checkout support experiment also get a tag for their variation, so Zendesk can
+		// tell the variations apart. A user sent back to an open chat gets no new conversation, so
+		// that chat keeps the tags it started with.
+		const conversationTags = [
+			...( zendeskConversationTags ?? [] ),
+			...( checkoutSupportVariation
+				? [ CHECKOUT_SUPPORT_TAG, `${ CHECKOUT_SUPPORT_TAG }_${ checkoutSupportVariation }` ]
+				: [] ),
+		];
+
 		const SMOOCH_READY_TIMEOUT_MS = 10000;
 		const SMOOCH_RETRY_INTERVAL_MS = 250;
 		const smoochReadyDeadline = Date.now() + SMOOCH_READY_TIMEOUT_MS;
@@ -196,9 +210,7 @@ export const useCreateZendeskConversation = () => {
 				conversation = await Smooch.createConversation( {
 					metadata: {
 						createdAt: Date.now(),
-						...( zendeskConversationTags?.length
-							? { 'zen:ticket:tags': zendeskConversationTags.join() }
-							: {} ),
+						...( conversationTags.length ? { 'zen:ticket:tags': conversationTags.join() } : {} ),
 						...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
 						...( chatId ? { odieChatId: chatId } : {} ),
 						...ticketFieldMetadata,
