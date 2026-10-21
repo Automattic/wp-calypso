@@ -1,6 +1,6 @@
 import { isChatUiStale } from './stale-chat-ui';
 import type { UIMessage } from '@automattic/agenttic-client';
-import type { InteractiveUiMessage } from '@automattic/ai-ui-renderer';
+import type { InteractiveUiMessage, InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 /** The A2UI protocol version the interactive UI speaks. */
 export const INTERACTIVE_UI_VERSION = 'v0.9';
@@ -94,6 +94,29 @@ export function getInteractiveUiBatches( messages: UIMessage[] ): InteractiveUiB
 			];
 		} );
 	} );
+}
+
+/**
+ * Applies a batch's messages one by one and returns the batch with only those the runtime
+ * accepted, so a rejected message can't count as a change to its surface.
+ */
+export function applyInteractiveUiBatch(
+	runtime: InteractiveUiRuntime,
+	batch: InteractiveUiBatch
+): InteractiveUiBatch {
+	return {
+		...batch,
+		operations: batch.operations.filter( ( message ) => {
+			try {
+				runtime.processMessages( [ message ], batch.messageId );
+				return true;
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.error( '[AgentsManager] Failed to apply an interactive UI message:', error );
+				return false;
+			}
+		} ),
+	};
 }
 
 // Every A2UI message holds one operation, keyed by its name, on one surface. The agent's messages

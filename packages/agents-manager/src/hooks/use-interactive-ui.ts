@@ -5,6 +5,7 @@ import {
 } from '../utils/convert-interactive-ui-messages-to-components';
 import { createInteractiveUiCatalogs } from '../utils/interactive-ui-catalogs';
 import {
+	applyInteractiveUiBatch,
 	getInteractiveUiBatches,
 	getStaleInteractiveUiSurfaceIds,
 	INTERACTIVE_UI_VERSION,
@@ -64,21 +65,6 @@ export function useInteractiveUi( {
 	const messageBatches = useMemo( () => getInteractiveUiBatches( messages ), [ messages ] );
 	const hasMessageBatches = messageBatches.length > 0;
 
-	// Messages from before this session's first turn came from history, such as a past chat's.
-	// Kept per conversation, since the chat stays mounted across them.
-	const [ firstTurn, setFirstTurn ] = useState< {
-		conversationId: string;
-		messageIndex: number;
-	} >();
-	const firstLiveMessageIndex =
-		firstTurn?.conversationId === conversationId ? firstTurn.messageIndex : Infinity;
-
-	useEffect( () => {
-		if ( isProcessing && firstLiveMessageIndex === Infinity ) {
-			setFirstTurn( { conversationId, messageIndex: messages.length } );
-		}
-	}, [ isProcessing, firstLiveMessageIndex, conversationId, messages.length ] );
-
 	const latestUserMessageIndex = getLatestUserMessageIndex( messages );
 
 	const actionInputsRef = useRef( { agentConfig, isProcessing, submitContextMessage } );
@@ -97,6 +83,21 @@ export function useInteractiveUi( {
 		} ),
 		[ conversationId ]
 	);
+
+	// Messages from before this session's first turn came from history, such as a past chat's. Each
+	// conversation switch starts a new session, a return to an earlier conversation included.
+	const [ firstTurn, setFirstTurn ] = useState< {
+		session: typeof conversationSession;
+		messageIndex: number;
+	} >();
+	const firstLiveMessageIndex =
+		firstTurn?.session === conversationSession ? firstTurn.messageIndex : Infinity;
+
+	useEffect( () => {
+		if ( isProcessing && firstLiveMessageIndex === Infinity ) {
+			setFirstTurn( { session: conversationSession, messageIndex: messages.length } );
+		}
+	}, [ isProcessing, firstLiveMessageIndex, conversationSession, messages.length ] );
 
 	// Staleness follows the batches the runtime has applied, not one still streaming, so a surface
 	// never changes staleness before its data does.
@@ -197,16 +198,14 @@ export function useInteractiveUi( {
 			} );
 		}
 
-		for ( const batch of newBatches ) {
-			try {
-				conversationSession.runtime?.processMessages( batch.operations, batch.messageId );
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.error( '[AgentsManager] Failed to process an interactive UI batch:', error );
-			}
+		const { runtime } = conversationSession;
+		if ( runtime ) {
+			conversationSession.appliedBatches = [
+				...conversationSession.appliedBatches,
+				...newBatches.map( ( batch ) => applyInteractiveUiBatch( runtime, batch ) ),
+			];
 		}
 
-		conversationSession.appliedBatches = messageBatches;
 		setRuntimeRevision( ( currentRevision ) => currentRevision + 1 );
 	}, [ messageBatches, isProcessing, renderer, catalogs, conversationSession ] );
 

@@ -1,4 +1,6 @@
+import { createInteractiveUiCatalog, createInteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 import {
+	applyInteractiveUiBatch,
 	getInteractiveUiBatches,
 	getStaleInteractiveUiSurfaceIds,
 	parseInteractiveUiText,
@@ -169,5 +171,32 @@ describe( 'getStaleInteractiveUiSurfaceIds', () => {
 		);
 
 		expect( staleSurfaceIds.size ).toBe( 0 );
+	} );
+} );
+
+describe( 'applyInteractiveUiBatch', () => {
+	it( 'keeps only the messages the runtime accepts', () => {
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const runtime = createInteractiveUiRuntime( {
+			catalogs: [ createInteractiveUiCatalog() ],
+			onAction: jest.fn(),
+			onError: jest.fn(),
+		} );
+		const rejected = {
+			version: 'v0.9' as const,
+			updateComponents: { surfaceId: 'missing-surface', components: [ { id: 'root' } ] },
+		};
+
+		const applied = applyInteractiveUiBatch( runtime, {
+			operations: [ rejected, ...operations ],
+			messageId: 'agent',
+			messageIndex: 1,
+			signature: '1',
+		} );
+
+		expect( applied.operations ).toEqual( operations );
+		expect( consoleError ).toHaveBeenCalledTimes( 1 );
+
+		consoleError.mockRestore();
 	} );
 } );
