@@ -166,7 +166,7 @@ function authorizePath() {
 }
 
 const JP_CLOUD_PUBLIC_ROUTES = [ '/pricing', '/plans', '/features/comparison' ];
-const A4A_PUBLIC_ROUTES = [ '/signup', /^\/error$/ ];
+const A4A_PUBLIC_ROUTES = [ '/signup', '/error' ];
 
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
@@ -187,11 +187,7 @@ const oauthTokenMiddleware = () => {
 
 		// Forces OAuth users to the /login page if no token is present
 		page( '*', function ( context, next ) {
-			const isValidSection = loggedOutRoutes.some( ( route ) =>
-				typeof route === 'string'
-					? context.path.startsWith( route )
-					: route.test( context.pathname )
-			);
+			const isValidSection = loggedOutRoutes.some( ( route ) => context.path.startsWith( route ) );
 
 			// Check we have an OAuth token, otherwise redirect to auth/login page
 			if ( getToken() === false && ! isValidSection ) {
