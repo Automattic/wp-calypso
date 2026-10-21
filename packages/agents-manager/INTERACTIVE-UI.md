@@ -3,8 +3,8 @@
 The agent can show UI in the chat when it helps, such as buttons, forms and pickers, so people can
 finish their request there. It uses A2UI v0.9.
 
-Agents Manager owns this architecture. Agents Manager, its providers (the Jetpack AI sidebar and
-WooCommerce AI) and other hosts such as MCP apps all follow it. Ticket numbers mark parts still to
+Agents Manager owns this architecture, and its providers (such as the Jetpack AI sidebar and
+WooCommerce AI) and other hosts (such as MCP apps) follow it. Ticket numbers mark parts still to
 come.
 
 ## How it works
@@ -29,11 +29,11 @@ come.
   styles. It has no chat, session or transport code. See its
   [README](../ai-ui-renderer/README.md).
 - **Agents Manager** hosts them in the chat:
-  - `hooks/use-interactive-ui.ts` keeps a runtime per conversation, loads the renderer on demand
+  - `src/hooks/use-interactive-ui.ts` keeps a runtime per conversation, loads the renderer on demand
     and sends actions to the agent.
-  - `components/interactive-ui-surfaces/` renders a message's surfaces.
-  - `utils/interactive-ui-messages.ts` and `utils/convert-interactive-ui-messages-to-components.ts`
-    find surfaces in the transcript.
+  - `src/components/interactive-ui-surfaces/` renders a message's surfaces.
+  - `src/utils/interactive-ui-messages.ts` and
+    `src/utils/convert-interactive-ui-messages-to-components.ts` find surfaces in the transcript.
 - **Providers** bring their own components and functions from their own packages (AM-116).
 
 ## Rules

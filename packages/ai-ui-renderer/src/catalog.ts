@@ -63,9 +63,8 @@ function assertUniqueNames( items: { name: string }[], kind: 'component' | 'func
 }
 
 /**
- * Builds a host's catalog from the basic components plus its own. A surface renders with
- * one catalog, so everything a host renders goes in it, under the Basic catalog's ID that
- * the server's surfaces use. Throws on a duplicate name.
+ * Builds a host's catalog from the basic components plus its own, under the Basic catalog's ID
+ * that the server's surfaces use. Throws on a duplicate name.
  */
 export function createInteractiveUiCatalog( {
 	components = [],

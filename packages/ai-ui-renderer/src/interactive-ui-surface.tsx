@@ -36,8 +36,8 @@ interface InteractiveUiSurfaceProps {
 }
 
 /**
- * Renders a surface with Markdown once its root component has arrived, and renders nothing if
- * it fails to render.
+ * Renders a surface with Markdown once its root component has arrived, and nothing if it fails
+ * to render. The root check doesn't subscribe, so hosts re-render after processing messages.
  */
 export function InteractiveUiSurface( {
 	surface,

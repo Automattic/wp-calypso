@@ -15,11 +15,11 @@ ordered batches with `runtime.processMessages(messages, ownerId)`. The owner is 
 the host shows the surfaces next to, such as a chat message. Keep the runtime for the
 session to preserve edits, then call `runtime.dispose()`.
 
-Render an owner's surfaces from `runtime.getSurfaceIds(ownerId)` and
-`runtime.getSurface(id)` with `InteractiveUiSurface`. It supplies the `ai-ui-renderer`
-root fieldset and Markdown, renders nothing until the surface's root component has
-arrived, and hides a surface that fails to render until its `revision` changes. Pass
-`disabled` to disable its controls, including those in an open modal.
+Render each of an owner's surfaces (`runtime.getSurfaceIds(ownerId)`, then
+`runtime.getSurface(id)`) with `InteractiveUiSurface`, and re-render after each
+`processMessages()` call. It adds the `ai-ui-renderer` root fieldset and Markdown, waits
+for the surface's root component, and hides a surface that fails to render until its
+`revision` changes. Pass `disabled` to disable its controls, including an open modal's.
 
 Import `@automattic/ai-ui-renderer/style.scss` and the WordPress components stylesheet.
 Hosts need Sass support and supply their own stacking rule for `.ai-ui-renderer__modal`.
