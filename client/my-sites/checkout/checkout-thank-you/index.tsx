@@ -1,4 +1,3 @@
-import { receiptQuery } from '@automattic/api-queries';
 import {
 	domainProductSlugs,
 	isCredits,
@@ -20,7 +19,6 @@ import {
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { css, Global } from '@emotion/react';
-import { useQuery } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
 import { Component, ComponentProps, useEffect } from 'react';
@@ -62,8 +60,6 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
-import { fetchReceipt } from 'calypso/state/receipts/actions';
-import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
@@ -81,6 +77,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { logStashEvent } from '../src/lib/analytics';
 import CheckoutThankYouHeader from './header';
 import HundredYearThankYou from './hundred-year-thank-you';
+import { useCheckoutReceipt } from './receipt';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
 import DomainOnly from './redesign-v2/pages/domain-only';
@@ -99,12 +96,12 @@ import {
 	isTitanWithoutMailboxes,
 	getDomainPurchaseTypeAndPredicate,
 } from './utils';
+import type { ReceiptData, ReceiptPurchase } from './receipt';
 import type { FindPredicate } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { UserData } from 'calypso/lib/user/user';
-import type { ReceiptState, ReceiptPurchase } from 'calypso/state/receipts/types';
 import type { LocalizeProps } from 'i18n-calypso';
 
 declare global {
@@ -124,13 +121,14 @@ export interface CheckoutThankYouProps {
 	redirectTo?: string;
 	displayMode?: string;
 	checkoutType?: string;
+	receipt?: ReceiptData;
+	gsuiteReceipt?: ReceiptData;
+	hasLoadedReceipts: boolean;
 }
 
 export interface CheckoutThankYouConnectedProps {
 	isLoadingPurchases: boolean;
 	isProductsListFetching: boolean;
-	receipt: ReceiptState;
-	gsuiteReceipt: ReceiptState | null;
 	sitePlans: SitesPlansResult;
 	isWooCommerceInstalled: boolean;
 	isFetchingSitePlugins: boolean;
@@ -150,7 +148,6 @@ export interface CheckoutThankYouConnectedProps {
 	hasDashboardOptIn: boolean;
 	fetchAtomicTransfer: ( siteId: number ) => void;
 	fetchSitePlugins: ( siteId: number ) => void;
-	fetchReceipt: ( receiptId: number ) => void;
 	fetchSitePlans: ( siteId: number ) => void;
 	fetchSiteDomains: ( siteId: number ) => void;
 	refreshSitePlans: ( siteId: number ) => void;
@@ -173,10 +170,7 @@ export type CheckoutThankYouCombinedProps = CheckoutThankYouProps &
 	LocalizeProps;
 
 export function getPurchases( props: CheckoutThankYouCombinedProps ): ReceiptPurchase[] {
-	return [
-		...( props?.receipt?.data?.purchases ?? [] ),
-		...( props?.gsuiteReceipt?.data?.purchases ?? [] ),
-	];
+	return [ ...( props?.receipt?.purchases ?? [] ), ...( props?.gsuiteReceipt?.purchases ?? [] ) ];
 }
 
 function findPurchaseAndDomain(
@@ -204,31 +198,17 @@ export class CheckoutThankYou extends Component<
 	componentDidMount() {
 		this.redirectIfThemePurchased();
 
-		const { gsuiteReceipt, gsuiteReceiptId, receipt, receiptId, selectedSite, sitePlans } =
-			this.props;
+		const { hasLoadedReceipts, selectedSite, sitePlans } = this.props;
 
 		if ( selectedSite ) {
 			this.props.fetchAtomicTransfer?.( selectedSite.ID );
 		}
 
-		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
+		if ( selectedSite && hasLoadedReceipts && this.hasPlanOrDomainProduct() ) {
 			this.props.refreshSitePlans( selectedSite.ID );
 			this.refreshDomainsIfNeeded( selectedSite.ID );
 		} else if ( selectedSite && shouldFetchSitePlans( sitePlans ) ) {
 			this.props.fetchSitePlans( selectedSite.ID );
-		}
-
-		if ( receiptId && ! receipt.hasLoadedFromServer && ! receipt.isRequesting ) {
-			this.props.fetchReceipt( receiptId );
-		}
-
-		if (
-			gsuiteReceiptId &&
-			gsuiteReceipt &&
-			! gsuiteReceipt.hasLoadedFromServer &&
-			! gsuiteReceipt.isRequesting
-		) {
-			this.props.fetchReceipt( gsuiteReceiptId );
 		}
 
 		if ( isOnlyDomainTransfers( getPurchases( this.props ) ) ) {
@@ -285,8 +265,8 @@ export class CheckoutThankYou extends Component<
 		this.redirectIfThemePurchased();
 
 		if (
-			! prevProps.receipt.hasLoadedFromServer &&
-			this.props.receipt.hasLoadedFromServer &&
+			! prevProps.hasLoadedReceipts &&
+			this.props.hasLoadedReceipts &&
 			this.hasPlanOrDomainProduct()
 		) {
 			if ( this.props.selectedSite ) {
@@ -391,8 +371,7 @@ export class CheckoutThankYou extends Component<
 		return (
 			this.props.hasReceivedRemotePreferences &&
 			( ! this.props.selectedSite || this.props.sitePlans.hasLoadedFromServer ) &&
-			this.props.receipt.hasLoadedFromServer &&
-			( ! this.props.gsuiteReceipt || this.props.gsuiteReceipt.hasLoadedFromServer ) &&
+			this.props.hasLoadedReceipts &&
 			! this.props.isProductsListFetching
 		);
 	};
@@ -411,7 +390,7 @@ export class CheckoutThankYou extends Component<
 		const purchases = getPurchases( this.props );
 
 		if (
-			this.props.receipt.hasLoadedFromServer &&
+			this.props.hasLoadedReceipts &&
 			purchases.length > 0 &&
 			purchases.every( isThemePurchase )
 		) {
@@ -594,15 +573,15 @@ export class CheckoutThankYou extends Component<
 				isGSuiteOrExtraLicenseOrGoogleWorkspace
 			);
 
-			if ( this.props.receipt.data && isOnlyDomainTransfers( purchases ) ) {
+			if ( this.props.receipt && isOnlyDomainTransfers( purchases ) ) {
 				pageContent = (
 					<DomainBulkTransferThankYou
 						purchases={ purchases }
-						receipt={ this.props.receipt.data }
-						currency={ this.props.receipt.data?.currency ?? 'USD' }
+						receipt={ this.props.receipt }
+						currency={ this.props.receipt.currency ?? 'USD' }
 					/>
 				);
-			} else if ( this.props.receipt.data && hundredYearDomainPurchase ) {
+			} else if ( this.props.receipt && hundredYearDomainPurchase ) {
 				pageContent = (
 					<>
 						<Global
@@ -640,7 +619,7 @@ export class CheckoutThankYou extends Component<
 					</>
 				);
 			} else if (
-				this.props.receipt.data &&
+				this.props.receipt &&
 				isOnlyDomainPurchases( purchases ) &&
 				this.props.domainOnlySiteFlow
 			) {
@@ -657,7 +636,7 @@ export class CheckoutThankYou extends Component<
 				pageContent = (
 					<DomainOnly
 						domainPurchase={ domainPurchases[ 0 ] }
-						currency={ this.props.receipt.data.currency }
+						currency={ this.props.receipt.currency }
 					/>
 				);
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
@@ -750,7 +729,7 @@ export class CheckoutThankYou extends Component<
 							primaryCta={ this.primaryCta }
 							displayMode={ this.props.displayMode }
 							purchases={ purchases }
-							currency={ this.props.receipt.data?.currency }
+							currency={ this.props.receipt?.currency }
 						/>
 					</div>
 				</Card>
@@ -793,11 +772,10 @@ const ConnectedCheckoutThankYou = connect(
 		let siteId = getSelectedSiteId( state );
 		const activeTheme = getActiveTheme( state, siteId ?? 0 );
 		const sitePlugins = getInstalledPlugins( state, [ siteId ], undefined );
-		const receipt = getReceiptById( state, props.receiptId );
 
-		if ( props.domainOnlySiteFlow && receipt.hasLoadedFromServer ) {
+		if ( props.domainOnlySiteFlow && props.receipt ) {
 			const [ domainOnlyPurchase ] = findPurchaseAndDomain(
-				receipt.data?.purchases ?? [],
+				props.receipt.purchases,
 				isDomainRegistration
 			);
 			if ( domainOnlyPurchase?.blogId ) {
@@ -807,8 +785,6 @@ const ConnectedCheckoutThankYou = connect(
 
 		return {
 			isProductsListFetching: isProductsListFetching( state ),
-			receipt,
-			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
 			isFetchingSitePlugins: isRequestingSitePlugins( state, siteId ),
 			isWooCommerceInstalled: isWooCommercePluginInstalled( sitePlugins ),
@@ -836,7 +812,6 @@ const ConnectedCheckoutThankYou = connect(
 	{
 		fetchAtomicTransfer,
 		fetchSitePlugins,
-		fetchReceipt,
 		fetchSitePlans,
 		fetchSiteDomains,
 		refreshSitePlans,
@@ -846,16 +821,15 @@ const ConnectedCheckoutThankYou = connect(
 	}
 )( localize( CheckoutThankYou ) );
 
-function CheckoutThankYouWithReceipt( props: ComponentProps< typeof ConnectedCheckoutThankYou > ) {
-	const {
-		data: receipt,
-		isLoading,
-		isError,
-		error,
-	} = useQuery( {
-		...receiptQuery( props.receiptId ),
-		enabled: !! props.receiptId,
-	} );
+function CheckoutThankYouWithReceipt(
+	props: Omit<
+		ComponentProps< typeof ConnectedCheckoutThankYou >,
+		'receipt' | 'gsuiteReceipt' | 'hasLoadedReceipts'
+	>
+) {
+	const checkoutReceipt = useCheckoutReceipt( props.receiptId );
+	const gsuiteReceipt = useCheckoutReceipt( props.gsuiteReceiptId );
+	const { isLoading, isError, error } = checkoutReceipt;
 
 	useEffect( () => {
 		if ( isError && error ) {
@@ -878,7 +852,12 @@ function CheckoutThankYouWithReceipt( props: ComponentProps< typeof ConnectedChe
 	return (
 		<ConnectedCheckoutThankYou
 			{ ...props }
-			checkoutType={ receipt?.checkout_type ?? props.checkoutType }
+			checkoutType={ checkoutReceipt.data?.checkoutType ?? props.checkoutType }
+			receipt={ checkoutReceipt.data }
+			gsuiteReceipt={ gsuiteReceipt.data }
+			hasLoadedReceipts={
+				checkoutReceipt.isSuccess && ( ! props.gsuiteReceiptId || gsuiteReceipt.isSuccess )
+			}
 		/>
 	);
 }
