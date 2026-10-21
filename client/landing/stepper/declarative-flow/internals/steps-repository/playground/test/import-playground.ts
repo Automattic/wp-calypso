@@ -8,7 +8,7 @@ import {
 	ImportFailureError,
 	UnsupportedExportError,
 	importPlaygroundSite,
-	startPlaygroundImportIfReady,
+	ensureImportStarted,
 } from '../lib/import-playground';
 import type { ImportJob } from 'calypso/blocks/importer/types';
 
@@ -33,7 +33,7 @@ const updateImporterMock = updateImporter as jest.Mock;
 const uploadExportFileMock = uploadExportFile as jest.Mock;
 const wpcomRequestMock = wpcomRequest as unknown as jest.Mock;
 
-describe( 'startPlaygroundImportIfReady', () => {
+describe( 'ensureImportStarted', () => {
 	const siteId = 123;
 	const status = {
 		importerId: 'import-id',
@@ -49,7 +49,7 @@ describe( 'startPlaygroundImportIfReady', () => {
 	} );
 
 	it( 'starts a Playground import as soon as its upload succeeds', async () => {
-		await expect( startPlaygroundImportIfReady( siteId, status ) ).resolves.toBe( true );
+		await expect( ensureImportStarted( siteId, status ) ).resolves.toBe( true );
 
 		expect( updateImporterMock ).toHaveBeenCalledWith( siteId, {
 			importerId: 'import-id',
@@ -62,7 +62,7 @@ describe( 'startPlaygroundImportIfReady', () => {
 
 	it( 'waits when the Playground upload is still processing', async () => {
 		await expect(
-			startPlaygroundImportIfReady( siteId, {
+			ensureImportStarted( siteId, {
 				...status,
 				importerState: appStates.UPLOAD_PROCESSING,
 			} )
@@ -71,13 +71,21 @@ describe( 'startPlaygroundImportIfReady', () => {
 		expect( updateImporterMock ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not start a non-Playground upload', async () => {
+	it( 'reports an auto-started import as started without sending the start', async () => {
 		await expect(
-			startPlaygroundImportIfReady( siteId, {
+			ensureImportStarted( siteId, { ...status, importerState: appStates.IMPORTING } )
+		).resolves.toBe( true );
+
+		expect( updateImporterMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'fails a non-Playground upload instead of waiting for it', async () => {
+		await expect(
+			ensureImportStarted( siteId, {
 				...status,
 				importerFileType: 'content',
 			} )
-		).resolves.toBe( false );
+		).rejects.toBeInstanceOf( UnsupportedExportError );
 
 		expect( updateImporterMock ).not.toHaveBeenCalled();
 	} );

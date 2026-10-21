@@ -27,7 +27,6 @@ import type { PlaygroundClient } from '../../lib/types';
 import './style.scss';
 
 type ImportFailureReason = 'timeout' | 'unsupported_file_type' | 'import_failure';
-type ImportResult = { status: 'error'; reason: ImportFailureReason };
 
 function getFailureReason( error: unknown ): ImportFailureReason {
 	if ( error instanceof ImportTimeoutError ) {
@@ -53,7 +52,7 @@ export const PlaygroundSetupStep: Step< {
 	const { mutateAsync: importBlueprint } = useImportBlueprint();
 
 	const [ progress, setProgress ] = useState< PlaygroundImportProgress | null >( null );
-	const [ result, setResult ] = useState< ImportResult | null >( null );
+	const [ failureReason, setFailureReason ] = useState< ImportFailureReason | null >( null );
 	const keepOpenSubtitle = __(
 		'This usually takes a few minutes. Keep this window open until your site is ready.'
 	);
@@ -90,7 +89,7 @@ export const PlaygroundSetupStep: Step< {
 		}
 
 		playgroundClientRef.current = client;
-		setResult( null );
+		setFailureReason( null );
 		setProgress( null );
 
 		// The Playground publish flow (entrepreneur) exports a WooCommerce sandbox
@@ -115,7 +114,7 @@ export const PlaygroundSetupStep: Step< {
 				reason,
 				duration_seconds: durationSeconds(),
 			} );
-			setResult( { status: 'error', reason } );
+			setFailureReason( reason );
 			return;
 		}
 
@@ -134,7 +133,8 @@ export const PlaygroundSetupStep: Step< {
 		}
 	};
 
-	const renderProgress = ( title: string, bar: { value: number; isPulsing?: boolean } ) => (
+	// Without a percentage, the bar pulses.
+	const renderProgress = ( title: string, percent?: number ) => (
 		<div className="import-layout__center">
 			<Progress>
 				<div className="import__heading import__heading-center">
@@ -142,8 +142,8 @@ export const PlaygroundSetupStep: Step< {
 					<ProgressBar
 						key={ progress?.phase ?? 'loading' }
 						compact
-						value={ bar.value }
-						isPulsing={ bar.isPulsing }
+						value={ percent ?? 100 }
+						isPulsing={ percent === undefined }
 					/>
 					<SubTitle>{ keepOpenSubtitle }</SubTitle>
 				</div>
@@ -152,13 +152,13 @@ export const PlaygroundSetupStep: Step< {
 	);
 
 	const getStatus = () => {
-		if ( result?.status === 'error' ) {
+		if ( failureReason ) {
 			return (
 				<div className="import-layout__center">
 					<div className="import__heading import__heading-center">
 						<Title>{ __( 'Your site could not be imported' ) }</Title>
 						<SubTitle>
-							{ result.reason === 'timeout'
+							{ failureReason === 'timeout'
 								? __(
 										'The import is taking longer than expected and may still finish. Check your dashboard in a few minutes.'
 									)
@@ -167,13 +167,13 @@ export const PlaygroundSetupStep: Step< {
 									) }
 						</SubTitle>
 						<div className="playground-setup__actions">
-							{ result.reason !== 'timeout' && (
+							{ failureReason !== 'timeout' && (
 								<Button variant="primary" onClick={ retryImport }>
 									{ __( 'Try again' ) }
 								</Button>
 							) }
 							<Button
-								variant={ result.reason === 'timeout' ? 'primary' : 'secondary' }
+								variant={ failureReason === 'timeout' ? 'primary' : 'secondary' }
 								href={ `/home/${ siteSlug || siteId }` }
 							>
 								{ __( 'Go to dashboard' ) }
@@ -189,13 +189,11 @@ export const PlaygroundSetupStep: Step< {
 		}
 
 		if ( progress?.phase === 'starting' ) {
-			return renderProgress( __( 'Starting the import' ), { value: 100, isPulsing: true } );
+			return renderProgress( __( 'Starting the import' ) );
 		}
 
 		if ( progress?.phase === 'uploading' ) {
-			return progress.percent === undefined
-				? renderProgress( __( 'Uploading to WordPress.com' ), { value: 100, isPulsing: true } )
-				: renderProgress( __( 'Uploading to WordPress.com' ), { value: progress.percent } );
+			return renderProgress( __( 'Uploading to WordPress.com' ), progress.percent );
 		}
 
 		if ( progress?.phase === 'packing' ) {
@@ -204,12 +202,11 @@ export const PlaygroundSetupStep: Step< {
 				sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
 
 			return renderProgress(
-				isStore ? __( 'Packing up your store' ) : __( 'Packing up your site' ),
-				{ value: 100, isPulsing: true }
+				isStore ? __( 'Packing up your store' ) : __( 'Packing up your site' )
 			);
 		}
 
-		return renderProgress( __( 'Loading your Playground site' ), { value: 100, isPulsing: true } );
+		return renderProgress( __( 'Loading your Playground site' ) );
 	};
 
 	const getStepContent = () => {

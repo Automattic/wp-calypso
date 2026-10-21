@@ -45,14 +45,6 @@ export class ImportFailureError extends Error {
 	}
 }
 
-/**
- * Whether the server is already running the import, for example because the
- * upload was sent with autoStart.
- */
-function isImporting( status: ImportJob ): boolean {
-	return status.importerState === appStates.IMPORTING;
-}
-
 export class UnsupportedExportError extends Error {
 	constructor( fileType?: string ) {
 		super( `The upload was not recognized as a Playground export (${ fileType ?? 'unknown' }).` );
@@ -61,28 +53,19 @@ export class UnsupportedExportError extends Error {
 }
 
 /**
- * Only a Playground export can be started from here. If the server recognizes
- * the upload as another file type, fail now instead of waiting for a start that
- * never comes.
+ * Start the import once its upload succeeds, and report whether it has started.
+ * An upload sent with autoStart may already be importing. An upload the server
+ * recognizes as another file type can never start from here, so it fails now.
  */
-function assertPlaygroundExport( status: ImportJob ): void {
-	if (
-		status.importerState === appStates.UPLOAD_SUCCESS &&
-		status.importerFileType !== 'playground'
-	) {
-		throw new UnsupportedExportError( status.importerFileType );
+export async function ensureImportStarted( siteId: number, status: ImportJob ): Promise< boolean > {
+	if ( status.importerState === appStates.IMPORTING ) {
+		return true;
 	}
-}
-
-export async function startPlaygroundImportIfReady(
-	siteId: number,
-	status: ImportJob
-): Promise< boolean > {
-	if (
-		status.importerState !== appStates.UPLOAD_SUCCESS ||
-		status.importerFileType !== 'playground'
-	) {
+	if ( status.importerState !== appStates.UPLOAD_SUCCESS ) {
 		return false;
+	}
+	if ( status.importerFileType !== 'playground' ) {
+		throw new UnsupportedExportError( status.importerFileType );
 	}
 
 	const startPayload = toApi( { ...status, importerState: appStates.IMPORTING } );
@@ -184,11 +167,7 @@ export async function importPlaygroundSite(
 				percent: event.lengthComputable ? ( 100 * event.loaded ) / event.total : undefined,
 			} ),
 	} );
-	const importerStatus = toImportJob( importer );
-	assertPlaygroundExport( importerStatus );
-	let started =
-		isImporting( importerStatus ) ||
-		( await startPlaygroundImportIfReady( siteId, importerStatus ) );
+	let started = await ensureImportStarted( siteId, toImportJob( importer ) );
 
 	const importId: string = importer.importId;
 	onProgress?.( { phase: 'starting' } );
@@ -216,8 +195,7 @@ export async function importPlaygroundSite(
 		}
 
 		if ( ! started ) {
-			assertPlaygroundExport( status );
-			started = isImporting( status ) || ( await startPlaygroundImportIfReady( siteId, status ) );
+			started = await ensureImportStarted( siteId, status );
 		}
 
 		// Report server-side progress only once the import has started; until
