@@ -68,6 +68,7 @@
 		"@wordpress/eslint-plugin": "^25.4.0",
 		"@wordpress/stylelint-config": "^26.1.0",
 		"css-loader": "^7.1.5",
+		"sass-embedded": "^1.89.0",
 		"sass-loader": "^16.0.5",
 		"stylelint": "^17.16.0",
 		"stylelint-scss": "^7.3.0",

@@ -2609,6 +2609,7 @@ __metadata:
     "@wordpress/stylelint-config": "npm:^26.1.0"
     "@wordpress/url": "npm:^4.48.0"
     css-loader: "npm:^7.1.5"
+    sass-embedded: "npm:^1.89.0"
     sass-loader: "npm:^16.0.5"
     stylelint: "npm:^17.16.0"
     stylelint-scss: "npm:^7.3.0"
