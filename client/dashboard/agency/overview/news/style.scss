@@ -116,3 +116,8 @@
 	height: auto;
 	border-radius: 4px;
 }
+
+// The blog card's image takes the same corners as an open post's image in the list.
+.a4a-blog .a4a-blog-media {
+	border-radius: 4px;
+}

@@ -71,6 +71,8 @@ interface AnnouncementLinks {
 }
 
 const BLOG = 'https://automattic.com/for-agencies/blog';
+/** The blog's front page, where every post lives. */
+export const BLOG_URL = `${ BLOG }/`;
 const UPLOADS = 'https://automattic.com/wp-content/uploads';
 
 /**

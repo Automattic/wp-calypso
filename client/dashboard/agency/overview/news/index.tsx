@@ -23,6 +23,7 @@ import {
 	bindLastWords,
 } from './announcement-parts';
 import { getPlaceholderAnnouncements } from './announcements';
+import BlogCard from './blog-card';
 import type { AnnouncementActionProps } from './announcement-parts';
 import type { Announcement, AnnouncementType } from './announcements';
 import type { Field, View } from '@wordpress/dataviews';
@@ -46,16 +47,21 @@ const TYPE_ORDER: AnnouncementType[] = [ 'event', 'announcement', 'blog' ];
  * Prototype switches, in development builds only, until the announcements API exists:
  * `?items=1|4|12` how many items the server returned, `?tab=event|announcement|blog` the
  * filter it starts on, `?page=2` the page it starts on, `?first=<id>` the item marketing
- * sent first. Everywhere else the URL is ignored and the defaults apply.
+ * sent first, `?blog=card` blog posts in their own card below the list. Everywhere else
+ * the URL is ignored and the defaults apply.
  */
 function readSwitches() {
 	const params = new URLSearchParams(
 		config( 'env' ) === 'development' && typeof window !== 'undefined' ? window.location.search : ''
 	);
 	const count = Math.min( Math.max( Number( params.get( 'items' ) ) || 12, 1 ), 12 );
-	const filter: NewsFilter = TYPE_ORDER.find( ( type ) => type === params.get( 'tab' ) ) ?? 'all';
+	const blogCard = params.get( 'blog' ) === 'card';
+	const filter: NewsFilter =
+		TYPE_ORDER.find(
+			( type ) => type === params.get( 'tab' ) && ! ( blogCard && type === 'blog' )
+		) ?? 'all';
 	const page = Math.max( Number( params.get( 'page' ) ) || 1, 1 );
-	return { count, filter, page, first: params.get( 'first' ) };
+	return { count, filter, page, first: params.get( 'first' ), blogCard };
 }
 
 function NewsHeader( { children }: { children?: React.ReactNode } ) {
@@ -234,16 +240,22 @@ interface NewsCardProps extends AnnouncementActionProps {
  */
 export default function NewsCard( { links, ...actionProps }: NewsCardProps ) {
 	const switches = readSwitches();
+	const placeholders = useMemo( () => getPlaceholderAnnouncements( links ), [ links ] );
+	// With their own card, blog posts leave the list.
+	const blogPosts = useMemo(
+		() => ( switches.blogCard ? placeholders.filter( ( { type } ) => type === 'blog' ) : [] ),
+		[ placeholders, switches.blogCard ]
+	);
 	const announcements = useMemo( () => {
-		const placeholders = getPlaceholderAnnouncements( links );
+		const items = switches.blogCard
+			? placeholders.filter( ( { type } ) => type !== 'blog' )
+			: placeholders;
 		// Marketing promotes an item by sending it first; the switch stands in for that order.
-		const promoted = placeholders.find( ( { id } ) => id === switches.first );
+		const promoted = items.find( ( { id } ) => id === switches.first );
 		return (
-			promoted
-				? [ promoted, ...placeholders.filter( ( item ) => item !== promoted ) ]
-				: placeholders
+			promoted ? [ promoted, ...items.filter( ( item ) => item !== promoted ) ] : items
 		).slice( 0, switches.count );
-	}, [ links, switches.first, switches.count ] );
+	}, [ placeholders, switches.blogCard, switches.first, switches.count ] );
 
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
@@ -285,8 +297,10 @@ export default function NewsCard( { links, ...actionProps }: NewsCardProps ) {
 		[ announcements, view, fields ]
 	);
 
+	const blogSection = blogPosts.length > 0 && <BlogCard posts={ blogPosts } { ...actionProps } />;
+
 	if ( ! announcements.length ) {
-		return null;
+		return blogSection || null;
 	}
 
 	const typeFilter = view.filters?.find( ( { field } ) => field === 'type' );
@@ -305,49 +319,52 @@ export default function NewsCard( { links, ...actionProps }: NewsCardProps ) {
 		openId === undefined || ! data.some( ( { id } ) => id === openId ) ? data[ 0 ]?.id : openId;
 
 	return (
-		<Card className="a4a-news">
-			<DataViews< Announcement >
-				data={ data }
-				fields={ fields }
-				view={ view }
-				onChangeView={ ( next ) => {
-					setView( next );
-					setOpenId( undefined );
-				} }
-				paginationInfo={ paginationInfo }
-				defaultLayouts={ { list: {} } }
-				getItemId={ ( item ) => item.id }
-			>
-				<NewsHeader>
-					<FilterPills
-						announcements={ announcements }
-						value={ filterValue }
-						onChange={ changeFilter }
-					/>
-				</NewsHeader>
-				{ data.map( ( announcement, index ) => (
-					<Fragment key={ announcement.id }>
-						{ index > 0 && <CardDivider style={ DIVIDER_STYLE } /> }
-						<NewsRow
-							announcement={ announcement }
-							isOpen={ openItemId === announcement.id }
-							canToggle={ announcements.length > 1 }
-							onToggle={ () =>
-								setOpenId( openItemId === announcement.id ? null : announcement.id )
-							}
-							{ ...actionProps }
+		<>
+			<Card className="a4a-news">
+				<DataViews< Announcement >
+					data={ data }
+					fields={ fields }
+					view={ view }
+					onChangeView={ ( next ) => {
+						setView( next );
+						setOpenId( undefined );
+					} }
+					paginationInfo={ paginationInfo }
+					defaultLayouts={ { list: {} } }
+					getItemId={ ( item ) => item.id }
+				>
+					<NewsHeader>
+						<FilterPills
+							announcements={ announcements }
+							value={ filterValue }
+							onChange={ changeFilter }
 						/>
-					</Fragment>
-				) ) }
-				{ paginationInfo.totalPages > 1 && (
-					<>
-						<CardDivider style={ DIVIDER_STYLE } />
-						<CardBody>
-							<DataViews.Pagination />
-						</CardBody>
-					</>
-				) }
-			</DataViews>
-		</Card>
+					</NewsHeader>
+					{ data.map( ( announcement, index ) => (
+						<Fragment key={ announcement.id }>
+							{ index > 0 && <CardDivider style={ DIVIDER_STYLE } /> }
+							<NewsRow
+								announcement={ announcement }
+								isOpen={ openItemId === announcement.id }
+								canToggle={ announcements.length > 1 }
+								onToggle={ () =>
+									setOpenId( openItemId === announcement.id ? null : announcement.id )
+								}
+								{ ...actionProps }
+							/>
+						</Fragment>
+					) ) }
+					{ paginationInfo.totalPages > 1 && (
+						<>
+							<CardDivider style={ DIVIDER_STYLE } />
+							<CardBody>
+								<DataViews.Pagination />
+							</CardBody>
+						</>
+					) }
+				</DataViews>
+			</Card>
+			{ blogSection }
+		</>
 	);
 }
