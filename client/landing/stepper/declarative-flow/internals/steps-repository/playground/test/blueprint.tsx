@@ -7,6 +7,7 @@ import {
 	getBlueprintArchiveIdentifier,
 	getBlueprintID,
 	getBlueprintLabelForTracking,
+	getStaticSiteImportShareToken,
 } from '../lib/blueprint';
 
 const DEFAULT_BLUEPRINT = {
@@ -420,5 +421,44 @@ describe( 'getBlueprintLabelForTracking', () => {
 		params.set( 'blueprint', '55555' );
 		const label = getBlueprintLabelForTracking( params );
 		expect( label ).toBe( 'bpl-55555' );
+	} );
+} );
+
+describe( 'getStaticSiteImportShareToken', () => {
+	const base = 'https://public-api.wordpress.com/wpcom/v2/static-site-import-session/share/';
+	const token = 'eyJ0eXAi.eyJhdWQi.sig-_nature';
+	const withUrl = ( url: string ) => {
+		const params = new URLSearchParams();
+		params.set( 'blueprint-url', url );
+		return params;
+	};
+
+	it( 'returns the token of a static site import share blueprint', () => {
+		expect( getStaticSiteImportShareToken( withUrl( `${ base }${ token }/blueprint` ) ) ).toBe(
+			token
+		);
+	} );
+
+	it( 'is labelled static-site-import for Tracks', () => {
+		expect( getBlueprintLabelForTracking( withUrl( `${ base }${ token }/blueprint` ) ) ).toBe(
+			'static-site-import'
+		);
+	} );
+
+	it.each( [
+		[
+			'another host',
+			`https://example.com/wpcom/v2/static-site-import-session/share/${ token }/blueprint`,
+		],
+		[ 'the archive route', `${ base }${ token }/site.zip` ],
+		[ 'a token that is not a JWT', `${ base }not-a-token/blueprint` ],
+		[ 'a path after the token', `${ base }${ token }/blueprint/extra` ],
+		[ 'a query string', `${ base }${ token }/blueprint?x=1` ],
+	] )( 'returns null for %s', ( _label, url ) => {
+		expect( getStaticSiteImportShareToken( withUrl( url ) ) ).toBeNull();
+	} );
+
+	it( 'returns null without a blueprint-url', () => {
+		expect( getStaticSiteImportShareToken( new URLSearchParams() ) ).toBeNull();
 	} );
 } );
