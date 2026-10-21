@@ -1,6 +1,6 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
-import { useEffect, useRef, useState, type TransitionEvent } from 'react';
+import { useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
@@ -97,20 +97,15 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 
 	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
 
-	const appRef = useRef< HTMLDivElement >( null );
-	useEffect( () => {
-		const appElement = appRef.current;
-		if ( ! appElement ) {
-			return;
-		}
-
-		const interceptLinkClick = ( event: MouseEvent ) => store.dispatch( interceptLinks( event ) );
-		appElement.addEventListener( 'click', interceptLinkClick );
-		return () => appElement.removeEventListener( 'click', interceptLinkClick );
-	}, [] );
-
 	return (
-		<HStack ref={ appRef } className="wpnc-app" spacing={ 0 } alignment="stretch">
+		<HStack
+			className="wpnc-app"
+			spacing={ 0 }
+			alignment="stretch"
+			onClick={ ( event: MouseEvent< HTMLDivElement > ) =>
+				store.dispatch( interceptLinks( event ) )
+			}
+		>
 			<div
 				className={ clsx( 'wpnc-app__detail-pane', { 'is-open': isDetailOpen } ) }
 				onTransitionEnd={ handleDetailPaneTransitionEnd }
