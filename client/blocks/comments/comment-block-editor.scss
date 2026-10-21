@@ -8,6 +8,7 @@
 	--jetpack-comments-line-height: 21px;
 	--jetpack-comments-color: var(--color-text);
 	--jetpack-comments-background: var(--color-surface);
+	position: relative;
 	border: 1px solid var(--color-neutral-light);
 	border-radius: 2px;
 	background: var(--color-surface);
@@ -15,5 +16,77 @@
 
 	&:focus-within {
 		border-color: var(--color-primary);
+	}
+}
+
+// Holds the editor's place until it loads: no border of its own, and as tall as
+// the editor's content area, so the box doesn't move when the editor takes over.
+.comments__block-editor .comments__block-editor-textarea {
+	display: block;
+	box-sizing: border-box;
+	inline-size: 100%;
+	min-block-size: 5lh;
+	margin: 0;
+	padding: var(--jetpack-comments-pad);
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	color: inherit;
+	font-family: var(--jetpack-comments-font-family);
+	font-size: var(--jetpack-comments-font-size);
+	line-height: var(--jetpack-comments-line-height);
+	outline: none;
+	resize: none;
+	field-sizing: content;
+
+	&[hidden] {
+		display: none;
+	}
+
+	// The shade the editor gives its own placeholder, so the handoff keeps it.
+	&::placeholder {
+		color: currentColor;
+		opacity: 0.62;
+	}
+}
+
+// Over the textarea while the editor downloads, its dots bouncing one after another.
+.comments__block-editor-loading {
+	position: absolute;
+	inset-block-start: var(--jetpack-comments-pad);
+	inset-inline-start: var(--jetpack-comments-pad);
+	font-family: var(--jetpack-comments-font-family);
+	font-size: var(--jetpack-comments-font-size);
+	line-height: var(--jetpack-comments-line-height);
+	opacity: 0.62;
+	pointer-events: none;
+
+	span {
+		display: inline-block;
+		animation: comments-block-editor-bounce 1s ease-in-out infinite;
+
+		@media (prefers-reduced-motion: reduce) {
+			animation: none;
+		}
+	}
+
+	span:nth-child(2) {
+		animation-delay: 0.15s;
+	}
+
+	span:nth-child(3) {
+		animation-delay: 0.3s;
+	}
+}
+
+@keyframes comments-block-editor-bounce {
+	0%,
+	60%,
+	100% {
+		transform: none;
+	}
+
+	30% {
+		transform: translateY(-0.3em);
 	}
 }

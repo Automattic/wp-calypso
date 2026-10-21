@@ -164,6 +164,9 @@ describe( 'PostCommentForm', () => {
 
 		const renderEditorForm = ( props ) => renderForm( props, { blockEditor: true } );
 
+		// The editor's stand-in, which only a site with the block editor gets.
+		const findEditorBox = () => screen.findByRole( 'textbox', { name: 'Comment' } );
+
 		it( 'stays a textarea outside the conversations inbox', async () => {
 			const { request } = mockEditorSettings();
 
@@ -175,12 +178,38 @@ describe( 'PostCommentForm', () => {
 			expect( screen.getByPlaceholderText( 'Add a comment…' ) ).toBeVisible();
 		} );
 
+		it( "holds the editor's place until the box has focus", async () => {
+			mockEditorSettings();
+			mockLoader();
+
+			renderEditorForm();
+			const box = await findEditorBox();
+
+			expect( box ).toBeVisible();
+			expect( box ).toHaveAttribute( 'placeholder', 'Add a comment…' );
+			expect( loadScript ).not.toHaveBeenCalled();
+		} );
+
+		it( 'keeps the box read-only while the editor loads', async () => {
+			mockEditorSettings();
+			loadScript.mockReturnValue( new Promise( () => {} ) );
+
+			renderEditorForm();
+			const box = await findEditorBox();
+			await userEvent.click( box );
+
+			expect( box ).toHaveAttribute( 'readonly' );
+			expect( box ).toHaveAttribute( 'placeholder', '' );
+			expect( screen.getByText( 'Add a comment' ) ).toBeVisible();
+		} );
+
 		it( 'takes over from the textarea once the box has focus', async () => {
 			const { body } = mockEditorSettings();
 			const mountEditor = mockLoader();
 
 			renderEditorForm();
-			await userEvent.click( screen.getByPlaceholderText( 'Add a comment…' ) );
+			const box = await findEditorBox();
+			await userEvent.click( box );
 
 			await waitFor( () => expect( mountEditor ).toHaveBeenCalledTimes( 1 ) );
 			expect( loadScript ).toHaveBeenCalledWith( body.loaderUrl );
@@ -189,7 +218,7 @@ describe( 'PostCommentForm', () => {
 				placeholder: 'Add a comment…',
 				labels: settings.editor,
 			} );
-			expect( screen.queryByPlaceholderText( 'Add a comment…' ) ).not.toBeInTheDocument();
+			expect( box ).not.toBeVisible();
 			expect( screen.getByRole( 'group', { name: 'Comment' } ) ).toBeVisible();
 		} );
 
@@ -199,7 +228,7 @@ describe( 'PostCommentForm', () => {
 			const onUpdateCommentText = jest.fn();
 
 			renderEditorForm( { onUpdateCommentText } );
-			await userEvent.click( screen.getByPlaceholderText( 'Add a comment…' ) );
+			await userEvent.click( await findEditorBox() );
 			await waitFor( () => expect( mountEditor ).toHaveBeenCalled() );
 
 			mountEditor.mock.calls[ 0 ][ 1 ].onChange( markup );
@@ -248,9 +277,11 @@ describe( 'PostCommentForm', () => {
 			loadScript.mockRejectedValue( new Error( 'blocked' ) );
 
 			renderEditorForm();
-			await userEvent.click( screen.getByPlaceholderText( 'Add a comment…' ) );
-			await waitFor( () => expect( loadScript ).toHaveBeenCalled() );
+			await userEvent.click( await findEditorBox() );
 
+			await waitFor( () =>
+				expect( screen.queryByRole( 'textbox', { name: 'Comment' } ) ).not.toBeInTheDocument()
+			);
 			expect( screen.getByPlaceholderText( 'Add a comment…' ) ).toBeVisible();
 		} );
 	} );

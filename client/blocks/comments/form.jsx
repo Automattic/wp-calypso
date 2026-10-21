@@ -21,7 +21,6 @@ import { getPreviousPath } from 'calypso/state/selectors/get-previous-path';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
 import CommentBlockEditor from './comment-block-editor';
 import { CommentEditorContext } from './comment-editor-context';
-import { loadCommentEditor } from './load-comment-editor';
 
 const noop = () => {};
 
@@ -39,23 +38,8 @@ function PostCommentFormError( { type } ) {
 class PostCommentForm extends Component {
 	state = {
 		haveFocus: false,
-		// The block editor: 'none' until the box is reached, then 'loading', 'ready' or 'failed'.
-		editor: 'none',
+		editorFailed: false,
 	};
-
-	// Whether the editor takes the caret once it mounts: yes from a focus, no for a restored draft.
-	editorFocus = true;
-
-	componentDidMount() {
-		this.openEditorForDraft();
-	}
-
-	componentDidUpdate() {
-		if ( this.state.haveFocus ) {
-			this.openEditor();
-		}
-		this.openEditorForDraft();
-	}
 
 	handleKeyDown = ( event ) => {
 		// Use Ctrl+Enter to submit comment
@@ -81,31 +65,10 @@ class PostCommentForm extends Component {
 
 	handleFocus = () => {
 		this.setState( { haveFocus: true } );
-		this.openEditor();
 	};
 
-	// A draft from the editor is block markup, which only the editor shows.
-	openEditorForDraft() {
-		if ( this.getCommentText().includes( '<!-- wp:' ) ) {
-			this.openEditor( false );
-		}
-	}
-
-	openEditor( focus = true ) {
-		if ( ! this.props.editorSettings || this.state.editor !== 'none' ) {
-			return;
-		}
-
-		this.editorFocus = focus;
-		this.setState( { editor: 'loading' } );
-		loadCommentEditor( this.props.editorSettings ).then(
-			() => this.setState( { editor: 'ready' } ),
-			() => this.setState( { editor: 'failed' } )
-		);
-	}
-
 	handleEditorError = () => {
-		this.setState( { editor: 'failed' } );
+		this.setState( { editorFailed: true } );
 		// The textarea cannot show block markup.
 		this.resetCommentText();
 	};
@@ -251,13 +214,14 @@ class PostCommentForm extends Component {
 						} }
 						hideHovercard
 					/>
-					{ this.state.editor === 'ready' ? (
+					{ this.props.editorSettings && ! this.state.editorFailed ? (
 						<CommentBlockEditor
 							settings={ this.props.editorSettings }
-							initialContent={ this.getCommentText() }
+							value={ this.getCommentText() }
 							placeholder={ placeholder }
 							label={ isReply ? translate( 'Reply' ) : translate( 'Comment' ) }
-							takeFocus={ this.editorFocus }
+							// Settings that arrive after a focus keep it.
+							takeFocus={ isReply || this.state.haveFocus }
 							onChange={ this.updateCommentText }
 							onError={ this.handleEditorError }
 							onKeyDown={ this.handleKeyDown }
