@@ -1,12 +1,11 @@
 import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
-import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SearchNotice } from '..';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
-import { buildFreeSuggestion, buildSuggestion } from '../../../test-helpers/factories/suggestions';
+import { buildSuggestion } from '../../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../../test-helpers/queries/availability';
 import {
-	mockGetFreeSuggestionQuery,
 	mockGetSuggestionsQuery,
 	mockGetSuggestionsQueryEmptyResults,
 } from '../../../test-helpers/queries/suggestions';
@@ -1514,18 +1513,16 @@ describe( 'SearchNotice', () => {
 		];
 
 		it.each( CONNECTED_TO_OTHER_ACCOUNT_CASES )(
-			'skips with the free subdomain when status is $status and mappable is $mappable',
+			'skips the domain step when status is $status and mappable is $mappable',
 			async ( { status, mappable } ) => {
 				const query = `taken-${ status }-${ mappable }.com`;
 				const onSkip = jest.fn();
 				const onSearchNoticeSkipClick = jest.fn();
-				const freeSuggestion = buildFreeSuggestion( { domain_name: 'taken.wordpress.com' } );
 
 				mockNoSuggestionsAndAvailability(
 					query,
 					buildAvailability( { domain_name: query, tld: 'com', status, mappable } )
 				);
-				mockGetFreeSuggestionQuery( { params: { query }, freeSuggestion } );
 
 				render(
 					<TestDomainSearchWithSuggestions
@@ -1543,67 +1540,9 @@ describe( 'SearchNotice', () => {
 				await userEvent.click( screen.getByRole( 'button', { name: 'skip the domain for now' } ) );
 
 				expect( onSearchNoticeSkipClick ).toHaveBeenCalledWith( query, status );
-				await waitFor( () => expect( onSkip ).toHaveBeenCalledWith( freeSuggestion ) );
+				expect( onSkip ).toHaveBeenCalledWith();
 			}
 		);
-
-		it( 'skips without a suggestion when the free subdomain is hidden', async () => {
-			const onSkip = jest.fn();
-
-			mockNoSuggestionsAndAvailability(
-				'taken-hidden.com',
-				buildAvailability( {
-					domain_name: 'taken-hidden.com',
-					status: DomainAvailabilityStatus.REGISTERED,
-					mappable: DomainAvailabilityStatus.MAPPED,
-				} )
-			);
-
-			render(
-				<TestDomainSearchWithSuggestions
-					query="taken-hidden.com"
-					config={ { skippable: true, hideFreeSubdomainSuggestion: true } }
-					events={ { onSkip, onSearchNoticeSkipClick: jest.fn() } }
-				>
-					<SearchNotice />
-				</TestDomainSearchWithSuggestions>
-			);
-
-			await userEvent.click(
-				await screen.findByRole( 'button', { name: 'skip the domain for now' } )
-			);
-
-			expect( onSkip ).toHaveBeenCalledWith();
-		} );
-
-		it( 'skips without a suggestion when the free subdomain cannot be fetched', async () => {
-			const onSkip = jest.fn();
-
-			mockNoSuggestionsAndAvailability(
-				'taken-no-free.com',
-				buildAvailability( {
-					domain_name: 'taken-no-free.com',
-					status: DomainAvailabilityStatus.MAPPED,
-					mappable: DomainAvailabilityStatus.MAPPED,
-				} )
-			);
-
-			render(
-				<TestDomainSearchWithSuggestions
-					query="taken-no-free.com"
-					config={ { skippable: true } }
-					events={ { onSkip, onSearchNoticeSkipClick: jest.fn() } }
-				>
-					<SearchNotice />
-				</TestDomainSearchWithSuggestions>
-			);
-
-			await userEvent.click(
-				await screen.findByRole( 'button', { name: 'skip the domain for now' } )
-			);
-
-			await waitFor( () => expect( onSkip ).toHaveBeenCalledWith( undefined ) );
-		} );
 
 		it.each( [
 			{ name: 'the skip event is not provided', config: { skippable: true }, events: {} },

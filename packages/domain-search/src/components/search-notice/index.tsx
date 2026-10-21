@@ -1,9 +1,8 @@
 import { DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useIsMutating, useQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useMemo, useRef } from 'react';
-import { isWpcomSubdomainQuery, stripWpcomSubdomainSuffix } from '../../helpers';
+import { useMemo } from 'react';
 import { getAvailabilityNotice } from '../../helpers/get-availability-notice';
 import { getRootDomain } from '../../helpers/get-root-domain';
 import { isFqdnShownAsSuggestion } from '../../helpers/is-fqdn-shown-as-suggestion';
@@ -79,7 +78,7 @@ const isConnectedToOtherAccount = ( availability: DomainAvailability ): boolean 
 	return (
 		availability.status === DomainAvailabilityStatus.REGISTERED ||
 		( availability.status === DomainAvailabilityStatus.MAPPED &&
-			shouldReturnGenericMappedMessage( availability ) )
+			availability.mappable === DomainAvailabilityStatus.MAPPED )
 	);
 };
 
@@ -89,60 +88,15 @@ export const SearchNotice = () => {
 		queries,
 		events,
 		currentSiteUrl,
-		config: { includeOwnedDomainInSuggestions, skippable, hideFreeSubdomainSuggestion },
+		config: { includeOwnedDomainInSuggestions, skippable },
 	} = useDomainSearch();
 	const { error: suggestionError } = useQuery( queries.domainSuggestions( query ) );
 	const { data: availability, error: availabilityError } = useQuery(
 		queries.domainAvailability( query )
 	);
 
+	const isMutating = useIsMutating();
 	const { onSearchNoticeSkipClick } = events;
-	const queryClient = useQueryClient();
-	const isSkipping = useRef( false );
-
-	const skipFromNotice = useMemo( () => {
-		if ( ! onSearchNoticeSkipClick || ! skippable ) {
-			return null;
-		}
-
-		return async ( status: DomainAvailabilityStatus ) => {
-			if ( isSkipping.current ) {
-				return;
-			}
-
-			isSkipping.current = true;
-			onSearchNoticeSkipClick( query, status );
-
-			try {
-				if ( hideFreeSubdomainSuggestion || currentSiteUrl ) {
-					events.onSkip();
-					return;
-				}
-
-				// Exact-domain searches don't load the free subdomain, so it's fetched on demand.
-				const freeSuggestion = await queryClient
-					.fetchQuery(
-						queries.freeSuggestion(
-							isWpcomSubdomainQuery( query ) ? stripWpcomSubdomainSuffix( query ) : query
-						)
-					)
-					.catch( () => undefined );
-
-				events.onSkip( freeSuggestion );
-			} finally {
-				isSkipping.current = false;
-			}
-		};
-	}, [
-		onSearchNoticeSkipClick,
-		skippable,
-		hideFreeSubdomainSuggestion,
-		currentSiteUrl,
-		query,
-		queries,
-		queryClient,
-		events,
-	] );
 
 	const notice = useMemo( () => {
 		if (
@@ -170,7 +124,7 @@ export const SearchNotice = () => {
 			};
 		}
 
-		if ( skipFromNotice && isConnectedToOtherAccount( availability ) ) {
+		if ( onSearchNoticeSkipClick && skippable && isConnectedToOtherAccount( availability ) ) {
 			return {
 				severity: 'error' as const,
 				message: createInterpolateElement(
@@ -178,7 +132,15 @@ export const SearchNotice = () => {
 						'This domain is already connected to a WordPress.com site. You can <button>skip the domain for now</button> and keep building.'
 					),
 					{
-						button: <button onClick={ () => skipFromNotice( availability.status ) } />,
+						button: (
+							<button
+								disabled={ !! isMutating }
+								onClick={ () => {
+									onSearchNoticeSkipClick( query, availability.status );
+									events.onSkip();
+								} }
+							/>
+						),
 					}
 				),
 			};
@@ -198,7 +160,9 @@ export const SearchNotice = () => {
 		events,
 		currentSiteUrl,
 		includeOwnedDomainInSuggestions,
-		skipFromNotice,
+		onSearchNoticeSkipClick,
+		skippable,
+		isMutating,
 	] );
 
 	// A failed suggestions request still renders the exact-match card when the FQDN is
