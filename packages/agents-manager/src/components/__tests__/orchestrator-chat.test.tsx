@@ -463,6 +463,8 @@ const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
 const mockCreditsVisibility = jest.fn();
 const mockCreditsNoticeVisibility = jest.fn();
 const mockTakeRefusalCode = jest.fn( (): string | undefined => undefined );
+const mockCreditsNotice = jest.fn( (): unknown => undefined );
+const mockRefusalNotice = jest.fn( (): unknown => undefined );
 jest.mock( '../../hooks/use-credits', () => ( {
 	useCredits: ( {
 		agentConfig,
@@ -479,6 +481,8 @@ jest.mock( '../../hooks/use-credits', () => ( {
 			chat: jest.requireMock( '@automattic/agenttic-client' ).useAgentChat( agentConfig ),
 			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
 			takeRefusalCode: mockTakeRefusalCode,
+			notice: mockCreditsNotice(),
+			refusalNotice: mockRefusalNotice(),
 		};
 	},
 } ) );
@@ -784,6 +788,8 @@ describe( 'OrchestratorChat', () => {
 		mockUseRegenerateAction.mockReturnValue( () => [] );
 		mockUseConversation.mockReturnValue( { isLoading: false } );
 		mockUseAgentChat.mockReturnValue( agentChatReturn() );
+		mockCreditsNotice.mockReturnValue( undefined );
+		mockRefusalNotice.mockReturnValue( undefined );
 		mockUseImageUpload.mockReturnValue( createImageUpload() );
 		mockIsReaderChatAgent.mockReturnValue( false );
 		mockAgentConfig = { agentId: 'wp-orchestrator' };
@@ -1995,6 +2001,85 @@ describe( 'OrchestratorChat', () => {
 				[ 'calypso_agents_manager_chat_error', { error_type: 'credits' } ],
 				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
 			] );
+		} );
+	} );
+
+	describe( 'credits refusal notice', () => {
+		const refusalError =
+			'Streaming error: This site has used all of its AI credits, including top-ups.';
+		const outNotice = { message: 'You’ve used all your site credits.', dismissible: false };
+		const refusalNotice = {
+			message: 'You’ve used all your site credits.',
+			action: { label: 'Add credits', href: 'https://example.com/checkout' },
+			dismissible: false,
+		};
+		const chatProps = () =>
+			mockAgentChat.mock.calls.at( -1 )![ 0 ] as {
+				error?: string | null;
+				errorNotice?: unknown;
+				notice?: unknown;
+			};
+
+		beforeEach( () => {
+			mockCreditsNotice.mockReturnValue( outNotice );
+			mockRefusalNotice.mockReturnValue( refusalNotice );
+		} );
+
+		it( 'shows the refusal notice in place of the error, without the composer’s notice', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: refusalError } ) );
+			render( chat() );
+
+			expect( chatProps().error ).toBeNull();
+			expect( chatProps().errorNotice ).toBe( refusalNotice );
+			expect( chatProps().notice ).toBeUndefined();
+		} );
+
+		it( 'keeps the error text and the composer’s notice without a refusal notice', () => {
+			mockRefusalNotice.mockReturnValue( undefined );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: refusalError } ) );
+			render( chat() );
+
+			expect( chatProps().error ).toBe( refusalError );
+			expect( chatProps().errorNotice ).toBeUndefined();
+			expect( chatProps().notice ).toBe( outNotice );
+		} );
+
+		it( 'restores the composer’s notice once the error clears', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: refusalError } ) );
+			const { rerender } = render( chat() );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: null } ) );
+			rerender( chat() );
+
+			expect( chatProps().error ).toBeNull();
+			expect( chatProps().errorNotice ).toBeUndefined();
+			expect( chatProps().notice ).toBe( outNotice );
+		} );
+
+		it( 'shows neither the error nor its notice while a failed resume hides the error', () => {
+			mockUseConversation.mockReturnValue( { isLoading: false, hasFailedResume: true } );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: refusalError } ) );
+			render( chat() );
+
+			expect( chatProps().error ).toBeNull();
+			expect( chatProps().errorNotice ).toBeUndefined();
+			expect( chatProps().notice ).toBe( outNotice );
+		} );
+
+		it( 'still shows an upload error beside the refusal notice', async () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: refusalError } ) );
+			renderWithImageUpload(
+				createImageUpload( {
+					pendingImages: [ { id: 'p1' } ],
+					uploadImagesToWordPress: jest.fn().mockRejectedValue( new Error( 'network' ) ),
+				} )
+			);
+
+			fireEvent.click( screen.getByText( 'Submit message' ) );
+
+			await waitFor( () =>
+				expect( chatProps().error ).toBe( 'Failed to upload images. Please try again.' )
+			);
+			expect( chatProps().errorNotice ).toBe( refusalNotice );
 		} );
 	} );
 

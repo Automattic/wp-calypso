@@ -314,6 +314,7 @@ export default function OrchestratorChat( {
 		error: hasFailedResume ? null : error,
 		isReaderChat,
 		takeRefusalCode: credits.takeRefusalCode,
+		refusalNotice: credits.refusalNotice,
 	} );
 
 	// Registered before the providers' ability setup below, whose effects may
@@ -556,7 +557,8 @@ export default function OrchestratorChat( {
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}
-			error={ chatError || uploadError }
+			error={ chatError.message || uploadError }
+			errorNotice={ chatError.notice }
 			onSubmit={ submitComposerMessage }
 			onAbort={ stopResponse }
 			isLoadingConversation={ isPreparingConversation }
@@ -577,7 +579,7 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ isPageOrSiteEditorSurface }
 			imageUpload={ imageUpload }
-			notice={ credits.notice ?? replyNotice }
+			notice={ chatError.notice ? undefined : ( credits.notice ?? replyNotice ) }
 			trailingActions={ credits.trailingActions }
 			beforeSubmit={ credits.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }

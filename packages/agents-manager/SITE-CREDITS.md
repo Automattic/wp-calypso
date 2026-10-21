@@ -38,6 +38,10 @@ Checkout refuses an upgrade from most people who didn't buy the plan, though any
 - `getCreditsPurchaseAction( options )` turns `getCreditsPurchaseOptions()`'s result into a button labelled Upgrade or Add credits that opens in a new tab. The chat notice's `action` and `CreditsMeter`'s `action` both take it; add an `onClick` to record the click.
 - `getCreditsNoticeMessage( level, remaining, askToUpgrade? )` gives the low (`low`) or zero-balance (`out`) notice, naming who to ask.
 
+## Refusals
+
+In the dock, a reply the server refuses because the site has used all its credits (`ai_credit_allowance_exhausted`) shows the zero-balance notice and its button in the thread, through agenttic-ui's `errorNotice`, in place of the error's text. It shows while the error does, the balance is still 0 and the thread has messages; after a top-up the error's text comes back, and after New chat the composer's notice does. Meanwhile the notice above the composer hides and the credits popover doesn't open by itself. A click on its button sends the usual `cta_clicked` event with `placement: 'refusal'`. Other credits refusals, and Reader Chat, keep the error's text.
+
 ## Tracks
 
 The credits events send these values, so other chats report the same as the dock:

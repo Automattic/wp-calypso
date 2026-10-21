@@ -1,6 +1,7 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { formatCreditsShort } from './credits';
 import type { CreditsPurchaseKind, CreditsPurchaseLink } from './live-credits';
+import type { NoticeConfig } from '@automattic/agenttic-ui';
 
 /** Who may buy, from the `/ai/credits` response. A turn's final update doesn't carry it. */
 export interface CreditsAccess {
@@ -175,4 +176,18 @@ export function getCreditsNoticeMessage(
 		_n( '%s credit left.', '%s credits left.', remaining, __i18n_text_domain__ ),
 		formatCreditsShort( remaining )
 	);
+}
+
+/** The zero-balance notice, which stays until the balance changes. */
+export function getCreditsOutNotice(
+	remaining: number,
+	askToUpgrade: CreditsAskToUpgrade | undefined,
+	action: CreditsPurchaseAction | undefined
+): NoticeConfig {
+	return {
+		icon: false,
+		message: getCreditsNoticeMessage( 'out', remaining, askToUpgrade ),
+		action,
+		dismissible: false,
+	};
 }
