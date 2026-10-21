@@ -93,7 +93,6 @@ export * from './me-username';
 export * from './meta-sms-country-codes';
 export * from './name-pulse';
 export * from './notification-devices';
-export * from './notifications';
 export * from './odie';
 export * from './p2';
 export * from './payment-methods';

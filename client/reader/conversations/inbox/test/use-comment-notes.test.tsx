@@ -4,8 +4,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { makeNote } from 'calypso/reader/conversations/inbox/test/helpers';
 import { useCommentNotes, useMarkNotesRead } from '../use-comment-notes';
+import { makeNote } from './helpers';
 import type { ReactNode } from 'react';
 
 const createWrapper = ( queryClient: QueryClient ) =>

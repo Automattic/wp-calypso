@@ -1,4 +1,4 @@
-import type { NotificationNote as Note } from '@automattic/api-core';
+import type { Note } from '@automattic/notifications/src/app/types';
 
 const POST_TITLE_SUBJECT = ( name: string, title: string ) => {
 	const text = `${ name } commented on ${ title }`;
@@ -9,6 +9,7 @@ const POST_TITLE_SUBJECT = ( name: string, title: string ) => {
 				type: 'post',
 				indices: [ text.length - title.length, text.length ] as [ number, number ],
 				id: 1,
+				parent: null,
 			},
 		],
 	};
@@ -38,9 +39,12 @@ export const makeNote = ( {
 	id,
 	type: 'comment',
 	read,
+	noticon: '',
 	timestamp,
 	icon: avatar,
+	url: '',
 	title: 'Comment',
+	note_hash: id,
 	meta: { ids: { site: siteId, post: postId, comment: commentId } },
 	subject: [ POST_TITLE_SUBJECT( commenter, title ), { text: excerpt } ],
 	body: [
