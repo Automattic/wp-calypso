@@ -93,6 +93,7 @@ export default function Omnibar( {
 							cartManagerClient={ cartManagerClient }
 							sectionGroup={ sectionGroup }
 							sectionName={ sectionName ?? undefined }
+							preferDashboardAdminBar={ sectionGroup === 'reader' }
 						/>
 					</div>
 					<CommandPalette />

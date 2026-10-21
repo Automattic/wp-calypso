@@ -73,7 +73,7 @@ test( 'Test', async ( { pageLogin, componentSidebar } ) => {
 
 ### Available Fixtures
 
-**Accounts**: one fixture per key of `fixtureAccounts` in [`lib/pw-base.ts`](lib/pw-base.ts), plus `accountGivenByEnvironment` and `accountSMS`. Declaring an account fixture logs in as it, whether or not the test body uses it, so take only the ones the test needs.
+**Accounts**: one fixture per key of `fixtureAccounts` in [`lib/pw-base.ts`](lib/pw-base.ts), plus `accountGivenByEnvironment`. Declaring an account fixture logs in as it, whether or not the test body uses it, so take only the ones the test needs.
 
 **Pages/Components**: Follow naming conventions:
 

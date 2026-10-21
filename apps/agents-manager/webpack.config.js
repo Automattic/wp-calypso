@@ -77,7 +77,6 @@ function getIndividualConfig( options = {} ) {
 				...( webpackConfig.resolve?.alias || {} ),
 				// Share one Smooch instance with the Help Center bundle when both load
 				// together (e.g. the Site Editor). See smooch-shim.js.
-				// TODO: Remove once Agents Manager takes over the Help Center.
 				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
 			},
 		},
@@ -116,32 +115,11 @@ function getIndividualConfig( options = {} ) {
 					if ( request === '@wordpress/abilities' ) {
 						return null;
 					}
-					// Bundle @wordpress/ui: neither WordPress core nor the Gutenberg
-					// plugin registers a wp-ui script handle yet, and WP_Scripts
-					// silently skips scripts with unregistered dependencies, so
-					// externalizing it prevents the bundle from loading on
-					// self-hosted sites.
-					if ( request === '@wordpress/ui' ) {
-						return null;
-					}
 					// No branch for @wordpress/router or @wordpress/private-apis —
 					// core registers both handles and they must stay external. Each
 					// keeps module-scope state the editor already owns (the router's
 					// history, `unlock()`'s WeakMap); a bundled second copy forks it
 					// and silently breaks `editor-navigate`.
-
-					// The plugin maps `react`/`react-dom` but not this deep import,
-					// so it would get bundled — a second react-dom copy (v19) that
-					// crashes against the page's external React. WordPress's
-					// `ReactDOM` global has included `createRoot` since WP 6.2.
-					if ( request === 'react-dom/client' ) {
-						return 'ReactDOM';
-					}
-				},
-				requestToHandle( request ) {
-					if ( request === 'react-dom/client' ) {
-						return 'react-dom';
-					}
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
@@ -199,15 +177,14 @@ function getReaderConfig( options = {} ) {
 			...webpackConfig.resolve,
 			alias: {
 				...( webpackConfig.resolve?.alias || {} ),
-				// Share one Smooch instance across bundles (see smooch-shim.js).
-				// TODO: Remove once Agents Manager takes over the Help Center.
-				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
 				// Keep libvips' inlined WASM out of the frontend bundle. See
 				// reader-chat-vips-stub.js.
 				'@wordpress/vips/worker$': path.join( __dirname, 'reader-chat-vips-stub.js' ),
+				// Keep the Zendesk client and Smooch out of the frontend bundle. See
+				// reader-chat-zendesk-client-stub.js.
+				'@automattic/zendesk-client$': path.join( __dirname, 'reader-chat-zendesk-client-stub.js' ),
 				'../agent-history': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../support-guide': path.join( __dirname, 'reader-chat-route-stub.js' ),
-				'../support-guides': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../zendesk-chat': path.join( __dirname, 'reader-chat-route-stub.js' ),
 			},
 		},
@@ -268,7 +245,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'image-studio' } ),
 		getIndividualConfig( { env, argv, name: 'jetpack-ai-sidebar' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
-		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wooai' } ),
 		getReaderConfig( { env, argv } ),
 	];

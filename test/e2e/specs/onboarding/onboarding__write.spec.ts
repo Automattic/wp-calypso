@@ -39,7 +39,7 @@ test.describe(
 			// Signup plus the 90s wait for site creation to redirect can exceed the 120s default.
 			test.setTimeout( 180 * 1000 );
 
-			let selectedFreeDomain: string;
+			const selectedFreeDomain = `${ blogName }.wordpress.com`;
 
 			await test.step( 'When I navigate to the Login page', async () => {
 				const loginPage = new LoginPage( page );
@@ -59,7 +59,7 @@ test.describe(
 			await test.step( 'When I select a .wordpress.com domain name', async () => {
 				const domainSearchComponent = new DomainSearchComponent( page );
 				await domainSearchComponent.search( blogName );
-				selectedFreeDomain = await domainSearchComponent.skipPurchase();
+				await domainSearchComponent.skipPurchase();
 			} );
 
 			await test.step( 'When I select WordPress.com Free plan', async () => {

@@ -1,62 +1,73 @@
 /**
  * @jest-environment jsdom
  */
-import { useQuery } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react';
-import { useStatsSparklinePlugin } from '../plugin-stats-sparkline';
-import type { Site } from '@automattic/api-core';
+import { Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
+import { screen, waitFor } from '@testing-library/react';
+import nock from 'nock';
+import { render } from '../../../test-utils';
+import { createStatsSparklineNodeBuilder } from '../plugin-stats-sparkline';
+import type { AdminBarNode } from '@automattic/omnibar';
 
-jest.mock( '@tanstack/react-query', () => ( {
-	useQuery: jest.fn(),
-} ) );
+const LABEL = 'Views over 48 hours. Click for more Stats.';
 
-jest.mock( '@automattic/api-queries', () => ( {
-	siteHourlyViewsQuery: jest.fn( () => ( { queryKey: [ 'site-hourly-views' ] } ) ),
-} ) );
+const statsNode = {
+	id: 'stats',
+	title: '<div><img src="chart.png"></div>',
+	parent: false,
+	href: 'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin',
+	group: false,
+} as AdminBarNode;
 
-const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
+const newContentNode = {
+	id: 'new-content',
+	title: 'New',
+	parent: false,
+	href: 'https://example.com/wp-admin/post-new.php',
+	group: false,
+} as AdminBarNode;
 
-const simpleSite = {
-	ID: 1,
-	options: { admin_url: 'https://example.com/wp-admin/' },
-	capabilities: { view_stats: true },
-} as unknown as Site;
+function renderOmnibar( siteId?: number ) {
+	const nodes = buildOmnibarNodesFromAdminBarNodes( [ newContentNode, statsNode ], {
+		stats: createStatsSparklineNodeBuilder( { siteId } ),
+	} );
+	return render( <Omnibar nodes={ { ...nodes, site: { id: 'site-name', title: 'Site' } } } /> );
+}
 
-describe( 'useStatsSparklinePlugin', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-		mockUseQuery.mockReturnValue( { data: [ 1, 2, 3 ] } as never );
+describe( '<Omnibar> stats sparkline', () => {
+	test( 'draws the site admin bar Stats node as a chart once the views arrive', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/sites/1/stats/visits' )
+			.query( true )
+			.reply( 200, { data: [ [ '2026-10-01 00:00:00', 3 ] ] } );
+
+		renderOmnibar( 1 );
+
+		expect( await screen.findByRole( 'button', { name: 'New' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: LABEL } ) ).not.toBeInTheDocument();
+
+		const statsLink = await screen.findByRole( 'button', { name: LABEL } );
+		expect( statsLink ).toHaveAttribute( 'href', statsNode.href );
 	} );
 
-	test( 'renders the sparkline on a Simple site', () => {
-		const { result } = renderHook( () => useStatsSparklinePlugin( { site: simpleSite } ) );
+	test( 'leaves the Stats node out when the views fail to load', async () => {
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/sites/1/stats/visits' )
+			.query( true )
+			.reply( 500 );
+		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
-		expect( result.current?.href ).toBe( 'https://example.com/wp-admin/admin.php?page=stats' );
+		renderOmnibar( 1 );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		expect( await screen.findByRole( 'button', { name: 'New' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: LABEL } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'renders the sparkline when the Jetpack site has the Stats module active', () => {
-		const site = { ...simpleSite, jetpack: true, jetpack_modules: [ 'stats', 'monitor' ] } as Site;
+	test( 'leaves the Stats node out without a site to fetch views for', async () => {
+		const { queryClient } = renderOmnibar();
 
-		const { result } = renderHook( () => useStatsSparklinePlugin( { site } ) );
-
-		expect( result.current ).toBeDefined();
-	} );
-
-	// Without the module there is no admin.php?page=stats screen, so the sparkline would link
-	// to "Sorry, you are not allowed to access this page".
-	test( 'renders nothing when the Jetpack site has the Stats module off', () => {
-		const site = { ...simpleSite, jetpack: true, jetpack_modules: [ 'monitor' ] } as Site;
-
-		const { result } = renderHook( () => useStatsSparklinePlugin( { site } ) );
-
-		expect( result.current ).toBeUndefined();
-	} );
-
-	test( 'renders nothing when the user cannot view stats', () => {
-		const site = { ...simpleSite, capabilities: { view_stats: false } } as unknown as Site;
-
-		const { result } = renderHook( () => useStatsSparklinePlugin( { site } ) );
-
-		expect( result.current ).toBeUndefined();
+		expect( await screen.findByRole( 'button', { name: 'New' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: LABEL } ) ).not.toBeInTheDocument();
+		expect( queryClient.isFetching() ).toBe( 0 );
 	} );
 } );

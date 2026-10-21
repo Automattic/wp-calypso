@@ -11,6 +11,7 @@ import { matchPath } from 'react-router';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import {
+	SITE_SELECTED_REF,
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
 	WOO_HOSTING_SOLUTIONS_REF,
 } from 'calypso/landing/stepper/constants';
@@ -39,7 +40,9 @@ import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import {
 	getBlueprintArchiveSiteSpecUrl,
+	getSpecMetaFromQuery,
 	getStandaloneBlueprintArchiveSlug,
+	getStandaloneBlueprintSimpleSlug,
 	isBlueprintCustomThemeBuild,
 } from '../../../utils/blueprint-archive-import';
 import {
@@ -340,6 +343,15 @@ const onboarding: FlowV2< typeof initialize > = {
 			[ preselectedPlan, couponParam, storageParam ]
 		);
 	},
+	useStepsProps() {
+		// The site-selected signup flow records its own completion before checkout, so the
+		// hand-off's processing pass must not record a second one.
+		const isSiteSelectedHandOff = useQuery().get( 'ref' ) === SITE_SELECTED_REF;
+
+		return {
+			[ STEPS.PROCESSING.slug ]: { skipSignupComplete: isSiteSelectedHandOff },
+		};
+	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 		// Variant B: the account step doesn't gate; the verification step is met after the free plan
@@ -370,6 +382,8 @@ const onboarding: FlowV2< typeof initialize > = {
 		const shouldSkipPlans = shouldSkipPlansStep( queryParams, planCartItem );
 		const coupon = queryParams.get( 'coupon' );
 		const refParameter = queryParams.get( 'ref' );
+		// A site-selected purchase finishes in this flow, but lands and completes as that flow.
+		const postCheckoutFlowName = refParameter === SITE_SELECTED_REF ? SITE_SELECTED_REF : flowName;
 		const siteSlugParam = queryParams.get( 'siteSlug' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
@@ -377,6 +391,14 @@ const onboarding: FlowV2< typeof initialize > = {
 		const playgroundId = queryParams.get( 'playground' );
 		const buildDest = queryParams.get( 'build_dest' );
 		const blueprintArchiveSlug = getStandaloneBlueprintArchiveSlug(
+			blueprint,
+			playgroundId,
+			buildDest
+		);
+		// build_dest=simple: the blueprint goes onto the Simple site the flow creates, on the free
+		// plan, and the spec interview still runs. No plans grid and no checkout — the run is
+		// decided by the CTA, the way a preselected plan decides it for the paid flows.
+		const blueprintSimpleSlug = getStandaloneBlueprintSimpleSlug(
 			blueprint,
 			playgroundId,
 			buildDest
@@ -442,6 +464,21 @@ const onboarding: FlowV2< typeof initialize > = {
 					siteId: providedDependencies.siteId as number,
 				};
 
+				// build_dest=simple: land on the AI site-spec too, which starts the Simple
+				// blueprint import on the site just created and, on confirm, waits for it,
+				// applies the spec and hands over to the site's own editor. The blueprint step
+				// already verified the blueprint exists for a Simple build.
+				if ( blueprintSimpleSlug ) {
+					return getBlueprintArchiveSiteSpecUrl( {
+						siteSlug: providedDependencies.siteSlug as string,
+						siteId: providedDependencies.siteId as number,
+						blueprintSlug: blueprintSimpleSlug,
+						ref: refParameter,
+						simpleImport: true,
+						specMeta: getSpecMetaFromQuery( queryParams ),
+					} );
+				}
+
 				// build_dest=wow: skip the Playground-based importer and land on the AI
 				// site-spec, which kicks off the background transfer-to-Atomic +
 				// blueprint-archive import and, on confirm, polls the import and
@@ -492,7 +529,32 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * goes straight to site creation. The free-plan and email-verification branches in the
 		 * plans handler below only apply when no plan was picked, so nothing is skipped here.
 		 */
-		const navigateAfterDomain = () => {
+		const navigateAfterDomain = ( { requiresPaidPlan = false } = {} ) => {
+			// A Simple blueprint build is a free-plan run by definition, so the plans grid has
+			// nothing to ask either. Same bookkeeping as the free branch of the plans handler
+			// below, including its email-verification gate: a fully free order never reaches
+			// checkout, so this is where the gate is met. A connected or transferred domain is
+			// the exception: it needs a paid plan, so that run still picks one on the grid and
+			// reaches the same destination through checkout's redirect.
+			if ( blueprintSimpleSlug && ! requiresPaidPlan ) {
+				setPlanCartItem( null );
+				setProductCartItems( [] );
+				setSignupDomainOrigin(
+					signupDomainOrigin === 'choose-later' ? signupDomainOrigin : SIGNUP_DOMAIN_ORIGIN.FREE
+				);
+				setSignupCompleteFlowName( flowName );
+
+				if ( postPlanSelectionEmailVerification ) {
+					return navigate(
+						'email-verification?next=create-site' as typeof currentStepSlug,
+						undefined,
+						false
+					);
+				}
+
+				return navigate( 'create-site', undefined, false );
+			}
+
 			if ( ! shouldSkipPlans ) {
 				return navigate( 'plans' );
 			}
@@ -547,6 +609,8 @@ const onboarding: FlowV2< typeof initialize > = {
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 						setHideFreePlan( true );
 						setDomainCartItem( providedDependencies.domainCartItem );
+
+						return navigateAfterDomain( { requiresPaidPlan: true } );
 					}
 
 					return navigateAfterDomain();
@@ -599,7 +663,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				case 'wow-funnel-handoff':
 					// Success replaces location with the built site itself, so the only thing
 					// that reaches navigation here is a failed or timed-out wait.
-					return navigate( STEPS.ERROR.slug );
+					return navigate( STEPS.ERROR.slug, { errorReason: 'wow_funnel_handoff_failed' } );
 				case 'post-checkout-onboarding': {
 					setShouldShowNotification( providedDependencies?.siteId as number );
 					return navigate( 'processing' );
@@ -640,7 +704,9 @@ const onboarding: FlowV2< typeof initialize > = {
 									site_slug: siteSlug,
 									site_id: siteId,
 								} );
-								return navigate( 'error' as typeof currentStepSlug );
+								return navigate( 'error' as typeof currentStepSlug, {
+									errorReason: 'build_wow_missing_site',
+								} );
 							}
 
 							try {
@@ -653,7 +719,9 @@ const onboarding: FlowV2< typeof initialize > = {
 									site_identifier: siteIdentifier,
 									error: error instanceof Error ? error.message : String( error ),
 								} );
-								return navigate( 'error' as typeof currentStepSlug );
+								return navigate( 'error' as typeof currentStepSlug, {
+									errorReason: 'build_wow_start_failed',
+								} );
 							}
 
 							window.location.assign(
@@ -706,7 +774,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					const dependencies: ProvidedDependencies = providedDependencies;
 					const [ defaultDestination, backDestination, backDestinationDomains ] =
 						getOnboardingPostCheckoutDestination( {
-							flowName,
+							flowName: postCheckoutFlowName,
 							locale,
 							siteSlug: dependencies.siteSlug as string,
 						} );
@@ -717,7 +785,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					);
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
-						setSignupCompleteFlowName( flowName );
+						setSignupCompleteFlowName( postCheckoutFlowName );
 						setSignupCompleteSlug( providedDependencies.siteSlug );
 
 						if ( providedDependencies.goToCheckout ) {
@@ -770,7 +838,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									// straight from checkout to their destination — no
 									// post-checkout-onboarding hop, no chooser.
 									redirect_to:
-										blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug )
+										blueprintArchiveSlug || blueprintSimpleSlug || isKnownWowFunnel( wowFunnelSlug )
 											? destination
 											: redirectTo,
 									signup: 1,
@@ -786,8 +854,12 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug ) ) {
-							// build_dest=wow and the WoW funnel never show the
+						} else if (
+							blueprintArchiveSlug ||
+							blueprintSimpleSlug ||
+							isKnownWowFunnel( wowFunnelSlug )
+						) {
+							// build_dest=wow, build_dest=simple and the WoW funnel never show the
 							// setup-your-site-ai chooser; go straight to their destination.
 							// This can stay ahead of the domain branches below: a connected or
 							// transferred domain forces a paid plan (use-my-domain hides the free
@@ -816,7 +888,13 @@ const onboarding: FlowV2< typeof initialize > = {
 							window.location.replace( destination );
 						}
 					} else {
-						return navigate( 'error' as typeof currentStepSlug );
+						// NO_ACTION reaches here only without a siteSlug to send it back with.
+						return navigate( 'error' as typeof currentStepSlug, {
+							errorReason:
+								providedDependencies.processingResult === ProcessingResult.NO_ACTION
+									? 'processing_no_action'
+									: 'processing_failed',
+						} );
 					}
 					return;
 				}
@@ -902,6 +980,21 @@ const onboarding: FlowV2< typeof initialize > = {
 		] );
 
 		/**
+		 * The `site-selected` signup flow hands its purchase over to post-checkout-onboarding
+		 * without ever entering this flow, so whatever the store still holds belongs to some
+		 * earlier, unfinished run. Left in place, a stale connected-domain cart item would send
+		 * processing to that domain's setup page instead of the chooser.
+		 */
+		useEffect( () => {
+			if (
+				currentStepSlug === STEPS.POST_CHECKOUT_ONBOARDING.slug &&
+				getCurrentQueryParams().get( 'ref' ) === SITE_SELECTED_REF
+			) {
+				resetOnboardStore();
+			}
+		}, [ currentStepSlug, resetOnboardStore ] );
+
+		/**
 		 * Load Survicate and set visitor traits on each step navigation.
 		 *
 		 * This runs on every step change to ensure:
@@ -955,7 +1048,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					// that does not need one. Resume only while it is still unpaid.
 					const site = await resolveSelect( SITE_STORE )
 						.getSite( remembered.siteSlug )
-						.catch( () => null );
+						.catch( () => undefined );
 
 					if ( ! wowFunnelSiteIsPaid( site ) ) {
 						return;

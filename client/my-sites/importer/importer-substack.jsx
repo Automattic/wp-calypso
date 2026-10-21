@@ -4,8 +4,11 @@ import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import importerConfig from 'calypso/lib/importer/importer-config';
+import { getSubscribersUrl } from 'calypso/lib/subscribers/get-subscribers-url';
 import { appStates } from 'calypso/state/imports/constants';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import FileImporter from './file-importer';
 import ImporterHeader from './importer-header';
 
@@ -33,6 +36,7 @@ class ImporterSubstack extends PureComponent {
 
 	render() {
 		const importerData = importerConfig( {
+			addSubscribersUrl: this.props.addSubscribersUrl,
 			importerState: this.props.importerStatus.importerState,
 			siteSlug: this.props.siteSlug,
 			siteTitle: this.props.siteTitle,
@@ -67,4 +71,8 @@ class ImporterSubstack extends PureComponent {
 	}
 }
 
-export default localize( ImporterSubstack );
+export default connect( ( state ) => ( {
+	addSubscribersUrl: getSubscribersUrl( state, getSelectedSiteId( state ), {
+		addSubscribers: true,
+	} ),
+} ) )( localize( ImporterSubstack ) );

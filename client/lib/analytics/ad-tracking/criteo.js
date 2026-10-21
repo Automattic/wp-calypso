@@ -1,5 +1,6 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import { mayWeTrackByTracker } from '../tracker-buckets';
+import { getReceiptItemCost } from '../utils/receipt-item-details';
 import { debug, TRACKING_IDS } from './constants';
 import { loadTrackingScripts } from './load-tracking-scripts';
 
@@ -59,16 +60,16 @@ export function recordPlansViewInCriteo() {
 }
 
 /**
- * Converts the products in a cart to the format Criteo expects for its `items` property
- * @param {Object} cart - cart as `ResponseCart` object
+ * Converts the items in a receipt to the format Criteo expects for its `items` property
+ * @param {import('@automattic/api-core').Receipt} receipt - The receipt for the purchase
  * @returns {Array} - An array of items to include in the Criteo tracking call
  */
-export function cartToCriteoItems( cart ) {
-	return cart.products.map( ( product ) => {
+export function receiptToCriteoItems( receipt ) {
+	return receipt.items.map( ( item ) => {
 		return {
-			id: product.product_id,
-			price: product.cost,
-			quantity: product.volume,
+			id: item.product_id,
+			price: getReceiptItemCost( item, receipt.currency ),
+			quantity: item.volume,
 		};
 	} );
 }

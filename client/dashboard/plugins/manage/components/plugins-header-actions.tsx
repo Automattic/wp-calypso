@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { Button, __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 
@@ -22,9 +23,9 @@ export const PluginsHeaderActions = ( {
 	const renderText = () => {
 		if ( hasUpdates ) {
 			return sprintf(
-				// translators: %d is the number of plugins with an update available.
-				__( 'Updates available (%d)' ),
-				updateCount
+				// translators: %s is the formatted number of plugins with an update available.
+				__( 'Updates available (%s)' ),
+				formatNumber( updateCount )
 			);
 		}
 

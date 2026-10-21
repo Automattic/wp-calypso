@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { applyBlockEditsCallback } from './callback';
-import type { Ability } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * Never called by the model directly: the backend's block-editing tools
@@ -39,14 +39,16 @@ export const applyBlockEditsAbility: Ability = {
 				description:
 					'Deprecated. This tool always returns to the agent with a success or error message.',
 			},
-			suppressAssistantMessage: {
-				type: 'boolean',
-				description: 'Whether to suppress assistant message',
-			},
 			visualCheckPending: {
 				type: 'boolean',
 				description:
 					'Set by the server, never by the model: the acknowledgement for this call may be held back until the canvas capture attached to the result has been looked at. Forwarded to the client only when a capture was actually produced.',
+			},
+			visualCheckClientIds: {
+				type: 'array',
+				items: { type: 'string' },
+				description:
+					'ClientIds of the blocks this edit is being compared against, whenever the request is to make something look like something else on the page — in any property: "make this match the other section", "same color as the subscribe section background", "use the heading font from the hero", "make these buttons look like the ones above", "line these up", "same spacing as above". Name the blocks being matched TO, not the blocks being edited — and the block that carries what is being matched (for a section\'s background, the section\'s group). The result is checked against a capture that otherwise frames only what was edited, and a comparison cannot be judged from a picture that shows one side of it. Leave it out when the request is not relative to other blocks.',
 			},
 			reverseMap: {
 				type: 'object',
@@ -71,6 +73,36 @@ export const applyBlockEditsAbility: Ability = {
 					message: {
 						type: 'string',
 						description: 'Human-readable success or error message.',
+					},
+					captureNotes: {
+						type: 'array',
+						items: { type: 'string' },
+						description:
+							'Sentences about what the attached screenshots do and do not show, kept apart from the message.',
+					},
+					contrastFailures: {
+						type: 'number',
+						description:
+							'How many text blocks the edit affects measured below WCAG AA contrast against what renders behind them.',
+					},
+					contrastBackdrops: {
+						type: 'array',
+						items: {
+							type: 'object',
+							properties: {
+								clientId: { type: 'string' },
+								name: { type: 'string' },
+								ownBackground: { type: 'boolean' },
+								textClientIds: { type: 'array', items: { type: 'string' } },
+								readableText: {
+									type: 'string',
+									description:
+										'A text colour measured readable on this backdrop, as #RRGGBB; absent when none is.',
+								},
+							},
+						},
+						description:
+							'The blocks painting backgrounds that edited text fails contrast against, with the text over each, for a correction to target.',
 					},
 					outcome: {
 						type: 'string',

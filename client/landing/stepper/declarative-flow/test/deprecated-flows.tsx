@@ -5,7 +5,6 @@ const frozenDeprecatedV1Flows = [
 	'copy-site',
 	'newsletter',
 	'entrepreneur',
-	'readymade-template',
 	'update-design',
 	'update-options',
 	'domain-and-plan',

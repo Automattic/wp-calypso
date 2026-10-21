@@ -41,8 +41,6 @@ const initialPreparedProductsState: PreparedProductsForCart = {
 export default function usePrepareProductsForCart( {
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
-	usesJetpackProducts,
-	isPrivate,
 	siteSlug,
 	sitelessCheckoutType,
 	isLoggedOutCart,
@@ -50,13 +48,12 @@ export default function usePrepareProductsForCart( {
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	source,
+	aiSessionId,
 	isGiftPurchase,
 	hostingIntent,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
-	usesJetpackProducts: boolean;
-	isPrivate: boolean;
 	siteSlug: string | undefined;
 	sitelessCheckoutType: SitelessCheckoutType;
 	isLoggedOutCart?: boolean;
@@ -64,6 +61,7 @@ export default function usePrepareProductsForCart( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	source?: string;
+	aiSessionId?: string;
 	isGiftPurchase?: boolean;
 	hostingIntent?: string | undefined;
 } ): PreparedProductsForCart {
@@ -111,13 +109,12 @@ export default function usePrepareProductsForCart( {
 	useAddProductFromSlug( {
 		productAliasFromUrl,
 		dispatch,
-		usesJetpackProducts,
-		isPrivate,
 		addHandler,
 		sitelessCheckoutType,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
 		source,
+		aiSessionId,
 		hostingIntent,
 	} );
 	useAddProductFromBillingIntent( {
@@ -529,24 +526,22 @@ function useAddRenewalBySubscriptionId( {
 function useAddProductFromSlug( {
 	productAliasFromUrl,
 	dispatch,
-	usesJetpackProducts,
-	isPrivate,
 	addHandler,
 	sitelessCheckoutType,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	source,
+	aiSessionId,
 	hostingIntent,
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
-	usesJetpackProducts: boolean;
-	isPrivate: boolean;
 	addHandler: AddHandler;
 	sitelessCheckoutType: SitelessCheckoutType;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	source?: string;
+	aiSessionId?: string;
 	hostingIntent?: string | undefined;
 } ) {
 	const translate = useTranslate();
@@ -582,6 +577,7 @@ function useAddProductFromSlug( {
 				jetpackSiteSlug,
 				jetpackPurchaseToken,
 				source,
+				aiSessionId,
 				hostingIntent,
 			} )
 		);
@@ -604,17 +600,11 @@ function useAddProductFromSlug( {
 			} );
 			return;
 		}
-		debug(
-			'preparing products that were requested in url',
-			{ productAliasFromUrl, usesJetpackProducts },
-			cartProducts
-		);
+		debug( 'preparing products that were requested in url', productAliasFromUrl, cartProducts );
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
 	}, [
 		addHandler,
 		translate,
-		isPrivate,
-		usesJetpackProducts,
 		productAliasFromUrl,
 		validProducts,
 		sitelessCheckoutType,
@@ -623,6 +613,7 @@ function useAddProductFromSlug( {
 		jetpackPurchaseToken,
 		hostingIntent,
 		source,
+		aiSessionId,
 	] );
 }
 
@@ -748,6 +739,7 @@ function createItemToAddToCart( {
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	source,
+	aiSessionId,
 	hostingIntent,
 }: {
 	productSlug: string;
@@ -756,6 +748,7 @@ function createItemToAddToCart( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	source?: string;
+	aiSessionId?: string;
 	hostingIntent?: string | undefined;
 } ): RequestCartProduct {
 	// Allow setting meta (theme name or domain name) from products in the URL by
@@ -790,6 +783,7 @@ function createItemToAddToCart( {
 			jetpackPurchaseToken,
 			context: 'calypstore',
 			source: source ?? undefined,
+			ai_session_id: aiSessionId || undefined,
 			hosting_intent: hostingIntent,
 			...( TITAN_MAIL_PRODUCT_SLUGS.includes( productSlug )
 				? { new_quantity: getTitanNewQuantity( quantity ) }

@@ -14,6 +14,7 @@ export const siteCurrentUserQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'users', 'current' ],
 		queryFn: () => fetchCurrentSiteUser( siteId ),
+		meta: { persist: false },
 	} );
 
 export const siteCurrentUserMetaMutation = ( siteId: number ) =>
@@ -40,10 +41,12 @@ export const siteUsersQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'users', 'list' ],
 		queryFn: () => fetchSiteUsers( siteId ),
+		meta: { persist: false },
 	} );
 
 export const siteUsersWpcomQuery = ( siteId: number, role?: string ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'wpcom-users', role ],
 		queryFn: () => fetchWpcomSiteUsers( siteId, { role } ),
+		meta: { persist: false },
 	} );

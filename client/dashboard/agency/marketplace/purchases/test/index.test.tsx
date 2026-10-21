@@ -152,6 +152,26 @@ describe( '<MarketplacePurchases>', () => {
 		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBeNull();
 	} );
 
+	test( 'empties the referral cart and leaves referral mode when a free referral cart was bought', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+		sessionStorage.setItem( 'shopping-card-selected-items', 'jetpack-backup-t1:1' );
+		sessionStorage.setItem( 'referrals-shopping-card-selected-items', 'jetpack-stats-free:1' );
+		sessionStorage.setItem( 'marketplace-type', 'referral' );
+		window.history.replaceState( {}, '', '/purchases?cart=referral&receipt_id=123' );
+
+		render( <MarketplacePurchases /> );
+
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBeNull();
+		expect( sessionStorage.getItem( 'marketplace-type' ) ).toBe( 'regular' );
+		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBe(
+			'jetpack-backup-t1:1'
+		);
+	} );
+
 	test( 'leaves the cart alone without a receipt', async () => {
 		mockAgency();
 		mockPreferences();
@@ -273,5 +293,43 @@ describe( '<MarketplacePurchases>', () => {
 			'Jetpack VaultPress Backup has been assigned to https://client.example.com.'
 		);
 		expect( notice ).toBeVisible();
+	} );
+
+	describe( 'Manage in Pressable', () => {
+		const DAY_MS = 24 * 60 * 60 * 1000;
+
+		function mockOwnerAgency() {
+			nock( API )
+				.get( '/wpcom/v2/agency' )
+				.query( true )
+				.reply( 200, [ { id: AGENCY_ID, user: { role: 'a4a_administrator' } } ] )
+				.persist();
+		}
+
+		function pressableLicenseAttached( daysAgo: number ) {
+			// The endpoint reports UTC times without a zone: "YYYY-MM-DD HH:MM:SS".
+			const attachedAt = new Date( Date.now() - daysAgo * DAY_MS )
+				.toISOString()
+				.replace( 'T', ' ' )
+				.slice( 0, 19 );
+			return {
+				...unassignedWpcomLicense,
+				license_key: 'pressable-wp-1_abc',
+				product: 'Pressable Signature 1',
+				attached_at: attachedAt,
+			};
+		}
+
+		test( 'asks for feedback within a week of the purchase', async () => {
+			mockOwnerAgency();
+			mockPreferences();
+			mockLicenses( [ pressableLicenseAttached( 2 ) ] );
+			mockPendingSites( 'pending' );
+
+			render( <MarketplacePurchases /> );
+			await userEvent.click( await screen.findByRole( 'link', { name: /Manage in Pressable/ } ) );
+
+			expect( await screen.findByRole( 'dialog', { name: 'Purchase complete!' } ) ).toBeVisible();
+		} );
 	} );
 } );

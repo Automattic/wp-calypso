@@ -28,7 +28,7 @@ describe( 'getUsageLevel', () => {
 	} );
 
 	test.each( [ [ 80 ], [ 88.7 ], [ 99.999 ] ] )(
-		'returns Critical when storage is 80-99% utilized',
+		'returns Critical when storage is 80-99%% utilized',
 		( used ) => {
 			// let's assume there are 20 backups available in last 30 days and all of the backups can under-fit
 			// the current storage and still it can fit more, so as per the rule allowed days of backup would
@@ -39,7 +39,7 @@ describe( 'getUsageLevel', () => {
 	);
 
 	test.each( [ [ 65 ], [ 74.2 ], [ 79.999 ] ] )(
-		'returns Warning when storage is 65-79% utilized',
+		'returns Warning when storage is 65-79%% utilized',
 		( used ) => {
 			const result = getUsageLevel( used, 100, MINIMUM_DAYS_OF_BACKUPS, 30, 30, 15 );
 			expect( result ).toEqual( StorageUsageLevels.Warning );
@@ -47,7 +47,7 @@ describe( 'getUsageLevel', () => {
 	);
 
 	test.each( [ [ 0 ], [ 20.3 ], [ 64.999 ] ] )(
-		'returns Normal when storage is <65% utilized',
+		'returns Normal when storage is <65%% utilized',
 		( used ) => {
 			const result = getUsageLevel( used, 100, 7, 30, 30, 10 );
 			expect( result ).toEqual( StorageUsageLevels.Normal );

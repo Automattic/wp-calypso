@@ -29,8 +29,6 @@ $ yarn
 $ yarn start
 ```
 
-<!--eslint ignore no-emphasis-as-heading-->
-
 _Note - if you are planning on pushing changes back to Calypso, this workflow will ask you for a username and password every time you push a change, which will not work if you have GitHub 2-factor auth enabled. In this case you should use `git clone git@github.com:Automattic/wp-calypso.git` instead, and follow the instructions [here](https://help.github.com/articles/about-ssh/) to set up authentication._
 
 The `yarn start` command will install any `npm` dependencies and start the development server. When changes are made to either the JavaScript files or the Sass stylesheets, the build process will run automatically. The build process compiles both the JavaScript and CSS to make sure that you have the latest versions of both.

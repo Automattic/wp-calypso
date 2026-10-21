@@ -1,0 +1,29 @@
+<svg width="480" height="260" viewBox="0 0 480 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="88" y="56" width="304" height="142" rx="16" fill="white"/>
+<circle cx="124" cy="92" r="20" fill="#E5F1FF"/>
+<text fill="#0240E4" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="115" y="97.332">JL</tspan></text>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="156" y="88.332">Free agency growth call</tspan></text>
+<text fill="#646970" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="13" letter-spacing="0em"><tspan x="156" y="106.621">With a growth specialist</tspan></text>
+<rect x="104.5" y="129" width="47" height="52" rx="9.5" stroke="#DCDCDE"/>
+<text fill="#50575E" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="510" letter-spacing="0em"><tspan x="115" y="148.766">Mon</tspan></text>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="16" font-weight="590" letter-spacing="0em"><tspan x="119" y="168.688">12</tspan></text>
+<rect x="160.5" y="129" width="47" height="52" rx="9.5" stroke="#DCDCDE"/>
+<text fill="#50575E" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="510" letter-spacing="0em"><tspan x="173" y="148.766">Tue</tspan></text>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="16" font-weight="590" letter-spacing="0em"><tspan x="174.5" y="168.688">13</tspan></text>
+<rect x="216.75" y="128.75" width="46.5" height="52.5" rx="9.25" fill="#EDF0FD"/>
+<rect x="216.75" y="128.75" width="46.5" height="52.5" rx="9.25" stroke="#0240E4" stroke-width="1.5"/>
+<text fill="#0240E4" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="510" letter-spacing="0em"><tspan x="227" y="148.766">Wed</tspan></text>
+<text fill="#0240E4" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="16" font-weight="590" letter-spacing="0em"><tspan x="230.5" y="168.688">14</tspan></text>
+<rect x="272.5" y="129" width="47" height="52" rx="9.5" stroke="#DCDCDE"/>
+<text fill="#50575E" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="510" letter-spacing="0em"><tspan x="284.5" y="148.766">Thu</tspan></text>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="16" font-weight="590" letter-spacing="0em"><tspan x="286.5" y="168.688">15</tspan></text>
+<rect x="328.5" y="129" width="47" height="52" rx="9.5" stroke="#DCDCDE"/>
+<text fill="#50575E" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="510" letter-spacing="0em"><tspan x="344.5" y="148.766">Fri</tspan></text>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="16" font-weight="590" letter-spacing="0em"><tspan x="342.5" y="168.688">16</tspan></text>
+<path d="M246 184V202L250.8 197.6L254 204.4L257 203.1L253.9 196.4H260L246 184Z" fill="#1D2327"/>
+<mask id="stroke0_16127_42864" maskUnits="userSpaceOnUse" x="244" y="180" width="20" height="27" fill="black">
+<rect fill="white" x="244" y="180" width="20" height="27"/>
+<path d="M246 184V202L250.8 197.6L254 204.4L257 203.1L253.9 196.4H260L246 184Z"/>
+</mask>
+<path d="M246 184V202L250.8 197.6L254 204.4L257 203.1L253.9 196.4H260L246 184Z" stroke-width="3" stroke="white" mask="url(#stroke0_16127_42864)"/>
+</svg>

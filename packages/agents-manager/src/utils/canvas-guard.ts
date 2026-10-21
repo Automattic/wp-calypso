@@ -2,13 +2,14 @@
  * Enforces the canvas binding on the merged providers.
  *
  * `canvas-binding` owns the state machine; this module owns the policy: which
- * abilities are bound to the open canvas, which ones legitimately move it, and
- * what a refusal says. The lists live here, next to the state machine they
- * encode against, rather than in the provider loader that composes them.
+ * abilities are bound to the open canvas, which ones legitimately move it, which
+ * must respect a stopped request, and what a refusal says. The lists live here,
+ * next to the state machine they encode against, rather than in the provider
+ * loader that composes them.
  *
  * The policy is installed on both dispatch paths. agenttic-client calls an
  * ability's own `callback` when it has one and falls back to `executeAbility`
- * only when it does not, and every Big Sky ability has a callback — so guarding
+ * only when it does not, and every editor ability has a callback — so guarding
  * `executeAbility` alone would leave the guard inert.
  */
 
@@ -21,15 +22,19 @@ import {
 	buildCanvasKey,
 	clearCanvasBinding,
 	getBlockingMove,
+	isCurrentRequestBlocked,
 	type CanvasMove,
 } from './canvas-binding';
-import type { Ability, AbilityResult } from '../abilities/types';
+import type { AbilityResult } from '../abilities/types';
 import type { ContextProvider, ToolProvider } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 // Abilities that write to the page open in the editor. Site-wide writes and
 // `show-component` cannot be made wrong by a move between pages, and
 // `edit-entity-record` names its own target and moves the canvas itself through
 // `bindToEditorPath()`, so guarding it would refuse legitimate edits.
+// `save-changes` persists explicitly keyed dirty entities across canvases. It
+// respects a stopped request below, but moving pages alone cannot redirect it.
 //
 // Normalized, because the agent invokes `big-sky/apply-block-edits` as
 // `big_sky__apply_block_edits` — the registered form would never match.
@@ -46,9 +51,15 @@ const CANVAS_MOVING_ABILITIES = new Set(
 	[ 'big-sky/editor-navigate', 'wp-admin/navigate' ].map( normalizeAbilityName )
 );
 
+const SAVE_CHANGES_ABILITY = normalizeAbilityName( 'big-sky/save-changes' );
+
 // Every ability the policy acts on, and so the only ones whose callbacks are worth
 // wrapping.
-const POLICED_ABILITIES = new Set( [ ...CANVAS_BOUND_ABILITIES, ...CANVAS_MOVING_ABILITIES ] );
+const POLICED_ABILITIES = new Set( [
+	...CANVAS_BOUND_ABILITIES,
+	...CANVAS_MOVING_ABILITIES,
+	SAVE_CHANGES_ABILITY,
+] );
 
 const EDITOR_NAVIGATE_ABILITY = normalizeAbilityName( 'big-sky/editor-navigate' );
 
@@ -151,6 +162,21 @@ function applyCanvasPolicy( name: string, args: unknown ): CanvasPolicy {
 	// (`findAbilityByName` accepts both), and normalizing an already
 	// normalized name is a no-op.
 	const normalizedName = normalizeAbilityName( name );
+
+	if ( normalizedName === SAVE_CHANGES_ABILITY && isCurrentRequestBlocked() ) {
+		return {
+			refusal: {
+				result: {
+					success: false,
+					error: 'editor_request_blocked',
+					message:
+						'No changes were saved because this request was stopped when the editor canvas moved. Do not retry saving in this request. Tell the user what happened and wait for a new explicit save request.',
+				},
+				returnToAgent: true,
+			},
+			rollbackBinding: null,
+		};
+	}
 
 	if ( CANVAS_BOUND_ABILITIES.has( normalizedName ) ) {
 		const move = getBlockingMove();
@@ -269,10 +295,10 @@ function guardAbilityCallback( ability: Ability ): Ability {
 }
 
 /**
- * Refuses a canvas write whose canvas has moved since the model asked for it.
+ * Refuses a canvas write after a move, and saves after the request has been stopped.
  *
  * Applied to the merged tool provider, so it is indifferent to which provider owns
- * a given ability — including after an ability migrates into AM.
+ * a given ability.
  * @param toolProvider The merged tool provider, if any.
  * @returns The wrapped provider, or undefined when there is nothing to wrap.
  */

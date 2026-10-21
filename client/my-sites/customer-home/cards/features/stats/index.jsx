@@ -5,16 +5,17 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import IllustrationStatsIntro from 'calypso/assets/images/stats/illustration-stats-intro.svg';
 import CardHeading from 'calypso/components/card-heading';
 import Chart from 'calypso/components/chart';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useStatsAdminUrl } from 'calypso/dashboard/app/hooks/use-stats-admin-url';
 import { preventWidows } from 'calypso/lib/formatting';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
 import {
@@ -40,7 +41,6 @@ export const StatsV2 = ( {
 	mostPopularTime,
 	siteCreatedAt,
 	siteId,
-	siteAdminUrl,
 	topPage,
 	topPost,
 	topPostsQuery,
@@ -48,6 +48,8 @@ export const StatsV2 = ( {
 	visitors,
 } ) => {
 	const dispatch = useDispatch();
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const statsUrl = useStatsAdminUrl( site );
 	const translate = useTranslate();
 
 	const showTopPost = !! topPost;
@@ -164,7 +166,7 @@ export const StatsV2 = ( {
 							) }
 						</div>
 						<div className="stats__all">
-							<a href={ `${ siteAdminUrl }admin.php?page=stats` } className="stats__all-link">
+							<a href={ statsUrl } className="stats__all-link">
 								{ translate( 'See all stats' ) }
 							</a>
 						</div>
@@ -277,7 +279,6 @@ const isLoadingStats = ( state, siteId, chartQuery, insightsQuery, topPostsQuery
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const siteAdminUrl = getSiteAdminUrl( state, siteId );
 	const isSiteUnlaunched = isUnlaunchedSite( state, siteId );
 	const siteCreatedAt = getSiteOption( state, siteId, 'created_at' );
 
@@ -308,7 +309,6 @@ const mapStateToProps = ( state ) => {
 		isSiteUnlaunched,
 		siteCreatedAt,
 		siteId,
-		siteAdminUrl,
 		topPostsQuery,
 		visitsQuery,
 		...statsData,

@@ -12,6 +12,8 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isOnboardingFlow,
+	LAUNCH_SITE_FLOW,
+	SITE_MIGRATION_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -27,14 +29,14 @@ import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-searc
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
-import { isRelativeUrl } from 'calypso/dashboard/utils/url';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { shouldSkipPlansStep } from 'calypso/landing/stepper/utils/preselected-plan';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { getSafeUrl } from 'calypso/lib/site-launch/destination';
 import {
 	domainAddNew,
 	domainManagementList,
@@ -56,7 +58,7 @@ import { OnboardingProgress } from '../components/onboarding-progress';
 import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { getSkipSuggestionCopy } from './get-skip-suggestion-copy';
-import { getDomainSearchResultsVariation } from './results-experiment';
+import { useDomainSearchResultsExperiment } from './results-experiment';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { HelpCenterSelect, OnboardSelect } from '@automattic/data-stores';
@@ -153,9 +155,9 @@ const DomainSearchStep: StepType< {
 	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
 	const wowSkipCopy = isWowFunnel ? __( 'Set up a domain later' ) : undefined;
 	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
-	const resultsVariation = getDomainSearchResultsVariation( flow );
+	const { isLoading: isLoadingResultsExperiment, variation: resultsVariation } =
+		useDomainSearchResultsExperiment( flow );
 	const isCustomDomainBannerCopyVariation = resultsVariation === 'custom_domain_banner_copy';
-	const isFreeDomainBannerCopyVariation = resultsVariation === 'free_domain_banner_copy';
 
 	const storedSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -166,7 +168,7 @@ const DomainSearchStep: StepType< {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 		[]
 	);
-	const shouldHidePlansStep = shouldSkipPlansStep( queryParams, planCartItem );
+	const shouldHidePlansStep = shouldSkipPlansStep( queryParams, planCartItem, flow );
 
 	// For CIAB sites, prefer the site title over the slug for domain suggestions
 	// since the slug is often randomly generated.
@@ -184,18 +186,6 @@ const DomainSearchStep: StepType< {
 	} );
 
 	const config = useMemo( () => {
-		const experimentSkipCopy = isFreeDomainBannerCopyVariation
-			? {
-					title: __( 'Skip the domain for now' ),
-					subtitle: __(
-						'You’ll get a WordPress.com branded domain. Upgrade to a custom domain name anytime.'
-					),
-					buttonText: __( 'Skip' ),
-					// Keeps the free *.wordpress.com address out of the accessible label too.
-					skipLabel: __( 'Skip the domain for now' ),
-				}
-			: undefined;
-
 		const urlAllowedTlds = tldQuery?.split( ',' ) ?? [];
 
 		// Precedence for allowedTlds:
@@ -234,13 +224,10 @@ const DomainSearchStep: StepType< {
 			// Free-subdomain skip card copy, in order of precedence: per-flow
 			// `freeSubdomainTitle` / `freeSubdomainButtonLabel` overrides, then the WoW
 			// funnel default (no free-subdomain option to offer, see `isWowFunnel` above),
-			// then the results experiment copy, then the flow default resolved by
-			// `getSkipSuggestionCopy`.
+			// then the flow default resolved by `getSkipSuggestionCopy`.
 			skipSuggestionCopy: getSkipSuggestionCopy( flow, __, {
-				title: freeSubdomainTitle ?? wowSkipCopy ?? experimentSkipCopy?.title,
-				subtitle: experimentSkipCopy?.subtitle,
-				buttonText: freeSubdomainButtonLabel ?? wowSkipCopy ?? experimentSkipCopy?.buttonText,
-				skipLabel: experimentSkipCopy?.skipLabel,
+				title: freeSubdomainTitle ?? wowSkipCopy,
+				buttonText: freeSubdomainButtonLabel ?? wowSkipCopy,
 			} ),
 			// WoW funnel: hide the free *.wordpress.com subdomain card entirely and offer only
 			// the skip control.
@@ -252,7 +239,8 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
-				! isDomainAndPlanFlow( flow ),
+				! isDomainAndPlanFlow( flow ) &&
+				flow !== LAUNCH_SITE_FLOW,
 			allowedTlds: resolvedAllowedTlds,
 			includeOwnedDomainInSuggestions: true,
 			allowsUsingOwnDomain:
@@ -270,7 +258,6 @@ const DomainSearchStep: StepType< {
 		isWowFunnel,
 		wowSkipCopy,
 		resultsVariation,
-		isFreeDomainBannerCopyVariation,
 		tldQuery,
 		query,
 		allowedTldsProp,
@@ -354,6 +341,17 @@ const DomainSearchStep: StepType< {
 					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
 				} );
 			},
+			// Omitted (not `undefined`) outside onboarding: the WPCOM wrapper wraps every event
+			// key in a function, which would render the card in other flows.
+			...( isOnboardingFlow( flow ) && {
+				onMigrateSiteClick: () => {
+					recordTracksEvent( 'calypso_domain_search_migrate_site_button_click', {
+						section: 'signup',
+						flow_name: flow,
+					} );
+					window.location.assign( `/setup/${ SITE_MIGRATION_FLOW }?ref=${ flow }` );
+				},
+			} ),
 			onContinue: ( domainCart: MinimalRequestCartProduct[] ) => {
 				const domainItem = domainCart[ 0 ];
 
@@ -407,10 +405,15 @@ const DomainSearchStep: StepType< {
 		return true;
 	}, [ flow, isCiab, site, sourceSlug, planCartItem ] );
 
+	// Launching an existing site keeps the promo, as legacy signup did, without the per-domain
+	// first-year-free pricing.
+	const showFreeDomainPromo =
+		! hideFreeDomainPromo && ( isFirstDomainFreeForFirstYear || flow === LAUNCH_SITE_FLOW );
+
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
-				if ( hideFreeDomainPromo || ! isFirstDomainFreeForFirstYear ) {
+				if ( ! showFreeDomainPromo ) {
 					return null;
 				}
 
@@ -442,7 +445,7 @@ const DomainSearchStep: StepType< {
 				);
 			},
 			BeforeFullCartItems: () => {
-				if ( hideFreeDomainPromo || ! isFirstDomainFreeForFirstYear ) {
+				if ( ! showFreeDomainPromo ) {
 					return null;
 				}
 
@@ -452,9 +455,8 @@ const DomainSearchStep: StepType< {
 			},
 		};
 	}, [
-		isFirstDomainFreeForFirstYear,
+		showFreeDomainPromo,
 		isCiab,
-		hideFreeDomainPromo,
 		freeDomainPromoTitle,
 		freeDomainPromoSubtitle,
 		isCustomDomainBannerCopyVariation,
@@ -512,7 +514,11 @@ const DomainSearchStep: StepType< {
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 	}, [ flow, isCiab, isWooHostingSolutions, __, subHeaderTextOverride ] );
 
-	const domainSearchElement = (
+	// Holding the search until the experiment is assigned keeps users from seeing control
+	// and then switching to their variation.
+	const domainSearchElement = isLoadingResultsExperiment ? (
+		<></>
+	) : (
 		<WPCOMDomainSearch
 			className={
 				shouldUseStepContainerV2( flow )
@@ -570,6 +576,20 @@ const DomainSearchStep: StepType< {
 				return;
 			}
 
+			// Matches legacy /start/launch-site, which ignores `source` and also follows a `back_to` on
+			// the site, such as the wp-admin screen the launch started from.
+			if ( flow === LAUNCH_SITE_FLOW ) {
+				const launchBackTo = getSafeUrl( backTo, site?.URL );
+
+				return (
+					<Step.BackButton href={ launchBackTo ?? defaultBackUrl }>
+						{ launchBackTo ? __( 'Back' ) : sitesBackLabelText }
+					</Step.BackButton>
+				);
+			}
+
+			const isSafeBackTo = !! getSafeUrl( backTo );
+
 			let backDestination: string | typeof navigation.goBack = '';
 			let backLabelText = '';
 
@@ -582,24 +602,18 @@ const DomainSearchStep: StepType< {
 			} else if ( 'general-settings' === source && siteSlug ) {
 				backDestination = `/settings/general/${ siteSlug }`;
 				backLabelText = __( 'Back to General Settings' );
+			} else if ( isSafeBackTo ) {
+				backDestination = backTo;
+				backLabelText = __( 'Back' );
+			} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
+				backDestination = navigation.goBack;
+				backLabelText = __( 'Back' );
 			} else {
-				const isSafeBackTo =
-					isRelativeUrl( backTo ) ||
-					dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
-
-				if ( isSafeBackTo ) {
-					backDestination = backTo;
-					backLabelText = __( 'Back' );
-				} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
-					backDestination = navigation.goBack;
-					backLabelText = __( 'Back' );
-				} else {
-					if ( ! isLoggedIn || ! userSiteCount ) {
-						return;
-					}
-					backDestination = defaultBackUrl;
-					backLabelText = __( 'Back' );
+				if ( ! isLoggedIn || ! userSiteCount ) {
+					return;
 				}
+				backDestination = defaultBackUrl;
+				backLabelText = __( 'Back' );
 			}
 
 			return (

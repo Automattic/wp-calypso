@@ -9,6 +9,7 @@ import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import {
 	useCanMarkSeen,
+	useIsSeenEnabled,
 	useIsSeenVisible,
 	useMarkAsSeenMutation,
 } from 'calypso/reader/data/seen-posts';
@@ -27,7 +28,7 @@ export class CrossPost extends PureComponent {
 		site: PropTypes.object,
 		feed: PropTypes.object,
 		canMarkSeen: PropTypes.bool,
-		isSeenVisible: PropTypes.bool,
+		isUnread: PropTypes.bool,
 		requestMarkAsSeen: PropTypes.func.isRequired,
 	};
 
@@ -162,7 +163,7 @@ export class CrossPost extends PureComponent {
 			reader__card: true,
 			'is-x-post': true,
 			'is-selected': this.props.isSelected,
-			'is-seen': this.props.isSeenVisible,
+			'is-unread': this.props.isUnread,
 		} );
 
 		// Remove the x-post text from the title.
@@ -217,7 +218,9 @@ export default function CrossPostContainer( props ) {
 	const { mutate: requestMarkAsSeen } = useMarkAsSeenMutation();
 	const seenProps = { feedId: resolvedFeedId, blogId: siteId, post: props.post };
 	const canMarkSeen = useCanMarkSeen( seenProps );
+	const isSeenEnabled = useIsSeenEnabled( seenProps );
 	const isSeenVisible = useIsSeenVisible( seenProps );
+	const isUnread = isSeenEnabled && ! isSeenVisible; // Check isSeenEnabled too, since isSeenVisible is also false when read status is off.
 
 	return (
 		<LocalizedCrossPost
@@ -225,7 +228,7 @@ export default function CrossPostContainer( props ) {
 			site={ site }
 			feed={ feedFromKey || feedFromSite }
 			canMarkSeen={ canMarkSeen }
-			isSeenVisible={ isSeenVisible }
+			isUnread={ isUnread }
 			requestMarkAsSeen={ requestMarkAsSeen }
 		/>
 	);

@@ -1,8 +1,8 @@
+import { fetchStripeConfiguration } from '@automattic/api-core';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { LoadingPlaceholder } from '@automattic/components';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import CalypsoShoppingCartProvider from '../calypso-shopping-cart-provider';
@@ -37,7 +37,10 @@ export function AgencyCheckoutShell( { children }: { children: ReactNode } ) {
 			<CheckoutQueryClientProvider>
 				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 					<CartMessageCleanup />
-					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
+					<StripeHookProvider
+						fetchStripeConfiguration={ fetchStripeConfiguration }
+						locale={ locale }
+					>
 						{ children }
 					</StripeHookProvider>
 				</CalypsoShoppingCartProvider>

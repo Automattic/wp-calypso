@@ -65,7 +65,7 @@ type CoreSelectStore =
 	{ getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown } | undefined;
 
 /** Reads the optional server-provided Automattician tracking signal. */
-function getIsA11n(): boolean | undefined {
+export function getIsA11n(): boolean | undefined {
 	const isA11n = getAgentsManagerInlineData()?.isA11n;
 	return typeof isA11n === 'boolean' ? isA11n : undefined;
 }
@@ -237,7 +237,7 @@ function hasEditorStore(): boolean {
  * Injected `agentsManagerData` means a wp-admin host (Jetpack, Woo AI); its
  * absence means a Calypso-rendered page.
  */
-function getAgentsManagerSurface(): string {
+export function getAgentsManagerSurface(): string {
 	if ( isReaderChatHost() ) {
 		return 'reader-chat';
 	}

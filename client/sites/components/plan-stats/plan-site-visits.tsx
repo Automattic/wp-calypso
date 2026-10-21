@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useLayoutEffect, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
-import { untrailingslashit } from 'calypso/lib/route';
+import { useStatsAdminUrl } from 'calypso/dashboard/app/hooks/use-stats-admin-url';
 import wpcom from 'calypso/lib/wp';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -11,7 +11,7 @@ import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteAdminUrl, isJetpackModuleActive } from 'calypso/state/sites/selectors';
+import { getSite, isJetpackModuleActive } from 'calypso/state/sites/selectors';
 
 interface PlanSiteVisitsProps {
 	siteId: number;
@@ -80,7 +80,8 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 		fetchVisits();
 	}, [ fetchVisits, hasModuleActive ] );
 
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) ) as string;
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const statsPageUrl = useStatsAdminUrl( site, `admin.php?page=stats#!/stats/month/${ siteId }` );
 
 	if ( ! canViewStat ) {
 		return null;
@@ -171,10 +172,6 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 				</Button>
 			);
 		}
-
-		const statsPageUrl = `${ untrailingslashit(
-			siteAdminUrl
-		) }/admin.php?page=stats#!/stats/month/${ siteId }`;
 
 		return (
 			<a

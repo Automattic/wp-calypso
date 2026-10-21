@@ -6,7 +6,7 @@ import {
 	userTaxDetailsQuery,
 	userReceiptsQuery,
 } from '@automattic/api-queries';
-import { formatCurrency } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -558,10 +558,10 @@ function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Recei
 	const isAkismet = item.licensed_quantity && isAkismetPro500Plan( item.wpcom_product_slug );
 	const variationDisplay = isAkismet
 		? sprintf(
-				/* translators: 1: product name like "Akismet Pro", 2: number of requests per month */
-				__( '%1$s (%2$d requests/month)' ),
+				/* translators: 1: product name like "Akismet Pro", 2: formatted number of requests per month */
+				__( '%1$s (%2$s requests/month)' ),
 				item.variation.replace( /\s*\(.*$/, '' ).trim(),
-				500 * parseInt( String( item.licensed_quantity ) )
+				formatNumber( 500 * parseInt( String( item.licensed_quantity ) ) )
 			)
 		: item.variation;
 	const shouldShowDiscount = areReceiptItemDiscountsAccurate( receipt.date );
@@ -606,7 +606,6 @@ function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Recei
 							formattedAmount
 						) }
 					</Text>
-					{ receipt.credit && <Text>{ __( 'Refund' ) }</Text> }
 				</VStack>
 			</HStack>
 			{ shouldShowDiscount && (

@@ -1,11 +1,11 @@
+import { sitePurchasesQuery } from '@automattic/api-queries';
 import { getJetpackProductDisplayName } from '@automattic/calypso-products';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { useSelector } from 'calypso/state';
-import { getRawSitePurchases } from 'calypso/state/purchases/selectors';
 import PrePurchaseNotice from './prepurchase-notice';
+import type { Site as ApiSite } from '@automattic/api-core';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
-import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 
 type Site = {
 	ID: number;
@@ -13,7 +13,7 @@ type Site = {
 };
 
 type Props = {
-	plan: SitePlan;
+	plan: Pick< NonNullable< ApiSite[ 'plan' ] >, 'product_slug' | 'product_name_short' >;
 	product: ResponseCartProduct;
 	selectedSite: Site;
 };
@@ -24,12 +24,10 @@ const SitePlanIncludesCartProductNotice: FunctionComponent< Props > = ( {
 	selectedSite,
 } ) => {
 	const translate = useTranslate();
-	const purchase = useSelector( ( state ) =>
-		getRawSitePurchases( state, selectedSite?.ID ).find(
-			( p ) => p.product_slug === plan.product_slug
-		)
-	);
-	const purchaseId = purchase?.ID;
+	const { data: purchaseId } = useQuery( {
+		...sitePurchasesQuery( selectedSite.ID ),
+		select: ( purchases ) => purchases.find( ( p ) => p.product_slug === plan.product_slug )?.ID,
+	} );
 	const subscriptionUrl = purchaseId
 		? `/me/purchases/${ selectedSite.slug }/${ purchaseId }`
 		: '/me/purchases/';

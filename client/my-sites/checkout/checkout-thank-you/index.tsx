@@ -730,6 +730,7 @@ export class CheckoutThankYou extends Component<
 			return (
 				<Main className="checkout-thank-you">
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
+					{ this.getMasterBar() }
 					{ this.renderConfirmationNotice() }
 					<PlanThankYouCard siteId={ this.props.selectedSite?.ID ?? 0 } { ...planProps } />
 				</Main>
@@ -740,6 +741,7 @@ export class CheckoutThankYou extends Component<
 		return (
 			<Main className="checkout-thank-you">
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
+				{ this.getMasterBar() }
 				<Card className="checkout-thank-you__content">
 					<div>
 						<CheckoutThankYouHeader

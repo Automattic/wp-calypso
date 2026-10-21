@@ -1,0 +1,177 @@
+import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import { attachInteractiveUiPresentation } from '../utils/convert-interactive-ui-messages-to-components';
+import { getInteractiveUiBatches, INTERACTIVE_UI_VERSION } from '../utils/interactive-ui-messages';
+import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
+import type { AgentConfig } from '../utils/create-agent-config';
+import type { UIMessage, SubmitOptions } from '@automattic/agenttic-client';
+import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
+
+type InteractiveUiRenderer = typeof import( '@automattic/ai-ui-renderer' );
+
+interface UseInteractiveUiOptions {
+	convertedMessages: AgentsManagerUIMessage[];
+	messages: UIMessage[];
+	conversationId: string;
+	isProcessing: boolean;
+	agentConfig: AgentConfig | null;
+	submitContextMessage: ( message: string, options: SubmitOptions ) => Promise< void >;
+}
+
+export interface InteractiveUiPresentation {
+	runtime: InteractiveUiRuntime | undefined;
+	renderer: InteractiveUiRenderer | undefined;
+	hasLoadError: boolean;
+	isRetryingLoad: boolean;
+	retryLoad: () => void;
+	revision: number;
+	isDisabled: boolean;
+}
+
+/**
+ * Runs the interactive UI surfaces in agent replies and returns the transcript with them
+ * attached. Loads the renderer once a reply has a surface, applies surfaces after the reply
+ * has streamed so none changes mid-stream, and sends their actions to the agent as hidden
+ * context messages. Keeps the user's input as messages arrive, rebuilds the surfaces when
+ * an earlier reply changes, and reports a failed load so the chat can offer a retry.
+ */
+export function useInteractiveUi( {
+	messages,
+	convertedMessages,
+	conversationId,
+	isProcessing,
+	agentConfig,
+	submitContextMessage,
+}: UseInteractiveUiOptions ) {
+	const actionInputsRef = useRef( { agentConfig, isProcessing, submitContextMessage } );
+	actionInputsRef.current = { agentConfig, isProcessing, submitContextMessage };
+
+	const [ renderer, setRenderer ] = useState< InteractiveUiRenderer >();
+	const [ loadAttempt, setLoadAttempt ] = useState( 0 );
+	const [ failedLoadAttempt, setFailedLoadAttempt ] = useState< number >();
+	const [ runtimeRevision, setRuntimeRevision ] = useState( 0 );
+
+	const messageBatches = useMemo( () => getInteractiveUiBatches( messages ), [ messages ] );
+	const hasMessageBatches = messageBatches.length > 0;
+
+	const conversationSession = useMemo(
+		() => ( {
+			conversationId,
+			runtime: undefined as InteractiveUiRuntime | undefined,
+			processedBatchSignatures: [] as string[],
+		} ),
+		[ conversationId ]
+	);
+
+	// Load the renderer on demand to keep it out of the initial bundle. A retry starts a new
+	// attempt while the error stays on screen, so the retry button can show it's busy.
+	useEffect( () => {
+		if ( ! hasMessageBatches || renderer ) {
+			return;
+		}
+
+		let isLoadCancelled = false;
+
+		void import( /* webpackChunkName: "am-interactive-ui" */ '@automattic/ai-ui-renderer' ).then(
+			( rendererModule ) => ! isLoadCancelled && setRenderer( rendererModule ),
+			() => ! isLoadCancelled && setFailedLoadAttempt( loadAttempt )
+		);
+
+		return () => {
+			isLoadCancelled = true;
+		};
+	}, [ hasMessageBatches, renderer, loadAttempt ] );
+
+	const hasLoadError = ! renderer && failedLoadAttempt !== undefined;
+	const isRetryingLoad = hasLoadError && failedLoadAttempt < loadAttempt;
+
+	// Dispose of the runtime when the conversation changes or the chat unmounts.
+	useEffect( () => {
+		return () => {
+			conversationSession.runtime?.dispose();
+			conversationSession.runtime = undefined;
+			conversationSession.processedBatchSignatures = [];
+		};
+	}, [ conversationSession ] );
+
+	// Apply new batches once the reply has streamed, so a surface never changes mid-stream.
+	useEffect( () => {
+		if ( ! renderer || isProcessing ) {
+			return;
+		}
+
+		// Start over when an earlier batch changed.
+		const hasChangedBatches = conversationSession.processedBatchSignatures.some(
+			( signature, index ) => signature !== messageBatches[ index ]?.signature
+		);
+
+		if ( hasChangedBatches ) {
+			conversationSession.runtime?.dispose();
+			conversationSession.runtime = undefined;
+			conversationSession.processedBatchSignatures = [];
+		}
+
+		const newBatches = messageBatches.slice( conversationSession.processedBatchSignatures.length );
+		if ( ! hasChangedBatches && newBatches.length === 0 ) {
+			return;
+		}
+
+		if ( newBatches.length > 0 && ! conversationSession.runtime ) {
+			conversationSession.runtime = renderer.createInteractiveUiRuntime( {
+				catalog: renderer.createInteractiveUiCatalog(),
+				onAction: async ( action ) => {
+					const latestInputs = actionInputsRef.current;
+
+					if ( ! latestInputs.agentConfig || latestInputs.isProcessing ) {
+						return;
+					}
+
+					const actionMessage = JSON.stringify( { version: INTERACTIVE_UI_VERSION, action } );
+
+					await latestInputs.submitContextMessage( actionMessage, {
+						type: 'context',
+						sessionId: latestInputs.agentConfig.sessionId,
+					} );
+				},
+			} );
+		}
+
+		for ( const batch of newBatches ) {
+			try {
+				conversationSession.runtime?.processMessages( batch.operations, batch.messageId );
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.error( '[AgentsManager] Failed to process an interactive UI batch:', error );
+			}
+		}
+
+		conversationSession.processedBatchSignatures = messageBatches.map(
+			( batch ) => batch.signature
+		);
+		setRuntimeRevision( ( currentRevision ) => currentRevision + 1 );
+	}, [ messageBatches, isProcessing, renderer, conversationSession ] );
+
+	const presentation = useMemo< InteractiveUiPresentation >(
+		() => ( {
+			runtime: conversationSession.runtime,
+			renderer,
+			hasLoadError,
+			isRetryingLoad,
+			retryLoad: () => setLoadAttempt( ( attempt ) => attempt + 1 ),
+			revision: runtimeRevision,
+			isDisabled: isProcessing,
+		} ),
+		[
+			conversationSession.runtime,
+			renderer,
+			hasLoadError,
+			isRetryingLoad,
+			runtimeRevision,
+			isProcessing,
+		]
+	);
+
+	return useMemo(
+		() => attachInteractiveUiPresentation( convertedMessages, presentation ),
+		[ convertedMessages, presentation ]
+	);
+}

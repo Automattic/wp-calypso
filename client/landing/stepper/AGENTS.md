@@ -184,12 +184,11 @@ export default myFlow;
 
 ### AI / other
 
-| `STEPS.*` constant                    | slug                 | Purpose                        |
-| ------------------------------------- | -------------------- | ------------------------------ |
-| `LAUNCH_BIG_SKY`                      | `launch-big-sky`     | BigSky AI site builder         |
-| `SETUP_YOUR_SITE_AI`                  | `setup-your-site-ai` | AI-assisted site setup         |
-| `BLUEPRINT`                           | `blueprint`          | Blueprint template selection   |
-| `READYMADE_TEMPLATE_GENERATE_CONTENT` | `generateContent`    | Generate content from template |
+| `STEPS.*` constant   | slug                 | Purpose                      |
+| -------------------- | -------------------- | ---------------------------- |
+| `LAUNCH_BIG_SKY`     | `launch-big-sky`     | BigSky AI site builder       |
+| `SETUP_YOUR_SITE_AI` | `setup-your-site-ai` | AI-assisted site setup       |
+| `BLUEPRINT`          | `blueprint`          | Blueprint template selection |
 
 ## Step customization — what the flow can change without touching step code
 
@@ -234,6 +233,9 @@ step" → Worked example** section of [`README.md`](README.md); the tables below
 | `highlightLabelOverrides`                                                                                                | `{ [PlanSlug]?: TranslateResult }`              | Re-labels a plan's highlight tag (top pill)                                                |
 | `titleBadgeOverrides`                                                                                                    | `{ [PlanSlug]?: TranslateResult }`              | Re-labels the badge next to a plan's title (features grid only)                            |
 | `taglineOverrides`                                                                                                       | `{ [PlanSlug]?: TranslateResult }`              | Overrides a plan's tagline, winning over computed and experiment copy (features grid only) |
+| `isLaunchPage`                                                                                                           | `boolean`                                       | Launch-page CTAs ("Keep this plan" / "Select X")                                           |
+| `isCustomDomainAllowedOnFreePlan`                                                                                        | `boolean`                                       | Picking Free keeps a paid domain via a dialog                                              |
+| `deemphasizeFreePlan`                                                                                                    | `boolean`                                       | De-emphasizes the Free plan                                                                |
 | `wrapperProps.hideBack`                                                                                                  | `boolean`                                       | Hides the back button                                                                      |
 | `wrapperProps.goBack`                                                                                                    | `() => void`                                    | Custom back button handler                                                                 |
 
@@ -255,6 +257,7 @@ step" → Worked example** section of [`README.md`](README.md); the tables below
 | -------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `title` / `subtitle` | `string`                     | Override the single visible frame; these win over the carousel                                                            |
 | `loadingMessages`    | `ProcessingLoadingMessage[]` | Replace the rotating loading-carousel copy. `duration` is optional per message — one without a usable duration is held 5s |
+| `skipSignupComplete` | `boolean`                    | Don't record `calypso_signup_complete` when the pending action succeeds, for a run whose completion was recorded earlier  |
 
 Applies to the generic V1 `StepContainer` / `Loading` and V2 `Step.Loading` paths only. The
 tailored (`TailoredFlowPreCheckoutScreen`, newsletter / update-design) and hundred-year
@@ -266,11 +269,11 @@ Auto-injected by `stepsWithRequiredLogin()` — it is **not** in the flow's `ini
 so its props are passed under a reserved `user` key of `useStepsProps()` (the return type is
 widened via `MapStepsToTheirAcceptedProps<[ typeof PRIVATE_STEPS.USER ]>`).
 
-| Prop                           | Type       | What it does                                                   |
-| ------------------------------ | ---------- | -------------------------------------------------------------- |
-| `headerText` / `subHeaderText` | `string`   | Override the "Create your account" heading / add a sub-heading |
-| `hideLoginLink`                | `boolean`  | Hide the top-level "Log in" link (V2 top bar / V1 footer)      |
-| `allowedSocialServices`        | `string[]` | Restrict which social sign-in providers are offered            |
+| Prop                           | Type       | What it does                                                    |
+| ------------------------------ | ---------- | --------------------------------------------------------------- |
+| `headerText` / `subHeaderText` | `string`   | Override the "Create your account" heading / add a sub-heading  |
+| `hideLoginLink`                | `boolean`  | Hide the "Log in" link (V2 top bar or in-form line / V1 footer) |
+| `allowedSocialServices`        | `string[]` | Restrict which social sign-in providers are offered             |
 
 ```ts
 const myFlow: FlowV2< typeof initialize > = {

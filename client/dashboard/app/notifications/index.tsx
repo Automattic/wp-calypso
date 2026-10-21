@@ -14,6 +14,7 @@ import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
 import { useLocale } from '../locale';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
+import useSubscriberAlerts from './use-subscriber-alerts';
 import type { UserPreferences } from '@automattic/api-core';
 import './style.scss';
 
@@ -34,8 +35,13 @@ export default function Notifications( {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
-
 	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
+	const isSimplifiedNoteEnabled = isViewSettingsEnabled;
+	const onNotificationCount = useCallback( ( count: number ) => {
+		setHasUnseenNotifications( count > 0 );
+		omnibarEvents.notificationsUnseenCount.emit( count );
+	}, [] );
+	useSubscriberAlerts( onNotificationCount, isSimplifiedNoteEnabled );
 
 	// Both share one query key, so this is a single request — and it is skipped entirely
 	// without the picker, where nothing reads either value.
@@ -86,27 +92,12 @@ export default function Notifications( {
 		omnibarEvents.notificationsOpen.emit( isOpen );
 	}, [ isOpen ] );
 
-	useEffect( () => {
-		let unsubscribe: ( () => void ) | undefined;
-		let cancelled = false;
-
-		import( '@automattic/notifications/src/app/client' ).then( ( { subscribeUnseenCount } ) => {
-			if ( ! cancelled ) {
-				unsubscribe = subscribeUnseenCount( wpcom, ( count ) => {
-					setHasUnseenNotifications( count > 0 );
-					omnibarEvents.notificationsUnseenCount.emit( count );
-				} );
-			}
-		} );
-
-		return () => {
-			cancelled = true;
-			unsubscribe?.();
-		};
-	}, [] );
-
 	const handleClose = () => {
 		handleToggle( false );
+	};
+
+	const openInNewTab = ( store: unknown, { href }: { href: string } ) => {
+		window.open( href, '_blank', 'noopener' );
 	};
 
 	const actionHandlers = {
@@ -122,16 +113,12 @@ export default function Notifications( {
 				window.open( dashboardLink( '/me/notifications' ), '_blank' );
 			},
 		],
-		EDIT_COMMENT: [
-			( store: unknown, { href }: { href: string } ) => {
-				window.open( href, '_blank' );
-			},
-		],
-		ANSWER_PROMPT: [
-			( store: unknown, { href }: { href: string } ) => {
-				window.open( href, '_blank' );
-			},
-		],
+		EDIT_COMMENT: [ openInNewTab ],
+		ANSWER_PROMPT: [ openInNewTab ],
+		OPEN_LINK: [ openInNewTab ],
+		OPEN_POST: [ openInNewTab ],
+		OPEN_COMMENT: [ openInNewTab ],
+		OPEN_SITE: [ openInNewTab ],
 		CLOSE_PANEL: [ handleClose ],
 	};
 
@@ -223,6 +210,7 @@ export default function Notifications( {
 						locale={ locale }
 						isDismissible={ isMobileViewport }
 						isViewSettingsEnabled={ isViewSettingsEnabled }
+						isSimplifiedNoteEnabled={ isSimplifiedNoteEnabled }
 						preferences={ notificationPreferences }
 						onPreferenceChange={ handlePreferenceChange }
 						actionHandlers={ actionHandlers }

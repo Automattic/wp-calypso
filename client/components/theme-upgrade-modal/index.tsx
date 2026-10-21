@@ -15,7 +15,6 @@ import {
 	FEATURE_WORDADS,
 	PLAN_BUSINESS,
 	PLAN_PERSONAL,
-	PLAN_PREMIUM,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	getPlan,
@@ -96,7 +95,6 @@ export const ThemeUpgradeModal = ( {
 	const isLoading = ! requiredPlanProduct || ! theme.data;
 
 	const personalPlanName = getPlan( PLAN_PERSONAL )?.getTitle() || '';
-	const premiumPlanName = getPlan( PLAN_PREMIUM )?.getTitle() || '';
 	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
 	const requiredPlanName = getPlan( requiredPlan )?.getTitle() || '';
 
@@ -205,7 +203,7 @@ export const ThemeUpgradeModal = ( {
 		const planPrice = requiredPlanProduct?.combined_cost_display;
 
 		const planText = getPlanText(
-			premiumPlanName as string,
+			requiredPlanName as string,
 			requiredPlanProduct?.product_term || '',
 			planPrice || ''
 		);
@@ -513,8 +511,8 @@ export const ThemeUpgradeModal = ( {
 	} else {
 		modalData = getStandardPurchaseModalData();
 		featureList = getStandardPurchaseFeatureList();
-		featureListHeader = translate( 'Included with your %(premiumPlanName)s plan', {
-			args: { premiumPlanName: premiumPlanName },
+		featureListHeader = translate( 'Included with your %(plan)s plan', {
+			args: { plan: requiredPlanName },
 		} );
 	}
 
