@@ -27,6 +27,7 @@ export const noteAction = ( action ) => ( noteId ) => ( {
 export const readNote = noteAction( types.READ_NOTE );
 export const spamNote = noteAction( types.SPAM_NOTE );
 export const trashNote = noteAction( types.TRASH_NOTE );
+export const unreadNote = noteAction( types.UNREAD_NOTE );
 
 export const approveNote = ( noteId, isApproved ) => ( {
 	type: types.APPROVE_NOTE,
@@ -83,4 +84,5 @@ export default {
 	setFilteredNoteIds,
 	spamNote,
 	trashNote,
+	unreadNote,
 };
