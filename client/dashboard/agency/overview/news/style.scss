@@ -27,8 +27,9 @@
 
 // The filter pills: the Marketplace category tile (agency/components/showcase/spot-tiles.scss)
 // made short: the same Card surface and outline, the same 1px inset accent ring on hover
-// and the same 2px focus outline. Changed from the tile: 8px 12px padding instead of
-// 20px 12px (about 32px tall instead of about 100px), no icon, a 16px radius so it reads
+// and the same 2px focus outline. Changed from the tile: 6px 12px padding instead of
+// 20px 12px (about 28px tall instead of about 100px; 6px ends the header level with the
+// agency tier card's header beside it on Overview), no icon, a 16px radius so it reads
 // as a pill, and the selected ring. The tile's 2px ring is too heavy on a pill, so the
 // selected pill takes DataViews' selected filter chip instead: a 1px ring
 // (--wpds-border-width-xs) and accent text, which also tells it apart from a hovered one.
@@ -61,7 +62,7 @@
 }
 
 .a4a-news .a4a-news-filter-body {
-	padding: 8px 12px;
+	padding: 6px 12px;
 	white-space: nowrap;
 }
 
