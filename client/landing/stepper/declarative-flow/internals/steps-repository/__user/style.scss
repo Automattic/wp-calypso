@@ -11,8 +11,8 @@ $breakpoint-mobile: 660px;
 
 .step-route.user {
 	// Match the login page's heading area, so the form does not jump between the two screens:
-	// 2rem down to the form, with the terms 0.5rem under the heading in login's type. The class
-	// sits on the form's row, so the gap rule reaches up to the wrapper that owns the gap.
+	// 2rem down to the form, with the terms 0.5rem under the heading. The class sits on the
+	// form's row, so the gap rule reaches up to the wrapper that owns the gap.
 	.step-container-v2__content-wrapper:has(> .step-container-v2--user-login-spacing) {
 		gap: 2rem;
 	}
@@ -22,15 +22,6 @@ $breakpoint-mobile: 660px;
 		.signup-form-social-first-screen
 		> .signup-form-social-first__tos-link:first-child {
 		margin-block-start: -1.5rem;
-		color: var(--color-text-subtle, var(--studio-gray-50));
-		font-family: inherit;
-		font-size: 1rem;
-		line-height: 1.5;
-		text-wrap: balance;
-
-		a {
-			color: inherit;
-		}
 	}
 
 	.form-fieldset {
