@@ -318,7 +318,7 @@ __metadata:
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/plugins": "npm:^7.48.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.57.0"
-    copy-webpack-plugin: "npm:^10.2.4"
+    copy-webpack-plugin: "npm:^14.0.0"
     postcss-prefix-selector: "npm:^1.16.1"
     sass: "npm:1.77.8"
     webpack: "npm:^5.111.1"
@@ -1517,7 +1517,7 @@ __metadata:
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.57.0"
     "@wordpress/router": "npm:^1.48.0"
     "@wordpress/url": "npm:^4.48.0"
-    copy-webpack-plugin: "npm:^10.2.4"
+    copy-webpack-plugin: "npm:^14.0.0"
     postcss-prefix-selector: "npm:^1.16.1"
     typescript: "npm:^6.0.3"
     webpack: "npm:^5.111.1"
@@ -14438,7 +14438,7 @@ __metadata:
     "@electron/rebuild": "npm:4.0.4"
     "@playwright/browser-chromium": "npm:1.57.0"
     archiver: "npm:^3.1.1"
-    copy-webpack-plugin: "npm:^10.2.4"
+    copy-webpack-plugin: "npm:^14.0.0"
     cross-env: "npm:^7.0.3"
     electron: "npm:41.10.7"
     electron-builder: "npm:26.15.0"
@@ -17194,19 +17194,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"copy-webpack-plugin@npm:^10.2.4":
-  version: 10.2.4
-  resolution: "copy-webpack-plugin@npm:10.2.4"
+"copy-webpack-plugin@npm:^14.0.0":
+  version: 14.0.0
+  resolution: "copy-webpack-plugin@npm:14.0.0"
   dependencies:
-    fast-glob: "npm:^3.2.7"
     glob-parent: "npm:^6.0.1"
-    globby: "npm:^12.0.2"
     normalize-path: "npm:^3.0.0"
-    schema-utils: "npm:^4.0.0"
-    serialize-javascript: "npm:^6.0.0"
+    schema-utils: "npm:^4.2.0"
+    serialize-javascript: "npm:^7.0.3"
+    tinyglobby: "npm:^0.2.12"
   peerDependencies:
     webpack: ^5.1.0
-  checksum: d4501aa2d813eadc906318ed301707240fc7bfeb250813e2e4d93e95bc9896822c136e49de01dfe612ea5334a1f04cb8fbed4412b91117666a92607c0deba624
+  checksum: 1296bec96c9b7bb603c11aac95bc9580810e3f6be062044d2d4442c54d11ac5a0cd535e118fee6d65a83709a7a440e231686c0a2755f36df73061f7e4a0024d6
   languageName: node
   linkType: hard
 
@@ -21411,7 +21410,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globby@npm:^12.0.0, globby@npm:^12.0.2":
+"globby@npm:^12.0.0":
   version: 12.0.2
   resolution: "globby@npm:12.0.2"
   dependencies:
@@ -21587,7 +21586,7 @@ __metadata:
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.57.0"
     clsx: "npm:^2.1.1"
-    copy-webpack-plugin: "npm:^10.2.4"
+    copy-webpack-plugin: "npm:^14.0.0"
     glob: "npm:^7.2.3"
     i18n-calypso: "workspace:^"
     postcss: "npm:^8.5.15"
@@ -30989,6 +30988,13 @@ __metadata:
   version: 7.0.5
   resolution: "serialize-javascript@npm:7.0.5"
   checksum: 7b7818e5267f6d474ec7a56d36ba69dd712726a13eab37706ec94615fb7ca8945471f2b7fb0dc9dbe8c79c1930c1079d97f66f91315c8c8c2ca6c38898cec96f
+  languageName: node
+  linkType: hard
+
+"serialize-javascript@npm:^7.0.3":
+  version: 7.1.2
+  resolution: "serialize-javascript@npm:7.1.2"
+  checksum: 568ea22e16893a26cd2506433b8d98bb82f4af37e149330a3deb042bd417516988e6ca9a5010739e1a8dc4866caae320f582dfd2a1a0f0ab69ba3c03f1e155ba
   languageName: node
   linkType: hard
 
