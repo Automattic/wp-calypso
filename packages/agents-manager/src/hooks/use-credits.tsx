@@ -46,6 +46,12 @@ import type { AuthProvider, TaskUpdate, UseAgentChatReturn } from '@automattic/a
 import type { NoticeConfig, TrailingActions } from '@automattic/agenttic-ui';
 import type { AgentsManagerSite } from '@automattic/data-stores';
 
+interface LiveCredits {
+	status: CreditsStatus;
+	siteId: number;
+	agentConfig: AgentConfig;
+}
+
 interface MockCreditsSeed {
 	plan: CreditsPlan;
 	percent: number;
@@ -177,15 +183,19 @@ export function useCredits( {
 	const [ seed ] = useState( readMockSeed );
 	const [ percent, setPercent ] = useState( seed?.percent ?? 0 );
 	// The live balance the credits events describe, set once it is known below.
-	const liveCredits = useRef<
-		{ status: CreditsStatus; siteId: number; agentConfig: AgentConfig } | undefined
-	>( undefined );
+	const liveCredits = useRef< LiveCredits | undefined >( undefined );
+	// `shown` stands in while the balance is unknown, for a notice that still shows an earlier one.
 	const recordCreditsEvent = useCallback(
-		( eventName: CreditsTracksEventName, props?: Record< string, string > ) => {
-			if ( currentScope.current !== scope || ! scope.active || ! liveCredits.current ) {
+		(
+			eventName: CreditsTracksEventName,
+			props?: Record< string, string >,
+			shown?: LiveCredits
+		) => {
+			const credits = liveCredits.current ?? shown;
+			if ( currentScope.current !== scope || ! scope.active || ! credits ) {
 				return;
 			}
-			const { status, siteId, agentConfig: config } = liveCredits.current;
+			const { status, siteId, agentConfig: config } = credits;
 			recordCreditsTracksEvent(
 				eventName,
 				{ status, siteId, contextProvider: config.contextProvider },
@@ -263,7 +273,10 @@ export function useCredits( {
 				if ( isTerminalUpdate( update ) ) {
 					const code = getTaskRefusalCode( update );
 					refusalCode.current = code;
-					setRefusal( code ? { scope, code } : undefined );
+					// A late reply from an earlier visit must not clear this visit's notice.
+					if ( currentScope.current === scope ) {
+						setRefusal( code ? { scope, code } : undefined );
+					}
 				}
 				observeTaskUpdate( update );
 				await agentConfig.onTaskUpdate?.( update );
@@ -488,12 +501,12 @@ export function useCredits( {
 
 	// Every click counts; the link opens in a new tab without waiting for the event.
 	const recordPurchaseClick = useCallback(
-		( placement?: 'refusal' ) =>
-			recordCreditsEvent( 'calypso_agents_manager_credits_cta_clicked', {
-				cta_type: ctaType,
-				ref: CREDITS_UPGRADE_SOURCE,
-				...( placement && { placement } ),
-			} ),
+		( placement: 'refusal' | 'none' = 'none', shown?: LiveCredits ) =>
+			recordCreditsEvent(
+				'calypso_agents_manager_credits_cta_clicked',
+				{ cta_type: ctaType, ref: CREDITS_UPGRADE_SOURCE, placement },
+				shown
+			),
 		[ ctaType, recordCreditsEvent ]
 	);
 
@@ -582,15 +595,20 @@ export function useCredits( {
 		if ( ! isExhausted ) {
 			return getCreditsBackNotice();
 		}
+		const shown = { status, siteId, agentConfig };
 		return getCreditsOutNotice(
 			status.remaining,
 			askToUpgrade,
-			purchaseAction && { ...purchaseAction, onClick: () => recordPurchaseClick( 'refusal' ) }
+			purchaseAction && {
+				...purchaseAction,
+				onClick: () => recordPurchaseClick( 'refusal', shown ),
+			}
 		);
 	}, [
 		isRefusedForCredits,
 		siteId,
 		status,
+		agentConfig,
 		isExhausted,
 		askToUpgrade,
 		purchaseAction,

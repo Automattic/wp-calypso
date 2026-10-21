@@ -2359,7 +2359,7 @@ describe( 'credits Tracks events', () => {
 	describe( 'purchase clicks', () => {
 		const clicked = 'calypso_agents_manager_credits_cta_clicked';
 		const clicks = () => creditsEvents().filter( ( [ name ] ) => name === clicked );
-		const upgrade = { cta_type: 'upgrade', ref: 'wp_ai_credits' };
+		const upgrade = { cta_type: 'upgrade', ref: 'wp_ai_credits', placement: 'none' };
 
 		it( 'records every click on the notice’s link with the balance’s state at the click', async () => {
 			fetchMock.mockResolvedValueOnce( response( low() ) );
@@ -2399,6 +2399,7 @@ describe( 'credits Tracks events', () => {
 						plan_tier: 'commerce',
 						cta_type: 'top_up',
 						ref: 'wp_ai_credits',
+						placement: 'none',
 					},
 				],
 			] );
@@ -2426,6 +2427,7 @@ describe( 'credits Tracks events', () => {
 							plan_tier,
 							cta_type: ctaType,
 							ref: 'wp_ai_credits',
+							placement: 'none',
 						},
 					],
 				] );
@@ -2455,13 +2457,23 @@ describe( 'credits Tracks events', () => {
 				expect( clicks() ).toEqual( [ [ clicked, { ...zeroClick, placement: 'refusal' } ] ] );
 			} );
 
-			it( 'records clicks on the notice’s and popover’s links without a placement', async () => {
+			it( 'records a click on the held refusal notice’s link with the balance it last showed', async () => {
+				const result = await refused();
+				fetchMock.mockResolvedValueOnce( { ok: false, json: async () => ( {} ) } );
+				act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+				await flush();
+				expect( result.current.trailingActions ).toBeUndefined();
+				act( () => result.current.refusalNotice?.action?.onClick?.() );
+				expect( clicks() ).toEqual( [ [ clicked, { ...zeroClick, placement: 'refusal' } ] ] );
+			} );
+
+			it( 'records clicks on the notice’s and popover’s links with placement none', async () => {
 				const result = await refused();
 				act( () => result.current.notice?.action?.onClick?.() );
 				act( () => props( result.current ).action?.onClick?.() );
 				expect( clicks() ).toEqual( [
-					[ clicked, zeroClick ],
-					[ clicked, zeroClick ],
+					[ clicked, { ...zeroClick, placement: 'none' } ],
+					[ clicked, { ...zeroClick, placement: 'none' } ],
 				] );
 			} );
 		} );
@@ -2816,6 +2828,21 @@ describe( 'refusal code', () => {
 				agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
 			} );
 			expect( view.result.current.refusalNotice ).toBeUndefined();
+		} );
+
+		it( 'keeps the notice when a reply from the previous site ends late', async () => {
+			const view = renderCredits();
+			const previousSiteConfig = mockConfig;
+			view.rerender( {
+				...defaultOptions,
+				siteKey: '456',
+				agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+			} );
+			await refuse( { ...exhausted( true ), plan_tier: 'business', blog_id: 456 } );
+			expect( view.result.current.refusalNotice ).toBeDefined();
+
+			await act( async () => previousSiteConfig.onTaskUpdate?.( terminal( creditSnapshot() ) ) );
+			expect( view.result.current.refusalNotice ).toBeDefined();
 		} );
 
 		it( 'drops the notice when the thread empties, leaving the composer’s', async () => {
