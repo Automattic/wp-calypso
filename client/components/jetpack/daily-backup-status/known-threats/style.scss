@@ -54,6 +54,9 @@
 // Visually just the pill: drop the toggle button's own colour, padding and height.
 .button.is-compact.is-borderless.backup-known-threats__toggle,
 .components-button.backup-known-threats__toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
 	height: auto;
 	min-width: 0;
 	padding: 0;
@@ -74,6 +77,11 @@
 
 	.backup-known-threats__badge {
 		margin-inline-end: 0;
+	}
+
+	> svg {
+		flex-shrink: 0;
+		fill: currentColor;
 	}
 }
 

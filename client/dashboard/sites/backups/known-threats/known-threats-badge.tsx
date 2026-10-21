@@ -1,6 +1,6 @@
 import { Button, Icon, Tooltip, VisuallyHidden } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { caution } from '@wordpress/icons';
+import { caution, chevronDown, chevronUp } from '@wordpress/icons';
 import './known-threats-badge.scss';
 
 export function getKnownThreatsWarning( count: number ) {
@@ -84,6 +84,7 @@ export function KnownThreatsToggle( {
 			onClick={ onToggle }
 		>
 			<KnownThreatsBadge count={ count } />
+			<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 24 } />
 		</Button>
 	);
 }
