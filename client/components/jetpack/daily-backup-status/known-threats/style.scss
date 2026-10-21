@@ -32,48 +32,13 @@
 	line-height: var( --wpds-typography-line-height-xs, 16px );
 
 	.gridicon {
+		position: static;
+		top: 0;
 		flex-shrink: 0;
+		margin-block-start: 0;
 		width: 16px;
 		height: 16px;
 		fill: currentColor;
-	}
-}
-
-// Inside a Calypso button, `.button.is-borderless.is-compact .gridicon` (and friends) resize and
-// nudge icons. Repeat the rule with more specificity so the pill's icon stays 16px and centred.
-.backup-known-threats__badge .gridicon,
-.button.is-borderless.is-compact.backup-known-threats__toggle .backup-known-threats__badge .gridicon,
-.components-button.backup-known-threats__toggle .backup-known-threats__badge .gridicon {
-	position: static;
-	top: 0;
-	margin-block-start: 0;
-	width: 16px;
-	height: 16px;
-}
-
-// Visually just the pill: drop the toggle button's own colour, padding and height.
-.button.is-compact.is-borderless.backup-known-threats__toggle,
-.components-button.backup-known-threats__toggle {
-	height: auto;
-	min-width: 0;
-	padding: 0;
-	border-radius: var( --wpds-border-radius-lg, 8px );
-	color: inherit;
-
-	&:hover:not( :disabled ),
-	&:active:not( :disabled ) {
-		color: inherit;
-		background: transparent;
-	}
-
-	&:focus:not( :disabled ),
-	&:focus-visible:not( :disabled ) {
-		color: inherit;
-		box-shadow: 0 0 0 2px var( --color-accent );
-	}
-
-	.backup-known-threats__badge {
-		margin-inline-end: 0;
 	}
 }
 

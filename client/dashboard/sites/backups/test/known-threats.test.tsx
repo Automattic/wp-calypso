@@ -294,21 +294,17 @@ test( 'expands the threats list for Scan sites', async () => {
 		} );
 	renderPage( { withScan: true, backups: flaggedBackups, selected: flaggedRewindId } );
 
-	const toggle = await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
-	expect( toggle ).toHaveTextContent( 'Known threats (3)' );
+	const toggle = await screen.findByRole( 'button', { name: 'Show threats (3)' } );
+	expect( toggle ).toHaveTextContent( 'Show threats (3)' );
 	expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
 	expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
 	expect( screen.queryByText( 'Show threats' ) ).not.toBeInTheDocument();
 	expect( toggle ).not.toHaveAccessibleDescription( 'Show threats' );
 	await user.unhover( toggle );
 	expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
-	const pill = within( toggle ).getByText( 'Known threats (3)' );
-	expect( pill ).toHaveClass( 'dashboard-known-threats-badge' );
-	expect( pill.querySelector( 'svg' ) ).toBeInTheDocument();
-	// The warning icon and, at the end of the pill, the chevron.
-	expect( toggle.querySelectorAll( 'svg' ) ).toHaveLength( 2 );
-	expect( toggle.querySelector( 'svg' )?.parentElement ).toBe( pill );
-	expect( pill.lastElementChild?.tagName ).toBe( 'svg' );
+	// Not the badge: no "Known threats" label or warning icon, only the chevron.
+	expect( within( toggle ).queryByText( /Known threats/ ) ).not.toBeInTheDocument();
+	expect( toggle.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
 	expect(
 		screen.getByText(
 			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.',
@@ -354,7 +350,7 @@ test( 'expands the threats list for Scan sites', async () => {
 		'is-next-40px-default-size'
 	);
 	expect( threatsScope.isDone() ).toBe( true );
-	const expanded = screen.getByRole( 'button', { name: 'Known threats (3), hide threats' } );
+	const expanded = screen.getByRole( 'button', { name: 'Hide threats (3)' } );
 	expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
 	await user.unhover( expanded );
 	expect( expanded ).not.toHaveAccessibleDescription( 'Hide threats' );
@@ -369,7 +365,7 @@ test( 'points the toggle at a loading, then failed, threats region while open', 
 		.reply( 500, {} );
 	renderPage( { withScan: true, backups: flaggedBackups, selected: flaggedRewindId } );
 
-	const toggle = await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
+	const toggle = await screen.findByRole( 'button', { name: 'Show threats (3)' } );
 	expect( toggle ).not.toHaveAttribute( 'aria-controls' );
 	await user.click( toggle );
 
@@ -392,7 +388,7 @@ test( 'hides the restore link when the latest clean backup is this one', async (
 		latestWithout: 1792244301,
 	} );
 
-	await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
+	await screen.findByRole( 'button', { name: 'Show threats (3)' } );
 	expect( screen.queryByRole( 'link', { name: /^Restore .+ instead$/ } ) ).toBeNull();
 } );
 
@@ -410,7 +406,7 @@ test( 'uses the singular vulnerable note for one version', async () => {
 		} );
 	renderPage( { withScan: true, backups: flaggedBackups, selected: flaggedRewindId } );
 
-	await user.click( await screen.findByRole( 'button', { name: /show threats/ } ) );
+	await user.click( await screen.findByRole( 'button', { name: /^Show threats/ } ) );
 
 	expect( await screen.findByText( 'Also: 1 vulnerable plugin or theme version.' ) ).toBeVisible();
 } );

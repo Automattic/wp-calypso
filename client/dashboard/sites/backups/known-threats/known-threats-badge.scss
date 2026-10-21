@@ -19,22 +19,3 @@
 		fill: currentColor;
 	}
 }
-
-// Visually just the pill: drop the tertiary Button's own colour and padding.
-.components-button.dashboard-known-threats-toggle {
-	height: auto;
-	padding: 0;
-	border-radius: var( --wpds-border-radius-lg, 8px );
-	color: inherit;
-
-	&:hover:not( :disabled ),
-	&:active:not( :disabled ) {
-		color: inherit;
-		background: transparent;
-	}
-
-	&:focus:not( :disabled ) {
-		color: inherit;
-		box-shadow: 0 0 0 var( --wp-admin-border-width-focus, 2px ) var( --wp-components-color-accent );
-	}
-}
