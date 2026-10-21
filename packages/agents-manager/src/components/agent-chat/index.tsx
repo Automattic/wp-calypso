@@ -14,6 +14,7 @@ import {
 import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../../constants';
 import {
 	useAgentticSuggestionClick,
 	type SuggestionClickHandler,
@@ -134,15 +135,6 @@ const EditorHistoryBridge = lazyComponent(
 	() => import( /* webpackChunkName: "am-editor-history-bridge" */ '../editor-history-bridge' )
 );
 
-const DEFAULT_ACCEPTED_IMAGE_TYPES = [
-	'image/jpeg',
-	'image/png',
-	'image/heic',
-	'image/heif',
-	'image/heic-sequence',
-	'image/heif-sequence',
-];
-
 /**
  * Returns the empty-view greeting: the host's `agentsManagerData.emptyViewHeading`,
  * else the Reader chat or orchestrator default.
@@ -201,7 +193,7 @@ export default function AgentChat( {
 	isChatInputDisabled,
 	isCompactMode = false,
 	imageUpload,
-	acceptedImageFileTypes = DEFAULT_ACCEPTED_IMAGE_TYPES,
+	acceptedImageFileTypes = DEFAULT_ACCEPTED_UPLOAD_TYPES,
 	showFeedbackInput = false,
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},

@@ -494,7 +494,12 @@ class Layout extends Component {
 							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
 						/>
 					) }
-					<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
+					<AsyncLoad
+						require={ loadGlobalNotices }
+						placeholder={ null }
+						loadFailureFallback={ null }
+						id="notices"
+					/>
 					{ ! ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) && (
 						<>
 							<div id="secondary" className="layout__secondary" role="navigation">
@@ -524,7 +529,11 @@ class Layout extends Component {
 					<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
 				) }
 				{ config.isEnabled( 'cookie-banner' ) && (
-					<AsyncLoad require={ loadCookieBanner } placeholder={ null } />
+					<AsyncLoad
+						require={ loadCookieBanner }
+						placeholder={ null }
+						loadFailureFallback={ null }
+					/>
 				) }
 				{ config.isEnabled( 'layout/app-banner' ) && (
 					<AsyncLoad require={ loadAppBanner } placeholder={ null } />

@@ -49,6 +49,8 @@ interface Measured {
 	isImageBlock: boolean;
 	/** The image's box, for an image block whose image could be measured. */
 	image?: Box;
+	/** Whether the block paints its own box: a background, border or shadow. */
+	paints: boolean;
 }
 
 /** A visible box; `hidden` for a block with no layout, `unknown` for one that cannot be read. */
@@ -96,6 +98,30 @@ function toBox( rect: DOMRect, scale: number, scrollX: number, scrollY: number )
 
 const hasSize = ( rect: DOMRect ): boolean => rect.width > 0 && rect.height > 0;
 
+const isSet = ( value: string ): boolean => !! value && value !== 'none';
+
+// Computed colours serialise with an alpha only below 1: `rgba(r, g, b, a)`,
+// or `color(space c1 c2 c3 / a)`.
+const isTransparent = ( colour: string ): boolean =>
+	! colour ||
+	colour === 'transparent' ||
+	/^rgba\((?:[^,]*,){3}\s*0(?:\.0*)?\s*\)$/.test( colour ) ||
+	/\/\s*0(?:\.0*)?\s*\)$/.test( colour );
+
+function paintsBox( style: CSSStyleDeclaration ): boolean {
+	return (
+		! isTransparent( style.backgroundColor ) ||
+		isSet( style.backgroundImage ) ||
+		isSet( style.boxShadow ) ||
+		[
+			style.borderTopWidth,
+			style.borderRightWidth,
+			style.borderBottomWidth,
+			style.borderLeftWidth,
+		].some( ( width ) => parseFloat( width ) > 0 )
+	);
+}
+
 function measure(
 	canvasDocument: Document,
 	clientId: string,
@@ -130,6 +156,7 @@ function measure(
 		block: toCanvasBox( rect ),
 		isImageBlock,
 		...( imageRect && { image: toCanvasBox( imageRect ) } ),
+		paints: !! view && paintsBox( view.getComputedStyle( element ) ),
 	};
 }
 
@@ -153,8 +180,9 @@ function createMeasurer() {
 		return measured.get( clientId ) ?? null;
 	};
 
-	// An image block shows its image; a container, what its children show; any
-	// other block, its own box. A container is as unknown as any child of it.
+	// An image block shows its image; a container, what its children show, or
+	// its own box as well when it paints one, as a card does; any other block,
+	// its own box. A container is as unknown as any child of it.
 	const visibleOf = ( clientId: string ): Visible => {
 		const known = visible.get( clientId );
 
@@ -179,7 +207,11 @@ function createMeasurer() {
 			} else {
 				const childBoxes = children.filter( isBox );
 
-				box = childBoxes.length ? union( childBoxes ) : item.block;
+				if ( item.paints ) {
+					box = union( [ item.block, ...childBoxes ] );
+				} else {
+					box = childBoxes.length ? union( childBoxes ) : item.block;
+				}
 			}
 		}
 

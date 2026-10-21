@@ -1,7 +1,15 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
+import { useQuery as useDataQuery } from '@tanstack/react-query';
+import { useReducedMotion } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getBuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
+import {
+	BUILD_WOW_STREAMING_FLAG,
+	getBuildWowGraph,
+} from 'calypso/landing/stepper/utils/build-wow';
+import { useBuildWowStream } from './stream/use-build-wow-stream';
 import { useSiteGeneration } from './use-site-generation';
 import { SiteGenerationView } from './view';
 import type { Step as StepType } from '../../types';
@@ -11,6 +19,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const translate = useTranslate();
 	const query = useMemo( () => new URLSearchParams( window.location.search ), [] );
 	const siteIdentifier = query.get( 'siteId' ) || query.get( 'siteSlug' );
+	const siteSlug = query.get( 'siteSlug' );
 	const source = query.get( 'source' );
 	const specId = query.get( 'specId' );
 	const graph = getBuildWowGraph( query );
@@ -30,7 +39,27 @@ const SiteGeneration: StepType = function SiteGeneration() {
 		],
 		[ translate ]
 	);
-	const state = useSiteGeneration( { siteIdentifier, source, specId, graph, steps } );
+	const [ previewReady, setPreviewReady ] = useState( false );
+	const shouldReduceMotion = useReducedMotion();
+	const state = useSiteGeneration( {
+		siteIdentifier,
+		source,
+		specId,
+		graph,
+		steps,
+		completionDelayMs: previewReady && ! shouldReduceMotion ? 2600 : 0,
+	} );
+	const streamingEnabled = config.isEnabled( BUILD_WOW_STREAMING_FLAG );
+	const { data: isAutomattician = false } = useDataQuery( {
+		...isAutomatticianQuery(),
+		enabled: streamingEnabled,
+	} );
+	const streamingAllowed = streamingEnabled && isAutomattician;
+	const stream = useBuildWowStream( streamingAllowed ? ( state.streamInfo ?? null ) : null );
+	// The build only asks for a feed; the server may decline it. Show the live
+	// canvas once the status response advertises a stream, even before the
+	// event subscription delivers its first state.
+	const streamRequested = streamingAllowed && Boolean( state.streamInfo );
 
 	const reload = () => {
 		window.location.reload();
@@ -39,7 +68,15 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	return (
 		<>
 			<DocumentHead title={ translate( 'Generating your site' ) } />
-			<SiteGenerationView graph={ graph } onReload={ reload } state={ state } />
+			<SiteGenerationView
+				graph={ graph }
+				onReload={ reload }
+				onPreviewReady={ setPreviewReady }
+				siteSlug={ siteSlug }
+				state={ state }
+				stream={ streamingAllowed ? stream : null }
+				streamRequested={ streamRequested }
+			/>
 		</>
 	);
 };

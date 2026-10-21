@@ -35,7 +35,7 @@ it( 'adapts the real draft allowance to one exact paid pool with its server rese
 		],
 	} );
 } );
-it( 'gives other chats the dot status for a valid snapshot and nothing for an unknown one', () => {
+it( 'gives other chats the meter status for a valid snapshot and nothing for an unknown one', () => {
 	const snapshot = creditSnapshot();
 	expect( parseLiveCreditsStatus( snapshot, 123 ) ).toEqual( buildLiveCreditsStatus( snapshot ) );
 	expect( parseLiveCreditsStatus( snapshot, 456 ) ).toBeUndefined();
@@ -148,6 +148,57 @@ describe( 'getCreditsPurchaseLink', () => {
 	it( 'gives an unknown plan no link', () => {
 		window.history.replaceState( {}, '', SAVED_POST );
 		expect( getCreditsPurchaseLink( statusOn( undefined ), 123, true ) ).toBeUndefined();
+	} );
+
+	describe( 'the chat’s session', () => {
+		const LINKS = [
+			[ 'Upgrade', 'premium', 'https://wordpress.com/plans/example.wordpress.com', {} ],
+			[
+				'Add credits',
+				'business',
+				'https://wordpress.com/checkout/example.wordpress.com/ai-credits-lifetime:-q-100000',
+				{ redirect_to: HOME, cancel_to: HOME },
+			],
+		] as const;
+
+		it.each( LINKS )(
+			'goes on %s as ai_session_id, beside its other parameters',
+			( _label, planTier, page, returns ) => {
+				const link = getCreditsPurchaseLink(
+					statusOn( planTier ),
+					'example.wordpress.com',
+					false,
+					'5c2b0b4e-session'
+				);
+				expect( partsOf( link?.url ) ).toEqual( {
+					page,
+					query: {
+						source: 'wp_ai_credits',
+						ai_session_id: '5c2b0b4e-session',
+						...returns,
+					},
+				} );
+			}
+		);
+
+		it.each(
+			LINKS.flatMap( ( [ label, planTier ] ) =>
+				[ undefined, '', 'none' ].map(
+					( aiSessionId ) => [ label, aiSessionId, planTier ] as const
+				)
+			)
+		)( 'leaves %s without ai_session_id for the session %p', ( _label, aiSessionId, planTier ) => {
+			const link = getCreditsPurchaseLink(
+				statusOn( planTier ),
+				'example.wordpress.com',
+				false,
+				aiSessionId
+			);
+			expect( partsOf( link?.url ).query ).not.toHaveProperty( 'ai_session_id' );
+			expect( link ).toEqual(
+				getCreditsPurchaseLink( statusOn( planTier ), 'example.wordpress.com', false )
+			);
+		} );
 	} );
 } );
 it.each( [

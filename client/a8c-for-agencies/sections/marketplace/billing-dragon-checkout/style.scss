@@ -1,4 +1,4 @@
-@import "@wordpress/base-styles/breakpoints";
+@import '@wordpress/base-styles/breakpoints';
 
 /*.theme-a8c-for-agencies:has(.client-checkout-v2) {
 	.layout.has-no-masterbar .layout__content {
@@ -16,8 +16,22 @@
 	padding: 24px 16px 16px;
 	z-index: 1000;
 
-	@media (max-width: $break-large) {
+	@media ( max-width: $break-large ) {
 		position: relative;
 		justify-content: center;
+	}
+}
+
+.client-checkout-v2-pressable-top-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 16px;
+	padding-block: 16px;
+	padding-inline: 24px;
+
+	@media ( max-width: $break-large ) {
+		padding-inline: 16px;
 	}
 }

@@ -46,14 +46,7 @@
 		},
 		{
 			groupName: 'webpack packages',
-			matchPackageNames: [
-				'style-loader',
-				'html-loader',
-				'exports-loader',
-				'loader-utils',
-				'postcss-loader',
-				'css-loader',
-			],
+			matchPackageNames: [ 'html-loader', 'postcss-loader', 'css-loader' ],
 			matchPackagePatterns: [ 'webpack', 'terser' ],
 			excludePackagePatterns: [ '^@storybook' ],
 			prPriority: 2,

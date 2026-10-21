@@ -1,16 +1,17 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
-import { useEffect, useState, type TransitionEvent } from 'react';
+import { useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
-import { init as initStore, store } from '../panel/state';
+import { store } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
+import { interceptLinks } from '../panel/utils/link-interceptor';
 import { getClient, initClient } from './client';
 import { AppProvider } from './context';
 import ErrorBoundary from './error-boundary';
@@ -97,7 +98,14 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
 
 	return (
-		<HStack className="wpnc-app" spacing={ 0 } alignment="stretch">
+		<HStack
+			className="wpnc-app"
+			spacing={ 0 }
+			alignment="stretch"
+			onClick={ ( event: MouseEvent< HTMLDivElement > ) =>
+				store.dispatch( interceptLinks( event ) )
+			}
+		>
 			<div
 				className={ clsx( 'wpnc-app__detail-pane', { 'is-open': isDetailOpen } ) }
 				onTransitionEnd={ handleDetailPaneTransitionEnd }
@@ -139,7 +147,6 @@ const NotificationApp = ( {
 	isSimplifiedNoteEnabled = false,
 	preferences,
 	onPreferenceChange,
-	customEnhancer,
 	actionHandlers = {},
 	wpcom,
 }: {
@@ -149,7 +156,6 @@ const NotificationApp = ( {
 	isSimplifiedNoteEnabled?: boolean;
 	preferences?: NotificationPreferences;
 	onPreferenceChange?: ( key: string, value: unknown ) => Promise< unknown >;
-	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
 } ) => {
@@ -179,12 +185,6 @@ const NotificationApp = ( {
 		hasResolvedPreferences = true;
 		applyPreferences( preferences );
 	}, [ preferences ] );
-
-	useEffect( () => {
-		if ( customEnhancer ) {
-			initStore( { customEnhancer } );
-		}
-	}, [ customEnhancer ] );
 
 	useEffect( () => {
 		getClient()?.setLocale( locale );

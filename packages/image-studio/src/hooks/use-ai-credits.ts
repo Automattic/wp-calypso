@@ -11,6 +11,7 @@ import {
 } from '@automattic/agents-manager';
 import { useEvent } from '@wordpress/compose';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import { getSessionId } from '../utils/session';
 import {
 	getImageStudioBlogId,
 	getImageStudioIsDevMode,
@@ -83,8 +84,14 @@ function getSiteCreditsBlogId(): number | null {
 	return getImageStudioSiteType() === 'jetpack' ? null : getImageStudioBlogId();
 }
 
+/** The link carries the session the click event sends as `ai_session_id`. */
 function getSitePurchaseLink( status: PaidCreditsStatus, blogId: number ) {
-	return getCreditsPurchaseLink( status, blogId, getImageStudioSiteType() === 'simple' );
+	return getCreditsPurchaseLink(
+		status,
+		blogId,
+		getImageStudioSiteType() === 'simple',
+		getSessionId()
+	);
 }
 
 /** Resolves to undefined when the site is not on AI credits or the request fails. */
@@ -119,9 +126,9 @@ export interface AiCreditsState {
 	isLoading: boolean;
 	/** For the chat config: a turn's final update carries the new balance. */
 	onTaskUpdate: ( update: TaskUpdate ) => void;
-	/** For the chat container: at zero, blocks Send and opens the dot's details, keeping the draft. */
+	/** For the chat container: at zero, blocks Send and opens the meter's details, keeping the draft. */
 	beforeSubmit: () => boolean;
-	/** The Agent's credits dot, for sites on a paid plan. */
+	/** The Agent's credits meter, for sites on a paid plan. */
 	meter?: {
 		status: CreditsStatus;
 		/** Upgrade or Add credits, by the site's plan. Its click joins the notice's events. */
@@ -223,7 +230,7 @@ export function useAiCredits( {
 		}
 	);
 
-	// The Agent's parser, so the notice, the send block and the dot always agree. An unreadable
+	// The Agent's parser, so the notice, the send block and the meter always agree. An unreadable
 	// balance keeps whatever was known, so a fluke never clears or shows a notice.
 	const applyCredits = useEvent(
 		( snapshot: unknown, trigger: UpgradeNoticeTrigger, holdNotice = false ) => {
@@ -236,7 +243,7 @@ export function useAiCredits( {
 			}
 			latestStatus.current = next;
 			const level = getSiteCreditsLevel( next.remaining );
-			// A known balance running out opens the dot's details once. The first read stays quiet.
+			// A known balance running out opens the meter's details once. The first read stays quiet.
 			if ( level === 'out' && shown.current.level !== undefined && shown.current.level !== 'out' ) {
 				openMeter( next, level, 'exhausted' );
 			}

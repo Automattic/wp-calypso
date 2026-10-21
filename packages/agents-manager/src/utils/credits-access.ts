@@ -20,11 +20,11 @@ export interface CreditsPurchaseOptions {
 	/** Which purchase `purchaseUrl` starts; set together with it. */
 	purchaseKind?: CreditsPurchaseKind;
 	askToUpgrade?: CreditsAskToUpgrade;
-	/** The dot's details message, shown in place of the purchase button. */
+	/** The meter's details message, shown in place of the purchase button. */
 	purchaseHint?: string;
 }
 
-/** A purchase link, shaped like the chat notice's link action so one object serves the notice and the dot. */
+/** A purchase link, shaped like the chat notice's link action so one object serves the notice and the meter. */
 export interface CreditsPurchaseAction {
 	label: string;
 	href: string;

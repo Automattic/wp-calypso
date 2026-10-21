@@ -1,11 +1,20 @@
 /**
  * @jest-environment jsdom
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, renderHook } from '@testing-library/react';
 import { ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { localNumber } from '../../utils/__tests__/fixtures/local-number';
-import { CREDITS_LOW_BALANCE, getCreditsLabel, getCreditsTone } from '../../utils/credits';
+import {
+	NO_SITE,
+	clearSessionId,
+	saveSessionId,
+	setSessionSiteKey,
+	setSessionUserId,
+} from '../../utils/agent-session';
+import { CREDITS_LOW_BALANCE, getCreditsLabel, isCreditsAlert } from '../../utils/credits';
+import { setResolvedAgentId } from '../../utils/resolved-agent-id';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { useCredits } from '../use-credits';
 import type { AgentConfig } from '../../utils/create-agent-config';
@@ -41,6 +50,7 @@ jest.mock( '@wordpress/i18n', () => ( {
 } ) );
 jest.mock( '../../components/credits-meter', () => () => null );
 jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
+jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
 
 const authProvider = jest.fn();
 const agentConfig: AgentConfig = {
@@ -207,6 +217,101 @@ describe( 'return address', () => {
 		const { result } = renderCredits();
 		await flush();
 		expect( returnsOf( result.current ) ).toEqual( { redirectTo: returnUrl, cancelTo: returnUrl } );
+	} );
+} );
+describe( 'session', () => {
+	const LINKS = [
+		[ 'Upgrade', 'premium', UPGRADE_URL ],
+		[ 'Add credits', 'business', ADD_CREDITS_URL ],
+	] as const;
+	const sessionOf = ( href?: string ) => new URL( href ?? '' ).searchParams.get( 'ai_session_id' );
+	const hrefs = ( value: ReturnType< typeof useCredits > ) => ( {
+		notice: value.notice?.action?.href,
+		popover: props( value ).action?.href,
+	} );
+	const both = ( url: string ) => ( { notice: url, popover: url } );
+	const withSession = ( url: string, aiSessionId: string ) =>
+		url.replace( 'source=wp_ai_credits', `source=wp_ai_credits&ai_session_id=${ aiSessionId }` );
+
+	beforeEach( () => {
+		// The scope the chat publishes for its Tracks events.
+		setResolvedAgentId( 'wp-orchestrator' );
+		setSessionSiteKey( '123' );
+		setSessionUserId( 1 );
+	} );
+	afterEach( () => {
+		sessionStorage.clear();
+		setResolvedAgentId( undefined );
+		setSessionSiteKey( NO_SITE );
+		setSessionUserId( undefined );
+		jest.mocked( recordAgentsManagerTracksEvent ).mockReset();
+	} );
+
+	it.each( LINKS )(
+		'adds the chat’s session to %s in the notice and the popover, keeping the rest',
+		async ( _label, plan_tier, url ) => {
+			saveSessionId( 'session-a' );
+			fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier } ) );
+			const { result } = renderCredits();
+			await flush();
+			expect( hrefs( result.current ) ).toEqual( both( withSession( url, 'session-a' ) ) );
+		}
+	);
+
+	it.each( LINKS )(
+		'leaves %s without a session before the chat has one',
+		async ( _label, plan_tier, url ) => {
+			fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier } ) );
+			const { result } = renderCredits();
+			await flush();
+			expect( hrefs( result.current ) ).toEqual( both( url ) );
+		}
+	);
+
+	it( 'sends the click event the session its link carries', async () => {
+		const tracks =
+			jest.requireActual< typeof import( '../../utils/tracks' ) >( '../../utils/tracks' );
+		jest
+			.mocked( recordAgentsManagerTracksEvent )
+			.mockImplementation( tracks.recordAgentsManagerTracksEvent );
+		jest.mocked( recordTracksEvent ).mockClear();
+		saveSessionId( 'session-a' );
+		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'business' } ) );
+		const { result } = renderCredits();
+		await flush();
+
+		act( () => result.current.notice?.action?.onClick?.() );
+		act( () => props( result.current ).action?.onClick?.() );
+
+		const clicks = jest
+			.mocked( recordTracksEvent )
+			.mock.calls.filter( ( [ name ] ) => name === 'calypso_agents_manager_credits_cta_clicked' );
+		expect( clicks.map( ( [ , eventProps ] ) => eventProps?.ai_session_id ) ).toEqual( [
+			sessionOf( hrefs( result.current ).notice ),
+			sessionOf( hrefs( result.current ).popover ),
+		] );
+		expect( sessionOf( hrefs( result.current ).notice ) ).toBe( 'session-a' );
+	} );
+
+	it( 'follows a new conversation in the same tab', async () => {
+		saveSessionId( 'session-a' );
+		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'premium' } ) );
+		const view = renderCredits();
+		await flush();
+		expect( hrefs( view.result.current ) ).toEqual(
+			both( withSession( UPGRADE_URL, 'session-a' ) )
+		);
+
+		// A new chat clears the session, and the server assigns the next one in its first turn.
+		clearSessionId();
+		view.rerender( defaultOptions );
+		expect( hrefs( view.result.current ) ).toEqual( both( UPGRADE_URL ) );
+
+		saveSessionId( 'session-b' );
+		await receive( { ...exhausted(), plan_tier: 'premium' } );
+		expect( hrefs( view.result.current ) ).toEqual(
+			both( withSession( UPGRADE_URL, 'session-b' ) )
+		);
 	} );
 } );
 it.each( [ undefined, null, 'unsupported' ] )(
@@ -609,7 +714,7 @@ it.each( [
 	}
 );
 
-it( 'turns the dot red by amount through depletion and replenishment', async () => {
+it( 'switches the meter to its alert icon by amount through depletion and replenishment', async () => {
 	const balance = ( remaining: number ) =>
 		creditSnapshot( {
 			credits_limit: 100000,
@@ -620,28 +725,28 @@ it( 'turns the dot red by amount through depletion and replenishment', async () 
 	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
 	const { result } = renderCredits();
 	await flush();
-	// The dot and the notice share one rule, so the dot is red exactly when a notice would show.
-	const expectDot = ( tone: 'muted' | 'error', message?: string ) => {
-		const actual = getCreditsTone( props( result.current ).status );
-		expect( actual ).toBe( tone );
+	// The meter and the notice share one rule, so the alert icon shows exactly when a notice would.
+	const expectAlert = ( isAlert: boolean, message?: string ) => {
+		const actual = isCreditsAlert( props( result.current ).status );
+		expect( actual ).toBe( isAlert );
 		expect( result.current.notice?.message ).toBe( message );
-		expect( result.current.notice !== undefined ).toBe( actual === 'error' );
+		expect( result.current.notice !== undefined ).toBe( actual );
 	};
-	expectDot( 'muted' );
-	for ( const [ remaining, tone, message ] of [
-		[ 10000, 'muted', undefined ],
-		[ 9999, 'error', `${ localNumber( 9.9 ) }k credits left.` ],
-		[ 800, 'error', `${ localNumber( 800 ) } credits left.` ],
-		[ 0, 'error', 'You’ve used all your site credits.' ],
+	expectAlert( false );
+	for ( const [ remaining, isAlert, message ] of [
+		[ 10000, false, undefined ],
+		[ 9999, true, `${ localNumber( 9.9 ) }k credits left.` ],
+		[ 800, true, `${ localNumber( 800 ) } credits left.` ],
+		[ 0, true, 'You’ve used all your site credits.' ],
 	] as const ) {
 		await receive( balance( remaining ) );
 		expect( props( result.current ).status.remaining ).toBe( remaining );
-		expectDot( tone, message );
+		expectAlert( isAlert, message );
 	}
 	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
 	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
 	await flush();
-	expectDot( 'muted' );
+	expectAlert( false );
 } );
 
 it.each( [ 'GET', 'terminal' ] )(
@@ -1380,7 +1485,7 @@ it( 'clears old amounts after cancellation/error without terminal metadata, incl
 	expect( fetchMock ).not.toHaveBeenCalled();
 } );
 it.each( [ 'focus', 'online', 'visibilitychange' ] )(
-	'keeps the dot and its open popover visible during a %s refresh',
+	'keeps the meter and its open popover visible during a %s refresh',
 	async ( event ) => {
 		const read = deferred< ReturnType< typeof response > >();
 		fetchMock
@@ -1388,7 +1493,7 @@ it.each( [ 'focus', 'online', 'visibilitychange' ] )(
 			.mockReturnValueOnce( read.promise );
 		const { result } = renderCredits();
 		await flush();
-		// Clicking the dot can focus the sidebar's window before opening the popover.
+		// Clicking the meter can focus the sidebar's window before opening the popover.
 		act( () => {
 			( event === 'visibilitychange' ? document : window ).dispatchEvent( new Event( event ) );
 			props( result.current ).onToggle( true );
@@ -1833,7 +1938,7 @@ describe( 'credits Tracks events', () => {
 		).toHaveLength( 1 );
 	} );
 
-	it( 'records a click on the dot as ok on a healthy balance, only when it opens', async () => {
+	it( 'records a click on the meter as ok on a healthy balance, only when it opens', async () => {
 		fetchMock.mockResolvedValueOnce( response( healthy() ) );
 		const { result } = renderCredits( freshScope() );
 		await flush();

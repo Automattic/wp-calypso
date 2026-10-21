@@ -97,7 +97,7 @@ interface UseCreditsOptions {
 
 export interface UseCreditsResult {
 	chat: UseAgentChatReturn;
-	/** Dot + popover; hidden until this site returns valid allowance metadata. */
+	/** Meter + popover; hidden until this site returns valid allowance metadata. */
 	trailingActions?: TrailingActions;
 	/** Dismissible low-credit notice, or a persistent exhausted notice. */
 	notice?: NoticeConfig;

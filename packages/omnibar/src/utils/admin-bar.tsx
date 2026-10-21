@@ -149,11 +149,10 @@ export function buildOmnibarNodesFromAdminBarNodes(
 
 		if ( builder ) {
 			Object.assign( omnibarNode, built );
+		}
 
-			// The tree walk skips `top-secondary`, so a builder is what surfaces those nodes.
-			if ( node.parent === 'top-secondary' ) {
-				pluginNodes.push( omnibarNode );
-			}
+		if ( node.parent === 'top-secondary' && omnibarNode !== omnibarNodes.user ) {
+			pluginNodes.push( omnibarNode );
 		}
 
 		nodeMap.set( node.id, omnibarNode );
