@@ -86,6 +86,8 @@ const simplify = (
 	}
 
 	const replyId = item.meta?.ids?.reply_comment;
+	// The summary leaves out the reply icon the subject shows when you've replied,
+	// so add it back as a zero-width noticon range at the start of the text.
 	const replyIconRanges: Range[] = replyId
 		? [ { type: 'noticon', value: REPLY_NOTICON, indices: [ 0, 0 ], id: replyId, parent: null } ]
 		: [];
