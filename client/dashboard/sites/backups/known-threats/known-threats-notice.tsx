@@ -16,7 +16,7 @@ import { hasHostingFeature } from '../../../utils/site-features';
 import { getKnownThreatsWarning, KnownThreatsToggle } from './known-threats-badge';
 import { KnownThreatsTable } from './known-threats-table';
 import { RestoreThatOneInsteadLink } from './restore-that-one-instead-link';
-import type { Site } from '@automattic/api-core';
+import type { BackupKnownThreats, Site } from '@automattic/api-core';
 import type { MutableRefObject } from 'react';
 
 import './known-threats-notice.scss';
@@ -33,6 +33,8 @@ interface KnownThreatsNoticeProps {
 	acknowledgementRef?: MutableRefObject< HTMLInputElement | null >;
 	/** Said when the box is ticked; say where the restore button is if it isn't the next stop. */
 	acknowledgedMessage?: string;
+	/** Counts from a server refusal to restore without the acknowledgement; flagged is 0 when it sent none. */
+	refusedKnownThreats?: BackupKnownThreats | null;
 }
 
 export default function KnownThreatsNotice( {
@@ -45,6 +47,7 @@ export default function KnownThreatsNotice( {
 	onKnownThreatsChange,
 	acknowledgementRef,
 	acknowledgedMessage,
+	refusedKnownThreats,
 }: KnownThreatsNoticeProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const threatsRegionId = useId();
@@ -64,10 +67,19 @@ export default function KnownThreatsNotice( {
 		enabled: hasScan && isOpen && counts?.backupPeriod != null,
 	} );
 
-	const knownThreats = counts?.knownThreats;
-	const hasKnownThreats = !! knownThreats && isFlagged( knownThreats );
+	// The server refuses a restore it knows is flagged even when this lookup failed or missed it.
+	const isRefused = ! isFlagged( counts?.knownThreats ) && !! refusedKnownThreats;
+	const knownThreats = isRefused ? refusedKnownThreats : counts?.knownThreats;
+	const flagged = knownThreats?.flagged ?? 0;
+	const hasKnownThreats = isRefused || flagged > 0;
 
-	const warning = hasKnownThreats ? getKnownThreatsWarning( knownThreats.flagged ) : '';
+	let warning = '';
+	if ( hasKnownThreats ) {
+		warning =
+			flagged > 0
+				? getKnownThreatsWarning( flagged )
+				: __( 'This backup is known to contain security threats. Acknowledge them to restore it.' );
+	}
 
 	useEffect( () => {
 		onKnownThreatsChange?.( hasKnownThreats );
@@ -80,7 +92,7 @@ export default function KnownThreatsNotice( {
 		}
 	}, [ hasKnownThreats, warning ] );
 
-	if ( ! knownThreats || ! hasKnownThreats ) {
+	if ( ! hasKnownThreats ) {
 		return null;
 	}
 
@@ -88,10 +100,10 @@ export default function KnownThreatsNotice( {
 		<Notice variant="warning">
 			<VStack spacing={ 3 }>
 				<Text>{ warning }</Text>
-				{ hasScan && (
+				{ hasScan && flagged > 0 && counts?.backupPeriod != null && (
 					<div>
 						<KnownThreatsToggle
-							count={ knownThreats.flagged }
+							count={ flagged }
 							isOpen={ isOpen }
 							onToggle={ () => setIsOpen( ( open ) => ! open ) }
 							controlsId={ threatsRegionId }
@@ -126,8 +138,8 @@ export default function KnownThreatsNotice( {
 					siteId={ site.ID }
 					siteSlug={ site.slug }
 					restoreLinkTo={ restoreLinkTo }
-					latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-					currentBackupPeriod={ counts.backupPeriod }
+					latestWithoutKnownThreats={ counts?.latestWithoutKnownThreats }
+					currentBackupPeriod={ counts?.backupPeriod }
 				/>
 				{ requireAcknowledgement && (
 					<div className="known-threats-notice__acknowledgement" ref={ acknowledgementWrapperRef }>
