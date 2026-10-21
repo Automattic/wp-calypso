@@ -43,6 +43,7 @@ import type {
 } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
+import type { InteractiveUiCatalogOptions } from '@automattic/ai-ui-renderer';
 import type { ReactNode } from 'react';
 
 /**
@@ -187,6 +188,8 @@ export interface LoadedProviders {
 	suppressEmptyViewDefaults?: boolean;
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
+	/** Interactive UI components and functions, added to Agents Manager's catalog. */
+	interactiveUi?: Pick< InteractiveUiCatalogOptions, 'components' | 'functions' >;
 	useAbilitiesSetup?: AbilitiesSetupHook;
 	useSuggestions?: UseSuggestionsHook;
 	getChatComponent?: GetChatComponent;
@@ -649,6 +652,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allContextProviders: ContextProvider[] = isBigSkySite ? [ bigSkyPageContextProvider ] : [];
 	const allMarkdownComponents: MarkdownComponents[] = [];
 	const allMarkdownExtensions: MarkdownExtensions[] = [];
+	const allInteractiveUi: NonNullable< LoadedProviders[ 'interactiveUi' ] >[] = [];
 	const allGetChatComponents: GetChatComponent[] = [];
 	const allTransformMessages: TransformMessages[] = [];
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
@@ -733,6 +737,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.markdownExtensions ) {
 			allMarkdownExtensions.push( module.markdownExtensions );
+		}
+		if ( module.interactiveUi ) {
+			allInteractiveUi.push( module.interactiveUi );
 		}
 
 		// First-write-wins for the singleton export.
@@ -895,6 +902,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		};
 	}
 
+	// Merge interactiveUi: every provider's components and functions, in registration order.
+	const mergedInteractiveUi = {
+		components: allInteractiveUi.flatMap( ( { components = [] } ) => components ),
+		functions: allInteractiveUi.flatMap( ( { functions = [] } ) => functions ),
+	};
+
 	setLoadedProviderIds( allProviderIds );
 
 	return {
@@ -903,6 +916,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		getEmptyViewSuggestions: mergedGetEmptyViewSuggestions,
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: { ...defaultMarkdownExtensions, ...mergedMarkdownExtensions },
+		interactiveUi: mergedInteractiveUi,
 		providerIds: allProviderIds.length ? allProviderIds : undefined,
 		useAbilitiesSetup: mergedAbilitiesSetup,
 		onTaskUpdate: isEditor ? handlePageDesignTaskUpdate : undefined,

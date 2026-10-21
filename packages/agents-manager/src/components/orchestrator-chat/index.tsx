@@ -58,6 +58,7 @@ import type { BigSkyMessage } from '../../types';
 import type {
 	AbilitiesSetupHook,
 	GetChatComponent,
+	LoadedProviders,
 	UseSuggestionsHook,
 	SiteBuildUtils,
 	TransformMessages,
@@ -92,6 +93,8 @@ interface Props {
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
+	/** The providers' interactive UI components and functions. */
+	interactiveUi?: LoadedProviders[ 'interactiveUi' ];
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
 	/** Rewrite the transcript before it is displayed. See `TransformMessages`. */
@@ -120,6 +123,7 @@ export default function OrchestratorChat( {
 	useProviderAbilitiesSetup,
 	useSuggestions,
 	getChatComponent,
+	interactiveUi,
 	siteBuildUtils,
 	transformMessages,
 	useCheckpoint,
@@ -460,6 +464,7 @@ export default function OrchestratorChat( {
 		isProcessing: isProcessing || isUploadingImages,
 		agentConfig,
 		submitContextMessage,
+		interactiveUi,
 	} );
 
 	const messageCount = displayedMessages.length;

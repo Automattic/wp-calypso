@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { attachInteractiveUiPresentation } from '../utils/convert-interactive-ui-messages-to-components';
+import { createInteractiveUiCatalogs } from '../utils/interactive-ui-catalogs';
 import { getInteractiveUiBatches, INTERACTIVE_UI_VERSION } from '../utils/interactive-ui-messages';
 import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
 import type { AgentConfig } from '../utils/create-agent-config';
+import type { InteractiveUiRenderer } from '../utils/interactive-ui-catalogs';
+import type { LoadedProviders } from '../utils/load-external-providers';
 import type { UIMessage, SubmitOptions } from '@automattic/agenttic-client';
 import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
-
-type InteractiveUiRenderer = typeof import( '@automattic/ai-ui-renderer' );
 
 interface UseInteractiveUiOptions {
 	convertedMessages: AgentsManagerUIMessage[];
@@ -15,6 +16,8 @@ interface UseInteractiveUiOptions {
 	isProcessing: boolean;
 	agentConfig: AgentConfig | null;
 	submitContextMessage: ( message: string, options: SubmitOptions ) => Promise< void >;
+	/** The providers' interactive UI components and functions. */
+	interactiveUi: LoadedProviders[ 'interactiveUi' ];
 }
 
 export interface InteractiveUiPresentation {
@@ -41,6 +44,7 @@ export function useInteractiveUi( {
 	isProcessing,
 	agentConfig,
 	submitContextMessage,
+	interactiveUi,
 }: UseInteractiveUiOptions ) {
 	const actionInputsRef = useRef( { agentConfig, isProcessing, submitContextMessage } );
 	actionInputsRef.current = { agentConfig, isProcessing, submitContextMessage };
@@ -84,6 +88,11 @@ export function useInteractiveUi( {
 	const hasLoadError = ! renderer && failedLoadAttempt !== undefined;
 	const isRetryingLoad = hasLoadError && failedLoadAttempt < loadAttempt;
 
+	const catalogs = useMemo(
+		() => renderer && createInteractiveUiCatalogs( renderer, interactiveUi ),
+		[ renderer, interactiveUi ]
+	);
+
 	// Dispose of the runtime when the conversation changes or the chat unmounts.
 	useEffect( () => {
 		return () => {
@@ -95,7 +104,7 @@ export function useInteractiveUi( {
 
 	// Apply new batches once the reply has streamed, so a surface never changes mid-stream.
 	useEffect( () => {
-		if ( ! renderer || isProcessing ) {
+		if ( ! renderer || ! catalogs || isProcessing ) {
 			return;
 		}
 
@@ -117,7 +126,7 @@ export function useInteractiveUi( {
 
 		if ( newBatches.length > 0 && ! conversationSession.runtime ) {
 			conversationSession.runtime = renderer.createInteractiveUiRuntime( {
-				catalog: renderer.createInteractiveUiCatalog(),
+				catalogs,
 				onAction: async ( action ) => {
 					const latestInputs = actionInputsRef.current;
 
@@ -131,6 +140,10 @@ export function useInteractiveUi( {
 						type: 'context',
 						sessionId: latestInputs.agentConfig.sessionId,
 					} );
+				},
+				onError: ( error ) => {
+					// eslint-disable-next-line no-console
+					console.error( '[AgentsManager] Interactive UI error:', error );
 				},
 			} );
 		}
@@ -148,7 +161,7 @@ export function useInteractiveUi( {
 			( batch ) => batch.signature
 		);
 		setRuntimeRevision( ( currentRevision ) => currentRevision + 1 );
-	}, [ messageBatches, isProcessing, renderer, conversationSession ] );
+	}, [ messageBatches, isProcessing, renderer, catalogs, conversationSession ] );
 
 	const presentation = useMemo< InteractiveUiPresentation >(
 		() => ( {

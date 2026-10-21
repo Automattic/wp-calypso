@@ -49,8 +49,9 @@ function createPresentation( {
 	hasLoadError?: boolean;
 } ): InteractiveUiPresentation {
 	const runtime = createInteractiveUiRuntime( {
-		catalog: createInteractiveUiCatalog(),
+		catalogs: [ createInteractiveUiCatalog() ],
 		onAction: jest.fn(),
+		onError: jest.fn(),
 	} );
 
 	if ( surfaceOwnerId ) {
