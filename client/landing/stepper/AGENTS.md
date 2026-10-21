@@ -184,12 +184,11 @@ export default myFlow;
 
 ### AI / other
 
-| `STEPS.*` constant                    | slug                 | Purpose                        |
-| ------------------------------------- | -------------------- | ------------------------------ |
-| `LAUNCH_BIG_SKY`                      | `launch-big-sky`     | BigSky AI site builder         |
-| `SETUP_YOUR_SITE_AI`                  | `setup-your-site-ai` | AI-assisted site setup         |
-| `BLUEPRINT`                           | `blueprint`          | Blueprint template selection   |
-| `READYMADE_TEMPLATE_GENERATE_CONTENT` | `generateContent`    | Generate content from template |
+| `STEPS.*` constant   | slug                 | Purpose                      |
+| -------------------- | -------------------- | ---------------------------- |
+| `LAUNCH_BIG_SKY`     | `launch-big-sky`     | BigSky AI site builder       |
+| `SETUP_YOUR_SITE_AI` | `setup-your-site-ai` | AI-assisted site setup       |
+| `BLUEPRINT`          | `blueprint`          | Blueprint template selection |
 
 ## Step customization — what the flow can change without touching step code
 

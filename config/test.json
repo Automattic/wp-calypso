@@ -102,7 +102,6 @@
 		"reader/four-for-four": true,
 		"reader/msd-enabled": true,
 		"reader/saved-posts": true,
-		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": false,
 		"security/security-checkup": true,
