@@ -82,8 +82,14 @@ $button-border: 4px;
 		padding: 24px 44px;
 
 		@media screen and ( min-width: 960px ) {
-			padding: 24px 20px;
+			padding: 24px $theme-sheet-content-padding-x;
 		}
+	}
+
+	// NavigationHeader is border-box while the columns below are content-box, so
+	// its max-width has to include the padding for the breadcrumb to line up.
+	.theme__sheet .navigation-header {
+		max-width: $theme-sheet-content-max-width + 2 * $theme-sheet-content-padding-x;
 	}
 }
 
