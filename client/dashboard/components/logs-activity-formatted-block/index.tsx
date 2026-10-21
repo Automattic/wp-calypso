@@ -14,10 +14,9 @@
  * // Renders: Updated <a href="/reader/blogs/123/posts/456">Hello World</a>
  */
 import { ExternalLink } from '@wordpress/components';
-import { Fragment, type MouseEvent, type ReactNode } from 'react';
+import { createContext, Fragment, useContext, type MouseEvent, type ReactNode } from 'react';
 import isA8CForAgencies from '../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../lib/jetpack/is-jetpack-cloud';
-import { useAppContext } from '../../app/context';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import type { ActivityBlockContent, ActivityBlockNode, ActivityBlockMeta } from './types';
@@ -222,13 +221,19 @@ const Theme: BlockRenderer = ( { content, children, onClick, meta } ) => {
 const isInDashboardApp = () =>
 	! isDashboardBackport() && ! isJetpackCloud() && ! isA8CForAgencies();
 
+/**
+ * Whether backup ranges open the backup's details. The dashboard provides it from its `AppConfig`;
+ * classic Calypso also renders these blocks, so this module must not import the dashboard app.
+ */
+export const BackupDetailsLinksContext = createContext( false );
+
 // A component rather than a plain renderer, because renderers are called as functions and can't use hooks.
 function BackupBlock( { content, children, onClick, meta }: Parameters< BlockRenderer >[ 0 ] ) {
-	const { supports } = useAppContext();
+	const backupDetailsLinks = useContext( BackupDetailsLinksContext );
 	const { url, siteSlug, rewindId, activity, intent, section } = content;
 
 	const backupDetailsPath =
-		! url && siteSlug && rewindId && supports.backupDetailsLinks && isInDashboardApp()
+		! url && siteSlug && rewindId && backupDetailsLinks && isInDashboardApp()
 			? `/sites/${ siteSlug }/backups/${ rewindId }`
 			: null;
 	const href = url ?? ( siteSlug ? `/backup/${ siteSlug }` : null );
