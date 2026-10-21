@@ -253,27 +253,24 @@ describe( 'KnownThreatsNotice', () => {
 			} );
 		nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
 		renderWithProvider( <Harness /> );
-		const toggle = await screen.findByRole( 'button', { name: 'Show threats (3)' } );
+		const toggle = await screen.findByRole( 'button', { name: 'Show threats' } );
 		expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
 		expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
 		// Not the badge: no warning icon, only the chevron.
 		expect( toggle.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
-		expect( toggle.parentElement ).toHaveClass( 'rewind-flow-known-threats__details' );
+		expect( toggle.closest( '.rewind-flow-known-threats__details' ) ).toBeInTheDocument();
 		const banner = screen.getByText( NOTICE ).closest( '.rewind-flow-notice' );
 		expect( banner ).toBeInTheDocument();
 		expect( banner ).toContainElement( toggle );
 		expect( banner ).toContainElement( screen.getByRole( 'checkbox', { name: CHECKBOX } ) );
-		expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Show threats' ) ).not.toBeInTheDocument();
 		expect( toggle ).not.toHaveAccessibleDescription( 'Show threats' );
 		await userEvent.unhover( toggle );
 		await userEvent.click( toggle );
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
-		const expanded = screen.getByRole( 'button', { name: 'Hide threats (3)' } );
+		const expanded = screen.getByRole( 'button', { name: 'Hide threats' } );
 		expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
 		await userEvent.unhover( expanded );
 		expect( expanded ).not.toHaveAccessibleDescription( 'Hide threats' );
-		expect( screen.queryByRole( 'button', { name: 'Hide threats' } ) ).not.toBeInTheDocument();
 		const link = await screen.findByRole( 'link', { name: /^Restore .+ backup instead$/ } );
 		expect( link ).toHaveAttribute( 'href', '/backup/example.wordpress.com/restore/150.817' );
 		expect( banner ).toContainElement( link );
@@ -289,7 +286,7 @@ describe( 'KnownThreatsNotice', () => {
 		nock( BASE ).get( THREATS_PATH ).query( true ).delay( 300 ).reply( 500, {} );
 		renderWithProvider( <Harness /> );
 
-		const toggle = await screen.findByRole( 'button', { name: 'Show threats (3)' } );
+		const toggle = await screen.findByRole( 'button', { name: 'Show threats' } );
 		expect( toggle ).not.toHaveAttribute( 'aria-controls' );
 		await userEvent.click( toggle );
 

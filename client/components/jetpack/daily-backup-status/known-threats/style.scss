@@ -42,6 +42,11 @@
 	}
 }
 
+// The row's gap spaces the badge from the toggle.
+.backup-known-threats__summary .backup-known-threats__badge {
+	margin-inline-end: 0;
+}
+
 .backup-known-threats__status {
 	display: flex;
 	align-items: center;

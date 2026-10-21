@@ -7,7 +7,13 @@ import {
 import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Spinner, Tooltip, VisuallyHidden } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	Button,
+	Spinner,
+	Tooltip,
+	VisuallyHidden,
+} from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useId, useState } from 'react';
@@ -362,12 +368,11 @@ export function KnownThreatsToggleButton( {
 	const warningId = useId();
 	// In the card toolbar the warning isn't shown nearby, so screen readers get it as the description.
 	const warning = inToolbar ? getKnownThreatsWarning( translate, flagged ) : null;
-	// Not the badge's look or label: a badge must not read as something to click.
-	const button = (
+	// The badge never acts as a control; the link beside it shows and hides the list.
+	const toggle = (
 		<Button
 			__next40pxDefaultSize
-			variant="secondary"
-			size="compact"
+			variant="link"
 			icon={ isOpen ? chevronUp : chevronDown }
 			iconPosition="right"
 			className="backup-known-threats__toggle"
@@ -377,32 +382,36 @@ export function KnownThreatsToggleButton( {
 			onClick={ onToggle }
 		>
 			{ isOpen
-				? translate( 'Hide threats (%d)', {
-						args: flagged,
-						comment:
-							'%d is the number of known security threats in a backup; the button hides the list of threats',
+				? translate( 'Hide threats', {
+						comment: 'Hides the list of known security threats in a backup',
 					} )
-				: translate( 'Show threats (%d)', {
-						args: flagged,
-						comment:
-							'%d is the number of known security threats in a backup; the button shows the list of threats',
+				: translate( 'Show threats', {
+						comment: 'Shows the list of known security threats in a backup',
 					} ) }
 		</Button>
 	);
 
 	return (
-		<>
+		<HStack
+			spacing={ 2 }
+			justify="flex-start"
+			expanded={ false }
+			wrap
+			className="backup-known-threats__summary"
+		>
 			{ warning ? (
-				// Shows sighted users the warning; Tooltip leaves the existing description alone,
-				// so screen readers don't hear it twice.
+				// Hovering the badge shows the warning; screen readers get it as the toggle's description.
 				<Tooltip text={ String( warning ) } className="backup-known-threats__tooltip">
-					{ button }
+					<span>
+						<KnownThreatsBadge flagged={ flagged } />
+					</span>
 				</Tooltip>
 			) : (
-				button
+				<KnownThreatsBadge flagged={ flagged } />
 			) }
+			{ toggle }
 			{ warning && <VisuallyHidden id={ warningId }>{ warning }</VisuallyHidden> }
-		</>
+		</HStack>
 	);
 }
 

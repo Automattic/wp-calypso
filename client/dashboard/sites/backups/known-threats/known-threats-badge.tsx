@@ -1,4 +1,10 @@
-import { Button, Icon, Tooltip, VisuallyHidden } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	Button,
+	Icon,
+	Tooltip,
+	VisuallyHidden,
+} from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { caution, chevronDown, chevronUp } from '@wordpress/icons';
 import './known-threats-badge.scss';
@@ -65,23 +71,25 @@ export function KnownThreatsToggle( {
 	onToggle,
 	controlsId,
 }: KnownThreatsToggleProps ) {
-	// Not the badge's look or label: a badge must not read as something to click.
+	// The badge never acts as a control; the link beside it shows and hides the list.
 	return (
-		<Button
-			__next40pxDefaultSize
-			variant="secondary"
-			size="compact"
-			icon={ isOpen ? chevronUp : chevronDown }
-			iconPosition="right"
-			aria-expanded={ isOpen }
-			aria-controls={ isOpen ? controlsId : undefined }
-			onClick={ onToggle }
-		>
-			{ isOpen
-				? /* translators: %d is the number of known security threats in a backup; the button hides the list of threats */
-					sprintf( __( 'Hide threats (%d)' ), count )
-				: /* translators: %d is the number of known security threats in a backup; the button shows the list of threats */
-					sprintf( __( 'Show threats (%d)' ), count ) }
-		</Button>
+		<HStack spacing={ 2 } justify="flex-start" expanded={ false } wrap>
+			<KnownThreatsBadge count={ count } />
+			<Button
+				__next40pxDefaultSize
+				variant="link"
+				icon={ isOpen ? chevronUp : chevronDown }
+				iconPosition="right"
+				aria-expanded={ isOpen }
+				aria-controls={ isOpen ? controlsId : undefined }
+				onClick={ onToggle }
+			>
+				{ isOpen
+					? /* translators: Hides the list of known security threats in a backup. */
+						__( 'Hide threats' )
+					: /* translators: Shows the list of known security threats in a backup. */
+						__( 'Show threats' ) }
+			</Button>
+		</HStack>
 	);
 }
