@@ -343,8 +343,8 @@ export function getKnownThreatsWarning(
 
 interface BackupKnownThreatsToggleProps {
 	state: BackupKnownThreatsState;
-	/** In the activity card toolbar, where the warning isn't shown nearby. */
-	inToolbar?: boolean;
+	/** Where the warning isn't shown nearby: the badge, with the warning as its tooltip, comes first. */
+	withBadge?: boolean;
 }
 
 interface KnownThreatsToggleButtonProps {
@@ -353,8 +353,8 @@ interface KnownThreatsToggleButtonProps {
 	onToggle: () => void;
 	/** The id of the region the toggle shows; referenced only while it is open. */
 	controlsId?: string;
-	/** In the activity card toolbar, where the warning isn't shown nearby. */
-	inToolbar?: boolean;
+	/** Where the warning isn't shown nearby: the badge, with the warning as its tooltip, comes first. */
+	withBadge?: boolean;
 }
 
 export function KnownThreatsToggleButton( {
@@ -362,17 +362,18 @@ export function KnownThreatsToggleButton( {
 	isOpen,
 	onToggle,
 	controlsId,
-	inToolbar,
+	withBadge,
 }: KnownThreatsToggleButtonProps ) {
 	const translate = useTranslate();
 	const warningId = useId();
-	// In the card toolbar the warning isn't shown nearby, so screen readers get it as the description.
-	const warning = inToolbar ? getKnownThreatsWarning( translate, flagged ) : null;
-	// The badge never acts as a control; the link beside it shows and hides the list.
+	// Where the warning isn't shown nearby, screen readers get it as the toggle's description.
+	const warning = withBadge ? getKnownThreatsWarning( translate, flagged ) : null;
+	// Beside the badge it's a link; alone, under the warning, an outlined button.
 	const toggle = (
 		<Button
 			__next40pxDefaultSize
-			variant="link"
+			variant={ withBadge ? 'link' : 'secondary' }
+			size={ withBadge ? undefined : 'compact' }
 			icon={ isOpen ? chevronUp : chevronDown }
 			iconPosition="right"
 			className="backup-known-threats__toggle"
@@ -391,6 +392,11 @@ export function KnownThreatsToggleButton( {
 		</Button>
 	);
 
+	// Beside the warning the count is already said, so the badge would only repeat it.
+	if ( ! warning ) {
+		return toggle;
+	}
+
 	return (
 		<HStack
 			spacing={ 2 }
@@ -399,23 +405,19 @@ export function KnownThreatsToggleButton( {
 			wrap
 			className="backup-known-threats__summary"
 		>
-			{ warning ? (
-				// Hovering the badge shows the warning; screen readers get it as the toggle's description.
-				<Tooltip text={ String( warning ) } className="backup-known-threats__tooltip">
-					<span>
-						<KnownThreatsBadge flagged={ flagged } />
-					</span>
-				</Tooltip>
-			) : (
-				<KnownThreatsBadge flagged={ flagged } />
-			) }
+			{ /* Hovering the badge shows the warning; screen readers get it as the toggle's description. */ }
+			<Tooltip text={ String( warning ) } className="backup-known-threats__tooltip">
+				<span>
+					<KnownThreatsBadge flagged={ flagged } />
+				</span>
+			</Tooltip>
 			{ toggle }
-			{ warning && <VisuallyHidden id={ warningId }>{ warning }</VisuallyHidden> }
+			<VisuallyHidden id={ warningId }>{ warning }</VisuallyHidden>
 		</HStack>
 	);
 }
 
-export function BackupKnownThreatsToggle( { state, inToolbar }: BackupKnownThreatsToggleProps ) {
+export function BackupKnownThreatsToggle( { state, withBadge }: BackupKnownThreatsToggleProps ) {
 	const { flagged, hasScan, isOpen, toggle, detailsId } = state;
 
 	if ( flagged === null ) {
@@ -432,7 +434,7 @@ export function BackupKnownThreatsToggle( { state, inToolbar }: BackupKnownThrea
 			isOpen={ isOpen }
 			onToggle={ toggle }
 			controlsId={ detailsId }
-			inToolbar={ inToolbar }
+			withBadge={ withBadge }
 		/>
 	);
 }
@@ -523,7 +525,7 @@ export function BackupKnownThreats( {
 
 	return (
 		<div className="backup-known-threats">
-			<BackupKnownThreatsToggle state={ state } />
+			<BackupKnownThreatsToggle state={ state } withBadge />
 			<BackupKnownThreatsDetails state={ state } />
 			{ showRestoreLink && <BackupKnownThreatsRestoreLink state={ state } /> }
 		</div>

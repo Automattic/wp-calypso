@@ -259,6 +259,8 @@ describe( 'KnownThreatsNotice', () => {
 		// Not the badge: no warning icon, only the chevron.
 		expect( toggle.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
 		expect( toggle.closest( '.rewind-flow-known-threats__details' ) ).toBeInTheDocument();
+		// The banner already says how many threats there are, so no badge repeats it.
+		expect( screen.queryByText( 'Known threats (3)' ) ).not.toBeInTheDocument();
 		const banner = screen.getByText( NOTICE ).closest( '.rewind-flow-notice' );
 		expect( banner ).toBeInTheDocument();
 		expect( banner ).toContainElement( toggle );

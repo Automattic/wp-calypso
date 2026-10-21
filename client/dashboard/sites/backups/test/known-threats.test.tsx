@@ -303,11 +303,10 @@ test( 'expands the threats list for Scan sites', async () => {
 	// Not the badge: no "Known threats" label or warning icon, only the chevron.
 	expect( within( toggle ).queryByText( /Known threats/ ) ).not.toBeInTheDocument();
 	expect( toggle.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
-	// The badge sits beside the toggle and is never a control itself.
+	// The warning above already gives the count, so no badge sits beside the toggle.
 	expect(
-		within( toggle.parentElement as HTMLElement ).getByText( 'Known threats (3)' )
-	).toBeVisible();
-	expect( screen.queryByRole( 'button', { name: /Known threats/ } ) ).not.toBeInTheDocument();
+		within( toggle.parentElement as HTMLElement ).queryByText( 'Known threats (3)' )
+	).not.toBeInTheDocument();
 	expect(
 		screen.getByText(
 			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.',

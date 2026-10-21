@@ -78,7 +78,6 @@ export default function KnownThreatsNotice( {
 				{ hasScan && (
 					<div>
 						<KnownThreatsToggle
-							count={ knownThreats.flagged }
 							isOpen={ isOpen }
 							onToggle={ () => setIsOpen( ( open ) => ! open ) }
 							controlsId={ threatsRegionId }
