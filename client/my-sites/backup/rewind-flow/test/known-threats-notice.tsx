@@ -260,10 +260,11 @@ describe( 'KnownThreatsNotice', () => {
 			} );
 		nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
 		renderWithProvider( <Harness /> );
-		const toggle = await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
+		const toggle = await screen.findByRole( 'button', { name: 'Show threats (3)' } );
 		expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
 		expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
-		expect( toggle.querySelector( '.gridicons-notice-outline' ) ).toBeInTheDocument();
+		// Not the badge: no warning icon, only the chevron.
+		expect( toggle.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
 		expect( toggle.parentElement ).toHaveClass( 'rewind-flow-known-threats__details' );
 		const banner = screen.getByText( NOTICE ).closest( '.rewind-flow-notice' );
 		expect( banner ).toBeInTheDocument();
@@ -275,7 +276,7 @@ describe( 'KnownThreatsNotice', () => {
 		await userEvent.unhover( toggle );
 		await userEvent.click( toggle );
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
-		const expanded = screen.getByRole( 'button', { name: 'Known threats (3), hide threats' } );
+		const expanded = screen.getByRole( 'button', { name: 'Hide threats (3)' } );
 		expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
 		await userEvent.unhover( expanded );
 		expect( expanded ).not.toHaveAccessibleDescription( 'Hide threats' );
@@ -295,7 +296,7 @@ describe( 'KnownThreatsNotice', () => {
 		nock( BASE ).get( THREATS_PATH ).query( true ).delay( 300 ).reply( 500, {} );
 		renderWithProvider( <Harness /> );
 
-		const toggle = await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
+		const toggle = await screen.findByRole( 'button', { name: 'Show threats (3)' } );
 		expect( toggle ).not.toHaveAttribute( 'aria-controls' );
 		await userEvent.click( toggle );
 

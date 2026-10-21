@@ -21,15 +21,12 @@ interface KnownThreatsBadgeProps {
 	showWarning?: boolean;
 	/** Set to false where the tooltip can't be reached, e.g. under a clickable row. */
 	withTooltip?: boolean;
-	/** Set where the badge toggles the threats: it then ends with a chevron showing which way. */
-	isOpen?: boolean;
 }
 
 export function KnownThreatsBadge( {
 	count,
 	showWarning = false,
 	withTooltip = true,
-	isOpen,
 }: KnownThreatsBadgeProps ) {
 	const badge = (
 		<span className="dashboard-known-threats-badge">
@@ -38,9 +35,6 @@ export function KnownThreatsBadge( {
 				/* translators: %d is the number of known security threats in a backup */
 				sprintf( __( 'Known threats (%d)' ), count )
 			}
-			{ isOpen !== undefined && (
-				<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 16 } fill="currentColor" />
-			) }
 		</span>
 	);
 
@@ -71,25 +65,23 @@ export function KnownThreatsToggle( {
 	onToggle,
 	controlsId,
 }: KnownThreatsToggleProps ) {
-	const ariaLabel = isOpen
-		? /* translators: %d is the number of known security threats in a backup; the button hides the list of threats */
-			sprintf( __( 'Known threats (%d), hide threats' ), count )
-		: /* translators: %d is the number of known security threats in a backup; the button shows the list of threats */
-			sprintf( __( 'Known threats (%d), show threats' ), count );
-
-	// No tooltip: it could only repeat the label.
+	// Not the badge's look or label: a badge must not read as something to click.
 	return (
 		<Button
 			__next40pxDefaultSize
-			variant="tertiary"
+			variant="secondary"
 			size="compact"
-			className="dashboard-known-threats-toggle"
-			aria-label={ ariaLabel }
+			icon={ isOpen ? chevronUp : chevronDown }
+			iconPosition="right"
 			aria-expanded={ isOpen }
 			aria-controls={ isOpen ? controlsId : undefined }
 			onClick={ onToggle }
 		>
-			<KnownThreatsBadge count={ count } isOpen={ isOpen } />
+			{ isOpen
+				? /* translators: %d is the number of known security threats in a backup; the button hides the list of threats */
+					sprintf( __( 'Hide threats (%d)' ), count )
+				: /* translators: %d is the number of known security threats in a backup; the button shows the list of threats */
+					sprintf( __( 'Show threats (%d)' ), count ) }
 		</Button>
 	);
 }

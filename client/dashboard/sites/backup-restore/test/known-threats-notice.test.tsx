@@ -381,7 +381,7 @@ test( 'shows the restore link once when the threats are expanded', async () => {
 	mockBackups( { known_threats: knownThreats( 3 ) } );
 	renderForm();
 
-	const toggle = await screen.findByRole( 'button', { name: 'Known threats (3), show threats' } );
+	const toggle = await screen.findByRole( 'button', { name: 'Show threats (3)' } );
 	expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
 	expect( toggle.querySelector( 'svg' ) ).toBeInTheDocument();
 	expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
@@ -393,7 +393,7 @@ test( 'shows the restore link once when the threats are expanded', async () => {
 	expect(
 		await screen.findByRole( 'list', { name: 'Known threats in this backup' } )
 	).toBeVisible();
-	const expanded = screen.getByRole( 'button', { name: 'Known threats (3), hide threats' } );
+	const expanded = screen.getByRole( 'button', { name: 'Hide threats (3)' } );
 	expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
 	await user.unhover( expanded );
 	expect( expanded ).not.toHaveAccessibleDescription( 'Hide threats' );

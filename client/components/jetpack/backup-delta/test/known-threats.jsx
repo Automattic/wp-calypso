@@ -145,7 +145,7 @@ describe( 'BackupDelta known threats', () => {
 		);
 
 		const button = await screen.findByRole( 'button', {
-			name: 'Known threats (3), show threats',
+			name: 'Show threats (3)',
 		} );
 		const cards = document.querySelectorAll( '.activity-card' );
 		expect( cards ).toHaveLength( 2 );
