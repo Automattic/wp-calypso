@@ -2,6 +2,7 @@ import './form.scss';
 import { siteCommentsEditorQuery } from '@automattic/api-queries';
 import { Button, FormInputValidation } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
+import { Button as WPButton } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -39,6 +40,18 @@ class PostCommentForm extends Component {
 	state = {
 		haveFocus: false,
 		editorFailed: false,
+		// Bumped to start the editor over, since it keeps its own content once mounted.
+		editorKey: 0,
+	};
+
+	handleCancel = () => {
+		if ( this.props.parentCommentId && this.props.onReplyCancel ) {
+			this.props.onReplyCancel();
+			return;
+		}
+
+		this.resetCommentText();
+		this.setState( ( { editorKey } ) => ( { haveFocus: false, editorKey: editorKey + 1 } ) );
 	};
 
 	handleKeyDown = ( event ) => {
@@ -199,23 +212,43 @@ class PostCommentForm extends Component {
 		} );
 
 		const isReply = !! this.props.parentCommentId;
+		const { composer } = this.props;
+		let submitLabel = translate( 'Send' );
+		if ( this.props.error ) {
+			submitLabel = translate( 'Resend' );
+		} else if ( composer ) {
+			submitLabel = translate( 'Reply' );
+		}
 		const placeholder = translate( 'Add a comment…' );
 
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
+		const avatar = (
+			<UserAvatar
+				user={ {
+					avatar_URL: currentUser?.avatar_URL,
+					wpcom_login: currentUser?.username,
+				} }
+				size={ composer ? 36 : undefined }
+				hideHovercard
+			/>
+		);
+
 		return (
-			<form className="comments__form">
+			<form className={ clsx( 'comments__form', { 'is-composer': composer } ) }>
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
 				<FormFieldset>
-					<UserAvatar
-						user={ {
-							avatar_URL: currentUser?.avatar_URL,
-							wpcom_login: currentUser?.username,
-						} }
-						hideHovercard
-					/>
+					{ composer ? (
+						<div className="comments__form-author">
+							{ avatar }
+							<span className="comments__form-author-name">{ currentUser?.display_name }</span>
+						</div>
+					) : (
+						avatar
+					) }
 					{ this.props.editorSettings && ! this.state.editorFailed ? (
 						<CommentBlockEditor
+							key={ this.state.editorKey }
 							settings={ this.props.editorSettings }
 							value={ this.getCommentText() }
 							placeholder={ placeholder }
@@ -240,13 +273,31 @@ class PostCommentForm extends Component {
 							siteId={ post.site_ID }
 						/>
 					) }
-					<Button
-						className={ buttonClasses }
-						disabled={ this.getCommentText().length === 0 }
-						onClick={ this.handleSubmit }
-					>
-						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
-					</Button>
+					{ composer ? (
+						<div className="comments__form-actions">
+							{ ! this.props.placeholderId && (
+								<WPButton __next40pxDefaultSize variant="tertiary" onClick={ this.handleCancel }>
+									{ translate( 'Cancel' ) }
+								</WPButton>
+							) }
+							<WPButton
+								__next40pxDefaultSize
+								variant="primary"
+								disabled={ this.getCommentText().length === 0 }
+								onClick={ this.handleSubmit }
+							>
+								{ submitLabel }
+							</WPButton>
+						</div>
+					) : (
+						<Button
+							className={ buttonClasses }
+							disabled={ this.getCommentText().length === 0 }
+							onClick={ this.handleSubmit }
+						>
+							{ submitLabel }
+						</Button>
+					) }
 					{ error && <PostCommentFormError type={ errorType } /> }
 				</FormFieldset>
 			</form>
@@ -264,7 +315,10 @@ PostCommentForm.propTypes = {
 	isInlineComment: PropTypes.bool,
 	isLogedIn: PropTypes.bool,
 
-	// From withCommentsEditorSettings; set only inside CommentEditorContext on a site with the block editor.
+	onReplyCancel: PropTypes.func,
+
+	// From withCommentsEditorSettings: the inbox's composer layout, and the editor where its site has one.
+	composer: PropTypes.bool,
 	editorSettings: PropTypes.object,
 
 	// connect()ed props:
@@ -299,7 +353,13 @@ const withCommentsEditorSettings = ( WrappedComponent ) => {
 		const query = siteCommentsEditorQuery( props.post?.site_ID );
 		const { data } = useQuery( { ...query, enabled: blockEditor && query.enabled } );
 
-		return <WrappedComponent { ...props } editorSettings={ data?.blocks ? data : undefined } />;
+		return (
+			<WrappedComponent
+				{ ...props }
+				composer={ blockEditor }
+				editorSettings={ data?.blocks ? data : undefined }
+			/>
+		);
 	};
 
 	WithCommentsEditorSettings.displayName = `withCommentsEditorSettings(${

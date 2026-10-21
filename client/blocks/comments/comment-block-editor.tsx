@@ -110,31 +110,36 @@ export default function CommentBlockEditor( {
 			ref={ box }
 			className="comments__block-editor jetpack-comments jetpack-comments__box is-open"
 		>
-			<textarea
-				ref={ textarea }
-				className="comments__block-editor-textarea"
-				hidden={ editor === 'ready' }
-				aria-label={ label }
-				value={ text }
-				// Held while the editor arrives, so nothing typed lands in a box about to go.
-				readOnly={ editor === 'loading' }
-				aria-busy={ editor === 'loading' }
-				// Its loading copy, below, takes the placeholder's place.
-				placeholder={ editor === 'loading' ? '' : placeholder }
-				// eslint-disable-next-line jsx-a11y/no-autofocus
-				autoFocus={ takeFocus }
-				onPointerDown={ () => ( clicked.current = true ) }
-				onFocus={ () => openEditor( true ) }
-				onChange={ ( event ) => onChange( event.target.value ) }
-			/>
-			{ editor === 'loading' && ! text && (
-				<span className="comments__block-editor-loading" aria-hidden="true">
-					{ prompt }
-					<span>.</span>
-					<span>.</span>
-					<span>.</span>
-				</span>
-			) }
+			<div className="comments__block-editor-placeholder" hidden={ editor === 'ready' }>
+				{ /* The toolbar's strip, which the editor's own fills once a block has focus. */ }
+				<div className="comments__block-editor-toolbar" />
+				<div className="comments__block-editor-content">
+					<textarea
+						ref={ textarea }
+						className="comments__block-editor-textarea"
+						aria-label={ label }
+						value={ text }
+						// Held while the editor arrives, so nothing typed lands in a box about to go.
+						readOnly={ editor === 'loading' }
+						aria-busy={ editor === 'loading' }
+						// Its loading copy, below, takes the placeholder's place.
+						placeholder={ editor === 'loading' ? '' : placeholder }
+						// eslint-disable-next-line jsx-a11y/no-autofocus
+						autoFocus={ takeFocus }
+						onPointerDown={ () => ( clicked.current = true ) }
+						onFocus={ () => openEditor( true ) }
+						onChange={ ( event ) => onChange( event.target.value ) }
+					/>
+					{ editor === 'loading' && ! text && (
+						<span className="comments__block-editor-loading" aria-hidden="true">
+							{ prompt }
+							<span>.</span>
+							<span>.</span>
+							<span>.</span>
+						</span>
+					) }
+				</div>
+			</div>
 			<div
 				ref={ container }
 				className="jetpack-comments__editor"

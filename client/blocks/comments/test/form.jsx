@@ -1,18 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { loadScript } from '@automattic/load-script';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { CommentEditorContext } from '../comment-editor-context';
 import PostCommentForm from '../form';
-
-jest.mock( '@automattic/load-script', () => ( {
-	loadScript: jest.fn(),
-} ) );
 
 jest.mock( 'calypso/blocks/user-mentions', () => ( {
 	__esModule: true,
@@ -43,14 +37,12 @@ const defaultProps = {
 	onCommentSubmit: jest.fn(),
 };
 
-const renderForm = ( props = {}, { blockEditor = false } = {} ) => {
+const renderForm = ( props = {} ) => {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
 	return renderWithProvider(
 		<QueryClientProvider client={ queryClient }>
-			<CommentEditorContext.Provider value={ blockEditor }>
-				<PostCommentForm { ...defaultProps } { ...props } />
-			</CommentEditorContext.Provider>
+			<PostCommentForm { ...defaultProps } { ...props } />
 		</QueryClientProvider>,
 		{
 			initialState: {
@@ -70,8 +62,6 @@ describe( 'PostCommentForm', () => {
 
 	beforeEach( () => {
 		nock.cleanAll();
-		loadScript.mockReset();
-		delete window.JetpackCommentsEditor;
 	} );
 
 	describe( 'when comments are open', () => {
@@ -118,171 +108,6 @@ describe( 'PostCommentForm', () => {
 			await userEvent.click( screen.getByRole( 'button', { name: 'Send' } ) );
 
 			expect( request.isDone() ).toBe( true );
-		} );
-	} );
-
-	describe( 'block editor', () => {
-		const settings = {
-			assetsUrl: 'https://s0.wp.com/jetpack-comments/build/',
-			loaderUrl:
-				'https://s0.wp.com/jetpack-comments/build/editor-loader.js?minify=false&ver=abc123',
-			maxLength: 65525,
-			blocks: true,
-			editorLocale: {},
-			editor: {
-				blockTools: 'Block tools',
-				addBlock: 'Add block',
-				embedUrl: '',
-				images: true,
-				imageError: 'This image could not be loaded.',
-			},
-		};
-		const markup = '<!-- wp:paragraph --><p>Hello blocks</p><!-- /wp:paragraph -->';
-
-		// A fresh loader URL per test, since the form caches the loaded editor by URL.
-		let build = 0;
-		const mockEditorSettings = ( status = 200 ) => {
-			const body =
-				status === 200
-					? { ...settings, loaderUrl: `${ settings.loaderUrl }${ ++build }` }
-					: { code: 'editor_not_available' };
-			const request = nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/sites/456/comments/editor' )
-				.query( { _locale: 'user' } )
-				.reply( status, body );
-
-			return { request, body };
-		};
-
-		const mockLoader = () => {
-			const mountEditor = jest.fn();
-			loadScript.mockImplementation( async () => {
-				window.JetpackCommentsEditor = { load: async () => ( { mountEditor } ) };
-			} );
-			return mountEditor;
-		};
-
-		const renderEditorForm = ( props ) => renderForm( props, { blockEditor: true } );
-
-		// The editor's stand-in, which only a site with the block editor gets.
-		const findEditorBox = () => screen.findByRole( 'textbox', { name: 'Comment' } );
-
-		it( 'stays a textarea outside the conversations inbox', async () => {
-			const { request } = mockEditorSettings();
-
-			renderForm();
-			await userEvent.click( screen.getByPlaceholderText( 'Add a comment…' ) );
-
-			expect( request.isDone() ).toBe( false );
-			expect( loadScript ).not.toHaveBeenCalled();
-			expect( screen.getByPlaceholderText( 'Add a comment…' ) ).toBeVisible();
-		} );
-
-		it( "holds the editor's place until the box has focus", async () => {
-			mockEditorSettings();
-			mockLoader();
-
-			renderEditorForm();
-			const box = await findEditorBox();
-
-			expect( box ).toBeVisible();
-			expect( box ).toHaveAttribute( 'placeholder', 'Add a comment…' );
-			expect( loadScript ).not.toHaveBeenCalled();
-		} );
-
-		it( 'keeps the box read-only while the editor loads', async () => {
-			mockEditorSettings();
-			loadScript.mockReturnValue( new Promise( () => {} ) );
-
-			renderEditorForm();
-			const box = await findEditorBox();
-			await userEvent.click( box );
-
-			expect( box ).toHaveAttribute( 'readonly' );
-			expect( box ).toHaveAttribute( 'placeholder', '' );
-			expect( screen.getByText( 'Add a comment' ) ).toBeVisible();
-		} );
-
-		it( 'takes over from the textarea once the box has focus', async () => {
-			const { body } = mockEditorSettings();
-			const mountEditor = mockLoader();
-
-			renderEditorForm();
-			const box = await findEditorBox();
-			await userEvent.click( box );
-
-			await waitFor( () => expect( mountEditor ).toHaveBeenCalledTimes( 1 ) );
-			expect( loadScript ).toHaveBeenCalledWith( body.loaderUrl );
-			expect( mountEditor.mock.calls[ 0 ][ 1 ] ).toMatchObject( {
-				initialContent: '',
-				placeholder: 'Add a comment…',
-				labels: settings.editor,
-			} );
-			expect( box ).not.toBeVisible();
-			expect( screen.getByRole( 'group', { name: 'Comment' } ) ).toBeVisible();
-		} );
-
-		it( 'hands the editor markup to the form as the comment text', async () => {
-			mockEditorSettings();
-			const mountEditor = mockLoader();
-			const onUpdateCommentText = jest.fn();
-
-			renderEditorForm( { onUpdateCommentText } );
-			await userEvent.click( await findEditorBox() );
-			await waitFor( () => expect( mountEditor ).toHaveBeenCalled() );
-
-			mountEditor.mock.calls[ 0 ][ 1 ].onChange( markup );
-
-			expect( onUpdateCommentText ).toHaveBeenCalledWith( markup );
-		} );
-
-		it( 'submits on Cmd+Enter from inside the editor', async () => {
-			mockEditorSettings();
-			const mountEditor = mockLoader();
-			const request = nock( 'https://public-api.wordpress.com' )
-				.post( '/rest/v1.1/sites/456/posts/123/replies/new', { content: markup } )
-				.reply( 200, {
-					ID: 4,
-					content: markup,
-					date: '2026-05-02T00:00:00.000Z',
-					parent: false,
-					post: { ID: 123 },
-					status: 'approved',
-				} );
-
-			renderEditorForm( { commentText: markup } );
-			await waitFor( () => expect( mountEditor ).toHaveBeenCalled() );
-
-			const container = mountEditor.mock.calls[ 0 ][ 0 ];
-			container.dispatchEvent(
-				new KeyboardEvent( 'keydown', { keyCode: 13, metaKey: true, bubbles: true } )
-			);
-
-			await waitFor( () => expect( request.isDone() ).toBe( true ) );
-		} );
-
-		it( 'keeps the textarea when the site has no block editor', async () => {
-			const { request } = mockEditorSettings( 404 );
-
-			renderEditorForm();
-			await userEvent.click( screen.getByPlaceholderText( 'Add a comment…' ) );
-			await waitFor( () => expect( request.isDone() ).toBe( true ) );
-
-			expect( loadScript ).not.toHaveBeenCalled();
-			expect( screen.getByPlaceholderText( 'Add a comment…' ) ).toBeVisible();
-		} );
-
-		it( 'brings the textarea back when the loader fails', async () => {
-			mockEditorSettings();
-			loadScript.mockRejectedValue( new Error( 'blocked' ) );
-
-			renderEditorForm();
-			await userEvent.click( await findEditorBox() );
-
-			await waitFor( () =>
-				expect( screen.queryByRole( 'textbox', { name: 'Comment' } ) ).not.toBeInTheDocument()
-			);
-			expect( screen.getByPlaceholderText( 'Add a comment…' ) ).toBeVisible();
 		} );
 	} );
 
