@@ -1,17 +1,33 @@
+import { __ } from '@wordpress/i18n';
 import { OmnibarHomeNode } from './omnibar-home';
-import { OmnibarSiteActionsNode, OmnibarSiteNode } from './omnibar-site';
+import { OmnibarPluginsNode } from './omnibar-plugins';
+import { OmnibarResponsiveMenu } from './omnibar-responsive-menu';
+import { OmnibarSiteNode } from './omnibar-site';
 import { OmnibarUserNode } from './omnibar-user';
 import type { OmnibarProps } from '../types';
 
 import './omnibar.scss';
 
-export function Omnibar( { nodes }: OmnibarProps ) {
+export function Omnibar( { nodes, onClickResponsiveMenu, className }: OmnibarProps ) {
 	return (
-		<div className="omnibar" role="navigation" aria-label="Toolbar">
+		<div
+			className={ className ? `omnibar ${ className }` : 'omnibar' }
+			role="navigation"
+			aria-label={ __( 'Toolbar' ) }
+		>
+			{ onClickResponsiveMenu && (
+				<OmnibarResponsiveMenu onClickResponsiveMenu={ onClickResponsiveMenu } />
+			) }
 			{ nodes.home && <OmnibarHomeNode node={ nodes.home } /> }
-			{ nodes.site && <OmnibarSiteNode node={ nodes.site } /> }
-			{ nodes.siteActions && <OmnibarSiteActionsNode nodes={ nodes.siteActions } /> }
+			{ nodes.site && (
+				<OmnibarSiteNode
+					node={ nodes.site }
+					pluginNodes={ nodes.sitePlugins }
+					actionNodes={ nodes.siteActions }
+				/>
+			) }
 			<div className="omnibar__secondary">
+				{ nodes.plugins && <OmnibarPluginsNode nodes={ nodes.plugins } /> }
 				{ nodes.user && <OmnibarUserNode node={ nodes.user } /> }
 			</div>
 		</div>

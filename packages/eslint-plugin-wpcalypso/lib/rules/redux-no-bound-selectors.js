@@ -118,7 +118,8 @@ module.exports = {
 				 * which should be readily available in scope.
 				 */
 				const mapStateName = mapStateNode.name;
-				const variable = context.getScope().set.get( mapStateName );
+				const scope = context.sourceCode ? context.sourceCode.getScope( node ) : context.getScope();
+				const variable = scope.set.get( mapStateName );
 				const definition = variable && variable.defs && variable.defs[ 0 ];
 				mapStateBody =
 					definition && definition.node && definition.node.init && definition.node.init.body;

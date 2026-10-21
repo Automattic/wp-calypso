@@ -205,7 +205,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 											/* translators: %(plan)s: name of plan */
 											__( 'Requires a %(plan)s plan.' ),
 											{
-												plan: plan?.getTitle() ?? '',
+												plan: ( plan?.getTitle() ?? '' ) as string,
 											}
 										) }
 									</i>

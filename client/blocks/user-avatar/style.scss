@@ -3,3 +3,13 @@
 		flex-shrink: 0;
 	}
 }
+
+.user-avatar {
+	// The profile link wraps a block-level image wrapper, so the link's own
+	// inline outline collapses; put the keyboard focus ring on the container.
+	&:focus-visible,
+	&:has( a:focus-visible ) {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
+}

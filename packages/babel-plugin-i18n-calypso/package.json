@@ -6,14 +6,14 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
-		"gettext-parser": "^4.0.3",
-		"lodash": "^4.17.21"
+		"gettext-parser": "^4.0.3"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"peerDependencies": {
-		"@babel/core": "^7.27.1"
+		"@babel/core": "^7.29.7"
 	},
 	"publishConfig": {
 		"access": "public"

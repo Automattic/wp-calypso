@@ -1,11 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon, WordPressLogo } from '@automattic/components';
+import { WordPressLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import BluehostLogo from 'calypso/components/bluehost-logo';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
-import type { MutableRefObject } from 'react';
+import type { MutableRefObject, JSX } from 'react';
 
 type Props = {
 	showMainButtonLabel?: boolean;
@@ -16,7 +15,6 @@ type Props = {
 	onClickWpcomMenuItem?: () => void;
 	onClickJetpackMenuItem?: () => void;
 	onClickBluehostMenuItem?: () => void;
-	onClickUrlMenuItem?: () => void;
 };
 
 const AddNewSiteButton = ( {
@@ -28,7 +26,6 @@ const AddNewSiteButton = ( {
 	onClickWpcomMenuItem,
 	onClickJetpackMenuItem,
 	onClickBluehostMenuItem,
-	onClickUrlMenuItem,
 }: Props ): JSX.Element => {
 	const translate = useTranslate();
 
@@ -63,13 +60,6 @@ const AddNewSiteButton = ( {
 				<BluehostLogo size={ 18 } />
 				<span>{ translate( 'Create a new Bluehost site' ) }</span>
 			</PopoverMenuItem>
-
-			{ isEnabled( 'jetpack/url-only-connection' ) && (
-				<PopoverMenuItem onClick={ onClickUrlMenuItem } href="/dashboard/connect-url">
-					<Gridicon icon="domains" size={ 18 } />
-					<span>{ translate( 'Add sites by URL' ) }</span>
-				</PopoverMenuItem>
-			) }
 		</SplitButton>
 	);
 };

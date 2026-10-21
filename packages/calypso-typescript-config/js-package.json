@@ -19,7 +19,7 @@
 		"checkJs": false,
 		"isolatedModules": true,
 
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"types": [],
 		"forceConsistentCasingInFileNames": true
 	}

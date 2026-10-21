@@ -1,4 +1,3 @@
-import { without } from 'lodash';
 import {
 	JETPACK_SYNC_STATUS_REQUEST,
 	JETPACK_SYNC_STATUS_SUCCESS,
@@ -227,17 +226,12 @@ describe( 'reducer', () => {
 			const state = syncStatus( undefined, successfulSyncStatusRequest );
 			expect( state ).toHaveProperty( String( successfulSyncStatusRequest.siteId ) );
 			// legacy sync status will not have `progress` property.
-			without(
-				getExpectedResponseKeys().concat( [
-					'error',
-					'isRequesting',
-					'lastSuccessfulStatus',
-					'errorCounter',
-				] ),
-				'progress'
-			).forEach( ( key ) => {
-				expect( state[ successfulSyncStatusRequest.siteId ] ).toHaveProperty( key );
-			} );
+			getExpectedResponseKeys()
+				.concat( [ 'error', 'isRequesting', 'lastSuccessfulStatus', 'errorCounter' ] )
+				.filter( ( key ) => key !== 'progress' )
+				.forEach( ( key ) => {
+					expect( state[ successfulSyncStatusRequest.siteId ] ).toHaveProperty( key );
+				} );
 		} );
 
 		test( 'should set errorCounter to 0 after a successful request', () => {

@@ -1,6 +1,5 @@
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
-import { map } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_CONTACT_INFO_DISCLOSE,
@@ -45,7 +44,7 @@ export const domainsReceiveAction = ( siteId, domains ) => {
 	const action = {
 		type: SITE_DOMAINS_RECEIVE,
 		siteId,
-		domains: map( domains, createSiteDomainObject ),
+		domains: domains.map( createSiteDomainObject ),
 	};
 
 	debug( 'returning action: %o', action );
@@ -132,7 +131,7 @@ export function fetchSiteDomains( siteId ) {
 						? error.message
 						: translate(
 								'There was a problem fetching site domains. Please try again later or contact support.'
-						  );
+							);
 
 				dispatch( domainsRequestFailureAction( siteId, message ) );
 			} );
@@ -331,7 +330,7 @@ export function fetchDomainDetails( domain ) {
 						? error.message
 						: translate(
 								'There was a problem fetching domain details. Please try again later or contact support.'
-						  );
+							);
 
 				dispatch( domainDetailsRequestFailureAction( domain, message ) );
 			} );

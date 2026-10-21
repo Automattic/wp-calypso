@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import {
-	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
 	DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
@@ -9,11 +8,13 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
+	STATIC_SITE_IMPORT_FLOW,
 	ENTREPRENEUR_FLOW,
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	AI_SITE_BUILDER_FLOW,
+	AI_SITE_BUILDER_ONBOARDING_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_AND_PLAN_FLOW,
@@ -21,6 +22,11 @@ import {
 	FLEX_SITE_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
 	ART_PROMO_FLOW,
+	DIRECT_TO_CART_FLOW,
+	WRITE_ON_FLOW,
+	WRITE_NEW_SITE_FLOW,
+	EDUCATION_FLOW,
+	LAUNCH_SITE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -29,6 +35,12 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 		import(
 			/* webpackChunkName: "new-hosted-site-flow" */ './flows/new-hosted-site-flow/new-hosted-site-flow'
 		),
+
+	[ DIRECT_TO_CART_FLOW ]: () =>
+		import( /* webpackChunkName: "direct-to-cart-flow" */ './flows/direct-to-cart/direct-to-cart' ),
+
+	[ EDUCATION_FLOW ]: () =>
+		import( /* webpackChunkName: "education-flow" */ './flows/education/education' ),
 
 	[ ONBOARDING_FLOW ]: () =>
 		import( /* webpackChunkName: "onboarding-flow" */ './flows/onboarding/onboarding' ),
@@ -66,6 +78,15 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ ART_PROMO_FLOW ]: () =>
 		import( /* webpackChunkName: "artpromo-flow" */ './flows/artpromo/artpromo' ),
+
+	[ WRITE_ON_FLOW ]: () =>
+		import( /* webpackChunkName: "write-on-flow" */ './flows/write-on/write-on' ),
+
+	[ WRITE_NEW_SITE_FLOW ]: () =>
+		import( /* webpackChunkName: "write-new-site-flow" */ './flows/write-new-site/write-new-site' ),
+
+	[ LAUNCH_SITE_FLOW ]: () =>
+		import( /* webpackChunkName: "launch-site-flow" */ './flows/launch-site/launch-site' ),
 };
 
 /**
@@ -86,11 +107,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 			/* webpackChunkName: "entrepreneur-flow" */ './flows/entrepreneur-flow/entrepreneur-flow'
 		),
 
-	'readymade-template': () =>
-		import(
-			/* webpackChunkName: "readymade-template-flow" */ './flows/readymade-template/readymade-template'
-		),
-
 	'update-design': () =>
 		import( /* webpackChunkName: "update-design-flow" */ './flows/update-design/update-design' ),
 
@@ -105,9 +121,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 	build: () => import( /* webpackChunkName: "build-flow" */ './flows/build/build' ),
 
 	write: () => import( /* webpackChunkName: "write-flow" */ './flows/write/write' ),
-
-	[ START_WRITING_FLOW ]: () =>
-		import( /* webpackChunkName: "start-writing-flow" */ './flows/start-writing/start-writing' ),
 
 	[ CONNECT_DOMAIN_FLOW ]: () =>
 		import( /* webpackChunkName: "connect-domain" */ './flows/connect-domain/connect-domain' ),
@@ -143,8 +156,26 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any 
 	config.isEnabled( 'calypso/ai-site-builder-flow' )
 		? {
 				[ AI_SITE_BUILDER_FLOW ]: () => import( './flows/ai-site-builder/ai-site-builder' ),
-		  }
+			}
 		: {};
+
+const staticSiteImportFlow: Record< string, () => Promise< { default: FlowV2< any > } > > =
+	config.isEnabled( 'migration/non-wordpress-source' )
+		? {
+				[ STATIC_SITE_IMPORT_FLOW ]: () =>
+					import(
+						/* webpackChunkName: "static-site-import-flow" */ './flows/static-site-import-flow/static-site-import-flow'
+					),
+			}
+		: {};
+
+const aiSiteBuilderOnboardingFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
+	{
+		[ AI_SITE_BUILDER_ONBOARDING_FLOW ]: () =>
+			import(
+				/* webpackChunkName: "ai-site-builder-onboarding-flow" */ './flows/ai-site-builder-onboarding/ai-site-builder-onboarding'
+			),
+	};
 
 const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
@@ -162,4 +193,6 @@ export default {
 	...deprecatedV1Flows,
 	...hundredYearDomainFlow,
 	...aiSiteBuilderFlows,
+	...aiSiteBuilderOnboardingFlows,
+	...staticSiteImportFlow,
 };

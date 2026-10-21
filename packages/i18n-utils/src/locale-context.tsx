@@ -40,7 +40,11 @@ function mapWpI18nLangToLocaleSlug( locale: Locale = '' ): Locale {
  */
 function getWpI18nLocaleLang(): string | undefined {
 	const localeData = i18n.getLocaleData() || {};
-	return localeData[ '' ]?.lang || localeData[ '' ]?.language || '';
+	const defaultData = localeData[ '' ];
+	if ( ! defaultData || Array.isArray( defaultData ) ) {
+		return '';
+	}
+	return ( defaultData.lang as string ) || ( defaultData.language as string ) || '';
 }
 
 /**

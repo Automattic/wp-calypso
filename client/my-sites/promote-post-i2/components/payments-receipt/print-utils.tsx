@@ -99,8 +99,9 @@ export const printReceipt = (
 			<html lang="en">
 			<head>
 				<title>${ sprintf(
-					/* translators: %d is the payment ID */
-					__( 'WordPress Blaze Payment Receipt - ID %d' ),
+					/* translators: %1$s is the product name, %2$d is the payment ID */
+					__( '%1$s Payment Receipt - ID %2$d' ),
+					'Blaze Ads',
 					payment.id
 				) }</title>
 				<meta charset="UTF-8">

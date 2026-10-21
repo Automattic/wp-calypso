@@ -2,6 +2,15 @@
 
 ## trunk
 
+- Breaking: The `webpack` peer dependency is now `^5.101.0`, the minimum webpack-cli 7 supports.
+- Updated dependencies:
+  - webpack-cli to ^7.2.3
+- Changed: `minify`'s `extractComments` option now defaults to `false`. With the SWC minifier it previously had no effect, and terser-webpack-plugin 5.6+ rejects it unless `@swc/core` supports comment extraction. Minified output is unchanged.
+- Breaking: Sass loader no longer implicitly prepends `process.cwd()` to `includePaths`. Callers must include it explicitly when project-root-relative imports (e.g., `client/assets/...`) need to resolve.
+- Updated dependencies:
+  - sass to 1.77.8
+  - sass-loader to ^14.2.1
+- Switched sass-loader to its modern API and added `silenceDeprecations: ['mixed-decls']` to suppress noisy deprecations from upstream stylesheets.
 - Dropped Babel presets. They have been moved to `@automattic/calypso-babel-config`. The new packge should be a drop in replacement, anywhere you were using `@automattic/calypso-build/babel/dependencies` you can use `@automattic/calypso-babel-config/presets/dependencies` (same for the other presets)
 - Dropped Jest presets. They have been moved to `@automattic/calypso-jest`. . The new packge should be a drop in replacement, you can use `preset: @automattic/calypso-jest` in your Jest config.
 - Added `build-app-languages` command that takes a `pot` file and builds translations file off of it based on `https://widgets.wp.com/languages/calypso`.
@@ -290,6 +299,8 @@
   - [`@babel/plugin-proposal-export-default-from`](https://babeljs.io/docs/en/babel-plugin-proposal-export-default-from):
     Code relying on this plugin will need to be modified for compatibility before it can be bundled
     with `calypso-build`. For example:
+
+    <!-- eslint-skip -->
 
     ```js
     // Code relying on @babel/plugin-proposal-export-default-from

@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import { useDispatch } from 'calypso/state';
@@ -18,6 +18,8 @@ export default function OverviewSidebarContactSupport() {
 	return (
 		<Button
 			className="overview__sidebar-button"
+			variant="secondary"
+			__next40pxDefaultSize
 			onClick={ toggleContactForm }
 			href={ CONTACT_URL_HASH_FRAGMENT }
 		>

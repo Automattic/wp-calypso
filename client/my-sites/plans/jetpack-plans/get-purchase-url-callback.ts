@@ -1,4 +1,5 @@
 import { getCurrentUser, getTracksAnonymousUserId } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
@@ -12,7 +13,7 @@ import {
 } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 import type {
 	PurchaseURLCallback,
 	QueryArgs,
@@ -55,9 +56,12 @@ export function buildCheckoutURL(
 		}
 	}
 	// host maybe needed in either siteless or userless checkout below
+	// `config( 'port' )` is only read inside the development branch because in
+	// Odyssey dev builds the config accessor throws (rather than returning
+	// undefined) for keys absent from the filtered production config.
 	const host =
 		'development' === urlQueryArgs.calypso_env
-			? 'http://calypso.localhost:3000'
+			? `http://calypso.localhost:${ config( 'port' ) ?? 3000 }`
 			: 'https://wordpress.com';
 
 	// siteless checkout
@@ -156,7 +160,7 @@ export const getPurchaseURLCallback =
 			return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
 		}
 		if ( purchase ) {
-			const relativePath = getManagePurchaseUrlFor( siteSlug, purchase.id );
+			const relativePath = getManagePurchaseUrlFor( siteSlug, purchase.ID );
 			return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
 		}
 

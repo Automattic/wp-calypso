@@ -108,6 +108,7 @@ export const githubWorkflowChecksQuery = (
 
 export const saveGithubCredentialsMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'github-credentials-save' },
 		mutationFn: ( { accessToken }: { accessToken: string } ) =>
 			saveGithubCredentials( accessToken ),
 		onSuccess: () => {
@@ -139,6 +140,7 @@ export const githubWorkflowsQuery = (
 
 export const createGithubWorkflowMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'github-workflow-create' },
 		mutationFn: ( request: CreateWorkflowRequest ) => createGithubWorkflow( request ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {

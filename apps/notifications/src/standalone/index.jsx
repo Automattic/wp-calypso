@@ -1,14 +1,15 @@
-import '@automattic/calypso-polyfills';
 import { setLocaleData } from '@wordpress/i18n';
+import debugFactory from 'debug';
 import { setLocale } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import { createClient } from './client';
 import { receiveMessage, sendMessage } from './messaging';
-const debug = require( 'debug' )( 'notifications:standalone' );
 
 import '../panel/boot/stylesheets/style.scss';
+
+const debug = debugFactory( 'notifications:standalone' );
 
 const localePattern = /[&?]locale=([\w_-]+)/;
 const match = localePattern.exec( document.location.search );
@@ -45,7 +46,7 @@ const ACTION_HANDLERS = {
 						action: 'render',
 						num_new: newNoteCount,
 						latest_type: latestType,
-				  } )
+					} )
 				: sendMessage( { action: 'renderAllSeen' } ),
 	],
 	CLOSE_PANEL: [ () => sendMessage( { action: 'togglePanel' } ) ],
@@ -96,10 +97,6 @@ const NotesWrapper = ( { wpcom } ) => {
 	const [ isShowing, setIsShowing ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( document.visibilityState === 'visible' );
 	const [ isShortcutsPopoverVisible, setShortcutsPopoverVisible ] = useState( false );
-
-	if ( locale && 'en' !== locale ) {
-		fetchLocale( locale );
-	}
 
 	debug( 'wrapper state update', { isShowing, isVisible } );
 
@@ -181,10 +178,8 @@ const NotesWrapper = ( { wpcom } ) => {
 const render = ( wpcom ) => {
 	document.body.classList.add( 'font-smoothing-antialiased' );
 
-	ReactDOM.render(
-		<NotesWrapper wpcom={ wpcom } />,
-		document.getElementsByClassName( 'wpnc__main' )[ 0 ]
-	);
+	const root = createRoot( document.getElementsByClassName( 'wpnc__main' )[ 0 ] );
+	root.render( <NotesWrapper wpcom={ wpcom } /> );
 };
 
 const setTracksUser = ( wpcom ) => {
@@ -199,6 +194,9 @@ const setTracksUser = ( wpcom ) => {
 
 const init = ( wpcom ) => {
 	setTracksUser( wpcom );
+	if ( locale && 'en' !== locale ) {
+		fetchLocale( locale );
+	}
 	render( wpcom );
 };
 

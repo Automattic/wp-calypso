@@ -21,7 +21,7 @@ interface Props {
 	hideImporterListLink?: boolean;
 	label?: ReactNode;
 	nextLabelText?: string;
-	onDontHaveSiteAddressClick?: () => void;
+	onDontHaveSiteAddressClick?: ( url?: string ) => void;
 	onInputChange?: OnInputChange;
 	onInputEnter: OnInputEnter;
 	placeholder?: string;
@@ -46,7 +46,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const [ isValid, setIsValid ] = useState( false );
 	const [ submitted, setSubmitted ] = useState( false );
 	const [ validationMessage, setValidationMessage ] = useState( '' );
-	const lastInvalidValue = useRef< string | undefined >();
+	const lastInvalidValue = useRef< string | undefined >( undefined );
 	const showValidationMsg = hasError || ( submitted && ! isValid );
 	const { search } = useLocation();
 
@@ -56,7 +56,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		const urlValue = new URLSearchParams( search ).get( 'from' ) || '';
 		if ( skipInitialChecking ) {
 			setUrlValue( urlValue );
-			validateUrl( urlValue );
+			if ( urlValue ) {
+				validateUrl( urlValue );
+			}
 			return;
 		}
 
@@ -88,7 +90,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 
 	function onFormSubmit( e: FormEvent< HTMLFormElement > ) {
 		e.preventDefault();
-		isValid && onInputEnter( urlValue );
+		if ( isValid ) {
+			onInputEnter( urlValue );
+		}
 		setSubmitted( true );
 
 		if ( ! isValid && urlValue?.length > 4 && urlValue !== lastInvalidValue.current ) {
@@ -144,7 +148,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 						{
 							button: createElement( Button, {
 								borderless: true,
-								onClick: onDontHaveSiteAddressClick,
+								onClick: () => onDontHaveSiteAddressClick( isValid ? urlValue : undefined ),
 							} ),
 						}
 					) }

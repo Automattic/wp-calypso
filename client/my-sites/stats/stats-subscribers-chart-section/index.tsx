@@ -5,11 +5,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import AsyncLoad from 'calypso/components/async-load';
 import UplotChart from 'calypso/components/chart-uplot';
+import { getSubscribersUrl } from 'calypso/lib/subscribers/get-subscribers-url';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import { formatDate } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import { useSelector } from 'calypso/state';
-import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import useCssVariable from '../hooks/use-css-variable';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
@@ -19,6 +18,11 @@ import SubscribersNavigationArrows from './subscribers-navigation-arrows';
 import type uPlot from 'uplot';
 
 import './style.scss';
+const loadLineChart = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-stats-components-line-chart" */ 'calypso/my-sites/stats/components/line-chart'
+	);
+
 interface SubscribersData {
 	period: PeriodType;
 	subscribers: number;
@@ -139,8 +143,7 @@ export default function SubscribersChartSection( {
 } ) {
 	const containerRef = useRef< HTMLDivElement >( null );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const subscribersUrl = useSelector( ( state ) => getSubscribersUrl( state, siteId ) );
 	const isChartLibraryEnabled = config.isEnabled( 'stats/chart-library' );
 	const quantityDefault: QuantityDefaultType = {
 		day: 30,
@@ -188,7 +191,7 @@ export default function SubscribersChartSection( {
 		}
 	}, [ status, isError ] );
 
-	const subscriberLineStroke = useCssVariable( '--color-primary-light', containerRef.current );
+	const subscriberLineStroke = useCssVariable( '--color-accent-light', containerRef.current );
 	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
 
 	// Products with an undefined value rather than an empty array means the API call has not been completed yet.
@@ -234,11 +237,6 @@ export default function SubscribersChartSection( {
 	const slugPath = slug ? `/${ slug }` : '';
 	const pathTemplate = `${ subscribers.path }{{ interval }}${ slugPath }`;
 
-	const subscribersUrl =
-		isAtomic || isJetpack
-			? `https://cloud.jetpack.com/subscribers/${ slug }`
-			: `https://wordpress.com/subscribers/${ slug }`;
-
 	return (
 		<div ref={ containerRef } className="subscribers-section">
 			{ /* TODO: Remove highlight-cards class and use a highlight cards heading component instead. */ }
@@ -277,11 +275,7 @@ export default function SubscribersChartSection( {
 					<div className="subscribers-section-legend" ref={ legendRef }></div>
 					{ isChartLibraryEnabled ? (
 						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-my-sites-stats-components-line-chart" */ 'calypso/my-sites/stats/components/line-chart'
-								)
-							}
+							require={ loadLineChart }
 							chartData={ lineChartData }
 							height={ 300 }
 							curveType="monotone" // can use smooth, linear, monotone

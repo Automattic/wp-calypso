@@ -39,10 +39,12 @@ interface SetupOnboardingSiteOptions {
 
 export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSiteOptions ) {
 	// const { resetOnboardStore } = dispatch( ONBOARD_STORE );
-	const goals = ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals();
-	const siteTitle = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle();
-	const siteDescription = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteDescription();
-	const siteLogo = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteLogo();
+	const goals = ( select( ONBOARD_STORE ) as unknown as OnboardSelect ).getGoals();
+	const siteTitle = ( select( ONBOARD_STORE ) as unknown as OnboardSelect ).getSelectedSiteTitle();
+	const siteDescription = (
+		select( ONBOARD_STORE ) as unknown as OnboardSelect
+	 ).getSelectedSiteDescription();
+	const siteLogo = ( select( ONBOARD_STORE ) as unknown as OnboardSelect ).getSelectedSiteLogo();
 
 	if ( siteId && flowName ) {
 		const formData: ( string | File )[][] = [];

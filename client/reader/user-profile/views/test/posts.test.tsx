@@ -8,6 +8,10 @@ import React from 'react';
 import UserPosts from '../posts';
 import type { ReaderUser } from '@automattic/api-core';
 
+jest.mock( 'calypso/state', () => ( {
+	useSelector: jest.fn(),
+} ) );
+
 jest.mock(
 	'calypso/reader/stream',
 	() =>
@@ -39,7 +43,15 @@ jest.mock( 'calypso/components/empty-content', () => ( { icon, line } ) => (
 	</div>
 ) );
 
+jest.mock( 'calypso/reader/user-profile/components/private-tab-notice', () => ( {
+	__esModule: true,
+	default: ( { title }: { title: string } ) => (
+		<div data-testid="private-tab-notice">{ title }</div>
+	),
+} ) );
+
 describe( 'UserPosts', () => {
+	const { useSelector } = jest.requireMock( 'calypso/state' );
 	const defaultUser: ReaderUser = {
 		ID: 123,
 		user_login: 'test_user',
@@ -51,6 +63,12 @@ describe( 'UserPosts', () => {
 		description: '',
 		profile_URL: '',
 	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		// Default to a public viewer (not the profile owner).
+		useSelector.mockReturnValue( null );
+	} );
 
 	test( 'should render Stream component with correct props', () => {
 		render( <UserPosts user={ defaultUser } /> );
@@ -103,5 +121,21 @@ describe( 'UserPosts', () => {
 		expect( emptyContent.querySelector( '[data-testid="empty-content-line"]' ) ).toHaveTextContent(
 			'No posts yet.'
 		);
+	} );
+
+	test( 'should render the private-tab notice for the profile owner', () => {
+		useSelector.mockReturnValue( { username: defaultUser.user_login } );
+
+		render( <UserPosts user={ defaultUser } /> );
+
+		expect( screen.getByTestId( 'private-tab-notice' ) ).toHaveTextContent(
+			'Your posts are private'
+		);
+	} );
+
+	test( 'should not render the private-tab notice for a public viewer', () => {
+		render( <UserPosts user={ defaultUser } /> );
+
+		expect( screen.queryByTestId( 'private-tab-notice' ) ).not.toBeInTheDocument();
 	} );
 } );

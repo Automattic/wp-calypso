@@ -5,6 +5,7 @@ import { Button, __unstableMotion as motion } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
+import { getSelectedTextContext } from '../../utils/get-selected-text';
 import './style.scss';
 
 const animations = {
@@ -20,13 +21,15 @@ const animations = {
 	},
 };
 
+const SELECTED_BLOCK_CLEAR_EVENT = 'agents-manager-selected-block-cleared';
+
 export default function SelectedBlock() {
-	const { block, name, icon } = useSelect( ( select ) => {
+	const { clientId, name, icon } = useSelect( ( select ) => {
 		const selectedBlock = select( blockEditorStore ).getSelectedBlock();
 
 		if ( ! selectedBlock ) {
 			return {
-				block: null,
+				clientId: null,
 				name: null,
 				icon: null,
 			};
@@ -34,22 +37,33 @@ export default function SelectedBlock() {
 
 		const blockType = getBlockType( selectedBlock.name );
 
+		const selectedText = getSelectedTextContext( select );
+
 		return {
-			block: selectedBlock,
-			name: selectedBlock.attributes?.content?.text || blockType?.title,
+			clientId: selectedBlock.clientId,
+			name: selectedText
+				? `“${ selectedText.text }”`
+				: selectedBlock.attributes?.content?.text || blockType?.title,
 			icon: blockType?.icon,
 		};
 	}, [] );
 
 	const { clearSelectedBlock } = useDispatch( blockEditorStore );
 
-	if ( ! block ) {
+	const handleClearSelectedBlock = () => {
+		clearSelectedBlock();
+		window.dispatchEvent( new Event( SELECTED_BLOCK_CLEAR_EVENT ) );
+	};
+
+	if ( ! clientId ) {
 		return null;
 	}
 
+	// Keyed by block, not label: the label tracks the block's content, so a
+	// label key would remount and re-animate the pill on every keystroke.
 	return (
 		<motion.div
-			key={ name }
+			key={ clientId }
 			className="agents-manager-selected-block"
 			initial={ animations.hidden }
 			animate={ animations.visible }
@@ -62,8 +76,8 @@ export default function SelectedBlock() {
 				className="agents-manager-selected-block__remove"
 				icon={ close }
 				iconSize={ 16 }
-				onClick={ clearSelectedBlock }
-				label={ __( 'Clear selection', 'big-sky' ) }
+				onClick={ handleClearSelectedBlock }
+				label={ __( 'Clear selection', __i18n_text_domain__ ) }
 			/>
 		</motion.div>
 	);

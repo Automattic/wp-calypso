@@ -1,4 +1,8 @@
-import { closeAccountMutation, userPurchasesQuery } from '@automattic/api-queries';
+import {
+	closeAccountMutation,
+	monetizeSubscriptionsQuery,
+	userPurchasesQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Icon } from '@wordpress/components';
@@ -6,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ActionList } from '../../components/action-list';
 import AccountDeletionConfirmModal from './account-deletion-modal';
 
@@ -13,19 +18,21 @@ export default function AccountDeletionSection() {
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
-	const mutation = useMutation( {
-		...closeAccountMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Account deletion initiated.' ),
-				error: __( 'Failed to delete account.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( closeAccountMutation(), {
+			success: __( 'Account deletion initiated.' ),
+			error: __( 'Failed to delete account.' ),
+		} )
+	);
 	const { data: purchases, isLoading: isFetchingPurchases } = useQuery( {
 		...userPurchasesQuery(),
 		enabled: showConfirmModal,
 	} );
+	const { data: monetizeSubscriptions, isLoading: isFetchingMonetizeSubscriptions } = useQuery( {
+		...monetizeSubscriptionsQuery(),
+		enabled: showConfirmModal,
+	} );
+	const isFetching = isFetchingPurchases || isFetchingMonetizeSubscriptions;
 
 	const handleConfirmDelete = () => {
 		mutation.mutate( void 0, {
@@ -51,8 +58,8 @@ export default function AccountDeletionSection() {
 				<ActionList.ActionItem
 					actions={
 						<Button
-							isBusy={ isFetchingPurchases }
-							disabled={ mutation.isPending || isFetchingPurchases }
+							isBusy={ isFetching }
+							disabled={ mutation.isPending || isFetching }
 							onClick={ handleDeleteClick }
 							isDestructive
 							variant="secondary"
@@ -67,7 +74,7 @@ export default function AccountDeletionSection() {
 				/>
 			</ActionList>
 
-			{ showConfirmModal && purchases && (
+			{ showConfirmModal && purchases && monetizeSubscriptions && (
 				<AccountDeletionConfirmModal
 					onClose={ handleCloseModal }
 					onConfirm={ handleConfirmDelete }
@@ -75,6 +82,7 @@ export default function AccountDeletionSection() {
 					isDeleting={ mutation.isPending }
 					siteCount={ user.site_count || 0 }
 					purchases={ purchases }
+					monetizeSubscriptions={ monetizeSubscriptions }
 				/>
 			) }
 		</>

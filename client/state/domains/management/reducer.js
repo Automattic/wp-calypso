@@ -72,13 +72,13 @@ function mergeDomainRegistrantContactDetails( domainState, registrantContactDeta
 					};
 				}
 				return item;
-		  } )
+			} )
 		: [
 				{
 					...registrantContactDetails,
 					type: whoisType.REGISTRANT,
 				},
-		  ];
+			];
 }
 
 /**

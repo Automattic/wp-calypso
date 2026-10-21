@@ -1,4 +1,3 @@
-import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import { Dialog } from '@automattic/components';
 import {
@@ -21,10 +20,11 @@ import useCreatePaymentSubmittedAndProcessingCallback from 'calypso/my-sites/che
 import existingCardProcessor from 'calypso/my-sites/checkout/src/lib/existing-card-processor';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite, getSiteId } from 'calypso/state/sites/selectors';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import CheckoutQueryClientProvider from '../checkout-query-client-provider';
+import { isJetpackNotAtomicSite, useCheckoutSite } from '../src/hooks/use-checkout-site';
 import useCountryList from '../src/hooks/use-country-list';
 import { useStoredPaymentMethods } from '../src/hooks/use-stored-payment-methods';
 import { updateCartContactDetailsForCheckout } from '../src/lib/update-cart-contact-details-for-checkout';
@@ -135,22 +135,19 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	};
 
 	const { stripe, stripeConfiguration } = useStripe();
-	const { razorpayConfiguration } = useRazorpay();
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
 	const { responseCart, updateLocation, replaceProductsInCart, isPendingUpdate, applyCoupon } =
 		useShoppingCart( cartKey );
-	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const paymentMethodsState = useStoredPaymentMethods( {
 		type: 'card',
 	} );
 	const countries = useCountryList();
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const isJetpackNotAtomic = useSelector(
-		( state ) =>
-			!! isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
-	);
+	const { data: site } = useCheckoutSite( selectedSiteId );
+	const isJetpackNotAtomic = isJetpackNotAtomicSite( site );
 	const isAkismetSitelessCheckout = responseCart.products.some(
 		( product ) => product.extra.isAkismetSitelessCheckout
 	);
@@ -170,11 +167,10 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			isJetpackNotAtomic,
 			reduxDispatch,
 			responseCart,
-			siteSlug: selectedSite?.slug ?? '',
-			siteId: selectedSite?.ID,
+			siteSlug: selectedSiteSlug ?? '',
+			siteId: selectedSiteId ?? undefined,
 			stripe,
 			stripeConfiguration,
-			razorpayConfiguration,
 			contactDetails: {
 				countryCode: wrapValueInManagedValue( storedCard?.tax_location?.country_code ),
 				postalCode: wrapValueInManagedValue( storedCard?.tax_location?.postal_code ),
@@ -186,9 +182,9 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			includeGSuiteDetails,
 			stripe,
 			stripeConfiguration,
-			razorpayConfiguration,
 			reduxDispatch,
-			selectedSite,
+			selectedSiteSlug,
+			selectedSiteId,
 			responseCart,
 			isAkismetSitelessCheckout,
 			isJetpackNotAtomic,
@@ -232,7 +228,6 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		storedCard,
 		productToAdd,
 		countries,
-		selectedSite,
 		cartKey,
 		requestSent,
 		setRequestSent,
@@ -278,12 +273,12 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 
 function EnsureSelectedSite( { siteSlug, children }: PropsWithChildren< { siteSlug: SiteSlug } > ) {
 	const reduxDispatch = useDispatch();
-	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
 
 	// Set the selected site if it is not set already.
 	// This is necessary for the cart and post-purchase actions to function correctly.
-	const hasSelectedSiteId = siteId === selectedSite?.ID;
+	const hasSelectedSiteId = !! siteId && siteId === selectedSiteId;
 	useEffect( () => {
 		if ( ! hasSelectedSiteId && siteId ) {
 			reduxDispatch( setSelectedSiteId( siteId ) );
@@ -295,8 +290,10 @@ function EnsureSelectedSite( { siteSlug, children }: PropsWithChildren< { siteSl
 
 export default function PurchaseModalWrapped( props: PurchaseModalProps ) {
 	return (
-		<EnsureSelectedSite siteSlug={ props.siteSlug }>
-			<PurchaseModalWrapper { ...props } />
-		</EnsureSelectedSite>
+		<CheckoutQueryClientProvider>
+			<EnsureSelectedSite siteSlug={ props.siteSlug }>
+				<PurchaseModalWrapper { ...props } />
+			</EnsureSelectedSite>
+		</CheckoutQueryClientProvider>
 	);
 }

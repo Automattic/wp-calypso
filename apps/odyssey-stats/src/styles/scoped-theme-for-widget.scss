@@ -1,5 +1,5 @@
-@import "variables";
+@import "admin-theme-handback";
 
-.stats-widget-content {
-	@include jetpack-theme-for-odyssey-stats;
-}
+// The widget mount carries `color-scheme is-<scheme>` too, so it needs the same handback the app
+// roots get before anything below can resolve the admin theme colour.
+@include odyssey-admin-theme-handback( ".stats-widget-content.color-scheme" );

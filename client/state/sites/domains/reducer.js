@@ -1,6 +1,5 @@
 /* eslint-disable no-case-declarations */
 
-import { find } from 'lodash';
 import {
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
@@ -48,7 +47,7 @@ const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainPro
 	}
 
 	// Find the domain we want to update
-	const targetDomain = find( state[ siteId ], { domain: domain } );
+	const targetDomain = state[ siteId ].find( ( d ) => d.domain === domain );
 	const domainIndex = state[ siteId ].indexOf( targetDomain );
 	// Copy as we shouldn't mutate original state
 	const newDomains = [ ...state[ siteId ] ];

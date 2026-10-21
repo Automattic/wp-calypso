@@ -1,5 +1,5 @@
-import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DownFlow from './down-flow';
@@ -31,4 +31,4 @@ const connectComponent = connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 } ) );
 
-export default flowRight( connectComponent, redirectNonJetpack() )( DisconnectSite );
+export default compose( connectComponent, redirectNonJetpack() )( DisconnectSite );

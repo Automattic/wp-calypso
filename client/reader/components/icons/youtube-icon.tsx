@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 export default function ReaderYouTubeIcon( { iconSize }: { iconSize: number } ): JSX.Element {
 	return (
 		<svg

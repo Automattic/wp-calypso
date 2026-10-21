@@ -1,7 +1,7 @@
 import { Gridicon, ExternalLink } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
+import { debounce } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { debounce } from 'lodash';
 import { useState, useEffect, useRef } from 'react';
 import { isMobile, sortByMenuOrder, onLinkClick, closeOnFocusOut, isValidLink } from '../utils';
 import BundlesSection from './bundles-section';

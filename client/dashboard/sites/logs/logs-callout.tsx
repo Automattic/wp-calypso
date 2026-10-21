@@ -4,6 +4,7 @@ import { chartBar } from '@wordpress/icons';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import illustrationUrl from './logs-callout-illustration.svg';
 import type { Site } from '@automattic/api-core';
+import type { JSX } from 'react';
 
 export function getLogsCalloutProps() {
 	return {
@@ -12,6 +13,7 @@ export function getLogsCalloutProps() {
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Access detailed logs' ),
 		upsellImage: illustrationUrl,
+		upsellPlanRequirement: 'any' as const,
 		upsellDescription: __(
 			'Quickly identify and fix issues before they impact your visitors with full visibility into your site‘s web server logs and PHP errors.'
 		),

@@ -1,16 +1,16 @@
+import { fetchStripeConfiguration } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
-import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
 import Recaptcha from 'calypso/signup/recaptcha';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
+import CheckoutQueryClientProvider from './checkout-query-client-provider';
 import CheckoutMain from './src/components/checkout-main';
 import { logStashLoadErrorEvent } from './src/lib/analytics';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
@@ -22,6 +22,7 @@ const logCheckoutError = ( error: Error ) => {
 export default function CheckoutMainWrapper( {
 	productAliasFromUrl,
 	productSourceFromUrl,
+	aiSessionIdFromUrl,
 	purchaseId,
 	selectedFeature,
 	couponCode,
@@ -42,6 +43,7 @@ export default function CheckoutMainWrapper( {
 }: {
 	productAliasFromUrl?: string;
 	productSourceFromUrl?: string;
+	aiSessionIdFromUrl?: string;
 	purchaseId?: number;
 	selectedFeature?: string;
 	couponCode?: string;
@@ -107,14 +109,18 @@ export default function CheckoutMainWrapper( {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
 			>
-				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
-					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-						<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
+				<CheckoutQueryClientProvider>
+					<CalypsoShoppingCartProvider shouldShowPersistentErrors>
+						<StripeHookProvider
+							fetchStripeConfiguration={ fetchStripeConfiguration }
+							locale={ locale }
+						>
 							<CheckoutMain
 								siteSlug={ siteSlug }
 								siteId={ selectedSiteId }
 								productAliasFromUrl={ productAliasFromUrl }
 								productSourceFromUrl={ productSourceFromUrl }
+								aiSessionIdFromUrl={ aiSessionIdFromUrl }
 								purchaseId={ purchaseId }
 								couponCode={ couponCode }
 								redirectTo={ redirectTo }
@@ -132,9 +138,9 @@ export default function CheckoutMainWrapper( {
 								fromSiteSlug={ fromSiteSlug }
 								adminUrl={ adminUrl }
 							/>
-						</RazorpayHookProvider>
-					</StripeHookProvider>
-				</CalypsoShoppingCartProvider>
+						</StripeHookProvider>
+					</CalypsoShoppingCartProvider>
+				</CheckoutQueryClientProvider>
 			</CheckoutErrorBoundary>
 			{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
 		</>

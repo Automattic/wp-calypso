@@ -2,6 +2,17 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+.a4a-popover-trigger {
+	cursor: pointer;
+	display: inline-flex;
+	border-radius: 2px;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
+	}
+}
+
 .a4a-popover__content {
 	display: flex;
 	flex-direction: column;

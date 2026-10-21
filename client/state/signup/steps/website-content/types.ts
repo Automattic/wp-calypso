@@ -11,8 +11,12 @@ export type Media = {
 	uploadID?: string;
 };
 
+/** One selected page instance, identified by an opaque UUID `id` and its canonical `type`. */
+export type SelectedPageInstance = { id: string; type: PageId; title?: string };
+
 export type PageData = {
-	id: PageId;
+	id: string; // opaque instance id (UUID)
+	type: PageId; // canonical page type
 	title: string;
 	content: string;
 	useFillerContent: boolean;
@@ -24,6 +28,13 @@ export interface ContactPageData extends PageData {
 	displayPhone?: string;
 	displayAddress?: string;
 }
+
+/** Server-returned page payload. Lacks `type` — the frontend reconstructs it from the instance/title. */
+export type ServerPageData = Omit< PageData, 'type' > & {
+	displayEmail?: string;
+	displayPhone?: string;
+	displayAddress?: string;
+};
 
 export type WebsiteContent = {
 	pages: Array< PageData >;
@@ -48,6 +59,7 @@ export interface DIFMDependencies {
 	displayPhone: string;
 	displayAddress: string;
 	selectedPageTitles: string[];
+	selectedPageInstances?: SelectedPageInstance[];
 	isStoreFlow: boolean;
 }
 
@@ -70,6 +82,7 @@ export type WebsiteContentRequestDTO = {
 
 export type WebsiteContentResponseDTO = WebsiteContentRequestDTO & {
 	selected_page_titles: PageId[];
+	selected_page_instances?: Array< { id: string; type: PageId; title?: string } >;
 	is_website_content_submitted: boolean;
 	is_store_flow: boolean;
 };
@@ -80,9 +93,10 @@ export type WebsiteContentResponseDTO = WebsiteContentRequestDTO & {
  */
 export type WebsiteContentServerState = {
 	selectedPageTitles: PageId[];
+	selectedPageInstances?: SelectedPageInstance[];
 	isWebsiteContentSubmitted: boolean;
 	isStoreFlow: boolean;
-	pages: Array< PageData & ContactPageData >;
+	pages: Array< ServerPageData >;
 	siteLogoUrl: string;
 	genericFeedback: string;
 	searchTerms: string;

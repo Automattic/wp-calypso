@@ -27,17 +27,28 @@ global.TextDecoder = TextDecoder;
 
 global.ResizeObserver = require( 'resize-observer-polyfill' );
 
-global.fetch = jest.fn( () =>
-	Promise.resolve( {
-		json: () => Promise.resolve(),
-	} )
-);
+// jsdom doesn't implement IntersectionObserver, which is used by
+// @wordpress/dataviews' infinite-scroll hook.
+global.IntersectionObserver = class IntersectionObserver {
+	constructor() {
+		this.root = null;
+		this.rootMargin = '';
+		this.thresholds = [];
+	}
+	observe() {}
+	unobserve() {}
+	disconnect() {}
+	takeRecords() {
+		return [];
+	}
+};
 
 // Don't need to mock specific functions for any tests, but mocking
 // module because it accesses the `document` global.
 jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 	canAccessWpcomApis: jest.fn(),
+	isCookieAuthMissing: jest.fn( () => false ),
 	reloadProxy: jest.fn(),
 	requestAllBlogsAccess: jest.fn(),
 } ) );

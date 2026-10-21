@@ -25,6 +25,37 @@ function mockUserSettings( data: UserSettings ) {
 }
 
 describe( '<GravatarProfileSection>', () => {
+	test( 'HTML entities get decoded before avatar URL us rendered', async () => {
+		mockUserSettings( {
+			...settings,
+			avatar_URL: 'https://gravatar.com/avatar/abc123?s=96&amp;d=mm&amp;r=G',
+		} as unknown as UserSettings );
+
+		render( <GravatarProfileSection /> );
+		await screen.findByRole( 'heading', { name: 'Public Gravatar profile' } );
+
+		const avatarImg = screen.getByAltText( 'Gravatar' );
+		expect( avatarImg ).toBeVisible();
+		expect( avatarImg ).toHaveAttribute(
+			'src',
+			expect.stringContaining( 'https://gravatar.com/avatar/abc123?s=96&d=mm&r=G' )
+		);
+	} );
+
+	test( 'keeps the avatar src stable while typing in other fields', async () => {
+		const user = userEvent.setup();
+		mockUserSettings( settings );
+
+		render( <GravatarProfileSection /> );
+		await screen.findByRole( 'heading', { name: 'Public Gravatar profile' } );
+
+		const srcBefore = screen.getByAltText( 'Gravatar' ).getAttribute( 'src' );
+
+		await user.type( screen.getByRole( 'textbox', { name: 'Display name' } ), 'abc' );
+
+		expect( screen.getByAltText( 'Gravatar' ) ).toHaveAttribute( 'src', srcBefore );
+	} );
+
 	test( 'renders the form and saves the form', async () => {
 		const user = userEvent.setup();
 		mockUserSettings( settings );

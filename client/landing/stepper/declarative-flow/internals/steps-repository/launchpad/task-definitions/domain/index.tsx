@@ -1,9 +1,7 @@
 import { Task } from '@automattic/launchpad';
-import { isStartWritingFlow } from '@automattic/onboarding';
-import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
-import { getSiteIdOrSlug, isDomainUpsellCompleted } from '../../task-helper';
+import { isDomainUpsellCompleted } from '../../task-helper';
 import { TaskAction } from '../../types';
 
 export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => {
@@ -16,14 +14,6 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 	const getDestionationUrl = () => {
 		if ( ! siteSlug ) {
 			return '';
-		}
-
-		if ( isStartWritingFlow( flow ) ) {
-			return addQueryArgs( `/setup/${ flow }/domains`, {
-				...getSiteIdOrSlug( flow, site, siteSlug ),
-				flowToReturnTo: flow,
-				new: site?.name,
-			} );
 		}
 
 		// Users with a paid non-monthly plan already have a qualifying plan
@@ -56,10 +46,7 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 		...task,
 		completed: domainUpsellCompleted,
 		calypso_path: getDestionationUrl(),
-		badge_text:
-			domainUpsellCompleted || isStartWritingFlow( flow ) || hasPaidNonMonthlyPlan
-				? ''
-				: translate( 'Upgrade plan' ),
+		badge_text: domainUpsellCompleted || hasPaidNonMonthlyPlan ? '' : translate( 'Upgrade plan' ),
 		useCalypsoPath: true,
 	};
 };

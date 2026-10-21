@@ -8,12 +8,12 @@ import {
 	TypographySettings,
 } from '.';
 
-const parentSelector = '.edit-site-global-styles-sidebar';
+const parentSelector = '.editor-global-styles-sidebar';
 
 const selectors = {
 	menuButton: ( buttonName: string ) =>
 		`${ parentSelector } button.components-navigator-button:has-text("${ buttonName }")`,
-	closeSidebarButton: 'button:visible[aria-label="Close Styles sidebar"]',
+	closeSidebarButton: 'button:visible[aria-label="Close Styles"]',
 	backButton: `${ parentSelector } button[aria-label="Navigate to the previous view"]`,
 	moreActionsMenuButton: `${ parentSelector } button[aria-label="More Styles actions"]`,
 	styleVariation: ( styleVariationName: string ) =>

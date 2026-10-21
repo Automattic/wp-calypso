@@ -12,6 +12,7 @@ import {
 	connectedApplications,
 	dolly,
 	password,
+	qrCodeAppLogin,
 	securityAccountEmail,
 	securityCheckup,
 	socialLogin,
@@ -107,6 +108,15 @@ export default function () {
 		maybeRedirectToMultiSiteDashboard( '/me/security/ssh-key' ),
 		sidebar,
 		sshKey,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/me/security/qr-login',
+		setupPreferences,
+		sidebar,
+		qrCodeAppLogin,
 		makeLayout,
 		clientRender
 	);

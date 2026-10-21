@@ -98,7 +98,7 @@ const UpgradeNudge = ( {
 				href={
 					pluginsPlansPageFlag
 						? pluginsPlansPage
-						: `/checkout/${ siteSlug }/${ requiredPlan.getPathSlug() }`
+						: `/checkout/${ siteSlug }/${ plansForInstallPurchasedPlugins[ 0 ] }`
 				}
 				feature={ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS }
 				plan={ requiredPlan.getStoreSlug() }

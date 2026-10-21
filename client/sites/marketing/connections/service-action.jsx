@@ -8,13 +8,13 @@ import getRemovableConnections from 'calypso/state/selectors/get-removable-conne
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const SharingServiceAction = ( {
-	isConnecting,
-	isDisconnecting,
-	isRefreshing,
-	onAction,
-	removableConnections,
+	isConnecting = false,
+	isDisconnecting = false,
+	isRefreshing = false,
+	onAction = () => {},
+	removableConnections = [],
 	service,
-	status,
+	status = 'unknown',
 	translate,
 	recordTracksEvent,
 	path,
@@ -150,15 +150,6 @@ SharingServiceAction.propTypes = {
 	translate: PropTypes.func,
 	recordTracksEvent: PropTypes.func,
 	isExpanded: PropTypes.bool,
-};
-
-SharingServiceAction.defaultProps = {
-	isConnecting: false,
-	isDisconnecting: false,
-	isRefreshing: false,
-	onAction: () => {},
-	removableConnections: [],
-	status: 'unknown',
 };
 
 export default connect(

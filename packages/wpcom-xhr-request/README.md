@@ -61,7 +61,7 @@ This function has three parameters:
 ```js
 import handler from 'wpcom-xhr-request';
 
-// get .com blog data usign `REST-API`
+// get .com blog data using `REST-API`
 handler( '/sites/en.blog.wordpress.com', ( error, body, headers ) => {
 	if ( error ) {
 		return console.error( 'Request failed: ', error );

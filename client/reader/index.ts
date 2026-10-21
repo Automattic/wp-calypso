@@ -27,9 +27,11 @@ import {
 	commentSubscriptionsManager,
 	pendingSubscriptionsManager,
 	setupReadRoutes,
-	setBeforePrimary,
 	loadNewSubscriptionPage,
 } from './controller';
+import postCacheMiddleware from './data/post/middleware';
+import { fourForFour } from './four-for-four/controller';
+import { readerNotFound } from './lib/reader-router';
 import {
 	createList,
 	deleteList,
@@ -47,6 +49,8 @@ function forceTeamA8C( context: Context, next: () => void ): void {
 }
 
 export async function lazyLoadDependencies(): Promise< void > {
+	addMiddleware( postCacheMiddleware );
+
 	const isBrowser = typeof window === 'object';
 	if ( isBrowser && config.isEnabled( 'lasagna' ) ) {
 		const lasagnaMiddleware = await import(
@@ -64,7 +68,6 @@ export default async function (): Promise< void > {
 		[ '/reader', '/reader/recent/:feed_id' ],
 		redirectLoggedOutToDiscover,
 		sidebar,
-		setBeforePrimary,
 		setSelectedSiteIdByOrigin,
 		following,
 		makeLayout,
@@ -72,27 +75,23 @@ export default async function (): Promise< void > {
 	);
 
 	// On This Day
-	page(
-		'/reader/on-this-day',
-		redirectLoggedOut,
-		sidebar,
-		setBeforePrimary,
-		onThisDay,
-		makeLayout,
-		clientRender
-	);
+	page( '/reader/on-this-day', redirectLoggedOut, sidebar, onThisDay, makeLayout, clientRender );
+
+	if ( config.isEnabled( 'reader/four-for-four' ) ) {
+		page(
+			'/reader/four-for-four',
+			redirectLoggedOutToSignup,
+			sidebar,
+			fourForFour,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
-		[
-			'/reader/new',
-			'/reader/new/reddit',
-			'/reader/new/youtube',
-			'/reader/new/tumblr',
-			'/reader/new/substack',
-		],
+		[ '/reader/new', '/reader/new/youtube', '/reader/new/tumblr', '/reader/new/substack' ],
 		redirectLoggedOutToSignup,
 		sidebar,
-		setBeforePrimary,
 		setSelectedSiteIdByOrigin,
 		loadNewSubscriptionPage,
 		makeLayout,
@@ -105,7 +104,6 @@ export default async function (): Promise< void > {
 		blogDiscoveryByFeedId,
 		redirectLoggedOutToSignup,
 		sidebar,
-		setBeforePrimary,
 		feedDiscovery,
 		feedListing,
 		makeLayout,
@@ -117,7 +115,6 @@ export default async function (): Promise< void > {
 		'/reader/blogs/:blog_id',
 		redirectLoggedOutToSignup,
 		sidebar,
-		setBeforePrimary,
 		setSelectedSiteIdByOrigin,
 		blogListing,
 		makeLayout,
@@ -130,7 +127,6 @@ export default async function (): Promise< void > {
 		blogDiscoveryByFeedId,
 		redirectLoggedOutToSignup,
 		sidebar,
-		setBeforePrimary,
 		userProfile,
 		makeLayout,
 		clientRender
@@ -146,7 +142,6 @@ export default async function (): Promise< void > {
 		[ '/reader/users/:user_login', '/reader/users/:user_login/:view' ],
 		blogDiscoveryByFeedId,
 		redirectLoggedOutToSignup,
-		setBeforePrimary,
 		sidebar,
 		userProfile,
 		makeLayout,
@@ -158,27 +153,34 @@ export default async function (): Promise< void > {
 	// Lists
 	page(
 		'/reader/list/:user/:list/edit/items',
+		redirectLoggedOutToSignup,
 		sidebar,
-		setBeforePrimary,
 		editListItems,
 		makeLayout,
 		clientRender
 	);
 	page(
 		'/reader/list/:user/:list/edit',
+		redirectLoggedOutToSignup,
 		sidebar,
-		setBeforePrimary,
 		editList,
 		makeLayout,
 		clientRender
 	);
 
-	page( '/reader/list/new', sidebar, setBeforePrimary, createList, makeLayout, clientRender );
+	page(
+		'/reader/list/new',
+		redirectLoggedOutToSignup,
+		sidebar,
+		createList,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/reader/list/:user/:list/export',
+		redirectLoggedOutToSignup,
 		sidebar,
-		setBeforePrimary,
 		exportList,
 		makeLayout,
 		clientRender
@@ -186,8 +188,8 @@ export default async function (): Promise< void > {
 
 	page(
 		'/reader/list/:user/:list/delete',
+		redirectLoggedOutToSignup,
 		sidebar,
-		setBeforePrimary,
 		deleteList,
 		makeLayout,
 		clientRender
@@ -196,7 +198,6 @@ export default async function (): Promise< void > {
 	page(
 		[ '/reader/list/:user/:list', '/reader/list/:user/:list/:view' ],
 		sidebar,
-		setBeforePrimary,
 		listListing,
 		makeLayout,
 		clientRender
@@ -206,7 +207,6 @@ export default async function (): Promise< void > {
 	page(
 		'/reader/a8c',
 		redirectLoggedOut,
-		setBeforePrimary,
 		sidebar,
 		forceTeamA8C,
 		readA8C,
@@ -215,22 +215,13 @@ export default async function (): Promise< void > {
 	);
 
 	// new P2 Posts
-	page(
-		'/reader/p2',
-		redirectLoggedOut,
-		sidebar,
-		setBeforePrimary,
-		readFollowingP2,
-		makeLayout,
-		clientRender
-	);
+	page( '/reader/p2', redirectLoggedOut, sidebar, readFollowingP2, makeLayout, clientRender );
 
 	// Sites subscription management
 	page(
 		'/reader/subscriptions',
 		redirectLoggedOut,
 		sidebar,
-		setBeforePrimary,
 		siteSubscriptionsManager,
 		makeLayout,
 		clientRender
@@ -239,7 +230,6 @@ export default async function (): Promise< void > {
 		'/reader/subscriptions/comments',
 		redirectLoggedOut,
 		sidebar,
-		setBeforePrimary,
 		commentSubscriptionsManager,
 		makeLayout,
 		clientRender
@@ -248,7 +238,6 @@ export default async function (): Promise< void > {
 		'/reader/subscriptions/pending',
 		redirectLoggedOut,
 		sidebar,
-		setBeforePrimary,
 		pendingSubscriptionsManager,
 		makeLayout,
 		clientRender
@@ -257,7 +246,6 @@ export default async function (): Promise< void > {
 		'/reader/subscriptions/:subscription_id',
 		redirectLoggedOut,
 		sidebar,
-		setBeforePrimary,
 		siteSubscription,
 		makeLayout,
 		clientRender
@@ -266,13 +254,37 @@ export default async function (): Promise< void > {
 		'/reader/site/subscription/:blog_id',
 		redirectLoggedOut,
 		sidebar,
-		setBeforePrimary,
 		siteSubscription,
 		makeLayout,
 		clientRender
 	);
 
 	setupReaderRedirects();
+	setupSearchRedirects();
+
+	// Catch-all: render a 404 for unrecognized /reader/* and /read/* paths instead of
+	// hanging. `readerNotFound` yields to sibling reader sections (search,
+	// conversations, …) that own the path, so only truly unknown paths render the 404.
+	page( '/reader/*', readerNotFound );
+	page( '/read/*', readerNotFound );
+}
+
+/**
+ * Reader search now lives at /discover/search. Keep the query string so
+ * existing links with a search term or sort keep working.
+ */
+function setupSearchRedirects(): void {
+	const anyLangParam = getAnyLanguageRouteParam();
+
+	const redirectToDiscoverSearch = ( context: Context ): void => {
+		const localePrefix = context.params.lang ? `/${ context.params.lang }` : '';
+		const query = context.querystring ? `?${ context.querystring }` : '';
+		page.redirect( `${ localePrefix }/discover/search${ query }` );
+	};
+
+	page( '/reader/search', redirectToDiscoverSearch );
+	page( `/${ anyLangParam }/reader/search`, redirectToDiscoverSearch );
+	page( '/recommendations', redirectToDiscoverSearch );
 }
 
 /**
@@ -315,6 +327,11 @@ function setupReaderRedirects(): void {
 		{
 			path: '/reader/feed',
 			getRedirect: () => '/reader',
+		},
+		// Reddit ended RSS. Old add-a-feed links land on the generic form.
+		{
+			path: '/reader/new/reddit',
+			getRedirect: () => '/reader/new',
 		},
 		// Feed stream
 		{

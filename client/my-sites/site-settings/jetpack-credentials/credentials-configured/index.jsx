@@ -1,7 +1,6 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { CompactCard, Button, Gridicon, FoldableCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -83,10 +82,10 @@ class CredentialsConfigured extends Component {
 		const headerText = supportsRealtimeBackup
 			? translate(
 					'Your site is being backed up in real time and regularly scanned for security threats.'
-			  )
+				)
 			: translate(
 					'Your site is being backed up every day and regularly scanned for security threats.'
-			  );
+				);
 
 		const header = (
 			<div className="credentials-configured__info">
@@ -124,7 +123,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 
 	return {
 		canAutoconfigure: canAutoconfigure || credentials.some( ( c ) => c.type === 'managed' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors
-		mainCredentials: find( credentials, { role: 'main' } ),
+		mainCredentials: credentials.find( ( c ) => c.role === 'main' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors
 		supportsRealtimeBackup: siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS ),
 	};
 };

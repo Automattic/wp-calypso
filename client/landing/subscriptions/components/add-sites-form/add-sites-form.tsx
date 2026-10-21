@@ -1,6 +1,8 @@
 import './styles.scss';
+import { prepareComparableUrl } from '@automattic/api-core';
 import { FormInputValidation } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
+import { useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { Button, SearchControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -33,6 +35,66 @@ interface AddSitesFormProps {
 	hideInputError?: boolean;
 }
 
+type CachedFeedSearchItem = {
+	feed_ID?: string | number | null;
+	blog_ID?: string | number | null;
+	subscribe_URL?: string;
+};
+
+const getFeedsFromSearchCacheData = ( data: unknown ): CachedFeedSearchItem[] => {
+	if ( ! data || typeof data !== 'object' ) {
+		return [];
+	}
+
+	// Explicit record access for opaque RQ cache blobs (`in` narrowing already satisfies tsc).
+	const record = data as Record< string, unknown >;
+
+	if ( Array.isArray( record.feeds ) ) {
+		return record.feeds;
+	}
+
+	if ( Array.isArray( record.pages ) ) {
+		return record.pages.flatMap( ( page: unknown ) => {
+			if ( ! page || typeof page !== 'object' ) {
+				return [];
+			}
+			const pageRecord = page as Record< string, unknown >;
+			return Array.isArray( pageRecord.feeds ) ? pageRecord.feeds : [];
+		} );
+	}
+
+	return [];
+};
+
+const findCachedFeedIdsForUrl = (
+	queryClient: QueryClient,
+	url: string
+): { feed_id?: string | number; blog_id?: string | number } => {
+	const comparableUrl = prepareComparableUrl( url );
+	if ( ! comparableUrl ) {
+		return {};
+	}
+
+	const cachedQueries = queryClient.getQueriesData( {
+		queryKey: [ 'read', 'feeds', 'search' ],
+	} );
+
+	for ( const [ , data ] of cachedQueries ) {
+		const matchingFeed = getFeedsFromSearchCacheData( data ).find(
+			( feed ) => prepareComparableUrl( feed.subscribe_URL ) === comparableUrl
+		);
+
+		if ( matchingFeed ) {
+			return {
+				feed_id: matchingFeed.feed_ID ?? undefined,
+				blog_id: matchingFeed.blog_ID || undefined,
+			};
+		}
+	}
+
+	return {};
+};
+
 const AddSitesForm = ( {
 	onChange,
 	placeholder,
@@ -45,6 +107,7 @@ const AddSitesForm = ( {
 	hideInputError = false,
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
+	const queryClient = useQueryClient();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isSubmitting, setIsSubmitting ] = useState< boolean >( false );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
@@ -90,9 +153,14 @@ const AddSitesForm = ( {
 		e.preventDefault();
 
 		if ( isValidInput ) {
+			const url = parseUrl( inputValue ).toString();
+			const cachedFeedIds = findCachedFeedIdsForUrl( queryClient, url );
 			setIsSubmitting( true );
 			subscribe(
-				{ url: parseUrl( inputValue ).toString() },
+				{
+					url,
+					...cachedFeedIds,
+				},
 				{
 					onSuccess: ( data ) => {
 						if ( data?.info === 'already_subscribed' ) {
@@ -123,10 +191,8 @@ const AddSitesForm = ( {
 	};
 
 	function onSubscribeToggle( subscribed: boolean ): void {
-		// Reset form.
-		setInputValue( '' );
-		setIsValidInput( false );
-
+		// Fully reset form + shared search term so related-sites results unmount.
+		onTextFieldChange( '' );
 		onChangeSubscribe?.( subscribed );
 	}
 

@@ -1,18 +1,63 @@
-import { useWindowDimensions } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import {
 	createPortal,
 	useCallback,
+	useEffect,
 	useLayoutEffect,
 	useRef,
 	useState,
 	useMemo,
+	useSyncExternalStore,
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
+import { ResponsiveUndockContext } from './responsive-undock-context';
 
-const SIDEBAR_TRANSITION_DURATION_MS = 200;
+// On Gutenberg editor screens, only dock when fullscreen mode is on —
+// otherwise wp-admin's chrome leaves too little room for the editor.
+const FULLSCREEN_GATED_BODY_CLASSES = [ 'post-php', 'post-new-php', 'site-editor-php' ];
+const FULLSCREEN_BODY_CLASS = 'is-fullscreen-mode';
+
+// The Jetpack pre-paint gate watches for this element to know the app has mounted,
+// then hands off docking. Keep in sync with
+// `jetpack/projects/packages/agents-manager/src/js/sidebar-docking-gate.ts`.
+const CHAT_PORTAL_CLASS = 'agents-manager-chat';
+
+// Container classes that reserve layout space for the docked sidebar.
+const SIDEBAR_CONTAINER_CLASS = 'agents-manager-sidebar-container';
+const SIDEBAR_OPEN_CLASS = 'agents-manager-sidebar-container--sidebar-open';
+
+function getIsFullscreenGateOpen(): boolean {
+	const { classList } = document.body;
+	const isGated = FULLSCREEN_GATED_BODY_CLASSES.some( ( cls ) => classList.contains( cls ) );
+	return ! isGated || classList.contains( FULLSCREEN_BODY_CLASS );
+}
+
+// Hoisted so the reference stays stable — otherwise `useSyncExternalStore`
+// would tear down and re-create the observer on every render.
+function subscribeToBodyClasses( notify: () => void ): () => void {
+	const observer = new MutationObserver( notify );
+	observer.observe( document.body, { attributes: true, attributeFilter: [ 'class' ] } );
+	return () => observer.disconnect();
+}
+
+/**
+ * Whether the assistant can dock: requires a desktop viewport and, on Gutenberg
+ * editor screens, fullscreen mode.
+ *
+ * IMPORTANT: Keep this logic in sync with
+ * `jetpack/projects/packages/agents-manager/src/js/sidebar-docking-gate.ts`.
+ */
+const useCanDock = ( { desktopMediaQuery }: { desktopMediaQuery: string } ) => {
+	const isDesktop = useMediaQuery( desktopMediaQuery );
+	const isFullscreenGateOpen = useSyncExternalStore(
+		subscribeToBodyClasses,
+		getIsFullscreenGateOpen
+	);
+
+	return { canDock: isDesktop && isFullscreenGateOpen, isDesktop };
+};
 
 interface Options {
 	sidebarContainer?: string | HTMLElement;
@@ -24,15 +69,20 @@ interface Options {
 	onCloseSidebar?: () => void;
 	onDock?: () => void;
 	onUndock?: () => void;
+	/** Toggle the `is-split-screen` modifier on the sidebar container. */
+	isSplitScreen?: boolean;
 }
 
 interface ReturnValue {
 	isDocked: boolean;
+	isSidebarOpen: boolean;
 	canDock: boolean;
 	dock: () => void;
 	undock: () => void;
 	openSidebar: () => void;
 	closeSidebar: () => void;
+	/** The node the chat renders into. `null` until it is created. */
+	portalNode: HTMLElement | null;
 	createAgentPortal: ( children: React.ReactNode ) => React.ReactNode | React.ReactPortal;
 }
 
@@ -46,20 +96,20 @@ export default function useAgentLayoutManager( {
 	onCloseSidebar = () => {},
 	onDock = () => {},
 	onUndock = () => {},
+	isSplitScreen = false,
 }: Options = {} ): ReturnValue {
-	const portalRef = useRef< HTMLDivElement >();
-	const wasOpenRef = useRef( defaultOpen );
-	const [ isPortalReady, setIsPortalReady ] = useState( false );
-	const isDesktop = useMediaQuery( desktopMediaQuery );
-	const { height } = useWindowDimensions();
+	const portalRef = useRef< HTMLDivElement | undefined >( undefined );
+	// The same node as `portalRef`, which the layout effect reads synchronously.
+	// As state, it re-renders the consumers once the node exists.
+	const [ portalNode, setPortalNode ] = useState< HTMLElement | null >( null );
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
-	const [ adminMenuHeight, setAdminMenuHeight ] = useState( 0 );
-
-	const hasEnoughHeight = height >= adminMenuHeight;
-	const canDock = isDesktop && hasEnoughHeight;
+	const { canDock, isDesktop } = useCanDock( { desktopMediaQuery } );
 	const shouldRenderSidebar = canDock && isDocked;
-	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
-	const closeSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
+	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
+
+	// Floating because the viewport is narrow, with the docked preference still on.
+	const isResponsiveUndocked = !! isDocked && ! isDesktop;
+	const [ responsiveUndockCount, setResponsiveUndockCount ] = useState( 0 );
 
 	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
 	const defaultDockedRef = useRef( defaultDocked );
@@ -84,20 +134,15 @@ export default function useAgentLayoutManager( {
 				: sidebarContainer,
 		[ sidebarContainer ]
 	);
+	const [ isSidebarOpen, setIsSidebarOpen ] = useState(
+		() => defaultOpen || container?.classList.contains( SIDEBAR_OPEN_CLASS ) || false
+	);
 
 	// Initialize docked state, setup portal element, and handle dock/undock changes
 	// Use `useLayoutEffect` to prevent flickering
 	useLayoutEffect( () => {
 		if ( ! isReady || ! container ) {
 			return;
-		}
-
-		// Calculate admin menu height
-		const adminMenu = document.getElementById( 'adminmenu' );
-		if ( adminMenu ) {
-			const menuHeight = adminMenu.offsetHeight;
-			const menuTopOffset = adminMenu.getBoundingClientRect().top + window.scrollY;
-			setAdminMenuHeight( menuHeight + menuTopOffset + 20 );
 		}
 
 		// Set initial docked state
@@ -108,65 +153,94 @@ export default function useAgentLayoutManager( {
 		// Create portal element if it doesn't exist
 		if ( ! portalRef.current ) {
 			portalRef.current = document.createElement( 'div' );
-			portalRef.current.className = 'agents-manager-chat';
+			portalRef.current.className = CHAT_PORTAL_CLASS;
+			// Hidden until the package stylesheet reveals it (`chat-ui.scss`), so a page
+			// without the stylesheet shows no chat instead of an unstyled one (TAGENT-2186).
+			portalRef.current.style.display = 'none';
 			container.appendChild( portalRef.current );
+
+			if ( getComputedStyle( portalRef.current ).display === 'none' ) {
+				// eslint-disable-next-line no-console
+				console.error(
+					'[AgentsManager] The Agents Manager stylesheet is not applied; the chat stays hidden until it is.'
+				);
+			}
 
 			// Apply initial classes
 			if ( shouldRenderSidebar ) {
-				container.classList.add( 'agents-manager-sidebar-container' );
+				container.classList.add( SIDEBAR_CONTAINER_CLASS );
 				portalRef.current.classList.add( 'agents-manager-chat--docked' );
-
-				if ( defaultOpenRef.current ) {
-					container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
-				}
 			} else {
 				portalRef.current.classList.add( 'agents-manager-chat--undocked' );
 			}
 
-			setIsPortalReady( true );
+			setPortalNode( portalRef.current );
 
 			return;
 		}
 
 		// Handle dock/undock state changes
 		if ( shouldRenderSidebar ) {
-			container.classList.add( 'agents-manager-sidebar-container' );
+			container.classList.add( SIDEBAR_CONTAINER_CLASS );
 			portalRef.current.classList.add( 'agents-manager-chat--docked' );
 			portalRef.current.classList.remove( 'agents-manager-chat--undocked' );
 
-			if ( wasOpenRef.current ) {
-				container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
+			if ( defaultOpenRef.current ) {
+				setIsSidebarOpen( true );
 			}
 
 			onDockRef.current();
 		} else {
-			clearTimeout( closeSidebarTimeoutRef.current );
-			container.classList.remove(
-				'agents-manager-sidebar-container',
-				'agents-manager-sidebar-container--sidebar-open',
-				'agents-manager-sidebar-container--closing'
-			);
+			// Cancel the sidebar-open `dock()` scheduled — its closure captured
+			// `canDock` as true, so it would otherwise open the just-undocked sidebar.
+			clearTimeout( openSidebarTimeoutRef.current );
+			container.classList.remove( SIDEBAR_CONTAINER_CLASS, SIDEBAR_OPEN_CLASS );
 			portalRef.current.classList.add( 'agents-manager-chat--undocked' );
 			portalRef.current.classList.remove( 'agents-manager-chat--docked' );
+			setIsSidebarOpen( false );
 
 			onUndockRef.current();
 		}
 	}, [ container, isDocked, isReady, shouldRenderSidebar ] );
+
+	// Losing the desktop viewport takes the docked sidebar away. The count
+	// triggers the floating panel's layout command, moving it to the right
+	// corner — where the sidebar just was.
+	const wasDesktopRef = useRef( isDesktop );
+	useEffect( () => {
+		const wasDesktop = wasDesktopRef.current;
+		wasDesktopRef.current = isDesktop;
+
+		if ( wasDesktop && ! isDesktop && isDocked ) {
+			setResponsiveUndockCount( ( count ) => count + 1 );
+		}
+	}, [ isDesktop, isDocked ] );
+
+	useLayoutEffect( () => {
+		container?.classList.toggle( SIDEBAR_OPEN_CLASS, !! shouldRenderSidebar && isSidebarOpen );
+	}, [ container, isSidebarOpen, shouldRenderSidebar ] );
+
+	// Reflect split-screen state on the container as `is-split-screen`.
+	useLayoutEffect( () => {
+		if ( ! container ) {
+			return;
+		}
+		container.classList.toggle( 'is-split-screen', !! isSplitScreen );
+	}, [ container, isSplitScreen ] );
 
 	// Cleanup on unmount
 	// Use `useLayoutEffect` to prevent flickering
 	useLayoutEffect(
 		() => () => {
 			clearTimeout( openSidebarTimeoutRef.current );
-			clearTimeout( closeSidebarTimeoutRef.current );
 			setIsDocked( null );
-			setIsPortalReady( false );
+			setPortalNode( null );
 
 			if ( container ) {
 				container.classList.remove(
-					'agents-manager-sidebar-container',
-					'agents-manager-sidebar-container--sidebar-open',
-					'agents-manager-sidebar-container--closing'
+					SIDEBAR_CONTAINER_CLASS,
+					SIDEBAR_OPEN_CLASS,
+					'is-split-screen'
 				);
 
 				if ( portalRef.current ) {
@@ -184,10 +258,7 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
-		wasOpenRef.current = true;
-		clearTimeout( closeSidebarTimeoutRef.current );
-		container.classList.remove( 'agents-manager-sidebar-container--closing' );
-		container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
+		setIsSidebarOpen( true );
 
 		onOpenSidebarRef.current();
 	}, [ canDock, container, isReady ] );
@@ -197,22 +268,7 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
-		const wasSidebarOpen = container.classList.contains(
-			'agents-manager-sidebar-container--sidebar-open'
-		);
-
-		wasOpenRef.current = false;
-		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
-
-		// Only suppress admin bar pointer events during an actual sidebar-close transition.
-		if ( wasSidebarOpen ) {
-			container.classList.add( 'agents-manager-sidebar-container--closing' );
-			clearTimeout( closeSidebarTimeoutRef.current );
-			closeSidebarTimeoutRef.current = setTimeout( () => {
-				container?.classList.remove( 'agents-manager-sidebar-container--closing' );
-			}, SIDEBAR_TRANSITION_DURATION_MS );
-		}
-
+		setIsSidebarOpen( false );
 		onCloseSidebarRef.current();
 	}, [ canDock, container, isReady ] );
 
@@ -239,39 +295,48 @@ export default function useAgentLayoutManager( {
 		setIsDocked( false );
 	}, [ container, isReady ] );
 
+	const responsiveUndock = useMemo(
+		() => ( { isResponsiveUndocked, undockCount: responsiveUndockCount } ),
+		[ isResponsiveUndocked, responsiveUndockCount ]
+	);
+
 	const createAgentPortal = useCallback(
 		( children: React.ReactNode ) => {
-			if ( ! isPortalReady || ! portalRef.current ) {
+			if ( ! portalNode ) {
 				return null;
 			}
 
 			return createPortal(
-				shouldRenderSidebar ? (
-					<>
-						{ children }
-						<Button
-							className="agents-manager-sidebar-fab"
-							icon={ AI }
-							onClick={ handleOpenSidebar }
-							label={ __( 'Open Chat', '__i18n_text_domain__' ) }
-						/>
-					</>
-				) : (
-					children
-				),
-				portalRef.current
+				<ResponsiveUndockContext.Provider value={ responsiveUndock }>
+					{ shouldRenderSidebar ? (
+						<>
+							{ children }
+							<Button
+								className="agents-manager-sidebar-fab"
+								icon={ AI }
+								onClick={ handleOpenSidebar }
+								label={ __( 'Open Chat', __i18n_text_domain__ ) }
+							/>
+						</>
+					) : (
+						children
+					) }
+				</ResponsiveUndockContext.Provider>,
+				portalNode
 			);
 		},
-		[ handleOpenSidebar, isPortalReady, shouldRenderSidebar ]
+		[ handleOpenSidebar, portalNode, responsiveUndock, shouldRenderSidebar ]
 	);
 
 	return {
 		isDocked: !! shouldRenderSidebar,
+		isSidebarOpen: !! shouldRenderSidebar && isSidebarOpen,
 		canDock,
 		dock,
 		undock,
 		openSidebar: handleOpenSidebar,
 		closeSidebar: handleCloseSidebar,
+		portalNode,
 		createAgentPortal,
 	};
 }

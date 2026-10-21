@@ -20,7 +20,10 @@ interface Props {
 export default function ConversationListItem( { conversation, onClick }: Props ) {
 	const disabled = ! conversation.session_id && ! conversation.conversation_id;
 	const title = generateConversationTitle( conversation.first_message?.content || '' );
-	const subtitle = generateConversationSubtitle( conversation.first_message?.created_at || '' );
+	const subtitle = generateConversationSubtitle(
+		conversation.first_message?.created_at || '',
+		conversation.is_zendesk
+	);
 
 	return (
 		<button
@@ -30,7 +33,7 @@ export default function ConversationListItem( { conversation, onClick }: Props )
 			disabled={ disabled }
 			aria-label={ sprintf(
 				/* translators: %1$s: conversation title, %2$s: conversation subtitle */
-				__( 'Load conversation: %1$s, %2$s', '__i18n_text_domain__' ),
+				__( 'Load conversation: %1$s, %2$s', __i18n_text_domain__ ),
 				title,
 				subtitle
 			) }

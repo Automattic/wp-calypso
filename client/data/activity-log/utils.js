@@ -1,5 +1,6 @@
 const KNOWN_FILTER_OPTIONS = [
 	'action',
+	'actor',
 	'after',
 	'aggregate',
 	'before',

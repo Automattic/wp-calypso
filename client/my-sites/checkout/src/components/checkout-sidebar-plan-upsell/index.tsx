@@ -1,6 +1,11 @@
 import { isPlan, isJetpackPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
+import {
+	calculateDiscountPercentage,
+	fromVariantPriceData,
+	getPlanPriceForDuration,
+} from '@automattic/plans-grid-next';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -8,14 +13,9 @@ import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
-import {
-	getItemVariantCompareToPrice,
-	getItemVariantDiscount,
-} from '../item-variation-picker/util';
 import { CheckoutSummaryFeaturedList } from '../wp-checkout-order-summary';
 import type { WPCOMProductVariant } from '../item-variation-picker';
 import './style.scss';
@@ -37,10 +37,10 @@ function getUpsellVariant( currentVariant: WPCOMProductVariant, variants: WPCOMP
 function getUpsellTextForVariant(
 	upsellVariant: WPCOMProductVariant,
 	percentSavings: number,
-	__: any
+	__: typeof import( '@wordpress/i18n' ).__
 ) {
 	if ( upsellVariant.productBillingTermInMonths === 12 ) {
-		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+		// translators: %(percentSavings)d%% is the savings percentage for the upgrade as a number, like '20' for '20%'.
 		const cardTitle = __( '<strong>Save %(percentSavings)d%%</strong> by paying annually' );
 		return {
 			cardTitle: createInterpolateElement( sprintf( cardTitle, { percentSavings } ), {
@@ -52,7 +52,7 @@ function getUpsellTextForVariant(
 	}
 
 	if ( upsellVariant.productBillingTermInMonths === 24 ) {
-		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+		// translators: %(percentSavings)d%% is the savings percentage for the upgrade as a number, like '20' for '20%'.
 		const cardTitle = __(
 			'<strong>Save %(percentSavings)d%% extra</strong> by paying for two years'
 		);
@@ -66,7 +66,7 @@ function getUpsellTextForVariant(
 	}
 
 	if ( upsellVariant.productBillingTermInMonths === 36 ) {
-		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+		// translators: %(percentSavings)d%% is the savings percentage for the upgrade as a number, like '20' for '20%'.
 		const cardTitle = __(
 			'<strong>Save %(percentSavings)d%% extra</strong> by paying for three years'
 		);
@@ -95,7 +95,6 @@ function getTracksEventUpsellType( upsellVariant: WPCOMProductVariant ) {
 
 export function CheckoutSidebarPlanUpsell() {
 	const { formStatus } = useFormStatus();
-	const reduxDispatch = useDispatch();
 	const isFormLoading = FormStatus.READY !== formStatus;
 	const [ isClicked, setIsClicked ] = useState( false );
 	const { __ } = useI18n();
@@ -156,13 +155,11 @@ export function CheckoutSidebarPlanUpsell() {
 		};
 
 		debug( 'switching from', plan.product_slug, 'to', newPlan.product_slug );
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_sidebar_upsell_click', {
-				upsell_type: getTracksEventUpsellType( upsellVariant ),
-				switching_from: plan.product_slug,
-				switching_to: newPlan.product_slug,
-			} )
-		);
+		recordTracksEvent( 'calypso_checkout_sidebar_upsell_click', {
+			upsell_type: getTracksEventUpsellType( upsellVariant ),
+			switching_from: plan.product_slug,
+			switching_to: newPlan.product_slug,
+		} );
 		try {
 			await replaceProductInCart( plan.uuid, newPlan );
 			setIsClicked( false );
@@ -174,21 +171,21 @@ export function CheckoutSidebarPlanUpsell() {
 		}
 	};
 
-	const compareToPriceForVariantTerm = getItemVariantCompareToPrice(
-		upsellVariant,
-		currentVariant
+	const currentInfo = fromVariantPriceData( currentVariant );
+	const upsellInfo = fromVariantPriceData( upsellVariant );
+	const currentPlanPrice = currentVariant.priceInteger;
+	const currentPlanPriceAtUpsellTerm = getPlanPriceForDuration(
+		currentInfo,
+		upsellInfo.termMonths
 	);
-	const percentSavings = getItemVariantDiscount( upsellVariant, currentVariant );
+	const upsellPlanPrice = getPlanPriceForDuration( upsellInfo, upsellInfo.termMonths );
+	const percentSavings =
+		calculateDiscountPercentage( currentPlanPriceAtUpsellTerm, upsellPlanPrice ) ?? 0;
+
 	if ( percentSavings <= 0 ) {
 		debug( 'percent savings is too low', percentSavings );
 		return null;
 	}
-
-	const isComparisonWithIntroOffer =
-		upsellVariant.introductoryInterval === 2 &&
-		upsellVariant.introductoryTerm === 'year' &&
-		currentVariant.introductoryInterval === 1 &&
-		currentVariant.introductoryTerm === 'year';
 
 	const upsellText = getUpsellTextForVariant( upsellVariant, percentSavings, __ );
 
@@ -206,23 +203,18 @@ export function CheckoutSidebarPlanUpsell() {
 						{ currentVariant.variantLabel.adjective }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						{ formatCurrency(
-							currentVariant.priceInteger +
-								( isComparisonWithIntroOffer ? currentVariant.priceBeforeDiscounts : 0 ),
-							currentVariant.currency,
-							{
-								stripZeros: true,
-								isSmallestUnit: true,
-							}
-						) }
+						{ formatCurrency( currentPlanPrice, currentVariant.currency, {
+							stripZeros: true,
+							isSmallestUnit: true,
+						} ) }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ upsellVariant.variantLabel.adjective }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						{ compareToPriceForVariantTerm && (
+						{ currentPlanPriceAtUpsellTerm && (
 							<del className="checkout-sidebar-plan-upsell__do-not-pay">
-								{ formatCurrency( compareToPriceForVariantTerm, currentVariant.currency, {
+								{ formatCurrency( currentPlanPriceAtUpsellTerm, currentVariant.currency, {
 									stripZeros: true,
 									isSmallestUnit: true,
 								} ) }

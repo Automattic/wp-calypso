@@ -9,11 +9,11 @@ import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import { useAuth } from '../../app/auth';
-import { purchaseSettingsRoute } from '../../app/router/me';
+import { paymentMethodsRoute, purchaseSettingsRoute } from '../../app/router/me';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import SiteIcon from '../../components/site-icon';
 import {
-	isRenewing,
+	mightStillAutoRenew,
 	isTransferredOwnership,
 	isAkismetHoldingSitePurchase,
 	isMarketplaceHoldingSitePurchase,
@@ -74,7 +74,7 @@ export function BillingPurchaseInfoPopover( { children }: { children: ReactNode 
 }
 
 function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
-	const containerSize = 36;
+	const containerSize = 48;
 	const iconSize = 20;
 	return (
 		<span
@@ -97,7 +97,7 @@ function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
 }
 
 function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purchase } ) {
-	const size = 36;
+	const size = 48;
 
 	if ( purchase.is_jetpack_plan_or_product ) {
 		return (
@@ -168,7 +168,7 @@ function BackupPaymentMethodNotice() {
 	const noticeText = createInterpolateElement(
 		__( 'If the renewal fails, a <link>backup payment method</link> may be used.' ),
 		{
-			link: <a href="/me/purchases/payment-methods" />,
+			link: <Link to={ paymentMethodsRoute.fullPath } />,
 		}
 	);
 	return <BillingPurchaseInfoPopover>{ noticeText }</BillingPurchaseInfoPopover>;
@@ -191,7 +191,7 @@ function OwnerInfo( {
 			{ createInterpolateElement(
 				// translators: domain is a domain name
 				__(
-					'This license was activated on <domain /> by another user. If you haven’t given the license to them on purpose, <link>contact our support team</link> for more assistance.'
+					'This license was activated on <domain/> by another user. If you haven’t given the license to them on purpose, <link>contact our support team</link> for more assistance.'
 				),
 				{
 					domain: <strong>{ purchase.domain || purchase.site_slug || __( 'a site' ) }</strong>,
@@ -208,6 +208,32 @@ function OwnerInfo( {
 	);
 
 	return <BillingPurchaseInfoPopover>{ tooltipContent }</BillingPurchaseInfoPopover>;
+}
+
+// Only the purchaser can change how a purchase is paid for, and the backup
+// methods are the viewer's own, so show nothing for anyone else's purchase.
+function PurchasePaymentMethodCell( {
+	purchase,
+	isSiteMissing,
+	isBackupMethodAvailable,
+}: {
+	purchase: Purchase;
+	isSiteMissing: boolean;
+	isBackupMethodAvailable: boolean;
+} ) {
+	const { user } = useAuth();
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
+
+	return (
+		<HStack justify="flex-start" spacing={ 1 }>
+			<PurchasePaymentMethod purchase={ purchase } isSiteMissing={ isSiteMissing } />
+			{ isBackupMethodAvailable && mightStillAutoRenew( purchase ) && (
+				<BackupPaymentMethodNotice />
+			) }
+		</HStack>
+	);
 }
 
 function PurchaseSettingLink( {
@@ -238,18 +264,23 @@ export function getFields( {
 	paymentMethods,
 	transferredPurchases,
 	siteFilter,
+	visibleFields,
+	canFilterBySite = true,
 }: {
 	sites: Site[];
 	paymentMethods: Array< StoredPaymentMethod >;
 	transferredPurchases: Array< Purchase >;
 	siteFilter?: number;
+	visibleFields?: string[];
+	canFilterBySite?: boolean;
 } ): Fields< Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
 
-	// No point in having a filter if there's only one site.
-	const shouldAllowSiteFilter = sites.length > 1;
+	// No point in having a filter if there's only one site, or if the host has
+	// already scoped this screen to one site.
+	const shouldAllowSiteFilter = canFilterBySite && sites.length > 1;
 	return [
 		{
 			id: 'site',
@@ -264,7 +295,7 @@ export function getFields( {
 							return { value: String( site.ID ), label: `${ site.name } (${ site.slug })` };
 						} ),
 						filterBy: { operators: [ 'isAny' ], ...( siteFilter && { isPrimary: true } ) },
-				  }
+					}
 				: { filterBy: false } ),
 			getValue: ( { item }: { item: Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
@@ -307,7 +338,7 @@ export function getFields( {
 				return (
 					<HStack justify="flex-start" spacing={ 1 }>
 						<PurchaseSettingLink purchase={ item } disabled={ isTransferred }>
-							{ getTitleForListDisplay( item ) }
+							{ getTitleForListDisplay( item, false ) }
 						</PurchaseSettingLink>
 						<OwnerInfo purchase={ item } isTransferredOwnership={ isTransferred } />
 					</HStack>
@@ -329,7 +360,16 @@ export function getFields( {
 			},
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
-				return <PurchaseProduct purchase={ item } site={ site } />;
+				return (
+					<>
+						<PurchaseProduct purchase={ item } site={ site } />
+						{ ! visibleFields?.includes( 'status' ) && (
+							<div className="billing-purchase__inline-status">
+								<PurchaseExpiryStatus purchase={ item } isSiteMissing={ ! site } />
+							</div>
+						) }
+					</>
+				);
 			},
 		},
 		{
@@ -363,27 +403,27 @@ export function getFields( {
 			elements: [
 				{
 					value: '7',
-					// translators: %s: number of days
+					// translators: %(days)d is a number of days
 					label: sprintf( __( 'Expires in %(days)d days' ), { days: 7 } ),
 				},
 				{
 					value: '14',
-					// translators: %s: number of days
+					// translators: %(days)d is a number of days
 					label: sprintf( __( 'Expires in %(days)d days' ), { days: 14 } ),
 				},
 				{
 					value: '30',
-					// translators: %s: number of days
+					// translators: %(days)d is a number of days
 					label: sprintf( __( 'Expires in %(days)d days' ), { days: 30 } ),
 				},
 				{
 					value: '60',
-					// translators: %s: number of days
+					// translators: %(days)d is a number of days
 					label: sprintf( __( 'Expires in %(days)d days' ), { days: 60 } ),
 				},
 				{
 					value: '365',
-					// translators: %s: number of days
+					// translators: %(days)d is a number of days
 					label: sprintf( __( 'Expires in %(days)d days' ), { days: 365 } ),
 				},
 			],
@@ -416,17 +456,13 @@ export function getFields( {
 		},
 		{
 			id: 'status',
-			label: __( 'Expires/Renews on' ),
+			label: __( 'Renewal/expiry' ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
 			getValue: ( { item }: { item: Purchase } ) => {
-				if ( item.expiry_status === 'expired' ) {
-					// Prefix expired items with a z so they sort to the end of the list.
-					return 'zzz ' + item.expiry_status + ' ' + item.expiry_date;
-				}
 				// Include date in value to sort similar expiries together.
 				return item.expiry_date + ' ' + item.expiry_status;
 			},
@@ -449,12 +485,12 @@ export function getFields( {
 			filterBy: false,
 			getValue: ( { item }: { item: Purchase } ) => {
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
-				return item.expiry_status === 'expired'
-					? // Do not return card number for expired purchases because it
-					  // will not be displayed so it will look wierd if we sort
-					  // expired purchases with active ones that have the same card.
-					  'expired'
-					: item.payment_details ?? item.payment_card_type ?? 'no-payment-method';
+				return ! mightStillAutoRenew( item )
+					? // Do not return the card number when the payment method isn't in
+						// use, since it won't be displayed; sorting it alongside active
+						// purchases that have the same card would look wrong.
+						'expired'
+					: ( item.payment_details ?? item.payment_card_type ?? 'no-payment-method' );
 			},
 			render: ( { item }: { item: Purchase } ) => {
 				let isBackupMethodAvailable = false;
@@ -467,10 +503,11 @@ export function getFields( {
 				}
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
-					<HStack justify="flex-start" spacing={ 1 }>
-						<PurchasePaymentMethod purchase={ item } isSiteMissing={ ! site } />
-						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
-					</HStack>
+					<PurchasePaymentMethodCell
+						purchase={ item }
+						isSiteMissing={ ! site }
+						isBackupMethodAvailable={ isBackupMethodAvailable }
+					/>
 				);
 			},
 		},

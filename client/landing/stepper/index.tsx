@@ -1,4 +1,3 @@
-import '@automattic/calypso-polyfills';
 import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
@@ -8,6 +7,7 @@ import {
 	User as UserStore,
 	HelpCenter,
 } from '@automattic/data-stores';
+import { setRequester as setLaunchpadRequester } from '@automattic/launchpad';
 import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
@@ -58,6 +58,19 @@ import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager'
 import type { CurrentUser, HelpCenterSelect, HelpCenterDispatch } from '@automattic/data-stores';
 import type { AnyAction } from 'redux';
 import type { WpcomRequestParams } from 'wpcom-proxy-request';
+
+const loadCookieBanner = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-privacy-prefs" */ 'calypso/blocks/cookie-banner'
+	);
+const loadGlobalNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+	);
+const loadWebpackBuildMonitor = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-webpack-build-monitor" */ 'calypso/components/webpack-build-monitor'
+	);
 
 declare const window: AppWindow;
 
@@ -130,7 +143,11 @@ async function main() {
 
 			return new Promise< T >( ( resolve, reject ) => {
 				const cb = ( error: Error, response: T ) => {
-					error ? reject( error ) : resolve( response );
+					if ( error ) {
+						reject( error );
+					} else {
+						resolve( response );
+					}
 				};
 				if ( method && ( method as string ).toUpperCase() !== 'GET' ) {
 					wpcom.req.post( { ...rest, method }, queryObj, body, cb );
@@ -139,7 +156,11 @@ async function main() {
 				}
 			} );
 		};
+		// Each package holds its own requester. One left out here silently falls back to an
+		// unauthenticated proxy request instead of failing, so every package that talks to
+		// the API on Stepper's behalf needs a line below.
 		setDataStoresRequester( requester );
+		setLaunchpadRequester( requester );
 		setOnboardingRequester( requester );
 	}
 
@@ -255,21 +276,15 @@ async function main() {
 						<FlowRenderer flow={ flow } steps={ flowSteps } />
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad
-								require={ () =>
-									import(
-										/* webpackChunkName: "async-load-calypso-blocks-cookie-banner" */ 'calypso/blocks/cookie-banner'
-									)
-								}
+								require={ loadCookieBanner }
 								placeholder={ null }
+								loadFailureFallback={ null }
 							/>
 						) }
 						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
-								)
-							}
+							require={ loadGlobalNotices }
 							placeholder={ null }
+							loadFailureFallback={ null }
 							id="notices"
 						/>
 					</BrowserRouter>
@@ -277,33 +292,10 @@ async function main() {
 						( flowName === WOO_HOSTED_PLANS_FLOW ? (
 							<LazyHelpCenter currentUser={ user as UserStore.CurrentUser } />
 						) : (
-							<>
-								<AsyncHelpCenterApp
-									requireLogin
-									currentUser={ user as UserStore.CurrentUser }
-									sectionName="stepper"
-								/>
-								<AsyncLoad
-									require={ () =>
-										import(
-											/* webpackChunkName: "async-load-calypso-layout-agents-manager-loader" */ 'calypso/layout/agents-manager-loader'
-										)
-									}
-									placeholder={ null }
-									sectionName={ flowName }
-									loadAgentsManager
-								/>
-							</>
+							<AsyncHelpCenterApp requireLogin sectionName="stepper" />
 						) ) }
 					{ 'development' === process.env.NODE_ENV && (
-						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-components-webpack-build-monitor" */ 'calypso/components/webpack-build-monitor'
-								)
-							}
-							placeholder={ null }
-						/>
+						<AsyncLoad require={ loadWebpackBuildMonitor } placeholder={ null } />
 					) }
 				</QueryClientProvider>
 			</Provider>

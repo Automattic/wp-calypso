@@ -1,6 +1,6 @@
 import config, { isCalypsoLive } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { includes, isEmpty } from 'lodash';
+import { isEmpty } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import validUrl from 'valid-url';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
@@ -34,6 +34,7 @@ export function authQueryTransformer( queryObject ) {
 		// TODO: verify
 		authApproved: !! queryObject.auth_approved,
 		alreadyAuthorized: !! queryObject.already_authorized,
+		hasConnectedOwner: !! queryObject.has_connected_owner,
 		blogname: queryObject.blogname || null,
 		from: queryObject.from || '[unknown]',
 		jpVersion: queryObject.jp_version || null,
@@ -53,12 +54,19 @@ export function authQueryTransformer( queryObject ) {
 		// Related WooCommerce PR: https://github.com/woocommerce/woocommerce/pull/39799
 		// this param will be removed after the expierment is over
 		plugin_name: queryObject.plugin_name || null,
+		plugins: queryObject.plugins
+			? queryObject.plugins
+					.split( ',' )
+					.map( ( s ) => s.trim() )
+					.filter( Boolean )
+			: [],
 	};
 }
 
 export const authQueryPropTypes = PropTypes.shape( {
 	authApproved: PropTypes.bool,
 	alreadyAuthorized: PropTypes.bool,
+	hasConnectedOwner: PropTypes.bool,
 	blogname: PropTypes.string,
 	clientId: PropTypes.number.isRequired,
 	from: PropTypes.string.isRequired,
@@ -76,6 +84,7 @@ export const authQueryPropTypes = PropTypes.shape( {
 	userEmail: PropTypes.string,
 	installedExtSuccess: PropTypes.string,
 	plugin_name: PropTypes.string,
+	plugins: PropTypes.arrayOf( PropTypes.string ),
 } );
 
 export function addCalypsoEnvQueryArg( url ) {
@@ -109,7 +118,7 @@ export function cleanUrl( inputUrl ) {
  * @returns {?string}       Role parsed from scope if found
  */
 export function getRoleFromScope( scope ) {
-	if ( ! includes( scope, ':' ) ) {
+	if ( typeof scope !== 'string' || ! scope.includes( ':' ) ) {
 		return null;
 	}
 	const role = scope.split( ':', 1 )[ 0 ];

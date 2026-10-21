@@ -1,5 +1,4 @@
-import { SiteDetails } from '@automattic/data-stores';
-import { StepContainer, isStartWritingFlow } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
@@ -19,7 +18,7 @@ const SitesChecker: Step< {
 	submits: {
 		filteredSitesCount: number;
 	};
-} > = function SitePicker( { navigation, flow } ) {
+} > = function SitePicker( { navigation } ) {
 	const { __ } = useI18n();
 	const { submit } = navigation;
 	const hasAllSitesFetched = useSelector( hasAllSitesList );
@@ -32,12 +31,7 @@ const SitesChecker: Step< {
 
 	useEffect( () => {
 		if ( hasAllSitesFetched ) {
-			const filteredSites = isStartWritingFlow( flow )
-				? allSites?.filter(
-						( site: SiteDetails | null | undefined ) => site?.launch_status === 'unlaunched'
-				  )
-				: allSites;
-			submit?.( { filteredSitesCount: filteredSites.length } );
+			submit?.( { filteredSitesCount: allSites.length } );
 			return;
 		}
 	}, [ hasAllSitesFetched, allSites ] );

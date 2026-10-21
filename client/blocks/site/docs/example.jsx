@@ -1,5 +1,4 @@
 import { Card } from '@automattic/components';
-import { get } from 'lodash';
 import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -12,7 +11,7 @@ const SiteExample = ( { site } ) => (
 );
 
 const ConnectedSiteExample = connect( ( state ) => ( {
-	site: getSite( state, get( getCurrentUser( state ), 'primary_blog', null ) ),
+	site: getSite( state, getCurrentUser( state )?.primary_blog ?? null ),
 } ) )( SiteExample );
 
 ConnectedSiteExample.displayName = 'Site';

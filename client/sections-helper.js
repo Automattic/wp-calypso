@@ -3,13 +3,11 @@
  *
  * In days past, the preloader was part of sections.js. To preload a module you would import sections
  * and call preload directly. However, all of the require.ensure calls live in sections.js. This makes
- * webpack think that imported sections was also dependant on every other chunk. The cyclic dependencies
+ * webpack think that imported sections was also dependent on every other chunk. The cyclic dependencies
  * ballooned compile times and made module analysis very difficult.
  *
  * To break the dependency cycle, we introduced `sections-helper` which does not import sections.js
  */
-
-import { find } from 'lodash';
 
 let sections = null;
 export function receiveSections( s ) {
@@ -24,7 +22,7 @@ export function getSections() {
 }
 
 export function preload( sectionName ) {
-	const section = find( sections, { name: sectionName } );
+	const section = sections?.find( ( s ) => s.name === sectionName );
 
 	if ( section ) {
 		section.load();
@@ -32,7 +30,7 @@ export function preload( sectionName ) {
 }
 
 export function load( sectionName, moduleName ) {
-	const section = find( sections, { name: sectionName, module: moduleName } );
+	const section = sections?.find( ( s ) => s.name === sectionName && s.module === moduleName );
 
 	if ( ! section ) {
 		return Promise.reject(

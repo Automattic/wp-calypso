@@ -1,4 +1,3 @@
-import { flatMap } from 'lodash';
 import moment from 'moment';
 
 export const RECS_PER_BLOCK = 2;
@@ -48,7 +47,7 @@ export function injectRecommendations( posts, recs = [], itemsBetweenRecs ) {
 
 	let recIndex = 0;
 
-	return flatMap( posts, ( post, index ) => {
+	return posts.flatMap( ( post, index ) => {
 		if ( index && index % itemsBetweenRecs === 0 && recIndex < recs.length ) {
 			const recBlock = {
 				isRecommendationBlock: true,
@@ -109,6 +108,23 @@ export function getDistanceBetweenPrompts( totalSubs ) {
 	);
 }
 
+/**
+ * Insert a single caller-rendered block (see Stream's `inStreamBlock` prop)
+ * after `position` posts. If the stream is shorter than `position`, the block
+ * goes last so it still shows on short streams.
+ * @param {Array} posts Stream items.
+ * @param {number} position How many posts should precede the block.
+ * @returns {Array} Items with one `{ isCustomBlock: true, index: 0 }` entry.
+ */
+export function injectCustomBlock( posts, position ) {
+	if ( ! posts || posts.length === 0 ) {
+		return posts;
+	}
+	const at = Math.max( 0, Math.min( position, posts.length ) );
+	const block = { isCustomBlock: true, index: 0 };
+	return [ ...posts.slice( 0, at ), block, ...posts.slice( at ) ];
+}
+
 export function injectPrompts( posts, itemsBetweenPrompts ) {
 	if ( posts.length < itemsBetweenPrompts ) {
 		return posts;
@@ -116,7 +132,7 @@ export function injectPrompts( posts, itemsBetweenPrompts ) {
 
 	let promptIndex = 0;
 
-	return flatMap( posts, ( post, index ) => {
+	return posts.flatMap( ( post, index ) => {
 		if ( index && index % itemsBetweenPrompts === 0 ) {
 			const promptBlock = {
 				isPromptBlock: true,

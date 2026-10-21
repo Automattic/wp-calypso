@@ -1,18 +1,26 @@
+import { agencyProgramStatsQuery } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
+	CheckboxControl,
+	ExternalLink,
 	Modal,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
 import {
-	isAgencyNameExists,
+	isDeniedNonUniqueDomain,
 	isAgencyUrlExists,
 } from 'calypso/a8c-for-agencies/components/form/utils';
+import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import UserContactSupportModalForm from 'calypso/a8c-for-agencies/components/user-contact-support-modal-form';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
@@ -20,11 +28,53 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { useGetSupportedSMSCountries } from 'calypso/jetpack-cloud/sections/agency-dashboard/downtime-monitoring/contact-editor/hooks';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useDispatch } from 'calypso/state';
+import wpcom from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import useContactFormValidation from './hooks/use-contact-form-validation';
 
 import './style.scss';
+
+type SignupContext = {
+	is_automattician: boolean;
+	is_proxied: boolean;
+	non_unique_domains: string[];
+};
+
+function useSignupContext(): SignupContext | null {
+	const [ context, setContext ] = useState< SignupContext | null >( null );
+
+	useEffect( () => {
+		wpcom.req
+			.get( {
+				path: '/agency/signup-context',
+				apiNamespace: 'wpcom/v2',
+			} )
+			.then( ( response: SignupContext ) => {
+				setContext( response );
+			} )
+			.catch( () => {
+				setContext( null );
+			} );
+	}, [] );
+
+	return context;
+}
+
+const FALLBACK_AGENCY_COUNT = 10000;
+
+// Rounded down so the copy stays a stable "N,000+" instead of shifting on every refresh.
+function useAgencyCountLabel() {
+	const { data, isLoading } = useQuery( agencyProgramStatsQuery() );
+	let agencyCountLabel: string | null = null;
+	if ( data ) {
+		agencyCountLabel = `${ formatNumber( Math.floor( data.active_agencies / 1000 ) * 1000 ) }+`;
+	} else if ( ! isLoading ) {
+		agencyCountLabel = `${ formatNumber( FALLBACK_AGENCY_COUNT ) }+`;
+	}
+	return { agencyCountLabel, isLoading };
+}
 
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
@@ -45,6 +95,16 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 	const countriesList = useGetSupportedSMSCountries();
 	const noCountryList = countriesList.length === 0;
 
+	const user = useSelector( getCurrentUser );
+	const signupContext = useSignupContext();
+	const { agencyCountLabel, isLoading: isLoadingAgencyCount } = useAgencyCountLabel();
+	const showInternalFlags =
+		signupContext?.is_automattician === true || signupContext?.is_proxied === true;
+	const nonUniqueDomains = useMemo(
+		() => new Set( signupContext?.non_unique_domains ?? [] ),
+		[ signupContext?.non_unique_domains ]
+	);
+
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
 		firstName: initialFormData.firstName || '',
 		lastName: initialFormData.lastName || '',
@@ -52,22 +112,43 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		agencyName: initialFormData.agencyName || '',
 		agencyUrl: initialFormData.agencyUrl || '',
 		phoneNumber: initialFormData.phoneNumber || '',
+		phone: initialFormData.phone,
 	} );
 
-	const [ duplicateAgencyFields, setDuplicateAgencyFields ] = useState< {
-		agencyName: boolean;
-		agencyUrl: boolean;
-	} >( {
-		agencyName: false,
-		agencyUrl: false,
-	} );
+	const [ showDuplicateModal, setShowDuplicateModal ] = useState( false );
+	const [ showSupportForm, setShowSupportForm ] = useState( false );
+	const [ skipHubspot, setSkipHubspot ] = useState( true );
 
-	const handlePhoneInputChange = ( data: { phoneNumberFull: string } ) => {
+	// Track the phone input's country code so step 2 can auto-populate the
+	// agency location when the user supplies a phone number.
+	const [ phoneCountryCode, setPhoneCountryCode ] = useState( '' );
+
+	const handlePhoneInputChange = ( data: {
+		phoneNumber: string;
+		phoneNumberFull: string;
+		countryData?: { code: string };
+	} ) => {
 		setFormData( ( prev ) => ( {
 			...prev,
 			phoneNumber: data.phoneNumberFull,
+			phone: {
+				phoneNumberFull: data.phoneNumberFull,
+				phoneNumber: data.phoneNumber,
+				countryCode: data.countryData?.code,
+			},
 		} ) );
+		setPhoneCountryCode( data.phoneNumber && data.countryData?.code ? data.countryData.code : '' );
+		updateValidationError( { phoneNumber: undefined } );
 	};
+
+	const dataToContinue: Partial< AgencyDetailsSignupPayload > = useMemo(
+		() => ( {
+			...formData,
+			...( phoneCountryCode ? { country: phoneCountryCode } : {} ),
+			...( showInternalFlags ? { skip_hubspot: skipHubspot } : {} ),
+		} ),
+		[ formData, phoneCountryCode, showInternalFlags, skipHubspot ]
+	);
 
 	const handleInputChange =
 		( field: keyof AgencyDetailsSignupPayload ) =>
@@ -89,44 +170,148 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				return;
 			}
 
+			const agencyUrl = formData.agencyUrl ?? '';
+
+			// Non-unique domains (gmail.com, facebook.com, etc.) can't produce
+			// meaningful duplicate-agency matches, so skip the duplicate check
+			// entirely and let the signup proceed.  Risk review still fires
+			// independently based on the owner's email domain.
+			if ( isDeniedNonUniqueDomain( agencyUrl, nonUniqueDomains ) ) {
+				dispatch(
+					recordTracksEvent( 'calypso_a4a_agency_signup_form_non_unique_domain_skipped', {
+						agency_url: agencyUrl,
+					} )
+				);
+				setIsProceeding( false );
+				onContinue( dataToContinue );
+				return;
+			}
+
 			try {
-				const [ duplicateAgencyName, duplicateURL ] = await Promise.all( [
-					isAgencyNameExists( formData.agencyName ?? '' ),
-					isAgencyUrlExists( formData.agencyUrl ?? '' ),
-				] );
+				const duplicateURL = await isAgencyUrlExists( agencyUrl );
 
-				setDuplicateAgencyFields( {
-					agencyName: duplicateAgencyName,
-					agencyUrl: duplicateURL,
-				} );
-
-				if ( ! duplicateAgencyName && ! duplicateURL ) {
-					onContinue( formData );
+				if ( ! duplicateURL ) {
+					onContinue( dataToContinue );
 				} else {
-					// Fire track event to track the view of the duplicate agency warning dialog
+					setShowDuplicateModal( true );
 					dispatch(
 						recordTracksEvent(
 							'calypso_a4a_agency_signup_form_duplicate_agency_warning_dialog_view',
 							{
-								agencyName: formData.agencyName ?? '',
-								agencyUrl: formData.agencyUrl ?? '',
+								agency_url: agencyUrl,
 							}
 						)
 					);
 				}
-			} catch ( error ) {
+			} catch {
 				// In case the verification fails, we just let the user continue with the form submission.
-				onContinue( formData );
+				onContinue( dataToContinue );
 			} finally {
 				setIsProceeding( false );
 			}
 		},
-		[ validate, formData, onContinue, dispatch ]
+		[ validate, formData, dataToContinue, onContinue, dispatch, nonUniqueDomains ]
 	);
 
-	const closeDuplicateAgencyWarning = () => {
-		setDuplicateAgencyFields( { agencyName: false, agencyUrl: false } );
+	const closeDuplicateModal = useCallback( () => {
+		setShowDuplicateModal( false );
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_agency_signup_form_duplicate_agency_warning_cancel_clicked' )
+		);
+	}, [ dispatch ] );
+
+	const handleContactSupport = useCallback( () => {
+		setShowDuplicateModal( false );
+		setShowSupportForm( true );
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_agency_signup_form_duplicate_agency_warning_support_clicked' )
+		);
+	}, [ dispatch ] );
+
+	const handleBypass = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_agency_signup_form_internal_flags_bypass_clicked' ) );
+		setShowDuplicateModal( false );
+		onContinue( { ...dataToContinue, bypass_duplicate_check: true } );
+	}, [ dispatch, dataToContinue, onContinue ] );
+
+	const handleSkipHubspotToggle = useCallback(
+		( checked: boolean ) => {
+			setSkipHubspot( checked );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_agency_signup_form_internal_flags_skip_hubspot_toggled', {
+					checked,
+				} )
+			);
+		},
+		[ dispatch ]
+	);
+
+	const supportFormEmail = withEmail ? formData.email : user?.email;
+	const supportFormName = `${ formData.firstName ?? '' } ${ formData.lastName ?? '' }`.trim();
+	const supportDefaultMessage = translate(
+		'I tried to sign up for Automattic for Agencies with the agency name "%(agencyName)s" (%(agencyUrl)s) but was told my agency may already exist. I need help getting access.',
+		{
+			args: {
+				agencyName: formData.agencyName ?? '',
+				agencyUrl: formData.agencyUrl ?? '',
+			},
+		}
+	);
+
+	const getInternalFlagsReason = () => {
+		if ( signupContext?.is_proxied && signupContext?.is_automattician ) {
+			return translate(
+				"You're seeing these options because you're proxied AND logged into an A11n-owned WordPress.com account."
+			);
+		}
+		if ( signupContext?.is_proxied ) {
+			return translate( "You're seeing these options because you're proxied." );
+		}
+		return translate(
+			"You're seeing these options because you're logged into an A11n-owned WordPress.com account."
+		);
 	};
+
+	const internalFlagsFields = (
+		<>
+			<Text>
+				<strong>{ translate( 'Internal Flags' ) }</strong>
+			</Text>
+			<Text className="signup-contact-form__internal-flags-reason">
+				<em>{ getInternalFlagsReason() }</em>
+			</Text>
+			<CheckboxControl
+				__nextHasNoMarginBottom
+				label={ translate( "Don't send this signup to HubSpot" ) }
+				checked={ skipHubspot }
+				onChange={ handleSkipHubspotToggle }
+			/>
+		</>
+	);
+
+	let description: ReactNode = null;
+	if ( agencyCountLabel ) {
+		description = preventWidows(
+			translate(
+				'Join %(agencyCount)s agencies and grow your business with {{span}}Automattic for Agencies.{{/span}} Get access to site management, earn commission on referrals, and explore our tier program to launch your business potential.',
+				{
+					args: {
+						agencyCount: agencyCountLabel,
+					},
+					components: {
+						span: <span className="signup-contact-form__a4a-span" />,
+					},
+				}
+			)
+		);
+	} else if ( isLoadingAgencyCount ) {
+		description = (
+			<>
+				<TextPlaceholder style={ { marginBlockEnd: '8px' } } />
+				<TextPlaceholder style={ { width: '60%' } } />
+			</>
+		);
+	}
 
 	return (
 		<Form
@@ -134,16 +319,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			title={ preventWidows(
 				translate( "Sign up and unlock the blueprint to grow your agency's business" )
 			) }
-			description={ preventWidows(
-				translate(
-					'Join 6000+ agencies and grow your business with {{span}}Automattic for Agencies.{{/span}} Get access to site management, earn commission on referrals, and explore our tier program to launch your business potential.',
-					{
-						components: {
-							span: <span className="signup-contact-form__a4a-span" />,
-						},
-					}
-				)
-			) }
+			description={ description }
 		>
 			<div className="field-mandatory-message">
 				{ translate( 'Fields marked with * are required' ) }
@@ -230,35 +406,47 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 
 			{ noCountryList && <QuerySmsCountries /> }
 
-			<FormPhoneInput
-				isDisabled={ noCountryList }
-				countriesList={ countriesList }
-				onChange={ handlePhoneInputChange }
-				className="contact-form__phone-input"
-				phoneInputProps={ {
-					id: 'phone_number',
-					placeholder: translate( 'Phone number' ),
-				} }
-				countrySelectProps={ {
-					id: 'country_code',
-				} }
-				initialCountryCode="US"
-			/>
+			<div>
+				<FormPhoneInput
+					isDisabled={ noCountryList }
+					countriesList={ countriesList }
+					onChange={ handlePhoneInputChange }
+					className="contact-form__phone-input"
+					phoneInputProps={ {
+						id: 'phone_number',
+						placeholder: translate( 'Phone number' ),
+					} }
+					countrySelectProps={ {
+						id: 'country_code',
+					} }
+					initialCountryCode={ initialFormData.phone?.countryCode || 'US' }
+					initialPhoneNumber={ initialFormData.phone?.phoneNumber }
+				/>
+				<div
+					className={ clsx( 'a4a-form__error', { hidden: ! validationError.phoneNumber } ) }
+					role="alert"
+				>
+					{ validationError.phoneNumber }
+				</div>
+			</div>
+
+			{ showInternalFlags && (
+				<div className="signup-contact-form__internal-flags">{ internalFlagsFields }</div>
+			) }
 
 			<div className="signup-contact-form__tos">
 				<p>
 					{ translate(
-						"By clicking 'Continue', you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Platform Agreement{{/link}} ↗",
+						"By clicking 'Continue', you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Platform Agreement{{/link}}",
 						{
 							components: {
 								break: <br />,
 								link: (
-									<a
+									<ExternalLink
 										href="https://automattic.com/for-agencies/platform-agreement/"
 										className="signup-contact-form__tos-link"
-										target="_blank"
-										rel="noopener noreferrer"
-									></a>
+										children={ null }
+									/>
 								),
 							},
 						}
@@ -277,61 +465,64 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				</Button>
 			</FormFooter>
 
-			{ ( duplicateAgencyFields.agencyName || duplicateAgencyFields.agencyUrl ) && (
+			{ showDuplicateModal && (
 				<Modal
 					isDismissible
 					size="medium"
-					onRequestClose={ () =>
-						setDuplicateAgencyFields( { agencyName: false, agencyUrl: false } )
-					}
-					title={ translate( 'Duplicate Agency' ) }
+					onRequestClose={ closeDuplicateModal }
+					title={ translate(
+						'It looks like your agency may already be part of Automattic for Agencies.'
+					) }
 				>
 					<VStack spacing={ 8 }>
-						{ duplicateAgencyFields.agencyName ? (
-							<Text>
-								{ translate(
-									'An agency with the name {{b}}%(agencyName)s{{/b}} already exists. Do you want to proceed with creating a new agency account? Alternatively, ask your team for an invite.',
-									{
-										args: {
-											agencyName: formData.agencyName ?? '',
-										},
-										components: {
-											b: <b />,
-										},
-									}
-								) }
-							</Text>
-						) : (
-							<Text>
-								{ translate(
-									'An agency with the domain {{b}}%(agencyUrl)s{{/b}} already exists. Do you want to proceed with creating a new agency account? Alternatively, ask your team for an invite.',
-									{
-										args: {
-											agencyUrl: formData.agencyUrl ?? '',
-										},
-										components: {
-											b: <b />,
-										},
-									}
-								) }
-							</Text>
+						<Text>
+							{ translate(
+								"To get access, ask your agency owner to {{link}}invite you as a team member{{/link}}. If you're not sure who that is or need help, contact support.",
+								{
+									components: {
+										link: (
+											<ExternalLink
+												href="https://agencieshelp.automattic.com/knowledge-base/invite-team-members/"
+												children={ null }
+											/>
+										),
+									},
+								}
+							) }
+						</Text>
+
+						{ showInternalFlags && (
+							<div className="signup-contact-form__internal-flags">
+								{ internalFlagsFields }
+								<Button variant="secondary" onClick={ handleBypass }>
+									{ translate( 'Bypass and create new agency anyway' ) }
+								</Button>
+							</div>
 						) }
+
 						<ButtonStack justify="flex-end">
-							<Button variant="secondary" onClick={ closeDuplicateAgencyWarning }>
+							<Button variant="secondary" onClick={ closeDuplicateModal }>
 								{ translate( 'Cancel' ) }
 							</Button>
-							<Button
-								variant="primary"
-								onClick={ () => {
-									onContinue( formData );
-									closeDuplicateAgencyWarning();
-								} }
-							>
-								{ translate( 'Continue creating new agency account' ) }
+							<Button variant="primary" onClick={ handleContactSupport }>
+								{ translate( 'Contact support' ) }
 							</Button>
 						</ButtonStack>
 					</VStack>
 				</Modal>
+			) }
+
+			{ showSupportForm && (
+				<UserContactSupportModalForm
+					onClose={ () => setShowSupportForm( false ) }
+					defaultMessage={ supportDefaultMessage as string }
+					anonymousAtSignup={ {
+						name: supportFormName,
+						email: supportFormEmail ?? '',
+						agencyName: formData.agencyName ?? '',
+						agencyUrl: formData.agencyUrl ?? '',
+					} }
+				/>
 			) }
 		</Form>
 	);

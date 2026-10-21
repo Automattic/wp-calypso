@@ -1,11 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Button, Spinner } from '@wordpress/components';
-import { useInstanceId } from '@wordpress/compose';
+import { debounce, useInstanceId } from '@wordpress/compose';
 import { close, search, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { debounce } from 'lodash';
 import { useEffect } from 'react';
 import * as React from 'react';
 import { useUpdateEffect } from './utils';
@@ -191,7 +190,11 @@ const InnerSearch = (
 			return onSearch;
 		}
 
-		return debounce( onSearch, delayTimeout );
+		// `@wordpress/compose`'s debounce is generic over `( ...args: unknown[] )`, which
+		// a narrowly-typed callback like `onSearch` doesn't satisfy; cast around it.
+		return debounce( onSearch as ( ...args: unknown[] ) => unknown, delayTimeout ) as (
+			search: string
+		) => void;
 	}, [ onSearch, delayTimeout, delaySearch ] );
 
 	useEffect( () => {

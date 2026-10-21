@@ -1,7 +1,7 @@
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
+import { pick } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { pick } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
@@ -39,7 +39,6 @@ class SiteSettingsPerformance extends Component {
 			siteIsAtomic,
 			siteIsAtomicPrivate,
 			siteIsUnlaunched,
-			siteSlug,
 			submitForm,
 			translate,
 			trackEvent,
@@ -95,7 +94,7 @@ class SiteSettingsPerformance extends Component {
 						{ siteIsAtomicPrivate ? (
 							<EligibilityWarnings
 								isEligible
-								backUrl={ `/settings/performance/${ siteSlug }` }
+								context="performance"
 								eligibilityData={ {
 									eligibilityHolds: [ siteIsUnlaunched ? 'SITE_UNLAUNCHED' : 'SITE_NOT_PUBLIC' ],
 								} }

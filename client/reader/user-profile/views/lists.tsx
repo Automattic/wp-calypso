@@ -1,49 +1,29 @@
 import './lists.scss';
+import { readUserListsQuery } from '@automattic/api-queries';
 import { SummaryButton } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@wordpress/components';
 import { formatListBullets, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { List } from 'calypso/reader/list-manage/types';
-import { requestUserLists } from 'calypso/state/reader/lists/actions';
 import type { ReaderUser } from '@automattic/api-core';
-
-interface AppState {
-	reader: {
-		lists: {
-			userLists: Record< string, List[] >;
-			isRequestingUserLists: Record< string, boolean >;
-		};
-	};
-}
+import type { JSX } from 'react';
 
 interface UserListsProps {
 	user: ReaderUser;
-	requestUserLists?: ( userLogin: string ) => void;
-	lists?: List[];
-	isLoading?: boolean;
 }
 
-export const UserLists = ( {
-	user,
-	requestUserLists,
-	lists,
-	isLoading,
-}: UserListsProps ): JSX.Element => {
+export const UserLists = ( { user }: UserListsProps ): JSX.Element => {
 	const translate = useTranslate();
-	const [ hasRequested, setHasRequested ] = useState( false );
-	const userLogin = user.user_login;
+	const userLogin = user.user_login ?? '';
+	const { data, isLoading, isFetched } = useQuery( readUserListsQuery( userLogin ) );
+	const lists = data?.lists ?? [];
+	const visibleLists = lists.filter(
+		( list: List ) => ! ( list.slug === 'recommended-blogs' && list.is_owner )
+	);
 
-	useEffect( () => {
-		if ( ! hasRequested && requestUserLists && userLogin ) {
-			requestUserLists( userLogin );
-			setHasRequested( true );
-		}
-	}, [ userLogin, requestUserLists, hasRequested ] );
-
-	if ( isLoading || ! hasRequested ) {
+	if ( isLoading || ! isFetched ) {
 		return (
 			<div className="user-profile__loader">
 				<Spinner /> { translate( 'Loading lists' ) }...
@@ -51,7 +31,7 @@ export const UserLists = ( {
 		);
 	}
 
-	if ( ! lists || lists.length === 0 ) {
+	if ( visibleLists.length === 0 ) {
 		return (
 			<div className="user-profile__lists">
 				<EmptyContent
@@ -66,7 +46,7 @@ export const UserLists = ( {
 
 	return (
 		<div className="user-profile__lists">
-			{ lists.map( ( list: List ) => {
+			{ visibleLists.map( ( list: List ) => {
 				let description: React.ReactNode = list.description;
 				if ( list.slug === 'recommended-blogs' ) {
 					description = translate( 'A list of blogs recommended by %s.', {
@@ -87,12 +67,4 @@ export const UserLists = ( {
 	);
 };
 
-export default connect(
-	( state: AppState, ownProps: UserListsProps ) => ( {
-		lists: state.reader.lists.userLists[ ownProps.user.user_login ?? '' ] ?? [],
-		isLoading: state.reader.lists.isRequestingUserLists[ ownProps.user.user_login ?? '' ] ?? false,
-	} ),
-	{
-		requestUserLists,
-	}
-)( UserLists );
+export default UserLists;

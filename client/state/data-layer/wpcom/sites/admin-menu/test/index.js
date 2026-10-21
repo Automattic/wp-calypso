@@ -100,4 +100,53 @@ describe( 'handlers', () => {
 		expect( dispatch ).toHaveBeenCalledTimes( 1 );
 		expect( dispatch ).toHaveBeenCalledWith( expect.objectContaining( action ) );
 	} );
+
+	test( 'should normalize WordPress.com admin shell links', () => {
+		const dispatch = jest.fn();
+		const menu = [
+			{
+				icon: 'dashicons-admin-home',
+				slug: 'httpswordpress-comhomeexample-wordpress-com',
+				title: 'My Home',
+				type: 'menu-item',
+				url: '/home/example.wordpress.com',
+				group_id: 'plugins',
+				itemId: 'plugin:unknown:-:https://wordpress.com/home/example.wordpress.com',
+				reassignable: true,
+			},
+			{
+				icon: 'dashicons-admin-plugins',
+				slug: 'jetpack',
+				title: 'Jetpack',
+				type: 'menu-item',
+				url: 'https://example.wordpress.com/wp-admin/admin.php?page=jetpack',
+				group_id: 'plugins',
+				itemId: 'plugin:unknown:-:jetpack',
+				reassignable: true,
+			},
+		];
+
+		handleSuccess( { siteId: 73738 }, { menu, groups: [] } )( dispatch, getState );
+
+		expect( dispatch ).toHaveBeenCalledWith(
+			expect.objectContaining(
+				receiveAdminMenu(
+					73738,
+					[
+						expect.objectContaining( {
+							title: 'My Home',
+							group_id: null,
+							reassignable: false,
+						} ),
+						expect.objectContaining( {
+							title: 'Jetpack',
+							group_id: 'plugins',
+							reassignable: true,
+						} ),
+					],
+					[]
+				)
+			)
+		);
+	} );
 } );

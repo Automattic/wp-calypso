@@ -9,7 +9,7 @@ export type SitePerformanceHistory = {
 	metrics: Partial< Record< Metrics, number[] > >;
 };
 
-type PerformanceMetricAuditDetailsHeading = {
+export type PerformanceMetricAuditDetailsHeading = {
 	key: string;
 	label: string;
 	valueType: string;
@@ -75,7 +75,6 @@ export type SitePerformanceReport = {
 	screenshots?: Array< { data: string; timing: number } >;
 	history?: SitePerformanceHistory;
 	timestamp?: string;
-	share_link: string;
 } & Record< Metrics, number >;
 
 export interface SitePerformanceInsights {

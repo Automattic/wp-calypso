@@ -4,7 +4,6 @@ import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getPost,
 	getNormalizedPost,
-	getSitePosts,
 	getSitePost,
 	getPostsForQuery,
 	isRequestingPostsForQuery,
@@ -13,12 +12,10 @@ import {
 	getEditedPost,
 	getPostEdits,
 	getPostPreviewUrl,
-	getSitePostsByTerm,
 } from '../selectors';
 
 describe( 'selectors', () => {
 	beforeEach( () => {
-		getSitePosts.memoizedSelector.cache.clear();
 		getSitePost.memoizedSelector.cache.clear();
 		getNormalizedPost.memoizedSelector.cache.clear();
 		getPostsForQuery.memoizedSelector.cache.clear();
@@ -142,49 +139,6 @@ describe( 'selectors', () => {
 					height: 200,
 				},
 			} );
-		} );
-	} );
-
-	describe( '#getSitePosts()', () => {
-		test( 'should return an array of post objects for the site', () => {
-			const postObjects = {
-				2916284: {
-					'3d097cb7c5473c169bba0eb8e3c6cb64': {
-						ID: 841,
-						site_ID: 2916284,
-						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-						title: 'Hello World',
-					},
-					'6c831c187ffef321eb43a67761a525a3': {
-						ID: 413,
-						site_ID: 2916284,
-						global_ID: '6c831c187ffef321eb43a67761a525a3',
-						title: 'Ribs &amp; Chicken',
-					},
-				},
-				77203074: {
-					'0fcb4eb16f493c19b627438fdc18d57c': {
-						ID: 120,
-						site_ID: 77203074,
-						global_ID: 'f0cb4eb16f493c19b627438fdc18d57c',
-						title: 'Steak &amp; Eggs',
-					},
-				},
-			};
-			const state = {
-				posts: {
-					queries: {
-						2916284: new PostQueryManager( {
-							items: postObjects[ 2916284 ],
-						} ),
-						77203074: new PostQueryManager( {
-							items: postObjects[ 77203074 ],
-						} ),
-					},
-				},
-			};
-
-			expect( getSitePosts( state, 2916284 ) ).toEqual( Object.values( postObjects[ 2916284 ] ) );
 		} );
 	} );
 
@@ -1323,43 +1277,6 @@ describe( 'selectors', () => {
 			);
 
 			expect( previewUrl ).toEqual( 'https://example.com/post-url?other_arg=1&preview=true' );
-		} );
-	} );
-
-	describe( 'getSitePostsByTerm()', () => {
-		test( 'should return an array of post objects for the site matching the termId', () => {
-			const postObjects = {
-				2916284: {
-					'3d097cb7c5473c169bba0eb8e3c6cb64': {
-						ID: 841,
-						site_ID: 2916284,
-						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-						title: 'Hello World',
-						terms: {
-							category: [ { ID: 10 } ],
-						},
-					},
-					'6c831c187ffef321eb43a67761a525a3': {
-						ID: 413,
-						site_ID: 2916284,
-						global_ID: '6c831c187ffef321eb43a67761a525a3',
-						title: 'Ribs &amp; Chicken',
-					},
-				},
-			};
-			const state = {
-				posts: {
-					queries: {
-						2916284: new PostQueryManager( {
-							items: postObjects[ 2916284 ],
-						} ),
-					},
-				},
-			};
-
-			expect( getSitePostsByTerm( state, 2916284, 'category', 10 ) ).toEqual(
-				expect.arrayContaining( [ postObjects[ 2916284 ][ '3d097cb7c5473c169bba0eb8e3c6cb64' ] ] )
-			);
 		} );
 	} );
 } );

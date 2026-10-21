@@ -1,9 +1,8 @@
-import { Page, ElementHandle } from 'playwright';
+import { Page, ElementHandle, Response } from 'playwright';
 
 const selectors = {
 	block: '.wp-block-audio',
 	fileInput: '.components-form-file-upload input[type="file"]',
-	spinner: '.components-spinner',
 };
 
 /**
@@ -33,8 +32,19 @@ export class AudioBlock {
 	 */
 	async upload( path: string ): Promise< void > {
 		const input = await this.block.waitForSelector( selectors.fileInput, { state: 'attached' } );
-		await input.setInputFiles( path );
-		await this.page.locator( selectors.spinner ).waitFor( { state: 'hidden' } );
+		// Wait for the upload request to complete rather than for a spinner to hide.
+		// The page-level `.components-spinner` also matches the editor's "Uploading…"
+		// snackbar, which can linger after the block itself has finished uploading.
+		// Match the upload POST specifically so an unrelated media GET can't resolve early.
+		await Promise.all( [
+			this.page.waitForResponse(
+				( response: Response ) =>
+					response.request().method() === 'POST' &&
+					response.url().includes( 'media?' ) &&
+					response.ok()
+			),
+			input.setInputFiles( path ),
+		] );
 	}
 
 	/**

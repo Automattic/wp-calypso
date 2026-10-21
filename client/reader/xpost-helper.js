@@ -1,5 +1,5 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import displayTypes from 'calypso/state/reader/posts/display-types';
+import displayTypes from 'calypso/reader/data/post/display-types';
 
 const { X_POST } = displayTypes;
 

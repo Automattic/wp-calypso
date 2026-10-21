@@ -1,5 +1,9 @@
 ## next
 
+## 2.1.1
+
+- Declare React 19 compatibility for package consumers (#111721).
+
 ## 2.1.0
 
 - Fixed mobile cookie banner button's vertical positioning

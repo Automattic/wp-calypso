@@ -1,4 +1,5 @@
 import { ExternalLink } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
@@ -82,7 +83,11 @@ export const AdvancedWorkflowStyle = ( {
 					),
 					{
 						a: (
-							<ExternalLink href="https://developer.wordpress.com/docs/developer-tools/github-deployments/github-deployments-workflow-recipes/" />
+							<ExternalLink
+								href={ localizeUrl(
+									'https://wordpress.com/support/github-deployments/workflow-recipes/'
+								) }
+							/>
 						),
 					}
 				) }

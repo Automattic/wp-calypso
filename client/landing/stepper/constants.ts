@@ -1,6 +1,5 @@
 import type { Design } from '@automattic/design-picker';
 
-// Changing this? Consider also updating DEFAULT_START_WRITING_THEME so the write *flow* matches the write intent.
 export const WRITE_INTENT_DEFAULT_DESIGN: Design = {
 	slug: 'poema',
 	title: 'Poema',
@@ -12,6 +11,12 @@ export const WRITE_INTENT_DEFAULT_DESIGN: Design = {
 export const SITE_PICKER_FILTER_CONFIG = [ 'wpcom', 'atomic' ];
 
 export const WOO_HOSTING_SOLUTIONS_REF = 'woo-hosting-solutions-flow';
+
+/**
+ * The `ref` the `site-selected` signup flow hands its purchase to the onboarding post-checkout
+ * step with, so that run's events and landing page stay attributed to it.
+ */
+export const SITE_SELECTED_REF = 'site-selected';
 
 export const HOW_TO_MIGRATE_OPTIONS = {
 	DO_IT_FOR_ME: 'difm',

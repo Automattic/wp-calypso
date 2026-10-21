@@ -1,0 +1,18 @@
+[mcp_servers.playwright-test]
+args = [
+    "playwright",
+    "run-test-mcp-server",
+]
+command = "npx"
+
+[mcp_servers.chrome-devtools]
+args = [
+    "chrome-devtools-mcp@latest",
+]
+command = "npx"
+
+[mcp_servers.chrome-devtools.tools.click]
+approval_mode = "approve"
+
+[mcp_servers.chrome-devtools.tools.evaluate_script]
+approval_mode = "approve"

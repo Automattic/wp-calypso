@@ -13,9 +13,9 @@ interface Props {
 export default function AdPreview( { htmlCode, isLoading, templateFormat, width }: Props ) {
 	const adWidth = width ? `${ width }` : '300px';
 
-	// Both the classic html5_v2 template and the AI-generated html5_v3 template
-	// emit the same `wa-inline-frame` postMessage protocol to size the iframe.
-	const isResponsiveHtmlFormat = templateFormat === 'html5_v2' || templateFormat === 'html5_v3';
+	// Responsive WPCOM templates emit the same `wa-inline-frame` postMessage
+	// protocol to size the iframe.
+	const isResponsiveHtmlFormat = [ 'html5_v2', 'html5_v3', 'html5_v4' ].includes( templateFormat );
 
 	useEffect( () => {
 		if ( ! isLoading && isResponsiveHtmlFormat ) {
@@ -54,6 +54,7 @@ export default function AdPreview( { htmlCode, isLoading, templateFormat, width 
 	const classes = clsx( 'campaign-item-details__preview-content', {
 		v02: templateFormat === 'html5_v2',
 		v03: templateFormat === 'html5_v3',
+		v04: templateFormat === 'html5_v4',
 	} );
 
 	return (

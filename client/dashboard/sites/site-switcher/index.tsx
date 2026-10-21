@@ -16,7 +16,6 @@ import type { SiteSwitcherProps } from './types';
 const SiteSwitcher = ( props: SiteSwitcherProps ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isAddSiteModalOpen, setIsAddSiteModalOpen ] = useState( false );
-
 	return (
 		<>
 			<SiteSwitcherBase { ...props }>

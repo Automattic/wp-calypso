@@ -1,16 +1,19 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useViewportMatch } from '@wordpress/compose';
 import { SearchForm } from '..';
-import * as useContainerQueryModule from '../../../hooks/use-container-query';
 import { TestDomainSearch } from '../../../test-helpers/renderer';
 
-jest.mock( '../../../hooks/use-container-query', () => ( {
-	useContainerQuery: jest.fn().mockReturnValue( {
-		activeQuery: 'large',
-		currentWidth: 480,
-		ref: jest.fn(),
-	} ),
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn(),
 } ) );
+
+const mockUseViewportMatch = jest.mocked( useViewportMatch );
+
+beforeEach( () => {
+	mockUseViewportMatch.mockReturnValue( false );
+} );
 
 const expectPlaceholderPhrase = ( phrase: string ) => {
 	// Initial state
@@ -39,9 +42,10 @@ describe( 'SearchForm', () => {
 		const user = userEvent.setup();
 
 		const onQueryChange = jest.fn();
+		const onSearchStart = jest.fn();
 
 		render(
-			<TestDomainSearch events={ { onQueryChange } }>
+			<TestDomainSearch events={ { onQueryChange, onSearchStart } }>
 				<SearchForm />
 			</TestDomainSearch>
 		);
@@ -50,15 +54,17 @@ describe( 'SearchForm', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Search domains' } ) );
 
 		expect( onQueryChange ).toHaveBeenCalledWith( 'test' );
+		expect( onSearchStart ).toHaveBeenCalledWith( 'test', 'submit' );
 	} );
 
 	it( 'shows the search hint on empty search', async () => {
 		const user = userEvent.setup();
 
 		const onQueryChange = jest.fn();
+		const onSearchStart = jest.fn();
 
 		render(
-			<TestDomainSearch events={ { onQueryChange } }>
+			<TestDomainSearch events={ { onQueryChange, onSearchStart } }>
 				<SearchForm />
 			</TestDomainSearch>
 		);
@@ -66,33 +72,53 @@ describe( 'SearchForm', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Search domains' } ) );
 
 		expect( screen.getByText( /Try searching for a word like/i ) ).toBeInTheDocument();
+		expect( onSearchStart ).not.toHaveBeenCalled();
 
 		await user.click( screen.getByRole( 'button', { name: 'studio' } ) );
 
 		expect( onQueryChange ).toHaveBeenCalledWith( 'studio' );
+		expect( onSearchStart ).toHaveBeenCalledWith( 'studio', 'hint_link' );
 	} );
 
-	it( 'hides the submit button on small screens', async () => {
+	it( 'submits via the Enter key', async () => {
 		const user = userEvent.setup();
 
-		jest.spyOn( useContainerQueryModule, 'useContainerQuery' ).mockReturnValue( {
-			activeQuery: 'small',
-			currentWidth: 479,
-			ref: jest.fn(),
-		} );
-
 		const onQueryChange = jest.fn();
+		const onSearchStart = jest.fn();
 
 		render(
+			<TestDomainSearch events={ { onQueryChange, onSearchStart } }>
+				<SearchForm />
+			</TestDomainSearch>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'Search domains' } ) ).toBeInTheDocument();
+
+		await user.type( screen.getByRole( 'searchbox' ), 'test' );
+		await user.type( screen.getByRole( 'searchbox' ), '{enter}' );
+
+		expect( onQueryChange ).toHaveBeenCalledWith( 'test' );
+		expect( onSearchStart ).toHaveBeenCalledWith( 'test', 'submit' );
+	} );
+
+	it( 'renders the icon-only submit inside a field wrapper on mobile', async () => {
+		mockUseViewportMatch.mockReturnValue( true );
+		const user = userEvent.setup();
+		const onQueryChange = jest.fn();
+
+		const { container } = render(
 			<TestDomainSearch events={ { onQueryChange } }>
 				<SearchForm />
 			</TestDomainSearch>
 		);
 
-		expect( screen.queryByRole( 'button', { name: 'Search domains' } ) ).not.toBeInTheDocument();
+		expect( container.querySelector( '.domain-search__search-form-field' ) ).toBeInTheDocument();
+		expect(
+			container.querySelector( '.domain-search-controls__submit.is-icon-only' )
+		).toBeInTheDocument();
 
 		await user.type( screen.getByRole( 'searchbox' ), 'test' );
-		await user.type( screen.getByRole( 'searchbox' ), '{enter}' );
+		await user.click( screen.getByRole( 'button', { name: 'Search domains' } ) );
 
 		expect( onQueryChange ).toHaveBeenCalledWith( 'test' );
 	} );

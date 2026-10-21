@@ -49,7 +49,6 @@ export { isFulfilledThemesForQuery } from 'calypso/state/themes/selectors/is-ful
 export { isFullSiteEditingTheme } from 'calypso/state/themes/selectors/is-full-site-editing-theme';
 export { isInstallingTheme } from 'calypso/state/themes/selectors/is-installing-theme';
 export { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
-export { isMarketplaceThemeSubscribedByUser } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed-by-user';
 export { isPremiumThemeAvailable } from 'calypso/state/themes/selectors/is-premium-theme-available';
 export { isRequestingActiveTheme } from 'calypso/state/themes/selectors/is-requesting-active-theme';
 export { isRequestingTheme } from 'calypso/state/themes/selectors/is-requesting-theme';
@@ -70,11 +69,11 @@ export { isValidThemeFilterTerm } from 'calypso/state/themes/selectors/is-valid-
 export { isWpcomTheme } from 'calypso/state/themes/selectors/is-wpcom-theme';
 export { isWporgTheme } from 'calypso/state/themes/selectors/is-wporg-theme';
 export { prependThemeFilterKeys } from 'calypso/state/themes/selectors/prepend-theme-filter-keys';
+export { shouldShowActivationModal } from 'calypso/state/themes/selectors/should-show-activation-modal';
 export { shouldShowAtomicTransferDialog } from 'calypso/state/themes/selectors/should-show-atomic-transfer-dialog';
 export { shouldShowTryAndCustomize } from 'calypso/state/themes/selectors/should-show-try-and-customize';
 export { themePreviewVisibility } from 'calypso/state/themes/selectors/theme-preview-visibility';
 export { getThemeFiltersRequestError } from 'calypso/state/themes/selectors/get-theme-filters-request-error';
-export { canPublishThemeReview } from 'calypso/state/themes/selectors/can-publish-theme-review';
 export { getThemeTiers } from 'calypso/state/themes/selectors/get-theme-tiers';
 export { getThemeTier } from 'calypso/state/themes/selectors/get-theme-tier';
 export { getThemeTierForTheme } from 'calypso/state/themes/selectors/get-theme-tier-for-theme';

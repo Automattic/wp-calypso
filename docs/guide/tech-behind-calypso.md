@@ -20,7 +20,7 @@ For more Calypso-specific details, see the [Our Approach to Data](../our-approac
 
 ## Git
 
-Calypso is developed on Github, and we use Git extensively. Git is extremely powerful, and understanding how it works and controlling it are an important part of our daily workflow.
+Calypso is developed on GitHub, and we use Git extensively. Git is extremely powerful, and understanding how it works and controlling it are an important part of our daily workflow.
 
 Essential Git resources:
 

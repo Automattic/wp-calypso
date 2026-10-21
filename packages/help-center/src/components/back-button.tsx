@@ -28,7 +28,6 @@ export const BackButton = () => {
 			label={ __( 'Go Back', __i18n_text_domain__ ) }
 			data-testid="help-center-back-button"
 			onClick={ handleClick }
-			onTouchStart={ handleClick }
 			className="back-button__help-center"
 		>
 			<Icon icon={ chevronLeft } />

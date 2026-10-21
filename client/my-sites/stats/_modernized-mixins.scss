@@ -11,11 +11,11 @@ $common-border-radius: 4px;
 		&.is-primary {
 			.segmented-control__item.is-selected {
 				.segmented-control__link {
-					border-color: var(--color-primary);
-					background-color: var(--color-primary);
+					border-color: var(--color-accent);
+					background-color: var(--color-accent);
 
 					&:hover {
-						background-color: var(--color-primary);
+						background-color: var(--color-accent);
 					}
 				}
 			}
@@ -102,8 +102,8 @@ $common-border-radius: 4px;
 
 			&.is-selected {
 				.segmented-control__link {
-					background-color: var(--color-primary);
-					border-color: var(--color-primary);
+					background-color: var(--color-accent);
+					border-color: var(--color-accent);
 					color: var(--studio-white);
 					position: relative;
 					z-index: 1;

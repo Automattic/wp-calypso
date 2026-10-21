@@ -5,10 +5,10 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
+import { capitalize, flow, isEmpty } from '@automattic/js-utils';
 import { Icon, upload } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { filter as capitalize, flow, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -246,7 +246,7 @@ export class PluginsMain extends Component {
 											args: {
 												selectedSite: this.props.selectedSite.domain,
 											},
-									  } )
+										} )
 									: this.props.translate( 'Manage plugins installed on all sites' )
 							}
 						>
@@ -279,7 +279,7 @@ export class PluginsMain extends Component {
 																selectedSite: this.props.selectedSite.domain,
 															},
 														}
-												  )
+													)
 												: this.props.translate( 'Manage plugins installed on all sites' ) }
 										</div>
 									</div>

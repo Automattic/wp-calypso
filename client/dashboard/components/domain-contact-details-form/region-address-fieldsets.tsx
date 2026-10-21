@@ -1,7 +1,7 @@
 import { type DomainContactDetails, type StatesListItem } from '@automattic/api-core';
 import { __experimentalInputControl as InputControl, SelectControl } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { type DataFormControlProps, type Field } from '@wordpress/dataviews';
+import { type DataFormControlProps, type Field, type FormField } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { createFieldAsyncValidator, type AsyncValidator } from './contact-validation-utils';
 import {
@@ -10,6 +10,8 @@ import {
 } from './custom-form-fieldsets/constants';
 import { getCountryPostalCodeSupport } from './custom-form-fieldsets/get-country-postal-code-support';
 import { type CountryListItem } from './custom-form-fieldsets/types';
+
+const ADDRESS_LINE_MIN_LENGTH = 2;
 
 const getPostalCodeLabel = ( countryCode: string ): string => {
 	switch ( countryCode ) {
@@ -64,12 +66,13 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined, country
 				__nextHasNoMarginBottom
 				label={ hideLabelFromVision ? '' : stateLabel }
 				value={ currentValue }
-				options={
-					statesList.map( ( state ) => ( {
+				options={ [
+					{ label: stateLabel, value: '' },
+					...statesList.map( ( state ) => ( {
 						label: state.name,
 						value: state.code,
-					} ) ) ?? []
-				}
+					} ) ),
+				] }
 				onChange={ ( value ) => onChange( { [ id ]: value } ) }
 			/>
 		);
@@ -92,6 +95,7 @@ export function RegionAddressFieldsets(
 			type: 'text',
 			isValid: {
 				required: true,
+				minLength: ADDRESS_LINE_MIN_LENGTH,
 				custom: createFieldAsyncValidator( 'address1', asyncValidator ),
 			},
 		},
@@ -100,6 +104,7 @@ export function RegionAddressFieldsets(
 			label: __( 'Address line 2' ),
 			type: 'text',
 			isValid: {
+				minLength: ADDRESS_LINE_MIN_LENGTH,
 				custom: createFieldAsyncValidator( 'address2', asyncValidator ),
 			},
 		},
@@ -135,6 +140,13 @@ export function RegionAddressFieldsets(
 	return fields;
 }
 
+export function isEuOrUkAddressFormat( countryCode: string ): boolean {
+	return (
+		CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ||
+		CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode )
+	);
+}
+
 export function RegionAddressFieldsLayout( {
 	statesList,
 	countryList,
@@ -160,7 +172,7 @@ export function RegionAddressFieldsLayout( {
 						alignment: 'start' as const,
 					},
 					children: [ ...( arePostalCodesSupported ? [ 'postalCode' ] : [] ), 'city' ],
-				} as Field< DomainContactDetails >,
+				} as FormField,
 			];
 		}
 
@@ -175,7 +187,7 @@ export function RegionAddressFieldsLayout( {
 						alignment: 'start' as const,
 					},
 					children: [ 'city', ...( arePostalCodesSupported ? [ 'postalCode' ] : [] ) ],
-				} as Field< DomainContactDetails >,
+				} as FormField,
 			];
 		}
 	}
@@ -192,7 +204,7 @@ export function RegionAddressFieldsLayout( {
 			children: isMobileViewport
 				? [ 'city', 'state' ]
 				: [ 'city', 'state', ...( arePostalCodesSupported ? [ 'postalCode' ] : [] ) ],
-		} as Field< DomainContactDetails >,
+		} as FormField,
 		...( isMobileViewport && arePostalCodesSupported ? [ 'postalCode' ] : [] ),
 	];
 }

@@ -23,6 +23,14 @@ jest.mock( '../async', () => ( {
 	AsyncContent: () => <div data-testid="async-content">Async Content</div>,
 } ) );
 
+// Mock the analytics client to avoid needing a Redux store
+jest.mock( 'calypso/sites/v2/hooks/use-analytics-client', () => ( {
+	useAnalyticsClient: () => ( {
+		recordTracksEvent: jest.fn(),
+		recordPageView: jest.fn(),
+	} ),
+} ) );
+
 // Mock fetchUser to provide auth data
 jest.mock( '@automattic/api-core', () => ( {
 	fetchUser: jest.fn( () =>

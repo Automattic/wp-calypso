@@ -1,5 +1,4 @@
 import languages from '@automattic/languages';
-import { find } from 'lodash';
 import { stringify as stringifyQs } from 'qs';
 import { RequestError } from './request-error';
 
@@ -15,7 +14,9 @@ const WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.2/';
 const WPORG_CORE_VERSIONS_ENDPOINT = 'https://api.wordpress.org/core/version-check/1.7/';
 
 function getWporgLocaleCode( currentUserLocale ) {
-	let wpOrgLocaleCode = find( languages, { langSlug: currentUserLocale } ).wpLocale;
+	let wpOrgLocaleCode = languages.find(
+		( language ) => language.langSlug === currentUserLocale
+	).wpLocale;
 
 	if ( wpOrgLocaleCode === '' ) {
 		wpOrgLocaleCode = currentUserLocale;
@@ -25,10 +26,19 @@ function getWporgLocaleCode( currentUserLocale ) {
 }
 
 async function getRequest( url, query ) {
-	const response = await fetch( `${ url }?${ stringifyQs( query ) }`, {
-		method: 'GET',
-		headers: { Accept: 'application/json' },
-	} );
+	const requestUrl = query ? `${ url }?${ stringifyQs( query ) }` : url;
+
+	let response;
+	try {
+		response = await fetch( requestUrl, {
+			method: 'GET',
+			headers: { Accept: 'application/json' },
+		} );
+	} catch ( error ) {
+		// Network errors ("TypeError: fetch failed") don't say what they were fetching.
+		error.url = requestUrl;
+		throw error;
+	}
 
 	if ( response.ok ) {
 		return await response.json();

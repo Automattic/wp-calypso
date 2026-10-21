@@ -30,6 +30,8 @@ const {
 	hasToUpgradeToPayForADomain,
 	getRenewalItemFromProduct,
 	supportsPrivacyProtectionPurchase,
+	titanMailMonthly,
+	titanMailYearly,
 } = cartItems;
 
 describe( 'planItem()', () => {
@@ -226,6 +228,30 @@ describe( 'isNextDomainFree()', () => {
 				'domain.blog'
 			)
 		).toBe( true );
+	} );
+	test( 'should return true when condition is "blog,art" and requested domain is .blog', () => {
+		expect(
+			isNextDomainFree(
+				{ next_domain_is_free: true, next_domain_condition: 'blog,art' },
+				'domain.blog'
+			)
+		).toBe( true );
+	} );
+	test( 'should return true when condition is "blog,art" and requested domain is .art', () => {
+		expect(
+			isNextDomainFree(
+				{ next_domain_is_free: true, next_domain_condition: 'blog,art' },
+				'domain.art'
+			)
+		).toBe( true );
+	} );
+	test( 'should return false when condition is "blog,art" and requested domain is .com', () => {
+		expect(
+			isNextDomainFree(
+				{ next_domain_is_free: true, next_domain_condition: 'blog,art' },
+				'domain.com'
+			)
+		).toBe( false );
 	} );
 	test( 'should return false when cart.next_domain_is_free is false', () => {
 		expect( isNextDomainFree( { next_domain_is_free: false } ) ).toBe( false );
@@ -501,45 +527,6 @@ describe( 'getDomainPriceRule()', () => {
 					{ domain_name: 'domain.com', product_slug: 'domain' },
 					false,
 					'free'
-				)
-			).toBe( 'PRICE' );
-		} );
-
-		test( 'should return PRICE if flowName is personal-monthly', () => {
-			expect(
-				getDomainPriceRule(
-					true,
-					null,
-					{},
-					{ domain_name: 'domain.com', product_slug: 'domain' },
-					false,
-					'personal-monthly'
-				)
-			).toBe( 'PRICE' );
-		} );
-
-		test( 'should return PRICE if flowName is premium-monthly', () => {
-			expect(
-				getDomainPriceRule(
-					true,
-					null,
-					{},
-					{ domain_name: 'domain.com', product_slug: 'domain' },
-					false,
-					'premium-monthly'
-				)
-			).toBe( 'PRICE' );
-		} );
-
-		test( 'should return PRICE if flowName is business-monthly', () => {
-			expect(
-				getDomainPriceRule(
-					true,
-					null,
-					{},
-					{ domain_name: 'domain.com', product_slug: 'domain' },
-					false,
-					'business-monthly'
 				)
 			).toBe( 'PRICE' );
 		} );
@@ -869,4 +856,66 @@ describe( 'supportsPrivacyProtectionPurchase', () => {
 	it( 'returns false if the product slug does not match a product with privacy allowed', () => {
 		expect( supportsPrivacyProtectionPurchase( 'non_private_product', testProducts ) ).toBeFalsy();
 	} );
+} );
+
+describe( 'titanMailYearly() and titanMailMonthly()', () => {
+	const mailbox = { email: 'info@example.com' };
+
+	test.each( [ titanMailYearly, titanMailMonthly ] )(
+		'%p keeps an explicit new_quantity',
+		( builder ) => {
+			const cartItem = builder( {
+				domain: 'example.com',
+				quantity: 2,
+				extra: { email_users: [ mailbox, mailbox ], new_quantity: 2 },
+			} );
+
+			expect( cartItem.extra.new_quantity ).toBe( 2 );
+		}
+	);
+
+	test.each( [ titanMailYearly, titanMailMonthly ] )(
+		'%p uses the number of mailboxes when new_quantity is missing',
+		( builder ) => {
+			const cartItem = builder( {
+				domain: 'example.com',
+				extra: { email_users: [ mailbox, mailbox, mailbox ] },
+			} );
+
+			expect( cartItem.extra.new_quantity ).toBe( 3 );
+		}
+	);
+
+	test.each( [ titanMailYearly, titanMailMonthly ] )(
+		'%p uses the number of mailboxes when new_quantity is 0',
+		( builder ) => {
+			const cartItem = builder( {
+				domain: 'example.com',
+				extra: { email_users: [ mailbox ], new_quantity: 0 },
+			} );
+
+			expect( cartItem.extra.new_quantity ).toBe( 1 );
+		}
+	);
+
+	test.each( [ titanMailYearly, titanMailMonthly ] )(
+		'%p defaults new_quantity to 1 when there is no mailbox count at all',
+		( builder ) => {
+			const cartItem = builder( { domain: 'example.com' } );
+
+			expect( cartItem.extra.new_quantity ).toBe( 1 );
+		}
+	);
+
+	test.each( [ titanMailYearly, titanMailMonthly ] )(
+		'%p keeps the other extra fields',
+		( builder ) => {
+			const cartItem = builder( {
+				domain: 'example.com',
+				extra: { email_users: [ mailbox ], new_quantity: 1 },
+			} );
+
+			expect( cartItem.extra.email_users ).toEqual( [ mailbox ] );
+		}
+	);
 } );

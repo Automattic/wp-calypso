@@ -1,5 +1,6 @@
 import LoginSubmitButton from '../login-submit-button';
-import type { StoryFn, StoryObj } from '@storybook/react';
+import type { StoryObj } from '@storybook/react';
+import type { ComponentType } from 'react';
 import './style.scss';
 
 export const submitButtonArgs = {
@@ -9,7 +10,7 @@ export const submitButtonArgs = {
 	buttonText: 'Continue',
 };
 
-export const LoginFormWrapper = ( Story: StoryFn ) => (
+export const LoginFormWrapper = ( Story: ComponentType ) => (
 	<div className="login" style={ { maxWidth: '360px', padding: '30px' } }>
 		<div className="login__form">
 			<Story />
@@ -17,49 +18,49 @@ export const LoginFormWrapper = ( Story: StoryFn ) => (
 	</div>
 );
 
-export const LoginFormAction = ( Story: StoryFn ) => (
+export const LoginFormAction = ( Story: ComponentType ) => (
 	<div className="login__form-action">
 		<Story />
 	</div>
 );
 
-export const A4AWrapper = ( Story: StoryFn ) => (
+export const A4AWrapper = ( Story: ComponentType ) => (
 	<div className="a8c-for-agencies">
 		<Story />
 	</div>
 );
 
-export const AkismetWrapper = ( Story: StoryFn ) => (
+export const AkismetWrapper = ( Story: ComponentType ) => (
 	<div className="is-akismet">
 		<Story />
 	</div>
 );
 
-export const BlazeWrapper = ( Story: StoryFn ) => (
+export const BlazeWrapper = ( Story: ComponentType ) => (
 	<div className="blaze-pro">
 		<Story />
 	</div>
 );
 
-export const CrowdsignalWrapper = ( Story: StoryFn ) => (
+export const CrowdsignalWrapper = ( Story: ComponentType ) => (
 	<div className="crowdsignal">
 		<Story />
 	</div>
 );
 
-export const WooWrapper = ( Story: StoryFn ) => (
+export const WooWrapper = ( Story: ComponentType ) => (
 	<div className="woo is-woo-passwordless is-woo-com-oauth">
 		<Story />
 	</div>
 );
 
-export const JetpackCloudWrapper = ( Story: StoryFn ) => (
+export const JetpackCloudWrapper = ( Story: ComponentType ) => (
 	<div className="jetpack-cloud">
 		<Story />
 	</div>
 );
 
-export const JetpackLoginWrapper = ( Story: StoryFn ) => (
+export const JetpackLoginWrapper = ( Story: ComponentType ) => (
 	<div className="layout is-jetpack-login">
 		<div className="login is-jetpack" style={ { maxWidth: '360px', padding: '30px' } }>
 			<div className="login__form">
@@ -69,7 +70,7 @@ export const JetpackLoginWrapper = ( Story: StoryFn ) => (
 	</div>
 );
 
-export const GravatarWrapper = ( Story: StoryFn ) => (
+export const GravatarWrapper = ( Story: ComponentType ) => (
 	<div className="layout is-section-login is-grav-powered-client">
 		<div className="login" style={ { maxWidth: '360px' } }>
 			<Story />
@@ -77,7 +78,7 @@ export const GravatarWrapper = ( Story: StoryFn ) => (
 	</div>
 );
 
-export const WPJobManagerWrapper = ( Story: StoryFn ) => (
+export const WPJobManagerWrapper = ( Story: ComponentType ) => (
 	<div className="layout is-section-login is-grav-powered-client is-wp-job-manager">
 		<div className="login" style={ { maxWidth: '360px' } }>
 			<Story />

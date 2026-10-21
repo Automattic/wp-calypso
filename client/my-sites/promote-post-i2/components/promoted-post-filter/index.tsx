@@ -2,7 +2,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { Popover } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -113,7 +113,13 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 								className={ className }
 								onClick={ () => onTabClick( id ) }
 							>
-								<span ref={ ( el ) => ( tabsRef.current[ id ] = el ) }>{ name }</span>
+								<span
+									ref={ ( el ) => {
+										tabsRef.current[ id ] = el;
+									} }
+								>
+									{ name }
+								</span>
 								{ itemCount && itemCount !== 0 ? (
 									<span className="a8c-count">
 										{ isCountAmount ? '$' : null }

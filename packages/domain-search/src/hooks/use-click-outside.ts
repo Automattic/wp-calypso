@@ -5,7 +5,7 @@ export const useClickOutside = ( {
 	callback,
 	isEnabled,
 }: {
-	ref: React.RefObject< HTMLElement >;
+	ref: React.RefObject< HTMLElement | null >;
 	callback: () => void;
 	isEnabled: boolean;
 } ) => {

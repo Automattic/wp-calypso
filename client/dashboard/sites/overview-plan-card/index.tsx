@@ -1,9 +1,10 @@
 import { DotcomPlans, JetpackPlans, WooHostedPlans } from '@automattic/api-core';
-import { siteCurrentPlanQuery, siteByIdQuery, purchaseQuery } from '@automattic/api-queries';
+import { siteCurrentPlanQuery, siteByIdQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
 import {
-	__experimentalGrid as Grid,
+	Button,
+	ExternalLink,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Icon,
@@ -11,15 +12,22 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import { commerceGardenPlan } from '../../components/icons';
+import { useAnalytics } from '../../app/analytics';
+import { useAppContext } from '../../app/context';
+import { useLocale } from '../../app/locale';
+import { purchasesRoute } from '../../app/router/me';
+import Grid from '../../components/grid';
 import OverviewCard from '../../components/overview-card';
-import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
+import { getPurchaseExpiryStatusText } from '../../components/purchase-expiry-status';
+import RouterLinkButton from '../../components/router-link-button';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { wpcomLink } from '../../utils/link';
 import {
 	getJetpackProductsForSite,
 	getSitePlanDisplayName,
 	JETPACK_PRODUCTS,
 } from '../../utils/site-plan';
-import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSitePlanUrl } from '../../utils/site-url';
 import SiteBandwidthStat from './site-bandwidth-stat';
 import SiteStorageStat from './site-storage-stat';
@@ -51,6 +59,62 @@ function SitePlanStats( { site }: { site: Site } ) {
 	);
 }
 
+function useHasBillingRoutes() {
+	const { supports } = useAppContext();
+	return !! supports.me && !! supports.me.billing;
+}
+
+// Without billing routes, every plan link leaves the app, onboarding ones included,
+// so it opens in a new tab.
+function usePlanLinkProps( site: Site, purchase?: Purchase ) {
+	const hasBillingRoutes = useHasBillingRoutes();
+	const url = getSitePlanUrl( site, purchase, { hasBillingRoutes } );
+	return hasBillingRoutes ? { link: url } : { externalLink: url };
+}
+
+function SeeAllPurchasesLink( { site }: { site: Site } ) {
+	const { recordTracksEvent } = useAnalytics();
+	const hasBillingRoutes = useHasBillingRoutes();
+
+	const handleClick = () => {
+		recordTracksEvent( 'calypso_dashboard_site_overview_see_all_purchases_click' );
+	};
+
+	if ( isDashboardBackport() ) {
+		return (
+			<Button
+				variant="link"
+				href={ `/purchases/subscriptions/${ site.slug }` }
+				onClick={ handleClick }
+			>
+				{ __( 'See all purchases' ) }
+			</Button>
+		);
+	}
+
+	if ( ! hasBillingRoutes ) {
+		return (
+			<ExternalLink
+				href={ wpcomLink( `/purchases/subscriptions/${ site.slug }` ) }
+				onClick={ handleClick }
+			>
+				{ __( 'See all purchases' ) }
+			</ExternalLink>
+		);
+	}
+
+	return (
+		<RouterLinkButton
+			variant="link"
+			to={ purchasesRoute.fullPath }
+			search={ { site: site.ID } }
+			onClick={ handleClick }
+		>
+			{ __( 'See all purchases' ) }
+		</RouterLinkButton>
+	);
+}
+
 function JetpackPlanCard( {
 	site,
 	purchase,
@@ -60,6 +124,7 @@ function JetpackPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
+	const locale = useLocale();
 	const products = getJetpackProductsForSite( site );
 	const productsToDisplay = products.length > 0 ? products : JETPACK_PRODUCTS;
 
@@ -68,7 +133,7 @@ function JetpackPlanCard( {
 			title={ __( 'Subscriptions' ) }
 			icon={ <JetpackLogo /> }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, purchase ) }
+			description={ getCardDescription( site, locale, purchase ) }
 			link={ getSitePlanUrl( site ) }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
@@ -78,7 +143,7 @@ function JetpackPlanCard( {
 						className="jetpack-plan-card__icons"
 						columns={ 4 }
 						rows={ Math.ceil( productsToDisplay.length / 4 ) }
-						gap={ 2 }
+						gap="sm"
 					>
 						{ productsToDisplay.map( ( product ) => (
 							<Tooltip key={ product.id } text={ product.label } placement="top">
@@ -100,22 +165,32 @@ function JetpackPlanCard( {
 function WpcomPlanCard( {
 	site,
 	purchase,
+	hasPurchases,
 	isLoading,
 }: {
 	site: Site;
 	purchase?: Purchase;
+	hasPurchases: boolean;
 	isLoading: boolean;
 } ) {
+	const locale = useLocale();
+	const planLinkProps = usePlanLinkProps( site, purchase );
+
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, purchase ) }
-			link={ getSitePlanUrl( site, purchase ) }
+			description={ getCardDescription( site, locale, purchase ) }
+			{ ...planLinkProps }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
-			bottom={ <SitePlanStats site={ site } /> }
+			bottom={
+				<VStack spacing={ 3 }>
+					<SitePlanStats site={ site } />
+					{ hasPurchases && <SeeAllPurchasesLink site={ site } /> }
+				</VStack>
+			}
 		/>
 	);
 }
@@ -128,7 +203,7 @@ function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
 	const description = sprintf(
 		/* translators: %s: the site plan name */
 		__( 'Included with your %s plan.' ),
-		productionSite?.plan?.product_name_short
+		productionSite?.plan?.product_name_short ?? ''
 	);
 
 	return (
@@ -145,13 +220,17 @@ function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
 }
 
 function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean } ) {
+	const { supports } = useAppContext();
+
 	return (
 		<OverviewCard
 			title={ __( 'Development license' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ __( 'Managed by Automattic for Agencies.' ) }
-			link={ getSitePlanUrl( site ) }
+			link={
+				supports.agency ? `/sites/${ site.slug }/settings/site-visibility` : getSitePlanUrl( site )
+			}
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={ <SitePlanStats site={ site } /> }
@@ -159,43 +238,17 @@ function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean }
 	);
 }
 
-function CommerceGardenPlanCard( {
-	site,
-	purchase,
-	isLoading,
-}: {
-	site: Site;
-	purchase?: Purchase;
-	isLoading: boolean;
-} ) {
-	return (
-		<OverviewCard
-			title={ __( 'Plan' ) }
-			icon={ commerceGardenPlan }
-			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, purchase ) }
-			link={ getSitePlanUrl( site, purchase ) }
-			tracksId="plan"
-			isLoading={ isLoading }
-		/>
-	);
-}
-
 export default function PlanCard( { site }: { site: Site } ) {
 	const { data: plan, isLoading: isLoadingPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
-	const { data: purchase, isLoading: isLoadingPurchase } = useQuery( {
-		...purchaseQuery( plan?.id ?? 0 ),
-		enabled: !! plan?.id,
-	} );
+	const { data: purchases, isLoading: isLoadingPurchases } = useQuery(
+		sitePurchasesQuery( site.ID )
+	);
+	const purchase = purchases?.find( ( sitePurchase ) => sitePurchase.ID === plan?.id );
 
-	const isLoading = isLoadingPlan || isLoadingPurchase;
+	const isLoading = isLoadingPlan || isLoadingPurchases;
 
 	if ( site.is_a4a_dev_site ) {
 		return <AgencyPlanCard site={ site } isLoading={ isLoading } />;
-	}
-
-	if ( isCommerceGarden( site ) ) {
-		return <CommerceGardenPlanCard site={ site } purchase={ purchase } isLoading={ isLoading } />;
 	}
 
 	if ( isSelfHostedJetpackConnected( site ) ) {
@@ -206,10 +259,17 @@ export default function PlanCard( { site }: { site: Site } ) {
 		return <WpcomStagingSitePlanCard site={ site } />;
 	}
 
-	return <WpcomPlanCard site={ site } purchase={ purchase } isLoading={ isLoading } />;
+	return (
+		<WpcomPlanCard
+			site={ site }
+			purchase={ purchase }
+			hasPurchases={ ( purchases?.length ?? 0 ) > 0 }
+			isLoading={ isLoading }
+		/>
+	);
 }
 
-function getCardDescription( site: Site, purchase?: Purchase ) {
+function getCardDescription( site: Site, locale: string, purchase?: Purchase ) {
 	switch ( site.plan?.product_slug ) {
 		case DotcomPlans.FREE_PLAN:
 			return __( 'Upgrade to access all hosting features.' );
@@ -222,7 +282,7 @@ function getCardDescription( site: Site, purchase?: Purchase ) {
 	}
 
 	if ( purchase ) {
-		return <PurchaseExpiryStatus purchase={ purchase } />;
+		return getPurchaseExpiryStatusText( purchase, locale );
 	}
 
 	return undefined;

@@ -4,7 +4,7 @@ import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import { A4A_INVOICES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 
 type Props = {
-	wrapperRef: React.RefObject< HTMLButtonElement >;
+	wrapperRef: React.RefObject< HTMLButtonElement | null >;
 	hidePopover: () => void;
 };
 

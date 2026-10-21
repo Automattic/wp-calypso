@@ -1,0 +1,11 @@
+// Order the Help Center and AI chat entry points ahead of other plugins (default `order: 0`).
+// `:has()` limits this to when the AI chat entry point is present.
+.interface-pinned-items:has( .agents-manager-ai-chat ) {
+	> .help-center {
+		order: -2;
+	}
+
+	> .agents-manager-ai-chat {
+		order: -1;
+	}
+}

@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+export CONFIG_ENV=release
+export USE_HARD_LINKS=false
+export SKIP_TSC=true
+export PLAYWRIGHT_SKIP_DOWNLOAD=true
+export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+
+if [[ "${BUILDKITE_TAG:-}" == desktop-v* ]]; then
+	export RELEASE_BUILD=true
+else
+	export RELEASE_BUILD=false
+fi
+
+cd desktop
+corepack enable
+yarn install --immutable --inline-builds
+
+# The only desktop step that runs on trunk, so this doubles as the post-merge
+# guard for the signing routing/arg logic.
+echo "--- :jest: Running unit tests"
+yarn run test:unit
+
+echo "--- :ruby: Setting up Ruby tooling"
+install_gems
+
+echo "--- Configuring code signing"
+bundle exec fastlane configure_code_signing
+
+# Notarize and staple the `.app` inside electron-builder's afterSign hook
+# (`bin/after_sign_hook.js`), before the `.zip`/`.dmg` are packaged from it, so
+# both distributables carry a stapled, offline-verifiable app. `NOTARIZE`
+# triggers the hook; the hook hands `notarytool` the App Store Connect API key,
+# which it reads from this `.p8`. `APP_STORE_CONNECT_API_KEY_KEY` holds the key
+# content (raw PEM or base64).
+export NOTARIZE=true
+ASC_KEY_PATH="$(mktemp -t asc_api_key_XXXXXX).p8"
+trap 'rm -f "$ASC_KEY_PATH"' EXIT
+if [[ "$APP_STORE_CONNECT_API_KEY_KEY" == *"BEGIN PRIVATE KEY"* ]]; then
+  printf '%s' "$APP_STORE_CONNECT_API_KEY_KEY" > "$ASC_KEY_PATH"
+else
+  printf '%s' "$APP_STORE_CONNECT_API_KEY_KEY" | base64 --decode > "$ASC_KEY_PATH"
+fi
+export APP_STORE_CONNECT_API_KEY_PATH="$ASC_KEY_PATH"
+
+echo "RELEASE_BUILD=$RELEASE_BUILD"
+
+echo "--- Building the app"
+yarn run ci:build-mac
+
+echo "--- :lock: Verifying code signing"
+bundle exec fastlane verify_code_signing
+
+echo "--- Running E2E smoke tests"
+yarn run test:e2e
+
+echo "--- Code signing"
+# The afterSign hook already notarized and stapled the app; this notarizes and
+# staples the `.dmg` wrapper for offline Gatekeeper checks on first mount.
+bundle exec fastlane notarize_app
+
+if [[ "$RELEASE_BUILD" == "true" ]]; then
+	../.buildkite/commands/validate-desktop-artifacts.sh mac release
+fi
+
+# Drop the unpacked app trees electron-builder leaves behind so the artifact
+# upload ferries only the distributables (zip, dmg, blockmaps, update yml),
+# not thousands of individual app-bundle files.
+rm -rf release/mac release/mac-arm64
+rm -f release/builder-debug.yml

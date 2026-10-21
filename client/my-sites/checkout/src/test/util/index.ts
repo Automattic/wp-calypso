@@ -13,6 +13,7 @@ import { thunk } from 'redux-thunk';
 import { useExperiment } from 'calypso/lib/explat';
 import domainManagementReducer from 'calypso/state/domains/management/reducer';
 import noticesReducer from 'calypso/state/notices/reducer';
+import type { Site } from '@automattic/api-core';
 import type { PricedAPIPlan, StorePlanSlug } from '@automattic/data-stores';
 import type {
 	CartKey,
@@ -42,18 +43,6 @@ export const stripeConfiguration = {
 	js_url: 'https://stripe-js-url',
 	public_key: 'stripe-public-key',
 	setup_intent_id: undefined,
-};
-
-export const razorpayConfiguration = {
-	js_url: 'https://checkout.razorpay.com/v1/checkout.js',
-	options: {
-		key: 'razorpay-public-key',
-		config: {
-			display: {
-				language: 'en',
-			},
-		},
-	},
 };
 
 export const processorOptions = {
@@ -477,8 +466,6 @@ export const professionalEmailMonthly: ResponseCartProduct = {
 
 export const fetchStripeConfiguration = async () => stripeConfiguration;
 
-export const fetchRazorpayConfiguration = async () => razorpayConfiguration;
-
 export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 	return async ( _: CartKey, requestCart: RequestCart ): Promise< ResponseCart > => {
 		const { products: requestProducts, coupon: requestCoupon } = requestCart;
@@ -533,6 +520,9 @@ function convertRequestProductToResponseProduct(
 		const { product_slug } = product;
 
 		switch ( product_slug ) {
+			// The cart endpoint accepts a plan's path slug (e.g. `personal`) as
+			// well as its product slug, resolving it server-side.
+			case 'personal':
 			case 'personal-bundle': // WPCOM Personal Bundle
 				return {
 					...getEmptyResponseCartProduct(),
@@ -1278,6 +1268,32 @@ export function mockGetVatInfoEndpoint( response ) {
 		.reply( 200, response );
 }
 
+export function createTestSite( overrides: Partial< Site > = {} ): Site {
+	return {
+		ID: siteId,
+		slug: 'foo.com',
+		URL: 'https://foo.com',
+		name: 'Foo',
+		jetpack: false,
+		jetpack_connection: false,
+		is_wpcom_atomic: false,
+		is_private: false,
+		is_garden: false,
+		garden_name: null,
+		options: { admin_url: 'https://foo.com/wp-admin/', software_version: '6.8' },
+		...overrides,
+	} as Site;
+}
+
+export function mockGetSiteDomainsEndpoint( response: unknown[] ) {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( `/rest/v1.2/sites/${ siteId }/domains` )
+		.query( true )
+		.optionally()
+		.reply( 200, { domains: response } );
+}
+
 export function mockLogStashEndpoint() {
 	const endpoint = jest.fn();
 	endpoint.mockReturnValue( true );
@@ -1435,7 +1451,9 @@ export const basicExpectedDomainDetails = {
 	email: undefined,
 	extra: {
 		ca: null,
+		es: null,
 		fr: null,
+		in: null,
 		uk: null,
 	},
 	fax: undefined,

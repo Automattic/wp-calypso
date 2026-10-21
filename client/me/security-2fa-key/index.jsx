@@ -1,6 +1,5 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -56,7 +55,7 @@ class Security2faKey extends Component {
 					'invalid_operation' === err.error
 						? translate(
 								`Unable to delete the last WordPress.com security key while enhanced account security is active. Deleting it may result in losing access to your account. If you still want to remove it, please disable enhanced account security.`
-						  )
+							)
 						: translate( 'The key could not be deleted. Please try again later.' );
 				this.setState( {
 					errorMessage,
@@ -74,7 +73,7 @@ class Security2faKey extends Component {
 			this.setState( {
 				isEnabled: true,
 				addingKey: false,
-				security2faKeys: get( data, 'registrations', [] ),
+				security2faKeys: data?.registrations ?? [],
 			} );
 		}
 	};

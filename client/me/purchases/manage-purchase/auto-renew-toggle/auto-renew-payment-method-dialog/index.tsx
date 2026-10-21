@@ -1,13 +1,13 @@
 import { Dialog } from '@automattic/components';
 import { localize, type LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
-import type { Purchases } from '@automattic/data-stores';
+import type { Purchase } from '@automattic/api-core';
 
 import './style.scss';
 
 interface AutoRenewPaymentMethodDialogProps {
 	isVisible: boolean;
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 	onClose: () => void;
 	onAddClick: () => void;
 }

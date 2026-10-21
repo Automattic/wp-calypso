@@ -8,15 +8,37 @@ import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
+import { EARLY_PROVISION_TARGET_WPCOM_ATOMIC } from '../../internals/steps-repository/create-site/early-provisioning';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { FlowV2, SubmitHandler } from '../../internals/types';
 
 const SiteIntent = Onboard.SiteIntent;
+
+function logEarlyWpcomAtomicEvent(
+	type: string,
+	siteId: string | number,
+	properties: Record< string, unknown > = {}
+): void {
+	const blogId = Number( siteId );
+
+	void logToLogstash( {
+		feature: 'calypso_client',
+		message: 'AI Site Builder early WPCOM Atomic provisioning',
+		severity: 'debug',
+		...( Number.isNaN( blogId ) ? {} : { blog_id: blogId } ),
+		properties: {
+			type: `ai_site_builder_early_wpcom_atomic_${ type }`,
+			...properties,
+		},
+	} ).catch( () => {} );
+}
+
 const deletePage = async ( siteId: string | number, pageId: number ): Promise< boolean > => {
 	try {
 		await wpcom.req.post( {
@@ -105,6 +127,9 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 		const goToCheckout = async () => {
 			const site = await resolveSelect( SITE_STORE ).getSite( siteIdFromSiteData );
+			if ( ! site ) {
+				return;
+			}
 			const bigSkyUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
 			const siteLaunchUrl = addQueryArgs( '/setup/ai-site-builder/site-launch', {
 				siteId: siteIdFromSiteData,
@@ -117,7 +142,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							? siteLaunchUrl
 							: addQueryArgs( bigSkyUrl, {
 									checkout: 'success',
-							  } ),
+								} ),
 					checkoutBackUrl: addQueryArgs( bigSkyUrl, {
 						checkout: 'cancel',
 					} ),
@@ -151,10 +176,15 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							}
 							// get the prompt from the get url
 							const prompt = queryParams.get( 'prompt' );
-							let promptParam = '';
+							let promptValue = prompt;
 
 							const source = queryParams.get( 'source' );
 							const specId = queryParams.get( 'spec_id' );
+							const provisionTarget =
+								queryParams.get( 'provision_target' ) ??
+								queryParams.get( 'early_provision_target' );
+							const isEarlyWpcomAtomicProvisioning =
+								provisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC;
 
 							/**
 							 * Redirect behavior after site creation:
@@ -181,89 +211,69 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							 * | 1                  | (not set)            | /wp-admin/                                        |
 							 * | 1                  | 0                    | /wp-admin/site-editor.php?canvas=edit&ai-step=spec |
 							 * | 1                  | 1                    | /wp-admin/                                        |
+							 *
+							 * WPCOM Atomic provision targets use Easy Site Editor instead of the legacy
+							 * Big Sky site-editor surface.
 							 */
 							const triggerBackendBuildParam = queryParams.get( 'trigger_backend_build' );
 							const triggerBackendBuild = gardenName
 								? triggerBackendBuildParam !== '0' // Garden sites: default to /wp-admin/, opt-out with =0
 								: triggerBackendBuildParam === '1'; // Non-garden: default to site-editor, opt-in with =1
 
-							let sourceParam = '';
-							let specIdParam = '';
-
-							const pendingActions = [
-								resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
-							];
+							const siteRequest = resolveSelect( SITE_STORE ).getSite( siteId );
+							let pageRequest: Promise< { id: number } > | undefined;
 
 							if ( ! gardenName ) {
 								// Add blog sticker - this runs independently and errors are handled by the mutation's onError callback (only for non-garden sites)
 								addBlogSticker( siteId, 'big-sky-free-trial' );
 
 								// Create a new home page if one is not set yet (only for non-garden sites)
-								pendingActions.push(
-									wpcom.req.post(
-										{
-											path: '/sites/' + siteId + '/pages',
-											apiNamespace: 'wp/v2',
-										},
-										{},
-										{
-											title: 'Home',
-											status: 'publish',
-											content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-										}
-									)
+								pageRequest = wpcom.req.post(
+									{
+										path: '/sites/' + siteId + '/pages',
+										apiNamespace: 'wp/v2',
+									},
+									{},
+									{
+										title: 'Home',
+										status: 'publish',
+										content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+									}
 								);
 							}
 
 							// Only apply design and delete page for non-garden sites
-							if ( ! gardenName ) {
-								pendingActions.push( deletePage( siteId || '', 1 ) );
-							}
-							pendingActions.push( setIntentOnSite( siteSlug, SiteIntent.AIAssembler ) );
-
-							// Execute operations individually to identify which one fails
-							const results = [];
-							try {
-								// Execute all actions sequentially with logging
-								for ( let i = 0; i < pendingActions.length; i++ ) {
-									const result = await pendingActions[ i ];
-									results.push( result );
-								}
-							} catch ( error ) {
+							const deletePageRequest = ! gardenName ? deletePage( siteId || '', 1 ) : undefined;
+							const intentRequest = setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
+							const results = await Promise.all( [
+								siteRequest,
+								pageRequest,
+								deletePageRequest,
+								intentRequest,
+							] ).catch( () => null );
+							if ( ! results ) {
 								return;
 							}
+							const [ siteData, pageCreationResult ] = results;
 
 							// Defensive check for site data (always first)
-							const siteData = results[ 0 ];
 							if ( ! siteData || ! siteData.URL ) {
 								return;
 							}
 							const siteURL = siteData.URL;
 
 							// Handle page creation result (only exists for non-garden sites)
-							if ( ! gardenName && results.length > 1 ) {
-								const pageCreationResult = results[ 1 ];
-								if ( pageCreationResult && pageCreationResult.id ) {
-									const homePagePostId = pageCreationResult.id;
-									await setStaticHomepageOnSite( siteId, homePagePostId );
-								}
+							if ( pageCreationResult && pageCreationResult.id ) {
+								const homePagePostId = pageCreationResult.id;
+								await setStaticHomepageOnSite( siteId, homePagePostId );
 							}
 
-							if ( prompt ) {
-								promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;
-							} else if ( window.sessionStorage.getItem( 'stored_ai_prompt' ) ) {
-								promptParam = `&prompt=${ encodeURIComponent(
-									window.sessionStorage.getItem( 'stored_ai_prompt' ) || ''
-								) }`;
+							const storedPrompt = window.sessionStorage.getItem( 'stored_ai_prompt' );
+							if ( ! prompt && storedPrompt ) {
+								promptValue = storedPrompt;
 								window.sessionStorage.removeItem( 'stored_ai_prompt' );
 							}
 
-							if ( source ) {
-								sourceParam = `&source=${ encodeURIComponent( source ) }`;
-							}
-							if ( specId ) {
-								specIdParam = `&spec_id=${ encodeURIComponent( specId ) }`;
-							}
 							if ( triggerBackendBuild ) {
 								const ph = queryParams.get( '_ph' );
 								window.location.replace(
@@ -272,14 +282,38 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 									} )
 								);
 							} else {
-								window.location.replace(
-									`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }`
-								);
+								const siteEditorUrl = isEarlyWpcomAtomicProvisioning
+									? addQueryArgs( `${ siteURL }/wp-admin/admin.php`, {
+											page: 'easy-site-editor',
+											referrer: AI_SITE_BUILDER_FLOW,
+											...( source ? { source } : {} ),
+											...( specId ? { spec_id: specId } : {} ),
+										} )
+									: addQueryArgs( `${ siteURL }/wp-admin/site-editor.php`, {
+											canvas: 'edit',
+											p: '/',
+											'ai-step': 'spec',
+											referrer: AI_SITE_BUILDER_FLOW,
+											...( promptValue ? { prompt: promptValue } : {} ),
+											...( source ? { source } : {} ),
+											...( specId ? { spec_id: specId } : {} ),
+										} );
+
+								if ( isEarlyWpcomAtomicProvisioning ) {
+									logEarlyWpcomAtomicEvent( 'easy_site_editor_redirect', siteId, {
+										spec_id: specId,
+									} );
+								}
+
+								window.location.replace( siteEditorUrl );
 							}
-						} else if ( providedDependencies.isLaunched ) {
+						} else if ( providedDependencies.isLaunched && providedDependencies.siteSlug ) {
 							const site = await resolveSelect( SITE_STORE ).getSite(
 								providedDependencies.siteSlug
 							);
+							if ( ! site ) {
+								return;
+							}
 							let bigSkyUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
 							const checkout = queryParams.get( 'checkout' );
 							if ( checkout ) {

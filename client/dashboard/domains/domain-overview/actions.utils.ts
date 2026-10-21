@@ -1,5 +1,6 @@
 import { Domain, DomainSubtype, DomainTransferStatus, Purchase } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
+import { isExpiredOrRemoved, isIncludedWithPlan } from '../../utils/purchase';
 
 export const transferableTypes: DomainSubtype[] = [
 	DomainSubtype.DEFAULT_ADDRESS,
@@ -8,8 +9,30 @@ export const transferableTypes: DomainSubtype[] = [
 ];
 export const disconnectableTypes: DomainSubtype[] = [ DomainSubtype.DOMAIN_REGISTRATION ];
 
+/**
+ * Similar to the canAutoRenewBeTurnedOff method in the purchase management code.
+ *
+ * Note that this is poorly named -- it is effectively used to determine
+ * whether the user is allowed to go through the "cancellation" flow in the
+ * user interface (rather than the "removal" flow), but the meaning of these
+ * flows is imprecise; sometimes "cancel" means disabling auto-renew, but other
+ * times it means removing and refunding.
+ *
+ * As a result, this should be considered mostly deprecated, in favor of either
+ * isPurchaseCancelable() (which defers cancellation checks to the server-side
+ * code) or something else more precise.
+ */
 export const canAutoRenewBeTurnedOff = ( purchase: Purchase ) => {
-	if ( [ 'included', 'expired' ].includes( purchase.expiry_status ) ) {
+	if ( isIncludedWithPlan( purchase ) ) {
+		return false;
+	}
+
+	// Subscriptions past their expiration date should really only be offered
+	// the option to remove the subscription (rather than "cancel" it), given
+	// how close they are to being automatically removed anyway. If the
+	// subscription still has grace period renewal attempts scheduled, the user
+	// can still disable auto-renew via the dedicated toggle instead.
+	if ( isExpiredOrRemoved( purchase ) ) {
 		return false;
 	}
 

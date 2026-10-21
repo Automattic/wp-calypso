@@ -61,6 +61,17 @@ export const noteLikes = ( state = {}, { type, noteId, isLiked } ) => {
 	return state;
 };
 
+// Ordered id lists for the filtered tabs, keyed by tab name so each keeps its own
+// last result. Absent key = never fetched (show the loader); present (even []) =
+// loaded. The notes themselves live in `allNotes`.
+export const filteredNoteIds = ( state = {}, { type, filterKey, noteIds } ) => {
+	if ( types.SET_FILTERED_NOTE_IDS === type ) {
+		return { ...state, [ filterKey ]: noteIds };
+	}
+
+	return state;
+};
+
 export const noteReads = ( state = {}, { type, noteId } ) => {
 	if ( ( types.READ_NOTE === type || types.SELECT_NOTE === type ) && noteId ) {
 		return { ...state, [ noteId ]: true };
@@ -83,6 +94,7 @@ export const filteredNoteReads = ( state = [], { type, noteId } ) => {
 
 export default combineReducers( {
 	allNotes,
+	filteredNoteIds,
 	hiddenNoteIds,
 	noteApprovals,
 	noteLikes,

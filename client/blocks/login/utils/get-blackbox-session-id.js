@@ -1,26 +1,56 @@
+import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { waitForChallengeSettled } from 'calypso/blocks/login/utils/challenge-gate';
+
 /**
- * Retrieve a Blackbox bot-detection session ID, if the library is loaded.
+ * Retrieve a Blackbox bot-detection session ID.
  *
- * Blackbox returns `BlackboxError` instead of throwing, so the `typeof`
- * check filters those out. The try/catch is defense-in-depth in case the
- * third-party script misbehaves — Blackbox must never block login.
- * @returns {Promise<string|undefined>} Session ID, or undefined on failure.
+ * Awaits the lazy SDK load, then calls collect() to flush accumulated
+ * behavioral data (keypress timing, mouse movements, etc.) to the server.
+ * This ensures the server-side session score reflects behavioral signals
+ * before the login request fires — critical for enforcement via verify().
+ *
+ * collect() returns as soon as the response arrives, even when that response
+ * issued a challenge, so we hold the session here until the challenge settles.
+ * Verify rejects a session with an unsolved challenge outright.
+ *
+ * Blackbox returns BlackboxError instead of throwing, so the typeof check
+ * filters those out. The try/catch is defense-in-depth.
+ * @param {string} apiKey Public key for this collect.
+ * @returns {Promise<string|undefined>} Session ID, or undefined on any failure.
  */
-export async function getBlackboxSessionId() {
-	if ( ! window.Blackbox?.getSessionId ) {
+export async function getBlackboxSessionId( apiKey ) {
+	try {
+		await Promise.race( [
+			loadBlackboxSdk( apiKey ),
+			new Promise( ( resolve ) => setTimeout( resolve, 5000 ) ),
+		] );
+	} catch {
+		// loadBlackboxSdk() always resolves, but guard here in case that contract changes.
+		return undefined;
+	}
+
+	if ( typeof window.Blackbox?.collect !== 'function' ) {
 		return undefined;
 	}
 
 	try {
 		const result = await Promise.race( [
-			window.Blackbox.getSessionId(),
-			new Promise( ( resolve ) => setTimeout( resolve, 2000 ) ),
+			window.Blackbox.collect(),
+			new Promise( ( resolve ) => setTimeout( resolve, 5000 ) ),
 		] );
+
+		await waitForChallengeSettled();
+
 		if ( typeof result === 'string' ) {
 			return result;
+		}
+
+		if ( result && typeof result.sessionId === 'string' ) {
+			return result.sessionId;
 		}
 	} catch {
 		// Intentionally ignored — Blackbox must never block login.
 	}
+
 	return undefined;
 }

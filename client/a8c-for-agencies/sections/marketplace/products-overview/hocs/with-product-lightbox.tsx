@@ -109,6 +109,7 @@ function withProductLightbox< T >(
 					<PressableAddonsCustomDescription
 						productName={ currentProduct.name }
 						productSlug={ currentProduct.slug }
+						siteDomain={ currentProduct.site_domain }
 					/>
 				);
 			}
@@ -118,7 +119,7 @@ function withProductLightbox< T >(
 			}
 
 			return undefined;
-		}, [ currentProduct.name, currentProduct.slug ] );
+		}, [ currentProduct.name, currentProduct.site_domain, currentProduct.slug ] );
 
 		const customFooter = useMemo( () => {
 			if ( currentProduct.slug.startsWith( 'woocommerce-' ) ) {

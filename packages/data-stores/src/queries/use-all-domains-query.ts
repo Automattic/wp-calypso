@@ -30,10 +30,10 @@ export interface AllDomainsQueryFnData {
 	domains: PartialDomainData[];
 }
 
-export interface AllDomainsQueryArgs {
+export type AllDomainsQueryArgs = {
 	no_wpcom?: boolean;
 	resolve_status?: boolean;
-}
+};
 
 export const getAllDomainsQueryKey = ( queryArgs: AllDomainsQueryArgs = {} ) => [
 	'all-domains',

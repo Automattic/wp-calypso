@@ -1,5 +1,5 @@
-import { action } from '@storybook/addon-actions';
-import { Story } from '@storybook/react';
+import { StoryFn } from '@storybook/react';
+import { action } from 'storybook/actions';
 import { CookieBanner } from '.';
 import type { CookieBannerProps } from '.';
 
@@ -7,8 +7,8 @@ export default {
 	title: 'Cookie Banner',
 };
 
-export const Default: Story< CookieBannerProps > = ( args ) => <CookieBanner { ...args } />;
-export const Decline: Story< CookieBannerProps > = ( args ) => <CookieBanner { ...args } />;
+export const Default: StoryFn< CookieBannerProps > = ( args ) => <CookieBanner { ...args } />;
+export const Decline: StoryFn< CookieBannerProps > = ( args ) => <CookieBanner { ...args } />;
 
 Default.args = {
 	onAccept: action( 'accept' ),

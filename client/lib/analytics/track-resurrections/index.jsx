@@ -3,7 +3,9 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	RESURRECTED_EVENT,
+	RESURRECTED_EVENT_3M,
 	RESURRECTED_EVENT_6M,
+	RESURRECTION_DAY_LIMIT_3M,
 	RESURRECTION_DAY_LIMIT_DEFAULT,
 	RESURRECTION_DAY_LIMIT_EXPERIMENT,
 } from 'calypso/lib/resurrected-users/constants';
@@ -24,6 +26,10 @@ const TrackResurrections = () => {
 		lastSeen,
 		RESURRECTION_DAY_LIMIT_EXPERIMENT
 	);
+	const isResurrectedThreeMonths = hasExceededDormancyThreshold(
+		lastSeen,
+		RESURRECTION_DAY_LIMIT_3M
+	);
 
 	useEffect( () => {
 		if ( isFetching ) {
@@ -41,7 +47,19 @@ const TrackResurrections = () => {
 				day_limit: RESURRECTION_DAY_LIMIT_EXPERIMENT,
 			} );
 		}
-	}, [ isFetching, isResurrectedDefault, isResurrectedSixMonths, lastSeen ] ); // Only run this when LastSeen value changes.
+		if ( isResurrectedThreeMonths ) {
+			recordTracksEvent( RESURRECTED_EVENT_3M, {
+				last_seen: lastSeen,
+				day_limit: RESURRECTION_DAY_LIMIT_3M,
+			} );
+		}
+	}, [
+		isFetching,
+		isResurrectedDefault,
+		isResurrectedSixMonths,
+		isResurrectedThreeMonths,
+		lastSeen,
+	] ); // Only run this when LastSeen value changes.
 
 	return null;
 };

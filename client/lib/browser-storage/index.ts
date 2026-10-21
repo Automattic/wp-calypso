@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
+import { kebabCase } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { kebabCase } from 'lodash';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { once } from 'calypso/lib/memoize-last';
 import {

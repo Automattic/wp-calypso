@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"description": "Material icons in SVG format.",
 	"main": "src/index.js",
+	"calypso:src": "src/index.js",
 	"module": "src/index.js",
 	"sideEffects": false,
 	"keywords": [
@@ -30,6 +31,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"svgstore-cli": "^1.3.2"
+		"svgstore-cli": "^2.0.1"
 	}
 }

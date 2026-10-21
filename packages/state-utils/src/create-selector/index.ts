@@ -1,6 +1,6 @@
+import { memoize } from '@automattic/js-utils';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import warn from '@wordpress/warning';
-import { memoize } from 'lodash';
 
 /**
  * Constants
@@ -101,7 +101,7 @@ export default function createSelector<
 			}
 
 			if ( lastDependants && ! isShallowEqual( currentDependants, lastDependants ) ) {
-				memoizedSelector.cache.clear?.();
+				memoizedSelector.cache.clear();
 			}
 
 			lastDependants = currentDependants;

@@ -103,7 +103,7 @@ function useDisablePaymentMethodsWhenListChanges(
 	);
 
 	const paymentMethodIdsHash = paymentMethods.map( ( method ) => method.id ).join( '-_-' );
-	const previousPaymentMethodIdsHash = useRef< string >();
+	const previousPaymentMethodIdsHash = useRef< string >( undefined );
 
 	useEffect( () => {
 		if ( previousPaymentMethodIdsHash.current !== paymentMethodIdsHash ) {
@@ -131,7 +131,7 @@ function useResetSelectedPaymentMethodWhenListChanges(
 	setPaymentMethodId: ( id: string | null | undefined ) => void
 ) {
 	const hashKey = availablePaymentMethodIds.join( '-_-' );
-	const previousKey = useRef< string >();
+	const previousKey = useRef< string >( undefined );
 
 	useEffect( () => {
 		if ( previousKey.current !== hashKey ) {

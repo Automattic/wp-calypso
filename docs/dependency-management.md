@@ -2,6 +2,8 @@
 
 This project uses [yarn v3](https://yarnpkg.com/) to manage its dependencies. It uses workspaces[https://yarnpkg.com/features/workspaces] functionality to manage the monorepo.
 
+For GitHub Dependabot security alerts, use the [dependency security alerts playbook](dependency-security-alerts.md).
+
 ## Working with sub-packages
 
 In this context, a 'sub-package' is any package of the monorepo. That includes `./packages/*`, `./client` and `./apps/*`.
@@ -15,7 +17,7 @@ cd packages/calypso-analytics
 yarn add ...
 ```
 
-**Option 2**: Run `yarn` commands in teh root of the project, but prepend `workspace <packageName>`. Example
+**Option 2**: Run `yarn` commands in the root of the project, but prepend `workspace <packageName>`. Example
 
 ```
 yarn workspace @automattic/calypso-analytics add...
@@ -33,7 +35,7 @@ yarn add <dependency>
 
 # Example:
 # cd packages/calypso-analytics
-# yarn add lodash
+# yarn add uuid
 ```
 
 You should add dependencies to the root project _only_ when it will be used to test and/or build other packages. To do this, run:
@@ -46,11 +48,11 @@ yarn add -w <dependency>
 
 Sometimes you'll want to [create a package](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/guide/monorepo.md#a-sample-packagejson) and use it as another workspace's dependency before it's published. To add such dependency, make sure you **specify its exact version** because otherwise, `yarn` will try to resolve it from the `npm` registry and throw the `Not found` error.
 
-Let's say you created a polyfill package and want to add it as a dependency to `packages/calypso-polyfills`. Doing this will make `yarn` resolve to your fresh (unpublished) package and install it as a symlink:
+Let's say you created a package and want to add it as a dependency to another workspace, such as `packages/<package-dir>`. Doing this will make `yarn` resolve to your fresh (unpublished) package and install it as a symlink:
 
 ```
-cd packages/calypso-polyfills
-yarn add @automattic/my-awesome-polyfill@1.0.0
+cd packages/<package-dir>
+yarn add @automattic/my-awesome-package@1.0.0
 ```
 
 That's it! Don't forget to [publish the package](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/guide/monorepo.md#publishing) after merging your PR!
@@ -63,13 +65,13 @@ yarn remove <dependency>
 
 # Example:
 # cd packages/calypso-analytics
-# yarn remove lodash
+# yarn remove uuid
 ```
 
 To delete a dependency of the root project, run:
 
 ```
-yarn remove -w lodash
+yarn remove -w uuid
 ```
 
 ### Update a dependency

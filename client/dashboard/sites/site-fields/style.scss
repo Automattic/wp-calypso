@@ -1,0 +1,10 @@
+.site-plan-expiry-status__renew-link {
+	// The parent carries the warning and error colors, which the external
+	// link's own brand color would otherwise override in every state.
+	&,
+	&:visited,
+	&:hover,
+	&:active {
+		color: inherit;
+	}
+}

@@ -1,4 +1,4 @@
-import { pickBy } from 'lodash';
+import { pickBy } from '@automattic/js-utils';
 
 /**
  * Returns a normalized post terms object for sending to the API

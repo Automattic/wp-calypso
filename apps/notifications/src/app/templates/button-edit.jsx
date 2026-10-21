@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { edit } from '@wordpress/icons';
+import { pencil as edit } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getEditCommentLink } from '../../panel/helpers/notes';

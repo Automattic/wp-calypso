@@ -49,7 +49,10 @@ const ChatButton: FC< Props > = ( {
 	);
 	const { setShowHelpCenter, setNavigateToRoute, setNewMessagingChat } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging(
+		true,
+		siteId ?? undefined
+	);
 
 	function shouldShowChatButton(): boolean {
 		if ( isEligibleForChat && hasActiveChats && canConnectToZendesk ) {

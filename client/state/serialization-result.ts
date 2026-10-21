@@ -1,5 +1,3 @@
-import { forEach } from 'lodash';
-
 type Json = any;
 
 /**
@@ -35,7 +33,7 @@ export class SerializationResult {
 		result: Json | SerializationResult
 	): void {
 		if ( result instanceof SerializationResult ) {
-			forEach( result.results, ( resultState, resultKey ) => {
+			Object.entries( result.results ).forEach( ( [ resultKey, resultState ] ) => {
 				if ( resultKey === 'root' ) {
 					this.addResult( storageKey, reducerKey, resultState );
 				} else {

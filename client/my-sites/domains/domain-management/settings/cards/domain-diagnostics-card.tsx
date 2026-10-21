@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
-import { sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import Accordion from 'calypso/components/domains/accordion';
@@ -90,16 +90,16 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 			message = records[ recordType ].error_message ?? null;
 		} else if ( records[ recordType ].status === 'incorrect' ) {
 			message = sprintf(
-				/* translators: dnsRecordType is a DNS record type, e.g. SPF, DKIM or DMARC */
-				translate( 'Your %(dnsRecordType)s record is incorrect. The correct record should be:' ),
+				/* translators: %(dnsRecordType)s is a DNS record type, e.g. SPF, DKIM or DMARC */
+				__( 'Your %(dnsRecordType)s record is incorrect. The correct record should be:' ),
 				{
 					dnsRecordType: uppercaseRecord,
 				}
 			);
 		} else if ( records[ recordType ].status === 'not_found' ) {
 			message = sprintf(
-				/* translators: dnsRecordType is a DNS record type, e.g. SPF, DKIM or DMARC */
-				translate( 'There is no %(dnsRecordType)s record. The correct record should be:' ),
+				/* translators: %(dnsRecordType)s is a DNS record type, e.g. SPF, DKIM or DMARC */
+				__( 'There is no %(dnsRecordType)s record. The correct record should be:' ),
 				{
 					dnsRecordType: uppercaseRecord,
 				}

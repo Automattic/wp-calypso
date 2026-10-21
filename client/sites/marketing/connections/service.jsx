@@ -3,8 +3,8 @@ import { Badge, FoldableCard, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
 import clsx from 'clsx';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { isEqual, find, some, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
@@ -233,9 +233,9 @@ export class SharingService extends Component {
 			);
 		}
 
-		const existingConnection = find( this.props.siteUserConnections, {
-			keyring_connection_ID: keyringConnectionId,
-		} );
+		const existingConnection = this.props.siteUserConnections.find(
+			( connection ) => connection.keyring_connection_ID === keyringConnectionId
+		);
 
 		if ( this.props.siteId && existingConnection ) {
 			// If a Keyring connection is already in use by another connection,
@@ -278,7 +278,7 @@ export class SharingService extends Component {
 	 */
 	refresh = ( connections = this.props.brokenConnections ) => {
 		this.getConnections( connections ).map( ( connection ) => {
-			const keyringConnection = find( this.props.keyringConnections, ( token ) => {
+			const keyringConnection = this.props.keyringConnections.find( ( token ) => {
 				// Publicize connections store the token id as `keyring_connection_ID`
 				const tokenID =
 					'publicize' === token.type ? connection.keyring_connection_ID : connection.ID;
@@ -373,10 +373,12 @@ export class SharingService extends Component {
 			 * This immediately connects the account, which is needed for non-publicize accounts
 			 */
 			if (
-				get( nextProps, 'service.type' ) !== 'publicize' &&
+				nextProps?.service?.type !== 'publicize' &&
 				this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts )
 			) {
-				const account = find( nextProps.availableExternalAccounts, { isConnected: false } );
+				const account = nextProps.availableExternalAccounts.find(
+					( externalAccount ) => externalAccount.isConnected === false
+				);
 				this.addConnection( nextProps.service, account.keyringConnectionId );
 				this.setState( { isConnecting: false } );
 			} else if ( this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts ) ) {
@@ -407,16 +409,24 @@ export class SharingService extends Component {
 		if ( this.props.isFetching ) {
 			// When connections are still loading, we don't know the status
 			status = 'unknown';
-		} else if ( ! some( this.getConnections(), { service } ) ) {
+		} else if (
+			! ( this.getConnections() ?? [] ).some( ( connection ) => connection.service === service )
+		) {
 			// If no connections exist, the service isn't connected
 			status = 'not-connected';
-		} else if ( some( this.getConnections(), { status: 'broken' } ) ) {
+		} else if (
+			( this.getConnections() ?? [] ).some( ( connection ) => connection.status === 'broken' )
+		) {
 			// A problematic connection exists
 			status = 'reconnect';
-		} else if ( some( this.getConnections(), { status: 'refresh-failed' } ) ) {
+		} else if (
+			( this.getConnections() ?? [] ).some(
+				( connection ) => connection.status === 'refresh-failed'
+			)
+		) {
 			// We need to manually refresh a token
 			status = 'refresh-failed';
-		} else if ( some( this.getConnections(), isConnectionInvalidOrMustReauth ) ) {
+		} else if ( ( this.getConnections() ?? [] ).some( isConnectionInvalidOrMustReauth ) ) {
 			// A valid connection is not available anymore, user must reconnect
 			status = 'must-disconnect';
 		} else {
@@ -441,7 +451,9 @@ export class SharingService extends Component {
 	 * @returns {boolean} Whether the Keyring authorization attempt succeeded
 	 */
 	didKeyringConnectionSucceed( externalAccounts ) {
-		const hasAnyConnectionOptions = some( externalAccounts, { isConnected: false } );
+		const hasAnyConnectionOptions = ( externalAccounts ?? [] ).some(
+			( externalAccount ) => externalAccount.isConnected === false
+		);
 
 		if ( ! externalAccounts.length ) {
 			// At this point, if there are no available accounts to
@@ -516,12 +528,12 @@ export class SharingService extends Component {
 		if ( ! config.isEnabled( 'mailchimp' ) ) {
 			return false;
 		}
-		return get( this, 'props.service.ID' ) === 'mailchimp';
+		return this?.props?.service?.ID === 'mailchimp';
 	};
 
 	// Is the service a Google Photos that requires migration to Google Photos Picker API
 	isGooglePhotosMigration( status ) {
-		if ( status === 'must-disconnect' && get( this, 'props.service.ID' ) === 'google_photos' ) {
+		if ( status === 'must-disconnect' && this?.props?.service?.ID === 'google_photos' ) {
 			return true;
 		}
 
@@ -544,7 +556,8 @@ export class SharingService extends Component {
 		} );
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
 		const showLinkedInNotice =
-			'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } );
+			'linkedin' === this.props.service.ID &&
+			( connections ?? [] ).some( ( connection ) => connection.status === 'must_reauth' );
 
 		const header = (
 			<div>

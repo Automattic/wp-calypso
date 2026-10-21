@@ -1,8 +1,8 @@
-import { JETPACK_BOOST_ID } from 'calypso/a8c-for-agencies/sections/sites/features/features';
+import { JETPACK_BACKUP_ID } from 'calypso/a8c-for-agencies/sections/sites/features/features';
 import { AgencyDashboardFilterMap } from './types';
 
 export const A4A_SITES_DASHBOARD_DEFAULT_CATEGORY = 'overview';
-export const A4A_SITES_DASHBOARD_DEFAULT_FEATURE = JETPACK_BOOST_ID;
+export const A4A_SITES_DASHBOARD_DEFAULT_FEATURE = JETPACK_BACKUP_ID;
 
 export const DEFAULT_SORT_FIELD = 'url';
 export const DEFAULT_SORT_DIRECTION = 'asc';

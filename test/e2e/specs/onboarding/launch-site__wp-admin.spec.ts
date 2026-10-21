@@ -5,7 +5,12 @@ import {
 	type NewUserResponse,
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiCloseAccount, apiDeleteSite, swapBaseUrl } from '../shared';
+import {
+	apiCloseAccount,
+	apiCreateUnlaunchedFreeSiteForUser,
+	apiDeleteSite,
+	swapBaseUrl,
+} from '../shared';
 
 test.describe(
 	'Onboarding: Launch site from WP Admin',
@@ -45,13 +50,12 @@ test.describe(
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
-			await test.step( 'And I select a .wordpress.com domain name', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
-				await componentDomainSearch.skipPurchase();
-			} );
-
-			await test.step( 'And I select the WordPress.com Free plan', async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan( 'Free', new RegExp( '.*/home/.*' ) );
+			await test.step( 'Given I have an unlaunched free site', async function () {
+				newSiteDetails = await apiCreateUnlaunchedFreeSiteForUser(
+					testUser,
+					newUserDetails,
+					helperData.getBlogName()
+				);
 				siteSlug = newSiteDetails.blog_details.site_slug;
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
@@ -73,28 +77,26 @@ test.describe(
 				expect( launchSiteUrl.searchParams.get( 'siteSlug' ) ).toBe( siteSlug );
 				expect( launchSiteUrl.searchParams.get( 'ref' ) ).toBe( 'wp-admin' );
 
-				const launchSiteUrlWithSwappedOrigin = swapBaseUrl(
-					launchSiteButtonHref,
-					environment.CALYPSO_BASE_URL
+				// The admin bar still links to legacy `/start/launch-site`. Open `/setup/launch-site`
+				// directly so test runs don't count as hits on the legacy redirect.
+				const stepperLaunchSiteUrl = new URL(
+					swapBaseUrl( launchSiteButtonHref, environment.CALYPSO_BASE_URL )
 				);
+				stepperLaunchSiteUrl.pathname = '/setup/launch-site';
 
-				await page.goto( launchSiteUrlWithSwappedOrigin );
+				await page.goto( stepperLaunchSiteUrl.toString() );
 			} );
 
-			await test.step( 'Then I am redirected to the launch-site flow on WPCOM', async function () {
-				await page.waitForURL( /start\/launch-site/, { timeout: 30_000 } );
+			await test.step( 'Then I am in the launch-site flow on WPCOM', async function () {
+				await page.waitForURL( /setup\/launch-site/, { timeout: 30_000 } );
 			} );
 
 			await test.step( 'And I skip the domain search', async function () {
 				await componentDomainSearch.skipPurchase();
 			} );
 
-			await test.step( 'And I open the escape hatch to skip the plan', async function () {
-				await pageSignupPickPlan.openEscapeHatch();
-			} );
-
-			await test.step( 'And I continue with the Free plan', async function () {
-				await pageSignupPickPlan.continueWithFreeViaEscapeHatch( new RegExp( '.*/wp-admin.*' ) );
+			await test.step( 'And I start with the Free plan', async function () {
+				await pageSignupPickPlan.startWithFreePlan( new RegExp( '.*/wp-admin.*' ) );
 			} );
 
 			await test.step( 'Then I am redirected back to WP Admin', async function () {

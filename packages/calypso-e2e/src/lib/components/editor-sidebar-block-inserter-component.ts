@@ -2,6 +2,12 @@ import { Page, Locator } from 'playwright';
 import envVariables from '../../env-variables';
 import { EditorComponent } from './editor-component';
 
+// Choosing a result inserts the block synchronously, and on desktop hovering it
+// mounts a preview iframe first. On contended CI agents that kept the renderer
+// busy past the default action timeout. A dispatched click cannot be retried
+// safely (it may insert the block twice), so give it more time instead.
+const INSERTER_CLICK_TIMEOUT = 20 * 1000;
+
 const sidebarParentSelector = '.block-editor-inserter__main-area';
 const selectors = {
 	closeBlockInserterButton: 'button[aria-label="Close Block Inserter"]',
@@ -41,23 +47,50 @@ export class EditorSidebarBlockInserterComponent {
 		}
 
 		const editorParent = await this.editor.parent();
-		const sidebarParentSelectorDetachedPromise = this.page
-			.locator( sidebarParentSelector )
-			.waitFor( { state: 'detached' } );
+		const sidebarLocator = this.page.locator( sidebarParentSelector );
 		const closeBlockInserterButtonLocator = editorParent.locator(
 			selectors.closeBlockInserterButton
 		);
 
-		// Gutenberg 22.4.0 closes the sidebar automatically in some cases, so sometimes the button won't be there to click.
+		// Gutenberg 22.4.0+ auto-closes the sidebar after insertion in some cases,
+		// so the button may never appear. Race the two terminal states.
 		await Promise.any( [
 			closeBlockInserterButtonLocator.waitFor(),
-			sidebarParentSelectorDetachedPromise,
+			sidebarLocator.waitFor( { state: 'detached' } ),
 		] );
 
-		// If the button is there, click it.
-		if ( await closeBlockInserterButtonLocator.isVisible() ) {
-			await closeBlockInserterButtonLocator.click();
-			await sidebarParentSelectorDetachedPromise;
+		// If the sidebar is already gone, nothing to do.
+		if ( ( await sidebarLocator.count() ) === 0 ) {
+			return;
+		}
+
+		// On mobile, the button can pass actionability checks but detach
+		// mid-animation while the click is in-flight, hanging the click until
+		// the action timeout. Bound each attempt with `timeout`, use
+		// `noWaitAfter` to skip post-click navigation heuristics, and treat
+		// sidebar detachment as success regardless of which attempt landed it.
+		const maxAttempts = 3;
+		for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
+			try {
+				await closeBlockInserterButtonLocator.click( {
+					timeout: 5000,
+					noWaitAfter: true,
+				} );
+			} catch {
+				// The button may have detached between the race above and the
+				// click. That is the success case here.
+			}
+
+			try {
+				await sidebarLocator.waitFor( { state: 'detached', timeout: 5000 } );
+				return;
+			} catch {
+				if ( attempt === maxAttempts ) {
+					throw new Error(
+						`Block inserter sidebar did not close after ${ maxAttempts } click attempts.`
+					);
+				}
+			}
 		}
 	}
 
@@ -101,6 +134,14 @@ export class EditorSidebarBlockInserterComponent {
 						: selectors.patternResultItem( name )
 				)
 				.first();
+
+			// The pattern dialog does not load in-order. Grab the label of the match we found, then re-do the locator as an exact match.
+			if ( ! exactMatch ) {
+				const actualName = await locator.getAttribute( 'aria-label' );
+				locator = editorParent
+					.locator( selectors.patternExactResultItem( String( actualName ) ) )
+					.first();
+			}
 		} else {
 			const optionName = blockFallBackName
 				? new RegExp( `(${ name }|${ blockFallBackName })` )
@@ -117,8 +158,17 @@ export class EditorSidebarBlockInserterComponent {
 				.first();
 		}
 
-		await Promise.all( [ locator.hover(), locator.focus() ] );
-		await locator.click();
+		// Pattern insertion does not navigate but can emit events that Playwright
+		// treats as "scheduled navigation" on slow CI, hanging the click auto-wait.
+		// Keep it off the block path: noWaitAfter also drops the post-click check
+		// that the pointer landed here, so a click the re-rendering list eats is
+		// never retried. Patterns can afford that (they assert on a block-count
+		// delta); blocks assert on ".is-selected", which a block of the same type
+		// left selected by an earlier step can satisfy.
+		await locator.click( {
+			timeout: INSERTER_CLICK_TIMEOUT,
+			...( type === 'pattern' && { noWaitAfter: true } ),
+		} );
 
 		return locator;
 	}

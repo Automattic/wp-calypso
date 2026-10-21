@@ -79,7 +79,7 @@ export function PayPalProvider( {
 	const { payPalConfiguration, error } = usePayPalConfigurationInternalOnly( {
 		fetchPayPalConfiguration,
 	} );
-	const lastError = useRef< Error | undefined >();
+	const lastError = useRef< Error | undefined >( undefined );
 
 	useEffect( () => {
 		if ( ! error || lastError.current === error ) {

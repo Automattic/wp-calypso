@@ -18,7 +18,6 @@ import { encodePatternId } from 'calypso/my-sites/patterns/lib/encode-pattern-id
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import type { Pattern, PatternGalleryProps } from 'calypso/my-sites/patterns/types';
 import type { Dispatch, SetStateAction } from 'react';
 
@@ -29,10 +28,12 @@ export const ASPECT_RATIO = 7 / 4;
 
 // This style is injected into pattern preview iframes to prevent users from navigating away from
 // the pattern preview page and from submitting forms.
-const noClickStyle = {
-	css: 'a[href], button, input, textarea { pointer-events: none; }',
-	isGlobalStyles: true,
-};
+const noClickStyles = [
+	{
+		css: 'a[href], button, input, textarea { pointer-events: none; }',
+		isGlobalStyles: true,
+	},
+];
 
 // Firefox and Safari have trouble rendering elements in iframes with `writing-mode` styles. This
 // hacky script is injected into pattern preview iframes to force rerender those elements.
@@ -126,41 +127,39 @@ function PatternPreviewFragment( {
 		? translate( 'Copied link to pattern', {
 				comment: 'Tooltip text in Pattern Library for when the user just clicked a button',
 				textOnly: true,
-		  } )
+			} )
 		: translate( 'Copy link to pattern', {
 				comment: 'Tooltip text in Pattern Library',
 				textOnly: true,
-		  } );
+			} );
 
 	let copyButtonText = isPreviewLarge
 		? translate( 'Copy pattern', {
 				comment: 'Button label for copying a pattern',
 				textOnly: true,
-		  } )
+			} )
 		: translate( 'Copy', {
 				comment: 'Button label for copying a pattern',
 				textOnly: true,
-		  } );
+			} );
 
 	if ( isPatternCopied ) {
 		copyButtonText = isPreviewLarge
 			? translate( 'Pattern copied', {
 					comment: 'Button label for when a pattern was just copied',
 					textOnly: true,
-			  } )
+				} )
 			: translate( 'Copied', {
 					comment: 'Button label for when a pattern was just copied',
 					textOnly: true,
-			  } );
+				} );
 	}
 
-	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 	const recordCopyEvent = ( tracksEventName: string ) => {
 		recordTracksEvent( tracksEventName, {
 			name: pattern?.name,
 			category,
 			type: getTracksPatternType( patternTypeFilter ),
-			user_is_dev_account: isDevAccount ? '1' : '0',
 			view: isGridView ? 'grid' : 'list',
 		} );
 	};
@@ -305,7 +304,7 @@ function PatternPreviewFragment( {
 					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
 					patternId={ patternId }
 					scripts={ redrawScript }
-					styles={ [ noClickStyle ] }
+					styles={ noClickStyles }
 					viewportWidth={ viewportWidth }
 				/>
 			</div>
@@ -391,7 +390,6 @@ export function PatternPreview( props: PatternPreviewProps ) {
 
 	const isMobile = useMobileBreakpoint();
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 	const isRtl = useRtl();
 
 	if ( ! pattern ) {
@@ -408,7 +406,6 @@ export function PatternPreview( props: PatternPreviewProps ) {
 			category,
 			type: getTracksPatternType( patternTypeFilter ),
 			is_logged_in: isLoggedIn,
-			user_is_dev_account: isDevAccount ? '1' : '0',
 		} );
 	};
 

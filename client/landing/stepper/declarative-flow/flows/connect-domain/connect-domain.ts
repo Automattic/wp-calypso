@@ -64,7 +64,7 @@ const connectDomain: Flow = {
 		// /setup/blog/blogger-intent route which has no locale in the path so we need to
 		// redirect off of the first render.
 		// This effects both /setup/blog/<locale> starting points and /setup/blog/blogger-intent/<locale> urls.
-		// The double call also hapens on urls without locale.
+		// The double call also happens on urls without locale.
 		useEffect( () => {
 			if ( ! userIsLoggedIn ) {
 				redirect( logInUrl );

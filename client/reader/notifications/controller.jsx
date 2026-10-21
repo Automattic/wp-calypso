@@ -9,6 +9,9 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getIsNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 
+const loadNotifications = () =>
+	import( /* webpackChunkName: "async-load-calypso-notifications" */ 'calypso/notifications' );
+
 export function notifications( context, next ) {
 	const basePath = sectionify( context.path );
 	const mcKey = 'notifications';
@@ -49,12 +52,7 @@ export function notifications( context, next ) {
 			<NotificationTitle />
 			<div className="reader-notifications__panel">
 				<AsyncLoad
-					key="reader-notifications"
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-notifications" */ 'calypso/notifications'
-						)
-					}
+					require={ loadNotifications }
 					isShowing
 					checkToggle={ () => {} }
 					placeholder={ null }

@@ -1,7 +1,7 @@
 import { ProgressBar } from '@automattic/components';
+import { truncate } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { truncate } from 'lodash';
 import { connect } from 'react-redux';
 import DropZone from 'calypso/components/drop-zone';
 import { UploadingPane as UploadingPaneBase } from 'calypso/my-sites/importer/uploading-pane';
@@ -34,7 +34,7 @@ export class UploadingPane extends UploadingPaneBase {
 				importerState === appStates.UPLOADING && uploadPercent < 99
 					? this.props.translate( 'Uploading %(filename)s\u2026', {
 							args: { filename: truncate( filename, { length: 40 } ) },
-					  } )
+						} )
 					: this.props.translate( 'Processing uploaded file\u2026' );
 
 			// Override ProgressBar color and force 'compact'

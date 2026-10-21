@@ -1,5 +1,9 @@
 # AGENTS.md
 
+## Confidentiality
+
+CRITICAL: This is a **public repository**. Never put an internal link or hostname in a PR description, review comment, commit message, code comment, or any other public-facing text: no wordpress.com URLs (internal sites and P2s), no Slack, Linear, HackerOne, private GitHub repository, or GitHub Enterprise URLs, and no other internal tool URLs. Use shortlinks instead: `PCYsg-hS-p2` for a P2 post, `p<message>-slack-<channel>` for a Slack message (`p<message>/<thread>-slack-<channel>` for a reply in a thread), and the bare issue key (`LIN-123`) for Linear.
+
 ## Repository layout
 
 - client/ — main application clients, deployed as single-page React apps.
@@ -11,7 +15,7 @@
 - **Calypso** — the classic WordPress.com hosting dashboard, sharing data using Redux and split via Webpack section chunks.
   - client/my-sites — per-site management; deprecated in favor of the Dashboard client
   - client/my-sites/checkout — checkout flow
-  - client/me/purchases — purchase management
+  - client/me/purchases — redirects to the Dashboard billing screens, plus purchase helpers shared by other sections
   - client/landing/stepper — onboarding/signup flows (site creation, domain purchase, migration wizards)
   - client/reader — WordPress.com Reader: feed streams, discover, conversations, likes, lists, following management
   - Shared infra: client/components, client/state, client/lib, client/layout
@@ -22,15 +26,22 @@
 
 ## Packages
 
+- **Agents Manager** (`packages/agents-manager`) — shared component library for WordPress.com's unified AI agent experience, running in Calypso, the Dashboard, Simple and Atomic sites, the WooCommerce AI admin and Reader Chat. Also deployed via `apps/agents-manager/` to `widgets.wp.com`. See its `AGENTS.md` for architecture and conventions.
+- **AI UI Renderer** (`packages/ai-ui-renderer`) — reusable A2UI v0.9 catalog and rendering primitives built with WordPress components. Agents Manager consumes it; conversation handling and MCP transport stay in consumers.
+- **Agenttic** (`packages/agenttic-client`, `packages/agenttic-ui`) — AI agent chat client library and UI components. Also published to npm for consumers outside this repo. ⚠️ Still on its pre-migration package layout (vite-built, ESM-only, flat `dist/`, no `calypso:src`); normalizing it is a future goal, but the published artifact shape is a contract with external consumers — read the Development and Releasing sections in `packages/agenttic-client/README.md` before restructuring or publishing.
 - **Help Center** (`packages/help-center`) — shared component library for WordPress.com support. Also deployed via `apps/help-center/` to `widgets.wp.com`.
-- **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation
-- **Block Notes** (`packages/block-notes`) — AI-powered block commenting system for WordPress
+- **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation. When adding Image Studio entry points, read [packages/image-studio/AGENTS.md](packages/image-studio/AGENTS.md).
+- **Calypso Products** (`packages/calypso-products`) — ⚠️ **Avoid.** Deprecated/frozen: a bloated client-side duplicate of product data the backend already owns. Don't add to it; prefer backend-driven data (e.g. `@automattic/api-queries`). See `packages/calypso-products/AGENTS.md`.
 
 ## Apps
 
+- **Agents Manager** (`apps/agents-manager`) — build/deploy layer that bundles `packages/agents-manager` into webpack entry points served from `widgets.wp.com`.
 - **Help Center** (`apps/help-center`) — build/deploy layer that bundles `packages/help-center` into webpack entry points served from `widgets.wp.com`.
+- **Survicate** (`apps/survicate`) — build/deploy layer that bundles `packages/survicate` into the single script wp-admin loads from `widgets.wp.com`. No logic of its own.
 
 ## Development
+
+> **Note**: The Calypso dev server uses the `PORT` environment variable (check repo-root `.env`) and falls back to port `3000`. Do not create or modify `.env` unless explicitly asked.
 
 ```bash
 # Setup
@@ -42,6 +53,8 @@ yarn start
 # Build and start the dev server for the Dashboard client only.
 yarn start-dashboard
 ```
+
+If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`, increase the Node heap size by running `NODE_OPTIONS=--max-old-space-size=8192 yarn start`. For other errors, run `yarn calypso-doctor` to diagnose and fix common environment issues.
 
 ## Testing instructions
 
@@ -65,18 +78,33 @@ yarn test-client --testNamePattern="<TestName>" # Run a specific client unit tes
 # E2E tests - refer to: test/e2e/AGENTS.md
 
 # Code Quality
-yarn lint           # Lint everything
-yarn lint:css       # Lint CSS
-yarn lint:js        # Lint JavaScript
-yarn reformat-files # Fix formatting with Prettier
+yarn lint             # Lint everything
+yarn lint:css         # Lint CSS
+yarn lint:js          # Lint JavaScript
+yarn reformat-files   # Fix formatting with Prettier
+yarn typecheck-client # Type-check client
 ```
+
+## Conventions
+
+- Do NOT add any verbose code comments that narrate what the change does or why it was made (e.g. `// Added this to fix X`, `// Changed from Y to Z`, restating the code in prose). Such explanation belongs in the PR description, not the source. Only keep comments that a future reader genuinely needs — non-obvious rationale, gotchas, links to context — and match the comment density and style of the surrounding code.
+
+## Pre-PR checks
+
+Before pushing a branch or running `gh pr create`, run the type-check that CI will run. PRs touching `client/` may fail the `type_check_client` CI check after opening, so verify locally first:
+
+```bash
+yarn               # Install dependencies first if you haven't already
+yarn typecheck-client
+```
+
+If it fails, fix the type errors at the source — do not silence them with `// @ts-expect-error`, `// @ts-ignore`, or `as any` unless you can justify it in the PR description. Other CI type-checks worth running when relevant: `yarn typecheck-packages`, `yarn typecheck-apps`.
 
 ## Creating Pull Requests
 
 - Create PRs as draft. Follow the template in .github/PULL_REQUEST_TEMPLATE.md.
-- Follow the branch naming conventions in docs/git-workflow.md.
+- Branch naming (see `docs/git-workflow.md`): branch off `trunk` and prefix with `add/` (new feature), `update/` (iterating on existing), `fix/` (fixing something broken), or `try/` (experiment). Use a **single slash only** — multiple slashes break Calypso Live testing. Do NOT use Linear's autogenerated `gitBranchName` (e.g. `dotcom-17900-…`); it has no prefix and violates this convention. For the Signup accepts-props initiative, follow the established pattern `add/stepper-<step>-accepts-props` (e.g. `add/stepper-user-step-accepts-props`, `add/stepper-unified-plans-accepts-props`).
 - In the PR description:
   - Use Linear issue IDs (e.g., `LIN-123`) instead of full Linear URLs.
   - Avoid mentioning people's names.
-  - Do not link to wordpress.com URLs.
   - Include all checklist items from .github/PULL_REQUEST_TEMPLATE.md. Only mark items as completed (`[x]`) if they actually apply; leave inapplicable items unchecked (`[ ]`).

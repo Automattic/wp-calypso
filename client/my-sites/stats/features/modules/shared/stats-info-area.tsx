@@ -1,6 +1,7 @@
 import { StatsCardTitleExtras } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import InfoPopover from 'calypso/components/info-popover';
+import StatsInfotip from 'calypso/my-sites/stats/components/stats-infotip';
 
 import './stats-info-area.scss';
 
@@ -10,13 +11,20 @@ type StatsInfoAreaProps = {
 };
 
 const StatsInfoArea: React.FC< StatsInfoAreaProps > = ( { isNew, children } ) => {
+	const translate = useTranslate();
+
 	return (
 		<StatsCardTitleExtras
 			prefixNodes={
 				children ? (
-					<InfoPopover className="stats-info-area__popover" iconSize={ 24 } position="top">
+					<StatsInfotip
+						className="stats-info-area__popover"
+						iconSize={ 24 }
+						label={ translate( 'More information' ) }
+						side="top"
+					>
 						{ children }
-					</InfoPopover>
+					</StatsInfotip>
 				) : null
 			}
 			isNew={ isNew }

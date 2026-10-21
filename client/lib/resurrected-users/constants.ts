@@ -1,11 +1,27 @@
 export const RESURRECTION_DAY_LIMIT_DEFAULT = 373;
 export const RESURRECTION_DAY_LIMIT_EXPERIMENT = 180;
+export const RESURRECTION_DAY_LIMIT_3M = 90;
 
 export const RESURRECTED_EVENT = 'calypso_user_resurrected';
 export const RESURRECTED_EVENT_6M = 'calypso_user_resurrected_6m';
+export const RESURRECTED_EVENT_3M = 'calypso_user_resurrected_3m';
+export const RESURRECTED_FREE_USERS_EXPERIMENT =
+	'calypso_resurrected_users_welcome_back_modal_202607';
 
 /** Rolled-out welcome-back modal variation (manual onboarding + continue). */
 export const WELCOME_BACK_VARIATION_MANUAL = 'treatment_manual_dual' as const;
 
+/* Variations for the new welcome-back modal experiment */
+export const WELCOME_BACK_VARIATIONS = {
+	themes: 'treatment_themes',
+	content: 'treatment_content',
+	design: 'treatment_design',
+	control: 'control',
+};
+export type WelcomeBackVariation =
+	( typeof WELCOME_BACK_VARIATIONS )[ keyof typeof WELCOME_BACK_VARIATIONS ];
+
 /** Feature flag to force the welcome-back modal for local/testing. */
 export const WELCOME_BACK_MODAL_FORCE_FLAG = 'welcome-back-modal-manual';
+
+export const WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG = 'resurrected-users/90-day-eligibility';

@@ -16,7 +16,7 @@ function LicenseStateFilter( { data }: { data: Record< LicenseFilter, number > }
 	const navItems = [
 		{
 			key: LicenseFilter.NotRevoked,
-			label: translate( 'All Active' ),
+			label: translate( 'All active' ),
 		},
 		{
 			key: LicenseFilter.Detached,

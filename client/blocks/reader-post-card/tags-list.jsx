@@ -1,4 +1,3 @@
-import { values } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
@@ -31,7 +30,7 @@ class TagsList extends Component {
 
 	render() {
 		const tagsToShow = this.props.tagsToShow || 3;
-		const tagsInOccurrenceOrder = values( this.props.post.tags );
+		const tagsInOccurrenceOrder = Object.values( this.props.post.tags || {} );
 		tagsInOccurrenceOrder.sort( ( a, b ) => b.post_count - a.post_count );
 		const tags = tagsInOccurrenceOrder.map( ( tag ) => <TagLink tag={ tag } key={ tag.slug } /> );
 		const defaultTags = tags.slice( 0, tagsToShow );

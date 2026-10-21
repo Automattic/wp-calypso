@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { HelpCenter } from '@automattic/data-stores';
@@ -16,17 +15,19 @@ import imgLiveChat from 'calypso/assets/images/cancellation/live-chat.webp';
 import imgMonthlyPayments from 'calypso/assets/images/cancellation/monthly-payments.webp';
 import imgSwitchPlan from 'calypso/assets/images/cancellation/switch-plan.webp';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import type { UpsellType } from '../get-upsell-type';
+import type { Purchase } from '@automattic/api-core';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 const HELP_CENTER_STORE = HelpCenter.register();
 
 type UpsellProps = {
 	children?: React.ReactNode;
 	image: string;
+	intent?: string;
 	title: TranslateResult;
 	acceptButtonText: TranslateResult;
 	acceptButtonUrl?: string;
@@ -39,11 +40,12 @@ function Upsell( { image, ...props }: UpsellProps ) {
 	const translate = useTranslate();
 	const declineButtonText = props.declineButtonText || translate( 'Cancel my current plan' );
 	const [ busyButton, setBusyButton ] = useState( '' );
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
 	return (
 		<div className="cancel-purchase-form__upsell">
 			<div className="cancel-purchase-form__upsell-content">
-				{ ! isEnabled( 'cancel-flow/solutions-cards-upsell' ) && (
+				{ ! isSplitCancelRemoveEnabled && (
 					<div className="cancel-purchase-form__upsell-subheader">
 						{ translate( 'Here is an idea' ) }
 					</div>
@@ -53,6 +55,7 @@ function Upsell( { image, ...props }: UpsellProps ) {
 				<div className="cancel-purchase-form__upsell-buttons">
 					<Button
 						variant="primary"
+						isDestructive={ props.intent === 'remove' }
 						href={ props.acceptButtonUrl }
 						onClick={ () => {
 							setBusyButton( 'accept' );
@@ -63,7 +66,8 @@ function Upsell( { image, ...props }: UpsellProps ) {
 						{ props.acceptButtonText }
 					</Button>
 					<Button
-						variant="secondary"
+						variant={ props.intent ? 'tertiary' : 'secondary' }
+						isDestructive={ props.intent === 'remove' }
 						onClick={ () => {
 							setBusyButton( 'decline' );
 							props.onDecline?.();
@@ -85,7 +89,7 @@ function Upsell( { image, ...props }: UpsellProps ) {
 function getLiveChatUrl( type: UpsellType, site: SiteDetails, purchase: Purchase ) {
 	switch ( type ) {
 		case 'live-chat:plans':
-			return `/purchases/subscriptions/${ site.slug }/${ purchase.id }`;
+			return `/purchases/subscriptions/${ site.slug }/${ purchase.ID }`;
 		case 'live-chat:plugins':
 			return `/plugins/${ site.slug }`;
 		case 'live-chat:themes':
@@ -106,6 +110,7 @@ type StepProps = {
 	closeDialog?: () => void;
 	cancelBundledDomain?: boolean;
 	includedDomainPurchase?: object;
+	intent?: string;
 	onDeclineUpsell?: () => void;
 	onClickFreeMonthOffer?: () => void;
 	onClickDowngrade?: ( upsell: string ) => void;
@@ -119,7 +124,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 	const numberOfPluginsThemes = formatNumber( 50000 );
 	const discountRate = 25;
-	const couponCode = 'BIZWPC25';
+	const couponCode = 'BIZRENEW25';
 	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
 	const { setNewMessagingChat } = useDataStoreDispatch( HELP_CENTER_STORE );
@@ -159,6 +164,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 
 						props.closeDialog?.();
 					} }
+					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgLiveChat }
@@ -173,14 +179,14 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 								{
 									components: { b: <strong /> },
 								}
-						  )
+							)
 						: translate(
 								'If you’re feeling a bit stuck with your site, our expert {{b}}Happiness Engineers{{/b}} are always ready to chat. ' +
 									'Whatever you’re struggling with - from customizing your design to sorting out your domain - they’ll listen, guide you, and get you the advice you need to make it happen.',
 								{
 									components: { b: <strong /> },
 								}
-						  ) }
+							) }
 				</Upsell>
 			);
 		case 'built-by':
@@ -192,6 +198,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 						recordTracksEvent( 'calypso_cancellation_upsell_step_buily_by_click' );
 						window.location.replace( builtByURL );
 					} }
+					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgBuiltBy }
@@ -216,6 +223,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
 					} }
+					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgBusinessPlan }
@@ -245,6 +253,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					title={ translate( 'Switch to flexible monthly payments' ) }
 					acceptButtonText={ translate( 'Switch to monthly payments' ) }
 					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgMonthlyPayments }
@@ -277,7 +286,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 											),
 										},
 									}
-							  )
+								)
 							: null }
 					</>
 				</Upsell>
@@ -291,6 +300,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 						args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 					} ) }
 					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgSwitchPlan }
@@ -305,13 +315,13 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 										args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 										comment: '%(plan)s is WordPress.com Personal or another plan',
 									}
-							  )
+								)
 							: translate(
 									'%(plan)s still gives you access to customer support via email, removal of ads, and more — and for 50% of the cost of your current plan.',
 									{
 										args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 									}
-							  ) }{ ' ' }
+								) }{ ' ' }
 						{ refundAmount &&
 							translate(
 								'You can downgrade and get a partial refund of %(amount)s or ' +
@@ -331,6 +341,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					title={ translate( 'How about a free month?' ) }
 					acceptButtonText={ translate( 'Get a free month' ) }
 					onAccept={ () => props.onClickFreeMonthOffer?.() }
+					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgFreeMonth }
@@ -340,7 +351,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 							'But we’d love to see you stick around to build on what you started. ' +
 							'How about a free month of your %(currentPlan)s plan subscription to continue building your site?',
 						{
-							args: { planName: getPlan( purchase.productSlug )?.getTitle() ?? '' },
+							args: { planName: getPlan( purchase.product_slug )?.getTitle() ?? '' },
 						}
 					) }
 				</Upsell>

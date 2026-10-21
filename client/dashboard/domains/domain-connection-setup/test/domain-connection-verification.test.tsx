@@ -54,6 +54,7 @@ const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	expired: false,
 	primary_domain: false,
 	can_set_as_primary: true,
+	set_primary_domain_pending: false,
 	domain_status: {
 		id: DomainStatus.ACTIVE,
 		label: 'Active',
@@ -77,8 +78,10 @@ const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	current_user_can_manage: true,
 	contact_info_disclosure_available: false,
 	contact_info_disclosed: false,
+	contact_verification_deadline: null,
 	current_user_cannot_add_email_reason: null,
 	domain_locking_available: false,
+	domain_registrant_email: null,
 	has_wpcom_nameservers: false,
 	is_dnssec_enabled: false,
 	is_dnssec_supported: false,
@@ -91,6 +94,7 @@ const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	is_redeemable: false,
 	is_mapped_to_atomic_site: false,
 	is_hundred_year_domain: false,
+	is_icann_verification_suspended: false,
 	is_subdomain: false,
 	is_pending_icann_verification: false,
 	is_wpcom_staging_domain: false,
@@ -98,13 +102,12 @@ const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	nominet_pending_contact_verification_request: false,
 	nominet_domain_suspended: false,
 	owner: 'user',
-	is_pending_registration: false,
-	is_pending_registration_at_registry: false,
 	private_domain: false,
 	privacy_available: false,
 	points_to_wpcom: false,
 	pending_registration: false,
 	pending_registration_at_registry: false,
+	pending_registration_at_registry_url: '',
 	pending_transfer: false,
 	renewable_until: '',
 	ssl_status: 'inactive',
@@ -334,6 +337,7 @@ describe( 'DomainConnectionVerification', () => {
 					domainData={ createMockDomain( {
 						primary_domain: false,
 						can_set_as_primary: true,
+						ssl_status: 'active',
 					} ) }
 				/>
 			);
@@ -342,6 +346,24 @@ describe( 'DomainConnectionVerification', () => {
 
 			expect( screen.getByText( 'Set example.com as your primary site address' ) ).toBeVisible();
 		} );
+
+		test.each( [ 'pending', 'newly_registered', 'inactive' ] as const )(
+			'does not display "Recommended" section when SSL is not active (ssl_status: %s)',
+			( sslStatus ) => {
+				render(
+					<DomainConnectionVerification
+						{ ...defaultProps }
+						domainData={ createMockDomain( {
+							primary_domain: false,
+							can_set_as_primary: true,
+							ssl_status: sslStatus,
+						} ) }
+					/>
+				);
+
+				expect( screen.queryByText( 'Recommended' ) ).not.toBeInTheDocument();
+			}
+		);
 
 		test( 'does not display "Recommended" section when domain is not primary and cannot be set as primary', () => {
 			render(

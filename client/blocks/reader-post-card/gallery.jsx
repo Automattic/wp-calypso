@@ -3,8 +3,8 @@ import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
-import { getImagesFromPostToDisplay } from 'calypso/state/reader/posts/normalization-rules';
-import { GALLERY_MAX_IMAGES, READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
+import { getImagesFromPostToDisplay } from 'calypso/reader/data/post/normalization';
+import { GALLERY_MAX_IMAGES, READER_CONTENT_WIDTH } from 'calypso/reader/data/post/sizes';
 
 function PostGallery( { post, children } ) {
 	const imagesToDisplay = getImagesFromPostToDisplay( post, GALLERY_MAX_IMAGES );

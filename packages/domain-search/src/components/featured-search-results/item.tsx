@@ -8,6 +8,7 @@ import { DomainPriceRule, useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSuggestionBadges } from '../../hooks/use-suggestion-badges';
 import { useDomainSearch } from '../../page/context';
 import { DomainSuggestion, DomainSuggestionBadge } from '../../ui';
+import { bullseyeIcon } from '../../ui/icons/bullseye-icon';
 import { DomainSuggestionCTA } from '../suggestion-cta';
 import { DomainSuggestionPrice } from '../suggestion-price';
 
@@ -27,20 +28,37 @@ export const FeaturedSearchResultsItem = ( {
 
 	const suggestion = useSuggestion( domainName );
 
+	const showsExactMatchBadge =
+		reason === 'exact-match' && suggestion.price_rule !== DomainPriceRule.DOMAIN_MOVE_PRICE;
+
 	const matchReasons = useMemo( () => {
 		if ( ! suggestion.match_reasons || query !== domainName ) {
 			return;
 		}
 
-		return parseMatchReasons( domainName, suggestion.match_reasons );
-	}, [ domainName, suggestion.match_reasons, query ] );
+		// The exact-match badge already surfaces "Exact match", so drop the redundant
+		// 'exact-match' footer reason to avoid rendering the same label twice on the
+		// card (the backend sends it for an available FQDN search). The remaining
+		// per-TLD reasons still render.
+		const reasons = showsExactMatchBadge
+			? suggestion.match_reasons.filter( ( matchReason ) => matchReason !== 'exact-match' )
+			: suggestion.match_reasons;
+
+		const parsed = parseMatchReasons( domainName, reasons );
+
+		return parsed.length > 0 ? parsed : undefined;
+	}, [ domainName, suggestion.match_reasons, query, showsExactMatchBadge ] );
 
 	const suggestionBadges = useDomainSuggestionBadges( domainName );
 	const policyBadges = usePolicyBadges( domainName );
 
 	const badges = useMemo( () => {
-		if ( reason === 'exact-match' && suggestion.price_rule !== DomainPriceRule.DOMAIN_MOVE_PRICE ) {
+		if ( showsExactMatchBadge ) {
 			return [
+				<DomainSuggestionBadge key="exact-match">
+					{ bullseyeIcon }
+					{ __( 'Exact match' ) }
+				</DomainSuggestionBadge>,
 				<DomainSuggestionBadge key="available" variation="success">
 					{ __( "It's available!" ) }
 				</DomainSuggestionBadge>,
@@ -64,7 +82,7 @@ export const FeaturedSearchResultsItem = ( {
 			);
 		}
 		return existingBadges;
-	}, [ reason, suggestionBadges, policyBadges, suggestion.price_rule ] );
+	}, [ reason, suggestionBadges, policyBadges, showsExactMatchBadge ] );
 
 	const { events } = useDomainSearch();
 

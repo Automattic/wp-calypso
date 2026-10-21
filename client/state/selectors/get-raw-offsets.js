@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/timezones/init';
 
 /**
@@ -9,5 +7,5 @@ import 'calypso/state/timezones/init';
  * @returns {?Array} An array of manual offset timezones
  */
 export default function getRawOffsets( state ) {
-	return get( state, 'timezones.rawOffsets', null );
+	return state?.timezones?.rawOffsets ?? null;
 }

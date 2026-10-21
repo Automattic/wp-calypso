@@ -23,6 +23,18 @@ export function isValidCNPJ( cnpj: string ): boolean {
 	return isValidCnpj( cnpj );
 }
 
+/**
+ * Validates a Brazilian taxpayer identification number, accepting either a CPF
+ * (individual, 11 digits) or a CNPJ (company, 14 digits). Ebanx accepts both
+ * forms in the same `document` field, so callers can use this rather than
+ * branching on which form the user entered.
+ * @param {string} taxId - a Brazilian taxpayer identification number (CPF or CNPJ)
+ * @returns {boolean} Whether the value is a valid CPF or CNPJ
+ */
+export function isValidBrazilianTaxId( taxId: string ): boolean {
+	return isValidCPF( taxId ) || isValidCNPJ( taxId );
+}
+
 export function fullAddressFieldsRules() {
 	return {
 		'street-number': {
@@ -79,25 +91,6 @@ export function countrySpecificFieldRules( country: string ): FieldRuleCollectio
 			name: {
 				description: i18n.translate( 'Your Name', { textOnly: true } ),
 				rules: [ 'required' ],
-			},
-			nik: {
-				description: i18n.translate( 'NIK - Indonesia Identity Card Number', {
-					comment: 'NIK - Indonesia Identity Card Number required for Indonesian payment methods.',
-					textOnly: true,
-				} ),
-				rules: [ 'validIndonesiaNik' ],
-			},
-
-			pan: {
-				description: i18n.translate( 'PAN - Permanent account number', { textOnly: true } ),
-				rules: [ 'validIndiaPan' ],
-			},
-			gstin: {
-				description: i18n.translate( 'GSTIN - GST identification number', {
-					comment: 'GSTIN: India specific tax id number',
-					textOnly: true,
-				} ),
-				rules: [ 'validIndiaGstin' ],
 			},
 			'postal-code': {
 				description: i18n.translate( 'Postal Code', { textOnly: true } ),

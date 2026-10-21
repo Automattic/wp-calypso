@@ -1,6 +1,7 @@
-import { trim, forEach } from 'lodash';
 import striptags from 'striptags';
 import { domForHtml } from './utils';
+
+const EXCERPT_ATTRIBUTES = [ 'dir', 'lang' ];
 
 /**
  * Removes an HTML element from the DOM
@@ -46,7 +47,7 @@ function buildStrippedDom( content ) {
 	// Ditch any photo captions, styles, scripts
 	const stripSelectors =
 		'.wp-caption, style, script, blockquote[class^="instagram-"], figure, .tiled-gallery';
-	forEach( dom.querySelectorAll( stripSelectors ), removeElement );
+	Array.from( dom.querySelectorAll( stripSelectors ) ).forEach( removeElement );
 	return dom.innerHTML;
 }
 
@@ -60,20 +61,22 @@ export function formatExcerpt( content ) {
 
 	// strip any p's that are empty
 	Array.from( dom.querySelectorAll( 'p' ) )
-		.filter( ( element ) => trim( element.textContent ).length === 0 )
+		.filter( ( element ) => ( element.textContent ?? '' ).trim().length === 0 )
 		.forEach( removeElement );
 
-	// remove styles for all p's that remain
-	Array.from( dom.querySelectorAll( 'p' ) ).forEach( ( element ) => {
-		element.removeAttribute( 'style' );
-		element.removeAttribute( 'align' );
+	// `striptags` keeps the whole opening tag of an allowed element, attributes included. `dir` and
+	// `lang` are the only ones that still do anything once the excerpt is rendered.
+	Array.from( dom.querySelectorAll( '*' ) ).forEach( ( element ) => {
+		element
+			.getAttributeNames()
+			.filter( ( name ) => ! EXCERPT_ATTRIBUTES.includes( name ) )
+			.forEach( ( name ) => element.removeAttribute( name ) );
 	} );
 
 	stripLeadingBreaklines( dom );
 
 	// now limit it to the first three elements
-	forEach(
-		dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ),
+	Array.from( dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ) ).forEach(
 		function ( element, index ) {
 			if ( index >= 3 ) {
 				element.parentNode && element.parentNode.removeChild( element );
@@ -82,7 +85,7 @@ export function formatExcerpt( content ) {
 	);
 
 	// trim and replace &nbsp; entities
-	const betterExcerpt = trim( dom.innerHTML.replace( /&nbsp;/g, ' ' ) );
+	const betterExcerpt = dom.innerHTML.replace( /&nbsp;/g, ' ' ).trim();
 	dom.innerHTML = '';
 	return betterExcerpt;
 }
@@ -94,10 +97,10 @@ export default function createBetterExcerpt( post ) {
 
 	const strippedDom = buildStrippedDom( post.content );
 
-	post.content_no_html = trim( striptags( strippedDom ) );
+	post.content_no_html = striptags( strippedDom ).trim();
 
 	post.better_excerpt = formatExcerpt( strippedDom );
-	post.better_excerpt_no_html = trim( striptags( post.better_excerpt ) );
+	post.better_excerpt_no_html = striptags( post.better_excerpt ).trim();
 
 	// also make a shorter excerpt...
 	if ( post.better_excerpt_no_html ) {

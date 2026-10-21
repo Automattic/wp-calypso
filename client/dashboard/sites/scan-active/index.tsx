@@ -64,8 +64,8 @@ export function ActiveThreatsDataViews( {
 	const recentScanRelativeTime = useTimeSince( lastScanTime || '' );
 
 	const NoActiveThreatsFound = () => {
-		let title = __( 'Don’t worry about a thing' );
-		let description = sprintf(
+		let title: string = __( 'Don’t worry about a thing' );
+		let description: string = sprintf(
 			/** translators: %s: relative time string like "2 hours ago" */
 			__( 'The last scan ran %s and found no security issues.' ),
 			recentScanRelativeTime
@@ -77,7 +77,7 @@ export function ActiveThreatsDataViews( {
 			if ( view.search ) {
 				description = sprintf(
 					/** translators: %s: search query string */
-					__( 'Your search for "%s" did not return any results.' ),
+					__( 'Your search for “%s” did not return any results.' ),
 					view.search
 				);
 			}
@@ -103,7 +103,7 @@ export function ActiveThreatsDataViews( {
 				isLoading={ isLoading }
 				onChangeSelection={ setSelection }
 				onChangeView={ updateView }
-				onResetView={ resetView }
+				onReset={ resetView }
 				paginationInfo={ paginationInfo }
 				searchLabel={ __( 'Search' ) }
 				selection={ selection }

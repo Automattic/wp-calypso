@@ -4,6 +4,7 @@ import {
 	__experimentalNavigatorBackButton as NavigatorBackButton,
 } from '@wordpress/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
+import type { JSX } from 'react';
 import './style.scss';
 
 interface Props {

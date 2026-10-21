@@ -35,8 +35,8 @@ export default function ClipboardInputControl( {
 		? sprintf(
 				/* translators: %s is the field to copy */
 				__( 'Copy %s' ),
-				props.label
-		  )
+				String( props.label )
+			)
 		: __( 'Copy' );
 
 	return (

@@ -1,6 +1,7 @@
 import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
 import useAchievementsVisibility from '../use-achievements-visibility';
 import { YearsOfServiceBadge } from '../years-of-service-badge';
+import type { JSX } from 'react';
 
 import './style.scss';
 
@@ -22,7 +23,13 @@ export const AuthorAchievementBadges = ( {
 
 	const badges = [
 		!! yearsOfService && (
-			<YearsOfServiceBadge key="years-of-service" size={ size } yearsOfService={ yearsOfService } />
+			<YearsOfServiceBadge
+				key="years-of-service"
+				size={ size }
+				yearsOfService={ yearsOfService }
+				linked
+				userLogin={ authorLogin }
+			/>
 		),
 	].filter( Boolean );
 

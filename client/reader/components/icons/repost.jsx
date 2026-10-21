@@ -6,6 +6,7 @@ export default function ReaderRepostIcon( { iconSize, viewBox = '0 0 20 20' } ) 
 			height={ iconSize }
 			viewBox={ viewBox }
 			xmlns="http://www.w3.org/2000/svg"
+			fill="currentColor"
 		>
 			<path
 				fillRule="evenodd"

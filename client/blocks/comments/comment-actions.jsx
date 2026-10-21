@@ -14,7 +14,6 @@ const CommentActions = ( {
 	comment,
 	comment: { isPlaceholder },
 	activeReplyCommentId,
-	commentId,
 	handleReply,
 	onReplyCancel,
 	showReadMore,
@@ -22,6 +21,7 @@ const CommentActions = ( {
 	onLikeToggle,
 } ) => {
 	const translate = useTranslate();
+	const commentId = comment.ID;
 	const showReplyButton = isCommentsOpen( post );
 	const showCancelReplyButton = activeReplyCommentId === commentId;
 	const hasSites = !! useSelector( getPrimarySiteId );
@@ -73,6 +73,7 @@ const CommentActions = ( {
 				postId={ post.ID }
 				railcar={ post.railcar }
 				commentId={ commentId }
+				comment={ comment }
 				onLikeToggle={ onLikeToggle }
 			/>
 		</div>

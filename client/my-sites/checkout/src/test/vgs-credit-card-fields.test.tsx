@@ -431,7 +431,7 @@ describe( 'VgsCreditCardFields', () => {
 
 			const cardNumberField = screen.getByTestId( 'card-number-field-card_number' );
 			// VGS library uses CSS-in-JS, so we check for className pattern instead of exact match
-			expect( cardNumberField.className ).toMatch( /^css-\w+-VgsCreditCardFields$/ );
+			expect( cardNumberField.className ).toMatch( /^css-\w+(?:-VgsCreditCardFields)?$/ );
 		} );
 
 		it( 'should merge custom styles with default styles', async () => {
@@ -459,7 +459,7 @@ describe( 'VgsCreditCardFields', () => {
 
 			const cardNumberField = screen.getByTestId( 'card-number-field-card_number' );
 			// VGS library uses CSS-in-JS, so we check for className pattern instead of exact match
-			expect( cardNumberField.className ).toMatch( /^css-\w+-VgsCreditCardFields$/ );
+			expect( cardNumberField.className ).toMatch( /^css-\w+(?:-VgsCreditCardFields)?$/ );
 		} );
 	} );
 

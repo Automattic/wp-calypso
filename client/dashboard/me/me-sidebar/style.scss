@@ -1,5 +1,8 @@
+@import "@wordpress/base-styles/variables";
+
 .me-sidebar__avatar-wrapper {
 	margin-inline-start: $grid-unit-15;
+	flex-shrink: 0;
 }
 
 .me-sidebar__avatar {

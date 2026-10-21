@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { GUIDED_TOUR_UPDATE, ROUTE_SET, SITE_SETTINGS_RECEIVE } from 'calypso/state/action-types';
 import { THEMES_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
 
@@ -16,7 +15,7 @@ const relevantTypes = {
 };
 
 const hasRelevantAnalytics = ( action ) =>
-	get( action, 'meta.analytics', [] ).some( ( record ) =>
+	( action?.meta?.analytics ?? [] ).some( ( record ) =>
 		relevantAnalyticsEvents.includes( record.payload.name )
 	);
 

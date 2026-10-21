@@ -3,6 +3,7 @@ import { SubscribersFilterBy, SubscribersSortBy } from '../constants';
 export type SubscriberEndpointResponse = {
 	per_page: number;
 	total: number;
+	total_unfiltered?: number;
 	page: number;
 	pages: number;
 	subscribers: Subscriber[];

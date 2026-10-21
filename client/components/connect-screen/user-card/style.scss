@@ -1,7 +1,8 @@
 .connect-screen-user-card.card {
 	display: flex;
 	width: 100%;
-	margin-bottom: 1rem;
+	margin-bottom: 0;
+	border-radius: 8px;
 
 	.gravatar {
 		border-radius: 50%;

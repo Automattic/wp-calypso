@@ -102,7 +102,7 @@ export function generateAdminSections(
 			icon: 'plans',
 		},
 		{
-			/* translators: %(googleMailService)s can be either "G Suite" or "Google Workspace */
+			/* translators: %s can be either "G Suite" or "Google Workspace" */
 			title: sprintf( __( 'Cancel %s', __i18n_text_domain__ ), googleMailService ),
 			link: '/me/purchases',
 			synonyms: [ 'upgrade', 'business', 'professional', 'personal', 'google' ],
@@ -150,17 +150,11 @@ export function generateAdminSections(
 				__(
 					"By upgrading to the %s plan, you'll be able to monetize your site through the WordAds program."
 				),
-				getPlan( PLAN_PREMIUM )?.getTitle()
+				String( getPlan( PLAN_PREMIUM )?.getTitle() ?? '' )
 			),
 			link: `/earn/${ siteSlug }`,
 			synonyms: [ 'monetize', 'wordads', 'premium', 'explorer' ],
 			icon: 'money',
-		},
-		{
-			title: __( 'Learn how to market my site', __i18n_text_domain__ ),
-			link: `/marketing/tools/${ siteSlug }`,
-			synonyms: [ 'marketing', 'brand', 'logo', 'seo', 'tools', 'traffic' ],
-			icon: 'speaker',
 		},
 		{
 			title: __( "Manage my site's users" ),
@@ -250,12 +244,6 @@ export function generateAdminSections(
 			title: __( 'Manage how users can comment on my site', __i18n_text_domain__ ),
 			link: `/settings/discussion/${ siteSlug }`,
 			synonyms: [ 'discussion', 'moderation', 'blocklist' ],
-			icon: 'cog',
-		},
-		{
-			title: __( 'Manage post categories', __i18n_text_domain__ ),
-			link: `/settings/taxonomies/category/${ siteSlug }`,
-			synonyms: [ 'post', 'category' ],
 			icon: 'cog',
 		},
 		{

@@ -26,7 +26,7 @@ class PostBlocked extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Card className="reader-post-card is-blocked">
+			<Card ref={ this.props.itemRef } className="reader-post-card is-blocked">
 				<p className="reader-post-card__blocked-description">
 					{ translate( 'You have blocked %(site_name)s.', {
 						args: { site_name: post.site_name },

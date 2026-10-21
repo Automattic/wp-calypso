@@ -1,9 +1,7 @@
-import { get } from 'lodash';
-
 import 'calypso/state/memberships/init';
 
 export function getEarningsForSiteId( state, siteId ) {
-	return get( state, [ 'memberships', 'earnings', 'summary', siteId ] );
+	return state?.memberships?.earnings?.summary?.[ siteId ];
 }
 
 export function getEarningsWithDefaultsForSiteId( state, siteId ) {

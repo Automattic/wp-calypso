@@ -7,6 +7,9 @@ import AsyncLoad from 'calypso/components/async-load';
 import { useMarketingMessage } from './use-marketing-message';
 import './style.scss';
 
+const loadJitm = () =>
+	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
+
 type NudgeProps = {
 	siteId?: number | null;
 	path?: string;
@@ -92,9 +95,7 @@ function slugify( text: string ) {
 const limitedTimeOfferDiscountNudge = () => {
 	return (
 		<AsyncLoad
-			require={ () =>
-				import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' )
-			}
+			require={ loadJitm }
 			placeholder={ null }
 			messagePath="calypso:plans:lto_notices"
 			onClick={ ( jitm: JITMTProps ) => {

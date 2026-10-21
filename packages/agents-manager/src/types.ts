@@ -1,18 +1,16 @@
-import type { ServerConversationListItem } from '@automattic/agenttic-client';
-import type Smooch from 'smooch';
-
 /**
  * Common types used across the agents-manager package.
  */
 
+import type { ServerConversationListItem } from '@automattic/agenttic-client';
+import type Smooch from 'smooch';
+
 export type {
-	Ability,
 	ToolProvider,
 	ContextProvider,
 	ClientContextType,
 	BaseContextEntry,
 	ContextEntry,
-	Suggestion,
 	BigSkyMessage,
 } from './extension-types';
 

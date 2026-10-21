@@ -27,7 +27,7 @@ export default function ConversationListSkeleton( { count = 3 }: Props ) {
 		<div
 			className="agents-manager-conversation-list-skeleton"
 			role="status"
-			aria-label={ __( 'Loading conversations', '__i18n_text_domain__' ) }
+			aria-label={ __( 'Loading conversations', __i18n_text_domain__ ) }
 			aria-busy="true"
 		>
 			{ Array.from( { length: count } ).map( ( _, index ) => (

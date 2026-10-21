@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
@@ -11,14 +12,17 @@ import {
 	redirectToPurchases,
 	purchaseDetails,
 	purchaseCancel,
-	purchaseCancelDomain,
 	purchaseChangePaymentMethod,
+	purchaseSiteActions,
+	purchaseMove,
 	billingHistory,
 	receiptView,
 	paymentMethods,
 	addPaymentMethod,
-	planDowngrade,
 	crmDownloads,
+	redirectToPurchaseCancel,
+	redirectToAddPaymentMethod,
+	redirectToChangePaymentMethod,
 } from './controller';
 
 const commonHandlers = [ siteSelection, navigation, stagingSiteNotSupportedRedirect ];
@@ -49,17 +53,35 @@ export default ( router ) => {
 	);
 
 	page(
-		'/purchases/subscriptions/:site/:purchaseId/downgrade',
+		'/purchases/subscriptions/:site/:purchaseId/confirm-cancel-domain',
 		...commonHandlers,
-		planDowngrade,
+		redirectToPurchaseCancel,
 		makeLayout,
 		clientRender
 	);
 
 	page(
-		'/purchases/subscriptions/:site/:purchaseId/confirm-cancel-domain',
+		'/purchases/subscriptions/:site/:purchaseId/site-actions/:action',
 		...commonHandlers,
-		purchaseCancelDomain,
+		purchaseSiteActions,
+		makeLayout,
+		clientRender
+	);
+
+	if ( isEnabled( 'purchases/site-transfer' ) ) {
+		page(
+			'/purchases/subscriptions/:site/:purchaseId/move',
+			...commonHandlers,
+			purchaseMove,
+			makeLayout,
+			clientRender
+		);
+	}
+
+	page(
+		'/purchases/subscriptions/:site/:purchaseId/payment-method/change',
+		...commonHandlers,
+		purchaseChangePaymentMethod,
 		makeLayout,
 		clientRender
 	);
@@ -67,7 +89,7 @@ export default ( router ) => {
 	page(
 		'/purchases/subscriptions/:site/:purchaseId/payment-method/add',
 		...commonHandlers,
-		purchaseChangePaymentMethod,
+		redirectToChangePaymentMethod,
 		makeLayout,
 		clientRender
 	);
@@ -83,13 +105,21 @@ export default ( router ) => {
 	page(
 		'/purchases/subscriptions/:site/:purchaseId/payment-method/change/:cardId',
 		...commonHandlers,
-		purchaseChangePaymentMethod,
+		redirectToChangePaymentMethod,
 		makeLayout,
 		clientRender
 	);
 
 	page(
 		'/purchases/add-payment-method/:site',
+		...commonHandlers,
+		redirectToAddPaymentMethod,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/purchases/payment-methods/:site/add',
 		...commonHandlers,
 		addPaymentMethod,
 		makeLayout,

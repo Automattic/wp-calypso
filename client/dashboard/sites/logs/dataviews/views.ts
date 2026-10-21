@@ -6,8 +6,9 @@ export const DEFAULT_PER_PAGE = 50;
 const DEFAULT_VIEW = {
 	type: 'table',
 	perPage: DEFAULT_PER_PAGE,
-	infiniteScrollEnabled: true,
 	showLevels: false,
+	infiniteScrollEnabled: true,
+	startPosition: 1,
 } satisfies Partial< View >;
 
 export const DEFAULT_PHP_LOGS_VIEW: View = {
@@ -55,7 +56,7 @@ const getFilterParamsFromView = ( view: View, fieldNames: string[] ): FilterType
 			continue;
 		}
 
-		const raw = Array.isArray( filter.value ) ? filter.value : [];
+		const raw = Array.isArray( filter.value ) ? filter.value : [ filter.value ?? '' ];
 		const values = Array.from( new Set( raw.map( String ) ) )
 			.filter( Boolean )
 			.sort();
@@ -73,5 +74,12 @@ export function toFilterParams( { view, logType }: { view: View; logType: LogTyp
 		return getFilterParamsFromView( view, [ 'severity' ] );
 	}
 
-	return getFilterParamsFromView( view, [ 'cached', 'request_type', 'status', 'renderer' ] );
+	return getFilterParamsFromView( view, [
+		'cached',
+		'request_type',
+		'request_url',
+		'status',
+		'renderer',
+		'user_ip',
+	] );
 }

@@ -12,6 +12,7 @@ import './sidebar-environment-switcher.scss';
 const SidebarEnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	const {
 		productionSite,
+		stagingSiteId,
 		stagingSite,
 		isStagingSiteCreating,
 		isStagingSiteDeleting,
@@ -52,6 +53,7 @@ const SidebarEnvironmentSwitcher = ( { site }: { site: Site } ) => {
 						<EnvironmentSwitcherDropdown
 							currentSite={ site }
 							productionSite={ productionSite }
+							stagingSiteId={ stagingSiteId }
 							stagingSite={ stagingSite }
 							onClose={ onClose }
 							onAddStagingSite={ handleAddStagingSite }

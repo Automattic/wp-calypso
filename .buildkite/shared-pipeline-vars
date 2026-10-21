@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -eux -o pipefail
+
+# This file is `source`'d before calling `buildkite-agent pipeline upload`, and can be used
+# to set up some variables that will be interpolated in the `.yml` pipeline before uploading it.
+
+# Selects the VM image for the `mac` queue.
+export IMAGE_ID="xcode-26.6"
+
+# https://github.com/Automattic/a8c-ci-toolkit-buildkite-plugin/releases/tag/6.1.0 (2026-04-27)
+export CI_TOOLKIT_PLUGIN="automattic/a8c-ci-toolkit#6.1.0"
+
+# https://github.com/Automattic/nvm-buildkite-plugin/releases/tag/0.6.0 (2025-03-06)
+export NVM_PLUGIN="automattic/nvm#0.6.0"
+
+# https://github.com/buildkite-plugins/docker-buildkite-plugin/releases/tag/v5.13.0 (2025-07-07)
+export DOCKER_PLUGIN="docker#v5.13.0"

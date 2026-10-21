@@ -81,7 +81,7 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 							/* translators: %1$s is the email and %2$s is the forwarding destination address. */
 							__( 'Emails sent to %1$s address will no longer be forwarded to %2$s.' ),
 							email.emailAddress,
-							email.forwardingTo
+							email.forwardingTo ?? ''
 						) }
 					</Text>
 					<HStack justify="right">

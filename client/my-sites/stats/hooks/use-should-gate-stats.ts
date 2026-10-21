@@ -75,7 +75,8 @@ const jetpackStatsAdvancedPaywall = [
 ];
 
 // If Jetpack commerical sites don't have any purchase that supports commercial use,
-// gate modules or cards accordingly.
+// gate modules or cards accordingly. Still referenced below, but unreachable while the
+// commercial paywall kill switch is on (STATS-387).
 const jetpackStatsCommercialPaywall = [
 	STAT_TYPE_TOP_POSTS,
 	STAT_TYPE_COUNTRY_VIEWS,
@@ -97,7 +98,8 @@ const jetpackStatsCommercialPaywall = [
 ];
 
 // If Jetpack commerical sites don't have any purchase that supports commercial use,
-// gate controls accordingly.
+// gate controls accordingly. Still referenced below, but unreachable while the commercial
+// paywall kill switch is on (STATS-387).
 const granularControlForJetpackStatsCommercialPaywall = [
 	...defaultDateControlGates,
 	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
@@ -230,19 +232,18 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 			// Paywall basic stats for commercial sites with:
 			// 1. Monthly views reached the paywall threshold.
 			// 2. Current usage passed over grace period days.
+			// Inert while the commercial paywall kill switch is on — see
+			// `state/stats/plan-usage/constants` (STATS-387).
 			if ( shouldShowPaywallAfterGracePeriod( state, siteId ) ) {
 				return [
 					...jetpackStatsCommercialPaywall,
 					...granularControlForJetpackStatsCommercialPaywall,
 				].includes( statType );
 			}
-
-			// Paywall advanced stats for commercial sites with monthly views less than 1k.
-			return [ ...jetpackStatsAdvancedPaywall ].includes( statType );
 		}
 
-		// Paywall advanced stats for non-commercial sites.
-		return [ ...jetpackStatsAdvancedPaywall ].includes( statType );
+		// Paywall advanced stats for all other Jetpack sites without a supporting purchase.
+		return jetpackStatsAdvancedPaywall.includes( statType );
 	}
 
 	const siteFeatures = getSiteFeatures( state, siteId );

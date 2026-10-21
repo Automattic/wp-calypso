@@ -48,14 +48,12 @@ test.describe(
 				);
 			} );
 
-			await test.step( 'Then I see a "Processing uploaded file" message temporarily', async function () {
+			await test.step( 'Then I see a "Processing uploaded file" message', async function () {
 				await expect( pageImportContentFromSubstack.processingUploadedFileButton ).toBeVisible();
-				await pageImportContentFromSubstack.processingUploadedFileButton.waitFor( {
-					state: 'detached',
-				} );
 			} );
 
 			await test.step( 'Then I see a "Import content from Substack" page with a conversion summary', async function () {
+				await pageImportContentFromSubstack.waitForConversionSummary();
 				await expect( pageImportContentFromSubstack.importContentHeading ).toBeVisible();
 				await expect(
 					pageImportContentFromSubstack.importHeading( substackSiteName )
@@ -110,14 +108,12 @@ test.describe(
 				);
 			} );
 
-			await test.step( 'Then I see a "Processing uploaded file" message temporarily', async function () {
+			await test.step( 'Then I see a "Processing uploaded file" message', async function () {
 				await expect( pageImportContentFromSubstack.processingUploadedFileButton ).toBeVisible();
-				await pageImportContentFromSubstack.processingUploadedFileButton.waitFor( {
-					state: 'detached',
-				} );
 			} );
 
 			await test.step( 'Then I see a "Import content from Substack" page with a conversion summary', async function () {
+				await pageImportContentFromSubstack.waitForConversionSummary();
 				await expect( pageImportContentFromSubstack.importContentHeading ).toBeVisible();
 				await expect(
 					pageImportContentFromSubstack.importHeading( substackSiteName )
@@ -145,7 +141,7 @@ test.describe(
 		} );
 
 		test( 'Three: As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Substack account', async ( {
-			sitePublic,
+			sitePublicShared: sitePublic,
 			pageImportContent,
 			pageImportContentFromSubstack,
 		} ) => {
@@ -182,14 +178,12 @@ test.describe(
 				);
 			} );
 
-			await test.step( 'Then I see a "Processing uploaded file" message temporarily', async function () {
+			await test.step( 'Then I see a "Processing uploaded file" message', async function () {
 				await expect( pageImportContentFromSubstack.processingUploadedFileButton ).toBeVisible();
-				await pageImportContentFromSubstack.processingUploadedFileButton.waitFor( {
-					state: 'detached',
-				} );
 			} );
 
 			await test.step( 'Then I see a page with a conversion summary', async function () {
+				await pageImportContentFromSubstack.waitForConversionSummary();
 				await expect(
 					pageImportContentFromSubstack.importHeading( substackSiteName )
 				).toBeVisible();

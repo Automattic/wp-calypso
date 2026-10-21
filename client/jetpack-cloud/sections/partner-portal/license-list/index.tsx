@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { PropsWithChildren, useContext, useCallback } from 'react';
+import { PropsWithChildren, useContext, useCallback, useRef } from 'react';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import QueryJetpackPartnerPortalLicenses from 'calypso/components/data/query-jetpack-partner-portal-licenses';
@@ -35,9 +35,22 @@ interface LicenseTransitionProps {
 	exit?: boolean;
 }
 
-const LicenseTransition = ( props: PropsWithChildren< LicenseTransitionProps > ) => (
-	<CSSTransition { ...props } classNames="license-list__license-transition" timeout={ 150 } />
-);
+const LicenseTransition = ( {
+	children,
+	...props
+}: PropsWithChildren< LicenseTransitionProps > ) => {
+	const nodeRef = useRef< HTMLDivElement >( null );
+	return (
+		<CSSTransition
+			{ ...props }
+			nodeRef={ nodeRef }
+			classNames="license-list__license-transition"
+			timeout={ 150 }
+		>
+			<div ref={ nodeRef }>{ children }</div>
+		</CSSTransition>
+	);
+};
 
 export default function LicenseList() {
 	const dispatch = useDispatch();

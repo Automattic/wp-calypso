@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/user-suggestions/init';
 
 const emptyArray = [];
@@ -12,7 +10,7 @@ const emptyArray = [];
  * @returns {boolean}         Whether user suggestions are being requested
  */
 export function isRequestingUserSuggestions( state, siteId ) {
-	return get( state.userSuggestions.requesting, [ siteId ], false );
+	return state.userSuggestions.requesting?.[ siteId ] ?? false;
 }
 
 /**
@@ -23,5 +21,5 @@ export function isRequestingUserSuggestions( state, siteId ) {
  */
 export function getUserSuggestions( state, siteId ) {
 	// Use a defined array as the default value to prevent unnecessary rerenders.
-	return get( state.userSuggestions.items, [ siteId ], emptyArray );
+	return state.userSuggestions.items?.[ siteId ] ?? emptyArray;
 }

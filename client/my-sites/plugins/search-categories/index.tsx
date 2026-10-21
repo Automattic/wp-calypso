@@ -4,7 +4,14 @@ import { isDesktop } from '@automattic/viewport';
 import { SearchControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useCallback, MutableRefObject, useRef, RefObject, useEffect } from 'react';
+import {
+	useCallback,
+	useRef,
+	useEffect,
+	type FC,
+	type MutableRefObject,
+	type RefObject,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ScrollableHorizontalNavigation from 'calypso/components/scrollable-horizontal-navigation';
 import { setQueryArgs } from 'calypso/lib/query-args';
@@ -23,7 +30,7 @@ import { useTermsSuggestions } from '../use-terms-suggestions';
 import './style.scss';
 
 const SearchBox: FC< {
-	categoriesRef: RefObject< HTMLDivElement >;
+	categoriesRef: RefObject< HTMLDivElement | null >;
 	searchBoxRef: MutableRefObject< ImperativeHandle >;
 	searchTerm: string;
 	searchTerms: string[];
@@ -47,7 +54,7 @@ const SearchBox: FC< {
 			// Handle side effects when search is not empty
 			if ( search ) {
 				searchBoxRef.current?.blur();
-				categoriesRef.current &&
+				if ( categoriesRef.current ) {
 					scrollTo( {
 						x: 0,
 						y:
@@ -55,6 +62,7 @@ const SearchBox: FC< {
 							categoriesRef.current.getBoundingClientRect().height, // But don't show the categories
 						duration: 300,
 					} );
+				}
 			}
 
 			// Track search event

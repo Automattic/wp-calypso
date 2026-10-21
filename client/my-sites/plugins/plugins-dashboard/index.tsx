@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { hasMarketplaceProduct } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import A4APluginsJetpackBanner from 'calypso/a8c-for-agencies/sections/plugins/plugins-jetpack-banner';
@@ -369,7 +369,9 @@ const PluginsDashboard = ( {
 								{ `${ selectedPlugin.name }` }
 							</Title>
 							<Actions>
-								<Button href="/plugins/manage/sites">{ translate( 'Close' ) }</Button>
+								<Button href="/plugins/manage/sites" borderless aria-label={ translate( 'Close' ) }>
+									<Gridicon icon="cross" size={ 24 } />
+								</Button>
 							</Actions>
 						</LayoutHeader>
 					</LayoutTop>

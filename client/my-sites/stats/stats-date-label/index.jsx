@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
-import { flowRight, get } from 'lodash';
 import { useMemo } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { NAVIGATION_METHOD_ARROW } from 'calypso/my-sites/stats/constants';
@@ -99,9 +99,15 @@ function StatsDateLabel( {
 		return `${ localizedStartDate.format( 'll' ) } - ${ localizedEndDate.format( 'll' ) }`;
 	}
 
-	function dateForSummarize() {
+	function dateForSummarize( selectedShortcut = null ) {
 		if ( query.start_date ) {
-			return dateForCustomRange( query.start_date, query.date );
+			if (
+				selectedShortcut?.label &&
+				! [ 'month_to_date', 'year_to_date' ].includes( selectedShortcut?.id )
+			) {
+				return selectedShortcut.label;
+			}
+			return dateForCustomRange( query.start_date, query.date, selectedShortcut );
 		}
 
 		const localizedDate = momentSiteZone();
@@ -190,10 +196,10 @@ function StatsDateLabel( {
 		);
 	}
 
-	const isSummarizeQuery = get( query, 'summarize' );
+	const isSummarizeQuery = query?.summarize;
 	const { selectedShortcut } = getShortcuts( reduxState, dateRange, translate );
 	const shortDisplayDate = isShort ? dateForDisplay( selectedShortcut ) : null;
-	const summarizeDisplayDate = isSummarizeQuery ? dateForSummarize() : null;
+	const summarizeDisplayDate = isSummarizeQuery ? dateForSummarize( selectedShortcut ) : null;
 	const displayDate = isShort ? shortDisplayDate : summarizeDisplayDate;
 
 	const previousDisplayDate = useMemo( () => {
@@ -235,20 +241,24 @@ function StatsDateLabel( {
 					period: (
 						<span className="period">
 							<span className="date">
-								{ isSummarizeQuery ? dateForSummarize() : dateForDisplay( selectedShortcut ) }
+								{ isSummarizeQuery
+									? dateForSummarize( selectedShortcut )
+									: dateForDisplay( selectedShortcut ) }
 							</span>
 						</span>
 					),
 				},
 				comment: 'Example: "Activity for December 2017"',
-		  } )
+			} )
 		: translate( '{{prefix}}Stats for {{/prefix}}{{period/}}', {
 				components: {
 					prefix: <span className="prefix" />,
 					period: (
 						<span className="period">
 							<span className="date">
-								{ isSummarizeQuery ? dateForSummarize() : dateForDisplay( selectedShortcut ) }
+								{ isSummarizeQuery
+									? dateForSummarize( selectedShortcut )
+									: dateForDisplay( selectedShortcut ) }
 							</span>
 						</span>
 					),
@@ -256,7 +266,7 @@ function StatsDateLabel( {
 				context: 'Stats: Main stats page heading',
 				comment:
 					'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"',
-		  } );
+			} );
 
 	if ( isShort ) {
 		sectionTitle = (
@@ -300,4 +310,4 @@ const connectComponent = connect( ( state, { query, statsType, showQueryDate } )
 	};
 } );
 
-export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsDateLabel );
+export default compose( connectComponent, localize, withLocalizedMoment )( StatsDateLabel );

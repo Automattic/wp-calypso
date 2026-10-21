@@ -1,5 +1,5 @@
+import { camelCase, set, snakeCase } from '@automattic/js-utils';
 import { extendAction } from '@automattic/state-utils';
-import { camelCase, map, reduce, set, snakeCase } from 'lodash';
 
 const doBypassDataLayer = {
 	meta: {
@@ -19,19 +19,15 @@ export const bypassDataLayer = ( action ) => extendAction( action, doBypassDataL
  */
 export function convertKeysBy( obj, fn ) {
 	if ( Array.isArray( obj ) ) {
-		return map( obj, ( v ) => convertKeysBy( v, fn ) );
+		return obj.map( ( v ) => convertKeysBy( v, fn ) );
 	}
 
 	if ( typeof obj === 'object' && obj !== null ) {
-		return reduce(
-			obj,
-			( result, value, key ) => {
-				const newKey = fn( key );
-				const newValue = convertKeysBy( value, fn );
-				return set( result, [ newKey ], newValue );
-			},
-			{}
-		);
+		return Object.entries( obj ).reduce( ( result, [ key, value ] ) => {
+			const newKey = fn( key );
+			const newValue = convertKeysBy( value, fn );
+			return set( result, [ newKey ], newValue );
+		}, {} );
 	}
 
 	return obj;

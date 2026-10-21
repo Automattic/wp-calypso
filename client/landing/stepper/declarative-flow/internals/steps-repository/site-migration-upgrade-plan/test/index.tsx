@@ -11,7 +11,7 @@ import { StepProps } from '../../../types';
 import { mockStepProps, renderStep } from '../../test/helpers';
 
 // Mock MigrationPlansGrid with a simplified version that triggers onUpgradeClick
-jest.mock( '../migration-plans-grid', () => {
+jest.mock( 'calypso/blocks/importer/components/migration-plans-grid', () => {
 	const { PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } = jest.requireActual(
 		'@automattic/calypso-products'
 	);
@@ -59,7 +59,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			goToCheckout: true,
-			plan: 'business-monthly',
+			plan: 'business-bundle-monthly',
 		} );
 	} );
 
@@ -71,7 +71,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			goToCheckout: true,
-			plan: 'business',
+			plan: 'business-bundle',
 		} );
 	} );
 

@@ -4,7 +4,7 @@ import type { Theme as ThemeType } from './lib/theme';
 import type { ReactElement } from 'react';
 
 declare module '@emotion/react' {
-	// eslint-disable-next-line @typescript-eslint/no-empty-interface
+	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 	export interface Theme extends ThemeType {}
 }
 
@@ -104,11 +104,11 @@ export type ReactStandardAction< T = string, P = unknown > = P extends void
 	? {
 			type: T;
 			payload?: P;
-	  }
+		}
 	: {
 			type: T;
 			payload?: P;
-	  };
+		};
 
 export interface CheckoutProviderProps {
 	theme?: ThemeType;
@@ -137,6 +137,7 @@ export type PaymentMethodChangedCallback = ( method: string ) => void;
 export type PaymentEventCallback = ( args: PaymentEventCallbackArguments ) => void;
 export type PaymentErrorCallback = ( args: {
 	paymentMethodId: string | null | undefined;
+	paymentProcessorId: string | undefined;
 	transactionError: string | null;
 } ) => void;
 export type CheckoutPageErrorCallback = (
@@ -153,6 +154,8 @@ export type StepChangedEventArguments = {
 
 export type PaymentEventCallbackArguments = {
 	transactionLastResponse: PaymentProcessorResponseData;
+	paymentMethodId: string | null | undefined;
+	paymentProcessorId: string | undefined;
 };
 
 export type PaymentProcessorResponseData = unknown;
@@ -171,9 +174,7 @@ export type PaymentProcessorRedirect = {
 };
 
 export type PaymentProcessorResponse =
-	| PaymentProcessorError
-	| PaymentProcessorSuccess
-	| PaymentProcessorRedirect;
+	PaymentProcessorError | PaymentProcessorSuccess | PaymentProcessorRedirect;
 
 export type PaymentProcessorSubmitData = unknown;
 
@@ -210,28 +211,35 @@ export interface TransactionStatusPayloads {
 	url?: string;
 }
 
-export interface TransactionStatusPayloadNotStarted
-	extends Pick< TransactionStatusPayloads, 'status' > {
+export interface TransactionStatusPayloadNotStarted extends Pick<
+	TransactionStatusPayloads,
+	'status'
+> {
 	status: TransactionStatus.NOT_STARTED;
 }
 
-export interface TransactionStatusPayloadPending
-	extends Pick< TransactionStatusPayloads, 'status' > {
+export interface TransactionStatusPayloadPending extends Pick<
+	TransactionStatusPayloads,
+	'status'
+> {
 	status: TransactionStatus.PENDING;
 }
 
-export interface TransactionStatusPayloadComplete
-	extends Required< Pick< TransactionStatusPayloads, 'status' | 'response' > > {
+export interface TransactionStatusPayloadComplete extends Required<
+	Pick< TransactionStatusPayloads, 'status' | 'response' >
+> {
 	status: TransactionStatus.COMPLETE;
 }
 
-export interface TransactionStatusPayloadRedirecting
-	extends Required< Pick< TransactionStatusPayloads, 'status' | 'url' > > {
+export interface TransactionStatusPayloadRedirecting extends Required<
+	Pick< TransactionStatusPayloads, 'status' | 'url' >
+> {
 	status: TransactionStatus.REDIRECTING;
 }
 
-export interface TransactionStatusPayloadError
-	extends Required< Pick< TransactionStatusPayloads, 'status' | 'error' > > {
+export interface TransactionStatusPayloadError extends Required<
+	Pick< TransactionStatusPayloads, 'status' | 'error' >
+> {
 	status: TransactionStatus.ERROR;
 }
 
@@ -294,6 +302,8 @@ export interface CheckoutStepGroupState {
 	stepIdMap: StepIdMap;
 	stepCompleteCallbackMap: StepCompleteCallbackMap;
 	stepSkipValidationOnSubmitMap: Record< number, boolean >;
+	suppressNextForwardScroll: boolean;
+	hasUserInteractedWithSteps: boolean;
 }
 
 export interface CheckoutStepGroupActions {
@@ -311,6 +321,8 @@ export interface CheckoutStepGroupActions {
 	) => void;
 	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
 	setTotalSteps: ( totalSteps: number ) => void;
+	setSuppressNextForwardScroll: ( value: boolean ) => void;
+	setHasUserInteractedWithSteps: ( value: boolean ) => void;
 }
 
 export type TogglePaymentMethod = ( paymentMethodId: string, available: boolean ) => void;

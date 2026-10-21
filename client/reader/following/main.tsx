@@ -1,31 +1,38 @@
-import { Card, CardBody } from '@wordpress/components';
+import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { fixMe, translate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
-import { QuickPostSkeleton } from 'calypso/reader/components/quick-post/skeleton';
-import ReaderOnboardingGate from 'calypso/reader/onboarding/gate';
+import NewBlogsExperimentSlot from 'calypso/reader/new-blogs/experiment-slot';
+import { useNewBlogs } from 'calypso/reader/new-blogs/use-new-blogs';
+import ReaderOnboardingGate from 'calypso/reader/onboarding-rsm/gate';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream from 'calypso/reader/stream';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { useDispatch } from 'calypso/state';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 import Recent from '../recent';
 import { useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
+import { WriteButton } from './write-button';
 import './style.scss';
 
-function FollowingStream( { ...props } ) {
+const loadTrackResurrections = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
+	);
+
+function FollowingStream( {
+	suppressReaderOnboarding: forceSuppressReaderOnboarding = false,
+	...props
+} ) {
 	const { currentView } = useFollowingView();
 	const dispatch = useDispatch();
 	const [ isResurrectedModalVisible, setIsResurrectedModalVisible ] = useState( false );
 	const [ shouldDelayReaderOnboarding, setShouldDelayReaderOnboarding ] = useState( false );
 	const [ readerOnboardingShouldShow, setReaderOnboardingShouldShow ] = useState( false );
-	const currentUser = useSelector( getCurrentUser );
-	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 
 	const handleReaderOnboardingRender = useCallback(
 		( willRender: boolean ) => {
@@ -47,7 +54,26 @@ function FollowingStream( { ...props } ) {
 	}, [ shouldDelayReaderOnboarding, isResurrectedModalVisible ] );
 
 	const suppressReaderOnboarding =
-		readerOnboardingShouldShow && ( isResurrectedModalVisible || shouldDelayReaderOnboarding );
+		forceSuppressReaderOnboarding ||
+		( readerOnboardingShouldShow && ( isResurrectedModalVisible || shouldDelayReaderOnboarding ) );
+
+	// "Discover new blogs" (READ-542): one bounded block in the Recent feed,
+	// in the third spot (after two recent posts), per the READ-542 thread. Only
+	// on the "all subscriptions" feed, never on a single site's feed, and not
+	// mounted at all while loading, for cold-start users, or once hidden —
+	// all of which leave `recs` empty. The spot is where the READ-543 A/B
+	// assigns users, in both groups; only treatment sees the module.
+	const { recs, isHidden, dismissBlog, hide } = useNewBlogs();
+	const showNewBlogs =
+		isEnabled( 'reader/discover-new-blogs' ) && ! props.feedId && ! isHidden && recs.length > 0;
+	// Memoised so the stream only rebuilds its item list when the recs change.
+	const newBlogsBlock = useMemo(
+		() =>
+			showNewBlogs ? (
+				<NewBlogsExperimentSlot recs={ recs } dismissBlog={ dismissBlog } hide={ hide } />
+			) : null,
+		[ showNewBlogs, recs, dismissBlog, hide ]
+	);
 
 	// Set the selected feed based on route param.
 	useEffect( () => {
@@ -58,9 +84,21 @@ function FollowingStream( { ...props } ) {
 	return (
 		<>
 			{ currentView === 'recent' ? (
-				<Recent viewToggle={ <ViewToggle /> } />
+				<Recent
+					viewToggle={
+						<>
+							<ViewToggle />
+							<WriteButton />
+						</>
+					}
+				/>
 			) : (
-				<ReaderStream { ...props } className="following">
+				<ReaderStream
+					{ ...props }
+					className="following"
+					inStreamBlock={ newBlogsBlock }
+					inStreamBlockPosition={ 2 }
+				>
 					<BloganuaryHeader />
 					<NavigationHeader
 						title={ translate( 'Recent' ) }
@@ -72,21 +110,8 @@ function FollowingStream( { ...props } ) {
 						className={ clsx( 'following-stream-header' ) }
 					>
 						<ViewToggle />
+						<WriteButton />
 					</NavigationHeader>
-					{ hasSites && (
-						<Card className="following-stream__quick-post-card">
-							<CardBody>
-								<AsyncLoad
-									require={ () =>
-										import(
-											/* webpackChunkName: "async-load-calypso-reader-components-quick-post" */ 'calypso/reader/components/quick-post'
-										)
-									}
-									placeholder={ <QuickPostSkeleton /> }
-								/>
-							</CardBody>
-						</Card>
-					) }
 					<ReaderOnboardingGate
 						onRender={ handleReaderOnboardingRender }
 						isSuppressed={ suppressReaderOnboarding }
@@ -94,14 +119,7 @@ function FollowingStream( { ...props } ) {
 				</ReaderStream>
 			) }
 			<ResurrectedWelcomeModalGate onVisibilityChange={ setIsResurrectedModalVisible } />
-			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
-					)
-				}
-				placeholder={ null }
-			/>
+			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 		</>
 	);
 }

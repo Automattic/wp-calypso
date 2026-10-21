@@ -1,0 +1,226 @@
+import page from '@automattic/calypso-router';
+import { useTranslate } from 'i18n-calypso';
+import DocumentHead from 'calypso/components/data/document-head';
+import { getSiteFragment } from 'calypso/lib/route';
+import { getSubscribersUrl } from 'calypso/lib/subscribers/get-subscribers-url';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import EditTeamMember from './edit-team-member-form';
+import PeopleInviteDetails from './people-invite-details';
+import PeopleInvites from './people-invites';
+import PeopleInvitesPending from './people-invites-pending';
+import SubscriberDetails from './subscriber-details';
+import SubscribersTeam from './subscribers-team';
+import TeamInvite from './team-invite';
+import ViewerDetails from './viewer-details';
+
+import './style.scss';
+
+export default {
+	redirectToTeam,
+
+	enforceSiteEnding( context, next ) {
+		const siteId = getSiteFragment( context.path );
+
+		if ( ! siteId ) {
+			redirectToTeam( context );
+		}
+
+		next();
+	},
+
+	people( context, next ) {
+		renderPeopleList( context, next );
+	},
+
+	invitePeople( context, next ) {
+		renderInvitePeople( context, next );
+	},
+
+	person( context, next ) {
+		renderSingleTeamMember( context, next );
+	},
+
+	peopleInvites( context, next ) {
+		renderPeopleInvites( context, next );
+	},
+
+	peopleInviteDetails( context, next ) {
+		renderPeopleInviteDetails( context, next );
+	},
+
+	peoplePendingInvites( context, next ) {
+		renderPendingInvites( context, next );
+	},
+
+	viewerTeamMember( context, next ) {
+		renderViewerTeamMember( context, next );
+	},
+
+	subscribers( context ) {
+		// Subscribers are managed outside Calypso, so this leaves the app rather than routing.
+		// `replace` keeps this out of the history: a pushed entry would send Back here, and
+		// straight out again.
+		const state = context.store.getState();
+		window.location.replace( getSubscribersUrl( state, getSelectedSiteId( state ) ) );
+	},
+
+	subscriberDetails( context, next ) {
+		renderSubscribersDetails( context, next );
+	},
+
+	peopleAddSubscribers( context ) {
+		const state = context.store.getState();
+		window.location.replace(
+			getSubscribersUrl( state, getSelectedSiteId( state ), { addSubscribers: true } )
+		);
+	},
+};
+
+function redirectToTeam( context ) {
+	if ( context ) {
+		// if we are redirecting we need to retain our intended layout-focus
+		const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
+		context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
+	}
+	page.redirect( '/people/team' );
+}
+
+function renderPeopleList( context, next ) {
+	const PeopleListTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'Users', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<PeopleListTitle />
+			<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
+		</>
+	);
+	next();
+}
+
+function renderInvitePeople( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+
+	const InvitePeopleTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'Invite People', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<InvitePeopleTitle />
+			<TeamInvite key={ site.ID } site={ site } />
+		</>
+	);
+	next();
+}
+
+function renderPeopleInvites( context, next ) {
+	const PeopleInvitesTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'Invites', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<PeopleInvitesTitle />
+			<PeopleInvites />
+		</>
+	);
+	next();
+}
+
+function renderPendingInvites( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+
+	const PeopleInvitesTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'Pending Invites', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<PeopleInvitesTitle />
+			<PeopleInvitesPending site={ site } />
+		</>
+	);
+	next();
+}
+
+function renderSubscribersDetails( context, next ) {
+	const SubscriberDetailsTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'User Details', { textOnly: true } ) } />;
+	};
+
+	// typeId is in the format "{type}-{id}
+	const [ type, id ] = context.params.typeId.split( '-' );
+
+	context.primary = (
+		<>
+			<SubscriberDetailsTitle />
+			<SubscriberDetails subscriberId={ id } subscriberType={ type } />
+		</>
+	);
+	next();
+}
+
+function renderPeopleInviteDetails( context, next ) {
+	const PeopleInviteDetailsTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'User Details', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<PeopleInviteDetailsTitle />
+			<PeopleInviteDetails inviteKey={ context.params.invite_key } />
+		</>
+	);
+	next();
+}
+
+function renderSingleTeamMember( context, next ) {
+	const SingleTeamMemberTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'View User', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<SingleTeamMemberTitle />
+			<EditTeamMember userLogin={ context.params.user_login } />
+		</>
+	);
+	next();
+}
+
+function renderViewerTeamMember( context, next ) {
+	const SingleTeamMemberTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'View User', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<SingleTeamMemberTitle />
+			<ViewerDetails userId={ context.params.user_id } />
+		</>
+	);
+
+	next();
+}

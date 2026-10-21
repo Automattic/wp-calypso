@@ -1,7 +1,7 @@
 import { CompactCard, Count } from '@automattic/components';
+import { uniqBy } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -57,9 +57,7 @@ class PluginItem extends Component {
 	doing() {
 		const { translate, progress } = this.props;
 		const log = progress[ 0 ];
-		const uniqLogs = uniqBy( progress, function ( uniqLog ) {
-			return uniqLog.siteId;
-		} );
+		const uniqLogs = uniqBy( progress, 'siteId' );
 		const translationArgs = {
 			args: { count: uniqLogs.length },
 			count: uniqLogs.length,
@@ -74,7 +72,7 @@ class PluginItem extends Component {
 							'Updating on %(count)s site',
 							'Updating on %(count)s sites',
 							translationArgs
-					  );
+						);
 				break;
 
 			case ACTIVATE_PLUGIN:
@@ -84,7 +82,7 @@ class PluginItem extends Component {
 							'Activating on %(count)s site',
 							'Activating on %(count)s sites',
 							translationArgs
-					  );
+						);
 				break;
 
 			case DEACTIVATE_PLUGIN:
@@ -94,7 +92,7 @@ class PluginItem extends Component {
 							'Deactivating on %(count)s site',
 							'Deactivating on %(count)s sites',
 							translationArgs
-					  );
+						);
 				break;
 
 			case ENABLE_AUTOUPDATE_PLUGIN:
@@ -104,7 +102,7 @@ class PluginItem extends Component {
 							'Enabling autoupdates on %(count)s site',
 							'Enabling autoupdates on %(count)s sites',
 							translationArgs
-					  );
+						);
 				break;
 
 			case DISABLE_AUTOUPDATE_PLUGIN:
@@ -114,7 +112,7 @@ class PluginItem extends Component {
 							'Disabling autoupdates on %(count)s site',
 							'Disabling autoupdates on %(count)s sites',
 							translationArgs
-					  );
+						);
 
 				break;
 			case REMOVE_PLUGIN:
@@ -124,7 +122,7 @@ class PluginItem extends Component {
 							'Removing from %(count)s site',
 							'Removing from %(count)s sites',
 							translationArgs
-					  );
+						);
 		}
 		return message;
 	}

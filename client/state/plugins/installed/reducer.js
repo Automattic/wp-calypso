@@ -1,6 +1,5 @@
 /* eslint-disable no-case-declarations */
 
-import { findIndex } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	PLUGINS_RECEIVE,
@@ -171,7 +170,9 @@ function pluginsForSite( state = [], action ) {
 			return [ ...state, decodePluginName( action.data ) ];
 		}
 		case PLUGIN_REMOVE_REQUEST_SUCCESS:
-			const index = findIndex( state, { id: action.pluginId } );
+			const index = state.findIndex(
+				( installedPlugin ) => installedPlugin.id === action.pluginId
+			);
 			return [ ...state.slice( 0, index ), ...state.slice( index + 1 ) ];
 		default:
 			return state;

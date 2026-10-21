@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit } from '@automattic/js-utils';
 import QueryKey from '../key';
 import { PAGINATION_QUERY_KEYS } from './constants';
 

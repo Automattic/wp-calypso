@@ -1,4 +1,3 @@
-import { includes } from 'lodash';
 import { getThemeFilterTermsTable } from 'calypso/state/themes/selectors/get-theme-filter-terms-table';
 
 import 'calypso/state/themes/init';
@@ -33,7 +32,7 @@ export function getThemeFilterStringFromTerm(
 	}
 
 	if ( taxonomy ) {
-		if ( includes( term, ':' ) ) {
+		if ( term.includes( ':' ) ) {
 			return term;
 		}
 		return `${ taxonomy }:${ term }`;

@@ -1,11 +1,19 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { isEmpty } from '@automattic/js-utils';
 import { isOnboardingFlow } from '@automattic/onboarding';
-import { isEmpty } from 'lodash';
 import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
 import { login } from 'calypso/lib/paths';
+import {
+	LEGACY_LAUNCH_SITE_FLOW,
+	getLegacyLaunchSiteRedirect,
+} from 'calypso/lib/signup/legacy-launch-site-flow';
+import {
+	getLegacyPlanFlowRedirect,
+	shouldRedirectLegacyPlanFlow,
+} from 'calypso/lib/signup/legacy-plan-flows';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -98,6 +106,30 @@ export default {
 		) {
 			// Update the `initialContext` when the flow changes.
 			initialContext = Object.assign( {}, initialContext, context );
+		}
+
+		next();
+	},
+
+	// The server redirect only sees hard navigations; `/start` is also a client route, so an
+	// in-app link reaches this router instead. Runs before anything touches signup state so
+	// the hand-off to Stepper leaves nothing half-written behind.
+	redirectLegacyFlow( context, next ) {
+		const { flowName, lang } = context.params;
+
+		if ( shouldRedirectLegacyPlanFlow( flowName ) ) {
+			window.location.replace( getLegacyPlanFlowRedirect( flowName, context.query, lang ) );
+			return;
+		}
+
+		if ( flowName === LEGACY_LAUNCH_SITE_FLOW ) {
+			// The legacy flow fell back to the stored site when the query had none.
+			const siteSlug =
+				context.query?.siteSlug || getSignupDependencyStore( context.store.getState() )?.siteSlug;
+			window.location.replace(
+				getLegacyLaunchSiteRedirect( { ...context.query, ...( siteSlug && { siteSlug } ) } )
+			);
+			return;
 		}
 
 		next();
@@ -209,10 +241,8 @@ export default {
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const stepName = getStepName( context.params );
 		const stepSectionName = getStepSectionName( context.params );
-		const { providesDependenciesInQuery, excludeFromManageSiteFlows } = flows.getFlow(
-			flowName,
-			userLoggedIn
-		);
+		const { providesDependenciesInQuery, excludeFromManageSiteFlows, persistsDomainsOnReEntry } =
+			flows.getFlow( flowName, userLoggedIn );
 
 		// Update initialContext to help woocommerce-install support site switching.
 		if ( 'woocommerce-install' === flowName ) {
@@ -249,13 +279,13 @@ export default {
 		const isManageSiteFlow =
 			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
 
-		// Hydrate the store with domains dependencies from session storage,
-		// only in the onboarding flow.
+		// Hydrate the store with domains dependencies from session storage so re-entering via
+		// browser back from checkout skips the domains step instead of recreating the site.
 		const domainsDependencies = getDomainsDependencies();
 		if (
 			domainsDependencies &&
 			isManageSiteFlow &&
-			flowName === 'onboarding' &&
+			persistsDomainsOnReEntry &&
 			stepName !== 'domains'
 		) {
 			const { step, dependencies } = JSON.parse( domainsDependencies );
@@ -276,7 +306,7 @@ export default {
 		// Set referral parameter in signup dependency store so we can retrieve it in getSignupDestination().
 		const refParameter = query && query.ref;
 		const localeSlug = context.params.lang;
-		// Set design parameters in signup depencency store so we can retrieve it in getChecklistThemeDestination().
+		// Set design parameters in signup dependency store so we can retrieve it in getChecklistThemeDestination().
 		const themeParameter = query && query.theme;
 		const themeType = query && query.theme_type;
 		const styleVariation = query && query.style_variation;
@@ -306,6 +336,19 @@ export default {
 		};
 		if ( ! isEmpty( additionalDependencies ) ) {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
+		}
+
+		if ( [ 'launch-site', 'site-selected' ].includes( flowName ) ) {
+			// The dependency store persists between visits, and `back_to`, `redirect_to` and `ref` are
+			// optional, so an abandoned flow would otherwise decide where the next one leaves the user.
+			// Re-read them from the query the flow was entered with.
+			context.store.dispatch(
+				updateDependencies( {
+					back_to: query?.back_to ?? null,
+					redirect_to: query?.redirect_to ?? null,
+					refParameter: query?.ref ?? null,
+				} )
+			);
 		}
 
 		context.primary = createElement( SignupComponent, {

@@ -1,6 +1,5 @@
 import './post-navigation.scss';
 import {
-	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -26,11 +25,18 @@ interface NavigationButtonProps {
 	direction: 'previous' | 'next';
 	post: Post | null;
 	postKey: PostKey | null;
+	/**
+	 * URL the card links to. Pre-computed by the caller because x-post
+	 * wrappers route to the original blog post — caller has the wrapper
+	 * post metadata, the navigation card does not.
+	 */
+	postUrl?: string;
 	onNavigate: ( postKey: PostKey ) => void;
 }
 
 /**
- * Generates the URL for a reader post from a PostKey.
+ * Fallback URL for a reader post from a PostKey. Used when no pre-computed
+ * `postUrl` is provided.
  */
 function getPostUrlFromKey( postKey: PostKey ): string {
 	if ( postKey.feedId ) {
@@ -39,7 +45,13 @@ function getPostUrlFromKey( postKey: PostKey ): string {
 	return `/reader/blogs/${ postKey.blogId }/posts/${ postKey.postId }`;
 }
 
-const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationButtonProps ) => {
+const NavigationButton = ( {
+	direction,
+	post,
+	postKey,
+	postUrl,
+	onNavigate,
+}: NavigationButtonProps ) => {
 	const translate = useTranslate();
 	const isNext = direction === 'next';
 	const label = isNext ? translate( 'Next post' ) : translate( 'Previous post' );
@@ -60,7 +72,7 @@ const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationB
 
 	return (
 		<a
-			href={ getPostUrlFromKey( postKey ) }
+			href={ postUrl ?? getPostUrlFromKey( postKey ) }
 			onClick={ handleClick }
 			className={ clsx( 'reader-full-post-navigation__link-button', {
 				'reader-full-post-navigation__link-button--next': isNext,
@@ -95,6 +107,8 @@ interface ReaderFullPostNavigationProps {
 	nextPost: Post | null;
 	previousPostKey: PostKey | null;
 	nextPostKey: PostKey | null;
+	previousPostUrl?: string;
+	nextPostUrl?: string;
 	onNavigate: ( postKey: PostKey ) => void;
 }
 
@@ -103,6 +117,8 @@ const ReaderFullPostNavigation = ( {
 	nextPost,
 	previousPostKey,
 	nextPostKey,
+	previousPostUrl,
+	nextPostUrl,
 	onNavigate,
 }: ReaderFullPostNavigationProps ) => {
 	if ( ! previousPostKey && ! nextPostKey ) {
@@ -111,18 +127,20 @@ const ReaderFullPostNavigation = ( {
 
 	return (
 		<VStack spacing={ 6 } className="reader-full-post-navigation">
-			<Divider />
+			<hr />
 			<HStack spacing={ 6 } justify="space-between">
 				<NavigationButton
 					direction="previous"
 					post={ previousPost }
 					postKey={ previousPostKey }
+					postUrl={ previousPostUrl }
 					onNavigate={ onNavigate }
 				/>
 				<NavigationButton
 					direction="next"
 					post={ nextPost }
 					postKey={ nextPostKey }
+					postUrl={ nextPostUrl }
 					onNavigate={ onNavigate }
 				/>
 			</HStack>

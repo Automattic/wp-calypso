@@ -66,14 +66,14 @@ export function getIntroductoryOfferIntervalDisplay( {
 							args: {
 								numberOfMonths: intervalCount,
 							},
-					  } )
+						} )
 					: String(
 							translate( 'Discount for first %(numberOfMonths)d months', {
 								args: {
 									numberOfMonths: intervalCount,
 								},
 							} )
-					  );
+						);
 			}
 		}
 		if ( intervalUnit === 'year' ) {
@@ -93,14 +93,14 @@ export function getIntroductoryOfferIntervalDisplay( {
 					? translate( 'Price for first %(numberOfYears)d years', {
 							textOnly: true,
 							args: { numberOfYears: intervalCount },
-					  } )
+						} )
 					: String(
 							translate( 'Discount for first %(numberOfYears)d years', {
 								args: {
 									numberOfYears: intervalCount,
 								},
 							} )
-					  );
+						);
 			}
 		}
 	}
@@ -118,7 +118,7 @@ export function getIntroductoryOfferIntervalDisplay( {
 							args: {
 								remainingRenewals: remainingRenewalsUsingOffer,
 							},
-					  } )
+						} )
 					: String(
 							translate(
 								'The first %(remainingRenewals)d renewal is also discounted.',
@@ -130,7 +130,7 @@ export function getIntroductoryOfferIntervalDisplay( {
 									},
 								}
 							)
-					  );
+						);
 			}
 		} else {
 			text += isPriceIncrease
@@ -144,7 +144,7 @@ export function getIntroductoryOfferIntervalDisplay( {
 								remainingRenewals: remainingRenewalsUsingOffer,
 							},
 						}
-				  )
+					)
 				: String(
 						translate(
 							'%(remainingRenewals)d discounted renewal remaining.',
@@ -156,7 +156,7 @@ export function getIntroductoryOfferIntervalDisplay( {
 								},
 							}
 						)
-				  );
+					);
 		}
 	}
 	return text;

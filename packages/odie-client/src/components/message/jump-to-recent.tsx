@@ -9,7 +9,7 @@ const SCROLL_THRESHOLD = 100;
 export const JumpToRecent = ( {
 	containerReference,
 }: {
-	containerReference: RefObject< HTMLDivElement >;
+	containerReference: RefObject< HTMLDivElement | null >;
 } ) => {
 	const { trackEvent, isMinimized, chat } = useOdieAssistantContext();
 	const scrollParent = containerReference.current;
@@ -17,8 +17,8 @@ export const JumpToRecent = ( {
 	const [ needsScrolling, setNeedsScrolling ] = useState(
 		Boolean(
 			scrollParent &&
-				scrollParent.scrollTop + scrollParent.offsetHeight <
-					scrollParent.scrollHeight - SCROLL_THRESHOLD
+			scrollParent.scrollTop + scrollParent.offsetHeight <
+				scrollParent.scrollHeight - SCROLL_THRESHOLD
 		)
 	);
 

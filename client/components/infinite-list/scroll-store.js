@@ -1,5 +1,5 @@
+import { throttle } from '@wordpress/compose';
 import debugFactory from 'debug';
-import { throttle } from 'lodash';
 
 const debug = debugFactory( 'calypso:infinite-list:scroll-store' );
 

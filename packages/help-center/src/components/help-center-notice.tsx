@@ -22,7 +22,7 @@ function getResponses( siteName?: string ) {
 						'%s is linked to another WordPress.com account. If you’re trying to access it, please follow our Account Recovery procedure.',
 						__i18n_text_domain__
 					),
-					siteName
+					siteName ?? ''
 				) }
 				&nbsp;{ ' ' }
 				<ExternalLink href={ localizeUrl( 'https://wordpress.com/wp-login.php?action=recovery' ) }>

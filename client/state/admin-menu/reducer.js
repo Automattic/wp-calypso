@@ -7,7 +7,7 @@ import {
 	withPersistence,
 } from 'calypso/state/utils';
 import 'calypso/state/data-layer/wpcom/sites/admin-menu';
-import { menusSchema } from './schema';
+import { groupsSchema, menusSchema } from './schema';
 
 const menusReducer = ( state = [], action ) => {
 	switch ( action.type ) {
@@ -18,9 +18,23 @@ const menusReducer = ( state = [], action ) => {
 	}
 };
 
+const groupsBySiteReducer = ( state = [], action ) => {
+	switch ( action.type ) {
+		case ADMIN_MENU_RECEIVE:
+			return action.groups || [];
+		default:
+			return state;
+	}
+};
+
 export const menus = withSchemaValidation(
 	menusSchema,
 	keyedReducer( 'siteId', withPersistence( menusReducer ) )
+);
+
+export const groupsBySite = withSchemaValidation(
+	groupsSchema,
+	keyedReducer( 'siteId', withPersistence( groupsBySiteReducer ) )
 );
 
 export const requesting = ( state = false, action ) => {
@@ -35,6 +49,7 @@ export const requesting = ( state = false, action ) => {
 
 const reducer = combineReducers( {
 	menus,
+	groupsBySite,
 	requesting,
 } );
 

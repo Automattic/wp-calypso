@@ -1,0 +1,29 @@
+.social-composer__overflow-handoff {
+	// Negative inline margins + matching inline padding bleed the top
+	// border across the full modal width. `.components-modal__content`
+	// adds 24px of horizontal padding around the composer; the separator
+	// reaches the modal edges while the section text stays aligned with
+	// the rest of the modal body.
+	margin-block-start: 16px;
+	margin-inline: -24px;
+	padding-block: 16px;
+	padding-inline: 24px;
+	border-block-start: 1px solid var(--color-border-subtle);
+	animation: social-composer-overflow-handoff-fade-in 280ms ease-out;
+
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
+}
+
+@keyframes social-composer-overflow-handoff-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(-4px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}

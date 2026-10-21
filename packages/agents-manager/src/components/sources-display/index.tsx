@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FoldableCard } from '@automattic/components';
 import { isThisASupportArticleLink } from '@automattic/urls';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -6,7 +5,8 @@ import { __ } from '@wordpress/i18n';
 import { Icon, chevronRight, page } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAgentsManagerContext } from '../../contexts';
+import { FROM_CHAT } from '../../constants';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import './style.scss';
 
 interface Source {
@@ -22,7 +22,6 @@ interface Props {
 export default function SourcesDisplay( { sources }: Props ) {
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
-	const { getActiveSessionId } = useAgentsManagerContext();
 
 	const uniqueSources = useMemo(
 		() => [ ...new Map( sources.map( ( source ) => [ source.url, source ] ) ).values() ],
@@ -40,13 +39,13 @@ export default function SourcesDisplay( { sources }: Props ) {
 		if ( isSupportArticle ) {
 			e.preventDefault();
 			navigate( `/post?link=${ encodeURIComponent( url ) }`, {
-				state: isFromOrchestrator ? { ...state, sessionId: getActiveSessionId() } : state,
+				state: isFromOrchestrator ? { from: FROM_CHAT } : state,
 			} );
 		}
 
-		recordTracksEvent( 'calypso_agents_manager_link_click', {
+		recordAgentsManagerTracksEvent( 'calypso_agents_manager_link_click', {
 			href: url,
-			type: isSupportArticle ? 'support_article' : 'external',
+			link_type: isSupportArticle ? 'support_article' : 'external',
 			source: isFromOrchestrator ? 'orchestrator' : 'zendesk',
 		} );
 	};
@@ -54,9 +53,9 @@ export default function SourcesDisplay( { sources }: Props ) {
 	return (
 		<FoldableCard
 			className="agents-manager-sources-display"
-			summary={ __( 'Sources', '__i18n_text_domain__' ) }
-			expandedSummary={ __( 'Sources', '__i18n_text_domain__' ) }
-			screenReaderText={ __( 'More', '__i18n_text_domain__' ) }
+			summary={ __( 'Sources', __i18n_text_domain__ ) }
+			expandedSummary={ __( 'Sources', __i18n_text_domain__ ) }
+			screenReaderText={ __( 'More', __i18n_text_domain__ ) }
 			iconSize={ 16 }
 			clickableHeader
 			useInert

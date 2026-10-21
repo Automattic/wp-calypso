@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { JetpackConnection, JetpackConnectionHealth } from './types';
+import type { JetpackConnection, JetpackConnectionHealth, JetpackTestConnection } from './types';
 
 export async function fetchJetpackConnection( siteId: number ): Promise< JetpackConnection > {
 	const { data } = await wpcom.req.get( `/jetpack-blogs/${ siteId }/rest-api/`, {
@@ -16,4 +16,20 @@ export async function fetchJetpackConnectionHealth(
 		path: `/sites/${ siteId }/jetpack-connection-health`,
 		apiNamespace: 'wpcom/v2',
 	} );
+}
+
+export async function fetchJetpackTestConnection(
+	siteId: number,
+	isStaleConnectionHealthy: boolean
+): Promise< JetpackTestConnection > {
+	return wpcom.req.get(
+		{
+			path: `/jetpack-blogs/${ siteId }/test-connection`,
+			apiNamespace: 'rest/v1.1',
+		},
+		{
+			// We call the current health state "stale", as it might be different than the actual state.
+			is_stale_connection_healthy: isStaleConnectionHealthy,
+		}
+	);
 }

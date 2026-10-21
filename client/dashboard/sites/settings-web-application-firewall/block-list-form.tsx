@@ -6,6 +6,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { NavigationBlocker } from '../../app/navigation-blocker';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
@@ -51,15 +52,12 @@ const form = {
 
 export default function BlockListForm( { site }: { site: Site } ) {
 	const { data: jetpackSettings } = useSuspenseQuery( siteJetpackSettingsQuery( site.ID ) );
-	const mutation = useMutation( {
-		...siteJetpackSettingsMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Blocked IP addresses saved.' ),
-				error: __( 'Failed to save blocked IP addresses.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( siteJetpackSettingsMutation( site.ID ), {
+			success: __( 'Blocked IP addresses saved.' ),
+			error: __( 'Failed to save blocked IP addresses.' ),
+		} )
+	);
 
 	// The WAF module is only supported on self-hosted Jetpack sites, and not supported on VIP
 	const isFirewallModuleSupported =

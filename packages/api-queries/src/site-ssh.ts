@@ -18,6 +18,7 @@ export const siteSshAccessStatusQuery = ( siteId: number ) =>
 
 export const siteSshAccessEnableMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-ssh-access-enable' },
 		mutationFn: () => enableSshAccess( siteId ),
 		onSuccess: ( data ) => {
 			queryClient.setQueryData( siteSshAccessStatusQuery( siteId ).queryKey, data );
@@ -26,6 +27,7 @@ export const siteSshAccessEnableMutation = ( siteId: number ) =>
 
 export const siteSshAccessDisableMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-ssh-access-disable' },
 		mutationFn: () => disableSshAccess( siteId ),
 		onSuccess: ( data ) => {
 			queryClient.setQueryData( siteSshAccessStatusQuery( siteId ).queryKey, data );
@@ -40,6 +42,7 @@ export const siteSshKeysQuery = ( siteId: number ) =>
 
 export const siteSshKeysAttachMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-ssh-keys-attach' },
 		mutationFn: ( name: string ) => attachSiteSshKey( siteId, name ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteSshKeysQuery( siteId ) );
@@ -48,6 +51,7 @@ export const siteSshKeysAttachMutation = ( siteId: number ) =>
 
 export const siteSshKeysDetachMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-ssh-keys-detach' },
 		mutationFn: ( siteSshKey: SiteSshKey ) =>
 			detachSiteSshKey( siteId, siteSshKey.user_login, siteSshKey.name ),
 		onSuccess: () => {

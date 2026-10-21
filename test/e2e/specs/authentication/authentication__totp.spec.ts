@@ -1,8 +1,10 @@
 import { DataHelper, TOTPClient } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
+const WOO_LOGIN_TIMEOUT = 30_000;
+
 test.describe(
-	'Authentication: Time-based One Time Passcode (TOTP)',
+	DataHelper.createSuiteTitle( 'Authentication: Time-based One Time Passcode (TOTP)' ),
 	{ tag: [ tags.AUTHENTICATION ] },
 	() => {
 		test.describe.configure( { mode: 'serial' } ); // Since both tests use the same TOTP, they should not be run at the same time
@@ -80,13 +82,18 @@ test.describe(
 			} );
 
 			await test.step( 'And I choose to log in', async function () {
-				await page.getByRole( 'link', { name: 'Log in' } ).click();
+				const loginLink = page.getByRole( 'link', { name: 'Log in', exact: true } );
+				await expect( loginLink ).toBeVisible( { timeout: WOO_LOGIN_TIMEOUT } );
+				await loginLink.click();
+				await expect( page ).toHaveURL( /wordpress\.com\/log-in/, {
+					timeout: WOO_LOGIN_TIMEOUT,
+				} );
 			} );
 
 			await test.step( 'Then I see the WordPress.com log in page', async function () {
 				await expect(
 					page.getByRole( 'heading', { name: 'Log in to Woo with WordPress.com' } )
-				).toBeVisible();
+				).toBeVisible( { timeout: WOO_LOGIN_TIMEOUT } );
 			} );
 
 			await test.step( 'When I enter my username', async function () {
@@ -108,13 +115,19 @@ test.describe(
 				await pageLogin.submitVerificationCode( code );
 			} );
 
-			await test.step( 'Then I am see the my dashboard page on WooCommerce.com', async function () {
-				await expect
-					.poll( async () => page.url() )
-					.toBe( `${ environment.WOO_BASE_URL }/my-dashboard/` );
+			await test.step( 'Then I am logged in on WooCommerce.com', async function () {
+				// The landing path is picked per user by a WooCommerce.com experiment, so only
+				// the origin is a stable contract for a completed OAuth round trip.
+				await expect( page ).toHaveURL(
+					( url ) => url.origin === new URL( environment.WOO_BASE_URL ).origin,
+					{ timeout: WOO_LOGIN_TIMEOUT }
+				);
 
-				// The Log Out link is only visible to authenticated users.
-				await expect( page.getByRole( 'link', { name: /log ?out/i } ) ).toBeVisible();
+				// The account menu replaces the Log in link once WooCommerce.com recognises the session.
+				await expect( page.getByRole( 'button', { name: 'Open account menu' } ) ).toBeVisible( {
+					timeout: WOO_LOGIN_TIMEOUT,
+				} );
+				await expect( page.getByRole( 'link', { name: 'Log in', exact: true } ) ).toBeHidden();
 			} );
 		} );
 	}

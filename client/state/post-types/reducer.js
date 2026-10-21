@@ -1,5 +1,5 @@
+import { keyBy } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { keyBy } from 'lodash';
 import { POST_TYPES_RECEIVE } from 'calypso/state/action-types';
 import {
 	combineReducers,
@@ -8,7 +8,6 @@ import {
 	withPersistence,
 } from 'calypso/state/utils';
 import { items as itemsSchema } from './schema';
-import taxonomies from './taxonomies/reducer';
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -35,7 +34,6 @@ export const items = withSchemaValidation(
 
 const combinedReducer = combineReducers( {
 	items,
-	taxonomies,
 } );
 
 export default withStorageKey( 'postTypes', combinedReducer );

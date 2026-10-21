@@ -43,10 +43,10 @@ class ThemeMoreButton extends Component {
 		}
 	};
 
-	popoverAction( action, label, key ) {
+	popoverAction( action, optionSlug, key ) {
 		return () => {
 			action( this.props.themeId, 'more button' );
-			this.props.onMoreButtonClick( this.props.themeId, this.props.index, 'popup_' + label );
+			this.props.onMoreButtonClick( this.props.themeId, this.props.index, 'popup_' + optionSlug );
 			this.props.onMoreButtonItemClick?.( this.props.themeId, this.props.index, key );
 		};
 	}
@@ -88,7 +88,7 @@ class ThemeMoreButton extends Component {
 								return (
 									<PopoverMenuItem
 										key={ `${ key }-geturl` }
-										action={ this.popoverAction( option.action, option.label, option.key ) }
+										action={ this.popoverAction( option.action, key, option.key ) }
 										href={ url }
 										target={ isOutsideCalypso( url ) ? '_blank' : null }
 									>
@@ -100,7 +100,7 @@ class ThemeMoreButton extends Component {
 								return (
 									<PopoverMenuItem
 										key={ `${ key }-action` }
-										action={ this.popoverAction( option.action, option.label, option.key ) }
+										action={ this.popoverAction( option.action, key, option.key ) }
 									>
 										{ option.label }
 									</PopoverMenuItem>

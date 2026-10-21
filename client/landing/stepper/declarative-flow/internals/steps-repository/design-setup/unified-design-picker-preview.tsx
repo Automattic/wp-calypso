@@ -7,15 +7,10 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Onboard, useStarterDesignBySlug } from '@automattic/data-stores';
-import {
-	getDesignPreviewUrl,
-	PERSONAL_THEME,
-	getThemeIdFromDesign,
-} from '@automattic/design-picker';
+import { getDesignPreviewUrl, getThemeIdFromDesign } from '@automattic/design-picker';
 import DesignPreview, { useScreens, type DesignPreviewProps } from '@automattic/design-preview';
 import { StepContainer, Step } from '@automattic/onboarding';
-import { Modal } from '@wordpress/components';
-import { Navigator } from '@wordpress/components/build-types/navigator/types';
+import { Modal, type useNavigator } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -35,7 +30,6 @@ import { urlToSlug } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { hasPurchasedDomain } from 'calypso/state/purchases/selectors/has-purchased-domain';
-import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
@@ -49,9 +43,11 @@ import { goToCheckout } from '../../../../utils/checkout';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
-import type { SiteSelect, GlobalStyles, OnboardSelect } from '@automattic/data-stores';
+import type { GlobalStyles, OnboardSelect } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
+
+type Navigator = ReturnType< typeof useNavigator >;
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -156,9 +152,6 @@ const UnifiedDesignPickerPreview = ( {
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 
-	// @TODO Cleanup once the test phase is over.
-	const isGlobalStylesOnPersonal = useSiteGlobalStylesOnPersonal( site?.ID );
-
 	const wpcomSiteSlug = useSelector( ( state ) => getSiteSlug( state, site?.ID ) );
 	const didPurchaseDomain = useSelector(
 		( state ) => site?.ID && hasPurchasedDomain( state, site.ID )
@@ -169,11 +162,11 @@ const UnifiedDesignPickerPreview = ( {
 	const [ showEligibility, setShowEligibility ] = useState( false );
 
 	const isJetpack = useSelect(
-		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isJetpackSite( site.ID ),
+		( select ) => site && select( SITE_STORE ).isJetpackSite( site.ID ),
 		[ site ]
 	);
 	const isAtomic = useSelect(
-		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
+		( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ),
 		[ site ]
 	);
 
@@ -326,10 +319,10 @@ const UnifiedDesignPickerPreview = ( {
 		const destination = selectedDesign?.is_externally_managed
 			? addQueryArgs( `/marketplace/thank-you/${ wpcomSiteSlug ?? siteSlug }?onboarding`, {
 					themes: selectedDesign?.slug,
-			  } )
+				} )
 			: addQueryArgs( window.location.href.replace( window.location.origin, '' ), {
 					continue: 1,
-			  } );
+				} );
 
 		goToCheckout( {
 			flowName: flow,
@@ -413,7 +406,7 @@ const UnifiedDesignPickerPreview = ( {
 				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 				// When the user is done with checkout, send them back to the current url
 				destination: window.location.href.replace( window.location.origin, '' ),
-				plan: isGlobalStylesOnPersonal ? 'personal' : 'premium',
+				plan: 'personal',
 			} );
 
 			setShowPremiumGlobalStylesModal( false );
@@ -462,25 +455,15 @@ const UnifiedDesignPickerPreview = ( {
 	}
 
 	function getPrimaryActionButtonAction(): () => void {
-		if ( isGlobalStylesOnPersonal ) {
-			if ( isLockedTheme ) {
-				return upgradePlan;
-			}
-
-			if ( shouldUnlockGlobalStyles ) {
-				return unlockPremiumGlobalStyles;
-			}
-
-			return pickDesign;
-		}
-
-		const isPersonalDesign = selectedDesign?.design_tier === PERSONAL_THEME;
 		if ( isLockedTheme ) {
-			// For personal themes we favor the GS Upgrade Modal over the Plan Upgrade Modal.
-			return isPersonalDesign && shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : upgradePlan;
+			return upgradePlan;
 		}
 
-		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : pickDesign;
+		if ( shouldUnlockGlobalStyles ) {
+			return unlockPremiumGlobalStyles;
+		}
+
+		return pickDesign;
 	}
 
 	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
@@ -519,9 +502,7 @@ const UnifiedDesignPickerPreview = ( {
 		limitGlobalStyles: shouldLimitGlobalStyles,
 		variations: styleVariations,
 		splitDefaultVariation:
-			( isGlobalStylesOnPersonal &&
-				selectedDesign?.design_tier === THEME_TIER_FREE &&
-				shouldLimitGlobalStyles ) ||
+			( selectedDesign?.design_tier === THEME_TIER_FREE && shouldLimitGlobalStyles ) ||
 			( ! ( selectedDesign?.design_tier === THEME_TIER_PREMIUM ) &&
 				! isBundled &&
 				! isPremiumThemeAvailable &&
@@ -582,20 +563,11 @@ const UnifiedDesignPickerPreview = ( {
 		navigatorRef,
 		previewUrl: themeDemoUrl || previewUrl,
 		siteInfo: {
-			title: shouldCustomizeText ? site?.name ?? '' : '',
-			tagline: shouldCustomizeText ? site?.description ?? '' : '',
+			title: shouldCustomizeText ? ( site?.name ?? '' ) : '',
+			tagline: shouldCustomizeText ? ( site?.description ?? '' ) : '',
 		},
 		splitDefaultVariation:
-			( isGlobalStylesOnPersonal &&
-				selectedDesign?.design_tier === THEME_TIER_FREE &&
-				shouldLimitGlobalStyles ) ||
-			( ! ( selectedDesign?.design_tier === THEME_TIER_PREMIUM ) &&
-				! isBundled &&
-				! isPremiumThemeAvailable &&
-				! didPurchaseSelectedTheme &&
-				! isPluginBundleEligible &&
-				! isGlobalStylesOnPersonal &&
-				shouldLimitGlobalStyles ),
+			selectedDesign?.design_tier === THEME_TIER_FREE && shouldLimitGlobalStyles,
 		needsUpgrade: shouldLimitGlobalStyles || isLockedTheme,
 		title: headerDesignTitle,
 		selectedDesignTitle: designTitle,
@@ -653,7 +625,8 @@ const UnifiedDesignPickerPreview = ( {
 						standaloneProceed
 						isOnboarding
 						isMarketplace={ selectedDesign?.is_externally_managed }
-						currentContext="plugin-details"
+						context="themes"
+						inModal
 						onProceed={ () => {
 							navigateToCheckout();
 							setShowEligibility( false );

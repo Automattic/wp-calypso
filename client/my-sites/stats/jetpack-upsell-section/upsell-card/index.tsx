@@ -1,4 +1,4 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card, ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Product } from './available-upsells';
 
@@ -37,14 +37,18 @@ export function UpsellCard( { siteTitle, upsells }: UpsellCardProps ) {
 						</div>
 						<h3 className="jetpack-upsell-card__product-title">{ title }</h3>
 						<p className="jetpack-upsell-card__product-description">{ description }</p>
-						<a href={ href } className="jetpack-upsell-card__product-link">
+						<ExternalLink
+							href={ href }
+							className="jetpack-upsell-card__product-link"
+							icon
+							iconSize={ 16 }
+						>
 							<span className="jetpack-upsell-card__product-link-text">
 								{ translate( 'More about %(productName)s', {
 									args: { productName: title },
 								} ) }
 							</span>
-							<Gridicon icon="external" size={ 16 } />
-						</a>
+						</ExternalLink>
 						<Button
 							href={ checkoutUrl! }
 							className="jetpack-upsell-card__product-button"

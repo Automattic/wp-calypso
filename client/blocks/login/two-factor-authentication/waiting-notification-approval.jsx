@@ -14,9 +14,7 @@ export default function WaitingTwoFactorNotificationApproval( { switchTwoFactorA
 		<Fragment>
 			<Card className="two-factor-authentication__push-notification-approval">
 				<p className="two-factor-authentication__info">
-					{ translate(
-						'Check your device. Approve your login with the Jetpack or WordPress mobile app.'
-					) }
+					{ translate( 'Check your device. Approve your login with the Jetpack mobile app.' ) }
 				</p>
 				<PushNotificationIllustration />
 				<FormDivider isHorizontal />

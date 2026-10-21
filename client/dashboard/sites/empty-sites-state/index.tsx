@@ -1,19 +1,19 @@
-import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, reusableBlock, wordpress } from '@wordpress/icons';
+import { backup, Icon, reusableBlock, wordpress } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
 import EmptyState from '../../components/empty-state';
 import OfferCard from '../../components/offer-card';
+import RouterLinkButton from '../../components/router-link-button';
 import { wpcomLink } from '../../utils/link';
 
 const CONTEXT = 'dashboard-sites';
 const EMPTY_STATE_REF = 'dashboard-sites-empty-state';
 const EMPTY_STATE_CTA_ID = 'dashboard-sites-empty-state';
 
-function CreateAndBuildActions() {
+function CreateSiteAction() {
 	const { recordTracksEvent } = useAnalytics();
 
 	const handleCreateSiteClick = () => {
@@ -22,53 +22,28 @@ function CreateAndBuildActions() {
 		} );
 	};
 
-	const handleBuildWithAiClick = () => {
-		recordTracksEvent( 'calypso_sites_dashboard_empty_state_action_click', {
-			action: 'build-with-ai',
-		} );
-	};
-
 	return (
-		<>
-			<EmptyState.ActionItem
-				title={ __( 'Create it yourself' ) }
-				description={ __( 'Start with a clean WordPress site and make it yours.' ) }
-				decoration={ <Icon icon={ wordpress } size={ 24 } /> }
-				actions={
-					<Button
-						variant="secondary"
-						href={ addQueryArgs( wpcomLink( '/start' ), {
-							source: CONTEXT,
-							ref: EMPTY_STATE_REF,
-						} ) }
-						onClick={ handleCreateSiteClick }
-						size="compact"
-						__next40pxDefaultSize
-					>
-						{ __( 'Create a site' ) }
-					</Button>
-				}
-			/>
-			<EmptyState.ActionItem
-				title={ __( 'Build with AI' ) }
-				description={ __( 'Describe your idea and let AI help you refine your site.' ) }
-				decoration={ <BigSkyLogo.Mark /> }
-				actions={
-					<Button
-						variant="secondary"
-						href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder' ), {
-							source: CONTEXT,
-							ref: EMPTY_STATE_REF,
-						} ) }
-						onClick={ handleBuildWithAiClick }
-						__next40pxDefaultSize
-						size="compact"
-					>
-						{ __( 'Build with AI' ) }
-					</Button>
-				}
-			/>
-		</>
+		<EmptyState.ActionItem
+			title={ __( 'Build a new site' ) }
+			description={ __(
+				'Pick a domain and plan, then build it yourself or with the WordPress Agent.'
+			) }
+			decoration={ <Icon icon={ wordpress } size={ 24 } /> }
+			actions={
+				<Button
+					variant="secondary"
+					href={ addQueryArgs( wpcomLink( '/start' ), {
+						source: CONTEXT,
+						ref: EMPTY_STATE_REF,
+					} ) }
+					onClick={ handleCreateSiteClick }
+					size="compact"
+					__next40pxDefaultSize
+				>
+					{ __( 'Create a site' ) }
+				</Button>
+			}
+		/>
 	);
 }
 
@@ -84,11 +59,44 @@ function EmptySitesStateUpsell() {
 	return <OfferCard onClick={ handleOfferClick } />;
 }
 
+export function EmptyDeletedSitesStateContent() {
+	const { recordTracksEvent } = useAnalytics();
+
+	const handleViewDeletedSitesClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_empty_state_action_click', {
+			action: 'view-deleted-sites',
+		} );
+	};
+
+	return (
+		<EmptyState.ActionList>
+			<EmptyState.ActionItem
+				title={ __( 'Restore a deleted site' ) }
+				description={ __( 'Deleted sites can be restored within 30 days of deletion.' ) }
+				decoration={ <Icon icon={ backup } size={ 24 } /> }
+				actions={
+					<RouterLinkButton
+						to="/sites"
+						search={ { is_deleted: true } }
+						variant="primary"
+						onClick={ handleViewDeletedSitesClick }
+						size="compact"
+						__next40pxDefaultSize
+					>
+						{ __( 'Show deleted sites' ) }
+					</RouterLinkButton>
+				}
+			/>
+			<CreateSiteAction />
+		</EmptyState.ActionList>
+	);
+}
+
 export function EmptySitesSearchStateContent() {
 	return (
 		<>
 			<EmptyState.ActionList>
-				<CreateAndBuildActions />
+				<CreateSiteAction />
 			</EmptyState.ActionList>
 			<EmptySitesStateUpsell />
 		</>
@@ -113,7 +121,7 @@ export function EmptySitesStateContent() {
 	return (
 		<>
 			<EmptyState.ActionList>
-				<CreateAndBuildActions />
+				<CreateSiteAction />
 				<EmptyState.ActionItem
 					title={ __( 'Migrate' ) }
 					description={ __( 'Bring your site to the world’s best WordPress host.' ) }

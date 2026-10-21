@@ -1,7 +1,7 @@
-import { Badge } from '@automattic/components';
 import { Button, Icon } from '@wordpress/components';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { check, chevronLeft, chevronRight } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import type { Task, Expandable } from '../types';
 import type { FC, Key } from 'react';
@@ -137,7 +137,11 @@ const ChecklistItem: FC< Props > = ( {
 						<span className="screen-reader-text">{ getStatusText() }</span>
 						<span aria-hidden="true">{ title }</span>
 					</span>
-					{ task.badge_text ? <Badge type="info-blue">{ task.badge_text }</Badge> : null }
+					{ task.badge_text ? (
+						<Badge className="badge" intent="informational">
+							{ String( task.badge_text ) }
+						</Badge>
+					) : null }
 					{ shouldDisplayTaskCounter && (
 						<span className="checklist-item__counter">
 							{ task.repetition_count }/{ task.target_repetitions }

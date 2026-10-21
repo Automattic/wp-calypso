@@ -5,11 +5,14 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import PreferencesAiMcp from '../preferences-ai-mcp';
+import PreferencesAppearance from '../preferences-appearance';
 import PreferencesBlockedSites from '../preferences-blocked-sites';
-import PreferencesDefaults from '../preferences-defaults';
+import PreferencesDefaultsSummary from '../preferences-defaults/summary';
 import PreferencesLanguage from '../preferences-language';
 import PreferencesNewHostingDashboard from '../preferences-new-hosting-dashboard';
 import PreferencesPrivacy from '../preferences-privacy';
+import PreferencesReader from '../preferences-reader';
+import PreferencesWordPressLabs from '../preferences-wordpress-labs';
 
 export default function Preferences() {
 	const { optIn, supports } = useAppContext();
@@ -26,10 +29,13 @@ export default function Preferences() {
 		>
 			<SummaryButtonList>
 				{ optIn ? <PreferencesNewHostingDashboard /> : null }
+				{ isEnabled( 'wordpress-labs' ) ? <PreferencesWordPressLabs /> : null }
+				<PreferencesAppearance />
 				{ isEnabled( 'mcp-settings' ) ? <PreferencesAiMcp /> : null }
 				<PreferencesLanguage />
-				<PreferencesDefaults />
+				<PreferencesDefaultsSummary />
 				<PreferencesPrivacy />
+				{ supports.reader ? <PreferencesReader /> : null }
 				{ supports.reader ? <PreferencesBlockedSites /> : null }
 			</SummaryButtonList>
 		</PageLayout>

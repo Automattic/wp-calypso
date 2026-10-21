@@ -1,6 +1,8 @@
-@import "@automattic/onboarding/styles/mixins";
-@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/grid-mixins";
+@import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/colors.native";
 

@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/variables";
+
 .is-section-github-deployments.theme-default:not(:has(.is-global-sidebar-visible)) {
 	background-color: var(--studio-white);
 	font-size: $font-body-small;

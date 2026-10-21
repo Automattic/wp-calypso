@@ -64,9 +64,7 @@ export default function SocialLogoExample() {
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<div className="design-assets__group">
-			<h2>
-				<a href="/devdocs/design/social-logo">Social Logo</a>
-			</h2>
+			<h2>Social Logo</h2>
 			<div>
 				{ logos.map( ( logo ) => (
 					<SocialLogo

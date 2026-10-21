@@ -1,7 +1,7 @@
+import { debounce } from '@wordpress/compose';
 import cookie from 'cookie';
 import debugFactory from 'debug';
 import { registerTranslateHook } from 'i18n-calypso';
-import { debounce } from 'lodash';
 import { recordOriginals, encodeOriginalKey } from './glotpress';
 
 const debug = debugFactory( 'calypso:translation-scanner' );

@@ -1,3 +1,4 @@
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -48,6 +49,16 @@ export default function PricingSummary( {
 	const isAgencyCheckout = ! isAutomatedReferrals && ! isClient;
 
 	const showOriginalPrice = isAgencyCheckout && totalCost !== actualCost;
+	const summaryTotal = (
+		<div className="checkout__summary-total">
+			<span>
+				{ isAutomatedReferrals
+					? translate( 'Total your client will pay:' )
+					: translate( 'Total:' ) }
+			</span>
+			<span>{ totalCostFormattedText }</span>
+		</div>
+	);
 
 	return (
 		<div className="checkout__summary">
@@ -72,15 +83,14 @@ export default function PricingSummary( {
 				) ) }
 			</ul>
 			<hr />
-			<div className="checkout__summary-total">
-				<span>
-					{ isAutomatedReferrals
-						? translate( 'Total your client will pay:' )
-						: translate( 'Total:' ) }
-				</span>
-				<span>{ totalCostFormattedText }</span>
-			</div>
-			{ isAutomatedReferrals && <CommissionsInfo items={ items } termPricing={ termPricing } /> }
+			{ isAutomatedReferrals ? (
+				<VStack spacing={ 2 }>
+					{ summaryTotal }
+					<CommissionsInfo items={ items } termPricing={ termPricing } />
+				</VStack>
+			) : (
+				summaryTotal
+			) }
 		</div>
 	);
 }

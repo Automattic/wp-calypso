@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
+import { times } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';

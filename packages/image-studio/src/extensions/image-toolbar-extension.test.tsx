@@ -38,6 +38,7 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 jest.mock( '@wordpress/block-editor', () => ( {
+	store: 'core/block-editor',
 	BlockControls: ( { children }: { children: React.ReactNode } ) => (
 		<div data-testid="block-controls">{ children }</div>
 	),
@@ -85,35 +86,73 @@ jest.mock( '../utils/get-image-data', () => ( {} ) );
 import { withImageStudioToolbarButton } from './image-toolbar-extension';
 
 const BlockEdit = () => <div data-testid="block-edit" />;
+const ToolbarBlockEdit = withImageStudioToolbarButton( BlockEdit );
 
 function renderToolbar( {
 	attachment = makeAttachment(),
 	hasResolved = true,
 	attributes = { id: 1, url: BASE_URL },
 	name = 'core/image',
+	settings = { mediaUpload: jest.fn() },
 }: {
 	attachment?: ReturnType< typeof makeAttachment > | null;
 	hasResolved?: boolean;
 	attributes?: { id?: number; url?: string };
 	name?: string;
+	settings?: { mediaUpload?: unknown };
 } = {} ) {
 	( useSelect as jest.Mock ).mockImplementation(
 		( callback: ( select: () => Record< string, jest.Mock > ) => unknown ) =>
 			callback( () => ( {
+				getSettings: jest.fn( () => settings ),
 				getEntityRecord: jest.fn( () => attachment ),
 				hasFinishedResolution: jest.fn( () => hasResolved ),
 			} ) )
 	);
 
-	const Component = withImageStudioToolbarButton( BlockEdit );
 	return render(
-		<Component name={ name } attributes={ attributes } setAttributes={ jest.fn() } />
+		<ToolbarBlockEdit name={ name } attributes={ attributes } setAttributes={ jest.fn() } />
 	);
 }
 
 describe( 'withImageStudioToolbarButton', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+	} );
+
+	it.each( [ false, undefined ] )( 'hides the button when mediaUpload is %s', ( mediaUpload ) => {
+		renderToolbar( { settings: { mediaUpload } } );
+
+		expect( screen.getByTestId( 'block-edit' ) ).toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'Edit image with AI' } )
+		).not.toBeInTheDocument();
+	} );
+
+	it( 'updates the button when upload permission changes', () => {
+		const settings: { mediaUpload?: unknown } = {};
+		const { rerender } = renderToolbar( { settings } );
+		const block = () => (
+			<ToolbarBlockEdit
+				name="core/image"
+				attributes={ { id: 1, url: BASE_URL } }
+				setAttributes={ jest.fn() }
+			/>
+		);
+		expect(
+			screen.queryByRole( 'button', { name: 'Edit image with AI' } )
+		).not.toBeInTheDocument();
+
+		settings.mediaUpload = jest.fn();
+		rerender( block() );
+		expect( screen.getByRole( 'button', { name: 'Edit image with AI' } ) ).toBeInTheDocument();
+
+		settings.mediaUpload = false;
+		rerender( block() );
+		expect(
+			screen.queryByRole( 'button', { name: 'Edit image with AI' } )
+		).not.toBeInTheDocument();
+		expect( screen.getByTestId( 'block-edit' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should return a component compatible with class extends', () => {

@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/route/init';
 
 /**
@@ -7,6 +5,6 @@ import 'calypso/state/route/init';
  * @param {Object} state - global redux state
  * @returns {Object.<string, string|string[]>|null} current state value
  */
-export const getCurrentQueryArguments = ( state ) => get( state, 'route.query.current', null );
+export const getCurrentQueryArguments = ( state ) => state?.route?.query?.current ?? null;
 
 export default getCurrentQueryArguments;

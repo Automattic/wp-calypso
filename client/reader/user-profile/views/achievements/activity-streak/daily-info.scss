@@ -1,0 +1,46 @@
+@import '@automattic/components/src/styles/typography';
+
+.activity-streak__daily-info {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-block-start: 8px;
+}
+
+.activity-streak__day {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	width: 24px;
+	cursor: default;
+}
+
+.activity-streak__day-weekday {
+	font-size: $font-body-extra-small;
+	font-weight: bold;
+	color: var( --color-text-subtle );
+	line-height: 1.2;
+}
+
+.activity-streak__day-icon {
+	width: 24px;
+	height: 24px;
+	background: var( --streak-day-background );
+}
+
+.activity-streak__day-icon.is-missed {
+	--streak-day-background: url( calypso/assets/images/achievements/streak-day-missed.svg ) no-repeat center / cover;
+}
+
+.activity-streak__day-icon.is-extended {
+	--streak-day-background: url( calypso/assets/images/achievements/streak-day-extended.svg ) no-repeat center / cover;
+}
+
+.activity-streak__day-icon.is-freeze-used {
+	--streak-day-background: url( calypso/assets/images/achievements/streak-day-freeze-used.svg ) no-repeat center / cover;
+}
+
+.activity-streak__day-icon.is-freeze-earned {
+	--streak-day-background: url( calypso/assets/images/achievements/streak-day-extended.svg ) no-repeat center / cover;
+}

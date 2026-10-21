@@ -13,6 +13,7 @@ import { useAnalytics } from '../../../../../app/analytics';
 import { ButtonStack } from '../../../../../components/button-stack';
 import { Card, CardBody } from '../../../../../components/card';
 import { settingsPath } from '../../../../../utils/jetpack';
+import { hasQueryableSite } from '../../../../../utils/purchase';
 import RetentionConfirmationDialog from '../retention-confirmation-dialog';
 import type { SiteRewindPoliciesResponse, Purchase } from '@automattic/api-core';
 
@@ -43,7 +44,9 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 
 	const [ retentionOfferCardVisible, setRetentionOfferCardVisible ] = useState( false );
 	const [ confirmationDialogVisible, setConfirmationDialogVisible ] = useState( false );
-	const { data: site } = useQuery( siteByIdQuery( siteId ) );
+	// Holding-site purchases have no readable site; see `hasQueryableSite`.
+	const canQuerySite = hasQueryableSite( purchase );
+	const { data: site } = useQuery( { ...siteByIdQuery( siteId ), enabled: canQuerySite } );
 	const siteSlug = site?.slug ?? purchase.site_slug;
 
 	const updateBackupRetentionDaysMutation = useMutation(
@@ -73,12 +76,14 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 	const onClose = useCallback( () => {
 		setConfirmationDialogVisible( false );
 	}, [] );
-	const { data: siteBackupSize, isPending: fetchingSize } = useQuery(
-		siteBackupSizeQuery( siteId )
-	);
-	const { data: siteBackupPolicies, isPending: fetchingPolicies } = useQuery(
-		siteBackupPoliciesQuery( siteId )
-	);
+	const { data: siteBackupSize, isLoading: fetchingSize } = useQuery( {
+		...siteBackupSizeQuery( siteId ),
+		enabled: canQuerySite,
+	} );
+	const { data: siteBackupPolicies, isLoading: fetchingPolicies } = useQuery( {
+		...siteBackupPoliciesQuery( siteId ),
+		enabled: canQuerySite,
+	} );
 
 	const isFetching = fetchingSize || fetchingPolicies;
 	const storageLimitBytes = siteBackupPolicies?.policies?.storage_limit_bytes ?? 0;

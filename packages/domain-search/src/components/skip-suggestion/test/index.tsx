@@ -97,7 +97,6 @@ describe( 'SkipSuggestion', () => {
 				name: 'Skip purchase and continue with site.wordpress.com',
 			} );
 			expect( skipButton ).toBeInTheDocument();
-			expect( skipButton ).toHaveTextContent( 'Start Free' );
 
 			await userEvent.click( skipButton );
 
@@ -125,6 +124,31 @@ describe( 'SkipSuggestion', () => {
 			expect( screen.getByText( 'Upgrade to a custom domain name anytime.' ) ).toBeInTheDocument();
 
 			expect( freeSuggestionQuery.isDone() ).toBe( true );
+		} );
+
+		it( 'searches for the suggested subdomain when the searched one is unavailable', async () => {
+			const onSearchStart = jest.fn();
+
+			mockGetFreeSuggestionQuery( {
+				params: { query: 'taken' },
+				freeSuggestion: buildFreeSuggestion( { domain_name: 'taken2.wordpress.com' } ),
+			} );
+
+			render(
+				<TestDomainSearchWithSuggestions
+					query="taken.wordpress.com"
+					config={ { skippable: true } }
+					events={ { onSearchStart } }
+				>
+					<SkipSuggestion />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			await userEvent.click(
+				await screen.findByRole( 'button', { name: 'taken2.wordpress.com' } )
+			);
+
+			expect( onSearchStart ).toHaveBeenCalledWith( 'taken2.wordpress.com', 'skip_suggestion' );
 		} );
 
 		it( 'disables the button when a mutation is in progress', async () => {

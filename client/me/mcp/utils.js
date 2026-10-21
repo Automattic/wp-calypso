@@ -72,6 +72,15 @@ export function getSiteAccountToolsEnabled( userSettings, siteId ) {
 	return true;
 }
 
+export function getGroupDescriptors( userSettings ) {
+	const groups = userSettings?.mcp_abilities?.groups ?? [];
+	return [ ...groups ].sort( ( a, b ) => a.order - b.order );
+}
+
+export function getGroupIntents( userSettings ) {
+	return userSettings?.mcp_abilities?.group_intents ?? {};
+}
+
 /**
  * Get the set of tool IDs that are relevant in a site context.
  * Uses mcp_abilities.site as the authoritative list of site-applicable tools.
@@ -93,6 +102,79 @@ export function getSiteMcpAbilities( userSettings, siteId ) {
 	const mcpSites = userSettings?.mcp_abilities?.sites || [];
 	const siteEntry = mcpSites.find( ( site ) => site.blog_id === parseInt( siteId ) );
 	return siteEntry?.abilities || {};
+}
+
+/**
+ * Get the remote-ability allowlist (AI-1329) for a specific site
+ * @param {Object} userSettings - The user settings object
+ * @param {string|number} siteId - The site ID
+ * @returns {Record<string, boolean>} Remote-group map ("{read|write|destructive}:{namespace}" -> true)
+ */
+export function getSiteRemoteGroups( userSettings, siteId ) {
+	const mcpSites = userSettings?.mcp_abilities?.sites || [];
+	const siteEntry = mcpSites.find( ( site ) => site.blog_id === parseInt( siteId ) );
+	return siteEntry?.remote_groups || {};
+}
+
+/**
+ * The allowlist group key of a remote ability: "{read|write|destructive}:{namespace}".
+ * Mirrors SettingsHelper::remote_group_key() — destructive wins over readonly, only a
+ * strict readonly counts as Read, and the namespace is lowercased — so the UI groups
+ * abilities exactly the way the server enforces them.
+ * @param {string} name - Ability name, e.g. "jetpack-boost/get-modules"
+ * @param {Object} [annotations] - Published annotations (readonly, destructive)
+ * @returns {string} Group key
+ */
+export function getRemoteAbilityGroupKey( name, annotations = {} ) {
+	const namespace = String( name ).split( '/' )[ 0 ].toLowerCase();
+	if ( annotations?.destructive === true ) {
+		return `destructive:${ namespace }`;
+	}
+	if ( annotations?.readonly === true ) {
+		return `read:${ namespace }`;
+	}
+	return `write:${ namespace }`;
+}
+
+/**
+ * The access-level page an ability belongs on: everything that isn't a strict
+ * read is treated as a write (destructive included) for display purposes.
+ * @param {string} name - Ability name
+ * @param {Object} [annotations] - Published annotations
+ * @returns {'read'|'write'} Access-level category
+ */
+export function getRemoteAbilityCategory( name, annotations = {} ) {
+	return getRemoteAbilityGroupKey( name, annotations ).startsWith( 'read:' ) ? 'read' : 'write';
+}
+
+/**
+ * The ability-level allowlist key of a remote ability: "{group}/{ability}"
+ * (e.g. "write:akismet/check-comment"). Wins over the group key in server-side
+ * resolution, so one ability can be allowed or denied inside its group.
+ * @param {string} name - Ability name
+ * @param {Object} [annotations] - Published annotations
+ * @returns {string} Ability-level key
+ */
+export function getRemoteAbilityKey( name, annotations = {} ) {
+	const namespace = String( name ).split( '/' )[ 0 ];
+	return `${ getRemoteAbilityGroupKey( name, annotations ) }${ String( name ).slice(
+		namespace.length
+	) }`.toLowerCase();
+}
+
+/**
+ * Whether a remote ability is enabled in a saved allowlist: the ability-level
+ * key when present, otherwise the group key.
+ * @param {Object} savedGroups - Saved remote-group map
+ * @param {string} name - Ability name
+ * @param {Object} [annotations] - Published annotations
+ * @returns {boolean}
+ */
+export function isRemoteAbilityEnabled( savedGroups, name, annotations = {} ) {
+	return (
+		savedGroups[ getRemoteAbilityKey( name, annotations ) ] ??
+		savedGroups[ getRemoteAbilityGroupKey( name, annotations ) ] === true
+	);
 }
 
 /**

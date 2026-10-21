@@ -3,7 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { changePaymentMethodRoute } from '../../../app/router/me';
-import { isCloseToExpiration, isInExpirationGracePeriod } from '../../../utils/purchase';
+import { isCloseToExpiration, isExpiredAndInGracePeriod, isRemoved } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
 /**
@@ -12,12 +12,12 @@ import type { Purchase } from '@automattic/api-core';
 export function shouldShowRenewNoticeAction( purchase: Purchase ): boolean {
 	// If the purchase is fully removed, do not show any actions. Such a
 	// subscription cannot be renewed; it would have to be purchased again.
-	// However, a purchase can be expired without being removed, and those
-	// purchases can be renewed so we want to allow that case.
-	if ( purchase.subscription_status !== 'active' ) {
+	if ( isRemoved( purchase ) ) {
 		return false;
 	}
 
+	// When the purchase is close to expiration and has no payment method or
+	// can't be renewed, we should show an "Add Payment Method" action.
 	const shouldAddPaymentSourceInsteadOfRenewingNow =
 		isCloseToExpiration( purchase ) ||
 		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD;
@@ -28,11 +28,8 @@ export function shouldShowRenewNoticeAction( purchase: Purchase ): boolean {
 		return true;
 	}
 
-	// isExpiring(), which leads here (along with isExpired()) returns true
-	// when expiring, when auto-renew is disabled, or when the payment method
-	// was credits but we don't want to show "Add Payment Method" if the
-	// subscription is actually expiring or expired; we want to show "Renew
-	// Now" in that case.
+	// When the purchase is far away from expiration but was paid for with
+	// credits, we should show an "Add Payment Method" action too.
 	if ( purchase.payment_type === 'credits' && purchase.expiry_status === 'manual-renew' ) {
 		return true;
 	}
@@ -41,8 +38,9 @@ export function shouldShowRenewNoticeAction( purchase: Purchase ): boolean {
 		return true;
 	}
 
-	// Show renew action for purchases in grace period that can be renewed.
-	if ( purchase.can_explicit_renew && isInExpirationGracePeriod( purchase ) ) {
+	// When the purchase is past its expiration date, we always want to show
+	// "Renew now" if it's possible to renew.
+	if ( purchase.can_explicit_renew && isExpiredAndInGracePeriod( purchase ) ) {
 		return true;
 	}
 
@@ -64,6 +62,9 @@ export function RenewNoticeAction( {
 	onClick: () => void;
 } ) {
 	const navigate = useNavigate();
+
+	// When the purchase is close to expiration and has no payment method or
+	// can't be renewed, we should show an "Add Payment Method" action.
 	const shouldAddPaymentSourceInsteadOfRenewingNow =
 		isCloseToExpiration( purchase ) ||
 		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD;
@@ -86,11 +87,8 @@ export function RenewNoticeAction( {
 		);
 	}
 
-	// isExpiring(), which leads here (along with isExpired()) returns true
-	// when expiring, when auto-renew is disabled, or when the payment method
-	// was credits but we don't want to show "Add Payment Method" if the
-	// subscription is actually expiring or expired; we want to show "Renew
-	// Now" in that case.
+	// When the purchase is far away from expiration but was paid for with
+	// credits, we should show an "Add Payment Method" action too.
 	if ( purchase.payment_type === 'credits' && purchase.expiry_status === 'manual-renew' ) {
 		return (
 			<Button

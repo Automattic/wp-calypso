@@ -9,21 +9,14 @@ import { formatLabel } from './utils';
 import type { PresetId } from './utils';
 import './style.scss';
 
-type DateRangePickerProps = {
+export type DateRangePickerProps = {
 	start: Date;
 	end: Date;
 	onChange: ( next: { start: Date; end: Date } ) => void;
 	timezoneString?: string;
 	gmtOffset?: number;
 	locale: string;
-	disableFuture?: boolean;
 	defaultFallbackPreset?: PresetId; // preset to apply when inputs are empty and user presses Apply
-	inputsProps?: {
-		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onStartBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onEndBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-	};
 };
 
 export function DateRangePicker( {
@@ -33,9 +26,7 @@ export function DateRangePicker( {
 	gmtOffset,
 	timezoneString,
 	locale,
-	disableFuture = true,
 	defaultFallbackPreset = 'last-7-days',
-	inputsProps,
 }: DateRangePickerProps ) {
 	const isSmall = useMediaQuery( '(max-width: 600px)' );
 	// Use a wider breakpoint to decide when two calendars can fit comfortably
@@ -95,9 +86,7 @@ export function DateRangePicker( {
 					onClose={ onClose }
 					mobileLabelId={ mobileLabelId }
 					desktopLabelId={ desktopLabelId }
-					disableFuture={ disableFuture }
 					defaultFallbackPreset={ defaultFallbackPreset }
-					inputsProps={ inputsProps }
 				/>
 			) }
 		/>
@@ -115,7 +104,6 @@ function DateRangePickerInner( {
 	onClose,
 	mobileLabelId,
 	desktopLabelId,
-	disableFuture,
 	defaultFallbackPreset,
 }: {
 	isSmall: boolean;
@@ -128,14 +116,7 @@ function DateRangePickerInner( {
 	onClose: () => void;
 	mobileLabelId: string;
 	desktopLabelId: string;
-	disableFuture: boolean;
 	defaultFallbackPreset: PresetId;
-	inputsProps?: {
-		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onStartBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onEndBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-	};
 } ) {
 	const [ fromDraft, setFromDraft ] = useState< Date | undefined >( () => start );
 	const [ toDraft, setToDraft ] = useState< Date | undefined >( () => end );
@@ -175,7 +156,6 @@ function DateRangePickerInner( {
 			todayStr={ todayStr }
 			mobileLabelId={ mobileLabelId }
 			desktopLabelId={ desktopLabelId }
-			disableFuture={ disableFuture }
 			showTwoMonths={ showTwoMonths }
 			defaultFallbackPreset={ defaultFallbackPreset }
 		/>

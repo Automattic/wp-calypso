@@ -140,7 +140,6 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 			wide
 		>
 			<GuidedTour defaultTourId="marketplaceWalkthrough" />
-
 			<div className="products-overview__top" ref={ topRef }>
 				<LayoutTop>
 					<A4AAgencyApprovalNotice />
@@ -166,7 +165,11 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 							) }
 							<div className="a4a-marketplace__header-actions">
 								<MobileSidebarNavigation />
-								<div ref={ ( ref ) => setReferralToggleRef( ref as HTMLElement | null ) }>
+								<div
+									ref={ ( ref ) => {
+										setReferralToggleRef( ref as HTMLElement | null );
+									} }
+								>
 									<ReferralToggle />
 								</div>
 								<ShoppingCart
@@ -200,7 +203,6 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 					<ProductCategoryMenu onSelect={ onCategorySelected } />
 				</LayoutTop>
 			</div>
-
 			<div
 				className="products-overview__action-panel-wrapper"
 				ref={ actionPanelRef }
@@ -218,7 +220,6 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 					setSelectedBundleSize={ setSelectedBundleSize }
 				/>
 			</div>
-
 			<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
 				{
 					// we will remove this once we have the new product listing component

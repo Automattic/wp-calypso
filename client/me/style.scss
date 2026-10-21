@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
@@ -95,7 +96,7 @@ body.is-section-me {
 	}
 
 	@media only screen and ( max-width: 600px ) {
-		.navigation-header:not( .developer__header ) {
+		.navigation-header:not( .developer__header ):not( .wordpress-agent__header ) {
 			padding: 0 0 24px 0;
 		}
 		.navigation-header__main {

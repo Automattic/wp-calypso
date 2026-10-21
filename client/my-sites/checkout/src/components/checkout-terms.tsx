@@ -1,7 +1,6 @@
 import { isDomainTransfer } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
 import { styled } from '@automattic/wpcom-checkout';
-import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { Children, Fragment, ReactNode, isValidElement } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
@@ -13,10 +12,9 @@ import {
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import DomainPromotionalPricingRestrictions from 'calypso/my-sites/checkout/src/components/domain-promotional-pricing-restrictions';
 import { useSelector } from 'calypso/state';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { isJetpackNotAtomicSite, useCheckoutSite } from '../hooks/use-checkout-site';
+import { useContactDetails } from '../lib/checkout-stores';
 import AdditionalTermsOfServiceInCart from './additional-terms-of-service-in-cart';
 import BundledDomainNotice, { showBundledDomainNotice } from './bundled-domain-notice';
 import DomainRegistrationAgreement from './domain-registration-agreement';
@@ -29,6 +27,7 @@ import JetpackSocialAdvancedPricingDisclaimer, {
 	showJetpackSocialAdvancedPricingDisclaimer,
 } from './jetpack-social-advanced-pricing-disclaimer';
 import RefundPolicies from './refund-policies';
+import { hasStudioCodeAiCredits } from './studio-code-ai-credits-guidelines';
 import { PlanTerms100Year, DomainTerms100Year } from './terms-100-year';
 import { TermsOfService } from './terms-of-service';
 import ThirdPartyPluginsTermsOfService from './third-party-plugins-terms-of-service';
@@ -60,14 +59,19 @@ const TermsCollapsedContent = styled.div`
 	}
 `;
 
-export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
+export default function CheckoutTerms( {
+	cart,
+	expandReadMore = false,
+}: {
+	cart: ResponseCart;
+	expandReadMore?: boolean;
+} ) {
 	const isGiftPurchase = cart.is_gift_purchase;
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const isJetpackNotAtomic = useSelector( ( state ) => {
-		return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
-	} );
-	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
+	const { data: site } = useCheckoutSite( siteId );
+	const isJetpackNotAtomic = isJetpackNotAtomicSite( site );
+	const contactInfo = useContactDetails();
 	const isNotJetpackOrAkismetCheckout =
 		! isJetpackCheckout() && ! isJetpackNotAtomic && ! isAkismetCheckout();
 
@@ -95,6 +99,7 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 			</div>
 
 			<TermsOfService
+				hasStudioCodeAiCredits={ hasStudioCodeAiCredits( cart ) }
 				hasRenewableSubscription={ hasRenewableSubscription( cart ) || hasDomainTransfer }
 				isGiftPurchase={ Boolean( isGiftPurchase ) }
 				is100YearPlanPurchase={ has100YearPlan( cart ) }
@@ -114,7 +119,7 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 				{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
 				{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
 
-				<CheckoutTermsReadMore>
+				<CheckoutTermsReadMore expanded={ expandReadMore }>
 					{ shouldShowBundledDomainNotice && <BundledDomainNotice cart={ cart } /> }
 					{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
 					{ shouldShowJetpackSocialAdvancedPricingDisclaimer && (
@@ -129,7 +134,13 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 /**
  * Render a FoldableCard to contain TOS items or nothing if there are no items.
  */
-function CheckoutTermsReadMore( { children }: { children: ReactNode } ) {
+function CheckoutTermsReadMore( {
+	children,
+	expanded = false,
+}: {
+	children: ReactNode;
+	expanded?: boolean;
+} ) {
 	const translate = useTranslate();
 	// Note that this technique for finding children does not work for strings or
 	// empty fragments. Hopefully all children passed to this component are
@@ -142,6 +153,7 @@ function CheckoutTermsReadMore( { children }: { children: ReactNode } ) {
 			<FoldableCard
 				clickableHeader
 				compact
+				expanded={ expanded }
 				className="checkout__terms-foldable-card"
 				header={ translate( 'Read more' ) }
 				screenReaderText={ translate( 'Read more' ) }

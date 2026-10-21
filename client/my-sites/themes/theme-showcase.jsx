@@ -2,9 +2,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { pickBy } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { compact, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { InView } from 'react-intersection-observer';
@@ -19,11 +19,13 @@ import ThemeDesignYourOwnModal from 'calypso/components/theme-design-your-own-mo
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
 import FilterBarModern from 'calypso/my-sites/themes/filter-bar-modern';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -44,6 +46,7 @@ import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
 import PlanUpgradeBanner from './banners-modern/plan-upgrade-banner';
 import { CustomSelectWrapper } from './custom-select-wrapper';
+import DifmOfferBanner from './difm-offer-banner';
 import {
 	addTracking,
 	getSubjectsFromTermTable,
@@ -51,6 +54,7 @@ import {
 	localizeThemesPath,
 	isStaticFilter,
 	constructThemeShowcaseUrl,
+	shouldEnableThemesColorScheme,
 } from './helpers';
 import SearchResultsModern from './search-results-modern';
 import RecommendedSections from './sections-modern/recommended-sections';
@@ -61,6 +65,9 @@ import ThemesFAQ from './themes-faq';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
 import './theme-showcase.scss';
+
+const loadJitm = () =>
+	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
 
 const optionShape = PropTypes.shape( {
 	label: PropTypes.string,
@@ -102,11 +109,13 @@ class ThemeShowcase extends Component {
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
 		loggedOutComponent: PropTypes.bool,
+		isSiteRoute: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
 		isSiteECommerceFreeTrial: PropTypes.bool,
 		isSiteWooExpress: PropTypes.bool,
 		isSiteWooExpressOrEcomFreeTrial: PropTypes.bool,
+		isThemesColorSchemeEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -321,7 +330,7 @@ class ThemeShowcase extends Component {
 		const filters = searchString.match( filterRegex ) || [];
 
 		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
-		const filterString = compact( validFilters ).join( '+' );
+		const filterString = validFilters.filter( Boolean ).join( '+' );
 
 		const search = searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim();
 
@@ -517,9 +526,7 @@ class ThemeShowcase extends Component {
 		if ( config.isEnabled( 'jitms' ) && ! loggedOutComponent ) {
 			return (
 				<AsyncLoad
-					require={ () =>
-						import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' )
-					}
+					require={ loadJitm }
 					placeholder={ null }
 					messagePath="calypso:themes:showcase-website-design"
 				/>
@@ -718,7 +725,7 @@ class ThemeShowcase extends Component {
 		const showThemeErrors =
 			siteId && this.props.category === staticFilters.MYTHEMES.key && isJetpackSite;
 
-		return (
+		const showcase = (
 			<div className={ classnames }>
 				<PageViewTracker
 					path={ this.props.analyticsPath }
@@ -859,6 +866,7 @@ class ThemeShowcase extends Component {
 					) }
 					<div className="themes__showcase">
 						{ showThemeErrors && <ThemeErrors siteId={ siteId } /> }
+						{ siteId && <DifmOfferBanner siteId={ siteId } /> }
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>
@@ -871,12 +879,20 @@ class ThemeShowcase extends Component {
 				</div>
 			</div>
 		);
+
+		return withColorScheme( showcase, {
+			bodyClass: 'is-themes-dark-mode',
+			enabled: this.props.isThemesColorSchemeEnabled,
+			Provider: ClassicColorSchemeProvider,
+		} );
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter } ) => {
+const mapStateToProps = ( state, { siteId, filter, isSiteRoute } ) => {
+	const isLoggedIn = isUserLoggedIn( state );
+
 	return {
-		isLoggedIn: isUserLoggedIn( state ),
+		isLoggedIn,
 		isAtomicSite: isAtomicSite( state, siteId ),
 		areSiteFeaturesLoaded: !! getSiteFeaturesById( state, siteId ),
 		site: getSite( state, siteId ),
@@ -897,6 +913,11 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
 		themeTiers: getThemeTiers( state ),
+		isThemesColorSchemeEnabled: shouldEnableThemesColorScheme( {
+			isSiteRoute,
+			isLoggedIn,
+			dashboardOptIn: hasDashboardOptIn( state ),
+		} ),
 	};
 };
 

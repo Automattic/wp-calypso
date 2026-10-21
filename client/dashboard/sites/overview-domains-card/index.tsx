@@ -2,7 +2,7 @@ import { DomainSubtype, type DomainSummary, type Site } from '@automattic/api-co
 import { siteCurrentPlanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import { siteDomainsRoute } from '../../app/router/sites';
@@ -10,10 +10,15 @@ import { CalloutSkeleton } from '../../components/callout-skeleton';
 import { Card, CardHeader, CardBody } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
-import { useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
+import {
+	filterSortAndPaginateDomains,
+	useFields,
+	DEFAULT_VIEW,
+	DEFAULT_LAYOUTS,
+} from '../../domains/dataviews';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { isCommerceGarden, isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import DomainTransferUpsellCard from '../overview-domain-transfer-upsell-card';
 import DomainUpsellCard from '../overview-domain-upsell-card';
 
@@ -23,6 +28,7 @@ const getDomainId = ( domain: DomainSummary ): string => {
 
 const view = {
 	...DEFAULT_VIEW,
+	layout: { ...DEFAULT_VIEW.layout, enableMoving: false },
 	fields: [ 'expiry', 'domain_status' ],
 };
 
@@ -32,7 +38,20 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 	const router = useRouter();
 	const fields = useFields( { site, inOverview: true } );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
+	// Disable the column controls for the DataView display without affecting
+	// sorting/filtering in `filterSortAndPaginateDomains`, which reads the raw fields.
+	const displayFields = fields.map( ( field ) => ( {
+		...field,
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false as const,
+	} ) );
+
+	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
+		domains,
+		view,
+		fields
+	);
 
 	return (
 		<Card>
@@ -64,7 +83,7 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 			<CardBody>
 				<DataViews< DomainSummary >
 					data={ filteredData || [] }
-					fields={ fields }
+					fields={ displayFields }
 					onChangeView={ onChangeView }
 					view={ view }
 					paginationInfo={ paginationInfo }
@@ -83,22 +102,20 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 
 export default function DomainsCard( { site }: { site: Site } ) {
 	const { queries } = useAppContext();
-	const isCommerceGardenSite = isCommerceGarden( site );
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: siteDomains } = useQuery( {
 		...queries.domainsQuery(),
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
 	} );
 
-	if ( site.is_wpcom_staging_site ) {
+	if ( site.is_wpcom_staging_site || site.is_a4a_dev_site ) {
 		return null;
 	}
 
 	if ( ! sitePlan || ! siteDomains ) {
 		// Given that the SiteDomainsDataViews is disabled for the backport,
 		// we skip rendering the skeleton here as it might not result in any component being rendered at all.
-		// For CIAB (hideUpsells), we also skip the skeleton to avoid CLS when it turns out there are no domains.
-		if ( isDashboardBackport() || isCommerceGardenSite ) {
+		if ( isDashboardBackport() ) {
 			return null;
 		}
 
@@ -109,16 +126,10 @@ export default function DomainsCard( { site }: { site: Site } ) {
 		isSelfHostedJetpackConnected( site ) &&
 		siteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
 	) {
-		if ( isCommerceGardenSite ) {
-			return null;
-		}
 		return <DomainTransferUpsellCard />;
 	}
 
 	if ( ! siteDomains.find( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS ) ) {
-		if ( isCommerceGardenSite ) {
-			return null;
-		}
 		return <DomainUpsellCard site={ site } />;
 	}
 

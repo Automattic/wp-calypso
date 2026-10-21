@@ -7,6 +7,16 @@
 	flex-shrink: 0;
 }
 
+.domains-full-cart-items__bundle-protect-icon {
+	fill: currentColor;
+	flex: 0 0 auto;
+}
+
+.domains-full-cart-items__bundle-members {
+	border-top: 1px solid rgba( 0, 0, 0, 0.05 );
+	padding: 16px 0;
+}
+
 .domains-full-cart-items__original-price {
 	text-decoration: line-through;
 }

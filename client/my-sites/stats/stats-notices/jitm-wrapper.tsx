@@ -4,6 +4,9 @@ import { useSelector } from 'calypso/state';
 import { getTopJITM } from 'calypso/state/jitm/selectors';
 import { StatsNoticeProps } from './types';
 
+const loadJitm = () =>
+	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
+
 const JITMWrapper: React.FC< StatsNoticeProps > = ( { isOdysseyStats } ) => {
 	const messagePath = isOdysseyStats
 		? 'wp:jetpack_page_stats:admin_notices'
@@ -18,9 +21,7 @@ const JITMWrapper: React.FC< StatsNoticeProps > = ( { isOdysseyStats } ) => {
 			} ) }
 		>
 			<AsyncLoad
-				require={ () =>
-					import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' )
-				}
+				require={ loadJitm }
 				placeholder={ null }
 				messagePath={ messagePath }
 				searchQuery="page%3Dstats"

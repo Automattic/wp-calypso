@@ -1,6 +1,15 @@
-import { createContext, useCallback, useContext, useState } from '@wordpress/element';
-import { getSessionId } from '../utils/agent-session';
-import type { UseAgentChatConfig } from '@automattic/agenttic-client';
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useLayoutEffect,
+	useState,
+} from '@wordpress/element';
+import { useNavigate } from 'react-router-dom';
+import { getSessionId, NO_SITE, setSessionSiteKey, setSessionUserId } from '../utils/agent-session';
+import { getWooZendeskIntegrationKey } from '../utils/is-woo-ai-provider';
+import { setResolvedAgentId } from '../utils/resolved-agent-id';
+import type { AgentConfig } from '../utils/create-agent-config';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
 
 /**
@@ -22,31 +31,47 @@ export interface AgentsManagerContextType {
 	sectionName: string;
 	/** The current route path. */
 	currentRoute?: string;
+	/** Whether this screen is currently enabled only for internal users. */
+	isInternalOnly: boolean;
+	/** Whether the host's masterbar renders the AI chat button, even before it's in the DOM. */
+	hasMasterbarAiChatButton: boolean;
 	/**
 	 * Whether the user is eligible for chat support.
 	 *
 	 * TODO: Implement with dedicated endpoint. Currently hardcoded to false.
 	 */
 	isEligibleForChat: boolean;
+	/** Zendesk conversation tags to apply when a new support conversation is created. */
+	zendeskConversationTags: string[];
+	/** Index selecting a dedicated Smooch integration for new support conversations (e.g. `woo`). */
+	zendeskSmoochIntegrationKey?: string;
+	/** Zendesk Product ticket-field value to apply to new support conversations. */
+	zendeskTicketProductFieldValue?: string;
 	/** The agent configuration created during setup. */
-	agentConfig: UseAgentChatConfig | null;
+	agentConfig: AgentConfig | null;
 	/** Sets the agent configuration (called from `AgentSetup` after initialization). */
-	setAgentConfig: ( config: UseAgentChatConfig | null ) => void;
-	/** Returns the active session ID from `agentConfig` or stored session. */
-	getActiveSessionId: () => string;
+	setAgentConfig: ( config: AgentConfig | null ) => void;
+	/** Returns this tab's active session ID from the stored session. */
+	getTabSessionId: () => string;
+	/** Reopen the chat, resuming this tab's conversation. */
+	resumeChat: () => void;
 }
 
 const defaultContext: AgentsManagerContextType = {
 	currentUser: undefined,
 	isLoggedIn: false,
 	site: null,
-	siteKey: 'no-site',
+	siteKey: NO_SITE,
 	sectionName: 'wp-admin',
 	currentRoute: undefined,
+	isInternalOnly: false,
+	hasMasterbarAiChatButton: false,
 	isEligibleForChat: false,
+	zendeskConversationTags: [],
 	agentConfig: null,
 	setAgentConfig: () => {},
-	getActiveSessionId: () => '',
+	getTabSessionId: () => '',
+	resumeChat: () => {},
 };
 
 const AgentsManagerContext = createContext< AgentsManagerContextType >( defaultContext );
@@ -54,7 +79,18 @@ const AgentsManagerContext = createContext< AgentsManagerContextType >( defaultC
 export interface AgentsManagerContextProviderProps {
 	children: React.ReactNode;
 	value: Partial<
-		Pick< AgentsManagerContextType, 'currentUser' | 'site' | 'currentRoute' | 'isEligibleForChat' >
+		Pick<
+			AgentsManagerContextType,
+			| 'currentUser'
+			| 'site'
+			| 'currentRoute'
+			| 'isInternalOnly'
+			| 'hasMasterbarAiChatButton'
+			| 'isEligibleForChat'
+			| 'zendeskConversationTags'
+			| 'zendeskSmoochIntegrationKey'
+			| 'zendeskTicketProductFieldValue'
+		>
 	> & { sectionName: string; siteKey: string };
 }
 
@@ -65,12 +101,32 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 	children,
 	value,
 } ) => {
-	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
+	const [ agentConfig, setAgentConfig ] = useState< AgentConfig | null >( null );
 	const isLoggedIn = value.currentUser?.ID !== undefined;
+	const zendeskSmoochIntegrationKey = getWooZendeskIntegrationKey(
+		value.zendeskSmoochIntegrationKey
+	);
 
-	const getActiveSessionId = useCallback( () => {
-		return agentConfig?.sessionId || getSessionId( agentConfig?.agentId );
-	}, [ agentConfig ] );
+	const navigate = useNavigate();
+
+	const getTabSessionId = useCallback( () => {
+		return getSessionId( agentConfig?.agentId, value.siteKey, value.currentUser?.ID );
+	}, [ agentConfig?.agentId, value.siteKey, value.currentUser?.ID ] );
+
+	// `AgentSetup` resolves this tab's stored session, so navigating is all a
+	// resume needs.
+	const resumeChat = useCallback( () => {
+		navigate( '/chat' );
+	}, [ navigate ] );
+
+	// Publish the resolved agent id and session scope for non-React callers
+	// (e.g. tracks), which fire from event handlers after commit. React callers
+	// receive the scope explicitly, so no render-phase module writes are needed.
+	useLayoutEffect( () => {
+		setResolvedAgentId( agentConfig?.agentId );
+		setSessionSiteKey( value.siteKey );
+		setSessionUserId( value.currentUser?.ID );
+	}, [ agentConfig?.agentId, value.siteKey, value.currentUser?.ID ] );
 
 	return (
 		<AgentsManagerContext.Provider
@@ -78,9 +134,11 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 				...defaultContext,
 				...value,
 				isLoggedIn,
+				zendeskSmoochIntegrationKey,
 				agentConfig,
 				setAgentConfig,
-				getActiveSessionId,
+				getTabSessionId,
+				resumeChat,
 			} }
 		>
 			{ children }

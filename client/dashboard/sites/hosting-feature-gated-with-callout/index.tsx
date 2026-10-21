@@ -1,12 +1,8 @@
-import { useRouterState } from '@tanstack/react-router';
 import { useViewportMatch } from '@wordpress/compose';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import EmptyState from '../../components/empty-state';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import SnackbarBackButton, {
-	getSnackbarBackButtonText,
-} from '../../components/snackbar-back-button';
 import HostingFeatureGate from '../hosting-feature-gate';
 import ActivationCallout from './activation';
 import UpsellCallout, { UpsellCalloutProps } from './upsell';
@@ -34,19 +30,11 @@ export default function HostingFeatureGatedWithCallout( {
 	upsellImage,
 	upsellTitle,
 	upsellDescription,
+	upsellPlanRequirement,
 	...props
 }: HostingFeatureGatedWithCalloutProps ) {
-	const {
-		location: { search },
-	} = useRouterState();
-
 	const { site, upsellId, upsellFeatureId, feature } = props;
 	const isDesktop = useViewportMatch( 'medium' );
-
-	const snackbarBackButtonText = getSnackbarBackButtonText( search.back_to );
-	const backButton = snackbarBackButtonText && (
-		<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>
-	);
 
 	const wrapCallout = ( callout: ReactNode ) => {
 		if ( ! fullPage ) {
@@ -79,6 +67,7 @@ export default function HostingFeatureGatedWithCallout( {
 						upsellImage={ upsellImage }
 						upsellTitle={ upsellTitle }
 						upsellDescription={ upsellDescription }
+						upsellPlanRequirement={ upsellPlanRequirement }
 						feature={ feature }
 					/>
 				);
@@ -87,7 +76,6 @@ export default function HostingFeatureGatedWithCallout( {
 					<>
 						<PerformanceTrackerStop />
 						{ wrapCallout( upsellCallout ) }
-						{ backButton }
 					</>
 				);
 			} }
@@ -104,7 +92,6 @@ export default function HostingFeatureGatedWithCallout( {
 					<>
 						<PerformanceTrackerStop />
 						{ wrapCallout( activationCallout ) }
-						{ backButton }
 					</>
 				);
 			} }

@@ -4,10 +4,10 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
-import { useContainerQuery } from '../../hooks/use-container-query';
+import { useEffect, useRef, useState } from 'react';
 import { useTypedPlaceholder } from '../../hooks/use-typed-placeholder';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
@@ -30,34 +30,49 @@ export const SearchForm = () => {
 	const [ localQuery, setLocalQuery ] = useState( '' );
 	const { placeholder } = useTypedPlaceholder( PLACEHOLDER_PHRASES, false );
 	const [ showSearchHint, setShowSearchHint ] = useState( false );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 
-	const { activeQuery, ref } = useContainerQuery( { small: 0, large: 480 } );
+	// autoFocus races the stepper's route-transition animation; focus
+	// in an effect lands reliably after the commit phase.
+	const inputRef = useRef< HTMLInputElement >( null );
+	useEffect( () => {
+		inputRef.current?.focus();
+	}, [] );
 
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		setQuery( localQuery );
+		setQuery( localQuery, 'submit' );
 
 		if ( localQuery === '' ) {
 			setShowSearchHint( true );
 		}
 	};
 
+	const inputProps = {
+		ref: inputRef,
+		value: localQuery,
+		onChange: ( value: string ) => setLocalQuery( value.trim() ),
+		onReset: () => setLocalQuery( '' ),
+		placeholder,
+	};
+
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 2 }>
-				<HStack alignment="flex-start" spacing={ 4 } ref={ ref }>
-					<DomainSearchControls.Input
-						value={ localQuery }
-						onChange={ ( value ) => setLocalQuery( value.trim() ) }
-						onReset={ () => setLocalQuery( '' ) }
-						placeholder={ placeholder }
-						// eslint-disable-next-line jsx-a11y/no-autofocus
-						autoFocus
-					/>
-					{ activeQuery === 'large' && (
+				{ isMobileViewport ? (
+					<div className="domain-search__search-form-field">
+						<DomainSearchControls.Input { ...inputProps } />
+						<DomainSearchControls.Submit
+							iconOnly
+							onClick={ () => onSubmitButtonClick( localQuery ) }
+						/>
+					</div>
+				) : (
+					<HStack alignment="flex-start" spacing={ 4 }>
+						<DomainSearchControls.Input { ...inputProps } />
 						<DomainSearchControls.Submit onClick={ () => onSubmitButtonClick( localQuery ) } />
-					) }
-				</HStack>
+					</HStack>
+				) }
 				{ showSearchHint && (
 					<Text variant="muted">
 						{ createInterpolateElement(
@@ -68,14 +83,14 @@ export const SearchForm = () => {
 								studioLink: (
 									<Button
 										variant="link"
-										onClick={ () => setQuery( 'studio' ) }
+										onClick={ () => setQuery( 'studio', 'hint_link' ) }
 										className="domain-search__search-form-hint"
 									/>
 								),
 								coffeeLink: (
 									<Button
 										variant="link"
-										onClick={ () => setQuery( 'coffee' ) }
+										onClick={ () => setQuery( 'coffee', 'hint_link' ) }
 										className="domain-search__search-form-hint"
 									/>
 								),

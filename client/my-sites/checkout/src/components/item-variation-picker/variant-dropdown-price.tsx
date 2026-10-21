@@ -3,10 +3,18 @@ import {
 	isMultiYearDomainProduct,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
+import {
+	calculateDiscountPercentage,
+	fromVariantPriceData,
+	getPlanPriceForDuration,
+} from '@automattic/plans-grid-next';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { LoadingCopy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
+import useCartKey from '../../../use-cart-key';
 import {
 	Discount,
 	DoNotPayThis,
@@ -17,7 +25,6 @@ import {
 	PriceTextContainer,
 	Variant,
 } from './styles';
-import { getItemVariantDiscount, getItemVariantCompareToPrice } from './util';
 import type { WPCOMProductVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -40,8 +47,21 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	product: ResponseCartProduct;
 } > = ( { variant, compareTo, product } ) => {
 	const isMobile = useMobileBreakpoint();
-	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
-	const discountPercentage = getItemVariantDiscount( variant, compareTo );
+	const cartKey = useCartKey();
+	const { couponStatus } = useShoppingCart( cartKey );
+	const isApplyingCoupon = couponStatus === 'pending';
+	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
+	const variantInfo = fromVariantPriceData( variant );
+	const compareToPriceForVariantTerm = compareToInfo
+		? getPlanPriceForDuration( compareToInfo, variantInfo.termMonths )
+		: undefined;
+	const discountPercentage =
+		( compareToPriceForVariantTerm &&
+			calculateDiscountPercentage(
+				compareToPriceForVariantTerm,
+				getPlanPriceForDuration( variantInfo, variantInfo.termMonths )
+			) ) ??
+		0;
 
 	const formattedCurrentPrice = formatCurrency( variant.priceInteger, variant.currency, {
 		stripZeros: true,
@@ -51,7 +71,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 		? formatCurrency( compareToPriceForVariantTerm, variant.currency, {
 				stripZeros: true,
 				isSmallestUnit: true,
-		  } )
+			} )
 		: undefined;
 	// Introductory offer variables
 	const introTerm = variant.introductoryTerm;
@@ -109,22 +129,22 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 					? translate(
 							'%(formattedCurrentPrice)s first month then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
 							{ args: multiYearArgs }
-					  )
+						)
 					: translate(
 							'%(formattedCurrentPrice)s first year then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
 							{ args: multiYearArgs }
-					  );
+						);
 				// translation example: $1 first month then $2 per 2 years
 			} else if ( productBillingTermInMonths === 12 ) {
 				return introTerm === 'month'
 					? translate(
 							'%(formattedCurrentPrice)s first month then %(formattedPriceBeforeDiscounts)s per year',
 							{ args }
-					  )
+						)
 					: translate(
 							'%(formattedCurrentPrice)s first year then %(formattedPriceBeforeDiscounts)s per year',
 							{ args }
-					  );
+						);
 				// translation example: $1 first month then $2 per year
 			} else if ( productBillingTermInMonths === 1 && introTerm === 'year' ) {
 				return translate(
@@ -147,24 +167,24 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 								'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
 								{ args: multiYearArgs }
 							)
-					  )
+						)
 					: preventWidows(
 							translate(
 								'%(formattedCurrentPrice)s for first %(introCount)s years then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
 								{ args: multiYearArgs }
 							)
-					  );
+						);
 				// translation example: $1 first 3 months then $2 per 2 years
 			} else if ( productBillingTermInMonths === 12 ) {
 				return introTerm === 'month'
 					? translate(
 							'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per year',
 							{ args }
-					  )
+						)
 					: translate(
 							'%(formattedCurrentPrice)s first %(introCount)s years then %(formattedPriceBeforeDiscounts)s per year',
 							{ args }
-					  );
+						);
 			} else if ( productBillingTermInMonths === 1 && introTerm === 'year' ) {
 				return translate(
 					'%(formattedCurrentPrice)s first %(introCount)s years then %(formattedPriceBeforeDiscounts)s per month',
@@ -192,21 +212,27 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 				{ hasDiscount && isMobile && <DiscountPercentage percent={ discountPercentage } /> }
 			</Label>
 			<PriceTextContainer>
-				{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
-					<DiscountPercentage percent={ discountPercentage } />
-				) }
-				{ hasDiscount && ! isIntroductoryOffer && (
-					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
-				) }
+				{ isApplyingCoupon ? (
+					<LoadingCopy width="80px" height="16px" noMargin />
+				) : (
+					<>
+						{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
+							<DiscountPercentage percent={ discountPercentage } />
+						) }
+						{ hasDiscount && ! isIntroductoryOffer && (
+							<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
+						) }
 
-				<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
-				<IntroPricing>
-					{ ! isMultiYearDomain && ! isA4ACheckout && (
-						<IntroPricingText>
-							{ isIntroductoryOffer && translatedIntroOfferDetails() }
-						</IntroPricingText>
-					) }
-				</IntroPricing>
+						<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
+						<IntroPricing>
+							{ ! isMultiYearDomain && ! isA4ACheckout && (
+								<IntroPricingText>
+									{ isIntroductoryOffer && translatedIntroOfferDetails() }
+								</IntroPricingText>
+							) }
+						</IntroPricing>
+					</>
+				) }
 			</PriceTextContainer>
 		</Variant>
 	);

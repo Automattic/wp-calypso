@@ -1,5 +1,5 @@
 import { Button, ConfettiAnimation } from '@automattic/components';
-import { useLaunchpad } from '@automattic/data-stores';
+import { useLaunchpad } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import DocumentHead from 'calypso/components/data/document-head';

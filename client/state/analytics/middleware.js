@@ -4,7 +4,6 @@ import {
 } from 'calypso/lib/analytics/ad-tracking';
 import { gaRecordEvent, gaRecordPageView } from 'calypso/lib/analytics/ga';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
-import { maybeAddLogRocketScript } from 'calypso/lib/analytics/logrocket';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
@@ -35,14 +34,10 @@ const loadTrackingTool = ( trackingTool, store ) => {
 		addHotJarScript();
 	}
 
-	if ( trackingTool === 'LogRocket' ) {
-		maybeAddLogRocketScript();
-	}
-
 	if ( trackingTool === 'Survicate' ) {
 		const user = getCurrentUser( store.getState() );
 		if ( user?.email && user?.date ) {
-			addSurvicate( { email: user.email, registrationDate: user.date } );
+			addSurvicate( { email: user.email, registrationDate: user.date, userId: user.ID } );
 		}
 	}
 };

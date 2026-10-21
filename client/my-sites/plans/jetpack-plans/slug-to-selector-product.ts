@@ -224,7 +224,7 @@ function itemToSelectorProduct(
 			displayName: getForCurrentCROIteration( item.getTitle ) ?? '',
 			type: ITEM_TYPE_PLAN,
 			shortName: getForCurrentCROIteration( item.getTitle ) ?? '',
-			tagline: getForCurrentCROIteration( item.getTagline ) || '',
+			tagline: getForCurrentCROIteration( () => item.getTagline?.() ) || '',
 			description: getForCurrentCROIteration( item.getDescription ),
 			featuredDescription: getFeaturedPlanDescription( item ),
 			lightboxDescription: getLightboxPlanDescription( item ),

@@ -20,7 +20,7 @@ class PostUnavailable extends PureComponent {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Card tagName="article" className="reader__card is-error">
+			<Card ref={ this.props.itemRef } tagName="article" className="reader__card is-error">
 				<div className="reader__post-header">
 					<h1 className="reader__post-title">
 						<div className="reader__post-title-link">

@@ -1,17 +1,13 @@
 //TODO: Temporary export until we can replace all dependencies with ./types.ts Task;
 export type { Task } from '@automattic/launchpad';
-import { type ChecklistStatuses, type SiteDetails } from '@automattic/data-stores';
-import { type Task } from '@automattic/launchpad';
+import { type SiteDetails } from '@automattic/data-stores';
+import { type ChecklistStatuses, type Task } from '@automattic/launchpad';
 import { type MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { QueryClient } from '@tanstack/react-query';
 import { Dispatch, SetStateAction, type ReactNode } from 'react';
 import { type NavigationControls } from '../../types';
 
 export type LaunchpadChecklist = Task[];
-
-export interface LaunchpadFlowTaskList {
-	[ string: string ]: string[];
-}
 
 export interface TranslatedLaunchpadStrings {
 	flowName: string;

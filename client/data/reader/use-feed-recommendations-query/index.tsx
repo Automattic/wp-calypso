@@ -1,11 +1,5 @@
-import { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'calypso/state';
-import { requestUserRecommendedBlogs } from 'calypso/state/reader/lists/actions';
-import {
-	getUserRecommendedBlogs,
-	hasRequestedUserRecommendedBlogs,
-	isRequestingUserRecommendedBlogs,
-} from 'calypso/state/reader/lists/selectors';
+import { readListItemsAllQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 
 interface QueryOptions {
 	enabled?: boolean;
@@ -44,8 +38,9 @@ export interface FeedRecommendation {
 	feedId: string;
 }
 
-// A blog from a list may have either a site or feed object, and the data is structured in different
-// property names. This function normalizes the data to a consistent format.
+// A blog from a list may have either a site or feed object, and the data is
+// structured in different property names. This function normalizes the data to
+// a consistent format.
 const normalizeFeedRecommendation = ( blog: APIFeedRecommendation ): FeedRecommendation => {
 	if ( blog.meta?.data?.site ) {
 		const { name, feed_URL: feedUrl, ID: siteId, icon } = blog.meta.data.site;
@@ -71,42 +66,24 @@ const normalizeFeedRecommendation = ( blog: APIFeedRecommendation ): FeedRecomme
 
 /**
  * Hook to fetch and manage user recommended blogs.
- * @param userLogin - The user login to fetch recommendations for
- * @param options - Optional configuration
- * @param options.enabled - Whether the query should be enabled (default: true)
- * @returns Object containing loading state, data, and success status
+ *
+ * `readListItemsAllQuery` already short-circuits retries for the
+ * `list_not_found` error (matching the legacy `noRetry()` policy), so this
+ * hook only adds normalization on top.
  */
 export const useFeedRecommendationsQuery = ( userLogin?: string, options?: QueryOptions ) => {
 	const { enabled = true } = options || {};
-	const dispatch = useDispatch();
-	const hasRequested = useSelector( ( state ) =>
-		hasRequestedUserRecommendedBlogs( state, userLogin || '' )
-	);
 
-	const isRequesting = useSelector( ( state ) =>
-		isRequestingUserRecommendedBlogs( state, userLogin || '' )
-	);
-
-	const recommendedBlogs = useSelector( ( state ) =>
-		getUserRecommendedBlogs( state, userLogin || '' )
-	);
-
-	const needsRequest = ! recommendedBlogs && userLogin && ! hasRequested && enabled;
-
-	useEffect( () => {
-		if ( needsRequest ) {
-			dispatch( requestUserRecommendedBlogs( userLogin ) );
-		}
-	}, [ userLogin, needsRequest, dispatch ] );
-
-	const feedRecommendations = useMemo< FeedRecommendation[] >(
-		() => recommendedBlogs?.map?.( normalizeFeedRecommendation ),
-		[ recommendedBlogs ]
-	);
+	const { data, isLoading, isFetched } = useQuery( {
+		...readListItemsAllQuery( userLogin, 'recommended-blogs' ),
+		enabled: !! userLogin && enabled,
+		select: ( response ): FeedRecommendation[] =>
+			( response.items as unknown as APIFeedRecommendation[] ).map( normalizeFeedRecommendation ),
+	} );
 
 	return {
-		isLoading: isRequesting || needsRequest,
-		data: feedRecommendations ?? [],
-		isFetched: ! isRequesting && hasRequested && ! needsRequest,
+		isLoading,
+		data: data ?? ( [] as FeedRecommendation[] ),
+		isFetched,
 	};
 };

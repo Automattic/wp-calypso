@@ -20,6 +20,7 @@ describe( 'actions', () => {
 				type: ADMIN_MENU_RECEIVE,
 				siteId: 374948,
 				menu: menuFixture,
+				groups: [],
 			} );
 		} );
 	} );

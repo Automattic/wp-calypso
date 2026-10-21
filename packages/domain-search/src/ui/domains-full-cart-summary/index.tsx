@@ -15,7 +15,7 @@ export const DomainsFullCartSummary = ( {
 		// translators: %(domains)s is the number of domains selected.
 		_n( '%(domains)s domain', '%(domains)s domains', totalItems ),
 		{
-			domains: totalItems,
+			domains: String( totalItems ),
 		}
 	);
 

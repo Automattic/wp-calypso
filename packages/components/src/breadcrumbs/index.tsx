@@ -123,7 +123,7 @@ const BreadcrumbsNav = forwardRef<
 		<nav
 			className={ clsx( 'a8c-components-breadcrumbs', { 'is-offscreen': isOffscreen } ) }
 			ref={ ref }
-			{ ...( isOffscreen && { 'aria-hidden': true, inert: '' } ) }
+			{ ...( isOffscreen && { 'aria-hidden': true, inert: true } ) }
 			{ ...props }
 		>
 			<HStack

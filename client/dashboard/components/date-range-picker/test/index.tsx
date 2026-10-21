@@ -5,7 +5,7 @@ import { render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import { useState } from 'react';
-import { DateRangePicker } from '../index';
+import { DateRangePicker } from '..';
 import type { ComponentProps } from 'react';
 
 function renderDateRangePicker( {
@@ -38,7 +38,7 @@ function renderDateRangePicker( {
 
 describe( 'DateRangePicker (new)', () => {
 	// Ensure we 'freeze' the time and date so we don't get test flakiness depending on when they are run,
-	// and when testing presets as well as disableFuture.
+	// and when testing presets as well as disabled future dates.
 	beforeEach( () => {
 		MockDate.set( '2025-08-25T12:00:00Z' );
 	} );
@@ -76,6 +76,47 @@ describe( 'DateRangePicker (new)', () => {
 			( t ) => t.includes( 'Aug 6, 2025' ) && t.includes( 'Aug 8, 2025' )
 		);
 		expect( span ).toBeVisible();
+	} );
+
+	test( 'starting a new range from a complete one empties the end date input', async () => {
+		const { getByRole, findByRole, getByLabelText } = renderDateRangePicker();
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		const augGrid = await findByRole( 'grid', { name: /August 2025/i } );
+		await userEvent.click( within( augGrid ).getByRole( 'button', { name: /August 6, 2025/i } ) );
+
+		expect( getByLabelText( 'End date' ) ).toHaveValue( '' );
+	} );
+
+	test( 'clicking the day of a single-day range does not fall back to the default preset', async () => {
+		const { getByRole, findByRole } = renderDateRangePicker( {
+			start: new Date( 2025, 7, 20 ),
+			end: new Date( 2025, 7, 20 ),
+		} );
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		const augGrid = await findByRole( 'grid', { name: /August 2025/i } );
+		await userEvent.click( within( augGrid ).getByRole( 'button', { name: /August 20, 2025/i } ) );
+
+		expect( getByRole( 'button', { name: /^Apply$/i } ) ).toBeDisabled();
+	} );
+
+	// The test environment runs in UTC, so a New York site is a day behind at site midnight.
+	test( 'today follows the site day when the site is behind the browser', async () => {
+		const { getByRole, findByRole } = renderDateRangePicker( {
+			timezoneString: 'America/New_York',
+		} );
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		const grid = within( await findByRole( 'grid', { name: /August 2025/i } ) );
+		expect( grid.getByRole( 'button', { name: /August 25, 2025/i } ) ).toBeEnabled();
+	} );
+
+	test( 'shows one month below the two-month breakpoint', async () => {
+		const { getByRole, findAllByRole } = renderDateRangePicker();
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		expect( await findAllByRole( 'grid' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'Clear → shows “Apply last 7 days”; click applies and closes', async () => {
@@ -168,8 +209,8 @@ describe( 'DateRangePicker (new)', () => {
 		expect( applyDefault ).toBeEnabled();
 	} );
 
-	test( 'disableFuture prevents selecting a future date', async () => {
-		const { getByRole, findByRole } = renderDateRangePicker( { disableFuture: true } );
+	test( 'future dates cannot be selected', async () => {
+		const { getByRole, findByRole } = renderDateRangePicker();
 
 		// Open
 		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
@@ -210,6 +251,20 @@ describe( 'DateRangePicker (new)', () => {
 		// Label should reflect Aug 24 → Aug 24
 		const updated = await findByRole( 'button', {
 			name: /Date range:.*Aug 24, 2025.*Aug 24, 2025/i,
+		} );
+		expect( updated ).toBeVisible();
+	} );
+
+	test( 'last-90-days preset applies a 90-day window', async () => {
+		const { getByRole, findByRole } = renderDateRangePicker();
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		const listbox = await findByRole( 'listbox', { name: /Date range presets/i } );
+		await userEvent.click( within( listbox ).getByRole( 'option', { name: /last 90 days/i } ) );
+
+		// 89 days back from Aug 25 2025 → May 28 2025 (inclusive 90 days)
+		const updated = await findByRole( 'button', {
+			name: /Date range:.*May 28, 2025.*Aug 25, 2025/i,
 		} );
 		expect( updated ).toBeVisible();
 	} );

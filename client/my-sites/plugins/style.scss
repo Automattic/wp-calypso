@@ -1,3 +1,7 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/grid-mixins";
+@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
@@ -71,6 +75,18 @@ body.is-section-plugins {
 		.plugins-browser,
 		.is-plugin-details {
 			overflow-x: hidden;
+		}
+	}
+
+	// When the agents-manager (AI) sidebar is open, AM applies
+	// `#content { overflow: auto !important }` on plugins routes,
+	// which causes these ::before pseudo-elements to end up overflowing
+	// the container and causing unnecessary scrollbars.
+	&.agents-manager-sidebar-container--sidebar-open {
+		.plugins-browser :has(> .section-header-container)::before,
+		.is-plugin-details :has(> .section-header-container)::before {
+			width: auto;
+			height: auto;
 		}
 	}
 
@@ -343,14 +359,13 @@ $calypso-header-height: 31px;
 		margin-top: 24px;
 		gap: 16px;
 		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		font-size: $font-body-extra-small;
 
-		@include breakpoint-deprecated( '<1280px' ) {
-			flex-direction: column;
-			gap: 10px;
-		}
-
 		.plugin-details__plugin-download-cta {
+			flex-shrink: 0;
+
 			a {
 				font-size: $font-body-extra-small;
 				padding: 6px 14px;
@@ -360,6 +375,8 @@ $calypso-header-height: 31px;
 		.full-width-section & {
 			font-size: $font-body-small;
 			flex-direction: column;
+			align-items: initial;
+			justify-content: initial;
 
 			border-top: 1px solid var(--studio-gray-5);
 			padding-top: 24px;
@@ -716,14 +733,6 @@ body.is-section-plugins #primary {
 	}
 }
 
-.plugin-details__reviews {
-	margin-bottom: 40px;
-
-	@media screen and ( max-width: 1040px ) {
-		padding: 16px;
-	}
-}
-
 .full-width-section.plugins__marketplace-footer {
 	--scss-font-title-large: 2.5rem;
 	--scss-font-body: 1.375rem;
@@ -787,18 +796,6 @@ body.is-section-plugins #primary {
 	}
 }
 
-.banner.card.plugin-details__reviews-banner {
-	&:hover {
-		cursor: pointer;
-		box-shadow:
-			0 0 1px var( --color-neutral ),
-			0 2px 4px var( --color-neutral-10 );
-	}
-
-	~ .plugin-details__page .plugin-details__layout {
-		padding-top: calc( $layout-padding-top - 40px );
-	}
-}
 body.is-section-plugins:has(.is-full-width-layout) {
 	.plugins-browser__content-wrapper {
 		background-color: var(--studio-white);
@@ -818,7 +815,9 @@ body.is-section-plugins:has(.is-full-width-layout) {
 			height: 0;
 		}
 
-		.x-nav-item, .x-dropdown-link, .x-menu-link {
+		.x-nav-item,
+		.x-dropdown-link,
+		.x-menu-link:not(.cta-btn-nav) {
 			color: var(--studio-gray-100);
 		}
 		.x-dropdown-link {
@@ -837,13 +836,6 @@ body.is-section-plugins:has(.is-full-width-layout) {
 }
 
 // Remove layout padding for logged-out full-width layout (covers both actually logged out and logged-in showing logged-out UI)
-body.is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out),
-body.is-section-plugins:has(.is-plugin-details.is-full-width-layout) {
-	.lpc-footer-nav-wrapper,
-	.lpc-footer-automattic-nav-wrapper {
-		max-width: 1220px;
-	}
-}
 body .is-section-plugins:has(.plugins-browser.is-full-width-layout.is-logged-out) .layout__content,
 body.is-section-plugins .layout__primary main.main.is-plugin-details.is-full-width-layout {
 	padding: 0;

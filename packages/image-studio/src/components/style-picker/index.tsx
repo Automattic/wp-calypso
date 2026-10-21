@@ -18,18 +18,35 @@ import origamiPreview from '../../assets/origami.webp';
 import photographicPreview from '../../assets/photographic.webp';
 import pixelArtPreview from '../../assets/pixel-art.webp';
 import texturePreview from '../../assets/texture.webp';
+import videoCinematicPreview from '../../assets/video/styles/cinematic.webp';
 import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
+import { store as videoStudioStore } from '../../stores/video-studio';
 import { ImageStudioMode } from '../../types';
 import { trackImageStudioStyleSelected } from '../../utils/tracking';
 import { BrushIcon } from '../icons/BrushIcon';
 
+export type StylePickerVariant = 'image' | 'video';
+
 interface StylePickerProps {
 	disabled?: boolean;
 	mode: ImageStudioMode;
+	variant?: StylePickerVariant;
 }
 
-export const STYLE_OPTIONS = [
+interface StyleOption {
+	label: string;
+	value: string;
+	preview: string;
+	// One-line explainer rendered under the label. Video styles use it;
+	// image styles are self-explanatory by name and omit it.
+	description?: string;
+	// Renders the card with the native disabled attribute + a greyed-out
+	// .is-disabled style — used to tease an upcoming style.
+	disabled?: boolean;
+}
+
+export const STYLE_OPTIONS: StyleOption[] = [
 	{ label: __( 'None', __i18n_text_domain__ ), value: 'none', preview: nonePreview },
 	{
 		label: __( 'Vivid', __i18n_text_domain__ ),
@@ -114,12 +131,32 @@ export const STYLE_OPTIONS = [
 	},
 ];
 
-export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
-	const { setSelectedStyle } = useDispatch( imageStudioStore );
+export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
+	{
+		label: __( 'Cinematic', __i18n_text_domain__ ),
+		value: 'cinematic',
+		preview: videoCinematicPreview,
+		description: __( 'Create an 8-second b-roll mood clip from a prompt.', __i18n_text_domain__ ),
+	},
+];
 
-	const selectedStyle = useSelect( ( select ) => {
-		return select( imageStudioStore ).getSelectedStyle();
-	}, [] );
+export function StylePicker( { disabled = false, mode, variant = 'image' }: StylePickerProps ) {
+	const isVideo = variant === 'video';
+	// Video and image variants live in independent stores so the two slices
+	// never collide — the video bundle's "Style" is unrelated to the image
+	// bundle's "Style".
+	const targetStore = isVideo ? videoStudioStore : imageStudioStore;
+
+	const { setSelectedStyle } = useDispatch( targetStore );
+
+	const selectedStyle = useSelect(
+		( select ) => {
+			return select( targetStore ).getSelectedStyle();
+		},
+		[ targetStore ]
+	);
+
+	const options = isVideo ? VIDEO_STYLE_OPTIONS : STYLE_OPTIONS;
 
 	const handleStyleSelect = ( value: string ) => {
 		setSelectedStyle( value );
@@ -139,7 +176,7 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 	};
 
 	const selectedLabel =
-		STYLE_OPTIONS.find( ( opt ) => opt.value === selectedStyle )?.label ??
+		options.find( ( opt ) => opt.value === selectedStyle )?.label ??
 		__( 'Style', __i18n_text_domain__ );
 
 	return (
@@ -150,12 +187,14 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 			disabled={ disabled }
 		>
 			<div className="image-studio-input-toolbar-dialog-grid">
-				{ STYLE_OPTIONS.map( ( option ) => (
+				{ options.map( ( option ) => (
 					<button
 						key={ option.value }
 						type="button"
+						disabled={ option.disabled }
 						className={ cn( 'image-studio-input-toolbar-card', {
 							'is-selected': selectedStyle === option.value,
+							'is-disabled': option.disabled,
 						} ) }
 						onClick={ () => handleStyleSelect( option.value ) }
 					>
@@ -167,6 +206,11 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 							/>
 						</span>
 						<span className="image-studio-input-toolbar-card__label">{ option.label }</span>
+						{ option.description ? (
+							<span className="image-studio-input-toolbar-card__description">
+								{ option.description }
+							</span>
+						) : null }
 					</button>
 				) ) }
 			</div>

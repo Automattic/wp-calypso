@@ -1,5 +1,8 @@
+export * from './api-cancel-atomic-plan';
 export * from './api-close-account';
+export * from './api-create-free-site';
 export * from './api-delete-site';
+export * from './api-wait-for-account-propagation';
 export * from './swap-base-url';
 
 /**

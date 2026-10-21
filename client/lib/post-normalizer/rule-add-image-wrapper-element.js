@@ -1,5 +1,3 @@
-import { forEach } from 'lodash';
-
 /**
  * Gets the image width and height from an img attribute
  * We can get the aspect ratio with the width and height
@@ -56,7 +54,7 @@ export default function addImageWrapperElement( post, dom ) {
 	}
 
 	const images = dom.querySelectorAll( 'img[src]' );
-	forEach( images, ( image ) => {
+	Array.from( images ).forEach( ( image ) => {
 		if ( image.classList.contains( 'wp-smiley' ) || image.classList.contains( 'emoji' ) ) {
 			// filter images that have the class wp-smiley or emoji
 			// these are emoji images and should not be wrapped

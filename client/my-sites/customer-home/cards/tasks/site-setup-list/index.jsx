@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { Card, Spinner } from '@automattic/components';
+import { memoize } from '@automattic/js-utils';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import clsx from 'clsx';
 import { translate, useRtl } from 'i18n-calypso';
-import { memoize } from 'lodash';
 import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -305,12 +305,12 @@ const SiteSetupList = ( {
 										useAccordionLayout && isCurrent && showAccordionSelectedTask
 											? () => {
 													setShowAccordionSelectedTask( false );
-											  }
+												}
 											: () => {
 													setShowAccordionSelectedTask( true );
 													setTaskIsManuallySelected( true );
 													setCurrentTaskId( task.id );
-											  }
+												}
 									}
 									useAccordionLayout={ useAccordionLayout }
 								/>

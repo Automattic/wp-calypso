@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { omit, isEmpty } from '@automattic/js-utils';
 import { isHostingSignupFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, fixMe } from 'i18n-calypso';
-import { get, isEmpty, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -175,7 +175,7 @@ export class UserStep extends Component {
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 
-		const clientId = get( this.props.initialContext, 'query.oauth2_client_id', null );
+		const clientId = this.props.initialContext?.query?.oauth2_client_id ?? null;
 		if ( this.props.oauth2Signup && clientId ) {
 			this.props.fetchOAuth2ClientData( clientId );
 		}
@@ -538,7 +538,7 @@ export class UserStep extends Component {
 		const { translate } = this.props;
 
 		if ( this.userCreationPending() ) {
-			return translate( 'Creating Your Account…' );
+			return translate( 'Creating your account…' );
 		}
 
 		return translate( 'Create your account' );
@@ -679,6 +679,7 @@ export class UserStep extends Component {
 						isSectionSignup
 						loginUrl={ this.getLoginUrl() }
 						noThanksRedirectUrl={ noThanksRedirectUrl }
+						linkLogoToHome={ this.props.flowName === 'account' }
 					>
 						{ this.renderSignupForm() }
 					</OneLoginLayout>
@@ -707,7 +708,7 @@ const ConnectedUser = connect(
 			isWoo,
 			isWooJPC: isWooJPCFlow( state ),
 			isBlazePro,
-			from: get( getCurrentQueryArguments( state ), 'from' ),
+			from: getCurrentQueryArguments( state )?.from,
 			userLoggedIn: isUserLoggedIn( state ),
 			isOnboardingAffiliateFlow: getIsOnboardingAffiliateFlow( state ),
 			isA4A,

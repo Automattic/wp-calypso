@@ -39,9 +39,12 @@ $stats-utm-border: 1px solid var(--gray-gray-5, #dcdcde);
 	flex-direction: column; // allow for a divider line between grouped items
 	min-width: $stats-utm-popover-min-width;
 
+	// The 0 and 5 steps of --color-accent are the decorative highlight, which diverges from the
+	// controls beside this one now that they follow --wp-admin-theme-color. That colour has no such
+	// steps, so both are mixed, at the percentages the date range picker's shortcut rows already use.
 	&:hover {
 		.components-button {
-			background-color: var(--color-primary-0);
+			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 6%, transparent);
 		}
 	}
 
@@ -51,7 +54,7 @@ $stats-utm-border: 1px solid var(--gray-gray-5, #dcdcde);
 
 	&.is-selected {
 		.components-button {
-			background-color: var(--color-accent-5);
+			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 12%, transparent);
 		}
 	}
 

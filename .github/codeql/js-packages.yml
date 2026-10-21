@@ -1,0 +1,4 @@
+name: CodeQL JavaScript packages
+
+paths:
+  - packages

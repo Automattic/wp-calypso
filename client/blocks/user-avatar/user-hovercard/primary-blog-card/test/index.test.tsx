@@ -115,14 +115,16 @@ describe( 'PrimaryBlogCard', () => {
 		renderWithProvider( <PrimaryBlogCard user={ defaultUser } /> );
 
 		expect( screen.getByTestId( 'follow-button' ) ).toBeVisible();
-		expect( ReaderFollowButton ).toHaveBeenCalledWith(
+		// Assert only on the props (first argument). React 18 calls function
+		// components with a second argument (legacy context), React 19 does not,
+		// so checking the call's first argument keeps this version-agnostic.
+		expect( jest.mocked( ReaderFollowButton ).mock.lastCall?.[ 0 ] ).toEqual(
 			expect.objectContaining( {
 				siteUrl: 'https://testblog.com',
 				feedId: 200,
 				siteId: 100,
 				iconSize: 24,
-			} ),
-			expect.anything()
+			} )
 		);
 	} );
 

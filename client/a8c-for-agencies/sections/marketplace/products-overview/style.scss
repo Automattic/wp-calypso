@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '../variables';
@@ -15,8 +17,7 @@ $header-compact-height-mobile: 128px;
 
 	.products-overview__top {
 		max-height: auto;
-		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-bg.svg )
-			no-repeat top right $header-background-color;
+		background: $header-background-color;
 		border-block-end: none;
 		position: sticky;
 		top: 0;
@@ -30,11 +31,11 @@ $header-compact-height-mobile: 128px;
 	}
 
 	.hosting-dashboard-layout__header-breadcrumb {
-		color: var( --color-neutral-40 );
-		fill: var( --color-neutral-40 );
+		color: var( --color-text-white );
+		fill: var( --color-text-white );
 
 		a {
-			color: var( --color-primary-5 );
+			color: var( --color-text-white );
 		}
 	}
 

@@ -1,0 +1,59 @@
+.a4a-payment-risk-notice-banner {
+	.notice-banner__action-bar {
+		gap: 8px;
+		margin-block-start: 16px;
+
+		> * {
+			margin: 0;
+		}
+
+		a.components-button.is-primary,
+		a.components-button.is-primary:hover,
+		a.components-button.is-primary:focus,
+		a.components-button.is-primary:active {
+			color: var( --color-text-inverted );
+		}
+
+		a.components-button.is-secondary,
+		a.components-button.is-secondary:hover,
+		a.components-button.is-secondary:focus,
+		a.components-button.is-secondary:active {
+			color: var( --color-primary-50 );
+			border-color: var( --color-primary-50 );
+		}
+	}
+}
+
+.a4a-payment-risk-notice-menu-indicator {
+	align-items: center;
+	border-radius: 50%;
+	color: var( --color-text-inverted );
+	display: inline-flex;
+	flex-shrink: 0;
+	font-size: 10px;
+	font-weight: 600;
+	height: 14px;
+	justify-content: center;
+	line-height: 14px;
+	margin-inline-start: 4px;
+	min-width: 14px;
+	vertical-align: middle;
+}
+
+.a4a-payment-risk-notice-menu-title {
+	align-items: center;
+	display: inline-flex;
+	gap: 12px;
+
+	.a4a-payment-risk-notice-menu-indicator {
+		margin-inline-start: 0;
+	}
+}
+
+.a4a-payment-risk-notice-menu-indicator--error {
+	background-color: var( --color-error-50 );
+}
+
+.a4a-payment-risk-notice-menu-indicator--warning {
+	background-color: var( --color-warning-50 );
+}

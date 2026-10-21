@@ -1,4 +1,9 @@
-import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_BACKUPS_SELF_SERVE,
+	WPCOM_FEATURES_INSTALL_PLUGINS,
+	getPlanBusinessTitle,
+	getPlanEcommerceTitle,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Badge, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
@@ -13,6 +18,7 @@ import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import version_compare from 'calypso/lib/version-compare';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
+import { sparkleFilled } from 'calypso/my-sites/plugins/marketplace-ai-experience/sparkle-icon';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
@@ -49,6 +55,7 @@ const PluginsBrowserListElement = ( props ) => {
 		plugin = {},
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
+		why,
 	} = props;
 
 	const dispatch = useDispatch();
@@ -192,12 +199,23 @@ const PluginsBrowserListElement = ( props ) => {
 		return 'vaultpress' === plugin.slug && ! jetpackNonAtomic;
 	}, [ jetpackNonAtomic, plugin.slug ] );
 
+	// WordPress.com provides backups itself, so point to the plans that include them instead.
+	const isBuiltInBackupPlugin = isIncompatiblePlugin && 'jetpack-backup' === plugin.slug;
+
 	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite?.ID ) );
 
 	const canInstallPlugins =
 		useSelector( ( state ) =>
 			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PLUGINS )
 		) || jetpackNonAtomic;
+
+	// The backups page upsells sites without self-serve backups, so only those sites get the shortcut.
+	const canViewBackups =
+		useSelector( ( state ) =>
+			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_BACKUPS_SELF_SERVE )
+		) && !! site;
+	const showBackupShortcut =
+		isIncompatibleBackupPlugin || ( isBuiltInBackupPlugin && canViewBackups );
 
 	if ( isPlaceholder ) {
 		return <Placeholder variant={ variant } />;
@@ -246,6 +264,17 @@ const PluginsBrowserListElement = ( props ) => {
 						<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 					) }
 				</div>
+				{ !! why && (
+					<div className="plugins-browser-item__why">
+						<Icon className="plugins-browser-item__why-icon" icon={ sparkleFilled } size={ 18 } />
+						<div className="plugins-browser-item__why-body">
+							<span className="plugins-browser-item__why-label">
+								{ translate( 'Why this fits' ) }
+							</span>
+							<p className="plugins-browser-item__why-text">{ why }</p>
+						</div>
+					</div>
+				) }
 				{ isUntestedVersion && (
 					<div className="plugins-browser-item__untested-notice">
 						<Icon size={ 20 } icon={ info } />
@@ -254,7 +283,7 @@ const PluginsBrowserListElement = ( props ) => {
 						</span>
 					</div>
 				) }
-				{ isIncompatiblePlugin && ! isIncompatibleBackupPlugin && (
+				{ isIncompatiblePlugin && ! isIncompatibleBackupPlugin && ! isBuiltInBackupPlugin && (
 					<span
 						role="link"
 						tabIndex="-1"
@@ -265,7 +294,7 @@ const PluginsBrowserListElement = ( props ) => {
 						{ translate( 'Why is this plugin not compatible with WordPress.com?' ) }
 					</span>
 				) }
-				{ isIncompatibleBackupPlugin && (
+				{ showBackupShortcut && (
 					<span
 						role="link"
 						tabIndex="-1"
@@ -274,6 +303,20 @@ const PluginsBrowserListElement = ( props ) => {
 						className="plugins-browser-item__incompatible"
 					>
 						{ translate( 'Your site plan already includes Jetpack VaultPress Backup.' ) }
+					</span>
+				) }
+				{ isBuiltInBackupPlugin && ! canViewBackups && (
+					<span className="plugins-browser-item__incompatible">
+						{ translate(
+							// translators: %(businessPlanName)s is the Business plan name, %(commercePlanName)s is the Commerce plan name
+							'Jetpack VaultPress Backup is included with the WordPress.com %(businessPlanName)s and %(commercePlanName)s plans.',
+							{
+								args: {
+									businessPlanName: getPlanBusinessTitle(),
+									commercePlanName: getPlanEcommerceTitle(),
+								},
+							}
+						) }
 					</span>
 				) }
 				<div className="plugins-browser-item__footer">

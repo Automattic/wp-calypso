@@ -1,5 +1,4 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_BIG_SKY,
 	isBusiness,
@@ -19,10 +18,9 @@ import { useQuery as useUrlParams } from 'calypso/landing/stepper/hooks/use-quer
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { waitForPluginsActive } from 'calypso/landing/stepper/utils/wait-for-plugins-active';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useExperiment } from 'calypso/lib/explat';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
-import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer/query';
+import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer-status-query';
 import { useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
@@ -55,22 +53,17 @@ const PostCheckoutOnboarding: StepType< {
 	const siteSlug = useSiteSlugParam() ?? '';
 	const {
 		data: site,
-		isLoading: isLoadingSite,
+		isFetchedAfterMount: isSiteFetchedAfterMount,
 		isError: isErrorSite,
 	} = useQuery( {
 		...siteBySlugQuery( siteSlug ),
 		enabled: !! siteSlug,
 	} );
 
-	const eligibleForExperiment =
-		isEnabled( 'onboarding/post-checkout-ai-step' ) &&
+	const showBigSkyChoice =
 		!! site?.plan &&
 		( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) &&
 		site.plan.features?.active?.includes( FEATURE_BIG_SKY );
-	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-		'calyso_post_onboarding_big_sky_202601_v1',
-		{ isEligible: eligibleForExperiment }
-	);
 
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -114,8 +107,14 @@ const PostCheckoutOnboarding: StepType< {
 
 	const waitForAtomic = async () => {
 		await waitForTransfer();
-		await setIntentOnSite( siteSlug, intent );
-		await setGoalsOnSite( siteSlug, goals );
+		// An existing site handed over from another flow arrives with an empty store; don't let
+		// that overwrite the intent and goals the site already has.
+		if ( intent ) {
+			await setIntentOnSite( siteSlug, intent );
+		}
+		if ( goals.length ) {
+			await setGoalsOnSite( siteSlug, goals );
+		}
 		await waitForFeature();
 		await waitForLatestSiteData();
 	};
@@ -178,10 +177,11 @@ const PostCheckoutOnboarding: StepType< {
 			hasError ||
 			! site ||
 			! siteSlug ||
-			isLoadingSite ||
+			// The site can come from the persisted query cache with its pre-purchase plan, which
+			// would hide the chooser, so wait for a fetch made after checkout.
+			! isSiteFetchedAfterMount ||
 			isLoadingMarketplaceThemeProducts ||
-			isLoadingSiteTransferStatusData ||
-			isLoadingExperiment
+			isLoadingSiteTransferStatusData
 		) {
 			return;
 		}
@@ -191,12 +191,7 @@ const PostCheckoutOnboarding: StepType< {
 				siteSlug,
 				hasExternalTheme,
 				hasPluginByGoal,
-				...( eligibleForExperiment
-					? {
-							postCheckoutBigSky: true,
-							postCheckoutBigSkyVariation: experimentAssignment?.variationName ?? 'control',
-					  }
-					: {} ),
+				...( showBigSkyChoice ? { postCheckoutBigSky: true } : {} ),
 			};
 
 			if ( ! isJetpackOrAtomic ) {
@@ -228,10 +223,9 @@ const PostCheckoutOnboarding: StepType< {
 		hasError,
 		site,
 		siteSlug,
-		isLoadingSite,
+		isSiteFetchedAfterMount,
 		isLoadingMarketplaceThemeProducts,
 		isLoadingSiteTransferStatusData,
-		isLoadingExperiment,
 		isJetpackOrAtomic,
 		siteTransferStatusData,
 		selectedDesign,

@@ -132,7 +132,7 @@ const write: Flow = {
 		// /setup/write/launchpad route which has no locale in the path so we need to
 		// redirect off of the first render.
 		// This effects both /setup/write/<locale> starting points and /setup/write/launchpad/<locale> urls.
-		// The double call also hapens on urls without locale.
+		// The double call also happens on urls without locale.
 		useEffect( () => {
 			if ( ! userIsLoggedIn ) {
 				const logInUrl = getStartUrl();

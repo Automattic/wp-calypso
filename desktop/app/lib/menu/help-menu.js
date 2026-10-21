@@ -27,11 +27,13 @@ module.exports = function ( { view, window } ) {
 			click: function () {
 				const defaultHelpUrl = 'https://en.support.wordpress.com/';
 				if ( session.isLoggedIn() ) {
-					window.show();
-					if ( isCalypso( view ) ) {
-						ipc.showHelp( view );
-					} else {
-						view.webContents.loadURL( defaultHelpUrl );
+					if ( window && view ) {
+						window.show();
+						if ( isCalypso( view ) ) {
+							ipc.showHelp( view );
+						} else {
+							view.webContents.loadURL( defaultHelpUrl );
+						}
 					}
 				} else {
 					shell.openExternal( defaultHelpUrl );

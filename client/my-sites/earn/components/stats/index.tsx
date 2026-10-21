@@ -31,37 +31,35 @@ function StatsSection() {
 			<div>
 				<SectionHeader label={ translate( 'Earnings' ) } />
 				<QueryMembershipsEarnings siteId={ site.ID } />
-				<Card>
-					<div className="memberships__module-content module-content">
-						<ul className="memberships__earnings-breakdown-list">
-							<li className="memberships__earnings-breakdown-item">
-								<span className="memberships__earnings-breakdown-label">
-									{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
-								</span>
-								<span className="memberships__earnings-breakdown-value">
-									{ formatCurrency( total, currency ) }
-								</span>
-							</li>
-							<li className="memberships__earnings-breakdown-item">
-								<span className="memberships__earnings-breakdown-label">
-									{ translate( 'Last 30 days', { context: 'Sum of earnings over last 30 days' } ) }
-								</span>
-								<span className="memberships__earnings-breakdown-value">
-									{ formatCurrency( lastMonth, currency ) }
-								</span>
-							</li>
-							<li className="memberships__earnings-breakdown-item">
-								<span className="memberships__earnings-breakdown-label">
-									{ translate( 'Next month', {
-										context: 'Forecast for the subscriptions due in the next 30 days',
-									} ) }
-								</span>
-								<span className="memberships__earnings-breakdown-value">
-									{ formatCurrency( forecast, currency ) }
-								</span>
-							</li>
-						</ul>
-					</div>
+				<Card className="memberships__earnings-card">
+					<ul className="memberships__earnings-breakdown-list">
+						<li className="memberships__earnings-breakdown-item">
+							<span className="memberships__earnings-breakdown-label">
+								{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
+							</span>
+							<span className="memberships__earnings-breakdown-value">
+								{ formatCurrency( total, currency ) }
+							</span>
+						</li>
+						<li className="memberships__earnings-breakdown-item">
+							<span className="memberships__earnings-breakdown-label">
+								{ translate( 'Last 30 days', { context: 'Sum of earnings over last 30 days' } ) }
+							</span>
+							<span className="memberships__earnings-breakdown-value">
+								{ formatCurrency( lastMonth, currency ) }
+							</span>
+						</li>
+						<li className="memberships__earnings-breakdown-item">
+							<span className="memberships__earnings-breakdown-label">
+								{ translate( 'Next month', {
+									context: 'Forecast for the subscriptions due in the next 30 days',
+								} ) }
+							</span>
+							<span className="memberships__earnings-breakdown-value">
+								{ formatCurrency( forecast, currency ) }
+							</span>
+						</li>
+					</ul>
 					<CommissionFees
 						commission={ commission }
 						iconSize={ 12 }

@@ -1,34 +1,47 @@
-import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
+import { fetchStripeConfiguration } from '@automattic/api-core';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
-import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
+import PressableCheckoutBack from 'calypso/a8c-for-agencies/sections/marketplace/billing-dragon-checkout/pressable-checkout-back';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import CheckoutQueryClientProvider from 'calypso/my-sites/checkout/checkout-query-client-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import ClientCheckoutV2Error from '../../checkout-v2-error';
 import ClientCheckoutV2Placeholder from '../../checkout-v2-placeholder';
 import useClientCheckout from '../../hooks/use-client-checkout';
+import getClientCheckoutRedirectUrl from '../../lib/get-client-checkout-redirect-url';
 
 import './style.scss';
 
 /**
  * Client Checkout Component using the WordPress.com checkout
  */
-function ClientCheckoutContent() {
+function ClientCheckoutContent( { skipActiveCart }: { skipActiveCart: boolean } ) {
 	const translate = useTranslate();
+	const [ isCheckoutFormSubmitting, setIsCheckoutFormSubmitting ] = useState( false );
 
-	const { isReady, error, emailMismatchWithReferralClient, referral } = useClientCheckout( {
-		expressMode: false,
-	} );
+	const {
+		isReady,
+		error,
+		emailMismatchWithReferralClient,
+		referral,
+		wpcomHostingProductSlug,
+		preparedCartContext,
+		products,
+	} = useClientCheckout( { expressMode: false, skipActiveCart } );
 
-	if ( ! isReady ) {
-		return <ClientCheckoutV2Placeholder />;
-	}
+	const subscriptionsUrl = window.location.origin + '/client/subscriptions';
+	const redirectTo = getClientCheckoutRedirectUrl( subscriptionsUrl, wpcomHostingProductSlug );
 
-	if ( emailMismatchWithReferralClient ) {
+	if (
+		emailMismatchWithReferralClient &&
+		referral?.client?.email &&
+		( skipActiveCart || isReady )
+	) {
 		return (
 			<ClientCheckoutV2Error
 				title={ translate( 'Permission denied' ) }
@@ -51,18 +64,40 @@ function ClientCheckoutContent() {
 	if ( error ) {
 		return <ClientCheckoutV2Error title={ translate( 'Error' ) } message={ error } />;
 	}
+	if ( ! isReady ) {
+		return <ClientCheckoutV2Placeholder />;
+	}
+
+	const extra = skipActiveCart && preparedCartContext ? products[ 0 ]?.extra : undefined;
+	const successUrl =
+		typeof extra?.afterPurchaseUrl === 'string' ? extra.afterPurchaseUrl : undefined;
+	const cancelUrl =
+		extra && 'pressableCancelUrl' in extra && typeof extra.pressableCancelUrl === 'string'
+			? extra.pressableCancelUrl
+			: undefined;
 
 	return (
 		<div className="client-checkout-v2">
-			<div className="client-checkout-v2__top-bar">
+			<div
+				className={
+					cancelUrl ? 'client-checkout-v2-pressable-top-bar' : 'client-checkout-v2__top-bar'
+				}
+			>
+				{ cancelUrl && (
+					<PressableCheckoutBack
+						cancelUrl={ cancelUrl }
+						isFormSubmitting={ isCheckoutFormSubmitting }
+					/>
+				) }
 				<div className="client-checkout-v2__top-bar-logo">
 					<A4ALogo full size={ 14 } />
 				</div>
 			</div>
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
-				redirectTo={ window.location.origin + '/client/subscriptions' }
+				redirectTo={ successUrl ?? redirectTo }
 				customizedPreviousPath="/client/subscriptions"
+				onFormSubmittingChange={ cancelUrl ? setIsCheckoutFormSubmitting : undefined }
 				siteSlug=""
 				siteId={ 0 }
 			/>
@@ -70,7 +105,11 @@ function ClientCheckoutContent() {
 	);
 }
 
-export default function ClientCheckoutV2() {
+export default function ClientCheckoutV2( {
+	skipActiveCart = false,
+}: {
+	skipActiveCart?: boolean;
+} ) {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
 
@@ -78,13 +117,16 @@ export default function ClientCheckoutV2() {
 		<CheckoutErrorBoundary
 			errorMessage={ translate( 'Sorry, there was an error loading the checkout page.' ) }
 		>
-			<CalypsoShoppingCartProvider shouldShowPersistentErrors>
-				<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-					<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
-						<ClientCheckoutContent />
-					</RazorpayHookProvider>
-				</StripeHookProvider>
-			</CalypsoShoppingCartProvider>
+			<CheckoutQueryClientProvider>
+				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
+					<StripeHookProvider
+						fetchStripeConfiguration={ fetchStripeConfiguration }
+						locale={ locale }
+					>
+						<ClientCheckoutContent skipActiveCart={ skipActiveCart } />
+					</StripeHookProvider>
+				</CalypsoShoppingCartProvider>
+			</CheckoutQueryClientProvider>
 		</CheckoutErrorBoundary>
 	);
 }

@@ -7,7 +7,7 @@ const cachedScrollPositions: Record< string, number > = {};
 
 export const useHelpCenterChatScroll = (
 	id: number | string | undefined,
-	scrollParentRef: React.RefObject< HTMLElement >,
+	scrollParentRef: React.RefObject< HTMLElement | null >,
 	isEnabled: boolean
 ) => {
 	const timeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );

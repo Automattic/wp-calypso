@@ -1,16 +1,4 @@
 /**
- * Module Dependencies
- */
-
-const event = require( 'component-event' );
-
-/**
- * Expose `FilePicker`
- */
-
-module.exports = FilePicker;
-
-/**
  * Input template
  */
 
@@ -29,11 +17,10 @@ let bound = false;
 
 /**
  * Opens a file picker dialog.
- * @param {Object} options (optional)
+ * @param {Object} opts (optional)
  * @param {Function} fn callback function
  */
-
-function FilePicker( opts, fn ) {
+export default function FilePicker( opts, fn ) {
 	if ( 'function' === typeof opts ) {
 		fn = opts;
 		opts = {};
@@ -59,14 +46,14 @@ function FilePicker( opts, fn ) {
 
 	// listen to change event (unbind old one if already listening)
 	if ( bound ) {
-		event.unbind( input, 'change', bound );
+		input.removeEventListener( 'change', bound );
 	}
-	event.bind( input, 'change', onchange );
+	input.addEventListener( 'change', onchange );
 	bound = onchange;
 
 	function onchange( e ) {
 		fn( input.files, e, input );
-		event.unbind( input, 'change', onchange );
+		input.removeEventListener( 'change', onchange );
 		bound = false;
 	}
 

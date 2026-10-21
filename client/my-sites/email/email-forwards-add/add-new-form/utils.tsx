@@ -1,4 +1,4 @@
-import { sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import emailValidator from 'email-validator';
 import type { ValidationError } from './types';
 import type { EmailAccountEmail } from 'calypso/data/emails/types';
@@ -42,8 +42,8 @@ export function isValidDestination(
 			return {
 				severity: 'warning',
 				message: sprintf(
-					/* translators: %s: email address %s: email address */
-					translate( 'There is already a forward from (%1$s) to (%2$s).' ),
+					/* translators: %1$s is the existing forward source email address, %2$s is the existing forward destination email address */
+					__( 'There is already a forward from (%1$s) to (%2$s).' ),
 					`${ mailbox }@${ selectedDomainName }`,
 					value
 				),

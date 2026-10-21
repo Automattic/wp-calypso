@@ -27,6 +27,7 @@ export const wpOrgPluginQuery = ( slug: string, locale: string ) =>
 
 export const installPluginMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'plugin-install' },
 		mutationFn: ( vars: { siteId: number; slug: string } ) =>
 			installPlugin( vars.siteId, vars.slug ),
 		onSuccess: ( _data, vars ) => {

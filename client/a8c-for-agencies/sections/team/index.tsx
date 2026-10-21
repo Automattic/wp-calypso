@@ -13,5 +13,10 @@ export default function () {
 
 	page( A4A_TEAM_ACCEPT_INVITE_LINK, teamAcceptInviteContext, makeLayout, clientRender );
 
-	page( `${ A4A_TEAM_LINK }/:tab?`, requireAccessContext, teamContext, makeLayout, clientRender );
+	page( A4A_TEAM_LINK, requireAccessContext, teamContext, makeLayout, clientRender );
+
+	// The active/invited members tabs were merged into a single list. Redirect
+	// the retired tab URLs back to the combined team screen.
+	page( `${ A4A_TEAM_LINK }/active-members`, () => page.redirect( A4A_TEAM_LINK ) );
+	page( `${ A4A_TEAM_LINK }/invited-members`, () => page.redirect( A4A_TEAM_LINK ) );
 }

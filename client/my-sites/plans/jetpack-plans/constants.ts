@@ -42,6 +42,8 @@ import {
 	JETPACK_SECURITY_T2_PLANS,
 	JETPACK_COMPLETE_PLANS,
 	JETPACK_GROWTH_PLANS,
+	JETPACK_PRO_PLANS,
+	PLAN_JETPACK_PRO_YEARLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
 	PLAN_JETPACK_GROWTH_YEARLY,
@@ -177,10 +179,8 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct =
 	},
 	hidePrice: true,
 
-	// The Stats PWYW product in the Plans grid is shown as `Stats` but also referred to `Stats (Personal)`,
-	// which aligns with the naming in packages/calypso-products/src/translations.tsx.
-	displayName: translate( 'Stats (Personal)' ),
-	shortName: translate( 'Stats (Personal)' ),
+	displayName: translate( 'Stats (Name your price)' ),
+	shortName: translate( 'Stats (Name your price)' ),
 	productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	costProductSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	term: TERM_ANNUALLY,
@@ -225,6 +225,7 @@ export const SELECTOR_PLANS = [
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_GROWTH_YEARLY,
 	PLAN_JETPACK_GROWTH_MONTHLY,
+	PLAN_JETPACK_PRO_YEARLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
@@ -314,6 +315,7 @@ export const MOST_POPULAR_BUNDLES = [
 	...JETPACK_SECURITY_T1_PLANS,
 	...JETPACK_SECURITY_T2_PLANS,
 	...JETPACK_COMPLETE_PLANS,
+	...JETPACK_PRO_PLANS,
 	...JETPACK_GROWTH_PLANS,
 ];
 

@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 
 /**
@@ -10,5 +9,5 @@ import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain
  * @returns {boolean} primary domain
  */
 export default function isPrimaryDomainBySiteId( state, siteId, domain ) {
-	return domain === get( getPrimaryDomainBySiteId( state, siteId ), 'domain' );
+	return domain === getPrimaryDomainBySiteId( state, siteId )?.domain;
 }

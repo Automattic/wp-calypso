@@ -1,3 +1,6 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
 .backup-placeholder {
 	&__backup-date-picker {
 		@include placeholder( --color-neutral-10 );

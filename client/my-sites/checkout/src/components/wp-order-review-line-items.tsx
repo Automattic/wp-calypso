@@ -6,8 +6,10 @@ import {
 	canItemBeRemovedFromCart,
 	getCouponLineItemFromCart,
 	getCreditsLineItemFromCart,
+	groupBundleLineItems,
 	isWpComProductRenewal,
 	joinClasses,
+	BundleLineItem,
 	CouponLineItem,
 	NonProductLineItem,
 	LineItem,
@@ -18,16 +20,17 @@ import {
 import styled from '@emotion/styled';
 import { getQueryArg } from '@wordpress/url';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { has100YearPlan, getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
+import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import {
 	isRenewalPricingTreatment,
 	useRenewalPricingExperiment,
 } from 'calypso/my-sites/plans-features-main/hooks/use-renewal-price-experiment';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useSelector } from 'calypso/state';
 import {
 	getIsOnboardingAffiliateFlow,
 	getIsOnboardingUnifiedFlow,
@@ -45,6 +48,7 @@ import type {
 	RemoveCouponFromCart,
 	AddProductsToCart,
 } from '@automattic/shopping-cart';
+import type { GroupedCartLineItem } from '@automattic/wpcom-checkout';
 import type { PropsWithChildren, RefObject } from 'react';
 
 const WPOrderReviewList = styled.ul`
@@ -98,7 +102,6 @@ export function WPOrderReviewLineItems( {
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
 } ) {
-	const reduxDispatch = useDispatch();
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
@@ -122,6 +125,16 @@ export function WPOrderReviewLineItems( {
 	} );
 	const [ initialProducts ] = useState( () => responseCart.products );
 	const [ forceShowAkQuantityDropdown, setForceShowAkQuantityDropdown ] = useState( false );
+
+	// Bundle grouping is gated behind the `domain-bundling` feature flag. When off,
+	// every product renders on its own line exactly as before.
+	const groupedLineItems: GroupedCartLineItem[] = config.isEnabled( 'domain-bundling' )
+		? groupBundleLineItems( responseCart.products )
+		: responseCart.products.map( ( product ) => ( { type: 'product' as const, product } ) );
+
+	// Match the single-item path: the WooCommerce mobile app webview hides the
+	// remove action, so a bundle must not surface one either.
+	const isWooMobile = isWcMobileApp();
 
 	const isAkismetProMultipleLicensesCart = useMemo( () => {
 		if ( ! config.isEnabled( 'akismet/checkout-quantity-dropdown' ) ) {
@@ -154,20 +167,12 @@ export function WPOrderReviewLineItems( {
 				}
 			}
 
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_variant_dropdown_open', {
-					has_wpcom_plan_in_cart: hasWPCOMPlanInCart,
-				} )
-			);
+			recordTracksEvent( 'calypso_checkout_variant_dropdown_open', {
+				has_wpcom_plan_in_cart: hasWPCOMPlanInCart,
+			} );
 			setVariantOpenId( variantOpenId !== id ? id : null );
 		},
-		[
-			akQuantityOpenId,
-			hasWPCOMPlanInCart,
-			isAkismetProMultipleLicensesCart,
-			reduxDispatch,
-			variantOpenId,
-		]
+		[ akQuantityOpenId, hasWPCOMPlanInCart, isAkismetProMultipleLicensesCart, variantOpenId ]
 	);
 
 	const handleAkQuantityToggle = useCallback(
@@ -183,13 +188,11 @@ export function WPOrderReviewLineItems( {
 
 	const changeAkismetPro500CartQuantity = useCallback< OnChangeAkProQuantity >(
 		( uuid, productSlug, productId, prevQuantity, newQuantity ) => {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_akismet_pro_quantity_change', {
-					product_slug: productSlug,
-					prev_quantity: prevQuantity,
-					new_quantity: newQuantity,
-				} )
-			);
+			recordTracksEvent( 'calypso_checkout_akismet_pro_quantity_change', {
+				product_slug: productSlug,
+				prev_quantity: prevQuantity,
+				new_quantity: newQuantity,
+			} );
 			replaceProductInCart( uuid, {
 				product_slug: productSlug,
 				product_id: productId,
@@ -198,43 +201,70 @@ export function WPOrderReviewLineItems( {
 				// Nothing needs to be done here. CartMessages will display the error to the user.
 			} );
 		},
-		[ replaceProductInCart, reduxDispatch ]
+		[ replaceProductInCart ]
 	);
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ responseCart.products.map( ( product ) => (
-				<LineItemWrapper
-					key={ product.uuid }
-					product={ product }
-					isSummary={ isSummary }
-					removeProductFromCart={ removeProductFromCart }
-					onChangeSelection={ onChangeSelection }
-					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					responseCart={ responseCart }
-					isPwpoUser={ isPwpoUser }
-					onRemoveProduct={ onRemoveProduct }
-					onRemoveProductClick={ onRemoveProductClick }
-					onRemoveProductCancel={ onRemoveProductCancel }
-					hasPartnerCoupon={ hasPartnerCoupon }
-					isDisabled={ isDisabled }
-					initialVariantTerm={
-						initialProducts.find( ( initialProduct ) => {
-							return initialProduct.product_variants.find(
-								( variant ) => variant.product_id === product.product_id
-							);
-						} )?.months_per_bill_period
-					}
-					toggleVariantSelector={ handleVariantToggle }
-					variantOpenId={ variantOpenId }
-					isAkPro500Cart={ isAkismetProMultipleLicensesCart || forceShowAkQuantityDropdown }
-					setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
-					onChangeAkProQuantity={ changeAkismetPro500CartQuantity }
-					toggleAkQuantityDropdown={ handleAkQuantityToggle }
-					akQuantityOpenId={ akQuantityOpenId }
-					isRenewalPricingExperiment={ isRenewalPricingTreatment( renewalPricingVariation ) }
-				/>
-			) ) }
+			{ groupedLineItems.map( ( entry ) => {
+				if ( entry.type === 'bundle' ) {
+					return (
+						<WPOrderReviewListItem key={ `bundle-${ entry.groupId }` }>
+							<BundleLineItem
+								bundle={ entry }
+								isSummary={ isSummary }
+								hasDeleteButton={
+									! isWooMobile &&
+									entry.products.every( ( product ) =>
+										canItemBeRemovedFromCart( product, responseCart )
+									)
+								}
+								removeProductFromCart={ removeProductFromCart }
+								onRemoveBundle={ ( groupId, memberCount ) => {
+									recordTracksEvent( 'calypso_domain_bundle_removed_from_cart', {
+										domain_bundle_group_id: groupId,
+										domain_count: memberCount,
+									} );
+								} }
+							/>
+						</WPOrderReviewListItem>
+					);
+				}
+
+				const { product } = entry;
+				return (
+					<LineItemWrapper
+						key={ product.uuid }
+						product={ product }
+						isSummary={ isSummary }
+						removeProductFromCart={ removeProductFromCart }
+						onChangeSelection={ onChangeSelection }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						responseCart={ responseCart }
+						isPwpoUser={ isPwpoUser }
+						onRemoveProduct={ onRemoveProduct }
+						onRemoveProductClick={ onRemoveProductClick }
+						onRemoveProductCancel={ onRemoveProductCancel }
+						hasPartnerCoupon={ hasPartnerCoupon }
+						isDisabled={ isDisabled }
+						initialVariantTerm={
+							initialProducts.find( ( initialProduct ) => {
+								return initialProduct.product_variants.find(
+									( variant ) => variant.product_id === product.product_id
+								);
+							} )?.months_per_bill_period
+						}
+						toggleVariantSelector={ handleVariantToggle }
+						variantOpenId={ variantOpenId }
+						isAkPro500Cart={ isAkismetProMultipleLicensesCart || forceShowAkQuantityDropdown }
+						setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
+						onChangeAkProQuantity={ changeAkismetPro500CartQuantity }
+						toggleAkQuantityDropdown={ handleAkQuantityToggle }
+						akQuantityOpenId={ akQuantityOpenId }
+						isRenewalPricingExperiment={ isRenewalPricingTreatment( renewalPricingVariation ) }
+					/>
+				);
+			} ) }
 			{ restorableProducts.map( ( product ) => (
 				<RemovedFromCartItem
 					key={ product.uuid }
@@ -321,10 +351,12 @@ function LineItemWrapper( {
 	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
 	const signupFlowName = getSignupCompleteFlowName();
-	const shouldShowComparison = isWpComPlan( product.product_slug );
+	const shouldShowComparison =
+		isWpComPlan( product.product_slug ) && ! responseCart.is_gift_purchase;
 
 	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {
 		isDeletable = false;
@@ -337,7 +369,7 @@ function LineItemWrapper( {
 
 	useEffect( () => {
 		const handleClickOutside =
-			( ref: RefObject< HTMLDivElement >, toggle: ( key: string | null ) => void ) =>
+			( ref: RefObject< HTMLDivElement | null >, toggle: ( key: string | null ) => void ) =>
 			( event: MouseEvent ): void => {
 				if ( ref.current && ! ref.current.contains( event.target as Node ) ) {
 					toggle( null );
@@ -449,6 +481,7 @@ function LineItemWrapper( {
 				shouldShowComparison={ shouldShowComparison }
 				compareToPrice={ compareToPrice }
 				isRenewalPricingExperiment={ isRenewalPricingExperiment }
+				isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 			>
 				<DropdownWrapper>
 					{ finalShouldShowVariantSelector && (

@@ -41,6 +41,16 @@ describe( 'PlanStorageBar basic tests', () => {
 		expect( progressBar ).toHaveAttribute( 'aria-valuenow', '10' );
 	} );
 
+	test( 'shows the alert state just over 80%, even though the label rounds to 80%', () => {
+		const { container } = render(
+			<PlanStorageBar
+				{ ...props }
+				mediaStorage={ { storageUsedBytes: 801, maxStorageBytes: 1000 } }
+			/>
+		);
+		expect( container.querySelector( '.plan-storage__bar' ) ).toHaveClass( 'is-alert' );
+	} );
+
 	test( 'should render when storage is limited', () => {
 		const { container: premContainer } = render(
 			<PlanStorageBar { ...props } sitePlanSlug={ PLAN_PREMIUM } />

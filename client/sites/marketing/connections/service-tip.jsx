@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -74,8 +73,7 @@ class SharingServiceTip extends Component {
 	render() {
 		const { service } = this.props;
 		if (
-			! includes(
-				this.props.hasJetpack ? JETPACK_SERVICES_WITH_TIPS : SERVICES_WITH_TIPS,
+			! ( this.props.hasJetpack ? JETPACK_SERVICES_WITH_TIPS : SERVICES_WITH_TIPS ).includes(
 				service.ID
 			) ||
 			'google_plus' === service.ID

@@ -24,7 +24,7 @@ function getExpiryStringLessThanOneDay( expiryDate: Date, now: Date ) {
 
 	if ( expiryInSeconds < ONE_MINUTE_IN_SECONDS ) {
 		return sprintf(
-			// translators: %(seconds) is the number of seconds until the link expires.
+			// translators: %(seconds)d: the number of seconds until the link expires.
 			_n( 'Expires in %(seconds)d second', 'Expires in %(seconds)d seconds', expiryInSeconds ),
 			{ seconds: expiryInSeconds }
 		);
@@ -50,7 +50,7 @@ function getExpiryStringLessThanOneDay( expiryDate: Date, now: Date ) {
 
 	const days = Math.round( expiryInSeconds / ONE_DAY_IN_SECONDS );
 	return sprintf(
-		// translators: %(days) is the number of days until the link expires.
+		// translators: %(days)d: the number of days until the link expires.
 		_n( 'Expires in %(days)d day', 'Expires in %(days)d days', days ),
 		{ days }
 	);
@@ -83,7 +83,7 @@ const LinkExpiryCopy = ( { expiresAt }: LinkExpiryCopyProps ) => {
 	return (
 		<>
 			{ sprintf(
-				// translators: %(days) is the number of days until the link expires. We know it is at least 1 day.
+				// translators: %(days)d: the number of days until the link expires. We know it is at least 1 day.
 				_n( 'Expires in %(days)d day', 'Expires in %(days)d days', days ),
 				{ days }
 			) }

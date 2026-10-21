@@ -17,7 +17,7 @@ export function getImporterStatus( state, importerId ) {
 export const getImporterStatusForSiteId = createSelector(
 	( state, siteId ) => {
 		return Object.values( state.imports.importerStatus ).filter(
-			( importer ) => importer.site.ID === siteId
+			( importer ) => importer.site?.ID === siteId
 		);
 	},
 	( state ) => [ state.imports.importerStatus ]

@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -65,10 +64,10 @@ class ReaderShare extends Component {
 			clearTimeout( this.closeHandle );
 		}
 
-		this.closeHandle = defer( () => {
+		this.closeHandle = setTimeout( () => {
 			this.closeHandle = null;
 			this.setState( { showingMenu: showing } );
-		} );
+		}, 0 );
 	};
 
 	toggle = () => {
@@ -151,11 +150,11 @@ class ReaderShare extends Component {
 						? ReaderShareIcon( {
 								iconSize: this.props.iconSize,
 								viewBox: '-1 -1 24 24',
-						  } )
+							} )
 						: ReaderRepostIcon( {
 								iconSize: this.props.iconSize,
 								viewBox: '0 0 20 20',
-						  } ) }
+							} ) }
 				</Button>
 				{ this.state.showingMenu &&
 					( ! this.props.isReblogSelection ? (

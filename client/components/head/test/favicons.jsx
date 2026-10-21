@@ -3,17 +3,21 @@
  */
 
 import { render } from '@testing-library/react';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import Favicons from '../favicons';
 
+jest.mock( 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies' );
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
 describe( 'Favicons', () => {
 	beforeEach( () => {
+		isA8CForAgencies.mockImplementation( () => false );
 		isJetpackCloud.mockImplementation( () => false );
 	} );
 
 	afterEach( () => {
+		isA8CForAgencies.mockRestore();
 		isJetpackCloud.mockRestore();
 	} );
 
@@ -25,8 +29,8 @@ describe( 'Favicons', () => {
 
 	test( "should render environment favicons using the 'environmentFaviconURL' property", () => {
 		const arbitraryURL = 'https://arbitrary-favicon-url/';
-		const { container } = render( <Favicons environmentFaviconURL={ arbitraryURL } /> );
-		const links = Array.from( container.getElementsByTagName( 'link' ) );
+		render( <Favicons environmentFaviconURL={ arbitraryURL } /> );
+		const links = Array.from( document.getElementsByTagName( 'link' ) );
 
 		[
 			{ rel: 'shortcut icon', type: 'image/vnd.microsoft.icon' },
@@ -61,9 +65,9 @@ describe( 'Favicons', () => {
 		const baseUrl = '//s1.wp.com/i/favicons';
 
 		expect( isJetpackCloud() ).toEqual( false );
-		const { container } = render( <Favicons environmentFaviconURL="" /> );
+		render( <Favicons environmentFaviconURL="" /> );
 
-		const links = Array.from( container.getElementsByTagName( 'link' ) );
+		const links = Array.from( document.getElementsByTagName( 'link' ) );
 
 		favicons.forEach( ( icon ) => {
 			const [ rel, size, filename ] = icon;
@@ -79,10 +83,10 @@ describe( 'Favicons', () => {
 
 		isJetpackCloud.mockImplementation( () => true );
 		expect( isJetpackCloud() ).toEqual( true );
-		const { container } = render( <Favicons environmentFaviconURL="" /> );
+		render( <Favicons environmentFaviconURL="" /> );
 
-		const links = Array.from( container.getElementsByTagName( 'link' ) );
-		const metas = Array.from( container.getElementsByTagName( 'meta' ) );
+		const links = Array.from( document.getElementsByTagName( 'link' ) );
+		const metas = Array.from( document.getElementsByTagName( 'meta' ) );
 
 		// Safari pinned tab icon (foreground color should be Jetpack Green)
 		const safariLink = links.find(
@@ -115,5 +119,40 @@ describe( 'Favicons', () => {
 		expect(
 			findFaviconBySizes( links, { rel: 'apple-touch-icon', sizes: '180x180' } )
 		).toHaveAttribute( 'href', expect.stringContaining( `${ basePath }/apple-touch-icon.png` ) );
+	} );
+
+	test( "should render the favicons for the 'brand' property regardless of the environment", () => {
+		const basePath = '/calypso/images/a8c-for-agencies/favicons';
+
+		expect( isA8CForAgencies() ).toEqual( false );
+		render( <Favicons environmentFaviconURL="" brand="a4a" /> );
+
+		const links = Array.from( document.getElementsByTagName( 'link' ) );
+		const metas = Array.from( document.getElementsByTagName( 'meta' ) );
+
+		expect( metas.find( ( { name } ) => name === 'application-name' ) ).toHaveAttribute(
+			'content',
+			'Automattic for Agencies'
+		);
+		expect( findFaviconBySizes( links, { rel: 'icon', sizes: '192x192' } ) ).toHaveAttribute(
+			'href',
+			`${ basePath }/android-chrome-192x192.png`
+		);
+		expect(
+			findFaviconBySizes( links, { rel: 'apple-touch-icon', sizes: '180x180' } )
+		).toHaveAttribute( 'href', `${ basePath }/apple-touch-icon.png` );
+	} );
+
+	test( "should fall back to the environment favicons when 'brand' is not set", () => {
+		isA8CForAgencies.mockImplementation( () => true );
+		expect( isA8CForAgencies() ).toEqual( true );
+		render( <Favicons environmentFaviconURL="" brand={ undefined } /> );
+
+		const links = Array.from( document.getElementsByTagName( 'link' ) );
+
+		expect( findFaviconBySizes( links, { rel: 'icon', sizes: '192x192' } ) ).toHaveAttribute(
+			'href',
+			'/calypso/images/a8c-for-agencies/favicons/android-chrome-192x192.png'
+		);
 	} );
 } );

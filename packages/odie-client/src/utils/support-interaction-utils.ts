@@ -20,8 +20,9 @@ export const getConversationIdFromInteraction = (
 export const getOdieIdFromInteraction = (
 	supportInteraction: SupportInteraction | undefined
 ): string | null => {
+	// Prefer the latest odie event so remapped legacy chats follow the new chat_id.
 	return (
-		supportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
+		supportInteraction?.events.findLast( ( event ) => event.event_source === 'odie' )
 			?.event_external_id ?? null
 	);
 };

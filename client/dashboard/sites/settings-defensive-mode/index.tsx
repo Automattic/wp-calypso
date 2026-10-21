@@ -25,6 +25,7 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
+import { wpcomLink } from '../../utils/link';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import type { DefensiveModeSettingsUpdate } from '@automattic/api-core';
@@ -149,7 +150,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 								),
 								{
 									// @ts-expect-error children prop is injected by createInterpolateElement
-									link: <ExternalLink href="/help/contact" />,
+									link: <ExternalLink href={ wpcomLink( '/support/contact' ) } />,
 								}
 							) }
 						</Text>

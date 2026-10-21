@@ -1,3 +1,8 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .form-text-input-with-affixes {
 	display: inline-flex;
 	flex-direction: column;

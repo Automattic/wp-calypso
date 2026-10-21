@@ -1,0 +1,52 @@
+.social-post-card-repost-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0;
+	padding: 4px 6px;
+	background: transparent;
+	border: 0;
+	border-radius: 8px;
+	color: inherit;
+	cursor: pointer;
+	font: inherit;
+	line-height: 1;
+	position: relative;
+	z-index: 1;
+
+	&:hover:not( [aria-disabled='true'] ),
+	&:focus-visible:not( [aria-disabled='true'] ) {
+		color: var( --studio-green-50 );
+		background: var( --studio-gray-0 );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
+
+	&.is-reposted {
+		color: var( --studio-green-50 );
+	}
+
+	&.is-pending {
+		cursor: default;
+		opacity: 0.6;
+	}
+}
+
+.social-post-card-repost-button__count {
+	font-size: inherit;
+	line-height: 1;
+}
+
+// `<Dropdown>` from `@wordpress/components` wraps the toggle button in a
+// `<div class="components-dropdown">` whose default `display: block` leaves
+// the inline-flex button top-aligned within a tall line box, knocking the
+// repost icon ~2px above the surrounding counts. Scoping this to the counts
+// row (rather than touching the global `.components-dropdown` rules) lets the
+// row's `align-items: center` reach the button.
+.social-post-card-counts .components-dropdown {
+	display: inline-flex;
+	align-items: center;
+}

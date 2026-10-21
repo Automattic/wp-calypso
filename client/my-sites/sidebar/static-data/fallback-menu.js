@@ -92,7 +92,7 @@ export default function buildFallbackResponse( {
 								type: 'submenu-item',
 								url: `/add-ons/${ siteDomain }`,
 							},
-					  ]
+						]
 					: [] ),
 				{
 					parent: 'upgrades',
@@ -139,20 +139,6 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/post/${ siteDomain }`,
 				},
-				{
-					parent: 'edit.php',
-					slug: 'edit-tags-phptaxonomycategory',
-					title: translate( 'Categories' ),
-					type: 'submenu-item',
-					url: `/settings/taxonomies/category/${ siteDomain }`,
-				},
-				{
-					parent: 'edit.php',
-					slug: 'edit-tags-phptaxonomypost_tag',
-					title: translate( 'Tags' ),
-					type: 'submenu-item',
-					url: `/settings/taxonomies/post_tag/${ siteDomain }`,
-				},
 			],
 		},
 		{
@@ -194,7 +180,7 @@ export default function buildFallbackResponse( {
 							},
 						],
 					},
-			  ]
+				]
 			: [] ),
 		{
 			icon: 'dashicons-admin-page',
@@ -244,7 +230,7 @@ export default function buildFallbackResponse( {
 							},
 						],
 					},
-			  ]
+				]
 			: [] ),
 		...( shouldShowPortfolio
 			? [
@@ -285,7 +271,7 @@ export default function buildFallbackResponse( {
 							},
 						],
 					},
-			  ]
+				]
 			: [] ),
 		{
 			icon: 'dashicons-admin-comments',
@@ -366,7 +352,7 @@ export default function buildFallbackResponse( {
 					{
 						type: 'separator',
 					},
-			  ]
+				]
 			: [] ),
 		...( shouldShowThemes
 			? [
@@ -401,7 +387,7 @@ export default function buildFallbackResponse( {
 											type: 'submenu-item',
 											url: `https://${ siteDomain }/wp-admin/customize.php?return=%2Fwp-admin%2F&autofocus%5Bcontrol%5D=header_image`,
 										},
-								  ]
+									]
 								: [] ),
 							...( shouldShowApperanceBackground
 								? [
@@ -412,7 +398,7 @@ export default function buildFallbackResponse( {
 											type: 'submenu-item',
 											url: `https://${ siteDomain }/wp-admin/customize.php?return=%2Fwp-admin%2F&autofocus%5Bcontrol%5D=background_image`,
 										},
-								  ]
+									]
 								: [] ),
 							{
 								parent: 'themes.php',
@@ -430,7 +416,7 @@ export default function buildFallbackResponse( {
 							},
 						],
 					},
-			  ]
+				]
 			: [] ),
 		{
 			icon: 'dashicons-admin-plugins',
@@ -462,13 +448,6 @@ export default function buildFallbackResponse( {
 				},
 				{
 					parent: 'users.php',
-					slug: 'subscribers',
-					title: translate( 'Subscribers' ),
-					type: 'submenu-item',
-					url: `/subscribers/${ siteDomain }`,
-				},
-				{
-					parent: 'users.php',
 					slug: 'users-my-profile',
 					title: translate( 'My Profile' ),
 					type: 'submenu-item',
@@ -488,15 +467,8 @@ export default function buildFallbackResponse( {
 			slug: 'tools-php',
 			title: translate( 'Tools' ),
 			type: 'menu-item',
-			url: `/marketing/tools/${ siteDomain }`,
+			url: `/earn/${ siteDomain }`,
 			children: [
-				{
-					parent: 'tools.php',
-					slug: 'tools-marketing',
-					title: translate( 'Marketing' ),
-					type: 'menu-item',
-					url: `/marketing/tools/${ siteDomain }`,
-				},
 				{
 					parent: 'tools.php',
 					slug: 'tools-earn',
@@ -534,7 +506,7 @@ export default function buildFallbackResponse( {
 								type: 'submenu-item',
 								url: `/site-monitoring/${ siteDomain }`,
 							},
-					  ]
+						]
 					: [] ),
 			],
 		},
@@ -569,9 +541,9 @@ export default function buildFallbackResponse( {
 				{
 					parent: 'options-podcasting.php',
 					slug: 'options-podcasting-php',
-					title: translate( 'Podcasting' ),
+					title: translate( 'Podcast' ),
 					type: 'submenu-item',
-					url: `/settings/podcasting/${ siteDomain }`,
+					url: `https://${ siteDomain }/wp-admin/admin.php?page=jetpack-podcast`,
 				},
 				{
 					parent: 'options-general.php',
@@ -627,7 +599,7 @@ export default function buildFallbackResponse( {
 								type: 'submenu-item',
 								url: `https://${ siteDomain }/wp-admin/options-general.php?page=adcontrol`,
 							},
-					  ]
+						]
 					: [] ),
 			],
 		},

@@ -276,7 +276,7 @@ export function removeLocaleFromPathLocaleInFront( path: string ): string {
 }
 
 /**
- * Retreive the locale slug in the start of the path, if it is present.
+ * Retrieve the locale slug in the start of the path, if it is present.
  * '/en/themes' => 'en', '/themes' => 'en', '/fr/plugins' => 'fr'
  * @param  path - original path
  * @returns locale

@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
 import { getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
@@ -53,7 +54,11 @@ function InviteFormHeaderLoggedOut( { site, partnerConfig } ) {
 		);
 
 	return (
-		<div className="invite-form-header invite-form-header--logged-out">
+		<div
+			className={ clsx( 'invite-form-header invite-form-header--logged-out', {
+				'is-wpcom-brand': ! partnerConfig,
+			} ) }
+		>
 			<BrandHeader title={ title } description={ description } />
 		</div>
 	);

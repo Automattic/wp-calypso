@@ -1,8 +1,8 @@
 import { Button, Gridicon } from '@automattic/components';
 import { getWindowInnerWidth } from '@automattic/viewport';
+import { throttle } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 

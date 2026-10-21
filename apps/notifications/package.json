@@ -26,18 +26,20 @@
 		"translate": "rm -rf dist/strings && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './' --dir './dist/strings' --jobs 4 --output './dist/notifications.pot' && build-app-languages --stringsFilePath='./dist/notifications.pot' --outputPath='./dist/languages'"
 	},
 	"dependencies": {
+		"@automattic/api-core": "workspace:^",
 		"@automattic/calypso-color-schemes": "workspace:^",
-		"@automattic/calypso-polyfills": "workspace:^",
 		"@automattic/calypso-router": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
-		"@wordpress/components": "^32.1.0",
-		"@wordpress/data": "^10.23.0",
-		"@wordpress/dataviews": "^13.1.0",
-		"@wordpress/element": "^6.23.0",
-		"@wordpress/i18n": "^5.23.0",
-		"@wordpress/icons": "^10.23.0",
+		"@wordpress/components": "^37.0.0",
+		"@wordpress/compose": "^8.2.0",
+		"@wordpress/data": "^10.48.0",
+		"@wordpress/dataviews": "^18.0.0",
+		"@wordpress/element": "^8.0.0",
+		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/icons": "^13.3.0",
+		"@wordpress/ui": "^0.23.0",
 		"autoprefixer": "^10.4.21",
 		"calypso": "workspace:^",
 		"clsx": "^2.1.1",
@@ -49,19 +51,19 @@
 		"react-redux": "^9.2.0",
 		"redux": "^5.0.1",
 		"redux-thunk": "^3.1.0",
-		"webpack-bundle-analyzer": "^4.10.2",
+		"webpack-bundle-analyzer": "^5.4.0",
 		"wpcom": "workspace:^",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
-		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"html-webpack-plugin": "^5.6.3",
-		"postcss": "^8.5.3",
+		"html-webpack-plugin": "^5.6.8",
+		"postcss": "^8.5.15",
 		"postcss-custom-properties": "^12.1.11",
-		"webpack": "^5.99.8"
+		"webpack": "^5.111.1"
 	}
 }

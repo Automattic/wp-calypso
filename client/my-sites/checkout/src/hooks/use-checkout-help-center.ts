@@ -4,23 +4,31 @@ import {
 	useProductsCustomOptions,
 	useProductsWithPremiumSupport,
 } from '@automattic/help-center/src/hooks';
+import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDataStoreSelect,
 } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
+import { useTranslate } from 'i18n-calypso';
+import { useExperiment } from 'calypso/lib/explat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
+// Checkout has no admin bar node to read the arm from, so it asks ExPlat itself.
+const GET_HELP_EXPERIMENT = 'calypso_help_center_get_help_chat_forward';
+
 export const useCheckoutHelpCenter = (): {
 	toggleHelpCenter: () => void;
 	helpCenterButtonCopy?: string;
 	helpCenterButtonLink: string;
+	showHelpIcon: boolean;
 } => {
+	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
@@ -36,6 +44,9 @@ export const useCheckoutHelpCenter = (): {
 	} = useProductsWithPremiumSupport( responseCart.products, 'checkout' );
 	const helpCenterOptions = useProductsCustomOptions( responseCart.products );
 
+	const [ , experimentAssignment ] = useExperiment( GET_HELP_EXPERIMENT );
+	const isGetHelpTreatment = experimentAssignment?.variationName === 'treatment';
+
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const isShowingHelpCenter = useDataStoreSelect(
@@ -47,6 +58,16 @@ export const useCheckoutHelpCenter = (): {
 			force_site_id: true,
 			location: 'thank-you-help-center',
 		} );
+
+		// Unified onboarding help-adoption signal, tagged by step. Only in the
+		// onboarding-flow checkout and only when opening (matches the domains,
+		// use-my-domain and plans steps).
+		if ( ! isShowingHelpCenter ) {
+			const flow = new URLSearchParams( window.location.search ).get( 'flow' );
+			if ( flow === ONBOARDING_FLOW ) {
+				recordTracksEvent( 'calypso_onboarding_help_center_click', { flow, step: 'checkout' } );
+			}
+		}
 
 		setShowHelpCenter( ! isShowingHelpCenter, { hasPremiumSupport, ...helpCenterOptions } );
 		if ( hasPremiumSupport ) {
@@ -65,6 +86,9 @@ export const useCheckoutHelpCenter = (): {
 	return {
 		toggleHelpCenter,
 		helpCenterButtonCopy,
-		helpCenterButtonLink,
+		helpCenterButtonLink: isGetHelpTreatment
+			? String( translate( 'Get Help' ) )
+			: helpCenterButtonLink,
+		showHelpIcon: isGetHelpTreatment,
 	};
 };

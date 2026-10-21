@@ -1,0 +1,107 @@
+/**
+ * @jest-environment jsdom
+ */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import '@testing-library/jest-dom';
+import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
+import SeoTitlePicker from './seo-title-picker';
+
+const mockEditPost = jest.fn();
+const mockRevealSidebarField = jest.fn().mockResolvedValue( true );
+let mockCurrentMeta: Record< string, string > | undefined;
+
+jest.mock( '../utils/reveal-sidebar-field', () => ( {
+	revealSidebarField: ( ...args: unknown[] ) => mockRevealSidebarField( ...args ),
+} ) );
+
+jest.mock( '@wordpress/data', () => ( {
+	useDispatch: ( store: string ) => {
+		if ( store === 'core/editor' ) {
+			return { editPost: mockEditPost };
+		}
+		return {};
+	},
+	useSelect: ( mapSelect: any ) =>
+		mapSelect( ( store: string ) => {
+			if ( store === 'core/editor' ) {
+				return {
+					getEditedPostAttribute: ( attr: string ) =>
+						attr === 'meta' ? mockCurrentMeta : undefined,
+				};
+			}
+			return {};
+		} ),
+} ) );
+
+describe( 'SeoTitlePicker', () => {
+	beforeEach( () => {
+		mockEditPost.mockClear();
+		mockRevealSidebarField.mockClear();
+		mockCurrentMeta = undefined;
+	} );
+
+	const titles = [
+		{ title: 'Best Vegetable Garden Guide for Beginners', explanation: 'a' },
+		{ title: 'Start a Vegetable Garden: Easy Beginner Steps', explanation: 'b' },
+	];
+
+	it( 'reveals the SEO panel once a title is applied', () => {
+		render( <SeoTitlePicker titles={ titles } /> );
+
+		fireEvent.click( screen.getByText( titles[ 0 ].title ) );
+
+		expect( mockRevealSidebarField ).toHaveBeenCalledWith( 'seo' );
+	} );
+
+	it( 'renders every suggested SEO title', () => {
+		render( <SeoTitlePicker titles={ titles } /> );
+		expect( screen.getByText( titles[ 0 ].title ) ).toBeInTheDocument();
+		expect( screen.getByText( titles[ 1 ].title ) ).toBeInTheDocument();
+	} );
+
+	it( 'writes the chosen title to the jetpack_seo_html_title meta on click', () => {
+		render( <SeoTitlePicker titles={ titles } /> );
+		fireEvent.click( screen.getByText( titles[ 0 ].title ) );
+		expect( mockEditPost ).toHaveBeenCalledWith( {
+			meta: { jetpack_seo_html_title: titles[ 0 ].title },
+		} );
+	} );
+
+	it( 'highlights the applied option and calls onComplete', () => {
+		const onComplete = jest.fn();
+		render( <SeoTitlePicker titles={ titles } onComplete={ onComplete } /> );
+		const button = screen.getByText( titles[ 1 ].title ).closest( 'button' ) as HTMLButtonElement;
+		fireEvent.click( button );
+		expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect( onComplete ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'marks the option matching the current SEO title meta as applied on mount', () => {
+		mockCurrentMeta = { jetpack_seo_html_title: titles[ 0 ].title };
+		render( <SeoTitlePicker titles={ titles } /> );
+		const applied = screen.getByText( titles[ 0 ].title ).closest( 'button' ) as HTMLButtonElement;
+		expect( applied ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect( screen.getByText( 'SEO title updated.' ) ).toBeInTheDocument();
+	} );
+
+	it.each( [
+		[ 'omitted', undefined ],
+		[ 'not an array', 'text' as any ],
+		[ 'an array of invalid entries', [ null, {}, { title: 7 }, { title: '  ' } ] as any ],
+	] )( 'renders nothing when the options are %s, instead of throwing', ( _label, titles ) => {
+		// History strips the picker options to save tokens, and a malformed
+		// payload can carry unusable entries. Mirrors usePickerVariations.
+		const { container } = render( <SeoTitlePicker titles={ titles } /> );
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	it( 'skips invalid entries and renders the valid options', () => {
+		const mixed = [ null, {}, { title: 7 }, { title: 'Valid SEO Title' } ] as any;
+		render( <SeoTitlePicker titles={ mixed } /> );
+		expect( screen.getByText( 'Valid SEO Title' ) ).toBeInTheDocument();
+		expect( screen.getAllByRole( 'button' ) ).toHaveLength( 1 );
+	} );
+} );

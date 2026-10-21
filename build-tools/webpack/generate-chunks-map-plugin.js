@@ -35,6 +35,7 @@ class GenerateChunksMapPlugin {
 			}
 
 			// Write chunks map
+			fs.mkdirSync( path.dirname( this.output ), { recursive: true } );
 			fs.writeFileSync( this.output, JSON.stringify( chunksMap ) );
 		} );
 	}

@@ -44,6 +44,7 @@ import { Subscriber } from '../../types';
 import { AddSubscribersModal } from '../add-subscribers-modal';
 import { JetpackEmptyListView } from '../jetpack-empty-list-view';
 import { MigrateSubscribersModal } from '../migrate-subscribers-modal';
+import { SelfOnlyNudge } from '../self-only-nudge';
 import { SubscriberDetails } from '../subscriber-details';
 import { SubscriberDetailsSkeleton } from '../subscriber-details/skeleton';
 import { SubscriberLaunchpad } from '../subscriber-launchpad';
@@ -209,6 +210,13 @@ export default function SubscriberDataViews( {
 		SubscriberModalType.NONE
 	);
 	const [ initialMethod, setInitialMethod ] = useState( '' );
+	const [ addButtonAnchor, setAddButtonAnchor ] = useState< HTMLButtonElement | null >( null );
+	const [ isNudgeDismissed, setNudgeDismissed ] = useState( false );
+	const dismissNudge = useCallback( () => setNudgeDismissed( true ), [] );
+	const openAddSubscribersModal = () => {
+		setShowSubscriberModal( SubscriberModalType.ADD );
+		setNudgeDismissed( true );
+	};
 	const closeSubscriberModal = () => {
 		setShowSubscriberModal( SubscriberModalType.NONE );
 		setInitialMethod( '' );
@@ -226,6 +234,7 @@ export default function SubscriberDataViews( {
 					'method'
 				);
 				setShowSubscriberModal( SubscriberModalType.ADD );
+				setNudgeDismissed( true );
 				if ( method ) {
 					setInitialMethod( method );
 				}
@@ -316,16 +325,41 @@ export default function SubscriberDataViews( {
 		is_owner_subscribed: isOwnerSubscribed,
 		pages,
 		total,
+		total_unfiltered: totalUnfiltered,
 	} = subscribersQueryResult || {
 		subscribers: [],
 		is_owner_subscribed: false,
 		pages: 0,
 		total: 0,
+		total_unfiltered: undefined,
 	};
+	// Prefer the list endpoint's unfiltered population over /counts so the
+	// "X out of Y total" denominator can't lag behind the filtered numerator.
+	// See NL-274 / 222712-ghe-Automattic/wpcom.
+	const denominator = totalUnfiltered ?? grandTotal;
 
-	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : JetpackEmptyListView;
+	const hasLaunchpad = isSimple || isAtomic;
+	const EmptyComponent = hasLaunchpad ? SubscriberLaunchpad : JetpackEmptyListView;
+	// Simple and Atomic sites keep the launchpad checklist when the owner is the only subscriber.
+	// Everywhere else the owner's own row is shown, with a nudge towards "Add subscribers".
 	const shouldShowLaunchpad =
-		! isLoading && ! searchTerm && ( ! grandTotal || ( grandTotal === 1 && isOwnerSubscribed ) );
+		! isLoading &&
+		! searchTerm &&
+		( ! grandTotal || ( hasLaunchpad && grandTotal === 1 && isOwnerSubscribed ) );
+	// Uses the list total rather than /counts so the nudge can't drift from the rows on screen.
+	const isUnfiltered = filters.every( ( filter ) => filter === SubscribersFilterBy.All );
+	const showSelfOnlyNudge =
+		! hasLaunchpad &&
+		! isLoading &&
+		! searchTerm &&
+		isUnfiltered &&
+		total === 1 &&
+		isOwnerSubscribed &&
+		! isNudgeDismissed &&
+		! selectedSubscriber &&
+		! isUnverified &&
+		! isStaging &&
+		showSubscriberModal === SubscriberModalType.NONE;
 
 	/**
 	 * Read page from URL when component mounts or URL changes.
@@ -687,15 +721,19 @@ export default function SubscriberDataViews( {
 	}, [ currentView.search, currentView.filters ] );
 
 	// Memoize the data and pagination info.
+	// totalItems is the count of rows being paged through: the filtered total
+	// from the list response, which always matches `pages`. Using the /counts
+	// grand total here would mismatch the data when a filter is active (and
+	// could drift from the list count even without filters — see NL-274).
 	const { data, paginationInfo } = useMemo( () => {
 		return {
 			data: subscribers,
 			paginationInfo: {
-				totalItems: grandTotal,
+				totalItems: total,
 				totalPages: pages,
 			},
 		};
-	}, [ subscribers, grandTotal, pages ] );
+	}, [ subscribers, total, pages ] );
 
 	return (
 		<div
@@ -732,7 +770,8 @@ export default function SubscriberDataViews( {
 							<Button
 								variant="primary"
 								disabled={ isUnverified || isStaging }
-								onClick={ () => setShowSubscriberModal( SubscriberModalType.ADD ) }
+								ref={ setAddButtonAnchor }
+								onClick={ openAddSubscribersModal }
 								size="compact"
 								icon={ <Icon icon={ plus } size={ 18 } /> }
 								{ ...{
@@ -740,6 +779,13 @@ export default function SubscriberDataViews( {
 										translate( 'Add subscribers' ),
 								} }
 							/>
+							{ showSelfOnlyNudge && (
+								<SelfOnlyNudge
+									anchor={ addButtonAnchor }
+									isNarrow={ isMobile }
+									onDismiss={ dismissNudge }
+								/>
+							) }
 							<SubscribersHeaderPopover
 								siteId={ siteId }
 								openMigrateSubscribersModal={ () =>
@@ -777,7 +823,7 @@ export default function SubscriberDataViews( {
 					) : (
 						<>
 							<SubscriberTotals
-								totalSubscribers={ grandTotal }
+								totalSubscribers={ denominator }
 								filteredCount={ total }
 								filters={ filters }
 								searchTerm={ searchTerm }

@@ -9,9 +9,15 @@ type Props = {
 	heading: string;
 	isPressable?: boolean;
 	areSignaturePlans?: boolean;
+	showFreeDomain?: boolean;
 };
 
-export default function HostingFeatures( { heading, isPressable, areSignaturePlans }: Props ) {
+export default function HostingFeatures( {
+	heading,
+	isPressable,
+	areSignaturePlans,
+	showFreeDomain = true,
+}: Props ) {
 	const translate = useTranslate();
 	const { __ } = useI18n();
 
@@ -44,7 +50,7 @@ export default function HostingFeatures( { heading, isPressable, areSignaturePla
 					title: translate( 'Security' ),
 					items: [
 						translate( 'Real-time backups' ),
-						translate( 'DDOS protection and mitigation' ),
+						translate( 'DDoS protection and mitigation' ),
 						translate( 'Brute-force protection' ),
 						translate( 'Malware detection & removal' ),
 						translate( 'Spam protection with Akismet' ),
@@ -79,7 +85,9 @@ export default function HostingFeatures( { heading, isPressable, areSignaturePla
 						translate( 'In-depth site analytics dashboard' ),
 						translate( 'Elastic-powered search' ),
 						translate( '4K, unbranded VideoPress player' ),
-						...( isPressable ? [] : [ translate( 'Free domain for one year' ) ] ),
+						...( ! isPressable && showFreeDomain
+							? [ translate( 'Free domain for one year' ) ]
+							: [] ),
 						translate( 'Smart redirects' ),
 					],
 				},

@@ -1,0 +1,69 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.task.task__code-for-the-people .task__illustration {
+	@include break-small {
+		width: 50%;
+	}
+}
+
+.task__code-for-the-people-illustration {
+	position: relative;
+	display: inline-block;
+	width: 100%;
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: pointer;
+
+	img {
+		display: block;
+		width: 100%;
+		aspect-ratio: 2 / 1;
+		object-fit: cover;
+		border-radius: 8px;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+	}
+
+	.task__code-for-the-people-play {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 56px;
+		height: 56px;
+		border-radius: 50%;
+		background: var(--color-surface);
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+		transition: transform 0.15s ease-out;
+
+		svg {
+			width: 28px;
+			height: 28px;
+			fill: var(--color-text);
+		}
+	}
+
+	&:hover .task__code-for-the-people-play {
+		transform: translate(-50%, -50%) scale(1.08);
+	}
+
+	&.is-playing {
+		cursor: default;
+		aspect-ratio: 16 / 9;
+		border-radius: 8px;
+		overflow: hidden;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
+		iframe {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			border: 0;
+		}
+	}
+}

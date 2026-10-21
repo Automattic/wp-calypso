@@ -1,9 +1,19 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .wp-login__one-login-layout-content-wrapper {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	gap: 2em;
+}
+
+// The wrapper centers its children, so a notice would otherwise shrink to its
+// text. Span it, like the heading and form below.
+.wp-login__one-login-layout-content-wrapper > .components-notice {
+	width: 100%;
 }
 
 .wp-login__one-login-layout-heading {
@@ -26,6 +36,17 @@
 	gap: rem( 16px );
 }
 
+// Hidden in CSS rather than by a viewport hook: the page is server-rendered, so a hook would
+// jump on hydration. `display: contents` keeps the link in the parent's flex gap when shown;
+// `display: none` removes it from the accessibility tree when hidden.
+.wp-login__top-right-mobile {
+	display: contents;
+
+	@include break-large {
+		display: none;
+	}
+}
+
 .wp-login__one-login-layout-tos {
 	color: var( --studio-gray-50, #646970 );
 
@@ -43,25 +64,43 @@
 
 .wp-login__one-login-layout-heading-subtext {
 	text-wrap: balance;
-	color: var( --studio-gray-50, #646970 );
+	color: var( --color-text-subtle, var( --studio-gray-50 ) );
 	margin-block: 0.5rem 0;
 	font-size: $font-body;
 
 	a {
-		color: var( --studio-gray-50, #646970 );
+		color: var( --color-text-subtle, var( --studio-gray-50 ) );
 		text-decoration: underline;
+	}
+
+	// Dotcom-prominent variant for real subtitles (vs. the default ToS-style
+	// quiet treatment). Slightly darker (`--color-text` resolves to
+	// studio-gray-80) and a step up on the typography scale.
+	&.is-prominent {
+		color: var( --color-text, var( --studio-gray-80 ) );
+		font-size: $font-body-large;
+
+		a {
+			color: var( --color-text, var( --studio-gray-80 ) );
+		}
 	}
 
 	&.is-secondary {
 		font-size: $font-body-extra-small;
-		color: var( --studio-gray-30 );
+		color: var( --color-text-subtle, var( --studio-gray-50 ) );
 
 		a {
-			color: var( --studio-gray-30 );
+			color: var( --color-text-subtle, var( --studio-gray-50 ) );
 		}
 	}
 }
 
 .wp-login__one-login-header-client-name {
 	text-transform: capitalize;
+
+	// Pre-branded, exact-case names (e.g. "Jetpack for iOS") must not be
+	// title-cased, which would render "iOS" as "IOS" and "for" as "For".
+	&.is-exact-case {
+		text-transform: none;
+	}
 }

@@ -10,6 +10,7 @@ export const connectedApplicationsQuery = () =>
 
 export const deleteConnectedApplicationMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'connected-app-delete' },
 		mutationFn: deleteConnectedApplication,
 		onSuccess: () => queryClient.invalidateQueries( connectedApplicationsQuery() ),
 	} );

@@ -13,7 +13,7 @@ import {
 	normalizePluginsList,
 	normalizePluginData,
 } from 'calypso/lib/plugins/utils';
-import { fetchPluginsList } from 'calypso/lib/wporg';
+import { fetchPluginInformation, fetchPluginsList } from 'calypso/lib/wporg';
 import { useSelector } from 'calypso/state';
 import { BASE_STALE_TIME } from 'calypso/state/constants';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -47,6 +47,18 @@ export const getWPORGPluginsQueryParams = (
 	return { queryKey, queryFn };
 };
 
+export const getWPORGPluginQueryParams = (
+	slug: string,
+	locale: string
+): { queryKey: QueryKey; queryFn: QueryFunction } => {
+	const queryKey: QueryKey = [ WPORG_CACHE_KEY, 'plugin', slug, locale, 'normalized' ];
+	const queryFn = () =>
+		fetchPluginInformation( slug, locale ).then( ( data: any ) =>
+			normalizePluginData( { detailsFetched: Date.now() }, data )
+		);
+	return { queryKey, queryFn };
+};
+
 export const useWPORGPlugins = (
 	options: PluginQueryOptions,
 	{
@@ -66,7 +78,7 @@ export const useWPORGPlugins = (
 };
 
 const extractPages = ( pages: Array< { plugins: Plugin[]; info: object } > = [] ) =>
-	pages.flatMap( ( page ) => page.plugins ).map( normalizePluginData );
+	pages.flatMap( ( page ) => page.plugins ).map( ( plugin ) => normalizePluginData( plugin ) );
 
 const extractPagination = ( pages: Array< { plugins: object; info: object } > = [] ) =>
 	pages[ pages.length - 1 ].info;

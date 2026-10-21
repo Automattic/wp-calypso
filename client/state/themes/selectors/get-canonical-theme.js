@@ -1,6 +1,4 @@
-import { find } from 'lodash';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
-import { Theme } from 'calypso/types';
 import 'calypso/state/themes/init';
 
 /**
@@ -38,7 +36,7 @@ export const knownConflictingThemes = new Set( [ 'bistro' ] );
  * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Jetpack Site ID to fall back to
  * @param  {string|null|undefined}  themeId Theme ID
- * @returns {?Theme}         Theme object
+ * @returns {?import('calypso/types').Theme} Theme object
  */
 export function getCanonicalTheme( state, siteId, themeId ) {
 	let searchOrder = [ 'wpcom', 'wporg', siteId ];
@@ -46,6 +44,6 @@ export function getCanonicalTheme( state, siteId, themeId ) {
 		searchOrder = [ siteId, 'wpcom', 'wporg' ];
 	}
 
-	const source = find( searchOrder, ( s ) => getTheme( state, s, themeId ) );
+	const source = searchOrder.find( ( s ) => getTheme( state, s, themeId ) );
 	return getTheme( state, source, themeId );
 }

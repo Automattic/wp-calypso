@@ -1,4 +1,3 @@
-import { map } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { THEME_REQUEST, THEME_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
 import { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
@@ -26,7 +25,7 @@ export function requestThemeOnAtomic( themeId, siteId ) {
 				path: `/sites/${ siteId }/themes/${ themeId }`,
 				apiNamespace: 'wp/v2',
 			} );
-			dispatch( receiveThemes( map( themes, normalizeJetpackTheme ), siteId ) );
+			dispatch( receiveThemes( ( themes ?? [] ).map( normalizeJetpackTheme ), siteId ) );
 			dispatch( {
 				type: THEME_REQUEST_SUCCESS,
 				siteId,

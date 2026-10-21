@@ -52,6 +52,8 @@ export function keyToString( postKey ) {
 		return `rec-${ postKey.index }`;
 	} else if ( postKey.isPromptBlock ) {
 		return `prompt-${ postKey.index }`;
+	} else if ( postKey.isCustomBlock ) {
+		return `custom-${ postKey.index }`;
 	} else if ( postKey.feedId ) {
 		return `feed-${ postKey.postId }-${ postKey.feedId }`;
 	} else if ( postKey.blogId ) {
@@ -61,6 +63,4 @@ export function keyToString( postKey ) {
 	return null; // should never happen!
 }
 
-export function isPostKeyLike( postKey ) {
-	return postKey && postKey.postId && ( postKey.blogId || postKey.feedId );
-}
+export { isPostKeyLike } from '@automattic/api-core';

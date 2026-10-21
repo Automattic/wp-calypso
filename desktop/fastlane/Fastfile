@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-require 'dotenv'
+require 'fastlane/plugin/wpmreleasetoolkit'
 require 'json'
+
+EnvManager = Fastlane::Wpmreleasetoolkit::EnvManager
 
 fastlane_version '2.0'
 
@@ -10,7 +12,6 @@ default_platform :mac
 PROJECT_ROOT_FOLDER = File.dirname(File.expand_path(__dir__))
 
 ENV_FILE_NAME = 'wordpress-desktop.env'
-USER_ENV_FILE_PATH = File.join(Dir.home, '.a8c-apps', ENV_FILE_NAME)
 
 TEAM_ID = 'PZYM8XX95Q'
 
@@ -34,24 +35,26 @@ ASC_API_KEY_ENV_VARS = %w[
   APP_STORE_CONNECT_API_KEY_KEY
 ].freeze
 
-import 'lib/helpers.rb'
-
 before_all do
   # This is necessary for 'match' to work correctly in CI. When running
   # locally, it has no effect so it's safe to run it before all lanes.
   setup_ci
 
-  Dotenv.load(USER_ENV_FILE_PATH)
+  EnvManager.set_up(env_file_name: ENV_FILE_NAME)
 end
 
 platform :mac do
-  desc 'Download and configure code signing certificates and provisioning profiles .'
+  # Download and configure code signing certificates and provisioning profiles.
+  #
+  # @param readonly [Boolean] Use `true` to only fetch existing certificates and profiles from
+  #   our S3 bucket via `match`. Use `false` to create or update them on App Store Connect.
+  #
   lane :configure_code_signing do |readonly: true|
-    require_env_vars!(*CODE_SIGNING_ENV_VARS)
+    EnvManager.require_env_vars!(*CODE_SIGNING_ENV_VARS)
 
     unless readonly
       # We need the API key instantiated only when making changes on ASC (readonly = false)
-      require_env_vars!(*ASC_API_KEY_ENV_VARS)
+      EnvManager.require_env_vars!(*ASC_API_KEY_ENV_VARS)
       api_key = app_store_connect_api_key
     end
 
@@ -65,5 +68,46 @@ platform :mac do
       readonly: readonly,
       **CODE_SIGNING_STORAGE_OPTIONS
     )
+  end
+
+  # Verify that the .app bundles electron-builder produced are signed with our
+  # Developer ID and carry a notarization ticket.
+  #
+  lane :verify_code_signing do
+    app_paths = Dir[ File.join( PROJECT_ROOT_FOLDER, 'release', 'mac*', '*.app' ) ]
+    UI.user_error!( 'No .app artifacts found to verify code signing.' ) if app_paths.empty?
+
+    macos_verify_code_signing(
+      artifact_path: app_paths,
+      expected_authority: "Developer ID Application: Automattic, Inc. (#{TEAM_ID})"
+    )
+  end
+
+  # Notarize and staple the .dmg artifacts produced by electron-builder.
+  #
+  # The `.app` is notarized and stapled earlier, in electron-builder's
+  # afterSign hook (`bin/after_sign_hook.js`), so that the `.zip` packaged from
+  # it carries a stapled app. This lane handles the `.dmg` wrapper, which only
+  # exists after the build completes.
+  #
+  lane :notarize_app do
+    EnvManager.require_env_vars!(*ASC_API_KEY_ENV_VARS)
+
+    api_key = app_store_connect_api_key
+
+    dmg_paths = Dir[File.join(PROJECT_ROOT_FOLDER, 'release', '**', '*.dmg')]
+    UI.user_error!('No .dmg artifacts found to notarize.') if dmg_paths.empty?
+
+    dmg_paths.each do |path|
+      notarize(
+        package: path,
+        api_key: api_key,
+        print_log: true
+      )
+    end
+
+    # `electron-builder` only signs the app inside a dmg, not the dmg itself, 
+    # so the stapled ticket is all there is to check here.
+    macos_verify_code_signing(artifact_path: dmg_paths)
   end
 end

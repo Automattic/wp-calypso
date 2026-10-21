@@ -140,9 +140,10 @@ describe( 'MigrationOverview', () => {
 				status: 'success',
 			} );
 
+			const user = userEvent.setup();
 			renderWithProvider( <MigrationOverview site={ site } /> );
 
-			await userEvent.click( screen.getByRole( 'button', { name: 'Copy migration key' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Copy migration key' } ) );
 
 			await waitFor( () => {
 				const notice = screen.getByText( 'Migration key copied successfully' );

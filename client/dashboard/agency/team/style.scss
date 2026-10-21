@@ -1,0 +1,11 @@
+.agency-team-member__avatar {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	object-fit: cover;
+	flex-shrink: 0;
+}
+
+.agency-team-member__avatar-placeholder {
+	background: var( --color-surface-backdrop );
+}

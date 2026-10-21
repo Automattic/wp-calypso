@@ -16,6 +16,17 @@ export interface PriceRulesConfig {
 	hidePrice?: boolean;
 	oneTimePrice?: boolean;
 	freeForFirstYear?: boolean;
+	/**
+	 * List of specific domain names that should always show $0 pricing (free for first year),
+	 * regardless of the global freeForFirstYear flag. Used to keep a domain showing as $0 in
+	 * the suggestion list after it has been added to the cart with a free-domain promotion.
+	 */
+	freeForFirstYearDomains?: string[];
+	/**
+	 * When set, only domains whose TLD is in this list get FREE_FOR_FIRST_YEAR pricing.
+	 * All other TLDs show their real price. Takes precedence over freeForFirstYear.
+	 */
+	freeForFirstYearTlds?: string[];
 }
 
 const getPriceRuleForSuggestion = ( {
@@ -41,6 +52,18 @@ const getPriceRuleForSuggestion = ( {
 		return DomainPriceRule.PRICE;
 	}
 
+	if ( priceRules.freeForFirstYearDomains?.includes( suggestion.domain_name ) ) {
+		return DomainPriceRule.FREE_FOR_FIRST_YEAR;
+	}
+
+	if ( priceRules.freeForFirstYearTlds ) {
+		return priceRules.freeForFirstYearTlds.some( ( tld ) =>
+			suggestion.domain_name.endsWith( '.' + tld )
+		)
+			? DomainPriceRule.FREE_FOR_FIRST_YEAR
+			: DomainPriceRule.PRICE;
+	}
+
 	if ( priceRules.freeForFirstYear ) {
 		return DomainPriceRule.FREE_FOR_FIRST_YEAR;
 	}
@@ -51,19 +74,26 @@ const getPriceRuleForSuggestion = ( {
 export const useSuggestion = ( domainName: string ) => {
 	const { query, queries, config, events } = useDomainSearch();
 
+	// Read the availability of the query, not of this card's domain: every card's
+	// position must count the FQDN that useSuggestionsList puts first.
 	const { data: fqdnAvailability } = useQuery( {
-		...queries.domainAvailability( domainName ),
+		...queries.domainAvailability( query ),
 	} );
 
-	const { data: suggestions } = useQuery( {
+	const { data, isError } = useQuery( {
 		...queries.domainSuggestions( query ),
 	} );
 
-	if ( suggestions && fqdnAvailability ) {
-		addAvailabilityAsSuggestion( suggestions, fqdnAvailability );
-	}
+	// Match useSuggestionsList, which treats a failed request as an empty list: the
+	// FQDN card it renders from the availability result must still resolve here.
+	const cachedSuggestions = data ?? ( isError ? [] : undefined );
 
-	if ( suggestions ) {
+	if ( cachedSuggestions ) {
+		const suggestions =
+			fqdnAvailability && query === fqdnAvailability.domain_name
+				? addAvailabilityAsSuggestion( cachedSuggestions, fqdnAvailability )
+				: cachedSuggestions;
+
 		const suggestionPosition = suggestions.findIndex(
 			( suggestion ) => suggestion.domain_name === domainName
 		);

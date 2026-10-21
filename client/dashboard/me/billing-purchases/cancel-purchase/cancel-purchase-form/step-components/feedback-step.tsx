@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Notice } from '../../../../../components/notice';
 import { getCancellationReasons } from '../cancellation-reasons';
 import { toSelectOption } from '../to-select-options';
+import type { CancelIntent } from '../../../../../utils/purchase';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 type ChangeCallback = ( value: string ) => void;
@@ -19,7 +20,7 @@ type CancellationReasonProps = {
 	onChange: ChangeCallback;
 	plans: PlanProduct[];
 	onDetailsChange: DetailsChangeCallback;
-	intent?: 'cancel' | 'remove';
+	intent?: CancelIntent;
 };
 
 function CancellationReason( {
@@ -64,14 +65,20 @@ function CancellationReason( {
 		);
 	};
 
+	const getReasonLabel = () => {
+		if ( intent === 'remove' ) {
+			return __( 'Why would you like to remove?' );
+		}
+		if ( intent === 'auto-renew' ) {
+			return __( 'Why would you like to turn off auto-renew?' );
+		}
+		return __( 'Why would you like to cancel?' );
+	};
+
 	return (
 		<VStack spacing={ 6 }>
 			<RadioControl
-				label={
-					intent === 'remove'
-						? __( 'Why would you like to remove?' )
-						: __( 'Why would you like to cancel?' )
-				}
+				label={ getReasonLabel() }
 				selected={ value }
 				options={ reasons.map( toSelectOption ) }
 				onChange={ ( val ) => {
@@ -150,6 +157,13 @@ function ImportQuestion( { onChange }: { onChange?: ChangeCallback } ) {
 	);
 }
 
+// Must stay in sync with the survey step routing in cancel-purchase/index.tsx.
+export function shouldShowCancellationReason( purchase: Purchase ): boolean {
+	return (
+		purchase.is_plan || purchase.is_google_workspace_product || purchase.is_domain_registration
+	);
+}
+
 type FeedbackStepProps = {
 	purchase: Purchase;
 	plans: PlanProduct[];
@@ -158,7 +172,7 @@ type FeedbackStepProps = {
 	onChangeCancellationReason: ChangeCallback;
 	onChangeCancellationReasonDetails: ChangeCallback;
 	onChangeImportFeedback: ChangeCallback;
-	intent?: 'cancel' | 'remove';
+	intent?: CancelIntent;
 };
 
 export default function FeedbackStep( {
@@ -171,10 +185,7 @@ export default function FeedbackStep( {
 	onChangeCancellationReasonDetails,
 	onChangeImportFeedback,
 }: FeedbackStepProps ) {
-	const isPlanPurchase = purchase.is_plan;
-	const isGSuite = purchase.is_google_workspace_product;
-	const isDomain = purchase.is_domain_registration;
-	const showCancellationReason = isPlanPurchase || isGSuite || isDomain;
+	const showCancellationReason = shouldShowCancellationReason( purchase );
 
 	return (
 		<VStack spacing={ 6 }>

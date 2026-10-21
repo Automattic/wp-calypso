@@ -1,5 +1,6 @@
 import FormTextInput from '../index';
-import type { Meta, StoryFn, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
+import type { ComponentType } from 'react';
 
 export type FormTextInputStory = StoryObj< typeof FormTextInput >;
 
@@ -7,7 +8,7 @@ const meta: Meta = {
 	title: 'client/components/Forms/Form Text Input',
 	component: FormTextInput,
 	decorators: [
-		( Story: StoryFn ) => (
+		( Story: ComponentType ) => (
 			<div style={ { maxWidth: '360px', padding: '30px' } }>
 				<Story />
 			</div>

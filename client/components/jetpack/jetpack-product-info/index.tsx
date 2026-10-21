@@ -1,6 +1,15 @@
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { FunctionComponent, ReactNode } from 'react';
+import {
+	Children,
+	cloneElement,
+	Fragment,
+	FunctionComponent,
+	isValidElement,
+	ReactNode,
+	useCallback,
+	useRef,
+} from 'react';
 import { useIncludedProductDescriptionMap } from 'calypso/components/jetpack/jetpack-product-info/hooks/use-included-product-description-map';
 import isWooCommerceProduct from 'calypso/jetpack-cloud/sections/partner-portal/lib/is-woocommerce-product';
 import { PricingBreakdown } from 'calypso/my-sites/plans/jetpack-plans/product-store/pricing-breakdown';
@@ -15,6 +24,7 @@ import JetpackProductInfoRecommendationTags from './recommendation-tags';
 import JetpackProductInfoRegularList from './regular-list';
 import JetpackProductInfoSection from './section';
 import type { VendorInfo } from '../jetpack-lightbox/types';
+import type { AnchorHTMLAttributes, MouseEvent } from 'react';
 
 import './style.scss';
 
@@ -61,9 +71,55 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 	} );
 
 	const descriptionMap = useIncludedProductDescriptionMap( product.productSlug );
+	const productInfoRef = useRef< HTMLDivElement >( null );
+
+	const onDisclaimerClick = useCallback( ( event: MouseEvent< HTMLAnchorElement > ) => {
+		const faqButtonId = event.currentTarget.hash.slice( 1 );
+		const faqButton = Array.from(
+			productInfoRef.current?.querySelectorAll< HTMLButtonElement >( '.foldable-faq__question' ) ??
+				[]
+		).find( ( button ) => button.id === faqButtonId );
+
+		if ( ! faqButton ) {
+			return;
+		}
+
+		event.preventDefault();
+		faqButton.click();
+		faqButton.scrollIntoView( { behavior: 'smooth', block: 'nearest' } );
+	}, [] );
+
+	const renderDisclaimerNode = ( child: ReactNode ): ReactNode => {
+		if ( isValidElement< { children?: ReactNode } >( child ) && child.type === Fragment ) {
+			return cloneElement( child, {}, Children.map( child.props.children, renderDisclaimerNode ) );
+		}
+
+		if (
+			! isValidElement< AnchorHTMLAttributes< HTMLAnchorElement > >( child ) ||
+			child.type !== 'a' ||
+			! child.props.href?.startsWith( '#' )
+		) {
+			return child;
+		}
+
+		return cloneElement( child, {
+			onClick: ( event: MouseEvent< HTMLAnchorElement > ) => {
+				child.props.onClick?.( event );
+
+				if ( ! event.defaultPrevented ) {
+					onDisclaimerClick( event );
+				}
+			},
+		} );
+	};
+
+	const renderedDisclaimer = Children.map( disclaimer, renderDisclaimerNode );
 
 	return (
-		<div className={ clsx( 'jetpack-product-info', { 'is-woocommerce-product': isWooCommerce } ) }>
+		<div
+			className={ clsx( 'jetpack-product-info', { 'is-woocommerce-product': isWooCommerce } ) }
+			ref={ productInfoRef }
+		>
 			<div className="jetpack-product-info__header">
 				<div className={ iconStyles }>
 					<img alt="" src={ icon } />
@@ -151,7 +207,7 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 
 			{ disclaimer && (
 				<JetpackProductInfoSection alwaysExpanded>
-					<span className="jetpack-product-info__disclaimer-text">{ disclaimer }</span>
+					<span className="jetpack-product-info__disclaimer-text">{ renderedDisclaimer }</span>
 				</JetpackProductInfoSection>
 			) }
 		</div>

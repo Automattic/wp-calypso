@@ -1,6 +1,6 @@
 import { DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -60,7 +60,10 @@ const domainTransfer: FlowV1 = {
 
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
-			redirectTo: addQueryArgs( `/setup/${ flowName }/domains`, window.location.search ),
+			redirectTo: addQueryArgs(
+				`/setup/${ flowName }/domains`,
+				getQueryArgs( window.location.search )
+			),
 			pageTitle: 'Bulk Transfer',
 		} );
 
@@ -91,7 +94,7 @@ const domainTransfer: FlowV1 = {
 
 					const checkoutBackURLWithQueryArgs = addQueryArgs(
 						checkoutBackURL,
-						window.location.search
+						getQueryArgs( window.location.search )
 					);
 
 					const destination = addQueryArgs( '/checkout/no-site', {

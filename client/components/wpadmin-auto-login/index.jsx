@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -31,7 +30,7 @@ export default class WpadminAutoLogin extends Component {
 	};
 
 	componentDidMount() {
-		const siteUrl = get( this.props.site, 'URL' );
+		const siteUrl = this.props.site?.URL;
 		const requestUrl = this.getPixelUrl( siteUrl );
 
 		setTimeout( tryLogin.bind( null, requestUrl, this.props.delay, 0 ), this.props.delay );

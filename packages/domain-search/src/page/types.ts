@@ -1,18 +1,26 @@
 import {
 	availableTldsQuery,
+	bundleForDomainQuery,
+	bundleSuggestionQuery,
+	bundleTriggersQuery,
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
 	domainAvailabilityQuery,
+	namePulseAvailabilityQuery,
+	namePulseSuggestionsQuery,
+	namePulseTldsQuery,
 } from '@automattic/api-queries';
 import { PriceRulesConfig, useSuggestion } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
 import type { FeaturedSuggestionReason } from '../helpers/partition-suggestions';
 import type {
+	BundleSuggestion,
 	DomainAvailability,
 	DomainAvailabilityStatus,
 	DomainSuggestion,
 	DomainSuggestionQueryVendor,
 	FreeDomainSuggestion,
+	NamePulseSuggestionsQuery,
 } from '@automattic/api-core';
 import type { ComponentType } from 'react';
 
@@ -22,20 +30,74 @@ export interface SelectedDomain {
 	tld: string;
 	salePrice?: string;
 	price: string;
+	/**
+	 * Bundle membership, present only when the item was added to the cart as
+	 * part of a domain bundle. `groupId` is the server-issued bundle group id,
+	 * passed through verbatim by the app layer; items sharing a `groupId` are
+	 * rendered as a single grouped cart row. `price` is the formatted sum of
+	 * the bundle members' current prices, computed and formatted at the app
+	 * layer (the same value for every member of the group). `isPrimary` marks
+	 * the bundle's anchor domain so the grouped row can list it first,
+	 * matching the masterbar mini-cart and checkout member ordering.
+	 */
+	bundle?: {
+		groupId: string;
+		price: string;
+		isPrimary?: boolean;
+	};
 }
 
 export interface DomainSearchCart {
 	items: SelectedDomain[];
 	total: string;
 	onAddItem: ( item: DomainSuggestion ) => Promise< unknown >;
+	/**
+	 * Add every member of a bundle suggestion to the cart in a single,
+	 * all-or-nothing operation. Implemented at the app layer; when absent the
+	 * bundle CTA is a no-op.
+	 */
+	onAddBundle?: ( bundle: BundleSuggestion ) => Promise< unknown >;
 	onRemoveItem: ( uuid: string ) => Promise< unknown >;
+	/**
+	 * Remove every member of a bundle group from the cart in a single,
+	 * all-or-nothing operation. Implemented at the app layer; when absent the
+	 * grouped cart row falls back to removing each member individually. That
+	 * fallback is not all-or-nothing — a failed member removal can leave the
+	 * rest of the group orphaned in the cart — so consumers should provide
+	 * this callback whenever their cart backend can batch the removal.
+	 */
+	onRemoveBundle?: ( bundleGroupId: string ) => Promise< unknown >;
 	hasItem: ( domainName: string ) => boolean;
 }
+
+/**
+ * What started a domain search: a user action on the page, or the query the page mounted with
+ * (`prefilled` when it sends a request, `cached` when results come from the client-side cache).
+ */
+export type SearchTrigger =
+	| 'submit'
+	| 'input_changed'
+	| 'filter_apply'
+	| 'filter_reset'
+	| 'hint_link'
+	| 'skip_suggestion'
+	| 'prefilled'
+	| 'cached';
+
+export type DomainSearchTracksProps = Record< string, string | number | boolean | undefined >;
+
+export type NamePulseTracksEventName =
+	'results_error' | 'view_cart_click' | 'remove_button_click' | 'query_clear';
 
 export interface DomainSearchEvents {
 	onContinue: () => void;
 	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
 	onExternalDomainClick: ( domainName?: string ) => void;
+	/**
+	 * Shows the "Already have a site?" card on the initial state when provided. Left out of the
+	 * default events so flows without a migration entry point don't render the card.
+	 */
+	onMigrateSiteClick?: () => void;
 	onMakePrimaryAddressClick: ( domainName: string ) => void;
 	onMoveDomainToSiteClick: ( otherSiteDomain: string, domainName: string ) => void;
 	onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => void;
@@ -43,6 +105,7 @@ export interface DomainSearchEvents {
 	onMapDomainClick: ( domainName: string ) => void;
 	onSubmitButtonClick: ( query: string ) => void;
 	onQueryChange: ( query: string ) => void;
+	onSearchStart: ( query: string, trigger: SearchTrigger ) => void;
 	onQueryClear: () => void;
 	onAddDomainToCart: (
 		domainName: string,
@@ -62,23 +125,85 @@ export interface DomainSearchEvents {
 	) => void;
 	onFilterApplied: ( filter: FilterState ) => void;
 	onFilterReset: ( filter: FilterState, keysToReset: string[] ) => void;
-	onShowMoreResults: ( pageNumber: number ) => void;
-	onSuggestionsReceive: ( query: string, suggestions: string[], responseTime: number ) => void;
+	onShowMoreResults: ( pageNumber: number, properties?: DomainSearchTracksProps ) => void;
+	onSuggestionsReceive: (
+		query: string,
+		suggestions: string[],
+		responseTime: number,
+		properties?: DomainSearchTracksProps
+	) => void;
 	onSuggestionRender: (
 		suggestion: ReturnType< typeof useSuggestion >,
-		reason?: FeaturedSuggestionReason
+		reason?: FeaturedSuggestionReason,
+		properties?: DomainSearchTracksProps
 	) => void;
-	onSuggestionInteract: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
+	/** Name Pulse passes the railcar its card was rendered with. */
+	onSuggestionInteract: (
+		suggestion: ReturnType< typeof useSuggestion >,
+		railcar?: string
+	) => void;
 	onSuggestionNotFound: ( domainName: string ) => void;
 	onTrademarkClaimsNoticeShown: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onTrademarkClaimsNoticeAccepted: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onTrademarkClaimsNoticeClosed: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onPageView: () => void;
+	/**
+	 * A bundle offer became visible. `placement` distinguishes the top featured
+	 * `BundleCard` (`'card'`) from an inline row beneath a trigger suggestion
+	 * (`'inline'`) so the shown → accepted funnel can segment by surface.
+	 */
+	onBundleShown: ( bundle: BundleSuggestion, placement: BundlePlacement ) => void;
+	onBundleAddToCart: ( bundle: BundleSuggestion, placement: BundlePlacement ) => void;
+	/** Name Pulse only. Records `calypso_domain_search` once per settled search. */
+	onNamePulseSearch: (
+		query: string,
+		trigger: SearchTrigger,
+		properties: DomainSearchTracksProps
+	) => void;
+	onNamePulseTracksEvent: (
+		name: NamePulseTracksEventName,
+		properties: DomainSearchTracksProps
+	) => void;
 }
+
+/**
+ * Where a bundle offer is surfaced: the top featured card or an inline row.
+ */
+export type BundlePlacement = 'card' | 'inline';
 
 export interface DomainSearchConfig {
 	vendor: DomainSuggestionQueryVendor;
 	skippable: boolean;
+	/**
+	 * Optional copy overrides for the free-subdomain skip card. When omitted, the
+	 * card keeps its default "Start free with %(domain)s" title, "Upgrade to a custom
+	 * domain name anytime." subtitle and "Start Free" CTA. `title` may include the
+	 * `%(domain)s` placeholder, interpolated with the free subdomain (e.g.
+	 * flows that require a paid plan can drop the "free" framing).
+	 */
+	skipSuggestionCopy?: {
+		title?: string;
+		subtitle?: string;
+		buttonText?: string;
+		/** Accessible label of the skip button. Defaults to "Skip purchase and continue with %(domain)s". */
+		skipLabel?: string;
+	};
+	/**
+	 * Where the free-subdomain skip card renders. `results` (the default) puts it at the top of
+	 * the results list, below the `BeforeResults` slot; `top` puts it above that slot.
+	 */
+	skipSuggestionPlacement?: 'results' | 'top';
+	/**
+	 * Label the add-to-cart button "Select" with a plus icon instead of "Add to cart" with a
+	 * cart icon, so picking a domain reads less like a purchase.
+	 */
+	showSelectCta?: boolean;
+	/**
+	 * Hide the free *.wordpress.com subdomain skip card and offer only a plain "skip / set up a
+	 * domain later" control. Used by flows whose site never keeps a free subdomain (e.g. the
+	 * atomic funnel, which always transfers to Atomic).
+	 */
+	hideFreeSubdomainSuggestion?: boolean;
 	deemphasizedTlds: string[];
 	priceRules: PriceRulesConfig;
 	includeDotBlogSubdomain: boolean;
@@ -86,6 +211,14 @@ export interface DomainSearchConfig {
 	allowedTlds: string[];
 	includeOwnedDomainInSuggestions: boolean;
 	numberOfDomainsResultsPerPage: number;
+	/**
+	 * Show domain bundle suggestions in the search flow. Frontend dev/Storybook
+	 * gate, set from the `domain-bundling` feature flag at the app layer. Default
+	 * false, so bundles stay hidden unless a consumer opts in.
+	 */
+	showBundleSuggestions: boolean;
+	/** Set by the signup domain-only step. */
+	showNamePulseSearch: boolean;
 }
 
 export interface DomainSearchProps {
@@ -102,20 +235,21 @@ export interface DomainSearchProps {
 	config?: Partial< DomainSearchConfig >;
 }
 
-export interface DomainSearchContextType
-	extends Omit<
-		DomainSearchProps,
-		'className' | 'events' | 'config' | 'getPriceRuleForSuggestion'
-	> {
+export interface DomainSearchContextType extends Omit<
+	DomainSearchProps,
+	'className' | 'events' | 'config' | 'getPriceRuleForSuggestion'
+> {
 	events: DomainSearchEvents;
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
 	openFullCart: () => void;
 	query: string;
-	setQuery: ( query: string ) => void;
+	setQuery: ( query: string, trigger: SearchTrigger ) => void;
 	filter: FilterState;
 	setFilter: ( filter: FilterState ) => void;
 	resetFilter: () => void;
+	/** What started the latest search. Name Pulse reports searches once they settle. */
+	lastSearchTrigger: { current?: SearchTrigger };
 	queries: {
 		availableTlds: ( query?: string, vendor?: string ) => ReturnType< typeof availableTldsQuery >;
 		domainSuggestions: (
@@ -124,6 +258,16 @@ export interface DomainSearchContextType
 		) => ReturnType< typeof domainSuggestionsQuery >;
 		domainAvailability: ( domainName: string ) => ReturnType< typeof domainAvailabilityQuery >;
 		freeSuggestion: ( query: string ) => ReturnType< typeof freeSuggestionQuery >;
+		bundleSuggestion: ( query: string ) => ReturnType< typeof bundleSuggestionQuery >;
+		bundleTriggers: ( query: string ) => ReturnType< typeof bundleTriggersQuery >;
+		bundleForDomain: ( fqdn: string ) => ReturnType< typeof bundleForDomainQuery >;
+		namePulseSuggestions: (
+			params: NamePulseSuggestionsQuery
+		) => ReturnType< typeof namePulseSuggestionsQuery >;
+		namePulseAvailability: (
+			domainNames: string[]
+		) => ReturnType< typeof namePulseAvailabilityQuery >;
+		namePulseTlds: () => ReturnType< typeof namePulseTldsQuery >;
 	};
 	config: DomainSearchConfig;
 }

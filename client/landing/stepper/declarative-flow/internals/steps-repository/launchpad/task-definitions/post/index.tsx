@@ -1,6 +1,5 @@
 import { Task } from '@automattic/launchpad';
-import { isNewsletterFlow, isStartWritingFlow } from '@automattic/onboarding';
-import { addQueryArgs } from '@wordpress/url';
+import { isNewsletterFlow } from '@automattic/onboarding';
 import { TaskAction } from '../../types';
 
 export const getFirstPostPublished: TaskAction = ( task, flow, context ): Task => {
@@ -9,15 +8,8 @@ export const getFirstPostPublished: TaskAction = ( task, flow, context ): Task =
 
 	return {
 		...task,
-		disabled:
-			mustVerifyEmailBeforePosting ||
-			( task.completed && isStartWritingFlow( flow || null ) ) ||
-			false,
-		calypso_path: ! isStartWritingFlow( flow || null )
-			? task.calypso_path
-			: addQueryArgs( task.calypso_path, {
-					origin: window.location.origin,
-			  } ),
+		disabled: mustVerifyEmailBeforePosting || false,
+		calypso_path: task.calypso_path,
 		useCalypsoPath: true,
 	};
 };

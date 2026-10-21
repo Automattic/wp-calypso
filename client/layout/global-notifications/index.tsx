@@ -10,6 +10,9 @@ import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import type { AppState } from 'calypso/types';
 import './style.scss';
 
+const loadNotifications = () =>
+	import( /* webpackChunkName: "async-load-calypso-notifications" */ 'calypso/notifications' );
+
 const GlobalNotifications = () => {
 	const isNotificationsOpen = useSelector( ( state: AppState ) => getIsNotificationsOpen( state ) );
 	const isNotificationsOpenRef = useRef( isNotificationsOpen );
@@ -79,11 +82,7 @@ const GlobalNotifications = () => {
 	return (
 		<div className="global-notifications" ref={ containerRef }>
 			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-notifications" */ 'calypso/notifications'
-					)
-				}
+				require={ loadNotifications }
 				isShowing={ isNotificationsOpen }
 				checkToggle={ checkToggleNotes }
 				placeholder={ null }

@@ -31,6 +31,10 @@ jest.mock( '../lib/create-ebanx-token-vgs', () => ( {
 	createEbanxTokenVgs: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
+} ) );
+
 async function createMockStripeToken( {
 	type,
 	card,
@@ -160,11 +164,8 @@ describe( 'multiPartnerCardProcessor', () => {
 			device_id: undefined, // VGS flow doesn't provide deviceId
 			document: 'ebanx-document-code',
 			email: undefined,
-			gstin: undefined,
 			ideal_bank: undefined,
 			name: 'test name',
-			nik: undefined,
-			pan: undefined,
 			payment_key: 'ebanx-token',
 			payment_method: 'WPCOM_Billing_Ebanx',
 			payment_partner: undefined,
@@ -696,6 +697,85 @@ describe( 'multiPartnerCardProcessor', () => {
 					products: [ domainProduct ],
 				},
 				domain_details: basicExpectedDomainDetails,
+			} );
+		} );
+
+		describe( 'with no user', () => {
+			const loggedOutOptions = {
+				...options,
+				createUserAndSiteBeforeTransaction: true,
+				contactDetails: {
+					email,
+					countryCode,
+					postalCode,
+				},
+			};
+			const submitData = {
+				paymentPartner: 'ebanx',
+				...ebanxCardTransactionRequest,
+			};
+
+			beforeEach( () => {
+				( createEbanxTokenVgs as jest.Mock ).mockClear();
+			} );
+
+			it( 'creates an account once before tokenizing and sends the new site to the endpoint', async () => {
+				const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+				const createAccountEndpoint = mockCreateAccountEndpoint(
+					mockCreateAccountSiteCreatedResponse
+				);
+				const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
+				await expect(
+					multiPartnerCardProcessor( submitData, loggedOutOptions )
+				).resolves.toStrictEqual( expected );
+				expect( createAccountEndpoint ).toHaveBeenCalledTimes( 1 );
+				expect( createAccountEndpoint ).toHaveBeenCalledWith( expectedCreateAccountRequest );
+				expect( createEbanxTokenVgs ).toHaveBeenCalledTimes( 1 );
+				expect( createAccountEndpoint.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+					( createEbanxTokenVgs as jest.Mock ).mock.invocationCallOrder[ 0 ]
+				);
+				expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+					...basicExpectedEbanxRequest,
+					cart: {
+						...basicExpectedStripeRequest.cart,
+						blog_id: 1234567,
+						cart_key: 1234567,
+						coupon: '',
+					},
+				} );
+			} );
+
+			it( 'returns an error response without tokenizing if account creation fails', async () => {
+				const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+				mockCreateAccountEndpoint( () => [
+					400,
+					{
+						error: 'test_error',
+						message: 'account error',
+					},
+				] );
+				const expected = { payload: 'account error', type: 'ERROR' };
+				await expect(
+					multiPartnerCardProcessor( submitData, loggedOutOptions )
+				).resolves.toStrictEqual( expected );
+				expect( createEbanxTokenVgs ).not.toHaveBeenCalled();
+				expect( transactionsEndpoint ).not.toHaveBeenCalled();
+			} );
+
+			it( 'returns an error response without sending the transaction if tokenization fails', async () => {
+				const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+				const createAccountEndpoint = mockCreateAccountEndpoint(
+					mockCreateAccountSiteCreatedResponse
+				);
+				( createEbanxTokenVgs as jest.Mock ).mockRejectedValueOnce(
+					new Error( 'ebanx error: tokenization failed' )
+				);
+				const expected = { payload: 'ebanx error: tokenization failed', type: 'ERROR' };
+				await expect(
+					multiPartnerCardProcessor( submitData, loggedOutOptions )
+				).resolves.toStrictEqual( expected );
+				expect( createAccountEndpoint ).toHaveBeenCalledTimes( 1 );
+				expect( transactionsEndpoint ).not.toHaveBeenCalled();
 			} );
 		} );
 	} );

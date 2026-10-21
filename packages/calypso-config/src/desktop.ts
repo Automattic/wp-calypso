@@ -22,7 +22,9 @@ const features = {
 	'signup/social-first': false,
 	'login/magic-login': false,
 	'bilmur-script': false,
+	blackbox: false,
 	'blackbox-login': false,
+	'blackbox-lost-password': false,
 };
 
 export default ( data: ConfigData ): ConfigData => {

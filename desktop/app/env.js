@@ -9,6 +9,7 @@ const { mkdirSync } = require( 'fs' );
 
 const state = require( './lib/state' );
 const config = require( './lib/config' );
+const { appendE2EUserAgentSuffix } = require( './lib/e2e-user-agent' );
 const appData = path.join( app.getPath( 'appData' ), config.appPathName );
 
 // Initialize log path prior to requiring any modules that log
@@ -60,6 +61,9 @@ log.info( `App Path: ${ app.getAppPath() }` );
 log.info( `App Data: ${ app.getPath( 'userData' ) }` );
 log.info( 'Settings:', Settings._getAll() );
 
+app.userAgentFallback = appendE2EUserAgentSuffix( app.userAgentFallback, process.env );
+log.info( `User agent: ${ app.userAgentFallback }` );
+
 if ( Settings.getSetting( 'proxy-type' ) === '' ) {
 	log.info( 'Proxy: none' );
 	app.commandLine.appendSwitch( 'no-proxy-server' );
@@ -75,7 +79,7 @@ if ( Settings.getSetting( 'proxy-type' ) === '' ) {
 	if ( Settings.getSetting( 'proxy-pac' ) !== '' ) {
 		log.info( 'Proxy PAC: ' + Settings.getSetting( 'proxy-pac' ) );
 
-		// todo: this doesnt seem to work yet
+		// todo: this doesn't seem to work yet
 		app.commandLine.appendSwitch( 'proxy-pac-url', Settings.getSetting( 'proxy-pac' ) );
 	}
 }

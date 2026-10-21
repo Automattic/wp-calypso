@@ -1,10 +1,19 @@
-import { fetchReadFeedSite } from '@automattic/api-core';
+import { adaptReadSite, fetchReadSite } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
-export const readFeedSiteQuery = ( siteId?: number ) => {
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+export const readSiteQuery = ( siteId?: number | string ) => {
+	const coercedId = typeof siteId === 'string' ? Number( siteId ) : siteId;
+	const id = typeof coercedId === 'number' && Number.isFinite( coercedId ) ? coercedId : undefined;
+
 	return queryOptions( {
-		queryKey: [ 'read', 'sites', siteId ],
-		queryFn: () => fetchReadFeedSite( siteId! ),
-		enabled: typeof siteId === 'number' && siteId > 0,
+		queryKey: [ 'read', 'sites', id ?? 'invalid' ],
+		queryFn: () => fetchReadSite( id! ),
+		select: adaptReadSite,
+		staleTime: ONE_DAY_MS,
+		retry: false,
+		retryOnMount: false,
+		enabled: typeof id === 'number' && id > 0,
 	} );
 };

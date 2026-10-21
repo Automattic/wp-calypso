@@ -1,10 +1,12 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '../constants';
-import { useOdieBroadcastWithCallbacks } from '../data';
+import {
+	HELP_CENTER_STORE,
+	ODIE_NEW_INTERACTIONS_BOT_SLUG,
+	ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG,
+} from '../constants';
 import { useGetCombinedChat } from '../hooks';
 import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
 import type {
@@ -33,6 +35,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	addMessage: noop,
 	botName: 'Wapuu',
 	newInteractionsBotSlug: ODIE_NEW_INTERACTIONS_BOT_SLUG,
+	newLoggedOutInteractionsBotSlug: ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG,
 	chat: emptyChat,
 	canConnectToZendesk: false,
 	isLoadingCanConnectToZendesk: false,
@@ -40,10 +43,11 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	currentUser: { display_name: 'Me' },
 	experimentVariationName: null,
 	hasUserEverEscalatedToHumanSupport: false,
+	isLoadingZendeskHistory: false,
 	isChatLoaded: false,
 	isMinimized: false,
 	isUserEligibleForPaidSupport: false,
-	odieBroadcastClientId: '',
+	hasOpenZendeskChat: false,
 	setChat: noop,
 	setChatStatus: noop,
 	setExperimentVariationName: noop,
@@ -55,45 +59,51 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 // Custom hook to access the OdieAssistantContext
 export const useOdieAssistantContext = () => useContext( OdieAssistantContext );
 
-// Generate random client id
-export const odieBroadcastClientId = Math.random().toString( 36 ).substring( 2, 15 );
-
 /**
  * Provider for the Odie Assistant context.
  */
 export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	botName = 'Wapuu assistant',
 	newInteractionsBotSlug,
+	newLoggedOutInteractionsBotSlug,
 	newInteractionsBotVersion,
 	isUserEligibleForPaidSupport = true,
+	hasOpenZendeskChat = false,
 	canConnectToZendesk = false,
 	isLoadingCanConnectToZendesk = false,
 	selectedSiteId,
 	selectedSiteURL,
 	userFieldMessage,
 	userFieldFlowName,
+	zendeskConversationTags,
+	zendeskIntegrationKey,
+	externalChatProvider,
+	externalChatId,
 	version = null,
 	currentUser,
 	forceEmailSupport = false,
 	isChatRestricted = false,
+	launcherContext,
 	children,
 } ) => {
-	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded } = useSelect(
-		( select ) => {
-			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded, checkoutSupportVariation } =
+		useSelect(
+			( select ) => {
+				const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
-			const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
-				? ( store.getOdieBotNameSlug() as OdieAllowedBots )
-				: newInteractionsBotSlug;
+				const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
+					? ( store.getOdieBotNameSlug() as OdieAllowedBots )
+					: newInteractionsBotSlug;
 
-			return {
-				dynamicNewInteractionsBotSlug: odieBotNameSlug,
-				isMinimized: store.getIsMinimized(),
-				isChatLoaded: store.getIsChatLoaded(),
-			};
-		},
-		[ newInteractionsBotSlug ]
-	);
+				return {
+					dynamicNewInteractionsBotSlug: odieBotNameSlug,
+					isMinimized: store.getIsMinimized(),
+					isChatLoaded: store.getIsChatLoaded(),
+					checkoutSupportVariation: store.getCheckoutSupportVariation(),
+				};
+			},
+			[ newInteractionsBotSlug ]
+		);
 
 	const navigate = useNavigate();
 
@@ -105,8 +115,8 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * The main chat thread.
 	 * This is where we manage the state of the chat.
 	 */
-	const { mainChatState, setMainChatState } = useGetCombinedChat(
-		isUserEligibleForPaidSupport && canConnectToZendesk,
+	const { mainChatState, setMainChatState, isLoadingZendeskHistory } = useGetCombinedChat(
+		( isUserEligibleForPaidSupport || hasOpenZendeskChat ) && canConnectToZendesk,
 		isLoadingCanConnectToZendesk
 	);
 
@@ -123,13 +133,20 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 */
 	const trackEvent = useCallback(
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
-			recordTracksEvent( `calypso_odie_${ eventName }`, {
-				...properties,
-				chat_id: mainChatState?.odieId,
-				bot_name_slug: newInteractionsBotSlug,
-			} );
+			recordTracksEvent(
+				`calypso_odie_${ eventName }`,
+				withSiteContext(
+					{
+						...properties,
+						chat_id: mainChatState?.odieId,
+						bot_name_slug: newInteractionsBotSlug,
+					},
+					'selected_site',
+					selectedSiteId
+				)
+			);
 		},
-		[ newInteractionsBotSlug, mainChatState ]
+		[ newInteractionsBotSlug, mainChatState, selectedSiteId ]
 	);
 
 	const clearChat = useCallback( () => {
@@ -154,8 +171,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		setMainChatState( ( prevChat ) => ( { ...prevChat, status } ) );
 	};
 
-	useOdieBroadcastWithCallbacks( { addMessage }, odieBroadcastClientId );
-
 	/**
 	 * Version for Odie API.
 	 * Set this query param to override the version in the request.
@@ -170,6 +185,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				addMessage,
 				botName,
 				newInteractionsBotSlug: dynamicNewInteractionsBotSlug,
+				newLoggedOutInteractionsBotSlug,
 				chat: mainChatState,
 				setChat: setMainChatState,
 				clearChat,
@@ -178,20 +194,27 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				isMinimized,
 				experimentVariationName,
 				isUserEligibleForPaidSupport,
+				hasOpenZendeskChat,
 				canConnectToZendesk,
 				isLoadingCanConnectToZendesk,
 				hasUserEverEscalatedToHumanSupport,
-				odieBroadcastClientId,
+				isLoadingZendeskHistory,
 				selectedSiteId,
 				selectedSiteURL,
 				userFieldMessage,
 				userFieldFlowName,
+				zendeskConversationTags,
+				zendeskIntegrationKey,
+				externalChatProvider,
+				externalChatId,
 				setChatStatus,
 				setExperimentVariationName,
 				trackEvent,
 				version: overriddenVersion,
 				forceEmailSupport,
 				isChatRestricted,
+				launcherContext,
+				checkoutSupportVariation,
 			} }
 		>
 			{ children }

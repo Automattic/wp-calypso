@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -8,7 +7,6 @@ import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteMainProduct,
 	enhanceWithSiteType,
-	enhanceWithUserIsDevAccount,
 	enhanceWithGlobalSiteViewEnabled,
 } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -101,7 +99,7 @@ const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 	const currentSlug =
-		typeof window === 'undefined' ? '' : getSiteFragment( get( window, 'location.pathname', '' ) );
+		typeof window === 'undefined' ? '' : getSiteFragment( window?.location?.pathname ?? '' );
 
 	const hasSelectedSiteLoaded =
 		! currentSlug ||
@@ -119,7 +117,6 @@ const mapDispatchToProps = {
 	recorder: withEnhancers( recordPageView, [
 		enhanceWithSiteType,
 		enhanceWithSiteMainProduct,
-		enhanceWithUserIsDevAccount,
 		enhanceWithGlobalSiteViewEnabled,
 	] ),
 };

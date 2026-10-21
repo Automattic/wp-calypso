@@ -11,9 +11,13 @@ import Notice from 'calypso/components/notice';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { hideMagicLoginRequestNotice } from 'calypso/state/login/magic-login/actions';
-import { getLastCheckedUsernameOrEmail } from 'calypso/state/login/selectors';
+import {
+	getLastCheckedUsernameOrEmail,
+	getRedirectToOriginal,
+} from 'calypso/state/login/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getMagicLoginIsNewAccount from 'calypso/state/selectors/get-magic-login-is-new-account';
 import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-login-request-email-error';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import VerifyLoginCode from './verify-login-code';
@@ -34,6 +38,7 @@ const RequestLoginCode = ( {
 	translate,
 	shouldShowLoadingEllipsis,
 	publicToken,
+	isNewAccount,
 	tosComponent,
 } ) => {
 	const [ usernameOrEmail, setUsernameOrEmail ] = useState( userEmail || '' );
@@ -93,6 +98,7 @@ const RequestLoginCode = ( {
 				publicToken={ publicToken }
 				usernameOrEmail={ usernameOrEmail }
 				onResendEmail={ onSubmit }
+				isNewAccount={ isNewAccount }
 			/>
 		);
 	}
@@ -174,6 +180,7 @@ RequestLoginCode.propTypes = {
 	isFetching: PropTypes.bool,
 	redirectTo: PropTypes.string,
 	requestError: PropTypes.object,
+	isNewAccount: PropTypes.bool,
 	userEmail: PropTypes.string,
 	flow: PropTypes.string,
 
@@ -185,10 +192,12 @@ RequestLoginCode.propTypes = {
 	onPublicTokenReceived: PropTypes.func,
 };
 
-const mapState = ( state ) => ( {
+export const mapState = ( state ) => ( {
 	currentUser: getCurrentUser( state ),
 	isFetching: isFetchingMagicLoginEmail( state ),
 	requestError: getMagicLoginRequestEmailError( state ),
+	isNewAccount: getMagicLoginIsNewAccount( state ),
+	redirectTo: getRedirectToOriginal( state ),
 	userEmail:
 		getLastCheckedUsernameOrEmail( state ) ||
 		getCurrentQueryArguments( state ).email_address ||

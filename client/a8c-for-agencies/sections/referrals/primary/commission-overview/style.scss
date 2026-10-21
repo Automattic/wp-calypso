@@ -2,10 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 
 .commission-overview {
-	.hosting-dashboard-layout__top-wrapper {
-		padding-block: 24px 0;
-	}
-
 	.commission-overview__section-container {
 		display: flex;
 		flex-direction: column;

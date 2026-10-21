@@ -1,4 +1,4 @@
-import { mapValues } from 'lodash';
+import { mapValues } from '@automattic/js-utils';
 import { COMMENT_COUNTS_REQUEST, COMMENT_COUNTS_UPDATE } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';

@@ -2,8 +2,7 @@
  * Utility functions shared across data stores
  */
 declare const helpCenterData:
-	| { isProxied: boolean; isSU: boolean; isSSP: boolean; currentUser: { ID: number } }
-	| undefined;
+	{ isProxied: boolean; isSU: boolean; isSSP: boolean; currentUser: { ID: number } } | undefined;
 declare const isSupportSession: boolean;
 declare const isSSP: boolean;
 
@@ -21,7 +20,7 @@ export const isInSupportSession = () => {
 			!! document.querySelector( '#wp-admin-bar-support-session-details' ) ||
 			!! document.querySelector( '#a8c-support-session-overlay' ) ||
 			// Atomic
-			document.body.classList.contains( 'support-session' ) ||
+			document.body?.classList.contains( 'support-session' ) ||
 			document.querySelector( '#wpcom > .is-support-session' ) ||
 			( typeof isSupportSession !== 'undefined' && !! isSupportSession ) ||
 			( typeof helpCenterData !== 'undefined' && helpCenterData?.isSU ) ||

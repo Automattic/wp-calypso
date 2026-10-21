@@ -121,13 +121,16 @@ export function useFields(
 				},
 				enableHiding: false,
 				render: ( { item }: { item: Plugin } ) => {
+					if ( isListView ) {
+						return null;
+					}
+
 					const isMarketplaceProduct = item.isMarketplaceProduct;
 					const marketplaceVersion = item.version;
 
 					if (
 						item.status?.includes( PLUGINS_STATUS.UPDATE ) &&
-						( item?.update?.new_version || marketplaceVersion ) &&
-						! isListView
+						( item?.update?.new_version || marketplaceVersion )
 					) {
 						let version = '';
 						if ( isMarketplaceProduct && marketplaceVersion ) {

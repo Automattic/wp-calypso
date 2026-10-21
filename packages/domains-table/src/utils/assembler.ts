@@ -1,5 +1,5 @@
 import { DomainData } from '@automattic/data-stores';
-import { camelCase, mapKeys } from 'lodash';
+import { camelCase, mapKeys } from '@automattic/js-utils';
 import { getDomainType } from './get-domain-type';
 import { getGdprConsentStatus } from './get-gdpr-consent-status';
 import { getTransferStatus } from './get-transfer-status';
@@ -145,6 +145,7 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		isPrimary: Boolean( domain.primary_domain ),
 		isPendingWhoisUpdate: Boolean( domain.pending_whois_update ),
 		isSubdomain: Boolean( domain.is_subdomain ),
+		isSuspendedSite: Boolean( domain.is_suspended_site ),
 		isWPCOMDomain: Boolean( domain.wpcom_domain ),
 		isWpcomStagingDomain: Boolean( domain.is_wpcom_staging_domain ),
 		lastTransferError: String( domain.last_transfer_error ?? '' ),

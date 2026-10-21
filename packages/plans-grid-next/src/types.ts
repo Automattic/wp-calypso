@@ -65,6 +65,9 @@ export type GridSize = 'small' | 'smedium' | 'medium' | 'large' | 'xlarge';
 export type PlansIntent =
 	| 'plans-affiliate'
 	| 'plans-ai-assembler-free-trial'
+	| 'plans-ai-assembler-paid-only'
+	// Deprecated: no longer produced by any flow (the start-writing flow was removed); kept only for external
+	// consumers. TypeScript cannot attach an @deprecated tag to a union member, so this is a plain note.
 	| 'plans-blog-onboarding'
 	| 'plans-newsletter'
 	| 'plans-new-hosted-site'
@@ -77,6 +80,7 @@ export type PlansIntent =
 	| 'plans-p2'
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'
+	| 'plans-student'
 	| 'plans-videopress'
 	| 'plans-guided-segment-developer-or-agency'
 	| 'plans-guided-segment-merchant'
@@ -87,6 +91,7 @@ export type PlansIntent =
 	| 'plans-playground'
 	| 'plans-playground-premium' // This plan intent is currently not utilized but will be soon
 	| 'plans-upgrade'
+	| 'plans-upgrade-or-downgrade'
 	| 'plans-wordpress-hosting'
 	| 'plans-website-builder'
 	| 'plans-woo-hosted'
@@ -139,6 +144,7 @@ export interface CommonGridProps {
 }
 
 export interface FeaturesGridProps extends CommonGridProps {
+	bottomGridPlan?: GridPlan;
 	gridPlans: GridPlan[];
 	currentPlanManageHref?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
@@ -270,21 +276,20 @@ export type GridContextProps = {
 	 */
 	showSimplifiedBillingDescription?: boolean;
 	/**
-	 * If, and how to present increased renewal pricing (null, 'crossed_price', 'no_crossed_price')
+	 * If, and how to present increased renewal pricing (null or the assigned variant name)
 	 */
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
 
 	/**
-	 * When true, indicates the user is in an experiment variant.
-	 * Used to display experiment-specific feature titles in the comparison grid.
+	 * When true, the user is in the rolled-out pricing differentiation cohort.
+	 * Used to display cohort-specific feature titles in the comparison grid.
 	 */
 	isExperimentVariant?: boolean;
 
 	/**
-	 * When true, the pricing differentiation experiment uses the focused_comparison feature set.
-	 * Used to exclude that arm from domain-line highlight styling.
+	 * Display availability checkmarks next to features in the features grid.
 	 */
-	useFocusedComparisonFeatures?: boolean;
+	showFeatureCheckmarks?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

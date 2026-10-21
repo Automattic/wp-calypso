@@ -2,7 +2,7 @@ import * as Ariakit from '@ariakit/react';
 import { useMergeRefs } from '@wordpress/compose';
 import warning from '@wordpress/warning';
 import clsx from 'clsx';
-import { forwardRef, useLayoutEffect, useState } from 'react';
+import { forwardRef, useLayoutEffect, useState, type ComponentPropsWithRef } from 'react';
 import { useTrackElementOffsetRect } from '../utils/element-rect';
 import { useAnimatedOffsetRect } from '../utils/hooks/use-animated-offset-rect';
 import { useTabsContext } from './context';
@@ -117,7 +117,7 @@ export const TabList = forwardRef<
 		<Ariakit.TabList
 			ref={ refs }
 			store={ store }
-			render={ ( props ) => (
+			render={ ( props: ComponentPropsWithRef< 'div' > ) => (
 				<div
 					{ ...props }
 					// Fallback to -1 to prevent browsers from making the tablist

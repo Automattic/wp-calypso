@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import NotFound from '../../app/404';
 import UnknownError from '../../app/500';
 import { domainRoute } from '../../app/router/domains';
 import Notice from '../../components/notice';
@@ -9,6 +10,10 @@ import { DomainPermissionError } from '../../utils/domain-permissions';
 
 export default function DomainError( { error }: { error: Error } ) {
 	const { domainName } = domainRoute.useParams();
+
+	if ( error.name === 'InvalidDomainError' ) {
+		return <NotFound />;
+	}
 
 	if ( ! ( error instanceof DomainPermissionError ) ) {
 		return <UnknownError error={ error } />;

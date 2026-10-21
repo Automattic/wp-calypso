@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/route/init';
 
 /**
@@ -7,6 +5,6 @@ import 'calypso/state/route/init';
  * @param {Object} state - global redux state
  * @returns {string} previous path value
  */
-export const getPreviousPath = ( state ) => get( state, 'route.path.previous', '' );
+export const getPreviousPath = ( state ) => state?.route?.path?.previous ?? '';
 
 export default getPreviousPath;

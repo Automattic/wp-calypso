@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
 import { connect } from 'react-redux';
@@ -76,7 +75,7 @@ class DomainManagementData extends Component {
 
 export default connect( ( state ) => {
 	const selectedSite = getSelectedSite( state );
-	const siteId = get( selectedSite, 'ID', null );
+	const siteId = selectedSite?.ID ?? null;
 
 	return {
 		currentUser: getCurrentUser( state ),

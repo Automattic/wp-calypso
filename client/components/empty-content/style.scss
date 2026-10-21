@@ -1,3 +1,7 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/typography/styles/fonts";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .empty-content {
 	max-width: 960px;
 	overflow: hidden;

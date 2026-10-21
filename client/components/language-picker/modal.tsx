@@ -4,7 +4,7 @@ import LanguagePicker, { createLanguageGroups } from '@automattic/language-picke
 import { Modal, Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
+import { useState, type JSX } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import QueryLanguageNames from 'calypso/components/data/query-language-names';
@@ -99,7 +99,7 @@ const LanguagePickerModal: React.FC< Props > = ( {
 			? recordTracksEvent( 'calypso_translator_invitation', {
 					language: localizedLanguageNames[ selectedLanguage.langSlug ].en,
 					location: '/me/account',
-			  } )
+				} )
 			: null;
 
 	const selectedLanguageSlug = selectedLanguage && selectedLanguage.langSlug;

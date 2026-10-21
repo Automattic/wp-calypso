@@ -1,17 +1,22 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { PasswordValidationResponse, UserSettings } from './types';
+import { adaptUserSettings } from './adapters';
+import type {
+	PasswordValidationResponse,
+	SendVerificationEmailResponse,
+	UserSettings,
+	UserSettingsUpdate,
+} from './types';
 
 export async function updateUserSettings(
-	data: Partial< UserSettings >
+	data: Partial< UserSettings > | UserSettingsUpdate
 ): Promise< Partial< UserSettings > > {
-	const saveableKeys: ( keyof UserSettings )[] = [
+	const saveableKeys: ( keyof UserSettingsUpdate )[] = [
 		'first_name',
 		'last_name',
 		'user_email',
 		'advertising_targeting_opt_out',
 		'display_name',
 		'description',
-		'is_dev_account',
 		'password',
 		'tracks_opt_out',
 		'user_URL',
@@ -32,15 +37,24 @@ export async function updateUserSettings(
 		'two_step_enhanced_security',
 		'primary_site_ID',
 		'mcp_abilities',
+		'mcp_approval_bypass',
 		'ai_assistant',
 		'user_email_change_pending',
+		'user_email_change_requested_from',
 	];
 	const payload = Object.fromEntries(
 		saveableKeys.filter( ( key ) => key in data ).map( ( key ) => [ key, data[ key ] ] )
 	);
-	return await wpcom.req.post( '/me/settings', payload );
+	return adaptUserSettings( await wpcom.req.post( '/me/settings', payload ) );
 }
 
 export async function validatePassword( password: string ): Promise< PasswordValidationResponse > {
 	return await wpcom.req.post( '/me/settings/password/validate', { password } );
+}
+
+export async function sendVerificationEmail(): Promise< SendVerificationEmailResponse > {
+	return await wpcom.req.post( {
+		path: '/me/send-verification-email',
+		apiVersion: '1.1',
+	} );
 }

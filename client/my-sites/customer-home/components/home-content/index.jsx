@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -21,6 +22,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { FEATURE_SUPPORT } from 'calypso/my-sites/customer-home/cards/constants';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
@@ -54,6 +56,11 @@ import openSyncUrlInStudio from './studio-deeplink';
 
 import './style.scss';
 
+const loadTrackResurrections = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
+	);
+
 const HomeContent = ( {
 	canUserUseCustomerHome,
 	hasWooCommerceInstalled,
@@ -78,6 +85,7 @@ const HomeContent = ( {
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const isP2 = site?.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
@@ -142,6 +150,25 @@ const HomeContent = ( {
 		Array.isArray( layout?.secondary ) &&
 		layout.secondary.length > 0;
 
+	const getHeaderSubtitle = () => {
+		if ( isLoading ) {
+			return undefined;
+		}
+		const defaultSubtitle = translate(
+			'Your hub for next steps, support center, and quick links.'
+		);
+		const hasSupportCard =
+			layout?.secondary?.includes( FEATURE_SUPPORT ) ||
+			layout?.[ 'tertiary.manage-site' ]?.includes( FEATURE_SUPPORT );
+		if ( hasSupportCard ) {
+			return defaultSubtitle;
+		}
+		if ( hasEnTranslation( 'Your hub for next steps and quick links to manage your site.' ) ) {
+			return translate( 'Your hub for next steps and quick links to manage your site.' );
+		}
+		return defaultSubtitle;
+	};
+
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
 		return <EmptyContent title={ preventWidows( title ) } />;
@@ -181,7 +208,7 @@ const HomeContent = ( {
 				navigationItems={ [] }
 				mobileItem={ null }
 				title={ translate( 'My Home' ) }
-				subtitle={ translate( 'Your hub for next steps, support center, and quick links.' ) }
+				subtitle={ getHeaderSubtitle() }
 			>
 				{ headerActions }
 			</NavigationHeader>
@@ -228,7 +255,12 @@ const HomeContent = ( {
 			isFetchingDomainDiagnostics ||
 			! emailDnsDiagnostics ||
 			emailDnsDiagnostics.code === 'domain_not_mapped_to_atomic_site' ||
-			emailDnsDiagnostics.all_essential_email_dns_records_are_correct
+			emailDnsDiagnostics.all_essential_email_dns_records_are_correct ||
+			// When WordPress.com controls the domain's DNS and can restore the records
+			// automatically, don't alarm the user on the dashboard. The Diagnostics card
+			// in domain settings still surfaces the issue with a one-click fix.
+			( emailDnsDiagnostics.is_using_wpcom_name_servers &&
+				emailDnsDiagnostics.should_offer_automatic_fixes )
 		) {
 			return null;
 		}
@@ -299,6 +331,7 @@ const HomeContent = ( {
 
 	return (
 		<div className="customer-home__main">
+			{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 			{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
@@ -336,14 +369,7 @@ const HomeContent = ( {
 				</>
 			) : null }
 			<ResurrectedWelcomeModalGate isSuppressed={ celebrateLaunchModalIsOpen } />
-			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
-					)
-				}
-				placeholder={ null }
-			/>
+			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 		</div>
 	);
 };

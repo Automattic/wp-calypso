@@ -19,7 +19,6 @@ import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { useExperiment } from 'calypso/lib/explat';
 import {
 	domainMapping,
 	domainAddNew,
@@ -29,7 +28,7 @@ import {
 	domainManagementTransferToOtherSite,
 } from 'calypso/my-sites/domains/paths';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getStepUrl } from 'calypso/signup/utils';
+import { getNextStepName, getStepUrl } from 'calypso/signup/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
@@ -49,6 +48,33 @@ const getThemeSlugWithRepo = ( themeSlug: string | undefined, isPurchasingTheme:
 	return `${ repo }/${ themeSlug }`;
 };
 
+function isDashboardUrl( url: string ) {
+	try {
+		return dashboardOrigins().includes( new URL( url ).origin );
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Whether `url` points at the site the flow loaded, e.g. the wp-admin screen a launch started from.
+ * The host comes from the loaded site rather than from query args, so `back_to` can't name an
+ * arbitrary host.
+ */
+function isOnSiteHost( url: string, siteUrl?: string ) {
+	if ( ! url || ! siteUrl ) {
+		return false;
+	}
+
+	try {
+		const target = new URL( url );
+
+		return target.protocol === 'https:' && target.host === new URL( siteUrl ).host;
+	} catch {
+		return false;
+	}
+}
+
 const DomainSearchUI = (
 	props: StepProps & {
 		locale: string;
@@ -61,6 +87,7 @@ const DomainSearchUI = (
 		stepName,
 		submitSignupStep,
 		goToNextStep,
+		goToStep,
 		locale,
 		queryObject,
 		baseSubmitStepProps,
@@ -71,13 +98,9 @@ const DomainSearchUI = (
 
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
+	const showNamePulseSearch = isDomainOnlyFlow;
 
-	const [ , experimentAssignment ] = useExperiment(
-		'calypso_signup_domain_only_checkout_simplification_v1',
-		{ isEligible: isDomainOnlyFlow }
-	);
-	const isTreatment = experimentAssignment?.variationName === 'treatment';
-
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
 
 	const siteSlug = queryObject.siteSlug;
@@ -92,15 +115,16 @@ const DomainSearchUI = (
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
-	const { query, setQuery, clearQuery } = useQueryHandler( {
+	const { query, setQuery, clearQuery, resetQuery } = useQueryHandler( {
 		initialQuery: queryObject.new,
 		currentSiteUrl,
+		persistQuery: ! showNamePulseSearch,
 	} );
 
 	const events = useMemo( () => {
 		return {
 			onQueryChange: setQuery,
-			onQueryClear: clearQuery,
+			onQueryClear: showNamePulseSearch ? resetQuery : clearQuery,
 			beforeAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
 				if ( isDomainForGravatarFlow( flowName ) ) {
 					return {
@@ -205,8 +229,8 @@ const DomainSearchUI = (
 						{ stepName: 'site-picker', wasSkipped: true },
 						{ themeSlugWithRepo: 'pub/twentysixteen' }
 					);
-				} else if ( isTreatment && isDomainOnlyFlow ) {
-					// Experiment: skip the 'Choose how to use your domain' step for domain-only purchases.
+				} else if ( isDomainOnlyFlow ) {
+					// Skip the 'Choose how to use your domain' step for domain-only purchases.
 					submitSignupStep(
 						{
 							stepName: 'site-or-domain',
@@ -227,6 +251,19 @@ const DomainSearchUI = (
 						{ stepName: 'plans-site-selected', wasSkipped: true },
 						{ cartItems: null }
 					);
+
+					// For logged-out users the account step is still pending, so the flow isn't
+					// "every step submitted" and the default goToNextStep() advances by array index
+					// from 'domain-only' back onto the just-skipped 'site-or-domain' step. Advance
+					// from the last auto-submitted step instead: logged-out users go to the account
+					// step, logged-in users fall through to checkout.
+					const nextStep = getNextStepName( flowName, 'plans-site-selected', isLoggedIn );
+					if ( nextStep ) {
+						goToStep( nextStep );
+					} else {
+						goToNextStep();
+					}
+					return;
 				}
 
 				goToNextStep();
@@ -262,11 +299,14 @@ const DomainSearchUI = (
 		siteSlug,
 		setQuery,
 		clearQuery,
+		resetQuery,
+		showNamePulseSearch,
 		submitSignupStep,
 		goToNextStep,
+		goToStep,
+		isLoggedIn,
 		locale,
 		isDomainOnlyFlow,
-		isTreatment,
 		baseSubmitStepProps,
 		baseSubmitProvidedDependencies,
 		dashboard,
@@ -278,7 +318,7 @@ const DomainSearchUI = (
 	const config = useMemo( () => {
 		const allowedTlds = Array.isArray( allowedTldParam )
 			? allowedTldParam
-			: allowedTldParam?.split( ',' ) ?? [];
+			: ( allowedTldParam?.split( ',' ) ?? [] );
 
 		return {
 			vendor: getSuggestionsVendor( {
@@ -292,14 +332,20 @@ const DomainSearchUI = (
 				! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
 			allowsUsingOwnDomain: ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
+			showNamePulseSearch,
 		};
-	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
+	}, [
+		flowName,
+		isDomainOnlyFlow,
+		isOnboardingWithEmailFlow,
+		allowedTldParam,
+		showNamePulseSearch,
+	] );
 
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
 				if (
-					isDomainOnlyFlow ||
 					isDomainForGravatarFlow( flowName ) ||
 					isFreeFlow( flowName ) ||
 					isOnboardingWithEmailFlow
@@ -379,8 +425,7 @@ const DomainSearchUI = (
 
 			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString() ?? '';
 			const isSafeBackTo =
-				isRelativeUrl( backTo ) ||
-				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+				isRelativeUrl( backTo ) || isDashboardUrl( backTo ) || isOnSiteHost( backTo, site?.URL );
 
 			if ( isSafeBackTo ) {
 				backUrl = backTo;
@@ -393,7 +438,7 @@ const DomainSearchUI = (
 			backUrl,
 			backLabelText,
 		};
-	}, [ dashboardOptIn, flowName, previousStepName, goBack, userSiteCount, __ ] );
+	}, [ dashboardOptIn, flowName, previousStepName, goBack, userSiteCount, site?.URL, __ ] );
 
 	const getUseDomainIOwnLink = () => {
 		if ( ! query || ! config.allowsUsingOwnDomain ) {
@@ -438,7 +483,8 @@ const DomainSearchUI = (
 			hideBack={ hideBack }
 			backUrl={ backUrl }
 			backLabelText={ backLabelText }
-			isWideLayout
+			isWideLayout={ ! config.showNamePulseSearch }
+			isFullLayout={ config.showNamePulseSearch }
 			stepContent={
 				<WPCOMDomainSearch
 					className="domain-search--step-wrapper"

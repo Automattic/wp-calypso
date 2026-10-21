@@ -1,7 +1,15 @@
+import { camelCase, capitalize, sortBy } from '@automattic/js-utils';
 import { translate, getLocaleSlug } from 'i18n-calypso';
-import { sortBy, camelCase, get, filter, map, flatten, capitalize } from 'lodash';
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
+
+/**
+ * Reads the value at a path (array of keys) in an object, or `undefined` if any
+ * segment along the way is missing.
+ * @param {Object} object Object to read from
+ * @param {Array}  path   Array of keys to walk
+ */
+const getFromPath = ( object, path ) => path.reduce( ( value, key ) => value?.[ key ], object );
 
 /** @type ( key: string ) => string */
 function getArchiveKeyLabel( key ) {
@@ -122,8 +130,7 @@ export function buildExportArray( data, parent = null, modifierFn = null ) {
 		return [];
 	}
 	const label = parent ? parent + ' > ' + String( data.label ) : String( data.label );
-	// eslint-disable-next-line
-	const escapedLabel = label.replace( /\"/, '""' );
+	const escapedLabel = label.replace( /"/g, '""' );
 	let exportData = [ [ '"' + escapedLabel + '"', data.value ] ];
 
 	// Includes the URL for content data, but not for "Countries" data where it doesn't exist.
@@ -136,11 +143,11 @@ export function buildExportArray( data, parent = null, modifierFn = null ) {
 	}
 
 	if ( data.children ) {
-		const childData = map( data.children, ( child ) => {
+		const childData = data.children.map( ( child ) => {
 			return buildExportArray( child, label, modifierFn );
 		} );
 
-		exportData = exportData.concat( flatten( childData ) );
+		exportData = exportData.concat( childData.flat() );
 	}
 
 	return exportData;
@@ -210,7 +217,7 @@ export function getChartLabels( unit, date, localizedDate ) {
 	if ( validDate && validLocalizedDate && unit ) {
 		const dayOfWeek = date.toDate().getDay();
 		const isWeekend = 'day' === unit && ( 6 === dayOfWeek || 0 === dayOfWeek );
-		const labelName = `label${ unit.charAt( 0 ).toUpperCase() + unit.slice( 1 ) }`;
+		const labelName = `label${ capitalize( unit ) }`;
 		return {
 			[ labelName ]: localizedDate.format( chartLabelformats[ unit ] ),
 			classNames: isWeekend ? [ 'is-weekend' ] : [],
@@ -340,7 +347,7 @@ export const normalizers = {
 	 * @returns {Object | null}        Normalized stats data
 	 */
 	statsInsights: ( data ) => {
-		if ( ! data || typeof data.highest_day_of_week !== 'number' ) {
+		if ( ! data ) {
 			return {};
 		}
 
@@ -353,22 +360,37 @@ export const normalizers = {
 			years,
 		} = data;
 
-		// Adjust Day of Week from 0 = Monday to 0 = Sunday (for Moment)
-		let dayOfWeek = highest_day_of_week + 1;
-		if ( dayOfWeek > 6 ) {
-			dayOfWeek = 0;
+		const localeSlug = getLocaleSlug();
+		const result = {};
+
+		// The API returns null for these when there are no views.
+		if ( typeof highest_day_of_week === 'number' && typeof highest_day_percent === 'number' ) {
+			// Adjust Day of Week from 0 = Monday to 0 = Sunday (for Moment)
+			let dayOfWeek = highest_day_of_week + 1;
+			if ( dayOfWeek > 6 ) {
+				dayOfWeek = 0;
+			}
+			result.day = moment().locale( localeSlug ).day( dayOfWeek ).format( 'dddd' );
+			result.percent = Math.round( highest_day_percent );
 		}
 
-		const localeSlug = getLocaleSlug();
+		if ( typeof highest_hour === 'number' && typeof highest_hour_percent === 'number' ) {
+			result.hour = moment()
+				.locale( localeSlug )
+				.hour( highest_hour )
+				.startOf( 'hour' )
+				.format( 'LT' );
+			result.hourPercent = Math.round( highest_hour_percent );
+		}
 
-		return {
-			day: moment().locale( localeSlug ).day( dayOfWeek ).format( 'dddd' ),
-			percent: Math.round( highest_day_percent ),
-			hour: moment().locale( localeSlug ).hour( highest_hour ).startOf( 'hour' ).format( 'LT' ),
-			hourPercent: Math.round( highest_hour_percent ),
-			hourlyViews: hourly_views,
-			years,
-		};
+		if ( hourly_views !== undefined ) {
+			result.hourlyViews = hourly_views;
+		}
+		if ( years !== undefined ) {
+			result.years = years;
+		}
+
+		return result;
 	},
 
 	/**
@@ -388,9 +410,9 @@ export const normalizers = {
 		const dataPath = query.summarize
 			? [ 'summary', 'postviews' ]
 			: [ 'days', startOf, 'postviews' ];
-		const viewData = get( data, dataPath, [] );
+		const viewData = getFromPath( data, dataPath ) ?? [];
 
-		return map( viewData, ( item ) => {
+		return viewData.map( ( item ) => {
 			// To avoid showing a detail page for the Homepage set as latest posts.
 			const detailPage = site && item.href ? `/stats/post/${ item.id }/${ site.slug }` : null;
 			let inPeriod = false;
@@ -439,7 +461,7 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
-		const archivesData = get( data, dataPath, {} );
+		const archivesData = getFromPath( data, dataPath ) ?? {};
 
 		// Add null check for archivesData
 		// TODO: ensure API always returns an object here. Now it return an empty array when there's no items.
@@ -541,13 +563,13 @@ export const normalizers = {
 			return null;
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const countryInfo = get( data, [ 'country-info' ], {} );
+		const countryInfo = data?.[ 'country-info' ] ?? {};
 
 		// the API response object shape depends on if this is a summary request or not
 		const dataPath = query.summarize ? [ 'summary', 'views' ] : [ 'days', startOf, 'views' ];
 
 		// filter out country views that have no legitimate country data associated with them
-		const countryData = filter( get( data, dataPath, [] ), ( viewData ) => {
+		const countryData = ( getFromPath( data, dataPath ) ?? [] ).filter( ( viewData ) => {
 			// Ignore the unknown location of sources from the legacy stats geoviews table.
 			if ( [ 'A1', 'A2', 'ZZ' ].includes( viewData.country_code ) ) {
 				return false;
@@ -564,7 +586,7 @@ export const normalizers = {
 			return countryInfo[ viewData.country_code ];
 		} );
 
-		return map( countryData, ( viewData ) => {
+		return countryData.map( ( viewData ) => {
 			const country = countryInfo[ viewData.country_code ];
 
 			// ’ in country names causes google's geo viz to break
@@ -608,11 +630,11 @@ export const normalizers = {
 		}
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const videoPlaysData = get(
-			data,
-			query.summarize ? [ 'days', 'summary', 'data' ] : [ 'days', startOf, 'data' ],
-			[]
-		);
+		const videoPlaysData =
+			getFromPath(
+				data,
+				query.summarize ? [ 'days', 'summary', 'data' ] : [ 'days', startOf, 'data' ]
+			) ?? [];
 
 		const normalizedData = videoPlaysData.map( ( item ) => {
 			return {
@@ -650,11 +672,11 @@ export const normalizers = {
 			return normalizers.statsVideoPlaysCompleteStats( data, query, siteId, site );
 		}
 
-		const videoPlaysData = get(
-			data,
-			query.summarize ? [ 'days', 'summary', 'plays' ] : [ 'days', startOf, 'plays' ],
-			[]
-		);
+		const videoPlaysData =
+			getFromPath(
+				data,
+				query.summarize ? [ 'days', 'summary', 'plays' ] : [ 'days', startOf, 'plays' ]
+			) ?? [];
 
 		return videoPlaysData.map( ( item ) => {
 			const detailPage = site
@@ -664,6 +686,7 @@ export const normalizers = {
 				label: item.title,
 				page: detailPage,
 				value: item.plays,
+				poster: item.poster ?? '',
 				actions: [
 					{
 						type: 'link',
@@ -684,7 +707,7 @@ export const normalizers = {
 			return null;
 		}
 		const { total_wpcom, total_email, total } = data;
-		const subscriberData = get( data, [ 'subscribers' ], [] );
+		const subscriberData = data?.subscribers ?? [];
 
 		const subscribers = subscriberData.map( ( item ) => {
 			return {
@@ -826,10 +849,36 @@ export const normalizers = {
 		}
 
 		let data = [];
-		if ( payload.data ) {
-			data = payload.data.map( ( item ) => {
-				return { period: item[ 0 ], value: item[ 1 ] };
-			} );
+		// When the requested window has no rows at all, the endpoint returns a single
+		// `{ date, p }` object instead of the usual `[ date, value ]` tuples.
+		if ( Array.isArray( payload.data ) ) {
+			data = payload.data
+				.filter( ( item ) => Array.isArray( item ) )
+				.map( ( item ) => {
+					return { period: item[ 0 ], value: item[ 1 ] };
+				} );
+		}
+
+		// `fields` names the tuple columns after the leading period (one metric
+		// for a single statType, four for statType=all). Rows keyed by metric
+		// name let consumers pick series without caring about column order.
+		let metrics = null;
+		let rows = null;
+		if (
+			Array.isArray( payload.fields ) &&
+			payload.fields.length >= 2 &&
+			Array.isArray( payload.data )
+		) {
+			metrics = payload.fields.slice( 1 );
+			rows = payload.data
+				.filter( ( item ) => Array.isArray( item ) )
+				.map( ( item ) => {
+					const row = { period: item[ 0 ] };
+					metrics.forEach( ( metric, index ) => {
+						row[ metric ] = item[ index + 1 ] === null ? null : Number( item[ index + 1 ] ) || 0;
+					} );
+					return row;
+				} );
 		}
 
 		let pages = [];
@@ -842,7 +891,18 @@ export const normalizers = {
 			} );
 		}
 
-		return { pages, data };
+		// The endpoint also returns the video's attachment post, which carries
+		// the title and upload date.
+		return {
+			pages,
+			data,
+			post: payload.post ?? null,
+			metrics,
+			rows,
+			// Range queries also return canonical totals over the window, keyed
+			// by metric name.
+			total: payload.total ?? null,
+		};
 	},
 
 	/**
@@ -859,7 +919,7 @@ export const normalizers = {
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary', 'authors' ] : [ 'days', startOf, 'authors' ];
-		const authorsData = get( data, dataPath, [] );
+		const authorsData = getFromPath( data, dataPath ) ?? [];
 
 		return authorsData.map( ( item ) => {
 			const record = {
@@ -952,7 +1012,7 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary', 'clicks' ] : [ 'days', startOf, 'clicks' ];
-		const statsData = get( data, dataPath, [] );
+		const statsData = getFromPath( data, dataPath ) ?? [];
 
 		const output = statsData.map( ( item ) => {
 			const hasChildren = item.children && item.children.length > 0;
@@ -999,7 +1059,7 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary', 'groups' ] : [ 'days', startOf, 'groups' ];
-		let statsData = get( data, dataPath, [] );
+		let statsData = getFromPath( data, dataPath ) ?? [];
 
 		const parseItem = ( item ) => {
 			let children;
@@ -1126,7 +1186,7 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
-		const searchTerms = get( data, dataPath.concat( [ 'search_terms' ] ), [] );
+		const searchTerms = getFromPath( data, dataPath.concat( [ 'search_terms' ] ) ) ?? [];
 
 		return searchTerms.map( ( day ) => {
 			return {
@@ -1151,7 +1211,7 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary', 'files' ] : [ 'days', startOf, 'files' ];
-		const statsData = get( data, dataPath, [] );
+		const statsData = getFromPath( data, dataPath ) ?? [];
 
 		return statsData.map( ( item ) => {
 			return {
@@ -1179,7 +1239,8 @@ export const normalizers = {
 			return [];
 		}
 
-		const emailsData = get( data, [ 'posts' ], [] );
+		// Never-emailed posts are filtered server-side, before pagination (STATS-452).
+		const emailsData = data?.posts ?? [];
 
 		return emailsData.map(
 			( {

@@ -1,3 +1,7 @@
+## 1.1.1
+
+- Declare React 19 compatibility for package consumers (#111721).
+
 ## 1.1.0
 
 - Update dependency typescript to ^4.5.5 (#60420)

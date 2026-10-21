@@ -1,4 +1,4 @@
-import { PLAN_PREMIUM, getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
+import { getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
@@ -18,12 +18,6 @@ import GlobalStylesVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
 import './style.scss';
 
-declare global {
-	interface Window {
-		isGlobalStylesOnPersonal?: boolean;
-	}
-}
-
 interface GlobalStylesVariationProps {
 	globalStylesVariation: GlobalStylesObject;
 	isActive: boolean;
@@ -38,7 +32,6 @@ interface GlobalStylesVariationsProps {
 	showOnlyHoverViewDefaultVariation?: boolean;
 	splitDefaultVariation?: boolean;
 	needsUpgrade?: boolean;
-	isGlobalStylesOnPersonal?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
 }
 
@@ -106,18 +99,17 @@ const GlobalStylesVariations = ( {
 	showOnlyHoverViewDefaultVariation,
 	splitDefaultVariation = true,
 	needsUpgrade = true,
-	isGlobalStylesOnPersonal = window.isGlobalStylesOnPersonal ?? false,
 	onSelect,
 }: GlobalStylesVariationsProps ) => {
 	const hasEnTranslation = useHasEnTranslation();
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
-	const upgradeToPlan = isGlobalStylesOnPersonal ? PLAN_PERSONAL : PLAN_PREMIUM;
+	const upgradeToPlan = PLAN_PERSONAL;
 
 	const variationDescription = needsUpgrade
 		? translate(
 				'Preview our style variations for free or pick your own fonts and colors with the %(planName)s plan later on.',
 				{ args: { planName: getPlan( upgradeToPlan )?.getTitle() ?? '' } }
-		  )
+			)
 		: translate( 'You can change your style at any time.' );
 
 	const baseGlobalStyles = useMemo(
@@ -161,7 +153,7 @@ const GlobalStylesVariations = ( {
 
 	return (
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>
-			<div className="global-styles-variations__container">
+			<div className="global-styles-variations__container global-styles-variations__container--stacked">
 				<div
 					className={ clsx( 'global-styles-variations__type', {
 						'combined-variations': ! splitDefaultVariation,
@@ -206,17 +198,13 @@ const GlobalStylesVariations = ( {
 									{ hasEnTranslation( 'Style Variations' )
 										? translate( 'Style Variation', 'Style Variations', {
 												count: nonDefaultStyles.length,
-										  } )
+											} )
 										: translate( 'Premium Style', 'Premium Styles', {
 												count: nonDefaultStyles.length,
-										  } ) }
+											} ) }
 								</span>
 								{ needsUpgrade && (
-									<PremiumBadge
-										shouldHideTooltip
-										shouldCompactWithAnimation
-										labelText={ translate( 'Upgrade' ) }
-									/>
+									<PremiumBadge shouldHideTooltip labelText={ translate( 'Upgrade' ) } />
 								) }
 							</h2>
 							<p>{ nonDefaultStylesDescription }</p>

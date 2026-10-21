@@ -1,6 +1,5 @@
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { translate } from 'i18n-calypso';
-import { find } from 'lodash';
 import moment from 'moment'; // No localization needed in this file.
 import qs from 'qs';
 import { UNITS } from './constants';
@@ -87,7 +86,7 @@ export function formatValue( value, format, code, decimals ) {
  * @returns {Array} - array of delta objects matching selectedDate
  */
 export function getDelta( deltas, selectedDate, stat ) {
-	const selectedDeltas = find( deltas, ( item ) => item.period === selectedDate );
+	const selectedDeltas = deltas?.find( ( item ) => item.period === selectedDate );
 	return ( selectedDeltas && selectedDeltas[ stat ] ) || [];
 }
 

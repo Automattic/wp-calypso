@@ -17,6 +17,7 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { getCreateSiteFromDomainOnlyUrl } from '../../utils/domain-url';
 import { SelectSite } from './select-site';
 import type { Site } from '@automattic/api-core';
 
@@ -34,22 +35,21 @@ export default function DomainTransferToOtherSite() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const onConfirmTransfer = () => {
-		!! selectedSite &&
-			transferDomainToSite( selectedSite.ID, {
-				onSuccess: () => {
-					createSuccessNotice( __( 'Domain transferred successfully.' ), { type: 'snackbar' } );
-					setIsConfirmDialogOpen( false );
-					navigate( { to: domainRoute.fullPath, params: { domainName } } );
-				},
-				onError: ( e ) => {
-					createErrorNotice(
-						e.message || __( 'An error occurred while transferring the domain.' ),
-						{
-							type: 'snackbar',
-						}
-					);
-				},
-			} );
+		if ( ! selectedSite ) {
+			return;
+		}
+		transferDomainToSite( selectedSite.ID, {
+			onSuccess: () => {
+				createSuccessNotice( __( 'Domain transferred successfully.' ), { type: 'snackbar' } );
+				setIsConfirmDialogOpen( false );
+				navigate( { to: domainRoute.fullPath, params: { domainName } } );
+			},
+			onError: ( e ) => {
+				createErrorNotice( e.message || __( 'An error occurred while transferring the domain.' ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
 	};
 
 	return (
@@ -64,6 +64,17 @@ export default function DomainTransferToOtherSite() {
 						__( 'Attach %s to a site you’re an administrator of:' ),
 						domainName
 					) }
+					actions={
+						domain?.is_domain_only_site ? (
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								href={ getCreateSiteFromDomainOnlyUrl( domain ) }
+							>
+								{ __( 'Add a new site' ) }
+							</Button>
+						) : undefined
+					}
 				/>
 			}
 		>
@@ -95,7 +106,7 @@ export default function DomainTransferToOtherSite() {
 								selectedSite.name
 							) }
 						</Text>
-						{ selectedSite?.plan?.is_free && ! selectedSite?.is_wpcom_flex && (
+						{ selectedSite?.plan?.is_free && (
 							<Text as="p">
 								{ __(
 									'The target site doesn’t have a paid plan, so you won’t be able to set this domain as primary on the site.'

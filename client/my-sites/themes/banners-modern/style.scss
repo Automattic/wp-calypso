@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/mixins";
 @import '@automattic/color-studio/dist/color-properties-rgb.css';
 @import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
@@ -298,6 +299,12 @@
 	color: var( --plan-banner-price );
 	font-size: $font-body-small;
 	margin-bottom: 8px;
+}
+
+.plan-upgrade-banner__price-renewal {
+	color: var( --plan-banner-price );
+	font-size: $font-body-small;
+	margin: -8px 0 16px;
 }
 
 .plan-upgrade-banner__billing-toggle {

@@ -1,0 +1,140 @@
+import {
+	activeAgencyQuery,
+	agencyProductsQuery,
+	referralsQuery,
+	referralCommissionPayoutQuery,
+} from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
+import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
+import { useAnalytics } from '../../../app/analytics';
+import { useLocale } from '../../../app/locale';
+import { DataViewsCard } from '../../../components/dataviews';
+import { PageHeader } from '../../../components/page-header';
+import PageLayout from '../../../components/page-layout';
+import RouterLinkButton from '../../../components/router-link-button';
+import { AgencyNotices } from '../../components/agency-notices';
+import { isAgencyApproved } from '../../marketplace/is-agency-approved';
+import { MARKETPLACE_HOSTING_ROUTE } from '../../marketplace/paths';
+import { useMarketplaceType } from '../../marketplace/use-marketplace-type';
+import MissingPaymentSettingsNotice, {
+	useMissingPaymentSettings,
+} from '../missing-payment-settings-notice';
+import BankDetailsNotice from './bank-details-notice';
+import ConsolidatedViews from './consolidated-views';
+import { DEFAULT_VIEW } from './dataviews/views';
+import ReferralsEmptyState from './empty-state';
+import NewReferralFeedback from './new-referral-feedback';
+import NewReferralNotice from './new-referral-notice';
+import ReferralsList from './referrals-list';
+import type { View } from '@wordpress/dataviews';
+
+export default function EarnReferrals() {
+	const locale = useLocale();
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const agencyId = agency?.id ?? 0;
+
+	const { data: referrals = [], isLoading: isLoadingReferrals } = useQuery(
+		referralsQuery( agencyId )
+	);
+	const { data: commissionPayout, isLoading: isLoadingCommissionPayout } = useQuery(
+		referralCommissionPayoutQuery( agencyId )
+	);
+	const { data: products } = useQuery( agencyProductsQuery( agencyId ) );
+	const { recordTracksEvent } = useAnalytics();
+	const { updateMarketplaceType } = useMarketplaceType();
+
+	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+
+	// Counts the pre-agency window as loading, so the empty state doesn't flash.
+	const isLoading = agency === undefined || isLoadingReferrals;
+	const hasReferrals = referrals.length > 0;
+	const missingPaymentSettings = useMissingPaymentSettings( {
+		hasCommissionActivity: hasReferrals,
+		isLoadingActivity: isLoading,
+	} );
+
+	return (
+		<PageLayout
+			header={
+				<PageHeader
+					title={ __( 'Referrals' ) }
+					description={ __( 'Refer products and services and earn commissions.' ) }
+					actions={
+						! isLoading && isAgencyApproved( agency ) ? (
+							<RouterLinkButton
+								variant="primary"
+								__next40pxDefaultSize
+								to={ MARKETPLACE_HOSTING_ROUTE }
+								onClick={ () => {
+									updateMarketplaceType( 'referral' );
+									recordTracksEvent( 'calypso_a4a_referrals_make_a_referral_button_click' );
+								} }
+							>
+								{ hasReferrals ? __( 'New referral' ) : __( 'Make a referral' ) }
+							</RouterLinkButton>
+						) : undefined
+					}
+				/>
+			}
+			notices={
+				<>
+					<NewReferralNotice />
+					<AgencyNotices
+						candidates={ [
+							{
+								id: 'missing-payment-settings',
+								...missingPaymentSettings,
+								notice: (
+									<MissingPaymentSettingsNotice
+										hasCommissionActivity={ hasReferrals }
+										commissionType="referrals"
+									/>
+								),
+							},
+						] }
+					/>
+					{ ! isLoading && ! hasReferrals && <BankDetailsNotice agencyId={ agencyId } /> }
+				</>
+			}
+		>
+			{ ! isLoading && ! hasReferrals ? (
+				<ReferralsEmptyState agencyId={ agencyId } />
+			) : (
+				<>
+					<ConsolidatedViews
+						referrals={ referrals }
+						referralCommissionPayout={ commissionPayout }
+						isLoading={ isLoading }
+						isLoadingCommissionPayout={ isLoadingCommissionPayout }
+						locale={ locale }
+						products={ products }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+					<DataViewsCard>
+						<ReferralsList
+							referrals={ referrals }
+							view={ view }
+							onChangeView={ setView }
+							isLoading={ isLoading }
+							renderClient={ ( item ) => (
+								<Link
+									to="/referrals/$referralId"
+									params={ { referralId: String( item.id ) } }
+									style={ { color: 'inherit', textDecoration: 'none' } }
+									onClick={ () =>
+										recordTracksEvent( 'calypso_a4a_referrals_list_view_details_click' )
+									}
+								>
+									{ item.client.email }
+								</Link>
+							) }
+						/>
+					</DataViewsCard>
+				</>
+			) }
+			<NewReferralFeedback />
+		</PageLayout>
+	);
+}

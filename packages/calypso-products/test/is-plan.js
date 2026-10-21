@@ -22,6 +22,7 @@ import {
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_100_YEARS,
+	PLAN_STUDENT,
 } from '../src/constants';
 import { isPlan } from '../src/is-plan';
 
@@ -36,6 +37,7 @@ describe( 'isPlan', () => {
 		PLAN_100_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_BLOGGER,
+		PLAN_STUDENT,
 		PLAN_WPCOM_ENTERPRISE,
 		PLAN_HOST_BUNDLE,
 		PLAN_P2_PLUS,

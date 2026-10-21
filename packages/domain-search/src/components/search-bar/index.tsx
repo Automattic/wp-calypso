@@ -6,7 +6,7 @@ import './style.scss';
 
 export const SearchBar = () => {
 	return (
-		<HStack spacing={ 4 }>
+		<HStack className="domain-search__search-bar" spacing={ 4 }>
 			<Input />
 			<Filter />
 		</HStack>

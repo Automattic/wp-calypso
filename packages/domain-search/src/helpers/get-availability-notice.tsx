@@ -205,9 +205,7 @@ export const getAvailabilityNotice = (
 					sprintf(
 						/* translators: %(domain)s is the domain name */
 						__(
-							'<strong>%(domain)s</strong> is already connected to this site, but registered somewhere else. Do you want to move ' +
-								'it from your current domain provider to WordPress.com so you can manage the domain and the site ' +
-								'together? <button>Yes, transfer it to WordPress.com.</button>'
+							'<strong>%(domain)s</strong> is already connected to this site, but registered somewhere else. Do you want to move it from your current domain provider to WordPress.com so you can manage the domain and the site together? <button>Yes, transfer it to WordPress.com.</button>'
 						),
 						{
 							domain,
@@ -277,8 +275,7 @@ export const getAvailabilityNotice = (
 				sprintf(
 					/* translators: %(domain)s is the domain name, %(site)s is the other site domain */
 					__(
-						'<strong>%(domain)s</strong> is already connected to your site %(site)s. If you want to connect it to this site ' +
-							'instead, we will be happy to help you do that. <a>Contact us</a>.'
+						'<strong>%(domain)s</strong> is already connected to your site %(site)s. If you want to connect it to this site instead, we will be happy to help you do that. <a>Contact us</a>.'
 					),
 					{
 						domain,
@@ -297,8 +294,7 @@ export const getAvailabilityNotice = (
 				sprintf(
 					/* translators: %(domain)s is the domain name, %(site)s is the other site domain */
 					__(
-						'<strong>%(domain)s</strong> is already connected to your site %(site)s.' +
-							' <button>Register it to the connected site</button>.'
+						'<strong>%(domain)s</strong> is already connected to your site %(site)s. <button>Register it to the connected site</button>.'
 					),
 					{
 						domain,
@@ -380,7 +376,7 @@ export const getAvailabilityNotice = (
 			break;
 		case DomainAvailabilityStatus.MAINTENANCE:
 			if ( availabilityData.tld ) {
-				let maintenanceEnd = __( 'shortly' );
+				let maintenanceEnd: string = __( 'shortly' );
 				if ( availabilityData.maintenance_end_time ) {
 					maintenanceEnd = moment
 						.unix( parseInt( availabilityData.maintenance_end_time, 10 ) )
@@ -389,10 +385,9 @@ export const getAvailabilityNotice = (
 
 				message = createInterpolateElement(
 					sprintf(
-						/* translators: %(tld)s is the TLD */
+						/* translators: %(tld)s is the TLD, %(maintenanceEnd)s is the maintenance end time */
 						__(
-							'Domains ending with <strong>.%(tld)s</strong> are undergoing maintenance. Please ' +
-								'try a different extension or check back %(maintenanceEnd)s.'
+							'Domains ending with <strong>.%(tld)s</strong> are undergoing maintenance. Please try a different extension or check back %(maintenanceEnd)s.'
 						),
 						{
 							tld: availabilityData.tld,
@@ -407,7 +402,7 @@ export const getAvailabilityNotice = (
 			}
 			break;
 		case DomainAvailabilityStatus.PURCHASES_DISABLED: {
-			let maintenanceEnd = __( 'shortly' );
+			let maintenanceEnd: string = __( 'shortly' );
 			if ( availabilityData.maintenance_end_time ) {
 				maintenanceEnd = moment
 					.unix( parseInt( availabilityData.maintenance_end_time, 10 ) )
@@ -417,8 +412,7 @@ export const getAvailabilityNotice = (
 			message = sprintf(
 				/* translators: %(maintenanceEnd)s is the maintenance end time */
 				__(
-					'Domain registration is unavailable at this time. Please select a free subdomain ' +
-						'or check back %(maintenanceEnd)s.'
+					'Domain registration is unavailable at this time. Please select a free subdomain or check back %(maintenanceEnd)s.'
 				),
 				{
 					maintenanceEnd,

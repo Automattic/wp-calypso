@@ -9,12 +9,8 @@ VerticalNavItem.displayName = 'VerticalNavItem';
 VerticalNavItemEnhanced.displayName = 'VerticalNavItemEnhanced';
 VerticalNavExample.displayName = 'VerticalNav';
 
-function VerticalNavExample( props ) {
-	return props.exampleCode;
-}
-
-VerticalNavExample.defaultProps = {
-	exampleCode: (
+function VerticalNavExample( {
+	exampleCode = (
 		<VerticalNav>
 			<VerticalNavItem path="/stats" key="0">
 				Stats
@@ -48,6 +44,8 @@ VerticalNavExample.defaultProps = {
 			/>
 		</VerticalNav>
 	),
-};
+} ) {
+	return exampleCode;
+}
 
 export default VerticalNavExample;

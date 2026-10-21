@@ -1,4 +1,4 @@
-[← Debugging](./debugging.md) &nbsp; | &nbsp; [Top](./../README.md)
+[← Documentation index](./overview.md)
 
 # Troubleshooting
 

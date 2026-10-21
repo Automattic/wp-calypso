@@ -2,7 +2,11 @@
  * @jest-environment jsdom
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { RESURRECTED_EVENT, RESURRECTED_EVENT_6M } from 'calypso/lib/resurrected-users/constants';
+import {
+	RESURRECTED_EVENT,
+	RESURRECTED_EVENT_3M,
+	RESURRECTED_EVENT_6M,
+} from 'calypso/lib/resurrected-users/constants';
 import userSettings from 'calypso/state/user-settings/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import TrackResurrections from '../';
@@ -40,7 +44,7 @@ describe( 'TrackResurrections', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 0 );
 	} );
 
-	it( 'should not call recordTracksEvent if lastSeen is less than six months ago', () => {
+	it( 'should not call recordTracksEvent if lastSeen is less than three months ago', () => {
 		const dormantThreshold = Date.now() / 1000 - 2 * 30 * 24 * 60 * 60; // 2 months-ish.
 
 		render( <TrackResurrections />, {
@@ -57,7 +61,7 @@ describe( 'TrackResurrections', () => {
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should call both resurrection events if lastSeen is more than one year ago', () => {
+	it( 'should call all resurrection events if lastSeen is more than one year ago', () => {
 		const resurrectedDate = Date.now() / 1000 - 2 * 365 * 24 * 60 * 60; // 2 years in seconds.
 
 		render( <TrackResurrections />, {
@@ -85,10 +89,46 @@ describe( 'TrackResurrections', () => {
 				last_seen: resurrectedDate,
 			} )
 		);
+		expect( recordTracksEvent ).toHaveBeenNthCalledWith(
+			3,
+			RESURRECTED_EVENT_3M,
+			expect.objectContaining( {
+				last_seen: resurrectedDate,
+			} )
+		);
 	} );
 
-	it( 'should call only the six month resurrection event if lastSeen is between six and twelve months ago', () => {
+	it( 'should call the six and three month events if lastSeen is between six and twelve months ago', () => {
 		const resurrectedDate = Date.now() / 1000 - 8 * 30 * 24 * 60 * 60; // ~8 months.
+
+		render( <TrackResurrections />, {
+			initialState: {
+				userSettings: {
+					settings: {
+						last_admin_activity_timestamp: resurrectedDate,
+					},
+					fetching: false,
+				},
+			},
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 2 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			RESURRECTED_EVENT_6M,
+			expect.objectContaining( {
+				last_seen: resurrectedDate,
+			} )
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			RESURRECTED_EVENT_3M,
+			expect.objectContaining( {
+				last_seen: resurrectedDate,
+			} )
+		);
+	} );
+
+	it( 'should call only the three month event if lastSeen is between three and six months ago', () => {
+		const resurrectedDate = Date.now() / 1000 - 4 * 30 * 24 * 60 * 60; // ~4 months.
 
 		render( <TrackResurrections />, {
 			initialState: {
@@ -103,7 +143,7 @@ describe( 'TrackResurrections', () => {
 
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			RESURRECTED_EVENT_6M,
+			RESURRECTED_EVENT_3M,
 			expect.objectContaining( {
 				last_seen: resurrectedDate,
 			} )

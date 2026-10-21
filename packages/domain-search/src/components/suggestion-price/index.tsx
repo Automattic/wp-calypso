@@ -47,7 +47,7 @@ export const DomainSuggestionPrice = ( { domainName }: DomainSuggestionPriceProp
 		typeof priceSource.sale_cost === 'number'
 			? formatCurrency( priceSource.sale_cost, priceSource.currency_code, {
 					stripZeros: true,
-			  } )
+				} )
 			: priceSource.sale_cost;
 
 	return (

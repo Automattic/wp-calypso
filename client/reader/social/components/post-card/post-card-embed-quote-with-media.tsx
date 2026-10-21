@@ -2,10 +2,10 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { PostCardEmbedImages } from './post-card-embed-images';
 import { PostCardEmbedQuote } from './post-card-embed-quote';
 import { PostCardEmbedVideo } from './post-card-embed-video';
-import type { AtmosphereEmbedQuoteWithMedia } from '@automattic/api-core';
+import type { SocialEmbedQuoteWithMedia } from '../../types';
 
 interface PostCardEmbedQuoteWithMediaProps {
-	embed: AtmosphereEmbedQuoteWithMedia;
+	embed: SocialEmbedQuoteWithMedia;
 	parentPostUri: string;
 }
 

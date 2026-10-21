@@ -4,7 +4,7 @@
 	display: flex;
 	border-top: var(--wpds-border-width-xs, 1px) solid var(--wpds-color-stroke-surface-neutral-weak, #e0e0e0);
 	box-sizing: border-box;
-	color: var(--wpds-color-fg-content-neutral, #1e1e1e);
+	color: var(--wpds-color-foreground-content-neutral, #1e1e1e);
 	font-size: var(--wpds-font-size-md, 13px);
 	padding: var(--wpds-dimension-padding-xl) var(--wpds-dimension-padding-2xl);
 	width: 100%;
@@ -18,7 +18,7 @@
 
 		&:any-link,
 		&[role="button"] {
-			color: var(--wpds-color-fg-interactive-neutral-weak);
+			color: var(--wpds-color-foreground-interactive-neutral-weak);
 			cursor: pointer;
 			text-decoration: none;
 		}
@@ -57,6 +57,6 @@ a.jetpack-footer__a8c {
 	}
 
 	svg {
-		fill: var(--wpds-color-fg-interactive-neutral-weak);
+		fill: var(--wpds-color-foreground-interactive-neutral-weak);
 	}
 }

@@ -86,6 +86,14 @@
 		max-width: 75ch;
 		margin: 0;
 	}
+
+	code {
+		background: var(--color-neutral-0);
+		color: var(--color-neutral-100);
+		padding: 4px;
+		font-size: $font-size-small;
+		font-weight: bold;
+	}
 }
 
 .a4a-event__button {

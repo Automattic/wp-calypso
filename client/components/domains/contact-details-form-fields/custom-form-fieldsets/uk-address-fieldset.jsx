@@ -5,7 +5,12 @@ import { Input } from 'calypso/my-sites/domains/components/form';
 const noop = () => {};
 
 const UkAddressFieldset = ( props ) => {
-	const { getFieldProps, translate, contactDetailsErrors, arePostalCodesSupported } = props;
+	const {
+		getFieldProps = noop,
+		translate,
+		contactDetailsErrors,
+		arePostalCodesSupported = true,
+	} = props;
 	return (
 		<div className="custom-form-fieldsets__address-fields uk-address-fieldset">
 			<Input
@@ -31,8 +36,4 @@ UkAddressFieldset.propTypes = {
 	arePostalCodesSupported: PropTypes.bool,
 };
 
-UkAddressFieldset.defaultProps = {
-	getFieldProps: noop,
-	arePostalCodesSupported: true,
-};
 export default localize( UkAddressFieldset );

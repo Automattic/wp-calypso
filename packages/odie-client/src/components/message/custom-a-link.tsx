@@ -1,6 +1,6 @@
 import { isThisASupportArticleLink } from '@automattic/urls';
 import clsx from 'clsx';
-import { useMemo } from 'react';
+import { Children, isValidElement, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { uriTransformer } from './uri-transformer';
@@ -27,6 +27,11 @@ const CustomALink = ( {
 
 	const transformedHref = useMemo( () => uriTransformer( href ?? '' ), [ href ] );
 
+	const wrapsImage = Children.toArray( children ).some(
+		( child ) => isValidElement( child ) && child.type === 'img'
+	);
+	const effectiveTarget = wrapsImage ? '_blank' : target;
+
 	const classNames = clsx( 'odie-sources', {
 		'odie-sources-inline': inline,
 	} );
@@ -36,7 +41,7 @@ const CustomALink = ( {
 			<a
 				className="odie-sources-link"
 				href={ transformedHref }
-				target={ target }
+				target={ effectiveTarget }
 				rel="noopener noreferrer"
 				onClick={ ( e ) => {
 					// Open support article links in the Help Center.

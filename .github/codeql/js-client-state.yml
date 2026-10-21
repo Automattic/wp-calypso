@@ -1,0 +1,4 @@
+name: CodeQL JavaScript client state
+
+paths:
+  - client/state

@@ -1,5 +1,4 @@
 import { IncomingMessage } from 'http';
-import cloneDeep from 'lodash/cloneDeep';
 import mockFs from 'mock-fs';
 import sections from 'calypso/sections';
 
@@ -16,11 +15,6 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 jest.mock( 'calypso/server/sanitize', () => jest.fn() );
-
-jest.mock( 'calypso/server/bundler/utils', () => ( {
-	hashFile: jest.fn( () => 'hash' ),
-	getUrl: jest.fn( jest.requireActual( 'calypso/server/bundler/utils' ).getUrl ),
-} ) );
 
 jest.mock( 'calypso/sections', () => {
 	// eslint-disable-next-line no-shadow
@@ -61,6 +55,8 @@ jest.mock( 'calypso/server/render', () => ( {
 	attachBuildTimestamp: jest.fn(),
 	attachHead: jest.fn(),
 	attachI18n: jest.fn(),
+	bumpStat: jest.fn(),
+	customizeClientDataForRequest: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/server/state-cache', () => new Map() );
@@ -108,6 +104,11 @@ jest.mock( 'calypso/lib/oauth2-clients', () => ( {
 	isWooOAuth2Client: jest.fn(),
 } ) );
 
+const createMockStore = () => ( {
+	dispatch: jest.fn(),
+	getState: jest.fn( () => ( { documentHead: { meta: [] } } ) ),
+} );
+
 /**
  * Builds an app for an specific environment.
  *
@@ -141,12 +142,22 @@ const buildApp = ( environment ) => {
 			attachBuildTimestamp,
 			attachI18n,
 			attachHead,
+			customizeClientDataForRequest,
 			renderJsx,
 			serverRender,
 		} = require( 'calypso/server/render' );
-		mocks = { ...mocks, attachBuildTimestamp, attachI18n, attachHead, renderJsx, serverRender };
+		mocks = {
+			...mocks,
+			attachBuildTimestamp,
+			attachI18n,
+			attachHead,
+			customizeClientDataForRequest,
+			renderJsx,
+			serverRender,
+		};
 		mocks.sanitize = require( 'calypso/server/sanitize' );
 		mocks.createReduxStore = require( 'calypso/state' ).createReduxStore;
+		mocks.createReduxStore.mockImplementation( createMockStore );
 		mocks.execSync = require( 'child_process' ).execSync;
 		mocks.login = require( 'calypso/lib/paths' ).login;
 		mocks.getBootstrappedUser = require( 'calypso/server/user-bootstrap' );
@@ -207,6 +218,9 @@ const buildApp = ( environment ) => {
 					),
 					'entry-browsehappy': assetsList.map( ( asset ) =>
 						asset.replace( 'entry-main', 'entry-browsehappy' )
+					),
+					'entry-dashboard-dotcom': assetsList.map( ( asset ) =>
+						asset.replace( 'entry-main', 'entry-dashboard-dotcom' )
 					),
 					...Object.fromEntries(
 						sections.map( ( section ) => [
@@ -285,7 +299,7 @@ const buildApp = ( environment ) => {
 		},
 		withReduxStore( store ) {
 			mocks.createReduxStore.mockImplementation( () => store );
-			tearDown.push( () => mocks.createReduxStore.mockReset() );
+			tearDown.push( () => mocks.createReduxStore.mockImplementation( createMockStore ) );
 		},
 		withSetCurrentAction( action ) {
 			mocks.setCurrentUser.mockImplementation( () => action );
@@ -315,28 +329,26 @@ const buildApp = ( environment ) => {
 					...request,
 				} );
 
-				// Using cloneDeep to capture the state of the request/response objects right now, in case
-				// an async middleware changes them _after_ the request handler has been executed
 				const mockResponse = {
 					setHeader: jest.fn(),
 					getHeader: jest.fn(),
 					clearCookie: jest.fn(),
 					send: jest.fn( () => {
 						resolve( {
-							request: cloneDeep( mockRequest ),
-							response: cloneDeep( mockResponse ),
+							request: mockRequest,
+							response: mockResponse,
 						} );
 					} ),
 					end: jest.fn( () => {
 						resolve( {
-							request: cloneDeep( mockRequest ),
-							response: cloneDeep( mockResponse ),
+							request: mockRequest,
+							response: mockResponse,
 						} );
 					} ),
 					redirect: jest.fn( () => {
 						resolve( {
-							request: cloneDeep( mockRequest ),
-							response: cloneDeep( mockResponse ),
+							request: mockRequest,
+							response: mockResponse,
 						} );
 					} ),
 					...response,
@@ -442,11 +454,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.featuresHelper ).toEqual( false );
 	} );
 
-	it( 'sets devDocsUrl', async () => {
-		const { request } = await app.run();
-		expect( request.context.devDocsURL ).toEqual( '/devdocs' );
-	} );
-
 	it( 'sets redux store', async () => {
 		const theStore = {};
 		app.withReduxStore( theStore );
@@ -492,10 +499,10 @@ const assertDefaultContext = ( { url, entry } ) => {
 	it( 'sets dashboard according to the request hostname', async () => {
 		const { request } = await app.run( {
 			request: {
-				hostname: 'my.woo.localhost',
+				hostname: 'my.a4a.localhost',
 			},
 		} );
-		expect( request.context.dashboard ).toEqual( 'ciab' );
+		expect( request.context.dashboard ).toEqual( 'a4a' );
 	} );
 
 	it( 'sets the client ip', async () => {
@@ -556,11 +563,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the badge', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'wpcalypso' );
-		} );
-
-		it( 'sets devDocs', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.devDocs ).toEqual( true );
 		} );
 
 		it( 'sets the feedback url', async () => {
@@ -660,11 +662,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the badge', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'dev' );
-		} );
-
-		it( 'sets devDocs', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.devDocs ).toEqual( true );
 		} );
 
 		it( 'sets the feedback url', async () => {
@@ -824,9 +821,7 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 		let theAction;
 
 		beforeEach( () => {
-			theStore = {
-				dispatch: jest.fn(),
-			};
+			theStore = createMockStore();
 			theAction = {};
 
 			// This method resets the existing enabled config, we need to re-enable 'use-translation-chunks'.
@@ -982,6 +977,105 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Route /me/security/qr-login', () => {
+		beforeEach( () => {
+			app.withConfigEnabled( {
+				'wpcom-user-bootstrap': true,
+				'use-translation-chunks': true,
+			} );
+		} );
+
+		afterEach(
+			() =>
+				new Promise( ( done ) => {
+					// Redirects can resolve the request before local language revisions finish reading.
+					// Give that setup promise time to settle before mockFs is restored by the outer afterEach.
+					setTimeout( done, 5 );
+				} )
+		);
+
+		it( 'redirects Woo-origin anonymous requests back to the Woo mobile login fallback', async () => {
+			app.withAnonymousUser();
+
+			const { response } = await app.run( {
+				request: {
+					url: '/me/security/qr-login',
+					query: {
+						origin: 'woocommerce',
+						return_to: 'https://woocommerce.com/mobilelogin/',
+					},
+				},
+			} );
+
+			expect( response.redirect ).toHaveBeenCalledWith(
+				'https://woocommerce.com/mobilelogin/?wpcom_auth=missing'
+			);
+		} );
+
+		it( 'ignores unsafe Woo-origin return_to values', async () => {
+			app.withAnonymousUser();
+
+			const { response } = await app.run( {
+				request: {
+					url: '/me/security/qr-login',
+					query: {
+						origin: 'woocommerce',
+						return_to: 'https://evil.example/mobilelogin/',
+					},
+				},
+			} );
+
+			expect( response.redirect ).toHaveBeenCalledWith(
+				'https://woocommerce.com/mobilelogin/?wpcom_auth=missing'
+			);
+		} );
+
+		it( 'redirects stale-auth Woo-origin requests back to the Woo mobile login fallback', async () => {
+			app.withAuthenticatedUser();
+			app.withFailedBootstrapUser( { error: 'authorization_required' } );
+
+			const { response } = await app.run( {
+				request: {
+					url: '/me/security/qr-login',
+					query: {
+						origin: 'woocommerce',
+						return_to: 'https://woocommerce.com/mobilelogin/',
+					},
+				},
+			} );
+
+			expect( response.clearCookie ).toHaveBeenCalledWith( 'wordpress_logged_in', {
+				path: '/',
+				httpOnly: true,
+				domain: '.wordpress.com',
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				'https://woocommerce.com/mobilelogin/?wpcom_auth=missing'
+			);
+		} );
+
+		it( 'redirects authenticated Woo-origin requests to a URL without return_to', async () => {
+			app.withAuthenticatedUser();
+			app.withBootstrapUser( {} );
+			app.withReduxStore( createMockStore() );
+			app.withSetCurrentAction( {} );
+
+			const { response } = await app.run( {
+				request: {
+					url: '/me/security/qr-login?origin=woocommerce&return_to=https%3A%2F%2Fwoocommerce.com%2Fmobilelogin%2F',
+					query: {
+						origin: 'woocommerce',
+						return_to: 'https://woocommerce.com/mobilelogin/',
+					},
+				},
+			} );
+
+			expect( response.redirect ).toHaveBeenCalledWith(
+				'/me/security/qr-login?origin=woocommerce'
+			);
+		} );
+	} );
+
 	describe( 'Route /sites/:site/:section', () => {
 		[
 			{ section: 'posts', url: '/posts/my-site' },
@@ -1016,6 +1110,43 @@ describe( 'main app', () => {
 			} );
 			expect( response.redirect ).toHaveBeenCalledWith(
 				'https://wordpress.com/pricing/?ref=test&coupon=test'
+			);
+		} );
+	} );
+
+	describe( 'Route /tags and /tag', () => {
+		it( 'redirects logged-out visitors to the Discover tags tab', async () => {
+			const { response } = await app.run( { request: { url: '/tags' } } );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				302,
+				'/discover/tags?selectedTag=dailyprompt'
+			);
+		} );
+
+		it( 'carries the tag and locale prefix through the redirect', async () => {
+			const { response } = await app.run( { request: { url: '/fr/tag/travel' } } );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				302,
+				'/fr/discover/tags?selectedTag=travel'
+			);
+		} );
+
+		it( 'does not redirect logged-in users', async () => {
+			const { response } = await app.run( {
+				request: { url: '/tags', cookies: { wordpress_logged_in: true } },
+			} );
+			expect( response.redirect ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'Route /speed-test-tool', () => {
+		it( 'redirects old report links to the localized site speed guide', async () => {
+			const { response } = await app.run( {
+				request: { url: '/es/speed-test-tool/weekly-report/unsubscribe?url=example.com' },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				301,
+				'https://wordpress.com/es/support/site-speed/'
 			);
 		} );
 	} );
@@ -1131,9 +1262,7 @@ describe( 'main app', () => {
 					'use-translation-chunks': true,
 				} );
 				app.withBootstrapUser( {} );
-				app.withReduxStore( {
-					dispatch: jest.fn(),
-				} );
+				app.withReduxStore( createMockStore() );
 			} );
 
 			afterEach(
@@ -1166,7 +1295,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://wordpress.com/reader/search?q=my%20search'
+					'https://wordpress.com/discover/search?q=my%20search'
 				);
 			} );
 
@@ -1181,7 +1310,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://wordpress.com/reader/search?q=my%20search'
+					'https://wordpress.com/discover/search?q=my%20search'
 				);
 			} );
 
@@ -1233,6 +1362,93 @@ describe( 'main app', () => {
 		it( 'redirects to /setup/domain-transfer', async () => {
 			const { response } = await app.run( { request: { url: '/start/domain-transfer' } } );
 			expect( response.redirect ).toHaveBeenCalledWith( 301, '/setup/domain-transfer' );
+		} );
+	} );
+
+	describe( 'Route /start/launch-site', () => {
+		const query = { siteSlug: 'example.wordpress.com' };
+		const search = 'siteSlug=example.wordpress.com';
+
+		it( 'redirects to /setup/launch-site with the query', async () => {
+			const { response } = await app.run( {
+				request: {
+					url: '/start/launch-site',
+					query: { siteSlug: 'example.wordpress.com', back_to: '/sites' },
+				},
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				302,
+				'/setup/launch-site?siteSlug=example.wordpress.com&back_to=%2Fsites'
+			);
+		} );
+
+		it( 'records the hit without the full query', async () => {
+			const { request } = await app.run( {
+				request: {
+					url: '/start/launch-site/plans-launch',
+					query: { siteSlug: 'example.wordpress.com', ref: 'admin-bar', coupon: 'SECRET' },
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				{ path: '/start/launch-site/plans-launch', ref: 'admin-bar', query_source: undefined },
+				request
+			);
+		} );
+
+		it( 'still redirects when tracking throws', async () => {
+			app.getMocks().analytics.tracks.recordEvent.mockImplementationOnce( () => {
+				throw new Error( 'Fake error' );
+			} );
+			const { response } = await app.run( { request: { url: '/start/launch-site', query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, `/setup/launch-site?${ search }` );
+		} );
+
+		it( 'only records string caller hints', async () => {
+			const { request } = await app.run( {
+				request: {
+					url: '/start/launch-site',
+					query: { ...query, ref: [ 'a', 'b' ], source: { a: 'b' } },
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				{ path: '/start/launch-site', ref: undefined, query_source: undefined },
+				request
+			);
+		} );
+
+		it( 'leaves requests without a siteSlug to the signup section, but still records them', async () => {
+			const { response } = await app.run( { request: { url: '/start/launch-site' } } );
+			expect( response.redirect ).not.toHaveBeenCalledWith( 302, expect.anything() );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalled();
+		} );
+
+		it( 'does not record HEAD requests', async () => {
+			await app.run( { request: { url: '/start/launch-site', method: 'HEAD', query } } );
+			expect( app.getMocks().analytics.tracks.recordEvent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not record outside production', async () => {
+			const devApp = buildApp( 'development' );
+			devApp.withServerRender( '' );
+			devApp.withMockFilesystem();
+			devApp.withEvergreenBrowser();
+			const { response } = await devApp.run( { request: { url: '/start/launch-site', query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, `/setup/launch-site?${ search }` );
+			expect( devApp.getMocks().analytics.tracks.recordEvent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'drops legacy step and locale segments', async () => {
+			const { response } = await app.run( {
+				request: { url: '/start/launch-site/domains-launch/es/', query },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, `/setup/launch-site?${ search }` );
+		} );
+
+		it( 'leaves flows that only share the prefix alone', async () => {
+			const { response } = await app.run( { request: { url: '/start/launch-site-foo' } } );
+			expect( response.redirect ).not.toHaveBeenCalledWith( 302, expect.anything() );
 		} );
 	} );
 
@@ -1482,5 +1698,91 @@ describe( 'main app', () => {
 
 			expect( request.logger.error ).toHaveBeenCalledWith( { error: 'fake error' } );
 		} );
+	} );
+} );
+
+describe( 'dashboard app', () => {
+	let app;
+
+	beforeAll( () => {
+		app = buildApp( 'dashboard-production' );
+	} );
+
+	beforeEach( () => {
+		app.withConfigEnabled( { 'use-translation-chunks': true } );
+		app.withServerRender( '' );
+		app.withMockFilesystem();
+		app.withEvergreenBrowser();
+		app.withReduxStore( { dispatch: jest.fn(), getState: jest.fn( () => ( {} ) ) } );
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
+		app.reset();
+	} );
+
+	it( 'serves the dashboard shell with a 404 for unmatched paths', async () => {
+		const { request, response } = await app.run( {
+			request: { url: '/does-not-exist', hostname: 'my.wordpress.com' },
+		} );
+
+		expect( request.context.sectionName ).toBe( 'dashboard-dotcom' );
+		expect( response.statusCode ).toBe( 404 );
+		expect( app.getMocks().serverRender ).toHaveBeenCalled();
+	} );
+
+	it( 'serves known dashboard routes without a 404', async () => {
+		const { request, response } = await app.run( {
+			request: { url: '/sites', hostname: 'my.wordpress.com' },
+		} );
+
+		expect( request.context.sectionName ).toBe( 'dashboard-dotcom' );
+		expect( response.statusCode ).not.toBe( 404 );
+		expect( app.getMocks().serverRender ).toHaveBeenCalled();
+	} );
+
+	// Logged-out requests skip the dashboard `/start` route anyway, since signup is isomorphic.
+	it( 'redirects legacy /start/launch-site ahead of the dashboard signup route', async () => {
+		app.withAuthenticatedUser();
+
+		const { response } = await app.run( {
+			request: {
+				url: '/start/launch-site',
+				hostname: 'my.wordpress.com',
+				query: { siteSlug: 'example.wordpress.com' },
+			},
+		} );
+
+		expect( response.redirect ).toHaveBeenCalledWith(
+			302,
+			'/setup/launch-site?siteSlug=example.wordpress.com'
+		);
+	} );
+
+	it( 'serves robots.txt that disallows all paths', async () => {
+		const { response } = await app.run( {
+			request: { url: '/robots.txt', hostname: 'my.wordpress.com' },
+		} );
+
+		expect( response.setHeader ).toHaveBeenCalledWith( 'Content-Type', 'text/plain' );
+		expect( response.send ).toHaveBeenCalledWith( 'User-agent: *\nDisallow: /\n' );
+	} );
+
+	it( 'redirects /wp-login.php to the WordPress.com login, forwarding only redirect_to', async () => {
+		app.getMocks().customizeClientDataForRequest.mockReturnValue( {
+			wpcom_login_url: 'https://wordpress.com/log-in',
+		} );
+
+		const { response } = await app.run( {
+			request: {
+				url: '/wp-login.php?action=login&redirect_to=https%3A%2F%2Fmy.wordpress.com%2Fsites',
+				hostname: 'my.wordpress.com',
+				query: { action: 'login', redirect_to: 'https://my.wordpress.com/sites' },
+			},
+		} );
+
+		expect( response.redirect ).toHaveBeenCalledWith(
+			'https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fmy.wordpress.com%2Fsites'
+		);
 	} );
 } );

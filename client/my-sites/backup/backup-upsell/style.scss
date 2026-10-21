@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .backup-upsell__content {
 	.jetpack-product-card__description {
 		@include breakpoint-deprecated( ">660px" ) {

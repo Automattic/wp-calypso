@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .migrate__placeholder {
 	color: transparent;
 	background-color: var(--studio-gray-10);

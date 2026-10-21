@@ -2,24 +2,27 @@ import { siteBackupGranularRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack, Panel } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
-import { rotateLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
-import { siteBackupRestoreRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import FileSectionPanelBody from './file-section-panel-body';
+import WooSubscriptionsNotice from './woo-subscriptions-notice';
 
 function SiteBackupGranularRestoreForm( {
 	siteId,
+	rewindId,
+	restorePointDate,
 	onRestoreInitiate,
 }: {
 	siteId: number;
+	rewindId: string;
+	restorePointDate: string;
 	onRestoreInitiate: ( restoreId: number ) => void;
 } ) {
-	const { rewindId } = siteBackupRestoreRoute.useParams();
 	const { mutate: restoreMutation, isPending: isRestoreMutationPending } = useMutation(
 		siteBackupGranularRestoreMutation( siteId )
 	);
@@ -70,19 +73,22 @@ function SiteBackupGranularRestoreForm( {
 	const restoreWarning = hasSelectedTables
 		? __(
 				'This action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
-		  )
+			)
 		: __(
 				'This action will replace the selected content with the content from the selected restore point.'
-		  );
+			);
 
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
 				<Text>
-					{ _n(
-						'The following item will be restored:',
-						'All the following selected items will be restored:',
-						browserCheckList.totalItems
+					{ createInterpolateElement(
+						_n(
+							'Restoring the following item from your <restorePointDate /> backup:',
+							'Restoring the following items from your <restorePointDate /> backup:',
+							browserCheckList.totalItems
+						),
+						{ restorePointDate: <strong>{ restorePointDate }</strong> }
 					) }
 				</Text>
 				<Panel>
@@ -96,10 +102,15 @@ function SiteBackupGranularRestoreForm( {
 					{ restoreWarning }
 				</Notice>
 
+				<WooSubscriptionsNotice
+					siteId={ siteId }
+					rewindId={ rewindId }
+					includesDatabase={ hasSelectedTables }
+				/>
+
 				<ButtonStack justify="flex-start">
 					<Button
 						variant="primary"
-						icon={ rotateLeft }
 						type="submit"
 						isBusy={ isRestoreMutationPending }
 						disabled={ isRestoreMutationPending }

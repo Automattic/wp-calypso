@@ -33,28 +33,28 @@ import {
 	getTotalLineItemFromCart,
 	getCreditsLineItemFromCart,
 } from '@automattic/wpcom-checkout';
-import { css, keyframes } from '@emotion/react';
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Icon, reusableBlock } from '@wordpress/icons';
+import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useEquivalentMonthlyTotals, {
-	getSimulatedCostBeforeDiscounts,
+	getSubtotalBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
-import { useSelector } from 'calypso/state';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
+import { getActivePlanSlug, useCheckoutSite } from '../hooks/use-checkout-site';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
+import { useSubmitButtonSlot } from '../lib/submit-button-slot';
 import { CheckIcon } from './check-icon';
+import CheckoutPayButtonFooter from './checkout-pay-button-footer';
+import { CheckoutSummaryRefundWindows } from './checkout-summary-refund-windows';
 import { ProductsAndCostOverridesList } from './cost-overrides-list';
-import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { TranslateResult } from 'i18n-calypso';
+import type { LineItemType } from '@automattic/wpcom-checkout';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -62,16 +62,6 @@ import type { TranslateResult } from 'i18n-calypso';
 const PALETTE = colorStudio.colors;
 const COLOR_GRAY_40 = PALETTE[ 'Gray 40' ];
 const COLOR_GREEN_60 = PALETTE[ 'Green 60' ];
-
-const StyledIcon = styled( Icon )`
-	fill: '#1E1E1E';
-	margin-right: 0.3em;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: 0.3em;
-	}
-`;
 
 export function WPCheckoutOrderSummary( {
 	onChangeSelection,
@@ -167,55 +157,71 @@ function CheckoutSummaryPriceList() {
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
 	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
-	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
+	const { setSlotEl } = useSubmitButtonSlot();
+	const isLargeViewport = useViewportMatch( 'large', '>=' );
+	const { formStatus } = useFormStatus();
+	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 
-	const subtotalBeforeDiscounts = responseCart.products.reduce( ( subtotal, product ) => {
-		const originalAmountInteger = getSimulatedCostBeforeDiscounts( product, monthlyPrices );
-		// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
-		return subtotal + Math.max( product.item_subtotal_integer, originalAmountInteger );
-	}, 0 );
+	const subtotalBeforeDiscounts = getSubtotalBeforeDiscounts( responseCart, monthlyPrices );
 	const totalDiscount = subtotalBeforeDiscounts - responseCart.sub_total_integer;
 
 	return (
 		<>
 			<CheckoutSummaryTitle className="wp-checkout-order-summary__section-title">
-				<span>{ translate( 'Your order' ) }</span>
+				<span>{ translate( 'Summary' ) }</span>
 			</CheckoutSummaryTitle>
-			<ProductsAndCostOverridesList responseCart={ responseCart } />
+			<ProductsAndCostOverridesList
+				responseCart={ responseCart }
+				isCartUpdating={ isCartUpdating }
+			/>
 			<CheckoutSummaryAmountWrapper className="wp-checkout-order-summary__amount-wrapper">
 				<CheckoutSubtotalSection className="wp-checkout-order-summary__subtotal-section">
 					<CheckoutSummarySubtotal
 						key="checkout-summary-line-item-subtotal"
 						className="wp-checkout-order-summary__subtotal"
-						isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
 					>
 						<span>{ translate( 'Subtotal' ) }</span>
-						<span className="wp-checkout-order-summary__subtotal-price">
-							{ totalDiscount > 0 && (
-								<s>
-									{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
+						{ isCartUpdating ? (
+							<PriceLoadingIndicator
+								className="wp-checkout-order-summary__subtotal-price"
+								width="80px"
+								height="18px"
+							/>
+						) : (
+							<span className="wp-checkout-order-summary__subtotal-price">
+								{ totalDiscount > 0 && (
+									<s>
+										{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
+											isSmallestUnit: true,
+											stripZeros: true,
+										} ) }
+									</s>
+								) }
+								<span>
+									{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
 										isSmallestUnit: true,
 										stripZeros: true,
 									} ) }
-								</s>
-							) }
-							<span>
-								{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
-									isSmallestUnit: true,
-									stripZeros: true,
-								} ) }
+								</span>
 							</span>
-						</span>
+						) }
 					</CheckoutSummarySubtotal>
 					{ totalDiscount > 0 && (
 						<CheckoutSummaryTotalDiscount className="wp-checkout-order-summary__line-item">
 							<span>{ translate( 'Discount' ) }</span>
-							<span className="wp-checkout-order-summary__subtotal-discount">
-								{ formatCurrency( totalDiscount, responseCart.currency, {
-									isSmallestUnit: true,
-									stripZeros: true,
-								} ) }
-							</span>
+							{ isCartUpdating ? (
+								<PriceLoadingIndicator
+									className="wp-checkout-order-summary__subtotal-discount"
+									width="60px"
+								/>
+							) : (
+								<span className="wp-checkout-order-summary__subtotal-discount">
+									{ formatCurrency( totalDiscount, responseCart.currency, {
+										isSmallestUnit: true,
+										stripZeros: true,
+									} ) }
+								</span>
+							) }
 						</CheckoutSummaryTotalDiscount>
 					) }
 
@@ -224,8 +230,12 @@ function CheckoutSummaryPriceList() {
 							key={ 'checkout-summary-line-item-' + taxLineItem.id }
 							className="wp-checkout-order-summary__line-item"
 						>
-							<span>{ taxLineItem.label }</span>
-							<span>{ taxLineItem.formattedAmount }</span>
+							<CheckoutSummaryLineItemLabel lineItem={ taxLineItem } />
+							{ isCartUpdating ? (
+								<PriceLoadingIndicator width="50px" />
+							) : (
+								<span>{ taxLineItem.formattedAmount }</span>
+							) }
 						</CheckoutSummaryLineItem>
 					) ) }
 					{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
@@ -235,7 +245,11 @@ function CheckoutSummaryPriceList() {
 							className="wp-checkout-order-summary__line-item"
 						>
 							<span>{ creditsLineItem.label }</span>
-							<span>{ creditsLineItem.formattedAmount }</span>
+							{ isCartUpdating ? (
+								<PriceLoadingIndicator width="50px" />
+							) : (
+								<span>{ creditsLineItem.formattedAmount }</span>
+							) }
 						</CheckoutSummaryLineItem>
 					) }
 				</CheckoutSubtotalSection>
@@ -247,12 +261,46 @@ function CheckoutSummaryPriceList() {
 							textOnly: true,
 						} ) }
 					</span>
-					<span className="wp-checkout-order-summary__total-price">
-						{ totalLineItem.formattedAmount }
-					</span>
+					{ isCartUpdating ? (
+						<PriceLoadingIndicator
+							className="wp-checkout-order-summary__total-price"
+							width="80px"
+							height="22px"
+						/>
+					) : (
+						<span className="wp-checkout-order-summary__total-price">
+							{ totalLineItem.formattedAmount }
+						</span>
+					) }
 				</CheckoutSummaryTotal>
+				{ isLargeViewport && (
+					<>
+						<CheckoutSummaryPayButtonSlot
+							ref={ setSlotEl }
+							className="wp-checkout-order-summary__pay-button-slot"
+						/>
+						<CheckoutPayButtonFooter cart={ responseCart } />
+					</>
+				) }
 			</CheckoutSummaryAmountWrapper>
 		</>
+	);
+}
+
+function CheckoutSummaryLineItemLabel( { lineItem }: { lineItem: LineItemType } ) {
+	if ( ! lineItem.labelSuffix ) {
+		return <span>{ lineItem.label }</span>;
+	}
+
+	const labelSuffixWithParentheses = ` (${ lineItem.labelSuffix })`;
+	const label = lineItem.label.endsWith( labelSuffixWithParentheses )
+		? lineItem.label.slice( 0, -labelSuffixWithParentheses.length )
+		: lineItem.label;
+
+	return (
+		<span>
+			{ label } (<em>{ lineItem.labelSuffix }</em>)
+		</span>
 	);
 }
 
@@ -292,119 +340,7 @@ function SwitchToAnnualPlan( {
 	return <SwitchToAnnualPlanButton onClick={ handleClick }>{ text }</SwitchToAnnualPlanButton>;
 }
 
-const CheckoutSummaryRefundWindowsContainer = styled.p`
-	margin: 0;
-	padding: 0;
-`;
-
-export function CheckoutSummaryRefundWindows( {
-	cart,
-	highlight = false,
-	includeRefundIcon,
-}: {
-	cart: ResponseCart;
-	highlight?: boolean;
-	includeRefundIcon?: boolean;
-} ) {
-	const translate = useTranslate();
-
-	const refundPolicies = getRefundPolicies( cart );
-	const refundWindows = getRefundWindows( refundPolicies );
-
-	if ( ! refundWindows.length || refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
-		return null;
-	}
-
-	const allCartItemsAreDomains = refundPolicies.every(
-		( refundPolicy ) =>
-			refundPolicy === RefundPolicy.DomainNameRegistration ||
-			refundPolicy === RefundPolicy.DomainNameRegistrationBundled ||
-			refundPolicy === RefundPolicy.DomainNameRenewal
-	);
-
-	if ( allCartItemsAreDomains ) {
-		return null;
-	}
-
-	const allCartItemsAreMonthlyPlanBundle = refundPolicies.every(
-		( refundPolicy ) =>
-			refundPolicy === RefundPolicy.DomainNameRegistration ||
-			refundPolicy === RefundPolicy.PlanMonthlyBundle
-	);
-
-	const allCartItemsArePlanOrDomainRenewals = refundPolicies.every(
-		( refundPolicy ) =>
-			refundPolicy === RefundPolicy.DomainNameRenewal ||
-			refundPolicy === RefundPolicy.PlanMonthlyRenewal ||
-			refundPolicy === RefundPolicy.PlanYearlyRenewal ||
-			refundPolicy === RefundPolicy.PlanBiennialRenewal
-	);
-
-	let text: TranslateResult;
-
-	if ( refundWindows.length === 1 ) {
-		const refundWindow = refundWindows[ 0 ];
-		const planBundleRefundPolicy = refundPolicies.find(
-			( refundPolicy ) =>
-				refundPolicy === RefundPolicy.PlanBiennialBundle ||
-				refundPolicy === RefundPolicy.PlanYearlyBundle
-		);
-		const planProduct = cart.products.find( isPlan );
-
-		if ( planBundleRefundPolicy ) {
-			// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
-			text = translate(
-				'%(days)d-day money back guarantee for %(product)s',
-				'%(days)d-day money back guarantee for %(product)s',
-				{
-					count: refundWindow,
-					args: {
-						days: refundWindow,
-						product: planProduct?.product_name ?? '',
-					},
-				}
-			);
-		} else {
-			text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
-				count: refundWindow,
-				args: { days: refundWindow },
-			} );
-		}
-	} else if ( allCartItemsAreMonthlyPlanBundle || allCartItemsArePlanOrDomainRenewals ) {
-		const refundWindow = Math.max( ...refundWindows );
-		const planProduct = cart.products.find( isPlan );
-
-		text = translate(
-			'%(days)d-day money back guarantee for %(product)s',
-			'%(days)d-day money back guarantee for %(product)s',
-			{
-				count: refundWindow,
-				args: {
-					days: refundWindow,
-					product: planProduct?.product_name ?? '',
-				},
-			}
-		);
-	} else {
-		const shortestRefundWindow = Math.min( ...refundWindows );
-
-		text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
-			count: shortestRefundWindow,
-			args: { days: shortestRefundWindow },
-			comment: 'The number of days until the shortest refund window in the cart expires.',
-		} );
-	}
-
-	return (
-		<>
-			{ includeRefundIcon && <StyledIcon icon={ reusableBlock } size={ 24 } /> }
-			<CheckoutSummaryRefundWindowsContainer>
-				{ ! includeRefundIcon && <WPCheckoutCheckIcon /> }
-				{ highlight ? <strong>{ text }</strong> : text }
-			</CheckoutSummaryRefundWindowsContainer>
-		</>
-	);
-}
+export { CheckoutSummaryRefundWindows };
 
 export function CheckoutSummaryFeaturesList( props: {
 	siteId: number | undefined;
@@ -674,11 +610,8 @@ function CheckoutSummarySupportIfAvailable( props: {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
-	const currentPlan = useSelector( ( state ) =>
-		props.siteId ? getCurrentPlan( state, props.siteId ) : undefined
-	);
-
-	const currentPlanSlug = currentPlan?.productSlug;
+	const { data: site } = useCheckoutSite( props.siteId );
+	const currentPlanSlug = getActivePlanSlug( site );
 
 	const isSupportAvailable =
 		props.hasDomainTransferInCart ||
@@ -696,7 +629,7 @@ function CheckoutSummarySupportIfAvailable( props: {
 		return (
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon />
-				{ isWpComPremiumPlan( currentPlanSlug )
+				{ isWpComPremiumPlan( currentPlanSlug ?? '' )
 					? translate( 'Fast support' )
 					: translate( 'Priority support 24/7' ) }
 			</CheckoutSummaryFeaturesListItem>
@@ -760,13 +693,13 @@ function CheckoutSummaryAnnualUpsell( props: {
 									? translate( 'Fast support' )
 									: translate( 'Priority support 24/7' ) }
 							</CheckoutSummaryFeaturesListItem>
-					  )
+						)
 					: ! isWpComPersonalPlan( productSlug ) && (
 							<CheckoutSummaryFeaturesListItem isSupported={ false }>
 								<WPCheckoutCheckIcon />
 								{ translate( 'Live chat support' ) }
 							</CheckoutSummaryFeaturesListItem>
-					  ) }
+						) }
 			</CheckoutSummaryFeaturesListWrapper>
 			{ props.onChangeSelection && (
 				<SwitchToAnnualPlan plan={ props.plan } onChangeSelection={ props.onChangeSelection } />
@@ -793,16 +726,44 @@ const CheckoutSummaryCard = styled.div`
 		0 3px 8px rgb( 0 0 0 / 12% );
 	margin-bottom: 20px;
 `;
+
+const CheckoutSummaryPayButtonSlot = styled.div`
+	margin-top: 16px;
+
+	/*
+	 * The submit button renders here via a React portal (see submit-button-slot.ts).
+	 * Each payment method provides its own button element, and a "Continue" button
+	 * renders here while steps are incomplete, so normalize every button in the slot
+	 * to a consistent full-width, 50px-tall look in the sidebar regardless of which
+	 * one is showing (Pay, Continue, PayPal, etc.). The "Use a different payment
+	 * method" link is also a <button> but is a text link, so it is excluded from
+	 * the 50px submit-button sizing below.
+	 */
+	.checkout-submit-button {
+		width: 100%;
+	}
+
+	button:not( .checkout-steps__change-payment-method-button ) {
+		width: 100%;
+		height: 50px;
+		box-sizing: border-box;
+	}
+
+	/* The portaled wrapper keeps the form's 24px padding; the sidebar card already pads it. */
+	.checkout-steps__submit-button-wrapper {
+		padding: 0;
+	}
+`;
 const CheckoutSummaryFeatures = styled.div`
 	padding: 24px 0;
 	justify-self: flex-start;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 24px 0; ) }
+		padding: 24px 0;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 24px 0; ) }
+		padding: 24px 0;
 	}
 `;
 
@@ -884,9 +845,6 @@ const CheckoutSummaryFeaturesListItem = styled( 'li' )< { isSupported?: boolean 
 		padding-left: 0;
 	}
 `;
-CheckoutSummaryFeaturesListItem.defaultProps = {
-	isSupported: true,
-};
 
 const CheckoutSummaryTitle = styled.div`
 	margin-bottom: 16px;
@@ -898,14 +856,14 @@ const CheckoutSummaryTitle = styled.div`
 
 const CheckoutSubtotalSection = styled.div`
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	margin-bottom: 20px;
-	padding-bottom: 20px;
+	margin-bottom: 16px;
+	padding-bottom: 16px;
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	padding: 20px 0 0 0;
-	margin-top: 20px;
+	padding: 16px 0 0 0;
+	margin-top: 16px;
 `;
 
 const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
@@ -918,26 +876,27 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 
 	color: ${ ( props ) => ( props.isDiscount ? props.theme.colors.discount : 'inherit' ) };
 
-	.is-loading & {
-		animation: ${ pulse } 1.5s ease-in-out infinite;
+	& > span:last-child {
+		white-space: nowrap;
 	}
 `;
 
-const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )< {
-	isCheckoutUiRedesignV1?: boolean;
-} >`
+export const PriceLoadingIndicator = styled.span< { width?: string; height?: string } >`
+	display: inline-block;
+	height: ${ ( props ) => props.height ?? '16px' };
+	width: ${ ( props ) => props.width ?? '60px' };
+	background: ${ ( props ) => props.theme.colors.borderColorLight };
+	border-radius: 2px;
+	animation: ${ pulse } 1.5s ease-in-out infinite;
+	vertical-align: middle;
+`;
+
+const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
-	line-height: 26px;
+	line-height: 24px;
 	margin-bottom: 0px;
-	font-size: 20px;
-	${ ( { isCheckoutUiRedesignV1 } ) =>
-		isCheckoutUiRedesignV1 &&
-		css`
-			& > span:first-child {
-				font-size: 14px;
-			}
-		` }
+	font-size: 16px;
 	& .wp-checkout-order-summary__subtotal-price {
 		font-size: 14px;
 
@@ -945,6 +904,7 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )< {
 		flex: 0 0 auto;
 		gap: 4px;
 		margin-left: auto;
+		white-space: nowrap;
 
 		.rtl & {
 			margin-right: auto;
@@ -965,6 +925,7 @@ const CheckoutSummaryTotalDiscount = styled( CheckoutSummaryLineItem )`
 	& .wp-checkout-order-summary__subtotal-discount {
 		color: ${ COLOR_GREEN_60 };
 		font-weight: 500;
+		white-space: nowrap;
 	}
 `;
 
@@ -974,6 +935,10 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	line-height: 26px;
 	margin-bottom: 0px;
 	font-size: 20px;
+
+	.wp-checkout-order-summary__total-price {
+		white-space: nowrap;
+	}
 `;
 
 const LoadingCopy = styled.p`

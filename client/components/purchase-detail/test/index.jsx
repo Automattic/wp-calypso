@@ -51,9 +51,8 @@ describe( 'PurchaseDetail', () => {
 
 		const tipInfo = screen.queryByTestId( 'tip-info' );
 		expect( tipInfo ).toBeVisible();
-		expect( TipInfo ).toHaveBeenCalledWith(
-			expect.objectContaining( { info: 'test:tip-info' } ),
-			expect.anything()
+		expect( TipInfo.mock.lastCall?.[ 0 ] ).toEqual(
+			expect.objectContaining( { info: 'test:tip-info' } )
 		);
 
 		rerender( <PurchaseDetail info="test:tip-info" body="test:body" /> );
@@ -75,7 +74,7 @@ describe( 'PurchaseDetail', () => {
 		const purchaseButton = screen.queryByTestId( 'purchase-button' );
 		expect( purchaseButton ).toBeVisible();
 
-		expect( PurchaseButton ).toHaveBeenCalledWith(
+		expect( PurchaseButton.mock.lastCall?.[ 0 ] ).toEqual(
 			expect.objectContaining( {
 				disabled: false,
 				href: 'https://wordpress.com/test/url',
@@ -83,8 +82,7 @@ describe( 'PurchaseDetail', () => {
 				target: 'test:target',
 				rel: 'test:rel',
 				text: buttonProps.buttonText,
-			} ),
-			expect.anything()
+			} )
 		);
 
 		rerender( <PurchaseDetail { ...buttonProps } body="test:body" /> );

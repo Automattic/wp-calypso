@@ -32,9 +32,13 @@ module.exports = {
 		__dirname: false,
 	},
 	resolve: {
-		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		extensions: [ '.json', '.js', '.mjs', '.jsx', '.ts', '.tsx' ],
 		modules: [ 'node_modules' ],
 	},
 	externals: [ 'superagent', 'ws' ],
 	mode: DEVELOPMENT ? 'development' : 'production',
+	optimization: {
+		// Minify only JavaScript, leaving the copied HTML and CSS as they are.
+		minimizeOptions: { html: false, css: false },
+	},
 };

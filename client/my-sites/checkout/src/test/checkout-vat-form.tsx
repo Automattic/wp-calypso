@@ -5,15 +5,13 @@
 import { convertResponseCartToRequestCart } from '@automattic/shopping-cart';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
-import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { resetCheckoutStores } from '../lib/checkout-stores';
 import {
 	planWithoutDomain,
 	mockSetCartEndpointWith,
@@ -27,6 +25,7 @@ import {
 	countryList,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
+	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockUserSignupValidationEndpoint,
 	mockSetCachedContactDetailsEndpoint,
@@ -34,15 +33,21 @@ import {
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
 
-jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/sites/domains/selectors' );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
+// Spy on errorNotice so we can assert the message text; keep every other
+// notices action real so the rest of the suite behaves normally.
+jest.mock( 'calypso/state/notices/actions', () => {
+	const actual = jest.requireActual( 'calypso/state/notices/actions' );
+	return {
+		...actual,
+		errorNotice: jest.fn( actual.errorNotice ),
+	};
+} );
 
 // These tests seem to be particularly slow (it might be because of using
 // it.each; it's not clear but the timeout might apply to the whole loop
@@ -61,10 +66,8 @@ describe( 'Checkout contact step VAT form', () => {
 	getPlansBySiteId.mockImplementation( () => ( {
 		data: getActivePersonalPlanDataForType( 'yearly' ),
 	} ) );
-	hasLoadedSiteDomains.mockImplementation( () => true );
-	getDomainsBySiteId.mockImplementation( () => [] );
+	mockGetSiteDomainsEndpoint( [] );
 	isMarketplaceProduct.mockImplementation( () => false );
-	isJetpackSite.mockImplementation( () => false );
 	useCheckoutHelpCenter.mockImplementation( () => ( {
 		hasPremiumSupport: false,
 		userFieldMessage: null,
@@ -78,7 +81,7 @@ describe( 'Checkout contact step VAT form', () => {
 	} );
 
 	beforeEach( () => {
-		dispatch( CHECKOUT_STORE ).reset();
+		resetCheckoutStores();
 		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
 		mockGetPaymentMethodsEndpoint( [] );
@@ -94,9 +97,7 @@ describe( 'Checkout contact step VAT form', () => {
 	it( 'does not render the VAT field checkbox if the selected country does not support VAT', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
 		expect( screen.queryByLabelText( 'Add VAT details' ) ).not.toBeInTheDocument();
@@ -105,9 +106,7 @@ describe( 'Checkout contact step VAT form', () => {
 	it( 'renders the VAT field checkbox if the selected country does support VAT', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeInTheDocument();
@@ -116,9 +115,7 @@ describe( 'Checkout contact step VAT form', () => {
 	it( 'does not render the VAT fields if the checkbox is not checked', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).not.toBeChecked();
@@ -128,9 +125,7 @@ describe( 'Checkout contact step VAT form', () => {
 	it( 'renders the VAT fields if the checkbox is checked', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
@@ -141,9 +136,7 @@ describe( 'Checkout contact step VAT form', () => {
 	it( 'does not render the Northern Ireland checkbox is if the VAT checkbox is checked and the country is EU', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'ES' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
@@ -153,9 +146,7 @@ describe( 'Checkout contact step VAT form', () => {
 	it( 'renders the Northern Ireland checkbox is if the VAT checkbox is checked and the country is GB', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
@@ -165,9 +156,7 @@ describe( 'Checkout contact step VAT form', () => {
 	it( 'hides the Northern Ireland checkbox is if the VAT checkbox is checked and the country is changed from GB to ES', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
@@ -193,9 +182,7 @@ describe( 'Checkout contact step VAT form', () => {
 			country: 'GB',
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for checkout to load.
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -225,9 +212,7 @@ describe( 'Checkout contact step VAT form', () => {
 			country: 'GB',
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for checkout to load.
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -258,9 +243,7 @@ describe( 'Checkout contact step VAT form', () => {
 			country: 'XI',
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for checkout to load.
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -290,9 +273,7 @@ describe( 'Checkout contact step VAT form', () => {
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const user = userEvent.setup();
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for checkout to load.
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -319,9 +300,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for the cart to load
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -350,9 +329,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockSetVatInfoEndpoint();
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for the cart to load
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -388,10 +365,7 @@ describe( 'Checkout contact step VAT form', () => {
 				{ ...defaultPropsForMockCheckout }
 				cartChanges={ cartChanges }
 				additionalProps={ { isLoggedOutCart: true } }
-			/>,
-			{
-				legacyRoot: true,
-			}
+			/>
 		);
 
 		// Wait for the cart to load
@@ -415,9 +389,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for the cart to load
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -446,9 +418,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for the cart to load
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -477,9 +447,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for the cart to load
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -508,9 +476,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for the cart to load
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -553,9 +519,7 @@ describe( 'Checkout contact step VAT form', () => {
 		} );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for the cart to load
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -595,9 +559,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
@@ -624,9 +586,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		// Check the box
@@ -764,10 +724,7 @@ describe( 'Checkout contact step VAT form', () => {
 				{ ...defaultPropsForMockCheckout }
 				cartChanges={ cartChanges }
 				setCart={ setCart }
-			/>,
-			{
-				legacyRoot: true,
-			}
+			/>
 		);
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		await user.type( await screen.findByLabelText( 'Postal code' ), postalCode );
@@ -806,9 +763,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
@@ -816,5 +771,68 @@ describe( 'Checkout contact step VAT form', () => {
 		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
 		await user.click( screen.getByText( 'Continue to payment' ) );
 		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
+	} );
+
+	it( 'tells the shopper they can finish without a VAT ID when validation is temporarily unavailable', async () => {
+		const vatId = '12345';
+		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
+		const countryCode = 'GB';
+		// `invalid_vat` is the "could not validate right now" bucket (service down/busy).
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/me/vat-info' ).reply( 400, {
+			error: 'invalid_vat',
+			message:
+				'VAT validation for this country is temporarily unavailable. Please try again later.',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
+		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
+		await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
+		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
+		( errorNotice as jest.Mock ).mockClear();
+		await user.click( screen.getByText( 'Continue to payment' ) );
+		await waitFor( () =>
+			expect( errorNotice ).toHaveBeenCalledWith(
+				expect.stringContaining( 'finish your purchase now without a VAT ID' ),
+				expect.anything()
+			)
+		);
+	} );
+
+	it( 'does not suggest skipping VAT when the VAT number is actually invalid', async () => {
+		const vatId = '12345';
+		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
+		const countryCode = 'GB';
+		// `validation_failed` means the number is genuinely wrong, so the shopper should fix it.
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/me/vat-info' ).reply( 400, {
+			error: 'validation_failed',
+			message: 'Your VAT details are not valid. Please check each field and try again.',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
+		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
+		await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
+		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
+		( errorNotice as jest.Mock ).mockClear();
+		await user.click( screen.getByText( 'Continue to payment' ) );
+		await waitFor( () =>
+			expect( errorNotice ).toHaveBeenCalledWith(
+				expect.stringContaining( 'not valid' ),
+				expect.anything()
+			)
+		);
+		expect( errorNotice ).not.toHaveBeenCalledWith(
+			expect.stringContaining( 'finish your purchase now without a VAT ID' ),
+			expect.anything()
+		);
 	} );
 } );

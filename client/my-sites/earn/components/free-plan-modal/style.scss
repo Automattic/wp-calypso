@@ -1,0 +1,20 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+
+// Scoped to this modal rather than reusing the global `.memberships__dialog-sections`
+// selector (owned by add-edit-plan-modal / add-edit-coupon-modal), so we don't ship
+// a conflicting base rule for a shared global class — which would make the final
+// styling depend on CSS bundling/import order.
+.free-plan-modal__sections {
+	display: grid;
+	grid-template: "item" 1fr / 1fr;
+
+	* {
+		font-size: $font-body-small;
+	}
+
+	@include break-medium {
+		min-width: 580px;
+	}
+}

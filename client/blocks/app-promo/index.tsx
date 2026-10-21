@@ -1,12 +1,15 @@
 import { Card, Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate, useRtl } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 import wpToJpImageRtl from 'calypso/assets/images/jetpack/wp-to-jp-rtl.svg';
 import wpToJpImage from 'calypso/assets/images/jetpack/wp-to-jp.svg';
 import QrCode from 'calypso/blocks/app-promo/qr-code';
 import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
 import CardHeading from 'calypso/components/card-heading';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import userAgent from 'calypso/lib/user-agent';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
 interface AppPromoProps {
@@ -30,6 +33,7 @@ export const AppPromo = ( {
 }: AppPromoProps ) => {
 	const isRtl = useRtl();
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const iconWidth = Math.ceil( ( 49 / 29 ) * iconSize );
 
 	const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
@@ -39,8 +43,16 @@ export const AppPromo = ( {
 	const showAndroidBadge = isAndroid;
 	const showBadge = showIosBadge || showAndroidBadge;
 
+	const recordClick = ( cta: string ) => {
+		dispatch( recordTracksEvent( 'calypso_app_promo_click', { campaign, cta } ) );
+	};
+
 	return (
 		<Card className={ clsx( 'app-promo', className ) }>
+			<TrackComponentView
+				eventName="calypso_app_promo_impression"
+				eventProperties={ { campaign } }
+			/>
 			<img
 				className="app-promo__icon"
 				src={ isRtl ? wpToJpImageRtl : wpToJpImage }
@@ -60,14 +72,22 @@ export const AppPromo = ( {
 						storeName={ showIosBadge ? 'ios' : 'android' }
 						utm_campaign={ campaign }
 						utm_source="calypso"
+						onClick={ () => recordClick( 'store_badge' ) }
 					></AppsBadge>
 				</div>
 			) }
-			{ hasQRCode && ! showBadge && <QrCode campaign={ campaign } size={ 100 } /> }
+			{ hasQRCode && ! showBadge && (
+				<QrCode
+					campaign={ campaign }
+					size={ 100 }
+					onLinkClick={ () => recordClick( 'text_link' ) }
+				/>
+			) }
 			{ hasGetAppButton && ! showBadge && (
 				<Button
 					className="app-promo__link-button is-link"
 					href={ `/me/get-apps/?campaign=${ encodeURIComponent( campaign ) }` }
+					onClick={ () => recordClick( 'get_app_button' ) }
 				>
 					{ translate( 'Get the Jetpack app' ) }
 				</Button>

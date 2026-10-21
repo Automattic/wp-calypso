@@ -1,10 +1,11 @@
+import { removeStreamItemFromCache } from 'calypso/reader/data/stream';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
 } from 'calypso/state/reader/action-types';
 import { getReaderConversationFollowStatus } from 'calypso/state/reader/conversations/selectors';
-import { removeItemFromStream } from 'calypso/state/reader/streams/actions';
 
 import 'calypso/state/data-layer/wpcom/read/sites/posts/follow';
 import 'calypso/state/data-layer/wpcom/read/sites/posts/mute';
@@ -43,18 +44,17 @@ export function muteConversation( { siteId, postId } ) {
 				} ),
 			},
 		} );
-		dispatch(
-			removeItemFromStream( {
-				postKey: { blogId: siteId, postId },
+		const queryClient = getCalypsoQueryClient();
+		if ( queryClient ) {
+			removeStreamItemFromCache( queryClient, {
+				item: { blogId: siteId, postId },
 				streamKey: 'conversations-a8c',
-			} )
-		);
-		dispatch(
-			removeItemFromStream( {
-				postKey: { blogId: siteId, postId },
+			} );
+			removeStreamItemFromCache( queryClient, {
+				item: { blogId: siteId, postId },
 				streamKey: 'conversations',
-			} )
-		);
+			} );
+		}
 	};
 }
 

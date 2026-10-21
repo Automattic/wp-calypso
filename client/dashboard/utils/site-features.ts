@@ -16,15 +16,15 @@ export function hasPlanFeature(
 		return false;
 	}
 
-	return site.plan.features.active.includes( feature );
+	// `features` is required by the type but can be absent in real API responses.
+	return site.plan.features?.active?.includes( feature ) ?? false;
 }
 
 // Returns whether the plan supports a specific "hosting feature",
 // which is a feature that requires Atomic or self-hosted infrastructure.
 export function hasHostingFeature( site: Site, feature: HostingFeatureSlug ) {
 	if ( hasPlanFeature( site, DotcomFeatures.ATOMIC ) ) {
-		const isWoAOrFlexSite = site.is_wpcom_atomic || site.is_wpcom_flex;
-		if ( site.plan?.expired || ! isWoAOrFlexSite ) {
+		if ( site.plan?.expired || ! site.is_wpcom_atomic ) {
 			return false;
 		}
 	}

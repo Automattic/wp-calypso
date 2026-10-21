@@ -39,7 +39,9 @@ test.describe( 'I18N: Editor', { tag: [ tags.I18N, tags.DESKTOP_ONLY ] }, () => 
 			} );
 
 			await test.step( 'When I visit the editor page', async function () {
-				await pageEditor.visit( 'post' );
+				await pageEditor.visit( 'post', {
+					siteSlug: accounti18n.getSiteURL( { protocol: false } ),
+				} );
 			} );
 
 			/**

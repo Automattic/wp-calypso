@@ -1,7 +1,23 @@
+import { HelpCenter } from '@automattic/data-stores';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { __, sprintf } from '@wordpress/i18n';
-import type { Context, Message, OdieAllowedBots, OdieAllBotSlugs } from './types';
+import { PLANS_PRESALES_INTRO_MESSAGE } from './presales-constants';
+import type { Context, Message, OdieAllowedBots } from './types';
 declare const __i18n_text_domain__: string;
+
+type HasEnTranslation = ( single: string, context?: string, domain?: string ) => boolean;
+
+export const PLANS_PRESALES_LAUNCHER_CONTEXT = HelpCenter.PLANS_PRESALES_LAUNCHER_CONTEXT;
+
+export { PLANS_PRESALES_INTRO_MESSAGE } from './presales-constants';
+
+// Single gate for the presales surface, so greeting, title, and chips switch together per locale.
+export const isPlansPresalesExperience = (
+	launcherContext?: string,
+	hasEnTranslation?: HasEnTranslation
+): boolean =>
+	launcherContext === PLANS_PRESALES_LAUNCHER_CONTEXT &&
+	!! hasEnTranslation?.( PLANS_PRESALES_INTRO_MESSAGE, undefined, __i18n_text_domain__ );
 
 export const getOdieErrorMessage = (): string =>
 	__(
@@ -41,45 +57,18 @@ export const getOdieForwardToZendeskMessage = ( userHasRecentOpenConversation: b
 		? __(
 				'We noticed you have an ongoing conversation. Would you like to continue it?',
 				__i18n_text_domain__
-		  )
+			)
 		: __(
 				'Would you like to continue your conversation with a support agent?',
 				__i18n_text_domain__
-		  );
+			);
 
-export function getFlowFromBotSlug( botSlug?: OdieAllBotSlugs ): string {
-	if ( botSlug === 'ciab-workflow-support_chat' ) {
-		return 'commerce-garden';
-	}
-	return 'wpcom';
-}
-
-export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] => {
+export const getOdieTransferMessages = (
+	hasEnTranslation: HasEnTranslation = () => true,
+	// The user went straight to a human, so there's no request or AI chat to refer back to.
+	isDirectChat = false
+): Message[] => {
 	const isTestMode = isTestModeEnvironment();
-	const flow = getFlowFromBotSlug( botSlug );
-
-	// Commerce garden has a simplified, single-message flow
-	if ( flow === 'commerce-garden' ) {
-		return [
-			{
-				content:
-					( isTestMode ? '**STAGING VERSION OF ZENDESK** ⚠️\n\n' : '' ) +
-					__(
-						'You have started a chat in a staging version of Zendesk. This means you will not be redirected to a support agent, nor the ticket will appear in Zendesk production. To target Zendesk production, **you need to be unproxied and use a production environment.**',
-						__i18n_text_domain__
-					),
-				role: 'bot' as const,
-				type: 'message' as const,
-				context: {
-					flags: {
-						hide_disclaimer_content: true,
-						show_ai_avatar: false,
-					},
-					site_id: null,
-				},
-			},
-		];
-	}
 
 	const baseMessage = {
 		content:
@@ -96,49 +85,98 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 		},
 	};
 
-	if ( isTestMode ) {
-		return [
-			baseMessage,
-			{
-				content: __(
-					'This is the Sandbox version of Zendesk. You will not be redirected to a support agent. If you want to test the real experience and be connected to a support agent, you need to be unproxied.',
+	const sandboxMessage = {
+		content: __(
+			'This is the Sandbox version of Zendesk. You will not be redirected to a support agent. If you want to test the real experience and be connected to a support agent, you need to be unproxied.',
+			__i18n_text_domain__
+		),
+		role: 'bot' as const,
+		type: 'message' as const,
+		context: {
+			flags: {
+				hide_disclaimer_content: true,
+				show_ai_avatar: false,
+			},
+			site_id: null,
+		},
+	};
+
+	const replyMessage = {
+		content: hasEnTranslation(
+			'A Happiness Engineer will reply as soon as they are available, either here or by email.',
+			undefined,
+			__i18n_text_domain__
+		)
+			? __(
+					'A Happiness Engineer will reply as soon as they are available, either here or by email.',
+					__i18n_text_domain__
+				)
+			: __(
+					"We're connecting you with our support team. A Happiness Engineer will join the chat as soon as they're available.",
 					__i18n_text_domain__
 				),
-				role: 'bot' as const,
-				type: 'message' as const,
-				context: {
-					flags: {
-						hide_disclaimer_content: true,
-						show_ai_avatar: false,
-					},
-					site_id: null,
-				},
+		role: 'bot' as const,
+		type: 'message' as const,
+		context: {
+			flags: {
+				hide_disclaimer_content: true,
+				show_ai_avatar: false,
 			},
+			site_id: null,
+		},
+	};
+
+	if ( isDirectChat ) {
+		return [
+			isTestMode ? sandboxMessage : replyMessage,
+			// Until this is translated, the message before it stands on its own.
+			...( hasEnTranslation(
+				'Tell us what you need help with while you wait.',
+				undefined,
+				__i18n_text_domain__
+			)
+				? [
+						{
+							content: __(
+								'Tell us what you need help with while you wait.',
+								__i18n_text_domain__
+							),
+							role: 'bot' as const,
+							type: 'message' as const,
+							context: {
+								flags: {
+									hide_disclaimer_content: true,
+									show_ai_avatar: false,
+								},
+								site_id: null,
+							},
+						},
+					]
+				: [] ),
 		];
+	}
+
+	if ( isTestMode ) {
+		return [ baseMessage, sandboxMessage ];
 	}
 
 	return [
 		baseMessage,
+		replyMessage,
 		{
-			content: __(
-				"We're connecting you with our support team. A Happiness Engineer will join the chat as soon as they're available.",
+			content: hasEnTranslation(
+				'They can see this conversation, so please add any other details that may help.',
+				undefined,
 				__i18n_text_domain__
-			),
-			role: 'bot' as const,
-			type: 'message' as const,
-			context: {
-				flags: {
-					hide_disclaimer_content: true,
-					show_ai_avatar: false,
-				},
-				site_id: null,
-			},
-		},
-		{
-			content: __(
-				'They can see your chat with our AI assistant but please share any extra details while you wait so we can assist you better.',
-				__i18n_text_domain__
-			),
+			)
+				? __(
+						'They can see this conversation, so please add any other details that may help.',
+						__i18n_text_domain__
+					)
+				: __(
+						'They can see your chat with our AI assistant but please share any extra details while you wait so we can assist you better.',
+						__i18n_text_domain__
+					),
 			role: 'bot' as const,
 			type: 'message' as const,
 			context: {
@@ -157,7 +195,7 @@ export const getOdieThirdPartyMessageContent = (): string =>
 		'I’m happy to connect you to a human! However, it looks like 3rd party cookies are disabled in your browser. Please turn them on for our live chat to work properly. [Use our guide](https://wordpress.com/support/third-party-cookies/)',
 		__i18n_text_domain__
 	) } \n\n ${ __(
-		'Once you’re done, you can come back here to start talking with someone by clicking on the following button.',
+		'Once you’re done, you can come back here and ask me to speak with a human. I’ll connect you to our support right away.',
 		__i18n_text_domain__
 	) }`;
 
@@ -166,11 +204,11 @@ export const getOdieEmailFallbackMessageContent = ( isChatRestricted = false ): 
 		? __(
 				"I'm sorry, our human chat support is unavailable, but I'm here and ready to assist.",
 				__i18n_text_domain__
-		  )
+			)
 		: __(
 				"I'm sorry, our human chat support is down for maintenance, but I'm here and ready to assist.",
 				__i18n_text_domain__
-		  );
+			);
 
 	const followUp = __( 'What can I help you with?', __i18n_text_domain__ );
 	return `${ unavailableMessage } \n\n ${ followUp }`;
@@ -240,21 +278,49 @@ const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | 
 	}
 };
 
+const getOdieIntroMessage = (
+	launcherContext?: string,
+	hasEnTranslation?: HasEnTranslation
+): string => {
+	if ( isPlansPresalesExperience( launcherContext, hasEnTranslation ) ) {
+		return __(
+			"Not sure which plan fits? Tell me what kind of site you're building, and I'll help you choose.",
+			__i18n_text_domain__
+		);
+	}
+
+	return hasEnTranslation?.(
+		"I'm your personal Support Assistant. I can help with any questions about your site or account.",
+		undefined,
+		__i18n_text_domain__
+	)
+		? __(
+				"I'm your personal Support Assistant. I can help with any questions about your site or account.",
+				__i18n_text_domain__
+			)
+		: __(
+				"I'm your personal AI assistant. I can help with any questions about your site or account.",
+				__i18n_text_domain__
+			);
+};
+
 export const getOdieInitialMessage = (
 	botNameSlug: OdieAllowedBots,
-	displayName: string
+	displayName: string,
+	hasEnTranslation?: ( single: string, context?: string, domain?: string ) => boolean,
+	launcherContext?: string
 ): Message => {
+	const introMessage = getOdieIntroMessage( launcherContext, hasEnTranslation );
+
 	return {
 		content: `**${ sprintf(
 			/* translators: %(name)s: the user's display name */
-			__( 'Howdy %(name)s 👋', __i18n_text_domain__ ),
+			__( 'Howdy %(name)s', __i18n_text_domain__ ),
 			{
-				name: displayName || 'there',
+				/* translators: fallback used when the user's display name isn't available */
+				name: displayName || __( 'there', __i18n_text_domain__ ),
 			}
-		) }** \n\n ${ __(
-			"I'm your personal AI assistant. I can help with any questions about your site or account.",
-			__i18n_text_domain__
-		) }`,
+		).trim() } 👋** \n\n ${ introMessage }`,
 		role: 'bot',
 		type: 'introduction',
 		context: getOdieInitialPromptContext( botNameSlug ),
@@ -344,6 +410,11 @@ export const getZendeskChatStartedMetaMessage = (): Message => ( {
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;
 
+// The Help Center @wordpress/data store key. Defined here rather than imported
+// from @automattic/help-center (which depends back on this package, a workspace
+// cycle). Mirrors STORE_KEY in @automattic/data-stores' help-center store.
+export const HELP_CENTER_STORE = 'automattic/help-center';
+
 /**
  * NOTE: NEVER CHANGE THIS VALUE.
  * This value should never be changed. Otherwise the old interactions will be broken and users will not be able to continue their conversations.
@@ -358,6 +429,7 @@ export const ODIE_DEFAULT_BOT_SLUG_LEGACY = 'wpcom-support-chat';
  * New interactions will target this bot slug and store it in the interaction object. All future events of those interactions will use this bot slug.
  */
 export const ODIE_NEW_INTERACTIONS_BOT_SLUG = 'wpcom-workflow-support_chat';
+export { ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG } from './presales-constants';
 
 export const ODIE_ALLOWED_BOTS = [
 	ODIE_DEFAULT_BOT_SLUG_LEGACY,
@@ -365,5 +437,3 @@ export const ODIE_ALLOWED_BOTS = [
 	'wpcom-plan-support',
 	'automattic-chat-support_a4a',
 ];
-
-export const ODIE_ALL_BOT_SLUGS = [ ...ODIE_ALLOWED_BOTS, 'ciab-workflow-support_chat' ];

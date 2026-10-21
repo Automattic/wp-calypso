@@ -1,16 +1,15 @@
 import { Modal, Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useRef } from 'react';
+import { useRef, type ComponentProps } from 'react';
 import { Text } from '../../components/text';
 import { ButtonStack } from '../button-stack';
-import type { ButtonProps } from '@wordpress/components/build-types/button/types';
 
 interface Props {
 	__experimentalHideHeader?: boolean;
 	title?: string;
 	size?: 'small' | 'medium' | 'large';
 	cancelButtonText?: string;
-	confirmButtonProps: ButtonProps;
+	confirmButtonProps: ComponentProps< typeof Button >;
 	children: React.ReactNode;
 	isOpen: boolean;
 	isDismissible?: boolean;
@@ -30,8 +29,8 @@ export default function ConfirmModal( {
 	onCancel,
 	onConfirm,
 }: Props ) {
-	const cancelButtonRef = useRef();
-	const confirmButtonRef = useRef();
+	const cancelButtonRef = useRef( undefined );
+	const confirmButtonRef = useRef( undefined );
 
 	const handleOnConfirm = () => {
 		onConfirm?.();

@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .importer-header {
 	border-bottom: 1px solid var(--color-border-subtle);
 	display: flex;

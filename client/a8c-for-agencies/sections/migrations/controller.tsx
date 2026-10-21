@@ -1,10 +1,18 @@
 import { type Callback } from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import MigrationsSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/migrations';
+import SidebarPlaceholder from 'calypso/a8c-for-agencies/components/sidebar-placeholder';
 import ReferralsBankDetails from '../referrals/primary/bank-details';
 import MigrationsCommissions from './primary/migrations-commissions';
+import MigrationsLanding from './primary/migrations-landing';
 import MigrationsOverviewV2 from './primary/migrations-overview-v2';
 import SelfMigrationTool from './primary/self-migration-tool';
+
+export const migrationsLandingContext: Callback = ( context, next ) => {
+	context.primary = <MigrationsLanding />;
+	context.secondary = <SidebarPlaceholder />;
+	next();
+};
 
 export const migrationsOverviewContext: Callback = ( context, next ) => {
 	context.primary = (

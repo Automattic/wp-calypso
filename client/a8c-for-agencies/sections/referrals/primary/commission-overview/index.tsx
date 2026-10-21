@@ -77,7 +77,7 @@ export default function CommissionOverview() {
 									<div className="a4a-overview-hosting__logo-container">
 										<img width={ 45 } src={ WooLogoColor } alt="WooCommerce" />
 									</div>
-									<div>{ translate( 'WooPayments revenue share' ) }</div>
+									<div>{ translate( 'WooPayments Revenue Share' ) }</div>
 								</>
 							}
 							expanded
@@ -107,7 +107,7 @@ export default function CommissionOverview() {
 									</div>
 
 									<div>
-										{ translate( 'Hosting revenue share (WordPress.com and{{nbsp/}}Pressable)', {
+										{ translate( 'Hosting Revenue Share (WordPress.com and{{nbsp/}}Pressable)', {
 											components: {
 												nbsp: <>&nbsp;</>,
 											},
@@ -160,7 +160,7 @@ export default function CommissionOverview() {
 							summary={ false }
 						>
 							{ translate(
-								'To continue earning a revenue share on all of the above, you must refer at least one new client to a WordPress.com or Pressable plan each year, starting from the date that you joined the Automattic for Agencies program.'
+								'To continue earning a commission, you must refer at least one new subscriber each year or have an active Automattic for Agencies purchase, starting from the date you joined the Automattic for Agencies program.'
 							) }
 						</FoldableCard>
 

@@ -1,5 +1,5 @@
+import { escapeRegExp } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { trim, escapeRegExp } from 'lodash';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -51,6 +51,15 @@ const normalizeWhitespace = ( str ) => {
 };
 
 /**
+ * Escapes plain text for interpolation into HTML text content, where only `&` and `<` can start
+ * markup. Quotes are deliberately left as-is: their entities add Latin letters to the string
+ * `AutoDirection` samples, which flips short RTL excerpts to LTR.
+ * @param {string} str the string to escape
+ * @returns an HTML-escaped string
+ */
+const escapeHtmlText = ( str ) => str.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' );
+
+/**
  * Gets the writing prompt text which was inserted as a pullquote at the begining of the post's content.
  * @param {Object} post the post object
  * @returns writing prompt text
@@ -78,8 +87,9 @@ const chooseExcerpt = ( post ) => {
 					new RegExp( '^' + escapeRegExp( promptText ) ),
 					''
 				);
-				// And insert a blockquote with the prompt text
-				return `<blockquote class="wp-block-pullquote"> ${ promptText } </blockquote> ${ excerpt }`;
+				// `promptText` is decoded text, so escape it before it re-enters an HTML string.
+				const safePromptText = escapeHtmlText( promptText );
+				return `<blockquote class="wp-block-pullquote"> ${ safePromptText } </blockquote> ${ excerpt }`;
 			}
 		}
 		if ( post.short_excerpt === undefined ) {
@@ -89,10 +99,11 @@ const chooseExcerpt = ( post ) => {
 		// Remove … from short_excerpt
 		const short_excerpt = post.short_excerpt.replaceAll( '…', '' );
 		// Remove any non-alphanumeric chars to avoid string comparison issues, then trim
-		const short_excerpt_chars = trim( short_excerpt.replace( /\W/g, '' ) );
-		const custom_excerpt_chars = trim(
-			post.excerpt.substring( 0, short_excerpt.length ).replace( /\W/g, '' )
-		);
+		const short_excerpt_chars = short_excerpt.replace( /\W/g, '' ).trim();
+		const custom_excerpt_chars = post.excerpt
+			.substring( 0, short_excerpt.length )
+			.replace( /\W/g, '' )
+			.trim();
 
 		if ( short_excerpt_chars !== custom_excerpt_chars ) {
 			// In this case, the post excerpt is different to the short excerpt (which is a shortened version of the better_excerpt)

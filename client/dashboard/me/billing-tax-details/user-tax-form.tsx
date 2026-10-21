@@ -6,10 +6,10 @@ import {
 	userTaxDetailsMutation,
 } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Button,
+	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalInputControl as InputControl,
 	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
@@ -18,27 +18,36 @@ import {
 	SelectControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm } from '@wordpress/dataviews';
+import { DataForm, type DataFormControlProps, type Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import InlineSupportLink from '../../components/inline-support-link';
+import { wpcomLink } from '../../utils/link';
 import { getTaxName, getDataFormCountryCodes, stripCountryCodeFromVatId } from '../../utils/tax';
-import type {
-	UserTaxDetails,
-	UserTaxField,
-	UserTaxFormData,
-	UserTaxNormalizedField,
-} from '@automattic/api-core';
+import type { UserTaxDetails, UserTaxFormData } from '@automattic/api-core';
 
-export interface UserTaxFormControlProps {
-	data: UserTaxFormData;
-	field: UserTaxNormalizedField;
-	onChange: ( edits: Partial< UserTaxFormData > ) => void;
+const SUPPORT_CONTACT_URL = wpcomLink( '/support/contact' );
+
+export type UserTaxFormControlProps = DataFormControlProps< UserTaxFormData >;
+
+/**
+ * Per-field configuration that the custom DataForm controls need but that is
+ * not part of the DataViews `Field` API. It is provided through React context
+ * because `@wordpress/dataviews` strips unknown properties when normalizing
+ * fields.
+ */
+export interface UserTaxFieldConfig {
+	isDisabled?: boolean;
+	isVatAlreadySet?: boolean;
+	canUserEdit?: boolean;
+	taxName?: string;
 }
+
+const UserTaxFieldContext = createContext< UserTaxFieldConfig >( {} );
 
 export interface UserTaxDetailsUpdateError {
 	message: string;
@@ -52,7 +61,8 @@ export interface UserTaxDetailsFetchError {
 const emptyUserTaxDetails = {};
 
 function VatSelectControl( { data, field, onChange }: UserTaxFormControlProps ) {
-	const { elements, getValue, id, label, isDisabled, isVatAlreadySet, canUserEdit } = field;
+	const { isDisabled, isVatAlreadySet, canUserEdit } = useContext( UserTaxFieldContext );
+	const { elements, getValue, id, label } = field;
 
 	const options =
 		elements?.length === 0
@@ -74,14 +84,15 @@ function VatSelectControl( { data, field, onChange }: UserTaxFormControlProps ) 
 function VatIdControl( { data, field, onChange }: UserTaxFormControlProps ) {
 	const { recordTracksEvent } = useAnalytics();
 
-	const { getValue, id, isDisabled, isVatAlreadySet, canUserEdit, label, taxName } = field;
+	const { isDisabled, isVatAlreadySet, canUserEdit, taxName } = useContext( UserTaxFieldContext );
+	const { getValue, id, label } = field;
 	const { country } = data;
 
 	const vatIdHelp =
 		! canUserEdit &&
 		createInterpolateElement(
 			sprintf(
-				/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+				/* translators: %(taxName)s: the name of taxes in the country (eg: "VAT" or "GST"). */
 				__(
 					'To change your %(taxName)s ID, <contactSupportLink>please contact support</contactSupportLink>.'
 				),
@@ -89,10 +100,9 @@ function VatIdControl( { data, field, onChange }: UserTaxFormControlProps ) {
 			),
 			{
 				contactSupportLink: (
-					<a
-						target="_blank"
-						href={ CALYPSO_CONTACT }
-						rel="noreferrer"
+					<ExternalLink
+						href={ SUPPORT_CONTACT_URL }
+						children={ null }
 						onClick={ () => {
 							recordTracksEvent( 'calypso_dashboard_vat_details_support_click' );
 						} }
@@ -115,7 +125,8 @@ function VatIdControl( { data, field, onChange }: UserTaxFormControlProps ) {
 }
 
 function VatInputControl( { data, field, onChange }: UserTaxFormControlProps ) {
-	const { getValue, id, label, isDisabled } = field;
+	const { isDisabled } = useContext( UserTaxFieldContext );
+	const { getValue, id, label } = field;
 
 	return (
 		<InputControl
@@ -213,38 +224,39 @@ export default function UserTaxForm() {
 	const isDisabled = query.isLoading || mutation.isPending;
 	const canUserEdit = userTaxDetails.can_user_edit ?? false;
 
-	const fields: UserTaxField[] = [
+	const selectedCountry = localData.country
+		? countryList.find( ( country ) => country.code === localData.country )
+		: null;
+	const selectedCountryIsVatSupportedOrNoCountryIsSelected = selectedCountry
+		? selectedCountry.vat_supported
+		: true;
+
+	const fields: Field< UserTaxFormData >[] = [
 		{
 			Edit: VatSelectControl,
 			elements: countryCodes,
 			id: 'country',
-			isDisabled,
-			isVatAlreadySet,
-			canUserEdit,
 			label: __( 'Country' ),
 		},
 		{
 			Edit: VatIdControl,
 			id: 'id',
-			isDisabled,
-			isVatAlreadySet,
-			canUserEdit,
 			label: __( 'VAT ID' ),
-			taxName,
+			isVisible: () => selectedCountryIsVatSupportedOrNoCountryIsSelected,
 		},
 		{
 			Edit: VatInputControl,
 			id: 'name',
-			isDisabled,
 			label: __( 'Name' ),
 			type: 'text',
+			isVisible: () => selectedCountryIsVatSupportedOrNoCountryIsSelected,
 		},
 		{
 			Edit: VatInputControl,
 			id: 'address',
-			isDisabled,
 			label: __( 'Address' ),
 			type: 'text',
+			isVisible: () => selectedCountryIsVatSupportedOrNoCountryIsSelected,
 		},
 	];
 
@@ -283,39 +295,62 @@ export default function UserTaxForm() {
 		/* translators: This is a generic name for taxes to use when we do not know the user's country. */
 		__( 'tax (VAT/GST/CT)' );
 	const fallbackTaxName = genericTaxName;
-
 	return (
 		<form onSubmit={ onSubmit }>
 			<VStack spacing={ 4 }>
-				<DataForm
-					data={ formData }
-					fields={ fields }
-					form={ form }
-					onChange={ ( edits ) => {
-						setLocalData( ( current ) => ( { ...current, ...edits } ) );
-					} }
-				/>
-
-				<Text variant="muted">
-					{ createInterpolateElement(
-						sprintf(
-							/* translators: This is a list of tax-related reasons a customer might need to contact support, %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
-							__(
-								'If you need to update existing %(taxName)s details, have been charged taxes as a business subject to reverse charges, or do not see your country listed in this form <contactSupportLink>contact our Happiness Engineers</contactSupportLink>. Include your %(taxName)s number and country code when you contact us.'
-							),
-							{ taxName: taxName ?? fallbackTaxName }
-						),
-						{
-							contactSupportLink: (
-								<a
-									href="/help"
-									title={ contactSupportLinkTitle }
-									onClick={ handleOpenCenterChat }
-								/>
-							),
-						}
+				<UserTaxFieldContext.Provider
+					value={ { isDisabled, isVatAlreadySet, canUserEdit, taxName } }
+				>
+					<DataForm
+						data={ formData }
+						fields={ fields }
+						form={ form }
+						onChange={ ( edits ) => setLocalData( ( current ) => ( { ...current, ...edits } ) ) }
+					/>
+					{ ! selectedCountryIsVatSupportedOrNoCountryIsSelected && selectedCountry && (
+						<Text variant="muted">
+							{ createInterpolateElement(
+								/* translators: This tells the customer that they will need to contact support to add their tax details, <nameOfTax></nameOfTax> is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names, <countryName></countryName> is the name of the country, contactSupportLink links to a document asking the customer to contact support. */
+								__(
+									'Unfortunately <nameOfTax></nameOfTax> details for <countryName></countryName> cannot be added via this form. Please <contactSupportLink>contact our Happiness Engineers</contactSupportLink>. Include your <nameOfTax></nameOfTax> number and country code when you contact us.'
+								),
+								{
+									nameOfTax: <span>{ taxName ?? fallbackTaxName }</span>,
+									countryName: <span>{ selectedCountry.name }</span>,
+									contactSupportLink: (
+										<a
+											href={ wpcomLink( '/help' ) }
+											title={ contactSupportLinkTitle }
+											onClick={ handleOpenCenterChat }
+										/>
+									),
+								}
+							) }
+						</Text>
 					) }
-				</Text>
+				</UserTaxFieldContext.Provider>
+				{ selectedCountryIsVatSupportedOrNoCountryIsSelected && (
+					<Text variant="muted">
+						{ createInterpolateElement(
+							sprintf(
+								/* translators: This is a list of tax-related reasons a customer might need to contact support, %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
+								__(
+									'If you need to update existing %(taxName)s details, have been charged taxes as a business subject to reverse charges, or do not see your country listed in this form <contactSupportLink>contact our Happiness Engineers</contactSupportLink>. Include your %(taxName)s number and country code when you contact us.'
+								),
+								{ taxName: taxName ?? fallbackTaxName }
+							),
+							{
+								contactSupportLink: (
+									<a
+										href={ wpcomLink( '/help' ) }
+										title={ contactSupportLinkTitle }
+										onClick={ handleOpenCenterChat }
+									/>
+								),
+							}
+						) }
+					</Text>
+				) }
 				<Text variant="muted">
 					{ createInterpolateElement(
 						__( 'For more information about taxes, <learnMoreLink>click here</learnMoreLink>.' ),

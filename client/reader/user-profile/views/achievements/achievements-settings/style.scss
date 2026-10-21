@@ -1,3 +1,11 @@
+// @wordpress/components Button resolves to `cursor: default` once the WPDS
+// `--wpds-cursor-control` token has been loaded into the document (some
+// other Reader pages import `@wordpress/theme/design-tokens.css`, and the
+// var leaks across the SPA). Restore the web-conventional pointer cursor.
+.achievements-settings__button:not([disabled]):not([data-disabled]) {
+	cursor: pointer;
+}
+
 .achievements-settings__popover {
 	.achievements-settings__content {
 		padding: 16px;

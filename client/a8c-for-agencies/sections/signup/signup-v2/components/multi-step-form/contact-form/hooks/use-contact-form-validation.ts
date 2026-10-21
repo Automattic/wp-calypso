@@ -15,6 +15,23 @@ type ValidationState = {
 	agencyName?: string;
 	agencyUrl?: string;
 	email?: string;
+	phoneNumber?: string;
+};
+
+const PHONE_SEPARATORS_RGX = /[\s.\-()]/g;
+
+// Format-only check: the `phone` package behind FormPhoneInput's own validation
+// only accepts mobile numbers, which rejects valid business landlines.
+export const isValidPhoneNumberFormat = ( phone: AgencyDetailsSignupPayload[ 'phone' ] ) => {
+	if ( ! phone?.phoneNumber ) {
+		return true;
+	}
+
+	const digits = ( phone.phoneNumberFull ?? '' )
+		.replace( PHONE_SEPARATORS_RGX, '' )
+		.replace( /^\+/, '' );
+
+	return /^\d{8,15}$/.test( digits );
 };
 
 type Props = {
@@ -53,6 +70,10 @@ const useContactFormValidation = ( { withEmail }: Props ) => {
 				} else if ( ! emailValidator.validate( payload.email ) ) {
 					newValidationError.email = translate( 'Please provide correct email address' );
 				}
+			}
+
+			if ( ! isValidPhoneNumberFormat( payload.phone ) ) {
+				newValidationError.phoneNumber = translate( 'Please enter a valid phone number' );
 			}
 
 			if ( payload.agencyUrl?.trim() === '' || typeof payload.agencyUrl !== 'string' ) {

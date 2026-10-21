@@ -3,10 +3,8 @@ import {
 	userSettingsQuery,
 	userPaymentMethodsQuery,
 	stripeConfigurationQuery,
-	razorpayConfigurationQuery,
 	queryClient,
 } from '@automattic/api-queries';
-import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
@@ -113,15 +111,9 @@ export default function ChangePaymentMethodWrapper() {
 		[]
 	);
 
-	const fetchRazorpayConfiguration = useCallback( ( requestArgs?: { sandbox: boolean } ) => {
-		return queryClient.fetchQuery( razorpayConfigurationQuery( requestArgs ) );
-	}, [] );
-
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ fetchStripeConfiguration }>
-			<RazorpayHookProvider fetchRazorpayConfiguration={ fetchRazorpayConfiguration }>
-				<ChangePaymentMethod />
-			</RazorpayHookProvider>
+			<ChangePaymentMethod />
 		</StripeHookProvider>
 	);
 }

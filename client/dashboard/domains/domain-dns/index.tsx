@@ -6,11 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	Button,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -19,6 +15,7 @@ import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { DataViewsCard } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
@@ -36,13 +33,13 @@ import RestoreDefaultCnameRecord from './restore-default-cname-record';
 import RestoreDefaultEmailRecords from './restore-default-email-records';
 import { hasDefaultARecords, hasDefaultCnameRecord, hasDefaultEmailRecords } from './utils';
 import type { DnsRecord } from '@automattic/api-core';
-import type { ViewTable, ViewList, View } from '@wordpress/dataviews';
+import type { ViewTable, View } from '@wordpress/dataviews';
 
 function getDnsRecordId( record: DnsRecord ) {
 	return `${ record.id }-${ record.name }`;
 }
 
-type DnsView = ViewTable | ViewList;
+type DnsView = ViewTable;
 
 const DEFAULT_VIEW: DnsView = {
 	type: 'table',
@@ -60,36 +57,29 @@ const DEFAULT_VIEW: DnsView = {
 
 const DEFAULT_LAYOUTS = {
 	table: {},
-	list: {},
 };
 
 export default function DomainDns() {
 	const { domainName } = domainRoute.useParams();
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
-	const updateDnsMutation = useMutation( {
-		...domainDnsMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'Default A records restored for %s.' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
-	const restoreDefaultEmailRecordsMutation = useMutation( {
-		...domainDnsEmailMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'Default email DNS records restored for %s.' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const updateDnsMutation = useMutation(
+		withSnackbar( domainDnsMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'Default A records restored for %s.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
+	const restoreDefaultEmailRecordsMutation = useMutation(
+		withSnackbar( domainDnsEmailMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'Default email DNS records restored for %s.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { data: dnsData, isLoading } = useQuery( domainDnsQuery( domainName ) );
+	const { data: dnsData, isLoading, isFetching } = useQuery( domainDnsQuery( domainName ) );
 	const [ isRestoreDefaultARecordsDialogOpen, setIsRestoreDefaultARecordsDialogOpen ] =
 		useState( false );
 	const [ isRestoreDefaultCnameRecordDialogOpen, setIsRestoreDefaultCnameRecordDialogOpen ] =
@@ -220,7 +210,14 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultARecordsNotice = () => {
-		if ( ! domain.has_wpcom_nameservers || hasDefaultARecordsValue ) {
+		// Only judge whether the default records are missing once we have records we
+		// trust. The route loader prefetches the DNS query, so by the time this
+		// component mounts the cache often already holds (possibly stale) records and
+		// `isLoading` is false; a background refetch then runs because of `staleTime: 0`.
+		// Gating on `isFetching` — which is true during both the initial load and any
+		// background revalidation — prevents the warning from flashing against stale or
+		// not-yet-loaded data, matching the legacy "hide while requesting" behavior.
+		if ( isFetching || ! domain.has_wpcom_nameservers || hasDefaultARecordsValue ) {
 			return null;
 		}
 
@@ -253,7 +250,7 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultCnameRecordNotice = () => {
-		if ( ! domain.has_wpcom_nameservers || hasDefaultCnameRecordValue ) {
+		if ( isFetching || ! domain.has_wpcom_nameservers || hasDefaultCnameRecordValue ) {
 			return null;
 		}
 
@@ -297,7 +294,7 @@ export default function DomainDns() {
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 2 } /> }
 						actions={
-							<HStack>
+							<>
 								<Button
 									variant="primary"
 									onClick={ () => {
@@ -329,7 +326,7 @@ export default function DomainDns() {
 										}
 									/>
 								</PageHeader.ActionMenu>
-							</HStack>
+							</>
 						}
 						description={ <DnsDescription /> }
 					/>
@@ -351,19 +348,21 @@ export default function DomainDns() {
 						data={ filteredData || [] }
 						fields={ fields }
 						onChangeView={ ( view: View ) => setView( view as DnsView ) }
-						search={ false }
+						search
 						view={ view }
 						actions={ actions }
 						paginationInfo={ paginationInfo }
 						getItemId={ getDnsRecordId }
 						isLoading={ isLoading }
 						defaultLayouts={ DEFAULT_LAYOUTS }
-					>
-						<>
-							<DataViews.Layout />
-							<DataViews.Pagination />
-						</>
-					</DataViews>
+						empty={
+							<p>
+								{ view.search
+									? __( 'No DNS records match your search.' )
+									: __( 'No DNS records match the selected filters.' ) }
+							</p>
+						}
+					/>
 				) }
 			</DataViewsCard>
 			{ domain.has_wpcom_nameservers && <EmailSetup /> }
@@ -383,7 +382,7 @@ export default function DomainDns() {
 			<RestoreDefaultEmailRecords
 				onConfirm={ handleRestoreDefaultEmailRecords }
 				onCancel={ () => setIsRestoreDefaultEmailRecordsDialogOpen( false ) }
-				isBusy={ updateDnsMutation.isPending }
+				isBusy={ restoreDefaultEmailRecordsMutation.isPending }
 				isOpen={ isRestoreDefaultEmailRecordsDialogOpen }
 			/>
 			{ isImportDialogOpen && (

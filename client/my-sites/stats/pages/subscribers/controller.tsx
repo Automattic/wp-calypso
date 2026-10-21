@@ -1,19 +1,18 @@
-import { find } from 'lodash';
 import AsyncLoad from 'calypso/components/async-load';
 import { getMomentSiteZone } from '../../hooks/use-moment-site-zone';
 import { getSiteFilters, rangeOfPeriod, type SiteFilterType } from '../shared/helpers';
 import PageLoading from '../shared/page-loading';
 import type { Context } from '@automattic/calypso-router';
 
-setTimeout(
-	() => import( /* webpackChunkName: "async-load-calypso-my-sites-stats-pages-subscribers" */ '.' ),
-	3000
-);
+const loadSubscribers = () =>
+	import( /* webpackChunkName: "async-load-calypso-my-sites-stats-pages-subscribers" */ '.' );
+
+setTimeout( loadSubscribers, 3000 );
 
 function subscribers( context: Context, next: () => void ) {
 	const givenSiteId = context.params.site;
 	const filters = getSiteFilters( givenSiteId );
-	const activeFilter = find( filters, ( filter: SiteFilterType ) => {
+	const activeFilter = filters.find( ( filter: SiteFilterType ) => {
 		return (
 			context.path.indexOf( filter.path ) >= 0 ||
 			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
@@ -26,10 +25,7 @@ function subscribers( context: Context, next: () => void ) {
 
 	context.primary = (
 		<AsyncLoad
-			key="stats-pages-subscribers"
-			require={ () =>
-				import( /* webpackChunkName: "async-load-calypso-my-sites-stats-pages-subscribers" */ '.' )
-			}
+			require={ loadSubscribers }
 			placeholder={ PageLoading }
 			period={ rangeOfPeriod( activeFilter?.period || 'day', date ) }
 			context={ context }

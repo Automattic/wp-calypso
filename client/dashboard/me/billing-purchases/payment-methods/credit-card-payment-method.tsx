@@ -6,11 +6,17 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { Fragment, useState } from 'react';
-import InlineSupportLink from '../../../components/inline-support-link';
-import { TaxLocationForm, defaultTaxLocation } from '../../../components/tax-location-form';
+import { useAnalytics } from '../../../app/analytics';
+import { CheckboxWithSupportLink } from '../../../components/checkbox-with-support-link';
+import {
+	TaxLocationForm,
+	defaultTaxLocation,
+	isBusinessUseTaxLocation,
+} from '../../../components/tax-location-form';
 import { PaymentMethodImage } from '../payment-method-image';
 import { CreditCardFields } from './credit-card-fields';
 import type { StoredPaymentMethodTaxLocation } from '@automattic/api-core';
@@ -163,26 +169,20 @@ function CreditCardFieldsWrapper( {
 			/>
 			<TaxLocationForm
 				data={ formData.taxLocation }
+				allowIsForBusinessCheckbox
 				onChange={ ( updated ) =>
 					handleFieldChange( { taxLocation: { ...formData.taxLocation, ...updated } } )
 				}
 			/>
 			{ allowUseForAllSubscriptions && (
-				<label>
-					<input
-						type="checkbox"
-						checked={ formData.useForAllSubscriptions }
-						onChange={ ( e ) => handleFieldChange( { useForAllSubscriptions: e.target.checked } ) }
-					/>
-					{ createInterpolateElement(
-						__(
-							'Use this payment method for all subscriptions on my account. <link>Learn more.</link>'
-						),
-						{
-							link: <InlineSupportLink supportContext="payment_method_all_subscriptions" />,
-						}
+				<CheckboxWithSupportLink
+					label={ __(
+						'Use this payment method for all subscriptions on my account. <link>Learn more.</link>'
 					) }
-				</label>
+					supportContext="payment_method_all_subscriptions"
+					checked={ formData.useForAllSubscriptions }
+					onChange={ ( useForAllSubscriptions ) => handleFieldChange( { useForAllSubscriptions } ) }
+				/>
 			) }
 		</VStack>
 	);
@@ -200,6 +200,8 @@ function CreditCardSubmitButton( {
 	getCardElement: () => StripeCardNumberElement | undefined;
 } ) {
 	const { formStatus } = useFormStatus();
+	const { createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 
 	const handleButtonPress = () => {
 		if ( ! onClick ) {
@@ -210,6 +212,13 @@ function CreditCardSubmitButton( {
 		const formData = getFormData();
 		const cardElement = getCardElement();
 
+		recordTracksEvent( 'calypso_dashboard_payment_method_save_card_click' );
+
+		if ( ! formData.taxLocation.country_code ) {
+			createErrorNotice( __( 'Please select a country.' ), { type: 'snackbar' } );
+			return;
+		}
+
 		onClick( {
 			name: formData.cardholderName,
 			countryCode: formData.taxLocation.country_code,
@@ -219,6 +228,9 @@ function CreditCardSubmitButton( {
 			organization: formData.taxLocation.organization,
 			address: formData.taxLocation.address,
 			useForAllSubscriptions: formData.useForAllSubscriptions,
+			useForBusiness: isBusinessUseTaxLocation( formData.taxLocation )
+				? Boolean( formData.taxLocation.is_for_business )
+				: undefined,
 			cardElement,
 		} );
 	};

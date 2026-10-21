@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import getSection from './get-section';
 
 /**
@@ -7,5 +6,5 @@ import getSection from './get-section';
  * @returns {?string}       Current section group name
  */
 export default function getSectionGroup( state ) {
-	return get( getSection( state ), 'group', null );
+	return getSection( state )?.group ?? null;
 }

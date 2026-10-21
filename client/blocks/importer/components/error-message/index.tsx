@@ -8,14 +8,12 @@ import './style.scss';
 
 interface Props {
 	primaryBtnText?: string;
-	secondaryBtnText?: string;
 	onPrimaryBtnClick?: () => void;
-	onSecondaryBtnClick?: () => void;
 }
 
 const ErrorMessage: React.FunctionComponent< Props > = ( props ) => {
 	const translate = useTranslate();
-	const { primaryBtnText, secondaryBtnText, onPrimaryBtnClick, onSecondaryBtnClick } = props;
+	const { primaryBtnText, onPrimaryBtnClick } = props;
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_site_importer_start_import_failure' );
@@ -41,11 +39,6 @@ const ErrorMessage: React.FunctionComponent< Props > = ( props ) => {
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						{ onSecondaryBtnClick && (
-							<NextButton type="button" variant="secondary" onClick={ onSecondaryBtnClick }>
-								{ secondaryBtnText ?? translate( 'Back to goals' ) }
-							</NextButton>
-						) }
 						{ onPrimaryBtnClick && (
 							<div>
 								<NextButton type="button" onClick={ onPrimaryBtnClick }>

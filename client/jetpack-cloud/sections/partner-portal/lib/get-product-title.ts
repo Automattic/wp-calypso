@@ -9,7 +9,7 @@ export default function getProductTitle( product: string, removeVariant: boolean
 		return 'AI';
 	}
 
-	if ( 'Jetpack Stats (Commercial license)' === product ) {
+	if ( 'Jetpack Stats (Paid)' === product ) {
 		return 'Stats';
 	}
 

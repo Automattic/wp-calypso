@@ -1,4 +1,8 @@
-import { siteSettingsQuery, queryClient, persistQueryClientPromise } from '@automattic/api-queries';
+import {
+	siteSettingsQuery,
+	queryClient,
+	getPersistQueryClientPromise,
+} from '@automattic/api-queries';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from 'calypso/dashboard/app/auth';
@@ -51,7 +55,7 @@ export default function DashboardBackportSiteSettingsRenderer( {
 		}
 
 		Promise.all( [
-			persistQueryClientPromise,
+			getPersistQueryClientPromise( user?.ID ),
 			router.preloadRoute( {
 				to: `/sites/${ siteSlug }/settings`,
 			} ),

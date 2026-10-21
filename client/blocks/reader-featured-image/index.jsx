@@ -15,7 +15,7 @@ import {
 	READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH,
 	READER_COMPACT_POST_NO_EXCERPT_FEATURED_MAX_IMAGE_WIDTH,
 	READER_FEATURED_MAX_IMAGE_HEIGHT,
-} from 'calypso/state/reader/posts/sizes';
+} from 'calypso/reader/data/post/sizes';
 
 const getFeaturedImageType = (
 	canonicalMedia,

@@ -40,9 +40,9 @@ export default function PaymentsFilter( props: Props ) {
 		const selectedOption = options.find( ( item ) => item.value === paymentsFilter )?.label;
 		return selectedOption
 			? // translators: filterOption is something like All sites, Current site
-			  translate( 'View: %(filterOption)s', {
+				translate( 'View: %(filterOption)s', {
 					args: { filterOption: selectedOption },
-			  } )
+				} )
 			: undefined;
 	};
 
@@ -56,7 +56,11 @@ export default function PaymentsFilter( props: Props ) {
 							selected={ paymentsFilter === option.value }
 							onClick={ () => handleChange( option.value as PaymentsFilterType ) }
 						>
-							<span ref={ ( el ) => ( tabsRef.current[ option.value ] = el ) }>
+							<span
+								ref={ ( el ) => {
+									tabsRef.current[ option.value ] = el;
+								} }
+							>
 								{ option.label }
 							</span>
 						</SegmentedControl.Item>

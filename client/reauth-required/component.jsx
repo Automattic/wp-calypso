@@ -1,14 +1,19 @@
+import { determineUrlType, URL_TYPE } from '@automattic/calypso-url';
 import { getQueryArg } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { logToLogstash } from 'calypso/lib/logstash';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequiredComponent from 'calypso/me/reauth-required';
 import './style.scss';
 
 // Only allow redirects to production environments,
 // as two-step authentication is only available on production environments.
-const ALLOWED_ORIGINS = [ 'https://my.wordpress.com', 'https://my.woo.ai' ];
+export const ALLOWED_ORIGINS = [
+	'https://my.wordpress.com',
+	'https://agencies-beta.automattic.com',
+];
 
 export default function ReauthRequired() {
 	useEffect( () => {
@@ -25,7 +30,7 @@ export default function ReauthRequired() {
 					const url = new URL( redirectTo, window.location.origin );
 					if (
 						url.origin === window.location.origin ||
-						redirectTo.startsWith( '/' ) ||
+						determineUrlType( redirectTo ) === URL_TYPE.PATH_ABSOLUTE ||
 						ALLOWED_ORIGINS.includes( url.origin )
 					) {
 						// Use the resolved URL's href to ensure correct navigation for pathnames
@@ -33,6 +38,16 @@ export default function ReauthRequired() {
 					} else {
 						// eslint-disable-next-line no-console
 						console.warn( `Skipping potentially unsafe redirect to: ${ redirectTo }` );
+						logToLogstash( {
+							feature: 'calypso_client',
+							message: 'Reauth required: blocked redirect to untrusted origin',
+							severity: 'warning',
+							tags: [ 'dashboard' ],
+							extra: {
+								type: 'reauth_required_redirect_blocked',
+								redirect_to: redirectTo,
+							},
+						} ).catch( () => undefined );
 						// Optionally redirect to a default safe page, e.g., '/'
 						// window.location.href = '/';
 					}
@@ -40,8 +55,28 @@ export default function ReauthRequired() {
 					// Handle invalid URL if necessary
 					// eslint-disable-next-line no-console
 					console.error( `Invalid redirect URL: ${ redirectTo }`, e );
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: 'Reauth required: invalid redirect URL',
+						severity: 'warning',
+						tags: [ 'dashboard' ],
+						extra: {
+							type: 'reauth_required_redirect_invalid_url',
+							redirect_to: redirectTo,
+							error: e instanceof Error ? e.message : String( e ),
+						},
+					} ).catch( () => undefined );
 				}
 			} else {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'Reauth required: missing redirect_to query param',
+					severity: 'warning',
+					tags: [ 'dashboard' ],
+					extra: {
+						type: 'reauth_required_redirect_missing',
+					},
+				} ).catch( () => undefined );
 				// Optional: Redirect to a default location if redirect_to is not present or invalid
 				// window.location.href = '/';
 			}

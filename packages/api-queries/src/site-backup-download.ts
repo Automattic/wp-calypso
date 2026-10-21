@@ -29,6 +29,7 @@ export const siteBackupDownloadProgressQuery = ( siteId: number, downloadId: num
  */
 export const siteBackupDownloadInitiateMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-backup-dl-init' },
 		mutationFn: ( {
 			timestamp,
 			config: downloadConfig,
@@ -54,6 +55,7 @@ export const siteBackupFilteredDownloadStatusQuery = (
 
 export const siteBackupFilteredDownloadPrepareMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'site-backup-filt-dl-prep' },
 		mutationFn: ( {
 			siteId,
 			rewindId,
@@ -74,6 +76,7 @@ export const siteBackupFilteredDownloadPrepareMutation = () =>
  */
 export const siteGranularBackupDownloadInitiateMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-backup-gran-dl-init' },
 		mutationFn: ( {
 			rewindId,
 			includePaths,

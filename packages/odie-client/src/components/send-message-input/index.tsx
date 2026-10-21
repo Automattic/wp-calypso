@@ -1,20 +1,46 @@
 import '@automattic/agenttic-ui/index.css';
 import { useInput } from '@automattic/agenttic-ui';
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useConnectionStatusNotice } from '@automattic/zendesk-client';
+import { ExternalLink } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
+import {
+	createInterpolateElement,
+	useCallback,
+	useEffect,
+	useId,
+	useRef,
+	useState,
+} from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useSearchParams } from 'react-router-dom';
 import Smooch from 'smooch';
+import { HELP_CENTER_STORE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { AgentUIFooter } from '../chat-footer';
+import { EmailFallbackNotice } from '../email-fallback-notice';
 import { useMessageSizeErrorNotice } from '../notices';
 import { useAttachmentHandler } from './use-attachment-handler';
 import { useSendMessageHandler } from './use-send-message-handler';
+
+const AiDisclosureLink = ( { children }: { children?: React.ReactNode } ) => (
+	<ExternalLink href="https://automattic.com/ai-guidelines">{ children }</ExternalLink>
+);
+
+const AiDisclosure = ( { id }: { id: string } ) => (
+	<div className="odie-ai-disclosure" id={ id }>
+		{ createInterpolateElement(
+			__(
+				'You’re chatting with an AI assistant. Responses may be inaccurate. <a>Learn more</a>',
+				__i18n_text_domain__
+			),
+			{
+				a: <AiDisclosureLink />,
+			}
+		) }
+	</div>
+);
 
 const getTextAreaPlaceholder = (
 	shouldDisableInputField: boolean,
@@ -30,7 +56,8 @@ const getTextAreaPlaceholder = (
 
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { trackEvent, chat, canConnectToZendesk, forceEmailSupport } = useOdieAssistantContext();
+	const { trackEvent, chat, canConnectToZendesk, forceEmailSupport, isChatRestricted } =
+		useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
 			! canConnectToZendesk ) ??
@@ -41,10 +68,17 @@ export const OdieSendMessageButton = () => {
 	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
 	const [ searchParams ] = useSearchParams();
 	const queryFromParam = searchParams.get( 'query' ) || '';
-	const chatIdFromParam = searchParams.get( 'chatId' );
-	const queryForNewChat = chatIdFromParam ? '' : queryFromParam;
+	// The query only starts a new conversation. It stays in the persisted route after the chat
+	// gets an interaction (and after an escalation), so it must not be applied to that chat again.
+	const isExistingChat = !! (
+		searchParams.get( 'chatId' ) ||
+		searchParams.get( 'id' ) ||
+		searchParams.get( 'odieInteractionId' )
+	);
+	const queryForNewChat = isExistingChat ? '' : queryFromParam;
 	const [ initialQuery, setInitialQuery ] = useState( queryForNewChat );
 	const [ inputValue, setInputValue ] = useState( initialQuery );
+	const handledInitialQueryRef = useRef< string | null >( null );
 	const messageSizeNotice = useMessageSizeErrorNotice( inputValue.trim().length );
 
 	const connectionStatus = useSelect( ( select ) => {
@@ -55,12 +89,12 @@ export const OdieSendMessageButton = () => {
 	const connectionNotice = useConnectionStatusNotice( connectionStatus, isLiveChat );
 
 	useEffect( () => {
-		// Only process query param for new conversations (no chatId)
+		// Only process query param for new conversations
 		// This prevents refilling the input when navigating back to an existing chat
-		if ( ! chatIdFromParam ) {
+		if ( ! isExistingChat ) {
 			setInitialQuery( queryFromParam );
 		}
-	}, [ queryFromParam, chatIdFromParam ] );
+	}, [ queryFromParam, isExistingChat ] );
 
 	// I'm only using adjustHeight from agenttic-ui
 	const { textareaRef } = useInput( {
@@ -135,6 +169,22 @@ export const OdieSendMessageButton = () => {
 
 	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
 
+	const aiDisclosureId = useId();
+	const showAiDisclosure = ! isLiveChat && ! isEmailFallback;
+
+	// ChatInput doesn't forward aria attributes to the textarea, so associate the
+	// disclosure through the ref to have screen readers announce it on focus.
+	useEffect( () => {
+		const textarea = textareaRef.current;
+		if ( ! textarea ) {
+			return;
+		}
+		if ( showAiDisclosure ) {
+			textarea.setAttribute( 'aria-describedby', aiDisclosureId );
+			return () => textarea.removeAttribute( 'aria-describedby' );
+		}
+	}, [ textareaRef, showAiDisclosure, aiDisclosureId ] );
+
 	// Handle key events including Enter submission and paste
 	const handleKeyDown = useCallback(
 		( e: React.KeyboardEvent< HTMLTextAreaElement > ) => {
@@ -157,12 +207,22 @@ export const OdieSendMessageButton = () => {
 	const isProcessing = ( isChatBusy || isAttachingFile || cantTransferToZendesk ) && ! isDisabled;
 
 	useEffect( () => {
-		if ( initialQuery && ! isProcessing && chat.status !== 'loading' ) {
-			setInputValue( initialQuery );
-			setInitialQuery( '' );
-			if ( chat.messages.length === 0 ) {
-				sendMessageHandler();
-			}
+		if (
+			! initialQuery ||
+			handledInitialQueryRef.current === initialQuery ||
+			isProcessing ||
+			chat.status === 'loading'
+		) {
+			return;
+		}
+		// Tracked in a ref because `setInitialQuery( '' )` can land too late: with React 18 (wp-admin),
+		// sending re-renders synchronously first, so this effect ran again with the same query and sent
+		// it on every render until React bailed out, leaving dozens of retrying copies behind.
+		handledInitialQueryRef.current = initialQuery;
+		setInputValue( initialQuery );
+		setInitialQuery( '' );
+		if ( chat.messages.length === 0 ) {
+			sendMessageHandler();
 		}
 	}, [
 		initialQuery,
@@ -177,7 +237,7 @@ export const OdieSendMessageButton = () => {
 		<>
 			<div className="odie-chat-message-input-container agenttic" ref={ divContainerRef }>
 				{ isEmailFallback ? (
-					<EmailFallbackNotice />
+					<EmailFallbackNotice isChatRestricted={ isChatRestricted } />
 				) : (
 					<AgentUIFooter
 						value={ inputValue }
@@ -195,6 +255,7 @@ export const OdieSendMessageButton = () => {
 						actionOrder="before-submit"
 					/>
 				) }
+				{ showAiDisclosure && <AiDisclosure id={ aiDisclosureId } /> }
 			</div>
 			<AttachmentDropZone />
 		</>

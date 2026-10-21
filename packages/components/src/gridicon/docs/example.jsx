@@ -209,9 +209,7 @@ export default function GridiconExample() {
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<div className="design-assets__group">
-			<h2>
-				<a href="/devdocs/design/social-logo">Social Logo</a>
-			</h2>
+			<h2>Social Logo</h2>
 			<div>
 				{ icons.map( ( icon ) => (
 					<Gridicon key={ icon } icon={ icon } size={ 48 } onClick={ () => handleClick( icon ) } />

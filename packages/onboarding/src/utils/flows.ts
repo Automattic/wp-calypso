@@ -3,14 +3,19 @@ export const NEWSLETTER_FLOW = 'newsletter';
 export const HOSTING_LP_FLOW = 'hosting-start';
 export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
 export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
+export const DIRECT_TO_CART_FLOW = 'direct-to-cart';
+export const EDUCATION_FLOW = 'education';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';
 export const DOMAIN_FLOW = 'domain';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const FREE_FLOW = 'free';
 export const SITE_MIGRATION_FLOW = 'site-migration';
+export const STATIC_SITE_IMPORT_FLOW = 'static-site-import';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
+export const WRITE_ON_FLOW = 'write-on';
+export const WRITE_NEW_SITE_FLOW = 'write-new-site';
 export const START_WRITING_FLOW = 'start-writing';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
@@ -27,6 +32,8 @@ export const HUNDRED_YEAR_DOMAIN_FLOW = 'hundred-year-domain';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
 export const BLOG_FLOW = 'blog';
 export const REBLOGGING_FLOW = 'reblogging';
+export const READER_FLOW = 'reader';
+export const WPCC_FLOW = 'wpcc';
 export const DOMAIN_FOR_GRAVATAR_FLOW = 'domain-for-gravatar';
 export const ONBOARDING_FLOW = 'onboarding';
 export const EXAMPLE_FLOW = 'example';
@@ -35,9 +42,11 @@ export const DIFM_FLOW_STORE = 'do-it-for-me-store';
 export const WEBSITE_DESIGN_SERVICES = 'website-design-services';
 export const ONBOARDING_UNIFIED_FLOW = 'onboarding-unified';
 export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
+export const AI_SITE_BUILDER_ONBOARDING_FLOW = 'ai-site-builder-onboarding';
 export const AI_SITE_BUILDER_SPEC_FLOW = 'ai-site-builder-spec';
 export const PLAYGROUND_FLOW = 'playground';
 export const PLAN_UPGRADE_FLOW = 'plan-upgrade';
+export const LAUNCH_SITE_FLOW = 'launch-site';
 export const FLEX_SITE_FLOW = 'flex-site';
 export const WOO_HOSTED_PLANS_FLOW = 'woo-hosted-plans';
 export const ART_PROMO_FLOW = 'art-domain';
@@ -69,7 +78,7 @@ export const isTransferringHostedSiteCreationFlow = ( flowName: string | null ) 
 export const isAnyHostingFlow = ( flowName?: string | null ) => {
 	return Boolean(
 		flowName &&
-			[ HOSTING_LP_FLOW, NEW_HOSTED_SITE_FLOW, TRANSFERRING_HOSTED_SITE_FLOW ].includes( flowName )
+		[ HOSTING_LP_FLOW, NEW_HOSTED_SITE_FLOW, TRANSFERRING_HOSTED_SITE_FLOW ].includes( flowName )
 	);
 };
 
@@ -86,7 +95,9 @@ export const isEcommerceFlow = ( flowName: string | null ) => {
 };
 
 export const isNewSiteMigrationFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ SITE_MIGRATION_FLOW ].includes( flowName ) );
+	return Boolean(
+		flowName && [ SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW ].includes( flowName )
+	);
 };
 
 export const isBuildFlow = ( flowName: string | null ) => {
@@ -103,6 +114,10 @@ export const isUpdateDesignFlow = ( flowName: string | null ) => {
 
 export const isStartWritingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ START_WRITING_FLOW ].includes( flowName ) );
+};
+
+export const isWriteOnFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ WRITE_ON_FLOW ].includes( flowName ) );
 };
 
 export const isOnboardingFlow = ( flowName: string | null ) => {
@@ -155,6 +170,10 @@ export const isDIFMFlow = ( flowName: string | null ) => {
 
 export const isAIBuilderFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ AI_SITE_BUILDER_FLOW ].includes( flowName ) );
+};
+
+export const isAIBuilderOnboardingFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ AI_SITE_BUILDER_ONBOARDING_FLOW ].includes( flowName ) );
 };
 
 export const isAIBuilderSpecFlow = ( flowName: string | null ) => {

@@ -4,14 +4,11 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
-import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { resetCheckoutStores } from '../lib/checkout-stores';
 import {
 	planWithoutDomain,
 	getActivePersonalPlanDataForType,
@@ -24,6 +21,7 @@ import {
 	mockGetVatInfoEndpoint,
 	countryList,
 	mockLogStashEndpoint,
+	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockGetPaymentMethodsEndpoint,
 	mockUserSignupValidationEndpoint,
@@ -32,9 +30,6 @@ import {
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
 
-jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/sites/domains/selectors' );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
@@ -58,14 +53,12 @@ describe( 'Checkout contact step', () => {
 	getPlansBySiteId.mockImplementation( () => ( {
 		data: getActivePersonalPlanDataForType( 'yearly' ),
 	} ) );
-	hasLoadedSiteDomains.mockImplementation( () => true );
-	getDomainsBySiteId.mockImplementation( () => [] );
+	mockGetSiteDomainsEndpoint( [] );
 	isMarketplaceProduct.mockImplementation( () => false );
-	isJetpackSite.mockImplementation( () => false );
 	mockMatchMediaOnWindow();
 
 	beforeEach( () => {
-		dispatch( CHECKOUT_STORE ).reset();
+		resetCheckoutStores();
 		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
 		mockGetVatInfoEndpoint( {} );
@@ -78,9 +71,7 @@ describe( 'Checkout contact step', () => {
 	it( 'does not complete the contact step when the contact step button has not been clicked and there are no cached details', async () => {
 		mockCachedContactDetailsEndpoint( {} );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
 		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
@@ -93,9 +84,7 @@ describe( 'Checkout contact step', () => {
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		const countryField = await screen.findByLabelText( 'Country' );
@@ -116,9 +105,7 @@ describe( 'Checkout contact step', () => {
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
 		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
@@ -134,9 +121,7 @@ describe( 'Checkout contact step', () => {
 			messages: { postal_code: [ 'Postal code error message' ] },
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
 		await expect( screen.findByText( 'Postal code error message' ) ).toNeverAppear();
@@ -260,8 +245,7 @@ describe( 'Checkout contact step', () => {
 					{ ...defaultPropsForMockCheckout }
 					cartChanges={ { products: [ product ] } }
 					additionalProps={ { isLoggedOutCart: logged === 'out' } }
-				/>,
-				{ legacyRoot: true }
+				/>
 			);
 
 			// Wait for the cart to load

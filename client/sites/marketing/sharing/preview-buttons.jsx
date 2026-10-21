@@ -1,10 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import clsx from 'clsx';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { filter, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
-import { findDOMNode } from 'react-dom';
 import ResizableIframe from 'calypso/components/resizable-iframe';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import ButtonsPreviewButton from './preview-button';
@@ -130,7 +129,7 @@ class SharingButtonsPreviewButtons extends Component {
 		} else {
 			// For custom styles, we can calculate the offset using the
 			// position of the rendered button
-			moreButton = findDOMNode( this.moreButtonRef.current );
+			moreButton = this.moreButtonRef.current;
 			offset = {
 				top: moreButton.offsetTop + moreButton.clientHeight,
 				left: moreButton.offsetLeft,
@@ -168,7 +167,9 @@ class SharingButtonsPreviewButtons extends Component {
 		// to include the non-enabled icons in a preview. Non-enabled icons are
 		// only needed in the button selection tray, where official buttons are
 		// rendered in the text-only style.
-		const buttons = filter( this.props.buttons, { visibility: this.props.visibility } );
+		const buttons = ( this.props.buttons ?? [] ).filter(
+			( button ) => button.visibility === this.props.visibility
+		);
 		const previewUrl = previewWidget.generatePreviewUrlFromButtons( buttons, this.props.showMore );
 
 		return (
@@ -199,7 +200,7 @@ class SharingButtonsPreviewButtons extends Component {
 		if ( this.props.showMore ) {
 			buttons.push(
 				<ButtonsPreviewButton
-					ref={ this.moreButtonRef }
+					elementRef={ this.moreButtonRef }
 					key="more"
 					button={ {
 						ID: 'more',
@@ -227,7 +228,9 @@ class SharingButtonsPreviewButtons extends Component {
 
 		// The more preview is only ever used to show hidden buttons, so we
 		// filter on the current set of buttons
-		const hiddenButtons = filter( this.props.buttons, { visibility: 'hidden' } );
+		const hiddenButtons = ( this.props.buttons ?? [] ).filter(
+			( button ) => button.visibility === 'hidden'
+		);
 
 		return (
 			<div className={ classes } style={ this.state.morePreviewOffset }>

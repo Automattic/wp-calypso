@@ -2,9 +2,21 @@
  * @jest-environment jsdom
  */
 
+import {
+	PLAN_PERSONAL,
+	PLAN_PERSONAL_MONTHLY,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import nock from 'nock';
 import flows from 'calypso/signup/config/flows';
-import { createSiteWithCart, isDomainFulfilled, isPlanFulfilled } from '../step-actions';
+import {
+	createSiteWithCart,
+	getPluginBillingPeriodForPlan,
+	isDomainFulfilled,
+	isPlanFulfilled,
+	pickMarketplacePluginVariant,
+} from '../step-actions';
 
 jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );
@@ -41,7 +53,7 @@ describe( 'createSiteWithCart()', () => {
 			};
 		} );
 
-	test( 'should find available url if siteUrl is empty and enable auto generated blog name', async () => {
+	test( 'sends an empty blog_name and finds an available url when siteUrl is empty', async () => {
 		expect.assertions( 1 );
 		const fakeStore = {
 			getState: () => ( {
@@ -51,7 +63,10 @@ describe( 'createSiteWithCart()', () => {
 
 		await testCreateSite(
 			( response ) => {
-				expect( response.requestBody.find_available_url ).toBe( true );
+				expect( response.requestBody ).toMatchObject( {
+					blog_name: '',
+					find_available_url: true,
+				} );
 			},
 			[],
 			{ siteUrl: undefined },
@@ -71,47 +86,6 @@ describe( 'createSiteWithCart()', () => {
 			},
 			[],
 			{ siteUrl: 'mysite' },
-			fakeStore
-		);
-	} );
-
-	test( 'use username for blog_name if user data available and enable auto generated blog name', async () => {
-		expect.assertions( 1 );
-		const fakeStore = {
-			getState: () => ( {
-				currentUser: {
-					user: {
-						username: 'alex',
-					},
-				},
-				signup: { dependencyStore: { shouldHideFreePlan: true } },
-			} ),
-		};
-
-		await testCreateSite(
-			( response ) => {
-				expect( response.requestBody.blog_name ).toBe( 'alex' );
-			},
-			[],
-			{ siteUrl: undefined },
-			fakeStore
-		);
-	} );
-
-	test( "use username from dependency store for blog_name if user data isn't available and enable auto generated blog name", async () => {
-		expect.assertions( 1 );
-		const fakeStore = {
-			getState: () => ( {
-				signup: { dependencyStore: { username: 'alex', shouldHideFreePlan: true } },
-			} ),
-		};
-
-		await testCreateSite(
-			( response ) => {
-				expect( response.requestBody.blog_name ).toBe( 'alex' );
-			},
-			[],
-			{ siteUrl: undefined },
 			fakeStore
 		);
 	} );
@@ -261,5 +235,73 @@ describe( 'isPlanFulfilled()', () => {
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should not remove a step for a free trial plan', () => {
+		const stepName = 'plans';
+		const nextProps = {
+			isPaidPlan: true,
+			sitePlanSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
+			submitSignupStep,
+		};
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+
+		isPlanFulfilled( stepName, undefined, nextProps );
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'getPluginBillingPeriodForPlan()', () => {
+	test( 'maps a monthly plan to the plugin MONTHLY term', () => {
+		expect( getPluginBillingPeriodForPlan( PLAN_PERSONAL_MONTHLY, 'ANNUALLY' ) ).toBe( 'MONTHLY' );
+	} );
+
+	test( 'maps an annual plan to the plugin ANNUALLY term', () => {
+		expect( getPluginBillingPeriodForPlan( PLAN_PERSONAL, 'MONTHLY' ) ).toBe( 'ANNUALLY' );
+	} );
+
+	test( 'maps a multi-year plan to the plugin ANNUALLY term', () => {
+		expect( getPluginBillingPeriodForPlan( PLAN_BUSINESS_2_YEARS, 'MONTHLY' ) ).toBe( 'ANNUALLY' );
+	} );
+
+	test( 'falls back to the provided billing period when the plan is unknown', () => {
+		expect( getPluginBillingPeriodForPlan( undefined, 'ANNUALLY' ) ).toBe( 'ANNUALLY' );
+		expect( getPluginBillingPeriodForPlan( 'not-a-real-plan', 'MONTHLY' ) ).toBe( 'MONTHLY' );
+	} );
+} );
+
+describe( 'pickMarketplacePluginVariant()', () => {
+	const monthlyVariant = { product_slug: 'plugin-monthly', product_term: 'month' };
+	const yearlyVariant = { product_slug: 'plugin-yearly', product_term: 'year' };
+
+	test( 'returns the monthly variant for a MONTHLY billing period', () => {
+		expect( pickMarketplacePluginVariant( [ monthlyVariant, yearlyVariant ], 'MONTHLY' ) ).toBe(
+			monthlyVariant
+		);
+	} );
+
+	test( 'returns the yearly variant for an ANNUALLY billing period', () => {
+		expect( pickMarketplacePluginVariant( [ monthlyVariant, yearlyVariant ], 'ANNUALLY' ) ).toBe(
+			yearlyVariant
+		);
+	} );
+
+	test( 'keeps the plugin when the requested term has no variant (monthly plan, annual-only plugin)', () => {
+		expect( pickMarketplacePluginVariant( [ yearlyVariant ], 'MONTHLY' ) ).toBe( yearlyVariant );
+	} );
+
+	test( 'returns the first variant when no billing period is given', () => {
+		expect( pickMarketplacePluginVariant( [ yearlyVariant, monthlyVariant ] ) ).toBe(
+			yearlyVariant
+		);
+	} );
+
+	test( 'returns null when there are no variants', () => {
+		expect( pickMarketplacePluginVariant( [], 'MONTHLY' ) ).toBeNull();
+		expect( pickMarketplacePluginVariant( undefined, 'ANNUALLY' ) ).toBeNull();
 	} );
 } );

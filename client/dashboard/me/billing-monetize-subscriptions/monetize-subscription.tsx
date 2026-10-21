@@ -7,11 +7,9 @@ import {
 } from '@automattic/api-queries';
 import { useLocale } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
-import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
-	__experimentalGrid as Grid,
 	__experimentalVStack as VStack,
 	Button,
 	Notice,
@@ -19,7 +17,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _x, sprintf } from '@wordpress/i18n';
 import { calendar, currencyDollar, rotateRight, siteLogo } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -27,12 +25,16 @@ import { monetizeSubscriptionRoute, monetizeSubscriptionsRoute } from '../../app
 import ActionList from '../../components/action-list';
 import { Card, CardBody } from '../../components/card';
 import { useFormattedTime } from '../../components/formatted-time';
+import Grid from '../../components/grid';
 import OverviewCard from '../../components/overview-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { formatDate } from '../../utils/datetime';
+import { wpcomLink } from '../../utils/link';
 
 import './style.scss';
+
+const SUPPORT_CONTACT_URL = wpcomLink( '/support/contact' );
 
 function AutoRenewButton( {
 	disableAutoRenew,
@@ -56,7 +58,7 @@ function AutoRenewButton( {
 			createErrorNotice( __( 'Failed to remove your product.' ), {
 				actions: [
 					{
-						url: CALYPSO_CONTACT,
+						url: SUPPORT_CONTACT_URL,
 						label: __( 'Please contact support' ),
 					},
 				],
@@ -66,7 +68,7 @@ function AutoRenewButton( {
 			createErrorNotice( __( 'Failed to update your subscription.' ), {
 				actions: [
 					{
-						url: CALYPSO_CONTACT,
+						url: SUPPORT_CONTACT_URL,
 						label: __( 'Please contact support' ),
 					},
 				],
@@ -82,7 +84,7 @@ function AutoRenewButton( {
 				const locale = useLocale();
 				const helpText = ( () => {
 					if ( isAutoRenewing ) {
-						// translators: date is a formatted date string
+						/* translators: %(date)s is a formatted date string. */
 						return sprintf( __( 'You will be billed on %(date)s' ), {
 							date: formatDate( new Date( Date.parse( data?.end_date ?? '' ) ), locale, {
 								dateStyle: 'long',
@@ -129,9 +131,11 @@ function AutoRenewButton( {
 					data={ subscription }
 					form={ form }
 					onChange={ () => {
-						isAutoRenewing
-							? disableAutoRenew( null, { onError: onError } )
-							: enableAutoRenew( null, { onError: onError } );
+						if ( isAutoRenewing ) {
+							disableAutoRenew( null, { onError: onError } );
+							return;
+						}
+						enableAutoRenew( null, { onError: onError } );
 					} }
 				/>
 			</CardBody>
@@ -139,67 +143,109 @@ function AutoRenewButton( {
 	);
 }
 
-function StopSubscriptionButton( {
+function CancelOrRemoveButton( {
+	disableAutoRenew,
 	stopSubscription,
 	isProduct,
-	subscription,
+	isAutoRenewing,
+	renewalDate,
 }: {
+	disableAutoRenew: ( data: any, variables?: object ) => void;
 	stopSubscription: ( data: any, variables: object ) => void;
 	isProduct: boolean;
-	subscription: MonetizeSubscription;
+	isAutoRenewing: boolean;
+	renewalDate: string;
 } ) {
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate();
-	const title = isProduct
-		? // translators: %s is the product title
-		  sprintf( __( 'Remove %s product' ), subscription.title )
-		: // translators: %s is the product title
-		  sprintf( __( 'Stop %s subscription' ), subscription.title );
+
+	const showCancel = ! isProduct && isAutoRenewing;
+
+	const title = ( () => {
+		if ( showCancel ) {
+			return __( 'Cancel subscription' );
+		}
+		return isProduct ? __( 'Remove one-time purchase' ) : __( 'Remove subscription' );
+	} )();
+
+	const description = ( () => {
+		if ( showCancel ) {
+			/* translators: %(date)s is a formatted date string. */
+			return sprintf( __( 'Stop future payments. Keep access to subscription until %(date)s.' ), {
+				date: renewalDate,
+			} );
+		}
+		return isProduct
+			? __( 'One-time purchase will be removed immediately.' )
+			: __( 'Subscription will be removed immediately.' );
+	} )();
+
+	const buttonLabel = showCancel
+		? _x( 'Cancel', 'Stop the subscription from automatically charging and renewing' )
+		: _x(
+				'Remove',
+				'Remove the cancelled or expired subscription from the list of active purchases.'
+			);
+
+	const onClick = () => {
+		if ( showCancel ) {
+			disableAutoRenew( null, {
+				onSuccess: () => {
+					createSuccessNotice( __( 'Auto-renew has been disabled.' ), { type: 'snackbar' } );
+				},
+				onError: () => {
+					createErrorNotice( __( 'Failed to update your subscription.' ), {
+						actions: [
+							{
+								url: SUPPORT_CONTACT_URL,
+								label: __( 'Please contact support' ),
+							},
+						],
+						type: 'snackbar',
+					} );
+				},
+			} );
+			return;
+		}
+
+		stopSubscription( null, {
+			onSuccess: () => {
+				createSuccessNotice( __( 'This item has been removed.' ), { type: 'snackbar' } );
+				navigate( { to: monetizeSubscriptionsRoute.fullPath } );
+			},
+			onError: () => {
+				if ( isProduct ) {
+					createErrorNotice( __( 'There was a problem while removing your product.' ), {
+						actions: [
+							{
+								url: SUPPORT_CONTACT_URL,
+								label: __( 'Please contact support' ),
+							},
+						],
+						type: 'snackbar',
+					} );
+				} else {
+					createErrorNotice( __( 'There was a problem while stopping your subscription.' ), {
+						actions: [
+							{
+								url: SUPPORT_CONTACT_URL,
+								label: __( 'Please contact support' ),
+							},
+						],
+						type: 'snackbar',
+					} );
+				}
+			},
+		} );
+	};
+
 	return (
 		<ActionList.ActionItem
 			title={ title }
-			description={ __( 'We’ll be sorry to see you go!' ) }
+			description={ description }
 			actions={
-				<Button
-					variant="secondary"
-					isDestructive
-					size="compact"
-					onClick={ () => {
-						stopSubscription( null, {
-							onSuccess: () => {
-								createSuccessNotice( __( 'This item has been removed.' ), { type: 'snackbar' } );
-								navigate( { to: monetizeSubscriptionsRoute.fullPath } );
-							},
-							onError: () => {
-								if ( isProduct ) {
-									createErrorNotice( __( 'There was a problem while removing your product.' ), {
-										actions: [
-											{
-												url: CALYPSO_CONTACT,
-												label: __( 'Please contact support' ),
-											},
-										],
-										type: 'snackbar',
-									} );
-								} else {
-									createErrorNotice(
-										__( 'There was a problem while stopping your subscription.' ),
-										{
-											actions: [
-												{
-													url: CALYPSO_CONTACT,
-													label: __( 'Please contact support' ),
-												},
-											],
-											type: 'snackbar',
-										}
-									);
-								}
-							},
-						} );
-					} }
-				>
-					{ title }
+				<Button variant="secondary" isDestructive size="compact" onClick={ onClick }>
+					{ buttonLabel }
 				</Button>
 			}
 		/>
@@ -229,8 +275,11 @@ export default function MonetizeSubscriptionDetails() {
 	const isUpdating = isEnablingAutoRenew || isDisablingAutoRenew;
 	const formattedExpiry = useFormattedTime( subscription?.end_date ?? '' );
 	const formattedRenewal = useFormattedTime( subscription?.end_date ?? '' );
-	const isOneTimePurchase = subscription?.renew_interval === 'one-time';
+	const isOneTimePurchase = subscription?.end_date === null;
 	const expiryDateTitle = ( () => {
+		if ( isOneTimePurchase ) {
+			return __( 'Renewal status' );
+		}
 		if ( isProduct ) {
 			return __( 'Paid until' );
 		}
@@ -259,7 +308,7 @@ export default function MonetizeSubscriptionDetails() {
 			{ isUpdating && <Notice status="info">{ __( 'Updating subscription auto-renew' ) }</Notice> }
 			{ subscription && (
 				<VStack spacing={ 6 }>
-					<Grid columns={ 2 } rows={ 2 } gap={ 6 }>
+					<Grid columns={ 2 } rows={ 2 } gap="xl">
 						<OverviewCard
 							icon={ siteLogo }
 							title={ __( 'Site' ) }
@@ -272,7 +321,7 @@ export default function MonetizeSubscriptionDetails() {
 							title={ expiryDateTitle }
 							heading={ ( () => {
 								if ( isOneTimePurchase ) {
-									return __( 'Never expires.' );
+									return __( 'One-time purchase' );
 								}
 								if ( isAutoRenewing ) {
 									return formattedRenewal;
@@ -280,6 +329,9 @@ export default function MonetizeSubscriptionDetails() {
 								return formattedExpiry;
 							} )() }
 							description={ ( () => {
+								if ( isOneTimePurchase ) {
+									return __( 'Does not renew' );
+								}
 								if ( isAutoRenewing ) {
 									return __( 'Auto-renew is enabled.' );
 								}
@@ -293,10 +345,7 @@ export default function MonetizeSubscriptionDetails() {
 								title={ __( 'Price' ) }
 								heading={ formatCurrency(
 									parseFloat( subscription.renewal_price ),
-									subscription.currency,
-									{
-										isSmallestUnit: true,
-									}
+									subscription.currency
 								) }
 								description={ __( 'Excludes taxes.' ) }
 							/>
@@ -308,18 +357,17 @@ export default function MonetizeSubscriptionDetails() {
 								title={ __( 'Renewal price' ) }
 								heading={ formatCurrency(
 									parseFloat( subscription.renewal_price ),
-									subscription.currency,
-									{
-										isSmallestUnit: true,
-									}
+									subscription.currency
 								) }
 							/>
 						) }
-						<OverviewCard
-							icon={ rotateRight }
-							title={ __( 'Renewal interval' ) }
-							heading={ subscription.renew_interval || '-' }
-						/>
+						{ ! isOneTimePurchase && (
+							<OverviewCard
+								icon={ rotateRight }
+								title={ __( 'Renewal interval' ) }
+								heading={ subscription.renew_interval || '-' }
+							/>
+						) }
 					</Grid>
 
 					{ isRenewable && (
@@ -333,10 +381,12 @@ export default function MonetizeSubscriptionDetails() {
 						/>
 					) }
 					<ActionList>
-						<StopSubscriptionButton
-							subscription={ subscription }
+						<CancelOrRemoveButton
+							disableAutoRenew={ disableAutoRenew }
 							stopSubscription={ stopSubscription }
 							isProduct={ isProduct }
+							isAutoRenewing={ isAutoRenewing }
+							renewalDate={ formattedRenewal }
 						/>
 					</ActionList>
 				</VStack>

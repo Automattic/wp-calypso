@@ -1,4 +1,4 @@
-import { kebabCase } from 'lodash';
+import { kebabCase } from '@automattic/js-utils';
 import { bypassDataLayer, convertKeysBy, convertToCamelCase, convertToSnakeCase } from '../utils';
 
 describe( 'Data Layer', () => {
@@ -124,7 +124,7 @@ describe( 'Data Layer', () => {
 			},
 		};
 
-		test( 'lodash native backwards/cross compatiblity', () => {
+		test( 'native backwards/cross compatibility', () => {
 			expect( convertKeysBy( snakeObject, kebabCase ) ).toEqual(
 				convertKeysBy( camelObject, kebabCase )
 			);

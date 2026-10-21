@@ -1,27 +1,29 @@
-@import "@automattic/components/src/styles/mixins";
-@import "@automattic/typography/styles/variables";
-@import "calypso/my-sites/stats/components/highlight-cards/variables";
-
+@import '@automattic/components/src/styles/mixins';
+@import '@automattic/typography/styles/variables';
+@import 'calypso/my-sites/stats/components/highlight-cards/variables';
 
 .ads__table-header {
+	align-items: center;
 	margin-bottom: 1em;
 	display: flex;
 
 	// Keep synced with $custom-mobile-breakpoint in packages/components/src/highlight-cards/variables.scss.
-	@media (max-width: 660px) {
-		margin-left: $font-body-small;
-		margin-right: $font-body-small;
+	@media ( max-width: 660px ) {
+		margin-inline: $font-body-small;
 	}
 }
 
 .ads__table-header-title {
 	@include stats-section-header;
-	margin-right: 4px;
+	margin-inline-end: 4px;
 }
 
-.ads__table-header-button {
-	color: var(--studio-gray-50);
-	cursor: pointer;
+.ads__table-header-infotip {
+	color: var( --studio-gray-50 );
+}
+
+.stats-infotip__description .ads__earnings-history-info-list {
+	padding-inline-start: var( --wpds-dimension-padding-sm, 8px );
 }
 
 .earnings_history {
@@ -33,8 +35,7 @@
 	}
 
 	// Keep synced with $custom-mobile-breakpoint in packages/components/src/highlight-cards/variables.scss.
-	@media (max-width: 660px) {
-		margin-left: $font-body-small;
-		margin-right: $font-body-small;
+	@media ( max-width: 660px ) {
+		margin-inline: $font-body-small;
 	}
 }

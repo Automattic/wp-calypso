@@ -1,8 +1,0 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
-
-.a4a-referrals-client {
-	@include body-medium;
-	color: var(--color-accent-80);
-}

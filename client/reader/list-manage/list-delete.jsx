@@ -1,13 +1,38 @@
+import { deleteReadListMutation } from '@automattic/api-queries';
+import page from '@automattic/calypso-router';
 import { Button, Card, Dialog } from '@automattic/components';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { deleteReaderList } from 'calypso/state/reader/lists/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 
 function ListDelete( { list } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
+	const { mutate: deleteList } = useMutation( deleteReadListMutation( queryClient ) );
+
+	const handleDelete = () => {
+		deleteList(
+			{ owner: list.owner, slug: list.slug },
+			{
+				onSuccess: () => {
+					page( '/reader' );
+					dispatch(
+						successNotice( translate( 'List deleted successfully.' ), {
+							duration: DEFAULT_NOTICE_DURATION,
+						} )
+					);
+				},
+				onError: () => {
+					dispatch( errorNotice( translate( 'Unable to delete list.' ) ) );
+				},
+			}
+		);
+	};
 
 	return (
 		<>
@@ -28,7 +53,7 @@ function ListDelete( { list } ) {
 					onClose={ ( action ) => {
 						setShowDeleteConfirmation( false );
 						if ( action === 'delete' ) {
-							dispatch( deleteReaderList( list.ID, list.owner, list.slug ) );
+							handleDelete();
 						}
 					} }
 				>

@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import businessPlanIllustration from 'calypso/assets/images/plugins/business-plan-illustration.webp';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getSitePlanSlug } from 'calypso/state/sites/selectors';
@@ -49,7 +50,7 @@ const BusinessPlanBanner = () => {
 			<div className="business-plan-banner__illustration-container">
 				<img
 					className="business-plan-banner__illustration"
-					src="/calypso/images/plugins/business-plan-illustration.webp"
+					src={ businessPlanIllustration }
 					alt=""
 					aria-hidden="true"
 				/>

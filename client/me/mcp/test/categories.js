@@ -13,6 +13,15 @@ describe( 'client/me/mcp/categories', () => {
 		it( 'returns false when annotations are missing', () => {
 			expect( isWriteTool( {} ) ).toBe( false );
 		} );
+
+		it( 'prefers the top-level readonly field over annotations.readonly', () => {
+			expect( isWriteTool( { readonly: false, annotations: { readonly: true } } ) ).toBe( true );
+			expect( isWriteTool( { readonly: true, annotations: { readonly: false } } ) ).toBe( false );
+		} );
+
+		it( 'falls back to annotations.readonly when the top-level field is absent', () => {
+			expect( isWriteTool( { annotations: { readonly: false } } ) ).toBe( true );
+		} );
 	} );
 
 	describe( 'isReadTool', () => {

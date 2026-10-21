@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit } from '@automattic/js-utils';
 import FormSelect from 'calypso/components/forms/form-select';
 
 const SelectOptGroups = ( props ) => {

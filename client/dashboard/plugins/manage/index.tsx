@@ -4,17 +4,15 @@ import {
 	marketplaceSearchQuery,
 	pluginsQuery,
 } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import { __experimentalGrid as Grid } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { OptInWelcome } from '../../components/opt-in-welcome';
+import Grid from '../../components/grid';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { usePlugin } from '../plugin/use-plugin';
@@ -45,10 +43,14 @@ const searchableFields = [
 
 export default function PluginsList() {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
-	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
-	const isSmallViewport = useViewportMatch( isOmnibarEnabled ? 'xlarge' : 'medium', '<' );
-	const { data: sitesPlugins, isLoading: sitesPluginsLoading } = useQuery( pluginsQuery() );
-	const { sitesById } = useSitesById();
+	const isSmallViewport = useViewportMatch( 'xlarge', '<' );
+	const {
+		data: sitesPlugins,
+		isLoading: pluginsQueryLoading,
+		isError: pluginsQueryError,
+	} = useQuery( pluginsQuery() );
+	const { sitesById, isLoadingSites } = useSitesById();
+	const sitesPluginsLoading = pluginsQueryLoading || isLoadingSites;
 	const { pluginId: pluginSlug } = useParams( { strict: false } );
 	const fields = useMemo( () => {
 		return searchableFields.map( ( searchableField ) => ( {
@@ -78,7 +80,7 @@ export default function PluginsList() {
 		return batches;
 	}, [ plugins ] );
 
-	const marketplaceSearchResults = useQueries( {
+	const { marketplaceSearchData, allSearchQueriesLoaded } = useQueries( {
 		queries:
 			slugBatches.length > 0
 				? slugBatches.map( ( slugs ) =>
@@ -87,25 +89,26 @@ export default function PluginsList() {
 							slugs,
 							groupId: 'wporg',
 						} )
-				  )
+					)
 				: [],
+		combine: ( results ) => ( {
+			marketplaceSearchData: results.flatMap( ( result ) => result.data?.data.results || [] ),
+			allSearchQueriesLoaded: results.every( ( result ) => result.isSuccess ),
+		} ),
 	} );
 
 	const iconBySlug = useMemo( () => {
 		// Only recalculate once all queries have data
-		const allQueriesLoaded = marketplaceSearchResults.every( ( result ) => result.isSuccess );
-		if ( ! allQueriesLoaded ) {
+		if ( ! allSearchQueriesLoaded ) {
 			return new Map< string, PluginListRow[ 'icon' ] >();
 		}
 
 		const marketplacePluginsBySlug = new Map( Object.entries( marketplacePlugins?.results || {} ) );
 
-		const marketplaceSearchBySlug = marketplaceSearchResults
-			.flatMap( ( result ) => result.data?.data.results || [] )
-			.reduce( ( acc, { fields } ) => {
-				acc.set( fields.slug, fields );
-				return acc;
-			}, new Map< string, MarketplaceSearchResult[ 'fields' ] >() );
+		const marketplaceSearchBySlug = marketplaceSearchData.reduce( ( acc, { fields } ) => {
+			acc.set( fields.slug, fields );
+			return acc;
+		}, new Map< string, MarketplaceSearchResult[ 'fields' ] >() );
 
 		return plugins.reduce( ( acc, { slug } ) => {
 			let icon;
@@ -119,7 +122,7 @@ export default function PluginsList() {
 
 			return acc;
 		}, new Map< string, PluginListRow[ 'icon' ] >() );
-	}, [ plugins, marketplacePlugins, marketplaceSearchResults ] );
+	}, [ plugins, marketplacePlugins, marketplaceSearchData, allSearchQueriesLoaded ] );
 
 	const pluginsWithIcon = useMemo( () => {
 		return plugins.map( ( plugin ) => {
@@ -147,17 +150,17 @@ export default function PluginsList() {
 						prefix={ pluginSlug ? <Breadcrumbs length={ 2 } /> : null }
 					/>
 				}
-				notices={ <OptInWelcome tracksContext="plugins" /> }
 			>
 				{ pluginSlug ? (
 					<PluginSites selectedPluginSlug={ selectedPluginSlug } />
 				) : (
 					<PluginSwitcher
-						pluginsWithIcon={ pluginsWithIcon }
+						pluginsWithIcon={ sitesPluginsLoading ? undefined : pluginsWithIcon }
 						searchableFields={ searchableFields }
 						view={ view }
 						onChangeView={ setView }
 						paginationInfo={ paginationInfo }
+						isError={ pluginsQueryError }
 					/>
 				) }
 				{ ! sitesPluginsLoading && <PerformanceTrackerStop /> }
@@ -174,16 +177,16 @@ export default function PluginsList() {
 					description={ __( 'Install, activate, and manage plugins across your sites.' ) }
 				/>
 			}
-			notices={ <OptInWelcome tracksContext="plugins" /> }
 		>
-			<Grid columns={ 2 } gap={ 3 } templateColumns="392px 1fr">
+			<Grid gap="md" templateColumns="392px 1fr">
 				<PluginSwitcher
-					pluginsWithIcon={ pluginsWithIcon }
+					pluginsWithIcon={ sitesPluginsLoading ? undefined : pluginsWithIcon }
 					searchableFields={ searchableFields }
 					selectedPluginSlug={ selectedPluginSlug }
 					view={ view }
 					onChangeView={ setView }
 					paginationInfo={ paginationInfo }
+					isError={ pluginsQueryError }
 				/>
 
 				<PluginSites selectedPluginSlug={ selectedPluginSlug } />

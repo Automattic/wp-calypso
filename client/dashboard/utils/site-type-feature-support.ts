@@ -1,4 +1,4 @@
-import { isCommerceGarden, isSelfHostedJetpackConnected } from './site-types';
+import { isSelfHostedJetpackConnected, isSimple } from './site-types';
 import type { Site } from '@automattic/api-core';
 
 export type SiteTypeFeatureSupports = {
@@ -28,7 +28,7 @@ export type SiteTypeFeature = keyof SiteTypeFeatureSupports;
 /**
  * Returns a complete map of which features are supported for a given site type.
  *
- * This is about structural site type (Commerce Garden, Jetpack-connected, etc.),
+ * This is about structural site type (Jetpack-connected, multisite, etc.),
  * NOT about plan features. Plan-based feature checks (hasHostingFeature) should
  * be used within routes to gate content, show upsells, etc.
  */
@@ -47,23 +47,23 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 		};
 	}
 
-	if ( isCommerceGarden( site ) ) {
+	if ( site.is_multisite && ! isSimple( site ) ) {
 		return {
-			deployments: false,
-			performance: false,
-			monitoring: false,
-			logs: false,
+			deployments: true,
+			performance: true,
+			monitoring: true,
+			logs: true,
 			backups: false,
 			scan: false,
 			domains: true,
 			emails: true,
 			settings: true,
 			settingsGeneral: true,
-			settingsGeneralAITools: false,
+			settingsGeneralAITools: true,
 			settingsGeneralRedirect: true,
-			settingsGeneralDotcomSiteVisibility: false,
-			settingsServer: false,
-			settingsSecurity: false,
+			settingsGeneralDotcomSiteVisibility: true,
+			settingsServer: true,
+			settingsSecurity: true,
 		};
 	}
 

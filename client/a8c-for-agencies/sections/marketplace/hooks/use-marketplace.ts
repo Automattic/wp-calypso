@@ -41,7 +41,7 @@ export const getWPCOMTieredPrice = (
 ) => {
 	// Calculate actual cost (base product price * quantity)
 	const basePricePerUnit =
-		termPricing === 'yearly' ? product.yearly_price ?? 0 : product.monthly_price ?? 0;
+		termPricing === 'yearly' ? ( product.yearly_price ?? 0 ) : ( product.monthly_price ?? 0 );
 	const actualCost = basePricePerUnit * quantity;
 	const tierPrices =
 		termPricing === 'yearly' ? product.tier_yearly_prices : product.tier_monthly_prices;
@@ -88,11 +88,25 @@ export const checkProductTermAvailability = (
 	return { isMissingMonthlyId, isMissingYearlyId };
 };
 
+const getAmount = ( amount?: string ) => {
+	if ( ! amount ) {
+		return 0;
+	}
+	return parseFloat( amount.replace( ',', '' ) ) || 0;
+};
+
+const isFreeProduct = ( product: APIProductFamilyProduct ) =>
+	! product.monthly_price && ! product.yearly_price && ! getAmount( product.amount );
+
 export const useProductTermAvailabilityTooltip = ( termPricing: TermPricingType ) => {
 	const translate = useTranslate();
 
 	const termAvailabilityTooltip = useCallback(
 		( product: APIProductFamilyProduct ) => {
+			if ( isFreeProduct( product ) ) {
+				return undefined;
+			}
+
 			const { isMissingMonthlyId, isMissingYearlyId } = checkProductTermAvailability(
 				product,
 				termPricing
@@ -287,7 +301,7 @@ export const useGetProductPricingInfo = (
 
 		// If we don't have userProducts, we just pull the price from the product and not calculate the discount
 		if ( ! Object.keys( userProducts ).length ) {
-			const actualCost = Number( product?.price_per_unit_display?.replace( /,/g, '' ) ) ?? 0;
+			const actualCost = Number( product?.price_per_unit_display?.replace( /,/g, '' ) );
 			return {
 				actualCost,
 				discountedCost: actualCost,
@@ -298,13 +312,6 @@ export const useGetProductPricingInfo = (
 				isFree: actualCost === 0,
 			};
 		}
-
-		const getAmount = ( amount?: string ) => {
-			if ( ! amount ) {
-				return 0;
-			}
-			return parseFloat( amount.replace( ',', '' ) ) || 0;
-		};
 
 		const bundle = product?.supported_bundles?.find( ( bundle ) => bundle.quantity === quantity );
 
@@ -408,10 +415,10 @@ export const useTotalInvoiceValue = ( termPricing?: TermPricingType, currency?: 
 			return isTermPricingEnabled && termPricing === 'yearly'
 				? translate( '%(total)s/yr', {
 						args: { total: formatCurrency( cost, currency ?? 'USD' ) },
-				  } )
+					} )
 				: translate( '%(total)s/mo', {
 						args: { total: formatCurrency( cost, currency ?? 'USD' ) },
-				  } );
+					} );
 		};
 
 		return {

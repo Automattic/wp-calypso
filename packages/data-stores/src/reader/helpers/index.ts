@@ -2,6 +2,12 @@ import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest from '../../wpcom-request';
 import isValidId from './validators';
 
+declare global {
+	interface Window {
+		subscriptionManagementSubkey?: string;
+	}
+}
+
 type callApiParams = {
 	apiNamespace?: string;
 	path: string;
@@ -13,7 +19,7 @@ type callApiParams = {
 
 // Get cookie named subkey
 const getSubkey = () => {
-	return window.currentUser?.subscriptionManagementSubkey;
+	return window.subscriptionManagementSubkey;
 };
 
 // Helper function for fetching from subkey authenticated API. Subkey authentication process is only applied in case of logged-out users.
@@ -47,7 +53,7 @@ async function callApi< ReturnType >( {
 			? `https://public-api.wordpress.com/wpcom/v2${ path }`
 			: `https://public-api.wordpress.com/rest/v${ apiVersion }${ path }`;
 
-	return apiFetch( {
+	const res = await apiFetch( {
 		global: true,
 		path: apiPath,
 		apiVersion,
@@ -59,6 +65,7 @@ async function callApi< ReturnType >( {
 			'Content-Type': 'application/json',
 		},
 	} as APIFetchOptions );
+	return res as ReturnType;
 }
 
 interface PagedResult< T > {

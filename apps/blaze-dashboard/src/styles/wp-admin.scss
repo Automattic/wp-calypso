@@ -20,6 +20,19 @@
 		padding-bottom: 0;
 	}
 
+	// The Blaze pages render their own sticky Jetpack/Blaze Ads footer —
+	// replace wp-admin's "Thank you for creating with WordPress" footer.
+	#wpfooter {
+		display: none;
+	}
+
+	.promote-post-i2__page {
+		// Only the admin bar sits above the page here: #wpbody-content's
+		// bottom padding is zeroed and #wpfooter is hidden above, so unlike
+		// the Calypso formula there is no extra layout padding to subtract.
+		min-height: calc(100vh - var(--wp-admin--admin-bar--height, 32px));
+	}
+
 	.site__info {
 		width: inherit;
 	}

@@ -3,10 +3,10 @@ import { formatNumber } from '@automattic/number-formatters';
 import { Icon, chartBar, trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import Chart from 'calypso/components/chart';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import compareProps from 'calypso/lib/compare-props';
@@ -185,4 +185,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( localize, connectComponent )( WordAdsChartTabs );
+export default compose( localize, connectComponent )( WordAdsChartTabs );

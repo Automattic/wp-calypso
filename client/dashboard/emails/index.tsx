@@ -1,4 +1,4 @@
-import { DomainSubtype, EmailBox } from '@automattic/api-core';
+import { DomainSubtype } from '@automattic/api-core';
 import { userMailboxesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -13,7 +13,6 @@ import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { addEmailForwarderRoute, chooseDomainRoute, emailsRoute } from '../app/router/emails';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../components/dataviews';
 import InlineSupportLink from '../components/inline-support-link';
-import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import UnusedMailboxNotice from './components/unused-mailbox-notice';
@@ -24,6 +23,7 @@ import {
 	EmptyMailboxesSearchStateContent,
 } from './empty-mailboxes-state';
 import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
+import type { DomainWithUnusedMailboxes } from './components/unused-mailbox-notice';
 import type { Email } from './types';
 
 import './style.scss';
@@ -35,7 +35,7 @@ function Emails() {
 	const { domainName: domainNameFilter }: { domainName?: string } = emailsRoute.useSearch();
 	const { data: allDomains } = useSuspenseQuery( queries.domainsQuery() );
 	const domains = ( allDomains ?? [] ).filter(
-		( d ) => d.current_user_is_owner && d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+		( d ) => d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
 
 	// Aggregate all domains into a single array
@@ -45,36 +45,38 @@ function Emails() {
 		return domains.filter( ( d ) => domainsWithEmailsList.includes( d.domain ) );
 	}, [ allEmailAccounts, domains ] );
 
-	const emails: Email[] = useMemo( () => {
+	const emails = useMemo( () => {
 		if ( ! allEmailAccounts?.length ) {
 			return [];
 		}
-		return allEmailAccounts
-			.flatMap( ( account ) =>
-				account.emails.map( ( box: EmailBox ) => mapMailboxToEmail( box, account ) )
-			)
-			.filter( ( email ) => email.canUserManage ) as Email[];
+		return allEmailAccounts.flatMap( ( account ) =>
+			account.emails.map( ( box ) => mapMailboxToEmail( box, account ) )
+		);
 	}, [ allEmailAccounts ] );
 
 	// Gather domains with unused mailbox warnings
-	const domainsWithUnusedMailbox: string[] = useMemo( () => {
+	const domainsWithUnusedMailboxes: DomainWithUnusedMailboxes[] = useMemo( () => {
 		if ( ! allEmailAccounts?.length ) {
 			return [];
 		}
-		const warnedDomains = new Set< string >();
+		const unusedMailboxesByDomain = new Map< string, number >();
 		for ( const account of allEmailAccounts ) {
 			const hasUnusedWarning = ( account.warnings ?? [] ).some(
 				( w ) => w.warning_slug === 'unused_mailboxes'
 			);
 			if ( hasUnusedWarning ) {
-				warnedDomains.add( account.domains[ 0 ].domain );
+				const unusedCount = account.maximum_mailboxes - account.emails.length;
+				unusedMailboxesByDomain.set( account.domains[ 0 ].domain, unusedCount );
 			}
 		}
 
 		// Return only domains we show in the table (i.e., that actually have emails)
 		return domainsWithEmails
-			.filter( ( d ) => warnedDomains.has( d.domain ) )
-			.map( ( d ) => d.domain );
+			.filter( ( d ) => unusedMailboxesByDomain.has( d.domain ) )
+			.map( ( d ) => ( {
+				domain: d.domain,
+				unusedCount: unusedMailboxesByDomain.get( d.domain ) ?? 0,
+			} ) );
 	}, [ domainsWithEmails, allEmailAccounts ] );
 
 	const [ selection, setSelection ] = useState< Email[] >( [] );
@@ -136,7 +138,7 @@ function Emails() {
 					fields={ emailFields }
 					view={ view }
 					onChangeView={ updateView }
-					onResetView={ resetView }
+					onReset={ resetView }
 					selection={ selection.map( ( item ) => item.id ) }
 					onChangeSelection={ ( ids ) =>
 						setSelection( emails.filter( ( email ) => ids.includes( email.id ) ) )
@@ -187,9 +189,8 @@ function Emails() {
 					}
 				/>
 			}
-			notices={ <OptInWelcome tracksContext="emails" /> }
 		>
-			<UnusedMailboxNotice domains={ domainsWithUnusedMailbox } />
+			<UnusedMailboxNotice domains={ domainsWithUnusedMailboxes } />
 			{ renderContent() }
 		</PageLayout>
 	);

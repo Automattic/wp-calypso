@@ -43,7 +43,7 @@ const OverviewBodyHosting = () => {
 			translate(
 				'24/7 expert security team, malware scanning and removal, and DDoS and WAF protection.'
 			),
-			translate( 'Realtime backups with one-click restores.' ),
+			translate( 'Real-time backups with one-click restores.' ),
 			translate( 'Round-the-clock support from WordPress experts.' ),
 		],
 		// translators: Button navigating to A4A Marketplace

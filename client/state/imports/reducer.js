@@ -1,5 +1,5 @@
+import { omit, omitBy, isEmpty } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { get, isEmpty, map, omit, omitBy } from 'lodash';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,
@@ -19,7 +19,7 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import { fromApi } from './api';
-import { appStates } from './constants';
+import { appStates, ID_GENERATOR_PREFIX } from './constants';
 import siteImporter from './site-importer/reducer';
 import uploads from './uploads/reducer';
 import urlAnalyzer from './url-analyzer/reducer';
@@ -82,6 +82,8 @@ function importerStatus( state = {}, action ) {
 
 			// convert the response with `fromApi` only after we know it's not empty
 			const newImporterStatus = fromApi( action.importerStatus );
+			const newSiteId = newImporterStatus.site?.ID;
+			const discardedStates = [ appStates.CANCEL_PENDING, appStates.DEFUNCT, appStates.EXPIRED ];
 
 			return omitBy(
 				{
@@ -90,10 +92,23 @@ function importerStatus( state = {}, action ) {
 					// ...and the importer being received.
 					[ newImporterStatus.importerId ]: newImporterStatus,
 				},
-				( importer ) =>
-					[ appStates.CANCEL_PENDING, appStates.DEFUNCT, appStates.EXPIRED ].includes(
-						importer.importerState
-					)
+				( importer ) => {
+					// Drop terminal-state importers.
+					if ( discardedStates.includes( importer.importerState ) ) {
+						return true;
+					}
+					if (
+						importer.importerId?.startsWith( ID_GENERATOR_PREFIX ) &&
+						discardedStates.includes( newImporterStatus.importerState )
+					) {
+						return false;
+					}
+					// The server only tracks one importer per site (a single restapi_import_manager_data blog option).
+					// Without this, an old importerId could linger in Redux, and the UI would keep POSTing to /imports/{stale-id} and getting 404s.
+					return (
+						importer.importerId !== newImporterStatus.importerId && importer.site?.ID === newSiteId
+					);
+				}
 			);
 		}
 
@@ -113,14 +128,13 @@ function importerStatus( state = {}, action ) {
 					...state[ action.importerId ],
 					customData: {
 						...state[ action.importerId ]?.customData,
-						sourceAuthors: map(
-							get( state[ action.importerId ], 'customData.sourceAuthors' ),
+						sourceAuthors: ( state[ action.importerId ]?.customData?.sourceAuthors ?? [] ).map(
 							( author ) =>
 								action.sourceAuthor.id === author.id
 									? {
 											...author,
 											mappedTo: action.targetAuthor,
-									  }
+										}
 									: author
 						),
 					},

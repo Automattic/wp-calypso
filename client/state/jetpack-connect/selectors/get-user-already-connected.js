@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors/get-authorization-data';
 
 import 'calypso/state/jetpack-connect/init';
@@ -9,5 +8,5 @@ import 'calypso/state/jetpack-connect/init';
  * @returns {boolean}       True if the user is connected otherwise false
  */
 export const getUserAlreadyConnected = ( state ) => {
-	return get( getAuthorizationData( state ), 'userAlreadyConnected', false );
+	return getAuthorizationData( state )?.userAlreadyConnected ?? false;
 };

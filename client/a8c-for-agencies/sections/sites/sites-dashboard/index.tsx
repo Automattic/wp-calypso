@@ -14,7 +14,6 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import JetpackSitesDataViews from 'calypso/a8c-for-agencies/sections/sites/features/jetpack/jetpack-sites-dataviews';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import GuidedTour from 'calypso/components/guided-tour';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
@@ -138,15 +137,18 @@ export function SitesDashboard() {
 			return;
 		}
 
-		if (
-			dataViewsState.selectedItem &&
-			dataViewsState.selectedItem.url === initialSelectedSiteUrl
-		) {
-			return;
-		}
-
 		if ( ! isLoading && ! isError && data && initialSelectedSiteUrl ) {
 			const site = data.sites.find( ( site: Site ) => site.url === initialSelectedSiteUrl );
+
+			// The preview pane reads its site off this snapshot, so re-point it when a refetch
+			// produces a new object for the same site. React Query's structural sharing keeps the
+			// reference stable while the data is unchanged, which is what stops this from looping.
+			if (
+				dataViewsState.selectedItem?.url === initialSelectedSiteUrl &&
+				( ! site || site === dataViewsState.selectedItem )
+			) {
+				return;
+			}
 
 			setDataViewsState( ( prevState: DataViewsState ) => ( {
 				...prevState,
@@ -248,7 +250,7 @@ export function SitesDashboard() {
 		>
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop isFullWidth withNavigation={ navItems.length > 1 }>
-					<ProvisioningSiteNotification />
+					<ProvisioningSiteNotification onSuccess={ () => refetch() } />
 					<A4AAgencyApprovalNotice isFullWidth />
 
 					<LayoutHeader>
@@ -267,7 +269,6 @@ export function SitesDashboard() {
 
 				<SiteNotifications />
 				{ tourId && <GuidedTour defaultTourId={ tourId } /> }
-				<QueryReaderTeams />
 				<DashboardDataContext.Provider
 					value={ {
 						verifiedContacts: {

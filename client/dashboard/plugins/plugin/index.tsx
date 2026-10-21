@@ -1,9 +1,11 @@
 import { MarketplacePlugin, type PluginItem, Site, WpOrgPlugin } from '@automattic/api-core';
+import { formatNumber } from '@automattic/number-formatters';
 import { privateApis } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
+import { TextBlur } from '../../components/text-blur';
 import { SitesWithThisPlugin } from './sites-with-this-plugin';
 import { SitesWithoutThisPlugin } from './sites-without-this-plugin';
 import { SiteWithPluginData } from './use-plugin';
@@ -60,25 +62,34 @@ export function PluginTabs( {
 		[ sitesWithThisPlugin, optimisticDelete ]
 	);
 
+	const installedCount = sitesWithThisPluginExcludingDeleted.length;
+	const installedLabel = sprintf(
+		// translators: %(count)s: the formatted number of sites the plugin is installed on.
+		_n( 'Installed on %(count)s site', 'Installed on %(count)s sites', installedCount ),
+		{ count: formatNumber( installedCount ) }
+	);
+	// While the site data is still loading the count isn't known yet, so blur the
+	// label into a skeleton instead of asserting a misleading "Installed on 0 sites".
+	const installedTabTitle = (
+		<TextBlur isBlurred={ isLoading && installedCount === 0 }>{ installedLabel }</TextBlur>
+	);
+
 	return (
 		<Tabs
 			selectedTabId={ activeTab }
 			onSelect={ ( tabId: 'installed' | 'available' ) => setActiveTab( tabId ) }
 		>
-			<Tabs.TabList className="plugin-tabs-list">
+			{ /*
+			 * The "Installed on N sites" label changes width when the selected
+			 * plugin changes, which shifts the sibling "Available on" tab. The
+			 * WordPress Tabs indicator only re-measures on a selected-tab resize
+			 * or tab-index change — not when a sibling reflows — so its underline
+			 * gets left behind. Keying the tab list on the label remounts it,
+			 * forcing a fresh measurement so the indicator stays aligned.
+			 */ }
+			<Tabs.TabList key={ sitesWithThisPluginExcludingDeleted.length } className="plugin-tabs-list">
 				<Tabs.Tab tabId="installed">
-					<SectionHeader
-						level={ 3 }
-						title={ sprintf(
-							// translators: %(count) is the number of sites the plugin is installed on.
-							_n(
-								'Installed on %(count)d site',
-								'Installed on %(count)d sites',
-								sitesWithThisPluginExcludingDeleted.length
-							),
-							{ count: sitesWithThisPluginExcludingDeleted.length }
-						) }
-					/>
+					<SectionHeader level={ 3 } title={ installedTabTitle } />
 				</Tabs.Tab>
 				<Tabs.Tab tabId="available">
 					<SectionHeader level={ 3 } title={ __( 'Available on' ) } />

@@ -1,9 +1,25 @@
-import { useEffect } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { parseErrorUrl } from '../utils/parse-error-url';
+import {
+	trackImageStudioUpgradeNoticeShown,
+	trackImageStudioUpgradeNoticeClick,
+} from '../utils/tracking';
 import type { NoticeAction, NoticeType } from '../store';
+import type { ImageStudioMode } from '../types';
+import type { UpgradeNoticeCredits } from '../utils/tracking';
 
 type AddNoticeFunc = ( content: string, type: NoticeType, actions?: NoticeAction[] ) => void;
+
+/** The old Jetpack AI quota only refuses at zero, with no balance or plan to report. */
+const JETPACK_AI_QUOTA_NOTICE: UpgradeNoticeCredits = {
+	meter: 'jetpack_ai',
+	state: 'zero',
+	planTier: 'none',
+	creditsLeft: 'none',
+	ctaType: 'upgrade',
+	ref: 'none',
+};
 
 /**
  * Hook that displays an error notice when an error occurs.
@@ -11,8 +27,17 @@ type AddNoticeFunc = ( content: string, type: NoticeType, actions?: NoticeAction
  * Upgrade URLs show as persistent warning notices, other errors as snackbars.
  * @param error     - The error to display
  * @param addNotice - Function to add a notice to the store
+ * @param mode      - Image Studio mode ('edit' or 'generate') for tracking
  */
-export function useErrorNotice( error: unknown, addNotice: AddNoticeFunc ): void {
+export function useErrorNotice(
+	error: unknown,
+	addNotice: AddNoticeFunc,
+	mode: ImageStudioMode
+): void {
+	// The notice store dedupes by content, so repeated errors with the same
+	// message keep a single visible notice; mirror that here and count one
+	// impression per distinct message rather than one per error.
+	const trackedImpressions = useRef< Set< string > >( new Set() );
 	useEffect( () => {
 		if ( ! error ) {
 			return;
@@ -27,6 +52,14 @@ export function useErrorNotice( error: unknown, addNotice: AddNoticeFunc ): void
 
 		if ( url && isUpgradeUrl ) {
 			// Show upgrade notices as persistent warning notices
+			if ( ! trackedImpressions.current.has( content ) ) {
+				trackedImpressions.current.add( content );
+				trackImageStudioUpgradeNoticeShown( {
+					mode,
+					trigger: 'error',
+					...JETPACK_AI_QUOTA_NOTICE,
+				} );
+			}
 			addNotice( content, 'warning', [
 				{
 					label: isPlansPageUrl
@@ -34,6 +67,12 @@ export function useErrorNotice( error: unknown, addNotice: AddNoticeFunc ): void
 						: __( 'Upgrade plan', __i18n_text_domain__ ),
 					url,
 					openInNewTab: true,
+					onClick: () =>
+						trackImageStudioUpgradeNoticeClick( {
+							mode,
+							trigger: 'error',
+							...JETPACK_AI_QUOTA_NOTICE,
+						} ),
 				},
 			] );
 		} else if ( url ) {
@@ -49,5 +88,5 @@ export function useErrorNotice( error: unknown, addNotice: AddNoticeFunc ): void
 			// Plain errors show as snackbar
 			addNotice( content, 'error' );
 		}
-	}, [ error, addNotice ] );
+	}, [ error, addNotice, mode ] );
 }

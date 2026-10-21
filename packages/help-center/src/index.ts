@@ -8,3 +8,5 @@ export { default as HelpCenterInlineButton } from './components/help-center-inli
 export { default as Mail } from './icons/mail';
 export { useHelpSearchQuery } from './hooks/use-help-search-query';
 export { HelpCenterSupportGuides } from './components/help-center-support-guides';
+export { HelpCenterCTA } from './components/help-center-cta';
+export type { HelpCenterCTAProps, HelpCenterCTAVariant } from './components/help-center-cta';

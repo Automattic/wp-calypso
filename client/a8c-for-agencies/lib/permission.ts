@@ -21,7 +21,6 @@ import {
 	A4A_SITES_LINK_DEVELOPMENT,
 	A4A_SITES_LINK_WALKTHROUGH_TOUR,
 	A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
-	A4A_SITES_CONNECT_URL_LINK,
 	A4A_PLUGINS_LINK,
 	A4A_MARKETPLACE_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
@@ -55,9 +54,18 @@ import {
 	A4A_WOOPAYMENTS_SITE_SETUP_LINK,
 	A4A_WOOPAYMENTS_OVERVIEW_LINK,
 	A4A_LEARN_LINK,
+	A4A_AGENT_STUDIO_LINK,
 	A4A_RESOURCES_LINK,
 	A4A_DEV_TOOLS_LINK,
+	A4A_AI_MCP_LINK,
+	A4A_AI_MCP_READ_TOOLS_LINK,
+	A4A_AI_MCP_WRITE_TOOLS_LINK,
+	A4A_AI_MCP_CONNECT_LINK,
+	A4A_AI_MCP_STARTER_PROMPTS_LINK,
+	A4A_BENCHMARKS_LINK,
 	A4A_EXCLUSIVE_OFFERS_LINK,
+	A4A_AMPLIFY_LINK,
+	A4A_AMPLIFY_REPORTS_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 
@@ -74,7 +82,6 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_SITES_LINK_DEVELOPMENT ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_SITES_LINK_WALKTHROUGH_TOUR ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_SITES_LINK_ADD_NEW_SITE_TOUR ]: [ 'a4a_read_managed_sites' ],
-	[ A4A_SITES_CONNECT_URL_LINK ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_REPORTS_LINK ]: [ 'a4a_read_reports' ],
 	[ A4A_REPORTS_OVERVIEW_LINK ]: [ 'a4a_read_reports' ],
 	[ A4A_REPORTS_DASHBOARD_LINK ]: [ 'a4a_read_reports' ],
@@ -117,9 +124,18 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_WOOPAYMENTS_SITE_SETUP_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_WOOPAYMENTS_OVERVIEW_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_EXCLUSIVE_OFFERS_LINK ]: [ 'a4a_read_exclusive_offers' ],
+	[ A4A_AMPLIFY_LINK ]: [ 'a4a_read_amplify' ],
+	[ A4A_AMPLIFY_REPORTS_LINK ]: [ 'a4a_read_amplify' ],
 	[ A4A_RESOURCES_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_LEARN_LINK ]: [ 'a4a_read_learn' ],
+	[ A4A_AGENT_STUDIO_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_DEV_TOOLS_LINK ]: [ 'a4a_read_learn' ],
+	[ A4A_AI_MCP_LINK ]: [ 'a4a_read_learn' ],
+	[ A4A_AI_MCP_READ_TOOLS_LINK ]: [ 'a4a_read_learn' ],
+	[ A4A_AI_MCP_WRITE_TOOLS_LINK ]: [ 'a4a_read_learn' ],
+	[ A4A_AI_MCP_CONNECT_LINK ]: [ 'a4a_read_learn' ],
+	[ A4A_AI_MCP_STARTER_PROMPTS_LINK ]: [ 'a4a_read_learn' ],
+	[ A4A_BENCHMARKS_LINK ]: [ 'a4a_read_learn' ],
 };
 
 const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
@@ -129,6 +145,7 @@ const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
 	licenses: [ 'a4a_jetpack_licensing' ],
 	plugins: [ 'a4a_read_managed_sites' ],
 	referrals: [ 'a4a_read_referrals' ],
+	'agent-studio': [ 'a4a_read_learn' ],
 };
 
 const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
@@ -138,6 +155,7 @@ const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
 	team: /^\/team(\/.*)?$/,
 	plugins: /^\/plugins(\/.*)?$/,
 	referrals: /^\/referrals(\/.*)?$/,
+	'agent-studio': /^\/resources-and-tools\/agent-studio\/(projects|agents|outputs)\/[^/]+(\/.*)?$/,
 };
 
 export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
@@ -162,8 +180,8 @@ export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
 		for ( const [ key, pattern ] of Object.entries( DYNAMIC_PATH_PATTERNS ) ) {
 			if ( pattern.test( pathname ) ) {
 				const dynamicPermissions = MEMBER_ACCESSIBLE_DYNAMIC_PATHS[ key ];
-				return capabilities.some(
-					( capability: string ) => dynamicPermissions?.includes( capability )
+				return capabilities.some( ( capability: string ) =>
+					dynamicPermissions?.includes( capability )
 				);
 			}
 		}

@@ -70,7 +70,7 @@ $blueberry-blue: #3858e9;
 	width: 100%;
 	height: 0;
 	flex: 1;
-	background-color: #fff;
+	background-color: var(--color-surface, #fff);
 }
 
 .using-environment-badge {
@@ -79,7 +79,7 @@ $blueberry-blue: #3858e9;
 }
 
 .chatbox-header-button {
-	color: #ece6f6;
+	color: var( --color-foreground );
 	border: none;
 	outline: none;
 	padding: 0;
@@ -93,6 +93,36 @@ $blueberry-blue: #3858e9;
 
 .odie-chat-message-input-container {
 	padding: 16px;
+}
+
+.odie-ai-disclosure {
+	color: var( --studio-gray-50 );
+	font-size: 0.75rem;
+	line-height: 1.4;
+	text-align: center;
+	padding: 8px 8px 0;
+
+	@media screen {
+		:root[data-theme='dark'] & {
+			color: var( --dashboard__text-muted-color, var( --studio-gray-50 ) );
+		}
+	}
+
+	@media screen and ( prefers-color-scheme: dark ) {
+		:root[data-theme='system'] & {
+			color: var( --dashboard__text-muted-color, var( --studio-gray-50 ) );
+		}
+	}
+
+	a,
+	a:visited {
+		color: inherit;
+		text-decoration: underline;
+		text-decoration-color: currentcolor;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 2px;
+		font-size: inherit;
+	}
 }
 
 .odie-chat-message-input-container.agenttic {

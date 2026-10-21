@@ -5,7 +5,6 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 const debug = require( 'debug' )( 'config' );
-const { assignWith } = require( 'lodash' );
 
 function getDataFromFile( file ) {
 	let fileData = {};
@@ -40,10 +39,15 @@ module.exports = function ( configPath, defaultOpts ) {
 	const disabledFeatures = opts.disabledFeatures ? opts.disabledFeatures.split( ',' ) : [];
 
 	configFiles.forEach( function ( file ) {
-		// merge the objects in `features` field, and do a simple assignment for other fields
-		assignWith( data, getDataFromFile( file ), ( objValue, srcValue, key ) =>
-			key === 'features' ? { ...objValue, ...srcValue } : undefined
-		);
+		for ( const [ key, value ] of Object.entries( getDataFromFile( file ) ) ) {
+			// Never assign through `__proto__`; a direct write would invoke the
+			// prototype setter instead of setting an own property.
+			if ( key === '__proto__' ) {
+				continue;
+			}
+			// merge the objects in `features` field, and do a simple assignment for other fields
+			data[ key ] = key === 'features' ? { ...data[ key ], ...value } : value;
+		}
 	} );
 
 	if ( data.hasOwnProperty( 'features' ) ) {

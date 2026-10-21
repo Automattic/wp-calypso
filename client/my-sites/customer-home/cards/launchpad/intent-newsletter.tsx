@@ -4,6 +4,7 @@ import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CustomerHomeLaunchpad from '.';
 import type { AppState } from 'calypso/types';
+import type { JSX } from 'react';
 
 const LaunchpadIntentNewsletter = ( { checklistSlug }: { checklistSlug: string } ): JSX.Element => {
 	const siteId = useSelector( getSelectedSiteId ) || 0;

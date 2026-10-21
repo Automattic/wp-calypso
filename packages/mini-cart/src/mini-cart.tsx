@@ -132,18 +132,22 @@ export function MiniCart( {
 	goToCheckout,
 	closeCart,
 	onRemoveProduct,
+	onRemoveBundle,
 	onRemoveCoupon,
 	checkoutLabel,
 	emptyCart,
+	showBundleGrouping = false,
 }: {
 	selectedSiteSlug: string;
 	cartKey: number | undefined;
 	goToCheckout: ( siteSlug: string ) => void;
 	closeCart: () => void;
 	onRemoveProduct?: ( uuid: string ) => void;
+	onRemoveBundle?: ( groupId: string, memberCount: number ) => void;
 	onRemoveCoupon?: () => void;
 	checkoutLabel?: string;
 	emptyCart?: React.ReactNode;
+	showBundleGrouping?: boolean;
 } ) {
 	const {
 		responseCart,
@@ -198,6 +202,8 @@ export function MiniCart( {
 						removeProductFromCart={ handleRemoveProduct }
 						addProductsToCart={ addProductsToCart }
 						responseCart={ responseCart }
+						showBundleGrouping={ showBundleGrouping }
+						onRemoveBundle={ onRemoveBundle }
 					/>
 					{ shouldRenderEmptyCart && emptyCart }
 					{ ! shouldRenderEmptyCart && <MiniCartTotal responseCart={ responseCart } /> }

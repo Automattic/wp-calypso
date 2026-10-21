@@ -1,1 +1,1 @@
-export * from './me-sidebar-component';
+export * from './dashboard-me-sidebar-component';

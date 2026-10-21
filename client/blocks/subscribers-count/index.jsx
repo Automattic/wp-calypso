@@ -1,6 +1,5 @@
 import { Button, Count } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -32,13 +31,13 @@ class SubscribersCount extends Component {
 
 export default connect( ( state ) => {
 	const site = getSelectedSite( state );
-	const siteId = get( site, 'ID' );
+	const siteId = site?.ID;
 	const data = getSiteStatsNormalizedData( state, siteId, 'stats' );
-	const siteSubscribers = get( site, 'subscribers_count' );
+	const siteSubscribers = site?.subscribers_count;
 
 	return {
 		slug: getSiteSlug( state, siteId ),
-		subscribers: get( data, 'followersBlog', siteSubscribers ),
+		subscribers: data?.followersBlog ?? siteSubscribers,
 		siteId,
 	};
 } )( localize( SubscribersCount ) );

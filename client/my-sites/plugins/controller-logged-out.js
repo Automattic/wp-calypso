@@ -7,17 +7,31 @@ import {
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { getSiteFragment } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { setDocumentHeadMeta } from 'calypso/state/document-head/actions';
+import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin as getWporgPluginSelector } from 'calypso/state/plugins/wporg/selectors';
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
-import { getCategories } from './categories/use-categories';
+import { ALLOWED_CATEGORIES, getCategories } from './categories/use-categories';
 import { UNLISTED_PLUGINS } from './constants';
 import { getCategoryForPluginsBrowser } from './controller';
 
 const PREFETCH_TIMEOUT = 2000;
 const PREFETCH_TIMEOUT_BOTS = 10000;
 const PREFETCH_TIMEOUT_ERROR = 'plugins prefetch timeout';
+
+const formatCause = ( cause ) => {
+	if ( ! cause ) {
+		return undefined;
+	}
+	// Undici surfaces connection failures as AggregateError when every attempt fails.
+	if ( cause instanceof AggregateError ) {
+		return cause.errors.map( String ).join( '; ' );
+	}
+	return String( cause );
+};
 
 function getQueryOptions( { path, lang } ) {
 	const props = {
@@ -84,14 +98,36 @@ const prefetchPlugin = async ( queryClient, store, { locale, pluginSlug } ) => {
 		await store.dispatch( wporgFetchPluginData( pluginSlug, locale ) );
 		data = getWporgPluginSelector( store.getState(), pluginSlug );
 		if ( data?.error ) {
-			throw new Error( data.error );
+			// Rethrow the original error so its url/cause survive to the error log.
+			throw data.error instanceof Error ? data.error : new Error( data.error );
 		}
 	}
 
 	return data;
 };
 
-const prefetchTimebox = ( prefetchPromises, context ) => {
+/**
+ * Read the marketplace product that `prefetchPlugin` just cached.
+ *
+ * `prefetchPlugin` cannot hand the product back directly: it caches through
+ * `queryClient.prefetchQuery`, which resolves to `undefined` by design. The
+ * cache is the only place the prefetched product is readable.
+ *
+ * `pluginSlug` must be the same value that was passed to `prefetchPlugin`,
+ * because that value builds the query key.
+ * @param {Object} queryClient The react-query client holding the prefetched data
+ * @param {string} pluginSlug The plugin slug used for the prefetch
+ * @returns {Object|undefined} The normalized product, or undefined for a non-marketplace plugin
+ */
+const getPrefetchedMarketplaceProduct = ( queryClient, pluginSlug ) =>
+	queryClient.getQueryData( getWPCOMPluginQueryParams( pluginSlug ).queryKey );
+
+const prefetchTimebox = ( prefetches, context ) => {
+	const pending = new Set( prefetches.map( ( { name } ) => name ) );
+	const prefetchPromises = prefetches.map( ( { name, promise } ) =>
+		promise.finally( () => pending.delete( name ) )
+	);
+
 	const racingPromises = [ Promise.all( prefetchPromises ) ];
 	const isBot = context.res?.req?.useragent?.isBot;
 
@@ -116,6 +152,13 @@ const prefetchTimebox = ( prefetchPromises, context ) => {
 		context.res.req.logger.error( {
 			feature: 'calypso_ssr',
 			message: err?.message,
+			extra: {
+				// Network-layer errors carry the request URL (see wpcom-xhr-request,
+				// lib/wporg); wporg HTTP errors expose it on err.response.url.
+				prefetchUrl: err?.url ?? err?.response?.url,
+				prefetchCause: formatCause( err?.cause ),
+				pendingPrefetches: [ ...pending ],
+			},
 		} );
 
 		return err;
@@ -135,10 +178,10 @@ export async function fetchPlugins( context, next ) {
 
 	await prefetchTimebox(
 		[
-			prefetchProductList( queryClient, store ),
-			prefetchPaidPlugins( queryClient, options ),
-			prefetchPopularPlugins( queryClient, options ),
-			prefetchFeaturedPlugins( queryClient, options ),
+			{ name: 'products-list', promise: prefetchProductList( queryClient, store ) },
+			{ name: 'paid-plugins', promise: prefetchPaidPlugins( queryClient, options ) },
+			{ name: 'popular-plugins', promise: prefetchPopularPlugins( queryClient, options ) },
+			{ name: 'featured-plugins', promise: prefetchFeaturedPlugins( queryClient ) },
 		],
 		context
 	);
@@ -167,12 +210,46 @@ export async function fetchCategoryPlugins( context, next ) {
 
 	await prefetchTimebox(
 		[
-			prefetchProductList( queryClient, store ),
-			prefetchPaidPlugins( queryClient, options ),
-			prefetchCategoryPlugins( queryClient, options ),
+			{ name: 'products-list', promise: prefetchProductList( queryClient, store ) },
+			{ name: 'paid-plugins', promise: prefetchPaidPlugins( queryClient, options ) },
+			{ name: 'category-plugins', promise: prefetchCategoryPlugins( queryClient, options ) },
 		],
 		context
 	);
+
+	next();
+}
+
+/**
+ * Mark uncurated `/plugins/browse/<term>` pages as `noindex`.
+ *
+ * Only the curated `ALLOWED_CATEGORIES` are intentional landing pages meant to be
+ * indexed. Every other term is a tag fallthrough: each plugin links all of its
+ * WordPress.org tags as `/plugins/browse/<tag>` (see plugin-details-header), which
+ * generates a long tail of ~49k thin tag pages. Google crawls these and declines to
+ * index them, so they pile up in Search Console's "Crawled - currently not indexed"
+ * bucket. Emitting `noindex` reclassifies them into the intentional "Excluded by
+ * 'noindex' tag" bucket. We deliberately keep them crawlable (no robots.txt block)
+ * so Googlebot can recrawl and observe the directive.
+ */
+export function setBrowsePluginsNoindex( context, next ) {
+	if ( ! context.isServerSide || isUserLoggedIn( context.store.getState() ) ) {
+		return next();
+	}
+
+	const category = getCategoryForPluginsBrowser( context );
+	const isCurated =
+		!! category &&
+		ALLOWED_CATEGORIES.some( ( allowed ) => allowed.toLowerCase() === category.toLowerCase() );
+
+	if ( ! isCurated ) {
+		const meta = getDocumentHeadMeta( context.store.getState() )
+			// Drop any existing robots meta to avoid duplicate tags.
+			.filter( ( { name } ) => name !== 'robots' )
+			.concat( { name: 'robots', content: 'noindex' } );
+
+		context.store.dispatch( setDocumentHeadMeta( meta ) );
+	}
 
 	next();
 }
@@ -196,10 +273,13 @@ export async function fetchPlugin( context, next ) {
 
 	const dataOrError = await prefetchTimebox(
 		[
-			// We need to have the product list before prefetchPlugin so it can determine where to fetch from.
-			prefetchProductList( queryClient, store ).then( () =>
-				prefetchPlugin( queryClient, store, options )
-			),
+			{
+				// We need to have the product list before prefetchPlugin so it can determine where to fetch from.
+				name: `plugin:${ pluginSlug }`,
+				promise: prefetchProductList( queryClient, store ).then( () =>
+					prefetchPlugin( queryClient, store, options )
+				),
+			},
 		],
 		context
 	);
@@ -208,6 +288,16 @@ export async function fetchPlugin( context, next ) {
 		if ( dataOrError.message !== PREFETCH_TIMEOUT_ERROR ) {
 			return next( 'route' );
 		}
+	}
+
+	// A retired marketplace product cannot be bought any more, so its detail page
+	// is a dead end. Send the request to the plugin browser instead. The redirect
+	// is temporary because a product can stop being retired.
+	if ( getPrefetchedMarketplaceProduct( queryClient, options.pluginSlug )?.is_retired ) {
+		// `ssrSetupLocale` has already redirected any locale that is not a
+		// magnificent one, so a `lang` param here is safe to keep in the path.
+		const { lang } = context.params;
+		return context.res.redirect( 302, lang ? `/${ lang }/plugins` : '/plugins' );
 	}
 
 	next();

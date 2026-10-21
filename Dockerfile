@@ -5,7 +5,7 @@ ARG node_version=24.15.0
 ARG cache_seed_image=registry.a8c.com/calypso/cache-seed:latest
 
 ###################
-FROM node:${node_version}-bullseye-slim AS builder-cache-none
+FROM node:${node_version}-trixie-slim AS builder-cache-none
 
 WORKDIR /calypso
 ENV HOME=/calypso
@@ -18,7 +18,7 @@ RUN mkdir -p /calypso/.cache /calypso/.yarn
 FROM ${cache_seed_image} AS cache-seed-source
 
 ###################
-FROM node:${node_version}-bullseye-slim AS builder-cache-seed
+FROM node:${node_version}-trixie-slim AS builder-cache-seed
 
 WORKDIR /calypso
 ENV HOME=/calypso
@@ -37,11 +37,14 @@ FROM builder-cache-${cache_mode} AS deps
 WORKDIR /calypso
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV ELECTRON_SKIP_BINARY_DOWNLOAD=1
 ENV SKIP_TSC=true
 ENV SKIP_CALYPSO_POSTINSTALL=true
 ENV SKIP_CALYPSO_PACKAGE_BUILDS=true
 ENV CONTAINER=docker
 ENV IS_CI=true
+
+RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
 
 # For Sentry uploads
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
@@ -145,6 +148,11 @@ COPY --from=builder --chown=nobody:nobody /calypso/build /calypso/build
 COPY --from=builder --chown=nobody:nobody /calypso/public /calypso/public
 COPY --from=builder --chown=nobody:nobody /calypso/config /calypso/config
 COPY --from=builder --chown=nobody:nobody /calypso/package.json /calypso/package.json
+
+# The tag calypso.live can resolve this image by. Declared last because it
+# changes on every build, and would otherwise invalidate the layers above.
+ARG calypso_live_image=""
+ENV CALYPSO_LIVE_IMAGE=$calypso_live_image
 
 USER nobody
 ENTRYPOINT ["/sbin/tini", "--"]

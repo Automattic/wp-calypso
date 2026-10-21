@@ -44,7 +44,7 @@ import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
-class HandleEmailedLinkForm extends Component {
+export class HandleEmailedLinkForm extends Component {
 	static propTypes = {
 		// Passed props
 		clientId: PropTypes.string,
@@ -90,6 +90,11 @@ class HandleEmailedLinkForm extends Component {
 	}
 
 	componentDidMount() {
+		const { emailAddress, token, isExpired } = this.props;
+		if ( emailAddress && token && ! isExpired ) {
+			this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
+		}
+
 		if (
 			this.props.clientId === config( 'wpcom_signup_id' ) &&
 			! this.props.isImmediateLoginAttempt &&
@@ -118,14 +123,20 @@ class HandleEmailedLinkForm extends Component {
 
 	// Lifted from `blocks/login`
 	// @TODO move to `state/login/actions` & use both places
-	handleValidToken = () => {
+	//
+	// Accepts `props` because `this.props` is not yet updated when called from
+	// `UNSAFE_componentWillUpdate`, which left `twoFactorEnabled` with a stale value.
+	// Users with 2FA enabled who tried to login with a magic link would be
+	// redirected to the logged-out home instead of the authenticator prompt because
+	// `twoFactorEnabled` was false.
+	handleValidToken = ( props = this.props ) => {
 		const {
 			redirectToSanitized,
 			twoFactorEnabled,
 			twoFactorNotificationSent,
 			oauth2Client,
 			wccomFrom,
-		} = this.props;
+		} = props;
 
 		if ( ! twoFactorEnabled ) {
 			this.props.rebootAfterLogin( { magic_login: 1 } );
@@ -160,7 +171,8 @@ class HandleEmailedLinkForm extends Component {
 			this.props.showMagicLoginLinkExpiredPage();
 			return;
 		}
-		this.handleValidToken();
+		// We pass `nextProps` here because `this.props` is not yet updated during this lifecycle
+		this.handleValidToken( nextProps );
 	}
 
 	render() {
@@ -262,8 +274,6 @@ class HandleEmailedLinkForm extends Component {
 				</p>
 			);
 		}
-
-		this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
 
 		if ( isGravPoweredClient ) {
 			return (

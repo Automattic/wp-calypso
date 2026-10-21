@@ -3,7 +3,6 @@ import { SiteExcerptData } from '@automattic/sites';
 import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
-import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { Text } from 'calypso/dashboard/components/text';
 import { DEFAULT_CONFIG } from 'calypso/dashboard/sites/dataviews';
@@ -44,8 +43,6 @@ const P2SitesDataViews = ( {
 	const userId = useSelector( getCurrentUserId );
 
 	const siteStatusGroups = useSiteStatusGroups();
-
-	useQueryReaderTeams();
 
 	// Generate DataViews table field-columns
 	const fields = useMemo( () => {

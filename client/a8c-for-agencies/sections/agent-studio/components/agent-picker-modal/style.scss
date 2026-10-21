@@ -1,0 +1,34 @@
+.a4a-agent-studio-agent-picker-modal {
+	.components-modal__content {
+		width: 520px;
+		max-width: 100%;
+	}
+
+	// The summary button renders inside a WordPress Button, which centers its
+	// text; keep the picker copy left-aligned.
+	.summary-button {
+		text-align: start;
+	}
+
+	// Give the icon or preview image an intentional, fixed slot. Scoped to
+	// match the component's own selector specificity so the overrides win.
+	.summary-button.components-button .summary-button-decoration {
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		width: 64px;
+		height: 64px;
+		overflow: hidden;
+		border-radius: 4px;
+		background: var( --color-neutral-0 );
+		color: var( --color-neutral-60 );
+	}
+
+	.summary-button.components-button .summary-button-decoration img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+}

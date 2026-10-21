@@ -1,0 +1,19 @@
+@import '@automattic/calypso-color-schemes/root-only';
+
+.omnibar__cart-popover {
+	button {
+		appearance: none;
+		border: 0;
+		font-family: inherit;
+	}
+
+	.mini-cart__close-button {
+		background: transparent;
+		padding: 0;
+	}
+
+	.mini-cart__title {
+		margin-block-start: 0;
+		font-weight: inherit;
+	}
+}

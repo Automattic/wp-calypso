@@ -19,6 +19,7 @@ import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useLocale } from '../../app/locale';
 import { domainRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
@@ -53,28 +54,22 @@ export default function TransferDomainToAnyUser() {
 	const { domainName } = domainRoute.useParams() as { domainName: string };
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: domainTransferRequest } = useSuspenseQuery(
-		domainTransferRequestQuery( domainName, domain.site_slug )
+		domainTransferRequestQuery( domainName, domain.blog_id )
 	);
 	const { mutate: deleteDomainTransferRequest, isPending: isDeletingDomainTransferRequest } =
-		useMutation( {
-			...deleteDomainTransferRequestMutation( domainName, domain.site_slug ),
-			meta: {
-				snackbar: {
-					success: __( 'Domain transfer cancelled.' ),
-					error: __( 'Failed to cancel domain transfer.' ),
-				},
-			},
-		} );
+		useMutation(
+			withSnackbar( deleteDomainTransferRequestMutation( domainName, domain.blog_id ), {
+				success: __( 'Domain transfer cancelled.' ),
+				error: __( 'Failed to cancel domain transfer.' ),
+			} )
+		);
 	const { mutate: updateDomainTransferRequest, isPending: isUpdatingDomainTransferRequest } =
-		useMutation( {
-			...updateDomainTransferRequestMutation( domainName, domain.site_slug ),
-			meta: {
-				snackbar: {
-					success: __( 'A domain transfer request has been emailed to the recipient’s address.' ),
-					error: __( 'Failed to initiate domain transfer.' ),
-				},
-			},
-		} );
+		useMutation(
+			withSnackbar( updateDomainTransferRequestMutation( domainName, domain.blog_id ), {
+				success: __( 'A domain transfer request has been emailed to the recipient’s address.' ),
+				error: __( 'Failed to initiate domain transfer.' ),
+			} )
+		);
 	const locale = useLocale();
 	const transferEmail = domainTransferRequest?.email;
 	const requestedAt = domainTransferRequest?.requested_at;
@@ -147,7 +142,7 @@ export default function TransferDomainToAnyUser() {
 					{ hasEmailWithUs && (
 						<Text as="p">
 							{ sprintf(
-								/* Translators: %s: domainName is the domain name */
+								/* translators: %(domainName)s: the domain name */
 								__(
 									'The email subscription for %(domainName)s will be transferred along with the domain.'
 								),

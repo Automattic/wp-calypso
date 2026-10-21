@@ -22,7 +22,8 @@ module.exports = ( api, opts ) => ( {
 				modules: modulesOption( opts ),
 				useBuiltIns: opts.useBuiltIns ? opts.useBuiltIns : 'entry',
 				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
-				exclude: [ 'transform-typeof-symbol' ],
+				// Exclude `web.immediate`: the non-standard setImmediate is unused and needed by no target browser.
+				exclude: [ 'transform-typeof-symbol', 'web.immediate' ],
 			},
 		],
 		[

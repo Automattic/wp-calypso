@@ -17,7 +17,7 @@
 		"resolveJsonModule": true,
 		"strict": true,
 		"isolatedModules": true,
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"types": [],
 		"forceConsistentCasingInFileNames": true
 	}

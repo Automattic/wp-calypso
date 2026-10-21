@@ -1,27 +1,26 @@
-import { BrowserManager, RestAPIClient } from '@automattic/calypso-e2e';
+import { BrowserManager, DataHelper, RestAPIClient } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiDeleteSite } from '../shared';
+import { apiCancelAtomicPlan, apiDeleteSite } from '../shared';
 import type { NewSiteResponse, TestAccount } from '@automattic/calypso-e2e';
 
 test.describe(
-	'Plans: Create a WordPress.com/Business site as existing user',
+	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com/Business site as existing user' ),
 	{
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
 	() => {
 		const planName = 'Business';
 
-		let siteCreatedFlag = false;
 		let newSiteDetails: NewSiteResponse | undefined;
 		let accountUsed: TestAccount;
 
 		test( `As an existing WordPress.com user, I can purchase a ${ planName } plan during signup`, async ( {
 			accountPreRelease,
 			componentDomainSearch,
-			componentSidebar,
 			helperData,
 			page,
 			pageCartCheckout,
+			pagePostCheckoutSetupSite,
 			pageSignupPickPlan,
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountPreRelease.accountName }'`, async function () {
@@ -38,13 +37,19 @@ test.describe(
 			} );
 
 			await test.step( 'And I skip domain selection', async function () {
-				await componentDomainSearch.search( 'foo' );
+				await componentDomainSearch.search( helperData.getBlogName() );
 				await componentDomainSearch.skipPurchase();
 			} );
 
 			await test.step( `And I select the WordPress.com ${ planName } plan`, async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
-				siteCreatedFlag = true;
+				try {
+					newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				} finally {
+					// selectPlan throws if the flow doesn't reach checkout in time, but the
+					// site is created before that. Take it from the page object so afterAll
+					// deletes it instead of leaking it onto the shared account.
+					newSiteDetails ??= pageSignupPickPlan.createdSite;
+				}
 			} );
 
 			await test.step( 'Then I see secure checkout with the plan in the cart', async function () {
@@ -59,18 +64,30 @@ test.describe(
 				await pageCartCheckout.purchase( { timeout: 75 * 1000 } );
 			} );
 
-			await test.step( 'Then I land on Home', async function () {
-				await page.waitForURL( /home/ );
+			await test.step( 'Then I land on the post-checkout "Let’s design your site" screen', async function () {
+				// Eligible paid plans now land on the post-checkout choice screen
+				// after checkout, instead of going straight to Home.
+				await pagePostCheckoutSetupSite.waitUntilLoaded();
 			} );
 
-			await test.step( `And the sidebar shows I am on the ${ planName } plan`, async function () {
-				const currentPlan = await componentSidebar.getCurrentPlanName();
-				expect( currentPlan ).toBe( planName );
+			await test.step( `And the site has the ${ planName } plan`, async function () {
+				// New sites land on wp-admin Site Setup instead of My Home, so the Calypso
+				// sidebar isn't there to show the plan; read it from the site's purchases.
+				const restAPIClient = new RestAPIClient( {
+					username: accountPreRelease.credentials.username,
+					password: accountPreRelease.credentials.password,
+				} );
+				const purchases = await restAPIClient.getAllPurchases(
+					newSiteDetails!.blog_details.blogid
+				);
+				expect( purchases.map( ( purchase ) => purchase.product_slug ) ).toContain(
+					'business-bundle'
+				);
 			} );
 		} );
 
 		test.afterAll( 'Delete the created site', async function () {
-			if ( ! siteCreatedFlag || ! newSiteDetails || ! accountUsed ) {
+			if ( ! newSiteDetails || ! accountUsed ) {
 				return;
 			}
 
@@ -78,6 +95,13 @@ test.describe(
 				username: accountUsed.credentials.username,
 				password: accountUsed.credentials.password,
 			} );
+
+			// Business is an Atomic plan: the site can't be deleted via API while the
+			// subscription is active, and this shared pre-release account must not be
+			// closed. Cancel this site's plan first (scoped by blog ID so a concurrent
+			// test's plan is untouched) to stop billing and trigger deprovision. The
+			// delete below is best-effort until that async deprovision completes.
+			await apiCancelAtomicPlan( restAPIClient, newSiteDetails.blog_details.blogid );
 
 			await apiDeleteSite( restAPIClient, {
 				url: newSiteDetails.blog_details.url,

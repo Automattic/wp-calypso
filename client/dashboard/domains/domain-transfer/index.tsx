@@ -3,6 +3,7 @@ import { domainQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
@@ -23,6 +24,7 @@ export default function DomainTransfer() {
 			size="small"
 			header={
 				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Transfer' ) }
 					description={
 						! isNewInboundTransferExperience

@@ -1,10 +1,10 @@
 import { addQueryArgs } from '@wordpress/url';
 import { wpcom } from '../wpcom-fetcher';
-import type { UserResponse } from './types';
+import type { NewUserRequest, NewUserResponse, UserResponse } from './types';
 
-interface FetchUserParams {
+type FetchUserParams = {
 	find_by_id?: boolean;
-}
+};
 
 export const fetchUserProfile = (
 	userIdOrLogin: string | number,
@@ -15,4 +15,11 @@ export const fetchUserProfile = (
 		apiVersion: '1.1',
 		method: 'GET',
 	} );
+};
+
+/**
+ * Creates a WordPress.com account.
+ */
+export const createUser = ( body: NewUserRequest ): Promise< NewUserResponse > => {
+	return wpcom.req.post( { path: '/users/new', body } );
 };

@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import {
 	SITE_IMPORTER_IMPORT_FAILURE,
 	SITE_IMPORTER_IMPORT_RESET,
@@ -118,7 +117,7 @@ const validatedSiteUrl = ( state = '', action ) => {
 	switch ( action.type ) {
 		case SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS: {
 			const { response } = action;
-			return get( response, 'site_url', '' );
+			return response?.site_url ?? '';
 		}
 	}
 

@@ -6,20 +6,22 @@ import {
 	DomainUpdateStatus,
 	fetchAvailableTlds,
 	fetchBulkDomainUpdateStatus,
+	fetchBundleForDomain,
+	fetchBundleMetadata,
 	fetchDomains,
 	fetchDomainSuggestions,
 	fetchFreeDomainSuggestion,
-	type FetchDomainsOptions,
+	type BundleMetadata,
 	type JobStatus,
 	type DomainSuggestionQuery,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 
-export const domainsQuery = ( options?: FetchDomainsOptions ) =>
+export const domainsQuery = () =>
 	queryOptions( {
-		queryKey: [ 'domains', options ],
-		queryFn: () => fetchDomains( options ),
+		queryKey: [ 'domains', 'all' ],
+		queryFn: () => fetchDomains(),
 	} );
 
 export const domainSuggestionsQuery = (
@@ -39,6 +41,54 @@ export const freeSuggestionQuery = (
 	queryOptions( {
 		queryKey: [ 'free-suggestion', query, params ],
 		queryFn: () => fetchFreeDomainSuggestion( query, params ),
+		meta: { persist: false },
+	} );
+
+// One request, two typed views. `bundle_suggestion` (top BundleCard) and
+// `bundle_triggers` (inline-bundle catalogue) both come from the same
+// `with_bundles=1` `/domains/suggestions` call, so they share a query key and
+// React Query dedupes them to a single network request even when both consumers
+// are enabled on the same query. The two exports below spread this query and add
+// a `select` picking their half of the response. `params` mirror the plain
+// suggestions request so the two lists match (DOMAINS-2238); they are part of
+// the key because a different filter is a different list.
+export const bundleMetadataQuery = (
+	query: string,
+	params: Partial< DomainSuggestionQuery > = {}
+) =>
+	queryOptions( {
+		queryKey: [ 'domain-bundle-metadata', query, params ],
+		queryFn: () => fetchBundleMetadata( query, params ),
+		meta: { persist: false },
+	} );
+
+// Module-level selectors so React Query sees a stable `select` reference across
+// renders instead of a fresh closure per call.
+const selectBundleSuggestion = ( data: BundleMetadata ) => data.bundle_suggestion;
+const selectBundleTriggers = ( data: BundleMetadata ) => data.bundle_triggers;
+
+export const bundleSuggestionQuery = (
+	query: string,
+	params: Partial< DomainSuggestionQuery > = {}
+) =>
+	queryOptions( {
+		...bundleMetadataQuery( query, params ),
+		select: selectBundleSuggestion,
+	} );
+
+export const bundleTriggersQuery = (
+	query: string,
+	params: Partial< DomainSuggestionQuery > = {}
+) =>
+	queryOptions( {
+		...bundleMetadataQuery( query, params ),
+		select: selectBundleTriggers,
+	} );
+
+export const bundleForDomainQuery = ( fqdn: string ) =>
+	queryOptions( {
+		queryKey: [ 'bundle-for-domain', fqdn ],
+		queryFn: () => fetchBundleForDomain( fqdn ),
 		meta: { persist: false },
 	} );
 
@@ -110,6 +160,7 @@ export const bulkDomainUpdateStatusQuery = () =>
 
 export const bulkDomainsActionMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'domains-bulk-apply' },
 		mutationFn: ( action: BulkDomainsAction ) => bulkDomainsAction( action ),
 		onSuccess: () => {
 			queryClient.refetchQueries( bulkDomainUpdateStatusQuery() );

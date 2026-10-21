@@ -6,6 +6,9 @@ import { Icon, shield, plugins, currencyDollar } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import howToFindPluginsImage from 'calypso/assets/images/plugins/how-to-find-plugins.webp';
+import howToInstallPluginsImage from 'calypso/assets/images/plugins/how-to-install-plugins.webp';
+import whatArePluginsImage from 'calypso/assets/images/plugins/what-are-plugins.webp';
 import FeatureItem from 'calypso/components/feature-item';
 import LinkCard from 'calypso/components/link-card';
 import Section, { SectionContainer } from 'calypso/components/section';
@@ -147,8 +150,9 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 
 const CardText = styled.span< { color: string } >`
 	color: ${ ( { color } ) => color };
-	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
-		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+	font-family:
+		'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen-Sans',
+		'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-weight: 400;
 	font-size: 14px;
 	line-height: 20px;
@@ -217,7 +221,7 @@ export const MarketplaceFooter = () => {
 	const headerTitle = isMarketplaceRedesignEnabled
 		? translate( "You pick the plugin,{{br}}{{/br}}we'll take care of the rest", {
 				components: { br: <br /> },
-		  } )
+			} )
 		: __( "You pick the plugin. We'll take care of the rest." );
 
 	const ctaButton = showCta ? (
@@ -246,10 +250,10 @@ export const MarketplaceFooter = () => {
 						{ isMarketplaceRedesignEnabled
 							? __(
 									'Plugins authored by WordPress.com are fully managed by our team. No security patches. No update nags. It just works.'
-							  )
+								)
 							: __(
 									'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
-							  ) }
+								) }
 					</FeatureItem>
 					<FeatureItem
 						header={
@@ -276,10 +280,10 @@ export const MarketplaceFooter = () => {
 						{ isMarketplaceRedesignEnabled
 							? __(
 									'Pay yearly and save. Or keep it flexible with monthly plugin pricing. It’s entirely up to you.'
-							  )
+								)
 							: __(
 									'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
-							  ) }
+								) }
 					</FeatureItem>
 				</ThreeColumnContainer>
 			</Section>
@@ -329,11 +333,7 @@ const EducationFooter = () => {
 			/>
 			<ThreeColumnContainer className="plugin-how-to-guides">
 				<LinkCard
-					image={
-						isMarketplaceRedesignEnabled
-							? '/calypso/images/plugins/what-are-plugins.webp'
-							: undefined
-					}
+					image={ isMarketplaceRedesignEnabled ? whatArePluginsImage : undefined }
 					title={
 						<CardTitle color="var(--studio-gray-100)">
 							{ __( 'What Are WordPress Plugins? Everything You Need to Know as a Beginner' ) }
@@ -346,11 +346,7 @@ const EducationFooter = () => {
 					onClick={ onClickLinkCard( 'website_building', links.websiteBuilding ) }
 				/>
 				<LinkCard
-					image={
-						isMarketplaceRedesignEnabled
-							? '/calypso/images/plugins/how-to-find-plugins.webp'
-							: undefined
-					}
+					image={ isMarketplaceRedesignEnabled ? howToFindPluginsImage : undefined }
 					title={
 						<CardTitle color="var(--studio-gray-100)">
 							{ __( 'How to Find and Choose the Best WordPress Plugins (Useful for All Sites)' ) }
@@ -363,11 +359,7 @@ const EducationFooter = () => {
 					onClick={ onClickLinkCard( 'seo', links.seo ) }
 				/>
 				<LinkCard
-					image={
-						isMarketplaceRedesignEnabled
-							? '/calypso/images/plugins/how-to-install-plugins.webp'
-							: undefined
-					}
+					image={ isMarketplaceRedesignEnabled ? howToInstallPluginsImage : undefined }
 					title={
 						<CardTitle color="var(--studio-gray-100)">
 							{ __(

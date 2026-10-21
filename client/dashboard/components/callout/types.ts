@@ -1,5 +1,5 @@
 import type { Icon } from '@wordpress/components';
-import type { ComponentProps, ReactNode } from 'react';
+import type { ComponentProps, ReactNode, JSX } from 'react';
 
 export interface CalloutProps {
 	/**

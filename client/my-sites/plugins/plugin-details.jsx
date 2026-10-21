@@ -1,12 +1,17 @@
+import {
+	WPCOM_FEATURES_BACKUPS_SELF_SERVE,
+	getPlanBusinessTitle,
+	getPlanEcommerceTitle,
+} from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, download } from '@wordpress/icons';
 import clsx from 'clsx';
 import { fixMe, useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
@@ -22,11 +27,9 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
-import { useMarketplaceReviewsQuery } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { MarketplaceReviewsCards } from 'calypso/my-sites/marketplace/components/reviews-cards';
-import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
+import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
@@ -50,11 +53,11 @@ import {
 } from 'calypso/state/analytics/actions';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
-import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { canPublishProductReviews } from 'calypso/state/marketplace/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getPluginOnSites,
 	isRequestingForAllSites,
+	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
@@ -75,6 +78,7 @@ import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-s
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	isJetpackSite,
 	isRequestingSites as checkRequestingSites,
@@ -123,7 +127,6 @@ function PluginDetails( props ) {
 				? canCurrentUser( state, selectedSite?.ID, 'manage_options' )
 				: canCurrentUserManagePlugins( state ) )
 	);
-	const [ isReviewsModalVisible, setIsReviewsModalVisible ] = useState( false );
 
 	// Site type.
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -162,6 +165,15 @@ function PluginDetails( props ) {
 		return 'vaultpress' === props.pluginSlug && ! isJetpackSelfHosted;
 	}, [ isJetpackSelfHosted, props.pluginSlug ] );
 
+	// WordPress.com provides backups itself, so point to the plans that include them instead.
+	const isBuiltInBackupPlugin = isIncompatiblePlugin && 'jetpack-backup' === props.pluginSlug;
+	// The backups page upsells sites without self-serve backups, so only those sites get the shortcut.
+	const canViewBackups = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_BACKUPS_SELF_SERVE )
+	);
+	const showBackupShortcut =
+		isIncompatibleBackupPlugin || ( isBuiltInBackupPlugin && canViewBackups );
+
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
 		if ( isProductListFetched && ! isMarketplaceProduct && ! isWporgPluginFetched ) {
@@ -183,6 +195,55 @@ function PluginDetails( props ) {
 		isFetching: isWpComPluginFetching,
 	} = useWPCOMPlugin( props.pluginSlug, { enabled: isProductListFetched && isMarketplaceProduct } );
 
+	// A retired marketplace product cannot be bought any more, so its detail page
+	// is a dead end. Wait for the marketplace fetch to resolve so that a plugin is
+	// never treated as retired on partial data.
+	const isRetiredProduct =
+		isMarketplaceProduct && isWpComPluginFetched && !! wpComPluginData?.is_retired;
+
+	// Retiring a product cancels its subscriptions but leaves the plugin installed,
+	// and this page is where a site owner deactivates or removes it. So the redirect
+	// must wait for the installed-plugins fetch that `QueryPlugins` starts on mount,
+	// and must stand down when the plugin is installed on a site in scope. The
+	// installed-plugins state is keyed by the software slug, not the product slug.
+	const isRequestingInstalledPlugins = useSelector(
+		( state ) => isRequestingForAllSites( state ) || isRequestingForSites( state, siteIds )
+	);
+	const isRetiredPluginInstalled = useSelector(
+		( state ) =>
+			isRetiredProduct &&
+			!! getPluginOnSites( state, siteIds, getSoftwareSlug( wpComPluginData, true ) )
+	);
+	const hasRequestedInstalledPlugins = useRef( false );
+	const canHaveInstalledPlugins = sitesWithPlugins.length > 0;
+	const retiredRedirectPath = localizePath(
+		selectedSite?.slug ? `/plugins/${ selectedSite.slug }` : '/plugins'
+	);
+
+	useEffect( () => {
+		if ( isRequestingInstalledPlugins ) {
+			hasRequestedInstalledPlugins.current = true;
+			return;
+		}
+		if ( ! isRetiredProduct || isRequestingSites ) {
+			return;
+		}
+		if (
+			canHaveInstalledPlugins &&
+			( isRetiredPluginInstalled || ! hasRequestedInstalledPlugins.current )
+		) {
+			return;
+		}
+		page.redirect( retiredRedirectPath );
+	}, [
+		isRequestingInstalledPlugins,
+		isRetiredProduct,
+		isRetiredPluginInstalled,
+		isRequestingSites,
+		canHaveInstalledPlugins,
+		retiredRedirectPath,
+	] );
+
 	// Unify plugin details
 	const fullPlugin = useMemo( () => {
 		const wpcomPlugin = {
@@ -202,6 +263,11 @@ function PluginDetails( props ) {
 		};
 		if ( isMarketplaceProduct && marketplaceVersion ) {
 			merged.version = marketplaceVersion;
+		}
+		// Marketplace ratings come from WooCommerce.com via the wpcom catalog, not from WordPress.org
+		if ( isMarketplaceProduct ) {
+			merged.rating = wpcomPlugin.rating;
+			merged.num_ratings = wpcomPlugin.num_ratings;
 		}
 		return merged;
 	}, [
@@ -247,18 +313,6 @@ function PluginDetails( props ) {
 		fullPlugin,
 		requestingPluginsForSites,
 	] );
-
-	const canPublishReview = useSelector( ( state ) =>
-		canPublishProductReviews( state, 'plugin', fullPlugin.slug, fullPlugin.variations )
-	);
-	const currentUserId = useSelector( getCurrentUserId );
-	const { data: userReviews = [] } = useMarketplaceReviewsQuery( {
-		productType: 'plugin',
-		slug: fullPlugin.slug,
-		perPage: 1,
-		author: currentUserId ?? undefined,
-		status: 'all',
-	} );
 
 	const setBreadcrumbs = ( breadcrumbs = [] ) => {
 		if ( breadcrumbs?.length === 0 ) {
@@ -449,31 +503,8 @@ function PluginDetails( props ) {
 						</NoticeAction>
 					</Notice>
 				) }
-				<ReviewsModal
-					isVisible={ isReviewsModalVisible }
-					onClose={ () => setIsReviewsModalVisible( false ) }
-					productName={ fullPlugin.name }
-					slug={ fullPlugin.slug }
-					variations={ fullPlugin.variations }
-					productType="plugin"
-				/>
 				<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
 			</FullWidthSection>
-			{ userReviews.length === 0 &&
-				canPublishReview &&
-				isMarketplaceProduct &&
-				! showPlaceholder && (
-					<Banner
-						className="plugin-details__reviews-banner"
-						title={ translate( 'Review this plugin!' ) }
-						description={ translate(
-							'Please help other users by sharing your experience with this plugin.'
-						) }
-						onClick={ () => setIsReviewsModalVisible( true ) }
-						disableHref
-						event="calypso_marketplace_reviews_plugin_banner"
-					/>
-				) }
 			<FullWidthSection
 				className="plugin-details__main-section"
 				enabled={ isMarketplaceRedesignEnabled }
@@ -484,7 +515,6 @@ function PluginDetails( props ) {
 							<PluginDetailsHeader
 								plugin={ fullPlugin }
 								isPlaceholder={ showPlaceholder }
-								onReviewsClick={ () => setIsReviewsModalVisible( true ) }
 								isMarketplaceProduct={ isMarketplaceProduct }
 							/>
 						</div>
@@ -493,7 +523,8 @@ function PluginDetails( props ) {
 								<div className="plugin-details__body">
 									{ ! isJetpackSelfHosted &&
 										isIncompatiblePlugin &&
-										! isIncompatibleBackupPlugin && (
+										! isIncompatibleBackupPlugin &&
+										! isBuiltInBackupPlugin && (
 											<Notice
 												text={ translate(
 													'Incompatible plugin: This plugin is not supported on WordPress.com.'
@@ -511,18 +542,35 @@ function PluginDetails( props ) {
 											</Notice>
 										) }
 
-									{ isIncompatibleBackupPlugin && (
+									{ showBackupShortcut && (
 										<Notice
 											text={ translate(
-												'Incompatible plugin: You site plan already includes Jetpack VaultPress Backup.'
+												'Your site plan already includes Jetpack VaultPress Backup.'
 											) }
-											status="is-warning"
+											status="is-info"
 											showDismiss={ false }
 										>
 											<NoticeAction href={ `/backup/${ selectedSite.slug }` }>
 												{ translate( 'View backups' ) }
 											</NoticeAction>
 										</Notice>
+									) }
+
+									{ isBuiltInBackupPlugin && ! canViewBackups && (
+										<Notice
+											text={ translate(
+												// translators: %(businessPlanName)s is the Business plan name, %(commercePlanName)s is the Commerce plan name
+												'Jetpack VaultPress Backup is included with the WordPress.com %(businessPlanName)s and %(commercePlanName)s plans.',
+												{
+													args: {
+														businessPlanName: getPlanBusinessTitle(),
+														commercePlanName: getPlanEcommerceTitle(),
+													},
+												}
+											) }
+											status="is-info"
+											showDismiss={ false }
+										/>
 									) }
 
 									{ ! isMaintained && (
@@ -567,13 +615,6 @@ function PluginDetails( props ) {
 			</FullWidthSection>
 			{ isMarketplaceRedesignEnabled && relatedPlugins }
 
-			{ ! showPlaceholder && (
-				<MarketplaceReviewsCards
-					slug={ fullPlugin.slug }
-					productType="plugin"
-					showMarketplaceReviews={ () => setIsReviewsModalVisible( true ) }
-				/>
-			) }
 			{ isMarketplaceProduct && ! showPlaceholder && (
 				<FullWidthSection
 					className="plugins__marketplace-footer"

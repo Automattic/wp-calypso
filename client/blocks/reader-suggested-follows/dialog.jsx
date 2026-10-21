@@ -97,7 +97,7 @@ const ReaderSuggestedFollowsDialog = ( {
 						args: { authorName: userName },
 						components: { strong: <strong /> },
 					}
-			  )
+				)
 			: translate( 'While you’re at it, you might check out these blogs.' );
 
 	return (

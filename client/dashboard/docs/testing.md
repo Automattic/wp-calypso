@@ -44,20 +44,20 @@ Note: `nock.cleanAll()` is already called globally after each test, so you don't
 
 ```tsx
 nock( 'https://public-api.wordpress.com' )
-  .get( `/wpcom/v2/sites/${ siteId }/hosting/error-logs` )
-  .query( true ) // match any query string
-  .reply( 200, { data: { logs: [], total_results: 0, scroll_id: null } } );
+	.get( `/wpcom/v2/sites/${ siteId }/hosting/error-logs` )
+	.query( true ) // match any query string
+	.reply( 200, { data: { logs: [], total_results: 0, scroll_id: null } } );
 ```
 
 **Intercepting a mutation (POST):**
 
 ```tsx
 const scope = nock( 'https://public-api.wordpress.com' )
-  .post( '/rest/v1.1/me/preferences', ( body ) => {
-    // optionally inspect the request body
-    return true;
-  } )
-  .reply( 200, { calypso_preferences: {} } );
+	.post( '/rest/v1.1/me/preferences', ( body ) => {
+		// optionally inspect the request body
+		return true;
+	} )
+	.reply( 200, { calypso_preferences: {} } );
 
 // …trigger the mutation…
 
@@ -70,8 +70,8 @@ DELETE, so use `.delete()` not `.post()`:
 
 ```tsx
 nock( 'https://public-api.wordpress.com' )
-  .delete( `/wpcom/v2/sites/${ productionSiteId }/staging-site/${ stagingSiteId }` )
-  .reply( 200, {} );
+	.delete( `/wpcom/v2/sites/${ productionSiteId }/staging-site/${ stagingSiteId }` )
+	.reply( 200, {} );
 ```
 
 **Tips:**
@@ -87,22 +87,22 @@ Assert the request body inside nock's body callback using Jest matchers, then us
 
 ```tsx
 const scope = nock( 'https://public-api.wordpress.com' )
-  .post( '/rest/v1.1/me/preferences', ( body ) => {
-    expect( body ).toEqual(
-      expect.objectContaining( {
-        my_key: 'strict string check',
-        some_string: expect.any( String ),
-        pi: expect.closeTo( 3.14 ),
-      } )
-    );
-    return true;
-  } )
-  .reply( 200, { calypso_preferences: {} } );
+	.post( '/rest/v1.1/me/preferences', ( body ) => {
+		expect( body ).toEqual(
+			expect.objectContaining( {
+				my_key: 'strict string check',
+				some_string: expect.any( String ),
+				pi: expect.closeTo( 3.14 ),
+			} )
+		);
+		return true;
+	} )
+	.reply( 200, { calypso_preferences: {} } );
 
 // …trigger the mutation…
 
 await waitFor( () => {
-  expect( scope.isDone() ).toBe( true );
+	expect( scope.isDone() ).toBe( true );
 } );
 ```
 
@@ -120,6 +120,41 @@ const queryClient = new QueryClient();
 queryClient.setQueryData( [ 'staging-site', 1, 'is-deleting' ], true );
 
 render( <MyComponent />, { queryClient } );
+```
+
+### Mocking Modules: use ES imports, not `require()`
+
+Do not use inline `require()` to load a mocked module "after" `jest.mock()` is set up. Jest hoists `jest.mock()` calls above all imports, so a top-level ES import already receives the mocked version. Inline `require()` is also an ESLint error (`@typescript-eslint/no-require-imports`).
+
+```tsx
+// ❌ Bad: lazy require to "get the mock"
+test( 'saves preferences', () => {
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	const { userPreferencesMutation } = require( '@automattic/api-queries' );
+	userPreferencesMutation.mockReturnValue( /* … */ );
+} );
+```
+
+```tsx
+// ✅ Good: top-level import + cast
+import { userPreferencesMutation } from '@automattic/api-queries';
+
+jest.mock( '@automattic/api-queries' );
+
+test( 'saves preferences', () => {
+	( userPreferencesMutation as jest.Mock ).mockReturnValue( /* … */ );
+} );
+```
+
+Deferred loading is only genuinely needed with `jest.resetModules()`, `jest.isolateModules()`, or `jest.doMock()` — and even then prefer `await import()` over `require()`.
+
+One exception: a `jest.mock()` factory runs before imports are initialized, so it cannot reference top-level imports. Inside a factory, use `jest.requireActual()`:
+
+```tsx
+jest.mock( 'some-module', () => {
+	const { createElement } = jest.requireActual( 'react' );
+	// …
+} );
 ```
 
 ### Utility Function Tests

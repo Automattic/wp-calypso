@@ -10,7 +10,6 @@ import React, { Fragment, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import QuerySites from 'calypso/components/data/query-sites';
 import FeatureExample from 'calypso/components/feature-example';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -252,6 +251,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 			transferState !== transferStates.ERROR &&
 			transferState !== transferStates.COMPLETED &&
 			transferState !== transferStates.COMPLETE &&
+			transferState !== transferStates.CLIENT_TIMEOUT &&
 			transferState !== transferStates.REVERTED
 	);
 
@@ -287,7 +287,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 					feature: FEATURE_SFTP_DATABASE,
 					href: `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }`,
 					title: translate( 'Upgrade your plan to access all hosting features' ),
-			  };
+				};
 		return <HostingUpsellNudge siteId={ siteId } targetPlan={ targetPlan } />;
 	};
 
@@ -381,7 +381,6 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 					} }
 				/>
 			) }
-			<QueryReaderTeams />
 		</Panel>
 	);
 };

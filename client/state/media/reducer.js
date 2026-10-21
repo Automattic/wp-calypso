@@ -1,141 +1,21 @@
+import { merge, omit } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { isEmpty, mapValues, omit, pickBy, without, merge, isEqual } from 'lodash';
-import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
-import isTransientMediaId from 'calypso/lib/media/utils/is-transient-media-id';
+import isEqual from 'fast-deep-equal/es6';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
 	MEDIA_DELETE,
-	MEDIA_ERRORS_CLEAR,
-	MEDIA_ITEM_ERRORS_CLEAR,
-	MEDIA_ITEM_ERRORS_SET,
 	MEDIA_ITEM_CREATE,
 	MEDIA_ITEM_REQUEST_FAILURE,
-	MEDIA_ITEM_REQUEST_SUCCESS,
-	MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_SET_NEXT_PAGE_HANDLE,
-	MEDIA_SOURCE_CHANGE,
 	MEDIA_SET_QUERY,
-	MEDIA_ITEM_EDIT,
-	MEDIA_PHOTOS_PICKER_FEATURE_FLAG_SET,
 } from 'calypso/state/action-types';
 import { transformSite as transformSiteTransientItems } from 'calypso/state/media/utils/transientItems';
 import { combineReducers } from 'calypso/state/utils';
-
-const isExternalMediaError = ( message ) =>
-	message.error && ( message.error === 'servicefail' || message.error === 'keyring_token_error' );
-
-const isMediaError = ( action ) =>
-	action.error && ( action.siteId || isExternalMediaError( action.error ) );
-
-/**
- * Returns the updated media errors state after an action has been
- * dispatched. The state reflects a mapping of site ID, media ID pairing to
- * an array of errors that occurred for that corresponding media item.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}        Updated state
- */
-export const errors = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case MEDIA_ITEM_ERRORS_SET: {
-			const { siteId, mediaId, errors: mediaItemErrors } = action;
-
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ mediaId ]: mediaItemErrors,
-				},
-			};
-		}
-
-		case MEDIA_ITEM_REQUEST_FAILURE:
-		case MEDIA_REQUEST_FAILURE: {
-			// Track any errors which occurred during upload or getting external media
-			if ( ! isMediaError( action ) ) {
-				return state;
-			}
-
-			const mediaErrors = Array.isArray( action.error.errors )
-				? action.error.errors
-				: [ action.error ];
-
-			const sanitizedErrors = mediaErrors.map( ( error ) => {
-				switch ( error.error ) {
-					case 'http_404':
-						return MediaValidationErrors.UPLOAD_VIA_URL_404;
-					case 'rest_upload_limited_space':
-						return MediaValidationErrors.NOT_ENOUGH_SPACE;
-					case 'rest_upload_file_too_big':
-						return MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE;
-					case 'rest_upload_user_quota_exceeded':
-						return MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT;
-					case 'upload_error':
-						return MediaValidationErrors.SERVER_ERROR;
-					case 'keyring_token_error':
-						return MediaValidationErrors.SERVICE_AUTH_FAILED;
-					case 'servicefail':
-						return MediaValidationErrors.SERVICE_FAILED;
-					case 'service_unavailable':
-						return MediaValidationErrors.SERVICE_UNAVAILABLE;
-					default:
-						return MediaValidationErrors.SERVER_ERROR;
-				}
-			} );
-
-			return {
-				...state,
-				[ action.siteId ]: {
-					...state[ action.siteId ],
-					[ action?.mediaId ?? 0 ]: sanitizedErrors,
-				},
-			};
-		}
-
-		case MEDIA_ERRORS_CLEAR:
-			if ( ! action.siteId ) {
-				return state;
-			}
-
-			return {
-				...state,
-				[ action.siteId ]: pickBy(
-					mapValues( state[ action.siteId ], ( mediaErrors ) =>
-						without( mediaErrors, action.errorType )
-					),
-					( mediaErrors ) => ! isEmpty( mediaErrors )
-				),
-			};
-
-		case MEDIA_ITEM_ERRORS_CLEAR: {
-			if ( ! action.siteId || ! action.mediaId ) {
-				return state;
-			}
-
-			return {
-				...state,
-				[ action.siteId ]: {
-					...omit( state[ action.siteId ], [ [ action.siteId ], [ action.mediaId ] ] ),
-				},
-			};
-		}
-
-		case MEDIA_SOURCE_CHANGE: {
-			if ( ! action.siteId ) {
-				return state;
-			}
-
-			return omit( state, action.siteId );
-		}
-	}
-
-	return state;
-};
 
 export const queries = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -151,104 +31,6 @@ export const queries = ( state = {}, action ) => {
 		case MEDIA_DELETE: {
 			const { siteId, mediaIds } = action;
 			return withQueryManager( state, siteId, ( m ) => m.removeItems( mediaIds ) );
-		}
-		case MEDIA_ITEM_EDIT: {
-			const { siteId, mediaItem } = action;
-			return withQueryManager( state, siteId, ( m ) => m.receive( mediaItem, { patch: true } ) );
-		}
-		case MEDIA_SOURCE_CHANGE: {
-			if ( ! action.siteId ) {
-				return state;
-			}
-
-			return omit( state, action.siteId );
-		}
-	}
-
-	return state;
-};
-
-/**
- * Returns the media library selected items state after an action has been
- * dispatched. The state reflects a mapping of site ID pairing to an array
- * that contains IDs of media items.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}       Updated state
- */
-export const selectedItems = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case MEDIA_SOURCE_CHANGE: {
-			const { siteId } = action;
-			return {
-				...state,
-				[ siteId ]: [],
-			};
-		}
-		case MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE: {
-			const { media, siteId } = action;
-			return {
-				...state,
-				[ siteId ]: media.map( ( mediaItem ) => mediaItem.ID ),
-			};
-		}
-		case MEDIA_ITEM_CREATE: {
-			const { site, transientMedia } = action;
-
-			if ( ! action.site || ! action.transientMedia ) {
-				return state;
-			}
-
-			return {
-				...state,
-				[ site.ID ]: [ ...( state[ site.ID ] ?? [] ), transientMedia.ID ],
-			};
-		}
-		case MEDIA_RECEIVE: {
-			const { media, siteId } = action;
-
-			// We only want to auto-mark as selected media that has just been uploaded
-			if ( action.found || action.query ) {
-				return state;
-			}
-
-			const { [ siteId ]: existingMediaIds = [] } = state;
-
-			const nextMediaIds = media.reduce(
-				( aggregatedMediaIds, mediaItem ) =>
-					// avoid duplicating IDs
-					existingMediaIds.includes( mediaItem.ID )
-						? aggregatedMediaIds
-						: [ ...aggregatedMediaIds, mediaItem.ID ],
-				[ ...existingMediaIds ]
-			);
-
-			return {
-				...state,
-				[ siteId ]: nextMediaIds,
-			};
-		}
-		case MEDIA_ITEM_REQUEST_SUCCESS: {
-			const { mediaId: transientMediaId, siteId } = action;
-
-			// We only want to deselect if it is a transient media item
-			if ( ! isTransientMediaId( transientMediaId ) ) {
-				return state;
-			}
-
-			const media = state[ siteId ] ?? [];
-
-			return {
-				...state,
-				[ siteId ]: media.filter( ( mediaId ) => transientMediaId !== mediaId ),
-			};
-		}
-		case MEDIA_DELETE: {
-			const { mediaIds, siteId } = action;
-			return {
-				...state,
-				[ siteId ]: state[ siteId ].filter( ( mediaId ) => ! mediaIds.includes( mediaId ) ),
-			};
 		}
 	}
 
@@ -280,19 +62,6 @@ export const selectedItems = ( state = {}, action ) => {
  */
 export const transientItems = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case MEDIA_SOURCE_CHANGE: {
-			/**
-			 * Clear the media for the site.
-			 *
-			 * Dispatched when the media source changes (e.g., switching from uploaded media to
-			 * external media like Google Photos).
-			 */
-			return transformSiteTransientItems( state, action.siteId, () => ( {
-				transientItems: {},
-				transientIdsToServerIds: {},
-			} ) );
-		}
-
 		case MEDIA_ITEM_CREATE: {
 			/**
 			 * Save the transient media item.
@@ -444,26 +213,10 @@ export const fetching = ( state = {}, action ) => {
 	return state;
 };
 
-export const googlePhotosPicker = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case MEDIA_PHOTOS_PICKER_FEATURE_FLAG_SET: {
-			return {
-				...state,
-				featureEnabled: action.enabled,
-			};
-		}
-	}
-
-	return state;
-};
-
 const combinedReducer = combineReducers( {
-	errors,
 	queries,
-	selectedItems,
 	transientItems,
 	fetching,
-	googlePhotosPicker,
 } );
 
 export default withStorageKey( 'media', combinedReducer );

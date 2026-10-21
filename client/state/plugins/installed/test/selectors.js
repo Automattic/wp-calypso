@@ -1,5 +1,5 @@
+import { pick } from '@automattic/js-utils';
 import deepFreeze from 'deep-freeze';
-import { pick } from 'lodash';
 import {
 	DEACTIVATE_PLUGIN,
 	ENABLE_AUTOUPDATE_PLUGIN,

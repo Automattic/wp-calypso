@@ -1,4 +1,4 @@
-import { forEach, get } from 'lodash';
+import { safeLinkRe } from './utils';
 
 /**
  * The linkJetpackCarousels rule modifies all of the WordPress galleries in the content
@@ -14,8 +14,8 @@ import { forEach, get } from 'lodash';
 export default function linkJetpackCarousels( post, dom ) {
 	const galleries = dom.querySelectorAll( '.tiled-gallery' );
 
-	forEach( galleries, ( gallery ) => {
-		let extra = get( gallery, [ 'dataset', 'carouselExtra' ], false );
+	Array.from( galleries ).forEach( ( gallery ) => {
+		let extra = gallery?.dataset?.carouselExtra ?? false;
 		if ( ! extra ) {
 			// this only really exists for jsdom. See https://github.com/tmpvar/jsdom/issues/961
 			extra = gallery.getAttribute( 'data-carousel-extra' );
@@ -32,9 +32,14 @@ export default function linkJetpackCarousels( post, dom ) {
 			// doesn't look like the extra was valid JSON. Maybe this isn't really a gallery? Bail.
 			return post;
 		}
+		// The gallery markup is author controlled, and this permalink becomes an href. Anything
+		// that isn't a web address would run as a URI scheme when the reader clicks the image.
+		if ( ! safeLinkRe.test( permalink ) ) {
+			return post;
+		}
 		// find all the links and rewrite them to point to the carousel instead of the permalink
 		const links = gallery.querySelectorAll( '.tiled-gallery-item > a' );
-		forEach( links, ( link ) => {
+		Array.from( links ).forEach( ( link ) => {
 			const img = link.querySelector( 'img' );
 			const attachmentId = img && img.getAttribute( 'data-attachment-id' );
 			if ( attachmentId ) {

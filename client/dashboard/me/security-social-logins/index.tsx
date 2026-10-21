@@ -15,6 +15,7 @@ import { ActionList } from '../../components/action-list';
 import ConfirmModal from '../../components/confirm-modal';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import SVGIcon from '../../components/svg-icon';
 import AppleIcon from '../../images/apple-logo.svg';
 import GitHubIcon from '../../images/github-logo.svg';
 import GoogleIcon from '../../images/google-logo.svg';
@@ -26,13 +27,38 @@ import PayPalLogin from './paypal-login';
 import type { SocialLoginButtonProps } from './types';
 import type { SocialLoginConnection, ConnectSocialUserArgs } from '@automattic/api-core';
 
+const SocialLoginIcon = ( {
+	service,
+	decoration,
+	hasMonochromeIcon = false,
+}: {
+	service: string;
+	decoration: string;
+	hasMonochromeIcon?: boolean;
+} ) => {
+	const icon = hasMonochromeIcon ? (
+		<SVGIcon
+			icon={ decoration }
+			name={ `${ service.toLowerCase() }-logo` }
+			role="img"
+			aria-label={ service }
+		/>
+	) : (
+		<img src={ decoration } alt={ service } style={ { width: '24px', height: '24px' } } />
+	);
+
+	return <Icon icon={ icon } />;
+};
+
 const SocialLoginItem = ( {
 	service,
 	decoration,
+	hasMonochromeIcon = false,
 	renderButton,
 }: {
 	service: string;
 	decoration: string;
+	hasMonochromeIcon?: boolean;
 	renderButton: ( {
 		isConnected,
 		responseHandler,
@@ -119,10 +145,10 @@ const SocialLoginItem = ( {
 				title={ service }
 				description={ socialLoginConnection?.service_user_email }
 				decoration={
-					<Icon
-						icon={
-							<img src={ decoration } alt={ service } style={ { width: '24px', height: '24px' } } />
-						}
+					<SocialLoginIcon
+						service={ service }
+						decoration={ decoration }
+						hasMonochromeIcon={ hasMonochromeIcon }
 					/>
 				}
 				actions={ renderButton( {
@@ -186,6 +212,7 @@ export default function SecuritySocialLogins() {
 				<SocialLoginItem
 					service="Apple"
 					decoration={ AppleIcon }
+					hasMonochromeIcon
 					renderButton={ ( { isConnected, responseHandler, handleDisconnect, isLoading } ) => (
 						<AppleLogin
 							isConnected={ isConnected }
@@ -198,6 +225,7 @@ export default function SecuritySocialLogins() {
 				<SocialLoginItem
 					service="GitHub"
 					decoration={ GitHubIcon }
+					hasMonochromeIcon
 					renderButton={ ( { isConnected, responseHandler, handleDisconnect, isLoading } ) => (
 						<GitHubLogin
 							isConnected={ isConnected }

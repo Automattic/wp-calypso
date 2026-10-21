@@ -1,5 +1,6 @@
 import { JetpackLogo } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useMemo } from 'react';
 import { BackgroundType10 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
@@ -124,7 +125,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 				heading={ translate( 'Jetpack Complete included' ) }
 				subheading={ translate( "Supercharge your clients' sites" ) }
 				description={ translate(
-					'Every Pressable site comes with a free Jetpack Complete license — an %(amount)s/year/site value.',
+					'Every Pressable site comes with a free Jetpack Complete license — a %(amount)s/year/site value.',
 					{
 						args: {
 							amount: formatCurrency( 899, 'USD' ),
@@ -135,21 +136,20 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 					translate( 'VaultPress Backup w/ 1TB storage' ),
 					translate( 'Scan w/ WAF' ),
 					translate( 'Akismet Anti-spam w/ 60k API calls/mo' ),
-					translate( 'Stats w/ 100k views/mo (Commercial use)' ),
+					translate( 'Stats (Paid) w/ 100k views/mo' ),
 					translate( 'VideoPress w/ 1TB storage' ),
 					translate( 'Boost w/ Auto CSS Generation' ),
 					translate( 'Social Advanced w/ unlimited shares' ),
 					translate( 'Site Search up to 100k records and 100k requests/mo' ),
 					translate( 'CRM Entrepreneur' ),
 					translate( 'All Jetpack features' ),
-					translate( '{{a}}And more{{/a}} ↗', {
+					translate( '{{a}}And more{{/a}}', {
 						components: {
 							a: (
-								<a
+								<ExternalLink
 									href="https://jetpack.com/complete/"
-									target="_blank"
-									rel="noopener noreferrer"
 									onClick={ onJetpackCompleteMoreLinkClick }
+									children={ null }
 								/>
 							),
 						},

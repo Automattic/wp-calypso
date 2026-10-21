@@ -1,5 +1,4 @@
 import { useRtl } from 'i18n-calypso';
-import { get } from 'lodash';
 import { cloneElement, Children } from 'react';
 import { stripHTML } from 'calypso/lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
@@ -121,7 +120,7 @@ const getTextMainDirection = ( text, isRtl ) => {
 
 const getDirectionProps = ( child, direction ) => ( {
 	direction: direction,
-	style: Object.assign( {}, get( child, 'props.style', {} ), {
+	style: Object.assign( {}, child?.props?.style ?? {}, {
 		direction: direction,
 		textAlign: direction === 'rtl' ? 'right' : 'left',
 	} ),

@@ -8,6 +8,7 @@ import {
 	useEffect,
 	useLayoutEffect,
 	useRef,
+	type JSX,
 } from 'react';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 
@@ -43,6 +44,8 @@ export const PatternLibraryToggleOption = forwardRef<
 		</Tooltip>
 	);
 } );
+
+PatternLibraryToggleOption.displayName = 'PatternLibraryToggleOption';
 
 type PatternLibraryToggleProps = {
 	className?: string;

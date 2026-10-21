@@ -62,7 +62,7 @@ const getFields = (
 					? formatDate( new Date( item.lastUpdate * 1000 ), locale, {
 							dateStyle: 'medium',
 							timeStyle: 'short',
-					  } )
+						} )
 					: '-',
 			filterBy: { operators: [] },
 		},
@@ -110,7 +110,7 @@ const getFields = (
 								display: 'flex',
 							} }
 						>
-							<Icon icon={ info } size={ 16 } />
+							<Icon icon={ info } size={ 16 } style={ { fill: 'currentColor' } } />
 						</span>
 					</Tooltip>
 				</span>
@@ -258,7 +258,7 @@ export default function PluginsScheduledUpdates() {
 									? __( 'No scheduled updates yet.' )
 									: __(
 											"We couldn't find any schedules based on your search criteria. You might want to check your search terms and try again."
-									  ) }
+										) }
 							</p>
 						}
 						actions={ [

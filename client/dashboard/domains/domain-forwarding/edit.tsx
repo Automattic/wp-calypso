@@ -9,6 +9,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainForwardingRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import DomainForwardingForm from './form';
@@ -21,16 +22,13 @@ export default function EditDomainForwarding() {
 	const router = useRouter();
 	const { domainName, forwardingId } = domainRoute.useParams();
 	const { data: forwardingData } = useSuspenseQuery( domainForwardingQuery( domainName ) );
-	const saveMutation = useMutation( {
-		...domainForwardingSaveMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'Domain forwarding rule for %s saved.' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const saveMutation = useMutation(
+		withSnackbar( domainForwardingSaveMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'Domain forwarding rule for %s saved.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 	const { data: domainData } = useSuspenseQuery( domainQuery( domainName ) );
 	const forceSubdomainsOnly = domainData?.primary_domain && ! domainData?.is_domain_only_site;
 

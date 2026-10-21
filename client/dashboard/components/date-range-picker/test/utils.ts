@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { formatLabel } from '../utils';
+import { computePresetRange, formatLabel, getActivePresetId, presetDefs } from '../utils';
 
 describe( 'formatLabel', () => {
 	const locale = 'en-US';
@@ -35,5 +35,24 @@ describe( 'formatLabel', () => {
 			const label = formatLabel( start, end, locale );
 			expect( label ).toBe( 'Nov 1, 2025 to Nov 3, 2025' );
 		} );
+	} );
+} );
+
+describe( 'last-90-days preset', () => {
+	const base = new Date( 2025, 7, 25 );
+
+	test( 'presetDefs includes last-90-days', () => {
+		expect( presetDefs.find( ( p ) => p.id === 'last-90-days' ) ).toBeDefined();
+	} );
+
+	test( 'computePresetRange spans an inclusive 90-day window ending on baseDate', () => {
+		expect( computePresetRange( 'last-90-days', base ) ).toEqual( {
+			from: new Date( 2025, 4, 28 ),
+			to: base,
+		} );
+	} );
+
+	test( 'getActivePresetId identifies a 90-day range ending today', () => {
+		expect( getActivePresetId( new Date( 2025, 4, 28 ), base, base ) ).toBe( 'last-90-days' );
 	} );
 } );

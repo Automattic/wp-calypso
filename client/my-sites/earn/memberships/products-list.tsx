@@ -5,22 +5,27 @@ import {
 } from '@automattic/calypso-products';
 import { Badge, Button, Card, CompactCard, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
+import { __experimentalHStack as HStack, Tooltip } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { useDispatch, useSelector } from 'calypso/state';
-import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal';
+import FreePlanModal from '../components/free-plan-modal';
 import { Product } from '../types';
 import {
 	ADD_NEW_PAYMENT_PLAN_HASH,
@@ -39,6 +44,7 @@ function ProductsList() {
 	const dispatch = useDispatch();
 	const [ showAddEditDialog, setShowAddEditDialog ] = useState( false );
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
+	const [ showFreePlanDialog, setShowFreePlanDialog ] = useState( false );
 	const [ product, setProduct ] = useState< Product | null >( null );
 	const [ annualProduct, setAnnualProduct ] = useState< Product | null >( null );
 	const site = useSelector( getSelectedSite );
@@ -46,6 +52,26 @@ function ProductsList() {
 	const hasLoadedFeatures = features?.active.length > 0;
 	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
 	const hasProducts = products.length > 0;
+
+	// The "Free" newsletter tier is not a product; it's the absence of a paid
+	// subscription. We only surface it (and its editable description / hide
+	// setting) when at least one paid newsletter tier exists, mirroring the
+	// subscriber-facing selector where Free only appears alongside paid tiers.
+	const hasNewsletterTier = products.some(
+		( currentProduct: Product ) => currentProduct.type === TYPE_TIER && ! currentProduct.tier
+	);
+	const siteSettings = useSelector( ( state ) => getSiteSettings( state, site?.ID ?? null ) );
+	const freeTierDescription: string =
+		siteSettings?.subscription_options?.free_tier_description ?? '';
+	// Server-rendered markdown for the Free tier, parsed by the same backend
+	// parser the subscribe modal uses, so the preview is 1:1 with what
+	// subscribers see (the raw value above is still used for editing). It's
+	// colocated with subscription_options on the site-settings endpoint, so it
+	// stays read-after-write consistent with the source after a save.
+	const freeTierDescriptionRendered = siteSettings?.free_tier_description_rendered ?? null;
+	const isFreeTierHidden = Boolean( siteSettings?.subscription_options?.hide_free_tier );
+
+	const supportsFreeTierSettings = Boolean( siteSettings?.supports_free_tier_customization );
 
 	const hasDonationsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site?.ID ?? null, FEATURE_DONATIONS )
@@ -65,13 +91,10 @@ function ProductsList() {
 		window.location.hash === ADD_TIER_PLAN_HASH;
 	const default_product_type = defaultToTierPanel ? TYPE_TIER : null;
 
-	const trackUpgrade = () =>
-		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
-
-	function renderEllipsisMenu( productId: number ) {
+	function renderEllipsisMenu( productId: number, canEdit: boolean ) {
 		return (
 			<EllipsisMenu position="bottom left">
-				{ hasStripeFeature && (
+				{ hasStripeFeature && canEdit && (
 					<PopoverMenuItem onClick={ () => openAddEditDialog( productId ) }>
 						<Gridicon size={ 18 } icon="pencil" />
 						{ translate( 'Edit' ) }
@@ -90,10 +113,21 @@ function ProductsList() {
 		openAddEditDialog();
 	}
 
+	function getProductPair( productId: number ) {
+		const currentProduct = products.find( ( prod ) => prod.ID === productId );
+		const currentAnnualProduct = products.find( ( prod ) => prod.tier === productId );
+		return {
+			currentProduct,
+			currentAnnualProduct,
+		};
+	}
+
 	function openAddEditDialog( productId?: number ) {
 		if ( productId ) {
-			const currentProduct = products.find( ( prod: Product ) => prod.ID === productId );
-			const currentAnnualProduct = products.find( ( prod: Product ) => prod.tier === productId );
+			const { currentProduct, currentAnnualProduct } = getProductPair( productId );
+			if ( ! currentProduct ) {
+				return;
+			}
 			setShowAddEditDialog( true );
 			setProduct( currentProduct ?? null );
 			setAnnualProduct( currentAnnualProduct ?? null );
@@ -106,17 +140,25 @@ function ProductsList() {
 
 	function openDeleteDialog( productId: number ) {
 		if ( productId ) {
-			const currentProduct = products.find( ( prod: Product ) => prod.ID === productId );
-			const currentAnnualProduct = products.find( ( prod: Product ) => prod.tier === productId );
+			const { currentProduct, currentAnnualProduct } = getProductPair( productId );
+			if ( ! currentProduct ) {
+				return;
+			}
 			setShowDeleteDialog( true );
 			setProduct( currentProduct ?? null );
 			setAnnualProduct( currentAnnualProduct ?? null );
 		}
 	}
 
+	function openFreePlanDialog() {
+		dispatch( recordTracksEvent( 'calypso_earn_page_free_plan_edit_click' ) );
+		setShowFreePlanDialog( true );
+	}
+
 	function closeDialog() {
 		setShowAddEditDialog( false );
 		setShowDeleteDialog( false );
+		setShowFreePlanDialog( false );
 	}
 
 	function getPriceFromProduct( product: Product, price: string ) {
@@ -146,22 +188,10 @@ function ProductsList() {
 		<div className="memberships__products-list">
 			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
 			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
-			{ hasLoadedFeatures && ! hasStripeFeature && (
-				// Purposefully isn't a dismissible nudge as without this nudge, the page would appear to be
-				// broken as it only does listing and deleting of plans and it wouldn't be clear how to change that.
-				<UpsellNudge
-					title={ translate( 'Upgrade to modify payment plans or add new plans' ) }
-					href={ '/plans/' + site?.slug }
-					showIcon
-					onClick={ () => trackUpgrade() }
-					// This could be any stripe payment features (see `hasStripeFeature`) but UpsellNudge only
-					// supports 1. They're all available on the same plans anyway, so practically it's ok to pick 1.
-					feature={ FEATURE_RECURRING_PAYMENTS }
-					event="calypso_earn_page_payment_plans_upgrade_nudge"
-					tracksClickName="calypso_earn_page_payment_plans_upgrade_button_click"
-					tracksImpressionName="calypso_earn_page_payment_plans_upgrade_button_view"
-				/>
-			) }
+			{ /* Site settings are only needed to render/edit the Free tier, which
+			     only appears when a newsletter tier exists — avoid the extra
+			     request on donation-only / non-newsletter sites. */ }
+			{ hasNewsletterTier && site?.ID && <QuerySiteSettings siteId={ site.ID } /> }
 			{ hasLoadedFeatures && hasStripeFeature && (
 				<SectionHeader label={ translate( 'Manage plans' ) }>
 					<Button primary compact onClick={ onAddNewPaymentPlanButtonClick }>
@@ -180,10 +210,17 @@ function ProductsList() {
 			) }
 			{ hasLoadedFeatures &&
 				products
-					.filter( ( currentProduct: Product ) => ! currentProduct.tier ) // We remove the "tiers" (the annual products with "tier" type)
+					.filter(
+						( currentProduct: Product ) =>
+							! currentProduct.tier ||
+							! products.some( ( parentProduct ) => parentProduct.ID === currentProduct.tier )
+					)
 					.map( function ( currentProduct: Product ) {
 						const currentAnnualProduct = products.find(
 							( _prod: Product ) => _prod.tier === currentProduct.ID
+						);
+						const isReadOnly = Boolean(
+							currentProduct.is_read_only || currentAnnualProduct?.is_read_only
 						);
 						const price = formatCurrency(
 							currentProduct?.price || 0,
@@ -205,6 +242,29 @@ function ProductsList() {
 									<div className="memberships__products-product-title">
 										{ currentProduct?.title }
 									</div>
+									{ currentProduct.type === TYPE_TIER &&
+										currentProduct.description &&
+										( currentProduct.description_rendered ? (
+											// Server-rendered (and kses-sanitized) markdown — the same
+											// HTML the subscribe modal shows, for a 1:1 preview.
+											// DOMPurify is defense-in-depth in case the API's
+											// sanitization guarantee ever changes. ADD_ATTR keeps the
+											// target="_blank" the server adds to links (DOMPurify
+											// strips `target` by default); `rel` is kept by default.
+											<div
+												className="memberships__products-product-description"
+												// eslint-disable-next-line react/no-danger
+												dangerouslySetInnerHTML={ {
+													__html: DOMPurify.sanitize( currentProduct.description_rendered, {
+														ADD_ATTR: [ 'target' ],
+													} ),
+												} }
+											/>
+										) : (
+											<div className="memberships__products-product-description">
+												{ currentProduct.description }
+											</div>
+										) ) }
 									<sub className="memberships__products-product-price">
 										{ getPriceFromProduct( currentProduct, price ) }
 										{ currentAnnualProduct &&
@@ -223,10 +283,74 @@ function ProductsList() {
 										</div>
 									) }
 								</div>
-								{ currentProduct && currentProduct.ID && renderEllipsisMenu( currentProduct.ID ) }
+								{ isReadOnly && (
+									<Tooltip text={ __( 'Managed on the owning site.' ) }>
+										<Badge
+											type="info"
+											className="memberships__products-product-read-only"
+											tabIndex={ 0 }
+										>
+											{ __( 'Read-only' ) }
+										</Badge>
+									</Tooltip>
+								) }
+								{ ! isReadOnly &&
+									currentProduct &&
+									currentProduct.ID &&
+									renderEllipsisMenu( currentProduct.ID, ! currentProduct.tier ) }
 							</CompactCard>
 						);
 					} ) }
+			{ hasLoadedFeatures && hasStripeFeature && hasNewsletterTier && supportsFreeTierSettings && (
+				<CompactCard className="memberships__products-product-card">
+					<div className="memberships__products-product-details">
+						<div className="memberships__products-product-title">{ translate( 'Free' ) }</div>
+						{ freeTierDescriptionRendered ? (
+							// Server-rendered (and kses-sanitized) markdown — the same HTML
+							// the subscribe modal shows, for a 1:1 preview. DOMPurify is
+							// defense-in-depth in case the API's sanitization guarantee ever
+							// changes. ADD_ATTR keeps the target="_blank" the server adds to
+							// links (DOMPurify strips `target` by default); `rel` is kept by
+							// default.
+							<div
+								className="memberships__products-product-description"
+								// eslint-disable-next-line react/no-danger
+								dangerouslySetInnerHTML={ {
+									__html: DOMPurify.sanitize( freeTierDescriptionRendered, {
+										ADD_ATTR: [ 'target' ],
+									} ),
+								} }
+							/>
+						) : (
+							freeTierDescription && (
+								<div className="memberships__products-product-description">
+									{ freeTierDescription }
+								</div>
+							)
+						) }
+						<sub className="memberships__products-product-price">{ translate( 'Free' ) }</sub>
+						<div className="memberships__products-product-badge">
+							<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
+								<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>
+								{ isFreeTierHidden && (
+									<Badge type="warning">{ translate( 'Hidden from subscribers' ) }</Badge>
+								) }
+							</HStack>
+						</div>
+					</div>
+					<EllipsisMenu position="bottom left">
+						{ hasStripeFeature && (
+							<PopoverMenuItem onClick={ openFreePlanDialog }>
+								<Gridicon size={ 18 } icon="pencil" />
+								{ translate( 'Edit' ) }
+							</PopoverMenuItem>
+						) }
+					</EllipsisMenu>
+				</CompactCard>
+			) }
+			{ hasLoadedFeatures && showFreePlanDialog && hasStripeFeature && supportsFreeTierSettings && (
+				<FreePlanModal closeDialog={ closeDialog } siteId={ site?.ID } />
+			) }
 			{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && (
 				<RecurringPaymentsPlanAddEditModal
 					closeDialog={ closeDialog }

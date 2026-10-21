@@ -123,7 +123,8 @@
 // general styles
 .checklist-item__text {
 	font-weight: 600;
-	flex-grow: 1;
+	flex: 1 1 0%;
+	min-width: 0;
 	text-align: left;
 }
 
@@ -236,6 +237,7 @@
 	display: flex;
 	line-height: 20px;
 	width: 30px;
+	flex-shrink: 0;
 }
 
 .gridicon.checklist-item__chevron {

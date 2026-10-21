@@ -1,6 +1,7 @@
 import { queryClient } from '@automattic/api-queries';
 import pagejs from '@automattic/calypso-router';
 import {
+	type GroupableSiteLaunchStatuses,
 	type SiteExcerptData,
 	SitesSortKey,
 	useFilterDeletedSites,
@@ -8,7 +9,6 @@ import {
 	useSitesListGrouping,
 	useSitesListSorting,
 } from '@automattic/sites';
-import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
 import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -66,6 +66,9 @@ import './style.scss';
 import './dotcom-style.scss';
 
 import './guided-tours.scss';
+
+const loadSitesList = () =>
+	import( /* webpackChunkName: "async-load-calypso-sites-v2-sites-list" */ '../v2/sites-list' );
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
@@ -205,7 +208,7 @@ const SitesDashboard = ( {
 							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
 						},
 					],
-			  }
+				}
 			: {} ),
 		...( selectedSite
 			? {
@@ -215,7 +218,7 @@ const SitesDashboard = ( {
 					mediaField: 'icon.ico',
 					showMedia: true,
 					descriptionField: 'URL',
-			  }
+				}
 			: {
 					type: 'table',
 					titleField: 'name',
@@ -242,7 +245,7 @@ const SitesDashboard = ( {
 							},
 						},
 					},
-			  } ),
+				} ),
 	};
 	const [ dataViewsState, setDataViewsState ] = useState< View >( defaultDataViewsState );
 
@@ -330,7 +333,7 @@ const SitesDashboard = ( {
 			? filteredSites.slice(
 					( dataViewsState.page - 1 ) * dataViewsState.perPage,
 					dataViewsState.page * dataViewsState.perPage
-			  )
+				)
 			: filteredSites;
 
 	const onboardingTours = useOnboardingTours();
@@ -382,6 +385,7 @@ const SitesDashboard = ( {
 				recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
 					site_id: site.ID,
 					source,
+					is_staging_site: site.is_wpcom_staging_site ?? null,
 				} );
 				showSitesPage( sitePreviewPane.getUrl( site ), openInNewTab );
 			},
@@ -451,16 +455,7 @@ const SitesDashboard = ( {
 			);
 		}
 
-		return (
-			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-sites-v2-sites-list" */ '../v2/sites-list'
-					)
-				}
-				placeholder={ null }
-			/>
-		);
+		return <AsyncLoad require={ loadSitesList } placeholder={ null } />;
 	};
 
 	return (

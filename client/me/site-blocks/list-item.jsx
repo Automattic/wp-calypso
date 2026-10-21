@@ -2,9 +2,9 @@ import { Button, ExternalLink } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { withSite } from 'calypso/reader/data/site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { unblockSite } from 'calypso/state/reader/site-blocks/actions';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 
 class SiteBlockListItem extends Component {
 	unblockSite = () => {
@@ -42,11 +42,6 @@ class SiteBlockListItem extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		return {
-			site: getSite( state, ownProps.siteId ),
-		};
-	},
-	{ unblockSite, recordTracksEvent }
-)( localize( SiteBlockListItem ) );
+export default connect( null, { unblockSite, recordTracksEvent } )(
+	withSite( localize( SiteBlockListItem ) )
+);

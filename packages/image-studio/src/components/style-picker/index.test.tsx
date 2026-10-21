@@ -1,9 +1,10 @@
 /* eslint-disable import/order */
 import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 // Mock dependencies - MUST be before imports that use them
 jest.mock( '@automattic/agenttic-ui', () => {
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const React = require( 'react' );
 	const { useState } = React;
 
@@ -64,6 +65,10 @@ jest.mock( '../../store', () => ( {
 	store: 'image-studio',
 } ) );
 
+jest.mock( '../../stores/video-studio', () => ( {
+	store: 'video-studio',
+} ) );
+
 jest.mock( '../icons/BrushIcon', () => ( {
 	BrushIcon: ( { size }: { size: number } ) => <div data-testid="brush-icon">Brush { size }</div>,
 } ) );
@@ -72,7 +77,7 @@ jest.mock( '../icons/BrushIcon', () => ( {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ImageStudioMode } from '../../types';
 import { trackImageStudioStyleSelected } from '../../utils/tracking';
-import { STYLE_OPTIONS, StylePicker } from './index';
+import { STYLE_OPTIONS, StylePicker, VIDEO_STYLE_OPTIONS } from './index';
 
 const mockUseDispatch = useDispatch as jest.MockedFunction< typeof useDispatch >;
 const mockUseSelect = useSelect as jest.MockedFunction< typeof useSelect >;
@@ -109,6 +114,7 @@ describe( 'StylePicker', () => {
 
 	afterEach( () => {
 		jest.restoreAllMocks();
+		delete ( window as Record< string, unknown > ).imageStudioData;
 	} );
 
 	describe( 'Rendering', () => {
@@ -428,6 +434,31 @@ describe( 'StylePicker', () => {
 			expectedStyles.forEach( ( style ) => {
 				expect( dropdown ).toHaveTextContent( style );
 			} );
+		} );
+
+		it( 'exports Cinematic as the only video style', () => {
+			expect( VIDEO_STYLE_OPTIONS ).toHaveLength( 1 );
+
+			expect( VIDEO_STYLE_OPTIONS[ 0 ] ).toMatchObject( {
+				label: 'Cinematic',
+				value: 'cinematic',
+			} );
+			expect( VIDEO_STYLE_OPTIONS[ 0 ].disabled ).toBeFalsy();
+			expect( VIDEO_STYLE_OPTIONS[ 0 ].preview ).toBeTruthy();
+		} );
+
+		it( 'renders video options when variant="video"', async () => {
+			const user = userEvent.setup();
+			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
+
+			await user.click( screen.getByTestId( 'toolbar-button' ) );
+
+			const dropdown = screen.getByTestId( 'dropdown-content' );
+			expect( dropdown ).toHaveTextContent( 'Cinematic' );
+			expect( within( dropdown ).queryByRole( 'button', { name: /Highlights/ } ) ).toBeNull();
+			// Image-only options should not appear in the video dropdown.
+			expect( dropdown ).not.toHaveTextContent( 'Anime' );
+			expect( dropdown ).not.toHaveTextContent( 'Pixel Art' );
 		} );
 
 		it( 'maps style values correctly', async () => {

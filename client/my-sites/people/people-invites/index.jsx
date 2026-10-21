@@ -1,6 +1,5 @@
 import { Card, Button, Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -56,7 +55,10 @@ class PeopleInvites extends PureComponent {
 			return;
 		}
 
-		this.props.deleteInvites( site.ID, map( acceptedInvites, 'key' ) );
+		this.props.deleteInvites(
+			site.ID,
+			( acceptedInvites ?? [] ).map( ( invite ) => invite?.key )
+		);
 		this.toggleClearAllConfirmation();
 	};
 

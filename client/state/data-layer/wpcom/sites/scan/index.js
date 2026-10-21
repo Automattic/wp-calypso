@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit } from '@automattic/js-utils';
 import {
 	JETPACK_SCAN_UPDATE,
 	JETPACK_SCAN_REQUEST,
@@ -65,13 +65,13 @@ const formatScanStateRawResponse = ( {
 			? {
 					...omit( mostRecent, [ 'is_initial' ] ),
 					isInitial: mostRecent.is_initial,
-			  }
+				}
 			: undefined,
 		current: current
 			? {
 					...omit( current, [ 'is_initial' ] ),
 					isInitial: current.is_initial,
-			  }
+				}
 			: undefined,
 		...rest,
 	};

@@ -1,7 +1,7 @@
+import { orderBy } from '@automattic/js-utils';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { orderBy } from 'lodash';
 import { getCacheKey as getEmailDomainsQueryKey } from 'calypso/data/domains/use-get-domains-query';
 import wp from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -16,10 +16,10 @@ import type {
 } from './types';
 import type { UseMutationOptions } from '@tanstack/react-query';
 
-const ArrayOfFive = new Array( 5 );
-
 type AddMailboxFormData = {
-	destinations: typeof ArrayOfFive;
+	// Sourced from `FormData.getAll`, so the entries are intentionally untyped.
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	destinations: any[];
 	mailbox: string;
 };
 

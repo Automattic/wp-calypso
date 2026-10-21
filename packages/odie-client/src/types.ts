@@ -1,5 +1,6 @@
-import { ODIE_ALLOWED_BOTS, ODIE_ALL_BOT_SLUGS } from './constants';
-import type { ZendeskConversation } from '@automattic/zendesk-client';
+import { ODIE_ALLOWED_BOTS } from './constants';
+import type { CheckoutSupportVariation } from '@automattic/data-stores';
+import type { SmoochIntegrationKey, ZendeskConversation } from '@automattic/zendesk-client';
 import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
 export type OdieAssistantContextInterface = {
@@ -9,21 +10,31 @@ export type OdieAssistantContextInterface = {
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	newInteractionsBotSlug: string;
+	newLoggedOutInteractionsBotSlug: string;
 	newInteractionsBotVersion?: string;
 	chat: Chat;
 	clearChat: () => void;
 	currentUser: CurrentUser;
 	experimentVariationName: string | undefined | null;
 	hasUserEverEscalatedToHumanSupport: boolean;
+	isLoadingZendeskHistory: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
-	odieBroadcastClientId: string;
+	// An open human chat can be reopened even without paid support.
+	hasOpenZendeskChat: boolean;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
+	zendeskConversationTags?: string[];
+	zendeskIntegrationKey?: SmoochIntegrationKey | null;
+	externalChatProvider?: string | null;
+	externalChatId?: string | null;
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
+	launcherContext?: string;
+	// Set while the Help Center is open from checkout as part of the checkout support experiment.
+	checkoutSupportVariation?: CheckoutSupportVariation;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
@@ -33,20 +44,27 @@ export type OdieAssistantContextInterface = {
 
 export type OdieAssistantProviderProps = {
 	newInteractionsBotSlug: OdieAllowedBots;
+	newLoggedOutInteractionsBotSlug: string;
 	newInteractionsBotVersion?: string;
 	canConnectToZendesk?: boolean;
 	isLoadingCanConnectToZendesk?: boolean;
 	botName?: string;
 	isUserEligibleForPaidSupport?: boolean;
+	hasOpenZendeskChat?: boolean;
 	isMinimized?: boolean;
 	currentUser: CurrentUser;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
+	zendeskConversationTags?: string[];
+	zendeskIntegrationKey?: SmoochIntegrationKey | null;
+	externalChatProvider?: string | null;
+	externalChatId?: string | null;
 	version?: string | null;
 	forceEmailSupport?: boolean;
 	isChatRestricted?: boolean;
+	launcherContext?: string;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
 } & PropsWithChildren;
@@ -88,7 +106,7 @@ type InquiryType =
 	| 'unrelated-to-wordpress'
 	| 'request-for-human-support';
 
-type InteractionStatus = 'open' | 'closed' | 'solved';
+export type InteractionStatus = 'open' | 'closed' | 'solved';
 
 type ClassificationResults = {
 	inquiry_type?: InquiryType;
@@ -130,6 +148,7 @@ export type MessageType =
 	| 'conversation-feedback'
 	| 'help-link'
 	| 'file'
+	| 'file-placeholder'
 	| 'image'
 	| 'image-placeholder'
 	| 'introduction'
@@ -145,6 +164,11 @@ export type ChatFeedbackActions = {
 export type Message = {
 	content: ReactNode;
 	context?: Context;
+	displayName?: string;
+	/**
+	 * Set on messages originating from Zendesk, where it holds the Smooch message id.
+	 */
+	id?: string;
 	internal_message_id?: string;
 	message_id?: number;
 	meta?: Record< string, string >;
@@ -189,7 +213,6 @@ export type Chat = OdieChat & {
 };
 
 export type OdieAllowedBots = ( typeof ODIE_ALLOWED_BOTS )[ number ];
-export type OdieAllBotSlugs = ( typeof ODIE_ALL_BOT_SLUGS )[ number ];
 
 export type SupportProvider = 'zendesk' | 'odie' | 'zendesk-staging' | 'help-center';
 
@@ -201,6 +224,7 @@ export type MessageAction = {
 	metadata: ChatFeedbackActions;
 	label: string;
 	onClick: () => void;
+	uri?: string;
 };
 
 export type OdieMessage = {

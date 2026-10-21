@@ -10,6 +10,7 @@ import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import SitePreviewLink from '../../components/site-preview-link';
@@ -30,24 +31,18 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		...sitePreviewLinksQuery( site.ID ),
 		enabled: linksPermitted,
 	} );
-	const createMutation = useMutation( {
-		...sitePreviewLinkCreateMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Preview link enabled.' ),
-				error: __( 'Failed to enable preview link.' ),
-			},
-		},
-	} );
-	const deleteMutation = useMutation( {
-		...sitePreviewLinkDeleteMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Preview link disabled.' ),
-				error: __( 'Failed to disable preview link.' ),
-			},
-		},
-	} );
+	const createMutation = useMutation(
+		withSnackbar( sitePreviewLinkCreateMutation( site.ID ), {
+			success: __( 'Preview link enabled.' ),
+			error: __( 'Failed to enable preview link.' ),
+		} )
+	);
+	const deleteMutation = useMutation(
+		withSnackbar( sitePreviewLinkDeleteMutation( site.ID ), {
+			success: __( 'Preview link disabled.' ),
+			error: __( 'Failed to disable preview link.' ),
+		} )
+	);
 	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	if ( ! linksPermitted ) {
@@ -100,27 +95,25 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		const data = { enabled: links.length > 0 };
 
 		return (
-			<>
-				<VStack spacing={ 4 }>
-					<DataForm< { enabled: boolean } >
-						data={ data }
-						fields={ fields }
-						form={ form }
-						onChange={ handleChange }
+			<VStack spacing={ 4 }>
+				<DataForm< { enabled: boolean } >
+					data={ data }
+					fields={ fields }
+					form={ form }
+					onChange={ handleChange }
+				/>
+				{ links.map( ( link ) => (
+					<SitePreviewLink
+						key={ link.code }
+						label={ __( 'Preview link' ) }
+						hideLabelFromVision
+						{ ...link }
+						siteUrl={ site.URL }
+						disabled={ isMutationPending }
+						onCopy={ handleCopy }
 					/>
-					{ links.map( ( link ) => (
-						<SitePreviewLink
-							key={ link.code }
-							label={ __( 'Preview link' ) }
-							hideLabelFromVision
-							{ ...link }
-							siteUrl={ site.URL }
-							disabled={ isMutationPending }
-							onCopy={ handleCopy }
-						/>
-					) ) }
-				</VStack>
-			</>
+				) ) }
+			</VStack>
 		);
 	};
 

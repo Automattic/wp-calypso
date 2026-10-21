@@ -1,5 +1,13 @@
 import type { IntroductoryOfferTerms } from '@automattic/shopping-cart';
 
+export interface TaxBreakdownEntry {
+	label: string;
+	rate: number;
+	rate_display: string;
+	local_tax_collected: number;
+	local_tax_collected_integer: number;
+}
+
 export interface TaxVendorInfo {
 	/**
 	 * The country code for this info.
@@ -30,6 +38,28 @@ export interface TaxVendorInfo {
 	tax_name: string;
 }
 
+/**
+ * The buyer's tax identity as the document currently standing for a receipt
+ * states it: the reissue that supersedes it where there is one, and the receipt
+ * as issued where there is not.
+ *
+ * Not the same as the user's current details from `userTaxDetailsQuery`, which
+ * describe who they are today rather than who the receipt was issued to. Prefer
+ * this whenever rendering a receipt.
+ *
+ * Same shape as the `/me/vat-info` response minus `can_user_edit`, so either
+ * can be handed to the same renderer.
+ */
+export interface TaxCustomerInfo {
+	/**
+	 * Uppercase country code, or an empty string where none is on record.
+	 */
+	country: string;
+	id: string | null;
+	name: string | null;
+	address: string | null;
+}
+
 export interface ReceiptItemCostOverride {
 	id: number;
 	human_readable_reason: string;
@@ -37,6 +67,11 @@ export interface ReceiptItemCostOverride {
 	does_override_original_cost: boolean;
 	old_price_integer: number;
 	new_price_integer: number;
+	/**
+	 * The coupon code the customer applied that caused this override, or null
+	 * for any other override, including automatic sale coupons.
+	 */
+	coupon_code: string | null;
 }
 
 export interface ReceiptItem {
@@ -64,20 +99,49 @@ export interface ReceiptItem {
 	tax_integer: number;
 	amount_integer: number;
 	currency: string;
-	licensed_quantity: number;
+	licensed_quantity: number | null;
 	new_quantity: number;
 	product: string;
+	product_id: number;
+	product_name_en: string;
+	product_type: string;
 	product_slug: string;
 	variation: string;
 	variation_slug: string;
-	months_per_renewal_interval: number;
+	months_per_renewal_interval: number | null;
 	wpcom_product_slug: string;
+	store_subscription_id?: number | null;
 	cost_overrides: ReceiptItemCostOverride[];
 	volume: number;
 	credits_used: number | null;
 	introductory_offer_terms: IntroductoryOfferTerms | null;
 	price_tier_slug: string;
 	saas_redirect_url: string;
+	is_plan: boolean;
+	is_domain_registration: boolean;
+	/**
+	 * True if this item is for the domain that received a free first-year domain
+	 * credit in this purchase: a plan's domain credit (from a plan bought in the
+	 * same purchase or one the site already has) or a marketplace add-on's free
+	 * .blog domain. Set on every domain product for that domain, including its
+	 * mapping. Same as `is_bundled` on a shopping cart product.
+	 *
+	 * Unrelated to `domain_bundle_group_id`.
+	 */
+	uses_free_domain_credit: boolean;
+	/**
+	 * The ID shared by domains that were bought together as a group suggested
+	 * by domain search, or null if this item was not part of such a group.
+	 * Same as `extra.domain_bundle_group_id` on a shopping cart product.
+	 *
+	 * Unrelated to `uses_free_domain_credit`.
+	 */
+	domain_bundle_group_id: string | null;
+	/**
+	 * The store product slug of the plan this item was upgraded from (for
+	 * example a Woo Express trial), or null if this item was not an upgrade.
+	 */
+	previous_plan_slug: string | null;
 }
 
 export interface Receipt {
@@ -89,6 +153,8 @@ export interface Receipt {
 	tax_integer: number;
 	amount_integer: number;
 	tax_country_code: string;
+	tax_state?: string;
+	tax_is_for_business?: boolean | null;
 	date: string;
 	desc: string;
 	org: string;
@@ -103,8 +169,29 @@ export interface Receipt {
 	cc_num: string;
 	cc_name: string;
 	cc_email: string;
-	credit: string;
 	items: ReceiptItem[];
 	tax_vendor_info?: TaxVendorInfo;
+	/**
+	 * Optional only because responses cached before this field shipped will not
+	 * carry it; the API always sends it. Fall back to the user's current details
+	 * when it is absent.
+	 */
+	tax_customer_info?: TaxCustomerInfo;
+	tax_breakdown?: TaxBreakdownEntry[];
 	checkout_type?: string;
+	/**
+	 * Line items that failed to provision during checkout, keyed by site (blog) ID.
+	 * Only populated when the receipt is fetched with `include_failed_purchases=true`;
+	 * omitted otherwise. Used to surface partial-failure orders on the failed-purchases page.
+	 */
+	failed_purchases?: Record<
+		string,
+		Array< {
+			product_meta: string;
+			product_id: string | number;
+			product_slug: string;
+			product_cost: string | number;
+			product_name: string;
+		} >
+	>;
 }

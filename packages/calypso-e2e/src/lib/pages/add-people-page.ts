@@ -2,6 +2,8 @@ import { Page } from 'playwright';
 
 export type RoleValue = 'administrator' | 'editor' | 'author' | 'contributor' | 'follower';
 
+export type Roles = 'Administrator' | 'Editor' | 'Author' | 'Contributor' | 'Follower';
+
 const selectors = {
 	// Form inputs
 	emailInput: '#token-0',

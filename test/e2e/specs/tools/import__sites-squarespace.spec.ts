@@ -59,7 +59,7 @@ test.describe(
 			pageImportLetsFindYourSite,
 			sitePublic,
 		} ) => {
-			const squarespaceSiteURL = 'https://example.squarespace.com/';
+			const squarespaceSiteURL = 'https://www.squarespace.com/';
 
 			await test.step( 'When I visit the "Let\'s find your site" page as coming from the wp-admin Tools > Import page', async function () {
 				await pageImportLetsFindYourSite.visit( sitePublic.blog_details.site_slug );
@@ -100,7 +100,7 @@ test.describe(
 		} );
 
 		test( 'Three: As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Squarespace site', async ( {
-			sitePublic,
+			sitePublicShared: sitePublic,
 			pageImportContent,
 		} ) => {
 			await test.step( 'When I visit the "Import Content" page for my new site', async function () {

@@ -25,6 +25,7 @@ import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { wpcomLink } from '../../utils/link';
 import {
 	getProductionSiteId,
 	hasStagingSite,
@@ -38,9 +39,7 @@ type SiteDeleteFormData = {
 };
 
 const canDeleteSite = ( site: Site ) =>
-	( site.is_garden || site.is_wpcom_atomic || ! site.jetpack ) &&
-	! site.is_vip &&
-	! site.options?.p2_hub_blog_id;
+	( site.is_wpcom_atomic || ! site.jetpack ) && ! site.is_vip && ! site.options?.p2_hub_blog_id;
 
 const isTrialSite = ( site: Site ) =>
 	site.plan?.product_slug && ( TrialPlans as string[] ).includes( site.plan?.product_slug );
@@ -212,7 +211,9 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 							'Before deleting your site, consider <link>exporting your content as a backup</link>.'
 						),
 						{
-							link: <ExternalLink href={ `/export/${ site.slug }` } children={ null } />,
+							link: (
+								<ExternalLink href={ wpcomLink( `/export/${ site.slug }` ) } children={ null } />
+							),
 						}
 					) }
 				</Text>

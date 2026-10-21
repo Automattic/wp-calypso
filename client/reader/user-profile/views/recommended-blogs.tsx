@@ -7,6 +7,7 @@ import { ReaderSitesList } from 'calypso/reader/sites-list';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import type { ReaderUser } from '@automattic/api-core';
+import type { JSX } from 'react';
 
 interface UserRecommendedBlogsProps {
 	user: ReaderUser;

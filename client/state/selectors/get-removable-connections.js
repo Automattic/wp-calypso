@@ -1,4 +1,3 @@
-import { filter } from 'lodash';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getKeyringConnectionsByName } from 'calypso/state/sharing/keyring/selectors';
 import { getRemovableConnections as getRemovablePublicizeConnections } from 'calypso/state/sharing/publicize/selectors';
@@ -16,8 +15,7 @@ import { getRemovableConnections as getRemovablePublicizeConnections } from 'cal
  */
 export default function getRemovableConnections( state, service ) {
 	const userId = getCurrentUserId( state );
-	const keyringConnections = filter(
-		getKeyringConnectionsByName( state, service ),
+	const keyringConnections = getKeyringConnectionsByName( state, service ).filter(
 		( { type, user_ID } ) => 'publicize' !== type && user_ID === userId
 	);
 

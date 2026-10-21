@@ -10,6 +10,7 @@ import { DataForm, Field, useFormValidity } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { domainRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 
 export type EmailSetupFormData = {
@@ -47,23 +48,20 @@ export default function EmailSetupForm( {
 	const { domainName } = domainRoute.useParams();
 	const [ formData, setFormData ] = useState< EmailSetupFormData >( defaultFormData );
 
-	const mutation = useMutation( {
-		...domainDnsApplyTemplateMutation( domainName ),
-		meta: {
-			snackbar: {
-				// translators: %(providerName)s will be replaced with the name of the service provider that this template is used for, for example Google Workspace or Office 365; %(domainName)s will be replaced with the domain name
-				success: sprintf( __( '%(provider)s email set up for %(domainName)s.' ), {
-					provider: label,
-					domainName,
-				} ),
-				// translators: %(providerName)s will be replaced with the name of the service provider that this template is used for, for example Google Workspace or Office 365; %(domainName)s will be replaced with the domain name
-				error: sprintf( __( 'Failed to complete %(provider)s email setup for %(domainName)s.' ), {
-					provider: label,
-					domainName,
-				} ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( domainDnsApplyTemplateMutation( domainName ), {
+			// translators: %(providerName)s will be replaced with the name of the service provider that this template is used for, for example Google Workspace or Office 365; %(domainName)s will be replaced with the domain name
+			success: sprintf( __( '%(provider)s email set up for %(domainName)s.' ), {
+				provider: label,
+				domainName,
+			} ),
+			// translators: %(providerName)s will be replaced with the name of the service provider that this template is used for, for example Google Workspace or Office 365; %(domainName)s will be replaced with the domain name
+			error: sprintf( __( 'Failed to complete %(provider)s email setup for %(domainName)s.' ), {
+				provider: label,
+				domainName,
+			} ),
+		} )
+	);
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();

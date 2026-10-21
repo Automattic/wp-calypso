@@ -1,8 +1,8 @@
 import page from '@automattic/calypso-router';
+import { isEmpty } from '@automattic/js-utils';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -47,6 +47,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getIsUserAccountEmailUpdateRedirect from 'calypso/state/selectors/get-is-user-account-email-update-redirect';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
@@ -57,9 +58,23 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
+import SignupExistingAccountNotice from './signup-existing-account-notice';
 import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './style.scss';
+
+const loadSocialConnectPrompt = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-login-social-connect-prompt" */ './social-connect-prompt'
+	);
+const loadLostPasswordForm = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-login-lost-password-form" */ './lost-password-form'
+	);
+const loadTwoFactorContent = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-login-two-factor-authentication-two-factor-content" */ './two-factor-authentication/two-factor-content'
+	);
 
 class Login extends Component {
 	static propTypes = {
@@ -68,8 +83,10 @@ class Login extends Component {
 		isJetpack: PropTypes.bool.isRequired,
 		isFromAkismet: PropTypes.bool,
 		isFromPassport: PropTypes.bool,
+		isUserAccountEmailUpdateRedirect: PropTypes.bool,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
+		lostPasswordLink: PropTypes.node,
 		linkingSocialService: PropTypes.string,
 		oauth2Client: PropTypes.object,
 		rebootAfterLogin: PropTypes.func.isRequired,
@@ -91,7 +108,6 @@ class Login extends Component {
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
 		isGravPoweredLoginPage: PropTypes.bool,
-		isSignupExistingAccount: PropTypes.bool,
 		emailRequested: PropTypes.bool,
 		isSendingEmail: PropTypes.bool,
 		isWooJPC: PropTypes.bool,
@@ -347,23 +363,6 @@ class Login extends Component {
 		return getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
 	};
 
-	renderLoginFormSignupNotice() {
-		return (
-			<Notice status="is-transparent-info" showDismiss={ false }>
-				{ this.props.translate(
-					'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
-					{
-						components: {
-							returnToSignup: (
-								<a href={ this.getSignupUrl() } onClick={ this.recordSignUpLinkClick } />
-							),
-						},
-					}
-				) }
-			</Notice>
-		);
-	}
-
 	renderNotice() {
 		const { requestNotice } = this.props;
 
@@ -393,6 +392,7 @@ class Login extends Component {
 			userEmail,
 			handleUsernameChange,
 			signupUrl,
+			lostPasswordLink,
 			isWCCOM,
 			isBlazePro,
 			translate,
@@ -405,21 +405,13 @@ class Login extends Component {
 			redirectTo,
 			isWooJPC,
 			isWoo,
+			isUserAccountEmailUpdateRedirect,
 		} = this.props;
 
 		const signupLink = this.getSignupLinkComponent();
 
 		if ( socialConnect ) {
-			return (
-				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-blocks-login-social-connect-prompt" */ './social-connect-prompt'
-						)
-					}
-					onSuccess={ this.handleValidLogin }
-				/>
-			);
+			return <AsyncLoad require={ loadSocialConnectPrompt } onSuccess={ this.handleValidLogin } />;
 		}
 
 		if ( action === 'lostpassword' ) {
@@ -427,17 +419,13 @@ class Login extends Component {
 				<Fragment>
 					<div className="login__lost-password-form-wrapper">
 						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-blocks-login-lost-password-form" */ './lost-password-form'
-								)
-							}
+							require={ loadLostPasswordForm }
 							redirectToAfterLoginUrl={ this.props.redirectTo }
 							oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
 							locale={ locale }
 							isWoo={ isWoo }
 							isWooJPC={ isWooJPC }
-							from={ get( currentQuery, 'from' ) }
+							from={ currentQuery?.from }
 							isJetpack={ isJetpack }
 						/>
 					</div>
@@ -449,11 +437,7 @@ class Login extends Component {
 			return (
 				<Fragment>
 					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-blocks-login-two-factor-authentication-two-factor-content" */ './two-factor-authentication/two-factor-content'
-							)
-						}
+						require={ loadTwoFactorContent }
 						isBrowserSupported={ this.state.isBrowserSupported }
 						isJetpack={ isJetpack }
 						isBlazePro={ isBlazePro }
@@ -531,9 +515,11 @@ class Login extends Component {
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
+				lostPasswordLink={ lostPasswordLink }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isFromAkismet={ this.props.isFromAkismet }
 				isFromPassport={ this.props.isFromPassport }
+				isUserAccountEmailUpdateRedirect={ isUserAccountEmailUpdateRedirect }
 				isSendingEmail={ this.props.isSendingEmail }
 				isSocialFirst={ isSocialFirst } // TODO just not gravatar
 				isJetpack={ isJetpack }
@@ -565,7 +551,6 @@ class Login extends Component {
 			isGravPoweredClient,
 			isGravPoweredLoginPage,
 			isManualRenewalImmediateLoginAttempt,
-			isSignupExistingAccount,
 			linkingSocialService,
 			socialConnect,
 			twoStepNonce,
@@ -598,7 +583,9 @@ class Login extends Component {
 					/>
 				) }
 
-				{ isSignupExistingAccount && this.renderLoginFormSignupNotice() }
+				{ /* Grav-powered clients render no OneLoginLayout, which is where every other
+				     client gets this. */ }
+				{ isGravPoweredClient && <SignupExistingAccountNotice /> }
 
 				{ /* For Woo, we render the ErrrorNotice component in login-form.jsx */ }
 				{ ! isWCCOM && <ErrorNotice locale={ locale } /> }
@@ -632,9 +619,10 @@ export default connect(
 			new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 		),
 		isFromPassport: isPassportRedirect( getRedirectToOriginal( state ) ),
+		isUserAccountEmailUpdateRedirect: getIsUserAccountEmailUpdateRedirect( state ),
 
 		isFromAutomatticForAgenciesPlugin:
-			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
+			'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from ||
 			'automattic-for-agencies-client' ===
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 		isWooJPC: isWooJPCFlow( state ),
@@ -646,15 +634,11 @@ export default connect(
 		currentRoute: getCurrentRoute( state ),
 		loginEmailAddress: getCurrentQueryArguments( state )?.email_address,
 		isBlazePro: isBlazeProOAuth2Client( getCurrentOAuth2Client( state ) ),
-		isSignupExistingAccount: !! (
-			getInitialQueryArguments( state )?.is_signup_existing_account ||
-			getCurrentQueryArguments( state )?.is_signup_existing_account
-		),
 		requestError: getRequestError( state ),
 		isSendingEmail: isFetchingMagicLoginEmail( state ),
 		emailRequested: isMagicLoginEmailRequested( state ),
 		isLoggedIn: isUserLoggedIn( state ),
-		from: get( getCurrentQueryArguments( state ), 'from' ),
+		from: getCurrentQueryArguments( state )?.from,
 	} ),
 	{
 		rebootAfterLogin,
@@ -679,7 +663,7 @@ export default connect(
 					isWooJPC: stateProps.isWooJPC,
 					isJetpack: ownProps.isJetpack,
 				} ) && { tokenType: 'code' } ),
-				source: stateProps.isWooJPC ? 'woo-passwordless-jpc' + '-' + get( stateProps, 'from' ) : '',
+				source: stateProps.isWooJPC ? 'woo-passwordless-jpc' + '-' + stateProps?.from : '',
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||
 					( ownProps.isGravPoweredClient && getGravatarOAuth2Flow( ownProps.oauth2Client ) ) ||

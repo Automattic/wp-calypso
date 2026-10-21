@@ -12,12 +12,12 @@ const shared = {
 		'react-markdown': '<rootDir>/node_modules/react-markdown/react-markdown.min.js',
 	},
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!(@fnando[\\/\\\\]|@vgs[\\/\\\\].*|uuid[\\/\\\\])|.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|sass|css)$)',
+		'node_modules[\\/\\\\](?!(@fnando[\\/\\\\]|@vgs[\\/\\\\].*|@wordpress[\\/\\\\]theme[\\/\\\\]|(?:.*[\\/\\\\])?uuid[\\/\\\\]|(?:d3-(?:array|color|format|interpolate|scale|time|time-format)|internmap)[\\/\\\\])|.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$)',
 	],
 	testEnvironmentOptions: {
 		url: 'https://example.com',
 	},
-	setupFiles: [ 'jest-canvas-mock' ],
+	setupFiles: [ ...base.setupFiles, 'jest-canvas-mock' ],
 	globals: {
 		google: {},
 		__i18n_text_domain__: 'default',
@@ -30,6 +30,7 @@ module.exports = {
 			...shared,
 			displayName: 'client',
 			testPathIgnorePatterns: [ ...shared.testPathIgnorePatterns, '<rootDir>/dashboard/' ],
+			setupFiles: [ ...shared.setupFiles, '<rootDir>/../test/client/setup-globals.js' ],
 			setupFilesAfterEnv: [
 				...shared.setupFilesAfterEnv,
 				'<rootDir>/../test/client/setup-test-framework.js',
@@ -39,7 +40,7 @@ module.exports = {
 			...shared,
 			displayName: 'dashboard',
 			// Override testMatch to only run dashboard tests
-			testMatch: [ '<rootDir>/dashboard/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
+			testMatch: [ '<rootDir>/dashboard/**/test/*.[jt]s?(x)' ],
 			setupFilesAfterEnv: [
 				...shared.setupFilesAfterEnv,
 				'<rootDir>/../test/client/setup-dashboard-test-framework.js',

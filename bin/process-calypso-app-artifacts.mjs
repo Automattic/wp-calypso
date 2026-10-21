@@ -46,7 +46,7 @@ const changedApps = SKIP_BUILD_DIFF
 			await Promise.all(
 				apps.map( async ( app ) => ( ( await didCalypsoAppChange( app ) ) ? app : null ) )
 			)
-	  ).filter( Boolean );
+		).filter( Boolean );
 
 if ( changedApps.length ) {
 	console.info(

@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/variables";
+
 .subscriptions-mobile {
 	border: 1px solid var(--color-neutral-10);
 	border-radius: 4px;
@@ -32,6 +34,7 @@
 	}
 
 	.step-section-item__status {
+		display: inline-block;
 		margin-block-start: 8px;
 	}
 

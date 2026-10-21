@@ -9,6 +9,7 @@ import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 export interface AgentsManagerSite {
 	ID: number | string;
 	domain: string;
+	URL?: string;
 }
 
 export type Dispatch = DispatchFromMap< typeof actions >;

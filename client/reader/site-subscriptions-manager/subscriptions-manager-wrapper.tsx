@@ -1,5 +1,7 @@
+import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { SubscriptionManager } from '@automattic/data-stores';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -13,18 +15,15 @@ import {
 	SubscriptionManagerContextProvider,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import { SubscriptionsEllipsisMenu } from 'calypso/landing/subscriptions/components/subscriptions-ellipsis-menu';
-import { useDispatch } from 'calypso/state';
-import { markFollowsAsStale } from 'calypso/state/reader/follows/actions';
 import './style.scss';
 
-const useMarkFollowsAsStaleOnUnmount = () => {
-	const dispatch = useDispatch();
+const useInvalidateSiteSubscriptionsOnUnmount = () => {
+	const queryClient = useQueryClient();
 	useEffect( () => {
 		return () => {
-			dispatch( markFollowsAsStale() );
+			queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ queryClient ] );
 };
 
 const getSelectedTab = ( pathname: string ) => {
@@ -56,11 +55,11 @@ const SubscriptionsManagerWrapper = ( {
 	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
 	const selectedTab = getSelectedTab( page.current );
 
-	// Mark follows as stale on unmount to ensure that the reader
-	// redux store is in a consistent state when the user navigates.
+	// Invalidate site subscriptions on unmount to ensure that the shared query
+	// cache is in a consistent state when the user navigates.
 	// This is necessary because the subscription manager does not
-	// sync its subscriptions state with the reader redux store.
-	useMarkFollowsAsStaleOnUnmount();
+	// sync its subscriptions state with the shared site-subscriptions query cache.
+	useInvalidateSiteSubscriptionsOnUnmount();
 
 	const selectedTabText = useMemo( () => {
 		switch ( selectedTab ) {
@@ -71,7 +70,7 @@ const SubscriptionsManagerWrapper = ( {
 			default:
 				return translate( 'Sites' );
 		}
-	}, [ selectedTab ] );
+	}, [ selectedTab, translate ] );
 
 	return (
 		<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>

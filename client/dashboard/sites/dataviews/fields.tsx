@@ -1,7 +1,7 @@
 import { queryClient } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
@@ -29,6 +29,8 @@ import {
 import type { AppConfig } from '../../app/context';
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator, View } from '@wordpress/dataviews';
+
+export const STAGING_FILTER_FIELD = 'staging';
 
 function getDefaultFields( {
 	viewType,
@@ -81,6 +83,7 @@ function getDefaultFields( {
 		{
 			id: 'subscribers_count',
 			label: __( 'Subscribers' ),
+			render: ( { item } ) => formatNumber( item.subscribers_count ),
 		},
 		{
 			id: 'backup',
@@ -92,18 +95,14 @@ function getDefaultFields( {
 			id: 'plan',
 			label: __( 'Plan' ),
 			getValue: ( { item } ) => item.plan?.product_name_en ?? '',
-			render: function PlanField( { item } ) {
-				const { user } = useAuth();
-				return (
-					<Plan
-						nag={ item.plan?.expired ? { isExpired: true, site: item } : { isExpired: false } }
-						isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected( item ) }
-						isJetpack={ item.jetpack }
-						isOwner={ item.site_owner === user.ID }
-						value={ getSitePlanDisplayName( item ) ?? '' }
-					/>
-				);
-			},
+			render: ( { item } ) => (
+				<Plan
+					site={ item }
+					isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected( item ) }
+					isJetpack={ item.jetpack }
+					value={ getSitePlanDisplayName( item ) ?? '' }
+				/>
+			),
 			getElements: async () => {
 				const { plan = [] } = await queryClient.ensureQueryData( {
 					...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
@@ -128,12 +127,6 @@ function getDefaultFields( {
 			},
 			filterBy: {
 				operators: [ 'isAny' ],
-			},
-			sort: ( a, b, direction ) => {
-				const planA = getSitePlanDisplayName( a ) ?? '';
-				const planB = getSitePlanDisplayName( b ) ?? '';
-
-				return direction === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
 			},
 		},
 		{
@@ -234,12 +227,26 @@ function getDefaultFields( {
 			render: ( { field, item } ) => field.getValue( { item } ),
 		},
 		{
+			id: STAGING_FILTER_FIELD,
+			type: 'boolean',
+			label: __( 'Staging sites' ),
+			elements: [
+				{ value: true, label: __( 'Show' ) },
+				{ value: false, label: __( 'Hide' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			enableHiding: false,
+			enableSorting: false,
+		},
+		{
 			id: 'is_deleted',
 			type: 'boolean',
-			label: __( 'Deleted' ),
+			label: __( 'Deleted sites' ),
 			elements: [
-				{ value: true, label: __( 'Yes' ) },
-				{ value: false, label: __( 'No' ) },
+				{ value: true, label: __( 'Show' ) },
+				{ value: false, label: __( 'Hide' ) },
 			],
 			filterBy: {
 				operators: [ 'is' as Operator ],

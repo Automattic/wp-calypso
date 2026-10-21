@@ -20,6 +20,7 @@ class NavItem extends PureComponent {
 		compactCount: PropTypes.bool,
 		className: PropTypes.string,
 		preloadSectionName: PropTypes.string,
+		forwardedRef: PropTypes.oneOfType( [ PropTypes.func, PropTypes.object ] ),
 	};
 
 	_preloaded = false;
@@ -52,7 +53,7 @@ class NavItem extends PureComponent {
 		}
 
 		return (
-			<li className={ itemClassName } role="none">
+			<li className={ itemClassName } role="none" ref={ this.props.forwardedRef }>
 				<a
 					href={ this.props.path }
 					target={ target }

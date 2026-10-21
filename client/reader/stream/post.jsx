@@ -1,13 +1,10 @@
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import ReaderPostCard from 'calypso/blocks/reader-post-card';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { useCommentsApiDisabled } from 'calypso/reader/data/comments';
+import { useFeedQuery } from 'calypso/reader/data/feed';
+import { withSite } from 'calypso/reader/data/site';
+import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
-import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 
 class ReaderPostCardAdapter extends Component {
 	static displayName = 'ReaderPostCardAdapter';
@@ -34,10 +31,6 @@ class ReaderPostCardAdapter extends Component {
 	// take what the stream hands to a card and adapt it
 	// for use by a ReaderPostCard
 	render() {
-		const { feed_ID: feedId, site_ID: siteId, is_external: isExternal } = this.props.post;
-
-		// only query the site if the feed id is missing. feed queries end up fetching site info
-		// via a meta query, so we don't need both.
 		return (
 			<ReaderPostCard
 				post={ this.props.post }
@@ -56,32 +49,32 @@ class ReaderPostCardAdapter extends Component {
 				fixedHeaderHeight={ this.props.fixedHeaderHeight }
 				streamKey={ this.props.streamKey }
 				commentsApiDisabled={ this.props.commentsApiDisabled }
+				showBylineSecondarySiteLink={ this.props.showBylineSecondarySiteLink }
+				itemRef={ this.props.itemRef }
 			>
-				<div ref={ this.props.postRef }>
-					{ feedId && <QueryReaderFeed feedId={ feedId } /> }
-					{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } /> }
-				</div>
+				<div ref={ this.props.postRef } />
 			</ReaderPostCard>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const post = ownProps.post;
-	const siteId = post?.site_ID;
-	const isExternal = post?.is_external;
-	const feedId = post?.feed_ID;
-	const feed = getFeed( state, feedId );
+const getPostSiteId = ( { post } ) =>
+	post && ! post.is_external && post.site_ID ? +post.site_ID : undefined;
 
-	// Add site icon to feed object so have icon for external feeds
-	if ( feed ) {
-		const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
-		feed.site_icon = follow?.site_icon;
-	}
+const ConnectedReaderPostCardAdapter = withSite( ReaderPostCardAdapter, getPostSiteId );
 
-	return {
-		site: isExternal ? null : getSite( state, siteId ),
-		feed: feed,
-		commentsApiDisabled: isExternal ? false : isCommentsApiDisabled( state, siteId ),
-	};
-} )( ReaderPostCardAdapter );
+export default function ReaderPostCardAdapterContainer( props ) {
+	const { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = props.post ?? {};
+	const commentsApiDisabled = useCommentsApiDisabled( siteId );
+	const { data: feed } = useFeedQuery( feedId );
+	const follow = useSiteSubscriptionForFeed( feedId );
+	const feedWithIcon = feed ? { ...feed, site_icon: follow?.site_icon } : feed;
+
+	return (
+		<ConnectedReaderPostCardAdapter
+			{ ...props }
+			feed={ feedWithIcon }
+			commentsApiDisabled={ isExternal ? false : commentsApiDisabled }
+		/>
+	);
+}

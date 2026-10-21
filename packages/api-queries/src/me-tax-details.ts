@@ -6,10 +6,12 @@ export const userTaxDetailsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'billing-purchases', 'tax-details' ],
 		queryFn: () => fetchUserTaxDetails(),
+		meta: { persist: false },
 	} );
 
 export const userTaxDetailsMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'user-tax-details-update' },
 		mutationFn: updateUserTaxDetails,
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData(

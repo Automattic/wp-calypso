@@ -28,7 +28,7 @@ export default function Settings( { selectedTab }: Props ) {
 	const settingsTabs: { [ key: string ]: LayoutNavigationItemProps } = {
 		[ SETTINGS_AGENCY_PROFILE_TAB ]: {
 			key: SETTINGS_AGENCY_PROFILE_TAB,
-			label: translate( 'Agency Profile' ),
+			label: translate( 'Agency profile' ),
 		},
 	};
 

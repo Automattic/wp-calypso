@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { includes } from 'lodash';
 import getJetpackModulesRequiringConnection from './get-jetpack-modules-requiring-connection';
 
 /**
@@ -17,7 +16,7 @@ const isJetpackModuleUnavailableInDevelopmentMode = createSelector(
 			return null;
 		}
 
-		return includes( modulesRequiringConnection, moduleSlug );
+		return modulesRequiringConnection.includes( moduleSlug );
 	},
 	getJetpackModulesRequiringConnection
 );

@@ -1,23 +1,18 @@
+import { getIntervalTypeForTerm, getPlan, isFreePlan } from '@automattic/calypso-products';
 import { OnboardSelect } from '@automattic/data-stores';
 import {
-	AI_SITE_BUILDER_FLOW,
 	DOMAIN_FLOW,
-	EXAMPLE_FLOW,
-	NEW_HOSTED_SITE_FLOW,
-	NEWSLETTER_FLOW,
 	ONBOARDING_FLOW,
-	ONBOARDING_UNIFIED_FLOW,
-	PLAN_UPGRADE_FLOW,
-	START_WRITING_FLOW,
-	WOO_HOSTED_PLANS_FLOW,
+	SITE_MIGRATION_FLOW,
 	Step,
 	useStepPersistedState,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
+import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
-import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import { useBlueprintSuggestedPlans } from 'calypso/landing/stepper/hooks/use-blueprint-suggested-plans';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
@@ -29,65 +24,23 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { playgroundPlansIntent } from '../playground/lib/plans';
 import UnifiedPlansStep from './unified-plans-step';
-import { getIntervalType, getVisualSplitPlansIntent, SupportedIntervalTypes } from './util';
+import {
+	getBlueprintPlanHideProps,
+	getIntervalType,
+	getPlansIntent,
+	getVisualSplitPlansIntent,
+	SupportedIntervalTypes,
+} from './util';
 import type { Step as StepType } from '../../types';
+import type { PlanSlug } from '@automattic/calypso-products';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './style.scss';
 
-/**
- * Copied from steps-repository/plans (which should be removed)
- */
-/**
- * Copied from steps-repository/plans (which should be removed)
- */
-function getPlansIntent( flowName: string | null ): PlansIntent | null {
-	const search = new URLSearchParams( location.search );
-
-	switch ( flowName ) {
-		case START_WRITING_FLOW:
-			return 'plans-blog-onboarding';
-		case NEWSLETTER_FLOW:
-		case EXAMPLE_FLOW:
-			return 'plans-newsletter';
-		case NEW_HOSTED_SITE_FLOW:
-			/**
-			 * isWordCampPromo is temporary
-			 */
-			if ( search.has( 'utm_source', 'wordcamp' ) ) {
-				return 'plans-new-hosted-site-business-only';
-			}
-
-			return 'plans-new-hosted-site';
-		case AI_SITE_BUILDER_FLOW:
-			return 'plans-ai-assembler-free-trial';
-		case ONBOARDING_FLOW:
-			if ( search.has( 'playground' ) ) {
-				return playgroundPlansIntent( search.get( 'playground' )! );
-			}
-			if ( search.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF ) {
-				return 'plans-woo-hosting-solutions';
-			}
-			if ( search.has( 'intent' ) ) {
-				return getVisualSplitPlansIntent( search.get( 'intent' )! );
-			}
-			break;
-		case ONBOARDING_UNIFIED_FLOW:
-			return 'plans-affiliate';
-		case PLAN_UPGRADE_FLOW:
-			return 'plans-upgrade';
-		case WOO_HOSTED_PLANS_FLOW:
-			return 'plans-woo-hosted';
-		default:
-			return null;
-	}
-	return null;
-}
-
 type ProvidedDependencies = {
 	stepName: 'plans';
+	action?: 'select-existing-site';
 	cartItems: MinimalRequestCartProduct[] | null;
 };
 
@@ -98,6 +51,22 @@ const PlansStepAdaptor: StepType< {
 		isStepperUpgradeFlow?: boolean;
 		selectedFeature?: string;
 		displayedIntervals?: SupportedIntervalTypes[];
+		headerText?: string;
+		subHeaderText?: string;
+		showExistingSiteLink?: boolean;
+		hideFreePlan?: boolean;
+		hideEnterprisePlan?: boolean;
+		hidePersonalPlan?: boolean;
+		hidePremiumPlan?: boolean;
+		hideEcommercePlan?: boolean;
+		hidePlanTypeSelector?: boolean;
+		defaultInterval?: SupportedIntervalTypes;
+		highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+		titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+		taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+		isLaunchPage?: boolean;
+		isCustomDomainAllowedOnFreePlan?: boolean;
+		deemphasizeFreePlan?: boolean;
 		wrapperProps?: {
 			hideBack?: boolean;
 			goBack?: () => void;
@@ -106,10 +75,36 @@ const PlansStepAdaptor: StepType< {
 		};
 	};
 } > = ( props ) => {
-	const { displayedIntervals, isInSignup, isStepperUpgradeFlow, selectedFeature, wrapperProps } =
-		props;
+	const {
+		displayedIntervals,
+		isInSignup,
+		isStepperUpgradeFlow,
+		selectedFeature,
+		wrapperProps,
+		headerText,
+		subHeaderText,
+		showExistingSiteLink,
+		hideFreePlan: hideFreePlanOverride,
+		hideEnterprisePlan: hideEnterprisePlanOverride,
+		hidePersonalPlan: hidePersonalPlanOverride,
+		hidePremiumPlan: hidePremiumPlanOverride,
+		hideEcommercePlan: hideEcommercePlanOverride,
+		hidePlanTypeSelector: hidePlanTypeSelectorOverride,
+		defaultInterval,
+		highlightLabelOverrides,
+		titleBadgeOverrides,
+		taglineOverrides,
+		isLaunchPage,
+		isCustomDomainAllowedOnFreePlan,
+		deemphasizeFreePlan,
+	} = props;
+	const translate = useTranslate();
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
-	const siteSlug = useSiteSlug();
+	const query = useQuery();
+	const isMigrationFlow = props.flow === SITE_MIGRATION_FLOW;
+	const hasMigrationDestination = !! ( query.get( 'siteId' ) || query.get( 'siteSlug' ) );
+	const resolvedSiteSlug = useSiteSlug();
+	const siteSlug = isMigrationFlow && ! hasMigrationDestination ? null : resolvedSiteSlug;
 
 	const { siteTitle, domainItem, domainItems, selectedDesign, hideFreePlan } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
@@ -162,9 +157,20 @@ const PlansStepAdaptor: StepType< {
 	const postSignUpSiteSlugParam = getSignupCompleteSlug();
 	const postSignUpSiteIdParam = getSignupCompleteSiteID();
 
-	const site = useSite( postSignUpSiteSlugParam || postSignUpSiteIdParam );
+	const resolvedSite = useSite(
+		isMigrationFlow ? undefined : postSignUpSiteSlugParam || postSignUpSiteIdParam
+	);
+	const site = isMigrationFlow && ! hasMigrationDestination ? null : resolvedSite;
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
-	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
+
+	// A blueprint import narrows the grid to the plans the blueprint suggests
+	// (the library's "Blueprint Plans" box). The identifier rides along in the
+	// query from the `blueprint` step through login to here.
+	const blueprintIdentifier = useQuery().get( 'blueprint' );
+	const { suggestedPlans: blueprintSuggestedPlans, isLoading: isLoadingBlueprintPlans } =
+		useBlueprintSuggestedPlans( blueprintIdentifier );
+	const blueprintHideProps = getBlueprintPlanHideProps( blueprintSuggestedPlans );
+	const [ planInterval, setPlanInterval ] = useState< string | undefined >( defaultInterval );
 
 	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
@@ -202,14 +208,83 @@ const PlansStepAdaptor: StepType< {
 	const isUsingStepContainerV2 =
 		shouldUseStepContainerV2( props.flow ) || props.flow === DOMAIN_FLOW;
 
-	if ( isLoadingSelectedTheme ) {
+	// The downgrade flow only lets users move between paid plans, so hide the free
+	// and enterprise plans (not valid downgrade targets) and default the billing
+	// term selector to the currently active plan's term.
+	const isDowngradeFlow = defaultPlansIntent === 'plans-upgrade-or-downgrade';
+
+	const themeHideProps: {
+		hideFreePlan?: boolean;
+		hidePersonalPlan?: boolean;
+		hidePremiumPlan?: boolean;
+	} = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
+
+	const currentPlanSlug = site?.plan?.product_slug;
+	const currentPlanIntervalType =
+		currentPlanSlug && ! isFreePlan( currentPlanSlug )
+			? getIntervalTypeForTerm( getPlan( currentPlanSlug )?.term ?? '' )
+			: null;
+
+	useEffect( () => {
+		if ( isDowngradeFlow && planInterval === undefined && currentPlanIntervalType ) {
+			setPlanInterval( currentPlanIntervalType );
+		}
+	}, [ isDowngradeFlow, planInterval, currentPlanIntervalType ] );
+
+	// Hold the grid until the blueprint's suggestions are known, so it never
+	// flashes plans the blueprint is about to hide.
+	if ( isLoadingSelectedTheme || isLoadingBlueprintPlans ) {
 		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
 	}
 
 	return (
 		<UnifiedPlansStep
-			{ ...getHidePlanPropsBasedOnThemeType( selectedThemeType || '' ) }
-			hideFreePlan={ hideFreePlan }
+			hideFreePlan={
+				hideFreePlanOverride || hideFreePlan || isDowngradeFlow || blueprintHideProps.hideFreePlan
+			}
+			hideEnterprisePlan={ hideEnterprisePlanOverride || isDowngradeFlow }
+			hidePersonalPlan={
+				hidePersonalPlanOverride ||
+				themeHideProps.hidePersonalPlan ||
+				blueprintHideProps.hidePersonalPlan
+			}
+			hidePremiumPlan={
+				hidePremiumPlanOverride ||
+				themeHideProps.hidePremiumPlan ||
+				blueprintHideProps.hidePremiumPlan
+			}
+			hideBusinessPlan={ blueprintHideProps.hideBusinessPlan }
+			hideEcommercePlan={ hideEcommercePlanOverride || blueprintHideProps.hideEcommercePlan }
+			hidePlanTypeSelector={ hidePlanTypeSelectorOverride }
+			headerText={ headerText }
+			subHeaderText={
+				showExistingSiteLink ? (
+					<>
+						{ subHeaderText }
+						<br />
+						{ translate( 'Or {{link}}migrate to a site you already have{{/link}}.', {
+							components: {
+								link: (
+									<Step.LinkButton
+										onClick={ () =>
+											props.navigation.submit?.( {
+												stepName: 'plans',
+												cartItems: null,
+												action: 'select-existing-site',
+											} )
+										}
+									/>
+								),
+							},
+						} ) }
+					</>
+				) : (
+					subHeaderText
+				)
+			}
+			highlightLabelOverrides={ highlightLabelOverrides }
+			titleBadgeOverrides={ titleBadgeOverrides }
+			taglineOverrides={ taglineOverrides }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...step } as ProvidedDependencies ) );
@@ -252,6 +327,9 @@ const PlansStepAdaptor: StepType< {
 			isInSignup={ isInSignup }
 			isStepperUpgradeFlow={ isStepperUpgradeFlow }
 			selectedFeature={ selectedFeature }
+			isLaunchPage={ isLaunchPage }
+			isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+			deemphasizeFreePlan={ deemphasizeFreePlan }
 		/>
 	);
 };

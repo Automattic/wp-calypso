@@ -13,6 +13,7 @@ import {
 import {
 	isPressableAddonProduct,
 	isPressableHostingProduct,
+	isPressableTitanProduct,
 	isWPCOMHostingProduct,
 } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import isJetpackCrmProduct from 'calypso/components/crm-downloads/is-jetpack-crm-product';
@@ -64,6 +65,9 @@ export default function LicenseDetailsActions( {
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const isPressableAddonLicense =
 		isPressableAddonProduct( licenseKey ) || isPressableAddonProduct( product );
+	// Titan inboxes are managed and cancelled in Pressable, not from the license list.
+	const isTitanLicense =
+		isPressableTitanProduct( licenseKey ) || isPressableTitanProduct( product );
 	const isWPCOMHostingLicense = isWPCOMHostingProduct( licenseKey );
 	const isAutoRenewDisabled =
 		subscription?.status === 'active' && ! subscription.isAutoRenewEnabled;
@@ -97,13 +101,15 @@ export default function LicenseDetailsActions( {
 
 	const download = useCallback( () => {
 		mutate( null );
-		dispatch( recordTracksEvent( 'calypso_a4a_license_details_download' ) );
-	}, [ dispatch, mutate ] );
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_license_details_download', { license_state: licenseState } )
+		);
+	}, [ dispatch, mutate, licenseState ] );
 
 	return (
 		<div className="license-details__actions">
 			{ hasDownloads &&
-				licenseState === LicenseState.Attached &&
+				licenseState !== LicenseState.Revoked &&
 				licenseType === LicenseType.Partner && (
 					<Button
 						compact
@@ -168,6 +174,7 @@ export default function LicenseDetailsActions( {
 
 			{ canRevoke &&
 				! isClientLicense &&
+				! isTitanLicense &&
 				( isChildLicense
 					? licenseState === LicenseState.Attached
 					: licenseState !== LicenseState.Revoked ) &&

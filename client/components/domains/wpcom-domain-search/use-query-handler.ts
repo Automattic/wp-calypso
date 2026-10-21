@@ -14,23 +14,25 @@ const setSessionStorageQuery = ( query: string ) => {
 	sessionStorage.setItem( SESSION_STORAGE_QUERY_KEY, query );
 };
 
-const clearSessionStorageQuery = () => {
+export const clearSessionStorageQuery = () => {
 	sessionStorage.removeItem( SESSION_STORAGE_QUERY_KEY );
 };
 
 export const useQueryHandler = ( {
 	initialQuery: externalInitialQuery,
 	currentSiteUrl,
+	persistQuery = true,
 }: {
 	initialQuery?: string;
 	currentSiteUrl?: string;
+	persistQuery?: boolean;
 } ) => {
 	const [ localQuery, setLocalQuery ] = useState< string | undefined >( () => {
 		if ( externalInitialQuery ) {
 			return externalInitialQuery;
 		}
 
-		const storedQuery = getSessionStorageQuery();
+		const storedQuery = persistQuery ? getSessionStorageQuery() : undefined;
 		if ( storedQuery ) {
 			return storedQuery;
 		}
@@ -48,14 +50,25 @@ export const useQueryHandler = ( {
 		return undefined;
 	} );
 
-	const setQuery = useCallback( ( query: string ) => {
-		setLocalQuery( query );
-		setSessionStorageQuery( query );
+	const setQuery = useCallback(
+		( query: string ) => {
+			setLocalQuery( query );
+			if ( persistQuery ) {
+				setSessionStorageQuery( query );
+			}
+		},
+		[ persistQuery ]
+	);
+
+	const resetQuery = useCallback( () => {
+		clearSessionStorageQuery();
+		setLocalQuery( undefined );
 	}, [] );
 
 	return {
 		query: localQuery?.trim().toLowerCase(),
 		setQuery,
 		clearQuery: clearSessionStorageQuery,
+		resetQuery,
 	};
 };

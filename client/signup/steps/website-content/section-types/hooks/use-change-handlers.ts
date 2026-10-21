@@ -1,13 +1,12 @@
 import { ChangeEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { websiteContentFieldChanged } from 'calypso/state/signup/steps/website-content/actions';
-import type { PageId } from 'calypso/signup/difm/constants';
 
 export const useChangeHandlers = ( {
 	pageId,
 	onChangeField,
 }: {
-	pageId: PageId;
+	pageId: string;
 	onChangeField?: ( e: ChangeEvent< HTMLInputElement > ) => void;
 } ) => {
 	const dispatch = useDispatch();

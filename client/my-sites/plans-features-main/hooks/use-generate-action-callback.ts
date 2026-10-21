@@ -5,7 +5,6 @@ import {
 	type PlanSlug,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
-	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
@@ -27,19 +26,33 @@ import { useNonOwnerHandler } from './use-non-owner-handler';
 import type { PlansIntent, UseActionCallback } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
+/**
+ * Purchase attribution that arrived on the plans page URL (`source`,
+ * `ai_session_id`). Checkout reads both from its own URL, so the plans page
+ * forwards them to the checkout it opens.
+ */
+export interface CheckoutAttribution {
+	source?: string;
+	aiSessionId?: string;
+}
+
 function useUpgradeHandler( {
 	siteSlug,
 	coupon,
 	cartHandler,
 	redirectTo,
 	pluginSlug,
+	checkoutAttribution,
 }: {
 	siteSlug?: string | null;
 	coupon?: string;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectTo?: string;
 	pluginSlug?: string;
+	checkoutAttribution?: CheckoutAttribution;
 } ) {
+	const { source, aiSessionId } = checkoutAttribution ?? {};
+
 	const processCartItems = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
 			const cartItemForPlan = getPlanCartItem( cartItems );
@@ -59,9 +72,7 @@ function useUpgradeHandler( {
 				return;
 			}
 
-			const planPath = cartItemForPlan?.product_slug
-				? getPlanPath( cartItemForPlan.product_slug )
-				: '';
+			const planPath = cartItemForPlan?.product_slug ?? '';
 
 			let checkoutUrl = cartItemForStorageAddOn
 				? `/checkout/${ siteSlug }/${ planPath },${ cartItemForStorageAddOn.product_slug }:-q-${ cartItemForStorageAddOn.quantity }`
@@ -75,14 +86,19 @@ function useUpgradeHandler( {
 			}
 
 			const checkoutUrlWithArgs = addQueryArgs(
-				{ ...( coupon && { coupon } ), ...( redirectTo && { redirect_to: redirectTo } ) },
+				{
+					...( coupon && { coupon } ),
+					...( redirectTo && { redirect_to: redirectTo } ),
+					...( source && { source } ),
+					...( aiSessionId && { ai_session_id: aiSessionId } ),
+				},
 				checkoutUrl
 			);
 
 			page( checkoutUrlWithArgs );
 			return;
 		},
-		[ siteSlug, coupon, cartHandler, redirectTo, pluginSlug ]
+		[ siteSlug, coupon, cartHandler, redirectTo, pluginSlug, source, aiSessionId ]
 	);
 
 	return useCallback(
@@ -169,26 +185,22 @@ function useGenerateActionCallback( {
 	sitePlanSlug,
 	siteId,
 	coupon,
-	isGatingBusinessQ1,
 	redirectTo,
 	pluginSlug,
+	checkoutAttribution,
 }: {
 	currentPlan: Plans.SitePlan | undefined;
 	eligibleForFreeHostingTrial: boolean;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	flowName?: string | null;
 	intent?: PlansIntent | null;
-	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
+	showModalAndExit?: ( planSlug: PlanSlug ) => boolean | Promise< boolean >;
 	sitePlanSlug?: PlanSlug | null;
 	siteId?: number | null;
 	coupon?: string;
-	/**
-	 * When true, adds `is_gating_business_q1` to the plan cart item extra data.
-	 * Used for the pricing differentiation experiment (calypso_pricing_differentiation_202603).
-	 */
-	isGatingBusinessQ1?: boolean;
 	redirectTo?: string;
 	pluginSlug?: string;
+	checkoutAttribution?: CheckoutAttribution;
 } ): UseActionCallback {
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 	const siteUrl = useSelector( ( state: IAppState ) => siteId && getSiteUrl( state, siteId ) );
@@ -208,6 +220,7 @@ function useGenerateActionCallback( {
 		cartHandler,
 		redirectTo,
 		pluginSlug,
+		checkoutAttribution,
 	} );
 	const handleDowngradeClick = useDowngradeHandler( {
 		siteSlug,
@@ -221,7 +234,7 @@ function useGenerateActionCallback( {
 			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 			const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
 
-			const earlyReturn = showModalAndExit?.( planSlug );
+			const earlyReturn = await showModalAndExit?.( planSlug );
 			if ( earlyReturn ) {
 				return;
 			}
@@ -242,8 +255,7 @@ function useGenerateActionCallback( {
 				sitePlanSlug &&
 				currentPlan?.productSlug === planSlug &&
 				! flowName &&
-				intent !== 'plans-p2' &&
-				intent !== 'plans-blog-onboarding'
+				intent !== 'plans-p2'
 			) {
 				if ( isFreePlan( planSlug ) ) {
 					page.redirect( `/add-ons/${ siteSlug }` );
@@ -253,22 +265,17 @@ function useGenerateActionCallback( {
 				return;
 			}
 
-			if (
-				sitePlanSlug &&
-				! flowName &&
-				intent !== 'plans-p2' &&
-				intent !== 'plans-blog-onboarding' &&
-				! canUserManageCurrentPlan
-			) {
+			if ( sitePlanSlug && ! flowName && intent !== 'plans-p2' && ! canUserManageCurrentPlan ) {
 				await handleNonOwnerClick( { availableForPurchase } );
 				return;
 			}
 			/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
 			if (
 				sitePlanSlug &&
-				( ! flowName || flowName === WOO_HOSTED_PLANS_FLOW ) &&
+				( ! flowName ||
+					flowName === WOO_HOSTED_PLANS_FLOW ||
+					intent === 'plans-upgrade-or-downgrade' ) &&
 				intent !== 'plans-p2' &&
-				intent !== 'plans-blog-onboarding' &&
 				! availableForPurchase
 			) {
 				recordTracksEvent?.( 'calypso_plan_features_downgrade_click', {
@@ -290,21 +297,8 @@ function useGenerateActionCallback( {
 				} );
 			}
 
-			// Augment the cart item with pricing differentiation experiment data if applicable.
-			let augmentedCartItemForPlan = cartItemForPlan;
-
-			if ( cartItemForPlan && isGatingBusinessQ1 ) {
-				augmentedCartItemForPlan = {
-					...cartItemForPlan,
-					extra: {
-						...cartItemForPlan.extra,
-						is_gating_business_q1: true,
-					},
-				};
-			}
-
 			handleUpgradeClick( {
-				cartItemForPlan: augmentedCartItemForPlan,
+				cartItemForPlan,
 				selectedStorageAddOn,
 			} );
 			return;

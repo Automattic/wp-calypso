@@ -80,10 +80,51 @@ export class JetpackProductInstall extends Component< Props, State > {
 	componentDidMount() {
 		this.requestInstallationStatus();
 		this.maybeStartInstall();
+		this.maybeReportInstallError();
 	}
 
 	componentDidUpdate() {
 		this.maybeStartInstall();
+		this.maybeReportInstallError();
+	}
+
+	/**
+	 * Report an installation error once, via analytics and logstash. Runs in the
+	 * commit phase (not render) so it fires only on committed updates rather than
+	 * on every — possibly discarded — render attempt under concurrent rendering.
+	 */
+	maybeReportInstallError(): void {
+		const hasErrorInstalling =
+			! this.shouldRefetchInstallationStatus() && this.installationHasRecoverableErrors();
+
+		if ( ! hasErrorInstalling || this.tracksEventSent ) {
+			return;
+		}
+
+		this.tracksEventSent = true;
+		const { status } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_plans_autoconfig_error', {
+			checklist_name: 'jetpack',
+			error: 'installation_error',
+			location: 'JetpackChecklist',
+			status_akismet: status ? status.akismet_status : '(unknown)',
+			status_vaultpress: status ? status.vaultpress_status : '(unknown)',
+		} );
+
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'Jetpack plugin installer error',
+			...( this.props.siteId && { site_id: this.props.siteId } ),
+			extra: {
+				pluginStatus: this.props.status,
+				knownPluginKeys: {
+					// Clean plugin keys for logging
+					akismet: !! this.state.pluginKeys?.akismet,
+					vaultpress: !! this.state.pluginKeys?.vaultpress,
+				},
+			},
+		} );
 	}
 
 	fetchPluginKeys = (): void => {
@@ -288,33 +329,6 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 		const hasErrorInstalling =
 			! this.shouldRefetchInstallationStatus() && this.installationHasRecoverableErrors();
-
-		if ( hasErrorInstalling && ! this.tracksEventSent ) {
-			this.tracksEventSent = true;
-			const { status } = this.props;
-
-			this.props.recordTracksEvent( 'calypso_plans_autoconfig_error', {
-				checklist_name: 'jetpack',
-				error: 'installation_error',
-				location: 'JetpackChecklist',
-				status_akismet: status ? status.akismet_status : '(unknown)',
-				status_vaultpress: status ? status.vaultpress_status : '(unknown)',
-			} );
-
-			logToLogstash( {
-				feature: 'calypso_client',
-				message: 'Jetpack plugin installer error',
-				...( this.props.siteId && { site_id: this.props.siteId } ),
-				extra: {
-					pluginStatus: this.props.status,
-					knownPluginKeys: {
-						// Clean plugin keys for logging
-						akismet: !! this.state.pluginKeys?.akismet,
-						vaultpress: !! this.state.pluginKeys?.vaultpress,
-					},
-				},
-			} );
-		}
 
 		return (
 			<>

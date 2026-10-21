@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult, QueryKey } from '@tanstack/react-query';
+import { useQuery, UseQueryResult, QueryKey, QueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { useHomeLayoutQueryParams, HomeLayoutQueryParams } from './use-home-layout-query-params';
 
@@ -21,9 +21,30 @@ const useHomeLayoutQuery = (
 		// so the view doesn't change without some user action.
 		staleTime: Infinity,
 		refetchInterval: false,
-		refetchOnMount: 'always',
+
+		// Navigating to My Home is the user action that earns a new view, and the route
+		// asks for one via `prefetchHomeLayout` before this ever mounts. Refetching on
+		// mount as well would throw that request away and re-request on arrival.
+		refetchOnMount: true,
 	} );
 };
+
+/**
+ * Requests the layout from the route, so it is in flight before My Home renders.
+ *
+ * `fetchQuery` without a `staleTime` always goes to the network, which is what keeps
+ * a new view per navigation working now that the hook no longer refetches on mount.
+ */
+export function prefetchHomeLayout(
+	queryClient: QueryClient,
+	siteId: number | null,
+	query: HomeLayoutQueryParams = {}
+): Promise< unknown > {
+	return queryClient.fetchQuery( {
+		queryKey: getCacheKey( siteId ),
+		queryFn: () => fetchHomeLayout( siteId, query ),
+	} );
+}
 
 export function fetchHomeLayout(
 	siteId: number | null,

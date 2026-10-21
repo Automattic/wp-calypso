@@ -6,7 +6,6 @@ import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
-import { unmountComponentAtNode } from 'react-dom';
 import Modal from 'react-modal';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -81,7 +80,6 @@ describe( '<RemovePlugin>', () => {
 	} );
 
 	afterEach( () => {
-		unmountComponentAtNode( modalRoot );
 		document.body.removeChild( modalRoot );
 		modalRoot = null;
 	} );

@@ -1,7 +1,5 @@
-import { get } from 'lodash';
-
 export function getAdminUrlFromBlogDetails( blogDetails ) {
-	return get( blogDetails, 'admin_url' );
+	return blogDetails?.admin_url;
 }
 
 export function navigateToUrl( url ) {

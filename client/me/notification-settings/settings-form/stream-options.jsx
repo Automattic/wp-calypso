@@ -1,5 +1,4 @@
 import { CheckboxControl } from '@wordpress/components';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -38,7 +37,7 @@ class StreamOptions extends PureComponent {
 								<CheckboxControl
 									__nextHasNoMarginBottom
 									disabled={ this.props.isFetching }
-									checked={ get( this.props.settings, setting ) }
+									checked={ this.props.settings?.[ setting ] }
 									onChange={ () => {
 										this.props.onToggle( this.props.blogId, this.props.stream, setting );
 									} }

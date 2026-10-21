@@ -9,9 +9,7 @@ export default class PostEditButtonExample extends PureComponent {
 		const site = { slug: 'example.com' };
 		return (
 			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/edit-button">Post Edit Button</a>
-				</h2>
+				<h2>Post Edit Button</h2>
 				<PostEditButton post={ post } site={ site } />
 			</div>
 		);

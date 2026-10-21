@@ -4,8 +4,8 @@ import { Gridicon } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -157,7 +157,7 @@ const connectComponent = connect( ( state, { siteId, postId } ) => {
 	};
 } );
 
-export default flowRight(
+export default compose(
 	connectComponent,
 	localize,
 	toggleInfo,

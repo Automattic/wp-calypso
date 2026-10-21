@@ -19,13 +19,14 @@ export default function SiteIcon( { site, size = 48 }: { site: Site; size?: numb
 		if ( ! ico ) {
 			return;
 		}
-		const url = new URL( ico );
+		// Atomic `/sites/:slug` can return a relative upload path instead of a full URL.
+		const url = new URL( ico, site.URL );
 		// wordpress.com/wp-content works with w.
 		url.searchParams.set( 'w', '96' );
 		// "blavatar" works with s.
 		url.searchParams.set( 's', '96' );
 		return url.toString();
-	}, [ ico ] );
+	}, [ ico, site.URL ] );
 
 	const className = clsx( {
 		'is-small': size <= 16,

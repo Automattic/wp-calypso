@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 
@@ -10,5 +9,5 @@ import getRequest from 'calypso/state/selectors/get-request';
  * @returns {boolean}             Whether Jetpack settings are currently being updated
  */
 export default function isUpdatingJetpackSettings( state, siteId, settings ) {
-	return get( getRequest( state, saveJetpackSettings( siteId, settings ) ), 'isLoading', false );
+	return getRequest( state, saveJetpackSettings( siteId, settings ) )?.isLoading ?? false;
 }

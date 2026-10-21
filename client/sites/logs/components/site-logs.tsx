@@ -241,6 +241,20 @@ export const SiteLogsDataViews = ( {
 		setItemDetailsModal( null );
 	}, [] );
 
+	const phpEmptyState = (
+		<div className="site-logs__empty">
+			<p className="site-logs__empty-title">{ translate( 'No results' ) }</p>
+			<p className="site-logs__empty-description">
+				{ translate( 'The custom {{wpDebugLog/}} or {{errorLog/}} paths aren’t shown here.', {
+					components: {
+						wpDebugLog: <code>WP_DEBUG_LOG</code>,
+						errorLog: <code>error_log</code>,
+					},
+				} ) }
+			</p>
+		</div>
+	);
+
 	return (
 		<>
 			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
@@ -325,6 +339,7 @@ export const SiteLogsDataViews = ( {
 				onClickItem={ onOpenDetailsModal }
 				actions={ actions }
 				search={ false }
+				empty={ logType === LogType.PHP ? phpEmptyState : undefined }
 				defaultLayouts={ { table: {} } }
 				header={
 					<>

@@ -18,6 +18,15 @@ describe( 'login', () => {
 		);
 	} );
 
+	test( 'should keep the two factor auth page when the redirect url is a Jetpack SSO login', () => {
+		const redirectTo =
+			'https://wordpress.com/wp-login.php?action=jetpack-sso&site_id=123&sso_nonce=abc';
+		const url = login( { twoFactorAuthType: 'push', redirectTo } );
+		expect( url ).toBe(
+			'/log-in/push?redirect_to=https%3A%2F%2Fwordpress.com%2Fwp-login.php%3Faction%3Djetpack-sso%26site_id%3D123%26sso_nonce%3Dabc'
+		);
+	} );
+
 	test( 'should return the login url with encoded email_address param', () => {
 		const url = login( { emailAddress: 'foo@bar.com' } );
 		expect( url ).toBe( '/log-in?email_address=foo%40bar.com' );
@@ -96,5 +105,28 @@ describe( 'login', () => {
 		} );
 		expect( url ).toContain( 'plugin_name=explicit-plugin' );
 		expect( url ).not.toContain( 'plugin_name=woocommerce-payments' );
+	} );
+
+	test( 'should return the login url with explicit "plugins" parameter', () => {
+		const url = login( { isJetpack: true, plugins: 'jetpack,woocommerce' } );
+		expect( url ).toBe( '/log-in/jetpack?plugins=jetpack%2Cwoocommerce' );
+	} );
+
+	test( 'should extract "plugins" from redirectTo when not explicitly provided', () => {
+		const url = login( {
+			isJetpack: true,
+			redirectTo: 'https://site.com/wp-admin/admin.php?page=jetpack&plugins=jetpack%2Cwoocommerce',
+		} );
+		expect( url ).toContain( 'plugins=jetpack%2Cwoocommerce' );
+	} );
+
+	test( 'should not override explicit "plugins" with value from redirectTo', () => {
+		const url = login( {
+			isJetpack: true,
+			plugins: 'jetpack',
+			redirectTo: 'https://site.com/wp-admin/admin.php?page=jetpack&plugins=jetpack%2Cwoocommerce',
+		} );
+		expect( url ).toContain( 'plugins=jetpack' );
+		expect( url ).not.toContain( 'plugins=jetpack%2Cwoocommerce' );
 	} );
 } );

@@ -1,4 +1,4 @@
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getRawSitePurchases } from 'calypso/state/purchases/selectors';
 import type { AppState } from 'calypso/types';
 
 import 'calypso/state/themes/init';
@@ -19,9 +19,9 @@ export function isThemePurchased(
 	themeId: string,
 	siteId: number | null
 ): boolean {
-	const sitePurchases = getSitePurchases( state, siteId );
+	const sitePurchases = getRawSitePurchases( state, siteId );
 
 	return !! sitePurchases.find(
-		( purchase ) => purchase.productType === 'theme' && purchase.meta === themeId
+		( purchase ) => purchase.product_type === 'theme' && purchase.meta === themeId
 	);
 }

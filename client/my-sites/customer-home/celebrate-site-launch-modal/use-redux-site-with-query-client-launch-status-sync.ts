@@ -18,7 +18,7 @@ export function useReduxSiteWithQueryClientLaunchStatusSync( siteId: number ) {
 
 	const { data: site } = useQuery( siteByIdQuery( siteId ) );
 
-	const cachedReduxSiteLaunchStatus = useRef< undefined | string >();
+	const cachedReduxSiteLaunchStatus = useRef< undefined | string >( undefined );
 	cachedReduxSiteLaunchStatus.current = reduxSite?.launch_status;
 
 	useEffect( () => {

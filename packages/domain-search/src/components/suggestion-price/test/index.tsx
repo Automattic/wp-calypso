@@ -137,6 +137,67 @@ describe( 'DomainSuggestionPrice', () => {
 		expect( await screen.findByLabelText( 'Sale price: $0' ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders FREE_FOR_FIRST_YEAR when the domain TLD is in priceRules.freeForFirstYearTlds', async () => {
+		mockGetSuggestionsQuery( {
+			params: { query: 'test-free-tld.blog' },
+			suggestions: [
+				buildSuggestion( {
+					domain_name: 'test-free-tld.blog',
+					cost: '$5',
+				} ),
+			],
+		} );
+
+		render(
+			<TestDomainSearchWithSuggestions
+				query="test-free-tld.blog"
+				config={ {
+					priceRules: {
+						freeForFirstYearTlds: [ 'blog', 'art' ],
+					},
+				} }
+			>
+				<DomainSuggestionsList>
+					<DomainSuggestionPrice domainName="test-free-tld.blog" />
+				</DomainSuggestionsList>
+			</TestDomainSearchWithSuggestions>
+		);
+
+		expect( await screen.findByLabelText( 'Original price: $5' ) ).toBeInTheDocument();
+		expect( await screen.findByLabelText( 'Sale price: $0' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the regular price when the domain TLD is not in priceRules.freeForFirstYearTlds', async () => {
+		mockGetSuggestionsQuery( {
+			params: { query: 'test-not-free-tld.com' },
+			suggestions: [
+				buildSuggestion( {
+					domain_name: 'test-not-free-tld.com',
+					cost: '$5',
+					sale_cost: 1,
+				} ),
+			],
+		} );
+
+		render(
+			<TestDomainSearchWithSuggestions
+				query="test-not-free-tld.com"
+				config={ {
+					priceRules: {
+						freeForFirstYearTlds: [ 'blog', 'art' ],
+					},
+				} }
+			>
+				<DomainSuggestionsList>
+					<DomainSuggestionPrice domainName="test-not-free-tld.com" />
+				</DomainSuggestionsList>
+			</TestDomainSearchWithSuggestions>
+		);
+
+		expect( await screen.findByLabelText( 'Original price: $5' ) ).toBeInTheDocument();
+		expect( await screen.findByLabelText( 'Sale price: $1' ) ).toBeInTheDocument();
+	} );
+
 	it( 'renders the renew price if priceRule is FREE_FOR_FIRST_YEAR and renew cost is provided', async () => {
 		mockGetSuggestionsQuery( {
 			params: { query: 'test-free-for-first-year-renew-cost.com' },

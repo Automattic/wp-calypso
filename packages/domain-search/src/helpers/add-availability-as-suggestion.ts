@@ -8,10 +8,12 @@ export const addAvailabilityAsSuggestion = (
 	const isFQDNAlreadyInSuggestions = suggestions.some(
 		( suggestion ) => suggestion.domain_name === fqdnAvailability.domain_name
 	);
-	if ( ! isFQDNAlreadyInSuggestions ) {
-		// An FQDN search should always be the first suggestion, so we add it to the
-		// beginning of the suggestions list
-		suggestions.unshift( convertAvailabilityToSuggestion( fqdnAvailability ) );
+	if ( isFQDNAlreadyInSuggestions ) {
+		return suggestions;
 	}
-	return suggestions;
+
+	// An FQDN search should always be the first suggestion, so we add it to the
+	// beginning of the suggestions list. This builds a new array so the cached
+	// query data is left untouched.
+	return [ convertAvailabilityToSuggestion( fqdnAvailability ), ...suggestions ];
 };

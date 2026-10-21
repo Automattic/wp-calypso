@@ -1,0 +1,8 @@
+name: CodeQL JavaScript client product surfaces
+
+paths:
+  - client/a8c-for-agencies
+  - client/blocks
+  - client/jetpack-cloud
+  - client/landing
+  - client/reader

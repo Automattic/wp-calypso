@@ -7,9 +7,6 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	StepContainer,
-	isStartWritingFlow,
-	START_WRITING_FLOW,
-	READYMADE_TEMPLATE_FLOW,
 	DOMAIN_FLOW,
 	Step,
 } from '@automattic/onboarding';
@@ -88,26 +85,6 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 					actionText: translate( 'Start a new site' ),
 				},
 			];
-		case START_WRITING_FLOW:
-		case READYMADE_TEMPLATE_FLOW:
-			return [
-				{
-					key: 'existing-site',
-					title: translate( 'Existing WordPress.com site' ),
-					description: '',
-					icon: <WordPressLogo size={ 24 } />,
-					value: 'existing-site',
-					actionText: translate( 'Select a site' ),
-				},
-				{
-					key: 'new-site',
-					title: translate( 'New site' ),
-					description: '',
-					icon: <NewSiteIcon />,
-					value: 'new-site',
-					actionText: translate( 'Start a new site' ),
-				},
-			];
 		case DOMAIN_FLOW: {
 			const options = [
 				{
@@ -174,9 +151,6 @@ const NewOrExistingSiteStep: StepType< { submits: { newExistingSiteChoice: Choic
 		};
 
 		const getHeaderText = () => {
-			if ( isStartWritingFlow( flow ) ) {
-				return translate( 'New or existing site' );
-			}
 			switch ( flow ) {
 				case HUNDRED_YEAR_PLAN_FLOW:
 				case HUNDRED_YEAR_DOMAIN_FLOW:
@@ -242,7 +216,7 @@ const NewOrExistingSiteStep: StepType< { submits: { newExistingSiteChoice: Choic
 				stepName="new-or-existing-site"
 				flowName={ flow }
 				recordTracksEvent={ recordTracksEvent }
-				hideBack={ isStartWritingFlow( flow ) }
+				hideBack={ false }
 			/>
 		);
 	};

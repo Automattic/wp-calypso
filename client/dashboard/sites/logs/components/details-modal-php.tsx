@@ -1,10 +1,10 @@
-import { Badge } from '@automattic/ui';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useLocale } from '../../../app/locale';
 import { getUtcOffsetDisplay } from '../../../utils/datetime';
-import { formatLogDateTimeForDisplay, toSeverityClass } from '../utils';
+import { formatLogDateTimeForDisplay, formatLogDetailValue, toSeverityIntent } from '../utils';
 import type { PHPLog, PHPData } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 import './style.scss';
@@ -29,12 +29,12 @@ export default function DetailsModalPHP( {
 
 	const data = {
 		timestamp: formatted,
-		kind: item.kind,
-		name: item.name,
+		kind: formatLogDetailValue( item.kind ),
+		name: formatLogDetailValue( item.name ),
 		severity: item.severity,
-		file: item.file,
-		line: String( item.line ),
-		message: item.message,
+		file: formatLogDetailValue( item.file ),
+		line: formatLogDetailValue( item.line ),
+		message: formatLogDetailValue( item.message ),
 	};
 
 	const fields: Field< PHPData >[] = [
@@ -65,9 +65,7 @@ export default function DetailsModalPHP( {
 			label: __( 'Severity' ),
 			type: 'text',
 			render: ( { item }: { item: PHPData } ) => (
-				<Badge intent="default" className={ `badge--${ toSeverityClass( item.severity ) }` }>
-					{ item.severity }
-				</Badge>
+				<Badge intent={ toSeverityIntent( item.severity ) }>{ item.severity }</Badge>
 			),
 			readOnly: true,
 		},

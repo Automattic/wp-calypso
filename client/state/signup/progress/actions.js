@@ -1,6 +1,6 @@
 import { isTitanMail, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
+import { snakeCase, isEmpty } from '@automattic/js-utils';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
-import { isEmpty, reduce, snakeCase } from 'lodash';
 import { assertValidDependencies } from 'calypso/lib/signup/asserts';
 import {
 	SIGNUP_PROGRESS_SAVE_STEP,
@@ -37,9 +37,8 @@ const EXCLUDED_DEPENDENCIES = [
 function recordSubmitStep( flow, stepName, providedDependencies, optionalProps ) {
 	// Transform the keys since tracks events only accept snaked prop names.
 	// And anonymize personally identifiable information.
-	const inputs = reduce(
-		providedDependencies,
-		( props, propValue, propName ) => {
+	const inputs = Object.entries( providedDependencies ?? {} ).reduce(
+		( props, [ propName, propValue ] ) => {
 			if ( EXCLUDED_DEPENDENCIES.includes( propName ) ) {
 				return props;
 			}
@@ -79,14 +78,22 @@ function recordSubmitStep( flow, stepName, providedDependencies, optionalProps )
 			if ( propName === 'selected_page_titles' && Array.isArray( propValue ) ) {
 				propValue = propValue.join( ',' );
 			}
+			if ( propName === 'selected_page_instances' && Array.isArray( propValue ) ) {
+				propValue = JSON.stringify( propValue );
+			}
 
 			if (
 				[ 'cart_items', 'domain_item', 'email_item' ].includes( propName ) &&
 				typeof propValue !== 'string'
 			) {
-				propValue = Object.entries( propValue || {} )
-					.map( ( pair ) => pair.join( ':' ) )
-					.join( ',' );
+				propValue = Array.isArray( propValue )
+					? propValue
+							.map( ( item ) => item?.product_slug )
+							.filter( Boolean )
+							.join( ',' )
+					: Object.entries( propValue || {} )
+							.map( ( pair ) => pair.join( ':' ) )
+							.join( ',' );
 			}
 
 			if ( propName === 'selected_design' ) {

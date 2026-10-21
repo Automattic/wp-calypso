@@ -98,7 +98,7 @@ export default function RemoveDomainDialog( {
 							<Text as="p">
 								{ createInterpolateElement(
 									__(
-										'If you want to use <domain /> with another provider you can <transferLink>transfer it</transferLink>.'
+										'If you want to use <domain/> with another provider you can <transferLink>transfer it</transferLink>.'
 									),
 									{
 										domain: <strong>{ domain.domain }</strong>,

@@ -1,17 +1,62 @@
 import config from '@automattic/calypso-config';
 import { getCurrentDashboard, getDashboardFromQuery, buildDashboardLink } from '../app/routing';
+import { A4A_SIGNUP_PATHS } from '../section';
 import { isDashboardBackport } from './is-dashboard-backport';
+import { isJetpackCloud } from './jetpack';
+
+const CALYPSO_LIVE_ORIGIN = 'https://calypso.live';
+
+/**
+ * On a calypso.live preview, returns a redirector link that resolves to the
+ * previewed build's container for the given app flavour. Returns null
+ * everywhere else, so callers fall back to their normal static URLs.
+ *
+ * `env` selects the flavour: 'wpcom' for classic Calypso, 'dashboard' for the
+ * my.wordpress.com Dashboard. The redirector carries the path and any remaining
+ * query params across its 302.
+ */
+export function calypsoLiveRedirectorLink(
+	path: string,
+	env: 'wpcom' | 'dashboard'
+): string | null {
+	const image = config( 'calypso_live_image' );
+	if ( ! image ) {
+		return null;
+	}
+
+	const url = new URL( path, CALYPSO_LIVE_ORIGIN );
+
+	if ( url.origin !== CALYPSO_LIVE_ORIGIN ) {
+		// `path` was an absolute URL.
+		return null;
+	}
+
+	url.searchParams.set( 'image', String( image ) );
+	if ( env === 'dashboard' ) {
+		url.searchParams.set( 'env', env );
+	}
+	return url.href;
+}
 
 /**
  * This function returns all the origins for the dashboard.
  */
 export function dashboardOrigins(): string[] {
-	return [
-		'http://my.localhost:3000',
+	const port = config( 'port' ) ?? 3000;
+	const origins = [
+		`http://my.localhost:${ port }`,
 		'https://my.wordpress.com',
-		'http://my.woo.localhost:3000',
-		'https://my.woo.ai',
+		`http://my.a4a.localhost:${ port }`,
+		'https://agencies-beta.automattic.com',
 	];
+
+	// On calypso.live previews both apps are reached through the redirector,
+	// so back_to/cancel_to round trips land on this origin.
+	if ( config( 'calypso_live_image' ) ) {
+		origins.push( CALYPSO_LIVE_ORIGIN );
+	}
+
+	return origins;
 }
 
 /**
@@ -22,22 +67,15 @@ export function dashboardOrigins(): string[] {
  *
  * For example, the value is set to `calypso.localhost:3000` in `config/dashboard-development.json`,
  * so that the link points to the local Calypso dev server.
- *
- * Exception: for CIAB dashboard, we will use the dashboard origin to serve signup, stepper, and checkout links.
- * This is a temporary measure until we reimplement the screen natively in the dashboard.
  */
 export function wpcomLink( path: string ) {
-	if (
-		[ '/start', '/setup', '/checkout' ].some(
-			( prefix ) => path === prefix || path.startsWith( prefix + '/' )
-		)
-	) {
+	if ( A4A_SIGNUP_PATHS.some( ( prefix ) => path === prefix || path.startsWith( prefix + '/' ) ) ) {
 		const dashboard = getCurrentDashboard();
-		if ( dashboard === 'ciab' ) {
+		if ( dashboard === 'a4a' ) {
 			return path;
 		}
 	}
-	return new URL( path, config( 'wpcom_url' ) ).href;
+	return calypsoLiveRedirectorLink( path, 'wpcom' ) ?? new URL( path, config( 'wpcom_url' ) ).href;
 }
 
 /**
@@ -45,10 +83,19 @@ export function wpcomLink( path: string ) {
  */
 export function a4aLink( path: string ) {
 	if ( config( 'env' ) === 'development' ) {
-		return new URL( path, 'http://agencies.localhost:3000' ).href;
+		const port = config( 'port' ) ?? 3000;
+		return new URL( path, `http://agencies.localhost:${ port }` ).href;
 	}
 
 	return new URL( path, 'https://agencies.automattic.com' ).href;
+}
+
+/**
+ * Whether a link is a path inside the current app, so a router link can open it.
+ * Absolute URLs point to other apps or third parties.
+ */
+export function isDashboardPath( url: string ) {
+	return url.startsWith( '/' );
 }
 
 /**
@@ -61,10 +108,14 @@ export function dashboardLink( path: string = '' ) {
 
 /**
  * This function returns the link to the dashboard, with backport support.
+ *
+ * In a backport the path is returned relative, for flows on WordPress.com to
+ * resolve against their own origin. Jetpack Cloud does not share that origin,
+ * so there it is made absolute.
  */
 export function dashboardLinkWithBackport( path: string = '' ) {
 	if ( isDashboardBackport() ) {
-		return path;
+		return isJetpackCloud() ? new URL( path, window.location.origin ).href : path;
 	}
 
 	return dashboardLink( path );

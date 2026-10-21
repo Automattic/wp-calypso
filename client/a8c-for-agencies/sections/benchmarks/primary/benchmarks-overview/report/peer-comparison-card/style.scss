@@ -1,0 +1,104 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.benchmarks-peer-comparison {
+	background: var(--color-surface);
+	border: 1px solid var(--color-neutral-5);
+	border-radius: 8px;
+	padding: 24px;
+	margin-block-start: 24px;
+}
+
+.benchmarks-peer-comparison-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 16px;
+	margin-block-end: 16px;
+
+	@media (max-width: $break-small) {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.components-base-control {
+		min-inline-size: 200px;
+		max-inline-size: 320px;
+	}
+
+	.components-select-control__input {
+		text-overflow: ellipsis;
+	}
+
+	@media (max-width: $break-small) {
+		.components-base-control {
+			max-inline-size: none;
+		}
+	}
+}
+
+.benchmarks-peer-comparison-heading h3 {
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--color-neutral-90);
+	margin: 0 0 4px;
+}
+
+.benchmarks-peer-comparison-heading p {
+	font-size: 0.875rem;
+	color: var(--color-neutral-60);
+	margin: 0;
+}
+
+.benchmarks-peer-comparison-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+
+	@media (max-width: $break-medium) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.benchmarks-peer-cell {
+	border: 1px solid var(--color-neutral-5);
+	border-radius: 8px;
+	padding: 16px 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.benchmarks-peer-cell-label {
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--color-neutral-60);
+}
+
+.benchmarks-peer-cell-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+}
+
+.benchmarks-peer-cell-side {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.benchmarks-peer-cell-side-label {
+	font-size: 0.875rem;
+	color: var(--color-neutral-60);
+}
+
+.benchmarks-peer-cell-value {
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: var(--color-neutral-90);
+}
+
+.benchmarks-peer-cell-value.is-better {
+	color: var(--color-success-50);
+}

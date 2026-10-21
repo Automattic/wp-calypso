@@ -26,7 +26,7 @@ export const SitePreviewEllipsisMenu = () => {
 				aria-label={ sprintf(
 					/* translators: %s is the site name */
 					__( 'More options for site %s' ),
-					selectedSite?.name
+					selectedSite?.name ?? ''
 				) }
 				ref={ moreButtonRef }
 				onClick={ () => setIsShowingPopover( ! isShowingPopover ) }

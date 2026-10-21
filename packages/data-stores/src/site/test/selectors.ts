@@ -7,7 +7,7 @@
  */
 
 import { dispatch, select, subscribe } from '@wordpress/data';
-import { AtomicSoftwareStatus, AtomicSoftwareStatusError, register } from '..';
+import { AtomicSoftwareStatus, AtomicSoftwareStatusError, register, STORE_KEY } from '..';
 import wpcomRequest from '../../wpcom-request';
 import {
 	getAtomicSoftwareStatus,
@@ -38,6 +38,19 @@ beforeEach( () => {
 } );
 
 describe( 'getBundledPluginSlug', () => {
+	it( 'reuses the registered descriptor and persists the bundled plugin selection', () => {
+		const siteSlug = 'test.wordpress.com';
+		const pluginSlug = 'woocommerce';
+
+		expect( register( { client_id: '', client_secret: '' } ) ).toBe( store );
+		expect( store.name ).toBe( STORE_KEY );
+		dispatch( store ).setBundledPluginSlug( siteSlug, pluginSlug );
+		expect( select( store ).getBundledPluginSlug( siteSlug ) ).toBe( pluginSlug );
+		expect(
+			JSON.parse( localStorage.getItem( 'WPCOM_7_DAYS_PERSISTENCE' ) ?? '{}' )[ STORE_KEY ]
+		).toEqual( { bundledPluginSlug: { [ siteSlug ]: pluginSlug } } );
+	} );
+
 	it( 'retrieves the bundled plugin slug from the store', () => {
 		const siteSlug = 'test.wordpress.com';
 		const pluginSlug = 'woocommerce';
@@ -290,7 +303,7 @@ describe( 'requiresUpgrade', () => {
 } );
 
 describe( 'getAtomicSoftwareStatus', () => {
-	it( 'Tries to retrive the Atomic Software Status', async () => {
+	it( 'Tries to retrieve the Atomic Software Status', async () => {
 		const siteId = 1234;
 		const softwareSet = 'woo-on-plans';
 		const status: AtomicSoftwareStatus = {
@@ -321,7 +334,7 @@ describe( 'getAtomicSoftwareStatus', () => {
 		expect( getAtomicSoftwareStatus( state, 123456, softwareSet ) ).toEqual( undefined );
 	} );
 
-	it( 'Fails to retrive the Atomic Software Status', async () => {
+	it( 'Fails to retrieve the Atomic Software Status', async () => {
 		const siteId = 1234;
 		const softwareSet = 'non-existing-software-set';
 		const error: AtomicSoftwareStatusError = {
@@ -387,7 +400,7 @@ describe( 'getSiteOptions', () => {
 		},
 	};
 
-	it( 'Tries to retrive the site options', async () => {
+	it( 'Tries to retrieve the site options', async () => {
 		const state: State = {
 			sites: {
 				[ siteId ]: site,
@@ -397,7 +410,7 @@ describe( 'getSiteOptions', () => {
 		expect( getSiteOptions( state, siteId ) ).toEqual( options );
 	} );
 
-	it( 'Tries to retrive a specific site option', async () => {
+	it( 'Tries to retrieve a specific site option', async () => {
 		const state: State = {
 			sites: {
 				[ siteId ]: site,

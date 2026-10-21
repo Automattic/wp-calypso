@@ -88,6 +88,7 @@ import GenericThankYou from './redesign-v2/pages/generic';
 import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
+import StudioHandoff from './studio-handoff';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import {
@@ -252,7 +253,9 @@ export class CheckoutThankYou extends Component<
 				const params = [ 'trackCustom', 'BulkDomainTransfer', {} ];
 
 				debug( 'recordOrderInFacebookAds: WPCom Bulk Domain Transfer Purchase', params );
-				window.fbq && window.fbq( ...params );
+				if ( window.fbq ) {
+					window.fbq( ...params );
+				}
 			}
 
 			// Custom conversion for Twitter Ads.
@@ -703,6 +706,8 @@ export class CheckoutThankYou extends Component<
 
 						{ this.getMasterBar() }
 
+						<StudioHandoff siteId={ siteId } receiptId={ this.props.receiptId } />
+
 						{ pageContent }
 					</Main>
 				);
@@ -725,6 +730,7 @@ export class CheckoutThankYou extends Component<
 			return (
 				<Main className="checkout-thank-you">
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
+					{ this.getMasterBar() }
 					{ this.renderConfirmationNotice() }
 					<PlanThankYouCard siteId={ this.props.selectedSite?.ID ?? 0 } { ...planProps } />
 				</Main>
@@ -735,6 +741,7 @@ export class CheckoutThankYou extends Component<
 		return (
 			<Main className="checkout-thank-you">
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
+				{ this.getMasterBar() }
 				<Card className="checkout-thank-you__content">
 					<div>
 						<CheckoutThankYouHeader
@@ -785,7 +792,7 @@ const ConnectedCheckoutThankYou = connect(
 	( state: IAppState, props: CheckoutThankYouProps ) => {
 		let siteId = getSelectedSiteId( state );
 		const activeTheme = getActiveTheme( state, siteId ?? 0 );
-		const sitePlugins = getInstalledPlugins( state, [ siteId ] );
+		const sitePlugins = getInstalledPlugins( state, [ siteId ], undefined );
 		const receipt = getReceiptById( state, props.receiptId );
 
 		if ( props.domainOnlySiteFlow && receipt.hasLoadedFromServer ) {

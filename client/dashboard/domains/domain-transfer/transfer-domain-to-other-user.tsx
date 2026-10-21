@@ -57,7 +57,7 @@ const createFields = ( users: WpcomSiteUser[] ): Field< TransferFormData >[] => 
 							value: getWpcomUserId( user ),
 							label: getUserDisplayName( user ),
 						} ) ),
-				  ]
+					]
 				: [ { value: '', label: '--' + __( 'Site has no other administrators' ) + '--' } ],
 		isValid: {
 			required: true,
@@ -115,13 +115,11 @@ export default function TransferDomainToOtherUser() {
 			onSuccess: () => {
 				createSuccessNotice(
 					sprintf(
-						/* Translators: %s: domainName is the domain name, %s: selectedUserDisplay is the selected user display */
+						/* Translators: %(selectedDomainName)s is the domain name, %(selectedUserDisplay)s is the selected user display */
 						__( '%(selectedDomainName)s has been transferred to %(selectedUserDisplay)s' ),
 						{
-							args: {
-								selectedDomainName: domainName,
-								selectedUserDisplay: selectedUser ? getUserDisplayName( selectedUser ) : '',
-							},
+							selectedDomainName: domainName,
+							selectedUserDisplay: selectedUser ? getUserDisplayName( selectedUser ) : '',
 						}
 					)
 				);
@@ -131,9 +129,9 @@ export default function TransferDomainToOtherUser() {
 			onError: () => {
 				createErrorNotice(
 					sprintf(
-						/* Translators: %s: domainName is the domain name */
+						/* Translators: %(selectedDomainName)s is the domain name */
 						__( 'Failed to transfer %(selectedDomainName)s, please try again or contact support.' ),
-						{ args: { selectedDomainName: domainName } }
+						{ selectedDomainName: domainName }
 					)
 				);
 				setIsDialogOpen( false );
@@ -221,10 +219,10 @@ export default function TransferDomainToOtherUser() {
 							isMapping
 								? __(
 										'Do you want to transfer the domain connection of <domainName/> to <selectedUserDisplay/>?'
-								  )
+									)
 								: __(
 										'Do you want to transfer the ownership of <domainName/> to <selectedUserDisplay/>?'
-								  ),
+									),
 							{
 								domainName: <strong>{ domainName }</strong>,
 								selectedUserDisplay: (

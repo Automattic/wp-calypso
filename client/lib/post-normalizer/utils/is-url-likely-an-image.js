@@ -1,5 +1,4 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import { some } from 'lodash';
 
 /**
  * Determine if url is likely pointed to an image
@@ -12,7 +11,7 @@ export function isUrlLikelyAnImage( uri ) {
 	}
 
 	const withoutQuery = getUrlParts( uri ).pathname;
-	return some( [ '.jpg', '.jpeg', '.png', '.gif', '.webp' ], ( ext ) =>
+	return [ '.jpg', '.jpeg', '.png', '.gif', '.webp' ].some( ( ext ) =>
 		withoutQuery.endsWith( ext )
 	);
 }

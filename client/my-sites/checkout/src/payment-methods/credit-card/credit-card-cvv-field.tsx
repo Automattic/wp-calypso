@@ -1,8 +1,8 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { CardCvcElement } from '@stripe/react-stripe-js';
-import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { LeftColumn, RightColumn } from 'calypso/my-sites/checkout/src/components/ie-fallback';
+import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import { Input } from 'calypso/my-sites/domains/components/form';
 import CVVImage from './cvv-image';
 import {
@@ -12,11 +12,12 @@ import {
 	StripeFieldWrapper,
 	StripeErrorMessage,
 } from './form-layout-components';
-import type { WpcomCreditCardSelectors } from './store';
-import type { StripeFieldChangeInput } from './types';
+import { useCreditCardStoreState } from './store';
+import type { CardStoreType, StripeFieldChangeInput } from './types';
 import type { StripeElementStyle } from '@stripe/stripe-js';
 
 export default function CreditCardCvvField( {
+	store,
 	handleStripeFieldChange,
 	stripeElementStyle,
 	shouldUseEbanx,
@@ -24,6 +25,7 @@ export default function CreditCardCvvField( {
 	setFieldValue,
 	getFieldValue,
 }: {
+	store: CardStoreType;
 	handleStripeFieldChange: ( change: StripeFieldChangeInput ) => void;
 	stripeElementStyle: StripeElementStyle;
 	shouldUseEbanx?: boolean;
@@ -34,10 +36,8 @@ export default function CreditCardCvvField( {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const { cardCvc: cardCvcError } = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
-		[]
-	);
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
+	const cardCvcError = useCreditCardStoreState( store, ( state ) => state.cardDataErrors.cardCvc );
 	const errorMessages = getErrorMessagesForField( 'cvv' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;
 
@@ -64,31 +64,37 @@ export default function CreditCardCvvField( {
 	}
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	const stripeField = (
+		<StripeFieldWrapper className="cvv" hasError={ !! cardCvcError } isDisabled={ isDisabled }>
+			<CardCvcElement
+				options={ {
+					style: stripeElementStyle,
+					disabled: isDisabled,
+				} }
+				onChange={ ( input ) => {
+					handleStripeFieldChange( input );
+				} }
+			/>
+		</StripeFieldWrapper>
+	);
+
 	return (
 		<Label>
 			<LabelText>{ translate( 'Security code' ) }</LabelText>
-			<GridRow gap="4%" columnWidths="67% 29%">
-				<LeftColumn>
-					<StripeFieldWrapper
-						className="cvv"
-						hasError={ !! cardCvcError }
-						isDisabled={ isDisabled }
-					>
-						<CardCvcElement
-							options={ {
-								style: stripeElementStyle,
-								disabled: isDisabled,
-							} }
-							onChange={ ( input ) => {
-								handleStripeFieldChange( input );
-							} }
-						/>
-					</StripeFieldWrapper>
-				</LeftColumn>
-				<RightColumn>
-					<CVVImage />
-				</RightColumn>
-			</GridRow>
+			{ isMobileCheckoutStickySummary ? (
+				/* Figma 3971:13276 — the CVC card-back hint moves out of the
+				   Security code field and into the expiry/CVC row as its own
+				   38px column (rendered by credit-card-fields.tsx). Drop the
+				   2-column GridRow so the input fills the field. */
+				stripeField
+			) : (
+				<GridRow gap="4%" columnWidths="67% 29%">
+					<LeftColumn>{ stripeField }</LeftColumn>
+					<RightColumn>
+						<CVVImage />
+					</RightColumn>
+				</GridRow>
+			) }
 			{ cardCvcError && <StripeErrorMessage>{ cardCvcError }</StripeErrorMessage> }
 		</Label>
 	);

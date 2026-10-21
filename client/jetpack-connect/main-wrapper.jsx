@@ -17,6 +17,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	static propTypes = {
 		isWide: PropTypes.bool,
 		isWooJPC: PropTypes.bool,
+		isJetpackConnector: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
 		partnerSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -29,6 +30,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	static defaultProps = {
 		isWide: false,
 		isWooJPC: false,
+		isJetpackConnector: false,
 		wooDnaConfig: null,
 		useCompactLogo: false,
 	};
@@ -37,6 +39,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 		const {
 			isWide,
 			isWooJPC,
+			isJetpackConnector,
 			isFromAutomatticForAgenciesPlugin,
 			className,
 			children,
@@ -51,6 +54,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 			'is-wide': isWide,
 			'is-woocommerce': isWooJPC,
 			'is-woocommerce-core-profiler-flow': isWooJPC,
+			'is-jetpack-connector-flow': isJetpackConnector,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
 			'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
 		} );
@@ -99,7 +103,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 					title={ pageTitle || translate( 'Jetpack Connect' ) }
 					skipTitleFormatting={ Boolean( pageTitle ) }
 				/>
-				{ ! useCompactLogo && ! isWooJPC && (
+				{ ! useCompactLogo && ! isWooJPC && ! isJetpackConnector && (
 					<div className="jetpack-connect__main-logo">
 						<JetpackHeader
 							partnerSlug={ partnerSlug }

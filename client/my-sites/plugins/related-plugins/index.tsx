@@ -1,7 +1,7 @@
 import { Gridicon, Button, DotPager } from '@automattic/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, type JSX } from 'react';
 import FullWidthSection from 'calypso/components/full-width-section';
 import { RelatedPlugin } from 'calypso/data/marketplace/types';
 import { useGetRelatedPlugins } from 'calypso/data/marketplace/use-get-related-plugins';

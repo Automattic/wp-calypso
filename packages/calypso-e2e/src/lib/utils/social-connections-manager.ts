@@ -81,7 +81,7 @@ export class SocialConnectionsManager {
 	isSimpleConnectionTestUrl( url: URL ) {
 		return Boolean(
 			url.searchParams.get( 'test_connections' ) === '1' &&
-				this.patterns.CONNECTION_TESTS.exec( url.pathname )?.groups?.site_prefix
+			this.patterns.CONNECTION_TESTS.exec( url.pathname )?.groups?.site_prefix
 		);
 	}
 
@@ -93,9 +93,9 @@ export class SocialConnectionsManager {
 
 		return Boolean(
 			url.searchParams.get( 'test_connections' ) === '1' &&
-				match &&
-				// Atomic sites don't have a site prefix in the URL.
-				! match.groups?.site_prefix
+			match &&
+			// Atomic sites don't have a site prefix in the URL.
+			! match.groups?.site_prefix
 		);
 	}
 
@@ -140,12 +140,18 @@ export class SocialConnectionsManager {
 
 	/**
 	 * Wait for the connection test results response.
+	 *
+	 * The connections resolver fires the request during editor load, so callers arm
+	 * this before navigating; the timeout must cover navigation + hydration + fetch.
 	 */
-	async waitForConnectionTests() {
-		await this.page.waitForResponse( ( response ) => {
-			const url = new URL( response.url() );
+	async waitForConnectionTests( { timeout = 60 * 1000 }: { timeout?: number } = {} ) {
+		await this.page.waitForResponse(
+			( response ) => {
+				const url = new URL( response.url() );
 
-			return this.isSimpleConnectionTestUrl( url ) || this.isAtomicConnectionTestUrl( url );
-		} );
+				return this.isSimpleConnectionTestUrl( url ) || this.isAtomicConnectionTestUrl( url );
+			},
+			{ timeout }
+		);
 	}
 }

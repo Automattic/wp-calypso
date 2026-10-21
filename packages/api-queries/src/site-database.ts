@@ -3,5 +3,6 @@ import { mutationOptions } from '@tanstack/react-query';
 
 export const siteDatabaseMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-db-password-restore' },
 		mutationFn: () => restoreDatabasePassword( siteId ),
 	} );

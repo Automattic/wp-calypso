@@ -11,6 +11,21 @@ import {
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
+import type { BackupContentsResponse } from '@automattic/api-core';
+
+export const BACKUP_PLUGINS_PATH = '/wp-content/plugins/';
+
+export const WOOCOMMERCE_SUBSCRIPTIONS_PLUGIN_SLUG = 'woocommerce-subscriptions';
+
+// Matches on raw `contents` keys (directory slugs), not the API display labels
+// the file browser substitutes in their place.
+export const selectBackupIncludesPlugin =
+	( slug: string ) =>
+	( response: BackupContentsResponse ): boolean =>
+		!! response?.ok &&
+		Object.keys( response.contents ?? {} ).some(
+			( name ) => name.toLowerCase() === slug.toLowerCase()
+		);
 
 export const siteLastBackupQuery = ( siteId: number ) =>
 	queryOptions( {
@@ -27,6 +42,7 @@ export const siteBackupsQuery = ( siteId: number ) =>
 
 export const siteBackupEnqueueMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-backup-enqueue' },
 		mutationFn: () => enqueueSiteBackup( siteId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteBackupsQuery( siteId ) );
@@ -78,5 +94,6 @@ export const siteBackupSizeQuery = ( siteId: number ) =>
 
 export const siteUpdateRetentionDaysMutation = ( siteId: number, retentionDays: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-retention-days-update' },
 		mutationFn: () => updateRetentionDays( siteId, retentionDays ),
 	} );

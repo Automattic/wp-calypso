@@ -1,0 +1,146 @@
+import {
+	activeAgencyQuery,
+	agencyTeamMembersQuery,
+	agencyTeamInvitesQuery,
+	agencyTeamResendInviteMutation,
+} from '@automattic/api-queries';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { useCallback, useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
+import { useAuth } from '../../app/auth';
+import { usePersistentView } from '../../app/hooks/use-persistent-view';
+import { agencyTeamRoute, hasAnyCapability } from '../../app/router/agency';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
+import { MilestoneFeedbackModal, useMilestoneFeedback } from '../feedback';
+import { useTeamActions, type TeamActionRequest } from './dataviews/actions';
+import { DEFAULT_VIEW } from './dataviews/views';
+import InviteTeamMemberModal from './invite-team-member-modal';
+import TeamActionModal from './team-action-modal';
+import TeamMembersContent from './team-members-content';
+import type { TeamMember } from '@automattic/api-core';
+
+const REMOVE_USERS_CAPABILITY = 'a4a_remove_users';
+const INVITE_USERS_CAPABILITY = 'a4a_edit_user_invites';
+
+export default function AgencyTeam() {
+	const { recordTracksEvent } = useAnalytics();
+	const { user } = useAuth();
+	const { data: activeAgency } = useQuery( activeAgencyQuery() );
+	const agencyId = activeAgency?.id ?? 0;
+
+	const searchParams = agencyTeamRoute.useSearch();
+	const { view, updateView, resetView } = usePersistentView( {
+		slug: 'agency-team',
+		defaultView: DEFAULT_VIEW,
+		queryParams: searchParams,
+	} );
+
+	const { data: members = [], isLoading: isLoadingMembers } = useQuery(
+		agencyTeamMembersQuery( agencyId )
+	);
+	const { data: invites = [], isLoading: isLoadingInvites } = useQuery(
+		agencyTeamInvitesQuery( agencyId )
+	);
+
+	const allMembers = useMemo< TeamMember[] >(
+		() => [ ...members, ...invites ],
+		[ members, invites ]
+	);
+
+	const capabilities = activeAgency?.user?.capabilities ?? [];
+	const canRemove = hasAnyCapability( capabilities, REMOVE_USERS_CAPABILITY );
+	const canInvite = hasAnyCapability( capabilities, INVITE_USERS_CAPABILITY );
+
+	const [ activeRequest, setActiveRequest ] = useState< TeamActionRequest | null >( null );
+	const [ isInviteOpen, setIsInviteOpen ] = useState( false );
+	const [ invitedLogin, setInvitedLogin ] = useState< string | null >( null );
+	const { shouldAsk: shouldAskAboutInvite } = useMilestoneFeedback( 'team-member-invite-sent' );
+
+	const { mutate: resendInvite } = useMutation(
+		withSnackbar( agencyTeamResendInviteMutation( agencyId ), {
+			success: __( 'The invitation has been resent.' ),
+			error: { source: 'server' },
+		} )
+	);
+
+	const onResendInvite = useCallback(
+		( member: TeamMember ) => {
+			recordTracksEvent( 'calypso_a4a_team_resend_invite_click' );
+			resendInvite( member.id );
+		},
+		[ recordTracksEvent, resendInvite ]
+	);
+
+	const actions = useTeamActions( {
+		canRemove,
+		canInvite,
+		currentUserEmail: user?.email,
+		onResendInvite,
+		onConfirmAction: setActiveRequest,
+	} );
+
+	return (
+		<PageLayout
+			header={
+				<PageHeader
+					title={ __( 'Team' ) }
+					description={ __( 'Manage team members and invitations for your agency.' ) }
+					actions={
+						canInvite ? (
+							<Button
+								variant="primary"
+								__next40pxDefaultSize
+								onClick={ () => {
+									recordTracksEvent( 'calypso_a4a_team_invite_team_member_click' );
+									setIsInviteOpen( true );
+								} }
+							>
+								{ __( 'Invite a team member' ) }
+							</Button>
+						) : undefined
+					}
+				/>
+			}
+		>
+			<TeamMembersContent
+				members={ allMembers }
+				actions={ actions }
+				view={ view }
+				onChangeView={ updateView }
+				onReset={ resetView }
+				isLoading={ isLoadingMembers || isLoadingInvites }
+			/>
+			{ activeRequest && (
+				<TeamActionModal
+					agencyId={ agencyId }
+					agencyName={ activeAgency?.name ?? '' }
+					request={ activeRequest }
+					onClose={ () => setActiveRequest( null ) }
+				/>
+			) }
+			{ isInviteOpen && (
+				<InviteTeamMemberModal
+					agencyId={ agencyId }
+					onClose={ () => setIsInviteOpen( false ) }
+					onSent={ ( login ) => {
+						setIsInviteOpen( false );
+						if ( shouldAskAboutInvite ) {
+							setInvitedLogin( login );
+						}
+					} }
+				/>
+			) }
+			{ invitedLogin !== null && (
+				<MilestoneFeedbackModal
+					type="team-member-invite-sent"
+					args={ { email: invitedLogin } }
+					onClose={ () => setInvitedLogin( null ) }
+				/>
+			) }
+		</PageLayout>
+	);
+}

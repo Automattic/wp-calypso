@@ -1,12 +1,8 @@
 .phone-number-input {
 	align-items: baseline;
-	gap: calc( 4px * 4 );
 
-	.phone-number-input__country-code-input {
-		width: 35%;
-	}
-
+	.phone-number-input__country-code-input,
 	.components-validated-control {
-		width: 65%;
+		width: 100%;
 	}
 }

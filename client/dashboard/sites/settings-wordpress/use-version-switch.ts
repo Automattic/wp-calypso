@@ -5,12 +5,14 @@ import {
 	sitePendingWordPressVersionQuery,
 	siteWordPressVersionQuery,
 	siteWordPressVersionMutation,
+	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { usePrevious } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useReducer } from 'react';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { useBackupState } from '../backups/use-backup-state';
 import type { BackupState } from '../backups/use-backup-state';
 import type { Site } from '@automattic/api-core';
@@ -55,8 +57,14 @@ export interface VersionSwitchState {
 }
 
 export function useVersionSwitch( site: Site ): VersionSwitchState {
+	// When the public latest and beta releases point to the same version, switching
+	// between them is a no-op — skip the backup flow. Primed by the route loader.
+	const { data: latestVersion } = useSuspenseQuery( wpOrgCoreVersionQuery() );
+	const { data: betaVersion } = useSuspenseQuery( wpOrgCoreVersionQuery( 'beta' ) );
+	const versionsMatch = !! latestVersion && latestVersion === betaVersion;
+
 	const deferUntilBackupComplete =
-		isEnabled( 'dashboard/wp-beta-program' ) && ! site.is_wpcom_staging_site;
+		isEnabled( 'dashboard/wp-beta-program' ) && ! site.is_wpcom_staging_site && ! versionsMatch;
 
 	const backupState = useBackupState( site.ID );
 	const [ phase, dispatch ] = useReducer( reducer, { status: 'idle' } );
@@ -103,15 +111,12 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 		refetchInterval: hasPendingVersion && backupState.hasRecentlyCompleted ? 5000 : false,
 	} );
 
-	const mutation = useMutation( {
-		...siteWordPressVersionMutation( site.ID, { deferUntilBackupComplete } ),
-		meta: {
-			snackbar: {
-				...( ! deferUntilBackupComplete && { success: __( 'WordPress version saved.' ) } ),
-				error: __( 'Failed to save WordPress version.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( siteWordPressVersionMutation( site.ID, { deferUntilBackupComplete } ), {
+			...( ! deferUntilBackupComplete && { success: __( 'WordPress version saved.' ) } ),
+			error: __( 'Failed to save WordPress version.' ),
+		} )
+	);
 
 	const switchVersion = ( version: string ) => {
 		if ( deferUntilBackupComplete ) {

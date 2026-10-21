@@ -17,6 +17,14 @@ export interface PlanProduct {
 	product_id: number;
 	product_name: string;
 	product_slug: string;
+	/**
+	 * Short, human-readable URL alias for the plan, used in checkout and plan
+	 * routes (e.g. `business` for the `business-bundle` product). Distinct from
+	 * `product_slug`. Populated from a manually-maintained list server-side, so
+	 * it may be absent for some plans — callers should fall back to
+	 * `product_slug` when it is missing.
+	 */
+	path_slug?: string;
 	product_type: string;
 	meta: string | null;
 	bd_slug: string;

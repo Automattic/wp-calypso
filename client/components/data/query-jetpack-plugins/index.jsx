@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

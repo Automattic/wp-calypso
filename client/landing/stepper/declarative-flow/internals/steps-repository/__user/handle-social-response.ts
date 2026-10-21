@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, type JSX } from 'react';
 import { PreSignUpUserData, SocialAuthParams } from 'calypso/lib/signup/api/type';
 import { useCreateAccountMutation } from './use-create-user-mutation';
 import { useErrorNotice } from './use-error-notice';

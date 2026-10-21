@@ -22,7 +22,19 @@ export type McpAbility = {
 	enabled: boolean;
 	/** When false, hide this tool from account settings UIs. */
 	visible?: boolean;
+	/** Whether this ability is read-only. The backend guarantees this as of AIINT-469, but treat it as optional since older/partial payloads may omit it — fall back to `annotations.readonly`. */
+	readonly?: boolean;
+	/** The display group this ability belongs to — a clean slug (e.g. `site`), decoupled from any STRAP facade's tool key. `null`/absent for abilities with no resolved group. */
+	group?: string | null;
 	annotations?: McpAbilityAnnotations;
+};
+
+/** Ordered display-group descriptor for the settings UI's middle grouping layer (AIINT-469). A group's members usually come from one STRAP facade, but multiple facades can resolve to the same group (e.g. Create Site into Site), and standalone abilities can declare a group directly in config. */
+export type McpGroupDescriptor = {
+	name: string;
+	label: string;
+	description: string;
+	order: number;
 };
 
 export type McpSiteOverride = {
@@ -30,13 +42,30 @@ export type McpSiteOverride = {
 	account_tools_enabled?: boolean;
 	site_level_enabled?: boolean;
 	abilities?: Record< string, unknown >;
+	/** Site-level group "enable all" intents (AIINT-471): keys are `read`, `write`, or a bare group slug (e.g. `site`). */
+	group_intents?: Record< string, boolean >;
+	/** Site allowlist for site-published (remote) abilities (AI-1329): keys are `{read|write|destructive}:{namespace}`, lowercased. Only allowed groups are stored; a missing group denies. */
+	remote_groups?: Record< string, boolean >;
 };
 
 export type McpAbilities = {
 	account?: Record< string, McpAbility >;
 	site?: Record< string, McpAbility >; // Site-scoped ability defaults
 	sites?: McpSiteOverride[]; // Array of site-specific overrides
+	site_level_enabled_default?: boolean;
+	/** Ordered display-group descriptors (AIINT-469). */
+	groups?: McpGroupDescriptor[];
+	/** Account-level group "enable all" intents (AIINT-471): keys are `read`, `write`, or a bare group slug (e.g. `site`). */
+	group_intents?: Record< string, boolean >;
 };
+
+/** `expires_at` is a Unix timestamp in seconds; `null` while active means it stays on until turned off. */
+export type McpApprovalBypass = {
+	active: boolean;
+	expires_at: number | null;
+};
+
+export type McpApprovalBypassDuration = '30m' | '2h' | '12h' | 'forever' | 'off';
 
 export interface UserSettings {
 	advertising_targeting_opt_out: boolean;
@@ -45,13 +74,13 @@ export interface UserSettings {
 	first_name: string;
 	last_name: string;
 	display_name: string;
-	is_dev_account: boolean;
 	password: string;
 	is_passwordless_user: boolean;
 	tracks_opt_out: boolean;
 	user_email: string;
 	user_login: string;
 	user_URL: string;
+	last_admin_activity_timestamp: number | string;
 	language?: string;
 	locale_variant?: string;
 	i18n_empathy_mode?: boolean;
@@ -78,6 +107,8 @@ export interface UserSettings {
 
 	primary_site_ID?: number;
 	mcp_abilities?: McpAbilities;
+	/** Present only for Automatticians. */
+	mcp_approval_bypass?: McpApprovalBypass;
 	/** When true, account-level AI assistant features are enabled (requires API support). */
 	ai_assistant?: boolean | null;
 
@@ -87,8 +118,15 @@ export interface UserSettings {
 
 	// Email verification fields
 	user_email_change_pending?: boolean;
+	// Write-only. Names where a change was asked from, so confirming it can return the user there.
+	user_email_change_requested_from?: string;
 	new_user_email?: string;
 }
+
+// `mcp_approval_bypass` is read as its state but written as a duration.
+export type UserSettingsUpdate = Partial< Omit< UserSettings, 'mcp_approval_bypass' > > & {
+	mcp_approval_bypass?: McpApprovalBypassDuration;
+};
 
 export interface PasswordValidationResponse {
 	passed: boolean;
@@ -97,4 +135,10 @@ export interface PasswordValidationResponse {
 			explanation: string;
 		}[];
 	};
+}
+
+export interface SendVerificationEmailResponse {
+	success: boolean;
+	// Seconds until another verification email may be requested.
+	retry_after?: number;
 }

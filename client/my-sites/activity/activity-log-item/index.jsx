@@ -2,10 +2,10 @@ import { Button, Gridicon, FoldableCard } from '@automattic/components';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -481,7 +481,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 				rewindBackup( siteId, rewindId, downloadArgs )
 			)
 		)
-	),
+	 ),
 	confirmRewind: ( rewindId, activityName, restoreArgs ) => (
 		scrollTo( { x: 0, y: 0, duration: 250 } ),
 		dispatch(
@@ -494,7 +494,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 				rewindRestore( siteId, rewindId, restoreArgs )
 			)
 		)
-	),
+	 ),
 	trackAddCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_add_credentials' ) ),
 	trackFixCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_fix_credentials' ) ),
 } );

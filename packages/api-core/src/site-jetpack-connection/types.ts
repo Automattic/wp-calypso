@@ -19,3 +19,7 @@ export interface JetpackConnectionHealth {
 	is_healthy: boolean;
 	error?: string;
 }
+
+export interface JetpackTestConnection {
+	connected: boolean;
+}

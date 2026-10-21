@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { throttle } from 'lodash';
+import { throttle } from '@wordpress/compose';
 import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 
 // Compute the number of milliseconds between each call to recordTiming

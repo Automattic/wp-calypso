@@ -481,7 +481,7 @@ $with-sidebar-min-page-width: 1114px;
 			@extend %headertext;
 			color: var(--color-neutral-40);
 			padding: 6px 0;
-			background: rgba(255, 255, 255, 0.95);
+			background: color-mix(in srgb, var(--color-surface) 95%, transparent);
 			border-bottom: 1px solid var(--color-neutral-5);
 
 			.gridicons-time {
@@ -804,12 +804,10 @@ $with-sidebar-min-page-width: 1114px;
 			list-style: none;
 
 			.wpnc__todo-done::before {
-				/* stylelint-disable-next-line no-irregular-whitespace */
 				content: "◉ ";
 			}
 
 			.wpnc__todo-not-done::before {
-				/* stylelint-disable-next-line no-irregular-whitespace */
 				content: "◎ ";
 			}
 		}
@@ -820,6 +818,10 @@ $with-sidebar-min-page-width: 1114px;
 			color: var(--color-text-subtle);
 			background: transparent;
 		}
+	}
+
+	.wpnc__note-body--needs-top-spacing .wpnc__body {
+		padding-top: $wpnc__padding-large;
 	}
 
 	.wpnc__single-view .wpnc__comment .wpnc__body .wpnc__user {

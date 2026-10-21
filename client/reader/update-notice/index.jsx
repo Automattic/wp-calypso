@@ -1,79 +1,46 @@
 import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
-import { filter, get, flatMap } from 'lodash';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getCommentById } from 'calypso/state/comments/selectors';
 import { getDocumentHeadCappedUnreadCount } from 'calypso/state/document-head/selectors/get-document-head-capped-unread-count';
-import { getPendingItems } from 'calypso/state/reader/streams/selectors';
 import './style.scss';
 
-const noop = () => {};
+// Conversations historically counted *new comments* instead of new posts via a
+// Redux-backed hack — see git blame on `countNewComments`. That path required
+// reading `pendingItem.comments[]` from Redux plus `state.comments`. The
+// React Query migration drops it; conversations now count posts like every
+// other stream. Follow-up: re-introduce a `countOverride` prop and a
+// conversations-specific wrapper that computes the comment count from
+// `useStreamPendingPosts` raw data.
+function UpdateNotice( { count = 0, onClick } ) {
+	const translate = useTranslate();
+	const cappedUnreadCount = useSelector( getDocumentHeadCappedUnreadCount );
+	const counterClasses = clsx( 'reader-update-notice', { 'is-active': count > 0 } );
 
-class UpdateNotice extends PureComponent {
-	static propTypes = {
-		streamKey: PropTypes.string,
-		onClick: PropTypes.func,
-		cappedUnreadCount: PropTypes.string,
-	};
-
-	static defaultProps = { onClick: noop };
-
-	render() {
-		const { count, cappedUnreadCount, translate } = this.props;
-
-		const counterClasses = clsx( {
-			'reader-update-notice': true,
-			'is-active': count > 0,
-		} );
-
-		return (
-			<button className={ counterClasses } onClick={ this.handleClick }>
-				<DocumentHead unreadCount={ count } />
-				<Gridicon icon="arrow-up" size={ 18 } />
-				{ translate( '%s new post', '%s new posts', {
-					args: [ cappedUnreadCount ],
-					count,
-					comment: '%s is the number of new posts. For example: "1" or "40+"',
-				} ) }
-			</button>
-		);
-	}
-
-	handleClick = ( event ) => {
-		event.preventDefault();
-		this.props.onClick();
-	};
+	return (
+		<button
+			className={ counterClasses }
+			onClick={ ( event ) => {
+				event.preventDefault();
+				onClick?.();
+			} }
+		>
+			<DocumentHead unreadCount={ count } />
+			<Gridicon icon="arrow-up" size={ 18 } />
+			{ translate( '%s new post', '%s new posts', {
+				args: [ cappedUnreadCount ],
+				count,
+				comment: '%s is the number of new posts. For example: "1" or "40+"',
+			} ) }
+		</button>
+	);
 }
 
-const countNewComments = ( state, postKeys ) => {
-	const newComments = flatMap( postKeys, ( postKey ) => {
-		return filter( postKey.comments, ( commentId ) => {
-			return ! getCommentById( {
-				state,
-				siteId: postKey.blogId,
-				commentId: commentId,
-			} );
-		} );
-	} );
-	return newComments.length;
+UpdateNotice.propTypes = {
+	count: PropTypes.number,
+	onClick: PropTypes.func,
 };
 
-const mapStateToProps = ( state ) => {
-	const pendingItems = getPendingItems( state );
-	const updateCount = pendingItems.length;
-
-	// ugly hack for convos
-	const isConversations = !! get( pendingItems, [ 0, 'comments' ] );
-	const count = isConversations ? countNewComments( state, pendingItems ) : updateCount;
-
-	return {
-		cappedUnreadCount: getDocumentHeadCappedUnreadCount( state ),
-		count,
-	};
-};
-
-export default connect( mapStateToProps )( localize( UpdateNotice ) );
+export default UpdateNotice;

@@ -7,8 +7,10 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryMemberships from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import SubscriberValidationGate from 'calypso/components/subscribers-validation-gate';
 import { useCompleteLaunchpadTaskWithNoticeOnLoad } from 'calypso/launchpad/hooks/use-complete-launchpad-task-with-notice-on-load';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import CompSubscriptionModal from 'calypso/my-sites/subscribers/components/comp-modal/comp-modal';
 import RemoveCompModal from 'calypso/my-sites/subscribers/components/remove-comp-modal/remove-comp-modal';
 import { SubscriberDataViews } from 'calypso/my-sites/subscribers/components/subscriber-data-views';
@@ -84,7 +86,8 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 		<>
 			<QueryMemberships siteId={ siteId ?? 0 } />
 			<QueryMembershipsSettings siteId={ siteId ?? 0 } source="calypso" />
-			<Main wideLayout className="subscribers">
+			<Main fullWidthLayout className="subscribers">
+				{ isJetpackCloud() && <SidebarNavigation /> }
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 				<SubscriberValidationGate siteId={ siteId }>
 					<SubscriberDataViews

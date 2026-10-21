@@ -1,6 +1,8 @@
-import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
+import { envelope, globe, layout, plugins } from '@wordpress/icons';
+import { useRef } from 'react';
+import ReferralSidebar from '../../agency/earn/referrals/referral-sidebar';
+import AgencySiteSidebar from '../../agency/sites/site-sidebar';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import SidebarNavigator from '../../components/sidebar-navigator';
@@ -10,16 +12,22 @@ import SiteSidebar from '../../sites/site-sidebar';
 import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
-import ThemeSwitcher from './theme-switcher';
+import AgencySidebar from './agency';
+import AgencyClientSidebar from './agency-client';
+import { useSidebarScrollSync } from './use-sidebar-scroll-sync';
 
 import './sidebar.scss';
 
-export default function Sidebar() {
-	const { Logo, name, supports } = useAppContext();
+export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnabled?: boolean } ) {
+	const { Logo, name } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
+	const sidebarRef = useRef< HTMLDivElement >( null );
+	const navigatorRef = useRef< HTMLDivElement >( null );
+
+	useSidebarScrollSync( { enabled: scrollSyncEnabled, sidebarRef, navigatorRef } );
 
 	return (
-		<div className="dashboard-responsive-sidebar__sidebar">
+		<div ref={ sidebarRef } className="dashboard-responsive-sidebar__sidebar">
 			{ Logo && (
 				<div className="dashboard-responsive-sidebar__logo">
 					<RouterLinkButton
@@ -33,12 +41,18 @@ export default function Sidebar() {
 					/>
 				</div>
 			) }
-			<SidebarNavigator>
+			<SidebarNavigator ref={ navigatorRef }>
 				<SidebarNavigator.Screen path="/">
 					<PrimaryMenuSidebar />
 				</SidebarNavigator.Screen>
 				<SidebarNavigator.Screen path="/sites/$siteSlug">
 					<SiteSidebar />
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/agency/sites/$siteSlug">
+					<AgencySiteSidebar />
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/agency/referrals/$referralId">
+					<ReferralSidebar />
 				</SidebarNavigator.Screen>
 				<SidebarNavigator.Screen path="/domains/$domainName">
 					<DomainSidebar />
@@ -47,7 +61,6 @@ export default function Sidebar() {
 					<MeSidebar />
 				</SidebarNavigator.Screen>
 			</SidebarNavigator>
-			{ supports.colorScheme && <ThemeSwitcher /> }
 		</div>
 	);
 }
@@ -57,6 +70,8 @@ function PrimaryMenuSidebar() {
 
 	return (
 		<SidebarMenu>
+			{ supports.agency && <AgencySidebar /> }
+			{ supports.agencyClient && <AgencyClientSidebar /> }
 			{ supports.sites && (
 				<SidebarMenuItem icon={ layout } to="/sites">
 					{ __( 'Sites' ) }
@@ -78,30 +93,10 @@ function PrimaryMenuSidebar() {
 					<SidebarMenuItem to="/plugins/scheduled-updates">
 						{ __( 'Scheduled updates' ) }
 					</SidebarMenuItem>
-					<SidebarMenuItem
-						href={ wpcomLink( '/plugins' ) }
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<HStack justify="flex-start" spacing={ 1 }>
-							<span>{ __( 'Browse plugins' ) }</span>
-							<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
-						</HStack>
+					<SidebarMenuItem href={ wpcomLink( '/plugins' ) }>
+						{ __( 'Browse plugins' ) }
 					</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
-			) }
-			{ supports.themes && (
-				<SidebarMenuItem
-					icon={ brush }
-					href={ wpcomLink( '/themes' ) }
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<HStack justify="flex-start" spacing={ 1 }>
-						<span>{ __( 'Themes' ) }</span>
-						<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
-					</HStack>
-				</SidebarMenuItem>
 			) }
 		</SidebarMenu>
 	);

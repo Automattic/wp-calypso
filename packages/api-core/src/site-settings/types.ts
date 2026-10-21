@@ -1,7 +1,7 @@
 export interface SiteSettings {
 	blog_public?: number;
 	is_fully_managed_agency_site?: boolean;
-	gmt_offset?: number | string;
+	gmt_offset?: number;
 	timezone_string?: string;
 	/**
 	 * @deprecated Use `wpcom_public_coming_soon` instead.
@@ -28,3 +28,10 @@ export type SiteMcpAbilities = Record<
 		enabled: boolean;
 	}
 >;
+
+export interface SitePremiumAnalyticsSettings {
+	/**
+	 * Absent when the site does not register the setting, as on a Jetpack too old to ship it.
+	 */
+	jetpack_premium_analytics_enabled?: boolean;
+}

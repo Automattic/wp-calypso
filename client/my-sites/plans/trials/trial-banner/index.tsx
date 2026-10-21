@@ -12,6 +12,7 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DoughnutChart from '../../doughnut-chart';
 import useBannerSubtitle from './use-banner-subtitle';
+import type { JSX } from 'react';
 import './style.scss';
 
 interface TrialBannerProps {
@@ -73,7 +74,7 @@ const TrialBanner = ( props: TrialBannerProps ) => {
 						? translate( 'Your free trial has expired' )
 						: translate( 'day left in trial', 'days left in trial', {
 								count: trialDaysLeftToDisplay,
-						  } ) }
+							} ) }
 				</span>
 			</div>
 		</Card>

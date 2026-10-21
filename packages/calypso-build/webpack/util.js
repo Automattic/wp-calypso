@@ -66,10 +66,8 @@ function IncrementalProgressPlugin() {
 const nodeModulesToTranspile = [
 	// general form is <package-name>/.
 	// The trailing slash makes sure we're not matching these as prefixes
-	// In some cases we do want prefix style matching (lodash. for lodash.assign)
-	'@automattic/calypso-polyfills/',
+	// In some cases we do want prefix style matching (e.g. `foo.` to match `foo.bar`)
 	'@automattic/lasagna/',
-	'@automattic/react-virtualized/',
 	'@github/webauthn-json/',
 	'acorn-jsx/',
 	'chalk/',

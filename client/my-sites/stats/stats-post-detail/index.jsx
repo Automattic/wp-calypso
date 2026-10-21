@@ -2,17 +2,19 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button as CoreButton } from '@wordpress/components';
+import { Stack, Text } from '@wordpress/ui';
 import clsx from 'clsx';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { isEqual, flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import titlecase from 'to-title-case';
+import { withPostLikes } from 'calypso/components/data/post-likes';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
-import EmptyContent from 'calypso/components/empty-content';
 import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
@@ -26,7 +28,6 @@ import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigat
 import { getMappedPreviewUrl } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import { getSitePost } from 'calypso/state/posts/selectors';
-import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import {
 	isJetpackSite,
@@ -38,11 +39,13 @@ import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-e
 import getSiteAdminUrlFromState from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import usePostEmailStatsAvailabilityQuery from '../hooks/use-post-email-stats-availability-query';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
 import StatsPlaceholder from '../stats-module/placeholder';
 import PageViewTracker from '../stats-page-view-tracker';
 import PostSummary from '../stats-post-summary';
+import './style.scss';
 
 class StatsPostDetail extends Component {
 	static propTypes = {
@@ -63,6 +66,7 @@ class StatsPostDetail extends Component {
 		} ),
 		editUrl: PropTypes.string,
 		openSupportDoc: PropTypes.func,
+		isEmailTabsAvailable: PropTypes.bool,
 	};
 
 	state = {
@@ -114,7 +118,7 @@ class StatsPostDetail extends Component {
 
 	componentDidUpdate( prevProps ) {
 		const { context } = this.props;
-		if ( ! isEqual( prevProps.context, this.props.context ) ) {
+		if ( ! isEqual( prevProps.context.query, context.query ) ) {
 			recordCurrentScreen( 'postDetails', {
 				queryParams: context.query,
 				period: null,
@@ -152,12 +156,6 @@ class StatsPostDetail extends Component {
 		return null;
 	}
 
-	hasDontSendEmailPostToSubs( metadata ) {
-		return metadata?.some(
-			( { key, value } ) => key === '_jetpack_dont_email_post_to_subs' && !! value
-		);
-	}
-
 	getPost() {
 		const { isPostHomepage, post, postFallback, countLikes } = this.props;
 
@@ -172,7 +170,6 @@ class StatsPostDetail extends Component {
 			return {
 				...postBase,
 				date: post?.date,
-				dont_email_post_to_subs: this.hasDontSendEmailPostToSubs( post?.metadata ),
 				post_thumbnail: post?.post_thumbnail,
 				comment_count: post?.discussion?.comment_count,
 				type: post?.type,
@@ -184,7 +181,6 @@ class StatsPostDetail extends Component {
 			return {
 				...postBase,
 				date: postFallback?.post_date_gmt,
-				dont_email_post_to_subs: this.hasDontSendEmailPostToSubs( post?.metadata ),
 				post_thumbnail: null,
 				comment_count: parseInt( postFallback?.comment_count, 10 ),
 				type: postFallback?.post_type,
@@ -206,9 +202,7 @@ class StatsPostDetail extends Component {
 			showViewLink,
 			previewUrl,
 			supportsUTMStats,
-			isSubscriptionsModuleActive,
-			supportsEmailStats,
-			isSimple,
+			isEmailTabsAvailable,
 			breadcrumbTrail,
 		} = this.props;
 
@@ -219,16 +213,7 @@ class StatsPostDetail extends Component {
 		passedPost.url = previewUrl;
 
 		const postType = passedPost && passedPost.type !== null ? passedPost.type : 'post';
-		let actionLabel;
-		let noViewsLabel;
-
-		if ( postType === 'page' ) {
-			actionLabel = translate( 'View Page' );
-			noViewsLabel = translate( 'Your page has not received any views yet!' );
-		} else {
-			actionLabel = translate( 'View Post' );
-			noViewsLabel = translate( 'Your post has not received any views yet!' );
-		}
+		const actionLabel = postType === 'page' ? translate( 'View Page' ) : translate( 'View Post' );
 
 		const isWPAdmin = config.isEnabled( 'is_odyssey' );
 		const postDetailPageClasses = clsx( 'stats', {
@@ -237,17 +222,6 @@ class StatsPostDetail extends Component {
 
 		// TODO: Refactor navigationItems to a single object with backLink and title attributes.
 		const navigationItems = this.getNavigationItemsWithTitle( this.getTitle() );
-
-		const subscriptionsEnabled = isSimple || isSubscriptionsModuleActive;
-		// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
-		const isEmailTabsAvailable =
-			subscriptionsEnabled &&
-			postId > 0 &&
-			! passedPost?.dont_email_post_to_subs &&
-			passedPost?.date &&
-			// The Newsletter Stats data was never backfilled (internal ref pdDOJh-1Uy-p2).
-			new Date( passedPost?.date ) >= new Date( '2023-05-30' ) &&
-			supportsEmailStats;
 
 		return (
 			<Main
@@ -291,14 +265,21 @@ class StatsPostDetail extends Component {
 					<StatsPlaceholder isLoading={ isLoading } />
 
 					{ ! isLoading && countViews === 0 && (
-						<EmptyContent
-							title={ noViewsLabel }
-							line={ translate( 'Learn some tips to attract more visitors' ) }
-							action={ translate( 'Get more traffic!' ) }
-							actionCallback={ () => {
-								this.props.openSupportDoc();
-							} }
-						/>
+						<Stack
+							className="stats-post-detail__no-views"
+							direction="column"
+							gap="md"
+							align="start"
+						>
+							<Text variant="body-lg" style={ { color: 'var(--color-text-subtle)' } }>
+								{ translate(
+									"You don't have any views yet. Learn some tips to attract more visitors."
+								) }
+							</Text>
+							<CoreButton variant="primary" onClick={ this.props.openSupportDoc }>
+								{ translate( 'View guide' ) }
+							</CoreButton>
+						</Stack>
 					) }
 
 					{ ! isLoading && countViews > 0 && (
@@ -328,6 +309,8 @@ class StatsPostDetail extends Component {
 	}
 }
 
+const StatsPostDetailWithLikes = withPostLikes( StatsPostDetail );
+
 const StatsPostDetailWrapper = ( props ) => {
 	const breadcrumbTrail = useStatsBreadcrumbTrail();
 
@@ -345,6 +328,18 @@ const StatsPostDetailWrapper = ( props ) => {
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
+	// `connect` wraps this component, so the environment checks arrive as props;
+	// the whole email-tabs rule lives here rather than being re-derived in render.
+	const { supportsEmailStats, isSimple, isSubscriptionsModuleActive, postId } = props;
+	const canHaveEmailStats = !! supportsEmailStats && !! ( isSimple || isSubscriptionsModuleActive );
+
+	const { data, isError } = usePostEmailStatsAvailabilityQuery( siteId, postId, canHaveEmailStats );
+	// A failed request would otherwise read as "never emailed"; fail open instead.
+	const hasEmailStats = data ?? isError;
+
+	// postId > 0: show the tabs for posts except for the Home Page (postId = 0).
+	const isEmailTabsAvailable = canHaveEmailStats && postId > 0 && hasEmailStats;
+
 	const openDoc = () => {
 		if ( isJetpack ) {
 			setTimeout( () => window.open( supportLink, '_blank' ), 250 );
@@ -354,7 +349,13 @@ const StatsPostDetailWrapper = ( props ) => {
 	};
 
 	return (
-		<StatsPostDetail { ...props } breadcrumbTrail={ breadcrumbTrail } openSupportDoc={ openDoc } />
+		<StatsPostDetailWithLikes
+			{ ...props }
+			siteId={ siteId }
+			breadcrumbTrail={ breadcrumbTrail }
+			openSupportDoc={ openDoc }
+			isEmailTabsAvailable={ isEmailTabsAvailable }
+		/>
 	);
 };
 
@@ -362,7 +363,6 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const isPreviewable = isSitePreviewable( state, siteId );
 	const isPostHomepage = postId === 0;
-	const countLikes = countPostLikes( state, siteId, postId ) || 0;
 	const { supportsUTMStats, supportsEmailStats } = getEnvStatsFeatureSupportChecks( state, siteId );
 	const isSimple = isSimpleSite( state, siteId );
 	const previewUrl = getMappedPreviewUrl( state, siteId, postId );
@@ -376,7 +376,6 @@ const connectComponent = connect( ( state, { postId } ) => {
 
 	return {
 		post: getSitePost( state, siteId, postId ),
-		countLikes,
 		// NOTE: Post object from the stats response does not conform to the data structure returned by getSitePost!
 		postFallback: getPostStat( state, siteId, postId, 'post' ),
 		isPostHomepage,
@@ -394,4 +393,4 @@ const connectComponent = connect( ( state, { postId } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatsPostDetailWrapper );
+export default compose( connectComponent, localize )( StatsPostDetailWrapper );

@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -85,7 +84,7 @@ class CredsConfirmStep extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const siteId = get( ownProps, [ 'initialContext', 'query', 'blogid' ], 0 );
+		const siteId = ownProps?.initialContext?.query?.blogid ?? 0;
 		return {
 			siteId,
 			siteSlug: getSelectedSiteSlug( state, siteId ),

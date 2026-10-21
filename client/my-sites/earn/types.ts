@@ -3,6 +3,9 @@ export type Product = {
 	currency?: string;
 	price?: number;
 	title?: string;
+	description?: string;
+	/** Server-rendered HTML of the markdown description (sanitized by the API). */
+	description_rendered?: string;
 	interval?: string;
 	buyer_can_change_amount?: boolean;
 	multiple_per_user?: boolean;
@@ -11,6 +14,7 @@ export type Product = {
 	renewal_schedule?: string;
 	type?: string;
 	is_editable?: boolean;
+	is_read_only?: boolean;
 	tier?: number;
 };
 

@@ -115,7 +115,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 						<div className="status-card__title">{ displayDate }</div>
 						<Spacer marginBottom={ 2 }>
 							{ fileBrowserState.getCheckList( rewindId ).totalItems === 0 ? (
-								<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
+								<ActionButtons isMultiSite={ !! isMultiSite } rewindId={ rewindId.toString() } />
 							) : (
 								<ButtonStack justify="flex-start">
 									<Button

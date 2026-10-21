@@ -1,10 +1,9 @@
-import '@automattic/calypso-polyfills';
 import { getGenericSuperPropsGetter, initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { CurrentUser, User, UserActions } from '@automattic/data-stores';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
-import ReactDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AnyAction } from 'redux';
@@ -55,7 +54,9 @@ async function main() {
 
 	loadDevHelpers( reduxStore );
 
-	ReactDom.render(
+	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
+
+	root.render(
 		<CalypsoI18nProvider>
 			<Provider store={ reduxStore }>
 				<GlobalNotices />
@@ -63,26 +64,26 @@ async function main() {
 					<MomentProvider>
 						<WindowLocaleEffectManager />
 						<BrowserRouter>
-							<RecordPageView />
-							<Routes>
-								<Route
-									path="/subscriptions/site/:blogId/*"
-									element={
-										<SubscriptionManagerContextProvider
-											portal={ SubscriptionsPortal.Subscriptions }
-										>
-											<SiteSubscriptionPage />
-										</SubscriptionManagerContextProvider>
-									}
-								/>
-								<Route path="/subscriptions/*" element={ <SubscriptionManagerPage /> } />
-							</Routes>
+							<RecordPageView>
+								<Routes>
+									<Route
+										path="/subscriptions/site/:blogId/*"
+										element={
+											<SubscriptionManagerContextProvider
+												portal={ SubscriptionsPortal.Subscriptions }
+											>
+												<SiteSubscriptionPage />
+											</SubscriptionManagerContextProvider>
+										}
+									/>
+									<Route path="/subscriptions/*" element={ <SubscriptionManagerPage /> } />
+								</Routes>
+							</RecordPageView>
 						</BrowserRouter>
 					</MomentProvider>
 				</QueryClientProvider>
 			</Provider>
-		</CalypsoI18nProvider>,
-		document.getElementById( 'wpcom' )
+		</CalypsoI18nProvider>
 	);
 }
 

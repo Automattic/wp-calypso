@@ -159,6 +159,9 @@ class Sites extends Component {
 			case 'site-monitoring':
 				path = translate( 'Site Monitoring' );
 				break;
+			case 'site-editor':
+				path = translate( 'Site Editor' );
+				break;
 			case 'github-deployments':
 				path = translate( 'GitHub Deployments' );
 				break;

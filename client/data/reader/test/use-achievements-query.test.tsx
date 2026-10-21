@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { isEnabled } from '@automattic/calypso-config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
@@ -14,11 +13,6 @@ jest.mock( 'calypso/lib/wp', () => ( {
 	},
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
-
-const mockIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
 const mockGet = jest.mocked( wpcom.req.get );
 
 describe( 'useAchievementsQuery', () => {
@@ -27,7 +21,6 @@ describe( 'useAchievementsQuery', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockIsEnabled.mockReturnValue( true );
 
 		queryClient = new QueryClient( {
 			defaultOptions: { queries: { retry: false } },
@@ -35,14 +28,6 @@ describe( 'useAchievementsQuery', () => {
 		wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
-	} );
-
-	test( 'should not fire a request when feature flag is disabled', () => {
-		mockIsEnabled.mockReturnValue( false );
-
-		renderHook( () => useAchievementsQuery( 'testuser' ), { wrapper } );
-
-		expect( mockGet ).not.toHaveBeenCalled();
 	} );
 
 	test( 'should not fire a request when userIdOrLogin is undefined', () => {
@@ -112,5 +97,69 @@ describe( 'useAchievementsQuery', () => {
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 
 		expect( result.current.yearsOfService ).toBeUndefined();
+	} );
+
+	test( 'should expose lockedAchievements from the first page', async () => {
+		mockGet.mockResolvedValue( {
+			found: 0,
+			achievements: [],
+			locked_achievements: [
+				{
+					achievement_id: 99,
+					slug: 'locked',
+					name: 'Locked',
+					description: 'd',
+					badge_prefix: 'p',
+					is_secret: false,
+					date_created: '2026-01-01T00:00:00Z',
+				},
+			],
+		} );
+
+		const { result } = renderHook( () => useAchievementsQuery( 'testuser' ), { wrapper } );
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		expect( result.current.lockedAchievements ).toHaveLength( 1 );
+		expect( result.current.lockedAchievements[ 0 ].achievement_id ).toBe( 99 );
+	} );
+
+	test( 'should default lockedAchievements to an empty array when absent', async () => {
+		mockGet.mockResolvedValue( { found: 0, achievements: [] } );
+
+		const { result } = renderHook( () => useAchievementsQuery( 'testuser' ), { wrapper } );
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		expect( result.current.lockedAchievements ).toEqual( [] );
+	} );
+
+	test( 'should sort daily post streaks by current_streak descending', async () => {
+		mockGet.mockResolvedValue( {
+			found: 0,
+			achievements: [],
+			daily_post_streak: [
+				{ blog_id: 1, url: 'https://one.example.com', current_streak: 4 },
+				{ blog_id: 2, url: 'https://two.example.com', current_streak: 23 },
+				{ blog_id: 3, url: 'https://three.example.com', current_streak: 14 },
+			],
+		} );
+
+		const { result } = renderHook( () => useAchievementsQuery( 'testuser' ), { wrapper } );
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		expect( result.current.dailyPostStreaks ).toHaveLength( 3 );
+		expect( result.current.dailyPostStreaks.map( ( s ) => s.blog_id ) ).toEqual( [ 2, 3, 1 ] );
+	} );
+
+	test( 'should default dailyPostStreaks to an empty array when absent', async () => {
+		mockGet.mockResolvedValue( { found: 0, achievements: [] } );
+
+		const { result } = renderHook( () => useAchievementsQuery( 'testuser' ), { wrapper } );
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		expect( result.current.dailyPostStreaks ).toEqual( [] );
 	} );
 } );

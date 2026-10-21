@@ -17,6 +17,7 @@ interface SiteFaviconProps {
 	size?: number;
 	className?: string;
 	fallback?: SiteFaviconFallback;
+	siteName?: string;
 	lazy?: boolean;
 	variant?: SiteIconVariant;
 }
@@ -27,6 +28,7 @@ const SiteFavicon = ( {
 	size = 40,
 	className = '',
 	fallback = 'color',
+	siteName,
 	lazy = false,
 	variant,
 }: SiteFaviconProps ) => {
@@ -47,7 +49,7 @@ const SiteFavicon = ( {
 					aria-label={ __( 'Site Icon' ) }
 					style={ size <= 36 ? { fontSize: size * 0.6 } : {} }
 				>
-					{ getFirstGrapheme( site?.title ?? '' ) }
+					{ getFirstGrapheme( siteName ?? site?.title ?? '' ) }
 				</div>
 			);
 			defaultFaviconClass = 'is-first-grapheme';

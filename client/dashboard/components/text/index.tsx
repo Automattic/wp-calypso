@@ -18,11 +18,7 @@ function UnforwardedText(
 			lineHeight={ lineHeight || 'unset' }
 			size={ size || 'unset' }
 			weight={ weight || 'unset' }
-			className={ clsx(
-				intent && `dashboard-text--${ intent }`,
-				props.variant === 'muted' && 'dashboard-text--muted',
-				props.className
-			) }
+			className={ clsx( intent && `dashboard-text--${ intent }`, props.className ) }
 		/>
 	);
 }

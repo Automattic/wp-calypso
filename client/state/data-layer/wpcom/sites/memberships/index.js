@@ -11,6 +11,7 @@ import {
 	MEMBERSHIPS_COUPONS_RECEIVE,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
@@ -22,6 +23,8 @@ export const membershipProductFromApi = ( product ) => ( {
 	formatted_price: product.price,
 	price: parseFloat( product.price ),
 	title: product.title,
+	description: product.description,
+	description_rendered: product.description_rendered,
 	renewal_schedule: product.interval,
 	buyer_can_change_amount: product.buyer_can_change_amount,
 	multiple_per_user: product.multiple_per_user,
@@ -29,6 +32,7 @@ export const membershipProductFromApi = ( product ) => ( {
 	welcome_email_content: product.welcome_email_content,
 	type: product.type,
 	tier: product.tier,
+	is_read_only: Boolean( product.is_read_only ),
 } );
 
 export const membershipCouponFromApi = ( coupon ) => ( {
@@ -125,6 +129,8 @@ export const handleMembershipGetEarnings = dispatchRequest( {
 	onError: noop,
 } );
 
+export const handleMembershipSubscribersError = ( action ) => bypassDataLayer( action );
+
 export const handleMembershipGetSubscribers = dispatchRequest( {
 	fetch: ( action ) =>
 		http(
@@ -140,7 +146,7 @@ export const handleMembershipGetSubscribers = dispatchRequest( {
 		siteId,
 		subscribers,
 	} ),
-	onError: noop,
+	onError: handleMembershipSubscribersError,
 } );
 
 export const handleMembershipGetSettings = dispatchRequest( {

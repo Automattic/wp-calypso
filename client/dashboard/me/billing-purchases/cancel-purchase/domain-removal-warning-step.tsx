@@ -67,7 +67,7 @@ export default function DomainRemovalWarningStep( {
 						? createInterpolateElement(
 								/* translators: <domainName /> is the domain name */
 								__(
-									'If you want to use <domainName /> with another provider you can <moveLink>move it to another service</moveLink> or <transferLink>transfer it to another provider</transferLink>.'
+									'If you want to use <domainName/> with another provider you can <moveLink>move it to another service</moveLink> or <transferLink>transfer it to another provider</transferLink>.'
 								),
 								{
 									domainName: <strong>{ domainName }</strong>,
@@ -86,11 +86,11 @@ export default function DomainRemovalWarningStep( {
 										/>
 									),
 								}
-						  )
+							)
 						: createInterpolateElement(
 								/* translators: <domainName /> is the domain name */
 								__(
-									'If you want to use <domainName /> with another provider you can <moveLink>move it to another service</moveLink>.'
+									'If you want to use <domainName/> with another provider you can <moveLink>move it to another service</moveLink>.'
 								),
 								{
 									domainName: <strong>{ domainName }</strong>,
@@ -102,7 +102,7 @@ export default function DomainRemovalWarningStep( {
 										/>
 									),
 								}
-						  ) }
+							) }
 				</Text>
 
 				<Text>{ __( 'Do you still want to continue with deleting your domain?' ) }</Text>

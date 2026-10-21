@@ -51,7 +51,8 @@ export default function ReportsDashboard() {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
-		fields: [ 'site', 'reportCount', 'latestStatus', 'dateSent' ],
+		fields: [ 'reportCount', 'latestStatus', 'dateSent' ],
+		titleField: 'site',
 	} );
 
 	// To ensure the selected item is updated when the reports list is updated

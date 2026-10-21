@@ -1,13 +1,15 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
+import PasswordResetSuccessNotice from 'calypso/blocks/login/password-reset-success-notice';
+import SignupExistingAccountNotice from 'calypso/blocks/login/signup-existing-account-notice';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
@@ -23,7 +25,8 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
-import { login } from 'calypso/lib/paths';
+import { login, lostPassword } from 'calypso/lib/paths';
+import useEntryClarityExperiment from 'calypso/lib/signup/use-entry-clarity-experiment';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -39,6 +42,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsJetpackApp from 'calypso/state/selectors/get-is-jetpack-app';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow, {
@@ -70,6 +74,8 @@ export class Login extends Component {
 		twoFactorAuthType: PropTypes.string,
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
+		isWoo: PropTypes.bool,
+		isEntryClarityTreatment: PropTypes.bool,
 	};
 
 	static defaultProps = { isJetpack: false, isLoginView: true };
@@ -109,11 +115,14 @@ export class Login extends Component {
 			'oauth2Client',
 			'isWooJPC',
 			'isJetpack',
+			'isJetpackApp',
 			'isWCCOM',
 			'isBlazePro',
 			'isFromAkismet',
 			'isFromPassport',
 			'isFromAutomatticForAgenciesPlugin',
+			'isFromJetpackConnector',
+			'connectorPlugins',
 			'partnerConfig',
 			'isGravPoweredClient',
 			'currentQuery',
@@ -162,32 +171,70 @@ export class Login extends Component {
 		return <LocaleSuggestions locale={ locale } path={ path } />;
 	}
 
+	handleLostPasswordClick = ( event ) => {
+		event.preventDefault();
+		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+		page(
+			login( {
+				redirectTo: this.props.redirectTo,
+				locale: this.props.locale,
+				action:
+					this.props.isWooJPC || this.props.isJetpack ? 'jetpack/lostpassword' : 'lostpassword',
+				oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+				from: this.props.currentQuery?.from,
+			} )
+		);
+	};
+
+	/**
+	 * Where "Lost your password?" goes, shared by its footer and password label row copies.
+	 *
+	 * Jetpack, Woo and OAuth2 sign-ins stay on the Calypso screen: it carries the
+	 * passwordless magic-link branch and the client context, and wp-login.php has neither.
+	 */
+	getLostPasswordLinkProps() {
+		const keepCalypsoForm =
+			this.props.isWooJPC || this.props.isJetpack || !! this.props.oauth2Client;
+
+		if ( keepCalypsoForm ) {
+			return { href: '/', onClick: this.handleLostPasswordClick };
+		}
+
+		return {
+			// No redirect_to. wp-login.php honours it in place of checkemail=confirm, and
+			// the recovery-email and SMS steps hang off checkemail=confirm.
+			href: lostPassword( { locale: this.props.locale } ),
+			rel: 'external',
+			onClick: () => this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' ),
+		};
+	}
+
+	/**
+	 * The footer's copy, which is where this link lives below 960px.
+	 */
 	getLostPasswordLink() {
 		if ( this.props.twoFactorAuthType ) {
 			return null;
 		}
 
 		return (
-			<a
-				className="one-login__footer-link"
-				href="/"
-				onClick={ ( event ) => {
-					event.preventDefault();
-					this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
-					page(
-						login( {
-							redirectTo: this.props.redirectTo,
-							locale: this.props.locale,
-							action:
-								this.props.isWooJPC || this.props.isJetpack
-									? 'jetpack/lostpassword'
-									: 'lostpassword',
-							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-							from: get( this.props.currentQuery, 'from' ),
-						} )
-					);
-				} }
-			>
+			<a className="one-login__footer-link" { ...this.getLostPasswordLinkProps() }>
+				{ this.props.translate( 'Lost your password?' ) }
+			</a>
+		);
+	}
+
+	/**
+	 * The same link for desktop, where it sits on the password field's label row, beside the
+	 * field it resets. Only one of the two is ever visible: see login-form.scss.
+	 */
+	getLostPasswordFormLink() {
+		if ( this.props.twoFactorAuthType ) {
+			return null;
+		}
+
+		return (
+			<a className="login__form-lost-password" { ...this.getLostPasswordLinkProps() }>
 				{ this.props.translate( 'Lost your password?' ) }
 			</a>
 		);
@@ -205,7 +252,7 @@ export class Login extends Component {
 							redirectTo: this.props.redirectTo,
 							locale: this.props.locale,
 							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-							from: get( this.props.currentQuery, 'from' ),
+							from: this.props.currentQuery?.from,
 							isJetpack: this.props.isJetpack,
 						} )
 					);
@@ -219,12 +266,12 @@ export class Login extends Component {
 
 	getSupportLink() {
 		return (
-			<a
+			<ExternalLink
 				className="one-login__footer-link"
 				href="/support/category/manage-your-account/account-settings/"
 			>
 				{ this.props.translate( 'Support' ) }
-			</a>
+			</ExternalLink>
 		);
 	}
 
@@ -245,6 +292,7 @@ export class Login extends Component {
 			action,
 			currentRoute,
 			isLoginView,
+			isEntryClarityTreatment,
 		} = this.props;
 
 		// It's used to toggle UIs for the login page of Gravatar powered clients only (excluding 2FA relevant pages).
@@ -256,6 +304,12 @@ export class Login extends Component {
 			! currentRoute.startsWith( '/log-in/sms' ) &&
 			! currentRoute.startsWith( '/log-in/webauthn' ) &&
 			! currentRoute.startsWith( '/log-in/backup' );
+
+		// Gravatar-powered clients and Woo render their own lost-password link.
+		const lostPasswordFormLink =
+			isEntryClarityTreatment && ! isGravPoweredClient && ! this.props.isWoo
+				? this.getLostPasswordFormLink()
+				: undefined;
 
 		return (
 			<LoginBlock
@@ -271,13 +325,17 @@ export class Login extends Component {
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				fromSite={ fromSite }
+				lostPasswordLink={ lostPasswordFormLink }
 				footer={
 					isGravPoweredLoginPage ? (
 						<GravPoweredLoginBlockFooter />
 					) : (
 						<OneLoginFooter
 							isLoginView={ isLoginView }
+							signupUrl={ signupUrl }
+							showSignupPrompt={ isEntryClarityTreatment }
 							lostPasswordLink={ this.getLostPasswordLink() }
+							lostPasswordLinkMobileOnly={ !! lostPasswordFormLink }
 							loginLink={ this.getLoginLink() }
 							supportLink={ this.getSupportLink() }
 						/>
@@ -321,6 +379,7 @@ export class Login extends Component {
 			isGenericOauth,
 			isGravPoweredClient,
 			isJetpack,
+			isEntryClarityTreatment,
 			action,
 			partnerConfig,
 		} = this.props;
@@ -329,6 +388,14 @@ export class Login extends Component {
 
 		// TODO: remove isGravPoweredClient when login pages are unified.
 		const isSocialFirst = ! isGravPoweredClient;
+
+		// Each returns null when it has nothing to say.
+		const notices = (
+			<>
+				<PasswordResetSuccessNotice />
+				<SignupExistingAccountNotice />
+			</>
+		);
 
 		const mainContent = (
 			<Main
@@ -370,9 +437,16 @@ export class Login extends Component {
 				{ ! isGravPoweredClient && (
 					<OneLoginLayout
 						isJetpack={ isJetpack }
+						isFromJetpackConnector={ this.props.isFromJetpackConnector }
+						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
+						// The footer carries the route to signup on desktop instead.
+						signupLinkMobileOnly={ isEntryClarityTreatment }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
+						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
+						notice={ notices }
+						linkLogoToHome
 					>
 						{ mainContent }
 					</OneLoginLayout>
@@ -393,11 +467,14 @@ function getInitialHeadingState( props, translate ) {
 		oauth2Client,
 		isWooJPC,
 		isJetpack,
+		isJetpackApp,
 		isWCCOM,
 		isBlazePro,
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
+		isFromJetpackConnector,
+		connectorPlugins,
 		partnerConfig,
 		isGravPoweredClient,
 		currentQuery,
@@ -416,11 +493,14 @@ function getInitialHeadingState( props, translate ) {
 		oauth2Client,
 		isWooJPC,
 		isJetpack,
+		isJetpackApp,
 		isWCCOM,
 		isBlazePro,
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
+		isFromJetpackConnector,
+		connectorPlugins,
 		partnerConfig,
 		isGravPoweredClient,
 		currentQuery,
@@ -435,6 +515,8 @@ function getInitialHeadingState( props, translate ) {
 		translate,
 		isWooJPC,
 		partnerConfig,
+		isFromJetpackConnector,
+		connectorPlugins,
 	} );
 
 	return {
@@ -450,6 +532,11 @@ const LoginWithContext = ( props ) => {
 		props,
 		translate
 	);
+	// Logged-out visitors on the main login view, the same audience as the signup step. Gravatar-
+	// powered logins have their own layout, which the treatment does not change.
+	const isEntryClarityTreatment = useEntryClarityExperiment(
+		props.isLoginView && ! props.isUserLoggedIn && ! props.isGravPoweredClient
+	);
 
 	return (
 		<LoginContextProvider
@@ -457,16 +544,32 @@ const LoginWithContext = ( props ) => {
 			initialSubHeading={ subHeadingPrimary }
 			initialSubHeadingSecondary={ subHeadingSecondary }
 		>
-			<Login { ...props } translate={ translate } />
+			<Login
+				{ ...props }
+				translate={ translate }
+				isEntryClarityTreatment={ isEntryClarityTreatment }
+			/>
 		</LoginContextProvider>
 	);
 };
+
+const trimString = ( s ) => s.trim();
 
 export default connect(
 	( state, props ) => {
 		const currentQuery = getCurrentQueryArguments( state );
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const currentRoute = getCurrentRoute( state );
+
+		const redirectParams = new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] );
+		const connectorFromParam = redirectParams.get( 'from' ) || currentQuery?.from;
+		const isFromJetpackConnector = connectorFromParam === 'jetpack-connector';
+		const connectorPlugins = isFromJetpackConnector
+			? ( redirectParams.get( 'plugins' ) || currentQuery?.plugins || '' )
+					.split( ',' )
+					.map( trimString )
+					.filter( Boolean )
+			: [];
 
 		return {
 			locale: getCurrentLocaleSlug( state ),
@@ -489,6 +592,7 @@ export default connect(
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),
 			isBlazePro: getIsBlazePro( state ),
+			isJetpackApp: getIsJetpackApp( state ),
 			// This applies to all oauth screens except for A4A, Blaze Pro, Jetpack, Woo.
 			isGenericOauth:
 				oauth2Client &&
@@ -503,9 +607,11 @@ export default connect(
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),
 			isFromAutomatticForAgenciesPlugin:
-				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
+				'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from ||
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
+			isFromJetpackConnector,
+			connectorPlugins,
 			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 			isUserLoggedIn: isUserLoggedIn( state ),

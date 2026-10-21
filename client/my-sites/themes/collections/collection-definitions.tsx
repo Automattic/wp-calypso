@@ -2,9 +2,7 @@ import { translate } from 'i18n-calypso';
 import type { TranslateResult } from 'i18n-calypso';
 
 export type ThemeCollectionDescription =
-	| TranslateResult
-	| ( ( options?: { search?: string } ) => TranslateResult )
-	| null;
+	TranslateResult | ( ( options?: { search?: string } ) => TranslateResult ) | null;
 
 export type ThemeCollectionDefinition = {
 	query: {
@@ -107,10 +105,10 @@ export const THEME_COLLECTIONS: Record< string, ThemeCollectionDefinition > = {
 				? translate(
 						'Explore "%(query)s" themes from the WordPress community, and upload to install when ready.',
 						{ args: { query: search } }
-				  )
+					)
 				: translate(
 						'Explore themes from the WordPress community, and upload to install when ready.'
-				  ),
+					),
 		seeAllLink: '/themes/community/collection',
 	},
 };

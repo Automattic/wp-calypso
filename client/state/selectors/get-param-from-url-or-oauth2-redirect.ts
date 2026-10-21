@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import 'calypso/state/route/init';
 import getCurrentQueryArguments from './get-current-query-arguments';
 import getInitialQueryArguments from './get-initial-query-arguments';
@@ -16,7 +15,7 @@ export const getParamFromUrlOrOauth2Redirect = (
 ): string | null => {
 	const initialQuery = getInitialQueryArguments( state );
 	const currentQuery = getCurrentQueryArguments( state );
-	const paramValue = get( currentQuery, paramName ) as string | null;
+	const paramValue = currentQuery?.[ paramName ] as string | null;
 
 	if ( paramValue ) {
 		return paramValue;

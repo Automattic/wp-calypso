@@ -1,8 +1,7 @@
-import { useLaunchpad } from '@automattic/data-stores';
-import { StepContainer, START_WRITING_FLOW } from '@automattic/onboarding';
+import { useLaunchpad } from '@automattic/launchpad';
+import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
-import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -19,7 +18,6 @@ import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import { areLaunchpadTasksCompleted } from './task-helper';
 import type { Step } from '../../types';
-import type { SiteSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -44,7 +42,7 @@ const Launchpad: Step = ( { navigation, flow } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const fetchingSiteError = useSelect(
-		( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+		( select ) => select( SITE_STORE ).getFetchingSiteError(),
 		[]
 	);
 
@@ -52,19 +50,14 @@ const Launchpad: Step = ( { navigation, flow } ) => {
 		window.location.replace( '/home' );
 	}
 
-	// This is temporary until we can use the launchpad inside the editor.
-	const newWriterFlow = 'true' === getQueryArg( window.location.search, START_WRITING_FLOW );
-
-	if (
-		! isLoggedIn ||
-		launchpadScreenOption === 'off' ||
-		( launchpadScreenOption === false && ! newWriterFlow )
-	) {
+	if ( ! isLoggedIn || launchpadScreenOption === 'off' || launchpadScreenOption === false ) {
 		redirectToSiteHome( siteSlug, flow );
 	}
 
 	if ( areLaunchpadTasksCompleted( launchpadChecklist, isSiteLaunched ) ) {
-		saveSiteSettings( site?.ID, { launchpad_screen: 'off' } );
+		if ( site?.ID ) {
+			saveSiteSettings( site.ID, { launchpad_screen: 'off' } );
+		}
 		redirectToSiteHome( siteSlug, flow );
 	}
 

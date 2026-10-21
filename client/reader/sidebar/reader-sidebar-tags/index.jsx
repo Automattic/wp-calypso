@@ -1,16 +1,15 @@
-import page from '@automattic/calypso-router';
-import { localize } from 'i18n-calypso';
-import { startsWith } from 'lodash';
+import { followReadTagMutation } from '@automattic/api-queries';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import clsx from 'clsx';
+import { localize, translate as i18nTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
-import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
+import { connect, useDispatch } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import ReaderTagIcon from 'calypso/reader/components/icons/tag-icon';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { requestFollowTag } from 'calypso/state/reader/tags/items/actions';
-import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { AddTagForm } from './add-tags-form';
 import ReaderSidebarTagsList from './list';
 
@@ -30,7 +29,7 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	followTag = ( tag ) => {
-		if ( startsWith( tag, '#' ) ) {
+		if ( ( tag ?? '' ).startsWith( '#' ) ) {
 			tag = tag.substring( 1 );
 		}
 
@@ -44,34 +43,24 @@ export class ReaderSidebarTags extends Component {
 		this.setState( ( state ) => ( { addTagCounter: state.addTagCounter + 1 } ) );
 	};
 
-	selectMenu = () => {
-		const { onClick, tags, isOpen, path } = this.props;
-		if ( ! isOpen ) {
-			onClick();
-		}
-		const defaultSelection = tags?.length ? `/tag/${ tags[ 0 ]?.slug }` : '/tags';
-		if ( path !== defaultSelection ) {
-			page( defaultSelection );
-		}
-	};
-
 	render() {
-		const { tags, isOpen, translate, onClick, path } = this.props;
+		const { isOpen, translate, onClick, tags, path } = this.props;
+		const isChildSelected = tags?.some( ( tag ) => path === `/tag/${ tag.slug }` );
 
 		return (
 			<li className="sidebar-streams__tags">
-				{ ! tags && <QueryReaderFollowedTags /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
-					onClick={ this.selectMenu }
-					customIcon={ <ReaderTagIcon viewBox="0 0 24 24" /> }
+					onClick={ onClick }
 					disableFlyout
-					className={ path.startsWith( '/tag' ) && 'sidebar__menu--selected' }
+					className={ clsx( {
+						'sidebar__menu--selected': path === '/tags' || ( ! isOpen && isChildSelected ),
+					} ) }
 					expandableIconClick={ onClick }
 				>
-					<ReaderSidebarTagsList { ...this.props } />
-					<li className="sidebar-menu__item add-tag-form">
+					<ReaderSidebarTagsList tags={ tags } { ...this.props } />
+					<li className="sidebar__menu-item sidebar__menu-item--reader-tag add-tag-form">
 						<AddTagForm onAction={ this.followTag } />
 					</li>
 				</ExpandableSidebarMenu>
@@ -80,12 +69,31 @@ export class ReaderSidebarTags extends Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		tags: getReaderFollowedTags( state ),
-	} ),
-	{
-		followTag: requestFollowTag,
-		recordReaderTracksEvent,
-	}
-)( localize( ReaderSidebarTags ) );
+function withFollowedReaderTags( Inner ) {
+	return function WithFollowedReaderTags( props ) {
+		const { data: tags } = useFollowedTags();
+		return <Inner { ...props } tags={ tags } />;
+	};
+}
+
+function withFollowTagMutation( Inner ) {
+	return function WithFollowTagMutation( props ) {
+		const queryClient = useQueryClient();
+		const dispatch = useDispatch();
+		const { mutate: follow } = useMutation( followReadTagMutation( queryClient ) );
+
+		const followTag = ( tag ) =>
+			follow( tag, {
+				onError: () =>
+					dispatch(
+						errorNotice( i18nTranslate( 'Could not follow tag: %(tag)s', { args: { tag } } ) )
+					),
+			} );
+
+		return <Inner { ...props } followTag={ followTag } />;
+	};
+}
+
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( withFollowedReaderTags( withFollowTagMutation( localize( ReaderSidebarTags ) ) ) );

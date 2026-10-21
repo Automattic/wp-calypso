@@ -1,10 +1,11 @@
 import { FormStatus, useFormStatus, useIsStepActive } from '@automattic/composite-checkout';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import { usePrefillCheckoutContactForm } from '../hooks/use-prefill-checkout-contact-form';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { useContactDetails } from '../lib/checkout-stores';
 import ContactDetailsContainer from './contact-details-container';
 import type { CountryListItem, ContactDetailsType } from '@automattic/wpcom-checkout';
 
@@ -28,6 +29,16 @@ const BillingFormFields = styled.div< BillingFormFieldsProps >`
 	.form-fieldset.contact-details-form-fields select {
 		border-radius: 2px;
 		color: ${ ( props ) => props.theme.colors.textColorDark };
+	}
+
+	/* Align focus indicator with the VAT field — single solid outline,
+	   instead of the default form-field border-color change + halo. */
+	& input:focus:not( .is-valid ):not( .is-error ),
+	& .form-select:focus,
+	& select:focus {
+		border-color: var( --color-neutral-10 );
+		box-shadow: none;
+		outline: 2px solid var( --studio-wordpress-blue-30 );
 	}
 
 	& .form-input-validation {
@@ -70,23 +81,32 @@ export default function WPContactForm( {
 	contactDetailsType,
 	isLoggedOutCart,
 	setShouldShowContactDetailsValidationErrors,
+	setIsPrefillPending,
 }: {
 	countriesList: CountryListItem[];
 	shouldShowContactDetailsValidationErrors: boolean;
 	contactDetailsType: Exclude< ContactDetailsType, 'none' >;
 	isLoggedOutCart: boolean;
 	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void;
+	setIsPrefillPending?: ( isPending: boolean ) => void;
 } ) {
 	const translate = useTranslate();
-	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
+	const contactInfo = useContactDetails();
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	const hasCompleted = usePrefillCheckoutContactForm( {
 		setShouldShowContactDetailsValidationErrors,
 		isLoggedOut: isLoggedOutCart,
+		suppressScrollOnAutoComplete: isMobileCheckoutStickySummary,
 	} );
+
+	useEffect( () => {
+		setIsPrefillPending?.( ! hasCompleted );
+	}, [ hasCompleted, setIsPrefillPending ] );
+	useEffect( () => () => setIsPrefillPending?.( false ), [ setIsPrefillPending ] );
 
 	return (
 		<>

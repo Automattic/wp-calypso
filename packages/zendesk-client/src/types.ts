@@ -1,4 +1,8 @@
+import type { SMOOCH_INTEGRATION_ID_CUSTOM } from './constants';
 import type React from 'react';
+
+/** Selects a dedicated Smooch integration from `SMOOCH_INTEGRATION_ID_CUSTOM`. */
+export type SmoochIntegrationKey = keyof typeof SMOOCH_INTEGRATION_ID_CUSTOM;
 
 export type ZendeskConfigName =
 	| 'zendesk_support_chat_key'
@@ -73,6 +77,7 @@ export type MessageAction = {
 	tooltip?: string;
 	icon?: React.ReactNode;
 	pressed?: boolean;
+	uri?: string;
 };
 
 export type ZendeskContentType =
@@ -82,6 +87,7 @@ export type ZendeskContentType =
 	| 'form'
 	| 'formResponse'
 	| 'image'
+	| 'file-placeholder'
 	| 'image-placeholder'
 	| 'list'
 	| 'location'
@@ -93,6 +99,7 @@ export type ZendeskMessage = {
 	text: string;
 	altText?: string;
 	avatarUrl?: string;
+	displayName?: string;
 	sendStatus?: 'sending';
 	id: string;
 	actions?: MessageAction[];
@@ -139,6 +146,7 @@ export type MessageType =
 	| 'conversation-feedback'
 	| 'help-link'
 	| 'file'
+	| 'file-placeholder'
 	| 'image'
 	| 'image-placeholder'
 	| 'introduction'

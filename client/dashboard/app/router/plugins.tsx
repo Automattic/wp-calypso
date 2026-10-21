@@ -4,7 +4,7 @@ import {
 	rawUserPreferencesQuery,
 	marketplacePluginsQuery,
 } from '@automattic/api-queries';
-import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { createRoute, createLazyRoute, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
@@ -20,13 +20,8 @@ export const pluginsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'plugins',
-} ).lazy( () =>
-	import( '../../plugins' ).then( ( d ) =>
-		createLazyRoute( 'plugins' )( {
-			component: d.default,
-		} )
-	)
-);
+	component: Outlet,
+} );
 
 export const pluginsIndexRoute = createRoute( {
 	head: () => ( {

@@ -27,6 +27,16 @@ export interface UseGridPlansParams {
 	 */
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	/**
+	 * Provide a map of plan slug keyed strings to override the title badge (the pill next to the plan
+	 * title). Only rendered by the features grid.
+	 */
+	titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	/**
+	 * Provide a map of plan slug keyed strings to override the plan tagline (the line under the plan
+	 * title), winning over the computed and experiment copy. Only rendered by the features grid.
+	 */
+	taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	/**
 	 * Used to hide the "Your Plan" label for domain-only sites
 	 */
 	isDomainOnlySite?: boolean;
@@ -36,32 +46,34 @@ export interface UseGridPlansParams {
 	 */
 	reflectStorageSelectionInPlanPrices?: boolean;
 	/**
-	 * When true, use the focused_comparison feature set (getLongSetSignupWpcomFeatures).
-	 */
-	useFocusedComparisonFeatures?: boolean;
-	/**
-	 * When true, use the focused_more_premium / focused_new_copy feature set
-	 * (getVar41MorePremiumSignupWpcomFeatures) for the plans differentiators experiment.
-	 */
-	useVar41MorePremiumFeatures?: boolean;
-	/**
-	 * When true, use the focused_no_ai feature set for the plans differentiators experiment.
+	 * When true, use the no-AI feature set for the rolled-out pricing differentiation cohort.
 	 */
 	useVar42NoAiFeatures?: boolean;
 	/**
-	 * When true, show plan-scoped feature pills (focused_more_premium, focused_new_copy, focused_no_ai only).
-	 * focused_no_ai suppresses AI-labeled pills only.
+	 * When true, use the pricing-grid redesign feature set for plan cards.
+	 */
+	usePlansGridRedesignFeatures?: boolean;
+	/**
+	 * When true, show plan-scoped feature pills. AI-labeled pills are suppressed.
 	 */
 	showPricingDifferentiationFeaturePills?: boolean;
 	/**
 	 * When true, use the focused_new_copy taglines for plan headers.
-	 * Applies to: focused_new_copy only.
 	 */
 	useFocusedNewCopyTaglines?: boolean;
 	/**
-	 * When true, use experiment-variant feature lists and comparison grid copy.
+	 * When true, use the pricing grid redesign taglines for plan headers.
+	 */
+	usePlansGridRedesignNewDescription?: boolean;
+	/**
+	 * When true, use cohort feature lists and comparison grid copy.
 	 */
 	isExperimentVariant?: boolean;
+	/**
+	 * Renewal-pricing experiment flag, threaded to the pricing hook so the current
+	 * plan's headline matches the renewal-vs-intro treatment.
+	 */
+	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
 }
 
 export type UseGridPlansType = (

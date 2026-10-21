@@ -27,12 +27,14 @@ export enum SiteGoal {
 
 export enum SiteIntent {
 	Write = 'write',
+	/** @deprecated The start-writing flow has been removed; retained for existing sites that persisted this intent. */
 	StartWriting = 'start-writing',
 	Sell = 'sell',
 	Build = 'build',
 	DIFM = 'difm', // "Do It For Me"
 	WpAdmin = 'wpadmin',
 	Import = 'import', // deprecated
+	/** @deprecated The readymade-template flow has been removed; retained for existing sites that persisted this intent. */
 	ReadyMadeTemplate = 'readymade-template',
 	AIAssembler = 'ai-assembler',
 	Newsletter = 'newsletter',

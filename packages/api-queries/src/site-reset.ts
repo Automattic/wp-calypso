@@ -13,6 +13,7 @@ export const siteResetContentSummaryQuery = ( siteId: number ) =>
 
 export const siteResetMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-reset' },
 		mutationFn: () => resetSite( siteId ),
 	} );
 

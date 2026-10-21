@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { NavigationBlocker } from '../../app/navigation-blocker';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
@@ -27,21 +28,20 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		...sitePHPVersionQuery( site.ID ),
 		enabled: hasHostingFeature( site, HostingFeatures.PHP ),
 	} );
-	const mutation = useMutation( {
-		...sitePHPVersionMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'PHP version saved.' ),
-				error: __( 'Failed to save PHP version.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( sitePHPVersionMutation( site.ID ), {
+			success: __( 'PHP version saved.' ),
+			error: __( 'Failed to save PHP version.' ),
+		} )
+	);
+
+	const { recommendedValue, phpVersions } = getPHPVersions();
+
+	const savedVersion = currentVersion || undefined;
 
 	const [ formData, setFormData ] = useState< { version: string } >( {
-		version: currentVersion ?? '',
+		version: savedVersion ?? recommendedValue,
 	} );
-
-	const { phpVersions } = getPHPVersions( site.ID );
 
 	const fields: Field< { version: string } >[] = [
 		{
@@ -50,7 +50,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 			Edit: 'select',
 			elements: phpVersions.filter( ( option ) => {
 				// Show disabled PHP version only if the site is still using it.
-				if ( option.disabled && option.value !== currentVersion ) {
+				if ( option.disabled && option.value !== savedVersion ) {
 					return false;
 				}
 				return true;
@@ -63,7 +63,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		fields: [ 'version' ],
 	};
 
-	const isDirty = formData.version !== currentVersion;
+	const isDirty = formData.version !== savedVersion;
 	const { isPending } = mutation;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -77,7 +77,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 				/* translators: %s: plan name. Eg. 'Personal' */
 				__( 'Sites on the %s plan run on our recommended PHP version.' ),
 				getSitePlanDisplayName( site )
-		  );
+			);
 
 	return (
 		<PageLayout

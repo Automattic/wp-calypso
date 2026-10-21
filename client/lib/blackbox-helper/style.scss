@@ -1,0 +1,47 @@
+.blackbox-helper__menu-item.is-allow {
+	color: var(--dashboard__foreground-color-success);
+}
+
+.blackbox-helper__menu-item.is-block {
+	color: var(--color-error);
+}
+
+.blackbox-helper__menu-item.is-challenge {
+	color: var(--color-warning);
+}
+
+.blackbox-helper__popover {
+	display: none;
+}
+
+.environment.is-blackbox:hover .blackbox-helper__popover {
+	display: block;
+	position: absolute;
+	bottom: 100%;
+	right: 0;
+	// padding: 8px 12px;
+	padding: 4px;
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	width: 250px;
+}
+
+.blackbox-helper__help {
+	margin: 8px 0 0;
+	font-size: 8px;
+	line-height: 1.4;
+	color: var(--color-text-subtle);
+	white-space: normal;
+}
+
+.blackbox-helper__label {
+	display: block;
+	margin-bottom: 4px;
+	line-height: 16px;
+
+	input[type="radio"] {
+		appearance: auto;
+		vertical-align: middle;
+		margin: 0 4px 0 0;
+	}
+}

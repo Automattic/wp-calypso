@@ -1,4 +1,7 @@
-import renderer from 'react-test-renderer';
+/**
+ * @jest-environment jsdom
+ */
+import { render } from '@testing-library/react';
 import GSuitePrice from '../';
 
 describe( 'GSuitePrice', () => {
@@ -15,8 +18,8 @@ describe( 'GSuitePrice', () => {
 	};
 
 	test( 'renders correctly', () => {
-		const tree = renderer.create( <GSuitePrice product={ product } currencyCode="EUR" /> ).toJSON();
+		const { container } = render( <GSuitePrice product={ product } currencyCode="EUR" /> );
 
-		expect( tree ).toMatchSnapshot();
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 } );

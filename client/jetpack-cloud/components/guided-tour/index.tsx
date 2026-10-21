@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Popover, Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type JSX } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getJetpackDashboardPreference as getPreference } from 'calypso/state/jetpack-agency-dashboard/selectors';
@@ -16,14 +16,7 @@ export interface Tour {
 	title: string;
 	description: string | JSX.Element;
 	popoverPosition?:
-		| 'top'
-		| 'top right'
-		| 'right'
-		| 'bottom right'
-		| 'bottom'
-		| 'bottom left'
-		| 'left'
-		| 'top left';
+		'top' | 'top right' | 'right' | 'bottom right' | 'bottom' | 'bottom left' | 'left' | 'top left';
 	nextStepOnTargetClick?: string;
 	forceShowSkipButton?: boolean;
 }

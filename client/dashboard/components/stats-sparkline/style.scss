@@ -1,0 +1,12 @@
+.wpcom-stats-sparkline {
+	overflow: hidden;
+}
+
+.wpcom-stats-sparkline-peak {
+	opacity: 0;
+	transition: opacity 0.15s ease-in;
+}
+
+.wpcom-stats-sparkline-label {
+	font-size: 9px;
+}

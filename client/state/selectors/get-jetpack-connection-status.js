@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/jetpack/init';
 
 /**
@@ -10,5 +8,5 @@ import 'calypso/state/jetpack/init';
  * @returns {?Object}             Details about connection status
  */
 export default function getJetpackConnectionStatus( state, siteId ) {
-	return get( state.jetpack.connection.items, [ siteId ], null );
+	return state.jetpack.connection.items?.[ siteId ] ?? null;
 }

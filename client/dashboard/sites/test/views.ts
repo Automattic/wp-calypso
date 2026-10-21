@@ -22,6 +22,27 @@ describe( 'recordViewChanges', () => {
 		expect( tracks ).not.toHaveBeenCalled();
 	} );
 
+	test( 'records search started when search goes from empty to non-empty', () => {
+		const tracks = jest.fn();
+		const oldView: View = { type: 'grid' };
+		const newView: View = { type: 'grid', search: 'hello' };
+
+		recordViewChanges( oldView, newView, tracks );
+
+		expect( tracks ).toHaveBeenCalledTimes( 1 );
+		expect( tracks ).toHaveBeenCalledWith( 'calypso_dashboard_sites_search' );
+	} );
+
+	test( 'does not record search when search term changes between non-empty values', () => {
+		const tracks = jest.fn();
+		const oldView: View = { type: 'grid', search: 'hel' };
+		const newView: View = { type: 'grid', search: 'hello' };
+
+		recordViewChanges( oldView, newView, tracks );
+
+		expect( tracks ).not.toHaveBeenCalled();
+	} );
+
 	test( 'add new field', () => {
 		const tracks = jest.fn();
 		const oldView: View = { type: 'grid' };

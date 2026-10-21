@@ -8,6 +8,8 @@ import { __ } from '@wordpress/i18n';
 import { useLayoutEffect, useMemo, useState } from 'react';
 import { useAppContext } from '../../app/context';
 import { NavigationBlocker } from '../../app/navigation-blocker';
+import { buildDashboardLink } from '../../app/routing';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -119,7 +121,7 @@ const robotForm = {
 } satisfies Form;
 
 export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSettings } ) {
-	const { queries } = useAppContext();
+	const { queries, supports } = useAppContext();
 	const { data: domains = [] } = useQuery( {
 		...queries.domainsQuery(),
 		select: ( data ) => {
@@ -127,20 +129,17 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 		},
 	} );
 
-	const mutation = useMutation( {
-		...siteSettingsMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Site visibility settings saved.' ),
-				error: __( 'Failed to save site visibility settings.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( siteSettingsMutation( site.ID ), {
+			success: __( 'Site visibility settings saved.' ),
+			error: __( 'Failed to save site visibility settings.' ),
+		} )
+	);
 
 	const primaryDomain = domains.find( ( domain ) => domain.primary_domain );
 	const isPrimaryDomainStaging = Boolean(
 		primaryDomain?.subtype.id === DomainSubtype.DEFAULT_ADDRESS &&
-			primaryDomain?.tags.includes( 'wpcom_staging' )
+		primaryDomain?.tags.includes( 'wpcom_staging' )
 	);
 	const hasNonWpcomDomain = domains.some(
 		( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
@@ -191,6 +190,26 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 		} );
 	};
 
+	// Dashboards without their own domains route (e.g. A4A) send users to the WordPress.com dashboard.
+	const manageDomainsButton =
+		isDashboardBackport() || supports.domains ? (
+			<RouterLinkButton
+				variant="secondary"
+				to={
+					isDashboardBackport() ? `/domains/manage/${ site.slug }` : `/sites/${ site.slug }/domains`
+				}
+			>
+				{ __( 'Manage domains' ) }
+			</RouterLinkButton>
+		) : (
+			<Button
+				variant="secondary"
+				href={ buildDashboardLink( 'dotcom', `/sites/${ site.slug }/domains` ) }
+			>
+				{ __( 'Manage domains' ) }
+			</Button>
+		);
+
 	return (
 		<>
 			<Card>
@@ -218,16 +237,7 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 										density="medium"
 										actions={
 											hasNonWpcomDomain ? (
-												<RouterLinkButton
-													variant="secondary"
-													to={
-														isDashboardBackport()
-															? `/domains/manage/${ site.slug }`
-															: `/sites/${ site.slug }/domains`
-													}
-												>
-													{ __( 'Manage domains' ) }
-												</RouterLinkButton>
+												manageDomainsButton
 											) : (
 												<Button variant="secondary" href={ getAddSiteDomainUrl( site.slug ) }>
 													{ __( 'Add new domain' ) }

@@ -1,5 +1,5 @@
+import { isError } from '@automattic/js-utils';
 import { useQuery } from '@tanstack/react-query';
-import { isError } from 'lodash';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import getDefaultQueryParams from 'calypso/my-sites/stats/hooks/default-query-params';

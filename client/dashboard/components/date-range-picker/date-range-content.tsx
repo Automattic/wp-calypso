@@ -1,4 +1,4 @@
-import { DateRangeCalendar, TZDate } from '@automattic/ui';
+import { TZDate } from '@date-fns/tz';
 import {
 	__experimentalText as Text,
 	Button,
@@ -6,10 +6,11 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { RangeCalendar } from '@wordpress/ui';
 import { startOfMonth, subMonths } from 'date-fns';
 import { useState } from 'react';
-import { ButtonStack } from '../../components/button-stack';
 import { formatYmd, parseYmdLocal } from '../../utils/datetime';
+import { ButtonStack } from '../button-stack';
 import { DateInputs } from './date-inputs';
 import { PresetsListbox } from './presets-listbox';
 import { computePresetRange, getActivePresetId, PresetId, presetDefs } from './utils';
@@ -35,14 +36,7 @@ type DateRangeContentProps = {
 	todayStr: string;
 	mobileLabelId: string;
 	desktopLabelId: string;
-	disableFuture?: boolean;
 	defaultFallbackPreset?: PresetId;
-	inputsProps?: {
-		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onStartBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onEndBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-	};
 };
 
 export function DateRangeContent( props: DateRangeContentProps ) {
@@ -67,9 +61,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		todayStr,
 		mobileLabelId,
 		desktopLabelId,
-		disableFuture = true,
 		defaultFallbackPreset = 'last-7-days',
-		inputsProps,
 	} = props;
 
 	// Avoid passing invalid or empty time zones to Intl consumers
@@ -169,13 +161,21 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 	const endMonth = makeTZMonthFromDate( siteMonthStart );
 
 	// Use TZDate for calendar selection when a valid IANA time zone is available
-	const selected =
+	const value =
 		timeZoneForCalendar && ( fromDraft || toDraft )
 			? {
 					from: fromDraft ? new TZDate( +fromDraft, timeZoneForCalendar ) : undefined,
 					to: toDraft ? new TZDate( +toDraft, timeZoneForCalendar ) : undefined,
-			  }
+				}
 			: { from: fromDraft ?? undefined, to: toDraft ?? undefined };
+
+	// `today` is a site day held as a browser-local midnight, but the calendar matches days in
+	// `timeZoneForCalendar`, so rebuild it as that day's midnight in the site zone.
+	const disabledMatcher = {
+		after: timeZoneForCalendar
+			? new TZDate( today.getFullYear(), today.getMonth(), today.getDate(), timeZoneForCalendar )
+			: today,
+	};
 
 	return (
 		<VStack as="div" spacing={ 3 } style={ { padding: 12 } }>
@@ -210,25 +210,21 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							setIsTyping( Boolean( fromStr || value ) );
 						} }
 						todayStr={ todayStr }
-						onFromFocus={ ( e ) => {
+						onFromFocus={ () => {
 							setIsTyping( true );
-							inputsProps?.onStartFocus?.( e );
 						} }
-						onToFocus={ ( e ) => {
+						onToFocus={ () => {
 							setIsTyping( true );
-							inputsProps?.onEndFocus?.( e );
 						} }
-						onFromBlur={ ( e ) => {
+						onFromBlur={ () => {
 							if ( ! fromStr && ! toStr ) {
 								setIsTyping( false );
 							}
-							inputsProps?.onStartBlur?.( e );
 						} }
-						onToBlur={ ( e ) => {
+						onToBlur={ () => {
 							if ( ! fromStr && ! toStr ) {
 								setIsTyping( false );
 							}
-							inputsProps?.onEndBlur?.( e );
 						} }
 						stack
 						fromStyle={ { minWidth: 140 } }
@@ -261,25 +257,21 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							setIsTyping( Boolean( fromStr || value ) );
 						} }
 						todayStr={ todayStr }
-						onFromFocus={ ( e ) => {
+						onFromFocus={ () => {
 							setIsTyping( true );
-							inputsProps?.onStartFocus?.( e );
 						} }
-						onToFocus={ ( e ) => {
+						onToFocus={ () => {
 							setIsTyping( true );
-							inputsProps?.onEndFocus?.( e );
 						} }
-						onFromBlur={ ( e ) => {
+						onFromBlur={ () => {
 							if ( ! fromStr && ! toStr ) {
 								setIsTyping( false );
 							}
-							inputsProps?.onStartBlur?.( e );
 						} }
-						onToBlur={ ( e ) => {
+						onToBlur={ () => {
 							if ( ! fromStr && ! toStr ) {
 								setIsTyping( false );
 							}
-							inputsProps?.onEndBlur?.( e );
 						} }
 						fromStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						toStyle={ { minWidth: 220, flex: '0 0 auto' } }
@@ -301,30 +293,23 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 				) }
 
 				<div className="daterange-calendar">
-					<DateRangeCalendar
+					<RangeCalendar
 						timeZone={ timeZoneForCalendar }
-						numberOfMonths={ isSmall ? 1 : 2 }
+						numberOfMonths={ showTwoMonths ? 2 : 1 }
 						defaultMonth={ defaultMonth }
 						endMonth={ endMonth }
-						disabled={ disableFuture ? { after: today } : undefined }
+						disabled={ disabledMatcher }
 						excludeDisabled
-						selected={ selected }
-						onSelect={ ( range ) => {
-							const toNative = ( d?: Date ) => ( d ? new Date( d.getTime() ) : undefined );
-							if ( range?.from ) {
-								const from = toNative( range.from );
-								setFromDraft( from );
-								if ( from ) {
-									setFromStr( formatYmd( from, timezoneString, gmtOffset ) );
-								}
-							}
-							if ( range?.to ) {
-								const to = toNative( range.to );
-								setToDraft( to );
-								if ( to ) {
-									setToStr( formatYmd( to, timezoneString, gmtOffset ) );
-								}
-							}
+						required
+						value={ value }
+						onValueChange={ ( range ) => {
+							// A click after a complete range starts a new one with no end, so `to` must be cleared too.
+							const from = range?.from ? new Date( range.from.getTime() ) : undefined;
+							const to = range?.to ? new Date( range.to.getTime() ) : undefined;
+							setFromDraft( from );
+							setToDraft( to );
+							setFromStr( from ? formatYmd( from, timezoneString, gmtOffset ) : '' );
+							setToStr( to ? formatYmd( to, timezoneString, gmtOffset ) : '' );
 							setIsTyping( false );
 						} }
 					/>

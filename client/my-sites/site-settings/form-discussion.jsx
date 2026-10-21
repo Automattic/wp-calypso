@@ -1,9 +1,10 @@
 import { Card, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { pick } from '@automattic/js-utils';
 import { ToggleControl } from '@wordpress/components';
-import { flowRight, pick } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
@@ -79,7 +80,6 @@ class SiteSettingsFormDiscussion extends Component {
 
 		const commentDisplaySettingsFields = {
 			highlander_comment_form_prompt: fields.highlander_comment_form_prompt,
-			jetpack_comment_form_color_scheme: fields.jetpack_comment_form_color_scheme,
 			enable_verbum_commenting: fields.enable_verbum_commenting,
 			enable_blocks_comments: fields.enable_blocks_comments,
 		};
@@ -659,7 +659,6 @@ export const getFormSettings = ( settings ) => {
 		'moderation_keys',
 		'disallowed_keys',
 		'highlander_comment_form_prompt',
-		'jetpack_comment_form_color_scheme',
 		'subscriptions',
 		'stb_enabled',
 		'stc_enabled',
@@ -669,7 +668,7 @@ export const getFormSettings = ( settings ) => {
 	] );
 };
 
-export default flowRight(
+export default compose(
 	connectComponent,
 	wrapSettingsForm( getFormSettings )
 )( SiteSettingsFormDiscussion );

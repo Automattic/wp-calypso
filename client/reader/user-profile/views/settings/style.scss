@@ -1,0 +1,13 @@
+@import "@automattic/typography/styles/variables";
+
+.is-reader-page {
+	.user-profile-settings {
+		margin-block-start: 16px;
+	}
+
+	.user-profile-settings__card-title {
+		margin: 0;
+		font-size: $font-body;
+		font-weight: 600;
+	}
+}

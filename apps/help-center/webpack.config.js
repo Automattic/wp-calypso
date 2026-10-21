@@ -17,13 +17,22 @@ function getIndividualConfig( options = {} ) {
 	return {
 		...webpackConfig,
 		mode: isDevelopment ? 'development' : 'production',
-		entry: { [ name ]: path.join( __dirname, `${ name }.js` ) },
+		entry: { [ name ]: path.join( __dirname, name ) },
 		output: {
 			...webpackConfig.output,
 			path: outputPath,
 			filename: '[name].min.js', // dynamic filename
 			chunkFilename: `[id].[contenthash:8].min.js`,
 			library: 'helpCenter',
+		},
+		resolve: {
+			...webpackConfig.resolve,
+			alias: {
+				...( webpackConfig.resolve?.alias || {} ),
+				// Share one Smooch instance with the Agents Manager bundle when both load
+				// together (e.g. the Site Editor). See smooch-shim.js.
+				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
+			},
 		},
 		optimization: {
 			...webpackConfig.optimization,
@@ -50,13 +59,6 @@ function getIndividualConfig( options = {} ) {
 					// explicitly returns undefined for the given request. Null
 					// shortcuts the logic such that the package will be bundled instead.
 					if ( request === '@wordpress/react-i18n' ) {
-						return null;
-					}
-
-					// Bundle @wordpress/dataviews and @wordpress/ui instead of externalizing.
-					// These are only used by HelpCenterA4AContactForm which is lazy-loaded,
-					// so we don't want them listed as dependencies for the main entry point.
-					if ( request === '@wordpress/dataviews' || request === '@wordpress/ui' ) {
 						return null;
 					}
 				},
@@ -89,8 +91,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 
 	return [
 		getIndividualConfig( { env, argv, name: 'help-center-gutenberg' } ),
-		getIndividualConfig( { env, argv, name: 'help-center-ciab-admin' } ),
-		getIndividualConfig( { env, argv, name: 'help-center-ciab-admin-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'help-center-wp-admin' } ),
 		getIndividualConfig( { env, argv, name: 'help-center-customizer' } ),
 		getIndividualConfig( { env, argv, name: 'help-center-gutenberg-disconnected' } ),

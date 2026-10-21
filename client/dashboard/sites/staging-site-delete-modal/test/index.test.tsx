@@ -22,6 +22,7 @@ jest.mock( '@wordpress/data', () => ( {
 	createReduxStore: jest.fn(),
 	register: jest.fn(),
 	createSelector: jest.fn(),
+	keyedReducer: () => () => ( {} ),
 } ) );
 
 jest.mock( '@tanstack/react-router', () => ( {
@@ -77,9 +78,10 @@ const getButton = ( name: string ) => screen.getByRole( 'button', { name } );
 
 describe( 'StagingSiteDeleteModal', () => {
 	describe( 'Modal Display', () => {
-		test( 'renders modal with correct title and content', () => {
+		test( 'renders modal with correct title and content', async () => {
 			mockProductionSite();
 			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
 			expect( screen.getByRole( 'dialog', { name: 'Delete staging site' } ) ).toBeInTheDocument();
 			expect(
@@ -89,12 +91,12 @@ describe( 'StagingSiteDeleteModal', () => {
 			).toBeInTheDocument();
 		} );
 
-		test( 'displays cancel and delete buttons', () => {
+		test( 'displays cancel and delete buttons', async () => {
 			mockProductionSite();
 			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
 
 			expect( getButton( 'Cancel' ) ).toBeInTheDocument();
-			expect( getButton( 'Delete staging site' ) ).toBeInTheDocument();
+			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 		} );
 
 		test( 'returns null when no production site ID is provided', () => {

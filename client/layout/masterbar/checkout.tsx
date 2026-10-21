@@ -1,23 +1,25 @@
-import { WordPressWordmark, GravatarTextLogo, WordPressLogo } from '@automattic/components';
+import { AutomatticLogo, GravatarTextLogo } from '@automattic/components';
 import { checkoutTheme } from '@automattic/composite-checkout';
+import { Step } from '@automattic/onboarding';
 import { ThemeProvider } from '@emotion/react';
-import { Icon } from '@wordpress/components';
-import { chevronLeft } from '@wordpress/icons';
+import { useViewportMatch } from '@wordpress/compose';
+import { Icon, help } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import AkismetLogo from 'calypso/components/akismet-logo';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import PassportLogo from 'calypso/components/passport-logo';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	AGENCY_CHECKOUT_PATH,
+	getAllowedA4ADashboardUrl,
+} from 'calypso/my-sites/checkout/agency-checkout/lib/agency-checkout-params';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import { DefaultMasterbarContact } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/masterbar-styled/default-contact';
 import {
 	LeaveCheckoutModal,
 	useCheckoutLeaveModal,
 } from 'calypso/my-sites/checkout/src/components/leave-checkout-modal';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
-import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
-import Item from './item';
 import Masterbar from './masterbar';
 
 interface Props {
@@ -32,19 +34,32 @@ interface Props {
 }
 
 const CheckoutMasterbar = ( {
-	title,
 	isJetpackNotAtomic,
 	siteSlug,
 	isLeavingAllowed,
 	loadHelpCenterIcon,
 	isGravatarDomain,
 }: Props ) => {
-	const translate = useTranslate();
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteSlug ?? '' } );
-	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
-	const { helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
+	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter, showHelpIcon } =
+		useCheckoutHelpCenter();
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	const getCheckoutType = () => {
+		// Check the siteless brand paths first: they have no site, so the site
+		// props describe whichever site was last selected, not this checkout.
+		if ( window.location.pathname.startsWith( '/checkout/akismet' ) ) {
+			return 'akismet';
+		}
+
+		if ( window.location.pathname.startsWith( '/checkout/agency' ) ) {
+			return 'a4a';
+		}
+
+		if ( window.location.pathname.startsWith( '/checkout/passport' ) ) {
+			return 'passport';
+		}
+
 		// Woo Hosted sites are supposed to default to WPcom colors, but without
 		// a logo. We should update this once we have a better way to identify
 		// Garden sites outside of the Hosting Dashboard.
@@ -54,18 +69,6 @@ const CheckoutMasterbar = ( {
 
 		if ( window.location.pathname.startsWith( '/checkout/jetpack' ) || isJetpackNotAtomic ) {
 			return 'jetpack';
-		}
-
-		if ( window.location.pathname.startsWith( '/checkout/akismet' ) ) {
-			return 'akismet';
-		}
-
-		if ( window.location.pathname.startsWith( '/checkout/agency/referral' ) ) {
-			return 'a4a';
-		}
-
-		if ( window.location.pathname.startsWith( '/checkout/passport' ) ) {
-			return 'passport';
 		}
 
 		if ( isGravatarDomain ) {
@@ -80,73 +83,104 @@ const CheckoutMasterbar = ( {
 		isLeavingAllowed &&
 		( checkoutType === 'wpcom' || checkoutType === 'gravatar' || checkoutType === 'woo-hosted' );
 
+	// Optional step indicator. The redirecting flow may pass its position via the
+	// `steps_current` / `steps_total` query params — checkout has no per-flow
+	// knowledge, any flow can opt in. Mobile-only, matching the onboarding header.
+	const searchParams = new URLSearchParams( window.location.search );
+	const stepsCurrent = Number( searchParams.get( 'steps_current' ) );
+	const stepsTotal = Number( searchParams.get( 'steps_total' ) );
+	const stepCounter =
+		isMobileViewport &&
+		Number.isInteger( stepsCurrent ) &&
+		stepsCurrent > 0 &&
+		Number.isInteger( stepsTotal ) &&
+		stepsTotal > 0 &&
+		stepsCurrent <= stepsTotal
+			? { current: stepsCurrent, total: stepsTotal }
+			: null;
+
+	// The checkout an agency reaches from its dashboard carries the dashboard's
+	// logo and returns to the page the cart came from, with the cart kept, so it
+	// bypasses the leave-checkout prompt. A client's referral checkout has no
+	// dashboard to return to.
+	const isAgencyCheckout = window.location.pathname.startsWith( AGENCY_CHECKOUT_PATH );
+	const agencyBackUrl = isAgencyCheckout
+		? getAllowedA4ADashboardUrl( searchParams.get( 'cancel_to' ) )
+		: undefined;
+
+	const agencyBackButton = agencyBackUrl && (
+		<Step.BackButton
+			href={ agencyBackUrl }
+			enableTracksEvent={ false }
+			onClick={ () => recordTracksEvent( 'calypso_a4a_marketplace_checkout_back_click' ) }
+		/>
+	);
+	const leaveCheckoutButton = showCloseButton && (
+		<Step.BackButton
+			onClick={ leaveModalProps.clickClose }
+			disabled={ leaveModalProps.isLeaveDisabled }
+			accessibleWhenDisabled
+		/>
+	);
+
+	const getBrandLogo = () => {
+		if ( isAgencyCheckout ) {
+			// The wordmark sits in the middle third of its viewBox, so this box
+			// renders it at roughly the WordPress wordmark's height.
+			return <AutomatticLogo width={ 183 } height={ 40 } />;
+		}
+
+		switch ( checkoutType ) {
+			case 'jetpack':
+				return <JetpackLogo className="masterbar__jetpack-wordmark" full size={ 24 } />;
+			case 'akismet':
+				return <AkismetLogo className="masterbar__akismet-wordmark" />;
+			case 'passport':
+				return <PassportLogo className="masterbar__passport-wordmark" />;
+			case 'gravatar':
+				return <GravatarTextLogo />;
+			case 'a4a':
+				return <A4ALogo full size={ 14 } />;
+		}
+
+		return undefined;
+	};
+
 	return (
 		<Masterbar
-			className={ clsx( 'masterbar--is-checkout', {
+			className={ clsx( 'masterbar--is-checkout', 'masterbar--is-checkout-redesign-v1', {
 				'masterbar--is-wpcom': checkoutType === 'wpcom',
 				'masterbar--is-jetpack': checkoutType === 'jetpack',
 				'masterbar--is-akismet': checkoutType === 'akismet',
 				'masterbar--is-a4a': checkoutType === 'a4a',
 				'masterbar--is-passport': checkoutType === 'passport',
-				'masterbar--is-checkout-redesign-v1': isCheckoutUiRedesignV1,
 			} ) }
 		>
-			{ isCheckoutUiRedesignV1 ? (
-				<>
-					<div className="masterbar__secure-checkout">
-						<WordPressLogo size={ 21 } className="masterbar__wp-circle-logo" />
-						<div className="masterbar__redesign-divider" />
-						{ showCloseButton && (
-							<button className="masterbar__back-button" onClick={ leaveModalProps.clickClose }>
-								<Icon icon={ chevronLeft } size={ 18 } />
-								{ translate( 'Back' ) }
-							</button>
+			<Step.TopBar
+				logo={ getBrandLogo() }
+				hideLogo={ checkoutType === 'woo-hosted' }
+				leftElement={ agencyBackButton || leaveCheckoutButton || undefined }
+				rightElement={
+					<>
+						{ stepCounter && (
+							<Step.StepCounter current={ stepCounter.current } total={ stepCounter.total } />
 						) }
-					</div>
-					{ loadHelpCenterIcon && (
-						<button className="masterbar__need-help-button" onClick={ toggleHelpCenter }>
-							{ helpCenterButtonLink }
-						</button>
-					) }
-				</>
-			) : (
-				<>
-					<div className="masterbar__secure-checkout">
-						{ showCloseButton && (
-							<Item
-								icon="cross"
-								className="masterbar__close-button"
-								onClick={ leaveModalProps.clickClose }
-								tooltip={ String( translate( 'Close Checkout' ) ) }
-								tipTarget="close"
-							/>
+						{ loadHelpCenterIcon && (
+							<span
+								className={ clsx( 'checkout-skip-button', {
+									'has-help-entry-label': showHelpIcon,
+								} ) }
+							>
+								{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
+								<Step.LinkButton onClick={ toggleHelpCenter }>
+									{ showHelpIcon && <Icon icon={ help } size={ 20 } /> }
+									{ helpCenterButtonLink }
+								</Step.LinkButton>
+							</span>
 						) }
-						{ checkoutType === 'wpcom' && (
-							<WordPressWordmark
-								size={ { width: 122, height: 'auto' } }
-								className="masterbar__wpcom-wordmark"
-								color="#2c3338"
-							/>
-						) }
-						{ checkoutType === 'jetpack' && (
-							<JetpackLogo className="masterbar__jetpack-wordmark" full />
-						) }
-						{ checkoutType === 'akismet' && (
-							<AkismetLogo className="masterbar__akismet-wordmark" />
-						) }
-						{ checkoutType === 'passport' && (
-							<PassportLogo className="masterbar__passport-wordmark" />
-						) }
-						{ checkoutType === 'gravatar' && <GravatarTextLogo /> }
-						{ checkoutType === 'a4a' && <A4ALogo full size={ 14 } /> }
-						<span className="masterbar__secure-checkout-text">
-							{ translate( 'Secure checkout' ) }
-						</span>
-					</div>
-					{ title && <Item className="masterbar__item-title">{ title }</Item> }
-					{ loadHelpCenterIcon && <DefaultMasterbarContact /> }
-				</>
-			) }
+					</>
+				}
+			/>
 			<LeaveCheckoutModal { ...leaveModalProps } />
 		</Masterbar>
 	);

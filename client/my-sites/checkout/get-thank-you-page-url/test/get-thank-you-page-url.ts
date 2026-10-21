@@ -4,6 +4,7 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
+import config from '@automattic/calypso-config';
 import {
 	JETPACK_REDIRECT_URL,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
@@ -26,7 +27,9 @@ import {
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/url';
-import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
+import getThankYouPageUrl, {
+	getAllowedExternalRedirectHosts,
+} from 'calypso/my-sites/checkout/get-thank-you-page-url';
 
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
 jest.mock( '@automattic/calypso-products', () => ( {
@@ -36,6 +39,17 @@ jest.mock( '@automattic/calypso-products', () => ( {
 jest.mock( 'calypso/dashboard/app/routing', () => ( {
 	getDashboardFromQuery: jest.fn(),
 } ) );
+jest.mock( '@automattic/calypso-config', () => {
+	// In tests, '@automattic/calypso-config' is module-mapped to
+	// `client/server/config/index.js`, a CJS module whose module.exports is the
+	// config function itself (with isEnabled/enable/etc. attached).
+	const actualConfigFn = jest.requireActual( '@automattic/calypso-config' );
+	const configFn = jest.fn( ( key ) => actualConfigFn( key ) );
+	// Preserve attached methods (isEnabled, enable, disable, etc.) so consumers
+	// like `config.isEnabled(...)` keep working through the spy.
+	Object.assign( configFn, actualConfigFn );
+	return configFn;
+} );
 
 const samplePurchaseId = 12342424241;
 
@@ -319,6 +333,30 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 		expect( url ).toBe( 'https://my.site/wp-admin/admin.php?page=my-jetpack' );
 	} );
+
+	it.each( [ 'jetpack_pro_yearly', 'jetpack_pro_bi_yearly' ] )(
+		'redirects to My Jetpack if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and %s is in the cart',
+		( productSlug ) => {
+			jest.mocked( isJetpackCloud ).mockReturnValue( true );
+			jest.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( true );
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'foo.bar',
+				isJetpackNotAtomic: true,
+				cart: {
+					...getMockCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							product_slug: productSlug,
+						},
+					],
+				},
+				adminUrl: 'https://my.site/wp-admin/',
+			} );
+			expect( url ).toBe( 'https://my.site/wp-admin/admin.php?page=my-jetpack' );
+		}
+	);
 
 	it( 'redirects to the sites wp-admin with adminPageRedirect if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product and adminPageRedirect is supplied', () => {
 		jest.mocked( isJetpackCloud ).mockReturnValue( true );
@@ -936,7 +974,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to thank-you page with dashboard query param if present', () => {
-		jest.mocked( getDashboardFromQuery ).mockReturnValue( 'ciab' );
+		jest.mocked( getDashboardFromQuery ).mockReturnValue( 'a4a' );
 		const cart = {
 			...getMockCart(),
 			cart_key: 'no-site' as CartKey,
@@ -953,7 +991,7 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			receiptId: samplePurchaseId,
 		} );
-		expect( url ).toBe( `/checkout/thank-you/no-site/${ samplePurchaseId }?dashboard=ciab` );
+		expect( url ).toBe( `/checkout/thank-you/no-site/${ samplePurchaseId }?dashboard=a4a` );
 	} );
 
 	it( 'redirects to thank-you page followed by purchase id if no cookie url is set, there is no site, and there is no receipt', () => {
@@ -1473,6 +1511,42 @@ describe( 'getThankYouPageUrl', () => {
 			sitelessCheckoutType: 'akismet',
 		} );
 		expect( url ).toBe( '/me/purchases/siteless.akismet.com/123abc' );
+	} );
+
+	it( 'redirects to the no-site thank you when the wpcom siteless arg is set', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			receiptId: 12342424241,
+			sitelessCheckoutType: 'wpcom',
+		} );
+		expect( url ).toBe( '/checkout/thank-you/no-site/12342424241' );
+	} );
+
+	it( 'redirects to the no-site thank you with a receipt placeholder when the wpcom siteless arg is set and no receipt is known', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			sitelessCheckoutType: 'wpcom',
+		} );
+		expect( url ).toBe( '/checkout/thank-you/no-site/:receiptId' );
+	} );
+
+	it( 'redirects to the bare no-site thank you when the wpcom siteless receipt id is not an integer', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			receiptId: 'pending',
+			sitelessCheckoutType: 'wpcom',
+		} );
+		expect( url ).toBe( '/checkout/thank-you/no-site' );
+	} );
+
+	it( 'ignores a disallowed external redirectTo and still uses the wpcom siteless thank you', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			receiptId: 12342424241,
+			redirectTo: 'https://not-an-allowed-host.example.com/somewhere',
+			sitelessCheckoutType: 'wpcom',
+		} );
+		expect( url ).toBe( '/checkout/thank-you/no-site/12342424241' );
 	} );
 
 	it( 'redirects to the jetpack checkout thank you with `no_product` when jetpack checkout arg is set and the cart is empty', () => {
@@ -2148,5 +2222,45 @@ describe( 'getThankYouPageUrl', () => {
 
 			expect( url ).toBe( '/checkout/thank-you/:siteId/67890' );
 		} );
+	} );
+} );
+
+describe( 'getAllowedExternalRedirectHosts', () => {
+	const mockedConfig = config as unknown as jest.Mock;
+	const actualConfig = jest.requireActual( '@automattic/calypso-config' );
+
+	afterEach( () => {
+		mockedConfig.mockImplementation( ( key ) => actualConfig( key ) );
+	} );
+
+	function mockConfig( extras ) {
+		mockedConfig.mockImplementation( ( key ) => {
+			if ( key === 'checkout_additional_allowed_redirect_hosts' ) {
+				return extras;
+			}
+			return actualConfig( key );
+		} );
+	}
+
+	it( 'returns the base allowlist when no extras are configured', () => {
+		mockConfig( undefined );
+		const hosts = getAllowedExternalRedirectHosts();
+		expect( hosts ).toContain( 'my.wordpress.com' );
+		expect( hosts ).toContain( 'jetpack.com' );
+	} );
+
+	it( 'appends entries from checkout_additional_allowed_redirect_hosts', () => {
+		mockConfig( [ 'telex.example.test', 'telex-staging.example.test' ] );
+		const hosts = getAllowedExternalRedirectHosts();
+		expect( hosts ).toContain( 'my.wordpress.com' );
+		expect( hosts ).toContain( 'telex.example.test' );
+		expect( hosts ).toContain( 'telex-staging.example.test' );
+	} );
+
+	it( 'ignores a non-array extras value defensively', () => {
+		mockConfig( 'not-an-array' );
+		const hosts = getAllowedExternalRedirectHosts();
+		expect( hosts ).toContain( 'my.wordpress.com' );
+		expect( hosts ).not.toContain( 'not-an-array' );
 	} );
 } );

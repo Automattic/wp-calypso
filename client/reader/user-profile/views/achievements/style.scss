@@ -2,12 +2,17 @@
 	.achievements__header {
 		display: flex;
 		align-items: flex-start;
-		justify-content: flex-end;
-		margin: 16px 0;
+		gap: 24px;
+		margin: 16px auto 48px;
+		max-width: 720px;
+	}
 
-		.years-of-service-badge {
-			margin-bottom: 16px;
-			margin-inline-end: auto;
-		}
+	.achievements__header > .activity-streak {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.achievements__header > .achievements__settings {
+		flex: 0 0 auto;
 	}
 }

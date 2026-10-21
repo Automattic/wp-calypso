@@ -1,5 +1,5 @@
+import { escapeRegExp } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { escapeRegExp } from 'lodash';
 import { useEffect, memo, forwardRef } from 'react';
 import type { ForwardRefRenderFunction, FocusEvent, MouseEvent } from 'react';
 

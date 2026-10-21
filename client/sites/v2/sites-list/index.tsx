@@ -1,4 +1,4 @@
-import { queryClient, persistQueryClientPromise } from '@automattic/api-queries';
+import { queryClient, getPersistQueryClientPromise } from '@automattic/api-queries';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from 'calypso/dashboard/app/auth';
@@ -38,14 +38,14 @@ export default function DashboardBackportSitesList() {
 		}
 
 		Promise.all( [
-			persistQueryClientPromise,
+			getPersistQueryClientPromise( user?.ID ),
 			router.preloadRoute( {
 				to: '/sites',
 			} ),
 		] ).then( () => {
 			rootInstanceRef.current?.render( <Layout analyticsClient={ analyticsClient } /> );
 		} );
-	}, [ analyticsClient ] );
+	}, [ analyticsClient, user ] );
 
 	// Use data already available in Redux to seed the React Query cache and avoid redundant data fetching.
 	useEffect( () => {

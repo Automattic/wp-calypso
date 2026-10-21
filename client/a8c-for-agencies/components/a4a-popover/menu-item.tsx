@@ -2,6 +2,7 @@ import { Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
+import type { JSX } from 'react';
 
 import './style.scss';
 

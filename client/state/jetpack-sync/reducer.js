@@ -2,8 +2,8 @@
  * External dependencis
  *
  */
+import { pick } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { pick, get } from 'lodash';
 import {
 	JETPACK_SYNC_START_REQUEST,
 	JETPACK_SYNC_START_SUCCESS,
@@ -19,7 +19,7 @@ export function fullSyncRequest( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_SYNC_START_REQUEST:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, get( state, [ action.siteId ], {} ), {
+				[ action.siteId ]: Object.assign( {}, state?.[ action.siteId ] ?? {}, {
 					isRequesting: true,
 					scheduled: false,
 					lastRequested: Date.now(),
@@ -27,15 +27,15 @@ export function fullSyncRequest( state = {}, action ) {
 			} );
 		case JETPACK_SYNC_START_SUCCESS:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, get( state, [ action.siteId ], {} ), {
+				[ action.siteId ]: Object.assign( {}, state?.[ action.siteId ] ?? {}, {
 					isRequesting: false,
-					scheduled: get( action, 'data.scheduled' ),
+					scheduled: action?.data?.scheduled,
 					error: false,
 				} ),
 			} );
 		case JETPACK_SYNC_START_ERROR:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, get( state, [ action.siteId ], {} ), {
+				[ action.siteId ]: Object.assign( {}, state?.[ action.siteId ] ?? {}, {
 					isRequesting: false,
 					scheduled: false,
 					error: action.error,
@@ -54,24 +54,24 @@ export function syncStatus( state = {}, action ) {
 		}
 		case JETPACK_SYNC_STATUS_REQUEST: {
 			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, get( state, [ action.siteId ], {} ), {
+				[ action.siteId ]: Object.assign( {}, state?.[ action.siteId ] ?? {}, {
 					isRequesting: true,
 				} ),
 			} );
 		}
 		case JETPACK_SYNC_STATUS_SUCCESS: {
-			const thisState = get( state, [ action.siteId ], {} );
+			const thisState = state?.[ action.siteId ] ?? {};
 
 			// lastSuccessfulStatus is any status after we have started sycing
-			let lastSuccessfulStatus = get( thisState, 'lastSuccessfulStatus', false );
-			const isFullSyncing = get( action, 'data.started' ) && ! get( action, 'data.finished' );
+			let lastSuccessfulStatus = thisState?.lastSuccessfulStatus ?? false;
+			const isFullSyncing = action?.data?.started && ! action?.data?.finished;
 			if ( lastSuccessfulStatus || isFullSyncing ) {
 				lastSuccessfulStatus = Date.now();
 			}
 
 			// Check if Sync Completed before seeing a successful status request
 			if ( false === lastSuccessfulStatus ) {
-				if ( get( action, 'data.started' ) < get( action, 'data.finished' ) ) {
+				if ( action?.data?.started < action?.data?.finished ) {
 					lastSuccessfulStatus = Date.now();
 				}
 			}
@@ -89,7 +89,7 @@ export function syncStatus( state = {}, action ) {
 			} );
 		}
 		case JETPACK_SYNC_STATUS_ERROR: {
-			const errorCounter = get( state, [ action.siteId, 'errorCounter' ], 0 );
+			const errorCounter = state?.[ action.siteId ]?.errorCounter ?? 0;
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign(
 					{

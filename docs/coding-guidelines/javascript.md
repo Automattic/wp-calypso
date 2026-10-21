@@ -195,6 +195,7 @@ When a statement is too long to fit on one line, line breaks must occur after an
 const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c
 	+ ' is ' + ( a + b + c );
 ```
+
 ```js
 // Good
 const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c + ' is ' + ( a + b + c );
@@ -438,7 +439,7 @@ Note that the `in` operator checks all inherited properties of an object prototy
 Instead, use [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty).
 
 ```js
-( {}.hasOwnProperty( 'valueOf' ) ); // false
+( {} ).hasOwnProperty( 'valueOf' ); // false
 ```
 
 [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) is also recommended for testing the presence of an object key using variable input:
@@ -634,7 +635,9 @@ We encourage you to make use of these methods in favor of traditional `for` and 
 - [`Array#some`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some)
 - [`Array#every`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every)
 
-Calypso [includes polyfills](https://github.com/Automattic/wp-calypso/pull/25419) for many more Array prototype methods that were added in ES2015 and beyond. You can safely use them without fear of breaking older browsers, and you should always prefer them over their [Lodash](https://lodash.com/) equivalents, which in most cases offer little more.
+Calypso [includes polyfills](https://github.com/Automattic/wp-calypso/pull/25419) for many more Array prototype methods that were added in ES2015 and beyond. You can safely use them without fear of breaking older browsers.
+
+Avoid [Lodash](https://lodash.com/) entirely. It is being removed from Calypso and new imports are blocked by lint. Prefer native JavaScript; when a native equivalent is genuinely awkward, use a helper from [`@automattic/js-utils`](../../packages/js-utils).
 
 Introduced in ES2015, [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) provide a shorter syntax for function expressions while preserving the parent scope's `this` context. Arrow functions are especially well-suited for iteration method callbacks.
 
@@ -734,7 +737,7 @@ Resources:
 
 ## ESLint
 
-To help encourage developers to follow our coding standards, we include an [ESLint](http://eslint.org/) configuration file [`.eslintrc.js`](../../.eslintrc.js) that configures [ESLint](http://eslint.org/) to detect code that doesn't follow the guidelines. ESLint also catches basic syntax errors, and natively supports both ES6 and JSX. It can be extended by plugins, such as [`eslint-plugin-wpcalypso`](https://github.com/Automattic/eslint-plugin-wpcalypso), which we use in our configuration.
+To help encourage developers to follow our coding standards, we include an [ESLint](http://eslint.org/) configuration, [`@automattic/calypso-eslint-config`](../../packages/calypso-eslint-config/README.md), that configures [ESLint](http://eslint.org/) to detect code that doesn't follow the guidelines. ESLint also catches basic syntax errors, and natively supports both ES6 and JSX. It can be extended by plugins, such as [`eslint-plugin-wpcalypso`](https://github.com/Automattic/eslint-plugin-wpcalypso), which we use in our configuration.
 
 There are [integrations](http://eslint.org/docs/user-guide/integrations) for many editors that will automatically detect the configuration file and run the checks.
 
@@ -765,7 +768,7 @@ If you are using Sublime Text, you can use the `SublimeLinter-eslint` plugin to 
 Before following these instructions, you'll want to globally install ESLint and related dependencies by running the following command in your terminal:
 
 ```bash
-yarn global add eslint @babel/core @babel/eslint-parser eslint-plugin-react eslint-plugin-wpcalypso
+yarn global add eslint eslint-plugin-react eslint-plugin-wpcalypso
 ```
 
 #### Identifying Spaces with Sublime Text

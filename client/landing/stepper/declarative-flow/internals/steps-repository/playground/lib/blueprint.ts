@@ -1,3 +1,4 @@
+import { BlueprintLoadError } from './blueprint-load-error';
 import { BLUEPRINT_LIB_HOST, FALLBACK_PHP_VERSION } from './constants';
 import { ZipFilesystem, resolveRemoteBlueprint } from './resolve-remote-blueprint-standalone';
 import type {
@@ -145,6 +146,19 @@ export function getBlueprintID( query: URLSearchParams ): string | null {
 	return null;
 }
 
+/**
+ * The blueprint identifier for the onboarding blueprint flow
+ * (`/setup/onboarding/blueprint/?blueprint=<id-or-slug>`). Unlike getBlueprintID —
+ * which is scoped to numeric ids — this also accepts a blueprint-library post
+ * slug; both forms resolve against blueprintlibrary.wordpress.com server-side.
+ * We only shape-check here: a non-empty numeric id or slug (lowercase
+ * alphanumerics + hyphens).
+ */
+export function getBlueprintArchiveIdentifier( query: URLSearchParams ): string | null {
+	const raw = query.get( 'blueprint' )?.trim() ?? '';
+	return /^[a-z0-9-]+$/i.test( raw ) ? raw : null;
+}
+
 // Used in sending the Tracks event
 export function getBlueprintLabelForTracking( query: URLSearchParams ): string {
 	const blueprint = getBlueprintID( query );
@@ -262,6 +276,6 @@ async function resolveBlueprintFromURL( url: URL ): Promise< BlueprintBundle > {
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( error );
-		throw new Error( `Failed to resolve blueprint: ${ source }` );
+		throw new BlueprintLoadError( source, error );
 	}
 }

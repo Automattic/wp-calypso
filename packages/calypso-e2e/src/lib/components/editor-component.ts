@@ -1,6 +1,14 @@
 import { Page, Locator } from 'playwright';
+import envVariables from '../../env-variables';
+import { completeJetpackSso } from '../pages/wp-admin/jetpack-sso';
 
 const EDITOR_TIMEOUT = 60 * 1000;
+
+// The SSO screen is the slow path: it is what a loaded Atomic site answers with when the two
+// waits below are already doomed. Giving it the same budget as its competitors makes it lose a
+// race it is meant to win — `Promise.any` rejects once all three are out, so a screen arriving
+// after EDITOR_TIMEOUT is never clicked. It must outlive them.
+const JETPACK_SSO_SCREEN_TIMEOUT = 2 * EDITOR_TIMEOUT;
 
 /**
  * Represents the Editor component.
@@ -8,7 +16,6 @@ const EDITOR_TIMEOUT = 60 * 1000;
 export class EditorComponent {
 	private page: Page;
 	private parentLocator: Locator | null;
-	private canvasLocator: Locator | null;
 
 	/**
 	 * Constructs an instance of the component.
@@ -18,7 +25,6 @@ export class EditorComponent {
 	constructor( page: Page ) {
 		this.page = page;
 		this.parentLocator = null;
-		this.canvasLocator = null;
 	}
 
 	/**
@@ -30,12 +36,17 @@ export class EditorComponent {
 			return this.parentLocator;
 		}
 
+		const waits = [ this.waitForFramedEditor(), this.waitForUnframedEditor() ];
+
+		// Only Atomic wp-admin can answer with the SSO screen. Elsewhere this racer would
+		// just hold a wp-login.php wait open for the full timeout after the editor loaded.
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			waits.push( this.waitForEditorBehindJetpackSso() );
+		}
+
 		try {
-			this.parentLocator = await Promise.any( [
-				this.waitForFramedEditor(),
-				this.waitForUnframedEditor(),
-			] );
-		} catch ( _error ) {
+			this.parentLocator = await Promise.any( waits );
+		} catch {
 			throw new Error( 'Timed out waiting for the Editor' );
 		}
 
@@ -45,22 +56,42 @@ export class EditorComponent {
 	/**
 	 * Returns the Editor canvas locator. It will automatically resolve to the
 	 * proper locator, regardless if the canvas is iframed or not.
+	 *
+	 * Note: unlike the Editor parent, the canvas can switch between iframed and
+	 * non-iframed within a single session — e.g. inserting a block that doesn't
+	 * support the iframed canvas (such as Layout Grid or Blog Posts) de-iframes
+	 * it. The result is therefore re-detected on every call and never cached.
 	 */
 	async canvas(): Promise< Locator > {
-		if ( this.canvasLocator ) {
-			return this.canvasLocator;
-		}
-
 		try {
-			this.canvasLocator = await Promise.any( [
-				this.waitForFramedCanvas(),
-				this.waitForUnframedCanvas(),
-			] );
-		} catch ( _error ) {
+			return await Promise.any( [ this.waitForFramedCanvas(), this.waitForUnframedCanvas() ] );
+		} catch {
 			throw new Error( 'Timed out waiting for the Editor canvas' );
 		}
+	}
 
-		return this.canvasLocator;
+	/**
+	 * If wp-admin answered with the Jetpack SSO screen, it will clear the screen and resolve
+	 * with the parent element locator once the Editor loads behind it. Otherwise, it will
+	 * time out.
+	 *
+	 * Atomic sites carrying local users serve this screen in place of the Editor. It arrives
+	 * after Calypso has redirected away from its own route, so no navigation the caller made
+	 * can check for it, and the two waits above see only a page that never becomes an Editor.
+	 * Racing it alongside them is what catches it; on the common path this branch simply loses
+	 * and `Promise.any` ignores it.
+	 *
+	 * The cost of the longer budget is paid only when the Editor never loads at all: that
+	 * failure now takes JETPACK_SSO_SCREEN_TIMEOUT to report instead of EDITOR_TIMEOUT.
+	 */
+	private async waitForEditorBehindJetpackSso() {
+		// Keyed on the URL, not on the link: the two waits above race this one and only one of
+		// the three may touch the page, so this branch must not act until the screen is
+		// certain.
+		await this.page.waitForURL( /wp-login\.php/, { timeout: JETPACK_SSO_SCREEN_TIMEOUT } );
+		await completeJetpackSso( this.page );
+
+		return await this.waitForUnframedEditor();
 	}
 
 	/**

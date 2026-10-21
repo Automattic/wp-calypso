@@ -13,7 +13,7 @@ export const useTypedPlaceholder = ( phrases: string[], pauseAnimation = false )
 
 	const charIndexRef = useRef( 0 );
 	const phraseIndexRef = useRef( 0 );
-	const timeoutIdRef = useRef< ReturnType< typeof setTimeout > >();
+	const timeoutIdRef = useRef< ReturnType< typeof setTimeout > >( undefined );
 
 	const timeBetweenChars = 60;
 	const timeBetweenPhrases = 1500;

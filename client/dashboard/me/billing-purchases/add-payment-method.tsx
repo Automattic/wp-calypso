@@ -1,10 +1,4 @@
-import {
-	userSettingsQuery,
-	stripeConfigurationQuery,
-	razorpayConfigurationQuery,
-	queryClient,
-} from '@automattic/api-queries';
-import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
+import { userSettingsQuery, stripeConfigurationQuery, queryClient } from '@automattic/api-queries';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -38,7 +32,7 @@ function AddPaymentMethod() {
 				size="small"
 				header={
 					<PageHeader
-						prefix={ <Breadcrumbs length={ 4 } /> }
+						prefix={ <Breadcrumbs length={ 3 } /> }
 						title={ __( 'Add payment method' ) }
 					/>
 				}
@@ -58,7 +52,7 @@ function AddPaymentMethod() {
 				size="small"
 				header={
 					<PageHeader
-						prefix={ <Breadcrumbs length={ 4 } /> }
+						prefix={ <Breadcrumbs length={ 3 } /> }
 						title={ __( 'Add payment method' ) }
 					/>
 				}
@@ -76,7 +70,7 @@ function AddPaymentMethod() {
 		<PageLayout
 			size="small"
 			header={
-				<PageHeader prefix={ <Breadcrumbs length={ 4 } /> } title={ __( 'Add payment method' ) } />
+				<PageHeader prefix={ <Breadcrumbs length={ 3 } /> } title={ __( 'Add payment method' ) } />
 			}
 		>
 			<VStack spacing={ 6 }>
@@ -100,15 +94,9 @@ export default function AddPaymentMethodWrapper() {
 		[]
 	);
 
-	const fetchRazorpayConfiguration = useCallback( ( requestArgs?: { sandbox: boolean } ) => {
-		return queryClient.fetchQuery( razorpayConfigurationQuery( requestArgs ) );
-	}, [] );
-
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ fetchStripeConfiguration }>
-			<RazorpayHookProvider fetchRazorpayConfiguration={ fetchRazorpayConfiguration }>
-				<AddPaymentMethod />
-			</RazorpayHookProvider>
+			<AddPaymentMethod />
 		</StripeHookProvider>
 	);
 }

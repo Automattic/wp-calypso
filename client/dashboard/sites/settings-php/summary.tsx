@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { code } from '@wordpress/icons';
 import { getPHPVersions } from 'calypso/data/php-versions';
+import versionCompare from 'calypso/lib/version-compare';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { hasHostingFeature } from '../../utils/site-features';
 import type { Site } from '@automattic/api-core';
@@ -15,7 +16,7 @@ export default function PHPSettingsSummary( { site, density }: { site: Site; den
 		enabled: hasHostingFeature( site, HostingFeatures.PHP ),
 	} );
 
-	const { recommendedValue } = getPHPVersions( site.ID );
+	const { recommendedValue } = getPHPVersions();
 
 	const getBadge = () => {
 		if ( ! version ) {
@@ -25,7 +26,9 @@ export default function PHPSettingsSummary( { site, density }: { site: Site; den
 		return [
 			{
 				text: version,
-				intent: version !== recommendedValue ? ( 'warning' as const ) : ( 'success' as const ),
+				intent: versionCompare( version, recommendedValue, '>=' )
+					? ( 'stable' as const )
+					: ( 'low' as const ),
 			},
 		];
 	};

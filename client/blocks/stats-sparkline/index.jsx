@@ -125,6 +125,9 @@ const getStatsInsightsHourlyViews = createSelector(
 	( state, siteId ) => getSiteStatsNormalizedData( state, siteId, 'statsInsights' )
 );
 
+/**
+ * @param {{ className?: string; showLoader?: boolean; siteId?: number; }} props
+ */
 const StatsSparkline = ( { className, showLoader = false, siteId } ) => {
 	const hourlyViews = useSelector( ( state ) => getStatsInsightsHourlyViews( state, siteId ) );
 	return (

@@ -1,7 +1,7 @@
 import { Gridicon, ScreenReaderText } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, type JSX } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
 
 type MobileHeaderProps = {

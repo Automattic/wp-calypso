@@ -25,5 +25,20 @@ describe( 'loadScript/dom-operations', () => {
 			expect( script.id ).toBe( args.id );
 			expect( script.async ).toBe( false );
 		} );
+
+		test( 'createScriptElement sets data attributes as attributes', () => {
+			const url = 'https://example.com/';
+			const args = {
+				'data-apikey': 'secret-api-key',
+				'data-challenge-container': '#blackbox-root',
+			};
+
+			const script = createScriptElement( url, args );
+
+			expect( script.getAttribute( 'data-apikey' ) ).toBe( args[ 'data-apikey' ] );
+			expect( script.getAttribute( 'data-challenge-container' ) ).toBe(
+				args[ 'data-challenge-container' ]
+			);
+		} );
 	} );
 } );

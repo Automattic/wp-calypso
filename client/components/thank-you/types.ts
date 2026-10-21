@@ -1,6 +1,7 @@
 import { TranslateResult } from 'i18n-calypso';
 import * as React from 'react';
 import { Theme } from 'calypso/types';
+import type { JSX } from 'react';
 
 export type ThankYouNextStepProps = {
 	stepCta?: React.ReactNode;

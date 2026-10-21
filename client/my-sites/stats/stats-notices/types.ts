@@ -18,13 +18,17 @@ export interface StatsNoticeProps {
 	isSiteJetpackNotAtomic?: boolean;
 	statsPurchaseSuccess?: string;
 	isCommercial?: boolean;
-	isCommercialOwned?: boolean;
+	supportCommercialUse?: boolean;
 	hasPWYWPlanOnly?: boolean;
 	showPaywallNotice?: boolean;
 	hasSignificantViews?: boolean;
 	isOverLimit?: boolean;
 	isNearLimit?: boolean;
 	hasWpcomUpsell?: boolean;
+	canManageOptions?: boolean;
+	hasCommercialStats?: boolean;
+	isPremiumAnalyticsEnabled?: boolean;
+	premiumAnalyticsDashboardUrl?: string | null;
 }
 
 export interface NoticeBodyProps {

@@ -1,6 +1,6 @@
 import { Gravatar } from '@automattic/components';
 import { useHappinessEngineersQuery } from '@automattic/data-stores';
-import { shuffle } from 'lodash';
+import { shuffle } from '@automattic/js-utils';
 import { useMemo } from 'react';
 
 import './style.scss';

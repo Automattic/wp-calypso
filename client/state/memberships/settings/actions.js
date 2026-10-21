@@ -1,7 +1,6 @@
 import wpcom from 'calypso/lib/wp';
 import { MEMBERSHIPS_SETTINGS } from 'calypso/state/action-types';
 import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices/actions';
-
 import 'calypso/state/data-layer/wpcom/sites/memberships';
 import 'calypso/state/memberships/init';
 

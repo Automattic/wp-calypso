@@ -1,6 +1,6 @@
 import { FormInputValidation } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
-import { Icon, warning } from '@wordpress/icons';
+import { Icon, cautionFilled as warning } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 
 type Props = {
@@ -48,7 +48,7 @@ export default function PaidImportSubscribersError( { error }: Props ) {
 							? error.message
 							: __(
 									'An unexpected error occurred. Please try again later or contact support if the problem persists.'
-							  );
+								);
 				}
 			} )() }
 		</FormInputValidation>

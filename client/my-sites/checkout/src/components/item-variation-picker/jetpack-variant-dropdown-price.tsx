@@ -1,6 +1,9 @@
 import { formatCurrency } from '@automattic/number-formatters';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { LoadingCopy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
+import useCartKey from '../../../use-cart-key';
 import { Discount, Label, Price, PriceTextContainer, Variant } from './styles';
 import type { WPCOMProductVariant } from './types';
 import type { FunctionComponent } from 'react';
@@ -42,6 +45,9 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 	allVariants: WPCOMProductVariant[];
 } > = ( { variant, allVariants } ) => {
 	const isMobile = useMobileBreakpoint();
+	const cartKey = useCartKey();
+	const { couponStatus } = useShoppingCart( cartKey );
+	const isApplyingCoupon = couponStatus === 'pending';
 
 	// We offer a free month trial for selected yearly plans (for now, only Social Advanced)
 
@@ -70,21 +76,27 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 				) }
 			</Label>
 			<PriceTextContainer>
-				{ ! isMobile && discountInteger > 0 && (
-					<JetpackDiscountDisplay
-						finalPriceInteger={ variant.priceInteger }
-						discountInteger={ discountInteger }
-						currency={ variant.currency }
-						showIntroOffer={ showIntroOffer }
-						isFirstMonthTrial={ isFirstMonthTrial( variant ) }
-					/>
+				{ isApplyingCoupon ? (
+					<LoadingCopy width="80px" height="16px" noMargin />
+				) : (
+					<>
+						{ ! isMobile && discountInteger > 0 && (
+							<JetpackDiscountDisplay
+								finalPriceInteger={ variant.priceInteger }
+								discountInteger={ discountInteger }
+								currency={ variant.currency }
+								showIntroOffer={ showIntroOffer }
+								isFirstMonthTrial={ isFirstMonthTrial( variant ) }
+							/>
+						) }
+						<Price aria-hidden={ variant.introductoryInterval > 0 }>
+							{ formatCurrency( variant.priceInteger, variant.currency, {
+								stripZeros: true,
+								isSmallestUnit: true,
+							} ) }
+						</Price>
+					</>
 				) }
-				<Price aria-hidden={ variant.introductoryInterval > 0 }>
-					{ formatCurrency( variant.priceInteger, variant.currency, {
-						stripZeros: true,
-						isSmallestUnit: true,
-					} ) }
-				</Price>
 			</PriceTextContainer>
 		</Variant>
 	);

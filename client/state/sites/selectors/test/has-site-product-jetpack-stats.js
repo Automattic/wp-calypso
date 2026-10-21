@@ -17,6 +17,7 @@ describe( 'hasSiteProductJetpackStats()', () => {
 						blog_id: 2916288,
 						product_slug: 'jetpack_stats_free_yearly',
 						expiry_status: 'manual-renew',
+						subscription_status: 'active',
 					},
 				],
 			},
@@ -42,6 +43,7 @@ describe( 'hasSiteProductJetpackStats()', () => {
 						blog_id: 2916288,
 						product_slug: 'jetpack_stats_free_yearly',
 						expiry_status: 'manual-renew',
+						subscription_status: 'active',
 					},
 				],
 			},
@@ -67,6 +69,7 @@ describe( 'hasSiteProductJetpackStats()', () => {
 						blog_id: 2916288,
 						product_slug: 'jetpack_stats_monthly',
 						expiry_status: 'manual-renew',
+						subscription_status: 'active',
 					},
 				],
 			},
@@ -76,8 +79,8 @@ describe( 'hasSiteProductJetpackStats()', () => {
 		expect( hasPaidJetpackStats ).toEqual( true );
 	} );
 
-	test( 'should return false if site has paid products but expired', () => {
-		const stateWithExpiredStats = {
+	test( 'should return false if site has paid products that have been removed', () => {
+		const stateWithRemovedStats = {
 			sites: {
 				items: {
 					2916288: {
@@ -92,12 +95,39 @@ describe( 'hasSiteProductJetpackStats()', () => {
 						blog_id: 2916288,
 						product_slug: 'jetpack_stats_monthly',
 						expiry_status: 'expired',
+						subscription_status: 'inactive',
 					},
 				],
 			},
 		};
-		const hasJetpackStats = hasSiteProductJetpackStats( stateWithExpiredStats, false, 2916288 );
+		const hasJetpackStats = hasSiteProductJetpackStats( stateWithRemovedStats, false, 2916288 );
 
 		expect( hasJetpackStats ).toEqual( false );
+	} );
+
+	test( 'should return true if site has paid products that are expired but still in the grace period', () => {
+		const stateWithGracePeriodStats = {
+			sites: {
+				items: {
+					2916288: {
+						plan: {},
+						products: [],
+					},
+				},
+			},
+			purchases: {
+				data: [
+					{
+						blog_id: 2916288,
+						product_slug: 'jetpack_stats_monthly',
+						expiry_status: 'expired',
+						subscription_status: 'active',
+					},
+				],
+			},
+		};
+		const hasJetpackStats = hasSiteProductJetpackStats( stateWithGracePeriodStats, false, 2916288 );
+
+		expect( hasJetpackStats ).toEqual( true );
 	} );
 } );

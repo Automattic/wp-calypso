@@ -1,6 +1,6 @@
 .skeleton {
 	box-sizing: border-box;
-	background-color: var( --studio-gray-5 );
+	background-color: var( --color-border-subtle, var( --studio-gray-5 ) );
 	animation: skeleton-shimmer 1.5s infinite;
 	border-radius: 4px;
 

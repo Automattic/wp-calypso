@@ -4,6 +4,23 @@ import PropTypes from 'prop-types';
 
 import './style.scss';
 
+/**
+ * @param {{
+ *   headerText: import('react').ReactNode;
+ *   mainText: import('react').ReactNode;
+ *   buttonPrimary?: boolean;
+ *   buttonText?: import('react').ReactNode;
+ *   buttonIcon?: string;
+ *   buttonTarget?: string;
+ *   buttonHref?: string;
+ *   buttonOnClick?: import('react').MouseEventHandler< HTMLElement >;
+ *   children?: import('react').ReactNode;
+ *   compact?: boolean;
+ *   classNames?: string;
+ *   buttonDisabled?: boolean;
+ *   illustration?: string;
+ * }} props
+ */
 const ActionCard = ( {
 	headerText,
 	mainText,

@@ -3,7 +3,6 @@ import {
 	JETPACK_SOCIAL_ADVANCED_PRODUCTS,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-import { isNumber } from 'lodash';
 import { useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import {
@@ -120,7 +119,7 @@ const useIntroductoryOfferPrices = (
 			product.product_id,
 			siteId ?? 'none'
 		);
-		return isNumber( introOfferPrice ) && isEligibleForIntroPrice ? introOfferPrice : null;
+		return typeof introOfferPrice === 'number' && isEligibleForIntroPrice ? introOfferPrice : null;
 	} );
 
 	return {
@@ -179,9 +178,10 @@ const useItemPrice = (
 		if ( item.term !== TERM_MONTHLY ) {
 			originalPrice = getMonthlyPrice( itemCost ); // monthlyItemCost - See comment above.
 			originalPriceTotal = itemCost;
-			discountedPrice = isNumber( introductoryOfferPrices.introOfferCost )
-				? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
-				: undefined;
+			discountedPrice =
+				typeof introductoryOfferPrices.introOfferCost === 'number'
+					? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
+					: undefined;
 			discountedPriceTotal = introductoryOfferPrices.introOfferCost;
 
 			// Override Jetpack Social Advanced price by hard-coding it for now
@@ -190,10 +190,11 @@ const useItemPrice = (
 					item?.productSlug as ( typeof JETPACK_SOCIAL_ADVANCED_PRODUCTS )[ number ]
 				)
 			) {
-				discountedPrice = isNumber( introductoryOfferPrices.introOfferCost )
-					? introductoryOfferPrices.introOfferCost
-					: undefined;
-				if ( isNumber( discountedPrice ) ) {
+				discountedPrice =
+					typeof introductoryOfferPrices.introOfferCost === 'number'
+						? introductoryOfferPrices.introOfferCost
+						: undefined;
+				if ( typeof discountedPrice === 'number' ) {
 					discountedPriceDuration = 1;
 				}
 			}

@@ -4,7 +4,7 @@ import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import debugFactory from 'debug';
-import { find, isEqual, cloneDeep } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
 import delegateEventTracking, {
 	registerSubscriber as registerDelegateEventSubscriber,
 } from './tracking/delegate-event-tracking';
@@ -338,7 +338,7 @@ const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
 		select( 'core/block-editor' ).getSettings();
 	const patterns = select( 'core/block-editor' ).__experimentalGetAllowedPatterns();
 
-	const meta = find( actionData, ( item ) => item?.patternName );
+	const meta = actionData?.find( ( item ) => item?.patternName );
 	let patternName = meta?.patternName;
 	// Quick block inserter doesn't use an object to store the patternName
 	// in the metadata. The pattern name is just directly used as a string.
@@ -739,12 +739,12 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 	if ( kind === 'root' && type === 'globalStyles' ) {
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
 		const entityContent = {
-			settings: cloneDeep( editedEntity.settings ),
-			styles: cloneDeep( editedEntity.styles ),
+			settings: structuredClone( editedEntity.settings ),
+			styles: structuredClone( editedEntity.styles ),
 		};
 		const updatedContent = {
-			settings: cloneDeep( updates.settings ),
-			styles: cloneDeep( updates.styles ),
+			settings: structuredClone( updates.settings ),
+			styles: structuredClone( updates.styles ),
 		};
 
 		// Sometimes a second update is triggered corresponding to no changes since the last update.
@@ -788,12 +788,12 @@ const trackSaveEditedEntityRecord = ( kind, type, id ) => {
 
 	if ( kind === 'root' && type === 'globalStyles' ) {
 		const entityContent = {
-			settings: cloneDeep( savedEntity.settings ),
-			styles: cloneDeep( savedEntity.styles ),
+			settings: structuredClone( savedEntity.settings ),
+			styles: structuredClone( savedEntity.styles ),
 		};
 		const updatedContent = {
-			settings: cloneDeep( editedEntity.settings ),
-			styles: cloneDeep( editedEntity.styles ),
+			settings: structuredClone( editedEntity.settings ),
+			styles: structuredClone( editedEntity.styles ),
 		};
 
 		buildGlobalStylesContentEvents(
@@ -914,13 +914,9 @@ const REDUX_TRACKING = {
 		updateOptions: trackGlobalStyles( 'wpcom_global_styles_update' ),
 		publishOptions: trackGlobalStyles( 'wpcom_global_styles_publish' ),
 	},
-	// Post Editor is using the undo/redo from the 'core/editor' store
-	'core/editor': {
-		undo: 'wpcom_block_editor_undo_performed',
-		redo: 'wpcom_block_editor_redo_performed',
-	},
-	// Site Editor is using the undo/redo from the 'core' store
 	core: {
+		// Undo/redo are tracked only here: the 'core/editor' actions delegate to these,
+		// so tracking both stores would record every undo/redo twice.
 		undo: 'wpcom_block_editor_undo_performed',
 		redo: 'wpcom_block_editor_redo_performed',
 		saveEntityRecord: trackSaveEntityRecord,
@@ -988,6 +984,7 @@ if (
 } else {
 	debug( 'registering tracking handlers.' );
 	// Intercept dispatch function and add tracking for actions that need it.
+	// eslint-disable-next-line react-hooks/rules-of-hooks -- `use` is the @wordpress/data registry plugin API, not a React hook.
 	use( ( registry ) => ( {
 		dispatch: ( namespace ) => {
 			const namespaceName = typeof namespace === 'object' ? namespace.name : namespace;

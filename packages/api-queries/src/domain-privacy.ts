@@ -11,6 +11,7 @@ import { queryClient } from './query-client';
 
 export const domainPrivacySaveMutation = ( domainName: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-privacy-save' },
 		mutationFn: ( enable_privacy: boolean ) =>
 			enable_privacy ? enableDomainPrivacy( domainName ) : disableDomainPrivacy( domainName ),
 		onSuccess: ( _, enable_privacy: boolean ) => {
@@ -25,6 +26,7 @@ export const domainPrivacySaveMutation = ( domainName: string ) =>
 
 export const domainPrivacyDiscloseSaveMutation = ( domainName: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-privacy-disclose' },
 		mutationFn: ( disclose: boolean ) =>
 			disclose ? discloseDomainPrivacy( domainName ) : redactDomainPrivacy( domainName ),
 		onSuccess: ( _, disclose: boolean ) => {

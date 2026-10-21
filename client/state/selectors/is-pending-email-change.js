@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/user-settings/init';
 
 /**
@@ -8,5 +6,5 @@ import 'calypso/state/user-settings/init';
  * @returns {boolean} pending email state
  */
 export default function isPendingEmailChange( state ) {
-	return get( state, 'userSettings.settings.new_user_email', null );
+	return state?.userSettings?.settings?.new_user_email ?? null;
 }

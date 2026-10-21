@@ -1,4 +1,4 @@
-import { pick } from 'lodash';
+import { pick } from '@automattic/js-utils';
 import { applyDuplicatesHandlers, removeDuplicateGets } from './remove-duplicate-gets';
 import { retryOnFailure } from './retry-on-failure';
 

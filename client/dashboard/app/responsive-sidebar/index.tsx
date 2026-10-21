@@ -43,7 +43,7 @@ export default function ResponsiveSidebar( {
 	}, [ isDesktop, router, onClose ] );
 
 	if ( isDesktop ) {
-		return <Sidebar />;
+		return <Sidebar scrollSyncEnabled />;
 	}
 
 	return (
@@ -54,6 +54,7 @@ export default function ResponsiveSidebar( {
 					<div
 						role="presentation"
 						className="dashboard-responsive-sidebar__overlay"
+						data-testid="dashboard-responsive-sidebar-overlay"
 						onClick={ handleOverlayClick }
 						onKeyDown={ handleOverlayKeyDown }
 					/>,

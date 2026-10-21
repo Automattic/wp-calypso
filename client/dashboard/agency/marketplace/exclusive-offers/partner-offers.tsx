@@ -1,0 +1,248 @@
+import {
+	Button,
+	__experimentalSpacer as Spacer,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
+import { getQueryArgs } from '@wordpress/url';
+import { useState, useMemo } from 'react';
+import { ButtonStack } from '../../../components/button-stack';
+import { Card, CardBody } from '../../../components/card';
+import Grid from '../../../components/grid';
+import RouterLinkButton from '../../../components/router-link-button';
+import { isDashboardPath } from '../../../utils/link';
+import { filterOptions, getPartnerOffers } from './constants';
+import type { PartnerOffer, PartnerOfferLinks, RecordTracksEvent } from './types';
+import type { View, Field } from '@wordpress/dataviews';
+
+import './style.scss';
+
+const VIEW_TERMS_URL = 'https://automattic.com/for-agencies/program-incentives';
+
+const initialView: View = {
+	type: 'list',
+	fields: [],
+	search: '',
+	filters: [],
+	page: 1,
+	perPage: 100,
+};
+
+function PartnerOfferCard( {
+	item,
+	recordTracksEvent,
+	onCtaClick,
+	shouldUseRouterLink,
+}: {
+	item: PartnerOffer;
+	recordTracksEvent: RecordTracksEvent;
+	onCtaClick?: ( offer: PartnerOffer ) => void;
+	shouldUseRouterLink: boolean;
+} ) {
+	const offerType = filterOptions.offerTypes.find( ( option ) => option.value === item.offerType );
+
+	const handleCTAClick = () => {
+		onCtaClick?.( item );
+		recordTracksEvent( 'calypso_a4a_exclusive_offers_cta_click', { offer_id: item.id } );
+	};
+
+	const handleViewTermsClick = () => {
+		recordTracksEvent( 'calypso_a4a_exclusive_offers_view_terms_click', { offer_id: item.id } );
+	};
+
+	return (
+		<Card>
+			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
+				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
+					<HStack>
+						<HStack
+							className="exclusive-offers-card-logo"
+							spacing={ 0 }
+							justify="flex-start"
+							alignment="center"
+							expanded={ false }
+						>
+							{ item.logo }
+						</HStack>
+						{ offerType?.label && <Badge intent="draft">{ offerType.label }</Badge> }
+					</HStack>
+					<VStack spacing={ 1 }>
+						<Text size={ 13 } weight={ 500 }>
+							{ item.title }
+						</Text>
+						<Text variant="muted" size={ 12 }>
+							{ item.description }
+						</Text>
+					</VStack>
+				</VStack>
+				{ item.cta && (
+					<ButtonStack
+						style={ {
+							marginTop: '24px',
+							alignSelf: 'flex-start',
+							justifyContent: 'flex-start',
+							gap: '16px',
+						} }
+					>
+						{ shouldUseRouterLink && isDashboardPath( item.cta.url ) ? (
+							<RouterLinkButton
+								variant="secondary"
+								size="compact"
+								to={ item.cta.url.split( '?' )[ 0 ] }
+								search={ getQueryArgs( item.cta.url ) }
+								onClick={ handleCTAClick }
+							>
+								{ item.cta.label }
+							</RouterLinkButton>
+						) : (
+							<Button
+								variant="secondary"
+								size="compact"
+								href={ item.cta.url }
+								target={ item.cta.external ? '_blank' : undefined }
+								rel={ item.cta.external ? 'noopener noreferrer' : undefined }
+								onClick={ handleCTAClick }
+							>
+								{ item.cta.label }
+							</Button>
+						) }
+						<Button
+							variant="link"
+							href={ item.termsUrl ?? VIEW_TERMS_URL }
+							target="_blank"
+							onClick={ handleViewTermsClick }
+							style={ {
+								whiteSpace: 'nowrap',
+							} }
+						>
+							{ __( 'View terms' ) }
+						</Button>
+					</ButtonStack>
+				) }
+			</CardBody>
+		</Card>
+	);
+}
+
+export default function PartnerOffers( {
+	links,
+	recordTracksEvent = () => {},
+	onCtaClick,
+	shouldUseRouterLink = true,
+}: {
+	links: PartnerOfferLinks;
+	recordTracksEvent?: RecordTracksEvent;
+	onCtaClick?: ( offer: PartnerOffer ) => void;
+	/**
+	 * Set to false in apps without the dashboard's TanStack Router, so the CTAs
+	 * render plain anchors for the host app's own router to pick up.
+	 */
+	shouldUseRouterLink?: boolean;
+} ) {
+	const [ view, setView ] = useState< View >( initialView );
+	const partnerOffers = useMemo( () => getPartnerOffers( links ), [ links ] );
+
+	const fields: Field< PartnerOffer >[] = useMemo(
+		() => [
+			{
+				id: 'title',
+				getValue: ( { item } ) => item.title,
+				enableGlobalSearch: true,
+			},
+			{
+				id: 'description',
+				getValue: ( { item } ) => item.description,
+				enableGlobalSearch: true,
+			},
+			{
+				id: 'product',
+				label: __( 'Product' ),
+				type: 'text',
+				getValue: ( { item } ) => item.product,
+				elements: filterOptions.products,
+				filterBy: {
+					operators: [ 'is' ],
+				},
+				enableSorting: false,
+				enableHiding: true,
+			},
+			{
+				id: 'offerType',
+				label: __( 'Offer type' ),
+				type: 'text',
+				getValue: ( { item } ) => item.offerType,
+				elements: filterOptions.offerTypes,
+				filterBy: {
+					operators: [ 'is' ],
+				},
+				enableSorting: false,
+				enableHiding: true,
+			},
+			{
+				id: 'productType',
+				label: __( 'Product type' ),
+				type: 'text',
+				getValue: ( { item } ) => item.productType,
+				elements: filterOptions.productTypes,
+				filterBy: {
+					operators: [ 'is' ],
+				},
+				enableSorting: false,
+				enableHiding: true,
+			},
+		],
+		[]
+	);
+
+	const { data: filteredData } = useMemo(
+		() => filterSortAndPaginate( partnerOffers, view, fields ),
+		[ partnerOffers, view, fields ]
+	);
+
+	return (
+		<>
+			<Spacer marginBottom={ 4 } style={ { maxWidth: '600px' } }>
+				<Text size={ 15 }>
+					{ __(
+						'Discover exclusive offers, events, training, and tools from Automattic and our partners. Everything you need to help your agency grow and support your clients.'
+					) }
+				</Text>
+			</Spacer>
+
+			<div className="exclusive-offers-filters">
+				<DataViews< PartnerOffer >
+					data={ partnerOffers }
+					fields={ fields }
+					view={ view }
+					onChangeView={ setView }
+					paginationInfo={ { totalItems: partnerOffers.length, totalPages: 1 } }
+					defaultLayouts={ { list: {} } }
+					search
+				>
+					<HStack justify="start" style={ { paddingBlock: '16px' } }>
+						<DataViews.Search />
+						<DataViews.FiltersToggle />
+					</HStack>
+					<Spacer marginBottom={ 4 }>
+						<DataViews.FiltersToggled />
+					</Spacer>
+				</DataViews>
+			</div>
+			<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="2xl">
+				{ filteredData.map( ( item ) => (
+					<PartnerOfferCard
+						key={ item.id }
+						item={ item }
+						recordTracksEvent={ recordTracksEvent }
+						onCtaClick={ onCtaClick }
+						shouldUseRouterLink={ shouldUseRouterLink }
+					/>
+				) ) }
+			</Grid>
+		</>
+	);
+}

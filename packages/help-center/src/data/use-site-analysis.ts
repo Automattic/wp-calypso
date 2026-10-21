@@ -37,7 +37,7 @@ function urlMatches( trustedURL: string, userInputUrl: string | undefined ) {
 }
 
 /**
- * Analyses a site to determine whether its a WPCOM site, and if yes, it would fetch and return the site information (SiteDetails).
+ * Analyzes a site to determine whether its a WPCOM site, and if yes, it would fetch and return the site information (SiteDetails).
  * @param userId the user ID
  * @param siteURL the site URL
  * @param enabled whether the query is enabled

@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/plugins/init';
 
 /**
@@ -11,5 +9,5 @@ import 'calypso/state/plugins/init';
  * @returns {?string} ID of uploaded plugin
  */
 export default function getUploadedPluginId( state, siteId ) {
-	return get( state.plugins.upload.uploadedPluginId, siteId, null );
+	return state.plugins.upload.uploadedPluginId?.[ siteId ] ?? null;
 }

@@ -1,10 +1,17 @@
 import { type MarkdownComponents, type MarkdownExtensions } from '@automattic/agenttic-ui';
-import { useManagedZendeskChat } from '@automattic/zendesk-client';
-import { useEffect } from '@wordpress/element';
+import {
+	useManagedZendeskChat,
+	ZENDESK_CUSTOM_FIELD_PRODUCT,
+	ZENDESK_CUSTOM_FIELD_WEBSITE_URL,
+	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
+} from '@automattic/zendesk-client';
+import { useMemo, useState } from '@wordpress/element';
+import { useAgentsManagerContext } from '../../contexts';
+import { getSiteUrl } from '../../utils/site-url';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import ConcludedConversationFooter from '../concluded-conversation-footer';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { UIMessage as Message } from '@automattic/agenttic-client';
 import './style.scss';
 
 interface Props {
@@ -22,8 +29,6 @@ interface Props {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
-	/** Called when the has-messages state changes. */
-	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
 
 export default function ZendeskChat( {
@@ -34,8 +39,27 @@ export default function ZendeskChat( {
 	onExpand,
 	markdownComponents = {},
 	markdownExtensions = {},
-	onHasMessagesChange,
 }: Props ) {
+	const {
+		site,
+		zendeskConversationTags,
+		zendeskSmoochIntegrationKey,
+		zendeskTicketProductFieldValue,
+	} = useAgentsManagerContext();
+
+	const siteUrl = getSiteUrl( site );
+	const conversationTicketFields = useMemo(
+		() =>
+			zendeskTicketProductFieldValue
+				? {
+						[ ZENDESK_CUSTOM_FIELD_WEBSITE_URL ]: siteUrl,
+						[ ZENDESK_SOURCE_URL_TICKET_FIELD_ID ]: window.location.href,
+						[ ZENDESK_CUSTOM_FIELD_PRODUCT ]: zendeskTicketProductFieldValue,
+					}
+				: {},
+		[ siteUrl, zendeskTicketProductFieldValue ]
+	);
+
 	const {
 		agentticMessages,
 		onSubmit,
@@ -46,13 +70,24 @@ export default function ZendeskChat( {
 		supportedImageTypes,
 		notice,
 		hasInteractionEnded,
-	} = useManagedZendeskChat();
+	} = useManagedZendeskChat( {
+		conversationTags: zendeskConversationTags,
+		conversationTicketFields,
+		smoochIntegrationKey: zendeskSmoochIntegrationKey,
+		siteId: site?.ID,
+	} );
 
-	// Notify parent when has-messages state changes
-	const hasMessages = agentticMessages.length > 0;
-	useEffect( () => {
-		onHasMessagesChange( hasMessages );
-	}, [ hasMessages, onHasMessagesChange ] );
+	const [ inputValue, setInputValue ] = useState( '' );
+
+	// Smooch drops the typing indicator 10 s after `startTyping`, so refresh it on
+	// every keystroke, as the Help Center does.
+	const handleInputChange = ( value: string ) => {
+		setInputValue( value );
+
+		if ( value ) {
+			onTypingStatusChange( true );
+		}
+	};
 
 	return (
 		<AgentChat
@@ -72,9 +107,14 @@ export default function ZendeskChat( {
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
 			onTypingStatusChange={ onTypingStatusChange }
+			inputValue={ inputValue }
+			onInputChange={ handleInputChange }
 			imageUpload={ imageUpload }
 			acceptedImageFileTypes={ supportedImageTypes }
 			alternativeFooter={ hasInteractionEnded ? <ConcludedConversationFooter /> : undefined }
+			// Zendesk conversations connect the user to a human Happiness
+			// Engineer, so the "You're chatting with AI" disclosure must not show.
+			complianceDisclosure={ false }
 		/>
 	);
 }

@@ -3,7 +3,7 @@ import {
 	__unstableEditorStyles as EditorStyles,
 } from '@wordpress/block-editor';
 import { useRefEffect } from '@wordpress/compose';
-import { useMemo } from 'react';
+import { type JSX, useMemo } from 'react';
 import { useSafeGlobalStylesOutput } from '../../gutenberg-bridge';
 import './style.scss';
 
@@ -37,7 +37,7 @@ const GlobalStylesVariationContainer = ( {
 								css: inlineCss,
 								isGlobalStyles: true,
 							},
-					  ]
+						]
 					: [] ),
 				{
 					css: 'html{overflow:hidden}body{min-width: 0;padding: 0;border: none;transform:scale(1);}',

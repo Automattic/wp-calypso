@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { contextTypes } from '../context-types';
+import { TourContext } from '../context';
 
 export default class Tour extends Component {
 	static propTypes = {
@@ -10,7 +10,7 @@ export default class Tour extends Component {
 		when: PropTypes.func,
 	};
 
-	static contextTypes = contextTypes;
+	static contextType = TourContext;
 
 	render() {
 		const { children } = this.props;

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { type JSX, ReactNode } from 'react';
 
 export interface TaskExtraData {
 	about_page_id?: number;

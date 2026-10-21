@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/variables";
+
 // Actions for Individual Comments
 .comments__comment-actions {
 	align-items: center;
@@ -27,7 +29,8 @@
 
 		&:hover,
 		button.is-active,
-		&.like-button.is-liked {
+		&.like-button.is-liked,
+		&.like-button.is-pressed {
 			color: var(--color-link);
 
 			svg.reader-star path {
@@ -35,7 +38,11 @@
 			}
 		}
 
-		&.like-button.is-liked {
+		// Overrides the dark background @wordpress/components applies to Button's aria-pressed state.
+		&.like-button.is-liked,
+		&.like-button.is-pressed {
+			background: transparent;
+
 			svg.reader-star path {
 				fill: var(--color-link);
 			}

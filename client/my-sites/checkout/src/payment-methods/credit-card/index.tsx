@@ -1,5 +1,4 @@
 import { PaymentLogo } from '@automattic/wpcom-checkout';
-import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
 import {
@@ -14,25 +13,20 @@ import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/src/components/summary-details';
+import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
-import type { WpcomCreditCardSelectors } from './store';
-import type { CardFieldState, CardStoreType } from './types';
+import { useCreditCardStoreState } from './store';
+import type { CardStoreType } from './types';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { ReactNode } from 'react';
 
 export { createCreditCardPaymentMethodStore } from './store';
 
-function CreditCardSummary() {
-	const fields: CardFieldState = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
-		[]
-	);
+function CreditCardSummary( { store }: { store: CardStoreType } ) {
+	const fields = useCreditCardStoreState( store, ( state ) => state.fields );
 	const cardholderName = fields.cardholderName;
-	const brand: string = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getBrand(),
-		[]
-	);
+	const brand = useCreditCardStoreState( store, ( state ) => state.brand || '' );
 
 	return (
 		<SummaryDetails>
@@ -62,6 +56,25 @@ const CreditCardLabel: React.FC< {
 };
 
 function CreditCardLogos( { currency }: { currency: string | null } ) {
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
+
+	// VISA / MasterCard / AMEX + a "+N" pill (Figma 3971:13250). N counts only what
+	// the control strip advertises for this currency (CB on EUR, JCB on JPY) — the
+	// pill is a claim about accepted cards, so it must not overcount.
+	if ( isMobileCheckoutStickySummary ) {
+		const overflowCount = currency === 'EUR' || currency === 'JPY' ? 1 : 0;
+		return (
+			<PaymentMethodLogos className="credit-card__logos">
+				<VisaLogo />
+				<MastercardLogo />
+				<AmexLogo />
+				{ overflowCount > 0 && (
+					<span className="credit-card__logos-overflow">{ `+${ overflowCount }` }</span>
+				) }
+			</PaymentMethodLogos>
+		);
+	}
+
 	return (
 		<PaymentMethodLogos className="credit-card__logos">
 			{ currency === 'EUR' && <CBLogo className="has-background" /> }
@@ -99,6 +112,7 @@ export function createCreditCardMethod( {
 		hasRequiredFields: true,
 		activeContent: (
 			<CreditCardFields
+				store={ store }
 				shouldUseEbanx={ shouldUseEbanx }
 				shouldShowTaxFields={ shouldShowTaxFields }
 				allowUseForAllSubscriptions={ allowUseForAllSubscriptions }
@@ -111,7 +125,7 @@ export function createCreditCardMethod( {
 				submitButtonContent={ submitButtonContent }
 			/>
 		),
-		inactiveContent: <CreditCardSummary />,
+		inactiveContent: <CreditCardSummary store={ store } />,
 		getAriaLabel: ( __: ( text: string ) => string ) => __( 'Credit Card' ),
 	};
 }

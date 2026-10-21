@@ -5,13 +5,29 @@ export type AtmosphereError =
 	| { kind: 'auth_required' }
 	| { kind: 'connection_not_found' }
 	| { kind: 'not_found' }
+	// retry_after is in seconds, matching the Bluesky and wpcom contract.
 	| { kind: 'rate_limited'; retry_after?: number }
 	| { kind: 'upstream_unavailable' }
-	| { kind: 'bad_request'; message: string }
+	| { kind: 'bad_request'; message: string | null }
+	| { kind: 'text_too_long' }
+	| { kind: 'reply_disabled' }
+	| { kind: 'quote_disabled' }
+	| { kind: 'target_unavailable' }
+	// Set client-side from `compressImage` failures; the server never emits
+	// a matching wire code (the slice-8a backend collapses every blob/media
+	// rejection into `atmosphere_bad_request`, which lands as `bad_request`
+	// above).
+	| { kind: 'blob_decode_failed' }
 	| { kind: 'unknown'; cause: unknown };
 
 interface WpErrorLike {
+	// The wpcom-proxy / wpcom-xhr-request transports surface the WP REST
+	// envelope's error code as `code` on the thrown error. Some legacy
+	// callsites (and the existing test fixtures) populate `error` instead.
+	// Accept both so live errors classify correctly regardless of which
+	// transport raised them.
 	error?: string;
+	code?: string;
 	statusCode?: number;
 	status?: number;
 	message?: string;
@@ -19,14 +35,18 @@ interface WpErrorLike {
 }
 
 function isWpErrorLike( e: unknown ): e is WpErrorLike {
-	return typeof e === 'object' && e !== null && 'error' in ( e as object );
+	if ( typeof e !== 'object' || e === null ) {
+		return false;
+	}
+	return 'error' in ( e as object ) || 'code' in ( e as object );
 }
 
 export function classifyAtmosphereError( raw: unknown ): AtmosphereError {
 	if ( ! isWpErrorLike( raw ) ) {
 		return { kind: 'unknown', cause: raw };
 	}
-	switch ( raw.error ) {
+	const errorCode = raw.error ?? raw.code;
+	switch ( errorCode ) {
 		case 'invalid_handle':
 			return { kind: 'invalid_handle' };
 		case 'invalid_credentials':
@@ -34,6 +54,7 @@ export function classifyAtmosphereError( raw: unknown ): AtmosphereError {
 		case 'auth_failed':
 			return { kind: 'auth_failed' };
 		case 'atmosphere_auth_required':
+		case 'atmosphere_unauthenticated':
 			return { kind: 'auth_required' };
 		case 'connection_not_found':
 			return { kind: 'connection_not_found' };
@@ -51,7 +72,16 @@ export function classifyAtmosphereError( raw: unknown ): AtmosphereError {
 		case 'atmosphere_upstream_unavailable':
 			return { kind: 'upstream_unavailable' };
 		case 'bad_request':
-			return { kind: 'bad_request', message: raw.message ?? '' };
+		case 'atmosphere_bad_request':
+			return { kind: 'bad_request', message: raw.message ?? null };
+		case 'atmosphere_text_too_long':
+			return { kind: 'text_too_long' };
+		case 'atmosphere_reply_disabled':
+			return { kind: 'reply_disabled' };
+		case 'atmosphere_quote_disabled':
+			return { kind: 'quote_disabled' };
+		case 'atmosphere_target_unavailable':
+			return { kind: 'target_unavailable' };
 		default:
 			return { kind: 'unknown', cause: raw };
 	}

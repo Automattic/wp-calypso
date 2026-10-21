@@ -4,6 +4,7 @@ import {
 	PageId,
 	CUSTOM_PAGE,
 } from 'calypso/signup/difm/constants';
+import { newInstanceId } from 'calypso/signup/difm/page-instances';
 import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX,
 	SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_UPLOAD_COMPLETED,
@@ -25,7 +26,7 @@ import type { TranslateResult } from 'i18n-calypso';
 import 'calypso/state/signup/init';
 
 export type MediaUploadedData = {
-	pageId: PageId;
+	pageId: string; // opaque PageData instance id
 	mediaIndex: number;
 	media: Partial< Media >;
 };
@@ -36,21 +37,21 @@ export function mediaUploaded( data: MediaUploadedData ) {
 	};
 }
 
-export function mediaRemoved( data: { pageId: PageId; mediaIndex: number } ) {
+export function mediaRemoved( data: { pageId: string; mediaIndex: number } ) {
 	return {
 		type: SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_REMOVED,
 		payload: data,
 	};
 }
 
-export function mediaUploadInitiated( data: { pageId: PageId; mediaIndex: number } ) {
+export function mediaUploadInitiated( data: { pageId: string; mediaIndex: number } ) {
 	return {
 		type: SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_UPLOAD_STARTED,
 		payload: data,
 	};
 }
 
-export function mediaUploadFailed( data: { pageId: PageId; mediaIndex: number } ) {
+export function mediaUploadFailed( data: { pageId: string; mediaIndex: number } ) {
 	return {
 		type: SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_UPLOAD_FAILED,
 		payload: data,
@@ -180,21 +181,90 @@ function getInitialTitle( {
 
 /**
  * This action essentially maps server state to local state.
- * Page titles are currently picked from client app translations, but
- * they will be a part of local & server state in the future.
+ * When selectedPageInstances is present, one PageData is built per instance (id: instance.id)
+ * so each custom page has distinct title/content. Otherwise falls back to selectedPageTitles
+ * with order-based consumption of saved pages per type.
  */
 export function initializeWebsiteContentForm(
 	websiteContentServerState: WebsiteContentServerState,
 	translatedPageTitles: Record< PageId, TranslateResult >
 ) {
-	const { selectedPageTitles, pages, siteLogoUrl, searchTerms, genericFeedback } =
-		websiteContentServerState;
+	const {
+		selectedPageTitles,
+		selectedPageInstances,
+		pages,
+		siteLogoUrl,
+		searchTerms,
+		genericFeedback,
+	} = websiteContentServerState;
 
-	const generatedPages = selectedPageTitles.map( ( pageId ) => {
-		const savedContent = pages.find( ( page ) => page.id === pageId );
+	// Index saved pages by id (instance id or PageId) for direct lookup when using instances
+	const pagesByInstanceId = pages.reduce< Record< string, ( typeof pages )[ 0 ] > >(
+		( acc, page ) => {
+			acc[ String( page.id ) ] = page;
+			return acc;
+		},
+		{}
+	);
+
+	// When we have instances, build one PageData per instance; match saved content by instance id
+	if ( selectedPageInstances?.length ) {
+		const generatedPages = selectedPageInstances.map( ( instance ) => {
+			const savedContent = pagesByInstanceId[ instance.id ];
+			const pageId = instance.type;
+			return {
+				id: instance.id,
+				type: pageId,
+				title: getInitialTitle( {
+					pageId,
+					savedTitle: savedContent?.title ?? instance.title,
+					translatedPageTitle: translatedPageTitles[ pageId ],
+				} ),
+				content: savedContent?.content ?? '',
+				displayEmail: savedContent?.displayEmail || undefined,
+				displayPhone: savedContent?.displayPhone || undefined,
+				displayAddress: savedContent?.displayAddress || undefined,
+				useFillerContent: savedContent?.useFillerContent || false,
+				media: getInitialMediaState( pageId, savedContent?.media ),
+			};
+		} );
 
 		return {
-			id: pageId,
+			type: SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES,
+			payload: {
+				pages: generatedPages,
+				siteInformationSection: { siteLogoUrl, searchTerms },
+				feedbackSection: { genericFeedback },
+			},
+		};
+	}
+
+	/**
+	 * Fallback: no selectedPageInstances. There may be multiple pages of the same type.
+	 * Align each selectedPageTitles entry with a corresponding saved page of the same id,
+	 * consuming saved pages in order so that instances don't all point to the first match.
+	 */
+	const pagesById = pages.reduce<
+		Partial< Record< PageId, WebsiteContentServerState[ 'pages' ] > >
+	>( ( acc, page ) => {
+		const list = acc[ page.id as PageId ] ?? [];
+		list.push( page );
+		acc[ page.id as PageId ] = list;
+		return acc;
+	}, {} );
+
+	const usedIndexById: Partial< Record< PageId, number > > = {};
+
+	const generatedPages = selectedPageTitles.map( ( pageId ) => {
+		const listForId = pagesById[ pageId ] ?? [];
+		const usedIndex = usedIndexById[ pageId ] ?? 0;
+		const savedContent = listForId[ usedIndex ];
+
+		usedIndexById[ pageId ] = usedIndex + 1;
+
+		return {
+			id: newInstanceId(),
+			type: pageId,
 			title: getInitialTitle( {
 				pageId,
 				savedTitle: savedContent?.title,

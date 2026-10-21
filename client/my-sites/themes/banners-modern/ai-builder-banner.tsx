@@ -25,7 +25,7 @@ const AIBuilderBanner = () => {
 				<Button
 					className="banner-modern__button"
 					variant="primary"
-					href="/setup/ai-site-builder"
+					href="/setup/ai-site-builder-onboarding"
 					onClick={ trackClick }
 				>
 					{ translate( 'Start with AI' ) }

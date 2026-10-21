@@ -1,6 +1,7 @@
+import { useIsomorphicLayoutEffect } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import Gridicon from '../../gridicon';
 import Popover from '../../popover';
 
@@ -39,11 +40,11 @@ const PremiumBadge = ( {
 		? __(
 				'Let your site stand out from the crowd with a modern and stylish Premium theme. Premium themes are included in your plan.',
 				__i18n_text_domain__
-		  )
+			)
 		: __(
 				'Let your site stand out from the crowd with a modern and stylish Premium theme.',
 				__i18n_text_domain__
-		  );
+			);
 
 	const divRef = useRef( null );
 	const labelRef = useRef< HTMLDivElement >( null );
@@ -58,7 +59,9 @@ const PremiumBadge = ( {
 	const labelText = customLabelText || __( 'Premium' );
 
 	// Display the label as a tooltip if the tooltip is being hidden and the label is too long.
-	useLayoutEffect( () => {
+	// useIsomorphicLayoutEffect falls back to useEffect on the server, avoiding React's
+	// "useLayoutEffect does nothing on the server" warning when the badge is server-rendered.
+	useIsomorphicLayoutEffect( () => {
 		const scrollWidth = labelRef?.current?.scrollWidth ?? 0;
 		const offsetWidth = labelRef?.current?.offsetWidth ?? 0;
 		setDisplayLabelAsTooltip( !! shouldHideTooltip && scrollWidth > offsetWidth );

@@ -7,4 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Update Jest, `jest-config` and `babel-jest` to v30.
+
 Initial release
+
+## 1.0.1
+
+- Declare React 19 compatibility for package consumers (#111721).

@@ -1,9 +1,8 @@
-import { fetchReaderTeams } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
+import { readTeamsQuery } from './read-teams';
 
 export const isAutomatticianQuery = () =>
 	queryOptions( {
-		queryKey: [ 'me', 'is-automattician' ],
-		queryFn: fetchReaderTeams,
+		...readTeamsQuery(),
 		select: ( data ) => data.teams.some( ( team ) => team.slug === 'a8c' ),
 	} );

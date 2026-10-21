@@ -1,0 +1,30 @@
+@import '@wordpress/base-styles/mixins';
+
+// Hero
+.amplify-landing-hero-text {
+	max-inline-size: 640px;
+}
+
+// Hero grid + alignment overrides: widen the left (text) column and pin the
+// score card to the end of its column so it hugs the hero's right edge.
+.amplify-landing-hero {
+	.page-section-columns__content {
+		@include break-large {
+			grid-template-columns: 1fr 0.65fr;
+		}
+	}
+
+	.page-section-column.is-align-center {
+		justify-content: flex-end;
+	}
+
+	// Larger hero CTA to sit alongside the headline. Scoped under the hero and
+	// with a doubled class for specificity over the default Button styling
+	// (.components-button.is-primary).
+	.amplify-landing-cta.amplify-landing-cta {
+		block-size: auto;
+		padding-block: 12px;
+		padding-inline: 40px;
+		font-size: 15px;
+	}
+}

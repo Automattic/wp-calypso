@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Button, FormInputValidation, Gridicon, SelectDropdown } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { FC, useState, useCallback, useEffect, useMemo } from 'react';
+import { FC, useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.webp';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
@@ -145,14 +145,22 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		[ selectedSite, handleAutoActivate, manualActivationUrl ]
 	);
 
-	// Prevent auto-activation if it will fail at the initial attempt.
-	const [ attemptAutoActivate, setAttemptAutoActivate ] = useState( true );
+	// Ref instead of state so the guard flips synchronously before the dispatch
+	// inside `handleAutoActivate`. Under React 18 + react-redux's
+	// `useSyncExternalStore`, a dispatch in an effect can force a subscriber
+	// re-render before a sibling `setState` commits, which would otherwise
+	// re-enter this effect and dispatch repeatedly.
+	const autoActivateAttemptedRef = useRef( false );
 	useEffect( () => {
-		if ( attemptAutoActivate && fromSiteSlug && initialSelectedSite.includes( fromSiteSlug ) ) {
-			setAttemptAutoActivate( false );
+		if (
+			! autoActivateAttemptedRef.current &&
+			fromSiteSlug &&
+			initialSelectedSite.includes( fromSiteSlug )
+		) {
+			autoActivateAttemptedRef.current = true;
 			handleAutoActivate( initialSelectedSite );
 		}
-	}, [ attemptAutoActivate, fromSiteSlug, handleAutoActivate, initialSelectedSite ] );
+	}, [ fromSiteSlug, handleAutoActivate, initialSelectedSite ] );
 
 	useEffect( () => {
 		if ( error || supportTicketRequestStatus === undefined ) {

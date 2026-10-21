@@ -2,23 +2,32 @@ import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import {
+	Button,
+	ExternalLink,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { Icon, envelope, formatListBullets, help } from '@wordpress/icons';
+import { __, sprintf } from '@wordpress/i18n';
+import { Icon, envelope, file, formatListBullets, help, wordpress } from '@wordpress/icons';
 import { Fragment, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { Card, CardBody, CardDivider } from '../../components/card';
+import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import { hasHostingFeature } from '../../utils/site-features';
 import {
 	getJetpackCriticalErrorMessage,
+	getJetpackRecoverySessionErrors,
 	isInJetpackCriticalErrorState,
 } from '../../utils/site-jetpack-critical-error';
 import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
+import type { JetpackRecoverySessionError } from '@automattic/api-core';
 import type { ReactElement, ReactNode } from 'react';
 
 type Item = {
@@ -29,6 +38,31 @@ type Item = {
 // Poll while the user is on the critical-error screen so we can send them back
 // to the overview as soon as the site comes back online.
 const RECOVERY_POLL_INTERVAL_MS = 30_000;
+
+const RecoveryErrorNotice = ( { error }: { error: JetpackRecoverySessionError } ) => (
+	<VStack spacing={ 3 }>
+		<SectionHeader
+			level={ 3 }
+			title={ error.kind === 'themes' ? __( 'Suspected theme' ) : __( 'Suspected plugin' ) }
+		/>
+		<Notice variant="error">
+			<VStack spacing={ 1 }>
+				<Text weight={ 500 }>
+					{ error.version ? `${ error.slug } (v${ error.version })` : error.slug }
+				</Text>
+				<Text>{ error.message }</Text>
+				<Text variant="muted">
+					{ sprintf(
+						/* translators: 1: file path, 2: line number */
+						__( '%1$s:%2$d' ),
+						error.file,
+						error.line
+					) }
+				</Text>
+			</VStack>
+		</Notice>
+	</VStack>
+);
 
 const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 	const { data: site } = useSuspenseQuery( {
@@ -44,6 +78,8 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 		isAdmin &&
 		siteTypeSupportsFeature( site, 'logs' ) &&
 		hasHostingFeature( site, HostingFeatures.LOGS );
+	// Deliberately ignores the plan: the SFTP/SSH settings page upsells sites that lack the feature.
+	const canViewSftpSshSettingsRoute = isAdmin && siteTypeSupportsFeature( site, 'settingsServer' );
 	const hasRecovered = ! isInJetpackCriticalErrorState( site );
 
 	useEffect( () => {
@@ -62,12 +98,31 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 	}, [ hasRecovered, navigate, siteSlug ] );
 
 	const message = getJetpackCriticalErrorMessage( site );
+	const recoveryErrors = isAdmin ? getJetpackRecoverySessionErrors( site ) : [];
 
 	const items: Item[] = [];
 	if ( isAdmin ) {
 		items.push( {
 			icon: envelope,
-			text: __( 'Check your site admin email inbox for instructions to troubleshoot.' ),
+			text: createInterpolateElement(
+				// translators: <q/> is the search phrase to use in the email inbox.
+				__(
+					'Search your admin email inbox for the keyword <q/> for troubleshooting instructions.'
+				),
+				{ q: <strong>{ __( 'critical error' ) }</strong> }
+			),
+		} );
+	}
+	if ( isAdmin && site.options?.admin_url ) {
+		items.push( {
+			icon: wordpress,
+			text: createInterpolateElement(
+				// translators: <a/> is a link to the site's wp-admin with the text "Visit your site"
+				__( '<a>Visit your site</a> to check available recovery options.' ),
+				{
+					a: <ExternalLink href={ site.options.admin_url } children={ null } />,
+				}
+			),
 		} );
 	}
 	if ( canAccessPhpLogs ) {
@@ -78,7 +133,32 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 				__( '<phpLogsLink/> to locate any fatal errors on your site.' ),
 				{
 					phpLogsLink: (
-						<Link to={ `/sites/${ siteSlug }/logs/php` }>{ __( 'Review the PHP logs' ) }</Link>
+						<Link to={ `/sites/${ siteSlug }/logs/php` } search={ { severity: 'Fatal error' } }>
+							{ __( 'Review the PHP logs' ) }
+						</Link>
+					),
+				}
+			),
+		} );
+	}
+	if ( canViewSftpSshSettingsRoute ) {
+		items.push( {
+			icon: file,
+			text: createInterpolateElement(
+				// translators: <sftpLink/> is a link to the SFTP/SSH settings page with the text "Connect over SFTP/SSH"
+				__( '<sftpLink/> to edit the files responsible for the error.' ),
+				{
+					sftpLink: (
+						<Link
+							to={ `/sites/${ siteSlug }/settings/sftp-ssh` }
+							onClick={ () =>
+								recordTracksEvent( 'calypso_dashboard_critical_error_sftp_click', {
+									has_sftp_feature: hasHostingFeature( site, HostingFeatures.SFTP ),
+								} )
+							}
+						>
+							{ __( 'Connect over SFTP/SSH' ) }
+						</Link>
 					),
 				}
 			),
@@ -112,19 +192,30 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 			}
 			size="small"
 		>
-			<Card>
-				{ items.map( ( item, index ) => (
-					<Fragment key={ index }>
-						<CardBody>
-							<HStack spacing={ 3 } alignment="center" justify="flex-start">
-								<Icon icon={ item.icon } size={ 20 } />
-								<Text>{ item.text }</Text>
-							</HStack>
-						</CardBody>
-						{ index < items.length - 1 && <CardDivider /> }
-					</Fragment>
+			<VStack spacing={ 4 }>
+				{ recoveryErrors.map( ( error, index ) => (
+					<RecoveryErrorNotice
+						key={ `${ error.kind }-${ error.slug }-${ index }` }
+						error={ error }
+					/>
 				) ) }
-			</Card>
+				<VStack spacing={ 3 }>
+					<SectionHeader level={ 3 } title={ __( 'What you can try next' ) } />
+					<Card>
+						{ items.map( ( item, index ) => (
+							<Fragment key={ index }>
+								<CardBody>
+									<HStack spacing={ 3 } alignment="center" justify="flex-start">
+										<Icon icon={ item.icon } size={ 20 } />
+										<Text>{ item.text }</Text>
+									</HStack>
+								</CardBody>
+								{ index < items.length - 1 && <CardDivider /> }
+							</Fragment>
+						) ) }
+					</Card>
+				</VStack>
+			</VStack>
 		</PageLayout>
 	);
 };

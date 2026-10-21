@@ -1,15 +1,22 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
-import type { AtmosphereError } from '@automattic/api-core';
+import type { SocialError } from '../../types';
 
 interface FeedListEmptyProps {
-	error: AtmosphereError | null;
+	error: SocialError | null;
 	onRetry: () => void;
 	emptyTitle: string;
 	emptyLine: string;
 	emptyActionLabel?: string;
 	emptyActionURL?: string;
+	protocolLabel: string;
+	protocolHomeURL: string;
+	protocolHomeLabel: string;
+	// Protocols without a working reconnect flow (Bluesky, Fediverse) pass
+	// this to replace the default "Reconnect needed" + protocol-home link
+	// with generic copy + a Retry button.
+	authRequiredCopy?: { title: string; line: string };
 }
 
 export function FeedListEmpty( {
@@ -19,6 +26,10 @@ export function FeedListEmpty( {
 	emptyLine,
 	emptyActionLabel,
 	emptyActionURL,
+	protocolLabel,
+	protocolHomeURL,
+	protocolHomeLabel,
+	authRequiredCopy,
 }: FeedListEmptyProps ) {
 	const translate = useTranslate();
 
@@ -35,23 +46,47 @@ export function FeedListEmpty( {
 
 	switch ( error.kind ) {
 		case 'auth_required':
+			if ( authRequiredCopy ) {
+				return (
+					<EmptyContent
+						title={ authRequiredCopy.title }
+						line={ authRequiredCopy.line }
+						action={
+							<Button variant="primary" onClick={ onRetry }>
+								{ translate( 'Retry' ) }
+							</Button>
+						}
+					/>
+				);
+			}
 			return (
 				<EmptyContent
 					title={ translate( 'Reconnect needed' ) }
-					line={ translate( 'Your Bluesky connection needs to be reconnected. Coming soon.' ) }
+					line={ translate( 'Your %(protocol)s connection needs to be reconnected.', {
+						args: { protocol: protocolLabel },
+					} ) }
+					action={ protocolHomeLabel }
+					actionURL={ protocolHomeURL }
 				/>
 			);
 		case 'rate_limited': {
-			const retryAfter = ( error as { retry_after?: number } ).retry_after;
+			const retryAfter = error.retry_after;
 			return (
 				<EmptyContent
 					title={ translate( 'Slow down' ) }
 					line={
 						retryAfter
-							? translate( 'Bluesky is asking us to slow down. Try again in %(n)ds.', {
-									args: { n: retryAfter },
-							  } )
-							: translate( 'Bluesky is asking us to slow down. Try again in a moment.' )
+							? translate(
+									'%(protocol)s is asking us to slow down. Try again in %(n)d second.',
+									'%(protocol)s is asking us to slow down. Try again in %(n)d seconds.',
+									{
+										count: retryAfter,
+										args: { protocol: protocolLabel, n: retryAfter },
+									}
+								)
+							: translate( '%(protocol)s is asking us to slow down. Try again in a moment.', {
+									args: { protocol: protocolLabel },
+								} )
 					}
 					action={
 						<Button variant="primary" onClick={ onRetry }>
@@ -64,8 +99,12 @@ export function FeedListEmpty( {
 		case 'upstream_unavailable':
 			return (
 				<EmptyContent
-					title={ translate( 'Bluesky unreachable' ) }
-					line={ translate( 'Bluesky is temporarily unreachable. Try again in a moment.' ) }
+					title={ translate( '%(protocol)s unreachable', {
+						args: { protocol: protocolLabel },
+					} ) }
+					line={ translate( '%(protocol)s is temporarily unreachable. Try again in a moment.', {
+						args: { protocol: protocolLabel },
+					} ) }
 					action={
 						<Button variant="primary" onClick={ onRetry }>
 							{ translate( 'Retry' ) }
@@ -78,15 +117,19 @@ export function FeedListEmpty( {
 				<EmptyContent
 					title={ translate( 'Connection not found' ) }
 					line={ translate( 'This connection no longer exists.' ) }
-					action={ translate( 'Back to ATmosphere' ) }
-					actionURL="/reader/atmosphere"
+					action={ protocolHomeLabel }
+					actionURL={ protocolHomeURL }
 				/>
 			);
 		default:
 			return (
 				<EmptyContent
 					title={ translate( "Couldn't load timeline" ) }
-					line={ translate( 'Something went wrong.' ) }
+					// Prefer the backend-supplied message when the projector
+					// passed one through (e.g. bad_request validation copy).
+					// Falls back to the generic line for protocol-side errors
+					// that don't carry actionable detail.
+					line={ error.message ?? translate( 'Something went wrong.' ) }
 					action={
 						<Button variant="primary" onClick={ onRetry }>
 							{ translate( 'Retry' ) }

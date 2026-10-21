@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/editor/init';
 
 /**
@@ -9,5 +7,5 @@ import 'calypso/state/editor/init';
  * @returns {?Object}         Original image dimensions, if known
  */
 export default function getImageEditorOriginalAspectRatio( state ) {
-	return get( state, 'editor.imageEditor.originalAspectRatio', null );
+	return state?.editor?.imageEditor?.originalAspectRatio ?? null;
 }

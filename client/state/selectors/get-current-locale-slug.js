@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/ui/init';
 
 /**
@@ -8,5 +6,5 @@ import 'calypso/state/ui/init';
  * @returns {string} current state value
  */
 export default function getCurrentLocaleSlug( state ) {
-	return get( state, 'ui.language.localeSlug', null );
+	return state?.ui?.language?.localeSlug ?? null;
 }

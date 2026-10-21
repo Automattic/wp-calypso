@@ -1,7 +1,9 @@
 import config from '@automattic/calypso-config';
 import { type Request, type Response, type NextFunction } from 'express';
-import { type Details as UserAgentDetails, parse as parseUserAgent } from 'express-useragent';
+import userAgent, { type AgentDetails as UserAgentDetails } from 'express-useragent';
 import unsupportedBrowserMiddleware from '../../middleware/unsupported-browser';
+
+const parseUserAgent = ( source: string ) => userAgent.parse( source );
 
 jest.mock( '@automattic/calypso-config', () =>
 	Object.assign(

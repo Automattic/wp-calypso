@@ -1,6 +1,5 @@
 import { isJetpackProduct } from '@automattic/calypso-products';
-import { some } from 'lodash';
-import { getSitePurchases } from './get-site-purchases';
+import { getRawSitePurchases } from './get-raw-site-purchases';
 
 import 'calypso/state/purchases/init';
 
@@ -11,5 +10,5 @@ import 'calypso/state/purchases/init';
  * @returns {boolean} True if the site has an active Jetpack purchase, false otherwise.
  */
 export const siteHasJetpackProductPurchase = ( state, siteId ) => {
-	return some( getSitePurchases( state, siteId ), ( purchase ) => isJetpackProduct( purchase ) );
+	return getRawSitePurchases( state, siteId ).some( ( purchase ) => isJetpackProduct( purchase ) );
 };

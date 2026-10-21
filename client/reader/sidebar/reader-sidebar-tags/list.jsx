@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
@@ -14,11 +14,12 @@ export class ReaderSidebarTagsList extends Component {
 		path: PropTypes.string.isRequired,
 		currentTag: PropTypes.string,
 		translate: PropTypes.func,
+		recordReaderTracksEvent: PropTypes.func,
 	};
 
 	renderItems() {
 		const { path, currentTag, tags } = this.props;
-		return map( tags, ( tag ) => (
+		return ( tags ?? [] ).map( ( tag ) => (
 			<ReaderSidebarTagsListItem
 				key={ tag.id }
 				tag={ tag }
@@ -27,11 +28,11 @@ export class ReaderSidebarTagsList extends Component {
 			/>
 		) );
 	}
-	trackTagsPageClick() {
+	trackTagsPageClick = () => {
 		recordAction( 'clicked_reader_sidebar_tags_page_link' );
 		recordGaEvent( 'Clicked Reader Sidebar Tags Page Link' );
-		recordReaderTracksEvent( 'calypso_reader_sidebar_tags_page_link_clicked' );
-	}
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_tags_page_link_clicked' );
+	};
 	render() {
 		return (
 			<>
@@ -39,6 +40,7 @@ export class ReaderSidebarTagsList extends Component {
 				<MenuItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/tags', this.props.path, {
 						'sidebar-dynamic-menu__tag': true,
+						'sidebar__menu-item--reader-tag': true,
 					} ) }
 				>
 					<MenuItemLink href="/tags" onClick={ this.trackTagsPageClick }>
@@ -52,4 +54,6 @@ export class ReaderSidebarTagsList extends Component {
 	}
 }
 
-export default localize( ReaderSidebarTagsList );
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( localize( ReaderSidebarTagsList ) );

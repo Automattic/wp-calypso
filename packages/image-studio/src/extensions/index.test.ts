@@ -42,6 +42,7 @@ describe( 'Extension Registration', () => {
 
 	describe( 'registerBlockEditorFilters', () => {
 		it( 'should register all three filters when called', () => {
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
 			const { registerBlockEditorFilters } = require( './index' );
 
 			registerBlockEditorFilters();
@@ -78,6 +79,7 @@ describe( 'Extension Registration', () => {
 		} );
 
 		it( 'should only register filters once (idempotency)', () => {
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
 			const { registerBlockEditorFilters } = require( './index' );
 
 			registerBlockEditorFilters();
@@ -89,6 +91,7 @@ describe( 'Extension Registration', () => {
 		} );
 
 		it( 'should use correct namespace for filters', () => {
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
 			const { registerBlockEditorFilters } = require( './index' );
 			registerBlockEditorFilters();
 

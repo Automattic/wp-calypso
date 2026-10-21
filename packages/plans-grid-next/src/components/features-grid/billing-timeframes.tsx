@@ -1,3 +1,4 @@
+import { isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
 import clsx from 'clsx';
 import { GridPlan } from '../../types';
 import PlanDivOrTdContainer from '../plan-div-td-container';
@@ -17,6 +18,10 @@ const BillingTimeframes = ( {
 	showRefundPeriod,
 }: BillingTimeframesProps ) => {
 	return renderedGridPlans.map( ( { planSlug } ) => {
+		if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+			return null;
+		}
+
 		const classes = clsx(
 			'plan-features-2023-grid__table-item',
 			'plan-features-2023-grid__header-billing-info'

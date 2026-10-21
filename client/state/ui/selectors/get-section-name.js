@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import getSection from './get-section';
 
 /**
@@ -7,5 +6,5 @@ import getSection from './get-section';
  * @returns {?string}       Current section name
  */
 export default function getSectionName( state ) {
-	return get( getSection( state ), 'name', null );
+	return getSection( state )?.name ?? null;
 }

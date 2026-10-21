@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button, Card, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -61,9 +60,9 @@ class StepSourceSelect extends Component {
 					this.props.recordTracksEvent( 'calypso_importer_wordpress_enter_url', {
 						url: result.site_url,
 						engine: result.site_engine,
-						has_jetpack: !! get( result, 'site_meta.jetpack_version', false ),
-						jetpack_version: get( result, 'site_meta.jetpack_version', 'no jetpack' ),
-						is_wpcom: get( result, 'site_meta.wpcom_site', false ),
+						has_jetpack: !! ( result?.site_meta?.jetpack_version ?? false ),
+						jetpack_version: result?.site_meta?.jetpack_version ?? 'no jetpack',
+						is_wpcom: result?.site_meta?.wpcom_site ?? false,
 					} );
 
 					switch ( result.site_engine ) {

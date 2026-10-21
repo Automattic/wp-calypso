@@ -42,7 +42,7 @@ const LOCALIZABLE_URLS = [
 const getCallee = require( '../util/get-callee' );
 
 /**
- * A helper funciton that would return the parent node which is relevant to the specific rule checks.
+ * A helper function that would return the parent node which is relevant to the specific rule checks.
  * @param   {Object} node
  * @returns {Object}
  */

@@ -3,7 +3,7 @@ import { useState } from '@wordpress/element';
 import { chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import type { ReactNode } from 'react';
+import type { ReactNode, JSX } from 'react';
 
 import './style.scss';
 

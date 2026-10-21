@@ -2,7 +2,9 @@
  * @module comment-replies-cache/index
  */
 
-const debug = require( 'debug' )( 'notifications:note' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'notifications:note' );
 
 function getItem( key ) {
 	let item;

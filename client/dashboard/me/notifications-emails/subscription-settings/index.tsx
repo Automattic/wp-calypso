@@ -13,6 +13,7 @@ import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { NavigationBlocker } from '../../../app/navigation-blocker';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../../components/card';
 import { getSettings, getSettingsKeys, SubscriptionSettingsForm, type SettingsData } from './form';
 
@@ -43,15 +44,12 @@ export const SubscriptionSettings = () => {
 	const [ dataState, setDataState ] = useState< SettingsData >( originalSettings );
 	const { recordTracksEvent } = useAnalytics();
 
-	const { mutate: saveSettings, isPending: isSaving } = useMutation( {
-		...userSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Subscription settings saved.' ),
-				error: __( 'Failed to save subscription settings.' ),
-			},
-		},
-	} );
+	const { mutate: saveSettings, isPending: isSaving } = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: __( 'Subscription settings saved.' ),
+			error: __( 'Failed to save subscription settings.' ),
+		} )
+	);
 
 	const isDataStateDirty = useMemo(
 		() => isDirty( dataState, originalSettings ),

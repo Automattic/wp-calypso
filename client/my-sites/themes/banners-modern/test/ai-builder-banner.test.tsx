@@ -31,7 +31,7 @@ describe( 'AIBuilderBanner', () => {
 		render( <AIBuilderBanner /> );
 		const button = screen.getByRole( 'link', { name: 'Start with AI' } );
 		expect( button ).toBeVisible();
-		expect( button ).toHaveAttribute( 'href', '/setup/ai-site-builder' );
+		expect( button ).toHaveAttribute( 'href', '/setup/ai-site-builder-onboarding' );
 	} );
 
 	test( 'tracks click event when CTA is clicked', async () => {

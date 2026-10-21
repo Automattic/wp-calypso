@@ -8,6 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import {
 	showDSP,
@@ -88,10 +89,11 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 		if ( goToCampaigns ) {
 			page( getAdvertisingDashboardPath( `/campaigns/${ siteSlug }` ) );
 		} else {
-			queryClient &&
+			if ( queryClient ) {
 				queryClient.invalidateQueries( {
 					queryKey: [ 'promote-post-campaigns', siteId ],
 				} );
+			}
 			if ( previousRoute ) {
 				closeModal();
 			} else {
@@ -101,6 +103,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	};
 
 	useEffect( () => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		isVisible &&
 			( async () => {
 				if ( props.siteId === null || props.postId === null ) {
@@ -178,7 +181,11 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 							}
 						} }
 					>
-						<h2>{ translate( 'Blaze - Powered by Jetpack' ) }</h2>
+						<h2>Blaze Ads</h2>
+						<div className="blazepress-widget__jetpack-powered">
+							<JetpackLogo monochrome size={ 18 } />
+							<span>{ translate( 'Jetpack powered' ) }</span>
+						</div>
 					</BlankCanvas.Header>
 
 					<div className={ clsx( 'blazepress-widget__content', { loading: isLoading } ) }>

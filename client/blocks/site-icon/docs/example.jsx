@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import SiteIcon from '../';
@@ -13,7 +12,7 @@ const EN_BLOG_SITE_ID = 3584907;
 const SiteIconExample = ( { siteId } ) => <SiteIcon siteId={ siteId || EN_BLOG_SITE_ID } />;
 
 const ConnectedSiteIconExample = connect( ( state ) => ( {
-	siteId: get( getCurrentUser( state ), 'primary_blog' ),
+	siteId: getCurrentUser( state )?.primary_blog,
 } ) )( SiteIconExample );
 
 ConnectedSiteIconExample.displayName = 'SiteIcon';

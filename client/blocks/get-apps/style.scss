@@ -1,6 +1,7 @@
+@import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import "@automattic/typography/styles/variables";
 
 main.get-apps {
 	.get-apps__wrapper {

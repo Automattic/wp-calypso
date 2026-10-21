@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { withStorageKey } from '@automattic/state-utils';
-import { isEqual } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
 import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,

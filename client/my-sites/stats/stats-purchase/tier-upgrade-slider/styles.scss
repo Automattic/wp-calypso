@@ -1,5 +1,6 @@
 @use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
 
 $slider-height: 40px;
@@ -51,11 +52,16 @@ $track-height: 4px;
 		}
 	}
 
+	// A filled circle rather than the bordered pill the slider ships, so the thumb, the filled track
+	// and the selected mark read as one selection. All three take the admin theme colour for the
+	// same reason the purchase CTA beside them does — they are one control group on one screen.
+	// The Jetpack green stays as the fallback the vendored slider uses, so the two stylesheets agree
+	// on what happens where no admin theme colour is published.
 	.jp-components-pricing-slider__thumb.tier-upgrade-slider__thumb {
 		width: $thumb-width;
 		height: $slider-height;
 		border-radius: 50%;
-		background-color: var(--jp-green-40);
+		background-color: var(--wp-admin-theme-color, var(--jp-green-40));
 		color: var(--jp-white);
 	}
 
@@ -95,22 +101,8 @@ $track-height: 4px;
 		}
 
 		.jp-components-pricing-slider__mark--selected {
-			background-color: var(--jp-green-40);
-			border-color: var(--jp-green-40);
-		}
-	}
-}
-
-// Override colors for WPCOM context.
-.stats-purchase-page--is-wpcom {
-	.jp-components-pricing-slider__thumb.tier-upgrade-slider__thumb {
-		background-color: var(--color-primary);
-	}
-
-	.jp-components-pricing-slider__control {
-		.jp-components-pricing-slider__mark--selected {
-			background-color: var(--color-primary);
-			border-color: var(--color-primary);
+			background-color: var(--wp-admin-theme-color, var(--jp-green-40));
+			border-color: var(--wp-admin-theme-color, var(--jp-green-40));
 		}
 	}
 }

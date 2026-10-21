@@ -1,4 +1,4 @@
-import { type BlockInstance } from '@wordpress/blocks';
+import { type Block } from '@wordpress/blocks';
 
 export interface EditorProps {
 	initialContent: string;
@@ -10,8 +10,8 @@ export interface EditorProps {
 }
 
 export interface StateWithUndoManager {
-	value: BlockInstance[];
-	setValue: ( value: BlockInstance[] ) => void;
+	value: Block[];
+	setValue: ( value: Block[] ) => void;
 	undo: () => void;
 	redo: () => void;
 }

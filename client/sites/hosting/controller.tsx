@@ -9,7 +9,7 @@ import { HostingActivationCallout, HostingUpsellCallout } from './components/hos
 import HostingFeatures from './components/hosting-features';
 import { isHostingFeatureSupported } from './features';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
-import type { ComponentType } from 'react';
+import type { ComponentType, JSX } from 'react';
 
 import './style.scss';
 

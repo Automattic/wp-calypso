@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
+import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import type { SupportActivity } from '../types';
 
@@ -13,11 +13,11 @@ export function useSupportActivity( enabled = true ) {
 				? wpcomRequest< SupportActivity[] >( {
 						path: '/support-activity',
 						apiNamespace: 'wpcom/v2',
-				  } )
+					} )
 				: apiFetch< SupportActivity[] >( {
 						path: 'help-center/support-activity',
 						global: true,
-				  } as APIFetchOptions ),
+					} as { path: string; global: boolean } ),
 		refetchOnWindowFocus: false,
 		refetchOnMount: true,
 		enabled,

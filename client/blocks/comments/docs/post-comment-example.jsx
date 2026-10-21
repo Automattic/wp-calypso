@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { Component } from 'react';
 import PostComment from 'calypso/blocks/comments/post-comment';
-import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
+import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/reader/comments/constants';
 
 const mockComment = {
 	author: {

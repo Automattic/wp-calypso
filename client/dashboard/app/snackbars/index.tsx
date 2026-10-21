@@ -4,23 +4,13 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { Icon, published, error } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import './style.scss';
 
 const statusIcon: Record< string, React.JSX.Element > = {
 	success: published,
 	error,
 };
-
-declare module '@tanstack/react-query' {
-	interface Register {
-		mutationMeta: {
-			snackbar?: {
-				success?: string;
-				error?: string | { source: 'server' };
-			};
-		};
-	}
-}
 
 export default function Snackbars() {
 	const notices = useSelect( ( select ) => select( noticesStore ).getNotices(), [] );
@@ -53,19 +43,32 @@ export default function Snackbars() {
 
 	const snackbarNotices = notices
 		.filter( ( { type } ) => type === 'snackbar' )
-		.map( ( { status, ...notice } ) => ( {
-			icon: statusIcon[ status ] && (
-				<Icon icon={ statusIcon[ status ] } style={ { fill: 'currentcolor' } } />
-			),
-			...notice,
-		} ) );
+		.map( ( notice ) => {
+			const { status } = notice;
+			const icon = statusIcon[ status ];
+			const statusClassName = status ? `is-${ status }` : undefined;
 
-	return (
-		<SnackbarList
-			// @ts-expect-error Bypass typecheck as WPNoticeAction is structurally incompatible with NoticeAction
-			notices={ snackbarNotices }
-			className="dashboard-snackbars"
-			onRemove={ removeNotice }
-		/>
+			return {
+				...notice,
+				className: statusClassName,
+				icon:
+					'icon' in notice
+						? notice.icon
+						: icon && <Icon icon={ icon } style={ { fill: 'currentcolor' } } />,
+			};
+		} );
+
+	// Portalled to <body> so it isn't inside the app root that `Modal` hides with
+	// `aria-hidden`. Modal skips `aria-live` elements; `off` because `Snackbar`
+	// announces itself via `speak()` and we don't want to hear it twice.
+	return createPortal(
+		<div aria-live="off">
+			<SnackbarList
+				notices={ snackbarNotices }
+				className="dashboard-snackbars"
+				onRemove={ removeNotice }
+			/>
+		</div>,
+		document.body
 	);
 }

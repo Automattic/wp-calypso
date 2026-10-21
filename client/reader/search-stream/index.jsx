@@ -4,36 +4,24 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
-import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { trim, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import NavigationHeader from 'calypso/components/navigation-header';
 import SearchInput from 'calypso/components/search';
 import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
-import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
+import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
+import { SEARCH_TAB } from 'calypso/reader/discover/helper';
 import { recordAction } from 'calypso/reader/stats';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import {
-	SORT_BY_RELEVANCE,
-	SORT_BY_LAST_UPDATED,
-} from 'calypso/state/reader/feed-searches/actions';
-import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
-import { getTransformedStreamItems } from 'calypso/state/reader/streams/selectors';
-import ReaderPopularSitesSidebar from '../stream/reader-popular-sites-sidebar';
 import PostResults from './post-results';
-import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
-import SiteResults from './site-results';
 import Suggestion from './suggestion';
 import SuggestionProvider from './suggestion-provider';
+import { getSearchPlaceholderText } from './utils';
 import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 660;
@@ -41,30 +29,10 @@ const WIDE_DISPLAY_CUTOFF = 660;
 const updateQueryArg = ( params ) =>
 	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
 
-const pickSort = ( sort ) => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
-
 class SearchStream extends React.Component {
 	static propTypes = {
 		query: PropTypes.string,
 		streamKey: PropTypes.string,
-	};
-
-	state = {
-		feeds: [],
-	};
-
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.query !== this.props.query ) {
-			this.resetSearchFeeds();
-		}
-	}
-
-	resetSearchFeeds = () => {
-		this.setState( { feeds: [] } );
-	};
-
-	setSearchFeeds = ( feeds ) => {
-		this.setState( { feeds: feeds } );
 	};
 
 	getTitle = ( props = this.props ) => props.query || props.translate( 'Search' );
@@ -72,7 +40,7 @@ class SearchStream extends React.Component {
 	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		// Remove whitespace from newValue and limit to 1024 characters
-		const trimmedValue = trim( newValue ).substring( 0, 1024 );
+		const trimmedValue = ( newValue ?? '' ).trim().substring( 0, 1024 );
 		if (
 			( trimmedValue !== '' && trimmedValue.length > 1 && trimmedValue !== this.props.query ) ||
 			newValue === ''
@@ -116,20 +84,15 @@ class SearchStream extends React.Component {
 
 	handleFixedAreaMounted = ( ref ) => ( this.fixedAreaRef = ref );
 
-	handleSearchTypeSelection = ( searchType ) => updateQueryArg( { show: searchType } );
-
 	render() {
-		const { query, translate, searchType, suggestions, isLoggedIn } = this.props;
+		const { query, translate, suggestions } = this.props;
 		const sortOrder = this.props.sort;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const toggleGroupControlClasses = wideDisplay
 			? 'search-stream__sort-picker is-wide'
 			: 'search-stream__sort-picker';
 
-		let searchPlaceholderText = this.props.searchPlaceholderText;
-		if ( ! searchPlaceholderText ) {
-			searchPlaceholderText = getSearchPlaceholderText();
-		}
+		const searchPlaceholderText = getSearchPlaceholderText();
 
 		const documentTitle = translate( '%s ‹ Reader', {
 			args: this.getTitle(),
@@ -144,21 +107,18 @@ class SearchStream extends React.Component {
 			comment: 'A sort order, showing the most recent posts first.',
 		} );
 
-		const searchStreamResultsClasses = clsx( 'search-stream__results', 'is-two-columns' );
-
-		const singleColumnResultsClasses = clsx( 'search-stream__single-column-results', {
-			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
-		} );
-		const suggestionList = flatMap( suggestions, ( suggestion ) => [
-			<Suggestion
-				suggestion={ suggestion.text }
-				source="search"
-				sort={ sortOrder === 'date' ? sortOrder : undefined }
-				railcar={ suggestion.railcar }
-				key={ 'suggestion-' + suggestion.text }
-			/>,
-			', ',
-		] ).slice( 0, -1 );
+		const suggestionList = ( suggestions || [] )
+			.flatMap( ( suggestion ) => [
+				<Suggestion
+					suggestion={ suggestion.text }
+					source="search"
+					sort={ sortOrder === 'date' ? sortOrder : undefined }
+					railcar={ suggestion.railcar }
+					key={ 'suggestion-' + suggestion.text }
+				/>,
+				', ',
+			] )
+			.slice( 0, -1 );
 
 		const fixedAreaHeight = this.fixedAreaRef && this.fixedAreaRef.clientHeight;
 
@@ -166,16 +126,12 @@ class SearchStream extends React.Component {
 		return (
 			<div>
 				<DocumentHead title={ documentTitle } />
-				<NavigationHeader
-					title={ translate( 'Search' ) }
-					subtitle={ translate( 'Search for specific topics, authors, or blogs.' ) }
-				/>
+				<DiscoverHeaderAndNavigation selectedTab={ SEARCH_TAB } />
 				<div className="search-stream__fixed-area" ref={ this.handleFixedAreaMounted }>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
 							onSearch={ this.updateQuery }
 							onSearchClose={ this.scrollToTop }
-							onSearchOpen={ this.resetSearchFeeds }
 							autoFocus={ this.props.autoFocusInput }
 							delaySearch
 							delayTimeout={ 500 }
@@ -206,54 +162,10 @@ class SearchStream extends React.Component {
 							trackTagsPageLinkClick={ this.trackTagsPageLinkClick }
 						/>
 					) }
-					<SearchStreamHeader
-						selected={ searchType }
-						onSelection={ this.handleSearchTypeSelection }
-						wideDisplay={ wideDisplay }
-						isLoggedIn={ isLoggedIn }
-					/>
 				</div>
-				{ wideDisplay && (
-					<div className={ searchStreamResultsClasses }>
-						<div className="search-stream__post-results">
-							<PostResults { ...this.props } fixedHeaderHeight={ fixedAreaHeight } />
-						</div>
-						<div className="search-stream__site-results">
-							{ query && (
-								<SiteResults
-									query={ query }
-									sort={ pickSort( sortOrder ) }
-									onReceiveSearchResults={ this.setSearchFeeds }
-								/>
-							) }
-							{ ! query && (
-								<ReaderPopularSitesSidebar
-									items={ this.props.items }
-									followSource={ READER_SEARCH_POPULAR_SITES }
-								/>
-							) }
-						</div>
-					</div>
-				) }
-				{ ! wideDisplay && (
-					<div className={ singleColumnResultsClasses }>
-						{ ( searchType === SEARCH_TYPES.POSTS && (
-							<PostResults { ...this.props } fixedHeaderHeight={ fixedAreaHeight } />
-						) ) ||
-							( query && (
-								<SiteResults
-									query={ query }
-									sort={ pickSort( sortOrder ) }
-									onReceiveSearchResults={ this.setSearchFeeds }
-								/>
-							) ) || (
-								<ReaderPopularSitesSidebar
-									items={ this.props.items }
-									followSource={ READER_SEARCH_POPULAR_SITES }
-								/>
-							) }
-					</div>
-				) }
+				<div className="search-stream__post-results">
+					<PostResults { ...this.props } fixedHeaderHeight={ fixedAreaHeight } />
+				</div>
 			</div>
 		);
 		/* eslint-enable jsx-a11y/no-autofocus */
@@ -263,23 +175,12 @@ class SearchStream extends React.Component {
 /* eslint-disable */
 // wrapping with Main so that we can use withWidth helper to pass down whole width of Main
 const wrapWithMain = ( Component ) => ( props ) => (
-	<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
+	<ReaderMain className="search-stream">
 		<Component { ...props } />
 	</ReaderMain>
 );
 /* eslint-enable */
 
-export default connect(
-	( state, ownProps ) => ( {
-		readerAliasedFollowFeedUrl:
-			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
-		isLoggedIn: isUserLoggedIn( state ),
-		items: getTransformedStreamItems( state, {
-			streamKey: ownProps.streamKey,
-			recsStreamKey: ownProps.recsStreamKey,
-		} ),
-	} ),
-	{
-		recordReaderTracksEvent,
-	}
-)( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );

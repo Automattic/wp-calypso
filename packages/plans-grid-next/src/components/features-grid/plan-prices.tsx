@@ -1,3 +1,4 @@
+import { isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
 import { GridPlan } from '../../types';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 import HeaderPrice from '../shared/header-price';
@@ -15,12 +16,14 @@ const PlanPrices = ( { currentSitePlanSlug, options, renderedGridPlans }: PlanPr
 	return (
 		<HeaderPriceContextProvider>
 			{ renderedGridPlans.map( ( { planSlug } ) => {
+				const isEnterprise = isWpcomEnterpriseGridPlan( planSlug );
 				return (
 					<PlanDivOrTdContainer
 						scope="col"
 						key={ planSlug }
 						className="plan-features-2023-grid__table-item plan-price"
 						isTableCell={ options?.isTableCell }
+						rowSpan={ isEnterprise && options?.isTableCell ? 2 : undefined }
 					>
 						<HeaderPrice
 							planSlug={ planSlug }

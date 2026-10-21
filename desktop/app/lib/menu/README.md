@@ -2,7 +2,7 @@
 
 Provides all the app system menus.
 
-The main menu template is `main-menu.js`, and each submenu is stored in a seperate file.
+The main menu template is `main-menu.js`, and each submenu is stored in a separate file.
 
 Any menu item with `requiresUser: true` will be toggled by `enableLoggedInItems` and `disableLoggedInItems`.
 

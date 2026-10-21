@@ -22,7 +22,7 @@ const files = child_process
 	.toString()
 	.split( '\n' )
 	.map( ( name ) => name.trim() )
-	.filter( ( name ) => /\.[jt]sx?$/.test( name ) );
+	.filter( ( name ) => /\.[cm]?[jt]sx?$/.test( name ) );
 
 const flags = [ '--cache' ];
 

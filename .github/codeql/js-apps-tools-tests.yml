@@ -1,0 +1,11 @@
+name: CodeQL JavaScript apps, tools, and tests
+
+paths:
+  - apps
+  - desktop
+  - bin
+  - build-tools
+  - test
+  - .storybook
+  - eslint.config.mjs
+  - babel.config.js

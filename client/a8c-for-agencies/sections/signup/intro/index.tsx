@@ -31,7 +31,7 @@ export default function SignupIntro( { wpAdminUrl }: { wpAdminUrl?: string } ) {
 				<img src={ VipLogo } alt={ translate( 'WordPress VIP' ) } />
 				<img src={ PressableLogo } alt={ translate( 'Pressable' ) } />
 			</div>
-			<h4 className="a4a-signup-intro__separator">{ translate( 'Get Access' ) }</h4>
+			<h4 className="a4a-signup-intro__separator">{ translate( 'Get access' ) }</h4>
 			<p>
 				{ translate(
 					"The Automattic for Agencies program is open for sign ups. Manage all of your clients' sites and client relationships in one platform. And more!"

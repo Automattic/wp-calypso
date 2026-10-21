@@ -45,6 +45,23 @@ export function updateSiteSettings( siteId, settings ) {
 }
 
 /**
+ * Normalizes the `hide_free_tier` flag to 1/0. This payload is form-encoded, so
+ * a JS boolean would arrive as the string "true"/"false" — and PHP treats any
+ * non-empty string (including "false") as truthy. Coercing to 1/0 keeps the
+ * value unambiguous on the wire regardless of what a caller passes in.
+ * @param {*} value The raw flag value (boolean, number, or string).
+ * @returns {number} 1 for truthy values; 0 for falsy values, including the
+ *                   stringy falsy forms '', '0', and 'false'.
+ */
+function normalizeHideFreeTier( value ) {
+	if ( typeof value === 'string' ) {
+		const normalized = value.trim().toLowerCase();
+		return normalized === '' || normalized === '0' || normalized === 'false' ? 0 : 1;
+	}
+	return value ? 1 : 0;
+}
+
+/**
  * Formats subscription_options to match the expected server format
  * @param {Object} settings The settings object
  * @param {number} siteId The site ID
@@ -56,13 +73,24 @@ function formatSubscriptionOptions( settings, siteId, state ) {
 		return settings;
 	}
 
-	const allowedKeys = [ 'invitation', 'comment_follow', 'welcome' ];
-	const formattedOptions = [];
+	const allowedKeys = [
+		'invitation',
+		'comment_follow',
+		'welcome',
+		'free_tier_description',
+		'hide_free_tier',
+	];
+	// Send a plain object keyed by name. The server filters subscription_options
+	// by key (`invitation`, `welcome`, ...), so the keys must survive the wire.
+	// A JS array would not: the request crosses a postMessage/JSON boundary
+	// (wpcom-proxy-request), which drops an array's non-index string properties,
+	// leaving the server an integer-keyed list it filters out entirely — which is
+	// why Jetpack/Atomic saves silently no-op. Filtering to allowedKeys (the part
+	// that actually fixed the original Atomic save bug) is preserved.
+	const formattedOptions = {};
 	Object.entries( settings.subscription_options ).forEach( ( [ key, value ] ) => {
 		if ( allowedKeys.includes( key ) ) {
-			// Create an array-like object with numeric indices
-			formattedOptions.push( value );
-			formattedOptions[ key ] = value; // Also keep the key-value pairs
+			formattedOptions[ key ] = key === 'hide_free_tier' ? normalizeHideFreeTier( value ) : value;
 		}
 	} );
 

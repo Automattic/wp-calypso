@@ -1,4 +1,4 @@
-import { getRedirectAfterAccept } from '../utils';
+import { getRedirectAfterAccept, isSameEmail } from '../utils';
 
 jest.mock( 'calypso/lib/logmein', () => ( {
 	logmeinUrl: ( _host: string, backUrl: string ) => backUrl,
@@ -99,5 +99,25 @@ describe( 'getRedirectAfterAccept', () => {
 
 			expect( getRedirectAfterAccept( invite, false ) ).toBe( 'https://wordpress.com/reader' );
 		} );
+	} );
+} );
+
+describe( 'isSameEmail', () => {
+	it( 'ignores letter case', () => {
+		expect( isSameEmail( 'RevErinHougland@gmail.com', 'reverinhougland@gmail.com' ) ).toBe( true );
+	} );
+
+	it( 'ignores surrounding whitespace', () => {
+		expect( isSameEmail( ' me@example.com ', 'me@example.com' ) ).toBe( true );
+	} );
+
+	it( 'rejects different addresses', () => {
+		expect( isSameEmail( 'me@example.com', 'me+other@example.com' ) ).toBe( false );
+	} );
+
+	it( 'rejects missing or empty addresses', () => {
+		expect( isSameEmail( undefined, 'me@example.com' ) ).toBe( false );
+		expect( isSameEmail( 'me@example.com', null ) ).toBe( false );
+		expect( isSameEmail( '', '' ) ).toBe( false );
 	} );
 } );

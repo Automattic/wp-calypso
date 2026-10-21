@@ -1,5 +1,4 @@
 import treeSelect from '@automattic/tree-select';
-import { find } from 'lodash';
 import { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 
 import 'calypso/state/comments/init';
@@ -15,7 +14,7 @@ import 'calypso/state/comments/init';
 export const getCommentLike = treeSelect(
 	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
 	( [ comments ], siteId, postId, commentId ) => {
-		const comment = find( comments, { ID: commentId } );
+		const comment = comments?.find( ( item ) => item.ID === commentId );
 
 		if ( ! comment ) {
 			return undefined;

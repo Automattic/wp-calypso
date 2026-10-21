@@ -1,5 +1,6 @@
-@import 'node_modules/@wordpress/base-styles/breakpoints';
-@import 'node_modules/@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .github-deployments-repositories {
 	display: flex;

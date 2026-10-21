@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import { contextTypes } from '../context-types';
+import { TourContext } from '../context';
 
 export default class ConditionalBlock extends PureComponent {
 	static propTypes = {
 		when: PropTypes.func.isRequired,
 	};
 
-	static contextTypes = contextTypes;
+	static contextType = TourContext;
 
 	render() {
 		const { isValid } = this.context;

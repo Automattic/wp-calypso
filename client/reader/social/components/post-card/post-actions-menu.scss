@@ -1,0 +1,8 @@
+.social-post-actions-menu {
+	// DropdownMenu's default trigger is sized for toolbar contexts; tighten
+	// it for the card header.
+	button {
+		min-width: 28px;
+		padding-inline: 4px;
+	}
+}

@@ -4,6 +4,7 @@ import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import illustrationUrl from './deployments-callout-illustration.svg';
 import GithubIcon from './icons/github';
 import type { Site } from '@automattic/api-core';
+import type { JSX } from 'react';
 
 export function getDeploymentsCalloutProps() {
 	return {

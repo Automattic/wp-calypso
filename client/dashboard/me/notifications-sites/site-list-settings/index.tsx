@@ -51,10 +51,10 @@ export const SiteListSettings = () => {
 						<CardBody>
 							{ createInterpolateElement(
 								sprintf(
-									// translators: %s is the search query
+									// translators: %(search)s is the search query
 									__( 'No sites found with the search query <strong>%(search)s</strong>.' ),
 									{
-										search: search,
+										search: search ?? '',
 									}
 								),
 								{

@@ -33,6 +33,9 @@ module.exports = function ( app, { view, window } ) {
 			enabled: false,
 			id: 'loggedin',
 			click: async function () {
+				if ( ! window || ! view ) {
+					return;
+				}
 				window.show();
 				if ( isCalypso( view ) ) {
 					ipc.signOut( view );

@@ -226,7 +226,7 @@ export class RequestLoginEmailForm extends Component {
 			isEmailInputError,
 			isSubmitButtonDisabled,
 			isSubmitButtonBusy,
-			isFromJetpackOnboarding,
+			isUnifiedConnectionFlow,
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
@@ -238,7 +238,7 @@ export class RequestLoginEmailForm extends Component {
 			return isJetpackMagicLinkSignUpEnabled ? (
 				<EmailedLoginLinkSuccessfullyJetpackConnect
 					emailAddress={ emailAddress }
-					shouldRedirect={ ! isFromJetpackOnboarding }
+					shouldRedirect={ ! isUnifiedConnectionFlow }
 					onResendEmail={ this.onSubmit }
 				/>
 			) : (

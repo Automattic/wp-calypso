@@ -4,6 +4,15 @@ export const omnibarSiteIdQuery = () =>
 	queryOptions( {
 		queryKey: [ 'omnibar', 'site-id' ],
 		queryFn: () => Promise.resolve< number | null >( null ),
+		initialData: null,
+		staleTime: Infinity,
+		meta: { persist: false },
+	} );
+
+export const omnibarAgentsManagerEnabledQuery = () =>
+	queryOptions( {
+		queryKey: [ 'omnibar', 'agents-manager-enabled' ],
+		queryFn: () => Promise.resolve( false ),
 		staleTime: Infinity,
 		meta: { persist: false },
 	} );

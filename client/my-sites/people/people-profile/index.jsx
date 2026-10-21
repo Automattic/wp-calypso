@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
@@ -115,7 +114,7 @@ const PeopleProfile = ( { siteId, type, user, invite, showDate, showRole = true 
 			return;
 		}
 
-		const blogId = get( user, 'follow_data.params.blog_id', false );
+		const blogId = user?.follow_data?.params?.blog_id ?? false;
 
 		if ( ! blogId ) {
 			return;
@@ -152,7 +151,7 @@ const PeopleProfile = ( { siteId, type, user, invite, showDate, showRole = true 
 			return null;
 		}
 
-		const blogId = get( user, 'follow_data.params.blog_id', false );
+		const blogId = user?.follow_data?.params?.blog_id ?? false;
 
 		return (
 			<div className="people-profile__username" title={ userTitle }>

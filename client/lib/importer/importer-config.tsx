@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
+import { orderBy } from '@automattic/js-utils';
 import { TranslateResult, translate } from 'i18n-calypso';
-import { filter, orderBy, values } from 'lodash';
 import { type ImporterOption } from 'calypso/blocks/import/list';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { appStates } from 'calypso/state/imports/constants';
@@ -33,6 +33,7 @@ interface ImporterConfigMap {
 }
 
 interface ImporterConfigArgs {
+	addSubscribersUrl?: string;
 	importerState?: string;
 	isAtomic?: boolean;
 	isJetpack?: boolean;
@@ -41,12 +42,11 @@ interface ImporterConfigArgs {
 }
 
 function getConfig( {
+	addSubscribersUrl,
 	importerState = '',
 	isAtomic = false,
-	isJetpack = false,
-	siteSlug = '',
 	siteTitle = '',
-} ): ImporterConfigMap {
+}: ImporterConfigArgs ): ImporterConfigMap {
 	let importerConfig: ImporterConfigMap = {};
 
 	const isFinished = importerState === appStates.IMPORT_SUCCESS;
@@ -86,8 +86,6 @@ function getConfig( {
 				},
 			}
 		),
-		overrideDestination:
-			'/setup/site-migration?siteSlug=%SITE_SLUG%&siteId=%SITE_ID%&ref=calypso-importer',
 		weight: 1,
 	};
 
@@ -200,11 +198,11 @@ function getConfig( {
 						}
 					) }
 				</p>
-				{ ! isFinished && (
+				{ ! isFinished && addSubscribersUrl && (
 					<p>
 						{ translate( 'To import your subscribers, go to {{a}}subscribers page{{/a}}.', {
 							components: {
-								a: <a href={ `/subscribers/${ siteSlug }#add-subscribers` } />,
+								a: <a href={ addSubscribersUrl } />,
 							},
 						} ) }
 					</p>
@@ -356,11 +354,6 @@ function getConfig( {
 
 	const hasUnifiedImporter = config.isEnabled( 'importer/unified' );
 
-	// For Jetpack sites, we don't support migration as destination, so we remove the override here.
-	if ( hasUnifiedImporter && isJetpack && ! isAtomic ) {
-		delete importerConfig.wordpress.overrideDestination;
-	}
-
 	// For atomic sites filter out all importers except the WordPress ones if the Unified Importer is disabled.
 	if ( ! hasUnifiedImporter && isAtomic ) {
 		importerConfig = { wordpress: importerConfig.wordpress };
@@ -407,7 +400,11 @@ export function getImporters( args: ImporterConfigArgs = { siteSlug: '', siteTit
 		delete importerConfig.substack;
 	}
 
-	const importers = orderBy( values( importerConfig ), [ 'weight', 'title' ], [ 'desc', 'asc' ] );
+	const importers = orderBy(
+		Object.values( importerConfig ),
+		[ 'weight', 'title' ],
+		[ 'desc', 'asc' ]
+	);
 
 	return importers;
 }
@@ -416,7 +413,7 @@ export function getImporterByKey(
 	key: string,
 	args: ImporterConfigArgs = { siteSlug: '', siteTitle: '' }
 ) {
-	return filter( getImporters( args ), ( importer ) => importer.key === key )[ 0 ];
+	return getImporters( args ).find( ( importer ) => importer.key === key );
 }
 
 export function isSupportedImporterEngine( engine: string ): boolean {

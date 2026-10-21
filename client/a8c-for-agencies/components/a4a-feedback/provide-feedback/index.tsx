@@ -68,7 +68,7 @@ export default function ProvideFeedback() {
 					},
 					{
 						id: 'screenshot',
-						label: translate( 'Upload a screenshot (Optional)' ),
+						label: translate( 'Upload a screenshot (optional)' ),
 						type: 'file',
 						optional: true,
 					},

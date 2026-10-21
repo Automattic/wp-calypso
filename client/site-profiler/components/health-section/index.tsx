@@ -13,17 +13,16 @@ interface HealthSectionProps {
 	url?: string;
 	hash?: string;
 	hostingProvider?: HostingProvider;
-	healthMetricsRef: React.RefObject< HTMLObjectElement >;
-	setIsGetReportFormOpen?: ( isOpen: boolean ) => void;
+	healthMetricsRef: React.RefObject< HTMLElement | null >;
 }
 
 const OVERALL_SCORE_THRESHOLD = 0.8;
 
 export const HealthSection: React.FC< HealthSectionProps > = ( props ) => {
 	const translate = useTranslate();
-	const { url, hash, hostingProvider, healthMetricsRef, setIsGetReportFormOpen } = props;
+	const { url, hash, hostingProvider, healthMetricsRef } = props;
 	const { data }: { data: any } = useUrlPerformanceMetricsQuery( url, hash );
-	const { truncated, diagnostic: healthData = {} } = data?.audits.health ?? {};
+	const { diagnostic: healthData = {} } = data?.audits.health ?? {};
 
 	const isWPcom = hostingProvider?.slug?.toLowerCase() === 'automattic';
 
@@ -75,17 +74,6 @@ export const HealthSection: React.FC< HealthSectionProps > = ( props ) => {
 					} }
 				/>
 			) ) }
-
-			{ truncated &&
-				Array( 10 )
-					.fill( {} )
-					.map( ( _, index ) => (
-						<MetricsInsight
-							key={ `locked-${ index }` }
-							locked
-							onClick={ () => setIsGetReportFormOpen?.( true ) }
-						/>
-					) ) }
 		</MetricsSection>
 	);
 };

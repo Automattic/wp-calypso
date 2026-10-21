@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/connected-applications/init';
 
 /**
@@ -7,4 +5,4 @@ import 'calypso/state/connected-applications/init';
  * @param  {Object} state Global state tree
  * @returns {?Array}       Connected applications
  */
-export default ( state ) => get( state, 'connectedApplications', null );
+export default ( state ) => state?.connectedApplications ?? null;

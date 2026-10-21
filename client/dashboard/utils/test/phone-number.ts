@@ -96,27 +96,51 @@ describe( 'validatePhone', () => {
 	} );
 
 	describe( 'edge cases', () => {
+		it( 'should reject a valid number prefixed with multiple plus signs', () => {
+			const result = validatePhone( '++12025551234' );
+			expect( result ).toEqual( {
+				error: 'phone_number_contains_special_characters',
+				message: 'Phone numbers cannot contain special characters',
+			} );
+		} );
+
+		it( 'should reject a number with many leading plus signs', () => {
+			const result = validatePhone( '+++12025551234' );
+			expect( result ).toEqual( {
+				error: 'phone_number_contains_special_characters',
+				message: 'Phone numbers cannot contain special characters',
+			} );
+		} );
+
 		it( 'should handle phone number with multiple plus signs', () => {
 			const result = validatePhone( '++1234567890' );
 			expect( result ).toEqual( {
-				error: 'phone_number_invalid',
-				message: 'That phone number does not appear to be valid',
+				error: 'phone_number_contains_special_characters',
+				message: 'Phone numbers cannot contain special characters',
 			} );
 		} );
 
 		it( 'should handle phone number with plus sign in the middle', () => {
 			const result = validatePhone( '123+4567890' );
 			expect( result ).toEqual( {
-				error: 'phone_number_invalid',
-				message: 'That phone number does not appear to be valid',
+				error: 'phone_number_contains_special_characters',
+				message: 'Phone numbers cannot contain special characters',
 			} );
 		} );
 
-		it( 'should handle phone number with commas (bug in regex)', () => {
+		it( 'should reject phone number with commas', () => {
 			const result = validatePhone( '123,456,7890' );
 			expect( result ).toEqual( {
-				error: 'phone_number_contains_letters',
-				message: 'Phone numbers cannot contain letters',
+				error: 'phone_number_contains_special_characters',
+				message: 'Phone numbers cannot contain special characters',
+			} );
+		} );
+
+		it( 'should report special characters over length for a short misplaced-plus number', () => {
+			const result = validatePhone( '+1+2345' );
+			expect( result ).toEqual( {
+				error: 'phone_number_contains_special_characters',
+				message: 'Phone numbers cannot contain special characters',
 			} );
 		} );
 	} );

@@ -10,6 +10,11 @@ import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
 
 import './style.scss';
 
+const loadQrCodeLogin = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-qr-code-login" */ 'calypso/blocks/qr-code-login'
+	);
+
 function QrCodeLoginPlaceholder() {
 	return <Card className="qr-code-login-page__placeholder" />;
 }
@@ -21,11 +26,7 @@ function QrCodeLoginPage( { locale, redirectTo, isJetpack = false } ) {
 		<Main className={ clsx( 'qr-code-login-page', { 'is-jetpack': isJetpack } ) }>
 			<div className="qr-code-login-page__form">
 				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-blocks-qr-code-login" */ 'calypso/blocks/qr-code-login'
-						)
-					}
+					require={ loadQrCodeLogin }
 					placeholder={ <QrCodeLoginPlaceholder /> }
 					size={ 300 }
 					locale={ locale }
@@ -44,7 +45,7 @@ function QrCodeLoginPage( { locale, redirectTo, isJetpack = false } ) {
 	);
 
 	return (
-		<OneLoginLayout isJetpack={ isJetpack } columnWidth={ 8 }>
+		<OneLoginLayout isJetpack={ isJetpack } columnWidth={ 8 } linkLogoToHome>
 			{ mainContent }
 		</OneLoginLayout>
 	);

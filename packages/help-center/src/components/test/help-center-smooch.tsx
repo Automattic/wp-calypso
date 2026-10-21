@@ -28,6 +28,7 @@ jest.mock( 'smooch', () => {
 } );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
+	...jest.requireActual( '@automattic/calypso-analytics' ),
 	recordTracksEvent: jest.fn(),
 } ) );
 
@@ -40,14 +41,15 @@ jest.mock( '@automattic/odie-client/src/utils/csat', () => ( {
 } ) );
 
 jest.mock( '@automattic/zendesk-client', () => ( {
-	useLoadZendeskMessaging: () => ( { isMessagingScriptLoaded: true } ),
+	// Like the real hook, only load the script when chat is allowed.
+	useLoadZendeskMessaging: ( allowChat: boolean ) => ( { isMessagingScriptLoaded: allowChat } ),
 	useAuthenticateZendeskMessaging: () => ( {
 		data: { jwt: 'test-jwt', externalId: 'test-ext-id', isLoggedIn: true },
 	} ),
 	fetchMessagingAuth: jest.fn(),
 	isTestModeEnvironment: jest.fn().mockReturnValue( false ),
-	SMOOCH_INTEGRATION_ID: 'integration-id',
-	SMOOCH_INTEGRATION_ID_STAGING: 'integration-id-staging',
+	getSmoochIntegrationId: ( key?: string | null ) =>
+		key ? `integration-id-${ key }` : 'integration-id',
 	useCanConnectToZendeskMessaging: () => ( { data: true } ),
 } ) );
 
@@ -58,11 +60,16 @@ jest.mock( '@automattic/data-stores', () => ( {
 	},
 } ) );
 
+// Changed by the open human chat tests.
+let mockIsEligibleForChat = true;
+// Changed by the integration tests.
+let mockZendeskIntegrationKey: string | null = null;
+
 // Mock the real on-disk modules that are transitively loaded via src/hooks.
 // Without these, the entire dependency graph tries to load, pulling in
 // @wordpress/components, @wordpress/rich-text, etc., which fail in jsdom.
 jest.mock( '../../hooks', () => ( {
-	useChatStatus: () => ( { isEligibleForChat: true } ),
+	useChatStatus: () => ( { isEligibleForChat: mockIsEligibleForChat } ),
 } ) );
 
 jest.mock( '../../stores', () => ( {
@@ -70,7 +77,9 @@ jest.mock( '../../stores', () => ( {
 } ) );
 
 jest.mock( '../../contexts/HelpCenterContext', () => ( {
-	useFeatureConfig: () => ( { chat: { hasPremiumSupport: false } } ),
+	useFeatureConfig: () => ( {
+		chat: { hasPremiumSupport: false, zendeskIntegrationKey: mockZendeskIntegrationKey },
+	} ),
 	useHelpCenterContext: () => ( { currentUser: { ID: 1 } } ),
 } ) );
 
@@ -79,13 +88,21 @@ jest.mock( '../../components/utils', () => ( {
 	getZendeskConversations: jest.fn().mockReturnValue( [] ),
 } ) );
 
-jest.mock( '@tanstack/react-query', () => ( {
-	useQueryClient: () => ( {
-		invalidateQueries: jest.fn(),
-		fetchQuery: jest.fn(),
-	} ),
-	QueryClient: jest.fn(),
-} ) );
+// eslint-disable-next-line no-var
+var mockInvalidateQueries: jest.Mock;
+// eslint-disable-next-line no-var
+var mockFetchQuery: jest.Mock;
+jest.mock( '@tanstack/react-query', () => {
+	mockInvalidateQueries = jest.fn().mockResolvedValue( undefined );
+	mockFetchQuery = jest.fn();
+	return {
+		useQueryClient: () => ( {
+			invalidateQueries: mockInvalidateQueries,
+			fetchQuery: mockFetchQuery,
+		} ),
+		QueryClient: jest.fn(),
+	};
+} );
 
 const mockSetIsChatLoaded = jest.fn();
 jest.mock( '@wordpress/data', () => ( {
@@ -111,6 +128,7 @@ jest.mock( '@wordpress/element', () => ( {
 } ) );
 
 import '@testing-library/jest-dom';
+import { fetchMessagingAuth } from '@automattic/zendesk-client';
 import { act, render } from '@testing-library/react';
 import HelpCenterSmooch from '../help-center-smooch';
 
@@ -180,5 +198,118 @@ describe( 'HelpCenterSmooch – Smooch.destroy() error handling (regression)', (
 		}
 
 		expect( unhandledErrors ).toHaveLength( 0 );
+	} );
+} );
+
+describe( 'HelpCenterSmooch – onInvalidAuth refreshes the messenger auth (regression)', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockSmooch.render.mockImplementation( () => {} );
+		mockSmooch.destroy.mockResolvedValue( undefined );
+		mockSmooch.init.mockResolvedValue( undefined );
+	} );
+
+	it( 'refreshes the same messenger query the component subscribes to and returns the fresh JWT', async () => {
+		await act( async () => {
+			render( <HelpCenterSmooch enableAuth /> );
+			await new Promise( ( r ) => setTimeout( r, 0 ) );
+		} );
+
+		// Grab the delegate Smooch was initialized with.
+		const initOptions = mockSmooch.init.mock.calls[ 0 ][ 0 ];
+		const { onInvalidAuth } = initOptions.delegate;
+
+		mockFetchQuery.mockResolvedValueOnce( {
+			jwt: 'fresh-jwt',
+			externalId: 'test-ext-id',
+			isLoggedIn: true,
+		} );
+
+		let returnedJwt: string | undefined;
+		await act( async () => {
+			returnedJwt = await onInvalidAuth();
+		} );
+
+		// Smooch receives the refreshed token.
+		expect( returnedJwt ).toBe( 'fresh-jwt' );
+
+		// It must refresh the exact key the component reads (type 'messenger',
+		// initializeWidget true) — NOT the old orphan 'zendesk' key — so authJwtRef
+		// picks up the new token. isTestModeEnvironment() is mocked to false.
+		const expectedKey = [ 'getMessagingAuth', 'messenger', false, true ];
+		expect( mockInvalidateQueries ).toHaveBeenCalledWith( { queryKey: expectedKey } );
+		const fetchArgs = mockFetchQuery.mock.calls[ 0 ][ 0 ];
+		expect( fetchArgs.queryKey ).toEqual( expectedKey );
+
+		// The query function fetches the messenger auth with the widget login flow.
+		fetchArgs.queryFn();
+		expect( fetchMessagingAuth ).toHaveBeenCalledWith( 'messenger', true );
+	} );
+} );
+
+describe( 'HelpCenterSmooch – open human chats', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockSmooch.render.mockImplementation( () => {} );
+		mockSmooch.init.mockResolvedValue( undefined );
+		mockIsEligibleForChat = false;
+	} );
+
+	afterEach( () => {
+		mockIsEligibleForChat = true;
+	} );
+
+	it( 'starts the chat for a user without paid support who has an open human chat', async () => {
+		await act( async () => {
+			render( <HelpCenterSmooch enableAuth hasOpenZendeskChat /> );
+			await new Promise( ( r ) => setTimeout( r, 0 ) );
+		} );
+
+		expect( mockSmooch.init ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not start the chat for a user without paid support or an open human chat', async () => {
+		await act( async () => {
+			render( <HelpCenterSmooch enableAuth /> );
+			await new Promise( ( r ) => setTimeout( r, 0 ) );
+		} );
+
+		expect( mockSmooch.init ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'HelpCenterSmooch – messaging integration', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockSmooch.render.mockImplementation( () => {} );
+		mockSmooch.init.mockResolvedValue( undefined );
+	} );
+
+	afterEach( () => {
+		mockZendeskIntegrationKey = null;
+	} );
+
+	it( 'initializes Smooch on the default integration', async () => {
+		await act( async () => {
+			render( <HelpCenterSmooch enableAuth /> );
+			await new Promise( ( r ) => setTimeout( r, 0 ) );
+		} );
+
+		expect( mockSmooch.init ).toHaveBeenCalledWith(
+			expect.objectContaining( { integrationId: 'integration-id' } )
+		);
+	} );
+
+	it( "initializes Smooch on the product's integration", async () => {
+		mockZendeskIntegrationKey = 'woo';
+
+		await act( async () => {
+			render( <HelpCenterSmooch enableAuth /> );
+			await new Promise( ( r ) => setTimeout( r, 0 ) );
+		} );
+
+		expect( mockSmooch.init ).toHaveBeenCalledWith(
+			expect.objectContaining( { integrationId: 'integration-id-woo' } )
+		);
 	} );
 } );

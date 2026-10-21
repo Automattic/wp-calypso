@@ -41,7 +41,7 @@ const useTrackDesignView = ( {
 	design,
 	isPremiumThemeAvailable,
 }: TrackDesignViewProps ): RefCallback< HTMLDivElement > => {
-	const observerRef = useRef< IntersectionObserver >();
+	const observerRef = useRef< IntersectionObserver >( undefined );
 	const [ viewedCategories, setViewedCategory ] = useState< string[] >( [] );
 
 	// Use a callback as the ref so we get called for both mount and unmount events
@@ -425,7 +425,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 								? translate( '%s themes', {
 										args: getCategoryName( categorySlug ),
 										comment: '%s will be a name of the theme category. e.g. Blog.',
-								  } )
+									} )
 								: ''
 						}
 						category={ categorySlug }

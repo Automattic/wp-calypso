@@ -1,7 +1,6 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalScrollable as Scrollable,
 	Button,
 	Card,
 	CheckboxControl,
@@ -21,6 +20,7 @@ type Props = {
 	filter: FilterState;
 	onApply: ( filter: FilterState ) => void;
 	onClear: () => void;
+	showExactMatchesOnly?: boolean;
 };
 
 export const DomainSearchControlsFilterPopover = ( {
@@ -28,6 +28,7 @@ export const DomainSearchControlsFilterPopover = ( {
 	filter,
 	onApply,
 	onClear,
+	showExactMatchesOnly = true,
 }: Props ) => {
 	const { __ } = useI18n();
 	// This is the filter that the user is currently selecting. It is only applied when the popover is closed
@@ -103,7 +104,10 @@ export const DomainSearchControlsFilterPopover = ( {
 				className="domain-search-controls__filters-popover-available-tlds-container"
 				isRounded={ false }
 			>
-				<Scrollable role="listbox" scrollDirection="y" style={ { maxHeight: '18.5rem' } }>
+				<div
+					role="listbox"
+					style={ { maxHeight: '18.5rem', overflowX: 'hidden', overflowY: 'auto' } }
+				>
 					{ tldList.map( ( tld ) => {
 						return tld.isLabel ? (
 							<FilterPopoverLabel key={ tld.text } text={ tld.text } />
@@ -115,7 +119,7 @@ export const DomainSearchControlsFilterPopover = ( {
 							/>
 						);
 					} ) }
-				</Scrollable>
+				</div>
 			</Card>
 		);
 	};
@@ -153,12 +157,14 @@ export const DomainSearchControlsFilterPopover = ( {
 						placeholder={ __( 'Search for an ending' ) }
 					/>
 					{ renderAvailableTldsList() }
-					<CheckboxControl
-						label={ __( 'Show exact matches only' ) }
-						checked={ temporaryFilter.exactSldMatchesOnly }
-						onChange={ setExactMatchesOnlyInFilter }
-						__nextHasNoMarginBottom
-					/>
+					{ showExactMatchesOnly && (
+						<CheckboxControl
+							label={ __( 'Show exact matches only' ) }
+							checked={ temporaryFilter.exactSldMatchesOnly }
+							onChange={ setExactMatchesOnlyInFilter }
+							__nextHasNoMarginBottom
+						/>
+					) }
 					<HStack spacing={ 4 } className="domain-search-controls__filters-popover-buttons">
 						<Button __next40pxDefaultSize variant="secondary" onClick={ onClear }>
 							{ __( 'Clear' ) }

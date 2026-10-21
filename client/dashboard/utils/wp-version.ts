@@ -4,7 +4,7 @@ import type { Site } from '@automattic/api-core';
 
 function getWordPressVersionTagName( versionTag: string ) {
 	if ( versionTag === 'latest' ) {
-		return __( 'Latest' );
+		return __( 'Stable' );
 	}
 	if ( versionTag === 'beta' ) {
 		return __( 'Beta' );
@@ -42,7 +42,7 @@ export function formatWordPressVersion(
 	}
 
 	if ( versionTag ) {
-		wpVersion = `${ wpVersion } (${ getWordPressVersionTagName( versionTag ) })`;
+		wpVersion = `${ getWordPressVersionTagName( versionTag ) } (${ wpVersion })`;
 	}
 
 	return wpVersion;

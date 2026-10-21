@@ -5,8 +5,9 @@ import { useEffect, useState } from 'react';
 import { useAppContext } from '../../app/context';
 import { Notice } from '../../components/notice';
 import type { BulkDomainUpdateStatusQueryFnData } from '@automattic/api-core';
+import type { ReactNode } from 'react';
 
-const getLastJob = ( data: BulkDomainUpdateStatusQueryFnData | undefined ) => {
+export const getLastJob = ( data: BulkDomainUpdateStatusQueryFnData | undefined ) => {
 	if ( ! data ) {
 		return undefined;
 	}
@@ -17,7 +18,13 @@ const getLastJob = ( data: BulkDomainUpdateStatusQueryFnData | undefined ) => {
 		.at( 0 );
 };
 
-export const BulkActionsProgressNotice = () => {
+/**
+ * Tracks the most recent bulk domain update job and returns the notice that
+ * should currently be shown for it (progress, then a completion summary), or
+ * null when there's nothing to report. Returning the element from a hook lets
+ * pages use the result directly as a notice candidate.
+ */
+export const useBulkActionsProgressNotice = (): ReactNode => {
 	const [ lastId, setLastId ] = useState( '' );
 	const queryClient = useQueryClient();
 	const { queries } = useAppContext();
@@ -132,4 +139,8 @@ export const BulkActionsProgressNotice = () => {
 			{ content }
 		</Notice>
 	);
+};
+
+export const BulkActionsProgressNotice = () => {
+	return <>{ useBulkActionsProgressNotice() }</>;
 };

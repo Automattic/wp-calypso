@@ -1,4 +1,4 @@
-import { pickBy } from 'lodash';
+import { pickBy } from '@automattic/js-utils';
 import { initialSiteState } from './reducer';
 
 export function getProductsBySiteId( state, siteId ) {

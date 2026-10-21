@@ -47,7 +47,9 @@ export default function DomainTransferSetup() {
 
 	const setNextStepName = () => {
 		const next = stepsDefinition[ currentStepName as StepNameValue ]?.next;
-		next && setCurrentStepName( next );
+		if ( next ) {
+			setCurrentStepName( next );
+		}
 	};
 
 	const goBack = () => {

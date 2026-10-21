@@ -1,13 +1,9 @@
 import { useState } from 'react';
+import { hasCancelablePurchases, hasRenewableMonetizeSubscriptions } from '../../utils/purchase';
 import AlternativesModal from './alternatives-modal';
 import FinalConfirmationModal from './final-confirmation-modal';
 import PurchasesModal from './purchases-modal';
-import type { Purchase } from '@automattic/api-core';
-
-type PurchaseLike = Pick<
-	Purchase,
-	'expiry_status' | 'product_slug' | 'is_cancelable' | 'is_refundable'
->;
+import type { MonetizeSubscription, Purchase } from '@automattic/api-core';
 
 interface AccountDeletionModalProps {
 	onClose: () => void;
@@ -15,7 +11,8 @@ interface AccountDeletionModalProps {
 	username: string;
 	isDeleting: boolean;
 	siteCount: number;
-	purchases: PurchaseLike[];
+	purchases: Purchase[];
+	monetizeSubscriptions: MonetizeSubscription[];
 }
 
 export default function AccountDeletionModal( {
@@ -25,20 +22,14 @@ export default function AccountDeletionModal( {
 	isDeleting,
 	siteCount,
 	purchases,
+	monetizeSubscriptions,
 }: AccountDeletionModalProps ) {
 	const [ showAlternatives, setShowAlternatives ] = useState( true );
 
-	const hasCancelablePurchases = purchases.some( ( p ) => {
-		if ( p.expiry_status === 'expired' ) {
-			return false;
-		}
-		if ( p.product_slug === 'premium_theme' && ! p.is_refundable ) {
-			return false;
-		}
-		return Boolean( p.is_cancelable );
-	} );
-
-	if ( hasCancelablePurchases ) {
+	if (
+		hasCancelablePurchases( purchases ) ||
+		hasRenewableMonetizeSubscriptions( monetizeSubscriptions )
+	) {
 		return <PurchasesModal onClose={ onClose } />;
 	}
 

@@ -25,6 +25,7 @@ type SupportedMethods =
 	| 'captureMessage'
 	| 'configureScope'
 	| 'withScope'
+	| 'setTag'
 	| 'setUser';
 
 interface QueueDataMethod< Method extends SupportedMethods > {
@@ -51,7 +52,7 @@ type SentryState =
 	// Sentry will not be enabled
 	| { state: 'disabled'; params: SentryOptions }
 	// Fully loaded!
-	| { state: 'loaded'; params: SentryOptions; sentry: typeof import('@sentry/react') };
+	| { state: 'loaded'; params: SentryOptions; sentry: typeof import( '@sentry/react' ) };
 let state: SentryState = { state: 'initial' };
 
 function dispatchSentryMethodCall< Method extends SupportedMethods >(
@@ -81,11 +82,19 @@ export function captureException( ...args: Parameters< typeof SentryApi.captureE
 export function captureMessage( ...args: Parameters< typeof SentryApi.captureMessage > ) {
 	dispatchSentryMethodCall( 'captureMessage', args );
 }
+/**
+ * @deprecated Sentry deprecated `configureScope` (removed in @sentry/react v8).
+ * To set a tag use `setTag`; for anything else use the top-level scope helpers
+ * directly once the SDK is loaded.
+ */
 export function configureScope( ...args: Parameters< typeof SentryApi.configureScope > ) {
 	dispatchSentryMethodCall( 'configureScope', args );
 }
 export function withScope( ...args: Parameters< typeof SentryApi.withScope > ) {
 	dispatchSentryMethodCall( 'withScope', args );
+}
+export function setTag( ...args: Parameters< typeof SentryApi.setTag > ) {
+	dispatchSentryMethodCall( 'setTag', args );
 }
 export function setUser( ...args: Parameters< typeof SentryApi.setUser > ) {
 	dispatchSentryMethodCall( 'setUser', args );

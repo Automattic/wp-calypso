@@ -6,5 +6,8 @@ export {
 	default as useSiteSubscriptionsQuery,
 	siteSubscriptionsQueryKeyPrefix,
 } from './use-site-subscriptions-query';
-export { default as useSubscriptionsCountQuery } from './use-subscriptions-count-query';
+export {
+	default as useSubscriptionsCountQuery,
+	subscriptionsCountQueryKeyPrefix,
+} from './use-subscriptions-count-query';
 export { default as useUserSettingsQuery } from './use-user-settings-query';

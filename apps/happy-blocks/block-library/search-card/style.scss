@@ -166,6 +166,10 @@ $breakpoint-desktop: 1440px; //Desktop size.
 		.dropdown-menu {
 			position: absolute;
 			top: 100%;
+			// Anchor to the positioned ancestor's edge: without it the box keeps
+			// its static 16px offset while width:100% spans the full card, pushing
+			// 16px past the viewport (a horizontal scrollbar even while hidden).
+			inset-inline-start: 0;
 			width: 100%;
 			background: #fff;
 			list-style: none;

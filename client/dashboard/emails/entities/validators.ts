@@ -65,8 +65,11 @@ class MaximumStringLengthValidator extends BaseValidator< string > {
 	}
 
 	static getFieldTooLongError( maximumStringLength: number ): FieldError {
-		// Translators: %s is the maximum length in characters.
-		return sprintf( __( "This field can't be longer than %s characters." ), maximumStringLength );
+		return sprintf(
+			// Translators: %s is the maximum length in characters.
+			__( "This field can't be longer than %s characters." ),
+			String( maximumStringLength )
+		);
 	}
 
 	validateField( field: MailboxFormFieldBase< string > ): void {
@@ -179,13 +182,22 @@ class PasswordResetEmailValidator extends BaseValidator< string > {
 	}
 }
 
+interface PasswordValidatorOptions {
+	requireNumber?: boolean;
+	requireSpecialCharacter?: boolean;
+}
+
 class PasswordValidator extends BaseValidator< string > {
 	private readonly minimumPasswordLength: number;
+	private readonly requireNumber: boolean;
+	private readonly requireSpecialCharacter: boolean;
 	static readonly maximumPasswordLength = 100;
 
-	constructor( minimumPasswordLength: number ) {
+	constructor( minimumPasswordLength: number, options: PasswordValidatorOptions = {} ) {
 		super();
 		this.minimumPasswordLength = minimumPasswordLength;
+		this.requireNumber = options.requireNumber ?? false;
+		this.requireSpecialCharacter = options.requireSpecialCharacter ?? false;
 	}
 
 	static getPasswordTooShortError( minimumPasswordLength: number ): FieldError {
@@ -200,7 +212,7 @@ class PasswordValidator extends BaseValidator< string > {
 		return sprintf(
 			// Translators: %s is the maximum length in characters.
 			__( "This field can't be longer than %s characters." ),
-			PasswordValidator.maximumPasswordLength
+			String( PasswordValidator.maximumPasswordLength )
 		);
 	}
 
@@ -215,8 +227,19 @@ class PasswordValidator extends BaseValidator< string > {
 	static getPasswordContainsForbiddenCharacterError(
 		firstForbiddenCharacter: string | undefined
 	): FieldError {
-		// Translators: %s denotes a single character that is not allowed in this field
-		return sprintf( __( "This field can't accept '%s' as character." ), firstForbiddenCharacter );
+		return sprintf(
+			// Translators: %s denotes a single character that is not allowed in this field
+			__( "This field can't accept '%s' as character." ),
+			firstForbiddenCharacter ?? ''
+		);
+	}
+
+	static getPasswordMissingNumberError(): FieldError {
+		return __( 'This field must contain at least one number.' );
+	}
+
+	static getPasswordMissingSpecialCharacterError(): FieldError {
+		return __( 'This field must contain at least one special character, such as ! @ # $ %.' );
 	}
 
 	validateField( field: MailboxFormFieldBase< string > ): void {
@@ -252,6 +275,16 @@ class PasswordValidator extends BaseValidator< string > {
 
 		if ( value.endsWith( ' ' ) ) {
 			field.error = PasswordValidator.getPasswordEndsWithSpaceError();
+			return;
+		}
+
+		if ( this.requireNumber && ! /\d/.test( value ) ) {
+			field.error = PasswordValidator.getPasswordMissingNumberError();
+			return;
+		}
+
+		if ( this.requireSpecialCharacter && ! /[^A-Za-z0-9 ]/.test( value ) ) {
+			field.error = PasswordValidator.getPasswordMissingSpecialCharacterError();
 		}
 	}
 }

@@ -1,5 +1,7 @@
+import { queryClient, siteAdminBarQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { useQuery } from '@tanstack/react-query';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -20,6 +22,36 @@ import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+
+const loadJitm = () =>
+	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
+
+const FREE_DOMAIN_UPSELL_NODE_ID = 'free-domain-upsell';
+
+export function SidebarJitm( { siteId } ) {
+	const { data: adminBar, isPending } = useQuery(
+		{ ...siteAdminBarQuery( siteId ), enabled: !! siteId },
+		queryClient
+	);
+
+	if ( siteId && isPending ) {
+		return null;
+	}
+
+	const replacedMessageId = adminBar?.nodes.find(
+		( node ) => node.id === FREE_DOMAIN_UPSELL_NODE_ID
+	)?.meta?.upsell_source;
+
+	return (
+		<AsyncLoad
+			require={ loadJitm }
+			placeholder={ null }
+			messagePath="calypso:sites:sidebar_notice"
+			template="sidebar-banner"
+			suppressedMessageIds={ replacedMessageId ? [ replacedMessageId ] : undefined }
+		/>
+	);
+}
 
 export class SiteNotice extends Component {
 	static propTypes = {
@@ -118,18 +150,7 @@ export class SiteNotice extends Component {
 			<div className="current-site__notices">
 				<QueryActivePromotions />
 				{ siteRedirectNotice }
-				{ showJitms && (
-					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm'
-							)
-						}
-						placeholder={ null }
-						messagePath="calypso:sites:sidebar_notice"
-						template="sidebar-banner"
-					/>
-				) }
+				{ showJitms && <SidebarJitm siteId={ site.ID } /> }
 				<QuerySitePlans siteId={ site.ID } />
 			</div>
 		);

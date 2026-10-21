@@ -13,6 +13,7 @@ import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
@@ -30,16 +31,13 @@ export default function NameServers() {
 		data: { nameServers, isUsingDefaultNameServers, defaultNameServers },
 	} = useSuspenseQuery( domainNameServersQuery( domainName ) );
 
-	const { mutate: updateNameServers, isPending: isUpdatingNameServers } = useMutation( {
-		...domainNameServersMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'Name servers for %s updated successfully.' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const { mutate: updateNameServers, isPending: isUpdatingNameServers } = useMutation(
+		withSnackbar( domainNameServersMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'Name servers for %s updated successfully.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );

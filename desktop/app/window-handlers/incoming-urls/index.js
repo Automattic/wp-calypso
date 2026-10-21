@@ -1,5 +1,6 @@
 const { app } = require( 'electron' );
 const Config = require( '../../lib/config' );
+const log = require( '../../lib/logger' )( 'desktop:incoming-urls' );
 
 module.exports = function ( { view, mainWindow } ) {
 	// Mac.
@@ -14,16 +15,35 @@ module.exports = function ( { view, mainWindow } ) {
 			}
 			mainWindow.focus();
 		}
-		// The commandLine is an array of strings in which the last element is the url.
-		handleUrl( view, commandLine.pop() );
+		// A second launch is not necessarily a deep link: a plain relaunch passes argv such
+		// as the executable path or CLI flags, none of which are URLs. Only forward an
+		// argument that actually looks like one of our protocol URLs.
+		handleUrl( view, findProtocolUrl( commandLine ) );
 	} );
 };
+
+function findProtocolUrl( args ) {
+	if ( ! Array.isArray( args ) ) {
+		return undefined;
+	}
+	const prefix = `${ Config.protocol }://`.toLowerCase();
+	return args.find( ( arg ) => typeof arg === 'string' && arg.toLowerCase().startsWith( prefix ) );
+}
 
 function handleUrl( view, url ) {
 	if ( ! url ) {
 		return;
 	}
-	const u = new URL( url );
+
+	let u;
+	try {
+		u = new URL( url );
+	} catch ( error ) {
+		// Guard against malformed input reaching the WHATWG URL parser, which throws
+		// `TypeError: Invalid URL` and would otherwise crash the main process. (DOTAPP-8)
+		log.info( `Ignoring unparseable incoming URL "${ url }": ${ error.message }` );
+		return;
+	}
 
 	// It should not be possible that the protocol is not Config.protocol, but you never know.
 	if ( u.protocol !== `${ Config.protocol }:` ) {

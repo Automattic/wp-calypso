@@ -1,6 +1,5 @@
 import { SubTitle, Title } from '@automattic/onboarding';
 import clsx from 'clsx';
-import { includes } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { UrlData } from 'calypso/blocks/import/types';
@@ -18,14 +17,14 @@ import './style.scss';
 /**
  * Module variables
  */
-const importingStates = [
+const importingStates: string[] = [
 	appStates.IMPORT_FAILURE,
 	appStates.IMPORT_SUCCESS,
 	appStates.IMPORTING,
 	appStates.MAP_AUTHORS,
 ];
 
-const uploadingStates = [
+const uploadingStates: string[] = [
 	appStates.UPLOAD_PROCESSING,
 	appStates.READY_FOR_UPLOAD,
 	appStates.UPLOAD_FAILURE,
@@ -63,7 +62,7 @@ const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 					importerEngine={ importerData?.engine }
 				/>
 			) }
-			{ includes( importingStates, importerState ) && (
+			{ importingStates.includes( importerState ) && (
 				<ImportingPane
 					importerStatus={ importerStatus }
 					sourceType={ importerData?.title }
@@ -71,7 +70,7 @@ const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 					urlData={ urlData }
 				/>
 			) }
-			{ includes( uploadingStates, importerState ) && (
+			{ uploadingStates.includes( importerState ) && (
 				<UploadingPane
 					isEnabled={ isEnabled }
 					description={ importerData?.uploadDescription }

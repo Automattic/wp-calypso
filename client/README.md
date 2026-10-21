@@ -13,7 +13,7 @@ These are some of the key modules of the application, kept in `client`'s root fo
 
 ## Components
 
-The `/components` folder holds all the internal React components used to build the Calypso UI across sections. Most of these are rendered in `/devdocs/design` for reference.
+The `/components` folder holds all the internal React components used to build the Calypso UI across sections.
 
 ## State
 

@@ -8,6 +8,7 @@ export default function EmptySearchRecommendedPost( {
 	postKey,
 	streamKey,
 	fixedHeaderHeight,
+	itemRef,
 } ) {
 	const dispatch = useDispatch();
 
@@ -33,6 +34,7 @@ export default function EmptySearchRecommendedPost( {
 			handleClick={ handlePostClick }
 			fixedHeaderHeight={ fixedHeaderHeight }
 			streamKey={ streamKey }
+			itemRef={ itemRef }
 		/>
 	);
 }

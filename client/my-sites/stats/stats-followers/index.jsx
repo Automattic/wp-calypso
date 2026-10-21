@@ -2,9 +2,11 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
-import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import { getSubscribersUrl } from 'calypso/lib/subscribers/get-subscribers-url';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
+import { useSelector, useStore } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SUBSCRIBERS_SUPPORT_URL } from '../const';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
@@ -19,9 +21,13 @@ const StatModuleFollowers = ( { className } ) => {
 
 	// Selectors
 	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+	const subscriberManagementUrl = useSelector( ( state ) => getSubscribersUrl( state, siteId ) );
+	// Read per-subscriber URLs on demand: the list is built inside a render callback, where a
+	// selector per row is not an option.
+	const store = useStore();
 
 	const { data: subTotals, isLoading, isError: hasError } = useSubscribersTotalsQueries( siteId );
 
@@ -58,22 +64,40 @@ const StatModuleFollowers = ( { className } ) => {
 	);
 
 	const noData = ! subTotals.subscribers.length;
-	const summaryPageSlug = siteSlug || '';
-	const useJetpackCloudLinks = isAtomic || isJetpack;
-	const subscriberManagementUrl = useJetpackCloudLinks
-		? `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`
-		: `https://wordpress.com/subscribers/${ summaryPageSlug }`;
+	const supportContext = isSiteJetpackNotAtomic ? 'stats-subscribers-jetpack' : 'stats-subscribers';
 
 	return (
 		<StatsListCard
 			moduleType="followers"
-			data={ subTotals.subscribers.map( ( dataPoint ) => ( {
-				...dataPoint,
-				value: calculateOffset( dataPoint.value?.value ),
-			} ) ) }
+			data={ subTotals.subscribers.map( ( dataPoint ) => {
+				// Link the subscriber name to its individual details page. `link` is kept
+				// for the right-side icon that opens the subscriber's own site.
+				const detailPage = dataPoint.subscription_id
+					? getSubscribersUrl( store.getState(), siteId, {
+							subscriptionId: dataPoint.subscription_id,
+							userId: dataPoint.user_id,
+						} )
+					: undefined;
+				return {
+					...dataPoint,
+					value: calculateOffset( dataPoint.value?.value ),
+					page: detailPage,
+				};
+			} ) }
 			usePlainCard
 			hasNoBackground
 			title={ translate( 'Subscribers' ) }
+			titleNodes={
+				<StatsInfoArea>
+					{ translate( '{{link}}Latest subscribers{{/link}} and when they subscribed.', {
+						comment: '{{link}} links to support documentation.',
+						components: {
+							link: <InlineSupportLink supportContext={ supportContext } showIcon={ false } />,
+						},
+						context: 'Stats: Header popover information when the Subscribers module has data.',
+					} ) }
+				</StatsInfoArea>
+			}
 			emptyMessage={ translate(
 				'Once you get a few, {{link}}your subscribers{{/link}} will appear here.',
 				{

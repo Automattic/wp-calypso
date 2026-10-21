@@ -63,7 +63,11 @@ const DnsActionsMenu = ( {
 	};
 
 	return (
-		<DropdownMenu icon={ moreVertical } label={ __( 'DNS actions' ) }>
+		<DropdownMenu
+			toggleProps={ { __next40pxDefaultSize: true } }
+			icon={ moreVertical }
+			label={ __( 'DNS actions' ) }
+		>
 			{ ( { onClose } ) => (
 				<MenuGroup className="dashboard-domains-overview-dns-actions-menu__menu-group">
 					<FormFileUpload

@@ -1,7 +1,7 @@
+import { capitalize } from '@automattic/js-utils';
 import { Spinner } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { getLocaleSlug } from 'i18n-calypso';
-import _ from 'lodash';
 import moment from 'moment';
 import React from 'react';
 import { DetailedPayment } from 'calypso/data/promote-post/use-promote-post-payment-details-query';
@@ -90,7 +90,7 @@ export const Receipt = ( {
 				</div>
 				<div className="payment-receipt__row">
 					<div className="payment-receipt__label">{ __( 'Status' ) }</div>
-					<div className="payment-receipt__value">{ _.capitalize( payment.status ) }</div>
+					<div className="payment-receipt__value">{ capitalize( payment.status ) }</div>
 				</div>
 				<div className="payment-receipt__billing-details">
 					<div className="payment-receipt__label">{ __( 'Billing Details' ) }</div>
@@ -190,9 +190,7 @@ export const Receipt = ( {
 					{ payment.payment_method && (
 						<div className="payment-receipt__row payment-receipt__payment-method">
 							<div className="payment-receipt__label">{ __( 'Payment method:' ) }</div>
-							<div className="payment-receipt__value">
-								{ _.capitalize( payment.payment_method ) }
-							</div>
+							<div className="payment-receipt__value">{ capitalize( payment.payment_method ) }</div>
 						</div>
 					) }
 

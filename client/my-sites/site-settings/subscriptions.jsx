@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -24,9 +23,7 @@ const Subscriptions = ( {
 	subscriptionsModuleActive,
 	translate,
 } ) => {
-	const viewFollowersSubscribersLink = ! isEnabled( 'user-management-revamp' )
-		? `/people/email-followers/${ selectedSiteSlug }`
-		: `/people/subscribers/${ selectedSiteSlug }`;
+	const viewFollowersSubscribersLink = `/people/subscribers/${ selectedSiteSlug }`;
 
 	return (
 		<div>

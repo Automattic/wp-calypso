@@ -9,7 +9,7 @@ import page from '@automattic/calypso-router';
 import { Button, JetpackLogo, WooLogo, CloudLogo, Tooltip } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, type JSX } from 'react';
 import useIssueLicenses from 'calypso/jetpack-cloud/sections/partner-portal/hooks/use-issue-licenses';
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -18,7 +18,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
-import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import FeatureItem from './feature-item';
 import './style.scss';
 
@@ -48,9 +47,6 @@ export default function CardContent( {
 	const [ showPopover, setShowPopover ] = useState( false );
 	const { data: agencyProducts } = useProductsQuery();
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
-
-	// Set a prop on the window object on whether Global Styles is available on the Personal plan.
-	useSiteGlobalStylesOnPersonal();
 
 	const getLogo = ( planSlug: string ) => {
 		switch ( planSlug ) {

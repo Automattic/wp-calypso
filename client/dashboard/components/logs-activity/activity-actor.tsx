@@ -16,12 +16,12 @@ function getMcpIndicator( actor?: ActivityActorDetails ): string | null {
 		? sprintf(
 				/* translators: %s: MCP client name and version */ __( 'via %s (MCP)' ),
 				actor.mcpClient
-		  )
+			)
 		: __( 'via MCP' );
 }
 
 function getActorPresentation( actor?: ActivityActorDetails ) {
-	let actorName = __( 'Unknown' );
+	let actorName: string = __( 'Unknown' );
 
 	if ( ! actor ) {
 		return {
@@ -113,7 +113,7 @@ export function ActivityActor( { actor }: { actor?: ActivityActorDetails } ) {
 	const mcpIndicator = getMcpIndicator( actor );
 
 	return (
-		<HStack spacing="2" alignment="left" className="site-activity-logs__actor">
+		<HStack spacing="2" alignment="topLeft" className="site-activity-logs__actor">
 			{ icon }
 			<span>
 				{ label }
