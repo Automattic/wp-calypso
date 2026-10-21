@@ -431,6 +431,9 @@ export class Login extends Component {
 		);
 
 		const isLostPasswordView = action === 'lostpassword' || action === 'jetpack/lostpassword';
+		// The login form sits beside the social buttons, so it needs the wider, centered layout.
+		// Lost password and two-step screens follow the 432px account template.
+		const isLoginFormView = ! isLostPasswordView && ! this.props.twoFactorAuthType;
 
 		return (
 			<>
@@ -441,6 +444,8 @@ export class Login extends Component {
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
+						columnWidth={ isLoginFormView ? 6 : 4 }
+						isCentered={ isLoginFormView }
 						// The footer carries the route to signup on desktop instead.
 						signupLinkMobileOnly={ isEntryClarityTreatment }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }

@@ -13,6 +13,7 @@ import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import useSignupLink from '../hooks/use-signup-link';
 import HeadingLogo from './heading-logo';
+import 'calypso/components/account-template/style.scss';
 import './one-login-layout.scss';
 
 export const ensureHeadingProvided = (
@@ -52,9 +53,15 @@ interface OneLoginLayoutProps {
 	signupLinkMobileOnly?: boolean;
 	noThanksRedirectUrl?: string;
 	/**
-	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`. Defaults to 6.
+	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`.
+	 * Defaults to 4, the 432px column every account screen shares.
 	 */
 	columnWidth?: 4 | 5 | 6 | 8 | 10;
+	/**
+	 * Centers the heading over a wider layout, like the main login screen's side-by-side
+	 * form and social buttons. Defaults to left-aligned.
+	 */
+	isCentered?: boolean;
 	/**
 	 * Optional flag to control whether the heading logo should be displayed. Defaults to true.
 	 */
@@ -90,7 +97,8 @@ const OneLoginLayout = ( {
 	isLostPasswordView,
 	signupLinkMobileOnly,
 	noThanksRedirectUrl,
-	columnWidth,
+	columnWidth = 4,
+	isCentered = false,
 	showLogo = true,
 	subHeadingProminent = false,
 	notice,
@@ -180,7 +188,7 @@ const OneLoginLayout = ( {
 		// Hidden in CSS rather than by a viewport hook: the page is server-rendered, so a hook
 		// would render the mobile arrangement and jump on hydration.
 		const rightElement = (
-			<nav className="wp-login__one-login-layout-top-right">
+			<nav className="wp-login__one-login-layout-top-right account-template__top-bar-links">
 				{ signupLinkMobileOnly ? (
 					<span className="wp-login__top-right-mobile">{ signupOrLoginLink }</span>
 				) : (
@@ -200,15 +208,17 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const effectiveColumnWidth: 4 | 5 | 6 | 8 | 10 = ( columnWidth ?? 6 ) as 4 | 5 | 6 | 8 | 10;
-
 	return (
 		<Step.CenteredColumnLayout
-			columnWidth={ effectiveColumnWidth }
+			columnWidth={ columnWidth }
 			topBar={ topBar() }
 			verticalAlign="center"
 		>
-			<div className="wp-login__one-login-layout-content-wrapper">
+			<div
+				className={ clsx( 'wp-login__one-login-layout-content-wrapper', 'account-template', {
+					'is-centered': isCentered,
+				} ) }
+			>
 				{ notice }
 				<div className="wp-login__one-login-layout-heading">
 					{ showLogo && (
