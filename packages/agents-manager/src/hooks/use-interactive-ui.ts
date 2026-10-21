@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { attachInteractiveUiPresentation } from '../interactive-ui/convert-interactive-ui-messages-to-components';
 import { getInteractiveUiBatches } from '../interactive-ui/interactive-ui-messages';
-import type { InteractiveUiRuntime } from '../interactive-ui/runtime';
 import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
 import type { AgentConfig } from '../utils/create-agent-config';
 import type { UIMessage, SubmitOptions } from '@automattic/agenttic-client';
+import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 interface UseInteractiveUiOptions {
 	convertedMessages: AgentsManagerUIMessage[];
@@ -17,7 +17,7 @@ interface UseInteractiveUiOptions {
 
 export interface InteractiveUiPresentation {
 	runtime: InteractiveUiRuntime | undefined;
-	sdk: typeof import( '../interactive-ui' ) | undefined;
+	sdk: typeof import( '@automattic/ai-ui-renderer' ) | undefined;
 	hasLoadError: boolean;
 	retryLoad: () => void;
 	revision: number;
@@ -45,7 +45,7 @@ export function useInteractiveUi( {
 	actionInputsRef.current = { agentConfig, isProcessing, submitContextMessage };
 
 	const [ interactiveUiSdk, setInteractiveUiSdk ] =
-		useState< typeof import( '../interactive-ui' ) >();
+		useState< typeof import( '@automattic/ai-ui-renderer' ) >();
 	const [ hasLoadError, setHasLoadError ] = useState( false );
 	const [ runtimeRevision, setRuntimeRevision ] = useState( 0 );
 
@@ -68,7 +68,7 @@ export function useInteractiveUi( {
 		}
 
 		let isUiLoadCancelled = false;
-		void import( /* webpackChunkName: "am-interactive-ui" */ '../interactive-ui' ).then(
+		void import( /* webpackChunkName: "am-interactive-ui" */ '@automattic/ai-ui-renderer' ).then(
 			( interactiveUiModule ) => ! isUiLoadCancelled && setInteractiveUiSdk( interactiveUiModule ),
 			() => ! isUiLoadCancelled && setHasLoadError( true )
 		);

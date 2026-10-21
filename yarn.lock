@@ -337,11 +337,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
-    "@a2ui/markdown-it": "npm:0.2.0"
-    "@a2ui/react": "npm:0.12.0"
-    "@a2ui/web_core": "npm:0.12.0"
     "@automattic/agenttic-client": "workspace:^"
     "@automattic/agenttic-ui": "workspace:^"
+    "@automattic/ai-ui-renderer": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -384,7 +382,6 @@ __metadata:
     smooch: "npm:^5.7.17"
     typescript: "npm:^6.0.3"
     wpcom-proxy-request: "workspace:^"
-    zod: "npm:^3.25.76"
   peerDependencies:
     "@wordpress/data": ^10.48.0
     "@wordpress/element": ^8.0.0
@@ -484,6 +481,32 @@ __metadata:
   dependenciesMeta:
     marked:
       optional: true
+  languageName: unknown
+  linkType: soft
+
+"@automattic/ai-ui-renderer@workspace:^, @automattic/ai-ui-renderer@workspace:packages/ai-ui-renderer":
+  version: 0.0.0-use.local
+  resolution: "@automattic/ai-ui-renderer@workspace:packages/ai-ui-renderer"
+  dependencies:
+    "@a2ui/markdown-it": "npm:0.2.0"
+    "@a2ui/react": "npm:0.12.0"
+    "@a2ui/web_core": "npm:0.12.0"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@testing-library/dom": "npm:^10.4.2"
+    "@testing-library/react": "npm:^16.3.3"
+    "@types/react": "npm:^18.3.1"
+    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/components": "npm:^37.0.0"
+    "@wordpress/i18n": "npm:^6.21.0"
+    "@wordpress/icons": "npm:^13.3.0"
+    clsx: "npm:^2.1.1"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^6.0.3"
+    zod: "npm:^3.25.76"
+  peerDependencies:
+    "@wordpress/element": ^8.0.0
+    react: ^18.3.1 || ^19.0.0
+    react-dom: ^18.3.1 || ^19.0.0
   languageName: unknown
   linkType: soft
 

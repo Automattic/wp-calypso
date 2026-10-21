@@ -13,9 +13,9 @@ export default createComponentImplementation(
 	( { props, buildChild } ) => (
 		<div
 			className={ clsx(
-				'agents-manager-interactive-ui__row',
-				`agents-manager-interactive-ui__row--justify-${ props.justify ?? 'start' }`,
-				`agents-manager-interactive-ui__row--align-${ props.align ?? 'stretch' }`
+				'ai-ui-renderer__row',
+				`ai-ui-renderer__row--justify-${ props.justify ?? 'start' }`,
+				`ai-ui-renderer__row--align-${ props.align ?? 'stretch' }`
 			) }
 		>
 			{ props.children.map( ( child ) =>

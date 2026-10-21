@@ -16,7 +16,7 @@ export const Video = createComponentImplementation(
 			src={ props.url }
 			controls
 			preload="metadata"
-			className="agents-manager-interactive-ui__video"
+			className="ai-ui-renderer__video"
 		/>
 	)
 );

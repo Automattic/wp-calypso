@@ -17,15 +17,11 @@ export const Modal = createComponentImplementation(
 				</ModalTriggerContext.Provider>
 				{ isOpen && (
 					<GutenbergModal
-						title={ __( 'Details', __i18n_text_domain__ ) }
-						overlayClassName="agents-manager-interactive-ui-modal"
+						title={ __( 'Details', 'default' ) }
+						overlayClassName="ai-ui-renderer__modal"
 						onRequestClose={ () => setIsOpen( false ) }
 					>
-						<fieldset
-							data-agenttic-isolated
-							className="agents-manager-interactive-ui"
-							disabled={ isDisabled }
-						>
+						<fieldset className="ai-ui-renderer" disabled={ isDisabled }>
 							{ buildChild( props.content ) }
 						</fieldset>
 					</GutenbergModal>
