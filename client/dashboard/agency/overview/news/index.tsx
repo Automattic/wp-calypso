@@ -44,16 +44,31 @@ const TYPE_LABELS: Record< AnnouncementType, string > = {
 const TYPE_ORDER: AnnouncementType[] = [ 'event', 'announcement', 'blog' ];
 
 /**
- * Prototype switches, in development builds only, until the announcements API exists:
- * `?items=1|4|12` how many items the server returned, `?tab=event|announcement|blog` the
- * filter it starts on, `?page=2` the page it starts on, `?first=<id>` the item marketing
- * sent first, `?blog=card` blog posts in their own card below the list. Everywhere else
- * the URL is ignored and the defaults apply.
+ * The switches below work in development builds and on calypso.live, which serves each PR's
+ * build as a production build, so reviewers can try them on a PR's live link. Production and
+ * every other host ignore them.
+ */
+function canUseSwitches() {
+	if ( typeof window === 'undefined' ) {
+		return false;
+	}
+	const { hostname } = window.location;
+	return (
+		config( 'env' ) === 'development' ||
+		hostname === 'calypso.live' ||
+		hostname.endsWith( '.calypso.live' )
+	);
+}
+
+/**
+ * Prototype switches, until the announcements API exists: `?items=1|4|12` how many items the
+ * server returned, `?tab=event|announcement|blog` the filter it starts on, `?page=2` the
+ * page it starts on, `?first=<id>` the item marketing sent first, `?blog=card` blog posts in
+ * their own card below the list. Where switches are off, the URL is ignored and the
+ * defaults apply.
  */
 function readSwitches() {
-	const params = new URLSearchParams(
-		config( 'env' ) === 'development' && typeof window !== 'undefined' ? window.location.search : ''
-	);
+	const params = new URLSearchParams( canUseSwitches() ? window.location.search : '' );
 	const count = Math.min( Math.max( Number( params.get( 'items' ) ) || 12, 1 ), 12 );
 	const blogCard = params.get( 'blog' ) === 'card';
 	const filter: NewsFilter =
