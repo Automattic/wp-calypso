@@ -1,6 +1,6 @@
-# AI UI
+# AI UI Renderer
 
-`@automattic/ai-ui` contains the A2UI v0.9 WordPress catalog and runtime extracted
+`@automattic/ai-ui-renderer` contains the A2UI v0.9 WordPress catalog and runtime extracted
 from Agents Manager. Consumers own session lifetime, action delivery, and error handling.
 
 Create a runtime with `createInteractiveUiRuntime(onAction)`, feed ordered batches
@@ -10,7 +10,7 @@ preserve edits, and call `runtime.dispose()` when its session ends.
 
 The package also exports `MarkdownContext`, `renderMarkdown`, and
 `InteractiveUiDisabledContext` for the host's rendering wrapper. Import
-`@automattic/ai-ui/style.scss` and the WordPress components stylesheet. Consumers
+`@automattic/ai-ui-renderer/style.scss` and the WordPress components stylesheet. Consumers
 need Sass support and supply their own modal stacking rule.
 
 The demo catalog supports `Text`, `TextField`, `Button`, `Column`, `Image`, `Icon`,
@@ -33,5 +33,5 @@ actions normally. Dialog inputs share the surface data model and are disabled
 alongside the surface while the agent is processing.
 Input and choice-group labels use WordPress control typography and spacing.
 
-Build with `yarn workspace @automattic/ai-ui build`. Run the relocated tests with
-`yarn jest --config packages/ai-ui/jest.config.js --runInBand`.
+Build with `yarn workspace @automattic/ai-ui-renderer build`. Run the relocated tests with
+`yarn jest --config packages/ai-ui-renderer/jest.config.js --runInBand`.

@@ -137,7 +137,7 @@ The `wpcom/render-interactive-ui` tool returns an envelope with
 in `data`. Agents Manager also accepts raw A2UI message arrays.
 
 The catalog, data bindings, runtime, and styles live in
-[`@automattic/ai-ui`](../ai-ui/README.md). Agents Manager loads
+[`@automattic/ai-ui-renderer`](../ai-ui-renderer/README.md). Agents Manager loads
 that package on demand, associates surfaces with transcript messages, maintains
 one runtime per conversation, and submits actions through the conversation's
 context-message flow. Controls are disabled while the agent is processing.

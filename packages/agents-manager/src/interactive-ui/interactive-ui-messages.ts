@@ -1,5 +1,5 @@
 import type { UIMessage } from '@automattic/agenttic-client';
-import type { InteractiveUiMessage } from '@automattic/ai-ui';
+import type { InteractiveUiMessage } from '@automattic/ai-ui-renderer';
 
 export function getInteractiveUiMessagesFromText(
 	text?: string

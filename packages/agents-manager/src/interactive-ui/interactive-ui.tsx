@@ -3,7 +3,7 @@ import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import type { InteractiveUiPresentation } from '../hooks/use-interactive-ui';
 import type { ReactNode } from 'react';
-import '@automattic/ai-ui/style.scss';
+import '@automattic/ai-ui-renderer/style.scss';
 import './modal.scss';
 
 class SurfaceBoundary extends Component<

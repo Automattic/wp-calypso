@@ -339,7 +339,7 @@ __metadata:
   dependencies:
     "@automattic/agenttic-client": "workspace:^"
     "@automattic/agenttic-ui": "workspace:^"
-    "@automattic/ai-ui": "workspace:^"
+    "@automattic/ai-ui-renderer": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -485,9 +485,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/ai-ui@workspace:^, @automattic/ai-ui@workspace:packages/ai-ui":
+"@automattic/ai-ui-renderer@workspace:^, @automattic/ai-ui-renderer@workspace:packages/ai-ui-renderer":
   version: 0.0.0-use.local
-  resolution: "@automattic/ai-ui@workspace:packages/ai-ui"
+  resolution: "@automattic/ai-ui-renderer@workspace:packages/ai-ui-renderer"
   dependencies:
     "@a2ui/markdown-it": "npm:0.2.0"
     "@a2ui/react": "npm:0.12.0"
