@@ -38,6 +38,13 @@ const IMAGE_REF_PATTERN = /^registry\.a8c\.com\/calypso\/app:build-\d+$/;
 // only by the `-a4a` suffix calypso.live gives its container.
 const A4A_HOSTNAME_SUFFIX = '-a4a.calypso.live';
 
+const CALYPSO_LIVE_DEV_HELPER_FEATURES = {
+	'dev/account-settings-helper': true,
+	'dev/auth-helper': true,
+	'dev/preferences-helper': true,
+	'dev/store-sandbox-helper': true,
+};
+
 function isCalypsoLiveDotcomHostname( hostname ) {
 	return isCalypsoLiveHostname( hostname ) && ! hostname.endsWith( A4A_HOSTNAME_SUFFIX );
 }
@@ -78,6 +85,13 @@ export function customizeClientDataForRequest( req, baseClientData ) {
 			...clientData,
 			...overrideData,
 			features: { ...clientData.features, ...overrideFeatures },
+		};
+	}
+
+	if ( isCalypsoLiveHostname( reqHostname ) ) {
+		clientData = {
+			...clientData,
+			features: { ...clientData.features, ...CALYPSO_LIVE_DEV_HELPER_FEATURES },
 		};
 	}
 
