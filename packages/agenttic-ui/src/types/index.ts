@@ -147,7 +147,10 @@ export interface AgentUIProps {
 	/** Whether reply text is streaming in. When set, it drives the thinking indicator. */
 	isReplying?: boolean;
 	error?: string | null;
-	/** An error shown as a notice in the message list, alongside or instead of `error`. */
+	/**
+	 * An error shown as a notice in the message list, alongside or instead of `error`. The message
+	 * list reads its message out as written when it appears or changes; `EmbeddedAgentUI` doesn't.
+	 */
 	errorNotice?: NoticeConfig;
 	onSubmit: ( message: string, files?: File[] ) => void | Promise< void >;
 

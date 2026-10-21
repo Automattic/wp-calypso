@@ -175,4 +175,54 @@ describe( 'Messages', () => {
 			container.querySelector( '[data-slot="messages"] [data-slot="notice"]' )?.textContent
 		).toBe( 'You’re out of site credits.' );
 	} );
+
+	it( 'announces `errorNotice` when it appears', async () => {
+		const question = userMessage( 'Make it orange' );
+		await render( { messages: [ question ], isProcessing: true } );
+		await render( {
+			messages: [ question ],
+			isProcessing: false,
+			errorNotice: { message: 'You’re out of site credits.' },
+		} );
+
+		expect( announcement() ).toBe( 'You’re out of site credits.' );
+	} );
+
+	it( 'announces `errorNotice` again when its message changes', async () => {
+		const question = userMessage( 'Make it orange' );
+		await render( { messages: [ question ] } );
+		await render( {
+			messages: [ question ],
+			errorNotice: { message: 'You’re out of site credits.' },
+		} );
+		await render( {
+			messages: [ question ],
+			errorNotice: { message: 'Site credits are back. Send your message again.' },
+		} );
+
+		expect( announcement() ).toBe( 'Site credits are back. Send your message again.' );
+	} );
+
+	it( 'does not read out an `errorNotice` already on screen when it opens', async () => {
+		await render( {
+			messages: [ userMessage( 'Make it orange' ) ],
+			errorNotice: { message: 'You’re out of site credits.' },
+		} );
+
+		expect( announcement() ).toBe( '' );
+	} );
+
+	it( 'announces the same `errorNotice` again after the next turn', async () => {
+		const question = userMessage( 'Make it orange' );
+		const notice = { message: 'You’re out of site credits.' };
+		await render( { messages: [ question ], isProcessing: true } );
+		await render( { messages: [ question ], errorNotice: notice } );
+		await render( { messages: [ question ], isProcessing: true } );
+
+		expect( announcement() ).toBe( '' );
+
+		await render( { messages: [ question ], errorNotice: notice } );
+
+		expect( announcement() ).toBe( 'You’re out of site credits.' );
+	} );
 } );

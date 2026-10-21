@@ -104,6 +104,8 @@ export function Messages( {
 	useEffect( () => {
 		if ( isProcessing ) {
 			textWhenProcessingStartedRef.current ??= liveRegionText;
+			// Emptied for the turn, so the same text is read out again when it ends.
+			setAnnouncement( '' );
 			return;
 		}
 		const textWhenStarted = textWhenProcessingStartedRef.current;
@@ -117,6 +119,16 @@ export function Messages( {
 		const latest = agentMessages?.[ agentMessages.length - 1 ];
 		setAnnouncement( getSpokenText( latest?.querySelector( '[data-slot="message-bubble"]' ) ) );
 	}, [ isProcessing, liveRegionText ] );
+
+	// Announce the notice in the message list when it appears or changes, as with a reply.
+	const noticeMessage = errorNotice?.message;
+	const announcedNoticeRef = useRef( noticeMessage );
+	useEffect( () => {
+		if ( noticeMessage && noticeMessage !== announcedNoticeRef.current ) {
+			setAnnouncement( noticeMessage );
+		}
+		announcedNoticeRef.current = noticeMessage;
+	}, [ noticeMessage ] );
 
 	if ( visibleMessages.length === 0 && ! isProcessing ) {
 		if ( emptyView ) {
@@ -139,7 +151,7 @@ export function Messages( {
 
 	return (
 		<>
-			{ /* Live region for announcing AI responses - hidden from view */ }
+			{ /* Live region for announcing AI responses and the error notice - hidden from view */ }
 			<div
 				aria-live="polite"
 				aria-atomic="true"
