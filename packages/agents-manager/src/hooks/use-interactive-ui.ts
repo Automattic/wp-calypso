@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
-import { attachInteractiveUiPresentation } from '../utils/convert-interactive-ui-messages-to-components';
+import {
+	attachInteractiveUiPresentation,
+	markInteractiveUiActionReplies,
+} from '../utils/convert-interactive-ui-messages-to-components';
 import { createInteractiveUiCatalogs } from '../utils/interactive-ui-catalogs';
-import { getInteractiveUiBatches, INTERACTIVE_UI_VERSION } from '../utils/interactive-ui-messages';
+import {
+	getInteractiveUiBatches,
+	getStaleInteractiveUiSurfaceIds,
+	INTERACTIVE_UI_VERSION,
+} from '../utils/interactive-ui-messages';
+import { getLatestUserMessageIndex } from '../utils/latest-message';
 import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
 import type { AgentConfig } from '../utils/create-agent-config';
 import type { InteractiveUiRenderer } from '../utils/interactive-ui-catalogs';
@@ -18,6 +26,8 @@ interface UseInteractiveUiOptions {
 	submitContextMessage: ( message: string, options: SubmitOptions ) => Promise< void >;
 	/** The providers' interactive UI components and functions. */
 	interactiveUi: LoadedProviders[ 'interactiveUi' ];
+	/** The page the editor has open, if any. */
+	currentPostId?: number | string;
 }
 
 export interface InteractiveUiPresentation {
@@ -28,6 +38,7 @@ export interface InteractiveUiPresentation {
 	retryLoad: () => void;
 	revision: number;
 	isDisabled: boolean;
+	staleSurfaceIds: ReadonlySet< string >;
 }
 
 /**
@@ -35,7 +46,9 @@ export interface InteractiveUiPresentation {
  * attached. Loads the renderer once a reply has a surface, applies surfaces after the reply
  * has streamed so none changes mid-stream, and sends their actions to the agent as hidden
  * context messages. Keeps the user's input as messages arrive, rebuilds the surfaces when
- * an earlier reply changes, and reports a failed load so the chat can offer a retry.
+ * an earlier reply changes, and reports a failed load so the chat can offer a retry. Marks
+ * surfaces stale with the rule `show-component` uses, and starts a new turn at each reply to an
+ * action, since the action's message is hidden.
  */
 export function useInteractiveUi( {
 	messages,
@@ -45,7 +58,18 @@ export function useInteractiveUi( {
 	agentConfig,
 	submitContextMessage,
 	interactiveUi,
+	currentPostId,
 }: UseInteractiveUiOptions ) {
+	const messageBatches = useMemo( () => getInteractiveUiBatches( messages ), [ messages ] );
+	const hasMessageBatches = messageBatches.length > 0;
+
+	const latestUserMessageIndex = getLatestUserMessageIndex( messages );
+	const staleSurfaceIds = useMemo(
+		() =>
+			getStaleInteractiveUiSurfaceIds( messageBatches, { latestUserMessageIndex, currentPostId } ),
+		[ messageBatches, latestUserMessageIndex, currentPostId ]
+	);
+
 	const actionInputsRef = useRef( { agentConfig, isProcessing, submitContextMessage } );
 	actionInputsRef.current = { agentConfig, isProcessing, submitContextMessage };
 
@@ -53,9 +77,6 @@ export function useInteractiveUi( {
 	const [ loadAttempt, setLoadAttempt ] = useState( 0 );
 	const [ failedLoadAttempt, setFailedLoadAttempt ] = useState< number >();
 	const [ runtimeRevision, setRuntimeRevision ] = useState( 0 );
-
-	const messageBatches = useMemo( () => getInteractiveUiBatches( messages ), [ messages ] );
-	const hasMessageBatches = messageBatches.length > 0;
 
 	const conversationSession = useMemo(
 		() => ( {
@@ -172,6 +193,7 @@ export function useInteractiveUi( {
 			retryLoad: () => setLoadAttempt( ( attempt ) => attempt + 1 ),
 			revision: runtimeRevision,
 			isDisabled: isProcessing,
+			staleSurfaceIds,
 		} ),
 		[
 			conversationSession.runtime,
@@ -180,11 +202,16 @@ export function useInteractiveUi( {
 			isRetryingLoad,
 			runtimeRevision,
 			isProcessing,
+			staleSurfaceIds,
 		]
 	);
 
 	return useMemo(
-		() => attachInteractiveUiPresentation( convertedMessages, presentation ),
-		[ convertedMessages, presentation ]
+		() =>
+			markInteractiveUiActionReplies(
+				attachInteractiveUiPresentation( convertedMessages, presentation ),
+				messages
+			),
+		[ convertedMessages, presentation, messages ]
 	);
 }

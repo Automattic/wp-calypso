@@ -465,6 +465,7 @@ export default function OrchestratorChat( {
 		agentConfig,
 		submitContextMessage,
 		interactiveUi,
+		currentPostId,
 	} );
 
 	const messageCount = displayedMessages.length;

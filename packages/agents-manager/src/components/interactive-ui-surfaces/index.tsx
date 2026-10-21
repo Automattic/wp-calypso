@@ -4,6 +4,10 @@ import type { InteractiveUiPresentation } from '../../hooks/use-interactive-ui';
 import '@automattic/ai-ui-renderer/style.scss';
 import './style.scss';
 
+// Stable, so the components re-render only when their staleness changes.
+const STALE_HOST_PROPS = { isMessageStale: true };
+const CURRENT_HOST_PROPS = { isMessageStale: false };
+
 interface Props {
 	messageId: string;
 	presentation: InteractiveUiPresentation;
@@ -11,8 +15,16 @@ interface Props {
 
 /** Shows a message's interactive UI surfaces, or a retry when the renderer failed to load. */
 export function InteractiveUiSurfaces( { messageId, presentation }: Props ) {
-	const { runtime, renderer, revision, isDisabled, hasLoadError, isRetryingLoad, retryLoad } =
-		presentation;
+	const {
+		runtime,
+		renderer,
+		revision,
+		isDisabled,
+		staleSurfaceIds,
+		hasLoadError,
+		isRetryingLoad,
+		retryLoad,
+	} = presentation;
 
 	if ( hasLoadError ) {
 		return (
@@ -46,13 +58,15 @@ export function InteractiveUiSurfaces( { messageId, presentation }: Props ) {
 		<div data-agenttic-isolated>
 			{ runtime.getSurfaceIds( messageId ).map( ( surfaceId ) => {
 				const surface = runtime.getSurface( surfaceId );
+				const isStale = staleSurfaceIds.has( surfaceId );
 
 				return surface ? (
 					<InteractiveUiSurface
 						key={ surfaceId }
 						surface={ surface }
-						disabled={ isDisabled }
+						disabled={ isDisabled || isStale }
 						revision={ revision }
+						hostProps={ isStale ? STALE_HOST_PROPS : CURRENT_HOST_PROPS }
 					/>
 				) : null;
 			} ) }

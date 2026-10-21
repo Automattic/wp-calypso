@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getVisibleMessages } from '../message-helpers';
+import { getLatestTurnStartIndex, getVisibleMessages } from '../message-helpers';
 import type { Message } from '../../types';
 
 const buildMessage = ( content: Message[ 'content' ] ): Message => ( {
@@ -61,5 +61,30 @@ describe( 'getVisibleMessages', () => {
 
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].content ).toHaveLength( 2 );
+	} );
+} );
+
+describe( 'getLatestTurnStartIndex', () => {
+	const message = ( role: Message[ 'role' ], startsTurn?: boolean ): Message => ( {
+		...buildMessage( [ { type: 'text', text: role } ] ),
+		role,
+		startsTurn,
+	} );
+
+	it( 'starts the latest turn after the user’s latest message', () => {
+		expect(
+			getLatestTurnStartIndex( [
+				message( 'user' ),
+				message( 'agent' ),
+				message( 'user' ),
+				message( 'agent' ),
+			] )
+		).toBe( 3 );
+	} );
+
+	it( 'starts it at a later message that starts a turn', () => {
+		expect(
+			getLatestTurnStartIndex( [ message( 'user' ), message( 'agent' ), message( 'agent', true ) ] )
+		).toBe( 2 );
 	} );
 } );

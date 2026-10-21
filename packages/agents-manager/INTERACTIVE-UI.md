@@ -16,12 +16,12 @@ come.
    - **The agent composes it** with `wpcom/render-interactive-ui`, for one-off forms and choices
      from the basic components. The `a2ui-render-interactive-ui` blog sticker enables it.
 2. Both return a `wpcom__render_interactive_ui` envelope of A2UI messages, stored with the
-   conversation.
+   conversation. An ability's envelope also names the page it built the surface for (`post_id`).
 3. Once the reply has streamed, the host feeds those messages to the conversation's runtime, which
    shows each surface under its message. Reloading rebuilds the surfaces from history.
 4. A button's event goes to the agent as a context message, `{ "version": "v0.9", "action": … }`,
    and its `functionCall` runs a catalog function in the browser. The surfaces are disabled while
-   the agent replies.
+   the agent replies, and the reply starts a new turn (`startsTurn`).
 
 ## Where the code lives
 
@@ -34,7 +34,8 @@ come.
     and sends actions to the agent.
   - `src/components/interactive-ui-surfaces/` renders a message's surfaces.
   - `src/utils/interactive-ui-messages.ts` and
-    `src/utils/convert-interactive-ui-messages-to-components.ts` find surfaces in the transcript.
+    `src/utils/convert-interactive-ui-messages-to-components.ts` find surfaces in the transcript
+    and which of them are stale.
   - `src/utils/interactive-ui-catalogs.ts` builds the catalogs.
 - **Providers** declare their components and functions in the provider contract's `interactiveUi`
   field (`LoadedProviders` in `src/utils/load-external-providers.ts`).
@@ -54,12 +55,14 @@ come.
   order. Agents Manager skips and logs a later duplicate.
 - **Providers declare plain definitions** (`InteractiveUiComponentDefinition`,
   `InteractiveUiFunctionDefinition`) and import only types. Each `schema` builds with the
-  renderer's `zod`, so it works from another bundle. The host passes chat state as props (AM-116).
+  renderer's `zod`, so it works from another bundle. Agents Manager passes chat state as props,
+  such as `isMessageStale`, which a surface can't override.
 - **Components own their side effects:** the change itself, its checkpoint and its Tracks events.
-- **The host decides when a surface is stale** (AM-116), with the same rules as `show-component`,
-  such as the user having replied past it, or the editor being on a different page from the one
-  its envelope names. A stale surface stays visible but greyed out and disabled, and its
-  components skip their side effects and Tracks.
+- **Agents Manager decides when a surface is stale**, with the rule `show-component` uses
+  (`src/utils/stale-chat-ui.ts`): the user has replied past the last message that changed it, or
+  the editor has another page open than the one its envelope names. Unlike a `show-component`
+  picker, a surface restored from history stays usable until then. A stale surface stays visible
+  but greyed out and disabled, and its components skip their side effects and Tracks.
 - **Load only what the surface renders.** Editor-only components load on demand, in the editor.
 
 ## Try it
