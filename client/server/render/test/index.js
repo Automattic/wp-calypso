@@ -1,4 +1,8 @@
-import { shouldServerSideRender, setShouldServerSideRender } from '..';
+import {
+	customizeClientDataForRequest,
+	shouldServerSideRender,
+	setShouldServerSideRender,
+} from '..';
 
 /**
  * A mutable hashmap that is used to create the current context (i.e. the values set here can be used as return
@@ -122,5 +126,31 @@ describe( 'setShouldServerSideRender', () => {
 		setShouldServerSideRender( contextWithQueryKeys, next );
 		expect( contextWithQueryKeys.serverSideRender ).toBe( false );
 		expect( next ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'customizeClientDataForRequest', () => {
+	const baseClientData = { features: { 'some-feature': true } };
+
+	test( 'enables the dev helpers on calypso.live', () => {
+		const clientData = customizeClientDataForRequest(
+			{ hostname: 'hash-abcd1234.calypso.live' },
+			baseClientData
+		);
+		expect( clientData.features ).toEqual( {
+			'some-feature': true,
+			'dev/account-settings-helper': true,
+			'dev/auth-helper': true,
+			'dev/preferences-helper': true,
+			'dev/store-sandbox-helper': true,
+		} );
+	} );
+
+	test( 'leaves the features unchanged elsewhere', () => {
+		const clientData = customizeClientDataForRequest(
+			{ hostname: 'wordpress.com' },
+			baseClientData
+		);
+		expect( clientData ).toBe( baseClientData );
 	} );
 } );
