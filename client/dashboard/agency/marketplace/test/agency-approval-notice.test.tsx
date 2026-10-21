@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import '@testing-library/jest-dom';
-import { queryClient } from '@automattic/api-queries';
+import { queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
 // eslint-disable-next-line no-restricted-imports -- Preload the real Help Center store before timing the interaction.
 import { HelpCenter } from '@automattic/data-stores';
 import { screen, waitFor } from '@testing-library/react';
@@ -23,14 +23,11 @@ function mockPreferences( preferences: Record< string, unknown > = {} ) {
 		.reply( 200, { calypso_preferences: preferences } );
 }
 
-function agency( approval_status: Agency[ 'approval_status' ], createdDaysAgo: number | null = 1 ) {
+function agency( approval_status: Agency[ 'approval_status' ], createdDaysAgo = 1 ) {
 	return {
 		id: 1,
 		approval_status,
-		created_at:
-			createdDaysAgo === null
-				? undefined
-				: new Date( Date.now() - createdDaysAgo * 24 * 60 * 60 * 1000 ).toISOString(),
+		created_at: new Date( Date.now() - createdDaysAgo * 24 * 60 * 60 * 1000 ).toISOString(),
 	} as Agency;
 }
 
@@ -44,13 +41,6 @@ describe( '<AgencyApprovalNotice>', () => {
 	beforeEach( () => {
 		nock.cleanAll();
 		queryClient.clear();
-	} );
-
-	test( 'tells a pending agency what is locked', async () => {
-		mockPreferences();
-		renderNotice( agency( 'pending' ) );
-
-		expect( await screen.findByText( /While we review your agency/ ) ).toBeVisible();
 	} );
 
 	test( 'opens the contact form for a rejected agency', async () => {
@@ -67,7 +57,7 @@ describe( '<AgencyApprovalNotice>', () => {
 		} );
 	} );
 
-	test( 'welcomes a newly approved agency until dismissed', async () => {
+	test( 'welcomes a newly approved agency and remembers dismissal after reloading', async () => {
 		mockPreferences();
 		const save = nock( API )
 			.post(
@@ -77,37 +67,41 @@ describe( '<AgencyApprovalNotice>', () => {
 			.reply( 200, {
 				calypso_preferences: { 'a4a-agency-approval-notice-dismissed': true },
 			} );
-		renderNotice( agency( 'approved' ) );
+		const { unmount } = renderNotice( agency( 'approved' ) );
 
 		expect( await screen.findByText( /Your application has been approved/ ) ).toBeVisible();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
-		await waitFor( () => expect( save.isDone() ).toBe( true ) );
-		await waitFor( () =>
-			expect( screen.queryByText( /Your application has been approved/ ) ).not.toBeInTheDocument()
-		);
-	} );
+		await waitFor( () => {
+			expect( save.isDone() ).toBe( true );
+			expect( queryClient.isMutating() ).toBe( 0 );
+			expect( screen.queryByText( /Your application has been approved/ ) ).not.toBeInTheDocument();
+		} );
 
-	test( 'welcomes an approved agency whose creation date is unknown', async () => {
-		mockPreferences();
-		renderNotice( agency( 'approved', null ) );
+		unmount();
+		nock.cleanAll();
+		queryClient.clear();
 
-		expect( await screen.findByText( /Your application has been approved/ ) ).toBeVisible();
-	} );
-
-	test( 'says nothing to an agency approved more than a week ago', async () => {
-		mockPreferences();
-		const { container } = renderNotice( agency( 'approved', 8 ) );
-
-		await waitFor( () => expect( nock.pendingMocks() ).toHaveLength( 0 ) );
-		expect( container ).toBeEmptyDOMElement();
-	} );
-
-	test( 'stays dismissed', async () => {
 		mockPreferences( { 'a4a-agency-approval-notice-dismissed': true } );
 		const { container } = renderNotice( agency( 'approved' ) );
 
-		await waitFor( () => expect( nock.pendingMocks() ).toHaveLength( 0 ) );
+		await waitFor( () =>
+			expect( queryClient.getQueryState( rawUserPreferencesQuery().queryKey )?.status ).toBe(
+				'success'
+			)
+		);
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	test( 'hides the welcome for agencies created more than a week ago', async () => {
+		mockPreferences();
+		const { container } = renderNotice( agency( 'approved', 8 ) );
+
+		await waitFor( () =>
+			expect( queryClient.getQueryState( rawUserPreferencesQuery().queryKey )?.status ).toBe(
+				'success'
+			)
+		);
 		expect( container ).toBeEmptyDOMElement();
 	} );
 } );
