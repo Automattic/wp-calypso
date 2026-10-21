@@ -209,6 +209,29 @@ describe( 'fetching', () => {
 		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	test( 'downloads included sublists next to the list', async () => {
+		const cacheDir = fs.mkdtempSync( path.join( os.tmpdir(), 'content-blocker-lists-' ) );
+		try {
+			const bodies = {
+				'https://example.com/filters/main.txt':
+					'! Title: Main\n!#include extra.txt\n!#include ../escape/x.txt',
+				'https://example.com/filters/extra.txt': '-extra.',
+			};
+			global.fetch = jest.fn( async ( url ) =>
+				bodies[ url ] ? respond( 200, bodies[ url ] ) : respond( 404 )
+			);
+			const [ list ] = await loadFilterLists(
+				{ lists: [ { id: 'main', url: 'https://example.com/filters/main.txt' } ] },
+				{ cacheDir, fetchOptions: { delayMs: 0 } }
+			);
+			expect( list.includes ).toEqual( { 'extra.txt': '-extra.' } );
+			expect( list.title ).toBe( 'Main' );
+			expect( global.fetch ).toHaveBeenCalledTimes( 2 );
+		} finally {
+			fs.rmSync( cacheDir, { recursive: true, force: true } );
+		}
+	} );
+
 	test( 'falls back to the cached list when a refresh fails', async () => {
 		const cacheDir = fs.mkdtempSync( path.join( os.tmpdir(), 'content-blocker-lists-' ) );
 		try {

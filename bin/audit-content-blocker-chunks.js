@@ -158,7 +158,17 @@ async function main() {
 	if ( values.json ) {
 		fs.writeFileSync(
 			path.resolve( root, values.json ),
-			JSON.stringify( { lists: lists.map( ( { text, ...list } ) => list ), reports }, null, '\t' )
+			JSON.stringify(
+				{
+					lists: lists.map( ( { text, includes, ...list } ) => ( {
+						...list,
+						includes: Object.keys( includes ?? {} ),
+					} ) ),
+					reports,
+				},
+				null,
+				'\t'
+			)
 		);
 	}
 

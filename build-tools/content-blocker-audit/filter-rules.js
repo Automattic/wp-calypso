@@ -453,39 +453,74 @@ function evaluateCondition( expression, environment ) {
 	return parse( 0 );
 }
 
+const INCLUDE = /^!#include\s+(\S+)/;
+
+/**
+ * Names of the sublists a filter list pulls in with `!#include`.
+ * @param {string} text Filter list contents.
+ */
+function listIncludes( text ) {
+	return [
+		...new Set(
+			text
+				.split( /\r?\n/ )
+				.map( ( line ) => INCLUDE.exec( line.trim() )?.[ 1 ] )
+				.filter( Boolean )
+		),
+	];
+}
+
 /**
  * Parse a whole filter list. Rules inside `!#if` blocks are kept only when the
- * condition holds on at least one of the audited platforms.
- * @param {string} text Filter list contents.
- * @param {string} list Name recorded on each rule.
+ * condition holds on at least one of the audited platforms. `!#include` lines
+ * are replaced by the matching entry of `includes`, whose rules are recorded
+ * as coming from `<list>/<name>`.
+ * @param {string} text     Filter list contents.
+ * @param {string} list     Name recorded on each rule.
+ * @param {Object} includes Contents of included sublists, keyed by name.
  */
-function parseFilterList( text, list ) {
+function parseFilterList( text, list, includes = {} ) {
 	// One stack of open `!#if` blocks per environment: whether each block is active.
 	const stacks = ENVIRONMENTS.map( () => [] );
 	const rules = [];
-	text.split( /\r?\n/ ).forEach( ( line, index ) => {
-		const directive = /^!#(if|else|endif)\b\s*(.*)$/.exec( line.trim() );
-		if ( directive ) {
-			const [ , keyword, expression ] = directive;
-			stacks.forEach( ( stack, i ) => {
-				if ( keyword === 'if' ) {
-					stack.push( evaluateCondition( expression, ENVIRONMENTS[ i ] ) );
-				} else if ( keyword === 'else' && stack.length ) {
-					stack.push( ! stack.pop() );
-				} else if ( keyword === 'endif' ) {
-					stack.pop();
+	const active = () => stacks.some( ( stack ) => stack.every( Boolean ) );
+	const parseText = ( source, label, nested ) => {
+		source.split( /\r?\n/ ).forEach( ( line, index ) => {
+			const directive = /^!#(if|else|endif)\b\s*(.*)$/.exec( line.trim() );
+			if ( directive ) {
+				const [ , keyword, expression ] = directive;
+				stacks.forEach( ( stack, i ) => {
+					if ( keyword === 'if' ) {
+						stack.push( evaluateCondition( expression, ENVIRONMENTS[ i ] ) );
+					} else if ( keyword === 'else' && stack.length ) {
+						stack.push( ! stack.pop() );
+					} else if ( keyword === 'endif' ) {
+						stack.pop();
+					}
+				} );
+				return;
+			}
+			if ( ! active() ) {
+				return;
+			}
+			const include = INCLUDE.exec( line.trim() )?.[ 1 ];
+			if ( include ) {
+				// uBlock Origin only follows includes in the top-level list.
+				if ( ! nested && includes[ include ] !== undefined ) {
+					const depth = stacks.map( ( stack ) => stack.length );
+					parseText( includes[ include ], `${ list }/${ include }`, true );
+					// An unbalanced sublist must not leak `!#if` state into its parent.
+					stacks.forEach( ( stack, i ) => ( stack.length = depth[ i ] ) );
 				}
-			} );
-			return;
-		}
-		if ( ! stacks.some( ( stack ) => stack.every( Boolean ) ) ) {
-			return;
-		}
-		const rule = parseRule( line, { list, line: index + 1 } );
-		if ( rule ) {
-			rules.push( rule );
-		}
-	} );
+				return;
+			}
+			const rule = parseRule( line, { list: label, line: index + 1 } );
+			if ( rule ) {
+				rules.push( rule );
+			}
+		} );
+	};
+	parseText( text, list, false );
 	return rules;
 }
 
@@ -525,6 +560,7 @@ function isRelevantRule( rule, { pageHosts, assetHosts } ) {
 module.exports = {
 	parseRule,
 	parseFilterList,
+	listIncludes,
 	createMatcher,
 	ruleMatches,
 	hostMatches,

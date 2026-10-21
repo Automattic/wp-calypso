@@ -1,6 +1,11 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
-const { parseFilterList, createMatcher, isRelevantRule } = require( './filter-rules' );
+const {
+	parseFilterList,
+	listIncludes,
+	createMatcher,
+	isRelevantRule,
+} = require( './filter-rules' );
 
 const ASSET_EXTENSIONS = {
 	'.js': 'script',
@@ -140,7 +145,32 @@ async function fetchWithRetry( url, { attempts = 3, delayMs = 2000 } = {} ) {
 }
 
 /**
- * Load the configured filter lists, downloading any that are not cached yet.
+ * Read a cached download, fetching it first when it is missing or `refresh` is
+ * set. A failed refresh falls back to the cached copy and marks it stale.
+ */
+async function loadCached( file, url, label, { offline, refresh, fetchOptions } ) {
+	const cached = fs.existsSync( file );
+	let stale = false;
+	if ( refresh || ! cached ) {
+		if ( offline ) {
+			throw new Error( `Filter list "${ label }" is not cached in ${ path.dirname( file ) }` );
+		}
+		try {
+			fs.writeFileSync( file, await fetchWithRetry( url, fetchOptions ) );
+		} catch ( error ) {
+			if ( ! cached ) {
+				throw new Error( `Could not download "${ label }": ${ error.message }` );
+			}
+			console.warn( `Using the cached copy of "${ label }": ${ error.message }` );
+			stale = true;
+		}
+	}
+	return { text: fs.readFileSync( file, 'utf8' ), stale };
+}
+
+/**
+ * Load the configured filter lists, downloading any that are not cached yet,
+ * along with the sublists they `!#include`.
  * @param {Object}  config           Parsed `filter-lists.json`.
  * @param {Object}  options
  * @param {string}  options.cacheDir Directory holding `<id>.txt` copies of each list.
@@ -153,27 +183,27 @@ async function loadFilterLists(
 	{ cacheDir, offline = false, refresh = false, fetchOptions }
 ) {
 	fs.mkdirSync( cacheDir, { recursive: true } );
+	const options = { offline, refresh, fetchOptions };
 	return Promise.all(
 		config.lists.map( async ( { id, url } ) => {
-			const file = path.join( cacheDir, `${ id }.txt` );
-			const cached = fs.existsSync( file );
-			let stale = false;
-			if ( refresh || ! cached ) {
-				if ( offline ) {
-					throw new Error( `Filter list "${ id }" is not cached in ${ cacheDir }` );
+			const list = await loadCached( path.join( cacheDir, `${ id }.txt` ), url, id, options );
+			const includes = {};
+			let stale = list.stale;
+			for ( const name of listIncludes( list.text ) ) {
+				// Includes are plain sibling file names; anything else is not followed.
+				if ( ! /^[\w.-]+\.txt$/.test( name ) ) {
+					continue;
 				}
-				try {
-					fs.writeFileSync( file, await fetchWithRetry( url, fetchOptions ) );
-				} catch ( error ) {
-					if ( ! cached ) {
-						throw new Error( `Could not download "${ id }": ${ error.message }` );
-					}
-					console.warn( `Using the cached copy of "${ id }": ${ error.message }` );
-					stale = true;
-				}
+				const include = await loadCached(
+					path.join( cacheDir, `${ id }--${ name }` ),
+					new URL( name, url ).href,
+					`${ id }/${ name }`,
+					options
+				);
+				includes[ name ] = include.text;
+				stale ||= include.stale;
 			}
-			const text = fs.readFileSync( file, 'utf8' );
-			return { id, url, text, stale, ...describeList( text ) };
+			return { id, url, text: list.text, includes, stale, ...describeList( list.text ) };
 		} )
 	);
 }
@@ -192,7 +222,9 @@ function buildMatcher( lists, config ) {
 	const context = { pageHosts: config.pageHosts, assetHosts: config.assetHosts };
 	return createMatcher(
 		lists.flatMap( ( list ) =>
-			parseFilterList( list.text, list.id ).filter( ( rule ) => isRelevantRule( rule, context ) )
+			parseFilterList( list.text, list.id, list.includes ).filter( ( rule ) =>
+				isRelevantRule( rule, context )
+			)
 		)
 	);
 }

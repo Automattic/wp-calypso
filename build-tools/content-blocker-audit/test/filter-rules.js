@@ -182,6 +182,37 @@ describe( 'parseFilterList', () => {
 		).toEqual( [ '-firefox.', '-not-firefox.', '-chromium.', '-everywhere.' ] );
 	} );
 
+	test( 'follows includes, recording the sublist each rule came from', () => {
+		const rules = parseFilterList(
+			[
+				'-main.',
+				'!#include filters-2026.txt',
+				'!#if env_mobile',
+				'!#include filters-mobile.txt',
+				'!#endif',
+				'!#include missing.txt',
+			].join( '\n' ),
+			'ublock',
+			{
+				'filters-2026.txt': '! comment\n-yearly.\n!#include nested.txt',
+				'filters-mobile.txt': '-mobile.',
+				'nested.txt': '-nested.',
+			}
+		);
+		expect( rules.map( ( { list, line, raw } ) => `${ list }:${ line } ${ raw }` ) ).toEqual( [
+			'ublock:1 -main.',
+			'ublock/filters-2026.txt:2 -yearly.',
+		] );
+	} );
+
+	test( 'does not let an unbalanced include leak `!#if` state', () => {
+		expect(
+			parseFilterList( '!#include open.txt\n-after.', 'test', {
+				'open.txt': '!#if env_mobile\n-mobile.',
+			} ).map( ( rule ) => rule.raw )
+		).toEqual( [ '-after.' ] );
+	} );
+
 	test( 'handles nested blocks', () => {
 		expect(
 			raws( [ '!#if ext_ublock', '!#if env_mobile', '-mobile.', '!#endif', '-ublock.', '!#endif' ] )
