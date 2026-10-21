@@ -400,6 +400,11 @@ describe( 'BackupKnownThreats', () => {
 		expect( badge.querySelector( '.gridicons-notice-outline' ) ).toHaveAttribute( 'height', '16' );
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( /show threats/i ) ).not.toBeInTheDocument();
+		// Nothing else says what the badge means, so it explains itself on hover.
+		await userEvent.hover( badge );
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+			'This backup is known to contain 1 security threat. Restoring it may bring malware back to your site.'
+		);
 		expect( details.isDone() ).toBe( false );
 	} );
 } );
