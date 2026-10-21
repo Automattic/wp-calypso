@@ -86,6 +86,7 @@ export function useInteractiveUi( {
 	sessionRef.current = getInteractiveUiSession( sessionRef.current, scopeIdentity, sessionId );
 	const conversationSession = sessionRef.current;
 
+	// Tells surfaces restored from history, such as a past chat's, from new ones.
 	useEffect( () => {
 		trackInteractiveUiHistory( conversationSession.history, {
 			isProcessing,
