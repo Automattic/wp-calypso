@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import type { InteractiveUiPresentation } from '../../hooks/use-interactive-ui';
 import '@automattic/ai-ui-renderer/style.scss';
 import './style.scss';
@@ -61,13 +62,19 @@ export function InteractiveUiSurfaces( { messageId, presentation }: Props ) {
 				const isStale = staleSurfaceIds.has( surfaceId );
 
 				return surface ? (
-					<InteractiveUiSurface
+					<div
 						key={ surfaceId }
-						surface={ surface }
-						disabled={ isDisabled || isStale }
-						revision={ revision }
-						hostProps={ isStale ? STALE_HOST_PROPS : CURRENT_HOST_PROPS }
-					/>
+						className={ clsx( 'agents-manager-interactive-ui-surfaces__surface', {
+							'is-stale': isStale,
+						} ) }
+					>
+						<InteractiveUiSurface
+							surface={ surface }
+							disabled={ isDisabled || isStale }
+							revision={ revision }
+							hostProps={ isStale ? STALE_HOST_PROPS : CURRENT_HOST_PROPS }
+						/>
+					</div>
 				) : null;
 			} ) }
 		</div>

@@ -80,6 +80,7 @@ export function useInteractiveUi( {
 			conversationId,
 			runtime: undefined as InteractiveUiRuntime | undefined,
 			appliedBatches: [] as InteractiveUiBatch[],
+			hasBeenIdle: false,
 		} ),
 		[ conversationId ]
 	);
@@ -94,7 +95,12 @@ export function useInteractiveUi( {
 		firstTurn?.session === conversationSession ? firstTurn.messageIndex : Infinity;
 
 	useEffect( () => {
-		if ( isProcessing && firstLiveMessageIndex === Infinity ) {
+		// Right after a switch, the previous conversation's reply can still be in progress, so only
+		// a turn started once the session has been idle counts. A turn that rewinds the transcript,
+		// such as a regeneration, moves the start back.
+		if ( ! isProcessing ) {
+			conversationSession.hasBeenIdle = true;
+		} else if ( conversationSession.hasBeenIdle && messages.length < firstLiveMessageIndex ) {
 			setFirstTurn( { session: conversationSession, messageIndex: messages.length } );
 		}
 	}, [ isProcessing, firstLiveMessageIndex, conversationSession, messages.length ] );

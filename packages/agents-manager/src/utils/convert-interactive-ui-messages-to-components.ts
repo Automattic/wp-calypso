@@ -52,8 +52,7 @@ function isInteractiveUiSurfacesPart( content: MessageContentPart ) {
 
 /**
  * Hands each message's interactive UI part the current presentation, and drops the part while
- * its message has no surface to show yet, unless the renderer failed to load. Greys out a message
- * whose surfaces are all stale, as `show-component` does.
+ * its message has no surface to show yet, unless the renderer failed to load.
  */
 export function attachInteractiveUiPresentation(
 	messages: AgentsManagerUIMessage[],
@@ -64,15 +63,10 @@ export function attachInteractiveUiPresentation(
 			return message;
 		}
 
-		const surfaceIds = presentation.runtime?.getSurfaceIds( message.id ) ?? [];
-		const hasSurfaces = surfaceIds.length > 0;
-		const isStale =
-			hasSurfaces &&
-			surfaceIds.every( ( surfaceId ) => presentation.staleSurfaceIds.has( surfaceId ) );
+		const hasSurfaces = !! presentation.runtime?.getSurfaceIds( message.id ).length;
 
 		return {
 			...message,
-			...( isStale && { disabled: true } ),
 			content: message.content.flatMap( ( content ) => {
 				if ( ! isInteractiveUiSurfacesPart( content ) ) {
 					return [ content ];
