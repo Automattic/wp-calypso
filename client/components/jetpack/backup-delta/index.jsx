@@ -26,7 +26,7 @@ function BackupDeltaRow( { siteId, activity } ) {
 			toolbarExtraContent={
 				isFlagged ? (
 					<div>
-						<BackupKnownThreatsToggle state={ knownThreats } inToolbar />
+						<BackupKnownThreatsToggle state={ knownThreats } withBadge />
 					</div>
 				) : undefined
 			}

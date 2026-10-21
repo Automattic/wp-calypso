@@ -103,7 +103,6 @@ export default function KnownThreatsNotice( {
 				{ hasScan && flagged > 0 && counts?.backupPeriod != null && (
 					<div>
 						<KnownThreatsToggle
-							count={ flagged }
 							isOpen={ isOpen }
 							onToggle={ () => setIsOpen( ( open ) => ! open ) }
 							controlsId={ threatsRegionId }

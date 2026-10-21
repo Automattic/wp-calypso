@@ -1,10 +1,4 @@
-import {
-	__experimentalHStack as HStack,
-	Button,
-	Icon,
-	Tooltip,
-	VisuallyHidden,
-} from '@wordpress/components';
+import { Button, Icon, Tooltip, VisuallyHidden } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { caution, chevronDown, chevronUp } from '@wordpress/icons';
 import './known-threats-badge.scss';
@@ -58,38 +52,30 @@ export function KnownThreatsBadge( {
 }
 
 interface KnownThreatsToggleProps {
-	count: number;
 	isOpen: boolean;
 	onToggle: () => void;
 	/** The id of the region the toggle shows; referenced only while it is open. */
 	controlsId?: string;
 }
 
-export function KnownThreatsToggle( {
-	count,
-	isOpen,
-	onToggle,
-	controlsId,
-}: KnownThreatsToggleProps ) {
-	// The badge never acts as a control; the link beside it shows and hides the list.
+export function KnownThreatsToggle( { isOpen, onToggle, controlsId }: KnownThreatsToggleProps ) {
+	// The warning beside it already gives the count, so no badge: just the button.
 	return (
-		<HStack spacing={ 2 } justify="flex-start" expanded={ false } wrap>
-			<KnownThreatsBadge count={ count } />
-			<Button
-				__next40pxDefaultSize
-				variant="link"
-				icon={ isOpen ? chevronUp : chevronDown }
-				iconPosition="right"
-				aria-expanded={ isOpen }
-				aria-controls={ isOpen ? controlsId : undefined }
-				onClick={ onToggle }
-			>
-				{ isOpen
-					? /* translators: Hides the list of known security threats in a backup. */
-						__( 'Hide threats' )
-					: /* translators: Shows the list of known security threats in a backup. */
-						__( 'Show threats' ) }
-			</Button>
-		</HStack>
+		<Button
+			__next40pxDefaultSize
+			variant="secondary"
+			size="compact"
+			icon={ isOpen ? chevronUp : chevronDown }
+			iconPosition="right"
+			aria-expanded={ isOpen }
+			aria-controls={ isOpen ? controlsId : undefined }
+			onClick={ onToggle }
+		>
+			{ isOpen
+				? /* translators: Hides the list of known security threats in a backup. */
+					__( 'Hide threats' )
+				: /* translators: Shows the list of known security threats in a backup. */
+					__( 'Show threats' ) }
+		</Button>
 	);
 }
