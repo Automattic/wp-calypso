@@ -23,7 +23,7 @@ function NoSitesEmptyState() {
 	return (
 		<DataViewsEmptyStateLayout
 			title={ __( 'You need a site to install a plugin' ) }
-			description={ __( 'Create a site to start adding plugins.' ) }
+			description={ __( 'Create a site to start installing plugins.' ) }
 		>
 			<EmptyState.ActionList>
 				<EmptyState.ActionItem
