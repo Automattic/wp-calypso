@@ -102,7 +102,7 @@ const ErrorStep: StepType< {
 				variant: variantSlug,
 				previous_step: previousStep,
 				error_reason: errorReason,
-				step_data_persisted: ! isFlowArrival,
+				is_flow_arrival: isFlowArrival,
 			},
 			properties: {
 				flow,

@@ -98,7 +98,7 @@ describe( 'ErrorStep', () => {
 				variant: undefined,
 				previous_step: 'processing',
 				error_reason: undefined,
-				step_data_persisted: false,
+				is_flow_arrival: true,
 			},
 			properties: {
 				flow: 'onboarding',
@@ -127,7 +127,7 @@ describe( 'ErrorStep', () => {
 				variant: undefined,
 				previous_step: 'processing',
 				error_reason: undefined,
-				step_data_persisted: false,
+				is_flow_arrival: true,
 			},
 			properties: {
 				flow: 'onboarding',
@@ -177,7 +177,7 @@ describe( 'ErrorStep', () => {
 		expect( loggedExtra() ).toMatchObject( {
 			previous_step: 'setup-your-site-ai',
 			error_reason: 'build_wow_start_failed',
-			step_data_persisted: true,
+			is_flow_arrival: false,
 		} );
 	} );
 
@@ -191,7 +191,7 @@ describe( 'ErrorStep', () => {
 		expect( loggedExtra() ).toMatchObject( {
 			previous_step: 'processing',
 			error_reason: 'processing_no_redirect',
-			step_data_persisted: false,
+			is_flow_arrival: true,
 		} );
 	} );
 
@@ -234,7 +234,7 @@ describe( 'ErrorStep', () => {
 			expect( loggedExtra() ).toMatchObject( {
 				previous_step: 'processing',
 				error_reason: 'processing_failed',
-				step_data_persisted: true,
+				is_flow_arrival: false,
 			} );
 		} );
 
@@ -247,7 +247,7 @@ describe( 'ErrorStep', () => {
 			expect( loggedError() ).toBe( 'Unsupported plan' );
 			expect( loggedExtra() ).toMatchObject( {
 				error_reason: 'processing_failed',
-				step_data_persisted: true,
+				is_flow_arrival: false,
 			} );
 		} );
 
