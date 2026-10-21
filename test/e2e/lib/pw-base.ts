@@ -842,6 +842,7 @@ export const tags = {
 	AUTHENTICATION: '@authentication',
 	CALYPSO_PR: '@calypso-pr',
 	CALYPSO_RELEASE: '@calypso-release',
+	CONTENT_BLOCKER: '@content-blocker',
 	DASHBOARD_PR: '@dashboard-pr',
 	DESKTOP_ONLY: '@desktop-only',
 	EDITOR_TRACKING: '@editor-tracking',

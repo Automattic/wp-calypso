@@ -21,6 +21,8 @@ set -o pipefail
 #     scheduled job. If every changed non-spec file is P2-only code (see P2_PATH_RE), run
 #     TEST_GROUP plus @p2 and any changed specs instead; if P2 code (a P2 spec included) is
 #     mixed with other non-spec changes, run all tests.
+#   - "all tests" never includes @content-blocker, a scheduled production check that depends
+#     on third-party filter lists.
 #   - Playwright specs changed (test/e2e/specs/**/*.spec.ts) -> run TEST_GROUP plus those specs
 #     in a single pass. Playwright's `--grep` matches the spec path relative to test/e2e/specs/,
 #     so a test selected by both the tag and a changed path runs once.
@@ -29,6 +31,7 @@ set -o pipefail
 
 # Anchored so a future tag such as "@p2-foo" is not skipped by accident.
 readonly P2_TAG_GREP='@p2(\s|$)'
+readonly CONTENT_BLOCKER_TAG_GREP='@content-blocker(\s|$)'
 
 # P2-only files. P2 lines in shared files (the accountP2 fixture, p2User secrets) can't be
 # matched by path; such a change skips P2 here and relies on the scheduled P2 job.
@@ -62,10 +65,11 @@ compute_flag() {
 		if grep -qvE "$P2_PATH_RE" <<<"$runtime_changed"; then
 			# P2 code mixed with other runtime changes: anything may break, P2 included.
 			if grep -qE "$P2_PATH_RE" <<<"$relevant_changed"; then
+				printf -- '--grep-invert=%s' "$CONTENT_BLOCKER_TAG_GREP"
 				return 0
 			fi
 
-			printf -- '--grep-invert=%s' "$P2_TAG_GREP"
+			printf -- '--grep-invert=%s|%s' "$P2_TAG_GREP" "$CONTENT_BLOCKER_TAG_GREP"
 			return 0
 		fi
 
@@ -111,7 +115,8 @@ self_test() {
 	local POM=test/e2e/lib/pages/some-page.ts
 	local SHARED=test/e2e/specs/shared/login.ts
 	local PW_GREP='--grep=@calypso-pr|(^|\s)tools/import__sites-squarespace\.spec\.ts'
-	local NO_P2='--grep-invert=@p2(\s|$)'
+	local NO_P2='--grep-invert=@p2(\s|$)|@content-blocker(\s|$)'
+	local ALL='--grep-invert=@content-blocker(\s|$)'
 	local GROUP_P2='--grep=@calypso-pr|@p2(\s|$)'
 	local P2_SPEC=test/e2e/specs/p2/p2__post.spec.ts
 	local P2_POM=packages/calypso-e2e/src/lib/pages/p2-page.ts
@@ -157,11 +162,11 @@ self_test() {
 		"$P2_SPEC"$'\n'"$P2_POM"
 	check "P2 POM, empty group runs all"    "" "$P2_POM" ""
 	check "POM, empty group skips P2"       "$NO_P2" "$POM" ""
-	check "P2 POM + POM runs all"           "" "$P2_POM"$'\n'"$POM"
+	check "P2 POM + POM runs all"           "$ALL" "$P2_POM"$'\n'"$POM"
 	check "P2 POM + PW spec unions both" \
 		'--grep=@calypso-pr|@p2(\s|$)|(^|\s)tools/import__sites-squarespace\.spec\.ts' \
 		"$P2_POM"$'\n'"$PW"
-	check "P2 spec + POM runs all"          "" "$P2_SPEC"$'\n'"$POM"
+	check "P2 spec + POM runs all"          "$ALL" "$P2_SPEC"$'\n'"$POM"
 	check "P2 spec alone unions path" \
 		'--grep=@calypso-pr|(^|\s)p2/p2__post\.spec\.ts' \
 		"$P2_SPEC"
