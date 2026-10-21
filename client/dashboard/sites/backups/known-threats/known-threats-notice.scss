@@ -7,6 +7,7 @@
 		var( --wpds-color-stroke-surface-warning );
 
 	.components-checkbox-control__label {
-		font-weight: var( --wpds-typography-font-weight-emphasis, 600 );
+		// The emphasis token is a medium weight here (499), which doesn't read as bold.
+		font-weight: 600;
 	}
 }

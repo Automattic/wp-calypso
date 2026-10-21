@@ -305,10 +305,10 @@ test( 'expands the threats list for Scan sites', async () => {
 	const pill = within( toggle ).getByText( 'Known threats (3)' );
 	expect( pill ).toHaveClass( 'dashboard-known-threats-badge' );
 	expect( pill.querySelector( 'svg' ) ).toBeInTheDocument();
-	// The pill's warning icon, then the chevron after the pill.
+	// The warning icon and, at the end of the pill, the chevron.
 	expect( toggle.querySelectorAll( 'svg' ) ).toHaveLength( 2 );
 	expect( toggle.querySelector( 'svg' )?.parentElement ).toBe( pill );
-	expect( toggle.lastElementChild?.tagName ).toBe( 'svg' );
+	expect( pill.lastElementChild?.tagName ).toBe( 'svg' );
 	expect(
 		screen.getByText(
 			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.',

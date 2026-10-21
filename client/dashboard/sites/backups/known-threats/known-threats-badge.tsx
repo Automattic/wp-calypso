@@ -21,12 +21,15 @@ interface KnownThreatsBadgeProps {
 	showWarning?: boolean;
 	/** Set to false where the tooltip can't be reached, e.g. under a clickable row. */
 	withTooltip?: boolean;
+	/** Set where the badge toggles the threats: it then ends with a chevron showing which way. */
+	isOpen?: boolean;
 }
 
 export function KnownThreatsBadge( {
 	count,
 	showWarning = false,
 	withTooltip = true,
+	isOpen,
 }: KnownThreatsBadgeProps ) {
 	const badge = (
 		<span className="dashboard-known-threats-badge">
@@ -35,6 +38,9 @@ export function KnownThreatsBadge( {
 				/* translators: %d is the number of known security threats in a backup */
 				sprintf( __( 'Known threats (%d)' ), count )
 			}
+			{ isOpen !== undefined && (
+				<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 16 } fill="currentColor" />
+			) }
 		</span>
 	);
 
@@ -83,8 +89,7 @@ export function KnownThreatsToggle( {
 			aria-controls={ isOpen ? controlsId : undefined }
 			onClick={ onToggle }
 		>
-			<KnownThreatsBadge count={ count } />
-			<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 24 } />
+			<KnownThreatsBadge count={ count } isOpen={ isOpen } />
 		</Button>
 	);
 }
