@@ -1,9 +1,11 @@
 import { createInteractiveUiCatalog, createInteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 import {
 	applyInteractiveUiBatch,
+	createInteractiveUiHistory,
 	getInteractiveUiBatches,
 	getStaleInteractiveUiSurfaceIds,
 	parseInteractiveUiText,
+	trackInteractiveUiHistory,
 } from '../interactive-ui-messages';
 import type { InteractiveUiBatch } from '../interactive-ui-messages';
 import type { UIMessage } from '@automattic/agenttic-client';
@@ -198,5 +200,57 @@ describe( 'applyInteractiveUiBatch', () => {
 		expect( consoleError ).toHaveBeenCalledTimes( 1 );
 
 		consoleError.mockRestore();
+	} );
+} );
+
+describe( 'trackInteractiveUiHistory', () => {
+	const batch = { operations, messageId: 'agent', messageIndex: 1, signature: 'restored' };
+
+	it( 'records the batches in the transcript before the first turn', () => {
+		const history = createInteractiveUiHistory();
+
+		trackInteractiveUiHistory( history, {
+			isProcessing: false,
+			messageCount: 2,
+			batches: [ batch ],
+		} );
+
+		expect( history.restoredSignatures ).toEqual( new Set( [ 'restored' ] ) );
+	} );
+
+	it.each( [
+		[
+			'a cancelled upload',
+			[
+				{ isProcessing: false, messageCount: 0 },
+				{ isProcessing: true, messageCount: 0 },
+			],
+		],
+		[ 'a reply still in progress after a switch', [ { isProcessing: true, messageCount: 5 } ] ],
+	] )( 'keeps recording after %s', ( _description, steps ) => {
+		const history = createInteractiveUiHistory();
+
+		steps.forEach( ( step ) => trackInteractiveUiHistory( history, { ...step, batches: [] } ) );
+		trackInteractiveUiHistory( history, {
+			isProcessing: false,
+			messageCount: 2,
+			batches: [ batch ],
+		} );
+
+		expect( history.restoredSignatures.has( 'restored' ) ).toBe( true );
+	} );
+
+	it( 'stops recording once a message is sent', () => {
+		const history = createInteractiveUiHistory();
+
+		trackInteractiveUiHistory( history, { isProcessing: false, messageCount: 2, batches: [] } );
+		trackInteractiveUiHistory( history, { isProcessing: true, messageCount: 3, batches: [] } );
+		trackInteractiveUiHistory( history, {
+			isProcessing: false,
+			messageCount: 4,
+			batches: [ batch ],
+		} );
+
+		expect( history.restoredSignatures.size ).toBe( 0 );
 	} );
 } );
