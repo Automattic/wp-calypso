@@ -29,7 +29,7 @@ function makeFixerFunction( arg, context ) {
 		switch ( arg.type ) {
 			case 'TemplateLiteral':
 				return arg.quasis.reduce( ( fixes, quasi ) => {
-					const nodeContent = context.getSourceCode().getText( quasi );
+					const nodeContent = context.sourceCode.getText( quasi );
 					if ( 'TemplateElement' === quasi.type && containsThreeDots( nodeContent ) ) {
 						fixes.push(
 							fixer.replaceTextRange( quasi.range, replaceThreeDotsWithEllipsis( nodeContent ) )

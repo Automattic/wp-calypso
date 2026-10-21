@@ -44,7 +44,23 @@ export const isFetching = ( state = false, action ) => {
 	return state;
 };
 
+/*
+ * What this session knows about the list: `full` after a full (not slug-filtered) list,
+ * `failed` after a failed request. Not persisted, so a stale cache is never trusted.
+ */
+export const sessionListStatus = ( state = 'none', action ) => {
+	switch ( action.type ) {
+		case PRODUCTS_LIST_RECEIVE:
+			return action.isPartialList ? 'none' : 'full';
+		case PRODUCTS_LIST_REQUEST_FAILURE:
+			return 'failed';
+	}
+
+	return state;
+};
+
 const combinedReducer = combineReducers( {
+	sessionListStatus,
 	isFetching,
 	items,
 	type,

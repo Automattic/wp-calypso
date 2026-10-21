@@ -1,6 +1,7 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { getBrowserSafeLocale } from 'i18n-calypso';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
+import { getActiveSessionId } from './agent-session';
 import type { CreditsPlanTier, CreditsStatus } from './credits';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite } from '@automattic/data-stores';
@@ -151,7 +152,7 @@ export function getLiveCreditSiteId(
 		: undefined;
 }
 
-/** The dot's status for a valid allowance snapshot, so other chats can show the same balance. */
+/** The meter's status for a valid allowance snapshot, so other chats can show the same balance. */
 export function parseLiveCreditsStatus(
 	value: unknown,
 	siteId: number
@@ -206,29 +207,94 @@ export function buildLiveCreditsStatus( snapshot: CreditSnapshot ): CreditsStatu
 	};
 }
 
-/** Tags upgrades from the credits prompts. Checkout copies it onto the purchase, and Tracks events send it as `ref`. */
+/** Tags purchases from the credits prompts. Checkout copies it onto the purchase, and Tracks events send it as `ref`. */
 export const CREDITS_UPGRADE_SOURCE = 'wp_ai_credits';
 
-/**
- * The plans page for a plan with a higher plan to move to. Calypso's plans
- * route takes the site's domain or its ID.
- */
-export function getCreditsUpgradeUrl(
-	status: CreditsStatus,
-	site: string | number
-): string | undefined {
-	if ( ! [ 'personal', 'premium', 'business' ].includes( status.planTier ?? '' ) ) {
-		return undefined;
-	}
-	return `https://wordpress.com/plans/${ encodeURIComponent( site ) }?source=${ CREDITS_UPGRADE_SOURCE }`;
+/** The store's AI credits product. Kept here because this package doesn't depend on `@automattic/api-core`. */
+const CREDITS_TOP_UP_PRODUCT = 'ai-credits-lifetime';
+
+/** Credits one Add credits click buys: one pack, with no amount picker. */
+const CREDITS_TOP_UP_AMOUNT = 100000;
+
+/** A plan upgrade, or a credits pack. Tracks events send it as `cta_type`. */
+export type CreditsPurchaseKind = 'upgrade' | 'top_up';
+
+export interface CreditsPurchaseLink {
+	kind: CreditsPurchaseKind;
+	url: string;
 }
 
-/** Bind the plans destination to the same site as the authenticated balance. */
-export function getLiveCreditsUpgradeUrl(
+// Upgrading is the better deal on the lower plans. Business and Commerce buy a
+// credits pack instead, and Commerce has no plan to upgrade to.
+const CREDITS_PURCHASE_KIND_BY_TIER: Record< CreditsPlanTier, CreditsPurchaseKind > = {
+	personal: 'upgrade',
+	premium: 'upgrade',
+	business: 'top_up',
+	commerce: 'top_up',
+};
+
+// Copied from `getWPComRedirectToURL` in Jetpack's projects/js-packages/ai-client/src/hooks/use-ai-checkout/index.ts.
+function getCreditsReturnUrl( siteFragment: string, isSimpleSite: boolean ): string {
+	const postId = new URLSearchParams( window.location.search ).get( 'post' );
+	if ( isSimpleSite && postId !== null ) {
+		return `https://wordpress.com/post/${ siteFragment }/${ encodeURIComponent( postId ) }`;
+	}
+	return `https://wordpress.com/home/${ siteFragment }`;
+}
+
+/** An empty ID, or the Tracks standard's `none` for a missing one, names no session. */
+function getAiSessionQuery( aiSessionId?: string ): { ai_session_id?: string } {
+	return aiSessionId && aiSessionId !== 'none' ? { ai_session_id: aiSessionId } : {};
+}
+
+/**
+ * The plans page or the credits pack checkout, by the site's plan. Calypso's
+ * plans and checkout routes take the site's domain or its ID. Add credits returns to
+ * the post open in a Simple site's editor, or else the site's home. Pass the
+ * `ai_session_id` the chat's click event sends, so checkout can save it on the purchase.
+ */
+export function getCreditsPurchaseLink(
+	status: CreditsStatus,
+	site: string | number,
+	isSimpleSite: boolean,
+	aiSessionId?: string
+): CreditsPurchaseLink | undefined {
+	const kind = status.planTier && CREDITS_PURCHASE_KIND_BY_TIER[ status.planTier ];
+	if ( ! kind ) {
+		return undefined;
+	}
+
+	const siteFragment = encodeURIComponent( site );
+	const attribution = { source: CREDITS_UPGRADE_SOURCE, ...getAiSessionQuery( aiSessionId ) };
+	if ( kind === 'upgrade' ) {
+		// No return address: the plans page passes `redirect_to` on to checkout, which then
+		// skips its own pages after a plan purchase. Only the plans page's downgrade and
+		// renewal buttons read `cancel_to`.
+		const query = new URLSearchParams( attribution );
+		return { kind, url: `https://wordpress.com/plans/${ siteFragment }?${ query }` };
+	}
+
+	const returnUrl = getCreditsReturnUrl( siteFragment, isSimpleSite );
+	const query = new URLSearchParams( {
+		...attribution,
+		redirect_to: returnUrl,
+		cancel_to: returnUrl,
+	} );
+	return {
+		kind,
+		url: `https://wordpress.com/checkout/${ siteFragment }/${ CREDITS_TOP_UP_PRODUCT }:-q-${ CREDITS_TOP_UP_AMOUNT }?${ query }`,
+	};
+}
+
+/**
+ * Bind the purchase destination to the same site as the authenticated balance, and
+ * to the session the credits Tracks events send as `ai_session_id`.
+ */
+export function getLiveCreditsPurchaseLink(
 	status: CreditsStatus,
 	siteId: number | undefined,
 	site?: AgentsManagerSite | null
-): string | undefined {
+): CreditsPurchaseLink | undefined {
 	if (
 		! siteId ||
 		Number( site?.ID ) !== siteId ||
@@ -237,5 +303,10 @@ export function getLiveCreditsUpgradeUrl(
 	) {
 		return undefined;
 	}
-	return getCreditsUpgradeUrl( status, site.domain );
+	return getCreditsPurchaseLink(
+		status,
+		site.domain,
+		window._currentSiteType === 'simple',
+		getActiveSessionId()
+	);
 }

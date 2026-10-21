@@ -15,9 +15,15 @@
 		padding-inline-end: 56px;
 	}
 
+	// Banner draws a 24px cross. Design asked for the small close icon, so draw the cross at
+	// 16px and keep a 24px target with the padding.
 	.banner__close-icon {
+		box-sizing: content-box;
 		top: 50%;
+		width: 16px;
+		height: 16px;
 		margin-top: -12px;
+		padding: 4px;
 	}
 
 	.banner__content {

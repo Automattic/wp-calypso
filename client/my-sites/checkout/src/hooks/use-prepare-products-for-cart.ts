@@ -568,21 +568,7 @@ function useAddProductFromSlug( {
 			return;
 		}
 
-		const cartProducts = validProducts.map( ( product ) =>
-			// Transform the product data into a RequestCartProduct
-			createItemToAddToCart( {
-				productSlug: product.productSlug,
-				productAlias: product.productAlias,
-				sitelessCheckoutType,
-				jetpackSiteSlug,
-				jetpackPurchaseToken,
-				source,
-				aiSessionId,
-				hostingIntent,
-			} )
-		);
-
-		if ( cartProducts.length < 1 ) {
+		if ( validProducts.length < 1 || validProducts.some( ( product ) => ! product.productSlug ) ) {
 			debug(
 				'there is a request to add a one or more products but creating them failed',
 				productAliasFromUrl
@@ -600,6 +586,20 @@ function useAddProductFromSlug( {
 			} );
 			return;
 		}
+
+		const cartProducts = validProducts.map( ( product ) =>
+			// Transform the product data into a RequestCartProduct
+			createItemToAddToCart( {
+				productSlug: product.productSlug,
+				productAlias: product.productAlias,
+				sitelessCheckoutType,
+				jetpackSiteSlug,
+				jetpackPurchaseToken,
+				source,
+				aiSessionId,
+				hostingIntent,
+			} )
+		);
 		debug( 'preparing products that were requested in url', productAliasFromUrl, cartProducts );
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
 	}, [

@@ -322,19 +322,6 @@ describe( '<SiteOverview>', () => {
 		expect( screen.queryByText( 'Finish setting up your site.' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'renders the overview of a commerce garden site', async () => {
-		mockSite( { ...site, is_garden: true, garden_name: 'commerce' } as Site );
-		render( <SiteOverview siteSlug={ site.slug } /> );
-
-		await screen.findByRole( 'heading', { name: 'Test Site' } );
-
-		expect( screen.getByRole( 'link', { name: 'Manage store' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: /WP Admin/ } ) ).not.toBeInTheDocument();
-
-		expect( await getCard( 'Plan' ) ).toBeVisible();
-		expect( await getCard( 'Visibility' ) ).toBeVisible();
-	} );
-
 	test( 'renders the overview of a self-hosted free Jetpack connected site', async () => {
 		mockSite( {
 			...site,

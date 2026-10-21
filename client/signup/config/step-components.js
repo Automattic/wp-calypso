@@ -1,10 +1,4 @@
 const stepNameToModuleName = {
-	'clone-start': 'clone-start',
-	'clone-destination': 'clone-destination',
-	'clone-credentials': 'clone-credentials',
-	'clone-point': 'clone-point',
-	'clone-ready': 'clone-ready',
-	'clone-cloning': 'clone-cloning',
 	'creds-confirm': 'creds-confirm',
 	'creds-permission': 'creds-permission',
 	domains: 'domains',

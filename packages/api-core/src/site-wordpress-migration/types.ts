@@ -1,9 +1,8 @@
 export type WordPressMigrationFinding = {
 	code: string;
 	severity: 'warning' | 'failure';
-	// What gets past the finding: continuing accepts it, continuing only runs the same step again,
-	// or the source has to be connected again. Not sent by the API yet.
-	resolution?: 'accept' | 'retry' | 'reconnect';
+	// What gets past the finding: continuing accepts it, or continuing only runs the same step again.
+	resolution: 'accept' | 'retry';
 	label: string;
 	message: string;
 	data?: Record< string, unknown >;
