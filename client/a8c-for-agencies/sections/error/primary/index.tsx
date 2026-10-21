@@ -6,6 +6,8 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getErrorPreset } from '../presets';
 
+import './style.scss';
+
 export default function ErrorPage( { querystring }: { querystring: string } ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
@@ -18,6 +20,7 @@ export default function ErrorPage( { querystring }: { querystring: string } ) {
 			<main className="layout__content" id="content">
 				<div className="layout__primary" id="primary">
 					<EmptyContent
+						className="a4a-error-page"
 						title={ preset.title }
 						line={ preset.subtitle }
 						action={ preset.buttonText }
