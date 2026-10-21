@@ -737,7 +737,7 @@ __metadata:
     autoprefixer: "npm:^10.4.21"
     babel-loader: "npm:^8.2.3"
     browserslist: "npm:^4.24.5"
-    css-loader: "npm:^6.11.0"
+    css-loader: "npm:^7.1.5"
     css-minimizer-webpack-plugin: "npm:^3.4.1"
     duplicate-package-checker-webpack-plugin: "npm:^3.0.0"
     gettext-parser: "npm:^6.0.0"
@@ -2672,7 +2672,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    css-loader: "npm:^6.11.0"
+    css-loader: "npm:^7.1.5"
     mini-css-extract-plugin: "npm:^2.10.2"
     rtlcss: "npm:^3.1.2"
     webpack: "npm:^5.111.1"
@@ -17499,31 +17499,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-loader@npm:^6.11.0":
-  version: 6.11.0
-  resolution: "css-loader@npm:6.11.0"
-  dependencies:
-    icss-utils: "npm:^5.1.0"
-    postcss: "npm:^8.4.33"
-    postcss-modules-extract-imports: "npm:^3.1.0"
-    postcss-modules-local-by-default: "npm:^4.0.5"
-    postcss-modules-scope: "npm:^3.2.0"
-    postcss-modules-values: "npm:^4.0.0"
-    postcss-value-parser: "npm:^4.2.0"
-    semver: "npm:^7.5.4"
-  peerDependencies:
-    "@rspack/core": 0.x || 1.x
-    webpack: ^5.0.0
-  peerDependenciesMeta:
-    "@rspack/core":
-      optional: true
-    webpack:
-      optional: true
-  checksum: bb52434138085fed06a33e2ffbdae9ee9014ad23bf60f59d6b7ee67f28f26c6b1764024d3030bd19fd884d6ee6ee2224eaed64ad19eb18fbbb23d148d353a965
-  languageName: node
-  linkType: hard
-
-"css-loader@npm:^7.1.2":
+"css-loader@npm:^7.1.2, css-loader@npm:^7.1.5":
   version: 7.1.5
   resolution: "css-loader@npm:7.1.5"
   dependencies:
@@ -28619,7 +28595,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.2.4, postcss@npm:^8.3.5, postcss@npm:^8.4.0, postcss@npm:^8.4.21, postcss@npm:^8.4.33, postcss@npm:^8.4.40, postcss@npm:^8.5.15, postcss@npm:^8.5.26, postcss@npm:^8.5.3, postcss@npm:^8.5.6":
+"postcss@npm:^8.2.4, postcss@npm:^8.3.5, postcss@npm:^8.4.0, postcss@npm:^8.4.21, postcss@npm:^8.4.40, postcss@npm:^8.5.15, postcss@npm:^8.5.26, postcss@npm:^8.5.3, postcss@npm:^8.5.6":
   version: 8.5.30
   resolution: "postcss@npm:8.5.30"
   dependencies:
@@ -34844,7 +34820,6 @@ __metadata:
     chalk: "npm:^4.1.2"
     check-node-version: "npm:^4.0.2"
     chroma-js: "npm:^2.6.0"
-    css-loader: "npm:^6.11.0"
     d3-time-format: "npm:^4.1.0"
     debug: "npm:^4.4.1"
     dotenv: "npm:^9.0.2"

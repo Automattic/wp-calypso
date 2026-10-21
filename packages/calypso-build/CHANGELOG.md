@@ -2,6 +2,7 @@
 
 ## trunk
 
+- Updated css-loader to ^7.1.5. The Sass loader keeps css-loader 6's CSS Modules exports (a default object with class names as written), so `import styles from './style.module.scss'` and `styles[ 'is-current' ]` keep working.
 - Breaking: The `webpack` peer dependency is now `^5.101.0`, the minimum webpack-cli 7 supports.
 - Updated dependencies:
   - webpack-cli to ^7.2.3

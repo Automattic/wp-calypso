@@ -25,6 +25,11 @@ module.exports.loader = ( { includePaths, postCssOptions } ) => ( {
 				url: {
 					filter: ( path ) => ! path.startsWith( '/' ),
 				},
+				// Components import `*.module.scss` as a default object (`styles.tablist`),
+				// which css-loader 7 no longer exports by default. Without `as-is`, it would
+				// only export camel-cased keys, and kebab-case lookups like
+				// `styles[ 'is-current' ]` would be undefined.
+				modules: { auto: true, namedExport: false, exportLocalsConvention: 'as-is' },
 			},
 		},
 		{
