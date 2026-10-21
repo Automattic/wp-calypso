@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions, type QueryClient } from '@tanstack/react-query';
 
-const NOTIFICATIONS_QUERY_KEY = [ 'notifications' ];
+const NOTIFICATIONS_QUERY_KEY = [ 'notifications', 'notes' ];
 
 export const notificationsQuery = ( params: FetchNotificationsParams ) =>
 	queryOptions( {
@@ -16,6 +16,7 @@ export const notificationsQuery = ( params: FetchNotificationsParams ) =>
 
 export const markNotificationsReadMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'notif-mark-read' },
 		mutationFn: markNotificationsRead,
 		onMutate: async ( noteIds: number[] ) => {
 			try {
