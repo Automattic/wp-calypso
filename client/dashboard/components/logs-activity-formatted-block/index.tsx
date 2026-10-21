@@ -17,7 +17,7 @@ import { ExternalLink } from '@wordpress/components';
 import { Fragment, type MouseEvent, type ReactNode } from 'react';
 import isA8CForAgencies from '../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../lib/jetpack/is-jetpack-cloud';
-import { getCurrentDashboard } from '../../app/routing';
+import { useAppContext } from '../../app/context';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import type { ActivityBlockContent, ActivityBlockNode, ActivityBlockMeta } from './types';
@@ -218,18 +218,17 @@ const Theme: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	);
 };
 
-// In the dashboard itself, a range naming one backup opens that backup's details.
-const isInDotcomDashboard = () =>
-	! isDashboardBackport() &&
-	! isJetpackCloud() &&
-	! isA8CForAgencies() &&
-	getCurrentDashboard() === 'dotcom';
+// Outside the dashboard app itself, backup ranges keep opening the Backup page.
+const isInDashboardApp = () =>
+	! isDashboardBackport() && ! isJetpackCloud() && ! isA8CForAgencies();
 
-const Backup: BlockRenderer = ( { content, children, onClick, meta } ) => {
+// A component rather than a plain renderer, because renderers are called as functions and can't use hooks.
+function BackupBlock( { content, children, onClick, meta }: Parameters< BlockRenderer >[ 0 ] ) {
+	const { supports } = useAppContext();
 	const { url, siteSlug, rewindId, activity, intent, section } = content;
 
 	const backupDetailsPath =
-		! url && siteSlug && rewindId && isInDotcomDashboard()
+		! url && siteSlug && rewindId && supports.backupDetailsLinks && isInDashboardApp()
 			? `/sites/${ siteSlug }/backups/${ rewindId }`
 			: null;
 	const href = url ?? ( siteSlug ? `/backup/${ siteSlug }` : null );
@@ -249,7 +248,9 @@ const Backup: BlockRenderer = ( { content, children, onClick, meta } ) => {
 			{ children }
 		</a>
 	);
-};
+}
+
+const Backup: BlockRenderer = ( args ) => <BackupBlock { ...args } />;
 
 const blockTypeMapping: Record< string, BlockRenderer > = {
 	b: ( { children } ) => <Strong>{ children }</Strong>,

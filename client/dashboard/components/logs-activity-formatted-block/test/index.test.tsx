@@ -7,7 +7,9 @@ import userEvent from '@testing-library/user-event';
 import { renderFormattedContent, createFormattedBlock } from '../';
 import isA8CForAgencies from '../../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
+import { APP_CONTEXT_DEFAULT_CONFIG, AppProvider } from '../../../app/context';
 import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
+import type { AppConfig } from '../../../app/context';
 import type { ActivityBlockContent, ActivityBlockMeta } from '../types';
 
 jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn() );
@@ -27,17 +29,24 @@ const renderFormatted = (
 	{
 		onClick = () => null,
 		meta = {},
-	}: { onClick?: ( event: unknown ) => void | null; meta?: ActivityBlockMeta } = {}
+		config = APP_CONTEXT_DEFAULT_CONFIG,
+	}: {
+		onClick?: ( event: unknown ) => void | null;
+		meta?: ActivityBlockMeta;
+		config?: AppConfig;
+	} = {}
 ) => {
 	const arrayItems = Array.isArray( items ) ? items : [ items ];
 	return render(
-		<div data-testid="formatted-content">
-			{ renderFormattedContent( {
-				items: arrayItems,
-				onClick,
-				meta,
-			} ) }
-		</div>
+		<AppProvider config={ config }>
+			<div data-testid="formatted-content">
+				{ renderFormattedContent( {
+					items: arrayItems,
+					onClick,
+					meta,
+				} ) }
+			</div>
+		</AppProvider>
 	);
 };
 
@@ -155,9 +164,14 @@ describe( 'Backup blocks', () => {
 		mockedIsA8CForAgencies.mockReturnValue( false );
 	} );
 
-	test( "opens the backup's details in the dashboard", () => {
+	const withBackupDetailsLinks: AppConfig = {
+		...APP_CONTEXT_DEFAULT_CONFIG,
+		supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, backupDetailsLinks: true },
+	};
+
+	test( "opens the backup's details in a dashboard that links to them", () => {
 		mockedIsDashboardBackport.mockReturnValue( false );
-		renderFormatted( backup );
+		renderFormatted( backup, { config: withBackupDetailsLinks } );
 
 		expect( screen.getByRole( 'link', { name: 'October 17, 1:38 pm' } ) ).toHaveAttribute(
 			'href',
@@ -165,9 +179,12 @@ describe( 'Backup blocks', () => {
 		);
 	} );
 
-	test( 'opens the Backup page outside the dashboard', () => {
-		mockedIsDashboardBackport.mockReturnValue( true );
-		renderFormatted( backup );
+	test.each( [
+		[ 'a dashboard that does not link to backup details', false, APP_CONTEXT_DEFAULT_CONFIG ],
+		[ 'a dashboard backport', true, withBackupDetailsLinks ],
+	] )( 'opens the Backup page in %s', ( _label, isBackport, config ) => {
+		mockedIsDashboardBackport.mockReturnValue( isBackport );
+		renderFormatted( backup, { config } );
 
 		expect( screen.getByRole( 'link', { name: 'October 17, 1:38 pm' } ) ).toHaveAttribute(
 			'href',

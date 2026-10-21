@@ -55,6 +55,7 @@ boot( {
 		domainOnlySites: false,
 		colorScheme: false,
 		darkMode: false,
+		backupDetailsLinks: false,
 	},
 	optIn: false,
 	components: {
