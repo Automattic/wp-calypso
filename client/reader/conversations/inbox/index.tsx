@@ -4,10 +4,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useCommentNotes, useMarkNotesRead } from 'calypso/reader/data/notifications';
 import { ConversationDetail } from './conversation-detail';
 import { ConversationList } from './conversation-list';
 import { getConversationKey, groupNotesByPost, type Conversation } from './group-notes';
-import { useCommentNotes, useMarkNotesRead } from './use-comment-notes';
 
 import './style.scss';
 
