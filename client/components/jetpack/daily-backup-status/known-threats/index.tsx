@@ -9,7 +9,7 @@ import { Button as CalypsoButton, Gridicon } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Spinner, Tooltip, VisuallyHidden } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useId, useState } from 'react';
+import { Fragment, useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useApplySiteOffset } from 'calypso/components/site-offset';
@@ -121,7 +121,23 @@ export function RestoreThatOneInsteadLink( {
 	);
 }
 
-interface BackupKnownThreatsTableProps {
+/**
+ * A path that wraps only after its slashes, never inside a file name.
+ */
+function breakablePath( path: string ) {
+	return path.split( '/' ).map( ( segment, index, segments ) => (
+		<Fragment key={ index }>
+			{ segment }
+			{ index < segments.length - 1 && (
+				<>
+					/<wbr />
+				</>
+			) }
+		</Fragment>
+	) );
+}
+
+interface BackupKnownThreatsListProps {
 	siteId: number;
 	siteSlug: string;
 	threats: BackupThreats;
@@ -131,14 +147,15 @@ interface BackupKnownThreatsTableProps {
 	showRestoreLink?: boolean;
 }
 
-export function BackupKnownThreatsTable( {
+// One threat per item, stacked, so long paths have the full width at any screen size.
+export function BackupKnownThreatsList( {
 	siteId,
 	siteSlug,
 	threats,
 	latestWithoutKnownThreats,
 	currentBackupPeriod,
 	showRestoreLink = true,
-}: BackupKnownThreatsTableProps ) {
+}: BackupKnownThreatsListProps ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const rows = threats.threats.filter( ( threat ) => threat.kind !== 'vulnerable' );
@@ -147,7 +164,9 @@ export function BackupKnownThreatsTable( {
 		value ? moment.utc( value ).local().format( 'll' ) : '';
 
 	const getWhere = ( threat: BackupThreat ) =>
-		threat.slug ? `${ threat.slug }@${ threat.version ?? '' }` : ( threat.path ?? threat.target );
+		threat.slug
+			? `${ threat.slug }@${ threat.version ?? '' }`
+			: ( threat.path ?? threat.target ?? '' );
 
 	const getStatus = ( threat: BackupThreat ) => {
 		if ( threat.state === 'fixed' ) {
@@ -159,31 +178,37 @@ export function BackupKnownThreatsTable( {
 		return threat.status === 'ignored' ? translate( 'Ignored' ) : translate( 'Open' );
 	};
 
+	const getDetails = ( threat: BackupThreat ) => {
+		const reportedOn = formatDate( threat.reported_on );
+		return reportedOn
+			? translate( 'First detected %1$s · %2$s', {
+					args: [ reportedOn, String( getStatus( threat ) ) ],
+					comment:
+						'1: the date Scan first detected a threat, 2: its status now, such as "Open" or "Fixed Oct 17, 2026".',
+				} )
+			: getStatus( threat );
+	};
+
 	return (
 		<div className="backup-known-threats__details">
-			<table className="backup-known-threats__table">
-				<VisuallyHidden as="caption">
-					{ translate( 'Known threats in this backup' ) }
-				</VisuallyHidden>
-				<thead>
-					<tr>
-						<th>{ translate( 'Threat' ) }</th>
-						<th>{ translate( 'Where' ) }</th>
-						<th>{ translate( 'First detected' ) }</th>
-						<th>{ translate( 'Status now' ) }</th>
-					</tr>
-				</thead>
-				<tbody>
-					{ rows.map( ( threat ) => (
-						<tr key={ threat.id }>
-							<td>{ threat.signature ?? threat.kind }</td>
-							<td>{ getWhere( threat ) }</td>
-							<td>{ formatDate( threat.reported_on ) }</td>
-							<td>{ getStatus( threat ) }</td>
-						</tr>
-					) ) }
-				</tbody>
-			</table>
+			<ul
+				className="backup-known-threats__list"
+				aria-label={ String( translate( 'Known threats in this backup' ) ) }
+			>
+				{ rows.map( ( threat ) => (
+					<li key={ threat.id } className="backup-known-threats__threat">
+						<span className="backup-known-threats__threat-name">
+							{ threat.signature ?? threat.kind }
+						</span>
+						{ getWhere( threat ) && (
+							<span className="backup-known-threats__threat-where">
+								<bdi>{ breakablePath( getWhere( threat ) ) }</bdi>
+							</span>
+						) }
+						<span className="backup-known-threats__threat-details">{ getDetails( threat ) }</span>
+					</li>
+				) ) }
+			</ul>
 			{ threats.summary.vulnerable > 0 && (
 				<p>
 					{ translate(
@@ -212,11 +237,11 @@ export function BackupKnownThreatsTable( {
 interface KnownThreatsRegionProps {
 	id: string;
 	isError: boolean;
-	/** The threats table, once loaded. */
+	/** The threats list, once loaded. */
 	children?: ReactNode;
 }
 
-/** What an open Known threats toggle controls: the table, or why it isn't there yet. */
+/** What an open Known threats toggle controls: the list, or why it isn't there yet. */
 export function KnownThreatsRegion( { id, isError, children }: KnownThreatsRegionProps ) {
 	const translate = useTranslate();
 
@@ -425,13 +450,13 @@ export function BackupKnownThreatsRestoreLink( { state }: { state: BackupKnownTh
 	);
 }
 
-/** The threats table, shown once expanded. The restore link lives in BackupKnownThreatsRestoreLink. */
+/** The threats list, shown once expanded. The restore link lives in BackupKnownThreatsRestoreLink. */
 export function BackupKnownThreatsDetails( {
 	state,
 	showWarning = false,
 }: {
 	state: BackupKnownThreatsState;
-	/** Show the warning above the table, where it isn't shown nearby. */
+	/** Show the warning above the list, where it isn't shown nearby. */
 	showWarning?: boolean;
 } ) {
 	const translate = useTranslate();
@@ -461,7 +486,7 @@ export function BackupKnownThreatsDetails( {
 			) }
 			<KnownThreatsRegion id={ detailsId } isError={ isThreatsError || ! siteSlug }>
 				{ threats && siteSlug && (
-					<BackupKnownThreatsTable
+					<BackupKnownThreatsList
 						siteId={ siteId }
 						siteSlug={ siteSlug }
 						threats={ threats }

@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
-	BackupKnownThreatsTable,
+	BackupKnownThreatsList,
 	getKnownThreatsWarning,
 	KnownThreatsRegion,
 	KnownThreatsToggleButton,
@@ -122,7 +122,7 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 						{ isOpen && (
 							<KnownThreatsRegion id={ threatsRegionId } isError={ isThreatsError || ! siteSlug }>
 								{ threats && siteSlug && (
-									<BackupKnownThreatsTable
+									<BackupKnownThreatsList
 										siteId={ siteId }
 										siteSlug={ siteSlug }
 										threats={ threats }

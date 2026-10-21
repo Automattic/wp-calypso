@@ -233,7 +233,7 @@ describe( 'KnownThreatsNotice', () => {
 		expect( onChange ).not.toHaveBeenCalledWith( true );
 	} );
 
-	it( 'expands the threats table for Scan sites', async () => {
+	it( 'expands the threats list for Scan sites', async () => {
 		mockList( counts( 3 ), { latest_without_known_threats: 150 } );
 		nock( BASE )
 			.get( ACTIVITY_PATH )

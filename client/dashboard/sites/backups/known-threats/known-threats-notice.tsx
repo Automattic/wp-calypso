@@ -14,7 +14,7 @@ import Notice from '../../../components/notice';
 import { Text } from '../../../components/text';
 import { hasHostingFeature } from '../../../utils/site-features';
 import { getKnownThreatsWarning, KnownThreatsToggle } from './known-threats-badge';
-import { KnownThreatsTable } from './known-threats-table';
+import { KnownThreatsList } from './known-threats-list';
 import { RestoreThatOneInsteadLink } from './restore-that-one-instead-link';
 import type { BackupKnownThreats, Site } from '@automattic/api-core';
 import type { MutableRefObject } from 'react';
@@ -111,7 +111,7 @@ export default function KnownThreatsNotice( {
 						{ isOpen && (
 							<div id={ threatsRegionId }>
 								{ threats && (
-									<KnownThreatsTable
+									<KnownThreatsList
 										siteId={ site.ID }
 										siteSlug={ site.slug }
 										restoreLinkTo={ restoreLinkTo }
