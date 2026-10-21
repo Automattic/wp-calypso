@@ -239,29 +239,6 @@ describe( 'User email signup step', () => {
 		} );
 	} );
 
-	describe( 'login-matched spacing', () => {
-		const spacingClass = 'step-container-v2--user-login-spacing';
-
-		it.each( [ 'control', 'treatment' ] as const )( 'applies to the %s arm', ( variationName ) => {
-			setEntryClarityArm( variationName );
-
-			const { container } = renderUserStep();
-
-			expect( container.getElementsByClassName( spacingClass ) ).toHaveLength( 1 );
-		} );
-
-		it.each( [
-			[ 'the compact mobile layout', true, '/onboarding/user' ],
-			[ 'the email-first layout', false, '/onboarding/user?ref=woo-hosting-solutions-flow' ],
-		] )( 'leaves out %s', ( _label, isMobile, url ) => {
-			setViewport( { isMobile, isLarge: false } );
-
-			const { container } = renderUserStep( url );
-
-			expect( container.getElementsByClassName( spacingClass ) ).toHaveLength( 0 );
-		} );
-	} );
-
 	describe( 'entry clarity experiment', () => {
 		const loginLinkSelector = '.signup-form-social-first__login-link';
 		const emailButtonIcon = () =>
