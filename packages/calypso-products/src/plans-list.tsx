@@ -958,12 +958,16 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PLUGINS_THEMES,
 	],
 	get2023PlanComparisonJetpackFeatureOverride: () => {
-		return [ FEATURE_PLUGIN_AUTOUPDATE_JP, FEATURE_ADVANCED_FORM_FEATURES_JP ];
+		return [
+			FEATURE_BACKUP_DAILY_V2,
+			FEATURE_PLUGIN_AUTOUPDATE_JP,
+			FEATURE_ADVANCED_FORM_FEATURES_JP,
+		];
 	},
 	// Experimental: Comparison grid Jetpack features for experiment variants.
 	// Advanced Jetpack Forms is excluded for Personal plan in experiment variants.
 	get2023PlanComparisonJetpackFeatureOverrideForExperiment: () => {
-		return [ FEATURE_PLUGIN_AUTOUPDATE_JP ];
+		return [ FEATURE_BACKUP_DAILY_V2, FEATURE_PLUGIN_AUTOUPDATE_JP ];
 	},
 	getStorageFeature: () => FEATURE_6GB_STORAGE,
 	getPlanComparisonFeatureLabels: ( { isExperimentVariant } = {} ) => {
