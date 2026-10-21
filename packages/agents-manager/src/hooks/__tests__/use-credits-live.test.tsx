@@ -1753,7 +1753,12 @@ describe( 'credits Tracks events', () => {
 			credits_used: CREDITS_LOW_BALANCE,
 			plan_tier: 'business',
 		} );
-	const base = { blog_id: 123, site_type: 'none', agent_environment: 'none' };
+	const base = {
+		blog_id: 123,
+		site_type: 'none',
+		agent_environment: 'none',
+		top_up_credits_left: 'none',
+	};
 
 	it( 'records the notice once per state, not on re-renders or a repeated state', async () => {
 		const scope = freshScope();
@@ -1771,6 +1776,7 @@ describe( 'credits Tracks events', () => {
 					plan_tier: 'personal',
 					user_role: 'admin',
 					cta_type: 'upgrade',
+					ref: 'wp_ai_credits',
 				},
 			],
 		] );
@@ -1832,6 +1838,7 @@ describe( 'credits Tracks events', () => {
 						plan_tier: 'personal',
 						user_role: 'none',
 						cta_type: 'none',
+						ref: 'none',
 					},
 				],
 			] );
@@ -1894,6 +1901,7 @@ describe( 'credits Tracks events', () => {
 							plan_tier,
 							user_role: 'admin',
 							cta_type: ctaType,
+							ref: 'wp_ai_credits',
 						},
 					],
 				] );
@@ -1955,20 +1963,20 @@ describe( 'credits Tracks events', () => {
 	} );
 
 	it.each( [
-		[ true, true, 'admin', 'upgrade' ],
-		[ false, false, 'non_admin', 'contact_admin' ],
-		[ true, false, 'admin', 'contact_plan_owner' ],
-		[ null, null, 'none', 'none' ],
+		[ true, true, 'admin', 'upgrade', 'wp_ai_credits' ],
+		[ false, false, 'non_admin', 'contact_admin', 'none' ],
+		[ true, false, 'admin', 'contact_plan_owner', 'none' ],
+		[ null, null, 'none', 'none', 'none' ],
 	] as const )(
-		'records who may buy (%p, %p) as %s with the %s call to action the notice shows',
-		async ( canBuyCredits, canUpgrade, userRole, ctaType ) => {
+		'records who may buy (%p, %p) as %s with the %s call to action the notice shows, and ref %s',
+		async ( canBuyCredits, canUpgrade, userRole, ctaType, ref ) => {
 			fetchMock.mockResolvedValueOnce( response( low(), canBuyCredits, canUpgrade ) );
 			renderCredits( freshScope() );
 			await flush();
 			expect( creditsEvents() ).toEqual( [
 				[
 					'calypso_agents_manager_credits_notice_shown',
-					expect.objectContaining( { user_role: userRole, cta_type: ctaType } ),
+					expect.objectContaining( { user_role: userRole, cta_type: ctaType, ref } ),
 				],
 			] );
 		}
@@ -1983,7 +1991,12 @@ describe( 'credits Tracks events', () => {
 			expect( creditsEvents() ).toEqual( [
 				[
 					'calypso_agents_manager_credits_notice_shown',
-					expect.objectContaining( { plan_tier, user_role: 'admin', cta_type: 'top_up' } ),
+					expect.objectContaining( {
+						plan_tier,
+						user_role: 'admin',
+						cta_type: 'top_up',
+						ref: 'wp_ai_credits',
+					} ),
 				],
 			] );
 		}
@@ -2013,6 +2026,64 @@ describe( 'credits Tracks events', () => {
 		} finally {
 			delete window._currentSiteType;
 		}
+	} );
+
+	describe( 'the top-ups balance', () => {
+		const lowOnBusiness = () => ( { ...low(), plan_tier: 'business' as const } );
+		const withPacks = ( snapshot: ReturnType< typeof creditSnapshot >, remaining: number ) => ( {
+			...snapshot,
+			credits_available: snapshot.credits_remaining + remaining,
+			top_up_credits_purchased: 100000,
+			top_up_credits_used: 100000 - remaining,
+			top_up_credits_remaining: remaining,
+		} );
+		const topUpsLeft = () =>
+			creditsEvents().map( ( [ name, eventProps ] ) => [ name, eventProps?.top_up_credits_left ] );
+
+		it.each( [
+			[ 'the packs left', withPacks( lowOnBusiness(), 3000 ), 3000 ],
+			[ '0 for used-up packs', withPacks( lowOnBusiness(), 0 ), 0 ],
+			[ 'none without packs', lowOnBusiness(), 'none' ],
+			[
+				'none when purchases are unreadable',
+				{
+					...lowOnBusiness(),
+					top_up_credits_purchased: null,
+					top_up_credits_used: 0,
+					top_up_credits_remaining: null,
+				},
+				'none',
+			],
+		] )( 'sends %s on every credits event', async ( _case, snapshot, topUpCreditsLeft ) => {
+			fetchMock.mockResolvedValueOnce( response( snapshot ) );
+			const { result } = renderCredits( freshScope() );
+			await flush();
+			act( () => result.current.notice?.action?.onClick?.() );
+			act( () => result.current.notice?.onDismiss?.() );
+			act( () => props( result.current ).onToggle( true ) );
+			expect( topUpsLeft() ).toEqual( [
+				[ 'calypso_agents_manager_credits_notice_shown', topUpCreditsLeft ],
+				[ 'calypso_agents_manager_credits_cta_clicked', topUpCreditsLeft ],
+				[ 'calypso_agents_manager_credits_notice_dismissed', topUpCreditsLeft ],
+				[ 'calypso_agents_manager_credits_meter_opened', topUpCreditsLeft ],
+			] );
+		} );
+
+		it( 'sends 0 when the popover opens at zero after the plan and the packs run out', async () => {
+			fetchMock.mockResolvedValueOnce( response( withPacks( lowOnBusiness(), 3000 ) ) );
+			const { result } = renderCredits( freshScope() );
+			await flush();
+			await receive( withPacks( { ...exhausted(), plan_tier: 'business' }, 0 ) );
+			act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
+			expect(
+				creditsEvents()
+					.filter( ( [ name ] ) => name === 'calypso_agents_manager_credits_meter_opened' )
+					.map( ( [ , eventProps ] ) => [ eventProps?.trigger, eventProps?.top_up_credits_left ] )
+			).toEqual( [
+				[ 'exhausted', 0 ],
+				[ 'submit_blocked', 0 ],
+			] );
+		} );
 	} );
 
 	it( 'records a dismissal once, and nothing from a previous site’s handler', async () => {
