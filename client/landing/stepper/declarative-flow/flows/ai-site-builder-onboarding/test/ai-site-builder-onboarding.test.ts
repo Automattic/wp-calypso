@@ -486,16 +486,19 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			);
 		} );
 
-		it( 'replaces processing with the error step when a reload drops the pending action', async () => {
+		it( 'replaces processing with the plans step when a reload drops the pending action', async () => {
 			const navigate = await submitFrom( STEPS.PROCESSING.slug, {
 				processingResult: ProcessingResult.NO_ACTION,
 			} );
 
-			expect( navigate ).toHaveBeenCalledWith(
-				STEPS.ERROR.slug,
-				{ errorReason: 'processing_no_action' },
-				true
-			);
+			expect( navigate ).toHaveBeenCalledTimes( 1 );
+			expect( navigate ).toHaveBeenCalledWith( STEPS.UNIFIED_PLANS.slug, undefined, true );
+		} );
+
+		it( 'replaces create-site with processing so Back cannot create another site', async () => {
+			const navigate = await submitFrom( STEPS.SITE_CREATION_STEP.slug, {} );
+
+			expect( navigate ).toHaveBeenCalledWith( STEPS.PROCESSING.slug, undefined, true );
 		} );
 
 		it( 'names the cause when processing succeeds without a site', async () => {

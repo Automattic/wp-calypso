@@ -282,14 +282,20 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					return navigate( STEPS.SITE_CREATION_STEP.slug );
 				}
 
+				// create-site creates a site as soon as it mounts, so it must not stay in history,
+				// where a Back would reach it.
 				case STEPS.SITE_CREATION_STEP.slug:
-					return navigate( STEPS.PROCESSING.slug );
+					return navigate( STEPS.PROCESSING.slug, undefined, true );
 
 				case STEPS.PROCESSING.slug: {
-					// NO_ACTION follows a reload or a Back from checkout. The processing step has no
-					// timeout, so returning here would leave the customer on the spinner. The error
-					// step replaces processing, or each Back would land on processing and push the
-					// error step again.
+					// NO_ACTION follows a reload or a Back from checkout, after initialize has reset
+					// the onboard store. Nothing failed, so the customer picks a plan again, which is
+					// also where checkoutBackUrl leads. The processing step has no timeout, so
+					// returning here would leave the customer on the spinner.
+					if ( providedDependencies.processingResult === ProcessingResult.NO_ACTION ) {
+						return navigate( STEPS.UNIFIED_PLANS.slug, undefined, true );
+					}
+
 					if ( providedDependencies.processingResult !== ProcessingResult.SUCCESS ) {
 						return navigate(
 							STEPS.ERROR.slug,
