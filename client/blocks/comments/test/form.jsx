@@ -1,12 +1,17 @@
 /**
  * @jest-environment jsdom
  */
+import { loadScript } from '@automattic/load-script';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PostCommentForm from '../form';
+
+jest.mock( '@automattic/load-script', () => ( {
+	loadScript: jest.fn(),
+} ) );
 
 jest.mock( 'calypso/blocks/user-mentions', () => ( {
 	__esModule: true,
@@ -62,6 +67,8 @@ describe( 'PostCommentForm', () => {
 
 	beforeEach( () => {
 		nock.cleanAll();
+		loadScript.mockReset();
+		delete window.JetpackCommentsEditor;
 	} );
 
 	describe( 'when comments are open', () => {
@@ -108,6 +115,102 @@ describe( 'PostCommentForm', () => {
 			await userEvent.click( screen.getByRole( 'button', { name: 'Send' } ) );
 
 			expect( request.isDone() ).toBe( true );
+		} );
+	} );
+
+	describe( 'block editor', () => {
+		const settings = {
+			assetsUrl: 'https://s0.wp.com/jetpack-comments/build/',
+			loaderUrl:
+				'https://s0.wp.com/jetpack-comments/build/editor-loader.js?minify=false&ver=abc123',
+			maxLength: 65525,
+			blocks: true,
+			editorLocale: {},
+			editor: {
+				blockTools: 'Block tools',
+				addBlock: 'Add block',
+				embedUrl: '',
+				images: true,
+				imageError: 'This image could not be loaded.',
+			},
+		};
+		const markup = '<!-- wp:paragraph --><p>Hello blocks</p><!-- /wp:paragraph -->';
+
+		// A fresh loader URL per test, since the form caches the loaded editor by URL.
+		let build = 0;
+		const mockEditorSettings = ( status = 200 ) => {
+			const body =
+				status === 200
+					? { ...settings, loaderUrl: `${ settings.loaderUrl }${ ++build }` }
+					: { code: 'editor_not_available' };
+			const request = nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/sites/456/comments/editor' )
+				.query( { _locale: 'user' } )
+				.reply( status, body );
+
+			return { request, body };
+		};
+
+		const mockLoader = () => {
+			const mountEditor = jest.fn();
+			loadScript.mockImplementation( async () => {
+				window.JetpackCommentsEditor = { load: async () => ( { mountEditor } ) };
+			} );
+			return mountEditor;
+		};
+
+		it( 'takes over from the textarea once the box has focus', async () => {
+			const { body } = mockEditorSettings();
+			const mountEditor = mockLoader();
+
+			renderForm();
+			await userEvent.click( screen.getByPlaceholderText( 'Add a comment…' ) );
+
+			await waitFor( () => expect( mountEditor ).toHaveBeenCalledTimes( 1 ) );
+			expect( loadScript ).toHaveBeenCalledWith( body.loaderUrl );
+			expect( mountEditor.mock.calls[ 0 ][ 1 ] ).toMatchObject( {
+				initialContent: '',
+				placeholder: 'Add a comment…',
+				labels: settings.editor,
+			} );
+			expect( screen.queryByPlaceholderText( 'Add a comment…' ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'group', { name: 'Comment' } ) ).toBeVisible();
+		} );
+
+		it( 'hands the editor markup to the form as the comment text', async () => {
+			mockEditorSettings();
+			const mountEditor = mockLoader();
+			const onUpdateCommentText = jest.fn();
+
+			renderForm( { onUpdateCommentText } );
+			await userEvent.click( screen.getByPlaceholderText( 'Add a comment…' ) );
+			await waitFor( () => expect( mountEditor ).toHaveBeenCalled() );
+
+			mountEditor.mock.calls[ 0 ][ 1 ].onChange( markup );
+
+			expect( onUpdateCommentText ).toHaveBeenCalledWith( markup );
+		} );
+
+		it( 'keeps the textarea when the site has no block editor', async () => {
+			const { request } = mockEditorSettings( 404 );
+
+			renderForm();
+			await userEvent.click( screen.getByPlaceholderText( 'Add a comment…' ) );
+			await waitFor( () => expect( request.isDone() ).toBe( true ) );
+
+			expect( loadScript ).not.toHaveBeenCalled();
+			expect( screen.getByPlaceholderText( 'Add a comment…' ) ).toBeVisible();
+		} );
+
+		it( 'brings the textarea back when the loader fails', async () => {
+			mockEditorSettings();
+			loadScript.mockRejectedValue( new Error( 'blocked' ) );
+
+			renderForm();
+			await userEvent.click( screen.getByPlaceholderText( 'Add a comment…' ) );
+			await waitFor( () => expect( loadScript ).toHaveBeenCalled() );
+
+			expect( screen.getByPlaceholderText( 'Add a comment…' ) ).toBeVisible();
 		} );
 	} );
 

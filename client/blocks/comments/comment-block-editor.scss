@@ -1,0 +1,19 @@
+@import "@automattic/typography/styles/variables";
+
+// The textarea's box and type, which the editor's own styles read as variables.
+.comments__block-editor {
+	--jetpack-comments-pad: 5px;
+	--jetpack-comments-font-family: #{$sans};
+	--jetpack-comments-font-size: #{$font-body-small};
+	--jetpack-comments-line-height: 21px;
+	--jetpack-comments-color: var(--color-text);
+	--jetpack-comments-background: var(--color-surface);
+	border: 1px solid var(--color-neutral-light);
+	border-radius: 2px;
+	background: var(--color-surface);
+	color: var(--color-text);
+
+	&:focus-within {
+		border-color: var(--color-primary);
+	}
+}

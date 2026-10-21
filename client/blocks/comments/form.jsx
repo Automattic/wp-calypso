@@ -1,5 +1,7 @@
 import './form.scss';
+import { siteCommentsEditorQuery } from '@automattic/api-queries';
 import { Button, FormInputValidation } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -17,6 +19,8 @@ import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getPreviousPath } from 'calypso/state/selectors/get-previous-path';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
+import CommentBlockEditor from './comment-block-editor';
+import { loadCommentEditor } from './load-comment-editor';
 
 const noop = () => {};
 
@@ -34,7 +38,23 @@ function PostCommentFormError( { type } ) {
 class PostCommentForm extends Component {
 	state = {
 		haveFocus: false,
+		// The block editor: 'none' until the box is reached, then 'loading', 'ready' or 'failed'.
+		editor: 'none',
 	};
+
+	// Whether the editor takes the caret once it mounts: yes from a focus, no for a restored draft.
+	editorFocus = true;
+
+	componentDidMount() {
+		this.openEditorForDraft();
+	}
+
+	componentDidUpdate() {
+		if ( this.state.haveFocus ) {
+			this.openEditor();
+		}
+		this.openEditorForDraft();
+	}
 
 	handleKeyDown = ( event ) => {
 		// Use Ctrl+Enter to submit comment
@@ -60,9 +80,40 @@ class PostCommentForm extends Component {
 
 	handleFocus = () => {
 		this.setState( { haveFocus: true } );
+		this.openEditor();
+	};
+
+	// A draft from the editor is block markup, which only the editor shows.
+	openEditorForDraft() {
+		if ( this.getCommentText().includes( '<!-- wp:' ) ) {
+			this.openEditor( false );
+		}
+	}
+
+	openEditor( focus = true ) {
+		if ( ! this.props.editorSettings || this.state.editor !== 'none' ) {
+			return;
+		}
+
+		this.editorFocus = focus;
+		this.setState( { editor: 'loading' } );
+		loadCommentEditor( this.props.editorSettings ).then(
+			() => this.setState( { editor: 'ready' } ),
+			() => this.setState( { editor: 'failed' } )
+		);
+	}
+
+	handleEditorError = () => {
+		this.setState( { editor: 'failed' } );
+		// The textarea cannot show block markup.
+		this.resetCommentText();
 	};
 
 	handleTextChange = ( event ) => {
+		this.updateCommentText( event.target.value );
+	};
+
+	updateCommentText = ( value ) => {
 		if ( ! this.props.isLoggedIn ) {
 			return this.props.registerLastActionRequiresLogin( {
 				type: 'comment',
@@ -72,7 +123,7 @@ class PostCommentForm extends Component {
 			} );
 		}
 		// Update the comment text in the container's state
-		this.props.onUpdateCommentText( event.target.value );
+		this.props.onUpdateCommentText( value );
 	};
 
 	handleSubmit = ( event ) => {
@@ -184,6 +235,7 @@ class PostCommentForm extends Component {
 		} );
 
 		const isReply = !! this.props.parentCommentId;
+		const placeholder = translate( 'Add a comment…' );
 
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
@@ -198,17 +250,31 @@ class PostCommentForm extends Component {
 						} }
 						hideHovercard
 					/>
-					<AutoresizingFormTextarea
-						value={ this.getCommentText() }
-						placeholder={ translate( 'Add a comment…' ) }
-						onKeyUp={ this.handleKeyUp }
-						onKeyDown={ this.handleKeyDown }
-						onFocus={ this.handleFocus }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleTextChange }
-						enableAutoFocus={ isReply }
-						siteId={ post.site_ID }
-					/>
+					{ this.state.editor === 'ready' ? (
+						<CommentBlockEditor
+							settings={ this.props.editorSettings }
+							initialContent={ this.getCommentText() }
+							placeholder={ placeholder }
+							label={ isReply ? translate( 'Reply' ) : translate( 'Comment' ) }
+							takeFocus={ this.editorFocus }
+							onChange={ this.updateCommentText }
+							onError={ this.handleEditorError }
+							onKeyDown={ this.handleKeyDown }
+							onFocus={ this.handleFocus }
+						/>
+					) : (
+						<AutoresizingFormTextarea
+							value={ this.getCommentText() }
+							placeholder={ placeholder }
+							onKeyUp={ this.handleKeyUp }
+							onKeyDown={ this.handleKeyDown }
+							onFocus={ this.handleFocus }
+							onBlur={ this.handleBlur }
+							onChange={ this.handleTextChange }
+							enableAutoFocus={ isReply }
+							siteId={ post.site_ID }
+						/>
+					) }
 					<Button
 						className={ buttonClasses }
 						disabled={ this.getCommentText().length === 0 }
@@ -232,6 +298,9 @@ PostCommentForm.propTypes = {
 	onCommentSubmit: PropTypes.func,
 	isInlineComment: PropTypes.bool,
 	isLogedIn: PropTypes.bool,
+
+	// From withCommentsEditorSettings; absent where the site has no block editor.
+	editorSettings: PropTypes.object,
 
 	// connect()ed props:
 	currentUser: PropTypes.object,
@@ -259,6 +328,20 @@ const withPostCommentActions = ( WrappedComponent ) => {
 	return WithPostCommentActions;
 };
 
+const withCommentsEditorSettings = ( WrappedComponent ) => {
+	const WithCommentsEditorSettings = ( props ) => {
+		const { data } = useQuery( siteCommentsEditorQuery( props.post?.site_ID ) );
+
+		return <WrappedComponent { ...props } editorSettings={ data?.blocks ? data : undefined } />;
+	};
+
+	WithCommentsEditorSettings.displayName = `withCommentsEditorSettings(${
+		WrappedComponent.displayName || WrappedComponent.name || 'Component'
+	})`;
+
+	return WithCommentsEditorSettings;
+};
+
 export default compose(
 	connect(
 		( state ) => ( {
@@ -270,5 +353,6 @@ export default compose(
 		{ registerLastActionRequiresLogin }
 	),
 	withPostCommentActions,
+	withCommentsEditorSettings,
 	localize
 )( PostCommentForm );

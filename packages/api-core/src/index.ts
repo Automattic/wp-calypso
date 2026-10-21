@@ -182,6 +182,7 @@ export * from './site-stats';
 export * from './site-suggestions';
 export * from './site-themes';
 export * from './site-update-schedules';
+export * from './site-comments-editor';
 export * from './site-users';
 export * from './site-wordpress-migration';
 export * from './sites-comments';
