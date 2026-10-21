@@ -21,6 +21,16 @@ import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/
 export interface AgentConfig extends UseAgentChatConfig {
 	/** Scope captured by the authentication provider during initialization. */
 	authenticationScope?: { siteId?: number; userId?: number };
+	/** Identifies the host page or embedded-page provider set used by this config. */
+	runtimeKey?: string;
+}
+
+export interface AgentRuntimeOverride {
+	key: string;
+	toolProvider: ToolProvider;
+	contextProvider: ContextProvider;
+	environment: string;
+	url: string;
 }
 
 export interface CreateAgentConfigOptions {
@@ -44,6 +54,8 @@ export interface CreateAgentConfigOptions {
 	 * paints streamed page-design markup into the editor as it arrives.
 	 */
 	onTaskUpdate?: ( update: unknown ) => void | Promise< void >;
+	/** Page-scoped runtime supplied by the full-screen iframe bridge. */
+	runtimeOverride?: AgentRuntimeOverride | null;
 }
 
 /**
@@ -283,14 +295,25 @@ export async function createAgentConfig(
 		sessionUserId,
 		siteId,
 		currentRoute,
-		toolProvider,
-		contextProvider,
+		toolProvider: hostToolProvider,
+		contextProvider: hostContextProvider,
 		providerIds,
-		environment = 'calypso',
+		environment: hostEnvironment = 'calypso',
 		agentId = ORCHESTRATOR_AGENT_ID,
 		version,
-		onTaskUpdate,
+		onTaskUpdate: hostOnTaskUpdate,
+		runtimeOverride,
 	} = options;
+	const toolProvider = runtimeOverride?.toolProvider ?? hostToolProvider;
+	const contextProvider = runtimeOverride?.contextProvider ?? hostContextProvider;
+	const environment = runtimeOverride?.environment ?? hostEnvironment;
+	const runtimeUrl = runtimeOverride ? new URL( runtimeOverride.url ) : null;
+	const resolvedCurrentRoute = runtimeUrl
+		? `${ runtimeUrl.pathname }${ runtimeUrl.search }`
+		: currentRoute;
+	// Shared-window streaming is deliberately excluded until the P4 protocol exists.
+	const onTaskUpdate = runtimeOverride ? undefined : hostOnTaskUpdate;
+	const runtimeKey = runtimeOverride?.key ?? 'host';
 
 	const config: AgentConfig = {
 		authenticationScope: { siteId, userId: sessionUserId },
@@ -305,6 +328,7 @@ export async function createAgentConfig(
 			...( sessionUserId !== undefined && { userId: sessionUserId } ),
 		} ),
 		enableStreaming: true,
+		runtimeKey,
 	};
 
 	if ( onTaskUpdate ) {
@@ -322,17 +346,17 @@ export async function createAgentConfig(
 			agentId,
 			version,
 			environment,
-			currentRoute,
-			providerIds
+			resolvedCurrentRoute,
+			runtimeOverride ? undefined : providerIds
 		);
 	} else {
 		config.contextProvider = await createDefaultContextProvider(
-			currentRoute,
+			resolvedCurrentRoute,
 			environment,
 			siteId,
 			agentId,
 			version,
-			providerIds
+			runtimeOverride ? undefined : providerIds
 		);
 	}
 

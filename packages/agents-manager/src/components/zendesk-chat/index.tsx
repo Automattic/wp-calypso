@@ -19,6 +19,8 @@ interface Props {
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Indicates if the chat is docked in the sidebar. */
 	isDocked: boolean;
+	/** Uses the dedicated full-screen chat presentation. */
+	isFullscreen?: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
 	/** Called when the chat is closed. */
@@ -34,6 +36,7 @@ interface Props {
 export default function ZendeskChat( {
 	chatHeaderOptions,
 	isDocked,
+	isFullscreen = false,
 	isOpen,
 	onClose,
 	onExpand,
@@ -98,6 +101,7 @@ export default function ZendeskChat( {
 			onSubmit={ onSubmit }
 			isLoadingConversation={ isLoadingConversation }
 			isDocked={ isDocked }
+			isFullscreen={ isFullscreen }
 			onAbort={ () => {} }
 			isOpen={ isOpen }
 			onClose={ onClose }

@@ -1,6 +1,8 @@
 /* global agentsManagerData */
 import './config';
 import AgentsManager from '@automattic/agents-manager';
+import EmbeddedPageBridge from '@automattic/agents-manager/src/components/embedded-page-bridge';
+import { isEmbeddedInFullscreen } from '@automattic/agents-manager/src/utils/embedded-page-protocol';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
@@ -14,6 +16,10 @@ export default function AgentsManagerWithProvider( {
 	zendeskSmoochIntegrationKey,
 	zendeskTicketProductFieldValue,
 } ) {
+	if ( isEmbeddedInFullscreen() ) {
+		return <EmbeddedPageBridge />;
+	}
+
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<AgentsManager

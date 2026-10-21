@@ -64,6 +64,8 @@ interface Props {
 	isLoadingConversation: boolean;
 	/** Indicates if the chat is docked in the sidebar. */
 	isDocked: boolean;
+	/** Uses the light, fixed full-screen presentation without an in-chat header. */
+	isFullscreen?: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
 	/** Called when the user submits a message. */
@@ -174,6 +176,7 @@ export default function AgentChat( {
 	thinkingMessage,
 	isLoadingConversation,
 	isDocked,
+	isFullscreen = false,
 	isOpen,
 	onSubmit,
 	onAbort,
@@ -300,7 +303,7 @@ export default function AgentChat( {
 	return (
 		<AgentUI.Container
 			{ ...floatingPanelProps }
-			className={ clsx( 'agenttic', { dark: isDocked } ) }
+			className={ clsx( 'agenttic', { dark: isDocked && ! isFullscreen } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }
 			isStreaming={ isStreaming }
@@ -308,9 +311,9 @@ export default function AgentChat( {
 			thinkingMessage={ thinkingMessage ?? undefined }
 			error={ error }
 			onSubmit={ onSubmit }
-			variant={ isDocked ? 'embedded' : 'floating' }
-			freeDrag={ ! isDocked }
-			resizable={ ! isDocked }
+			variant={ isDocked || isFullscreen ? 'embedded' : 'floating' }
+			freeDrag={ ! isDocked && ! isFullscreen }
+			resizable={ ! isDocked && ! isFullscreen }
 			suggestions={ displayedSuggestions }
 			clearSuggestions={ clearSuggestions }
 			onSuggestionClick={ onSuggestionClick ? handleDisplayedSuggestionClick : undefined }
@@ -346,7 +349,9 @@ export default function AgentChat( {
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
 				{ isSiteEditorContext() && <EditorHistoryBridge /> }
-				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
+				{ ! isFullscreen && (
+					<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
+				) }
 				{ isLoadingConversation && messages.length === 0 ? (
 					<ChatMessageSkeleton count={ 3 } />
 				) : (

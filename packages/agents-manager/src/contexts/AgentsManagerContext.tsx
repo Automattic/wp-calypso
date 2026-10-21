@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { getSessionId, NO_SITE, setSessionSiteKey, setSessionUserId } from '../utils/agent-session';
 import { getWooZendeskIntegrationKey } from '../utils/is-woo-ai-provider';
 import { setResolvedAgentId } from '../utils/resolved-agent-id';
-import type { AgentConfig } from '../utils/create-agent-config';
+import type { AgentConfig, AgentRuntimeOverride } from '../utils/create-agent-config';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
 
 /**
@@ -51,6 +51,10 @@ export interface AgentsManagerContextType {
 	agentConfig: AgentConfig | null;
 	/** Sets the agent configuration (called from `AgentSetup` after initialization). */
 	setAgentConfig: ( config: AgentConfig | null ) => void;
+	/** Page-scoped providers used while the full-screen site panel is connected. */
+	agentRuntimeOverride: AgentRuntimeOverride | null;
+	/** Publishes or clears the full-screen site panel's page-scoped providers. */
+	setAgentRuntimeOverride: ( override: AgentRuntimeOverride | null ) => void;
 	/** Returns this tab's active session ID from the stored session. */
 	getTabSessionId: () => string;
 	/** Reopen the chat, resuming this tab's conversation. */
@@ -70,6 +74,8 @@ const defaultContext: AgentsManagerContextType = {
 	zendeskConversationTags: [],
 	agentConfig: null,
 	setAgentConfig: () => {},
+	agentRuntimeOverride: null,
+	setAgentRuntimeOverride: () => {},
 	getTabSessionId: () => '',
 	resumeChat: () => {},
 };
@@ -102,6 +108,9 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 	value,
 } ) => {
 	const [ agentConfig, setAgentConfig ] = useState< AgentConfig | null >( null );
+	const [ agentRuntimeOverride, setAgentRuntimeOverride ] = useState< AgentRuntimeOverride | null >(
+		null
+	);
 	const isLoggedIn = value.currentUser?.ID !== undefined;
 	const zendeskSmoochIntegrationKey = getWooZendeskIntegrationKey(
 		value.zendeskSmoochIntegrationKey
@@ -137,6 +146,8 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 				zendeskSmoochIntegrationKey,
 				agentConfig,
 				setAgentConfig,
+				agentRuntimeOverride,
+				setAgentRuntimeOverride,
 				getTabSessionId,
 				resumeChat,
 			} }

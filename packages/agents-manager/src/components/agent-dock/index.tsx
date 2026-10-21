@@ -8,15 +8,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { backup, cog, columns, comment, drawerRight, heading } from '@wordpress/icons';
-import {
-	Navigate,
-	NavigationType,
-	Route,
-	Routes,
-	useLocation,
-	useNavigate,
-	useNavigationType,
-} from 'react-router-dom';
+import { useLocation, useNavigate, useNavigationType } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
@@ -31,9 +23,9 @@ import { getChatPresentation } from '../../utils/chat-presentation';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
-import { isWooAiProvider } from '../../utils/is-woo-ai-provider';
 import lazyComponent from '../../utils/lazy-component';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
+import { AgentChatRoutes } from '../agent-chat-routes';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import EditorAiChatButton from '../editor-ai-chat-button';
@@ -479,25 +471,14 @@ export default function AgentDock( {
 			{ isEditorPage() && <PageDesignRenderer /> }
 			{ isChatVisible &&
 				createAgentPortal(
-					// NOTE: Use route state to pass data that needs to be accessed throughout the app.
-					<Routes>
-						<Route path="/chat" element={ OrchestratorChatRoute } />
-						{ ! isReaderChat && isWooAiProvider() && (
-							<Route path="/zendesk" element={ ZendeskChatRoute } />
-						) }
-						{ ! isReaderChat && <Route path="/post" element={ SupportGuideRoute } /> }
-						{ ! isReaderChat && <Route path="/history" element={ HistoryRoute } /> }
-						<Route
-							path="*"
-							element={
-								<Navigate
-									to="/chat"
-									state={ navigationType === NavigationType.Push ? { isNewChat: true } : undefined }
-									replace
-								/>
-							}
-						/>
-					</Routes>
+					<AgentChatRoutes
+						chat={ OrchestratorChatRoute }
+						zendesk={ ZendeskChatRoute }
+						history={ HistoryRoute }
+						supportGuide={ SupportGuideRoute }
+						isReaderChat={ isReaderChat }
+						navigationType={ navigationType }
+					/>
 				) }
 		</>
 	);

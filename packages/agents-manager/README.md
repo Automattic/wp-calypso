@@ -73,6 +73,7 @@ The host page URL can carry these query parameters:
 
 | Parameter       | Description                                                                                                                                                                              |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `am-fullscreen` | `am-fullscreen=1` opts into the lazy full-screen prototype for this page load (never Reader Chat). It sends the `fullscreen` environment. In Calypso and the Dashboard, the `calypso/agents-manager-internal` flag and a selected site allow loading on otherwise ineligible routes, without enabling Big Sky. |
 | `ai-open`       | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied.                            |
 | `agent`         | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`). Ignored when the host passes an `agentId` prop.                                                        |
 | `version`       | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                                                      |
@@ -80,6 +81,10 @@ The host page URL can carry these query parameters:
 | `am_plan`       | With `am_credits`, the mock plan: `paid`, or `free` (the default).                                                                                                                       |
 | `wp-agent-chat` | The chat session to resume, handed off by a same-tab link from another origin (e.g. wp-admin to Calypso) so the conversation continues there. Stripped from the URL after being applied. |
 | `wp-agent-site` | The site scope of the handed-off session. The session is resumed only on pages for that site, and stored for it otherwise.                                                               |
+
+In full-screen mode, **Referenced pages** lists same-site links from assistant replies and editor URLs from user-message context in the current session. The list uses reply link labels when available and batches title lookups for unlabeled post IDs. Site metadata, post resolution, and title requests use the WordPress.com REST proxy. Selecting a reference resolves its post ID when necessary and opens the editor in a right-hand panel (an overlay on narrow screens). Each open requests a fresh frame nonce and carries the session handoff and `am-embedded=1`. Jetpack/Atomic site-editor links use a new tab because those sites do not support framing the site editor.
+
+An allowlisted `am-embedded=1` editor frame mounts no chat UI. Instead, the widgets entry serves its merged abilities and debounced editor context over a versioned `postMessage` protocol. The full-screen host validates the frame window and site origin, then re-creates the current session's agent config with those page-scoped providers, environment, and URL. Closing or replacing the frame restores the host's `fullscreen` context and global tools. Shared-window features such as checkpoint UI, canvas capture, page-design streaming, and navigation continuation are not bridged.
 
 ## API Reference
 

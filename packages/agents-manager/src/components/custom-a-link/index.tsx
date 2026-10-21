@@ -8,8 +8,9 @@ import { uriTransformer } from '../../utils/uri-transformer';
 export default function CustomALink( {
 	href,
 	children,
+	openInNewTab = false,
 	...props
-}: React.AnchorHTMLAttributes< HTMLAnchorElement > ) {
+}: React.AnchorHTMLAttributes< HTMLAnchorElement > & { openInNewTab?: boolean } ) {
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
 	const transformedHref = useMemo( () => uriTransformer( href ?? '' ), [ href ] );
@@ -24,12 +25,13 @@ export default function CustomALink( {
 			{ ...props }
 			href={ transformedHref }
 			rel="noopener noreferrer"
+			target={ openInNewTab ? '_blank' : props.target }
 			onClick={ ( e ) => {
 				const isSupportArticle = isThisASupportArticleLink( transformedHref );
 				const isFromOrchestrator = pathname === '/chat';
 
 				// Open support article links in the post view.
-				if ( isSupportArticle ) {
+				if ( isSupportArticle && ! openInNewTab ) {
 					e.preventDefault();
 					// Mark the chat origin (or forward the existing `state`) so the
 					// post view's back button returns to the right place.
