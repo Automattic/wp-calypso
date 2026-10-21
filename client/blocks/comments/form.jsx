@@ -38,6 +38,13 @@ const blocksToText = ( markup ) =>
 		.body.textContent.replace( /\n{3,}/g, '\n\n' )
 		.trim();
 
+// Whether the editor's markup holds anything to post. The editor reports an empty paragraph as
+// empty, but not an emptied list, quote, or code block.
+const hasBlockContent = ( markup ) => {
+	const body = new DOMParser().parseFromString( markup, 'text/html' ).body;
+	return !! body.textContent.trim() || !! body.querySelector( 'img' );
+};
+
 function PostCommentFormError( { type } ) {
 	const translate = useTranslate();
 
@@ -129,7 +136,7 @@ class PostCommentForm extends Component {
 		const post = this.props.post;
 		const commentText = this.getCommentText().trim();
 
-		if ( ! commentText ) {
+		if ( ! this.hasCommentText() ) {
 			this.resetCommentText(); // Clean up any newlines
 			return false;
 		}
@@ -194,7 +201,8 @@ class PostCommentForm extends Component {
 	}
 
 	hasCommentText() {
-		return this.getCommentText().trim().length > 0;
+		const text = this.getCommentText();
+		return text.includes( '<!-- wp:' ) ? hasBlockContent( text ) : text.trim().length > 0;
 	}
 
 	render() {
@@ -309,7 +317,7 @@ class PostCommentForm extends Component {
 							<WPButton
 								__next40pxDefaultSize
 								variant="primary"
-								disabled={ this.getCommentText().length === 0 }
+								disabled={ ! this.hasCommentText() }
 								onClick={ this.handleSubmit }
 							>
 								{ submitLabel }
@@ -318,7 +326,7 @@ class PostCommentForm extends Component {
 					) : (
 						<Button
 							className={ buttonClasses }
-							disabled={ this.getCommentText().length === 0 }
+							disabled={ ! this.hasCommentText() }
 							onClick={ this.handleSubmit }
 						>
 							{ submitLabel }
