@@ -145,7 +145,7 @@ describe( 'BackupDelta known threats', () => {
 		);
 
 		const button = await screen.findByRole( 'button', {
-			name: 'Show threats (3)',
+			name: 'Show threats',
 		} );
 		const cards = document.querySelectorAll( '.activity-card' );
 		expect( cards ).toHaveLength( 2 );
@@ -155,16 +155,17 @@ describe( 'BackupDelta known threats', () => {
 		expect( cards[ 1 ].querySelector( '.activity-card__toolbar--reverse' ) ).not.toBeNull();
 		expect( within( cards[ 1 ] ).queryByText( /Known threats/ ) ).toBeNull();
 
-		expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).toBeNull();
 		const warning =
 			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
 		expect( button ).toHaveAccessibleDescription( warning );
 		expect( button ).not.toHaveAttribute( 'title' );
 		expect( button ).not.toHaveAccessibleDescription( 'Show threats' );
-		await userEvent.hover( button );
+		// Hovering the badge shows the warning; the toggle keeps it as its description.
+		const badge = within( cards[ 0 ] ).getByText( 'Known threats (3)' );
+		await userEvent.hover( badge );
 		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( warning );
 		expect( button ).toHaveAccessibleDescription( warning );
-		await userEvent.unhover( button );
+		await userEvent.unhover( badge );
 		const restoreLink = await within( cards[ 0 ] ).findByRole( 'link', {
 			name: /^Restore .+ backup instead$/,
 		} );

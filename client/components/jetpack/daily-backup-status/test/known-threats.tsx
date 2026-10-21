@@ -136,7 +136,7 @@ describe( 'BackupKnownThreats', () => {
 	it( 'shows the threats toggle when flagged threats exist', async () => {
 		mockList( [ backupWith( counts( 3 ) ) ] );
 		renderIt();
-		expect( await screen.findByText( 'Show threats (3)' ) ).toBeVisible();
+		expect( await screen.findByText( 'Show threats' ) ).toBeVisible();
 	} );
 
 	it( 'renders nothing before VaultPress ships', async () => {
@@ -161,11 +161,9 @@ describe( 'BackupKnownThreats', () => {
 		renderIt();
 
 		const toggle = await screen.findByRole( 'button', {
-			name: 'Show threats (1)',
+			name: 'Show threats',
 		} );
-		expect( toggle ).toHaveTextContent( 'Show threats (1)' );
-		expect( screen.queryByRole( 'button', { name: 'Show threats' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Show threats' ) ).not.toBeInTheDocument();
+		expect( toggle ).toHaveTextContent( 'Show threats' );
 		expect( toggle ).not.toHaveAccessibleDescription( 'Show threats' );
 		await userEvent.unhover( toggle );
 		expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
@@ -173,6 +171,9 @@ describe( 'BackupKnownThreats', () => {
 		// Not the badge: no "Known threats" label or warning icon, only the chevron.
 		expect( within( toggle ).queryByText( /Known threats/ ) ).not.toBeInTheDocument();
 		expect( toggle.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
+		// The badge sits beside the toggle and is never a control itself.
+		expect( screen.getByText( 'Known threats (1)' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: /Known threats/ } ) ).not.toBeInTheDocument();
 		const restoreLink = await screen.findByRole( 'link', { name: /^Restore .+ backup instead$/ } );
 		expect( restoreLink ).toBeVisible();
 		expectInOrder( toggle, restoreLink );
@@ -204,7 +205,7 @@ describe( 'BackupKnownThreats', () => {
 		expect( screen.getByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toHaveClass(
 			'is-next-40px-default-size'
 		);
-		const expanded = screen.getByRole( 'button', { name: 'Hide threats (1)' } );
+		const expanded = screen.getByRole( 'button', { name: 'Hide threats' } );
 		expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
 		await userEvent.unhover( expanded );
 		expect( expanded ).not.toHaveAccessibleDescription( 'Hide threats' );
@@ -216,7 +217,7 @@ describe( 'BackupKnownThreats', () => {
 		nock( BASE ).get( THREATS_PATH ).query( true ).delay( 300 ).reply( 200, threatsBody );
 		renderIt();
 
-		const toggle = await screen.findByRole( 'button', { name: 'Show threats (1)' } );
+		const toggle = await screen.findByRole( 'button', { name: 'Show threats' } );
 		expect( toggle ).not.toHaveAttribute( 'aria-controls' );
 		await userEvent.click( toggle );
 
@@ -235,7 +236,7 @@ describe( 'BackupKnownThreats', () => {
 		nock( BASE ).get( THREATS_PATH ).query( true ).reply( 500, {} );
 		renderIt();
 
-		const toggle = await screen.findByRole( 'button', { name: 'Show threats (1)' } );
+		const toggle = await screen.findByRole( 'button', { name: 'Show threats' } );
 		await userEvent.click( toggle );
 
 		const error = await screen.findByText( "Couldn't load the threats. Try again later." );
@@ -309,7 +310,7 @@ describe( 'BackupKnownThreats', () => {
 			} );
 		renderWithProvider( <BackupKnownThreats siteId={ SITE_ID } rewindId="1792333800.1" /> );
 
-		await screen.findByText( 'Show threats (1)' );
+		await screen.findByText( 'Show threats' );
 		await waitFor( () => expect( activities.isDone() ).toBe( true ) );
 		expect( query[ 'name[]' ] ).toContain( 'rewind__backup_complete_full' );
 		expect( query.aggregate ).toBe( 'false' );
@@ -324,7 +325,7 @@ describe( 'BackupKnownThreats', () => {
 		const activities = mockActivities( [ '200.817' ] );
 		renderWithProvider( <BackupKnownThreats siteId={ SITE_ID } rewindId="300.5" /> );
 
-		await screen.findByText( 'Show threats (1)' );
+		await screen.findByText( 'Show threats' );
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 		expect( screen.queryByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toBeNull();
 		expect( activities.isDone() ).toBe( false );
@@ -335,7 +336,7 @@ describe( 'BackupKnownThreats', () => {
 		const activities = mockActivities( [] );
 		renderIt();
 
-		await screen.findByText( 'Show threats (1)' );
+		await screen.findByText( 'Show threats' );
 		await waitFor( () => expect( activities.isDone() ).toBe( true ) );
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 		expect( screen.queryByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toBeNull();
@@ -346,7 +347,7 @@ describe( 'BackupKnownThreats', () => {
 		const activities = mockActivities( [ '1792247404.817' ] );
 		renderIt();
 
-		await screen.findByText( 'Show threats (1)' );
+		await screen.findByText( 'Show threats' );
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 		expect( activities.isDone() ).toBe( false );
 	} );
@@ -359,7 +360,7 @@ describe( 'BackupKnownThreats', () => {
 			.reply( 200, { ...threatsBody, summary: counts( 1, 1 ) } );
 		renderIt();
 
-		await userEvent.click( await screen.findByRole( 'button', { name: /^Show threats/ } ) );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Show threats' } ) );
 
 		expect(
 			await screen.findByText( 'Also: 1 vulnerable plugin or theme version.' )
@@ -380,7 +381,7 @@ describe( 'BackupKnownThreats', () => {
 		renderWithProvider(
 			<BackupKnownThreats siteId={ SITE_ID } rewindId="200.5" showRestoreLink={ false } />
 		);
-		await userEvent.click( await screen.findByRole( 'button', { name: /^Show threats/ } ) );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Show threats' } ) );
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toBeNull();
 	} );
