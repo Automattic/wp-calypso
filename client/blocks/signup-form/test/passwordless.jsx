@@ -370,6 +370,16 @@ describe( 'Blackbox integration', () => {
 		await waitFor( () => expect( getBlackboxSessionId ).toHaveBeenCalledTimes( 1 ) );
 	} );
 
+	it( 'cancels signup without sending a request when its form becomes inactive', async () => {
+		getBlackboxSessionId.mockResolvedValue( null );
+		const getRequestBody = interceptUsersNew( 403, { error: 'throttled' } );
+		renderFormAndSubmit();
+		await waitFor( () =>
+			expect( screen.getByRole( 'button', { name: /create your account/i } ) ).toBeEnabled()
+		);
+		expect( getRequestBody() ).toBeUndefined();
+	} );
+
 	it( 'resets Blackbox when the signup request fails', async () => {
 		window.Blackbox = { reset: jest.fn() };
 		interceptUsersNew( 500, { error: 'internal_server_error' } );

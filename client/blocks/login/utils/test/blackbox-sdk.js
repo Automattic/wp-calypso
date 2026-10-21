@@ -72,6 +72,22 @@ describe( 'blackbox-sdk', () => {
 		expect( loadScript ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	test( 'rotates the initial session when the active key changes during script loading', async () => {
+		const { loadScript } = require( '@automattic/load-script' );
+		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
+		const { configureBlackbox } = require( '../blackbox-surface' );
+		let finishLoad;
+		loadScript.mockImplementationOnce( ( _url, callback ) => {
+			finishLoad = callback;
+		} );
+		const loading = loadBlackboxSdk( 'login-key' );
+		window.Blackbox = { configure: jest.fn(), reset: jest.fn() };
+		finishLoad( null );
+		await loading;
+		configureBlackbox( window.Blackbox, { apiKey: 'signup-key' } );
+		expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	test( 'loadBlackboxSdk does not call configure after load', async () => {
 		window.Blackbox = { configure: jest.fn(), getSessionId: jest.fn() };
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );

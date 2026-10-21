@@ -10,8 +10,8 @@ export interface BlackboxProtection {
 	isSubmitBlocked: boolean;
 	/** Challenge container element to render in the form. */
 	challenge: ReactElement;
-	/** Resolves the Blackbox session ID (no-op when disabled). */
-	getSessionId: () => Promise< string | undefined >;
+	/** Resolves an ID, undefined without a session, or null when the form becomes inactive. */
+	getSessionId: () => Promise< string | undefined | null >;
 	/** Resets the Blackbox session so a retry starts fresh. */
 	reset: () => void;
 }
