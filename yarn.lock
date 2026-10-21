@@ -24322,7 +24322,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loader-utils@npm:^1.4.0, loader-utils@npm:^1.4.2":
+"loader-utils@npm:^1.4.0":
   version: 1.4.2
   resolution: "loader-utils@npm:1.4.2"
   dependencies:
@@ -34894,7 +34894,6 @@ __metadata:
     jest-environment-jsdom: "npm:^30.5.2"
     jest-teamcity: "npm:^1.12.0"
     jsdom: "npm:^20.0.3"
-    loader-utils: "npm:^1.4.2"
     lodash: "npm:^4.18.1"
     lottie-web: "npm:^5.9.6"
     mixedindentlint: "npm:^1.2.0"
