@@ -120,17 +120,17 @@ describe( 'getStaleInteractiveUiSurfaceIds', () => {
 		[
 			'the user has replied past it',
 			createBatch( 1 ),
-			{ latestUserMessageIndex: 2, firstLiveMessageIndex: 0 },
+			{ latestUserMessageIndex: 2, restoredSignatures: new Set< string >() },
 		],
 		[
 			'the editor has another page open',
 			createBatch( 1, 7 ),
-			{ latestUserMessageIndex: 0, firstLiveMessageIndex: 0, currentPostId: 8 },
+			{ latestUserMessageIndex: 0, restoredSignatures: new Set< string >(), currentPostId: 8 },
 		],
 		[
 			'it was restored from history',
 			createBatch( 1 ),
-			{ latestUserMessageIndex: 0, firstLiveMessageIndex: Infinity },
+			{ latestUserMessageIndex: 0, restoredSignatures: new Set( [ '1' ] ) },
 		],
 	] )( 'marks a surface stale when %s', ( _description, batch, options ) => {
 		expect( getStaleInteractiveUiSurfaceIds( [ batch ], options ) ).toEqual(
@@ -147,7 +147,7 @@ describe( 'getStaleInteractiveUiSurfaceIds', () => {
 		expect(
 			getStaleInteractiveUiSurfaceIds( [ batch ], {
 				latestUserMessageIndex: 2,
-				firstLiveMessageIndex: 0,
+				restoredSignatures: new Set< string >(),
 			} )
 		).toEqual( new Set( [ 'test-surface' ] ) );
 	} );
@@ -158,7 +158,7 @@ describe( 'getStaleInteractiveUiSurfaceIds', () => {
 		expect(
 			getStaleInteractiveUiSurfaceIds( [ createBatch( 1, 7 ), update ], {
 				latestUserMessageIndex: 0,
-				firstLiveMessageIndex: 0,
+				restoredSignatures: new Set< string >(),
 				currentPostId: 8,
 			} )
 		).toEqual( new Set( [ 'test-surface' ] ) );
@@ -167,7 +167,7 @@ describe( 'getStaleInteractiveUiSurfaceIds', () => {
 	it( 'judges a surface by the last batch that changed it', () => {
 		const staleSurfaceIds = getStaleInteractiveUiSurfaceIds(
 			[ createBatch( 1 ), createBatch( 3 ) ],
-			{ latestUserMessageIndex: 2, firstLiveMessageIndex: 0 }
+			{ latestUserMessageIndex: 2, restoredSignatures: new Set< string >() }
 		);
 
 		expect( staleSurfaceIds.size ).toBe( 0 );

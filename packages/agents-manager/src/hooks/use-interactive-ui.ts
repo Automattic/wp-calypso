@@ -80,30 +80,24 @@ export function useInteractiveUi( {
 			conversationId,
 			runtime: undefined as InteractiveUiRuntime | undefined,
 			appliedBatches: [] as InteractiveUiBatch[],
+			restoredSignatures: new Set< string >(),
 			hasBeenIdle: false,
+			hasStartedTurn: false,
 		} ),
 		[ conversationId ]
 	);
 
-	// Messages from before this session's first turn came from history, such as a past chat's. Each
-	// conversation switch starts a new session, a return to an earlier conversation included.
-	const [ firstTurn, setFirstTurn ] = useState< {
-		session: typeof conversationSession;
-		messageIndex: number;
-	} >();
-	const firstLiveMessageIndex =
-		firstTurn?.session === conversationSession ? firstTurn.messageIndex : Infinity;
-
+	// Batches applied before this session's first turn came from history, such as a past chat's.
+	// Each conversation switch starts a new session, a return to an earlier one included. Right
+	// after a switch, the previous conversation's reply can still be in progress, so only a turn
+	// started once the session has been idle counts.
 	useEffect( () => {
-		// Right after a switch, the previous conversation's reply can still be in progress, so only
-		// a turn started once the session has been idle counts. A turn that rewinds the transcript,
-		// such as a regeneration, moves the start back.
 		if ( ! isProcessing ) {
 			conversationSession.hasBeenIdle = true;
-		} else if ( conversationSession.hasBeenIdle && messages.length < firstLiveMessageIndex ) {
-			setFirstTurn( { session: conversationSession, messageIndex: messages.length } );
+		} else if ( conversationSession.hasBeenIdle ) {
+			conversationSession.hasStartedTurn = true;
 		}
-	}, [ isProcessing, firstLiveMessageIndex, conversationSession, messages.length ] );
+	}, [ isProcessing, conversationSession ] );
 
 	// Staleness follows the batches the runtime has applied, not one still streaming, so a surface
 	// never changes staleness before its data does.
@@ -111,13 +105,13 @@ export function useInteractiveUi( {
 		() =>
 			getStaleInteractiveUiSurfaceIds( conversationSession.appliedBatches, {
 				latestUserMessageIndex,
-				firstLiveMessageIndex,
+				restoredSignatures: conversationSession.restoredSignatures,
 				currentPostId,
 			} ),
 		[
 			conversationSession.appliedBatches,
+			conversationSession.restoredSignatures,
 			latestUserMessageIndex,
-			firstLiveMessageIndex,
 			currentPostId,
 		]
 	);
@@ -202,6 +196,12 @@ export function useInteractiveUi( {
 					console.error( '[AgentsManager] Interactive UI error:', error );
 				},
 			} );
+		}
+
+		if ( ! conversationSession.hasStartedTurn ) {
+			newBatches.forEach( ( batch ) =>
+				conversationSession.restoredSignatures.add( batch.signature )
+			);
 		}
 
 		const { runtime } = conversationSession;

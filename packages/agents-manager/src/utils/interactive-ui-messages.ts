@@ -138,8 +138,8 @@ function getOperation( message: unknown ): { name: string; surfaceId: string } |
 
 interface StaleInteractiveUiSurfaceOptions {
 	latestUserMessageIndex: number;
-	/** Where this chat session's first turn starts: earlier messages came from history. */
-	firstLiveMessageIndex: number;
+	/** The signatures of batches restored from history, such as a past chat's. */
+	restoredSignatures: ReadonlySet< string >;
 	currentPostId?: number | string;
 }
 
@@ -150,9 +150,12 @@ interface StaleInteractiveUiSurfaceOptions {
  */
 export function getStaleInteractiveUiSurfaceIds(
 	batches: InteractiveUiBatch[],
-	{ latestUserMessageIndex, firstLiveMessageIndex, currentPostId }: StaleInteractiveUiSurfaceOptions
+	{ latestUserMessageIndex, restoredSignatures, currentPostId }: StaleInteractiveUiSurfaceOptions
 ): Set< string > {
-	const surfaces = new Map< string, { messageIndex: number; postId?: number | string } >();
+	const surfaces = new Map<
+		string,
+		{ messageIndex: number; postId?: number | string; isRestored: boolean }
+	>();
 
 	for ( const batch of batches ) {
 		for ( const message of batch.operations ) {
@@ -167,6 +170,7 @@ export function getStaleInteractiveUiSurfaceIds(
 				surfaces.set( operation.surfaceId, {
 					messageIndex: batch.messageIndex,
 					postId: batch.postId ?? previous?.postId,
+					isRestored: restoredSignatures.has( batch.signature ),
 				} );
 			}
 		}
@@ -174,9 +178,7 @@ export function getStaleInteractiveUiSurfaceIds(
 
 	const staleSurfaceIds = new Set< string >();
 
-	for ( const [ surfaceId, { messageIndex, postId } ] of surfaces ) {
-		const isRestored = messageIndex < firstLiveMessageIndex;
-
+	for ( const [ surfaceId, { messageIndex, postId, isRestored } ] of surfaces ) {
 		if (
 			isRestored ||
 			isChatUiStale( { messageIndex, latestUserMessageIndex, postId, currentPostId } )
