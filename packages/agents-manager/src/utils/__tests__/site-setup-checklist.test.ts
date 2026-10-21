@@ -10,8 +10,6 @@ import {
 import type { SiteSetupTask } from '../site-setup-tasks';
 import type { UIMessage } from '@automattic/agenttic-client';
 
-type WindowWithInlineData = Window & { agentsManagerData?: { siteSetupChecklist?: boolean } };
-
 const TASKS: SiteSetupTask[] = [
 	{ id: 'design', title: 'Customize the design', status: 'todo', disabled: false },
 	{ id: 'about', title: 'Publish the About page', status: 'done', disabled: false },
@@ -25,27 +23,21 @@ describe( 'isSiteSetupChecklistEnabled', () => {
 
 	beforeEach( () => {
 		setEditorPage( true );
-		delete ( window as WindowWithInlineData ).agentsManagerData;
 		window.history.replaceState( null, '', '/' );
 	} );
 
-	it( 'is off without the flag', () => {
+	it( 'is off without the toggle', () => {
 		expect( isSiteSetupChecklistEnabled() ).toBe( false );
 	} );
 
-	it( 'follows the host flag', () => {
-		( window as WindowWithInlineData ).agentsManagerData = { siteSetupChecklist: true };
-		expect( isSiteSetupChecklistEnabled() ).toBe( true );
-	} );
-
-	it( 'accepts the dev toggle in the query string', () => {
+	it( 'is on with the toggle in the query string', () => {
 		window.history.replaceState( null, '', '/?am_setup_checklist=1' );
 		expect( isSiteSetupChecklistEnabled() ).toBe( true );
 	} );
 
-	it( 'is off outside the editor even with the flag', () => {
+	it( 'is off outside the editor even with the toggle', () => {
 		setEditorPage( false );
-		( window as WindowWithInlineData ).agentsManagerData = { siteSetupChecklist: true };
+		window.history.replaceState( null, '', '/?am_setup_checklist=1' );
 		expect( isSiteSetupChecklistEnabled() ).toBe( false );
 	} );
 } );

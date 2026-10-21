@@ -1,5 +1,4 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isEditorPage } from './is-editor-page';
 import { markNextPromptSource } from './prompt-source';
 import type { SiteSetupTask } from './site-setup-tasks';
@@ -9,28 +8,20 @@ import type { ChecklistItem } from '@automattic/agenttic-ui';
 /** `clientContext.metadata.promptSource` of a task's prompt: marks the chat as started from the list. */
 export const SITE_SETUP_PROMPT_SOURCE = 'site-setup-checklist';
 
-// Query-string override for sandboxes, like `?am_credits`.
-const DEV_TOGGLE_PARAM = 'am_setup_checklist';
+// Query-string toggle, like `?am_credits`: the only way in until the rollout
+// gate is decided. Nothing is fetched without it.
+const TOGGLE_PARAM = 'am_setup_checklist';
 
 /**
- * Whether the chat shows the Site Setup checklist: the host flag (or the dev
- * toggle), and only in the block editor, where the Site Setup ability reads
- * the site's own REST route.
+ * Whether the chat shows the Site Setup checklist: only in the block editor,
+ * where the Site Setup ability runs, and only with the query-string toggle.
  */
 export function isSiteSetupChecklistEnabled(): boolean {
-	if ( ! isEditorPage() ) {
+	if ( ! isEditorPage() || typeof window === 'undefined' ) {
 		return false;
 	}
 
-	if ( getAgentsManagerInlineData()?.siteSetupChecklist === true ) {
-		return true;
-	}
-
-	if ( typeof window === 'undefined' ) {
-		return false;
-	}
-
-	return new URLSearchParams( window.location.search ).has( DEV_TOGGLE_PARAM );
+	return new URLSearchParams( window.location.search ).has( TOGGLE_PARAM );
 }
 
 export function siteSetupTaskPrompt( task: SiteSetupTask ): string {
