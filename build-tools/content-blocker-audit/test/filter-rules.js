@@ -130,6 +130,63 @@ describe( 'createMatcher', () => {
 			match( [ '-cookie-banner.', '-cookie-banner.$badfilter' ], 'x-cookie-banner.min.js' ).blocked
 		).toBe( false );
 	} );
+
+	test( 'matches $badfilter regardless of option order', () => {
+		expect(
+			match(
+				[ '-cookie-banner.$script,1p', '-cookie-banner.$badfilter,1p,script' ],
+				'x-cookie-banner.min.js'
+			).blocked
+		).toBe( false );
+		expect(
+			match(
+				[ '-cookie-banner.$script', '-cookie-banner.$badfilter,css' ],
+				'x-cookie-banner.min.js'
+			).blocked
+		).toBe( true );
+	} );
+
+	test( 'honours negated strict party options', () => {
+		expect( match( [ '-cookie-banner.$~strict3p' ], 'x-cookie-banner.min.js' ).blocked ).toBe(
+			true
+		);
+		expect( match( [ '-cookie-banner.$~strict1p' ], 'x-cookie-banner.min.js' ).blocked ).toBe(
+			false
+		);
+	} );
+} );
+
+describe( 'parseFilterList', () => {
+	const raws = ( lines ) =>
+		parseFilterList( lines.join( '\n' ), 'test' ).map( ( rule ) => rule.raw );
+
+	test( 'skips rules for platforms the audit does not cover', () => {
+		expect(
+			raws( [ '!#if env_mobile', '-mobile.', '!#endif', '!#if !ext_ublock', '-other.', '!#endif' ] )
+		).toEqual( [] );
+	} );
+
+	test( 'keeps rules that apply to desktop uBlock Origin on any covered browser', () => {
+		expect(
+			raws( [
+				'!#if env_firefox',
+				'-firefox.',
+				'!#else',
+				'-not-firefox.',
+				'!#endif',
+				'!#if !env_mobile && (env_chromium || env_safari)',
+				'-chromium.',
+				'!#endif',
+				'-everywhere.',
+			] )
+		).toEqual( [ '-firefox.', '-not-firefox.', '-chromium.', '-everywhere.' ] );
+	} );
+
+	test( 'handles nested blocks', () => {
+		expect(
+			raws( [ '!#if ext_ublock', '!#if env_mobile', '-mobile.', '!#endif', '-ublock.', '!#endif' ] )
+		).toEqual( [ '-ublock.' ] );
+	} );
 } );
 
 describe( 'isRelevantRule', () => {

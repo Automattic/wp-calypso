@@ -41,20 +41,24 @@ function parseObjectLiteral( source ) {
  * List the chunk URLs a deployed page can load, by reading the chunk name and
  * hash maps out of the inline webpack runtime (`__webpack_require__.u` for
  * scripts and `.miniCssF` for stylesheets), plus the scripts and stylesheets the
- * page references directly.
+ * page references directly from the same public path. Other scripts on the page,
+ * such as stats or RUM beacons, are left out: blockers refuse some of them on
+ * purpose, and they are not Calypso chunks.
  * @param {string} html    Page HTML.
  * @param {string} pageUrl URL the HTML was fetched from.
  */
 function collectAssetsFromPage( html, pageUrl ) {
 	const publicPath = /\.p="([^"]+)"/.exec( html )?.[ 1 ];
 	if ( ! publicPath ) {
-		throw new Error( `Could not find the webpack public path in ${ pageUrl }` );
+		const hint = html.includes( '/__challenge/' ) ? ' (the response is a bot challenge page)' : '';
+		throw new Error( `Could not find the webpack public path in ${ pageUrl }${ hint }` );
 	}
 	const base = new URL( publicPath, pageUrl ).href;
 	const assets = new Map();
 	const add = ( url, type ) => {
-		const name = url.startsWith( base ) ? url.slice( base.length ) : url;
-		assets.set( url, { name, url, type } );
+		if ( url.startsWith( base ) ) {
+			assets.set( url, { name: url.slice( base.length ), url, type } );
+		}
 	};
 
 	const chunkMaps =
@@ -103,6 +107,38 @@ function describeList( text ) {
 	return header;
 }
 
+const wait = ( ms ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
+
+/**
+ * Fetch a URL, retrying network errors, 429s and 5xx responses so a brief outage
+ * on a list host or wordpress.com does not fail the run.
+ * @param {string} url
+ * @param {Object} options
+ * @param {number} options.attempts Total attempts.
+ * @param {number} options.delayMs  Delay before the first retry; doubles after each one.
+ */
+async function fetchWithRetry( url, { attempts = 3, delayMs = 2000 } = {} ) {
+	let lastError;
+	for ( let attempt = 1; attempt <= attempts; attempt++ ) {
+		if ( attempt > 1 ) {
+			await wait( delayMs * 2 ** ( attempt - 2 ) );
+		}
+		try {
+			const response = await fetch( url, { signal: AbortSignal.timeout( 30000 ) } );
+			if ( response.ok ) {
+				return await response.text();
+			}
+			lastError = `HTTP ${ response.status }`;
+			if ( response.status !== 429 && response.status < 500 ) {
+				break;
+			}
+		} catch ( error ) {
+			lastError = error.message;
+		}
+	}
+	throw new Error( `Could not fetch ${ url }: ${ lastError }` );
+}
+
 /**
  * Load the configured filter lists, downloading any that are not cached yet.
  * @param {Object}  config           Parsed `filter-lists.json`.
@@ -110,26 +146,34 @@ function describeList( text ) {
  * @param {string}  options.cacheDir Directory holding `<id>.txt` copies of each list.
  * @param {boolean} options.offline  Fail instead of downloading missing lists.
  * @param {boolean} options.refresh  Download every list even if cached.
+ * @param {Object}  options.fetchOptions Options for `fetchWithRetry`.
  */
-async function loadFilterLists( config, { cacheDir, offline = false, refresh = false } ) {
+async function loadFilterLists(
+	config,
+	{ cacheDir, offline = false, refresh = false, fetchOptions }
+) {
 	fs.mkdirSync( cacheDir, { recursive: true } );
 	return Promise.all(
 		config.lists.map( async ( { id, url } ) => {
 			const file = path.join( cacheDir, `${ id }.txt` );
-			if ( refresh || ! fs.existsSync( file ) ) {
+			const cached = fs.existsSync( file );
+			let stale = false;
+			if ( refresh || ! cached ) {
 				if ( offline ) {
 					throw new Error( `Filter list "${ id }" is not cached in ${ cacheDir }` );
 				}
-				const response = await fetch( url );
-				if ( ! response.ok ) {
-					throw new Error(
-						`Could not download "${ id }" from ${ url }: HTTP ${ response.status }`
-					);
+				try {
+					fs.writeFileSync( file, await fetchWithRetry( url, fetchOptions ) );
+				} catch ( error ) {
+					if ( ! cached ) {
+						throw new Error( `Could not download "${ id }": ${ error.message }` );
+					}
+					console.warn( `Using the cached copy of "${ id }": ${ error.message }` );
+					stale = true;
 				}
-				fs.writeFileSync( file, await response.text() );
 			}
 			const text = fs.readFileSync( file, 'utf8' );
-			return { id, url, text, ...describeList( text ) };
+			return { id, url, text, stale, ...describeList( text ) };
 		} )
 	);
 }
@@ -139,23 +183,40 @@ function formatRule( rule ) {
 }
 
 /**
+ * Parse the lists and keep the rules that can affect Calypso's assets. This is
+ * the slow part of a run, so build it once and pass it to every `audit` call.
+ * @param {Array}  lists  Lists returned by `loadFilterLists`.
+ * @param {Object} config Parsed `filter-lists.json`.
+ */
+function buildMatcher( lists, config ) {
+	const context = { pageHosts: config.pageHosts, assetHosts: config.assetHosts };
+	return createMatcher(
+		lists.flatMap( ( list ) =>
+			parseFilterList( list.text, list.id ).filter( ( rule ) => isRelevantRule( rule, context ) )
+		)
+	);
+}
+
+/**
  * Check assets against filter lists. A control asset that is not blocked means
  * the lists or the matcher no longer catch a known-bad name, so the run is not
  * trustworthy.
  * @param {Object} options
  * @param {Array}  options.lists   Lists returned by `loadFilterLists`.
+ * @param {Object} options.matcher Matcher from `buildMatcher`; built from `lists` if omitted.
  * @param {Array}  options.assets  Assets returned by `collectAssets`.
  * @param {Object} options.config  Parsed `filter-lists.json`.
  * @param {string} options.pageUrl Page that loads the assets.
  * @param {string} options.publicPath URL the assets are served from.
  */
-function audit( { lists, assets, config, pageUrl, publicPath } ) {
-	const context = { pageHosts: config.pageHosts, assetHosts: config.assetHosts };
-	const rules = lists.flatMap( ( list ) =>
-		parseFilterList( list.text, list.id ).filter( ( rule ) => isRelevantRule( rule, context ) )
-	);
-	const matcher = createMatcher( rules );
-
+function audit( {
+	lists,
+	config,
+	matcher = buildMatcher( lists, config ),
+	assets,
+	pageUrl,
+	publicPath,
+} ) {
 	const check = ( asset ) => {
 		const result = matcher.match( { url: asset.url, type: asset.type, pageUrl } );
 		return {
@@ -171,12 +232,13 @@ function audit( { lists, assets, config, pageUrl, publicPath } ) {
 
 	return {
 		pageUrl,
-		lists: lists.map( ( { id, url, title, version, last_modified } ) => ( {
+		lists: lists.map( ( { id, url, title, version, last_modified, stale } ) => ( {
 			id,
 			url,
 			title,
 			version,
 			lastModified: last_modified,
+			stale,
 		} ) ),
 		rulesEvaluated: matcher.size,
 		assetsScanned: assets.length,
@@ -199,4 +261,11 @@ function collectControls( config, publicPath ) {
 	} ) );
 }
 
-module.exports = { audit, collectAssets, collectAssetsFromPage, loadFilterLists };
+module.exports = {
+	audit,
+	buildMatcher,
+	collectAssets,
+	collectAssetsFromPage,
+	fetchWithRetry,
+	loadFilterLists,
+};

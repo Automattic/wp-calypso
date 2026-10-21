@@ -1,7 +1,13 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { audit, collectAssets, collectAssetsFromPage } from '../audit';
+import {
+	audit,
+	collectAssets,
+	collectAssetsFromPage,
+	fetchWithRetry,
+	loadFilterLists,
+} from '../audit';
 import config from '../filter-lists.json';
 
 const PAGE_URL = 'https://wordpress.com/setup/onboarding/user';
@@ -65,6 +71,7 @@ describe( 'collectAssetsFromPage', () => {
 		</script>
 		<script src="/calypso/evergreen/entry-stepper.e1.min.js"></script>
 		<script src="https://s0.wp.com/wp-includes/js/jquery.min.js"></script>
+		<script src="/wp-content/js/bilmur.min.js"></script>
 	`;
 
 	test( 'reads chunk URLs from the webpack runtime and the page', () => {
@@ -77,7 +84,6 @@ describe( 'collectAssetsFromPage', () => {
 			'script async-load-calypso-blocks-privacy-prefs.h60977.min.js',
 			'stylesheet entry-stepper.c1.min.css',
 			'script entry-stepper.e1.min.js',
-			'script https://s0.wp.com/wp-includes/js/jquery.min.js',
 			'script onboarding-unified-flow.h90.min.js',
 		] );
 	} );
@@ -89,6 +95,12 @@ describe( 'collectAssetsFromPage', () => {
 		expect( collectAssetsFromPage( minified, PAGE_URL ).assets ).toEqual(
 			collectAssetsFromPage( html, PAGE_URL ).assets
 		);
+	} );
+
+	test( 'says when the page is a bot challenge', () => {
+		expect( () =>
+			collectAssetsFromPage( '<script src="/__challenge/probes.js"></script>', PAGE_URL )
+		).toThrow( 'bot challenge' );
 	} );
 
 	test( 'fails loudly when the runtime cannot be parsed', () => {
@@ -163,5 +175,62 @@ describe( 'audit', () => {
 		expect( report.allowedByException.map( ( asset ) => asset.name ) ).toEqual( [
 			'entry-main.abc.min.js',
 		] );
+	} );
+} );
+
+describe( 'fetching', () => {
+	const realFetch = global.fetch;
+	const respond = ( status, body = '' ) => ( {
+		ok: status >= 200 && status < 300,
+		status,
+		text: async () => body,
+	} );
+
+	afterEach( () => {
+		global.fetch = realFetch;
+		jest.restoreAllMocks();
+	} );
+
+	test( 'retries server errors and network failures', async () => {
+		global.fetch = jest
+			.fn()
+			.mockResolvedValueOnce( respond( 503 ) )
+			.mockRejectedValueOnce( new Error( 'socket hang up' ) )
+			.mockResolvedValueOnce( respond( 200, 'ok' ) );
+		await expect( fetchWithRetry( 'https://example.com/', { delayMs: 0 } ) ).resolves.toBe( 'ok' );
+		expect( global.fetch ).toHaveBeenCalledTimes( 3 );
+	} );
+
+	test( 'does not retry client errors', async () => {
+		global.fetch = jest.fn().mockResolvedValue( respond( 404 ) );
+		await expect( fetchWithRetry( 'https://example.com/', { delayMs: 0 } ) ).rejects.toThrow(
+			'HTTP 404'
+		);
+		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'falls back to the cached list when a refresh fails', async () => {
+		const cacheDir = fs.mkdtempSync( path.join( os.tmpdir(), 'content-blocker-lists-' ) );
+		try {
+			fs.writeFileSync( path.join( cacheDir, 'cookie.txt' ), '-cookie-banner.' );
+			global.fetch = jest.fn().mockResolvedValue( respond( 502 ) );
+			jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+			const lists = await loadFilterLists(
+				{ lists: [ { id: 'cookie', url: 'https://example.com/cookie.txt' } ] },
+				{ cacheDir, refresh: true, fetchOptions: { delayMs: 0 } }
+			);
+			expect( lists ).toEqual( [
+				expect.objectContaining( { id: 'cookie', text: '-cookie-banner.', stale: true } ),
+			] );
+
+			await expect(
+				loadFilterLists(
+					{ lists: [ { id: 'missing', url: 'https://example.com/missing.txt' } ] },
+					{ cacheDir, refresh: true, fetchOptions: { delayMs: 0 } }
+				)
+			).rejects.toThrow( 'Could not download "missing"' );
+		} finally {
+			fs.rmSync( cacheDir, { recursive: true, force: true } );
+		}
 	} );
 } );

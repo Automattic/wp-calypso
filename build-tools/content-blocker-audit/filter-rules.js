@@ -157,6 +157,18 @@ function splitOptions( text ) {
 	return [ text, '' ];
 }
 
+/**
+ * Identify a rule independently of option order, so a `$badfilter` rule can be
+ * matched to the rule it disables.
+ */
+function ruleKey( exception, pattern, options ) {
+	const kept = options
+		.filter( ( option ) => option.toLowerCase() !== 'badfilter' )
+		.map( ( option ) => option.toLowerCase() )
+		.sort();
+	return `${ exception ? '@@' : '' }${ pattern }${ kept.length ? `$${ kept.join( ',' ) }` : '' }`;
+}
+
 function isCosmetic( line ) {
 	return /#[@?$%]?#|#@?[$%?]#|\$@?\$/.test( line );
 }
@@ -186,8 +198,10 @@ function parseRule( line, source = {} ) {
 	}
 
 	const [ pattern, optionText ] = splitOptions( text );
+	const options = optionText ? optionText.split( ',' ) : [];
 	const rule = {
 		raw,
+		key: ruleKey( exception, pattern, options ),
 		exception,
 		pattern,
 		important: false,
@@ -203,7 +217,7 @@ function parseRule( line, source = {} ) {
 		...source,
 	};
 
-	for ( const option of optionText ? optionText.split( ',' ) : [] ) {
+	for ( const option of options ) {
 		const [ rawName, ...valueParts ] = option.split( '=' );
 		const value = valueParts.join( '=' );
 		const negated = rawName.startsWith( '~' );
@@ -235,10 +249,10 @@ function parseRule( line, source = {} ) {
 				rule.party = negated ? 'third' : 'first';
 				break;
 			case 'strict1p':
-				rule.party = 'strict-first';
+				rule.party = negated ? 'strict-third' : 'strict-first';
 				break;
 			case 'strict3p':
-				rule.party = 'strict-third';
+				rule.party = negated ? 'strict-first' : 'strict-third';
 				break;
 			case 'domain':
 			case 'from':
@@ -313,10 +327,19 @@ function appliesToParty( rule, requestHost, pageHost ) {
  * @param {Object} request `{ url, type, pageUrl, method }`
  */
 function ruleMatches( rule, request ) {
-	const requestUrl = new URL( request.url );
-	const pageUrl = new URL( request.pageUrl );
-	const requestHost = requestUrl.hostname;
-	const pageHost = pageUrl.hostname;
+	return matchesRequest( rule, withHosts( request ) );
+}
+
+function withHosts( request ) {
+	return {
+		...request,
+		requestHost: new URL( request.url ).hostname,
+		pageHost: new URL( request.pageUrl ).hostname,
+	};
+}
+
+function matchesRequest( rule, request ) {
+	const { requestHost, pageHost } = request;
 
 	if ( ! appliesToType( rule, request.type ) ) {
 		return false;
@@ -353,26 +376,30 @@ function ruleMatches( rule, request ) {
  */
 function createMatcher( rules ) {
 	const badfiltered = new Set(
-		rules
-			.filter( ( rule ) => rule.badfilter )
-			.map( ( rule ) => rule.raw.replace( /,?\bbadfilter\b/, '' ).replace( /\$$/, '' ) )
+		rules.filter( ( rule ) => rule.badfilter ).map( ( rule ) => rule.key )
 	);
-	const active = rules.filter( ( rule ) => ! rule.badfilter && ! badfiltered.has( rule.raw ) );
+	const active = rules.filter( ( rule ) => ! rule.badfilter && ! badfiltered.has( rule.key ) );
 	const blocking = active.filter( ( rule ) => ! rule.exception );
 	const exceptions = active.filter( ( rule ) => rule.exception );
 
 	return {
 		size: active.length,
-		match( request ) {
-			const blockedBy = blocking.filter( ( rule ) => ruleMatches( rule, request ) );
+		match( unresolved ) {
+			const request = withHosts( unresolved );
+			const blockedBy = blocking.filter( ( rule ) => matchesRequest( rule, request ) );
 			if ( ! blockedBy.length ) {
 				return { blocked: false, blockedBy, allowedBy: [] };
 			}
-			const documentRequest = { ...request, url: request.pageUrl, type: 'document' };
+			const documentRequest = {
+				...request,
+				url: request.pageUrl,
+				type: 'document',
+				requestHost: request.pageHost,
+			};
 			const allowedBy = exceptions.filter(
 				( rule ) =>
-					ruleMatches( rule, request ) ||
-					( rule.types?.includes( 'document' ) && ruleMatches( rule, documentRequest ) )
+					matchesRequest( rule, request ) ||
+					( rule.types?.includes( 'document' ) && matchesRequest( rule, documentRequest ) )
 			);
 			const important = blockedBy.filter( ( rule ) => rule.important );
 			const blocked = important.length > 0 || allowedBy.length === 0;
@@ -381,16 +408,85 @@ function createMatcher( rules ) {
 	};
 }
 
+// The `!#if` tokens that hold for uBlock Origin on desktop Chromium and Firefox,
+// the platforms the audit stands in for. Unknown tokens are false, as in uBlock.
+const ENVIRONMENTS = [
+	new Set( [ 'ext_ublock', 'env_chromium', 'cap_user_stylesheet' ] ),
+	new Set( [
+		'ext_ublock',
+		'env_firefox',
+		'cap_html_filtering',
+		'cap_ipaddress',
+		'cap_user_stylesheet',
+	] ),
+];
+
 /**
- * Parse a whole filter list.
+ * Evaluate a `!#if` expression (`token`, `!`, `&&`, `||`, parentheses).
+ */
+function evaluateCondition( expression, environment ) {
+	const tokens = expression.match( /!|&&|\|\||\(|\)|[\w-]+/g ) ?? [];
+	let position = 0;
+	// Binary operators, loosest first.
+	const operators = [ '||', '&&' ];
+	const parse = ( level ) => {
+		if ( level === operators.length ) {
+			const token = tokens[ position++ ];
+			if ( token === '!' ) {
+				return ! parse( level );
+			}
+			if ( token === '(' ) {
+				const value = parse( 0 );
+				position++;
+				return value;
+			}
+			return environment.has( token );
+		}
+		let value = parse( level + 1 );
+		while ( tokens[ position ] === operators[ level ] ) {
+			position++;
+			const right = parse( level + 1 );
+			value = level === 0 ? value || right : value && right;
+		}
+		return value;
+	};
+	return parse( 0 );
+}
+
+/**
+ * Parse a whole filter list. Rules inside `!#if` blocks are kept only when the
+ * condition holds on at least one of the audited platforms.
  * @param {string} text Filter list contents.
  * @param {string} list Name recorded on each rule.
  */
 function parseFilterList( text, list ) {
-	return text
-		.split( /\r?\n/ )
-		.map( ( line, index ) => parseRule( line, { list, line: index + 1 } ) )
-		.filter( Boolean );
+	// One stack of open `!#if` blocks per environment: whether each block is active.
+	const stacks = ENVIRONMENTS.map( () => [] );
+	const rules = [];
+	text.split( /\r?\n/ ).forEach( ( line, index ) => {
+		const directive = /^!#(if|else|endif)\b\s*(.*)$/.exec( line.trim() );
+		if ( directive ) {
+			const [ , keyword, expression ] = directive;
+			stacks.forEach( ( stack, i ) => {
+				if ( keyword === 'if' ) {
+					stack.push( evaluateCondition( expression, ENVIRONMENTS[ i ] ) );
+				} else if ( keyword === 'else' && stack.length ) {
+					stack.push( ! stack.pop() );
+				} else if ( keyword === 'endif' ) {
+					stack.pop();
+				}
+			} );
+			return;
+		}
+		if ( ! stacks.some( ( stack ) => stack.every( Boolean ) ) ) {
+			return;
+		}
+		const rule = parseRule( line, { list, line: index + 1 } );
+		if ( rule ) {
+			rules.push( rule );
+		}
+	} );
+	return rules;
 }
 
 function anchoredHost( pattern ) {

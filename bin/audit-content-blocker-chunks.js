@@ -35,8 +35,10 @@ const path = require( 'path' );
 const { parseArgs } = require( 'util' );
 const {
 	audit,
+	buildMatcher,
 	collectAssets,
 	collectAssetsFromPage,
+	fetchWithRetry,
 	loadFilterLists,
 } = require( '../build-tools/content-blocker-audit/audit' );
 const config = require( '../build-tools/content-blocker-audit/filter-lists.json' );
@@ -92,26 +94,27 @@ async function main() {
 	} );
 
 	for ( const pageUrl of values.page ?? [] ) {
-		const response = await fetch( pageUrl );
-		if ( ! response.ok ) {
-			throw new Error( `Could not fetch ${ pageUrl }: HTTP ${ response.status }` );
-		}
 		sources.push( {
 			source: pageUrl,
 			pageUrl,
-			...collectAssetsFromPage( await response.text(), pageUrl ),
+			...collectAssetsFromPage( await fetchWithRetry( pageUrl ), pageUrl ),
 		} );
 	}
 
+	const matcher = buildMatcher( lists, config );
 	const reports = sources.map( ( { source, publicPath, pageUrl, assets } ) => ( {
 		source,
 		publicPath,
-		...audit( { lists, config, publicPath, pageUrl, assets } ),
+		...audit( { lists, matcher, config, publicPath, pageUrl, assets } ),
 	} ) );
 
 	console.log( 'Filter lists:' );
 	for ( const list of lists ) {
-		console.log( `  ${ list.id }: ${ list.version ?? list.last_modified ?? 'unknown version' }` );
+		console.log(
+			`  ${ list.id }: ${ list.version ?? list.last_modified ?? 'unknown version' }${
+				list.stale ? ' (cached; download failed)' : ''
+			}`
+		);
 	}
 
 	let exitCode = 0;

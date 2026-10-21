@@ -13,7 +13,7 @@ yarn build-client
 yarn audit-content-blocker-chunks
 ```
 
-Audit what is deployed right now. The chunk name and hash maps are read from the webpack runtime inlined in the page, so this covers every async chunk, not only the ones the page loads up front:
+Audit what is deployed right now. The chunk name and hash maps are read from the webpack runtime inlined in the page, so this covers every async chunk, not only the ones the page loads up front. Scripts and stylesheets the page references from outside Calypso's public path, such as stats or RUM beacons, are not audited: blockers refuse some of them on purpose.
 
 ```bash
 yarn audit-content-blocker-chunks --page https://wordpress.com/setup/onboarding/user
@@ -32,7 +32,7 @@ yarn audit-content-blocker-chunks --page https://wordpress.com/setup/onboarding/
 
 Exit codes: `0` nothing blocked, `1` at least one asset blocked, `2` the control was not blocked or the run failed.
 
-The lists are downloaded on first use and then reused, so repeated runs compare against the same rules. Pass `--refresh` to pick up new rules; the list versions are printed on every run and recorded in the JSON report.
+The lists are downloaded on first use and then reused, so repeated runs compare against the same rules. Pass `--refresh` to pick up new rules; the list versions are printed on every run and recorded in the JSON report. Downloads and page fetches are retried on network errors, 429s and 5xx responses. If a refresh still fails and a cached copy exists, that copy is used and marked as stale in the output and report.
 
 ## Scheduled run
 
@@ -52,4 +52,4 @@ The lists are not vendored because of their size and licences. The audit keeps o
 
 ## What the matcher supports
 
-Adblock Plus network filter syntax as used by EasyList, uBlock Origin and AdGuard: `||` and `|` anchors, `^`, `*`, `/regex/`, `@@` exceptions (including `$document`), `$important`, `$badfilter`, resource types and their uBlock aliases, `$third-party`/`$1p`/`$3p`/`$strict1p`/`$strict3p`, `$domain=`/`$from=`, `$to=`, `$denyallow=`, `$method=` and `$match-case`. Cosmetic filters and rules that rewrite rather than block (`$csp`, `$removeparam`, `$redirect-rule`, …) are ignored, as are rules with options it does not recognise.
+Adblock Plus network filter syntax as used by EasyList, uBlock Origin and AdGuard: `||` and `|` anchors, `^`, `*`, `/regex/`, `@@` exceptions (including `$document`), `$important`, `$badfilter`, resource types and their uBlock aliases, `$third-party`/`$1p`/`$3p`/`$strict1p`/`$strict3p`, `$domain=`/`$from=`, `$to=`, `$denyallow=`, `$method=` and `$match-case`. `!#if` blocks are evaluated for uBlock Origin on desktop Chromium and Firefox; a rule is kept if it applies on either. `!#include` is not followed yet. Cosmetic filters and rules that rewrite rather than block (`$csp`, `$removeparam`, `$redirect-rule`, …) are ignored, as are rules with options it does not recognise.
