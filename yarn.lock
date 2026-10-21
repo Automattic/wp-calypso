@@ -929,12 +929,10 @@ __metadata:
     "@storybook/addon-themes": "npm:^10.6.2"
     "@storybook/addon-webpack5-compiler-babel": "npm:^4.0.1"
     "@storybook/react-webpack5": "npm:^10.6.2"
-    css-loader: "npm:^6.11.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     sass-loader: "npm:^16.0.5"
     storybook: "npm:^10.6.2"
-    style-loader: "npm:^1.3.0"
     webpack: "npm:^5.111.1"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
@@ -2123,7 +2121,6 @@ __metadata:
     "@wordpress/url": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
     copyfiles: "npm:^2.4.1"
-    css-loader: "npm:^6.11.0"
     debug: "npm:^4.4.1"
     email-validator: "npm:^2.0.4"
     i18n-calypso: "workspace:^"
@@ -2134,7 +2131,6 @@ __metadata:
     redux: "npm:^5.0.1"
     sass-loader: "npm:^16.0.5"
     storybook: "npm:^10.6.2"
-    style-loader: "npm:^1.3.0"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     webpack: "npm:^5.111.1"
@@ -30844,7 +30840,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"schema-utils@npm:^2.6.5, schema-utils@npm:^2.7.0":
+"schema-utils@npm:^2.6.5":
   version: 2.7.1
   resolution: "schema-utils@npm:2.7.1"
   dependencies:
@@ -31957,18 +31953,6 @@ __metadata:
   version: 3.2.0
   resolution: "striptags@npm:3.2.0"
   checksum: 72c8eea03c04ca8522511caf44ffd2bde4b5f36cbeb5d43140906c0a7ee19e98b3341bf96370ccb643e55972587eafac772d4a3f7f526d3045c2cf36270511e6
-  languageName: node
-  linkType: hard
-
-"style-loader@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "style-loader@npm:1.3.0"
-  dependencies:
-    loader-utils: "npm:^2.0.0"
-    schema-utils: "npm:^2.7.0"
-  peerDependencies:
-    webpack: ^4.0.0 || ^5.0.0
-  checksum: 21137d63623690af0c8b135f94e01af724bc0dea560c65ff553aa06c560fac69c068ec19ae7893b3667e50e79a660e051783803c949bcd559a8fc2f839397056
   languageName: node
   linkType: hard
 
