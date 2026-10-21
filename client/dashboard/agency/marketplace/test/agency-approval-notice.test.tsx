@@ -3,6 +3,8 @@
  */
 import '@testing-library/jest-dom';
 import { queryClient } from '@automattic/api-queries';
+// eslint-disable-next-line no-restricted-imports -- Preload the real Help Center store before timing the interaction.
+import { HelpCenter } from '@automattic/data-stores';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { select } from '@wordpress/data';
@@ -52,6 +54,7 @@ describe( '<AgencyApprovalNotice>', () => {
 	} );
 
 	test( 'opens the contact form for a rejected agency', async () => {
+		HelpCenter.register();
 		mockPreferences();
 		renderNotice( agency( 'rejected' ) );
 
