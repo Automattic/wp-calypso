@@ -58,6 +58,7 @@ import {
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
+import { validateDateRangeSearch } from '../../utils/date-range-search';
 import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
@@ -342,6 +343,7 @@ export const siteLogsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'logs',
+	validateSearch: validateDateRangeSearch,
 } );
 
 export const siteLogsIndexRoute = createRoute( {
@@ -494,6 +496,7 @@ export const siteBackupsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
+	validateSearch: validateDateRangeSearch,
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries and group counts.

@@ -1,8 +1,9 @@
-import { useRouter } from '@tanstack/react-router';
+import { useSearch } from '@tanstack/react-router';
 import { getUnixTime, fromUnixTime, isValid as isValidDate, subDays, isSameSecond } from 'date-fns';
 import { useState, useRef, useEffect } from 'react';
 import { buildTimeRangeInSeconds } from '../../sites/logs/utils';
 import { formatYmd, parseYmdLocal } from '../../utils/datetime';
+import type { DateRangeSearch } from '../../utils/date-range-search';
 
 interface UseDateRangeOptions {
 	timezoneString?: string;
@@ -17,8 +18,7 @@ export function useDateRange( {
 	autoRefresh = false,
 	defaultDays = 7,
 }: UseDateRangeOptions ) {
-	const router = useRouter();
-	const search = router.state.location.search;
+	const search = useSearch( { strict: false } );
 
 	const initial = getDefaultDateRange( timezoneString, gmtOffset, defaultDays );
 	const initialFromUrl = getInitialDateRangeFromSearch( search );
@@ -28,30 +28,6 @@ export function useDateRange( {
 	);
 
 	const lastUrlRangeRef = useRef< { from: number; to: number } | null >( null );
-
-	// Rewrite millisecond from/to params (older shared links) to canonical Unix seconds.
-	// Go through the router so this composes with navigations queued by child views on mount.
-	useEffect( () => {
-		const toSeconds = ( value: unknown ) => {
-			const seconds = parseUnixSecondsParam( value == null ? null : String( value ) );
-			return seconds ?? value;
-		};
-		const { from, to } = router.state.location.search as Record< string, unknown >;
-		if ( toSeconds( from ) === from && toSeconds( to ) === to ) {
-			return;
-		}
-		router.navigate( {
-			to: '.',
-			search: ( prev: Record< string, unknown > ) => ( {
-				...prev,
-				from: toSeconds( prev.from ),
-				to: toSeconds( prev.to ),
-			} ),
-			replace: true,
-			resetScroll: false,
-		} );
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- normalize once on mount
-	}, [] );
 
 	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
 		setDateRange( next );
@@ -130,35 +106,21 @@ export function getDefaultDateRange(
 }
 
 /**
- * Parse a `from`/`to` URL param as Unix seconds. Values of 1e12 and above are treated as
- * milliseconds, which older versions of the logs page used in shared links.
- */
-export function parseUnixSecondsParam( raw?: string | null ): number | null {
-	if ( ! raw ) {
-		return null;
-	}
-	const num = Number.parseInt( raw, 10 );
-	if ( ! Number.isFinite( num ) ) {
-		return null;
-	}
-	return num >= 1e12 ? Math.floor( num / 1000 ) : num;
-}
-
-/**
  * Get the initial date range from the URL search parameters.
  */
-export function getInitialDateRangeFromSearch( search: string ): { start: Date; end: Date } | null {
-	const params = new URLSearchParams( search );
-	const toDate = ( raw: string | null ) => {
-		const num = parseUnixSecondsParam( raw );
-		if ( num === null ) {
+export function getInitialDateRangeFromSearch( {
+	from,
+	to,
+}: DateRangeSearch ): { start: Date; end: Date } | null {
+	const toDate = ( seconds?: number ) => {
+		if ( seconds === undefined ) {
 			return undefined;
 		}
-		const date = fromUnixTime( num );
+		const date = fromUnixTime( seconds );
 		return isValidDate( date ) ? date : undefined;
 	};
 
-	const start = toDate( params.get( 'from' ) );
-	const end = toDate( params.get( 'to' ) );
+	const start = toDate( from );
+	const end = toDate( to );
 	return start && end && start <= end ? { start, end } : null;
 }

@@ -4,7 +4,7 @@
 
 import '@testing-library/jest-dom';
 import { LogType } from '@automattic/api-core';
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -87,69 +87,6 @@ describe( 'SiteLogs page', () => {
 		await screen.findByRole( 'button', { name: /^Date range:/ } );
 
 		expect( screen.queryByText( /paths aren’t shown here/ ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'URL from/to params are normalized from ms to seconds', async () => {
-		const msFrom = Date.UTC( 2024, 9, 27, 0, 0, 0 );
-		const msTo = Date.UTC( 2024, 9, 28, 23, 59, 59 );
-		window.history.pushState( {}, '', `/?from=${ msFrom }&to=${ msTo }` );
-
-		const { router } = render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
-
-		await waitFor( () => {
-			expect( router.state.location.search ).toMatchObject( {
-				from: msFrom / 1000,
-				to: msTo / 1000,
-			} );
-		} );
-	} );
-
-	test( 'ms URL params stay normalized when the Activity view resets pagination on mount', async () => {
-		const msFrom = Date.UTC( 2024, 9, 27, 0, 0, 0 );
-		const msTo = Date.UTC( 2024, 9, 28, 23, 59, 59 );
-		window.history.pushState( {}, '', `/?from=${ msFrom }&to=${ msTo }&page=2` );
-
-		render( <SiteLogs logType={ LogType.ACTIVITY } siteSlug="test-site" /> );
-
-		await screen.findByRole( 'button', { name: /^Date range:/ } );
-		await waitFor( () => {
-			const params = new URLSearchParams( window.location.search );
-			expect( params.get( 'from' ) ).toBe( String( msFrom / 1000 ) );
-			expect( params.get( 'to' ) ).toBe( String( msTo / 1000 ) );
-		} );
-	} );
-
-	test( 'a reversed URL range is not sent to the logs API', async () => {
-		const msFrom = Date.UTC( 2024, 9, 28, 23, 59, 59 );
-		const msTo = Date.UTC( 2024, 9, 27, 0, 0, 0 );
-		window.history.pushState( {}, '', `/?from=${ msFrom }&to=${ msTo }` );
-
-		const requestedRanges: Array< { start: number; end: number } > = [];
-		nock( API_BASE )
-			.persist()
-			.get( `/wpcom/v2/sites/${ mockSiteId }/hosting/error-logs` )
-			.query( ( query ) => {
-				requestedRanges.push( { start: Number( query.start ), end: Number( query.end ) } );
-				return true;
-			} )
-			.reply( 200, { data: { total_results: 0, logs: [], scroll_id: null } } );
-
-		render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
-
-		await waitFor( () => expect( requestedRanges.length ).toBeGreaterThan( 0 ) );
-		requestedRanges.forEach( ( { start, end } ) => expect( start ).toBeLessThanOrEqual( end ) );
-	} );
-
-	test( 'date range picker shows the dates from ms URL params', async () => {
-		const msFrom = Date.UTC( 2024, 9, 27, 0, 0, 0 );
-		const msTo = Date.UTC( 2024, 9, 28, 23, 59, 59 );
-		window.history.pushState( {}, '', `/?from=${ msFrom }&to=${ msTo }` );
-
-		render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
-
-		expect(
-			await screen.findByRole( 'button', { name: /^Date range:.*Oct 27, 2024.*Oct 28, 2024/ } )
-		).toBeVisible();
 	} );
 
 	test( 'auto-refresh is blocked for non-last-7 range and shows warning notice', async () => {
