@@ -4,9 +4,10 @@
 
 	th,
 	td {
-		padding: 8px 12px 8px 0;
+		padding-block: 8px;
+		padding-inline: 0 12px;
 		text-align: start;
-		border-bottom: 1px solid var( --dashboard-surface__border-color );
+		border-block-end: 1px solid var( --dashboard-surface__border-color );
 	}
 
 	td {
