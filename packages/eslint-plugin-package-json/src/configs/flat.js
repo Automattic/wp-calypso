@@ -1,9 +1,9 @@
-// Flat-config version of the `recommended` preset, built from the same rule objects.
+// The `recommended` preset, built from the rules `recommended.js` holds.
 const jsonEs = require( 'eslint-plugin-json-es' );
 const { parseForESLint } = require( '../parser' );
-const legacy = require( './recommended' );
+const recommendedRules = require( './recommended' );
 
-// ESLint identifies flat-config parsers by `meta` when caching or printing config.
+// ESLint identifies parsers by `meta` when caching or printing config.
 const parser = {
 	meta: {
 		name: '@automattic/eslint-plugin-json/parser',
@@ -12,24 +12,39 @@ const parser = {
 	parseForESLint,
 };
 
-// Legacy override globs without a slash match at any depth; flat ones are relative to the config.
-const toFlatFiles = ( files ) =>
-	files.map( ( file ) => ( file.includes( '/' ) ? file : `**/${ file }` ) );
+// The plugin's rules call `context.getSourceCode()`, which ESLint 10 removed in favor of
+// `context.sourceCode`.
+const withGetSourceCode = ( plugin ) => ( {
+	...plugin,
+	rules: Object.fromEntries(
+		Object.entries( plugin.rules ).map( ( [ name, rule ] ) => [
+			name,
+			{
+				...rule,
+				create: ( context ) =>
+					rule.create(
+						Object.create( context, { getSourceCode: { value: () => context.sourceCode } } )
+					),
+			},
+		] )
+	),
+} );
 
+/** @type {( plugin: import('eslint').ESLint.Plugin ) => import('eslint').Linter.Config[]} */
 const recommended = ( plugin ) => [
 	{
 		name: '@automattic/json/recommended',
-		// The JSON parser rejects flat config's defaults (`'latest'`, `'module'`); these are the legacy ones.
+		// The JSON parser rejects ESLint's defaults (`'latest'`, `'module'`).
 		languageOptions: { parser, ecmaVersion: 5, sourceType: 'script' },
-		plugins: { 'json-es': jsonEs },
-		rules: { ...jsonEs.configs.recommended.rules, ...legacy.rules },
+		plugins: { 'json-es': withGetSourceCode( jsonEs ) },
+		rules: { ...jsonEs.configs.recommended.rules, ...recommendedRules.rules },
 	},
-	...legacy.overrides.map( ( { files, plugins, ...rest }, index ) => ( {
-		name: `@automattic/json/recommended/overrides/${ index }`,
-		files: toFlatFiles( files ),
+	{
+		name: '@automattic/json/recommended/package-json',
+		files: [ '**/package.json' ],
 		plugins: { '@automattic/json': plugin },
-		...rest,
-	} ) ),
+		rules: recommendedRules.packageJsonRules,
+	},
 ];
 
 module.exports = { recommended };

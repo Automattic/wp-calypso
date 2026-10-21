@@ -1,8 +1,8 @@
 ## Usage
 
 ```jsx
-import BackupActionsToolbar from 'calypso/components/jetpack/backup-actions-toolbar';
 import { useSelector } from 'react-redux';
+import BackupActionsToolbar from 'calypso/components/jetpack/backup-actions-toolbar';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function render() {

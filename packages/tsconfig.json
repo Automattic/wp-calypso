@@ -10,6 +10,7 @@
 		{ "path": "./agents-manager" },
 		{ "path": "./agenttic-client" },
 		{ "path": "./agenttic-ui" },
+		{ "path": "./ai-ui-renderer" },
 		{ "path": "./api-core" },
 		{ "path": "./api-queries" },
 		{ "path": "./block-renderer" },

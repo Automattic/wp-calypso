@@ -1,4 +1,4 @@
-import { isContextOnlyMessage } from './convert-tool-messages-to-components';
+import { isContextOnlyMessage } from './context-only-message';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 export function getLatestAgentMessageId( messages: UIMessage[] ): string | null {

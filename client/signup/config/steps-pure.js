@@ -516,36 +516,6 @@ export function generateSteps( {
 			providesDependencies: [ 'rewindconfig' ],
 		},
 
-		'clone-start': {
-			stepName: 'clone-start',
-			providesDependencies: [ 'originSiteSlug', 'originSiteName', 'originBlogId' ],
-		},
-
-		'clone-destination': {
-			stepName: 'clone-destination',
-			providesDependencies: [ 'destinationSiteName', 'destinationSiteUrl' ],
-		},
-
-		'clone-credentials': {
-			stepName: 'clone-credentials',
-			providesDependencies: [ 'roleName' ],
-		},
-
-		'clone-point': {
-			stepName: 'clone-point',
-			providesDependencies: [ 'clonePoint' ],
-		},
-
-		'clone-ready': {
-			stepName: 'clone-ready',
-			providesDependencies: [],
-		},
-
-		'clone-cloning': {
-			stepName: 'clone-cloning',
-			providesDependencies: [],
-		},
-
 		launch: {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,

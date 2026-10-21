@@ -5,7 +5,7 @@ import {
 	PRODUCTS_LIST_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import reducer, { items, isFetching, type } from '../reducer';
+import reducer, { items, isFetching, sessionListStatus, type } from '../reducer';
 
 describe( 'reducer', () => {
 	jest.spyOn( console, 'warn' ).mockImplementation();
@@ -118,6 +118,44 @@ describe( 'reducer', () => {
 		test( 'should be false when a request fails', () => {
 			const state = isFetching( true, { type: PRODUCTS_LIST_REQUEST_FAILURE } );
 			expect( state ).toEqual( false );
+		} );
+	} );
+
+	describe( '#sessionListStatus()', () => {
+		test( 'should default to none', () => {
+			expect( sessionListStatus( undefined, {} ) ).toBe( 'none' );
+		} );
+
+		test( 'should be full once a full list is received', () => {
+			expect( sessionListStatus( 'none', { type: PRODUCTS_LIST_RECEIVE } ) ).toBe( 'full' );
+		} );
+
+		test( 'should be none after a slug-filtered list is received', () => {
+			expect(
+				sessionListStatus( 'full', { type: PRODUCTS_LIST_RECEIVE, isPartialList: true } )
+			).toBe( 'none' );
+		} );
+
+		test( 'should keep its value while a refresh is pending', () => {
+			expect( sessionListStatus( 'full', { type: PRODUCTS_LIST_REQUEST } ) ).toBe( 'full' );
+		} );
+
+		test( 'should be failed after a failed request', () => {
+			expect( sessionListStatus( 'full', { type: PRODUCTS_LIST_REQUEST_FAILURE } ) ).toBe(
+				'failed'
+			);
+		} );
+
+		test( 'should not be persisted', () => {
+			const state = reducer( undefined, {
+				type: PRODUCTS_LIST_RECEIVE,
+				productsList: {},
+				productsListType: 'jetpack',
+			} );
+
+			expect( state.sessionListStatus ).toBe( 'full' );
+			expect( serialize( reducer, state ).root() ).not.toHaveProperty( 'sessionListStatus' );
+			expect( deserialize( reducer, { items: {} } ).sessionListStatus ).toBe( 'none' );
 		} );
 	} );
 

@@ -20,14 +20,14 @@
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
-		"@babel/core": "^7.27.1",
+		"@babel/core": "^7.29.7",
 		"@mswjs/interceptors": "^0.41.0",
 		"babel-jest": "^30.5.2",
 		"jest": "^30.5.2",
 		"jest-config": "^30.5.2"
 	},
 	"devDependencies": {
-		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"peerDependencies": {

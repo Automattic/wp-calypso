@@ -1,17 +1,24 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { keyForPost } from 'calypso/reader/post-key';
+import { useIsPostSaved, useSavePost } from 'calypso/reader/data/saved-posts';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
-import { useDispatch, useSelector } from 'calypso/state';
-import { savePost, unsavePost } from 'calypso/state/reader/saved/actions';
-import { isPostSaved } from 'calypso/state/reader/saved/selectors';
+import { useDispatch } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
+import type { Post } from 'calypso/reader/data/post';
 import type { TrackPostData } from 'calypso/state/reader/analytics/types';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
 interface ReaderSaveButtonProps {
-	post: Record< string, unknown >;
+	post: Post;
 	iconSize?: number;
+}
+
+// wpcom surfaces the WP REST error code on `.code` (proxy) or `.error` (xhr).
+function getErrorCode( error: unknown ) {
+	const { code, error: legacyCode } = ( error ?? {} ) as { code?: unknown; error?: unknown };
+	return typeof code === 'string' ? code : legacyCode;
 }
 
 function SaveIcon( { iconSize = 24, saved }: { iconSize: number; saved: boolean } ) {
@@ -39,21 +46,39 @@ function SaveIcon( { iconSize = 24, saved }: { iconSize: number; saved: boolean 
 export default function ReaderSaveButton( { post, iconSize = 24 }: ReaderSaveButtonProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const postKey = keyForPost( post );
-	const saved = useSelector( ( state ) => ( postKey ? isPostSaved( state, postKey ) : false ) );
+	const saved = useIsPostSaved( post );
+	const { savePost, unsavePost, isPending } = useSavePost();
+	// Until the saved keys load, a click can't tell a save from an unsave.
+	const isDisabled = isPending || saved === undefined;
+	const showError = ( message: TranslateResult ) =>
+		dispatch( errorNotice( message, { duration: 5000 } ) );
 
 	const handleClick = () => {
-		if ( ! postKey ) {
+		if ( isDisabled ) {
 			return;
 		}
 
 		if ( saved ) {
-			dispatch( unsavePost( postKey ) );
+			unsavePost( post, {
+				onError: () =>
+					showError(
+						translate(
+							'Sorry, there was a problem removing that post from Saved. Please try again.'
+						)
+					),
+			} );
 			recordAction( 'unsaved_post' );
 			recordGaEvent( 'Clicked Unsave Post' );
 			recordTrackForPost( 'calypso_reader_article_unsaved', post as unknown as TrackPostData );
 		} else {
-			dispatch( savePost( postKey ) );
+			savePost( post, {
+				onError: ( error ) =>
+					showError(
+						getErrorCode( error ) === 'saved_limit_reached'
+							? translate( 'You’ve saved as many posts as you can. Remove some to save more.' )
+							: translate( 'Sorry, there was a problem saving that post. Please try again.' )
+					),
+			} );
 			recordAction( 'saved_post' );
 			recordGaEvent( 'Clicked Save Post' );
 			recordTrackForPost( 'calypso_reader_article_saved', post as unknown as TrackPostData );
@@ -67,9 +92,10 @@ export default function ReaderSaveButton( { post, iconSize = 24 }: ReaderSaveBut
 			className={ clsx( 'reader-save-button', 'tooltip', { 'is-saved': saved } ) }
 			onClick={ handleClick }
 			aria-label={ tooltip }
+			aria-disabled={ isDisabled }
 			data-tooltip={ tooltip }
 		>
-			<SaveIcon iconSize={ iconSize } saved={ saved } />
+			<SaveIcon iconSize={ iconSize } saved={ !! saved } />
 		</button>
 	);
 }

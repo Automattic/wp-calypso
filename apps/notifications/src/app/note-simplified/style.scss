@@ -30,27 +30,9 @@
 	margin-top: $grid-unit-10;
 }
 
-.wpnc-simplified__thread-item {
-	position: relative;
-
-	&:not(:last-child)::before {
-		content: "";
-		position: absolute;
-		inset-block: #{36px + $grid-unit-15} #{-$grid-unit-05};
-		inset-inline-start: 17px;
-		width: 2px;
-		border-radius: $radius-small;
-		background: var(--wpnc-divider__color, #{$gray-200});
-	}
-}
-
 .wpnc-simplified__photo {
 	display: flex;
 	flex-shrink: 0;
-}
-
-.wpnc-simplified__thread-header {
-	min-height: 36px;
 }
 
 .wpnc-simplified__pending-approval {
@@ -81,6 +63,14 @@
 
 .wpnc-simplified__parent-text {
 	white-space: pre-line;
+
+	&.is-truncated {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		overflow: hidden;
+		white-space: normal;
+	}
 }
 
 .wpnc-simplified__card {
@@ -135,6 +125,7 @@
 }
 
 .wpnc-simplified .wpnc__body-content .wpnc__comment,
+.wpnc-simplified .wpnc__new_post .wpnc__body .wpnc__body-content,
 .wpnc-simplified__parent-text {
 	font-size: 15px;
 	line-height: 24px;

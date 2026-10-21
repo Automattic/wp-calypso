@@ -12,8 +12,14 @@ const EditorEmptyViewSuggestions = lazyComponent(
 
 /** Converts a message a provider adds through `addMessage` to Agenttic's format. */
 export function convertBigSkyMessageToUIMessage( message: BigSkyMessage ): UIMessage {
+	const suggestionList = {
+		type: 'component' as const,
+		component: EditorEmptyViewSuggestions,
+		componentProps: { messageId: message.id },
+	};
+
 	const content = message.hasEditorEmptyViewSuggestions
-		? [ ...message.content, { type: 'component' as const, component: EditorEmptyViewSuggestions } ]
+		? [ ...message.content, suggestionList ]
 		: message.content;
 
 	return {

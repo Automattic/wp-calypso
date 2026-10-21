@@ -1,15 +1,5 @@
+// The rules and settings `recommended` adds on top of `@eslint/js` and `eslint-plugin-jsdoc`.
 module.exports = {
-	env: {
-		es6: true,
-	},
-	parser: '@babel/eslint-parser',
-	parserOptions: {
-		ecmaFeatures: {
-			jsx: true,
-		},
-	},
-	extends: [ 'eslint:recommended', 'plugin:jsdoc/recommended' ],
-	plugins: [ 'jsdoc', 'wpcalypso', 'inclusive-language' ],
 	settings: {
 		jsdoc: {
 			preferredTypes: {
@@ -23,7 +13,18 @@ module.exports = {
 		'array-bracket-spacing': [ 'error', 'always' ],
 		'brace-style': [ 'error', '1tbs' ],
 		camelcase: 'error',
-		'comma-dangle': [ 'error', 'always-multiline' ],
+		// `functions` stays off, as it was before ES2017: WordPress's Prettier style leaves function
+		// arguments without a trailing comma.
+		'comma-dangle': [
+			'error',
+			{
+				arrays: 'always-multiline',
+				objects: 'always-multiline',
+				imports: 'always-multiline',
+				exports: 'always-multiline',
+				functions: 'ignore',
+			},
+		],
 		'comma-spacing': 'error',
 		'comma-style': 'error',
 		'computed-property-spacing': [ 'error', 'always' ],
@@ -40,7 +41,10 @@ module.exports = {
 		'key-spacing': 'error',
 		'keyword-spacing': 'error',
 		'max-len': [ 'error', { code: 100 } ],
-		'new-cap': [ 'error', { capIsNew: false, newIsCap: true } ],
+		'new-cap': [
+			'error',
+			{ capIsNew: false, newIsCap: true, newIsCapExceptions: [ 'this.constructor' ] },
+		],
 		'no-cond-assign': 'error',
 		'no-const-assign': 'error',
 		'no-console': 'error',
@@ -169,12 +173,8 @@ module.exports = {
 		// Ensure our codebases use inclusive language
 		'inclusive-language/use-inclusive-words': 'error',
 	},
-	overrides: [
-		{
-			files: [ '**/test/*', '*.json', '*.md' ],
-			rules: {
-				'wpcalypso/i18n-unlocalized-url': 'off',
-			},
-		},
-	],
+	// Test files may link to unlocalized URLs.
+	testFileRules: {
+		'wpcalypso/i18n-unlocalized-url': 'off',
+	},
 };

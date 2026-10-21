@@ -11,7 +11,7 @@ import ClipboardInputControl from '../../../components/clipboard-input-control';
 import Notice from '../../../components/notice';
 import { Text } from '../../../components/text';
 import { MigrationCard } from './migration-card';
-import type { Site } from '@automattic/api-core';
+import type { Site, WordPressMigrationFinding } from '@automattic/api-core';
 
 const MANUAL_INSTALL = 'manual-wpcom-install';
 
@@ -54,7 +54,7 @@ function SourceKey( { site }: { site: Site } ) {
 	);
 }
 
-export function Connect( { site }: { site: Site } ) {
+export function Connect( { site, failure }: { site: Site; failure?: WordPressMigrationFinding } ) {
 	const snackbar = { error: __( 'Failed to start the migration.' ) };
 	const { manualInstall } = useManualInstall( site );
 	const configure = useMutation(
@@ -95,6 +95,11 @@ export function Connect( { site }: { site: Site } ) {
 				</>
 			}
 		>
+			{ failure && (
+				<Notice variant="error" title={ failure.label }>
+					{ failure.message }
+				</Notice>
+			) }
 			<VStack spacing={ 1 }>
 				<Text variant="muted">
 					{ __(

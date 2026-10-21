@@ -33,6 +33,7 @@ export const paths = {
 	'jetpack-free': jetpackFree,
 	'jetpack-personal': jetpackBundles,
 	'jetpack-premium': jetpackBundles,
+	'jetpack-pro': jetpackBundles,
 	'jetpack-professional': jetpackBundles,
 	'jetpack-scan': jetpackScan,
 	'jetpack-search': jetpackSearch,
@@ -96,6 +97,9 @@ export type SupportedSlugs =
 	| 'jetpack_growth_monthly'
 	| 'jetpack_growth_yearly'
 	| 'jetpack_growth_bi_yearly'
+	| 'jetpack_pro_monthly'
+	| 'jetpack_pro_yearly'
+	| 'jetpack_pro_bi_yearly'
 	| 'jetpack_crm'
 	| 'jetpack_crm_monthly'
 	| 'jetpack_backup_daily'
@@ -305,4 +309,5 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 		'jetpack_growth_yearly',
 		'jetpack_growth_bi_yearly',
 	],
+	'jetpack-pro': [ 'jetpack_pro_monthly', 'jetpack_pro_yearly', 'jetpack_pro_bi_yearly' ],
 } as const;

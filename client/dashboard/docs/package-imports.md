@@ -1,6 +1,6 @@
 # Package Import Restrictions
 
-The dashboard restricts imports from `calypso/` and `@automattic/` packages. This is enforced by ESLint rules in `.eslintrc.js`.
+The dashboard restricts imports from `calypso/` and `@automattic/` packages. This is enforced by ESLint rules in `eslint.config.mjs`.
 
 ## Why imports are restricted
 
