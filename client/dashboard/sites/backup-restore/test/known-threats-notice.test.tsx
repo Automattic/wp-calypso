@@ -385,7 +385,9 @@ test( 'shows the restore link once when the threats are expanded', async () => {
 	await user.unhover( toggle );
 	await user.click( toggle );
 
-	expect( await screen.findByRole( 'columnheader', { name: 'Threat' } ) ).toBeVisible();
+	expect(
+		await screen.findByRole( 'list', { name: 'Known threats in this backup' } )
+	).toBeVisible();
 	const expanded = screen.getByRole( 'button', { name: 'Known threats (3), hide threats' } );
 	expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
 	await user.unhover( expanded );

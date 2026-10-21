@@ -1,0 +1,41 @@
+.dashboard-backups__known-threats-details {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var( --wpds-dimension-gap-md, 12px );
+	margin-block-start: 4px;
+
+	p {
+		margin: 0;
+	}
+}
+
+.dashboard-backups__known-threats-list {
+	display: flex;
+	flex-direction: column;
+	align-self: stretch;
+	gap: var( --wpds-dimension-gap-md, 12px );
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.dashboard-backups__known-threat {
+	display: flex;
+	flex-direction: column;
+	gap: var( --wpds-dimension-gap-xs, 4px );
+	margin: 0;
+}
+
+.dashboard-backups__known-threat-name {
+	font-weight: var( --wpds-typography-font-weight-emphasis, 500 );
+}
+
+.dashboard-backups__known-threat-where,
+.dashboard-backups__known-threat-details {
+	font-size: var( --wpds-typography-font-size-sm, 12px );
+}
+
+.dashboard-backups__known-threat-where {
+	overflow-wrap: break-word;
+}

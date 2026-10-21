@@ -31,7 +31,7 @@ function BackupDeltaRow( { siteId, activity } ) {
 				) : undefined
 			}
 		>
-			{ /* The toolbar row can't fit a full-width table beside Actions, so the threats open just below it. */ }
+			{ /* The toolbar row can't fit the full-width threats list beside Actions, so the threats open just below it. */ }
 			{ isFlagged && (
 				<VStack spacing={ 2 } alignment="left" className="backup-delta__known-threats">
 					<BackupKnownThreatsDetails state={ knownThreats } showWarning />

@@ -254,7 +254,7 @@ test( 'shows no badge before VaultPress ships', async () => {
 	consoleError.mockRestore();
 } );
 
-test( 'expands the threats table for Scan sites', async () => {
+test( 'expands the threats list for Scan sites', async () => {
 	const user = userEvent.setup();
 	const threatsScope = nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/1792244301/threats` )
@@ -322,10 +322,10 @@ test( 'expands the threats table for Scan sites', async () => {
 	await user.click( toggle );
 
 	expect( await screen.findByText( 'Backdoor.PHP.Agent' ) ).toBeVisible();
-	expect( screen.getByRole( 'table', { name: 'Known threats in this backup' } ) ).toBeVisible();
+	expect( screen.getByRole( 'list', { name: 'Known threats in this backup' } ) ).toBeVisible();
 	expectInOrder(
 		toggle,
-		screen.getByRole( 'table', { name: 'Known threats in this backup' } ),
+		screen.getByRole( 'list', { name: 'Known threats in this backup' } ),
 		screen.getByRole( 'link', { name: fallbackRestoreLink } )
 	);
 	expect( screen.getByText( 'wp-content/uploads/evil.php' ) ).toBeVisible();
@@ -333,9 +333,14 @@ test( 'expands the threats table for Scan sites', async () => {
 		screen.getByText( 'wp-content/plugins/rf-known-threats-test/eicar-standard.php' )
 	).toBeVisible();
 	expect( screen.queryByText( 'eicar-standard.php' ) ).not.toBeInTheDocument();
-	expect( screen.getAllByText( localDate( Date.UTC( 2026, 8, 1, 23, 30 ) ) ) ).toHaveLength( 2 );
+	const reportedOn = localDate( Date.UTC( 2026, 8, 1, 23, 30 ) );
+	expect( screen.getAllByText( new RegExp( `^First detected ${ reportedOn } · ` ) ) ).toHaveLength(
+		2
+	);
 	expect(
-		screen.getByText( `Fixed ${ localDate( Date.UTC( 2026, 8, 2, 23, 30 ) ) }` )
+		screen.getByText(
+			`First detected ${ reportedOn } · Fixed ${ localDate( Date.UTC( 2026, 8, 2, 23, 30 ) ) }`
+		)
 	).toBeVisible();
 	expect( screen.getByText( 'Also: 2 vulnerable plugin or theme versions.' ) ).toBeVisible();
 	expect( screen.getAllByRole( 'link', { name: fallbackRestoreLink } ) ).toHaveLength( 1 );

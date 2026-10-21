@@ -182,20 +182,18 @@ describe( 'BackupDelta known threats', () => {
 		await userEvent.unhover( button );
 		expect( button ).not.toHaveAccessibleDescription( 'Hide threats' );
 		expect( await within( cards[ 0 ] ).findByText( 'Evil.Sig' ) ).toBeVisible();
-		// The table opens right below the toggle's row, full width, and above the link.
-		const table = within( cards[ 0 ] ).getByRole( 'table', {
+		// The list opens right below the toggle's row, full width, and above the link.
+		const list = within( cards[ 0 ] ).getByRole( 'list', {
 			name: 'Known threats in this backup',
 		} );
-		expect( toolbar ).not.toContainElement( table );
-		expect( toolbar.nextElementSibling ).toContainElement( table );
-		// Opened, the card shows the warning above the table.
+		expect( toolbar ).not.toContainElement( list );
+		expect( toolbar.nextElementSibling ).toContainElement( list );
+		// Opened, the card shows the warning above the list.
 		const shownWarning = within( toolbar.nextElementSibling ).getByText( warning );
 		expect( shownWarning ).toBeVisible();
-		expect( shownWarning.compareDocumentPosition( table ) ).toBe(
-			Node.DOCUMENT_POSITION_FOLLOWING
-		);
+		expect( shownWarning.compareDocumentPosition( list ) ).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
 		expect(
-			table.compareDocumentPosition( restoreLink ) & Node.DOCUMENT_POSITION_FOLLOWING
+			list.compareDocumentPosition( restoreLink ) & Node.DOCUMENT_POSITION_FOLLOWING
 		).toBeTruthy();
 		expect( within( cards[ 1 ] ).queryByText( 'Evil.Sig' ) ).toBeNull();
 		expect(

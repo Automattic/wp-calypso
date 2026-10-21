@@ -154,7 +154,7 @@ describe( 'BackupKnownThreats', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	it( 'expands a threats table for Scan sites', async () => {
+	it( 'expands a threats list for Scan sites', async () => {
 		mockList( [ backupWith( counts( 1, 2 ) ) ], { latest_without_known_threats: 150 } );
 		mockActivities( [ '150.817' ] );
 		const details = nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
@@ -183,10 +183,10 @@ describe( 'BackupKnownThreats', () => {
 		await userEvent.click( toggle );
 
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
-		expect( screen.getByRole( 'table', { name: 'Known threats in this backup' } ) ).toBeVisible();
+		expect( screen.getByRole( 'list', { name: 'Known threats in this backup' } ) ).toBeVisible();
 		expectInOrder(
 			toggle,
-			screen.getByRole( 'table', { name: 'Known threats in this backup' } ),
+			screen.getByRole( 'list', { name: 'Known threats in this backup' } ),
 			screen.getByRole( 'link', { name: /^Restore .+ backup instead$/ } )
 		);
 		expect( screen.getByText( 'wp-content/evil.php' ) ).toBeVisible();
@@ -194,9 +194,9 @@ describe( 'BackupKnownThreats', () => {
 			screen.getByText( 'wp-content/plugins/rf-known-threats-test/eicar-standard.php' )
 		).toBeVisible();
 		expect( screen.queryByText( 'eicar-standard.php' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( 'Open' ) ).toBeVisible();
-		expect( screen.getByText( 'Ignored' ) ).toBeVisible();
-		expect( screen.getAllByText( localDate( Date.UTC( 2026, 9, 1, 23, 30 ) ) ) ).toHaveLength( 2 );
+		const reportedOn = localDate( Date.UTC( 2026, 9, 1, 23, 30 ) );
+		expect( screen.getByText( `First detected ${ reportedOn } · Open` ) ).toBeVisible();
+		expect( screen.getByText( `First detected ${ reportedOn } · Ignored` ) ).toBeVisible();
 		expect( screen.getByText( 'Also: 2 vulnerable plugin or theme versions.' ) ).toBeVisible();
 		expect( screen.getAllByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toHaveLength(
 			1
@@ -378,7 +378,7 @@ describe( 'BackupKnownThreats', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	it( 'hides the restore link in the clone flow but keeps the table', async () => {
+	it( 'hides the restore link in the clone flow but keeps the list', async () => {
 		mockList( [ backupWith( counts( 1 ) ) ], { latest_without_known_threats: 150 } );
 		nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
 		renderWithProvider(
