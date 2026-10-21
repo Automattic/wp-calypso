@@ -29,47 +29,26 @@ describe( 'trackInteractiveUiHistory', () => {
 	it( 'records the batches in the transcript before the first turn', () => {
 		const history = createHistory();
 
-		trackInteractiveUiHistory( history, {
-			isProcessing: false,
-			messageCount: 2,
-			batches: [ batch ],
-		} );
+		trackInteractiveUiHistory( history, { isProcessing: false, batches: [ batch ] } );
 
 		expect( history.restoredSignatures ).toEqual( new Set( [ 'restored' ] ) );
 	} );
 
-	it.each( [
-		[
-			'a cancelled upload',
-			[
-				{ isProcessing: false, messageCount: 0 },
-				{ isProcessing: true, messageCount: 0 },
-			],
-		],
-		[ 'a reply still in progress after a switch', [ { isProcessing: true, messageCount: 5 } ] ],
-	] )( 'keeps recording after %s', ( _description, steps ) => {
+	it( 'keeps recording after the previous conversation’s reply, still in progress after a switch', () => {
 		const history = createHistory();
 
-		steps.forEach( ( step ) => trackInteractiveUiHistory( history, { ...step, batches: [] } ) );
-		trackInteractiveUiHistory( history, {
-			isProcessing: false,
-			messageCount: 2,
-			batches: [ batch ],
-		} );
+		trackInteractiveUiHistory( history, { isProcessing: true, batches: [] } );
+		trackInteractiveUiHistory( history, { isProcessing: false, batches: [ batch ] } );
 
 		expect( history.restoredSignatures.has( 'restored' ) ).toBe( true );
 	} );
 
-	it( 'stops recording once a message is sent', () => {
+	it( 'stops recording once a reply starts, even one that adds no message, such as a resumed tool call', () => {
 		const history = createHistory();
 
-		trackInteractiveUiHistory( history, { isProcessing: false, messageCount: 2, batches: [] } );
-		trackInteractiveUiHistory( history, { isProcessing: true, messageCount: 3, batches: [] } );
-		trackInteractiveUiHistory( history, {
-			isProcessing: false,
-			messageCount: 4,
-			batches: [ batch ],
-		} );
+		trackInteractiveUiHistory( history, { isProcessing: false, batches: [] } );
+		trackInteractiveUiHistory( history, { isProcessing: true, batches: [] } );
+		trackInteractiveUiHistory( history, { isProcessing: false, batches: [ batch ] } );
 
 		expect( history.restoredSignatures.size ).toBe( 0 );
 	} );

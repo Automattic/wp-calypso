@@ -29,7 +29,9 @@ interface UseInteractiveUiOptions {
 	/** The site, user and agent the conversation belongs to. */
 	scopeIdentity: string;
 	sessionId: string;
+	/** The agent is replying. */
 	isProcessing: boolean;
+	isUploadingImages: boolean;
 	agentConfig: AgentConfig | null;
 	submitContextMessage: ( message: string, options: SubmitOptions ) => Promise< void >;
 	/** The providers' interactive UI components and functions. */
@@ -64,6 +66,7 @@ export function useInteractiveUi( {
 	scopeIdentity,
 	sessionId,
 	isProcessing,
+	isUploadingImages,
 	agentConfig,
 	submitContextMessage,
 	interactiveUi,
@@ -74,8 +77,11 @@ export function useInteractiveUi( {
 
 	const latestUserMessageIndex = getLatestUserMessageIndex( messages );
 
-	const actionInputsRef = useRef( { agentConfig, isProcessing, submitContextMessage } );
-	actionInputsRef.current = { agentConfig, isProcessing, submitContextMessage };
+	// Surfaces wait while the agent replies or images upload, and are disabled meanwhile.
+	const isBusy = isProcessing || isUploadingImages;
+
+	const actionInputsRef = useRef( { agentConfig, isBusy, submitContextMessage } );
+	actionInputsRef.current = { agentConfig, isBusy, submitContextMessage };
 
 	const [ renderer, setRenderer ] = useState< InteractiveUiRenderer >();
 	const [ loadAttempt, setLoadAttempt ] = useState( 0 );
@@ -90,10 +96,9 @@ export function useInteractiveUi( {
 	useEffect( () => {
 		trackInteractiveUiHistory( conversationSession.history, {
 			isProcessing,
-			messageCount: messages.length,
 			batches: messageBatches,
 		} );
-	}, [ conversationSession, isProcessing, messages.length, messageBatches ] );
+	}, [ conversationSession, isProcessing, messageBatches ] );
 
 	// Staleness follows the batches the runtime has applied, not one still streaming, so a surface
 	// never changes staleness before its data does.
@@ -150,7 +155,7 @@ export function useInteractiveUi( {
 
 	// Apply new batches once the reply has streamed, so a surface never changes mid-stream.
 	useEffect( () => {
-		if ( ! renderer || ! catalogs || isProcessing ) {
+		if ( ! renderer || ! catalogs || isBusy ) {
 			return;
 		}
 
@@ -176,7 +181,7 @@ export function useInteractiveUi( {
 				onAction: async ( action ) => {
 					const latestInputs = actionInputsRef.current;
 
-					if ( ! latestInputs.agentConfig || latestInputs.isProcessing ) {
+					if ( ! latestInputs.agentConfig || latestInputs.isBusy ) {
 						return;
 					}
 
@@ -203,7 +208,7 @@ export function useInteractiveUi( {
 		}
 
 		setRuntimeRevision( ( currentRevision ) => currentRevision + 1 );
-	}, [ messageBatches, isProcessing, renderer, catalogs, conversationSession ] );
+	}, [ messageBatches, isBusy, renderer, catalogs, conversationSession ] );
 
 	const presentation = useMemo< InteractiveUiPresentation >(
 		() => ( {
@@ -213,7 +218,7 @@ export function useInteractiveUi( {
 			isRetryingLoad,
 			retryLoad: () => setLoadAttempt( ( attempt ) => attempt + 1 ),
 			revision: runtimeRevision,
-			isDisabled: isProcessing,
+			isDisabled: isBusy,
 			staleSurfaceIds,
 		} ),
 		[
@@ -222,7 +227,7 @@ export function useInteractiveUi( {
 			hasLoadError,
 			isRetryingLoad,
 			runtimeRevision,
-			isProcessing,
+			isBusy,
 			staleSurfaceIds,
 		]
 	);

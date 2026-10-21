@@ -6,8 +6,7 @@ import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 interface InteractiveUiHistory {
 	/** The signatures of batches restored from history, such as a past chat's. */
 	restoredSignatures: Set< string >;
-	/** The transcript's length when the session was last idle, once it has been. */
-	idleMessageCount?: number;
+	hasBeenIdle: boolean;
 	hasStartedTurn: boolean;
 }
 
@@ -45,35 +44,28 @@ export function getInteractiveUiSession(
 	return {
 		...next,
 		appliedBatches: [],
-		history: { restoredSignatures: new Set(), hasStartedTurn: false },
+		history: { restoredSignatures: new Set(), hasBeenIdle: false, hasStartedTurn: false },
 	};
 }
 
 /**
  * Records the batches restored from history: those in the transcript before the session's first
- * turn. A turn starts only when the transcript changes while processing, so neither an image
- * upload the user cancels nor the previous conversation's reply, still in progress right after a
- * switch, counts as one.
+ * turn, which starts when the agent begins a reply. Right after a switch, the previous
+ * conversation's reply can still be in progress, so only a reply begun once the session has been
+ * idle counts.
  */
 export function trackInteractiveUiHistory(
 	history: InteractiveUiHistory,
-	{
-		isProcessing,
-		messageCount,
-		batches,
-	}: { isProcessing: boolean; messageCount: number; batches: InteractiveUiBatch[] }
+	{ isProcessing, batches }: { isProcessing: boolean; batches: InteractiveUiBatch[] }
 ) {
 	if ( history.hasStartedTurn ) {
 		return;
 	}
 
 	if ( ! isProcessing ) {
-		history.idleMessageCount = messageCount;
+		history.hasBeenIdle = true;
 		batches.forEach( ( batch ) => history.restoredSignatures.add( batch.signature ) );
-	} else if (
-		history.idleMessageCount !== undefined &&
-		messageCount !== history.idleMessageCount
-	) {
+	} else if ( history.hasBeenIdle ) {
 		history.hasStartedTurn = true;
 	}
 }
