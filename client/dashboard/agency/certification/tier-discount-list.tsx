@@ -33,7 +33,13 @@ export default function TierDiscountList( {
 							<Text size={ 13 } weight={ isCurrent ? 500 : 400 } lineHeight="20px">
 								{ tier?.name }
 							</Text>
-							{ isCurrent && <Badge intent="informational">{ __( 'Your tier' ) }</Badge> }
+							{ isCurrent && (
+								<Badge
+									style={ { minWidth: 'fit-content' } }
+									intent="draft"
+									children={ __( 'Your tier' ) }
+								/>
+							) }
 						</HStack>
 						<Text
 							size={ 13 }
