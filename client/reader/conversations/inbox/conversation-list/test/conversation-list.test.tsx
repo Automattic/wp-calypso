@@ -3,10 +3,13 @@
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationList } from '..';
 import { groupNotesByPost } from '../../group-notes';
 import { makeNote } from '../../test/helpers';
+import { filterConversations } from '../filter-conversations';
+import type { InboxTab } from '../tabs';
 
 const conversations = groupNotesByPost( [
 	makeNote( { id: 1, postId: 100, title: 'Unread post', commenter: 'Ana', read: 0 } ),
@@ -14,16 +17,34 @@ const conversations = groupNotesByPost( [
 	makeNote( { id: 3, postId: 200, title: 'Read post', commenter: 'Carla', read: 1 } ),
 ] );
 
-const renderList = ( props: Partial< React.ComponentProps< typeof ConversationList > > = {} ) => {
-	const onSelect = jest.fn();
-	renderWithProvider(
+function ControlledList( props: Partial< React.ComponentProps< typeof ConversationList > > ) {
+	const [ tab, setTab ] = useState< InboxTab >( 'all' );
+	const [ search, setSearch ] = useState( '' );
+	const [ isShortcutsOpen, setIsShortcutsOpen ] = useState( false );
+	const source = props.conversations ?? conversations;
+	return (
 		<ConversationList
-			conversations={ conversations }
+			unreadCount={ source.reduce(
+				( total, { unreadNoteIds } ) => total + unreadNoteIds.length,
+				0
+			) }
 			isLoading={ false }
-			onSelect={ onSelect }
+			tab={ tab }
+			onTabChange={ setTab }
+			search={ search }
+			onSearchChange={ setSearch }
+			isShortcutsOpen={ isShortcutsOpen }
+			onShortcutsToggle={ setIsShortcutsOpen }
+			onSelect={ jest.fn() }
 			{ ...props }
+			conversations={ filterConversations( source, tab, search ) }
 		/>
 	);
+}
+
+const renderList = ( props: Partial< React.ComponentProps< typeof ConversationList > > = {} ) => {
+	const onSelect = jest.fn();
+	renderWithProvider( <ControlledList onSelect={ onSelect } { ...props } /> );
 	return { onSelect };
 };
 
@@ -124,5 +145,15 @@ describe( 'ConversationList', () => {
 		renderList( { conversations: [] } );
 
 		expect( screen.getByText( 'No conversations yet.' ) ).toBeVisible();
+	} );
+
+	it( 'lists the keyboard shortcuts from the header button', async () => {
+		const user = userEvent.setup();
+		renderList();
+
+		await user.click( screen.getByRole( 'button', { name: 'Keyboard shortcuts' } ) );
+
+		expect( screen.getByText( 'View unread' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Toggle shortcuts menu' ) ).toBeInTheDocument();
 	} );
 } );

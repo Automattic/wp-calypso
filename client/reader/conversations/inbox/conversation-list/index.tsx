@@ -1,12 +1,14 @@
 import {
 	Spinner,
 	__experimentalHeading as Heading,
+	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { KeyboardShortcuts } from '../keyboard-shortcuts';
 import { ConversationListItem } from './list-item';
 import { ConversationListTabs, type InboxTab } from './tabs';
 import { ConversationListToolbar } from './toolbar';
@@ -16,37 +18,37 @@ import './style.scss';
 
 interface Props {
 	conversations: Conversation[];
+	unreadCount: number;
 	isLoading: boolean;
+	tab: InboxTab;
+	onTabChange: ( tab: InboxTab ) => void;
+	search: string;
+	onSearchChange: ( search: string ) => void;
+	isShortcutsOpen: boolean;
+	onShortcutsToggle: ( isOpen: boolean ) => void;
 	selectedKey?: string;
 	onSelect: ( conversation: Conversation ) => void;
 }
 
-export function ConversationList( { conversations, isLoading, selectedKey, onSelect }: Props ) {
+export function ConversationList( {
+	conversations,
+	unreadCount,
+	isLoading,
+	tab,
+	onTabChange,
+	search,
+	onSearchChange,
+	isShortcutsOpen,
+	onShortcutsToggle,
+	selectedKey,
+	onSelect,
+}: Props ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const [ tab, setTab ] = useState< InboxTab >( 'all' );
-	const [ search, setSearch ] = useState( '' );
-
-	const unreadCount = conversations.reduce(
-		( total, { unreadNoteIds: ids } ) => total + ids.length,
-		0
-	);
-
-	const visible = useMemo( () => {
-		if ( tab === 'yours' ) {
-			return [];
-		}
-		const term = search.trim().toLowerCase();
-		return conversations.filter(
-			( { unreadNoteIds: ids, title, excerpt } ) =>
-				( tab === 'all' || ids.length > 0 ) &&
-				( ! term || title.toLowerCase().includes( term ) || excerpt.toLowerCase().includes( term ) )
-		);
-	}, [ conversations, tab, search ] );
 
 	const sections = useMemo( () => {
 		const result: { label: string; items: Conversation[] }[] = [];
-		for ( const conversation of visible ) {
+		for ( const conversation of conversations ) {
 			const day = moment( conversation.timestamp );
 			let label = day.format( 'LL' );
 			if ( day.isSame( moment(), 'day' ) ) {
@@ -62,24 +64,21 @@ export function ConversationList( { conversations, isLoading, selectedKey, onSel
 			}
 		}
 		return result;
-	}, [ visible, moment, translate ] );
+	}, [ conversations, moment, translate ] );
 
 	return (
 		<VStack spacing={ 0 } className="conversations-inbox__list-pane">
-			<Heading
-				level={ 1 }
-				size={ 20 }
-				weight={ 500 }
-				color="inherit"
-				className="conversations-inbox__pane-title"
-			>
-				{ translate( 'Conversations' ) }
-			</Heading>
-			<ConversationListTabs tab={ tab } unreadCount={ unreadCount } onChange={ setTab } />
-			<ConversationListToolbar search={ search } onSearchChange={ setSearch } />
+			<HStack className="conversations-inbox__pane-title">
+				<Heading level={ 1 } size={ 20 } weight={ 500 } color="inherit">
+					{ translate( 'Conversations' ) }
+				</Heading>
+				<KeyboardShortcuts isOpen={ isShortcutsOpen } onToggle={ onShortcutsToggle } />
+			</HStack>
+			<ConversationListTabs tab={ tab } unreadCount={ unreadCount } onChange={ onTabChange } />
+			<ConversationListToolbar search={ search } onSearchChange={ onSearchChange } />
 			<div className="conversations-inbox__list">
 				{ isLoading && <Spinner /> }
-				{ ! isLoading && visible.length === 0 && (
+				{ ! isLoading && conversations.length === 0 && (
 					<Text as="p" color="var(--color-text-subtle)" className="conversations-inbox__empty">
 						{ tab === 'yours'
 							? translate( 'Conversations you commented on will show up here.' )

@@ -1,0 +1,19 @@
+.conversations-inbox__shortcuts {
+	margin: 0;
+	padding: 16px;
+	list-style: none;
+
+	kbd {
+		min-width: 24px;
+		padding: 2px 6px;
+		border: 1px solid var( --color-border-subtle );
+		border-radius: 4px;
+		background: var( --color-surface );
+		color: var( --color-text );
+		font-family: inherit;
+		font-size: 0.75rem;
+		font-weight: 600;
+		line-height: 18px;
+		text-align: center;
+	}
+}
