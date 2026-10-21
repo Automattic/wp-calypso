@@ -13,15 +13,15 @@ export default createComponentImplementation(
 	( { props, buildChild } ) => (
 		<ul
 			className={ clsx(
-				'agents-manager-interactive-ui__list',
-				`agents-manager-interactive-ui__list--${ props.direction ?? 'vertical' }`,
-				`agents-manager-interactive-ui__list--align-${ props.align ?? 'stretch' }`
+				'ai-ui-renderer__list',
+				`ai-ui-renderer__list--${ props.direction ?? 'vertical' }`,
+				`ai-ui-renderer__list--align-${ props.align ?? 'stretch' }`
 			) }
 		>
 			{ props.children.map( ( child ) => (
 				<li
 					key={ typeof child === 'string' ? child : child.id }
-					className="agents-manager-interactive-ui__list-item"
+					className="ai-ui-renderer__list-item"
 				>
 					{ typeof child === 'string'
 						? buildChild( child )

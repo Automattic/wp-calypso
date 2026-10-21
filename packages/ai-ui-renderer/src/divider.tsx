@@ -7,7 +7,7 @@ export default createComponentImplementation(
 		<div
 			role="separator"
 			aria-orientation={ props.axis ?? 'horizontal' }
-			className="agents-manager-interactive-ui__divider"
+			className="ai-ui-renderer__divider"
 		/>
 	)
 );

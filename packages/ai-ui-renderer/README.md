@@ -8,10 +8,11 @@ into `runtime.processMessages(messages, ownerMessageId)`, and render surfaces fr
 `runtime.getSurface(id)` with `InteractiveUiSurface`. Keep the runtime alive to
 preserve edits, and call `runtime.dispose()` when its session ends.
 
-The package also exports `MarkdownContext`, `renderMarkdown`, and
-`InteractiveUiDisabledContext` for the host's rendering wrapper. Import
+`InteractiveUiSurface` supplies the `ai-ui-renderer` root class and a fieldset.
+Pass `disabled` to disable its controls, including controls in open modals.
+The package also exports `MarkdownContext` and `renderMarkdown` for rendering Markdown. Import
 `@automattic/ai-ui-renderer/style.scss` and the WordPress components stylesheet. Consumers
-need Sass support and supply their own modal stacking rule.
+need Sass support and supply their own modal stacking rule for `.ai-ui-renderer__modal`.
 
 The demo catalog supports `Text`, `TextField`, `Button`, `Column`, `Image`, `Icon`,
 `Row`, `List`, `Card`, `Divider`, `CheckBox`, `ChoicePicker`, `DateTimeInput`,

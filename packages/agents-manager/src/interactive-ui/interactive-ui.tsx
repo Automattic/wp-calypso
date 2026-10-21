@@ -48,29 +48,17 @@ export default function InteractiveUi( {
 	if ( ! runtime || ! sdk ) {
 		return null;
 	}
-	const {
-		InteractiveUiSurface: Surface,
-		MarkdownContext,
-		renderMarkdown,
-		InteractiveUiDisabledContext,
-	} = sdk;
+	const { InteractiveUiSurface: Surface, MarkdownContext, renderMarkdown } = sdk;
 	return runtime.getSurfaceIds( messageId ).map( ( surfaceId ) => {
 		const surface = runtime.getSurface( surfaceId );
 		return surface?.componentsModel.has( surface.rootId ) ? (
-			<fieldset
-				key={ surfaceId }
-				data-agenttic-isolated
-				className="agents-manager-interactive-ui"
-				disabled={ isDisabled }
-			>
+			<div key={ surfaceId } data-agenttic-isolated>
 				<SurfaceBoundary revision={ revision }>
-					<InteractiveUiDisabledContext.Provider value={ isDisabled }>
-						<MarkdownContext.Provider value={ renderMarkdown }>
-							<Surface surface={ surface } />
-						</MarkdownContext.Provider>
-					</InteractiveUiDisabledContext.Provider>
+					<MarkdownContext.Provider value={ renderMarkdown }>
+						<Surface surface={ surface } disabled={ isDisabled } />
+					</MarkdownContext.Provider>
 				</SurfaceBoundary>
-			</fieldset>
+			</div>
 		) : null;
 	} );
 }

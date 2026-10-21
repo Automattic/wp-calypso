@@ -5,7 +5,7 @@ import { Card, CardBody } from '@wordpress/components';
 export default createComponentImplementation(
 	{ name: CardApi.name, schema: CardApi.schema.pick( { child: true } ) },
 	( { props, buildChild } ) => (
-		<Card className="agents-manager-interactive-ui__card">
+		<Card className="ai-ui-renderer__card">
 			<CardBody>{ buildChild( props.child ) }</CardBody>
 		</Card>
 	)

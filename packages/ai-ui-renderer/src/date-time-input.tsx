@@ -52,9 +52,7 @@ export default createComponentImplementation(
 		};
 		return (
 			<TextControl
-				className={
-					errorMessage ? 'agents-manager-interactive-ui__date-time-input--error' : undefined
-				}
+				className={ errorMessage ? 'ai-ui-renderer__date-time-input--error' : undefined }
 				type={ type }
 				label={ props.label ?? __( 'Date and time', 'default' ) }
 				value={ normalize( value ) }
