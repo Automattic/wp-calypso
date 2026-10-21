@@ -73,13 +73,34 @@ module.exports = function storybookDefaultConfig( {
 				...config.resolve.alias,
 				...webpackAliases,
 			};
+			// Reuse the style-loader and css-loader that Storybook already applies to `.css`.
+			const cssRule = config.module.rules.find(
+				( rule ) => String( rule?.test ) === String( /\.css$/ )
+			);
+			if ( ! cssRule ) {
+				throw new Error(
+					'calypso-storybook: Storybook no longer provides a .css rule to extend for .scss'
+				);
+			}
+			const [ styleLoader, cssLoader ] = cssRule.use;
 			config.module.rules = [
 				...config.module.rules,
 				{
 					test: /\.scss$/,
 					use: [
-						require.resolve( 'style-loader' ), // Injects styles into the DOM
-						require.resolve( 'css-loader' ), // Translates CSS into CommonJS
+						styleLoader,
+						{
+							...cssLoader,
+							options: {
+								...cssLoader.options,
+								// Plain `.css` files imported from SCSS must not go through sass-loader, which
+								// would prepend `sassPrelude` to them.
+								importLoaders: 0,
+								// Components import `*.module.scss` as a default object (`styles.tablist`),
+								// which css-loader 7 no longer exports by default.
+								modules: { auto: true, namedExport: false, exportLocalsConvention: 'as-is' },
+							},
+						},
 						{
 							loader: require.resolve( 'sass-loader' ), // Compiles Sass to CSS
 							options: {
