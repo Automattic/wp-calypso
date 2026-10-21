@@ -177,7 +177,8 @@ describe( 'DomainSearchStep notice skip link', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'notice skip' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_domain_search_notice_skip_click', {
-			flow: ONBOARDING_FLOW,
+			section: 'signup',
+			flow_name: ONBOARDING_FLOW,
 			domain: 'taken.com',
 			availability_status: DomainAvailabilityStatus.MAPPED,
 		} );

@@ -354,7 +354,8 @@ const DomainSearchStep: StepType< {
 				},
 				onSearchNoticeSkipClick: ( domainName: string, status: DomainAvailabilityStatus ) => {
 					recordTracksEvent( 'calypso_domain_search_notice_skip_click', {
-						flow,
+						section: 'signup',
+						flow_name: flow,
 						domain: domainName,
 						availability_status: status,
 					} );
