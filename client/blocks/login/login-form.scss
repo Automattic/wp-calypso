@@ -32,6 +32,33 @@ $breakpoint-mobile: 782px; //Mobile size.
 	margin-bottom: 8px;
 }
 
+// Desktop only: below 960px the footer carries the lost-password link.
+.login__form-password-label-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+// Anchored under `.login` because `.card a:not(.components-external-link)` strips the
+// underline from every link in the card at a specificity a lone class cannot beat.
+.login .login__form-password-label-row .login__form-lost-password {
+	display: none;
+	font-size: 0.75rem;
+	line-height: 16px;
+	color: var(--color-link);
+	text-decoration: underline;
+
+	&:hover,
+	&:focus {
+		color: var(--color-link-dark);
+	}
+
+	@include break-large {
+		display: inline;
+	}
+}
+
 form {
 	margin-left: auto;
 	margin-right: auto;

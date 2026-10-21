@@ -86,11 +86,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/free-post-setup' ),
 	},
 
-	GENERATE_CONTENT: {
-		slug: 'generateContent',
-		asyncComponent: () => import( './steps-repository/readymade-template-generate-content' ),
-	},
-
 	IMPORT: { slug: 'import', asyncComponent: () => import( './steps-repository/import' ) },
 
 	IMPORT_LIST: {

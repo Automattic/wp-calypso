@@ -15,7 +15,6 @@ import {
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
-	isReadymadeFlow,
 	isWriteOnFlow,
 	isOnboardingFlow,
 	Step,
@@ -208,7 +207,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		isCopySiteFlow( flow ) ||
 		isWriteOnFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
-		isReadymadeFlow( flow ) ||
 		wooFlows.includes( flow || '' ) ||
 		flow === AI_SITE_BUILDER_FLOW ||
 		isAIBuilderOnboardingFlow( flow ) ||

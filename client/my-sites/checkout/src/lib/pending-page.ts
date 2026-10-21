@@ -307,6 +307,7 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'agencies.automattic.com',
 		'agencies-beta.automattic.com',
 		'agencies.localhost',
+		'my.pressable.com',
 		...( siteSlug ? [ siteSlug.includes( '::' ) ? siteSlug.split( '::' )[ 0 ] : siteSlug ] : [] ),
 	];
 

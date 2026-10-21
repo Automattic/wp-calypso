@@ -1,10 +1,10 @@
 import { Button } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { InteractiveUiDisabledContext } from './context';
 import type { InteractiveUiPresentation } from '../hooks/use-interactive-ui';
 import type { ReactNode } from 'react';
-import './style.scss';
+import '@automattic/ai-ui-renderer/style.scss';
+import './modal.scss';
 
 class SurfaceBoundary extends Component<
 	{ children: ReactNode; revision: number },
@@ -52,20 +52,13 @@ export default function InteractiveUi( {
 	return runtime.getSurfaceIds( messageId ).map( ( surfaceId ) => {
 		const surface = runtime.getSurface( surfaceId );
 		return surface?.componentsModel.has( surface.rootId ) ? (
-			<fieldset
-				key={ surfaceId }
-				data-agenttic-isolated
-				className="agents-manager-interactive-ui"
-				disabled={ isDisabled }
-			>
+			<div key={ surfaceId } data-agenttic-isolated>
 				<SurfaceBoundary revision={ revision }>
-					<InteractiveUiDisabledContext.Provider value={ isDisabled }>
-						<MarkdownContext.Provider value={ renderMarkdown }>
-							<Surface surface={ surface } />
-						</MarkdownContext.Provider>
-					</InteractiveUiDisabledContext.Provider>
+					<MarkdownContext.Provider value={ renderMarkdown }>
+						<Surface surface={ surface } disabled={ isDisabled } />
+					</MarkdownContext.Provider>
 				</SurfaceBoundary>
-			</fieldset>
+			</div>
 		) : null;
 	} );
 }

@@ -3,6 +3,7 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
+import { useFormStatus } from '@automattic/composite-checkout';
 import { ResponseCart } from '@automattic/shopping-cart';
 import { render, screen, within, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -13,6 +14,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
+import * as PrePurchaseNotices from '../components/prepurchase-notices';
 import { contactDetailsActions, resetCheckoutStores } from '../lib/checkout-stores';
 import {
 	domainProduct,
@@ -90,6 +92,37 @@ describe( 'CheckoutMain', () => {
 					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 		} );
+	} );
+
+	it( 'reports form submission during payment preparation and readiness afterwards', async () => {
+		function FormControls() {
+			const { setFormSubmitting, setFormReady } = useFormStatus();
+			return (
+				<>
+					<button onClick={ setFormSubmitting }>Submit test form</button>
+					<button onClick={ setFormReady }>Reset test form</button>
+				</>
+			);
+		}
+		const notices = jest.spyOn( PrePurchaseNotices, 'default' ).mockImplementation( FormControls );
+		const onFormSubmittingChange = jest.fn();
+		const user = userEvent.setup();
+		try {
+			render(
+				<MockCheckout
+					initialCart={ initialCart }
+					setCart={ mockSetCartEndpoint }
+					additionalProps={ { onFormSubmittingChange } }
+				/>
+			);
+			await user.click( await screen.findByRole( 'button', { name: 'Submit test form' } ) );
+			await waitFor( () => expect( onFormSubmittingChange ).toHaveBeenLastCalledWith( true ) );
+
+			await user.click( screen.getByRole( 'button', { name: 'Reset test form' } ) );
+			await waitFor( () => expect( onFormSubmittingChange ).toHaveBeenLastCalledWith( false ) );
+		} finally {
+			notices.mockRestore();
+		}
 	} );
 
 	it( 'renders the line items with prices when logged-out', async () => {
