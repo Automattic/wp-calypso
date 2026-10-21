@@ -35,6 +35,7 @@ export default function loadOmnibar( config: AppConfig ) {
 							user={ window.currentUser }
 							cartManagerClient={ shoppingCartManagerClient }
 							sectionName="dashboard"
+							preferDashboardAdminBar
 						/>
 					) }
 				</AnalyticsProvider>

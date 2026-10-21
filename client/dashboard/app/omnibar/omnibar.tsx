@@ -14,7 +14,6 @@ import { dashboardLink, wpcomLink } from '../../utils/link';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
-import { addMissingDefaultNodes } from './default-nodes';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
 import { buildAiChatPluginNode } from './plugin-ai-chat';
@@ -33,19 +32,47 @@ import { buildWpcomAccountNode } from './plugin-wpcom-account';
 import { RESPONSIVE_MENU_NODE_ID, trackOmnibarNodes, useRecordOmnibarNodeClick } from './tracking';
 import { useOmnibarUser } from './user';
 import type { User } from '@automattic/api-core';
-import type { OmnibarNode, OmnibarNodeBuilders } from '@automattic/omnibar';
+import type { AdminBarNode, OmnibarNode, OmnibarNodeBuilders } from '@automattic/omnibar';
 import type { ShoppingCartManagerClient } from '@automattic/shopping-cart';
 
 const onClickResponsiveMenu = () => omnibarEvents.mobileMenu.emit();
 
-function insertBefore( nodes: OmnibarNode[], node: OmnibarNode | undefined, beforeId: string ) {
-	if ( ! node ) {
-		return nodes;
+function getSubtreeIds( nodes: AdminBarNode[], rootIds: string[] ) {
+	const ids = new Set(
+		nodes.filter( ( node ) => rootIds.includes( node.id ) ).map( ( { id } ) => id )
+	);
+
+	let found = true;
+	while ( found ) {
+		found = false;
+		for ( const node of nodes ) {
+			if ( node.parent && ids.has( node.parent ) && ! ids.has( node.id ) ) {
+				ids.add( node.id );
+				found = true;
+			}
+		}
 	}
-	const index = nodes.findIndex( ( { id } ) => id === beforeId );
-	return index === -1
-		? [ ...nodes, node ]
-		: [ ...nodes.slice( 0, index ), node, ...nodes.slice( index ) ];
+	return ids;
+}
+
+function preferDashboardNodes(
+	dashboardNodes: AdminBarNode[] | undefined,
+	siteNodes: AdminBarNode[] | undefined
+) {
+	if ( ! dashboardNodes || ! siteNodes ) {
+		return siteNodes ?? dashboardNodes ?? [];
+	}
+
+	const dashboardRootIds = dashboardNodes
+		.filter( ( node ) => node.id === 'wp-logo' || node.parent === 'top-secondary' )
+		.map( ( { id } ) => id );
+	const dashboardSubtreeIds = getSubtreeIds( dashboardNodes, dashboardRootIds );
+	const siteSubtreeIds = getSubtreeIds( siteNodes, dashboardRootIds );
+
+	return [
+		...siteNodes.filter( ( node ) => ! siteSubtreeIds.has( node.id ) ),
+		...dashboardNodes.filter( ( node ) => dashboardSubtreeIds.has( node.id ) ),
+	];
 }
 
 function createHrefResolver( adminUrl?: string ) {
@@ -74,15 +101,22 @@ export default function OmnibarContainer( {
 	cartManagerClient,
 	sectionGroup,
 	sectionName,
+	preferDashboardAdminBar = false,
 }: {
 	user?: User;
 	cartManagerClient: ShoppingCartManagerClient;
 	sectionGroup?: string;
 	sectionName?: string;
+	preferDashboardAdminBar?: boolean;
 } ) {
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient }>
-			<ConnectedOmnibar user={ user } sectionGroup={ sectionGroup } sectionName={ sectionName } />
+			<ConnectedOmnibar
+				user={ user }
+				sectionGroup={ sectionGroup }
+				sectionName={ sectionName }
+				preferDashboardAdminBar={ preferDashboardAdminBar }
+			/>
 		</ShoppingCartProvider>
 	);
 }
@@ -91,10 +125,12 @@ function ConnectedOmnibar( {
 	user,
 	sectionGroup,
 	sectionName,
+	preferDashboardAdminBar,
 }: {
 	user?: User;
 	sectionGroup?: string;
 	sectionName?: string;
+	preferDashboardAdminBar: boolean;
 } ) {
 	const { supports } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
@@ -120,8 +156,11 @@ function ConnectedOmnibar( {
 	} );
 
 	const adminBarNodes = useMemo(
-		() => addMissingDefaultNodes( siteNodes ?? dashboardNodes ?? [] ),
-		[ siteNodes, dashboardNodes ]
+		() =>
+			preferDashboardAdminBar
+				? preferDashboardNodes( dashboardNodes, siteNodes )
+				: ( siteNodes ?? dashboardNodes ?? [] ),
+		[ preferDashboardAdminBar, dashboardNodes, siteNodes ]
 	);
 	const helpCenterNodeBuilder = useHelpCenterNodeBuilder( { sectionName } );
 	const notificationsNodeBuilder = useNotificationsNodeBuilder( { user } );
@@ -139,9 +178,9 @@ function ConnectedOmnibar( {
 			'launch-site': launchSiteNodeBuilder,
 			...( supports.commandPalette ? {} : { 'command-palette': () => null } ),
 			...( authUser ? { logout: createLogoutNodeBuilder( authUser ) } : {} ),
-			...( supports.reader ? { reader: createReaderNodeBuilder( { sectionGroup } ) } : {} ),
-			...( supports.help ? { 'help-center': helpCenterNodeBuilder } : {} ),
-			...( supports.notifications ? { notes: notificationsNodeBuilder } : {} ),
+			reader: supports.reader ? createReaderNodeBuilder( { sectionGroup } ) : () => null,
+			'help-center': supports.help ? helpCenterNodeBuilder : () => null,
+			notes: supports.notifications ? notificationsNodeBuilder : () => null,
 		} ),
 		[
 			authUser,
@@ -199,17 +238,18 @@ function ConnectedOmnibar( {
 		adminBarNodes,
 	} );
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
+	const findPluginNode = ( id: string ) =>
+		baseOmnibarNodes.plugins?.find( ( node ) => node.id === id );
 
 	const plugins = baseOmnibarNodes.user
-		? insertBefore(
-				[
-					...( languageSwitcherNode ? [ languageSwitcherNode ] : [] ),
-					...( shoppingCartNode ? [ shoppingCartNode ] : [] ),
-					...( baseOmnibarNodes.plugins ?? [] ),
-				],
+		? [
+				languageSwitcherNode,
+				shoppingCartNode,
+				findPluginNode( 'reader' ),
+				findPluginNode( 'help-center' ),
 				aiChatPluginNode,
-				'notes'
-			)
+				findPluginNode( 'notes' ),
+			].filter( ( node ): node is OmnibarNode => !! node )
 		: [];
 
 	const omnibarNodes = trackOmnibarNodes(
