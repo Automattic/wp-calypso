@@ -7,7 +7,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 type RedirectRule = {
 	flow: string;
-	to: string;
+	to: string | ( ( searchParams: URLSearchParams ) => string );
 	shouldRedirect?: ( searchParams: URLSearchParams ) => boolean;
 	replace?: boolean;
 };
@@ -37,7 +37,14 @@ const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 	{ flow: 'migration-signup', to: '/setup/site-migration' },
 	{ flow: 'hosted-site-migration', to: '/setup/site-migration' },
 	{ flow: 'domain-upsell', to: '/setup/domain-and-plan' },
-	{ flow: 'readymade-template', to: '/home' },
+	{
+		flow: 'readymade-template',
+		// Bare `/home` follows the account's landing-page preference, which may be another site.
+		to: ( searchParams ) => {
+			const site = searchParams.get( 'siteId' ) || searchParams.get( 'siteSlug' );
+			return site ? `/home/${ encodeURIComponent( site ) }` : '/home';
+		},
+	},
 ];
 
 const FLOW_REDIRECTS = [ AI_SITE_BUILDER_REDIRECT, ...REMOVED_TAILORED_FLOWS ];
@@ -70,7 +77,8 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	const [ , lang ] = normalizedPathname.match( langPattern ) ?? [];
 
 	// Replace the ":lang?" placeholder in the "to" field with the matched language or empty string if not present
-	const redirectUrl = route.to.replace( ':lang?', lang ? `/${ lang }` : '' );
+	const to = typeof route.to === 'function' ? route.to( searchParams ) : route.to;
+	const redirectUrl = to.replace( ':lang?', lang ? `/${ lang }` : '' );
 
 	// Construct the final URL with search parameters if present
 	const finalUrl = `${ redirectUrl }${ search }`;
