@@ -1,4 +1,5 @@
 import { hasNewsletterSubscribersPage, newsletterAdminUrl } from '@automattic/newsletter-urls';
+import { jetpackCloudLink } from './link';
 import { isSelfHostedJetpackConnected } from './site-types';
 import type { Site } from '@automattic/api-core';
 
@@ -16,5 +17,5 @@ export function getSiteSubscribersUrl( site: Site ): string {
 		return newsletterAdminUrl( adminUrl, { tab: 'subscribers' } );
 	}
 
-	return `https://cloud.jetpack.com/subscribers/${ site.slug }`;
+	return jetpackCloudLink( `/subscribers/${ site.slug }` );
 }

@@ -6,7 +6,7 @@ import { shield } from '@wordpress/icons';
 import OverviewCard from '../../components/overview-card';
 import { useTimeSince } from '../../components/time-since';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { wpcomLink } from '../../utils/link';
+import { jetpackCloudLink, wpcomLink } from '../../utils/link';
 import { isSelfHostedJetpackConnected, isSimple } from '../../utils/site-types';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import JetpackConnectionWarningCard from '../overview-jetpack-connection-warning-card';
@@ -20,7 +20,7 @@ const CARD_PROPS = {
 
 function getScanURL( site: Site ) {
 	if ( isSelfHostedJetpackConnected( site ) ) {
-		return `https://cloud.jetpack.com/scan/${ site.slug }`;
+		return jetpackCloudLink( `/scan/${ site.slug }` );
 	}
 
 	return isDashboardBackport()

@@ -25,5 +25,5 @@ export function buildDotcomDashboardLink( path: string = '' ) {
 		const port = config( 'port' ) ?? 3000;
 		return new URL( path, `http://my.localhost:${ port }` ).href;
 	}
-	return new URL( path, 'https://my.wordpress.com' ).href;
+	return new URL( path, config( 'dashboard_url' ) ).href;
 }
