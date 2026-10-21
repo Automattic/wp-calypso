@@ -315,7 +315,7 @@
 		"tslib": "^2.8.1",
 		"typescript": "6.0.3",
 		"webpack": "^5.111.1",
-		"webpack-bundle-analyzer": "^4.10.2",
+		"webpack-bundle-analyzer": "^5.4.0",
 		"webpack-cli": "^4.10.0",
 		"whybundled": "^2.0.0",
 		"yargs": "^17.0.1"
