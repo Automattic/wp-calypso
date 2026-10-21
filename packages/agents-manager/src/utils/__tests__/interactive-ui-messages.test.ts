@@ -8,15 +8,15 @@ const operations = [
 	{
 		version: 'v0.9',
 		createSurface: {
-			surfaceId: 'test-form',
+			surfaceId: 'test-surface',
 			catalogId: 'https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json',
 		},
 	},
 	{
 		version: 'v0.9',
 		updateComponents: {
-			surfaceId: 'test-form',
-			components: [ { id: 'root', component: 'Text', text: 'Test form' } ],
+			surfaceId: 'test-surface',
+			components: [ { id: 'root', component: 'Text', text: 'Test surface' } ],
 		},
 	},
 ];
@@ -27,7 +27,7 @@ const envelope = JSON.stringify( {
 } );
 
 describe( 'interactive UI response messages', () => {
-	it( 'extracts ordered surface operations from the renamed tool envelope', () => {
+	it( 'extracts ordered surface operations from the tool envelope', () => {
 		expect( getInteractiveUiMessagesFromText( envelope ) ).toEqual( operations );
 	} );
 
@@ -48,12 +48,15 @@ describe( 'interactive UI response messages', () => {
 		);
 	} );
 
-	it( 'leaves unrelated tool responses as ordinary message content', () => {
-		expect(
-			getInteractiveUiMessagesFromText(
-				JSON.stringify( { tool_id: 'wpcom__other_tool', data: operations } )
-			)
-		).toBeUndefined();
+	it.each( [
+		[ 'plain text', 'Here you go.' ],
+		[
+			'an unrelated tool response',
+			JSON.stringify( { tool_id: 'wpcom__other_tool', data: operations } ),
+		],
+		[ 'another protocol version', JSON.stringify( [ { ...operations[ 0 ], version: 'v0.8' } ] ) ],
+	] )( 'ignores %s', ( _description, text ) => {
+		expect( getInteractiveUiMessagesFromText( text ) ).toBeUndefined();
 	} );
 
 	it( 'associates only agent response operations with their message', () => {
@@ -70,7 +73,7 @@ describe( 'interactive UI response messages', () => {
 				id: 'agent',
 				role: 'agent',
 				content: [
-					{ type: 'text', text: 'Here is the form.' },
+					{ type: 'text', text: 'Here you go.' },
 					{ type: 'text', text: envelope },
 				],
 				timestamp: 1,
@@ -78,6 +81,7 @@ describe( 'interactive UI response messages', () => {
 				showIcon: true,
 			},
 		];
+
 		expect( getInteractiveUiBatches( messages ) ).toEqual( [
 			{ messageId: 'agent', operations, signature: JSON.stringify( [ 'agent', 1, envelope ] ) },
 		] );

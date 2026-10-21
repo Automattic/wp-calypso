@@ -136,7 +136,7 @@ The `wpcom/render-interactive-ui` tool returns an envelope with
 `tool_id: wpcom__render_interactive_ui` and an ordered array of A2UI v0.9 messages
 in `data`. Agents Manager also accepts raw A2UI message arrays.
 
-The catalog, data bindings, runtime, and styles live in
+The catalog, data bindings, runtime, surface rendering and styles live in
 [`@automattic/ai-ui-renderer`](../ai-ui-renderer/README.md). Agents Manager loads
 that package on demand, associates surfaces with transcript messages, maintains
 one runtime per conversation, and submits actions through the conversation's
@@ -144,6 +144,8 @@ context-message flow. Agents Manager passes the processing state to
 `InteractiveUiSurface` through its `disabled` prop and keeps the chat isolation
 wrapper and modal stacking rule here.
 The shared package has no dependency on Agents Manager or its message format.
+See [`INTERACTIVE-UI.md`](./INTERACTIVE-UI.md) for the architecture every agent
+chat UI follows.
 
 Interactive surfaces use `data-agenttic-isolated` so their controls retain their
 own typography while normal replies keep the chat's default typography reset.

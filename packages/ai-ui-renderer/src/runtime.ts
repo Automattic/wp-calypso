@@ -1,75 +1,40 @@
-import { basicCatalog } from '@a2ui/react/v0_9';
-import { Catalog, MessageProcessor } from '@a2ui/web_core/v0_9';
-import { AudioPlayer } from './audio-player';
-import Button from './button';
-import Card from './card';
-import CheckBox from './check-box';
-import ChoicePicker from './choice-picker';
-import Column from './column';
-import DateTimeInput from './date-time-input';
-import Divider from './divider';
-import Icon from './icon';
-import Image from './image';
-import List from './list';
-import { Modal } from './modal';
-import Row from './row';
-import { Slider } from './slider';
-import { Tabs } from './tabs';
-import Text from './text';
-import TextField from './text-field';
-import { Video } from './video';
+import { MessageProcessor } from '@a2ui/web_core/v0_9';
+import type { InteractiveUiCatalog } from './catalog';
 import type { ReactComponentImplementation } from '@a2ui/react/v0_9';
 import type { A2uiClientAction, A2uiMessage } from '@a2ui/web_core/v0_9';
 
-const catalog = new Catalog(
-	basicCatalog.id,
-	'0.9',
-	[
-		Text,
-		TextField,
-		Button,
-		Column,
-		Image,
-		Icon,
-		Row,
-		List,
-		Card,
-		Divider,
-		CheckBox,
-		ChoicePicker,
-		DateTimeInput,
-		Video,
-		AudioPlayer,
-		Tabs,
-		Modal,
-		Slider,
-	],
-	[],
-	basicCatalog.themeSchema
-);
+interface InteractiveUiRuntimeOptions {
+	/** From `createInteractiveUiCatalog()`. */
+	catalog: InteractiveUiCatalog;
+	/** Sends the surfaces' actions to the agent. */
+	onAction: ( action: A2uiClientAction ) => Promise< void >;
+}
 
-export function createInteractiveUiRuntime(
-	onAction: ( action: A2uiClientAction ) => Promise< void >
-) {
+/**
+ * Turns A2UI messages into surfaces, grouped by the owner the host shows them next to,
+ * such as a chat message.
+ */
+export function createInteractiveUiRuntime( { catalog, onAction }: InteractiveUiRuntimeOptions ) {
 	const processor = new MessageProcessor< ReactComponentImplementation >( [ catalog ], onAction );
-	const placements = new Map< string, string >();
-	let messageId = '';
-	const created = processor.onSurfaceCreated( ( surface ) =>
-		placements.set( surface.id, messageId )
+
+	const surfaceOwners = new Map< string, string >();
+	let currentOwnerId = '';
+	const createdSubscription = processor.onSurfaceCreated( ( surface ) =>
+		surfaceOwners.set( surface.id, currentOwnerId )
 	);
-	const deleted = processor.onSurfaceDeleted( ( id ) => placements.delete( id ) );
+	const deletedSubscription = processor.onSurfaceDeleted( ( id ) => surfaceOwners.delete( id ) );
 
 	return {
-		processMessages: ( messages: A2uiMessage[], ownerMessageId: string ) => {
-			messageId = ownerMessageId;
+		processMessages: ( messages: A2uiMessage[], ownerId: string ) => {
+			currentOwnerId = ownerId;
 			processor.processMessages( messages );
 		},
 		getSurface: ( id: string ) => processor.getSurface( id ),
-		getSurfaceIds: ( ownerMessageId: string ) =>
-			[ ...placements ].flatMap( ( [ id, owner ] ) => ( owner === ownerMessageId ? [ id ] : [] ) ),
+		getSurfaceIds: ( ownerId: string ) =>
+			[ ...surfaceOwners ].filter( ( [ , owner ] ) => owner === ownerId ).map( ( [ id ] ) => id ),
 		dispose: () => {
-			created.unsubscribe();
-			deleted.unsubscribe();
+			createdSubscription.unsubscribe();
+			deletedSubscription.unsubscribe();
 			processor.model.dispose();
 			processor.dispose();
 		},
