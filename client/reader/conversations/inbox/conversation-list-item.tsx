@@ -40,14 +40,14 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 				aria-current={ isSelected || undefined }
 				onClick={ () => onSelect( conversation ) }
 			>
-				<HStack as="span" className="conversations-inbox__item-header">
+				<HStack as="span">
 					<span className="conversations-inbox__item-title">{ title }</span>
 					<Text size={ 14 } color="var(--color-text-subtle)">
 						{ moment( timestamp ).fromNow( true ) }
 					</Text>
 				</HStack>
 				{ firstCommenter && (
-					<HStack as="span" justify="flex-start" className="conversations-inbox__item-commenters">
+					<HStack as="span" justify="flex-start">
 						<HStack
 							as="span"
 							spacing={ 0 }
@@ -75,7 +75,7 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 						</span>
 					</HStack>
 				) }
-				<HStack as="span" className="conversations-inbox__item-footer">
+				<HStack as="span">
 					<span className="conversations-inbox__item-excerpt">{ excerpt }</span>
 					{ unreadCount > 0 && (
 						<Text color="var(--color-primary)" className="conversations-inbox__item-new">
