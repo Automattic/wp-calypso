@@ -1,5 +1,6 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import CommentNote from './layouts/comment';
+import FollowNote from './layouts/follow';
 import NewPostNote from './layouts/new-post';
 import NoticeNote from './layouts/notice';
 import ReactionsNote from './layouts/reactions';
@@ -13,7 +14,7 @@ const LAYOUT_BY_TYPE: Record< string, ComponentType< { note: Note } > > = {
 	like: ReactionsNote,
 	comment_like: ReactionsNote,
 	reblog: ReactionsNote,
-	follow: ReactionsNote,
+	follow: FollowNote,
 	new_post: NewPostNote,
 };
 
