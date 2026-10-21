@@ -12,6 +12,7 @@ const defaultProps = {
 	setFilterName: noop,
 	selectedNoteId: undefined,
 	setSelectedNoteId: noop,
+	requestNoteFocus: noop,
 };
 
 // Copied from https://github.com/WordPress/gutenberg/blob/adf3ef6d41df4e70f283a35f552631668131dd95/packages/components/src/tabs/test/index.tsx#L181.
@@ -63,6 +64,7 @@ describe( 'NotePanel', () => {
 					setFilterName={ setFilterName }
 					selectedNoteId={ undefined }
 					setSelectedNoteId={ noop }
+					requestNoteFocus={ noop }
 				/>
 			);
 		};

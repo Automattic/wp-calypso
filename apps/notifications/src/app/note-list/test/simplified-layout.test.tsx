@@ -106,6 +106,7 @@ const renderList = (
 					filterName={ 'all' as FilterName }
 					selectedNoteId={ undefined }
 					setSelectedNoteId={ noop }
+					requestNoteFocus={ noop }
 				/>
 			</AppProvider>
 		</Provider>

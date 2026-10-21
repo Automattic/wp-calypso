@@ -70,6 +70,7 @@ describe( 'load-more after a tab switch (integration)', () => {
 					filterName={ filterName }
 					selectedNoteId={ undefined }
 					setSelectedNoteId={ noop }
+					requestNoteFocus={ noop }
 				/>
 			</AppProvider>
 		</Provider>

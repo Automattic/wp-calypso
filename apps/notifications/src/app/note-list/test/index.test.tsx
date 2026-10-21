@@ -35,6 +35,7 @@ const noteListTab = (
 				filterName={ filterName }
 				selectedNoteId={ selectedNoteId }
 				setSelectedNoteId={ noop }
+				requestNoteFocus={ noop }
 			/>
 		</AppProvider>
 	</Provider>

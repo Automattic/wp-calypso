@@ -17,6 +17,7 @@ const defaultProps = {
 	setFilterName: noop,
 	selectedNoteId: undefined,
 	setSelectedNoteId: noop,
+	requestNoteFocus: noop,
 };
 
 const renderPanel = ( { isViewSettingsEnabled }: { isViewSettingsEnabled: boolean } ) => {

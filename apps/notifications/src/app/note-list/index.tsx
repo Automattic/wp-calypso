@@ -17,6 +17,7 @@ import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields, SelectedNoteIdContext } from './dataviews';
 import {
+	useNoteListFocusOnNoteClose,
 	useNoteListFocusToLastSelectedNote,
 	useNoteListNavigationKeyboardShortcuts,
 } from './hooks';
@@ -45,9 +46,15 @@ type NoteListProps = {
 	filterName: FilterName;
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
+	requestNoteFocus: () => void;
 };
 
-const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListProps ) => {
+const NoteList = ( {
+	filterName,
+	selectedNoteId,
+	setSelectedNoteId,
+	requestNoteFocus,
+}: NoteListProps ) => {
 	const filter = getFilters()[ filterName ];
 	const isAllTab = filterName === 'all';
 	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
@@ -122,7 +129,13 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		}
 
 		// Toggle off when selecting the same note.
-		setSelectedNoteId( noteId !== selectedNoteId ? noteId : undefined );
+		if ( noteId === selectedNoteId ) {
+			setSelectedNoteId( undefined );
+			return;
+		}
+
+		setSelectedNoteId( noteId );
+		requestNoteFocus();
 	};
 
 	const [ initialView, setView ] = useState< View >( {
@@ -199,6 +212,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const noteListRef = useRef< HTMLObjectElement >( null );
 
 	useNoteListFocusToLastSelectedNote( { noteListRef, notes: tab.notes } );
+	useNoteListFocusOnNoteClose( { noteListRef, notes: tab.notes, selectedNoteId } );
 	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes } );
 
 	// Spinner instead of an empty message while the view may still be filling: more

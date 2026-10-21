@@ -40,6 +40,7 @@ type NotePanelProps = {
 	setFilterName: ( filterName: FilterName ) => void;
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
+	requestNoteFocus: () => void;
 };
 
 const NotePanel = ( {
@@ -48,6 +49,7 @@ const NotePanel = ( {
 	setFilterName,
 	selectedNoteId,
 	setSelectedNoteId,
+	requestNoteFocus,
 }: NotePanelProps ) => {
 	const notificationTabs = getNotificationTabs();
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
@@ -170,6 +172,7 @@ const NotePanel = ( {
 					filterName={ filterName }
 					selectedNoteId={ selectedNoteId }
 					setSelectedNoteId={ setSelectedNoteId }
+					requestNoteFocus={ requestNoteFocus }
 				/>
 			</ErrorBoundary>
 		</>

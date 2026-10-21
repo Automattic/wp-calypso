@@ -6,11 +6,11 @@ import {
 	CardHeader,
 	CardBody,
 } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
+import { useInstanceId, useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, arrowUp, arrowDown } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
 import actions from '../../panel/state/actions';
@@ -70,9 +70,16 @@ type NoteProps = {
 	noteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
 	noteNavigation: NoteNavigation;
+	noteFocusRequest: number;
 };
 
-const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: NoteProps ) => {
+const Note = ( {
+	isDismissible,
+	noteId,
+	setSelectedNoteId,
+	noteNavigation,
+	noteFocusRequest,
+}: NoteProps ) => {
 	const dispatch = useDispatch();
 	const isLargeScreen = useViewportMatch( 'large' );
 	const goBack = () => setSelectedNoteId( undefined );
@@ -91,6 +98,16 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 			dispatch( actions.ui.selectNote( note.id ) );
 		}
 	}, [ note?.id, dispatch ] );
+
+	const noteBodyRef = useRef< HTMLDivElement >( null );
+
+	const noteTitleId = useInstanceId( Note, 'wpnc-note-title' );
+
+	useEffect( () => {
+		if ( noteFocusRequest > 0 ) {
+			noteBodyRef.current?.focus( { preventScroll: true } );
+		}
+	}, [ noteFocusRequest ] );
 
 	if ( ! note ) {
 		return null;
@@ -119,7 +136,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 								onClick={ goBack }
 							/>
 						) }
-						<Heading level={ 3 } size={ 15 } weight={ 500 }>
+						<Heading id={ noteTitleId } level={ 3 } size={ 15 } weight={ 500 }>
 							{ isSimplifiedNote ? getTemporaryNoteTitle( note ) : note.title }
 						</Heading>
 					</HStack>
@@ -148,7 +165,14 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 					</HStack>
 				</HStack>
 			</CardHeader>
-			<CardBody size="small" style={ { maxHeight: 'unset' } }>
+			<CardBody
+				ref={ noteBodyRef }
+				size="small"
+				style={ { maxHeight: 'unset' } }
+				tabIndex={ -1 }
+				role="region"
+				aria-labelledby={ noteTitleId }
+			>
 				<VStack justify="flex-start" spacing={ isSimplifiedNote ? 6 : 4 }>
 					{ isSimplifiedNote && <SimplifiedNote note={ note } /> }
 					{ ! isSimplifiedNote && !! note.header?.length && (

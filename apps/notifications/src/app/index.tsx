@@ -1,6 +1,6 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
-import { useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
+import { useCallback, useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
@@ -71,6 +71,11 @@ const defaultHandlers = {
 const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) => {
 	const [ filterName, setFilterName ] = useState< FilterName >( 'all' );
 	const [ selectedNoteId, setSelectedNoteId ] = useState< string | undefined >( undefined );
+	const [ noteFocusRequest, setNoteFocusRequest ] = useState( 0 );
+	const requestNoteFocus = useCallback(
+		() => setNoteFocusRequest( ( request ) => request + 1 ),
+		[]
+	);
 	const isDetailOpen = selectedNoteId !== undefined;
 
 	// Hold the last selected note id so it keeps rendering through the
@@ -124,6 +129,7 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 						noteId={ displayedNoteId }
 						setSelectedNoteId={ setSelectedNoteId }
 						noteNavigation={ noteNavigation }
+						noteFocusRequest={ noteFocusRequest }
 					/>
 				</ErrorBoundary>
 			</div>
@@ -134,6 +140,7 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 					setFilterName={ setFilterName }
 					selectedNoteId={ selectedNoteId }
 					setSelectedNoteId={ setSelectedNoteId }
+					requestNoteFocus={ requestNoteFocus }
 				/>
 			</div>
 		</HStack>
