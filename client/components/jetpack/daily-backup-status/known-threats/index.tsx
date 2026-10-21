@@ -348,22 +348,25 @@ export function KnownThreatsToggleButton( {
 					'%d is the number of known security threats in a backup; the button shows the list of threats',
 			} );
 
-	// No tooltip: it could only repeat the label.
 	return (
 		<>
 			{ inToolbar ? (
-				<CalypsoButton
-					compact
-					borderless
-					className="backup-known-threats__toggle"
-					aria-label={ String( ariaLabel ) }
-					aria-expanded={ isOpen }
-					aria-controls={ isOpen ? controlsId : undefined }
-					aria-describedby={ warningId }
-					onClick={ onToggle }
-				>
-					<KnownThreatsBadge flagged={ flagged } />
-				</CalypsoButton>
+				// Shows sighted users the warning; Tooltip leaves the existing description alone,
+				// so screen readers don't hear it twice.
+				<Tooltip text={ String( warning ) }>
+					<CalypsoButton
+						compact
+						borderless
+						className="backup-known-threats__toggle"
+						aria-label={ String( ariaLabel ) }
+						aria-expanded={ isOpen }
+						aria-controls={ isOpen ? controlsId : undefined }
+						aria-describedby={ warningId }
+						onClick={ onToggle }
+					>
+						<KnownThreatsBadge flagged={ flagged } />
+					</CalypsoButton>
+				</Tooltip>
 			) : (
 				<Button
 					__next40pxDefaultSize

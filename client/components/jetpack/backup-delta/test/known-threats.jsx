@@ -161,6 +161,9 @@ describe( 'BackupDelta known threats', () => {
 		expect( button ).toHaveAccessibleDescription( warning );
 		expect( button ).not.toHaveAttribute( 'title' );
 		expect( button ).not.toHaveAccessibleDescription( 'Show threats' );
+		await userEvent.hover( button );
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( warning );
+		expect( button ).toHaveAccessibleDescription( warning );
 		await userEvent.unhover( button );
 		const restoreLink = await within( cards[ 0 ] ).findByRole( 'link', {
 			name: /^Restore .+ backup instead$/,
