@@ -2,6 +2,12 @@ import { Page, Locator } from 'playwright';
 import envVariables from '../../env-variables';
 import { EditorComponent } from './editor-component';
 
+// Choosing a result inserts the block synchronously, and on desktop hovering it
+// mounts a preview iframe first. On contended CI agents that kept the renderer
+// busy past the default action timeout. A dispatched click cannot be retried
+// safely (it may insert the block twice), so give it more time instead.
+const INSERTER_CLICK_TIMEOUT = 20 * 1000;
+
 const sidebarParentSelector = '.block-editor-inserter__main-area';
 const selectors = {
 	closeBlockInserterButton: 'button[aria-label="Close Block Inserter"]',
@@ -152,19 +158,17 @@ export class EditorSidebarBlockInserterComponent {
 				.first();
 		}
 
-		// Hover is best-effort: on mobile/CI it occasionally hangs after the
-		// element resolves and the auto-wait reports the element visible and
-		// stable, exhausting the action timeout for no useful reason. The
-		// click below does not require a prior hover, so swallow timeouts.
-		try {
-			await locator.hover( { timeout: 2000 } );
-		} catch {
-			// Hover unavailable; proceed with focus + click.
-		}
-		await locator.focus();
 		// Pattern insertion does not navigate but can emit events that Playwright
 		// treats as "scheduled navigation" on slow CI, hanging the click auto-wait.
-		await locator.click( type === 'pattern' ? { noWaitAfter: true } : undefined );
+		// Keep it off the block path: noWaitAfter also drops the post-click check
+		// that the pointer landed here, so a click the re-rendering list eats is
+		// never retried. Patterns can afford that (they assert on a block-count
+		// delta); blocks assert on ".is-selected", which a block of the same type
+		// left selected by an earlier step can satisfy.
+		await locator.click( {
+			timeout: INSERTER_CLICK_TIMEOUT,
+			...( type === 'pattern' && { noWaitAfter: true } ),
+		} );
 
 		return locator;
 	}

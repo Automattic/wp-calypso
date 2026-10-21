@@ -10,5 +10,5 @@ export { getTransferPriceText } from './get-transfer-price-text';
 export { getTransferRestrictionMessage } from './get-transfer-restriction-message';
 export { getTransferSalePriceText } from './get-transfer-sale-price-text';
 export { isFreeTransfer } from './is-free-transfer';
-export { optionInfo } from './option-info';
+export { optionInfo, getConnectSupportedTopText } from './option-info';
 export { transferDomainAction } from './transfer-domain-action';

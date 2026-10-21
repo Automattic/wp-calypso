@@ -1,18 +1,17 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useLocale } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { type JSX } from 'react';
-import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { useLoginContext } from 'calypso/login/login-context';
-import { useDispatch, useSelector } from 'calypso/state';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { useSelector } from 'calypso/state';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
+import useSignupLink from '../hooks/use-signup-link';
 import HeadingLogo from './heading-logo';
 import './one-login-layout.scss';
 
@@ -31,6 +30,11 @@ export const ensureHeadingProvided = (
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
 	isFromJetpackConnector?: boolean;
+	/**
+	 * Jetpack onboarding or connector flow, which the user is completing from a
+	 * Jetpack site.
+	 */
+	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
 	children: React.ReactNode;
 	/**
@@ -40,6 +44,12 @@ interface OneLoginLayoutProps {
 	isSectionSignup?: boolean;
 	loginUrl?: string;
 	isLostPasswordView?: boolean;
+	/**
+	 * Keeps the "Create an account" link in the top bar below 960px only. The main login view
+	 * passes this in the entry clarity treatment, where its footer carries the route to signup on
+	 * desktop.
+	 */
+	signupLinkMobileOnly?: boolean;
 	noThanksRedirectUrl?: string;
 	/**
 	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`. Defaults to 6.
@@ -56,21 +66,35 @@ interface OneLoginLayoutProps {
 	 * default quiet ToS treatment.
 	 */
 	subHeadingProminent?: boolean;
+	/**
+	 * Rendered above the heading. Pass a component that returns `null` when it
+	 * has nothing to show, so the layout keeps its spacing.
+	 */
+	notice?: React.ReactNode;
+	/**
+	 * Links the top bar WordPress.com logo to the homepage. Never applies to
+	 * Jetpack, Woo JPC, OAuth2 client or partner-branded logins.
+	 */
+	linkLogoToHome?: boolean;
 }
 
 const OneLoginLayout = ( {
 	isJetpack,
 	isFromJetpackConnector,
+	isUnifiedConnectionFlow,
 	connectorPlugins,
 	children,
 	signupUrl: signupUrlProp,
 	isSectionSignup,
 	loginUrl,
 	isLostPasswordView,
+	signupLinkMobileOnly,
 	noThanksRedirectUrl,
 	columnWidth,
 	showLogo = true,
 	subHeadingProminent = false,
+	notice,
+	linkLogoToHome = false,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const urlLocale = useLocale();
@@ -79,40 +103,31 @@ const OneLoginLayout = ( {
 	// For logged-in users, use their user locale setting. For logged-out users, use URL locale.
 	const locale = isLoggedIn && userLocale ? userLocale : urlLocale;
 	const currentRoute = useSelector( getCurrentRoute );
-	const currentQuery = useSelector( getCurrentQueryArguments );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
-	const dispatch = useDispatch();
+	const isWooJPC = useSelector( isWooJPCFlow );
 	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
 	const validatedHeadingText = ensureHeadingProvided( headingText );
-	const { topBarLogo } = usePartnerBranding();
+	const { topBarLogo, hasCustomBranding } = usePartnerBranding();
+	const signupLink = useSignupLink( { signupUrl: signupUrlProp, origin: 'login-layout' } );
 
-	const SignUpLink = () => {
-		// use '?signup_url' if explicitly passed as URL query param
-		const signupUrl: string = signupUrlProp
-			? window.location.origin + pathWithLeadingSlash( signupUrlProp )
-			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale );
-
-		const handleClick = ( event: React.MouseEvent< HTMLElement > ) => {
-			recordTracksEvent( 'calypso_login_sign_up_link_click', { origin: 'login-layout' } );
-
-			if ( isLoggedIn ) {
-				event.preventDefault();
-				dispatch( redirectToLogout( signupUrl ) );
-			}
-		};
-
+	const renderSignUpLink = () => {
 		if ( isLostPasswordView ) {
 			return null;
 		}
 
 		return (
-			<Step.LinkButton href={ signupUrl } key="sign-up-link" onClick={ handleClick } rel="external">
+			<Step.LinkButton
+				href={ signupLink.href }
+				key="sign-up-link"
+				onClick={ signupLink.onClick }
+				rel="external"
+			>
 				{ translate( 'Create an account' ) }
 			</Step.LinkButton>
 		);
 	};
 
-	const LoginLink = () => {
+	const renderLoginLink = () => {
 		if ( ! loginUrl ) {
 			return null;
 		}
@@ -124,7 +139,7 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const NoThanksLink = () => {
+	const renderNoThanksLink = () => {
 		if ( ! noThanksRedirectUrl ) {
 			return null;
 		}
@@ -144,15 +159,45 @@ const OneLoginLayout = ( {
 		);
 	};
 
+	const shouldLinkLogo =
+		linkLogoToHome &&
+		! isJetpack &&
+		! isFromJetpackConnector &&
+		! isUnifiedConnectionFlow &&
+		! isWooJPC &&
+		! oauth2Client &&
+		! hasCustomBranding;
+
+	const handleLogoClick = () => {
+		recordTracksEvent( isSectionSignup ? 'calypso_signup_logo_click' : 'calypso_login_logo_click', {
+			page: currentRoute,
+		} );
+	};
+
 	const topBar = (): JSX.Element => {
+		const signupOrLoginLink = isSectionSignup ? renderLoginLink() : renderSignUpLink();
+
+		// Hidden in CSS rather than by a viewport hook: the page is server-rendered, so a hook
+		// would render the mobile arrangement and jump on hydration.
 		const rightElement = (
 			<nav className="wp-login__one-login-layout-top-right">
-				{ isSectionSignup ? <LoginLink /> : <SignUpLink /> }
-				{ noThanksRedirectUrl && <NoThanksLink /> }
+				{ signupLinkMobileOnly ? (
+					<span className="wp-login__top-right-mobile">{ signupOrLoginLink }</span>
+				) : (
+					signupOrLoginLink
+				) }
+				{ renderNoThanksLink() }
 			</nav>
 		);
 
-		return <Step.TopBar rightElement={ rightElement } logo={ topBarLogo } />;
+		return (
+			<Step.TopBar
+				rightElement={ rightElement }
+				logo={ topBarLogo }
+				logoHref={ shouldLinkLogo ? localizeUrl( 'https://wordpress.com/', locale ) : undefined }
+				onLogoClick={ shouldLinkLogo ? handleLogoClick : undefined }
+			/>
+		);
 	};
 
 	const effectiveColumnWidth: 4 | 5 | 6 | 8 | 10 = ( columnWidth ?? 6 ) as 4 | 5 | 6 | 8 | 10;
@@ -164,6 +209,7 @@ const OneLoginLayout = ( {
 			verticalAlign="center"
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">
+				{ notice }
 				<div className="wp-login__one-login-layout-heading">
 					{ showLogo && (
 						<HeadingLogo

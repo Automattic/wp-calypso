@@ -39,7 +39,7 @@ export function DomainsTable( props: DomainsTableProps & { footer?: ReactNode } 
 			<div className={ clsx( className, 'domains-table' ) }>
 				{ showBulkUpdateNotice && <DomainsTableBulkUpdateNotice /> }
 				{ showDomainsToolbar && <DomainsTableToolbar /> }
-				{ useMobileCards ?? isMobile ? (
+				{ ( useMobileCards ?? isMobile ) ? (
 					<DomainsTableMobileCards />
 				) : (
 					<table

@@ -31,7 +31,9 @@ import { getSitePlan } from 'calypso/state/sites/plans/selectors';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
-import useGenerateActionCallback from './use-generate-action-callback';
+import useGenerateActionCallback, {
+	type CheckoutAttribution,
+} from './use-generate-action-callback';
 import useRenewalPricingPostButtonText from './use-renewal-pricing-post-button-text';
 import type {
 	GridAction,
@@ -76,6 +78,7 @@ export default function useGenerateActionHook( {
 	enableCategorisedFeatures,
 	redirectTo,
 	pluginSlug,
+	checkoutAttribution,
 	isDelayedDowngradePending,
 	delayedDowngradeToProductSlug,
 	onRenewCurrentPlan,
@@ -92,6 +95,8 @@ export default function useGenerateActionHook( {
 	enableCategorisedFeatures?: boolean;
 	redirectTo?: string;
 	pluginSlug?: string;
+	/** Purchase attribution forwarded to the upgrade checkout. */
+	checkoutAttribution?: CheckoutAttribution;
 	/** True when a downgrade has been scheduled for the current plan's renewal. */
 	isDelayedDowngradePending?: boolean;
 	/** The product slug the scheduled downgrade will land on, if any. */
@@ -130,6 +135,7 @@ export default function useGenerateActionHook( {
 		coupon,
 		redirectTo,
 		pluginSlug,
+		checkoutAttribution,
 	} );
 
 	const useActionHook = ( {
@@ -364,7 +370,7 @@ function getSignupAction( {
 						components: {
 							span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
 						},
-				  } )
+					} )
 				: translate( 'Get %(plan)s ⋅ %(priceString)s', {
 						args: {
 							plan: planTitle ?? '',
@@ -372,7 +378,7 @@ function getSignupAction( {
 						},
 						comment:
 							'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium ⋅ $10',
-				  } ),
+					} ),
 			undefined,
 			translate( 'Get %(plan)s plan %(priceString)s', {
 				args: {
@@ -461,15 +467,12 @@ function getLoggedInPlansAction( {
 	delayedDowngradeToProductSlug?: string | null;
 	onRenewCurrentPlan?: () => void;
 } & UseActionHookProps ): GridAction {
-	// Use plan type matching instead of exact slug matching for the 'plans-upgrade' intent.
-	// This allows monthly/yearly versions of the same plan to be considered "current"
 	const isUpgradeFlow =
 		plansIntent &&
 		[ 'plans-upgrade', 'plans-upgrade-or-downgrade', 'plans-woo-hosted' ].includes( plansIntent );
-	const current =
-		isUpgradeFlow && sitePlanSlug
-			? getPlanClass( sitePlanSlug ) === getPlanClass( planSlug )
-			: sitePlanSlug === planSlug;
+	// Term matters: a longer-term card of the tier the user already owns is a term upgrade, not
+	// the plan they're on, so it has to stay purchasable.
+	const current = sitePlanSlug === planSlug;
 	const isTrialPlan =
 		sitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
 		sitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
@@ -623,13 +626,13 @@ function getLoggedInPlansAction( {
 						components: {
 							span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
 						},
-				  } )
+					} )
 				: translate( 'Upgrade ⋅ %(priceString)s', {
 						context: 'verb',
 						args: { priceString: priceString ?? '' },
 						comment:
 							'%(priceString)s is the full price including the currency. Eg: Get Upgrade ⋅ $10',
-				  } ),
+					} ),
 			'primary',
 			translate( 'Upgrade to %(plan)s plan, %(priceString)s', {
 				context: 'verb',

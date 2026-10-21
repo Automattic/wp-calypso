@@ -14,12 +14,20 @@ export function buildOmnibarNodesFromAdminBarNodes(
 ): OmnibarNodes {
 	const omnibarNodes: OmnibarNodes = {};
 	const siteActionNodes: OmnibarNode[] = [];
+	const pluginNodes: OmnibarNode[] = [];
 
 	const nodeMap = new Map< string, OmnibarNode >();
 	for ( const node of adminBarNodes ) {
+		const builder = builders?.[ node.id ];
+		const built = builder?.( node );
+		if ( built === null ) {
+			continue;
+		}
+
 		const omnibarNode: OmnibarNode = {
 			id: node.id,
 			title: node.meta?.menu_title || node.title || '',
+			tooltip: node.meta?.title || undefined,
 			href: node.href && resolveHref ? resolveHref( node.href ) : node.href,
 			group: node.group,
 		};
@@ -29,10 +37,13 @@ export function buildOmnibarNodesFromAdminBarNodes(
 		}
 
 		switch ( node.id ) {
-			case 'wp-logo':
+			case 'wp-logo': {
+				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
+				omnibarNode.title = undefined;
+				omnibarNode.label = doc.querySelector( '.screen-reader-text' )?.textContent?.trim();
 				omnibarNodes.home = omnibarNode;
-				omnibarNodes.home.title = undefined;
 				break;
+			}
 			case 'site-name': {
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
 				const siteIcon = doc.querySelector( 'img' );
@@ -93,6 +104,11 @@ export function buildOmnibarNodesFromAdminBarNodes(
 				siteActionNodes.push( omnibarNode );
 				break;
 			}
+			case 'stats':
+			case 'launch-site': {
+				siteActionNodes.push( omnibarNode );
+				break;
+			}
 			case 'my-account': {
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
 				const avatar = doc.querySelector( 'img' );
@@ -131,9 +147,12 @@ export function buildOmnibarNodesFromAdminBarNodes(
 			}
 		}
 
-		const builder = builders?.[ node.id ];
 		if ( builder ) {
-			Object.assign( omnibarNode, builder( node ) );
+			Object.assign( omnibarNode, built );
+		}
+
+		if ( node.parent === 'top-secondary' && omnibarNode !== omnibarNodes.user ) {
+			pluginNodes.push( omnibarNode );
 		}
 
 		nodeMap.set( node.id, omnibarNode );
@@ -141,6 +160,10 @@ export function buildOmnibarNodesFromAdminBarNodes(
 
 	if ( siteActionNodes.length > 0 ) {
 		omnibarNodes.siteActions = siteActionNodes;
+	}
+
+	if ( pluginNodes.length > 0 ) {
+		omnibarNodes.plugins = pluginNodes;
 	}
 
 	for ( const node of adminBarNodes ) {
@@ -161,4 +184,12 @@ export function buildOmnibarNodesFromAdminBarNodes(
 	}
 
 	return omnibarNodes;
+}
+
+export function parseAdminBarTitle( node: AdminBarNode ) {
+	const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
+	return {
+		text: doc.body.textContent?.trim() || undefined,
+		tooltip: doc.querySelector( '[title]' )?.getAttribute( 'title' )?.trim() || undefined,
+	};
 }

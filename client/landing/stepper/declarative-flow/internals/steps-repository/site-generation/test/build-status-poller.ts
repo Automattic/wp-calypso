@@ -13,11 +13,16 @@ describe( 'pollForBuildWowStatus', () => {
 		jest.useRealTimers();
 	} );
 
-	it( 'calls onReady once the status is live', async () => {
+	it( 'calls onReady with the live response once the status is live', async () => {
+		const liveResponse = {
+			build_status: 'live',
+			site_editor_url:
+				'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&p=%2Fpage%2F12&canvas=edit',
+		};
 		const fetchStatus = jest
 			.fn()
 			.mockResolvedValueOnce( { build_status: 'delivering' } )
-			.mockResolvedValueOnce( { build_status: 'live' } );
+			.mockResolvedValueOnce( liveResponse );
 		const onReady = jest.fn();
 		const onFailed = jest.fn();
 
@@ -34,6 +39,9 @@ describe( 'pollForBuildWowStatus', () => {
 
 		await jest.advanceTimersByTimeAsync( 1000 );
 		expect( onReady ).toHaveBeenCalledTimes( 1 );
+		// The consumer reads site_editor_url off this: the live route is only
+		// known once the build has verified the generated front page.
+		expect( onReady ).toHaveBeenCalledWith( liveResponse );
 		expect( onFailed ).not.toHaveBeenCalled();
 	} );
 

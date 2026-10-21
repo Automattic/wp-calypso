@@ -14,16 +14,15 @@ interface PerformanceSectionProps {
 	hash?: string;
 	hostingProvider?: HostingProvider;
 	performanceMetricsRef: React.RefObject< HTMLElement | null >;
-	setIsGetReportFormOpen?: ( isOpen: boolean ) => void;
 }
 
 const PERFORMANCE_THRESHOLD = 0.9;
 
 export const PerformanceSection: React.FC< PerformanceSectionProps > = ( props ) => {
 	const translate = useTranslate();
-	const { url, hash, hostingProvider, performanceMetricsRef, setIsGetReportFormOpen } = props;
+	const { url, hash, hostingProvider, performanceMetricsRef } = props;
 	const { data }: { data: any } = useUrlPerformanceMetricsQuery( url, hash );
-	const { truncated, diagnostic: performanceData = {} } = data?.audits.performance ?? {};
+	const { diagnostic: performanceData = {} } = data?.audits.performance ?? {};
 
 	const isWPcom = hostingProvider?.slug?.toLowerCase() === 'automattic';
 
@@ -75,17 +74,6 @@ export const PerformanceSection: React.FC< PerformanceSectionProps > = ( props )
 					} }
 				/>
 			) ) }
-
-			{ truncated &&
-				Array( 10 )
-					.fill( {} )
-					.map( ( _, index ) => (
-						<MetricsInsight
-							key={ `locked-${ index }` }
-							locked
-							onClick={ () => setIsGetReportFormOpen?.( true ) }
-						/>
-					) ) }
 		</MetricsSection>
 	);
 };

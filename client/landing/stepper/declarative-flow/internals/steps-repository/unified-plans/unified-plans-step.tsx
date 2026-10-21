@@ -14,7 +14,9 @@ import {
 	isNewHostedSiteCreationFlow,
 	isOnboardingFlow,
 	isTailoredSignupFlow,
+	LAUNCH_SITE_FLOW,
 	ONBOARDING_FLOW,
+	SITE_MIGRATION_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -28,6 +30,7 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import { parse as parseQs } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
@@ -51,6 +54,8 @@ import {
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
+import { OnboardingProgress } from '../components/onboarding-progress';
+import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';
@@ -69,6 +74,7 @@ export interface UnifiedPlansStepProps {
 	hideFreePlan?: boolean;
 	hidePersonalPlan?: boolean;
 	hidePremiumPlan?: boolean;
+	hideBusinessPlan?: boolean;
 	hideEnterprisePlan?: boolean;
 	hideEcommercePlan?: boolean;
 	hidePlanTypeSelector?: boolean;
@@ -123,7 +129,7 @@ export interface UnifiedPlansStepProps {
 		Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >
 	>;
 	headerText?: string;
-	subHeaderText?: string;
+	subHeaderText?: TranslateResult;
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
@@ -223,6 +229,7 @@ function UnifiedPlansStep( {
 	hideEcommercePlan,
 	hidePersonalPlan,
 	hidePremiumPlan,
+	hideBusinessPlan,
 	hideEnterprisePlan,
 	hidePlanTypeSelector,
 	saveSignupStep: saveSignupStepFromProps,
@@ -289,6 +296,7 @@ function UnifiedPlansStep( {
 		setShowHelpCenter( ! isHelpCenterShown );
 	};
 	const stepCounter = useOnboardingStepCounter( flowName, 'plans' );
+	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flowName ) );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
 			return null;
@@ -682,6 +690,9 @@ function UnifiedPlansStep( {
 				customerType={ customerType }
 				deemphasizeFreePlan={ deemphasizeFreePlan }
 				renderFreePlanCtaInStepContainerV2={ shouldUseModalBackedFreePlanCTA }
+				// Legacy /start/launch-site shares its flow name with the Stepper flow, so the name
+				// alone can't tell which container the plans render in.
+				isInStepContainerV2={ flowName === LAUNCH_SITE_FLOW ? !! useStepContainerV2 : undefined }
 				plansWithScroll={ isDesktop }
 				intent={ intent }
 				flowName={ flowName }
@@ -689,6 +700,7 @@ function UnifiedPlansStep( {
 				hideFreePlan={ hideFreePlan && ! deemphasizeFreePlan }
 				hidePersonalPlan={ hidePersonalPlan }
 				hidePremiumPlan={ hidePremiumPlan }
+				hideBusinessPlan={ hideBusinessPlan }
 				hideEcommercePlan={ shouldHideEcommercePlan() }
 				hideEnterprisePlan={ hideEnterprisePlan }
 				hidePlanTypeSelector={ hidePlanTypeSelector }
@@ -715,10 +727,11 @@ function UnifiedPlansStep( {
 	);
 
 	if ( useStepContainerV2 && wrapperProps ) {
-		const goBack = wrapperProps.hideBack ? undefined : wrapperProps.goBack;
+		const goBack = wrapperProps.hideBack || showProgress ? undefined : wrapperProps.goBack;
 
 		return (
 			<>
+				{ flowName === SITE_MIGRATION_FLOW && <DocumentHead title={ headerText } /> }
 				{ /*
 				 * The layout mounts hidden (CSS: visibility:hidden + position:absolute) so
 				 * PlansFeaturesMain's data-fetching hooks run immediately. Step.Loading
@@ -745,7 +758,7 @@ function UnifiedPlansStep( {
 									) : undefined
 								}
 								rightElement={
-									isOnboardingFlow( flowName ) ? (
+									stepCounter || isOnboardingFlow( flowName ) ? (
 										<>
 											{ stepCounter && (
 												<Step.StepCounter
@@ -753,9 +766,11 @@ function UnifiedPlansStep( {
 													total={ stepCounter.total }
 												/>
 											) }
-											<Step.LinkButton onClick={ toggleHelpCenter }>
-												{ translate( 'Need help?' ) }
-											</Step.LinkButton>
+											{ isOnboardingFlow( flowName ) && (
+												<Step.LinkButton onClick={ toggleHelpCenter }>
+													{ translate( 'Need help?' ) }
+												</Step.LinkButton>
+											) }
 										</>
 									) : undefined
 								}
@@ -763,6 +778,12 @@ function UnifiedPlansStep( {
 						}
 						heading={
 							<>
+								{ showProgress && (
+									<OnboardingProgress
+										currentStep="plans"
+										onStepSelect={ () => wrapperProps.goBack?.() }
+									/>
+								) }
 								{ ( intent === 'plans-website-builder' ||
 									intent === 'plans-wordpress-hosting' ) && (
 									<IntentToggle

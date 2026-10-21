@@ -2,7 +2,7 @@
 
 Shared utilities for integrating [Survicate](https://survicate.com/) surveys into WordPress.com clients.
 
-This package extracts the core Survicate logic (condition checks, script loading, and visitor trait setting) so that multiple clients (Calypso, Multi-site Dashboard, etc.) can share the same implementation.
+This package is the single Survicate implementation for WordPress.com surfaces: the Multi-site Dashboard and classic Calypso import it directly, and wp-admin on Simple and Atomic sites loads it as a `widgets.wp.com` bundle built by `apps/survicate/`. See `AGENTS.md` for the suppression model and the consumer map.
 
 ## Usage
 

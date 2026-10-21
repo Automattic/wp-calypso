@@ -6,8 +6,16 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import Notice from '../../components/notice';
+import { useSiteExpiryNoticeCandidate } from '../../components/site-expiry-notice';
 import { render } from '../../test-utils';
 import { SitesNoticeArbiter } from '../notice-arbiter';
+
+jest.mock( '../../components/site-expiry-notice', () => ( {
+	useSiteExpiryNoticeCandidate: jest.fn( () => null ),
+} ) );
+const mockCandidate = jest.mocked( useSiteExpiryNoticeCandidate );
+
+afterEach( () => mockCandidate.mockReturnValue( null ) );
 
 describe( '<SitesNoticeArbiter>', () => {
 	test( 'renders only the first page candidate when several are eligible', async () => {
@@ -76,5 +84,81 @@ describe( '<SitesNoticeArbiter>', () => {
 
 		expect( screen.queryByText( 'High priority notice' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Low priority notice' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'an urgent shared candidate outranks page candidates', async () => {
+		mockCandidate.mockReturnValue( { node: <Notice>Plan expired</Notice>, isUrgent: true } );
+		render(
+			<SitesNoticeArbiter>
+				<Notice>Page notice</Notice>
+			</SitesNoticeArbiter>
+		);
+		expect( await screen.findByText( 'Plan expired' ) ).toBeVisible();
+		expect( screen.queryByText( 'Page notice' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'dismissing an urgent shared candidate leaves the slot empty', async () => {
+		function DismissibleSharedNotice() {
+			const [ isDismissed, setIsDismissed ] = useState( false );
+			if ( isDismissed ) {
+				return null;
+			}
+			return <Notice onClose={ () => setIsDismissed( true ) }>Plan expired</Notice>;
+		}
+		mockCandidate.mockReturnValue( { node: <DismissibleSharedNotice />, isUrgent: true } );
+
+		render(
+			<SitesNoticeArbiter>
+				<Notice>Page notice</Notice>
+			</SitesNoticeArbiter>
+		);
+
+		expect( await screen.findByText( 'Plan expired' ) ).toBeVisible();
+		await userEvent.click( screen.getByRole( 'button', { name: /dismiss/i } ) );
+
+		expect( screen.queryByText( 'Plan expired' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Page notice' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'leaves the slot empty when an urgent shared candidate goes null after mount', async () => {
+		// A dismissal written back to the cache makes the candidate hook return
+		// null on the next render; the page notice must not take its place.
+		function Page() {
+			const [ , rerender ] = useState( 0 );
+			return (
+				<>
+					<button onClick={ () => rerender( ( n ) => n + 1 ) }>Rerender</button>
+					<SitesNoticeArbiter>
+						<Notice>Page notice</Notice>
+					</SitesNoticeArbiter>
+				</>
+			);
+		}
+		mockCandidate.mockReturnValue( { node: <Notice>Plan expired</Notice>, isUrgent: true } );
+		render( <Page /> );
+		expect( await screen.findByText( 'Plan expired' ) ).toBeVisible();
+
+		mockCandidate.mockReturnValue( null );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Rerender' } ) );
+
+		expect( screen.queryByText( 'Plan expired' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Page notice' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'a non-urgent shared candidate loses to page candidates', async () => {
+		mockCandidate.mockReturnValue( { node: <Notice>Plan expiring</Notice>, isUrgent: false } );
+		render(
+			<SitesNoticeArbiter>
+				<Notice>Page notice</Notice>
+			</SitesNoticeArbiter>
+		);
+		expect( await screen.findByText( 'Page notice' ) ).toBeVisible();
+		expect( screen.queryByText( 'Plan expiring' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'a non-urgent shared candidate fills an empty slot', async () => {
+		mockCandidate.mockReturnValue( { node: <Notice>Plan expiring</Notice>, isUrgent: false } );
+		render( <SitesNoticeArbiter /> );
+		expect( await screen.findByText( 'Plan expiring' ) ).toBeVisible();
 	} );
 } );

@@ -9,6 +9,7 @@ export async function fetchAgencySites(
 		sort_direction = 'asc',
 		page,
 		per_page,
+		not_multisite,
 	}: FetchAgencySitesOptions = {}
 ): Promise< FetchAgencySitesResponse > {
 	const data: FetchAgencySitesResponse = await wpcom.req.get(
@@ -23,6 +24,7 @@ export async function fetchAgencySites(
 			...( per_page ? { per_page } : {} ),
 			...( sort_field ? { sort_field } : {} ),
 			...( sort_direction ? { sort_direction } : {} ),
+			...( not_multisite ? { not_multisite: true } : {} ),
 		}
 	);
 

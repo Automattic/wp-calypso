@@ -4,6 +4,8 @@ import { captureException } from '@automattic/calypso-sentry';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { maybeReloadForChunkError } from '../chunk-load-recovery';
+import { getComponentStackFingerprint } from './component-stack';
+import { getDomInterferenceReport } from './dom-interference';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
@@ -39,15 +41,24 @@ function isBenignError( error: Error ) {
 	return false;
 }
 
-export function handleOnCatch(
+interface ReportOptions {
+	severity: 'error' | 'debug';
+	dashboard_backport?: boolean;
+	calypso_section?: string;
+	routeParams?: Record< string, unknown >;
+	previousPath?: string;
+	mechanism?: { type: string; handled: boolean };
+}
+
+/**
+ * Shared entry point for dashboard errors, whether caught by a router/error
+ * boundary or by React's root `onUncaughtError` handler. Decides whether an
+ * error is worth reporting, then delegates to `reportDashboardError`.
+ */
+function handleDashboardError(
 	error: Error,
-	errorInfo: ErrorInfo,
-	router: AnyRouter,
-	options: {
-		severity: 'error' | 'debug';
-		dashboard_backport?: boolean;
-		calypso_section?: string;
-	}
+	componentStack: string | null | undefined,
+	options: ReportOptions
 ) {
 	// A failed chunk load is usually a stale deploy, not a real error. Reload
 	// once to fetch fresh chunks instead of logging and showing an error page.
@@ -59,15 +70,19 @@ export function handleOnCatch(
 		return;
 	}
 
-	const lastMatch = router.state.matches[ router.state.matches.length - 1 ];
-	const routeParams = Object.fromEntries(
-		Object.entries( lastMatch.params ?? {} ).map( ( [ key, value ] ) => [
-			camelToSnakeCase( key ),
-			value,
-		] )
-	);
+	reportDashboardError( error, componentStack, options );
+}
 
-	const previousPath = previousPaths.get( router );
+/**
+ * Enriches every report with a DOM-interference fingerprint and a Sentry
+ * fingerprint derived from the failing React component.
+ */
+function reportDashboardError(
+	error: Error,
+	componentStack: string | null | undefined,
+	options: ReportOptions
+) {
+	const domInterference = getDomInterferenceReport();
 
 	logToLogstash( {
 		feature: 'calypso_client',
@@ -78,21 +93,91 @@ export function handleOnCatch(
 			dashboard_backport: options.dashboard_backport,
 			env_id: calypsoConfig( 'env_id' ),
 			message: error.message,
-			stack: errorInfo.componentStack,
+			stack: componentStack,
 			path: window.location.href,
-			previous_path: previousPath,
-			params: routeParams,
+			previous_path: options.previousPath,
+			params: options.routeParams,
+			...domInterference.tags,
+			dom_interference: domInterference.context,
 		},
 	} );
 
 	// Dashboard backport has its mechanism to send error log to sentry.
-	if ( ! options.dashboard_backport ) {
-		captureException( error, {
+	if ( options.dashboard_backport ) {
+		return;
+	}
+
+	const fingerprint = getComponentStackFingerprint( componentStack );
+
+	captureException( error, {
+		captureContext: {
 			tags: {
 				calypso_section: options.calypso_section,
-				...routeParams,
+				...options.routeParams,
+				...domInterference.tags,
 			},
-			extra: { previous_path: previousPath },
-		} );
+			...( options.previousPath ? { extra: { previous_path: options.previousPath } } : {} ),
+			contexts: {
+				'dom-interference': domInterference.context,
+				...( componentStack ? { react: { componentStack } } : {} ),
+			},
+			...( fingerprint ? { fingerprint } : {} ),
+		},
+		...( options.mechanism ? { mechanism: options.mechanism } : {} ),
+	} );
+}
+
+export function handleOnCatch(
+	error: Error,
+	errorInfo: ErrorInfo,
+	router: AnyRouter,
+	options: {
+		severity: 'error' | 'debug';
+		dashboard_backport?: boolean;
+		calypso_section?: string;
 	}
+) {
+	const lastMatch = router.state.matches[ router.state.matches.length - 1 ];
+	const routeParams = Object.fromEntries(
+		Object.entries( lastMatch?.params ?? {} ).map( ( [ key, value ] ) => [
+			camelToSnakeCase( key ),
+			value,
+		] )
+	);
+
+	handleDashboardError( error, errorInfo.componentStack, {
+		severity: options.severity,
+		dashboard_backport: options.dashboard_backport,
+		calypso_section: options.calypso_section,
+		routeParams,
+		previousPath: previousPaths.get( router ),
+	} );
+}
+
+/**
+ * Handler for React 19's root `onUncaughtError`. Captures commit-phase crashes
+ * that bypass every error boundary (the `handled:no` subset in Sentry), which
+ * otherwise arrive as bare `window.onerror` events with no component or route
+ * context. React no longer rethrows to `window.onerror` once this is provided,
+ * so this is the only reporting path for those errors — and the mechanism has to
+ * be set explicitly, since `captureException` would otherwise stamp them
+ * `handled: true` and drop them out of the `handled:no` facet and out of
+ * crash-free-session rate.
+ */
+export function handleUncaughtError( error: unknown, errorInfo: { componentStack?: string } ) {
+	try {
+		const normalizedError = error instanceof Error ? error : new Error( String( error ) );
+		handleDashboardError( normalizedError, errorInfo.componentStack, {
+			severity: calypsoConfig( 'env_id' ) === 'dashboard-production' ? 'error' : 'debug',
+			calypso_section: 'dashboard',
+			mechanism: { type: 'react.onUncaughtError', handled: false },
+		} );
+	} catch {
+		// A throwing error handler would replace the original crash with a less
+		// useful one. Swallow.
+	}
+
+	// Preserve React's default console reporting for uncaught errors.
+	// eslint-disable-next-line no-console
+	console.error( error );
 }

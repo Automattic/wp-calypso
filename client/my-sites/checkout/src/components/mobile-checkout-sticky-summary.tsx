@@ -209,6 +209,8 @@ const TotalPriceGroup = styled.span`
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
+	white-space: nowrap;
+	flex-shrink: 0;
 `;
 
 /**
@@ -348,7 +350,7 @@ export function MobileCheckoutStickySummary() {
 			? formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
 					isSmallestUnit: true,
 					stripZeros: true,
-			  } )
+				} )
 			: undefined;
 	const { setSlotEl } = useSubmitButtonSlot();
 	const [ isOpen, setIsOpen ] = useState( false );

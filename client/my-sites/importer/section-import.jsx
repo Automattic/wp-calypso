@@ -329,11 +329,11 @@ class SectionImport extends Component {
 			? translate( 'Importing content from:', {
 					comment:
 						"This text appears above the icon of another service (e.g. Wix, Squarespace) indicating that the process of importing the user's data from that service is ongoing",
-			  } )
+				} )
 			: translate( 'I want to import content from:', {
 					comment:
 						'This text appears above a list of service icons (e.g. Wix, Squarespace) asking the user to choose one.',
-			  } );
+				} );
 		const isImportSuccess = Boolean( this.state.latestSuccessImport );
 		const skipHeader = isSpecificImporter || isImportSuccess;
 

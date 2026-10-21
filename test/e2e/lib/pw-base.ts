@@ -29,9 +29,9 @@
  */
 /* eslint-disable react-hooks/rules-of-hooks */
 import {
+	abandonPendingLoginLockWaits,
 	AddPeoplePage,
 	AdvertisingPage,
-	AppleLoginPage,
 	BlazeCampaignPage,
 	BlockWidgetEditorComponent,
 	CartCheckoutPage,
@@ -55,7 +55,6 @@ import {
 	ImportContentFromSubstackPage,
 	ImportContentFromWordPressPage,
 	ImportContentPage,
-	ImportContentWordPressQuestionPage,
 	ImportLetsFindYourSitePage,
 	ImportLetUsMigrateYourSitePage,
 	ImportPlansPage,
@@ -66,17 +65,14 @@ import {
 	LOHPThemeSignupFlow,
 	MarketingPage,
 	MediaHelper,
-	MeSidebarComponent,
-	MyProfilePage,
 	NewSiteResponse,
-	NoticeComponent,
 	PeoplePage,
 	PostCheckoutSetupSitePage,
 	PreviewComponent,
-	PurchasesPage,
 	RestAPIClient,
 	Secrets,
 	SecretsManager,
+	setRunningSpecFile,
 	SidebarComponent,
 	SiteSelectComponent,
 	SignupPickPlanPage,
@@ -122,15 +118,14 @@ export type CustomOptions = {
 	 * Set per-project in playwright.config.ts. Valid values: 'desktop' | 'mobile'.
 	 */
 	viewportName: string;
+	sitePublicSiteCount: 1 | 2;
 };
 
 /**
  * Test accounts exposed as a fixture of the same name, logged in on first use.
  *
- * The `prime-logins` setup project logs in as each of these before the suite starts, so
- * an account added here is primed rather than logged in inline. Two accounts are fixtures
- * without belonging here: `accountGivenByEnvironment`, which resolves at run time, and
- * `accountSMS`, whose 2FA code costs a Mailosaur email only a couple of specs need.
+ * One account is a fixture without belonging here: `accountGivenByEnvironment`, which
+ * resolves at run time.
  */
 export const fixtureAccounts = {
 	accountAtomic: 'atomicUser',
@@ -263,15 +258,13 @@ export const test = base.extend<
 	CustomOptions & {
 		[ K in keyof typeof fixtureAccounts ]: TestAccount;
 	} & {
+		_abandonLoginLockWaits: void;
+		_runningSpecFile: void;
 		_throttleActionHandler: void;
 		/**
 		 * Test account selected based on the current environment variables.
 		 */
 		accountGivenByEnvironment: TestAccount;
-		/**
-		 * Test account used for SMS-based 2FA.
-		 */
-		accountSMS: TestAccount;
 		/**
 		 * Client for interacting with emails during tests.
 		 */
@@ -309,14 +302,6 @@ export const test = base.extend<
 		 */
 		componentDashboardSnackbar: DashboardSnackbarComponent;
 		/**
-		 * Component for the Me sidebar (profile/settings)
-		 */
-		componentMeSidebar: MeSidebarComponent;
-		/**
-		 * Component for displaying notices (e.g., success/error messages).
-		 */
-		componentNotice: NoticeComponent;
-		/**
 		 * Component for selecting items in various flows.
 		 */
 		componentSelectItems: SelectItemsComponent;
@@ -344,10 +329,6 @@ export const test = base.extend<
 		 * Page object representing the WordPress.com Advertising page.
 		 */
 		pageAdvertising: AdvertisingPage;
-		/**
-		 * Page object representing the Apple login page.
-		 */
-		pageAppleLogin: AppleLoginPage;
 		/**
 		 * Page object representing the Blaze campaign page.
 		 */
@@ -405,10 +386,6 @@ export const test = base.extend<
 		 */
 		pageImportContentFromWordPress: ImportContentFromWordPressPage;
 		/**
-		 * Page object representing the Import Content WordPress Question page.
-		 */
-		pageImportContentWordpressQuestion: ImportContentWordPressQuestionPage;
-		/**
 		 * Page object representing the Import Content from Another Platform or File page.
 		 */
 		pageImportContentFromAnotherPlatformOrFile: ImportContentFromAnotherPlatformOrFilePage;
@@ -437,10 +414,6 @@ export const test = base.extend<
 		 */
 		pageMarketing: MarketingPage;
 		/**
-		 * Page object representing the WordPress.com My Profile page.
-		 */
-		pageMyProfile: MyProfilePage;
-		/**
 		 * Page object representing the WordPress.com Add People page.
 		 */
 		pageAddPeople: AddPeoplePage;
@@ -457,13 +430,9 @@ export const test = base.extend<
 		 */
 		pagePlans: PlansPage;
 		/**
-		 * Page object representing the post-checkout "Set up your site" choice screen.
+		 * Page object representing the post-checkout "Let’s design your site" choice screen.
 		 */
 		pagePostCheckoutSetupSite: PostCheckoutSetupSitePage;
-		/**
-		 * Page object representing the WordPress.com purchases page.
-		 */
-		pagePurchases: PurchasesPage;
 		/**
 		 * Page object representing the Multi-site Dashboard Billing > Active upgrades screens.
 		 */
@@ -500,6 +469,33 @@ export const test = base.extend<
 	}
 >( {
 	viewportName: [ 'desktop', { option: true } ],
+	sitePublicSiteCount: [ 1, { option: true } ],
+	_abandonLoginLockWaits: [
+		async ( {}, use ) => {
+			await use();
+			// A timed-out test's await is abandoned, not cancelled, so a withLoginLock call it
+			// left waiting would keep polling and could take the lock during worker teardown.
+			// Any teardown running means the test body is over: a wait still pending belongs to
+			// no live test, so abandoning it here cannot fail one.
+			abandonPendingLoginLockWaits();
+		},
+		{ auto: true },
+	],
+	_runningSpecFile: [
+		async ( {}, use, testInfo ) => {
+			// Lets a mixed Atomic run resolve the test's variation from fixtures, which run
+			// outside the spec file: `accountGivenByEnvironment` has to pick that site's account.
+			// The title path starts with the spec file Playwright loaded; `testInfo.file` would
+			// name the shared helper that declares the test, as `block-smoke-testing.ts` does.
+			setRunningSpecFile( testInfo.titlePath[ 0 ] );
+			try {
+				await use();
+			} finally {
+				setRunningSpecFile( undefined );
+			}
+		},
+		{ auto: true },
+	],
 	_throttleActionHandler: [
 		async ( {}, use, testInfo ) => {
 			const unregister = registerThrottleActionHandler( ( action, ids ) => {
@@ -535,7 +531,7 @@ export const test = base.extend<
 			},
 		] );
 
-		if ( testInfo.project.name === 'authentication' ) {
+		if ( [ 'authentication', 'chrome', 'mobile' ].includes( testInfo.project.name ) ) {
 			await useBlackboxTestKeyForCollect( page );
 		}
 
@@ -559,10 +555,6 @@ export const test = base.extend<
 		const testAccount = await getAccount( page, accountName );
 		await use( testAccount );
 	},
-	accountSMS: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'smsUser' );
-		await use( testAccount );
-	},
 	clientEmail: async ( {}, use ) => {
 		const emailClient = new EmailClient();
 		await use( emailClient );
@@ -582,14 +574,6 @@ export const test = base.extend<
 	componentDashboardSnackbar: async ( { page }, use ) => {
 		const dashboardSnackbarComponent = new DashboardSnackbarComponent( page );
 		await use( dashboardSnackbarComponent );
-	},
-	componentMeSidebar: async ( { page }, use ) => {
-		const meSidebarComponent = new MeSidebarComponent( page );
-		await use( meSidebarComponent );
-	},
-	componentNotice: async ( { page }, use ) => {
-		const noticeComponent = new NoticeComponent( page );
-		await use( noticeComponent );
 	},
 	componentPreview: async ( { page }, use ) => {
 		const previewComponent = new PreviewComponent( page );
@@ -635,10 +619,6 @@ export const test = base.extend<
 	pageAdvertising: async ( { page }, use ) => {
 		const advertisingPage = new AdvertisingPage( page );
 		await use( advertisingPage );
-	},
-	pageAppleLogin: async ( { page }, use ) => {
-		const appleLoginPage = new AppleLoginPage( page );
-		await use( appleLoginPage );
 	},
 	pageDashboard: async ( { page }, use ) => {
 		const dashboardPage = new DashboardPage( page );
@@ -705,10 +685,6 @@ export const test = base.extend<
 		const importPlansPage = new ImportPlansPage( page );
 		await use( importPlansPage );
 	},
-	pageImportContentWordpressQuestion: async ( { page }, use ) => {
-		const importContentWordpressQuestionPage = new ImportContentWordPressQuestionPage( page );
-		await use( importContentWordpressQuestionPage );
-	},
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
 		await incognitoPage.spawn();
@@ -733,10 +709,6 @@ export const test = base.extend<
 		const myHomePage = new MyHomePage( page );
 		await use( myHomePage );
 	},
-	pageMyProfile: async ( { page }, use ) => {
-		const myProfilePage = new MyProfilePage( page );
-		await use( myProfilePage );
-	},
 	pageAddPeople: async ( { page }, use ) => {
 		const addPeoplePage = new AddPeoplePage( page );
 		await use( addPeoplePage );
@@ -752,10 +724,6 @@ export const test = base.extend<
 	pagePostCheckoutSetupSite: async ( { page }, use ) => {
 		const postCheckoutSetupSitePage = new PostCheckoutSetupSitePage( page );
 		await use( postCheckoutSetupSitePage );
-	},
-	pagePurchases: async ( { page }, use ) => {
-		const purchasesPage = new PurchasesPage( page );
-		await use( purchasesPage );
 	},
 	pageDashboardPurchases: async ( { page }, use ) => {
 		const dashboardPurchasesPage = new DashboardPurchasesPage( page );
@@ -781,7 +749,10 @@ export const test = base.extend<
 		const secrets = SecretsManager.secrets;
 		await use( secrets );
 	},
-	sitePublic: async ( { page, clientEmail, helperData, pageLogin, pageUserSignUp }, use ) => {
+	sitePublic: async (
+		{ page, clientEmail, helperData, pageLogin, pageUserSignUp, sitePublicSiteCount },
+		use
+	) => {
 		const testUser = helperData.getNewTestUser( { useMailosaur: true } );
 		const siteName = helperData.getBlogName();
 		await pageLogin.visit();
@@ -801,6 +772,13 @@ export const test = base.extend<
 				name: siteName,
 				title: siteName,
 			} );
+			if ( sitePublicSiteCount === 2 ) {
+				const companionSiteName = helperData.getBlogName();
+				await restAPIClient.createSite( {
+					name: companionSiteName,
+					title: companionSiteName,
+				} );
+			}
 			const message = await clientEmail.getLastMatchingMessage( {
 				inboxId: testUser.inboxId,
 				sentTo: testUser.email,

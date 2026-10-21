@@ -2,7 +2,7 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import clx from 'classnames';
+import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
 import { getOdieInitialMessage, ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../../constants';
@@ -29,8 +29,14 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
-		useOdieAssistantContext();
+	const {
+		chat,
+		isChatLoaded,
+		isUserEligibleForPaidSupport,
+		forceEmailSupport,
+		launcherContext,
+		isLoadingZendeskHistory,
+	} = useOdieAssistantContext();
 	const isTestMode = isTestModeEnvironment();
 	const hasEnTranslation = useHasEnTranslation();
 	const createZendeskConversation = useCreateZendeskConversation();
@@ -75,9 +81,17 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	/**
 	 * Handle the case where we are directly forwarding to Zendesk without AI first.
+	 * Check eligibility here too: the effect above only edits the params, so `isForwardingToZendesk`
+	 * stays true for this render, and the chat can be loaded without paid support (an open human chat).
 	 */
 	useEffect( () => {
-		if ( isForwardingToZendesk && ! chat.conversationId && isChatLoaded && ! forceEmailSupport ) {
+		if (
+			isForwardingToZendesk &&
+			isUserEligibleForPaidSupport &&
+			! chat.conversationId &&
+			isChatLoaded &&
+			! forceEmailSupport
+		) {
 			searchParams.delete( 'provider' );
 			searchParams.set( 'direct-zd-chat', '1' );
 			setSearchParams( searchParams );
@@ -109,6 +123,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	}, [
 		navigate,
 		isForwardingToZendesk,
+		isUserEligibleForPaidSupport,
 		isChatLoaded,
 		chat?.conversationId,
 		createZendeskConversation,
@@ -120,7 +135,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	return (
 		<div
-			className={ clx( 'chatbox-messages', {
+			className={ clsx( 'chatbox-messages', {
 				'force-email-support': forceEmailSupport && chat.provider === 'zendesk',
 			} ) }
 			ref={ messagesContainerRef }
@@ -139,7 +154,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			</div>
 			<>
 				<div
-					className={ clx( 'chatbox-loading-chat__spinner', {
+					className={ clsx( 'chatbox-loading-chat__spinner', {
 						'is-visible': chat.status === 'loading' || ( isScrolling && chat.status !== 'sending' ),
 					} ) }
 				>
@@ -150,12 +165,18 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						message={ getOdieInitialMessage(
 							supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY,
 							currentUser?.display_name,
-							hasEnTranslation
+							hasEnTranslation,
+							launcherContext
 						) }
 						key={ 0 }
 					/>
 				) }
-				{ chat.messages?.length > 0 && <MessagesClusterizer messages={ chat.messages } /> }
+				{ chat.messages?.length > 0 && (
+					<MessagesClusterizer
+						messages={ chat.messages }
+						isLoadingZendeskHistory={ isLoadingZendeskHistory }
+					/>
+				) }
 				<JumpToRecent containerReference={ messagesContainerRef } />
 
 				{ chat.provider === 'odie' && chat.status === 'sending' && <ThinkingPlaceholder /> }

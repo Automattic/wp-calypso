@@ -1,5 +1,6 @@
 import { userSettingsQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useParams } from '@tanstack/react-router';
 import {
 	Button,
 	ExternalLink,
@@ -15,7 +16,6 @@ import { copy, check } from '@wordpress/icons';
 import { useState } from 'react';
 import { getSiteLevelEnabled } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
-import { siteRoute } from '../../../app/router/sites';
 import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
@@ -26,7 +26,7 @@ import { SectionHeader } from '../../../components/section-header';
 import '../../../me/mcp/setup/style.scss';
 
 function SiteAIToolsSetup() {
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 

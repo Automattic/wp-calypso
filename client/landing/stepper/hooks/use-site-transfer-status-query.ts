@@ -1,4 +1,5 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useRef } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { transferStates, type TransferStates } from 'calypso/state/automated-transfer/constants';
 
@@ -28,6 +29,12 @@ const fetchStatus = ( siteId: number ): Promise< TransferStatusResponse > => {
 
 const REFETCH_TIME = process.env.NODE_ENV === 'test' ? 300 : 3000;
 
+// A transfer started in another tab appears within seconds; after that, window focus is enough.
+const NONE_WATCH_MS = process.env.NODE_ENV === 'test' ? 6000 : 60 * 1000;
+
+// Matches the deadline the Redux pollers got in DOTCOM-17961/17962.
+const TRANSFER_DEADLINE_MS = process.env.NODE_ENV === 'test' ? 30_000 : 5 * 60 * 1000;
+
 const endStates: TransferState[] = [
 	transferStates.NONE,
 	transferStates.COMPLETE,
@@ -51,21 +58,17 @@ export function getSiteTransferStatusQueryKey( siteId: number ) {
 	return [ 'sites', siteId, 'atomic', 'transfers', 'latest' ];
 }
 
-const shouldRefetch = ( status: TransferStates | undefined ) => {
-	if ( ! status ) {
-		return false;
-	}
+// Phase, not raw status: one deadline has to span pending → active → provisioned.
+type WatchPhase = 'none' | 'transferring';
 
-	// This condition ensures that when the status is NONE,
-	// we expect it might change in another tab. This allows the UI to reflect any updates dynamically.
-	if ( transferStates.NONE === status ) {
-		return true;
+const watchPhase = ( status: TransferStates | undefined ): WatchPhase | null => {
+	if ( status === transferStates.NONE ) {
+		return 'none';
 	}
-
-	return isTransferring( status );
+	return status && isTransferring( status ) ? 'transferring' : null;
 };
 
-type Options = Pick< UseQueryOptions, 'retry' | 'refetchIntervalInBackground' >;
+type Options = Pick< UseQueryOptions, 'retry' >;
 
 /**
  * Query hook to get the site transfer status, pooling the endpoint.
@@ -73,10 +76,23 @@ type Options = Pick< UseQueryOptions, 'retry' | 'refetchIntervalInBackground' >;
  * @returns
  */
 export const useSiteTransferStatusQuery = ( siteId: number | undefined, options?: Options ) => {
+	// Wall clock, so a throttled tab cannot stretch the bound. Keyed by site so a switch starts fresh.
+	const phaseRef = useRef( { siteId, phase: null as WatchPhase | null, since: Date.now() } );
+
+	// No status yet means no window, so a first load keeps its full retry budget.
+	const isWithinWatchWindow = () => {
+		const { phase, since } = phaseRef.current;
+		if ( ! phase ) {
+			return true;
+		}
+		return Date.now() - since < ( phase === 'none' ? NONE_WATCH_MS : TRANSFER_DEADLINE_MS );
+	};
+
 	return useQuery( {
 		queryKey: getSiteTransferStatusQueryKey( siteId! ),
 		queryFn: () => fetchStatus( siteId! ),
-		retry: options?.retry ?? 20,
+		// Retries run on their own schedule, so they need the bound too.
+		retry: options?.retry ?? ( ( failureCount ) => isWithinWatchWindow() && failureCount < 20 ),
 		select: ( data ) => {
 			return {
 				isTransferring: data?.status ? isTransferring( data.status as TransferStates ) : false,
@@ -88,10 +104,17 @@ export const useSiteTransferStatusQuery = ( siteId: number | undefined, options?
 				error: null,
 			};
 		},
-		refetchOnWindowFocus: false,
-		refetchIntervalInBackground: !! options?.refetchIntervalInBackground,
-		refetchInterval: ( { state } ) =>
-			shouldRefetch( state.data?.status ) ? REFETCH_TIME : false,
+		// What notices a transfer started elsewhere once the interval has stopped.
+		refetchOnWindowFocus: ( query ) => watchPhase( query.state.data?.status ) !== null,
+		refetchInterval: ( { state } ) => {
+			const phase = watchPhase( state.data?.status );
+
+			if ( phase !== phaseRef.current.phase || siteId !== phaseRef.current.siteId ) {
+				phaseRef.current = { siteId, phase, since: Date.now() };
+			}
+
+			return phase && isWithinWatchWindow() ? REFETCH_TIME : false;
+		},
 		enabled: !! siteId,
 	} );
 };

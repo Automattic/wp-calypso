@@ -50,8 +50,9 @@ export interface NavigationControls extends BaseNavigationControls {
 	submit( providedDependencies?: ProvidedDependencies ): void;
 }
 
-export interface NavigationControlsWithSubmittedData< StepSubmittedTypes = unknown >
-	extends BaseNavigationControls {
+export interface NavigationControlsWithSubmittedData<
+	StepSubmittedTypes = unknown,
+> extends BaseNavigationControls {
 	/**
 	 * Submits the answers provided in the flow. If it's complaining about the type, it means you haven't typed the step correctly.
 	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
@@ -383,7 +384,7 @@ export type Step< ConfiguredStepPropTypes extends StepPropTypes = object > =
 	keyof ConfiguredStepPropTypes extends keyof StepPropTypes
 		? React.FC< StepProps< ConfiguredStepPropTypes > >
 		: // Only allow `accept` and `submits` config props.
-		  never;
+			never;
 
 // TODO: get rid of these. Every type should be specific.
 export type ProvidedDependencies = Record< string, unknown >;
@@ -422,7 +423,7 @@ type GroupBySlug< U extends StepperStep > = {
 				Parameters<
 					Awaited< ReturnType< U[ 'asyncComponent' ] > >[ 'default' ]
 				>[ 0 ][ 'navigation' ][ 'submit' ]
-		  >[ 0 ]
+			>[ 0 ]
 		: never;
 };
 

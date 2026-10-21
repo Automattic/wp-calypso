@@ -82,6 +82,9 @@ This mixin generates alias variables for a color palette. For example, the
 	--wpds-color-foreground-interactive-brand: var( --wp-components-color-accent );
 	--wpds-color-foreground-interactive-brand-active: var( --wp-components-color-accent-darker-20 );
 	--wpds-color-stroke-focus: var( --wp-components-color-accent );
+	--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
+	--wpds-color-foreground-interactive-neutral-active: var( --wp-components-color-foreground );
+	--wpds-color-background-interactive-neutral-weak-active: var( --wp-components-color-gray-200 );
 	--wp-components-color-gray-800: #e0e0e0;
 	--wp-components-color-gray-700: #bdbdbd;
 	--wp-components-color-gray-600: #8a8a8a;
@@ -588,6 +591,11 @@ This mixin generates alias variables for a color palette. For example, the
 @mixin color-scheme-dark-theme-dataviews {
 	--wp-dataviews-color-background: var( --dashboard-surface__background-color );
 
+	// DataViews hard-codes a white background on the sticky infinite-scroll toolbar.
+	.dataviews__view-actions--infinite-scroll {
+		background-color: var( --wp-dataviews-color-background );
+	}
+
 	.dataviews-view-table {
 		color: var( --dashboard__text-muted-color );
 
@@ -810,6 +818,15 @@ This mixin generates alias variables for a color palette. For example, the
 	}
 }
 
+@mixin color-scheme-dark-theme-spinner {
+	// The Spinner track strokes with `@wordpress/components`' deprecated literal
+	// gray palette, so it stays `#ddd` on dark surfaces no matter which tokens
+	// are set.
+	.components-spinner circle {
+		stroke: var( --wp-components-color-gray-300 );
+	}
+}
+
 @mixin color-scheme-dark-theme-agenttic {
 	// @automattic/agenttic-ui declares its own default light tokens on `.agenttic`.
 	.agenttic {
@@ -883,5 +900,59 @@ This mixin generates alias variables for a color palette. For example, the
 @mixin color-scheme-dark-theme-community-translator {
 	.community-translator.is-incompatible {
 		--color-neutral-20: var( --dashboard__text-muted-color );
+	}
+}
+
+// The DataViews filter dropdown ("search widget") comes from the
+// @wordpress/dataviews package, whose CSS prefers --wpds-* tokens with
+// light-only fallbacks. Those tokens are not defined here, so hovered rows
+// fall back to a near-white color-mix and the radio/checkbox indicators to
+// light-mode borders and backgrounds.
+@mixin color-scheme-dark-theme-dataviews-filters-search-widget {
+	.dataviews-filters__search-widget-listitem {
+		color: var( --dashboard__text-color );
+
+		&:hover,
+		&[data-active-item],
+		&:focus {
+			background-color: var( --dashboard-item-selected__background-color );
+		}
+
+		.dataviews-filters__search-widget-listitem-description {
+			color: var( --dashboard-subtle__color );
+		}
+
+		// Scoped to unselected indicators so the accent fill on selected
+		// ones still wins.
+		.dataviews-filters__search-widget-listitem-single-selection:not( .is-selected, :checked ),
+		.dataviews-filters__search-widget-listitem-multi-selection:not( .is-selected, :checked ) {
+			border-color: var( --dashboard-field__border-color );
+			background: var( --dashboard-surface__background-color );
+		}
+	}
+
+	.dataviews-filters__search-widget-filter-combobox-list {
+		border-top-color: var( --dashboard-surface__border-color );
+	}
+
+	.dataviews-filters__search-widget-filter-combobox__wrapper
+		.dataviews-filters__search-widget-filter-combobox__input {
+		&:focus {
+			background: var( --dashboard-surface__background-color );
+		}
+
+		&::placeholder {
+			color: var( --dashboard-subtle__color );
+		}
+	}
+
+	.dataviews-filters__summary-operators-container:has( + .dataviews-filters__search-widget-listbox ),
+	.dataviews-filters__summary-operators-container:has( + .dataviews-filters__search-widget-no-elements ),
+	.dataviews-filters__summary-operators-container:has( + .dataviews-filters__user-input-widget ) {
+		border-bottom-color: var( --dashboard-surface__border-color );
+	}
+
+	.dataviews-filters__summary-operators-container .dataviews-filters__summary-operators-filter-name {
+		color: var( --dashboard-subtle__color );
 	}
 }

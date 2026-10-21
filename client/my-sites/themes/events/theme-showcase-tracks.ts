@@ -64,7 +64,7 @@ const getThemeShowcaseEventRecorder = (
 					? {
 							collection_index: ( defaultCollectionIndex || collectionIndex || 0 ) + 1,
 							collection: defaultCollectionId || collectionId,
-					  }
+						}
 					: {} ),
 			} );
 		};

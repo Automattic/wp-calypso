@@ -34,14 +34,6 @@ export const technologyBlogs: CuratedBlogsList = {
 			feed_URL: 'http://gauginggadgets.com/feed',
 			has_icon: true,
 		},
-		{
-			feed_ID: 153964960,
-			site_ID: 228278685,
-			site_URL: 'tech-guy-gadgets.com',
-			site_name: 'Tech Guy Gadgets',
-			feed_URL: 'http://tech-guy-gadgets.com',
-			has_icon: true,
-		},
 	],
 	software: [
 		{
@@ -77,11 +69,11 @@ export const technologyBlogs: CuratedBlogsList = {
 			has_icon: true,
 		},
 		{
-			feed_ID: 9891486,
+			feed_ID: 109374737,
 			site_ID: 9510434,
 			site_URL: 'https://oss.cs.fau.de',
 			site_name: 'Professorship for Open-Source Software',
-			feed_URL: 'http://osr.cs.fau.de',
+			feed_URL: 'http://oss.cs.fau.de/feed',
 			has_icon: true,
 		},
 		{
@@ -177,11 +169,11 @@ export const technologyBlogs: CuratedBlogsList = {
 			has_icon: true,
 		},
 		{
-			feed_ID: 35899213,
+			feed_ID: 66240742,
 			site_ID: 31759332,
-			site_URL: 'make.wordpress.org/design',
+			site_URL: 'https://make.wordpress.org/design',
 			site_name: 'Make WordPress Design',
-			feed_URL: 'https://make.wordpress.org/design/feed',
+			feed_URL: 'http://make.wordpress.org/design/feed',
 			has_icon: true,
 		},
 		{
@@ -491,11 +483,11 @@ export const technologyBlogs: CuratedBlogsList = {
 			has_icon: true,
 		},
 		{
-			feed_ID: 91104997,
+			feed_ID: 180536053,
 			site_ID: 123172266,
-			site_URL: 'http://myfusimotors.wordpress.com',
+			site_URL: 'https://scentsofscience.com/',
 			site_name: 'Scents of Science',
-			feed_URL: 'http://myfusimotors.com',
+			feed_URL: 'http://scentsofscience.com/feed',
 			has_icon: true,
 		},
 		{

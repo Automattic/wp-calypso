@@ -2,6 +2,7 @@ import { Tooltip } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useState } from 'react';
+import { isRateKnown, toCount } from './is-rate-known';
 
 export interface EmailStatsItem {
 	unique_opens: number;
@@ -44,38 +45,12 @@ export const TooltipWrapper: React.FC< TooltipWrapperProps > = ( {
 	);
 };
 
-export const hasUniqueMetrics = ( uniqueValue: number, totalValue: number ) => {
-	return uniqueValue > 0 && totalValue > 0;
-};
-
-export const getClicksDisplayValue = (
-	item: Pick< EmailStatsItem, 'unique_clicks' | 'clicks' | 'clicks_rate' >
-) => {
-	const clicksUnique = parseInt( String( item.unique_clicks ), 10 );
-	const clicks = parseInt( String( item.clicks ), 10 );
-	const hasUniques = hasUniqueMetrics( clicksUnique, clicks );
-
-	if ( hasUniques ) {
-		return `${ formatNumber( item.clicks_rate, {
-			numberFormatOptions: {
-				maximumFractionDigits: 2,
-			},
-		} ) }%`;
-	}
-
-	if ( clicks > 0 ) {
-		return formatNumber( item.clicks );
-	}
-
-	return '—';
-};
-
 export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { item } ) => {
 	const translate = useTranslate();
-	const hasUniques = hasUniqueMetrics(
-		parseInt( String( item.unique_opens ), 10 ),
-		parseInt( String( item.opens ), 10 )
-	);
+	const sends = toCount( item.total_sends );
+	const opens = toCount( item.opens );
+	// Same rule as the cell, so the tooltip never shows a rate the cell marked unknown.
+	const rateKnown = isRateKnown( { uniques: toCount( item.unique_opens ), totals: opens, sends } );
 
 	return (
 		<div className="stats-email__tooltip">
@@ -84,33 +59,43 @@ export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { ite
 					args: { sendsCountFormatted: formatNumber( item.total_sends ) },
 				} ) }
 			</div>
-			<div>
-				{ translate( 'Total opens: %(opensCountFormatted)s', {
-					args: { opensCountFormatted: formatNumber( item.opens ) },
-				} ) }
-			</div>
-			<div>
-				{ hasUniques
-					? translate( 'Unique opens: %(uniqueOpensCountFormatted)s (%(opensRate)s%)', {
-							args: {
-								uniqueOpensCountFormatted: formatNumber( item.unique_opens ),
-								opensRate: formatNumber( item.opens_rate, {
-									numberFormatOptions: { maximumFractionDigits: 2 },
-								} ),
-							},
-					  } )
-					: translate( 'Unique opens: —' ) }
-			</div>
+			{ /* The unavailable states explain themselves in the note below, so the
+			     unique line only renders when the rate is a known value. */ }
+			{ rateKnown && (
+				<div>
+					{ translate( 'Unique opens: %(uniqueOpensCountFormatted)s (%(opensRate)s%)', {
+						args: {
+							uniqueOpensCountFormatted: formatNumber( item.unique_opens ),
+							opensRate: formatNumber( item.opens_rate, {
+								numberFormatOptions: { maximumFractionDigits: 2 },
+							} ),
+						},
+					} ) }
+				</div>
+			) }
+			{ sends === 0 && (
+				<div className="stats-email__tooltip-note">
+					{ translate( 'No delivery data for this email.' ) }
+				</div>
+			) }
+			{ sends > 0 && ! rateKnown && (
+				<div className="stats-email__tooltip-note">
+					{ translate( "Opens weren't linked to recipients." ) }
+				</div>
+			) }
 		</div>
 	);
 };
 
 export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { item } ) => {
 	const translate = useTranslate();
-	const hasUniques = hasUniqueMetrics(
-		parseInt( String( item.unique_clicks ), 10 ),
-		parseInt( String( item.clicks ), 10 )
-	);
+	const sends = toCount( item.total_sends );
+	const clicks = toCount( item.clicks );
+	const rateKnown = isRateKnown( {
+		uniques: toCount( item.unique_clicks ),
+		totals: clicks,
+		sends,
+	} );
 
 	return (
 		<div className="stats-email__tooltip">
@@ -119,23 +104,29 @@ export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { it
 					args: { sendsCountFormatted: formatNumber( item.total_sends ) },
 				} ) }
 			</div>
-			<div>
-				{ translate( 'Total clicks: %(clicksCountFormatted)s', {
-					args: { clicksCountFormatted: formatNumber( item.clicks ) },
-				} ) }
-			</div>
-			<div>
-				{ hasUniques
-					? translate( 'Unique clicks: %(uniqueClicksCountFormatted)s (%(clicksRate)s%)', {
-							args: {
-								uniqueClicksCountFormatted: formatNumber( item.unique_clicks ),
-								clicksRate: formatNumber( item.clicks_rate, {
-									numberFormatOptions: { maximumFractionDigits: 2 },
-								} ),
-							},
-					  } )
-					: translate( 'Unique clicks: —' ) }
-			</div>
+			{ /* Same rule as the opens tooltip: numbers only, the note covers the rest. */ }
+			{ rateKnown && (
+				<div>
+					{ translate( 'Unique clicks: %(uniqueClicksCountFormatted)s (%(clicksRate)s%)', {
+						args: {
+							uniqueClicksCountFormatted: formatNumber( item.unique_clicks ),
+							clicksRate: formatNumber( item.clicks_rate, {
+								numberFormatOptions: { maximumFractionDigits: 2 },
+							} ),
+						},
+					} ) }
+				</div>
+			) }
+			{ sends === 0 && (
+				<div className="stats-email__tooltip-note">
+					{ translate( 'No delivery data for this email.' ) }
+				</div>
+			) }
+			{ sends > 0 && ! rateKnown && (
+				<div className="stats-email__tooltip-note">
+					{ translate( "Clicks weren't linked to recipients." ) }
+				</div>
+			) }
 		</div>
 	);
 };

@@ -66,6 +66,8 @@ yarn workspace wp-e2e-tests decrypt-secrets
 
 The decrypted file (`src/secrets/decrypted-secrets.json`) must **NEVER be committed.** The `.gitignore` in `packages/calypso-e2e` denies everything under `src/secrets/` except an explicit allowlist, but be vigilant nonetheless — because the rule is a blanket deny, the decrypted file never shows up in `git status` to remind you to delete it.
 
+The Google authentication test also uses this encrypted file for its Google-only browser session. See [Google authentication session renewal](./google_authentication.md) when Google requires human verification again.
+
 ### Using the Secrets
 
 The secrets are read and validated at runtime. They are accessed through the [`SecretsManager`](../../../packages/calypso-e2e/src/secrets/secrets-manager.ts) static class, which presents the secrets with static typings.

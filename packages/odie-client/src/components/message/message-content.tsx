@@ -66,7 +66,9 @@ export const MessageContent = ( {
 		<div className={ messageClasses }>
 			{ header && <div className="message-header business">{ header }</div> }
 			{ message.type === 'error' && <MarkdownOrChildren messageContent={ message.content } /> }
-			{ ( [ 'message', 'image', 'image-placeholder', 'file', 'text' ].includes( message.type ) ||
+			{ ( [ 'message', 'image', 'image-placeholder', 'file', 'file-placeholder', 'text' ].includes(
+				message.type
+			) ||
 				! message.type ) && (
 				<UserMessage
 					message={ markdownMessageContent }

@@ -7,7 +7,9 @@ import {
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
-import { Logo } from './logo';
+import { A4ALoadingLogo } from './loading-logo';
+import A4AOmnibar from './omnibar';
+import A4AOmnibarHelpCenter from './omnibar-help-center';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
@@ -16,21 +18,28 @@ import type {
 import './style.scss';
 
 boot( {
-	name: 'A4A',
+	name: 'Automattic for Agencies',
+	unifiedAdminPageViewApp: 'a4a',
 	basePath: '/',
 	mainRoute: '/overview',
-	Logo,
+	Logo: null,
+	LoadingLogo: A4ALoadingLogo,
 	supports: {
 		agency: {
 			overview: true,
 			tiers: true,
 			partnerDirectory: true,
+			marketplace: true,
 			exclusiveOffers: true,
 			learn: true,
 			mcp: true,
+			amplify: true,
+			devTools: true,
 			sites: true,
+			plugins: true,
 			team: true,
 			earn: true,
+			billing: true,
 		},
 		agencyClient: { subscriptions: true },
 		sites: false,
@@ -44,14 +53,14 @@ boot( {
 		plugins: false,
 		commandPalette: false,
 		domainOnlySites: false,
-		siteOverview: {
-			preview: false,
-		},
 		colorScheme: false,
 		darkMode: false,
 	},
 	optIn: false,
-	components: {},
+	components: {
+		omnibar: A4AOmnibar,
+		helpCenter: A4AOmnibarHelpCenter,
+	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>

@@ -1,3 +1,4 @@
+import { isRecord } from './is-record';
 // Detection of the legacy style-variation CSS block that older versions of the
 // Easy Site Editor injected into the user's Additional CSS (`styles.css`):
 //
@@ -8,8 +9,8 @@
 // Nothing writes the block any more, but sites touched by the old version still
 // carry it, and its `!important` typography permanently overrides any font the
 // user later picks (ESE-20). Detection subset of Big Sky's
-// `shared/legacy-style-variation-css` — the consent dialog and removal flow are
-// Big Sky's and port together with `set-styles`.
+// `shared/legacy-style-variation-css`; the consent dialog and removal flow are
+// Big Sky's (see `use-styles`).
 
 export const LEGACY_CSS_START = '/* easy-site-editor-style-variation:start */';
 export const LEGACY_CSS_END = '/* easy-site-editor-style-variation:end */';
@@ -21,10 +22,6 @@ export interface LegacyBlock {
 	end: number;
 	/** The block as shown to the user, without leading blank lines. */
 	text: string;
-}
-
-function isRecord( value: unknown ): value is Record< string, unknown > {
-	return !! value && typeof value === 'object' && ! Array.isArray( value );
 }
 
 /**

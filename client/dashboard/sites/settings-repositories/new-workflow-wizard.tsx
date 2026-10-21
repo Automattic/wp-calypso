@@ -40,7 +40,7 @@ export const NewWorkflowWizard = ( {
 	const errorMessage = existingWorkflow
 		? __(
 				'A workflow file with this name already exists. Installing this workflow will overwrite it.'
-		  )
+			)
 		: undefined;
 
 	return (

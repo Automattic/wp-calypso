@@ -94,7 +94,7 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 												),
 											},
 										}
-								  )
+									)
 								: failureReason.message }
 						</li>
 					);

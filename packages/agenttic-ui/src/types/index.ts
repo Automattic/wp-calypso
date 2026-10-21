@@ -44,6 +44,16 @@ export interface Suggestion {
 	action?: () => boolean | Promise< boolean >;
 	autoSubmit?: boolean; // When true, clicking the suggestion automatically submits it to the LLM
 	options?: SuggestionOption[]; // When present, renders as a dropdown picker
+	disabled?: boolean; // Greyed out and inert. For a feature with nothing to act on yet; drop one the user can never use
+	disabledReason?: string; // Tooltip on a disabled suggestion, explaining what would make it usable
+}
+
+export type ChecklistItemStatus = 'todo' | 'in-progress' | 'done' | 'skipped';
+
+// A checklist task is a suggestion with a status: clicking one submits like a
+// suggestion does. `done` and `skipped` items are settled and inert.
+export interface ChecklistItem extends Omit< Suggestion, 'options' > {
+	status?: ChecklistItemStatus; // Defaults to 'todo'
 }
 
 export interface QuestionChoice {
@@ -89,6 +99,12 @@ export interface Message {
 	sources?: AgentSource[]; // Agent message sources/citations rendered beneath the body
 }
 
+/**
+ * `latest-turn`: inline on the latest turn; on earlier turns, in a panel that floats below the
+ * message on hover and docks into a row once one of its buttons is pressed.
+ */
+export type MessageActionVisibility = 'always' | 'latest-turn';
+
 export interface MessageActionButton {
 	type?: 'button';
 	id: string;
@@ -100,6 +116,8 @@ export interface MessageActionButton {
 	pressed?: boolean;
 	showLabel?: boolean;
 	order?: number;
+	/** When the action shows. Defaults to `always`. */
+	visibility?: MessageActionVisibility;
 }
 
 export interface MessageActionComponent {
@@ -109,6 +127,8 @@ export interface MessageActionComponent {
 	component: React.ComponentType< any >;
 	componentProps?: Record< string, unknown >;
 	order?: number;
+	/** When the action shows. Defaults to `always`. */
+	visibility?: MessageActionVisibility;
 }
 
 export type MessageAction = MessageActionButton | MessageActionComponent;
@@ -120,6 +140,10 @@ export interface AgentUIProps {
 	// Core data from agent hook
 	messages: Message[];
 	isProcessing: boolean;
+	/** Whether the latest reply is still streaming. Defaults to `isProcessing`. */
+	isStreaming?: boolean;
+	/** Whether reply text is streaming in. When set, it drives the thinking indicator. */
+	isReplying?: boolean;
 	error?: string | null;
 	onSubmit: ( message: string, files?: File[] ) => void | Promise< void >;
 
@@ -131,6 +155,11 @@ export interface AgentUIProps {
 	triggerTitle?: string; // Title shown next to the icon in the 'minimized' state (defaults to 'Ask AI')
 	placeholder?: string | string[];
 	notice?: NoticeConfig;
+	// Return false to block a submit. Typed text stays in the input; a blocked
+	// auto-submit suggestion stays in the list and never overwrites the input.
+	beforeSubmit?: ( message: string, source: SubmitSource ) => boolean;
+	leadingActions?: React.ReactNode; // Pinned to the start of the composer's actions row
+	trailingActions?: TrailingActions; // Grouped with the submit button; see TrailingActions
 	onOpen?: () => void;
 	onExpand?: () => void;
 	onClose?: () => void;
@@ -201,14 +230,27 @@ export interface AgentUIProps {
 export interface NoticeConfig {
 	icon?: React.ReactNode | null | false;
 	message: string;
-	action?: {
-		label: string;
-		onClick: () => void;
-	};
+	action?:
+		| { label: string; onClick: () => void; href?: never }
+		| {
+				label: string;
+				href: string;
+				target?: React.HTMLAttributeAnchorTarget;
+				rel?: string;
+				/** Runs before the link opens, for example to record the click. */
+				onClick?: () => void;
+		  };
 	dismissible?: boolean;
 	onDismiss?: () => void;
 	status?: 'success' | 'warning' | 'error';
 }
+
+export type SubmitSource = 'input' | 'suggestion';
+
+// Content grouped with the composer's submit button. A node renders right
+// before it; a function receives the ready-made submit button and decides the
+// order itself, so it must render `submit` or the composer loses its Send.
+export type TrailingActions = React.ReactNode | ( ( submit: React.ReactNode ) => React.ReactNode );
 
 // UI-specific types for existing components
 export interface ChatProps extends AgentUIProps {

@@ -275,13 +275,13 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 
 				<EligibilityWarnings
 					disableContinueButton={ !! this.isLoading() }
-					currentContext="plugin-details"
+					context="themes"
+					inModal
 					atomicTransferAction="themes"
 					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
 					onDismiss={ this.isLoading() ? undefined : () => this.handleDismiss() }
 					onProceed={ () => this.handleAccept() }
-					backUrl="#"
 				/>
 			</Modal>
 		);

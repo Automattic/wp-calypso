@@ -56,7 +56,7 @@ export default function AmplifySiteSelector( { onChange, disabled }: Props ) {
 	// Report the resolved target for whichever source is currently active, so
 	// a value left in the hidden field never leaks into the submission.
 	const report = ( nextSource: InputSource, url: string, site: string | null ) => {
-		onChange( nextSource === 'url' ? normalizeUrl( url ) ?? '' : site ?? '' );
+		onChange( nextSource === 'url' ? ( normalizeUrl( url ) ?? '' ) : ( site ?? '' ) );
 	};
 
 	const handleSourceChange = ( value: string | number | undefined ) => {

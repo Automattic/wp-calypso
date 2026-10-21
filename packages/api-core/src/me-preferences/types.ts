@@ -5,6 +5,11 @@ export interface HostingDashboardOptIn {
 	updated_at: string; // ISO date string
 }
 
+export interface WordPressLabsOptIn {
+	value: 'unset' | 'opt-in' | 'opt-out';
+	updated_at: string; // ISO date string
+}
+
 export interface LandingPagePreference {
 	updatedAt: number; // Result of Date.now()
 }
@@ -17,9 +22,19 @@ export interface ReaderLandingPage extends LandingPagePreference {
 	useReaderAsLandingPage: boolean;
 }
 
+export interface LoggedInHomepagePreference {
+	show: boolean;
+	updatedAt: number; // Result of Date.now()
+}
+
 export interface VisitCounter {
 	count: number;
 	lastUpdated: number | null; // Result of Date.now(), or null before the first visit
+}
+
+export interface A4AFeedbackEntry {
+	lastSubmittedAt?: number;
+	lastSkippedAt?: number;
 }
 
 export interface UserPreferences {
@@ -27,7 +42,6 @@ export interface UserPreferences {
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
 	'hosting-dashboard-dark-mode-announcement-dismissed'?: string; // Timestamp when the user dismissed the notice
-	'hosting-dashboard-opt-in-welcome-modal-dismissed'?: string; // Timestamp when the user dismissed the modal
 	[ key: `hosting-dashboard-dataviews-view-${ string }` ]: View | undefined;
 	[ key: `hosting-dashboard-visit-count-${ string }` ]: VisitCounter | undefined;
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
@@ -35,10 +49,15 @@ export interface UserPreferences {
 	[ key: `hosting-dashboard-time-mismatch-warning-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-wp-beta-notice-dismissed-${ number }` ]: string | undefined; // ISO timestamp when the user dismissed the beta notice for a site
 	'hosting-dashboard-welcome-notice-dismissed'?: string; // Timestamp when the user dismissed the notice
+	'hosting-dashboard-difm-offer-dismissed'?: string; // ISO timestamp when the user dismissed the free DIFM offer, on any site
+	'wordpress-labs-opt-in'?: WordPressLabsOptIn;
+	'wordpress-labs-excluded-sites'?: number[]; // Site IDs excluded from an otherwise-opted-in account
 	'account-recovery-interstitial-snoozed-until'?: number; // Unix timestamp (seconds) until which the account-recovery interstitial is snoozed; 0/unset means "never snoozed"
 	'account-recovery-interstitial-dismiss-count'?: number; // How many times the user has dismissed the account-recovery interstitial; capped so we stop nudging after a few dismissals
 	'reader-landing-page'?: ReaderLandingPage;
+	'reader-seen-posts'?: boolean;
 	'sites-landing-page'?: SitesLandingPage;
+	'logged-in-homepage'?: LoggedInHomepagePreference;
 	[ key: `cancel-purchase-survey-completed-${ string | number }` ]: string | undefined;
 	[ key: `cancellation-offer-accepted-notice-dismissed-${ string | number }` ]: string | undefined;
 	'achievements-visibility'?: 'public' | 'private';
@@ -48,4 +67,18 @@ export interface UserPreferences {
 	'reader-profile-hidden-sites'?: number[];
 	two_step_security_key_reregister_required?: boolean;
 	'a4a-dashboard-pd-not-approved-popover'?: boolean;
+	'a4a-marketplace-referral-band-folded'?: boolean;
+	'a4a-referrals-bank-details-success-notice-seen'?: boolean;
+	'a4a-marketplace-term-pricing'?: 'monthly' | 'yearly';
+	/** Shared with the classic A4A dashboard: a milestone answered there is not asked again here. */
+	'a4a-feedback'?: Record< string, A4AFeedbackEntry >;
+	'notifications-layout-style'?: 'detailed' | 'simplified';
+	'notifications-view-settings-seen'?: boolean;
+	'notifications-subscriber-alerts-enabled'?: boolean;
+	/** Timestamp of the Pressable usage-limit notification the user dismissed. */
+	'pressable-limit-notification-dismissed'?: number;
+	'a4a-agency-approval-notice-dismissed'?: boolean;
+	/** The welcome tour section to pick back up at after leaving the tour to explore a page. */
+	'a4a-dashboard-onboarding-tour-section'?: string;
+	'a4a-overview-welcome-band-dismissed'?: boolean;
 }

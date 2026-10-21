@@ -253,9 +253,9 @@ export default function McpTools( {
 											label={
 												isOpen
 													? /* translators: %s is a tool category name, e.g. "Sites" */
-													  sprintf( __( 'Hide %s tools' ), group.label )
+														sprintf( __( 'Hide %s tools' ), group.label )
 													: /* translators: %s is a tool category name, e.g. "Sites" */
-													  sprintf( __( 'Show %s tools' ), group.label )
+														sprintf( __( 'Show %s tools' ), group.label )
 											}
 											aria-expanded={ isOpen }
 											onClick={ () => toggleGroupOpen( group ) }

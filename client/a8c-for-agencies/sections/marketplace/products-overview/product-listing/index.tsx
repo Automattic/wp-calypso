@@ -261,12 +261,11 @@ export default function ProductListing( {
 				options =
 					quantity === 1
 						? productOption
-						: productOption.filter(
-								( option ) =>
-									option.supported_bundles?.some(
-										( bundle: { quantity: number } ) => bundle.quantity === quantity
-									)
-						  );
+						: productOption.filter( ( option ) =>
+								option.supported_bundles?.some(
+									( bundle: { quantity: number } ) => bundle.quantity === quantity
+								)
+							);
 			} else {
 				options = [ productOption ];
 			}
@@ -277,11 +276,10 @@ export default function ProductListing( {
 
 			const productDoNotHaveSupportedBundles =
 				! isSingleLicenseView &&
-				! options.some(
-					( option ) =>
-						option.supported_bundles?.some(
-							( bundle: { quantity: number } ) => bundle.quantity === quantity
-						)
+				! options.some( ( option ) =>
+					option.supported_bundles?.some(
+						( bundle: { quantity: number } ) => bundle.quantity === quantity
+					)
 				);
 
 			const termAvailabilityTooltipMessage = termAvailabilityTooltip( productOption );

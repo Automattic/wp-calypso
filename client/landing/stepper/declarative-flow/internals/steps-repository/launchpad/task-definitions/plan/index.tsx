@@ -1,7 +1,6 @@
 import { FEATURE_STYLE_CUSTOMIZATION, isFreePlanProduct } from '@automattic/calypso-products';
-import { updateLaunchpadSettings } from '@automattic/data-stores/src/queries/use-launchpad';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Task } from '@automattic/launchpad';
+import { updateLaunchpadSettings, type Task } from '@automattic/launchpad';
 import { QueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -30,7 +29,7 @@ const getPlanTaskSubtitle = (
 					onClick={ ( event ) => {
 						event.stopPropagation();
 						recordGlobalStylesGattingPlanSelectedResetStylesEvent( task, flow, context, {
-							displayGlobalStylesWarning,
+							display_global_styles_warning: displayGlobalStylesWarning,
 						} );
 					} }
 				/>
@@ -54,7 +53,7 @@ export const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => 
 		actionDispatch: () => {
 			if ( displayGlobalStylesWarning ) {
 				recordGlobalStylesGattingPlanSelectedResetStylesEvent( task, flow, context, {
-					displayGlobalStylesWarning,
+					display_global_styles_warning: displayGlobalStylesWarning,
 				} );
 			}
 		},
@@ -104,11 +103,13 @@ const getNewsLetterPlanCreated: TaskAction = ( task, flow, context ) => {
 		...task,
 		actionDispatch: () => {
 			completePaidNewsletterTask( siteSlug, queryClient );
-			site?.ID
-				? setShowPlansModal( true )
-				: window.location.assign(
-						`/earn/payments/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
-				  );
+			if ( site?.ID ) {
+				setShowPlansModal( true );
+			} else {
+				window.location.assign(
+					`/earn/payments/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
+				);
+			}
 		},
 	};
 };

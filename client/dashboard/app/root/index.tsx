@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useQueryClient, useIsFetching, useIsMutating } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
+import clsx from 'clsx';
 import {
 	Suspense,
 	lazy,
@@ -21,18 +22,16 @@ import { CheckoutSuccessFlashMessage } from '../checkout-success-flash-message';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import { useTrackVisitedAreas } from '../hooks/use-visit-counter';
-import OmnibarAgentsManager from '../interim-omnibar/omnibar-agents-manager';
-import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import MutationErrorTracker from '../mutation-error-tracker';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
 import { useOmnibarEvent } from '../omnibar/events';
-import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
+import OmnibarAgentsManager from '../omnibar/omnibar-agents-manager';
+import OmnibarHelpCenter from '../omnibar/omnibar-help-center';
 import { useSyncOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import { ResurrectedWelcomeModalGate } from '../resurrected-welcome-modal';
 import Snackbars from '../snackbars';
-import { OptInWelcomeModal } from '../welcome-modal';
 import './style.scss';
 
 const WebpackBuildMonitor = lazy(
@@ -56,9 +55,8 @@ function Root() {
 	const isAccountRecoveryInterstitialEnabled = isEnabled(
 		'dashboard/account-recovery-interstitial'
 	);
-	const isOptInWelcomeModalEnabled =
-		! isDashboardBackport() && ! isE2ETest() && isEnabled( 'dashboard/opt-in-welcome-modal' );
-	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
+	const { name, supports, components, LoadingLogo = WordPressLogo } = useAppContext();
+	const HelpCenter = components.helpCenter ?? OmnibarHelpCenter;
 	const isResurrectedWelcomeModalEnabled =
 		supports.resurrectedWelcomeModal && ! isDashboardBackport() && ! isE2ETest();
 	const isFetching = useIsFetching();
@@ -84,28 +82,6 @@ function Root() {
 	useSyncOmnibarSite();
 	useTrackVisitedAreas();
 	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
-	useOmnibarEvent( 'linkClick', ( { href, event } ) => {
-		const url = new URL( href, window.location.origin );
-
-		if ( url.origin !== window.location.origin ) {
-			return;
-		}
-
-		const path = url.pathname + url.search + url.hash;
-		const parsedLocation = router.parseLocation( undefined, {
-			pathname: url.pathname,
-			search: url.search,
-			hash: url.hash,
-			href: path,
-			state: { __TSR_index: 0 },
-		} );
-		const { foundRoute } = router.getMatchedRoutes( parsedLocation );
-
-		if ( foundRoute ) {
-			event.preventDefault();
-			router.navigate( { to: path } );
-		}
-	} );
 
 	const loadingQueryRequestedFullPageLoader = useSyncExternalStore(
 		( onStoreChange ) => queryCache.subscribe( onStoreChange ),
@@ -117,10 +93,12 @@ function Root() {
 		}
 	);
 
-	const { routeMeta, isNavigating, isInitialLoad } = useRouterState( {
+	const { routeMeta, isNavigating, isInitialLoad, pathname, isFullscreen } = useRouterState( {
 		select: ( state ) => ( {
 			routeMeta: state.matches.map( ( match ) => match.meta! ).filter( Boolean ),
 			isNavigating: state.status === 'pending',
+			pathname: state.location.pathname,
+			isFullscreen: state.matches.some( ( match ) => match.staticData?.isFullscreen ),
 
 			// A little trick after investigation router state: it will initially be
 			// empty, but remain set after subsequent navigations.
@@ -178,7 +156,9 @@ function Root() {
 
 		return (
 			<div className="dashboard-root__body">
-				<ResponsiveSidebar isOpen={ isSidebarOpen } onClose={ closeSidebar } />
+				{ ! isFullscreen && (
+					<ResponsiveSidebar isOpen={ isSidebarOpen } onClose={ closeSidebar } />
+				) }
 				<div className="dashboard-root__content">
 					<main>
 						<CatchNotFound fallback={ NotFound }>
@@ -195,7 +175,7 @@ function Root() {
 	}, [ name, title ] );
 
 	return (
-		<div className="dashboard-root__layout">
+		<div className={ clsx( 'dashboard-root__layout', { 'is-fullscreen': isFullscreen } ) }>
 			{ ( isFetching > 0 || isMutating > 0 || isSlowNavigation ) && (
 				<LoadingLine
 					variant={
@@ -208,9 +188,8 @@ function Root() {
 			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
 			{ supports.notifications && <Notifications anchor /> }
-			{ supports.help && <OmnibarHelpCenter /> }
-			{ supports.help && <OmnibarAgentsManager /> }
-			<OmnibarSiteSwitcher />
+			{ supports.help && <HelpCenter /> }
+			<OmnibarAgentsManager pathname={ pathname } />
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />
 			{ isResurrectedWelcomeModalEnabled && (
@@ -218,9 +197,6 @@ function Root() {
 			) }
 			{ resurrectedModalState === 'ineligible' && isAccountRecoveryInterstitialEnabled && (
 				<AccountRecoveryInterstitial />
-			) }
-			{ resurrectedModalState === 'ineligible' && isOptInWelcomeModalEnabled && (
-				<OptInWelcomeModal />
 			) }
 			<PageViewTracker />
 			<MutationErrorTracker />

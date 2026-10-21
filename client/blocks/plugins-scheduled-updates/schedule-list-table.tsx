@@ -75,8 +75,8 @@ export const ScheduleListTable = ( props: Props ) => {
 											{ schedule.last_run_status === 'in-progress'
 												? translate( 'In progress' )
 												: isWideScreen &&
-												  schedule.last_run_timestamp &&
-												  prepareDateTime( schedule.last_run_timestamp ) }
+													schedule.last_run_timestamp &&
+													prepareDateTime( schedule.last_run_timestamp ) }
 										</Button>
 									) }
 								</>

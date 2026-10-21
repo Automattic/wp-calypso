@@ -197,12 +197,12 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 				props.selectedSite.slug,
 				props.selectedDomainName,
 				currentRoute
-		  )
+			)
 		: domainManagementEditContactInfo(
 				props.selectedSite.slug,
 				props.selectedDomainName,
 				currentRoute
-		  );
+			);
 
 	return (
 		<div>

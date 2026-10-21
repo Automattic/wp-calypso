@@ -6,11 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	Button,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -37,13 +33,13 @@ import RestoreDefaultCnameRecord from './restore-default-cname-record';
 import RestoreDefaultEmailRecords from './restore-default-email-records';
 import { hasDefaultARecords, hasDefaultCnameRecord, hasDefaultEmailRecords } from './utils';
 import type { DnsRecord } from '@automattic/api-core';
-import type { ViewTable, ViewList, View } from '@wordpress/dataviews';
+import type { ViewTable, View } from '@wordpress/dataviews';
 
 function getDnsRecordId( record: DnsRecord ) {
 	return `${ record.id }-${ record.name }`;
 }
 
-type DnsView = ViewTable | ViewList;
+type DnsView = ViewTable;
 
 const DEFAULT_VIEW: DnsView = {
 	type: 'table',
@@ -61,7 +57,6 @@ const DEFAULT_VIEW: DnsView = {
 
 const DEFAULT_LAYOUTS = {
 	table: {},
-	list: {},
 };
 
 export default function DomainDns() {
@@ -299,7 +294,7 @@ export default function DomainDns() {
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 2 } /> }
 						actions={
-							<HStack>
+							<>
 								<Button
 									variant="primary"
 									onClick={ () => {
@@ -331,7 +326,7 @@ export default function DomainDns() {
 										}
 									/>
 								</PageHeader.ActionMenu>
-							</HStack>
+							</>
 						}
 						description={ <DnsDescription /> }
 					/>
@@ -353,19 +348,21 @@ export default function DomainDns() {
 						data={ filteredData || [] }
 						fields={ fields }
 						onChangeView={ ( view: View ) => setView( view as DnsView ) }
-						search={ false }
+						search
 						view={ view }
 						actions={ actions }
 						paginationInfo={ paginationInfo }
 						getItemId={ getDnsRecordId }
 						isLoading={ isLoading }
 						defaultLayouts={ DEFAULT_LAYOUTS }
-					>
-						<>
-							<DataViews.Layout />
-							<DataViews.Pagination />
-						</>
-					</DataViews>
+						empty={
+							<p>
+								{ view.search
+									? __( 'No DNS records match your search.' )
+									: __( 'No DNS records match the selected filters.' ) }
+							</p>
+						}
+					/>
 				) }
 			</DataViewsCard>
 			{ domain.has_wpcom_nameservers && <EmailSetup /> }
@@ -385,7 +382,7 @@ export default function DomainDns() {
 			<RestoreDefaultEmailRecords
 				onConfirm={ handleRestoreDefaultEmailRecords }
 				onCancel={ () => setIsRestoreDefaultEmailRecordsDialogOpen( false ) }
-				isBusy={ updateDnsMutation.isPending }
+				isBusy={ restoreDefaultEmailRecordsMutation.isPending }
 				isOpen={ isRestoreDefaultEmailRecordsDialogOpen }
 			/>
 			{ isImportDialogOpen && (

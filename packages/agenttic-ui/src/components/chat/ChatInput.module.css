@@ -46,6 +46,19 @@
 	min-height: var( --spacing-8 );
 }
 
+.leadingActions,
+.trailingActions {
+	display: inline-flex;
+	align-items: center;
+	gap: var( --spacing );
+}
+
+/* Trailing actions stay grouped with the submit button on the right while
+   the leading ones stay pinned to the left edge. */
+.containerStacked .actions .trailingActions {
+	margin-left: auto;
+}
+
 .button {
 	border-radius: var( --radius-full );
 }

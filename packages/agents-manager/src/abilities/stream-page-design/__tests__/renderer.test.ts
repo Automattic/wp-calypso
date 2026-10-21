@@ -1,0 +1,356 @@
+jest.mock( '@wordpress/blocks', () => {
+	let nextId = 0;
+
+	return {
+		createBlock: jest.fn( ( name, attributes = {}, innerBlocks = [] ) => ( {
+			clientId: `preview-${ ++nextId }`,
+			name,
+			attributes,
+			innerBlocks,
+		} ) ),
+	};
+} );
+// The scanner stays real; only the editor-side repair is stubbed.
+jest.mock( '../block-markup', () => {
+	let nextId = 0;
+
+	return {
+		...jest.requireActual( '../block-markup' ),
+		repairBlocksFromMarkup: jest.fn( ( markup: string ) => [
+			{
+				clientId: `final-${ ++nextId }`,
+				name: 'core/paragraph',
+				attributes: { markup },
+				innerBlocks: [],
+			},
+		] ),
+	};
+} );
+jest.mock( '../preview', () => ( {
+	...jest.requireActual( '../preview' ),
+	ensurePreviewStyles: jest.fn(),
+	scrollToBlockBottom: jest.fn(),
+} ) );
+
+import { act, renderHook } from '@testing-library/react';
+import { ensurePreviewStyles, PREVIEW_CLASS_NAME, scrollToBlockBottom } from '../preview';
+import { usePageDesignRenderer, type EditorHost } from '../renderer';
+import {
+	finalizePendingStreams,
+	getStreamedMarkup,
+	handlePageDesignTaskUpdate,
+	setStreamHandler,
+	STREAM_PAGE_DESIGN_TOOL_ID,
+} from '../stream';
+import type { TaskUpdate } from '@automattic/agenttic-client';
+
+const PAGE = '<!-- wpcom:page-design-section {"target":"page"} -->';
+const PARAGRAPH = '<!-- wp:paragraph --><p>Hi</p><!-- /wp:paragraph -->';
+
+const streamed = ( markup: string, toolCallId = 'call-1', sessionId?: string ) =>
+	handlePageDesignTaskUpdate( {
+		sessionId,
+		status: {
+			message: {
+				parts: [
+					{
+						type: 'data',
+						data: { toolId: STREAM_PAGE_DESIGN_TOOL_ID, toolCallId, arguments: { markup } },
+					},
+				],
+			},
+		},
+	} as unknown as TaskUpdate );
+
+const flush = () => act( () => jest.advanceTimersByTime( 150 ) );
+
+let host: jest.Mocked< EditorHost >;
+
+const lastStaged = () => host.stageBlocks.mock.calls[ host.stageBlocks.mock.calls.length - 1 ];
+
+beforeEach( () => {
+	jest.useFakeTimers();
+	jest.clearAllMocks();
+	host = {
+		resolveRoot: jest.fn( () => 'root' ),
+		stageBlocks: jest.fn(),
+		captureCheckpoint: jest.fn(),
+		commitFinalDesign: jest.fn(),
+		forgetToolCall: jest.fn(),
+	};
+} );
+
+afterEach( () => {
+	setStreamHandler( undefined );
+	jest.useRealTimers();
+	jest.restoreAllMocks();
+} );
+
+it( 'paints a complete block after the throttle, snapshotting the page first', async () => {
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }${ PARAGRAPH }` );
+
+	expect( host.stageBlocks ).not.toHaveBeenCalled();
+
+	flush();
+
+	expect( host.captureCheckpoint ).toHaveBeenCalledWith( 'call-1', 'root' );
+	expect( host.stageBlocks ).toHaveBeenCalledWith( 'root', [
+		expect.objectContaining( { name: 'core/paragraph', attributes: { markup: PARAGRAPH } } ),
+	] );
+	expect( host.captureCheckpoint.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+		host.stageBlocks.mock.invocationCallOrder[ 0 ]
+	);
+	expect( scrollToBlockBottom ).toHaveBeenCalledWith( lastStaged()[ 1 ][ 0 ].clientId );
+} );
+
+it( 'paints a burst of deltas in one flush', async () => {
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }<!-- wp:para` );
+	await streamed( `${ PAGE }${ PARAGRAPH }<!-- wp:para` );
+	await streamed( `${ PAGE }${ PARAGRAPH }${ PARAGRAPH }` );
+	flush();
+
+	expect( host.resolveRoot ).toHaveBeenCalledTimes( 1 );
+	expect( lastStaged()[ 1 ] ).toHaveLength( 2 );
+} );
+
+it( 'shows an open block as a preview, then replaces it when it closes', async () => {
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }<!-- wp:group --><div>` );
+	flush();
+
+	const [ , [ preview ] ] = host.stageBlocks.mock.calls[ 0 ];
+	expect( preview ).toEqual(
+		expect.objectContaining( { name: 'core/group', attributes: { className: PREVIEW_CLASS_NAME } } )
+	);
+
+	await streamed( `${ PAGE }<!-- wp:group --><div>${ PARAGRAPH }</div><!-- /wp:group -->` );
+	flush();
+
+	const [ , staged ] = lastStaged();
+	expect( staged ).toHaveLength( 1 );
+	expect( staged[ 0 ].attributes ).not.toHaveProperty( 'className' );
+} );
+
+it( 'places complete children under an open block, previewing an open child until it closes', async () => {
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }<!-- wp:group --><div>${ PARAGRAPH }<!-- wp:columns --><div>` );
+	flush();
+
+	const [ , [ preview ] ] = host.stageBlocks.mock.calls[ 0 ];
+	const [ rootClientId, children ] = lastStaged();
+	expect( rootClientId ).toBe( preview.clientId );
+	expect( children.map( ( block ) => block.name ) ).toEqual( [ 'core/paragraph', 'core/columns' ] );
+	expect( children[ 1 ].attributes ).toEqual( { className: PREVIEW_CLASS_NAME } );
+
+	await streamed(
+		`${ PAGE }<!-- wp:group --><div>${ PARAGRAPH }<!-- wp:columns --><div></div><!-- /wp:columns -->`
+	);
+	flush();
+
+	const [ parentClientId, closed ] = lastStaged();
+	expect( parentClientId ).toBe( preview.clientId );
+	expect( closed ).toHaveLength( 2 );
+	expect( closed[ 1 ].attributes ).not.toHaveProperty( 'className' );
+} );
+
+it( 'waits for a block to open before previewing wrapper HTML at the top level', async () => {
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }<div><!-- wp:group -->` );
+	flush();
+
+	expect( host.stageBlocks ).not.toHaveBeenCalled();
+} );
+
+it( 'commits at once on the final flush, then forgets the stream', async () => {
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }${ PARAGRAPH }` );
+	await act( () => finalizePendingStreams() );
+
+	expect( host.stageBlocks ).toHaveBeenCalled();
+	expect( host.commitFinalDesign ).toHaveBeenCalledWith( 'call-1', 'root' );
+	expect( getStreamedMarkup( 'call-1' ) ).toBeUndefined();
+} );
+
+it( 'closes a block left open by the final flush instead of committing its preview', async () => {
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }<!-- wp:group --><div>` );
+	flush();
+	await act( () => finalizePendingStreams() );
+
+	const [ , staged ] = lastStaged();
+	expect( staged ).toHaveLength( 1 );
+	expect( staged[ 0 ].attributes ).not.toHaveProperty( 'className' );
+	expect( host.commitFinalDesign ).toHaveBeenCalledTimes( 1 );
+} );
+
+it( 'logs a frame that cannot be painted and goes on', async () => {
+	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	host.stageBlocks.mockImplementationOnce( () => {
+		throw new Error( 'canvas gone' );
+	} );
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }${ PARAGRAPH }` );
+	flush();
+
+	expect( consoleError ).toHaveBeenCalledWith(
+		'[AgentsManager] The page design could not be painted:',
+		expect.any( Error )
+	);
+
+	await streamed( `${ PAGE }${ PARAGRAPH }${ PARAGRAPH }` );
+	flush();
+
+	// The frame that failed is staged again with the next, once each.
+	expect( lastStaged()[ 1 ] ).toHaveLength( 2 );
+} );
+
+it( 'keeps the preview styles injected while a design streams', async () => {
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }<!-- wp:group -->` );
+	act( () => jest.advanceTimersByTime( 2000 ) );
+
+	expect( ensurePreviewStyles ).toHaveBeenCalledTimes( 3 );
+
+	await act( () => finalizePendingStreams() );
+	act( () => jest.advanceTimersByTime( 2000 ) );
+
+	expect( ensurePreviewStyles ).toHaveBeenCalledTimes( 3 );
+} );
+
+// The canvas can still be mounting when the first markup arrives.
+describe( 'without a root', () => {
+	it( 'retries until the canvas has one', async () => {
+		host.resolveRoot.mockReturnValueOnce( null );
+		renderHook( () => usePageDesignRenderer( host ) );
+
+		await streamed( `${ PAGE }${ PARAGRAPH }` );
+		flush();
+
+		expect( host.stageBlocks ).not.toHaveBeenCalled();
+
+		flush();
+
+		expect( host.stageBlocks ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'gives up after the retry budget', async () => {
+		host.resolveRoot.mockReturnValue( null );
+		renderHook( () => usePageDesignRenderer( host ) );
+
+		await streamed( `${ PAGE }${ PARAGRAPH }` );
+		act( () => jest.advanceTimersByTime( 150 * 30 ) );
+
+		expect( host.resolveRoot ).toHaveBeenCalledTimes( 21 );
+	} );
+
+	// The callback must not tell the agent the design was staged when it was not.
+	it( 'reports a final flush the canvas never took, and forgets the stream', async () => {
+		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		host.resolveRoot.mockReturnValue( null );
+		renderHook( () => usePageDesignRenderer( host ) );
+
+		await streamed( `${ PAGE }${ PARAGRAPH }` );
+		const finalized = finalizePendingStreams();
+		await act( () => jest.advanceTimersByTimeAsync( 150 * 21 ) );
+
+		expect( await finalized ).toBe( false );
+		expect( host.commitFinalDesign ).not.toHaveBeenCalled();
+		expect( host.forgetToolCall ).toHaveBeenCalledWith( 'call-1' );
+		expect( getStreamedMarkup( 'call-1' ) ).toBeUndefined();
+	} );
+
+	// A retry queued before the canvas mounted must not fire after the final
+	// flush landed: it would snapshot the finished design as the checkpoint.
+	it( 'drops a queued retry once a flush lands', async () => {
+		host.resolveRoot.mockReturnValueOnce( null );
+		renderHook( () => usePageDesignRenderer( host ) );
+
+		await streamed( `${ PAGE }${ PARAGRAPH }` );
+		flush();
+		// Outside `act`, which queues a timer of its own.
+		await finalizePendingStreams();
+
+		expect( host.commitFinalDesign ).toHaveBeenCalledTimes( 1 );
+		expect( jest.getTimerCount() ).toBe( 0 );
+	} );
+
+	it( 'finalizes each waiting tool call in turn, only once the canvas has a root', async () => {
+		host.resolveRoot.mockReturnValue( null );
+		renderHook( () => usePageDesignRenderer( host ) );
+
+		await streamed( `${ PAGE }${ PARAGRAPH }`, 'call-1' );
+		await streamed( `${ PAGE }${ PARAGRAPH }`, 'call-2' );
+		const finalized = finalizePendingStreams();
+		await act( () => jest.advanceTimersByTimeAsync( 0 ) );
+
+		expect( host.commitFinalDesign ).not.toHaveBeenCalled();
+
+		host.resolveRoot.mockReturnValue( 'root' );
+		await act( () => jest.advanceTimersByTimeAsync( 150 ) );
+
+		expect( await finalized ).toBe( true );
+		expect( host.commitFinalDesign.mock.calls.map( ( [ id ] ) => id ) ).toEqual( [
+			'call-1',
+			'call-2',
+		] );
+	} );
+} );
+
+// The transport forgets a session's streams; a flush already queued must not paint them.
+it( 'paints nothing for a stream the transport forgot before the flush', async () => {
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }${ PARAGRAPH }`, 'call-1', 'session-1' );
+	await handlePageDesignTaskUpdate( {
+		sessionId: 'session-2',
+		status: { message: { parts: [ { type: 'text', text: 'hi' } ] } },
+	} as unknown as TaskUpdate );
+	flush();
+
+	expect( host.captureCheckpoint ).not.toHaveBeenCalled();
+	expect( host.stageBlocks ).not.toHaveBeenCalled();
+} );
+
+// Without the checkpoint the design would have no way back.
+it( 'stages nothing until the checkpoint is captured, retrying a failed capture', async () => {
+	jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	host.captureCheckpoint.mockImplementationOnce( () => {
+		throw new Error( 'no root blocks' );
+	} );
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }${ PARAGRAPH }` );
+	flush();
+
+	expect( host.stageBlocks ).not.toHaveBeenCalled();
+
+	flush();
+
+	expect( host.captureCheckpoint ).toHaveBeenCalledTimes( 2 );
+	expect( host.stageBlocks ).toHaveBeenCalledTimes( 1 );
+} );
+
+it( 'stops listening and clears its timers when unmounted', async () => {
+	const { unmount } = renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }<!-- wp:group -->` );
+	unmount();
+
+	expect( jest.getTimerCount() ).toBe( 0 );
+
+	await streamed( `${ PAGE }${ PARAGRAPH }` );
+	flush();
+
+	expect( host.stageBlocks ).not.toHaveBeenCalled();
+} );

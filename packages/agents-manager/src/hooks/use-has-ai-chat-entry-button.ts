@@ -1,17 +1,22 @@
 import { useSyncExternalStore } from '@wordpress/element';
+import { useAgentsManagerContext } from '../contexts';
+import { getChatPresentation } from '../utils/chat-presentation';
 import { isAdminBarInEditor, isEditorAiEntryEnabled } from '../utils/editor-entry-points';
 import { isSiteEditorContext, isSiteEditorNavigationView } from '../utils/site-editor-context';
 
 // The standalone AI chat button — the chat's entry point, separate from the Help
-// menu. The wp-admin bar exposes it by ID; Calypso's masterbar by class.
+// menu. wp-admin renders it server-side, so it's found by ID; Calypso's masterbar
+// renders it late, so the host declares it instead.
 export const ADMIN_BAR_AI_CHAT_BUTTON_ID = 'wp-admin-bar-agents-manager-ai-chat';
-const MASTERBAR_AI_CHAT_BUTTON_SELECTOR = '.masterbar__item-agents-manager-ai-chat';
 
 /**
  * Whether an AI chat entry button (wp-admin bar, Calypso masterbar, or editor toolbar) is
  * present. If so, the chat hides on close and reopens from it instead of a floating bubble.
  */
-export function hasAiChatEntryButton(): boolean {
+export function hasAiChatEntryButton( hasMasterbarAiChatButton: boolean ): boolean {
+	if ( ! getChatPresentation().showEntryPoints ) {
+		return false;
+	}
 	// The Site Editor navigation view hides the editor toolbar and — unless the
 	// omnibar experiment shows it — the admin bar, whose markup can still sit
 	// hidden in the DOM. Only the omnibar's admin-bar button counts as an entry.
@@ -24,7 +29,7 @@ export function hasAiChatEntryButton(): boolean {
 	return (
 		isEditorAiEntryEnabled() ||
 		!! document.getElementById( ADMIN_BAR_AI_CHAT_BUTTON_ID ) ||
-		!! document.querySelector( MASTERBAR_AI_CHAT_BUTTON_SELECTOR )
+		hasMasterbarAiChatButton
 	);
 }
 
@@ -76,5 +81,9 @@ function subscribeToSiteEditorLocation( notify: () => void ): () => void {
  * navigation, where the toolbar entry appears and disappears without a page load.
  */
 export default function useHasAiChatEntryButton(): boolean {
-	return useSyncExternalStore( subscribeToSiteEditorLocation, hasAiChatEntryButton );
+	const { hasMasterbarAiChatButton } = useAgentsManagerContext();
+
+	return useSyncExternalStore( subscribeToSiteEditorLocation, () =>
+		hasAiChatEntryButton( hasMasterbarAiChatButton )
+	);
 }

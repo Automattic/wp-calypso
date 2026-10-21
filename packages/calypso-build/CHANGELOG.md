@@ -2,6 +2,7 @@
 
 ## trunk
 
+- Changed: `minify`'s `extractComments` option now defaults to `false`. With the SWC minifier it previously had no effect, and terser-webpack-plugin 5.6+ rejects it unless `@swc/core` supports comment extraction. Minified output is unchanged.
 - Breaking: Sass loader no longer implicitly prepends `process.cwd()` to `includePaths`. Callers must include it explicitly when project-root-relative imports (e.g., `client/assets/...`) need to resolve.
 - Updated dependencies:
   - sass to 1.77.8
@@ -295,6 +296,8 @@
   - [`@babel/plugin-proposal-export-default-from`](https://babeljs.io/docs/en/babel-plugin-proposal-export-default-from):
     Code relying on this plugin will need to be modified for compatibility before it can be bundled
     with `calypso-build`. For example:
+
+    <!-- eslint-skip -->
 
     ```js
     // Code relying on @babel/plugin-proposal-export-default-from

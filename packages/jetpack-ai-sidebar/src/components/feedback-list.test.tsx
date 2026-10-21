@@ -8,6 +8,7 @@ import '@testing-library/jest-dom';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import FeedbackList, { type FeedbackListItem } from './feedback-list';
+import SplitScreenGuide from './split-screen-guide';
 
 const mockApplyReviewEdit = jest.fn();
 const mockUndoBlockEdit = jest.fn();
@@ -43,11 +44,11 @@ jest.mock( '../utils/use-copy-to-clipboard', () => ( {
 
 jest.mock( './split-screen-guide', () => ( {
 	__esModule: true,
-	default: () => null,
+	default: jest.fn( () => null ),
 } ) );
 
 jest.mock( './review-card', () => {
-	const ReactModule = jest.requireActual< typeof import('react') >( 'react' );
+	const ReactModule = jest.requireActual< typeof import( 'react' ) >( 'react' );
 	return {
 		__esModule: true,
 		default: ( { status, onApply, onDismiss, onUndo }: any ) =>
@@ -69,7 +70,7 @@ jest.mock( './review-card', () => {
 								{ type: 'button', onClick: onDismiss },
 								'Dismiss'
 							)
-					  )
+						)
 			),
 	};
 } );
@@ -88,7 +89,7 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 jest.mock( '@wordpress/components', () => {
-	const ReactModule = jest.requireActual< typeof import('react') >( 'react' );
+	const ReactModule = jest.requireActual< typeof import( 'react' ) >( 'react' );
 	return {
 		Panel: ( { children }: any ) => ReactModule.createElement( 'div', null, children ),
 		PanelBody: ( { children }: any ) => ReactModule.createElement( 'section', null, children ),
@@ -153,6 +154,16 @@ beforeEach( () => {
 
 afterEach( () => {
 	delete ( window as any ).wp;
+} );
+
+it( 'passes the tool call through to the split-screen guide', () => {
+	const mockSplitScreenGuide = SplitScreenGuide as jest.MockedFunction< typeof SplitScreenGuide >;
+	render( feedbackList( jest.fn(), items, { toolCallId: 'tool-call-1' } ) );
+
+	expect( mockSplitScreenGuide.mock.calls.at( -1 )?.[ 0 ] ).toMatchObject( {
+		componentType: 'proofread',
+		toolCallId: 'tool-call-1',
+	} );
 } );
 
 it( 'reports an individual apply and its inline undo from existing operation results', async () => {

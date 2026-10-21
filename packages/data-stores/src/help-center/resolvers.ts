@@ -1,12 +1,31 @@
+import { addQueryArgs } from '@wordpress/url';
+import { PLANS_PRESALES_LAUNCHER_CONTEXT } from './constants';
 import { HelpCenterThunkProps } from './types';
 import { getPersistedPreference } from './utils';
 
 export function isHelpCenterShown() {
 	return async ( { dispatch, select }: HelpCenterThunkProps ) => {
 		if ( select.hasLoggedOutOdieChat() ) {
+			// Presales reopens the saved conversation; other surfaces land on home.
+			const options = select.getHelpCenterOptions();
+			const isPresales = options?.launcherContext === PLANS_PRESALES_LAUNCHER_CONTEXT;
+			const chat =
+				isPresales && options?.loggedOutBotSlug
+					? select.getLoggedOutOdieChat( options.loggedOutBotSlug )
+					: undefined;
+			let route = '/';
+			if ( isPresales ) {
+				route = chat
+					? addQueryArgs( '/odie', {
+							chatId: chat.odieId,
+							sessionId: chat.sessionId,
+							botSlug: chat.botSlug,
+						} )
+					: '/odie';
+			}
 			dispatch( {
 				type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
-				route: '/',
+				route,
 				coalesceParams: false,
 			} as const );
 			dispatch( {
@@ -20,7 +39,9 @@ export function isHelpCenterShown() {
 			const helpCenterOpen = await getPersistedPreference( 'help_center_open' );
 
 			// We only want to auto-open, we don't want to auto-close (and potentially overrule the user's action).
-			if ( helpCenterOpen ) {
+			// The same goes for an open or close that happened while the preference was loading: the block
+			// editor, for example, closes the Help Center as it loads.
+			if ( helpCenterOpen && typeof select.isHelpCenterShown() === 'undefined' ) {
 				dispatch( {
 					type: 'HELP_CENTER_SET_SHOW',
 					show: true,

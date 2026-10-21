@@ -160,7 +160,7 @@ export default function CommissionOverview() {
 							summary={ false }
 						>
 							{ translate(
-								'To continue earning a revenue share on all of the above, you must refer at least one new client to a WordPress.com or Pressable plan each year, starting from the date that you joined the Automattic for Agencies program.'
+								'To continue earning a commission, you must refer at least one new subscriber each year or have an active Automattic for Agencies purchase, starting from the date you joined the Automattic for Agencies program.'
 							) }
 						</FoldableCard>
 

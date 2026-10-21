@@ -15,13 +15,11 @@ describe( 'reducer', () => {
 					type: GUIDED_TOUR_UPDATE,
 					tour: 'testTour',
 					stepName: 'testStepName',
-					isPaused: false,
 				}
 			);
 			expect( state ).toEqual( {
 				tour: 'testTour',
 				stepName: 'testStepName',
-				isPaused: false,
 			} );
 		} );
 	} );

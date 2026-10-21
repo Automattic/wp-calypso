@@ -4,11 +4,15 @@ export interface OmnibarNode {
 	id: string;
 	title?: string;
 	label?: string;
+	tooltip?: string;
 	icon?: React.ReactElement;
 	group?: boolean;
 	variant?: 'secondary';
 	href?: string;
+	target?: string;
+	rel?: string;
 	onClick?: ( event: React.MouseEvent ) => void;
+	onView?: () => void;
 	disabled?: boolean;
 	active?: boolean;
 	className?: string;
@@ -19,7 +23,7 @@ export interface OmnibarNode {
 
 export type OmnibarNodeBuilders = Record<
 	string,
-	( adminBarNode: AdminBarNode ) => Partial< OmnibarNode >
+	( adminBarNode: AdminBarNode ) => Partial< OmnibarNode > | null
 >;
 
 export type OmnibarHrefResolver = ( href: string ) => string;

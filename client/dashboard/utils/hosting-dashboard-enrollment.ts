@@ -30,8 +30,7 @@ function isInRolloutCohort( userId: number | undefined ): boolean {
 }
 
 type HostingDashboardEnrollment =
-	| { enrolled: true; reason: 'opt-in' | 'forced' }
-	| { enrolled: false };
+	{ enrolled: true; reason: 'opt-in' | 'forced' } | { enrolled: false };
 
 /**
  * Is a user's default experience is the hosting dashboard, and why.
@@ -54,30 +53,6 @@ export function getHostingDashboardEnrollment(
 	}
 
 	return { enrolled: false };
-}
-
-/**
- * Whether the opt-in welcome modal should be shown. The modal introduces the
- * dashboard to existing users who were moved onto it by the rollout, so it is
- * limited to enrolled users who did not earlier opt in. Can't use the existing
- * `isInRolloutCohort` logic because semantics are slightly different: even
- * users who have been "forced" do not see modal if they have previously opt'd in.
- */
-export function isWelcomeModalEligible(
-	preference: HostingDashboardOptIn | undefined,
-	userId: number | undefined
-): boolean {
-	if (
-		! config.isEnabled( 'dashboard/opt-in-welcome-modal' ) ||
-		! userId ||
-		userId > NEW_USER_ID_THRESHOLD ||
-		preference?.value === 'opt-in' ||
-		isSupportSession()
-	) {
-		return false;
-	}
-
-	return userId % 100 < ROLLOUT_PERCENTAGE;
 }
 
 /**

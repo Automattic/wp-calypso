@@ -122,20 +122,8 @@ export default defineConfig( {
 			testDir: './setup',
 		},
 		{
-			name: 'prime-logins',
-			testMatch: /prime-logins\.setup\.ts/,
-			testDir: './setup',
-			// Borrows the `chrome` context so the login carries the e2e user agent suffix the
-			// backend expects. The cookies it leaves are per account, not per device, so the
-			// mobile project reuses them too.
-			use: withCustomOptions( {
-				...devices[ 'Desktop Chrome HiDPI' ],
-				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
-			} ),
-		},
-		{
 			name: 'chrome',
-			dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
+			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
 			use: withCustomOptions( {
 				...devices[ 'Desktop Chrome HiDPI' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
@@ -144,7 +132,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'mobile',
-			dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
+			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
 			use: withCustomOptions( {
 				...devices[ 'Pixel 7' ],
 				userAgent: appendE2EUserAgent( devices[ 'Pixel 7' ].userAgent ),
@@ -154,8 +142,6 @@ export default defineConfig( {
 		},
 		{
 			name: 'authentication',
-			// No 'prime-logins': these specs exercise the login flow itself, so warming
-			// the cookie cache would only add wall clock.
 			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
 			retries: 0,
 			testDir: './specs/authentication',

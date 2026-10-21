@@ -3,10 +3,10 @@ import {
 	getPlan,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_GROWTH_YEARLY,
+	PLAN_JETPACK_PRO_YEARLY,
 	PLAN_JETPACK_BUSINESS,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button as CalypsoButton } from '@automattic/components';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -15,7 +15,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { useJetpackConnectionStatus } from 'calypso/my-sites/stats/hooks/use-jetpack-connection-status';
 import { useSelector } from 'calypso/state';
-import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSiteAdminUrl, getSiteOption, getIsSimpleSite } from 'calypso/state/sites/selectors';
 import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import usePlanUsageQuery, { getUsageLimitStatus } from '../hooks/use-plan-usage-query';
@@ -107,15 +106,19 @@ interface StatsPersonalPurchaseProps {
 // same title), since only the title is read from the returned plan object.
 export const getBundledPlanSlug = ( {
 	isCompletePlanOwned,
+	isProPlanOwned,
 	isGrowthPlanOwned,
 	isBusinessPlanOwned,
 }: {
 	isCompletePlanOwned: boolean;
+	isProPlanOwned: boolean;
 	isGrowthPlanOwned: boolean;
 	isBusinessPlanOwned: boolean;
 } ): string | undefined => {
 	if ( isCompletePlanOwned ) {
 		return PLAN_JETPACK_COMPLETE;
+	} else if ( isProPlanOwned ) {
+		return PLAN_JETPACK_PRO_YEARLY;
 	} else if ( isGrowthPlanOwned ) {
 		return PLAN_JETPACK_GROWTH_YEARLY;
 	} else if ( isBusinessPlanOwned ) {
@@ -133,11 +136,11 @@ const getBundledPlanNoticeText = (
 		? translate(
 				'Your %(planName)s plan already includes %(viewsLimit)s views per month for Stats. Views from this purchase will stack on top, so you keep what you already have.',
 				{ args: { planName, viewsLimit: formatNumberCompact( viewsLimit ) } }
-		  )
+			)
 		: translate(
 				'Your %(planName)s plan already includes views for Stats. Views from this purchase will stack on top, so you keep what you already have.',
 				{ args: { planName } }
-		  );
+			);
 
 const StatsUpgradeInstructions = ( {
 	isNearLimit,
@@ -238,13 +241,13 @@ const StatsCommercialPurchase = ( {
 	eventProps,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
-	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 	const haveTiers = tiers.length > 0;
 	const {
 		isCommercialOwned,
 		hasAnyStatsPlan,
 		isCompletePlanOwned,
+		isProPlanOwned,
 		isGrowthPlanOwned,
 		isBusinessPlanOwned,
 	} = useStatsPurchases( siteId );
@@ -256,6 +259,7 @@ const StatsCommercialPurchase = ( {
 	// whether it has also purchased standalone Stats — both stack, so both notices can co-render.
 	const bundledPlanSlug = getBundledPlanSlug( {
 		isCompletePlanOwned,
+		isProPlanOwned,
 		isGrowthPlanOwned,
 		isBusinessPlanOwned,
 	} );
@@ -270,8 +274,6 @@ const StatsCommercialPurchase = ( {
 
 	const { isNearLimit, isOverLimit } = getUsageLimitStatus( usageData );
 
-	// The button of @automattic/components has built-in color scheme support for Calypso.
-	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
 	const startingTierQuantity = haveTiers ? getTierQuantity( tiers[ 0 ] ) : 0;
 	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( startingTierQuantity ?? 0 );
 
@@ -392,9 +394,8 @@ const StatsCommercialPurchase = ( {
 				</div>
 			) }
 			<div className="stats-purchase-wizard__actions">
-				<ButtonComponent
+				<Button
 					variant="primary"
-					primary={ isWPCOMSite ? true : undefined }
 					disabled={ ! haveTiers || needsConnectionForUpgrade }
 					onClick={ () =>
 						gotoCheckoutPage( {
@@ -413,13 +414,13 @@ const StatsCommercialPurchase = ( {
 					}
 				>
 					{ continueButtonText }
-				</ButtonComponent>
-				<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
+				</Button>
+				<Button variant="secondary" onClick={ handleCheckoutPostponed }>
 					{ postponeLabel ??
 						( needsConnectionForFreePlan
 							? translate( 'Start for free' )
 							: translate( 'I will do it later' ) ) }
-				</ButtonComponent>
+				</Button>
 			</div>
 			<div className="stats-purchase-page__footnotes">
 				<p>{ translate( '(*) 14-day money-back guarantee' ) }</p>

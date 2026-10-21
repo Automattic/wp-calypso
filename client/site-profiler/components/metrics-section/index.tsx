@@ -17,24 +17,27 @@ const Container = styled.div`
 `;
 
 const NameSpan = styled.span`
-	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
-		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+	font-family:
+		'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen-Sans',
+		'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	color: var( --studio-gray-20 );
 	font-size: 1rem;
 	margin-bottom: 8px;
 `;
 
 const Title = styled.div`
-	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
-		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+	font-family:
+		'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen-Sans',
+		'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 60px;
 	font-weight: 400;
 	line-height: 100%;
 	margin-bottom: 24px;
 
 	span {
-		font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
-			'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+		font-family:
+			'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen-Sans',
+			'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 		font-size: 60px;
 		font-style: normal;
 		line-height: 100%;
@@ -58,8 +61,9 @@ const Title = styled.div`
 
 const Subtitle = styled.span`
 	cursor: pointer;
-	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
-		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+	font-family:
+		'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen-Sans',
+		'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 1rem;
 	font-style: normal;
 	font-weight: 500;

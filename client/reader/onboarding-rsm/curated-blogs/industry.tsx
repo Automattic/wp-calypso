@@ -109,11 +109,11 @@ export const industryBlogs: CuratedBlogsList = {
 			has_icon: true,
 		},
 		{
-			feed_ID: 458090,
-			site_ID: 11070789,
-			site_URL: 'http://kellblog.com',
+			feed_ID: 178929684,
+			site_ID: 0,
+			site_URL: 'https://www.kellblog.com/',
 			site_name: 'Kellblog',
-			feed_URL: 'http://kellblog.com',
+			feed_URL: 'http://www.kellblog.com/rss',
 			has_icon: true,
 		},
 		{
@@ -497,11 +497,11 @@ export const industryBlogs: CuratedBlogsList = {
 			has_icon: true,
 		},
 		{
-			feed_ID: 458090,
-			site_ID: 11070789,
-			site_URL: 'https://kellblog.com/',
+			feed_ID: 178929684,
+			site_ID: 0,
+			site_URL: 'https://www.kellblog.com/',
 			site_name: 'Kellblog',
-			feed_URL: 'http://kellblog.com',
+			feed_URL: 'http://www.kellblog.com/rss',
 			has_icon: true,
 		},
 		{

@@ -115,8 +115,10 @@ sidebar navigates to the new shelf route without an action hash.
 - On create success: append to the cache (via the mutation), fire a
   `calypso_reader_*` Tracks event, show a `successNotice`, close, then the
   sidebar navigates to `getShelfPath( shelf.id )`.
-- `TODO(RSM-4139)`: when the real backend lands, map its error kinds to copy
-  where the generic `createShelf.isError` message is shown today.
+- Backend error codes are mapped to copy in `getShelfErrorMessage`
+  (`form-helpers.ts`); see the "Error codes" table in `README.md` for the full
+  list. Feed/tag/language count limits are additionally enforced client-side
+  before submit (`validateFeeds`/`validateTags`/`validateLanguages`).
 - Forms use WordPress components and `useTranslate` from `i18n-calypso`.
 
 ### Data

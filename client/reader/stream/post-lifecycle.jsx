@@ -96,6 +96,12 @@ class PostLifecycle extends Component {
 					itemRef={ this.props.itemRef }
 				/>
 			);
+		} else if ( postKey.isCustomBlock ) {
+			return (
+				<div ref={ this.props.itemRef } className="reader-stream__custom-block">
+					{ this.props.inStreamBlock }
+				</div>
+			);
 		} else if ( postKey.isPromptBlock ) {
 			return (
 				<div
@@ -162,6 +168,8 @@ const ConnectedPostLifecycle = connect(
 	}
 )( PostLifecycle );
 
+// The inner name labels the component in React DevTools.
+// eslint-disable-next-line no-shadow
 const PostLifecycleWithPost = forwardRef( function PostLifecycleWithPost( props, ref ) {
 	const post = useCachedPost( props.postKey );
 	return <ConnectedPostLifecycle { ...props } post={ post } ref={ ref } />;

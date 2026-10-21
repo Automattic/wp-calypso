@@ -18,7 +18,7 @@ describe( 'recordHostTracksEvent', () => {
 	} );
 
 	it( 'adds site attribution from Help Center inline data', () => {
-		globalThis.helpCenterData = { site: { ID: 123 } };
+		globalThis.helpCenterData = { site: { ID: 123 }, currentUser: { primary_blog: 456 } };
 
 		recordHostTracksEvent( 'calypso_inlinehelp_show', { location: 'help-center' } );
 
@@ -26,6 +26,30 @@ describe( 'recordHostTracksEvent', () => {
 			location: 'help-center',
 			blog_id: 123,
 			site_context_source: 'help_center_data',
+		} );
+	} );
+
+	it( 'falls back to the current user primary site', () => {
+		globalThis.helpCenterData = { currentUser: { primary_blog: 456 } };
+
+		recordHostTracksEvent( 'calypso_inlinehelp_show', { location: 'help-center' } );
+
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_inlinehelp_show', {
+			location: 'help-center',
+			blog_id: 456,
+			site_context_source: 'primary_site',
+		} );
+	} );
+
+	it( 'falls back when inline site data has an invalid ID', () => {
+		globalThis.helpCenterData = { site: { ID: 0 }, currentUser: { primary_blog: 456 } };
+
+		recordHostTracksEvent( 'calypso_inlinehelp_show', { location: 'help-center' } );
+
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_inlinehelp_show', {
+			location: 'help-center',
+			blog_id: 456,
+			site_context_source: 'primary_site',
 		} );
 	} );
 

@@ -1,6 +1,6 @@
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logStashEvent, recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
@@ -36,9 +36,7 @@ export default async function webPayProcessor(
 	if ( ! isValidWebPayTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
-	transactionOptions.reduxDispatch(
-		recordTransactionBeginAnalytics( { paymentMethodId: webPaymentType } )
-	);
+	recordTransactionBeginAnalytics( { paymentMethodId: webPaymentType } );
 
 	const { includeDomainDetails, includeGSuiteDetails, responseCart, siteId, contactDetails } =
 		transactionOptions;
@@ -70,7 +68,6 @@ export default async function webPayProcessor(
 				debug( 'transaction requires authentication' );
 				paymentIntentId = stripeResponse.message.payment_intent_id;
 				await handle3DSChallenge(
-					transactionOptions.reduxDispatch,
 					submitData.stripe,
 					stripeResponse.message.payment_intent_client_secret,
 					paymentIntentId
@@ -86,12 +83,10 @@ export default async function webPayProcessor(
 		.then( makeSuccessResponse )
 		.catch( ( error: Error ) => {
 			debug( 'transaction failed' );
-			transactionOptions.reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_web_pay_transaction_failed', {
-					payment_intent_id: paymentIntentId ?? '',
-					error: error.message,
-				} )
-			);
+			recordTracksEvent( 'calypso_checkout_web_pay_transaction_failed', {
+				payment_intent_id: paymentIntentId ?? '',
+				error: error.message,
+			} );
 			logStashEvent( 'calypso_checkout_web_pay_transaction_failed', {
 				payment_intent_id: paymentIntentId ?? '',
 				tags: [ `payment_intent_id:${ paymentIntentId }` ],

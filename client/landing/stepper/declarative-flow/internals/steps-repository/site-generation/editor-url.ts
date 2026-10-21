@@ -1,29 +1,27 @@
-const ALLOWED_HOST_SUFFIXES = [ '.wordpress.com', '.wpcomstaging.com' ];
-
-export function getSafeEditorUrl( rawUrl: string | null ): string | null {
-	if ( ! rawUrl ) {
+// The status API computes this URL from the site's admin URL, including custom domains.
+export function getEditorUrlFromStatus( liveUrl: unknown, source?: string | null ): string | null {
+	if ( typeof liveUrl !== 'string' || ! liveUrl ) {
 		return null;
 	}
 
 	let parsed: URL;
 	try {
-		parsed = new URL( rawUrl, window.location.origin );
+		parsed = new URL( liveUrl );
 	} catch {
 		return null;
 	}
 
-	const isCurrentHost = parsed.hostname === window.location.hostname;
 	const isLocalHttpDestination =
-		isCurrentHost && parsed.protocol === 'http:' && window.location.protocol === 'http:';
+		parsed.hostname === window.location.hostname &&
+		parsed.protocol === 'http:' &&
+		window.location.protocol === 'http:';
 	if ( parsed.protocol !== 'https:' && ! isLocalHttpDestination ) {
 		return null;
 	}
 
-	const { hostname } = parsed;
-	const isAllowedHost =
-		isCurrentHost ||
-		hostname === 'wordpress.com' ||
-		ALLOWED_HOST_SUFFIXES.some( ( suffix ) => hostname.endsWith( suffix ) );
+	if ( source && ! parsed.searchParams.has( 'source' ) ) {
+		parsed.searchParams.set( 'source', source );
+	}
 
-	return isAllowedHost ? parsed.href : null;
+	return parsed.href;
 }

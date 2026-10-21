@@ -5,12 +5,13 @@ import {
 	ZENDESK_CUSTOM_FIELD_WEBSITE_URL,
 	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
 } from '@automattic/zendesk-client';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
 import { useAgentsManagerContext } from '../../contexts';
+import { getSiteUrl } from '../../utils/site-url';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import ConcludedConversationFooter from '../concluded-conversation-footer';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { UIMessage as Message } from '@automattic/agenttic-client';
 import './style.scss';
 
 interface Props {
@@ -30,22 +31,6 @@ interface Props {
 	markdownExtensions?: MarkdownExtensions;
 }
 
-function withHttpsProtocol( domain: string ) {
-	return /^https?:\/\//.test( domain ) ? domain : `https://${ domain }`;
-}
-
-function getSiteUrl( site: ReturnType< typeof useAgentsManagerContext >[ 'site' ] ) {
-	if ( site?.URL ) {
-		return site.URL;
-	}
-
-	if ( site?.domain ) {
-		return withHttpsProtocol( site.domain );
-	}
-
-	return window.location.href;
-}
-
 export default function ZendeskChat( {
 	chatHeaderOptions,
 	isDocked,
@@ -61,6 +46,7 @@ export default function ZendeskChat( {
 		zendeskSmoochIntegrationKey,
 		zendeskTicketProductFieldValue,
 	} = useAgentsManagerContext();
+
 	const siteUrl = getSiteUrl( site );
 	const conversationTicketFields = useMemo(
 		() =>
@@ -69,10 +55,11 @@ export default function ZendeskChat( {
 						[ ZENDESK_CUSTOM_FIELD_WEBSITE_URL ]: siteUrl,
 						[ ZENDESK_SOURCE_URL_TICKET_FIELD_ID ]: window.location.href,
 						[ ZENDESK_CUSTOM_FIELD_PRODUCT ]: zendeskTicketProductFieldValue,
-				  }
+					}
 				: {},
 		[ siteUrl, zendeskTicketProductFieldValue ]
 	);
+
 	const {
 		agentticMessages,
 		onSubmit,
@@ -89,6 +76,18 @@ export default function ZendeskChat( {
 		smoochIntegrationKey: zendeskSmoochIntegrationKey,
 		siteId: site?.ID,
 	} );
+
+	const [ inputValue, setInputValue ] = useState( '' );
+
+	// Smooch drops the typing indicator 10 s after `startTyping`, so refresh it on
+	// every keystroke, as the Help Center does.
+	const handleInputChange = ( value: string ) => {
+		setInputValue( value );
+
+		if ( value ) {
+			onTypingStatusChange( true );
+		}
+	};
 
 	return (
 		<AgentChat
@@ -108,6 +107,8 @@ export default function ZendeskChat( {
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
 			onTypingStatusChange={ onTypingStatusChange }
+			inputValue={ inputValue }
+			onInputChange={ handleInputChange }
 			imageUpload={ imageUpload }
 			acceptedImageFileTypes={ supportedImageTypes }
 			alternativeFooter={ hasInteractionEnded ? <ConcludedConversationFooter /> : undefined }

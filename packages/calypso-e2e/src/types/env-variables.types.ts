@@ -1,5 +1,3 @@
-import { TestAccountName } from '../';
-
 export type ViewportName = string;
 export type JetpackTarget = 'remote-site' | 'wpcom-production' | 'wpcom-deployment';
 export type AtomicVariation =
@@ -15,7 +13,6 @@ export type AtomicVariation =
 export interface SupportedEnvVariables {
 	readonly A8C_FOR_AGENCIES_URL: string;
 	readonly ATOMIC_VARIATION: AtomicVariation;
-	readonly AUTHENTICATE_ACCOUNTS: TestAccountName[];
 	readonly CALYPSO_BASE_URL: string;
 	readonly COBLOCKS_EDGE: boolean;
 	readonly COOKIES_PATH: string;

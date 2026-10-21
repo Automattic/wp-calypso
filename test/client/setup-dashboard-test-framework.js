@@ -17,6 +17,15 @@ global.TextDecoder = TextDecoder;
 
 global.ResizeObserver = require( 'resize-observer-polyfill' );
 
+// jsdom doesn't implement scrollIntoView, which @wordpress/components' ComboboxControl
+// calls when navigating its suggestion list with the arrow keys.
+if (
+	typeof global.Element !== 'undefined' &&
+	typeof global.Element.prototype.scrollIntoView !== 'function'
+) {
+	global.Element.prototype.scrollIntoView = function () {};
+}
+
 // jsdom doesn't implement structuredClone; mirror the client test setup so
 // transitively-loaded Calypso code that relies on it works under jsdom.
 if ( typeof global.structuredClone !== 'function' ) {

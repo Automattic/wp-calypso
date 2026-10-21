@@ -232,10 +232,10 @@ const LaunchSite = () => {
 							{ isComingSoon || isPrivateAndUnlaunched
 								? translate(
 										'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
-								  )
+									)
 								: translate(
 										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
-								  ) }
+									) }
 						</p>
 						{ shouldShowAgencyBillingMessage && <i>{ agencyBillingMessage }</i> }
 					</div>

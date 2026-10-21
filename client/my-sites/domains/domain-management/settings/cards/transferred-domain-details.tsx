@@ -63,7 +63,7 @@ const TransferredDomainDetails = ( {
 								code: <code />,
 							},
 						}
-				  )
+					)
 				: translate(
 						'We tried to start a transfer for the domain {{strong}}%(domain)s{{/strong}} but an error occurred. ' +
 							'Please contact the domain owner, {{strong}}%(owner)s{{/strong}}, for more details.',
@@ -76,7 +76,7 @@ const TransferredDomainDetails = ( {
 								strong: <strong />,
 							},
 						}
-				  );
+					);
 		}
 
 		if ( transferStatus.PENDING_START === domain.transferStatus ) {
@@ -93,7 +93,7 @@ const TransferredDomainDetails = ( {
 								strong: <strong />,
 							},
 						}
-				  )
+					)
 				: translate(
 						'This domain transfer is waiting to be initiated. Please contact the domain owner, {{strong}}%(owner)s{{/strong}}, to start it.',
 						{
@@ -104,7 +104,7 @@ const TransferredDomainDetails = ( {
 								strong: <strong />,
 							},
 						}
-				  );
+					);
 		} else if ( transferStatus.CANCELLED === domain.transferStatus ) {
 			return currentUserIsOwner
 				? translate(
@@ -126,7 +126,7 @@ const TransferredDomainDetails = ( {
 								),
 							},
 						}
-				  )
+					)
 				: translate(
 						'The domain transfer failed to complete. Please contact the domain owner, {{strong}}%(owner)s{{/strong}}, to restart it.',
 						{
@@ -137,7 +137,7 @@ const TransferredDomainDetails = ( {
 								strong: <strong />,
 							},
 						}
-				  );
+					);
 		}
 
 		return translate(

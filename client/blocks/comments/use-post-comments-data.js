@@ -64,7 +64,7 @@ export const usePostCommentsData = ( props ) => {
 	const initialCommentFromList = props.startingCommentId
 		? loadedComments.find(
 				( comment ) => Number( comment.ID ) === Number( props.startingCommentId )
-		  )
+			)
 		: undefined;
 	const shouldFetchStartingComment = Boolean(
 		data && props.startingCommentId && ! initialCommentFromList
@@ -100,7 +100,7 @@ export const usePostCommentsData = ( props ) => {
 	const initialComment = props.startingCommentId
 		? commentsForDisplay.find(
 				( comment ) => Number( comment.ID ) === Number( props.startingCommentId )
-		  )
+			)
 		: undefined;
 	const commentsTreeWithInitialComment = useMemo(
 		() => ensureInitialCommentVisible( commentsTree, initialComment ),

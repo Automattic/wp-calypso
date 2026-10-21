@@ -10,51 +10,56 @@
 //------------------------------------------------------------------------------
 
 const RuleTester = require( 'eslint' ).RuleTester;
-const rule = require( '../../../lib/rules/post-message-no-wildcard-targets' );
-const config = { env: { es6: true } };
+const plugin = require( '../../..' );
+const { ERROR_MESSAGE } = require( '../../../lib/rules/post-message-no-wildcard-targets' );
+const config = { languageOptions: { ecmaVersion: 2015, sourceType: 'script' } };
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( config ).run( 'post-message-no-wildcard-targets', rule, {
-	valid: [
-		{ code: 'foo()' },
-		{ code: "foo( 1, '*' )" },
-		{ code: "postMessage( 1, 'test' )" },
-		{ code: 'postMessage( null, test )' },
-		{ code: 'postMessage( true, test() )' },
-		{ code: "postMessage( '*', 'some.domain' )" },
-	],
+new RuleTester( config ).run(
+	'post-message-no-wildcard-targets',
+	plugin.rules[ 'post-message-no-wildcard-targets' ],
+	{
+		valid: [
+			{ code: 'foo()' },
+			{ code: "foo( 1, '*' )" },
+			{ code: "postMessage( 1, 'test' )" },
+			{ code: 'postMessage( null, test )' },
+			{ code: 'postMessage( true, test() )' },
+			{ code: "postMessage( '*', 'some.domain' )" },
+		],
 
-	invalid: [
-		{
-			code: "postMessage( 'bob', '*' )",
-			errors: [ { message: rule.ERROR_MESSAGE } ],
-		},
-		{
-			code: "postMessage( false, '*' )",
-			errors: [ { message: rule.ERROR_MESSAGE } ],
-		},
-		{
-			code: 'postMessage( JSON.stringify( {} ), "*" )',
-			errors: [ { message: rule.ERROR_MESSAGE } ],
-		},
-		{
-			code: 'postMessage( null, `*` )',
-			errors: [ { message: rule.ERROR_MESSAGE } ],
-		},
-		{
-			code: "window.postMessage( null, '*' )",
-			errors: [ { message: rule.ERROR_MESSAGE } ],
-		},
-		{
-			code: "frame.postMessage( null, '*' )",
-			errors: [ { message: rule.ERROR_MESSAGE } ],
-		},
-		{
-			code: "a.contentWindow.postMessage( null, '*' )",
-			errors: [ { message: rule.ERROR_MESSAGE } ],
-		},
-	],
-} );
+		invalid: [
+			{
+				code: "postMessage( 'bob', '*' )",
+				errors: [ { message: ERROR_MESSAGE } ],
+			},
+			{
+				code: "postMessage( false, '*' )",
+				errors: [ { message: ERROR_MESSAGE } ],
+			},
+			{
+				code: 'postMessage( JSON.stringify( {} ), "*" )',
+				errors: [ { message: ERROR_MESSAGE } ],
+			},
+			{
+				code: 'postMessage( null, `*` )',
+				errors: [ { message: ERROR_MESSAGE } ],
+			},
+			{
+				code: "window.postMessage( null, '*' )",
+				errors: [ { message: ERROR_MESSAGE } ],
+			},
+			{
+				code: "frame.postMessage( null, '*' )",
+				errors: [ { message: ERROR_MESSAGE } ],
+			},
+			{
+				code: "a.contentWindow.postMessage( null, '*' )",
+				errors: [ { message: ERROR_MESSAGE } ],
+			},
+		],
+	}
+);

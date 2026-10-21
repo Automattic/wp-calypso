@@ -28,17 +28,17 @@ const ArticleContent = ( {
 					<SupportArticleHeader post={ post } isLoading={ false } />
 					<EmbedContainer>
 						<div
-							className={
-								post.lesson_navigation
-									? 'help-center-article-content__main help-center-article-content__main--with-lesson-navigation'
-									: 'help-center-article-content__main'
-							}
+							className="help-center-article-content__main"
 							// eslint-disable-next-line react/no-danger
 							dangerouslySetInnerHTML={ { __html: post.content } }
 							ref={ articleContentRef }
 						/>
 						<HelpCenterFeedbackForm
+							// Remount when the article changes so the form re-seeds from that article's rating.
+							key={ `${ post.site_ID }-${ post.ID }` }
 							postId={ post.ID }
+							blogId={ post.site_ID }
+							userRating={ post.user_rating }
 							isEligibleForChat={ isEligibleForChat }
 							forceEmailSupport={ forceEmailSupport }
 						/>

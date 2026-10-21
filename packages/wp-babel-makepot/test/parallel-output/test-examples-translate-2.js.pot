@@ -1,0 +1,27 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+#: test/examples/translate-2.js:4
+#. Second occurrence of `Simple string` should also be extracted.
+msgid "Simple string"
+msgstr ""
+
+#: test/examples/translate-2.js:8
+#: test/examples/translate-2.js:9
+#. First comment
+#. Second comment
+msgid "Stack comments"
+msgstr ""
+
+#: test/examples/translate-2.js:12
+#: test/examples/translate-2.js:15
+#. Extract from leading comment first
+#. Extract from leading comment second
+msgid "Extract from leading comment"
+msgstr ""
+
+#: test/examples/translate-2.js:17
+msgid "Exrract _x as alias for translate"
+msgid_plural "Second param should be extracted as plural instead of context"
+msgstr[0] ""
+msgstr[1] ""

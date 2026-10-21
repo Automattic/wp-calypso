@@ -31,9 +31,25 @@ interface AltTextSuggestion {
 }
 
 interface ImageAltTextPickerProps {
-	images: AltTextSuggestion[];
+	images?: AltTextSuggestion[];
 	onComplete?: () => void;
 	onResponseAction?: OnResponseAction;
+}
+
+const EMPTY_ALT_TEXT_SUGGESTIONS: AltTextSuggestion[] = [];
+
+function isAltTextSuggestion( image: unknown ): image is AltTextSuggestion {
+	if ( ! image || typeof image !== 'object' || Array.isArray( image ) ) {
+		return false;
+	}
+
+	const candidate = image as Record< string, unknown >;
+	return (
+		typeof candidate.clientId === 'string' &&
+		candidate.clientId.trim() !== '' &&
+		typeof candidate.alt === 'string' &&
+		candidate.alt.trim() !== ''
+	);
 }
 
 /** Renders image alt-text suggestions and applies them in one action. */
@@ -44,12 +60,17 @@ export default function ImageAltTextPicker( {
 }: ImageAltTextPickerProps ) {
 	const [ applied, setApplied ] = useState( false );
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
+	// The props arrive from an orchestrator tool payload, so guard the shape
+	// instead of trusting the TypeScript type.
+	const rows = Array.isArray( images )
+		? images.filter( isAltTextSuggestion )
+		: EMPTY_ALT_TEXT_SUGGESTIONS;
 
 	const handleApplyAll = useCallback( () => {
 		let completedCount = 0;
 		// Updates stop on the first throw; earlier completions produce `partial_failed`.
 		try {
-			images.forEach( ( image ) => {
+			rows.forEach( ( image ) => {
 				updateBlockAttributes( image.clientId, { alt: image.alt } );
 				completedCount++;
 			} );
@@ -70,13 +91,13 @@ export default function ImageAltTextPicker( {
 			itemCount: completedCount,
 		} );
 		onComplete?.();
-	}, [ images, updateBlockAttributes, onComplete, onResponseAction ] );
+	}, [ rows, updateBlockAttributes, onComplete, onResponseAction ] );
 
-	if ( ! images?.length ) {
+	if ( ! rows.length ) {
 		return null;
 	}
 
-	const count = images.length;
+	const count = rows.length;
 
 	return (
 		<div className="jetpack-ai-image-alt-text-picker">
@@ -84,7 +105,7 @@ export default function ImageAltTextPicker( {
 				{ __( 'Suggested alt text for your images:', 'jetpack' ) }
 			</p>
 			<ul className="jetpack-ai-image-alt-text-picker__list">
-				{ images.map( ( image ) => (
+				{ rows.map( ( image ) => (
 					<li key={ image.clientId } className="jetpack-ai-image-alt-text-picker__row">
 						{ image.url && (
 							<img

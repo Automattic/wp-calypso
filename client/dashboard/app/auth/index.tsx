@@ -10,15 +10,25 @@ import {
 	useQueryClient,
 	type QueryCacheNotifyEvent,
 	type MutationCacheNotifyEvent,
+	type QueryFunctionContext,
+	QueryClient,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
 import { wpcomLink } from '../../utils/link';
 import { bumpStat } from '../analytics';
-import { useAppContext } from '../context';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import type { WPError } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
+
+/**
+ * Patches the current user so `useAuth()` consumers see a change straight away, then
+ * refetches it from `/me` to confirm.
+ */
+export function updateCurrentUser( queryClient: QueryClient, changes: Partial< User > ) {
+	queryClient.setQueryData< User >( AUTH_QUERY_KEY, ( user ) => user && { ...user, ...changes } );
+	queryClient.invalidateQueries( { queryKey: AUTH_QUERY_KEY } );
+}
 
 const BOOTSTRAP_ERROR_MESSAGE = 'Failed to bootstrap user object';
 
@@ -76,16 +86,53 @@ function isAuthBounceRecord( value: unknown ): value is AuthBounceRecord {
 	);
 }
 
+/**
+ * Whether the session behind the current page can still authenticate.
+ *
+ * `unknown` is separate from `dead` so a caller can choose not to act on a
+ * guess.
+ */
+export type SessionState = 'alive' | 'dead' | 'unknown';
+
+export const SESSION_STATE_QUERY_KEY = [ 'auth', 'session-state' ];
+
+/**
+ * Requesting the current user is the only way to tell a dead session from an
+ * account that merely lacks a permission: the failing request reports both the
+ * same way.
+ */
+export const sessionStateQuery = () => ( {
+	queryKey: SESSION_STATE_QUERY_KEY,
+	queryFn: (): Promise< SessionState > =>
+		fetchUser().then(
+			() => 'alive' as const,
+			( error: unknown ) =>
+				isWpError( error ) &&
+				( error.statusCode === 401 || error.error === 'authorization_required' )
+					? ( 'dead' as const )
+					: ( 'unknown' as const )
+		),
+	retry: false,
+	// Without this the query is parked in `pending` while the browser is offline,
+	// and callers waiting on a verdict never get one.
+	networkMode: 'always' as const,
+	// One answer serves the whole page: a dead session fails every request alike.
+	staleTime: Infinity,
+	meta: { persist: false },
+} );
+
+export function useSessionStateQuery() {
+	return useQuery( sessionStateQuery() );
+}
+
 function getOAuthAuthorizeUrl( {
 	state,
 	next = '',
 	isLogout = false,
-	isNewUser = false,
 }: {
 	state: string;
 	next?: string;
 	isLogout?: boolean;
-	isNewUser?: boolean;
 } ): string {
 	const redirectUri = new URL( OAUTH_CALLBACK_PATH, window.location.origin );
 
@@ -102,7 +149,6 @@ function getOAuthAuthorizeUrl( {
 		blog_id: '0',
 		state,
 		...( isLogout === true ? { implicit: 'false' } : {} ),
-		...( isNewUser === true ? { 'new-user': '1' } : {} ),
 	} ).toString();
 
 	return authUri.toString();
@@ -121,7 +167,7 @@ function shouldUseBootstrap(): boolean {
 	return ! isSupportUserSession() && config.isEnabled( 'wpcom-user-bootstrap' );
 }
 
-export async function initializeCurrentUser(): Promise< User > {
+export async function loadInitialUser(): Promise< User > {
 	if ( shouldUseBootstrap() ) {
 		if ( window.currentUser ) {
 			return window.currentUser;
@@ -130,6 +176,17 @@ export async function initializeCurrentUser(): Promise< User > {
 	}
 
 	return fetchUser();
+}
+
+/**
+ * The bootstrapped `window.currentUser` is only fresh on page load, so once the cache holds a
+ * user every later fetch goes to `/me`.
+ */
+export function authQueryFn( { client, queryKey }: QueryFunctionContext ): Promise< User > {
+	if ( client.getQueryData< User >( queryKey ) ) {
+		return fetchUser();
+	}
+	return loadInitialUser();
 }
 
 function getAuthErrorReason( error: unknown ): string {
@@ -154,7 +211,6 @@ function getAuthErrorReason( error: unknown ): string {
  */
 export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	const authErrorHandled = useRef( false );
-	const { supports } = useAppContext();
 	const queryClient = useQueryClient();
 	const {
 		data: user,
@@ -163,7 +219,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		error: userError,
 	} = useQuery( {
 		queryKey: AUTH_QUERY_KEY,
-		queryFn: initializeCurrentUser,
+		queryFn: authQueryFn,
 		staleTime: 30 * 60 * 1000, // Consider auth valid for 30 minutes
 		retry: false, // Don't retry on 401 errors
 		meta: {
@@ -182,43 +238,35 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		};
 	}, [ user ] );
 
-	const handleAuthError = useCallback(
-		( reason: string ) => {
-			// Prevents repeated calls to redirect
-			if ( authErrorHandled.current ) {
-				return;
-			}
+	const handleAuthError = useCallback( ( reason: string ) => {
+		// Prevents repeated calls to redirect
+		if ( authErrorHandled.current ) {
+			return;
+		}
 
-			authErrorHandled.current = true;
+		authErrorHandled.current = true;
 
-			bumpStat( 'dashboard-auth', `bounce:${ reason }` );
-			trackAuthBounceLoop();
+		bumpStat( 'dashboard-auth', `bounce:${ reason }` );
+		trackAuthBounceLoop();
 
-			if ( config.isEnabled( 'oauth' ) ) {
-				const state = crypto.randomUUID();
-				sessionStorage.setItem( 'wpcom_oauth_state', state );
+		if ( config.isEnabled( 'oauth' ) ) {
+			const state = crypto.randomUUID();
+			sessionStorage.setItem( 'wpcom_oauth_state', state );
 
-				// Default to the signup screen rather than the login screen for certain routes.
-				const isNewUser =
-					supports.startStoreRoute === true && window.location.pathname === '/start-store';
+			window.location.replace(
+				getOAuthAuthorizeUrl( {
+					state,
+					next: window.location.pathname + window.location.search,
+				} )
+			);
+			return;
+		}
 
-				window.location.replace(
-					getOAuthAuthorizeUrl( {
-						state,
-						isNewUser,
-						next: window.location.pathname + window.location.search,
-					} )
-				);
-				return;
-			}
-
-			const currentPath = window.location.href;
-			const path = config( 'wpcom_login_url' ) || wpcomLink( '/log-in' );
-			const loginUrl = `${ path }?redirect_to=${ encodeURIComponent( currentPath ) }`;
-			window.location.href = loginUrl;
-		},
-		[ supports.startStoreRoute ]
-	);
+		const currentPath = window.location.href;
+		const path = config( 'wpcom_login_url' ) || wpcomLink( '/log-in' );
+		const loginUrl = `${ path }?redirect_to=${ encodeURIComponent( currentPath ) }`;
+		window.location.href = loginUrl;
+	}, [] );
 
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.
@@ -262,11 +310,12 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		}
 	}, [ user ] );
 
-	// Handles _all_ errors fetching the user object, regardless of whether they are
-	// `authorization_required` errors or not.
-	if ( userIsError ) {
+	// Before the user has loaded, any error fetching it is fatal. After that, a failed refetch
+	// keeps the cached user unless the session is no longer authorized.
+	const authErrorReason = userIsError ? getAuthErrorReason( userError ) : null;
+	if ( authErrorReason && ( ! user || authErrorReason === 'unauthorized' ) ) {
 		if ( typeof window !== 'undefined' ) {
-			handleAuthError( getAuthErrorReason( userError ) );
+			handleAuthError( authErrorReason );
 		}
 		return null;
 	}

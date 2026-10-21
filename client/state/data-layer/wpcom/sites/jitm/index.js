@@ -30,7 +30,7 @@ const jitmSchema = ! isRunningInLegacyJetpackSite
 					items: schema.items,
 				},
 			},
-	  };
+		};
 
 /**
  * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.

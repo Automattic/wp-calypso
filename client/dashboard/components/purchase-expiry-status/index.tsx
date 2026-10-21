@@ -1,6 +1,6 @@
 import './style.scss';
 
-import { SubscriptionBillPeriod, getPlanNames } from '@automattic/api-core';
+import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button, ExternalLink, Icon } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -12,6 +12,7 @@ import { useHelpCenter } from '../../app/help-center';
 import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
 import { formatDate, getCalendarDaysUntil, getRelativeDayString } from '../../utils/datetime';
+import { getDowngradeTargetProductName } from '../../utils/downgrade-target-name';
 import {
 	EXPIRY_ERROR_DAYS,
 	EXPIRY_WARNING_DAYS,
@@ -19,6 +20,7 @@ import {
 	isRenewingBeforeExpiration,
 	isExpiring,
 	isExpiredOrRemoved,
+	isFreeTrialEndingOnExpiryDate,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isAkismetFreeProduct,
@@ -45,6 +47,29 @@ function FormattedExpiryDate( { locale, purchase }: { locale: string; purchase: 
 				dateStyle: 'long',
 			} ) }
 		</span>
+	);
+}
+
+/**
+ * An urgent status as plain text, with the expiry date it leaves out in a tooltip.
+ */
+function UrgentExpiryText( {
+	purchase,
+	copy,
+	untranslatedFallbackText,
+}: {
+	purchase: Purchase;
+	copy: ExpiryStatusCopy;
+	untranslatedFallbackText?: React.ReactNode;
+} ) {
+	const locale = useLocale();
+	return (
+		<Text
+			intent={ copy.intent }
+			title={ formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ) }
+		>
+			{ copy.text ?? untranslatedFallbackText }
+		</Text>
 	);
 }
 
@@ -110,9 +135,11 @@ function UrgentExpiryStatus( {
 
 	if ( ! isRenewalWorthOffering ) {
 		return (
-			<Text intent={ copy.intent } title={ expiryDateTitle }>
-				{ expiryText }
-			</Text>
+			<UrgentExpiryText
+				purchase={ purchase }
+				copy={ copy }
+				untranslatedFallbackText={ untranslatedFallbackText }
+			/>
 		);
 	}
 
@@ -152,31 +179,9 @@ export function PurchaseExpiryStatus( {
 	const locale = useLocale();
 	const { setShowHelpCenter } = useHelpCenter();
 
-	// @todo: There isn't currently a way to get the taxName based on the
-	// country. The country is not included in the purchase information
-	// envelope. We should add this information so we can utilize useTaxName
-	// to retrieve the correct taxName. For now, we are using a fallback tax
-	// name with context, to prevent mis-translation.
-	// translators: Shortened form of 'Sales Tax', not a country-specific tax name
-	const taxName = __( 'tax' );
-
-	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-	const excludeTaxStringAbbreviation = sprintf( __( '(excludes %s)' ), [ taxName ] );
-
-	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-	const excludeTaxStringTitle = sprintf( __( 'Renewal price excludes any applicable %s' ), [
-		taxName,
-	] );
-
-	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
-		// translators: partnerName is the name of the partner service who manages this product
-		return sprintf( __( 'Managed by %(partnerName)s' ), {
-			partnerName: purchase.partner_name,
-		} );
-	}
-
 	if (
 		isSiteMissing &&
+		! isManagedByPartner( purchase ) &&
 		purchase.is_attached_to_holding_site &&
 		purchase.product_type === 'jetpack'
 	) {
@@ -198,12 +203,19 @@ export function PurchaseExpiryStatus( {
 		temporarySitePurchaseProductTypes.includes( purchase.product_type );
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 
-	if ( isSiteMissing && ! isA4ABDPurchase && ! isKnownTemporarySiteProductType && isJetpack ) {
+	if (
+		isSiteMissing &&
+		! isManagedByPartner( purchase ) &&
+		! isA4ABDPurchase &&
+		! isKnownTemporarySiteProductType &&
+		isJetpack
+	) {
 		return <span>{ __( 'Disconnected from WordPress.com' ) }</span>;
 	}
 
 	if (
 		isSiteMissing &&
+		! isManagedByPartner( purchase ) &&
 		! isA4ABDPurchase &&
 		! isKnownTemporarySiteProductType &&
 		! purchase.is_domain
@@ -229,15 +241,89 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
+	if (
+		! isManagedByPartner( purchase ) &&
+		purchase.is_iap_purchase &&
+		purchase.iap_purchase_management_link
+	) {
+		return getInAppPurchaseText( <a href={ purchase.iap_purchase_management_link } /> );
+	}
+
+	const status = describePurchaseExpiry( purchase, locale );
+	return isUrgentExpiry( status ) ? (
+		<UrgentExpiryStatus purchase={ purchase } { ...status } />
+	) : (
+		status
+	);
+}
+
+/**
+ * What a purchase's expiry status says, with no links, for a caller that is itself
+ * a link to the purchase. `PurchaseExpiryStatus` adds the links the purchases list offers.
+ */
+export function getPurchaseExpiryStatusText( purchase: Purchase, locale: string ) {
+	const status = describePurchaseExpiry( purchase, locale );
+	return isUrgentExpiry( status ) ? (
+		<UrgentExpiryText purchase={ purchase } { ...status } />
+	) : (
+		status
+	);
+}
+
+/** An expiring or expired status, which the purchases list links to renewal checkout. */
+interface UrgentExpiry {
+	kind: 'urgent';
+	copy: ExpiryStatusCopy;
+	hasExpired: boolean;
+	untranslatedFallbackText?: React.ReactNode;
+}
+
+function isUrgentExpiry( status: React.ReactNode | UrgentExpiry ): status is UrgentExpiry {
+	return typeof status === 'object' && status !== null && 'kind' in status;
+}
+
+function isManagedByPartner( purchase: Purchase ) {
+	return Boolean( purchase.partner_name ) && ! isA4ABillingDragonPurchase( purchase );
+}
+
+function getInAppPurchaseText( managePurchase: React.JSX.Element ) {
+	return createInterpolateElement(
+		__(
+			'This product is an in-app purchase. You can manage it from within <managePurchase>the app store</managePurchase>.'
+		),
+		{ managePurchase }
+	);
+}
+
+function describePurchaseExpiry(
+	purchase: Purchase,
+	locale: string
+): React.ReactNode | UrgentExpiry {
+	// @todo: There isn't currently a way to get the taxName based on the
+	// country. The country is not included in the purchase information
+	// envelope. We should add this information so we can utilize useTaxName
+	// to retrieve the correct taxName. For now, we are using a fallback tax
+	// name with context, to prevent mis-translation.
+	// translators: Shortened form of 'Sales Tax', not a country-specific tax name
+	const taxName = __( 'tax' );
+
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const excludeTaxStringAbbreviation = sprintf( __( '(excludes %s)' ), [ taxName ] );
+
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const excludeTaxStringTitle = sprintf( __( 'Renewal price excludes any applicable %s' ), [
+		taxName,
+	] );
+
+	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
+		// translators: partnerName is the name of the partner service who manages this product
+		return sprintf( __( 'Managed by %(partnerName)s' ), {
+			partnerName: purchase.partner_name,
+		} );
+	}
+
 	if ( purchase.is_iap_purchase && purchase.iap_purchase_management_link ) {
-		return createInterpolateElement(
-			__(
-				'This product is an in-app purchase. You can manage it from within <managePurchase>the app store</managePurchase>.'
-			),
-			{
-				managePurchase: <a href={ purchase.iap_purchase_management_link } />,
-			}
-		);
+		return getInAppPurchaseText( <span /> );
 	}
 
 	const isCentennial = isCentennialPurchase( purchase );
@@ -255,12 +341,8 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
-	const isIntroductoryOfferFreeTrial = purchase.introductory_offer?.cost_per_interval === 0;
-	if (
-		purchase.introductory_offer?.is_within_period &&
-		isIntroductoryOfferFreeTrial &&
-		isRenewingBeforeExpiration( purchase )
-	) {
+	const isFreeTrial = isFreeTrialEndingOnExpiryDate( purchase );
+	if ( isFreeTrial && isRenewingBeforeExpiration( purchase ) ) {
 		return createInterpolateElement(
 			sprintf(
 				// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
@@ -283,11 +365,7 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
-	if (
-		purchase.introductory_offer?.is_within_period &&
-		isIntroductoryOfferFreeTrial &&
-		! isExpiredOrRemoved( purchase )
-	) {
+	if ( isFreeTrial && ! isExpiredOrRemoved( purchase ) ) {
 		return (
 			<span>
 				{
@@ -325,9 +403,9 @@ export function PurchaseExpiryStatus( {
 	// renew at its current price — it changes to a lower-tier plan. Say so instead
 	// of the usual "Renews ... on <date>" line.
 	if ( isRenewingOnDate && purchase.is_delayed_downgrade_pending ) {
-		const slug = purchase.delayed_downgrade_to_product_slug;
-		const planNames = getPlanNames() as Record< string, string | undefined >;
-		const targetPlanName = slug ? planNames[ slug ] ?? null : null;
+		const targetPlanName = getDowngradeTargetProductName(
+			purchase.delayed_downgrade_to_product_slug
+		);
 		const renewalDate = formatDate( new Date( purchase.renew_date ?? '' ), locale, {
 			dateStyle: 'long',
 		} );
@@ -447,14 +525,7 @@ export function PurchaseExpiryStatus( {
 			}
 		);
 
-		return (
-			<UrgentExpiryStatus
-				purchase={ purchase }
-				copy={ copy }
-				hasExpired={ false }
-				untranslatedFallbackText={ untranslatedFallbackText }
-			/>
-		);
+		return { kind: 'urgent', copy, hasExpired: false, untranslatedFallbackText };
 	}
 	if ( isExpiredOrRemoved( purchase ) && 'concierge-session' === purchase.product_slug ) {
 		// translators: %s is a formatted expiry date
@@ -464,23 +535,22 @@ export function PurchaseExpiryStatus( {
 	}
 
 	if ( isExpiredOrRemoved( purchase ) ) {
-		return (
-			<UrgentExpiryStatus
-				purchase={ purchase }
-				copy={ getExpiredCopy( new Date( purchase.expiry_date ) ) }
-				hasExpired
-			/>
-		);
+		return {
+			kind: 'urgent',
+			copy: getExpiredCopy( new Date( purchase.expiry_date ) ),
+			hasExpired: true,
+		};
 	}
 
 	if ( isIncludedWithPlan( purchase ) ) {
 		return __( 'Included with Plan' );
 	}
 
-	if (
-		( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) &&
-		purchase.product_slug !== 'domain_transfer'
-	) {
+	if ( isOneTimePurchase( purchase ) && purchase.product_slug !== 'domain_transfer' ) {
+		return __( 'One-time purchase' );
+	}
+
+	if ( isAkismetFreeProduct( purchase ) && purchase.product_slug !== 'domain_transfer' ) {
 		return __( 'Never Expires' );
 	}
 

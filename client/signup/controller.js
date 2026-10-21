@@ -6,6 +6,14 @@ import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
 import { login } from 'calypso/lib/paths';
+import {
+	LEGACY_LAUNCH_SITE_FLOW,
+	getLegacyLaunchSiteRedirect,
+} from 'calypso/lib/signup/legacy-launch-site-flow';
+import {
+	getLegacyPlanFlowRedirect,
+	shouldRedirectLegacyPlanFlow,
+} from 'calypso/lib/signup/legacy-plan-flows';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -98,6 +106,30 @@ export default {
 		) {
 			// Update the `initialContext` when the flow changes.
 			initialContext = Object.assign( {}, initialContext, context );
+		}
+
+		next();
+	},
+
+	// The server redirect only sees hard navigations; `/start` is also a client route, so an
+	// in-app link reaches this router instead. Runs before anything touches signup state so
+	// the hand-off to Stepper leaves nothing half-written behind.
+	redirectLegacyFlow( context, next ) {
+		const { flowName, lang } = context.params;
+
+		if ( shouldRedirectLegacyPlanFlow( flowName ) ) {
+			window.location.replace( getLegacyPlanFlowRedirect( flowName, context.query, lang ) );
+			return;
+		}
+
+		if ( flowName === LEGACY_LAUNCH_SITE_FLOW ) {
+			// The legacy flow fell back to the stored site when the query had none.
+			const siteSlug =
+				context.query?.siteSlug || getSignupDependencyStore( context.store.getState() )?.siteSlug;
+			window.location.replace(
+				getLegacyLaunchSiteRedirect( { ...context.query, ...( siteSlug && { siteSlug } ) } )
+			);
+			return;
 		}
 
 		next();
@@ -304,6 +336,19 @@ export default {
 		};
 		if ( ! isEmpty( additionalDependencies ) ) {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
+		}
+
+		if ( 'launch-site' === flowName ) {
+			// The dependency store persists between visits, and `back_to`, `redirect_to` and `ref` are
+			// optional, so an abandoned launch would otherwise decide where the next one leaves the user.
+			// Re-read them from the query the flow was entered with.
+			context.store.dispatch(
+				updateDependencies( {
+					back_to: query?.back_to ?? null,
+					redirect_to: query?.redirect_to ?? null,
+					refParameter: query?.ref ?? null,
+				} )
+			);
 		}
 
 		context.primary = createElement( SignupComponent, {

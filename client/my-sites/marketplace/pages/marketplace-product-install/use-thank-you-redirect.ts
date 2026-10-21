@@ -113,10 +113,10 @@ export function useThankYouRedirect( {
 	// drives, that is only true once the transfer is far enough along and the site is reachable, which
 	// is also when the URL below resolves.
 	useEffect( () => {
-		if ( installedPlugin && pluginActive && pluginsUrlFinal ) {
+		if ( ! halted && installedPlugin && pluginActive && pluginsUrlFinal ) {
 			window.location.href = pluginsUrlFinal;
 		}
-	}, [ installedPlugin, pluginActive, pluginsUrlFinal, siteId, pluginSlug ] );
+	}, [ halted, installedPlugin, pluginActive, pluginsUrlFinal, siteId, pluginSlug ] );
 
 	// Validate theme is already active
 	useEffect( () => {

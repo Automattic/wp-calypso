@@ -1,0 +1,29 @@
+@import '@wordpress/theme/design-tokens.css';
+
+// The stepper carries its own vertical spacing, so drop the wrapper's
+// top padding to avoid doubling up the space above it.
+.step-container-v2__content-wrapper.axis-vertical:has( .onboarding-progress ) {
+	padding-top: 0;
+}
+
+.onboarding-progress {
+	display: flex;
+	justify-content: center;
+	padding: 8px 0;
+	margin-block-end: 32px;
+	// Ensure the stepper paints above the sticky checkout sidebar, which is positioned
+	// and would otherwise overlap the heading row at the same stacking level.
+	position: relative;
+	z-index: 1;
+
+	.onboarding-progress-step {
+		display: flex;
+		justify-content: center;
+	}
+
+	.onboarding-progress-trigger {
+		display: flex;
+		align-items: center;
+		padding: 12px 16px;
+	}
+}

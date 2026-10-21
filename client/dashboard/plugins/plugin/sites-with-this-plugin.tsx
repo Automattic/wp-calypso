@@ -20,6 +20,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { link, linkOff, trash } from '@wordpress/icons';
 import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
+import { Name, SiteLink, URL } from '../../sites/site-fields';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
@@ -29,7 +30,6 @@ import { getViewFilteredByUpdates } from '../utils/update-filters';
 import { ActionRenderModalWrapper } from './components/action-render-modal-wrapper';
 import { ActiveToggle } from './components/active-toggle';
 import { AutoupdateToggle } from './components/autoupdate-toggle';
-import { PluginSiteFieldContent } from './components/plugin-site-field-content';
 import { SiteWithPluginData } from './use-plugin';
 import { getAllowedPluginActions } from './utils/get-allowed-plugin-actions';
 import { mapToPluginListRow } from './utils/map-to-plugin-list-row';
@@ -40,7 +40,8 @@ const defaultView: View = {
 	type: 'table',
 	fields: [ 'active', 'autoupdate', 'update' ],
 	sort: { field: 'name', direction: 'asc' },
-	titleField: 'domain',
+	titleField: 'name',
+	descriptionField: 'URL',
 	perPage: 10,
 };
 
@@ -90,19 +91,29 @@ export const SitesWithThisPlugin = ( {
 	const fields: Field< SiteWithPluginData >[] = useMemo(
 		() => [
 			{
-				id: 'domain',
+				id: 'name',
 				label: __( 'Site' ),
 				type: 'text',
 				getValue: ( { item }: { item: SiteWithPluginData } ) => getSiteDisplayName( item ),
 				render: ( { field, item } ) => (
-					<PluginSiteFieldContent
-						site={ item }
-						name={ field.getValue( { item } ) as string }
-						url={ getSiteDisplayUrl( item ) }
-					/>
+					<SiteLink site={ item }>
+						<Name site={ item } value={ field.getValue( { item } ) as string } />
+					</SiteLink>
 				),
 				enableHiding: false,
 				enableSorting: true,
+				enableGlobalSearch: true,
+			},
+			{
+				id: 'URL',
+				label: __( 'URL' ),
+				type: 'text',
+				getValue: ( { item }: { item: SiteWithPluginData } ) => getSiteDisplayUrl( item ),
+				render: ( { field, item } ) => (
+					<URL site={ item } value={ field.getValue( { item } ) as string } />
+				),
+				enableHiding: false,
+				enableSorting: false,
 				enableGlobalSearch: true,
 			},
 			{

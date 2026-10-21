@@ -86,12 +86,10 @@ test.describe(
 				'Form submissions not supported on private sites'
 			);
 
-			// Central Form Management's row "View" opens a standalone response page,
-			// while FeedbackInboxPage drives the DataViews inspector: it waits on
-			// `.jp-forms-response-header`, clicks a Close button and an "Actions" row
-			// button, none of which that page renders. Simple and Atomic both fail this
-			// way. Porting the page object to the new route is the fix.
-			test.fixme();
+			// Forty-odd inbox round-trips, plus the un-spam detour when Akismet flags
+			// the submissions, do not fit the 120s default. A wedged run still fails at
+			// the cause: every wait in the page object carries its own cap.
+			test.setTimeout( 240 * 1000 );
 
 			let publishedFormLocator: Locator;
 			let restAPIClient: RestAPIClient;
@@ -255,6 +253,9 @@ test.describe(
 			await test.step( 'Navigate to Inbox tab if needed', async () => {
 				if ( isInSpam ) {
 					await feedbackInboxPage.clickFolderTab( 'Inbox' );
+					// Leaving the single response page drops the active search, and the
+					// un-spam needs a moment to reach the Inbox query.
+					await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				}
 			} );
 
@@ -301,6 +302,9 @@ test.describe(
 			await test.step( 'Navigate to Inbox tab if needed', async () => {
 				if ( isInSpam ) {
 					await feedbackInboxPage.clickFolderTab( 'Inbox' );
+					// Leaving the single response page drops the active search, and the
+					// un-spam needs a moment to reach the Inbox query.
+					await feedbackInboxPage.searchUntilResponseRow( formData2.email );
 				}
 			} );
 
@@ -357,10 +361,10 @@ test.describe(
 				}
 			} );
 
-			await test.step( 'Close response modal (mobile only)', async () => {
-				if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-					await feedbackInboxPage.clickCloseResponse();
-				}
+			// The response opens on a standalone page on every viewport, so the list
+			// has to be restored before the next step reaches for a response row.
+			await test.step( 'Return to the responses list', async () => {
+				await feedbackInboxPage.clickCloseResponse();
 			} );
 
 			// --- Test response actions ---
@@ -396,7 +400,7 @@ test.describe(
 			} );
 
 			await test.step( 'Verify first response is in Spam', async () => {
-				await feedbackInboxPage.searchResponses( formData1.email );
+				await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );
@@ -410,7 +414,7 @@ test.describe(
 			} );
 
 			await test.step( 'Verify first response is back in Inbox', async () => {
-				await feedbackInboxPage.searchResponses( formData1.email, true );
+				await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );
@@ -424,7 +428,7 @@ test.describe(
 			} );
 
 			await test.step( 'Verify first response is in Trash', async () => {
-				await feedbackInboxPage.searchResponses( formData1.email, true );
+				await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );
@@ -438,7 +442,7 @@ test.describe(
 			} );
 
 			await test.step( 'Verify first response is restored in Inbox', async () => {
-				await feedbackInboxPage.searchResponses( formData1.email, true );
+				await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );

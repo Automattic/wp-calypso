@@ -23,7 +23,7 @@ import { resumeKey, writeResumeRecord } from './resume-storage';
 import { sanitizeDirectToCartRedirect } from './sanitize-redirect';
 import { validateParams } from './validate-params';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
-import type { OnboardActions, SiteActions } from '@automattic/data-stores';
+import type { OnboardActions } from '@automattic/data-stores';
 
 interface SitePlansResponse {
 	plans?: Array< { product_slug: string; is_current?: boolean } >;
@@ -55,7 +55,7 @@ async function initialize() {
 		recordTracksEvent( 'calypso_direct_to_cart_invalid_plan', {
 			plan: params.plan?.slice( 0, 64 ) ?? '',
 		} );
-		const siteActions = dispatch( SITE_STORE ) as SiteActions;
+		const siteActions = dispatch( SITE_STORE );
 		siteActions.setSiteSetupError(
 			__( 'Unsupported plan' ),
 			__( "The plan in this link isn't available here. You can choose a plan that works for you." )
@@ -211,7 +211,7 @@ const flow: FlowV2< typeof initialize > = {
 					const outerRedirect = externalRedirect
 						? addQueryArgs( '/setup/transferring-hosted-site', {
 								redirect_to: externalRedirect,
-						  } )
+							} )
 						: `/home/${ siteSlug }`;
 					persistSignupDestination( outerRedirect );
 					setSignupCompleteFlowName( DIRECT_TO_CART_FLOW );

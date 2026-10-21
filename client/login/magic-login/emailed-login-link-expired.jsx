@@ -175,7 +175,7 @@ class EmailedLoginLinkExpired extends Component {
 
 		return (
 			<div>
-				<RedirectWhenLoggedIn delayAtMount={ 3500 } redirectTo="/" replaceCurrentLocation />
+				<RedirectWhenLoggedIn delayAtMount={ 3500 } redirectTo="/home" replaceCurrentLocation />
 				<EmptyContent
 					action={ action }
 					actionCallback={ this.onClickTryAgainLink }

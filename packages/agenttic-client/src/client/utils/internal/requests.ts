@@ -270,7 +270,14 @@ export async function executeRequest(
 		logger( 'Response from %s: %d %O', fullAgentUrl, response.status, formatObject( data ) );
 
 		// Validate JSON-RPC response and return result
-		return validateJsonRpcResponse( data, 'request' );
+		try {
+			return validateJsonRpcResponse( data, 'request' );
+		} catch ( error ) {
+			if ( error instanceof Error && data?.result?.ai_credits !== undefined ) {
+				Object.assign( error, { aiCredits: data.result.ai_credits } );
+			}
+			throw error;
+		}
 	} catch ( error ) {
 		handleRequestError( error, timeoutId, 'request' );
 	}

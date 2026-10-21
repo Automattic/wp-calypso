@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import Debug from 'debug';
 import { localize, default as i18n } from 'i18n-calypso';
@@ -9,11 +8,12 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { navigateToLandingPage } from 'calypso/lib/landing-page';
 import { login } from 'calypso/lib/paths';
 import wpcom from 'calypso/lib/wp';
 import LoggedIn from 'calypso/my-sites/invites/invite-accept-logged-in';
 import LoggedOut from 'calypso/my-sites/invites/invite-accept-logged-out';
-import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
+import { getRedirectAfterAccept, isSameEmail } from 'calypso/my-sites/invites/utils';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
@@ -128,7 +128,12 @@ class InviteAccept extends Component {
 	isMatchEmailError = () => {
 		const { invite } = this.state;
 		const { user } = this.props;
-		return !! ( invite && invite.forceMatchingEmail && user && user.email !== invite.sentTo );
+		return !! (
+			invite &&
+			invite.forceMatchingEmail &&
+			user &&
+			! isSameEmail( user.email, invite.sentTo )
+		);
 	};
 
 	isInvalidInvite = () => {
@@ -143,7 +148,7 @@ class InviteAccept extends Component {
 		this.props.infoNotice( this.props.translate( 'You declined to join.' ), {
 			displayOnNextPage: true,
 		} );
-		page( '/' );
+		this.props.navigateToLandingPage();
 	};
 
 	signInLink = () => {
@@ -329,5 +334,6 @@ export default connect(
 		infoNotice,
 		hideMasterbar,
 		redirectToLogout,
+		navigateToLandingPage,
 	}
 )( localize( InviteAccept ) );

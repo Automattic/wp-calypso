@@ -13,7 +13,7 @@ do
 	cp -r $block/build/* "./release-files/${block//\.\.\//}/"; 
 done
 
-# Add the index.php file
-cp index.php README.md translations-manifest.json build_meta.json release-files/
+# Add the plugin's root PHP files and metadata.
+cp index.php translations-filters.php README.md translations-manifest.json build_meta.json release-files/
 
 printf "Finished configuration of the @automattic/happy-blocks plugin artifacts directory.\n"

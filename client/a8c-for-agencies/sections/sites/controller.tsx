@@ -58,7 +58,7 @@ function configureSitesContext( context: Context ) {
 				path={ context.path }
 				properties={ {
 					category: context.params.category,
-					siteUrl: context.params.siteUrl,
+					site_url: context.params.siteUrl,
 					feature: context.params.feature,
 				} }
 			/>

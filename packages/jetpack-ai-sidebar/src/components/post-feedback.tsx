@@ -27,6 +27,7 @@ export interface PostFeedbackProps {
 	sections?: FeedbackListSection[];
 	postId?: EditorPostId;
 	isMessageStale?: boolean;
+	toolCallId?: string;
 	onResponseAction?: OnResponseAction;
 }
 
@@ -37,6 +38,7 @@ export default function PostFeedback( {
 	sections,
 	postId,
 	isMessageStale,
+	toolCallId,
 	onResponseAction,
 }: PostFeedbackProps ) {
 	return (
@@ -47,6 +49,7 @@ export default function PostFeedback( {
 			sections={ sections }
 			postId={ postId }
 			isMessageStale={ isMessageStale }
+			toolCallId={ toolCallId }
 			onResponseAction={ onResponseAction }
 			sectionFallbackTitle={ __( 'Suggested edits', __i18n_text_domain__ ) }
 			staleWarning={ __(

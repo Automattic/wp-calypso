@@ -1,6 +1,5 @@
 import { referralCommissionPayoutQuery, referralsQuery } from '@automattic/api-queries';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHeading as Heading,
@@ -8,10 +7,11 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { Text } from '../../components/text';
-import { TextSkeleton } from '../../components/text-skeleton';
+import { TextBlur } from '../../components/text-blur';
 import useConsolidatedPayoutData from '../earn/referrals/hooks/use-consolidated-payout-data';
 import OverviewLinkButton from './overview-link-button';
 import StatList from './stat-list';
@@ -51,7 +51,7 @@ function ReferralEarningsEmptyState( {
 			</Text>
 			{ lockedNote && (
 				<HStack justify="flex-start" expanded={ false }>
-					<Badge>{ lockedNote }</Badge>
+					<Badge intent="draft">{ lockedNote }</Badge>
 				</HStack>
 			) }
 			{ ! locked && (
@@ -126,11 +126,9 @@ export default function ReferralEarningsCard( {
 					</Heading>
 					<HStack spacing={ 2 } justify="flex-start" alignment="baseline" expanded={ false }>
 						<Text size={ 20 } weight={ 500 } lineHeight="24px">
-							{ isLoading ? (
-								<TextSkeleton length={ 6 } />
-							) : (
-								formatCurrency( currentQuarterExpectedCommission, 'USD' )
-							) }
+							<TextBlur isBlurred={ isLoading } length={ 6 }>
+								{ formatCurrency( currentQuarterExpectedCommission, 'USD' ) }
+							</TextBlur>
 						</Text>
 						<Text intent="success" size={ 12 } lineHeight="16px">
 							{ __( 'estimated this quarter' ) }

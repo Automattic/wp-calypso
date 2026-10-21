@@ -1,4 +1,5 @@
 export { TestAccount } from './test-account';
+export { abandonPendingLoginLockWaits, clearStaleLoginLocks } from './login-lock';
 
 export * from './pages';
 export * from './flows';
@@ -23,3 +24,4 @@ export {
 } from './throttle-flags';
 export type { ThrottleId } from './throttle-flags';
 export { withDeadline } from './with-deadline';
+export { watchImportFailure } from './import-failure';

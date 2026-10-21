@@ -138,7 +138,7 @@ function ReaderSidebarConnections( { path }: Props ) {
 	// All three queries gated on the menu being expanded *or* on a
 	// connections route — i.e. whenever we'd actually render the rows.
 	// Otherwise the user expanding the menu manually from an unrelated
-	// Reader page (e.g. `/reader/search`) would see no connections at all
+	// Reader page (e.g. `/discover/search`) would see no connections at all
 	// because the queries never fire. The queries don't refetch every
 	// render thanks to React Query caching.
 	const shouldFetch = isOnConnections || isOpen;

@@ -46,10 +46,10 @@ export default function TosText( {
 									),
 								},
 							}
-					  )
+						)
 					: translate( 'You agree to our {{tosLink}}Terms of Service{{/tosLink}}.', {
 							components,
-					  } ) }
+						} ) }
 			</>
 		);
 	}
@@ -89,11 +89,11 @@ export default function TosText( {
 								),
 							},
 						}
-				  )
+					)
 				: translate(
 						'You agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{faqCancellingSupportPage}}how to cancel{{/faqCancellingSupportPage}}.',
 						{ components }
-				  ) }
+					) }
 		</>
 	);
 }

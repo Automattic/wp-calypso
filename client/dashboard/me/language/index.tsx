@@ -146,7 +146,7 @@ export default function Language() {
 									/>
 								),
 							}
-					  )
+						)
 					: undefined;
 
 				return (

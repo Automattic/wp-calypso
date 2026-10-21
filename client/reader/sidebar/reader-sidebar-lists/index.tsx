@@ -1,14 +1,28 @@
 import './style.scss';
 
 import { ReadList } from '@automattic/api-core';
-import { isAutomatticianQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
+import { useSeenPostsPreferenceEnabled } from 'calypso/reader/data/seen-posts';
 import MoreMenuActions from '../more-menu-actions';
 import ReaderSidebarListsList from './list';
+
+const RECOMMENDED_BLOGS_SLUG = 'recommended-blogs';
+
+// The backend auto-creates a Recommended Blogs list for every user, so a brand
+// new account would otherwise see it as its only list. Hide it until the user
+// has either recommended something or created another list.
+function hideEmptyRecommendedBlogsPlaceholder( lists?: ReadList[] ): ReadList[] | undefined {
+	if ( lists?.length !== 1 ) {
+		return lists;
+	}
+	const [ list ] = lists;
+	const isEmptyOwnRecommendedBlogs =
+		list.slug === RECOMMENDED_BLOGS_SLUG && list.is_owner && ! list.feeds?.length;
+	return isEmptyOwnRecommendedBlogs ? [] : lists;
+}
 
 interface ReaderSidebarListsProps {
 	lists?: ReadList[];
@@ -20,19 +34,19 @@ interface ReaderSidebarListsProps {
 }
 
 const ReaderSidebarLists = ( {
-	lists,
+	lists: allLists,
 	isOpen,
 	onClick,
 	path,
 	...passedProps
 }: ReaderSidebarListsProps ): JSX.Element => {
 	const translate = useTranslate();
-	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
+	const isSeenEnabled = useSeenPostsPreferenceEnabled();
+	const lists = hideEmptyRecommendedBlogsPlaceholder( allLists );
 	const isChildSelected = lists?.some( ( list ) =>
 		path.startsWith( `/reader/list/${ list.owner }/${ list.slug }` )
 	);
 	// Calculate the total unseen count across all lists and their feeds.
-	const isSeenEnabled = isAutomattician;
 	const totalUnseenCount: number =
 		lists?.reduce(
 			( total, list ) =>

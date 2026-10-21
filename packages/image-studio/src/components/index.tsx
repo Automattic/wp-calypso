@@ -1,3 +1,4 @@
+import { CreditsMeter } from '@automattic/agents-manager';
 import { getAgentManager, useAgentChat, UseAgentChatConfig } from '@automattic/agenttic-client';
 import { AgentUI, cn, ThinkingMessage } from '@automattic/agenttic-ui';
 import {
@@ -10,6 +11,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAgentConfig } from '../hooks/use-agent-config';
+import { useAiCredits, type AiCreditsState } from '../hooks/use-ai-credits';
 import { useAnnotation } from '../hooks/use-annotation';
 import { useBeforeUnload } from '../hooks/use-beforeunload';
 import { useDeletePermanently } from '../hooks/use-delete-permanently';
@@ -66,13 +68,29 @@ function ImageStudioAgentChat( {
 	attachmentId,
 	mode,
 	onChatSubmit,
+	credits,
 }: {
 	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
 	mode: ImageStudioMode;
 	onChatSubmit?: () => Promise< void > | void;
+	credits: AiCreditsState;
 } ) {
-	const agentChatProps = useAgentChat( agentConfigProp );
+	const {
+		notice: creditsNotice,
+		isLimitReached,
+		isLoading: isCheckingCredits,
+		meter: creditsMeter,
+		onTaskUpdate: onCreditsTaskUpdate,
+		beforeSubmit: creditsBeforeSubmit,
+	} = credits;
+	const agentChatProps = useAgentChat( {
+		...agentConfigProp,
+		onTaskUpdate: ( update ) => {
+			onCreditsTaskUpdate( update );
+			return agentConfigProp.onTaskUpdate?.( update );
+		},
+	} );
 	const { addNotice } = useDispatch( imageStudioStore );
 	// Storing the input value for detecting when it is cleared
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -86,13 +104,6 @@ function ImageStudioAgentChat( {
 	}, [] );
 
 	const isVideoMode = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
-
-	// Drives which suggestion-chip flavor the video-clip hook produces:
-	// Cinematic → cinematography prompts for the Veo render path,
-	// Highlights → editorial framing hints for the cloud-rendered recap.
-	const selectedVideoStyle = useSelect( ( select ) => {
-		return select( videoStudioStore ).getSelectedStyle();
-	}, [] );
 
 	useEffect( () => {
 		return () => {
@@ -125,7 +136,7 @@ function ImageStudioAgentChat( {
 		messages: displayMessages,
 		mode,
 		inputValue,
-		disabled: isVideoMode,
+		disabled: isVideoMode || isLimitReached,
 	} );
 
 	const videoSuggestions = useVideoClipSuggestions( {
@@ -133,8 +144,7 @@ function ImageStudioAgentChat( {
 		clearSuggestions: agentChatProps.clearSuggestions,
 		messages: displayMessages,
 		inputValue,
-		disabled: ! isVideoMode,
-		style: selectedVideoStyle,
+		disabled: ! isVideoMode || isLimitReached,
 	} );
 
 	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } = isVideoMode
@@ -211,27 +221,43 @@ function ImageStudioAgentChat( {
 				onInputChange={ setInputValue }
 				onSuggestionClick={ handleSuggestionClick }
 				maxInputLength={ isVideoMode ? 2000 : 1000 }
+				notice={ creditsNotice }
+				beforeSubmit={ creditsBeforeSubmit }
+				trailingActions={
+					creditsMeter && (
+						<CreditsMeter
+							status={ creditsMeter.status }
+							action={ creditsMeter.action }
+							purchaseHint={ creditsMeter.purchaseHint }
+							isOpen={ creditsMeter.isOpen }
+							onToggle={ creditsMeter.onToggle }
+						/>
+					)
+				}
 			>
 				<AgentUI.ConversationView showHeader={ false }>
 					<AgentUI.Messages />
 					<AgentUI.Footer>
-						{ suggestionsComponent }
+						{ /* Suggestions load during the credits check but wait for it to show, so they never flash and vanish. */ }
+						{ ! isLimitReached && ! isCheckingCredits && suggestionsComponent }
 						<AgentUI.Notice />
-						<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
-						<div className="image-studio-modal__input-toolbar">
-							{ mode === ImageStudioMode.Generate && isVideoMode && (
-								<StylePicker disabled={ isProcessing } mode={ mode } variant="video" />
-							) }
-							{ mode === ImageStudioMode.Generate && ! isVideoMode && (
+						{ /* Stacked puts the pickers on the same row as the credits meter and send button. */ }
+						<AgentUI.Input
+							layout="stacked"
+							disabled={ isStopDisabled ? true : undefined }
+							leadingActions={
 								<>
-									<AspectRatioPicker disabled={ isProcessing } />
-									<StylePicker disabled={ isProcessing } mode={ mode } />
+									{ mode === ImageStudioMode.Generate && ! isVideoMode && (
+										<AspectRatioPicker disabled={ isProcessing } />
+									) }
+									<StylePicker
+										disabled={ isProcessing }
+										mode={ mode }
+										variant={ mode === ImageStudioMode.Generate && isVideoMode ? 'video' : 'image' }
+									/>
 								</>
-							) }
-							{ mode !== ImageStudioMode.Generate && (
-								<StylePicker disabled={ isProcessing } mode={ mode } />
-							) }
-						</div>
+							}
+						/>
 					</AgentUI.Footer>
 				</AgentUI.ConversationView>
 			</AgentUI.Container>
@@ -255,12 +281,14 @@ const ImageStudioAgentUIComponent = ( {
 	modalOpenKey,
 	onChatSubmit,
 	mode,
+	credits,
 }: {
 	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
 	modalOpenKey?: number;
 	onChatSubmit?: () => void;
 	mode: ImageStudioMode;
+	credits: AiCreditsState;
 } ) => {
 	return (
 		<ImageStudioAgentChat
@@ -269,6 +297,7 @@ const ImageStudioAgentUIComponent = ( {
 			attachmentId={ attachmentId }
 			mode={ mode }
 			onChatSubmit={ onChatSubmit }
+			credits={ credits }
 		/>
 	);
 };
@@ -345,6 +374,11 @@ const ImageStudioContent = withInstanceId(
 		} );
 
 		const agentConfigState = useAgentConfig( agentConfigFactory, modalOpenKey );
+		// One balance for the chat and the sidebar's Regenerate buttons, which run their own turns.
+		const credits = useAiCredits( {
+			mode: config?.attachmentId ? ImageStudioMode.Edit : ImageStudioMode.Generate,
+			authProvider: agentConfigState?.authProvider,
+		} );
 
 		const [ isPromptSent, setIsPromptSent ] = useState( false );
 		const [ activeToolbarOption, setActiveToolbarOption ] = useState< ToolbarOption | null >(
@@ -670,6 +704,7 @@ const ImageStudioContent = withInstanceId(
 										modalOpenKey={ modalOpenKey }
 										onChatSubmit={ handleChatSubmit }
 										mode={ mode }
+										credits={ credits }
 									/>
 								) : (
 									<div className="image-studio-agent-loading">
@@ -692,6 +727,7 @@ const ImageStudioContent = withInstanceId(
 									className="image-studio-modal__sidebar-inner"
 								>
 									<ImageStudioAltTextSidebar
+										credits={ credits }
 										onClose={ () => setActiveToolbarOption( null ) }
 										onDeletePermanently={ handleDeletePermanently }
 										canDeletePermanently={ canDeletePermanently }

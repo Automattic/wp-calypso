@@ -10,18 +10,17 @@ import {
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../utils/tracks';
-import type { AuthProvider, UseAgentChatReturn } from '@automattic/agenttic-client';
-import type { Message, MessageAction } from '@automattic/agenttic-ui/dist/types';
+import type { AuthProvider, UIMessage as Message } from '@automattic/agenttic-client';
+import type { MessageAction } from '@automattic/agenttic-ui';
 
 const FEEDBACK_API_BASE = 'https://public-api.wordpress.com/wpcom/v2/ai/feedback';
 
-export interface UseFeedbackActionConfig {
-	registerMessageActions: UseAgentChatReturn[ 'registerMessageActions' ];
+interface UseFeedbackActionConfig {
 	messages: Message[];
 	getTraceIdForMessage?: ( messageId: string ) => string | undefined;
 }
 
-export interface UseFeedbackActionReturn {
+interface UseFeedbackActionReturn {
 	showFeedbackInput: boolean;
 	submitFeedbackText: ( feedbackText: string ) => Promise< void >;
 	resetFeedback: () => void;
@@ -204,7 +203,9 @@ export default function useFeedbackAction( {
 			}
 
 			recordBigSkyTracksEvent(
-				feedback === 'up' ? 'response_action_thumbs_up' : 'response_action_thumbs_down',
+				feedback === 'up'
+					? 'jetpack_big_sky_response_action_thumbs_up'
+					: 'jetpack_big_sky_response_action_thumbs_down',
 				{ message_id: messageId }
 			);
 
@@ -317,7 +318,7 @@ export default function useFeedbackAction( {
 				traceId
 			);
 
-			recordAgentsManagerTracksEvent( 'response_feedback_submitted', {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_response_feedback_submitted', {
 				message_id: currentMessageId,
 			} );
 		},

@@ -5,9 +5,8 @@ import {
 	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,
 	fetchMessagingAuth,
+	getSmoochIntegrationId,
 	isTestModeEnvironment,
-	SMOOCH_INTEGRATION_ID,
-	SMOOCH_INTEGRATION_ID_STAGING,
 	useCanConnectToZendeskMessaging,
 } from '@automattic/zendesk-client';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
@@ -19,20 +18,21 @@ import { useChatStatus } from '../hooks';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { HELP_CENTER_STORE } from '../stores';
 import { getClientId, getZendeskConversations } from './utils';
-import type { ZendeskMessage } from '@automattic/zendesk-client';
+import type { SmoochIntegrationKey, ZendeskMessage } from '@automattic/zendesk-client';
 
 type RecordTracksEvent = ReturnType< typeof useHelpCenterTracksEvent >;
 
 const initSmooch = async (
 	jwt: string,
 	externalId: string,
+	integrationKey: SmoochIntegrationKey | null,
 	queryClient: QueryClient,
 	recordTracksEvent: RecordTracksEvent
 ): Promise< void > => {
 	const isTestMode = isTestModeEnvironment();
 
 	await Smooch.init( {
-		integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
+		integrationId: getSmoochIntegrationId( integrationKey ),
 		delegate: {
 			async onInvalidAuth() {
 				recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
@@ -81,7 +81,10 @@ const playNotificationSound = () => {
 	oscillator.stop( audioContext.currentTime + duration );
 };
 
-const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } ) => {
+const HelpCenterSmooch: React.FC< { enableAuth: boolean; hasOpenZendeskChat?: boolean } > = ( {
+	enableAuth,
+	hasOpenZendeskChat = false,
+} ) => {
 	const { isEligibleForChat } = useChatStatus();
 	const queryClient = useQueryClient();
 	const { currentUser, site } = useHelpCenterContext();
@@ -109,10 +112,16 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	}, [] );
 
 	const featureConfig = useFeatureConfig();
+	const { zendeskIntegrationKey } = featureConfig.chat;
+	// An open human chat is enough: the user must be able to get back to it, but only
+	// paid support lets them start a new one.
 	const allowChat =
 		canConnectToZendesk &&
 		enableAuth &&
-		( isEligibleForChat || hasPremiumSupport || featureConfig.chat.hasPremiumSupport );
+		( isEligibleForChat ||
+			hasPremiumSupport ||
+			featureConfig.chat.hasPremiumSupport ||
+			hasOpenZendeskChat );
 
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 	const authJwt = authData?.jwt;
@@ -221,7 +230,13 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 				// Read the JWT from the ref so we always use the freshest token without
 				// this effect needing to re-run (and destroy + reinit Smooch) on every
 				// JWT rotation. Rotations are handled by Smooch's onInvalidAuth delegate.
-				await initSmooch( authJwtRef.current!, authExternalId, queryClient, recordTracksEvent );
+				await initSmooch(
+					authJwtRef.current!,
+					authExternalId,
+					zendeskIntegrationKey,
+					queryClient,
+					recordTracksEvent
+				);
 
 				if ( isCancelled ) {
 					return;
@@ -267,6 +282,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		authIsLoggedIn,
 		hasAuthJwt,
 		authExternalId,
+		zendeskIntegrationKey,
 		setIsChatLoaded,
 		queryClient,
 		recordTracksEvent,
@@ -276,7 +292,9 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		if ( isChatLoaded && getZendeskConversations ) {
 			const allConversations = getZendeskConversations();
 			getUnreadNotifications( allConversations );
-			setZendeskClientId( getClientId( allConversations ) );
+			setZendeskClientId(
+				getClientId( allConversations, getSmoochIntegrationId( zendeskIntegrationKey ) )
+			);
 			Smooch.on( 'message:received', getUnreadListener );
 			Smooch.on( 'message:sent', clientIdListener );
 			Smooch.on( 'disconnected', disconnectedListener );
@@ -307,6 +325,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		disconnectedListener,
 		reconnectingListener,
 		connectedListener,
+		zendeskIntegrationKey,
 	] );
 
 	return <div ref={ smoochRef } style={ { display: 'none' } }></div>;

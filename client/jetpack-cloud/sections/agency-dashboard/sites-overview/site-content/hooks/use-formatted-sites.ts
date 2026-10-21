@@ -163,7 +163,7 @@ const useFormatPluginData = () => {
 							! AUTOMOMANAGED_PLUGINS.includes( plugin ) &&
 							! ECOMMERCE_BUNDLED_PLUGINS.includes( plugin ) &&
 							! Object.keys( PREINSTALLED_PREMIUM_PLUGINS ).includes( plugin )
-				  )
+					)
 				: site.awaiting_plugin_updates;
 
 			if ( ! pluginUpdates ) {

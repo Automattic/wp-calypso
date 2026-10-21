@@ -12,9 +12,11 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { STATS_SUMMARY_MAX_BARS } from '../constants';
+import { useMomentInSite } from '../hooks/use-moment-site-zone';
 import DatePicker from '../stats-date-label';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
+import { clampRangeEnd } from '../stats-post-summary/range-end';
 import SummaryChart from '../stats-summary';
 import { calculatePlayWeightedRetention } from './retention';
 import VideoMetricTabs, {
@@ -37,7 +39,7 @@ interface ChartRecord {
 // date plus one value per metric named in the response's `fields`.
 interface SeriesRow {
 	period: string;
-	[ metric: string ]: string | number;
+	[ metric: string ]: string | number | null;
 }
 
 interface VideoSummaryData {
@@ -66,6 +68,12 @@ function metricValue( row: SeriesRow, type: VideoStatType ): number {
 	return Number( row[ METRIC_COLUMNS[ type ] ] ) || 0;
 }
 
+// Retention rate is `null` when the API cannot compute it (no video duration).
+function retentionValue( row: SeriesRow ): number | null {
+	const value = row[ METRIC_COLUMNS.retention_rate ];
+	return value === null || value === undefined ? null : Number( value ) || 0;
+}
+
 export default function VideoSummary( {
 	postId,
 	initialStatType,
@@ -75,6 +83,7 @@ export default function VideoSummary( {
 } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const momentSiteZone = useMomentInSite();
 	const siteId = useSelector( getSelectedSiteId );
 	const [ uiPeriod, setUiPeriod ] = useState< UiPeriod >( 'day' );
 	const [ page, setPage ] = useState( 1 );
@@ -128,13 +137,14 @@ export default function VideoSummary( {
 		() =>
 			visibleRows.map( ( row ) => {
 				const start = moment( row.period );
-				const value = metricValue( row, statType );
+				const value =
+					statType === 'retention_rate' ? retentionValue( row ) : metricValue( row, statType );
 				// Views and impressions tooltips show the exact count; hours
 				// watched and retention rate reuse the metric-tab formatting
 				// (one decimal, % suffix) so the tooltip matches the card.
 				const record = {
 					startDate: row.period,
-					value,
+					value: value ?? 0,
 					formattedValue:
 						statType === 'watch_time' || statType === 'retention_rate'
 							? formatValue( statType, value )
@@ -196,18 +206,17 @@ export default function VideoSummary( {
 				break;
 		}
 
-		// Don't extend the range into the future when the last bucket is
-		// still the current, in-progress period.
-		const today = moment();
-		if ( end.isAfter( today, 'day' ) ) {
-			end = today;
-		}
-
+		// Don't extend an in-progress period past the site's today, floored at
+		// the newest bucket charted.
 		return {
 			chartStart: start.format( 'YYYY-MM-DD' ),
-			chartEnd: end.format( 'YYYY-MM-DD' ),
+			chartEnd: clampRangeEnd(
+				end.format( 'YYYY-MM-DD' ),
+				momentSiteZone(),
+				visibleRows[ visibleRows.length - 1 ].period
+			),
 		};
-	}, [ visibleRows, uiPeriod, moment ] );
+	}, [ visibleRows, uiPeriod, moment, momentSiteZone ] );
 
 	// Card totals cover the window shown in the chart (the current page).
 	// Retention is play-weighted rather than summed — see retention.ts.
@@ -222,7 +231,7 @@ export default function VideoSummary( {
 			retention = calculatePlayWeightedRetention(
 				visibleRows.map( ( row ) => ( {
 					plays: metricValue( row, 'views' ),
-					retentionRate: metricValue( row, 'retention_rate' ),
+					retentionRate: retentionValue( row ),
 				} ) )
 			);
 		}

@@ -30,7 +30,7 @@ export default function WordPressSettingsSummary( {
 	const badges = [
 		{
 			text: wpVersion,
-			intent: versionTag === 'beta' ? ( 'warning' as const ) : ( 'success' as const ),
+			intent: versionTag === 'beta' ? ( 'informational' as const ) : ( 'stable' as const ),
 		},
 	];
 

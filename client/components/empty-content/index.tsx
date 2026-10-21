@@ -112,7 +112,7 @@ export default function EmptyContent( props: EmptyContentProps ): JSX.Element {
 			{ typeof title === 'string' ? (
 				<h2 className="empty-content__title">{ title }</h2>
 			) : (
-				title ?? null
+				( title ?? null )
 			) }
 			{ line }
 			{ action }

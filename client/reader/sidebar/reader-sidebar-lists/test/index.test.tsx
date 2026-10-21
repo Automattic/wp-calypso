@@ -13,8 +13,10 @@ jest.mock( 'calypso/reader/stats', () => ( {
 } ) );
 
 const mockMarkAllAsSeen = jest.fn();
+let mockSeenPostsUiEnabled = true;
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
 	useMarkAllAsSeenMutation: () => ( { mutate: mockMarkAllAsSeen } ),
+	useSeenPostsPreferenceEnabled: () => mockSeenPostsUiEnabled,
 } ) );
 
 const mockRecordReaderTracksEvent = jest.fn();
@@ -22,16 +24,11 @@ jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( 
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
 } ) );
 
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
-	isAutomatticianQuery: () => ( {
-		queryKey: [ 'is-automattician' ],
-		queryFn: () => true,
-		initialData: true,
-	} ),
-} ) );
-
-function makeList( ID: number, feeds: { feed_id: number; unseen_count: number }[] ): ReadList {
+function makeList(
+	ID: number,
+	feeds: ReadList[ 'feeds' ],
+	overrides: Partial< ReadList > = {}
+): ReadList {
 	return {
 		ID,
 		slug: `list-${ ID }`,
@@ -41,7 +38,19 @@ function makeList( ID: number, feeds: { feed_id: number; unseen_count: number }[
 		is_owner: true,
 		is_public: true,
 		feeds,
+		...overrides,
 	};
+}
+
+function makeRecommendedBlogsList(
+	feeds: ReadList[ 'feeds' ],
+	overrides: Partial< ReadList > = {}
+): ReadList {
+	return makeList( 99, feeds, {
+		slug: 'recommended-blogs',
+		title: 'Recommended Blogs',
+		...overrides,
+	} );
 }
 
 // The Count exposes no role/label, so scope to the header's own count element,
@@ -50,7 +59,55 @@ function getHeaderCount( container: HTMLElement ): HTMLElement | null {
 	return container.querySelector( '.a8c-count' );
 }
 
+const RECOMMENDED_BLOGS_LINK = "View list 'Recommended Blogs'";
+
 describe( 'ReaderSidebarLists', () => {
+	beforeEach( () => {
+		mockSeenPostsUiEnabled = true;
+	} );
+
+	describe( 'recommended blogs placeholder', () => {
+		it( 'hides an empty Recommended Blogs list when it is the only list', () => {
+			renderWithProvider(
+				<ReaderSidebarLists lists={ [ makeRecommendedBlogsList( [] ) ] } path="/reader" isOpen />
+			);
+
+			expect(
+				screen.queryByRole( 'link', { name: RECOMMENDED_BLOGS_LINK } )
+			).not.toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Create new list' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'shows the Recommended Blogs list once it has feeds', () => {
+			renderWithProvider(
+				<ReaderSidebarLists
+					lists={ [ makeRecommendedBlogsList( [ { feed_id: 10, unseen_count: 0 } ] ) ] }
+					path="/reader"
+					isOpen
+				/>
+			);
+
+			expect( screen.getByRole( 'link', { name: RECOMMENDED_BLOGS_LINK } ) ).toBeInTheDocument();
+		} );
+
+		it( 'shows an empty Recommended Blogs list alongside other lists', () => {
+			const lists = [ makeRecommendedBlogsList( [] ), makeList( 1, [] ) ];
+
+			renderWithProvider( <ReaderSidebarLists lists={ lists } path="/reader" isOpen /> );
+
+			expect( screen.getByRole( 'link', { name: RECOMMENDED_BLOGS_LINK } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: "View list 'List 1'" } ) ).toBeInTheDocument();
+		} );
+
+		it( "shows another user's empty Recommended Blogs list", () => {
+			const lists = [ makeRecommendedBlogsList( [], { owner: 'alice', is_owner: false } ) ];
+
+			renderWithProvider( <ReaderSidebarLists lists={ lists } path="/reader" isOpen /> );
+
+			expect( screen.getByText( 'Recommended Blogs (alice)' ) ).toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'unseen count', () => {
 		it( 'shows no header count when there are no lists', () => {
 			const { container } = renderWithProvider(
@@ -84,6 +141,22 @@ describe( 'ReaderSidebarLists', () => {
 			);
 
 			expect( getHeaderCount( container ) ).toHaveTextContent( '9' );
+		} );
+
+		it( 'hides the header count when seen posts UI is disabled', () => {
+			mockSeenPostsUiEnabled = false;
+			const lists = [
+				makeList( 1, [
+					{ feed_id: 10, unseen_count: 2 },
+					{ feed_id: 11, unseen_count: 3 },
+				] ),
+			];
+
+			const { container } = renderWithProvider(
+				<ReaderSidebarLists lists={ lists } path="/reader" isOpen />
+			);
+
+			expect( getHeaderCount( container ) ).toBeNull();
 		} );
 	} );
 

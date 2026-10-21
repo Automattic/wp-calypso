@@ -1,19 +1,20 @@
 /**
  * Enforces the canvas binding on the merged providers.
  *
- * `canvas-binding` owns the state machine; this module owns the policy — which
- * abilities are bound to the open canvas, which ones legitimately move it, and what
- * a refusal says. The ability lists live next to the state machine they encode
- * against rather than in the provider loader, which only composes them.
+ * `canvas-binding` owns the state machine; this module owns the policy: which
+ * abilities are bound to the open canvas, which ones legitimately move it, which
+ * must respect a stopped request, and what a refusal says. The lists live here,
+ * next to the state machine they encode against, rather than in the provider
+ * loader that composes them.
  *
- * The policy is installed on both dispatch paths, because agenttic-client picks
- * between them per ability: it calls an ability's own `callback` when it has one and
- * only falls back to the provider's `executeAbility` when it does not. Every Big Sky
- * ability is registered with a callback, so guarding `executeAbility` alone leaves
- * the guard switched off for exactly the abilities it exists to police.
+ * The policy is installed on both dispatch paths. agenttic-client calls an
+ * ability's own `callback` when it has one and falls back to `executeAbility`
+ * only when it does not, and every editor ability has a callback — so guarding
+ * `executeAbility` alone would leave the guard inert.
  */
 
 import { normalizeAbilityName } from '../abilities/ability-name';
+import { PAGE_PATH } from '../abilities/editor-navigate/page-path';
 import {
 	bindToNavigationTarget,
 	bindToOpenCanvas,
@@ -21,26 +22,22 @@ import {
 	buildCanvasKey,
 	clearCanvasBinding,
 	getBlockingMove,
+	isCurrentRequestBlocked,
 	type CanvasMove,
 } from './canvas-binding';
-import type { Ability, AbilityResult } from '../abilities/types';
+import type { AbilityResult } from '../abilities/types';
 import type { ContextProvider, ToolProvider } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
-// Abilities that write to the page open in the editor. Deliberately excludes
-// `big-sky/apply-update-theme` and `big-sky/set-site-logo` (site-wide — moving
-// between pages does not make them wrong) and `big-sky/show-component` (not a
-// write). Ownership is irrelevant here: this list is checked on the merged
-// provider, so it covers abilities that have migrated into AM and abilities still
-// served by an external provider alike.
-//
-// `edit-entity-record` is deliberately absent: it names its target explicitly
-// (`entityType`/`entityName`/`recordId`, often site-level like `root`/`site` or
-// `wp_navigation`), so moving the canvas cannot redirect its write. Guarding it
-// would refuse legitimate site-level edits from any screen.
+// Abilities that write to the page open in the editor. Site-wide writes and
+// `show-component` cannot be made wrong by a move between pages, and
+// `edit-entity-record` names its own target and moves the canvas itself through
+// `bindToEditorPath()`, so guarding it would refuse legitimate edits.
+// `save-changes` persists explicitly keyed dirty entities across canvases. It
+// respects a stopped request below, but moving pages alone cannot redirect it.
 //
 // Normalized, because the agent invokes `big-sky/apply-block-edits` as
-// `big_sky__apply_block_edits`. Matching the registered form against the name that
-// actually arrives would never hit, leaving the guard inert in production.
+// `big_sky__apply_block_edits` — the registered form would never match.
 const CANVAS_BOUND_ABILITIES = new Set(
 	[ 'big-sky/apply-block-edits', 'big-sky/stream-page-design', 'big-sky/restore-checkpoint' ].map(
 		normalizeAbilityName
@@ -54,49 +51,39 @@ const CANVAS_MOVING_ABILITIES = new Set(
 	[ 'big-sky/editor-navigate', 'wp-admin/navigate' ].map( normalizeAbilityName )
 );
 
+const SAVE_CHANGES_ABILITY = normalizeAbilityName( 'big-sky/save-changes' );
+
 // Every ability the policy acts on, and so the only ones whose callbacks are worth
 // wrapping.
-const POLICED_ABILITIES = new Set( [ ...CANVAS_BOUND_ABILITIES, ...CANVAS_MOVING_ABILITIES ] );
+const POLICED_ABILITIES = new Set( [
+	...CANVAS_BOUND_ABILITIES,
+	...CANVAS_MOVING_ABILITIES,
+	SAVE_CHANGES_ABILITY,
+] );
 
 const EDITOR_NAVIGATE_ABILITY = normalizeAbilityName( 'big-sky/editor-navigate' );
 
-// The editor path `editor-navigate` accepts, matching the shape Big Sky validates
-// before it will navigate: `/page/123`, with either slash optional.
-const EDITOR_PAGE_PATH = /^\/?page\/(\d+)\/?$/;
-
 /**
- * The canvas a navigation ability is heading for.
+ * Hands the binding to an editor navigation about to run.
  *
- * Only `editor-navigate` names one. `wp-admin/navigate` takes a wp-admin path and
- * leaves the editor entirely, and a path that does not parse names no page — both
- * answer null, which leaves the caller to drop the binding instead of guessing.
- * @param normalizedName The normalized ability name.
- * @param args           The ability arguments, untyped as they arrive off the wire.
- * @returns The destination canvas key, or null when the ability names no page.
+ * Only a page path names a destination the binding can follow; `all-pages` drops
+ * it. Exported for `edit-entity-record`, which calls `navigateEditorWithoutSaving()`
+ * to leave a page it is deleting: without the handoff, its own move reads as
+ * the user leaving and aborts the request.
+ * @param path The editor path being navigated to.
+ * @returns A rollback for a navigation that never happens; see `canvas-binding`.
  */
-function resolveNavigationTarget( normalizedName: string, args: unknown ): string | null {
-	if ( normalizedName !== EDITOR_NAVIGATE_ABILITY ) {
-		return null;
-	}
+export function bindToEditorPath( path: string ): () => void {
+	const target = buildCanvasKey( 'page', PAGE_PATH.exec( path )?.[ 1 ] );
 
-	const path = ( args as { path?: unknown } | undefined )?.path;
-
-	if ( typeof path !== 'string' ) {
-		return null;
-	}
-
-	// Always a page: the path shape admits nothing else.
-	return buildCanvasKey( 'page', EDITOR_PAGE_PATH.exec( path )?.[ 1 ] );
+	return target ? bindToNavigationTarget( target ) : clearCanvasBinding();
 }
 
 function buildCanvasRefusal( move: CanvasMove ): AbilityResult {
-	// Untranslated on purpose: `returnToAgent: true` means these strings are read by
-	// the model, not shown to the user, unlike neighbouring abilities' messages.
-	//
-	// Both spell out "do not retry", and the no-canvas one says so hardest. The
-	// write abilities poll for a canvas to appear, so a model that responds to the
-	// refusal by trying another route into the same write can keep a doomed request
-	// alive indefinitely.
+	// Untranslated on purpose: `returnToAgent: true` means the model reads these
+	// strings, not the user. Both spell out "do not retry", the no-canvas one
+	// hardest: the write abilities poll for a canvas to appear, so a model that
+	// finds another route into the same write keeps a doomed request alive.
 	const message =
 		null === move.to
 			? `Nothing was changed: this was requested for ${ move.from }, but the editor is no longer open on it and there is no page on screen to change. Do not retry this or try another way to make the same change — nothing can be edited until a page is open. Tell the user the request stopped because they navigated away, and ask them to reopen the page if they still want it.`
@@ -110,6 +97,21 @@ function buildCanvasRefusal( move: CanvasMove ): AbilityResult {
 		},
 		returnToAgent: true,
 	};
+}
+
+/**
+ * Throws, and refuses the rest of the turn, once the canvas has moved. For a
+ * write that yields between its steps: the policy checks only as an ability starts.
+ */
+export function assertCanvasUnmoved(): void {
+	const move = getBlockingMove();
+
+	if ( move ) {
+		blockCurrentRequest();
+		throw new Error(
+			`Stopped: the editor left ${ move.from } while the edits were being applied. The edits that had landed stay in place. Do not retry — tell the user what happened.`
+		);
+	}
 }
 
 /**
@@ -150,12 +152,7 @@ type CanvasPolicy = {
 };
 
 /**
- * Applies the canvas policy to one about-to-run ability.
- *
- * Shared by both dispatch paths, which is the whole point: agenttic-client calls an
- * ability's own `callback` when it has one and only falls back to the provider's
- * `executeAbility` when it does not, so a policy installed on one path alone is
- * inert for every ability that takes the other.
+ * Applies the canvas policy to one about-to-run ability, on both dispatch paths.
  * @param name The ability name, in either form.
  * @param args The ability arguments.
  * @returns The refusal to return instead of running it, and how to undo the binding it took.
@@ -166,6 +163,21 @@ function applyCanvasPolicy( name: string, args: unknown ): CanvasPolicy {
 	// normalized name is a no-op.
 	const normalizedName = normalizeAbilityName( name );
 
+	if ( normalizedName === SAVE_CHANGES_ABILITY && isCurrentRequestBlocked() ) {
+		return {
+			refusal: {
+				result: {
+					success: false,
+					error: 'editor_request_blocked',
+					message:
+						'No changes were saved because this request was stopped when the editor canvas moved. Do not retry saving in this request. Tell the user what happened and wait for a new explicit save request.',
+				},
+				returnToAgent: true,
+			},
+			rollbackBinding: null,
+		};
+	}
+
 	if ( CANVAS_BOUND_ABILITIES.has( normalizedName ) ) {
 		const move = getBlockingMove();
 		if ( move ) {
@@ -175,42 +187,50 @@ function applyCanvasPolicy( name: string, args: unknown ): CanvasPolicy {
 	}
 
 	if ( CANVAS_MOVING_ABILITIES.has( normalizedName ) ) {
-		const target = resolveNavigationTarget( normalizedName, args );
+		// Only `editor-navigate` names a destination. `wp-admin/navigate` leaves the
+		// editor entirely, so the binding is dropped rather than guessed.
+		const path =
+			normalizedName === EDITOR_NAVIGATE_ABILITY
+				? ( args as { path?: unknown } | undefined )?.path
+				: undefined;
 
 		return {
 			refusal: null,
-			rollbackBinding: target ? bindToNavigationTarget( target ) : clearCanvasBinding(),
+			rollbackBinding: typeof path === 'string' ? bindToEditorPath( path ) : clearCanvasBinding(),
 		};
 	}
 
 	return { refusal: null, rollbackBinding: null };
 }
 
-/**
- * Whether an ability answered that it did not do what it was asked.
- *
- * Abilities answer with the `AbilityResult` envelope, but the provider contract
- * types both dispatch paths as `Promise< any >`, so this reads defensively and
- * accepts the bare form too. Anything it cannot recognize counts as success: a
- * navigation whose result shape drifts should leave the binding where a working
- * navigation leaves it, not somewhere new.
- * @param result Whatever the ability answered.
- * @returns Whether it reported failure.
- */
-function reportsFailure( result: unknown ): boolean {
-	const answer = result as { success?: unknown; result?: { success?: unknown } } | undefined;
+interface FailureAnswer {
+	success?: unknown;
+	details?: { navigated?: unknown };
+}
 
-	return false === ( answer?.result?.success ?? answer?.success );
+/**
+ * A failure that never moved. One carrying `navigated` changed the route
+ * before failing — `editor-navigate`'s load timeout — so its destination is
+ * still where the editor is heading.
+ *
+ * Read defensively: the provider contract types both dispatch paths as
+ * `Promise< any >`, so the bare result shape is accepted too, and anything
+ * unrecognized counts as success.
+ */
+function failedWithoutMoving( result: unknown ): boolean {
+	const answer = result as ( FailureAnswer & { result?: FailureAnswer } ) | undefined;
+	const failure = answer?.result ?? answer;
+
+	return false === failure?.success && ! failure?.details?.navigated;
 }
 
 /**
  * Dispatches one ability under the policy, undoing a move that never happened.
  *
- * The abilities that take the binding forward can fail without navigating —
- * `editor-navigate` answers `{ success: false }` on a save conflict, a stale page
- * id or a network error, and can throw outright. Without this, the destination it
- * was handed stays bound to a page the editor is never going to open, and every
- * later canvas write in the turn goes through unguarded.
+ * `editor-navigate` can fail without navigating — a save conflict, a stale page
+ * id, a network error — or throw outright. Without this, the binding stays on a
+ * page the editor is never going to open, and every later canvas write in the
+ * turn goes through unguarded.
  * @param name     The ability name, in either form.
  * @param args     The ability arguments.
  * @param dispatch Runs the ability itself.
@@ -234,7 +254,7 @@ async function dispatchUnderCanvasPolicy(
 	try {
 		const result = await dispatch();
 
-		if ( reportsFailure( result ) ) {
+		if ( failedWithoutMoving( result ) ) {
 			rollbackBinding();
 		}
 
@@ -275,10 +295,10 @@ function guardAbilityCallback( ability: Ability ): Ability {
 }
 
 /**
- * Refuses a canvas write whose canvas has moved since the model asked for it.
+ * Refuses a canvas write after a move, and saves after the request has been stopped.
  *
  * Applied to the merged tool provider, so it is indifferent to which provider owns
- * a given ability — including after an ability migrates into AM.
+ * a given ability.
  * @param toolProvider The merged tool provider, if any.
  * @returns The wrapped provider, or undefined when there is nothing to wrap.
  */

@@ -32,10 +32,10 @@ function getDataPath( siteId, postId, period, statType, date = null ) {
  */
 export function isRequestingEmailStats( state, siteId, postId, period, statType, date ) {
 	return state.stats.emails
-		? [ ...getDataPath( siteId, postId, period, statType, date ), 'requesting' ].reduce(
+		? ( [ ...getDataPath( siteId, postId, period, statType, date ), 'requesting' ].reduce(
 				( value, key ) => value?.[ key ],
 				state.stats.emails.requests
-		  ) ?? false
+			) ?? false )
 		: false;
 }
 
@@ -124,7 +124,7 @@ export const getSiteEmail = createSelector(
  */
 export function getEmailStat( state, siteId, postId, period, statType ) {
 	const stats = state.stats.emails
-		? state.stats.emails.items?.[ siteId ]?.[ postId ]?.[ period ]?.[ statType ] ?? null
+		? ( state.stats.emails.items?.[ siteId ]?.[ postId ]?.[ period ]?.[ statType ] ?? null )
 		: null;
 	return stats ? Object.keys( stats ).map( ( key ) => stats[ key ] ) : null;
 }
@@ -143,9 +143,9 @@ export function getEmailStat( state, siteId, postId, period, statType ) {
  */
 export function getEmailStatsNormalizedData( state, siteId, postId, period, statType, date, path ) {
 	return state.stats.emails.items
-		? [ ...getDataPath( siteId, postId, period, statType ), path ].reduce(
+		? ( [ ...getDataPath( siteId, postId, period, statType ), path ].reduce(
 				( value, key ) => value?.[ key ],
 				state.stats.emails.items
-		  ) ?? null
+			) ?? null )
 		: null;
 }

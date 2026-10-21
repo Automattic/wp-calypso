@@ -40,12 +40,7 @@ function StreakFreezeTerm( { children }: { children?: ReactNode } ) {
 }
 
 type ActivityStreakMode =
-	| 'never-started'
-	| 'lost'
-	| 'pending'
-	| 'pending-frozen'
-	| 'engaged'
-	| 'engaged-record';
+	'never-started' | 'lost' | 'pending' | 'pending-frozen' | 'engaged' | 'engaged-record';
 
 interface ModeContent {
 	badgeState: StreakBadgeState;

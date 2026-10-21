@@ -11,7 +11,7 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { isExternal } from 'calypso/lib/url';
-import type { SiteSelect } from '@automattic/data-stores';
+
 import './style.scss';
 
 const BASE_STEPS = [ STEPS.UNIFIED_PLANS ];
@@ -74,7 +74,7 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 					return null;
 				}
 
-				const siteStore = select( SITE_STORE ) as SiteSelect;
+				const siteStore = select( SITE_STORE );
 				return siteStore.getSiteOption( site.ID, 'admin_url' ) ?? null;
 			},
 			[ site?.ID ]
@@ -83,7 +83,7 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 
 		// Validate back_to to prevent open redirect - must not be external
 		const safeBackTo =
-			backTo && ! isExternal( backTo ) ? backTo : safeAdminUrl ?? dashboardLink( '/sites' );
+			backTo && ! isExternal( backTo ) ? backTo : ( safeAdminUrl ?? dashboardLink( '/sites' ) );
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {

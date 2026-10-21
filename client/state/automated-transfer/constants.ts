@@ -88,6 +88,9 @@ export const eligibilityHolds = {
 	// SITE_UNLAUNCHED is a client constant to differentiate between launched private sites, and unlaunched sites.
 	// See: client/state/data-layer/wpcom/sites/automated-transfer/eligibility/index.js
 	SITE_UNLAUNCHED: 'SITE_UNLAUNCHED',
+	// SITE_NOT_PUBLIC is a client constant set for launched sites that are not public.
+	// See: client/my-sites/site-settings/settings-performance/main.jsx
+	SITE_NOT_PUBLIC: 'SITE_NOT_PUBLIC',
 	SITE_GRAYLISTED: 'SITE_GRAYLISTED',
 	NON_ADMIN_USER: 'NON_ADMIN_USER',
 	NOT_RESOLVING_TO_WPCOM: 'NOT_RESOLVING_TO_WPCOM',
@@ -95,4 +98,6 @@ export const eligibilityHolds = {
 	EMAIL_UNVERIFIED: 'EMAIL_UNVERIFIED',
 	EXCESSIVE_DISK_SPACE: 'EXCESSIVE_DISK_SPACE',
 	IS_STAGING_SITE: 'IS_STAGING_SITE',
-};
+} as const;
+
+export type EligibilityHold = ( typeof eligibilityHolds )[ keyof typeof eligibilityHolds ];

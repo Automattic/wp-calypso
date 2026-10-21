@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button as CalypsoButton } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -10,7 +9,6 @@ import { useJetpackConnectionStatus } from 'calypso/my-sites/stats/hooks/use-jet
 import useStatsPurchases from 'calypso/my-sites/stats/hooks/use-stats-purchases';
 import useDismissPricingGrid from 'calypso/my-sites/stats/pricing-grid/hooks/use-dismiss-pricing-grid';
 import { useSelector } from 'calypso/state';
-import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-consts';
@@ -47,11 +45,8 @@ const PersonalPurchase = ( {
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const { hasAnyStatsPlan } = useStatsPurchases( siteId );
-	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const isSimpleSite = useSelector( ( state ) => getIsSimpleSite( state, siteId ) );
 	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isSimpleSite );
-	// The button of @automattic/components has built-in color scheme support for Calypso.
-	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
 
 	const continueButtonText = translate( 'Contribute now and continue' );
 
@@ -130,9 +125,8 @@ const PersonalPurchase = ( {
 
 			{ subscriptionValue === 0 ? (
 				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
-					<ButtonComponent
+					<Button
 						variant="primary"
-						primary={ isWPCOMSite ? true : undefined }
 						onClick={ () =>
 							gotoCheckoutPage( {
 								from,
@@ -148,21 +142,17 @@ const PersonalPurchase = ( {
 						{ translate( 'Continue with %(product)s for free', {
 							args: { product: STATS_PRODUCT_NAME },
 						} ) }
-					</ButtonComponent>
+					</Button>
 				</div>
 			) : (
 				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
-					<ButtonComponent
-						variant="primary"
-						primary={ isWPCOMSite ? true : undefined }
-						onClick={ handleCheckoutRedirect }
-					>
+					<Button variant="primary" onClick={ handleCheckoutRedirect }>
 						{ continueButtonText }
-					</ButtonComponent>
+					</Button>
 
-					<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
+					<Button variant="secondary" onClick={ handleCheckoutPostponed }>
 						{ translate( 'I will do it later' ) }
-					</ButtonComponent>
+					</Button>
 				</div>
 			) }
 		</div>

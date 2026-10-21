@@ -11,6 +11,7 @@ import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
 	FetchDashboardSiteFiltersParams,
+	User,
 } from '@automattic/api-core';
 import type { PostHogOverrides } from '@automattic/posthog';
 
@@ -18,12 +19,17 @@ export type AgencySupports = {
 	overview: boolean;
 	tiers: boolean;
 	partnerDirectory: boolean;
+	marketplace: boolean;
 	exclusiveOffers: boolean;
 	learn: boolean;
 	mcp: boolean;
+	amplify: boolean;
+	devTools: boolean;
 	sites: boolean;
+	plugins: boolean;
 	team: boolean;
 	earn: boolean;
+	billing: boolean;
 };
 
 export type AgencyClientSupports = {
@@ -44,12 +50,9 @@ export type MeSupports = {
 	apps: boolean;
 };
 
-export type SiteOverviewSupports = {
-	preview: boolean;
-};
-
 export type AppConfig = {
 	name: string;
+	unifiedAdminPageViewApp?: 'msd' | 'a4a';
 	basePath: string;
 	mainRoute: string;
 	Logo: React.FC | null;
@@ -68,8 +71,6 @@ export type AppConfig = {
 		me: MeSupports | false;
 		commandPalette: boolean;
 		domainOnlySites: boolean;
-		startStoreRoute?: boolean;
-		siteOverview: SiteOverviewSupports;
 		colorScheme: boolean;
 		darkMode: boolean;
 	};
@@ -82,6 +83,10 @@ export type AppConfig = {
 		sites?: () => Promise< { default: React.FC } >;
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		siteSwitcher?: () => Promise< { default: React.FC< any > } >;
+		/** Replaces the WordPress.com omnibar, whose nodes come from the admin bar endpoint. */
+		omnibar?: React.FC< { user?: User } >;
+		/** Replaces the WordPress.com Help Center panel, which the omnibar's help node toggles. */
+		helpCenter?: React.FC;
 	};
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;
@@ -115,10 +120,6 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		me: false,
 		commandPalette: false,
 		domainOnlySites: false,
-		startStoreRoute: false,
-		siteOverview: {
-			preview: false,
-		},
 		colorScheme: false,
 		darkMode: false,
 	},

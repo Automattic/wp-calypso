@@ -1,10 +1,10 @@
-import { __ } from '@wordpress/i18n';
+import { parseAdminBarTitle } from '@automattic/omnibar';
 import { useSiteLaunch } from '../../sites/site-launch-button/use-site-launch';
 import { dashboardLinkWithBackport } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
 import type { Site } from '@automattic/api-core';
-import type { OmnibarNode } from '@automattic/omnibar';
+import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-launch-site.scss';
 
@@ -23,7 +23,10 @@ function LaunchRocketIcon() {
 
 const NO_SITE = { ID: 0, slug: '', name: '' } as Site;
 
-export function useLaunchSitePlugin( { site }: { site?: Site } ): OmnibarNode | undefined {
+export function useLaunchSiteNodeBuilder( { site }: { site?: Site } ): {
+	nodeBuilder: ( adminBarNode: AdminBarNode ) => Partial< OmnibarNode > | null;
+	panel?: React.ReactNode;
+} {
 	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 
@@ -35,30 +38,29 @@ export function useLaunchSitePlugin( { site }: { site?: Site } ): OmnibarNode | 
 	const launchSite = site ?? NO_SITE;
 	const siteOverviewUrl = `/sites/${ launchSite.slug }`;
 
-	const { isLoading, isExperimentLoading, isDisabled, isBusy, href, onClick } = useSiteLaunch(
-		launchSite,
-		{
+	const { isLoading, isExperimentLoading, isDisabled, isBusy, href, onClick, modal } =
+		useSiteLaunch( launchSite, {
 			tracksContext: 'omnibar',
 			backTo: siteOverviewUrl,
 			postLaunchUrl: dashboardLinkWithBackport( siteOverviewUrl ),
 			domainsOptions: { ...queries.domainsQuery(), enabled: isLaunchable },
 			recordTracksEvent,
-		}
-	);
-
-	if ( ! isLaunchable ) {
-		return undefined;
-	}
+		} );
 
 	const disabled = isLoading || isExperimentLoading || isDisabled || isBusy;
 
 	return {
-		id: 'launch-site',
-		title: __( 'Launch site' ),
-		icon: <LaunchRocketIcon />,
-		className: 'omnibar__launch-site color-scheme is-global',
-		disabled,
-		href,
-		onClick,
+		nodeBuilder: ( adminBarNode ) =>
+			isLaunchable
+				? {
+						title: parseAdminBarTitle( adminBarNode ).text,
+						icon: <LaunchRocketIcon />,
+						className: 'omnibar__launch-site color-scheme is-global',
+						disabled,
+						href,
+						onClick,
+					}
+				: null,
+		panel: isLaunchable ? modal : undefined,
 	};
 }

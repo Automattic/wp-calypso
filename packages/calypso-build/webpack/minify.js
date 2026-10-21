@@ -101,7 +101,7 @@ function chooseTerserEcmaVersion( browsers ) {
  * @param {Object} options Options
  * @param options.terserOptions Options for Terser plugin
  * @param options.cssMinimizerOptions Options for CSS Minimizer plugin
- * @param options.extractComments Whether to extract comments into a separate LICENSE file (defaults to true)
+ * @param options.extractComments Whether to extract comments into a separate LICENSE file (defaults to false)
  * @param options.parallel Whether to run minifiers in parallel (defaults to true)
  * @returns {Object[]}     Terser plugin object to be used in Webpack minification.
  */
@@ -109,9 +109,11 @@ module.exports = ( {
 	terserOptions = {},
 	cssMinimizerOptions = {},
 	parallel = true,
-	extractComments = true,
+	extractComments = false,
 } = {} ) => {
 	terserOptions = {
+		// SWC's own default. terser-webpack-plugin 5.6+ switches it to keeping license comments unless set.
+		format: { comments: false },
 		compress: true,
 		mangle: {
 			reserved: [ '__', '_n', '_nx', '_x' ],

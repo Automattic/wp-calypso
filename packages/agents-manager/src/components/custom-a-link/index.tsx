@@ -38,7 +38,7 @@ export default function CustomALink( {
 					} );
 				}
 
-				recordAgentsManagerTracksEvent( 'link_click', {
+				recordAgentsManagerTracksEvent( 'calypso_agents_manager_link_click', {
 					href: transformedHref,
 					link_type: isSupportArticle ? 'support_article' : 'external',
 					source: isFromOrchestrator ? 'orchestrator' : 'zendesk',

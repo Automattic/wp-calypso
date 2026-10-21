@@ -20,16 +20,18 @@ import type { Duration, SelectorProduct } from '../types';
 export const getPlansToDisplay = ( {
 	duration,
 	currentPlanSlug,
+	isOnSale,
 }: {
 	duration: Duration;
 	currentPlanSlug: string | null;
+	isOnSale: ( productSlug: string ) => boolean;
 } ): SelectorProduct[] => {
 	const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
 	const currentPlanTerms = currentPlan
 		? findPlansKeys( {
 				type: currentPlan.type,
 				group: currentPlan.group,
-		  } )
+			} )
 		: [];
 
 	let planSlugsToDisplay = SELECTOR_PLANS;
@@ -56,6 +58,7 @@ export const getPlansToDisplay = ( {
 			( product: SelectorProduct | null ): product is SelectorProduct =>
 				!! product &&
 				product.term === duration &&
+				isOnSale( product.productSlug ) &&
 				// Don't include a plan the user already owns, regardless of the term
 				! currentPlanTerms.includes( product.productSlug )
 		);

@@ -238,7 +238,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		const curatedRecommendations = isEnglish
 			? interleaveByTag( followedTagSlugs.map( ( tag ) => curatedBlogs[ tag ] || [] ) ).map(
 					( blog ) => ( { ...blog, weight: 1 } )
-			  )
+				)
 			: [];
 
 		const apiRecommendations = apiRecommendedSites.map( ( site ) => ( { ...site, weight: 1 } ) );

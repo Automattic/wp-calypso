@@ -48,6 +48,33 @@ const getThemeSlugWithRepo = ( themeSlug: string | undefined, isPurchasingTheme:
 	return `${ repo }/${ themeSlug }`;
 };
 
+function isDashboardUrl( url: string ) {
+	try {
+		return dashboardOrigins().includes( new URL( url ).origin );
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Whether `url` points at the site the flow loaded, e.g. the wp-admin screen a launch started from.
+ * The host comes from the loaded site rather than from query args, so `back_to` can't name an
+ * arbitrary host.
+ */
+function isOnSiteHost( url: string, siteUrl?: string ) {
+	if ( ! url || ! siteUrl ) {
+		return false;
+	}
+
+	try {
+		const target = new URL( url );
+
+		return target.protocol === 'https:' && target.host === new URL( siteUrl ).host;
+	} catch {
+		return false;
+	}
+}
+
 const DomainSearchUI = (
 	props: StepProps & {
 		locale: string;
@@ -71,6 +98,7 @@ const DomainSearchUI = (
 
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
+	const showNamePulseSearch = isDomainOnlyFlow;
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
@@ -87,15 +115,16 @@ const DomainSearchUI = (
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
-	const { query, setQuery, clearQuery } = useQueryHandler( {
+	const { query, setQuery, clearQuery, resetQuery } = useQueryHandler( {
 		initialQuery: queryObject.new,
 		currentSiteUrl,
+		persistQuery: ! showNamePulseSearch,
 	} );
 
 	const events = useMemo( () => {
 		return {
 			onQueryChange: setQuery,
-			onQueryClear: clearQuery,
+			onQueryClear: showNamePulseSearch ? resetQuery : clearQuery,
 			beforeAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
 				if ( isDomainForGravatarFlow( flowName ) ) {
 					return {
@@ -270,6 +299,8 @@ const DomainSearchUI = (
 		siteSlug,
 		setQuery,
 		clearQuery,
+		resetQuery,
+		showNamePulseSearch,
 		submitSignupStep,
 		goToNextStep,
 		goToStep,
@@ -287,7 +318,7 @@ const DomainSearchUI = (
 	const config = useMemo( () => {
 		const allowedTlds = Array.isArray( allowedTldParam )
 			? allowedTldParam
-			: allowedTldParam?.split( ',' ) ?? [];
+			: ( allowedTldParam?.split( ',' ) ?? [] );
 
 		return {
 			vendor: getSuggestionsVendor( {
@@ -301,14 +332,20 @@ const DomainSearchUI = (
 				! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
 			allowsUsingOwnDomain: ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
+			showNamePulseSearch,
 		};
-	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
+	}, [
+		flowName,
+		isDomainOnlyFlow,
+		isOnboardingWithEmailFlow,
+		allowedTldParam,
+		showNamePulseSearch,
+	] );
 
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
 				if (
-					isDomainOnlyFlow ||
 					isDomainForGravatarFlow( flowName ) ||
 					isFreeFlow( flowName ) ||
 					isOnboardingWithEmailFlow
@@ -388,8 +425,7 @@ const DomainSearchUI = (
 
 			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString() ?? '';
 			const isSafeBackTo =
-				isRelativeUrl( backTo ) ||
-				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+				isRelativeUrl( backTo ) || isDashboardUrl( backTo ) || isOnSiteHost( backTo, site?.URL );
 
 			if ( isSafeBackTo ) {
 				backUrl = backTo;
@@ -402,7 +438,7 @@ const DomainSearchUI = (
 			backUrl,
 			backLabelText,
 		};
-	}, [ dashboardOptIn, flowName, previousStepName, goBack, userSiteCount, __ ] );
+	}, [ dashboardOptIn, flowName, previousStepName, goBack, userSiteCount, site?.URL, __ ] );
 
 	const getUseDomainIOwnLink = () => {
 		if ( ! query || ! config.allowsUsingOwnDomain ) {
@@ -447,7 +483,8 @@ const DomainSearchUI = (
 			hideBack={ hideBack }
 			backUrl={ backUrl }
 			backLabelText={ backLabelText }
-			isWideLayout
+			isWideLayout={ ! config.showNamePulseSearch }
+			isFullLayout={ config.showNamePulseSearch }
 			stepContent={
 				<WPCOMDomainSearch
 					className="domain-search--step-wrapper"

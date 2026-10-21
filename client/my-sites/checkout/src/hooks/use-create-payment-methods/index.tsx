@@ -19,6 +19,7 @@ import {
 import { useMemo } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { CheckoutSubmitButtonContent } from '../../components/checkout-submit-button-content';
+import { contactDetailsStore } from '../../lib/checkout-stores';
 import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
@@ -109,7 +110,7 @@ export function useCreateCreditCard( {
 						submitButtonContent,
 						allowUseForAllSubscriptions,
 						hasExistingCardMethods,
-				  } )
+					} )
 				: null,
 		[
 			currency,
@@ -158,7 +159,7 @@ function useCreateAlipay( {
 			shouldLoad
 				? createAlipayMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -177,7 +178,7 @@ function useCreateP24( {
 			shouldLoad
 				? createP24Method( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -196,7 +197,7 @@ function useCreateBancontact( {
 			shouldLoad
 				? createBancontactMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -226,7 +227,7 @@ function useCreateIdeal( {
 			shouldLoad
 				? createIdealMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -248,7 +249,7 @@ function useCreateBlik( {
 			shouldLoad
 				? createBlikMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -267,7 +268,7 @@ function useCreateSofort( {
 			shouldLoad
 				? createSofortMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -286,7 +287,7 @@ function useCreateEps( {
 			shouldLoad
 				? createEpsMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -334,12 +335,7 @@ function useCreateGooglePay( {
 	stripe: Stripe | null;
 	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
-	const isStripeReady =
-		! isStripeLoading &&
-		! stripeLoadingError &&
-		stripe &&
-		stripeConfiguration &&
-		isEnabled( 'checkout/google-pay' );
+	const isStripeReady = ! isStripeLoading && ! stripeLoadingError && stripe && stripeConfiguration;
 
 	return useMemo( () => {
 		return isStripeReady && stripe && stripeConfiguration && cartKey
@@ -362,7 +358,8 @@ function useCreateStripeUpi( {
 			shouldLoad
 				? createStripeUpiMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+						contactDetails: contactDetailsStore,
+					} )
 				: null,
 		[ shouldLoad ]
 	);

@@ -90,7 +90,7 @@ const useSiteDeliveryFrequencyMutation = () => {
 								return siteSubscription;
 							} ),
 						} ) ),
-				  }
+					}
 				: previousSiteSubscriptions;
 			queryClient.setQueryData( siteSubscriptionsCacheKey, mutatedSiteSubscriptions );
 

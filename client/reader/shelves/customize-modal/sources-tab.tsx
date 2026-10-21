@@ -17,6 +17,7 @@ interface Props {
 	selectedSourceKeys: string[];
 	onAddDraftSource: ( subscription: SiteSubscriptionItem ) => void;
 	onRemoveDraftSource: ( subscription: SiteSubscriptionItem ) => void;
+	feedsError?: string | null;
 }
 
 type Filter = 'all' | 'selected';
@@ -52,7 +53,12 @@ const getSourcesContentState = ( {
 	return 'list';
 };
 
-export function SourcesTab( { selectedSourceKeys, onAddDraftSource, onRemoveDraftSource }: Props ) {
+export function SourcesTab( {
+	selectedSourceKeys,
+	onAddDraftSource,
+	onRemoveDraftSource,
+	feedsError,
+}: Props ) {
 	const translate = useTranslate();
 	// This tab only mounts while it's the active TabPanel tab, so the (paginating)
 	// subscriptions query only runs once the user opens Sources.
@@ -115,6 +121,12 @@ export function SourcesTab( { selectedSourceKeys, onAddDraftSource, onRemoveDraf
 					{ translate( 'In this shelf · %(count)d', { args: { count: selectedCount } } ) }
 				</Button>
 			</HStack>
+
+			{ feedsError ? (
+				<p className="customize-shelf-modal__error" role="alert">
+					{ feedsError }
+				</p>
+			) : null }
 
 			<SourcesTabContent
 				state={ sourcesState }
