@@ -17,6 +17,9 @@ export const getIsNoteRead = ( notesState, note ) => {
 		if ( null !== storedRead && '1' === storedRead ) {
 			return true;
 		}
+		if ( '0' === storedRead ) {
+			return false;
+		}
 	} catch ( e ) {}
 
 	return !! note.read;

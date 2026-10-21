@@ -778,7 +778,12 @@ function handleStorageEvent( event ) {
 	if ( 'note_read_status_' === event.key.substring( 0, 17 ) ) {
 		const noteId = parseInt( event.key.slice( 17 ), 10 );
 
-		return store.dispatch( actions.notes.readNote( noteId ) );
+		if ( event.newValue === '1' ) {
+			return store.dispatch( actions.notes.readNote( noteId ) );
+		}
+		if ( event.newValue === '0' ) {
+			return store.dispatch( actions.notes.unreadNote( noteId ) );
+		}
 	}
 }
 
