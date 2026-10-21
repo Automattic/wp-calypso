@@ -90,7 +90,7 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 								<Heading level={ 3 } size={ 20 } weight={ 500 } color="inherit">
 									{ String( post.title ?? conversation?.title ?? '' ) }
 								</Heading>
-								<Text numberOfLines={ 1 } color="var(--color-text-subtle)">
+								<Text truncate numberOfLines={ 1 } color="var(--color-text-subtle)">
 									{ String( post.better_excerpt_no_html ?? post.excerpt_no_html ?? '' ) }
 								</Text>
 							</VStack>
