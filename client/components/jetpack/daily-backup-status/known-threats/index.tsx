@@ -341,6 +341,26 @@ export function getKnownThreatsWarning(
 	);
 }
 
+/**
+ * The badge alone, without Scan: nothing else on the page says what it means, so the warning is
+ * its tooltip and, for screen readers, hidden text beside it.
+ */
+function KnownThreatsBadgeWithWarning( { flagged }: { flagged: number } ) {
+	const translate = useTranslate();
+	const warning = getKnownThreatsWarning( translate, flagged );
+
+	return (
+		<>
+			<Tooltip text={ String( warning ) } className="backup-known-threats__tooltip">
+				<span>
+					<KnownThreatsBadge flagged={ flagged } />
+				</span>
+			</Tooltip>
+			<VisuallyHidden>{ warning }</VisuallyHidden>
+		</>
+	);
+}
+
 interface BackupKnownThreatsToggleProps {
 	state: BackupKnownThreatsState;
 	/** Where the warning isn't shown nearby: the badge, with the warning as its tooltip, comes first. */
@@ -425,7 +445,7 @@ export function BackupKnownThreatsToggle( { state, withBadge }: BackupKnownThrea
 	}
 
 	if ( ! hasScan ) {
-		return <KnownThreatsBadge flagged={ flagged } />;
+		return <KnownThreatsBadgeWithWarning flagged={ flagged } />;
 	}
 
 	return (
