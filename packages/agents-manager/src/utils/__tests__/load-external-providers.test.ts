@@ -687,6 +687,31 @@ describe( 'loadExternalProviders', () => {
 		} );
 	} );
 
+	it( 'merges the interactive UI components and functions of every provider in order', async () => {
+		const titlePicker = { name: 'JetpackAiTitlePicker', schema: jest.fn(), component: jest.fn() };
+		const productCard = { name: 'WooAiProductCard', schema: jest.fn(), component: jest.fn() };
+		const openSettings = {
+			name: 'wooAiOpenSettings',
+			returnType: 'void',
+			schema: jest.fn(),
+			execute: jest.fn(),
+		};
+		setAgentsManagerData( {
+			agentProviders: [
+				{ interactiveUi: { components: [ titlePicker ] } },
+				{ markdownComponents: {} },
+				{ interactiveUi: { components: [ productCard ], functions: [ openSettings ] } },
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.interactiveUi ).toEqual( {
+			components: [ titlePicker, productCard ],
+			functions: [ openSettings ],
+		} );
+	} );
+
 	it( 'chains markdown code renderers so later providers can handle structured blocks', async () => {
 		const hostCode = jest.fn( ( props ) => ( {
 			type: 'code',

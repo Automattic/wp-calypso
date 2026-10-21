@@ -7,10 +7,31 @@ providers use it.
 
 ## Usage
 
-Build a catalog with `createInteractiveUiCatalog()`: the basic components below plus
-the host's own `components` and `functions`. Duplicate names throw.
+Build a catalog with `createInteractiveUiCatalog({ id, components, functions })`: the basic
+components below and A2UI's built-in functions, plus the host's own. The ID defaults to A2UI's
+Basic catalog; give a catalog with your own components its own versioned ID. Duplicate names
+throw.
 
-Create a runtime with `createInteractiveUiRuntime({ catalog, onAction })` and pass it
+Define a component or function as a plain object, so it can ship in another bundle without its
+own A2UI or `zod`:
+
+```ts
+const titlePicker: InteractiveUiComponentDefinition< TitlePickerProps > = {
+	name: 'JetpackAiTitlePicker',
+	schema: ( { z, ActionSchema } ) =>
+		z.object( { titles: z.array( z.string() ), onPick: ActionSchema } ),
+	component: TitlePicker,
+};
+```
+
+`schema` builds with the renderer's `zod`, A2UI's `ActionSchema` and `DataBindingSchema`, and
+value schemas that take a literal or a data binding (`StringValueSchema`, `NumberValueSchema`,
+`BooleanValueSchema`). The component gets resolved props: bound values read from the data model,
+a `set<Prop>` setter for each, and actions as functions to call. A function definition has a
+`name`, `returnType`, `schema` and `execute( args )`, which may be async; its arguments come from
+the agent, so treat them as untrusted.
+
+Create a runtime with `createInteractiveUiRuntime({ catalogs, onAction, onError })` and pass it
 ordered batches with `runtime.processMessages(messages, ownerId)`. The owner is what
 the host shows the surfaces next to, such as a chat message. Keep the runtime for the
 session to preserve edits, then call `runtime.dispose()`.
@@ -18,8 +39,9 @@ session to preserve edits, then call `runtime.dispose()`.
 Render each of an owner's surfaces (`runtime.getSurfaceIds(ownerId)`, then
 `runtime.getSurface(id)`) with `InteractiveUiSurface`, and re-render after each
 `processMessages()` call. It adds the `ai-ui-renderer` root fieldset and Markdown, waits
-for the surface's root component, and hides a surface that fails to render until its
-`revision` changes. Pass `disabled` to disable its controls, including an open modal's.
+for the surface's root component, hides a surface that uses a component its catalog lacks
+(reporting it through `onError`), and hides a surface that fails to render until its `revision`
+changes. Pass `disabled` to disable its controls, including an open modal's.
 
 Import `@automattic/ai-ui-renderer/style.scss` and the WordPress components stylesheet.
 Hosts need Sass support and supply their own stacking rule for `.ai-ui-renderer__modal`.
@@ -35,6 +57,7 @@ Hosts need Sass support and supply their own stacking rule for `.ai-ui-renderer_
 - Icons map supported Basic catalog names to WordPress icons.
 - Choice pickers support single and multiple selection and store selected values as
   string arrays.
+- Buttons send an `event` to the agent, or call a catalog function with `functionCall`.
 - Bind input values and button action context to the same data paths to submit edits.
 - Date/time inputs use local ISO date/time strings, enable date, time, or both with
   `enableDate`/`enableTime`, and show the browser's validation message on blur.

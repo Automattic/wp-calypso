@@ -33,7 +33,7 @@ function MyApp() {
 
 Plugins register provider modules through the PHP filter `agents_manager_agent_providers` (Jetpack's `agents-manager` package). The entries reach the client as `agentsManagerData.agentProviders`, and `loadExternalProviders()` imports them.
 
-See `src/extension-types.ts` for the tool and context provider interfaces, and `LoadedProviders` in `src/utils/load-external-providers.ts` for everything else a provider module can export, such as suggestions (and opting out of the default empty-view ones), markdown components and extensions, chat components, message transforms, abilities setup, checkpoint hooks, site-build utilities and capabilities.
+See `src/extension-types.ts` for the tool and context provider interfaces, and `LoadedProviders` in `src/utils/load-external-providers.ts` for everything else a provider module can export, such as suggestions (and opting out of the default empty-view ones), markdown components and extensions, interactive UI components and functions, chat components, message transforms, abilities setup, checkpoint hooks, site-build utilities and capabilities.
 
 ### Opening and closing the chat
 
@@ -136,11 +136,13 @@ The `wpcom/render-interactive-ui` tool returns an envelope with
 `tool_id: wpcom__render_interactive_ui` and an ordered array of A2UI v0.9 messages
 in `data`. Agents Manager also accepts raw A2UI message arrays.
 
-The catalog, data bindings, runtime, surface rendering and styles live in
+The catalogs, data bindings, runtime, surface rendering and styles come from
 [`@automattic/ai-ui-renderer`](../ai-ui-renderer/README.md). Agents Manager loads
-that package on demand, associates surfaces with transcript messages, maintains
-one runtime per conversation, and submits actions through the conversation's
-context-message flow. Agents Manager passes the processing state to
+that package on demand, builds its catalogs (A2UI's Basic catalog, and its own
+with its providers' `interactiveUi`), associates surfaces with transcript messages,
+maintains one runtime per conversation, and sends a button's event through the
+conversation's context-message flow; a `functionCall` runs in the browser instead.
+Agents Manager passes the processing state to
 `InteractiveUiSurface` through its `disabled` prop and keeps the chat isolation
 wrapper and modal stacking rule here.
 The shared package has no dependency on Agents Manager or its message format.

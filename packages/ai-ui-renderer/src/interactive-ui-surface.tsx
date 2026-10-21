@@ -1,6 +1,6 @@
 import { renderMarkdown } from '@a2ui/markdown-it';
 import { A2uiSurface, MarkdownContext } from '@a2ui/react/v0_9';
-import { Component } from '@wordpress/element';
+import { Component, useEffect } from '@wordpress/element';
 import { InteractiveUiDisabledContext } from './context';
 import type { ComponentProps, ReactNode } from 'react';
 
@@ -27,8 +27,23 @@ class SurfaceBoundary extends Component< SurfaceBoundaryProps, { hasFailed: bool
 	}
 }
 
+type Surface = ComponentProps< typeof A2uiSurface >[ 'surface' ];
+
+// Matches A2UI: a component uses the catalog it names, if any, or else the surface's.
+function getUnknownComponentType( surface: Surface ) {
+	for ( const [ , component ] of surface.componentsModel.entries ) {
+		const catalog = component.catalog?.components.size ? component.catalog : surface.defaultCatalog;
+
+		if ( ! catalog.components.has( component.type ) ) {
+			return component.type;
+		}
+	}
+
+	return undefined;
+}
+
 interface InteractiveUiSurfaceProps {
-	surface: ComponentProps< typeof A2uiSurface >[ 'surface' ];
+	surface: Surface;
 	/** Disables the surface's controls, including those in an open modal. */
 	disabled?: boolean;
 	/** A change retries a surface that failed to render. */
@@ -37,14 +52,28 @@ interface InteractiveUiSurfaceProps {
 
 /**
  * Renders a surface with Markdown once its root component has arrived, and nothing if it fails
- * to render. The root check doesn't subscribe, so hosts re-render after processing messages.
+ * to render or uses a component its catalog lacks. The checks don't subscribe, so hosts re-render
+ * after processing messages.
  */
 export function InteractiveUiSurface( {
 	surface,
 	disabled = false,
 	revision = 0,
 }: InteractiveUiSurfaceProps ) {
-	if ( ! surface.componentsModel.has( surface.rootId ) ) {
+	const unknownComponentType = getUnknownComponentType( surface );
+
+	// A2UI would show a red placeholder for it, so hide the surface and report the type instead.
+	useEffect( () => {
+		if ( unknownComponentType ) {
+			void surface.dispatchError( {
+				code: 'UNKNOWN_COMPONENT_TYPE',
+				message: `Unknown component type: ${ unknownComponentType }`,
+				surfaceId: surface.id,
+			} );
+		}
+	}, [ surface, unknownComponentType ] );
+
+	if ( ! surface.componentsModel.has( surface.rootId ) || unknownComponentType ) {
 		return null;
 	}
 
