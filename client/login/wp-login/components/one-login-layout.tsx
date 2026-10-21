@@ -67,13 +67,6 @@ interface OneLoginLayoutProps {
 	 */
 	showLogo?: boolean;
 	/**
-	 * When true, the primary subtext slot is rendered in the dotcom-prominent
-	 * variant (slightly darker text color and a step up on the typography
-	 * scale). Use it when the primary line is a real subtitle rather than the
-	 * default quiet ToS treatment.
-	 */
-	subHeadingProminent?: boolean;
-	/**
 	 * Rendered above the heading. Pass a component that returns `null` when it
 	 * has nothing to show, so the layout keeps its spacing.
 	 */
@@ -100,7 +93,6 @@ const OneLoginLayout = ( {
 	columnWidth = 4,
 	isCentered = false,
 	showLogo = true,
-	subHeadingProminent = false,
 	notice,
 	linkLogoToHome = false,
 }: OneLoginLayoutProps ) => {
@@ -236,13 +228,7 @@ const OneLoginLayout = ( {
 						}
 					/>
 					<div className="wp-login__one-login-layout-heading-subtext-wrapper">
-						<h2
-							className={ clsx( 'wp-login__one-login-layout-heading-subtext', {
-								'is-prominent': subHeadingProminent,
-							} ) }
-						>
-							{ subHeadingText }
-						</h2>
+						<h2 className="wp-login__one-login-layout-heading-subtext">{ subHeadingText }</h2>
 						{ subHeadingTextSecondary && (
 							<h3 className="wp-login__one-login-layout-heading-subtext is-secondary">
 								{ subHeadingTextSecondary }
