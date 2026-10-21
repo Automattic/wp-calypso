@@ -2034,6 +2034,21 @@ describe( 'OrchestratorChat', () => {
 			expect( chatProps().notice ).toBeUndefined();
 		} );
 
+		it( 'shows the credits-back notice in place of the error, without the composer’s low notice', () => {
+			const backNotice = {
+				message: 'Site credits are back. Send your message again.',
+				dismissible: false,
+			};
+			mockCreditsNotice.mockReturnValue( { message: '5 credits left.', dismissible: true } );
+			mockRefusalNotice.mockReturnValue( backNotice );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: refusalError } ) );
+			render( chat() );
+
+			expect( chatProps().error ).toBeNull();
+			expect( chatProps().errorNotice ).toBe( backNotice );
+			expect( chatProps().notice ).toBeUndefined();
+		} );
+
 		it( 'keeps the error text and the composer’s notice without a refusal notice', () => {
 			mockRefusalNotice.mockReturnValue( undefined );
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: refusalError } ) );

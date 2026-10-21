@@ -15,6 +15,7 @@ import {
 } from '../utils/credits';
 import {
 	type CreditsAccess,
+	getCreditsBackNotice,
 	getCreditsCtaType,
 	getCreditsNoticeMessage,
 	getCreditsOutNotice,
@@ -117,7 +118,10 @@ export interface UseCreditsResult {
 	beforeSubmit: () => boolean;
 	/** The last failed reply's refusal code, cleared once read so it labels one error only. */
 	takeRefusalCode: () => string | undefined;
-	/** The exhausted notice, while a reply refused for no credits shows its error at a 0 balance. */
+	/**
+	 * While a reply refused for no credits shows its error: the exhausted notice at a 0 balance,
+	 * a credits-back notice once it is above 0, and the last of these while it is unknown.
+	 */
 	refusalNotice?: NoticeConfig;
 }
 
@@ -422,7 +426,7 @@ export function useCredits( {
 
 	const isExhausted = status ? isCreditsExhausted( status ) : false;
 	const isLow = status ? isCreditsLow( status ) : false;
-	// New chat empties the thread but keeps the chat's error, which then draws nowhere.
+	// Big Sky's clearMessages empties the thread but keeps the chat's error, which then draws nowhere.
 	const isRefusedForCredits =
 		refusal?.scope === scope &&
 		refusal.code === CREDITS_EXHAUSTED_REFUSAL &&
@@ -571,10 +575,12 @@ export function useCredits( {
 		dismissLowNotice,
 	] );
 
-	// Takes the notice's place, so it records no notice_shown of its own.
-	const refusalNotice = useMemo< NoticeConfig | undefined >( () => {
-		if ( ! isRefusedForCredits || ! siteId || status?.plan !== 'paid' || ! isExhausted ) {
+	const liveRefusalNotice = useMemo< NoticeConfig | undefined >( () => {
+		if ( ! isRefusedForCredits || ! siteId || status?.plan !== 'paid' ) {
 			return undefined;
+		}
+		if ( ! isExhausted ) {
+			return getCreditsBackNotice();
 		}
 		return getCreditsOutNotice(
 			status.remaining,
@@ -590,16 +596,38 @@ export function useCredits( {
 		purchaseAction,
 		recordPurchaseClick,
 	] );
+	// An unknown balance keeps this refusal's last notice, as a failed read keeps the last answer.
+	// Only an earlier render knows that notice, so it's state, updated while rendering.
+	const [ shownRefusal, setShownRefusal ] = useState< {
+		refusal: typeof refusal;
+		notice: NoticeConfig;
+	} >();
+	if (
+		liveRefusalNotice &&
+		( shownRefusal?.refusal !== refusal || shownRefusal?.notice !== liveRefusalNotice )
+	) {
+		setShownRefusal( { refusal, notice: liveRefusalNotice } );
+	}
+	const heldRefusalNotice =
+		refusal && shownRefusal?.refusal === refusal ? shownRefusal.notice : undefined;
+	const refusalNotice = isRefusedForCredits
+		? ( liveRefusalNotice ?? heldRefusalNotice )
+		: undefined;
 
 	// A turn's balance doesn't say who may buy. A read that finishes sets who may buy or drops the
 	// balance, so it ends the wait; a cancelled read changes neither.
 	const isAwaitingAccess =
 		balance?.scope === scope && balance.isFromTurn && ! access && canReadBalance( scope );
 
+	// The exhausted refusal notice counts as the zero notice; a low notice behind the credits-back
+	// one waits until it shows.
+	const isLowNoticeBehindCreditsBack = !! refusalNotice && ! isExhausted;
 	// Once per state for this site, user and agent, and only while the notice is drawn. After a
 	// turn's balance it waits for the read of who may buy, so it names the button the notice shows.
 	const shownNoticeState: CreditsState | undefined =
-		siteId && status && notice && isNoticeVisible ? getCreditsState( status ) : undefined;
+		siteId && status && notice && isNoticeVisible && ! isLowNoticeBehindCreditsBack
+			? getCreditsState( status )
+			: undefined;
 	const userRole = getCreditsUserRole( access?.canBuyCredits );
 	useEffect( () => {
 		if ( ! shownNoticeState || isAwaitingAccess ) {

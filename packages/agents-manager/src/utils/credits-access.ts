@@ -191,3 +191,12 @@ export function getCreditsOutNotice(
 		dismissible: false,
 	};
 }
+
+/** After a reply refused for no credits, once the balance is above 0 again. */
+export function getCreditsBackNotice(): NoticeConfig {
+	return {
+		icon: false,
+		message: __( 'Site credits are back. Send your message again.', __i18n_text_domain__ ),
+		dismissible: false,
+	};
+}
