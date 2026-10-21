@@ -3,7 +3,7 @@
 // them. Then we can async-load Sentry for only a certain percent of requests.
 // Otherwise, we'd add a fair amount to the bundle size when we don't really need
 // it for every single request.
-import config from '@automattic/calypso-config';
+import config, { isCalypsoLive } from '@automattic/calypso-config';
 import type * as SentryApi from '@sentry/react';
 
 // Static sentry configuration. We add any dynamic values when initializing Sentry.
@@ -136,6 +136,11 @@ function shouldEnableSentry( sampleRate: number = 0.1 ): boolean {
 	// This flag overrides the other settings, always enabling Sentry:
 	if ( config.isEnabled( 'always-enable-sentry' ) ) {
 		return true;
+	}
+
+	// calypso.live runs unreleased PR builds, whose errors shouldn't be reported.
+	if ( isCalypsoLive() ) {
+		return false;
 	}
 
 	// By default, only load for 10% of requests when Sentry is enabled in the environment:

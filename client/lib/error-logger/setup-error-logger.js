@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isCalypsoLive } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { addBreadcrumb, initSentry } from '@automattic/calypso-sentry';
 import { tracksEvents } from 'calypso/lib/analytics/tracks';
@@ -29,7 +29,7 @@ export function setupErrorLogger( reduxStore ) {
 	// never happen.)
 	initSentry( { beforeSend, userId: getCurrentUserId( reduxStore.getState() ) } );
 
-	if ( ! config.isEnabled( 'catch-js-errors' ) ) {
+	if ( ! config.isEnabled( 'catch-js-errors' ) || isCalypsoLive() ) {
 		return;
 	}
 
