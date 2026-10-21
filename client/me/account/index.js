@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
+	setSelectedSiteIdByOrigin,
 	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
@@ -16,6 +17,7 @@ export default function () {
 		setupPreferences,
 		maybeRedirectToMultiSiteDashboard( '/me/preferences' ),
 		sidebar,
+		setSelectedSiteIdByOrigin,
 		account,
 		makeLayout,
 		clientRender

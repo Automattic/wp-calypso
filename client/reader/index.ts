@@ -8,6 +8,7 @@ import {
 	redirectLoggedOut,
 	redirectLoggedOutToSignup,
 	render as clientRender,
+	setSelectedSiteIdByOrigin,
 } from 'calypso/controller';
 import { RedirectRouteList, setupRedirectRoutes } from 'calypso/utils';
 import {
@@ -67,6 +68,7 @@ export default async function (): Promise< void > {
 		[ '/reader', '/reader/recent/:feed_id' ],
 		redirectLoggedOutToDiscover,
 		sidebar,
+		setSelectedSiteIdByOrigin,
 		following,
 		makeLayout,
 		clientRender
@@ -90,6 +92,7 @@ export default async function (): Promise< void > {
 		[ '/reader/new', '/reader/new/youtube', '/reader/new/tumblr', '/reader/new/substack' ],
 		redirectLoggedOutToSignup,
 		sidebar,
+		setSelectedSiteIdByOrigin,
 		loadNewSubscriptionPage,
 		makeLayout,
 		clientRender
@@ -112,6 +115,7 @@ export default async function (): Promise< void > {
 		'/reader/blogs/:blog_id',
 		redirectLoggedOutToSignup,
 		sidebar,
+		setSelectedSiteIdByOrigin,
 		blogListing,
 		makeLayout,
 		clientRender

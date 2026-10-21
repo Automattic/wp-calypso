@@ -551,6 +551,16 @@ export const notFound = ( context, next ) => {
 };
 
 /**
+ * Middleware to remove the `origin_site_id` query parameter.
+ */
+export const setSelectedSiteIdByOrigin = ( context, next ) => {
+	if ( context.query.origin_site_id !== undefined ) {
+		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_site_id' ) );
+	}
+	next();
+};
+
+/**
  * This function is only used to provide API compatibility for the sections that use shared controllers.
  */
 export const ssrSetupLocale = ( _context, next ) => {
