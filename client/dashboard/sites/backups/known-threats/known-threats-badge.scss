@@ -22,7 +22,6 @@
 
 // Visually just the pill: drop the tertiary Button's own colour and padding.
 .components-button.dashboard-known-threats-toggle {
-	gap: var( --wpds-dimension-gap-xs, 4px );
 	height: auto;
 	padding: 0;
 	border-radius: var( --wpds-border-radius-lg, 8px );

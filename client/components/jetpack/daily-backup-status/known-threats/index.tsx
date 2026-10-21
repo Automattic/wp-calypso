@@ -306,7 +306,14 @@ export function useBackupKnownThreats( siteId: number, rewindId?: string | null 
 
 type BackupKnownThreatsState = ReturnType< typeof useBackupKnownThreats >;
 
-export function KnownThreatsBadge( { flagged }: { flagged: number } ) {
+export function KnownThreatsBadge( {
+	flagged,
+	isOpen,
+}: {
+	flagged: number;
+	/** Set where the badge toggles the threats: it then ends with a chevron showing which way. */
+	isOpen?: boolean;
+} ) {
 	const translate = useTranslate();
 
 	return (
@@ -316,6 +323,9 @@ export function KnownThreatsBadge( { flagged }: { flagged: number } ) {
 				args: flagged,
 				comment: '%d is the number of known security threats in a backup',
 			} ) }
+			{ isOpen !== undefined && (
+				<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 16 } fill="currentColor" />
+			) }
 		</span>
 	);
 }
@@ -362,7 +372,6 @@ export function KnownThreatsToggleButton( {
 	const warningId = useId();
 	// In the card toolbar the warning isn't shown nearby, so screen readers get it as the description.
 	const warning = inToolbar ? getKnownThreatsWarning( translate, flagged ) : null;
-	const chevronIcon = isOpen ? chevronUp : chevronDown;
 	const ariaLabel = isOpen
 		? translate( 'Known threats (%d), hide threats', {
 				args: flagged,
@@ -391,8 +400,7 @@ export function KnownThreatsToggleButton( {
 						aria-describedby={ warningId }
 						onClick={ onToggle }
 					>
-						<KnownThreatsBadge flagged={ flagged } />
-						<Icon icon={ chevronIcon } size={ 24 } />
+						<KnownThreatsBadge flagged={ flagged } isOpen={ isOpen } />
 					</CalypsoButton>
 				</Tooltip>
 			) : (
@@ -406,8 +414,7 @@ export function KnownThreatsToggleButton( {
 					aria-controls={ isOpen ? controlsId : undefined }
 					onClick={ onToggle }
 				>
-					<KnownThreatsBadge flagged={ flagged } />
-					<Icon icon={ chevronIcon } size={ 24 } />
+					<KnownThreatsBadge flagged={ flagged } isOpen={ isOpen } />
 				</Button>
 			) }
 			{ warning && <VisuallyHidden id={ warningId }>{ warning }</VisuallyHidden> }
