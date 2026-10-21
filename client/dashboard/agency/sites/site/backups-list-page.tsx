@@ -60,6 +60,10 @@ export default function AgencySiteBackupsListPage() {
 		<BackupsPage
 			site={ site }
 			navigation={ navigation }
+			backupsPath={
+				router.buildLocation( { to: agencySiteBackupsIndexRoute.fullPath, params: { siteSlug } } )
+					.pathname
+			}
 			rewindId={ rewindId }
 			searchParams={ searchParams }
 		/>

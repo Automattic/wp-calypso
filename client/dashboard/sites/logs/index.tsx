@@ -4,7 +4,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useIntlLocale } from '../../app/locale';
 import { Card, CardBody } from '../../components/card';
@@ -98,25 +98,22 @@ function SiteLogsContent( {
 		gmtOffset,
 		autoRefresh,
 		defaultDays: logType === LogType.ACTIVITY ? 30 : 7,
+		resetPageOnChange: true,
 		initializeUrl:
 			( logType === LogType.PHP || logType === LogType.SERVER ) &&
 			hasHostingFeature( site, HostingFeatures.LOGS ),
 	} );
-	// this is used to track changes across the dateRange to ensure the components can react to changes when they are triggered by a change in the DateRangePicker
-	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );
-
-	const handleDateRangeChangeWrapper = async ( next: { start: Date; end: Date } ) => {
-		if ( autoRefresh && ! isLast7Days( next, timezoneString, gmtOffset ) ) {
+	// Only stop refresh after the router accepts a non-live range.
+	useEffect( () => {
+		if ( autoRefresh && ! isLast7Days( dateRange, timezoneString, gmtOffset ) ) {
 			setAutoRefresh( false );
 			setAutoRefreshDisabledReason( __( 'Auto-refresh only works with "Last 7 days" preset' ) );
-		} else {
-			// Clear on any other change, including non–last-7 → non–last-7
-			setAutoRefreshDisabledReason( null );
 		}
+	}, [ autoRefresh, dateRange, timezoneString, gmtOffset ] );
 
-		if ( await handleDateRangeChange( next ) ) {
-			setDateRangeVersion( ( v ) => v + 1 );
-		}
+	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
+		setAutoRefreshDisabledReason( null );
+		handleDateRangeChange( next );
 	};
 
 	const handleAutoRefreshToggle = ( isChecked: boolean ) => {
@@ -199,7 +196,6 @@ function SiteLogsContent( {
 							<SiteLogsDataViews
 								logType={ logType }
 								dateRange={ dateRange }
-								dateRangeVersion={ dateRangeVersion }
 								autoRefresh={ autoRefresh }
 								setAutoRefresh={ setAutoRefresh }
 								autoRefreshDisabledReason={ autoRefreshDisabledReason }
@@ -213,7 +209,6 @@ function SiteLogsContent( {
 						<SiteActivityLogsDataViews
 							logType={ logType }
 							dateRange={ dateRange }
-							dateRangeVersion={ dateRangeVersion }
 							autoRefresh={ autoRefresh }
 							setAutoRefresh={ setAutoRefresh }
 							gmtOffset={ gmtOffset }

@@ -42,7 +42,6 @@ export type SiteLogsDataViewsProps = {
 	setAutoRefresh: Dispatch< SetStateAction< boolean > >;
 	autoRefreshDisabledReason?: string | null;
 	onAutoRefreshRequest?: ( isChecked: boolean ) => boolean;
-	dateRangeVersion?: number;
 	gmtOffset: number;
 	timezoneString: string | undefined;
 	site: Site;
@@ -51,7 +50,6 @@ export type SiteLogsDataViewsProps = {
 function SiteLogsDataViews( {
 	logType,
 	dateRange,
-	dateRangeVersion,
 	gmtOffset,
 	timezoneString,
 	autoRefresh,
@@ -155,14 +153,6 @@ function SiteLogsDataViews( {
 			dataviewsRef.current.style.maxHeight = `${ maxHeight }px`;
 		} );
 	}, [] );
-
-	useEffect( () => {
-		if ( ! view.page || view.page === 1 ) {
-			return;
-		}
-		updateView( { ...view, page: 1 } );
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- reset page only when dateRange changes
-	}, [ dateRangeVersion ] );
 
 	useLayoutEffect( () => {
 		dataviewsRef.current = document.querySelector< HTMLDivElement >( '.dataviews-wrapper' );

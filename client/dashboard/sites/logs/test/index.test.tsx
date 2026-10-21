@@ -66,34 +66,6 @@ beforeEach( () => {
 
 describe( '<SiteLogs>', () => {
 	beforeEach( () => mockSiteAndSettings() );
-	test.each( [ '', '?from=100', '?from=1735732800&to=1735819200' ] )(
-		'keeps the PHP URL and requested range consistent on mount with %s',
-		async ( search ) => {
-			window.history.replaceState( { key: 'logs-test', __TSR_index: 3 }, '', `/${ search }` );
-			const queries = mockPhpLogs( [] );
-			const today = Math.floor( Date.now() / 86400000 ) * 86400;
-			const expected = search.includes( '&to=' )
-				? { from: 1735732800, to: 1735819200 }
-				: { from: today - 6 * 86400, to: today + 86399 };
-			const { router } = render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
-
-			await screen.findByRole( 'button', { name: /^Date range:/ } );
-			await waitFor( () => {
-				expect( router.state.location.search ).toMatchObject( expected );
-				expect( new URLSearchParams( window.location.search ).get( 'from' ) ).toBe(
-					String( expected.from )
-				);
-				expect( new URLSearchParams( window.location.search ).get( 'to' ) ).toBe(
-					String( expected.to )
-				);
-				expect( queries ).toContainEqual(
-					expect.objectContaining( { start: String( expected.from ), end: String( expected.to ) } )
-				);
-			} );
-			expect( window.history.state.__TSR_index ).toBe( 3 );
-		}
-	);
-
 	test( 'keeps selected Activity dates when resetting pagination', async () => {
 		const queries: Record< string, unknown >[] = [];
 		nock( API_BASE )

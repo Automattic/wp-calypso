@@ -1,6 +1,6 @@
 import { useRouter, useSearch } from '@tanstack/react-router';
-import { getUnixTime, fromUnixTime, isValid as isValidDate, subDays, isSameSecond } from 'date-fns';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { getUnixTime, fromUnixTime, isValid as isValidDate, subDays } from 'date-fns';
+import { useMemo, useRef, useEffect, useCallback } from 'react';
 import { buildTimeRangeInSeconds } from '../../sites/logs/utils';
 import { formatYmd, parseYmdLocal } from '../../utils/datetime';
 import type { DateRangeSearch } from '../../utils/date-range-search';
@@ -12,6 +12,8 @@ interface UseDateRangeOptions {
 	autoRefresh?: boolean;
 	defaultDays?: number;
 	initializeUrl?: boolean;
+	resetPageOnChange?: boolean;
+	selectionPath?: string;
 }
 
 export function useDateRange( {
@@ -20,33 +22,51 @@ export function useDateRange( {
 	autoRefresh = false,
 	defaultDays = 7,
 	initializeUrl = false,
+	resetPageOnChange = false,
+	selectionPath,
 }: UseDateRangeOptions ) {
 	const router = useRouter();
 	const search = useSearch( { strict: false } );
+	const { from, to } = search;
 
-	const initial = getDefaultDateRange( timezoneString, gmtOffset, defaultDays );
-	const initialFromUrl = getInitialDateRangeFromSearch( search );
-
-	const [ dateRange, setDateRange ] = useState< { start: Date; end: Date } >(
-		() => initialFromUrl ?? initial
-	);
+	const dateRange = useMemo( () => {
+		const range = getInitialDateRangeFromSearch( { from, to } );
+		if ( ! range ) {
+			return getDefaultDateRange( timezoneString, gmtOffset, defaultDays );
+		}
+		// URL bounds are instants; the picker expects local Dates carrying site calendar days.
+		return {
+			start: parseYmdLocal( formatYmd( range.start, timezoneString, gmtOffset ) )!,
+			end: parseYmdLocal( formatYmd( range.end, timezoneString, gmtOffset ) )!,
+		};
+	}, [ from, to, timezoneString, gmtOffset, defaultDays ] );
 
 	const initializedUrl = useRef( false );
 
 	const syncUrl = useCallback(
-		( from: number, to: number ) => {
+		( from: number, to: number, selection = false ) => {
 			const current = router.latestLocation.search;
-			if ( current.from === from && current.to === to ) {
+			if (
+				current.from === from &&
+				current.to === to &&
+				( ! selection || ! resetPageOnChange || current.page === undefined ) &&
+				( ! selection || ! selectionPath || router.latestLocation.pathname === selectionPath )
+			) {
 				return;
 			}
 			return router.navigate< AnyRouter, string >( {
-				// Match search can lag behind a pending view navigation.
-				search: () => ( { ...router.latestLocation.search, from, to } ),
+				...( selection && selectionPath ? { to: selectionPath } : {} ),
+				search: () => ( {
+					...router.latestLocation.search,
+					from,
+					to,
+					...( selection && resetPageOnChange ? { page: undefined } : {} ),
+				} ),
 				replace: true,
 				resetScroll: false,
 			} );
 		},
-		[ router ]
+		[ router, resetPageOnChange, selectionPath ]
 	);
 
 	// PHP/server logs have always pinned their default range in the URL.
@@ -69,28 +89,14 @@ export function useDateRange( {
 		void syncUrl( startSec, endSec );
 	}, [ initializeUrl, search, dateRange, timezoneString, gmtOffset, syncUrl ] );
 
-	const handleDateRangeChange = async ( next: { start: Date; end: Date } ) => {
-		const pathname = router.latestLocation.pathname;
-
-		// Sync from/to to the URL as UNIX seconds
+	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
 		const { startSec, endSec } = buildTimeRangeInSeconds(
 			next.start,
 			next.end,
 			timezoneString,
 			gmtOffset
 		);
-
-		await syncUrl( startSec, endSec );
-		const current = router.latestLocation;
-		if (
-			current.pathname !== pathname ||
-			current.search.from !== startSec ||
-			current.search.to !== endSec
-		) {
-			return false;
-		}
-		setDateRange( next );
-		return true;
+		void syncUrl( startSec, endSec, true );
 	};
 
 	// Auto-refresh effect for live updating
@@ -106,10 +112,6 @@ export function useDateRange( {
 			}
 			const end = new Date();
 			const start = subDays( end, defaultDays - 1 );
-
-			setDateRange( ( prev ) =>
-				isSameSecond( prev.start, start ) && isSameSecond( prev.end, end ) ? prev : { start, end }
-			);
 
 			const from = getUnixTime( start );
 			const to = getUnixTime( end );
