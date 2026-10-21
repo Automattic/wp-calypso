@@ -53,6 +53,13 @@ function isImporting( status: ImportJob ): boolean {
 	return status.importerState === appStates.IMPORTING;
 }
 
+export class UnsupportedExportError extends Error {
+	constructor( fileType?: string ) {
+		super( `The upload was not recognized as a Playground export (${ fileType ?? 'unknown' }).` );
+		this.name = 'UnsupportedExportError';
+	}
+}
+
 /**
  * Only a Playground export can be started from here. If the server recognizes
  * the upload as another file type, fail now instead of waiting for a start that
@@ -63,7 +70,7 @@ function assertPlaygroundExport( status: ImportJob ): void {
 		status.importerState === appStates.UPLOAD_SUCCESS &&
 		status.importerFileType !== 'playground'
 	) {
-		throw new ImportFailureError();
+		throw new UnsupportedExportError( status.importerFileType );
 	}
 }
 

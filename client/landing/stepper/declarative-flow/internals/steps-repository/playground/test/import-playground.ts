@@ -6,6 +6,7 @@ import { updateImporter, uploadExportFile } from 'calypso/state/imports/actions'
 import { appStates } from 'calypso/state/imports/constants';
 import {
 	ImportFailureError,
+	UnsupportedExportError,
 	importPlaygroundSite,
 	startPlaygroundImportIfReady,
 } from '../lib/import-playground';
@@ -236,7 +237,7 @@ describe( 'importPlaygroundSite', () => {
 		} );
 
 		await expect( importPlaygroundSite( 'slug', siteId ) ).rejects.toBeInstanceOf(
-			ImportFailureError
+			UnsupportedExportError
 		);
 		expect( updateImporterMock ).not.toHaveBeenCalled();
 		expect( wpcomRequestMock ).not.toHaveBeenCalled();

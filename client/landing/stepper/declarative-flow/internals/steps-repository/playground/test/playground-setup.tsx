@@ -2,12 +2,14 @@
  * @jest-environment jsdom
  */
 import { act, screen } from '@testing-library/react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { appStates } from 'calypso/state/imports/constants';
 import { mockStepProps, renderStep } from '../../test/helpers';
 import PlaygroundSetupStep from '../components/playground-setup';
 import {
 	ImportFailureError,
 	ImportTimeoutError,
+	UnsupportedExportError,
 	importPlaygroundSite,
 } from '../lib/import-playground';
 import type { PlaygroundImportProgress } from '../lib/import-playground';
@@ -17,6 +19,10 @@ jest.mock( '../lib/import-playground', () => ( {
 	...jest.requireActual( '../lib/import-playground' ),
 	importPlaygroundSite: jest.fn(),
 	removeSandboxPlugins: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
 } ) );
 
 jest.mock( '../components/playground-iframe', () => ( {
@@ -162,6 +168,20 @@ describe( 'PlaygroundSetupStep', () => {
 
 		expect( importPlaygroundSiteMock ).toHaveBeenCalledTimes( 2 );
 		expect( screen.queryByText( 'Your site could not be imported' ) ).not.toBeInTheDocument();
+	} );
+
+	it.each( [
+		[ 'import_failure', new ImportFailureError() ],
+		[ 'timeout', new ImportTimeoutError() ],
+		[ 'unsupported_file_type', new UnsupportedExportError( 'content' ) ],
+	] )( 'records a %s failure', async ( reason, error ) => {
+		importPlaygroundSiteMock.mockRejectedValue( error );
+		await renderSetupStep();
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_playground_import_failed',
+			expect.objectContaining( { site_id: 123, reason } )
+		);
 	} );
 
 	it( 'offers the dashboard instead of a retry when the import times out', async () => {

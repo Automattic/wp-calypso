@@ -18,6 +18,7 @@ import {
 	importPlaygroundSite,
 	removeSandboxPlugins,
 	ImportTimeoutError,
+	UnsupportedExportError,
 } from '../../lib/import-playground';
 import { PlaygroundIframe } from '../playground-iframe';
 import type { Step } from '../../../../types';
@@ -25,7 +26,18 @@ import type { PlaygroundImportProgress } from '../../lib/import-playground';
 import type { PlaygroundClient } from '../../lib/types';
 import './style.scss';
 
-type ImportResult = { status: 'error'; reason: 'timeout' | 'import_failure' };
+type ImportFailureReason = 'timeout' | 'unsupported_file_type' | 'import_failure';
+type ImportResult = { status: 'error'; reason: ImportFailureReason };
+
+function getFailureReason( error: unknown ): ImportFailureReason {
+	if ( error instanceof ImportTimeoutError ) {
+		return 'timeout';
+	}
+	if ( error instanceof UnsupportedExportError ) {
+		return 'unsupported_file_type';
+	}
+	return 'import_failure';
+}
 
 export const PlaygroundSetupStep: Step< {
 	submits: {
@@ -97,7 +109,7 @@ export const PlaygroundSetupStep: Step< {
 			}
 			await importPlaygroundSite( playgroundSlug, siteId, setProgress );
 		} catch ( error ) {
-			const reason = error instanceof ImportTimeoutError ? 'timeout' : 'import_failure';
+			const reason = getFailureReason( error );
 			recordTracksEvent( `${ eventPrefix }_failed`, {
 				site_id: siteId,
 				reason,
