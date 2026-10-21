@@ -97,10 +97,18 @@ export const useCheckoutHelpCenter = (): {
 	const [ , experimentAssignment ] = useExperiment( GET_HELP_EXPERIMENT );
 	const isGetHelpTreatment = experimentAssignment?.variationName === 'treatment';
 
-	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute, setIsMinimized } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
 
-	const isShowingHelpCenter = useDataStoreSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+	const { isShowingHelpCenter, isMinimized, currentCheckoutSupportVariation } = useDataStoreSelect(
+		( select ) => {
+			const helpCenterSelect = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+			return {
+				isShowingHelpCenter: helpCenterSelect.isHelpCenterShown(),
+				isMinimized: helpCenterSelect.getIsMinimized(),
+				currentCheckoutSupportVariation: helpCenterSelect.getCheckoutSupportVariation(),
+			};
+		},
 		[]
 	);
 
@@ -132,16 +140,25 @@ export const useCheckoutHelpCenter = (): {
 			}
 		}
 
+		// A minimized Help Center still counts as shown. When checkout support minimized it, bring it
+		// back as it was, like the Help Center's own header does, so a human chat keeps its route.
+		// Otherwise, bringing it back is a new opening from checkout.
+		if ( isMinimized && currentCheckoutSupportVariation ) {
+			setIsMinimized( false );
+			return;
+		}
+		const isOpening = ! isShowingHelpCenter || isMinimized;
+
 		// Assign the variation only when opening, so only people who ask for help are in the experiment.
 		const checkoutSupportVariation =
-			! isShowingHelpCenter && canJoinCheckoutSupportExperiment
+			isOpening && canJoinCheckoutSupportExperiment
 				? await loadCheckoutSupportVariation()
 				: undefined;
 		if ( toggle !== toggleCountRef.current ) {
 			return;
 		}
 
-		setShowHelpCenter( ! isShowingHelpCenter, {
+		setShowHelpCenter( isOpening, {
 			hasPremiumSupport,
 			...helpCenterOptions,
 			checkoutSupportVariation,

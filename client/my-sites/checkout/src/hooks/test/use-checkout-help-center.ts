@@ -9,7 +9,10 @@ import { useCheckoutHelpCenter } from '../use-checkout-help-center';
 
 const mockSetShowHelpCenter = jest.fn();
 const mockSetNavigateToRoute = jest.fn();
+const mockSetIsMinimized = jest.fn();
 let mockIsHelpCenterShown = false;
+let mockIsMinimized = false;
+let mockStoredVariation: string | undefined;
 let mockIsLoggedIn = true;
 let mockSectionName = 'checkout';
 let mockIsJetpackSite = false;
@@ -54,8 +57,14 @@ jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		setShowHelpCenter: mockSetShowHelpCenter,
 		setNavigateToRoute: mockSetNavigateToRoute,
+		setIsMinimized: mockSetIsMinimized,
 	} ),
-	useSelect: () => mockIsHelpCenterShown,
+	useSelect: ( mapSelect: ( select: () => unknown ) => unknown ) =>
+		mapSelect( () => ( {
+			isHelpCenterShown: () => mockIsHelpCenterShown,
+			getIsMinimized: () => mockIsMinimized,
+			getCheckoutSupportVariation: () => mockStoredVariation,
+		} ) ),
 } ) );
 
 jest.mock( 'i18n-calypso', () => ( {
@@ -116,6 +125,8 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockIsHelpCenterShown = false;
+		mockIsMinimized = false;
+		mockStoredVariation = undefined;
 		mockIsLoggedIn = true;
 		mockSectionName = 'checkout';
 		mockIsJetpackSite = false;
@@ -260,6 +271,38 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 
 		expect( mockLoadCheckoutSupportVariation ).not.toHaveBeenCalled();
 		expect( mockSetShowHelpCenter.mock.calls.at( -1 )?.[ 0 ] ).toBe( false );
+	} );
+
+	describe( 'when the Help Center is minimized', () => {
+		beforeEach( () => {
+			// A minimized Help Center still counts as shown.
+			mockIsHelpCenterShown = true;
+			mockIsMinimized = true;
+		} );
+
+		it( 'brings back a checkout support chat as it was', async () => {
+			mockStoredVariation = 'human_only';
+
+			await openHelpCenter();
+
+			expect( mockSetIsMinimized ).toHaveBeenCalledWith( false );
+			expect( mockLoadCheckoutSupportVariation ).not.toHaveBeenCalled();
+			expect( mockSetShowHelpCenter ).not.toHaveBeenCalled();
+			expect( mockSetNavigateToRoute ).not.toHaveBeenCalled();
+		} );
+
+		it( 'opens it for the variation when it was minimized before checkout', async () => {
+			mockLoadCheckoutSupportVariation.mockResolvedValue( 'human_only' );
+
+			await openHelpCenter();
+
+			expect( mockLoadCheckoutSupportVariation ).toHaveBeenCalled();
+			expect( mockSetShowHelpCenter ).toHaveBeenCalledWith(
+				true,
+				expect.objectContaining( { checkoutSupportVariation: 'human_only' } )
+			);
+			expect( route() ).toBe( '/odie?provider=zendesk&siteUrl=example.wordpress.com&siteId=123' );
+		} );
 	} );
 
 	describe( 'while the assignment loads', () => {
