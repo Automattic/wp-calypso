@@ -353,7 +353,7 @@ export function KnownThreatsToggleButton( {
 			{ inToolbar ? (
 				// Shows sighted users the warning; Tooltip leaves the existing description alone,
 				// so screen readers don't hear it twice.
-				<Tooltip text={ String( warning ) }>
+				<Tooltip text={ String( warning ) } className="backup-known-threats__tooltip">
 					<CalypsoButton
 						compact
 						borderless

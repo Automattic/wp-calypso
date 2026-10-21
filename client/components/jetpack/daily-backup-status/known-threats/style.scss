@@ -10,6 +10,11 @@
 	}
 }
 
+// The warning is a sentence; without a width it stays on one line and runs off the page.
+.backup-known-threats__tooltip {
+	max-inline-size: 280px;
+}
+
 // Mirrors the dashboard known-threats badge (same tokens).
 .backup-known-threats__badge {
 	display: inline-flex;
