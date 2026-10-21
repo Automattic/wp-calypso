@@ -39,6 +39,22 @@ const mockDomainsApi = ( domains: DomainSummary[] = [] ) => {
 		.reply( 200, { domains } );
 };
 
+const mockPendingFunnelApi = ( response: object ) =>
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/wow-funnel/pending' )
+		.query( true )
+		.reply( 200, response );
+
+const createAtomicFreeSite = (): Site =>
+	createMockSite( {
+		is_wpcom_atomic: true,
+		plan: {
+			product_slug: 'free_plan',
+			product_name: 'Free',
+			is_free: true,
+		},
+	} as Partial< Site > );
+
 const mockLaunchApi = () =>
 	nock( 'https://public-api.wordpress.com' )
 		.post( /\/sites\/1\/launch$/ )
@@ -256,6 +272,32 @@ describe( '<SiteLaunchButton>', () => {
 			replaceState.mockRestore();
 			Object.defineProperty( window, 'location', { writable: true, value: originalLocation } );
 		}
+	} );
+
+	test( 'sends a Studio preview to plans instead of launching it', async () => {
+		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
+		mockPendingFunnelApi( {
+			pending: false,
+			studio_previews: [ { blog_id: 1, site_slug: 'kaonashi.wordpress.com' } ],
+		} );
+
+		render( <SiteLaunchButton site={ createAtomicFreeSite() } tracksContext="test" /> );
+
+		const launchLink = await screen.findByRole( 'link', { name: 'Launch your site' } );
+		expect( launchLink ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/plans/kaonashi.wordpress.com' )
+		);
+	} );
+
+	test( 'an Atomic Free site that is not a Studio preview keeps the launch flow', async () => {
+		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
+		mockPendingFunnelApi( { pending: false } );
+
+		render( <SiteLaunchButton site={ createAtomicFreeSite() } tracksContext="test" /> );
+
+		const launchLink = await screen.findByRole( 'link', { name: 'Launch your site' } );
+		expect( launchLink ).toHaveAttribute( 'href', expect.stringContaining( '/setup/launch-site' ) );
 	} );
 
 	test( 'renders a link to the launch flow for a free site without an immediate launch', async () => {
