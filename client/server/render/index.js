@@ -8,14 +8,16 @@ import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
-import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
 	getTranslationChunkFileUrl,
 } from 'calypso/lib/i18n-utils/switch-locale';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCacheKey } from 'calypso/server/isomorphic-routing';
+import isCalypsoLiveHostname from 'calypso/server/lib/is-calypso-live-hostname';
 import performanceMark from 'calypso/server/lib/performance-mark';
 import stateCache from 'calypso/server/state-cache';
 import {
@@ -37,7 +39,7 @@ const IMAGE_REF_PATTERN = /^registry\.a8c\.com\/calypso\/app:build-\d+$/;
 const A4A_HOSTNAME_SUFFIX = '-a4a.calypso.live';
 
 function isCalypsoLiveDotcomHostname( hostname ) {
-	return !! hostname?.endsWith( '.calypso.live' ) && ! hostname.endsWith( A4A_HOSTNAME_SUFFIX );
+	return isCalypsoLiveHostname( hostname ) && ! hostname.endsWith( A4A_HOSTNAME_SUFFIX );
 }
 
 /**
@@ -84,7 +86,8 @@ export function customizeClientDataForRequest( req, baseClientData ) {
 		liveImageRef &&
 		isCalypsoLiveDotcomHostname( reqHostname ) &&
 		// Flavours without a dotcom sibling (e.g. Jetpack Cloud) keep static values.
-		( config( 'env_id' ) === 'wpcalypso' || isDashboardEnv() )
+		! isJetpackCloud() &&
+		! isA8CForAgencies()
 	) {
 		clientData = {
 			...clientData,
