@@ -18,6 +18,7 @@ const getUserSocialStepOrFallback = () =>
 export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
+	getSiteSelectedDestination = noop,
 	getLaunchDestination = noop,
 	getDomainSignupFlowDestination = noop,
 	getEmailSignupFlowDestination = noop,
@@ -193,21 +194,6 @@ export function generateFlows( {
 			disallowResume: true,
 		},
 		{
-			name: 'clone-site',
-			steps: [
-				'clone-start',
-				'clone-destination',
-				'clone-credentials',
-				'clone-point',
-				'clone-ready',
-				'clone-cloning',
-			],
-			destination: '/activity-log',
-			description: 'Allow Jetpack users to clone a site via Rewind (alternate restore)',
-			lastModified: '2018-05-28',
-			disallowResume: true,
-		},
-		{
 			name: 'ecommerce',
 			steps: [ userSocialStep, 'domains', 'plans-ecommerce-fulfilled' ],
 			destination: getSignupDestination,
@@ -267,7 +253,7 @@ export function generateFlows( {
 		{
 			name: 'site-selected',
 			steps: [ 'plans-site-selected-legacy' ],
-			destination: getSignupDestination,
+			destination: getSiteSelectedDestination,
 			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
 			description: 'A flow to test updating an existing site with `Signup`',
 			lastModified: '2017-01-19',

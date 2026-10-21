@@ -12,8 +12,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import AsyncHelpCenterFab from 'calypso/components/help-center-fab/async';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
-import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
-import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import { GlobalFooter } from 'calypso/layout/global-footer';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
@@ -132,16 +130,14 @@ const LayoutLoggedOut = ( {
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
 	const { partnerConfig } = usePartnerBranding();
 
-	const dashboard =
-		typeof window !== 'undefined' && getDashboardFromHostname( window.location.hostname );
 	const stepContainerV2Context = useMemo( () => {
 		return {
 			flowName: '',
 			stepName: '',
 			recordTracksEvent,
-			logo: getDashboardStepperLogo( dashboard ),
+			logo: null,
 		};
-	}, [ dashboard ] );
+	}, [] );
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -326,7 +322,12 @@ const LayoutLoggedOut = ( {
 					<AsyncLoad require={ loadA8cForAgenciesStyle } placeholder={ null } />
 				) }
 				<div id="content" className="layout__content">
-					<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
+					<AsyncLoad
+						require={ loadGlobalNotices }
+						placeholder={ null }
+						loadFailureFallback={ null }
+						id="notices"
+					/>
 					<div id="primary" className="layout__primary">
 						{ primary }
 					</div>

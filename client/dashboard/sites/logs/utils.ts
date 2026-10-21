@@ -183,6 +183,9 @@ export function getDateTimeLabel( {
 	return dateTimeLabel;
 }
 
+export const formatLogDetailValue = ( value: string | number | null | undefined ): string =>
+	value === null || value === undefined || String( value ).trim() === '' ? '-' : String( value );
+
 // Logs helpers
 
 export type PhpLogWithId = PHPLog & { id: string };

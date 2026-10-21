@@ -820,6 +820,10 @@ $with-sidebar-min-page-width: 1114px;
 		}
 	}
 
+	.wpnc__note-body--needs-top-spacing .wpnc__body {
+		padding-top: $wpnc__padding-large;
+	}
+
 	.wpnc__single-view .wpnc__comment .wpnc__body .wpnc__user {
 		border: none;
 	}

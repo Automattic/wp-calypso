@@ -265,7 +265,6 @@ describe( 'useGetCombinedChat — transfer messages', () => {
 
 		await waitFor( () =>
 			expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith(
-				'wpcom-workflow-support_chat',
 				// The test stubs the translation check with a plain value.
 				expect.anything(),
 				false
@@ -287,7 +286,6 @@ describe( 'useGetCombinedChat — transfer messages', () => {
 
 		await waitFor( () =>
 			expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith(
-				'wpcom-workflow-support_chat',
 				// The test stubs the translation check with a plain value.
 				expect.anything(),
 				true

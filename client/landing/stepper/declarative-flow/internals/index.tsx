@@ -7,8 +7,6 @@ import { createPath, generatePath, Navigate, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
-import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
-import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -124,15 +122,14 @@ export const FlowRenderer: React.FC< {
 		state: AssertConditionState.SUCCESS,
 	};
 
-	const dashboard = getDashboardFromHostname( window?.location?.hostname );
 	const stepContainerV2Context = useMemo( () => {
 		return {
 			flowName: flow.name,
 			stepName: currentStepRoute,
 			recordTracksEvent,
-			logo: getDashboardStepperLogo( dashboard ),
+			logo: null,
 		};
-	}, [ flow.name, currentStepRoute, dashboard ] );
+	}, [ flow.name, currentStepRoute ] );
 
 	const renderStep = ( step: StepperStep ) => {
 		if ( assertCondition ) {

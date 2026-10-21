@@ -7,13 +7,17 @@ const { flatNodeConfig } = require( '@automattic/calypso-eslint-overrides' );
 const json = require( '@automattic/eslint-plugin-json' );
 const { loadESLint } = require( 'eslint' );
 const { defineConfig } = require( 'eslint/config' );
+const react = require( 'eslint-plugin-react' );
 const wpcalypso = require( 'eslint-plugin-wpcalypso' );
 
 // eslint-disable-next-line wpcalypso/i18n-unlocalized-url -- the input that rule should flag
 const url = 'https://wordpress.com/support/';
 const files = {
-	'index.js': `export const help = '${ url }';\n`,
+	// eslint-disable-next-line inclusive-language/use-inclusive-words -- the input that rule should flag
+	'index.js': `export const help = '${ url }';\n// whitelist\n`,
 	'component.jsx': 'export const Example = () => <div />;\n',
+	// Multiline arguments without a trailing comma, as WordPress's Prettier style prints them.
+	'call.js': 'export const sum = ( a, b ) => a + b;\nsum(\n\t1,\n\t2\n);\n',
 	'test/index.js': `export const help = '${ url }';\n`,
 	'data.json': `{ "help": "${ url }" }\n`,
 	'package.json': '{}\n',
@@ -23,19 +27,11 @@ const files = {
 };
 
 const config = defineConfig( [
-	{ files: [ '**/*.{js,jsx}' ], extends: [ wpcalypso.configs[ 'flat/react' ] ] },
-	{ files: [ '**/*.json' ], extends: [ json.configs[ 'flat/recommended' ] ] },
+	{ files: [ '**/*.{js,jsx,cjs}' ], extends: [ wpcalypso.configs.react ] },
+	{ files: [ '**/*.json' ], extends: [ json.configs.recommended ] },
 	{ ...flatNodeConfig, files: [ 'bin/**' ] },
-	// Stands in for the Babel config a real project has.
-	{
-		files: [ '**/*.{js,jsx}' ],
-		languageOptions: {
-			parserOptions: {
-				requireConfigFile: false,
-				babelOptions: { presets: [ require.resolve( '@babel/preset-react' ) ] },
-			},
-		},
-	},
+	// Projects often add the React plugin's own config; the preset must register the same plugin.
+	{ files: [ '**/*.{js,jsx}' ], ...react.configs.flat[ 'jsx-runtime' ] },
 ] );
 
 ( async () => {

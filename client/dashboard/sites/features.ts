@@ -3,7 +3,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
 import { isSiteMigrationInProgress } from '../utils/site-status';
-import { isCommerceGarden, isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
+import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
 import type { Site, User } from '@automattic/api-core';
 
 export function canManageSite( site: Site ) {
@@ -108,10 +108,6 @@ export function canLeaveSite( site: Site ) {
 
 export function canDisconnectSite( site: Site ) {
 	return !! site.capabilities?.manage_options && isSelfHostedJetpackConnected( site );
-}
-
-export function canResetSite( site: Site ) {
-	return ! isCommerceGarden( site );
 }
 
 export function canRestoreSite( site: Site ) {

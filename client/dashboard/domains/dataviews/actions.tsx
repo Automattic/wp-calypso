@@ -353,7 +353,7 @@ export const useActions = ( {
 					return (
 						!! site &&
 						! site?.is_wpcom_atomic &&
-						! site?.is_garden &&
+						! item.is_suspended_site &&
 						item.subtype.id === DomainSubtype.DEFAULT_ADDRESS
 					);
 				},

@@ -30,6 +30,7 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 					'is-selected': isSelected,
 					'is-unread': unreadCount > 0,
 				} ) }
+				aria-current={ isSelected || undefined }
 				onClick={ () => onSelect( conversation ) }
 			>
 				<span className="conversations-inbox__item-header">
@@ -42,7 +43,7 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 					<span className="conversations-inbox__item-commenters">
 						<span className="conversations-inbox__avatars">
 							{ commenters.slice( 0, MAX_AVATARS ).map( ( { name, avatar } ) => (
-								<img key={ name } src={ avatar } alt="" width={ 20 } height={ 20 } />
+								<img key={ name } src={ avatar } alt="" width={ 24 } height={ 24 } />
 							) ) }
 						</span>
 						<span>
