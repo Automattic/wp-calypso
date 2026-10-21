@@ -2,12 +2,14 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
+import { CommentEditorContext } from './comment-editor-context';
 import PostCommentsList from './post-comment-list';
 import { usePostCommentsData } from './use-post-comments-data';
 
 class PostComments extends Component {
 	static propTypes = {
 		shouldHighlightNew: PropTypes.bool,
+		useBlockEditor: PropTypes.bool,
 		post: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 			site_ID: PropTypes.number.isRequired,
@@ -17,6 +19,7 @@ class PostComments extends Component {
 	static defaultProps = {
 		shouldHighlightNew: false,
 		shouldPollForNewComments: false,
+		useBlockEditor: false,
 	};
 
 	pollForNewComments = () => {
@@ -24,7 +27,7 @@ class PostComments extends Component {
 	};
 
 	render() {
-		const { siteId, postId, shouldPollForNewComments } = this.props;
+		const { siteId, postId, shouldPollForNewComments, useBlockEditor } = this.props;
 
 		if ( ! siteId || ! postId ) {
 			return null;
@@ -35,7 +38,9 @@ class PostComments extends Component {
 				{ shouldPollForNewComments && (
 					<Interval onTick={ this.pollForNewComments } period={ EVERY_MINUTE } />
 				) }
-				<PostCommentsList { ...this.props } />
+				<CommentEditorContext.Provider value={ useBlockEditor }>
+					<PostCommentsList { ...this.props } />
+				</CommentEditorContext.Provider>
 			</Fragment>
 		);
 	}

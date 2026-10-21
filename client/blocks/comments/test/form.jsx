@@ -7,6 +7,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { CommentEditorContext } from '../comment-editor-context';
 import PostCommentForm from '../form';
 
 jest.mock( '@automattic/load-script', () => ( {
@@ -42,12 +43,14 @@ const defaultProps = {
 	onCommentSubmit: jest.fn(),
 };
 
-const renderForm = ( props = {} ) => {
+const renderForm = ( props = {}, { blockEditor = false } = {} ) => {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
 	return renderWithProvider(
 		<QueryClientProvider client={ queryClient }>
-			<PostCommentForm { ...defaultProps } { ...props } />
+			<CommentEditorContext.Provider value={ blockEditor }>
+				<PostCommentForm { ...defaultProps } { ...props } />
+			</CommentEditorContext.Provider>
 		</QueryClientProvider>,
 		{
 			initialState: {
@@ -159,11 +162,24 @@ describe( 'PostCommentForm', () => {
 			return mountEditor;
 		};
 
+		const renderEditorForm = ( props ) => renderForm( props, { blockEditor: true } );
+
+		it( 'stays a textarea outside the conversations inbox', async () => {
+			const { request } = mockEditorSettings();
+
+			renderForm();
+			await userEvent.click( screen.getByPlaceholderText( 'Add a comment…' ) );
+
+			expect( request.isDone() ).toBe( false );
+			expect( loadScript ).not.toHaveBeenCalled();
+			expect( screen.getByPlaceholderText( 'Add a comment…' ) ).toBeVisible();
+		} );
+
 		it( 'takes over from the textarea once the box has focus', async () => {
 			const { body } = mockEditorSettings();
 			const mountEditor = mockLoader();
 
-			renderForm();
+			renderEditorForm();
 			await userEvent.click( screen.getByPlaceholderText( 'Add a comment…' ) );
 
 			await waitFor( () => expect( mountEditor ).toHaveBeenCalledTimes( 1 ) );
@@ -182,7 +198,7 @@ describe( 'PostCommentForm', () => {
 			const mountEditor = mockLoader();
 			const onUpdateCommentText = jest.fn();
 
-			renderForm( { onUpdateCommentText } );
+			renderEditorForm( { onUpdateCommentText } );
 			await userEvent.click( screen.getByPlaceholderText( 'Add a comment…' ) );
 			await waitFor( () => expect( mountEditor ).toHaveBeenCalled() );
 
@@ -205,7 +221,7 @@ describe( 'PostCommentForm', () => {
 					status: 'approved',
 				} );
 
-			renderForm( { commentText: markup } );
+			renderEditorForm( { commentText: markup } );
 			await waitFor( () => expect( mountEditor ).toHaveBeenCalled() );
 
 			const container = mountEditor.mock.calls[ 0 ][ 0 ];
@@ -219,7 +235,7 @@ describe( 'PostCommentForm', () => {
 		it( 'keeps the textarea when the site has no block editor', async () => {
 			const { request } = mockEditorSettings( 404 );
 
-			renderForm();
+			renderEditorForm();
 			await userEvent.click( screen.getByPlaceholderText( 'Add a comment…' ) );
 			await waitFor( () => expect( request.isDone() ).toBe( true ) );
 
@@ -231,7 +247,7 @@ describe( 'PostCommentForm', () => {
 			mockEditorSettings();
 			loadScript.mockRejectedValue( new Error( 'blocked' ) );
 
-			renderForm();
+			renderEditorForm();
 			await userEvent.click( screen.getByPlaceholderText( 'Add a comment…' ) );
 			await waitFor( () => expect( loadScript ).toHaveBeenCalled() );
 

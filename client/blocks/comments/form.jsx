@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useContext } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
@@ -20,6 +20,7 @@ import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getPreviousPath } from 'calypso/state/selectors/get-previous-path';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
 import CommentBlockEditor from './comment-block-editor';
+import { CommentEditorContext } from './comment-editor-context';
 import { loadCommentEditor } from './load-comment-editor';
 
 const noop = () => {};
@@ -299,7 +300,7 @@ PostCommentForm.propTypes = {
 	isInlineComment: PropTypes.bool,
 	isLogedIn: PropTypes.bool,
 
-	// From withCommentsEditorSettings; absent where the site has no block editor.
+	// From withCommentsEditorSettings; set only inside CommentEditorContext on a site with the block editor.
 	editorSettings: PropTypes.object,
 
 	// connect()ed props:
@@ -330,7 +331,9 @@ const withPostCommentActions = ( WrappedComponent ) => {
 
 const withCommentsEditorSettings = ( WrappedComponent ) => {
 	const WithCommentsEditorSettings = ( props ) => {
-		const { data } = useQuery( siteCommentsEditorQuery( props.post?.site_ID ) );
+		const blockEditor = useContext( CommentEditorContext );
+		const query = siteCommentsEditorQuery( props.post?.site_ID );
+		const { data } = useQuery( { ...query, enabled: blockEditor && query.enabled } );
 
 		return <WrappedComponent { ...props } editorSettings={ data?.blocks ? data : undefined } />;
 	};

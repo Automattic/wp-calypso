@@ -97,6 +97,7 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 
 							<Comments
 								key={ `${ siteId }-${ postId }` }
+								useBlockEditor
 								showNestingReplyArrow
 								post={ post }
 								initialSize={ commentCount || 10 }
