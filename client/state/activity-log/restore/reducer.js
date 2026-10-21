@@ -10,6 +10,7 @@ import { keyedReducer } from 'calypso/state/utils';
 
 const startProgress = ( state, { timestamp } ) => ( {
 	errorCode: '',
+	knownThreats: null,
 	failureReason: '',
 	message: '',
 	percent: 0,
@@ -22,6 +23,7 @@ const updateProgress = (
 	state,
 	{
 		errorCode,
+		knownThreats,
 		failureReason,
 		message,
 		percent,
@@ -34,6 +36,7 @@ const updateProgress = (
 	}
 ) => ( {
 	errorCode,
+	knownThreats,
 	failureReason,
 	message,
 	percent,

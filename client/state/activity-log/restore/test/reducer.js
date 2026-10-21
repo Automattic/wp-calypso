@@ -5,6 +5,7 @@ import {
 	rewindGranularRestore,
 	rewindRequestRestore,
 	rewindRestore,
+	updateRewindRestoreProgress,
 } from '../../actions';
 import { restoreProgress, restoreRequest } from '../reducer';
 
@@ -20,6 +21,7 @@ describe( 'restoreProgress', () => {
 		const state = restoreProgress( undefined, rewindRestore( SITE_ID, TIMESTAMP ) );
 		expect( state[ SITE_ID ] ).toEqual( {
 			errorCode: '',
+			knownThreats: null,
 			failureReason: '',
 			message: '',
 			percent: 0,
@@ -31,12 +33,17 @@ describe( 'restoreProgress', () => {
 
 	test( 'should start a granular restore at 0% queued, dropping an earlier error', () => {
 		const prevState = deepFreeze( {
-			[ SITE_ID ]: { status: 'failed', errorCode: 'threats_not_acknowledged' },
+			[ SITE_ID ]: {
+				status: 'failed',
+				errorCode: 'threats_not_acknowledged',
+				knownThreats: { flagged: 3 },
+			},
 		} );
 
 		const state = restoreProgress( prevState, rewindGranularRestore( SITE_ID, TIMESTAMP, 'f1' ) );
 		expect( state[ SITE_ID ] ).toEqual( {
 			errorCode: '',
+			knownThreats: null,
 			failureReason: '',
 			message: '',
 			percent: 0,
@@ -44,6 +51,28 @@ describe( 'restoreProgress', () => {
 			timestamp: TIMESTAMP,
 			rewindId: '',
 		} );
+	} );
+
+	test( 'should keep the known threats of a refusal', () => {
+		const knownThreats = {
+			malware: 3,
+			database: 0,
+			vulnerable: 0,
+			ignored: 0,
+			flagged: 3,
+			fixed: 0,
+		};
+		const state = restoreProgress(
+			undefined,
+			updateRewindRestoreProgress( SITE_ID, TIMESTAMP, null, {
+				status: 'failed',
+				errorCode: 'threats_not_acknowledged',
+				knownThreats,
+			} )
+		);
+		expect( state[ SITE_ID ] ).toEqual(
+			expect.objectContaining( { errorCode: 'threats_not_acknowledged', knownThreats } )
+		);
 	} );
 
 	test( 'should null on dismissal', () => {

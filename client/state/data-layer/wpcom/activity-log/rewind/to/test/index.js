@@ -101,6 +101,33 @@ describe( 'receiveRestoreError', () => {
 		] );
 	} );
 
+	test( 'passes on the known threats the refusal carries', () => {
+		const knownThreats = {
+			malware: 3,
+			database: 0,
+			vulnerable: 0,
+			ignored: 0,
+			flagged: 3,
+			fixed: 0,
+		};
+		const [ , progress ] = receiveRestoreError(
+			{ siteId, timestamp },
+			{
+				error: 'threats_not_acknowledged',
+				statusCode: 409,
+				data: { known_threats: knownThreats, backup_period: 200 },
+			}
+		);
+
+		expect( progress ).toEqual(
+			updateRewindRestoreProgress( siteId, timestamp, null, {
+				status: 'failed',
+				errorCode: 'threats_not_acknowledged',
+				knownThreats,
+			} )
+		);
+	} );
+
 	test( 'keeps the generic notice for other errors', () => {
 		const action = receiveRestoreError(
 			{ siteId, timestamp },

@@ -80,6 +80,7 @@ export const receiveRestoreError = ( { siteId, timestamp }, error ) => {
 			updateRewindRestoreProgress( siteId, timestamp, null, {
 				status: 'failed',
 				errorCode: 'threats_not_acknowledged',
+				knownThreats: error.data?.known_threats,
 			} ),
 		];
 	}
