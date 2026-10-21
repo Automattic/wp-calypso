@@ -7,7 +7,8 @@ import {
 import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
 import { Button as CalypsoButton, Gridicon } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Spinner, Tooltip, VisuallyHidden } from '@wordpress/components';
+import { Button, Icon, Spinner, Tooltip, VisuallyHidden } from '@wordpress/components';
+import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useId, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -361,6 +362,7 @@ export function KnownThreatsToggleButton( {
 	const warningId = useId();
 	// In the card toolbar the warning isn't shown nearby, so screen readers get it as the description.
 	const warning = inToolbar ? getKnownThreatsWarning( translate, flagged ) : null;
+	const chevronIcon = isOpen ? chevronUp : chevronDown;
 	const ariaLabel = isOpen
 		? translate( 'Known threats (%d), hide threats', {
 				args: flagged,
@@ -390,6 +392,7 @@ export function KnownThreatsToggleButton( {
 						onClick={ onToggle }
 					>
 						<KnownThreatsBadge flagged={ flagged } />
+						<Icon icon={ chevronIcon } size={ 24 } />
 					</CalypsoButton>
 				</Tooltip>
 			) : (
@@ -404,6 +407,7 @@ export function KnownThreatsToggleButton( {
 					onClick={ onToggle }
 				>
 					<KnownThreatsBadge flagged={ flagged } />
+					<Icon icon={ chevronIcon } size={ 24 } />
 				</Button>
 			) }
 			{ warning && <VisuallyHidden id={ warningId }>{ warning }</VisuallyHidden> }
