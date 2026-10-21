@@ -74,7 +74,7 @@ const UPGRADE_URL =
 	'https://wordpress.com/plans/123?source=wp_ai_credits&ai_session_id=image-studio-session';
 const ADD_CREDITS_URL =
 	'https://wordpress.com/checkout/123/ai-credits-lifetime:-q-100000?source=wp_ai_credits&ai_session_id=image-studio-session&redirect_to=https%3A%2F%2Fwordpress.com%2Fhome%2F123&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2F123';
-/** The purchase link; the dot and the notice each add a click handler that records the click. */
+/** The purchase link; the meter and the notice each add a click handler that records the click. */
 const upgradeButton = {
 	label: 'Upgrade',
 	href: UPGRADE_URL,
@@ -93,7 +93,7 @@ const noticeCredits = ( state: 'low' | 'zero', creditsLeft: number ) => ( {
 	ctaType: 'upgrade',
 	ref: 'wp_ai_credits',
 } );
-/** The balance details sent when the credits dot's popover opens. */
+/** The balance details sent when the credits meter's popover opens. */
 const meterDetails = ( state: 'ok' | 'low' | 'zero', creditsLeft: number ) => ( {
 	meter: 'site_credits',
 	state,
@@ -185,11 +185,11 @@ describe( 'useAiCredits', () => {
 			'https://public-api.wordpress.com/wpcom/v2/sites/123/ai/credits',
 			expect.objectContaining( { headers: { Authorization: 'Bearer token' } } )
 		);
-		// Above the low threshold only the dot shows, as in the Agent's chat.
+		// Above the low threshold only the meter shows, as in the Agent's chat.
 		expect( stateOf( result ) ).toEqual( { ...NOTHING, meter: meterAt( 75 ) } );
 	} );
 
-	it( 'shows a persistent notice at zero, and Send opens the dot’s details instead', async () => {
+	it( 'shows a persistent notice at zero, and Send opens the meter’s details instead', async () => {
 		respondWith( { ai_credits: planSnapshot( 0 ), ...PLAN_BUYER } );
 
 		const { result } = renderCredits( ImageStudioMode.Edit );
@@ -989,7 +989,7 @@ describe( 'useAiCredits', () => {
 		await waitFor( () => expect( result.current.isLimitReached ).toBe( true ) );
 	} );
 
-	it( 'takes the new balance from a turn’s final update, and opens the dot’s details at zero', async () => {
+	it( 'takes the new balance from a turn’s final update, and opens the meter’s details at zero', async () => {
 		respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
 		const { result } = renderCredits();
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
@@ -1090,7 +1090,7 @@ describe( 'useAiCredits', () => {
 		expect( result.current.meter?.isOpen ).toBe( false );
 	} );
 
-	it( 'opens the dot’s details when a known balance runs out in the same render', async () => {
+	it( 'opens the meter’s details when a known balance runs out in the same render', async () => {
 		fetchMock.mockReturnValue( new Promise( () => {} ) );
 		const { result } = renderCredits();
 		await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
@@ -1103,7 +1103,7 @@ describe( 'useAiCredits', () => {
 		expect( result.current.meter?.isOpen ).toBe( true );
 	} );
 
-	it( 'opens the dot’s details only once when the credits run out', async () => {
+	it( 'opens the meter’s details only once when the credits run out', async () => {
 		respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
 		const { result } = renderCredits();
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );

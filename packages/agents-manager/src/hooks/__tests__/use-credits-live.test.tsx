@@ -13,7 +13,7 @@ import {
 	setSessionSiteKey,
 	setSessionUserId,
 } from '../../utils/agent-session';
-import { CREDITS_LOW_BALANCE, getCreditsLabel, getCreditsTone } from '../../utils/credits';
+import { CREDITS_LOW_BALANCE, getCreditsLabel, isCreditsAlert } from '../../utils/credits';
 import { setResolvedAgentId } from '../../utils/resolved-agent-id';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { useCredits } from '../use-credits';
@@ -714,7 +714,7 @@ it.each( [
 	}
 );
 
-it( 'turns the dot red by amount through depletion and replenishment', async () => {
+it( 'switches the meter to its alert icon by amount through depletion and replenishment', async () => {
 	const balance = ( remaining: number ) =>
 		creditSnapshot( {
 			credits_limit: 100000,
@@ -725,28 +725,28 @@ it( 'turns the dot red by amount through depletion and replenishment', async () 
 	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
 	const { result } = renderCredits();
 	await flush();
-	// The dot and the notice share one rule, so the dot is red exactly when a notice would show.
-	const expectDot = ( tone: 'muted' | 'error', message?: string ) => {
-		const actual = getCreditsTone( props( result.current ).status );
-		expect( actual ).toBe( tone );
+	// The meter and the notice share one rule, so the alert icon shows exactly when a notice would.
+	const expectAlert = ( isAlert: boolean, message?: string ) => {
+		const actual = isCreditsAlert( props( result.current ).status );
+		expect( actual ).toBe( isAlert );
 		expect( result.current.notice?.message ).toBe( message );
-		expect( result.current.notice !== undefined ).toBe( actual === 'error' );
+		expect( result.current.notice !== undefined ).toBe( actual );
 	};
-	expectDot( 'muted' );
-	for ( const [ remaining, tone, message ] of [
-		[ 10000, 'muted', undefined ],
-		[ 9999, 'error', `${ localNumber( 9.9 ) }k credits left.` ],
-		[ 800, 'error', `${ localNumber( 800 ) } credits left.` ],
-		[ 0, 'error', 'You’ve used all your site credits.' ],
+	expectAlert( false );
+	for ( const [ remaining, isAlert, message ] of [
+		[ 10000, false, undefined ],
+		[ 9999, true, `${ localNumber( 9.9 ) }k credits left.` ],
+		[ 800, true, `${ localNumber( 800 ) } credits left.` ],
+		[ 0, true, 'You’ve used all your site credits.' ],
 	] as const ) {
 		await receive( balance( remaining ) );
 		expect( props( result.current ).status.remaining ).toBe( remaining );
-		expectDot( tone, message );
+		expectAlert( isAlert, message );
 	}
 	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
 	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
 	await flush();
-	expectDot( 'muted' );
+	expectAlert( false );
 } );
 
 it.each( [ 'GET', 'terminal' ] )(
@@ -1485,7 +1485,7 @@ it( 'clears old amounts after cancellation/error without terminal metadata, incl
 	expect( fetchMock ).not.toHaveBeenCalled();
 } );
 it.each( [ 'focus', 'online', 'visibilitychange' ] )(
-	'keeps the dot and its open popover visible during a %s refresh',
+	'keeps the meter and its open popover visible during a %s refresh',
 	async ( event ) => {
 		const read = deferred< ReturnType< typeof response > >();
 		fetchMock
@@ -1493,7 +1493,7 @@ it.each( [ 'focus', 'online', 'visibilitychange' ] )(
 			.mockReturnValueOnce( read.promise );
 		const { result } = renderCredits();
 		await flush();
-		// Clicking the dot can focus the sidebar's window before opening the popover.
+		// Clicking the meter can focus the sidebar's window before opening the popover.
 		act( () => {
 			( event === 'visibilitychange' ? document : window ).dispatchEvent( new Event( event ) );
 			props( result.current ).onToggle( true );
@@ -1938,7 +1938,7 @@ describe( 'credits Tracks events', () => {
 		).toHaveLength( 1 );
 	} );
 
-	it( 'records a click on the dot as ok on a healthy balance, only when it opens', async () => {
+	it( 'records a click on the meter as ok on a healthy balance, only when it opens', async () => {
 		fetchMock.mockResolvedValueOnce( response( healthy() ) );
 		const { result } = renderCredits( freshScope() );
 		await flush();
