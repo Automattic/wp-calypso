@@ -153,6 +153,7 @@ export default function AgencyOverviewContent( {
 						aiMcp: links.aiMcp,
 						pressableHosting: links.pressableHosting,
 						referrals: links.referrals,
+						tiers: links.tiers,
 					} }
 					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }

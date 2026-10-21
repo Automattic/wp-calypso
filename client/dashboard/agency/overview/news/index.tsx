@@ -61,7 +61,7 @@ function canUseSwitches() {
 }
 
 /**
- * Prototype switches, until the announcements API exists: `?items=1|4|12` how many items the
+ * Prototype switches, until the announcements API exists: `?items=1|4|13` how many items the
  * server returned, `?tab=event|announcement|blog` the filter it starts on, `?page=2` the
  * page it starts on, `?first=<id>` the item marketing sent first, `?blog=card` blog posts in
  * their own card below the list. Where switches are off, the URL is ignored and the
@@ -69,7 +69,7 @@ function canUseSwitches() {
  */
 function readSwitches() {
 	const params = new URLSearchParams( canUseSwitches() ? window.location.search : '' );
-	const count = Math.min( Math.max( Number( params.get( 'items' ) ) || 12, 1 ), 12 );
+	const count = Math.min( Math.max( Number( params.get( 'items' ) ) || 13, 1 ), 13 );
 	const blogCard = params.get( 'blog' ) === 'card';
 	const filter: NewsFilter =
 		TYPE_ORDER.find(
@@ -245,7 +245,7 @@ function NewsRow( {
 }
 
 interface NewsCardProps extends AnnouncementActionProps {
-	links: { aiMcp: string; pressableHosting: string; referrals: string };
+	links: { aiMcp: string; pressableHosting: string; referrals: string; tiers: string };
 }
 
 /**
