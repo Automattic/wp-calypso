@@ -52,6 +52,7 @@ export function InteractiveUiSurfaces( { messageId, presentation }: Props ) {
 						key={ surfaceId }
 						surface={ surface }
 						disabled={ isDisabled }
+						theme="agents-manager"
 						revision={ revision }
 					/>
 				) : null;

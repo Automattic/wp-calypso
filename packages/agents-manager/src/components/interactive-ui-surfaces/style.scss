@@ -1,5 +1,5 @@
 @import '../../styles/variables';
 
-.ai-ui-renderer__modal {
+.ai-ui-renderer__modal:has( .ai-ui-renderer--theme-agents-manager ) {
 	z-index: $agents-manager-z-index-focused + 1;
 }

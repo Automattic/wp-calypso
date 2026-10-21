@@ -46,6 +46,13 @@ changes. Pass `disabled` to disable its controls, including an open modal's.
 Import `@automattic/ai-ui-renderer/style.scss` and the WordPress components stylesheet.
 Hosts need Sass support and supply their own stacking rule for `.ai-ui-renderer__modal`.
 
+Select a theme with `createSurface.theme: { name: 'commerce' }` or the
+`InteractiveUiSurface` `theme` prop, which takes precedence. Theme names in
+messages must start with a lowercase letter and contain only lowercase letters,
+digits, and hyphens. The renderer adds `ai-ui-renderer--theme-<name>` to the
+surface fieldsets, including the one wrapping modal content. Consumers load their own
+CSS scoped to that class; no theme keeps the default styles.
+
 ## Basic components
 
 `Text`, `TextField`, `Button`, `Column`, `Image`, `Icon`, `Row`, `List`, `Card`,

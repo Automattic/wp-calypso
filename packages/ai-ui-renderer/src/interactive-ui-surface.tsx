@@ -1,7 +1,8 @@
 import { renderMarkdown } from '@a2ui/markdown-it';
 import { A2uiSurface, MarkdownContext } from '@a2ui/react/v0_9';
-import { Component, useEffect } from '@wordpress/element';
-import { InteractiveUiDisabledContext } from './context';
+import { Component, useEffect, useMemo } from '@wordpress/element';
+import clsx from 'clsx';
+import { InteractiveUiSurfaceContext } from './context';
 import type { ComponentProps, ReactNode } from 'react';
 
 interface SurfaceBoundaryProps {
@@ -46,6 +47,7 @@ interface InteractiveUiSurfaceProps {
 	surface: Surface;
 	/** Disables the surface's controls, including those in an open modal. */
 	disabled?: boolean;
+	theme?: string;
 	/** A change retries a surface that failed to render. */
 	revision?: number;
 }
@@ -58,8 +60,17 @@ interface InteractiveUiSurfaceProps {
 export function InteractiveUiSurface( {
 	surface,
 	disabled = false,
+	theme,
 	revision = 0,
 }: InteractiveUiSurfaceProps ) {
+	const themeName =
+		theme ?? ( typeof surface.theme?.name === 'string' ? surface.theme.name : undefined );
+	const themeClassName = themeName ? `ai-ui-renderer--theme-${ themeName }` : undefined;
+	const surfaceContext = useMemo(
+		() => ( { disabled, themeClassName } ),
+		[ disabled, themeClassName ]
+	);
+
 	const unknownComponentType = getUnknownComponentType( surface );
 
 	// A2UI would show a red placeholder for it, so hide the surface and report the type instead.
@@ -79,13 +90,13 @@ export function InteractiveUiSurface( {
 
 	return (
 		<SurfaceBoundary revision={ revision }>
-			<InteractiveUiDisabledContext.Provider value={ disabled }>
+			<InteractiveUiSurfaceContext.Provider value={ surfaceContext }>
 				<MarkdownContext.Provider value={ renderMarkdown }>
-					<fieldset className="ai-ui-renderer" disabled={ disabled }>
+					<fieldset className={ clsx( 'ai-ui-renderer', themeClassName ) } disabled={ disabled }>
 						<A2uiSurface surface={ surface } />
 					</fieldset>
 				</MarkdownContext.Provider>
-			</InteractiveUiDisabledContext.Provider>
+			</InteractiveUiSurfaceContext.Provider>
 		</SurfaceBoundary>
 	);
 }

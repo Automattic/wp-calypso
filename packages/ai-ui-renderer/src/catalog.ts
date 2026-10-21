@@ -1,5 +1,7 @@
 import { basicCatalog } from '@a2ui/react/v0_9';
 import { BASIC_FUNCTIONS, Catalog } from '@a2ui/web_core/v0_9';
+import { BasicCatalogThemeSchema } from '@a2ui/web_core/v0_9/basic_catalog';
+import { z } from 'zod';
 import { AudioPlayer } from './audio-player';
 import Button from './button';
 import Card from './card';
@@ -88,6 +90,12 @@ export function createInteractiveUiCatalog( {
 		basicCatalog.protocolVersion,
 		allComponents,
 		allFunctions,
-		basicCatalog.themeSchema
+		BasicCatalogThemeSchema.extend( {
+			name: z
+				.string()
+				.regex( /^[a-z][a-z0-9-]*$/ )
+				.optional()
+				.describe( 'Theme name applied as an ai-ui-renderer--theme-<name> CSS class.' ),
+		} )
 	);
 }
