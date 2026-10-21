@@ -14,7 +14,7 @@ import type { NotePost, NoteSite } from '../../types';
 export default function PostCard( {
 	post,
 	site,
-	url = post.url,
+	url,
 }: {
 	post: NotePost;
 	site?: NoteSite;
@@ -35,7 +35,7 @@ export default function PostCard( {
 		<Card
 			as="a"
 			className="wpnc-simplified__card"
-			href={ url }
+			href={ url || post.url }
 			target="_blank"
 			rel="noreferrer"
 			size="small"
