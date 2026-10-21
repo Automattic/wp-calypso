@@ -458,7 +458,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			<Step.CenteredColumnLayout
 				className={ clsx( 'step-container-v2--user', {
 					'step-container-v2--user-mobile': isMobileCompactLayout,
-					'step-container-v2--user-entry-clarity': isEntryClarityTreatment,
+					'step-container-v2--user-login-spacing': ! isMobileCompactLayout && ! isEmailFirstVariant,
 				} ) }
 				verticalAlign="center"
 				columnWidth={ 4 }
