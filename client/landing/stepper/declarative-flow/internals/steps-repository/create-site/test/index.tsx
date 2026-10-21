@@ -44,7 +44,6 @@ jest.mock( '@automattic/onboarding', () => ( {
 	isEntrepreneurFlow: () => false,
 	isNewHostedSiteCreationFlow: () => false,
 	isNewsletterFlow: () => false,
-	isReadymadeFlow: () => false,
 	isWriteOnFlow: () => false,
 	isOnboardingFlow: ( flow: string ) => flow === 'onboarding',
 	isNewSiteMigrationFlow: () => false,
