@@ -60,9 +60,10 @@ come.
 - **Components own their side effects:** the change itself, its checkpoint and its Tracks events.
 - **Agents Manager decides when a surface is stale**, with the rule `show-component` uses
   (`src/utils/stale-chat-ui.ts`): the user has replied past the last message that changed it, or
-  the editor has another page open than the one its envelope names. Unlike a `show-component`
-  picker, a surface restored from history stays usable until then. A stale surface stays visible
-  but greyed out and disabled, and its components skip their side effects and Tracks.
+  the editor has another page open than the one its envelope names. Like a restored picker, a
+  surface restored from history, in a past chat or after a reload, is stale too. A stale surface
+  stays visible but greyed out and disabled, and its components skip their side effects and
+  Tracks.
 - **Load only what the surface renders.** Editor-only components load on demand, in the editor.
 
 ## Try it

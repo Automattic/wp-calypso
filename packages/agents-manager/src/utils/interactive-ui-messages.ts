@@ -98,47 +98,66 @@ export function getInteractiveUiBatches( messages: UIMessage[] ): InteractiveUiB
 
 // Every A2UI message holds one operation, keyed by its name, on one surface. The agent's messages
 // aren't validated, so any entry may be malformed.
-function getSurfaceId( message: unknown ): unknown {
+function getOperation( message: unknown ): { name: string; surfaceId: string } | undefined {
 	if ( typeof message !== 'object' || message === null ) {
 		return undefined;
 	}
 
-	const operation = Object.entries( message ).find( ( [ key ] ) => key !== 'version' )?.[ 1 ];
+	const [ name, operation ] =
+		Object.entries( message ).find( ( [ key ] ) => key !== 'version' ) ?? [];
+	const surfaceId =
+		typeof operation === 'object' && operation !== null && 'surfaceId' in operation
+			? operation.surfaceId
+			: undefined;
 
-	return typeof operation === 'object' && operation !== null && 'surfaceId' in operation
-		? operation.surfaceId
-		: undefined;
+	return name && typeof surfaceId === 'string' ? { name, surfaceId } : undefined;
 }
 
 interface StaleInteractiveUiSurfaceOptions {
 	latestUserMessageIndex: number;
+	/** Where this chat session's first turn starts: earlier messages came from history. */
+	firstLiveMessageIndex: number;
 	currentPostId?: number | string;
 }
 
 /**
- * The surfaces that are stale, by the rule `show-component` uses. Each one is judged by the last
- * batch that changed it, so a surface the agent updates in a later turn stays current.
+ * The surfaces that are stale, by the rule `show-component` uses, and those restored from history,
+ * as restored pickers are. Each one is judged by the last batch that changed it, so a surface the
+ * agent updates in a later turn stays current, and keeps the page it was built for.
  */
 export function getStaleInteractiveUiSurfaceIds(
 	batches: InteractiveUiBatch[],
-	{ latestUserMessageIndex, currentPostId }: StaleInteractiveUiSurfaceOptions
+	{ latestUserMessageIndex, firstLiveMessageIndex, currentPostId }: StaleInteractiveUiSurfaceOptions
 ): Set< string > {
-	const lastBatchBySurfaceId = new Map< string, InteractiveUiBatch >();
+	const surfaces = new Map< string, { messageIndex: number; postId?: number | string } >();
 
 	for ( const batch of batches ) {
-		for ( const operation of batch.operations ) {
-			const surfaceId = getSurfaceId( operation );
+		for ( const message of batch.operations ) {
+			const operation = getOperation( message );
 
-			if ( typeof surfaceId === 'string' ) {
-				lastBatchBySurfaceId.set( surfaceId, batch );
+			if ( operation?.name === 'deleteSurface' ) {
+				surfaces.delete( operation.surfaceId );
+			} else if ( operation ) {
+				const previous =
+					operation.name === 'createSurface' ? undefined : surfaces.get( operation.surfaceId );
+
+				surfaces.set( operation.surfaceId, {
+					messageIndex: batch.messageIndex,
+					postId: batch.postId ?? previous?.postId,
+				} );
 			}
 		}
 	}
 
 	const staleSurfaceIds = new Set< string >();
 
-	for ( const [ surfaceId, { messageIndex, postId } ] of lastBatchBySurfaceId ) {
-		if ( isChatUiStale( { messageIndex, latestUserMessageIndex, postId, currentPostId } ) ) {
+	for ( const [ surfaceId, { messageIndex, postId } ] of surfaces ) {
+		const isRestored = messageIndex < firstLiveMessageIndex;
+
+		if (
+			isRestored ||
+			isChatUiStale( { messageIndex, latestUserMessageIndex, postId, currentPostId } )
+		) {
 			staleSurfaceIds.add( surfaceId );
 		}
 	}

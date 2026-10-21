@@ -115,11 +115,20 @@ describe( 'getStaleInteractiveUiSurfaceIds', () => {
 	}
 
 	it.each( [
-		[ 'the user has replied past it', createBatch( 1 ), { latestUserMessageIndex: 2 } ],
+		[
+			'the user has replied past it',
+			createBatch( 1 ),
+			{ latestUserMessageIndex: 2, firstLiveMessageIndex: 0 },
+		],
 		[
 			'the editor has another page open',
 			createBatch( 1, 7 ),
-			{ latestUserMessageIndex: 0, currentPostId: 8 },
+			{ latestUserMessageIndex: 0, firstLiveMessageIndex: 0, currentPostId: 8 },
+		],
+		[
+			'it was restored from history',
+			createBatch( 1 ),
+			{ latestUserMessageIndex: 0, firstLiveMessageIndex: Infinity },
 		],
 	] )( 'marks a surface stale when %s', ( _description, batch, options ) => {
 		expect( getStaleInteractiveUiSurfaceIds( [ batch ], options ) ).toEqual(
@@ -133,15 +142,30 @@ describe( 'getStaleInteractiveUiSurfaceIds', () => {
 			operations: [ ...operations, null ] as unknown as InteractiveUiBatch[ 'operations' ],
 		};
 
-		expect( getStaleInteractiveUiSurfaceIds( [ batch ], { latestUserMessageIndex: 2 } ) ).toEqual(
-			new Set( [ 'test-surface' ] )
-		);
+		expect(
+			getStaleInteractiveUiSurfaceIds( [ batch ], {
+				latestUserMessageIndex: 2,
+				firstLiveMessageIndex: 0,
+			} )
+		).toEqual( new Set( [ 'test-surface' ] ) );
+	} );
+
+	it( 'keeps a surface’s page when a later update doesn’t name one', () => {
+		const update = { ...createBatch( 2 ), operations: [ operations[ 1 ] ] };
+
+		expect(
+			getStaleInteractiveUiSurfaceIds( [ createBatch( 1, 7 ), update ], {
+				latestUserMessageIndex: 0,
+				firstLiveMessageIndex: 0,
+				currentPostId: 8,
+			} )
+		).toEqual( new Set( [ 'test-surface' ] ) );
 	} );
 
 	it( 'judges a surface by the last batch that changed it', () => {
 		const staleSurfaceIds = getStaleInteractiveUiSurfaceIds(
 			[ createBatch( 1 ), createBatch( 3 ) ],
-			{ latestUserMessageIndex: 2 }
+			{ latestUserMessageIndex: 2, firstLiveMessageIndex: 0 }
 		);
 
 		expect( staleSurfaceIds.size ).toBe( 0 );

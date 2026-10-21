@@ -13,6 +13,7 @@ import { getLatestUserMessageIndex } from '../utils/latest-message';
 import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
 import type { AgentConfig } from '../utils/create-agent-config';
 import type { InteractiveUiRenderer } from '../utils/interactive-ui-catalogs';
+import type { InteractiveUiBatch } from '../utils/interactive-ui-messages';
 import type { LoadedProviders } from '../utils/load-external-providers';
 import type { UIMessage, SubmitOptions } from '@automattic/agenttic-client';
 import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
@@ -47,8 +48,8 @@ export interface InteractiveUiPresentation {
  * has streamed so none changes mid-stream, and sends their actions to the agent as hidden
  * context messages. Keeps the user's input as messages arrive, rebuilds the surfaces when
  * an earlier reply changes, and reports a failed load so the chat can offer a retry. Marks
- * surfaces stale with the rule `show-component` uses, and starts a new turn at each reply to an
- * action, since the action's message is hidden.
+ * surfaces stale as `show-component` does, restored ones included, and starts a new turn at each
+ * reply to an action, since the action's message is hidden.
  */
 export function useInteractiveUi( {
 	messages,
@@ -63,12 +64,22 @@ export function useInteractiveUi( {
 	const messageBatches = useMemo( () => getInteractiveUiBatches( messages ), [ messages ] );
 	const hasMessageBatches = messageBatches.length > 0;
 
+	// Messages from before this session's first turn came from history, such as a past chat's.
+	// Kept per conversation, since the chat stays mounted across them.
+	const [ firstTurn, setFirstTurn ] = useState< {
+		conversationId: string;
+		messageIndex: number;
+	} >();
+	const firstLiveMessageIndex =
+		firstTurn?.conversationId === conversationId ? firstTurn.messageIndex : Infinity;
+
+	useEffect( () => {
+		if ( isProcessing && firstLiveMessageIndex === Infinity ) {
+			setFirstTurn( { conversationId, messageIndex: messages.length } );
+		}
+	}, [ isProcessing, firstLiveMessageIndex, conversationId, messages.length ] );
+
 	const latestUserMessageIndex = getLatestUserMessageIndex( messages );
-	const staleSurfaceIds = useMemo(
-		() =>
-			getStaleInteractiveUiSurfaceIds( messageBatches, { latestUserMessageIndex, currentPostId } ),
-		[ messageBatches, latestUserMessageIndex, currentPostId ]
-	);
 
 	const actionInputsRef = useRef( { agentConfig, isProcessing, submitContextMessage } );
 	actionInputsRef.current = { agentConfig, isProcessing, submitContextMessage };
@@ -82,9 +93,26 @@ export function useInteractiveUi( {
 		() => ( {
 			conversationId,
 			runtime: undefined as InteractiveUiRuntime | undefined,
-			processedBatchSignatures: [] as string[],
+			appliedBatches: [] as InteractiveUiBatch[],
 		} ),
 		[ conversationId ]
+	);
+
+	// Staleness follows the batches the runtime has applied, not one still streaming, so a surface
+	// never changes staleness before its data does.
+	const staleSurfaceIds = useMemo(
+		() =>
+			getStaleInteractiveUiSurfaceIds( conversationSession.appliedBatches, {
+				latestUserMessageIndex,
+				firstLiveMessageIndex,
+				currentPostId,
+			} ),
+		[
+			conversationSession.appliedBatches,
+			latestUserMessageIndex,
+			firstLiveMessageIndex,
+			currentPostId,
+		]
 	);
 
 	// Load the renderer on demand to keep it out of the initial bundle. A retry starts a new
@@ -119,7 +147,7 @@ export function useInteractiveUi( {
 		return () => {
 			conversationSession.runtime?.dispose();
 			conversationSession.runtime = undefined;
-			conversationSession.processedBatchSignatures = [];
+			conversationSession.appliedBatches = [];
 		};
 	}, [ conversationSession ] );
 
@@ -130,17 +158,17 @@ export function useInteractiveUi( {
 		}
 
 		// Start over when an earlier batch changed.
-		const hasChangedBatches = conversationSession.processedBatchSignatures.some(
-			( signature, index ) => signature !== messageBatches[ index ]?.signature
+		const hasChangedBatches = conversationSession.appliedBatches.some(
+			( batch, index ) => batch.signature !== messageBatches[ index ]?.signature
 		);
 
 		if ( hasChangedBatches ) {
 			conversationSession.runtime?.dispose();
 			conversationSession.runtime = undefined;
-			conversationSession.processedBatchSignatures = [];
+			conversationSession.appliedBatches = [];
 		}
 
-		const newBatches = messageBatches.slice( conversationSession.processedBatchSignatures.length );
+		const newBatches = messageBatches.slice( conversationSession.appliedBatches.length );
 		if ( ! hasChangedBatches && newBatches.length === 0 ) {
 			return;
 		}
@@ -178,9 +206,7 @@ export function useInteractiveUi( {
 			}
 		}
 
-		conversationSession.processedBatchSignatures = messageBatches.map(
-			( batch ) => batch.signature
-		);
+		conversationSession.appliedBatches = messageBatches;
 		setRuntimeRevision( ( currentRevision ) => currentRevision + 1 );
 	}, [ messageBatches, isProcessing, renderer, catalogs, conversationSession ] );
 
