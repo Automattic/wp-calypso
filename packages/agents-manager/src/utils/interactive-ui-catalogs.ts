@@ -38,18 +38,20 @@ export function createInteractiveUiCatalogs(
 	interactiveUi: LoadedProviders[ 'interactiveUi' ]
 ): InteractiveUiCatalog[] {
 	const basicCatalog = renderer.createInteractiveUiCatalog();
-	const components = withoutTakenNames(
-		interactiveUi?.components,
-		basicCatalog.components.keys(),
-		'component'
-	);
-	const functions = withoutTakenNames(
-		interactiveUi?.functions,
-		basicCatalog.functions.keys(),
-		'function'
-	);
 
+	// Providers' entries aren't validated, so a malformed one can throw while being read too.
 	try {
+		const components = withoutTakenNames(
+			interactiveUi?.components,
+			basicCatalog.components.keys(),
+			'component'
+		);
+		const functions = withoutTakenNames(
+			interactiveUi?.functions,
+			basicCatalog.functions.keys(),
+			'function'
+		);
+
 		return [
 			basicCatalog,
 			renderer.createInteractiveUiCatalog( {

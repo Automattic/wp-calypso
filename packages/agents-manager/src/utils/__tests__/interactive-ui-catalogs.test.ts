@@ -38,24 +38,32 @@ it( 'keeps the first of a duplicate name and skips the rest, basic names include
 	] );
 } );
 
-it( 'logs a failing definition and keeps only the basic components in Agents Manager’s catalog', () => {
-	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-	const broken: InteractiveUiComponentDefinition = {
-		...createComponent( 'JetpackAiTitlePicker' ),
-		schema: () => {
-			throw new Error( 'Broken schema' );
+it.each( [
+	[
+		'a schema that throws',
+		{
+			...createComponent( 'JetpackAiTitlePicker' ),
+			schema: () => {
+				throw new Error( 'Broken schema' );
+			},
 		},
-	};
+	],
+	[ 'a malformed entry', undefined as unknown as InteractiveUiComponentDefinition ],
+] )(
+	'logs %s and keeps only the basic components in Agents Manager’s catalog',
+	( _description, broken ) => {
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
-	const [ , agentsManagerCatalog ] = createInteractiveUiCatalogs( renderer, {
-		components: [ broken, createComponent( 'WooAiProductCard' ) ],
-	} );
+		const [ , agentsManagerCatalog ] = createInteractiveUiCatalogs( renderer, {
+			components: [ broken, createComponent( 'WooAiProductCard' ) ],
+		} );
 
-	expect( consoleError ).toHaveBeenCalledWith(
-		'[AgentsManager] Failed to add the interactive UI components and functions:',
-		expect.any( Error )
-	);
-	expect( agentsManagerCatalog.id ).toBe( AGENTS_MANAGER_CATALOG_ID );
-	expect( agentsManagerCatalog.components.has( 'WooAiProductCard' ) ).toBe( false );
-	expect( agentsManagerCatalog.components.has( 'Text' ) ).toBe( true );
-} );
+		expect( consoleError ).toHaveBeenCalledWith(
+			'[AgentsManager] Failed to add the interactive UI components and functions:',
+			expect.any( Error )
+		);
+		expect( agentsManagerCatalog.id ).toBe( AGENTS_MANAGER_CATALOG_ID );
+		expect( agentsManagerCatalog.components.has( 'WooAiProductCard' ) ).toBe( false );
+		expect( agentsManagerCatalog.components.has( 'Text' ) ).toBe( true );
+	}
+);
