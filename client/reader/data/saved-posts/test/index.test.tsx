@@ -54,13 +54,14 @@ describe( 'savedKeyForPost', () => {
 } );
 
 describe( 'canSavePost', () => {
-	it( 'allows a WordPress.com post', () => {
+	it( 'allows WordPress.com and RSS posts', () => {
 		expect( canSavePost( WPCOM_POST ) ).toBe( true );
+		expect( canSavePost( RSS_POST ) ).toBe( true );
 	} );
 
-	it( 'does not allow an RSS post or a post without the IDs the API needs', () => {
-		expect( canSavePost( RSS_POST ) ).toBe( false );
+	it( 'does not allow a post without the IDs the API needs', () => {
 		expect( canSavePost( { ID: 1 } ) ).toBe( false );
+		expect( canSavePost( { is_external: true } ) ).toBe( false );
 	} );
 } );
 

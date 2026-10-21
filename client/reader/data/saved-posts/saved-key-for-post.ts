@@ -20,9 +20,9 @@ export function savedKeyForPost( post: Post ): ReadSavedKey | null {
 }
 
 /**
- * Whether the web app offers to save the post. Not RSS posts yet: `/read/saved`
- * doesn't list them (READ-801).
+ * Whether the web app offers to save the post: only when it has the IDs the
+ * saved posts API needs.
  */
 export function canSavePost( post: Post ): boolean {
-	return ! post.is_external && savedKeyForPost( post ) !== null;
+	return savedKeyForPost( post ) !== null;
 }
