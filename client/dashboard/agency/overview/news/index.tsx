@@ -402,10 +402,10 @@ export default function NewsCard( { links, ...actionProps }: NewsCardProps ) {
 		} );
 		setOpenId( undefined );
 	};
-	// Under All and Blog only, above the first item, outside the counts and the pages.
+	// Under Blog only, above the first item, outside the counts and the pages.
 	const showSubscribe =
 		! isDismissed &&
-		( filterValue === 'all' || filterValue === 'blog' ) &&
+		filterValue === 'blog' &&
 		announcements.some( ( { type } ) => type === 'blog' );
 	// The first item on each page or filter opens until someone picks another.
 	const openItemId =
