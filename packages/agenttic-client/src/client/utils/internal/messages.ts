@@ -132,7 +132,12 @@ export async function enhanceMessage(
 	// The message's own metadata stays on the client, which uses it for timestamps; the agent gets
 	// only what the context provider gives it.
 	const { metadata, ...messageForAgent } = enhancedMessage;
-	const agentMetadata = contextProvider?.getMessageMetadata?.();
+	let agentMetadata: Record< string, unknown > | undefined;
+	try {
+		agentMetadata = contextProvider?.getMessageMetadata?.();
+	} catch ( error ) {
+		logger( 'Warning: Failed to get message metadata: %s', error );
+	}
 
 	return agentMetadata && Object.keys( agentMetadata ).length > 0
 		? { ...messageForAgent, metadata: agentMetadata }

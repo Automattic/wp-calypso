@@ -450,6 +450,14 @@ describe( 'enhanceMessage', () => {
 	it.each( [
 		[ 'gives none', {} ],
 		[ 'gives an empty object', { getMessageMetadata: () => ( {} ) } ],
+		[
+			'fails to give it',
+			{
+				getMessageMetadata: () => {
+					throw new Error( 'Unavailable' );
+				},
+			},
+		],
 	] )( 'sends no metadata when the context provider %s', async ( _case, provider ) => {
 		const enhanced = await enhanceMessage( message, undefined, {
 			getClientContext: () => ( {} ),

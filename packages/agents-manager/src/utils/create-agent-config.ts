@@ -36,7 +36,7 @@ export interface CreateAgentConfigOptions {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
 	providerIds?: string[];
-	/** The providers' interactive UI catalogs, which the client context lists with the chat's own. */
+	/** The providers' interactive UI catalogs, which each message's metadata lists with the chat's own. */
 	interactiveUiCatalogs?: InteractiveUiCatalogDefinition[];
 	environment?: string;
 	/** Override the agent ID (e.g., from query string). Defaults to ORCHESTRATOR_AGENT_ID. */
