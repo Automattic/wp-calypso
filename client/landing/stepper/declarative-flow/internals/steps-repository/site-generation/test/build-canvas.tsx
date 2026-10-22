@@ -513,19 +513,6 @@ describe( 'image tiles', () => {
 		);
 	} );
 
-	it( 'drops a failed image instead of showing a broken tile', () => {
-		const { container } = render(
-			<BuildWowStreamCanvas
-				stream={ imageStream(
-					{ 'a.png': { status: 'failed', url: null, query: 'Image 1', aspectRatio: null } },
-					3
-				) }
-			/>
-		);
-		expect( screen.getByText( '0 of 2 ready' ) ).toBeVisible();
-		expect( container.querySelectorAll( '.site-generation-canvas__image' ) ).toHaveLength( 2 );
-	} );
-
 	it( 'caps the strip but still counts every image', () => {
 		const { container } = render( <BuildWowStreamCanvas stream={ imageStream( {}, 12 ) } /> );
 		expect( screen.getByText( '0 of 12 ready' ) ).toBeVisible();
@@ -569,6 +556,23 @@ describe( 'image tiles', () => {
 		).toHaveLength( 1 );
 	} );
 
+	it( 'keeps the slot of a picture that failed, held still', () => {
+		const { container } = render(
+			<BuildWowStreamCanvas
+				stream={ imageStream(
+					{ 'one.png': { status: 'failed', url: null, query: 'Image 1', aspectRatio: null } },
+					2
+				) }
+			/>
+		);
+		expect( container.querySelectorAll( '.site-generation-canvas__image' ) ).toHaveLength( 2 );
+		expect(
+			container.querySelectorAll( '.site-generation-canvas__image-pending.is-settled' )
+		).toHaveLength( 1 );
+		expect( screen.getByText( 'Image 1' ) ).toBeVisible();
+		expect( screen.getByText( 'Image 2' ) ).toBeVisible();
+	} );
+
 	it( 'captions the site mark as the logo, whatever the engine named its file', () => {
 		render(
 			<BuildWowStreamCanvas
@@ -581,7 +585,7 @@ describe( 'image tiles', () => {
 							aspectRatio: null,
 						},
 					},
-					0
+					1
 				) }
 			/>
 		);
@@ -616,15 +620,27 @@ describe( 'image tiles', () => {
 		).toHaveLength( 4 );
 	} );
 
-	it( 'says so when the plan decided on no photos, and omits the block when the graph has none', () => {
+	it( 'holds its slots still when the plan decided on no photos, and omits the block when the graph has none', () => {
 		const { container, rerender } = render(
-			<BuildWowStreamCanvas stream={ imageStream( {}, 0 ) } />
+			<BuildWowStreamCanvas
+				stream={ imageStream(
+					{
+						'site-logo.png': {
+							status: 'generating',
+							url: null,
+							query: 'journal-mark.png',
+							aspectRatio: null,
+						},
+					},
+					0
+				) }
+			/>
 		);
 		expect( screen.getByRole( 'heading', { name: 'Images' } ) ).toBeVisible();
-		expect( screen.getByText( 'No photos in this design' ) ).toBeVisible();
 		expect(
 			container.querySelectorAll( '.site-generation-canvas__image-pending.is-settled' )
 		).toHaveLength( 4 );
+		expect( screen.queryByText( 'Logo' ) ).not.toBeInTheDocument();
 		const plain = streamView( { plan: null } );
 		rerender( <BuildWowStreamCanvas stream={ plain } /> );
 		expect( screen.queryByRole( 'heading', { name: 'Images' } ) ).not.toBeInTheDocument();

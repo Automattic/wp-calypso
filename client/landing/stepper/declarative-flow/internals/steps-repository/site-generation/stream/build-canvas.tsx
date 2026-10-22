@@ -251,16 +251,16 @@ function imageTiles(
 		isMark?: boolean;
 		isGenerating?: boolean;
 		caption?: string;
-	}[] = entries
-		.filter( ( [ , image ] ) => image.status !== 'failed' )
-		.map( ( [ id, image ] ) => ( {
-			key: `image-${ id }`,
-			previewId: image.previewId,
-			src: image.status === 'ready' ? loadedImage( id, image.url, sources ) : undefined,
-			isMark: id === SITE_MARK_IMAGE_ID,
-			isGenerating: image.status === 'generating',
-			caption: tileCaption( id, image ),
-		} ) );
+		isSettled?: boolean;
+	}[] = entries.map( ( [ id, image ] ) => ( {
+		key: `image-${ id }`,
+		previewId: image.previewId,
+		src: image.status === 'ready' ? loadedImage( id, image.url, sources ) : undefined,
+		isMark: id === SITE_MARK_IMAGE_ID,
+		isGenerating: image.status === 'generating',
+		isSettled: image.status === 'failed',
+		caption: tileCaption( id, image ),
+	} ) );
 	// Pending tiles carry the planned subjects nobody has reported yet; when the
 	// reports don't name their subjects, the slots fill in plan order instead.
 	const remaining = [ ...plannedQueries ];
@@ -380,11 +380,11 @@ function DesignBrief( {
 		imageSources,
 		plan?.title ?? null
 	);
-	const awaitingImages = tiles.length === 0;
-	// A plan can decide on no photos at all; the block then keeps its shape and
-	// says so, instead of vanishing after its placeholders breathed through
-	// the design step.
+	// A plan can decide on no photos at all; the block then keeps its shape,
+	// slots held still, instead of vanishing after they breathed through the
+	// design step.
 	const plannedNone = plan?.status === 'completed' && ( plan.images?.length ?? 0 ) === 0;
+	const awaitingImages = tiles.length === 0 || plannedNone;
 	const showImages =
 		tiles.length > 0 || ( hasCapability( stream, 'images' ) && ( isDesignPending || plannedNone ) );
 	const fontFamiliesToLoad = [
@@ -570,11 +570,6 @@ function DesignBrief( {
 							>
 								<div className="site-generation-canvas__brief-heading">
 									<h3 className="site-generation-canvas__brief-label">{ __( 'Images' ) }</h3>
-									{ awaitingImages && plannedNone && (
-										<span className="site-generation-canvas__brief-meta">
-											{ __( 'No photos in this design' ) }
-										</span>
-									) }
 									{ ! awaitingImages && (
 										<span className="site-generation-canvas__brief-meta">
 											{ sprintf(
@@ -598,6 +593,7 @@ function DesignBrief( {
 														caption={ tile.caption }
 														isGenerating={ tile.isGenerating }
 														isMark={ tile.isMark }
+														isSettled={ tile.isSettled }
 														key={ tile.key }
 														previewId={ tile.previewId }
 														src={ tile.src }
