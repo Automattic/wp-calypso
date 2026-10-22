@@ -192,6 +192,31 @@ export function getCreditsOutNotice(
 	};
 }
 
+/**
+ * The card in the thread for a reply refused for no credits, with the purchase as its link
+ * and words that match it. Someone who can't buy gets the title alone; the composer's
+ * notice says who may buy.
+ */
+export function getCreditsRefusalNotice(
+	purchaseKind: CreditsPurchaseKind | undefined,
+	action: CreditsPurchaseAction | undefined
+): NoticeConfig {
+	let message = '';
+	if ( action ) {
+		message =
+			purchaseKind === 'top_up'
+				? __( 'Add credits to keep working.', __i18n_text_domain__ )
+				: __( 'Upgrade to keep working.', __i18n_text_domain__ );
+	}
+	return {
+		icon: false,
+		title: __( 'Your message wasn’t sent', __i18n_text_domain__ ),
+		message,
+		action,
+		dismissible: false,
+	};
+}
+
 /** After a reply refused for no credits, once the balance is above 0 again. */
 export function getCreditsBackNotice(): NoticeConfig {
 	return {

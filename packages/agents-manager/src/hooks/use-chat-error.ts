@@ -17,7 +17,7 @@ interface UseChatErrorOptions {
 
 interface ChatError {
 	message: string | null;
-	/** Shown in place of `message`, so the chat hides its own notice meanwhile. */
+	/** Shown in the thread in place of `message`. */
 	notice?: NoticeConfig;
 }
 

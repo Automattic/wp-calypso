@@ -579,7 +579,7 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ isPageOrSiteEditorSurface }
 			imageUpload={ imageUpload }
-			notice={ chatError.notice ? undefined : ( credits.notice ?? replyNotice ) }
+			notice={ credits.notice ?? replyNotice }
 			trailingActions={ credits.trailingActions }
 			beforeSubmit={ credits.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }

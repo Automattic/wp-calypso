@@ -19,6 +19,7 @@ import {
 	getCreditsCtaType,
 	getCreditsNoticeMessage,
 	getCreditsOutNotice,
+	getCreditsRefusalNotice,
 	getCreditsPurchaseAction,
 	getCreditsPurchaseOptions,
 	parseCreditsAccess,
@@ -538,6 +539,9 @@ export function useCredits( {
 			if ( isExhausted ) {
 				return getCreditsOutNotice( status.remaining, askToUpgrade, purchaseAction );
 			}
+			if ( isRefusedForCredits ) {
+				return getCreditsBackNotice();
+			}
 			if ( isLow && ! isLowNoticeDismissed ) {
 				return {
 					icon: false,
@@ -582,23 +586,21 @@ export function useCredits( {
 		purchaseAction,
 		askToUpgrade,
 		isExhausted,
+		isRefusedForCredits,
 		isLow,
 		isLowNoticeDismissed,
 		handleAction,
 		dismissLowNotice,
 	] );
 
+	// The card stays in the thread as a record once credits are back; the composer says so.
 	const liveRefusalNotice = useMemo< NoticeConfig | undefined >( () => {
 		if ( ! isRefusedForCredits || ! siteId || status?.plan !== 'paid' ) {
 			return undefined;
 		}
-		if ( ! isExhausted ) {
-			return getCreditsBackNotice();
-		}
 		const shown = { status, siteId, agentConfig };
-		return getCreditsOutNotice(
-			status.remaining,
-			askToUpgrade,
+		return getCreditsRefusalNotice(
+			purchaseKind,
 			purchaseAction && {
 				...purchaseAction,
 				onClick: () => recordPurchaseClick( 'refusal', shown ),
@@ -609,8 +611,7 @@ export function useCredits( {
 		siteId,
 		status,
 		agentConfig,
-		isExhausted,
-		askToUpgrade,
+		purchaseKind,
 		purchaseAction,
 		recordPurchaseClick,
 	] );
@@ -637,8 +638,7 @@ export function useCredits( {
 	const isAwaitingAccess =
 		balance?.scope === scope && balance.isFromTurn && ! access && canReadBalance( scope );
 
-	// The exhausted refusal notice counts as the zero notice; a low notice behind the credits-back
-	// one waits until it shows.
+	// A low notice behind the credits-back one waits until it shows.
 	const isLowNoticeBehindCreditsBack = !! refusalNotice && ! isExhausted;
 	// Once per state for this site, user and agent, and only while the notice is drawn. After a
 	// turn's balance it waits for the read of who may buy, so it names the button the notice shows.

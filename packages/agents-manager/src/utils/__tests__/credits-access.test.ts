@@ -3,6 +3,7 @@ import {
 	getCreditsCtaType,
 	getCreditsNoticeMessage,
 	getCreditsOutNotice,
+	getCreditsRefusalNotice,
 	getCreditsPurchaseAction,
 	getCreditsPurchaseOptions,
 	parseCreditsAccess,
@@ -227,6 +228,36 @@ describe( 'getCreditsBackNotice', () => {
 		expect( getCreditsBackNotice() ).toEqual( {
 			icon: false,
 			message: 'Site credits are back. Send your message again.',
+			dismissible: false,
+		} );
+	} );
+} );
+
+describe( 'getCreditsRefusalNotice', () => {
+	it( 'titles the refused message and offers the credits pack as its link', () => {
+		const action = { label: 'Add credits', href: TOP_UP_URL };
+		expect( getCreditsRefusalNotice( 'top_up', action ) ).toEqual( {
+			icon: false,
+			title: 'Your message wasn’t sent',
+			message: 'Add credits to keep working.',
+			action,
+			dismissible: false,
+		} );
+	} );
+
+	it( 'offers the upgrade with matching words', () => {
+		const action = { label: 'Upgrade', href: UPGRADE_URL };
+		expect( getCreditsRefusalNotice( 'upgrade', action ).message ).toBe(
+			'Upgrade to keep working.'
+		);
+	} );
+
+	it( 'gives someone who can’t buy the title alone', () => {
+		expect( getCreditsRefusalNotice( 'top_up', undefined ) ).toEqual( {
+			icon: false,
+			title: 'Your message wasn’t sent',
+			message: '',
+			action: undefined,
 			dismissible: false,
 		} );
 	} );
