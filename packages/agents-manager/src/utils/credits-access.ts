@@ -221,7 +221,7 @@ export function getCreditsRefusalNotice(
 export function getCreditsBackNotice( action?: NoticeConfig[ 'action' ] ): NoticeConfig {
 	return {
 		icon: false,
-		message: __( 'Site credits are back.', __i18n_text_domain__ ),
+		message: __( 'Your site has credits again.', __i18n_text_domain__ ),
 		action,
 		dismissible: false,
 	};

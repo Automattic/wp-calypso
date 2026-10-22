@@ -2505,7 +2505,7 @@ describe( 'credits Tracks events', () => {
 			fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
 			act( () => window.dispatchEvent( new Event( 'focus' ) ) );
 			await flush();
-			expect( view.result.current.notice?.message ).toBe( 'Site credits are back.' );
+			expect( view.result.current.notice?.message ).toBe( 'Your site has credits again.' );
 			expect( view.result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
 			expect( shownStates() ).toEqual( [ 'zero' ] );
 			mockIsProcessing = true;
@@ -2694,7 +2694,7 @@ describe( 'refusal code', () => {
 		describe( 'once credits are back', () => {
 			const backNotice = {
 				icon: false,
-				message: 'Site credits are back.',
+				message: 'Your site has credits again.',
 				action: undefined,
 				dismissible: false,
 			};
@@ -2731,7 +2731,7 @@ describe( 'refusal code', () => {
 				await flush();
 				await refuse( { ...exhausted( true ), plan_tier: 'business' } );
 				await topUp();
-				expect( result.current.notice?.message ).toBe( 'Site credits are back.' );
+				expect( result.current.notice?.message ).toBe( 'Your site has credits again.' );
 				expect( result.current.notice?.action?.label ).toBe( 'Try again' );
 				act( () => result.current.notice?.action?.onClick?.() );
 				expect( onTryAgain ).toHaveBeenCalledWith( 'Make it shorter' );

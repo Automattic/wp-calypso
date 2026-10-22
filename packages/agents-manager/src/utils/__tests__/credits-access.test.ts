@@ -227,7 +227,7 @@ describe( 'getCreditsBackNotice', () => {
 	it( 'says so, with no action', () => {
 		expect( getCreditsBackNotice() ).toEqual( {
 			icon: false,
-			message: 'Site credits are back.',
+			message: 'Your site has credits again.',
 			action: undefined,
 			dismissible: false,
 		} );
