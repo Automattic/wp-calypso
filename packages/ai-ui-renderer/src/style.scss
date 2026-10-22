@@ -28,19 +28,19 @@ $wp-components-colors: (
 	)
 );
 
-// An unset token keeps the host's WordPress components color. A custom property can't read the
-// value it inherits, so the root saves the host's for its children.
+// An unset token keeps the host's WordPress components color, or else the default. A custom
+// property can't read the value it inherits, so the root resolves it for its children.
 .ai-ui-renderer,
 .ai-ui-renderer__modal {
 	@each $name, $token, $default in $wp-components-colors {
-		--ai-ui-renderer-host-#{$name}: var( --wp-components-color-#{$name} );
+		--ai-ui-renderer-host-#{$name}: var( --wp-components-color-#{$name}, #{$default} );
 	}
 
 	> * {
 		@each $name, $token, $default in $wp-components-colors {
 			--wp-components-color-#{$name}: var(
 				--a2ui-color-#{$token},
-				var( --ai-ui-renderer-host-#{$name}, #{$default} )
+				var( --ai-ui-renderer-host-#{$name} )
 			);
 		}
 
@@ -61,7 +61,7 @@ $wp-components-colors: (
 	}
 
 	// Newer WordPress components read the design system's tokens instead. They're set a level
-	// down, since the colors above fall back to the host's tokens.
+	// down, so the defaults above still read the host's.
 	> * * {
 		--wpds-color-foreground-content-neutral: var( --wp-components-color-foreground );
 		--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
