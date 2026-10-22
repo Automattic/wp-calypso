@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { useAutoScroll } from '../../hooks/useAutoScroll';
 import { cn } from '../../utils/classNames';
-import { getVisibleMessages } from '../../utils/message-helpers';
+import { getLatestTurnStartIndex, getVisibleMessages } from '../../utils/message-helpers';
 import { SourcesCard } from '../sources';
 import { Message } from './Message';
 import styles from './Messages.module.css';
@@ -65,9 +65,7 @@ export function Messages( {
 
 	useAutoScroll( { scrollAreaRef, visibleMessages } );
 
-	// The latest turn is everything after the user's latest message.
-	const latestTurnStartIndex =
-		visibleMessages.map( ( message ) => message.role ).lastIndexOf( 'user' ) + 1;
+	const latestTurnStartIndex = getLatestTurnStartIndex( visibleMessages );
 
 	const liveRegionText = useMemo( () => {
 		// Find the last agent message

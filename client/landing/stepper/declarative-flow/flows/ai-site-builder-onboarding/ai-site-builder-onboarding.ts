@@ -27,8 +27,6 @@ import {
 	BUILD_WOW_SITE_SPEC_PATH,
 	commerceUsesBuildWow,
 	getBuildWowSiteSpecUrl,
-	getBuildWowStreamQueryArgs,
-	isBuildWowStreamRequested,
 } from '../../../utils/build-wow';
 import { planSupportsBuildWow } from '../../../utils/build-wow-plans';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -54,7 +52,6 @@ function getBuildWowDestination( {
 	source,
 	prompt,
 	specId,
-	streamEvents,
 }: {
 	siteSlug: string;
 	siteId: number | string;
@@ -62,17 +59,8 @@ function getBuildWowDestination( {
 	source: string | null;
 	prompt: string;
 	specId: string | null;
-	streamEvents: boolean;
 } ): string {
-	const specUrl = getBuildWowSiteSpecUrl( {
-		siteSlug,
-		siteId,
-		ref,
-		source,
-		prompt,
-		graph: 'dsl',
-		streamEvents,
-	} );
+	const specUrl = getBuildWowSiteSpecUrl( { siteSlug, siteId, ref, source, prompt, graph: 'dsl' } );
 
 	return specId ? addQueryArgs( specUrl, { spec_id: specId } ) : specUrl;
 }
@@ -310,19 +298,10 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					const source = query.get( 'source' );
 					const ref = query.get( 'ref' );
 					const specId = query.get( 'spec_id' );
-					const streamEvents = isBuildWowStreamRequested( query );
 					window.sessionStorage.removeItem( 'stored_ai_prompt' );
 
 					const destination = useBuildWow
-						? getBuildWowDestination( {
-								siteSlug,
-								siteId,
-								ref,
-								source,
-								prompt,
-								specId,
-								streamEvents,
-							} )
+						? getBuildWowDestination( { siteSlug, siteId, ref, source, prompt, specId } )
 						: await prepareSiteEditorDestination( {
 								site,
 								siteId,
@@ -343,7 +322,6 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						...( source && { source } ),
 						...( ref && { ref } ),
 						...( specId && { spec_id: specId } ),
-						...getBuildWowStreamQueryArgs( streamEvents ),
 					};
 					const checkoutBackUrl = pathToUrl(
 						addQueryArgs(

@@ -138,26 +138,15 @@ module.exports = {
 		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useDefaults: false,
-			requestToHandle: ( request ) => {
-				// `react-dom/client` is not a registered handle; reuse `react-dom`.
-				if ( request === 'react-dom/client' ) {
-					return 'react-dom';
-				}
-				return defaultRequestToHandle( request );
-			},
+			requestToHandle: defaultRequestToHandle,
 			requestToExternal: ( request ) => {
-				// The default extraction only maps bare `react-dom`, so this subpath would
-				// otherwise bundle a second react-dom that crashes against the page's external
-				// React. Same fix as help-center (#112576) and agents-manager.
-				if ( request === 'react-dom/client' ) {
-					return 'ReactDOM';
-				}
 				if (
 					! [
 						'lodash',
 						'lodash-es',
 						'react',
 						'react-dom',
+						'react-dom/client',
 						// Externalize the JSX runtime alongside react/react-dom so it matches the
 						// React that WordPress provides. Bundling it (the default here, since it is
 						// absent from this allow list) ships an older React's runtime, whose elements

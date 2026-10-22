@@ -51,7 +51,7 @@
 		"react-redux": "^9.2.0",
 		"redux": "^5.0.1",
 		"redux-thunk": "^3.1.0",
-		"webpack-bundle-analyzer": "^4.10.2",
+		"webpack-bundle-analyzer": "^5.4.0",
 		"wpcom": "workspace:^",
 		"wpcom-proxy-request": "workspace:^"
 	},
@@ -61,9 +61,9 @@
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"html-webpack-plugin": "^5.6.3",
+		"html-webpack-plugin": "^5.6.8",
 		"postcss": "^8.5.15",
 		"postcss-custom-properties": "^12.1.11",
-		"webpack": "^5.99.8"
+		"webpack": "^5.111.1"
 	}
 }
