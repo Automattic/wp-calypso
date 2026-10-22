@@ -289,6 +289,7 @@ function ImageTile( {
 	src,
 	isMark = false,
 	isGenerating = false,
+	isSettled = false,
 	caption,
 }: {
 	stream: BuildWowStreamView | null;
@@ -296,6 +297,7 @@ function ImageTile( {
 	src?: string;
 	isMark?: boolean;
 	isGenerating?: boolean;
+	isSettled?: boolean;
 	caption?: string;
 } ) {
 	const thumbnail = useBuildImagePreview( src ? undefined : previewId, stream );
@@ -314,6 +316,7 @@ function ImageTile( {
 				<span
 					className={ clsx( 'site-generation-canvas__image-pending', {
 						'is-generating': isGenerating,
+						'is-settled': isSettled,
 					} ) }
 				>
 					<Placeholder className="site-generation-canvas__image-placeholder" />
@@ -378,7 +381,12 @@ function DesignBrief( {
 		plan?.title ?? null
 	);
 	const awaitingImages = tiles.length === 0;
-	const showImages = tiles.length > 0 || ( isDesignPending && hasCapability( stream, 'images' ) );
+	// A plan can decide on no photos at all; the block then keeps its shape and
+	// says so, instead of vanishing after its placeholders breathed through
+	// the design step.
+	const plannedNone = plan?.status === 'completed' && ( plan.images?.length ?? 0 ) === 0;
+	const showImages =
+		tiles.length > 0 || ( hasCapability( stream, 'images' ) && ( isDesignPending || plannedNone ) );
 	const fontFamiliesToLoad = [
 		...new Set( faces.map( ( face ) => streamedFontFamily( face.family ) ) ),
 	].filter( ( family ): family is string => family !== null );
@@ -558,10 +566,15 @@ function DesignBrief( {
 						{ showImages && (
 							<div
 								className="site-generation-canvas__brief-block site-generation-canvas__images"
-								aria-busy={ awaitingImages }
+								aria-busy={ awaitingImages && ! plannedNone }
 							>
 								<div className="site-generation-canvas__brief-heading">
 									<h3 className="site-generation-canvas__brief-label">{ __( 'Images' ) }</h3>
+									{ awaitingImages && plannedNone && (
+										<span className="site-generation-canvas__brief-meta">
+											{ __( 'No photos in this design' ) }
+										</span>
+									) }
 									{ ! awaitingImages && (
 										<span className="site-generation-canvas__brief-meta">
 											{ sprintf(
@@ -576,7 +589,7 @@ function DesignBrief( {
 								<ul aria-hidden="true" className="site-generation-canvas__image-strip">
 									{ awaitingImages
 										? Array.from( { length: PENDING_IMAGE_TILES }, ( _, index ) => (
-												<ImageTile key={ index } stream={ stream } />
+												<ImageTile isSettled={ plannedNone } key={ index } stream={ stream } />
 											) )
 										: tiles
 												.slice( 0, MAX_IMAGE_TILES )

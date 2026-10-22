@@ -431,6 +431,12 @@ $site-generation-half-beat: 1400ms;
 	&.is-generating .site-generation-canvas__image-caption {
 		color: var( --color-text );
 	}
+
+	// Slots the plan decided to leave empty hold still.
+	&.is-settled,
+	&.is-settled::before {
+		animation: none;
+	}
 }
 
 @for $i from 1 through 8 {

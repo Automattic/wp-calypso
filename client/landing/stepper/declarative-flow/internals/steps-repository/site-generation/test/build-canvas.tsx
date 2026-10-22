@@ -616,9 +616,15 @@ describe( 'image tiles', () => {
 		).toHaveLength( 4 );
 	} );
 
-	it( 'omits the images when the plan decided on none or the graph has no images', () => {
-		const { rerender } = render( <BuildWowStreamCanvas stream={ imageStream( {}, 0 ) } /> );
-		expect( screen.queryByRole( 'heading', { name: 'Images' } ) ).not.toBeInTheDocument();
+	it( 'says so when the plan decided on no photos, and omits the block when the graph has none', () => {
+		const { container, rerender } = render(
+			<BuildWowStreamCanvas stream={ imageStream( {}, 0 ) } />
+		);
+		expect( screen.getByRole( 'heading', { name: 'Images' } ) ).toBeVisible();
+		expect( screen.getByText( 'No photos in this design' ) ).toBeVisible();
+		expect(
+			container.querySelectorAll( '.site-generation-canvas__image-pending.is-settled' )
+		).toHaveLength( 4 );
 		const plain = streamView( { plan: null } );
 		rerender( <BuildWowStreamCanvas stream={ plain } /> );
 		expect( screen.queryByRole( 'heading', { name: 'Images' } ) ).not.toBeInTheDocument();
