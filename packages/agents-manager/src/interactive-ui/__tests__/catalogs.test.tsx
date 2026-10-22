@@ -125,17 +125,80 @@ it( 'keeps only valid provider catalogs, the first with each ID', () => {
 } );
 
 it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () => {
-	const wooCatalog = createCatalog( WOO_CATALOG_ID );
+	const wooCatalog = {
+		catalog: {
+			catalogId: WOO_CATALOG_ID,
+			components: {
+				WooAiProductCard: {
+					type: 'object',
+					properties: { name: { type: 'string' } },
+					required: [ 'name' ],
+				},
+				WooAiDivider: {},
+				WooAiBadge: {
+					type: 'object',
+					properties: { component: { const: 'WooAiBadge' } },
+					required: [ 'component' ],
+				},
+			},
+			functions: {
+				wooAiOpenProduct: { type: 'object', returnType: 'void', requiresUserActivation: undefined },
+				wooAiFormatPrice: {
+					type: 'object',
+					returnType: 'string',
+					requiresUserActivation: false,
+				},
+			},
+		},
+	};
 
 	expect( getInteractiveUiCapabilities( [ wooCatalog ] ) ).toEqual( {
 		'v1.0': {
 			supportedCatalogIds: [ BASIC_CATALOG_ID, AGENTS_MANAGER_CATALOG_ID, WOO_CATALOG_ID ],
 			inlineCatalogs: [
 				expect.objectContaining( {
+					$id: AGENTS_MANAGER_CATALOG_ID,
 					catalogId: AGENTS_MANAGER_CATALOG_ID,
 					protocolVersion: '1.0',
 				} ),
-				{ ...wooCatalog.catalog, protocolVersion: '1.0' },
+				{
+					$id: WOO_CATALOG_ID,
+					catalogId: WOO_CATALOG_ID,
+					protocolVersion: '1.0',
+					components: {
+						WooAiProductCard: {
+							type: 'object',
+							properties: { name: { type: 'string' }, component: { const: 'WooAiProductCard' } },
+							required: [ 'component', 'name' ],
+						},
+						WooAiDivider: {
+							type: 'object',
+							properties: { component: { const: 'WooAiDivider' } },
+							required: [ 'component' ],
+						},
+						WooAiBadge: {
+							type: 'object',
+							properties: { component: { const: 'WooAiBadge' } },
+							required: [ 'component' ],
+						},
+					},
+					functions: {
+						wooAiOpenProduct: {
+							requiresUserActivation: true,
+							type: 'object',
+							returnType: 'void',
+							properties: { '@call': { const: 'wooAiOpenProduct' } },
+							required: [ '@call' ],
+						},
+						wooAiFormatPrice: {
+							requiresUserActivation: false,
+							type: 'object',
+							returnType: 'string',
+							properties: { '@call': { const: 'wooAiFormatPrice' } },
+							required: [ '@call' ],
+						},
+					},
+				},
 			],
 		},
 	} );

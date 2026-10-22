@@ -22,8 +22,6 @@ export interface InteractiveUiCatalogDocument {
 	components?: Record< string, object >;
 	/** Each function's call, by name, such as `exampleOpenItem`. */
 	functions?: Record< string, object >;
-	/** Schemas the components and functions share through `$ref`. */
-	$defs?: Record< string, object >;
 }
 
 /** A host's or provider's own catalog: its document and the code that implements it. */

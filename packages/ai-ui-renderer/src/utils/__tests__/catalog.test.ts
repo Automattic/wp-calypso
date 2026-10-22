@@ -101,6 +101,22 @@ it.each< { problem: string; definition: InteractiveUiCatalogDefinition; error: s
 		definition: { ...hostCatalog, catalog: { ...hostCatalog.catalog, catalogId: '' } },
 		error: 'An interactive UI catalog needs a `catalogId`.',
 	},
+	{
+		problem: 'a component without an object schema',
+		definition: {
+			...hostCatalog,
+			catalog: { ...hostCatalog.catalog, components: { HostColorPicker: { required: 'color' } } },
+		},
+		error: 'The interactive UI component HostColorPicker needs an object schema.',
+	},
+	{
+		problem: 'a component of another type',
+		definition: {
+			...hostCatalog,
+			catalog: { ...hostCatalog.catalog, components: { HostColorPicker: { type: 'string' } } },
+		},
+		error: 'The interactive UI component HostColorPicker needs an object schema.',
+	},
 ] )( 'rejects $problem', ( { definition, error } ) => {
 	expect( () => createInteractiveUiCatalog( definition ) ).toThrow( error );
 } );

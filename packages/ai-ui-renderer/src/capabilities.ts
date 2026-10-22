@@ -41,9 +41,34 @@ function assertImplementations(
 	}
 }
 
+interface ObjectSchema {
+	properties?: Record< string, unknown >;
+	required?: string[];
+	requiresUserActivation?: boolean;
+}
+
+function isObject( value: unknown ): value is Record< string, unknown > {
+	return typeof value === 'object' && value !== null && ! Array.isArray( value );
+}
+
+// A2UI describes each component and function as a JSON Schema object.
+function assertSchemas( kind: 'component' | 'function', definitions: Record< string, unknown > ) {
+	for ( const [ name, schema ] of Object.entries( definitions ) ) {
+		if (
+			! isObject( schema ) ||
+			( 'type' in schema && schema.type !== 'object' ) ||
+			( 'properties' in schema && ! isObject( schema.properties ) ) ||
+			( 'required' in schema && ! Array.isArray( schema.required ) )
+		) {
+			throw new Error( `The interactive UI ${ kind } ${ name } needs an object schema.` );
+		}
+	}
+}
+
 /**
- * Throws when a catalog definition has no ID, or its code doesn't match its document: each of its
- * components and functions needs an implementation, and nothing else.
+ * Throws when a catalog definition has no ID, a component or function that isn't an object
+ * schema, or code that doesn't match its document: each of its components and functions needs an
+ * implementation, and nothing else.
  * `createInteractiveUiCatalog()` rejects those, so check catalogs with it before advertising them.
  */
 export function assertInteractiveUiCatalogDefinition( {
@@ -56,18 +81,75 @@ export function assertInteractiveUiCatalogDefinition( {
 		throw new Error( 'An interactive UI catalog needs a `catalogId`.' );
 	}
 
-	assertImplementations(
-		'component',
-		Object.keys( catalog.components ?? {} ),
-		components,
-		isComponent
-	);
+	const { components: componentSchemas = {}, functions: functionSchemas = {} } = catalog;
+
+	assertSchemas( 'component', componentSchemas );
+	assertSchemas( 'function', functionSchemas );
+
+	assertImplementations( 'component', Object.keys( componentSchemas ), components, isComponent );
 	assertImplementations(
 		'function',
-		Object.keys( catalog.functions ?? {} ),
+		Object.keys( functionSchemas ),
 		functions,
 		( value ) => typeof value === 'function'
 	);
+}
+
+function mapDefinitions(
+	definitions: Record< string, object >,
+	map: ( definition: ObjectSchema, name: string ) => object
+) {
+	return Object.fromEntries(
+		Object.entries( definitions ).map( ( [ name, definition ] ) => [
+			name,
+			map( definition as ObjectSchema, name ),
+		] )
+	);
+}
+
+// A2UI tells components and functions apart by a required prop whose const is their name.
+function withDiscriminator(
+	{ properties, required = [], ...schema }: ObjectSchema,
+	key: 'component' | '@call',
+	name: string
+) {
+	return {
+		type: 'object',
+		...schema,
+		properties: { ...properties, [ key ]: { const: name } },
+		required: [ key, ...required.filter( ( requiredKey ) => requiredKey !== key ) ],
+	};
+}
+
+// A document in A2UI's form. Each function states `requiresUserActivation`, since A2UI defaults it
+// to false but this renderer to true.
+function toInlineCatalog( {
+	catalogId,
+	title,
+	description,
+	instructions,
+	components,
+	functions,
+}: InteractiveUiCatalogDocument ) {
+	return {
+		$id: catalogId,
+		catalogId,
+		protocolVersion: '1.0',
+		...( title && { title } ),
+		...( description && { description } ),
+		...( instructions && { instructions } ),
+		...( components && {
+			components: mapDefinitions( components, ( definition, name ) =>
+				withDiscriminator( definition, 'component', name )
+			),
+		} ),
+		...( functions && {
+			functions: mapDefinitions( functions, ( definition, name ) => ( {
+				...withDiscriminator( definition, '@call', name ),
+				requiresUserActivation: definition.requiresUserActivation ?? true,
+			} ) ),
+		} ),
+	};
 }
 
 /**
@@ -78,7 +160,7 @@ export function getInteractiveUiRendererCapabilities( catalogs: InteractiveUiCat
 	return {
 		'v1.0': {
 			supportedCatalogIds: [ BASIC_CATALOG_ID, ...catalogs.map( ( { catalogId } ) => catalogId ) ],
-			inlineCatalogs: catalogs.map( ( catalog ) => ( { ...catalog, protocolVersion: '1.0' } ) ),
+			inlineCatalogs: catalogs.map( toInlineCatalog ),
 		},
 	};
 }
