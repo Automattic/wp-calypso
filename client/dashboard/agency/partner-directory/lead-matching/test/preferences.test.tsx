@@ -24,9 +24,7 @@ const noticeContents = () =>
 		.map( ( { content } ) => content );
 
 const waitForSaved = () =>
-	waitFor( () =>
-		expect( noticeContents() ).toContain( 'Your lead matching preferences were saved!' )
-	);
+	waitFor( () => expect( noticeContents() ).toContain( 'Lead matching preferences saved.' ) );
 
 beforeEach( () => {
 	dispatch( noticesStore ).removeAllNotices( 'snackbar' );
@@ -132,7 +130,7 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
 
 		await waitFor( () =>
-			expect( noticeContents() ).toContain( 'Something went wrong saving your preferences.' )
+			expect( noticeContents() ).toContain( 'Failed to save lead matching preferences.' )
 		);
 	} );
 } );
