@@ -8,6 +8,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
+	STATIC_SITE_IMPORT_FLOW,
 	ENTREPRENEUR_FLOW,
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -18,13 +19,13 @@ import {
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_AND_PLAN_FLOW,
 	PLAN_UPGRADE_FLOW,
-	FLEX_SITE_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
 	ART_PROMO_FLOW,
 	DIRECT_TO_CART_FLOW,
 	WRITE_ON_FLOW,
 	WRITE_NEW_SITE_FLOW,
 	EDUCATION_FLOW,
+	LAUNCH_SITE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -66,9 +67,6 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 	[ PLAN_UPGRADE_FLOW ]: () =>
 		import( /* webpackChunkName: "plan-upgrade-flow" */ './flows/plan-upgrade/plan-upgrade' ),
 
-	[ FLEX_SITE_FLOW ]: () =>
-		import( /* webpackChunkName: "flex-site-flow" */ './flows/flex-site/flex-site' ),
-
 	[ WOO_HOSTED_PLANS_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "woo-hosted-plans" */ './flows/woo-hosted-plans/woo-hosted-plans'
@@ -82,6 +80,9 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ WRITE_NEW_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "write-new-site-flow" */ './flows/write-new-site/write-new-site' ),
+
+	[ LAUNCH_SITE_FLOW ]: () =>
+		import( /* webpackChunkName: "launch-site-flow" */ './flows/launch-site/launch-site' ),
 };
 
 /**
@@ -102,16 +103,8 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 			/* webpackChunkName: "entrepreneur-flow" */ './flows/entrepreneur-flow/entrepreneur-flow'
 		),
 
-	'readymade-template': () =>
-		import(
-			/* webpackChunkName: "readymade-template-flow" */ './flows/readymade-template/readymade-template'
-		),
-
 	'update-design': () =>
 		import( /* webpackChunkName: "update-design-flow" */ './flows/update-design/update-design' ),
-
-	'update-options': () =>
-		import( /* webpackChunkName: "update-options-flow" */ './flows/update-options/update-options' ),
 
 	[ DOMAIN_AND_PLAN_FLOW ]: () =>
 		import(
@@ -159,6 +152,16 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any 
 			}
 		: {};
 
+const staticSiteImportFlow: Record< string, () => Promise< { default: FlowV2< any > } > > =
+	config.isEnabled( 'migration/non-wordpress-source' )
+		? {
+				[ STATIC_SITE_IMPORT_FLOW ]: () =>
+					import(
+						/* webpackChunkName: "static-site-import-flow" */ './flows/static-site-import-flow/static-site-import-flow'
+					),
+			}
+		: {};
+
 const aiSiteBuilderOnboardingFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
 	{
 		[ AI_SITE_BUILDER_ONBOARDING_FLOW ]: () =>
@@ -184,4 +187,5 @@ export default {
 	...hundredYearDomainFlow,
 	...aiSiteBuilderFlows,
 	...aiSiteBuilderOnboardingFlows,
+	...staticSiteImportFlow,
 };

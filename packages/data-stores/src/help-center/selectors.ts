@@ -54,7 +54,13 @@ export const getHelpCenterRouterHistory = ( state: State ) => state.helpCenterRo
 export const getNavigateToRoute = ( state: State ) => state.navigateToRoute;
 export const getOdieInitialPromptText = ( state: State ) => state.odieInitialPromptText;
 export const getOdieBotNameSlug = ( state: State ) => state.odieBotNameSlug;
-export const getHasPremiumSupport = ( state: State ) => state.hasPremiumSupport;
+// The human-only and hybrid checkout variations also grant premium support, but only until the
+// Help Center is opened from somewhere other than checkout.
+export const getHasPremiumSupport = ( state: State ) =>
+	state.hasPremiumSupport ||
+	state.checkoutSupportVariation === 'human_only' ||
+	state.checkoutSupportVariation === 'hybrid';
+export const getCheckoutSupportVariation = ( state: State ) => state.checkoutSupportVariation;
 export const getHelpCenterOptions = ( state: State ) => state.helpCenterOptions;
 export const getContextTerm = ( state: State ) => state.contextTerm;
 export const getSupportTypingStatus = ( state: State, conversationId: string ) =>

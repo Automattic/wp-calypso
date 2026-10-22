@@ -199,13 +199,26 @@ test.describe( 'Authentication: Google', { tag: [ tags.AUTHENTICATION ] }, () =>
 				.toBe( true );
 
 			stage = Stage.ProductionLogin;
+			// Simple sites without a saved admin interface style default to Classic, so the
+			// account may land on its site's wp-admin Dashboard rather than Calypso's My Home.
+			// Origin and path only: the failure reports where the login landed, never its query.
 			await expect
-				.poll( () => /^https:\/\/wordpress\.com\/home\//.test( page.url() ), {
-					timeout: 10000,
-					message: 'WordPress.com My Home did not load.',
-				} )
-				.toBe( true );
-			await expect( page.getByRole( 'heading', { name: 'My Home' } ) ).toBeVisible();
+				.poll(
+					() => {
+						const url = new URL( page.url() );
+						return url.origin + url.pathname;
+					},
+					{
+						timeout: 30000,
+						message: 'WordPress.com landing page did not load.',
+					}
+				)
+				.toMatch( /^https:\/\/(?:wordpress\.com\/home\/|[^/]+\.wordpress\.com\/wp-admin\/)/ );
+			await expect(
+				page
+					.getByRole( 'heading', { name: 'My Home' } )
+					.or( page.getByRole( 'heading', { name: 'Dashboard', level: 1 } ) )
+			).toBeVisible();
 			expect( ( await Promise.all( observed.pending ) ).every( Boolean ) ).toBe( true );
 			expect( observed.evidence ).toEqual( { exchange: true, identity: true, login: true } );
 		} catch ( error ) {

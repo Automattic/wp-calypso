@@ -854,6 +854,13 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
+		name: 'a8c-for-agencies-error',
+		paths: [ '/error' ],
+		module: 'calypso/a8c-for-agencies/sections/error',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
 		name: 'a8c-for-agencies-overview',
 		paths: [ '/overview' ],
 		module: 'calypso/a8c-for-agencies/sections/overview',

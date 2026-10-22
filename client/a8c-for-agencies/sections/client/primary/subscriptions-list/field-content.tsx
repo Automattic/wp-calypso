@@ -4,7 +4,9 @@ import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { EXTERNAL_PRESSABLE_AUTH_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import CancelSubscriptionAction from '../../cancel-subscription-confirmation-dialog';
+import CancelSubscriptionAction, {
+	canCancelSubscription,
+} from '../../cancel-subscription-confirmation-dialog';
 import { getSubscriptionStatus } from '../../lib/get-subscription-status';
 import { Subscription } from '../../types';
 
@@ -90,10 +92,8 @@ export function SubscriptionAction( {
 	subscription: Subscription;
 	onCancelSubscription: () => void;
 } ) {
-	const status = subscription.status;
-	const isActive = status === 'active';
 	return (
-		isActive && (
+		canCancelSubscription( subscription ) && (
 			<span className="action-button">
 				<CancelSubscriptionAction
 					subscription={ subscription }

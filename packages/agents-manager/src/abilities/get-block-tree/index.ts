@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { getBlockTreeCallback } from './callback';
-import type { Ability } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 const BLOCK_TREE_NODE_SCHEMA = {
 	type: 'object',

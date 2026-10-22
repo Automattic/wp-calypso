@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
-import { getAgentManager } from './agentManager';
+import { getAgentManager, type ToolResultInput, type TurnToolCall } from './agentManager';
 import { useRegenerate } from './useRegenerate';
 import type {
 	AuthProvider,
@@ -84,13 +84,15 @@ export interface ImageData {
 
 // Extra options for submitting a message
 export interface SubmitOptions {
-	type?: ContentType | 'tool_result'; // `text` for normal visible text (default), `context` for hidden context, `tool_result` for tool result (hidden from UI)
+	type?: ContentType | 'tool_result' | 'tool_results'; // `text` for normal visible text (default), `context` for hidden context, `tool_result` for tool result (hidden from UI), `tool_results` for the results of several calls of one turn (hidden from UI)
 	archived?: boolean;
 	imageUrls?: ( string | ImageData )[]; // Array of image URLs or image objects with metadata
 	sessionId?: string; // Optional `sessionId` to use for this message (overrides agent's `sessionId`)
 	toolCallId?: string; // Required when type is `tool_result`: the tool call ID to respond to
 	toolId?: string; // Required when type is `tool_result`: the tool ID
 	fileParts?: FilePart[]; // Optional when type is `tool_result`: files (typically images) produced by the tool
+	toolResults?: ToolResultInput[]; // Required when type is `tool_results`: one result per call being answered
+	turnToolCalls?: TurnToolCall[]; // Optional with `tool_results`: the turn's calls, added to history when this page never saw them
 }
 
 // UI Message format (simplified for UI components)
@@ -339,6 +341,7 @@ export interface UseAgentChatConfig {
 	onTaskUpdate?: ( update: TaskUpdate ) => void | Promise< void >;
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
+	trackReplying?: boolean; // Set to get `isReplying` (needs `enableStreaming`). Reply text then also clears the progress text.
 }
 
 // Hook return interface
@@ -351,6 +354,7 @@ export interface UseAgentChatReturn {
 	suggestions: Suggestion[];
 	progressMessage: string | null;
 	progressPhase: string | null;
+	isReplying?: boolean; // Whether reply text is streaming in. Only with `trackReplying`, during a request.
 
 	// UI management methods
 	registerSuggestions: ( suggestions: Suggestion[] ) => void;
@@ -384,6 +388,7 @@ export interface AgentChatState {
 	suggestions: Suggestion[];
 	progressMessage: string | null;
 	progressPhase: string | null;
+	isReplying: boolean;
 }
 
 export interface InternalSubmitOptions {
@@ -427,6 +432,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		suggestions: [],
 		progressMessage: null,
 		progressPhase: null,
+		isReplying: false,
 	} );
 
 	// Initialize message actions
@@ -445,12 +451,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		stateRef.current = state;
 	}, [ state ] );
 
-	// Keep the raw task-update observer fresh without reinitializing the agent
-	// or changing the stable onSubmit callback identity.
+	// Keep the raw task-update observer and `trackReplying` fresh without
+	// reinitializing the agent or changing the stable onSubmit callback identity.
 	const onTaskUpdateRef = useRef( config.onTaskUpdate );
 	useEffect( () => {
 		onTaskUpdateRef.current = config.onTaskUpdate;
 	}, [ config.onTaskUpdate ] );
+	const trackReplyingRef = useRef( config.trackReplying );
+	useEffect( () => {
+		trackReplyingRef.current = config.trackReplying;
+	}, [ config.trackReplying ] );
 
 	// Use a ref to always have access to the latest registrations
 	const registrationsRef = useRef( registrations );
@@ -478,7 +488,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 
-			const hasAgent = agentManager.hasAgent( agentKey );
+			let hasAgent = agentManager.hasAgent( agentKey );
+			if (
+				hasAgent &&
+				agentManager.getAgentSessionId( agentKey ) !== ( agentConfig.sessionId || null )
+			) {
+				agentManager.abortCurrentRequest( agentKey );
+				agentManager.removeAgent( agentKey );
+				hasAgent = false;
+				setState( ( prev ) => ( { ...prev, clientMessages: [], uiMessages: [] } ) );
+			}
 
 			// Always ensure agent exists, even for new chats with empty sessionId
 			if ( ! hasAgent ) {
@@ -562,12 +581,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				throw new Error( 'Invalid agent configuration' );
 			}
 
-			const isToolResult = options?.type === 'tool_result';
+			const isToolResults = options?.type === 'tool_results';
+			const isToolResult = options?.type === 'tool_result' || isToolResults;
 
 			// Validate before claiming the send lock — only the `finally` at
 			// the end of the send releases it, so a throw above that point
 			// would strand it and silently drop every later send.
-			if ( isToolResult && ( ! options?.toolCallId || ! options?.toolId ) ) {
+			if ( isToolResults && ! options?.toolResults?.length ) {
+				throw new Error( '`toolResults` is required when type is `tool_results`' );
+			}
+			if ( isToolResult && ! isToolResults && ( ! options?.toolCallId || ! options?.toolId ) ) {
 				throw new Error( '`toolCallId` and `toolId` are required when type is `tool_result`' );
 			}
 
@@ -641,12 +664,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						? [ ...( internalOptions?.initialUiMessages ?? prev.uiMessages ), userMessage ]
 						: ( internalOptions?.initialUiMessages ?? prev.uiMessages ),
 					isProcessing: true,
+					isReplying: false,
 					error: null,
 				} ) );
 			} else {
 				setState( ( prev ) => ( {
 					...prev,
 					isProcessing: true,
+					isReplying: false,
 					error: null,
 				} ) );
 			}
@@ -684,19 +709,29 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					messageOptions.message = internalOptions.messageOverride;
 				}
 
-				// Use `sendToolResult` for tool results (cleans up duplicate results
-				// from conversation history and sends a `ToolResultDataPart` message),
-				// otherwise use regular `sendMessageStream`.
-				const stream = isToolResult
-					? agentManager.sendToolResult(
-							agentKey,
-							options!.toolCallId!,
-							options!.toolId!,
-							{ success: true, message },
-							messageOptions,
-							options?.fileParts
-						)
-					: agentManager.sendMessageStream( agentKey, message, messageOptions );
+				// Use `sendToolResults` / `sendToolResult` for tool results (they clean
+				// up duplicate results from conversation history and send
+				// `ToolResultDataPart`s), otherwise use regular `sendMessageStream`.
+				let stream: AsyncIterable< TaskUpdate >;
+				if ( isToolResults ) {
+					stream = agentManager.sendToolResults(
+						agentKey,
+						options!.toolResults!,
+						options?.turnToolCalls,
+						messageOptions
+					);
+				} else if ( isToolResult ) {
+					stream = agentManager.sendToolResult(
+						agentKey,
+						options!.toolCallId!,
+						options!.toolId!,
+						{ success: true, message },
+						messageOptions,
+						options?.fileParts
+					);
+				} else {
+					stream = agentManager.sendMessageStream( agentKey, message, messageOptions );
+				}
 
 				for await ( const update of stream ) {
 					if ( onTaskUpdate ) {
@@ -705,6 +740,23 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						} catch ( observerError ) {
 							logger( 'Error in onTaskUpdate callback: %O', observerError );
 						}
+					}
+
+					// Reply text means the agent is talking; any other update means it's working.
+					// An empty content delta is a keep-alive and changes nothing.
+					const isContentDelta = update.delta?.deltaType === 'content';
+					const isKeepAlive = isContentDelta && ! update.delta?.content;
+					if ( trackReplyingRef.current && ! isKeepAlive ) {
+						setState( ( prev ) =>
+							prev.isReplying === isContentDelta
+								? prev
+								: {
+										...prev,
+										isReplying: isContentDelta,
+										// The progress text is stale once the reply starts.
+										...( isContentDelta && { progressMessage: null, progressPhase: null } ),
+									}
+						);
 					}
 
 					// Update progress message and phase if present
@@ -1019,6 +1071,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		suggestions: state.suggestions,
 		progressMessage: state.progressMessage,
 		progressPhase: state.progressPhase,
+		isReplying: config.trackReplying && state.isProcessing ? state.isReplying : undefined,
 
 		// UI management methods
 		registerSuggestions,

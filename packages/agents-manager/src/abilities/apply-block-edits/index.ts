@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { applyBlockEditsCallback } from './callback';
-import type { Ability } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * Never called by the model directly: the backend's block-editing tools
@@ -38,10 +38,6 @@ export const applyBlockEditsAbility: Ability = {
 				type: 'boolean',
 				description:
 					'Deprecated. This tool always returns to the agent with a success or error message.',
-			},
-			suppressAssistantMessage: {
-				type: 'boolean',
-				description: 'Whether to suppress assistant message',
 			},
 			visualCheckPending: {
 				type: 'boolean',
@@ -83,6 +79,30 @@ export const applyBlockEditsAbility: Ability = {
 						items: { type: 'string' },
 						description:
 							'Sentences about what the attached screenshots do and do not show, kept apart from the message.',
+					},
+					contrastFailures: {
+						type: 'number',
+						description:
+							'How many text blocks the edit affects measured below WCAG AA contrast against what renders behind them.',
+					},
+					contrastBackdrops: {
+						type: 'array',
+						items: {
+							type: 'object',
+							properties: {
+								clientId: { type: 'string' },
+								name: { type: 'string' },
+								ownBackground: { type: 'boolean' },
+								textClientIds: { type: 'array', items: { type: 'string' } },
+								readableText: {
+									type: 'string',
+									description:
+										'A text colour measured readable on this backdrop, as #RRGGBB; absent when none is.',
+								},
+							},
+						},
+						description:
+							'The blocks painting backgrounds that edited text fails contrast against, with the text over each, for a correction to target.',
 					},
 					outcome: {
 						type: 'string',

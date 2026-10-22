@@ -2,12 +2,14 @@
  * @jest-environment jsdom
  */
 
+import { buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import { useLaunchSitePlugin } from '../plugin-launch-site';
+import { useLaunchSiteNodeBuilder } from '../plugin-launch-site';
 import type { DomainSummary, Site } from '@automattic/api-core';
+import type { AdminBarNode } from '@automattic/omnibar';
 
 const createMockSite = ( options: Partial< Site > = {} ): Site =>
 	( {
@@ -40,21 +42,46 @@ const mockDomainsApi = ( domains: DomainSummary[] ) => {
 		.reply( 200, { domains } );
 };
 
-function LaunchHarness( { site }: { site: Site } ) {
-	const { node, panel } = useLaunchSitePlugin( { site } );
+const LAUNCH_SITE_NODE: AdminBarNode = {
+	id: 'launch-site',
+	title: '<span class="ab-icon"><svg></svg></span><span class="ab-label">Luncurkan situs</span>',
+	parent: false,
+	href: 'https://wordpress.com/start/launch-site?siteSlug=kaonashi.wordpress.com',
+	group: false,
+};
+
+const NEW_CONTENT_NODE: AdminBarNode = {
+	id: 'new-content',
+	title: 'New',
+	parent: false,
+	href: 'https://kaonashi.wordpress.com/wp-admin/post-new.php',
+	group: false,
+};
+
+function LaunchHarness( {
+	site,
+	adminBarNodes = [ LAUNCH_SITE_NODE, NEW_CONTENT_NODE ],
+}: {
+	site: Site;
+	adminBarNodes?: AdminBarNode[];
+} ) {
+	const { nodeBuilder, panel } = useLaunchSiteNodeBuilder( { site } );
+	const { sitePlugins = [] } = buildOmnibarNodesFromAdminBarNodes( adminBarNodes, {
+		'launch-site': nodeBuilder,
+	} );
 	return (
 		<>
-			{ node && (
-				<button onClick={ node.onClick } disabled={ node.disabled }>
+			{ sitePlugins.map( ( node ) => (
+				<button key={ node.id } onClick={ node.onClick } disabled={ node.disabled }>
 					{ node.title }
 				</button>
-			) }
+			) ) }
 			{ panel }
 		</>
 	);
 }
 
-describe( 'useLaunchSitePlugin', () => {
+describe( 'useLaunchSiteNodeBuilder', () => {
 	afterEach( () => nock.cleanAll() );
 
 	test( 'renders the pre-launch modal panel when a paid, custom-domain site is launched from the omnibar', async () => {
@@ -66,7 +93,7 @@ describe( 'useLaunchSitePlugin', () => {
 
 		render( <LaunchHarness site={ createMockSite() } /> );
 
-		const launchButton = await screen.findByRole( 'button', { name: 'Launch site' } );
+		const launchButton = await screen.findByRole( 'button', { name: 'Luncurkan situs' } );
 		// The button is disabled until the domains query settles, which is what
 		// tells the hook the site has a custom domain and should open the modal.
 		await waitFor( () => expect( launchButton ).toBeEnabled() );
@@ -75,5 +102,30 @@ describe( 'useLaunchSitePlugin', () => {
 		expect(
 			await screen.findByRole( 'dialog', { name: 'Launching makes your site public' } )
 		).toBeVisible();
+	} );
+
+	test( 'takes the title and position from the admin bar', async () => {
+		mockDomainsApi( [] );
+
+		render(
+			<LaunchHarness
+				site={ createMockSite() }
+				adminBarNodes={ [ NEW_CONTENT_NODE, LAUNCH_SITE_NODE ] }
+			/>
+		);
+
+		await screen.findByRole( 'button', { name: 'Luncurkan situs' } );
+		expect( screen.getAllByRole( 'button' ).map( ( button ) => button.textContent ) ).toEqual( [
+			'New',
+			'Luncurkan situs',
+		] );
+	} );
+
+	test( 'hides the admin bar node when the dashboard does not consider the site launchable', () => {
+		render( <LaunchHarness site={ createMockSite( { launch_status: 'launched' } ) } /> );
+
+		expect( screen.getAllByRole( 'button' ).map( ( button ) => button.textContent ) ).toEqual( [
+			'New',
+		] );
 	} );
 } );

@@ -12,13 +12,30 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { DEFAULT_CONFIG } from '../../../sites/dataviews/views';
-import { MilestoneFeedbackModal, useMilestoneFeedback } from '../../feedback';
+import { AgencyNotices } from '../../components/agency-notices';
+import PaymentRiskNotice, { hasPaymentRiskNotice } from '../../components/payment-risk-notice';
+import PressableUsageLimitNotice, {
+	usePressableUsageLimit,
+} from '../../components/pressable-usage-limit-notice';
+import {
+	MilestoneFeedbackModal,
+	isWithinFeedbackWindow,
+	useMilestoneFeedback,
+} from '../../feedback';
 import { OWNER_ROLE } from '../../team/constants';
 import { useLicenseActions } from './actions';
-import { DEFAULT_VIEW, getLicenseFields, getLicenseId, toFetchOptions } from './dataviews';
+import {
+	DEFAULT_VIEW,
+	getLicenseFields,
+	getLicenseId,
+	recordLicenseViewChanges,
+	toFetchOptions,
+	withLicenseColumnStyles,
+} from './dataviews';
 import { useCheckoutReturn } from './use-checkout-return';
 import { useProvisioningLicenses } from './use-provisioning-licenses';
 import type { JetpackLicense } from '@automattic/api-core';
+import type { View } from '@wordpress/dataviews';
 
 export default function MarketplacePurchases() {
 	const locale = useLocale();
@@ -27,6 +44,7 @@ export default function MarketplacePurchases() {
 	const agencyId = agency?.id ?? 0;
 	const canRevoke = hasAnyCapability( agency?.user?.capabilities ?? [], 'a4a_revoke_licenses' );
 	const isAgencyOwner = agency?.user?.role === OWNER_ROLE;
+	const pressableUsageLimit = usePressableUsageLimit( agency );
 	const currentSearchParams = marketplacePurchasesRoute.useSearch();
 	useCheckoutReturn();
 
@@ -37,16 +55,14 @@ export default function MarketplacePurchases() {
 		queryParamFilterFields: [ { field: 'status', operator: 'is' } ],
 	} );
 
+	const tableView = useMemo( () => withLicenseColumnStyles( view ), [ view ] );
+
 	const { data, isLoading, isPlaceholderData } = useQuery( {
 		...paginatedJetpackAgencyLicensesQuery( agencyId, toFetchOptions( view ) ),
 		enabled: agencyId > 0,
 		placeholderData: keepPreviousData,
 	} );
 	const { provisioningLicenseKeys, isProvisioning } = useProvisioningLicenses( agencyId );
-	const fields = useMemo(
-		() => getLicenseFields( { locale, isAgencyOwner, provisioningLicenseKeys } ),
-		[ locale, isAgencyOwner, provisioningLicenseKeys ]
-	);
 	const [ isFeedbackOpen, setIsFeedbackOpen ] = useState( false );
 	const { shouldAsk } = useMilestoneFeedback( 'purchase-completed' );
 	// Memoised: useLicenseActions keys its actions off this callback's identity.
@@ -55,6 +71,18 @@ export default function MarketplacePurchases() {
 			setIsFeedbackOpen( true );
 		}
 	}, [ shouldAsk ] );
+	const onManageSite = useCallback(
+		( license: JetpackLicense ) => {
+			if ( shouldAsk && isWithinFeedbackWindow( license.attached_at ) ) {
+				setIsFeedbackOpen( true );
+			}
+		},
+		[ shouldAsk ]
+	);
+	const fields = useMemo(
+		() => getLicenseFields( { locale, isAgencyOwner, provisioningLicenseKeys, onManageSite } ),
+		[ locale, isAgencyOwner, provisioningLicenseKeys, onManageSite ]
+	);
 	const actions = useLicenseActions( {
 		agencyId,
 		canRevoke,
@@ -62,6 +90,11 @@ export default function MarketplacePurchases() {
 		isProvisioning,
 		onLicenseAssigned,
 	} );
+
+	const onChangeView = ( nextView: View ) => {
+		recordLicenseViewChanges( view, nextView, recordTracksEvent );
+		updateView( nextView );
+	};
 
 	const paginationInfo = {
 		totalItems: data?.total_items ?? 0,
@@ -82,11 +115,29 @@ export default function MarketplacePurchases() {
 						<RouterLinkButton
 							to="/products"
 							variant="primary"
+							__next40pxDefaultSize
 							onClick={ () => recordTracksEvent( 'calypso_a4a_license_list_issue_license_click' ) }
 						>
 							{ __( 'Issue new license' ) }
 						</RouterLinkButton>
 					}
+				/>
+			}
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'payment-risk',
+							isUrgent: true,
+							isEligible: hasPaymentRiskNotice( agency ),
+							notice: <PaymentRiskNotice agency={ agency } source="purchases_licenses" />,
+						},
+						{
+							id: 'pressable-usage-limit',
+							...pressableUsageLimit,
+							notice: <PressableUsageLimitNotice agency={ agency } />,
+						},
+					] }
 				/>
 			}
 		>
@@ -96,10 +147,10 @@ export default function MarketplacePurchases() {
 					data={ data?.items ?? [] }
 					fields={ fields }
 					actions={ actions }
-					view={ view }
+					view={ tableView }
 					isLoading={ isLoading }
 					isPlaceholderData={ isPlaceholderData }
-					onChangeView={ updateView }
+					onChangeView={ onChangeView }
 					onReset={ resetView }
 					getItemId={ getLicenseId }
 					paginationInfo={ paginationInfo }

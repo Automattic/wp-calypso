@@ -5,13 +5,13 @@ import {
 	ZENDESK_CUSTOM_FIELD_WEBSITE_URL,
 	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
 } from '@automattic/zendesk-client';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
 import { useAgentsManagerContext } from '../../contexts';
 import { getSiteUrl } from '../../utils/site-url';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import ConcludedConversationFooter from '../concluded-conversation-footer';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { UIMessage as Message } from '@automattic/agenttic-client';
 import './style.scss';
 
 interface Props {
@@ -46,6 +46,7 @@ export default function ZendeskChat( {
 		zendeskSmoochIntegrationKey,
 		zendeskTicketProductFieldValue,
 	} = useAgentsManagerContext();
+
 	const siteUrl = getSiteUrl( site );
 	const conversationTicketFields = useMemo(
 		() =>
@@ -58,6 +59,7 @@ export default function ZendeskChat( {
 				: {},
 		[ siteUrl, zendeskTicketProductFieldValue ]
 	);
+
 	const {
 		agentticMessages,
 		onSubmit,
@@ -74,6 +76,18 @@ export default function ZendeskChat( {
 		smoochIntegrationKey: zendeskSmoochIntegrationKey,
 		siteId: site?.ID,
 	} );
+
+	const [ inputValue, setInputValue ] = useState( '' );
+
+	// Smooch drops the typing indicator 10 s after `startTyping`, so refresh it on
+	// every keystroke, as the Help Center does.
+	const handleInputChange = ( value: string ) => {
+		setInputValue( value );
+
+		if ( value ) {
+			onTypingStatusChange( true );
+		}
+	};
 
 	return (
 		<AgentChat
@@ -93,6 +107,8 @@ export default function ZendeskChat( {
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
 			onTypingStatusChange={ onTypingStatusChange }
+			inputValue={ inputValue }
+			onInputChange={ handleInputChange }
 			imageUpload={ imageUpload }
 			acceptedImageFileTypes={ supportedImageTypes }
 			alternativeFooter={ hasInteractionEnded ? <ConcludedConversationFooter /> : undefined }

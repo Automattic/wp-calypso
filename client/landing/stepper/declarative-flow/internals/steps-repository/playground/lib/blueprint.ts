@@ -1,3 +1,4 @@
+import { BlueprintLoadError } from './blueprint-load-error';
 import { BLUEPRINT_LIB_HOST, FALLBACK_PHP_VERSION } from './constants';
 import { ZipFilesystem, resolveRemoteBlueprint } from './resolve-remote-blueprint-standalone';
 import type {
@@ -275,6 +276,6 @@ async function resolveBlueprintFromURL( url: URL ): Promise< BlueprintBundle > {
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( error );
-		throw new Error( `Failed to resolve blueprint: ${ source }` );
+		throw new BlueprintLoadError( source, error );
 	}
 }

@@ -417,7 +417,7 @@ function useRedirectOnTransactionSuccess( {
 		// This is the first point where we know the purchase is complete, so
 		// record it before leaving the page.
 		if ( receipt && ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
-			recordCompletedPurchaseAnalytics( receipt, reduxDispatch ).then( () =>
+			recordCompletedPurchaseAnalytics( receipt ).then( () =>
 				notifyAndPerformRedirect( siteSlug, finalRedirectInstructions )
 			);
 			return;

@@ -4,15 +4,13 @@
 
 import { screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StudioReturn from '../index';
 
-// Only `recordTracksEvent` is stubbed — PageViewTracker pulls other action creators from this
-// module and needs the real ones.
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	...jest.requireActual( 'calypso/state/analytics/actions' ),
-	recordTracksEvent: jest.fn( () => ( { type: 'TEST_TRACKS_EVENT' } ) ),
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
+	recordTracksEvent: jest.fn(),
 } ) );
 
 const STUDIO_SITE_ID = 'b419d647-95e0-4b32-95fc-6ee255aa465d';

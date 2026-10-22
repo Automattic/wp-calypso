@@ -48,6 +48,14 @@ export interface Suggestion {
 	disabledReason?: string; // Tooltip on a disabled suggestion, explaining what would make it usable
 }
 
+export type ChecklistItemStatus = 'todo' | 'in-progress' | 'done' | 'skipped';
+
+// A checklist task is a suggestion with a status: clicking one submits like a
+// suggestion does. `done` and `skipped` items are settled and inert.
+export interface ChecklistItem extends Omit< Suggestion, 'options' > {
+	status?: ChecklistItemStatus; // Defaults to 'todo'
+}
+
 export interface QuestionChoice {
 	label: string;
 	message?: string;
@@ -89,6 +97,8 @@ export interface Message {
 	disabled?: boolean;
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
 	sources?: AgentSource[]; // Agent message sources/citations rendered beneath the body
+	/** Starts a turn though no user message shows before it, such as a reply to a click in a message. */
+	startsTurn?: boolean;
 }
 
 /**
@@ -134,6 +144,8 @@ export interface AgentUIProps {
 	isProcessing: boolean;
 	/** Whether the latest reply is still streaming. Defaults to `isProcessing`. */
 	isStreaming?: boolean;
+	/** Whether reply text is streaming in. When set, it drives the thinking indicator. */
+	isReplying?: boolean;
 	error?: string | null;
 	onSubmit: ( message: string, files?: File[] ) => void | Promise< void >;
 
@@ -227,7 +239,8 @@ export interface NoticeConfig {
 				href: string;
 				target?: React.HTMLAttributeAnchorTarget;
 				rel?: string;
-				onClick?: never;
+				/** Runs before the link opens, for example to record the click. */
+				onClick?: () => void;
 		  };
 	dismissible?: boolean;
 	onDismiss?: () => void;

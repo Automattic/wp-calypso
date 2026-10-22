@@ -18,8 +18,11 @@ const COLOR_STUDIO = path.join(
 	'packages/calypso-color-schemes/src/__color-studio/color-properties.css'
 );
 const CHART_STYLE = path.join( REPO_ROOT, 'client/components/chart/style.scss' );
+const SERIES_COLORS = path.join( REPO_ROOT, 'client/components/chart/_series-colors.scss' );
 const LINE_CHART = path.join( REPO_ROOT, 'client/my-sites/stats/stats-chart-tabs/index.jsx' );
 const WIDGET_CHART = path.join( REPO_ROOT, 'apps/odyssey-stats/src/widget/mini-chart.scss' );
+const WIDGET_LINE_CHART = path.join( REPO_ROOT, 'apps/odyssey-stats/src/widget/mini-chart.tsx' );
+const WIDGET_STYLE = path.join( REPO_ROOT, 'apps/odyssey-stats/src/widget/index.scss' );
 
 const MIN_RATIO = 3;
 
@@ -155,7 +158,9 @@ const parseSeriesRules = ( root: postcss.Root ) => {
 			return;
 		}
 		if ( ! values.views || ! values.visitors ) {
-			throw new Error( `Incomplete chart-series rule in chart/style.scss: ${ node.selector }` );
+			throw new Error(
+				`Incomplete chart-series rule in chart/_series-colors.scss: ${ node.selector }`
+			);
 		}
 		const pair: SeriesPair = { views: values.views, visitors: values.visitors };
 		for ( const selector of node.selectors ) {
@@ -170,12 +175,14 @@ const parseSeriesRules = ( root: postcss.Root ) => {
 		}
 	} );
 	if ( ! base ) {
-		throw new Error( 'No :root base chart-series rule found in chart/style.scss' );
+		throw new Error( 'No :root base chart-series rule found in chart/_series-colors.scss' );
 	}
 	return { base, overrides };
 };
 
-const { base: baseSeriesPair, overrides: seriesOverrides } = parseSeriesRules( chartStyleRoot );
+const { base: baseSeriesPair, overrides: seriesOverrides } = parseSeriesRules(
+	postcssScss.parse( fs.readFileSync( SERIES_COLORS, 'utf8' ) )
+);
 
 const pairForScheme = ( scheme: string ): SeriesPair =>
 	seriesOverrides.get( scheme ) ?? baseSeriesPair;
@@ -201,6 +208,11 @@ const LINE_CHART_TOKENS = [ ...lineChartSource.matchAll( /useCssVariable\(\s*'(-
 );
 const [ LINE_CHART_VIEWS_TOKEN, LINE_CHART_VISITORS_TOKEN ] = LINE_CHART_TOKENS;
 
+const widgetLineChartSource = fs.readFileSync( WIDGET_LINE_CHART, 'utf8' );
+const WIDGET_LINE_CHART_TOKENS = [
+	...widgetLineChartSource.matchAll( /useCssVariable\(\s*'(--[\w-]+)'/g ),
+].map( ( m ) => m[ 1 ] );
+
 describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
 	it( 'bar chart series read the shared --chart-series custom properties', () => {
 		expect( SERIES.viewsBar ).toBe( '--chart-series-views' );
@@ -212,7 +224,7 @@ describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
 		( scheme ) => {
 			if ( ! seriesOverrides.has( scheme ) ) {
 				throw new Error(
-					`.color-scheme.is-${ scheme } has no explicit --chart-series-views/--chart-series-visitors rule in chart/style.scss. ` +
+					`.color-scheme.is-${ scheme } has no explicit --chart-series-views/--chart-series-visitors rule in chart/_series-colors.scss. ` +
 						'A scheme cannot rely on the :root fallback: CSS substitutes var() at the element where a custom ' +
 						'property is declared, not where it is used, so --chart-series-views declared on :root resolves ' +
 						"--color-accent-40 against :root (the default scheme's ramp), not against this scheme's ramp. " +
@@ -271,6 +283,13 @@ describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
 		expect( LINE_CHART_TOKENS ).toHaveLength( 2 );
 		expect( LINE_CHART_VIEWS_TOKEN ).toBe( SERIES.viewsBar );
 		expect( LINE_CHART_VISITORS_TOKEN ).toBe( SERIES.visitorsBar );
+	} );
+
+	it( 'Odyssey widget line chart reads the shared series tokens, and loads them', () => {
+		expect( WIDGET_LINE_CHART_TOKENS ).toEqual( [ SERIES.viewsBar, SERIES.visitorsBar ] );
+		expect( fs.readFileSync( WIDGET_STYLE, 'utf8' ) ).toMatch(
+			/@import "calypso\/components\/chart\/series-colors";/
+		);
 	} );
 
 	it( 'Odyssey widget mini-chart does not override the shared series colours', () => {

@@ -5,10 +5,10 @@ This package also includes custom ESLint rules for the [WordPress.com Calypso pr
 
 ## Installation
 
-Install [ESLint](http://eslint.org) and `eslint-plugin-wpcalypso`
+Install [ESLint](http://eslint.org) 10.13 or later within 10.x, `eslint-plugin-wpcalypso` and the plugins its presets use:
 
 ```
-$ yarn add --dev eslint eslint-plugin-wpcalypso
+$ yarn add --dev eslint eslint-plugin-wpcalypso eslint-plugin-jsdoc eslint-plugin-inclusive-language
 ```
 
 If you're planning to use the React superset of rules, you should also install `eslint-plugin-react` and `eslint-plugin-react-hooks`:
@@ -17,27 +17,39 @@ If you're planning to use the React superset of rules, you should also install `
 yarn add --dev eslint-plugin-react eslint-plugin-react-hooks
 ```
 
+`eslint-plugin-react` doesn't list ESLint 10 as a peer yet. Yarn only warns about it; npm refuses to install unless your `package.json` overrides that peer:
+
+```json
+{
+	"overrides": {
+		"eslint-plugin-react": { "eslint": "$eslint" }
+	}
+}
+```
+
 ## Usage
 
 ### Recommended rules
 
-Simply extend the configuration from your project's `.eslintrc` configuration file:
+In `eslint.config.mjs`, apply `recommended` (or, for React projects, `react`) to your JavaScript files, using `files` and `extends` as shown below. Always set `files`: the presets don't pick files themselves, so without it they would also run on JSON or Markdown files.
 
-```json
-{
-	"extends": [ "plugin:wpcalypso/recommended" ]
-}
+The presets use ESLint's own parser, with JSX enabled. If your code has Flow, TypeScript or proposal syntax, set `languageOptions.parser` in a config entry after them, for example to `@typescript-eslint/parser`, or to `@babel/eslint-parser` 8 with `@babel/core` 8 (version 7 doesn't run on ESLint 10). They register a wrapped `eslint-plugin-inclusive-language`, so don't register that plugin yourself.
+
+```js
+import { defineConfig } from 'eslint/config';
+import wpcalypso from 'eslint-plugin-wpcalypso';
+
+export default defineConfig( [
+	{
+		files: [ '**/*.{js,jsx}' ],
+		extends: [ wpcalypso.configs.react ], // or wpcalypso.configs.recommended
+	},
+] );
 ```
 
-Or, if your project uses React and you want to opt in to additional React-specific rules, extend the React superset:
+For the eslintrc presets (`plugin:wpcalypso/recommended`), use version 8.
 
-```json
-{
-	"extends": [ "plugin:wpcalypso/react" ]
-}
-```
-
-Any of the above options will:
+Either preset will:
 
 - Enable the plugin `wpcalypso`
 - Enable the recommended set of rules to match WordPress.com's "Calypso" [JavaScript Coding Guidelines][2]
@@ -45,24 +57,22 @@ Any of the above options will:
 
 ### Custom rules
 
-If you are not interesetd in the recommended set of rules but only on some of the custom rules, you can enable them individually.
+If you are not interested in the recommended set of rules but only in some of the custom rules, register the plugin and enable them individually:
 
-First, add `wpcalypso` to the plugins section of your `.eslintrc` configuration file:
+```js
+import { defineConfig } from 'eslint/config';
+import wpcalypso from 'eslint-plugin-wpcalypso';
 
-```json
-{
-	"plugins": [ "wpcalypso" ]
-}
-```
-
-Then configure the rules you want to use under the rules section.
-
-```json
-{
-	"rules": {
-		"wpcalypso/rule-name": "error"
-	}
-}
+export default defineConfig( [
+	{
+		files: [ '**/*.{js,jsx}' ],
+		plugins: { wpcalypso },
+		languageOptions: { parserOptions: { ecmaFeatures: { jsx: true } } },
+		rules: {
+			'wpcalypso/rule-name': 'error',
+		},
+	},
+] );
 ```
 
 ## Supported Rules

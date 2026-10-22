@@ -10,13 +10,13 @@ import { Card, CardBody } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import { isDashboardPath } from '../../utils/link';
+import NewTabLabel from '../components/new-tab-label';
 import {
 	FEATURED_EVENT,
 	getAiMcpAnnouncement,
 	getPressableExpansionOfferEvent,
 	getPressableIntroOfferEvent,
 } from './events';
-import NewTabLabel from './new-tab-label';
 import type { FeaturedEvent } from './events';
 import type { RecordTracksEvent } from '../tiers/types';
 

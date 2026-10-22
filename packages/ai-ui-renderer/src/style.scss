@@ -1,0 +1,268 @@
+@import '@wordpress/base-styles/colors';
+
+// A2UI's mode classes, on the surface or an ancestor. Otherwise the surface follows the page.
+:where( .a2ui-dark ) {
+	color-scheme: dark;
+}
+
+:where( .a2ui-light ) {
+	color-scheme: light;
+}
+
+// A2UI's theme tokens (https://a2ui.org/guides/theming/) that WordPress components read, and their
+// defaults. Keep `THEME_PROPERTIES` in `utils/theme.ts` in sync.
+$wp-components-colors: (
+	( accent, primary, var( --wp-admin-theme-color, #3858e9 ) ),
+	( accent-darker-10, primary-hover, var( --wp-admin-theme-color-darker-10, #2145e6 ) ),
+	( accent-darker-20, primary-dark, var( --wp-admin-theme-color-darker-20, #183ad6 ) ),
+	( accent-inverted, on-primary, var( --wpds-color-foreground-interactive-brand-strong, #fff ) ),
+	(
+		background,
+		input,
+		light-dark( var( --wpds-color-background-surface-neutral-strong, $white ), $gray-800 )
+	),
+	(
+		foreground,
+		on-input,
+		light-dark( var( --wpds-color-foreground-content-neutral, $gray-900 ), $gray-100 )
+	)
+);
+
+// An unset token keeps the host's WordPress components color, or else the default. A custom
+// property can't read the value it inherits, so the root resolves it for its children.
+.ai-ui-renderer,
+.ai-ui-renderer__modal {
+	@each $name, $token, $default in $wp-components-colors {
+		--ai-ui-renderer-host-#{$name}: var( --wp-components-color-#{$name}, #{$default} );
+	}
+
+	> * {
+		@each $name, $token, $default in $wp-components-colors {
+			--wp-components-color-#{$name}: var(
+				--a2ui-color-#{$token},
+				var( --ai-ui-renderer-host-#{$name} )
+			);
+		}
+
+		// One accent can't fill a button under white text and also be readable text on a dark
+		// surface, so accent-colored text gets a lighter shade in dark mode.
+		--ai-ui-renderer-accent-text: light-dark(
+			var( --wp-components-color-accent ),
+			color-mix( in srgb, var( --wp-components-color-accent ) 55%, #{$white} )
+		);
+		--ai-ui-renderer-accent-text-hover: light-dark(
+			var( --wp-components-color-accent-darker-20 ),
+			color-mix( in srgb, var( --wp-components-color-accent ) 40%, #{$white} )
+		);
+		--ai-ui-renderer-accent-fill: light-dark(
+			var( --wp-components-color-accent ),
+			color-mix( in srgb, var( --wp-components-color-accent ) 80%, #{$white} )
+		);
+	}
+
+	// Newer WordPress components read the design system's tokens instead. They're set on each
+	// descendant, so the root's defaults still read the host's, and each element's follow its own
+	// colors, such as a checked control's.
+	> * * {
+		--wpds-color-foreground-content-neutral: var( --wp-components-color-foreground );
+		--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
+		--wpds-color-foreground-interactive-neutral-active: var( --wp-components-color-foreground );
+		--wpds-color-background-surface-neutral-strong: var( --wp-components-color-background );
+		--wpds-color-background-interactive-neutral-active: var( --wp-components-color-background );
+		--wpds-color-background-interactive-brand-strong: var( --wp-components-color-accent );
+		--wpds-color-foreground-interactive-brand-strong: var( --wp-components-color-accent-inverted );
+		--wpds-color-foreground-interactive-brand: var( --ai-ui-renderer-accent-text );
+		--wpds-color-foreground-interactive-brand-active: var( --ai-ui-renderer-accent-text-hover );
+		--wpds-color-stroke-focus: var( --wp-components-color-accent );
+	}
+}
+
+// WordPress's divider color, mirrored for dark mode.
+$border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( $white, 0.1 ) ) );
+
+.ai-ui-renderer .ai-ui-renderer__card,
+.ai-ui-renderer__modal .components-modal__frame {
+	background-color: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) );
+	color: var( --a2ui-color-on-surface, light-dark( $gray-900, $gray-100 ) );
+}
+
+// WordPress components color the modal's headings.
+.ai-ui-renderer__modal .components-modal__frame :is( h1, h2, h3 ) {
+	color: inherit;
+}
+
+.ai-ui-renderer {
+	border: 0;
+	padding: 0;
+	margin: 0;
+	min-width: 0;
+
+	.ai-ui-renderer__audio-player {
+		width: 100%;
+	}
+
+	.ai-ui-renderer__choice-picker {
+		border: 0;
+		padding: 0;
+		margin: 0;
+	}
+
+	.ai-ui-renderer__date-time-input--error .components-base-control__help {
+		color: $alert-red;
+	}
+
+	.ai-ui-renderer__card {
+		box-shadow: 0 0 0 1px $border-color;
+	}
+
+	.ai-ui-renderer__divider {
+		align-self: stretch;
+		border: 0 solid $border-color;
+		border-top-width: 1px;
+
+		&[aria-orientation='vertical'] {
+			border-top-width: 0;
+			border-left-width: 1px;
+		}
+	}
+
+	.ai-ui-renderer__image {
+		display: block;
+		max-width: 100%;
+
+		&--icon {
+			width: 24px;
+			height: 24px;
+		}
+
+		&--avatar {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+		}
+
+		&--small-feature {
+			width: 100px;
+		}
+
+		&--medium-feature {
+			width: 240px;
+		}
+
+		&--large-feature,
+		&--header {
+			width: 400px;
+		}
+
+		&--header {
+			height: 200px;
+		}
+
+		@each $fit in ( contain, cover, fill, none, scale-down ) {
+			&--fit-#{$fit} {
+				object-fit: $fit;
+			}
+		}
+	}
+
+	.ai-ui-renderer__row,
+	.ai-ui-renderer__list {
+		display: flex;
+		gap: 8px;
+
+		@each $align, $value in ( start: flex-start, end: flex-end, center: center, stretch: stretch ) {
+			&--align-#{$align} {
+				align-items: $value;
+			}
+		}
+	}
+
+	.ai-ui-renderer__list {
+		flex-direction: column;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		overflow: auto;
+
+		&--horizontal {
+			flex-direction: row;
+		}
+	}
+
+	.ai-ui-renderer__list-item {
+		min-width: 0;
+	}
+
+	.ai-ui-renderer__row {
+		flex-wrap: wrap;
+
+		@each $justify,
+			$value
+				in (
+					start: flex-start,
+					end: flex-end,
+					center: center,
+					space-around: space-around,
+					space-between: space-between,
+					space-evenly: space-evenly,
+					stretch: stretch
+				)
+		{
+			&--justify-#{$justify} {
+				justify-content: $value;
+			}
+		}
+	}
+
+	.ai-ui-renderer__video {
+		max-width: 100%;
+		height: auto;
+		align-self: flex-start;
+	}
+
+	// Other chat widgets can load older Agenttic typography rules on the same page.
+	.components-checkbox-control__label,
+	.components-radio-control__label {
+		font-size: 13px;
+		line-height: 20px;
+	}
+
+	.components-checkbox-control .components-h-stack {
+		align-items: center;
+	}
+
+	// These WordPress controls hard-code light colors instead of reading the theme's.
+	.components-checkbox-control__input[type='checkbox']:not( :checked, :indeterminate, :disabled ) {
+		background: var( --wp-components-color-background );
+	}
+
+	// Disabled controls mix the text into the input color, matching WordPress's light grays.
+	.components-checkbox-control__input[type='checkbox']:is( :disabled, [aria-disabled='true'] ),
+	.components-radio-control__input[type='radio']:disabled {
+		background: color-mix(
+			in srgb,
+			var( --wp-components-color-background ) 94%,
+			var( --wp-components-color-foreground )
+		);
+		border-color: color-mix(
+			in srgb,
+			var( --wp-components-color-background ) 85%,
+			var( --wp-components-color-foreground )
+		);
+	}
+
+	.components-radio-control__input[type='radio']:not( :checked, :disabled ) {
+		border-color: var( --wp-components-color-foreground );
+	}
+
+	.components-button:is( .is-secondary, .is-tertiary, .is-link ):not( .is-destructive ) {
+		--wp-components-color-accent: var( --ai-ui-renderer-accent-text );
+		--wp-components-color-accent-darker-20: var( --ai-ui-renderer-accent-text-hover );
+	}
+
+	// A checked control's fill sits on the surface, so it gets a lighter accent in dark mode.
+	.components-checkbox-control__input,
+	.components-radio-control__input {
+		--wp-components-color-accent: var( --ai-ui-renderer-accent-fill );
+	}
+}

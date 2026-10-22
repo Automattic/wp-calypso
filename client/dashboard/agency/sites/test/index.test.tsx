@@ -287,9 +287,7 @@ describe( '<AgencySites>', () => {
 		await userEvent.click( await addNewSiteButton() );
 		expect( screen.getByRole( 'button', { name: /^Connect a site/ } ) ).toBeVisible();
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_agency_sites_add_new_site_clicked'
-		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_sites_add_new_site_clicked' );
 	} );
 
 	test( 'marks a development site in the list', async () => {

@@ -9,7 +9,6 @@ import { CategoryGalleryClient } from 'calypso/my-sites/patterns/components/cate
 import { PatternsCategoryNotFound } from 'calypso/my-sites/patterns/components/category-not-found';
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
-import { ReadymadeTemplateDetails } from 'calypso/my-sites/patterns/components/readymade-template-details';
 import { PatternsContext } from 'calypso/my-sites/patterns/context';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { extractPatternIdFromHash } from 'calypso/my-sites/patterns/lib/extract-pattern-id-from-hash';
@@ -39,7 +38,6 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 				value={ {
 					category: context.params.category ?? '',
 					isGridView: !! context.query.grid,
-					section: context.hashstring,
 					patternPermalinkId: extractPatternIdFromHash(),
 					patternTypeFilter:
 						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,
@@ -84,18 +82,6 @@ function checkCategorySlug( context: RouterContext, next: RouterNext ) {
 		} );
 }
 
-function renderReadymadeTemplateDetails( context: RouterContext, next: RouterNext ) {
-	if ( ! context.primary ) {
-		context.primary = (
-			<PatternsWrapper hideGetStartedCta>
-				<ReadymadeTemplateDetails slug={ context.params.slug } />
-			</PatternsWrapper>
-		);
-	}
-
-	next();
-}
-
 export default function ( router: typeof clientRouter ) {
 	const langParam = getLanguageRouteParam();
 	const middleware = [ checkCategorySlug, renderPatterns, makeLayout, clientRender ];
@@ -114,11 +100,4 @@ export default function ( router: typeof clientRouter ) {
 
 	router( '/patterns/:category?', ...middleware );
 	router( '/patterns/:type(layouts)/:category?', ...middleware );
-
-	router(
-		'/patterns/:type(site-layouts)/:slug',
-		renderReadymadeTemplateDetails,
-		makeLayout,
-		clientRender
-	);
 }

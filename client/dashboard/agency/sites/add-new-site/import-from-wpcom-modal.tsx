@@ -204,7 +204,7 @@ export default function ImportFromWPCOMModal( { onClose, preview }: ImportFromWP
 			return;
 		}
 
-		recordTracksEvent( 'calypso_dashboard_agency_sites_import_wpcom_sites_click', {
+		recordTracksEvent( 'calypso_a4a_sites_import_wpcom_sites_click', {
 			site_count: blogIds.length,
 		} );
 
@@ -287,6 +287,7 @@ export default function ImportFromWPCOMModal( { onClose, preview }: ImportFromWP
 							<DataViewsEmptyStateLayout
 								title={ __( 'No sites to add' ) }
 								description={ __( 'Every site you can add is already managed by your agency.' ) }
+								isBorderless
 							/>
 						}
 					>

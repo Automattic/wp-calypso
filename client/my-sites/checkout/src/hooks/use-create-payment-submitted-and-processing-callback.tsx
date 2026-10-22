@@ -18,20 +18,18 @@ import { clearPurchases } from 'calypso/state/purchases/actions';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
-import {
-	isJetpackSite,
-	getJetpackCheckoutRedirectUrl,
-	isBackupPluginActive,
-	isSearchPluginActive,
-} from 'calypso/state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isExternalA4ACheckout } from '../lib/is-external-a4a-checkout';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import { recordCompletedPurchaseAnalytics } from '../lib/record-completed-purchase-analytics';
+import {
+	getJetpackCheckoutRedirectUrl,
+	isJetpackNotAtomicSite,
+	useCheckoutSite,
+} from './use-checkout-site';
 import type {
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
@@ -88,21 +86,11 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
-	const selectedSiteData = useSelector( getSelectedSite );
-	const adminUrl = selectedSiteData?.options?.admin_url || wpAdminUrl;
-	const isJetpackNotAtomic =
-		useSelector(
-			( state ) =>
-				siteId &&
-				( isJetpackSite( state, siteId ) ||
-					isBackupPluginActive( state, siteId ) ||
-					isSearchPluginActive( state, siteId ) ) &&
-				! isAtomicSite( state, siteId )
-		) || false;
+	const { data: site } = useCheckoutSite( siteId );
+	const adminUrl = site?.options?.admin_url || wpAdminUrl;
+	const isJetpackNotAtomic = isJetpackNotAtomicSite( site );
 	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
-	const adminPageRedirect = useSelector( ( state ) =>
-		getJetpackCheckoutRedirectUrl( state, siteId )
-	);
+	const adminPageRedirect = getJetpackCheckoutRedirectUrl( site );
 
 	const domains = useSiteDomains( siteId ?? undefined );
 	const queryClient = useQueryClient();
@@ -196,7 +184,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 				if ( receiptId ) {
 					queryClient
 						.fetchQuery( receiptQuery( receiptId, { includeFailedPurchases: true } ) )
-						.then( ( receipt ) => recordCompletedPurchaseAnalytics( receipt, reduxDispatch ) )
+						.then( ( receipt ) => recordCompletedPurchaseAnalytics( receipt ) )
 						.catch( ( error ) => debug( 'could not fetch receipt for analytics', error ) );
 				}
 				return;

@@ -1,9 +1,10 @@
-import { __ } from '@wordpress/i18n';
-import { useEffect, useRef, useState } from 'react';
-import { wpcomLink } from '../../utils/link';
+import { parseAdminBarTitle } from '@automattic/omnibar';
+import clsx from 'clsx';
+import { useCallback, useState } from 'react';
 import { omnibarEvents, useOmnibarEvent } from './events';
+import { NOTIFICATIONS_ICON_CLASS } from './notifications-icon-class';
 import type { User } from '@automattic/api-core';
-import type { OmnibarNode } from '@automattic/omnibar';
+import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-notifications.scss';
 
@@ -18,10 +19,11 @@ function BellIcon( { hasUnread }: { hasUnread: boolean } ) {
 	);
 }
 
-export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode {
+export function useNotificationsNodeBuilder( { user }: { user?: User } ) {
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState(
 		!! user?.has_unseen_notes
 	);
+	const [ subscriberAlertPulse, setSubscriberAlertPulse ] = useState( 0 );
 
 	useOmnibarEvent( 'notificationsUnseenCount', ( count ) =>
 		setHasUnseenNotifications( count > 0 )
@@ -33,27 +35,37 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 		}
 	} );
 
-	const bellRef = useRef< HTMLSpanElement >( null );
+	useOmnibarEvent( 'notificationsSubscriberReceived', () =>
+		setSubscriberAlertPulse( ( pulse ) => pulse + 1 )
+	);
 
-	// Re-runs every commit so the anchor stays correct if the bell button is replaced.
-	useEffect( () => {
-		omnibarEvents.notificationsAnchor.emit( bellRef.current?.closest( 'a' ) ?? null );
-	} );
+	return useCallback(
+		( adminBarNode: AdminBarNode ): Partial< OmnibarNode > => {
+			const { text, tooltip } = parseAdminBarTitle( adminBarNode );
 
-	return {
-		id: 'notifications',
-		className: 'omnibar__notifications',
-		label: __( 'Notifications' ),
-		icon: (
-			<span ref={ bellRef } className="omnibar__notifications-icon">
-				<BellIcon hasUnread={ hasUnseenNotifications } />
-			</span>
-		),
-		href: wpcomLink( '/notifications' ),
-		onClick: ( event ) => {
-			event.preventDefault();
-			event.stopPropagation();
-			omnibarEvents.notifications.emit();
+			return {
+				title: undefined,
+				className: 'omnibar__notifications',
+				label: tooltip ?? text,
+				tooltip,
+				icon: (
+					<span
+						key={ subscriberAlertPulse }
+						className={ clsx(
+							NOTIFICATIONS_ICON_CLASS,
+							subscriberAlertPulse > 0 && 'omnibar__notifications-icon--subscriber-pulse'
+						) }
+					>
+						<BellIcon hasUnread={ hasUnseenNotifications } />
+					</span>
+				),
+				onClick: ( event ) => {
+					event.preventDefault();
+					event.stopPropagation();
+					omnibarEvents.notifications.emit();
+				},
+			};
 		},
-	};
+		[ hasUnseenNotifications, subscriberAlertPulse ]
+	);
 }

@@ -22,6 +22,7 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../compo
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
+import { AgencyNotices } from '../components/agency-notices';
 import DesignPreviewControls, { useDesignPreview } from '../design-preview';
 import useSiteSimulation from '../design-preview/use-site-simulation';
 import { DevSiteConfigurationModal } from '../marketplace/purchases/site-configuration-modal';
@@ -176,7 +177,7 @@ function AgencySitesContent() {
 
 	const handleSiteClick = useCallback(
 		( site: AgencySite ) =>
-			recordTracksEvent( 'calypso_dashboard_sites_item_click', { site_id: site.blog_id } ),
+			recordTracksEvent( 'calypso_a4a_sites_item_click', { site_id: site.blog_id } ),
 		[ recordTracksEvent ]
 	);
 
@@ -214,7 +215,7 @@ function AgencySitesContent() {
 								<Button
 									variant="primary"
 									onClick={ () => {
-										recordTracksEvent( 'calypso_dashboard_agency_sites_add_new_site_clicked' );
+										recordTracksEvent( 'calypso_a4a_sites_add_new_site_clicked' );
 										setWizardOpen( true );
 									} }
 									__next40pxDefaultSize
@@ -226,7 +227,14 @@ function AgencySitesContent() {
 					/>
 				)
 			}
-			notices={ <>{ ! preview.sitesActive && <ProvisioningSiteNotices /> }</> }
+			notices={
+				! preview.sitesActive && (
+					<>
+						<ProvisioningSiteNotices />
+						<AgencyNotices />
+					</>
+				)
+			}
 		>
 			<DesignPreviewControls surface="sites" />
 			{ activeModal === 'dev-site-configurations' && (
@@ -278,11 +286,13 @@ function AgencySitesContent() {
 							empty={
 								view.search ? (
 									<DataViewsEmptyStateLayout
+										isBorderless
 										title={ __( 'No sites match your search' ) }
 										description={ __( 'Try a different search term.' ) }
 									/>
 								) : (
 									<DataViewsEmptyStateLayout
+										isBorderless
 										title={ __( 'No sites' ) }
 										description={ __( 'No agency-managed sites were found.' ) }
 									/>

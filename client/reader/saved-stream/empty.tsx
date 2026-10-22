@@ -1,7 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
+import { withReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 
-export default function SavedStreamEmpty() {
+function SavedStreamEmpty() {
 	const translate = useTranslate();
 
 	return (
@@ -16,3 +17,5 @@ export default function SavedStreamEmpty() {
 		/>
 	);
 }
+
+export default withReaderPerformanceTrackerStop( SavedStreamEmpty );

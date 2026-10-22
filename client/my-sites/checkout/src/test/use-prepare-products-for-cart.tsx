@@ -11,22 +11,26 @@ function renderPrepareProducts( {
 	productAliasFromUrl,
 	purchaseId,
 	sitelessCheckoutType,
+	source,
+	aiSessionId,
 }: {
 	productAliasFromUrl?: string;
 	purchaseId?: string;
 	sitelessCheckoutType: SitelessCheckoutType;
+	source?: string;
+	aiSessionId?: string;
 } ) {
 	return renderHook( () =>
 		usePrepareProductsForCart( {
 			productAliasFromUrl,
 			purchaseId,
-			usesJetpackProducts: false,
-			isPrivate: false,
 			siteSlug: undefined,
 			sitelessCheckoutType,
 			// The siteless route controller always sets this, so the 'wpcom' branch
 			// has to beat the localStorage path.
 			isNoSiteCart: true,
+			source,
+			aiSessionId,
 		} )
 	);
 }
@@ -184,5 +188,82 @@ describe( 'usePrepareProductsForCart for Professional Email', () => {
 		} );
 
 		expect( result.current.productsForCart[ 0 ].extra.new_quantity ).toBeUndefined();
+	} );
+} );
+
+describe( 'usePrepareProductsForCart purchase attribution', () => {
+	it( 'records the checkout link source and AI session on the cart item', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'personal-bundle',
+			sitelessCheckoutType: 'wpcom',
+			source: 'wpcom-mcp-checkout-url',
+			aiSessionId: 'a755f9e8-8e0a-45be-81bc-524aaf8e2703',
+		} );
+
+		expect( result.current.productsForCart[ 0 ].extra ).toMatchObject( {
+			source: 'wpcom-mcp-checkout-url',
+			ai_session_id: 'a755f9e8-8e0a-45be-81bc-524aaf8e2703',
+		} );
+	} );
+
+	it( 'omits the AI session when the link has none', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'personal-bundle',
+			sitelessCheckoutType: 'wpcom',
+			source: 'wpcom-mcp-checkout-url',
+		} );
+
+		expect( result.current.productsForCart[ 0 ].extra.ai_session_id ).toBeUndefined();
+	} );
+} );
+
+describe( 'usePrepareProductsForCart for invalid product aliases', () => {
+	it.each( [
+		':product',
+		':',
+		'personal-bundle,:product',
+		'personal-bundle,',
+		',personal-bundle',
+	] )(
+		'reports a preparation error for %s without creating any cart products',
+		( productAliasFromUrl ) => {
+			const { result } = renderPrepareProducts( {
+				productAliasFromUrl,
+				sitelessCheckoutType: 'jetpack',
+			} );
+
+			expect( result.current.isLoading ).toBe( false );
+			expect( result.current.error ).toBe(
+				`I tried and failed to create products matching the identifier '${ productAliasFromUrl }'`
+			);
+			expect( result.current.productsForCart ).toEqual( [] );
+		}
+	);
+
+	it( 'leaves unknown nonempty product slugs for the cart API to validate', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'foobar',
+			sitelessCheckoutType: 'jetpack',
+		} );
+
+		expect( result.current.error ).toBeNull();
+		expect( result.current.productsForCart[ 0 ].product_slug ).toBe( 'foobar' );
+	} );
+
+	it( 'preserves aliases, metadata, quantities, and multiple products', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'domain-mapping:example.com,theme:ovation:-q-2',
+			sitelessCheckoutType: 'wpcom',
+		} );
+
+		expect( result.current.error ).toBeNull();
+		expect( result.current.productsForCart ).toEqual( [
+			expect.objectContaining( {
+				product_slug: 'domain_map',
+				meta: 'example.com',
+				quantity: null,
+			} ),
+			expect.objectContaining( { product_slug: 'premium_theme', meta: 'ovation', quantity: 2 } ),
+		] );
 	} );
 } );

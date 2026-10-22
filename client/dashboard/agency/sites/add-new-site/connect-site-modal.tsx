@@ -28,7 +28,7 @@ function getConnection( action: ConnectSiteAction ): Connection {
 				'This lightweight plugin securely connects your clients’ sites to the Automattic for Agencies Sites Dashboard, enabling you to manage them from one place and to be notified immediately if any site is experiencing security or performance issues.'
 			),
 			submitLabel: __( 'Connect' ),
-			trackEventName: 'calypso_dashboard_agency_sites_add_site_via_a4a_plugin_click',
+			trackEventName: 'calypso_a4a_sites_add_site_via_a4a_plugin_click',
 			getUrl: getA4APluginInstallUrl,
 		};
 	}
@@ -39,7 +39,7 @@ function getConnection( action: ConnectSiteAction ): Connection {
 			'The Jetpack plugin lets you easily connect your clients’ sites to Automattic for Agencies. We’ll remotely install Jetpack for you on the site, and it will appear here.'
 		),
 		submitLabel: __( 'Install Jetpack' ),
-		trackEventName: 'calypso_dashboard_agency_sites_add_site_via_jetpack_plugin_click',
+		trackEventName: 'calypso_a4a_sites_add_site_via_jetpack_plugin_click',
 		getUrl: getJetpackConnectUrl,
 	};
 }

@@ -15,6 +15,7 @@ export const accountRecoveryQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'account-recovery' ],
 		queryFn: fetchAccountRecovery,
+		meta: { persist: false },
 	} );
 
 export const updateAccountRecoveryEmailMutation = () =>

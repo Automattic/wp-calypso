@@ -44,8 +44,13 @@ const searchableFields = [
 export default function PluginsList() {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const isSmallViewport = useViewportMatch( 'xlarge', '<' );
-	const { data: sitesPlugins, isLoading: sitesPluginsLoading } = useQuery( pluginsQuery() );
-	const { sitesById } = useSitesById();
+	const {
+		data: sitesPlugins,
+		isLoading: pluginsQueryLoading,
+		isError: pluginsQueryError,
+	} = useQuery( pluginsQuery() );
+	const { sitesById, isLoadingSites } = useSitesById();
+	const sitesPluginsLoading = pluginsQueryLoading || isLoadingSites;
 	const { pluginId: pluginSlug } = useParams( { strict: false } );
 	const fields = useMemo( () => {
 		return searchableFields.map( ( searchableField ) => ( {
@@ -150,11 +155,12 @@ export default function PluginsList() {
 					<PluginSites selectedPluginSlug={ selectedPluginSlug } />
 				) : (
 					<PluginSwitcher
-						pluginsWithIcon={ pluginsWithIcon }
+						pluginsWithIcon={ sitesPluginsLoading ? undefined : pluginsWithIcon }
 						searchableFields={ searchableFields }
 						view={ view }
 						onChangeView={ setView }
 						paginationInfo={ paginationInfo }
+						isError={ pluginsQueryError }
 					/>
 				) }
 				{ ! sitesPluginsLoading && <PerformanceTrackerStop /> }
@@ -174,12 +180,13 @@ export default function PluginsList() {
 		>
 			<Grid gap="md" templateColumns="392px 1fr">
 				<PluginSwitcher
-					pluginsWithIcon={ pluginsWithIcon }
+					pluginsWithIcon={ sitesPluginsLoading ? undefined : pluginsWithIcon }
 					searchableFields={ searchableFields }
 					selectedPluginSlug={ selectedPluginSlug }
 					view={ view }
 					onChangeView={ setView }
 					paginationInfo={ paginationInfo }
+					isError={ pluginsQueryError }
 				/>
 
 				<PluginSites selectedPluginSlug={ selectedPluginSlug } />

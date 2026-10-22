@@ -876,6 +876,11 @@ export type DomainBundleRole = 'primary' | 'companion';
 export interface ResponseCartProductExtra {
 	context?: string;
 	source?: string;
+	/**
+	 * The AI agent session that generated the checkout link. Recorded on the
+	 * purchase event so a sale joins exactly to the agent activity behind it.
+	 */
+	ai_session_id?: string;
 	premium?: boolean;
 	new_quantity?: number;
 	domain_to_bundle?: string;
@@ -969,6 +974,13 @@ export interface ResponseCartProductExtra {
 	 * Sent with checkout cart items so WPCOM can provision the add-on for the selected Pressable site.
 	 */
 	a4a_pressable_site_domain?: string;
+
+	/**
+	 * A4A Pressable Titan inbox add-on identity, set by the WordPress.com
+	 * backend when it prepares the cart. Checkout uses them for display only.
+	 */
+	titan_domain?: string;
+	titan_plan?: string;
 
 	/**
 	 * Marketplace properties

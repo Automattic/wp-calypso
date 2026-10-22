@@ -59,20 +59,6 @@ const baseProps: DocumentProps = {
 };
 
 describe( 'Document LoadingPlaceholder', () => {
-	it( 'hides the WordPress logo on CIAB dashboard', () => {
-		const html = renderToStaticMarkup(
-			<Document { ...baseProps } dashboard="ciab" sectionName="stepper" />
-		);
-
-		expect( html ).not.toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
-	} );
-
-	it( 'shows the WordPress logo on non-CIAB dashboard', () => {
-		const html = renderToStaticMarkup( <Document { ...baseProps } sectionName="stepper" /> );
-
-		expect( html ).toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
-	} );
-
 	it( 'hides the WordPress boot logo on the WooCommerce QR login auth-check route', () => {
 		const html = renderToStaticMarkup(
 			<Document
@@ -86,6 +72,20 @@ describe( 'Document LoadingPlaceholder', () => {
 
 		expect( html ).not.toContain( 'wpcom-site__logo' );
 		expect( html ).toContain( 'wpcom-loading__boot' );
+	} );
+
+	it( 'shows the Woo logo in the stepper loader on the Playground step with the WooCommerce intent', () => {
+		const html = renderToStaticMarkup( <Document { ...baseProps } isPlaygroundWoo /> );
+
+		expect( html ).toContain( 'woo-top-bar-logo' );
+		expect( html ).not.toContain( 'step-container-v2__top-bar-wordpress-logo' );
+	} );
+
+	it( 'shows the WordPress.com logo in the stepper loader on the Playground step without the WooCommerce intent', () => {
+		const html = renderToStaticMarkup( <Document { ...baseProps } isPlaygroundWoo={ false } /> );
+
+		expect( html ).not.toContain( 'woo-top-bar-logo' );
+		expect( html ).toContain( 'step-container-v2__top-bar-wordpress-logo' );
 	} );
 } );
 

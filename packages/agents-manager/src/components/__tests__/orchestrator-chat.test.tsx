@@ -3,7 +3,7 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import type { TaskUpdate } from '@automattic/agenttic-client';
+import type { DataPart, TaskState, TaskUpdate } from '@automattic/agenttic-client';
 import type { Suggestion } from '@automattic/agenttic-ui';
 import type { ComponentProps } from 'react';
 
@@ -11,6 +11,11 @@ const mockUseAgentChat = jest.fn();
 const mockUpdateSessionId = jest.fn();
 let mockManagerHasAgent = true;
 let mockManagerTurnInFlight = false;
+let mockConversationHistory: Array< {
+	role: string;
+	messageId?: string;
+	parts: Array< Record< string, unknown > >;
+} > = [];
 let mockAgentChatConfig: { onTaskUpdate?: ( update: TaskUpdate ) => Promise< void > } | undefined;
 let mockConversationConfig:
 	| {
@@ -23,6 +28,12 @@ let mockConversationConfig:
 				} >,
 				sessionId: string
 			) => void;
+			waitForReply?: boolean;
+			onRetry?: ( question: string ) => void;
+			onResume?: (
+				toolResults: Array< Record< string, unknown > >,
+				turnToolCalls: Array< Record< string, unknown > >
+			) => Promise< boolean >;
 	  }
 	| undefined;
 const mockUseRegenerateAction = jest.fn();
@@ -51,6 +62,7 @@ const mockSetCheckpointActionReverted = jest.fn(
 	}
 );
 let mockSelectedBlockType: string | undefined;
+let mockSelectedBlockClientId: string | undefined;
 let mockBlockEditorStoreThrows = false;
 // Simulates Agenttic's floating truncation in the `AgentChat` mock.
 let mockRenderedSuggestionsLimit: number | undefined;
@@ -79,6 +91,7 @@ const mockSelectDataStore = ( storeName: string ) => {
 		}
 		return {
 			getSelectedBlock: () => ( mockSelectedBlockType ? { name: mockSelectedBlockType } : null ),
+			getSelectedBlockClientId: () => mockSelectedBlockClientId ?? null,
 			getBlocks: () => mockEditorBlocks,
 		};
 	}
@@ -308,10 +321,20 @@ const mockAgentChat = jest.fn(
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
+		extractToolCallsFromMessage: ( message: { parts: Array< { type: string; data?: object } > } ) =>
+			message.parts.filter(
+				( { type, data } ) =>
+					type === 'data' &&
+					!! data &&
+					'toolCallId' in data &&
+					'toolId' in data &&
+					'arguments' in data
+			),
 		getAgentManager: () => ( {
 			updateSessionId: mockUpdateSessionId,
 			hasAgent: () => mockManagerHasAgent,
 			isTurnInFlight: () => mockManagerTurnInFlight,
+			getConversationHistory: () => mockConversationHistory,
 		} ),
 		useAgentChat: ( config: typeof mockAgentChatConfig ) => {
 			mockAgentChatConfig = config;
@@ -320,6 +343,9 @@ jest.mock(
 	} ),
 	{ virtual: true }
 );
+jest.mock( '@wordpress/components', () => ( {
+	Button: 'button',
+} ) );
 jest.mock( '@wordpress/data', () => {
 	const { useEffect, useReducer, useRef } =
 		jest.requireActual< typeof import( 'react' ) >( 'react' );
@@ -416,28 +442,30 @@ jest.mock( '../../hooks/use-sources-action', () => () => {} );
 // Returns `undefined` after a mock reset, which the wrapper reads as allowed.
 const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
 const mockCreditsVisibility = jest.fn();
+const mockCreditsNoticeVisibility = jest.fn();
+const mockTakeRefusalCode = jest.fn( (): string | undefined => undefined );
 jest.mock( '../../hooks/use-credits', () => ( {
-	useCredits: ( { agentConfig, isOpen }: { agentConfig: unknown; isOpen: boolean } ) => {
+	useCredits: ( {
+		agentConfig,
+		isOpen,
+		isNoticeVisible,
+	}: {
+		agentConfig: unknown;
+		isOpen: boolean;
+		isNoticeVisible: boolean;
+	} ) => {
 		mockCreditsVisibility( isOpen );
+		mockCreditsNoticeVisibility( isNoticeVisible );
 		return {
 			chat: jest.requireMock( '@automattic/agenttic-client' ).useAgentChat( agentConfig ),
 			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
+			takeRefusalCode: mockTakeRefusalCode,
 		};
 	},
 } ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
-	default: ( { messages }: { messages: unknown[] } ) => messages,
-	isContextOnlyMessage: ( message: {
-		context?: { flags?: { context_only?: boolean } };
-		content?: Array< { type?: string; data?: { flags?: { context_only?: boolean } } } >;
-	} ) =>
-		message.context?.flags?.context_only === true ||
-		message.content?.some(
-			( content ) =>
-				content.type === 'context' ||
-				( content.type === 'data' && content.data?.flags?.context_only === true )
-		),
+	default: jest.fn( ( { messages }: { messages: unknown[] } ) => messages ),
 } ) );
 jest.mock( '../../utils/external-context', () => ( {
 	consumeNextMessageExternalContextEntries: jest.fn(),
@@ -631,6 +659,43 @@ const createCompletedCheckpointUpdate = ( taskId: string, messageId: string ): T
 	kind: 'status',
 } );
 
+const createToolCallPart = (
+	toolCallId: string,
+	toolId: string = 'big_sky__apply_block_edits'
+): DataPart => ( {
+	type: 'data',
+	data: { toolCallId, toolId, arguments: {} },
+} );
+
+const createBlockEditResultPart = ( toolCallId: string ): DataPart => ( {
+	type: 'data',
+	data: {
+		toolCallId,
+		toolId: 'big_sky__apply_block_edits',
+		result: {
+			result: { success: true, outcome: 'updated' },
+			returnToAgent: true,
+			agentMessage: createCheckpointMessage( toolCallId, toolCallId ).content[ 0 ].text,
+		},
+	},
+} );
+
+const createTaskMessageUpdate = (
+	taskId: string,
+	state: TaskState,
+	role: 'agent' | 'user',
+	parts: DataPart[]
+): TaskUpdate => ( {
+	id: taskId,
+	status: {
+		state,
+		message: { messageId: `${ taskId }-${ state }-${ role }`, role, kind: 'message', parts },
+	},
+	text: '',
+	final: false,
+	kind: 'status',
+} );
+
 const createSwappableCheckpoint = () => ( {
 	getLastEditorState: jest.fn(),
 	setCheckpoint: jest.fn(),
@@ -706,11 +771,13 @@ describe( 'OrchestratorChat', () => {
 		mockSiteKey = 'site-1';
 		mockCurrentUserId = 1;
 		mockSelectedBlockType = undefined;
+		mockSelectedBlockClientId = undefined;
 		mockBlockEditorStoreThrows = false;
 		mockRenderedSuggestionsLimit = undefined;
 		sessionStorage.clear();
 		mockManagerHasAgent = true;
 		mockManagerTurnInFlight = false;
+		mockConversationHistory = [];
 		mockHasEditorRedo = false;
 		mockOpenPost = null;
 		mockEditorBlocks = [];
@@ -731,6 +798,19 @@ describe( 'OrchestratorChat', () => {
 		render( chat( options ) );
 		expect( mockCreditsVisibility ).toHaveBeenLastCalledWith( visible );
 	} );
+
+	it.each( [
+		[ 'docked', { isOpen: true, isDocked: true }, true ],
+		[ 'floating', { isOpen: true, isDocked: false }, true ],
+		[ 'compact', { isOpen: false, isDocked: false, isCompactMode: true }, false ],
+		[ 'closed', { isOpen: false, isDocked: false, isCompactMode: false }, false ],
+	] as const )(
+		'tells credits whether the %s chat draws the notice',
+		( _name, options, visible ) => {
+			render( chat( options ) );
+			expect( mockCreditsNoticeVisibility ).toHaveBeenLastCalledWith( visible );
+		}
+	);
 
 	it( 'ignores a conversation result for a discarded agent', () => {
 		mockManagerHasAgent = false;
@@ -1241,6 +1321,42 @@ describe( 'OrchestratorChat', () => {
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 2 );
 	} );
 
+	it.each( [
+		{
+			behavior: 'registers block chips again',
+			replaceEmptyViewSuggestions: true,
+			registrations: 2,
+		},
+		{
+			behavior: 'leaves other chips cleared',
+			replaceEmptyViewSuggestions: false,
+			registrations: 1,
+		},
+	] )(
+		'$behavior when another block is selected',
+		( { replaceEmptyViewSuggestions, registrations } ) => {
+			mockSelectedBlockClientId = 'paragraph-1';
+			const suggestions: Suggestion[] = [
+				{ id: 'change-tone', label: 'Change tone', prompt: 'Change the tone' },
+			];
+			const useSuggestions = jest.fn( () => ( { suggestions, replaceEmptyViewSuggestions } ) );
+			const registerSuggestions = jest.fn();
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { registerSuggestions } ) );
+
+			const { rerender } = render( chat( { useSuggestions } ) );
+			rerender( chat( { useSuggestions } ) );
+
+			expect( registerSuggestions ).toHaveBeenCalledTimes( 1 );
+
+			// A click cleared the chips; the next paragraph offers the same ones.
+			mockSelectedBlockClientId = 'paragraph-2';
+			rerender( chat( { useSuggestions } ) );
+
+			expect( registerSuggestions ).toHaveBeenCalledTimes( registrations );
+			expect( registerSuggestions ).toHaveBeenLastCalledWith( suggestions );
+		}
+	);
+
 	it( 'does not re-track lingering contextual suggestions when a block is deselected', () => {
 		mockSelectedBlockType = 'core/paragraph';
 		const blockSuggestions: Suggestion[] = [
@@ -1271,6 +1387,17 @@ describe( 'OrchestratorChat', () => {
 		const useSuggestions = jest.fn( () => ( { suggestions: [] } ) );
 
 		render( chat( { emptyViewSuggestions: staticDefaults, useSuggestions: useSuggestions } ) );
+
+		expect( screen.getByText( 'Getting started with WordPress' ) ).toBeTruthy();
+	} );
+
+	it( 'keeps the empty-view suggestions while the user types', () => {
+		const staticDefaults: Suggestion[] = [
+			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
+		];
+
+		render( chat( { emptyViewSuggestions: staticDefaults } ) );
+		fireEvent.click( screen.getByText( 'Type message' ) );
 
 		expect( screen.getByText( 'Getting started with WordPress' ) ).toBeTruthy();
 	} );
@@ -1828,6 +1955,26 @@ describe( 'OrchestratorChat', () => {
 			render( chat() );
 
 			expect( chatErrorCalls() ).toEqual( [] );
+		} );
+
+		it( 'labels a credits refusal by its code, and reads the code once per error', () => {
+			mockTakeRefusalCode.mockReturnValueOnce( 'ai_credit_allowance_exhausted' );
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'Streaming error: You’ve used all your site credits.' } )
+			);
+			const { rerender } = render( chat() );
+			rerender( chat() );
+
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: null } ) );
+			rerender( chat() );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: 'Some other error.' } ) );
+			rerender( chat() );
+
+			expect( mockTakeRefusalCode ).toHaveBeenCalledTimes( 2 );
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', { error_type: 'credits' } ],
+				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
+			] );
 		} );
 	} );
 
@@ -3364,6 +3511,113 @@ describe( 'OrchestratorChat', () => {
 		}
 	} );
 
+	describe( 'retried block edits', () => {
+		const noChangeOutcome = {
+			id: 'no-change-outcome',
+			role: 'agent' as const,
+			content: [
+				{
+					type: 'text' as const,
+					text: JSON.stringify( {
+						tool_id: 'big_sky__apply_block_edits',
+						tool_call_id: 'tool-call-1',
+						data: { result: { success: true, outcome: 'no-changes' } },
+					} ),
+				},
+			],
+			timestamp: 1,
+			archived: false,
+			showIcon: true,
+		};
+		const retryUpdate = {
+			id: 'task-retry',
+			status: {
+				state: 'working',
+				message: {
+					messageId: 'retry-progress',
+					role: 'agent',
+					kind: 'message',
+					parts: [
+						{
+							type: 'data',
+							data: { summary: 'Adjusting my approach…', retryingToolCallId: 'tool-call-1' },
+						},
+					],
+				},
+			},
+			final: false,
+			kind: 'status',
+		} as unknown as TaskUpdate;
+		// The converter is mocked, so check the retries the chat hands it.
+		const isToolCallRetried = () => {
+			const convert = jest.requireMock( '../../utils/convert-tool-messages-to-components' )
+				.default as jest.Mock;
+			const { retriedToolCallIds } = convert.mock.calls.at( -1 )![ 0 ] as {
+				retriedToolCallIds?: ReadonlySet< string >;
+			};
+			return retriedToolCallIds?.has( 'tool-call-1' ) === true;
+		};
+
+		beforeEach( () => {
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { messages: [ userMessage, noChangeOutcome ] } )
+			);
+		} );
+
+		it( 'hides the summary the server retried', async () => {
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-a' };
+			render( chat() );
+			expect( isToolCallRetried() ).toBe( false );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( retryUpdate );
+			} );
+
+			expect( isToolCallRetried() ).toBe( true );
+		} );
+
+		it( 'forgets retries when the conversation changes', async () => {
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-a' };
+			const view = render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( retryUpdate );
+			} );
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-b' };
+			view.rerender( chat() );
+
+			expect( isToolCallRetried() ).toBe( false );
+		} );
+
+		it( 'keeps retries when a fresh session is promoted', async () => {
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: '' };
+			mockTabSessionId = '';
+			const view = render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( retryUpdate );
+			} );
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'server-session' };
+			view.rerender( chat() );
+
+			expect( isToolCallRetried() ).toBe( true );
+		} );
+
+		it( 'ignores a retry from a previous conversation’s stream', async () => {
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-a' };
+			const view = render( chat() );
+			const onTaskUpdateBeforeSwitch = mockAgentChatConfig?.onTaskUpdate;
+
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-b' };
+			view.rerender( chat() );
+			await act( async () => {
+				await onTaskUpdateBeforeSwitch?.( retryUpdate );
+			} );
+
+			expect( isToolCallRetried() ).toBe( false );
+		} );
+	} );
+
 	it( 'drops in-flight streamed checkpoints when the tab session scope changes', async () => {
 		mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: '' };
 		mockTabSessionId = '';
@@ -3526,102 +3780,95 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	it( 'keeps a later-turn checkpoint action from a structured continuation result', async () => {
-		const firstCheckpoint = createCheckpointMessage(
-			'agent-first-structured-turn',
-			'first-structured-checkpoint'
-		);
+	describe( 'block-edit checkpoints from tool results', () => {
+		const taskId = 'task-later-turn';
+		const earlierEdit = createCheckpointMessage( 'agent-earlier-edit', 'tool-call-earlier-edit' );
 		const laterUserMessage = {
-			id: 'user-structured-continuation',
+			id: 'user-later-turn',
 			role: 'user',
-			content: [ { type: 'text', text: 'Make another edit' } ],
+			content: [ { type: 'text', text: 'Make another change' } ],
 			timestamp: 2,
 		};
-		const initialMessages = [ userMessage, firstCheckpoint, laterUserMessage ];
-		mockCheckpointActions();
-		mockUseAgentChat.mockReturnValue( agentChatReturn( { messages: initialMessages } ) );
-		const view = render( chat() );
-		const checkpointResult = JSON.stringify( {
-			tool_id: 'big_sky__apply_block_edits',
-			tool_call_id: 'tool-call-structured-continuation',
-			data: {
-				result: {
-					success: true,
-					outcome: 'updated',
-					changeType: 'text-content',
-				},
-			},
-		} );
+		const initialMessages = [ userMessage, earlierEdit, laterUserMessage ];
 
-		await act( async () => {
-			await mockAgentChatConfig?.onTaskUpdate?.( {
-				id: 'task-structured-continuation',
-				status: {
-					state: 'working',
-					message: {
-						messageId: 'tool-result-structured-continuation',
-						role: 'agent',
-						kind: 'message',
-						parts: [
-							{
-								type: 'data',
-								data: {
-									toolCallId: 'tool-call-structured-continuation',
-									toolId: 'big_sky__apply_block_edits',
-									result: {
-										result: {
-											success: true,
-											outcome: 'updated',
-											changeType: 'text-content',
-										},
-										returnToAgent: true,
-										agentMessage: checkpointResult,
-									},
-								},
-							},
-						],
-					},
-				},
-				text: '',
-				final: false,
-				kind: 'status',
-			} );
-			await mockAgentChatConfig?.onTaskUpdate?.( {
-				id: 'task-structured-continuation',
-				status: {
-					state: 'completed',
-					message: {
-						messageId: 'agent-structured-final',
-						role: 'agent',
-						kind: 'message',
-						parts: [],
-					},
-				},
-				text: 'The paragraph has been updated again.',
-				final: true,
-				kind: 'status',
-			} );
-		} );
+		// Streams a later turn that ends in a final message, then returns that message's
+		// checkpoint action. Streamed checkpoints outlive a render, so each test needs
+		// its own final message id.
+		const getFinalCheckpointAction = async ( finalMessageId: string, updates: TaskUpdate[] ) => {
+			mockCheckpointActions();
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { messages: initialMessages } ) );
+			const view = render( chat() );
 
-		const finalMessage = {
-			id: 'agent-structured-final',
-			role: 'agent' as const,
-			content: [ { type: 'text' as const, text: 'The paragraph has been updated again.' } ],
-			timestamp: 3,
-			archived: false,
-			showIcon: true,
+			await act( async () => {
+				for ( const update of updates ) {
+					await mockAgentChatConfig?.onTaskUpdate?.( update );
+				}
+
+				await mockAgentChatConfig?.onTaskUpdate?.(
+					createCompletedCheckpointUpdate( taskId, finalMessageId )
+				);
+			} );
+
+			const finalMessage = {
+				id: finalMessageId,
+				role: 'agent' as const,
+				content: [ { type: 'text' as const, text: 'All done.' } ],
+				timestamp: 3,
+				archived: false,
+				showIcon: true,
+			};
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { messages: [ ...initialMessages, finalMessage ] } )
+			);
+			view.rerender( chat() );
+
+			return getDisplayedCheckpointAction( finalMessageId );
 		};
-		mockUseAgentChat.mockReturnValue(
-			agentChatReturn( { messages: [ ...initialMessages, finalMessage ] } )
-		);
-		view.rerender( chat() );
 
-		expect( getDisplayedCheckpointAction( finalMessage.id ) ).toEqual(
-			expect.objectContaining( {
-				label: 'Updated and Undo',
-				componentProps: expect.objectContaining( { onUndo: expect.any( Function ) } ),
-			} )
-		);
+		it( 'binds a block edit whose tool call arrives in a continuation update', async () => {
+			const action = await getFinalCheckpointAction( 'agent-continuation-final', [
+				createTaskMessageUpdate( taskId, 'working', 'agent', [
+					createToolCallPart( 'tool-call-current-edit' ),
+				] ),
+				createTaskMessageUpdate( taskId, 'working', 'agent', [
+					createBlockEditResultPart( 'tool-call-current-edit' ),
+				] ),
+			] );
+
+			expect( action ).toEqual( expect.objectContaining( { label: 'Updated and Undo' } ) );
+		} );
+
+		it( 'ignores an earlier block edit the echo replays in a turn without one', async () => {
+			const action = await getFinalCheckpointAction( 'agent-picker-final', [
+				createTaskMessageUpdate( taskId, 'input-required', 'agent', [
+					createToolCallPart( 'tool-call-picker', 'big_sky__show_component' ),
+				] ),
+				createTaskMessageUpdate( taskId, 'working', 'user', [
+					createToolCallPart( 'tool-call-earlier-edit' ),
+					createBlockEditResultPart( 'tool-call-earlier-edit' ),
+				] ),
+			] );
+
+			expect( action ).toBeUndefined();
+		} );
+
+		it( 'binds the latest of several block edits in one turn', async () => {
+			// Binding the first edit would hide the action.
+			mockInvalidatedCheckpointIds.add( 'tool-call-first-edit' );
+
+			const action = await getFinalCheckpointAction( 'agent-latest-edit-final', [
+				createTaskMessageUpdate( taskId, 'input-required', 'agent', [
+					createToolCallPart( 'tool-call-first-edit' ),
+					createToolCallPart( 'tool-call-second-edit' ),
+				] ),
+				createTaskMessageUpdate( taskId, 'working', 'user', [
+					createBlockEditResultPart( 'tool-call-first-edit' ),
+					createBlockEditResultPart( 'tool-call-second-edit' ),
+				] ),
+			] );
+
+			expect( action ).toEqual( expect.objectContaining( { label: 'Updated and Undo' } ) );
+		} );
 	} );
 
 	it( 'enables regenerate when a provider opts in', () => {
@@ -4179,6 +4426,95 @@ describe( 'OrchestratorChat', () => {
 			} );
 
 			expect( getBlockingMove() ).toBeNull();
+		} );
+	} );
+
+	describe( 'waiting for a reply after a page change', () => {
+		it( 'shows the wait in the notice slot without locking the composer', () => {
+			const notice = { message: 'Waiting for the reply…' };
+			mockUseConversation.mockReturnValue( { isLoading: false, notice } );
+
+			render( chat() );
+
+			const props = mockAgentChat.mock.calls.at( -1 )![ 0 ] as {
+				notice?: unknown;
+				isProcessing?: boolean;
+			};
+			expect( props.notice ).toEqual( notice );
+			expect( props.isProcessing ).toBe( false );
+			expect( mockConversationConfig?.waitForReply ).toBe( true );
+		} );
+
+		it( 'does not wait while a turn runs in this tab', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+
+			render( chat() );
+
+			expect( mockConversationConfig?.waitForReply ).toBe( false );
+		} );
+
+		it( 'retries through the normal send, leaving images staged for the draft', async () => {
+			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			const uploadImagesToWordPress = jest.fn();
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			renderWithImageUpload(
+				createImageUpload( { pendingImages: [ { id: 'p1' } ], uploadImagesToWordPress } )
+			);
+
+			await act( async () => {
+				mockConversationConfig?.onRetry?.( 'ship the sale banner' );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( 'ship the sale banner' );
+			expect( uploadImagesToWordPress ).not.toHaveBeenCalled();
+		} );
+
+		it( 'resumes a turn paused on browser tools through the chat send and reports the reply', async () => {
+			// The old page's stored result, which the send drops before adding the reply:
+			// the history ends no longer than it started.
+			mockConversationHistory = [
+				{ role: 'user', messageId: 'm-question', parts: [ { type: 'text', text: 'Top 5?' } ] },
+				{ role: 'agent', messageId: 'm-result', parts: [ { type: 'data', data: {} } ] },
+			];
+			const onSubmit = jest.fn( async () => {
+				mockConversationHistory = [
+					mockConversationHistory[ 0 ],
+					{
+						role: 'agent',
+						messageId: 'm-reply',
+						parts: [ { type: 'text', text: 'Here are your top products.' } ],
+					},
+				];
+			} );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+			const toolResults = [ { toolCallId: 'call-top', toolId: 'top_products', result: {} } ];
+			const turnToolCalls = [ { toolCallId: 'call-top', toolId: 'top_products', arguments: {} } ];
+
+			let replied: boolean | undefined;
+			await act( async () => {
+				replied = await mockConversationConfig?.onResume?.( toolResults, turnToolCalls );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( '', {
+				type: 'tool_results',
+				toolResults,
+				turnToolCalls,
+			} );
+			expect( replied ).toBe( true );
+		} );
+
+		it( 'reports no reply when the resume lost to another page', async () => {
+			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+
+			let replied: boolean | undefined;
+			await act( async () => {
+				replied = await mockConversationConfig?.onResume?.( [], [] );
+			} );
+
+			expect( replied ).toBe( false );
 		} );
 	} );
 } );

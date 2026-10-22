@@ -18,6 +18,7 @@ let mockCurrentSupportInteraction: Record< string, unknown > | undefined;
 let mockConversation: { id: string; messages: Message[] } | null;
 let mockOdieChat: Record< string, unknown > | undefined;
 const mockGetZendeskConversation = jest.fn();
+const mockGetOdieTransferMessages = jest.fn().mockReturnValue( [] );
 const mockGetZendeskConversationHistory = jest.fn();
 const mockGetQueryData = jest.fn();
 
@@ -79,7 +80,7 @@ jest.mock( '../../utils', () => ( {
 
 jest.mock( '../../constants', () => ( {
 	HELP_CENTER_STORE: 'automattic/help-center',
-	getOdieTransferMessages: () => [],
+	getOdieTransferMessages: ( ...args: unknown[] ) => mockGetOdieTransferMessages( ...args ),
 	getZendeskChatStartedMetaMessage: () => ( {
 		content: 'chat-started',
 		role: 'bot',
@@ -246,6 +247,50 @@ describe( 'useGetCombinedChat — merging the Odie and Zendesk halves', () => {
 		} );
 
 		expect( countMessages( result.current.mainChatState.messages, 'my site is down' ) ).toBe( 1 );
+	} );
+} );
+
+describe( 'useGetCombinedChat — transfer messages', () => {
+	it( 'refers back to the Odie chat when the human chat followed one', async () => {
+		mockCurrentSupportInteraction = {
+			uuid: 'int-1',
+			conversationId: 'conv-1',
+			odieId: 42,
+			bot_slug: 'wpcom-workflow-support_chat',
+			status: 'open',
+		};
+		mockConversation = { id: 'conv-1', messages: [ agentMessage( 1, 'Happiness Engineer here' ) ] };
+
+		renderCombinedChat();
+
+		await waitFor( () =>
+			expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith(
+				// The test stubs the translation check with a plain value.
+				expect.anything(),
+				false
+			)
+		);
+	} );
+
+	it( 'uses the direct copy when the user went straight to a human', async () => {
+		mockCurrentSupportInteraction = {
+			uuid: 'int-1',
+			conversationId: 'conv-1',
+			odieId: null,
+			bot_slug: 'wpcom-workflow-support_chat',
+			status: 'open',
+		};
+		mockConversation = { id: 'conv-1', messages: [ agentMessage( 1, 'Happiness Engineer here' ) ] };
+
+		renderCombinedChat();
+
+		await waitFor( () =>
+			expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith(
+				// The test stubs the translation check with a plain value.
+				expect.anything(),
+				true
+			)
+		);
 	} );
 } );
 

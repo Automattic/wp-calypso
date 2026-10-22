@@ -13,6 +13,8 @@ jest.mock( '../../lib/selectors/can-current-user', () => jest.fn() );
 jest.mock( '../../lib/selectors/get-site-admin-url', () => () => 'https://example.com/wp-admin/' );
 
 const STATS_URL = 'https://example.com/wp-admin/admin.php?page=stats#!/stats/post/12/1';
+const DASHBOARD_URL =
+	'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin&p=%2Fpost%2F12';
 
 /**
  * @param enabled What the site reports, `undefined` for a Jetpack too old to register the setting.
@@ -37,6 +39,47 @@ function statsLink(
 }
 
 describe( 'useStatsLink', () => {
+	afterEach( () => {
+		delete ( window as unknown as { JetpackScriptData?: unknown } ).JetpackScriptData;
+	} );
+
+	it.each( [
+		[ 'a view_stats reader who cannot read the settings', false, undefined, true, DASHBOARD_URL ],
+		[ 'an admin whose site switched it on without the opt-in', true, false, true, DASHBOARD_URL ],
+		[ 'a user the script data says cannot view Stats', true, true, false, STATS_URL ],
+	] )(
+		'follows the script data Jetpack prints, without asking the site, for %s',
+		( _, canManageOptions, settingsValue, canView, expected ) => {
+			mockSite( settingsValue, canManageOptions );
+			( window as unknown as { JetpackScriptData: { analytics: object } } ).JetpackScriptData = {
+				analytics: { enabled: true, can_view: canView },
+			};
+
+			expect( statsLink( STATS_URL, '/post/12' ) ).toBe( expected );
+			expect( usePremiumAnalyticsStatusQuery ).toHaveBeenLastCalledWith( 1, false );
+		}
+	);
+
+	it( 'serves the route from the page the script data names', () => {
+		mockSite( undefined, false );
+		( window as unknown as { JetpackScriptData: { analytics: object } } ).JetpackScriptData = {
+			analytics: { enabled: true, can_view: true, page_slug: 'jetpack-analytics' },
+		};
+
+		expect( statsLink( STATS_URL, '/post/12' ) ).toBe(
+			'https://example.com/wp-admin/admin.php?page=jetpack-analytics&p=%2Fpost%2F12'
+		);
+	} );
+
+	it( 'keeps the known page when the script data has no usable slug', () => {
+		mockSite( undefined, false );
+		( window as unknown as { JetpackScriptData: { analytics: object } } ).JetpackScriptData = {
+			analytics: { enabled: true, can_view: true, page_slug: '' },
+		};
+
+		expect( statsLink( STATS_URL, '/post/12' ) ).toBe( DASHBOARD_URL );
+	} );
+
 	it( 'opens the dashboard route when the site has Premium Analytics switched on', () => {
 		mockSite( true );
 
@@ -49,12 +92,6 @@ describe( 'useStatsLink', () => {
 		mockSite( undefined );
 
 		expect( statsLink( STATS_URL, '/post/12' ) ).toBe( STATS_URL );
-	} );
-
-	it( 'keeps the Stats URL for a link the dashboard has no page for', () => {
-		mockSite( true );
-
-		expect( statsLink( STATS_URL, null ) ).toBe( STATS_URL );
 	} );
 
 	it( 'keeps the Stats URL for a user who cannot read the site settings', () => {

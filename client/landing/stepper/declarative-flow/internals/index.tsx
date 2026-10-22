@@ -7,8 +7,6 @@ import { createPath, generatePath, Navigate, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
-import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
-import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -27,6 +25,7 @@ import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { usePreloadSteps, lazyCache } from './hooks/use-preload-steps';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
+import { useStepContainerV2Logo } from './hooks/use-step-container-v2-logo';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
 import { componentTypeOf, recordStepComponentType } from './step-mount-registry';
 import { PRIVATE_STEPS } from './steps';
@@ -124,15 +123,16 @@ export const FlowRenderer: React.FC< {
 		state: AssertConditionState.SUCCESS,
 	};
 
-	const dashboard = getDashboardFromHostname( window?.location?.hostname );
+	const logo = useStepContainerV2Logo( flow.name, currentStepRoute );
+
 	const stepContainerV2Context = useMemo( () => {
 		return {
 			flowName: flow.name,
 			stepName: currentStepRoute,
 			recordTracksEvent,
-			logo: getDashboardStepperLogo( dashboard ),
+			logo,
 		};
-	}, [ flow.name, currentStepRoute, dashboard ] );
+	}, [ flow.name, currentStepRoute, logo ] );
 
 	const renderStep = ( step: StepperStep ) => {
 		if ( assertCondition ) {
