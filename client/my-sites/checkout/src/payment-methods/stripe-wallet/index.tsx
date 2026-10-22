@@ -17,6 +17,7 @@ import type {
 	Stripe,
 	StripeExpressCheckoutElementAvailablePaymentMethodsChangeEvent,
 	StripeExpressCheckoutElementConfirmEvent,
+	StripeExpressCheckoutElementReadyEvent,
 } from '@stripe/stripe-js';
 
 type StripeWalletMethodProps = {
@@ -43,6 +44,19 @@ function StripeWalletContent( {
 	const [ isLoading, setIsLoading ] = useState( true );
 
 	useRegisterPaymentMethodLoading( 'stripe-wallet', isLoading );
+
+	const onReady = useCallback(
+		( { availablePaymentMethods }: StripeExpressCheckoutElementReadyEvent ) => {
+			setIsLoading( false );
+			togglePaymentMethod( 'stripe-wallet', Boolean( availablePaymentMethods?.link ) );
+		},
+		[ togglePaymentMethod ]
+	);
+
+	const onLoadError = useCallback( () => {
+		setIsLoading( false );
+		togglePaymentMethod( 'stripe-wallet', false );
+	}, [ togglePaymentMethod ] );
 
 	const onAvailablePaymentMethodsChange = useCallback(
 		( { paymentMethods }: StripeExpressCheckoutElementAvailablePaymentMethodsChangeEvent ) => {
@@ -92,6 +106,8 @@ function StripeWalletContent( {
 	return (
 		<ExpressCheckoutElement
 			onConfirm={ onConfirm }
+			onReady={ onReady }
+			onLoadError={ onLoadError }
 			onAvailablePaymentMethodsChange={ onAvailablePaymentMethodsChange }
 			options={ {
 				paymentMethods: {
