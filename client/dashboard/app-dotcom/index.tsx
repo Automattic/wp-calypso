@@ -45,6 +45,7 @@ boot( {
 		domainOnlySites: true,
 		colorScheme: isEnabled( 'dark-mode' ),
 		darkMode: isEnabled( 'dark-mode' ),
+		backupDetailsLinks: true,
 	},
 	optIn: true,
 	components: {

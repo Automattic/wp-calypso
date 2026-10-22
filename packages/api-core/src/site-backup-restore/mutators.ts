@@ -7,13 +7,15 @@ import type { RestoreConfig, GranularRestoreConfig } from './types';
  * @param timestamp - Unix timestamp to restore site to.
  * @param calypsoEnv - The environment ID of the Calypso instance.
  * @param restoreConfig - Restore configuration specifying what to restore.
+ * @param acknowledgeThreats - Whether the user acknowledged the backup's known threats.
  * @returns A promise that resolves to the restore ID.
  */
 export async function initiateSiteBackupRestore(
 	siteId: number,
 	timestamp: string | number,
 	calypsoEnv: string,
-	restoreConfig: RestoreConfig = {}
+	restoreConfig: RestoreConfig = {},
+	acknowledgeThreats?: boolean
 ): Promise< number > {
 	const data: { restore_id: string } = await wpcom.req.post( {
 		apiVersion: '1',
@@ -22,6 +24,8 @@ export async function initiateSiteBackupRestore(
 			types: restoreConfig,
 			calypso_env: calypsoEnv,
 			force_rewind: true,
+			// Always sent, so VaultPress holds this restore to the known-threats acknowledgement.
+			acknowledge_threats: !! acknowledgeThreats,
 		},
 	} );
 
@@ -34,13 +38,15 @@ export async function initiateSiteBackupRestore(
  * @param timestamp - Unix timestamp to restore site to.
  * @param calypsoEnv - The environment ID of the Calypso instance.
  * @param granularConfig - Granular restore configuration with include/exclude paths.
+ * @param acknowledgeThreats - Whether the user acknowledged the backup's known threats.
  * @returns A promise that resolves to the restore ID.
  */
 export async function initiateSiteGranularRestore(
 	siteId: number,
 	timestamp: string | number,
 	calypsoEnv: string,
-	granularConfig: GranularRestoreConfig
+	granularConfig: GranularRestoreConfig,
+	acknowledgeThreats?: boolean
 ): Promise< number > {
 	const data: { restore_id: string } = await wpcom.req.post( {
 		apiVersion: '1',
@@ -51,6 +57,8 @@ export async function initiateSiteGranularRestore(
 			...( granularConfig.excludePaths ? { exclude_path_list: granularConfig.excludePaths } : {} ),
 			calypso_env: calypsoEnv,
 			force_rewind: true,
+			// Always sent, so VaultPress holds this restore to the known-threats acknowledgement.
+			acknowledge_threats: !! acknowledgeThreats,
 		},
 	} );
 

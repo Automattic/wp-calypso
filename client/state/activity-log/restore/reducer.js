@@ -1,4 +1,5 @@
 import {
+	REWIND_GRANULAR_RESTORE,
 	REWIND_RESTORE,
 	REWIND_RESTORE_DISMISS,
 	REWIND_RESTORE_DISMISS_PROGRESS,
@@ -9,6 +10,7 @@ import { keyedReducer } from 'calypso/state/utils';
 
 const startProgress = ( state, { timestamp } ) => ( {
 	errorCode: '',
+	knownThreats: null,
 	failureReason: '',
 	message: '',
 	percent: 0,
@@ -21,6 +23,7 @@ const updateProgress = (
 	state,
 	{
 		errorCode,
+		knownThreats,
 		failureReason,
 		message,
 		percent,
@@ -33,6 +36,7 @@ const updateProgress = (
 	}
 ) => ( {
 	errorCode,
+	knownThreats,
 	failureReason,
 	message,
 	percent,
@@ -47,6 +51,7 @@ const updateProgress = (
 export const restoreProgress = keyedReducer( 'siteId', ( state = {}, action ) => {
 	switch ( action.type ) {
 		case REWIND_RESTORE:
+		case REWIND_GRANULAR_RESTORE:
 			return startProgress( state, action );
 		case REWIND_RESTORE_DISMISS_PROGRESS:
 			return null;

@@ -13,6 +13,30 @@ export function useIsBackupsSmallViewport() {
 	return useViewportMatch( 'xlarge', '<' );
 }
 
+const BACKUP_COMPLETE = /^rewind__backup(_only)?_complete/;
+
+/**
+ * The backup a rewind id names. Restores started from a backup period (when the backup began)
+ * name no entry, so a period falls back to the backup that completed within a day of it.
+ */
+export function findBackup( activityLog: ActivityLogEntry[] | undefined, rewindId: string ) {
+	const exact = activityLog?.find( ( item ) => item.rewind_id === rewindId );
+	if ( exact || ! /^\d+$/.test( rewindId ) ) {
+		return exact ?? null;
+	}
+	const period = Number( rewindId );
+	return (
+		( activityLog ?? [] )
+			.filter(
+				( item ) =>
+					BACKUP_COMPLETE.test( item.name ) &&
+					Number( item.rewind_id ) >= period &&
+					Number( item.rewind_id ) < period + 24 * 60 * 60
+			)
+			.sort( ( a, b ) => Number( a.rewind_id ) - Number( b.rewind_id ) )[ 0 ] ?? null
+	);
+}
+
 // Single owner of the resolved selection so the page header and browser body can't disagree.
 export function useBackupsBrowserState( {
 	site,
@@ -41,7 +65,7 @@ export function useBackupsBrowserState( {
 
 	const selectedBackup = useMemo< ActivityLogEntry | null >( () => {
 		if ( rewindId ) {
-			return activityLog?.find( ( item ) => item.rewind_id === rewindId ) ?? null;
+			return findBackup( activityLog, rewindId );
 		}
 		if ( ! isSmallViewport ) {
 			return activityLog?.[ 0 ] ?? null;

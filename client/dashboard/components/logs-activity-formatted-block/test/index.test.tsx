@@ -4,7 +4,7 @@
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderFormattedContent, createFormattedBlock } from '../';
+import { BackupDetailsLinksContext, renderFormattedContent, createFormattedBlock } from '../';
 import isA8CForAgencies from '../../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
 import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
@@ -27,17 +27,24 @@ const renderFormatted = (
 	{
 		onClick = () => null,
 		meta = {},
-	}: { onClick?: ( event: unknown ) => void | null; meta?: ActivityBlockMeta } = {}
+		backupDetailsLinks = false,
+	}: {
+		onClick?: ( event: unknown ) => void | null;
+		meta?: ActivityBlockMeta;
+		backupDetailsLinks?: boolean;
+	} = {}
 ) => {
 	const arrayItems = Array.isArray( items ) ? items : [ items ];
 	return render(
-		<div data-testid="formatted-content">
-			{ renderFormattedContent( {
-				items: arrayItems,
-				onClick,
-				meta,
-			} ) }
-		</div>
+		<BackupDetailsLinksContext.Provider value={ backupDetailsLinks }>
+			<div data-testid="formatted-content">
+				{ renderFormattedContent( {
+					items: arrayItems,
+					onClick,
+					meta,
+				} ) }
+			</div>
+		</BackupDetailsLinksContext.Provider>
 	);
 };
 
@@ -139,6 +146,44 @@ describe( 'Link blocks', () => {
 			expect( link ).not.toHaveAttribute( 'rel' );
 		}
 	);
+} );
+
+describe( 'Backup blocks', () => {
+	const backup = {
+		type: 'backup',
+		text: 'October 17, 1:38 pm',
+		siteSlug: 'example.com',
+		rewindId: '1792244435.274',
+		children: [ 'October 17, 1:38 pm' ],
+	};
+
+	beforeEach( () => {
+		mockedIsJetpackCloud.mockReturnValue( false );
+		mockedIsA8CForAgencies.mockReturnValue( false );
+	} );
+
+	test( "opens the backup's details in a dashboard that links to them", () => {
+		mockedIsDashboardBackport.mockReturnValue( false );
+		renderFormatted( backup, { backupDetailsLinks: true } );
+
+		expect( screen.getByRole( 'link', { name: 'October 17, 1:38 pm' } ) ).toHaveAttribute(
+			'href',
+			'/sites/example.com/backups/1792244435.274'
+		);
+	} );
+
+	test.each( [
+		[ 'a dashboard that does not link to backup details', false, false ],
+		[ 'a dashboard backport', true, true ],
+	] )( 'opens the Backup page in %s', ( _label, isBackport, backupDetailsLinks ) => {
+		mockedIsDashboardBackport.mockReturnValue( isBackport );
+		renderFormatted( backup, { backupDetailsLinks } );
+
+		expect( screen.getByRole( 'link', { name: 'October 17, 1:38 pm' } ) ).toHaveAttribute(
+			'href',
+			expect.stringMatching( /\/backup\/example\.com$/ )
+		);
+	} );
 } );
 
 describe( 'Post blocks', () => {

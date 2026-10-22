@@ -7,7 +7,10 @@ import {
 	REWIND_CLONE,
 	REWIND_STAGING_CLONE,
 } from 'calypso/state/action-types';
-import { getRewindRestoreProgress } from 'calypso/state/activity-log/actions';
+import {
+	getRewindRestoreProgress,
+	updateRewindRestoreProgress,
+} from 'calypso/state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -39,13 +42,20 @@ const requestRewind = ( action, payload ) =>
 		action
 	);
 
-const requestRestore = ( action ) => requestRewind( action, { types: action.args } );
+export const requestRestore = ( action ) =>
+	requestRewind( action, {
+		types: action.args,
+		// Always sent, so VaultPress holds this restore to the known-threats acknowledgement.
+		acknowledge_threats: !! action.acknowledgeThreats,
+	} );
 
-const requestGranularRestore = ( action ) =>
+export const requestGranularRestore = ( action ) =>
 	requestRewind( action, {
 		types: 'paths',
 		include_path_list: action.includePaths,
 		...( action.excludePaths ? { exclude_path_list: action.excludePaths } : {} ),
+		// Always sent, so VaultPress holds this restore to the known-threats acknowledgement.
+		acknowledge_threats: !! action.acknowledgeThreats,
 	} );
 
 const requestClone = ( action ) => requestRewind( action, action.payload );
@@ -55,8 +65,29 @@ export const receiveRestoreSuccess = ( { siteId }, restoreId ) => [
 	requestRewindState( siteId ),
 ];
 
-export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
-	error.hasOwnProperty( 'schemaErrors' )
+export const receiveRestoreError = ( { siteId, timestamp }, error ) => {
+	if ( error.error === 'threats_not_acknowledged' ) {
+		return [
+			withAnalytics(
+				recordTracksEvent( 'calypso_rewind_to_threats_not_acknowledged', {
+					site_id: siteId,
+					timestamp,
+				} ),
+				errorNotice(
+					translate(
+						'This backup is known to contain security threats. Acknowledge them to restore it.'
+					)
+				)
+			),
+			updateRewindRestoreProgress( siteId, timestamp, null, {
+				status: 'failed',
+				errorCode: 'threats_not_acknowledged',
+				knownThreats: error.data?.known_threats,
+			} ),
+		];
+	}
+
+	return error.hasOwnProperty( 'schemaErrors' )
 		? withAnalytics(
 				recordTracksEvent( 'calypso_rewind_to_missing_restore_id', { site_id: siteId, timestamp } ),
 				errorNotice(
@@ -73,6 +104,7 @@ export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
 					)
 				)
 			);
+};
 
 const requestStagingClone = ( action ) =>
 	http(
