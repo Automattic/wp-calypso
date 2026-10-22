@@ -98,10 +98,12 @@ export interface SubmitOptions {
 
 /**
  * Where a prompt came from, as opposed to who sent it: `source` names the host
- * UI (e.g. `site-setup-checklist`), `id` the item within it. Kept as client
- * metadata on the user message, sent to the server in the client context's
- * `metadata`, and surfaced in the UI message as a `data` part either way, so a
- * live message and one restored from the server look the same.
+ * UI (e.g. `site-setup-checklist`), `id` the item within it. Not to be confused
+ * with `clientContext.metadata.source`, which names the calling client and is
+ * an analytics dimension. Kept as client metadata on the user message, sent to
+ * the server in the client context's `metadata`, and surfaced in the UI message
+ * as a `data` part either way, so a live message and one restored from the
+ * server look the same.
  */
 export interface PromptSource {
 	source: string;
