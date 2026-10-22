@@ -940,7 +940,9 @@ describe( 'Site Migration Flow', () => {
 					}
 				);
 				await waitFor( () =>
-					expect( result.current.props[ STEPS.SITE_MIGRATION_CHECK.slug ].canCopySite ).toBe( true )
+					expect(
+						result.current.props[ STEPS.SITE_MIGRATION_CHECK.slug ].copySiteEligibility
+					).toBe( 'eligible' )
 				);
 				act( () =>
 					result.current.navigation.submit( {
@@ -959,10 +961,12 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			it.each( [
-				[ true, false, false, true ],
-				[ false, false, false, false ],
-				[ true, true, false, false ],
-				[ true, false, true, false ],
+				[ true, false, false, 'eligible' ],
+				[ false, false, false, 'ineligible' ],
+				[ true, true, false, 'loading' ],
+				[ true, false, true, 'loading' ],
+				[ false, true, false, 'loading' ],
+				[ false, false, true, 'loading' ],
 			] )(
 				'checks copy eligibility on the source: eligible=%s, loading=%s, fetching=%s',
 				( eligible, isLoading, isFetching, expected ) => {
@@ -985,7 +989,9 @@ describe( 'Site Migration Flow', () => {
 					} );
 					expect( useSiteQuery ).toHaveBeenLastCalledWith( 'cotrim.dev', { enabled: true } );
 					expect( useSiteCopy ).toHaveBeenLastCalledWith( source, { enabled: true } );
-					expect( result.current[ STEPS.SITE_MIGRATION_CHECK.slug ].canCopySite ).toBe( expected );
+					expect( result.current[ STEPS.SITE_MIGRATION_CHECK.slug ].copySiteEligibility ).toBe(
+						expected
+					);
 				}
 			);
 
@@ -1385,7 +1391,7 @@ describe( 'Site Migration Flow', () => {
 						}
 					);
 					expect( props.current[ STEPS.SITE_MIGRATION_CHECK.slug ] ).toEqual( {
-						canCopySite: false,
+						copySiteEligibility: 'ineligible',
 						destinationSiteSlug: 'example.wordpress.com',
 						destinationPlanName: plan?.product_name_short,
 						needsUpgrade: !! plan,
@@ -1483,7 +1489,7 @@ describe( 'Site Migration Flow', () => {
 					wrapper: MemoryRouter,
 				} );
 				expect( props.current[ STEPS.SITE_MIGRATION_CHECK.slug ] ).toEqual( {
-					canCopySite: false,
+					copySiteEligibility: 'ineligible',
 					destinationSiteSlug: destination.siteSlug,
 					destinationPlanName: 'Personal',
 					needsUpgrade: false,

@@ -186,10 +186,10 @@
 		&:disabled {
 			color: var( --color-neutral-50 );
 		}
+	}
 
-		&:not( :disabled ):hover {
-			border-color: var( --color-link );
-		}
+	.site-migration-check__choice.components-button:not( :disabled, [aria-disabled='true'] ):hover {
+		border-color: var( --color-link );
 	}
 
 	.site-migration-check__choice-content {
@@ -217,6 +217,14 @@
 		font-size: 1.375rem;
 		line-height: 1.09;
 		color: var( --color-neutral-50 );
+	}
+
+	.site-migration-check__choice-arrow--external {
+		font-size: 1rem;
+	}
+
+	.site-migration-check__choice-learn-more {
+		color: var( --color-link );
 	}
 
 	.migration-instructions-from-preview {

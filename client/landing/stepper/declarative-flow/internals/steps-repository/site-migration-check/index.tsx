@@ -1,6 +1,8 @@
 import { getUrlParts } from '@automattic/calypso-url';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { Notice } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -10,6 +12,8 @@ import successIcon from './success.svg';
 import type { Step as StepType } from '../../types';
 
 import './style.scss';
+
+export type CopySiteEligibility = 'eligible' | 'ineligible' | 'loading';
 
 const PREVIEW_OPTIONS = {
 	vpw: 1200,
@@ -29,7 +33,7 @@ const SiteMigrationCheck: StepType< {
 		isLoadingDestination?: boolean;
 		destinationFailed?: boolean;
 		onRetryDestination?: () => void;
-		canCopySite?: boolean;
+		copySiteEligibility?: CopySiteEligibility;
 	};
 	submits:
 		| { action: 'back' }
@@ -49,7 +53,7 @@ const SiteMigrationCheck: StepType< {
 	isLoadingDestination,
 	destinationFailed,
 	onRetryDestination,
-	canCopySite,
+	copySiteEligibility = 'ineligible',
 } ) => {
 	const translate = useTranslate();
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
@@ -79,7 +83,13 @@ const SiteMigrationCheck: StepType< {
 		title = translate( 'Your site is already on WordPress.com' );
 		subTitle = translate( 'Let’s figure out your next step together.' );
 	}
-	const choices = [
+	const choices: {
+		action: 'copy-site' | 'transfer-domain' | 'get-access';
+		title: TranslateResult;
+		description: TranslateResult;
+		disabled?: boolean;
+		href?: string;
+	}[] = [
 		{
 			action: 'transfer-domain',
 			title: translate( 'Transfer your domain to WordPress.com' ),
@@ -92,11 +102,29 @@ const SiteMigrationCheck: StepType< {
 		},
 	];
 
-	if ( canCopySite ) {
+	if ( copySiteEligibility === 'ineligible' ) {
 		choices.push( {
 			action: 'copy-site',
 			title: translate( 'Make a copy of your site' ),
-			description: translate( 'Duplicate it to a new site you can work on.' ),
+			description: translate(
+				'This site isn’t eligible to be copied. {{learnMore}}Learn more{{/learnMore}}',
+				{
+					components: {
+						learnMore: <span className="site-migration-check__choice-learn-more" />,
+					},
+				}
+			),
+			href: localizeUrl( 'https://wordpress.com/support/copy-a-site/' ),
+		} );
+	} else {
+		const isCheckingCopySite = copySiteEligibility === 'loading';
+		choices.push( {
+			action: 'copy-site',
+			title: translate( 'Make a copy of your site' ),
+			description: isCheckingCopySite
+				? translate( 'Checking if your site can be copied…' )
+				: translate( 'Duplicate it to a new site you can work on.' ),
+			disabled: isCheckingCopySite,
 		} );
 	}
 
@@ -171,12 +199,17 @@ const SiteMigrationCheck: StepType< {
 				{ ! destinationFailed &&
 					( showChoices ? (
 						<div className="site-migration-check__card">
-							{ choices.map( ( { action, title, description } ) => (
+							{ choices.map( ( { action, title, description, disabled, href } ) => (
 								<Step.LinkButton
 									key={ action }
 									className="site-migration-check__choice"
-									onClick={ () =>
-										navigation.submit?.( { action, from, platform: 'wordpress', host } )
+									disabled={ disabled }
+									href={ href }
+									target={ href ? '_blank' : undefined }
+									onClick={
+										href
+											? undefined
+											: () => navigation.submit?.( { action, from, platform: 'wordpress', host } )
 									}
 								>
 									<span className="site-migration-check__choice-content">
@@ -185,8 +218,13 @@ const SiteMigrationCheck: StepType< {
 											{ description }
 										</span>
 									</span>
-									<span className="site-migration-check__choice-arrow" aria-hidden="true">
-										›
+									<span
+										className={ clsx( 'site-migration-check__choice-arrow', {
+											'site-migration-check__choice-arrow--external': href,
+										} ) }
+										aria-hidden="true"
+									>
+										{ href ? '↗' : '›' }
 									</span>
 								</Step.LinkButton>
 							) ) }

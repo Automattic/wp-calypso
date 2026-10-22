@@ -18,6 +18,7 @@ import {
 	isPlatformImportable,
 	getFullImporterUrl,
 } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/helper';
+import { type CopySiteEligibility } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-check';
 import { type SiteMigrationIdentifyAction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-identify';
 import { isHostingSupportedForSSHMigration } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-ssh-share-access/utils/hosting-provider-validation';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -207,12 +208,19 @@ const siteMigration: FlowV2< typeof initialize > = {
 			query.get( 'platform' ) === 'wordpress' &&
 			!! hostname &&
 			( protocol === 'http:' || protocol === 'https:' );
-		const { data: sourceSite } = useSiteQuery( hostname, {
+		const { data: sourceSite, isLoading: isLoadingSource } = useSiteQuery( hostname, {
 			enabled: checkSourceEligibility,
 		} );
-		const { shouldShowSiteCopyItem } = useSiteCopy( sourceSite ?? undefined, {
-			enabled: checkSourceEligibility,
-		} );
+		const { shouldShowSiteCopyItem, isFetching: isFetchingSiteCopy } = useSiteCopy(
+			sourceSite ?? undefined,
+			{ enabled: checkSourceEligibility }
+		);
+		let copySiteEligibility: CopySiteEligibility = 'ineligible';
+		if ( checkSourceEligibility && ( isLoadingSource || isFetchingSiteCopy ) ) {
+			copySiteEligibility = 'loading';
+		} else if ( shouldShowSiteCopyItem ) {
+			copySiteEligibility = 'eligible';
+		}
 		const hasDestination =
 			config.isEnabled( 'migration/reprint-flow' ) &&
 			query.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
@@ -246,7 +254,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 					query.get( 'action' ) !== 'import',
 			},
 			'site-migration-check': {
-				canCopySite: shouldShowSiteCopyItem,
+				copySiteEligibility,
 				destinationSiteSlug: hasDestination ? siteSlug : undefined,
 				destinationSiteUrl: hasDestination ? site?.URL : undefined,
 				destinationPlanName: site?.plan?.product_name_short || site?.plan?.product_name,
