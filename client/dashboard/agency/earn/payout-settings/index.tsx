@@ -1,8 +1,4 @@
-import {
-	activeAgencyQuery,
-	tipaltiIFrameUrlQuery,
-	tipaltiPayeeQuery,
-} from '@automattic/api-queries';
+import { activeAgencyQuery, tipaltiPayeeQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalHStack as HStack, Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -11,7 +7,9 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { Text } from '../../../components/text';
 import { getAccountStatus } from './get-account-status';
-import { TipaltiPayoutSettings } from './tipalti-payout-settings';
+import { TipaltiPayoutSummary } from './tipalti-payout-summary';
+
+import './style.scss';
 
 function PaymentStatusBadge( { agencyId }: { agencyId: number } ) {
 	const { data: payee } = useQuery( tipaltiPayeeQuery( agencyId ) );
@@ -39,11 +37,6 @@ export default function EarnPayoutSettings() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
 
-	const { data: iframeData, isLoading } = useQuery( {
-		...tipaltiIFrameUrlQuery( agencyId ),
-		refetchOnWindowFocus: false,
-	} );
-
 	return (
 		<PageLayout
 			header={
@@ -54,7 +47,7 @@ export default function EarnPayoutSettings() {
 				/>
 			}
 		>
-			<TipaltiPayoutSettings iframeUrl={ iframeData?.iframe_url } isLoading={ isLoading } />
+			{ !! agencyId && <TipaltiPayoutSummary agencyId={ agencyId } /> }
 		</PageLayout>
 	);
 }

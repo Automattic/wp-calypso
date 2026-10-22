@@ -2,6 +2,7 @@ import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, people, tag, trendingUp, currencyDollar } from '@wordpress/icons';
+import { onLeaveClick } from '../../agency/crossover/store';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { a4aLink } from '../../utils/link';
 import { useAppContext } from '../context';
@@ -70,6 +71,9 @@ export default function AgencySidebar() {
 	const canAccessGrow = canAccessLibrary || canAccessPartnerDirectory || canAccessTiers;
 	const canAccessAgency = canAccessTeam || canAccessMcp || canAccessBilling;
 
+	const pluginsUrl = buildDashboardLink( 'dotcom', '/plugins' );
+	const billingUrl = buildDashboardLink( 'dotcom', '/me/billing' );
+
 	return (
 		<>
 			<SidebarMenuItem icon={ home } to="/overview">
@@ -85,7 +89,10 @@ export default function AgencySidebar() {
 					{ canAccessSites && <SidebarMenuItem to="/sites">{ __( 'Sites' ) }</SidebarMenuItem> }
 					{ /* Plugins lives in the WP.com dashboard; the gate mirrors the classic app's. */ }
 					{ canAccessPlugins && (
-						<SidebarMenuItem href={ buildDashboardLink( 'dotcom', '/plugins' ) }>
+						<SidebarMenuItem
+							href={ pluginsUrl }
+							onClick={ onLeaveClick( 'wpcom-plugins', pluginsUrl ) }
+						>
 							{ __( 'Plugins' ) }
 						</SidebarMenuItem>
 					) }
@@ -160,7 +167,10 @@ export default function AgencySidebar() {
 					) }
 					{ /* Billing lives in the WP.com dashboard. */ }
 					{ canAccessBilling && (
-						<SidebarMenuItem href={ buildDashboardLink( 'dotcom', '/me/billing' ) }>
+						<SidebarMenuItem
+							href={ billingUrl }
+							onClick={ onLeaveClick( 'wpcom-billing', billingUrl ) }
+						>
 							{ __( 'Billing' ) }
 						</SidebarMenuItem>
 					) }

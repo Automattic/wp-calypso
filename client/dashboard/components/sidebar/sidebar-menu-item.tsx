@@ -13,6 +13,7 @@ interface SidebarMenuItemProps {
 	icon?: React.JSX.Element;
 	children: React.ReactNode;
 	activeOptions?: ActiveOptions;
+	onClick?: ( event: React.MouseEvent ) => void;
 }
 
 export function SidebarMenuItem( {
@@ -21,11 +22,13 @@ export function SidebarMenuItem( {
 	icon,
 	children,
 	activeOptions,
+	onClick,
 }: SidebarMenuItemProps ) {
 	const { recordTracksEvent } = useAnalytics();
 
-	const handleClick = () => {
+	const handleClick = ( event: React.MouseEvent ) => {
 		recordTracksEvent( 'calypso_dashboard_menu_item_click', { to: to ?? href ?? '' } );
+		onClick?.( event );
 	};
 
 	const label = href ? (
