@@ -125,7 +125,7 @@ The editor abilities (`abilities/editor-abilities.ts`) load as an async chunk on
 
 ## Interactive UI
 
-Agents Manager hosts interactive UI surfaces from `interactive-ui/`: the hook that loads the renderer (`@automattic/ai-ui-renderer`) once a reply has a surface, the surfaces component, the transcript and session utilities, and the catalogs. Its `README.md` has the architecture and the rules surfaces follow.
+Agents Manager hosts interactive UI surfaces from `interactive-ui/`: the hook that loads the renderer (`@automattic/ai-ui-renderer`) once a reply has a surface, the surfaces component, the transcript and session utilities, the catalogs, and the response tracking for catalog components. Its `README.md` has the architecture and the rules surfaces follow.
 
 - **Surfaces come from wpcom**, which stores them with the conversation: an ability returns one through `Interactive_UI`, or the agent composes one with `wpcom/render-interactive-ui`. A browser ability's `agentMessage` isn't stored, so it can't carry one.
 - **Basic components first.** Add a custom component only for what the basic ones can't express, such as a picker's style previews.
