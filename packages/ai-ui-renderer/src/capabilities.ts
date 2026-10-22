@@ -9,6 +9,14 @@ import type {
 /** The ID of A2UI's Basic catalog, which the basic components implement. */
 export const BASIC_CATALOG_ID = 'https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json';
 
+// A function component, or one React wraps in an object, such as `memo()`, `forwardRef()` or `lazy()`.
+function isComponent( value: unknown ) {
+	return (
+		typeof value === 'function' ||
+		( typeof value === 'object' && value !== null && '$$typeof' in value )
+	);
+}
+
 function assertSameNames(
 	kind: 'component' | 'function',
 	documentNames: string[],
@@ -45,7 +53,7 @@ export function assertInteractiveUiCatalogDefinition( {
 	assertSameNames(
 		'component',
 		Object.keys( catalog.components ?? {} ),
-		Object.keys( components ).filter( ( name ) => components[ name ] )
+		Object.keys( components ).filter( ( name ) => isComponent( components[ name ] ) )
 	);
 	assertSameNames(
 		'function',
