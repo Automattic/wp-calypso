@@ -19,7 +19,10 @@ export function useSavedPostKeys( options?: SavedPostKeysQueryOptions ) {
 // Every card reads the same keys response, so build its lookup once and share it.
 const savedKeyIdsByResponse = new WeakMap< ReadSavedKeysResponse, Set< string > >();
 
-function getSavedKeyIds( data: ReadSavedKeysResponse ) {
+/**
+ * The `getReadSavedKeyId()` of every key in the response.
+ */
+export function getSavedKeyIds( data: ReadSavedKeysResponse ) {
 	let ids = savedKeyIdsByResponse.get( data );
 	if ( ! ids ) {
 		ids = new Set( data.keys.map( getReadSavedKeyId ) );

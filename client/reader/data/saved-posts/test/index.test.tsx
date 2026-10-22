@@ -16,6 +16,11 @@ const RSS_POST = { ID: 9000, site_ID: 0, feed_ID: 60, feed_item_ID: 9000, is_ext
 // A Jetpack post shown with its WordPress.com copy, after being saved while that
 // copy failed to load.
 const JETPACK_POST = { ID: 45, site_ID: 123, feed_ID: 70, feed_item_ID: 6000, is_external: false };
+// The same Jetpack post saved under both of its keys.
+const JETPACK_SAVED_KEYS = [
+	{ blog_id: 123, post_id: 45, date_saved: '2026-10-02T00:00:00+00:00' },
+	{ feed_item_id: 6000, date_saved: '2026-10-01T00:00:00+00:00' },
+];
 
 function makeClient() {
 	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
@@ -228,10 +233,7 @@ describe( 'useSavePost', () => {
 
 	it( 'unsaves a post saved under both of its keys', async () => {
 		const client = makeClient();
-		setKeys( client, [
-			{ blog_id: 123, post_id: 45, date_saved: '2026-10-02T00:00:00+00:00' },
-			{ feed_item_id: 6000, date_saved: '2026-10-01T00:00:00+00:00' },
-		] );
+		setKeys( client, JETPACK_SAVED_KEYS );
 		const requests = nock( BASE )
 			.post( '/wpcom/v2/read/saved/delete', { blog_id: 123, post_id: 45, source: 'reader-web' } )
 			.reply( 200, { saved: false, key: { blog_id: 123, post_id: 45 }, total: 1 } )
@@ -249,10 +251,7 @@ describe( 'useSavePost', () => {
 
 	it( 'calls onError once when one of the keys fails to unsave', async () => {
 		const client = makeClient();
-		setKeys( client, [
-			{ blog_id: 123, post_id: 45, date_saved: '2026-10-02T00:00:00+00:00' },
-			{ feed_item_id: 6000, date_saved: '2026-10-01T00:00:00+00:00' },
-		] );
+		setKeys( client, JETPACK_SAVED_KEYS );
 		const requests = nock( BASE )
 			.post( '/wpcom/v2/read/saved/delete', { blog_id: 123, post_id: 45, source: 'reader-web' } )
 			.reply( 500, { error: 'server_error', message: 'Failed.' } )

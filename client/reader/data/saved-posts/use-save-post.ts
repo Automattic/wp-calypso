@@ -7,6 +7,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { savedKeyForPost, savedKeysForPost } from './saved-key-for-post';
+import { getSavedKeyIds } from './use-saved-post-keys';
 import type { ReadSavedKey, ReadSavedKeysResponse } from '@automattic/api-core';
 import type { Post } from 'calypso/reader/data/post';
 
@@ -64,12 +65,12 @@ export function useSavePost() {
 				return;
 			}
 
-			const savedIds = new Set(
-				queryClient
-					.getQueryData< ReadSavedKeysResponse >( readSavedKeysQuery().queryKey )
-					?.keys.map( getReadSavedKeyId )
+			const data = queryClient.getQueryData< ReadSavedKeysResponse >(
+				readSavedKeysQuery().queryKey
 			);
-			const savedKeys = keys.filter( ( key ) => savedIds.has( getReadSavedKeyId( key ) ) );
+			const savedKeys = data
+				? keys.filter( ( key ) => getSavedKeyIds( data ).has( getReadSavedKeyId( key ) ) )
+				: [];
 			unsaveKeys( savedKeys.length ? savedKeys : keys.slice( 0, 1 ), options );
 		},
 		[ queryClient, unsaveKeys ]
