@@ -552,7 +552,11 @@ interface Tool {
 }
 
 type AuthProvider = () => Promise< Record< string, string > >;
-type ContextProvider = { getClientContext: () => any };
+type ContextProvider = {
+	getClientContext: () => any;
+	// Metadata the agent reads on every message, such as A2UI's `a2uiRendererCapabilities`.
+	getMessageMetadata?: () => Record< string, unknown >;
+};
 type ToolProvider = {
 	getAvailableTools: () => Promise< Tool[] >;
 	getDispatchableTools?: () => Promise< Tool[] >;

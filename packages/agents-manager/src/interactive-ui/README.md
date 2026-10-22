@@ -42,7 +42,7 @@ come.
     of them are stale.
   - `session.ts` keeps each conversation's session, through a new chat's bootstrap, and tells
     surfaces restored from history from new ones.
-  - `catalogs.ts` builds the catalogs, and the renderer capabilities the client context sends.
+  - `catalogs.ts` builds the catalogs, and the renderer capabilities each message sends.
   - `with-chat-response-tracking.tsx` records the shared response events for each catalog
     component.
 - **Custom components and functions** live in the project that owns them: Agents Manager's here
@@ -65,11 +65,11 @@ come.
   `agentMessage` only shows live: it isn't stored, and the stream can drop it. So a browser ability
   that needs UI moves it to a server ability, or the agent composes it.
 - **The client lists what it renders.** Agents Manager sends A2UI's `a2uiRendererCapabilities` in
-  its client context: the IDs of the catalogs it renders, and their documents. It checks each
-  provider's catalog first, and skips and logs an invalid one or a later one with a taken ID, so
-  the others keep working. wpcom offers interactive UI only for the catalogs a client lists, and
-  builds the agent's tool from their documents (AM-116). The documents come from the browser, so
-  wpcom only describes and validates with them.
+  each message's metadata, as A2UI's A2A binding does: the IDs of the catalogs it renders, and
+  their documents. It checks each provider's catalog first, and skips and logs an invalid one or a
+  later one with a taken ID, so the others keep working. wpcom offers interactive UI only for the
+  catalogs a client lists, and builds the agent's tool from their documents (AM-116). The
+  documents come from the browser, so wpcom only describes and validates with them.
 - **Surfaces follow A2UI v1.0.** Component IDs are identifiers (letters, digits and underscores),
   each component has one parent (a Modal renders its trigger, so it isn't also placed in a layout),
   bindings are `{"@path": "/field"}` and function calls `{"@call": "name"}`. A2UI rejects a surface
