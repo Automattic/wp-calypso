@@ -13,6 +13,7 @@ import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
+import { getSingleMappingDomain } from 'calypso/landing/stepper/utils/get-single-mapping-domain';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -26,6 +27,7 @@ import {
 	getLaunchReturnUrl,
 	type LaunchParams,
 } from 'calypso/lib/site-launch/destination';
+import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import {
 	clearSignupCompleteFlowName,
 	clearSignupCompleteSiteID,
@@ -267,8 +269,11 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 		// The onboarding store is shared with other flows and survives a visit that skips this flow's
 		// root, so only pick up what this flow's own steps could have chosen.
+		const getLaunchDomainItems = () =>
+			stepSlugs.includes( STEPS.DOMAIN_SEARCH.slug ) ? getDomainItems() : [];
+
 		const getLaunchCartItems = () => {
-			const domainItems = stepSlugs.includes( STEPS.DOMAIN_SEARCH.slug ) ? getDomainItems() : [];
+			const domainItems = getLaunchDomainItems();
 			const hasPlansStep = stepSlugs.includes( STEPS.UNIFIED_PLANS.slug );
 			const planCartItem = hasPlansStep ? getPlanCartItem() : null;
 			const productCartItems = hasPlansStep ? ( getProductCartItems() ?? [] ) : [];
@@ -282,11 +287,17 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 		// The site is already live, so nothing here may keep the user from moving on.
 		const finishLaunch = async () => {
-			const destination = getLaunchDestination( launchParams );
+			let destination = getLaunchDestination( launchParams );
 			let cartItems: MinimalRequestCartProduct[] | null;
 
 			try {
 				cartItems = getLaunchCartItems();
+
+				const mappingDomain = getSingleMappingDomain( getLaunchDomainItems() );
+
+				if ( mappingDomain ) {
+					destination = domainMappingSetup( launchParams.siteSlug, mappingDomain, '', false, true );
+				}
 			} catch {
 				// Unknown contents: let checkout show whatever the cart already holds.
 				cartItems = null;
@@ -309,7 +320,7 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 			setSignupCompleteSlug( launchParams.siteSlug );
 			setSignupCompleteFlowName( LAUNCH_SITE_FLOW );
 
-			return window.location.replace( getLaunchCheckoutUrl( launchParams ) );
+			return window.location.replace( getLaunchCheckoutUrl( launchParams, destination ) );
 		};
 
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
