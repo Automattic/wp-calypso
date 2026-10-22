@@ -1,9 +1,8 @@
 import { Button, Gridicon, ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import JetpackInstructionList from './jetpack-instruction-list';
 import JetpackLicenseKeyClipboard from './jetpack-license-key-clipboard';
 import { getJetpackPluginSupportDocLink, getWPORGPluginLink } from './utils';
@@ -14,26 +13,21 @@ interface Props {
 }
 
 const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product, receiptId } ) => {
-	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const { productSlug } = product;
 	const wporgPluginLink = getWPORGPluginLink( productSlug );
 
 	const handleDownloadClick = useCallback( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_siteless_checkout_manual_activation_download_link_click', {
-				product_slug: productSlug,
-			} )
-		);
-	}, [ dispatch, productSlug ] );
+		recordTracksEvent( 'calypso_siteless_checkout_manual_activation_download_link_click', {
+			product_slug: productSlug,
+		} );
+	}, [ productSlug ] );
 	const handleLearnMoreClick = useCallback( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_siteless_checkout_manual_activation_learn_more_link_click', {
-				product_slug: productSlug,
-			} )
-		);
-	}, [ dispatch, productSlug ] );
+		recordTracksEvent( 'calypso_siteless_checkout_manual_activation_learn_more_link_click', {
+			product_slug: productSlug,
+		} );
+	}, [ productSlug ] );
 
 	const items = useMemo(
 		() => [
