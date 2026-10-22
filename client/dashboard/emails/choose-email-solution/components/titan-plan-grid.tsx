@@ -108,6 +108,7 @@ export function TitanPlanGrid( {
 	onUpgrade,
 	onDowngrade,
 	onCancelScheduledDowngrade,
+	onSelect,
 }: {
 	domain?: Domain;
 	domainName: string;
@@ -135,6 +136,9 @@ export function TitanPlanGrid( {
 	// Downgrades are a direct API call, so this never goes to checkout.
 	onDowngrade?: ( tier: TitanPlanTier, toProductId: number ) => void;
 	onCancelScheduledDowngrade?: () => void;
+	// Replaces the default navigation to add-mailbox when buying a new plan,
+	// e.g. when no domain has been picked yet.
+	onSelect?: ( tier: TitanPlanTier ) => void;
 } ) {
 	const navigate = useNavigate();
 
@@ -345,6 +349,10 @@ export function TitanPlanGrid( {
 								}
 								if ( currentTier ) {
 									onUpgrade?.( plan.tier );
+									return;
+								}
+								if ( onSelect ) {
+									onSelect( plan.tier );
 									return;
 								}
 								navigate( {
