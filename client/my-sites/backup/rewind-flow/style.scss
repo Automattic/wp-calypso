@@ -191,7 +191,8 @@ a.rewind-flow-notice__title-warning:visited {
 
 // Why Restore is off, under the button.
 .rewind-flow__acknowledgement-hint {
-	margin: 8px 0 0;
+	margin-block: 8px 0;
+	margin-inline: 0;
 	font-size: 0.875rem;
 	color: var( --color-text-subtle );
 	text-align: center;
