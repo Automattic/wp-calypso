@@ -125,7 +125,9 @@ module.exports = ( {
 		...terserOptions,
 	};
 	cssMinimizerOptions = {
-		preset: 'default',
+		// `:is()` folding wraps selectors that contain combinators, which changes what they match:
+		// `.a > .b .c, .a > .d .e` becomes `.a > :is(.b .c, .d .e)`, requiring `.c` to be a child of `.a`.
+		preset: [ 'default', { minifySelectors: { convertToIs: false } } ],
 		...cssMinimizerOptions,
 	};
 
