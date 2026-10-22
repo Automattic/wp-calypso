@@ -18,30 +18,8 @@ function createOmnibarEvent< T = void >() {
 	};
 }
 
-/**
- * Create an omnibar event that also passes its latest payload to new subscribers.
- */
-function createOmnibarValue< T >( initialValue: T ) {
-	const listeners = new Set< Listener< T > >();
-	let latestValue = initialValue;
-	return {
-		emit( value: T ) {
-			latestValue = value;
-			listeners.forEach( ( fn ) => fn( value ) );
-		},
-		subscribe( fn: Listener< T > ) {
-			listeners.add( fn );
-			fn( latestValue );
-			return () => {
-				listeners.delete( fn );
-			};
-		},
-	};
-}
-
 export const omnibarEvents = {
 	mobileMenu: createOmnibarEvent(),
-	notificationsAnchor: createOmnibarValue< HTMLElement | null >( null ),
 	notifications: createOmnibarEvent(),
 	notificationsUnseenCount: createOmnibarEvent< number >(),
 	notificationsOpen: createOmnibarEvent< boolean >(),

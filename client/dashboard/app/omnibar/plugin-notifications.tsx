@@ -1,6 +1,6 @@
 import { parseAdminBarTitle } from '@automattic/omnibar';
 import clsx from 'clsx';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { omnibarEvents, useOmnibarEvent } from './events';
 import type { User } from '@automattic/api-core';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
@@ -38,13 +38,6 @@ export function useNotificationsNodeBuilder( { user }: { user?: User } ) {
 		setSubscriberAlertPulse( ( pulse ) => pulse + 1 )
 	);
 
-	const bellRef = useRef< HTMLSpanElement >( null );
-
-	// Re-runs every commit so the anchor stays correct if the bell button is replaced.
-	useEffect( () => {
-		omnibarEvents.notificationsAnchor.emit( bellRef.current?.closest( 'a' ) ?? null );
-	} );
-
 	return useCallback(
 		( adminBarNode: AdminBarNode ): Partial< OmnibarNode > => {
 			const { text, tooltip } = parseAdminBarTitle( adminBarNode );
@@ -57,7 +50,6 @@ export function useNotificationsNodeBuilder( { user }: { user?: User } ) {
 				icon: (
 					<span
 						key={ subscriberAlertPulse }
-						ref={ bellRef }
 						className={ clsx(
 							'omnibar__notifications-icon',
 							subscriberAlertPulse > 0 && 'omnibar__notifications-icon--subscriber-pulse'

@@ -20,6 +20,21 @@ import './style.scss';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
 
+/**
+ * Returns the position of the omnibar bell, or the right end of the omnibar when the bell is missing.
+ */
+function getBellRect() {
+	const omnibar = document.getElementById( 'wpcom-omnibar' );
+	const bell = omnibar?.querySelector( '.omnibar__notifications-icon' )?.closest( 'a' );
+	if ( bell ) {
+		return bell.getBoundingClientRect();
+	}
+	const { top = 0, height = 0 } = omnibar?.getBoundingClientRect() ?? {};
+	return new DOMRect( document.documentElement.clientWidth, top, 0, height );
+}
+
+const bellAnchor = { getBoundingClientRect: getBellRect };
+
 export default function Notifications( {
 	className,
 	anchor,
@@ -34,7 +49,6 @@ export default function Notifications( {
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
-	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
 	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
 	const isSimplifiedNoteEnabled = isViewSettingsEnabled;
 	const onNotificationCount = useCallback( ( count: number ) => {
@@ -64,13 +78,6 @@ export default function Notifications( {
 	const notificationPreferences = useMemo(
 		() => ( layoutStyle === undefined ? undefined : { layoutStyle, viewSettingsSeen } ),
 		[ layoutStyle, viewSettingsSeen ]
-	);
-
-	const popoverAnchor = useMemo(
-		() => ( {
-			getBoundingClientRect: () => anchorEl?.getBoundingClientRect() ?? new DOMRect(),
-		} ),
-		[ anchorEl ]
 	);
 
 	const handleToggle = ( willOpen: boolean ) => {
@@ -131,7 +138,6 @@ export default function Notifications( {
 		} );
 	}, [ setShowHelpCenter ] );
 
-	useOmnibarEvent( 'notificationsAnchor', setAnchorEl );
 	useOmnibarEvent( 'notifications', handleOmnibarToggle );
 
 	useEffect( () => {
@@ -167,8 +173,7 @@ export default function Notifications( {
 				// container below. Portalled to the body, its coordinates are
 				// document-relative and have to be recomputed on every scroll
 				// frame, which visibly lags behind the fixed masterbar.
-				...( anchor && { inline: true } ),
-				...( anchor ? { anchor: popoverAnchor } : anchorEl && { anchor: anchorEl } ),
+				...( anchor && { inline: true, anchor: bellAnchor } ),
 				onFocusOutside: () => {
 					// When focus moves to the omnibar (e.g. clicking the
 					// omnibar notification bell), suppress the Popover's
