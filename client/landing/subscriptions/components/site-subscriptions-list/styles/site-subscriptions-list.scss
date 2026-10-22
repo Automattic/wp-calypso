@@ -93,12 +93,15 @@
 			display: flex;
 			align-items: center;
 
-			&[role="columnheader"] span {
+			&[role="columnheader"] .site-subscriptions-list__recommend-tooltip-trigger {
 				display: flex;
+				align-items: center;
+				background: none;
+				border: none;
+				padding: 0;
+				cursor: pointer;
 
 				.site-subscriptions-list__recommend-tooltip-icon {
-					cursor: pointer;
-					flex: 0.5;
 					color: var( --studio-gray-50 );
 					fill: currentColor;
 
@@ -164,7 +167,7 @@
 	width: 200px;
 }
 
-div[id^="portal/tooltip"] .components-tooltip.site-subscriptions-list__recommend-tooltip {
+.site-subscriptions-list__recommend-tooltip {
 	font-size: $font-body-small;
 	max-width: 250px;
 	text-align: left;

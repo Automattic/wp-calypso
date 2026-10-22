@@ -1,6 +1,7 @@
 import { SubscriptionManager } from '@automattic/data-stores';
-import { Spinner, __experimentalHStack as HStack, Icon, Tooltip } from '@wordpress/components';
+import { Spinner, __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { info } from '@wordpress/icons';
+import { Popover, VisuallyHidden } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Notice, NoticeType } from '../notice';
@@ -106,20 +107,32 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				{ isLoggedIn && ! isCompactLayout && (
 					<span className="recommend-cell" role="columnheader">
 						{ translate( 'Recommend' ) }
-						<Tooltip
-							className="site-subscriptions-list__recommend-tooltip"
-							text={ translate(
-								'Recommending a blog adds it to your profile and helps it to be discovered in the Reader.'
-							) }
-						>
-							<span>
+						<Popover.Root>
+							<Popover.Trigger
+								openOnHover
+								delay={ 200 }
+								closeDelay={ 200 }
+								aria-label={ translate( 'More information' ) }
+								className="site-subscriptions-list__recommend-tooltip-trigger"
+							>
 								<Icon
 									className="site-subscriptions-list__recommend-tooltip-icon"
 									icon={ info }
 									size={ 16 }
 								/>
-							</span>
-						</Tooltip>
+							</Popover.Trigger>
+							<Popover.Popup className="site-subscriptions-list__recommend-tooltip">
+								<Popover.Arrow />
+								<VisuallyHidden render={ <Popover.Title /> }>
+									{ translate( 'More information' ) }
+								</VisuallyHidden>
+								<Popover.Description>
+									{ translate(
+										'Recommending a blog adds it to your profile and helps it to be discovered in the Reader.'
+									) }
+								</Popover.Description>
+							</Popover.Popup>
+						</Popover.Root>
 					</span>
 				) }
 				<span className="unsubscribe-action-cell" role="columnheader">
