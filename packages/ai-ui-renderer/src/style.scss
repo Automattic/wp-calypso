@@ -43,6 +43,17 @@ $wp-components-colors: (
 				var( --ai-ui-renderer-host-#{$name}, #{$default} )
 			);
 		}
+
+		// One accent can't fill a button under white text and also be readable text on a dark
+		// surface, so accent-colored text gets a lighter shade in dark mode.
+		--ai-ui-renderer-accent-text: light-dark(
+			var( --wp-components-color-accent ),
+			color-mix( in srgb, var( --wp-components-color-accent ) 55%, #{$white} )
+		);
+		--ai-ui-renderer-accent-text-hover: light-dark(
+			var( --wp-components-color-accent-darker-20 ),
+			color-mix( in srgb, var( --wp-components-color-accent ) 40%, #{$white} )
+		);
 	}
 }
 
@@ -207,6 +218,11 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 
 	.components-radio-control__input[type='radio']:not( :checked, :disabled ) {
 		border-color: var( --wp-components-color-foreground );
+	}
+
+	.components-button:is( .is-secondary, .is-tertiary, .is-link ) {
+		--wp-components-color-accent: var( --ai-ui-renderer-accent-text );
+		--wp-components-color-accent-darker-20: var( --ai-ui-renderer-accent-text-hover );
 	}
 
 	.components-tab-panel__tabs {
