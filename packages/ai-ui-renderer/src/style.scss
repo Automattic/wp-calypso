@@ -19,12 +19,12 @@ $wp-components-colors: (
 	(
 		background,
 		input,
-		light-dark( var( --wpds-color-background-surface-neutral-strong, #fff ), #2f2f2f )
+		light-dark( var( --wpds-color-background-surface-neutral-strong, $white ), $gray-800 )
 	),
 	(
 		foreground,
 		on-input,
-		light-dark( var( --wpds-color-foreground-content-neutral, #1e1e1e ), #f0f0f0 )
+		light-dark( var( --wpds-color-foreground-content-neutral, $gray-900 ), $gray-100 )
 	)
 );
 
@@ -48,8 +48,8 @@ $wp-components-colors: (
 
 .ai-ui-renderer .ai-ui-renderer__card,
 .ai-ui-renderer__modal .components-modal__frame {
-	background-color: var( --a2ui-color-surface, light-dark( #fff, #1e1e1e ) );
-	color: var( --a2ui-color-on-surface, light-dark( #1e1e1e, #f0f0f0 ) );
+	background-color: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) );
+	color: var( --a2ui-color-on-surface, light-dark( $gray-900, $gray-100 ) );
 }
 
 // WordPress components color the modal's headings.
@@ -79,7 +79,7 @@ $wp-components-colors: (
 
 	.ai-ui-renderer__divider {
 		align-self: stretch;
-		border: 0 solid var( --a2ui-color-border, light-dark( #ddd, #3c3c3c ) );
+		border: 0 solid var( --a2ui-color-border, light-dark( $gray-300, #3c3c3c ) );
 		border-top-width: 1px;
 
 		&[aria-orientation='vertical'] {
