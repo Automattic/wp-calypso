@@ -57,16 +57,40 @@ and give the modal overlay (`ai-ui-renderer__modal`) a stacking rule.
 
 ## Theming
 
-Surfaces follow [A2UI's theming](https://a2ui.org/guides/theming/). Set its tokens on the surface
-or an ancestor: `--a2ui-color-primary`, `--a2ui-color-primary-hover`, `--a2ui-color-primary-dark`,
-`--a2ui-color-on-primary`, `--a2ui-color-surface`, `--a2ui-color-on-surface`,
-`--a2ui-color-input`, `--a2ui-color-on-input` and `--a2ui-color-border`. An unset primary or
-input token keeps the host's WordPress components color (`--wp-components-color-*`); otherwise an
-unset token uses a default.
+Surfaces follow [A2UI's theming](https://a2ui.org/guides/theming/): a host sets A2UI's color
+tokens, and the renderer applies them to the basic components and the WordPress components they
+use, including newer ones that read WordPress's `--wpds-*` design tokens.
 
-The defaults follow the page's `color-scheme`, or A2UI's `a2ui-dark` or `a2ui-light` class on the
-surface or an ancestor. The modal renders outside the host, so it copies its surface's theme when
-it opens.
+| Token                                                                             | Colors                                      |
+| --------------------------------------------------------------------------------- | ------------------------------------------- |
+| `--a2ui-color-primary`, `--a2ui-color-primary-hover`, `--a2ui-color-primary-dark` | Primary buttons and checked controls        |
+| `--a2ui-color-on-primary`                                                         | Text on the primary color                   |
+| `--a2ui-color-surface`, `--a2ui-color-on-surface`                                 | Cards and the modal                         |
+| `--a2ui-color-input`, `--a2ui-color-on-input`                                     | Inputs, and the text and labels of controls |
+| `--a2ui-color-border`                                                             | Card outlines and dividers                  |
+
+Set them on the class you pass as `className`, or on an ancestor. Pick light or dark with the
+page's `color-scheme`, or A2UI's `a2ui-dark` or `a2ui-light` class:
+
+```scss
+.my-chat__surface {
+	--a2ui-color-surface: var( --my-chat-background );
+	--a2ui-color-on-surface: var( --my-chat-text );
+}
+
+.my-chat.is-dark .my-chat__surface {
+	color-scheme: dark;
+	--a2ui-color-input: #2f2f2f;
+}
+```
+
+An unset token keeps the host's WordPress components color (`--wp-components-color-*`), or else a
+default from WordPress's palette that follows the light or dark mode. In dark mode, text-style
+buttons and checked controls use a lighter shade of the primary color, so they stay readable. The
+modal renders outside the host, so it copies its surface's theme when it opens.
+
+Custom components should use the tokens, such as `var( --a2ui-color-on-surface )`, or WordPress
+components, which follow them, never a chat's own variables.
 
 ## Basic components
 

@@ -34,7 +34,8 @@ come.
   - `src/hooks/use-interactive-ui.ts` keeps a runtime per conversation, loads the renderer on demand
     and sends actions to the agent.
   - `src/components/interactive-ui-surfaces/` renders a message's surfaces in the chat's colors
-    and mode, greys out a stale one, and stacks the modal above the chat. Surfaces sit in a
+    and mode (its `style.scss` sets A2UI's tokens from Agenttic's), greys out a stale one, and
+    stacks the modal above the chat. Surfaces sit in a
     `data-agenttic-isolated` wrapper, so their controls keep their own typography while replies
     keep the chat's typography reset.
   - `src/utils/interactive-ui-messages.ts` and
