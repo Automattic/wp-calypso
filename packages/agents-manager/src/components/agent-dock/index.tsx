@@ -74,8 +74,8 @@ interface Props {
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
-	/** The providers' interactive UI components and functions. */
-	interactiveUi?: LoadedProviders[ 'interactiveUi' ];
+	/** The providers' interactive UI catalogs. */
+	interactiveUiCatalogs?: LoadedProviders[ 'interactiveUiCatalogs' ];
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
 	transformMessages?: TransformMessages;
@@ -91,7 +91,7 @@ export default function AgentDock( {
 	markdownExtensions = {},
 	useProviderAbilitiesSetup,
 	getChatComponent,
-	interactiveUi,
+	interactiveUiCatalogs,
 	useSuggestions,
 	siteBuildUtils,
 	transformMessages,
@@ -428,7 +428,7 @@ export default function AgentDock( {
 			useProviderAbilitiesSetup={ useProviderAbilitiesSetup }
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
-			interactiveUi={ interactiveUi }
+			interactiveUiCatalogs={ interactiveUiCatalogs }
 			siteBuildUtils={ siteBuildUtils }
 			transformMessages={ transformMessages }
 			useCheckpoint={ useCheckpoint }

@@ -1,11 +1,12 @@
-import { isChatUiStale } from './stale-chat-ui';
+import { isChatUiStale } from '../utils/stale-chat-ui';
 import type { UIMessage } from '@automattic/agenttic-client';
 import type { InteractiveUiMessage, InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 /** The A2UI protocol version the interactive UI speaks. */
 export const INTERACTIVE_UI_VERSION = 'v1.0';
 
-const INTERACTIVE_UI_TOOL_ID = 'wpcom__render_interactive_ui';
+/** The tool ID wpcom's interactive UI envelope carries. */
+export const INTERACTIVE_UI_TOOL_ID = 'wpcom__render_interactive_ui';
 
 interface ParsedInteractiveUiText {
 	operations: InteractiveUiMessage[];

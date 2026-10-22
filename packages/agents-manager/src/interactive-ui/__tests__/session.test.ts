@@ -1,4 +1,4 @@
-import { getInteractiveUiSession, trackInteractiveUiHistory } from '../interactive-ui-session';
+import { getInteractiveUiSession, trackInteractiveUiHistory } from '../session';
 
 const SCOPE = JSON.stringify( [ 'site', 1, 'agent' ] );
 

@@ -1,12 +1,12 @@
 import { createInteractiveUiCatalog, createInteractiveUiRuntime } from '@automattic/ai-ui-renderer';
-import { InteractiveUiSurfaces } from '../../components/interactive-ui-surfaces';
 import {
 	attachInteractiveUiPresentation,
 	convertInteractiveUiMessagesToComponents,
 	markInteractiveUiActionReplies,
-} from '../convert-interactive-ui-messages-to-components';
-import type { InteractiveUiPresentation } from '../../hooks/use-interactive-ui';
-import type { AgentsManagerUIMessage } from '../convert-tool-messages-to-components';
+} from '../convert-messages-to-components';
+import { InteractiveUiSurfaces } from '../surfaces';
+import type { AgentsManagerUIMessage } from '../../utils/convert-tool-messages-to-components';
+import type { InteractiveUiPresentation } from '../use-interactive-ui';
 import type { ComponentType } from 'react';
 
 const operations = [
@@ -107,23 +107,25 @@ describe( 'attachInteractiveUiPresentation', () => {
 		expect( attached.content ).toEqual( [
 			{
 				...surfacesPart,
-				componentProps: { messageId: 'agent', presentation, isMessageStale: false },
+				componentProps: { messageId: 'agent', presentation },
 			},
 		] );
 	} );
 
-	it( 'disables a message whose surfaces are all stale', () => {
+	it( 'disables the actions of a message whose surfaces are all stale', () => {
 		const presentation = createPresentation( {
 			surfaceOwnerId: 'agent',
 			staleSurfaceIds: [ 'surface' ],
 		} );
+		const feedback = { id: 'feedback-up', label: 'Good response', onClick: jest.fn() };
 
-		const [ attached ] = attachInteractiveUiPresentation( [ message ], presentation );
+		const [ attached ] = attachInteractiveUiPresentation(
+			[ { ...message, actions: [ feedback ] } ],
+			presentation
+		);
 
-		expect( attached ).toMatchObject( {
-			disabled: true,
-			content: [ { componentProps: { isMessageStale: true } } ],
-		} );
+		expect( attached.actions ).toEqual( [ { ...feedback, disabled: true } ] );
+		expect( attached ).not.toHaveProperty( 'disabled' );
 	} );
 
 	it( 'drops the surfaces part while its message has no surface yet', () => {

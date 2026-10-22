@@ -1,5 +1,5 @@
-import { isSessionBootstrap } from './agent-session';
-import type { InteractiveUiBatch } from './interactive-ui-messages';
+import { isSessionBootstrap } from '../utils/agent-session';
+import type { InteractiveUiBatch } from './messages';
 import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 /** Where a chat session's history ends, so its surfaces can be told apart from new ones. */

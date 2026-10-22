@@ -1,7 +1,8 @@
-import { InteractiveUiSurfaces } from '../components/interactive-ui-surfaces';
-import { isInteractiveUiActionMessage, parseInteractiveUiText } from './interactive-ui-messages';
-import type { AgentsManagerUIMessage } from './convert-tool-messages-to-components';
-import type { InteractiveUiPresentation } from '../hooks/use-interactive-ui';
+import { withDisabledActions } from '../utils/message-actions';
+import { isInteractiveUiActionMessage, parseInteractiveUiText } from './messages';
+import { InteractiveUiSurfaces } from './surfaces';
+import type { InteractiveUiPresentation } from './use-interactive-ui';
+import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
 import type { UIMessage } from '@automattic/agenttic-client';
 import type { ComponentType } from 'react';
 
@@ -52,8 +53,9 @@ function isInteractiveUiSurfacesPart( content: MessageContentPart ) {
 
 /**
  * Hands each message's interactive UI part the current presentation, and drops the part while
- * its message has no surface to show yet, unless the renderer failed to load. Disables a message
- * whose surfaces are all stale, as `show-component` does, so Agenttic greys it out with its actions.
+ * its message has no surface to show yet, unless the renderer failed to load. Stale surfaces
+ * disable their own controls, so a message whose surfaces are all stale keeps its look and only
+ * disables its actions, as a `show-component` message does.
  */
 export function attachInteractiveUiPresentation(
 	messages: AgentsManagerUIMessage[],
@@ -66,13 +68,12 @@ export function attachInteractiveUiPresentation(
 
 		const surfaceIds = presentation.runtime?.getSurfaceIds( message.id ) ?? [];
 		const hasSurfaces = surfaceIds.length > 0;
-		const isMessageStale =
+		const isStale =
 			hasSurfaces &&
 			surfaceIds.every( ( surfaceId ) => presentation.staleSurfaceIds.has( surfaceId ) );
 
-		return {
+		const attachedMessage = {
 			...message,
-			...( isMessageStale && { disabled: true } ),
 			content: message.content.flatMap( ( content ) => {
 				if ( ! isInteractiveUiSurfacesPart( content ) ) {
 					return [ content ];
@@ -85,11 +86,13 @@ export function attachInteractiveUiPresentation(
 				return [
 					{
 						...content,
-						componentProps: { ...content.componentProps, presentation, isMessageStale },
+						componentProps: { ...content.componentProps, presentation },
 					},
 				];
 			} ),
 		};
+
+		return isStale ? withDisabledActions( attachedMessage ) : attachedMessage;
 	} );
 }
 

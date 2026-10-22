@@ -33,7 +33,7 @@ function MyApp() {
 
 Plugins register provider modules through the PHP filter `agents_manager_agent_providers` (Jetpack's `agents-manager` package). The entries reach the client as `agentsManagerData.agentProviders`, and Agents Manager imports them.
 
-See `src/extension-types.ts` for the tool and context provider interfaces, and `LoadedProviders` in `src/utils/load-external-providers.ts` for everything else a provider module can export: suggestions, markdown components and extensions, interactive UI components and functions, chat components, message transforms, task updates, abilities setup, checkpoint hooks, site-build utilities and capabilities.
+See `src/extension-types.ts` for the tool and context provider interfaces, and `LoadedProviders` in `src/utils/load-external-providers.ts` for everything else a provider module can export: suggestions, markdown components and extensions, an interactive UI catalog, chat components, message transforms, task updates, abilities setup, checkpoint hooks, site-build utilities and capabilities.
 
 ### Opening and closing the chat
 
@@ -138,7 +138,7 @@ import type {
 
 ## Interactive chat surfaces
 
-The agent can show buttons, forms and pickers in the chat. [`@automattic/ai-ui-renderer`](../ai-ui-renderer/README.md) renders them and holds only the basic or shared components; each chat's own components live in its project, such as Agents Manager, WooCommerce AI or the Jetpack AI sidebar. See [`INTERACTIVE-UI.md`](./INTERACTIVE-UI.md) for how it works.
+The agent can show buttons, forms and pickers in the chat. [`@automattic/ai-ui-renderer`](../ai-ui-renderer/README.md) renders them and holds only the basic or shared components; each chat's own components live in its project, such as Agents Manager, WooCommerce AI or the Jetpack AI sidebar. See [`src/interactive-ui/README.md`](./src/interactive-ui/README.md) for how it works.
 
 ## Development
 

@@ -4,8 +4,8 @@ import {
 	getInteractiveUiBatches,
 	getStaleInteractiveUiSurfaceIds,
 	parseInteractiveUiText,
-} from '../interactive-ui-messages';
-import type { InteractiveUiBatch } from '../interactive-ui-messages';
+} from '../messages';
+import type { InteractiveUiBatch } from '../messages';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 const operations = [
