@@ -54,7 +54,12 @@ export function MigrationCard( {
  */
 export function AssistedHandoffLink() {
 	return (
-		<Button variant="link" disabled className="wordpress-migration__align-start">
+		<Button
+			__next40pxDefaultSize
+			variant="link"
+			disabled
+			className="wordpress-migration__align-start"
+		>
 			{ __( 'Have our team handle this migration for you, included in your plan.' ) }
 		</Button>
 	);

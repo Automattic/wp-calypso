@@ -31,14 +31,9 @@ function useManualInstall( site: Site ) {
 	return { manualInstall, isError, refetch };
 }
 
-// Muted like the buttons while the URL is still loading, rather than a link that goes nowhere.
 function linkTo( url?: string ) {
-	return url ? (
-		// @ts-expect-error children prop is injected by createInterpolateElement
-		<ExternalLink href={ url } />
-	) : (
-		<Button variant="link" disabled />
-	);
+	// @ts-expect-error children prop is injected by createInterpolateElement
+	return <ExternalLink href={ url ?? '' } />;
 }
 
 export function Connect( { site, failure }: { site: Site; failure?: WordPressMigrationFinding } ) {
@@ -116,30 +111,33 @@ export function Connect( { site, failure }: { site: Site; failure?: WordPressMig
 			</VStack>
 			<VStack spacing={ 4 }>
 				<Button
+					__next40pxDefaultSize
 					variant="tertiary"
 					size="compact"
 					icon={ isShowingFallbacks ? chevronUp : chevronDown }
 					iconPosition="right"
 					aria-expanded={ isShowingFallbacks }
 					aria-controls={ isShowingFallbacks ? fallbacksId : undefined }
+					// Its links and key come with the site's details, so it opens once they've loaded.
+					disabled={ ! manualInstall }
 					onClick={ () => setIsShowingFallbacks( ! isShowingFallbacks ) }
 					className="wordpress-migration__fallbacks-toggle"
 				>
 					{ __( 'Having trouble? See other ways to set this up.' ) }
 				</Button>
-				{ isShowingFallbacks && (
+				{ isShowingFallbacks && manualInstall && (
 					<VStack spacing={ 4 } id={ fallbacksId }>
 						<VStack as="ul" spacing={ 1 } className="wordpress-migration__fallbacks">
 							<Text as="li" variant="muted">
 								{ createInterpolateElement(
 									__( 'Unable to find the plugin? Download it from <link>WordPress.org</link>' ),
-									{ link: linkTo( manualInstall?.plugin_url ) }
+									{ link: linkTo( manualInstall.plugin_url ) }
 								) }
 							</Text>
 							<Text as="li" variant="muted">
 								{ createInterpolateElement(
 									__( 'Already have the plugin? Connect on its <link>settings page</link>' ),
-									{ link: linkTo( manualInstall?.connect_url ) }
+									{ link: linkTo( manualInstall.connect_url ) }
 								) }
 							</Text>
 							<Text as="li" variant="muted">
@@ -147,13 +145,13 @@ export function Connect( { site, failure }: { site: Site; failure?: WordPressMig
 									__(
 										'Can’t connect? Copy the migration key onto the plugin’s <link>migration key page</link>'
 									),
-									{ link: linkTo( manualInstall?.manual_url ) }
+									{ link: linkTo( manualInstall.manual_url ) }
 								) }
 							</Text>
 						</VStack>
 						<ClipboardInputControl
 							label={ __( 'Migration key' ) }
-							value={ manualInstall?.key ?? '' }
+							value={ manualInstall.key ?? '' }
 							readOnly
 						/>
 					</VStack>
