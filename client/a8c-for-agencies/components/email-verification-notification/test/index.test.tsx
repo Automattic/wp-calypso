@@ -48,6 +48,7 @@ jest.mock( '@wordpress/components', () => ( {
 				{ children }
 			</button>
 		),
+	VisuallyHidden: ( { children }: { children: ReactNode } ) => <span>{ children }</span>,
 } ) );
 
 jest.mock( 'calypso/a8c-for-agencies/components/layout/banner', () => ( {
@@ -154,10 +155,9 @@ describe( 'EmailVerificationNotification', () => {
 
 		render( <EmailVerificationNotification /> );
 
-		expect( screen.getByRole( 'link', { name: /Resend email/ } ) ).toHaveAttribute(
-			'href',
-			'https://wordpress.com/me'
-		);
+		expect(
+			screen.getByRole( 'link', { name: 'Resend email (opens in a new tab)' } )
+		).toHaveAttribute( 'href', 'https://wordpress.com/me' );
 		expect( screen.queryByRole( 'button', { name: 'Resend email' } ) ).not.toBeInTheDocument();
 	} );
 

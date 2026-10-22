@@ -30,6 +30,7 @@ export default function EmailVerificationNotice() {
 	const { emailToVerify, isEmailChangePending } = useEmailToVerify();
 	const { resend, isResending, secondsUntilResend } = useEmailVerificationResend( {
 		originalEmail: user.email,
+		// Always false: a pending change links to WordPress.com below instead of re-saving here.
 		isEmailChangePending: false,
 		errorMessage: __( 'There was an error while resending the email. Please try again.' ),
 	} );

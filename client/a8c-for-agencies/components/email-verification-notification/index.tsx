@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { Button, VisuallyHidden } from '@wordpress/components';
 import { Substitution, useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
@@ -99,7 +99,10 @@ export default function EmailVerificationNotification( {
 						rel="noopener noreferrer"
 						__next40pxDefaultSize
 					>
-						{ translate( 'Resend email' ) } ↗
+						<span>
+							{ translate( 'Resend email' ) } <span aria-hidden="true">↗</span>
+						</span>
+						<VisuallyHidden>{ translate( '(opens in a new tab)' ) }</VisuallyHidden>
 					</Button>
 				) : (
 					<Button
