@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import * as tracks from '../../utils/tracks';
-import { withChatResponseTracking } from '../response-tracking';
+import { withChatResponseTracking } from '../with-chat-response-tracking';
 import type { ChatResponseAction } from '../../components/chat-response-tracking';
 
 let mockRecordBigSkyTracksEvent: jest.SpiedFunction< typeof tracks.recordBigSkyTracksEvent >;

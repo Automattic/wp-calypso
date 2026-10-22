@@ -3,7 +3,7 @@ import {
 	BASIC_CATALOG_ID,
 	getInteractiveUiRendererCapabilities,
 } from '@automattic/ai-ui-renderer/capabilities';
-import { withChatResponseTracking } from './response-tracking';
+import { withChatResponseTracking } from './with-chat-response-tracking';
 import type {
 	InteractiveUiCatalog,
 	InteractiveUiCatalogDefinition,
