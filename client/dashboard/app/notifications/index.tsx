@@ -14,6 +14,7 @@ import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
 import { useLocale } from '../locale';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
+import { NOTIFICATIONS_ICON_CLASS } from '../omnibar/notifications-icon-class';
 import useSubscriberAlerts from './use-subscriber-alerts';
 import type { UserPreferences } from '@automattic/api-core';
 import './style.scss';
@@ -25,7 +26,7 @@ const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/
  */
 function getBellRect() {
 	const omnibar = document.getElementById( 'wpcom-omnibar' );
-	const bell = omnibar?.querySelector( '.omnibar__notifications-icon' )?.closest( 'a' );
+	const bell = omnibar?.querySelector( `.${ NOTIFICATIONS_ICON_CLASS }` )?.closest( 'a' );
 	if ( bell ) {
 		return bell.getBoundingClientRect();
 	}

@@ -2,6 +2,7 @@ import { parseAdminBarTitle } from '@automattic/omnibar';
 import clsx from 'clsx';
 import { useCallback, useState } from 'react';
 import { omnibarEvents, useOmnibarEvent } from './events';
+import { NOTIFICATIONS_ICON_CLASS } from './notifications-icon-class';
 import type { User } from '@automattic/api-core';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
@@ -51,7 +52,7 @@ export function useNotificationsNodeBuilder( { user }: { user?: User } ) {
 					<span
 						key={ subscriberAlertPulse }
 						className={ clsx(
-							'omnibar__notifications-icon',
+							NOTIFICATIONS_ICON_CLASS,
 							subscriberAlertPulse > 0 && 'omnibar__notifications-icon--subscriber-pulse'
 						) }
 					>
