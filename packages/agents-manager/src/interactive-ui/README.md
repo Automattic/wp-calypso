@@ -11,7 +11,7 @@ come.
 
 1. **wpcom builds a surface**, in one of two ways:
    - **An ability builds it in code**, for a known flow such as a picker or a hand-off button
-     (AM-116). The agent only calls the ability, so the surface is reliable, cheap in tokens and
+     (AM-117). The agent only calls the ability, so the surface is reliable, cheap in tokens and
      testable.
    - **The agent composes it** with `wpcom/render-interactive-ui`, for one-off forms and choices
      from the basic components, or a provider's (AM-116). The `a2ui-render-interactive-ui` blog
@@ -60,10 +60,11 @@ come.
   `agentMessage` only shows live: it isn't stored, and the stream can drop it. So a browser ability
   that needs UI moves it to a server ability, or the agent composes it.
 - **The client lists what it renders.** Agents Manager sends A2UI's `a2uiRendererCapabilities` in
-  its client context: the IDs of the catalogs it renders, and their documents. wpcom offers
-  interactive UI only for the catalogs a client lists, and builds the agent's tool from their
-  documents (AM-116). The documents come from the browser, so wpcom only describes and validates
-  with them.
+  its client context: the IDs of the catalogs it renders, and their documents. It checks each
+  provider's catalog first, and skips and logs an invalid one or a later one with a taken ID, so
+  the others keep working. wpcom offers interactive UI only for the catalogs a client lists, and
+  builds the agent's tool from their documents (AM-116). The documents come from the browser, so
+  wpcom only describes and validates with them.
 - **Surfaces follow A2UI v1.0.** Component IDs are identifiers (letters, digits and underscores),
   each component has one parent (a Modal renders its trigger, so it isn't also placed in a layout),
   bindings are `{"@path": "/field"}` and function calls `{"@call": "name"}`. A2UI rejects a surface
@@ -74,24 +75,23 @@ come.
   follow them too.
 - **Owner-prefixed names.** Names are scoped by catalog, but prefix yours with your owner, such as
   `ExampleCard` and `exampleOpenItem` for an owner named Example, so the agent can tell catalogs
-  apart. Agents Manager checks each provider's catalog before listing it, and skips and logs an
-  invalid one or a later one with a taken ID, so the others keep working.
+  apart.
 - **Functions run from a click.** A2UI runs a catalog's functions only from a click, never from a
   value, unless its document sets `requiresUserActivation: false` for one without side effects.
   Every function treats its arguments as untrusted.
-- **Components own their side effects:** the change itself, its checkpoint and its own Tracks
-  events. Agents Manager passes chat state as props, such as `isMessageStale`, which a surface can't
-  override. As for `show-component` messages, it records `jetpack_big_sky_chat_response_rendered`
-  for each catalog component on a current surface, and the actions it reports through
-  `onResponseAction` (`jetpack_big_sky_chat_response_action`), with the component's name as
+- **Components act like the basic ones** and own their side effects: the change itself, its
+  checkpoint, keyed by `surfaceId`, and its own Tracks events. They turn off their controls with
+  `disabled`, and skip their side effects and Tracks with `isMessageStale`, chat state a surface
+  can't override. As for `show-component` messages, Agents Manager records
+  `jetpack_big_sky_chat_response_rendered` for each one on a current surface, and the actions it
+  reports through `onResponseAction` (`jetpack_big_sky_chat_response_action`), with its name as
   `component_type` and its surface ID as `tool_call_id`.
 - **Agents Manager decides when a surface is stale**, with the rule `show-component` uses
   (`src/utils/stale-chat-ui.ts`): the user has replied past the last message that changed it, or
   the editor has another page open than the one its envelope names. Like a restored picker, a
   surface restored from history, in a past chat or after a reload, is stale too. A stale surface
   stays visible and disabled: its controls look disabled, while display-only content such as text
-  or a chart looks as before. Custom components get `disabled` and `isMessageStale` to do the same,
-  and skip their side effects and Tracks.
+  or a chart looks as before.
 - **Style with A2UI's theme tokens.** Custom components color themselves with the `--a2ui-*`
   tokens, or use WordPress components, which the renderer themes with them, so they follow each
   host's theme ([theming](../../../ai-ui-renderer/README.md#theming)).
