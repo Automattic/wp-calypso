@@ -18,10 +18,10 @@ describe( 'createBootProgressCallbacks', () => {
 			[ login, installWooCommerce, setSiteOptions, installOther ],
 			[
 				{ stage: 'woocommerce', value: 50 },
-				{ stage: 'woocommerce', value: 63 },
-				{ stage: 'store', value: 75 },
-				{ stage: 'store', value: 88 },
-				{ stage: 'store', value: 100 },
+				{ stage: 'woocommerce', value: 60 },
+				{ stage: 'store', value: 70 },
+				{ stage: 'store', value: 80 },
+				{ stage: 'store', value: 90 },
 			],
 		],
 		[
@@ -29,8 +29,8 @@ describe( 'createBootProgressCallbacks', () => {
 			[ login, installOther ],
 			[
 				{ stage: 'store', value: 50 },
-				{ stage: 'store', value: 75 },
-				{ stage: 'store', value: 100 },
+				{ stage: 'store', value: 70 },
+				{ stage: 'store', value: 90 },
 			],
 		],
 		[ 'the steps start when the blueprint has none', [], [ { stage: 'store', value: 50 } ] ],

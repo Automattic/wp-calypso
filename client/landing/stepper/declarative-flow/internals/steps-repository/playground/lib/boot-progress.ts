@@ -12,8 +12,9 @@ export interface PlaygroundBootProgress {
 
 export const INITIAL_BOOT_PROGRESS: PlaygroundBootProgress = { stage: 'wordpress' };
 
-// Blueprint steps share the second half of the bar; the first half is the WordPress boot.
+// Blueprint steps fill 50–90%; the WordPress boot comes before and the OPFS save after.
 const STEPS_START = 50;
+const STEPS_END = 90;
 
 const isWooCommerceInstallStep = ( step: unknown ) => {
 	if ( ! step || typeof step !== 'object' ) {
@@ -40,7 +41,8 @@ export function createBootProgressCallbacks(
 		onProgress( {
 			stage: isWooCommercePending ? 'woocommerce' : 'store',
 			value:
-				STEPS_START + ( total ? Math.round( ( ( 100 - STEPS_START ) * completed ) / total ) : 0 ),
+				STEPS_START +
+				( total ? Math.round( ( ( STEPS_END - STEPS_START ) * completed ) / total ) : 0 ),
 		} );
 
 	return {
