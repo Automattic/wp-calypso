@@ -107,12 +107,12 @@ import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availabi
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
-import { useIsIndiaA4A } from './hooks/use-is-india-a4a';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import { useRenewalPricingExperiment } from './hooks/use-renewal-price-experiment';
 import useSelectedFeature from './hooks/use-selected-feature';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
+import type { CheckoutAttribution } from './hooks/use-generate-action-callback';
 import type { PlanChangeLostFeature } from '@automattic/api-core';
 import type {
 	PlansIntent,
@@ -148,6 +148,8 @@ export interface PlansFeaturesMainProps {
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectTo?: string;
 	pluginSlug?: string;
+	/** Purchase attribution (`source`, `ai_session_id`) forwarded to the upgrade checkout. */
+	checkoutAttribution?: CheckoutAttribution;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -219,6 +221,11 @@ export interface PlansFeaturesMainProps {
 	deemphasizeFreePlan?: boolean;
 	renderFreePlanCtaInStepContainerV2?: boolean;
 
+	/**
+	 * Whether the plans render inside StepContainerV2. Defaults to what the flow name implies.
+	 */
+	isInStepContainerV2?: boolean;
+
 	selectedThemeType?: string;
 }
 
@@ -235,6 +242,7 @@ const PlansFeaturesMain = ( {
 	hidePlanTypeSelector,
 	redirectTo,
 	pluginSlug,
+	checkoutAttribution,
 	redirectToAddDomainFlow,
 	siteId,
 	selectedPlan,
@@ -266,6 +274,7 @@ const PlansFeaturesMain = ( {
 	showLegacyStorageFeature = false,
 	deemphasizeFreePlan,
 	renderFreePlanCtaInStepContainerV2 = false,
+	isInStepContainerV2,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
@@ -928,6 +937,7 @@ const PlansFeaturesMain = ( {
 		enableCategorisedFeatures: showSimplifiedFeatures,
 		redirectTo,
 		pluginSlug,
+		checkoutAttribution,
 		isDelayedDowngradePending,
 		delayedDowngradeToProductSlug,
 		onRenewCurrentPlan: renewCurrentPlanWithPendingDowngrade,
@@ -1046,63 +1056,32 @@ const PlansFeaturesMain = ( {
 		gridPlansForFeaturesGridRaw,
 	] );
 
-	const isIndiaA4A = useIsIndiaA4A();
-
-	// India A4A test: re-skin the Enterprise card with the Automattic for Agencies title/tagline.
-	const applyA4AIndiaCopy = useCallback(
-		( gridPlans: GridPlan[] | null ) => {
-			if ( ! isIndiaA4A || ! gridPlans ) {
-				return gridPlans;
-			}
-
-			return gridPlans.map( ( gridPlan ) =>
-				isWpcomEnterpriseGridPlan( gridPlan.planSlug )
-					? {
-							...gridPlan,
-							planTitle: translate( 'Agencies' ),
-							tagline: translate( 'Pricing and incentives built for WordPress agencies.' ),
-						}
-					: gridPlan
-			);
-		},
-		[ isIndiaA4A, translate ]
-	);
-
-	const gridPlansForFeaturesGridWithA4AIndiaCopy = useMemo(
-		() => applyA4AIndiaCopy( gridPlansForFeaturesGridRaw ?? null ),
-		[ gridPlansForFeaturesGridRaw, applyA4AIndiaCopy ]
-	);
-
 	const bottomGridPlanForFeaturesGrid = useMemo( () => {
-		if ( ! gridPlansForFeaturesGridWithA4AIndiaCopy ) {
+		if ( ! gridPlansForFeaturesGridRaw ) {
 			return undefined;
 		}
 
 		let bottomGridPlan: GridPlan | undefined;
 
 		if ( showEnterpriseBottomCard ) {
-			bottomGridPlan = gridPlansForFeaturesGridWithA4AIndiaCopy.find( ( { planSlug } ) =>
+			bottomGridPlan = gridPlansForFeaturesGridRaw.find( ( { planSlug } ) =>
 				isWpcomEnterpriseGridPlan( planSlug )
 			);
 		} else if ( showWooCommerceBottomCard ) {
-			bottomGridPlan = gridPlansForFeaturesGridWithA4AIndiaCopy.find( ( { planSlug } ) =>
+			bottomGridPlan = gridPlansForFeaturesGridRaw.find( ( { planSlug } ) =>
 				isEcommercePlan( planSlug )
 			);
 		}
 
 		return bottomGridPlan;
-	}, [
-		gridPlansForFeaturesGridWithA4AIndiaCopy,
-		showEnterpriseBottomCard,
-		showWooCommerceBottomCard,
-	] );
+	}, [ gridPlansForFeaturesGridRaw, showEnterpriseBottomCard, showWooCommerceBottomCard ] );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
 	const gridPlansForFeaturesGrid = useMemo( () => {
 		const bottomGridPlanSlug = bottomGridPlanForFeaturesGrid?.planSlug;
 
 		return (
-			gridPlansForFeaturesGridWithA4AIndiaCopy?.filter( ( { planSlug } ) => {
+			gridPlansForFeaturesGridRaw?.filter( ( { planSlug } ) => {
 				if ( planSlug === bottomGridPlanSlug ) {
 					return false;
 				}
@@ -1120,15 +1099,10 @@ const PlansFeaturesMain = ( {
 		);
 	}, [
 		bottomGridPlanForFeaturesGrid,
-		gridPlansForFeaturesGridWithA4AIndiaCopy,
+		gridPlansForFeaturesGridRaw,
 		deemphasizeFreePlan,
 		showWooCommerceBottomCard,
 	] );
-
-	const gridPlansForComparisonGridFinal = useMemo(
-		() => applyA4AIndiaCopy( gridPlansForComparisonGrid ),
-		[ gridPlansForComparisonGrid, applyA4AIndiaCopy ]
-	);
 
 	const isVisualSplitEnabled =
 		intent === 'plans-website-builder' || intent === 'plans-wordpress-hosting';
@@ -1583,6 +1557,7 @@ const PlansFeaturesMain = ( {
 					flowName={ flowName }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					renderFreePlanCtaInStepContainerV2={ renderFreePlanCtaInStepContainerV2 }
+					isInStepContainerV2={ isInStepContainerV2 }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
 					isPlansGridRedesign={ usePlansGridRedesign }
@@ -1656,7 +1631,6 @@ const PlansFeaturesMain = ( {
 										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
 										enterpriseFeaturesList={ enterpriseFeaturesList }
-										isEnterpriseA4AIndia={ isIndiaA4A }
 										enableShowAllFeaturesButton={ ! showSimplifiedFeatures }
 										enableCategorisedFeatures={ showSimplifiedFeatures }
 										enableStorageAsBadge={ ! showSimplifiedFeatures }
@@ -1699,7 +1673,7 @@ const PlansFeaturesMain = ( {
 														coupon={ coupon }
 													/>
 												) }
-											{ gridPlansForComparisonGridFinal && gridPlansForPlanTypeSelector && (
+											{ gridPlansForComparisonGrid && gridPlansForPlanTypeSelector && (
 												<ComparisonGrid
 													allFeaturesList={ getFeaturesList() }
 													className={ clsx( 'plans-features-main__comparison-grid', {
@@ -1707,7 +1681,7 @@ const PlansFeaturesMain = ( {
 													} ) }
 													coupon={ coupon }
 													currentSitePlanSlug={ sitePlanSlug }
-													gridPlans={ gridPlansForComparisonGridFinal }
+													gridPlans={ gridPlansForComparisonGrid }
 													hideUnavailableFeatures={ hideUnavailableFeatures }
 													intent={ intent }
 													intervalType={ compatibleIntervalType }

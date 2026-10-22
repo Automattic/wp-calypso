@@ -16,6 +16,7 @@ import {
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
 import { useGetSupportInteractions } from '../hooks/use-get-support-interactions';
+import { useHasOpenZendeskChat } from '../hooks/use-has-open-zendesk-chat';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
@@ -42,6 +43,7 @@ const HelpCenter: React.FC< Container > = ( {
 		! isLoadingOpenInteractions && supportInteractionsOpen
 			? supportInteractionsOpen?.length > 0
 			: false;
+	const { hasOpenZendeskChat } = useHasOpenZendeskChat();
 	// Only check connectivity when the answer can matter: the panel is open, or Smooch
 	// may need to mount for unread notifications.
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging(
@@ -81,7 +83,10 @@ const HelpCenter: React.FC< Container > = ( {
 				currentRoute={ currentRoute }
 			/>
 			{ canConnectToZendesk && (
-				<HelpCenterSmooch enableAuth={ isHelpCenterShown || hasOpenZendeskConversations } />
+				<HelpCenterSmooch
+					enableAuth={ isHelpCenterShown || hasOpenZendeskConversations }
+					hasOpenZendeskChat={ hasOpenZendeskChat }
+				/>
 			) }
 		</>,
 		container

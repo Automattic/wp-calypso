@@ -27,13 +27,8 @@ import {
 } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
-import {
-	loadExternalProviders,
-	type AbilitiesSetupHook,
-	type LoadedProviders,
-} from '../utils/load-external-providers';
+import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import { isHandoffAgent, type SessionHandoff } from '../utils/session-handoff';
-import { canExposeWebMcpTools } from '../webmcp/eligibility';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
 import type { JSX } from 'react';
@@ -53,6 +48,8 @@ export interface AgentsManagerProps {
 	agentId?: string;
 	/** Whether this screen is currently enabled only for internal users. */
 	isInternalOnly?: boolean;
+	/** Whether the host's masterbar renders the AI chat button, even before it's in the DOM. */
+	hasMasterbarAiChatButton?: boolean;
 	/** Zendesk conversation tags to apply when a new support conversation is created. */
 	zendeskConversationTags?: string[];
 	/** Index selecting a dedicated Smooch integration for new support conversations. */
@@ -63,38 +60,13 @@ export interface AgentsManagerProps {
 
 const queryClient = new QueryClient();
 
-// Stable empty-array reference so the default prop doesn't change identity on
-// every render and retrigger downstream conversation effects.
+// A stable default, so it doesn't retrigger conversation effects on every render.
 const EMPTY_ARRAY: string[] = [];
 
-// The scope the live agent was initialized for. Module-level like the agent
-// manager itself, so a host that unmounts and remounts this tree (Calypso does
-// on some routes) still discards when the remount lands on a different scope.
+// The scope the live agent was initialized for. Module-level, like the agent
+// manager, so a remount on a different scope (Calypso remounts on some routes)
+// still discards the old agent.
 let lastInitializedScope: string | undefined;
-
-// External editor abilities currently register from a chat-owned hook. These
-// inert chat actions let that hook mount for WebMCP without starting a chat run.
-const WEBMCP_PROVIDER_SETUP_ACTIONS = {
-	addMessage: () => {},
-	clearMessages: () => {},
-	clearSuggestions: () => {},
-	getAgentManager,
-	isProcessing: false,
-	setIsThinking: () => {},
-	deleteMarkedMessages: () => {},
-	getSessionId: () => undefined,
-	setIsBuildingSite: () => {},
-	setThinkingMessage: () => {},
-} satisfies Parameters< AbilitiesSetupHook >[ 0 ];
-
-function WebMcpProviderAbilitiesSetup( {
-	useProviderAbilitiesSetup,
-}: {
-	useProviderAbilitiesSetup: AbilitiesSetupHook;
-} ): null {
-	useProviderAbilitiesSetup( WEBMCP_PROVIDER_SETUP_ACTIONS );
-	return null;
-}
 
 export default function AgentsManager( {
 	sectionName,
@@ -104,6 +76,7 @@ export default function AgentsManager( {
 	currentSiteId,
 	agentId,
 	isInternalOnly = false,
+	hasMasterbarAiChatButton = false,
 	zendeskConversationTags = EMPTY_ARRAY,
 	zendeskSmoochIntegrationKey,
 	zendeskTicketProductFieldValue,
@@ -138,6 +111,7 @@ export default function AgentsManager( {
 						siteKey,
 						currentRoute,
 						isInternalOnly,
+						hasMasterbarAiChatButton,
 						zendeskConversationTags,
 						zendeskSmoochIntegrationKey,
 						zendeskTicketProductFieldValue,
@@ -151,12 +125,11 @@ export default function AgentsManager( {
 }
 
 /**
- * Resolve the session to resume from this tab's stored session, which
- * conversation switches save before navigating here.
+ * Returns the tab's stored session to resume (conversation switches save it
+ * before navigating here), or '' for a new chat.
  * Reader chat and the orchestrator pre-generate one, so a page change before
- * the first reply still finds the session; other agents get theirs from the
- * server via `onSessionIdChange`.
- * Empty means a new chat.
+ * the first reply still finds it; other agents get theirs from the server via
+ * `onSessionIdChange`.
  */
 function resolveTabSessionId(
 	isNewChat: boolean,
@@ -173,7 +146,7 @@ function resolveTabSessionId(
 	return getSessionId( agentId, siteKey, userId );
 }
 
-// Separate component that uses hooks within `PersistentRouter` context
+// Split out so its hooks run inside the router and context providers `AgentsManager` renders.
 function AgentSetup( {
 	agentId: hostAgentId,
 	urlSessionHandoff,
@@ -184,15 +157,16 @@ function AgentSetup( {
 	const { site, siteKey, currentUser, sectionName, currentRoute, agentConfig, setAgentConfig } =
 		useAgentsManagerContext();
 	const userId = currentUser?.ID;
+
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
+	// Lets the effect read the latest config without depending on the config it sets.
 	const agentConfigRef = useRef( agentConfig );
 	agentConfigRef.current = agentConfig;
 	const wasChatViewShowingRef = useRef( false );
-	const navigate = useNavigate();
-	const { pathname, state } = useLocation();
 
-	// Detect new chat requests via `state.isNewChat` on the `/chat` route.
-	const isNewChat = pathname.startsWith( '/chat' ) && !! state?.isNewChat;
+	const navigate = useNavigate();
+	const { pathname, state: locationState } = useLocation();
+	const isNewChat = pathname.startsWith( '/chat' ) && !! locationState?.isNewChat;
 
 	// Mirrors `AgentDock`'s visibility: with an AI entry button the chat
 	// unmounts on close, so closing must count as leaving the chat view.
@@ -207,11 +181,11 @@ function AgentSetup( {
 	// '/' only exists transiently before the catch-all redirects to the chat.
 	const isChatViewShowing = ( pathname.startsWith( '/chat' ) || pathname === '/' ) && isChatVisible;
 
-	// Read agent/version overrides from browser URL (?agent=, ?version=).
-	// PersistentRouter (memory router) does not track window.location.search.
-	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
+	// `?agent=` and `?version=` come from the browser URL: `PersistentRouter` is a
+	// memory router.
+	const { agentId, version } = useAgentConfig( hostAgentId );
 
-	useSessionHandoffLinks( isAgentConfigLoading ? undefined : agentId );
+	useSessionHandoffLinks( agentId );
 
 	// A handed-off session is stored under its own site scope and resumed only
 	// when this page is in that scope, as a site switch within one origin would.
@@ -219,6 +193,8 @@ function AgentSetup( {
 	const handoffSiteKey = handoff?.siteKey ?? siteKey;
 	const initialSessionId = handoff && handoffSiteKey === siteKey ? handoff.sessionId : '';
 
+	// The handoff seeds only the first initialization; the effect saves it, so the
+	// tab's stored session applies after that.
 	let sessionId: string;
 	if ( initialSessionId && ! agentConfig ) {
 		sessionId = initialSessionId;
@@ -234,13 +210,10 @@ function AgentSetup( {
 	} );
 
 	useEffect( () => {
-		// Wait for the agent config to stabilize before initializing.
-		if ( isAgentConfigLoading ) {
-			return;
-		}
 		if ( ! agentConfigRef.current && handoff ) {
 			saveSessionId( handoff.sessionId, agentId, handoffSiteKey, userId );
 		}
+
 		// A dep change supersedes this run mid-await — a stale initialization
 		// must not navigate or publish its config over the newer run's.
 		let isSuperseded = false;
@@ -248,7 +221,6 @@ function AgentSetup( {
 		const isReturningToChatView = isChatViewShowing && ! wasChatViewShowingRef.current;
 		wasChatViewShowingRef.current = isChatViewShowing;
 
-		// Abort the agent's in-flight request and remove it.
 		async function discardAgent(): Promise< void > {
 			const agentManager = getAgentManager();
 
@@ -259,10 +231,9 @@ function AgentSetup( {
 		}
 
 		async function initializeAgent(): Promise< void > {
-			// A session-scope switch (`siteKey` and the user, which together key
-			// the tab's storage) is a context switch: drop the previous scope's
-			// agent so its still-streaming response can't write into this scope's
-			// session or transcript, then initialize from this scope's session.
+			// On a scope switch (`siteKey` plus the user, which key the tab's
+			// storage), drop the previous scope's agent so its still-streaming
+			// reply can't write into this scope's session or transcript.
 			const scope = `${ siteKey }-${ userId ?? '' }`;
 			const previousScope = lastInitializedScope;
 			lastInitializedScope = scope;
@@ -275,7 +246,6 @@ function AgentSetup( {
 				}
 			}
 
-			// Handle new chat: clear existing session and navigate to clean state
 			if ( isNewChat ) {
 				await discardAgent();
 
@@ -301,16 +271,15 @@ function AgentSetup( {
 				return;
 			}
 
-			// The running conversation wins while the chat view stays shown: the
-			// only thing that writes a session in that window is the agent's own
-			// `onSessionIdChange` (every user-driven switch navigates first), and
-			// re-initializing would refetch and clobber the live transcript.
-			// Storage is honored on the next navigation — away, or back to here.
+			// Keep the running conversation while the chat view stays shown: only
+			// the agent's own `onSessionIdChange` writes a session then (user-driven
+			// switches navigate first), and re-initializing would refetch and
+			// clobber the live transcript. The stored session applies on the next
+			// navigation, away or back to here.
 			if ( isSameAgent && isChatViewShowing && ! isReturningToChatView && hasLiveAgent ) {
 				return;
 			}
 
-			// Load external providers (only once)
 			let providers = loadedProvidersRef.current;
 			if ( ! providers ) {
 				providers = await loadExternalProviders();
@@ -332,6 +301,7 @@ function AgentSetup( {
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
 				providerIds: providers.providerIds,
+				interactiveUiCatalogs: providers.interactiveUiCatalogs,
 				environment: sectionName || 'calypso',
 				agentId,
 				version,
@@ -353,7 +323,6 @@ function AgentSetup( {
 	}, [
 		agentId,
 		currentRoute,
-		isAgentConfigLoading,
 		isChatViewShowing,
 		isNewChat,
 		handoff,
@@ -369,34 +338,25 @@ function AgentSetup( {
 	] );
 
 	const loadedProviders = loadedProvidersRef.current;
-
-	// Load empty view suggestions (handles Big Sky's theme-dependent suggestions)
 	const emptyViewSuggestions = useEmptyViewSuggestions( { loadedProviders } );
 
-	// Don't render until the setup is complete AND suggestions are ready
 	if ( ! agentConfig || ! loadedProviders || emptyViewSuggestions === null ) {
 		return null;
 	}
 
 	return (
-		<>
-			{ loadedProviders.useAbilitiesSetup && canExposeWebMcpTools() && (
-				<WebMcpProviderAbilitiesSetup
-					useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
-				/>
-			) }
-			<AgentDock
-				emptyViewSuggestions={ emptyViewSuggestions }
-				markdownComponents={ loadedProviders.markdownComponents || {} }
-				markdownExtensions={ loadedProviders.markdownExtensions || {} }
-				useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
-				useSuggestions={ loadedProviders.useSuggestions }
-				getChatComponent={ loadedProviders.getChatComponent }
-				siteBuildUtils={ loadedProviders.siteBuildUtils }
-				transformMessages={ loadedProviders.transformMessages }
-				useCheckpoint={ loadedProviders.useCheckpoint }
-				capabilities={ loadedProviders.capabilities }
-			/>
-		</>
+		<AgentDock
+			emptyViewSuggestions={ emptyViewSuggestions }
+			markdownComponents={ loadedProviders.markdownComponents || {} }
+			markdownExtensions={ loadedProviders.markdownExtensions || {} }
+			useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
+			useSuggestions={ loadedProviders.useSuggestions }
+			getChatComponent={ loadedProviders.getChatComponent }
+			interactiveUiCatalogs={ loadedProviders.interactiveUiCatalogs }
+			siteBuildUtils={ loadedProviders.siteBuildUtils }
+			transformMessages={ loadedProviders.transformMessages }
+			useCheckpoint={ loadedProviders.useCheckpoint }
+			capabilities={ loadedProviders.capabilities }
+		/>
 	);
 }

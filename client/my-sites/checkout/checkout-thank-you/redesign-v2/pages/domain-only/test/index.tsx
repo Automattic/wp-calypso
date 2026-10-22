@@ -19,7 +19,7 @@ import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-c
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DomainOnly from '../index';
-import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+import type { ReceiptPurchase } from 'calypso/my-sites/checkout/checkout-thank-you/receipt';
 
 jest.mock( '@automattic/calypso-analytics' );
 
@@ -59,18 +59,12 @@ const mockDomainPurchase: ReceiptPurchase = {
 	meta: 'example.com',
 	blogId: 123,
 	delayedProvisioning: false,
-	freeTrial: false,
 	isDomainRegistration: true,
 	productId: 'domain_registration',
 	productSlug: 'dotcom_domain',
 	productType: 'domain',
 	productName: 'Domain Registration',
-	productNameShort: 'Domain',
-	registrarSupportUrl: '',
-	isEmailVerified: true,
-	isRootDomainWithUs: true,
 	isHundredYearDomain: false,
-	isRenewal: false,
 	saasRedirectUrl: '',
 	newQuantity: undefined,
 	priceInteger: 1000,
@@ -338,12 +332,12 @@ describe( 'DomainOnly', () => {
 		} );
 
 		it( 'links to the site migration setup flow with dashboard query param if present', () => {
-			jest.mocked( getDashboardFromQuery ).mockReturnValue( 'ciab' );
+			jest.mocked( getDashboardFromQuery ).mockReturnValue( 'a4a' );
 			renderComponent();
 
 			expect( screen.getByRole( 'link', { name: /Migrate an existing site/ } ) ).toHaveAttribute(
 				'href',
-				`/setup/site-migration?dashboard=ciab&siteSlug=${ mockDomainPurchase.meta }`
+				`/setup/site-migration?dashboard=a4a&siteSlug=${ mockDomainPurchase.meta }`
 			);
 		} );
 

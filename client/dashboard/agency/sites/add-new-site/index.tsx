@@ -18,6 +18,7 @@ import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useAnalytics } from '../../../app/analytics';
 import Column from '../../../sites/add-new-site/column';
 import MenuItem from '../../../sites/add-new-site/menu-item';
+import { PRESSABLE_AGENCY_URL } from '../../marketplace/hosting/lib/pressable-plans';
 import { getMarketplaceHostingSectionRoute } from '../../marketplace/paths';
 import A4ALogo from './a4a-logo';
 import DevSiteCard from './dev-site-card';
@@ -25,8 +26,6 @@ import { getAvailablePendingSites, getPressableOwnershipType, isAgencyApproved }
 import type { AddNewSiteAction, AddNewSiteProps } from './types';
 // The shared Column and MenuItem above are styled by the dotcom menu's stylesheet.
 import '../../../sites/add-new-site/style.scss';
-
-const EXTERNAL_PRESSABLE_AUTH_URL = 'https://my.pressable.com/agency/auth';
 
 /**
  * `useLinkProps` describes a bare anchor: it widens `children` past the single
@@ -62,7 +61,7 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 	const Wrapper = isDesktop ? HStack : VStack;
 
 	const recordNavigation = ( action: string ) => {
-		recordTracksEvent( 'calypso_dashboard_agency_sites_new_site_action_click_item', { action } );
+		recordTracksEvent( 'calypso_a4a_sites_new_site_action_click_item', { action } );
 	};
 
 	// Both entries below change destination once the agency loads. Keeping one
@@ -118,7 +117,7 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 					description={ __( 'Best for large-scale businesses and major eCommerce sites.' ) }
 					{ ...( ownsPressableDirectly
 						? {
-								href: EXTERNAL_PRESSABLE_AUTH_URL,
+								href: PRESSABLE_AGENCY_URL,
 								target: '_blank',
 								onClick: () => recordNavigation( 'pressable' ),
 							}

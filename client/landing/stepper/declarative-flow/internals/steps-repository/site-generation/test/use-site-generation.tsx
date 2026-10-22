@@ -5,11 +5,17 @@
 import { act, renderHook } from '@testing-library/react';
 import { logBuildWowEvent, requestBuildWowSite } from 'calypso/landing/stepper/utils/build-wow';
 import { pollForBuildWowStatus } from '../build-status-poller';
+import { getBuildWowApiOverride } from '../poller';
 import { useSiteGeneration } from '../use-site-generation';
 
 jest.mock( '../build-status-poller', () => ( {
 	...jest.requireActual( '../build-status-poller' ),
 	pollForBuildWowStatus: jest.fn( () => jest.fn() ),
+} ) );
+
+jest.mock( '../poller', () => ( {
+	...jest.requireActual( '../poller' ),
+	getBuildWowApiOverride: jest.fn( () => null ),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/utils/build-wow', () => ( {
@@ -248,6 +254,218 @@ describe( 'useSiteGeneration', () => {
 				configurable: true,
 			} );
 		}
+	} );
+
+	it( 'stays on the wait screen when a local status server reports the build live', () => {
+		Object.defineProperty( window, 'location', {
+			value: { ...originalLocation, assign: jest.fn() },
+			configurable: true,
+		} );
+		( getBuildWowApiOverride as jest.Mock ).mockReturnValueOnce(
+			'http://127.0.0.1:4001/api/calypso'
+		);
+
+		try {
+			const { result } = renderHook( () =>
+				useSiteGeneration( {
+					siteIdentifier: 'amber-brook',
+					steps: STEPS,
+				} )
+			);
+
+			const { onReady } = statusPollMock.mock.calls[ 0 ][ 0 ];
+			act( () => {
+				onReady( { build_status: 'live' } );
+			} );
+
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			expect( result.current.status ).toBe( 'working' );
+			expect( result.current.isComplete ).toBe( true );
+			expect( result.current.isLocalPreview ).toBe( true );
+			expect( result.current.failureReason ).toBeUndefined();
+		} finally {
+			Object.defineProperty( window, 'location', {
+				value: originalLocation,
+				configurable: true,
+			} );
+		}
+	} );
+
+	it( 'does not time out after a local status server reports the build live', () => {
+		jest.useFakeTimers();
+		( getBuildWowApiOverride as jest.Mock ).mockReturnValueOnce(
+			'http://127.0.0.1:4001/api/calypso'
+		);
+
+		try {
+			const { result } = renderHook( () =>
+				useSiteGeneration( {
+					siteIdentifier: 'amber-brook',
+					graph: 'dsl',
+					steps: STEPS,
+				} )
+			);
+
+			const { onReady } = statusPollMock.mock.calls[ 0 ][ 0 ];
+			act( () => {
+				onReady( { build_status: 'live' } );
+			} );
+			act( () => {
+				jest.advanceTimersByTime( 31 * 60 * 1000 );
+			} );
+
+			expect( result.current.status ).toBe( 'working' );
+			expect( result.current.isComplete ).toBe( true );
+			expect( result.current.isLocalPreview ).toBe( true );
+			expect( result.current.failureReason ).toBeUndefined();
+		} finally {
+			jest.useRealTimers();
+		}
+	} );
+
+	it( 'still times out a build that never reports ready', () => {
+		jest.useFakeTimers();
+
+		try {
+			const { result } = renderHook( () =>
+				useSiteGeneration( {
+					siteIdentifier: 'amber-brook',
+					graph: 'dsl',
+					steps: STEPS,
+				} )
+			);
+
+			act( () => {
+				jest.advanceTimersByTime( 5 * 60 * 1000 + 1 );
+			} );
+
+			expect( result.current.status ).toBe( 'failed' );
+			expect( result.current.failureReason ).toBe( 'timed-out' );
+		} finally {
+			jest.useRealTimers();
+		}
+	} );
+
+	describe( 'completion presentation', () => {
+		beforeEach( () => {
+			Object.defineProperty( window, 'location', {
+				value: { ...originalLocation, assign: jest.fn() },
+				configurable: true,
+			} );
+		} );
+		afterEach( () => {
+			Object.defineProperty( window, 'location', { value: originalLocation, configurable: true } );
+		} );
+		const response = {
+			build_status: 'live',
+			site_editor_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
+		};
+
+		it( 'shows authoritative completion then redirects within a fixed bound', () => {
+			const { result } = renderHook( () =>
+				useSiteGeneration( {
+					siteIdentifier: '123',
+					steps: STEPS,
+					completionDelayMs: 10000,
+				} )
+			);
+			act( () => statusPollMock.mock.calls[ 0 ][ 0 ].onReady( response ) );
+			expect( result.current.isComplete ).toBe( true );
+			expect( result.current.hostState ).toBe( 'ready' );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			act( () => jest.advanceTimersByTime( 2599 ) );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			act( () => jest.advanceTimersByTime( 1 ) );
+			expect( window.location.assign ).toHaveBeenCalledTimes( 1 );
+			act( () => jest.advanceTimersByTime( 30 * 60 * 1000 ) );
+			expect( result.current.failureReason ).toBeUndefined();
+		} );
+
+		it( 'uses the latest preview eligibility without restarting status polling', () => {
+			const { rerender } = renderHook(
+				( { delay } ) =>
+					useSiteGeneration( {
+						siteIdentifier: '123',
+						steps: STEPS,
+						completionDelayMs: delay,
+					} ),
+				{ initialProps: { delay: 0 } }
+			);
+			rerender( { delay: 2600 } );
+			expect( statusPollMock ).toHaveBeenCalledTimes( 1 );
+			act( () => statusPollMock.mock.calls[ 0 ][ 0 ].onReady( response ) );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			act( () => jest.advanceTimersByTime( 2600 ) );
+			expect( window.location.assign ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it.each( [
+			[ true, false ],
+			[ false, false ],
+			[ true, true ],
+			[ false, true ],
+		] )(
+			'keeps stream identity when terminal metadata is omitted: %s, local feed: %s',
+			( omitStream, isLocal ) => {
+				( getBuildWowApiOverride as jest.Mock ).mockReturnValueOnce(
+					isLocal ? 'http://calypso.localhost:4001/api/calypso' : null
+				);
+				const { result } = renderHook( () =>
+					useSiteGeneration( {
+						siteIdentifier: '123',
+						steps: STEPS,
+						completionDelayMs: 2600,
+					} )
+				);
+				const info = {
+					protocol: 1,
+					blogId: 123,
+					runId: 'run-1',
+					capabilities: [ 'preview:dsl-html' ],
+					eventsUrl: 'https://public-api.wordpress.com/events',
+					snapshotUrl: 'https://public-api.wordpress.com/snapshot',
+				};
+				const callbacks = statusPollMock.mock.calls[ 0 ][ 0 ];
+				act( () => callbacks.onStream( info ) );
+				act( () => callbacks.onStream( { ...info, capabilities: [ ...info.capabilities ] } ) );
+				expect( result.current.streamInfo ).toBe( info );
+				act( () => {
+					callbacks.onStream( omitStream ? null : { ...info } );
+					callbacks.onReady( response );
+				} );
+				expect( result.current.streamInfo ).toBe( info );
+				expect( result.current.isComplete ).toBe( true );
+				act( () => jest.advanceTimersByTime( 3000 ) );
+				expect( window.location.assign ).toHaveBeenCalledTimes( isLocal ? 0 : 1 );
+			}
+		);
+
+		it( 'skips completion motion when the document is hidden', () => {
+			const hidden = jest.spyOn( document, 'hidden', 'get' ).mockReturnValue( true );
+			try {
+				renderHook( () =>
+					useSiteGeneration( { siteIdentifier: '123', steps: STEPS, completionDelayMs: 2600 } )
+				);
+				act( () => statusPollMock.mock.calls[ 0 ][ 0 ].onReady( response ) );
+				expect( window.location.assign ).toHaveBeenCalledTimes( 1 );
+			} finally {
+				hidden.mockRestore();
+			}
+		} );
+
+		it( 'cancels the pending redirect on unmount', () => {
+			const { unmount } = renderHook( () =>
+				useSiteGeneration( {
+					siteIdentifier: '123',
+					steps: STEPS,
+					completionDelayMs: 2600,
+				} )
+			);
+			act( () => statusPollMock.mock.calls[ 0 ][ 0 ].onReady( response ) );
+			unmount();
+			act( () => jest.advanceTimersByTime( 3000 ) );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	it( 'starts on the fallback checklist until the server checklist arrives', () => {

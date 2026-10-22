@@ -230,6 +230,21 @@ describe( 'createAgentConfig', () => {
 		);
 	} );
 
+	it( 'lists the providers’ interactive UI catalogs in the client context', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
+			interactiveUiCatalogs: [ { catalog: { catalogId: 'urn:woo-ai:v1' } } ],
+		} );
+		const context = config.contextProvider?.getClientContext();
+
+		expect( context ).toHaveProperty(
+			[ 'a2uiRendererCapabilities', 'v1.0', 'supportedCatalogIds' ],
+			expect.arrayContaining( [ 'urn:woo-ai:v1' ] )
+		);
+	} );
+
 	it( 'merges site editor actions into default client context', async () => {
 		setSiteEditorAction( 'colorPickerItemSelected', 'Ruby' );
 
@@ -345,6 +360,32 @@ describe( 'createAgentConfig', () => {
 			expect( config.contextProvider?.getClientContext() ).toHaveProperty(
 				'isTrackingAllowed',
 				false
+			);
+		}
+	);
+
+	it.each( clientContexts )(
+		'sends the browser events’ surface in the %s client context',
+		async ( _, contextProvider ) => {
+			const createConfig = () =>
+				createAgentConfig( {
+					sessionId: 'session-1',
+					sessionSiteKey: 'no-site',
+					agentId: DOLLY_AGENT_ID,
+					contextProvider,
+				} );
+
+			const calypsoConfig = await createConfig();
+			expect( calypsoConfig.contextProvider?.getClientContext() ).toHaveProperty(
+				'surface',
+				'calypso'
+			);
+
+			setAgentsManagerData( {} );
+			const wpAdminConfig = await createConfig();
+			expect( wpAdminConfig.contextProvider?.getClientContext() ).toHaveProperty(
+				'surface',
+				'wp-admin'
 			);
 		}
 	);

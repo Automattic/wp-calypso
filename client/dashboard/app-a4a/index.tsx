@@ -7,7 +7,7 @@ import {
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
-import { Logo } from './logo';
+import { A4ALoadingLogo } from './loading-logo';
 import A4AOmnibar from './omnibar';
 import A4AOmnibarHelpCenter from './omnibar-help-center';
 import type {
@@ -22,7 +22,8 @@ boot( {
 	unifiedAdminPageViewApp: 'a4a',
 	basePath: '/',
 	mainRoute: '/overview',
-	Logo,
+	Logo: null,
+	LoadingLogo: A4ALoadingLogo,
 	supports: {
 		agency: {
 			overview: true,
@@ -52,9 +53,6 @@ boot( {
 		plugins: false,
 		commandPalette: false,
 		domainOnlySites: false,
-		siteOverview: {
-			preview: false,
-		},
 		colorScheme: false,
 		darkMode: false,
 	},

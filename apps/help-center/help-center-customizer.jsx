@@ -99,7 +99,6 @@ function CustomizerHelpCenterContent() {
 			hasPurchases={ false }
 			onboardingUrl="https://wordpress.com/start"
 			handleClose={ closeCallback }
-			isCommerceGarden={ helpCenterData.isCommerceGarden }
 			{ ...customProps }
 		/>
 	);

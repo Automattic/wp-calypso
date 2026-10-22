@@ -25,6 +25,7 @@ interface ConversationViewProps extends InputHandlers {
 
 	// Agent state
 	isStreaming?: boolean;
+	isReplying?: boolean;
 	error?: string | null;
 
 	// UI state
@@ -68,6 +69,7 @@ export function ConversationView( {
 	trailingActions,
 	isProcessing,
 	isStreaming,
+	isReplying,
 	onStop,
 	fromCompact = false,
 	showHeader = false,
@@ -108,6 +110,7 @@ export function ConversationView( {
 				messages={ messages }
 				isProcessing={ isProcessing }
 				isStreaming={ isStreaming }
+				isReplying={ isReplying }
 				error={ error }
 				emptyView={ emptyView }
 				messageRenderer={ messageRenderer }

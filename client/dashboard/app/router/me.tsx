@@ -1,4 +1,3 @@
-import { fetchTwoStep } from '@automattic/api-core';
 import {
 	accountRecoveryQuery,
 	allowedPaymentMethodsQuery,
@@ -37,7 +36,7 @@ import {
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, Outlet } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import {
 	SITE_ACTION_TITLES,
@@ -48,7 +47,6 @@ import {
 import { getAppSetupTitle, getSMSSetupTitle } from '../../me/security-two-step-auth/title';
 import { isOptInToggleVisible } from '../../utils/hosting-dashboard-enrollment';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { reauthRequiredLink } from '../../utils/link';
 import {
 	getTitleForDisplay,
 	getPurchaseCancellationFlowType,
@@ -60,7 +58,7 @@ import {
 	type CancelIntent,
 } from '../../utils/purchase';
 import { AUTH_QUERY_KEY } from '../auth';
-import { dashboardRedirect } from './redirect';
+import { dashboardRedirect, redirectIfTwoStepReauthRequired } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { Purchase, User } from '@automattic/api-core';
@@ -78,12 +76,8 @@ export const meRoute = createRoute( {
 	path: 'me',
 	loader: () => queryClient.ensureQueryData( userSettingsQuery() ),
 	beforeLoad: async ( { cause } ) => {
-		if ( cause !== 'enter' ) {
-			return;
-		}
-		const twoStep = await fetchTwoStep();
-		if ( twoStep.two_step_reauthorization_required ) {
-			window.location.href = reauthRequiredLink();
+		if ( cause === 'enter' ) {
+			await redirectIfTwoStepReauthRequired();
 		}
 	},
 	component: Outlet,
@@ -361,6 +355,11 @@ export const purchaseSettingsIndexRoute = createRoute( {
 		if ( purchase.meta && purchase.is_domain ) {
 			await queryClient.ensureQueryData( domainQuery( purchase.meta ) ).catch( () => {} );
 		}
+
+		// Jetpack upgrades go through the store only once Pro is known to be on sale.
+		if ( purchase.is_jetpack_plan_or_product ) {
+			queryClient.prefetchQuery( productsQuery() );
+		}
 	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/purchase-settings' ).then( ( d ) =>
@@ -392,6 +391,25 @@ export const changePaymentMethodRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/billing-purchases/change-payment-method' ).then( ( d ) =>
 		createLazyRoute( 'purchases-purchase-settings-change-payment-method' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const movePurchaseRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				// translators: Moving a subscription, such as a plan or domain, to a different site.
+				title: _x( 'Move to another site', 'subscription site transfer' ),
+			},
+		],
+	} ),
+	getParentRoute: () => purchaseSettingsRoute,
+	path: 'move',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/move-purchase' ).then( ( d ) =>
+		createLazyRoute( 'purchases-purchase-settings-move' )( {
 			component: d.default,
 		} )
 	)
@@ -1495,6 +1513,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 					changePaymentMethodRoute,
 					cancelPurchaseRoute,
 					siteActionsRoute,
+					...( isEnabled( 'purchases/site-transfer' ) ? [ movePurchaseRoute ] : [] ),
 				] ),
 			] ),
 			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),

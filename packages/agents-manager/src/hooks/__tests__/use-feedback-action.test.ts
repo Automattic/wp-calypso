@@ -6,7 +6,7 @@ import { renderHook, act } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../contexts';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import useFeedbackAction from '../use-feedback-action';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { UIMessage as Message } from '@automattic/agenttic-client';
 
 // Capture the onFeedback callback passed to createFeedbackActions
 let capturedOnFeedback: ( messageId: string, feedback: 'up' | 'down' ) => void;
@@ -45,7 +45,6 @@ const mockFetch = jest.fn().mockResolvedValue( { ok: true } );
 globalThis.fetch = mockFetch;
 
 const mockCreateFeedbackActions = createFeedbackActions as jest.Mock;
-const mockRegisterMessageActions = jest.fn();
 const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.MockedFunction<
 	typeof recordBigSkyTracksEvent
 >;
@@ -98,7 +97,6 @@ describe( 'useFeedbackAction', () => {
 	} );
 
 	const defaultConfig = {
-		registerMessageActions: mockRegisterMessageActions,
 		messages: [] as Message[],
 	};
 

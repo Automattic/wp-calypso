@@ -68,7 +68,9 @@ describe( 'actions', () => {
 			const coupon = mockCoupon;
 			nock( 'https://public-api.wordpress.com' )
 				.post( '/wpcom/v2/sites/1/memberships/coupons' )
-				.replyWithError( { code: 'validation_error', message: 'Coupon code is already used' } );
+				.replyWithError(
+					Object.assign( new Error( 'Coupon code is already used' ), { code: 'validation_error' } )
+				);
 			const noticeText = 'Added coupon';
 			const dispatchedActions = [];
 
@@ -128,10 +130,11 @@ describe( 'actions', () => {
 			const couponContainingId = { ID: parseInt( couponId ), ...coupon };
 			nock( 'https://public-api.wordpress.com' )
 				.put( '/wpcom/v2/sites/1/memberships/coupon/123' )
-				.replyWithError( {
-					code: 'other_error',
-					message: 'Something went wrong updating this coupon.',
-				} );
+				.replyWithError(
+					Object.assign( new Error( 'Something went wrong updating this coupon.' ), {
+						code: 'other_error',
+					} )
+				);
 			const noticeText = 'Updated coupon';
 			const dispatchedActions = [];
 
@@ -201,10 +204,11 @@ describe( 'actions', () => {
 
 			nock( 'https://public-api.wordpress.com' )
 				.delete( '/wpcom/v2/sites/1/memberships/coupon/123' )
-				.replyWithError( {
-					code: 'other_error',
-					message: 'Something went wrong when deleting this coupon.',
-				} );
+				.replyWithError(
+					Object.assign( new Error( 'Something went wrong when deleting this coupon.' ), {
+						code: 'other_error',
+					} )
+				);
 
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
 			await requestDeleteCoupon( siteId, couponContainingId, noticeText )( dispatch );

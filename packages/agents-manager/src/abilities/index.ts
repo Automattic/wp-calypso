@@ -11,13 +11,18 @@ import { isEditorPage } from '../utils/is-editor-page';
 import { executeAbilityFromList } from './execute-ability';
 import { wpAdminNavigateAbility } from './wp-admin-navigate';
 import type { ToolProvider } from '../extension-types';
-import type { Ability } from './types';
 import type { CheckpointContextItem } from '../utils/checkpoints';
 import type { PageStructure } from '../utils/page-structure';
+import type { Ability } from '@wordpress/abilities';
 
 type EditorAbilitiesModule = typeof import( './editor-abilities' );
 
 type CheckpointActions = EditorAbilitiesModule[ 'checkpointActions' ];
+
+type EditorSuggestions = Pick<
+	EditorAbilitiesModule,
+	'getEditorEmptyViewSuggestions' | 'useBlockSuggestions'
+>;
 
 let editorAbilitiesPromise: Promise< EditorAbilitiesModule > | null = null;
 let loadedEditorAbilities: EditorAbilitiesModule | null = null;
@@ -58,8 +63,7 @@ function loadEditorAbilities(): Promise< EditorAbilitiesModule > | null {
 const ALL_SURFACE_ABILITIES: Ability[] = [ wpAdminNavigateAbility ];
 
 // A failed chunk load (already logged and set up to retry above) degrades to
-// the all-surface list — editor tool calls then fall through to the provider
-// copies.
+// the all-surface list until a later call loads the chunk.
 async function getOwnedAbilities(): Promise< Ability[] > {
 	let editorAbilities: Ability[] = [];
 	try {
@@ -75,11 +79,11 @@ async function getOwnedAbilities(): Promise< Ability[] > {
 /**
  * Serves AM-owned abilities to the agent's tool pipeline. Tool calls resolve
  * through the provider chain first-write-wins by ability name, and this
- * provider is placed before the external ones — so each migrated ability
- * executes through AM even if a provider still ships its copy.
+ * provider is placed before the external ones, so AM's abilities run ahead of
+ * any provider ability with the same name.
  *
- * Off the editor only the all-surface abilities are owned; everything else
- * falls through to the provider copies and the editor chunk stays unloaded.
+ * Off the editor only the all-surface abilities are owned; everything else is
+ * left to the providers and the editor chunk stays unloaded.
  */
 export const amToolProvider: ToolProvider = {
 	getAbilities: getOwnedAbilities,
@@ -127,6 +131,60 @@ export function getAmPageContentMarkup(): string {
  */
 export function getAmPageStructure(): PageStructure | null {
 	return loadedEditorAbilities?.getPageStructure() ?? null;
+}
+
+/**
+ * The post the editor has open, for the client context. Empty until the
+ * editor abilities have loaded, and off editor pages.
+ */
+export function getAmEditorPostContext(): Record< string, unknown > {
+	return loadedEditorAbilities?.getEditorPostContext() ?? {};
+}
+
+/**
+ * The editor's block types, selected text and custom CSS for the client
+ * context. Empty until the editor abilities have loaded, and off editor pages.
+ */
+export function getAmEditorContentContext(): Record< string, unknown > {
+	return loadedEditorAbilities?.getEditorContentContext() ?? {};
+}
+
+/**
+ * Starts loading what the editor content context reads, so the first message
+ * carries it: the post editor fetches the global styles only once asked.
+ */
+export async function preloadAmEditorContentContext(): Promise< void > {
+	try {
+		( await loadEditorAbilities() )?.preloadEditorContentContext();
+	} catch {
+		// Already logged; the next facade call retries the load.
+	}
+}
+
+/**
+ * AM's editor suggestions, from the editor abilities chunk. `null` off editor
+ * pages, or when the chunk fails to load.
+ */
+export async function loadAmEditorSuggestions(): Promise< EditorSuggestions | null > {
+	try {
+		return await loadEditorAbilities();
+	} catch {
+		// Already logged; the chat goes without them.
+		return null;
+	}
+}
+
+/**
+ * The id the agent knows a block by, so a host can name the block to it. The
+ * clientId itself until the editor abilities have loaded: the agent's tools
+ * take that too.
+ */
+export function getAmAgentBlockId( clientId: string ): string {
+	if ( typeof clientId !== 'string' || ! clientId ) {
+		return '';
+	}
+
+	return loadedEditorAbilities?.getAgentBlockId( clientId ) ?? clientId;
 }
 
 /**

@@ -54,7 +54,7 @@ export default function ReaderPreferences() {
 							level={ 3 }
 							title={ __( 'Read status' ) }
 							description={ __(
-								'Dims posts you have already opened, shows unread counts in the sidebar, and surfaces Mark as read actions.'
+								'Marks unread posts with a dot, shows unread counts in the sidebar, and surfaces Mark as read actions.'
 							) }
 						/>
 						<ToggleControl

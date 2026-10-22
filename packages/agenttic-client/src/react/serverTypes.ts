@@ -18,12 +18,15 @@ export interface ServerFilePart {
 }
 
 /**
- * Context structure that may contain file parts, sources, and flags (e.g. forward_to_human_support)
+ * Context structure that may contain file parts, sources, flags (e.g. forward_to_human_support)
+ * and where the client said the prompt came from (`clientContext.metadata.promptSource`).
  */
 export interface ServerMessageContext {
 	file_parts?: ServerFilePart[];
 	sources?: unknown;
 	flags?: Record< string, unknown >;
+	promptSource?: string;
+	promptSourceId?: string;
 	[ key: string ]: unknown;
 }
 
@@ -59,6 +62,27 @@ export interface ServerChat {
 	};
 	created_at: string;
 	updated_at: string;
+	/** Set on page 1 when the last turn is waiting on browser tool calls. */
+	pending_client_tools?: PendingClientTools;
+}
+
+/**
+ * The browser tool calls a chat's last turn is still waiting on, as reported by
+ * the server. After a page change no page sends their results, so the turn stays
+ * paused until one does.
+ */
+export interface PendingClientTools {
+	/**
+	 * `unanswered`: no result arrived for the calls listed. `running`: a run is in
+	 * progress on the session.
+	 */
+	state: 'unanswered' | 'running';
+	/** The calls still waiting on the browser, with the arguments it would have run them with. */
+	calls: Array< {
+		toolCallId: string;
+		toolId: string;
+		arguments: unknown;
+	} >;
 }
 
 /**
@@ -80,6 +104,7 @@ export interface ServerLoadResult {
 	pagination: PaginationMeta;
 	chatId: number;
 	sessionId?: string;
+	pendingClientTools?: PendingClientTools;
 }
 
 /**
@@ -154,19 +179,27 @@ export function serverMessageToMessage( serverMessage: ServerMessage ): Message 
 		}
 	}
 
-	// Preserve flags (e.g. forward_to_human_support) and sources from context as a data part.
+	// Preserve flags (e.g. forward_to_human_support), sources and the prompt
+	// source from context as a data part.
 	if ( context && ! Array.isArray( context ) ) {
 		const ctx = context as ServerMessageContext;
 		const hasFlags = ctx.flags && typeof ctx.flags === 'object' && ctx.flags !== null;
 		const hasSources = Array.isArray( ctx.sources ) && ctx.sources.length > 0;
+		const hasPromptSource = typeof ctx.promptSource === 'string' && ctx.promptSource !== '';
 
-		if ( hasFlags || hasSources ) {
+		if ( hasFlags || hasSources || hasPromptSource ) {
 			const data: Record< string, unknown > = {};
 			if ( hasFlags ) {
 				data.flags = ctx.flags;
 			}
 			if ( hasSources ) {
 				data.sources = ctx.sources;
+			}
+			if ( hasPromptSource ) {
+				data.promptSource = ctx.promptSource;
+				if ( typeof ctx.promptSourceId === 'string' && ctx.promptSourceId !== '' ) {
+					data.promptSourceId = ctx.promptSourceId;
+				}
 			}
 			parts.push( {
 				type: 'data',
@@ -265,6 +298,9 @@ export function serverChatToLoadResult(
 		pagination,
 		chatId: serverChat.chat_id,
 		sessionId: serverChat.session_id,
+		...( serverChat.pending_client_tools && {
+			pendingClientTools: serverChat.pending_client_tools,
+		} ),
 	};
 }
 

@@ -5,17 +5,29 @@
 
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlaygroundStep from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
+import { BlueprintLoadError } from '../lib/blueprint-load-error';
 import { initializeWordPressPlayground } from '../lib/initialize-playground';
+import { PlaygroundNotFoundError } from '../lib/playground-not-found-error';
 
 // Mock the initializeWordPressPlayground function
 jest.mock( '../lib/initialize-playground' );
 
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+
 // Mock the PlaygroundError component to simplify testing
 jest.mock( '../components/playground-error', () => ( {
-	PlaygroundError: () => <div data-testid="playground-error">Playground Error Component</div>,
+	PlaygroundError: ( { error, createNewPlayground } ) => (
+		<div data-testid="playground-error">
+			{ error.name }
+			<button onClick={ createNewPlayground }>Create new playground</button>
+		</div>
+	),
 } ) );
 
 let mockPlaygroundClientInstance;
@@ -24,13 +36,15 @@ const renderPlaygroundStep = (
 	props?: Partial< StepProps >,
 	renderOptions?: RenderStepOptions
 ) => {
-	const combinedProps = { ...mockStepProps( props ) };
+	const combinedProps = {
+		...mockStepProps( { flow: 'onboarding', stepName: 'playground', ...props } ),
+	};
 
 	return renderStep( <PlaygroundStep { ...combinedProps } />, renderOptions );
 };
 
 const getLaunchButton = () => screen.getByRole( 'button', { name: 'Launch on WordPress.com' } );
-const getFreeTrialButton = () => screen.getByRole( 'button', { name: 'Launch free trial' } );
+const getSaveStoreButton = () => screen.getByRole( 'button', { name: 'Save my store' } );
 
 describe( 'Playground', () => {
 	beforeEach( () => {
@@ -79,7 +93,7 @@ describe( 'Playground', () => {
 			expect( getLaunchButton() ).toBeDisabled();
 		} );
 
-		it( 'should show free trial button when intent is woocommerce', async () => {
+		it( 'should show the save store button when intent is woocommerce', async () => {
 			await act( async () => {
 				renderPlaygroundStep(
 					{},
@@ -90,14 +104,61 @@ describe( 'Playground', () => {
 				);
 			} );
 
-			expect( getFreeTrialButton() ).toBeVisible();
+			expect( getSaveStoreButton() ).toBeVisible();
+		} );
+	} );
+
+	describe( 'launch tracking', () => {
+		const getLaunchEventProps = () =>
+			recordTracksEvent.mock.calls.find(
+				( [ eventName ] ) => eventName === 'calypso_playground_launch_site'
+			)?.[ 1 ];
+
+		it( 'should flag WooCommerce launches', async () => {
+			await act( async () => {
+				renderPlaygroundStep(
+					{},
+					{
+						initialEntry:
+							'/setup/onboarding/playground?blueprint=woocommerce&playground=1&intent=woocommerce',
+					}
+				);
+			} );
+
+			await userEvent.click( getSaveStoreButton() );
+
+			expect( getLaunchEventProps() ).toEqual(
+				expect.objectContaining( { is_woocommerce_intent: true } )
+			);
+		} );
+
+		it( 'should not flag other launches and keep the existing properties', async () => {
+			await act( async () => {
+				renderPlaygroundStep(
+					{ flow: 'onboarding' },
+					{ initialEntry: '/setup/onboarding/playground?blueprint=123&playground=1' }
+				);
+			} );
+
+			await userEvent.click( getLaunchButton() );
+
+			expect( getLaunchEventProps() ).toEqual( {
+				flow: 'onboarding',
+				step: 'playground',
+				blueprint: 'bpl-123',
+				intent: 'plans-playground',
+				is_woocommerce_intent: false,
+			} );
 		} );
 	} );
 
 	describe( 'PlaygroundIframe error handling', () => {
 		it( 'should render PlaygroundError when initialization fails', async () => {
 			initializeWordPressPlayground.mockRejectedValue(
-				new Error( 'WordPress installation has failed.' )
+				new PlaygroundNotFoundError(
+					'missing-id',
+					new Error( 'Error connecting to the SQLite database.' )
+				)
 			);
 
 			await act( async () => renderPlaygroundStep() );
@@ -106,6 +167,60 @@ describe( 'Playground', () => {
 			await waitFor( () => {
 				expect( screen.getByTestId( 'playground-error' ) ).toBeVisible();
 			} );
+		} );
+
+		it( 'should not retry initialization on its own when the blueprint cannot be loaded', async () => {
+			initializeWordPressPlayground.mockRejectedValue(
+				new BlueprintLoadError( 'https://wordpress.com/404', new Error( 'Not Found' ) )
+			);
+
+			await act( async () =>
+				renderPlaygroundStep(
+					{},
+					{
+						initialEntry:
+							'/setup/onboarding/playground?blueprint-url=https%3A%2F%2Fwordpress.com%2F404&playground=missing-id',
+					}
+				)
+			);
+
+			await waitFor( () => {
+				expect( screen.getByTestId( 'playground-error' ) ).toHaveTextContent(
+					'BlueprintLoadError'
+				);
+			} );
+			expect( initializeWordPressPlayground ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should initialize again only when a new playground is requested', async () => {
+			initializeWordPressPlayground
+				.mockRejectedValueOnce(
+					new PlaygroundNotFoundError( 'missing-id', new Error( 'boot failed' ) )
+				)
+				.mockResolvedValue( { blueprint: null, client: mockPlaygroundClientInstance } );
+
+			let container;
+			await act( async () => {
+				const result = renderPlaygroundStep(
+					{},
+					{ initialEntry: '/setup/onboarding/playground?playground=missing-id' }
+				);
+				container = result.container;
+			} );
+
+			await waitFor( () => {
+				expect( screen.getByTestId( 'playground-error' ) ).toHaveTextContent(
+					'PlaygroundNotFoundError'
+				);
+			} );
+			expect( initializeWordPressPlayground ).toHaveBeenCalledTimes( 1 );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Create new playground' } ) );
+
+			await waitFor( () => {
+				expect( container.querySelector( 'iframe' ) ).toBeVisible();
+			} );
+			expect( initializeWordPressPlayground ).toHaveBeenCalledTimes( 2 );
 		} );
 	} );
 } );

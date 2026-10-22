@@ -1,11 +1,12 @@
 import { useCallback } from '@wordpress/element';
 import CopyActionButton from '../components/copy-action-button';
+import { COPY_ACTION_ID } from '../utils/message-actions';
 import {
 	getDisplayMessageFromToolData,
 	isDisplayableToolMessageTool,
 } from '../utils/tool-message-utils';
 import type { UIMessage } from '@automattic/agenttic-client';
-import type { MessageAction } from '@automattic/agenttic-ui/dist/types';
+import type { MessageAction } from '@automattic/agenttic-ui';
 
 /**
  * Extracts copyable text from a message. For tool messages, only known tools with
@@ -69,7 +70,7 @@ export default function useCopyAction(): ( message: UIMessage ) => MessageAction
 		return [
 			{
 				type: 'component',
-				id: 'copy',
+				id: COPY_ACTION_ID,
 				component: CopyActionButton,
 				componentProps: { text, messageId: message.id },
 				order: 4,

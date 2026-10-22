@@ -38,7 +38,6 @@ export async function payPalJsProcessor(
 	const {
 		getThankYouUrl,
 		createUserAndSiteBeforeTransaction,
-		reduxDispatch,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		responseCart,
@@ -47,7 +46,7 @@ export async function payPalJsProcessor(
 		contactDetails,
 		fromSiteSlug,
 	} = transactionOptions;
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'paypal-js' } ) );
+	recordTransactionBeginAnalytics( { paymentMethodId: 'paypal-js' } );
 
 	let currentUrl;
 	try {

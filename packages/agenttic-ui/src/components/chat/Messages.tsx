@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { useAutoScroll } from '../../hooks/useAutoScroll';
 import { cn } from '../../utils/classNames';
-import { getVisibleMessages } from '../../utils/message-helpers';
+import { getLatestTurnStartIndex, getVisibleMessages } from '../../utils/message-helpers';
 import { SourcesCard } from '../sources';
 import { Message } from './Message';
 import styles from './Messages.module.css';
@@ -16,6 +16,8 @@ interface MessagesProps {
 	isProcessing?: boolean;
 	/** Whether the latest reply is still streaming. Defaults to `isProcessing`. */
 	isStreaming?: boolean;
+	/** Whether reply text is streaming in. When set, it drives the thinking indicator. */
+	isReplying?: boolean;
 	error?: string | null;
 	emptyView?: React.ReactNode;
 	messageRenderer?: ComponentType< { children: string } >;
@@ -48,6 +50,7 @@ export function Messages( {
 	messages,
 	isProcessing,
 	isStreaming = isProcessing,
+	isReplying,
 	error,
 	emptyView,
 	messageRenderer,
@@ -62,9 +65,7 @@ export function Messages( {
 
 	useAutoScroll( { scrollAreaRef, visibleMessages } );
 
-	// The latest turn is everything after the user's latest message.
-	const latestTurnStartIndex =
-		visibleMessages.map( ( message ) => message.role ).lastIndexOf( 'user' ) + 1;
+	const latestTurnStartIndex = getLatestTurnStartIndex( visibleMessages );
 
 	const liveRegionText = useMemo( () => {
 		// Find the last agent message
@@ -89,8 +90,9 @@ export function Messages( {
 	// shadow: equal means streaming has paused (indicator visible during tool-call
 	// gaps); unequal means deltas are flowing (indicator hidden). The 1s window
 	// is chosen to comfortably exceed typical inter-delta cadence (~430ms) so
-	// the indicator does not flicker during steady streaming.
-	const isAgentTextStreaming = liveRegionText !== settledText;
+	// the indicator does not flicker during steady streaming. `isReplying`, when
+	// set, overrides this.
+	const isAgentTextStreaming = isReplying ?? liveRegionText !== settledText;
 
 	// Announce the rendered reply once it finishes: what is on screen rather than
 	// markdown source, and never history that was already there on open.

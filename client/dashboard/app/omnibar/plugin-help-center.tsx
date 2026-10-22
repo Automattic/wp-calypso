@@ -1,16 +1,14 @@
 import { omnibarSiteIdQuery } from '@automattic/api-queries';
 import { withSiteContext } from '@automattic/calypso-analytics';
+import { parseAdminBarTitle } from '@automattic/omnibar';
 import { useQuery } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useAnalytics } from '../analytics';
 import { useHelpCenter } from '../help-center';
 import { adminBarIcon } from './admin-bar-icon';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-help-center.scss';
-
-const HELP_CENTER_NODE_ID = 'help-center';
 
 function HelpCenterIcon( { name, sectionName }: { name?: string; sectionName?: string } ) {
 	const { recordTracksEvent } = useAnalytics();
@@ -37,28 +35,25 @@ function HelpCenterIcon( { name, sectionName }: { name?: string; sectionName?: s
 	return adminBarIcon( name, 'omnibar__help-icon' );
 }
 
-export function useHelpCenterPlugin( {
-	sectionName,
-	adminBarNodes,
-}: {
-	sectionName?: string;
-	adminBarNodes: AdminBarNode[];
-} ): OmnibarNode {
+export function useHelpCenterNodeBuilder( { sectionName }: { sectionName?: string } ) {
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 
-	// Older backends send no node; the client-side defaults cover them.
-	// `menu_title` arrives only when the entry point shows a label.
-	const helpCenterNode = adminBarNodes.find( ( node ) => node.id === HELP_CENTER_NODE_ID );
-	const menuTitle = helpCenterNode?.meta?.menu_title || undefined;
+	return useCallback(
+		( adminBarNode: AdminBarNode ): Partial< OmnibarNode > => {
+			const { text, tooltip } = parseAdminBarTitle( adminBarNode );
+			const menuTitle = adminBarNode.meta?.menu_title || undefined;
 
-	return {
-		id: HELP_CENTER_NODE_ID,
-		label: __( 'Help' ),
-		title: menuTitle,
-		tooltip: menuTitle,
-		icon: (
-			<HelpCenterIcon name={ helpCenterNode?.meta?.icon ?? 'help' } sectionName={ sectionName } />
-		),
-		onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
-	};
+			return {
+				label: menuTitle ?? tooltip ?? text,
+				title: menuTitle,
+				tooltip: menuTitle ?? tooltip,
+				href: undefined,
+				icon: (
+					<HelpCenterIcon name={ adminBarNode.meta?.icon ?? 'help' } sectionName={ sectionName } />
+				),
+				onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
+			};
+		},
+		[ sectionName, isHelpCenterShown, setShowHelpCenter ]
+	);
 }

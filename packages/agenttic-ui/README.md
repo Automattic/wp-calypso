@@ -218,6 +218,7 @@ interface AgentUIProps {
 	messages: Message[];
 	isProcessing: boolean;
 	isStreaming?: boolean; // Whether the latest reply is still streaming, when that differs from `isProcessing` (the default)
+	isReplying?: boolean; // Whether reply text is streaming in. When set, it drives the thinking indicator
 	error?: string | null;
 	onSubmit: ( message: string ) => void;
 	onStop?: () => void;
@@ -498,6 +499,7 @@ interface Message {
 	icon?: string;
 	actions?: MessageAction[];
 	disabled?: boolean;
+	startsTurn?: boolean; // Starts a turn though no user message shows before it, such as a reply to a click in a message
 }
 
 interface MessageAction {
@@ -528,7 +530,8 @@ interface NoticeConfig {
 				href: string;
 				target?: React.HTMLAttributeAnchorTarget;
 				rel?: string;
-				onClick?: never;
+				// Runs before the link opens, for example to record the click.
+				onClick?: () => void;
 		  };
 	dismissible?: boolean;
 	onDismiss?: () => void;
@@ -548,6 +551,9 @@ import '@automattic/agenttic-ui/index.css';
 ### CSS Scoping
 
 All styles are scoped to `.agenttic` class to prevent conflicts.
+
+Add `data-agenttic-isolated` to an embedded UI wrapper to skip the base message
+typography reset for its descendants. Element-specific Markdown styles still apply.
 
 ### Customization
 

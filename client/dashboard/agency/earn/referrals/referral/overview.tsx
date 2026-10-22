@@ -11,7 +11,10 @@ import Grid from '../../../../components/grid';
 import { PageHeader } from '../../../../components/page-header';
 import PageLayout from '../../../../components/page-layout';
 import { Text } from '../../../../components/text';
-import MissingPaymentSettingsNotice from '../../missing-payment-settings-notice';
+import { AgencyNotices } from '../../../components/agency-notices';
+import MissingPaymentSettingsNotice, {
+	useMissingPaymentSettings,
+} from '../../missing-payment-settings-notice';
 import ConsolidatedViews from '../consolidated-views';
 import { useReferral } from '../hooks/use-referral';
 import { getOrderSummary } from '../lib/get-order-summary';
@@ -89,6 +92,7 @@ export default function ReferralOverview() {
 
 	const referralFields = useMemo( () => getReferralFields( products ), [ products ] );
 	const purchaseFields = useMemo( () => getPurchaseFields( products ), [ products ] );
+	const missingPaymentSettings = useMissingPaymentSettings( { hasCommissionActivity: true } );
 
 	if ( ! referral ) {
 		return <ReferralNotFound />;
@@ -116,7 +120,19 @@ export default function ReferralOverview() {
 					}
 				/>
 			}
-			notices={ <MissingPaymentSettingsNotice hasCommissionActivity commissionType="referrals" /> }
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'missing-payment-settings',
+							...missingPaymentSettings,
+							notice: (
+								<MissingPaymentSettingsNotice hasCommissionActivity commissionType="referrals" />
+							),
+						},
+					] }
+				/>
+			}
 		>
 			<ConsolidatedViews
 				isSingleClient

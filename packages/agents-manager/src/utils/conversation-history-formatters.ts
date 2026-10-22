@@ -86,6 +86,11 @@ export function generateConversationSubtitle( dateTime: string, isHe?: boolean )
 	const date = formatConversationDate( dateTime );
 
 	if ( isHe ) {
+		// A Zendesk conversation with no messages has no first-message date.
+		if ( ! date ) {
+			return __( 'Happiness chat', __i18n_text_domain__ );
+		}
+
 		return sprintf(
 			/* translators: %s: date of the conversation */
 			__( 'Happiness chat · %s', __i18n_text_domain__ ),

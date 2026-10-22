@@ -143,39 +143,69 @@ test( 'without a support handler the reverted notice has no action', () => {
 	expect( screen.queryByRole( 'button', { name: 'Contact support' } ) ).not.toBeInTheDocument();
 } );
 
-test( 'dismisses the reverted state: hides at once, writes the meta, records the event', async () => {
-	const scope = nock( 'https://public-api.wordpress.com' )
-		.post( `/wp/v2/sites/${ SITE_ID }/users/me`, { meta: { [ DISMISS_KEY ]: 1 } } )
-		.query( true )
-		.reply( 200, { id: 1, name: 'me', slug: 'me', meta: { [ DISMISS_KEY ]: 1 } } );
+test.each( [
+	[
+		'the reverted state',
+		revertedState(),
+		'Your plan has expired',
+		{ surface: 'test', stage: 'post-grace', state: 'expired', days_remaining: -10 },
+	],
+	[
+		'a dismissible grace state',
+		{ ...purchaseState( grace(), 'grace' ), dismissMetaKey: DISMISS_KEY },
+		'Your Business plan has expired',
+		expect.objectContaining( {
+			surface: 'test',
+			purchase_id: 1234,
+			stage: 'grace',
+			state: 'expired_grace',
+		} ),
+	],
+] )(
+	'dismisses %s: hides at once, writes the meta, records the event',
+	async ( _, state, title, eventProperties ) => {
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post( `/wp/v2/sites/${ SITE_ID }/users/me`, { meta: { [ DISMISS_KEY ]: 1 } } )
+			.query( true )
+			.reply( 200, { id: 1, name: 'me', slug: 'me', meta: { [ DISMISS_KEY ]: 1 } } );
 
-	const { recordTracksEvent } = renderBanner( revertedState() );
-	await userEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
+		const { recordTracksEvent } = renderBanner( state );
+		expect( screen.getByText( title ) ).toBeVisible();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
 
-	expect( screen.queryByText( 'Your plan has expired' ) ).not.toBeInTheDocument();
-	await waitFor( () => expect( scope.isDone() ).toBe( true ) );
-	expect( recordTracksEvent ).toHaveBeenCalledWith(
-		'calypso_purchases_plan_expiry_notice_dismiss',
-		{ surface: 'test', stage: 'post-grace', state: 'expired', days_remaining: -10 }
-	);
-} );
+		expect( screen.queryByText( title ) ).not.toBeInTheDocument();
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_purchases_plan_expiry_notice_dismiss',
+			eventProperties
+		);
+	}
+);
 
-test( 'restores the reverted notice when the dismissal fails', async () => {
+test.each( [
+	[ 'reverted', revertedState(), 'Your plan has expired', 'post-grace' ],
+	[
+		'grace',
+		{ ...purchaseState( grace(), 'grace' ), dismissMetaKey: DISMISS_KEY },
+		'Your Business plan has expired',
+		'grace',
+	],
+] )( 'restores the %s notice when the dismissal fails', async ( _, state, title, stage ) => {
 	nock( 'https://public-api.wordpress.com' )
 		.post( `/wp/v2/sites/${ SITE_ID }/users/me` )
 		.query( true )
 		.reply( 500, { message: 'nope' } );
 
-	const { recordTracksEvent } = renderBanner( revertedState() );
+	const { recordTracksEvent } = renderBanner( state );
 	await userEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
 
 	await waitFor( () =>
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_purchases_plan_expiry_notice_dismiss_failed',
-			expect.objectContaining( { stage: 'post-grace', error_message: expect.any( String ) } )
+			expect.objectContaining( { stage, error_message: expect.any( String ) } )
 		)
 	);
-	expect( screen.getByText( 'Your plan has expired' ) ).toBeVisible();
+	expect( screen.getByText( title ) ).toBeVisible();
 } );
 
 test( 'without a dismiss key the reverted notice has no close button', () => {

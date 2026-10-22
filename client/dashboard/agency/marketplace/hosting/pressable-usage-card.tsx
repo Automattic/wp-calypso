@@ -1,5 +1,4 @@
 import { activeAgencyQuery } from '@automattic/api-queries';
-import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import {
 	ExternalLink,
@@ -11,18 +10,12 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { useIntlLocale } from '../../../app/locale';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
-import { Stat } from '../../../components/stat';
 import { OWNER_ROLE } from '../../team/constants';
 import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { calculateEffectiveCapacity } from './lib/pressable-capacity';
-import { getPressablePlanInfo } from './lib/pressable-plans';
+import { PRESSABLE_AGENCY_URL, getPressablePlanInfo } from './lib/pressable-plans';
+import PressableUsageStats from './pressable-usage-stats';
 import type { AgencyProduct } from '@automattic/api-core';
-
-const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
-const USAGE_WARNING_THRESHOLD = 80;
-
-const percentage = ( value: number, total: number ) =>
-	total > 0 ? Math.min( 100, Math.round( ( value / total ) * 100 ) ) : 0;
 
 const formatTrialEndDate = ( date: string, locale: string ) =>
 	new Intl.DateTimeFormat( locale, { month: 'long', day: 'numeric', timeZone: 'UTC' } ).format(
@@ -58,11 +51,6 @@ export default function PressableUsageCard( { existingPlan }: { existingPlan: Ag
 		0
 	);
 
-	const storageUsed = usage?.storage_gb ?? 0;
-	const sitesUsed = usage?.sites_count ?? 0;
-	const visitsUsed = usage?.visits_count ?? 0;
-	const storagePercent = percentage( storageUsed, capacity.storage );
-	const visitsPercent = percentage( visitsUsed, capacity.visits );
 	// Only the agency owner can sign in to the Pressable account.
 	const isAgencyOwner = agency?.user?.role === OWNER_ROLE;
 
@@ -80,51 +68,7 @@ export default function PressableUsageCard( { existingPlan }: { existingPlan: Ag
 			</CardHeader>
 			<CardBody>
 				<VStack spacing={ 4 } alignment="stretch">
-					{ ! usage && (
-						<Text variant="muted">{ __( 'View your usage data here when it’s available.' ) }</Text>
-					) }
-					<Stat
-						density="high"
-						isLoading={ ! usage }
-						strapline={ __( 'Sites created' ) }
-						metric={ formatNumber( sitesUsed ) }
-						description={ sprintf(
-							/* translators: %s is the maximum number of sites. */
-							__( 'of %s' ),
-							formatNumber( capacity.install )
-						) }
-						progressValue={ percentage( sitesUsed, capacity.install ) }
-					/>
-					<Stat
-						density="high"
-						isLoading={ ! usage }
-						strapline={ __( 'Visits this month' ) }
-						metric={ formatNumberCompact( visitsUsed ) }
-						description={ sprintf(
-							/* translators: %s is the maximum number of monthly visits. */
-							__( 'of %s' ),
-							formatNumberCompact( capacity.visits )
-						) }
-						progressValue={ visitsPercent }
-						progressColor={ visitsPercent > USAGE_WARNING_THRESHOLD ? 'alert-yellow' : undefined }
-					/>
-					<Stat
-						density="high"
-						isLoading={ ! usage }
-						strapline={ __( 'Storage used' ) }
-						metric={ sprintf(
-							/* translators: %s is the storage used in GB. */
-							__( '%sGB' ),
-							formatNumber( storageUsed )
-						) }
-						description={ sprintf(
-							/* translators: %s is the storage limit in GB. */
-							__( 'of %sGB' ),
-							formatNumber( capacity.storage )
-						) }
-						progressValue={ storagePercent }
-						progressColor={ storagePercent > USAGE_WARNING_THRESHOLD ? 'alert-yellow' : undefined }
-					/>
+					<PressableUsageStats usage={ usage } capacity={ capacity } />
 					{ activeTitanOrders.length > 0 && (
 						<VStack spacing={ 4 }>
 							<HStack justify="space-between" alignment="flex-start" wrap>

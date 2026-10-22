@@ -57,4 +57,35 @@ describe( 'CheckoutMasterbar', () => {
 		expect( screen.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Back' } ) ).not.toBeInTheDocument();
 	} );
+
+	it.each( [
+		[ '/checkout/akismet/ak_plus_yearly_2', '.akismet-logo' ],
+		[ '/checkout/jetpack/jetpack_backup_t1_yearly', '.jetpack-logo' ],
+		[ '/checkout/passport/passport_yearly', '.passport-logo' ],
+	] )( 'shows the brand logo instead of the WordPress logo at %s', ( url, logoSelector ) => {
+		const { container } = renderAt( url );
+
+		expect( container.querySelector( logoSelector ) ).toBeVisible();
+		expect(
+			container.querySelector( '.step-container-v2__top-bar-wordpress-logo-wrapper' )
+		).not.toBeInTheDocument();
+	} );
+
+	it( 'shows the Akismet logo even when the last selected site is a Jetpack site', () => {
+		window.history.pushState( {}, '', '/checkout/akismet/ak_plus_yearly_2' );
+		const { container } = render(
+			<CheckoutMasterbar title="Checkout" isLeavingAllowed isJetpackNotAtomic />
+		);
+
+		expect( container.querySelector( '.akismet-logo' ) ).toBeVisible();
+		expect( container.querySelector( '.jetpack-logo' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows the WordPress logo on the regular checkout', () => {
+		const { container } = renderAt( '/checkout/example.com' );
+
+		expect(
+			container.querySelector( '.step-container-v2__top-bar-wordpress-logo-wrapper' )
+		).toBeVisible();
+	} );
 } );

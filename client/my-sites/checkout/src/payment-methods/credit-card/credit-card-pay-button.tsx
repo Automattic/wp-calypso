@@ -7,17 +7,20 @@ import {
 } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useState, useEffect } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useVgsFormSubmit } from '../../hooks/use-vgs-form-submit';
 import { useVgsFormValidation } from '../../hooks/use-vgs-form-validation';
 import { logStashEvent } from '../../lib/analytics';
 import { getIncompleteFieldKeys, useCreditCardStoreState } from './store';
-import type { CardStoreType } from './types';
+import type { CardElementType, CardStoreType } from './types';
 import type { ProcessPayment } from '@automattic/composite-checkout';
+import type { I18n } from '@wordpress/i18n';
 import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:credit-card' );
@@ -97,11 +100,9 @@ export default function CreditCardPayButton( {
 								'Something seems to be wrong with the credit card form. Please try again or contact support for help.'
 							)
 						);
-						reduxDispatch(
-							recordTracksEvent( 'calypso_checkout_card_missing_element', {
-								error: 'No card number element found on page when submtting form.',
-							} )
-						);
+						recordTracksEvent( 'calypso_checkout_card_missing_element', {
+							error: 'No card number element found on page when submtting form.',
+						} );
 						logStashEvent( 'calypso_checkout_card_missing_element', {
 							error: 'No card number element found on page when submtting form.',
 						} );
@@ -191,26 +192,52 @@ export default function CreditCardPayButton( {
 function isCreditCardFormValid(
 	store: CardStoreType,
 	paymentPartner: string,
-	__: ( value: string ) => string,
+	__: I18n[ '__' ],
 	setDisplayFieldsError: ( value: string ) => void
 ) {
 	debug( 'validating credit card fields for partner', paymentPartner );
 
-	function setFieldsError() {
+	// Builds the "fill out these fields" notice, naming each missing field.
+	// Falls back to a generic message when no labels are available.
+	function setFieldsError( fieldLabels: string[] = [] ) {
+		if ( ! fieldLabels.length ) {
+			setDisplayFieldsError(
+				__( 'Something seems to be missing — please fill out all the required fields.' )
+			);
+			return;
+		}
 		setDisplayFieldsError(
-			__( 'Something seems to be missing — please fill out all the required fields.' )
+			sprintf(
+				/* translators: %s is a comma-separated list of payment form field names, e.g. "Card number, Security code" */
+				__( 'Please fill out the required fields: %s' ),
+				new Intl.ListFormat( i18n.getLocaleSlug() ?? 'en', {
+					style: 'long',
+					type: 'conjunction',
+				} ).format( fieldLabels )
+			)
 		);
 	}
 
 	switch ( paymentPartner ) {
 		case 'stripe': {
+			// Declared in form order, which is the order the notice lists them in.
+			// Keep in sync with the labels rendered by credit-card-number-field,
+			// credit-card-expiry-field and credit-card-cvv-field — the notice is
+			// only useful if it names the fields the way the form does.
+			const cardElementLabels: Record< CardElementType, string > = {
+				cardNumber: __( 'Card number' ),
+				cardExpiry: __( 'Expiry date' ),
+				cardCvc: __( 'Security code' ),
+			};
+			const missingFieldLabels: string[] = [];
+
 			const fields = store.getState().fields;
 			const cardholderName = fields.cardholderName;
 			if ( ! cardholderName?.value?.length ) {
 				// Touch the field so it displays a validation error
 				store.setFieldValue( 'cardholderName', '' );
 				store.setFieldError( 'cardholderName', __( 'This field is required' ) );
-				setFieldsError();
+				missingFieldLabels.push( __( 'Cardholder name' ) );
 			}
 			const errors = store.getState().cardDataErrors;
 			const incompleteFieldKeys = getIncompleteFieldKeys( store.getState() );
@@ -221,9 +248,14 @@ function isCreditCardFormValid(
 				incompleteFieldKeys.forEach( ( key ) =>
 					store.setCardDataError( key, __( 'This field is required' ) )
 				);
-				setFieldsError();
+				missingFieldLabels.push(
+					...Object.entries( cardElementLabels )
+						.filter( ( [ key ] ) => incompleteFieldKeys.includes( key as CardElementType ) )
+						.map( ( [ , label ] ) => label )
+				);
 			}
 			if ( areThereErrors || ! cardholderName?.value?.length || incompleteFieldKeys.length > 0 ) {
+				setFieldsError( missingFieldLabels );
 				debug( 'card info is not valid', { errors, incompleteFieldKeys, cardholderName } );
 
 				return false;
@@ -241,30 +273,34 @@ function isCreditCardFormValid(
 			// VGS card fields validation is handled separately via useVgsFormValidation hook
 			// which checks the VGS form state directly
 			let isValid = true;
-			const requiredFields = [
-				'cardholderName',
-				'state',
-				'city',
-				'postal-code',
-				'address-1',
-				'street-number',
-				'phone-number',
-				'document',
-			];
+			// The required fields, in the order the form renders them, mapped to
+			// the labels it renders them under. Keep in sync with
+			// country-specific-payment-fields.tsx and credit-card-fields.tsx:
+			// the notice is only useful if it names the fields the way the form
+			// does.
+			const requiredFieldLabels: Record< string, string > = {
+				cardholderName: __( 'Cardholder name' ),
+				document: __( 'Taxpayer Identification Number' ),
+				'phone-number': __( 'Phone' ),
+				'address-1': __( 'Address' ),
+				'street-number': __( 'Street Number' ),
+				city: __( 'City' ),
+				state: __( 'State' ),
+				'postal-code': __( 'Postal Code' ),
+			};
+			const missingFieldLabels: string[] = [];
 
-			requiredFields.forEach( ( fieldName ) => {
+			Object.entries( requiredFieldLabels ).forEach( ( [ fieldName, label ] ) => {
 				const fieldValue = rawState[ fieldName ]?.value;
 				if ( ! fieldValue || fieldValue.trim() === '' ) {
 					isValid = false;
 					store.setFieldError( fieldName, __( 'This field is required' ) );
+					missingFieldLabels.push( label );
 				}
 			} );
 
 			if ( ! isValid ) {
-				// Unlike the stripe branch above, nothing here previously
-				// surfaced an error notice or scrolled the invalid fields
-				// into view, so the button appeared to do nothing.
-				setFieldsError();
+				setFieldsError( missingFieldLabels );
 			}
 
 			debug( 'ebanx validation - cardholder name and contact details', {

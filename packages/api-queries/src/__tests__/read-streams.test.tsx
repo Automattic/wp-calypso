@@ -143,6 +143,36 @@ describe( 'readStreamQuery', () => {
 		expect( result.current.data?.posts?.[ 0 ].date_liked ).toBe( '2026-04-10' );
 	} );
 
+	it( 'fetches saved posts from /read/saved with the page handle', async () => {
+		const scope = nock( BASE )
+			.get( '/rest/v1.2/read/saved' )
+			.query( ( query ) => query.page_handle === 'abc' && query.number === '7' )
+			.reply( 200, {
+				posts: [
+					{
+						ID: 40,
+						site_ID: 400,
+						date: '2026-01-01',
+						date_saved: '2026-10-15T12:00:00+00:00',
+						URL: 'https://example.com/saved',
+					},
+				],
+				date_range: { after: '2026-10-15T12:00:00+00:00' },
+				next_page_handle: 'def',
+			} );
+
+		const client = newClient();
+		const { result } = renderHook(
+			() => useQuery( readStreamQuery( 'saved', { page_handle: 'abc', number: 7 }, 'abc' ) ),
+			{ wrapper: makeWrapper( client ) }
+		);
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( scope.isDone() ).toBe( true );
+		expect( result.current.data?.posts?.[ 0 ].date_saved ).toBe( '2026-10-15T12:00:00+00:00' );
+		expect( result.current.data?.next_page_handle ).toBe( 'def' );
+	} );
+
 	it( 'fetches a shelf feed from /wpcom/v2/reader/shelves/<id>/posts', async () => {
 		const scope = nock( BASE )
 			.get( '/wpcom/v2/reader/shelves/6/posts' )

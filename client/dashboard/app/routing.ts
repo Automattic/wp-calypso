@@ -1,43 +1,8 @@
 import { buildA4ADashboardLink, isAllowedA4ADashboardHostname } from '../app-a4a/routing';
-import {
-	buildCiabDashboardLink,
-	isAllowedCiabDashboardHostname,
-	isAllowedCiabLegacyRoute,
-} from '../app-ciab/routing';
 import { buildDotcomDashboardLink, isAllowedDotcomDashboardHostname } from '../app-dotcom/routing';
 import type { DashboardType } from './types';
 
-/**
- * Checks if the given route is allowed on the requesting dashboard hostname.
- * All routes are allowed on dotcom and A4A. On CIAB, route policy is delegated to
- * the CIAB routing module.
- */
-export function isAllowedDashboardRoute( {
-	hostname,
-	path,
-}: {
-	hostname?: string;
-	path?: string;
-} ): boolean {
-	if ( isAllowedDotcomDashboardHostname( hostname ) ) {
-		return true;
-	}
-
-	if ( isAllowedCiabDashboardHostname( hostname ) ) {
-		return isAllowedCiabLegacyRoute( path );
-	}
-
-	if ( isAllowedA4ADashboardHostname( hostname ) ) {
-		return true;
-	}
-
-	return false;
-}
-
 export function getDashboardFromHostname( hostname?: string ): DashboardType | undefined {
-	if ( isAllowedCiabDashboardHostname( hostname ) ) {
-		return 'ciab';
-	}
 	if ( isAllowedDotcomDashboardHostname( hostname ) ) {
 		return 'dotcom';
 	}
@@ -69,7 +34,7 @@ export function getDashboardFromQuery(): DashboardType | undefined {
 	const params = new URLSearchParams( window.location.search );
 	const dashboard = params.get( 'dashboard' );
 
-	if ( dashboard === 'a4a' || dashboard === 'ciab' || dashboard === 'dotcom' ) {
+	if ( dashboard === 'a4a' || dashboard === 'dotcom' ) {
 		return dashboard;
 	}
 	return undefined;
@@ -79,9 +44,6 @@ export function getDashboardFromQuery(): DashboardType | undefined {
  * Builds a link for the specified dashboard.
  */
 export function buildDashboardLink( dashboard: DashboardType, path: string = '' ) {
-	if ( dashboard === 'ciab' ) {
-		return buildCiabDashboardLink( path );
-	}
 	if ( dashboard === 'a4a' ) {
 		return buildA4ADashboardLink( path );
 	}
