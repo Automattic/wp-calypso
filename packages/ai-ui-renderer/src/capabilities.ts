@@ -44,8 +44,6 @@ function assertImplementations(
 interface ObjectSchema {
 	properties?: Record< string, unknown >;
 	required?: string[];
-	returnType?: string;
-	allowedCallers?: string;
 	requiresUserActivation?: boolean;
 }
 
@@ -67,26 +65,10 @@ function assertSchemas( kind: 'component' | 'function', definitions: Record< str
 	}
 }
 
-// A2UI's function rules: a return type, and only functions without a click may have other callers.
-function assertFunctions( definitions: Record< string, ObjectSchema > ) {
-	for ( const [ name, { returnType, allowedCallers, requiresUserActivation } ] of Object.entries(
-		definitions
-	) ) {
-		if ( typeof returnType !== 'string' ) {
-			throw new Error( `The interactive UI function ${ name } needs a \`returnType\`.` );
-		}
-
-		if ( allowedCallers && allowedCallers !== 'rendererOnly' && requiresUserActivation !== false ) {
-			throw new Error(
-				`The interactive UI function ${ name } needs \`requiresUserActivation: false\` for other callers.`
-			);
-		}
-	}
-}
-
 /**
- * Throws when a catalog definition breaks A2UI's catalog rules, or its code doesn't match its
- * document: each of its components and functions needs an implementation, and nothing else.
+ * Throws when a catalog definition has no ID, a component or function that isn't an object
+ * schema, or code that doesn't match its document: each of its components and functions needs an
+ * implementation, and nothing else.
  * `createInteractiveUiCatalog()` rejects those, so check catalogs with it before advertising them.
  */
 export function assertInteractiveUiCatalogDefinition( {
@@ -103,7 +85,6 @@ export function assertInteractiveUiCatalogDefinition( {
 
 	assertSchemas( 'component', componentSchemas );
 	assertSchemas( 'function', functionSchemas );
-	assertFunctions( functionSchemas as Record< string, ObjectSchema > );
 
 	assertImplementations( 'component', Object.keys( componentSchemas ), components, isComponent );
 	assertImplementations(

@@ -64,10 +64,9 @@ the definition's own, which replace basic ones of the same name.
 The `@automattic/ai-ui-renderer/capabilities` entry has no A2UI or React code, so a host can use it
 before loading the renderer:
 
-- `assertInteractiveUiCatalogDefinition( definition )` throws when a definition has no ID, breaks
-  A2UI's catalog rules (each component and function an object schema, each function a
-  `returnType`, and other callers only for a function that needs no click), or its code doesn't
-  match its document. Check catalogs with it before advertising them, since
+- `assertInteractiveUiCatalogDefinition( definition )` throws when a definition has no ID, a
+  component or function that isn't an object schema, or code that doesn't match its document.
+  Check catalogs with it before advertising them, since
   `createInteractiveUiCatalog()` rejects those that fail.
 - `getInteractiveUiRendererCapabilities( documents )` returns A2UI's `a2uiRendererCapabilities`
   for the Basic catalog and those catalogs: their IDs, and their documents in A2UI's form, with

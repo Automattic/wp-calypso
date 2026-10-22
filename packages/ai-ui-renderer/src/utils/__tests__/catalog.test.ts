@@ -117,32 +117,6 @@ it.each< { problem: string; definition: InteractiveUiCatalogDefinition; error: s
 		},
 		error: 'The interactive UI component HostColorPicker needs an object schema.',
 	},
-	{
-		problem: 'a function without a return type',
-		definition: {
-			...hostCatalog,
-			catalog: { ...hostCatalog.catalog, functions: { hostOpenHelpCenter: { type: 'object' } } },
-		},
-		error: 'The interactive UI function hostOpenHelpCenter needs a `returnType`.',
-	},
-	{
-		problem: 'a click-only function that other callers may call',
-		definition: {
-			...hostCatalog,
-			catalog: {
-				...hostCatalog.catalog,
-				functions: {
-					hostOpenHelpCenter: {
-						type: 'object',
-						returnType: 'void',
-						allowedCallers: 'rendererOrAgent',
-					},
-				},
-			},
-		},
-		error:
-			'The interactive UI function hostOpenHelpCenter needs `requiresUserActivation: false` for other callers.',
-	},
 ] )( 'rejects $problem', ( { definition, error } ) => {
 	expect( () => createInteractiveUiCatalog( definition ) ).toThrow( error );
 } );

@@ -20,7 +20,7 @@ const AGENTS_MANAGER_CATALOG: InteractiveUiCatalogDefinition = {
 };
 
 /**
- * Skips a provider catalog that breaks A2UI's catalog rules or whose implementations don't match
+ * Skips a provider catalog that isn't made of object schemas or whose implementations don't match
  * its document, so the chat doesn't advertise it. As with abilities, the first with an ID wins, so
  * a provider can't replace a catalog that already works. The Basic and Agents Manager IDs are
  * taken.
