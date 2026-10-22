@@ -297,6 +297,37 @@ $site-generation-half-beat: 1400ms;
 
 .site-generation-canvas__brief-chips.site-generation-canvas__page-list {
 	margin-block-start: 0;
+
+	li {
+		position: relative;
+		overflow: hidden;
+	}
+
+	// A page being built carries a sweep along its lower edge; a finished one
+	// goes quiet.
+	li[data-progress='building']::after {
+		content: '';
+		position: absolute;
+		inset-block-end: 0;
+		inset-inline-start: 0;
+		inline-size: 100%;
+		block-size: 2px;
+		background: var( --site-generation-brand, var( --color-primary ) );
+		transform: translateX( -100% );
+		animation: site-generation-canvas-building $site-generation-half-beat
+			cubic-bezier( 0.645, 0.045, 0.355, 1 ) infinite;
+	}
+}
+
+@keyframes site-generation-canvas-building {
+	0% {
+		transform: translateX( -100% );
+	}
+
+	60%,
+	100% {
+		transform: translateX( 100% );
+	}
 }
 
 .site-generation-canvas__page-jump {
@@ -313,9 +344,15 @@ $site-generation-half-beat: 1400ms;
 	}
 
 	&:focus-visible {
-		outline: 2px solid var( --color-primary );
-		outline-offset: 3px;
+		outline: none;
 	}
+}
+
+// The chip clips its own overflow for the sweep, so the focus ring sits on
+// the chip rather than on the button inside it.
+.site-generation-canvas__page-list li:has( .site-generation-canvas__page-jump:focus-visible ) {
+	outline: 2px solid var( --color-primary );
+	outline-offset: 2px;
 }
 
 .site-generation-canvas__image-strip {
@@ -613,6 +650,8 @@ $site-generation-half-beat: 1400ms;
 	.site-generation-canvas__status-line,
 	.site-generation-canvas__status-activity,
 	.site-generation-canvas__status-check,
+	.site-generation-canvas__brief-chips.site-generation-canvas__page-list
+		li[data-progress='building']::after,
 	.site-generation-canvas__image-pending,
 	.site-generation-canvas__image-pending::before {
 		animation: none;
