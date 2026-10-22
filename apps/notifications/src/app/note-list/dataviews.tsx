@@ -29,7 +29,7 @@ import type { JSX } from 'react';
 import './dataviews-overrides.scss';
 
 const iconMap: { [ key in string ]: JSX.Element } = {
-	'\uf814': atSymbol, // mention
+	'\uf814': atSymbol,
 	'\uf300': comment,
 	'\uf801': plus,
 	'\uf455': info,
