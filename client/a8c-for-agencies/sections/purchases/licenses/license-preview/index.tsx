@@ -197,14 +197,17 @@ export default function LicensePreview( {
 	const trialEnd = license.subscription?.trialEnd;
 	const isActiveTrial = Boolean( license.subscription?.isActiveTrial );
 
-	const bundleCountContent = quantity && (
+	// The API omits a quantity of one, so a single-inbox Titan license still shows its count.
+	const titanInboxCount = isTitanLicense ? quantity || 1 : null;
+
+	const bundleCountContent = ( titanInboxCount || quantity ) && (
 		<Badge className="license-preview__license-count" intent="draft">
-			{ isTitanLicense
+			{ titanInboxCount
 				? translate( '%(quantity)d Inbox', '%(quantity)d Inboxes', {
 						context: 'Titan inbox count',
-						count: quantity,
+						count: titanInboxCount,
 						args: {
-							quantity,
+							quantity: titanInboxCount,
 						},
 						textOnly: true,
 					} )
