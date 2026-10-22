@@ -109,6 +109,31 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 		expect( savedProfile?.service_and_budget.minimum_budget_band ).toBe( '3k_10k' );
 	} );
 
+	test( 'does not save the answers when the availability fails to save', async () => {
+		mockAgency();
+		mockLeadMatching( completeProfile );
+		const profileScope = nock( API )
+			.put( '/wpcom/v2/agency/123/profile' )
+			.query( true )
+			.reply( 500, { code: 'error', message: 'Error' } );
+		const leadMatchingScope = mockLeadMatchingSave();
+
+		render( <AgencyPartnerDirectoryLeadMatchingPreferences /> );
+
+		await userEvent.click(
+			await screen.findByRole( 'checkbox', { name: 'Accepting new clients' } )
+		);
+		await userEvent.selectOptions(
+			screen.getByRole( 'combobox', { name: 'What is your minimum budget? (optional)' } ),
+			'3k_10k'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
+
+		await waitFor( () => expect( noticeContents() ).toContain( 'Failed to save availability.' ) );
+		expect( profileScope.isDone() ).toBe( true );
+		expect( leadMatchingScope.isDone() ).toBe( false );
+	} );
+
 	test( 'reports a failed sync as an error', async () => {
 		mockAgency();
 		mockLeadMatching( completeProfile );
