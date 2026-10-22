@@ -11,7 +11,6 @@ import {
 	__experimentalHStack as HStack,
 	Button,
 	Spinner,
-	Tooltip,
 	VisuallyHidden,
 } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
@@ -106,25 +105,26 @@ export function RestoreThatOneInsteadLink( {
 
 	const reason = translate( "It's the most recent backup with no known security threats." );
 
+	// The reason shows under the link, which also takes it as its description.
 	return (
-		<>
-			<Tooltip text={ String( reason ) }>
-				<Button
-					__next40pxDefaultSize
-					variant="link"
-					className="backup-known-threats__restore-link"
-					aria-describedby={ descriptionId }
-					href={ backupRestorePath( siteSlug, resolvedRewindId ) }
-				>
-					{ translate( 'Restore %(date)s at %(time)s backup instead', {
-						args: { date: siteCompletedAt.format( 'll' ), time: siteCompletedAt.format( 'LT' ) },
-						comment:
-							'%(date)s is the date of a backup, e.g. "Oct 17, 2026"; %(time)s its time, e.g. "2:30 PM". Reads "Restore Oct 17, 2026 at 2:30 PM backup instead".',
-					} ) }
-				</Button>
-			</Tooltip>
-			<VisuallyHidden id={ descriptionId }>{ reason }</VisuallyHidden>
-		</>
+		<div className="backup-known-threats__restore-instead">
+			<Button
+				__next40pxDefaultSize
+				variant="link"
+				className="backup-known-threats__restore-link"
+				aria-describedby={ descriptionId }
+				href={ backupRestorePath( siteSlug, resolvedRewindId ) }
+			>
+				{ translate( 'Restore %(date)s at %(time)s backup instead', {
+					args: { date: siteCompletedAt.format( 'll' ), time: siteCompletedAt.format( 'LT' ) },
+					comment:
+						'%(date)s is the date of a backup, e.g. "Oct 17, 2026"; %(time)s its time, e.g. "2:30 PM". Reads "Restore Oct 17, 2026 at 2:30 PM backup instead".',
+				} ) }
+			</Button>
+			<span className="backup-known-threats__restore-reason" id={ descriptionId }>
+				{ reason }
+			</span>
+		</div>
 	);
 }
 

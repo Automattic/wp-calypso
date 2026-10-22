@@ -261,10 +261,10 @@ describe( 'BackupKnownThreats', () => {
 		expect( link ).toHaveAccessibleDescription(
 			"It's the most recent backup with no known security threats."
 		);
-		await userEvent.hover( link );
-		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
-			"It's the most recent backup with no known security threats."
-		);
+		// Shown as text, not in a tooltip.
+		expect(
+			screen.getByText( "It's the most recent backup with no known security threats." )
+		).toBeVisible();
 		expect( link ).not.toHaveAttribute( 'title' );
 		expect( activities.isDone() ).toBe( true );
 	} );

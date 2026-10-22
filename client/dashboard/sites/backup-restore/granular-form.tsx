@@ -1,13 +1,7 @@
 import { getRefusedKnownThreats } from '@automattic/api-core';
 import { siteBackupGranularRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	Button,
-	Panel,
-	Tooltip,
-	VisuallyHidden,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, Panel, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
@@ -191,25 +185,21 @@ function SiteBackupGranularRestoreForm( {
 				/>
 
 				<ButtonStack justify="flex-start">
-					{ /* The tooltip shows the hint on hover and focus; screen readers get it from the description. */ }
-					<Tooltip text={ awaitingAcknowledgement ? acknowledgementHint : undefined }>
-						<Button
-							variant="primary"
-							type="submit"
-							isBusy={ isRestoreMutationPending }
-							disabled={ isRestoreDisabled }
-							accessibleWhenDisabled={ awaitingAcknowledgement }
-							aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
-						>
-							{ _n(
-								'Restore selected file',
-								'Restore selected files',
-								browserCheckList.totalItems
-							) }
-						</Button>
-					</Tooltip>
+					{ /* The reason shows beside the button, which also takes it as its description. */ }
+					<Button
+						variant="primary"
+						type="submit"
+						isBusy={ isRestoreMutationPending }
+						disabled={ isRestoreDisabled }
+						accessibleWhenDisabled={ awaitingAcknowledgement }
+						aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
+					>
+						{ _n( 'Restore selected file', 'Restore selected files', browserCheckList.totalItems ) }
+					</Button>
 					{ awaitingAcknowledgement && (
-						<VisuallyHidden id={ acknowledgementHintId }>{ acknowledgementHint }</VisuallyHidden>
+						<Text variant="muted" id={ acknowledgementHintId }>
+							{ acknowledgementHint }
+						</Text>
 					) }
 				</ButtonStack>
 			</VStack>

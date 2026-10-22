@@ -4,7 +4,6 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
-	Tooltip,
 	VisuallyHidden,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -126,22 +125,20 @@ export function BackupDetails( {
 						? _n( 'Download selected file', 'Download selected files', selectedFilesCount )
 						: __( 'Download backup' ) }
 				</Button>
-				{ /* The tooltip shows the hint on hover and focus; screen readers get it from the description. */ }
-				<Tooltip text={ awaitingAcknowledgement ? acknowledgementHint : undefined }>
-					<Button
-						variant="primary"
-						size={ isSmallViewport ? 'default' : 'compact' }
-						onClick={ onRequestRestore }
-						style={ { justifyContent: 'center' } }
-						disabled={ awaitingAcknowledgement }
-						accessibleWhenDisabled
-						aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
-					>
-						{ hasSelectedFiles
-							? _n( 'Restore selected file', 'Restore selected files', selectedFilesCount )
-							: __( 'Restore to this point' ) }
-					</Button>
-				</Tooltip>
+				{ /* The warning's checkbox shows why it's off; screen readers get it from the description. */ }
+				<Button
+					variant="primary"
+					size={ isSmallViewport ? 'default' : 'compact' }
+					onClick={ onRequestRestore }
+					style={ { justifyContent: 'center' } }
+					disabled={ awaitingAcknowledgement }
+					accessibleWhenDisabled
+					aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
+				>
+					{ hasSelectedFiles
+						? _n( 'Restore selected file', 'Restore selected files', selectedFilesCount )
+						: __( 'Restore to this point' ) }
+				</Button>
 				{ awaitingAcknowledgement && (
 					<VisuallyHidden id={ acknowledgementHintId }>{ acknowledgementHint }</VisuallyHidden>
 				) }

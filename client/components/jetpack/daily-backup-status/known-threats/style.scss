@@ -101,6 +101,19 @@
 	text-decoration: underline;
 }
 
+// Why the clean backup is recommended, shown under its link.
+.backup-known-threats__restore-instead {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+}
+
+.backup-known-threats__restore-reason {
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+}
+
 .backup-known-threats__warning {
 	margin: 0;
 }
