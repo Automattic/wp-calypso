@@ -11,7 +11,7 @@ import {
 import { useReferralToggle } from './use-referral-toggle';
 
 export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting' } ) {
-	const { checked, disabled, onChange } = useReferralToggle();
+	const { checked, disabled, onChange, gate } = useReferralToggle();
 
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { data: referrals } = useQuery( referralsQuery( agency?.id ?? 0 ) );
@@ -22,6 +22,7 @@ export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting'
 
 	return (
 		<HStack spacing={ 2 } expanded={ false } alignment="center">
+			{ gate }
 			<ToggleControl
 				__nextHasNoMarginBottom
 				checked={ checked }

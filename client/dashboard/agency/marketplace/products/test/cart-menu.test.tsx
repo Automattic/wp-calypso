@@ -1,10 +1,13 @@
 /**
  * @jest-environment jsdom
  */
+import { activeAgencyQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { render } from '../../../../test-utils';
 import CartMenu from '../cart-menu';
-import type { AgencyProduct } from '@automattic/api-core';
+import type { Agency, AgencyProduct } from '@automattic/api-core';
 
 const mockBackup = {
 	name: 'Jetpack VaultPress Backup (10GB)',
@@ -38,19 +41,27 @@ jest.mock( '@tanstack/react-router', () => ( {
 	useLocation: () => ( { pathname: '/products', searchStr: '?category=jetpack' } ),
 } ) );
 
-function renderCart( isReferralMode: boolean ) {
-	return render(
+function renderCart( isReferralMode: boolean, approvalStatus = 'approved' ) {
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	queryClient.setQueryData( activeAgencyQuery().queryKey, {
+		id: 1,
+		approval_status: approvalStatus,
+	} as Agency );
+	const onToggle = jest.fn();
+	render(
 		<CartMenu
 			items={ [ mockItem ] }
 			products={ [ mockBackup ] }
 			term="yearly"
 			isReferralMode={ isReferralMode }
-			isAgencyApproved
+			isAgencyApproved={ approvalStatus === 'approved' }
 			open
-			onToggle={ jest.fn() }
+			onToggle={ onToggle }
 			onRemove={ jest.fn() }
-		/>
+		/>,
+		{ queryClient }
 	);
+	return { onToggle };
 }
 
 describe( 'CartMenu', () => {
@@ -73,4 +84,19 @@ describe( 'CartMenu', () => {
 		);
 		expect( url.pathname ).toBe( '/checkout/agency/purchase' );
 	} );
+
+	it.each( [ false, true ] )(
+		'opens the approval gate instead of a checkout while the agency is in review (referral mode: %s)',
+		async ( isReferralMode ) => {
+			const { onToggle } = renderCart( isReferralMode, 'pending' );
+
+			expect( screen.queryByRole( 'link', { name: 'Checkout' } ) ).not.toBeInTheDocument();
+			await userEvent.click( screen.getByRole( 'button', { name: 'Checkout' } ) );
+
+			expect(
+				await screen.findByRole( 'dialog', { name: 'Purchases unlock once you’re approved' } )
+			).toBeVisible();
+			expect( onToggle ).toHaveBeenCalledWith( false );
+		}
+	);
 } );

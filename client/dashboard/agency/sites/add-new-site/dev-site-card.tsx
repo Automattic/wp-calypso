@@ -2,12 +2,12 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
-	Tooltip,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import { Card, CardBody } from '../../../components/card';
 import { TextBlur } from '../../../components/text-blur';
+import { useApprovalGate } from '../../approval-gate';
 
 const FREE_DEV_SITE_ALLOWANCE = 5;
 
@@ -24,17 +24,11 @@ export default function DevSiteCard( {
 	onClick,
 }: DevSiteCardProps ) {
 	const isCountKnown = availableDevSites !== undefined;
-
-	// An unknown count blocks the CTA the same way an exhausted one does, but
-	// there is nothing to explain yet, so it gets no tooltip.
-	const blockedReason = ! isAgencyApproved
-		? __(
-				'Your agency is not yet approved. Please wait for approval before creating a development site.'
-			)
-		: undefined;
+	const approvalGate = useApprovalGate( 'dev-site' );
 
 	return (
 		<Card isBorderless variant="secondary">
+			{ approvalGate.gate }
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<img src={ devSiteBanner } alt="" />
@@ -57,20 +51,16 @@ export default function DevSiteCard( {
 								) }
 							</TextBlur>
 						</Text>
-						<Tooltip text={ blockedReason }>
-							<Button
-								variant="link"
-								size="compact"
-								disabled={ ! availableDevSites || !! blockedReason }
-								// Keeps the button focusable while disabled, so the tooltip
-								// explaining why is reachable by keyboard.
-								accessibleWhenDisabled
-								onClick={ onClick }
-								__next40pxDefaultSize
-							>
-								{ __( 'Create a site now' ) }
-							</Button>
-						</Tooltip>
+						<Button
+							variant="link"
+							size="compact"
+							disabled={ ! approvalGate.isGated && ( ! availableDevSites || ! isAgencyApproved ) }
+							accessibleWhenDisabled
+							onClick={ approvalGate.isGated ? approvalGate.openGate : onClick }
+							__next40pxDefaultSize
+						>
+							{ __( 'Create a site now' ) }
+						</Button>
 					</VStack>
 				</VStack>
 			</CardBody>

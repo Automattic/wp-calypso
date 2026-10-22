@@ -3,7 +3,6 @@ import { useLocation } from '@tanstack/react-router';
 import {
 	Button,
 	Dropdown,
-	Tooltip,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -14,6 +13,7 @@ import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import RouterLinkButton from '../../../components/router-link-button';
 import { TextBlur } from '../../../components/text-blur';
+import { useApprovalGate } from '../../approval-gate';
 import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
 import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../paths';
 import { getCheckoutUrl, getLegacyCheckoutUrl } from './lib/checkout-url';
@@ -72,21 +72,26 @@ export default function CartMenu( {
 		siteDomain: item.siteDomain,
 	} ) );
 
+	const approvalGate = useApprovalGate( 'purchase' );
+
+	const recordCheckoutClick = () =>
+		recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
+			purchase_mode: isReferralMode ? 'referral' : 'regular',
+			term_pricing: term,
+		} );
+
 	const checkoutButtonProps = {
 		variant: 'primary' as const,
 		__next40pxDefaultSize: true,
-		disabled: ! isAgencyApproved || ! isTotalReady,
+		disabled: ( ! isAgencyApproved && ! approvalGate.isGated ) || ! isTotalReady,
 		style: { justifyContent: 'center' },
 		onClick: () => {
-			recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
-				purchase_mode: isReferralMode ? 'referral' : 'regular',
-				term_pricing: term,
-			} );
+			recordCheckoutClick();
 			onCheckout?.();
 		},
 		children: __( 'Checkout' ),
 	};
-	const checkoutButton = isReferralMode ? (
+	let checkoutButton = isReferralMode ? (
 		<RouterLinkButton
 			{ ...checkoutButtonProps }
 			to={ MARKETPLACE_REFERRAL_CHECKOUT_ROUTE }
@@ -102,159 +107,166 @@ export default function CartMenu( {
 			}
 		/>
 	);
+	if ( approvalGate.isGated ) {
+		checkoutButton = (
+			<Button
+				{ ...checkoutButtonProps }
+				onClick={ () => {
+					recordCheckoutClick();
+					onToggle?.( false );
+					approvalGate.openGate();
+				} }
+			/>
+		);
+	}
 
 	return (
-		<Dropdown
-			open={ open }
-			onToggle={ onToggle }
-			popoverProps={ { placement: 'bottom-end' } }
-			// Focuses the panel, not its first Remove button, which Enter would trigger.
-			focusOnMount
-			expandOnMobile
-			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button
-					icon={ cart }
-					label={
-						items.length > 0
-							? sprintf(
-									/* translators: %d is the number of items in the cart. */
-									_n( 'Shopping cart, %d item', 'Shopping cart, %d items', items.length ),
-									items.length
-								)
-							: __( 'Shopping cart' )
-					}
-					aria-expanded={ isOpen }
-					text={ items.length > 0 ? String( items.length ) : undefined }
-					onClick={ () => {
-						recordTracksEvent( 'calypso_a4a_marketplace_toggle_cart', {
-							purchase_mode: isReferralMode ? 'referral' : 'regular',
-							term_pricing: term,
-						} );
-						onToggle();
-					} }
-				/>
-			) }
-			renderContent={ () => (
-				<VStack spacing={ 3 } className="dashboard-marketplace-products__cart">
-					<Heading level={ 3 } size={ 13 }>
-						{ __( 'Your cart' ) }
-					</Heading>
-					{ lines.length === 0 && <Text variant="muted">{ __( 'Your cart is empty.' ) }</Text> }
-					{ lines.map( ( { item, product, priceInfo, subtotal } ) => (
-						<HStack
-							key={ `${ item.slug }:${ item.siteDomain ?? '' }` }
-							justify="space-between"
-							spacing={ 4 }
-							alignment="flex-start"
-						>
-							<VStack spacing={ 0 }>
-								<Text>
-									{ item.quantity > 1
-										? sprintf(
-												/* translators: %1$s is the product name, %2$d the quantity. */
-												__( '%1$s x %2$d' ),
-												getCartProductName( product ),
-												item.quantity
-											)
-										: getCartProductName( product ) }
-								</Text>
-								{ item.siteDomain && (
-									<Text variant="muted" size={ 12 }>
-										{ item.siteDomain }
-									</Text>
-								) }
-								{ /* The spans keep Google Translate from crashing on sibling text nodes. */ }
-								<Text variant="muted" size={ 12 }>
-									<TextBlur
-										isBlurred={
-											! isTotalReady && product.family_slug === WPCOM_HOSTING_FAMILY_SLUG
-										}
-									>
-										{ priceInfo.isFree
-											? __( 'Free' )
-											: formatCurrency( subtotal, currency ) + getTermSuffix( term ) }
-									</TextBlur>
-									{ priceInfo.regularPrice !== undefined && (
-										<span>
-											{ ' ' }
-											<s>{ formatCurrency( priceInfo.regularPrice * item.quantity, currency ) }</s>
-										</span>
-									) }
-									{ ! priceInfo.isFree && priceInfo.billingTerm !== term && (
-										<span>
-											{ ' ' +
-												( priceInfo.billingTerm === 'yearly'
-													? __( '(billed yearly)' )
-													: __( '(billed monthly)' ) ) }
-										</span>
-									) }
-								</Text>
-							</VStack>
-							<Button
-								variant="link"
-								isDestructive
-								aria-label={
-									item.siteDomain
-										? sprintf(
-												/* translators: %1$s is the product name, %2$s the site the add-on applies to. */
-												__( 'Remove %1$s for %2$s from the cart' ),
-												getCartProductName( product ),
-												item.siteDomain
-											)
-										: sprintf(
-												/* translators: %s is the product name. */
-												__( 'Remove %s from the cart' ),
-												getCartProductName( product )
-											)
-								}
-								onClick={ () => {
-									recordTracksEvent( 'calypso_a4a_marketplace_checkout_remove_item_click', {
-										product: item.slug,
-									} );
-									onRemove( item );
-								} }
+		<>
+			{ approvalGate.gate }
+			<Dropdown
+				open={ open }
+				onToggle={ onToggle }
+				popoverProps={ { placement: 'bottom-end' } }
+				// Focuses the panel, not its first Remove button, which Enter would trigger.
+				focusOnMount
+				expandOnMobile
+				renderToggle={ ( { isOpen, onToggle } ) => (
+					<Button
+						icon={ cart }
+						label={
+							items.length > 0
+								? sprintf(
+										/* translators: %d is the number of items in the cart. */
+										_n( 'Shopping cart, %d item', 'Shopping cart, %d items', items.length ),
+										items.length
+									)
+								: __( 'Shopping cart' )
+						}
+						aria-expanded={ isOpen }
+						text={ items.length > 0 ? String( items.length ) : undefined }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_a4a_marketplace_toggle_cart', {
+								purchase_mode: isReferralMode ? 'referral' : 'regular',
+								term_pricing: term,
+							} );
+							onToggle();
+						} }
+					/>
+				) }
+				renderContent={ () => (
+					<VStack spacing={ 3 } className="dashboard-marketplace-products__cart">
+						<Heading level={ 3 } size={ 13 }>
+							{ __( 'Your cart' ) }
+						</Heading>
+						{ lines.length === 0 && <Text variant="muted">{ __( 'Your cart is empty.' ) }</Text> }
+						{ lines.map( ( { item, product, priceInfo, subtotal } ) => (
+							<HStack
+								key={ `${ item.slug }:${ item.siteDomain ?? '' }` }
+								justify="space-between"
+								spacing={ 4 }
+								alignment="flex-start"
 							>
-								{ __( 'Remove' ) }
-							</Button>
-						</HStack>
-					) ) }
-					{ lines.length > 0 && (
-						<>
-							<HStack justify="space-between">
-								<Text weight={ 600 }>
-									{ isReferralMode ? __( 'Total your client will pay:' ) : __( 'Total:' ) }
-								</Text>
-								<Text weight={ 600 }>
-									<TextBlur isBlurred={ ! isTotalReady }>
-										{ formatCurrency( total, currency ) + getTermSuffix( term ) }
-									</TextBlur>
-								</Text>
+								<VStack spacing={ 0 }>
+									<Text>
+										{ item.quantity > 1
+											? sprintf(
+													/* translators: %1$s is the product name, %2$d the quantity. */
+													__( '%1$s x %2$d' ),
+													getCartProductName( product ),
+													item.quantity
+												)
+											: getCartProductName( product ) }
+									</Text>
+									{ item.siteDomain && (
+										<Text variant="muted" size={ 12 }>
+											{ item.siteDomain }
+										</Text>
+									) }
+									{ /* The spans keep Google Translate from crashing on sibling text nodes. */ }
+									<Text variant="muted" size={ 12 }>
+										<TextBlur
+											isBlurred={
+												! isTotalReady && product.family_slug === WPCOM_HOSTING_FAMILY_SLUG
+											}
+										>
+											{ priceInfo.isFree
+												? __( 'Free' )
+												: formatCurrency( subtotal, currency ) + getTermSuffix( term ) }
+										</TextBlur>
+										{ priceInfo.regularPrice !== undefined && (
+											<span>
+												{ ' ' }
+												<s>
+													{ formatCurrency( priceInfo.regularPrice * item.quantity, currency ) }
+												</s>
+											</span>
+										) }
+										{ ! priceInfo.isFree && priceInfo.billingTerm !== term && (
+											<span>
+												{ ' ' +
+													( priceInfo.billingTerm === 'yearly'
+														? __( '(billed yearly)' )
+														: __( '(billed monthly)' ) ) }
+											</span>
+										) }
+									</Text>
+								</VStack>
+								<Button
+									variant="link"
+									isDestructive
+									aria-label={
+										item.siteDomain
+											? sprintf(
+													/* translators: %1$s is the product name, %2$s the site the add-on applies to. */
+													__( 'Remove %1$s for %2$s from the cart' ),
+													getCartProductName( product ),
+													item.siteDomain
+												)
+											: sprintf(
+													/* translators: %s is the product name. */
+													__( 'Remove %s from the cart' ),
+													getCartProductName( product )
+												)
+									}
+									onClick={ () => {
+										recordTracksEvent( 'calypso_a4a_marketplace_checkout_remove_item_click', {
+											product: item.slug,
+										} );
+										onRemove( item );
+									} }
+								>
+									{ __( 'Remove' ) }
+								</Button>
 							</HStack>
-							{ isReferralMode && commission > 0 && (
+						) ) }
+						{ lines.length > 0 && (
+							<>
 								<HStack justify="space-between">
-									<Text variant="muted">{ __( 'Your estimated commission:' ) }</Text>
-									<Text variant="muted">
+									<Text weight={ 600 }>
+										{ isReferralMode ? __( 'Total your client will pay:' ) : __( 'Total:' ) }
+									</Text>
+									<Text weight={ 600 }>
 										<TextBlur isBlurred={ ! isTotalReady }>
-											{ formatCurrency( commission, currency ) + getTermSuffix( term ) }
+											{ formatCurrency( total, currency ) + getTermSuffix( term ) }
 										</TextBlur>
 									</Text>
 								</HStack>
-							) }
-							{ isAgencyApproved ? (
-								checkoutButton
-							) : (
-								<Tooltip
-									text={ __(
-										'Your agency is not yet approved. Please wait for approval before making a purchase.'
-									) }
-								>
-									<span>{ checkoutButton }</span>
-								</Tooltip>
-							) }
-						</>
-					) }
-				</VStack>
-			) }
-		/>
+								{ isReferralMode && commission > 0 && (
+									<HStack justify="space-between">
+										<Text variant="muted">{ __( 'Your estimated commission:' ) }</Text>
+										<Text variant="muted">
+											<TextBlur isBlurred={ ! isTotalReady }>
+												{ formatCurrency( commission, currency ) + getTermSuffix( term ) }
+											</TextBlur>
+										</Text>
+									</HStack>
+								) }
+								{ checkoutButton }
+							</>
+						) }
+					</VStack>
+				) }
+			/>
+		</>
 	);
 }

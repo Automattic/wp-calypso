@@ -22,7 +22,7 @@ interface Props {
 /** The purchase rail on the Premium tab with referrals off: Premium plans are only sold through referrals. */
 export default function PressablePremiumGate( { label }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { checked, disabled, onChange } = useReferralToggle();
+	const { checked, disabled, onChange, gate } = useReferralToggle();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { scheduleCall, isLoading } = useScheduleCall( agency?.id );
 
@@ -38,6 +38,7 @@ export default function PressablePremiumGate( { label }: Props ) {
 
 	return (
 		<Card>
+			{ gate }
 			<CardHeader>
 				<SectionHeader level={ 3 } title={ __( 'Currently selected' ) } />
 			</CardHeader>

@@ -1062,6 +1062,16 @@ export const earnPayoutSettingsRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Payout settings' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'payout-settings',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! isAgencyApproved( agency ) ) {
+			throw dashboardRedirect( { to: '/overview' } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../agency/earn/payout-settings' ).then( ( d ) =>
 		createLazyRoute( 'earn-payout-settings' )( { component: d.default } )
