@@ -142,8 +142,12 @@ it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () 
 				},
 			},
 			functions: {
-				wooAiOpenProduct: { type: 'object' },
-				wooAiFormatPrice: { type: 'object', requiresUserActivation: false },
+				wooAiOpenProduct: { type: 'object', returnType: 'void' },
+				wooAiFormatPrice: {
+					type: 'object',
+					returnType: 'string',
+					requiresUserActivation: false,
+				},
 			},
 		},
 	};
@@ -168,6 +172,7 @@ it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () 
 							required: [ 'component', 'name' ],
 						},
 						WooAiDivider: {
+							type: 'object',
 							properties: { component: { const: 'WooAiDivider' } },
 							required: [ 'component' ],
 						},
@@ -178,8 +183,20 @@ it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () 
 						},
 					},
 					functions: {
-						wooAiOpenProduct: { type: 'object', requiresUserActivation: true },
-						wooAiFormatPrice: { type: 'object', requiresUserActivation: false },
+						wooAiOpenProduct: {
+							requiresUserActivation: true,
+							type: 'object',
+							returnType: 'void',
+							properties: { '@call': { const: 'wooAiOpenProduct' } },
+							required: [ '@call' ],
+						},
+						wooAiFormatPrice: {
+							requiresUserActivation: false,
+							type: 'object',
+							returnType: 'string',
+							properties: { '@call': { const: 'wooAiFormatPrice' } },
+							required: [ '@call' ],
+						},
 					},
 				},
 			],

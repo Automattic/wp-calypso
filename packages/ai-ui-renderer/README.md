@@ -51,9 +51,9 @@ const exampleCatalog: InteractiveUiCatalogDefinition = {
 - A component gets resolved props: bound values, a `set<Prop>` setter for each, actions as
   functions to call, its `surfaceId` and `disabled` state, and the host's `hostProps`. Disable
   its controls with `disabled`, as the basic components are.
-- A function may be async. Its arguments come from the agent, so treat them as untrusted. It runs
-  only from a click, unless the document sets `requiresUserActivation: false` so a value can call
-  it, such as one that formats text.
+- A function declares its `returnType`, and may be async. Its arguments come from the agent, so
+  treat them as untrusted. It runs only from a click, unless the document sets
+  `requiresUserActivation: false` so a value can call it, such as one that formats text.
 
 `createInteractiveUiCatalog()` builds A2UI's Basic catalog, and
 `createInteractiveUiCatalog( definition )` a catalog with the basic components and functions plus
@@ -64,13 +64,15 @@ the definition's own, which replace basic ones of the same name.
 The `@automattic/ai-ui-renderer/capabilities` entry has no A2UI or React code, so a host can use it
 before loading the renderer:
 
-- `assertInteractiveUiCatalogDefinition( definition )` throws when a definition has no ID, or its
-  code doesn't match its document. Check catalogs with it before advertising them, since
+- `assertInteractiveUiCatalogDefinition( definition )` throws when a definition has no ID, breaks
+  A2UI's catalog rules (each component and function an object schema, each function a
+  `returnType`, and other callers only for a function that needs no click), or its code doesn't
+  match its document. Check catalogs with it before advertising them, since
   `createInteractiveUiCatalog()` rejects those that fail.
 - `getInteractiveUiRendererCapabilities( documents )` returns A2UI's `a2uiRendererCapabilities`
-  for the Basic catalog and those catalogs: their IDs, and their documents as inline catalogs with
-  the fields A2UI expects (`$id`, `protocolVersion`, each component's `component` name, and each
-  function's `requiresUserActivation`).
+  for the Basic catalog and those catalogs: their IDs, and their documents as inline catalogs as
+  A2UI reads them, with only the root keys it allows, `$id`, `protocolVersion`, each component's
+  `component` and each function's `@call` naming it, and each function's `requiresUserActivation`.
   Send it to the agent, so it shows only UI the host can render.
 - `BASIC_CATALOG_ID` is A2UI's Basic catalog ID.
 

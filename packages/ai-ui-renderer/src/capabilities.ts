@@ -41,9 +41,51 @@ function assertImplementations(
 	}
 }
 
+interface ObjectSchema {
+	properties?: Record< string, unknown >;
+	required?: string[];
+	returnType?: string;
+	allowedCallers?: string;
+	requiresUserActivation?: boolean;
+}
+
+function isObject( value: unknown ): value is Record< string, unknown > {
+	return typeof value === 'object' && value !== null && ! Array.isArray( value );
+}
+
+// A2UI describes each component and function as a JSON Schema object.
+function assertSchemas( kind: 'component' | 'function', definitions: Record< string, unknown > ) {
+	for ( const [ name, schema ] of Object.entries( definitions ) ) {
+		if (
+			! isObject( schema ) ||
+			( 'properties' in schema && ! isObject( schema.properties ) ) ||
+			( 'required' in schema && ! Array.isArray( schema.required ) )
+		) {
+			throw new Error( `The interactive UI ${ kind } ${ name } needs an object schema.` );
+		}
+	}
+}
+
+// A2UI's function rules: a return type, and only functions without a click may have other callers.
+function assertFunctions( definitions: Record< string, ObjectSchema > ) {
+	for ( const [ name, { returnType, allowedCallers, requiresUserActivation } ] of Object.entries(
+		definitions
+	) ) {
+		if ( typeof returnType !== 'string' ) {
+			throw new Error( `The interactive UI function ${ name } needs a \`returnType\`.` );
+		}
+
+		if ( allowedCallers && allowedCallers !== 'rendererOnly' && requiresUserActivation !== false ) {
+			throw new Error(
+				`The interactive UI function ${ name } needs \`requiresUserActivation: false\` for other callers.`
+			);
+		}
+	}
+}
+
 /**
- * Throws when a catalog definition has no ID, or its code doesn't match its document: each of its
- * components and functions needs an implementation, and nothing else.
+ * Throws when a catalog definition breaks A2UI's catalog rules, or its code doesn't match its
+ * document: each of its components and functions needs an implementation, and nothing else.
  * `createInteractiveUiCatalog()` rejects those, so check catalogs with it before advertising them.
  */
 export function assertInteractiveUiCatalogDefinition( {
@@ -55,6 +97,10 @@ export function assertInteractiveUiCatalogDefinition( {
 	if ( typeof catalog?.catalogId !== 'string' || ! catalog.catalogId ) {
 		throw new Error( 'An interactive UI catalog needs a `catalogId`.' );
 	}
+
+	assertSchemas( 'component', catalog.components ?? {} );
+	assertSchemas( 'function', catalog.functions ?? {} );
+	assertFunctions( ( catalog.functions ?? {} ) as Record< string, ObjectSchema > );
 
 	assertImplementations(
 		'component',
@@ -70,52 +116,59 @@ export function assertInteractiveUiCatalogDefinition( {
 	);
 }
 
-interface ComponentSchema {
-	properties?: object;
-	required?: string[];
-}
-
 function mapDefinitions(
 	definitions: Record< string, object >,
-	map: ( definition: object, name: string ) => object
+	map: ( definition: ObjectSchema, name: string ) => object
 ) {
 	return Object.fromEntries(
 		Object.entries( definitions ).map( ( [ name, definition ] ) => [
 			name,
-			map( definition, name ),
+			map( definition as ObjectSchema, name ),
 		] )
 	);
 }
 
-// A component names itself in its required `component` prop, A2UI's discriminator rule.
-function withComponentName(
-	{ properties, required = [], ...schema }: ComponentSchema,
+// A2UI tells components and functions apart by a required prop whose const is their name.
+function withDiscriminator(
+	{ properties, required = [], ...schema }: ObjectSchema,
+	key: 'component' | '@call',
 	name: string
 ) {
 	return {
+		type: 'object',
 		...schema,
-		properties: { ...properties, component: { const: name } },
-		required: [ 'component', ...required.filter( ( key ) => key !== 'component' ) ],
+		properties: { ...properties, [ key ]: { const: name } },
+		required: [ key, ...required.filter( ( requiredKey ) => requiredKey !== key ) ],
 	};
 }
 
-// A document as A2UI reads it: its `$id` names it as A2UI's catalogs do, each component is
-// discriminated by name, and each function states `requiresUserActivation`, which A2UI defaults
-// to false but this renderer to true.
-function toInlineCatalog( { components, functions, ...catalog }: InteractiveUiCatalogDocument ) {
+// A document as A2UI reads it: only the root keys A2UI allows, its `$id` as A2UI's catalogs set
+// it, each component and function discriminated by name, and each function's
+// `requiresUserActivation`, which A2UI defaults to false but this renderer to true.
+function toInlineCatalog( {
+	catalogId,
+	title,
+	description,
+	instructions,
+	components,
+	functions,
+}: InteractiveUiCatalogDocument ) {
 	return {
-		...catalog,
-		$id: catalog.catalogId,
+		$id: catalogId,
+		catalogId,
 		protocolVersion: '1.0',
+		...( title && { title } ),
+		...( description && { description } ),
+		...( instructions && { instructions } ),
 		...( components && {
 			components: mapDefinitions( components, ( definition, name ) =>
-				withComponentName( definition as ComponentSchema, name )
+				withDiscriminator( definition, 'component', name )
 			),
 		} ),
 		...( functions && {
-			functions: mapDefinitions( functions, ( definition ) => ( {
+			functions: mapDefinitions( functions, ( definition, name ) => ( {
 				requiresUserActivation: true,
-				...definition,
+				...withDiscriminator( definition, '@call', name ),
 			} ) ),
 		} ),
 	};
