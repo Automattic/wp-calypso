@@ -133,10 +133,10 @@ describe( 'CartMenu', () => {
 		await waitFor( () => expect( name ).toBeVisible() );
 	} );
 
-	it( 'keeps the short name of a WooCommerce product', async () => {
+	it( 'keeps the vendor in a WooCommerce product name', async () => {
 		renderCart( false, mockWooProduct );
 
-		const name = await screen.findByText( 'Bookings' );
+		const name = await screen.findByText( 'WooCommerce Bookings' );
 		await waitFor( () => expect( name ).toBeVisible() );
 	} );
 } );
