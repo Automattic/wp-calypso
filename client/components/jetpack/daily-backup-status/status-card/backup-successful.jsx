@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { default as ActivityCard, useToggleContent } from 'calypso/components/activity-card';
 import { default as Toolbar } from 'calypso/components/activity-card/toolbar';
@@ -10,6 +11,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
 import { getBackupWarnings } from 'calypso/lib/jetpack/backup-utils';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
+import KnownThreatsNotice from 'calypso/my-sites/backup/rewind-flow/known-threats-notice';
 import getBackupLastBackupFailed from 'calypso/state/rewind/selectors/get-backup-last-backup-failed';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
@@ -71,6 +73,21 @@ const BackupSuccessful = ( {
 	const isCloneFlow =
 		availableActions && availableActions.length === 1 && availableActions[ 0 ] === 'clone';
 
+	// As on the restore page: the warning asks for the acknowledgement, and Restore waits for it.
+	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
+	const [ acknowledgedRewindId, setAcknowledgedRewindId ] = useState( null );
+	const acknowledged = !! actionableRewindId && acknowledgedRewindId === actionableRewindId;
+	const onAcknowledgedChange = useCallback(
+		( value ) => setAcknowledgedRewindId( value ? actionableRewindId : null ),
+		[ actionableRewindId ]
+	);
+	const restoreDisabledHint =
+		hasKnownThreats && ! acknowledged
+			? translate(
+					'To restore this backup, confirm that you understand it contains known threats.'
+				)
+			: undefined;
+
 	const selectedBackupDate = moment( backup.rewindId, 'X' );
 	const baseBackupDate = backup.baseRewindId ? moment.unix( backup.baseRewindId ) : null;
 	const showRealTimeMessage = backup.baseRewindId && baseBackupDate && backup.rewindStepCount > 0;
@@ -118,11 +135,24 @@ const BackupSuccessful = ( {
 				</div>
 			) }
 
-			<BackupKnownThreats
-				siteId={ siteId }
-				rewindId={ actionableRewindId }
-				showRestoreLink={ ! isCloneFlow }
-			/>
+			{ /* Clones don't need the acknowledgement, so they keep the badge. */ }
+			{ isCloneFlow && (
+				<BackupKnownThreats
+					siteId={ siteId }
+					rewindId={ actionableRewindId }
+					showRestoreLink={ false }
+				/>
+			) }
+			{ ! isCloneFlow && actionableRewindId && (
+				<KnownThreatsNotice
+					siteId={ siteId }
+					rewindId={ actionableRewindId }
+					requireAcknowledgement
+					acknowledged={ acknowledged }
+					onAcknowledgedChange={ onAcknowledgedChange }
+					onKnownThreatsChange={ setHasKnownThreats }
+				/>
+			) }
 
 			{ isCloneFlow && (
 				<ActionButtons
@@ -145,6 +175,7 @@ const BackupSuccessful = ( {
 					onClickClone={ onClickClone }
 					hideExpandedContent
 					useSplitButton
+					restoreDisabledHint={ restoreDisabledHint }
 				/>
 			) }
 

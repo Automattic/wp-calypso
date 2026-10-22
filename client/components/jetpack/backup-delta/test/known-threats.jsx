@@ -160,11 +160,10 @@ describe( 'BackupDelta known threats', () => {
 		expect( button ).toHaveAccessibleDescription( warning );
 		expect( button ).not.toHaveAttribute( 'title' );
 		expect( button ).not.toHaveAccessibleDescription( 'Show threats' );
-		// Hovering the badge shows the warning; the toggle keeps it as its description.
+		// The badge isn't interactive, so no tooltip; the toggle keeps the warning as its description.
 		const badge = within( cards[ 0 ] ).getByText( 'Known threats (3)' );
 		await userEvent.hover( badge );
-		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( warning );
-		expect( button ).toHaveAccessibleDescription( warning );
+		expect( screen.queryByRole( 'tooltip' ) ).toBeNull();
 		await userEvent.unhover( badge );
 		const restoreLink = await within( cards[ 0 ] ).findByRole( 'link', {
 			name: /^Restore .+ backup instead$/,
