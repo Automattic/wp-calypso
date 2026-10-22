@@ -5,9 +5,4 @@
 	padding-block-start: var( --wpds-dimension-padding-lg, 16px );
 	border-block-start: var( --wpds-border-width-xs, 1px ) solid
 		var( --wpds-color-stroke-surface-warning );
-
-	.components-checkbox-control__label {
-		// The emphasis token is a medium weight here (499), which doesn't read as bold.
-		font-weight: 600;
-	}
 }
