@@ -4,10 +4,11 @@ import {
 	Button,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { useState } from 'react';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import { Card, CardBody } from '../../../components/card';
 import { TextBlur } from '../../../components/text-blur';
-import { useApprovalGate } from '../../approval-gate';
+import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
 
 const FREE_DEV_SITE_ALLOWANCE = 5;
 
@@ -24,11 +25,12 @@ export default function DevSiteCard( {
 	onClick,
 }: DevSiteCardProps ) {
 	const isCountKnown = availableDevSites !== undefined;
-	const approvalGate = useApprovalGate( 'dev-site' );
+	const isGated = useIsApprovalGated();
+	const [ isGateOpen, setIsGateOpen ] = useState( false );
 
 	return (
 		<Card isBorderless variant="secondary">
-			{ approvalGate.gate }
+			{ isGateOpen && <ApprovalGate kind="dev-site" onClose={ () => setIsGateOpen( false ) } /> }
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<img src={ devSiteBanner } alt="" />
@@ -54,9 +56,9 @@ export default function DevSiteCard( {
 						<Button
 							variant="link"
 							size="compact"
-							disabled={ ! approvalGate.isGated && ( ! availableDevSites || ! isAgencyApproved ) }
+							disabled={ ! isGated && ( ! availableDevSites || ! isAgencyApproved ) }
 							accessibleWhenDisabled
-							onClick={ approvalGate.isGated ? approvalGate.openGate : onClick }
+							onClick={ isGated ? () => setIsGateOpen( true ) : onClick }
 							__next40pxDefaultSize
 						>
 							{ __( 'Create a site now' ) }

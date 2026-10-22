@@ -3,7 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { lock } from '@wordpress/icons';
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Callout } from '../../components/callout';
 import { Text } from '../../components/text';
@@ -51,40 +52,38 @@ function getBenefit( kind: ApprovalGateKind ) {
 }
 
 /**
- * Gates an action the agency can only take once it is approved. The control stays usable; for
- * an agency that is in review or was not approved, using it opens the gate instead.
+ * Whether the agency can only look around for now: it is in review or was not approved. The
+ * gated controls stay usable and open `ApprovalGate` instead of their action.
  *
- * `isGated` is false until the agency loads, so callers keep their control disabled until then.
+ * False until the agency loads, so callers keep their control disabled until then.
  */
-export function useApprovalGate( kind: ApprovalGateKind ) {
+export function useIsApprovalGated() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
-	const isGated = !! agency && ! isAgencyApproved( agency );
-	const [ isOpen, setIsOpen ] = useState( false );
-
-	return {
-		isGated,
-		openGate: () => setIsOpen( true ),
-		gate:
-			isGated && isOpen ? (
-				<ApprovalGateModal
-					kind={ kind }
-					isRejected={ agency.approval_status === 'rejected' }
-					onClose={ () => setIsOpen( false ) }
-				/>
-			) : null,
-	};
+	return !! agency && ! isAgencyApproved( agency );
 }
 
-function ApprovalGateModal( {
-	kind,
-	isRejected,
-	onClose,
-}: {
-	kind: ApprovalGateKind;
-	isRejected: boolean;
-	onClose: () => void;
-} ) {
+/** Says what unlocks once the agency is approved, in place of a gated action. */
+export function ApprovalGate( { kind, onClose }: { kind: ApprovalGateKind; onClose: () => void } ) {
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const { recordTracksEvent } = useAnalytics();
+	const approvalStatus = agency?.approval_status;
+	const isRejected = approvalStatus === 'rejected';
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_a4a_approval_gate_view', {
+			kind,
+			approval_status: approvalStatus,
+		} );
+	}, [ kind, approvalStatus, recordTracksEvent ] );
+
 	const { openContactForm } = useContactSupport();
+	const close = () => {
+		recordTracksEvent( 'calypso_a4a_approval_gate_close', {
+			kind,
+			approval_status: approvalStatus,
+		} );
+		onClose();
+	};
 	const title = isRejected ? __( 'We haven’t approved your agency' ) : getTitle( kind );
 
 	return (
@@ -92,7 +91,7 @@ function ApprovalGateModal( {
 			title={ title }
 			// The header is hidden, so the dialog takes its name from here.
 			contentLabel={ title }
-			onRequestClose={ onClose }
+			onRequestClose={ close }
 			__experimentalHideHeader
 		>
 			<div className="a4a-approval-gate">
@@ -128,23 +127,21 @@ function ApprovalGateModal( {
 									size="compact"
 									__next40pxDefaultSize
 									onClick={ () => {
+										recordTracksEvent( 'calypso_a4a_approval_gate_contact_support_click', {
+											kind,
+										} );
 										onClose();
 										openContactForm();
 									} }
 								>
 									{ __( 'Contact support' ) }
 								</Button>
-								<Button
-									variant="secondary"
-									size="compact"
-									__next40pxDefaultSize
-									onClick={ onClose }
-								>
+								<Button variant="secondary" size="compact" __next40pxDefaultSize onClick={ close }>
 									{ __( 'Close' ) }
 								</Button>
 							</ButtonStack>
 						) : (
-							<Button variant="primary" size="compact" __next40pxDefaultSize onClick={ onClose }>
+							<Button variant="primary" size="compact" __next40pxDefaultSize onClick={ close }>
 								{ __( 'Keep exploring' ) }
 							</Button>
 						)

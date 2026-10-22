@@ -14,7 +14,7 @@ import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
-import { useApprovalGate } from '../../approval-gate';
+import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
 import { getHostingReferralPayload, getVipPartnerOpportunityPayload } from './payload';
 import { STATE_SUPPORTED_COUNTRIES, useCountryOptions } from './use-country-options';
 import type { ReferralConfig } from './config';
@@ -271,7 +271,8 @@ export default function ReferHostingForm( {
 		};
 	}, [ isNarrow, hasEnterpriseFields ] );
 	const { validity, isValid } = useFormValidity( formData, fields, fullForm );
-	const approvalGate = useApprovalGate( 'referral' );
+	const isGated = useIsApprovalGated();
+	const [ isGateOpen, setIsGateOpen ] = useState( false );
 
 	const handleChange = ( edits: Partial< ReferHostingFormData > ) => {
 		setFormData( ( data ) => ( {
@@ -284,8 +285,8 @@ export default function ReferHostingForm( {
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
-		if ( approvalGate.isGated ) {
-			approvalGate.openGate();
+		if ( isGated ) {
+			setIsGateOpen( true );
 			return;
 		}
 		if ( ! isValid || isPending ) {
@@ -302,7 +303,7 @@ export default function ReferHostingForm( {
 
 	return (
 		<form onSubmit={ handleSubmit } autoComplete="off">
-			{ approvalGate.gate }
+			{ isGateOpen && <ApprovalGate kind="referral" onClose={ () => setIsGateOpen( false ) } /> }
 			<VStack spacing={ 8 }>
 				{ sections.map( ( section ) => (
 					<Card key={ section.id }>
@@ -329,9 +330,9 @@ export default function ReferHostingForm( {
 						disabled={ isPending }
 						onClick={ ( event: React.MouseEvent ) => {
 							// Before the browser checks the required fields, which would hold the gate back.
-							if ( approvalGate.isGated ) {
+							if ( isGated ) {
 								event.preventDefault();
-								approvalGate.openGate();
+								setIsGateOpen( true );
 							}
 						} }
 					>

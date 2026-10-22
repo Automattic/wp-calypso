@@ -10,10 +10,11 @@ import {
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { cart } from '@wordpress/icons';
+import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import RouterLinkButton from '../../../components/router-link-button';
 import { TextBlur } from '../../../components/text-blur';
-import { useApprovalGate } from '../../approval-gate';
+import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
 import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
 import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../paths';
 import { getCheckoutUrl, getLegacyCheckoutUrl } from './lib/checkout-url';
@@ -72,21 +73,19 @@ export default function CartMenu( {
 		siteDomain: item.siteDomain,
 	} ) );
 
-	const approvalGate = useApprovalGate( 'purchase' );
-
-	const recordCheckoutClick = () =>
-		recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
-			purchase_mode: isReferralMode ? 'referral' : 'regular',
-			term_pricing: term,
-		} );
+	const isGated = useIsApprovalGated();
+	const [ isGateOpen, setIsGateOpen ] = useState( false );
 
 	const checkoutButtonProps = {
 		variant: 'primary' as const,
 		__next40pxDefaultSize: true,
-		disabled: ( ! isAgencyApproved && ! approvalGate.isGated ) || ! isTotalReady,
+		disabled: ( ! isAgencyApproved && ! isGated ) || ! isTotalReady,
 		style: { justifyContent: 'center' },
 		onClick: () => {
-			recordCheckoutClick();
+			recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
+				purchase_mode: isReferralMode ? 'referral' : 'regular',
+				term_pricing: term,
+			} );
 			onCheckout?.();
 		},
 		children: __( 'Checkout' ),
@@ -107,14 +106,13 @@ export default function CartMenu( {
 			}
 		/>
 	);
-	if ( approvalGate.isGated ) {
+	if ( isGated ) {
 		checkoutButton = (
 			<Button
 				{ ...checkoutButtonProps }
 				onClick={ () => {
-					recordCheckoutClick();
 					onToggle?.( false );
-					approvalGate.openGate();
+					setIsGateOpen( true );
 				} }
 			/>
 		);
@@ -122,7 +120,7 @@ export default function CartMenu( {
 
 	return (
 		<>
-			{ approvalGate.gate }
+			{ isGateOpen && <ApprovalGate kind="purchase" onClose={ () => setIsGateOpen( false ) } /> }
 			<Dropdown
 				open={ open }
 				onToggle={ onToggle }

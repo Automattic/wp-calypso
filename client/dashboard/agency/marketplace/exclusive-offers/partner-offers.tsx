@@ -47,7 +47,10 @@ function PartnerOfferCard( {
 
 	const handleCTAClick = ( event: React.MouseEvent ) => {
 		onCtaClick?.( item, event );
-		recordTracksEvent( 'calypso_a4a_exclusive_offers_cta_click', { offer_id: item.id } );
+		// A host that stops the click (an offer the agency can't take yet) records its own event.
+		if ( ! event.defaultPrevented ) {
+			recordTracksEvent( 'calypso_a4a_exclusive_offers_cta_click', { offer_id: item.id } );
+		}
 	};
 
 	const handleViewTermsClick = () => {

@@ -12,12 +12,12 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { reusableBlock } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import EmptyState from '../../../components/empty-state';
 import InlineSupportLink from '../../../components/inline-support-link';
 import RouterLinkButton from '../../../components/router-link-button';
-import { useApprovalGate } from '../../approval-gate';
+import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
 import { isAgencyApproved } from '../../marketplace/is-agency-approved';
 import { MARKETPLACE_HOSTING_ROUTE } from '../../marketplace/paths';
 import { useMarketplaceType } from '../../marketplace/use-marketplace-type';
@@ -34,7 +34,8 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 	const accountStatus = useMemo( () => getAccountStatus( payee ), [ payee ] );
 	const hasPayeeAccount = !! accountStatus?.status;
 	const { data: agency } = useQuery( activeAgencyQuery() );
-	const approvalGate = useApprovalGate( 'referral' );
+	const isGated = useIsApprovalGated();
+	const [ isGateOpen, setIsGateOpen ] = useState( false );
 
 	const statusBadge = useMemo( () => {
 		if ( ! accountStatus ) {
@@ -50,7 +51,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 
 	return (
 		<EmptyState.Wrapper>
-			{ approvalGate.gate }
+			{ isGateOpen && <ApprovalGate kind="referral" onClose={ () => setIsGateOpen( false ) } /> }
 			<EmptyState>
 				<EmptyState.Header>
 					<EmptyState.Title>
@@ -87,15 +88,12 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 							) }
 							decoration={ <Icon icon={ reusableBlock } size={ 24 } /> }
 							actions={
-								approvalGate.isGated ? (
+								isGated ? (
 									<Button
 										variant="primary"
 										size="compact"
 										__next40pxDefaultSize
-										onClick={ () => {
-											recordTracksEvent( 'calypso_a4a_referrals_get_started_button_click' );
-											approvalGate.openGate();
-										} }
+										onClick={ () => setIsGateOpen( true ) }
 									>
 										{ __( 'Get started' ) }
 									</Button>

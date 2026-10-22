@@ -48,7 +48,7 @@ function renderCart( isReferralMode: boolean, approvalStatus = 'approved' ) {
 		approval_status: approvalStatus,
 	} as Agency );
 	const onToggle = jest.fn();
-	render(
+	const { recordTracksEvent } = render(
 		<CartMenu
 			items={ [ mockItem ] }
 			products={ [ mockBackup ] }
@@ -61,7 +61,7 @@ function renderCart( isReferralMode: boolean, approvalStatus = 'approved' ) {
 		/>,
 		{ queryClient }
 	);
-	return { onToggle };
+	return { onToggle, recordTracksEvent };
 }
 
 describe( 'CartMenu', () => {
@@ -88,7 +88,7 @@ describe( 'CartMenu', () => {
 	it.each( [ false, true ] )(
 		'opens the approval gate instead of a checkout while the agency is in review (referral mode: %s)',
 		async ( isReferralMode ) => {
-			const { onToggle } = renderCart( isReferralMode, 'pending' );
+			const { onToggle, recordTracksEvent } = renderCart( isReferralMode, 'pending' );
 
 			expect( screen.queryByRole( 'link', { name: 'Checkout' } ) ).not.toBeInTheDocument();
 			await userEvent.click( screen.getByRole( 'button', { name: 'Checkout' } ) );
@@ -97,6 +97,14 @@ describe( 'CartMenu', () => {
 				await screen.findByRole( 'dialog', { name: 'Purchases unlock once you’re approved' } )
 			).toBeVisible();
 			expect( onToggle ).toHaveBeenCalledWith( false );
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_approval_gate_view', {
+				kind: 'purchase',
+				approval_status: 'pending',
+			} );
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_a4a_marketplace_checkout_click',
+				expect.anything()
+			);
 		}
 	);
 } );

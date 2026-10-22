@@ -1,8 +1,9 @@
 import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { useApprovalGate } from '../../approval-gate';
+import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
 import {
 	MARKETPLACE_PRODUCTS_ROUTE,
 	getMarketplaceHostingSectionRoute,
@@ -24,14 +25,15 @@ const LINKS: PartnerOfferLinks = {
 export default function ExclusiveOffers() {
 	const { recordTracksEvent } = useAnalytics();
 	const { updateMarketplaceType } = useMarketplaceType();
-	const approvalGate = useApprovalGate( 'referral' );
+	const isGated = useIsApprovalGated();
+	const [ isGateOpen, setIsGateOpen ] = useState( false );
 
 	const handleCtaClick = ( offer: PartnerOffer, event: React.MouseEvent ) => {
 		const purchaseType = offer.cta.purchase_type;
 		// Partner programs outside Automattic link out and stay open.
-		if ( approvalGate.isGated && offer.offerType === 'refer' && ! offer.cta.external ) {
+		if ( isGated && offer.offerType === 'refer' && ! offer.cta.external ) {
 			event.preventDefault();
-			approvalGate.openGate();
+			setIsGateOpen( true );
 			return;
 		}
 		if ( purchaseType === 'referral' || purchaseType === 'regular' ) {
@@ -41,7 +43,7 @@ export default function ExclusiveOffers() {
 
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Exclusive offers' ) } /> }>
-			{ approvalGate.gate }
+			{ isGateOpen && <ApprovalGate kind="referral" onClose={ () => setIsGateOpen( false ) } /> }
 			<PartnerOffers
 				links={ LINKS }
 				recordTracksEvent={ recordTracksEvent }
