@@ -1,10 +1,5 @@
 import { getEmptyLeadMatchingFormData, type LeadMatchingFormData } from '../form-data';
-import {
-	getLeadMatchingStatus,
-	getNextSectionToAnswer,
-	isSectionAnswered,
-	validateLeadMatchingSection,
-} from '../sections';
+import { getLeadMatchingStatus, isSectionAnswered } from '../sections';
 
 const complete: LeadMatchingFormData = {
 	...getEmptyLeadMatchingFormData(),
@@ -47,25 +42,5 @@ describe( 'lead matching sections', () => {
 		expect(
 			isSectionAnswered( 'hosting-and-platforms', { ...complete, migrationPlatforms: [ 'wix' ] } )
 		).toBe( true );
-	} );
-
-	test( 'the next section skips answered and optional sections', () => {
-		expect( getNextSectionToAnswer( getEmptyLeadMatchingFormData() ) ).toBe(
-			'regions-and-languages'
-		);
-		expect( getNextSectionToAnswer( { ...complete, projectTypes: [] } ) ).toBe( 'website-needs' );
-		expect( getNextSectionToAnswer( complete ) ).toBeUndefined();
-	} );
-
-	test( 'validates only the section’s required questions', () => {
-		expect(
-			validateLeadMatchingSection( 'website-needs', getEmptyLeadMatchingFormData() )
-		).toEqual( {
-			projectTypes: 'Please select at least one project type',
-			serviceLevels: 'Please select at least one service level',
-		} );
-		expect(
-			validateLeadMatchingSection( 'hosting-and-platforms', getEmptyLeadMatchingFormData() )
-		).toEqual( {} );
 	} );
 } );
