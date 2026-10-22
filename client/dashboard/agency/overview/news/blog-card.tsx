@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { Card, CardBody, CardDivider, CardHeader, CardMedia } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import SummaryButton from '../../../components/summary-button';
-import NewTabLabel from '../new-tab-label';
+import NewTabLabel from '../../components/new-tab-label';
 import { AnnouncementCtas, AnnouncementDescription, bindLastWords } from './announcement-parts';
 import { BLOG_URL } from './announcements';
 import type { AnnouncementActionProps } from './announcement-parts';

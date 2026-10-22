@@ -7,7 +7,7 @@ import { ButtonStack } from '../../../components/button-stack';
 import RouterLinkButton from '../../../components/router-link-button';
 import { Text } from '../../../components/text';
 import { isDashboardPath } from '../../../utils/link';
-import NewTabLabel from '../new-tab-label';
+import NewTabLabel from '../../components/new-tab-label';
 import { ANNOUNCEMENT_LOGOS } from './announcements';
 import type { Announcement, AnnouncementCta } from './announcements';
 import type { RecordTracksEvent } from '../../tiers/types';
