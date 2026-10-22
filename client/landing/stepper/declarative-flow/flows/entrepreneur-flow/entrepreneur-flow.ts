@@ -1,6 +1,7 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_ECOMMERCE } from '@automattic/calypso-products';
+import { getLanguageSlugs } from '@automattic/i18n-utils';
 import {
 	ENTREPRENEUR_FLOW,
 	NEW_HOSTED_SITE_FLOW,
@@ -54,8 +55,10 @@ function isPlaygroundPublish( searchParams: URLSearchParams ) {
 	);
 }
 
-function getCommercePurchaseUrl( searchParams: URLSearchParams ) {
-	return addQueryArgs( `/setup/${ NEW_HOSTED_SITE_FLOW }`, {
+// A logged-out visitor's locale comes from the last path segment, so the redirect has to keep it.
+function getCommercePurchaseUrl( searchParams: URLSearchParams, lang?: string ) {
+	const path = `/setup/${ NEW_HOSTED_SITE_FLOW }${ lang ? `/${ lang }` : '' }`;
+	return addQueryArgs( path, {
 		...Object.fromEntries( searchParams ),
 		plan: PLAN_ECOMMERCE,
 	} );
@@ -114,6 +117,8 @@ const entrepreneurFlow: Flow = {
 		const [ searchParams ] = useSearchParams();
 		const match = useMatch( '/:flow/:step?/:lang?' );
 		const currentStep = match?.params.step ?? '';
+		// `/setup/entrepreneur/es` matches with the locale in place of a step.
+		const lang = getLanguageSlugs().includes( currentStep ) ? currentStep : match?.params.lang;
 
 		const shouldRedirect =
 			isEnabled( 'entrepreneur/redirect-to-commerce-purchase' ) &&
@@ -122,9 +127,9 @@ const entrepreneurFlow: Flow = {
 
 		useEffect( () => {
 			if ( shouldRedirect ) {
-				window.location.replace( getCommercePurchaseUrl( searchParams ) );
+				window.location.replace( getCommercePurchaseUrl( searchParams, lang ) );
 			}
-		}, [ shouldRedirect, searchParams ] );
+		}, [ shouldRedirect, searchParams, lang ] );
 
 		return {
 			state: shouldRedirect ? AssertConditionState.CHECKING : AssertConditionState.SUCCESS,

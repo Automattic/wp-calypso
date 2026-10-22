@@ -118,7 +118,9 @@ describe( 'Entrepreneur Flow', () => {
 		} );
 
 		it( 'sends a visitor on the survey step to the Commerce purchase path and keeps the query string', async () => {
-			renderAssertConditions( `/${ entrepreneurFlow.name }/start?ref=partner&utm_source=ads` );
+			renderAssertConditions(
+				`/${ entrepreneurFlow.name }/start?ref=partner&utm_source=ads&plan=personal-bundle`
+			);
 
 			await waitFor( () => {
 				expect( window.location.replace ).toHaveBeenCalledTimes( 1 );
@@ -138,12 +140,42 @@ describe( 'Entrepreneur Flow', () => {
 			expect( assertResult?.state ).toBe( AssertConditionState.CHECKING );
 		} );
 
-		it( 'redirects when the URL has no step', async () => {
-			renderAssertConditions( `/${ entrepreneurFlow.name }` );
+		it.each( [
+			[ 'the URL has no step', `/${ entrepreneurFlow.name }` ],
+			[ 'the step is user', `/${ entrepreneurFlow.name }/user` ],
+			[
+				`the step is ${ STEPS.TRIAL_ACKNOWLEDGE.slug }`,
+				`/${ entrepreneurFlow.name }/${ STEPS.TRIAL_ACKNOWLEDGE.slug }`,
+			],
+			[
+				`the step is ${ STEPS.SITE_CREATION_STEP.slug }`,
+				`/${ entrepreneurFlow.name }/${ STEPS.SITE_CREATION_STEP.slug }`,
+			],
+		] )( 'redirects when %s', async ( _label, path ) => {
+			renderAssertConditions( path );
 
 			await waitFor( () => {
 				expect( window.location.replace ).toHaveBeenCalledTimes( 1 );
 			} );
+			expect( assertResult?.state ).toBe( AssertConditionState.CHECKING );
+		} );
+
+		it.each( [
+			[ `/${ entrepreneurFlow.name }/start/es`, `/setup/${ NEW_HOSTED_SITE_FLOW }/es` ],
+			[ `/${ entrepreneurFlow.name }/es`, `/setup/${ NEW_HOSTED_SITE_FLOW }/es` ],
+		] )( 'keeps the locale when redirecting from %s', async ( path, expectedPathname ) => {
+			renderAssertConditions( path );
+
+			await waitFor( () => {
+				expect( window.location.replace ).toHaveBeenCalledTimes( 1 );
+			} );
+
+			const destination = new URL(
+				( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ],
+				'https://wordpress.com'
+			);
+
+			expect( destination.pathname ).toBe( expectedPathname );
 		} );
 
 		it.each( [
@@ -151,10 +183,16 @@ describe( 'Entrepreneur Flow', () => {
 				'the Playground publish path',
 				`/${ entrepreneurFlow.name }/start?from=playground-publish`,
 			],
-			[
-				'a step after site creation',
-				`/${ entrepreneurFlow.name }/${ STEPS.WAIT_FOR_ATOMIC.slug }`,
-			],
+			...[
+				STEPS.PROCESSING,
+				STEPS.WAIT_FOR_ATOMIC,
+				STEPS.WAIT_FOR_PLUGIN_INSTALL,
+				STEPS.IMPORTER_PLAYGROUND,
+				STEPS.ERROR,
+			].map( ( step ) => [
+				`the ${ step.slug } step`,
+				`/${ entrepreneurFlow.name }/${ step.slug }`,
+			] ),
 		] )( 'does not redirect on %s', ( _label, path ) => {
 			renderAssertConditions( path );
 
@@ -168,6 +206,7 @@ describe( 'Entrepreneur Flow', () => {
 			renderAssertConditions( `/${ entrepreneurFlow.name }/${ STEPS.SITE_CREATION_STEP.slug }` );
 
 			expect( window.location.replace ).not.toHaveBeenCalled();
+			expect( assertResult?.state ).toBe( AssertConditionState.SUCCESS );
 		} );
 	} );
 
