@@ -35,7 +35,7 @@ come.
   - `src/hooks/use-interactive-ui.ts` keeps a runtime per conversation, loads the renderer on demand
     and sends actions to the agent.
   - `src/components/interactive-ui-surfaces/` renders a message's surfaces in the chat's colors and
-    mode (its `style.scss` sets A2UI's tokens from Agenttic's), greys out a stale one, and stacks
+    mode (its `style.scss` sets A2UI's tokens from Agenttic's), disables a stale one, and stacks
     the modal above the chat. Surfaces sit in a `data-agenttic-isolated` wrapper, so their controls
     keep their own typography while replies keep the chat's typography reset.
   - `src/utils/interactive-ui-messages.ts` and
@@ -88,8 +88,9 @@ come.
   (`src/utils/stale-chat-ui.ts`): the user has replied past the last message that changed it, or
   the editor has another page open than the one its envelope names. Like a restored picker, a
   surface restored from history, in a past chat or after a reload, is stale too. A stale surface
-  stays visible but greyed out and disabled, and its components skip their side effects and
-  Tracks.
+  stays visible and disabled: its controls look disabled, while display-only content such as text
+  or a chart looks as before. Custom components get `disabled` and `isMessageStale` to do the same,
+  and skip their side effects and Tracks.
 - **Style with A2UI's theme tokens.** Custom components color themselves with the `--a2ui-*`
   tokens, or use WordPress components, which the renderer themes with them, so they follow each
   host's theme ([theming](../ai-ui-renderer/README.md#theming)).

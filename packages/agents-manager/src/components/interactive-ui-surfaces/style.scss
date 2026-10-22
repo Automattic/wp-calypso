@@ -17,9 +17,3 @@
 .ai-ui-renderer__modal.agents-manager-interactive-ui-surfaces__renderer {
 	z-index: $agents-manager-z-index-focused + 1;
 }
-
-// A stale surface among current ones, in Agenttic's look for a disabled message.
-.agents-manager-interactive-ui-surfaces__surface--stale {
-	filter: grayscale( 50% );
-	opacity: 0.6;
-}
