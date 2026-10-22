@@ -1,4 +1,5 @@
 import { DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
+import { isDomainMoveInternal } from '@automattic/calypso-products';
 import { useIsMutating, useQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -10,6 +11,7 @@ import { isSubdomainWithUnavailableRootDomain } from '../../helpers/is-subdomain
 import { isSupportedPremiumDomain } from '../../helpers/is-supported-premium-domain';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchNotice } from '../../ui';
+import { ConnectedDomainMoveNotice } from './connected-domain-move-notice';
 
 const AVAILABLE_DOMAIN_STATUSES = [
 	DomainAvailabilityStatus.AVAILABLE,
@@ -62,6 +64,20 @@ const shouldHideAvailabilityNotice = (
 	return false;
 };
 
+/**
+ * Whether a domain connected to another of the user's sites can be moved to the site being
+ * created. Only offered without a current site, where the move goes to the new site.
+ */
+const isConnectedDomainMoveToNewSite = (
+	availability: DomainAvailability,
+	currentSiteUrl?: string
+): availability is DomainAvailability & { other_site_domain: string } =>
+	! currentSiteUrl &&
+	availability.status === DomainAvailabilityStatus.MAPPED_OTHER_SITE_SAME_USER &&
+	!! availability.product_slug &&
+	isDomainMoveInternal( { product_slug: availability.product_slug } ) &&
+	!! availability.other_site_domain;
+
 const shouldReturnGenericMappedMessage = ( availability: DomainAvailability ): boolean => {
 	const isDomainMapped = DomainAvailabilityStatus.MAPPED === availability.mappable;
 
@@ -98,9 +114,15 @@ export const SearchNotice = () => {
 	const isMutating = useIsMutating();
 	const { onSearchNoticeSkipClick } = events;
 
+	const movableConnectedDomain =
+		availability && isConnectedDomainMoveToNewSite( availability, currentSiteUrl )
+			? availability
+			: undefined;
+
 	const notice = useMemo( () => {
 		if (
 			! availability ||
+			movableConnectedDomain ||
 			shouldHideAvailabilityNotice( availability, includeOwnedDomainInSuggestions )
 		) {
 			return null;
@@ -163,6 +185,7 @@ export const SearchNotice = () => {
 		onSearchNoticeSkipClick,
 		skippable,
 		isMutating,
+		movableConnectedDomain,
 	] );
 
 	// A failed suggestions request still renders the exact-match card when the FQDN is
@@ -174,6 +197,10 @@ export const SearchNotice = () => {
 
 	if ( errorMessage ) {
 		return <DomainSearchNotice status="error">{ errorMessage }</DomainSearchNotice>;
+	}
+
+	if ( movableConnectedDomain ) {
+		return <ConnectedDomainMoveNotice availability={ movableConnectedDomain } />;
 	}
 
 	if ( ! notice ) {
