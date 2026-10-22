@@ -1,19 +1,31 @@
 /**
  * @jest-environment jsdom
  */
-import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import { PLAN_ECOMMERCE } from '@automattic/calypso-products';
+import { NEW_HOSTED_SITE_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { waitFor } from '@testing-library/react';
 import React, { useEffect, useState } from 'react';
 import { MemoryRouter, useNavigate } from 'react-router';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
+import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/constants';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
+import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import entrepreneurFlow from '../entrepreneur-flow';
-import type { StepperStep } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import type {
+	AssertConditionResult,
+	StepperStep,
+} from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 const SITE_ID = 123;
 const SITE_SLUG = 'ecom-example.wordpress.com';
+const REDIRECT_FLAG = 'entrepreneur/redirect-to-commerce-purchase';
+
+const mockIsEnabled = jest.fn();
+jest.mock( '@automattic/calypso-config', () =>
+	Object.assign( jest.fn(), { isEnabled: ( flag: string ) => mockIsEnabled( flag ) } )
+);
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( {
@@ -57,6 +69,20 @@ const SurveyThenProcessing = () => {
 	return null;
 };
 
+let assertResult: AssertConditionResult | undefined;
+
+const AssertConditions = () => {
+	assertResult = entrepreneurFlow.useAssertConditions?.();
+	return null;
+};
+
+const renderAssertConditions = ( path: string ) =>
+	renderWithProvider(
+		<MemoryRouter initialEntries={ [ path ] }>
+			<AssertConditions />
+		</MemoryRouter>
+	);
+
 describe( 'Entrepreneur Flow', () => {
 	const originalLocation = window.location;
 
@@ -78,6 +104,69 @@ describe( 'Entrepreneur Flow', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockIsEnabled.mockReturnValue( false );
+		sessionStorage.clear();
+		assertResult = undefined;
+	} );
+
+	describe( 'redirect to the Commerce purchase path', () => {
+		beforeEach( () => {
+			mockIsEnabled.mockImplementation( ( flag: string ) => flag === REDIRECT_FLAG );
+		} );
+
+		it( 'sends a visitor on the survey step to the Commerce purchase path and keeps the query string', async () => {
+			renderAssertConditions( `/${ entrepreneurFlow.name }/start?ref=partner&utm_source=ads` );
+
+			await waitFor( () => {
+				expect( window.location.replace ).toHaveBeenCalledTimes( 1 );
+			} );
+
+			const destination = new URL(
+				( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ],
+				'https://wordpress.com'
+			);
+
+			expect( destination.pathname ).toBe( `/setup/${ NEW_HOSTED_SITE_FLOW }` );
+			expect( Object.fromEntries( destination.searchParams ) ).toEqual( {
+				ref: 'partner',
+				utm_source: 'ads',
+				plan: PLAN_ECOMMERCE,
+			} );
+			expect( assertResult?.state ).toBe( AssertConditionState.CHECKING );
+		} );
+
+		it( 'redirects when the URL has no step', async () => {
+			renderAssertConditions( `/${ entrepreneurFlow.name }` );
+
+			await waitFor( () => {
+				expect( window.location.replace ).toHaveBeenCalledTimes( 1 );
+			} );
+		} );
+
+		it.each( [
+			[ 'the Playground publish path', `/${ entrepreneurFlow.name }/start?from=playground-publish` ],
+			[ 'a step after site creation', `/${ entrepreneurFlow.name }/${ STEPS.WAIT_FOR_ATOMIC.slug }` ],
+		] )( 'does not redirect on %s', ( _label, path ) => {
+			renderAssertConditions( path );
+
+			expect( window.location.replace ).not.toHaveBeenCalled();
+			expect( assertResult?.state ).toBe( AssertConditionState.SUCCESS );
+		} );
+
+		it( 'does not redirect when the Playground session flag survives the login round trip', () => {
+			sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
+
+			renderAssertConditions( `/${ entrepreneurFlow.name }/${ STEPS.SITE_CREATION_STEP.slug }` );
+
+			expect( window.location.replace ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	it( 'does not redirect when the flag is off', () => {
+		renderAssertConditions( `/${ entrepreneurFlow.name }/start` );
+
+		expect( window.location.replace ).not.toHaveBeenCalled();
+		expect( assertResult?.state ).toBe( AssertConditionState.SUCCESS );
 	} );
 
 	it( 'sends a migrating user to the site-migration upgrade step for the trial site once WooCommerce is installed', async () => {
