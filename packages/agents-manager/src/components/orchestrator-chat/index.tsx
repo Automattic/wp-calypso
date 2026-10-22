@@ -186,7 +186,11 @@ export default function OrchestratorChat( {
 	] );
 
 	// The chat runtime, behind the credits gate.
+	// The composer's retry send is created after credits, so the notice reaches it through a ref.
+	const retrySendRef = useRef< ( message: string ) => void >( () => {} );
+	const tryAgain = useCallback( ( message: string ) => retrySendRef.current( message ), [] );
 	const credits = useCredits( {
+		onTryAgain: tryAgain,
 		enabled: ! isReaderChat,
 		agentConfig: agentChatConfig!,
 		siteKey,
@@ -273,6 +277,11 @@ export default function OrchestratorChat( {
 		flushPendingNavigation,
 		suggestionPromptsRef,
 	} );
+
+	// What's in the box wins, as it sits right under the notice; the refused question is the fallback.
+	// The draft goes as typed, so the composer recognises and clears it.
+	retrySendRef.current = ( message ) =>
+		submitRetryMessage( inputValue.trim() ? inputValue : message );
 
 	// Marks the session as sent whichever path started the turn.
 	useEffect( () => {

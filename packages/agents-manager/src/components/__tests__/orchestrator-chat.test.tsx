@@ -290,6 +290,9 @@ const mockAgentChat = jest.fn(
 				Click auto-submit suggestion
 			</button>
 			<button onClick={ () => onInputChange?.( 'Describe these images' ) }>Type message</button>
+			<button onClick={ () => onInputChange?.( 'Describe these images ' ) }>
+				Type padded message
+			</button>
 			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit message</button>
 			<button
 				onClick={ () =>
@@ -465,18 +468,22 @@ const mockCreditsNoticeVisibility = jest.fn();
 const mockTakeRefusalCode = jest.fn( (): string | undefined => undefined );
 const mockCreditsNotice = jest.fn( (): unknown => undefined );
 const mockRefusalNotice = jest.fn( (): unknown => undefined );
+let mockCreditsOnTryAgain: ( ( message: string ) => void ) | undefined;
 jest.mock( '../../hooks/use-credits', () => ( {
 	useCredits: ( {
 		agentConfig,
 		isOpen,
 		isNoticeVisible,
+		onTryAgain,
 	}: {
 		agentConfig: unknown;
 		isOpen: boolean;
 		isNoticeVisible: boolean;
+		onTryAgain?: ( message: string ) => void;
 	} ) => {
 		mockCreditsVisibility( isOpen );
 		mockCreditsNoticeVisibility( isNoticeVisible );
+		mockCreditsOnTryAgain = onTryAgain;
 		return {
 			chat: jest.requireMock( '@automattic/agenttic-client' ).useAgentChat( agentConfig ),
 			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
@@ -4556,6 +4563,50 @@ describe( 'OrchestratorChat', () => {
 			render( chat() );
 
 			expect( mockConversationConfig?.waitForReply ).toBe( false );
+		} );
+
+		it( 'resends a refused question through the retry path on the credits-back Try again', async () => {
+			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			const uploadImagesToWordPress = jest.fn();
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			renderWithImageUpload(
+				createImageUpload( { pendingImages: [ { id: 'p1' } ], uploadImagesToWordPress } )
+			);
+
+			await act( async () => {
+				mockCreditsOnTryAgain?.( 'ship the sale banner' );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( 'ship the sale banner' );
+			expect( uploadImagesToWordPress ).not.toHaveBeenCalled();
+		} );
+
+		it( 'sends the edited draft instead on the credits-back Try again', async () => {
+			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+			fireEvent.click( screen.getByText( 'Type message' ) );
+
+			await act( async () => {
+				mockCreditsOnTryAgain?.( 'ship the sale banner' );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' );
+			expect( screen.getByTestId( 'input-value' ).textContent ).toBe( '' );
+		} );
+
+		it( 'sends a padded draft as typed on Try again, so the box clears', async () => {
+			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+			fireEvent.click( screen.getByText( 'Type padded message' ) );
+
+			await act( async () => {
+				mockCreditsOnTryAgain?.( 'ship the sale banner' );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images ' );
+			expect( screen.getByTestId( 'input-value' ).textContent ).toBe( '' );
 		} );
 
 		it( 'retries through the normal send, leaving images staged for the draft', async () => {

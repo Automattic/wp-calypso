@@ -2505,9 +2505,7 @@ describe( 'credits Tracks events', () => {
 			fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
 			act( () => window.dispatchEvent( new Event( 'focus' ) ) );
 			await flush();
-			expect( view.result.current.notice?.message ).toBe(
-				'Site credits are back. Send your message again.'
-			);
+			expect( view.result.current.notice?.message ).toBe( 'Site credits are back.' );
 			expect( view.result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
 			expect( shownStates() ).toEqual( [ 'zero' ] );
 			mockIsProcessing = true;
@@ -2696,9 +2694,13 @@ describe( 'refusal code', () => {
 		describe( 'once credits are back', () => {
 			const backNotice = {
 				icon: false,
-				message: 'Site credits are back. Send your message again.',
+				message: 'Site credits are back.',
+				action: undefined,
 				dismissible: false,
 			};
+			const question = ( ...content: Array< { type: string; text?: string } > ) => [
+				{ id: 'q', role: 'user', content },
+			];
 			const read = async ( answer: unknown ) => {
 				fetchMock.mockResolvedValueOnce( answer );
 				act( () => window.dispatchEvent( new Event( 'focus' ) ) );
@@ -2718,6 +2720,37 @@ describe( 'refusal code', () => {
 			it( 'says so over the low notice on a low balance', async () => {
 				const { result } = await openThenRefuse( 'business' );
 				await read( response( low( 'business' ) ) );
+				expect( result.current.notice ).toEqual( backNotice );
+			} );
+
+			it( 'offers Try again, which resends the refused question', async () => {
+				const onTryAgain = jest.fn();
+				mockMessages = question( { type: 'text', text: 'Make it shorter' } );
+				fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
+				const { result } = renderCredits( { onTryAgain } );
+				await flush();
+				await refuse( { ...exhausted( true ), plan_tier: 'business' } );
+				await topUp();
+				expect( result.current.notice?.message ).toBe( 'Site credits are back.' );
+				expect( result.current.notice?.action?.label ).toBe( 'Try again' );
+				act( () => result.current.notice?.action?.onClick?.() );
+				expect( onTryAgain ).toHaveBeenCalledWith( 'Make it shorter' );
+			} );
+
+			it( 'offers no Try again for a question with images, which is asked again by hand', async () => {
+				mockMessages = question( { type: 'text', text: 'Match this' }, { type: 'component' } );
+				fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
+				const { result } = renderCredits( { onTryAgain: jest.fn() } );
+				await flush();
+				await refuse( { ...exhausted( true ), plan_tier: 'business' } );
+				await topUp();
+				expect( result.current.notice ).toEqual( backNotice );
+			} );
+
+			it( 'offers no Try again where the chat can’t resend', async () => {
+				mockMessages = question( { type: 'text', text: 'Make it shorter' } );
+				const { result } = await openThenRefuse( 'business' );
+				await topUp();
 				expect( result.current.notice ).toEqual( backNotice );
 			} );
 

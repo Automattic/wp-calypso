@@ -224,12 +224,18 @@ describe( 'getCreditsOutNotice', () => {
 } );
 
 describe( 'getCreditsBackNotice', () => {
-	it( 'asks for the message again, with no action', () => {
+	it( 'says so, with no action', () => {
 		expect( getCreditsBackNotice() ).toEqual( {
 			icon: false,
-			message: 'Site credits are back. Send your message again.',
+			message: 'Site credits are back.',
+			action: undefined,
 			dismissible: false,
 		} );
+	} );
+
+	it( 'offers the action it is given', () => {
+		const action = { label: 'Try again', onClick: () => {} };
+		expect( getCreditsBackNotice( action ).action ).toBe( action );
 	} );
 } );
 

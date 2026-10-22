@@ -217,11 +217,12 @@ export function getCreditsRefusalNotice(
 	};
 }
 
-/** After a reply refused for no credits, once the balance is above 0 again. */
-export function getCreditsBackNotice(): NoticeConfig {
+/** After a reply refused for no credits, once the balance is above 0 again, with Try again where the chat can resend. */
+export function getCreditsBackNotice( action?: NoticeConfig[ 'action' ] ): NoticeConfig {
 	return {
 		icon: false,
-		message: __( 'Site credits are back. Send your message again.', __i18n_text_domain__ ),
+		message: __( 'Site credits are back.', __i18n_text_domain__ ),
+		action,
 		dismissible: false,
 	};
 }

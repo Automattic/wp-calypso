@@ -34,6 +34,7 @@ import {
 	recordCreditsTracksEvent,
 } from '../utils/credits-tracks';
 import { getAgentsManagerInlineData } from '../utils/get-agents-manager-inline-data';
+import { getLatestUserMessageIndex } from '../utils/latest-message';
 import {
 	CREDITS_UPGRADE_SOURCE,
 	buildLiveCreditsStatus,
@@ -113,6 +114,8 @@ interface UseCreditsOptions {
 	isOpen: boolean;
 	/** Whether the chat draws the notice; the compact composer never does. */
 	isNoticeVisible: boolean;
+	/** Sends again once credits are back, given the refused question's text; the notice then offers Try again. */
+	onTryAgain?: ( message: string ) => void;
 }
 
 export interface UseCreditsResult {
@@ -150,6 +153,7 @@ export function useCredits( {
 	userId,
 	isOpen,
 	isNoticeVisible,
+	onTryAgain,
 }: UseCreditsOptions ): UseCreditsResult {
 	const isMockEnabled = enabled && siteKey === NO_SITE;
 	const requestedSiteId = enabled ? getLiveCreditSiteId( siteKey, agentConfig ) : undefined;
@@ -533,6 +537,30 @@ export function useCredits( {
 		);
 	}, [ status, isPopoverOpen, toggleMeter, handleAction, siteId, purchaseAction, purchaseHint ] );
 
+	// Try again resends text only, as the conversation's Retry does, so a question with
+	// images is asked again by hand.
+	const refusedQuestion = useMemo( () => {
+		const question = chat.messages[ getLatestUserMessageIndex( chat.messages ) ];
+		if ( ! question || question.content.some( ( part ) => part.type !== 'text' ) ) {
+			return undefined;
+		}
+		const text = question.content
+			.map( ( part ) => part.text ?? '' )
+			.join( ' ' )
+			.trim();
+		return text || undefined;
+	}, [ chat.messages ] );
+	const tryAgainAction = useMemo< NoticeConfig[ 'action' ] >(
+		() =>
+			onTryAgain && refusedQuestion
+				? {
+						label: __( 'Try again', __i18n_text_domain__ ),
+						onClick: () => onTryAgain( refusedQuestion ),
+					}
+				: undefined,
+		[ onTryAgain, refusedQuestion ]
+	);
+
 	const notice = useMemo< NoticeConfig | undefined >( () => {
 		if ( siteId && status?.plan === 'paid' ) {
 			// A dismissed low notice must not hide the exhausted state.
@@ -540,7 +568,7 @@ export function useCredits( {
 				return getCreditsOutNotice( status.remaining, askToUpgrade, purchaseAction );
 			}
 			if ( isRefusedForCredits ) {
-				return getCreditsBackNotice();
+				return getCreditsBackNotice( tryAgainAction );
 			}
 			if ( isLow && ! isLowNoticeDismissed ) {
 				return {
@@ -587,6 +615,7 @@ export function useCredits( {
 		askToUpgrade,
 		isExhausted,
 		isRefusedForCredits,
+		tryAgainAction,
 		isLow,
 		isLowNoticeDismissed,
 		handleAction,
