@@ -165,11 +165,6 @@ export const STEPS = {
 
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
 
-	OPTIONS: {
-		slug: 'options',
-		asyncComponent: () => import( './steps-repository/site-options' ),
-	},
-
 	PLANS: { slug: 'plans', asyncComponent: () => import( './steps-repository/plans' ) },
 
 	PROCESSING: {
