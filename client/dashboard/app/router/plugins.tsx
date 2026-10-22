@@ -48,10 +48,14 @@ export const pluginsManageRoute = createRoute( {
 	} ),
 	getParentRoute: () => pluginsRoute,
 	path: 'manage',
-	loader: async () => {
+	loader: async ( { context } ) => {
 		queryClient.prefetchQuery( marketplacePluginsQuery() );
 		queryClient.prefetchQuery( pluginsQuery() );
-		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			// The sites decide which layout the page renders, so settle them before first paint.
+			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
+		] );
 	},
 } );
 

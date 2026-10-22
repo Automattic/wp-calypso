@@ -68,24 +68,39 @@ const pluginSite = {
 	capabilities: { update_plugins: true },
 };
 
+// Holds the plugins request open until the returned `release` is called, so tests can check
+// what the page renders while plugins are still loading.
+let releasePlugins: () => void = () => {};
+
+afterEach( () => releasePlugins() );
+
 function mockApiEndpoints( {
 	sites,
 	plugins,
 	pluginsStatus = 200,
+	holdPlugins = false,
 }: {
 	sites: Record< string, unknown >[];
 	plugins: Record< string, unknown[] >;
 	pluginsStatus?: number;
+	holdPlugins?: boolean;
 } ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.2/me/sites' )
 		.query( true )
 		.reply( 200, { sites } );
 
-	nock( 'https://public-api.wordpress.com' )
+	const pluginsScope = nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/sites/plugins' )
-		.query( true )
-		.reply( pluginsStatus, { sites: plugins } );
+		.query( true );
+
+	if ( holdPlugins ) {
+		pluginsScope.reply( ( _uri, _body, callback ) => {
+			releasePlugins = () => callback( null, [ pluginsStatus, { sites: plugins } ] );
+		} );
+	} else {
+		pluginsScope.reply( pluginsStatus, { sites: plugins } );
+	}
 
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/wpcom/v2/marketplace/products' )
@@ -202,5 +217,48 @@ describe( '<PluginsList> empty states', () => {
 		expect(
 			screen.queryByRole( 'heading', { name: 'No plugins installed yet' } )
 		).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the no-site empty state without waiting for plugins', async () => {
+		mockApiEndpoints( { sites: [], plugins: {}, holdPlugins: true } );
+
+		render( <PluginsList /> );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'You need a site to install a plugin' } )
+		).toBeVisible();
+		expect( screen.queryByRole( 'tab', { name: /Available on/ } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the no-plugins empty state without waiting for plugins when no site can manage plugins', async () => {
+		mockApiEndpoints( {
+			sites: [ { ...pluginSite, capabilities: { update_plugins: false } } ],
+			plugins: {},
+			holdPlugins: true,
+		} );
+
+		render( <PluginsList /> );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'No plugins installed yet' } )
+		).toBeVisible();
+		expect( screen.queryByRole( 'tab', { name: /Available on/ } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'waits for plugins before showing an empty state when a site can manage plugins', async () => {
+		mockApiEndpoints( { sites: [ pluginSite ], plugins: { '1': [] }, holdPlugins: true } );
+
+		render( <PluginsList /> );
+
+		expect( await screen.findByRole( 'tab', { name: /Available on/ } ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'heading', { name: 'No plugins installed yet' } )
+		).not.toBeInTheDocument();
+
+		releasePlugins();
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'No plugins installed yet' } )
+		).toBeVisible();
 	} );
 } );
