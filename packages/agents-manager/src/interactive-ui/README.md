@@ -137,12 +137,12 @@ wpcom's `ability.color-palette.php`.
    its controls off with `disabled`, which covers a stale surface, and skips side effects outside
    itself when `isMessageStale` is set. One that changes the site takes its checkpoint on its first
    action, keyed by `surfaceId`.
-2. **Return a surface from the ability** (wpcom) when `can_show_interactive_ui()` passes: in an
-   agent's chat, on a site with the sticker, for a request with no steps after the component
-   (`followUpTasks`), since a surface ends the turn. Otherwise, keep returning the `show-component`
-   result. `Interactive_UI::component_result()` shows one component under the agent's summary, for
-   the post the editor has open; `surface_result()` takes a layout of your own. Both use Agents
-   Manager's catalog until a provider's ability can pass its own (AM-116).
+2. **Return a surface from the ability** (wpcom) when `Agent_Ability::can_show_interactive_ui()`
+   passes: in an agent's chat, on a site with the sticker, for a request with no steps after the
+   component (`followUpTasks`), since a surface ends the turn. Otherwise, keep returning the
+   `show-component` result. `Interactive_UI::component_result()` shows one component under the
+   agent's summary, for the post the editor has open; `surface_result()` takes a layout of your
+   own. Both use Agents Manager's catalog until a provider's ability can pass its own (AM-116).
 3. **Test both paths.** With the sticker, the surface renders, goes stale after a reply, a reload
    or a page switch, keeps its undo, and records the shared response events under its component's
    name and surface ID. Without it, the old UI shows as before.
