@@ -3,7 +3,7 @@ import {
 	BASIC_CATALOG_ID,
 	getInteractiveUiRendererCapabilities,
 } from '@automattic/ai-ui-renderer/capabilities';
-import { withChatResponseTracking } from '../components/chat-response-tracking';
+import { withChatResponseTracking } from './with-chat-response-tracking';
 import type {
 	InteractiveUiCatalog,
 	InteractiveUiCatalogDefinition,
@@ -20,9 +20,9 @@ const AGENTS_MANAGER_CATALOG: InteractiveUiCatalogDefinition = {
 };
 
 /**
- * Keeps the valid provider catalogs, so the chat only advertises catalogs it can build. As with
- * abilities, the first with an ID wins, so a provider can't replace a catalog that already works.
- * The Basic and Agents Manager IDs are taken.
+ * Skips a provider catalog whose implementations don't match its document, so the chat doesn't
+ * advertise it. As with abilities, the first with an ID wins, so a provider can't replace a
+ * catalog that already works. The Basic and Agents Manager IDs are taken.
  */
 export function filterInteractiveUiCatalogs( catalogs: InteractiveUiCatalogDefinition[] ) {
 	const takenIds = new Set( [ BASIC_CATALOG_ID, AGENTS_MANAGER_CATALOG_ID ] );
@@ -57,7 +57,7 @@ export function getInteractiveUiCapabilities(
 /**
  * Builds the catalogs a conversation's surfaces render with: A2UI's Basic catalog, Agents
  * Manager's, and each provider's, whose components record the shared response events. A catalog
- * whose document isn't valid A2UI is skipped, so only its own surfaces don't render.
+ * that fails to build is skipped, so only its own surfaces don't render.
  */
 export function createInteractiveUiCatalogs(
 	renderer: InteractiveUiRenderer,

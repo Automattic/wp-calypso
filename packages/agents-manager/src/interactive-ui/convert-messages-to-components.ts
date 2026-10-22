@@ -54,8 +54,8 @@ function isInteractiveUiSurfacesPart( content: MessageContentPart ) {
 /**
  * Hands each message's interactive UI part the current presentation, and drops the part while
  * its message has no surface to show yet, unless the renderer failed to load. Stale surfaces
- * disable their own controls, so a message whose surfaces are all stale keeps its look and only
- * disables its actions, as a `show-component` message does.
+ * disable their own controls, and a message whose surfaces are all stale disables its actions
+ * too. Unlike a stale `show-component` message, it isn't greyed out.
  */
 export function attachInteractiveUiPresentation(
 	messages: AgentsManagerUIMessage[],

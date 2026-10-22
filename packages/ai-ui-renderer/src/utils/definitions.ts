@@ -12,12 +12,18 @@ import type { ComponentType } from 'react';
 export interface InteractiveUiCatalogDocument {
 	/** A versioned ID, such as `urn:automattic:example:interactive-ui:v1`. */
 	catalogId: string;
+	/** A short name for people. */
+	title?: string;
+	/** What the catalog offers, for people. */
+	description?: string;
 	/** How the agent should use the catalog. */
 	instructions?: string;
 	/** Each component's props, by name, such as `ExampleCard`. */
 	components?: Record< string, object >;
 	/** Each function's call, by name, such as `exampleOpenItem`. */
 	functions?: Record< string, object >;
+	/** Schemas the components and functions share through `$ref`. */
+	$defs?: Record< string, object >;
 }
 
 /** A host's or provider's own catalog: its document and the code that implements it. */

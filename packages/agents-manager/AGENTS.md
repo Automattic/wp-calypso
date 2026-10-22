@@ -125,13 +125,14 @@ The editor abilities (`abilities/editor-abilities.ts`) load as an async chunk on
 
 ## Interactive UI
 
-Agents Manager hosts interactive UI surfaces from `interactive-ui/`: the hook that loads the renderer (`@automattic/ai-ui-renderer`) once a reply has a surface, the surfaces component, the transcript and session utilities, and the catalogs. Its `README.md` has the architecture and the rules surfaces follow.
+Agents Manager hosts interactive UI surfaces from `interactive-ui/`: the hook that loads the renderer (`@automattic/ai-ui-renderer`) once a reply has a surface, the surfaces component, the transcript and session utilities, the catalogs, and the response tracking for catalog components. Its `README.md` has the architecture and the rules surfaces follow.
 
 - **Surfaces come from wpcom**, which stores them with the conversation: an ability returns one through `Interactive_UI`, or the agent composes one with `wpcom/render-interactive-ui`. A browser ability's `agentMessage` isn't stored, so it can't carry one.
+- **Basic components first.** Add a custom component only for what the basic ones can't express, such as a picker's style previews.
 - **Add a component to a catalog, not to the converter.** Agents Manager's go in `AGENTS_MANAGER_CATALOG` (`interactive-ui/catalogs.ts`): their props as JSON Schema in its document, and the component itself, through `lazyComponent()` when it carries editor code. Providers declare theirs as `interactiveUi`.
-- **Components act like the basic ones.** Turn off custom controls with `disabled`, skip side effects with `isMessageStale`, and key a checkpoint by `surfaceId`. The host records the shared response events, so report actions through `onResponseAction` instead of recording them.
+- **Custom components own their side effects.** Turn off their controls with `disabled`, skip side effects with `isMessageStale`, and key a checkpoint by `surfaceId`. The host records the shared response events, so report actions through `onResponseAction` instead of recording them.
 - **Functions run from a click** unless their document sets `requiresUserActivation: false`, and treat their arguments as untrusted.
-- **Keep the renderer in its lazy chunk:** import only types from `@automattic/ai-ui-renderer`, and values only from its `capabilities` entry.
+- **Keep the renderer in its lazy chunk:** import only types from `@automattic/ai-ui-renderer`, and values only from its `capabilities` entry and `style.scss`.
 
 ## Pitfalls
 
