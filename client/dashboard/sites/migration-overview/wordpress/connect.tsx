@@ -8,14 +8,13 @@ import { __experimentalVStack as VStack, Button, ExternalLink } from '@wordpress
 import { useInstanceId } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Icon, chevronDown, chevronUp, pending } from '@wordpress/icons';
+import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useState } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import Notice from '../../../components/notice';
 import { Text } from '../../../components/text';
-import { MigrationCard } from './migration-card';
-import './style.scss';
+import { AssistedHandoffLink, MigrationCard, StatusIcon } from './migration-card';
 import type { Site, WordPressMigrationFinding } from '@automattic/api-core';
 
 const MANUAL_INSTALL = 'manual-wpcom-install';
@@ -62,9 +61,7 @@ export function Connect( { site, failure }: { site: Site; failure?: WordPressMig
 	return (
 		<MigrationCard
 			title={ __( 'Install our plugin to start the migration' ) }
-			decoration={
-				<Icon icon={ pending } size={ 20 } className="wordpress-migration__status-icon" />
-			}
+			decoration={ <StatusIcon status="pending" /> }
 			actions={
 				<>
 					<Button
@@ -87,11 +84,7 @@ export function Connect( { site, failure }: { site: Site; failure?: WordPressMig
 					</Button>
 				</>
 			}
-			footer={
-				<Button variant="link" disabled className="wordpress-migration__align-start">
-					{ __( 'Have our team handle this migration for you, included in your plan.' ) }
-				</Button>
-			}
+			footer={ <AssistedHandoffLink /> }
 		>
 			{ failure && (
 				<Notice variant="error" title={ failure.label }>
@@ -128,7 +121,7 @@ export function Connect( { site, failure }: { site: Site; failure?: WordPressMig
 					icon={ isShowingFallbacks ? chevronUp : chevronDown }
 					iconPosition="right"
 					aria-expanded={ isShowingFallbacks }
-					aria-controls={ fallbacksId }
+					aria-controls={ isShowingFallbacks ? fallbacksId : undefined }
 					onClick={ () => setIsShowingFallbacks( ! isShowingFallbacks ) }
 					className="wordpress-migration__fallbacks-toggle"
 				>

@@ -3,20 +3,19 @@ import { siteQueryFilter, siteWordPressMigrationStatusQuery } from '@automattic/
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useHelpCenter } from '../../../app/help-center';
 import Notice from '../../../components/notice';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { Text } from '../../../components/text';
 import { getSiteDisplayName } from '../../../utils/site-name';
 import { isSiteMigrationInProgress } from '../../../utils/site-status';
 import { Connect } from './connect';
 import { Findings } from './findings';
-import { MigrationCard } from './migration-card';
+import { MigrationCard, StatusIcon } from './migration-card';
 import { Running } from './running';
-import type { Site, WordPressMigrationStatus } from '@automattic/api-core';
+import type { Site } from '@automattic/api-core';
 
 // How long a completed migration can leave its site locked before we stop asking the user to wait.
 const UNLOCK_GRACE_PERIOD = 30000;
@@ -55,12 +54,6 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		migration?.status === 'failed'
 			? migration.findings.find( ( { code } ) => code === 'source_connection_failed' )
 			: undefined;
-
-	// The connect step speaks for itself, so the header only sums up a migration once it's underway.
-	const summary =
-		migration && sourceHost && ! connectionFailure
-			? getSummary( migration.status, sourceHost )
-			: null;
 
 	// The site is unlocked once the migration completes, so hand over to the overview. The router sends a site that
 	// still reads as migrating straight back here, so only leave once the site itself says it's done: reload it now,
@@ -129,18 +122,15 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					</Notice>
 				)
 			}
-			header={
-				<PageHeader
-					title={ getSiteDisplayName( site ) }
-					description={ summary && <Text variant="muted">{ summary }</Text> }
-				/>
-			}
+			header={ <PageHeader title={ getSiteDisplayName( site ) } /> }
 		>
 			{ /* Only the site's administrators can read the migration. */ }
 			{ isForbidden && (
 				<MigrationCard
 					title={ __( 'A migration to this site is underway' ) }
 					description={ __( 'An administrator of this site can follow and manage it here.' ) }
+					decoration={ <StatusIcon status="pending" /> }
+					actions={ contactUs }
 				/>
 			) }
 			{ ( migration?.status === 'not_started' || connectionFailure ) && (
@@ -154,6 +144,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			{ isCompleted && (
 				<MigrationCard
 					title={ __( 'Your site has been migrated' ) }
+					decoration={ <StatusIcon status="success" /> }
 					description={
 						isUnlockOverdue
 							? __( 'Loading your site is taking longer than it should.' )
@@ -177,7 +168,11 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			) }
 			{ /* A status this page doesn't know yet. */ }
 			{ migration && ! KNOWN_STATUSES.includes( migration.status ) && (
-				<MigrationCard title={ __( 'Your site is being migrated' ) } actions={ contactUs } />
+				<MigrationCard
+					title={ __( 'Your site is being migrated' ) }
+					decoration={ <StatusIcon status="pending" /> }
+					actions={ contactUs }
+				/>
 			) }
 		</PageLayout>
 	);
@@ -188,25 +183,5 @@ function getSourceHost( sourceUrl?: string | null ) {
 		return new URL( sourceUrl ?? '' ).hostname.replace( /^www\./, '' );
 	} catch {
 		return '';
-	}
-}
-
-// The line under the site's name in the header, e.g. "migrating from example.com".
-function getSummary( status: WordPressMigrationStatus[ 'status' ], sourceHost: string ) {
-	switch ( status ) {
-		case 'not_started':
-			return null;
-		case 'paused':
-			/* translators: %s: the domain of the site being migrated, e.g. example.com. */
-			return sprintf( __( 'checking %s before the migration' ), sourceHost );
-		case 'failed':
-			/* translators: %s: the domain of the site being migrated, e.g. example.com. */
-			return sprintf( __( 'the migration from %s stopped' ), sourceHost );
-		case 'completed':
-			/* translators: %s: the domain of the site that was migrated, e.g. example.com. */
-			return sprintf( __( 'migrated from %s' ), sourceHost );
-		default:
-			/* translators: %s: the domain of the site being migrated, e.g. example.com. */
-			return sprintf( __( 'migrating from %s' ), sourceHost );
 	}
 }

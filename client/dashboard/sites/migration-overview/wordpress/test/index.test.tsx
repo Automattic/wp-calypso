@@ -87,7 +87,7 @@ describe( 'WordPressMigration', () => {
 		).toBeDisabled();
 
 		// The install button comes first: the other ways in are only there for people who have trouble with it.
-		expect( screen.getAllByRole( 'link' ) ).toHaveLength( 1 );
+		expect( screen.queryByRole( 'link', { name: /WordPress.org/ } ) ).not.toBeInTheDocument();
 		await userEvent.click( screen.getByRole( 'button', { name: /Having trouble/ } ) );
 		expect( screen.getByRole( 'link', { name: /WordPress.org/ } ) ).toHaveAttribute(
 			'href',
@@ -112,7 +112,6 @@ describe( 'WordPressMigration', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
-		expect( screen.getByText( 'migrating from example.com' ) ).toBeVisible();
 		expect(
 			screen.getAllByRole( 'progressbar' ).map( ( bar ) => bar.getAttribute( 'aria-label' ) )
 		).toEqual( [ 'Verifying', 'Copying', 'Finishing' ] );
@@ -241,7 +240,9 @@ describe( 'WordPressMigration', () => {
 
 		const { router } = render( <WordPressMigration site={ site } />, { queryClient } );
 
-		expect( await screen.findByText( 'migrated from example.com' ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'heading', { name: 'Your site has been migrated' } )
+		).toBeVisible();
 		expect( screen.getByText( /One moment while we finish up/ ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Reload' } ) ).not.toBeInTheDocument();
 		expect( router.state.location.pathname ).toBe( '/' );
