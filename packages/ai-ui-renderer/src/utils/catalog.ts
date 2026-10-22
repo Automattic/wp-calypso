@@ -1,6 +1,6 @@
 import { Catalog, SpecVersion } from '@a2ui/web_core';
 import { BASIC_FUNCTIONS } from '@a2ui/web_core/v1_0';
-import { BASIC_CATALOG_ID } from '../capabilities';
+import { assertInteractiveUiCatalogDefinition, BASIC_CATALOG_ID } from '../capabilities';
 import { AudioPlayer } from '../components/audio-player';
 import { Button } from '../components/button';
 import { Card } from '../components/card';
@@ -48,33 +48,10 @@ const BASIC_COMPONENTS: readonly ReactComponentImplementation[] = [
 
 export type InteractiveUiCatalog = Catalog< ReactComponentImplementation >;
 
-// A definition's code must match its document, and its names can't replace basic ones.
-function assertDefinitionNames(
-	kind: 'component' | 'function',
-	declaredNames: string[],
-	implementedNames: string[],
-	basicNames: string[]
-) {
-	for ( const name of declaredNames ) {
-		if ( basicNames.includes( name ) ) {
-			throw new Error( `The interactive UI ${ kind } ${ name } is already a basic one.` );
-		}
-
-		if ( ! implementedNames.includes( name ) ) {
-			throw new Error( `The interactive UI ${ kind } ${ name } has no implementation.` );
-		}
-	}
-
-	for ( const name of implementedNames ) {
-		if ( ! declaredNames.includes( name ) ) {
-			throw new Error( `The interactive UI ${ kind } ${ name } isn't in its catalog document.` );
-		}
-	}
-}
-
 /**
- * Builds A2UI's Basic catalog, or a definition's catalog with the basic components and functions
- * added. Throws when the definition's code doesn't match its document, or reuses a basic name.
+ * Builds A2UI's Basic catalog, or a definition's catalog: the basic components and functions plus
+ * its own, which replace basic ones of the same name. Throws when the definition fails
+ * `assertInteractiveUiCatalogDefinition()`, or its document isn't a valid A2UI catalog.
  */
 export function createInteractiveUiCatalog(
 	definition?: InteractiveUiCatalogDefinition
@@ -88,22 +65,10 @@ export function createInteractiveUiCatalog(
 		);
 	}
 
+	assertInteractiveUiCatalogDefinition( definition );
+
 	const { catalog, components = {}, functions = {} } = definition;
 	const apis = Catalog.fromJson( catalog, SpecVersion.V1_0 );
-
-	assertDefinitionNames(
-		'component',
-		[ ...apis.components.keys() ],
-		Object.keys( components ),
-		BASIC_COMPONENTS.map( ( { name } ) => name )
-	);
-
-	assertDefinitionNames(
-		'function',
-		[ ...apis.functions.keys() ],
-		Object.keys( functions ),
-		BASIC_FUNCTIONS.map( ( { name } ) => name )
-	);
 
 	return new Catalog(
 		catalog.catalogId,

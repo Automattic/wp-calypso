@@ -10,13 +10,13 @@ import type { ComponentType } from 'react';
  * catalog's components and functions as JSON Schema, which the server reads too.
  */
 export interface InteractiveUiCatalogDocument {
-	/** A versioned ID, such as `urn:automattic:woocommerce-ai:interactive-ui:v1`. */
+	/** A versioned ID, such as `urn:automattic:example:interactive-ui:v1`. */
 	catalogId: string;
 	/** How the agent should use the catalog. */
 	instructions?: string;
-	/** Each component's props, by name, such as `WooAiProductCard`. */
+	/** Each component's props, by name, such as `ExampleCard`. */
 	components?: Record< string, object >;
-	/** Each function's call, by name, such as `wooAiOpenOrder`. */
+	/** Each function's call, by name, such as `exampleOpenItem`. */
 	functions?: Record< string, object >;
 }
 

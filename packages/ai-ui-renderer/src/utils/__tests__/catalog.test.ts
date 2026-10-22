@@ -43,6 +43,17 @@ it( 'adds a catalog’s own components and functions to the basic ones', () => {
 	);
 } );
 
+it( 'lets a catalog’s own component replace the basic one of the same name', () => {
+	const basicText = createInteractiveUiCatalog().components.get( 'Text' );
+
+	const catalog = createInteractiveUiCatalog( {
+		catalog: { catalogId: 'urn:host:catalog:v1', components: { Text: { type: 'object' } } },
+		components: { Text: () => null },
+	} );
+
+	expect( catalog.components.get( 'Text' ) ).not.toBe( basicText );
+} );
+
 it.each< { problem: string; definition: InteractiveUiCatalogDefinition; error: string } >( [
 	{
 		problem: 'a component without an implementation',
@@ -55,12 +66,9 @@ it.each< { problem: string; definition: InteractiveUiCatalogDefinition; error: s
 		error: "The interactive UI function hostExtra isn't in its catalog document.",
 	},
 	{
-		problem: 'a basic component’s name',
-		definition: {
-			catalog: { catalogId: 'urn:host:catalog:v1', components: { Text: { type: 'object' } } },
-			components: { Text: () => null },
-		},
-		error: 'The interactive UI component Text is already a basic one.',
+		problem: 'a catalog without an ID',
+		definition: { catalog: {} } as InteractiveUiCatalogDefinition,
+		error: 'An interactive UI catalog needs a `catalogId`.',
 	},
 ] )( 'rejects $problem', ( { definition, error } ) => {
 	expect( () => createInteractiveUiCatalog( definition ) ).toThrow( error );

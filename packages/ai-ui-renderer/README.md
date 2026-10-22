@@ -13,34 +13,34 @@ A host or provider with its own components and functions declares one catalog: a
 code that implements it.
 
 ```ts
-const wooAiCatalog: InteractiveUiCatalogDefinition = {
+const exampleCatalog: InteractiveUiCatalogDefinition = {
 	catalog: {
-		catalogId: 'urn:automattic:woocommerce-ai:interactive-ui:v1',
-		instructions: 'Use WooAiProductCard to show one product.',
+		catalogId: 'urn:automattic:example:interactive-ui:v1',
+		instructions: 'Use ExampleCard to show one item.',
 		components: {
-			WooAiProductCard: {
+			ExampleCard: {
 				type: 'object',
 				properties: {
 					title: { $ref: 'common_types.json#/$defs/DynamicString' },
-					onAdd: { $ref: 'common_types.json#/$defs/Action' },
+					onSelect: { $ref: 'common_types.json#/$defs/Action' },
 				},
 				required: [ 'title' ],
 			},
 		},
 		functions: {
-			wooAiOpenOrder: {
+			exampleOpenItem: {
 				type: 'object',
 				returnType: 'void',
 				properties: {
-					'@call': { const: 'wooAiOpenOrder' },
-					args: { type: 'object', properties: { orderId: { type: 'number' } } },
+					'@call': { const: 'exampleOpenItem' },
+					args: { type: 'object', properties: { itemId: { type: 'number' } } },
 				},
 				required: [ '@call', 'args' ],
 			},
 		},
 	},
-	components: { WooAiProductCard: ProductCard },
-	functions: { wooAiOpenOrder: ( args ) => openOrder( Number( args.orderId ) ) },
+	components: { ExampleCard },
+	functions: { exampleOpenItem: ( args ) => openItem( Number( args.itemId ) ) },
 };
 ```
 
@@ -56,16 +56,20 @@ const wooAiCatalog: InteractiveUiCatalogDefinition = {
 
 `createInteractiveUiCatalog()` builds A2UI's Basic catalog, and
 `createInteractiveUiCatalog( definition )` a catalog with the basic components and functions plus
-the definition's own. It throws when the code doesn't match the document, or when a name is a
-basic one.
+the definition's own, which replace basic ones of the same name.
 
 ## Capabilities
 
-`getInteractiveUiRendererCapabilities( documents )` from `@automattic/ai-ui-renderer/capabilities`
-returns A2UI's `a2uiRendererCapabilities` for a host that renders the Basic catalog and those
-catalogs: their IDs, and their documents as inline catalogs. Send it to the agent, so it shows only
-UI the host can render. That entry, which also exports `BASIC_CATALOG_ID`, has no A2UI or React
-code, so the renderer can still load on demand.
+The `@automattic/ai-ui-renderer/capabilities` entry has no A2UI or React code, so a host can use it
+before loading the renderer:
+
+- `assertInteractiveUiCatalogDefinition( definition )` throws when a definition has no ID, or its
+  code doesn't match its document. Check catalogs with it before advertising them, since
+  `createInteractiveUiCatalog()` rejects those that fail.
+- `getInteractiveUiRendererCapabilities( documents )` returns A2UI's `a2uiRendererCapabilities`
+  for the Basic catalog and those catalogs: their IDs, and their documents as inline catalogs.
+  Send it to the agent, so it shows only UI the host can render.
+- `BASIC_CATALOG_ID` is A2UI's Basic catalog ID.
 
 ## Rendering
 

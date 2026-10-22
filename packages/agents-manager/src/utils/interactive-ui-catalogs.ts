@@ -1,4 +1,5 @@
 import {
+	assertInteractiveUiCatalogDefinition,
 	BASIC_CATALOG_ID,
 	getInteractiveUiRendererCapabilities,
 } from '@automattic/ai-ui-renderer/capabilities';
@@ -18,26 +19,27 @@ const AGENTS_MANAGER_CATALOG: InteractiveUiCatalogDefinition = {
 };
 
 /**
- * Keeps the provider catalogs with an ID of their own. As with abilities, the first with an ID
- * wins, so a provider can't replace a catalog that already works. The Basic and Agents Manager
- * IDs are taken.
+ * Keeps the valid provider catalogs, so the chat only advertises catalogs it can build. As with
+ * abilities, the first with an ID wins, so a provider can't replace a catalog that already works.
+ * The Basic and Agents Manager IDs are taken.
  */
 export function filterInteractiveUiCatalogs( catalogs: InteractiveUiCatalogDefinition[] ) {
 	const takenIds = new Set( [ BASIC_CATALOG_ID, AGENTS_MANAGER_CATALOG_ID ] );
 
 	return catalogs.filter( ( definition ) => {
-		// Providers' exports aren't validated, so one can lack its catalog document.
-		const catalogId = definition.catalog?.catalogId;
+		try {
+			assertInteractiveUiCatalogDefinition( definition );
 
-		if ( typeof catalogId !== 'string' || takenIds.has( catalogId ) ) {
+			if ( takenIds.has( definition.catalog.catalogId ) ) {
+				throw new Error( `The catalog ID ${ definition.catalog.catalogId } is taken.` );
+			}
+		} catch ( error ) {
 			// eslint-disable-next-line no-console
-			console.error(
-				`[AgentsManager] Skipped an interactive UI catalog without an ID of its own: ${ catalogId }`
-			);
+			console.error( '[AgentsManager] Skipped an interactive UI catalog:', error );
 			return false;
 		}
 
-		takenIds.add( catalogId );
+		takenIds.add( definition.catalog.catalogId );
 		return true;
 	} );
 }
@@ -53,8 +55,8 @@ export function getInteractiveUiCapabilities(
 
 /**
  * Builds the catalogs a conversation's surfaces render with: A2UI's Basic catalog, Agents
- * Manager's, and each provider's. A provider's mistake can't break the chat: a catalog that fails
- * to build is skipped, so only its own surfaces don't render.
+ * Manager's, and each provider's. A catalog whose document isn't valid A2UI is skipped, so only
+ * its own surfaces don't render.
  */
 export function createInteractiveUiCatalogs(
 	renderer: InteractiveUiRenderer,

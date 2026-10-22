@@ -32,7 +32,7 @@ it( 'builds the Basic catalog, Agents Manager’s and each provider’s', () => 
 	] );
 } );
 
-it( 'skips a provider catalog that fails to build, and keeps the others', () => {
+it( 'skips a catalog that fails to build, and keeps the others', () => {
 	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 	const catalogs = createInteractiveUiCatalogs( renderer, [
@@ -51,7 +51,7 @@ it( 'skips a provider catalog that fails to build, and keeps the others', () => 
 	);
 } );
 
-it( 'keeps the first provider catalog with each ID, and skips one without an ID of its own', () => {
+it( 'keeps only valid provider catalogs, the first with each ID', () => {
 	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 	const first = createCatalog( WOO_CATALOG_ID );
 
@@ -60,13 +60,15 @@ it( 'keeps the first provider catalog with each ID, and skips one without an ID 
 		createCatalog( WOO_CATALOG_ID ),
 		createCatalog( AGENTS_MANAGER_CATALOG_ID ),
 		createCatalog( BASIC_CATALOG_ID ),
+		createCatalog( 'urn:broken:v1', {} ),
 		{} as InteractiveUiCatalogDefinition,
 	] );
 
 	expect( catalogs ).toEqual( [ first ] );
-	expect( consoleError ).toHaveBeenCalledTimes( 4 );
-	expect( consoleError ).toHaveBeenLastCalledWith(
-		'[AgentsManager] Skipped an interactive UI catalog without an ID of its own: undefined'
+	expect( consoleError ).toHaveBeenCalledTimes( 5 );
+	expect( consoleError ).toHaveBeenCalledWith(
+		'[AgentsManager] Skipped an interactive UI catalog:',
+		new Error( 'The interactive UI component WooAiProductCard has no implementation.' )
 	);
 } );
 

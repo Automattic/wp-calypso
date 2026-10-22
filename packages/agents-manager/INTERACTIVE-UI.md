@@ -74,10 +74,10 @@ come.
   twice, and `{"path": …}` is read as plain data. `wpcom/render-interactive-ui` checks all of these
   so the agent can retry, and abilities that build surfaces with `Interactive_UI::surface_result()`
   follow them too.
-- **Owner-prefixed names.** Names are scoped by catalog, but prefix yours with your owner
-  (`AgentsManagerColorPicker`, `JetpackAiTitlePicker`, `wooAiOpenOrder`) so the agent can tell
-  catalogs apart. As with abilities, the first catalog with an ID wins, and Agents Manager skips and
-  logs a later one. It also skips a catalog that fails to build, so the others keep working.
+- **Owner-prefixed names.** Names are scoped by catalog, but prefix yours with your owner, such as
+  `ExampleCard` and `exampleOpenItem` for an owner named Example, so the agent can tell catalogs
+  apart. Agents Manager checks each provider's catalog before listing it, and skips and logs an
+  invalid one or a later one with a taken ID, so the others keep working.
 - **Functions run from a click.** A2UI runs a catalog's functions only from a click, never from a
   value, unless its document sets `requiresUserActivation: false` for one without side effects.
   Every function treats its arguments as untrusted.
