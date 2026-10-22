@@ -1,13 +1,13 @@
 import * as renderer from '@automattic/ai-ui-renderer';
 import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
 import { render, screen } from '@testing-library/react';
+import * as tracks from '../../utils/tracks';
 import {
 	AGENTS_MANAGER_CATALOG_ID,
 	createInteractiveUiCatalogs,
 	filterInteractiveUiCatalogs,
 	getInteractiveUiCapabilities,
-} from '../interactive-ui-catalogs';
-import * as tracks from '../tracks';
+} from '../catalogs';
 import type { InteractiveUiCatalogDefinition } from '@automattic/ai-ui-renderer';
 
 const WOO_CATALOG_ID = 'urn:automattic:woocommerce-ai:interactive-ui:v1';

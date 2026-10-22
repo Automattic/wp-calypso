@@ -7,11 +7,11 @@
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
+import { getInteractiveUiCapabilities } from '../interactive-ui/catalogs';
 import { saveSessionId } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
-import { getInteractiveUiCapabilities } from './interactive-ui-catalogs';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { getClientConstructorArguments, getSiteEditorActions } from './site-editor-context';
 import { getAgentsManagerSurface, getIsA11n, getIsTest } from './tracks';

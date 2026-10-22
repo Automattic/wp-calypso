@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from '@wordpress/element';
-import { INTERACTIVE_UI_TOOL_ID } from '../utils/interactive-ui-messages';
+import { INTERACTIVE_UI_TOOL_ID } from '../interactive-ui/messages';
 import { recordBigSkyTracksEvent } from '../utils/tracks';
 import type { ComponentType } from 'react';
 

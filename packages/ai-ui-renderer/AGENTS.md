@@ -4,12 +4,13 @@ Shared A2UI v1.0 catalog and rendering primitives. Keep chat message handling, s
 and MCP transport in consumers. Preserve component schemas, bindings, and actions when moving
 code. Only basic or shared components live here; a chat's own components live in its project, in
 its own catalog that `createInteractiveUiCatalog()` builds. See README.md for usage and build
-commands, and `packages/agents-manager/INTERACTIVE-UI.md` for the architecture.
+commands, and `packages/agents-manager/src/interactive-ui/README.md` for the architecture.
 
 Code lives in `components/` (`InteractiveUiSurface` and the Basic catalog's components), `contexts/`
 (what a surface shares with its components), `hooks/`, and `utils/` (catalogs, definitions, runtime,
-shared schemas, theme, and `kebabCase()`). `index.ts` is the public API, `style.scss` the stylesheet,
-and `capabilities.ts` the entry hosts load before the renderer, so it imports no A2UI or React.
+shared schemas, theme, and `kebabCase()`). `index.ts` is the public API, `style.scss` the
+stylesheet, and `capabilities.ts` the entry hosts load before the renderer, so it imports no A2UI or
+React.
 
 Name CSS classes BEM-style under the `ai-ui-renderer` block, with kebab-case modifiers
 (`ai-ui-renderer__image--small-feature`); `kebabCase()` turns A2UI's enum values into them.

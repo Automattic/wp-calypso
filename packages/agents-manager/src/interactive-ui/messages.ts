@@ -1,4 +1,4 @@
-import { isChatUiStale } from './stale-chat-ui';
+import { isChatUiStale } from '../utils/stale-chat-ui';
 import type { UIMessage } from '@automattic/agenttic-client';
 import type { InteractiveUiMessage, InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 

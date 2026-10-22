@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import type { InteractiveUiPresentation } from '../../hooks/use-interactive-ui';
+import type { InteractiveUiPresentation } from '../use-interactive-ui';
 import '@automattic/ai-ui-renderer/style.scss';
 import './style.scss';
 

@@ -1,24 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import { getLatestUserMessageIndex } from '../utils/latest-message';
+import { createInteractiveUiCatalogs } from './catalogs';
 import {
 	attachInteractiveUiPresentation,
 	markInteractiveUiActionReplies,
-} from '../utils/convert-interactive-ui-messages-to-components';
-import { createInteractiveUiCatalogs } from '../utils/interactive-ui-catalogs';
+} from './convert-messages-to-components';
 import {
 	applyInteractiveUiBatch,
 	getInteractiveUiBatches,
 	getStaleInteractiveUiSurfaceIds,
 	INTERACTIVE_UI_VERSION,
-} from '../utils/interactive-ui-messages';
-import {
-	getInteractiveUiSession,
-	trackInteractiveUiHistory,
-} from '../utils/interactive-ui-session';
-import { getLatestUserMessageIndex } from '../utils/latest-message';
+} from './messages';
+import { getInteractiveUiSession, trackInteractiveUiHistory } from './session';
+import type { InteractiveUiRenderer } from './catalogs';
+import type { InteractiveUiSession } from './session';
 import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
 import type { AgentConfig } from '../utils/create-agent-config';
-import type { InteractiveUiRenderer } from '../utils/interactive-ui-catalogs';
-import type { InteractiveUiSession } from '../utils/interactive-ui-session';
 import type { LoadedProviders } from '../utils/load-external-providers';
 import type { UIMessage, SubmitOptions } from '@automattic/agenttic-client';
 import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';

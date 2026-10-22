@@ -28,7 +28,6 @@ import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestio
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useGatedRegenerateHandler } from '../../hooks/use-gated-regenerate-handler';
 import { useInlineSuggestionClick } from '../../hooks/use-inline-suggestion-click';
-import { useInteractiveUi } from '../../hooks/use-interactive-ui';
 import { useNavigationContinuation } from '../../hooks/use-navigation-continuation';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import { useResponseOutcomeTracking } from '../../hooks/use-response-outcome-tracking';
@@ -38,9 +37,10 @@ import useSiteSetupChecklist from '../../hooks/use-site-setup-checklist';
 import useSourcesAction from '../../hooks/use-sources-action';
 import { useStreamedCheckpointMessages } from '../../hooks/use-streamed-checkpoint-messages';
 import { useSuggestionTracking } from '../../hooks/use-suggestion-tracking';
+import { convertInteractiveUiMessagesToComponents } from '../../interactive-ui/convert-messages-to-components';
+import { useInteractiveUi } from '../../interactive-ui/use-interactive-ui';
 import { markSessionSent } from '../../utils/agent-session';
 import { convertBigSkyMessageToUIMessage } from '../../utils/convert-big-sky-message';
-import { convertInteractiveUiMessagesToComponents } from '../../utils/convert-interactive-ui-messages-to-components';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
 } from '../../utils/convert-tool-messages-to-components';

@@ -3,7 +3,7 @@
 `@automattic/ai-ui-renderer` renders A2UI v1.0 surfaces with WordPress components. It holds only
 basic or shared components: each chat's own components live in its project. Hosts own session
 lifetime, action delivery, and error handling. See the
-[interactive UI architecture](../agents-manager/INTERACTIVE-UI.md) for how hosts and providers
+[interactive UI architecture](../agents-manager/src/interactive-ui/README.md) for how hosts and providers
 use it.
 
 ## Catalogs

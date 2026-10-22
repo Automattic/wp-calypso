@@ -1,12 +1,12 @@
 import { createInteractiveUiCatalog, createInteractiveUiRuntime } from '@automattic/ai-ui-renderer';
-import { InteractiveUiSurfaces } from '../../components/interactive-ui-surfaces';
 import {
 	attachInteractiveUiPresentation,
 	convertInteractiveUiMessagesToComponents,
 	markInteractiveUiActionReplies,
-} from '../convert-interactive-ui-messages-to-components';
-import type { InteractiveUiPresentation } from '../../hooks/use-interactive-ui';
-import type { AgentsManagerUIMessage } from '../convert-tool-messages-to-components';
+} from '../convert-messages-to-components';
+import { InteractiveUiSurfaces } from '../surfaces';
+import type { AgentsManagerUIMessage } from '../../utils/convert-tool-messages-to-components';
+import type { InteractiveUiPresentation } from '../use-interactive-ui';
 import type { ComponentType } from 'react';
 
 const operations = [

@@ -138,7 +138,7 @@ import type {
 
 ## Interactive chat surfaces
 
-The agent can show buttons, forms and pickers in the chat. [`@automattic/ai-ui-renderer`](../ai-ui-renderer/README.md) renders them and holds only the basic or shared components; each chat's own components live in its project, such as Agents Manager, WooCommerce AI or the Jetpack AI sidebar. See [`INTERACTIVE-UI.md`](./INTERACTIVE-UI.md) for how it works.
+The agent can show buttons, forms and pickers in the chat. [`@automattic/ai-ui-renderer`](../ai-ui-renderer/README.md) renders them and holds only the basic or shared components; each chat's own components live in its project, such as Agents Manager, WooCommerce AI or the Jetpack AI sidebar. See [`src/interactive-ui/README.md`](./src/interactive-ui/README.md) for how it works.
 
 ## Development
 

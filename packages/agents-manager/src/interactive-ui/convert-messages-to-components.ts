@@ -1,7 +1,7 @@
-import { InteractiveUiSurfaces } from '../components/interactive-ui-surfaces';
-import { isInteractiveUiActionMessage, parseInteractiveUiText } from './interactive-ui-messages';
-import type { AgentsManagerUIMessage } from './convert-tool-messages-to-components';
-import type { InteractiveUiPresentation } from '../hooks/use-interactive-ui';
+import { isInteractiveUiActionMessage, parseInteractiveUiText } from './messages';
+import { InteractiveUiSurfaces } from './surfaces';
+import type { InteractiveUiPresentation } from './use-interactive-ui';
+import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
 import type { UIMessage } from '@automattic/agenttic-client';
 import type { ComponentType } from 'react';
 

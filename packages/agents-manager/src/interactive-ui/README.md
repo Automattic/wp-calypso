@@ -30,21 +30,19 @@ come.
 - **`@automattic/ai-ui-renderer`** renders surfaces for any host: the basic or shared components,
   `createInteractiveUiCatalog()`, `createInteractiveUiRuntime()`, `InteractiveUiSurface` and the
   styles, plus a light `capabilities` entry hosts use before loading it. It has no chat, session or
-  transport code. See its [README](../ai-ui-renderer/README.md).
-- **Agents Manager** hosts them in the chat:
-  - `src/hooks/use-interactive-ui.ts` keeps a runtime per conversation, loads the renderer on demand
-    and sends actions to the agent.
-  - `src/components/interactive-ui-surfaces/` renders a message's surfaces in the chat's colors and
-    mode (its `style.scss` sets A2UI's tokens from Agenttic's), disables a stale one, and stacks
-    the modal above the chat. Surfaces sit in a `data-agenttic-isolated` wrapper, so their controls
-    keep their own typography while replies keep the chat's typography reset.
-  - `src/utils/interactive-ui-messages.ts` and
-    `src/utils/convert-interactive-ui-messages-to-components.ts` find surfaces in the transcript
-    and which of them are stale.
-  - `src/utils/interactive-ui-session.ts` keeps each conversation's session, through a new chat's
-    bootstrap, and tells surfaces restored from history from new ones.
-  - `src/utils/interactive-ui-catalogs.ts` builds the catalogs, and the renderer capabilities the
-    client context sends.
+  transport code. See its [README](../../../ai-ui-renderer/README.md).
+- **Agents Manager** hosts them in the chat, from this folder:
+  - `use-interactive-ui.ts` keeps a runtime per conversation, loads the renderer on demand and
+    sends actions to the agent.
+  - `surfaces/` renders a message's surfaces in the chat's colors and mode (its `style.scss` sets
+    A2UI's tokens from Agenttic's), disables a stale one, and stacks the modal above the chat.
+    Surfaces sit in a `data-agenttic-isolated` wrapper, so their controls keep their own typography
+    while replies keep the chat's typography reset.
+  - `messages.ts` and `convert-messages-to-components.ts` find surfaces in the transcript and which
+    of them are stale.
+  - `session.ts` keeps each conversation's session, through a new chat's bootstrap, and tells
+    surfaces restored from history from new ones.
+  - `catalogs.ts` builds the catalogs, and the renderer capabilities the client context sends.
 - **Custom components and functions** live in the project that owns them: Agents Manager's here
   (AM-117), and its providers' (WooCommerce AI, the Jetpack AI sidebar) in their own repos.
   Providers declare their catalog in the provider contract's `interactiveUi` field
@@ -54,10 +52,10 @@ come.
 
 - **One catalog per owner.** Agents Manager, WooCommerce AI and the Jetpack AI sidebar each
   declare one catalog: an A2UI catalog document and the code that implements it
-  ([how](../ai-ui-renderer/README.md#catalogs)). Each catalog includes the basic components, so a
-  surface names one: the agent composes with A2UI's Basic catalog or one the client lists, and an
-  ability uses its owner's, such as `AGENTS_MANAGER_CATALOG_ID`. Conversations store surfaces, so
-  change a catalog only in ways that keep old surfaces rendering.
+  ([how](../../../ai-ui-renderer/README.md#catalogs)). Each catalog includes the basic components,
+  so a surface names one: the agent composes with A2UI's Basic catalog or one the client lists,
+  and an ability uses its owner's, such as `AGENTS_MANAGER_CATALOG_ID`. Conversations store
+  surfaces, so change a catalog only in ways that keep old surfaces rendering.
 - **Surfaces come from wpcom**, which stores them with the conversation. A browser ability's
   `agentMessage` only shows live: it isn't stored, and the stream can drop it. So a browser ability
   that needs UI moves it to a server ability, or the agent composes it.
@@ -96,7 +94,7 @@ come.
   and skip their side effects and Tracks.
 - **Style with A2UI's theme tokens.** Custom components color themselves with the `--a2ui-*`
   tokens, or use WordPress components, which the renderer themes with them, so they follow each
-  host's theme ([theming](../ai-ui-renderer/README.md#theming)).
+  host's theme ([theming](../../../ai-ui-renderer/README.md#theming)).
 - **Load only what the surface renders.** Editor-only components load on demand, in the editor.
 
 ## Try it
