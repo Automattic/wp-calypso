@@ -1,4 +1,4 @@
-import { EmailBox, isWpError } from '@automattic/api-core';
+import { DomainSubtype, EmailBox, isWpError } from '@automattic/api-core';
 import {
 	domainQuery,
 	mailboxAccountsQuery,
@@ -108,7 +108,15 @@ export const chooseDomainRoute = createRoute( {
 		};
 	},
 	loader: async ( { context } ) => {
-		queryClient.prefetchQuery( context.config.queries.domainsQuery() );
+		const domains = await queryClient.ensureQueryData( context.config.queries.domainsQuery() );
+		const hasEmailableDomains = domains.some(
+			( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+		);
+
+		// The emails page explains how to get a domain.
+		if ( ! hasEmailableDomains ) {
+			throw dashboardRedirect( { to: emailsRoute.fullPath } );
+		}
 	},
 } ).lazy( () =>
 	import( '../../emails/choose-domain' ).then( ( d ) =>
