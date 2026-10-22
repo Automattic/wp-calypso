@@ -23,12 +23,7 @@ import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
 
 function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
-	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
-
-	// Append the locale slug for the userless checkout page.
-	if ( 'no-site' === dependencies.siteSlug && true === dependencies.allowUnauthenticated ) {
-		checkoutURL += `/${ localeSlug }`;
-	}
+	const checkoutURL = `/checkout/${ dependencies.siteSlug }`;
 
 	const isDomainOnly = [ 'domain', DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName );
 	const isGravatarDomain = isDomainForGravatarFlow( flowName );

@@ -15,7 +15,6 @@ export function generateSteps( {
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
 	isDomainFulfilled = noop,
-	maybeRemoveStepForUserlessCheckout = noop,
 	createSiteAndAddDIFMToCart = noop,
 	submitWebsiteContent = noop,
 } = {} ) {
@@ -93,18 +92,11 @@ export function generateSteps( {
 				'username',
 				'marketing_price_group',
 				'redirect',
-				'allowUnauthenticated',
 				'is_new_account',
 				'oauth2_client_id',
 				'oauth2_redirect',
 			],
-			optionalDependencies: [
-				'redirect',
-				'allowUnauthenticated',
-				'is_new_account',
-				'oauth2_client_id',
-				'oauth2_redirect',
-			],
+			optionalDependencies: [ 'redirect', 'is_new_account', 'oauth2_client_id', 'oauth2_redirect' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
@@ -119,52 +111,14 @@ export function generateSteps( {
 				'username',
 				'marketing_price_group',
 				'redirect',
-				'allowUnauthenticated',
 				'is_new_account',
 				'oauth2_client_id',
 				'oauth2_redirect',
 			],
-			optionalDependencies: [
-				'redirect',
-				'allowUnauthenticated',
-				'is_new_account',
-				'oauth2_client_id',
-				'oauth2_redirect',
-			],
+			optionalDependencies: [ 'redirect', 'is_new_account', 'oauth2_client_id', 'oauth2_redirect' ],
 			props: {
 				isSocialFirst: true,
 				isSocialSignupEnabled: true,
-			},
-		},
-
-		'user-new': {
-			stepName: 'user-new',
-			apiRequestFunction: createAccount,
-			fulfilledStepCallback: maybeRemoveStepForUserlessCheckout,
-			providesToken: true,
-			dependencies: [ 'cartItem', 'domainItem' ],
-			providesDependencies: [
-				'bearer_token',
-				'username',
-				'marketing_price_group',
-				'allowUnauthenticated',
-				'is_new_account',
-				'redirect',
-				'oauth2_client_id',
-				'oauth2_redirect',
-			],
-			optionalDependencies: [
-				'bearer_token',
-				'username',
-				'marketing_price_group',
-				'allowUnauthenticated',
-				'is_new_account',
-				'redirect',
-				'oauth2_client_id',
-				'oauth2_redirect',
-			],
-			props: {
-				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
 		},
 
@@ -188,13 +142,6 @@ export function generateSteps( {
 		'hosting-decider': {
 			stepName: 'hosting-decider',
 			providesDependencies: [ 'stepperHostingFlow' ],
-		},
-
-		'plans-new': {
-			stepName: 'plans',
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isPlanFulfilled,
 		},
 
 		'plans-import': {
@@ -422,11 +369,10 @@ export function generateSteps( {
 				'oauth2_client_id',
 				'oauth2_redirect',
 				'marketing_price_group',
-				'allowUnauthenticated',
 				'is_new_account',
 				'redirect',
 			],
-			optionalDependencies: [ 'allowUnauthenticated', 'redirect', 'is_new_account' ],
+			optionalDependencies: [ 'redirect', 'is_new_account' ],
 		},
 
 		'oauth2-name': {
@@ -439,11 +385,10 @@ export function generateSteps( {
 				'oauth2_client_id',
 				'oauth2_redirect',
 				'marketing_price_group',
-				'allowUnauthenticated',
 				'is_new_account',
 				'redirect',
 			],
-			optionalDependencies: [ 'allowUnauthenticated', 'redirect', 'is_new_account' ],
+			optionalDependencies: [ 'redirect', 'is_new_account' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,
