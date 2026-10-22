@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../../../../test-utils';
 import SolutionsCardsUpsellStep from '../solutions-cards-upsell-step';
@@ -166,5 +166,25 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 		);
 		expect( mockSetNewMessagingChat ).not.toHaveBeenCalled();
 		expect( closeDialog ).not.toHaveBeenCalled();
+	} );
+
+	test( 'renew card shows the 25% discount and links to checkout with the coupon', async () => {
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="tooExpensive"
+				purchase={ purchase }
+				closeDialog={ jest.fn() }
+				onDeclineUpsell={ jest.fn() }
+			/>
+		);
+
+		const renewCard = await screen.findByRole( 'link', { name: /Renew now and pay less/ } );
+		expect(
+			within( renewCard ).getByText(
+				'Get an exclusive 25% discount automatically applied at checkout.'
+			)
+		).toBeVisible();
+		expect( renewCard ).not.toHaveTextContent( '25%%' );
+		expect( renewCard ).toHaveAttribute( 'href', expect.stringContaining( 'coupon=DONTGO25' ) );
 	} );
 } );
