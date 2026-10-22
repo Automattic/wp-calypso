@@ -10,7 +10,7 @@ providers use it.
 
 A host or provider with its own components and functions declares one catalog: an
 [A2UI v1.0 catalog document](https://a2ui.org/specification/v1_0/catalog_definition.json) and the
-code that implements it.
+code that implements it. Add a custom component only for what the basic ones can't express.
 
 ```ts
 const exampleCatalog: InteractiveUiCatalogDefinition = {
@@ -46,7 +46,7 @@ const exampleCatalog: InteractiveUiCatalogDefinition = {
 
 - The document is plain JSON, so the server reads the same one ([capabilities](#capabilities)).
   Props are JSON Schema, with A2UI's shared types from `common_types.json#/$defs/`, such as
-  `DynamicString` and `Action`. A component rejects props it doesn't declare, so declare `weight`
+  `DynamicString` and `Action`, and the document's own shared schemas in its `$defs`. A component rejects props it doesn't declare, so declare `weight`
   if it can sit in a `Row` or `Column`.
 - A component gets resolved props: bound values, a `set<Prop>` setter for each, actions as
   functions to call, its `surfaceId` and `disabled` state, and the host's `hostProps`. Disable
