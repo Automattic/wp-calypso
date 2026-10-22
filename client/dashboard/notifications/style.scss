@@ -1,0 +1,34 @@
+@import '@wordpress/base-styles/variables';
+
+$pane-height: calc(
+	100vh - var(--masterbar-height) - 2 * var(--page-layout-block-padding) -
+		var(--dashboard-page-header__row-height) - var(--dashboard-page-header__content-gap)
+);
+
+.dashboard-notifications__list,
+.dashboard-notifications__detail {
+	height: $pane-height;
+	overflow: hidden;
+
+	> div {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+}
+
+.dashboard-notifications__detail > div {
+	overflow-y: auto;
+}
+
+.dashboard-notifications__tabs,
+.dashboard-notifications__tab-panel {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+
+.dashboard-notifications__filters {
+	padding: 0 $grid-unit-20 $grid-unit-15;
+}
