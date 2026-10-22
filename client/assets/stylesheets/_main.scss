@@ -52,6 +52,7 @@ body {
 	color: var(--color-text);
 	font-size: $font-body;
 	line-height: 1.5;
+	text-wrap-style: pretty;
 
 	-ms-overflow-style: scrollbar;
 

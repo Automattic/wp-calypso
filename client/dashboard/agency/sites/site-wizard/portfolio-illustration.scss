@@ -1,0 +1,314 @@
+.agency-sites-story__graphic .agency-portfolio-art {
+	display: block;
+	inline-size: 100%;
+	block-size: auto;
+	fill: none;
+	stroke: var( --color-text );
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.agency-portfolio-art__paper {
+	fill: var( --color-surface );
+}
+
+.agency-portfolio-art__wash {
+	fill: color-mix( in srgb, var( --sites-story-accent ) 8%, var( --color-surface ) );
+	stroke: none;
+}
+
+.agency-portfolio-art__fine {
+	stroke-width: 1.2;
+}
+
+.agency-portfolio-art__accent {
+	stroke: var( --sites-story-accent );
+}
+
+.agency-portfolio-art__brand {
+	stroke: none;
+	color: var( --color-text );
+}
+
+.agency-portfolio-art__brand path {
+	fill: currentColor;
+}
+
+.agency-portfolio-art__cords {
+	stroke: color-mix( in srgb, var( --sites-story-accent ) 50%, var( --color-surface ) );
+	stroke-width: 1.5;
+}
+
+.agency-portfolio-art__node-signals path {
+	stroke: var( --sites-story-accent );
+	stroke-dasharray: 12 120;
+	stroke-dashoffset: 14;
+	opacity: 0;
+}
+
+.agency-portfolio-art__ink {
+	fill: var( --color-text );
+	stroke: none;
+}
+
+.agency-portfolio-art__ring {
+	stroke-width: 3.5;
+}
+
+.agency-portfolio-art__tag {
+	fill: color-mix( in srgb, var( --sites-story-accent ) 16%, var( --color-surface ) );
+}
+
+.agency-portfolio-art__keyring {
+	transform-origin: 240px 63px;
+}
+
+.agency-portfolio-art__folio-left,
+.agency-portfolio-art__folio-right,
+.agency-portfolio-art__folio-front {
+	transition: transform 500ms ease;
+}
+
+.agency-portfolio-art__folio-left {
+	transform-origin: 134px 274px;
+}
+
+.agency-portfolio-art__folio-right {
+	transform-origin: 350px 270px;
+}
+
+.agency-portfolio-art__folio-front {
+	transform-origin: 240px 306px;
+}
+
+.agency-portfolio-art__fan-page {
+	transform-origin: 240px 262px;
+}
+
+@media ( prefers-reduced-motion: no-preference ) and ( hover: hover ) {
+	.agency-sites-story__section:hover .agency-portfolio-art__node-signals path {
+		animation: agency-portfolio-connect 1800ms ease-in-out both;
+	}
+
+	.agency-sites-story__section:hover .agency-portfolio-art__folio-left {
+		animation: agency-portfolio-fan-left 850ms both;
+	}
+
+	.agency-sites-story__section:hover .agency-portfolio-art__folio-right {
+		animation: agency-portfolio-fan-right 1050ms 100ms both;
+	}
+
+	.agency-sites-story__section:hover .agency-portfolio-art__folio-front {
+		animation: agency-portfolio-lift 800ms 150ms both;
+	}
+
+	.agency-sites-story__section:hover .agency-portfolio-art__fan-page {
+		animation: agency-portfolio-open-fan 950ms var( --arrival-delay ) both;
+	}
+
+	.agency-sites-story__section:hover .agency-portfolio-art__cascade-page {
+		animation: agency-portfolio-spread 850ms var( --arrival-delay ) both;
+	}
+
+	.agency-sites-story__section:hover .agency-portfolio-art__stack-front {
+		animation: agency-portfolio-turn-page 1200ms var( --arrival-delay ) both;
+	}
+
+	.agency-sites-story__section:hover .agency-portfolio-art__loose-row {
+		animation: agency-portfolio-align 1000ms var( --arrival-delay ) both;
+	}
+
+	.agency-sites-story__section:hover .agency-portfolio-art__roll-rows {
+		animation: agency-portfolio-unroll 1800ms both;
+	}
+
+	.agency-sites-story__section:hover .agency-portfolio-art__keyring {
+		animation: agency-portfolio-sway 1700ms ease-in-out both;
+	}
+
+	.agency-sites-story__section:hover .agency-portfolio-art__key {
+		animation: agency-portfolio-jingle 1500ms var( --arrival-delay ) ease-in-out both;
+	}
+}
+
+@keyframes agency-portfolio-sway {
+	0%,
+	100% {
+		transform: none;
+	}
+	20% {
+		transform: rotate( 3deg );
+	}
+	48% {
+		transform: rotate( -2deg );
+	}
+	72% {
+		transform: rotate( 0.8deg );
+	}
+}
+
+@keyframes agency-portfolio-jingle {
+	0%,
+	100% {
+		transform: none;
+	}
+	14% {
+		transform: rotate( var( --swing ) );
+	}
+	32% {
+		transform: rotate( calc( var( --swing ) * -0.7 ) );
+	}
+	50% {
+		transform: rotate( calc( var( --swing ) * 0.4 ) );
+	}
+	68% {
+		transform: rotate( calc( var( --swing ) * -0.18 ) );
+	}
+	84% {
+		transform: rotate( calc( var( --swing ) * 0.06 ) );
+	}
+}
+
+
+
+@keyframes agency-portfolio-open-fan {
+	0% {
+		transform: none;
+	}
+	18% {
+		transform: translateY( 2px ) rotate( calc( var( --fan-angle ) * -0.25 ) );
+	}
+	68% {
+		transform: translateY( -6px ) rotate( calc( var( --fan-angle ) * 1.2 ) );
+	}
+	100% {
+		transform: translateY( -4px ) rotate( var( --fan-angle ) );
+	}
+}
+
+@keyframes agency-portfolio-spread {
+	0% {
+		transform: none;
+	}
+	20% {
+		transform: translateY( 2px );
+	}
+	70% {
+		transform: translate( calc( var( --cascade-x ) * 1.2 ), -5px );
+	}
+	100% {
+		transform: translate( var( --cascade-x ), -3px );
+	}
+}
+
+@keyframes agency-portfolio-turn-page {
+	0%,
+	100% {
+		transform: none;
+	}
+	15% {
+		transform: translateY( 3px );
+	}
+	50% {
+		transform: translate( 8px, -14px ) rotate( 2deg );
+	}
+	75% {
+		transform: translate( -1px, 2px );
+	}
+}
+
+@keyframes agency-portfolio-align {
+	0% {
+		transform: none;
+	}
+	20% {
+		transform: translateX( calc( var( --row-align ) * -0.15 ) );
+	}
+	70% {
+		transform: translateX( calc( var( --row-align ) * 1.1 ) );
+	}
+	100% {
+		transform: translateX( var( --row-align ) );
+	}
+}
+
+@keyframes agency-portfolio-unroll {
+	0% {
+		transform: none;
+	}
+	15% {
+		transform: translateY( 3px );
+	}
+	75% {
+		transform: translateY( -28px );
+	}
+	100% {
+		transform: translateY( -27px );
+	}
+}
+
+@keyframes agency-portfolio-connect {
+	0% {
+		opacity: 0;
+		stroke-dashoffset: 14;
+	}
+	12% {
+		opacity: 1;
+	}
+	85% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		stroke-dashoffset: -100;
+	}
+}
+
+@keyframes agency-portfolio-fan-left {
+	0% {
+		transform: none;
+	}
+	15% {
+		transform: translate( 2px, 2px ) rotate( 1deg );
+	}
+	65% {
+		transform: translate( -9px, -3px ) rotate( -4deg );
+	}
+	100% {
+		transform: translate( -7px, -2px ) rotate( -3deg );
+	}
+}
+
+@keyframes agency-portfolio-fan-right {
+	0% {
+		transform: none;
+	}
+	12% {
+		transform: translate( -2px, 2px ) rotate( -1deg );
+	}
+	60% {
+		transform: translate( 9px, -5px ) rotate( 4deg );
+	}
+	78% {
+		transform: translate( 6px, -2px ) rotate( 2.5deg );
+	}
+	100% {
+		transform: translate( 7px, -3px ) rotate( 3deg );
+	}
+}
+
+@keyframes agency-portfolio-lift {
+	0% {
+		transform: none;
+	}
+	18% {
+		transform: translateY( 2px );
+	}
+	68% {
+		transform: translateY( -8px );
+	}
+	100% {
+		transform: translateY( -6px );
+	}
+}

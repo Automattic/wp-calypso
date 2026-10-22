@@ -16205,6 +16205,7 @@ __metadata:
     react-slider: "npm:^2.0.6"
     react-test-renderer: "npm:^18.3.1"
     react-transition-group: "npm:^4.4.5"
+    read-excel-file: "npm:^9.3.12"
     redux: "npm:^5.0.1"
     redux-dynamic-middlewares: "npm:^2.2.0"
     redux-mock-store: "npm:^1.5.5"
@@ -20406,6 +20407,13 @@ __metadata:
   version: 0.4.9
   resolution: "fflate@npm:0.4.9"
   checksum: a74e599dc8592766d810e1af5c476627480132d1ded41bad3a8bff5ccebdaec048c0a3504f2578792b1fa26db5c2603473fb76e4983e76d0635f5cfc188f8613
+  languageName: node
+  linkType: hard
+
+"fflate@npm:^0.8.3":
+  version: 0.8.3
+  resolution: "fflate@npm:0.8.3"
+  checksum: eab181ca37f5348ae76d4b6f840e0026e30220e33153289ac942222d8b9638237d486507dbcc09878d724095bd354993a2ee48bbee99c8f2c6440d4448719aa7
   languageName: node
   linkType: hard
 
@@ -29537,6 +29545,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"read-excel-file@npm:^9.3.12":
+  version: 9.3.12
+  resolution: "read-excel-file@npm:9.3.12"
+  dependencies:
+    fflate: "npm:^0.8.3"
+    saxen: "npm:^11.1.0"
+    unzipper-esm: "npm:^0.13.3"
+    worker-f: "npm:^0.1.12"
+  checksum: cfb68a2495516b785df3fa92b5abb5bec52b0d631abb42b9f76874d4b8a0fa6bb2754728bd03bef51f4b4191b4f60c6fe9e402802ee289f7bbd6a9705595f8cf
+  languageName: node
+  linkType: hard
+
 "read-pkg-up@npm:^7.0.1":
   version: 7.0.1
   resolution: "read-pkg-up@npm:7.0.1"
@@ -30809,6 +30829,13 @@ __metadata:
   version: 1.6.0
   resolution: "sax@npm:1.6.0"
   checksum: e5593f4a91eb25761a688c4d96902e4e95a0dd6017bc65146b6f21236e3d715cf893333b76bc758923c9574c2fb5a7a76c3a81e96ea15432f2624f906c027c1e
+  languageName: node
+  linkType: hard
+
+"saxen@npm:^11.1.0":
+  version: 11.2.0
+  resolution: "saxen@npm:11.2.0"
+  checksum: 118ea49566e50336bfbeba2b13c4dabd5f9db775a9664d6550b9a6b3570bdf930e6f48255bf8639c18debaf8df43f7eac1e11ee7dfd67f2fd99a23fc26d03710
   languageName: node
   linkType: hard
 
@@ -33630,6 +33657,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"unzipper-esm@npm:^0.13.3":
+  version: 0.13.3
+  resolution: "unzipper-esm@npm:0.13.3"
+  dependencies:
+    graceful-fs: "npm:^4.2.2"
+    node-int64: "npm:^0.4.0"
+  checksum: 9218208d9154f2d9053100ea083b02ce75f259744af817433d580c7a96db7b1ef353e25a88a2b832df566f696f612b8c780f7e6325e66132c512583ca61562fc
+  languageName: node
+  linkType: hard
+
 "unzipper@npm:^0.12.3":
   version: 0.12.5
   resolution: "unzipper@npm:0.12.5"
@@ -34749,6 +34786,13 @@ __metadata:
   version: 1.0.0
   resolution: "wordwrap@npm:1.0.0"
   checksum: 7ed2e44f3c33c5c3e3771134d2b0aee4314c9e49c749e37f464bf69f2bcdf0cbf9419ca638098e2717cff4875c47f56a007532f6111c3319f557a2ca91278e92
+  languageName: node
+  linkType: hard
+
+"worker-f@npm:^0.1.12":
+  version: 0.1.20
+  resolution: "worker-f@npm:0.1.20"
+  checksum: 3587e1ef5821633df9833acc0db7e01b4461431d46b76d5f128eff03c8ef9d126ba30ee0b3855f89c17a5e6fa39534794c488761ffb8bd039ade9ffb5eb18cda
   languageName: node
   linkType: hard
 

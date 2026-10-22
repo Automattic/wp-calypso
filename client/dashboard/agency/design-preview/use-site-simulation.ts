@@ -27,18 +27,19 @@ export default function useSiteSimulation() {
 		refreshSuggestion: suggestAddress,
 		revalidate: () => {},
 	};
-	const addSite = ( input: string, isDevSite = false ) => {
+	const addSite = ( input: string, isDevSite = false, name = '' ) => {
 		const url = parseSiteUrl( input );
 		if ( ! url ) {
 			return;
 		}
 		const id = nextId--;
+		const siteUrl = `${ url.host }${ url.pathname.replace( /\/$/, '' ) }`;
 		const site: AgencySite = {
 			blog_id: id,
 			a4a_site_id: id,
-			url: url.host,
-			url_with_scheme: url.origin,
-			blogname: isDevSite ? address : url.host,
+			url: siteUrl,
+			url_with_scheme: `${ url.protocol }//${ siteUrl }`,
+			blogname: name || ( isDevSite ? address : siteUrl ),
 			a4a_is_dev_site: isDevSite,
 			is_atomic: isDevSite,
 			hosting_provider_guess: isDevSite ? 'WordPress.com' : undefined,
@@ -58,7 +59,7 @@ export default function useSiteSimulation() {
 			0,
 			5 - preview.siteRows.filter( ( site ) => site.a4a_is_dev_site ).length
 		),
-		onConnect: ( site: string ) => addSite( site ),
+		onConnect: ( site: string, name = '' ) => addSite( site, false, name ),
 		onCreateHosted: (
 			input: string,
 			name: string,
@@ -69,16 +70,17 @@ export default function useSiteSimulation() {
 			if ( ! url ) {
 				return;
 			}
-			const existing = preview.siteRows.find( ( site ) => site.url === url.host );
+			const siteUrl = `${ url.host }${ url.pathname.replace( /\/$/, '' ) }`;
+			const existing = preview.siteRows.find( ( site ) => site.url === siteUrl );
 			const id = existing?.blog_id ?? nextId--;
 			addPreviewSites(
 				[
 					{
 						blog_id: id,
 						a4a_site_id: existing?.a4a_site_id ?? id,
-						url: url.host,
-						url_with_scheme: url.origin,
-						blogname: name || existing?.blogname || url.host,
+						url: siteUrl,
+						url_with_scheme: `${ url.protocol }//${ siteUrl }`,
+						blogname: name || existing?.blogname || siteUrl,
 						is_atomic: host === 'wpcom',
 						a4a_is_dev_site: development,
 						hosting_provider_guess: host === 'wpcom' ? 'WordPress.com' : 'Pressable',

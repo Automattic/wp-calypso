@@ -1,11 +1,13 @@
 import { __ } from '@wordpress/i18n';
+import { Icon, chevronDown, chevronUp, closeSmall, reset } from '@wordpress/icons';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import '../amplify/dev-state-controls.scss';
 
 type Settings = { x: number; y: number; collapsed: boolean; hidden: boolean; advanced: boolean };
 const STORAGE_KEY = 'a4a-sites-migrations-panel-v2';
-const PANEL_WIDTH = 224;
+const PANEL_WIDTH = 264;
+let hiddenUntilRefresh = false;
 const DEFAULT_SETTINGS: Settings = {
 	x: 16,
 	y: 16,
@@ -24,7 +26,7 @@ function readSettings(): Settings {
 	try {
 		const saved = JSON.parse( window.localStorage.getItem( STORAGE_KEY ) ?? '{}' );
 		return {
-			hidden: saved.hidden === true,
+			hidden: hiddenUntilRefresh,
 			advanced: saved.advanced === true,
 			x: Number.isFinite( saved.x )
 				? clamp( saved.x, window.innerWidth - PANEL_WIDTH )
@@ -55,7 +57,7 @@ export function usePreviewPanelSettings( enabled: boolean ) {
 			return;
 		}
 		try {
-			window.localStorage.setItem( STORAGE_KEY, JSON.stringify( settings ) );
+			window.localStorage.setItem( STORAGE_KEY, JSON.stringify( { ...settings, hidden: false } ) );
 		} catch {
 			// The preview still works when browser storage is unavailable.
 		}
@@ -83,7 +85,9 @@ export default function FloatingPreviewPanel( {
 	children,
 	settings,
 	onChange,
+	onRestart,
 }: {
+	onRestart: () => void;
 	title: string;
 	children: React.ReactNode;
 	settings: Settings;
@@ -94,17 +98,7 @@ export default function FloatingPreviewPanel( {
 	);
 
 	if ( settings.hidden ) {
-		return createPortal(
-			<button
-				type="button"
-				className="dashboard-amplify-dev-controls dashboard-amplify-dev-controls__show"
-				style={ { left: settings.x, top: settings.y } }
-				onClick={ () => onChange( ( previous ) => ( { ...previous, hidden: false } ) ) }
-			>
-				Show { title.toLowerCase() }
-			</button>,
-			document.body
-		);
+		return null;
 	}
 	return createPortal(
 		<aside
@@ -146,24 +140,39 @@ export default function FloatingPreviewPanel( {
 				} }
 			>
 				<strong>{ title }</strong>
-				<button
-					type="button"
-					className="dashboard-amplify-dev-controls__collapse"
-					onClick={ () => onChange( ( previous ) => ( { ...previous, hidden: true } ) ) }
-				>
-					Hide
-				</button>
-				<button
-					type="button"
-					className="dashboard-amplify-dev-controls__collapse"
-					aria-expanded={ ! settings.collapsed }
-					aria-controls="dashboard-amplify-dev-controls-body"
-					onClick={ () =>
-						onChange( ( previous ) => ( { ...previous, collapsed: ! previous.collapsed } ) )
-					}
-				>
-					{ settings.collapsed ? __( 'Expand' ) : __( 'Collapse' ) }
-				</button>
+				<div className="agency-design-preview-panel__header-actions">
+					<button
+						type="button"
+						title={ __( 'Restart scenario' ) }
+						aria-label={ __( 'Restart scenario' ) }
+						onClick={ onRestart }
+					>
+						<Icon icon={ reset } size={ 18 } />
+					</button>
+					<button
+						type="button"
+						title={ settings.collapsed ? __( 'Expand' ) : __( 'Collapse' ) }
+						aria-label={ settings.collapsed ? __( 'Expand' ) : __( 'Collapse' ) }
+						aria-expanded={ ! settings.collapsed }
+						aria-controls="dashboard-amplify-dev-controls-body"
+						onClick={ () =>
+							onChange( ( previous ) => ( { ...previous, collapsed: ! previous.collapsed } ) )
+						}
+					>
+						<Icon icon={ settings.collapsed ? chevronDown : chevronUp } size={ 18 } />
+					</button>
+					<button
+						type="button"
+						title={ __( 'Hide until refresh' ) }
+						aria-label={ __( 'Hide until refresh' ) }
+						onClick={ () => {
+							hiddenUntilRefresh = true;
+							onChange( ( previous ) => ( { ...previous, hidden: true } ) );
+						} }
+					>
+						<Icon icon={ closeSmall } size={ 18 } />
+					</button>
+				</div>
 			</div>
 			<div id="dashboard-amplify-dev-controls-body" hidden={ settings.collapsed }>
 				{ children }

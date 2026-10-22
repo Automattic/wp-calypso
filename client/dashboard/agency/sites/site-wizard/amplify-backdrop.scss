@@ -1,0 +1,39 @@
+.agency-wizard-amplify-backdrop {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	pointer-events: none;
+	background-image:
+		url( ../../amplify/paper-grain.svg ),
+		linear-gradient(
+			135deg,
+			color-mix( in srgb, var( --color-primary ) 14%, var( --color-surface ) ),
+			color-mix( in srgb, var( --color-primary ) 5%, var( --color-surface ) )
+		);
+	background-position:
+		0 0,
+		center;
+	mask-image: linear-gradient( to bottom, var( --color-text ), transparent 13.33% );
+	animation: agency-wizard-amplify-grain-drift 28s linear infinite;
+}
+
+@keyframes agency-wizard-amplify-grain-drift {
+	to {
+		background-position:
+			160px 160px,
+			center;
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.agency-wizard-amplify-backdrop {
+		animation: none;
+	}
+}
+
+@media ( forced-colors: active ) {
+	.agency-wizard-amplify-backdrop {
+		display: none;
+	}
+}

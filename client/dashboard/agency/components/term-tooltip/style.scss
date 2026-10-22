@@ -1,0 +1,54 @@
+.components-popover.agency-term-tooltip {
+	pointer-events: none;
+}
+
+.components-popover.agency-term-tooltip .components-popover__content {
+	box-sizing: border-box;
+	inline-size: min( 300px, calc( 100vw - 24px ) );
+	padding: 14px 16px;
+	border-radius: 8px;
+	background: var( --color-neutral-100 );
+	color: var( --color-text-inverted );
+	font-size: 14px;
+	line-height: 1.5;
+	text-align: start;
+	text-wrap: pretty;
+	animation: agency-term-tooltip-in 150ms ease-out;
+}
+
+@keyframes agency-term-tooltip-in {
+	from {
+		opacity: 0;
+		transform: translateY( 6px ) scale( 0.98 );
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.components-popover.agency-term-tooltip.is-handoff .components-popover__content {
+	animation-name: agency-term-tooltip-swap;
+	animation-duration: 140ms;
+}
+
+@keyframes agency-term-tooltip-swap {
+	from {
+		opacity: 0.4;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.components-popover.agency-term-tooltip .components-popover__content {
+		animation: none;
+	}
+
+	.components-popover.agency-term-tooltip.is-handoff .components-popover__content {
+		animation: none;
+	}
+}

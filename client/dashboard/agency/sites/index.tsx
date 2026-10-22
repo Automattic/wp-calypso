@@ -8,7 +8,7 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
@@ -32,6 +32,8 @@ import { useAgencyFields, useAgencyActions } from './dataviews';
 import { hasWpcomLicenseWithoutSite } from './lib';
 import ProvisioningSiteNotices from './provisioning-notice';
 import SiteWizard from './site-wizard';
+import './style.scss';
+import { useWizardHistory } from './site-wizard/wizard-history';
 import type { AddNewSiteAction } from './add-new-site/types';
 import type { AgencySite, FetchAgencySitesOptions } from '@automattic/api-core';
 import type { SupportedLayouts, View } from '@wordpress/dataviews';
@@ -42,6 +44,7 @@ const AGENCY_LAYOUTS: SupportedLayouts = {
 		mediaField: 'site_icon',
 		titleField: 'name',
 		descriptionField: 'URL',
+		layout: { aspectRatio: '16/9' },
 	},
 	grid: {
 		layout: {
@@ -61,6 +64,7 @@ const DEFAULT_VIEW = {
 	titleField: 'name',
 	descriptionField: 'URL',
 	fields: [ 'visibility', 'plan' ],
+	layout: { aspectRatio: '16/9' },
 	sort: { field: 'URL', direction: 'asc' },
 } as View;
 
@@ -131,7 +135,15 @@ function AgencySitesContent() {
 	const [ wizardOpen, setWizardOpen ] = useState( false );
 	const [ wizardRevision, setWizardRevision ] = useState( 0 );
 
+	useEffect( () => {
+		if ( preview.wizardJump ) {
+			setActiveModal( null );
+			setWizardOpen( true );
+		}
+	}, [ preview.wizardJump ] );
+
 	const { data: agency } = useQuery( activeAgencyQuery() );
+	const wizardHistory = useWizardHistory( String( preview.sitesRevision ) );
 	const capabilities = agency?.user?.capabilities ?? [];
 	const canRemoveSites = hasAnyCapability( capabilities, 'a4a_remove_managed_sites' );
 	// Issuing a license navigates to the Marketplace, so read the requirement off
@@ -173,7 +185,7 @@ function AgencySitesContent() {
 		: ( data?.sites ?? [] );
 	const totalItems = preview.sitesActive ? filteredSamples.length : ( data?.total ?? 0 );
 	const showEmptyState = ! isLoading && totalItems === 0 && ! view.search && ! view.filters?.length;
-	const showWizard = showEmptyState || wizardOpen;
+	const showWizard = showEmptyState || wizardOpen || !! wizardHistory.entry;
 
 	const handleSiteClick = useCallback(
 		( site: AgencySite ) =>
@@ -190,6 +202,7 @@ function AgencySitesContent() {
 
 	const closeModal = () => setActiveModal( null );
 	const closeWizard = () => {
+		wizardHistory.close();
 		setWizardOpen( false );
 		setWizardRevision( ( revision ) => revision + 1 );
 	};
@@ -202,30 +215,30 @@ function AgencySitesContent() {
 	return (
 		<PageLayout
 			header={
-				! showWizard && (
-					<PageHeader
-						title={ __( 'Sites' ) }
-						description={
-							licensesReadyToSetUp > 0 ? (
-								<NeedsSetupDescription count={ licensesReadyToSetUp } />
-							) : undefined
-						}
-						actions={
-							! showWizard && (
-								<Button
-									variant="primary"
-									onClick={ () => {
-										recordTracksEvent( 'calypso_a4a_sites_add_new_site_clicked' );
-										setWizardOpen( true );
-									} }
-									__next40pxDefaultSize
-								>
-									{ __( 'Add new site' ) }
-								</Button>
-							)
-						}
-					/>
-				)
+				<PageHeader
+					title={ __( 'Sites' ) }
+					description={
+						licensesReadyToSetUp > 0 ? (
+							<NeedsSetupDescription count={ licensesReadyToSetUp } />
+						) : (
+							__( 'Manage your clients’ WordPress sites in one place.' )
+						)
+					}
+					actions={
+						! showWizard && (
+							<Button
+								variant="primary"
+								onClick={ () => {
+									recordTracksEvent( 'calypso_a4a_sites_add_new_site_clicked' );
+									setWizardOpen( true );
+								} }
+								__next40pxDefaultSize
+							>
+								{ __( 'Add new site' ) }
+							</Button>
+						)
+					}
+				/>
 			}
 			notices={
 				! preview.sitesActive && (
@@ -275,7 +288,11 @@ function AgencySitesContent() {
 							data={ sites }
 							fields={ fields }
 							actions={ preview.sitesActive ? [] : actions }
-							view={ view }
+							view={
+								view.type === 'table' && ! view.layout
+									? { ...view, layout: { aspectRatio: '16/9' } }
+									: view
+							}
 							isLoading={ isLoading }
 							isPlaceholderData={ ! preview.sitesActive && isPlaceholderData }
 							onChangeView={ handleViewChange }

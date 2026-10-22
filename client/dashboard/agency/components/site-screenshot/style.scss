@@ -1,0 +1,17 @@
+.agency-site-screenshot {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 80px;
+	background: var( --color-surface-backdrop );
+	color: var( --color-text-subtle );
+	font-size: 11px;
+}
+
+.agency-site-screenshot img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	object-fit: cover;
+	object-position: top;
+}

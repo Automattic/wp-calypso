@@ -242,7 +242,7 @@ export default function ImportFromWPCOMModal( { onClose, preview }: ImportFromWP
 
 	return (
 		<Modal
-			title={ __( 'Add sites via WordPress.com connection' ) }
+			title={ __( 'Add sites from your WordPress.com account' ) }
 			onRequestClose={ onClose }
 			size="large"
 			isDismissible={ ! isImporting }
@@ -252,7 +252,7 @@ export default function ImportFromWPCOMModal( { onClose, preview }: ImportFromWP
 			<VStack spacing={ 4 }>
 				<Text variant="muted" as="p">
 					{ __(
-						'Add one or more sites you previously created on WordPress.com or connected with Jetpack.'
+						'These sites are linked to your WordPress.com account but aren’t in your agency dashboard yet. Choose which ones to add. Their hosting stays the same.'
 					) }
 				</Text>
 				{ hasLoadError && (

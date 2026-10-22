@@ -1,19 +1,36 @@
 import { Button } from '@wordpress/components';
-import type { ReactNode } from 'react';
+import clsx from 'clsx';
+import type { ComponentProps, ReactNode } from 'react';
 
 export function Choice( {
 	title,
 	description,
 	onClick,
 	badge,
+	illustration,
+	href,
+	className,
+	...buttonProps
 }: {
 	title: string;
 	description: string;
 	onClick: () => void;
 	badge?: string;
-} ) {
+	illustration?: ReactNode;
+	href?: string;
+	className?: string;
+} & Pick< ComponentProps< typeof Button >, 'disabled' | 'isBusy' | 'onDragOver' | 'onDrop' > ) {
 	return (
-		<Button className="agency-site-wizard__choice" onClick={ onClick }>
+		<Button
+			{ ...buttonProps }
+			className={ clsx( 'agency-site-wizard__choice', className ) }
+			type="button"
+			onClick={ onClick }
+			href={ href }
+			target={ href ? '_blank' : undefined }
+			rel={ href ? 'noreferrer' : undefined }
+		>
+			{ illustration }
 			<span className="agency-site-wizard__choice-heading">
 				<span className="agency-site-wizard__choice-title">{ title }</span>
 				{ badge && <span className="agency-site-wizard__badge">{ badge }</span> }

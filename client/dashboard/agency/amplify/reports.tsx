@@ -13,7 +13,7 @@ import { useIntlLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { Text } from '../../components/text';
-import SiteScreenshot from './site-screenshot';
+import SiteScreenshot from '../components/site-screenshot';
 import type { AmplifyReport } from '@automattic/api-core';
 import type { Field, SupportedLayouts, View } from '@wordpress/dataviews';
 

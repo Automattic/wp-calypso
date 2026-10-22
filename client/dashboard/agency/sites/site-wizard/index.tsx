@@ -1,27 +1,33 @@
 import { activeAgencyQuery, agencyDevLicensesQuery } from '@automattic/api-queries';
-import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	CheckboxControl,
-	RadioControl,
 	TextareaControl,
 	TextControl,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { useEffect, useRef } from 'react';
-import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
+import { chevronLeft } from '@wordpress/icons';
+import { useEffect, useId, useRef } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { Card } from '../../../components/card';
+import { consumeWizardJump, setWizardPosition, useDesignPreview } from '../../design-preview';
 import { getMarketplaceHostingSectionRoute } from '../../marketplace/paths';
 import { getFormatError } from '../../marketplace/purchases/use-site-address';
-import {
-	getA4APluginInstallUrl,
-	getJetpackConnectUrl,
-	isAgencyApproved,
-	parseSiteUrl,
-} from '../add-new-site/lib';
+import { isAgencyApproved, parseSiteUrl } from '../add-new-site/lib';
+import AmplifyBackdrop from './amplify-backdrop';
 import { Choice, RadioChoice } from './choices';
+import ConnectionSetup, { ConnectionInstructions, ConnectionSites } from './connection-setup';
+import ConnectionWaiting from './connection-waiting';
+import CreateChoices from './create-choices';
+import EntryChoices from './entry-choices';
+import HostingChoice from './hosting-choice';
+import SitesOverviewStory from './overview-story';
+import { parseSiteList, SITE_REVIEW_BULK_THRESHOLD } from './site-intake';
+import SiteIntake, { selectedSiteLabel } from './site-intake-form';
+import SitePreview from './site-preview';
+import SiteReview from './site-review';
 import useSiteWizard from './use-site-wizard';
 import type { Journey, Step } from './use-site-wizard';
 import type useSiteSimulation from '../../design-preview/use-site-simulation';
@@ -51,6 +57,7 @@ export default function SiteWizard( {
 	isFirstSite,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
+	const { plugMotionReplay, wizardJump, sitesRevision } = useDesignPreview();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const developmentLicenses = useQuery( {
 		...agencyDevLicensesQuery( agency?.id ?? 0 ),
@@ -63,22 +70,39 @@ export default function SiteWizard( {
 		go: changeStep,
 		back,
 		restart,
+		jump,
 		error,
 		setError,
 		result,
 		setResult,
-	} = useSiteWizard( onStart );
+	} = useSiteWizard( onStart, String( sitesRevision ) );
+	useEffect( () => {
+		if ( wizardJump && simulation ) {
+			jump( wizardJump );
+			consumeWizardJump();
+		}
+	}, [ wizardJump, simulation, jump ] );
+	useEffect( () => {
+		setWizardPosition( {
+			step,
+			journey: data.journey,
+			host: data.host,
+			method: data.method,
+			billing: data.billing,
+		} );
+	}, [ step, data.journey, data.host, data.method, data.billing ] );
+	useEffect( () => () => setWizardPosition( null ), [] );
 	const container = useRef< HTMLDivElement >( null );
+	const titleId = useId();
+	const isUrlStep = step === 'url' || step === 'source';
 	const previousStep = useRef( step );
 	useEffect( () => {
 		if ( previousStep.current !== step ) {
-			if ( container.current ) {
-				container.current.scrollTop = 0;
-				container.current.querySelector< HTMLElement >( 'h2' )?.focus( { preventScroll: true } );
-			}
+			const target = isUrlStep ? '.agency-site-wizard__url-input textarea' : 'h2';
+			container.current?.querySelector< HTMLElement >( target )?.focus();
 			previousStep.current = step;
 		}
-	}, [ step ] );
+	}, [ step, isUrlStep ] );
 	const go = ( next: Step ) => {
 		recordTracksEvent( 'calypso_a4a_site_wizard_step', { step: next, preview: !! simulation } );
 		changeStep( next );
@@ -95,17 +119,50 @@ export default function SiteWizard( {
 	const isMigration = data.journey === 'migrate';
 	const isDevelopment = data.journey === 'development';
 	const siteAddress = `${ data.address }.${ data.host === 'wpcom' ? 'wpcomstaging.com' : 'mystagingwebsite.com' }`;
-	const validateUrl = () => {
-		if ( ! source || source.username || source.password ) {
-			setError( __( 'Enter a valid website address, such as example.com.' ) );
-			return;
-		}
-		if ( ! isMigration && simulation?.managedSites.some( ( site ) => site.url === source.host ) ) {
+	const reviewSites = ( input: string ) => {
+		const { sites, duplicates } = parseSiteList( input );
+		if ( ! sites.length ) {
 			setError(
-				__( 'This site is already in your dashboard. Choose another address or return to Sites.' )
+				__(
+					'We couldn’t find any website addresses. Try example.com, or paste the address column from your spreadsheet.'
+				)
 			);
 			return;
 		}
+		const eligible = sites.filter(
+			( site ) =>
+				! data.completed.includes( site.id ) &&
+				( isMigration || ! simulation?.managedSites.some( ( managed ) => managed.url === site.id ) )
+		);
+		if ( sites.length === 1 && ! eligible.length ) {
+			setError( __( 'This site has already been added to your agency dashboard.' ) );
+			return;
+		}
+		change( {
+			sites,
+			duplicates,
+			chosen: sites.length <= SITE_REVIEW_BULK_THRESHOLD ? eligible.map( ( site ) => site.id ) : [],
+			url: sites[ 0 ].url,
+		} );
+		const nextStep = isMigration ? 'host' : 'authorize';
+		go( sites.length === 1 ? nextStep : 'review' );
+	};
+	const batch = data.sites.filter( ( site ) => data.chosen.includes( site.id ) );
+	const batchSize = Math.max( 1, batch.length );
+	const batchNames =
+		batch.length > 1
+			? sprintf(
+					/* translators: %d is the number of sites. */
+					__( '%d selected sites' ),
+					batch.length
+				)
+			: source?.host;
+	const continueReview = () => {
+		if ( ! batch.length ) {
+			setError( __( 'Select at least one site to continue.' ) );
+			return;
+		}
+		change( { url: batch[ 0 ].url } );
 		go( isMigration ? 'host' : 'authorize' );
 	};
 	const finish = ( kind: 'connect' | 'picker' | 'create' | 'migrate', ids = data.selected ) => {
@@ -122,23 +179,51 @@ export default function SiteWizard( {
 				)
 			);
 		} else if ( kind === 'connect' ) {
-			simulation.onConnect( data.url );
-			setResult( __( 'Your site is connected' ) );
-		} else {
-			simulation.onCreateHosted(
-				kind === 'migrate' ? data.url : siteAddress,
-				data.name,
-				data.host,
-				isDevelopment
+			for ( const site of batch ) {
+				const accountSite = simulation.import.sites.find(
+					( candidate ) => parseSiteUrl( candidate.URL )?.host === parseSiteUrl( site.url )?.host
+				);
+				if ( accountSite ) {
+					simulation.import.onImport( [ accountSite.ID ] );
+				} else {
+					simulation.onConnect( site.url, site.name );
+				}
+			}
+			setResult(
+				batchSize === 1
+					? __( 'Your site is connected' )
+					: sprintf(
+							/* translators: %d is the number of sites. */
+							__( '%d sites connected' ),
+							batchSize
+						)
 			);
+		} else {
+			if ( kind === 'migrate' ) {
+				for ( const site of batch ) {
+					simulation.onCreateHosted( site.url, site.name, data.host );
+				}
+			} else {
+				simulation.onCreateHosted( siteAddress, data.name, data.host, isDevelopment );
+			}
 			let completion = __( 'Your new site is ready' );
 			if ( isDevelopment ) {
 				completion = __( 'Your development site is ready' );
 			}
 			if ( kind === 'migrate' ) {
-				completion = __( 'Your migration is complete' );
+				completion =
+					batchSize === 1
+						? __( 'Your migration is complete' )
+						: sprintf(
+								/* translators: %d is the number of sites. */
+								__( '%d sites moved' ),
+								batchSize
+							);
 			}
 			setResult( completion );
+		}
+		if ( kind === 'connect' || kind === 'migrate' ) {
+			change( { completed: [ ...new Set( [ ...data.completed, ...data.chosen ] ) ] } );
 		}
 		go( 'success' );
 	};
@@ -199,31 +284,18 @@ export default function SiteWizard( {
 	switch ( step ) {
 		case 'start':
 			title = isFirstSite ? __( 'Add your first site' ) : __( 'Add a site' );
-			description = __(
-				'Connect a website you manage, move its hosting, or create something new.'
-			);
+			description = isFirstSite
+				? __(
+						'Add one site or a whole batch. You can paste a list of addresses or upload a spreadsheet.'
+					)
+				: __( 'Connect a website you manage, move its hosting, or create something new.' );
 			content = (
-				<div className="agency-site-wizard__choices agency-site-wizard__choices--three">
-					<Choice
-						title={ __( 'Connect a site' ) }
-						description={ __(
-							'Add an existing WordPress website to your dashboard. Keep its current hosting.'
-						) }
-						onClick={ () => chooseJourney( 'connect', 'url' ) }
-					/>
-					<Choice
-						title={ __( 'Move a site' ) }
-						description={ __(
-							'Bring an existing WordPress website to WordPress.com or Pressable hosting.'
-						) }
-						onClick={ () => chooseJourney( 'migrate', 'source' ) }
-					/>
-					<Choice
-						title={ __( 'Create a site' ) }
-						description={ __( 'Build a new website for your agency or a client.' ) }
-						onClick={ () => go( 'new' ) }
-					/>
-				</div>
+				<EntryChoices
+					onConnect={ () => chooseJourney( 'connect', 'url' ) }
+					onMove={ () => chooseJourney( 'migrate', 'source' ) }
+					onCreate={ () => go( 'new' ) }
+					plugMotionReplay={ plugMotionReplay }
+				/>
 			);
 			break;
 		case 'new':
@@ -232,68 +304,72 @@ export default function SiteWizard( {
 				'Choose whether you’re building a project or setting up a website for visitors.'
 			);
 			content = (
-				<div className="agency-site-wizard__choices">
-					<Choice
-						title={ __( 'Development site' ) }
-						badge={ __( 'Free' ) }
-						description={ __(
-							'Build and share a preview with your client on WordPress.com. Pay for hosting when you’re ready to launch.'
-						) }
-						onClick={ startDevelopment }
-					/>
-					<Choice
-						title={ __( 'Production site' ) }
-						badge={ __( 'Paid' ) }
-						description={ __(
-							'Create a website with paid hosting on WordPress.com or Pressable. Connect a domain and publish when it’s ready.'
-						) }
-						onClick={ () => chooseJourney( 'hosted', 'host' ) }
-					/>
-				</div>
+				<CreateChoices
+					onDevelopment={ startDevelopment }
+					onProduction={ () => chooseJourney( 'hosted', 'host' ) }
+				/>
 			);
 			break;
 		case 'url':
 		case 'source':
-			title = isMigration
-				? __( 'Which site are you moving?' )
-				: __( 'Which site are you connecting?' );
+			title = isMigration ? __( 'Which sites are you moving?' ) : __( 'Bring your sites together' );
 			description = isMigration
 				? __(
-						'Enter the address of the website you want to move. We’ll choose its new hosting next.'
+						'Enter one site to get started, or paste a list and choose which sites to move together.'
 					)
 				: __(
-						'Enter your WordPress website’s address. Connecting it adds it to this dashboard without moving its hosting.'
+						'Add one WordPress site or your whole client portfolio. Keep the hosting you already have.'
 					);
 			content = (
-				<div className="agency-site-wizard__form">
-					<TextControl
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-						label={ __( 'Site address' ) }
-						placeholder="example.com"
-						value={ data.url }
-						onChange={ ( url ) => change( { url } ) }
-						autoComplete="url"
-						dir="ltr"
+				<div className="agency-site-wizard__intake-layout">
+					<SiteIntake
+						describedBy={ titleId }
+						value={ data.intake }
+						onChange={ ( intake ) => change( { intake } ) }
+						onReview={ reviewSites }
+						onError={ setError }
+						error={ error }
+						onChooseAccount={
+							! isMigration
+								? () => ( simulation ? go( 'picker' ) : onSelectAction( 'import-from-wpcom' ) )
+								: undefined
+						}
 					/>
-					{ ! isMigration && (
-						<Button
-							variant="link"
-							onClick={ () =>
-								simulation ? go( 'picker' ) : onSelectAction( 'import-from-wpcom' )
-							}
-						>
-							{ __( 'Choose sites from my account' ) }
-						</Button>
-					) }
 				</div>
 			);
-			primary = { label: __( 'Continue' ), onClick: validateUrl };
+			primary = { label: __( 'Continue' ), onClick: () => reviewSites( data.intake ) };
+			break;
+		case 'review':
+			title = isMigration
+				? __( 'Choose which sites to move' )
+				: __( 'Choose which sites to connect' );
+			description = isMigration
+				? __( 'Uncheck any sites you don’t want to move yet. You’ll choose hosting next.' )
+				: __( 'Uncheck any sites you don’t want to connect yet. Their hosting stays the same.' );
+			if ( data.sites.length > SITE_REVIEW_BULK_THRESHOLD ) {
+				description = __(
+					'Choose a first batch to work on together. You can return for the rest.'
+				);
+			}
+			content = (
+				<SiteReview
+					simulate={ !! simulation }
+					sites={ data.sites }
+					chosen={ data.chosen }
+					completed={ data.completed }
+					duplicates={ data.duplicates }
+					managed={
+						isMigration ? [] : ( simulation?.managedSites.map( ( site ) => site.url ) ?? [] )
+					}
+					onChange={ ( chosen ) => change( { chosen } ) }
+				/>
+			);
+			primary = { label: selectedSiteLabel( batch.length ), onClick: continueReview };
 			break;
 		case 'picker':
-			title = __( 'Choose sites to connect' );
+			title = __( 'Add sites to your agency' );
 			description = __(
-				'Select one or more sites already associated with your WordPress.com account.'
+				'These sites are linked to your WordPress.com account but aren’t in your agency dashboard yet. Choose which ones to add. Their hosting stays the same.'
 			);
 			content = (
 				<div className="agency-site-wizard__form">
@@ -326,7 +402,7 @@ export default function SiteWizard( {
 				</div>
 			);
 			primary = {
-				label: __( 'Connect selected sites' ),
+				label: __( 'Add selected sites' ),
 				onClick: () =>
 					data.selected.length
 						? finish( 'picker' )
@@ -334,138 +410,136 @@ export default function SiteWizard( {
 			};
 			break;
 		case 'authorize': {
-			title = __( 'Connect your site' );
-			description = knownSite
-				? __(
-						'This website is already associated with your WordPress.com account. Add it to your agency dashboard.'
-					)
-				: __( 'Connect with your agency account so this website appears in your dashboard.' );
-			const installer =
-				data.plugin === 'a4a'
-					? getA4APluginInstallUrl( data.url )
-					: getJetpackConnectUrl( data.url );
+			const alreadyLinked = !! knownSite && batchSize === 1;
+			title =
+				batchSize > 1
+					? __( 'Install the plugin on each site' )
+					: __( 'Install the plugin to connect' );
+			if ( alreadyLinked ) {
+				title = __( 'Add this site to your dashboard' );
+			}
+			description = alreadyLinked
+				? __( 'This site is already linked to your account. No plugin setup needed.' )
+				: _n(
+						'Your website and hosting stay where they are.',
+						'Your websites and hosting stay where they are.',
+						batchSize
+					);
 			content = (
-				<div className="agency-site-wizard__form">
-					<div className="agency-site-wizard__panel">
-						<strong>
-							<bdi>{ source?.host }</bdi>
-						</strong>
-						<p>{ __( 'Your website and its hosting stay where they are.' ) }</p>
-						{ ! knownSite && (
-							<>
-								<p>
-									{ __(
-										'Install the lightweight Automattic for Agencies plugin, then approve the connection using your agency account. You’ll need administrator access to the website.'
-									) }
-								</p>
-								<details className="agency-site-wizard__alternative">
-									<summary>{ __( 'Connection options' ) }</summary>
-									<RadioControl
-										label={ __( 'Connect using' ) }
-										selected={ data.plugin }
-										onChange={ ( plugin ) => change( { plugin: plugin as 'a4a' | 'jetpack' } ) }
-										options={ [
-											{
-												label: __( 'Automattic for Agencies — lightweight connection' ),
-												value: 'a4a',
-											},
-											{
-												label: __( 'Jetpack — includes plugin management and single sign-on' ),
-												value: 'jetpack',
-											},
-										] }
-									/>
-								</details>
-							</>
-						) }
-					</div>
-				</div>
+				<ConnectionSetup
+					sites={ batch }
+					knownSite={ alreadyLinked ? knownSite : undefined }
+					plugin={ data.plugin }
+					onPluginSelect={ ( plugin ) => {
+						change( { plugin, connectionChecks: 0 } );
+						if ( simulation || batchSize > 1 ) {
+							go( 'connecting' );
+						}
+					} }
+					simulate={ !! simulation }
+				/>
 			);
-			primary = simulation
-				? {
-						label: __( 'Approve connection' ),
-						onClick: () =>
-							knownSite ? finish( 'picker', [ knownSite.ID ] ) : finish( 'connect' ),
-					}
-				: { label: __( 'Install and connect' ), href: installer ?? undefined, external: true };
+			if ( alreadyLinked ) {
+				primary = {
+					label: __( 'Add to dashboard' ),
+					onClick: () => finish( 'connect' ),
+				};
+			}
 			break;
 		}
+		case 'connecting':
+			title = _n(
+				'Waiting for your site to connect',
+				'Waiting for your sites to connect',
+				batchSize
+			);
+			description = __( 'Finish setup in WordPress, then return here to check the connection.' );
+			if ( ! simulation ) {
+				title = __( 'Connect each site' );
+				description = __(
+					'Open each installer and approve the connection to your agency account.'
+				);
+				content = (
+					<div className="agency-site-wizard__connection">
+						<ConnectionSites
+							sites={ batch }
+							plugin={ data.plugin }
+							simulate={ false }
+							showInstallers
+						/>
+						<div className="agency-site-wizard__connection-setup">
+							<ConnectionInstructions plugin={ data.plugin } />
+						</div>
+					</div>
+				);
+				secondary = { label: __( 'View sites' ), onClick: onClose };
+				break;
+			}
+			content = (
+				<ConnectionWaiting
+					sites={ batch }
+					plugin={ data.plugin }
+					hasChecked={ data.connectionChecks > 0 }
+					onCheck={ () => {
+						// Preview the retry state first, then a successful return from the installer.
+						if ( data.connectionChecks === 0 ) {
+							change( { connectionChecks: 1 } );
+						} else {
+							finish( 'connect' );
+						}
+					} }
+				/>
+			);
+			break;
 		case 'host':
 			title = __( 'Choose your hosting' );
 			description = __(
-				'Both hosts support custom themes and plugins, backups, and managed WordPress hosting. Choose the way you want to buy and manage it.'
+				'Choose a provider to continue. You’ll choose a plan and arrange payment later.'
 			);
 			content = (
-				<div className="agency-site-wizard__sections">
-					<fieldset className="agency-site-wizard__fieldset">
-						<legend className="screen-reader-text">{ __( 'Hosting provider' ) }</legend>
-						<div className="agency-site-wizard__choices">
-							<RadioChoice
-								title="WordPress.com"
-								description={ __(
-									'A Business plan for each website. A straightforward choice when you want to manage and pay for client websites individually.'
-								) }
-								name="host"
-								value="wpcom"
-								checked={ data.host === 'wpcom' }
-								onChange={ () => change( { host: 'wpcom' } ) }
-								icon={ <WordPressLogo size={ 32 } /> }
-							>
-								<ul>
-									<li>{ __( 'Pay per site, with discounts as you add more' ) }</li>
-									<li>{ __( 'Unlimited traffic and bandwidth' ) }</li>
-									<li>{ __( 'Manage your sites through WordPress.com' ) }</li>
-								</ul>
-							</RadioChoice>
-							<RadioChoice
-								title="Pressable"
-								description={ __(
-									'A hosting plan for one or many websites. A useful choice when you want to manage an agency portfolio under a shared plan.'
-								) }
-								name="host"
-								value="pressable"
-								checked={ data.host === 'pressable' }
-								onChange={ () => change( { host: 'pressable' } ) }
-								icon={ <img className="agency-site-wizard__brand" src={ pressableIcon } alt="" /> }
-							>
-								<ul>
-									<li>{ __( 'Choose a plan by site count, traffic, and storage' ) }</li>
-									<li>{ __( 'Staging and sandbox sites included' ) }</li>
-									<li>{ __( 'Manage hosting in the Pressable control panel' ) }</li>
-								</ul>
-							</RadioChoice>
-						</div>
-					</fieldset>
-					{ isMigration && (
-						<fieldset className="agency-site-wizard__fieldset">
-							<legend>{ __( 'Who should handle the move?' ) }</legend>
-							<div className="agency-site-wizard__choices">
-								<RadioChoice
-									title={ __( 'Move it for me' ) }
-									description={ __(
-										'Our team copies the site and coordinates the move with you. You review it before switching the domain.'
-									) }
-									name="method"
-									value="concierge"
-									checked={ data.method === 'concierge' }
-									onChange={ () => change( { method: 'concierge' } ) }
-								/>
-								<RadioChoice
-									title={ __( 'I’ll move it myself' ) }
-									description={ __(
-										'Use the migration tools to copy the site, check it, and connect your domain.'
-									) }
-									name="method"
-									value="self"
-									checked={ data.method === 'self' }
-									onChange={ () => change( { method: 'self' } ) }
-								/>
-							</div>
-						</fieldset>
-					) }
+				<div className="agency-site-wizard__choices agency-site-wizard__entry-options">
+					<HostingChoice
+						host="wpcom"
+						onClick={ () => {
+							change( { host: 'wpcom' } );
+							go( isMigration ? 'method' : 'setup' );
+						} }
+					/>
+					<HostingChoice
+						host="pressable"
+						onClick={ () => {
+							change( { host: 'pressable' } );
+							go( isMigration ? 'method' : 'setup' );
+						} }
+					/>
 				</div>
 			);
-			primary = { label: __( 'Continue' ), onClick: () => go( 'setup' ) };
+			break;
+		case 'method':
+			title = __( 'Who should handle the move?' );
+			description = __( 'Either way, you’ll review the copied site before switching your domain.' );
+			content = (
+				<div className="agency-site-wizard__choices">
+					<Choice
+						title={ __( 'Move it for me' ) }
+						description={ __( 'Our team copies the site and coordinates the move with you.' ) }
+						onClick={ () => {
+							change( { method: 'concierge' } );
+							go( 'setup' );
+						} }
+					/>
+					<Choice
+						title={ __( 'I’ll move it myself' ) }
+						description={ __(
+							'Use the migration tools to copy the site, check it, and connect your domain.'
+						) }
+						onClick={ () => {
+							change( { method: 'self' } );
+							go( 'setup' );
+						} }
+					/>
+				</div>
+			);
 			break;
 		case 'setup':
 			title = isMigration ? __( 'Arrange your migration' ) : __( 'Set up your site' );
@@ -473,7 +547,11 @@ export default function SiteWizard( {
 				? __( 'Build on WordPress.com at no cost. A paid hosting plan is needed when you launch.' )
 				: sprintf(
 						/* translators: %s is the hosting provider. */
-						__( 'Your website will be hosted on %s. Choose who pays for the hosting below.' ),
+						_n(
+							'Your website will be hosted on %s. Choose who pays for the hosting below.',
+							'Your websites will be hosted on %s. Choose who pays for the hosting below.',
+							isMigration ? batchSize : 1
+						),
 						hostName
 					);
 			if ( ! simulation ) {
@@ -558,7 +636,7 @@ export default function SiteWizard( {
 					) }
 					{ isMigration && (
 						<p>
-							<bdi>{ source?.host }</bdi>
+							<bdi>{ batchNames }</bdi>
 							{ ' → ' }
 							{ hostName }
 						</p>
@@ -574,15 +652,9 @@ export default function SiteWizard( {
 											? __( 'Use my unused WordPress.com plan' )
 											: __( 'Add this website to my existing Pressable plan' )
 									}
-									help={
-										data.host === 'wpcom'
-											? __(
-													'You already have a Business plan that isn’t assigned to a website. Use it for this site instead of buying another. Its existing billing continues.'
-												)
-											: __(
-													'Your agency’s plan covers 5 websites, and 4 are in use. This website can be the fifth. Your existing plan’s billing continues.'
-												)
-									}
+									help={ __(
+										'Your agency already has hosting for one more website. Use it first; any additional sites in this batch need paid hosting.'
+									) }
 									checked={ data.billing === 'existing' }
 									onChange={ ( checked ) => change( { billing: checked ? 'existing' : 'agency' } ) }
 								/>
@@ -624,7 +696,7 @@ export default function SiteWizard( {
 										value={ data.email }
 										onChange={ ( email ) => change( { email } ) }
 										help={ __(
-											'We’ll send the hosting purchase invitation to this address. Setup continues after your client completes the purchase.'
+											'This client will pay for the selected sites. For different clients, start a separate batch for each. Setup continues after the purchase.'
 										) }
 										__next40pxDefaultSize
 										__nextHasNoMarginBottom
@@ -672,7 +744,10 @@ export default function SiteWizard( {
 			primary = { label: __( 'Check purchase status' ), onClick: completeSetup };
 			break;
 		case 'requested':
-			title = __( 'Your migration has been requested' );
+			title =
+				batchSize > 1
+					? __( 'Your migrations have been requested' )
+					: __( 'Your migration has been requested' );
 			description = __(
 				'Our migration team will follow up to arrange access and timing with you.'
 			);
@@ -680,7 +755,7 @@ export default function SiteWizard( {
 				<div className="agency-site-wizard__form">
 					<div className="agency-site-wizard__panel">
 						<p>
-							<bdi>{ source?.host }</bdi>
+							<bdi>{ batchNames }</bdi>
 						</p>
 						<p>
 							{ __(
@@ -693,7 +768,8 @@ export default function SiteWizard( {
 			primary = { label: __( 'Check migration status' ), onClick: () => go( 'verify' ) };
 			break;
 		case 'verify':
-			title = __( 'Review your migrated site' );
+			title =
+				batchSize > 1 ? __( 'Review your migrated sites' ) : __( 'Review your migrated site' );
 			description = __(
 				'The copy is ready. Review your pages, media, forms, and store before connecting your domain.'
 			);
@@ -701,20 +777,43 @@ export default function SiteWizard( {
 				<div className="agency-site-wizard__form">
 					<div className="agency-site-wizard__panel">
 						<p>
-							<bdi>{ source?.host }</bdi>
+							<bdi>{ batchNames }</bdi>
 						</p>
 						<ul>
 							<li>{ __( 'Website copied to the new host' ) }</li>
 							<li>{ __( 'Original website still online' ) }</li>
 							<li>{ __( 'Ready for your review and domain connection' ) }</li>
 						</ul>
+						{ batch.length > 1 && (
+							<ul className="agency-site-wizard__batch-list">
+								{ batch.map( ( site ) => (
+									<li key={ site.id }>
+										<strong>{ site.name }</strong>
+										<bdi>{ site.url }</bdi>
+									</li>
+								) ) }
+							</ul>
+						) }
 					</div>
 				</div>
 			);
-			primary = { label: __( 'Confirm and connect domain' ), onClick: () => finish( 'migrate' ) };
+			primary = {
+				label:
+					batchSize > 1
+						? sprintf(
+								/* translators: %d is the number of sites. */
+								__( 'Confirm and connect %d domains' ),
+								batchSize
+							)
+						: __( 'Confirm and connect domain' ),
+				onClick: () => finish( 'migrate' ),
+			};
 			break;
 		case 'success':
-			title = result;
+			title = result || __( 'Your sites are ready' );
+			if ( ! result && isDevelopment ) {
+				title = __( 'Your development site is ready' );
+			}
 			description = __(
 				'Your site has been added to your dashboard. You’re ready to start building.'
 			);
@@ -729,69 +828,101 @@ export default function SiteWizard( {
 				);
 			}
 			primary = { label: __( 'View sites' ), onClick: onClose };
-			secondary = { label: __( 'Add another site' ), onClick: restart };
+			secondary = data.sites.some( ( site ) => ! data.completed.includes( site.id ) )
+				? {
+						label: __( 'Continue with remaining sites' ),
+						onClick: () => {
+							change( { chosen: [] } );
+							go( 'review' );
+						},
+					}
+				: { label: __( 'Add another site' ), onClick: restart };
 	}
 
 	const canGoBack = ! [ 'start', 'success', 'requested', 'referral-sent', 'verify' ].includes(
 		step
 	);
 	return (
-		<div className="agency-site-wizard">
-			<form
-				className="agency-site-wizard__frame"
-				noValidate
-				onSubmit={ ( event ) => {
-					event.preventDefault();
-					primary?.onClick?.();
-				} }
-			>
-				<div className="agency-site-wizard__body" ref={ container }>
-					<div className="agency-site-wizard__intro">
-						<Heading level={ 2 } tabIndex={ -1 }>
-							{ title }
-						</Heading>
-						<p>{ description }</p>
-					</div>
-					{ content }
-				</div>
-				<p className="agency-site-wizard__error" role="alert">
-					{ error }
-				</p>
-				<div
-					className="agency-site-wizard__footer"
-					data-empty={ ! canGoBack && ! primary && ! secondary }
-				>
+		<div className="agency-site-wizard" data-step={ step }>
+			<Card className="agency-site-wizard__workspace">
+				<AmplifyBackdrop />
+				<div className="agency-site-wizard__navigation">
 					{ canGoBack && (
-						<Button variant="secondary" __next40pxDefaultSize onClick={ back }>
+						<Button
+							className="agency-site-wizard__back agency-site-wizard__directional-button"
+							variant="tertiary"
+							type="button"
+							icon={ chevronLeft }
+							onClick={ back }
+							__next40pxDefaultSize
+						>
 							{ __( 'Back' ) }
 						</Button>
 					) }
-					<div className="agency-site-wizard__footer-end">
-						{ secondary && (
-							<Button
-								variant="secondary"
-								__next40pxDefaultSize
-								href={ secondary.href }
-								onClick={ secondary.onClick }
-							>
-								{ secondary.label }
-							</Button>
-						) }
-						{ primary && (
-							<Button
-								variant="primary"
-								__next40pxDefaultSize
-								type={ primary.href ? 'button' : 'submit' }
-								href={ primary.href }
-								target={ primary.external ? '_blank' : undefined }
-								rel={ primary.external ? 'noreferrer' : undefined }
-							>
-								{ primary.label }
-							</Button>
-						) }
-					</div>
 				</div>
-			</form>
+				<form
+					className="agency-site-wizard__frame"
+					noValidate
+					onSubmit={ ( event ) => {
+						event.preventDefault();
+						primary?.onClick?.();
+					} }
+				>
+					<div className="agency-site-wizard__body" ref={ container }>
+						<div className="agency-site-wizard__intro">
+							<Heading level={ 2 } id={ titleId } tabIndex={ -1 }>
+								{ title }
+							</Heading>
+							<p>{ description }</p>
+						</div>
+						<div className="agency-site-wizard__step-content">
+							{ batch.length === 1 && step === 'host' && (
+								<div className="agency-site-wizard__source-preview">
+									<SitePreview
+										key={ batch[ 0 ].url }
+										site={ batch[ 0 ] }
+										simulate={ !! simulation }
+										knownSite={ knownSite }
+									/>
+								</div>
+							) }
+							{ content }
+							{ ! isUrlStep && (
+								<p className="agency-site-wizard__error" role="alert">
+									{ error }
+								</p>
+							) }
+							{ ! isUrlStep && ( primary || secondary ) && (
+								<div className="agency-site-wizard__actions">
+									{ primary && (
+										<Button
+											variant="primary"
+											__next40pxDefaultSize
+											type={ primary.href ? 'button' : 'submit' }
+											href={ primary.href }
+											target={ primary.external ? '_blank' : undefined }
+											rel={ primary.external ? 'noreferrer' : undefined }
+										>
+											{ primary.label }
+										</Button>
+									) }
+									{ secondary && (
+										<Button
+											variant="link"
+											type="button"
+											href={ secondary.href }
+											onClick={ secondary.onClick }
+										>
+											{ secondary.label }
+										</Button>
+									) }
+								</div>
+							) }
+						</div>
+					</div>
+				</form>
+				{ isFirstSite && step === 'start' && <SitesOverviewStory /> }
+			</Card>
 		</div>
 	);
 }
