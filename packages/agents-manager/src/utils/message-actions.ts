@@ -48,7 +48,10 @@ export function withComputedActions< Message extends { actions?: UIMessageAction
 	};
 }
 
-/** Disables every action a message shows, such as once its interactive UI is stale. */
+/**
+ * Disables a message's actions, such as once its interactive UI is stale. Component actions get a
+ * `disabled` prop, which those that change something, like the checkpoint, honor.
+ */
 export function withDisabledActions< Message extends { actions?: UIMessageAction[] } >(
 	message: Message
 ): Message {
