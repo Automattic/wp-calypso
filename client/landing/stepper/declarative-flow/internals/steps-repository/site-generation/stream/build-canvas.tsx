@@ -111,7 +111,8 @@ function pageProgress(
 	pages: StreamPage[],
 	sections: BuildWowStreamView[ 'state' ][ 'sections' ],
 	previews: BuildWowStreamView[ 'state' ][ 'previews' ] = {},
-	isComplete = false
+	isComplete = false,
+	isBuilding = false
 ): { built: number; planned: number; byPage: Record< string, PageProgress > } {
 	const routes = Object.entries( sections ).map( ( [ route, items ] ) => ( {
 		route: normalizeRoute( route ),
@@ -138,7 +139,7 @@ function pageProgress(
 			( page.sections.length > 0 && pageBuilt >= page.sections.length )
 		) {
 			byPage[ page.slug ] = 'done';
-		} else if ( preview || pageBuilt > 0 || hasPartial ) {
+		} else if ( preview || pageBuilt > 0 || hasPartial || isBuilding ) {
 			byPage[ page.slug ] = 'building';
 		} else {
 			byPage[ page.slug ] = 'pending';
@@ -360,7 +361,15 @@ function DesignBrief( {
 	const pages = canPlan ? ( plan?.pages ?? [] ) : [];
 	const awaitingPages = canPlan && isDesignPending && pages.length === 0;
 	const showPages = pages.length > 0 || awaitingPages;
-	const progress = pageProgress( pages, state?.sections ?? {}, state?.previews ?? {}, isComplete );
+	// The Engine starts composing the pages the moment the plan is complete,
+	// a few seconds before the first preview comes back.
+	const progress = pageProgress(
+		pages,
+		state?.sections ?? {},
+		state?.previews ?? {},
+		isComplete,
+		isGenerating && plan?.status === 'completed'
+	);
 	const sectionCount = sectionCountLabel( pages, progress.built );
 	const { tiles, ready: readyImages } = imageTiles(
 		state?.images ?? {},

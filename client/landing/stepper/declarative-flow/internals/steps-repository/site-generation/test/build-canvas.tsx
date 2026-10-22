@@ -711,6 +711,28 @@ describe( 'section progress', () => {
 		).toEqual( [ 'done', 'done' ] );
 	} );
 
+	it( 'marks every page building as soon as the plan is complete, before any preview arrives', () => {
+		const base = streamView().state.plan!;
+		const progress = ( container: HTMLElement ) =>
+			Array.from( container.querySelectorAll( '.site-generation-canvas__page-list li' ) ).map(
+				( chip ) => chip.getAttribute( 'data-progress' )
+			);
+		const { container, rerender } = render(
+			<BuildWowStreamCanvas
+				hostState="generating"
+				stream={ streamView( { plan: { ...base, status: 'developing', pages }, previews: {} } ) }
+			/>
+		);
+		expect( progress( container ) ).toEqual( [ 'pending', 'pending' ] );
+		rerender(
+			<BuildWowStreamCanvas
+				hostState="generating"
+				stream={ streamView( { plan: { ...base, pages }, previews: {} } ) }
+			/>
+		);
+		expect( progress( container ) ).toEqual( [ 'building', 'building' ] );
+	} );
+
 	it( 'keeps the plain planned count until a section has been built', () => {
 		render( <BuildWowStreamCanvas stream={ pagedStream( {} ) } /> );
 		expect( screen.getByText( '5 sections' ) ).toBeVisible();
