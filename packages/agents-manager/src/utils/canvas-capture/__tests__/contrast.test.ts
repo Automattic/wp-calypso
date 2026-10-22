@@ -1414,3 +1414,124 @@ describe( 'text over a cover image', () => {
 		expect( contrast?.notes[ 0 ] ).toContain( 'overlay, which hides its image' );
 	} );
 } );
+
+describe( 'text over a cover image, read more than once or more than one way', () => {
+	const PHOTO = 'https://example.com/food.jpg';
+	const COVER_RECT = { top: 0, left: 0, width: 1200, height: 600 };
+	const DARK_INK = { color: 'rgb(37, 45, 36)', fontSize: '16px' };
+	const greys = Array.from( { length: 121 }, ( _, index ) => 60 + index );
+	const imageData = ( x: number, y: number, width: number ) => ( {
+		data: Uint8ClampedArray.from(
+			greys.slice( x, x + width ).flatMap( ( grey ) => [ grey, grey, grey, 255 ] )
+		),
+	} );
+	const kept = () =>
+		( {
+			width: greys.length,
+			height: 1,
+			getContext: () => ( { getImageData: imageData } ),
+		} ) as unknown as HTMLCanvasElement;
+
+	const cover = (
+		clientId: string,
+		children: CanvasBlock[],
+		{ overlay = true, pixels = true, imageStyle = {}, loaded = false } = {}
+	): CanvasBlock => ( {
+		clientId,
+		name: 'core/cover',
+		rect: COVER_RECT,
+		build: ( element, canvasDocument ) => {
+			element.classList.add( 'wp-block-cover' );
+
+			const image = withRect( canvasDocument.createElement( 'img' ), COVER_RECT );
+			image.className = 'wp-block-cover__image-background';
+			image.src = PHOTO;
+			Object.assign( image.style, { position: 'absolute', ...imageStyle } );
+			element.append( image );
+
+			if ( pixels ) {
+				rememberImagePixels( image, PHOTO, kept() );
+			}
+
+			if ( loaded ) {
+				Object.defineProperties( image, {
+					complete: { value: true },
+					naturalWidth: { value: greys.length },
+					naturalHeight: { value: 1 },
+				} );
+			}
+
+			if ( overlay ) {
+				const span = canvasDocument.createElement( 'span' );
+				span.className = 'wp-block-cover__background';
+				Object.assign( span.style, {
+					position: 'absolute',
+					backgroundColor: 'rgb(26, 21, 16)',
+					opacity: '0.55',
+				} );
+				element.append( span );
+			}
+		},
+		children,
+	} );
+
+	it( 'gives each of two matching covers its own note, naming its own cover', () => {
+		mountCanvas( [
+			cover( 'one', [ text( 'a', DARK_INK ) ] ),
+			cover( 'two', [ text( 'b', DARK_INK ) ] ),
+		] );
+
+		const notes = describeTextContrast( [ 'one', 'two' ] )?.notes ?? [];
+
+		expect( notes ).toHaveLength( 2 );
+		expect( notes[ 0 ] ).toMatch( /paragraph \(a\) .* comes from cover \(one\)/ );
+		expect( notes[ 1 ] ).toMatch( /paragraph \(b\) .* comes from cover \(two\)/ );
+	} );
+
+	it( 'says a cover with no overlay shows its photograph undimmed', () => {
+		mountCanvas( [ cover( 'hero', [ text( 'a', DARK_INK ) ], { overlay: false } ) ] );
+
+		const [ note ] = notesOf( [ 'hero' ] );
+
+		expect( note ).toContain(
+			'comes from the photograph behind the text in cover (hero), which no overlay dims.'
+		);
+		expect( note ).not.toContain( 'opacity' );
+	} );
+
+	// What a duotone or a fade renders is not in the pixels sampled.
+	it.each( [
+		[ 'a duotone', { filter: 'url(#wp-duotone-dark)' } ],
+		[ 'a fade', { opacity: '0.5' } ],
+	] )( 'leaves text over an image with %s to the picture', ( _, imageStyle ) => {
+		mountCanvas( [ cover( 'hero', [ text( 'a', DARK_INK ) ], { imageStyle } ) ] );
+
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+	} );
+
+	it( 'draws the editor’s own copy of the image once for every run over it', () => {
+		mountCanvas( [
+			cover( 'hero', [ text( 'a', DARK_INK ), text( 'b', DARK_INK ) ], {
+				pixels: false,
+				loaded: true,
+			} ),
+		] );
+
+		const frameWindow = ( document.querySelector( 'iframe' ) as HTMLIFrameElement )
+			.contentWindow as Window & typeof globalThis;
+		const drawImage = jest.fn();
+		const getContext = jest
+			.spyOn( frameWindow.HTMLCanvasElement.prototype, 'getContext' )
+			.mockReturnValue( {
+				drawImage,
+				getImageData: imageData,
+			} as unknown as CanvasRenderingContext2D );
+
+		try {
+			expect( describeTextContrast( [ 'hero' ] )?.failures ).toBe( 2 );
+			expect( drawImage ).toHaveBeenCalledTimes( 1 );
+		} finally {
+			getContext.mockRestore();
+		}
+	} );
+} );

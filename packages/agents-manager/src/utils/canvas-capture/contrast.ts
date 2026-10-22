@@ -21,7 +21,12 @@
 import { createShortIdLookup } from '../block-ids';
 import { getBlock, getBlocks, getPaletteColors } from '../editor-blocks';
 import { getCanvasDocument } from '../editor-canvas';
-import { drawScaledCopy, getBackgroundImageUrls, recallImagePixels } from './image-pixels';
+import {
+	drawScaledCopy,
+	getBackgroundImageUrls,
+	recallImagePixels,
+	rememberImagePixels,
+} from './image-pixels';
 
 const MAX_TEXT_BLOCKS = 40;
 // Text runs read in one block: a paragraph's links, spans and highlights.
@@ -445,7 +450,13 @@ function copyLiveImage( image: HTMLImageElement ): HTMLCanvasElement | null {
 	}
 
 	try {
-		return drawScaledCopy( image, image.naturalWidth, image.naturalHeight, image.ownerDocument );
+		return drawScaledCopy(
+			image,
+			image.naturalWidth,
+			image.naturalHeight,
+			undefined,
+			image.ownerDocument
+		);
 	} catch {
 		return null;
 	}
@@ -542,9 +553,19 @@ function sampleImage( source: Element, textRect: DOMRect, view: Window ): Rgba[]
 		return null;
 	}
 
-	const pixels =
-		recallImagePixels( source, url ) ??
-		( isImage ? copyLiveImage( source as HTMLImageElement ) : null );
+	let pixels = recallImagePixels( source, url );
+
+	// Kept like the capture's own copies, so the other runs over this image
+	// read it without drawing it again. A tainted copy is kept too: it fails
+	// as cheaply the next time.
+	if ( ! pixels && isImage ) {
+		pixels = copyLiveImage( source as HTMLImageElement );
+
+		if ( pixels ) {
+			rememberImagePixels( source, url, pixels );
+		}
+	}
+
 	const region =
 		pixels &&
 		( isImage
@@ -630,9 +651,16 @@ function findCoverBackdrop(
 		child.classList.contains( 'wp-block-cover__image-background' )
 	);
 	const ownImage = hasBackgroundImage( view.getComputedStyle( cover ) );
+	const imageStyle = image && view.getComputedStyle( image );
 
+	// A duotone is a filter on the image, and what it renders is not in the
+	// pixels sampled; nor is a faded or blended image.
 	if (
 		( image && ownImage ) ||
+		( imageStyle &&
+			( isSet( imageStyle.filter ) ||
+				isSet( imageStyle.mixBlendMode ) ||
+				parseFloat( imageStyle.opacity ) < 1 ) ) ||
 		children.some(
 			( child ) =>
 				child.localName === 'video' ||
@@ -996,7 +1024,7 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 		let source = painter ?? '';
 
 		if ( item.backdrop.cover ) {
-			source = 'cover';
+			source = `cover|${ painter }`;
 		} else if ( painter && isOwnBackground( painter ) ) {
 			source = 'own';
 		} else if ( painter === item.clientId ) {
@@ -1030,14 +1058,20 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 			const { overlay, opacity } = backdrop.cover;
 			const cover = labelOf( backdrop.clientId );
 
-			source =
-				opacity >= 1
-					? `The ${ backdropHex } comes from ${ cover }'s overlay, which hides its image.`
-					: `The ${ backdropHex } comes from ${ cover }: its overlay, ${ toHex(
-							overlay
-						) } at ${ Math.round(
-							opacity * 100
-						) }% opacity, blended over the photograph behind the text. Of the darker and the lighter parts of the photograph, both measured, this is the one the text reads worse on.`;
+			const parts =
+				'Of the darker and the lighter parts of the photograph, both measured, this is the one the text reads worse on.';
+
+			if ( opacity >= 1 ) {
+				source = `The ${ backdropHex } comes from ${ cover }'s overlay, which hides its image.`;
+			} else if ( opacity <= 0 ) {
+				source = `The ${ backdropHex } comes from the photograph behind the text in ${ cover }, which no overlay dims. ${ parts }`;
+			} else {
+				source = `The ${ backdropHex } comes from ${ cover }: its overlay, ${ toHex(
+					overlay
+				) } at ${ Math.round(
+					opacity * 100
+				) }% opacity, blended over the photograph behind the text. ${ parts }`;
+			}
 		} else if ( ! backdrop.clientId ) {
 			source = `The ${ backdropHex } comes from the page background.`;
 		} else if ( isOwnBackground( backdrop.clientId ) ) {

@@ -26,7 +26,12 @@
  * Internals are exported for their tests only; `rasterizeCanvas` is the entry point.
  */
 
-import { drawScaledCopy, getBackgroundImageUrls, rememberImagePixels } from './image-pixels';
+import {
+	drawScaledCopy,
+	getBackgroundImageUrls,
+	rememberImagePixels,
+	URL_PATTERN,
+} from './image-pixels';
 import type { CanvasCaptureContext, CanvasRasterizer } from './capture';
 
 // Bounds the encoded size and the model's per-image token cost, which scale with
@@ -511,8 +516,6 @@ export const getCaptureRects = (
 	return clusters.map( ( cluster ) => bandForSpan( cluster, canvasWindow, documentHeight ) );
 };
 
-const URL_PATTERN = /url\(\s*['"]?([^'")]+)['"]?\s*\)/g;
-
 /**
  * Swaps every image in the clone for a box of the same rendered size.
  *
@@ -832,19 +835,22 @@ const toBase64 = ( buffer: ArrayBuffer ): string => bytesToBase64( new Uint8Arra
  * Downscaled because a photograph straight from the media library can run to
  * megabytes, every one of which would be base64-encoded into the SVG and
  * parsed again by the renderer, only to be drawn into a few hundred pixels.
- * The scale is the one `cover` would use, so whichever way the image is
- * fitted it is never drawn larger than it was encoded.
+ * The scale is the one `cover` would use, so an image fitted to its box is
+ * never drawn larger than it was encoded. One drawn at its own size — a
+ * repeated cover's tiles, a fixed one's viewport-sized background — is kept
+ * at that size, since shrinking it would change what the capture shows.
  * A small copy of the pixels is kept for the contrast measurement, which
  * reads text over a cover's photograph against them.
  * @param element The live element showing the image.
  * @param url     The image's URL.
- * @param box     The size it renders at, in CSS pixels.
+ * @param box     The size it renders at, in CSS pixels, when it is fitted to
+ *                it; `null` when it is drawn at its own size.
  * @returns The data URI.
  */
 const fetchImageAsDataUri = async (
 	element: Element,
 	url: string,
-	box: DOMRect
+	box: DOMRect | null
 ): Promise< string > => {
 	if ( url.startsWith( 'data:' ) ) {
 		return url;
@@ -866,20 +872,20 @@ const fetchImageAsDataUri = async (
 	}
 
 	const bitmap = await createImageBitmap( blob );
-	const scale = Math.min( 1, Math.max( box.width / bitmap.width, box.height / bitmap.height ) );
-	const canvas = document.createElement( 'canvas' );
-	canvas.width = Math.max( 1, Math.round( bitmap.width * scale ) );
-	canvas.height = Math.max( 1, Math.round( bitmap.height * scale ) );
+	const scale = box
+		? Math.min( 1, Math.max( box.width / bitmap.width, box.height / bitmap.height ) )
+		: 1;
+	let canvas: HTMLCanvasElement | null;
 
-	const context = canvas.getContext( '2d' );
-
-	if ( ! context ) {
+	try {
+		canvas = drawScaledCopy( bitmap, bitmap.width, bitmap.height, scale );
+	} finally {
 		bitmap.close();
-		throw new Error( 'No 2d context available' );
 	}
 
-	context.drawImage( bitmap, 0, 0, canvas.width, canvas.height );
-	bitmap.close();
+	if ( ! canvas ) {
+		throw new Error( 'No 2d context available' );
+	}
 
 	const pixels = drawScaledCopy( canvas, canvas.width, canvas.height );
 
@@ -900,6 +906,25 @@ const fetchImageAsDataUri = async (
 };
 
 /**
+ * Where to look for images to inline: the framed blocks, and before them any
+ * cover holding one. Text edited inside a cover is framed without the cover,
+ * and the contrast measurement needs the cover's photograph to read it against.
+ * @param canvasDocument The canvas document.
+ * @param clientIds      The framed blocks.
+ * @returns The elements, covers first.
+ */
+export const findImageRoots = ( canvasDocument: Document, clientIds: string[] ): Element[] => {
+	const blocks = findBlockElements( canvasDocument, clientIds );
+	const covers = blocks.flatMap( ( block ) => {
+		const cover = block.parentElement?.closest( '.wp-block-cover' );
+
+		return cover ? [ cover ] : [];
+	} );
+
+	return [ ...new Set( [ ...covers, ...blocks ] ) ];
+};
+
+/**
  * The real pixels of the images in the given blocks, keyed by the live element
  * that shows each one: `<img>`s, and CSS backgrounds, where cover blocks keep
  * their photograph.
@@ -916,7 +941,7 @@ export const inlineBlockImages = async (
 	view: Window
 ): Promise< Map< Element, string > > => {
 	const seen = new Set< Element >();
-	const candidates: { element: Element; url: string; box: DOMRect }[] = [];
+	const candidates: { element: Element; url: string; box: DOMRect | null }[] = [];
 
 	for ( const element of roots.flatMap( ( root ) => [
 		root,
@@ -942,20 +967,28 @@ export const inlineBlockImages = async (
 		// By tag name: the canvas is an iframe, so its elements are not
 		// instances of this window's `HTMLImageElement`.
 		let url: string | undefined;
+		let fitted: boolean;
 
 		if ( element.tagName === 'IMG' ) {
 			const image = element as HTMLImageElement;
 			url = image.currentSrc || image.src;
+			fitted = ! [ 'none', 'scale-down' ].includes( view.getComputedStyle( image ).objectFit );
 		} else {
-			const urls = getBackgroundImageUrls( view.getComputedStyle( element ).backgroundImage );
+			const style = view.getComputedStyle( element );
+			const urls = getBackgroundImageUrls( style.backgroundImage );
 
 			// One photograph to stand in for. Several layered urls would all be
-			// rewritten to the same one.
-			url = urls.length === 1 ? urls[ 0 ] : undefined;
+			// rewritten to the same one. A data URI is left to its placeholder:
+			// one with quotes in it is cut short by the url pattern, and the
+			// rewrite would leave broken CSS where the background was.
+			url = urls.length === 1 && ! urls[ 0 ].startsWith( 'data:' ) ? urls[ 0 ] : undefined;
+			fitted =
+				[ 'cover', 'contain' ].includes( style.backgroundSize ) &&
+				style.backgroundAttachment !== 'fixed';
 		}
 
 		if ( url ) {
-			candidates.push( { element, url, box } );
+			candidates.push( { element, url, box: fitted ? box : null } );
 		}
 	}
 
@@ -1763,6 +1796,15 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 	// and base64. Caching the first needs invalidation that catches a stylesheet
 	// rewritten in place; caching the second needs none at all, since a font at
 	// a given URL never changes.
+	// Started alongside the CSS, which it does not depend on: both are mostly
+	// waiting on the network. Never rejects. The whole page keeps its
+	// placeholders: scaled to fit, no photograph in it is legible, and they
+	// would cost the PNG its compression.
+	const images = wholePage
+		? Promise.resolve( new Map< Element, string >() )
+		: time( 'images', () =>
+				inlineBlockImages( findImageRoots( canvasDocument, clientIds ), canvasWindow )
+			);
 	const styleText = await time( 'css', () =>
 		getPreparedStyleText( canvasDocument, ( stats ) => {
 			stages.css_read = stats.read;
@@ -1777,14 +1819,7 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 			}
 		} )
 	);
-	// Before the clone, so the clone is taken as close to the draw as it can
-	// be. The whole page keeps its placeholders: scaled to fit, no photograph
-	// in it is legible, and they would cost the PNG its compression.
-	const inlinedImages = wholePage
-		? new Map< Element, string >()
-		: await time( 'images', () =>
-				inlineBlockImages( findBlockElements( canvasDocument, clientIds ), canvasWindow )
-			);
+	const inlinedImages = await images;
 
 	const clone = await time( 'clone', () => {
 		const cloned = body.cloneNode( true ) as Element;

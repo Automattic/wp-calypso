@@ -15,7 +15,7 @@
 // full-width hero.
 export const PIXEL_LONG_EDGE = 256;
 
-const URL_PATTERN = /url\(\s*['"]?([^'")]+)['"]?\s*\)/g;
+export const URL_PATTERN = /url\(\s*['"]?([^'")]+)['"]?\s*\)/g;
 
 interface ImagePixels {
 	/** The URL the pixels were read from, so a copy outlived by a new image is not used. */
@@ -30,11 +30,12 @@ export const getBackgroundImageUrls = ( backgroundImage: string | undefined ): s
 	Array.from( backgroundImage?.matchAll( URL_PATTERN ) ?? [] ).map( ( match ) => match[ 1 ] );
 
 /**
- * A copy of the drawn image, scaled to at most `PIXEL_LONG_EDGE`, in a canvas
- * of the given document's.
+ * A copy of the drawn image in a canvas of the given document's, scaled by
+ * `scale`: by default to at most `PIXEL_LONG_EDGE`, for a copy to keep.
  * @param source        What to copy: a canvas, image or bitmap already drawn.
  * @param width         Its width in pixels.
  * @param height        Its height in pixels.
+ * @param scale         How much to scale it by.
  * @param ownerDocument The document to make the canvas in.
  * @returns The canvas, or `null` when there is no 2d context.
  */
@@ -42,9 +43,9 @@ export function drawScaledCopy(
 	source: CanvasImageSource,
 	width: number,
 	height: number,
+	scale = Math.min( 1, PIXEL_LONG_EDGE / Math.max( width, height ) ),
 	ownerDocument: Document = document
 ): HTMLCanvasElement | null {
-	const scale = Math.min( 1, PIXEL_LONG_EDGE / Math.max( width, height ) );
 	const canvas = ownerDocument.createElement( 'canvas' );
 	canvas.width = Math.max( 1, Math.round( width * scale ) );
 	canvas.height = Math.max( 1, Math.round( height * scale ) );

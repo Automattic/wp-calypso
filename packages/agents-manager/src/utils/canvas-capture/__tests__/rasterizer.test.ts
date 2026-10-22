@@ -7,6 +7,7 @@ import {
 	getCaptureRect,
 	getCaptureRects,
 	getInkSpans,
+	findImageRoots,
 	getUsedFontFamilies,
 	inlineBlockImages,
 	inlineFonts,
@@ -366,7 +367,10 @@ describe( 'replaceImagesWithPlaceholders, given inlined images', () => {
 describe( 'inlineBlockImages', () => {
 	const SVG = '<svg xmlns="http://www.w3.org/2000/svg"/>';
 
-	const blockWith = ( html: string, { backgroundImage = 'none' } = {} ) => {
+	const blockWith = (
+		html: string,
+		{ backgroundImage = 'none', backgroundSize = 'cover', backgroundAttachment = 'scroll' } = {}
+	) => {
 		const root = document.createElement( 'figure' );
 		root.innerHTML = html;
 		[ root, ...Array.from( root.querySelectorAll( '*' ) ) ].forEach( ( element ) => {
@@ -376,6 +380,9 @@ describe( 'inlineBlockImages', () => {
 		const view = asWindow( {
 			getComputedStyle: ( element: Element ) => ( {
 				backgroundImage: element.classList.contains( 'bg' ) ? backgroundImage : 'none',
+				backgroundSize,
+				backgroundAttachment,
+				objectFit: '',
 			} ),
 		} );
 
@@ -471,6 +478,80 @@ describe( 'inlineBlockImages', () => {
 		expect( fetchMock() ).not.toHaveBeenCalled();
 	} );
 
+	// A data URI with quotes in it is cut short by the url pattern, and the
+	// rewrite would leave broken CSS where the background was.
+	it( 'leaves a data URI background to its placeholder', async () => {
+		stubSvg();
+		const { root, view } = blockWith( '<div class="bg"></div>', {
+			backgroundImage:
+				'url("data:image/svg+xml;utf8,<svg xmlns=\\"http://www.w3.org/2000/svg\\"/>")',
+		} );
+
+		await expect( inlineBlockImages( [ root ], view ) ).resolves.toEqual( new Map() );
+		expect( fetchMock() ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'with a raster image', () => {
+		const drawImage = jest.fn();
+		const globalsWithBitmap = globalThis as { createImageBitmap?: unknown };
+		let restore: () => void;
+
+		beforeEach( () => {
+			drawImage.mockClear();
+			globalsWithBitmap.createImageBitmap = jest.fn( async () => ( {
+				width: 2000,
+				height: 1000,
+				close: jest.fn(),
+			} ) );
+			const getContext = jest
+				.spyOn( HTMLCanvasElement.prototype, 'getContext' )
+				.mockReturnValue( { drawImage } as unknown as CanvasRenderingContext2D );
+			const toBlob = jest
+				.spyOn( HTMLCanvasElement.prototype, 'toBlob' )
+				.mockImplementation( ( resolve ) =>
+					resolve( {
+						type: 'image/webp',
+						arrayBuffer: async () => new Uint8Array( [ 1, 2, 3 ] ).buffer,
+					} as unknown as Blob )
+				);
+			stubFetch( async () => ( { ok: true, blob: async () => ( { type: 'image/jpeg' } ) } ) );
+			restore = () => {
+				getContext.mockRestore();
+				toBlob.mockRestore();
+				delete globalsWithBitmap.createImageBitmap;
+			};
+		} );
+
+		afterEach( () => restore() );
+
+		// Shrinking a tile, or a background sized to the viewport, would
+		// change what the capture shows.
+		it.each( [
+			[ 'a repeated background', { backgroundSize: 'auto' } ],
+			[ 'a fixed background', { backgroundAttachment: 'fixed' } ],
+		] )( 'keeps %s at its own size', async ( _, style ) => {
+			const { root, view } = blockWith( '<div class="bg"></div>', {
+				backgroundImage: 'url("https://example.com/tile.jpg")',
+				...style,
+			} );
+
+			await inlineBlockImages( [ root ], view );
+
+			expect( drawImage ).toHaveBeenCalledWith( expect.anything(), 0, 0, 2000, 1000 );
+		} );
+
+		it( 'shrinks a background sized to cover its box', async () => {
+			const { root, view } = blockWith( '<div class="bg"></div>', {
+				backgroundImage: 'url("https://example.com/photo.jpg")',
+			} );
+
+			await inlineBlockImages( [ root ], view );
+
+			expect( drawImage ).toHaveBeenCalledWith( expect.anything(), 0, 0, 200, 100 );
+			expect( drawImage ).not.toHaveBeenCalledWith( expect.anything(), 0, 0, 2000, 1000 );
+		} );
+	} );
+
 	it( 'downscales a raster image to the box it renders in', async () => {
 		const close = jest.fn();
 		const drawImage = jest.fn();
@@ -508,6 +589,21 @@ describe( 'inlineBlockImages', () => {
 			toBlob.mockRestore();
 			delete globalsWithBitmap.createImageBitmap;
 		}
+	} );
+} );
+
+describe( 'findImageRoots', () => {
+	it( 'puts the cover holding a framed block first, and each element once', () => {
+		document.body.innerHTML =
+			'<div class="wp-block-cover" data-block="hero"><div><h2 data-block="head"></h2><p data-block="lead"></p></div></div><p data-block="out"></p>';
+
+		expect(
+			findImageRoots( document, [ 'head', 'lead', 'out' ] ).map( ( element ) =>
+				element.getAttribute( 'data-block' )
+			)
+		).toEqual( [ 'hero', 'head', 'lead', 'out' ] );
+
+		document.body.innerHTML = '';
 	} );
 } );
 
