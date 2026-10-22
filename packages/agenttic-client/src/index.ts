@@ -80,6 +80,7 @@ export type {
 	Suggestion,
 	SuggestionOption,
 	SubmitOptions,
+	PromptSource,
 } from './react/useAgentChat';
 
 // Constants

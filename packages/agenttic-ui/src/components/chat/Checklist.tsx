@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import React, { useId, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { cn } from '../../utils/classNames';
 import { ChevronDownIcon } from '../icons/ChevronDownIcon';
 import { ChevronUpIcon } from '../icons/ChevronUpIcon';
@@ -20,6 +20,8 @@ export interface ChecklistProps {
 	onSubmit?: ( selectedItem: ChecklistItem, items: ChecklistItem[] ) => boolean | void;
 	/** While true (e.g. a reply is streaming) open tasks look and act inert. */
 	busy?: boolean;
+	/** Move focus to the header on mount, e.g. when this list replaces one the user just picked from. */
+	focusHeaderOnMount?: boolean;
 	className?: string;
 }
 
@@ -167,6 +169,7 @@ function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: Checklis
  * @param props.collapseOnSelect
  * @param props.onSubmit
  * @param props.busy
+ * @param props.focusHeaderOnMount Move focus to the header on mount.
  * @param props.className
  */
 export function Checklist( {
@@ -178,6 +181,7 @@ export function Checklist( {
 	collapseOnSelect = true,
 	onSubmit,
 	busy = false,
+	focusHeaderOnMount = false,
 	className,
 }: ChecklistProps ) {
 	const [ internalCollapsed, setInternalCollapsed ] = useState( defaultCollapsed );
@@ -188,6 +192,14 @@ export function Checklist( {
 	const foldEverything = items.every( ( item ) => getStatus( item ) === 'in-progress' );
 	const listId = useId();
 	const headerRef = useRef< HTMLButtonElement >( null );
+
+	// Read once: the list that replaced a picked-from list takes its focus.
+	const focusOnMountRef = useRef( focusHeaderOnMount );
+	useEffect( () => {
+		if ( focusOnMountRef.current ) {
+			headerRef.current?.focus( { preventScroll: true } );
+		}
+	}, [] );
 
 	const setCollapsed = ( next: boolean ) => {
 		if ( ! isControlled ) {

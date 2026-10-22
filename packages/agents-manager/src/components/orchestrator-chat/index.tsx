@@ -34,6 +34,7 @@ import useRegenerateAction from '../../hooks/use-regenerate-action';
 import { useResponseOutcomeTracking } from '../../hooks/use-response-outcome-tracking';
 import { useRetriedToolCalls } from '../../hooks/use-retried-tool-calls';
 import { useShowComponentRetention } from '../../hooks/use-show-component-retention';
+import useSiteSetupChecklist from '../../hooks/use-site-setup-checklist';
 import useSourcesAction from '../../hooks/use-sources-action';
 import { useStreamedCheckpointMessages } from '../../hooks/use-streamed-checkpoint-messages';
 import { useSuggestionTracking } from '../../hooks/use-suggestion-tracking';
@@ -54,6 +55,7 @@ import {
 } from '../../utils/message-actions';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import SiteSetupChecklist from '../site-setup-checklist';
 import type { BigSkyMessage } from '../../types';
 import type {
 	AbilitiesSetupHook,
@@ -291,6 +293,23 @@ export default function OrchestratorChat( {
 		onRetry: submitRetryMessage,
 		onSubmit,
 	} );
+	const siteSetupChecklist = useSiteSetupChecklist( {
+		enabled: ! isReaderChat,
+		isProcessing,
+		isLoadingConversation,
+		messages,
+	} );
+	// The empty view waits for the checklist too, or it flashes before the list.
+	const isPreparingConversation = isLoadingConversation || siteSetupChecklist.isLoading;
+	const siteSetupChecklistNode = siteSetupChecklist.variant ? (
+		<SiteSetupChecklist
+			variant={ siteSetupChecklist.variant }
+			items={ siteSetupChecklist.items }
+			busy={ isProcessing }
+			focusHeaderOnMount={ siteSetupChecklist.focusHeaderOnMount }
+		/>
+	) : null;
+
 	const chatError = useChatError( {
 		error: hasFailedResume ? null : error,
 		isReaderChat,
@@ -487,7 +506,7 @@ export default function OrchestratorChat( {
 	// Empty-view suggestions and their tracking.
 	const displayedEmptyViewSuggestions = getDisplayedEmptyViewSuggestions( {
 		isVisible: suggestionsVisible,
-		isChatEmpty: ! isLoadingConversation && ! hasMessages,
+		isChatEmpty: ! isPreparingConversation && ! hasMessages,
 		emptyViewSuggestions,
 		registeredSuggestions: suggestions,
 		dynamicSuggestions,
@@ -499,7 +518,7 @@ export default function OrchestratorChat( {
 
 	const { onSuggestionsRendered, trackSuggestionClick } = useSuggestionTracking( {
 		contextualSuggestionIds,
-		hasSuggestionsToRender: ! isLoadingConversation && displayedEmptyViewSuggestions.length > 0,
+		hasSuggestionsToRender: ! isPreparingConversation && displayedEmptyViewSuggestions.length > 0,
 	} );
 
 	const handleSuggestionClick = useCallback(
@@ -540,7 +559,9 @@ export default function OrchestratorChat( {
 			error={ chatError || uploadError }
 			onSubmit={ submitComposerMessage }
 			onAbort={ stopResponse }
-			isLoadingConversation={ isLoadingConversation }
+			isLoadingConversation={ isPreparingConversation }
+			pinnedContent={ siteSetupChecklist.variant === 'pinned' ? siteSetupChecklistNode : null }
+			emptyViewContent={ siteSetupChecklist.variant === 'empty' ? siteSetupChecklistNode : null }
 			isDocked={ isDocked }
 			isOpen={ isOpen }
 			onClose={ onClose }

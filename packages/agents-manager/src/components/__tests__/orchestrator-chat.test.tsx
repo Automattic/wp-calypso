@@ -173,6 +173,8 @@ const mockAgentChat = jest.fn(
 		onContextCardAction,
 	}: {
 		messages?: unknown[];
+		pinnedContent?: unknown;
+		emptyViewContent?: unknown;
 		onSuggestionClick: (
 			suggestion: Suggestion | string,
 			availableSuggestions?: Suggestion[]
@@ -439,6 +441,23 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
+const noSiteSetupChecklist = {
+	isLoading: false,
+	variant: null,
+	items: [],
+	focusHeaderOnMount: false,
+};
+const mockUseSiteSetupChecklist = jest.fn( (): unknown => noSiteSetupChecklist );
+jest.mock( '../../hooks/use-site-setup-checklist', () => ( {
+	__esModule: true,
+	default: () => mockUseSiteSetupChecklist(),
+} ) );
+jest.mock( '../site-setup-checklist', () => ( {
+	__esModule: true,
+	default: ( props: { variant: string } ) => (
+		<div data-testid={ `site-setup-checklist-${ props.variant }` } />
+	),
+} ) );
 // Returns `undefined` after a mock reset, which the wrapper reads as allowed.
 const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
 const mockCreditsVisibility = jest.fn();
@@ -503,6 +522,7 @@ jest.mock( '../agent-chat', () => {
 
 import { getSessionId } from '../../utils/agent-session';
 import { takeActionOrigin } from '../../utils/action-origin';
+import { markNextPromptSource } from '../../utils/prompt-source';
 import {
 	bindToNavigationTarget,
 	bindToOpenCanvas,
@@ -4515,6 +4535,77 @@ describe( 'OrchestratorChat', () => {
 			} );
 
 			expect( replied ).toBe( false );
+		} );
+	} );
+
+	describe( 'Site Setup checklist', () => {
+		afterEach( () => {
+			mockUseSiteSetupChecklist.mockReturnValue( noSiteSetupChecklist );
+		} );
+
+		it( 'renders the checklist into the empty view of a new chat, which stays empty', () => {
+			mockUseSiteSetupChecklist.mockReturnValue( { ...noSiteSetupChecklist, variant: 'empty' } );
+			mockUseAgentChat.mockReturnValue( agentChatReturn() );
+			const onHasMessagesChange = jest.fn();
+			render( chat( { onHasMessagesChange } ) );
+
+			const props = mockAgentChat.mock.calls.at( -1 )![ 0 ];
+			expect( props.pinnedContent ).toBeNull();
+			expect( ( props.emptyViewContent as { props: { variant: string } } ).props.variant ).toBe(
+				'empty'
+			);
+			expect( onHasMessagesChange ).toHaveBeenLastCalledWith( false );
+		} );
+
+		it( 'keeps the chat loading while the list is read', () => {
+			mockUseSiteSetupChecklist.mockReturnValue( { ...noSiteSetupChecklist, isLoading: true } );
+			mockUseAgentChat.mockReturnValue( agentChatReturn() );
+			render( chat( { emptyViewSuggestions: [ { id: 'a', label: 'A' } ] } ) );
+
+			const props = mockAgentChat.mock.calls.at( -1 )![ 0 ];
+			expect( props.isLoadingConversation ).toBe( true );
+			expect( props.emptyViewSuggestions ).toEqual( [] );
+		} );
+
+		it( 'sends a task prompt with its prompt source, and the next message without', async () => {
+			const onSubmit = jest.fn( async () => {} );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+			const { onSubmit: submit } = mockAgentChat.mock.calls.at( -1 )![ 0 ];
+
+			markNextPromptSource(
+				{ source: 'site-setup-checklist', id: 'design' },
+				'Help me with this task'
+			);
+			await act( async () => {
+				await submit( 'Help me with this task' );
+			} );
+			await act( async () => {
+				await submit( 'And now something else' );
+			} );
+
+			expect( onSubmit ).toHaveBeenNthCalledWith( 1, 'Help me with this task', {
+				promptSource: { source: 'site-setup-checklist', id: 'design' },
+			} );
+			expect( onSubmit ).toHaveBeenNthCalledWith( 2, 'And now something else' );
+		} );
+
+		it( 'pins the checklist above the messages, inert while a turn runs', () => {
+			mockUseSiteSetupChecklist.mockReturnValue( {
+				...noSiteSetupChecklist,
+				variant: 'pinned',
+				focusHeaderOnMount: true,
+			} );
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { messages: [ userMessage ], isProcessing: true } )
+			);
+			render( chat() );
+
+			const props = mockAgentChat.mock.calls.at( -1 )![ 0 ];
+			expect( props.emptyViewContent ).toBeNull();
+			expect( ( props.pinnedContent as { props: Record< string, unknown > } ).props ).toMatchObject(
+				{ variant: 'pinned', busy: true, focusHeaderOnMount: true }
+			);
 		} );
 	} );
 } );
