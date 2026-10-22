@@ -48,6 +48,7 @@ import {
 	getSiteMcpAbilities,
 	getSiteRemoteGroups,
 	isRemoteAbilityEnabled,
+	isRemoteKeyEnabled,
 	mergeSiteMcpAbilities,
 } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
@@ -323,6 +324,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	// back to counting their keys. Gated at the computation level: even a
 	// previously cached catalog must not leak into the totals for other users.
 	const remoteCounts = ( category: 'read' | 'write' ) => {
+		const defaultEnabled =
+			isMcpEnabled && enabledToolCount( category === 'read' ? readTools : writeTools ) > 0;
 		if ( ! isAutomattician ) {
 			return { total: 0, enabled: 0 };
 		}
@@ -332,13 +335,18 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 			if ( group.abilities.length > 0 ) {
 				total += group.abilities.length;
 				enabled += group.abilities.filter( ( ability ) =>
-					isRemoteAbilityEnabled( savedRemoteGroups, ability.name, ability.meta?.annotations )
+					isRemoteAbilityEnabled(
+						savedRemoteGroups,
+						ability.name,
+						ability.meta?.annotations,
+						defaultEnabled
+					)
 				).length;
 				return;
 			}
 			total += group.keys.length + group.abilityKeys.length;
-			enabled += [ ...group.keys, ...group.abilityKeys ].filter(
-				( key ) => savedRemoteGroups[ key ] === true
+			enabled += [ ...group.keys, ...group.abilityKeys ].filter( ( key ) =>
+				isRemoteKeyEnabled( savedRemoteGroups, key, defaultEnabled )
 			).length;
 		} );
 		return { total, enabled };

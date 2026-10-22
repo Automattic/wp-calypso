@@ -327,6 +327,7 @@ describe( '<AIToolsSettings>', () => {
 						blog_id: jetpackSite.ID,
 						site_level_enabled: true,
 						abilities: { 'wpcom-mcp/posts-list': true },
+						remote_groups: { 'read:jetpack-forms': false },
 					},
 				],
 			},
