@@ -13,6 +13,7 @@
 	"references": [
 		{ "path": "../agenttic-client" },
 		{ "path": "../agenttic-ui" },
+		{ "path": "../ai-ui-renderer" },
 		{ "path": "../viewport" },
 		{ "path": "../support-articles" }
 	]

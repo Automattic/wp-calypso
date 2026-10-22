@@ -11,7 +11,12 @@ export { getProductsByBillingSlug } from './get-products-by-billing-slug';
 export { getProductsList } from './get-products-list';
 export { getProductsListType } from './get-products-list-type';
 export { isProductsListFetching } from './is-products-list-fetching';
-export { getFreshProductsList, isListedProductOnSale, isProductOnSale } from './is-product-on-sale';
+export {
+	getFreshProductsList,
+	hasProductsListRequestFailed,
+	isListedProductOnSale,
+	isProductOnSale,
+} from './is-product-on-sale';
 export { isMarketplaceProduct } from './is-marketplace-product';
 export { isSaasProduct } from './is-saas-product';
 export { getProductSaleCouponCost } from './get-product-sale-coupon-cost';

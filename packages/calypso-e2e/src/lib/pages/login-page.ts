@@ -216,10 +216,13 @@ export class LoginPage {
 	}
 
 	/**
-	 * Clicks the "Create an account" link.
+	 * Clicks the link through to signup: "Sign up" in the main login view's footer, or
+	 * "Create an account" in the mid-flow views' top bar. The Woo 2FA view has both.
 	 */
 	async clickCreateNewAccount(): Promise< Locator > {
-		const locator = this.page.getByRole( 'link', { name: 'Create an account' } );
+		const locator = this.page
+			.getByRole( 'link', { name: /^(Create an account|Sign up)$/ } )
+			.first();
 		await locator.waitFor();
 		await locator.click();
 
@@ -240,7 +243,8 @@ export class LoginPage {
 	 * Clicks the "Lost your password?" link.
 	 */
 	async clickRetrievePassword(): Promise< Locator > {
-		const locator = await this.page.locator( ':text-is("Lost your password?")' );
+		// Two copies exist on the main login view, one hidden per viewport width.
+		const locator = this.page.locator( ':text-is("Lost your password?"):visible' );
 		await locator.click();
 
 		return locator;

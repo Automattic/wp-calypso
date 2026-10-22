@@ -19,15 +19,12 @@ export function Omnibar( { nodes, onClickResponsiveMenu, className }: OmnibarPro
 				<OmnibarResponsiveMenu onClickResponsiveMenu={ onClickResponsiveMenu } />
 			) }
 			{ nodes.home && <OmnibarHomeNode node={ nodes.home } /> }
-			{ nodes.site && (
-				<OmnibarSiteNode
-					node={ nodes.site }
-					pluginNodes={ nodes.sitePlugins }
-					actionNodes={ nodes.siteActions }
-				/>
+			{ nodes.site && <OmnibarSiteNode node={ nodes.site } /> }
+			{ nodes.site && nodes.sitePlugins && (
+				<OmnibarPluginsNode nodes={ nodes.sitePlugins } className="omnibar__site-plugin" />
 			) }
 			<div className="omnibar__secondary">
-				{ nodes.plugins && <OmnibarPluginsNode nodes={ nodes.plugins } /> }
+				{ nodes.userPlugins && <OmnibarPluginsNode nodes={ nodes.userPlugins } /> }
 				{ nodes.user && <OmnibarUserNode node={ nodes.user } /> }
 			</div>
 		</div>

@@ -42,6 +42,7 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import {
 	useCallback,
+	useEffect,
 	useMemo,
 	useRef,
 	useState,
@@ -88,14 +89,14 @@ import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
-import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
+import { siteHasPaidPlan, useCheckoutSite } from '../hooks/use-checkout-site';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useSiteDomains from '../hooks/use-site-domains';
 import {
@@ -347,10 +348,11 @@ function CheckoutSidebarNudge( {
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
 	const isPurchaseRenewal = responseCart?.products?.some?.( ( product ) => product.is_renewal );
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const { data: site } = useCheckoutSite( selectedSiteId );
 
 	const domainWithoutPlanInCartOrSite =
-		areThereDomainProductsInCart && ! hasPlan( responseCart ) && ! siteHasPaidPlan( selectedSite );
+		areThereDomainProductsInCart && ! hasPlan( responseCart ) && ! siteHasPaidPlan( site );
 
 	const productsWithVariants = responseCart?.products?.filter(
 		( product ) => product.product_variants?.length > 1 && product.is_domain_registration === false
@@ -446,11 +448,13 @@ export default function CheckoutMainContent( {
 	customizedPreviousPath,
 	loadingHeader,
 	onStepChanged,
+	onFormSubmittingChange,
 	showSitePreview = false,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changeSelection: OnChangeItemVariant;
 	onStepChanged?: StepChangedCallback;
+	onFormSubmittingChange?: ( isFormSubmitting: boolean ) => void;
 	countriesList: CountryListItem[];
 	createUserAndSiteBeforeTransaction: boolean;
 	infoMessage?: JSX.Element;
@@ -532,14 +536,14 @@ export default function CheckoutMainContent( {
 		( isOnboardingFlowCheckout || showProgress ) &&
 		hasStepCount &&
 		stepsTotal < ONBOARDING_STEPPER_TOTAL;
-	const selectedSiteData = useSelector( getSelectedSite );
-	const wpcomDomain = useSiteDomains( selectedSiteData?.ID ).find(
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const wpcomDomain = useSiteDomains( selectedSiteId ?? undefined ).find(
 		( { isWPCOMDomain, isWpcomStagingDomain } ) => isWPCOMDomain || isWpcomStagingDomain
 	);
 
 	// Only show the site preview for WPCOM domains that have a site connected to the site id
 	const shouldShowSitePreview =
-		showSitePreview && selectedSiteData && wpcomDomain && ! isSignupCheckout && ! isDIFMInCart;
+		showSitePreview && selectedSiteId && wpcomDomain && ! isSignupCheckout && ! isDIFMInCart;
 
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const reduxDispatch = useReduxDispatch();
@@ -597,6 +601,11 @@ export default function CheckoutMainContent( {
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
 	const { formStatus } = useFormStatus();
 	const isLoading = formStatus === FormStatus.LOADING;
+
+	useEffect( () => {
+		// Preserve the last status if cart clearing unmounts checkout before navigation.
+		onFormSubmittingChange?.( formStatus === FormStatus.SUBMITTING );
+	}, [ formStatus, onFormSubmittingChange ] );
 
 	const onReviewError = useCallback(
 		( error: Error ) =>

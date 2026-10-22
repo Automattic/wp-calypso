@@ -23,14 +23,17 @@ let mockQueryParams = new URLSearchParams();
 jest.mock( '@automattic/calypso-config', () => {
 	return {
 		__esModule: true,
-		default: jest.fn( ( key: string ) => {
-			const values: Record< string, string > = {
-				wpcom_signup_id: 'signup-id',
-				wpcom_signup_key: 'signup-key',
-			};
+		default: Object.assign(
+			jest.fn( ( key: string ) => {
+				const values: Record< string, string > = {
+					wpcom_signup_id: 'signup-id',
+					wpcom_signup_key: 'signup-key',
+				};
 
-			return values[ key ];
-		} ),
+				return values[ key ];
+			} ),
+			{ isEnabled: jest.fn( () => false ) }
+		),
 	};
 } );
 

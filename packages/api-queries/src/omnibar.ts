@@ -4,6 +4,7 @@ export const omnibarSiteIdQuery = () =>
 	queryOptions( {
 		queryKey: [ 'omnibar', 'site-id' ],
 		queryFn: () => Promise.resolve< number | null >( null ),
+		initialData: null,
 		staleTime: Infinity,
 		meta: { persist: false },
 	} );

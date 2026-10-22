@@ -118,6 +118,7 @@ import {
 } from '../../../utils/site-url';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { BillingPurchaseInfoPopover } from '../dataviews';
+import { MovePurchaseActionItem } from '../move-purchase/move-purchase-action-item';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
@@ -865,6 +866,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 					<AddMailboxesActionItem purchase={ purchase } />
 				) }
 				<RenewActionButton purchase={ purchase } />
+				<MovePurchaseActionItem purchase={ purchase } />
 				<CancelOrRemoveActionButton purchase={ purchase } />
 			</ActionList>
 		</VStack>
