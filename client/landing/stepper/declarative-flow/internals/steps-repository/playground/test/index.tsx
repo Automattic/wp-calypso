@@ -144,7 +144,7 @@ describe( 'Playground', () => {
 			expect( getLaunchEventProps() ).toEqual( {
 				flow: 'onboarding',
 				step: 'playground',
-				blueprint: expect.any( String ),
+				blueprint: 'bpl-123',
 				intent: 'plans-playground',
 				is_woocommerce_intent: false,
 			} );
