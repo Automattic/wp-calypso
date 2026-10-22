@@ -1,4 +1,5 @@
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import ReferralTitanDetails from './referral-titan-details';
 import type { ReferralPurchase } from '../../types';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
@@ -30,8 +31,13 @@ export default function ReferralProducts( {
 		return <TextPlaceholder />;
 	}
 	return (
-		<div>
-			{ products.map( ( product ) => getProductName( product, productsData ) ).join( ', ' ) }
+		<div className="referral-products">
+			{ products.map( ( product, index ) => (
+				<div key={ index } className="referral-products__product">
+					<div className="referral-products__name">{ getProductName( product, productsData ) }</div>
+					<ReferralTitanDetails product={ product } productsData={ productsData } />
+				</div>
+			) ) }
 		</div>
 	);
 }

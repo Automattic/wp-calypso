@@ -1,16 +1,23 @@
 import { ReferralProduct } from '../client/types';
 
+export interface ReferralPurchaseMeta {
+	titan_domain?: string | null;
+	titan_plan?: string | null;
+}
+
 interface ReferralPurchaseAPIResponse {
 	status: string;
 	product_id: number;
 	quantity: number;
 	license: {
 		license_key: string;
+		quantity?: number | null;
 		issued_at: string;
 		attached_at: string | null;
 		revoked_at: string | null;
 	};
 	site_assigned: string;
+	meta?: ReferralPurchaseMeta;
 	subscription?: ReferralProduct[ 'subscription' ];
 	commissions?: {
 		estimated_commission_current_quarter: number;

@@ -17,9 +17,15 @@ export interface ReferralPurchaseSubscription {
 
 export interface ReferralPurchaseLicense {
 	license_key: string;
+	quantity?: number | null;
 	issued_at: string;
 	attached_at: string | null;
 	revoked_at: string | null;
+}
+
+export interface ReferralPurchaseMeta {
+	titan_domain?: string | null;
+	titan_plan?: string | null;
 }
 
 export interface ReferralPurchaseCommissions {
@@ -33,6 +39,7 @@ export interface ReferralPurchase {
 	quantity: number;
 	license: ReferralPurchaseLicense;
 	site_assigned: string;
+	meta?: ReferralPurchaseMeta;
 	subscription?: ReferralPurchaseSubscription;
 	commissions?: ReferralPurchaseCommissions;
 	referral_id: number;
