@@ -103,4 +103,17 @@ describe( 'FontPicker', () => {
 		expect( injectFontFamiliesIntoEditorIframe ).toHaveBeenCalledTimes( 1 );
 		expect( injectFontFamiliesIntoEditorIframe ).toHaveBeenCalledWith( families );
 	} );
+
+	it( 'leaves the editor canvas alone when its message is stale', () => {
+		const variation = {
+			title: 'Modern Sans',
+			settings: {
+				typography: { fontFamilies: { theme: [ { name: 'Inter', fontFamily: 'Inter' } ] } },
+			},
+			styles: {},
+		};
+		render( <FontPicker variations={ [ variation ] } isMessageStale /> );
+
+		expect( injectFontFamiliesIntoEditorIframe ).not.toHaveBeenCalled();
+	} );
 } );

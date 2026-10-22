@@ -9,6 +9,7 @@ interface Props extends PickerSurfaceProps {
 	variations?: StyleVariation[];
 	themeVariations?: StyleVariation[];
 	dynamicVariations?: StyleVariation[];
+	isMessageStale?: boolean;
 }
 
 export default function FontPicker( {
@@ -17,6 +18,7 @@ export default function FontPicker( {
 	dynamicVariations = [],
 	surfaceId,
 	disabled,
+	isMessageStale,
 }: Props ) {
 	// Combine theme + dynamic + direct variations; the picker hook dedupes by title.
 	const fontVariations = useMemo( () => {
@@ -42,8 +44,12 @@ export default function FontPicker( {
 	} );
 
 	// Pre-load every variation's fonts in the editor canvas so previews and
-	// applying a pick don't flash unstyled text.
+	// applying a pick don't flash unstyled text. A stale picker can't apply one.
 	useEffect( () => {
+		if ( isMessageStale ) {
+			return;
+		}
+
 		const families = sortedVariations.flatMap(
 			( v ) => v.settings?.typography?.fontFamilies?.theme ?? []
 		);
