@@ -28,7 +28,6 @@ import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import { isJetpackNotAtomicSite, useCheckoutSite } from '../hooks/use-checkout-site';
-import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
@@ -103,6 +102,8 @@ export interface CheckoutMainProps {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
+	/** Reports whether the form is SUBMITTING, including payment preparation and transaction processing. */
+	onFormSubmittingChange?: ( isFormSubmitting: boolean ) => void;
 	connectAfterCheckout?: boolean;
 	/**
 	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
@@ -139,6 +140,7 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
+	onFormSubmittingChange,
 	connectAfterCheckout,
 	fromSiteSlug,
 	adminUrl,
@@ -652,7 +654,6 @@ export default function CheckoutMain( {
 		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
 	};
 
-	const [ isCheckoutUiRedesignLoading ] = useCheckoutUiRedesignExperiment();
 	const { isLoading: isMobileCheckoutStickySummaryLoading } =
 		useMobileCheckoutStickySummaryExperiment();
 
@@ -682,7 +683,7 @@ export default function CheckoutMain( {
 		{ name: translate( 'Loading Site' ), isLoading: isSiteLoading },
 		{
 			name: translate( 'Loading checkout' ),
-			isLoading: isCheckoutUiRedesignLoading || isMobileCheckoutStickySummaryLoading,
+			isLoading: isMobileCheckoutStickySummaryLoading,
 		},
 	];
 
@@ -889,6 +890,7 @@ export default function CheckoutMain( {
 							<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
 						}
 						onStepChanged={ handleStepChanged }
+						onFormSubmittingChange={ onFormSubmittingChange }
 						customizedPreviousPath={ customizedPreviousPath }
 						isRemovingProductFromCart={ isRemovingProductFromCart }
 						areThereErrors={ areThereErrors }

@@ -1,7 +1,13 @@
 /**
  * Tracks props for the site credits notice, its dismissal, the credits popover and their Upgrade and Add credits clicks.
  */
-import { type CreditsStatus, isCreditsExhausted, isCreditsLow } from './credits';
+import {
+	type CreditsStatus,
+	getAgentEnvironment,
+	getTopUpCreditsLeft,
+	isCreditsExhausted,
+	isCreditsLow,
+} from './credits';
 import { recordAgentsManagerTracksEvent } from './tracks';
 import type { ContextProvider, TaskUpdate } from '@automattic/agenttic-client';
 
@@ -13,7 +19,7 @@ export type CreditsTracksEventName =
 	| 'calypso_agents_manager_credits_meter_opened'
 	| 'calypso_agents_manager_credits_cta_clicked';
 
-/** By the same rules as the dot and the notices, so it follows `CREDITS_LOW_BALANCE`. */
+/** By the same rules as the meter and the notices, so it follows `CREDITS_LOW_BALANCE`. */
 export function getCreditsState( status: CreditsStatus ): CreditsState {
 	if ( isCreditsExhausted( status ) ) {
 		return 'zero';
@@ -50,16 +56,6 @@ export function getTaskRefusalCode( update: TaskUpdate ): string | undefined {
 	return undefined;
 }
 
-/** The client context's `environment`, sent unchanged as the server's credit events do. */
-function getAgentEnvironment( contextProvider?: ContextProvider ): string {
-	try {
-		const environment = contextProvider?.getClientContext().environment;
-		return typeof environment === 'string' && environment !== '' ? environment : 'none';
-	} catch {
-		return 'none';
-	}
-}
-
 /** WordPress.com sets `_currentSiteType` on editor pages only, so other surfaces send `none`. */
 function getSiteType(): string {
 	const siteType = window._currentSiteType;
@@ -81,6 +77,7 @@ export function recordCreditsTracksEvent(
 		agent_environment: getAgentEnvironment( contextProvider ),
 		state: getCreditsState( status ),
 		credits_left: status.remaining ?? 'none',
+		top_up_credits_left: getTopUpCreditsLeft( status ),
 		plan_tier: status.planTier ?? 'none',
 		...props,
 	} );

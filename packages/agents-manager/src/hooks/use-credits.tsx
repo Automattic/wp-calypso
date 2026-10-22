@@ -39,7 +39,7 @@ import {
 } from '../utils/live-credits';
 import type { AgentConfig } from '../utils/create-agent-config';
 import type { CreditSnapshot } from '../utils/live-credits';
-import type { TaskUpdate, UseAgentChatReturn } from '@automattic/agenttic-client';
+import type { AuthProvider, TaskUpdate, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { NoticeConfig, TrailingActions } from '@automattic/agenttic-ui';
 import type { AgentsManagerSite } from '@automattic/data-stores';
 
@@ -83,6 +83,16 @@ function isTerminalUpdate( update: TaskUpdate ): boolean {
 	);
 }
 
+// What a read needs for the whole visit; whether the chat is open or busy is checked per read.
+// TODO: Remove the dev mode check before AI credits reach customers (FORNO-538).
+function canReadBalance< Scope extends { siteId?: number; authProvider?: AuthProvider } >(
+	scope: Scope
+): scope is Scope & { siteId: number; authProvider: AuthProvider } {
+	return (
+		!! scope.siteId && !! scope.authProvider && getAgentsManagerInlineData()?.isDevMode !== false
+	);
+}
+
 interface UseCreditsOptions {
 	/** Surfaces without metering (Reader chat) pass false and get nothing. */
 	enabled: boolean;
@@ -97,7 +107,7 @@ interface UseCreditsOptions {
 
 export interface UseCreditsResult {
 	chat: UseAgentChatReturn;
-	/** Dot + popover; hidden until this site returns valid allowance metadata. */
+	/** Meter + popover; hidden until this site returns valid allowance metadata. */
 	trailingActions?: TrailingActions;
 	/** Dismissible low-credit notice, or a persistent exhausted notice. */
 	notice?: NoticeConfig;
@@ -146,7 +156,11 @@ export function useCredits( {
 	const currentScope = useRef( scope );
 	currentScope.current = scope;
 	const balanceRequest = useRef< AbortController | undefined >( undefined );
-	const [ balance, setBalance ] = useState< { scope: typeof scope; snapshot: CreditSnapshot } >();
+	const [ balance, setBalance ] = useState< {
+		scope: typeof scope;
+		snapshot: CreditSnapshot;
+		isFromTurn: boolean;
+	} >();
 	// Who may buy, from the balance read. Terminal updates don't carry it.
 	const [ upgradeAccess, setUpgradeAccess ] = useState< { scope: typeof scope } & CreditsAccess >();
 	const upgradeAccessRef = useRef( upgradeAccess );
@@ -217,7 +231,7 @@ export function useCredits( {
 			const snapshot = parseCreditSnapshot( update.aiCredits, scope.siteId );
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
 				scope.validTerminalRevision++;
-				setBalance( { scope, snapshot } );
+				setBalance( { scope, snapshot, isFromTurn: true } );
 			} else {
 				invalidateBalance();
 			}
@@ -249,13 +263,9 @@ export function useCredits( {
 	const processingRef = useRef( isProcessing );
 	processingRef.current = isProcessing;
 	const refreshBalance = useCallback( async () => {
-		const { authProvider } = scope;
-		// TODO: Remove the dev mode check before AI credits reach customers (FORNO-538).
 		if (
 			! isOpen ||
-			! scope.siteId ||
-			getAgentsManagerInlineData()?.isDevMode === false ||
-			! authProvider ||
+			! canReadBalance( scope ) ||
 			! scope.active ||
 			currentScope.current !== scope ||
 			processingRef.current ||
@@ -263,6 +273,7 @@ export function useCredits( {
 		) {
 			return;
 		}
+		const { authProvider } = scope;
 		const controller = new AbortController();
 		balanceRequest.current = controller;
 		const revision = scope.validTerminalRevision;
@@ -291,7 +302,7 @@ export function useCredits( {
 			}
 			const snapshot = parseCreditSnapshot( data?.ai_credits, scope.siteId );
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
-				setBalance( { scope, snapshot } );
+				setBalance( { scope, snapshot, isFromTurn: false } );
 			} else {
 				invalidateBalance();
 			}
@@ -547,12 +558,18 @@ export function useCredits( {
 		dismissLowNotice,
 	] );
 
-	// Once per state for this site, user and agent, and only while the notice is drawn.
+	// A turn's balance doesn't say who may buy. A read that finishes sets who may buy or drops the
+	// balance, so it ends the wait; a cancelled read changes neither.
+	const isAwaitingAccess =
+		balance?.scope === scope && balance.isFromTurn && ! access && canReadBalance( scope );
+
+	// Once per state for this site, user and agent, and only while the notice is drawn. After a
+	// turn's balance it waits for the read of who may buy, so it names the button the notice shows.
 	const shownNoticeState: CreditsState | undefined =
 		siteId && status && notice && isNoticeVisible ? getCreditsState( status ) : undefined;
 	const userRole = getCreditsUserRole( access?.canBuyCredits );
 	useEffect( () => {
-		if ( ! shownNoticeState ) {
+		if ( ! shownNoticeState || isAwaitingAccess ) {
 			return;
 		}
 		const key = JSON.stringify( [ scopeIdentity, shownNoticeState ] );
@@ -563,8 +580,17 @@ export function useCredits( {
 		recordCreditsEvent( 'calypso_agents_manager_credits_notice_shown', {
 			user_role: userRole,
 			cta_type: ctaType,
+			ref: purchaseKind ? CREDITS_UPGRADE_SOURCE : 'none',
 		} );
-	}, [ shownNoticeState, scopeIdentity, userRole, ctaType, recordCreditsEvent ] );
+	}, [
+		shownNoticeState,
+		isAwaitingAccess,
+		scopeIdentity,
+		userRole,
+		ctaType,
+		purchaseKind,
+		recordCreditsEvent,
+	] );
 
 	// A known zero opens the existing details without discarding the draft.
 	const beforeSubmit = useCallback( () => {

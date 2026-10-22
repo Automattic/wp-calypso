@@ -44,7 +44,7 @@ export function useHelpCenterNodeBuilder( { sectionName }: { sectionName?: strin
 			const menuTitle = adminBarNode.meta?.menu_title || undefined;
 
 			return {
-				label: tooltip ?? text,
+				label: menuTitle ?? tooltip ?? text,
 				title: menuTitle,
 				tooltip: menuTitle ?? tooltip,
 				href: undefined,

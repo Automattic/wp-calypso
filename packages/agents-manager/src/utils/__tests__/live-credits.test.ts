@@ -35,7 +35,7 @@ it( 'adapts the real draft allowance to one exact paid pool with its server rese
 		],
 	} );
 } );
-it( 'gives other chats the dot status for a valid snapshot and nothing for an unknown one', () => {
+it( 'gives other chats the meter status for a valid snapshot and nothing for an unknown one', () => {
 	const snapshot = creditSnapshot();
 	expect( parseLiveCreditsStatus( snapshot, 123 ) ).toEqual( buildLiveCreditsStatus( snapshot ) );
 	expect( parseLiveCreditsStatus( snapshot, 456 ) ).toBeUndefined();

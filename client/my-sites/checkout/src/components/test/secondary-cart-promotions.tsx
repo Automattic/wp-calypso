@@ -4,7 +4,7 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { normalizePurchase, type Product } from '@automattic/api-core';
-import { productsQuery, sitePurchasesQuery } from '@automattic/api-queries';
+import { productsQuery, siteByIdQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
@@ -17,6 +17,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
 import {
+	createTestSite,
 	mockGetCartEndpointWith,
 	mockSetCartEndpointWith,
 } from 'calypso/my-sites/checkout/src/test/util';
@@ -50,9 +51,15 @@ const products: Record< string, Product > = {
 	},
 };
 
-function createSeededQueryClient() {
-	const queryClient = new QueryClient();
+const freePlan = { product_slug: 'free_plan', is_free: true, expired: false };
+
+function createSeededQueryClient( sitePlan = freePlan ) {
+	const queryClient = new QueryClient( { defaultOptions: { queries: { staleTime: Infinity } } } );
 	const { ui, purchases } = storeData();
+	queryClient.setQueryData(
+		siteByIdQuery( ui.selectedSiteId ).queryKey,
+		createTestSite( { ID: ui.selectedSiteId, plan: sitePlan } )
+	);
 	// The fixture holds the API's raw response, so run it through the same
 	// normalization the fetcher applies before the component sees it.
 	queryClient.setQueryData(
@@ -63,9 +70,9 @@ function createSeededQueryClient() {
 	return queryClient;
 }
 
-function TestWrapper( { children, initialCart } ) {
+function TestWrapper( { children, initialCart, sitePlan = undefined } ) {
 	const [ reduxStore ] = useState( () => applyMiddleware( thunk )( createStore )( storeData ) );
-	const [ queryClient ] = useState( createSeededQueryClient );
+	const [ queryClient ] = useState( () => createSeededQueryClient( sitePlan ) );
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
 		currency: initialCart.currency,
 		locale: initialCart.locale,
@@ -185,6 +192,23 @@ describe( 'SecondaryCartPromotions', () => {
 				expect( mockAddItemToCart ).toHaveBeenCalledWith( {
 					product_slug: 'personal-bundle',
 				} );
+			} );
+		} );
+
+		describe( 'when the site has a paid plan', () => {
+			test( 'does not display the free user plan upsell component', async () => {
+				render(
+					<TestWrapper
+						initialCart={ responseCartWithRenewal }
+						sitePlan={ { product_slug: 'personal-bundle', is_free: false, expired: false } }
+					>
+						<SecondaryCartPromotions
+							responseCart={ responseCartWithRenewal }
+							addItemToCart={ jest.fn() }
+						/>
+					</TestWrapper>
+				);
+				await expect( screen.findByText( 'Upgrade and save' ) ).toNeverAppear();
 			} );
 		} );
 	} );

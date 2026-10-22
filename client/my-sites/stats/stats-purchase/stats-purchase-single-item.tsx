@@ -3,6 +3,7 @@ import {
 	getPlan,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_GROWTH_YEARLY,
+	PLAN_JETPACK_PRO_YEARLY,
 	PLAN_JETPACK_BUSINESS,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -105,15 +106,19 @@ interface StatsPersonalPurchaseProps {
 // same title), since only the title is read from the returned plan object.
 export const getBundledPlanSlug = ( {
 	isCompletePlanOwned,
+	isProPlanOwned,
 	isGrowthPlanOwned,
 	isBusinessPlanOwned,
 }: {
 	isCompletePlanOwned: boolean;
+	isProPlanOwned: boolean;
 	isGrowthPlanOwned: boolean;
 	isBusinessPlanOwned: boolean;
 } ): string | undefined => {
 	if ( isCompletePlanOwned ) {
 		return PLAN_JETPACK_COMPLETE;
+	} else if ( isProPlanOwned ) {
+		return PLAN_JETPACK_PRO_YEARLY;
 	} else if ( isGrowthPlanOwned ) {
 		return PLAN_JETPACK_GROWTH_YEARLY;
 	} else if ( isBusinessPlanOwned ) {
@@ -242,6 +247,7 @@ const StatsCommercialPurchase = ( {
 		isCommercialOwned,
 		hasAnyStatsPlan,
 		isCompletePlanOwned,
+		isProPlanOwned,
 		isGrowthPlanOwned,
 		isBusinessPlanOwned,
 	} = useStatsPurchases( siteId );
@@ -253,6 +259,7 @@ const StatsCommercialPurchase = ( {
 	// whether it has also purchased standalone Stats — both stack, so both notices can co-render.
 	const bundledPlanSlug = getBundledPlanSlug( {
 		isCompletePlanOwned,
+		isProPlanOwned,
 		isGrowthPlanOwned,
 		isBusinessPlanOwned,
 	} );

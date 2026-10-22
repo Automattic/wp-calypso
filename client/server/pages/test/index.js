@@ -1076,6 +1076,27 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Route /setup', () => {
+		it( 'flags the Playground step with the woocommerce intent for the Woo loader logo', async () => {
+			const { request } = await app.run( {
+				request: {
+					url: '/setup/onboarding/playground?intent=woocommerce',
+					query: { intent: 'woocommerce' },
+				},
+			} );
+
+			expect( request.context.isPlaygroundWoo ).toBe( true );
+		} );
+
+		it( 'does not flag the Playground step without the woocommerce intent', async () => {
+			const { request } = await app.run( {
+				request: { url: '/setup/onboarding/playground' },
+			} );
+
+			expect( request.context.isPlaygroundWoo ).toBe( false );
+		} );
+	} );
+
 	describe( 'Route /sites/:site/:section', () => {
 		[
 			{ section: 'posts', url: '/posts/my-site' },

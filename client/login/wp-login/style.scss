@@ -71,16 +71,6 @@ body.is-section-login {
 	width: 100%;
 }
 
-.wp-login__site-return-link {
-	overflow: hidden;
-	position: relative;
-	white-space: nowrap;
-
-	&::after {
-		@include long-content-fade( $color: var( --color-neutral-0 ) );
-	}
-}
-
 .layout.is-jetpack-login:not( .is-wccom-oauth-flow ):not( .is-woocommerce-core-profiler-flow ):not( .is-jetpack-connector-login ) {
 	@include jetpack-connect-colors();
 }
@@ -145,13 +135,6 @@ body.is-section-login {
 		color: var( --color-neutral-50 );
 	}
 
-	.wp-login__site-return-link::after {
-		background: linear-gradient(
-			to right,
-			color-mix( in srgb, var( --color-surface-backdrop ) 0%, transparent ),
-			var( --color-surface-backdrop ) 90%
-		);
-	}
 }
 
 .layout.is-wccom-oauth-flow {
@@ -191,10 +174,6 @@ body.is-section-login {
 			color: var( --studio-wordpress-blue );
 			box-shadow: none;
 		}
-	}
-
-	.wp-login__site-return-link::after {
-		background: none;
 	}
 
 	.login__form-footer {

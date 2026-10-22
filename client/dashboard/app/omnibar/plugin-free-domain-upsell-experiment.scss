@@ -40,7 +40,7 @@
 		background-color: transparent;
 	}
 
-	.omnibar__site-action {
+	.omnibar__node-content {
 		gap: 4px;
 		height: 36px;
 		padding-inline: 2px;
@@ -71,8 +71,8 @@
 		}
 	}
 
-	&:hover .omnibar__site-action,
-	&:focus-visible .omnibar__site-action {
+	&:hover .omnibar__node-content,
+	&:focus-visible .omnibar__node-content {
 		background: var( --free-domain-upsell-background-hover );
 		box-shadow: inset 0 0 0 1px var( --free-domain-upsell-ring-hover );
 	}

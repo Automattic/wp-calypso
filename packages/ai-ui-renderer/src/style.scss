@@ -1,0 +1,146 @@
+@import '@wordpress/base-styles/colors';
+
+.ai-ui-renderer {
+	border: 0;
+	padding: 0;
+	margin: 0;
+	min-width: 0;
+
+	.ai-ui-renderer__audio-player {
+		width: 100%;
+	}
+
+	.ai-ui-renderer__card {
+		background-color: var( --color-background, #fff );
+		color: var( --color-foreground, #1e1e1e );
+	}
+
+	.ai-ui-renderer__choice-picker {
+		border: 0;
+		padding: 0;
+		margin: 0;
+	}
+
+	.ai-ui-renderer__date-time-input--error .components-base-control__help {
+		color: $alert-red;
+	}
+
+	.ai-ui-renderer__divider {
+		align-self: stretch;
+		border-top: 1px solid #ddd;
+
+		&[aria-orientation='vertical'] {
+			border-top: 0;
+			border-left: 1px solid #ddd;
+		}
+	}
+
+	.ai-ui-renderer__image {
+		display: block;
+		max-width: 100%;
+
+		&--icon {
+			width: 24px;
+			height: 24px;
+		}
+
+		&--avatar {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+		}
+
+		&--smallFeature {
+			width: 100px;
+		}
+
+		&--mediumFeature {
+			width: 240px;
+		}
+
+		&--largeFeature,
+		&--header {
+			width: 400px;
+		}
+
+		&--header {
+			height: 200px;
+		}
+
+		@each $fit in ( contain, cover, fill, none ) {
+			&--fit-#{$fit} {
+				object-fit: $fit;
+			}
+		}
+
+		&--fit-scaleDown {
+			object-fit: scale-down;
+		}
+	}
+
+	.ai-ui-renderer__row,
+	.ai-ui-renderer__list {
+		display: flex;
+		gap: 8px;
+
+		@each $align, $value in ( start: flex-start, end: flex-end, center: center, stretch: stretch ) {
+			&--align-#{$align} {
+				align-items: $value;
+			}
+		}
+	}
+
+	.ai-ui-renderer__list {
+		flex-direction: column;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		overflow: auto;
+
+		&--horizontal {
+			flex-direction: row;
+		}
+	}
+
+	.ai-ui-renderer__list-item {
+		min-width: 0;
+	}
+
+	.ai-ui-renderer__row {
+		flex-wrap: wrap;
+
+		@each $justify,
+			$value
+				in (
+					start: flex-start,
+					end: flex-end,
+					center: center,
+					spaceAround: space-around,
+					spaceBetween: space-between,
+					spaceEvenly: space-evenly,
+					stretch: stretch
+				)
+		{
+			&--justify-#{$justify} {
+				justify-content: $value;
+			}
+		}
+	}
+
+	.ai-ui-renderer__video {
+		max-width: 100%;
+		height: auto;
+		align-self: flex-start;
+	}
+
+	// Other chat widgets can load older Agenttic typography rules on the same page.
+	.components-checkbox-control__label,
+	.components-radio-control__label {
+		font-size: 13px;
+		line-height: 20px;
+	}
+
+	.components-checkbox-control .components-h-stack {
+		align-items: center;
+	}
+}

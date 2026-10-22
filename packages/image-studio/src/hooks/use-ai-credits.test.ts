@@ -74,7 +74,7 @@ const UPGRADE_URL =
 	'https://wordpress.com/plans/123?source=wp_ai_credits&ai_session_id=image-studio-session';
 const ADD_CREDITS_URL =
 	'https://wordpress.com/checkout/123/ai-credits-lifetime:-q-100000?source=wp_ai_credits&ai_session_id=image-studio-session&redirect_to=https%3A%2F%2Fwordpress.com%2Fhome%2F123&cancel_to=https%3A%2F%2Fwordpress.com%2Fhome%2F123';
-/** The purchase link; the dot and the notice each add a click handler that records the click. */
+/** The purchase link; the meter and the notice each add a click handler that records the click. */
 const upgradeButton = {
 	label: 'Upgrade',
 	href: UPGRADE_URL,
@@ -90,15 +90,17 @@ const noticeCredits = ( state: 'low' | 'zero', creditsLeft: number ) => ( {
 	state,
 	planTier: 'premium',
 	creditsLeft,
+	topUpCreditsLeft: 'none',
 	ctaType: 'upgrade',
 	ref: 'wp_ai_credits',
 } );
-/** The balance details sent when the credits dot's popover opens. */
+/** The balance details sent when the credits meter's popover opens. */
 const meterDetails = ( state: 'ok' | 'low' | 'zero', creditsLeft: number ) => ( {
 	meter: 'site_credits',
 	state,
 	planTier: 'premium',
 	creditsLeft,
+	topUpCreditsLeft: 'none',
 } );
 const meterAt = ( percent: number, isOpen = false ) => ( {
 	status: expect.objectContaining( { plan: 'paid', percent } ),
@@ -185,11 +187,11 @@ describe( 'useAiCredits', () => {
 			'https://public-api.wordpress.com/wpcom/v2/sites/123/ai/credits',
 			expect.objectContaining( { headers: { Authorization: 'Bearer token' } } )
 		);
-		// Above the low threshold only the dot shows, as in the Agent's chat.
+		// Above the low threshold only the meter shows, as in the Agent's chat.
 		expect( stateOf( result ) ).toEqual( { ...NOTHING, meter: meterAt( 75 ) } );
 	} );
 
-	it( 'shows a persistent notice at zero, and Send opens the dot’s details instead', async () => {
+	it( 'shows a persistent notice at zero, and Send opens the meter’s details instead', async () => {
 		respondWith( { ai_credits: planSnapshot( 0 ), ...PLAN_BUYER } );
 
 		const { result } = renderCredits( ImageStudioMode.Edit );
@@ -264,6 +266,7 @@ describe( 'useAiCredits', () => {
 			state: 'ok',
 			planTier: 'premium',
 			creditsLeft: 30_000,
+			topUpCreditsLeft: 'none',
 			ctaType: 'upgrade',
 			ref: 'wp_ai_credits',
 		} );
@@ -487,6 +490,71 @@ describe( 'useAiCredits', () => {
 			mode: ImageStudioMode.Edit,
 			trigger: 'popover',
 			...credits,
+		} );
+	} );
+
+	describe( 'the top-ups balance', () => {
+		/** A Business site's balance, with packs on top of its plan credits. */
+		const withPacks = ( planRemaining: number, packsRemaining: number ) =>
+			planSnapshot( planRemaining, {
+				plan_tier: 'business',
+				credits_available: planRemaining + packsRemaining,
+				exhausted: planRemaining + packsRemaining === 0,
+				top_up_credits_purchased: 100_000,
+				top_up_credits_used: 100_000 - packsRemaining,
+				top_up_credits_remaining: packsRemaining,
+			} );
+
+		it.each( [
+			[ 'the packs left', withPacks( 1_000, 3_000 ), 3_000 ],
+			[ '0 for used-up packs', withPacks( 1_000, 0 ), 0 ],
+			[ 'none without packs', planSnapshot( 1_000, { plan_tier: 'business' } ), 'none' ],
+		] )(
+			'sends %s with the notice, its click and the popover opening',
+			async ( _case, snapshot, topUpCreditsLeft ) => {
+				respondWith( { ai_credits: snapshot, ...PLAN_BUYER } );
+				const { result } = renderCredits();
+				await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+				result.current.notice?.action?.onClick?.();
+				act( () => {
+					result.current.meter?.onToggle( true );
+				} );
+
+				const details = expect.objectContaining( { topUpCreditsLeft } );
+				expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( details );
+				expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( details );
+				expect( trackImageStudioCreditsMeterOpened ).toHaveBeenCalledWith( details );
+			}
+		);
+
+		it( 'sends 0 when Send is blocked after the plan and the packs run out', async () => {
+			respondWith( { ai_credits: withPacks( 0, 0 ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.isLimitReached ).toBe( true ) );
+
+			act( () => {
+				result.current.beforeSubmit();
+			} );
+			expect( trackImageStudioCreditsMeterOpened ).toHaveBeenCalledWith(
+				expect.objectContaining( { trigger: 'submit_blocked', state: 'zero', topUpCreditsLeft: 0 } )
+			);
+		} );
+
+		it( 'sends 0 when a turn uses the last plan credits and packs, opening the popover by itself', async () => {
+			respondWith( { ai_credits: withPacks( 1_000, 3_000 ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( withPacks( 0, 0 ) ) );
+			} );
+
+			expect( result.current.meter?.isOpen ).toBe( true );
+			expect( trackImageStudioCreditsMeterOpened ).toHaveBeenCalledTimes( 1 );
+			expect( trackImageStudioCreditsMeterOpened ).toHaveBeenCalledWith(
+				expect.objectContaining( { trigger: 'exhausted', state: 'zero', topUpCreditsLeft: 0 } )
+			);
 		} );
 	} );
 
@@ -989,7 +1057,7 @@ describe( 'useAiCredits', () => {
 		await waitFor( () => expect( result.current.isLimitReached ).toBe( true ) );
 	} );
 
-	it( 'takes the new balance from a turn’s final update, and opens the dot’s details at zero', async () => {
+	it( 'takes the new balance from a turn’s final update, and opens the meter’s details at zero', async () => {
 		respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
 		const { result } = renderCredits();
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
@@ -1090,7 +1158,7 @@ describe( 'useAiCredits', () => {
 		expect( result.current.meter?.isOpen ).toBe( false );
 	} );
 
-	it( 'opens the dot’s details when a known balance runs out in the same render', async () => {
+	it( 'opens the meter’s details when a known balance runs out in the same render', async () => {
 		fetchMock.mockReturnValue( new Promise( () => {} ) );
 		const { result } = renderCredits();
 		await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
@@ -1103,7 +1171,7 @@ describe( 'useAiCredits', () => {
 		expect( result.current.meter?.isOpen ).toBe( true );
 	} );
 
-	it( 'opens the dot’s details only once when the credits run out', async () => {
+	it( 'opens the meter’s details only once when the credits run out', async () => {
 		respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
 		const { result } = renderCredits();
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
