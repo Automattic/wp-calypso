@@ -351,6 +351,54 @@ describe( 'with cards of different content', () => {
 	} );
 } );
 
+describe( 'with buttons of different heights', () => {
+	// A filled button beside a shorter link-style one, laid out at fractional
+	// pixels, as the editor does.
+	const buttons = ( tops: number[] ): CanvasBlock => ( {
+		clientId: 'btns',
+		name: 'core/buttons',
+		rect: { top: 0, left: 0, width: 600, height: 60 },
+		children: tops.map( ( top, index ) => ( {
+			clientId: `b${ index }`,
+			name: 'core/button',
+			rect: { top, left: index * 200, width: 180, height: index ? 30 : 48.8 },
+			style: { backgroundColor: 'rgb(151, 71, 47)' },
+		} ) ),
+	} );
+
+	const rowOf = () =>
+		describeMeasuredLayout( [ 'btns' ] ).find( ( note ) =>
+			note.startsWith( 'Row in buttons (btns)' )
+		);
+
+	it( 'reports centres that round to within the tolerance as level, and nothing else', () => {
+		// Centres at 23 and 25.4: unrounded, a 2.4px spread.
+		mountCanvas( [ buttons( [ -1.4, 10.4 ] ) ] );
+
+		expect( rowOf() ).toContain( 'button (b0) -1–47, button (b1) 10–40' );
+		expect( rowOf() ).toContain( 'Their visible centre lines are level' );
+	} );
+
+	it( 'gives every offset as a number when the row is not level', () => {
+		// Each within 2px of the first, but 4px apart from each other.
+		mountCanvas( [
+			{
+				...buttons( [ 0, 0, 0 ] ),
+				children: [ 0, -2, 2 ].map( ( top, index ) => ( {
+					clientId: `b${ index }`,
+					name: 'core/button',
+					rect: { top: 10 + top, left: index * 200, width: 180, height: 40 },
+					style: { backgroundColor: 'rgb(151, 71, 47)' },
+				} ) ),
+			},
+		] );
+
+		expect( rowOf() ).toContain(
+			"not level. Against button (b0)'s: button (b1)'s is 2px above it; button (b2)'s is 2px below it."
+		);
+	} );
+} );
+
 it( 'gives nothing when the canvas is not mounted', () => {
 	expect( describeMeasuredLayout( EDITED ) ).toEqual( [] );
 } );

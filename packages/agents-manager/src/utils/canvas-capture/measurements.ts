@@ -288,12 +288,18 @@ function describeRow( { parent, items, boxes }: Row ): string {
 				) }`
 		)
 		.join( ', ' );
-	const spread = Math.max( ...centres ) - Math.min( ...centres );
+	// Rounded once, with the verdict and every offset read from the same
+	// numbers: rounded apart, a 2.4px spread read "not level" while each item
+	// in it read level, and the check believed the verdict. Each offset is then
+	// given as a number, since two items within the tolerance of the first can
+	// still be twice that apart.
+	const offsets = centres.map( ( centre ) => px( centre - centres[ 0 ] ) );
+	const spread = Math.max( ...offsets ) - Math.min( ...offsets );
 
 	const describeOffset = ( item: Measured, index: number ): string => {
-		const offset = px( centres[ index ] - centres[ 0 ] );
+		const offset = offsets[ index ];
 
-		if ( Math.abs( offset ) <= TOLERANCE ) {
+		if ( offset === 0 ) {
 			return `${ item.label }'s is level with it`;
 		}
 
