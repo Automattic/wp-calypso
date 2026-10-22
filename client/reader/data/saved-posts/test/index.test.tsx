@@ -12,7 +12,8 @@ import type { ReactNode } from 'react';
 const BASE = 'https://public-api.wordpress.com';
 
 const WPCOM_POST = { ID: 1, site_ID: 100, feed_ID: 50, feed_item_ID: 9001, is_external: false };
-const RSS_POST = { ID: 9000, site_ID: 0, feed_ID: 60, feed_item_ID: 9000, is_external: true };
+// `/read/saved` returns an RSS post with its feed ID as `site_ID`.
+const RSS_POST = { ID: 9000, site_ID: 60, feed_ID: 60, feed_item_ID: 9000, is_external: true };
 // A Jetpack post shown with its WordPress.com copy, after being saved while that
 // copy failed to load.
 const JETPACK_POST = { ID: 45, site_ID: 123, feed_ID: 70, feed_item_ID: 6000, is_external: false };
@@ -249,23 +250,29 @@ describe( 'useSavePost', () => {
 		expect( result.current.isSaved ).toBe( false );
 	} );
 
-	it( 'calls onError once when one of the keys fails to unsave', async () => {
-		const client = makeClient();
-		setKeys( client, JETPACK_SAVED_KEYS );
-		const requests = nock( BASE )
-			.post( '/wpcom/v2/read/saved/delete', { blog_id: 123, post_id: 45, source: 'reader-web' } )
-			.reply( 500, { error: 'server_error', message: 'Failed.' } )
-			.post( '/wpcom/v2/read/saved/delete', { feed_item_id: 6000, source: 'reader-web' } )
-			.reply( 200, { saved: false, key: { feed_item_id: 6000 }, total: 1 } );
-		const onError = jest.fn();
-		const result = renderSavePost( client, JETPACK_POST );
+	it.each( [
+		{ failing: 'blog and post', blogPostStatus: 500, feedItemStatus: 200 },
+		{ failing: 'feed item', blogPostStatus: 200, feedItemStatus: 500 },
+	] )(
+		'calls onError once when the $failing key fails to unsave',
+		async ( { blogPostStatus, feedItemStatus } ) => {
+			const client = makeClient();
+			setKeys( client, JETPACK_SAVED_KEYS );
+			const requests = nock( BASE )
+				.post( '/wpcom/v2/read/saved/delete', { blog_id: 123, post_id: 45, source: 'reader-web' } )
+				.reply( blogPostStatus )
+				.post( '/wpcom/v2/read/saved/delete', { feed_item_id: 6000, source: 'reader-web' } )
+				.reply( feedItemStatus );
+			const onError = jest.fn();
+			const result = renderSavePost( client, JETPACK_POST );
 
-		act( () => result.current.unsavePost( JETPACK_POST, { onError } ) );
+			act( () => result.current.unsavePost( JETPACK_POST, { onError } ) );
 
-		await waitFor( () => expect( onError ).toHaveBeenCalledTimes( 1 ) );
-		expect( requests.isDone() ).toBe( true );
-		expect( result.current.isSaved ).toBe( true );
-	} );
+			await waitFor( () => expect( onError ).toHaveBeenCalledTimes( 1 ) );
+			expect( requests.isDone() ).toBe( true );
+			expect( result.current.isSaved ).toBe( true );
+		}
+	);
 
 	it( 'shows the post as unsaved and calls onError when the save fails', async () => {
 		const client = makeClient();
