@@ -54,11 +54,7 @@ const translate = ( x ) => x;
 
 const defaultProps = {
 	translate,
-	receipt: {
-		data: {},
-	},
 	loadTrackingTool: () => {},
-	fetchReceipt: () => {},
 	siteHomeUrl: '',
 	domainOnlySiteFlow: false,
 	hasReceivedRemotePreferences: true,
@@ -124,11 +120,9 @@ describe( 'CheckoutThankYou', () => {
 			sitePlans: {
 				hasLoadedFromServer: true,
 			},
+			hasLoadedReceipts: true,
 			receipt: {
-				hasLoadedFromServer: true,
-				data: {
-					purchases: [ { productSlug: 'jetpack_personal' } ],
-				},
+				purchases: [ { productSlug: 'jetpack_personal' } ],
 			},
 			refreshSitePlans: ( selectedSite ) => selectedSite,
 			planSlug: PLAN_PREMIUM,
@@ -153,11 +147,9 @@ describe( 'CheckoutThankYou', () => {
 			sitePlans: {
 				hasLoadedFromServer: true,
 			},
+			hasLoadedReceipts: true,
 			receipt: {
-				hasLoadedFromServer: true,
-				data: {
-					purchases: [ { productSlug: PLAN_PERSONAL } ],
-				},
+				purchases: [ { productSlug: PLAN_PERSONAL } ],
 			},
 			refreshSitePlans: ( selectedSite ) => selectedSite,
 			planSlug: PLAN_PREMIUM,
@@ -176,23 +168,20 @@ describe( 'CheckoutThankYou', () => {
 		const props = {
 			...defaultProps,
 			receiptId: 12,
+			hasLoadedReceipts: true,
 			receipt: {
-				hasLoadedFromServer: true,
-				data: {
-					purchases: [
-						{
-							isDomainRegistration: true,
-							productSlug: 'dotcom_domain',
-							productType: 'domain',
-							meta: 'example.com',
-							blogId: 123,
-							isHundredYearDomain: false,
-							delayedProvisioning: false,
-						},
-					],
-					failedPurchases: [],
-					currency: 'USD',
-				},
+				purchases: [
+					{
+						isDomainRegistration: true,
+						productSlug: 'dotcom_domain',
+						productType: 'domain',
+						meta: 'example.com',
+						blogId: 123,
+						isHundredYearDomain: false,
+						delayedProvisioning: false,
+					},
+				],
+				currency: 'USD',
 			},
 			refreshSitePlans: () => {},
 		};
