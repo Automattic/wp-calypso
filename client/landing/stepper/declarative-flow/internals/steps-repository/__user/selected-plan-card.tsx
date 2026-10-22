@@ -82,6 +82,7 @@ function SelectedPlanCard( { planSlug, coupon }: SelectedPlanCardProps ) {
 							{ translate( 'Save %(savings)d%%', {
 								args: { savings },
 								comment: 'Example: Save 35%',
+								textOnly: true,
 							} ) }
 						</Badge>
 					) }
