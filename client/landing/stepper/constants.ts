@@ -12,6 +12,12 @@ export const SITE_PICKER_FILTER_CONFIG = [ 'wpcom', 'atomic' ];
 
 export const WOO_HOSTING_SOLUTIONS_REF = 'woo-hosting-solutions-flow';
 
+/**
+ * The `ref` the `site-selected` signup flow hands its purchase to the onboarding post-checkout
+ * step with, so that run's events and landing page stay attributed to it.
+ */
+export const SITE_SELECTED_REF = 'site-selected';
+
 export const HOW_TO_MIGRATE_OPTIONS = {
 	DO_IT_FOR_ME: 'difm',
 	DO_IT_MYSELF: 'myself',

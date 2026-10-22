@@ -265,7 +265,6 @@
 		"chalk": "^4.1.2",
 		"check-node-version": "^4.0.2",
 		"chroma-js": "^2.6.0",
-		"css-loader": "^6.11.0",
 		"dotenv": "^9.0.2",
 		"dotenv-webpack": "^8.1.1",
 		"eslint": "^10.13.0",
@@ -316,7 +315,7 @@
 		"typescript": "6.0.3",
 		"webpack": "^5.111.1",
 		"webpack-bundle-analyzer": "^5.4.0",
-		"webpack-cli": "^4.10.0",
+		"webpack-cli": "^7.2.3",
 		"whybundled": "^2.0.0",
 		"yargs": "^17.0.1"
 	},

@@ -34,6 +34,7 @@ export enum SiteIntent {
 	DIFM = 'difm', // "Do It For Me"
 	WpAdmin = 'wpadmin',
 	Import = 'import', // deprecated
+	/** @deprecated The readymade-template flow has been removed; retained for existing sites that persisted this intent. */
 	ReadyMadeTemplate = 'readymade-template',
 	AIAssembler = 'ai-assembler',
 	Newsletter = 'newsletter',

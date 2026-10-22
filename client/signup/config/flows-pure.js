@@ -18,6 +18,7 @@ const getUserSocialStepOrFallback = () =>
 export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
+	getSiteSelectedDestination = noop,
 	getLaunchDestination = noop,
 	getDomainSignupFlowDestination = noop,
 	getEmailSignupFlowDestination = noop,
@@ -252,7 +253,7 @@ export function generateFlows( {
 		{
 			name: 'site-selected',
 			steps: [ 'plans-site-selected-legacy' ],
-			destination: getSignupDestination,
+			destination: getSiteSelectedDestination,
 			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
 			description: 'A flow to test updating an existing site with `Signup`',
 			lastModified: '2017-01-19',

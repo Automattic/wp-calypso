@@ -22,7 +22,7 @@ describe( 'useProductLightbox', () => {
 		);
 	} );
 
-	it.each( [ 'jetpack_pro_monthly', 'jetpack_pro_yearly' ] )(
+	it.each( [ 'jetpack_security_t1_yearly', 'jetpack_pro_monthly', 'jetpack_pro_yearly' ] )(
 		'does not open %s while it is off sale',
 		( slug ) => {
 			expect( openedFromHash( `#${ slug }` ) ).toBeNull();

@@ -107,11 +107,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 			/* webpackChunkName: "entrepreneur-flow" */ './flows/entrepreneur-flow/entrepreneur-flow'
 		),
 
-	'readymade-template': () =>
-		import(
-			/* webpackChunkName: "readymade-template-flow" */ './flows/readymade-template/readymade-template'
-		),
-
 	'update-design': () =>
 		import( /* webpackChunkName: "update-design-flow" */ './flows/update-design/update-design' ),
 

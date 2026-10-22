@@ -351,6 +351,7 @@ function AgentSetup( {
 			useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
 			useSuggestions={ loadedProviders.useSuggestions }
 			getChatComponent={ loadedProviders.getChatComponent }
+			interactiveUi={ loadedProviders.interactiveUi }
 			siteBuildUtils={ loadedProviders.siteBuildUtils }
 			transformMessages={ loadedProviders.transformMessages }
 			useCheckpoint={ loadedProviders.useCheckpoint }

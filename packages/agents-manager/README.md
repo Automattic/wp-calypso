@@ -33,7 +33,7 @@ function MyApp() {
 
 Plugins register provider modules through the PHP filter `agents_manager_agent_providers` (Jetpack's `agents-manager` package). The entries reach the client as `agentsManagerData.agentProviders`, and `loadExternalProviders()` imports them.
 
-See `src/extension-types.ts` for the tool and context provider interfaces, and `LoadedProviders` in `src/utils/load-external-providers.ts` for everything else a provider module can export, such as suggestions (and opting out of the default empty-view ones), markdown components and extensions, chat components, message transforms, abilities setup, checkpoint hooks, site-build utilities and capabilities.
+See `src/extension-types.ts` for the tool and context provider interfaces, and `LoadedProviders` in `src/utils/load-external-providers.ts` for everything else a provider module can export, such as suggestions (and opting out of the default empty-view ones), markdown components and extensions, interactive UI components and functions, chat components, message transforms, abilities setup, checkpoint hooks, site-build utilities and capabilities.
 
 ### Opening and closing the chat
 
@@ -134,30 +134,21 @@ import type {
 
 The `wpcom/render-interactive-ui` tool returns an envelope with
 `tool_id: wpcom__render_interactive_ui` and an ordered array of A2UI v0.9 messages
-in `data`. Agents Manager also accepts raw A2UI message arrays. The renderer uses
-the A2UI SDK internally. Application helpers, components, and modules use
-interactive UI naming; imported SDK types and protocol identifiers retain their
-A2UI names.
+in `data`. Agents Manager also accepts raw A2UI message arrays.
 
-The demo catalog supports `Text`, `TextField`, `Button`, `Column`, `Image`, `Icon`,
-`Row`, `List`, `Card`, `Divider`, `CheckBox`, `ChoicePicker`, `DateTimeInput`,
-`Video`, `AudioPlayer`, `Tabs`, `Modal`, and `Slider`.
-Layouts use arrays of child IDs; cards wrap a single child and follow the chat
-theme colors. Icons map supported
-Basic catalog names to WordPress icons. Choice pickers support single and multiple
-selection and store selected values as string arrays. Bind input values and button
-action context to the same data paths to submit edits. Date/time inputs use local
-ISO date/time strings and enable date, time, or both with `enableDate`/`enableTime`.
-Date/time inputs show the browser's validation message below the field on blur.
-Text fields support `shortText`, `longText`, `number`, and `obscured` (password)
-variants; their values remain strings. Sliders store numbers and use `min` and
-`max` to set their range. Video and audio URLs support data bindings and render
-native players with playback controls. Tabs contain `{ title, child }` entries.
-Modals reference a `Button` trigger and a content component. The trigger opens
-the dialog locally instead of sending its action; buttons inside the dialog send
-actions normally. Dialog inputs share the surface data model and are disabled
-alongside the surface while the agent is processing.
-Input and choice-group labels use WordPress control typography and spacing.
+The catalogs, data bindings, runtime, surface rendering and styles come from
+[`@automattic/ai-ui-renderer`](../ai-ui-renderer/README.md). Agents Manager loads
+that package on demand, builds its catalogs (A2UI's Basic catalog, and its own
+with its providers' `interactiveUi`), associates surfaces with transcript messages,
+maintains one runtime per conversation, and sends a button's event through the
+conversation's context-message flow; a `functionCall` runs in the browser instead.
+Agents Manager passes the processing state to
+`InteractiveUiSurface` through its `disabled` prop and keeps the chat isolation
+wrapper and modal stacking rule here.
+The shared package has no dependency on Agents Manager or its message format.
+See [`INTERACTIVE-UI.md`](./INTERACTIVE-UI.md) for the architecture every agent
+chat UI follows.
+
 Interactive surfaces use `data-agenttic-isolated` so their controls retain their
 own typography while normal replies keep the chat's default typography reset.
 Choice-label alignment is scoped to the interactive surface because other chat
