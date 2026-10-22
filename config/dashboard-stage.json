@@ -58,6 +58,7 @@
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
 		"posthog-tracking": true,
+		"purchases/cancel-options-cards": false,
 		"purchases/split-cancel-remove": false,
 		"purchases/site-transfer": false,
 		"resurrected-users/90-day-eligibility": true,

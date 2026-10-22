@@ -11,7 +11,7 @@ import {
 	type CancelIntent,
 } from '../../../../utils/purchase';
 import { getSolutionsForReason } from '../get-solutions-for-reason';
-import { useIsSplitCancelRemoveEnabled } from '../use-is-split-cancel-remove-enabled';
+import { useCancelOptionsExperiment } from '../use-cancel-options-experiment';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep, { shouldShowCancellationReason } from './step-components/feedback-step';
@@ -147,7 +147,7 @@ function SurveyContent( {
 	yearlyPlanSlug,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
-	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { showCards: showCancelOptionsCards } = useCancelOptionsExperiment();
 	if ( surveyStep === FEEDBACK_STEP ) {
 		return (
 			<FeedbackStep
@@ -167,7 +167,7 @@ function SurveyContent( {
 		const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
 		const solutions = getSolutionsForReason( questionOneText ?? '' );
-		const useSolutionsCards = isSplitCancelRemoveEnabled && solutions && solutions.length > 0;
+		const useSolutionsCards = showCancelOptionsCards && solutions && solutions.length > 0;
 
 		if ( useSolutionsCards ) {
 			return (
