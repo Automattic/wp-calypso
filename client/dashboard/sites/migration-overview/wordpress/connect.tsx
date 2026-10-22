@@ -40,14 +40,14 @@ function SourceKey( { site }: { site: Site } ) {
 					</Button>
 				}
 			>
-				{ __( 'We couldn’t load your secret key.' ) }
+				{ __( 'We couldn’t load your migration key.' ) }
 			</Notice>
 		);
 	}
 
 	return (
 		<ClipboardInputControl
-			label={ __( 'Secret key' ) }
+			label={ __( 'Migration key' ) }
 			value={ manualInstall?.key ?? '' }
 			readOnly
 		/>
