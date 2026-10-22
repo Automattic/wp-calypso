@@ -103,9 +103,14 @@ describe( 'Playground', () => {
 		} );
 
 		it.each( [
-			[ 'a new Woo Playground', '?intent=woocommerce', true ],
-			[ 'a restored Woo Playground', '?intent=woocommerce&playground=1', false ],
-			[ 'a new Playground without the Woo intent', '', false ],
+			[ 'a new Woo Playground', '?intent=woocommerce&blueprint=woocommerce', true ],
+			[
+				'a restored Woo Playground',
+				'?intent=woocommerce&blueprint=woocommerce&playground=1',
+				false,
+			],
+			[ 'the default blueprint under the Woo intent', '?intent=woocommerce', false ],
+			[ 'a new Playground without the Woo intent', '?blueprint=woocommerce', false ],
 		] )( 'intro visibility for %s', async ( _label, search, shown ) => {
 			initializeWordPressPlayground.mockReturnValue( new Promise( () => {} ) );
 

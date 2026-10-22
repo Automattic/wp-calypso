@@ -23,8 +23,6 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 	const [ isLaunching, setIsLaunching ] = useState( false );
 
 	const isWooCommerceIntent = isPlaygroundWooIntent( flow, stepName, query.get( 'intent' ) );
-	// Read once: the `playground` ID is added to the URL when the new Playground is ready.
-	const [ showIntro ] = useState( () => isWooCommerceIntent && ! query.has( 'playground' ) );
 
 	const setPlaygroundClient = ( client: PlaygroundClient ) => {
 		playgroundClientRef.current = client;
@@ -74,7 +72,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 					className="playground__onboarding-iframe"
 					hasPlaygroundClient={ Boolean( playgroundClientRef.current ) }
 					setPlaygroundClient={ setPlaygroundClient }
-					showIntro={ showIntro }
+					withIntro={ isWooCommerceIntent }
 				/>
 			</Step.PlaygroundLayout>
 		</>

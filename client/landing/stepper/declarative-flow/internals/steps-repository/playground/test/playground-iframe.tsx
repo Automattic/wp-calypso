@@ -5,7 +5,9 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PlaygroundIframe } from '../components/playground-iframe';
+import { BlueprintLoadError } from '../lib/blueprint-load-error';
 import { initializeWordPressPlayground } from '../lib/initialize-playground';
+import { PlaygroundNotFoundError } from '../lib/playground-not-found-error';
 
 jest.mock( '../lib/initialize-playground' );
 jest.mock( 'calypso/data/php-versions', () => ( {
@@ -78,15 +80,19 @@ describe( 'PlaygroundIframe acquisition retry', () => {
 describe( 'PlaygroundIframe intro', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockSearchParams = new URLSearchParams( { intent: 'woocommerce' } );
+		mockSearchParams = new URLSearchParams( { intent: 'woocommerce', blueprint: 'woocommerce' } );
 	} );
 
-	const renderIframe = ( showIntro: boolean ) =>
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	const renderIframe = ( withIntro: boolean ) =>
 		render(
 			<PlaygroundIframe
 				hasPlaygroundClient={ false }
 				setPlaygroundClient={ jest.fn() }
-				showIntro={ showIntro }
+				withIntro={ withIntro }
 			/>
 		);
 
@@ -123,7 +129,43 @@ describe( 'PlaygroundIframe intro', () => {
 		expect( getIntroHeading() ).not.toBeInTheDocument();
 	} );
 
-	it( 'is not shown or fed progress without showIntro', () => {
+	it( 'shows when the not-found countdown starts a new playground', async () => {
+		jest.useFakeTimers();
+		mockSearchParams.set( 'playground', 'missing-id' );
+		jest
+			.mocked( initializeWordPressPlayground )
+			.mockRejectedValueOnce( new PlaygroundNotFoundError( 'missing-id', new Error() ) )
+			.mockReturnValue( new Promise( () => {} ) );
+
+		renderIframe( true );
+		expect( getIntroHeading() ).not.toBeInTheDocument();
+
+		await act( async () => {} );
+		// Each countdown second schedules the next one after it renders.
+		for ( let second = 0; second < 5; second++ ) {
+			await act( async () => jest.advanceTimersByTime( 1000 ) );
+		}
+
+		expect( initializeWordPressPlayground ).toHaveBeenCalledTimes( 2 );
+		expect( getIntroHeading() ).toBeVisible();
+	} );
+
+	it( 'does not show when the default blueprint replaces one that failed to load', async () => {
+		jest
+			.mocked( initializeWordPressPlayground )
+			.mockRejectedValueOnce( new BlueprintLoadError( 'https://example.com', new Error() ) )
+			.mockReturnValue( new Promise( () => {} ) );
+
+		renderIframe( true );
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'Start a new playground' } )
+		);
+
+		expect( initializeWordPressPlayground ).toHaveBeenCalledTimes( 2 );
+		expect( getIntroHeading() ).not.toBeInTheDocument();
+	} );
+
+	it( 'is not shown or fed progress without withIntro', () => {
 		jest.mocked( initializeWordPressPlayground ).mockReturnValue( new Promise( () => {} ) );
 
 		renderIframe( false );

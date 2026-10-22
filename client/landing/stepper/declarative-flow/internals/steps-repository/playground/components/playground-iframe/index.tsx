@@ -18,17 +18,21 @@ import type { PlaygroundClient } from '../../lib/types';
 
 import './style.scss';
 
+// A new boot of a blueprint from the URL; the default blueprint has no WooCommerce.
+const isNewBlueprintBoot = ( params: URLSearchParams ) =>
+	! params.has( 'playground' ) && ( params.has( 'blueprint' ) || params.has( 'blueprint-url' ) );
+
 export function PlaygroundIframe( {
 	className,
 	hasPlaygroundClient,
 	setPlaygroundClient,
-	showIntro = false,
+	withIntro = false,
 }: {
 	className?: string;
 	hasPlaygroundClient: boolean;
 	setPlaygroundClient: ( client: PlaygroundClient ) => void;
-	// Covers the page with the Woo intro until the Playground is ready, instead of the loader.
-	showIntro?: boolean;
+	// Covers the page with the Woo intro, instead of the loader, while a new Playground boots.
+	withIntro?: boolean;
 } ) {
 	const { __ } = useI18n();
 	const iframeRef = useRef< HTMLIFrameElement >( null );
@@ -36,8 +40,8 @@ export function PlaygroundIframe( {
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const [ playgroundError, setPlaygroundError ] = useState< Error | null >( null );
 	const [ isLoading, setIsLoading ] = useState( true );
-	const [ bootProgress, setBootProgress ] = useState< PlaygroundBootProgress | null >(
-		showIntro ? INITIAL_BOOT_PROGRESS : null
+	const [ bootProgress, setBootProgress ] = useState< PlaygroundBootProgress | null >( () =>
+		withIntro && isNewBlueprintBoot( searchParams ) ? INITIAL_BOOT_PROGRESS : null
 	);
 	// Bumped whenever the user asks for another initialization; the effect below
 	// must not re-run merely because an attempt failed, or a failing attempt that
@@ -71,6 +75,8 @@ export function PlaygroundIframe( {
 			return;
 		}
 
+		// Decided per attempt, as "Start a new playground" changes the URL.
+		const showIntro = withIntro && isNewBlueprintBoot( searchParams );
 		setIsLoading( true );
 		setBootProgress( showIntro ? INITIAL_BOOT_PROGRESS : null );
 
