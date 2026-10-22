@@ -164,6 +164,7 @@ describe( 'Messages', () => {
 		const card = container.querySelector< HTMLAnchorElement >(
 			'[data-slot="messages"] a[href="/checkout/credits"]'
 		)!;
+		expect( card.parentElement?.classList.contains( styles.errorCard ) ).toBe( true );
 		expect( card.textContent ).toBe(
 			'Your message wasn’t sentSite credits reset on Nov 15. Add more to keep going.'
 		);

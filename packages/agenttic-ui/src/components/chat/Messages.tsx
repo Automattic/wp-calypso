@@ -214,7 +214,7 @@ export function Messages( {
 					) }
 					{ /* A DOM element for the ref AnimatePresence's popLayout measures with. */ }
 					{ errorNotice && (
-						<div key="error-notice">
+						<div key="error-notice" className={ errorNotice.title ? styles.errorCard : undefined }>
 							{ errorNotice.title ? (
 								<MessageCard
 									title={ errorNotice.title }
