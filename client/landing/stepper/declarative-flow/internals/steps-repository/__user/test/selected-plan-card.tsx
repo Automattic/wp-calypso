@@ -111,6 +111,14 @@ describe( 'SelectedPlanCard', () => {
 		expect( screen.queryByText( /^Save/ ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'keeps the price and savings aligned to the start when they wrap under the plan name', () => {
+		render( <SelectedPlanCard planSlug="business-bundle" coupon={ undefined } /> );
+
+		const priceGroup = screen.getByText( '$25/mo, billed yearly' ).parentElement;
+
+		expect( priceGroup ).toHaveStyle( { '--wp-components-flex-justify': 'flex-start' } );
+	} );
+
 	it( 'passes the coupon through to the pricing query', () => {
 		render( <SelectedPlanCard planSlug="business-bundle" coupon="SAVE10" /> );
 

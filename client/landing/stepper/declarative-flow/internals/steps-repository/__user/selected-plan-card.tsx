@@ -75,7 +75,7 @@ function SelectedPlanCard( { planSlug, coupon }: SelectedPlanCardProps ) {
 						comment: 'Example: Business Plan',
 					} ) }
 				</Text>
-				<HStack justify="flex-end" alignment="center" spacing={ 2 } expanded={ false } wrap>
+				<HStack justify="flex-start" alignment="center" spacing={ 2 } expanded={ false } wrap>
 					{ priceText && <Text variant="muted">{ priceText }</Text> }
 					{ savings > 0 && (
 						<Badge intent="stable">
