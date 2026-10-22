@@ -46,6 +46,9 @@ $wp-components-colors: (
 	}
 }
 
+// WordPress's divider color, mirrored for dark mode.
+$border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( $white, 0.1 ) ) );
+
 .ai-ui-renderer .ai-ui-renderer__card,
 .ai-ui-renderer__modal .components-modal__frame {
 	background-color: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) );
@@ -77,9 +80,13 @@ $wp-components-colors: (
 		color: $alert-red;
 	}
 
+	.ai-ui-renderer__card {
+		box-shadow: 0 0 0 1px $border-color;
+	}
+
 	.ai-ui-renderer__divider {
 		align-self: stretch;
-		border: 0 solid var( --a2ui-color-border, light-dark( $gray-300, #3c3c3c ) );
+		border: 0 solid $border-color;
 		border-top-width: 1px;
 
 		&[aria-orientation='vertical'] {
@@ -191,5 +198,19 @@ $wp-components-colors: (
 
 	.components-checkbox-control .components-h-stack {
 		align-items: center;
+	}
+
+	// These WordPress controls hard-code light colors instead of reading the theme's.
+	.components-checkbox-control__input[type='checkbox']:not( :checked, :indeterminate, :disabled ) {
+		background: var( --wp-components-color-background );
+	}
+
+	.components-radio-control__input[type='radio']:not( :checked, :disabled ) {
+		border-color: var( --wp-components-color-foreground );
+	}
+
+	.components-tab-panel__tabs {
+		--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
+		--wpds-color-foreground-interactive-neutral-active: var( --wp-components-color-foreground );
 	}
 }
