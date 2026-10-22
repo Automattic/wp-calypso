@@ -1,3 +1,4 @@
+@import "@wordpress/theme/design-tokens.css";
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
@@ -23,11 +24,11 @@ $breakpoint-mobile: 660px;
 	.selected-plan-card {
 		box-sizing: border-box;
 		inline-size: 100%;
-		margin-block-end: 24px;
+		margin-block-end: 48px;
 		margin-inline: auto;
-		padding: 12px 16px;
-		border: 1px solid var(--color-border-subtle);
-		border-radius: 8px;
+		padding: var(--wpds-dimension-padding-md);
+		border: var(--wpds-border-width-xs) solid var(--color-border-subtle);
+		border-radius: var(--wpds-border-radius-lg);
 		background: var(--color-surface);
 		text-align: start;
 
@@ -35,22 +36,6 @@ $breakpoint-mobile: 660px;
 		@include break-small {
 			max-inline-size: calc(4 * var(--step-container-v2-content-column-width) + 3 * var(--step-container-v2-content-column-gap));
 		}
-	}
-
-	.selected-plan-card-eyebrow {
-		display: block;
-		margin-block-end: 4px;
-	}
-
-	.selected-plan-card-savings {
-		padding: 2px 8px;
-		border-radius: 4px;
-		background: var(--color-success-5);
-		color: var(--color-success-80);
-		font-size: 0.75rem;
-		font-weight: 500;
-		line-height: 1.5;
-		white-space: nowrap;
 	}
 
 	.locale-suggestions {

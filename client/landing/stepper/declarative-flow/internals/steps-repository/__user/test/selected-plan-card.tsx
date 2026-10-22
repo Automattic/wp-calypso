@@ -62,7 +62,7 @@ describe( 'SelectedPlanCard', () => {
 	it( 'renders the yearly Business plan with its monthly-equivalent price and savings', () => {
 		render( <SelectedPlanCard planSlug="business-bundle" coupon={ undefined } /> );
 
-		expect( screen.getByText( 'You selected:' ) ).toBeVisible();
+		expect( screen.queryByText( 'You selected:' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Business Plan' ) ).toBeVisible();
 		expect( screen.getByText( '$25/mo, billed yearly' ) ).toBeVisible();
 		expect( screen.getByText( 'Save 37%' ) ).toBeVisible();

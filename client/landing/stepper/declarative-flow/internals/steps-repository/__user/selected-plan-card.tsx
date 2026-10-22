@@ -9,6 +9,7 @@ import {
 import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -67,9 +68,6 @@ function SelectedPlanCard( { planSlug, coupon }: SelectedPlanCardProps ) {
 
 	return (
 		<div className="selected-plan-card">
-			<Text className="selected-plan-card-eyebrow" variant="muted" size="12">
-				{ translate( 'You selected:' ) }
-			</Text>
 			<HStack justify="space-between" alignment="center" wrap>
 				<Text weight={ 600 }>
 					{ translate( '%(planName)s Plan', {
@@ -80,12 +78,12 @@ function SelectedPlanCard( { planSlug, coupon }: SelectedPlanCardProps ) {
 				<HStack justify="flex-end" alignment="center" spacing={ 2 } expanded={ false } wrap>
 					{ priceText && <Text variant="muted">{ priceText }</Text> }
 					{ savings > 0 && (
-						<span className="selected-plan-card-savings">
+						<Badge intent="stable">
 							{ translate( 'Save %(savings)d%%', {
 								args: { savings },
 								comment: 'Example: Save 35%',
 							} ) }
-						</span>
+						</Badge>
 					) }
 				</HStack>
 			</HStack>
