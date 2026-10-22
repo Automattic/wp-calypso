@@ -38,6 +38,40 @@ interface Props {
 	onChange: ( fields: Partial< LeadMatchingFormData > ) => void;
 }
 
+function SelectField( {
+	label,
+	help,
+	placeholder,
+	options,
+	value,
+	onChange,
+}: {
+	label: string;
+	help?: string;
+	placeholder: string;
+	options: Record< string, string >;
+	value: string;
+	onChange: ( value: string ) => void;
+} ) {
+	return (
+		<SelectControl
+			__next40pxDefaultSize
+			__nextHasNoMarginBottom
+			label={ label }
+			help={ help }
+			value={ value }
+			options={ [
+				{ value: '', label: placeholder },
+				...Object.entries( options ).map( ( [ optionValue, optionLabel ] ) => ( {
+					value: optionValue,
+					label: optionLabel,
+				} ) ),
+			] }
+			onChange={ onChange }
+		/>
+	);
+}
+
 /**
  * The questions of one lead matching section, in the order and wording of
  * the full lead matching form.
@@ -52,7 +86,7 @@ export default function LeadMatchingSectionFields( { section, formData, onChange
 		{ sort = false, help = selectAllThatApply }: { sort?: boolean; help?: string } = {}
 	) => {
 		return (
-			<VStack spacing={ 2 } data-field-name={ field }>
+			<VStack spacing={ 2 }>
 				<TokenSelector
 					label={ label }
 					help={ help }
@@ -73,43 +107,6 @@ export default function LeadMatchingSectionFields( { section, formData, onChange
 			onChange={ ( checked ) => onChange( { [ field ]: checked } ) }
 		/>
 	);
-
-	const select = (
-		field: 'serviceLevels' | 'minimumBudget',
-		label: string,
-		help: string | undefined,
-		placeholder: string,
-		options: Record< string, string >
-	) => {
-		const value =
-			field === 'serviceLevels' ? ( formData.serviceLevels[ 0 ] ?? '' ) : formData[ field ];
-
-		return (
-			<VStack spacing={ 2 } data-field-name={ field }>
-				<SelectControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					label={ label }
-					help={ help }
-					value={ value }
-					options={ [
-						{ value: '', label: placeholder },
-						...Object.entries( options ).map( ( [ optionValue, optionLabel ] ) => ( {
-							value: optionValue,
-							label: optionLabel,
-						} ) ),
-					] }
-					onChange={ ( next ) =>
-						onChange(
-							field === 'serviceLevels'
-								? { serviceLevels: next ? [ next ] : [] }
-								: { minimumBudget: next }
-						)
-					}
-				/>
-			</VStack>
-		);
-	};
 
 	switch ( section ) {
 		case 'regions-and-languages':
@@ -189,13 +186,14 @@ export default function LeadMatchingSectionFields( { section, formData, onChange
 						'supportsQuickHelp',
 						__( 'We accept one-off small fixes / “quick help” tickets' )
 					) }
-					{ select(
-						'serviceLevels',
-						__( 'Which max service level are you most comfortable with right now?' ),
-						__( 'Choose the highest level your agency can realistically support.' ),
-						__( 'Select a maximum service level' ),
-						getServiceLevelOptions()
-					) }
+					<SelectField
+						label={ __( 'Which max service level are you most comfortable with right now?' ) }
+						help={ __( 'Choose the highest level your agency can realistically support.' ) }
+						placeholder={ __( 'Select a maximum service level' ) }
+						options={ getServiceLevelOptions() }
+						value={ formData.serviceLevels[ 0 ] ?? '' }
+						onChange={ ( value ) => onChange( { serviceLevels: value ? [ value ] : [] } ) }
+					/>
 				</>
 			);
 		case 'budget-and-timeline':
@@ -206,13 +204,13 @@ export default function LeadMatchingSectionFields( { section, formData, onChange
 						__( 'What budget levels are typically a good fit for new projects you take on?' ),
 						getBudgetLevelOptions()
 					) }
-					{ select(
-						'minimumBudget',
-						__( 'What is your minimum budget? (optional)' ),
-						undefined,
-						__( 'Select a minimum budget' ),
-						getMinimumBudgetOptions()
-					) }
+					<SelectField
+						label={ __( 'What is your minimum budget? (optional)' ) }
+						placeholder={ __( 'Select a minimum budget' ) }
+						options={ getMinimumBudgetOptions() }
+						value={ formData.minimumBudget }
+						onChange={ ( value ) => onChange( { minimumBudget: value } ) }
+					/>
 					{ tokens(
 						'timingPreferences',
 						__( 'What client start timing works well for you right now?' ),

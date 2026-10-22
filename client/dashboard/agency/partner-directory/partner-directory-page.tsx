@@ -23,6 +23,8 @@ const TAB_ROUTES: Record< PartnerDirectoryTab, string > = {
 	'lead-matching': PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE,
 };
 
+const isPartnerDirectoryTab = ( name: string ): name is PartnerDirectoryTab => name in TAB_ROUTES;
+
 /**
  * Shared shell for the Partner Directories views. Each tab keeps its own route
  * so it stays deep-linkable. Lead matching opens once a directory is approved,
@@ -57,11 +59,10 @@ export default function PartnerDirectoryPage( {
 	}
 
 	const handleSelect = ( name: string ) => {
-		const next = name as PartnerDirectoryTab;
-		if ( next === tab ) {
+		if ( name === tab || ! isPartnerDirectoryTab( name ) ) {
 			return;
 		}
-		router.navigate( { to: TAB_ROUTES[ next ] } );
+		router.navigate( { to: TAB_ROUTES[ name ] } );
 	};
 
 	return (

@@ -1,3 +1,14 @@
+import {
+	getBudgetLevelOptions,
+	getBusinessTypeOptions,
+	getDecisionProcessOptions,
+	getHostingEnvironmentOptions,
+	getMigrationPlatformOptions,
+	getMinimumBudgetOptions,
+	getProjectTypeOptions,
+	getStoreComplexityOptions,
+	getTimingPreferenceOptions,
+} from './options';
 import type { AgencyLeadMatchingProfile } from '@automattic/api-core';
 
 export interface LeadMatchingFormData {
@@ -43,69 +54,8 @@ export const REQUIRED_LEAD_MATCHING_FIELDS = [
 
 export type RequiredLeadMatchingField = ( typeof REQUIRED_LEAD_MATCHING_FIELDS )[ number ];
 
-const ALLOWED_BUSINESS_TYPES = new Set( [
-	'local_service',
-	'online_store_physical',
-	'online_store_digital',
-	'content_media',
-	'nonprofit_community',
-	'other',
-] );
-
-const ALLOWED_HOSTING_ENVIRONMENTS = new Set( [
-	'wpcom',
-	'shared_managed',
-	'managed_wp_hosts',
-	'self_hosted',
-] );
-
-const ALLOWED_MIGRATION_PLATFORMS = new Set( [
-	'shopify',
-	'wix',
-	'squarespace',
-	'webflow',
-	'custom',
-] );
-
-const ALLOWED_COMPLEXITY_FLAGS = new Set( [
-	'custom_pricing',
-	'erp_integrations',
-	'customer_portals',
-	'subscriptions_memberships',
-	'traffic_spikes',
-	'none_simple',
-] );
-
-const ALLOWED_PROJECT_TYPES = new Set( [
-	'new_website',
-	'redesign',
-	'new_woocommerce',
-	'migration',
-	'custom_features',
-	'fix_ongoing_support',
-	'seo_marketing',
-	'performance_optimization',
-	'security_audit',
-	'accessibility',
-] );
-
-const ALLOWED_DECISION_PROCESSES = new Set( [
-	'individual',
-	'small_team',
-	'multi_stakeholder',
-	'formal_procurement',
-] );
-
-const ALLOWED_BUDGET_LEVELS = new Set( [ 'affordable', 'mid_range', 'premium' ] );
-
-const ALLOWED_MINIMUM_BUDGETS = new Set( [ 'under_3k', '3k_10k', '10k_30k', 'above_30k' ] );
-
-const ALLOWED_TIMING_PREFERENCES = new Set( [
-	'right_away',
-	'within_month',
-	'book_1_3_months',
-	'flexible',
-] );
+// The answers an option list offers; anything else is dropped when read or saved.
+const optionKeys = ( options: Record< string, string > ) => new Set( Object.keys( options ) );
 
 const normalizeValues = ( values: string[] | undefined, allowedValues: Set< string > ) =>
 	Array.from( new Set( ( values ?? [] ).filter( ( value ) => allowedValues.has( value ) ) ) );
@@ -156,29 +106,29 @@ export function getLeadMatchingFormData(
 		languages: profile.geography_and_language?.supported_languages ?? [],
 		businessTypes: normalizeValues(
 			profile.business_fit?.supported_business_types,
-			ALLOWED_BUSINESS_TYPES
+			optionKeys( getBusinessTypeOptions() )
 		),
 		idealBusinessTypes: normalizeValues(
 			profile.business_fit?.ideal_business_types,
-			ALLOWED_BUSINESS_TYPES
+			optionKeys( getBusinessTypeOptions() )
 		),
 		companySizes: profile.business_fit?.supported_company_sizes ?? [],
 		hostingEnvironments: normalizeValues(
 			profile.platform_and_hosting?.supported_hosting_environments,
-			ALLOWED_HOSTING_ENVIRONMENTS
+			optionKeys( getHostingEnvironmentOptions() )
 		),
 		supportsHostingRecommendation: !! profile.platform_and_hosting?.can_recommend_better_hosting,
 		migrationPlatforms: normalizeValues(
 			profile.platform_and_hosting?.migration_platforms,
-			ALLOWED_MIGRATION_PLATFORMS
+			optionKeys( getMigrationPlatformOptions() )
 		),
 		storeComplexities: normalizeValues(
 			profile.ecommerce?.supported_complexity_flags,
-			ALLOWED_COMPLEXITY_FLAGS
+			optionKeys( getStoreComplexityOptions() )
 		),
 		projectTypes: normalizeValues(
 			profile.project_types?.supported_project_types,
-			ALLOWED_PROJECT_TYPES
+			optionKeys( getProjectTypeOptions() )
 		),
 		supportsQuickHelp: !! profile.project_types?.accepts_small_fixes,
 		serviceLevels: profile.service_and_budget?.max_service_level
@@ -186,20 +136,20 @@ export function getLeadMatchingFormData(
 			: [],
 		budgetLevels: normalizeValues(
 			profile.service_and_budget?.supported_budget_bands,
-			ALLOWED_BUDGET_LEVELS
+			optionKeys( getBudgetLevelOptions() )
 		),
 		minimumBudget: normalizeOptionalValue(
 			profile.service_and_budget?.minimum_budget_band,
-			ALLOWED_MINIMUM_BUDGETS
+			optionKeys( getMinimumBudgetOptions() )
 		),
 		timingPreferences: normalizeValues(
 			profile.timing?.supported_start_timings,
-			ALLOWED_TIMING_PREFERENCES
+			optionKeys( getTimingPreferenceOptions() )
 		),
 		supportsHardDeadlines: !! profile.timing?.supports_hard_deadlines,
 		decisionProcesses: normalizeValues(
 			profile.delivery_model?.supported_decision_processes,
-			ALLOWED_DECISION_PROCESSES
+			optionKeys( getDecisionProcessOptions() )
 		),
 		ongoingRelationships: [
 			...( profile.delivery_model?.offers_care_plans ? [ 'care_plans' ] : [] ),
@@ -245,8 +195,14 @@ export function getLeadMatchingProfile(
 			supported_languages: formData.languages,
 		},
 		business_fit: {
-			supported_business_types: normalizeValues( formData.businessTypes, ALLOWED_BUSINESS_TYPES ),
-			ideal_business_types: normalizeValues( formData.idealBusinessTypes, ALLOWED_BUSINESS_TYPES ),
+			supported_business_types: normalizeValues(
+				formData.businessTypes,
+				optionKeys( getBusinessTypeOptions() )
+			),
+			ideal_business_types: normalizeValues(
+				formData.idealBusinessTypes,
+				optionKeys( getBusinessTypeOptions() )
+			),
 			supported_company_sizes: formData.companySizes,
 		},
 		platform_and_hosting: {
@@ -259,7 +215,7 @@ export function getLeadMatchingProfile(
 			ecommerce_focus: supportsEcommerceProjects && formData.storeComplexities.length > 0,
 			supported_complexity_flags: normalizeValues(
 				formData.storeComplexities,
-				ALLOWED_COMPLEXITY_FLAGS
+				optionKeys( getStoreComplexityOptions() )
 			),
 		},
 		project_types: {
@@ -271,7 +227,7 @@ export function getLeadMatchingProfile(
 			supported_budget_bands: formData.budgetLevels,
 			minimum_budget_band: normalizeOptionalValue(
 				formData.minimumBudget,
-				ALLOWED_MINIMUM_BUDGETS
+				optionKeys( getMinimumBudgetOptions() )
 			),
 		},
 		timing: {

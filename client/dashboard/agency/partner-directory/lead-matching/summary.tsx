@@ -107,6 +107,7 @@ function getSectionAnswers(
 		case 'business-details':
 			return joinParts( [
 				labelsOf( formData.businessTypes, getBusinessTypeOptions() ),
+				labelsOf( formData.idealBusinessTypes, getBusinessTypeOptions() ),
 				labelsOf( formData.companySizes, getCompanySizeOptions() ),
 			] );
 		case 'hosting-and-platforms':
