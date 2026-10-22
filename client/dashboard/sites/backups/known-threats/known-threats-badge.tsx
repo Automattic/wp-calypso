@@ -1,4 +1,4 @@
-import { Button, Icon, Tooltip, VisuallyHidden } from '@wordpress/components';
+import { Button, Icon, VisuallyHidden } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { caution, chevronDown, chevronUp } from '@wordpress/icons';
 import './known-threats-badge.scss';
@@ -17,17 +17,14 @@ export function getKnownThreatsWarning( count: number ) {
 
 interface KnownThreatsBadgeProps {
 	count: number;
-	/** Explain the badge in a tooltip and to screen readers, where the warning isn't shown nearby. */
+	/**
+	 * Explain the badge to screen readers, where the warning isn't shown nearby. Not in a tooltip:
+	 * a badge isn't interactive, and tooltips are for labels, not descriptions.
+	 */
 	showWarning?: boolean;
-	/** Set to false where the tooltip can't be reached, e.g. under a clickable row. */
-	withTooltip?: boolean;
 }
 
-export function KnownThreatsBadge( {
-	count,
-	showWarning = false,
-	withTooltip = true,
-}: KnownThreatsBadgeProps ) {
+export function KnownThreatsBadge( { count, showWarning = false }: KnownThreatsBadgeProps ) {
 	const badge = (
 		<span className="dashboard-known-threats-badge">
 			<Icon icon={ caution } size={ 16 } fill="currentColor" aria-hidden="true" />
@@ -42,11 +39,10 @@ export function KnownThreatsBadge( {
 		return badge;
 	}
 
-	const warning = getKnownThreatsWarning( count );
 	return (
 		<>
-			{ withTooltip ? <Tooltip text={ warning }>{ badge }</Tooltip> : badge }
-			<VisuallyHidden as="span">{ warning }</VisuallyHidden>
+			{ badge }
+			<VisuallyHidden as="span">{ getKnownThreatsWarning( count ) }</VisuallyHidden>
 		</>
 	);
 }
