@@ -60,8 +60,9 @@ $wp-components-colors: (
 		);
 	}
 
-	// Newer WordPress components read the design system's tokens instead. They're set a level
-	// down, so the defaults above still read the host's.
+	// Newer WordPress components read the design system's tokens instead. They're set on each
+	// descendant, so the root's defaults still read the host's, and each element's follow its own
+	// colors, such as a checked control's.
 	> * * {
 		--wpds-color-foreground-content-neutral: var( --wp-components-color-foreground );
 		--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
@@ -235,8 +236,9 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 		background: var( --wp-components-color-background );
 	}
 
-	// Disabled checkboxes mix the text into the input color, matching WordPress's light grays.
-	.components-checkbox-control__input[type='checkbox']:is( :disabled, [aria-disabled='true'] ) {
+	// Disabled controls mix the text into the input color, matching WordPress's light grays.
+	.components-checkbox-control__input[type='checkbox']:is( :disabled, [aria-disabled='true'] ),
+	.components-radio-control__input[type='radio']:disabled {
 		background: color-mix(
 			in srgb,
 			var( --wp-components-color-background ) 94%,

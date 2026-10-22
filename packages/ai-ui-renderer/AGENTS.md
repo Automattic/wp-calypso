@@ -19,5 +19,6 @@ colors with A2UI's `--a2ui-*` tokens and their defaults, keeping `THEME_PROPERTI
 modal stacking rules in consumers.
 
 WordPress components come in two copies: Calypso bundles `@wordpress/components`, while wp-admin and
-the editor use the page's Gutenberg copy, whose newer components read the `--wpds-*` design tokens.
-`style.scss` maps the theme onto both, so check a theme change against both, in light and dark mode.
+the editor use the page's Gutenberg copy, which may be newer. Both read some colors from the
+`--wpds-*` design tokens, and `style.scss` maps the theme onto those too, so check a theme change
+against both, in light and dark mode.

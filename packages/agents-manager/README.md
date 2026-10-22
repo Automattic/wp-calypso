@@ -110,7 +110,7 @@ Besides the default `AgentsManager` component:
 - **Chat**: `openAgentsManagerChat`, `closeAgentsManagerChat`, `isAgentsManagerChatVisible` and `AGENTS_MANAGER_STORE` ([Opening and closing the chat](#opening-and-closing-the-chat)).
 - **Entry button**: `useAiChatEntryState` and `AiChatEntryLabel`.
 - **Feedback**: `submitFeedback`, `rateMessage` and the `FeedbackInput` component.
-- **Site credits**: the balance, purchase links, notices and Tracks values other chats share with the dock ([`CREDITS.md`](./CREDITS.md)).
+- **Site credits**: the balance, purchase links, notices and Tracks values other chats share with the dock ([`SITE-CREDITS.md`](./SITE-CREDITS.md)).
 - **Other**: `recordAgentsManagerTracksEvent`, and `getAgentsManagerInlineData()` for the server-injected `agentsManagerData`.
 
 Types:
