@@ -5,7 +5,7 @@ import { readSavedKeysQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { canSavePost, savedKeyForPost, useIsPostSaved, useSavePost } from '..';
+import { canSavePost, savedKeyForPost, savedKeysForPost, useIsPostSaved, useSavePost } from '..';
 import type { ReadSavedKeysResponse } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
@@ -13,6 +13,9 @@ const BASE = 'https://public-api.wordpress.com';
 
 const WPCOM_POST = { ID: 1, site_ID: 100, feed_ID: 50, feed_item_ID: 9001, is_external: false };
 const RSS_POST = { ID: 9000, site_ID: 0, feed_ID: 60, feed_item_ID: 9000, is_external: true };
+// A Jetpack post shown with its WordPress.com copy, after being saved while that
+// copy failed to load.
+const JETPACK_POST = { ID: 45, site_ID: 123, feed_ID: 70, feed_item_ID: 6000, is_external: false };
 
 function makeClient() {
 	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
@@ -50,6 +53,29 @@ describe( 'savedKeyForPost', () => {
 		expect( savedKeyForPost( { ID: 1 } ) ).toBeNull();
 		expect( savedKeyForPost( { site_ID: 100 } ) ).toBeNull();
 		expect( savedKeyForPost( { is_external: true } ) ).toBeNull();
+	} );
+} );
+
+describe( 'savedKeysForPost', () => {
+	it( 'adds the feed item key to a post that is not external', () => {
+		expect( savedKeysForPost( WPCOM_POST ) ).toEqual( [
+			{ blog_id: 100, post_id: 1 },
+			{ feed_item_id: 9001 },
+		] );
+	} );
+
+	it( 'returns only the feed item key for an RSS post', () => {
+		expect( savedKeysForPost( RSS_POST ) ).toEqual( [ { feed_item_id: 9000 } ] );
+	} );
+
+	it( 'returns only the blog and post key for a post without a feed item', () => {
+		expect( savedKeysForPost( { ID: 1, site_ID: 100 } ) ).toEqual( [
+			{ blog_id: 100, post_id: 1 },
+		] );
+	} );
+
+	it( 'returns no keys for a post without the IDs the API needs', () => {
+		expect( savedKeysForPost( { ID: 1, feed_item_ID: 9001 } ) ).toEqual( [] );
 	} );
 } );
 
@@ -92,6 +118,17 @@ describe( 'useIsPostSaved', () => {
 		expect( request.isDone() ).toBe( true );
 		expect( result.current.rss ).toBe( true );
 		expect( result.current.other ).toBe( false );
+	} );
+
+	it( 'reports a post saved under its feed item before it had a blog and post ID', () => {
+		const client = makeClient();
+		setKeys( client, [ { feed_item_id: 6000, date_saved: '2026-10-01T00:00:00+00:00' } ] );
+
+		const { result } = renderHook( () => useIsPostSaved( JETPACK_POST, { enabled: false } ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		expect( result.current ).toBe( true );
 	} );
 
 	it( 'does not fetch when disabled or when the post has no key', () => {
@@ -172,6 +209,39 @@ describe( 'useSavePost', () => {
 		act( () => result.current.unsavePost( RSS_POST ) );
 
 		await waitFor( () => expect( request.isDone() ).toBe( true ) );
+		expect( result.current.isSaved ).toBe( false );
+	} );
+
+	it( 'unsaves the post by the key it was saved under', async () => {
+		const client = makeClient();
+		setKeys( client, [ { feed_item_id: 6000, date_saved: '2026-10-01T00:00:00+00:00' } ] );
+		const request = nock( BASE )
+			.post( '/wpcom/v2/read/saved/delete', { feed_item_id: 6000, source: 'reader-web' } )
+			.reply( 200, { saved: false, key: { feed_item_id: 6000 }, total: 0 } );
+		const result = renderSavePost( client, JETPACK_POST );
+
+		act( () => result.current.unsavePost( JETPACK_POST ) );
+
+		await waitFor( () => expect( request.isDone() ).toBe( true ) );
+		expect( result.current.isSaved ).toBe( false );
+	} );
+
+	it( 'unsaves a post saved under both of its keys', async () => {
+		const client = makeClient();
+		setKeys( client, [
+			{ blog_id: 123, post_id: 45, date_saved: '2026-10-02T00:00:00+00:00' },
+			{ feed_item_id: 6000, date_saved: '2026-10-01T00:00:00+00:00' },
+		] );
+		const requests = nock( BASE )
+			.post( '/wpcom/v2/read/saved/delete', { blog_id: 123, post_id: 45, source: 'reader-web' } )
+			.reply( 200, { saved: false, key: { blog_id: 123, post_id: 45 }, total: 1 } )
+			.post( '/wpcom/v2/read/saved/delete', { feed_item_id: 6000, source: 'reader-web' } )
+			.reply( 200, { saved: false, key: { feed_item_id: 6000 }, total: 0 } );
+		const result = renderSavePost( client, JETPACK_POST );
+
+		act( () => result.current.unsavePost( JETPACK_POST ) );
+
+		await waitFor( () => expect( requests.isDone() ).toBe( true ) );
 		expect( result.current.isSaved ).toBe( false );
 	} );
 
