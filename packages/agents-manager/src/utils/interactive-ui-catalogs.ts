@@ -1,75 +1,78 @@
-import type { LoadedProviders } from './load-external-providers';
-import type { InteractiveUiCatalog } from '@automattic/ai-ui-renderer';
+import {
+	BASIC_CATALOG_ID,
+	getInteractiveUiRendererCapabilities,
+} from '@automattic/ai-ui-renderer/capabilities';
+import type {
+	InteractiveUiCatalog,
+	InteractiveUiCatalogDefinition,
+} from '@automattic/ai-ui-renderer';
 
 export type InteractiveUiRenderer = typeof import( '@automattic/ai-ui-renderer' );
 
-/** The ID of the catalog with Agents Manager's and its providers' own components. */
+/** The ID of Agents Manager's catalog, which its abilities build surfaces with. */
 export const AGENTS_MANAGER_CATALOG_ID = 'urn:automattic:agents-manager:interactive-ui:v1';
 
-// The first registration of a name wins, as with abilities: the basic names, then each provider's
-// in registration order. A later one is skipped, so it can't replace what already works.
-function withoutTakenNames< Item extends { name: string } >(
-	items: Item[] = [],
-	basicNames: Iterable< string >,
-	kind: 'component' | 'function'
-) {
-	const takenNames = new Set( basicNames );
+// Agents Manager's own components join its catalog as its chat UIs move to interactive UI.
+const AGENTS_MANAGER_CATALOG: InteractiveUiCatalogDefinition = {
+	catalog: { catalogId: AGENTS_MANAGER_CATALOG_ID },
+};
 
-	return items.filter( ( { name } ) => {
-		if ( takenNames.has( name ) ) {
+/**
+ * Keeps the provider catalogs with an ID of their own. As with abilities, the first with an ID
+ * wins, so a provider can't replace a catalog that already works. The Basic and Agents Manager
+ * IDs are taken.
+ */
+export function filterInteractiveUiCatalogs( catalogs: InteractiveUiCatalogDefinition[] ) {
+	const takenIds = new Set( [ BASIC_CATALOG_ID, AGENTS_MANAGER_CATALOG_ID ] );
+
+	return catalogs.filter( ( definition ) => {
+		// Providers' exports aren't validated, so one can lack its catalog document.
+		const catalogId = definition.catalog?.catalogId;
+
+		if ( typeof catalogId !== 'string' || takenIds.has( catalogId ) ) {
 			// eslint-disable-next-line no-console
-			console.error( `[AgentsManager] Skipped a duplicate interactive UI ${ kind }: ${ name }` );
+			console.error(
+				`[AgentsManager] Skipped an interactive UI catalog without an ID of its own: ${ catalogId }`
+			);
 			return false;
 		}
 
-		takenNames.add( name );
+		takenIds.add( catalogId );
 		return true;
 	} );
 }
 
+/** What the chat renders, as A2UI's `a2uiRendererCapabilities`, for its client context. */
+export function getInteractiveUiCapabilities(
+	providerCatalogs: InteractiveUiCatalogDefinition[] = []
+) {
+	return getInteractiveUiRendererCapabilities(
+		[ AGENTS_MANAGER_CATALOG, ...providerCatalogs ].map( ( { catalog } ) => catalog )
+	);
+}
+
 /**
- * Builds the catalogs a conversation's surfaces render with: A2UI's Basic catalog, for surfaces
- * the agent composes, and Agents Manager's, which adds its providers' components and functions.
- * A provider's mistake can't break the chat: a duplicate name is skipped, and anything else that
- * fails leaves only the basic components in Agents Manager's catalog.
+ * Builds the catalogs a conversation's surfaces render with: A2UI's Basic catalog, Agents
+ * Manager's, and each provider's. A provider's mistake can't break the chat: a catalog that fails
+ * to build is skipped, so only its own surfaces don't render.
  */
 export function createInteractiveUiCatalogs(
 	renderer: InteractiveUiRenderer,
-	interactiveUi: LoadedProviders[ 'interactiveUi' ]
+	providerCatalogs: InteractiveUiCatalogDefinition[] = []
 ): InteractiveUiCatalog[] {
-	const basicCatalog = renderer.createInteractiveUiCatalog();
+	const catalogs = [ renderer.createInteractiveUiCatalog() ];
 
-	// Providers' entries aren't validated, so a malformed one can throw while being read too.
-	try {
-		const components = withoutTakenNames(
-			interactiveUi?.components,
-			basicCatalog.components.keys(),
-			'component'
-		);
-		const functions = withoutTakenNames(
-			interactiveUi?.functions,
-			basicCatalog.functions.keys(),
-			'function'
-		);
-
-		return [
-			basicCatalog,
-			renderer.createInteractiveUiCatalog( {
-				id: AGENTS_MANAGER_CATALOG_ID,
-				components,
-				functions,
-			} ),
-		];
-	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.error(
-			'[AgentsManager] Failed to add the interactive UI components and functions:',
-			error
-		);
-
-		return [
-			basicCatalog,
-			renderer.createInteractiveUiCatalog( { id: AGENTS_MANAGER_CATALOG_ID } ),
-		];
+	for ( const definition of [ AGENTS_MANAGER_CATALOG, ...providerCatalogs ] ) {
+		try {
+			catalogs.push( renderer.createInteractiveUiCatalog( definition ) );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error(
+				`[AgentsManager] Failed to build the interactive UI catalog ${ definition.catalog.catalogId }:`,
+				error
+			);
+		}
 	}
+
+	return catalogs;
 }

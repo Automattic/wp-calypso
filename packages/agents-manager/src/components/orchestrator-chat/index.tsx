@@ -95,8 +95,8 @@ interface Props {
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
-	/** The providers' interactive UI components and functions. */
-	interactiveUi?: LoadedProviders[ 'interactiveUi' ];
+	/** The providers' interactive UI catalogs. */
+	interactiveUiCatalogs?: LoadedProviders[ 'interactiveUiCatalogs' ];
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
 	/** Rewrite the transcript before it is displayed. See `TransformMessages`. */
@@ -125,7 +125,7 @@ export default function OrchestratorChat( {
 	useProviderAbilitiesSetup,
 	useSuggestions,
 	getChatComponent,
-	interactiveUi,
+	interactiveUiCatalogs,
 	siteBuildUtils,
 	transformMessages,
 	useCheckpoint,
@@ -486,7 +486,7 @@ export default function OrchestratorChat( {
 		isUploadingImages,
 		agentConfig,
 		submitContextMessage,
-		interactiveUi,
+		interactiveUiCatalogs,
 		currentPostId,
 	} );
 

@@ -34,8 +34,8 @@ interface UseInteractiveUiOptions {
 	isUploadingImages: boolean;
 	agentConfig: AgentConfig | null;
 	submitContextMessage: ( message: string, options: SubmitOptions ) => Promise< void >;
-	/** The providers' interactive UI components and functions. */
-	interactiveUi: LoadedProviders[ 'interactiveUi' ];
+	/** The providers' interactive UI catalogs. */
+	interactiveUiCatalogs: LoadedProviders[ 'interactiveUiCatalogs' ];
 	/** The page the editor has open, if any. */
 	currentPostId?: number | string;
 }
@@ -69,7 +69,7 @@ export function useInteractiveUi( {
 	isUploadingImages,
 	agentConfig,
 	submitContextMessage,
-	interactiveUi,
+	interactiveUiCatalogs,
 	currentPostId,
 }: UseInteractiveUiOptions ) {
 	const messageBatches = useMemo( () => getInteractiveUiBatches( messages ), [ messages ] );
@@ -140,8 +140,8 @@ export function useInteractiveUi( {
 	const isRetryingLoad = hasLoadError && failedLoadAttempt < loadAttempt;
 
 	const catalogs = useMemo(
-		() => renderer && createInteractiveUiCatalogs( renderer, interactiveUi ),
-		[ renderer, interactiveUi ]
+		() => renderer && createInteractiveUiCatalogs( renderer, interactiveUiCatalogs ),
+		[ renderer, interactiveUiCatalogs ]
 	);
 
 	// Dispose of the runtime when the conversation changes or the chat unmounts.
