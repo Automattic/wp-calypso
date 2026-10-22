@@ -24,7 +24,8 @@ $breakpoint-mobile: 660px;
 	.selected-plan-card {
 		box-sizing: border-box;
 		inline-size: 100%;
-		margin-block-end: 48px;
+		// The account template already separates the card from the heading by 2rem; 48px in total.
+		margin-block-end: 1rem;
 		margin-inline: auto;
 		padding: var(--wpds-dimension-padding-md);
 		border: var(--wpds-border-width-xs) solid var(--color-border-subtle);
