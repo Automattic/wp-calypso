@@ -17,21 +17,27 @@ function isComponent( value: unknown ) {
 	);
 }
 
-function assertSameNames(
+// Every implementation needs a name in the document, and every name a real implementation.
+function assertImplementations(
 	kind: 'component' | 'function',
 	documentNames: string[],
-	implementedNames: string[]
+	implementations: Record< string, unknown >,
+	isImplementation: ( value: unknown ) => boolean
 ) {
-	const missingName = documentNames.find( ( name ) => ! implementedNames.includes( name ) );
-
-	if ( missingName ) {
-		throw new Error( `The interactive UI ${ kind } ${ missingName } has no implementation.` );
-	}
-
-	const extraName = implementedNames.find( ( name ) => ! documentNames.includes( name ) );
+	const extraName = Object.keys( implementations ).find(
+		( name ) => ! documentNames.includes( name )
+	);
 
 	if ( extraName ) {
 		throw new Error( `The interactive UI ${ kind } ${ extraName } isn't in its catalog document.` );
+	}
+
+	const missingName = documentNames.find(
+		( name ) => ! isImplementation( implementations[ name ] )
+	);
+
+	if ( missingName ) {
+		throw new Error( `The interactive UI ${ kind } ${ missingName } has no implementation.` );
 	}
 }
 
@@ -50,15 +56,17 @@ export function assertInteractiveUiCatalogDefinition( {
 		throw new Error( 'An interactive UI catalog needs a `catalogId`.' );
 	}
 
-	assertSameNames(
+	assertImplementations(
 		'component',
 		Object.keys( catalog.components ?? {} ),
-		Object.keys( components ).filter( ( name ) => isComponent( components[ name ] ) )
+		components,
+		isComponent
 	);
-	assertSameNames(
+	assertImplementations(
 		'function',
 		Object.keys( catalog.functions ?? {} ),
-		Object.keys( functions ).filter( ( name ) => typeof functions[ name ] === 'function' )
+		functions,
+		( value ) => typeof value === 'function'
 	);
 }
 

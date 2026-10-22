@@ -86,6 +86,17 @@ it.each< { problem: string; definition: InteractiveUiCatalogDefinition; error: s
 		error: 'The interactive UI component HostColorPicker has no implementation.',
 	},
 	{
+		problem: 'an invalid component missing from the document',
+		definition: {
+			...hostCatalog,
+			components: {
+				...hostCatalog.components,
+				HostExtra: undefined,
+			} as unknown as InteractiveUiCatalogDefinition[ 'components' ],
+		},
+		error: "The interactive UI component HostExtra isn't in its catalog document.",
+	},
+	{
 		problem: 'a function whose implementation isn’t a function',
 		definition: {
 			...hostCatalog,
