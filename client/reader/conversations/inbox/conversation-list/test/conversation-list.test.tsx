@@ -44,11 +44,23 @@ function ControlledList( props: Partial< React.ComponentProps< typeof Conversati
 
 const renderList = ( props: Partial< React.ComponentProps< typeof ConversationList > > = {} ) => {
 	const onSelect = jest.fn();
-	renderWithProvider( <ControlledList onSelect={ onSelect } { ...props } /> );
-	return { onSelect };
+	const { rerender } = renderWithProvider( <ControlledList onSelect={ onSelect } { ...props } /> );
+	return {
+		onSelect,
+		rerender: ( nextProps: typeof props ) =>
+			rerender( <ControlledList onSelect={ onSelect } { ...nextProps } /> ),
+	};
 };
 
 describe( 'ConversationList', () => {
+	let scrollIntoView: jest.Mock;
+
+	beforeEach( () => {
+		// jsdom does not implement scrollIntoView.
+		scrollIntoView = jest.fn();
+		window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+	} );
+
 	it( 'lists one item per post under a day header', () => {
 		renderList();
 
@@ -106,6 +118,7 @@ describe( 'ConversationList', () => {
 
 		await user.click( screen.getByRole( 'button', { name: /^Read post/ } ) );
 
+		expect( onSelect ).toHaveBeenCalledTimes( 1 );
 		expect( onSelect ).toHaveBeenCalledWith( expect.objectContaining( { postId: 200 } ) );
 	} );
 
@@ -155,5 +168,48 @@ describe( 'ConversationList', () => {
 
 		expect( screen.getByText( 'View unread' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Toggle shortcuts menu' ) ).toBeInTheDocument();
+	} );
+
+	it( 'scrolls the selected conversation into view', () => {
+		renderList( { selectedKey: conversations[ 1 ].key } );
+
+		expect( scrollIntoView ).toHaveBeenCalledTimes( 1 );
+		expect( scrollIntoView ).toHaveBeenCalledWith( { block: 'nearest' } );
+	} );
+
+	it( 'moves the focus to a conversation selected from the keyboard', () => {
+		const { rerender } = renderList( { selectedKey: conversations[ 0 ].key } );
+
+		rerender( { selectedKey: conversations[ 1 ].key } );
+
+		expect( screen.getByRole( 'button', { name: /^Read post/ } ) ).toHaveFocus();
+	} );
+
+	it( 'leaves the focus alone when it is outside the list', async () => {
+		const user = userEvent.setup();
+		const { rerender } = renderList( { selectedKey: conversations[ 0 ].key } );
+
+		await user.click( screen.getByRole( 'searchbox' ) );
+		rerender( { selectedKey: conversations[ 1 ].key } );
+
+		expect( screen.getByRole( 'searchbox' ) ).toHaveFocus();
+	} );
+
+	it( 'does not take the focus on the first render', () => {
+		renderList( { selectedKey: conversations[ 1 ].key } );
+
+		expect( screen.getByRole( 'button', { name: /^Read post/ } ) ).not.toHaveFocus();
+	} );
+
+	it( 'opens the conversation that Tab moves to', async () => {
+		const user = userEvent.setup();
+		const { onSelect } = renderList( { selectedKey: conversations[ 0 ].key } );
+
+		await user.click( screen.getByRole( 'button', { name: /^Unread post/ } ) );
+		onSelect.mockClear();
+		await user.tab();
+
+		expect( onSelect ).toHaveBeenCalledTimes( 1 );
+		expect( onSelect ).toHaveBeenCalledWith( expect.objectContaining( { postId: 200 } ) );
 	} );
 } );

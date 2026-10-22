@@ -4,6 +4,8 @@ import { useTranslate } from 'i18n-calypso';
 
 export type InboxTab = 'all' | 'unread' | 'yours';
 
+export const INBOX_TABS: InboxTab[] = [ 'all', 'unread', 'yours' ];
+
 interface Props {
 	tab: InboxTab;
 	unreadCount: number;

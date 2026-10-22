@@ -68,7 +68,7 @@ export function ConversationList( {
 
 	return (
 		<VStack spacing={ 0 } className="conversations-inbox__list-pane">
-			<HStack className="conversations-inbox__pane-title">
+			<HStack expanded={ false } className="conversations-inbox__pane-title">
 				<Heading level={ 1 } size={ 20 } weight={ 500 } color="inherit">
 					{ translate( 'Conversations' ) }
 				</Heading>

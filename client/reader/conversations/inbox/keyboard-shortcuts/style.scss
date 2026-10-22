@@ -2,10 +2,15 @@
 	margin: 0;
 	padding: 16px;
 	list-style: none;
+	white-space: nowrap;
 
 	kbd {
-		min-width: 24px;
-		padding: 2px 6px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		width: 24px;
+		height: 24px;
 		border: 1px solid var( --color-border-subtle );
 		border-radius: 4px;
 		background: var( --color-surface );
@@ -13,7 +18,5 @@
 		font-family: inherit;
 		font-size: 0.75rem;
 		font-weight: 600;
-		line-height: 18px;
-		text-align: center;
 	}
 }

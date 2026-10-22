@@ -1,5 +1,5 @@
 import {
-	Button,
+	IconButton,
 	Dropdown,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -19,12 +19,14 @@ export function KeyboardShortcuts( { isOpen, onToggle }: Props ) {
 	const translate = useTranslate();
 
 	const shortcuts = [
-		{ keys: [ '←', 'k' ], label: translate( 'Previous' ) },
-		{ keys: [ '→', 'j' ], label: translate( 'Next' ) },
-		{ keys: [ 'a' ], label: translate( 'View all' ) },
-		{ keys: [ 'u' ], label: translate( 'View unread' ) },
-		{ keys: [ 'c' ], label: translate( 'View your comments' ) },
-		{ keys: [ 'i' ], label: translate( 'Toggle shortcuts menu' ) },
+		{ key: '↓', label: translate( 'Next' ) },
+		{ key: '↑', label: translate( 'Previous' ) },
+		{ key: '←', label: translate( 'Previous tab' ) },
+		{ key: '→', label: translate( 'Next tab' ) },
+		{ key: 'a', label: translate( 'View all' ) },
+		{ key: 'u', label: translate( 'View unread' ) },
+		{ key: 'c', label: translate( 'View your comments' ) },
+		{ key: 'i', label: translate( 'Toggle shortcuts menu' ) },
 	];
 
 	return (
@@ -33,7 +35,7 @@ export function KeyboardShortcuts( { isOpen, onToggle }: Props ) {
 			onToggle={ onToggle }
 			popoverProps={ { placement: 'bottom-end' } }
 			renderToggle={ ( { isOpen: open, onToggle: toggle } ) => (
-				<Button
+				<IconButton
 					__next40pxDefaultSize
 					icon={ keyboard }
 					label={ translate( 'Keyboard shortcuts' ) }
@@ -42,14 +44,10 @@ export function KeyboardShortcuts( { isOpen, onToggle }: Props ) {
 				/>
 			) }
 			renderContent={ () => (
-				<VStack as="ul" spacing={ 3 } className="conversations-inbox__shortcuts">
-					{ shortcuts.map( ( { keys, label } ) => (
-						<HStack as="li" key={ label } spacing={ 3 } justify="flex-start">
-							<HStack as="span" spacing={ 1 } expanded={ false }>
-								{ keys.map( ( key ) => (
-									<kbd key={ key }>{ key }</kbd>
-								) ) }
-							</HStack>
+				<VStack as="ul" spacing={ 4 } className="conversations-inbox__shortcuts">
+					{ shortcuts.map( ( { key, label } ) => (
+						<HStack as="li" key={ key } spacing={ 2.5 } justify="flex-start">
+							<kbd>{ key }</kbd>
 							<Text>{ label }</Text>
 						</HStack>
 					) ) }

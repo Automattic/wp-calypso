@@ -4,10 +4,14 @@ import type { InboxTab } from '../conversation-list/tabs';
 interface Options {
 	/** When false, no shortcut fires (e.g. while the notifications panel is open). Defaults to true. */
 	enabled?: boolean;
-	/** `j` / `ArrowRight` — open the next conversation. */
+	/** `ArrowDown` / `j` — open the next conversation. */
 	onNext: () => void;
-	/** `k` / `ArrowLeft` — open the previous conversation. */
+	/** `ArrowUp` / `k` — open the previous conversation. */
 	onPrevious: () => void;
+	/** `ArrowRight` — switch to the next tab. */
+	onNextTab: () => void;
+	/** `ArrowLeft` — switch to the previous tab. */
+	onPreviousTab: () => void;
 	/** `a` / `u` / `c` — switch to the All, Unread or Your comments tab. */
 	onSelectTab: ( tab: InboxTab ) => void;
 	/** `i` — open or close the shortcuts popover. */
@@ -31,11 +35,27 @@ export function useInboxKeyboardShortcuts( {
 	enabled = true,
 	onNext,
 	onPrevious,
+	onNextTab,
+	onPreviousTab,
 	onSelectTab,
 	onToggleShortcuts,
 }: Options ): void {
-	const handlersRef = useRef( { onNext, onPrevious, onSelectTab, onToggleShortcuts } );
-	handlersRef.current = { onNext, onPrevious, onSelectTab, onToggleShortcuts };
+	const handlersRef = useRef( {
+		onNext,
+		onPrevious,
+		onNextTab,
+		onPreviousTab,
+		onSelectTab,
+		onToggleShortcuts,
+	} );
+	handlersRef.current = {
+		onNext,
+		onPrevious,
+		onNextTab,
+		onPreviousTab,
+		onSelectTab,
+		onToggleShortcuts,
+	};
 
 	useEffect( () => {
 		if ( ! enabled ) {
@@ -65,15 +85,23 @@ export function useInboxKeyboardShortcuts( {
 			}
 
 			switch ( event.key ) {
+				case 'ArrowDown':
 				case 'j':
-				case 'ArrowRight':
 					event.preventDefault();
 					handlers.onNext();
 					break;
+				case 'ArrowUp':
 				case 'k':
-				case 'ArrowLeft':
 					event.preventDefault();
 					handlers.onPrevious();
+					break;
+				case 'ArrowRight':
+					event.preventDefault();
+					handlers.onNextTab();
+					break;
+				case 'ArrowLeft':
+					event.preventDefault();
+					handlers.onPreviousTab();
 					break;
 				default:
 					if ( TAB_KEYS[ event.key ] ) {

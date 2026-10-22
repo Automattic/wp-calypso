@@ -20,8 +20,10 @@ describe( 'KeyboardShortcuts', () => {
 		render( <KeyboardShortcuts isOpen onToggle={ jest.fn() } /> );
 
 		for ( const label of [
-			'Previous',
 			'Next',
+			'Previous',
+			'Previous tab',
+			'Next tab',
 			'View all',
 			'View unread',
 			'View your comments',

@@ -10,9 +10,9 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { ConversationDetail } from './conversation-detail';
 import { ConversationList } from './conversation-list';
 import { filterConversations } from './conversation-list/filter-conversations';
+import { INBOX_TABS, type InboxTab } from './conversation-list/tabs';
 import { getConversationKey, groupNotesByPost, type Conversation } from './group-notes';
 import { useInboxKeyboardShortcuts } from './keyboard-shortcuts/use-inbox-keyboard-shortcuts';
-import type { InboxTab } from './conversation-list/tabs';
 
 import './style.scss';
 
@@ -68,10 +68,19 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	// With the open conversation filtered out of the list, next starts from the top.
 	const onNext = goTo( selectedIndex + 1 );
 
+	const moveTab = ( offset: number ) => {
+		const next = INBOX_TABS[ INBOX_TABS.indexOf( tab ) + offset ];
+		if ( next ) {
+			setTab( next );
+		}
+	};
+
 	useInboxKeyboardShortcuts( {
 		enabled: ! notificationsOpen,
 		onNext: () => onNext?.(),
 		onPrevious: () => onPrevious?.(),
+		onNextTab: () => moveTab( 1 ),
+		onPreviousTab: () => moveTab( -1 ),
 		onSelectTab: setTab,
 		onToggleShortcuts: () => setIsShortcutsOpen( ( isOpen ) => ! isOpen ),
 	} );

@@ -9,6 +9,8 @@ function makeHandlers() {
 	return {
 		onNext: jest.fn(),
 		onPrevious: jest.fn(),
+		onNextTab: jest.fn(),
+		onPreviousTab: jest.fn(),
 		onSelectTab: jest.fn(),
 		onToggleShortcuts: jest.fn(),
 	};
@@ -19,24 +21,35 @@ describe( 'useInboxKeyboardShortcuts', () => {
 		document.body.innerHTML = '';
 	} );
 
-	it( 'moves to the next conversation with j and the right arrow', async () => {
+	it( 'moves to the next conversation with the down arrow and j', async () => {
 		const user = userEvent.setup();
 		const handlers = makeHandlers();
 		renderHook( () => useInboxKeyboardShortcuts( handlers ) );
 
-		await user.keyboard( 'j{ArrowRight}' );
+		await user.keyboard( '{ArrowDown}j' );
 
 		expect( handlers.onNext ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	it( 'moves to the previous conversation with k and the left arrow', async () => {
+	it( 'moves to the previous conversation with the up arrow and k', async () => {
 		const user = userEvent.setup();
 		const handlers = makeHandlers();
 		renderHook( () => useInboxKeyboardShortcuts( handlers ) );
 
-		await user.keyboard( 'k{ArrowLeft}' );
+		await user.keyboard( '{ArrowUp}k' );
 
 		expect( handlers.onPrevious ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'moves between tabs with the left and right arrows', async () => {
+		const user = userEvent.setup();
+		const handlers = makeHandlers();
+		renderHook( () => useInboxKeyboardShortcuts( handlers ) );
+
+		await user.keyboard( '{ArrowRight}{ArrowLeft}' );
+
+		expect( handlers.onNextTab ).toHaveBeenCalledTimes( 1 );
+		expect( handlers.onPreviousTab ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'switches tabs with a, u and c', async () => {
