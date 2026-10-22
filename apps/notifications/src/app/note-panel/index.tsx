@@ -80,6 +80,9 @@ const NotePanel = ( {
 			if ( modifierKeyIsActive( event ) ) {
 				return;
 			}
+			if ( selectedNoteId ) {
+				return;
+			}
 
 			const shortcutToTabId: Record< string, string > = {
 				a: 'all',
@@ -104,7 +107,7 @@ const NotePanel = ( {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 		};
-	}, [ tabRefs, handleSelect, keyboardShortcutsAreEnabled ] );
+	}, [ tabRefs, handleSelect, keyboardShortcutsAreEnabled, selectedNoteId ] );
 
 	return (
 		<>
