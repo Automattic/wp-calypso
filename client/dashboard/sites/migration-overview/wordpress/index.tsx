@@ -2,18 +2,16 @@ import { isWpError } from '@automattic/api-core';
 import { siteQueryFilter, siteWordPressMigrationStatusQuery } from '@automattic/api-queries';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useHelpCenter } from '../../../app/help-center';
-import { MetadataItem, MetadataList } from '../../../components/metadata-list';
 import Notice from '../../../components/notice';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { Text } from '../../../components/text';
 import { getSiteDisplayName } from '../../../utils/site-name';
 import { isSiteMigrationInProgress } from '../../../utils/site-status';
-import { getSiteDisplayUrl } from '../../../utils/site-url';
 import { Connect } from './connect';
 import { Findings } from './findings';
 import { MigrationCard } from './migration-card';
@@ -57,6 +55,12 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		migration?.status === 'failed'
 			? migration.findings.find( ( { code } ) => code === 'source_connection_failed' )
 			: undefined;
+
+	// The connect step speaks for itself, so the header only sums up a migration once it's underway.
+	const summary =
+		migration && sourceHost && ! connectionFailure
+			? getSummary( migration.status, sourceHost )
+			: null;
 
 	// The site is unlocked once the migration completes, so hand over to the overview. The router sends a site that
 	// still reads as migrating straight back here, so only leave once the site itself says it's done: reload it now,
@@ -128,23 +132,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			header={
 				<PageHeader
 					title={ getSiteDisplayName( site ) }
-					description={
-						<MetadataList>
-							<MetadataItem>
-								<ExternalLink href={ site.URL }>{ getSiteDisplayUrl( site ) }</ExternalLink>
-							</MetadataItem>
-							{ migration && sourceHost && (
-								<MetadataItem>
-									<Text variant="muted">
-										{ getSummary(
-											connectionFailure ? 'not_started' : migration.status,
-											sourceHost
-										) }
-									</Text>
-								</MetadataItem>
-							) }
-						</MetadataList>
-					}
+					description={ summary && <Text variant="muted">{ summary }</Text> }
 				/>
 			}
 		>
@@ -203,12 +191,11 @@ function getSourceHost( sourceUrl?: string | null ) {
 	}
 }
 
-// The line after the site's address in the header, e.g. "example.wordpress.com · waiting for access to example.com".
+// The line under the site's name in the header, e.g. "migrating from example.com".
 function getSummary( status: WordPressMigrationStatus[ 'status' ], sourceHost: string ) {
 	switch ( status ) {
 		case 'not_started':
-			/* translators: %s: the domain of the site being migrated, e.g. example.com. */
-			return sprintf( __( 'waiting for access to %s' ), sourceHost );
+			return null;
 		case 'paused':
 			/* translators: %s: the domain of the site being migrated, e.g. example.com. */
 			return sprintf( __( 'checking %s before the migration' ), sourceHost );
