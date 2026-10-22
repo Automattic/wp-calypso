@@ -8,6 +8,7 @@ import {
 	getCaptureRects,
 	getInkSpans,
 	getUsedFontFamilies,
+	inlineBlockImages,
 	inlineFonts,
 	offsetCloneToBand,
 	pinViewportPositionedElements,
@@ -309,6 +310,204 @@ describe( 'replaceImagesWithPlaceholders', () => {
 		replaceImagesWithPlaceholders( live, clone, view );
 
 		expect( ( clone.querySelector( '.plain' ) as HTMLElement ).style.backgroundColor ).toBe( '' );
+	} );
+} );
+
+describe( 'replaceImagesWithPlaceholders, given inlined images', () => {
+	const IMAGE_URI = 'data:image/webp;base64,AAAA';
+
+	it( 'shows an inlined image instead of a placeholder, at the same box', () => {
+		const live = document.createElement( 'div' );
+		live.innerHTML =
+			'<img src="https://example.com/a.jpg" /><img src="https://example.com/b.jpg" />';
+		const [ inlined, other ] = Array.from( live.querySelectorAll( 'img' ) );
+		[ inlined, other ].forEach( ( image ) => {
+			image.getBoundingClientRect = () =>
+				box( { left: 0, top: 0, width: 320, height: 240 } ) as DOMRect;
+		} );
+		const clone = live.cloneNode( true ) as HTMLElement;
+		const view = asWindow( { getComputedStyle: () => ( { backgroundImage: 'none' } ) } );
+
+		replaceImagesWithPlaceholders( live, clone, view, new Map( [ [ inlined, IMAGE_URI ] ] ) );
+
+		const [ shown, placeholder ] = Array.from( clone.querySelectorAll( 'img' ) );
+
+		expect( shown.getAttribute( 'src' ) ).toBe( IMAGE_URI );
+		expect( shown.style.width ).toBe( '320px' );
+		expect( shown.style.backgroundColor ).toBe( '' );
+		expect( placeholder.getAttribute( 'src' ) ).toMatch( /^data:image\/gif/ );
+	} );
+
+	it( 'shows an inlined background photograph instead of a placeholder', () => {
+		const live = document.createElement( 'div' );
+		live.innerHTML = '<div class="cover"></div>';
+		const clone = live.cloneNode( true ) as HTMLElement;
+		const view = asWindow( {
+			getComputedStyle: () => ( {
+				backgroundImage: 'url("https://example.com/cover.jpg")',
+			} ),
+		} );
+
+		replaceImagesWithPlaceholders(
+			live,
+			clone,
+			view,
+			new Map( [ [ live.querySelector( '.cover' ) as Element, IMAGE_URI ] ] )
+		);
+
+		const cover = clone.querySelector( '.cover' ) as HTMLElement;
+
+		expect( cover.style.backgroundImage ).toContain( IMAGE_URI );
+		expect( cover.style.backgroundImage ).not.toContain( 'cover.jpg' );
+		expect( cover.style.backgroundColor ).toBe( '' );
+	} );
+} );
+
+describe( 'inlineBlockImages', () => {
+	const SVG = '<svg xmlns="http://www.w3.org/2000/svg"/>';
+
+	const blockWith = ( html: string, { backgroundImage = 'none' } = {} ) => {
+		const root = document.createElement( 'figure' );
+		root.innerHTML = html;
+		[ root, ...Array.from( root.querySelectorAll( '*' ) ) ].forEach( ( element ) => {
+			element.getBoundingClientRect = () =>
+				box( { left: 0, top: 0, width: 200, height: 100 } ) as DOMRect;
+		} );
+		const view = asWindow( {
+			getComputedStyle: ( element: Element ) => ( {
+				backgroundImage: element.classList.contains( 'bg' ) ? backgroundImage : 'none',
+			} ),
+		} );
+
+		return { root, view };
+	};
+
+	const stubSvg = () =>
+		stubFetch( async () => ( {
+			ok: true,
+			blob: async () => ( {
+				type: 'image/svg+xml',
+				arrayBuffer: async () => new TextEncoder().encode( SVG ).buffer,
+			} ),
+		} ) );
+
+	it( 'inlines an image in the block, fetched with a deadline', async () => {
+		stubSvg();
+		const { root, view } = blockWith( '<img src="https://example.com/logo.svg" />' );
+
+		const inlined = await inlineBlockImages( [ root ], view );
+
+		expect( fetchMock() ).toHaveBeenCalledWith( 'https://example.com/logo.svg', {
+			signal: 'deadline:3000',
+		} );
+		expect( inlined.get( root.querySelector( 'img' ) as Element ) ).toBe(
+			`data:image/svg+xml;base64,${ btoa( SVG ) }`
+		);
+	} );
+
+	it( 'inlines a background photograph, where cover blocks keep theirs', async () => {
+		stubSvg();
+		const { root, view } = blockWith( '<div class="bg"></div>', {
+			backgroundImage: 'url("https://example.com/cover.svg")',
+		} );
+
+		const inlined = await inlineBlockImages( [ root ], view );
+
+		expect( inlined.has( root.querySelector( '.bg' ) as Element ) ).toBe( true );
+	} );
+
+	// A host without CORS headers is the ordinary case, and must cost only the
+	// one image, never the capture.
+	it( 'leaves out an image that cannot be fetched', async () => {
+		stubFetch( async () => {
+			throw new TypeError( 'Failed to fetch' );
+		} );
+		const { root, view } = blockWith( '<img src="https://example.com/a.jpg" />' );
+
+		await expect( inlineBlockImages( [ root ], view ) ).resolves.toEqual( new Map() );
+	} );
+
+	it( 'leaves out an image the server answered with an error', async () => {
+		stubFetch( async () => ( { ok: false, status: 404 } ) );
+		const { root, view } = blockWith( '<img src="https://example.com/a.jpg" />' );
+
+		await expect( inlineBlockImages( [ root ], view ) ).resolves.toEqual( new Map() );
+	} );
+
+	it( 'fetches each image once, though nested framed blocks reach it twice', async () => {
+		stubSvg();
+		const { root, view } = blockWith(
+			'<div class="inner"><img src="https://example.com/a.svg" /></div>'
+		);
+
+		await inlineBlockImages( [ root, root.querySelector( '.inner' ) as Element ], view );
+
+		expect( fetchMock() ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'caps how many images one capture fetches', async () => {
+		stubSvg();
+		const { root, view } = blockWith(
+			Array.from(
+				{ length: 10 },
+				( _, index ) => `<img src="https://example.com/${ index }.svg" />`
+			).join( '' )
+		);
+
+		const inlined = await inlineBlockImages( [ root ], view );
+
+		expect( fetchMock() ).toHaveBeenCalledTimes( 6 );
+		expect( inlined.size ).toBe( 6 );
+	} );
+
+	it( 'skips an image with no rendered box', async () => {
+		stubSvg();
+		const { root, view } = blockWith( '<img src="https://example.com/a.svg" />' );
+		( root.querySelector( 'img' ) as Element ).getBoundingClientRect = () =>
+			box( { left: 0, top: 0, width: 0, height: 0 } ) as DOMRect;
+
+		await inlineBlockImages( [ root ], view );
+
+		expect( fetchMock() ).not.toHaveBeenCalled();
+	} );
+
+	it( 'downscales a raster image to the box it renders in', async () => {
+		const close = jest.fn();
+		const drawImage = jest.fn();
+		const globalsWithBitmap = globalThis as { createImageBitmap?: unknown };
+		globalsWithBitmap.createImageBitmap = jest.fn( async () => ( {
+			width: 2000,
+			height: 1000,
+			close,
+		} ) );
+		const getContext = jest
+			.spyOn( HTMLCanvasElement.prototype, 'getContext' )
+			.mockReturnValue( { drawImage } as unknown as CanvasRenderingContext2D );
+		const toBlob = jest
+			.spyOn( HTMLCanvasElement.prototype, 'toBlob' )
+			.mockImplementation( ( resolve ) =>
+				resolve( {
+					type: 'image/webp',
+					arrayBuffer: async () => new Uint8Array( [ 1, 2, 3 ] ).buffer,
+				} as unknown as Blob )
+			);
+		stubFetch( async () => ( { ok: true, blob: async () => ( { type: 'image/jpeg' } ) } ) );
+		const { root, view } = blockWith( '<img src="https://example.com/photo.jpg" />' );
+
+		try {
+			const inlined = await inlineBlockImages( [ root ], view );
+
+			// A 200×100 box needs a tenth of a 2000×1000 photograph.
+			expect( drawImage ).toHaveBeenCalledWith( expect.anything(), 0, 0, 200, 100 );
+			expect( close ).toHaveBeenCalled();
+			expect( inlined.get( root.querySelector( 'img' ) as Element ) ).toBe(
+				'data:image/webp;base64,AQID'
+			);
+		} finally {
+			getContext.mockRestore();
+			toBlob.mockRestore();
+			delete globalsWithBitmap.createImageBitmap;
+		}
 	} );
 } );
 

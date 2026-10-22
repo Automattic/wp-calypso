@@ -7,10 +7,12 @@ jest.mock( '../../block-ids', () => ( {
 jest.mock( '../../editor-blocks', () => ( {
 	getBlock: jest.fn(),
 	getBlocks: jest.fn(),
+	getPaletteColors: jest.fn(),
 } ) );
 
-import { getBlock, getBlocks } from '../../editor-blocks';
+import { getBlock, getBlocks, getPaletteColors } from '../../editor-blocks';
 import { describeTextContrast } from '../contrast';
+import { rememberImagePixels } from '../image-pixels';
 import type { BlockAttributes, EditorBlock } from '../../editor-blocks';
 
 type Styles = Partial< Record< keyof CSSStyleDeclaration, string > >;
@@ -1177,5 +1179,238 @@ describe( 'text outside the box of the background behind it', () => {
 		mountCanvas( [ groupWithText( { top: 40, left: 10, width: 200, height: 20 } ) ] );
 
 		expect( describeTextContrast( [ 'c25n' ] )?.failures ).toBe( 0 );
+	} );
+} );
+
+describe( 'text over a cover image', () => {
+	const PHOTO = 'https://example.com/food.jpg';
+	const COVER_RECT = { top: 0, left: 0, width: 1200, height: 600 };
+
+	/** Kept pixels, as the capture leaves them: one grey per column, left to right. */
+	const photo = ( greys: number[], { tainted = false } = {} ) =>
+		( {
+			width: greys.length,
+			height: 1,
+			getContext: () => ( {
+				getImageData: ( x: number, y: number, width: number ) => {
+					if ( tainted ) {
+						throw new DOMException( 'The canvas has been tainted', 'SecurityError' );
+					}
+
+					return {
+						data: Uint8ClampedArray.from(
+							greys.slice( x, x + width ).flatMap( ( grey ) => [ grey, grey, grey, 255 ] )
+						),
+					};
+				},
+			} ),
+		} ) as unknown as HTMLCanvasElement;
+
+	// From darker to lighter, so the 10th and 90th percentiles are 72 and 168.
+	const MID_TONED = Array.from( { length: 121 }, ( _, index ) => 60 + index );
+
+	interface CoverOptions {
+		overlay?: Styles;
+		overlayClass?: string;
+		pixels?: HTMLCanvasElement;
+		children: CanvasBlock[];
+	}
+
+	const cover = ( {
+		overlay,
+		overlayClass = '',
+		pixels,
+		children,
+	}: CoverOptions ): CanvasBlock => ( {
+		clientId: 'hero',
+		name: 'core/cover',
+		rect: COVER_RECT,
+		build: ( element, canvasDocument ) => {
+			element.classList.add( 'wp-block-cover' );
+
+			const image = withRect( canvasDocument.createElement( 'img' ), COVER_RECT );
+			image.className = 'wp-block-cover__image-background';
+			image.src = PHOTO;
+			image.style.position = 'absolute';
+			element.append( image );
+
+			if ( pixels ) {
+				rememberImagePixels( image, PHOTO, pixels );
+			}
+
+			if ( overlay ) {
+				const span = canvasDocument.createElement( 'span' );
+				span.className = `wp-block-cover__background ${ overlayClass }`;
+				Object.assign( span.style, { position: 'absolute', ...overlay } );
+				element.append( span );
+			}
+		},
+		children,
+	} );
+
+	// WPAGENT-224: `customOverlayColor: #1a1510` at `dimRatio: 55`.
+	const HERO_OVERLAY = { backgroundColor: 'rgb(26, 21, 16)', opacity: '0.55' };
+	const DARK_INK = { color: 'rgb(37, 45, 36)', fontSize: '16px' };
+
+	it( 'fails the WPAGENT-224 hero’s muted and dark text, and names the cover to fix', () => {
+		mountCanvas( [
+			cover( {
+				overlay: HERO_OVERLAY,
+				pixels: photo( MID_TONED ),
+				children: [
+					{
+						...text( 'loca', { color: 'rgb(98, 100, 89)', fontSize: '16px' } ),
+						name: 'core/paragraph',
+					},
+					{ ...text( 'head', { ...DARK_INK, fontSize: '48px' } ), name: 'core/heading' },
+					text( 'lead', DARK_INK ),
+					{ ...text( 'cta', DARK_INK ), name: 'core/button' },
+					text( 'ok', { color: 'rgb(250, 247, 240)', fontSize: '16px' } ),
+				],
+			} ),
+		] );
+
+		const contrast = describeTextContrast( [ 'hero' ] );
+
+		expect( contrast?.failures ).toBe( 4 );
+		expect( contrast?.backdrops ).toEqual( [
+			{
+				clientId: 'hero',
+				name: 'core/cover',
+				ownBackground: true,
+				textClientIds: expect.arrayContaining( [ 'loca', 'head', 'lead', 'cta' ] ),
+				readableText: '#FFFFFF',
+			},
+		] );
+		expect( contrast?.backdrops[ 0 ].textClientIds ).not.toContain( 'ok' );
+		expect( contrast?.notes.join( ' ' ) ).toContain(
+			'comes from cover (hero): its overlay, #1A1510 at 55% opacity, blended over the photograph behind the text.'
+		);
+		expect( contrast?.notes.join( ' ' ) ).not.toContain( 'could not be measured' );
+	} );
+
+	it( 'passes light text on the hero, counting it with the rest that was measured', () => {
+		mountCanvas( [
+			cover( {
+				overlay: HERO_OVERLAY,
+				pixels: photo( MID_TONED ),
+				children: [ text( 'ok', { color: 'rgb(250, 247, 240)', fontSize: '16px' } ) ],
+			} ),
+		] );
+
+		expect( describeTextContrast( [ 'hero' ] ) ).toEqual( {
+			notes: [
+				'Text contrast: all 1 edited text block(s) measure at least 4.5:1 (3:1 for large text) against what renders behind them.',
+			],
+			failures: 0,
+			backdrops: [],
+		} );
+	} );
+
+	it( 'measures a button with a background of its own against that background, not the cover', () => {
+		mountCanvas( [
+			cover( {
+				overlay: HERO_OVERLAY,
+				pixels: photo( MID_TONED ),
+				children: [
+					{
+						...text( 'btn', { ...WHITE_TEXT, backgroundColor: 'rgb(151, 71, 47)' } ),
+						name: 'core/button',
+					},
+				],
+			} ),
+		] );
+
+		expect( describeTextContrast( [ 'hero' ] )?.failures ).toBe( 0 );
+	} );
+
+	it( 'fails white text on a light photo under a light overlay, against the lighter part of it', () => {
+		mountCanvas( [
+			cover( {
+				overlay: { backgroundColor: 'rgb(255, 255, 255)', opacity: '0.2' },
+				pixels: photo( Array.from( { length: 21 }, ( _, index ) => 220 + index ) ),
+				children: [ text( 'line', WHITE_TEXT ) ],
+			} ),
+		] );
+
+		const contrast = describeTextContrast( [ 'hero' ] );
+
+		// 0.2 × 255 + 0.8 × 238, the 90th percentile, is 241.4.
+		expect( contrast?.notes[ 0 ] ).toMatch(
+			/^Text contrast too low: paragraph \(line\) — #FFFFFF text on #F1F1F1/
+		);
+		expect( contrast?.failures ).toBe( 1 );
+		expect( contrast?.backdrops ).toEqual( [
+			{
+				clientId: 'hero',
+				name: 'core/cover',
+				ownBackground: true,
+				textClientIds: [ 'line' ],
+				readableText: '#000000',
+			},
+		] );
+	} );
+
+	it( 'offers a palette colour when neither black nor white reads on both parts of the photo', () => {
+		jest.mocked( getPaletteColors ).mockReturnValue( [ 'var(--x)', '#707070' ] );
+		mountCanvas( [
+			cover( {
+				overlay: { backgroundColor: 'rgb(0, 0, 0)', opacity: '0' },
+				pixels: photo( [ ...Array( 10 ).fill( 20 ), ...Array( 10 ).fill( 203 ) ] ),
+				children: [ text( 'title', { ...WHITE_TEXT, fontSize: '32px' } ) ],
+			} ),
+		] );
+
+		expect( describeTextContrast( [ 'hero' ] )?.backdrops[ 0 ].readableText ).toBe( '#707070' );
+	} );
+
+	it( 'leaves text over a gradient overlay to the picture', () => {
+		mountCanvas( [
+			cover( {
+				overlay: { backgroundColor: 'rgb(0, 0, 0)', opacity: '0.5' },
+				overlayClass: 'wp-block-cover__gradient-background',
+				pixels: photo( MID_TONED ),
+				children: [ text( 'line', DARK_INK ) ],
+			} ),
+		] );
+
+		expect( describeTextContrast( [ 'hero' ] ) ).toEqual( {
+			notes: [ UNMEASURED_ONE ],
+			failures: null,
+			backdrops: [],
+		} );
+	} );
+
+	it( 'leaves text over a photo whose canvas is tainted to the picture', () => {
+		mountCanvas( [
+			cover( {
+				overlay: HERO_OVERLAY,
+				pixels: photo( MID_TONED, { tainted: true } ),
+				children: [ text( 'line', DARK_INK ) ],
+			} ),
+		] );
+
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+	} );
+
+	it( 'leaves text over a photo that has not loaded to the picture', () => {
+		mountCanvas( [ cover( { overlay: HERO_OVERLAY, children: [ text( 'line', DARK_INK ) ] } ) ] );
+
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+	} );
+
+	it( 'measures text on an opaque overlay, which hides the image', () => {
+		mountCanvas( [
+			cover( {
+				overlay: { backgroundColor: 'rgb(26, 21, 16)', opacity: '1' },
+				children: [ text( 'line', DARK_INK ) ],
+			} ),
+		] );
+
+		const contrast = describeTextContrast( [ 'hero' ] );
+
+		expect( contrast?.failures ).toBe( 1 );
+		expect( contrast?.notes[ 0 ] ).toContain( '#252D24 text on #1A1510' );
+		expect( contrast?.notes[ 0 ] ).toContain( 'overlay, which hides its image' );
 	} );
 } );

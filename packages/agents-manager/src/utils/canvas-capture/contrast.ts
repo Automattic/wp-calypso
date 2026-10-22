@@ -10,11 +10,18 @@
  *
  * The visual check takes these notes as fact, so a colour that cannot be read
  * is left out rather than guessed: a wrong "readable" is worse than no note.
+ *
+ * Text over a cover's photograph is the one image backdrop measured. The check
+ * passed unreadable hero text from the picture alone, and the theme can recolour
+ * that text in ways only the canvas shows. It is held to the darker and the
+ * lighter parts of the image behind it, each under the overlay, as the browser
+ * blends them, and must read against both.
  */
 
 import { createShortIdLookup } from '../block-ids';
-import { getBlock, getBlocks } from '../editor-blocks';
+import { getBlock, getBlocks, getPaletteColors } from '../editor-blocks';
 import { getCanvasDocument } from '../editor-canvas';
+import { drawScaledCopy, getBackgroundImageUrls, recallImagePixels } from './image-pixels';
 
 const MAX_TEXT_BLOCKS = 40;
 // Text runs read in one block: a paragraph's links, spans and highlights.
@@ -51,6 +58,13 @@ const TRANSPARENT: Rgba = { r: 0, g: 0, b: 0, a: 0 };
 // Media laid out over a background, as a cover block's image or video is.
 const OVERLAY_MEDIA = new Set( [ 'img', 'video', 'picture', 'canvas', 'svg', 'iframe' ] );
 
+// The dark and light ends of the image's tones behind the text, as luminance
+// percentiles rather than the extremes, so a few stray pixels do not decide it.
+const DARK_PERCENTILE = 0.1;
+const LIGHT_PERCENTILE = 0.9;
+// Pixels read from the image behind one run of text, at most.
+const MAX_SAMPLES = 4096;
+
 // The editor's own interface inside a block, which the page does not show:
 // an empty block's placeholder, an invalid block's warning, an appender.
 const EDITOR_UI = '.components-placeholder, .block-editor-warning, .block-list-appender';
@@ -59,6 +73,14 @@ interface Backdrop {
 	colour: Rgba;
 	/** The block whose element painted the backdrop, if any did. */
 	clientId?: string;
+	/**
+	 * Every colour the text has to read against, when there is more than one:
+	 * a cover's overlay over the dark and over the light parts of its image.
+	 * `colour` is then the one the text reads worst on.
+	 */
+	colours?: Rgba[];
+	/** A cover's overlay, as the browser blends it over the image. */
+	cover?: { overlay: Rgba; opacity: number };
 }
 
 /** A block painting a background that failing text sits on, for a correction to target. */
@@ -128,6 +150,17 @@ function parseColour( value: string ): Rgba | null {
 
 	if ( colour === 'transparent' ) {
 		return TRANSPARENT;
+	}
+
+	// Never computed, but palettes are written this way.
+	const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/.exec( colour )?.[ 1 ];
+
+	if ( hex ) {
+		const digits =
+			hex.length === 3 ? [ ...hex ].map( ( digit ) => digit + digit ) : hex.match( /../g );
+		const [ r, g, b ] = ( digits ?? [] ).map( ( pair ) => parseInt( pair, 16 ) );
+
+		return { r, g, b, a: 1 };
 	}
 
 	const match =
@@ -335,16 +368,18 @@ function paintsBehind( element: Element, textRect: DOMRect ): boolean {
  * is media, as a cover block's overlay and image are, or a positioned
  * pseudo-element that paints. Its colour is not on the path the backdrop is
  * read from. A child whose box is clear of the text's is no overlay; one
- * whose box cannot be read, nor a pseudo-element's, is taken to be.
+ * whose box cannot be read, nor a pseudo-element's, is taken to be. Children
+ * in `known` are left out, as a cover's own overlay and image are once read.
  */
 function hasOverlay(
 	element: Element,
 	pathChild: Element | null,
 	textRect: DOMRect,
-	view: Window
+	view: Window,
+	known: Element[] = []
 ): boolean {
 	const overlaid = Array.from( element.children ).some( ( child ) => {
-		if ( child === pathChild ) {
+		if ( child === pathChild || known.includes( child ) ) {
 			return false;
 		}
 
@@ -396,9 +431,270 @@ function isAltered( element: Element, view: Window ): boolean {
 	return false;
 }
 
+interface Region {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+}
+
+/** A copy of an image the editor has already loaded, or `null` when it has not. */
+function copyLiveImage( image: HTMLImageElement ): HTMLCanvasElement | null {
+	if ( ! image.complete || ! image.naturalWidth || ! image.naturalHeight ) {
+		return null;
+	}
+
+	try {
+		return drawScaledCopy( image, image.naturalWidth, image.naturalHeight, image.ownerDocument );
+	} catch {
+		return null;
+	}
+}
+
+/** Where `object-position` puts the image along one axis, given the room left over. */
+function objectOffset( value: string | undefined, room: number ): number {
+	if ( value?.endsWith( '%' ) ) {
+		return ( parseFloat( value ) / 100 ) * room;
+	}
+
+	if ( value?.endsWith( 'px' ) ) {
+		return parseFloat( value );
+	}
+
+	return room / 2;
+}
+
+/**
+ * The pixels of `pixels` an `<img>` shows inside `area`, through its
+ * `object-fit` and `object-position`. An image fitted some other way is read
+ * whole, which can only find the text's backdrop darker or lighter than it is.
+ * `null` when the image shows nothing there.
+ */
+function mapToImage(
+	image: Element,
+	pixels: HTMLCanvasElement,
+	area: DOMRect,
+	view: Window
+): Region | null {
+	const box = image.getBoundingClientRect();
+	const { width, height } = pixels;
+	const whole = { x: 0, y: 0, width, height };
+
+	if ( ! hasSize( box ) ) {
+		return null;
+	}
+
+	if ( ! hasSize( area ) ) {
+		return whole;
+	}
+
+	const style = view.getComputedStyle( image );
+	// The cover block's image is always `cover`, from core's stylesheet.
+	const fit = style.objectFit || 'cover';
+	let scaleX: number;
+	let scaleY: number;
+
+	if ( fit === 'fill' ) {
+		scaleX = box.width / width;
+		scaleY = box.height / height;
+	} else if ( fit === 'cover' || fit === 'contain' ) {
+		const pick = fit === 'cover' ? Math.max : Math.min;
+		scaleX = scaleY = pick( box.width / width, box.height / height );
+	} else {
+		return whole;
+	}
+
+	const [ positionX, positionY ] = ( style.objectPosition || '' ).split( /\s+/ );
+	const left = box.left + objectOffset( positionX, box.width - width * scaleX );
+	const top = box.top + objectOffset( positionY, box.height - height * scaleY );
+	const x = clamp( Math.floor( ( area.left - left ) / scaleX ), 0, width );
+	const y = clamp( Math.floor( ( area.top - top ) / scaleY ), 0, height );
+	const right = clamp( Math.ceil( ( area.right - left ) / scaleX ), 0, width );
+	const bottom = clamp( Math.ceil( ( area.bottom - top ) / scaleY ), 0, height );
+
+	return right > x && bottom > y ? { x, y, width: right - x, height: bottom - y } : null;
+}
+
+/**
+ * The dark and the light end of the image's tones behind the text, or `null`
+ * when its pixels cannot be had: not loaded, more than one image layered, or
+ * a canvas the browser will not read back because the image is cross-origin.
+ *
+ * The pixels the capture kept are used first, since it fetched them over CORS;
+ * failing that, the editor's own copy, which reads only when same-origin. A
+ * CSS background, as a fixed or repeated cover paints, is read whole: where it
+ * lands depends on the scroll and the tiling, and the whole image can only
+ * find the text's backdrop darker or lighter than it is.
+ */
+function sampleImage( source: Element, textRect: DOMRect, view: Window ): Rgba[] | null {
+	const isImage = source.localName === 'img';
+	let url: string | undefined;
+
+	if ( isImage ) {
+		const image = source as HTMLImageElement;
+		url = image.currentSrc || image.src;
+	} else {
+		const urls = getBackgroundImageUrls( view.getComputedStyle( source ).backgroundImage );
+		url = urls.length === 1 ? urls[ 0 ] : undefined;
+	}
+
+	if ( ! url ) {
+		return null;
+	}
+
+	const pixels =
+		recallImagePixels( source, url ) ??
+		( isImage ? copyLiveImage( source as HTMLImageElement ) : null );
+	const region =
+		pixels &&
+		( isImage
+			? mapToImage( source, pixels, textRect, view )
+			: { x: 0, y: 0, width: pixels.width, height: pixels.height } );
+
+	if ( ! pixels || ! region ) {
+		return null;
+	}
+
+	let data: Uint8ClampedArray | undefined;
+
+	try {
+		data = pixels
+			.getContext( '2d' )
+			?.getImageData( region.x, region.y, region.width, region.height ).data;
+	} catch {
+		return null;
+	}
+
+	if ( ! data ) {
+		return null;
+	}
+
+	const step = Math.max(
+		1,
+		Math.ceil( Math.sqrt( ( region.width * region.height ) / MAX_SAMPLES ) )
+	);
+	const samples: Rgba[] = [];
+
+	for ( let y = 0; y < region.height; y += step ) {
+		for ( let x = 0; x < region.width; x += step ) {
+			const index = ( y * region.width + x ) * 4;
+
+			// A transparent part of the image is taken to show white, as an
+			// unpainted canvas does.
+			samples.push(
+				composite(
+					{
+						r: data[ index ],
+						g: data[ index + 1 ],
+						b: data[ index + 2 ],
+						a: data[ index + 3 ] / 255,
+					},
+					WHITE
+				)
+			);
+		}
+	}
+
+	if ( ! samples.length ) {
+		return null;
+	}
+
+	const byLuminance = samples
+		.map( ( sample ) => ( { sample, luminance: luminance( sample ) } ) )
+		.sort( ( a, b ) => a.luminance - b.luminance );
+	const at = ( percentile: number ) =>
+		byLuminance[ Math.floor( percentile * ( byLuminance.length - 1 ) ) ].sample;
+
+	return [ at( DARK_PERCENTILE ), at( LIGHT_PERCENTILE ) ];
+}
+
+/**
+ * What a cover renders behind text inside it: its overlay over the image, at
+ * the overlay's opacity, which `dimRatio` sets through the
+ * `has-background-dim-N` classes. A colour per end of the image's tones, or a
+ * single one when the overlay is opaque and hides the image. `null` when the
+ * overlay is a gradient, the background a video or an image that cannot be
+ * read, or anything else is laid over it.
+ */
+function findCoverBackdrop(
+	cover: Element,
+	pathChild: Element | null,
+	textRect: DOMRect,
+	view: Window
+): Pick< Backdrop, 'colours' | 'cover' > | null {
+	const children = Array.from( cover.children );
+	const overlay = children.find( ( child ) =>
+		child.classList.contains( 'wp-block-cover__background' )
+	);
+	const image = children.find( ( child ) =>
+		child.classList.contains( 'wp-block-cover__image-background' )
+	);
+	const ownImage = hasBackgroundImage( view.getComputedStyle( cover ) );
+
+	if (
+		( image && ownImage ) ||
+		children.some(
+			( child ) =>
+				child.localName === 'video' ||
+				child.classList.contains( 'wp-block-cover__gradient-background' )
+		) ||
+		hasOverlay(
+			cover,
+			pathChild,
+			textRect,
+			view,
+			[ overlay, image ].filter( ( child ): child is Element => !! child )
+		)
+	) {
+		return null;
+	}
+
+	let colour = TRANSPARENT;
+	let opacity = 0;
+
+	if ( overlay && isDisplayed( overlay, view ) ) {
+		const style = view.getComputedStyle( overlay );
+		const background = readBackground( style );
+		const ownOpacity = style.opacity === '' ? 1 : parseFloat( style.opacity );
+
+		if (
+			! background ||
+			Number.isNaN( ownOpacity ) ||
+			hasBackgroundImage( style ) ||
+			isSet( style.filter ) ||
+			isSet( style.mixBlendMode ) ||
+			! paintsBehind( overlay, textRect )
+		) {
+			return null;
+		}
+
+		colour = { ...background, a: 1 };
+		opacity = clamp( ownOpacity * background.a, 0, 1 );
+	}
+
+	if ( opacity >= 1 ) {
+		return { colours: [ colour ], cover: { overlay: colour, opacity } };
+	}
+
+	// Without an image, what shows through the overlay is whatever is behind
+	// the cover, which is left to the picture.
+	const imageSource = image ?? ( ownImage ? cover : undefined );
+	const samples = imageSource && sampleImage( imageSource, textRect, view );
+
+	if ( ! samples ) {
+		return null;
+	}
+
+	return {
+		colours: samples.map( ( sample ) => composite( { ...colour, a: opacity }, sample ) ),
+		cover: { overlay: colour, opacity },
+	};
+}
+
 /**
  * What renders behind an element: the backgrounds of it and its ancestors,
- * layered until one is solid, over white when none is. `null` when an image,
+ * layered until one is solid, over white when none is, or over a cover's
+ * overlay and image when the element is in one. `null` when any other image,
  * gradient or overlay sits in the way, a colour cannot be read, or a
  * background does not cover the text.
  */
@@ -415,8 +711,27 @@ function findBackdrop( element: Element, view: Window ): Backdrop | null {
 		pathChild = current, current = current.parentElement
 	) {
 		const style = view.getComputedStyle( current );
+		const overlaid =
+			hasBackgroundImage( style ) || hasOverlay( current, pathChild, textRect, view );
 
-		if ( hasBackgroundImage( style ) || hasOverlay( current, pathChild, textRect, view ) ) {
+		if ( overlaid && current.classList.contains( 'wp-block-cover' ) ) {
+			const cover = paintsBehind( current, textRect )
+				? findCoverBackdrop( current, pathChild, textRect, view )
+				: null;
+
+			if ( ! cover?.colours ) {
+				return null;
+			}
+
+			const colours = cover.colours.map( ( under ) =>
+				layers.reduceRight( ( below, over ) => composite( over, below ), under )
+			);
+			const clientId = current.closest( '[data-block]' )?.getAttribute( 'data-block' ) ?? undefined;
+
+			return { colour: colours[ 0 ], colours, clientId, cover: cover.cover };
+		}
+
+		if ( overlaid ) {
 			return null;
 		}
 
@@ -471,12 +786,19 @@ function measureRun( element: Element, view: Window ): Run | null {
 		return null;
 	}
 
-	const text = composite( colour, backdrop.colour );
+	// Against each colour behind it, keeping the one it reads worst on.
+	const [ worst ] = ( backdrop.colours ?? [ backdrop.colour ] )
+		.map( ( under ) => {
+			const text = composite( colour, under );
+
+			return { text, under, ratio: contrastRatio( text, under ) };
+		} )
+		.sort( ( a, b ) => a.ratio - b.ratio );
 
 	return {
-		text,
-		backdrop,
-		ratio: contrastRatio( text, backdrop.colour ),
+		text: worst.text,
+		backdrop: { ...backdrop, colour: worst.under },
+		ratio: worst.ratio,
 		needs: isLargeText( style ) ? MIN_LARGE_RATIO : MIN_RATIO,
 	};
 }
@@ -530,13 +852,23 @@ function collectBlocks( clientIds: string[] ): { blocks: string[]; truncated: bo
  * A text colour that reads on every backdrop the failing runs sit on, held to
  * the strictest threshold among them, so a correction need not guess one.
  * On an opaque backdrop black or white always reaches 4.5:1, so this finds
- * one in practice; `undefined` keeps the server from being handed a guess.
+ * one in practice. A cover's photograph can defeat both, its dark parts
+ * under black and its light parts under white, and then the theme's palette
+ * is tried; `undefined` keeps the server from being handed a guess.
  */
 function findReadableText( runs: Run[] ): string | undefined {
 	const needs = Math.max( ...runs.map( ( run ) => run.needs ) );
-	const readable = READABLE_CANDIDATES.find( ( candidate ) =>
-		runs.every( ( run ) => contrastRatio( candidate, run.backdrop.colour ) >= needs )
-	);
+	const readsOnAll = ( candidate: Rgba ) =>
+		runs.every( ( run ) =>
+			( run.backdrop.colours ?? [ run.backdrop.colour ] ).every(
+				( under ) => contrastRatio( candidate, under ) >= needs
+			)
+		);
+	const readable =
+		READABLE_CANDIDATES.find( readsOnAll ) ??
+		( getPaletteColors() ?? [] )
+			.map( parseColour )
+			.find( ( candidate ): candidate is Rgba => candidate?.a === 1 && readsOnAll( candidate ) );
 
 	return readable && toHex( readable );
 }
@@ -663,7 +995,9 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 		const painter = item.backdrop.clientId;
 		let source = painter ?? '';
 
-		if ( painter && isOwnBackground( painter ) ) {
+		if ( item.backdrop.cover ) {
+			source = 'cover';
+		} else if ( painter && isOwnBackground( painter ) ) {
 			source = 'own';
 		} else if ( painter === item.clientId ) {
 			source = 'self';
@@ -692,7 +1026,19 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 		);
 		let source: string;
 
-		if ( ! backdrop.clientId ) {
+		if ( backdrop.cover && backdrop.clientId ) {
+			const { overlay, opacity } = backdrop.cover;
+			const cover = labelOf( backdrop.clientId );
+
+			source =
+				opacity >= 1
+					? `The ${ backdropHex } comes from ${ cover }'s overlay, which hides its image.`
+					: `The ${ backdropHex } comes from ${ cover }: its overlay, ${ toHex(
+							overlay
+						) } at ${ Math.round(
+							opacity * 100
+						) }% opacity, blended over the photograph behind the text. Of the darker and the lighter parts of the photograph, both measured, this is the one the text reads worse on.`;
+		} else if ( ! backdrop.clientId ) {
 			source = `The ${ backdropHex } comes from the page background.`;
 		} else if ( isOwnBackground( backdrop.clientId ) ) {
 			if ( painters.length === 1 ) {
@@ -749,7 +1095,10 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 	// is the page background, which no edit can reach. Every failing run
 	// counts, not only a block's worst: one paragraph can fail against its
 	// group and against its own highlight, and both are a fix.
-	const byPainter = new Map< string, { worst: number; texts: Set< string >; runs: Run[] } >();
+	const byPainter = new Map<
+		string,
+		{ worst: number; texts: Set< string >; runs: Run[]; cover: boolean }
+	>();
 
 	failing.forEach( ( item ) =>
 		item.failingRuns.forEach( ( run ) => {
@@ -763,9 +1112,11 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 				worst: Infinity,
 				texts: new Set< string >(),
 				runs: [],
+				cover: false,
 			};
 
 			row.worst = Math.min( row.worst, run.ratio );
+			row.cover ||= !! run.backdrop.cover;
 			row.texts.add( item.clientId );
 			row.runs.push( run );
 			byPainter.set( painter, row );
@@ -774,7 +1125,7 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 
 	const backdrops = [ ...byPainter ]
 		.sort( ( [ , a ], [ , b ] ) => a.worst - b.worst )
-		.flatMap( ( [ painter, { texts, runs } ] ): ContrastBackdrop[] => {
+		.flatMap( ( [ painter, { texts, runs, cover } ] ): ContrastBackdrop[] => {
 			const clientId = findShortId( painter );
 			const name = getBlock( painter )?.name;
 
@@ -788,7 +1139,8 @@ function measureTextContrast( clientIds: string[], wholePage: boolean ): TextCon
 				{
 					clientId,
 					name,
-					ownBackground: isOwnBackground( painter ),
+					// A cover's overlay and image are its own, whatever its colour attributes say.
+					ownBackground: cover || isOwnBackground( painter ),
 					textClientIds: [ ...texts ]
 						.map( ( textClientId ) => findShortId( textClientId ) )
 						.filter( ( id ): id is string => !! id )

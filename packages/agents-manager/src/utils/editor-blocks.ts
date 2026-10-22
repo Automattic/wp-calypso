@@ -124,6 +124,12 @@ export const getPaletteColor = ( slug: string ): string | undefined =>
 		?.getSettings?.()
 		.colors?.find( ( entry ) => entry.slug === slug )?.color;
 
+/** The colours of the editor's palette, as its entries give them. */
+export const getPaletteColors = (): string[] =>
+	blockEditorSelect()
+		?.getSettings?.()
+		.colors?.map( ( entry ) => entry.color ) ?? [];
+
 /** The post the editor holds, or `undefined` while it is still loading. */
 export function getCurrentPost(): CurrentPost | undefined {
 	const editor = select( 'core/editor' ) as unknown as

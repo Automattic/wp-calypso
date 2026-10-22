@@ -40,6 +40,24 @@ describe( 'captureCanvasCallback', () => {
 		} );
 	} );
 
+	// Placeholders are still described as such when no fetch succeeded, so a
+	// grey box is never read as a real, empty image.
+	it( 'says the framed blocks show their real images only when some were inlined', async () => {
+		jest
+			.mocked( captureCanvas )
+			.mockResolvedValue( [ filePart( { framed: 1, inlinedImages: 1 } ) ] );
+		const inlined = await captureCanvasCallback( { clientIds: [ 'a1' ] } );
+
+		jest
+			.mocked( captureCanvas )
+			.mockResolvedValue( [ filePart( { framed: 1, inlinedImages: 0 } ) ] );
+		const placeholders = await captureCanvasCallback( { clientIds: [ 'a1' ] } );
+
+		expect( inlined.result.message ).toContain( 'shown as they really are' );
+		expect( placeholders.result.message ).not.toContain( 'shown as they really are' );
+		expect( placeholders.result.message ).toContain( 'flat placeholder boxes' );
+	} );
+
 	it.each( [ {}, null ] )(
 		'describes the visible area when no block was named (%p)',
 		async ( input ) => {
