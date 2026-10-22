@@ -89,6 +89,7 @@ const SiteMigrationCheck: StepType< {
 		description: TranslateResult;
 		disabled?: boolean;
 		href?: string;
+		ineligible?: boolean;
 	}[] = [
 		{
 			action: 'transfer-domain',
@@ -115,6 +116,7 @@ const SiteMigrationCheck: StepType< {
 				}
 			),
 			href: localizeUrl( 'https://wordpress.com/support/copy-a-site/' ),
+			ineligible: true,
 		} );
 	} else {
 		const isCheckingCopySite = copySiteEligibility === 'loading';
@@ -199,10 +201,12 @@ const SiteMigrationCheck: StepType< {
 				{ ! destinationFailed &&
 					( showChoices ? (
 						<div className="site-migration-check__card">
-							{ choices.map( ( { action, title, description, disabled, href } ) => (
+							{ choices.map( ( { action, title, description, disabled, href, ineligible } ) => (
 								<Step.LinkButton
 									key={ action }
-									className="site-migration-check__choice"
+									className={ clsx( 'site-migration-check__choice', {
+										'site-migration-check__choice--ineligible': ineligible,
+									} ) }
 									disabled={ disabled }
 									href={ href }
 									target={ href ? '_blank' : undefined }

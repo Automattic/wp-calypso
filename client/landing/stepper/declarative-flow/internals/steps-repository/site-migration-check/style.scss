@@ -188,7 +188,15 @@
 		}
 	}
 
-	.site-migration-check__choice.components-button:not( :disabled, [aria-disabled='true'] ):hover {
+	.site-migration-check__choice--ineligible.components-button {
+		color: var( --color-neutral-50 );
+	}
+
+	.site-migration-check__choice.components-button:not(
+			:disabled,
+			[aria-disabled='true'],
+			.site-migration-check__choice--ineligible
+		):hover {
 		border-color: var( --color-link );
 	}
 
@@ -225,6 +233,7 @@
 
 	.site-migration-check__choice-learn-more {
 		color: var( --color-link );
+		text-decoration: underline;
 	}
 
 	.migration-instructions-from-preview {
