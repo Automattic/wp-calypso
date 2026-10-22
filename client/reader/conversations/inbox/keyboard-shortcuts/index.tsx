@@ -7,6 +7,7 @@ import {
 } from '@wordpress/components';
 import { keyboard } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { SHORTCUTS_POPOVER_CLASS } from './use-inbox-keyboard-shortcuts';
 
 import './style.scss';
 
@@ -34,6 +35,7 @@ export function KeyboardShortcuts( { isOpen, onToggle }: Props ) {
 			open={ isOpen }
 			onToggle={ onToggle }
 			popoverProps={ { placement: 'bottom-end' } }
+			contentClassName={ SHORTCUTS_POPOVER_CLASS }
 			className="conversations-inbox__shortcuts-dropdown"
 			renderToggle={ ( { isOpen: open, onToggle: toggle } ) => (
 				<Button

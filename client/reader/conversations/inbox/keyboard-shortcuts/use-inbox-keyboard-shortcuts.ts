@@ -20,6 +20,10 @@ interface Options {
 
 const INTERACTIVE_TAGS = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 
+const POPOVER_SELECTOR = '.components-popover, .popover';
+
+export const SHORTCUTS_POPOVER_CLASS = 'conversations-inbox__shortcuts-popover';
+
 const TAB_KEYS: Record< string, InboxTab > = {
 	a: 'all',
 	u: 'unread',
@@ -27,9 +31,9 @@ const TAB_KEYS: Record< string, InboxTab > = {
 };
 
 /**
- * Registers the Conversations inbox shortcuts, with the same input, popover and
- * modifier guards as `useStreamKeyboardShortcuts`. `i` is checked before the
- * popover guard so it also closes the shortcuts popover while focus is inside it.
+ * Registers the Conversations inbox shortcuts, with the same input and modifier
+ * guards as `useStreamKeyboardShortcuts`. Keys pressed inside any popover are
+ * ignored, except `i` inside the shortcuts popover so it can close itself.
  */
 export function useInboxKeyboardShortcuts( {
 	enabled = true,
@@ -75,12 +79,18 @@ export function useInboxKeyboardShortcuts( {
 
 			const handlers = handlersRef.current;
 
-			if ( event.key === 'i' ) {
-				handlers.onToggleShortcuts();
+			// Leave keys inside other popovers alone (WordPress and legacy `ReaderPopover`
+			// menus), but let `i` close the shortcuts popover while focus is inside it.
+			const popover = target?.closest?.( POPOVER_SELECTOR );
+			if ( popover ) {
+				if ( event.key === 'i' && popover.classList.contains( SHORTCUTS_POPOVER_CLASS ) ) {
+					handlers.onToggleShortcuts();
+				}
 				return;
 			}
 
-			if ( target?.closest?.( '.components-popover' ) ) {
+			if ( event.key === 'i' ) {
+				handlers.onToggleShortcuts();
 				return;
 			}
 

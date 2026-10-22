@@ -3,7 +3,10 @@
  */
 import { renderHook } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useInboxKeyboardShortcuts } from '../use-inbox-keyboard-shortcuts';
+import {
+	SHORTCUTS_POPOVER_CLASS,
+	useInboxKeyboardShortcuts,
+} from '../use-inbox-keyboard-shortcuts';
 
 function makeHandlers() {
 	return {
@@ -62,19 +65,38 @@ describe( 'useInboxKeyboardShortcuts', () => {
 		expect( handlers.onSelectTab.mock.calls ).toEqual( [ [ 'all' ], [ 'unread' ], [ 'yours' ] ] );
 	} );
 
-	it( 'toggles the shortcuts menu with i, even from inside a popover', async () => {
+	it( 'toggles the shortcuts menu with i, including from inside the shortcuts popover', async () => {
 		const user = userEvent.setup();
 		const handlers = makeHandlers();
-		document.body.innerHTML =
-			'<div class="components-popover"><button type="button">Inside</button></div>';
+		document.body.innerHTML = `<div class="components-popover ${ SHORTCUTS_POPOVER_CLASS }"><button type="button">Inside</button></div>`;
 		renderHook( () => useInboxKeyboardShortcuts( handlers ) );
 
 		await user.keyboard( 'i' );
 		document.querySelector< HTMLButtonElement >( 'button' )?.focus();
-		await user.keyboard( 'ij' );
+		await user.keyboard( 'i{ArrowDown}' );
 
 		expect( handlers.onToggleShortcuts ).toHaveBeenCalledTimes( 2 );
 		expect( handlers.onNext ).not.toHaveBeenCalled();
+	} );
+
+	it.each( [
+		[ 'WordPress', 'components-popover' ],
+		[ 'legacy', 'popover' ],
+	] )( 'ignores every shortcut inside an unrelated %s popover', async ( _, className ) => {
+		const user = userEvent.setup();
+		const handlers = makeHandlers();
+		document.body.innerHTML = `<div class="${ className }"><button type="button">Inside</button></div>`;
+		renderHook( () => useInboxKeyboardShortcuts( handlers ) );
+
+		document.querySelector< HTMLButtonElement >( 'button' )?.focus();
+		await user.keyboard( 'i{ArrowDown}{ArrowUp}{ArrowRight}{ArrowLeft}jkauc' );
+
+		expect( handlers.onToggleShortcuts ).not.toHaveBeenCalled();
+		expect( handlers.onNext ).not.toHaveBeenCalled();
+		expect( handlers.onPrevious ).not.toHaveBeenCalled();
+		expect( handlers.onNextTab ).not.toHaveBeenCalled();
+		expect( handlers.onPreviousTab ).not.toHaveBeenCalled();
+		expect( handlers.onSelectTab ).not.toHaveBeenCalled();
 	} );
 
 	it( 'ignores keys typed into a field', async () => {
