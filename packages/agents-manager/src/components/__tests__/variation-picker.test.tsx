@@ -66,6 +66,10 @@ const visibleVariations = () =>
 	screen.getAllByTestId( 'variation' ).filter( ( el ) => ! el.closest( '[hidden]' ) );
 
 describe( 'VariationPicker', () => {
+	beforeEach( () => {
+		mockWidth = null;
+	} );
+
 	it( 'disables every card when disabled', () => {
 		render(
 			<VariationPicker { ...defaultProps } variations={ mockVariations } type="color" disabled />
@@ -74,10 +78,6 @@ describe( 'VariationPicker', () => {
 		for ( const variation of screen.getAllByTestId( 'variation' ) ) {
 			expect( variation ).toHaveAttribute( 'data-disabled', 'true' );
 		}
-	} );
-
-	beforeEach( () => {
-		mockWidth = null;
 	} );
 
 	it( 'fits two rows per page with pagination at larger widths', () => {

@@ -131,18 +131,18 @@ These steps work for any owner, such as Agents Manager, the Jetpack AI sidebar o
 Agents Manager's pickers are a worked example: `AGENTS_MANAGER_CATALOG` in `catalogs.ts`, and
 wpcom's `ability.color-palette.php`.
 
-1. **Declare the component in your catalog**, your provider's `interactiveUi` or Agents Manager's
-   own: its props as JSON Schema in the document, and its name mapped to the existing React
-   component, which loads on demand if it carries editor code. The component keeps its side
-   effects, and acts like a basic one: it takes its checkpoint on the first action, keyed by
-   `surfaceId`, turns its controls off with `disabled`, and skips its side effects when
-   `isMessageStale` is set.
-2. **Return a surface from the ability** (wpcom), in an agent's chat on a site with the sticker
-   (`Interactive_UI::is_enabled()`). `Interactive_UI::component_result()` shows one component under
-   the agent's summary and names the post the editor has open; `surface_result()` takes a layout of
-   your own. A provider's ability passes its own catalog's ID (AM-116). Keep returning the
-   `show-component` result elsewhere, and for a request with steps after the component
-   (`followUpTasks`), since a surface ends the turn.
+1. **Declare the component in your catalog** (your provider's `interactiveUi`, or Agents Manager's
+   own): its props as JSON Schema in the document, and its name mapped to the existing React
+   component, which loads on demand if it carries editor code. On a surface, the component turns
+   its controls off with `disabled`, which covers a stale surface, and skips side effects outside
+   itself when `isMessageStale` is set. One that changes the site takes its checkpoint on its first
+   action, keyed by `surfaceId`.
+2. **Return a surface from the ability** (wpcom) when `can_show_interactive_ui()` passes: in an
+   agent's chat, on a site with the sticker, for a request with no steps after the component
+   (`followUpTasks`), since a surface ends the turn. Otherwise, keep returning the `show-component`
+   result. `Interactive_UI::component_result()` shows one component under the agent's summary, for
+   the post the editor has open; `surface_result()` takes a layout of your own. Both use Agents
+   Manager's catalog until a provider's ability can pass its own (AM-116).
 3. **Test both paths.** With the sticker, the surface renders, goes stale after a reply, a reload
    or a page switch, keeps its undo, and records the shared response events under its component's
    name and surface ID. Without it, the old UI shows as before.

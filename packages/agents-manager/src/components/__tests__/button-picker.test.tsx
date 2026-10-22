@@ -94,17 +94,18 @@ describe( 'ButtonPicker', () => {
 		expect( picker ).toHaveAttribute( 'data-max', '12' );
 	} );
 
-	it( 'disables its cards with its surface, and checkpoints its first pick under it', () => {
-		render( <ButtonPicker { ...defaultProps } surfaceId="buttons-1" disabled /> );
+	it( 'checkpoints its first pick under its surface, and disables its cards with it', () => {
+		const { rerender } = render( <ButtonPicker { ...defaultProps } surfaceId="buttons-1" /> );
 
 		act( () =>
 			( mockLastPickerProps?.onSelect as ( variation: unknown ) => void )(
 				defaultProps.buttonVariations[ 0 ]
 			)
 		);
-
-		expect( mockLastPickerProps?.disabled ).toBe( true );
 		expect( setCheckpoint ).toHaveBeenCalledWith( 'buttons-1', [ 'button' ], expect.any( Object ) );
+
+		rerender( <ButtonPicker { ...defaultProps } surfaceId="buttons-1" disabled /> );
+		expect( mockLastPickerProps?.disabled ).toBe( true );
 	} );
 
 	it( 'renders null when no variations', () => {

@@ -77,14 +77,15 @@ describe( 'FontPicker', () => {
 		expect( getByTestId( 'mock-variation-picker' ) ).toHaveAttribute( 'data-count', '2' );
 	} );
 
-	it( 'disables its cards with its surface, and checkpoints its first pick under it', () => {
-		render( <FontPicker { ...defaultProps } surfaceId="fonts-1" disabled /> );
-
+	it( 'checkpoints its first pick under its surface, and disables its cards with it', () => {
+		const { rerender } = render( <FontPicker { ...defaultProps } surfaceId="fonts-1" /> );
 		const picker = screen.getByTestId( 'mock-variation-picker' );
-		fireEvent.click( picker );
 
-		expect( picker ).toHaveAttribute( 'data-disabled', 'true' );
+		fireEvent.click( picker );
 		expect( setCheckpoint ).toHaveBeenCalledWith( 'fonts-1', [ 'font' ], expect.any( Object ) );
+
+		rerender( <FontPicker { ...defaultProps } surfaceId="fonts-1" disabled /> );
+		expect( picker ).toHaveAttribute( 'data-disabled', 'true' );
 	} );
 
 	it( 'loads the picked variation fonts into the editor canvas', () => {
