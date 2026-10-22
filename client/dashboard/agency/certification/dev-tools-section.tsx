@@ -13,7 +13,7 @@ import { Card, CardBody } from '../../components/card';
 import Grid from '../../components/grid';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
-import NewTabLabel from '../overview/new-tab-label';
+import NewTabLabel from '../components/new-tab-label';
 import CertificationCodeField from './certification-code-field';
 import { CERTIFICATION_EXAM_URL } from './constants';
 import { useCertification } from './use-certification';

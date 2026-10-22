@@ -11,7 +11,7 @@ import { Badge } from '@wordpress/ui';
 import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
-import NewTabLabel from '../overview/new-tab-label';
+import NewTabLabel from '../components/new-tab-label';
 import CertificationCodeField from './certification-code-field';
 import { CERTIFICATION_EXAM_URL } from './constants';
 import TierDiscountList from './tier-discount-list';
