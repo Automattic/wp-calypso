@@ -12,17 +12,18 @@ set -o pipefail
 #   E2E_CHANGED_FILES Optional newline-separated changed-file list. Testing seam; when unset,
 #                     falls back to `git diff` against trunk.
 #
-# Prints the flag to stdout: "--grep=<value>", "--grep-invert=<value>", or "" to run every test.
+# Prints the flag to stdout: "--grep=<value>" or "--grep-invert=<value>".
 #
-#   - no test/e2e or packages/calypso-e2e change -> keep TEST_GROUP
+#   - no test/e2e or packages/calypso-e2e change -> keep TEST_GROUP (all tests if empty)
 #   - documentation and package unit-test files do not affect Playwright selection
 #   - a changed E2E file is not a Playwright spec (POM, util, config, fixtures,
 #     production packages/calypso-e2e code) -> run all tests except @p2, which has its own
 #     scheduled job. If every changed non-spec file is P2-only code (see P2_PATH_RE), run
 #     TEST_GROUP plus @p2 and any changed specs instead; if P2 code (a P2 spec included) is
 #     mixed with other non-spec changes, run all tests.
-#   - "all tests" never includes @content-blocker, a scheduled production check that depends
-#     on third-party filter lists, except in Playwright specs changed on this branch.
+#   - "all tests", an empty TEST_GROUP included, never includes @content-blocker, a scheduled
+#     production check that depends on third-party filter lists, except in Playwright specs
+#     changed on this branch.
 #   - Playwright specs changed (test/e2e/specs/**/*.spec.ts) -> run TEST_GROUP plus those specs
 #     in a single pass. Playwright's `--grep` matches the spec path relative to test/e2e/specs/,
 #     so a test selected by both the tag and a changed path runs once.
@@ -37,30 +38,49 @@ readonly CONTENT_BLOCKER_TAG_GREP='@content-blocker(\s|$)'
 # matched by path; such a change skips P2 here and relies on the scheduled P2 job.
 readonly P2_PATH_RE='(^|/)(p2[/_-]|isolated-block-editor)'
 
+# Print a --grep-invert flag for the tag pattern in $1, sparing the changed specs in the
+# caller's spec_paths.
+print_grep_invert() {
+	local value="$1"
+	if [[ -n "$spec_paths" ]]; then
+		value="^(?!.*(^|\s)($spec_paths)).*($value)"
+	fi
+	printf -- '--grep-invert=%s' "$value"
+}
+
+# Print the group's --grep flag, or run all tests when no group is set.
+print_group() {
+	if [[ -n "$1" ]]; then
+		printf -- '--grep=%s' "$1"
+	else
+		print_grep_invert "$CONTENT_BLOCKER_TAG_GREP"
+	fi
+}
+
 compute_flag() {
 	local group="${TEST_GROUP:-}"
-	local changed e2e_changed relevant_changed runtime_changed pw_specs spec_paths grep_value file rel
+	local changed e2e_changed relevant_changed runtime_changed pw_specs grep_value file rel
+	local spec_paths=""
 
 	changed="${E2E_CHANGED_FILES-$(git diff --name-only refs/remotes/origin/trunk...HEAD)}"
 	e2e_changed="$(grep -E "^(test/e2e/|packages/calypso-e2e/)" <<<"$changed" || true)"
 
 	# No E2E changes: keep the group unchanged.
 	if [[ -z "$e2e_changed" ]]; then
-		[[ -n "$group" ]] && printf -- '--grep=%s' "$group"
+		print_group "$group"
 		return 0
 	fi
 
 	# Documentation and package unit-test files cannot affect Playwright.
 	relevant_changed="$(grep -vE '^(test/e2e/|packages/calypso-e2e/)(.*\.md$|docs/)|^packages/calypso-e2e/jest\.config\.js$|^packages/calypso-e2e/src/.*\.test\.ts$' <<<"$e2e_changed" || true)"
 	if [[ -z "$relevant_changed" ]]; then
-		[[ -n "$group" ]] && printf -- '--grep=%s' "$group"
+		print_group "$group"
 		return 0
 	fi
 
 	# Changed Playwright specs, addressed by their path relative to test/e2e/specs/. Only "."
 	# is regex-special in these paths (verified against the spec tree).
 	pw_specs="$(grep -E '^test/e2e/specs/.*\.spec\.ts$' <<<"$relevant_changed" || true)"
-	spec_paths=""
 	while IFS= read -r file; do
 		[[ -z "$file" ]] && continue
 		rel="${file#test/e2e/specs/}"
@@ -75,17 +95,10 @@ compute_flag() {
 		if grep -qvE "$P2_PATH_RE" <<<"$runtime_changed"; then
 			# P2 code mixed with other runtime changes: anything may break, P2 included.
 			if grep -qE "$P2_PATH_RE" <<<"$relevant_changed"; then
-				grep_value="$CONTENT_BLOCKER_TAG_GREP"
+				print_grep_invert "$CONTENT_BLOCKER_TAG_GREP"
 			else
-				grep_value="$P2_TAG_GREP|$CONTENT_BLOCKER_TAG_GREP"
+				print_grep_invert "$P2_TAG_GREP|$CONTENT_BLOCKER_TAG_GREP"
 			fi
-
-			# A changed spec still runs even when it carries a skipped tag.
-			if [[ -n "$spec_paths" ]]; then
-				grep_value="^(?!.*(^|\s)($spec_paths)).*($grep_value)"
-			fi
-
-			printf -- '--grep-invert=%s' "$grep_value"
 			return 0
 		fi
 
@@ -93,8 +106,9 @@ compute_flag() {
 		grep_value+="|$P2_TAG_GREP"
 	fi
 
-	# With no group set the build already runs everything, so keep clear.
+	# With no group set, run everything; that already covers P2 and the changed specs.
 	if [[ -z "$group" ]]; then
+		print_group ""
 		return 0
 	fi
 
@@ -175,7 +189,7 @@ self_test() {
 	check "P2 spec + P2 POM adds P2" \
 		'--grep=@calypso-pr|@p2(\s|$)|(^|\s)p2/p2__post\.spec\.ts' \
 		"$P2_SPEC"$'\n'"$P2_POM"
-	check "P2 POM, empty group runs all"    "" "$P2_POM" ""
+	check "P2 POM, empty group runs all"    "$ALL" "$P2_POM" ""
 	check "POM, empty group skips P2"       "$NO_P2" "$POM" ""
 	check "P2 POM + POM runs all"           "$ALL" "$P2_POM"$'\n'"$POM"
 	check "P2 POM + PW spec unions both" \
@@ -190,7 +204,11 @@ self_test() {
 	check "p2 substring is not P2 code"     "$NO_P2" "test/e2e/lib/pages/mp2-page.ts"
 
 	# Group edge cases.
-	check "PW spec, empty group runs all" "" "$PW" ""
+	check "PW spec, empty group runs all" \
+		'--grep-invert=^(?!.*(^|\s)(tools/import__sites-squarespace\.spec\.ts)).*(@content-blocker(\s|$))' \
+		"$PW" ""
+	check "no e2e change, empty group runs all" "$ALL" "client/foo.ts" ""
+	check "E2E docs, empty group runs all"      "$ALL" "test/e2e/README.md" ""
 	check "release group unions" \
 		'--grep=@calypso-release|(^|\s)blocks/blocks__media\.spec\.ts' \
 		"test/e2e/specs/blocks/blocks__media.spec.ts" "@calypso-release"
