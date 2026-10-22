@@ -4,9 +4,9 @@ import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useAppContext } from '../app/context';
 import { omnibarEvents } from '../app/omnibar/events';
+import { useHelpCenterNodeBuilder } from '../app/omnibar/node-help-center';
+import { createLogoutNodeBuilder } from '../app/omnibar/node-logout';
 import { InitialOmnibar } from '../app/omnibar/omnibar';
-import { useHelpCenterNodeBuilder } from '../app/omnibar/plugin-help-center';
-import { createLogoutNodeBuilder } from '../app/omnibar/plugin-logout';
 import {
 	RESPONSIVE_MENU_NODE_ID,
 	trackOmnibarNodes,
@@ -69,7 +69,9 @@ export default function A4AOmnibar( { user }: { user?: User } ) {
 	}, [] );
 
 	const authUser = useOmnibarUser( { user, enabled: hydrated } );
-	const helpCenterNodeBuilder = useHelpCenterNodeBuilder( { sectionName: 'dashboard' } );
+	const { nodeBuilder: helpCenterNodeBuilder } = useHelpCenterNodeBuilder( {
+		sectionName: 'dashboard',
+	} );
 
 	const nodes: OmnibarNodes = {
 		home: {
@@ -78,7 +80,7 @@ export default function A4AOmnibar( { user }: { user?: User } ) {
 			icon: <A4AOmnibarHomeIcon />,
 			href: mainRoute,
 		},
-		userPlugins:
+		userNodes:
 			authUser && supports.help
 				? [
 						{

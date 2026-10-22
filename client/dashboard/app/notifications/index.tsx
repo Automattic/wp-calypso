@@ -14,7 +14,7 @@ import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
 import { useLocale } from '../locale';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
-import { NOTIFICATIONS_ICON_CLASS } from '../omnibar/notifications-icon-class';
+import { NOTIFICATIONS_ICON_CLASS } from '../omnibar/node-notifications-icon-class';
 import useSubscriberAlerts from './use-subscriber-alerts';
 import type { UserPreferences } from '@automattic/api-core';
 import './style.scss';
