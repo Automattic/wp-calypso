@@ -67,6 +67,7 @@ $wp-components-colors: (
 		--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
 		--wpds-color-foreground-interactive-neutral-active: var( --wp-components-color-foreground );
 		--wpds-color-background-surface-neutral-strong: var( --wp-components-color-background );
+		--wpds-color-background-interactive-neutral-active: var( --wp-components-color-background );
 		--wpds-color-background-interactive-brand-strong: var( --wp-components-color-accent );
 		--wpds-color-foreground-interactive-brand-strong: var( --wp-components-color-accent-inverted );
 		--wpds-color-foreground-interactive-brand: var( --ai-ui-renderer-accent-text );
@@ -232,6 +233,20 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 	// These WordPress controls hard-code light colors instead of reading the theme's.
 	.components-checkbox-control__input[type='checkbox']:not( :checked, :indeterminate, :disabled ) {
 		background: var( --wp-components-color-background );
+	}
+
+	// Disabled checkboxes mix the text into the input color, matching WordPress's light grays.
+	.components-checkbox-control__input[type='checkbox']:is( :disabled, [aria-disabled='true'] ) {
+		background: color-mix(
+			in srgb,
+			var( --wp-components-color-background ) 94%,
+			var( --wp-components-color-foreground )
+		);
+		border-color: color-mix(
+			in srgb,
+			var( --wp-components-color-background ) 85%,
+			var( --wp-components-color-foreground )
+		);
 	}
 
 	.components-radio-control__input[type='radio']:not( :checked, :disabled ) {

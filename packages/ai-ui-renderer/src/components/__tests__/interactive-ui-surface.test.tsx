@@ -66,6 +66,7 @@ it( 'themes the modal like its surface and disables its controls with the surfac
 
 	root?.style.setProperty( '--a2ui-color-surface', 'black' );
 	root?.style.setProperty( 'color-scheme', 'dark' );
+	root?.style.setProperty( '--ai-ui-renderer-host-accent', 'green' );
 	fireEvent.click( trigger );
 
 	const dialog = await screen.findByRole( 'dialog', { name: 'Details' } );
@@ -76,6 +77,7 @@ it( 'themes the modal like its surface and disables its controls with the surfac
 	expect( overlay ).toHaveClass( 'host' );
 	expect( overlay?.style.getPropertyValue( '--a2ui-color-surface' ) ).toBe( 'black' );
 	expect( overlay?.style.getPropertyValue( 'color-scheme' ) ).toBe( 'dark' );
+	expect( overlay?.style.getPropertyValue( '--ai-ui-renderer-host-accent' ) ).toBe( 'green' );
 	expect( input ).toBeEnabled();
 
 	rerender( <InteractiveUiSurface surface={ surface } className="host" disabled /> );
