@@ -12,7 +12,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import useSignupLink from '../hooks/use-signup-link';
-import HeadingLogo from './heading-logo';
+import HeadingLogo, { useHeadingLogo } from './heading-logo';
 import 'calypso/components/account-template/style.scss';
 import './one-login-layout.scss';
 
@@ -54,12 +54,12 @@ interface OneLoginLayoutProps {
 	noThanksRedirectUrl?: string;
 	/**
 	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`.
-	 * Defaults to 4, the 432px column every account screen shares.
+	 * Defaults to 4, the 432px column every account screen shares, or 6 with a logo above the title.
 	 */
 	columnWidth?: 4 | 5 | 6 | 8 | 10;
 	/**
 	 * Centers the heading over a wider layout, like the main login screen's side-by-side
-	 * form and social buttons. Defaults to left-aligned.
+	 * form and social buttons. Defaults to left-aligned, or centered with a logo above the title.
 	 */
 	isCentered?: boolean;
 	/**
@@ -90,8 +90,8 @@ const OneLoginLayout = ( {
 	isLostPasswordView,
 	signupLinkMobileOnly,
 	noThanksRedirectUrl,
-	columnWidth = 4,
-	isCentered = false,
+	columnWidth: columnWidthProp,
+	isCentered: isCenteredProp,
 	showLogo = true,
 	notice,
 	linkLogoToHome = false,
@@ -109,6 +109,14 @@ const OneLoginLayout = ( {
 	const validatedHeadingText = ensureHeadingProvided( headingText );
 	const { topBarLogo, hasCustomBranding } = usePartnerBranding();
 	const signupLink = useSignupLink( { signupUrl: signupUrlProp, origin: 'login-layout' } );
+	const headingLogo = useHeadingLogo( { isJetpack, isFromJetpackConnector, connectorPlugins } );
+
+	// Product and partner logins with a logo above the title (Woo, Jetpack, Crowdsignal,
+	// Akismet...) are designed around it, so they stay centered. A logo in the top bar
+	// doesn't count: those screens follow the account template.
+	const hasLogoAboveTitle = showLogo && headingLogo !== null;
+	const columnWidth = columnWidthProp ?? ( hasLogoAboveTitle ? 6 : 4 );
+	const isCentered = isCenteredProp ?? hasLogoAboveTitle;
 
 	const renderSignUpLink = () => {
 		if ( isLostPasswordView ) {

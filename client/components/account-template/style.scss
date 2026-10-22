@@ -14,15 +14,20 @@
 	width: 100%;
 	text-align: start;
 
-	&.is-centered {
-		align-items: center;
-		text-align: center;
-	}
-
 	.step-container-v2__heading,
 	.wp-login__one-login-layout-heading {
 		width: 100%;
-		text-align: inherit;
+		text-align: start;
+	}
+
+	// Only the heading is centered: form labels and fields keep their own alignment.
+	&.is-centered {
+		align-items: center;
+
+		.step-container-v2__heading,
+		.wp-login__one-login-layout-heading {
+			text-align: center;
+		}
 	}
 
 	// Title: 32/40 on mobile, 44/52 from the small breakpoint.
