@@ -1,5 +1,7 @@
+@import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 // The template every account screen follows: log in, sign up, lost password,
 // magic link, two-step authentication. A 432px column (`columnWidth={ 4 }`)
@@ -33,11 +35,12 @@
 	// Title: 32/40 on mobile, 44/52 from the small breakpoint.
 	.step-container-v2__heading h1.wp-brand-font {
 		color: var( --color-neutral-100 );
-		font-size: 2rem;
-		line-height: 40px;
+		font-size: $font-title-large;
+		line-height: $font-line-height-2x-large;
 		letter-spacing: -0.32px;
 
 		@include break-small {
+			// No size or line-height token for the 44/52 title.
 			font-size: 2.75rem;
 			line-height: 52px;
 			letter-spacing: 0.2px;
@@ -57,13 +60,13 @@
 		// subtitle in half and leaves a ragged gap on the right.
 		text-wrap: pretty;
 		color: var( --color-neutral-100 );
-		font-size: 0.875rem;
-		line-height: 20px;
+		font-size: $font-body-small;
+		line-height: $font-line-height-small;
 		letter-spacing: -0.15px;
 
 		@include break-small {
-			font-size: 1rem;
-			line-height: 24px;
+			font-size: $font-body;
+			line-height: $font-line-height-medium;
 			letter-spacing: -0.32px;
 		}
 
@@ -83,8 +86,8 @@
 	}
 
 	.wp-login__one-login-layout-heading-subtext.is-secondary {
-		font-size: 0.75rem;
-		line-height: 16px;
+		font-size: $font-body-extra-small;
+		line-height: $font-line-height-x-small;
 	}
 
 	// Inside the column, forms take its full width instead of their own caps.
@@ -180,7 +183,7 @@
 	align-items: center;
 	gap: 0.75rem;
 	font-size: 13px;
-	line-height: 20px;
+	line-height: $font-line-height-small;
 
 	> * + * {
 		position: relative;
