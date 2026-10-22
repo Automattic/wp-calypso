@@ -237,12 +237,35 @@ describe( 'useSavePost', () => {
 			.reply( 200, { saved: false, key: { blog_id: 123, post_id: 45 }, total: 1 } )
 			.post( '/wpcom/v2/read/saved/delete', { feed_item_id: 6000, source: 'reader-web' } )
 			.reply( 200, { saved: false, key: { feed_item_id: 6000 }, total: 0 } );
+		const onSuccess = jest.fn();
 		const result = renderSavePost( client, JETPACK_POST );
 
-		act( () => result.current.unsavePost( JETPACK_POST ) );
+		act( () => result.current.unsavePost( JETPACK_POST, { onSuccess } ) );
 
-		await waitFor( () => expect( requests.isDone() ).toBe( true ) );
+		await waitFor( () => expect( onSuccess ).toHaveBeenCalledTimes( 1 ) );
+		expect( requests.isDone() ).toBe( true );
 		expect( result.current.isSaved ).toBe( false );
+	} );
+
+	it( 'calls onError once when one of the keys fails to unsave', async () => {
+		const client = makeClient();
+		setKeys( client, [
+			{ blog_id: 123, post_id: 45, date_saved: '2026-10-02T00:00:00+00:00' },
+			{ feed_item_id: 6000, date_saved: '2026-10-01T00:00:00+00:00' },
+		] );
+		const requests = nock( BASE )
+			.post( '/wpcom/v2/read/saved/delete', { blog_id: 123, post_id: 45, source: 'reader-web' } )
+			.reply( 500, { error: 'server_error', message: 'Failed.' } )
+			.post( '/wpcom/v2/read/saved/delete', { feed_item_id: 6000, source: 'reader-web' } )
+			.reply( 200, { saved: false, key: { feed_item_id: 6000 }, total: 1 } );
+		const onError = jest.fn();
+		const result = renderSavePost( client, JETPACK_POST );
+
+		act( () => result.current.unsavePost( JETPACK_POST, { onError } ) );
+
+		await waitFor( () => expect( onError ).toHaveBeenCalledTimes( 1 ) );
+		expect( requests.isDone() ).toBe( true );
+		expect( result.current.isSaved ).toBe( true );
 	} );
 
 	it( 'shows the post as unsaved and calls onError when the save fails', async () => {
