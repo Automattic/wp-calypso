@@ -9,13 +9,13 @@ come.
 
 ## How it works
 
-1. **wpcom builds a surface**, in one of two ways:
+1. **wpcom builds a surface** on sites with the `a2ui-render-interactive-ui` blog sticker, in one of
+   two ways:
    - **An ability builds it in code**, for a known flow such as a picker or a hand-off button
      (AM-117). The agent only calls the ability, so the surface is reliable, cheap in tokens and
      testable.
    - **The agent composes it** with `wpcom/render-interactive-ui`, for one-off forms and choices
-     from the basic components, or a provider's (AM-116). The `a2ui-render-interactive-ui` blog
-     sticker enables it.
+     from the basic components, or a provider's (AM-116).
 2. Both return a `wpcom__render_interactive_ui` envelope of A2UI messages, stored with the
    conversation. An ability's envelope also names the page it built the surface for (`post_id`).
    Agents Manager also accepts a raw array of A2UI messages.
@@ -58,6 +58,9 @@ come.
   so a surface names one: the agent composes with A2UI's Basic catalog or one the client lists,
   and an ability uses its owner's, such as `AGENTS_MANAGER_CATALOG_ID`. Conversations store
   surfaces, so change a catalog only in ways that keep old surfaces rendering.
+- **Basic components first.** Build a surface from the basic components when they can express it,
+  and add a custom component only for what they can't, such as a picker's style previews. Basic
+  components need no catalog change, render in every host, and the agent can compose them.
 - **Surfaces come from wpcom**, which stores them with the conversation. A browser ability's
   `agentMessage` only shows live: it isn't stored, and the stream can drop it. So a browser ability
   that needs UI moves it to a server ability, or the agent composes it.
@@ -81,13 +84,13 @@ come.
 - **Functions run from a click.** A2UI runs a catalog's functions only from a click, never from a
   value, unless its document sets `requiresUserActivation: false` for one without side effects.
   Every function treats its arguments as untrusted.
-- **Components act like the basic ones** and own their side effects: the change itself, its
-  checkpoint, keyed by `surfaceId`, and its own Tracks events. They turn off their controls with
-  `disabled`, and skip their side effects and Tracks with `isMessageStale`, chat state a surface
-  can't override. As for `show-component` messages, Agents Manager records
-  `jetpack_big_sky_chat_response_rendered` for each one on a current surface, and the actions it
-  reports through `onResponseAction` (`jetpack_big_sky_chat_response_action`), with its name as
-  `component_type` and its surface ID as `tool_call_id`.
+- **Custom components own their side effects**: the change itself, its checkpoint, keyed by
+  `surfaceId`, and its own Tracks events. They turn off their controls with `disabled`, and skip
+  their side effects and Tracks with `isMessageStale`, chat state a surface can't override. As for
+  `show-component` messages, Agents Manager records `jetpack_big_sky_chat_response_rendered` for
+  each one on a current surface, and the actions it reports through `onResponseAction`
+  (`jetpack_big_sky_chat_response_action`), with its name as `component_type` and its surface ID
+  as `tool_call_id`.
 - **Agents Manager decides when a surface is stale**, with the rule `show-component` uses
   (`src/utils/stale-chat-ui.ts`): the user has replied past the last message that changed it, or
   the editor has another page open than the one its envelope names. Like a restored picker, a
