@@ -43,6 +43,7 @@
 		"domain-bundling": true,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": false,
+		"entrepreneur/redirect-to-commerce-purchase": true,
 		"footer-redesign/2026": true,
 		"footer/dark": false,
 		"footer/light": false,
