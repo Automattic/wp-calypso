@@ -556,7 +556,6 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
   function flush() {
     frame=0;
     if (disposed || presenting) return;
-    if (pending.size) noteActivity();
     if (homeTimer!==null) { clearTimeout(homeTimer);homeTimer=null; }
     cancelMotion();
     const arrivals=[];
@@ -565,6 +564,9 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
     const moving=active && !complete && !document.hidden && !media.matches;
     const selected=homepageArrivals(moving);
     if (moving) selected.push(...arrivals.filter(entry=>entry.page.route!=='/' && entry.page.revealed && presentation==='showcase' && hasSectionContent(entry.node)));
+    // Only something the user can see moving counts as activity for the idle
+    // walk; a re-render that changes nothing on screen must not hold it off.
+    if (selected.length) noteActivity();
     selected.forEach(entry => { entry.node.style.visibility='hidden';hidden.add(entry.node); });
     const current=version;
     if (!moving || !selected.length) { layout(moving).then(()=>{advancePresentation();checkCompletion();});return; }

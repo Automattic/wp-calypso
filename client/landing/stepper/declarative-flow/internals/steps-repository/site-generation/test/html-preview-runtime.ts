@@ -768,4 +768,23 @@ describe( 'homepage section presentation', () => {
 			'showcase'
 		);
 	} );
+
+	it( 'starts the idle walk even while re-renders that change nothing keep arriving', async () => {
+		await showcaseWithStory();
+		const scene = document.querySelector< HTMLElement >( '.preview-scene' )!;
+		for ( let revision = 2; revision <= 5; revision++ ) {
+			await jest.advanceTimersByTimeAsync( 2000 );
+			send( {
+				type: 'render',
+				route: '/story/',
+				revision,
+				title: 'Story',
+				epoch: '1:1',
+				html: preparePreviewDocument( first )!.html,
+			} );
+		}
+		await jest.advanceTimersByTimeAsync( 1000 );
+		expect( scene.classList.contains( 'is-touring' ) ).toBe( true );
+		expect( tourMessages().pop().title ).not.toBeNull();
+	} );
 } );
