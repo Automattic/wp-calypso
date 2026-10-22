@@ -1,7 +1,11 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_ECOMMERCE } from '@automattic/calypso-products';
-import { ENTREPRENEUR_FLOW, NEW_HOSTED_SITE_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import {
+	ENTREPRENEUR_FLOW,
+	NEW_HOSTED_SITE_FLOW,
+	SITE_MIGRATION_FLOW,
+} from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
