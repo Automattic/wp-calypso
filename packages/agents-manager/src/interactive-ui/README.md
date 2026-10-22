@@ -46,9 +46,9 @@ come.
   - `catalogs.ts` builds the catalogs, and the renderer capabilities each message sends.
   - `with-chat-response-tracking.tsx` records the shared response events for each catalog
     component.
-- **Custom components and functions** live in the project that owns them: Agents Manager's here,
-  such as its color, font and button pickers (`AGENTS_MANAGER_CATALOG` in `catalogs.ts`), and its
-  providers' (WooCommerce AI, the Jetpack AI sidebar) in their own repos.
+- **Custom components and functions** live in the project that owns them: Agents Manager's in this
+  package, such as its color, font and button pickers (declared in `AGENTS_MANAGER_CATALOG` in
+  `catalogs.ts`), and its providers' (WooCommerce AI, the Jetpack AI sidebar) in their own repos.
   Providers declare their catalog in the provider contract's `interactiveUi` field
   (`LoadedProviders` in `src/utils/load-external-providers.ts`).
 
@@ -78,8 +78,8 @@ come.
   with any other ID or with a cycle, and Agents Manager then shows nothing and logs
   `[AgentsManager] Failed to apply an interactive UI message`. A component with two parents renders
   twice, and `{"path": …}` is read as plain data. `wpcom/render-interactive-ui` checks all of these
-  so the agent can retry, and abilities that build surfaces with `Interactive_UI::surface_result()`
-  follow them too.
+  so the agent can retry, and abilities' surfaces follow them through the `Interactive_UI`
+  helpers.
 - **Owner-prefixed names.** Names are scoped by catalog, but prefix yours with your owner, such as
   `ExampleCard` and `exampleOpenItem` for an owner named Example, so the agent can tell catalogs
   apart.
@@ -133,10 +133,8 @@ wpcom's `ability.color-palette.php`.
 
 1. **Declare the component in your catalog** (your provider's `interactiveUi`, or Agents Manager's
    own): its props as JSON Schema in the document, and its name mapped to the existing React
-   component, which loads on demand if it carries editor code. On a surface, the component turns
-   its controls off with `disabled`, which covers a stale surface, and skips side effects outside
-   itself when `isMessageStale` is set. One that changes the site takes its checkpoint on its first
-   action, keyed by `surfaceId`.
+   component, which loads on demand if it carries editor code. It follows the
+   [custom component rules](#rules).
 2. **Return a surface from the ability** (wpcom) when `Agent_Ability::can_show_interactive_ui()`
    passes: in an agent's chat, on a site with the sticker, for a request with no steps after the
    component (`followUpTasks`), since a surface ends the turn. Otherwise, keep returning the
