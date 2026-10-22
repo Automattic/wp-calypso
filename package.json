@@ -265,7 +265,7 @@
 		"chalk": "^4.1.2",
 		"check-node-version": "^4.0.2",
 		"chroma-js": "^2.6.0",
-		"dotenv": "^9.0.2",
+		"dotenv": "^14.3.2",
 		"dotenv-webpack": "^9.0.0",
 		"eslint": "^10.13.0",
 		"eslint-config-prettier": "^10.1.8",

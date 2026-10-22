@@ -18576,7 +18576,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^14.0.0":
+"dotenv@npm:^14.0.0, dotenv@npm:^14.3.2":
   version: 14.3.2
   resolution: "dotenv@npm:14.3.2"
   checksum: cb428358aa3a8da735be727f8a9de56e148ddf97d84a75e528039dc90e55787688766e48204a50b8326ba1ebaa6e039584c1019dfc28fa144e68145d8cbe5946
@@ -34825,7 +34825,7 @@ __metadata:
     chroma-js: "npm:^2.6.0"
     d3-time-format: "npm:^4.1.0"
     debug: "npm:^4.4.1"
-    dotenv: "npm:^9.0.2"
+    dotenv: "npm:^14.3.2"
     dotenv-webpack: "npm:^9.0.0"
     enhanced-resolve: "npm:5.9.3"
     eslint: "npm:^10.13.0"
