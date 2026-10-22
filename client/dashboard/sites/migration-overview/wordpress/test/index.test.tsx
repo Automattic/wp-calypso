@@ -71,7 +71,7 @@ describe( 'WordPressMigration', () => {
 
 		expect( await screen.findByText( 'waiting for access to example.com' ) ).toBeVisible();
 		await waitFor( () =>
-			expect( screen.getByRole( 'textbox', { name: 'Secret key' } ) ).toHaveValue( 'public-key' )
+			expect( screen.getByRole( 'textbox', { name: 'Migration key' } ) ).toHaveValue( 'public-key' )
 		);
 		expect( screen.getByRole( 'link', { name: /Install the plugin/ } ) ).toHaveAttribute(
 			'href',
@@ -173,7 +173,7 @@ describe( 'WordPressMigration', () => {
 		mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
 
 		await waitFor( () =>
-			expect( screen.getByRole( 'textbox', { name: 'Secret key' } ) ).toHaveValue( 'public-key' )
+			expect( screen.getByRole( 'textbox', { name: 'Migration key' } ) ).toHaveValue( 'public-key' )
 		);
 		await userEvent.click( screen.getByRole( 'button', { name: /start the migration/ } ) );
 
