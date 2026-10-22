@@ -234,7 +234,7 @@ describe( 'getCreditsBackNotice', () => {
 	} );
 
 	it( 'offers the action it is given', () => {
-		const action = { label: 'Try again', onClick: () => {} };
+		const action = { label: 'Continue', onClick: () => {} };
 		expect( getCreditsBackNotice( action ).action ).toBe( action );
 	} );
 } );

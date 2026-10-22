@@ -2723,7 +2723,7 @@ describe( 'refusal code', () => {
 				expect( result.current.notice ).toEqual( backNotice );
 			} );
 
-			it( 'offers Try again, which resends the refused question', async () => {
+			it( 'offers Continue, which resends the refused question', async () => {
 				const onTryAgain = jest.fn();
 				mockMessages = question( { type: 'text', text: 'Make it shorter' } );
 				fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
@@ -2732,12 +2732,12 @@ describe( 'refusal code', () => {
 				await refuse( { ...exhausted( true ), plan_tier: 'business' } );
 				await topUp();
 				expect( result.current.notice?.message ).toBe( 'Your site has credits again.' );
-				expect( result.current.notice?.action?.label ).toBe( 'Try again' );
+				expect( result.current.notice?.action?.label ).toBe( 'Continue' );
 				act( () => result.current.notice?.action?.onClick?.() );
 				expect( onTryAgain ).toHaveBeenCalledWith( 'Make it shorter' );
 			} );
 
-			it( 'offers no Try again for a question with images, which is asked again by hand', async () => {
+			it( 'offers no Continue for a question with images, which is asked again by hand', async () => {
 				mockMessages = question( { type: 'text', text: 'Match this' }, { type: 'component' } );
 				fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
 				const { result } = renderCredits( { onTryAgain: jest.fn() } );
@@ -2747,7 +2747,7 @@ describe( 'refusal code', () => {
 				expect( result.current.notice ).toEqual( backNotice );
 			} );
 
-			it( 'offers no Try again where the chat can’t resend', async () => {
+			it( 'offers no Continue where the chat can’t resend', async () => {
 				mockMessages = question( { type: 'text', text: 'Make it shorter' } );
 				const { result } = await openThenRefuse( 'business' );
 				await topUp();

@@ -4565,7 +4565,7 @@ describe( 'OrchestratorChat', () => {
 			expect( mockConversationConfig?.waitForReply ).toBe( false );
 		} );
 
-		it( 'resends a refused question through the retry path on the credits-back Try again', async () => {
+		it( 'resends a refused question through the retry path on the credits-back Continue', async () => {
 			const onSubmit = jest.fn().mockResolvedValue( undefined );
 			const uploadImagesToWordPress = jest.fn();
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
@@ -4581,7 +4581,7 @@ describe( 'OrchestratorChat', () => {
 			expect( uploadImagesToWordPress ).not.toHaveBeenCalled();
 		} );
 
-		it( 'sends the edited draft instead on the credits-back Try again', async () => {
+		it( 'sends the edited draft instead on the credits-back Continue', async () => {
 			const onSubmit = jest.fn().mockResolvedValue( undefined );
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
 			render( chat() );
@@ -4595,7 +4595,7 @@ describe( 'OrchestratorChat', () => {
 			expect( screen.getByTestId( 'input-value' ).textContent ).toBe( '' );
 		} );
 
-		it( 'sends a padded draft as typed on Try again, so the box clears', async () => {
+		it( 'sends a padded draft as typed on Continue, so the box clears', async () => {
 			const onSubmit = jest.fn().mockResolvedValue( undefined );
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
 			render( chat() );

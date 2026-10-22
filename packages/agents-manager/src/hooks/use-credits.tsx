@@ -114,7 +114,7 @@ interface UseCreditsOptions {
 	isOpen: boolean;
 	/** Whether the chat draws the notice; the compact composer never does. */
 	isNoticeVisible: boolean;
-	/** Sends again once credits are back, given the refused question's text; the notice then offers Try again. */
+	/** Sends again once credits are back, given the refused question's text; the notice then offers Continue. */
 	onTryAgain?: ( message: string ) => void;
 }
 
@@ -537,7 +537,7 @@ export function useCredits( {
 		);
 	}, [ status, isPopoverOpen, toggleMeter, handleAction, siteId, purchaseAction, purchaseHint ] );
 
-	// Try again resends text only, as the conversation's Retry does, so a question with
+	// Continue resends text only, as the conversation's Retry does, so a question with
 	// images is asked again by hand.
 	const refusedQuestion = useMemo( () => {
 		const question = chat.messages[ getLatestUserMessageIndex( chat.messages ) ];
@@ -554,7 +554,7 @@ export function useCredits( {
 		() =>
 			onTryAgain && refusedQuestion
 				? {
-						label: __( 'Try again', __i18n_text_domain__ ),
+						label: __( 'Continue', __i18n_text_domain__ ),
 						onClick: () => onTryAgain( refusedQuestion ),
 					}
 				: undefined,
