@@ -17,3 +17,7 @@ Name CSS classes BEM-style under the `ai-ui-renderer` block, with kebab-case mod
 colors with A2UI's `--a2ui-*` tokens and their defaults, keeping `THEME_PROPERTIES` in
 `utils/theme.ts` in sync with `style.scss`. Keep host-specific chat isolation, token values and
 modal stacking rules in consumers.
+
+WordPress components come in two copies: Calypso bundles `@wordpress/components`, while wp-admin and
+the editor use the page's Gutenberg copy, whose newer components read the `--wpds-*` design tokens.
+`style.scss` maps the theme onto both, so check a theme change against both, in light and dark mode.

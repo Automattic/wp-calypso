@@ -54,6 +54,13 @@ come.
 - **Each surface names one catalog.** Surfaces the agent composes use A2UI's Basic catalog.
   Agents Manager's catalog, `AGENTS_MANAGER_CATALOG_ID`, adds its own and its providers'
   components and functions; abilities build their surfaces with it (AM-116).
+- **Surfaces follow A2UI v1.0.** Component IDs are identifiers (letters, digits and underscores),
+  each component has one parent (a Modal renders its trigger, so it isn't also placed in a layout),
+  bindings are `{"@path": "/field"}` and function calls `{"@call": "name"}`. A2UI rejects a surface
+  that breaks these; Agents Manager then shows nothing and logs
+  `[AgentsManager] Failed to apply an interactive UI message`. `wpcom/render-interactive-ui` checks
+  the same rules so the agent can retry, and abilities that build surfaces with
+  `Interactive_UI::surface_result()` follow them too.
 - **wpcom owns the schemas.** It knows each catalog by ID and lets the agent use only the catalogs
   the client lists as `supportedCatalogIds` in its client context (AM-118). Other clients get text.
   In the browser, a surface can still use another catalog's components and functions, so
