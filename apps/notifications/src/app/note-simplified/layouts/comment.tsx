@@ -12,7 +12,7 @@ export default function CommentNote( { note }: { note: Note } ) {
 
 	return (
 		<>
-			{ post && <PostCard post={ post } site={ site } /> }
+			{ post && <PostCard post={ post } site={ site } url={ note.url } /> }
 			<Thread>
 				{ repliedTo && <ThreadParent comment={ repliedTo } truncate /> }
 				{ actor && (
