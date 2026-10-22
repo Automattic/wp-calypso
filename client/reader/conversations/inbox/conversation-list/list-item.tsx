@@ -5,9 +5,10 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useRef } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { usePost } from 'calypso/reader/data/post';
-import type { Conversation } from './group-notes';
+import type { Conversation } from '../group-notes';
 
 interface Props {
 	conversation: Conversation;
@@ -26,9 +27,29 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 	const [ firstCommenter ] = commenters;
 	const othersCount = commenters.length - 1;
 	const unreadCount = unreadNoteIds.length;
+	const itemRef = useRef< HTMLLIElement >( null );
+	const isMountedRef = useRef( false );
+	const openedOnFocusRef = useRef( false );
+
+	useEffect( () => {
+		const isFirstRun = ! isMountedRef.current;
+		isMountedRef.current = true;
+		const item = itemRef.current;
+		if ( ! isSelected || ! item ) {
+			return;
+		}
+		item.scrollIntoView( { block: 'nearest' } );
+		// Follow j/k with the focus so Tab moves on from the open conversation. Leave it
+		// alone on first render and when it sits elsewhere, like the previous/next buttons.
+		const { activeElement, body } = item.ownerDocument;
+		const list = item.closest( '.conversations-inbox__list' );
+		if ( ! isFirstRun && ( activeElement === body || list?.contains( activeElement ) ) ) {
+			item.querySelector( 'button' )?.focus( { preventScroll: true } );
+		}
+	}, [ isSelected ] );
 
 	return (
-		<li>
+		<li ref={ itemRef }>
 			<VStack
 				as="button"
 				spacing={ 2.5 }
@@ -38,7 +59,21 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 					'is-unread': unreadCount > 0,
 				} ) }
 				aria-current={ isSelected || undefined }
-				onClick={ () => onSelect( conversation ) }
+				onClick={ () => {
+					// A click focuses the item first, which has already opened it.
+					if ( openedOnFocusRef.current ) {
+						openedOnFocusRef.current = false;
+						return;
+					}
+					onSelect( conversation );
+				} }
+				// Tabbing onto a conversation opens it, like j/k.
+				onFocus={ () => {
+					if ( ! isSelected ) {
+						openedOnFocusRef.current = true;
+						onSelect( conversation );
+					}
+				} }
 			>
 				<HStack as="span">
 					<span className="conversations-inbox__item-title">{ title }</span>
