@@ -447,9 +447,13 @@ describe( 'enhanceMessage', () => {
 		expect( enhanced.metadata ).toEqual( { a2uiRendererCapabilities: { 'v1.0': {} } } );
 	} );
 
-	it( 'sends no metadata when the context provider has none', async () => {
+	it.each( [
+		[ 'gives none', {} ],
+		[ 'gives an empty object', { getMessageMetadata: () => ( {} ) } ],
+	] )( 'sends no metadata when the context provider %s', async ( _case, provider ) => {
 		const enhanced = await enhanceMessage( message, undefined, {
 			getClientContext: () => ( {} ),
+			...provider,
 		} );
 
 		expect( enhanced ).not.toHaveProperty( 'metadata' );
