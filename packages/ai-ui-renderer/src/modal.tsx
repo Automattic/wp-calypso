@@ -19,7 +19,7 @@ export const Modal = createComponentImplementation(
 				{ isOpen && (
 					<GutenbergModal
 						title={ __( 'Details', 'default' ) }
-						overlayClassName="ai-ui-renderer__modal"
+						overlayClassName={ clsx( 'ai-ui-renderer__modal', themeClassName ) }
 						onRequestClose={ () => setIsOpen( false ) }
 					>
 						<fieldset

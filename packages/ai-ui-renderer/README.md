@@ -50,7 +50,7 @@ Select a theme with `createSurface.theme: { name: 'commerce' }` or the
 `InteractiveUiSurface` `theme` prop, which takes precedence. Theme names in
 messages must start with a lowercase letter and contain only lowercase letters,
 digits, and hyphens. The renderer adds `ai-ui-renderer--theme-<name>` to the
-surface fieldsets, including the one wrapping modal content. Consumers load their own
+surface fieldsets and the modal overlay. Consumers load their own
 CSS scoped to that class; no theme keeps the default styles.
 
 ## Basic components
