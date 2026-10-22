@@ -4,12 +4,14 @@
 
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { speak } from '@wordpress/a11y';
 import { PlaygroundIframe } from '../components/playground-iframe';
 import { BlueprintLoadError } from '../lib/blueprint-load-error';
 import { initializeWordPressPlayground } from '../lib/initialize-playground';
 import { PlaygroundNotFoundError } from '../lib/playground-not-found-error';
 
 jest.mock( '../lib/initialize-playground' );
+jest.mock( '@wordpress/a11y', () => ( { speak: jest.fn() } ) );
 jest.mock( 'calypso/data/php-versions', () => ( {
 	getPHPVersions: () => ( { recommendedValue: '8.3' } ),
 } ) );
@@ -107,10 +109,11 @@ describe( 'PlaygroundIframe intro', () => {
 			} ) as ReturnType< typeof initializeWordPressPlayground >
 		);
 
-		renderIframe( true );
+		const { container } = renderIframe( true );
 
 		expect( getIntroHeading() ).toBeVisible();
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Downloading WordPress' );
+		expect( container.querySelector( 'iframe' ) ).toHaveAttribute( 'inert' );
 
 		const onBootProgress = jest.mocked( initializeWordPressPlayground ).mock.calls[ 0 ][ 4 ]!;
 		act( () => onBootProgress( { stage: 'woocommerce', value: 60 } ) );
@@ -118,6 +121,8 @@ describe( 'PlaygroundIframe intro', () => {
 
 		await act( async () => resolveBoot( { blueprint: null, client: {} } ) );
 		expect( getIntroHeading() ).not.toBeInTheDocument();
+		expect( container.querySelector( 'iframe' ) ).not.toHaveAttribute( 'inert' );
+		expect( speak ).toHaveBeenCalledWith( 'Your store is ready.' );
 	} );
 
 	it( 'gives way to the error screen when the boot fails', async () => {
