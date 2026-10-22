@@ -49,7 +49,8 @@ Hosts need Sass support and supply their own stacking rule for `.ai-ui-renderer_
 Select a theme with `createSurface.theme: { name: 'commerce' }` or the
 `InteractiveUiSurface` `theme` prop, which takes precedence. Theme names in
 messages must start with a lowercase letter and contain only lowercase letters,
-digits, and hyphens. The renderer adds `ai-ui-renderer--theme-<name>` to the
+digits, and hyphens. Other message theme names are ignored without preventing
+the surface from rendering. The renderer adds `ai-ui-renderer--theme-<name>` to the
 surface fieldsets and the modal overlay. Consumers load their own
 CSS scoped to that class; no theme keeps the default styles.
 

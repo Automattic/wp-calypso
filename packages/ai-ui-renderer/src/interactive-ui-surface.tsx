@@ -63,8 +63,12 @@ export function InteractiveUiSurface( {
 	theme,
 	revision = 0,
 }: InteractiveUiSurfaceProps ) {
+	const messageThemeName = surface.theme?.name;
 	const themeName =
-		theme ?? ( typeof surface.theme?.name === 'string' ? surface.theme.name : undefined );
+		theme ??
+		( typeof messageThemeName === 'string' && /^[a-z][a-z0-9-]*$/.test( messageThemeName )
+			? messageThemeName
+			: undefined );
 	const themeClassName = themeName ? `ai-ui-renderer--theme-${ themeName }` : undefined;
 	const surfaceContext = useMemo(
 		() => ( { disabled, themeClassName } ),
