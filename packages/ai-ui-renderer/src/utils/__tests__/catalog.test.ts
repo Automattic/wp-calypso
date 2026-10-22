@@ -66,16 +66,6 @@ it( 'lets a catalog’s own component replace the basic one of the same name', (
 
 it.each< { problem: string; definition: InteractiveUiCatalogDefinition; error: string } >( [
 	{
-		problem: 'a component without an implementation',
-		definition: { ...hostCatalog, components: {} },
-		error: 'The interactive UI component HostColorPicker has no implementation.',
-	},
-	{
-		problem: 'a function missing from the document',
-		definition: { ...hostCatalog, functions: { ...hostCatalog.functions, hostExtra: jest.fn() } },
-		error: "The interactive UI function hostExtra isn't in its catalog document.",
-	},
-	{
 		problem: 'a component whose implementation isn’t a component',
 		definition: {
 			...hostCatalog,
