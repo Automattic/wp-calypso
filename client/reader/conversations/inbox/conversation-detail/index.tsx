@@ -13,7 +13,9 @@ import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { usePost } from 'calypso/reader/data/post';
 import { getPostUrl } from 'calypso/reader/route';
-import type { Conversation } from './group-notes';
+import type { Conversation } from '../group-notes';
+
+import './style.scss';
 
 interface Props {
 	siteId: number;

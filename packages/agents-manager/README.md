@@ -143,8 +143,9 @@ with its providers' `interactiveUi`), associates surfaces with transcript messag
 maintains one runtime per conversation, and sends a button's event through the
 conversation's context-message flow; a `functionCall` runs in the browser instead.
 Agents Manager passes the processing state to
-`InteractiveUiSurface` through its `disabled` prop and keeps the chat isolation
-wrapper and modal stacking rule here.
+`InteractiveUiSurface` through its `disabled` prop and selects the `agents-manager`
+theme. Its stylesheet scopes modal stacking to `ai-ui-renderer--theme-agents-manager`.
+The chat isolation wrapper also stays here.
 The shared package has no dependency on Agents Manager or its message format.
 See [`INTERACTIVE-UI.md`](./INTERACTIVE-UI.md) for the architecture every agent
 chat UI follows.
