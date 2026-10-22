@@ -81,21 +81,25 @@ const SiteMigrationCheck: StepType< {
 	}
 	const choices = [
 		{
-			action: 'copy-site' as const,
-			title: translate( 'Make a copy of your site' ),
-			description: translate( 'Duplicate it to a new site you can work on.' ),
-		},
-		{
-			action: 'transfer-domain' as const,
+			action: 'transfer-domain',
 			title: translate( 'Transfer your domain to WordPress.com' ),
 			description: translate( 'Bring the registration across too.' ),
 		},
 		{
-			action: 'get-access' as const,
+			action: 'get-access',
 			title: translate( 'Get access to your site' ),
 			description: translate( 'Get help accessing and managing your site.' ),
 		},
-	].filter( ( { action } ) => action !== 'copy-site' || canCopySite );
+	];
+
+	if ( canCopySite ) {
+		choices.push( {
+			action: 'copy-site',
+			title: translate( 'Make a copy of your site' ),
+			description: translate( 'Duplicate it to a new site you can work on.' ),
+		} );
+	}
+
 	const returnToAddress = () => navigation.submit?.( { action: 'back' } );
 
 	useEffect( () => {

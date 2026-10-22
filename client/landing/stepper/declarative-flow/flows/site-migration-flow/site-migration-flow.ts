@@ -207,13 +207,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 			query.get( 'platform' ) === 'wordpress' &&
 			!! hostname &&
 			( protocol === 'http:' || protocol === 'https:' );
-		const { data: sourceSite, isLoading: isLoadingSource } = useSiteQuery( hostname, {
+		const { data: sourceSite } = useSiteQuery( hostname, {
 			enabled: checkSourceEligibility,
 		} );
-		const { shouldShowSiteCopyItem, isFetching: isFetchingSiteCopy } = useSiteCopy(
-			sourceSite ?? undefined,
-			{ enabled: checkSourceEligibility }
-		);
+		const { shouldShowSiteCopyItem } = useSiteCopy( sourceSite ?? undefined, {
+			enabled: checkSourceEligibility,
+		} );
 		const hasDestination =
 			config.isEnabled( 'migration/reprint-flow' ) &&
 			query.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
@@ -247,11 +246,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 					query.get( 'action' ) !== 'import',
 			},
 			'site-migration-check': {
-				canCopySite:
-					checkSourceEligibility &&
-					!! shouldShowSiteCopyItem &&
-					! isLoadingSource &&
-					! isFetchingSiteCopy,
+				canCopySite: shouldShowSiteCopyItem,
 				destinationSiteSlug: hasDestination ? siteSlug : undefined,
 				destinationSiteUrl: hasDestination ? site?.URL : undefined,
 				destinationPlanName: site?.plan?.product_name_short || site?.plan?.product_name,
