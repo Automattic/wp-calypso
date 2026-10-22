@@ -34,6 +34,22 @@ describe( '<PreLaunchModal>', () => {
 		expect( screen.queryByRole( 'button', { name: 'Yes, launch site!' } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'says "Publish" instead of "Launch" with usePublishCopy', () => {
+		render( <PreLaunchModal { ...baseProps } isLaunching={ false } usePublishCopy /> );
+
+		expect(
+			screen.getByRole( 'dialog', { name: 'Publishing makes your site public' } )
+		).toBeVisible();
+		expect( screen.getByText( /Do you want to publish your site\?/ ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Yes, publish site!' } ) ).toBeVisible();
+	} );
+
+	test( 'says "Publishing" while launching with usePublishCopy', () => {
+		render( <PreLaunchModal { ...baseProps } isLaunching usePublishCopy /> );
+
+		expect( screen.getByRole( 'dialog', { name: 'Publishing site…' } ) ).toBeVisible();
+	} );
+
 	test( 'fires onLaunch when the launch button is clicked', async () => {
 		const user = userEvent.setup();
 		const onLaunch = jest.fn();

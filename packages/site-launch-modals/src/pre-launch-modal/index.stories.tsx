@@ -8,9 +8,16 @@ interface PreLaunchArgs {
 	domain: string;
 	planName: string;
 	isLaunching: boolean;
+	usePublishCopy: boolean;
 }
 
-function PreLaunchModalPreview( { siteName, domain, planName, isLaunching }: PreLaunchArgs ) {
+function PreLaunchModalPreview( {
+	siteName,
+	domain,
+	planName,
+	isLaunching,
+	usePublishCopy,
+}: PreLaunchArgs ) {
 	const [ isOpen, setIsOpen ] = useState( true );
 
 	if ( ! isOpen ) {
@@ -27,6 +34,7 @@ function PreLaunchModalPreview( { siteName, domain, planName, isLaunching }: Pre
 			siteDomain={ domain }
 			planName={ planName }
 			isLaunching={ isLaunching }
+			usePublishCopy={ usePublishCopy }
 			onLaunch={ () => {} }
 			onClose={ () => setIsOpen( false ) }
 			preview={
@@ -60,6 +68,7 @@ export const Default: Story = {
 		domain: 'kaonashi.com',
 		planName: 'Business plan',
 		isLaunching: false,
+		usePublishCopy: false,
 	},
 };
 
@@ -67,5 +76,12 @@ export const Launching: Story = {
 	args: {
 		...Default.args,
 		isLaunching: true,
+	},
+};
+
+export const PublishCopy: Story = {
+	args: {
+		...Default.args,
+		usePublishCopy: true,
 	},
 };

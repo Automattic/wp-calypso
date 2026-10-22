@@ -82,7 +82,24 @@ function LaunchHarness( {
 }
 
 describe( 'useLaunchSiteNodeBuilder', () => {
-	afterEach( () => nock.cleanAll() );
+	// The site is in the "Publish" copy experiment. ExPlat reads a cached assignment from
+	// localStorage before asking the server, so this pins the control (today's copy).
+	beforeEach( () =>
+		window.localStorage.setItem(
+			'explat-experiment--calypso_site_launch_publish_copy_202610_v1',
+			JSON.stringify( {
+				experimentName: 'calypso_site_launch_publish_copy_202610_v1',
+				variationName: 'control',
+				retrievedTimestamp: Date.now(),
+				ttl: 3600,
+			} )
+		)
+	);
+
+	afterEach( () => {
+		nock.cleanAll();
+		window.localStorage.clear();
+	} );
 
 	test( 'renders the pre-launch modal panel when a paid, custom-domain site is launched from the omnibar', async () => {
 		const user = userEvent.setup();
@@ -101,6 +118,34 @@ describe( 'useLaunchSiteNodeBuilder', () => {
 
 		expect(
 			await screen.findByRole( 'dialog', { name: 'Launching makes your site public' } )
+		).toBeVisible();
+	} );
+
+	test( 'opens the "Publish" pre-launch modal in the copy experiment treatment', async () => {
+		const user = userEvent.setup();
+		window.localStorage.setItem(
+			'explat-experiment--calypso_site_launch_publish_copy_202610_v1',
+			JSON.stringify( {
+				experimentName: 'calypso_site_launch_publish_copy_202610_v1',
+				variationName: 'treatment',
+				retrievedTimestamp: Date.now(),
+				ttl: 3600,
+			} )
+		);
+		mockDomainsApi( [
+			createMockDomain( 'kaonashi.wordpress.com', false ),
+			createMockDomain( 'kaonashi.com' ),
+		] );
+
+		render( <LaunchHarness site={ createMockSite() } /> );
+
+		// The title comes from the admin bar node, which the server words for the same arm.
+		const launchButton = await screen.findByRole( 'button', { name: 'Luncurkan situs' } );
+		await waitFor( () => expect( launchButton ).toBeEnabled() );
+		await user.click( launchButton );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Publishing makes your site public' } )
 		).toBeVisible();
 	} );
 

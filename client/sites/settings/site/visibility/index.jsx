@@ -10,6 +10,7 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SitePreviewLinks from 'calypso/components/site-preview-links';
 import { a4aLink } from 'calypso/dashboard/utils/link';
+import { useSiteLaunchPublishCopy } from 'calypso/dashboard/utils/site-launch-publish-copy';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getUserBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -103,6 +104,26 @@ const createAgencyBillingMessage = (
 	);
 };
 
+const getLaunchDescription = ( { isComingSoon, usePublishCopy } ) => {
+	if ( usePublishCopy ) {
+		return isComingSoon
+			? translate(
+					'Your site hasn\'t been published yet. It is hidden from visitors behind a "Coming Soon" notice until it is published.'
+				)
+			: translate(
+					"Your site hasn't been published yet. It's private; only you can see it until it is published."
+				);
+	}
+
+	return isComingSoon
+		? translate(
+				'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
+			)
+		: translate(
+				"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
+			);
+};
+
 const LaunchSite = () => {
 	const [ isLaunchConfirmationModalOpen, setLaunchConfirmationModalOpen ] = useState( false );
 	const openLaunchConfirmationModal = () => setLaunchConfirmationModalOpen( true );
@@ -111,6 +132,11 @@ const LaunchSite = () => {
 	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const { isLoading: isPublishCopyLoading, usePublishCopy } = useSiteLaunchPublishCopy( {
+		launchStatus: site?.launch_status,
+		canManageOptions: site?.capabilities?.manage_options,
+		isA4ADevSite: site?.is_a4a_dev_site,
+	} );
 	const siteSettings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
 	const isPaidPlan = useSelector( ( state ) => isCurrentPlanPaid( state, siteId ) );
 	const isComingSoon = useSelector( ( state ) => isSiteComingSoon( state, siteId ) );
@@ -130,7 +156,7 @@ const LaunchSite = () => {
 	const launchSiteClasses = clsx( 'site-settings__general-settings-launch-site-button', {
 		'site-settings__disable-privacy-settings': ! siteDomains.length,
 	} );
-	const btnText = translate( 'Launch site' );
+	const btnText = usePublishCopy ? translate( 'Publish site' ) : translate( 'Launch site' );
 
 	const isDevelopmentSite = Boolean( site?.is_a4a_dev_site );
 	const isBillingTypeBD = userBillingType === 'billingdragon';
@@ -229,13 +255,10 @@ const LaunchSite = () => {
 				<div className="site-settings__general-settings-launch-site">
 					<div className="site-settings__general-settings-launch-site-text">
 						<p>
-							{ isComingSoon || isPrivateAndUnlaunched
-								? translate(
-										'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
-									)
-								: translate(
-										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
-									) }
+							{ getLaunchDescription( {
+								isComingSoon: isComingSoon || isPrivateAndUnlaunched,
+								usePublishCopy,
+							} ) }
 						</p>
 						{ shouldShowAgencyBillingMessage && <i>{ agencyBillingMessage }</i> }
 					</div>
@@ -256,11 +279,17 @@ const LaunchSite = () => {
 		return <SitePreviewLinks siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />;
 	};
 
+	// Render neither copy until the copy experiment answers, but keep fetching the domains the
+	// launch button needs.
+	if ( isPublishCopyLoading ) {
+		return querySiteDomainsComponent || null;
+	}
+
 	return (
 		<>
 			{ renderConfirmationModal() }
 			<PanelCard>
-				<PanelCardHeading>{ translate( 'Launch site' ) }</PanelCardHeading>
+				<PanelCardHeading>{ btnText }</PanelCardHeading>
 				{ renderContent() }
 			</PanelCard>
 			{ showPreviewLink && (

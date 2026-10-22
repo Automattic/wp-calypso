@@ -6,17 +6,23 @@ export const ReportUnavailable = ( {
 	isLaunching,
 	onLaunchSiteClick,
 	ctaText,
+	usePublishCopy = false,
 }: {
 	isLaunching: boolean;
 	onLaunchSiteClick(): void;
 	ctaText: string;
+	usePublishCopy?: boolean;
 } ) => {
 	const translate = useTranslate();
 
 	return (
 		<NoticeBanner
 			level="info"
-			title={ translate( 'Launch your site to start measuring performance' ) }
+			title={
+				usePublishCopy
+					? translate( 'Publish your site to start measuring performance' )
+					: translate( 'Launch your site to start measuring performance' )
+			}
 			hideCloseButton
 			actions={ [
 				<Button

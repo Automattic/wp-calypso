@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PreLaunchSiteModal from 'calypso/components/pre-launch-site-modal';
+import { useSiteLaunchPublishCopy } from 'calypso/dashboard/utils/site-launch-publish-copy';
 import {
 	DeviceTabProvider,
 	TabType,
@@ -157,6 +158,15 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 	} );
 
 	const [ isExperimentLoading, experimentVariant ] = useSiteLaunchGatingVariant();
+	const { isLoading: isPublishCopyLoading, usePublishCopy } = useSiteLaunchPublishCopy( {
+		launchStatus: site?.launch_status,
+		canManageOptions: site?.capabilities?.manage_options,
+		isA4ADevSite: site?.is_a4a_dev_site,
+		// The page renders nothing for other sites, and a public site shows its report instead.
+		// Agencies launch through their own flow, so the A4A dashboard keeps today's copy.
+		isEntryPointShown:
+			( !! isSiteAtomic || !! isSiteFlex ) && ! isSitePublic && ! isA8CForAgencies(),
+	} );
 
 	// A free, already-public, or A4A dev site never qualifies, so skip the bridge
 	// and let the CTA redirect instantly. A4A sends the CTA to WordPress.com
@@ -179,6 +189,13 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 				} );
 			}
 		} );
+	};
+
+	const getCtaText = () => {
+		if ( site?.is_a4a_dev_site ) {
+			return translate( 'Prepare for launch' );
+		}
+		return usePublishCopy ? translate( 'Publish your site' ) : translate( 'Launch your site' );
 	};
 
 	const onLaunchSiteClick = () => {
@@ -369,7 +386,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 					/>
 				) }
 			</div>
-			{ isLoadingPages && isSitePublic ? (
+			{ ( isLoadingPages && isSitePublic ) || ( ! isSitePublic && isPublishCopyLoading ) ? (
 				<PerformanceReportLoading isLoadingPages />
 			) : (
 				<>
@@ -377,11 +394,8 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 						<ReportUnavailable
 							isLaunching={ siteIsLaunching || isExperimentLoading || isLaunchModalOpen }
 							onLaunchSiteClick={ onLaunchSiteClick }
-							ctaText={
-								site?.is_a4a_dev_site
-									? translate( 'Prepare for launch' )
-									: translate( 'Launch your site' )
-							}
+							usePublishCopy={ usePublishCopy }
+							ctaText={ getCtaText() }
 						/>
 					) : (
 						<>
@@ -406,6 +420,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 					isOpen={ isLaunchModalOpen }
 					onClose={ () => setIsLaunchModalOpen( false ) }
 					launchUrl={ launchUrl }
+					usePublishCopy={ usePublishCopy }
 				/>
 			) }
 		</div>

@@ -31,6 +31,7 @@ interface PreLaunchVariantProps extends CommonProps {
 	variant: 'pre-launch';
 	site: Site;
 	isLaunching: boolean;
+	usePublishCopy?: boolean;
 	onLaunch: () => void;
 }
 
@@ -65,7 +66,7 @@ export default function SiteLaunchModal( props: SiteLaunchModalProps ) {
 	const siteDomain = hasCustomDomain ? customDomains[ 0 ].domain : props.site.slug;
 
 	if ( props.variant === 'pre-launch' ) {
-		const { site, isLaunching, onLaunch } = props;
+		const { site, isLaunching, usePublishCopy = false, onLaunch } = props;
 		const planName = site.plan?.product_name ?? getSitePlanDisplayName( site );
 
 		return (
@@ -74,6 +75,7 @@ export default function SiteLaunchModal( props: SiteLaunchModalProps ) {
 				siteDomain={ siteDomain }
 				planName={ planName }
 				isLaunching={ isLaunching }
+				usePublishCopy={ usePublishCopy }
 				onLaunch={ onLaunch }
 				onClose={ onClose }
 				preview={

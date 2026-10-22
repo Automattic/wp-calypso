@@ -21,15 +21,24 @@ export function SiteLaunchButton( {
 	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 
-	const { isLoading, isExperimentLoading, isHidden, isDisabled, isBusy, href, onClick, modal } =
-		useSiteLaunch( site, {
-			tracksContext,
-			flowDestination,
-			a4aLaunchUrl: launchUrl,
-			a4aLaunchModal: LaunchModal,
-			domainsOptions: queries.domainsQuery(),
-			recordTracksEvent,
-		} );
+	const {
+		isLoading,
+		isExperimentLoading,
+		usePublishCopy,
+		isHidden,
+		isDisabled,
+		isBusy,
+		href,
+		onClick,
+		modal,
+	} = useSiteLaunch( site, {
+		tracksContext,
+		flowDestination,
+		a4aLaunchUrl: launchUrl,
+		a4aLaunchModal: LaunchModal,
+		domainsOptions: queries.domainsQuery(),
+		recordTracksEvent,
+	} );
 
 	if ( isLoading || isHidden ) {
 		return null;
@@ -45,7 +54,7 @@ export function SiteLaunchButton( {
 				href={ href }
 				onClick={ onClick }
 			>
-				{ __( 'Launch your site' ) }
+				{ usePublishCopy ? __( 'Publish your site' ) : __( 'Launch your site' ) }
 			</Button>
 			{ modal }
 		</>

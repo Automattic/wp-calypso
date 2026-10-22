@@ -8,6 +8,7 @@ import { useSiteLaunchGatingVariant } from 'calypso/lib/use-site-launch-gating-v
 import { getCurrentDashboard } from '../../app/routing';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { dashboardLinkWithBackport, redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { useSiteLaunchPublishCopy } from '../../utils/site-launch-publish-copy';
 import {
 	isSitePlanLaunchable as getIsSitePlanLaunchable,
 	isSitePlanBigSkyTrial,
@@ -42,6 +43,7 @@ export interface UseSiteLaunchOptions {
 export interface UseSiteLaunchResult {
 	isLoading: boolean;
 	isExperimentLoading: boolean;
+	usePublishCopy: boolean;
 	isHidden: boolean;
 	isDisabled: boolean;
 	isBusy: boolean;
@@ -69,11 +71,25 @@ export function useSiteLaunch(
 		select: ( data ) => data.filter( ( d ) => d.blog_id === site.ID ),
 	} );
 
+	const { isLoading: isPublishCopyLoading, usePublishCopy } = useSiteLaunchPublishCopy( {
+		launchStatus: site.launch_status,
+		canManageOptions: site.capabilities?.manage_options,
+		isA4ADevSite: site.is_a4a_dev_site,
+	} );
+
 	const launchMutation = useMutation(
-		withSnackbar( siteLaunchMutation( site.ID ), {
-			success: __( 'Your site has been launched; now you can share it with the world!' ),
-			error: __( 'Failed to launch site.' ),
-		} )
+		withSnackbar(
+			siteLaunchMutation( site.ID ),
+			usePublishCopy
+				? {
+						success: __( 'Your site has been published; now you can share it with the world!' ),
+						error: __( 'Failed to publish site.' ),
+					}
+				: {
+						success: __( 'Your site has been launched; now you can share it with the world!' ),
+						error: __( 'Failed to launch site.' ),
+					}
+		)
 	);
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
@@ -142,8 +158,10 @@ export function useSiteLaunch(
 	};
 
 	const baseResult = {
-		isLoading: isDomainsLoading,
+		// Nothing renders the launch copy until the copy experiment answers.
+		isLoading: isDomainsLoading || isPublishCopyLoading,
 		isExperimentLoading,
+		usePublishCopy,
 		isDisabled,
 		isBusy: launchMutation.isPending,
 		modal: null as ReactElement | null,
@@ -202,6 +220,7 @@ export function useSiteLaunch(
 					isOpen
 					site={ site }
 					isLaunching={ launchMutation.isPending }
+					usePublishCopy={ usePublishCopy }
 					onClose={ () => setIsModalOpen( false ) }
 					onLaunch={ confirmPreLaunch }
 				/>

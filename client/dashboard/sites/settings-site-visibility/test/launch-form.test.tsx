@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import nock from 'nock';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
-import { LaunchAgencyDevelopmentSiteForm } from '../launch-form';
+import { LaunchAgencyDevelopmentSiteForm, LaunchForm } from '../launch-form';
 import type { AgencySupports, AppConfig } from '../../../app/context';
 import type { Site } from '@automattic/api-core';
 
@@ -83,5 +83,61 @@ describe( '<LaunchAgencyDevelopmentSiteForm>', () => {
 		expect( referUrl.hostname ).toMatch( /^agencies\./ );
 		expect( referUrl.pathname ).toBe( '/marketplace/checkout' );
 		expect( referUrl.searchParams.get( 'referral_blog_id' ) ).toBe( '55' );
+	} );
+} );
+
+describe( '<LaunchForm>', () => {
+	const adminSite = {
+		ID: 56,
+		slug: 'kaonashi.wordpress.com',
+		URL: 'https://kaonashi.wordpress.com',
+		name: 'Kaonashi',
+		launch_status: 'unlaunched',
+		capabilities: { manage_options: true },
+		plan: { product_slug: 'free_plan', is_free: true },
+	} as Site;
+
+	// ExPlat reads a cached assignment from localStorage before asking the server.
+	const assignPublishCopyVariation = ( variationName: string ) =>
+		window.localStorage.setItem(
+			'explat-experiment--calypso_site_launch_publish_copy_202610_v1',
+			JSON.stringify( {
+				experimentName: 'calypso_site_launch_publish_copy_202610_v1',
+				variationName,
+				retrievedTimestamp: Date.now(),
+				ttl: 3600,
+			} )
+		);
+
+	beforeEach( () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/all-domains' )
+			.query( true )
+			.reply( 200, { domains: [] } );
+	} );
+
+	afterEach( () => {
+		window.localStorage.clear();
+	} );
+
+	test( 'says "launched" in the copy experiment control', async () => {
+		assignPublishCopyVariation( 'control' );
+		render( <LaunchForm site={ adminSite } /> );
+
+		expect( await screen.findByRole( 'link', { name: 'Launch your site' } ) ).toBeVisible();
+		expect( screen.getByText( 'Your site hasn’t been launched yet' ) ).toBeVisible();
+	} );
+
+	test( 'says "published" in the copy experiment treatment', async () => {
+		assignPublishCopyVariation( 'treatment' );
+		render( <LaunchForm site={ adminSite } /> );
+
+		expect( await screen.findByRole( 'link', { name: 'Publish your site' } ) ).toBeVisible();
+		expect( screen.getByText( 'Your site hasn’t been published yet' ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				'It is hidden from visitors behind a “Coming Soon” notice until it is published.'
+			)
+		).toBeVisible();
 	} );
 } );
