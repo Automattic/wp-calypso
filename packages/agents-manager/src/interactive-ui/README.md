@@ -46,8 +46,9 @@ come.
   - `catalogs.ts` builds the catalogs, and the renderer capabilities each message sends.
   - `with-chat-response-tracking.tsx` records the shared response events for each catalog
     component.
-- **Custom components and functions** live in the project that owns them: Agents Manager's here
-  (AM-117), and its providers' (WooCommerce AI, the Jetpack AI sidebar) in their own repos.
+- **Custom components and functions** live in the project that owns them: Agents Manager's here,
+  such as its color, font and button pickers (`AGENTS_MANAGER_CATALOG` in `catalogs.ts`), and its
+  providers' (WooCommerce AI, the Jetpack AI sidebar) in their own repos.
   Providers declare their catalog in the provider contract's `interactiveUi` field
   (`LoadedProviders` in `src/utils/load-external-providers.ts`).
 
@@ -114,9 +115,9 @@ Button."
 
 This section is temporary: remove it once every chat UI has moved (AM-119).
 
-- **A server ability returning `show-component`** (Agents Manager's color, font and button
-  pickers, the Jetpack AI sidebar's components): the ability returns a surface with a catalog
-  component wrapping the same React component.
+- **A server ability returning `show-component`** (the Jetpack AI sidebar's components): the
+  ability returns a surface with a catalog component wrapping the same React component, as
+  Agents Manager's color, font and button pickers already do.
 - **A client button** (Agents Manager's Help Center button): a server ability returns a basic
   `Button` that calls a catalog function.
 - **Markdown cards** (WooCommerce AI's `markdownComponents`): its abilities run in the browser, so
@@ -126,13 +127,22 @@ Rollout (AM-118) waits for Agents Manager, the Jetpack AI sidebar and WooCommerc
 
 ### Moving an ability's component
 
-1. **Declare the component in your catalog.** Add its props to your catalog document as JSON
-   Schema, and map its name to the existing React component in your `interactiveUi`. It keeps its
-   side effects, and skips them when `isMessageStale` is set. One with editor code still loads on
-   demand.
-2. **Return a surface from the ability** (wpcom). On sites with the sticker
-   (`Interactive_UI::is_enabled()`), return `Interactive_UI::surface_result()` with your catalog's
-   ID (AM-116), the component and its props, the data model it binds to, and `post_id` when it acts
-   on a post. Elsewhere, keep returning the `show-component` result.
+These steps work for any owner, such as Agents Manager, the Jetpack AI sidebar or WooCommerce AI.
+Agents Manager's pickers are a worked example: `AGENTS_MANAGER_CATALOG` in `catalogs.ts`, and
+wpcom's `ability.color-palette.php`.
+
+1. **Declare the component in your catalog**, your provider's `interactiveUi` or Agents Manager's
+   own: its props as JSON Schema in the document, and its name mapped to the existing React
+   component, which loads on demand if it carries editor code. The component keeps its side
+   effects, and acts like a basic one: it takes its checkpoint on the first action, keyed by
+   `surfaceId`, turns its controls off with `disabled`, and skips its side effects when
+   `isMessageStale` is set.
+2. **Return a surface from the ability** (wpcom), in an agent's chat on a site with the sticker
+   (`Interactive_UI::is_enabled()`). `Interactive_UI::component_result()` shows one component under
+   the agent's summary and names the post the editor has open; `surface_result()` takes a layout of
+   your own. A provider's ability passes its own catalog's ID (AM-116). Keep returning the
+   `show-component` result elsewhere, and for a request with steps after the component
+   (`followUpTasks`), since a surface ends the turn.
 3. **Test both paths.** With the sticker, the surface renders, goes stale after a reply, a reload
-   or a page switch, and keeps its undo and Tracks events. Without it, the old UI shows as before.
+   or a page switch, keeps its undo, and records the shared response events under its component's
+   name and surface ID. Without it, the old UI shows as before.

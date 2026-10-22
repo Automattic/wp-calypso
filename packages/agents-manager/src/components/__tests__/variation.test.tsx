@@ -62,6 +62,21 @@ describe( 'Variation', () => {
 		expect( onSelect ).toHaveBeenCalledWith( mockVariation );
 	} );
 
+	it( 'ignores clicks and keys while disabled, and says so', () => {
+		const onSelect = jest.fn();
+		render(
+			<Variation variation={ mockVariation } type="color" isDisabled onSelect={ onSelect } />
+		);
+
+		const variation = screen.getByRole( 'button' );
+		fireEvent.click( variation );
+		fireEvent.keyDown( variation, { key: 'Enter' } );
+
+		expect( onSelect ).not.toHaveBeenCalled();
+		expect( variation ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( variation ).toHaveAttribute( 'tabindex', '-1' );
+	} );
+
 	it( 'applies active class when isActive is true', () => {
 		render( <Variation { ...defaultProps } variation={ mockVariation } type="color" isActive /> );
 		expect( screen.getByRole( 'button' ) ).toHaveClass( 'is-active' );

@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { setCheckpoint } from '../../utils/checkpoints';
 import { injectFontFamiliesIntoEditorIframe } from '../../utils/font-families-to-css';
 import FontPicker from '../font-picker';
 
@@ -9,14 +10,17 @@ import FontPicker from '../font-picker';
 jest.mock( '../variation-picker', () => {
 	const MockVariationPicker = ( {
 		variations,
+		disabled,
 		onSelect,
 	}: {
 		variations: unknown[];
+		disabled?: boolean;
 		onSelect?: ( variation: unknown ) => void;
 	} ) => (
 		<button
 			data-testid="mock-variation-picker"
 			data-count={ variations.length }
+			data-disabled={ disabled }
 			onClick={ () => onSelect?.( variations[ 0 ] ) }
 		/>
 	);
@@ -24,6 +28,11 @@ jest.mock( '../variation-picker', () => {
 	return MockVariationPicker;
 } );
 
+jest.mock( '../../utils/checkpoints', () => ( {
+	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
+	hasCheckpoint: jest.fn(),
+	setCheckpoint: jest.fn(),
+} ) );
 jest.mock( '../../hooks/use-global-styles', () => ( {
 	__esModule: true,
 	default: () => ( { globalStylesId: null, globalStyles: null } ),
@@ -65,6 +74,16 @@ describe( 'FontPicker', () => {
 		];
 		const { getByTestId } = render( <FontPicker { ...defaultProps } variations={ duped } /> );
 		expect( getByTestId( 'mock-variation-picker' ) ).toHaveAttribute( 'data-count', '2' );
+	} );
+
+	it( 'disables its cards with its surface, and checkpoints its first pick under it', () => {
+		render( <FontPicker { ...defaultProps } surfaceId="fonts-1" disabled /> );
+
+		const picker = screen.getByTestId( 'mock-variation-picker' );
+		fireEvent.click( picker );
+
+		expect( picker ).toHaveAttribute( 'data-disabled', 'true' );
+		expect( setCheckpoint ).toHaveBeenCalledWith( 'fonts-1', [ 'font' ], expect.any( Object ) );
 	} );
 
 	it( 'loads the picked variation fonts into the editor canvas', () => {

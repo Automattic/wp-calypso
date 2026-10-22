@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { INTERACTIVE_UI_TOOL_ID } from '../interactive-ui/messages';
+import { checkpointKeys, hasCheckpoint, setCheckpoint } from '../utils/checkpoints';
 import ensureCurrentFirst, {
 	dedupeByTitle,
 	findMatchingVariation,
@@ -20,6 +22,12 @@ const VARIATION_CLICK_EVENTS = {
 	button: 'jetpack_big_sky_button_variation_click',
 } as const satisfies Record< StyleVariationType, `jetpack_big_sky_${ string }` >;
 
+const CHECKPOINT_KEYS = {
+	color: checkpointKeys.COLOR,
+	font: checkpointKeys.FONT,
+	button: checkpointKeys.BUTTON,
+} as const satisfies Record< StyleVariationType, string >;
+
 interface Options {
 	variations?: StyleVariation[];
 	/**
@@ -37,6 +45,11 @@ interface Options {
 		liveValue: unknown,
 		globalStyles: GlobalStyles
 	) => Omit< StyleVariation, 'title' > | null;
+	/**
+	 * The interactive UI surface the picker sits on: its first pick takes a checkpoint under it, so
+	 * the agent can undo it. A `show-component` picker gets one when it's shown instead.
+	 */
+	surfaceId?: string;
 }
 
 /**
@@ -50,6 +63,7 @@ export default function usePickerVariations( {
 	getLiveValue,
 	getValue,
 	createCurrent,
+	surfaceId,
 }: Options ) {
 	const setStyles = useStyles();
 	const [ activeTitle, setActiveTitle ] = useState< string | null >( null );
@@ -117,6 +131,15 @@ export default function usePickerVariations( {
 	const handleSelect = useCallback(
 		( variation: StyleVariation ) => {
 			hasSortedRef.current = true;
+
+			// Taken before the first pick lands, so it holds the user's own styles.
+			if ( surfaceId && variationType && ! hasCheckpoint( surfaceId ) ) {
+				setCheckpoint( surfaceId, [ CHECKPOINT_KEYS[ variationType ] ], {
+					toolId: INTERACTIVE_UI_TOOL_ID,
+					summary: `Picked a ${ variationType } style from the picker`,
+				} );
+			}
+
 			if ( variationType ) {
 				// Fire Big Sky's variation-click event name and props, so the
 				// existing dashboards keep working.
@@ -131,7 +154,7 @@ export default function usePickerVariations( {
 				}
 			}
 		},
-		[ setStyles, variationType ]
+		[ setStyles, variationType, surfaceId ]
 	);
 
 	return { sortedVariations, activeTitle, handleSelect };

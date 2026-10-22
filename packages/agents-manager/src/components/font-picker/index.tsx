@@ -2,9 +2,10 @@ import { useCallback, useEffect, useMemo } from '@wordpress/element';
 import usePickerVariations from '../../hooks/use-picker-variations';
 import { injectFontFamiliesIntoEditorIframe } from '../../utils/font-families-to-css';
 import VariationPicker from '../variation-picker';
+import type { PickerSurfaceProps } from '../style-pickers/types';
 import type { StyleVariation } from '../styles-preview';
 
-interface Props {
+interface Props extends PickerSurfaceProps {
 	variations?: StyleVariation[];
 	themeVariations?: StyleVariation[];
 	dynamicVariations?: StyleVariation[];
@@ -14,6 +15,8 @@ export default function FontPicker( {
 	variations = [],
 	themeVariations = [],
 	dynamicVariations = [],
+	surfaceId,
+	disabled,
 }: Props ) {
 	// Combine theme + dynamic + direct variations; the picker hook dedupes by title.
 	const fontVariations = useMemo( () => {
@@ -25,6 +28,7 @@ export default function FontPicker( {
 
 	const { sortedVariations, activeTitle, handleSelect } = usePickerVariations( {
 		variations: fontVariations,
+		surfaceId,
 		variationType: 'font',
 		getLiveValue: ( globalStyles ) => globalStyles.settings?.typography?.fontFamilies?.theme,
 		getValue: ( variation ) => variation.settings?.typography?.fontFamilies?.theme,
@@ -69,6 +73,7 @@ export default function FontPicker( {
 		<VariationPicker
 			variations={ sortedVariations }
 			type="font"
+			disabled={ disabled }
 			onSelect={ handlePick }
 			activeVariationTitle={ activeTitle }
 		/>
