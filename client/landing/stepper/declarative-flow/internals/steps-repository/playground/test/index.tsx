@@ -36,18 +36,19 @@ const renderPlaygroundStep = (
 	props?: Partial< StepProps >,
 	renderOptions?: RenderStepOptions
 ) => {
-	const combinedProps = { ...mockStepProps( props ) };
+	const combinedProps = {
+		...mockStepProps( { flow: 'onboarding', stepName: 'playground', ...props } ),
+	};
 
 	return renderStep( <PlaygroundStep { ...combinedProps } />, renderOptions );
 };
 
 const getLaunchButton = () => screen.getByRole( 'button', { name: 'Launch on WordPress.com' } );
-const getFreeTrialButton = () => screen.getByRole( 'button', { name: 'Launch free trial' } );
+const getSaveStoreButton = () => screen.getByRole( 'button', { name: 'Save my store' } );
 
 describe( 'Playground', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		sessionStorage.clear();
 		mockPlaygroundClientInstance = {
 			run: jest.fn().mockImplementation( () => Promise.resolve( { text: 'plans-playground' } ) ),
 		};
@@ -92,7 +93,7 @@ describe( 'Playground', () => {
 			expect( getLaunchButton() ).toBeDisabled();
 		} );
 
-		it( 'should show free trial button when intent is woocommerce', async () => {
+		it( 'should show the save store button when intent is woocommerce', async () => {
 			await act( async () => {
 				renderPlaygroundStep(
 					{},
@@ -103,7 +104,7 @@ describe( 'Playground', () => {
 				);
 			} );
 
-			expect( getFreeTrialButton() ).toBeVisible();
+			expect( getSaveStoreButton() ).toBeVisible();
 		} );
 	} );
 
@@ -124,7 +125,7 @@ describe( 'Playground', () => {
 				);
 			} );
 
-			await userEvent.click( getFreeTrialButton() );
+			await userEvent.click( getSaveStoreButton() );
 
 			expect( getLaunchEventProps() ).toEqual(
 				expect.objectContaining( { is_woocommerce_intent: true } )
@@ -148,23 +149,6 @@ describe( 'Playground', () => {
 				intent: 'plans-playground',
 				is_woocommerce_intent: false,
 			} );
-		} );
-
-		it( 'should not flag launches without the woocommerce intent in the URL', async () => {
-			sessionStorage.setItem( 'entrepreneur_playground_woo_intent', '1' );
-
-			await act( async () => {
-				renderPlaygroundStep(
-					{},
-					{ initialEntry: '/setup/onboarding/playground?blueprint=woocommerce&playground=1' }
-				);
-			} );
-
-			await userEvent.click( getFreeTrialButton() );
-
-			expect( getLaunchEventProps() ).toEqual(
-				expect.objectContaining( { is_woocommerce_intent: false } )
-			);
 		} );
 	} );
 
