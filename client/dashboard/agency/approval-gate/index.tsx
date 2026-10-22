@@ -92,12 +92,7 @@ function ApprovalGateModal( {
 	const title = isRejected ? __( 'We haven’t approved your agency' ) : getTitle( kind );
 
 	return (
-		<Modal
-			title={ title }
-			onRequestClose={ onClose }
-			__experimentalHideHeader
-			overlayClassName="a4a-approval-gate-overlay"
-		>
+		<Modal title={ title } onRequestClose={ onClose } __experimentalHideHeader>
 			<div className="a4a-approval-gate">
 				<Callout
 					icon={ lock }

@@ -1,15 +1,7 @@
-@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 
 // The modal's own content padding with its header hidden; the callout pulls into it.
 $modal-padding: $grid-unit-30;
-
-// The frosted page behind the gate, as WordPress.com once showed its upsell callouts over the
-// locked page: the page stays readable at the top and fades out below the card.
-.a4a-approval-gate-overlay {
-	background: linear-gradient( 180deg, rgba( $white, 0.65 ) 0%, rgba( $white, 0.92 ) 100% );
-	backdrop-filter: blur( 3px );
-}
 
 // The callout fills the modal edge to edge, so the modal adds no frame of its own around it.
 .a4a-approval-gate {
