@@ -49,7 +49,8 @@ const exampleCatalog: InteractiveUiCatalogDefinition = {
   `DynamicString` and `Action`. A component rejects props it doesn't declare, so declare `weight`
   if it can sit in a `Row` or `Column`.
 - A component gets resolved props: bound values, a `set<Prop>` setter for each, actions as
-  functions to call, and the host's `hostProps`.
+  functions to call, its `surfaceId` and `disabled` state, and the host's `hostProps`. Disable
+  its controls with `disabled`, as the basic components are.
 - A function may be async. Its arguments come from the agent, so treat them as untrusted. It runs
   only from a click, unless the document sets `requiresUserActivation: false` so a value can call
   it, such as one that formats text.

@@ -1,6 +1,6 @@
 import { createComponentImplementation } from '@a2ui/react';
 import { createElement, useContext } from '@wordpress/element';
-import { InteractiveUiHostPropsContext } from '../contexts/surface';
+import { InteractiveUiHostPropsContext, InteractiveUiSurfaceContext } from '../contexts/surface';
 import type { ReactComponentImplementation } from '@a2ui/react';
 import type { ComponentApi, FunctionImplementation } from '@a2ui/web_core';
 import type { ComponentType } from 'react';
@@ -26,7 +26,7 @@ export interface InteractiveUiCatalogDefinition {
 
 	/**
 	 * Each of the document's components. They get bound values resolved, a `set<Prop>` setter for
-	 * each, actions as functions, and the host's props.
+	 * each, actions as functions, their `surfaceId` and `disabled` state, and the host's props.
 	 */
 	// A catalog holds components with different props types.
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,10 +46,12 @@ export function toComponentImplementation(
 	component: ComponentType< any >
 ): ReactComponentImplementation {
 	function DefinitionComponent( { props }: { props: Record< string, unknown > } ) {
+		const { surfaceId, disabled } = useContext( InteractiveUiSurfaceContext );
 		const hostProps = useContext( InteractiveUiHostPropsContext );
 
-		// The host's props win, so a surface can't override host state such as staleness.
-		return createElement( component, { ...props, ...hostProps } );
+		// Like the basic components, it's disabled with its surface. The surface's own state and
+		// the host's props win, so a surface can't override them.
+		return createElement( component, { ...props, surfaceId, disabled, ...hostProps } );
 	}
 
 	return {

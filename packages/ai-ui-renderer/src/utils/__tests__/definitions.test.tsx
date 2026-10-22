@@ -10,11 +10,18 @@ const HOST_CATALOG_ID = 'urn:host:catalog:v1';
 interface GreetingProps {
 	name: string;
 	onGreet: () => void;
+	surfaceId: string;
+	disabled: boolean;
 }
 
-function HostGreeting( { name, onGreet }: GreetingProps ) {
+function HostGreeting( { name, onGreet, surfaceId, disabled }: GreetingProps ) {
 	return (
-		<button type="button" onClick={ onGreet }>
+		<button
+			type="button"
+			onClick={ onGreet }
+			data-surface-id={ surfaceId }
+			data-disabled={ disabled }
+		>
 			{ `Hi ${ name }` }
 		</button>
 	);
@@ -57,7 +64,13 @@ function renderSurface(
 		runHost,
 		hostRunDocument,
 		hostProps,
-	}: { runHost?: jest.Mock; hostRunDocument?: object; hostProps?: Record< string, unknown > } = {}
+		disabled,
+	}: {
+		runHost?: jest.Mock;
+		hostRunDocument?: object;
+		hostProps?: Record< string, unknown >;
+		disabled?: boolean;
+	} = {}
 ) {
 	const onAction = jest.fn();
 	const onError = jest.fn();
@@ -81,7 +94,9 @@ function renderSurface(
 		throw new Error( 'The surface was not created.' );
 	}
 
-	render( <InteractiveUiSurface surface={ surface } hostProps={ hostProps } /> );
+	render(
+		<InteractiveUiSurface surface={ surface } hostProps={ hostProps } disabled={ disabled } />
+	);
 
 	return { onAction, onError };
 }
@@ -116,6 +131,24 @@ it( 'renders a host component with its bound values resolved and its action call
 	expect( onAction ).toHaveBeenCalledWith(
 		expect.objectContaining( { name: 'greet', surfaceId: 'surface' } )
 	);
+} );
+
+it( 'gives a host component its surface ID and the surface’s disabled state', async () => {
+	renderSurface(
+		[
+			updateComponents( {
+				component: 'HostGreeting',
+				name: 'Ada',
+				onGreet: { event: { name: 'greet' } },
+			} ),
+		],
+		{ disabled: true }
+	);
+
+	const button = await screen.findByRole( 'button', { name: 'Hi Ada' } );
+
+	expect( button ).toHaveAttribute( 'data-surface-id', 'surface' );
+	expect( button ).toHaveAttribute( 'data-disabled', 'true' );
 } );
 
 it( 'gives a host component the host’s props over the surface’s', async () => {
