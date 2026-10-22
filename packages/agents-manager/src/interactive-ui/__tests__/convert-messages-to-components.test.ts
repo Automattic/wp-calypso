@@ -45,9 +45,11 @@ const surfacesPart = {
 function createPresentation( {
 	surfaceOwnerId,
 	hasLoadError = false,
+	staleSurfaceIds = [],
 }: {
 	surfaceOwnerId?: string;
 	hasLoadError?: boolean;
+	staleSurfaceIds?: string[];
 } ): InteractiveUiPresentation {
 	const runtime = createInteractiveUiRuntime( {
 		catalogs: [ createInteractiveUiCatalog() ],
@@ -67,7 +69,7 @@ function createPresentation( {
 		retryLoad: jest.fn(),
 		revision: 0,
 		isDisabled: false,
-		staleSurfaceIds: new Set(),
+		staleSurfaceIds: new Set( staleSurfaceIds ),
 	};
 }
 
@@ -108,6 +110,22 @@ describe( 'attachInteractiveUiPresentation', () => {
 				componentProps: { messageId: 'agent', presentation },
 			},
 		] );
+	} );
+
+	it( 'disables the actions of a message whose surfaces are all stale', () => {
+		const presentation = createPresentation( {
+			surfaceOwnerId: 'agent',
+			staleSurfaceIds: [ 'surface' ],
+		} );
+		const feedback = { id: 'feedback-up', label: 'Good response', onClick: jest.fn() };
+
+		const [ attached ] = attachInteractiveUiPresentation(
+			[ { ...message, actions: [ feedback ] } ],
+			presentation
+		);
+
+		expect( attached.actions ).toEqual( [ { ...feedback, disabled: true } ] );
+		expect( attached ).not.toHaveProperty( 'disabled' );
 	} );
 
 	it( 'drops the surfaces part while its message has no surface yet', () => {

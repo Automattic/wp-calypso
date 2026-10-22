@@ -1,3 +1,4 @@
+import { withDisabledActions } from '../utils/message-actions';
 import { isInteractiveUiActionMessage, parseInteractiveUiText } from './messages';
 import { InteractiveUiSurfaces } from './surfaces';
 import type { InteractiveUiPresentation } from './use-interactive-ui';
@@ -53,7 +54,8 @@ function isInteractiveUiSurfacesPart( content: MessageContentPart ) {
 /**
  * Hands each message's interactive UI part the current presentation, and drops the part while
  * its message has no surface to show yet, unless the renderer failed to load. Stale surfaces
- * disable their own controls, so the message stays as it is.
+ * disable their own controls, so a message whose surfaces are all stale keeps its look and only
+ * disables its actions, as a `show-component` message does.
  */
 export function attachInteractiveUiPresentation(
 	messages: AgentsManagerUIMessage[],
@@ -64,9 +66,13 @@ export function attachInteractiveUiPresentation(
 			return message;
 		}
 
-		const hasSurfaces = !! presentation.runtime?.getSurfaceIds( message.id ).length;
+		const surfaceIds = presentation.runtime?.getSurfaceIds( message.id ) ?? [];
+		const hasSurfaces = surfaceIds.length > 0;
+		const isStale =
+			hasSurfaces &&
+			surfaceIds.every( ( surfaceId ) => presentation.staleSurfaceIds.has( surfaceId ) );
 
-		return {
+		const attachedMessage = {
 			...message,
 			content: message.content.flatMap( ( content ) => {
 				if ( ! isInteractiveUiSurfacesPart( content ) ) {
@@ -85,6 +91,8 @@ export function attachInteractiveUiPresentation(
 				];
 			} ),
 		};
+
+		return isStale ? withDisabledActions( attachedMessage ) : attachedMessage;
 	} );
 }
 

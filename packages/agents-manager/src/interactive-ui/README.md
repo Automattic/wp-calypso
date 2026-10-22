@@ -91,7 +91,8 @@ come.
   the editor has another page open than the one its envelope names. Like a restored picker, a
   surface restored from history, in a past chat or after a reload, is stale too. A stale surface
   stays visible and disabled: its controls look disabled, while display-only content such as text
-  or a chart looks as before.
+  or a chart looks as before. Once all of a message's surfaces are stale, its actions, such as
+  feedback, are disabled too.
 - **Style with A2UI's theme tokens.** Custom components color themselves with the `--a2ui-*`
   tokens, or use WordPress components, which the renderer themes with them, so they follow each
   host's theme ([theming](../../../ai-ui-renderer/README.md#theming)).
