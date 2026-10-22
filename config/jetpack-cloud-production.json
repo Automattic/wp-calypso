@@ -47,6 +47,7 @@
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page-annual-only": true,
 		"jetpack/pricing-page-cart": true,
+		"jetpack/pro-bundles": false,
 		"jetpack/pro-dashboard-jetpack-boost": true,
 		"jetpack/pro-dashboard-wpcom-atomic-hosting": true,
 		"jetpack/server-credentials-advanced-flow": true,

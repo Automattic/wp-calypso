@@ -19,7 +19,6 @@ import {
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_AND_PLAN_FLOW,
 	PLAN_UPGRADE_FLOW,
-	FLEX_SITE_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
 	ART_PROMO_FLOW,
 	DIRECT_TO_CART_FLOW,
@@ -68,9 +67,6 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 	[ PLAN_UPGRADE_FLOW ]: () =>
 		import( /* webpackChunkName: "plan-upgrade-flow" */ './flows/plan-upgrade/plan-upgrade' ),
 
-	[ FLEX_SITE_FLOW ]: () =>
-		import( /* webpackChunkName: "flex-site-flow" */ './flows/flex-site/flex-site' ),
-
 	[ WOO_HOSTED_PLANS_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "woo-hosted-plans" */ './flows/woo-hosted-plans/woo-hosted-plans'
@@ -105,11 +101,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 	[ ENTREPRENEUR_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "entrepreneur-flow" */ './flows/entrepreneur-flow/entrepreneur-flow'
-		),
-
-	'readymade-template': () =>
-		import(
-			/* webpackChunkName: "readymade-template-flow" */ './flows/readymade-template/readymade-template'
 		),
 
 	'update-design': () =>

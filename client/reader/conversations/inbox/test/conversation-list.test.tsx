@@ -16,17 +16,15 @@ const conversations = groupNotesByPost( [
 
 const renderList = ( props: Partial< React.ComponentProps< typeof ConversationList > > = {} ) => {
 	const onSelect = jest.fn();
-	const onMarkAllRead = jest.fn();
 	renderWithProvider(
 		<ConversationList
 			conversations={ conversations }
 			isLoading={ false }
 			onSelect={ onSelect }
-			onMarkAllRead={ onMarkAllRead }
 			{ ...props }
 		/>
 	);
-	return { onSelect, onMarkAllRead };
+	return { onSelect };
 };
 
 describe( 'ConversationList', () => {
@@ -81,21 +79,6 @@ describe( 'ConversationList', () => {
 		expect( screen.queryByRole( 'button', { name: /^Read post/ } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'marks every unread note as read', async () => {
-		const user = userEvent.setup();
-		const { onMarkAllRead } = renderList();
-
-		await user.click( screen.getByRole( 'button', { name: /Mark 2 as read/ } ) );
-
-		expect( onMarkAllRead ).toHaveBeenCalledWith( expect.arrayContaining( [ 1, 2 ] ) );
-	} );
-
-	it( 'hides the mark as read action when everything is read', () => {
-		renderList( { conversations: groupNotesByPost( [ makeNote( { id: 1, read: 1 } ) ] ) } );
-
-		expect( screen.queryByRole( 'button', { name: /as read/ } ) ).not.toBeInTheDocument();
-	} );
-
 	it( 'selects a conversation on click', async () => {
 		const user = userEvent.setup();
 		const { onSelect } = renderList();
@@ -103,6 +86,25 @@ describe( 'ConversationList', () => {
 		await user.click( screen.getByRole( 'button', { name: /^Read post/ } ) );
 
 		expect( onSelect ).toHaveBeenCalledWith( expect.objectContaining( { postId: 200 } ) );
+	} );
+
+	it( 'shows the new count only on conversations with unread notes', () => {
+		renderList();
+
+		expect( screen.getByRole( 'button', { name: /^Unread post/ } ) ).toHaveTextContent( '2 new' );
+		expect( screen.getByRole( 'button', { name: /^Read post/ } ) ).not.toHaveTextContent( 'new' );
+	} );
+
+	it( 'marks only the selected conversation as current', () => {
+		renderList( { selectedKey: conversations[ 1 ].key } );
+
+		expect( screen.getByRole( 'button', { name: /^Read post/ } ) ).toHaveAttribute(
+			'aria-current',
+			'true'
+		);
+		expect( screen.getByRole( 'button', { name: /^Unread post/ } ) ).not.toHaveAttribute(
+			'aria-current'
+		);
 	} );
 
 	it( 'shows filter and settings as disabled until they are built', () => {

@@ -59,9 +59,6 @@ const getLinks = (
 			if ( status === 'failed' ) {
 				link = `https://jptools.wordpress.com/debug/?url=${ siteUrl }`;
 				isExternalLink = true;
-			} else {
-				link = `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack#/settings`;
-				isExternalLink = true;
 			}
 			break;
 		}

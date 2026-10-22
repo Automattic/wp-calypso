@@ -53,6 +53,15 @@ interface SignupFormSocialFirst {
 	isEmailFirstVariant?: boolean;
 	isEmailAtBottom?: boolean;
 	isMobileCompactVariant?: boolean;
+	/**
+	 * Renders the "Have an account? Log in" line below the buttons. The email-first variants
+	 * always render it.
+	 */
+	showLoginLink?: boolean;
+	/**
+	 * Shows an envelope instead of the WordPress.com logo on the email button.
+	 */
+	showEnvelopeIcon?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 	activationEmailFrom?: string;
@@ -120,6 +129,8 @@ const SignupFormSocialFirst = ( {
 	isEmailFirstVariant,
 	isEmailAtBottom,
 	isMobileCompactVariant,
+	showLoginLink,
+	showEnvelopeIcon,
 	allowedSocialServices,
 	customTosElement,
 	activationEmailFrom,
@@ -351,6 +362,7 @@ const SignupFormSocialFirst = ( {
 					compact
 					isSocialFirst={ isSocialFirst }
 					shouldShowEmailButton={ ! isEmailFirstVariant }
+					showEnvelopeIcon={ showEnvelopeIcon }
 					allowedSocialServices={ allowedSocialServices }
 				/>
 				{ emailLoginBlock && isEmailAtBottom && (
@@ -362,6 +374,8 @@ const SignupFormSocialFirst = ( {
 				{ isEmailFirstVariant && loginLinkParagraph }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>{ emailScreen }</div>
+			{ /* Below both screens, so it stays on screen after "Continue with email". */ }
+			{ showLoginLink && ! isEmailFirstVariant && loginLinkParagraph }
 		</div>
 	);
 };
