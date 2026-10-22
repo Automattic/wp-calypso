@@ -68,7 +68,7 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 	return (
 		<>
 			<Button compact onClick={ () => setIsVisible( true ) }>
-				{ translate( 'Cancel the subscription' ) }
+				{ translate( 'Cancel subscription' ) }
 			</Button>
 
 			{ isVisible && (
