@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { waitFor } from '@testing-library/react';
@@ -22,10 +23,12 @@ const SITE_ID = 123;
 const SITE_SLUG = 'ecom-example.wordpress.com';
 const REDIRECT_FLAG = 'entrepreneur/redirect-to-commerce-purchase';
 
-const mockIsEnabled = jest.fn();
+// `@automattic/calypso-products` calls `isEnabled` while it loads, before a top-level
+// `mockIsEnabled` would exist, so the mock is created inside the factory.
 jest.mock( '@automattic/calypso-config', () =>
-	Object.assign( jest.fn(), { isEnabled: ( flag: string ) => mockIsEnabled( flag ) } )
+	Object.assign( jest.fn(), { isEnabled: jest.fn( () => false ) } )
 );
+const mockIsEnabled = isEnabled as jest.Mock;
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( {
@@ -144,8 +147,14 @@ describe( 'Entrepreneur Flow', () => {
 		} );
 
 		it.each( [
-			[ 'the Playground publish path', `/${ entrepreneurFlow.name }/start?from=playground-publish` ],
-			[ 'a step after site creation', `/${ entrepreneurFlow.name }/${ STEPS.WAIT_FOR_ATOMIC.slug }` ],
+			[
+				'the Playground publish path',
+				`/${ entrepreneurFlow.name }/start?from=playground-publish`,
+			],
+			[
+				'a step after site creation',
+				`/${ entrepreneurFlow.name }/${ STEPS.WAIT_FOR_ATOMIC.slug }`,
+			],
 		] )( 'does not redirect on %s', ( _label, path ) => {
 			renderAssertConditions( path );
 
