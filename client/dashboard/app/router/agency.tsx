@@ -69,15 +69,11 @@ import {
 	mayBeEligibleForPressableExpansionOffer,
 	pressableOfferLicensesQuery,
 } from '../../agency/overview/use-pressable-offer-eligibility';
-import {
-	getLeadMatchingSectionTitle,
-	isLeadMatchingSection,
-} from '../../agency/partner-directory/lead-matching/sections';
 import { hasApprovedDirectory } from '../../agency/partner-directory/lib';
 import {
 	PARTNER_DIRECTORY_DETAILS_SEGMENT,
 	PARTNER_DIRECTORY_EXPERTISE_SEGMENT,
-	PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE,
+	PARTNER_DIRECTORY_LEAD_MATCHING_PREFERENCES_SEGMENT,
 	PARTNER_DIRECTORY_LEAD_MATCHING_SEGMENT,
 	PARTNER_DIRECTORY_ROUTE,
 } from '../../agency/partner-directory/paths';
@@ -463,33 +459,25 @@ const agencyPartnerDirectoryLeadMatchingIndexRoute = createRoute( {
 	)
 );
 
-// `/partner-directory/lead-matching/$section` – one section of the preferences
-export const agencyPartnerDirectoryLeadMatchingSectionRoute = createRoute( {
-	head: ( { params } ) => ( {
+// `/partner-directory/lead-matching/preferences` – every lead matching question on one page
+export const agencyPartnerDirectoryLeadMatchingPreferencesRoute = createRoute( {
+	head: () => ( {
 		meta: [
 			{
-				title: isLeadMatchingSection( params.section )
-					? getLeadMatchingSectionTitle( params.section )
-					: '',
+				title: __( 'Lead matching preferences' ),
 			},
 		],
 	} ),
 	getParentRoute: () => agencyPartnerDirectoryLeadMatchingRoute,
-	path: '$section',
-	beforeLoad: ( { params } ) => {
-		if ( ! isLeadMatchingSection( params.section ) ) {
-			throw dashboardRedirect( { to: PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE } );
-		}
-	},
+	path: PARTNER_DIRECTORY_LEAD_MATCHING_PREFERENCES_SEGMENT,
 } ).lazy( () =>
-	import( '../../agency/partner-directory/lead-matching/section-route' ).then( ( d ) =>
-		createLazyRoute( 'agency-partner-directory-lead-matching-section' )( {
+	import( '../../agency/partner-directory/lead-matching/preferences' ).then( ( d ) =>
+		createLazyRoute( 'agency-partner-directory-lead-matching-preferences' )( {
 			component: d.default,
 		} )
 	)
 );
 
-// `/marketplace/products` – à la carte products an agency can buy or refer
 // `/products` – à la carte products an agency can buy or refer
 export const marketplaceProductsRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_marketplace' },
@@ -2259,7 +2247,7 @@ export const createAgencyRoutes = () => [
 			agencyPartnerDirectoryDetailsRoute,
 			agencyPartnerDirectoryLeadMatchingRoute.addChildren( [
 				agencyPartnerDirectoryLeadMatchingIndexRoute,
-				agencyPartnerDirectoryLeadMatchingSectionRoute,
+				agencyPartnerDirectoryLeadMatchingPreferencesRoute,
 			] ),
 		] ),
 		marketplaceRoute,

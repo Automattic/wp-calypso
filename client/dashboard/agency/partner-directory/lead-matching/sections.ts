@@ -19,10 +19,6 @@ export const LEAD_MATCHING_SECTIONS = [
 
 export type LeadMatchingSection = ( typeof LEAD_MATCHING_SECTIONS )[ number ];
 
-export function isLeadMatchingSection( value: string ): value is LeadMatchingSection {
-	return ( LEAD_MATCHING_SECTIONS as readonly string[] ).includes( value );
-}
-
 export function getLeadMatchingSectionTitle( section: LeadMatchingSection ): string {
 	switch ( section ) {
 		case 'availability':
@@ -55,12 +51,6 @@ const SECTION_REQUIRED_FIELDS: Record< LeadMatchingSection, RequiredLeadMatching
 	'site-management': [ 'ongoingRelationships' ],
 };
 
-export function getSectionRequiredFields(
-	section: LeadMatchingSection
-): RequiredLeadMatchingField[] {
-	return SECTION_REQUIRED_FIELDS[ section ];
-}
-
 /**
  * Whether the saved preferences answer the section. The availability toggle
  * is saved on the public profile and always has a value; the hosting
@@ -83,46 +73,6 @@ export function isSectionAnswered(
 	}
 
 	return SECTION_REQUIRED_FIELDS[ section ].every( ( field ) => formData[ field ].length > 0 );
-}
-
-/**
- * The section that still needs an answer to become eligible, if any.
- */
-export function getNextSectionToAnswer(
-	formData: LeadMatchingFormData
-): LeadMatchingSection | undefined {
-	return LEAD_MATCHING_SECTIONS.find(
-		( section ) => section !== 'hosting-and-platforms' && ! isSectionAnswered( section, formData )
-	);
-}
-
-const getRequiredFieldMessages = (): Record< RequiredLeadMatchingField, string > => ( {
-	regions: __( 'Please select at least one region' ),
-	languages: __( 'Please select at least one language' ),
-	businessTypes: __( 'Please select at least one business type' ),
-	idealBusinessTypes: __( 'Please select at least one ideal business type' ),
-	companySizes: __( 'Please select at least one company size' ),
-	projectTypes: __( 'Please select at least one project type' ),
-	serviceLevels: __( 'Please select at least one service level' ),
-	budgetLevels: __( 'Please select at least one budget level' ),
-	timingPreferences: __( 'Please select at least one timing preference' ),
-	decisionProcesses: __( 'Please select at least one decision process' ),
-	ongoingRelationships: __( 'Please select at least one relationship type' ),
-} );
-
-export type LeadMatchingValidationErrors = Partial< Record< RequiredLeadMatchingField, string > >;
-
-export function validateLeadMatchingSection(
-	section: LeadMatchingSection,
-	formData: LeadMatchingFormData
-): LeadMatchingValidationErrors {
-	const messages = getRequiredFieldMessages();
-
-	return Object.fromEntries(
-		SECTION_REQUIRED_FIELDS[ section ]
-			.filter( ( field ) => formData[ field ].length === 0 )
-			.map( ( field ) => [ field, messages[ field ] ] )
-	);
 }
 
 export type LeadMatchingStatus = 'not-accepting' | 'not-started' | 'in-progress' | 'eligible';

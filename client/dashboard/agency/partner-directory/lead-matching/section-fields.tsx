@@ -4,7 +4,6 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Text } from '../../../components/text';
 import { getAvailableLanguages } from '../options';
 import TokenSelector from '../token-selector';
 import {
@@ -23,7 +22,7 @@ import {
 	getTimingPreferenceOptions,
 } from './options';
 import type { LeadMatchingFormData } from './form-data';
-import type { LeadMatchingSection, LeadMatchingValidationErrors } from './sections';
+import type { LeadMatchingSection } from './sections';
 
 type ListField = {
 	[ K in keyof LeadMatchingFormData ]: LeadMatchingFormData[ K ] extends string[] ? K : never;
@@ -36,7 +35,6 @@ type ToggleField = {
 interface Props {
 	section: Exclude< LeadMatchingSection, 'availability' >;
 	formData: LeadMatchingFormData;
-	errors: LeadMatchingValidationErrors;
 	onChange: ( fields: Partial< LeadMatchingFormData > ) => void;
 }
 
@@ -44,12 +42,7 @@ interface Props {
  * The questions of one lead matching section, in the order and wording of
  * the full lead matching form.
  */
-export default function LeadMatchingSectionFields( {
-	section,
-	formData,
-	errors,
-	onChange,
-}: Props ) {
+export default function LeadMatchingSectionFields( { section, formData, onChange }: Props ) {
 	const selectAllThatApply = __( 'Select all that apply.' );
 
 	const tokens = (
@@ -58,8 +51,6 @@ export default function LeadMatchingSectionFields( {
 		options: Record< string, string >,
 		{ sort = false, help = selectAllThatApply }: { sort?: boolean; help?: string } = {}
 	) => {
-		const error = errors[ field as keyof LeadMatchingValidationErrors ];
-
 		return (
 			<VStack spacing={ 2 } data-field-name={ field }>
 				<TokenSelector
@@ -70,7 +61,6 @@ export default function LeadMatchingSectionFields( {
 					sortSuggestions={ sort }
 					onChange={ ( value ) => onChange( { [ field ]: value } ) }
 				/>
-				{ error && <Text intent="error">{ error }</Text> }
 			</VStack>
 		);
 	};
@@ -91,7 +81,6 @@ export default function LeadMatchingSectionFields( {
 		placeholder: string,
 		options: Record< string, string >
 	) => {
-		const error = errors[ field as keyof LeadMatchingValidationErrors ];
 		const value =
 			field === 'serviceLevels' ? ( formData.serviceLevels[ 0 ] ?? '' ) : formData[ field ];
 
@@ -118,7 +107,6 @@ export default function LeadMatchingSectionFields( {
 						)
 					}
 				/>
-				{ error && <Text intent="error">{ error }</Text> }
 			</VStack>
 		);
 	};
