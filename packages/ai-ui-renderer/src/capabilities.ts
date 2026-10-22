@@ -28,7 +28,8 @@ function assertSameNames(
 }
 
 /**
- * Throws when a catalog definition has no ID, or its code doesn't match its document.
+ * Throws when a catalog definition has no ID, or its code doesn't match its document: each of its
+ * components and functions needs an implementation, and nothing else.
  * `createInteractiveUiCatalog()` rejects those, so check catalogs with it before advertising them.
  */
 export function assertInteractiveUiCatalogDefinition( {
@@ -37,16 +38,20 @@ export function assertInteractiveUiCatalogDefinition( {
 	functions = {},
 }: InteractiveUiCatalogDefinition ) {
 	// Definitions often come from other bundles, unchecked by TypeScript.
-	if ( typeof catalog?.catalogId !== 'string' ) {
+	if ( typeof catalog?.catalogId !== 'string' || ! catalog.catalogId ) {
 		throw new Error( 'An interactive UI catalog needs a `catalogId`.' );
 	}
 
 	assertSameNames(
 		'component',
 		Object.keys( catalog.components ?? {} ),
-		Object.keys( components )
+		Object.keys( components ).filter( ( name ) => components[ name ] )
 	);
-	assertSameNames( 'function', Object.keys( catalog.functions ?? {} ), Object.keys( functions ) );
+	assertSameNames(
+		'function',
+		Object.keys( catalog.functions ?? {} ),
+		Object.keys( functions ).filter( ( name ) => typeof functions[ name ] === 'function' )
+	);
 }
 
 /**

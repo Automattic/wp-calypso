@@ -66,6 +66,21 @@ it.each< { problem: string; definition: InteractiveUiCatalogDefinition; error: s
 		error: "The interactive UI function hostExtra isn't in its catalog document.",
 	},
 	{
+		problem: 'a function whose implementation isn’t a function',
+		definition: {
+			...hostCatalog,
+			functions: {
+				hostOpenHelpCenter: undefined,
+			} as unknown as InteractiveUiCatalogDefinition[ 'functions' ],
+		},
+		error: 'The interactive UI function hostOpenHelpCenter has no implementation.',
+	},
+	{
+		problem: 'a catalog with an empty ID',
+		definition: { ...hostCatalog, catalog: { ...hostCatalog.catalog, catalogId: '' } },
+		error: 'An interactive UI catalog needs a `catalogId`.',
+	},
+	{
 		problem: 'a catalog without an ID',
 		definition: { catalog: {} } as InteractiveUiCatalogDefinition,
 		error: 'An interactive UI catalog needs a `catalogId`.',

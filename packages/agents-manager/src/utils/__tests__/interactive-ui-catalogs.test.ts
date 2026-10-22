@@ -61,11 +61,12 @@ it( 'keeps only valid provider catalogs, the first with each ID', () => {
 		createCatalog( AGENTS_MANAGER_CATALOG_ID ),
 		createCatalog( BASIC_CATALOG_ID ),
 		createCatalog( 'urn:broken:v1', {} ),
+		createCatalog( '' ),
 		{} as InteractiveUiCatalogDefinition,
 	] );
 
 	expect( catalogs ).toEqual( [ first ] );
-	expect( consoleError ).toHaveBeenCalledTimes( 5 );
+	expect( consoleError ).toHaveBeenCalledTimes( 6 );
 	expect( consoleError ).toHaveBeenCalledWith(
 		'[AgentsManager] Skipped an interactive UI catalog:',
 		new Error( 'The interactive UI component WooAiProductCard has no implementation.' )
