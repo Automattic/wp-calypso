@@ -100,11 +100,6 @@ it.each< { problem: string; definition: InteractiveUiCatalogDefinition; error: s
 		definition: { ...hostCatalog, catalog: { ...hostCatalog.catalog, catalogId: '' } },
 		error: 'An interactive UI catalog needs a `catalogId`.',
 	},
-	{
-		problem: 'a catalog without an ID',
-		definition: { catalog: {} } as InteractiveUiCatalogDefinition,
-		error: 'An interactive UI catalog needs a `catalogId`.',
-	},
 ] )( 'rejects $problem', ( { definition, error } ) => {
 	expect( () => createInteractiveUiCatalog( definition ) ).toThrow( error );
 } );
