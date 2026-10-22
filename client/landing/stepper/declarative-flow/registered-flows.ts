@@ -106,9 +106,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 	'update-design': () =>
 		import( /* webpackChunkName: "update-design-flow" */ './flows/update-design/update-design' ),
 
-	'update-options': () =>
-		import( /* webpackChunkName: "update-options-flow" */ './flows/update-options/update-options' ),
-
 	[ DOMAIN_AND_PLAN_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "domain-and-plan-flow" */ './flows/domain-and-plan/domain-and-plan'

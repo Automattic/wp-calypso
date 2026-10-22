@@ -38,23 +38,8 @@ export const getSetupNewsletterTask: TaskAction = ( task, flow, context ): Task 
 	};
 };
 
-export const getSetupGeneralTask: TaskAction = ( task, flow, context ): Task => {
-	const { siteSlug } = context;
-
-	return {
-		...task,
-		disabled: false,
-		calypso_path: addQueryArgs( '/setup/update-options/options', {
-			siteSlug,
-			flowToReturnTo: flow,
-		} ),
-		useCalypsoPath: true,
-	};
-};
-
 export const actions = {
 	setup_free: getSetupFreeTask,
 	setup_blog: getSetupBlogTask,
 	setup_newsletter: getSetupNewsletterTask,
-	setup_general: getSetupGeneralTask,
 };

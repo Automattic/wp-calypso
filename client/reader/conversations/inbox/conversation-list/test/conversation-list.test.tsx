@@ -3,10 +3,13 @@
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { ConversationList } from '../conversation-list';
-import { groupNotesByPost } from '../group-notes';
-import { makeNote } from './helpers';
+import { ConversationList } from '..';
+import { groupNotesByPost } from '../../group-notes';
+import { makeNote } from '../../test/helpers';
+import { filterConversations } from '../filter-conversations';
+import type { InboxTab } from '../tabs';
 
 const conversations = groupNotesByPost( [
 	makeNote( { id: 1, postId: 100, title: 'Unread post', commenter: 'Ana', read: 0 } ),
@@ -14,20 +17,50 @@ const conversations = groupNotesByPost( [
 	makeNote( { id: 3, postId: 200, title: 'Read post', commenter: 'Carla', read: 1 } ),
 ] );
 
-const renderList = ( props: Partial< React.ComponentProps< typeof ConversationList > > = {} ) => {
-	const onSelect = jest.fn();
-	renderWithProvider(
+function ControlledList( props: Partial< React.ComponentProps< typeof ConversationList > > ) {
+	const [ tab, setTab ] = useState< InboxTab >( 'all' );
+	const [ search, setSearch ] = useState( '' );
+	const [ isShortcutsOpen, setIsShortcutsOpen ] = useState( false );
+	const source = props.conversations ?? conversations;
+	return (
 		<ConversationList
-			conversations={ conversations }
+			unreadCount={ source.reduce(
+				( total, { unreadNoteIds } ) => total + unreadNoteIds.length,
+				0
+			) }
 			isLoading={ false }
-			onSelect={ onSelect }
+			tab={ tab }
+			onTabChange={ setTab }
+			search={ search }
+			onSearchChange={ setSearch }
+			isShortcutsOpen={ isShortcutsOpen }
+			onShortcutsToggle={ setIsShortcutsOpen }
+			onSelect={ jest.fn() }
 			{ ...props }
+			conversations={ filterConversations( source, tab, search ) }
 		/>
 	);
-	return { onSelect };
+}
+
+const renderList = ( props: Partial< React.ComponentProps< typeof ConversationList > > = {} ) => {
+	const onSelect = jest.fn();
+	const { rerender } = renderWithProvider( <ControlledList onSelect={ onSelect } { ...props } /> );
+	return {
+		onSelect,
+		rerender: ( nextProps: typeof props ) =>
+			rerender( <ControlledList onSelect={ onSelect } { ...nextProps } /> ),
+	};
 };
 
 describe( 'ConversationList', () => {
+	let scrollIntoView: jest.Mock;
+
+	beforeEach( () => {
+		// jsdom does not implement scrollIntoView.
+		scrollIntoView = jest.fn();
+		window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+	} );
+
 	it( 'lists one item per post under a day header', () => {
 		renderList();
 
@@ -85,6 +118,7 @@ describe( 'ConversationList', () => {
 
 		await user.click( screen.getByRole( 'button', { name: /^Read post/ } ) );
 
+		expect( onSelect ).toHaveBeenCalledTimes( 1 );
 		expect( onSelect ).toHaveBeenCalledWith( expect.objectContaining( { postId: 200 } ) );
 	} );
 
@@ -124,5 +158,58 @@ describe( 'ConversationList', () => {
 		renderList( { conversations: [] } );
 
 		expect( screen.getByText( 'No conversations yet.' ) ).toBeVisible();
+	} );
+
+	it( 'lists the keyboard shortcuts from the header button', async () => {
+		const user = userEvent.setup();
+		renderList();
+
+		await user.click( screen.getByRole( 'button', { name: 'Keyboard shortcuts' } ) );
+
+		expect( screen.getByText( 'View unread' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Toggle shortcuts menu' ) ).toBeInTheDocument();
+	} );
+
+	it( 'scrolls the selected conversation into view', () => {
+		renderList( { selectedKey: conversations[ 1 ].key } );
+
+		expect( scrollIntoView ).toHaveBeenCalledTimes( 1 );
+		expect( scrollIntoView ).toHaveBeenCalledWith( { block: 'nearest' } );
+	} );
+
+	it( 'moves the focus to a conversation selected from the keyboard', () => {
+		const { rerender } = renderList( { selectedKey: conversations[ 0 ].key } );
+
+		rerender( { selectedKey: conversations[ 1 ].key } );
+
+		expect( screen.getByRole( 'button', { name: /^Read post/ } ) ).toHaveFocus();
+	} );
+
+	it( 'leaves the focus alone when it is outside the list', async () => {
+		const user = userEvent.setup();
+		const { rerender } = renderList( { selectedKey: conversations[ 0 ].key } );
+
+		await user.click( screen.getByRole( 'searchbox' ) );
+		rerender( { selectedKey: conversations[ 1 ].key } );
+
+		expect( screen.getByRole( 'searchbox' ) ).toHaveFocus();
+	} );
+
+	it( 'does not take the focus on the first render', () => {
+		renderList( { selectedKey: conversations[ 1 ].key } );
+
+		expect( screen.getByRole( 'button', { name: /^Read post/ } ) ).not.toHaveFocus();
+	} );
+
+	it( 'opens the conversation that Tab moves to', async () => {
+		const user = userEvent.setup();
+		const { onSelect } = renderList( { selectedKey: conversations[ 0 ].key } );
+
+		await user.click( screen.getByRole( 'button', { name: /^Unread post/ } ) );
+		onSelect.mockClear();
+		await user.tab();
+
+		expect( onSelect ).toHaveBeenCalledTimes( 1 );
+		expect( onSelect ).toHaveBeenCalledWith( expect.objectContaining( { postId: 200 } ) );
 	} );
 } );

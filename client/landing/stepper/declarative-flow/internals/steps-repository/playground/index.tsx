@@ -41,6 +41,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 				step: 'playground',
 				blueprint: getBlueprintLabelForTracking( query ),
 				intent: DEFAULT_PLAN_INTENT,
+				is_woocommerce_intent: isWooCommerceIntent,
 			} );
 
 			submit();
