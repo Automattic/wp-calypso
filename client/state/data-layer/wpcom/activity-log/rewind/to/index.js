@@ -45,7 +45,8 @@ const requestRewind = ( action, payload ) =>
 export const requestRestore = ( action ) =>
 	requestRewind( action, {
 		types: action.args,
-		...( action.acknowledgeThreats ? { acknowledge_threats: true } : {} ),
+		// Always sent, so VaultPress holds this restore to the known-threats acknowledgement.
+		acknowledge_threats: !! action.acknowledgeThreats,
 	} );
 
 export const requestGranularRestore = ( action ) =>
@@ -53,7 +54,8 @@ export const requestGranularRestore = ( action ) =>
 		types: 'paths',
 		include_path_list: action.includePaths,
 		...( action.excludePaths ? { exclude_path_list: action.excludePaths } : {} ),
-		...( action.acknowledgeThreats ? { acknowledge_threats: true } : {} ),
+		// Always sent, so VaultPress holds this restore to the known-threats acknowledgement.
+		acknowledge_threats: !! action.acknowledgeThreats,
 	} );
 
 const requestClone = ( action ) => requestRewind( action, action.payload );

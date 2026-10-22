@@ -487,7 +487,7 @@ test( 'renders no link when the caller supplies no restore route', async () => {
 	expect( screen.queryByRole( 'link', { name: /^Restore .+ instead$/ } ) ).not.toBeInTheDocument();
 } );
 
-describe( 'sends acknowledge_threats only when acknowledged', () => {
+describe( 'always sends acknowledge_threats, true only when acknowledged', () => {
 	test( 'sends it after the box is ticked', async () => {
 		const user = userEvent.setup();
 		mockBackups( { known_threats: knownThreats( 3 ) } );
@@ -505,12 +505,12 @@ describe( 'sends acknowledge_threats only when acknowledged', () => {
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
-	test( 'omits it for backups without known threats', async () => {
+	test( 'sends false for backups without known threats', async () => {
 		const user = userEvent.setup();
 		mockBackups( { known_threats: knownThreats( 0 ) } );
 		const scope = nock( API_BASE )
 			.post( restorePath, ( body ) => {
-				expect( body ).not.toHaveProperty( 'acknowledge_threats' );
+				expect( body.acknowledge_threats ).toBe( false );
 				return true;
 			} )
 			.reply( 200, { restore_id: '42' } );
@@ -598,12 +598,12 @@ test( 'granular form sends acknowledge_threats after the box is ticked', async (
 	await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 } );
 
-test( 'granular form omits acknowledge_threats for backups without known threats', async () => {
+test( 'granular form sends acknowledge_threats false for backups without known threats', async () => {
 	const user = userEvent.setup();
 	mockBackups( { known_threats: knownThreats( 0 ) } );
 	const scope = nock( API_BASE )
 		.post( restorePath, ( body ) => {
-			expect( body ).not.toHaveProperty( 'acknowledge_threats' );
+			expect( body.acknowledge_threats ).toBe( false );
 			return true;
 		} )
 		.reply( 200, { restore_id: '42' } );

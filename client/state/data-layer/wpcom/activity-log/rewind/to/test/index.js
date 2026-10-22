@@ -34,12 +34,12 @@ describe( 'requestRestore', () => {
 		expect( body ).toEqual( expect.objectContaining( { types, acknowledge_threats: true } ) );
 	} );
 
-	test( 'requestRestore omits acknowledge_threats otherwise', () => {
+	test( 'requestRestore sends acknowledge_threats false otherwise', () => {
 		const unacknowledged = requestRestore( rewindRestore( siteId, timestamp, types, false ) );
 		const legacyCall = requestRestore( rewindRestore( siteId, timestamp, types ) );
 
-		expect( unacknowledged.body ).not.toHaveProperty( 'acknowledge_threats' );
-		expect( legacyCall.body ).not.toHaveProperty( 'acknowledge_threats' );
+		expect( unacknowledged.body.acknowledge_threats ).toBe( false );
+		expect( legacyCall.body.acknowledge_threats ).toBe( false );
 		expect( legacyCall.body ).toEqual( expect.objectContaining( { types, force_rewind: true } ) );
 	} );
 } );
@@ -59,14 +59,14 @@ describe( 'requestGranularRestore', () => {
 		);
 	} );
 
-	test( 'omits acknowledge_threats otherwise', () => {
+	test( 'sends acknowledge_threats false otherwise', () => {
 		const unacknowledged = requestGranularRestore(
 			rewindGranularRestore( siteId, timestamp, 'f1', '', false )
 		);
 		const legacyCall = requestGranularRestore( rewindGranularRestore( siteId, timestamp, 'f1' ) );
 
-		expect( unacknowledged.body ).not.toHaveProperty( 'acknowledge_threats' );
-		expect( legacyCall.body ).not.toHaveProperty( 'acknowledge_threats' );
+		expect( unacknowledged.body.acknowledge_threats ).toBe( false );
+		expect( legacyCall.body.acknowledge_threats ).toBe( false );
 		expect( legacyCall.body ).toEqual(
 			expect.objectContaining( { types: 'paths', include_path_list: 'f1', force_rewind: true } )
 		);

@@ -8,7 +8,7 @@ const config = { themes: true, sqls: true };
 describe( 'initiateSiteBackupRestore', () => {
 	afterEach( () => nock.cleanAll() );
 
-	it( 'sends acknowledge_threats only when acknowledged', async () => {
+	it( 'always sends acknowledge_threats, true only when acknowledged', async () => {
 		const bodies: Record< string, unknown >[] = [];
 		const scope = nock( BASE )
 			.post( PATH, ( body ) => {
@@ -31,16 +31,21 @@ describe( 'initiateSiteBackupRestore', () => {
 			force_rewind: true,
 			acknowledge_threats: true,
 		} );
-		expect( bodies[ 1 ] ).not.toHaveProperty( 'acknowledge_threats' );
-		expect( bodies[ 2 ] ).not.toHaveProperty( 'acknowledge_threats' );
-		expect( bodies[ 2 ] ).toEqual( { types: config, calypso_env: 'test', force_rewind: true } );
+		expect( bodies[ 1 ].acknowledge_threats ).toBe( false );
+		expect( bodies[ 2 ].acknowledge_threats ).toBe( false );
+		expect( bodies[ 2 ] ).toEqual( {
+			types: config,
+			calypso_env: 'test',
+			force_rewind: true,
+			acknowledge_threats: false,
+		} );
 	} );
 } );
 
 describe( 'initiateSiteGranularRestore', () => {
 	afterEach( () => nock.cleanAll() );
 
-	it( 'sends acknowledge_threats only when acknowledged', async () => {
+	it( 'always sends acknowledge_threats, true only when acknowledged', async () => {
 		const bodies: Record< string, unknown >[] = [];
 		const scope = nock( BASE )
 			.post( PATH, ( body ) => {
@@ -65,12 +70,13 @@ describe( 'initiateSiteGranularRestore', () => {
 			force_rewind: true,
 			acknowledge_threats: true,
 		} );
-		expect( bodies[ 1 ] ).not.toHaveProperty( 'acknowledge_threats' );
+		expect( bodies[ 1 ].acknowledge_threats ).toBe( false );
 		expect( bodies[ 2 ] ).toEqual( {
 			types: 'paths',
 			include_path_list: 'f1,f2',
 			calypso_env: 'test',
 			force_rewind: true,
+			acknowledge_threats: false,
 		} );
 	} );
 } );

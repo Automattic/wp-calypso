@@ -24,7 +24,8 @@ export async function initiateSiteBackupRestore(
 			types: restoreConfig,
 			calypso_env: calypsoEnv,
 			force_rewind: true,
-			...( acknowledgeThreats ? { acknowledge_threats: true } : {} ),
+			// Always sent, so VaultPress holds this restore to the known-threats acknowledgement.
+			acknowledge_threats: !! acknowledgeThreats,
 		},
 	} );
 
@@ -56,7 +57,8 @@ export async function initiateSiteGranularRestore(
 			...( granularConfig.excludePaths ? { exclude_path_list: granularConfig.excludePaths } : {} ),
 			calypso_env: calypsoEnv,
 			force_rewind: true,
-			...( acknowledgeThreats ? { acknowledge_threats: true } : {} ),
+			// Always sent, so VaultPress holds this restore to the known-threats acknowledgement.
+			acknowledge_threats: !! acknowledgeThreats,
 		},
 	} );
 
