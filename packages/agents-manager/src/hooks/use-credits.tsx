@@ -580,8 +580,17 @@ export function useCredits( {
 		recordCreditsEvent( 'calypso_agents_manager_credits_notice_shown', {
 			user_role: userRole,
 			cta_type: ctaType,
+			ref: purchaseKind ? CREDITS_UPGRADE_SOURCE : 'none',
 		} );
-	}, [ shownNoticeState, isAwaitingAccess, scopeIdentity, userRole, ctaType, recordCreditsEvent ] );
+	}, [
+		shownNoticeState,
+		isAwaitingAccess,
+		scopeIdentity,
+		userRole,
+		ctaType,
+		purchaseKind,
+		recordCreditsEvent,
+	] );
 
 	// A known zero opens the existing details without discarding the draft.
 	const beforeSubmit = useCallback( () => {
