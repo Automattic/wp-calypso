@@ -23,10 +23,10 @@ const EDITOR_PACKAGES = [
 ];
 
 // The renderer's main entry carries A2UI; its `capabilities` entry and styles are light.
-const LAZY_MODULES = [ '@automattic/ai-ui-renderer' ];
+const RENDERER_ENTRY = '@automattic/ai-ui-renderer';
 
 const isLazyOnly = ( specifier ) =>
-	LAZY_MODULES.includes( specifier ) ||
+	specifier === RENDERER_ENTRY ||
 	EDITOR_PACKAGES.some( ( name ) => specifier === name || specifier.startsWith( `${ name }/` ) );
 
 const isLocalImport = ( specifier ) =>
