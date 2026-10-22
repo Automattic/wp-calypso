@@ -134,6 +134,12 @@ it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () 
 					properties: { name: { type: 'string' } },
 					required: [ 'name' ],
 				},
+				WooAiDivider: {},
+				WooAiBadge: {
+					type: 'object',
+					properties: { component: { const: 'WooAiBadge' } },
+					required: [ 'component' ],
+				},
 			},
 			functions: {
 				wooAiOpenProduct: { type: 'object' },
@@ -160,6 +166,15 @@ it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () 
 							type: 'object',
 							properties: { name: { type: 'string' }, component: { const: 'WooAiProductCard' } },
 							required: [ 'component', 'name' ],
+						},
+						WooAiDivider: {
+							properties: { component: { const: 'WooAiDivider' } },
+							required: [ 'component' ],
+						},
+						WooAiBadge: {
+							type: 'object',
+							properties: { component: { const: 'WooAiBadge' } },
+							required: [ 'component' ],
 						},
 					},
 					functions: {
