@@ -31,9 +31,14 @@ test.describe(
 					await testAccount.logInViaLoginPage( page );
 				} );
 
-				await test.step( 'Then I am on the home page', async function () {
-					await page.waitForURL( /home/ );
-					await expect( page.getByRole( 'heading', { name: 'My Home' } ) ).toBeVisible();
+				// Simple sites without a saved admin interface style default to Classic, so the
+				// account lands on its site's wp-admin Dashboard rather than Calypso's My Home.
+				await test.step( 'Then I am on my landing page', async function () {
+					await expect(
+						page
+							.getByRole( 'heading', { name: 'My Home' } )
+							.or( page.getByRole( 'heading', { name: 'Dashboard', level: 1 } ) )
+					).toBeVisible( { timeout: 30_000 } );
 				} );
 			} );
 		} );

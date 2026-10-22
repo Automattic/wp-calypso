@@ -53,7 +53,7 @@ function ConfigSnippet( {
 								/* translators: %(file)s is the config file name */
 								__( 'Copy this configuration into %(file)s.' ),
 								{ file }
-						  )
+							)
 						: __( 'Copy this configuration into your client’s MCP settings.' ) }
 				</Text>
 				<Button
@@ -174,6 +174,7 @@ export default function McpConnectAgent( {
 									<Button
 										style={ { width: 'fit-content' } }
 										variant="primary"
+										size="compact"
 										href={ selectedAgent.installAction.deepLink }
 										onClick={ onInstallActionClick }
 									>

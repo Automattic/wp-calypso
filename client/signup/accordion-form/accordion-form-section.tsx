@@ -1,6 +1,6 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { useTranslate, useRtl } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { AccordionSectionProps } from './types';
 
 interface AccordionFormSectionProps< T > extends AccordionSectionProps< T > {
@@ -57,7 +57,7 @@ const ButtonsContainer = styled.div`
 	margin-top: 4px;
 	align-items: center;
 	display: flex;
-	gap: 24px;
+	gap: 16px;
 `;
 
 const SkipLink = styled.a< { disabled?: boolean } >`
@@ -96,14 +96,10 @@ const ActionButton = styled( Button )`
 	border-radius: 5px;
 	padding: 10px 0;
 	width: 177px;
-	.gridicon {
-		margin-left: 10px;
-	}
 `;
 
 export default function AccordionFormSection< T >( props: AccordionFormSectionProps< T > ) {
 	const translate = useTranslate();
-	const isRTL = useRtl();
 
 	return (
 		<Section>
@@ -124,18 +120,17 @@ export default function AccordionFormSection< T >( props: AccordionFormSectionPr
 					{ props.component ? props.component : props.children }
 					<ButtonsContainer>
 						<ActionButton
-							onClick={ props.onSave }
-							disabled={ props.blockNavigation || props.isSaving || ! props.hasUnsavedChanges }
-						>
-							{ props.isSaving ? translate( 'Saving' ) : translate( 'Save Changes' ) }
-						</ActionButton>
-						<ActionButton
-							primary={ props.showSubmit }
+							primary
 							onClick={ props.onNext }
 							disabled={ props.blockNavigation || props.isSaving }
 						>
 							{ props.showSubmit ? translate( 'Submit' ) : translate( 'Next' ) }
-							{ ! props.showSubmit && <Gridicon icon={ isRTL ? 'arrow-left' : 'arrow-right' } /> }
+						</ActionButton>
+						<ActionButton
+							onClick={ props.onSave }
+							disabled={ props.blockNavigation || props.isSaving || ! props.hasUnsavedChanges }
+						>
+							{ props.isSaving ? translate( 'Saving' ) : translate( 'Save Changes' ) }
 						</ActionButton>
 						{ props.showSkip && ! props.showSubmit && (
 							<SkipLink

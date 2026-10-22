@@ -473,8 +473,7 @@ type ActorListInfiniteData = InfiniteData< AtmosphereScopedProfilesPage >;
  * (matches `<FollowButton>`'s gating on `mutation.isPending`).
  */
 type ActorListViewerPatch =
-	| { following: null; following_rkey: null }
-	| { following: string; following_rkey: string };
+	{ following: null; following_rkey: null } | { following: string; following_rkey: string };
 
 /**
  * Snapshot of an actor-list row's prior viewer state, captured by
@@ -666,7 +665,7 @@ export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 								following: 'pending',
 								following_rkey: 'pending',
 							},
-					  }
+						}
 					: old
 			);
 			const actorListSnapshots = patchActorListsForSubject(
@@ -698,7 +697,7 @@ export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 								following: data.follow.uri,
 								following_rkey: data.follow.rkey,
 							},
-					  }
+						}
 					: old
 			);
 			patchActorListsForSubject( queryClient, vars.connectionId, vars.subjectDid, {
@@ -749,7 +748,7 @@ export const unfollowAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 								following: null,
 								following_rkey: null,
 							},
-					  }
+						}
 					: old
 			);
 			const actorListSnapshots = patchActorListsForSubject(
@@ -876,7 +875,7 @@ function patchAtmosphereQueryData(
 						? {
 								...page,
 								items: patchFeedItems( page.items, postUri, patch, items, seenOccurrences ),
-						  }
+							}
 						: page
 				),
 			},
@@ -1007,7 +1006,7 @@ function restoreAtmosphereQueryData(
 					? {
 							...page,
 							items: restoreFeedItems( page.items, itemSnapshots, seenOccurrences ),
-					  }
+						}
 					: page
 			),
 		};

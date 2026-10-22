@@ -227,7 +227,7 @@ export function createStreamDataFromCards(
 					return acc;
 				},
 				{ cardPosts: [], cardRecommendedSites: [], newSites: [] }
-		  )
+			)
 		: EMPTY_BUCKETS;
 	return {
 		...createStreamDataFromPosts( buckets.cardPosts, dateProperty ),
@@ -261,6 +261,11 @@ export function extractPageHandle(
 	const { date_range, meta, next_page, next_page_handle } = data;
 	if ( next_page_handle ) {
 		return { page_handle: next_page_handle };
+	}
+	// `/read/saved` leaves `next_page_handle` off its last page. Falling through
+	// to `date_range` would request one more page by `before` date.
+	if ( streamType === 'saved' ) {
+		return null;
 	}
 	if ( streamType.includes( 'rec' ) ) {
 		const offset = ( action.payload?.pageHandle?.offset ?? 0 ) + PER_FETCH;

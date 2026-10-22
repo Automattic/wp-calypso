@@ -31,14 +31,9 @@ export default async function existingPayPalPPCPProcessor(
 	if ( ! isValidTransactionData( transactionData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
-	const {
-		includeDomainDetails,
-		includeGSuiteDetails,
-		contactDetails,
-		reduxDispatch,
-		responseCart,
-	} = dataForProcessor;
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'existingPayPalPPCP' } ) );
+	const { includeDomainDetails, includeGSuiteDetails, contactDetails, responseCart } =
+		dataForProcessor;
+	recordTransactionBeginAnalytics( { paymentMethodId: 'existingPayPalPPCP' } );
 
 	const domainDetails = getDomainDetails( contactDetails, {
 		includeDomainDetails,

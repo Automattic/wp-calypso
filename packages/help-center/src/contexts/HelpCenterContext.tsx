@@ -50,7 +50,6 @@ const defaultContext: HelpCenterRequiredInformation = {
 		display_name: '',
 		email: '',
 		email_verified: false,
-		garden_site_count: 0,
 		had_hosting_trial: false,
 		has_unseen_notes: false,
 		i18n_empathy_mode: false,
@@ -117,6 +116,6 @@ export function useFeatureConfig(): HelpCenterFeatureConfig {
 	const { product = 'wpcom' } = useHelpCenterContext();
 
 	return useMemo( () => {
-		return PRODUCT_PRESETS[ product ];
+		return PRODUCT_PRESETS[ product ] ?? PRODUCT_PRESETS.wpcom;
 	}, [ product ] );
 }

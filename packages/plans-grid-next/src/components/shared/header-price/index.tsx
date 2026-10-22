@@ -32,7 +32,7 @@ import type { GridPlan } from '../../../types';
 import type { ReactNode } from 'react';
 import './style.scss';
 
-export const ALL_ENTERPRISE_LOGO_SLUGS = [
+const ALL_ENTERPRISE_LOGO_SLUGS = [
 	'slack',
 	'usa-today',
 	'salesforce',
@@ -167,7 +167,6 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		showBillingDescriptionForIncreasedRenewalPrice,
 		isExperimentVariant,
 		showFeatureCheckmarks,
-		isEnterpriseA4AIndia,
 	} = usePlansGridContext();
 
 	const pricingBadgeClassName = clsx( 'plans-grid-next-header-price__badge', {
@@ -227,7 +226,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	} );
 	let savings =
 		termVariantReferencePrice && currentPlanPrice
-			? calculateDiscountPercentage( termVariantReferencePrice, currentPlanPrice ) ?? 0
+			? ( calculateDiscountPercentage( termVariantReferencePrice, currentPlanPrice ) ?? 0 )
 			: 0;
 
 	const renderPricingBadge = (
@@ -280,10 +279,6 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	] );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
-		// India A4A test: the Enterprise card doesn't show the client logos in the price cell.
-		if ( isEnterpriseA4AIndia ) {
-			return null;
-		}
 		const hasFreePlan = visibleGridPlans.some( ( { planSlug: slug } ) => isFreePlan( slug ) );
 		const logoCount = hasFreePlan ? 7 : 9;
 		return (
@@ -316,7 +311,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						currencyCode,
 						referencePrice: compareToMonthlyPrice,
 						translate,
-				  } )
+					} )
 				: termSavingsTooltipText;
 		// Recalculate the savings for Monthly plans with introductory offers
 		// since we are comparing the introductory price with the same plan
@@ -337,7 +332,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 							? translate( 'Save %(savings)d%%', {
 									args: { savings },
 									comment: 'Example: Save 35%',
-							  } )
+								} )
 							: translate( 'Special Offer' ),
 						{ tooltipId: 'intro-offer', tooltipText: introOfferTooltipText }
 					) }
@@ -382,7 +377,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		const monthlyPrice =
 			typeof discountedPrice.monthly === 'number'
 				? discountedPrice.monthly
-				: originalPrice.monthly ?? 0;
+				: ( originalPrice.monthly ?? 0 );
 		return (
 			<div className="plans-grid-next-header-price">
 				{ ! current &&
@@ -509,7 +504,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 								comment: 'Example: Save 35%',
 							} ),
 							{ tooltipId: 'fallback-savings', tooltipText: termSavingsTooltipText }
-					  )
+						)
 					: renderPricingBadge( "' '", { isHidden: true, tooltipId: 'fallback-placeholder' } ) }
 				{ isLargeCurrency ? (
 					<div className="plans-grid-next-header-price__pricing-group is-large-currency">

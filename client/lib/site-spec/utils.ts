@@ -28,6 +28,12 @@ export interface BackButtonConfig {
 	useHistory?: boolean;
 }
 
+export interface SiteSpecCollectedContext {
+	instruction?: string;
+	data?: Record< string, string >;
+	meta?: Record< string, string >;
+}
+
 // Config structure for the client
 export interface SiteSpecConfig {
 	agentUrl?: string;
@@ -37,6 +43,11 @@ export interface SiteSpecConfig {
 	// Blueprint identifier when building from a blueprint. Forwarded by the widget
 	// to the agent (metadata.blueprint_id) so it can run a blueprint-aware interview.
 	blueprintId?: string;
+	// What the embedding page already knows about the user, handed to the widget on its first
+	// turn: `instruction` and `data` go to the agent with the first message, `meta` is stamped
+	// into the stored spec (allow-listed keys only, sanitised on the wpcom side). Runs once per
+	// mount and must be free of side effects; returning null seeds nothing.
+	collector?: () => SiteSpecCollectedContext | null | Promise< SiteSpecCollectedContext | null >;
 	theme?: {
 		// Branding
 		brandIcon?: ReactElement | string | null; // ReactElement or image URL; null hides
@@ -208,18 +219,44 @@ export function getDefaultSiteSpecConfig(): SiteSpecConfig {
  * SiteSpec configuration for a site being built from a blueprint. Extends the
  * default config with the blueprint identifier so the widget forwards it to the
  * agent (as metadata.blueprint_id), which then runs a blueprint-aware interview.
+ *
+ * Confirms on the site brief rather than the basic spec preview, like the
+ * build-wow flow: the brief is where the user edits the page set, goals and
+ * social links the blueprint's apply step carries onto the imported site.
+ *
+ * `specMeta` is what the entry URL already told us (a Zoom booking page, say). It is handed to
+ * the widget through a collector so it is stamped into the spec as `meta`, where the blueprint's
+ * configuration pass reads it; it does not open the conversation, since meta alone gives the
+ * agent nothing to say.
  * @param {Object} params            Params.
  * @param {string} params.blueprintId Blueprint identifier (numeric library id or slug).
+ * @param {Object} params.specMeta    Spec meta from the entry URL, keyed by allow-listed name.
  * @returns {SiteSpecConfig} Configuration object for the blueprint flow.
  */
 export function getBlueprintSiteSpecConfig( {
 	blueprintId,
+	specMeta,
 }: {
 	blueprintId?: string;
+	specMeta?: Record< string, string >;
 } ): SiteSpecConfig {
+	const defaultConfig = getDefaultSiteSpecConfig();
+	const meta = Object.fromEntries(
+		Object.entries( specMeta ?? {} ).filter(
+			( [ , value ] ) => typeof value === 'string' && value !== ''
+		)
+	);
+
 	return {
-		...getDefaultSiteSpecConfig(),
+		...defaultConfig,
 		...( blueprintId ? { blueprintId } : {} ),
+		...( Object.keys( meta ).length > 0 ? { collector: () => ( { meta } ) } : {} ),
+		features: {
+			...defaultConfig.features,
+			siteBrief: 'next',
+			// Social networks only, pinned for the same reason as build-wow.
+			links: 'social',
+		},
 	};
 }
 
@@ -381,11 +418,13 @@ export function getBuildWowSiteSpecConfig( {
 	siteId,
 	ref,
 	source,
+	graph,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
 	ref?: string | null;
 	source?: string | null;
+	graph?: string | null;
 } = {} ): SiteSpecConfig {
 	const buildSiteUrl = addQueryArgs( '/setup/ai-site-builder-spec/site-spec', {
 		build_wow: '1',
@@ -393,6 +432,7 @@ export function getBuildWowSiteSpecConfig( {
 		...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
 		...( ref ? { ref } : {} ),
 		...( source ? { source } : {} ),
+		...( graph ? { graph } : {} ),
 	} );
 
 	const defaultConfig = getDefaultSiteSpecConfig();

@@ -96,7 +96,7 @@ export default function SecurityConnectedApps() {
 							/>
 						),
 					},
-			  ]
+				]
 			: [];
 
 	const view = {
@@ -132,7 +132,7 @@ export default function SecurityConnectedApps() {
 							setSelectedApplicationToView( item );
 						},
 					},
-			  ]
+				]
 			: [];
 
 	return (

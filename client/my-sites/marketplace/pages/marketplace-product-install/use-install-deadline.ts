@@ -188,7 +188,7 @@ export function useInstallDeadline( {
 			: Math.min(
 					Number.isNaN( transferStartedAt ) ? waitBeganAt : transferStartedAt,
 					waitBeganAt
-			  );
+				);
 
 	const hasTransferFailed = isRunning && failureSeen;
 	// Query freshness controls the transfer anchor above, not whether the deadline runs. Otherwise

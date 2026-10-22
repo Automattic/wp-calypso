@@ -1,4 +1,5 @@
-import { PayPalConfigurationApiResponse, PayPalProvider } from '@automattic/calypso-paypal';
+import { fetchPayPalConfiguration } from '@automattic/api-core';
+import { PayPalProvider } from '@automattic/calypso-paypal';
 import {
 	PaymentProcessorResponseType,
 	useTogglePaymentMethod,
@@ -17,16 +18,11 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { PayPalLogo } from 'calypso/dashboard/components/paypal-logo';
-import wp from 'calypso/lib/wp';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { PaymentMethodLogos } from '../components/payment-method-logos';
 import { convertErrorToString, logStashEvent } from '../lib/analytics';
 
 const debug = debugFactory( 'calypso:paypal-js' );
-
-async function fetchPayPalConfiguration(): Promise< PayPalConfigurationApiResponse > {
-	return await wp.req.get( '/me/paypal-configuration' );
-}
 
 export function createPayPal( {
 	hasExistingPayPalPPCPMethods,

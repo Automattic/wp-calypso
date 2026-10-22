@@ -1,0 +1,50 @@
+import type { NotificationNote as Note } from '@automattic/api-core';
+
+const POST_TITLE_SUBJECT = ( name: string, title: string ) => {
+	const text = `${ name } commented on ${ title }`;
+	return {
+		text,
+		ranges: [
+			{
+				type: 'post',
+				indices: [ text.length - title.length, text.length ] as [ number, number ],
+				id: 1,
+			},
+		],
+	};
+};
+
+export const makeNote = ( {
+	id,
+	siteId = 10,
+	postId = 100,
+	commentId = id * 1000,
+	title = 'A post title',
+	commenter = 'Ana',
+	avatar = `https://example.com/${ commenter }.png`,
+	excerpt = 'A comment excerpt',
+	timestamp = new Date().toISOString(),
+	read = 0,
+	...overrides
+}: Partial< Note > & {
+	id: number;
+	siteId?: number;
+	postId?: number;
+	commentId?: number;
+	commenter?: string;
+	avatar?: string;
+	excerpt?: string;
+} ): Note => ( {
+	id,
+	type: 'comment',
+	read,
+	timestamp,
+	icon: avatar,
+	title: 'Comment',
+	meta: { ids: { site: siteId, post: postId, comment: commentId } },
+	subject: [ POST_TITLE_SUBJECT( commenter, title ), { text: excerpt } ],
+	body: [
+		{ type: 'user', text: commenter, media: [ { type: 'image', indices: [ 0, 0 ], url: avatar } ] },
+	],
+	...overrides,
+} );

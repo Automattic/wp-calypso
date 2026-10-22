@@ -7,7 +7,6 @@ import {
 	isBlogger,
 	isBloggerPlan,
 	isBusiness,
-	isConciergeSession,
 	isCustomDesign,
 	isDIFMProduct,
 	isDomainMapping,
@@ -36,7 +35,9 @@ import {
 	isUnlimitedThemes,
 	isVideoPress,
 	isWpComBloggerPlan,
+	isWpComBusinessPlan,
 	isWpComFreePlan,
+	isWpComMonthlyPlan,
 	TITAN_MAIL_MONTHLY_SLUG,
 	TITAN_MAIL_YEARLY_SLUG,
 	isAkismetProduct,
@@ -88,6 +89,20 @@ export function getRenewalItems( cart: ObjectWithProducts ): ResponseCartProduct
  */
 export function hasDIFMProduct( cart: ObjectWithProducts ): boolean {
 	return cart && getAllCartItems( cart ).some( isDIFMProduct );
+}
+
+/**
+ * Determines whether the shopping cart has a Business plan added from the free DIFM offer.
+ * The offer requires a WordPress.com Business plan billed yearly or longer, so a flagged
+ * monthly plan does not count.
+ */
+export function hasDIFMOfferPlan( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).some(
+		( product ) =>
+			isWpComBusinessPlan( product.product_slug ) &&
+			! isWpComMonthlyPlan( product.product_slug ) &&
+			product.extra?.difm_offer === true
+	);
 }
 
 /**
@@ -170,12 +185,6 @@ export function hasDomainRegistration( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainRegistration );
 }
 
-export function hasDomainBeingUsedForPlan( cart: ObjectWithProducts ): boolean {
-	return getDomainRegistrations( cart ).some( ( registration ) =>
-		isDomainBeingUsedForPlan( cart, registration.meta )
-	);
-}
-
 export function hasRenewalItem( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isRenewal );
 }
@@ -208,10 +217,6 @@ export function getDomainTransfers( cart: ObjectWithProducts ): ResponseCartProd
  */
 export function hasOnlyRenewalItems( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).every( ( item ) => isRenewal( item ) || isPartialCredits( item ) );
-}
-
-export function hasConciergeSession( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).some( isConciergeSession );
 }
 
 /**
@@ -459,17 +464,45 @@ function titanMailProduct(
 }
 
 /**
+ * Returns the number of mailboxes being bought. On a first purchase WordPress.com
+ * provisions exactly this many mailboxes, so it is never lower than 1.
+ */
+function getTitanNewMailboxCount( extra?: RequestCartProductExtra ): number {
+	const newQuantity = extra?.new_quantity ?? 0;
+	if ( newQuantity >= 1 ) {
+		return newQuantity;
+	}
+
+	const mailboxCount = extra?.email_users?.length ?? 0;
+	if ( mailboxCount >= 1 ) {
+		return mailboxCount;
+	}
+
+	return 1;
+}
+
+function withNewMailboxCount( properties: TitanProductProps ): TitanProductProps {
+	return {
+		...properties,
+		extra: {
+			...properties.extra,
+			new_quantity: getTitanNewMailboxCount( properties.extra ),
+		},
+	};
+}
+
+/**
  * Creates a new shopping cart item for Titan Mail Yearly.
  */
 export function titanMailYearly( properties: TitanProductProps ): MinimalRequestCartProduct {
-	return titanMailProduct( properties, TITAN_MAIL_YEARLY_SLUG );
+	return titanMailProduct( withNewMailboxCount( properties ), TITAN_MAIL_YEARLY_SLUG );
 }
 
 /**
  * Creates a new shopping cart item for Titan Mail Monthly.
  */
 export function titanMailMonthly( properties: TitanProductProps ): MinimalRequestCartProduct {
-	return titanMailProduct( properties, TITAN_MAIL_MONTHLY_SLUG );
+	return titanMailProduct( withNewMailboxCount( properties ), TITAN_MAIL_MONTHLY_SLUG );
 }
 
 export function hasGoogleApps( cart: ObjectWithProducts ): boolean {
@@ -774,15 +807,15 @@ export function shouldBundleDomainWithPlan(
 ): boolean {
 	return Boolean(
 		withPlansOnly &&
-			// not free or a cart item
-			( isDomainRegistration( suggestionOrCartItem ) ||
-				( hasSomeSlug( suggestionOrCartItem ) && isDomainMapping( suggestionOrCartItem ) ) ||
-				( suggestionOrCartItem.domain_name &&
-					! isFreeWordPressComDomain( suggestionOrCartItem ) ) ) &&
-			! isDomainBeingUsedForPlan( cart, suggestionOrCartItem.domain_name ) && // a plan in cart
-			! isNextDomainFree( cart ) && // domain credit
-			! hasPlan( cart ) && // already a plan in cart
-			( ! selectedSite || selectedSite.plan?.product_slug === 'free_plan' )
+		// not free or a cart item
+		( isDomainRegistration( suggestionOrCartItem ) ||
+			( hasSomeSlug( suggestionOrCartItem ) && isDomainMapping( suggestionOrCartItem ) ) ||
+			( suggestionOrCartItem.domain_name &&
+				! isFreeWordPressComDomain( suggestionOrCartItem ) ) ) &&
+		! isDomainBeingUsedForPlan( cart, suggestionOrCartItem.domain_name ) && // a plan in cart
+		! isNextDomainFree( cart ) && // domain credit
+		! hasPlan( cart ) && // already a plan in cart
+		( ! selectedSite || selectedSite.plan?.product_slug === 'free_plan' )
 	); // site has a plan
 }
 
@@ -816,8 +849,8 @@ export function hasToUpgradeToPayForADomain(
 export function isDomainMappingFree( selectedSite: SiteDetails | null | undefined ): boolean {
 	return Boolean(
 		selectedSite?.plan &&
-			isPlan( selectedSite.plan ) &&
-			! isBloggerPlan( selectedSite.plan.product_slug )
+		isPlan( selectedSite.plan ) &&
+		! isBloggerPlan( selectedSite.plan.product_slug )
 	);
 }
 

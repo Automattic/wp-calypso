@@ -206,7 +206,7 @@ export class PluginInstallButton extends Component {
 			: `/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
 					billingPeriod
-			  ) },${ product_slug }#step2`;
+				) },${ product_slug }#step2`;
 
 		return (
 			<span className="plugin-install-button__install embed">

@@ -68,10 +68,10 @@ export default function ThemeTierPartnerBadge( {
 						isLongLabel
 							? translate( 'Available for %(price)s/month', {
 									args: { price: subscriptionPrices.month },
-							  } )
+								} )
 							: translate( '%(price)s/month', {
 									args: { price: subscriptionPrices.month },
-							  } )
+								} )
 					}
 				/>
 			);

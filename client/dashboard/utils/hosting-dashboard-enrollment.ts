@@ -30,8 +30,7 @@ function isInRolloutCohort( userId: number | undefined ): boolean {
 }
 
 type HostingDashboardEnrollment =
-	| { enrolled: true; reason: 'opt-in' | 'forced' }
-	| { enrolled: false };
+	{ enrolled: true; reason: 'opt-in' | 'forced' } | { enrolled: false };
 
 /**
  * Is a user's default experience is the hosting dashboard, and why.

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WordPressWordmark, WordPressLogo } from '@automattic/components';
 import {
 	isDefaultLocale,
@@ -16,10 +15,6 @@ import { addQueryArgs } from 'calypso/lib/route';
 import Item from './item';
 import Masterbar from './masterbar';
 
-const loadMasterbarHelpCenter = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-help-center" */ './masterbar-help-center'
-	);
 const loadCheckout = () =>
 	import( /* webpackChunkName: "async-load-calypso-layout-masterbar-checkout" */ './checkout.tsx' );
 
@@ -105,23 +100,6 @@ class MasterbarLoggedOut extends Component {
 					comment: 'Should be shorter than ~12 chars',
 				} ) }
 			</Item>
-		);
-	}
-
-	renderHelpCenter() {
-		if ( ! isEnabled( 'help-center/logged-out' ) ) {
-			return null;
-		}
-
-		const { siteId, translate } = this.props;
-
-		return (
-			<AsyncLoad
-				require={ loadMasterbarHelpCenter }
-				siteId={ siteId }
-				tooltip={ translate( 'Help' ) }
-				placeholder={ null }
-			/>
 		);
 	}
 
@@ -253,7 +231,6 @@ class MasterbarLoggedOut extends Component {
 				) }
 				{ sectionName !== 'reader' && (
 					<div className="masterbar__login-links">
-						{ this.renderHelpCenter() }
 						{ this.renderLoginItem() }
 						{ this.renderSignupItem() }
 					</div>

@@ -119,13 +119,13 @@ export const WorkflowValidationList = ( {
 			workflowChecks.conclusion === 'success'
 				? createInterpolateElement( __( 'Your workflow <filename /> is good to go!' ), {
 						filename: <ExternalLink href={ workflowUrl }>{ workflowFile }</ExternalLink>,
-				  } )
+					} )
 				: createInterpolateElement(
 						__( 'Please edit <filename /> and fix the problems we found.' ),
 						{
 							filename: <ExternalLink href={ workflowUrl }>{ workflowFile }</ExternalLink>,
 						}
-				  );
+					);
 
 		return <Text>{ message }</Text>;
 	};

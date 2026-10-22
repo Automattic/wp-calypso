@@ -181,14 +181,14 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 					/* translators: %s: The upgrading plan name (ex.: WordPress.com Business) */
 					__( 'Upgrade to the %s plan and set up your WooCommerce store.' ),
 					productName
-			  )
+				)
 			: __( 'Upgrade to set up your WooCommerce store.' ),
 		checkoutText: productName
 			? sprintf(
 					/* translators: %s: The upgrading plan name (ex.: WordPress.com Business) */
 					__( 'Upgrade to %s' ),
 					productName
-			  )
+				)
 			: __( 'Upgrade' ),
 	};
 

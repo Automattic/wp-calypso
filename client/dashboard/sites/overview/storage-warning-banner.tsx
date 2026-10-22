@@ -3,13 +3,13 @@ import {
 	userPreferenceMutation,
 	siteMediaStorageQuery,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { sprintf, __ } from '@wordpress/i18n';
-import filesize from 'filesize';
 import { useState } from 'react';
+import { useIntlLocale } from '../../app/locale';
 import Notice from '../../components/notice';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { getStorageAlertLevel } from '../../utils/site-storage';
+import { formatStorage, getStorageAlertLevel } from '../../utils/site-storage';
 import { AddStorageModal } from '../storage/add-storage-modal';
 import type { Site } from '@automattic/api-core';
 
@@ -19,10 +19,14 @@ import type { Site } from '@automattic/api-core';
  * In-session dismissal is handled inside the component itself.
  */
 export function useShouldShowStorageWarningBanner( site: Site ) {
-	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
+	const { data: mediaStorage } = useQuery( siteMediaStorageQuery( site.ID ) );
 	const { data: isDismissedPersisted } = useSuspenseQuery(
 		userPreferenceQuery( `hosting-dashboard-overview-storage-notice-dismissed-${ site.ID }` )
 	);
+
+	if ( ! mediaStorage ) {
+		return false;
+	}
 
 	const alertLevel = getStorageAlertLevel( mediaStorage );
 	return alertLevel !== 'none' && ! ( alertLevel === 'warning' && isDismissedPersisted );
@@ -30,16 +34,21 @@ export function useShouldShowStorageWarningBanner( site: Site ) {
 
 export function StorageWarningBanner( { site }: { site: Site } ) {
 	const shouldShow = useShouldShowStorageWarningBanner( site );
-	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
+	const { data: mediaStorage } = useQuery( siteMediaStorageQuery( site.ID ) );
 	const { mutate: updateDismissed, isPending: isDismissing } = useMutation(
 		userPreferenceMutation( `hosting-dashboard-overview-storage-notice-dismissed-${ site.ID }` )
 	);
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const locale = useIntlLocale();
+
+	if ( ! shouldShow || ! mediaStorage ) {
+		return null;
+	}
 
 	const alertLevel = getStorageAlertLevel( mediaStorage );
 
 	// Optimistically hide the banner while the dismissal preference is saving.
-	if ( ! shouldShow || ( alertLevel === 'warning' && isDismissing ) ) {
+	if ( alertLevel === 'warning' && isDismissing ) {
 		return null;
 	}
 
@@ -50,12 +59,12 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 					isDismissible: true,
 					title: __( 'Your site is low on storage' ),
 					onClose: () => updateDismissed( new Date().toISOString() ),
-			  }
+				}
 			: {
 					variant: 'error' as const,
 					isDismissible: false,
 					title: __( 'Your site is out of storage' ),
-			  };
+				};
 
 	const upsellId =
 		alertLevel === 'warning'
@@ -83,8 +92,8 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 						'%(used)s of your %(available)s storage limit has been used. Upgrade to continue storing media, plugins, themes, and backups.'
 					),
 					{
-						used: filesize( mediaStorage.storage_used_bytes, { round: 0 } ),
-						available: filesize( mediaStorage.max_storage_bytes, { round: 0 } ),
+						used: formatStorage( mediaStorage.storage_used_bytes, locale ),
+						available: formatStorage( mediaStorage.max_storage_bytes, locale ),
 					}
 				) }
 			</Notice>

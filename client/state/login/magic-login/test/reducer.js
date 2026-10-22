@@ -22,6 +22,7 @@ import reducer, {
 	isFetchingAuth,
 	isFetchingEmail,
 	currentView,
+	isNewAccount,
 	requestAuthError,
 	requestAuthSuccess,
 	requestEmailError,
@@ -37,6 +38,7 @@ describe( 'reducer', () => {
 				'isFetchingEmail',
 				'requestAuthError',
 				'requestAuthSuccess',
+				'isNewAccount',
 				'requestEmailError',
 				'requestEmailSuccess',
 			] )
@@ -219,6 +221,36 @@ describe( 'reducer', () => {
 				type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
 			} );
 			expect( state ).toBe( true );
+		} );
+	} );
+
+	describe( 'isNewAccount', () => {
+		test( 'should default to false', () => {
+			const state = isNewAccount( undefined, {} );
+			expect( state ).toBe( false );
+		} );
+
+		test( 'should be true when the send response is a new account', () => {
+			const state = isNewAccount( undefined, {
+				type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
+				response: { new_user: true, public_token: 'token' },
+			} );
+			expect( state ).toBe( true );
+		} );
+
+		test( 'should be false when the send response is an existing account', () => {
+			const state = isNewAccount( true, {
+				type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
+				response: { new_user: false },
+			} );
+			expect( state ).toBe( false );
+		} );
+
+		test( 'should be false on reset', () => {
+			const state = isNewAccount( true, {
+				type: MAGIC_LOGIN_RESET_REQUEST_FORM,
+			} );
+			expect( state ).toBe( false );
 		} );
 	} );
 

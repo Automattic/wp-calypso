@@ -6,14 +6,13 @@ import {
 	userTaxDetailsQuery,
 	userReceiptsQuery,
 } from '@automattic/api-queries';
-import { formatCurrency } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	Flex,
 	TextareaControl,
-	__experimentalDivider as Divider,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -27,6 +26,7 @@ import { useIntlLocale } from '../../app/locale';
 import { receiptRoute, taxDetailsRoute } from '../../app/router/me';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
+import Divider from '../../components/divider';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { isAkismetPro500Plan } from '../../utils/akismet';
@@ -121,12 +121,12 @@ export default function Receipt() {
 													/* translators: %s: organization name */
 													__( 'Payment processed by %s' ),
 													displayReceipt.org
-											  )
+												)
 											: sprintf(
 													/* translators: %s: organization name */
 													__( 'by %s' ),
 													displayReceipt.org
-											  ) }
+												) }
 									</Text>
 									{ displayReceipt.address && (
 										<Text variant="muted" size={ 11 }>
@@ -558,11 +558,11 @@ function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Recei
 	const isAkismet = item.licensed_quantity && isAkismetPro500Plan( item.wpcom_product_slug );
 	const variationDisplay = isAkismet
 		? sprintf(
-				/* translators: 1: product name like "Akismet Pro", 2: number of requests per month */
-				__( '%1$s (%2$d requests/month)' ),
+				/* translators: 1: product name like "Akismet Pro", 2: formatted number of requests per month */
+				__( '%1$s (%2$s requests/month)' ),
 				item.variation.replace( /\s*\(.*$/, '' ).trim(),
-				500 * parseInt( String( item.licensed_quantity ) )
-		  )
+				formatNumber( 500 * parseInt( String( item.licensed_quantity ) ) )
+			)
 		: item.variation;
 	const shouldShowDiscount = areReceiptItemDiscountsAccurate( receipt.date );
 	const subtotalInteger = shouldShowDiscount
@@ -606,7 +606,6 @@ function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Recei
 							formattedAmount
 						) }
 					</Text>
-					{ receipt.credit && <Text>{ __( 'Refund' ) }</Text> }
 				</VStack>
 			</HStack>
 			{ shouldShowDiscount && (
@@ -629,7 +628,7 @@ function ReceiptItemDiscounts( { item, receiptDate }: { item: ReceiptItem; recei
 						? formatCurrency( -costOverride.discountAmount, item.currency, {
 								isSmallestUnit: true,
 								stripZeros: true,
-						  } )
+							} )
 						: '';
 
 				if (
@@ -768,12 +767,12 @@ function getIntroductoryOfferIntervalDisplay( {
 							/* translators: %d: number of months */
 							__( 'Price for first %d months' ),
 							intervalCount
-					  )
+						)
 					: sprintf(
 							/* translators: %d: number of months */
 							__( 'Discount for first %d months' ),
 							intervalCount
-					  );
+						);
 			}
 		}
 		if ( intervalUnit === 'year' ) {
@@ -785,12 +784,12 @@ function getIntroductoryOfferIntervalDisplay( {
 							/* translators: %d: number of years */
 							__( 'Price for first %d years' ),
 							intervalCount
-					  )
+						)
 					: sprintf(
 							/* translators: %d: number of years */
 							__( 'Discount for first %d years' ),
 							intervalCount
-					  );
+						);
 			}
 		}
 	}
@@ -816,7 +815,7 @@ function getIntroductoryOfferIntervalDisplay( {
 								/* translators: %d: number of renewals */
 								__( 'The first %d renewals are also discounted.' ),
 								remainingRenewalsUsingOffer
-						  );
+							);
 			}
 		} else if ( isPriceIncrease ) {
 			text +=
@@ -826,7 +825,7 @@ function getIntroductoryOfferIntervalDisplay( {
 							/* translators: %d: number of renewals */
 							__( 'Applies for %d renewals' ),
 							remainingRenewalsUsingOffer
-					  );
+						);
 		} else {
 			text +=
 				remainingRenewalsUsingOffer === 1
@@ -835,7 +834,7 @@ function getIntroductoryOfferIntervalDisplay( {
 							/* translators: %d: number of renewals */
 							__( '%d discounted renewals remaining.' ),
 							remainingRenewalsUsingOffer
-					  );
+						);
 		}
 	}
 

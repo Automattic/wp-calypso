@@ -18,7 +18,7 @@ export const recordReaderTracksEvent =
 		const followsCount = queryClient
 			? getSiteSubscriptionsCountFromData(
 					queryClient.getQueryData( getSiteSubscriptionsQueryKey() )
-			  )
+				)
 			: 0;
 		const railcar = railcarOverride || post?.railcar;
 

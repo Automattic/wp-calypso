@@ -48,7 +48,7 @@ jest.mock( './split-screen-guide', () => ( {
 } ) );
 
 jest.mock( './review-card', () => {
-	const ReactModule = jest.requireActual< typeof import('react') >( 'react' );
+	const ReactModule = jest.requireActual< typeof import( 'react' ) >( 'react' );
 	return {
 		__esModule: true,
 		default: ( { status, onApply, onDismiss, onUndo }: any ) =>
@@ -70,7 +70,7 @@ jest.mock( './review-card', () => {
 								{ type: 'button', onClick: onDismiss },
 								'Dismiss'
 							)
-					  )
+						)
 			),
 	};
 } );
@@ -89,7 +89,7 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 jest.mock( '@wordpress/components', () => {
-	const ReactModule = jest.requireActual< typeof import('react') >( 'react' );
+	const ReactModule = jest.requireActual< typeof import( 'react' ) >( 'react' );
 	return {
 		Panel: ( { children }: any ) => ReactModule.createElement( 'div', null, children ),
 		PanelBody: ( { children }: any ) => ReactModule.createElement( 'section', null, children ),

@@ -5,6 +5,7 @@ import {
 	getPlans,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
+	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_GUIDED_WEBSITE_BUILDER,
 	FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
 	FEATURE_REALTIME_BACKUPS_JP,
@@ -17,16 +18,8 @@ import { useRef, useMemo } from '@wordpress/element';
 import { Icon, chevronRightSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import {
-	useState,
-	useCallback,
-	useEffect,
-	ChangeEvent,
-	Dispatch,
-	SetStateAction,
-	forwardRef,
-} from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useState, useCallback, useEffect, ChangeEvent, Dispatch, SetStateAction } from 'react';
+import { hasTailoredFeatureList } from '../../constants';
 import { plansGridMediumLarge } from '../../css-mixins';
 import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
 import useGridSize from '../../hooks/use-grid-size';
@@ -382,14 +375,12 @@ type ComparisonGridHeaderProps = {
 	displayedGridPlans: GridPlan[];
 	visibleGridPlans: GridPlan[];
 	isInSignup: boolean;
-	isFooter?: boolean;
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
 	showRefundPeriod?: boolean;
 	isStuck: boolean;
-	isHiddenInMobile?: boolean;
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 };
 
@@ -408,7 +399,6 @@ const ComparisonGridHeaderCell = ( {
 	planSlug,
 	allVisible,
 	isLastInRow,
-	isFooter,
 	isInSignup,
 	visibleGridPlans,
 	onPlanChange,
@@ -431,7 +421,6 @@ const ComparisonGridHeaderCell = ( {
 	const headerClasses = clsx( 'plan-comparison-grid__header-cell', getPlanClass( planSlug ), {
 		'popular-plan-parent-class': gridPlan.highlightLabel,
 		'is-last-in-row': isLastInRow,
-		'plan-is-footer': isFooter,
 		'is-left-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.leftOfHighlight,
 		'is-right-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.rightOfHighlight,
 		'is-only-highlight': highlightAdjacencyMatrix[ planSlug ]?.isOnlyHighlight,
@@ -524,71 +513,62 @@ const PlanTypeSelectorWrapper = styled.div`
 	` ) }
 `;
 
-const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderProps >(
-	(
-		{
-			displayedGridPlans,
-			visibleGridPlans,
-			isInSignup,
-			isFooter,
-			onPlanChange,
-			currentSitePlanSlug,
-			planActionOverrides,
-			selectedPlan,
-			isHiddenInMobile,
-			showRefundPeriod,
-			isStuck,
-			planTypeSelectorProps,
-		},
-		ref
-	) => {
-		const translate = useTranslate();
-		const allVisible = visibleGridPlans.length === displayedGridPlans.length;
-		const { coupon } = usePlansGridContext();
+const ComparisonGridHeader = ( {
+	displayedGridPlans,
+	visibleGridPlans,
+	isInSignup,
+	onPlanChange,
+	currentSitePlanSlug,
+	planActionOverrides,
+	selectedPlan,
+	showRefundPeriod,
+	isStuck,
+	planTypeSelectorProps,
+}: ComparisonGridHeaderProps ) => {
+	const translate = useTranslate();
+	const allVisible = visibleGridPlans.length === displayedGridPlans.length;
+	const { coupon } = usePlansGridContext();
 
-		return (
-			<PlanRow as="tr" isHiddenInMobile={ isHiddenInMobile } ref={ ref }>
-				<RowTitleCell
-					key="feature-name"
-					className="plan-comparison-grid__header-cell is-placeholder-header-cell"
-					isPlaceholderHeaderCell
-				>
-					{ isStuck && planTypeSelectorProps && (
-						<PlanTypeSelectorWrapper>
-							<PlanTypeSelector
-								{ ...planTypeSelectorProps }
-								title={ translate( 'Billing Cycle' ) }
-								hideDiscount
-								coupon={ coupon }
-							/>
-						</PlanTypeSelectorWrapper>
-					) }
-				</RowTitleCell>
-				<HeaderPriceContextProvider>
-					{ visibleGridPlans.map( ( { planSlug }, index ) => (
-						<ComparisonGridHeaderCell
-							planSlug={ planSlug }
-							key={ planSlug }
-							isLastInRow={ index === visibleGridPlans.length - 1 }
-							isFooter={ isFooter }
-							allVisible={ allVisible }
-							isInSignup={ isInSignup }
-							visibleGridPlans={ visibleGridPlans }
-							onPlanChange={ onPlanChange }
-							displayedGridPlans={ displayedGridPlans }
-							currentSitePlanSlug={ currentSitePlanSlug }
-							planActionOverrides={ planActionOverrides }
-							selectedPlan={ selectedPlan }
-							showRefundPeriod={ showRefundPeriod }
-							isStuck={ isStuck }
+	return (
+		<PlanRow as="tr">
+			<RowTitleCell
+				key="feature-name"
+				className="plan-comparison-grid__header-cell is-placeholder-header-cell"
+				isPlaceholderHeaderCell
+			>
+				{ isStuck && planTypeSelectorProps && (
+					<PlanTypeSelectorWrapper>
+						<PlanTypeSelector
+							{ ...planTypeSelectorProps }
+							title={ translate( 'Billing Cycle' ) }
+							hideDiscount
+							coupon={ coupon }
 						/>
-					) ) }
-				</HeaderPriceContextProvider>
-			</PlanRow>
-		);
-	}
-);
-ComparisonGridHeader.displayName = 'ComparisonGridHeader';
+					</PlanTypeSelectorWrapper>
+				) }
+			</RowTitleCell>
+			<HeaderPriceContextProvider>
+				{ visibleGridPlans.map( ( { planSlug }, index ) => (
+					<ComparisonGridHeaderCell
+						planSlug={ planSlug }
+						key={ planSlug }
+						isLastInRow={ index === visibleGridPlans.length - 1 }
+						allVisible={ allVisible }
+						isInSignup={ isInSignup }
+						visibleGridPlans={ visibleGridPlans }
+						onPlanChange={ onPlanChange }
+						displayedGridPlans={ displayedGridPlans }
+						currentSitePlanSlug={ currentSitePlanSlug }
+						planActionOverrides={ planActionOverrides }
+						selectedPlan={ selectedPlan }
+						showRefundPeriod={ showRefundPeriod }
+						isStuck={ isStuck }
+					/>
+				) ) }
+			</HeaderPriceContextProvider>
+		</PlanRow>
+	);
+};
 
 const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	feature?: FeatureObject;
@@ -631,6 +611,9 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	if ( featureSlug === FEATURE_GUIDED_WEBSITE_BUILDER ) {
 		// Use the short title for the guided website builder in the comparison grid.
 		comparisonGridTitle = translate( 'Guided website builder', { textOnly: true } );
+	}
+	if ( featureSlug === FEATURE_BACKUP_DAILY_V2 ) {
+		comparisonGridTitle = translate( 'Automated daily backups', { textOnly: true } );
 	}
 
 	const planFeatures = [
@@ -794,11 +777,14 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	let title =
 		featureSlug === FEATURE_REALTIME_BACKUPS_JP
 			? // Always display the short title for backups in comparison grid.
-			  translate( 'Real-time backups', { textOnly: true } )
+				translate( 'Real-time backups', { textOnly: true } )
 			: feature?.getTitle?.();
 	if ( featureSlug === FEATURE_GUIDED_WEBSITE_BUILDER ) {
 		// Use the short title for the guided website builder in the comparison grid.
 		title = translate( 'Guided website builder', { textOnly: true } );
+	}
+	if ( featureSlug === FEATURE_BACKUP_DAILY_V2 ) {
+		title = translate( 'Automated daily backups', { textOnly: true } );
 	}
 	const headerAriaLabel: string = typeof title === 'string' ? title : '';
 
@@ -934,16 +920,22 @@ const FeatureGroup = ( {
 	};
 	plansLength: number;
 } ) => {
-	const { allFeaturesList, isExperimentVariant } = usePlansGridContext();
+	const { allFeaturesList, intent, isExperimentVariant } = usePlansGridContext();
 	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
 	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
 		firstSetOfFeatures,
 	] );
 	const features = featureGroup.getFeatures();
 
+	// Row titles follow the list: the experiment copy renames features the experiment override
+	// lists, so pairing it with a curated list mistitles the rows.
 	const featureObjects = filterUnusedFeaturesObject(
 		visibleGridPlans,
-		getPlanFeaturesObject( allFeaturesList, features, isExperimentVariant )
+		getPlanFeaturesObject(
+			allFeaturesList,
+			features,
+			isExperimentVariant && ! hasTailoredFeatureList( intent )
+		)
 	);
 
 	const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
@@ -1123,9 +1115,6 @@ const ComparisonGrid = ( {
 		[ gridPlans, setVisibleGridPlans ]
 	);
 
-	// 100px is the padding of the footer row
-	const [ bottomHeaderRef, isBottomHeaderInView ] = useInView( { rootMargin: '-100px' } );
-
 	/**
 	 * Search for "any" plan with a highlight label, not just the visible ones.
 	 * This will keep the grid static while user interacts (selects different plans to compare).
@@ -1141,7 +1130,6 @@ const ComparisonGrid = ( {
 			<StickyGrid
 				visiblePlans={ visibleGridPlans.length }
 				element="thead"
-				disabled={ isBottomHeaderInView }
 				stickyClass="is-sticky-header-row"
 				stickyOffset={ stickyRowOffset }
 				zIndex={ 1 }
@@ -1177,23 +1165,6 @@ const ComparisonGrid = ( {
 					plansLength={ visibleGridPlans.length }
 				/>
 			) ) }
-			<tbody>
-				<ComparisonGridHeader
-					displayedGridPlans={ gridPlans }
-					visibleGridPlans={ visibleGridPlans }
-					isInSignup={ isInSignup }
-					isFooter
-					onPlanChange={ onPlanChange }
-					currentSitePlanSlug={ currentSitePlanSlug }
-					planActionOverrides={ planActionOverrides }
-					selectedPlan={ selectedPlan }
-					showRefundPeriod={ showRefundPeriod }
-					isStuck={ false }
-					isHiddenInMobile
-					ref={ bottomHeaderRef }
-					planTypeSelectorProps={ planTypeSelectorProps }
-				/>
-			</tbody>
 
 			<tfoot className="plan-comparison-grid__footer">
 				{ planFeatureFootnotes?.footnoteList && (

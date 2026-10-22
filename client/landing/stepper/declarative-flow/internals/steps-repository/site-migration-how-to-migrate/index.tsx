@@ -1,12 +1,18 @@
 import { NextButton, Step } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
+import { Button } from '@wordpress/components';
 import { copy, lockOutline } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
+import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
+import {
+	recordMigrationStartEvent,
+	recordMigrationStartFacebookEvent,
+} from 'calypso/lib/analytics/ad-tracking/record-migration-events';
 import { ChecklistCard } from '../../components/checklist-card';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -17,14 +23,20 @@ const SiteMigrationHowToMigrate: StepType< {
 		subHeaderText?: string;
 	};
 	submits: {
-		how: string;
+		how?: string;
 		destination: string;
 	};
 } > = ( props ) => {
 	const { navigation, headerText, subHeaderText } = props;
 	const translate = useTranslate();
-	const site = useSite();
+	const { data: site, isLoading, isError, refetch } = useSiteQuery();
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
+	const { deleteMigrationSticker } = useMigrationStickerMutation();
+
+	useEffect( () => {
+		recordMigrationStartEvent( 'SiteMigrationHowToMigrate' );
+		recordMigrationStartFacebookEvent( 'SiteMigrationHowToMigrate' );
+	}, [] );
 
 	const checklistItems = useMemo(
 		() => [
@@ -53,9 +65,23 @@ const SiteMigrationHowToMigrate: StepType< {
 	};
 
 	const goBack = useCallback( () => {
-		cancelMigration();
-		navigation?.goBack?.();
-	}, [ cancelMigration, navigation ] );
+		if ( site?.ID ) {
+			cancelMigration();
+		}
+		if ( navigation?.goBack ) {
+			navigation.goBack();
+		} else {
+			history.back();
+		}
+	}, [ cancelMigration, navigation, site?.ID ] );
+
+	const handleImport = () => {
+		if ( site?.ID ) {
+			deleteMigrationSticker( site.ID );
+			cancelMigration();
+		}
+		return navigation.submit?.( { destination: 'import' } );
+	};
 
 	const renderSubHeaderText = () => {
 		const siteCanInstallPlugins = canInstallPlugins( site );
@@ -63,10 +89,10 @@ const SiteMigrationHowToMigrate: StepType< {
 		return siteCanInstallPlugins
 			? translate(
 					"Save yourself the headache of migrating. Our expert team takes care of everything without interrupting your current site. Plus it's included in your plan."
-			  )
+				)
 			: translate(
 					'Skip the migration hassle. Our team handles everything without disrupting your current site.'
-			  );
+				);
 	};
 
 	const renderStepContent = () => {
@@ -76,9 +102,46 @@ const SiteMigrationHowToMigrate: StepType< {
 					{ translate( 'Get started' ) }
 				</NextButton>
 				<ChecklistCard title={ translate( 'How it works' ) } items={ checklistItems } />
+				<Button variant="link" onClick={ handleImport }>
+					{ translate( 'Import a WordPress export file' ) }
+				</Button>
 			</div>
 		);
 	};
+
+	if ( isLoading ) {
+		return <Step.Loading />;
+	}
+
+	if ( isError || ! site ) {
+		const errorTitle = translate( "We couldn't load your site" );
+
+		return (
+			<>
+				<DocumentHead title={ errorTitle } />
+				<Step.CenteredColumnLayout
+					columnWidth={ 6 }
+					topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ goBack } /> } /> }
+					heading={
+						<Step.Heading
+							text={ errorTitle }
+							subText={
+								isError
+									? translate( 'Please try again, or go back to choose another site.' )
+									: translate( 'Go back to choose a destination site.' )
+							}
+						/>
+					}
+				>
+					{ isError && (
+						<div className="how-to-migrate__experiment-expectations">
+							<NextButton onClick={ refetch }>{ translate( 'Try again' ) }</NextButton>
+						</div>
+					) }
+				</Step.CenteredColumnLayout>
+			</>
+		);
+	}
 
 	return (
 		<>

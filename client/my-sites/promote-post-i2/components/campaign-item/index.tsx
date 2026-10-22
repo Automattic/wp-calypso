@@ -81,7 +81,7 @@ export default function CampaignItem( props: Props ) {
 					/* translators: %s is a formatted amount */
 					__( '%s weekly' ),
 					formattedTotalSpend
-			  )
+				)
 			: formattedTotalSpend;
 		spendStringMobile = sprintf(
 			/* translators: %s is a formatted amount */

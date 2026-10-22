@@ -5,6 +5,7 @@ import type {
 	UkDomainContactExtraDetails,
 	FrDomainContactExtraDetails,
 	InDomainContactExtraDetails,
+	EsDomainContactExtraDetails,
 } from '@automattic/shopping-cart';
 import type {
 	PossiblyCompleteDomainContactDetails,
@@ -13,6 +14,7 @@ import type {
 	UkDomainContactExtraDetailsErrors,
 	FrDomainContactExtraDetailsErrors,
 	InDomainContactExtraDetailsErrors,
+	EsDomainContactExtraDetailsErrors,
 	ManagedContactDetailsShape,
 	ManagedContactDetailsTldExtraFieldsShape,
 	ManagedValue,
@@ -20,7 +22,6 @@ import type {
 	ManagedContactDetailsErrors,
 	ManagedContactDetailsUpdate,
 	ManagedContactDetailsUpdaters,
-	WpcomStoreState,
 	SignupValidationResponse,
 	DomainContactValidationRequest,
 	GSuiteContactValidationRequest,
@@ -163,6 +164,45 @@ export function updateManagedContactDetailsShape< A, B >(
 		};
 	}
 
+	if ( data.tldExtraFields?.es ) {
+		if ( update.tldExtraFields?.es ) {
+			tldExtraFields.es = {
+				registrantEntityType: combine(
+					update.tldExtraFields.es.registrantEntityType,
+					data.tldExtraFields.es.registrantEntityType
+				),
+				registrantIdentificationNumber: combine(
+					update.tldExtraFields.es.registrantIdentificationNumber,
+					data.tldExtraFields.es.registrantIdentificationNumber
+				),
+				adminIdentificationNumber: combine(
+					update.tldExtraFields.es.adminIdentificationNumber,
+					data.tldExtraFields.es.adminIdentificationNumber
+				),
+				redEsAgreementAccepted: combine(
+					update.tldExtraFields.es.redEsAgreementAccepted,
+					data.tldExtraFields.es.redEsAgreementAccepted
+				),
+				redEsAgreementVersion: combine(
+					update.tldExtraFields.es.redEsAgreementVersion,
+					data.tldExtraFields.es.redEsAgreementVersion
+				),
+			};
+		} else {
+			tldExtraFields.es = data.tldExtraFields.es;
+		}
+	} else if ( update.tldExtraFields?.es ) {
+		tldExtraFields.es = {
+			registrantEntityType: construct( update.tldExtraFields.es.registrantEntityType ),
+			registrantIdentificationNumber: construct(
+				update.tldExtraFields.es.registrantIdentificationNumber
+			),
+			adminIdentificationNumber: construct( update.tldExtraFields.es.adminIdentificationNumber ),
+			redEsAgreementAccepted: construct( update.tldExtraFields.es.redEsAgreementAccepted ),
+			redEsAgreementVersion: construct( update.tldExtraFields.es.redEsAgreementVersion ),
+		};
+	}
+
 	return {
 		firstName: combine( update.firstName, data.firstName ),
 		lastName: combine( update.lastName, data.lastName ),
@@ -231,7 +271,7 @@ export function flattenManagedContactDetailsShape< A, B >(
 					x.tldExtraFields.ca.ciraAgreementAccepted
 						? f( x.tldExtraFields.ca.ciraAgreementAccepted )
 						: null,
-			  ].filter( Boolean ) as B[] )
+				].filter( Boolean ) as B[] )
 			: [];
 
 	const ukValues =
@@ -242,7 +282,7 @@ export function flattenManagedContactDetailsShape< A, B >(
 						? f( x.tldExtraFields.uk.registrationNumber )
 						: null,
 					x.tldExtraFields.uk.tradingName ? f( x.tldExtraFields.uk.tradingName ) : null,
-			  ].filter( Boolean ) as B[] )
+				].filter( Boolean ) as B[] )
 			: [];
 
 	const frValues =
@@ -251,7 +291,7 @@ export function flattenManagedContactDetailsShape< A, B >(
 					x.tldExtraFields.fr.registrantType ? f( x.tldExtraFields.fr.registrantType ) : null,
 					x.tldExtraFields.fr.trademarkNumber ? f( x.tldExtraFields.fr.trademarkNumber ) : null,
 					x.tldExtraFields.fr.sirenSiret ? f( x.tldExtraFields.fr.sirenSiret ) : null,
-			  ].filter( Boolean ) as B[] )
+				].filter( Boolean ) as B[] )
 			: [];
 
 	const inValues =
@@ -261,10 +301,31 @@ export function flattenManagedContactDetailsShape< A, B >(
 					x.tldExtraFields.in.nexusConnectionType
 						? f( x.tldExtraFields.in.nexusConnectionType )
 						: null,
-			  ].filter( Boolean ) as B[] )
+				].filter( Boolean ) as B[] )
 			: [];
 
-	return values.concat( caValues, ukValues, frValues, inValues );
+	const esValues =
+		x.tldExtraFields && x.tldExtraFields.es
+			? ( [
+					x.tldExtraFields.es.registrantEntityType
+						? f( x.tldExtraFields.es.registrantEntityType )
+						: null,
+					x.tldExtraFields.es.registrantIdentificationNumber
+						? f( x.tldExtraFields.es.registrantIdentificationNumber )
+						: null,
+					x.tldExtraFields.es.adminIdentificationNumber
+						? f( x.tldExtraFields.es.adminIdentificationNumber )
+						: null,
+					x.tldExtraFields.es.redEsAgreementAccepted
+						? f( x.tldExtraFields.es.redEsAgreementAccepted )
+						: null,
+					x.tldExtraFields.es.redEsAgreementVersion
+						? f( x.tldExtraFields.es.redEsAgreementVersion )
+						: null,
+				].filter( Boolean ) as B[] )
+			: [];
+
+	return values.concat( caValues, ukValues, frValues, inValues, esValues );
 }
 
 export function isValid( arg: ManagedValue ): boolean {
@@ -496,12 +557,14 @@ function prepareTldExtraContactDetails( details: ManagedContactDetails ): {
 	uk: null | UkDomainContactExtraDetails;
 	fr: null | FrDomainContactExtraDetails;
 	in: null | InDomainContactExtraDetails;
+	es: null | EsDomainContactExtraDetails;
 } {
 	return {
 		ca: prepareCaDomainContactExtraDetails( details ),
 		uk: prepareUkDomainContactExtraDetails( details ),
 		fr: prepareFrDomainContactExtraDetails( details ),
 		in: prepareInDomainContactExtraDetails( details ),
+		es: prepareEsDomainContactExtraDetails( details ),
 	};
 }
 
@@ -510,12 +573,14 @@ function prepareTldExtraContactDetailsErrors( details: ManagedContactDetails ): 
 	uk: null | UkDomainContactExtraDetailsErrors;
 	fr: null | FrDomainContactExtraDetailsErrors;
 	in: null | InDomainContactExtraDetailsErrors;
+	es: null | EsDomainContactExtraDetailsErrors;
 } {
 	return {
 		ca: prepareCaDomainContactExtraDetailsErrors( details ),
 		uk: prepareUkDomainContactExtraDetailsErrors( details ),
 		fr: prepareFrDomainContactExtraDetailsErrors( details ),
 		in: prepareInDomainContactExtraDetailsErrors( details ),
+		es: prepareEsDomainContactExtraDetailsErrors( details ),
 	};
 }
 
@@ -629,6 +694,39 @@ function prepareInDomainContactExtraDetailsErrors(
 	return null;
 }
 
+function prepareEsDomainContactExtraDetails(
+	details: ManagedContactDetails
+): EsDomainContactExtraDetails | null {
+	if ( details.tldExtraFields?.es ) {
+		return {
+			registrantEntityType: details.tldExtraFields.es.registrantEntityType?.value,
+			registrantIdentificationNumber:
+				details.tldExtraFields.es.registrantIdentificationNumber?.value,
+			adminIdentificationNumber: details.tldExtraFields.es.adminIdentificationNumber?.value,
+			redEsAgreementAccepted: details.tldExtraFields.es.redEsAgreementAccepted?.value === 'true',
+			redEsAgreementVersion: details.tldExtraFields.es.redEsAgreementVersion?.value,
+		};
+	}
+	return null;
+}
+
+function prepareEsDomainContactExtraDetailsErrors(
+	details: ManagedContactDetails
+): EsDomainContactExtraDetailsErrors | null {
+	if ( details.tldExtraFields?.es ) {
+		return {
+			registrantEntityType: details.tldExtraFields.es?.registrantEntityType?.errors?.[ 0 ],
+			registrantIdentificationNumber:
+				details.tldExtraFields.es?.registrantIdentificationNumber?.errors?.[ 0 ],
+			adminIdentificationNumber:
+				details.tldExtraFields.es?.adminIdentificationNumber?.errors?.[ 0 ],
+			redEsAgreementAccepted: details.tldExtraFields.es?.redEsAgreementAccepted?.errors?.[ 0 ],
+			redEsAgreementVersion: details.tldExtraFields.es?.redEsAgreementVersion?.errors?.[ 0 ],
+		};
+	}
+	return null;
+}
+
 export function prepareDomainContactValidationRequest(
 	details: ManagedContactDetails
 ): DomainContactValidationRequest {
@@ -660,6 +758,16 @@ export function prepareDomainContactValidationRequest(
 		extra.in = {
 			nexus_declaration: details.tldExtraFields.in.nexusDeclaration?.value === 'true',
 			nexus_connection_type: details.tldExtraFields.in.nexusConnectionType?.value,
+		};
+	}
+	if ( details.tldExtraFields?.es ) {
+		extra.es = {
+			registrant_entity_type: details.tldExtraFields.es.registrantEntityType?.value,
+			registrant_identification_number:
+				details.tldExtraFields.es.registrantIdentificationNumber?.value,
+			admin_identification_number: details.tldExtraFields.es.adminIdentificationNumber?.value,
+			red_es_agreement_accepted: details.tldExtraFields.es.redEsAgreementAccepted?.value === 'true',
+			red_es_agreement_version: details.tldExtraFields.es.redEsAgreementVersion?.value,
 		};
 	}
 
@@ -760,6 +868,14 @@ export function formatDomainContactValidationResponse(
 				nexusDeclaration: response.messages?.extra?.in?.nexus_declaration,
 				nexusConnectionType: response.messages?.extra?.in?.nexus_connection_type,
 			},
+			es: {
+				registrantEntityType: response.messages?.extra?.es?.registrant_entity_type,
+				registrantIdentificationNumber:
+					response.messages?.extra?.es?.registrant_identification_number,
+				adminIdentificationNumber: response.messages?.extra?.es?.admin_identification_number,
+				redEsAgreementAccepted: response.messages?.extra?.es?.red_es_agreement_accepted,
+				redEsAgreementVersion: response.messages?.extra?.es?.red_es_agreement_version,
+			},
 		},
 	};
 }
@@ -802,6 +918,13 @@ function prepareManagedContactDetailsUpdate(
 				nexusDeclaration: rawFields?.extra?.in?.nexusDeclaration?.toString(),
 				nexusConnectionType: rawFields?.extra?.in?.nexusConnectionType,
 			},
+			es: {
+				registrantEntityType: rawFields?.extra?.es?.registrantEntityType,
+				registrantIdentificationNumber: rawFields?.extra?.es?.registrantIdentificationNumber,
+				adminIdentificationNumber: rawFields?.extra?.es?.adminIdentificationNumber,
+				redEsAgreementAccepted: rawFields?.extra?.es?.redEsAgreementAccepted?.toString(),
+				redEsAgreementVersion: rawFields?.extra?.es?.redEsAgreementVersion,
+			},
 		},
 	};
 }
@@ -821,47 +944,10 @@ function applyDomainContactDetailsUpdate(
 }
 
 export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
-	updatePhone: ( oldDetails: ManagedContactDetails, newPhone: string ): ManagedContactDetails => {
-		return {
-			...oldDetails,
-			phone: touchIfDifferent( newPhone, oldDetails.phone ),
-		};
-	},
-
-	updatePhoneNumberCountry: (
-		oldDetails: ManagedContactDetails,
-		newPhoneNumberCountry: string
-	): ManagedContactDetails => {
-		return {
-			...oldDetails,
-			phoneNumberCountry: touchIfDifferent( newPhoneNumberCountry, oldDetails.phoneNumberCountry ),
-		};
-	},
-
-	updatePostalCode: (
-		oldDetails: ManagedContactDetails,
-		newPostalCode: string
-	): ManagedContactDetails => {
-		return {
-			...oldDetails,
-			postalCode: touchIfDifferent( newPostalCode, oldDetails.postalCode ),
-		};
-	},
-
 	updateEmail: ( oldDetails: ManagedContactDetails, newEmail: string ): ManagedContactDetails => {
 		return {
 			...oldDetails,
 			email: touchIfDifferent( newEmail, oldDetails.email ),
-		};
-	},
-
-	updateCountryCode: (
-		oldDetails: ManagedContactDetails,
-		newCountryCode: string
-	): ManagedContactDetails => {
-		return {
-			...oldDetails,
-			countryCode: touchIfDifferent( newCountryCode, oldDetails.countryCode ),
 		};
 	},
 
@@ -884,13 +970,6 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 
 	touchContactFields: ( oldDetails: ManagedContactDetails ): ManagedContactDetails => {
 		return mapManagedContactDetailsShape( touchField, oldDetails );
-	},
-
-	updateVatId: ( oldDetails: ManagedContactDetails, newVatId: string ): ManagedContactDetails => {
-		return {
-			...oldDetails,
-			vatId: touchIfDifferent( newVatId, oldDetails.vatId ),
-		};
 	},
 
 	setErrorMessages: (
@@ -953,14 +1032,3 @@ export const emptyManagedContactDetails: ManagedContactDetails = {
 	vatId: getInitialManagedValue(),
 	tldExtraFields: {},
 };
-
-export function getInitialWpcomStoreState(
-	contactDetails: ManagedContactDetails
-): WpcomStoreState {
-	return {
-		recaptchaClientId: -1,
-		transactionResult: undefined,
-		contactDetails,
-		vatDetails: {},
-	};
-}

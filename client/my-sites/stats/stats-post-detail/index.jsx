@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button as CoreButton } from '@wordpress/components';
+import { Stack, Text } from '@wordpress/ui';
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
@@ -14,7 +15,6 @@ import { withPostLikes } from 'calypso/components/data/post-likes';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
-import EmptyContent from 'calypso/components/empty-content';
 import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
@@ -45,6 +45,7 @@ import PostDetailTableSection from '../post-detail-table-section';
 import StatsPlaceholder from '../stats-module/placeholder';
 import PageViewTracker from '../stats-page-view-tracker';
 import PostSummary from '../stats-post-summary';
+import './style.scss';
 
 class StatsPostDetail extends Component {
 	static propTypes = {
@@ -212,16 +213,7 @@ class StatsPostDetail extends Component {
 		passedPost.url = previewUrl;
 
 		const postType = passedPost && passedPost.type !== null ? passedPost.type : 'post';
-		let actionLabel;
-		let noViewsLabel;
-
-		if ( postType === 'page' ) {
-			actionLabel = translate( 'View Page' );
-			noViewsLabel = translate( 'Your page has not received any views yet!' );
-		} else {
-			actionLabel = translate( 'View Post' );
-			noViewsLabel = translate( 'Your post has not received any views yet!' );
-		}
+		const actionLabel = postType === 'page' ? translate( 'View Page' ) : translate( 'View Post' );
 
 		const isWPAdmin = config.isEnabled( 'is_odyssey' );
 		const postDetailPageClasses = clsx( 'stats', {
@@ -273,14 +265,21 @@ class StatsPostDetail extends Component {
 					<StatsPlaceholder isLoading={ isLoading } />
 
 					{ ! isLoading && countViews === 0 && (
-						<EmptyContent
-							title={ noViewsLabel }
-							line={ translate( 'Learn some tips to attract more visitors' ) }
-							action={ translate( 'Get more traffic!' ) }
-							actionCallback={ () => {
-								this.props.openSupportDoc();
-							} }
-						/>
+						<Stack
+							className="stats-post-detail__no-views"
+							direction="column"
+							gap="md"
+							align="start"
+						>
+							<Text variant="body-lg" style={ { color: 'var(--color-text-subtle)' } }>
+								{ translate(
+									"You don't have any views yet. Learn some tips to attract more visitors."
+								) }
+							</Text>
+							<CoreButton variant="primary" onClick={ this.props.openSupportDoc }>
+								{ translate( 'View guide' ) }
+							</CoreButton>
+						</Stack>
 					) }
 
 					{ ! isLoading && countViews > 0 && (

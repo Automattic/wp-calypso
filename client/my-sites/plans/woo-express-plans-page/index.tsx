@@ -99,7 +99,7 @@ const WooExpressPlansPage = ( {
 						priceDescription,
 					},
 				}
-		  )
+			)
 		: translate(
 				'{{monthlyPriceWrapper}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month{{/priceDescription}}',
 				{
@@ -114,7 +114,7 @@ const WooExpressPlansPage = ( {
 						priceDescription,
 					},
 				}
-		  );
+			);
 
 	const triggerPlansGridTracksEvent = useCallback( ( planSlug: string ) => {
 		recordTracksEvent( 'calypso_wooexpress_plans_page_upgrade_cta_clicked', {

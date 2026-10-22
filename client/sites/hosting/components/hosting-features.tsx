@@ -190,10 +190,10 @@ const HostingFeatures = ( { path, showAsTools }: HostingFeaturesProps ) => {
 	)
 		? translate(
 				'Your plan includes all the hosting features listed below. Click "Activate now" to begin.'
-		  )
+			)
 		: translate(
 				'Your plan includes all the developer tools listed below. Click "Activate now" to begin.'
-		  );
+			);
 
 	const activateDescriptionAsTools = translate(
 		'Your plan includes all the advanced tools listed below. Click "Activate now" to begin.'
@@ -203,23 +203,23 @@ const HostingFeatures = ( { path, showAsTools }: HostingFeaturesProps ) => {
 		'Upgrade to the %(planName)s plan or higher to get access to all hosting features'
 	)
 		? // translators: %(planName)s is a plan name. E.g. Business plan.
-		  translate(
+			translate(
 				'Upgrade to the %(planName)s plan or higher to get access to all hosting features',
 				{
 					args: {
 						planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
 					},
 				}
-		  )
+			)
 		: // translators: %(planName)s is a plan name. E.g. Business plan.
-		  translate(
+			translate(
 				'Upgrade to the %(planName)s plan or higher to get access to all developer tools',
 				{
 					args: {
 						planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
 					},
 				}
-		  );
+			);
 
 	const unlockDescriptionAsTools = translate(
 		'Upgrade to the %(planName)s plan or higher to get access to all advanced tools',

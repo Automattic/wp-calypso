@@ -1,5 +1,5 @@
 import nock from 'nock';
-import { setPaymentMethodTaxInfo } from '../fetchers';
+import { fetchPaymentMethodTaxInfo, setPaymentMethodTaxInfo } from '../fetchers';
 import type { StoredPaymentMethodTaxLocation } from '../types';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -45,5 +45,23 @@ describe( 'setPaymentMethodTaxInfo', () => {
 		await setPaymentMethodTaxInfo( '12345', ohio );
 
 		expect( getBody() ).not.toHaveProperty( 'tax_is_for_business' );
+	} );
+} );
+
+describe( 'fetchPaymentMethodTaxInfo', () => {
+	afterEach( () => nock.cleanAll() );
+
+	test( "returns the stored tax location in the endpoint's tax_-prefixed shape", async () => {
+		nock( BASE ).get( '/rest/v1.1/me/payment-methods/12345/tax-location' ).reply( 200, {
+			tax_country_code: 'US',
+			tax_postal_code: '43201',
+			is_tax_info_set: true,
+		} );
+
+		await expect( fetchPaymentMethodTaxInfo( '12345' ) ).resolves.toEqual( {
+			tax_country_code: 'US',
+			tax_postal_code: '43201',
+			is_tax_info_set: true,
+		} );
 	} );
 } );

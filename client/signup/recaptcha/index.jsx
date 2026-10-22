@@ -1,13 +1,11 @@
 import config from '@automattic/calypso-config';
-import { useDispatch } from '@wordpress/data';
 import PropTypes from 'prop-types';
 import { memo, useEffect } from 'react';
 import { initGoogleRecaptcha } from 'calypso/lib/analytics/recaptcha';
 import './style.scss';
-import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/src/lib/wpcom-store';
+import { recaptchaClientIdStore } from 'calypso/my-sites/checkout/src/lib/checkout-stores';
 
 function Recaptcha( { badgePosition = 'bottomright' } ) {
-	const { setRecaptchaClientId } = useDispatch( CHECKOUT_STORE ) ?? {};
 	useEffect( () => {
 		initGoogleRecaptcha( 'g-recaptcha', config( 'google_recaptcha_site_key' ) ).then(
 			( clientId ) => {
@@ -15,10 +13,10 @@ function Recaptcha( { badgePosition = 'bottomright' } ) {
 					return;
 				}
 
-				setRecaptchaClientId?.( parseInt( clientId ) );
+				recaptchaClientIdStore.set( parseInt( clientId ) );
 			}
 		);
-	}, [ setRecaptchaClientId ] );
+	}, [] );
 
 	return <div id="g-recaptcha" data-badge={ badgePosition }></div>;
 }

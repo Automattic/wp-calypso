@@ -140,7 +140,7 @@ const mergePost = ( base: Post | null | undefined, patch: Post | null | undefine
 						...( ( base.discussion as Post | undefined ) ?? {} ),
 						...( ( patch.discussion as Post | undefined ) ?? {} ),
 					},
-			  }
+				}
 			: {} ),
 	};
 };

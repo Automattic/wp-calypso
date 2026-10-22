@@ -4,21 +4,6 @@
 import { renderHook } from '@testing-library/react';
 import usePremiumAnalyticsPreviewInvitation from '../use-premium-analytics-preview-invitation';
 
-// The flag store is created inside the factory and parked on `globalThis`: modules read config
-// while they are being imported, before any module-scope `const` here exists.
-jest.mock( '@automattic/calypso-config', () => {
-	const flags: Record< string, boolean > = {};
-	( globalThis as Record< string, unknown > ).__previewInvitationTestFlags = flags;
-	const isEnabled = ( flag: string ) => !! flags[ flag ];
-	return { __esModule: true, default: { isEnabled }, isEnabled };
-} );
-
-const mockFlags = () =>
-	( globalThis as Record< string, unknown > ).__previewInvitationTestFlags as Record<
-		string,
-		boolean
-	>;
-
 jest.mock( 'calypso/state', () => ( {
 	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( {} ),
 } ) );
@@ -78,7 +63,6 @@ const invitation = () =>
 describe( 'usePremiumAnalyticsPreviewInvitation', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockFlags()[ 'stats/premium-analytics-preview' ] = true;
 		mockIsWpcom = true;
 		mockCanManageOptions = true;
 		mockSiteFeatures = { active: [] };
@@ -114,13 +98,6 @@ describe( 'usePremiumAnalyticsPreviewInvitation', () => {
 
 	it( 'spends no request on a site outside the cohort', () => {
 		mockIsWpcom = false;
-
-		expect( invitation().isInvited ).toBe( false );
-		expect( mockUseStatusQuery ).toHaveBeenCalledWith( 123, false );
-	} );
-
-	it( 'spends no request while the flag is off', () => {
-		delete mockFlags()[ 'stats/premium-analytics-preview' ];
 
 		expect( invitation().isInvited ).toBe( false );
 		expect( mockUseStatusQuery ).toHaveBeenCalledWith( 123, false );

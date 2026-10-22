@@ -17,6 +17,7 @@ import {
 	isJetpackCreatorSlug,
 	PRODUCT_JETPACK_CREATOR_MONTHLY,
 	isJetpackStatsPaidTieredProductSlug,
+	JETPACK_PRO_PLANS,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { createElement } from 'react';
@@ -29,6 +30,7 @@ type featureString =
 	| 'backup-t1'
 	| 'boost'
 	| 'growth'
+	| 'pro'
 	| 'scan'
 	| 'search'
 	| 'social-basic'
@@ -95,6 +97,20 @@ function getFeatureStrings(
 				translate( 'CRM Entrepreneur' ),
 				translate( 'AI Assistant' ),
 				translate( 'Stats (Up to 100K site views, upgradeable)' ),
+				translate( 'Newsletter and monetization tools' ),
+			];
+		case 'pro':
+			return [
+				translate( 'Akismet Anti-spam (10K API calls per month)' ),
+				translate( 'VaultPress Backup (50GB storage)' ),
+				translate( 'Site Search (Up to 10K records and 10K requests per month)' ),
+				translate( 'Social' ),
+				translate( 'Scan' ),
+				translate( 'VideoPress' ),
+				translate( 'Boost' ),
+				translate( 'CRM Entrepreneur' ),
+				translate( 'AI Assistant' ),
+				translate( 'Stats (Up to 50K site views, upgradeable)' ),
 				translate( 'Newsletter and monetization tools' ),
 			];
 		case 'growth':
@@ -230,6 +246,13 @@ export default function getJetpackProductFeatures(
 	if ( isJetpackCompleteSlug( product.product_slug ) ) {
 		return [
 			...getFeatureStrings( 'complete', translate ),
+			...getFeatureStrings( 'support', translate ),
+		];
+	}
+
+	if ( ( JETPACK_PRO_PLANS as ReadonlyArray< string > ).includes( product.product_slug ) ) {
+		return [
+			...getFeatureStrings( 'pro', translate ),
 			...getFeatureStrings( 'support', translate ),
 		];
 	}

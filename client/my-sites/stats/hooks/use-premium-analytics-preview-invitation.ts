@@ -2,7 +2,7 @@ import usePremiumAnalyticsPreviewCohort from './use-premium-analytics-preview-co
 import usePremiumAnalyticsStatusQuery from './use-premium-analytics-status-query';
 
 /**
- * Whether classic Stats should offer this site the new Traffic tab, and where that leads.
+ * Whether classic Stats should offer this site the Stats preview, and where that leads.
  *
  * Unlike the banner, this does not ask the notices endpoint: a dismissal or a postponement
  * hides the banner, and this is the way in that has to outlive it. Only exactly `false` counts

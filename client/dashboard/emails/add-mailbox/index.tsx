@@ -103,7 +103,7 @@ const AddProfessionalEmail = () => {
 							// Translators: %(errors)s is a list of errors separated by commas.
 							__( 'You cannot add emails to this domain: %(errors)s.' ),
 							{ errors: Object.values( errors ).join( ', ' ) }
-					  )
+						)
 					: __( 'You cannot add emails to this domain.' );
 				createErrorNotice( message, { type: 'snackbar' } );
 			}

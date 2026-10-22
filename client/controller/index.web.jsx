@@ -20,6 +20,7 @@ import { dashboardLink } from 'calypso/dashboard/utils/link';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordUnifiedAdminPageView } from 'calypso/lib/analytics/record-admin-page-view';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
@@ -38,7 +39,6 @@ import {
 } from 'calypso/state/immediate-login/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
-import { setSelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.jsx';
 import { hydrate, render } from './web-util.js';
@@ -85,6 +85,7 @@ export const ProviderWrappedLayout = ( {
 				currentSection={ currentSection }
 				currentRoute={ currentRoute }
 				currentQuery={ currentQuery }
+				onRouteCommit={ recordUnifiedAdminPageView }
 			>
 				<QueryClientProvider client={ queryClient }>
 					<ReduxProvider store={ store }>
@@ -550,12 +551,10 @@ export const notFound = ( context, next ) => {
 };
 
 /**
- * Middleware to set the selected site ID based on the `origin_site_id` query parameter.
+ * Middleware to remove the `origin_site_id` query parameter.
  */
 export const setSelectedSiteIdByOrigin = ( context, next ) => {
-	const originSiteId = ( context.query.origin_site_id ?? '' ).trim();
-	if ( originSiteId ) {
-		context.store.dispatch( setSelectedSiteId( originSiteId ) );
+	if ( context.query.origin_site_id !== undefined ) {
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_site_id' ) );
 	}
 	next();
@@ -595,7 +594,8 @@ export const maybeRedirectToMultiSiteDashboard =
 		if ( isForcedOptIn || shouldForceRedirect?.( context ) ) {
 			const redirectUrl = typeof path === 'function' ? path( context.params, context.query ) : path;
 			bumpStat( 'dashboard-redirect', isForcedOptIn ? 'forced-opt-in' : 'feature-flag' );
-			return navigate( dashboardLink( redirectUrl ?? context.path ) );
+			window.location.replace( dashboardLink( redirectUrl ?? context.path ) );
+			return;
 		}
 
 		next();

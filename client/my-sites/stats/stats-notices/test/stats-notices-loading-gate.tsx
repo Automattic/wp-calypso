@@ -165,7 +165,6 @@ describe( 'StatsNotices loading gate', () => {
 		mockStatusLoading = false;
 		mockIsWpcom = true;
 		delete mockFlags().is_odyssey;
-		delete mockFlags()[ 'stats/premium-analytics-preview' ];
 	} );
 
 	it( 'waits for site plans in Calypso', () => {
@@ -190,7 +189,6 @@ describe( 'StatsNotices loading gate', () => {
 	it( 'waits for the status read only when it asked for it', () => {
 		mockHasLoadedPlans = true;
 		mockStatusLoading = true;
-		mockFlags()[ 'stats/premium-analytics-preview' ] = true;
 
 		const { unmount } = renderNotices();
 		expect( screen.queryByText( 'Notice under test' ) ).not.toBeInTheDocument();

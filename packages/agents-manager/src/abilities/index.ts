@@ -4,29 +4,31 @@
  * The editor abilities carry the editor stack (checkpoint engine, style
  * application), so they load as an async chunk and only on editor pages.
  * Chats everywhere else (Reader, wp-admin list screens, Calypso) never fetch
- * the chunk, keeping their bundles small. The `?am_abilities=0` testing
- * switch skips the load too, flipping the editor abilities back to the
- * provider copies — the all-surface abilities have no fallback and stay on.
+ * the chunk, keeping their bundles small.
  */
 
-import isAmAbilitiesDisabled from '../utils/is-am-abilities-disabled';
 import { isEditorPage } from '../utils/is-editor-page';
 import { executeAbilityFromList } from './execute-ability';
 import { wpAdminNavigateAbility } from './wp-admin-navigate';
 import type { ToolProvider } from '../extension-types';
-import type { Ability } from './types';
 import type { CheckpointContextItem } from '../utils/checkpoints';
+import type { PageStructure } from '../utils/page-structure';
+import type { Ability } from '@wordpress/abilities';
 
-type EditorAbilitiesModule = typeof import('./editor-abilities');
+type EditorAbilitiesModule = typeof import( './editor-abilities' );
+
+type CheckpointActions = EditorAbilitiesModule[ 'checkpointActions' ];
+
+type EditorSuggestions = Pick<
+	EditorAbilitiesModule,
+	'getEditorEmptyViewSuggestions' | 'useBlockSuggestions'
+>;
 
 let editorAbilitiesPromise: Promise< EditorAbilitiesModule > | null = null;
 let loadedEditorAbilities: EditorAbilitiesModule | null = null;
 
-// TODO (ability-migration): Drop the `?am_abilities=0` checks in this file —
-// the load gate below, the owned-ability list, and the checkpoint context —
-// with the switch itself. See `utils/is-am-abilities-disabled.ts`.
 function loadEditorAbilities(): Promise< EditorAbilitiesModule > | null {
-	if ( ! editorAbilitiesPromise && isEditorPage() && ! isAmAbilitiesDisabled() ) {
+	if ( ! editorAbilitiesPromise && isEditorPage() ) {
 		editorAbilitiesPromise = import(
 			/* webpackChunkName: "am-editor-abilities" */ './editor-abilities'
 		).then(
@@ -61,19 +63,12 @@ function loadEditorAbilities(): Promise< EditorAbilitiesModule > | null {
 const ALL_SURFACE_ABILITIES: Ability[] = [ wpAdminNavigateAbility ];
 
 // A failed chunk load (already logged and set up to retry above) degrades to
-// the all-surface list — editor tool calls then fall through to the provider
-// copies.
+// the all-surface list until a later call loads the chunk.
 async function getOwnedAbilities(): Promise< Ability[] > {
-	// All-surface abilities are fully migrated — no provider fallback, so the
-	// `?am_abilities=0` switch flips only the editor abilities.
-	if ( isAmAbilitiesDisabled() ) {
-		return [ ...ALL_SURFACE_ABILITIES ];
-	}
-
 	let editorAbilities: Ability[] = [];
 	try {
 		const module = loadEditorAbilities();
-		editorAbilities = module ? ( await module ).getEditorAbilities() : [];
+		editorAbilities = module ? ( await module ).EDITOR_ABILITIES : [];
 	} catch {
 		// Fall through with the chunk-less list.
 	}
@@ -84,11 +79,11 @@ async function getOwnedAbilities(): Promise< Ability[] > {
 /**
  * Serves AM-owned abilities to the agent's tool pipeline. Tool calls resolve
  * through the provider chain first-write-wins by ability name, and this
- * provider is placed before the external ones — so each migrated ability
- * executes through AM even if a provider still ships its copy.
+ * provider is placed before the external ones, so AM's abilities run ahead of
+ * any provider ability with the same name.
  *
- * Off the editor only the all-surface abilities are owned; everything else
- * falls through to the provider copies and the editor chunk stays unloaded.
+ * Off the editor only the all-surface abilities are owned; everything else is
+ * left to the providers and the editor chunk stays unloaded.
  */
 export const amToolProvider: ToolProvider = {
 	getAbilities: getOwnedAbilities,
@@ -111,17 +106,91 @@ export async function registerAmAbilities(): Promise< void > {
 }
 
 /**
- * AM's checkpoints for the merged `availableCheckpoints` context — a sync
+ * AM's checkpoints for the `availableCheckpoints` client context — a sync
  * view because the `ContextProvider` contract is sync. Empty until the
  * editor abilities finish loading: with no ability executions there are no
- * checkpoints, so reading is never a reason to load them. Empty again under
- * `?am_abilities=0`, so the agent is never offered ids that AM no longer
- * restores.
+ * checkpoints, so reading is never a reason to load them.
  */
 export function getAmCheckpointContext(): CheckpointContextItem[] {
-	if ( isAmAbilitiesDisabled() || ! loadedEditorAbilities ) {
-		return [];
+	return loadedEditorAbilities?.getAvailableCheckpoints() ?? [];
+}
+
+/**
+ * The page body as block markup for the client context, which the backend's
+ * page-design agent reads. Empty until the editor abilities have loaded, and
+ * off editor pages.
+ */
+export function getAmPageContentMarkup(): string {
+	return loadedEditorAbilities?.getPageContentMarkup() ?? '';
+}
+
+/**
+ * The page's blocks and the selected one for the client context, under the
+ * short ids the editor abilities resolve. `null` until they have loaded,
+ * which leaves the context as the providers built it.
+ */
+export function getAmPageStructure(): PageStructure | null {
+	return loadedEditorAbilities?.getPageStructure() ?? null;
+}
+
+/**
+ * The post the editor has open, for the client context. Empty until the
+ * editor abilities have loaded, and off editor pages.
+ */
+export function getAmEditorPostContext(): Record< string, unknown > {
+	return loadedEditorAbilities?.getEditorPostContext() ?? {};
+}
+
+/**
+ * The editor's block types, selected text and custom CSS for the client
+ * context. Empty until the editor abilities have loaded, and off editor pages.
+ */
+export function getAmEditorContentContext(): Record< string, unknown > {
+	return loadedEditorAbilities?.getEditorContentContext() ?? {};
+}
+
+/**
+ * Starts loading what the editor content context reads, so the first message
+ * carries it: the post editor fetches the global styles only once asked.
+ */
+export async function preloadAmEditorContentContext(): Promise< void > {
+	try {
+		( await loadEditorAbilities() )?.preloadEditorContentContext();
+	} catch {
+		// Already logged; the next facade call retries the load.
+	}
+}
+
+/**
+ * AM's editor suggestions, from the editor abilities chunk. `null` off editor
+ * pages, or when the chunk fails to load.
+ */
+export async function loadAmEditorSuggestions(): Promise< EditorSuggestions | null > {
+	try {
+		return await loadEditorAbilities();
+	} catch {
+		// Already logged; the chat goes without them.
+		return null;
+	}
+}
+
+/**
+ * The id the agent knows a block by, so a host can name the block to it. The
+ * clientId itself until the editor abilities have loaded: the agent's tools
+ * take that too.
+ */
+export function getAmAgentBlockId( clientId: string ): string {
+	if ( typeof clientId !== 'string' || ! clientId ) {
+		return '';
 	}
 
-	return loadedEditorAbilities.getAvailableCheckpoints();
+	return loadedEditorAbilities?.getAgentBlockId( clientId ) ?? clientId;
+}
+
+/**
+ * AM's checkpoint store for the chat's Undo, or `null` until the editor
+ * abilities have loaded — before then nothing has written to it.
+ */
+export function getAmCheckpointActions(): CheckpointActions | null {
+	return loadedEditorAbilities?.checkpointActions ?? null;
 }

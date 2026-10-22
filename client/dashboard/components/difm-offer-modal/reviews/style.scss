@@ -1,0 +1,141 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+$difm-offer-reviews-fade: 0.4s;
+
+.difm-offer-reviews {
+	width: 100%;
+	max-width: 248px;
+}
+
+// The cards share one grid cell, so the slider keeps the height of the tallest card and
+// the modal does not change size when the review changes.
+.difm-offer-reviews__cards {
+	display: grid;
+	align-items: center;
+}
+
+.difm-offer-reviews__card {
+	grid-area: 1 / 1;
+	box-sizing: border-box;
+	min-width: 0;
+	margin: 0;
+	padding: $grid-unit-30;
+	border-radius: $radius-large;
+	background: $white;
+	color: $gray-900;
+	overflow-wrap: break-word;
+	opacity: 0;
+	visibility: hidden;
+	transition:
+		opacity $difm-offer-reviews-fade ease-in-out,
+		visibility 0s linear $difm-offer-reviews-fade;
+
+	&.is-active {
+		opacity: 1;
+		visibility: visible;
+		transition: opacity $difm-offer-reviews-fade ease-in-out;
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		transition: none;
+
+		&.is-active {
+			transition: none;
+		}
+	}
+}
+
+.difm-offer-reviews__stars {
+	display: flex;
+	gap: 1px;
+	margin-bottom: $grid-unit-20;
+}
+
+.difm-offer-reviews__star {
+	display: block;
+	width: $grid-unit-30;
+	height: $grid-unit-30;
+}
+
+.difm-offer-reviews__quote {
+	// Reset the global blockquote box (background, padding and top margin from _main.scss).
+	// The gap under the title sits here, because the Text component resets the title's margin.
+	margin: $grid-unit-10 0 $grid-unit-20;
+	padding: 0;
+	border-radius: 0;
+	background: none;
+
+	p {
+		margin: 0;
+	}
+}
+
+.difm-offer-reviews__source {
+	display: flex;
+	flex-direction: column;
+	gap: $grid-unit-05;
+}
+
+// The link looks like the plain "Trustpilot" label, so it does not pull the user out of the
+// flow. It is there for credibility, for a user who wants to check the review.
+.difm-offer-reviews__link {
+	align-self: flex-start;
+	color: inherit;
+	font-size: 12px;
+	line-height: 16px;
+	text-decoration: none;
+
+	&:hover,
+	&:focus-visible {
+		color: inherit;
+		text-decoration: underline;
+	}
+}
+
+.difm-offer-reviews__reviewer {
+	letter-spacing: 0.006em;
+	text-transform: uppercase;
+}
+
+// The dots sit below the cards at a fixed place, so the cards and the dots do not move when
+// the review changes.
+.difm-offer-reviews__dots {
+	display: flex;
+	justify-content: center;
+	margin-top: $grid-unit-10;
+}
+
+// The button is 24px square, the smallest target size WCAG allows. The dot is drawn inside it.
+.difm-offer-reviews__dot {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: $grid-unit-30;
+	height: $grid-unit-30;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: pointer;
+
+	&::before {
+		content: "";
+		width: $grid-unit-10;
+		height: $grid-unit-10;
+		border-radius: $radius-full;
+		background: $white;
+		box-shadow: inset 0 0 0 1px $gray-600;
+	}
+
+	&.is-active::before {
+		background: $gray-900;
+		box-shadow: none;
+	}
+
+	&:focus-visible {
+		outline: $border-width-focus-fallback solid var(--wp-components-color-accent, var(--wp-admin-theme-color));
+		outline-offset: -2px;
+		border-radius: $radius-full;
+	}
+}

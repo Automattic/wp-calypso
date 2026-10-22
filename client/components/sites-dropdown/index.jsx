@@ -93,6 +93,9 @@ export class SitesDropdown extends PureComponent {
 	}
 
 	selectSite( siteId ) {
+		if ( this.props.disabled ) {
+			return;
+		}
 		this.props.onSiteSelect( siteId );
 		this.setState( {
 			selectedSiteId: siteId,
@@ -110,6 +113,9 @@ export class SitesDropdown extends PureComponent {
 	}
 
 	toggleOpen() {
+		if ( this.props.disabled ) {
+			return;
+		}
 		this.props.hasMultipleSites && this.setState( { open: ! this.state.open } );
 	}
 
@@ -162,6 +168,7 @@ export class SitesDropdown extends PureComponent {
 						className="sites-dropdown__selected"
 						onClick={ this.toggleOpen }
 						onKeyDown={ this.handleKeyDown }
+						aria-disabled={ this.props.disabled }
 						// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
 						tabIndex={ 0 }
 					>

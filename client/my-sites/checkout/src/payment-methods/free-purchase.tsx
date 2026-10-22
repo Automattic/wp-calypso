@@ -94,7 +94,6 @@ function WordPressFreePurchaseLabel() {
 		return (
 			<>
 				<div>{ __( 'Assign a payment method later' ) }</div>
-				<WordPressLogo />
 			</>
 		);
 	}

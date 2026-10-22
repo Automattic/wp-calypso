@@ -47,6 +47,9 @@ export const siteCreationPath = buildPathHelper<
 			platform: ImporterPlatform;
 			ssh?: string;
 			host?: string;
+			isWpcom?: boolean | '';
+			action?: string;
+			how?: string;
 		};
 	},
 	typeof STEPS.SITE_CREATION_STEP.slug
@@ -54,21 +57,31 @@ export const siteCreationPath = buildPathHelper<
 
 export const sitePickerPath = buildPathHelper<
 	{
-		queryParams: { from: string | null; platform: ImporterPlatform; ssh?: string; host?: string };
+		queryParams: {
+			from: string | null;
+			platform?: ImporterPlatform;
+			ssh?: string;
+			host?: string;
+			isWpcom?: boolean | '';
+			action?: string;
+			how?: string;
+			siteId?: number | '';
+			siteSlug?: string;
+		};
 	},
 	typeof STEPS.PICK_SITE.slug
 >( STEPS.PICK_SITE.slug );
 
-export const importOrMigratePath = buildPathHelper<
+export const plansPath = buildPathHelper<
 	{
 		queryParams: {
-			from?: string;
-			siteSlug: string;
-			siteId?: number | string;
+			from: string;
+			siteId?: number;
+			siteSlug?: string;
 		};
 	},
-	typeof STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
->( STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug );
+	typeof STEPS.UNIFIED_PLANS.slug
+>( STEPS.UNIFIED_PLANS.slug );
 
 export const howToMigratePath = buildPathHelper<
 	{
@@ -76,10 +89,33 @@ export const howToMigratePath = buildPathHelper<
 			from?: string | null;
 			siteSlug: string;
 			siteId?: number | string;
+			platform?: ImporterPlatform;
+			host?: string;
+			action?: string;
+			how?: string;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
 >( STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug );
+
+export const siteCheckPath = buildPathHelper<
+	{
+		queryParams: {
+			from: string;
+			platform?: ImporterPlatform;
+			host?: string;
+			isWpcom?: boolean;
+			siteId?: number;
+			siteSlug?: string;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_CHECK.slug
+>( STEPS.SITE_MIGRATION_CHECK.slug );
+
+export const errorPath = buildPathHelper<
+	{ queryParams: { siteId: number; siteSlug: string } },
+	typeof STEPS.ERROR.slug
+>( STEPS.ERROR.slug );
 
 export const processingPath = buildPathHelper<
 	{
@@ -232,10 +268,25 @@ export const sshInProgressPath = buildPathHelper<
 
 export const identifyPath = buildPathHelper<
 	{
-		queryParams: { from: string | null };
+		queryParams: { from: string | null; how?: string };
 	},
 	typeof STEPS.SITE_MIGRATION_IDENTIFY.slug
 >( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+
+export const importListPath = buildPathHelper<
+	{
+		queryParams: {
+			from: string;
+			platform: ImporterPlatform;
+			host: string;
+			isWpcom: '';
+			ssh: string;
+			action: string;
+			how: string;
+		};
+	},
+	typeof STEPS.IMPORT_LIST.slug
+>( STEPS.IMPORT_LIST.slug );
 
 export const siteSetupImportListPath = buildPathHelper< {
 	queryParams: {
@@ -247,19 +298,14 @@ export const siteSetupImportListPath = buildPathHelper< {
 	};
 } >( `/setup/site-setup/${ STEPS.IMPORT_LIST.slug }` );
 
-export const calypsoImporterPath = buildPathHelper< {
-	queryParams: { engine: string; ref: string };
-	params: { siteSlug: string };
-} >( '/import/:siteSlug' );
-
 export const siteSetupImportWordpressPath = buildPathHelper< {
 	queryParams: {
 		siteId?: number | string;
 		siteSlug: string;
-		from: string;
+		from?: string | null;
 		backToFlow: string;
 	};
-} >( '/setup/site-setup/importerWordpress' );
+} >( `/setup/site-setup/${ STEPS.IMPORTER_WORDPRESS.slug }` );
 
 export const calypsoOverviewPath = buildPathHelper< {
 	queryParams: { ref: string };

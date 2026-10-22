@@ -3,11 +3,15 @@ import { handleActiveThrottles, recordResponseThrottle } from '../../throttle-fl
 import { PlansPage, Plans } from '../plans-page';
 import type { NewSiteResponse } from '../../../types/rest-api-client.types';
 
+// Creating a site routinely outlasts the actionTimeout route.fetch inherits; this stays
+// inside the budget selectPlan gives the redirect that follows.
+const NEW_SITE_FETCH_TIMEOUT = 60 * 1000;
+
 /**
  * The plans page URL regex.
  */
 export const plansPageUrl =
-	/.*setup\/onboarding\/plans|setup\/domain\/plans|start\/plans|start\/with-plugin\/plans-with-plugin|start\/with-theme\/plans-theme-preselected|start\/domain\/plans-site-selected|start\/launch-site\/plans-launch.*/;
+	/.*setup\/onboarding\/plans|setup\/domain\/plans|start\/plans|start\/with-plugin\/plans-with-plugin|start\/with-theme\/plans-theme-preselected|start\/domain\/plans-site-selected|start\/launch-site\/plans-launch|setup\/launch-site\/plans.*/;
 
 /**
  * Represents the Signup > Pick a Plan page.
@@ -53,7 +57,7 @@ export class SignupPickPlanPage {
 				/.*\/sites\/new\?.*/,
 				async ( route ) => {
 					try {
-						const response = await route.fetch();
+						const response = await route.fetch( { timeout: NEW_SITE_FETCH_TIMEOUT } );
 						const body = await response.body();
 						await route.fulfill( { response } );
 
@@ -99,7 +103,9 @@ export class SignupPickPlanPage {
 			// Non-free plans should redirect to the Checkout cart.
 			redirectUrl ??= new RegExp( '.*checkout.*' );
 		} else {
-			redirectUrl ??= new RegExp( '.*(setup/site-setup|home/.+ref=onboarding).*' );
+			redirectUrl ??= new RegExp(
+				'.*(setup/site-setup|site-setup-wp-admin|home/.+ref=onboarding).*'
+			);
 		}
 
 		// Awaited alongside the redirect rather than after it: a refused creation
@@ -133,7 +139,9 @@ export class SignupPickPlanPage {
 			// Non-free plans should redirect to the Checkout cart.
 			redirectUrl ??= new RegExp( '.*checkout.*' );
 		} else {
-			redirectUrl ??= new RegExp( '.*(setup/site-setup|home/.+ref=onboarding).*' );
+			redirectUrl ??= new RegExp(
+				'.*(setup/site-setup|site-setup-wp-admin|home/.+ref=onboarding).*'
+			);
 		}
 
 		const actions = [
@@ -168,6 +176,26 @@ export class SignupPickPlanPage {
 	}
 
 	/**
+	 * Clicks the "start with a free plan" link and waits for navigation.
+	 *
+	 * Intended for flows where the free plan is de-emphasized and a free subdomain is
+	 * used, so no upsell modal is shown.
+	 *
+	 * @param {RegExp} redirectUrl Optional URL pattern to wait for after clicking.
+	 * @returns {Promise<void>}
+	 */
+	async startWithFreePlan( redirectUrl?: RegExp ): Promise< void > {
+		await this.page.waitForURL( plansPageUrl );
+
+		redirectUrl ??= new RegExp( '.*/home/.*' );
+
+		await Promise.all( [
+			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
+			this.plansPage.clickStartWithFreePlan(),
+		] );
+	}
+
+	/**
 	 * Opens the escape hatch modal by clicking the "start with a free plan" trigger.
 	 *
 	 * Use this when you need to inspect or assert modal content before committing to a plan.
@@ -177,16 +205,6 @@ export class SignupPickPlanPage {
 	async openEscapeHatch(): Promise< void > {
 		await this.page.waitForURL( plansPageUrl );
 		await this.plansPage.openEscapeHatch();
-	}
-
-	/**
-	 * Validates that the "No free custom domain" warning is visible in the escape hatch modal.
-	 *
-	 * @param {string} domainName The domain name that will be shown to visitors.
-	 * @returns {Promise<void>}
-	 */
-	async validateNoCustomDomainWarning( domainName: string ): Promise< void > {
-		await this.plansPage.validateNoCustomDomainWarning( domainName );
 	}
 
 	/**

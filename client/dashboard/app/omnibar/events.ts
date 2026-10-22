@@ -20,26 +20,20 @@ function createOmnibarEvent< T = void >() {
 
 export const omnibarEvents = {
 	mobileMenu: createOmnibarEvent(),
-	notificationsAnchor: createOmnibarEvent< HTMLElement | null >(),
 	notifications: createOmnibarEvent(),
 	notificationsUnseenCount: createOmnibarEvent< number >(),
 	notificationsOpen: createOmnibarEvent< boolean >(),
-	siteSwitcher: createOmnibarEvent(),
-	siteSwitcherAnchor: createOmnibarEvent< HTMLElement | null >(),
-	linkClick: createOmnibarEvent< { href: string; event: MouseEvent } >(),
+	notificationsSubscriberReceived: createOmnibarEvent(),
 };
 
-export type OmnibarEvents = typeof omnibarEvents;
+type OmnibarEvents = typeof omnibarEvents;
 
-type EventPayload< K extends keyof OmnibarEvents > = Parameters<
-	OmnibarEvents[ K ][ 'emit' ]
-> extends [ infer P ]
-	? P
-	: void;
+type EventPayload< K extends keyof OmnibarEvents > =
+	Parameters< OmnibarEvents[ K ][ 'emit' ] > extends [ infer P ] ? P : void;
 
 /**
  * Subscribe to an omnibar event. The callback fires whenever the named event
- * is emitted from the interim omnibar. No-ops when the omnibar is disabled.
+ * is emitted from the omnibar.
  */
 export function useOmnibarEvent< K extends keyof OmnibarEvents >(
 	name: K,

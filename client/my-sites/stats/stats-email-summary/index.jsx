@@ -143,7 +143,7 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 																numberFormatOptions: {
 																	maximumFractionDigits: 2,
 																},
-														  } ) }%`
+															} ) }%`
 														: '—'
 												}
 												item={ item }
@@ -179,7 +179,7 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 														numberFormatOptions: {
 															maximumFractionDigits: 2,
 														},
-												  } ) }%`
+													} ) }%`
 												: '—'
 										}
 										item={ item }

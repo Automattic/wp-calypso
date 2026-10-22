@@ -2,9 +2,11 @@
  * @jest-environment jsdom
  */
 
+import { getAiCreditsTitle } from '../ai-credits';
 import {
 	CANCEL_FLOW_TYPE,
 	getCancelIntentFromSearch,
+	getDelayedDowngradeRenewalPriceText,
 	getDisplayVariant,
 	getMutationFlowType,
 	getPurchaseCancellationFlowType,
@@ -20,8 +22,10 @@ import {
 	getTitleForDisplay,
 	isPurchaseDowngradeEligible,
 	isWithinRefundWindowDowngradeEligible,
+	isA4ASubscriptionMeta,
+	isA4ABillingDragonPurchase,
+	isJetpackCrmProduct,
 } from '../purchase';
-import { getStudioCodeAiCreditsTitle } from '../studio-code-ai-credits';
 import type { Purchase } from '@automattic/api-core';
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
@@ -482,6 +486,30 @@ describe( 'isFreeTrialEndingOnExpiryDate', () => {
 	} );
 } );
 
+describe( 'isA4ASubscriptionMeta', () => {
+	test( 'accepts the marker with or without an instance key', () => {
+		expect( isA4ASubscriptionMeta( 'is-a4a' ) ).toBe( true );
+		expect( isA4ASubscriptionMeta( 'is-a4a:example.com' ) ).toBe( true );
+		expect( isA4ASubscriptionMeta( 'is-a4a:titan:example.com' ) ).toBe( true );
+	} );
+
+	test( 'rejects other values', () => {
+		expect( isA4ASubscriptionMeta( 'is-a4a-not' ) ).toBe( false );
+		expect( isA4ASubscriptionMeta( 'example.com' ) ).toBe( false );
+		expect( isA4ASubscriptionMeta( '' ) ).toBe( false );
+		expect( isA4ASubscriptionMeta( undefined ) ).toBe( false );
+	} );
+} );
+
+describe( 'isA4ABillingDragonPurchase', () => {
+	test( 'matches meta with an instance key', () => {
+		expect( isA4ABillingDragonPurchase( makePurchase( { meta: 'is-a4a:example.com' } ) ) ).toBe(
+			true
+		);
+		expect( isA4ABillingDragonPurchase( makePurchase( { meta: 'example.com' } ) ) ).toBe( false );
+	} );
+} );
+
 describe( 'getRenewalUrlFromPurchase', () => {
 	test( 'uses the subscription-ID-only format', () => {
 		const url = getRenewalUrlFromPurchase(
@@ -649,19 +677,17 @@ describe( 'isWithinRefundWindowDowngradeEligible', () => {
 	} );
 } );
 
-describe( 'getStudioCodeAiCreditsTitle', () => {
-	const STUDIO_NAME = 'Studio Code AI Credits';
+describe( 'getAiCreditsTitle', () => {
+	const PRODUCT_NAME = 'Studio Code AI Credits';
 
 	test( 'uses a separator for thousands of credits', () => {
-		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 1000 ) ).toBe(
+		expect( getAiCreditsTitle( PRODUCT_NAME, 1000 ) ).toBe(
 			'Studio Code AI Credits (1,000 credits)'
 		);
 	} );
 
 	test( 'uses the singular form for one credit', () => {
-		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 1 ) ).toBe(
-			'Studio Code AI Credits (1 credit)'
-		);
+		expect( getAiCreditsTitle( PRODUCT_NAME, 1 ) ).toBe( 'Studio Code AI Credits (1 credit)' );
 	} );
 } );
 
@@ -683,6 +709,18 @@ describe( 'getTitleForDisplay', () => {
 				} )
 			)
 		).toBe( 'Studio Code AI Credits (500 credits)' );
+	} );
+
+	test( 'shows credit count for an AI Credits purchase', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_slug: 'ai-credits-lifetime',
+					product_name: 'AI Credits',
+					renewal_price_tier_usage_quantity: 1000,
+				} )
+			)
+		).toBe( 'AI Credits (1,000 credits)' );
 	} );
 
 	test.each( [ null, undefined, 0 ] )(
@@ -749,5 +787,87 @@ describe( 'getTitleForDisplay', () => {
 				} )
 			)
 		).toBe( 'Extra Storage 50 GB' );
+	} );
+} );
+
+describe( 'getDelayedDowngradeRenewalPriceText', () => {
+	const translated = () => true;
+
+	test( 'names the downgraded renewal price when a downgrade is pending', () => {
+		expect(
+			getDelayedDowngradeRenewalPriceText(
+				makePurchase( {
+					currency_code: 'USD',
+					is_delayed_downgrade_pending: true,
+					delayed_downgrade_price_integer: 9600,
+				} ),
+				translated
+			)
+		).toBe( 'Because of your scheduled downgrade, your next renewal will be $96.' );
+	} );
+
+	test( 'returns null when no downgrade is pending', () => {
+		expect(
+			getDelayedDowngradeRenewalPriceText(
+				makePurchase( {
+					currency_code: 'USD',
+					is_delayed_downgrade_pending: false,
+					delayed_downgrade_price_integer: 9600,
+				} ),
+				translated
+			)
+		).toBeNull();
+	} );
+
+	test( 'returns null when the downgrade price is unavailable', () => {
+		expect(
+			getDelayedDowngradeRenewalPriceText(
+				makePurchase( {
+					is_delayed_downgrade_pending: true,
+					delayed_downgrade_price_integer: null,
+				} ),
+				translated
+			)
+		).toBeNull();
+		expect(
+			getDelayedDowngradeRenewalPriceText(
+				makePurchase( { is_delayed_downgrade_pending: true } ),
+				translated
+			)
+		).toBeNull();
+	} );
+
+	test( 'returns null when the sentence is not translated yet', () => {
+		expect(
+			getDelayedDowngradeRenewalPriceText(
+				makePurchase( {
+					currency_code: 'USD',
+					is_delayed_downgrade_pending: true,
+					delayed_downgrade_price_integer: 9600,
+				} ),
+				() => false
+			)
+		).toBeNull();
+	} );
+} );
+
+describe( 'isJetpackCrmProduct', () => {
+	it.each( [
+		'jetpack_complete',
+		'jetpack-complete_abc123',
+		'jetpack_pro_yearly',
+		'jetpack_pro_bi_yearly',
+		'jetpack-pro_abc123',
+		'jetpack_crm',
+	] )( 'returns true for %s', ( keyOrSlug ) => {
+		expect( isJetpackCrmProduct( keyOrSlug ) ).toBe( true );
+	} );
+
+	it.each( [
+		'jetpack_professional',
+		'jetpack-professional_abc123',
+		'jetpack_security_t1_yearly',
+	] )( 'returns false for %s', ( keyOrSlug ) => {
+		expect( isJetpackCrmProduct( keyOrSlug ) ).toBe( false );
 	} );
 } );

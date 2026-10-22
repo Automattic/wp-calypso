@@ -149,6 +149,14 @@ describe( 'useInstallProgress', () => {
 		expect( Number.isNaN( result.current.overallProgress ) ).toBe( false );
 	} );
 
+	it( 'treats a timed-out wait as stalled whatever stage it is in', () => {
+		const { result } = renderHook( () =>
+			useInstallProgress( { transferStatus: transferStates.ACTIVE, hasTimedOut: true } )
+		);
+		expect( result.current.stage ).not.toBe( 2 );
+		expect( result.current.isStalled ).toBe( true );
+	} );
+
 	it( 'flags an overrun only well past the stage’s typical duration', () => {
 		const { result } = renderHook( () =>
 			useInstallProgress( { transferStatus: transferStates.ACTIVE, fallbackStep: 1 } )

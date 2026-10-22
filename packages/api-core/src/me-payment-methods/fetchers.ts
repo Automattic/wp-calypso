@@ -1,5 +1,9 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { StoredPaymentMethod, PaymentMethodRequestType } from './types';
+import type {
+	StoredPaymentMethod,
+	PaymentMethodRequestType,
+	PaymentMethodTaxInfoResponse,
+} from './types';
 
 export async function fetchUserPaymentMethods(
 	type: PaymentMethodRequestType,
@@ -50,6 +54,12 @@ function transformPaymentMethodTaxInfoForEndpoint(
 		// reads as "leave any stored declaration alone" rather than "clear it".
 		tax_is_for_business: paymentMethodTaxInfo?.is_for_business,
 	};
+}
+
+export async function fetchPaymentMethodTaxInfo(
+	paymentMethodId: string
+): Promise< PaymentMethodTaxInfoResponse > {
+	return await wpcom.req.get( `/me/payment-methods/${ paymentMethodId }/tax-location` );
 }
 
 export async function setPaymentMethodTaxInfo(

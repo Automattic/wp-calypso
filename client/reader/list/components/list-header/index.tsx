@@ -42,10 +42,10 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 	} );
 	const following = Boolean(
 		hasSubscribedListsData &&
-			list &&
-			subscribedListsData?.lists.some(
-				( subscribed ) => subscribed.owner === list.owner && subscribed.slug === list.slug
-			)
+		list &&
+		subscribedListsData?.lists.some(
+			( subscribed ) => subscribed.owner === list.owner && subscribed.slug === list.slug
+		)
 	);
 	const { mutate: followList } = useMutation( followReadListMutation( queryClient ) );
 	const { mutate: unfollowList } = useMutation( unfollowReadListMutation( queryClient ) );

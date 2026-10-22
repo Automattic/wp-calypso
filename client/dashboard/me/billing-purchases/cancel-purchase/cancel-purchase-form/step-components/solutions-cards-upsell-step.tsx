@@ -33,6 +33,7 @@ import { ButtonStack } from '../../../../../components/button-stack';
 import DashboardSummaryButton from '../../../../../components/summary-button';
 import { SummaryButtonList } from '../../../../../components/summary-button-list';
 import { dashboardLink, wpcomLink } from '../../../../../utils/link';
+import { getPurchaseSettingsUrl, getPurchasesListUrl } from '../../../../../utils/site-url';
 import { getSolutionsForReason, PRICE_MOTIVATED_REASONS } from '../../get-solutions-for-reason';
 import UpsellStep from './upsell-step';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
@@ -312,7 +313,7 @@ export default function SolutionsCardsUpsellStep( {
 	}
 
 	const changePlanUrl = wpcomLink( `/plans/${ purchase.site_slug }` );
-	const purchaseSettingsUrl = dashboardLink( '/me/billing/purchases/' + purchase.ID );
+	const purchaseSettingsUrl = getPurchaseSettingsUrl( purchase );
 	const renewNowUrl = addQueryArgs(
 		wpcomLink(
 			`/checkout/${ purchase.site_slug }/${ purchase.product_slug }?coupon=${ RENEW_COUPON }`
@@ -324,9 +325,9 @@ export default function SolutionsCardsUpsellStep( {
 	);
 	const yearlyPlanUrl = yearlyPlanSlug
 		? addQueryArgs( wpcomLink( `/checkout/${ purchase.site_slug }/${ yearlyPlanSlug }` ), {
-				redirect_to: dashboardLink( '/me/billing/purchases' ),
+				redirect_to: getPurchasesListUrl( purchase ),
 				cancel_to: purchaseSettingsUrl,
-		  } )
+			} )
 		: undefined;
 
 	const handleCardAction = ( solutionId: string ) => {
@@ -427,19 +428,19 @@ export default function SolutionsCardsUpsellStep( {
 				{ filteredSolutions.map( ( card ) => {
 					const hasAction = Boolean(
 						card.id === 'speak-with-support' ||
-							card.id === 'ask-ai-assistant' ||
-							card.id === 'built-by' ||
-							card.id === 'change-plan' ||
-							card.id === 'renew-now-pay-less' ||
-							card.id === 'switch-to-monthly' ||
-							card.id === 'switch-to-yearly' ||
-							card.id === 'upgrade-for-full-access' ||
-							card.id === 'get-theme-addon' ||
-							card.id === 'find-guides' ||
-							card.id === 'make-site-faster' ||
-							card.id === 'use-migration-tools' ||
-							card.id === 'use-domain-guide' ||
-							card.id === 'explore-domain-options'
+						card.id === 'ask-ai-assistant' ||
+						card.id === 'built-by' ||
+						card.id === 'change-plan' ||
+						card.id === 'renew-now-pay-less' ||
+						card.id === 'switch-to-monthly' ||
+						card.id === 'switch-to-yearly' ||
+						card.id === 'upgrade-for-full-access' ||
+						card.id === 'get-theme-addon' ||
+						card.id === 'find-guides' ||
+						card.id === 'make-site-faster' ||
+						card.id === 'use-migration-tools' ||
+						card.id === 'use-domain-guide' ||
+						card.id === 'explore-domain-options'
 					);
 					const href = getCardHref(
 						card.id,

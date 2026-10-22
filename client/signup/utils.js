@@ -65,7 +65,7 @@ export function getStepUrl(
 	const url =
 		flowName === defaultFlowName && framework === '/start'
 			? // we don't include the default flow name in the route in /start
-			  framework + step + section + locale
+				framework + step + section + locale
 			: framework + flow + step + section + locale;
 	return addQueryArgs( params, url );
 }

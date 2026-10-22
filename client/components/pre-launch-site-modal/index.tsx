@@ -17,7 +17,7 @@ interface PreLaunchSiteModalProps {
 	isOpen: boolean;
 	onClose: () => void;
 	// Where launch is handed off to. The caller owns this so the destination
-	// (and the `/start/launch-site` path) stays explicit at each call site.
+	// (and the `/setup/launch-site` path) stays explicit at each call site.
 	launchUrl: string;
 }
 

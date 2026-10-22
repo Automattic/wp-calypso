@@ -16,7 +16,7 @@ export default function ReportFooter() {
 				) }
 			</Text>
 			<Text as="p">
-				<ExternalLink href="https://developer.wordpress.com/docs/site-performance/speed-test/#accessing-the-speed-test-tool">
+				<ExternalLink href="https://developer.chrome.com/docs/crux">
 					{ __( 'Learn more about the Chrome UX Report' ) }
 				</ExternalLink>
 			</Text>

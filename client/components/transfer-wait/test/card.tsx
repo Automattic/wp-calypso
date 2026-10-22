@@ -18,9 +18,7 @@ describe( 'TransferWaitCard', () => {
 
 	it( 'narrates the preparing stage', () => {
 		render( <TransferWaitCard transferStatus={ transferStates.ACTIVE } fallbackStep={ 1 } /> );
-		expect( screen.getByRole( 'status' ).textContent ).toContain(
-			'preparing a dedicated server for your site'
-		);
+		expect( screen.getByRole( 'status' ).textContent ).toContain( 'preparing a dedicated server' );
 	} );
 	it( 'narrates the moving stage', () => {
 		render( <TransferWaitCard transferStatus={ transferStates.RELOCATING } fallbackStep={ 1 } /> );
@@ -55,7 +53,7 @@ describe( 'TransferWaitCard', () => {
 		render( <TransferWaitCard transferStatus={ transferStates.ACTIVE } fallbackStep={ 1 } /> );
 		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute(
 			'aria-label',
-			'Preparing a dedicated server for your site'
+			'Preparing a dedicated server'
 		);
 	} );
 
@@ -165,6 +163,7 @@ describe( 'TransferWaitCard', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_transfer_wait_stalled', {
 			wait_type: 'plugin_install',
+			reason: 'finishing',
 			product_slug: 'sensei-pro',
 		} );
 	} );
@@ -182,12 +181,35 @@ describe( 'TransferWaitCard', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_transfer_wait_stalled', {
 			wait_type: 'site_transfer',
+			reason: 'finishing',
 		} );
 
 		fireEvent.click( screen.getByRole( 'link', { name: 'Go to your site' } ) );
 		expect( recordTracksEvent ).toHaveBeenLastCalledWith( 'calypso_transfer_wait_stalled_click', {
 			wait_type: 'site_transfer',
+			reason: 'finishing',
 			stage_seconds: expect.any( Number ),
+		} );
+	} );
+
+	it( 'offers the way out while the transfer is still running, once the wait has timed out', () => {
+		render(
+			<TransferWaitCard
+				transferStatus={ transferStates.ACTIVE }
+				siteSlug="example.wordpress.com"
+				isPluginInstall={ false }
+				hasTimedOut
+			/>
+		);
+
+		expect(
+			screen.getByText( /your site is still being set up/i, { exact: false } )
+		).toBeVisible();
+		expect( screen.queryByText( /taking longer than it should/i ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Go to your site' } ) ).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_transfer_wait_stalled', {
+			wait_type: 'site_transfer',
+			reason: 'deadline',
 		} );
 	} );
 } );

@@ -156,6 +156,7 @@ const {
 	// Chat state
 	messages, // UIMessage[] - formatted for display
 	isProcessing, // boolean - request in progress
+	isReplying, // boolean | undefined - reply text is streaming in (with `trackReplying`, during a request)
 	error, // string | null - last error
 
 	// Core methods
@@ -182,6 +183,7 @@ const {
 - `contextProvider?: ContextProvider` - Dynamic context injection
 - `toolProvider?: ToolProvider` - Tool execution capabilities
 - `authProvider?: AuthProvider` - Authentication headers
+- `trackReplying?: boolean` - Return `isReplying` during a request, e.g. for AgentUI's `isReplying` prop. Needs `enableStreaming`. Reply text then also clears `progressMessage` and `progressPhase`
 
 ### useClientContext Hook
 
@@ -394,7 +396,7 @@ Add interactive buttons to agent messages:
 ```typescript
 const { registerMessageActions, getRegenerateHandler } = useAgentChat( config );
 
-// Built-in feedback actions
+// Built-in feedback actions: inline on the latest turn, on hover for earlier turns
 registerMessageActions(
 	createFeedbackActions( {
 		onFeedback: async ( messageId, feedback ) => {
@@ -414,6 +416,7 @@ registerMessageActions( {
 			icon: '📋',
 			onClick: ( message ) =>
 				navigator.clipboard.writeText( message.content[ 0 ].text ),
+			visibility: 'latest-turn', // Like the feedback actions. Defaults to `always`.
 		},
 	],
 } );

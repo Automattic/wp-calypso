@@ -245,7 +245,7 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 						},
 						A4A_FEEDBACK_LINK
 					)
-			  );
+				);
 	}, [
 		assignLicensesToSite,
 		dispatch,

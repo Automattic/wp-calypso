@@ -36,10 +36,7 @@ interface PlanPriceType {
 	currencyCode?: string;
 }
 type PlanKeys =
-	| 'PLAN_ECOMMERCE'
-	| 'PLAN_ECOMMERCE_2_YEARS'
-	| 'PLAN_ECOMMERCE_3_YEARS'
-	| 'PLAN_ECOMMERCE_MONTHLY';
+	'PLAN_ECOMMERCE' | 'PLAN_ECOMMERCE_2_YEARS' | 'PLAN_ECOMMERCE_3_YEARS' | 'PLAN_ECOMMERCE_MONTHLY';
 
 const useEntrepreneurPlanPrices = () => {
 	const translate = useTranslate();

@@ -79,9 +79,11 @@ describe( '<WordPressAgentSlack />', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Disconnect' } ) );
 
 		await waitFor( () => expect( disconnectRequest.isDone() ).toBe( true ) );
-		expect(
-			await screen.findByText( 'You have not connected WordPress Agent to a Slack workspace yet.' )
-		).toBeVisible();
+		await waitFor( () =>
+			expect(
+				screen.queryByRole( 'heading', { name: CONNECTION.team_name } )
+			).not.toBeInTheDocument()
+		);
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_wordpress_agent_slack_disconnect' );
 	} );
 

@@ -37,11 +37,11 @@ function getNoticeMessage(
 		? translate(
 				'You can purchase new mailboxes at the regular price of {{strong}}%(price)s{{/strong}} per mailbox per month.',
 				translateArgs
-		  )
+			)
 		: translate(
 				'You can purchase new mailboxes at the regular price of {{strong}}%(price)s{{/strong}} per mailbox per year.',
 				translateArgs
-		  );
+			);
 }
 
 function getPriceMessage( {
@@ -68,7 +68,7 @@ function getPriceMessage( {
 					comment:
 						'%(proratedPrice)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
 				}
-		  );
+			);
 }
 
 function getPriceMessageExplanation( {
@@ -98,28 +98,28 @@ function getPriceMessageExplanation( {
 			return isMonthlyBilling
 				? translate(
 						'This is less than the first year discounted price because you are only charged for the remainder of the current month.'
-				  )
+					)
 				: translate(
 						'This is less than the first year discounted price because you are only charged for the remainder of the current year.'
-				  );
+					);
 		}
 
 		return isMonthlyBilling
 			? translate(
 					'This is less than the regular price because you are only charged for the remainder of the current month.'
-			  )
+				)
 			: translate(
 					'This is less than the regular price because you are only charged for the remainder of the current year.'
-			  );
+				);
 	}
 
 	return isMonthlyBilling
 		? translate(
 				'This is more than the regular price because you are charged for the remainder of the current month plus any additional month until renewal.'
-		  )
+			)
 		: translate(
 				'This is more than the regular price because you are charged for the remainder of the current year plus any additional year until renewal.'
-		  );
+			);
 }
 
 function getPriceMessageRenewal( {

@@ -86,7 +86,7 @@ export default function MigrationsTagSitesModal( {
 					queryClient.invalidateQueries( {
 						queryKey: agencyMigrationCommissionSitesQuery( agencyId ).queryKey,
 					} );
-					recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_success', {
+					recordTracksEvent( 'calypso_a4a_migrations_tag_sites_modal_add_sites_success', {
 						count: selectedSites.length,
 						migration_source_host: finalMigrationSourceHost,
 					} );
@@ -98,12 +98,12 @@ export default function MigrationsTagSitesModal( {
 									/* translators: %s: the site URL */
 									__( 'The site %s has been successfully tagged for commission.' ),
 									siteUrl
-							  )
+								)
 							: sprintf(
 									/* translators: %d: the number of sites tagged */
 									__( '%d sites have been successfully tagged for commission.' ),
 									selectedSites.length
-							  )
+								)
 					);
 					onClose();
 				},
@@ -112,7 +112,7 @@ export default function MigrationsTagSitesModal( {
 				},
 			}
 		);
-		recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_click', {
+		recordTracksEvent( 'calypso_a4a_migrations_tag_sites_modal_add_sites_click', {
 			count: selectedSites.length,
 			migration_source_host: finalMigrationSourceHost,
 		} );
@@ -120,7 +120,7 @@ export default function MigrationsTagSitesModal( {
 
 	const handleOnClose = () => {
 		onClose();
-		recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_close' );
+		recordTracksEvent( 'calypso_a4a_migrations_tag_sites_modal_close' );
 	};
 
 	const handleMigrationSourceHostChange = ( value: string ) => {
@@ -132,8 +132,8 @@ export default function MigrationsTagSitesModal( {
 
 	const selectedMigrationSourceHost = isOtherSelected
 		? otherHostingProvider
-		: migrationSourceOptions.find( ( option ) => option.value === migrationSourceHost )?.label ??
-		  '';
+		: ( migrationSourceOptions.find( ( option ) => option.value === migrationSourceHost )?.label ??
+			'' );
 
 	return (
 		<Modal
@@ -206,7 +206,7 @@ export default function MigrationsTagSitesModal( {
 								/* translators: %d: the number of sites selected */
 								_n( 'Add %d site', 'Add %d sites', selectedSites.length ),
 								selectedSites.length
-						  )
+							)
 						: __( 'Add sites' ) }
 				</Button>
 			</HStack>

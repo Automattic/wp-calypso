@@ -1,16 +1,16 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { CardNumberElement } from '@stripe/react-stripe-js';
-import { useSelect } from '@wordpress/data';
 import { Icon, lock } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
 import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
-import type { WpcomCreditCardSelectors } from './store';
-import type { StripeFieldChangeInput } from './types';
+import { useCreditCardStoreState } from './store';
+import type { CardStoreType, StripeFieldChangeInput } from './types';
 import type { StripeElementStyle } from '@stripe/stripe-js';
 
 export default function CreditCardNumberField( {
+	store,
 	setIsStripeFullyLoaded,
 	handleStripeFieldChange,
 	stripeElementStyle,
@@ -19,6 +19,7 @@ export default function CreditCardNumberField( {
 	setFieldValue,
 	getFieldValue,
 }: {
+	store: CardStoreType;
 	setIsStripeFullyLoaded: ( isLoaded: boolean ) => void;
 	handleStripeFieldChange: ( input: StripeFieldChangeInput ) => void;
 	stripeElementStyle: StripeElementStyle;
@@ -32,9 +33,9 @@ export default function CreditCardNumberField( {
 	const isDisabled = formStatus !== FormStatus.READY;
 	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
-	const { cardNumber: cardNumberError } = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
-		[]
+	const cardNumberError = useCreditCardStoreState(
+		store,
+		( state ) => state.cardDataErrors.cardNumber
 	);
 	const errorMessages = getErrorMessagesForField( 'number' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;

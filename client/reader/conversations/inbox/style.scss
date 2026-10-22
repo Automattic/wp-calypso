@@ -1,0 +1,11 @@
+body.is-reader-page .main.conversations-inbox-main {
+	max-width: none;
+	margin: 0;
+}
+
+.conversations-inbox {
+	height: calc( 100vh - var( --masterbar-height, 46px ) - 34px );
+	background: var( --color-surface );
+	color: var( --color-text );
+	overflow: hidden;
+}

@@ -58,9 +58,7 @@ describe( 'SwitchOnDialog', () => {
 	it( 'asks before switching on, and counts the ask once', () => {
 		renderDialog();
 
-		expect(
-			screen.getByRole( 'dialog', { name: 'Switch on the new Traffic tab?' } )
-		).toBeVisible();
+		expect( screen.getByRole( 'dialog', { name: 'Switch on the new Stats?' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Switch it on' } ) ).toBeVisible();
 		expect(
 			mockRecordTracksEvent.mock.calls.filter(
@@ -69,7 +67,7 @@ describe( 'SwitchOnDialog', () => {
 		).toHaveLength( 1 );
 	} );
 
-	it( 'switches on, records it, and takes the reader to the new Traffic tab', async () => {
+	it( 'switches on, records it, and takes the reader to the new Stats', async () => {
 		renderDialog();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
@@ -94,7 +92,7 @@ describe( 'SwitchOnDialog', () => {
 	} );
 
 	/**
-	 * Back from the new Traffic tab, the browser can restore this page from its cache with the
+	 * Back from the preview, the browser can restore this page from its cache with the
 	 * dialog still open and every way out disabled.
 	 */
 	it( 'closes itself when the page is restored from the back/forward cache', () => {
@@ -117,7 +115,7 @@ describe( 'SwitchOnDialog', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
 
 		expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
-			'We couldn’t switch on the new Traffic tab.'
+			'We couldn’t switch on the new Stats.'
 		);
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_stats_premium_analytics_preview_menu_enable_failed',

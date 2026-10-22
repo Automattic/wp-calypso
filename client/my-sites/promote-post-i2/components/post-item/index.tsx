@@ -92,7 +92,7 @@ export default function PostItem( {
 												/* translators: %s its an unique alphanumeric code for a product */
 												__( 'SKU: %s' ),
 												post.sku
-										  )
+											)
 										: '-' }
 								</>
 							) : (

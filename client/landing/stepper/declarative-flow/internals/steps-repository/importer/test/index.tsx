@@ -3,8 +3,8 @@
  */
 import { render, screen } from '@testing-library/react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
-import { useSiteResolution } from 'calypso/landing/stepper/hooks/use-site-resolution';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { requestSites } from 'calypso/state/sites/actions';
 import { withImporterWrapper } from '../index';
@@ -63,6 +63,7 @@ jest.mock( 'calypso/blocks/importer/components/not-found', () => () => (
 
 jest.mock( 'calypso/blocks/importer/util', () => ( {
 	getImporterTypeForEngine: ( importer: string ) => importer,
+	isPlanUpgradeRequiredForImport: () => false,
 } ) );
 
 jest.mock( 'calypso/components/data/document-head', () => () => null );
@@ -83,8 +84,8 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site-resolution', () => ( {
-	useSiteResolution: jest.fn(),
+jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+	useSiteQuery: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
@@ -205,7 +206,7 @@ describe.each( [ '', 'playground=true' ] )( 'withImporterWrapper site loading (?
 		};
 		setSiteData();
 		jest.mocked( useQuery ).mockReturnValue( new URLSearchParams( query ) );
-		( useSiteResolution as jest.Mock ).mockReturnValue( true );
+		( useSiteQuery as jest.Mock ).mockReturnValue( { isLoading: false } );
 	} );
 
 	it( 'does not request the full sites list', () => {
@@ -218,7 +219,7 @@ describe.each( [ '', 'playground=true' ] )( 'withImporterWrapper site loading (?
 		setSiteData( {
 			site: null,
 		} );
-		( useSiteResolution as jest.Mock ).mockReturnValue( false );
+		( useSiteQuery as jest.Mock ).mockReturnValue( { isLoading: true } );
 
 		render( <WrappedImporter { ...props } /> );
 

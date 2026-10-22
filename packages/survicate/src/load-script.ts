@@ -30,7 +30,7 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 
 		const reason = getSuppressionReason();
 		if ( reason ) {
-			debug( 'Survicate survey suppressed (Help Center or a modal is open)' );
+			debug( 'Survicate survey suppressed (reason: %s)', reason );
 			recordSurveySuppressed( reason, 'survey_displayed' );
 			// Closing alone is not enough for auto-campaigns: the SDK's targeting
 			// engine re-evaluates every few seconds and re-displays a closed

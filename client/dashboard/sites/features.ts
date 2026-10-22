@@ -3,7 +3,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
 import { isSiteMigrationInProgress } from '../utils/site-status';
-import { isCommerceGarden, isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
+import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
 import type { Site, User } from '@automattic/api-core';
 
 export function canManageSite( site: Site ) {
@@ -44,16 +44,13 @@ export function canViewHundredYearPlanSettings( site: Site ) {
 export function canSwitchWordPressVersion( site: Site ) {
 	if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
 		// Atomic-only API.
-		return (
-			( site.is_wpcom_atomic || site.is_wpcom_flex ) &&
-			hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE )
-		);
+		return site.is_wpcom_atomic && hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
 	}
 	return site.is_wpcom_staging_site;
 }
 
 /**
- * Atomic/Flex sites without self-serve backups can't switch the WordPress
+ * Atomic sites without self-serve backups can't switch the WordPress
  * version manually, but if they were auto-enrolled in the beta program we
  * still want to give them a one-way path back to the stable release.
  *
@@ -65,7 +62,7 @@ export function canOptOutOfWordPressBeta( site: Site, versionTag: string | undef
 	if ( ! isEnabled( 'dashboard/wp-beta-program' ) ) {
 		return false;
 	}
-	if ( ! site.is_wpcom_atomic && ! site.is_wpcom_flex ) {
+	if ( ! site.is_wpcom_atomic ) {
 		return false;
 	}
 	if ( hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) ) {
@@ -111,10 +108,6 @@ export function canLeaveSite( site: Site ) {
 
 export function canDisconnectSite( site: Site ) {
 	return !! site.capabilities?.manage_options && isSelfHostedJetpackConnected( site );
-}
-
-export function canResetSite( site: Site ) {
-	return ! isCommerceGarden( site );
 }
 
 export function canRestoreSite( site: Site ) {

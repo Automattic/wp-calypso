@@ -59,6 +59,27 @@ export interface ServerChat {
 	};
 	created_at: string;
 	updated_at: string;
+	/** Set on page 1 when the last turn is waiting on browser tool calls. */
+	pending_client_tools?: PendingClientTools;
+}
+
+/**
+ * The browser tool calls a chat's last turn is still waiting on, as reported by
+ * the server. After a page change no page sends their results, so the turn stays
+ * paused until one does.
+ */
+export interface PendingClientTools {
+	/**
+	 * `unanswered`: no result arrived for the calls listed. `running`: a run is in
+	 * progress on the session.
+	 */
+	state: 'unanswered' | 'running';
+	/** The calls still waiting on the browser, with the arguments it would have run them with. */
+	calls: Array< {
+		toolCallId: string;
+		toolId: string;
+		arguments: unknown;
+	} >;
 }
 
 /**
@@ -80,6 +101,7 @@ export interface ServerLoadResult {
 	pagination: PaginationMeta;
 	chatId: number;
 	sessionId?: string;
+	pendingClientTools?: PendingClientTools;
 }
 
 /**
@@ -265,6 +287,9 @@ export function serverChatToLoadResult(
 		pagination,
 		chatId: serverChat.chat_id,
 		sessionId: serverChat.session_id,
+		...( serverChat.pending_client_tools && {
+			pendingClientTools: serverChat.pending_client_tools,
+		} ),
 	};
 }
 

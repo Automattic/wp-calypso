@@ -11,8 +11,8 @@ import 'calypso/state/automated-transfer/init';
 export const isFailed = ( status ) =>
 	status
 		? status === transferStates.CONFLICTS ||
-		  status === transferStates.FAILURE ||
-		  status === transferStates.CLIENT_TIMEOUT
+			status === transferStates.FAILURE ||
+			status === transferStates.CLIENT_TIMEOUT
 		: null;
 
 /**

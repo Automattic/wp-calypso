@@ -227,7 +227,7 @@ function PlanPrice( {
 							/* translators: %d is the number of years, e.g. "3" */
 							__( 'your first %d years' ),
 							intervalCount
-					  );
+						);
 		} else {
 			introPeriod =
 				intervalCount === 1
@@ -236,7 +236,7 @@ function PlanPrice( {
 							/* translators: %d is the number of months, e.g. "3" */
 							__( 'your first %d months' ),
 							intervalCount
-					  );
+						);
 		}
 
 		const formattedOriginalPrice = formatCurrency( originalPrice, sitePlan.currency_code, {
@@ -357,7 +357,7 @@ function PlanPrice( {
 			? Math.round(
 					( 1 - ( annualSitePlan.raw_price + annualSitePlan.raw_discount ) / 12 / originalPrice ) *
 						100
-			  )
+				)
 			: 0;
 
 	return (

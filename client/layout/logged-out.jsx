@@ -1,6 +1,6 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { Step } from '@automattic/onboarding';
-import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
+import { getFooterColorway } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -12,8 +12,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import AsyncHelpCenterFab from 'calypso/components/help-center-fab/async';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
-import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
-import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
+import { GlobalFooter } from 'calypso/layout/global-footer';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
@@ -54,6 +53,7 @@ import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import { refreshColorScheme, getColorSchemeFromCurrentQuery } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
+import { PublicMarketplaceFooter } from './public-marketplace-footer';
 
 import './style.scss';
 
@@ -83,7 +83,6 @@ const HELP_CENTER_FAB_SECTIONS = [
 	'checkout',
 	'mailing-lists',
 	'patterns',
-	'performance-profiler',
 	'plugins',
 	'reader',
 	'site-profiler',
@@ -131,16 +130,14 @@ const LayoutLoggedOut = ( {
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
 	const { partnerConfig } = usePartnerBranding();
 
-	const dashboard =
-		typeof window !== 'undefined' && getDashboardFromHostname( window.location.hostname );
 	const stepContainerV2Context = useMemo( () => {
 		return {
 			flowName: '',
 			stepName: '',
 			recordTracksEvent,
-			logo: getDashboardStepperLogo( dashboard ),
+			logo: null,
 		};
-	}, [ dashboard ] );
+	}, [] );
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -187,6 +184,10 @@ const LayoutLoggedOut = ( {
 		[ 'themes', 'theme' ].includes( sectionName ) &&
 		isEnabled( 'themes/showcase-modern' ) &&
 		! isLoggedIn;
+	const footerColorway = getFooterColorway(
+		isEnabled( 'footer-redesign/2026' ),
+		isEnabled( 'footer/dark' )
+	);
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
@@ -246,7 +247,6 @@ const LayoutLoggedOut = ( {
 	} else if (
 		[
 			'patterns',
-			'performance-profiler',
 			'plugins',
 			'reader',
 			'site-profiler',
@@ -322,7 +322,12 @@ const LayoutLoggedOut = ( {
 					<AsyncLoad require={ loadA8cForAgenciesStyle } placeholder={ null } />
 				) }
 				<div id="content" className="layout__content">
-					<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
+					<AsyncLoad
+						require={ loadGlobalNotices }
+						placeholder={ null }
+						loadFailureFallback={ null }
+						id="notices"
+					/>
 					<div id="primary" className="layout__primary">
 						{ primary }
 					</div>
@@ -334,18 +339,28 @@ const LayoutLoggedOut = ( {
 					<CookieBannerContainerSSR serverShow={ showGdprBanner } />
 				) }
 
+				<PublicMarketplaceFooter
+					sectionName={ sectionName }
+					currentRoute={ currentRoute }
+					isLoggedIn={ isLoggedIn }
+					hasSidebar={ Boolean( secondary ) }
+					hasSelectedSite={ false }
+				/>
+
 				{ [ 'plugins' ].includes( sectionName ) && (
 					<>
-						<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
-
 						{ config.isEnabled( 'layout/support-article-dialog' ) && (
 							<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
 						) }
 					</>
 				) }
 
-				{ [ 'patterns', 'reader', 'theme', 'themes' ].includes( sectionName ) && (
-					<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
+				{ [ 'patterns', 'reader' ].includes( sectionName ) && (
+					<GlobalFooter
+						currentRoute={ currentRoute }
+						isLoggedIn={ isLoggedIn }
+						colorway={ footerColorway }
+					/>
 				) }
 
 				{ ! isLoggedIn &&

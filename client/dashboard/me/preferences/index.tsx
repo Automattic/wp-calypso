@@ -11,6 +11,7 @@ import PreferencesDefaultsSummary from '../preferences-defaults/summary';
 import PreferencesLanguage from '../preferences-language';
 import PreferencesNewHostingDashboard from '../preferences-new-hosting-dashboard';
 import PreferencesPrivacy from '../preferences-privacy';
+import PreferencesReader from '../preferences-reader';
 import PreferencesWordPressLabs from '../preferences-wordpress-labs';
 
 export default function Preferences() {
@@ -34,6 +35,7 @@ export default function Preferences() {
 				<PreferencesLanguage />
 				<PreferencesDefaultsSummary />
 				<PreferencesPrivacy />
+				{ supports.reader ? <PreferencesReader /> : null }
 				{ supports.reader ? <PreferencesBlockedSites /> : null }
 			</SummaryButtonList>
 		</PageLayout>

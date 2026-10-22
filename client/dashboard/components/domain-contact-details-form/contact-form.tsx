@@ -26,7 +26,7 @@ import {
 	hasFrDomain,
 	validateFrOrganization,
 } from './fr-contact-fields';
-import { RegionAddressFieldsLayout } from './region-address-fieldsets';
+import { isEuOrUkAddressFormat, RegionAddressFieldsLayout } from './region-address-fieldsets';
 import {
 	getUkContactFormFields,
 	getUkContactFormLayout,
@@ -68,17 +68,23 @@ export default function ContactForm( {
 
 	const normalizedFormData = useMemo( () => {
 		if ( ! statesList || statesList.length === 0 ) {
+			if ( formData.state && isEuOrUkAddressFormat( selectedCountryCode ) ) {
+				// Clear the state field. The layout hides that field for countries that use
+				// the EU or UK address format, and the registrar might reject it if sent.
+				return { ...formData, state: '' };
+			}
 			return formData;
 		}
 
-		// If current state is not in the statesList, use the first available state
+		// A state from another country (or free text) has no entry in the list, so
+		// clear it and let the user pick one rather than silently substituting.
 		const isValidState = statesList.some( ( state ) => state.code === formData.state );
 		if ( formData.state && ! isValidState ) {
-			return { ...formData, state: statesList[ 0 ]?.code };
+			return { ...formData, state: '' };
 		}
 
 		return formData;
-	}, [ formData, statesList ] );
+	}, [ formData, statesList, selectedCountryCode ] );
 
 	const isDirty = ! ( JSON.stringify( normalizedFormData ) === JSON.stringify( initialData ) );
 
@@ -163,6 +169,10 @@ export default function ContactForm( {
 				children: [ 'firstName', 'lastName' ],
 			} as FormField,
 			'organization',
+			{
+				id: 'organizationNotice',
+				layout: { type: 'regular' as const, labelPosition: 'none' as const },
+			} as FormField,
 			'email',
 			'phone',
 			'countryCode',

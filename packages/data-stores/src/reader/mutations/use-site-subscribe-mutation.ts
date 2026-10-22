@@ -126,7 +126,7 @@ const useSiteSubscribeMutation = () => {
 											is_following: true,
 											isDeleted: false,
 											resubscribed: params.resubscribed ?? false,
-									  }
+										}
 									: siteSubscription
 							),
 						};

@@ -4,7 +4,12 @@
 jest.mock( '../../../utils/agent-session', () => ( {
 	getActiveSessionId: jest.fn( () => 'tab-session' ),
 } ) );
+jest.mock( '../../../utils/tracks', () => ( {
+	...jest.requireActual( '../../../utils/tracks' ),
+	recordAgentsManagerTracksEvent: jest.fn(),
+} ) );
 
+import { recordAgentsManagerTracksEvent } from '../../../utils/tracks';
 import {
 	completePendingNavigation,
 	markContinuationSent,
@@ -20,6 +25,7 @@ function storedState() {
 
 beforeEach( () => {
 	jest.useFakeTimers();
+	jest.clearAllMocks();
 	sessionStorage.clear();
 	// A writable stub, so the redirect assignment does not hit jsdom's
 	// unimplemented navigation.
@@ -75,6 +81,35 @@ describe( 'wpAdminNavigateCallback', () => {
 		expect( result.result.message ).toContain( '/wp-admin/edit.php?post_type=page' );
 	} );
 
+	it( 'records the navigation before the delay, with the route but no other query values', async () => {
+		await wpAdminNavigateCallback( {
+			path: '/wp-admin/admin.php?page=wc-admin&s=private+search',
+		} );
+
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_wp_admin_navigate_start',
+			{
+				destination_path: '/wp-admin/admin.php',
+				destination_page: 'wc-admin',
+				destination_post_type: '',
+			}
+		);
+	} );
+
+	it( 'records the post type that names an edit.php list', async () => {
+		await wpAdminNavigateCallback( { path: '/wp-admin/edit.php?post_type=shop_order&s=private' } );
+
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_wp_admin_navigate_start',
+			{
+				destination_path: '/wp-admin/edit.php',
+				destination_page: '',
+				destination_post_type: 'shop_order',
+			}
+		);
+	} );
+
 	it.each( [
 		[ 'a missing path', {} ],
 		[ 'a non-admin path', { path: '/some-page' } ],
@@ -88,6 +123,7 @@ describe( 'wpAdminNavigateCallback', () => {
 		expect( result.result.success ).toBe( false );
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).toBeNull();
 		expect( jest.getTimerCount() ).toBe( 0 );
+		expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'refuses to navigate when storing the state fails — no page could answer the call', async () => {
@@ -102,6 +138,7 @@ describe( 'wpAdminNavigateCallback', () => {
 		expect( jest.getTimerCount() ).toBe( 0 );
 		expect( window.location.href ).not.toBe( '/wp-admin/plugins.php' );
 		expect( error ).toHaveBeenCalled();
+		expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'reloads for a same-page destination instead of a no-op assignment', async () => {

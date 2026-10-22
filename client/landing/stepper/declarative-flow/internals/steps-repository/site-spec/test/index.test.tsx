@@ -1,23 +1,24 @@
 /**
  * @jest-environment jsdom
  */
-import { useQuery as useReactQuery } from '@tanstack/react-query';
-import { act, render } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import {
 	applyBlueprintSpec,
 	getSiteAdminUrl,
+	lookupBlueprintArchive,
 	startBlueprintArchiveImport,
+	startBlueprintSimpleImport,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
 } from 'calypso/landing/stepper/utils/blueprint-archive-import';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSpec } from 'calypso/lib/site-spec';
+import { getBlueprintSiteSpecConfig } from 'calypso/lib/site-spec/utils';
 import wpcom from 'calypso/lib/wp';
 import { EARLY_PROVISION_TARGET_WPCOM_ATOMIC } from '../early-provisioning';
 import SiteSpec from '../index';
 
 let mockQueryParams = new URLSearchParams();
-let mockBuildWowEnabled = false;
 
 jest.mock( '@automattic/calypso-config', () => {
 	return {
@@ -31,11 +32,7 @@ jest.mock( '@automattic/calypso-config', () => {
 
 				return values[ key ];
 			} ),
-			{
-				isEnabled: jest.fn(
-					( flag: string ) => flag === 'calypso/ai-site-builder-build-wow' && mockBuildWowEnabled
-				),
-			}
+			{ isEnabled: jest.fn( () => false ) }
 		),
 	};
 } );
@@ -46,20 +43,6 @@ jest.mock( '@automattic/onboarding', () => ( {
 
 jest.mock( '@automattic/posthog', () => ( {
 	getSessionId: jest.fn( () => 'ph-session' ),
-} ) );
-
-jest.mock( '@automattic/api-queries', () => ( {
-	isAutomatticianQuery: jest.fn( () => ( {
-		queryKey: [ 'me', 'is-automattician' ],
-		queryFn: jest.fn(),
-	} ) ),
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	useQuery: jest.fn( () => ( {
-		data: true,
-		isLoading: false,
-	} ) ),
 } ) );
 
 jest.mock( 'i18n-calypso', () => ( {
@@ -105,15 +88,35 @@ jest.mock( 'calypso/landing/stepper/stores', () => ( {
 // The wow-funnel helpers stay real so the funnel's readiness rules are exercised; only the
 // requests they make are stubbed.
 jest.mock( 'calypso/landing/stepper/utils/blueprint-archive-import', () => ( {
+	BLUEPRINT_SIMPLE_IMPORT_QUERY_PARAM: 'blueprint_simple_import',
 	applyBlueprintSpec: jest.fn( () => Promise.resolve( { applied: true, adminUrl: null } ) ),
 	getBlueprintArchiveSiteIdentifier: jest.fn(
 		( { siteSlug, siteId }: { siteSlug?: string | null; siteId?: string | null } ) =>
 			siteSlug || ( siteId && String( siteId ) !== '0' ? String( siteId ) : null )
 	),
+	getSimpleSiteEditorUrl: jest.fn(
+		( adminUrl: string ) => `${ adminUrl }site-editor.php?simple=1`
+	),
 	getSiteAdminUrl: jest.fn( () => Promise.resolve( 'https://example.wordpress.com/wp-admin/' ) ),
 	getSiteEditorUrl: jest.fn( () => 'https://example.wordpress.com/wp-admin/site-editor.php' ),
+	getSpecMetaFromQuery: ( queryParams: URLSearchParams ) => {
+		const url = queryParams.get( 'zoom_booking_url' );
+		const title = queryParams.get( 'site_title' );
+		return {
+			...( url ? { zoom_booking_url: url } : {} ),
+			...( title ? { site_title: title } : {} ),
+		};
+	},
+	isPrefillComplete: ( prefill: string[], specMeta: Record< string, string > ) =>
+		prefill.length > 0 && prefill.every( ( name ) => typeof specMeta[ name ] === 'string' ),
+	lookupBlueprintArchive: jest.fn( () =>
+		Promise.resolve( { exists: true, title: '', suggestedPlans: [], prefill: [] } )
+	),
+	isBlueprintCustomThemeBuild: ( queryParams: URLSearchParams ) =>
+		queryParams.get( 'build' ) === 'custom-theme',
 	logBlueprintArchiveEvent: jest.fn(),
 	startBlueprintArchiveImport: jest.fn( () => Promise.resolve() ),
+	startBlueprintSimpleImport: jest.fn( () => Promise.resolve() ),
 	waitForAtomicTransferComplete: jest.fn( () => Promise.resolve() ),
 	waitForBlueprintImportComplete: jest.fn( () => Promise.resolve() ),
 } ) );
@@ -133,7 +136,6 @@ describe( 'SiteSpec early provisioning step', () => {
 	const mockUseSiteSpec = useSiteSpec as jest.Mock;
 	const wpcomPostMock = wpcom.req.post as jest.Mock;
 	const logToLogstashMock = logToLogstash as jest.Mock;
-	const mockUseReactQuery = useReactQuery as jest.Mock;
 	const navigation = {
 		submit: jest.fn(),
 	};
@@ -145,13 +147,8 @@ describe( 'SiteSpec early provisioning step', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockBuildWowEnabled = false;
 		window.sessionStorage.clear();
 		mockQueryParams = new URLSearchParams( 'early_provision_site=1&source=vega' );
-		mockUseReactQuery.mockReturnValue( {
-			data: true,
-			isLoading: false,
-		} );
 		Object.defineProperty( window, 'location', {
 			value: { href: '' },
 			writable: true,
@@ -199,7 +196,6 @@ describe( 'SiteSpec early provisioning step', () => {
 		);
 		wpcomPostMock.mockResolvedValue( {
 			blog_id: 123,
-			site_editor_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
 			atomic: {
 				is_atomic: true,
 				ready_for_editor: true,
@@ -235,9 +231,7 @@ describe( 'SiteSpec early provisioning step', () => {
 		expect( redirect.searchParams.get( 'specId' ) ).toBe( 'spec-456' );
 		expect( redirect.searchParams.get( 'ref' ) ).toBe( 'site-card' );
 		expect( redirect.searchParams.get( 'source' ) ).toBe( 'site-overview' );
-		expect( redirect.searchParams.get( 'editorUrl' ) ).toBe(
-			'https://example.wordpress.com/wp-admin/site-editor.php?source=site-overview'
-		);
+		expect( redirect.searchParams.has( 'editorUrl' ) ).toBe( false );
 
 		expect( logToLogstashMock ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -254,33 +248,33 @@ describe( 'SiteSpec early provisioning step', () => {
 		);
 	} );
 
-	it( 'loads build-wow for non-Automatticians without asking for staff status when the feature is enabled', () => {
-		mockBuildWowEnabled = true;
-		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
-		mockUseReactQuery.mockReturnValue( { data: undefined, isLoading: false } );
-
-		renderSiteSpec();
-
-		expect( mockUseReactQuery ).toHaveBeenCalledWith(
-			expect.objectContaining( { enabled: false } )
+	it( 'builds on the requested graph and carries it to site generation for retries', async () => {
+		mockQueryParams = new URLSearchParams(
+			'build_wow=1&siteSlug=example.wordpress.com&spec_id=spec-dsl&graph=dsl'
 		);
-		expect( mockUseSiteSpec.mock.calls[ 0 ][ 0 ].siteSpecConfig ).toEqual( {
-			agentId: 'build-wow-site-spec',
+		wpcomPostMock.mockResolvedValue( {
+			blog_id: 123,
+			site_editor_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
 		} );
+
+		await act( async () => {
+			renderSiteSpec();
+		} );
+
+		expect( wpcomPostMock ).toHaveBeenCalledWith(
+			expect.objectContaining( { path: '/sites/example.wordpress.com/big-sky/build-wow' } ),
+			{ spec_id: 'spec-dsl', graph: 'dsl' }
+		);
+		const redirect = new URL( window.location.href, 'https://wordpress.com' );
+		expect( redirect.pathname ).toBe( '/setup/ai-site-builder-spec/site-generation' );
+		expect( redirect.searchParams.get( 'graph' ) ).toBe( 'dsl' );
 	} );
 
-	it( 'ignores build-wow Site Spec routing for non-Automatticians when the feature is disabled', () => {
-		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
-		mockUseReactQuery.mockReturnValue( {
-			data: false,
-			isLoading: false,
-		} );
+	it( 'leaves build-wow routing alone when build_wow is not requested', () => {
+		mockQueryParams = new URLSearchParams( 'siteSlug=example.wordpress.com' );
 
 		renderSiteSpec();
 
-		expect( mockUseReactQuery ).toHaveBeenCalledWith(
-			expect.objectContaining( { enabled: true } )
-		);
 		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
 		expect( siteSpecOptions.siteSpecConfig ).toBeUndefined();
 		expect( siteSpecOptions.onSpecConfirm ).toBeUndefined();
@@ -328,6 +322,38 @@ describe( 'SiteSpec early provisioning step', () => {
 		expect( window.location.href ).toBe( '' );
 	} );
 
+	it( 'starts the Atomic transfer when the interview opens, before any spec is confirmed', async () => {
+		mockQueryParams = new URLSearchParams(
+			'build_wow=1&siteSlug=example.wordpress.com&source=sites-dashboard'
+		);
+		wpcomPostMock.mockResolvedValue( { blog_id: 123 } );
+
+		await act( async () => {
+			renderSiteSpec();
+		} );
+
+		expect( mockUseSiteSpec ).toHaveBeenCalled();
+		expect( wpcomPostMock ).toHaveBeenCalledTimes( 1 );
+		expect( wpcomPostMock ).toHaveBeenCalledWith(
+			{ path: '/sites/example.wordpress.com/big-sky/build-wow', apiNamespace: 'wpcom/v2' },
+			{}
+		);
+		expect( window.location.href ).toBe( '' );
+	} );
+
+	it( 'keeps the interview open when the early transfer request fails', async () => {
+		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
+		wpcomPostMock.mockRejectedValue( new Error( 'Forbidden' ) );
+
+		await act( async () => {
+			renderSiteSpec();
+		} );
+
+		expect( wpcomPostMock ).toHaveBeenCalledTimes( 1 );
+		expect( mockSetSiteSetupError ).not.toHaveBeenCalled();
+		expect( navigation.submit ).not.toHaveBeenCalled();
+	} );
+
 	it( 'goes straight to the error step when build_wow has no target site', () => {
 		mockQueryParams = new URLSearchParams( 'build_wow=1' );
 
@@ -355,6 +381,9 @@ describe( 'SiteSpec blueprint archive import', () => {
 	const confirmSpec = async () => {
 		renderSiteSpec();
 
+		// A Simple build mounts the widget only once the blueprint lookup has said an
+		// interview is needed.
+		await waitFor( () => expect( mockUseSiteSpec ).toHaveBeenCalled() );
 		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
 		await act( async () => {
 			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-789' } );
@@ -366,6 +395,8 @@ describe( 'SiteSpec blueprint archive import', () => {
 		mockQueryParams = new URLSearchParams(
 			'blueprint_archive_import=1&blueprint_slug=961&siteSlug=example.wordpress.com&wow_funnel=blueprint'
 		);
+		// The funnel's readiness wait ends by asking whether the customer can sign in to the site.
+		( wpcom.req.get as jest.Mock ).mockResolvedValue( { ready: true } );
 	} );
 
 	it( 'leaves the spec page for the waiting screen without waiting on the import first', async () => {
@@ -445,5 +476,235 @@ describe( 'SiteSpec blueprint archive import', () => {
 		await confirmSpec();
 
 		expect( startBlueprintArchiveImport ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'Simple build (blueprint_simple_import=1)', () => {
+		beforeEach( () => {
+			mockQueryParams = new URLSearchParams(
+				'blueprint_simple_import=1&blueprint_slug=zoom&siteSlug=example.wordpress.com&siteId=123&zoom_booking_url=https%3A%2F%2Fscheduler.zoom.us%2Fjason'
+			);
+		} );
+
+		it( 'starts the Simple import when the interview opens, never the archive restore', async () => {
+			renderSiteSpec();
+
+			// The booking URL from the entry link rides along, so the import can write it into
+			// the blueprint content's placeholder without an agent. The blueprint declares no
+			// prefill, so the interview runs and the import is not asked to confirm the spec.
+			await waitFor( () =>
+				expect( startBlueprintSimpleImport ).toHaveBeenCalledWith(
+					'example.wordpress.com',
+					'zoom',
+					123,
+					{ zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+					{ applySpec: false }
+				)
+			);
+			// The archive restore converts the site to Atomic, which a Simple build must never do.
+			expect( startBlueprintArchiveImport ).not.toHaveBeenCalled();
+		} );
+
+		it( 'starts the import with no site values when the entry link carried none', async () => {
+			mockQueryParams = new URLSearchParams(
+				'blueprint_simple_import=1&blueprint_slug=zoom&siteSlug=example.wordpress.com&siteId=123'
+			);
+
+			renderSiteSpec();
+
+			await waitFor( () =>
+				expect( startBlueprintSimpleImport ).toHaveBeenCalledWith(
+					'example.wordpress.com',
+					'zoom',
+					123,
+					{},
+					{ applySpec: false }
+				)
+			);
+		} );
+
+		// The partner's hand-off settled everything the blueprint asks: no interview, the
+		// import confirms the spec, and this page waits on it and hands over.
+		it( 'skips the interview and hands over after the import when the partner settled the spec', async () => {
+			( lookupBlueprintArchive as jest.Mock ).mockResolvedValueOnce( {
+				exists: true,
+				title: 'zoom test',
+				suggestedPlans: [],
+				prefill: [ 'site_title' ],
+			} );
+			mockQueryParams = new URLSearchParams(
+				'blueprint_simple_import=1&blueprint_slug=zoom&siteSlug=example.wordpress.com&siteId=123&zoom_booking_url=https%3A%2F%2Fscheduler.zoom.us%2Fjason&site_title=Cedar%20Keel'
+			);
+
+			renderSiteSpec();
+
+			await waitFor( () =>
+				expect( startBlueprintSimpleImport ).toHaveBeenCalledWith(
+					'example.wordpress.com',
+					'zoom',
+					123,
+					{ zoom_booking_url: 'https://scheduler.zoom.us/jason', site_title: 'Cedar Keel' },
+					{ applySpec: true }
+				)
+			);
+			await waitFor( () => expect( mockSetPendingAction ).toHaveBeenCalled() );
+
+			// No interview widget was configured for this run.
+			expect( getBlueprintSiteSpecConfig ).not.toHaveBeenCalled();
+			expect( navigation.submit ).toHaveBeenCalled();
+
+			const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+			await expect( pendingAction() ).resolves.toEqual( {
+				redirectTo: 'https://example.wordpress.com/wp-admin/site-editor.php?simple=1',
+			} );
+			expect( waitForBlueprintImportComplete ).toHaveBeenCalledWith( 'example.wordpress.com' );
+			// The import applied the spec; nothing here applies it again.
+			expect( applyBlueprintSpec ).not.toHaveBeenCalled();
+		} );
+
+		// The partner supplied only part of what the blueprint asks: the interview runs.
+		it( 'runs the interview when the partner settled only part of the spec', async () => {
+			( lookupBlueprintArchive as jest.Mock ).mockResolvedValueOnce( {
+				exists: true,
+				title: 'zoom test',
+				suggestedPlans: [],
+				prefill: [ 'site_title', 'zoom_booking_url' ],
+			} );
+
+			renderSiteSpec();
+
+			await waitFor( () =>
+				expect( startBlueprintSimpleImport ).toHaveBeenCalledWith(
+					'example.wordpress.com',
+					'zoom',
+					123,
+					{ zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+					{ applySpec: false }
+				)
+			);
+			await waitFor( () => expect( getBlueprintSiteSpecConfig ).toHaveBeenCalled() );
+			expect( mockSetPendingAction ).not.toHaveBeenCalled();
+			expect( navigation.submit ).not.toHaveBeenCalled();
+		} );
+
+		// The lookup is only a hint; a failing one must never keep the interview from mounting.
+		it( 'runs the interview when the blueprint lookup fails', async () => {
+			( lookupBlueprintArchive as jest.Mock ).mockRejectedValueOnce( new Error( 'network' ) );
+
+			renderSiteSpec();
+
+			await waitFor( () => expect( getBlueprintSiteSpecConfig ).toHaveBeenCalled() );
+			expect( startBlueprintSimpleImport ).toHaveBeenCalledWith(
+				'example.wordpress.com',
+				'zoom',
+				123,
+				{ zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+				{ applySpec: false }
+			);
+			expect( mockSetPendingAction ).not.toHaveBeenCalled();
+		} );
+
+		// With no site-spec step to report a failed import start, the interview is the way the
+		// customer learns about it: a partner run that cannot start its import falls back to it.
+		it( 'falls back to the interview when the import cannot be started on a partner run', async () => {
+			( lookupBlueprintArchive as jest.Mock ).mockResolvedValueOnce( {
+				exists: true,
+				title: 'zoom test',
+				suggestedPlans: [],
+				prefill: [ 'site_title' ],
+			} );
+			( startBlueprintSimpleImport as jest.Mock ).mockRejectedValueOnce(
+				new Error( 'import_exists' )
+			);
+			mockQueryParams = new URLSearchParams(
+				'blueprint_simple_import=1&blueprint_slug=zoom&siteSlug=example.wordpress.com&siteId=123&site_title=Cedar%20Keel'
+			);
+
+			renderSiteSpec();
+
+			await waitFor( () => expect( getBlueprintSiteSpecConfig ).toHaveBeenCalled() );
+			expect( mockSetPendingAction ).not.toHaveBeenCalled();
+			expect( navigation.submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'waits on the import alone, applies the spec and hands over to the site editor directly', async () => {
+			await confirmSpec();
+
+			const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+			await expect( pendingAction() ).resolves.toEqual( {
+				redirectTo: 'https://example.wordpress.com/wp-admin/site-editor.php?simple=1',
+			} );
+
+			// No Atomic transfer to wait for on a Simple site.
+			expect( waitForAtomicTransferComplete ).not.toHaveBeenCalled();
+			expect( waitForBlueprintImportComplete ).toHaveBeenCalledWith( 'example.wordpress.com' );
+			// Applied only after the import, with the blueprint named so the apply need not
+			// rely on the provenance the import stamped.
+			expect( applyBlueprintSpec ).toHaveBeenCalledWith(
+				'example.wordpress.com',
+				'spec-789',
+				'zoom'
+			);
+		} );
+
+		it( 'runs the blueprint-aware interview with the spec meta the entry URL carried', async () => {
+			renderSiteSpec();
+
+			await waitFor( () =>
+				expect( getBlueprintSiteSpecConfig ).toHaveBeenCalledWith( {
+					blueprintId: 'zoom',
+					specMeta: { zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+				} )
+			);
+		} );
+	} );
+
+	describe( 'build=custom-theme', () => {
+		const wpcomPostMock = wpcom.req.post as jest.Mock;
+
+		beforeEach( () => {
+			mockQueryParams = new URLSearchParams(
+				'blueprint_archive_import=1&blueprint_slug=961&siteSlug=example.wordpress.com&wow_funnel=blueprint&build=custom-theme'
+			);
+			wpcomPostMock.mockResolvedValue( {
+				blog_id: 123,
+				build: { status: 'queued' },
+			} );
+		} );
+
+		it( 'sends the spec to the generator once the restore is done, instead of applying it', async () => {
+			await confirmSpec();
+
+			const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+			const { redirectTo } = await pendingAction();
+
+			expect( waitForBlueprintImportComplete ).toHaveBeenCalled();
+			expect( applyBlueprintSpec ).not.toHaveBeenCalled();
+			// blueprint_id is what lets the server take a site that is already on Atomic.
+			expect( wpcomPostMock ).toHaveBeenCalledWith(
+				{ path: '/sites/example.wordpress.com/big-sky/build-wow', apiNamespace: 'wpcom/v2' },
+				{ spec_id: 'spec-789', blueprint_id: '961' }
+			);
+
+			const destination = new URL( redirectTo, 'https://wordpress.com' );
+			expect( destination.pathname ).toBe( '/setup/ai-site-builder-spec/site-generation' );
+			expect( destination.searchParams.get( 'build_wow' ) ).toBe( '1' );
+			expect( destination.searchParams.get( 'specId' ) ).toBe( 'spec-789' );
+			expect( destination.searchParams.get( 'siteId' ) ).toBe( '123' );
+			expect( destination.searchParams.has( 'editorUrl' ) ).toBe( false );
+		} );
+
+		it( 'keeps the blueprint out of the interview so the full design brief is asked', () => {
+			renderSiteSpec();
+
+			expect( getBlueprintSiteSpecConfig ).toHaveBeenCalledWith(
+				expect.objectContaining( { blueprintId: undefined } )
+			);
+		} );
+
+		it( 'still never starts a second import', async () => {
+			await confirmSpec();
+
+			expect( startBlueprintArchiveImport ).not.toHaveBeenCalled();
+		} );
 	} );
 } );

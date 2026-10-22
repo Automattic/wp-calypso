@@ -1,4 +1,9 @@
 import { accountRecoveryQuery, cancelPendingEmailChangeMutation } from '@automattic/api-queries';
+import {
+	getEmailAddressError,
+	getEmailDomain,
+	isValidEmailAddress,
+} from '@automattic/onboarding/src/utils/email-validation';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalInputControl as InputControl,
@@ -6,9 +11,8 @@ import {
 	Button,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
-import emailValidator from 'email-validator';
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
@@ -29,7 +33,7 @@ interface EmailSectionProps {
 	onValidationChange?: ( isValid: boolean ) => void;
 }
 
-type EmailValidationState = 'valid' | 'invalid' | null;
+type EmailValidationState = 'valid' | 'invalid' | 'unknown_tld' | null;
 
 function useEmailValidation( onValidationChange?: ( isValid: boolean ) => void ) {
 	const [ emailValidationState, setEmailValidationStateValue ] =
@@ -38,7 +42,7 @@ function useEmailValidation( onValidationChange?: ( isValid: boolean ) => void )
 	const setEmailValidationState = useCallback(
 		( state: EmailValidationState ) => {
 			setEmailValidationStateValue( state );
-			onValidationChange?.( state !== 'invalid' );
+			onValidationChange?.( state === 'valid' || state === null );
 		},
 		[ onValidationChange ]
 	);
@@ -91,7 +95,10 @@ export default function EmailSection( {
 			}
 
 			try {
-				if ( ! emailValidator.validate( email ) ) {
+				const emailError = getEmailAddressError( email );
+				if ( emailError === 'unknown_tld' ) {
+					setEmailValidationState( 'unknown_tld' );
+				} else if ( emailError ) {
 					setEmailValidationState( 'invalid' );
 				} else {
 					setEmailValidationState( 'valid' );
@@ -121,7 +128,7 @@ export default function EmailSection( {
 	const showCustomDomainWarning =
 		! isEmailPending &&
 		!! value &&
-		emailValidator.validate( value ) &&
+		isValidEmailAddress( value ) &&
 		isCustomDomainEmail( value ) &&
 		isAccountRecoveryReady &&
 		! hasRecoveryMethod;
@@ -136,7 +143,7 @@ export default function EmailSection( {
 		if ( emailValidationState === 'valid' ) {
 			return 'has-success';
 		}
-		if ( emailValidationState === 'invalid' ) {
+		if ( emailValidationState === 'invalid' || emailValidationState === 'unknown_tld' ) {
 			return 'has-error';
 		}
 		return '';
@@ -186,6 +193,19 @@ export default function EmailSection( {
 					<>
 						<Icon icon={ check } size={ 16 } />
 						{ __( 'Email address looks good!' ) }
+					</>
+				);
+			}
+
+			if ( emailValidationState === 'unknown_tld' ) {
+				return (
+					<>
+						<Icon icon={ info } size={ 16 } />
+						{ sprintf(
+							/* translators: %s: the domain part of the email address the user typed */
+							__( '“%s” doesn’t look like a real domain. Check the address for typos.' ),
+							getEmailDomain( value )
+						) }
 					</>
 				);
 			}

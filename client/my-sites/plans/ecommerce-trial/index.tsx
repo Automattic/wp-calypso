@@ -9,12 +9,12 @@ import useOneDollarOfferTrack from '../hooks/use-onedollar-offer-track';
 import TrialBanner from '../trials/trial-banner';
 import { EntrepreneurPlan } from './entrepreneur-plan/entrepreneur-plan';
 import { WooExpressPlans } from './wooexpress-plans';
-import type { Site } from 'calypso/my-sites/scan/types';
+import type { SiteDetails } from '@automattic/data-stores';
 import './style.scss';
 
 interface ECommerceTrialPlansPageProps {
 	interval?: 'monthly' | 'yearly';
-	site: Site;
+	site: SiteDetails;
 	isWooExpressTrial: boolean;
 }
 

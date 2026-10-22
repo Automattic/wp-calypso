@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isEcommercePlan } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { AI_SITE_BUILDER_ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -22,11 +23,18 @@ import {
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
-import { getBuildWowSiteSpecUrl } from '../../../utils/build-wow';
+import {
+	BUILD_WOW_SITE_SPEC_PATH,
+	commerceUsesBuildWow,
+	getBuildWowSiteSpecUrl,
+} from '../../../utils/build-wow';
 import { planSupportsBuildWow } from '../../../utils/build-wow-plans';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
@@ -55,9 +63,29 @@ function getBuildWowDestination( {
 	prompt: string;
 	specId: string | null;
 } ): string {
-	const specUrl = getBuildWowSiteSpecUrl( { siteSlug, siteId, ref, source, prompt } );
+	const specUrl = getBuildWowSiteSpecUrl( { siteSlug, siteId, ref, source, prompt, graph: 'dsl' } );
 
 	return specId ? addQueryArgs( specUrl, { spec_id: specId } ) : specUrl;
+}
+
+/**
+ * The error-step reason for the first check that the commerce Atomic editor URL fails, or null
+ * when the URL is safe to open. One reason per check shows which check failed in the logs.
+ */
+function getCommerceAtomicEditorUrlError( siteSlug: string, editorUrl: URL ): string | null {
+	if ( ! siteSlug.endsWith( '.wordpress.com' ) ) {
+		return 'commerce_atomic_unexpected_site_slug';
+	}
+	if ( editorUrl.protocol !== 'https:' ) {
+		return 'commerce_atomic_editor_url_not_https';
+	}
+	if ( editorUrl.hostname !== siteSlug ) {
+		return 'commerce_atomic_editor_host_mismatch';
+	}
+	if ( editorUrl.pathname !== '/wp-admin/site-editor.php' ) {
+		return 'commerce_atomic_editor_path_mismatch';
+	}
+	return null;
 }
 
 async function initialize( reduxStore: Store ) {
@@ -77,6 +105,7 @@ async function initialize( reduxStore: Store ) {
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
+		STEPS.WAIT_FOR_COMMERCE_ATOMIC,
 		STEPS.ERROR,
 	] );
 }
@@ -178,6 +207,48 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 			const { slug, providedDependencies } = submittedStep;
 
 			switch ( slug ) {
+				case STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug: {
+					if ( ! providedDependencies.ready ) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
+					const siteSlug = query.get( 'siteSlug' );
+					const destination = query.get( 'redirect_to' );
+					if ( ! siteSlug ) {
+						return navigate( STEPS.ERROR.slug, {
+							errorReason: 'commerce_atomic_missing_site_slug',
+						} );
+					}
+					if ( ! destination ) {
+						return navigate( STEPS.ERROR.slug, {
+							errorReason: 'commerce_atomic_missing_redirect',
+						} );
+					}
+
+					// Only for checkouts started before build-wow skipped this wait, which
+					// persisted it as the destination. The signup destination cookie lives 24h
+					// and redirect payments return later, so remove it a few days after deploy.
+					if ( destination.startsWith( `${ BUILD_WOW_SITE_SPEC_PATH }?` ) ) {
+						window.location.replace( destination );
+						return;
+					}
+
+					let editorUrl: URL;
+					try {
+						editorUrl = new URL( destination );
+					} catch {
+						return navigate( STEPS.ERROR.slug, {
+							errorReason: 'commerce_atomic_invalid_redirect',
+						} );
+					}
+					const editorUrlError = getCommerceAtomicEditorUrlError( siteSlug, editorUrl );
+					if ( editorUrlError ) {
+						return navigate( STEPS.ERROR.slug, { errorReason: editorUrlError } );
+					}
+
+					window.location.replace( editorUrl.toString() );
+					return;
+				}
 				case STEPS.DOMAIN_SEARCH.slug: {
 					if ( ! providedDependencies ) {
 						throw new Error( 'No provided dependencies found' );
@@ -211,16 +282,28 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					return navigate( STEPS.SITE_CREATION_STEP.slug );
 				}
 
+				// create-site creates a site as soon as it mounts, so it must not stay in history,
+				// where a Back would reach it.
 				case STEPS.SITE_CREATION_STEP.slug:
-					return navigate( STEPS.PROCESSING.slug );
+					return navigate( STEPS.PROCESSING.slug, undefined, true );
 
 				case STEPS.PROCESSING.slug: {
-					if ( providedDependencies.processingResult === ProcessingResult.FAILURE ) {
-						return navigate( STEPS.ERROR.slug );
+					// NO_ACTION follows a reload or a Back from checkout, after initialize has reset
+					// the onboard store. Nothing failed, so the customer picks a plan again, which is
+					// also where checkoutBackUrl leads. The processing step has no timeout, so
+					// returning here would leave the customer on the spinner.
+					if ( providedDependencies.processingResult === ProcessingResult.NO_ACTION ) {
+						return navigate( STEPS.UNIFIED_PLANS.slug, undefined, true );
 					}
 
 					if ( providedDependencies.processingResult !== ProcessingResult.SUCCESS ) {
-						return;
+						return navigate(
+							STEPS.ERROR.slug,
+							{
+								errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
+							},
+							true
+						);
 					}
 
 					if ( ! providedDependencies.goToCheckout ) {
@@ -231,26 +314,24 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					const siteSlug = ( providedDependencies.siteSlug || getSignupCompleteSlug() ) as string;
 
 					if ( ! siteId || ! siteSlug ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'processing_missing_site' }, true );
 					}
 
 					const site = await resolveSelect( SITE_STORE ).getSite( siteId );
 
 					if ( ! site || ! site.URL ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'site_lookup_failed' }, true );
 					}
 
-					// Where the site builder swap is enabled, checkout lands on the build-wow
-					// theme generation flow, the same destination the post-checkout "Create a
-					// custom design" card uses. The build-wow endpoint prepares the site
-					// itself, so the Big Sky editor preparation is only for the legacy site
-					// editor destination. That destination lives in the ai-site-builder-spec
-					// flow, which bounces to plain onboarding without the site-spec feature,
-					// and needs an Atomic-capable plan.
+					// The build-wow endpoint prepares the site itself, so the Big Sky editor
+					// preparation is only for the legacy site editor destination. The build-wow
+					// destination lives in the ai-site-builder-spec flow, which bounces to plain
+					// onboarding without the site-spec feature.
+					const isCommerce = !! planCartItem && isEcommercePlan( planCartItem.product_slug );
 					const useBuildWow =
-						config.isEnabled( 'calypso/ai-site-builder-build-wow' ) &&
 						config.isEnabled( 'site-spec' ) &&
-						planSupportsBuildWow( planCartItem?.product_slug );
+						( planSupportsBuildWow( planCartItem?.product_slug ) ||
+							( isCommerce && ( await commerceUsesBuildWow( siteId ) ) ) );
 
 					const prompt =
 						query.get( 'prompt' ) || window.sessionStorage.getItem( 'stored_ai_prompt' ) || '';
@@ -268,7 +349,7 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 								prompt,
 								source,
 								specId,
-						  } );
+							} );
 
 					// On checkout exit we must not drop the user into the AI builder (the
 					// success destination) before they've paid. Send them back into
@@ -295,14 +376,24 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						)
 					);
 
-					persistSignupDestination( destination );
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					setSignupCompleteSiteID( siteId );
 
+					// Only the legacy editor lives on the site, so only it waits for the
+					// Commerce transfer. Build-wow reuses that transfer and builds once it ends.
+					const checkoutDestination =
+						isCommerce && ! useBuildWow
+							? addQueryArgs(
+									`/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }/${ STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug }`,
+									{ siteId, siteSlug, redirect_to: destination }
+								)
+							: destination;
+					persistSignupDestination( checkoutDestination );
+
 					return window.location.assign(
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-							redirect_to: destination,
+							redirect_to: checkoutDestination,
 							checkoutBackUrl,
 							checkoutBackUrlDomains,
 							signup: 1,

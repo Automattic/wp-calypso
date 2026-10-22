@@ -30,6 +30,7 @@ import {
 	loadNewSubscriptionPage,
 } from './controller';
 import postCacheMiddleware from './data/post/middleware';
+import { fourForFour } from './four-for-four/controller';
 import { readerNotFound } from './lib/reader-router';
 import {
 	createList,
@@ -76,14 +77,19 @@ export default async function (): Promise< void > {
 	// On This Day
 	page( '/reader/on-this-day', redirectLoggedOut, sidebar, onThisDay, makeLayout, clientRender );
 
+	if ( config.isEnabled( 'reader/four-for-four' ) ) {
+		page(
+			'/reader/four-for-four',
+			redirectLoggedOutToSignup,
+			sidebar,
+			fourForFour,
+			makeLayout,
+			clientRender
+		);
+	}
+
 	page(
-		[
-			'/reader/new',
-			'/reader/new/reddit',
-			'/reader/new/youtube',
-			'/reader/new/tumblr',
-			'/reader/new/substack',
-		],
+		[ '/reader/new', '/reader/new/youtube', '/reader/new/tumblr', '/reader/new/substack' ],
 		redirectLoggedOutToSignup,
 		sidebar,
 		setSelectedSiteIdByOrigin,
@@ -321,6 +327,11 @@ function setupReaderRedirects(): void {
 		{
 			path: '/reader/feed',
 			getRedirect: () => '/reader',
+		},
+		// Reddit ended RSS. Old add-a-feed links land on the generic form.
+		{
+			path: '/reader/new/reddit',
+			getRedirect: () => '/reader/new',
 		},
 		// Feed stream
 		{

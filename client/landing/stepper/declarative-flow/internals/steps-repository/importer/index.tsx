@@ -7,13 +7,16 @@ import { useCallback, useEffect } from 'react';
 import { getImportDragConfig } from 'calypso/blocks/importer/components/importer-drag/config';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
-import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
+import {
+	getImporterTypeForEngine,
+	isPlanUpgradeRequiredForImport,
+} from 'calypso/blocks/importer/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySites from 'calypso/components/data/query-sites';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
+import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
-import { useSiteResolution } from 'calypso/landing/stepper/hooks/use-site-resolution';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -70,7 +73,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		 */
 		const currentUser = useSelector( getCurrentUser );
 		const { site, siteId, siteSlug } = useSiteData();
-		const hasSiteResolutionFinished = useSiteResolution();
+		const { isLoading: isResolvingCurrentSite } = useSiteQuery();
 		const runImportInitially = useInitialQueryRun( siteId );
 		const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
@@ -85,7 +88,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		);
 
 		const isLoading =
-			! isImporterStatusHydrated || ! hasSiteResolutionFinished || isRequestingCurrentSite;
+			! isImporterStatusHydrated || isResolvingCurrentSite || isRequestingCurrentSite;
 
 		const skipToDashboardAction = useCallback( () => {
 			recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
@@ -232,41 +235,56 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const showHeading = statesToShowHeading.includes( importJob?.importerState ?? '' );
 		const showBackButton = importJob?.importerState !== appStates.IMPORT_SUCCESS;
 		const showSkipButton = importJob?.importerState === appStates.IMPORT_SUCCESS;
-		const title =
-			importJob?.importerState === appStates.IMPORTING ? __( 'Importing' ) : importerData.title;
+		const showPlansGrid = isPlanUpgradeRequiredForImport( site ?? undefined, importJob );
+		const getHeading = () => {
+			if ( showPlansGrid ) {
+				return {
+					text: __( 'Pick a plan to continue your import' ),
+					subText: __(
+						'Importing a backup file requires a paid plan. Choose the plan that best fits your needs.'
+					),
+				};
+			}
+			return {
+				text:
+					importJob?.importerState === appStates.IMPORTING ? __( 'Importing' ) : importerData.title,
+				subText: importerData.description,
+			};
+		};
+		const layoutProps = {
+			className: clsx(
+				'import__onboarding-page',
+				'importer-wrapper',
+				'import__onboarding-page--redesign',
+				{
+					[ `importer-wrapper__${ importer }` ]: !! importer,
+				}
+			),
+			topBar: (
+				<Step.TopBar
+					leftElement={ showBackButton ? <Step.BackButton onClick={ onGoBack } /> : null }
+					rightElement={
+						showSkipButton ? (
+							<Step.SkipButton onClick={ skipToDashboardAction }>
+								{ __( 'Skip to dashboard' ) }
+							</Step.SkipButton>
+						) : null
+					}
+				/>
+			),
+			heading: showHeading && <Step.Heading { ...getHeading() } />,
+			children: renderStepContent(),
+		};
 		return (
 			<>
 				<QuerySites siteId={ siteId } />
 				<DocumentHead title={ __( 'Import your site content' ) } />
 				<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
-				<Step.CenteredColumnLayout
-					className={ clsx(
-						'import__onboarding-page',
-						'importer-wrapper',
-						'import__onboarding-page--redesign',
-						{
-							[ `importer-wrapper__${ importer }` ]: !! importer,
-						}
-					) }
-					columnWidth={ 6 }
-					topBar={
-						<Step.TopBar
-							leftElement={ showBackButton ? <Step.BackButton onClick={ onGoBack } /> : null }
-							rightElement={
-								showSkipButton ? (
-									<Step.SkipButton onClick={ skipToDashboardAction }>
-										{ __( 'Skip to dashboard' ) }
-									</Step.SkipButton>
-								) : null
-							}
-						/>
-					}
-					heading={
-						showHeading && <Step.Heading text={ title } subText={ importerData.description } />
-					}
-				>
-					{ renderStepContent() }
-				</Step.CenteredColumnLayout>
+				{ showPlansGrid ? (
+					<Step.WideLayout { ...layoutProps } />
+				) : (
+					<Step.CenteredColumnLayout { ...layoutProps } columnWidth={ 6 } />
+				) }
 			</>
 		);
 	};

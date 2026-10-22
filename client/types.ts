@@ -106,12 +106,7 @@ export type TimestampMS = ReturnType< typeof Date.now >;
 export type TimerHandle = ReturnType< typeof setTimeout >;
 export type IntervalHandle = ReturnType< typeof setInterval >;
 export type JSONSerializable =
-	| null
-	| boolean
-	| number
-	| string
-	| JSONSerializable[]
-	| { [ prop: string ]: JSONSerializable };
+	null | boolean | number | string | JSONSerializable[] | { [ prop: string ]: JSONSerializable };
 
 /**
  * Calypso application state
@@ -138,6 +133,7 @@ declare global {
 			clientIp?: string;
 		};
 		currentUser?: User;
+		subscriptionManagementSubkey?: string; // Subkey for logged-out subscription management i.e. via email link.
 		__REDUX_DEVTOOLS_EXTENSION__?: () => void;
 		Blackbox?: {
 			configure: ( config: {

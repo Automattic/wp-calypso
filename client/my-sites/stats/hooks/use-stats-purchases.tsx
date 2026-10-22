@@ -1,7 +1,7 @@
 import {
 	JETPACK_COMPLETE_PLANS,
 	JETPACK_GROWTH_PLANS,
-	JETPACK_SECURITY_PLANS,
+	JETPACK_PRO_PLANS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -13,19 +13,19 @@ import {
 } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
 import { ComponentClass, useMemo } from 'react';
-import { isRemoved } from 'calypso/lib/purchases';
+import { isRemoved } from 'calypso/dashboard/utils/purchase';
 import { useSelector } from 'calypso/state';
 import {
 	isFetchingSitePurchases,
-	getSitePurchases,
+	getRawSitePurchases,
 	hasLoadedSitePurchasesFromServer,
-	getPurchases,
+	getRawPurchases,
 } from 'calypso/state/purchases/selectors';
 import {
 	getShouldShowPaywallNotice,
 	getShouldShowPaywallAfterGracePeriod,
 } from 'calypso/state/stats/plan-usage/selectors';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 
 const JETPACK_BUSINESS_PLANS = [ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
 
@@ -49,7 +49,7 @@ const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: st
 
 	// Filter purchases by both slug and validity.
 	return ownedPurchases.filter(
-		( purchase ) => isPurchaseValid( purchase ) && productSlugs.includes( purchase.productSlug )
+		( purchase ) => isPurchaseValid( purchase ) && productSlugs.includes( purchase.product_slug )
 	);
 };
 
@@ -72,9 +72,12 @@ const isCommercialPurchaseOwned = ( ownedPurchases: Purchase[] ) => {
 const supportCommercialPurchaseUse = ( ownedPurchases: Purchase[] ) => {
 	return (
 		isCommercialPurchaseOwned( ownedPurchases ) ||
-		[ ...JETPACK_BUSINESS_PLANS, ...JETPACK_COMPLETE_PLANS, ...JETPACK_GROWTH_PLANS ].some(
-			( plan ) => isProductOwned( ownedPurchases, plan )
-		)
+		[
+			...JETPACK_BUSINESS_PLANS,
+			...JETPACK_COMPLETE_PLANS,
+			...JETPACK_PRO_PLANS,
+			...JETPACK_GROWTH_PLANS,
+		].some( ( plan ) => isProductOwned( ownedPurchases, plan ) )
 	);
 };
 
@@ -82,30 +85,30 @@ const isVideoPressOwned = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_VIDEOPRESS_PRODUCTS ] );
 };
 
-export const hasBusinessPlan = ( ownedPurchases: Purchase[] ) => {
+const hasBusinessPlan = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_BUSINESS_PLANS ] );
 };
 
-export const hasCompletePlan = ( ownedPurchases: Purchase[] ) => {
+const hasCompletePlan = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_COMPLETE_PLANS ] );
 };
 
-export const hasGrowthPlan = ( ownedPurchases: Purchase[] ) => {
+const hasProPlan = ( ownedPurchases: Purchase[] ) => {
+	return areProductsOwned( ownedPurchases, [ ...JETPACK_PRO_PLANS ] );
+};
+
+const hasGrowthPlan = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_GROWTH_PLANS ] );
 };
 
-export const hasSecurityPlan = ( ownedPurchases: Purchase[] ) => {
-	return areProductsOwned( ownedPurchases, [ ...JETPACK_SECURITY_PLANS ] );
-};
-
 export const hasSupportedCommercialUse = ( state: object, siteId: number | null ) => {
-	const sitePurchases = getSitePurchases( state, siteId );
+	const sitePurchases = getRawSitePurchases( state, siteId );
 
 	return supportCommercialPurchaseUse( sitePurchases );
 };
 
 export const hasSupportedVideoPressUse = ( state: object, siteId: number | null ) => {
-	const sitePurchases = getSitePurchases( state, siteId );
+	const sitePurchases = getRawSitePurchases( state, siteId );
 
 	return isVideoPressOwned( sitePurchases );
 };
@@ -130,8 +133,8 @@ export const shouldShowPaywallAfterGracePeriod = (
 };
 
 const getPurchasesBySiteId = createSelector(
-	( state, siteId ) => getSitePurchases( state, siteId ),
-	getPurchases
+	( state, siteId ) => getRawSitePurchases( state, siteId ),
+	getRawPurchases
 );
 
 export default function useStatsPurchases( siteId: number | null ) {
@@ -162,6 +165,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 	// Which specific bundled plan (if any) is granting commercial Stats access, so purchase-page
 	// copy can name it instead of saying "your current plan".
 	const isCompletePlanOwned = useMemo( () => hasCompletePlan( sitePurchases ), [ sitePurchases ] );
+	const isProPlanOwned = useMemo( () => hasProPlan( sitePurchases ), [ sitePurchases ] );
 	const isGrowthPlanOwned = useMemo( () => hasGrowthPlan( sitePurchases ), [ sitePurchases ] );
 	const isBusinessPlanOwned = useMemo( () => hasBusinessPlan( sitePurchases ), [ sitePurchases ] );
 
@@ -172,6 +176,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 		isCommercialOwned,
 		supportCommercialUse,
 		isCompletePlanOwned,
+		isProPlanOwned,
 		isGrowthPlanOwned,
 		isBusinessPlanOwned,
 		hasLoadedSitePurchases,

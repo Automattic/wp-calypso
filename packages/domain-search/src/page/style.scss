@@ -17,6 +17,8 @@
 	--domain-search-warning-badge-background-color: #f9edb4;
 	--domain-search-success-badge-border-color: #b8e5be;
 	--domain-search-success-badge-background-color: #d1eed5;
+	--domain-search-premium-badge-border-color: rgba( 56, 88, 233, 0.6 );
+	--domain-search-premium-badge-background-color: rgba( 56, 88, 233, 0.1 );
 	--domain-search-sticky-overlay-z-index: 1;
 	--domain-search-full-cart-z-index: 2;
 	--domain-search-mini-cart-height: 80px;
@@ -28,6 +30,7 @@
 	flex-direction: column;
 	align-items: center;
 	flex: 1;
+	background-color: var( --domain-search-background-color );
 }
 
 .domain-search--initial-state {
@@ -38,8 +41,29 @@
 	flex-direction: column;
 }
 
-.domain-search--initial-state__already-own-domain-cta {
+.domain-search--initial-state__ctas {
 	margin-top: auto !important;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	@media ( min-width: #{ $break-small } ) {
+		flex-direction: row;
+		justify-content: center;
+
+		// With both cards, split the row evenly instead of sizing each card to its content.
+		// Kept to the row layout: below this breakpoint the stepper hides the domain card,
+		// which still matches `:nth-child( 2 )` while hidden.
+		&:has( > :nth-child( 2 ) ) > * {
+			flex: 1 1 0;
+			min-width: 0;
+
+			.summary-button.components-button {
+				width: 100%;
+				height: 100%;
+			}
+		}
+	}
 }
 
 .domain-search--results {

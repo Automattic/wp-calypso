@@ -7,7 +7,7 @@ import {
 	domainGlueRecordsQuery,
 	domainNameServersQuery,
 	sslDetailsQuery,
-	mailboxesQuery,
+	mailboxAccountsQuery,
 	siteByIdQuery,
 	queryClient,
 	domainTransferRequestQuery,
@@ -31,6 +31,7 @@ import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import {
+	DomainPermissionError,
 	checkDomainNameServersPermissions,
 	checkDomainTransferPermissions,
 	checkDomainContactInfoPermissions,
@@ -149,8 +150,12 @@ export const domainRoute = createRoute( {
 				checkDomainTransferPermissions( domain );
 			} catch ( error ) {
 				dispatch( noticesStore ).createWarningNotice(
-					__( 'You do not have permission to transfer this domain.' ),
-					{ type: 'snackbar' }
+					// Snackbars render plain text, so drop the {{strong}} interpolation markup.
+					error instanceof DomainPermissionError
+						? error.message.replace( /{{\/?strong}}/g, '' )
+						: __( 'You do not have permission to transfer this domain.' ),
+					// A fixed id replaces the previous notice instead of stacking one per click.
+					{ type: 'snackbar', id: 'domain-transfer-permission' }
 				);
 				throw dashboardRedirect( {
 					to: '/domains/$domainName',
@@ -187,7 +192,7 @@ export const domainOverviewRoute = createRoute( {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 
 		queryClient.prefetchQuery( siteByIdQuery( domain.blog_id ) );
-		queryClient.prefetchQuery( mailboxesQuery( domain.blog_id ) );
+		queryClient.prefetchQuery( mailboxAccountsQuery( domain.blog_id, domain.domain ) );
 
 		// The purchase can be forbidden as the domain owner may not be the current user.
 		if ( domain.subscription_id ) {
@@ -563,12 +568,12 @@ export const domainTransferSetupRoute = createRoute( {
 				createLazyRoute( 'domain-transfer-setup' )( {
 					component: d.default,
 				} )
-		  )
+			)
 		: import( '../../domains/domain-connection-setup/legacy-transfer-setup' ).then( ( d ) =>
 				createLazyRoute( 'domain-transfer-setup' )( {
 					component: d.default,
 				} )
-		  )
+			)
 );
 
 export const domainTransferRoute = createRoute( {
@@ -635,7 +640,7 @@ export const domainTransferToAnyUserRoute = createRoute( {
 	path: 'any-user',
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
-		await queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) );
+		await queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.blog_id ) );
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-transfer/transfer-domain-to-any-user' ).then( ( d ) =>
@@ -658,7 +663,7 @@ export const domainTransferToOtherUserRoute = createRoute( {
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		await Promise.all( [
-			queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) ),
+			queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.blog_id ) ),
 			queryClient.ensureQueryData( siteUsersWpcomQuery( domain.blog_id, 'administrator' ) ),
 		] );
 	},

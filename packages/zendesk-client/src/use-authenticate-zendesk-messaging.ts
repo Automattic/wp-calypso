@@ -22,12 +22,12 @@ export const fetchMessagingAuth = async ( type: string = 'zendesk', initializeWi
 				apiNamespace: 'wpcom/v2',
 				query: wpcomParams.toString(),
 				method: 'POST',
-		  } )
+			} )
 		: apiFetch< MessagingAuth >( {
 				path: addQueryArgs( '/help-center/authenticate/chat', params ),
 				method: 'POST',
 				global: true,
-		  } as APIFetchOptions ) );
+			} as APIFetchOptions ) );
 
 	const jwt = auth?.user?.jwt;
 

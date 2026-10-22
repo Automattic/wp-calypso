@@ -8,7 +8,7 @@ import type { ReactNode } from 'react';
 export function useStageTitles(): Record< InstallStageKey, ReactNode > {
 	const translate = useTranslate();
 	return {
-		preparing: translate( 'Preparing a dedicated server for your site' ),
+		preparing: translate( 'Preparing a dedicated server' ),
 		moving: translate( 'Moving your site to its new server' ),
 		finishing: translate( 'Finishing up' ),
 	};
@@ -21,7 +21,7 @@ export function useStageSentences( isPluginInstall = true ): Record< InstallStag
 	const translate = useTranslate();
 	return {
 		preparing: translate(
-			'We’re {{strong}}preparing a dedicated server for your site{{/strong}}.',
+			'We’re {{strong}}preparing a dedicated server{{/strong}} for your site.',
 			{
 				components: { strong: <strong /> },
 			}
@@ -38,10 +38,10 @@ export function useStageSentences( isPluginInstall = true ): Record< InstallStag
 					{
 						components: { strong: <strong /> },
 					}
-			  )
+				)
 			: translate( '{{strong}}Finishing up{{/strong}}. We’re making sure your site is ready.', {
 					components: { strong: <strong /> },
-			  } ),
+				} ),
 	};
 }
 
@@ -54,13 +54,28 @@ export function useStalledCopy( isPluginInstall = true ) {
 	return isPluginInstall
 		? translate(
 				'This is taking longer than it should. Your site is ready — your plugin may still finish installing on its own.'
-		  )
+			)
 		: translate( 'This is taking longer than it should. Your site is ready to use.' );
 }
 
 export function useStalledActionLabel( isPluginInstall = true ) {
 	const translate = useTranslate();
 	return isPluginInstall ? translate( 'Go to your plugins' ) : translate( 'Go to your site' );
+}
+
+/**
+ * The transfer has outrun the wait's deadline but is still running. All we know is that it has not
+ * ended, so the copy says only that, and makes leaving an option rather than the failure it was.
+ */
+export function useDeadlineCopy( isPluginInstall = true ) {
+	const translate = useTranslate();
+	return isPluginInstall
+		? translate(
+				'This is taking longer than usual. Your plugin is still being installed — you can close this page and check back in a few minutes.'
+			)
+		: translate(
+				'This is taking longer than usual. Your site is still being set up — you can close this page and check back in a few minutes.'
+			);
 }
 
 export function useOverrunCopy() {

@@ -1,10 +1,11 @@
-import { Page } from 'playwright';
+import { Page, Locator } from 'playwright';
 
 /**
  * Represents the Import Let's Us Migrate Your Site page.
  */
 export class ImportLetUsMigrateYourSitePage {
 	private page: Page;
+	readonly importExportFileButton: Locator;
 
 	/**
 	 * Constructs an instance of the page.
@@ -13,6 +14,9 @@ export class ImportLetUsMigrateYourSitePage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.importExportFileButton = page.getByRole( 'button', {
+			name: 'Import a WordPress export file',
+		} );
 	}
 
 	/**

@@ -8,7 +8,7 @@ import {
 import page from '@automattic/calypso-router';
 import { GravatarTextLogo } from '@automattic/components';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { camelToSnakeCase, kebabCase, omit, isEmpty } from '@automattic/js-utils';
+import { camelToSnakeCase, kebabCase, omit } from '@automattic/js-utils';
 import * as oauthToken from '@automattic/oauth-token';
 import { isDomainForGravatarFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
@@ -622,7 +622,7 @@ class Signup extends Component {
 			const signupDomainOriginValue =
 				isTransfer || isMapping
 					? SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN
-					: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET;
+					: ( signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET );
 
 			recordSignupComplete( {
 				flow: this.props.flowName,
@@ -702,14 +702,6 @@ class Signup extends Component {
 			debug( `Handling regular login` );
 
 			const { bearer_token: bearerToken, username } = dependencies;
-
-			if (
-				isEmpty( bearerToken ) &&
-				isEmpty( username ) &&
-				'onboarding-registrationless' === this.props.flowName
-			) {
-				return;
-			}
 
 			if ( this.state.bearerToken !== bearerToken && this.state.username !== username ) {
 				debug( 'Performing regular login' );

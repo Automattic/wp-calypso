@@ -70,7 +70,7 @@ export default function WPCOMPlanSelector( {
 				actualCost: originalPrice,
 				discountedCost: originalPrice - originalPrice * discount,
 				discountPercentage: Math.round( discount * 100 ),
-		  };
+			};
 
 	const actualPrice = pricingInfo.discountedCost;
 

@@ -90,7 +90,12 @@ export { createClient } from './client/index';
 
 // Agent Manager - Functional singleton for managing agent instances
 export { getAgentManager } from './react/agentManager';
-export type { AgentManager, AgentManagerConfig } from './react/agentManager';
+export type {
+	AgentManager,
+	AgentManagerConfig,
+	ToolResultInput,
+	TurnToolCall,
+} from './react/agentManager';
 
 // Message actions
 export { useMessageActions } from './message-actions';
@@ -115,18 +120,10 @@ export {
 	loadAllMessagesFromServer,
 } from './react/odieService';
 
-// Turn reconciliation across page loads. Persist a delivery status via
-// `message.metadata.deliveryStatus` and use `getUnresolvedMessages` on chat
-// panel boot to find in-flight turns that need to be reconciled with the
-// server.
-export {
-	getUnresolvedMessages,
-	reconcileWithServer,
-	type DeliveryStatus,
-} from './react/conversationStorage';
 export type { OdieServiceConfig } from './react/odieService';
 export type {
 	ServerLoadResult,
+	PendingClientTools,
 	PaginationMeta,
 	ServerConversationListItem,
 	ServerConversationListItemMessage,

@@ -298,7 +298,7 @@ export class MagicLogin extends Component {
 				? {
 						customFormLabel: translate( 'Your email address' ),
 						submitButtonLabel: translate( 'Send activation link' ),
-				  }
+					}
 				: {} ),
 		};
 
@@ -340,6 +340,7 @@ export class MagicLogin extends Component {
 				isFromJetpackConnector={ isFromJetpackConnector }
 				isUnifiedConnectionFlow={ isUnifiedConnectionFlow }
 				connectorPlugins={ connectorPlugins }
+				linkLogoToHome
 			>
 				{ mainContent }
 			</OneLoginLayout>
@@ -373,7 +374,7 @@ export const getMagicLoginInitialHeaders = ( props, translate ) => {
 				args: {
 					partnerName: props.partnerConfig.displayName,
 				},
-		  } )
+			} )
 		: undefined;
 
 	return getEmailLinkHeaders( translate, { headingOverride } );

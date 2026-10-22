@@ -27,7 +27,7 @@ const interceptStatus = ( connected: boolean ) =>
 	nock( API ).get( '/wpcom/v2/telegram-bot/status' ).reply( 200, { connected } );
 
 describe( '<WordPressAgentTelegram />', () => {
-	test( 'connects through the Telegram login widget', async () => {
+	test( 'requires confirmation before connecting through the Telegram login widget', async () => {
 		interceptStatus( false );
 		const connectRequest = nock( API )
 			.post( '/wpcom/v2/telegram-bot/connect', ( body ) => {
@@ -45,6 +45,11 @@ describe( '<WordPressAgentTelegram />', () => {
 
 		act( () => window.wordpressAgentOnTelegramAuth?.( TELEGRAM_USER ) );
 
+		expect( screen.getByText( 'Telegram account: @telegram-user (ID: 123)' ) ).toBeVisible();
+		expect( screen.queryByRole( 'heading', { name: 'Telegram' } ) ).not.toBeInTheDocument();
+		expect( connectRequest.isDone() ).toBe( false );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Connect' } ) );
+
 		await waitFor( () => expect( connectRequest.isDone() ).toBe( true ) );
 		expect( await screen.findByRole( 'button', { name: 'Disconnect' } ) ).toBeVisible();
 		expect(
@@ -58,6 +63,81 @@ describe( '<WordPressAgentTelegram />', () => {
 		);
 	} );
 
+	test( 'discards a widget connection on cancel', async () => {
+		interceptStatus( false );
+		const connectRequest = nock( API ).post( '/wpcom/v2/telegram-bot/connect' ).reply( 200, {} );
+		render( <WordPressAgentTelegram />, { user: USER } );
+		await waitFor( () => expect( window.wordpressAgentOnTelegramAuth ).toBeDefined() );
+		act( () => window.wordpressAgentOnTelegramAuth?.( TELEGRAM_USER ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+		expect( screen.queryByRole( 'button', { name: 'Connect' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Telegram' } ) ).toBeVisible();
+		await waitFor( () =>
+			expect( document.querySelector( 'script[data-telegram-login]' ) ).toBeInTheDocument()
+		);
+		expect( connectRequest.isDone() ).toBe( false );
+		act( () => window.wordpressAgentOnTelegramAuth?.( { ...TELEGRAM_USER, id: 456 } ) );
+		expect( screen.getByText( 'Telegram account: @telegram-user (ID: 456)' ) ).toBeVisible();
+		expect( connectRequest.isDone() ).toBe( false );
+	} );
+
+	test( 'keeps the displayed widget identity until it is confirmed or cancelled', async () => {
+		interceptStatus( false );
+		const connectRequest = nock( API )
+			.post( '/wpcom/v2/telegram-bot/connect', ( body ) => {
+				expect( body ).toEqual( TELEGRAM_USER );
+				return true;
+			} )
+			.reply( 200, {} );
+		render( <WordPressAgentTelegram />, { user: USER } );
+		await waitFor( () => expect( window.wordpressAgentOnTelegramAuth ).toBeDefined() );
+		act( () => window.wordpressAgentOnTelegramAuth?.( TELEGRAM_USER ) );
+		act( () => window.wordpressAgentOnTelegramAuth?.( { ...TELEGRAM_USER, id: 456 } ) );
+		expect( screen.getByText( 'Telegram account: @telegram-user (ID: 123)' ) ).toBeVisible();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Connect' } ) );
+		await waitFor( () => expect( connectRequest.isDone() ).toBe( true ) );
+	} );
+
+	test.each( [ { telegramId: '123' }, { bot: 'wordpressagentbot' } ] )(
+		'allows widget login after an incomplete token callback: %o',
+		async ( props ) => {
+			interceptStatus( false );
+			const connectRequest = nock( API ).post( '/wpcom/v2/telegram-bot/connect' ).reply( 200, {} );
+			render( <WordPressAgentTelegram { ...props } />, { user: USER } );
+			expect(
+				screen.getByText( 'This Telegram connection link is invalid or incomplete.', {
+					selector: '.components-notice__content',
+				} )
+			).toBeVisible();
+			await waitFor( () =>
+				expect( document.querySelector( 'script[data-telegram-login]' ) ).toBeInTheDocument()
+			);
+			act( () => window.wordpressAgentOnTelegramAuth?.( TELEGRAM_USER ) );
+			expect( screen.getByText( 'Telegram account: @telegram-user (ID: 123)' ) ).toBeVisible();
+			expect( connectRequest.isDone() ).toBe( false );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Connect' } ) );
+			await waitFor( () => expect( connectRequest.isDone() ).toBe( true ) );
+		}
+	);
+
+	test( 'restores the widget after cancelling a token connection', async () => {
+		interceptStatus( false );
+		const tokenRequest = nock( API )
+			.post( '/wpcom/v2/telegram-bot/connect-via-token' )
+			.reply( 200, {} );
+		render( <WordPressAgentTelegram telegramId="123" token="token" timestamp="456" />, {
+			user: USER,
+		} );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+		expect( tokenRequest.isDone() ).toBe( false );
+		expect( screen.getByRole( 'heading', { name: 'Telegram' } ) ).toBeVisible();
+		await waitFor( () =>
+			expect( document.querySelector( 'script[data-telegram-login]' ) ).toBeInTheDocument()
+		);
+		act( () => window.wordpressAgentOnTelegramAuth?.( TELEGRAM_USER ) );
+		expect( screen.getByText( 'Telegram account: @telegram-user (ID: 123)' ) ).toBeVisible();
+	} );
+
 	test( 'disconnects Telegram and shows the login widget again', async () => {
 		interceptStatus( true );
 		const disconnectRequest = nock( API )
@@ -66,14 +146,18 @@ describe( '<WordPressAgentTelegram />', () => {
 
 		render( <WordPressAgentTelegram />, { user: USER } );
 
-		expect( await screen.findByText( 'Chat with WordPress Agent on Telegram.' ) ).toBeVisible();
+		expect(
+			await screen.findByText( 'Message your agent from Telegram for quick updates on the go.' )
+		).toBeVisible();
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Disconnect' } ) );
 
 		await waitFor( () => expect( disconnectRequest.isDone() ).toBe( true ) );
 		await waitFor( () => {
 			expect( document.querySelector( 'script[data-telegram-login]' ) ).toBeInTheDocument();
 		} );
-		expect( screen.getByText( 'Chat with WordPress Agent on Telegram.' ) ).toBeVisible();
+		expect(
+			screen.getByText( 'Message your agent from Telegram for quick updates on the go.' )
+		).toBeVisible();
 	} );
 
 	test( 'connects from a Telegram token callback', async () => {
@@ -102,6 +186,9 @@ describe( '<WordPressAgentTelegram />', () => {
 				name: 'Connect your WordPress.com account Test User (@testuser) to Telegram?',
 			} )
 		).toBeVisible();
+		expect( tokenRequest.isDone() ).toBe( false );
+		expect( screen.queryByRole( 'heading', { name: 'Telegram' } ) ).not.toBeInTheDocument();
+		expect( window.wordpressAgentOnTelegramAuth ).toBeUndefined();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Connect' } ) );
 
 		await waitFor( () => expect( tokenRequest.isDone() ).toBe( true ) );

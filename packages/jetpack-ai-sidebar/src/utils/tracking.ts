@@ -6,11 +6,7 @@ type TrackProperties = Record< string, string | number | boolean >;
 export type BigSkyEventName = `jetpack_big_sky_${ string }`;
 
 type ReviewContext =
-	| 'notes_and_guidelines'
-	| 'notes_only'
-	| 'guidelines_only'
-	| 'content_only'
-	| 'insufficient_input';
+	'notes_and_guidelines' | 'notes_only' | 'guidelines_only' | 'content_only' | 'insufficient_input';
 
 type ResponseRenderedTrackingProperties = {
 	suggested_edit_count: number;

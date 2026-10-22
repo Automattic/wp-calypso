@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { NoticeIdType } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { COMMERCIAL_PAYWALL_KILLED } from 'calypso/state/stats/plan-usage/constants';
 import CommercialSiteUpgradeNotice from './commercial-site-upgrade-notice';
@@ -7,9 +6,7 @@ import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-succ
 import FreeSiteUpgradeNotice from './free-site-upgrade-notice';
 import GDPRCookieConsentNotice from './gdpr-cookie-consent-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
-import isPremiumAnalyticsPreviewCohort, {
-	PREMIUM_ANALYTICS_PREVIEW_FLAG,
-} from './premium-analytics-preview-cohort';
+import isPremiumAnalyticsPreviewCohort from './premium-analytics-preview-cohort';
 import PremiumAnalyticsPreviewNotice from './premium-analytics-preview-notice';
 import TierUpgradeNotice from './tier-upgrade-notice';
 import { StatsNoticeProps } from './types';
@@ -47,7 +44,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		// site never reported the setting, which must not read as "go ahead and offer it".
 		isVisibleFunc: ( options: StatsNoticeProps ) =>
 			isPremiumAnalyticsPreviewCohort( options ) && options.isPremiumAnalyticsEnabled === false,
-		disabled: ! isEnabled( PREMIUM_ANALYTICS_PREVIEW_FLAG ),
+		disabled: false,
 	},
 	{
 		component: CommercialSiteUpgradeNotice,

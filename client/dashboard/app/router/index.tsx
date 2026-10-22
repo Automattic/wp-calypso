@@ -14,7 +14,6 @@ import { createPluginsRoutes } from './plugins';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
-import { startStoreRoute } from './start-store';
 import type { SiteTypeFeature } from '../../utils/site-type-feature-support';
 import type { AppConfig } from '../context';
 import type { AgencyCapability } from '@automattic/api-core';
@@ -37,6 +36,11 @@ declare module '@tanstack/react-router' {
 		 * of these capabilities. Enforced in agencyRoute.beforeLoad.
 		 */
 		requiresAgencyCapability?: AgencyCapability | AgencyCapability[];
+		/**
+		 * Renders the route without the dashboard shell (sidebar and omnibar),
+		 * for pages that take the whole screen, like a checkout.
+		 */
+		isFullscreen?: boolean;
 	}
 }
 
@@ -94,10 +98,6 @@ const createRouteTree = ( config: AppConfig ) => {
 
 	if ( config.supports.me ) {
 		children.push( ...createMeRoutes( config ) );
-	}
-
-	if ( config.supports.startStoreRoute ) {
-		children.push( startStoreRoute );
 	}
 
 	children.push( catchAllRoute );

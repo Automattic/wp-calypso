@@ -1,17 +1,11 @@
 
 import _self.bashNodeScript
-import _self.yarn_install_cmd
 import _self.CalypsoE2ETestsBuildTemplate
 import _self.lib.utils.allBranchesExceptMergeQueue
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.dockerSupport
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
@@ -62,7 +56,6 @@ project {
 	buildType(BuildCacheSeedPreviewImage)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
-	buildType(SmartBuildLauncher)
 	template(CalypsoE2ETestsBuildTemplate)
 
 	params {
@@ -87,15 +80,20 @@ project {
 		param("teamcity.git.fetchAllHeads", "true")
 
 		// e2e config decryption key references. See PCYsg-vnR-p2 for more info.
-		password("E2E_SECRETS_ENCRYPTION_KEY_APR_04_25" , "credentialsJSON:b4046e11-8a27-4415-a3cc-fa9c015c9b86", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_OCT_21_26" , "credentialsJSON:33e2bfa5-1890-496f-8bfb-ab4d4cbfce39", display = ParameterDisplay.HIDDEN)
 		// Define the currently used encryption key here. This allows easy swapping between previously used keys.
-		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_APR_04_25%", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_OCT_21_26%", display = ParameterDisplay.HIDDEN)
 
 		// Calypso dashboard AWS secrets for S3 bucket.
 		password("CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID", "credentialsJSON:1f324549-3795-43e5-a8c2-fb81d6e7c15d", display = ParameterDisplay.HIDDEN)
 		password("CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY", "credentialsJSON:782b4bde-b73d-4326-9970-5a79251bdf07", display = ParameterDisplay.HIDDEN)
 		password("MATTICBOT_GITHUB_BEARER_TOKEN", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN, label = "Matticbot GitHub Bearer Token")
 		text("CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT", "s3://a8c-calypso-e2e-reports", label = "Calypso E2E Dashboard S3 bucket root")
+
+		// AWS secrets for the test reports S3 bucket.
+		password("A8C_TEST_REPORTS_S3_ACCESS_KEY", "credentialsJSON:1dc49412-c3f0-44ab-b45b-7a882d19d268", display = ParameterDisplay.HIDDEN)
+		password("A8C_TEST_REPORTS_S3_SECRET_ACCESS_KEY", "credentialsJSON:e6a1710d-e342-402e-9945-10e4eb841d12", display = ParameterDisplay.HIDDEN)
+		password("A8C_TEST_REPORTS_S3_ROOT", "credentialsJSON:8d82bf15-2eb9-4f68-b2ae-7733b3a70147", display = ParameterDisplay.HIDDEN)
 
 		// TeamCity Rich Notificaion App.
 		password("TEAMCITY_SLACK_RICH_NOTIFICATION_APP_OAUTH_TOKEN", "credentialsJSON:1ade13b3-4f88-4b2a-a71a-9c6f95698d00", display=ParameterDisplay.HIDDEN)
@@ -363,7 +361,7 @@ object BuildToolchainPreviewImages : BuildType({
 				docker run --rm --entrypoint /bin/bash registry.a8c.com/calypso/ci-e2e:%build.number% -lc '
 					xvfb-run --help >/dev/null &&
 					aws --version &&
-					dpkg -s fonts-noto-cjk fonts-noto-core libgtk-3-0 libgbm1 libnss3 >/dev/null
+					dpkg -s fonts-noto-cjk fonts-noto-core libgtk-3-0t64 libgbm1 libnss3 >/dev/null
 				'
 			""".trimIndent()
 		}
@@ -772,55 +770,6 @@ object CheckCodeStyle : BuildType({
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
 			}
-		}
-	}
-})
-
-object SmartBuildLauncher : BuildType({
-	name = "Smart Build Launcher"
-	description = "Launches TeamCity builds based on which files were modified in VCS."
-
-	vcs {
-		root(Settings.WpCalypso)
-		branchFilter = allBranchesExceptMergeQueue()
-		cleanCheckout = true
-	}
-
-	features {
-		pullRequests {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			provider = github {
-				authType = token {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-			}
-		}
-
-		commitStatusPublisher {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-			}
-		}
-	}
-
-	steps {
-		bashNodeScript {
-			name = "Install and build dependencies"
-			scriptContent = """
-				$yarn_install_cmd
-				yarn workspace @automattic/dependency-finder build
-			"""
-		}
-		bashNodeScript {
-			name = "Launch relevant builds"
-			scriptContent = """
-				node ./packages/dependency-finder/dist/esm/index.js
-			"""
 		}
 	}
 })

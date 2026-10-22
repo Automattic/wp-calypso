@@ -6,7 +6,7 @@ import { type ActionButton, ChatInput } from './ChatInput';
 import { ComplianceDisclosure, DefaultComplianceDisclosure } from './ComplianceDisclosure';
 import { Notice } from './Notice';
 import { Suggestions } from './Suggestions';
-import type { NoticeConfig, Suggestion } from '../../types';
+import type { NoticeConfig, Suggestion, TrailingActions } from '../../types';
 
 interface ChatFooterProps {
 	// Input handlers
@@ -16,6 +16,8 @@ interface ChatFooterProps {
 	onKeyDown: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
 	textareaRef: React.RefObject< HTMLTextAreaElement | null >;
 	placeholder?: string | string[];
+	leadingActions?: React.ReactNode;
+	trailingActions?: TrailingActions;
 	isProcessing: boolean;
 	onStop?: () => void;
 
@@ -53,6 +55,8 @@ export function ChatFooter( {
 	onKeyDown,
 	textareaRef,
 	placeholder,
+	leadingActions,
+	trailingActions,
 	isProcessing,
 	onStop,
 	fromCompact = false,
@@ -103,6 +107,8 @@ export function ChatFooter( {
 					onKeyDown={ onKeyDown }
 					textareaRef={ textareaRef }
 					placeholder={ placeholder }
+					leadingActions={ leadingActions }
+					trailingActions={ trailingActions }
 					isProcessing={ isProcessing }
 					onStop={ onStop }
 					fromCompact={ fromCompact }

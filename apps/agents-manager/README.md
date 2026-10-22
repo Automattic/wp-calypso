@@ -1,21 +1,23 @@
 # Agents Manager
 
-The Agents Manager is the unified AI agent experience for WordPress.com users, providing chat, support guides, and AI-powered tools across multiple environments.
+The Agents Manager provides chat, support guides, and AI-powered tools across multiple environments.
 
 ## Development
 
 The Agents Manager runs in multiple different environments:
 
 1. In Calypso.
-2. In Simple sites
+2. In the multi-site Dashboard
+   - in the omnibar.
+3. In Simple sites
    - as a plugin to Gutenberg editor.
    - as a wpadminbar menu item.
-3. In Atomic sites
+4. In Atomic sites
    - as a plugin to Gutenberg editor.
    - as a wpadminbar menu item.
-4. In the WooCommerce AI admin
+5. In the WooCommerce AI admin
    - as a standalone chat container.
-5. On public blog frontends
+6. On public blog frontends
    - as Reader Chat for logged-out visitors.
 
 ### How to develop the Agents Manager
@@ -24,25 +26,29 @@ The Agents Manager runs in multiple different environments:
 
 Follow the classic Calypso development setup. Run `yarn start` and edit away. Nothing else should be needed.
 
+#### In the Dashboard
+
+Run `yarn start-dashboard`. Like Calypso, it imports the package source directly.
+
 #### In Simple sites
 
 1. cd into `apps/agents-manager`.
 2. run `yarn dev --sync`.
-3. Sandbox your site and `widgets.wp.com`.
+3. Sandbox `widgets.wp.com` (the site itself does not need sandboxing).
 4. Your changes should be reflected on the site live.
 
 #### In Atomic sites
 
-If you only interested in making JS and CSS changes, you're in luck; you don't need to worry about running Jetpack. You can follow the same instructions of simple sites.
+For JS and CSS changes you don't need Jetpack running: follow the Simple-site steps above.
 
 > [!IMPORTANT]
-> If you make changes to the \*.asset.json files, i.e add or remove dependencies, these files won't be synced with the site as Jetpack pulls these files via network. And since Jetpack pulls from production and not your sandbox, you'll have to deploy first for these changes to take effect.
+> Adding or removing an externalized `@wordpress/*` dependency changes the `*.asset.json` files, which Jetpack's PHP reads from the server handling the request and caches for an hour, not from your synced bundle. To test such a change, sandbox the Simple site too; on Atomic and self-hosted sites it takes effect only after a deploy.
 
-If you do want to modify PHP files. Please follow the development process of [`jetpack-mu-plugin`](https://github.com/Automattic/jetpack/blob/trunk/projects/packages/jetpack-mu-wpcom/README.md).
+The PHP lives in Jetpack's [`projects/packages/agents-manager`](https://github.com/Automattic/jetpack/blob/trunk/projects/packages/agents-manager/README.md) package.
 
 ### Translations
 
-Translations are uploaded to widgets.wp.com/agents-manager/languages. They're then downloaded in Jetpack during the build process.
+The app's `translate` script builds translations into `dist/languages/`, released with the bundles to `widgets.wp.com/agents-manager/languages/`. Jetpack loads `languages/{locale}-v1.js` from there at runtime for non-English locales.
 
 ### Deployment
 
@@ -63,4 +69,4 @@ This simply means deploying Calypso as you normally would.
 This will deploy the Agents Manager app for Jetpack consumption. Along with the languages files.
 
 > [!IMPORTANT]
-> If you add new phrases to the Agents Manager. They will only be translated in Atomic sites after `jetpack-mu-plugin` is released. Which happens twice a day.
+> New phrases appear translated only after they are translated and the next Agents Manager release (above) is deployed: each release build fetches the latest translations.

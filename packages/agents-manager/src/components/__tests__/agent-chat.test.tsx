@@ -10,6 +10,9 @@ import type { ComponentProps, ReactNode, Ref } from 'react';
 
 const mockSetFloatingPosition = jest.fn();
 const mockContainerProps = jest.fn();
+const mockContainerCallbacks = jest.fn();
+const mockContainerSuggestionClick = jest.fn();
+const mockSuggestionsProps = jest.fn();
 const mockInputProps = jest.fn();
 const mockImageUploaderProps = jest.fn();
 const mockHasAiChatEntry = jest.fn();
@@ -17,7 +20,7 @@ const mockHasAiChatEntry = jest.fn();
 jest.mock(
 	'@automattic/agenttic-ui',
 	() => {
-		const React = jest.requireActual< typeof import('react') >( 'react' );
+		const React = jest.requireActual< typeof import( 'react' ) >( 'react' );
 
 		function MockContainer( {
 			children,
@@ -26,6 +29,8 @@ jest.mock(
 			triggerTitle,
 			suggestions = [],
 			onSuggestionClick,
+			onSuggestionsRendered,
+			onTypingStatusChange,
 		}: {
 			children: ReactNode;
 			emptyView: ReactNode;
@@ -36,8 +41,12 @@ jest.mock(
 				selectedSuggestion: Suggestion,
 				availableSuggestions: Suggestion[]
 			) => void;
+			onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
+			onTypingStatusChange?: ( isTyping: boolean ) => void;
 		} ) {
 			mockContainerProps( { floatingChatState, triggerTitle } );
+			mockContainerCallbacks( { onSuggestionsRendered, onTypingStatusChange } );
+			mockContainerSuggestionClick.mockImplementation( onSuggestionClick ?? ( () => {} ) );
 			return (
 				<div>
 					{ emptyView }
@@ -130,12 +139,20 @@ jest.mock(
 		}
 
 		function MockSuggestions( {
+			className,
 			suggestions = [],
+			visible,
 			onSubmit,
 		}: {
+			className?: string;
 			suggestions?: Suggestion[];
+			visible?: boolean;
 			onSubmit?: ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => void;
 		} ) {
+			mockSuggestionsProps( { className, visible } );
+			if ( visible === false ) {
+				return null;
+			}
 			return <MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSubmit } />;
 		}
 
@@ -212,8 +229,10 @@ jest.mock( '../selected-block', () => ( {
 	__esModule: true,
 	default: mockSelectedBlock,
 } ) );
-jest.mock( '../../utils/is-plugin-compass-agent', () => ( {
-	isPluginCompassHost: () => false,
+const mockEditorHistoryBridge = jest.fn( () => null );
+jest.mock( '../editor-history-bridge', () => ( {
+	__esModule: true,
+	default: mockEditorHistoryBridge,
 } ) );
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatHost: () => false,
@@ -252,6 +271,7 @@ describe( 'AgentChat', () => {
 		jest.clearAllMocks();
 		mockHasAiChatEntry.mockReturnValue( false );
 		document.body.className = '';
+		window.history.replaceState( {}, '', '/wp-admin/index.php' );
 	} );
 
 	it( 'renders the selected-block chip only on editor pages', async () => {
@@ -265,6 +285,18 @@ describe( 'AgentChat', () => {
 		// The lazy chunk resolves in a microtask — flush before asserting absence.
 		await act( () => Promise.resolve() );
 		expect( mockSelectedBlock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'mounts the editor history bridge only in the site editor', async () => {
+		document.body.classList.add( 'site-editor-php' );
+		renderAgentChat();
+		await waitFor( () => expect( mockEditorHistoryBridge ).toHaveBeenCalled() );
+
+		mockEditorHistoryBridge.mockClear();
+		document.body.className = '';
+		renderAgentChat();
+		await act( () => Promise.resolve() );
+		expect( mockEditorHistoryBridge ).not.toHaveBeenCalled();
 	} );
 
 	const imageUpload = ( isUploadingImages: boolean ) =>
@@ -375,6 +407,24 @@ describe( 'AgentChat', () => {
 		expect( onSuggestionClick ).toHaveBeenCalledWith( suggestion, [ suggestion ] );
 	} );
 
+	it( 'reports the list a suggestion in a message comes from', () => {
+		const footerSuggestion = { id: 'translate', label: 'Translate', prompt: 'Translate this' };
+		const listSuggestions = [
+			{ id: 'customize-colors', label: 'Customize colors', prompt: 'Show me palettes' },
+		];
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( {
+			isOpen: true,
+			messages: [ { id: 'site-ready', role: 'agent', content: [] } ] as never,
+			suggestions: [ footerSuggestion ],
+			onSuggestionClick,
+		} );
+		act( () => mockContainerSuggestionClick( listSuggestions[ 0 ], listSuggestions ) );
+
+		expect( onSuggestionClick ).toHaveBeenCalledWith( listSuggestions[ 0 ], listSuggestions, true );
+	} );
+
 	it( 'preserves the selected prompt from an inline dropdown suggestion', async () => {
 		const user = userEvent.setup();
 		const option = {
@@ -394,9 +444,11 @@ describe( 'AgentChat', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'Change tone: Formal' } ) );
 
-		expect( onSuggestionClick ).toHaveBeenCalledWith( { ...suggestion, prompt: option.value }, [
-			suggestion,
-		] );
+		expect( onSuggestionClick ).toHaveBeenCalledWith(
+			{ ...suggestion, prompt: option.value },
+			[ suggestion ],
+			false
+		);
 	} );
 
 	it( 'preserves the selected prompt from an empty-view dropdown suggestion', async () => {
@@ -626,6 +678,47 @@ describe( 'AgentChat', () => {
 		expect( mockContainerProps ).toHaveBeenLastCalledWith( {
 			floatingChatState: 'minimized',
 			triggerTitle: 'Agent',
+		} );
+	} );
+
+	it( 'forwards the rendered-suggestions callback to the Agenttic container', () => {
+		const onSuggestionsRendered = jest.fn();
+
+		renderAgentChat( { onSuggestionsRendered } );
+
+		expect( mockContainerCallbacks ).toHaveBeenLastCalledWith( { onSuggestionsRendered } );
+	} );
+
+	it( 'forwards the typing status callback to the Agenttic container', () => {
+		const onTypingStatusChange = jest.fn();
+
+		renderAgentChat( { onTypingStatusChange } );
+
+		expect( mockContainerCallbacks ).toHaveBeenLastCalledWith( { onTypingStatusChange } );
+	} );
+
+	it( 'keeps collapsed writing suggestions out of what Agenttic renders', async () => {
+		const user = userEvent.setup();
+
+		renderAgentChat( {
+			isOpen: true,
+			groupWritingSuggestions: true,
+			emptyViewSuggestions: [
+				{ id: 'customize-colors', label: 'Customize colors', prompt: 'Customize colors' },
+				{ id: 'optimize-title', label: 'Optimize Title', prompt: 'Optimize the title' },
+			],
+		} );
+
+		expect( mockSuggestionsProps ).toHaveBeenLastCalledWith( {
+			className: 'agents-manager-writing-suggestions__list',
+			visible: false,
+		} );
+
+		await user.click( screen.getByRole( 'button', { name: /Writing/ } ) );
+
+		expect( mockSuggestionsProps ).toHaveBeenLastCalledWith( {
+			className: 'agents-manager-writing-suggestions__list',
+			visible: true,
 		} );
 	} );
 } );

@@ -1,16 +1,18 @@
+import { userPurchasesQuery } from '@automattic/api-queries';
 import { HelpCenter } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import { hasCancelablePurchases } from 'calypso/dashboard/utils/purchase';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useHelpCenterSite } from './use-help-center-site';
 
 const importHelpCenter = () =>
@@ -32,7 +34,12 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 	}, [ setShowHelpCenter ] );
 
 	const locale = useLocale();
-	const hasPurchases = useSelector( hasCancelableUserPurchases );
+	// Only read purchases another screen already fetched; fetching here would add a request to every page load.
+	const { data: hasPurchases = false } = useQuery( {
+		...userPurchasesQuery(),
+		select: hasCancelablePurchases,
+		enabled: false,
+	} );
 	const user = useSelector( getCurrentUser );
 	const agency = useSelector( getActiveAgency );
 	const { site } = useHelpCenterSite();
@@ -48,10 +55,10 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 					? {
 							id: agency.id,
 							pressableId: agency?.third_party?.pressable?.pressable_id,
-					  }
+						}
 					: null,
 				product: 'a4a' as const,
-		  }
+			}
 		: {};
 
 	return (

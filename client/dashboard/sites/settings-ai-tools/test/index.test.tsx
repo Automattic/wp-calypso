@@ -6,6 +6,7 @@ import {
 	bigSkyPluginQuery,
 	isAutomatticianQuery,
 	queryClient,
+	siteAbilitiesQuery,
 	siteBySlugQuery,
 	sitePostByEmailSettingsQuery,
 	userSettingsQuery,
@@ -80,7 +81,7 @@ function seedQueries(
 							site_level_enabled: true,
 							abilities: {},
 						},
-				  ]
+					]
 				: [],
 		},
 	} as UserSettings );
@@ -301,6 +302,106 @@ describe( '<AIToolsSettings>', () => {
 		expect( screen.getByRole( 'link', { name: /^Write/ } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /^Connect external AI agent/ } ) ).toBeVisible();
 		expect( screen.queryByText( 'Upgrade required' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'counts site-published groups in the badges so they cannot claim All enabled while those are off', () => {
+		seedQueries( '', true, jetpackSite, true, true );
+		// The remote section is staff-gated; the badge math applies for Automatticians.
+		queryClient.setQueryData( isAutomatticianQuery().queryKey, {
+			number: 0,
+			teams: [ { slug: 'a8c' } ],
+		} );
+		queryClient.setQueryData( userSettingsQuery().queryKey, {
+			mcp_abilities: {
+				account: {
+					'wpcom-mcp/posts-list': {
+						enabled: true,
+						readonly: true,
+						visible: true,
+						title: 'List posts',
+						description: 'List posts on your sites.',
+					},
+				},
+				sites: [
+					{
+						blog_id: jetpackSite.ID,
+						site_level_enabled: true,
+						abilities: { 'wpcom-mcp/posts-list': true },
+						remote_groups: { 'read:jetpack-forms': false },
+					},
+				],
+			},
+		} as unknown as UserSettings );
+		queryClient.setQueryData( siteAbilitiesQuery( jetpackSite.ID, 'en_US' ).queryKey, [
+			{
+				name: 'jetpack-forms/get-form',
+				label: 'Get form',
+				meta: { annotations: { readonly: true } },
+			},
+			{
+				name: 'jetpack-forms/list-forms',
+				label: 'List forms',
+				meta: { annotations: { readonly: true } },
+			},
+			{
+				name: 'akismet/check-comment',
+				label: 'Check comment',
+				meta: { annotations: {} },
+			},
+		] );
+
+		render( <AIToolsSettings siteSlug={ jetpackSite.slug } />, { queryClient } );
+
+		// The wpcom read tool is on; the site's two read abilities (sharing one
+		// group key) are not, and the write side has nothing enabled at all.
+		expect( screen.getByText( '1 of 3 enabled' ) ).toBeVisible();
+		expect( screen.getByText( 'Disabled' ) ).toBeVisible();
+		expect( screen.queryByText( 'All enabled' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'excludes site-published abilities from the badges for non-Automatticians, even with the catalog cached', () => {
+		// seedQueries leaves the user as a non-Automattician (no a8c team).
+		seedQueries( '', true, jetpackSite, true, true );
+		queryClient.setQueryData( userSettingsQuery().queryKey, {
+			mcp_abilities: {
+				account: {
+					'wpcom-mcp/posts-list': {
+						enabled: true,
+						readonly: true,
+						visible: true,
+						title: 'List posts',
+						description: 'List posts on your sites.',
+					},
+				},
+				sites: [
+					{
+						blog_id: jetpackSite.ID,
+						site_level_enabled: true,
+						abilities: { 'wpcom-mcp/posts-list': true },
+					},
+				],
+			},
+		} as unknown as UserSettings );
+		// A catalog cached from an Automattician's earlier view must not leak in.
+		queryClient.setQueryData( siteAbilitiesQuery( jetpackSite.ID, 'en_US' ).queryKey, [
+			{
+				name: 'jetpack-forms/get-form',
+				label: 'Get form',
+				meta: { annotations: { readonly: true } },
+			},
+			{
+				name: 'jetpack-forms/list-forms',
+				label: 'List forms',
+				meta: { annotations: { readonly: true } },
+			},
+		] );
+
+		render( <AIToolsSettings siteSlug={ jetpackSite.slug } />, { queryClient } );
+
+		// Only the wpcom tool counts, and it is on.
+		expect( screen.getAllByText( 'All enabled' ) ).not.toHaveLength( 0 );
+		expect( screen.queryByText( '1 of 3 enabled' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Disabled' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'manages the WordPress Agent email address on an Atomic site', async () => {

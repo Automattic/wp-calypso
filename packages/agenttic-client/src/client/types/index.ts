@@ -24,13 +24,7 @@ export interface JsonRpcError {
 }
 
 export type TaskState =
-	| 'submitted'
-	| 'working'
-	| 'running'
-	| 'input-required'
-	| 'completed'
-	| 'canceled'
-	| 'failed';
+	'submitted' | 'working' | 'running' | 'input-required' | 'completed' | 'canceled' | 'failed';
 
 /**
  * Content type for text parts
@@ -250,6 +244,8 @@ export interface Artifact {
 }
 
 export interface Task {
+	/** Server-owned credit snapshot; opaque to the transport. */
+	ai_credits?: unknown;
 	id: string;
 	sessionId?: string;
 	status: TaskStatus;
@@ -328,12 +324,45 @@ export interface SendMessageParams {
 	imageUrls?: ( string | ImageData )[]; // Optional: array of image URLs or image objects with metadata
 }
 
+/**
+ * Delta message types emitted by the server in `message/delta` events.
+ */
+export interface ContentStreamDelta {
+	type?: 'delta';
+	deltaType: 'content';
+	content: string;
+}
+
+export interface ToolNameStreamDelta {
+	type?: 'delta';
+	deltaType: 'tool_name';
+	content: string;
+	toolCallId: string;
+	toolCallName?: string;
+	toolCallIndex?: number;
+}
+
+export interface ToolArgumentStreamDelta {
+	type?: 'delta';
+	deltaType: 'tool_argument';
+	content: string;
+	toolCallId: string;
+	toolCallName?: string;
+	toolCallIndex?: number;
+}
+
+export type ToolCallStreamDelta = ToolNameStreamDelta | ToolArgumentStreamDelta;
+
+export type StreamDelta = ContentStreamDelta | ToolNameStreamDelta | ToolArgumentStreamDelta;
+
 export interface TaskUpdate {
 	id: string;
 	sessionId?: string; // Session ID from server
 	status: TaskStatus;
 	final?: boolean;
 	artifact?: Artifact;
+	/** Credit status from the server's task result. Not persisted to messages. */
+	aiCredits?: unknown;
 	text: string; // Extracted text from status.message
 	agentMessage?: Message; // Optional separate agent message for when returnToAgent is false
 	progressMessage?: string; // Optional progress message extracted from progress parts
@@ -341,9 +370,11 @@ export interface TaskUpdate {
 	// Wire source: 'delta' (message/delta) or 'status' (TaskStatusUpdateEvent).
 	// Non-final text-bearing 'status' updates mark utterance boundaries.
 	kind?: 'delta' | 'status';
+	delta?: StreamDelta; // The wire delta, on 'delta' updates.
 }
 
 export interface Client {
+	/** Protocol errors retain aiCredits when the server supplies a terminal snapshot. */
 	sendMessage: ( params: SendMessageParams ) => Promise< TaskUpdate >;
 	sendMessageStream: ( params: SendMessageParams ) => AsyncIterable< TaskUpdate >;
 

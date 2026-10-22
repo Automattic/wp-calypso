@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 
 // Shared polling loop for the build-wow pollers in this directory: fetch with
@@ -29,11 +30,74 @@ function describeRequestError( error: unknown ): string {
 	return String( error );
 }
 
+function isLoopbackHostname( hostname: string ): boolean {
+	return (
+		hostname === 'localhost' ||
+		hostname === '127.0.0.1' ||
+		hostname === '[::1]' ||
+		hostname.endsWith( '.localhost' )
+	);
+}
+
+// A development build follows a build that never reached WordPress.com when
+// the URL names a local status server, e.g. ?build_wow_api=http://127.0.0.1:4001/api/calypso.
+// The value is read from the URL, so only a loopback http origin is honoured.
+export function getBuildWowApiOverride( search = window.location.search ): string | null {
+	if ( config( 'env_id' ) !== 'development' ) {
+		return null;
+	}
+
+	const value = new URLSearchParams( search ).get( 'build_wow_api' );
+	if ( ! value ) {
+		return null;
+	}
+
+	let url: URL;
+	try {
+		url = new URL( value );
+	} catch {
+		return null;
+	}
+
+	if (
+		url.protocol !== 'http:' ||
+		! isLoopbackHostname( url.hostname ) ||
+		url.username ||
+		url.password
+	) {
+		return null;
+	}
+
+	return `${ url.origin }${ url.pathname.replace( /\/$/, '' ) }`;
+}
+
+async function fetchFromApiOverride< T >(
+	apiBase: string,
+	siteIdentifier: string,
+	endpoint: string,
+	signal: AbortSignal
+): Promise< T | null > {
+	const response = await fetch(
+		`${ apiBase }/sites/${ encodeURIComponent( siteIdentifier ) }/big-sky/${ endpoint }`,
+		{ signal, credentials: 'omit' }
+	);
+	if ( ! response.ok ) {
+		throw new Error( `Status request failed with ${ response.status }` );
+	}
+
+	return ( await response.json() ) as T | null;
+}
+
 export function fetchSiteEndpoint< T >(
 	siteIdentifier: string,
 	endpoint: string,
 	signal: AbortSignal
 ): Promise< T | null > {
+	const apiOverride = getBuildWowApiOverride();
+	if ( apiOverride ) {
+		return fetchFromApiOverride< T >( apiOverride, siteIdentifier, endpoint, signal );
+	}
+
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdentifier }/big-sky/${ endpoint }`,
 		apiNamespace: 'wpcom/v2',

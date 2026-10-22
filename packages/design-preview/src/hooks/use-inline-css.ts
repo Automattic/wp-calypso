@@ -1,6 +1,6 @@
 import { useSafeGlobalStylesOutput, transformStyles } from '@automattic/global-styles';
 import { useMemo } from 'react';
-import type { StyleVariation } from '@automattic/design-picker/src/types';
+import type { StyleVariation } from '@automattic/design-picker';
 
 const INJECTED_CSS = 'body{ transition: background-color 0.2s linear, color 0.2s linear; }';
 

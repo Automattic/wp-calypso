@@ -61,11 +61,6 @@ export const STEPS = {
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
-	FLEX_SITE_CREATION: {
-		slug: 'flex-site-creation',
-		asyncComponent: () => import( './steps-repository/flex-site-creation' ),
-	},
-
 	NEWSLETTER_SETUP: {
 		slug: 'newsletterSetup',
 		asyncComponent: () => import( './steps-repository/newsletter-setup' ),
@@ -84,11 +79,6 @@ export const STEPS = {
 	FREE_POST_SETUP: {
 		slug: 'freePostSetup',
 		asyncComponent: () => import( './steps-repository/free-post-setup' ),
-	},
-
-	GENERATE_CONTENT: {
-		slug: 'generateContent',
-		asyncComponent: () => import( './steps-repository/readymade-template-generate-content' ),
 	},
 
 	IMPORT: { slug: 'import', asyncComponent: () => import( './steps-repository/import' ) },
@@ -175,11 +165,6 @@ export const STEPS = {
 
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
 
-	OPTIONS: {
-		slug: 'options',
-		asyncComponent: () => import( './steps-repository/site-options' ),
-	},
-
 	PLANS: { slug: 'plans', asyncComponent: () => import( './steps-repository/plans' ) },
 
 	PROCESSING: {
@@ -243,6 +228,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/wait-for-atomic' ),
 	},
 
+	WAIT_FOR_COMMERCE_ATOMIC: {
+		slug: 'wait-for-commerce-atomic',
+		asyncComponent: () => import( './steps-repository/wait-for-commerce-atomic' ),
+	},
+
 	WAIT_FOR_PLUGIN_INSTALL: {
 		slug: 'waitForPluginInstall',
 		asyncComponent: () => import( './steps-repository/wait-for-plugin-install' ),
@@ -273,10 +263,9 @@ export const STEPS = {
 		slug: 'site-migration-identify',
 		asyncComponent: () => import( './steps-repository/site-migration-identify' ),
 	},
-
-	SITE_MIGRATION_IMPORT_OR_MIGRATE: {
-		slug: 'site-migration-import-or-migrate',
-		asyncComponent: () => import( './steps-repository/site-migration-import-or-migrate' ),
+	SITE_MIGRATION_CHECK: {
+		slug: 'site-migration-check',
+		asyncComponent: () => import( './steps-repository/site-migration-check' ),
 	},
 
 	SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT: {
@@ -319,6 +308,38 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-ssh-in-progress' ),
 	},
 
+	STATIC_SITE_IMPORT_READING: {
+		slug: 'static-site-import-reading',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-reading'
+			),
+	},
+
+	STATIC_SITE_IMPORT_RESULTS: {
+		slug: 'static-site-import-results',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-results'
+			),
+	},
+
+	STATIC_SITE_IMPORT_ADDRESS: {
+		slug: 'static-site-import-address',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-address'
+			),
+	},
+
+	STATIC_SITE_IMPORT_EXPERT: {
+		slug: 'static-site-import-expert',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-expert'
+			),
+	},
+
 	PICK_SITE: {
 		slug: 'sitePicker',
 		asyncComponent: () => import( './steps-repository/site-picker' ),
@@ -332,6 +353,11 @@ export const STEPS = {
 	WOW_FUNNEL_HANDOFF: {
 		slug: 'wow-funnel-handoff',
 		asyncComponent: () => import( './steps-repository/wow-funnel-handoff' ),
+	},
+
+	WOW_FUNNEL_PENDING: {
+		slug: 'wow-funnel-pending',
+		asyncComponent: () => import( './steps-repository/wow-funnel-pending' ),
 	},
 
 	SETUP_YOUR_SITE_AI: {

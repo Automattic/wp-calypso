@@ -21,13 +21,11 @@ export interface HeaderProps {
 export interface FooterProps {
 	isLoggedIn?: boolean;
 	currentRoute?: string;
-	/**
-	 * Fills the Company column's `x-nav-footer--ccpa-dnsd` slot — on WPCOM the
-	 * twin's do-not-sell script injects its link there. Pass a single anchor
-	 * (e.g. a "Do Not Sell or Share My Personal Information" link wired to the
-	 * do-not-sell dialog); the empty li renders regardless so the anchor point
-	 * always exists.
-	 */
+	/** Enables the 2026 footer preview in the requested colorway. */
+	colorway?: 'dark' | 'white';
+	/** Whether geolocation identifies a visitor in California. */
+	showCaliforniaNotice?: boolean;
+	/** Opt-out link: legacy Company column or the redesigned legal row. */
 	additionalCompanyLinks?: React.ReactNode;
 }
 export interface PureFooterProps extends FooterProps {

@@ -22,6 +22,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { SectionHeader } from '../../components/section-header';
+import McpApprovalBypassControl from './approval-bypass';
 import { isWriteTool } from './categories';
 
 interface McpAbility {
@@ -99,7 +100,7 @@ function McpComponent() {
 						formatNumber( exceptionCount )
 					),
 					intent: 'low' as const,
-			  }
+				}
 			: { text: __( 'No exceptions' ), intent: 'draft' as const };
 
 	const addSiteBadge =
@@ -111,7 +112,7 @@ function McpComponent() {
 						formatNumber( enabledSiteIds.length )
 					),
 					intent: 'stable' as const,
-			  }
+				}
 			: { text: __( 'No sites added' ), intent: 'draft' as const };
 
 	const readBadge = getReadBadge( readTools );
@@ -126,8 +127,7 @@ function McpComponent() {
 
 	const handleMcpToggle = ( enabled: boolean ) => {
 		const overrides = getOverridesToMatch( Object.entries( mcpAbilities ), enabled ) as
-			| Record< string, boolean >
-			| undefined;
+			Record< string, boolean > | undefined;
 
 		const groupIntents: Record< string, boolean > = { read: enabled, write: enabled };
 		if ( ! enabled ) {
@@ -229,6 +229,9 @@ function McpComponent() {
 									decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
 									badges={ [ exceptionBadge ] }
 								/>
+								{ userSettings?.mcp_approval_bypass && (
+									<McpApprovalBypassControl approvalBypass={ userSettings.mcp_approval_bypass } />
+								) }
 							</>
 						) }
 						{ ! mcpEnabled && (

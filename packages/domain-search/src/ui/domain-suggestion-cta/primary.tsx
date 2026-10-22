@@ -41,7 +41,7 @@ export const DomainSuggestionPrimaryCTA = ( {
 			disabled={ disabled }
 			isBusy={ isBusy }
 		>
-			{ listContext.isFeatured ? children ?? __( 'Add to cart' ) : undefined }
+			{ listContext.isFeatured ? ( children ?? __( 'Add to cart' ) ) : undefined }
 		</Button>
 	);
 };

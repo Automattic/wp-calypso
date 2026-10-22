@@ -26,6 +26,20 @@ const france = {
 	has_postal_codes: true,
 } as CountryListItem;
 
+const canada = {
+	code: 'CA',
+	name: 'Canada',
+	has_postal_codes: true,
+	tax_needs_subdivision: true,
+	tax_needs_city: true,
+} as CountryListItem;
+
+const canadianProvinces = [
+	{ code: 'AB', name: 'Alberta' },
+	{ code: 'BC', name: 'British Columbia' },
+	{ code: 'ON', name: 'Ontario' },
+];
+
 function fieldsFor(
 	taxLocation: StoredPaymentMethodTaxLocation,
 	{
@@ -95,7 +109,9 @@ describe( '<TaxLocationForm>', () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.persist()
 			.get( ( uri ) => uri.startsWith( '/rest/v1.1/domains/supported-countries' ) )
-			.reply( 200, [ unitedStates, france ] )
+			.reply( 200, [ unitedStates, france, canada ] )
+			.get( ( uri ) => uri.startsWith( '/rest/v1.1/domains/supported-states/ca' ) )
+			.reply( 200, canadianProvinces )
 			.get( ( uri ) => uri.startsWith( '/rest/v1.1/domains/supported-states/' ) )
 			.reply( 200, [] );
 	} );
@@ -166,6 +182,61 @@ describe( '<TaxLocationForm>', () => {
 
 		expect( onDataChange ).toHaveBeenCalledWith(
 			expect.objectContaining( { is_for_business: true } )
+		);
+	} );
+
+	test( 'shows an unselected State/Province placeholder until a subdivision is chosen', async () => {
+		render(
+			<ControlledTaxLocationForm
+				initialData={ { ...defaultTaxLocation, country_code: 'CA', postal_code: 'T8V 7S1' } }
+			/>
+		);
+
+		expect( await screen.findByRole( 'option', { name: 'Alberta' } ) ).toBeVisible();
+		expect( screen.getByRole( 'option', { name: 'Select State/Province' } ) ).toBeVisible();
+		expect( screen.getByRole( 'combobox', { name: 'State/Province' } ) ).toHaveValue( '' );
+	} );
+
+	test( 'reports the selected subdivision code to the caller', async () => {
+		const onDataChange = jest.fn();
+		render(
+			<ControlledTaxLocationForm
+				initialData={ { ...defaultTaxLocation, country_code: 'CA', postal_code: 'T8V 7S1' } }
+				onDataChange={ onDataChange }
+			/>
+		);
+
+		await screen.findByRole( 'option', { name: 'Alberta' } );
+		const stateSelect = screen.getByRole( 'combobox', { name: 'State/Province' } );
+		await userEvent.selectOptions( stateSelect, 'Alberta' );
+
+		expect( stateSelect ).toHaveValue( 'AB' );
+		expect( onDataChange ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { country_code: 'CA', subdivision_code: 'AB' } )
+		);
+	} );
+
+	test( 'clears the subdivision when the country changes', async () => {
+		const onDataChange = jest.fn();
+		render(
+			<ControlledTaxLocationForm
+				initialData={ {
+					...defaultTaxLocation,
+					country_code: 'CA',
+					postal_code: 'T8V 7S1',
+					subdivision_code: 'AB',
+				} }
+				onDataChange={ onDataChange }
+			/>
+		);
+
+		await userEvent.selectOptions(
+			await screen.findByRole( 'combobox', { name: 'Country' } ),
+			'United States'
+		);
+
+		expect( onDataChange ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { country_code: 'US', subdivision_code: '' } )
 		);
 	} );
 

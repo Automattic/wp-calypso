@@ -75,15 +75,6 @@ export const isThinkingMessage = ( message: Message ): boolean => {
 };
 
 /**
- * Check if a message is a completed plan message
- * @param message
- */
-export const isCompletedPlanMessage = ( message: Message ): boolean => {
-	const text = getMessageText( message );
-	return text.includes( 'CompletedPlan' );
-};
-
-/**
  * Create a user message
  * @param text
  * @param imageUrls - Optional image URLs (will be converted to component parts)
@@ -150,3 +141,17 @@ export const getVisibleMessages = ( messages: Message[] ): Message[] => {
 		} ) )
 		.filter( ( message ) => message.content.length > 0 );
 };
+
+/**
+ * Index where the latest turn starts: after the user's latest message, or at a later message
+ * that starts a turn, such as a reply to a click in a message.
+ * @param messages
+ */
+export const getLatestTurnStartIndex = ( messages: Message[] ): number =>
+	messages.reduce( ( startIndex, message, index ) => {
+		if ( message.role === 'user' ) {
+			return index + 1;
+		}
+
+		return message.startsTurn ? index : startIndex;
+	}, 0 );

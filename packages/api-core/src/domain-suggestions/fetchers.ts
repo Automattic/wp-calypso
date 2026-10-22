@@ -7,20 +7,20 @@ import type {
 	FreeDomainSuggestion,
 } from './types';
 
+const DEFAULT_DOMAIN_SUGGESTION_QUERY = {
+	include_wordpressdotcom: false,
+	include_dotblogsubdomain: false,
+	only_wordpressdotcom: false,
+	quantity: 5,
+	vendor: 'variation2_front',
+};
+
 export async function fetchDomainSuggestions(
 	search: string,
 	domainSuggestionQuery: Partial< DomainSuggestionQuery > = {}
 ): Promise< DomainSuggestion[] > {
-	const defaultDomainSuggestionQuery = {
-		include_wordpressdotcom: false,
-		include_dotblogsubdomain: false,
-		only_wordpressdotcom: false,
-		quantity: 5,
-		vendor: 'variation2_front',
-	};
-
 	const suggestions: DomainSuggestion[] = await wpcom.req.get( '/domains/suggestions', {
-		...defaultDomainSuggestionQuery,
+		...DEFAULT_DOMAIN_SUGGESTION_QUERY,
 		...domainSuggestionQuery,
 		query: search.trim().toLocaleLowerCase(),
 		apiVersion: '1.1',
@@ -90,10 +90,16 @@ export async function fetchAvailableTlds( search?: string, vendor?: string ): Pr
  * normalises a missing suggestion to `null` and missing triggers to `[]`. The
  * frontend `domain-bundling` flag additionally gates whether the query runs at
  * all (see the `bundleMetadataQuery` consumers).
+ * `params` are the plain suggestions request's params, so the backend sees the
+ * same list the client renders (DOMAINS-2238).
  * @param search The domain search query (an SLD or FQDN).
+ * @param params The plain suggestions request's params.
  * @returns The bundle suggestion (or null) and the trigger TLDs (or []).
  */
-export async function fetchBundleMetadata( search: string ): Promise< BundleMetadata > {
+export async function fetchBundleMetadata(
+	search: string,
+	params: Partial< DomainSuggestionQuery > = {}
+): Promise< BundleMetadata > {
 	const response: {
 		bundle_suggestion?: BundleSuggestion | null;
 		bundle_triggers?: string[];
@@ -103,8 +109,9 @@ export async function fetchBundleMetadata( search: string ): Promise< BundleMeta
 			path: '/domains/suggestions',
 		},
 		{
+			...DEFAULT_DOMAIN_SUGGESTION_QUERY,
+			...params,
 			query: search.trim().toLocaleLowerCase(),
-			vendor: 'variation2_front',
 			with_bundles: 1,
 		}
 	);

@@ -1,4 +1,4 @@
-import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
+import { AI_CREDITS_PRODUCTS } from '@automattic/api-core';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { isAkismetPro500Plan } from '../../utils/akismet';
@@ -111,48 +111,48 @@ function renderTransactionQuantitySummaryForMailboxes(
 ) {
 	if ( isRenewal ) {
 		return sprintf(
-			/* translators: %d: number of mailboxes */
-			_n( 'Renewal for %d mailbox', 'Renewal for %d mailboxes', licensedQuantity ),
-			licensedQuantity
+			/* translators: %s: formatted number of mailboxes */
+			_n( 'Renewal for %s mailbox', 'Renewal for %s mailboxes', licensedQuantity ),
+			formatNumber( licensedQuantity )
 		);
 	}
 
 	if ( isUpgrade ) {
 		return sprintf(
-			/* translators: %d: number of additional mailboxes */
-			_n( 'Purchase of %d additional mailbox', 'Purchase of %d additional mailboxes', newQuantity ),
-			newQuantity
+			/* translators: %s: formatted number of additional mailboxes */
+			_n( 'Purchase of %s additional mailbox', 'Purchase of %s additional mailboxes', newQuantity ),
+			formatNumber( newQuantity )
 		);
 	}
 
 	return sprintf(
-		/* translators: %d: number of mailboxes */
-		_n( 'Purchase of %d mailbox', 'Purchase of %d mailboxes', licensedQuantity ),
-		licensedQuantity
+		/* translators: %s: formatted number of mailboxes */
+		_n( 'Purchase of %s mailbox', 'Purchase of %s mailboxes', licensedQuantity ),
+		formatNumber( licensedQuantity )
 	);
 }
 
 function renderDIFMTransactionQuantitySummary( licensedQuantity: number ) {
 	return sprintf(
-		/* translators: %d: number of pages */
-		_n( 'One-time fee includes %d page', 'One-time fee includes %d pages', licensedQuantity ),
-		licensedQuantity
+		/* translators: %s: formatted number of pages */
+		_n( 'One-time fee includes %s page', 'One-time fee includes %s pages', licensedQuantity ),
+		formatNumber( licensedQuantity )
 	);
 }
 
 function renderJetpackSearchQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
 	if ( isRenewal ) {
 		return sprintf(
-			/* translators: %d: number of search records/requests */
-			__( 'Renewal for %d search records/requests' ),
-			licensedQuantity
+			/* translators: %s: formatted number of search records/requests */
+			__( 'Renewal for %s search records/requests' ),
+			formatNumber( licensedQuantity )
 		);
 	}
 
 	return sprintf(
-		/* translators: %d: number of search records/requests */
-		__( 'Purchase for %d search records/requests' ),
-		licensedQuantity
+		/* translators: %s: formatted number of search records/requests */
+		__( 'Purchase for %s search records/requests' ),
+		formatNumber( licensedQuantity )
 	);
 }
 
@@ -175,20 +175,20 @@ function renderJetpackStatsQuantitySummary( licensedQuantity: number, isRenewal:
 function renderSpaceAddOnquantitySummary( licensedQuantity: number, isRenewal: boolean ) {
 	if ( isRenewal ) {
 		return sprintf(
-			/* translators: %d: number of gigabytes */
-			__( 'Renewal for %d GB' ),
-			licensedQuantity
+			/* translators: %s: formatted number of gigabytes */
+			__( 'Renewal for %s GB' ),
+			formatNumber( licensedQuantity )
 		);
 	}
 
 	return sprintf(
-		/* translators: %d: number of gigabytes */
-		__( 'Purchase of %d GB' ),
-		licensedQuantity
+		/* translators: %s: formatted number of gigabytes */
+		__( 'Purchase of %s GB' ),
+		formatNumber( licensedQuantity )
 	);
 }
 
-function renderStudioCodeAiCreditsQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
+function renderAiCreditsQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
 	if ( isRenewal ) {
 		return sprintf(
 			/* translators: %s: formatted number of AI credits */
@@ -207,24 +207,24 @@ function renderStudioCodeAiCreditsQuantitySummary( licensedQuantity: number, isR
 function renderAkismetTransactionQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
 	if ( isRenewal ) {
 		return sprintf(
-			/* translators: %d: number of 500 API call licenses */
+			/* translators: %s: formatted number of 500 API call licenses */
 			_n(
-				'Renewal for %d 500 API call license',
-				'Renewal for %d 500 API call licenses',
+				'Renewal for %s 500 API call license',
+				'Renewal for %s 500 API call licenses',
 				licensedQuantity
 			),
-			licensedQuantity
+			formatNumber( licensedQuantity )
 		);
 	}
 
 	return sprintf(
-		/* translators: %d: number of 500 API call licenses */
+		/* translators: %s: formatted number of 500 API call licenses */
 		_n(
-			'Purchase of %d 500 API call license',
-			'Purchase of %d 500 API call licenses',
+			'Purchase of %s 500 API call license',
+			'Purchase of %s 500 API call licenses',
 			licensedQuantity
 		),
-		licensedQuantity
+		formatNumber( licensedQuantity )
 	);
 }
 
@@ -308,30 +308,30 @@ export function renderTransactionQuantitySummary( {
 		return renderAkismetTransactionQuantitySummary( licensedQuantity, isRenewal );
 	}
 
-	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === wpcom_product_slug ) {
-		return renderStudioCodeAiCreditsQuantitySummary( licensedQuantity, isRenewal );
+	if ( AI_CREDITS_PRODUCTS.includes( wpcom_product_slug ) ) {
+		return renderAiCreditsQuantitySummary( licensedQuantity, isRenewal );
 	}
 
 	if ( isRenewal ) {
 		return sprintf(
-			/* translators: %d: number of items */
-			_n( 'Renewal for %d item', 'Renewal for %d items', licensedQuantity ),
-			licensedQuantity
+			/* translators: %s: formatted number of items */
+			_n( 'Renewal for %s item', 'Renewal for %s items', licensedQuantity ),
+			formatNumber( licensedQuantity )
 		);
 	}
 
 	if ( isUpgrade ) {
 		return sprintf(
-			/* translators: %d: number of additional items */
-			_n( 'Purchase of %d additional item', 'Purchase of %d additional items', newQuantity ),
-			newQuantity
+			/* translators: %s: formatted number of additional items */
+			_n( 'Purchase of %s additional item', 'Purchase of %s additional items', newQuantity ),
+			formatNumber( newQuantity )
 		);
 	}
 
 	return sprintf(
-		/* translators: %d: number of items */
-		_n( 'Purchase of %d item', 'Purchase of %d items', licensedQuantity ),
-		licensedQuantity
+		/* translators: %s: formatted number of items */
+		_n( 'Purchase of %s item', 'Purchase of %s items', licensedQuantity ),
+		formatNumber( licensedQuantity )
 	);
 }
 
@@ -381,9 +381,9 @@ export function renderJetpackSearch10kTierBreakdown(
 	} );
 
 	return sprintf(
-		/* translators: 1: number of units, 2: formatted price per unit */
-		_n( '%1$d unit @ %2$s', '%1$d units @ %2$s', numberOfUnits ),
-		numberOfUnits,
+		/* translators: 1: formatted number of units, 2: formatted price per unit */
+		_n( '%1$s unit @ %2$s', '%1$s units @ %2$s', numberOfUnits ),
+		formatNumber( numberOfUnits ),
 		formattedPricePerUnit
 	);
 }

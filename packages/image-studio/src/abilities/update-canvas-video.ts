@@ -33,8 +33,7 @@ import { trackImageStudioImageGenerated } from '../utils/tracking';
  */
 async function persistFeatureClipMeta( attachmentId: number ): Promise< void > {
 	const editor = select( 'core/editor' ) as unknown as
-		| { getCurrentPostId: () => number | null; getCurrentPostType: () => string | null }
-		| undefined;
+		{ getCurrentPostId: () => number | null; getCurrentPostType: () => string | null } | undefined;
 
 	const postId = editor?.getCurrentPostId?.() ?? null;
 	const postType = editor?.getCurrentPostType?.() ?? 'post';

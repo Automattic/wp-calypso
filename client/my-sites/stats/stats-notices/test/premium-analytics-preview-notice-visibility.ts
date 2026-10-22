@@ -3,6 +3,7 @@ import {
 	DEFAULT_NOTICES_VISIBILITY,
 } from '../../hooks/use-notice-visibility-query';
 import ALL_STATS_NOTICES from '../all-notice-definitions';
+import isPremiumAnalyticsPreviewCohort from '../premium-analytics-preview-cohort';
 import type { StatsNoticeProps } from '../types';
 
 const premiumAnalyticsPreviewNotice = ALL_STATS_NOTICES.find(
@@ -31,6 +32,7 @@ describe( 'premium_analytics_preview notice visibility', () => {
 	} );
 
 	it( 'shows for an administrator on an eligible site', () => {
+		expect( isPremiumAnalyticsPreviewCohort( eligibleSite ) ).toBe( true );
 		expect( premiumAnalyticsPreviewNotice?.isVisibleFunc( eligibleSite ) ).toBe( true );
 	} );
 

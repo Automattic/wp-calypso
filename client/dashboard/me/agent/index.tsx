@@ -51,7 +51,7 @@ export default function WordPressAgent() {
 				<PageHeader
 					title={ __( 'WordPress Agent' ) }
 					description={ __(
-						'WordPress Agent helps you manage your site, create content, and monitor performance. Message your agent from where it’s convenient: via Telegram, Email, or Slack.'
+						'WordPress Agent helps you manage your site, create content, and monitor performance. Choose how you want to reach your agents.'
 					) }
 				/>
 			}

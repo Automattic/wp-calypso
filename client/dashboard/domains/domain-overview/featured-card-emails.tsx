@@ -1,5 +1,5 @@
 import { Domain } from '@automattic/api-core';
-import { mailboxesQuery } from '@automattic/api-queries';
+import { mailboxAccountsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
@@ -7,7 +7,12 @@ import { __, sprintf } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
 import { emailsRoute, chooseEmailSolutionRoute } from '../../app/router/emails';
 import OverviewCard from '../../components/overview-card';
-import type { EmailProvider, Mailbox } from '@automattic/api-core';
+import type { EmailProvider } from '@automattic/api-core';
+
+interface DomainMailbox {
+	accountType: EmailProvider;
+	emailAddress: string;
+}
 
 const getAccountTypeLabel = ( accountType: EmailProvider ) => {
 	switch ( accountType ) {
@@ -28,19 +33,19 @@ const getAdditionlMailboxesLabel = ( count: number ) => {
 				// translators: %d is the number of additional mailboxes.
 				__( '+ %d more mailboxes' ),
 				count
-		  );
+			);
 };
 
-const getDescription = ( mailboxes: Mailbox[] ) => {
-	const additionalMailboxes = mailboxes.length - 1;
-
+const getDescription = ( mailboxes: DomainMailbox[] ) => {
 	if ( mailboxes.length === 0 ) {
 		return __( 'Stand out with professional email.' );
 	}
 
+	const additionalMailboxes = mailboxes.length - 1;
+
 	return additionalMailboxes > 0
 		? getAdditionlMailboxesLabel( additionalMailboxes )
-		: getAccountTypeLabel( mailboxes[ 0 ].account_type );
+		: getAccountTypeLabel( mailboxes[ 0 ].accountType );
 };
 
 interface Props {
@@ -50,15 +55,23 @@ interface Props {
 export default function FeaturedCardEmails( { domain }: Props ) {
 	const router = useRouter();
 
-	const { data: mailboxes } = useQuery( mailboxesQuery( domain.blog_id ) );
-	if ( mailboxes === undefined ) {
+	const { data: accounts } = useQuery( mailboxAccountsQuery( domain.blog_id, domain.domain ) );
+	if ( accounts === undefined ) {
 		return <OverviewCard icon={ <Icon icon={ envelope } /> } title={ __( 'Emails' ) } isLoading />;
 	}
 
-	const email = mailboxes.length
-		? `${ mailboxes[ 0 ].mailbox }@${ domain.domain }`
-		: // translators: %s is the mailbox name: youremail@example.com
-		  __( 'No email address' );
+	const mailboxes = accounts.flatMap( ( account ) =>
+		account.emails
+			// A Google Workspace account can span several domains, so only keep the
+			// mailboxes belonging to the domain this card is about.
+			.filter( ( box ) => box.domain === domain.domain )
+			.map( ( box ) => ( {
+				accountType: account.account_type,
+				emailAddress: `${ box.mailbox }@${ box.domain }`,
+			} ) )
+	);
+
+	const email = mailboxes.length ? mailboxes[ 0 ].emailAddress : __( 'No email address' );
 
 	return (
 		<OverviewCard
@@ -69,11 +82,11 @@ export default function FeaturedCardEmails( { domain }: Props ) {
 					? router.buildLocation( {
 							to: emailsRoute.fullPath,
 							search: { domainName: domain.domain },
-					  } ).href
+						} ).href
 					: router.buildLocation( {
 							to: chooseEmailSolutionRoute.fullPath,
 							params: { domain: domain.domain },
-					  } ).href
+						} ).href
 			}
 			icon={ <Icon icon={ envelope } /> }
 			description={ getDescription( mailboxes ) }

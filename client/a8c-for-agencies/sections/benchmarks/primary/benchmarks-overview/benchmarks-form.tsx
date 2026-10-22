@@ -213,7 +213,7 @@ export default function BenchmarksForm( { quarter, year, hideHeader, onSubmitSuc
 							__( 'Submit Q%1$d %2$d numbers' ),
 							quarter,
 							year
-					  )
+						)
 			}
 		>
 			<FormSection title={ __( 'Business performance' ) }>

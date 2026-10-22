@@ -16,14 +16,17 @@ import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import { appendReturnSignals, buildChainedCheckoutUrl } from './build-checkout-url';
 import { resolveResumability, type SitePlanStatusResult } from './resolve-resumability';
 import { resumeKey, writeResumeRecord } from './resume-storage';
 import { sanitizeDirectToCartRedirect } from './sanitize-redirect';
 import { validateParams } from './validate-params';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
-import type { OnboardActions, SiteActions } from '@automattic/data-stores';
+import type { OnboardActions } from '@automattic/data-stores';
 
 interface SitePlansResponse {
 	plans?: Array< { product_slug: string; is_current?: boolean } >;
@@ -55,7 +58,7 @@ async function initialize() {
 		recordTracksEvent( 'calypso_direct_to_cart_invalid_plan', {
 			plan: params.plan?.slice( 0, 64 ) ?? '',
 		} );
-		const siteActions = dispatch( SITE_STORE ) as SiteActions;
+		const siteActions = dispatch( SITE_STORE );
 		siteActions.setSiteSetupError(
 			__( 'Unsupported plan' ),
 			__( "The plan in this link isn't available here. You can choose a plan that works for you." )
@@ -169,7 +172,9 @@ const flow: FlowV2< typeof initialize > = {
 
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies.processingResult !== ProcessingResult.SUCCESS ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, {
+							errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
+						} );
 					}
 
 					const { siteSlug, siteId } = providedDependencies;
@@ -183,7 +188,7 @@ const flow: FlowV2< typeof initialize > = {
 							extra: { flow: DIRECT_TO_CART_FLOW },
 							tags: [ 'direct_to_cart', 'calypso_direct_to_cart_missing_site_slug' ],
 						} );
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'processing_missing_site' } );
 					}
 
 					// Record resumability for future re-visits.
@@ -211,7 +216,7 @@ const flow: FlowV2< typeof initialize > = {
 					const outerRedirect = externalRedirect
 						? addQueryArgs( '/setup/transferring-hosted-site', {
 								redirect_to: externalRedirect,
-						  } )
+							} )
 						: `/home/${ siteSlug }`;
 					persistSignupDestination( outerRedirect );
 					setSignupCompleteFlowName( DIRECT_TO_CART_FLOW );

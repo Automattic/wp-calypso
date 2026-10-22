@@ -46,12 +46,7 @@ import './style.scss';
 export type { AtomicTransferAction } from './warning-list';
 
 export type EligibilityContext =
-	| 'plugin-details'
-	| 'plugins-upload'
-	| 'themes'
-	| 'hosting'
-	| 'hosting-features'
-	| 'performance';
+	'plugin-details' | 'plugins-upload' | 'themes' | 'hosting' | 'hosting-features' | 'performance';
 
 const upsellByContext: Record< EligibilityContext, { feature: string; ctaName: string } > = {
 	'plugin-details': {
@@ -200,6 +195,9 @@ export const EligibilityWarnings = ( {
 
 	const hasHoldsToDisplay = isPlaceholder || hasDisplayableHold( listHolds );
 
+	const noticeOffersSupport =
+		!! validBlockingHold && blockingMessages[ validBlockingHold ].opensHelpCenter;
+
 	return (
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
@@ -221,6 +219,7 @@ export const EligibilityWarnings = ( {
 						blockingHold={ validBlockingHold }
 						translate={ translate }
 						blockingMessages={ blockingMessages }
+						onDismiss={ onDismiss }
 					/>
 				</CompactCard>
 			) }
@@ -273,7 +272,7 @@ export const EligibilityWarnings = ( {
 
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
-					<SupportLink onShowHelpAssistant={ onDismiss } />
+					{ ! noticeOffersSupport && <SupportLink onShowHelpAssistant={ onDismiss } /> }
 					{ ! hasValidBlockingHold && (
 						<Button
 							variant="primary"

@@ -51,7 +51,7 @@ function getStepsForTiers( tiers: StatsPlanTierUI[], currencyCode: string ) {
 				? formatCurrency( tierUpgradePricePerMonth, currencyCode, {
 						isSmallestUnit: true,
 						stripZeros: true,
-				  } )
+					} )
 				: '',
 			tierViews: tier.views,
 		};

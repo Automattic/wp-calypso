@@ -4,17 +4,11 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import page from '@automattic/calypso-router';
 import {
-	SUCCESS,
-	ERROR,
-	FAILURE,
-	UNKNOWN,
-	PROCESSING,
-} from 'calypso/state/order-transactions/constants';
-import {
 	addUrlToPendingPageRedirect,
 	redirectThroughPending,
 	getRedirectFromPendingPage,
 } from '../lib/pending-page';
+import { SUCCESS, ERROR, FAILURE, UNKNOWN, PROCESSING } from '../types/order-transaction';
 
 jest.mock( '@automattic/calypso-router' );
 
@@ -147,6 +141,16 @@ describe( 'addUrlToPendingPageRedirect', () => {
 			) }&receiptId=${ encodedReceiptPlaceholder }&isGravatarDomain=1`
 		);
 	} );
+	it( 'preserves signed Pressable SUCCESS bytes through pending and receipt completion', () => {
+		const successUrl =
+			'https://my.pressable.com/titan_email/checkout_return?agency_id=42&checkout_status=SUCCESS&signature=a%2Bb%2fc%3D';
+		const pendingUrl = addUrlToPendingPageRedirect( successUrl, { fromExternalCheckout: true } );
+		const redirectTo = new URL( pendingUrl ).searchParams.get( 'redirect_to' );
+		expect( redirectTo ).toBe( successUrl );
+		expect(
+			getRedirectFromPendingPage( { isLoadingOrder: false, receiptId: 12345, redirectTo } )
+		).toEqual( { url: successUrl } );
+	} );
 } );
 
 describe( 'redirectThroughPending', () => {
@@ -261,6 +265,16 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: 'https://wordpress.com/home' } );
 	} );
 
+	it( 'blocks a lookalike Pressable hostname after successful payment', () => {
+		expect(
+			getRedirectFromPendingPage( {
+				isLoadingOrder: false,
+				receiptId: 12345,
+				redirectTo: 'https://my.pressable.com.evil.test/titan_email/checkout_return',
+			} )
+		).toEqual( { url: '/checkout/thank-you/no-site/12345' } );
+	} );
+
 	it( 'returns a simple absolute url if it matches the siteSlug and there is also a receipt', () => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,
@@ -292,10 +306,35 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: 'https://wordpress.com/home/12345' } );
 	} );
 
+	it( 'returns the agency dashboard url with the receipt interpolated if there is also a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: 'https://agencies-beta.automattic.com/purchases?receipt_id=:receiptId',
+			receiptId: 12345,
+		} );
+		expect( actual ).toEqual( {
+			url: 'https://agencies-beta.automattic.com/purchases?receipt_id=12345',
+		} );
+	} );
+
 	it( 'returns a generic no-site url for an absolute url if it is not allowed and there is also a receipt', () => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,
 			redirectTo: 'https://example.com/home',
+			receiptId: 12345,
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/no-site/12345' } );
+	} );
+
+	it.each( [
+		'//example.com/home',
+		'/\\example.com/home',
+		'/\t/example.com/home',
+		'\\/example.com',
+	] )( 'returns a generic no-site url for the scheme-relative url %p', ( redirectTo ) => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo,
 			receiptId: 12345,
 		} );
 		expect( actual ).toEqual( { url: '/checkout/thank-you/no-site/12345' } );
@@ -521,17 +560,6 @@ describe( 'getRedirectFromPendingPage', () => {
 			},
 		} );
 		expect( actual ).toEqual( { url: '/checkout/no-site', isError: true } );
-	} );
-
-	it( 'returns a checkout url if there was an HTTP error', () => {
-		const actual = getRedirectFromPendingPage( {
-			isLoadingOrder: false,
-			redirectTo: '/home',
-			siteSlug: 'example.com',
-			error: new Error( 'test error' ),
-			orderId: 1,
-		} );
-		expect( actual ).toEqual( { url: '/checkout/example.com', isError: true } );
 	} );
 
 	it( 'returns a checkout url if the transaction is unknown', () => {

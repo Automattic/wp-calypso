@@ -11,12 +11,10 @@ export const ACTIVATION_EMAIL_SOURCE = 'onboarding-with-email-verification';
 //   control                         -> no step (current default)
 //   treatment_post_account_creation -> gate right after account creation (Variant A)
 //   treatment_post_plan_selection   -> gate after free-plan selection or after checkout (Variant B)
-const EXPERIMENT_NAME = 'calypso_signup_onboarding_email_verification_202609';
+const EXPERIMENT_NAME = 'calypso_signup_onboarding_email_verification_202609_v2';
 
 type EmailVerificationVariant =
-	| 'control'
-	| 'treatment_post_account_creation'
-	| 'treatment_post_plan_selection';
+	'control' | 'treatment_post_account_creation' | 'treatment_post_plan_selection';
 
 /**
  * The assigned arm of the email-verification experiment, defaulting to `control` while the
@@ -34,7 +32,7 @@ function useEmailVerificationVariant( flow: string ): {
 	} );
 
 	const variant = (
-		isLoading ? 'control' : assignment?.variationName ?? 'control'
+		isLoading ? 'control' : ( assignment?.variationName ?? 'control' )
 	) as EmailVerificationVariant;
 
 	return { isLoading, variant };

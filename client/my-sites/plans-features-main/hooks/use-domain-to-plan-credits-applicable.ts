@@ -15,11 +15,10 @@ export function useDomainToPlanCreditsApplicable(
 ): number | null {
 	const { data: sitePlans } = useSitePlans( { siteId, coupon: undefined } );
 	const plans = planSlugs || ( Object.keys( sitePlans || {} ) as PlanSlug[] );
-	const isCreditForDomainToPlan = Object.values( sitePlans || {} ).some(
-		( plan ) =>
-			plan?.pricing?.costOverrides?.some(
-				( override ) => override.overrideCode === COST_OVERRIDE_REASONS.RECENT_DOMAIN_PRORATION
-			)
+	const isCreditForDomainToPlan = Object.values( sitePlans || {} ).some( ( plan ) =>
+		plan?.pricing?.costOverrides?.some(
+			( override ) => override.overrideCode === COST_OVERRIDE_REASONS.RECENT_DOMAIN_PRORATION
+		)
 	);
 	const credits = useMaxPlanUpgradeCredits( { siteId, plans } );
 

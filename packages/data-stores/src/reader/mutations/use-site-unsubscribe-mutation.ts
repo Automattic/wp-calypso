@@ -122,7 +122,7 @@ const useSiteUnsubscribeMutation = () => {
 											is_following: false,
 											isDeleted: true,
 											resubscribed: false,
-									  }
+										}
 									: siteSubscription
 							),
 						};

@@ -258,6 +258,7 @@ export default function PartnerDirectoryDashboardContent( {
 						<>
 							<LinkButton
 								variant="secondary"
+								size="compact"
 								href={ expertiseUrl }
 								onClick={ onEditExpertiseClick }
 								shouldUseRouterLink={ shouldUseRouterLink }
@@ -266,6 +267,7 @@ export default function PartnerDirectoryDashboardContent( {
 							</LinkButton>
 							<LinkButton
 								variant="secondary"
+								size="compact"
 								href={ profileUrl }
 								onClick={ onEditProfileClick }
 								shouldUseRouterLink={ shouldUseRouterLink }
@@ -302,11 +304,12 @@ export default function PartnerDirectoryDashboardContent( {
 								? directoryStatusBadges
 								: __(
 										'Pick your agency’s specialties and choose your directories. We’ll review your application.'
-								  )
+									)
 						}
 						actions={
 							<LinkButton
 								variant={ applicationWasSubmitted ? 'secondary' : 'primary' }
+								size="compact"
 								href={ expertiseUrl }
 								onClick={ applicationWasSubmitted ? onEditExpertiseClick : onApplyNowClick }
 								shouldUseRouterLink={ shouldUseRouterLink }
@@ -330,6 +333,7 @@ export default function PartnerDirectoryDashboardContent( {
 										? 'primary'
 										: 'secondary'
 								}
+								size="compact"
 								href={ profileUrl }
 								onClick={ onFinishProfileClick }
 								disabled={ ! applicationWasSubmitted || ! hasDirectoryApproval }
@@ -350,6 +354,7 @@ export default function PartnerDirectoryDashboardContent( {
 						actions={
 							<Button
 								variant={ applicationWasSubmitted ? 'primary' : 'secondary' }
+								size="compact"
 								onClick={ onPublishProfileClick }
 								disabled={
 									! applicationWasSubmitted ||

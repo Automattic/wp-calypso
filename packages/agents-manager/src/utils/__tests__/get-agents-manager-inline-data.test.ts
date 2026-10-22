@@ -28,11 +28,8 @@ describe( 'getAgentsManagerInlineData', () => {
 	} );
 
 	it( 'returns the bare global when Jetpack injects `agentsManagerData`', () => {
-		setBareGlobal( { agentId: 'orchestrator', useUnifiedExperience: true } );
-		expect( getAgentsManagerInlineData() ).toEqual( {
-			agentId: 'orchestrator',
-			useUnifiedExperience: true,
-		} );
+		setBareGlobal( { agentId: 'orchestrator' } );
+		expect( getAgentsManagerInlineData() ).toEqual( { agentId: 'orchestrator' } );
 	} );
 
 	it( 'falls back to `window.agentsManagerData` when no bare global exists', () => {

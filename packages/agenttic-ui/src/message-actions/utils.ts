@@ -65,6 +65,7 @@ export const createFeedbackActions = ( config: FeedbackActionsConfig ): Feedback
 				tooltip: 'This response was helpful',
 				pressed: feedbackState === 'up',
 				disabled: feedbackState === 'down', // Disable if other is selected
+				visibility: 'latest-turn',
 			} );
 
 			actions.push( {
@@ -83,6 +84,7 @@ export const createFeedbackActions = ( config: FeedbackActionsConfig ): Feedback
 				tooltip: 'This response was not helpful',
 				pressed: feedbackState === 'down',
 				disabled: feedbackState === 'up', // Disable if other is selected
+				visibility: 'latest-turn',
 			} );
 
 			return actions;

@@ -9,12 +9,12 @@
  * Every ability, deliberately, rather than a curated list of the ones that
  * write. A listener that needs to know whether anything changed can ask the
  * editor once the event arrives; a list here would have to be kept in step with
- * abilities in two codebases as they migrate, and a missed entry would fail
- * silently.
+ * every provider's abilities, and a missed entry would fail silently.
  */
 import { broadcastAbilityCompleted } from './agent-activity-events';
-import type { Ability } from '../abilities/types';
+import { recordAgentsManagerTracksEvent } from './tracks';
 import type { ToolProvider } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * Whether an ability answered that it did not do what it was asked.
@@ -28,6 +28,22 @@ function reportsFailure( result: unknown ): boolean {
 	const answer = result as { success?: unknown; result?: { success?: unknown } } | undefined;
 
 	return false === ( answer?.result?.success ?? answer?.success );
+}
+
+/**
+ * Announce a finished ability to listeners on the page and to Tracks. Until this,
+ * which abilities ran, and whether they worked, was only visible in Langfuse.
+ * Prop names follow the AI Tracks standard (`ability_name`, `outcome`), as
+ * `wpcom_mcp_tool_called` does.
+ * @param name The ability name, in either form.
+ * @param ok   Whether it did what it was asked.
+ */
+function announce( name: string, ok: boolean ): void {
+	broadcastAbilityCompleted( { name, ok } );
+	recordAgentsManagerTracksEvent( 'calypso_agents_manager_ability_completed', {
+		ability_name: name,
+		outcome: ok ? 'success' : 'error',
+	} );
 }
 
 /**
@@ -46,11 +62,11 @@ async function dispatchAndBroadcast(
 		result = await dispatch();
 	} catch ( error ) {
 		// Announced, not swallowed: the caller still sees the failure.
-		broadcastAbilityCompleted( { name, ok: false } );
+		announce( name, false );
 		throw error;
 	}
 
-	broadcastAbilityCompleted( { name, ok: ! reportsFailure( result ) } );
+	announce( name, ! reportsFailure( result ) );
 
 	return result;
 }

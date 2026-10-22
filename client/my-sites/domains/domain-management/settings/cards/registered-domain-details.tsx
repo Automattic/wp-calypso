@@ -88,7 +88,7 @@ const RegisteredDomainDetails = ( {
 							renewalDate: moment( domain.autoRenewalDate ).format( 'LL' ),
 							price: formattedPrice,
 						},
-				  } )
+					} )
 				: null;
 
 		if ( ! purchase ) {

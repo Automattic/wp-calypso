@@ -7,6 +7,7 @@ import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-
 import { select } from '@wordpress/data';
 import { ImageStudioEntryPoint } from '../store';
 import { ImageStudioMode } from '../types';
+import { contextProvider } from './client-context';
 import {
 	getImageStudioRequestErrorType,
 	trackImageStudioClosed,
@@ -24,6 +25,9 @@ import {
 	trackImageStudioGenericShareFailed,
 	trackImageStudioFeatureClipAddedToPost,
 	trackImageStudioFeatureClipPanelViewed,
+	trackImageStudioCreditsMeterOpened,
+	trackImageStudioUpgradeNoticeShown,
+	trackImageStudioUpgradeNoticeClick,
 } from './tracking';
 
 // Mock session
@@ -31,8 +35,23 @@ jest.mock( '../utils/session', () => ( {
 	getSessionId: jest.fn( () => 'test-session-id' ),
 } ) );
 
+// The package root loads the whole chat; the credits helpers are all this file uses.
+jest.mock( '@automattic/agents-manager', () =>
+	jest.requireActual( '@automattic/agents-manager/src/utils/credits' )
+);
+
+jest.mock( './client-context', () => ( { contextProvider: { getClientContext: jest.fn() } } ) );
+
 const recordTracksEventMock = recordTracksEventBase as jest.Mock;
 const selectMock = select as jest.Mock;
+const getClientContextMock = jest.mocked( contextProvider.getClientContext );
+/** The client context Image Studio's agent receives while its modal is open. */
+const IMAGE_STUDIO_CONTEXT = {
+	url: 'https://example.com/wp-admin/post.php',
+	pathname: '/wp-admin/post.php',
+	search: '',
+	environment: 'image-studio',
+} as const;
 
 describe( 'getImageStudioRequestErrorType', () => {
 	it( 'identifies the streamed free-credit exhaustion error as quota exceeded', () => {
@@ -618,5 +637,248 @@ describe( 'feature clip tracking helpers', () => {
 				placement: 'post_editor_feature_clip',
 			} )
 		);
+	} );
+} );
+
+describe( 'upgrade notice tracking', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+		getClientContextMock.mockReturnValue( IMAGE_STUDIO_CONTEXT );
+	} );
+
+	const siteCredits = {
+		meter: 'site_credits',
+		state: 'low',
+		planTier: 'premium',
+		creditsLeft: 8500,
+		topUpCreditsLeft: 'none',
+		ctaType: 'upgrade',
+		ref: 'wp_ai_credits',
+	} as const;
+
+	const jetpackAiQuota = {
+		meter: 'jetpack_ai',
+		state: 'zero',
+		planTier: 'none',
+		creditsLeft: 'none',
+		topUpCreditsLeft: 'none',
+		ctaType: 'upgrade',
+		ref: 'none',
+	} as const;
+
+	it( 'records the trigger and credit details with the shown event, to join the Agent’s credits events', () => {
+		trackImageStudioUpgradeNoticeShown( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'open',
+			...siteCredits,
+		} );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_upgrade_notice_shown',
+			expect.objectContaining( {
+				mode: 'generate',
+				trigger: 'open',
+				meter: 'site_credits',
+				state: 'low',
+				plan_tier: 'premium',
+				credits_left: 8500,
+				cta_type: 'upgrade',
+				ref: 'wp_ai_credits',
+			} )
+		);
+	} );
+
+	it( 'records the Jetpack AI quota click and keeps the product-wide upgrade button event', () => {
+		trackImageStudioUpgradeNoticeClick( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'error',
+			...jetpackAiQuota,
+		} );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_upgrade_notice_click',
+			expect.objectContaining( {
+				mode: 'edit',
+				trigger: 'error',
+				meter: 'jetpack_ai',
+				state: 'zero',
+				plan_tier: 'none',
+				credits_left: 'none',
+				top_up_credits_left: 'none',
+				agent_environment: 'image-studio',
+				cta_type: 'upgrade',
+				ref: 'none',
+			} )
+		);
+		expect( recordTracksEventMock ).toHaveBeenCalledWith( 'jetpack_ai_upgrade_button', {
+			placement: 'image-studio-limit-notice',
+		} );
+	} );
+
+	it( 'records a popover click with the popover as its trigger', () => {
+		trackImageStudioUpgradeNoticeClick( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'popover',
+			...siteCredits,
+			state: 'ok',
+		} );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_upgrade_notice_click',
+			expect.objectContaining( { trigger: 'popover', state: 'ok' } )
+		);
+	} );
+
+	it( 'keeps site credits upgrades out of the Jetpack AI upgrade button funnel', () => {
+		trackImageStudioUpgradeNoticeClick( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'refresh',
+			...siteCredits,
+		} );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_upgrade_notice_click',
+			expect.objectContaining( { meter: 'site_credits', ref: 'wp_ai_credits' } )
+		);
+		expect( recordTracksEventMock ).not.toHaveBeenCalledWith(
+			'jetpack_ai_upgrade_button',
+			expect.anything()
+		);
+	} );
+} );
+
+describe( 'credits popover tracking', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+		getClientContextMock.mockReturnValue( IMAGE_STUDIO_CONTEXT );
+	} );
+
+	it( 'records what opened the popover, with the balance details', () => {
+		trackImageStudioCreditsMeterOpened( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'submit_blocked',
+			meter: 'site_credits',
+			state: 'zero',
+			planTier: 'business',
+			creditsLeft: 0,
+			topUpCreditsLeft: 0,
+		} );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_credits_meter_opened',
+			expect.objectContaining( {
+				mode: 'edit',
+				trigger: 'submit_blocked',
+				meter: 'site_credits',
+				state: 'zero',
+				plan_tier: 'business',
+				credits_left: 0,
+				top_up_credits_left: 0,
+				agent_environment: 'image-studio',
+			} )
+		);
+	} );
+} );
+
+describe( 'credits event details', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+		getClientContextMock.mockReturnValue( IMAGE_STUDIO_CONTEXT );
+	} );
+
+	const balance = {
+		meter: 'site_credits',
+		state: 'low',
+		planTier: 'business',
+		creditsLeft: 4000,
+	} as const;
+	const addCredits = { ctaType: 'top_up', ref: 'wp_ai_credits' } as const;
+
+	/** Records each of the three credits events with the given top-ups balance. */
+	const recordCreditsEvents = ( topUpCreditsLeft: number | 'none' ) => {
+		const details = { ...balance, topUpCreditsLeft };
+		trackImageStudioUpgradeNoticeShown( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'open',
+			...details,
+			...addCredits,
+		} );
+		trackImageStudioUpgradeNoticeClick( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'popover',
+			...details,
+			...addCredits,
+		} );
+		trackImageStudioCreditsMeterOpened( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'click',
+			...details,
+		} );
+	};
+	const sent = ( property: string ) =>
+		recordTracksEventMock.mock.calls.map( ( [ name, properties ] ) => [
+			name,
+			properties[ property ],
+		] );
+
+	it.each( [ 3000, 0, 'none' ] as const )(
+		'sends the top-ups balance %p on each credits event',
+		( topUpCreditsLeft ) => {
+			recordCreditsEvents( topUpCreditsLeft );
+
+			expect( sent( 'top_up_credits_left' ) ).toEqual( [
+				[ 'jetpack_big_sky_image_studio_upgrade_notice_shown', topUpCreditsLeft ],
+				[ 'jetpack_big_sky_image_studio_upgrade_notice_click', topUpCreditsLeft ],
+				[ 'jetpack_big_sky_image_studio_credits_meter_opened', topUpCreditsLeft ],
+			] );
+		}
+	);
+
+	it( 'sends the client context’s environment unchanged on each credits event', () => {
+		getClientContextMock.mockReturnValue( {
+			...IMAGE_STUDIO_CONTEXT,
+			environment: 'video-studio',
+		} );
+		recordCreditsEvents( 'none' );
+
+		expect( sent( 'agent_environment' ) ).toEqual( [
+			[ 'jetpack_big_sky_image_studio_upgrade_notice_shown', 'video-studio' ],
+			[ 'jetpack_big_sky_image_studio_upgrade_notice_click', 'video-studio' ],
+			[ 'jetpack_big_sky_image_studio_credits_meter_opened', 'video-studio' ],
+		] );
+	} );
+
+	it.each( [
+		[
+			'has no environment',
+			() =>
+				( { ...IMAGE_STUDIO_CONTEXT, environment: undefined } ) as unknown as ReturnType<
+					typeof contextProvider.getClientContext
+				>,
+		],
+		[
+			'throws',
+			() => {
+				throw new Error( 'The block editor store is missing' );
+			},
+		],
+	] )( 'sends agent_environment as none when the client context %s', ( _case, context ) => {
+		getClientContextMock.mockImplementation( context );
+		recordCreditsEvents( 'none' );
+
+		expect( sent( 'agent_environment' ) ).toEqual( [
+			[ 'jetpack_big_sky_image_studio_upgrade_notice_shown', 'none' ],
+			[ 'jetpack_big_sky_image_studio_upgrade_notice_click', 'none' ],
+			[ 'jetpack_big_sky_image_studio_credits_meter_opened', 'none' ],
+		] );
 	} );
 } );

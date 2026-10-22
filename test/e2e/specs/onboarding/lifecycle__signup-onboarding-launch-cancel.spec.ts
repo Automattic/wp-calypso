@@ -15,7 +15,6 @@ import {
 	RestAPIClient,
 	SecretsManager,
 	SignupPickPlanPage,
-	StartSiteFlow,
 	UserSignupPage,
 	cancelDashboardPurchaseFlow,
 } from '@automattic/calypso-e2e';
@@ -60,7 +59,7 @@ test.describe(
 			page,
 			browser,
 		} ) => {
-			// ~245s of dominant waits (90s purchase + 30s launchpad + 30s notice +
+			// ~245s of dominant waits (90s purchase + 30s Site Setup + 30s notice +
 			// the domain-search settle) plus signup, onboarding and launch; 300s
 			// leaves margin the 120s default cannot give.
 			test.setTimeout( 300 * 1000 );
@@ -143,27 +142,14 @@ test.describe(
 				await postCheckoutSetupSitePage.waitUntilLoaded();
 			} );
 
-			await test.step( 'When I select theme', async () => {
-				const startSiteFlow = new StartSiteFlow( page );
-				const themeName = 'Attar';
-				const showThemesButton = page.getByRole( 'button', { name: 'Show all Blog themes' } );
-				if ( await showThemesButton.isVisible() ) {
-					await showThemesButton.click();
-				}
-				const themeLocator = page.getByRole( 'link', { name: themeName } );
-				if ( ! ( await themeLocator.isVisible() ) ) {
-					return;
-				}
-				await startSiteFlow.selectTheme( themeName );
-				await startSiteFlow.clickButton( 'Continue' );
+			await test.step( 'When I start with a pre-made design', async () => {
+				await page.getByRole( 'button', { name: /Start with a pre-made design/ } ).click();
 			} );
 
-			await test.step( 'Then Launchpad is shown (if applicable)', async () => {
-				const title = page.getByText( "Let's get started!" );
-				if ( ! ( await title.isVisible() ) ) {
-					return;
-				}
-				await title.waitFor( { timeout: 30 * 1000 } );
+			await test.step( 'Then I land on Site Setup', async () => {
+				await page.waitForURL( /wp-admin\/admin\.php\?page=site-setup-wp-admin/, {
+					timeout: 30 * 1000,
+				} );
 			} );
 
 			await test.step( 'Then site slug exists', async () => {

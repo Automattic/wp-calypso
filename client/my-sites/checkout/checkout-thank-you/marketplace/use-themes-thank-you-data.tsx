@@ -97,7 +97,7 @@ export function useThemesThankYouData(
 						translate( 'Setting up theme installation' ), // Transferring to Atomic
 						translate( 'Installing theme' ), // Transferring to Atomic
 						translate( 'Getting the theme ready' ),
-				  ],
+					],
 		// We intentionally don't set `isJetpack` as dependency to keep the same steps after the Atomic transfer.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ translate ]

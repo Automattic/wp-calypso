@@ -1,9 +1,7 @@
-import config from '@automattic/calypso-config';
 import { STATS_FEATURE_UTM_STATS } from 'calypso/my-sites/stats/constants';
 import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import isPremiumAnalyticsPreviewCohort, {
 	PREMIUM_ANALYTICS_PAGE_PATH,
-	PREMIUM_ANALYTICS_PREVIEW_FLAG,
 } from 'calypso/my-sites/stats/stats-notices/premium-analytics-preview-cohort';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -23,12 +21,12 @@ export type PremiumAnalyticsPreviewCohort = {
 	hasSiteFeatures: boolean;
 	hasCommercialStats: boolean;
 	premiumAnalyticsDashboardUrl: string | null;
-	/** The cohort rule and the feature flag together, before anyone asks the site for its status. */
+	/** The cohort rule, before anyone asks the site for its status. */
 	canBeInvited: boolean;
 };
 
 /**
- * Resolve everything the new Traffic tab invitation asks of a site, bar the site's own status.
+ * Resolve everything the preview invitation asks of a site, bar the site's own status.
  *
  * One answer for every surface that offers the invitation - the banner and the modules menu -
  * so a site cannot be invited by one and refused by the other.
@@ -81,15 +79,13 @@ export default function usePremiumAnalyticsPreviewCohort(
 		hasSiteFeatures,
 		hasCommercialStats,
 		premiumAnalyticsDashboardUrl,
-		canBeInvited:
-			config.isEnabled( PREMIUM_ANALYTICS_PREVIEW_FLAG ) &&
-			isPremiumAnalyticsPreviewCohort( {
-				isWpcom,
-				isVip,
-				isP2,
-				canManageOptions,
-				hasCommercialStats,
-				premiumAnalyticsDashboardUrl,
-			} ),
+		canBeInvited: isPremiumAnalyticsPreviewCohort( {
+			isWpcom,
+			isVip,
+			isP2,
+			canManageOptions,
+			hasCommercialStats,
+			premiumAnalyticsDashboardUrl,
+		} ),
 	};
 }

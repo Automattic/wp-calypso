@@ -63,11 +63,6 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 						{ __( 'Domains' ) }
 					</ResponsiveMenu.Item>
 				) }
-				{ siteTypeSupports.emails && (
-					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/emails` }>
-						{ __( 'Emails' ) }
-					</ResponsiveMenu.Item>
-				) }
 			</ResponsiveMenu>
 		);
 	}

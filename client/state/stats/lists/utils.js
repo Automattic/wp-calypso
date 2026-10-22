@@ -347,7 +347,7 @@ export const normalizers = {
 	 * @returns {Object | null}        Normalized stats data
 	 */
 	statsInsights: ( data ) => {
-		if ( ! data || typeof data.highest_day_of_week !== 'number' ) {
+		if ( ! data ) {
 			return {};
 		}
 
@@ -360,22 +360,37 @@ export const normalizers = {
 			years,
 		} = data;
 
-		// Adjust Day of Week from 0 = Monday to 0 = Sunday (for Moment)
-		let dayOfWeek = highest_day_of_week + 1;
-		if ( dayOfWeek > 6 ) {
-			dayOfWeek = 0;
+		const localeSlug = getLocaleSlug();
+		const result = {};
+
+		// The API returns null for these when there are no views.
+		if ( typeof highest_day_of_week === 'number' && typeof highest_day_percent === 'number' ) {
+			// Adjust Day of Week from 0 = Monday to 0 = Sunday (for Moment)
+			let dayOfWeek = highest_day_of_week + 1;
+			if ( dayOfWeek > 6 ) {
+				dayOfWeek = 0;
+			}
+			result.day = moment().locale( localeSlug ).day( dayOfWeek ).format( 'dddd' );
+			result.percent = Math.round( highest_day_percent );
 		}
 
-		const localeSlug = getLocaleSlug();
+		if ( typeof highest_hour === 'number' && typeof highest_hour_percent === 'number' ) {
+			result.hour = moment()
+				.locale( localeSlug )
+				.hour( highest_hour )
+				.startOf( 'hour' )
+				.format( 'LT' );
+			result.hourPercent = Math.round( highest_hour_percent );
+		}
 
-		return {
-			day: moment().locale( localeSlug ).day( dayOfWeek ).format( 'dddd' ),
-			percent: Math.round( highest_day_percent ),
-			hour: moment().locale( localeSlug ).hour( highest_hour ).startOf( 'hour' ).format( 'LT' ),
-			hourPercent: Math.round( highest_hour_percent ),
-			hourlyViews: hourly_views,
-			years,
-		};
+		if ( hourly_views !== undefined ) {
+			result.hourlyViews = hourly_views;
+		}
+		if ( years !== undefined ) {
+			result.years = years;
+		}
+
+		return result;
 	},
 
 	/**
@@ -671,6 +686,7 @@ export const normalizers = {
 				label: item.title,
 				page: detailPage,
 				value: item.plays,
+				poster: item.poster ?? '',
 				actions: [
 					{
 						type: 'link',
@@ -859,7 +875,7 @@ export const normalizers = {
 				.map( ( item ) => {
 					const row = { period: item[ 0 ] };
 					metrics.forEach( ( metric, index ) => {
-						row[ metric ] = Number( item[ index + 1 ] ) || 0;
+						row[ metric ] = item[ index + 1 ] === null ? null : Number( item[ index + 1 ] ) || 0;
 					} );
 					return row;
 				} );

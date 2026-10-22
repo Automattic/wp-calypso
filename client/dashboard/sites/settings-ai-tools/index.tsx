@@ -4,6 +4,8 @@ import { HostingFeatures, type Site } from '@automattic/api-core';
 import {
 	bigSkyPluginMutation,
 	bigSkyPluginQuery,
+	isAutomatticianQuery,
+	siteAbilitiesQuery,
 	siteBySlugQuery,
 	sitePostByEmailSettingsMutation,
 	sitePostByEmailSettingsQuery,
@@ -11,6 +13,7 @@ import {
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import languages from '@automattic/languages';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -43,11 +46,15 @@ import {
 	getSiteContextToolIds,
 	getSiteLevelEnabled,
 	getSiteMcpAbilities,
+	getSiteRemoteGroups,
+	isRemoteAbilityEnabled,
+	isRemoteKeyEnabled,
 	mergeSiteMcpAbilities,
 } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useHelpCenter } from '../../app/help-center';
+import { useLocale } from '../../app/locale';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody, CardDivider, CardFooter } from '../../components/card';
 import ClipboardInputControl from '../../components/clipboard-input-control';
@@ -67,6 +74,7 @@ import {
 	getAgentEmailVCardFileName,
 } from '../../utils/wordpress-agent-email';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
+import { collectNamespaces } from './remote-abilities-section';
 import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export { getAgentEmailAddress, getAgentEmailVCard } from '../../utils/wordpress-agent-email';
@@ -79,30 +87,15 @@ interface McpAbility {
 	visible?: boolean;
 }
 
-function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
-	if ( tools.length === 0 ) {
+/**
+ * Badge for one access level, spanning wpcom tools and the site's published
+ * abilities on the same page.
+ */
+function getAccessBadge( total: number, enabledCount: number ) {
+	if ( total === 0 ) {
 		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
-	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
-	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'stable' as const };
-	}
-	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ), intent: 'draft' as const };
-	}
-	return {
-		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
-		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'informational' as const,
-	};
-}
-
-function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
-	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'stable' as const };
-	}
-	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
-	if ( enabledCount === tools.length ) {
+	if ( enabledCount === total ) {
 		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
@@ -110,7 +103,7 @@ function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
-		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
+		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, total ),
 		intent: 'informational' as const,
 	};
 }
@@ -239,6 +232,7 @@ function EmailAssistantCard( {
 							/>
 							<HStack justify="flex-start">
 								<Button
+									__next40pxDefaultSize
 									variant="secondary"
 									href={ vCardHref }
 									download={ vCardFileName }
@@ -247,6 +241,7 @@ function EmailAssistantCard( {
 									{ __( 'Add to contacts' ) }
 								</Button>
 								<Button
+									__next40pxDefaultSize
 									variant="secondary"
 									isBusy={ emailAddressMutation.isPending }
 									disabled={ isEmailAddressActionDisabled }
@@ -287,7 +282,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const siteAccountAbilities = siteContextToolIds.size
 		? Object.fromEntries(
 				Object.entries( accountAbilities ).filter( ( [ id ] ) => siteContextToolIds.has( id ) )
-		  )
+			)
 		: accountAbilities;
 	const mcpAbilities = mergeSiteMcpAbilities( siteAccountAbilities, siteAbilities );
 	const availableTools = (
@@ -299,11 +294,73 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	// state. True when account MCP is on for sites, false when disabled.
 	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
 	const defaultToolEnabled = userSettings?.mcp_abilities?.site_level_enabled_default ?? false;
-	const defaultBadge = defaultToolEnabled
-		? { text: __( 'All enabled' ), intent: 'stable' as const }
-		: { text: __( 'Disabled' ), intent: 'draft' as const };
-	const readBadge = hasSiteAbilityOverrides ? getReadBadge( readTools ) : defaultBadge;
-	const writeBadge = hasSiteAbilityOverrides ? getWriteBadge( writeTools ) : defaultBadge;
+	const enabledToolCount = ( tools: Array< [ string, McpAbility ] > ) => {
+		if ( hasSiteAbilityOverrides ) {
+			return tools.filter( ( [ , tool ] ) => tool.enabled ).length;
+		}
+		return defaultToolEnabled ? tools.length : 0;
+	};
+
+	// The badges span the site-published abilities on the subpages too, so "All
+	// enabled" can't appear while those groups are still off (their default).
+	// Staff-gated like the server-side remote: path (AI-1328).
+	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
+	const localeSlug = useLocale();
+	const wpLocale = languages.find( ( { langSlug } ) => langSlug === localeSlug )?.wpLocale;
+	const savedRemoteGroups = isAutomattician
+		? getSiteRemoteGroups( userSettings || {}, site.ID )
+		: {};
+	const { data: remoteAbilities } = useQuery( {
+		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
+		enabled:
+			!! isAutomattician &&
+			config.isEnabled( 'mcp-settings' ) &&
+			isAvailable &&
+			isMcpEnabled &&
+			!! site.jetpack,
+	} );
+	// Count published abilities individually; an ability counts as enabled when
+	// its group key is allowed. Saved-only groups (catalog unreachable) fall
+	// back to counting their keys. Gated at the computation level: even a
+	// previously cached catalog must not leak into the totals for other users.
+	const remoteCounts = ( category: 'read' | 'write' ) => {
+		const defaultEnabled =
+			isMcpEnabled && enabledToolCount( category === 'read' ? readTools : writeTools ) > 0;
+		if ( ! isAutomattician ) {
+			return { total: 0, enabled: 0 };
+		}
+		let total = 0;
+		let enabled = 0;
+		collectNamespaces( remoteAbilities, savedRemoteGroups, category ).forEach( ( group ) => {
+			if ( group.abilities.length > 0 ) {
+				total += group.abilities.length;
+				enabled += group.abilities.filter( ( ability ) =>
+					isRemoteAbilityEnabled(
+						savedRemoteGroups,
+						ability.name,
+						ability.meta?.annotations,
+						defaultEnabled
+					)
+				).length;
+				return;
+			}
+			total += group.keys.length + group.abilityKeys.length;
+			enabled += [ ...group.keys, ...group.abilityKeys ].filter( ( key ) =>
+				isRemoteKeyEnabled( savedRemoteGroups, key, defaultEnabled )
+			).length;
+		} );
+		return { total, enabled };
+	};
+	const readRemote = remoteCounts( 'read' );
+	const writeRemote = remoteCounts( 'write' );
+	const readBadge = getAccessBadge(
+		readTools.length + readRemote.total,
+		enabledToolCount( readTools ) + readRemote.enabled
+	);
+	const writeBadge = getAccessBadge(
+		writeTools.length + writeRemote.total,
+		enabledToolCount( writeTools ) + writeRemote.enabled
+	);
 	const mcpMutation = useMutation(
 		withSnackbar( userSettingsMutation(), {
 			success: isMcpEnabled
@@ -361,7 +418,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				{
 					learnMoreLink: <InlineSupportLink supportContext="ai-tools" />,
 				}
-		  )
+			)
 		: undefined;
 
 	const handleToggle = ( enable: boolean ) => {

@@ -6,7 +6,6 @@ const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
-const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const {
 	defaultRequestToExternal,
@@ -144,6 +143,9 @@ module.exports = {
 				__dirname,
 				'../../node_modules/@wordpress/components/build-style/style.css'
 			),
+			// Use WordPress's JSX runtime where it exists, with a fallback for WordPress < 6.6.
+			// See src/lib/jsx-runtime.ts.
+			'react/jsx-runtime$': path.join( __dirname, 'src/lib/jsx-runtime' ),
 		},
 	},
 	node: false,
@@ -182,11 +184,8 @@ module.exports = {
 						'lodash-es',
 						'react',
 						'react-dom',
-						// Externalize the JSX runtime alongside react/react-dom so it matches the
-						// React that WordPress provides. Bundling it (the default here, since it is
-						// absent from this allow list) ships an older React's runtime, whose elements
-						// React 19 rejects ("A React Element from an older version of React was rendered").
-						'react/jsx-runtime',
+						// `react/jsx-runtime` is deliberately absent: it resolves to
+						// src/lib/jsx-runtime.ts, which picks WordPress's runtime at load time.
 						'react/jsx-dev-runtime',
 						'@wordpress/api-fetch',
 						'@wordpress/components',
@@ -231,8 +230,6 @@ module.exports = {
 			cacheDir: path.resolve( cachePath, 'moment-timezone' ),
 		} ),
 		new ExtensiveLodashReplacementPlugin(),
-		new InlineConstantExportsPlugin( /\/client\/state\/action-types.[tj]s$/ ),
-		new InlineConstantExportsPlugin( /\/client\/state\/themes\/action-types.[tj]s$/ ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		// Repalce the `packages/components/src/gridicon/index.tsx` with a replacement that does not enqueue the SVG sprite.
 		// The sprite is loaded separately in Jetpack.

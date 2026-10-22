@@ -282,7 +282,7 @@ export const generateConversation = ( messageCount: number ): Message[] => {
 			? `User message ${ Math.floor( i / 2 ) + 1 }: This is a sample question or request.`
 			: `Assistant response ${
 					Math.floor( i / 2 ) + 1
-			  }: This is a helpful response to the user's question.`;
+				}: This is a helpful response to the user's question.`;
 
 		conversation.push(
 			createMockMessage(

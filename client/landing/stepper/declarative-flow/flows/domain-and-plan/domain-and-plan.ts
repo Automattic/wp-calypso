@@ -1,10 +1,6 @@
 import { DomainProductSlugs, DotcomFeatures } from '@automattic/api-core';
-import {
-	OnboardActions,
-	OnboardSelect,
-	updateLaunchpadSettings,
-	useLaunchpad,
-} from '@automattic/data-stores';
+import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import { updateLaunchpadSettings, useLaunchpad } from '@automattic/launchpad';
 import { addProductsToCart, DOMAIN_AND_PLAN_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
@@ -229,8 +225,7 @@ const domainUpsell: Flow = {
 					}
 
 					const domainCartItem = providedDependencies.domainCartItem as
-						| MinimalRequestCartProduct
-						| undefined;
+						MinimalRequestCartProduct | undefined;
 
 					if ( ! domainCartItem ) {
 						return navigate( STEPS.PLANS.slug );

@@ -15,6 +15,7 @@ import {
 	getSiteSpecUrlByType,
 	getDefaultSiteSpecConfig,
 	getEarlyProvisionSiteSpecConfig,
+	getBlueprintSiteSpecConfig,
 	getBuildWowSiteSpecConfig,
 } from '../utils';
 
@@ -209,6 +210,7 @@ describe( 'SiteSpec Utils', () => {
 				siteId: 123,
 				ref: 'referrer',
 				source: 'vega',
+				graph: 'dsl',
 			} );
 			const buildSiteUrl = new URL( result.buildSiteUrl ?? '', 'https://wordpress.com' );
 
@@ -218,6 +220,7 @@ describe( 'SiteSpec Utils', () => {
 			expect( buildSiteUrl.searchParams.get( 'siteId' ) ).toBe( '123' );
 			expect( buildSiteUrl.searchParams.get( 'ref' ) ).toBe( 'referrer' );
 			expect( buildSiteUrl.searchParams.get( 'source' ) ).toBe( 'vega' );
+			expect( buildSiteUrl.searchParams.get( 'graph' ) ).toBe( 'dsl' );
 			expect( result.buildSiteUrl ).toContain( 'spec_id=' );
 		} );
 
@@ -237,10 +240,63 @@ describe( 'SiteSpec Utils', () => {
 
 		it( 'should leave the other flows on the default spec preview', () => {
 			// The widget gates the brief on a truthy features.siteBrief, so any
-			// flow that grows one starts rendering the brief. Pin that this one
-			// is the only flow asking for it.
+			// flow that grows one starts rendering the brief. Pin that only this
+			// flow and the blueprint flow ask for it.
 			expect( getDefaultSiteSpecConfig().features ).toBeUndefined();
 			expect( getEarlyProvisionSiteSpecConfig().features ).toBeUndefined();
+		} );
+	} );
+
+	describe( 'getBlueprintSiteSpecConfig', () => {
+		it( 'should forward the blueprint identifier to the widget', () => {
+			const result = getBlueprintSiteSpecConfig( { blueprintId: 'coachava' } );
+
+			expect( result.blueprintId ).toBe( 'coachava' );
+			expect( result.agentUrl ).toBe( 'https://api.example.com/agent' );
+		} );
+
+		it( 'should omit the blueprint identifier when none is given', () => {
+			const result = getBlueprintSiteSpecConfig( {} );
+
+			expect( result ).not.toHaveProperty( 'blueprintId' );
+		} );
+
+		it( 'should enable the next site brief', () => {
+			const result = getBlueprintSiteSpecConfig( { blueprintId: 'coachava' } );
+
+			expect( result.features?.siteBrief ).toBe( 'next' );
+		} );
+
+		it( 'should hand spec meta to the widget through a collector', () => {
+			const result = getBlueprintSiteSpecConfig( {
+				blueprintId: 'zoom',
+				specMeta: { zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+			} );
+
+			expect( result.collector ).toBeInstanceOf( Function );
+			// Meta only: it is stamped into the spec, and must not open the conversation on
+			// the agent's behalf.
+			// Synchronous, so the widget settles the first screen before its first paint.
+			expect( result.collector?.() ).toEqual( {
+				meta: { zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+			} );
+		} );
+
+		it( 'should attach no collector when there is no spec meta', () => {
+			expect( getBlueprintSiteSpecConfig( { blueprintId: 'zoom' } ) ).not.toHaveProperty(
+				'collector'
+			);
+			expect(
+				getBlueprintSiteSpecConfig( { blueprintId: 'zoom', specMeta: { zoom_booking_url: '' } } )
+			).not.toHaveProperty( 'collector' );
+		} );
+
+		it( 'should offer social links only', () => {
+			// `links` is a sub-feature of the next brief, so it only means
+			// anything alongside the siteBrief assertion above.
+			const result = getBlueprintSiteSpecConfig( { blueprintId: 'coachava' } );
+
+			expect( result.features?.links ).toBe( 'social' );
 		} );
 	} );
 } );

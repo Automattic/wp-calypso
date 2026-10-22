@@ -5,14 +5,20 @@ import {
 	isHundredYearDomainFlow,
 	isHundredYearPlanFlow,
 } from '@automattic/onboarding';
-import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, type ComponentProps, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { mergeObjectFunctions } from '../../../lib/merge-object-functions';
 import { recordDomainSearchStepSubmit } from './analytics';
-import { useWPCOMDomainSearchCart } from './use-wpcom-domain-search-cart';
-import { useWPCOMDomainSearchEvents } from './use-wpcom-domain-search-events';
+import {
+	type ContinuedDomainProduct,
+	useWPCOMDomainSearchCart,
+} from './use-wpcom-domain-search-cart';
+import {
+	getSearchUiVersion,
+	useWPCOMDomainSearchEvents,
+	withSearchUiVersion,
+} from './use-wpcom-domain-search-events';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 export type WPCOMDomainSearchProps = Omit<
@@ -22,7 +28,7 @@ export type WPCOMDomainSearchProps = Omit<
 	currentSiteId?: number;
 	flowName: string;
 	events: Omit< Required< ComponentProps< typeof DomainSearch > >[ 'events' ], 'onContinue' > & {
-		onContinue: ( items: ResponseCartProduct[] ) => void;
+		onContinue: ( items: ContinuedDomainProduct[] ) => void;
 		beforeAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
 	};
 	isFirstDomainFreeForFirstYear?: boolean;
@@ -53,6 +59,7 @@ export const useWPCOMDomainSearchProps = ( {
 }: WPCOMDomainSearchProps ) => {
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isNamePulse = !! externalConfig?.showNamePulseSearch;
 
 	const {
 		onContinue: externalOnContinue,
@@ -61,12 +68,16 @@ export const useWPCOMDomainSearchProps = ( {
 	} = externalEvents;
 
 	const onContinueWithStepSubmissionTracking = useCallback(
-		( items: ResponseCartProduct[] ) => {
+		( items: ContinuedDomainProduct[] ) => {
 			const firstItem = items[ 0 ];
-			dispatch( recordDomainSearchStepSubmit( { domain_name: firstItem.meta }, analyticsSection ) );
+			const action = recordDomainSearchStepSubmit(
+				{ domain_name: firstItem.meta },
+				analyticsSection
+			);
+			dispatch( withSearchUiVersion( action, getSearchUiVersion( isNamePulse ) ) );
 			externalOnContinue( items );
 		},
-		[ dispatch, analyticsSection, externalOnContinue ]
+		[ dispatch, analyticsSection, externalOnContinue, isNamePulse ]
 	);
 
 	const { cart, isNextDomainFree, freeDomainName, freeForFirstYearTlds, onContinue } =
@@ -109,6 +120,7 @@ export const useWPCOMDomainSearchProps = ( {
 		flowName,
 		analyticsSection,
 		query: query,
+		isNamePulse,
 	} );
 
 	const events: ComponentProps< typeof DomainSearch >[ 'events' ] = useMemo( () => {

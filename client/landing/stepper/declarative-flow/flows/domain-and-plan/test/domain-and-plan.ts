@@ -26,7 +26,7 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
+jest.mock( '@automattic/launchpad', () => ( {
 	updateLaunchpadSettings: jest.fn(),
 	useLaunchpad: () => ( { data: {} } ),
 } ) );

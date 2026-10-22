@@ -8,6 +8,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Suspense } from 'react';
 import { usePersistentView } from '../use-persistent-view';
+import type { QueryParamFilterField } from '../use-persistent-view';
 import type { View } from '@wordpress/dataviews';
 
 const defaultView: View = {
@@ -178,6 +179,59 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
+		it( 'should lock the transient filters when `lockQueryParamFilters` is set', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const { Wrapper } = createTestWrapper();
+
+			const queryParams = { domainName: 'example.com' };
+			const queryParamFilterFields = [ 'domainName' ];
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams,
+						queryParamFilterFields,
+						lockQueryParamFilters: true,
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'domainName', operator: 'isAny', value: [ 'example.com' ], isLocked: true },
+				] );
+			} );
+		} );
+
+		it( 'should build a bare-value filter for a field whose operator is single-selection', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const { Wrapper } = createTestWrapper();
+
+			const queryParams = { status: 'unassigned' };
+			const queryParamFilterFields: QueryParamFilterField[] = [
+				{ field: 'status', operator: 'is' },
+			];
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams,
+						queryParamFilterFields,
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'status', operator: 'is', value: 'unassigned' },
+				] );
+			} );
+		} );
+
 		it( 'should convert "true"/"false" query param values into a boolean `is` filter', async () => {
 			mockGetCalypsoPreferences( {} );
 
@@ -200,6 +254,63 @@ describe( 'usePersistentView', () => {
 				expect( result.current.view.filters ).toEqual( [
 					{ field: 'is_deleted', operator: 'is', value: true },
 				] );
+			} );
+		} );
+
+		it( 'should follow the default view fields when the persisted view has none', async () => {
+			const persistedView = {
+				type: 'table',
+				sort: { field: 'name', direction: 'desc' },
+			};
+			mockGetCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': persistedView,
+			} );
+
+			const { Wrapper } = createTestWrapper();
+			const { result, rerender } = renderHook(
+				( { fields }: { fields: string[] } ) =>
+					usePersistentView( { slug, defaultView: { ...defaultView, fields } } ),
+				{ wrapper: Wrapper, initialProps: { fields: [ 'status' ] } }
+			);
+
+			await waitFor( () => {
+				expect( result.current.view ).toEqual( {
+					...persistedView,
+					fields: [ 'status' ],
+					page: 1,
+					search: '',
+				} );
+			} );
+
+			rerender( { fields: [ 'status', 'payment-method' ] } );
+
+			await waitFor( () => {
+				expect( result.current.view.fields ).toEqual( [ 'status', 'payment-method' ] );
+			} );
+		} );
+
+		it( 'should keep the persisted view fields over the default view fields', async () => {
+			const persistedView = {
+				type: 'table',
+				sort: { field: 'name', direction: 'asc' },
+				fields: [ 'status' ],
+			};
+			mockGetCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': persistedView,
+			} );
+
+			const { Wrapper } = createTestWrapper();
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView: { ...defaultView, fields: [ 'status', 'payment-method' ] },
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.fields ).toEqual( [ 'status' ] );
 			} );
 		} );
 	} );
@@ -232,6 +343,74 @@ describe( 'usePersistentView', () => {
 					page: 1,
 					search: '',
 				} );
+			} );
+
+			await waitFor( () => {
+				expect( expectedUpdatePreferences.isDone() ).toBe( true );
+			} );
+		} );
+
+		it( 'should not persist fields that match the default view', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const viewToPersist: View = {
+				type: 'table',
+				layout: { density: 'compact' },
+				sort: { field: 'name', direction: 'desc' },
+			};
+			const expectedUpdatePreferences = mockUpdateCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': viewToPersist,
+			} );
+
+			const { Wrapper } = createTestWrapper();
+			const { result } = renderHook(
+				() => usePersistentView( { slug, defaultView: { ...defaultView, fields: [ 'status' ] } } ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( {
+					...viewToPersist,
+					fields: [ 'status' ],
+					page: 1,
+					search: '',
+				} );
+			} );
+
+			await waitFor( () => {
+				expect( expectedUpdatePreferences.isDone() ).toBe( true );
+			} );
+		} );
+
+		it( 'should persist fields that differ from the default view', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const viewToPersist: View = {
+				type: 'table',
+				layout: { density: 'compact' },
+				sort: { field: 'name', direction: 'asc' },
+				fields: [ 'status', 'payment-method' ],
+			};
+			const expectedUpdatePreferences = mockUpdateCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': viewToPersist,
+			} );
+
+			const { Wrapper } = createTestWrapper();
+			const { result } = renderHook(
+				() => usePersistentView( { slug, defaultView: { ...defaultView, fields: [ 'status' ] } } ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( { ...viewToPersist, page: 1, search: '' } );
 			} );
 
 			await waitFor( () => {
@@ -303,6 +482,42 @@ describe( 'usePersistentView', () => {
 				result.current.updateView( {
 					...defaultView,
 					filters: [ { field: 'status', operator: 'isAny', value: [ 'active' ] } ],
+				} );
+			} );
+
+			await waitFor( () => {
+				const router = getRouter();
+				expect( router?.state.location.search ).toEqual( {
+					'current-param': 'current-value',
+				} );
+			} );
+		} );
+
+		it( 'should remove a bare-value transient filter from the current URL query params if no longer in the view', async () => {
+			mockGetCalypsoPreferences( {} );
+			mockUpdateCalypsoPreferences();
+
+			const { Wrapper, getRouter } = createTestWrapper();
+
+			const queryParams = { 'current-param': 'current-value', status: 'unassigned' };
+			const queryParamFilterFields: QueryParamFilterField[] = [
+				{ field: 'status', operator: 'is' },
+			];
+			const { result } = renderHook(
+				() => usePersistentView( { slug, defaultView, queryParams, queryParamFilterFields } ),
+				{
+					wrapper: Wrapper,
+				}
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( {
+					...defaultView,
+					filters: [ { field: 'status', operator: 'is', value: 'assigned' } ],
 				} );
 			} );
 

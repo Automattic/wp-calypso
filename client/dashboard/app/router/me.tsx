@@ -1,4 +1,3 @@
-import { fetchTwoStep } from '@automattic/api-core';
 import {
 	accountRecoveryQuery,
 	allowedPaymentMethodsQuery,
@@ -17,6 +16,7 @@ import {
 	purchaseQuery,
 	queryClient,
 	rawUserPreferencesQuery,
+	readTeamsQuery,
 	receiptQuery,
 	siteBySlugQuery,
 	siteFeaturesQuery,
@@ -36,7 +36,7 @@ import {
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, Outlet } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import {
 	SITE_ACTION_TITLES,
@@ -47,7 +47,6 @@ import {
 import { getAppSetupTitle, getSMSSetupTitle } from '../../me/security-two-step-auth/title';
 import { isOptInToggleVisible } from '../../utils/hosting-dashboard-enrollment';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { reauthRequiredLink } from '../../utils/link';
 import {
 	getTitleForDisplay,
 	getPurchaseCancellationFlowType,
@@ -59,7 +58,7 @@ import {
 	type CancelIntent,
 } from '../../utils/purchase';
 import { AUTH_QUERY_KEY } from '../auth';
-import { dashboardRedirect } from './redirect';
+import { dashboardRedirect, redirectIfTwoStepReauthRequired } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { Purchase, User } from '@automattic/api-core';
@@ -77,12 +76,8 @@ export const meRoute = createRoute( {
 	path: 'me',
 	loader: () => queryClient.ensureQueryData( userSettingsQuery() ),
 	beforeLoad: async ( { cause } ) => {
-		if ( cause !== 'enter' ) {
-			return;
-		}
-		const twoStep = await fetchTwoStep();
-		if ( twoStep.two_step_reauthorization_required ) {
-			window.location.href = reauthRequiredLink();
+		if ( cause === 'enter' ) {
+			await redirectIfTwoStepReauthRequired();
 		}
 	},
 	component: Outlet,
@@ -135,7 +130,10 @@ export const preferencesRoute = createRoute( {
 export const preferencesIndexRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: '/',
-	loader: async () => {
+	loader: async ( { context } ) => {
+		if ( context.config.supports.reader ) {
+			queryClient.prefetchQuery( readTeamsQuery() );
+		}
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
@@ -346,7 +344,9 @@ export const purchaseSettingsIndexRoute = createRoute( {
 					// Some sites cannot be reached; like disconnected Jetpack sites. We can safely ignore those.
 				} ),
 				isDotcomPlan( purchase )
-					? queryClient.ensureQueryData( siteMediaStorageQuery( purchase.blog_id ) )
+					? queryClient.ensureQueryData( siteMediaStorageQuery( purchase.blog_id ) ).catch( () => {
+							// Error gets logged at ErrorBoundary.
+						} )
 					: undefined,
 			] );
 		}
@@ -354,6 +354,11 @@ export const purchaseSettingsIndexRoute = createRoute( {
 		// Preload domain data to avoid layout shift for the "Attach to a site" card
 		if ( purchase.meta && purchase.is_domain ) {
 			await queryClient.ensureQueryData( domainQuery( purchase.meta ) ).catch( () => {} );
+		}
+
+		// Jetpack upgrades go through the store only once Pro is known to be on sale.
+		if ( purchase.is_jetpack_plan_or_product ) {
+			queryClient.prefetchQuery( productsQuery() );
 		}
 	},
 } ).lazy( () =>
@@ -386,6 +391,25 @@ export const changePaymentMethodRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/billing-purchases/change-payment-method' ).then( ( d ) =>
 		createLazyRoute( 'purchases-purchase-settings-change-payment-method' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const movePurchaseRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				// translators: Moving a subscription, such as a plan or domain, to a different site.
+				title: _x( 'Move to another site', 'subscription site transfer' ),
+			},
+		],
+	} ),
+	getParentRoute: () => purchaseSettingsRoute,
+	path: 'move',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/move-purchase' ).then( ( d ) =>
+		createLazyRoute( 'purchases-purchase-settings-move' )( {
 			component: d.default,
 		} )
 	)
@@ -491,7 +515,7 @@ export const cancelPurchaseRoute = createRoute( {
 						// rather than failing the whole route (SHILL-1442).
 						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ).catch( () => {} ),
 						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ).catch( () => {} ),
-				  ]
+					]
 				: [] ),
 			queryClient.ensureQueryData( productsQuery() ),
 			queryClient.ensureQueryData( plansQuery() ),
@@ -1063,6 +1087,27 @@ export const blockedSitesRoute = createRoute( {
 	)
 );
 
+export const preferencesReaderRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Reader' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'reader',
+	loader: async () => {
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/reader' ).then( ( d ) =>
+		createLazyRoute( 'preferences-reader' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const hostingDashboardRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1415,6 +1460,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	];
 	if ( config.supports.reader ) {
 		preferencesChildren.push( blockedSitesRoute );
+		preferencesChildren.push( preferencesReaderRoute );
 	}
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );
@@ -1458,7 +1504,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 							monetizeSubscriptionsIndexRoute,
 							monetizeSubscriptionRoute,
 						] ),
-				  ]
+					]
 				: [] ),
 			purchasesRoute.addChildren( [
 				purchasesIndexRoute,
@@ -1467,6 +1513,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 					changePaymentMethodRoute,
 					cancelPurchaseRoute,
 					siteActionsRoute,
+					...( isEnabled( 'purchases/site-transfer' ) ? [ movePurchaseRoute ] : [] ),
 				] ),
 			] ),
 			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),
@@ -1496,7 +1543,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 							securityLegacyContactIndexRoute,
 							securityLegacyContactPrintRoute,
 						] ),
-				  ]
+					]
 				: [] ),
 		] )
 	);

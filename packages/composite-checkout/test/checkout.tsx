@@ -875,6 +875,7 @@ describe( 'Checkout', () => {
 								<CheckoutFormSubmit
 									continueToNextIncompleteStep
 									disableSubmitButton={ props.disableSubmitButton }
+									disableContinueButton={ props.disableContinueButton }
 								/>
 							) : (
 								<CheckoutFormSubmit />
@@ -949,6 +950,44 @@ describe( 'Checkout', () => {
 			expect( getByTextInNode( submitArea, 'Continue' ) ).toBeInTheDocument();
 			expect( getByTextInNode( submitArea, 'Continue' ) ).not.toBeDisabled();
 			expect( queryByTextInNode( submitArea, 'Pay Please' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'disables Continue when disableContinueButton is set', async () => {
+			const isCompleteCallback = jest.fn( () => true );
+			const activeStep = { ...steps[ 3 ], isCompleteCallback };
+			const { container } = render(
+				<ContinueCheckout
+					withProp
+					disableContinueButton
+					steps={ [ steps[ 0 ], activeStep, steps[ 1 ] ] }
+				/>
+			);
+			const submitArea = getSubmitArea( container );
+			const continueButton = getByTextInNode( submitArea, 'Continue' );
+			expect( continueButton ).toBeDisabled();
+			const user = userEvent.setup();
+			await user.click( continueButton );
+			expect( isCompleteCallback ).not.toHaveBeenCalled();
+		} );
+
+		it( 'disables Continue while the step it validates is still resolving', async () => {
+			const isCompleteCallback = jest.fn( () => new Promise< boolean >( () => {} ) );
+			const pendingActiveStep = { ...steps[ 3 ], isCompleteCallback };
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], pendingActiveStep, steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			const continueButton = getByTextInNode( submitArea, 'Continue' );
+			const user = userEvent.setup();
+			await user.click( continueButton );
+
+			await waitFor( () => {
+				expect( continueButton ).toBeDisabled();
+			} );
+			expect( continueButton ).toHaveTextContent( 'Please wait…' );
+			expect( continueButton ).toHaveClass( 'is-busy' );
+			await user.click( continueButton );
+			expect( isCompleteCallback ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'smooth-scrolls to the next incomplete step when Continue is clicked', async () => {

@@ -3,7 +3,6 @@ import { FREE_THEME } from '@automattic/design-picker';
 import { DOMAIN_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useCallback } from '@wordpress/element';
 import {
-	FREE_PLAN_FREE_DOMAIN_DIALOG,
 	FREE_PLAN_PAID_DOMAIN_DIALOG,
 	PAID_PLAN_PAID_DOMAIN_DIALOG,
 	PAID_PLAN_IS_REQUIRED_DIALOG,
@@ -47,7 +46,7 @@ export function useModalResolutionCallback( {
 				if ( paidDomainName ) {
 					return FREE_PLAN_PAID_DOMAIN_DIALOG;
 				}
-				return FREE_PLAN_FREE_DOMAIN_DIALOG;
+				return null;
 			}
 
 			// The domain can still be purchased on the free plan (as a non-primary
