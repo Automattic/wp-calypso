@@ -1,6 +1,8 @@
 import { useRef } from 'react';
+import { matchPath } from 'react-router';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { DEFAULT_FLOW, getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
+import { isPlaygroundWooIntent } from 'calypso/landing/stepper/utils/playground-woo-intent';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { getOmnibarElement } from 'calypso/lib/omnibar-element';
 
@@ -170,6 +172,19 @@ export const useInitialIsInStepContainerV2FlowContext = () => {
 	);
 
 	return ref.current;
+};
+
+/**
+ * Returns whether a request is for the Playground step entered from WooCommerce.com,
+ * so the server-rendered loader can show the Woo logo before Stepper boots.
+ */
+export const isPlaygroundWooIntentRequest = (
+	pathname: string,
+	query: Record< string, unknown > | undefined
+) => {
+	const params = matchPath( { path: '/setup/:flow/:step/*' }, pathname )?.params;
+
+	return isPlaygroundWooIntent( params?.flow, params?.step, query?.intent );
 };
 
 /**

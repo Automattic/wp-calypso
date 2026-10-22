@@ -499,6 +499,7 @@ interface Message {
 	icon?: string;
 	actions?: MessageAction[];
 	disabled?: boolean;
+	startsTurn?: boolean; // Starts a turn though no user message shows before it, such as a reply to a click in a message
 }
 
 interface MessageAction {

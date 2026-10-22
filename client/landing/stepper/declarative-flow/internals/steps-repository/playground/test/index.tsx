@@ -5,6 +5,7 @@
 
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlaygroundStep from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
@@ -14,6 +15,10 @@ import { PlaygroundNotFoundError } from '../lib/playground-not-found-error';
 
 // Mock the initializeWordPressPlayground function
 jest.mock( '../lib/initialize-playground' );
+
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
 
 // Mock the PlaygroundError component to simplify testing
 jest.mock( '../components/playground-error', () => ( {
@@ -31,13 +36,15 @@ const renderPlaygroundStep = (
 	props?: Partial< StepProps >,
 	renderOptions?: RenderStepOptions
 ) => {
-	const combinedProps = { ...mockStepProps( props ) };
+	const combinedProps = {
+		...mockStepProps( { flow: 'onboarding', stepName: 'playground', ...props } ),
+	};
 
 	return renderStep( <PlaygroundStep { ...combinedProps } />, renderOptions );
 };
 
 const getLaunchButton = () => screen.getByRole( 'button', { name: 'Launch on WordPress.com' } );
-const getFreeTrialButton = () => screen.getByRole( 'button', { name: 'Launch free trial' } );
+const getSaveStoreButton = () => screen.getByRole( 'button', { name: 'Save my store' } );
 
 describe( 'Playground', () => {
 	beforeEach( () => {
@@ -86,7 +93,7 @@ describe( 'Playground', () => {
 			expect( getLaunchButton() ).toBeDisabled();
 		} );
 
-		it( 'should show free trial button when intent is woocommerce', async () => {
+		it( 'should show the save store button when intent is woocommerce', async () => {
 			await act( async () => {
 				renderPlaygroundStep(
 					{},
@@ -97,7 +104,51 @@ describe( 'Playground', () => {
 				);
 			} );
 
-			expect( getFreeTrialButton() ).toBeVisible();
+			expect( getSaveStoreButton() ).toBeVisible();
+		} );
+	} );
+
+	describe( 'launch tracking', () => {
+		const getLaunchEventProps = () =>
+			recordTracksEvent.mock.calls.find(
+				( [ eventName ] ) => eventName === 'calypso_playground_launch_site'
+			)?.[ 1 ];
+
+		it( 'should flag WooCommerce launches', async () => {
+			await act( async () => {
+				renderPlaygroundStep(
+					{},
+					{
+						initialEntry:
+							'/setup/onboarding/playground?blueprint=woocommerce&playground=1&intent=woocommerce',
+					}
+				);
+			} );
+
+			await userEvent.click( getSaveStoreButton() );
+
+			expect( getLaunchEventProps() ).toEqual(
+				expect.objectContaining( { is_woocommerce_intent: true } )
+			);
+		} );
+
+		it( 'should not flag other launches and keep the existing properties', async () => {
+			await act( async () => {
+				renderPlaygroundStep(
+					{ flow: 'onboarding' },
+					{ initialEntry: '/setup/onboarding/playground?blueprint=123&playground=1' }
+				);
+			} );
+
+			await userEvent.click( getLaunchButton() );
+
+			expect( getLaunchEventProps() ).toEqual( {
+				flow: 'onboarding',
+				step: 'playground',
+				blueprint: 'bpl-123',
+				intent: 'plans-playground',
+				is_woocommerce_intent: false,
+			} );
 		} );
 	} );
 

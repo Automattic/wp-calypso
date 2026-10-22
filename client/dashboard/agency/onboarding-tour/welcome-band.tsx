@@ -14,7 +14,7 @@ import { useEffect, useRef } from 'react';
 import { Card } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
-import NewTabLabel from '../overview/new-tab-label';
+import NewTabLabel from '../components/new-tab-label';
 import callArt from './images/welcome/call.svg';
 import productArt from './images/welcome/product.svg';
 import siteArt from './images/welcome/site.svg';

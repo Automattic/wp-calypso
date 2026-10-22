@@ -1,18 +1,33 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import type { InteractiveUiPresentation } from '../../hooks/use-interactive-ui';
 import '@automattic/ai-ui-renderer/style.scss';
 import './style.scss';
 
+// Stable, so the components re-render only when their staleness changes.
+const STALE_HOST_PROPS = { isMessageStale: true };
+const CURRENT_HOST_PROPS = { isMessageStale: false };
+
 interface Props {
 	messageId: string;
 	presentation: InteractiveUiPresentation;
+	/** Every surface is stale, so Agenttic greys out the whole message. */
+	isMessageStale: boolean;
 }
 
 /** Shows a message's interactive UI surfaces, or a retry when the renderer failed to load. */
-export function InteractiveUiSurfaces( { messageId, presentation }: Props ) {
-	const { runtime, renderer, revision, isDisabled, hasLoadError, isRetryingLoad, retryLoad } =
-		presentation;
+export function InteractiveUiSurfaces( { messageId, presentation, isMessageStale }: Props ) {
+	const {
+		runtime,
+		renderer,
+		revision,
+		isDisabled,
+		staleSurfaceIds,
+		hasLoadError,
+		isRetryingLoad,
+		retryLoad,
+	} = presentation;
 
 	if ( hasLoadError ) {
 		return (
@@ -46,14 +61,23 @@ export function InteractiveUiSurfaces( { messageId, presentation }: Props ) {
 		<div data-agenttic-isolated>
 			{ runtime.getSurfaceIds( messageId ).map( ( surfaceId ) => {
 				const surface = runtime.getSurface( surfaceId );
+				const isStale = staleSurfaceIds.has( surfaceId );
 
 				return surface ? (
-					<InteractiveUiSurface
+					<div
 						key={ surfaceId }
-						surface={ surface }
-						disabled={ isDisabled }
-						revision={ revision }
-					/>
+						className={ clsx( 'agents-manager-interactive-ui-surfaces__surface', {
+							'is-stale': isStale && ! isMessageStale,
+						} ) }
+					>
+						<InteractiveUiSurface
+							surface={ surface }
+							disabled={ isDisabled || isStale }
+							theme="agents-manager"
+							revision={ revision }
+							hostProps={ isStale ? STALE_HOST_PROPS : CURRENT_HOST_PROPS }
+						/>
+					</div>
 				) : null;
 			} ) }
 		</div>

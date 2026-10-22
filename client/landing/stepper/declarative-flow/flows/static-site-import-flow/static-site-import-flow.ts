@@ -8,6 +8,10 @@ import {
 	getFullImporterUrl,
 	isPlatformImportable,
 } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/helper';
+import {
+	getProcessingErrorReason,
+	type ProcessingResult,
+} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -290,15 +294,22 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 						siteId: createdSiteId,
 						siteSlug: createdSiteSlug,
 						goToCheckout: shouldGoToCheckout,
+						processingResult,
 					} = providedDependencies as {
 						siteCreated?: boolean;
 						siteId: number;
 						siteSlug: string;
 						goToCheckout?: boolean;
+						processingResult?: ProcessingResult;
 					};
 
 					if ( ! siteCreated ) {
-						return navigate( STEPS.ERROR.slug, { message: 'Site not created' } );
+						// A reload of the processing step drops the pending action and submits
+						// NO_ACTION, which says nothing about whether the site exists.
+						return navigate( STEPS.ERROR.slug, {
+							message: 'Site not created',
+							errorReason: getProcessingErrorReason( processingResult, 'site_not_created' ),
+						} );
 					}
 
 					recordSignupComplete( { siteId: createdSiteId } );

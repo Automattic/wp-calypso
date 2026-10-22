@@ -78,7 +78,7 @@ export default function A4AOmnibar( { user }: { user?: User } ) {
 			icon: <A4AOmnibarHomeIcon />,
 			href: mainRoute,
 		},
-		plugins:
+		userPlugins:
 			authUser && supports.help
 				? [
 						{

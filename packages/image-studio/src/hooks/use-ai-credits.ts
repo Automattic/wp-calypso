@@ -6,6 +6,7 @@ import {
 	getCreditsPurchaseAction,
 	getCreditsPurchaseLink,
 	getCreditsPurchaseOptions,
+	getTopUpCreditsLeft,
 	parseCreditsAccess,
 	parseLiveCreditsStatus,
 } from '@automattic/agents-manager';
@@ -64,6 +65,7 @@ function getMeterDetails(
 		state: level ? CREDITS_STATE_BY_LEVEL[ level ] : 'ok',
 		planTier: status.planTier ?? 'none',
 		creditsLeft: status.remaining,
+		topUpCreditsLeft: getTopUpCreditsLeft( status ),
 	};
 }
 
