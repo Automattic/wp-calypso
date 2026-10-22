@@ -1336,8 +1336,9 @@ export default function pages() {
 	// Legacy `/start/launch-site` is now served by Stepper; see `legacy-launch-site-flow.ts`.
 	app.get( [ '/start/launch-site', '/start/launch-site/*' ], ( req, res, next ) => {
 		// Shows who still links to the old path (the Referer is sent with the event), so we know
-		// when it can go. Only the path and caller hints are sent: the query can carry coupons and
-		// redirect URLs.
+		// when it can go. The Sec-Fetch headers tell a followed link from a typed, scripted or
+		// restored navigation, and `retry` marks the chunk-retry reload in `layout/error.jsx`.
+		// Only these and the site are sent: the query can carry coupons and redirect URLs.
 		if ( calypsoEnv === 'production' && req.method === 'GET' ) {
 			const stringArg = ( value ) => ( typeof value === 'string' ? value : undefined );
 
@@ -1348,6 +1349,11 @@ export default function pages() {
 						path: req.path,
 						ref: stringArg( req.query.ref ),
 						query_source: stringArg( req.query.source ),
+						site_slug: stringArg( req.query.siteSlug ),
+						retry: stringArg( req.query.retry ),
+						fetch_site: req.get( 'Sec-Fetch-Site' ),
+						fetch_mode: req.get( 'Sec-Fetch-Mode' ),
+						fetch_user: req.get( 'Sec-Fetch-User' ),
 					},
 					req
 				);

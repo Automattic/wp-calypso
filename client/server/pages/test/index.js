@@ -1412,7 +1412,42 @@ describe( 'main app', () => {
 			} );
 			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
 				'calypso_legacy_launch_site_redirect',
-				{ path: '/start/launch-site/plans-launch', ref: 'admin-bar', query_source: undefined },
+				{
+					path: '/start/launch-site/plans-launch',
+					ref: 'admin-bar',
+					query_source: undefined,
+					site_slug: 'example.wordpress.com',
+					retry: undefined,
+					fetch_site: undefined,
+					fetch_mode: undefined,
+					fetch_user: undefined,
+				},
+				request
+			);
+		} );
+
+		it( 'records how the browser navigated to the hit', async () => {
+			const fetchHeaders = {
+				'Sec-Fetch-Site': 'none',
+				'Sec-Fetch-Mode': 'navigate',
+				'Sec-Fetch-User': '?1',
+			};
+			const { request } = await app.run( {
+				request: {
+					url: '/start/launch-site/domains-launch',
+					query: { ...query, retry: '1' },
+					get: jest.fn( ( header ) => fetchHeaders[ header ] ),
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				expect.objectContaining( {
+					site_slug: 'example.wordpress.com',
+					retry: '1',
+					fetch_site: 'none',
+					fetch_mode: 'navigate',
+					fetch_user: '?1',
+				} ),
 				request
 			);
 		} );
@@ -1434,7 +1469,11 @@ describe( 'main app', () => {
 			} );
 			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
 				'calypso_legacy_launch_site_redirect',
-				{ path: '/start/launch-site', ref: undefined, query_source: undefined },
+				expect.objectContaining( {
+					path: '/start/launch-site',
+					ref: undefined,
+					query_source: undefined,
+				} ),
 				request
 			);
 		} );
