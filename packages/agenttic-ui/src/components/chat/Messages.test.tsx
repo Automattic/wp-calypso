@@ -149,6 +149,65 @@ describe( 'Messages', () => {
 		expect( onClick ).toHaveBeenCalledOnce();
 	} );
 
+	it( 'renders a titled `errorNotice` as a message card linking to its action', async () => {
+		const onClick = vi.fn();
+		await render( {
+			messages: [ userMessage( 'Make it orange' ) ],
+			errorNotice: {
+				title: 'Your message wasn’t sent',
+				message: 'Site credits reset on Nov 15. Add more to keep going.',
+				action: { label: 'Add credits', href: '/checkout/credits', onClick },
+			},
+		} );
+
+		expect( container.querySelector( '[data-slot="messages"] [data-slot="notice"]' ) ).toBeNull();
+		const card = container.querySelector< HTMLAnchorElement >(
+			'[data-slot="messages"] a[href="/checkout/credits"]'
+		)!;
+		expect( card.textContent ).toBe(
+			'Your message wasn’t sentSite credits reset on Nov 15. Add more to keep going.'
+		);
+		card.addEventListener( 'click', ( event ) => event.preventDefault() );
+		await act( async () => card.click() );
+		expect( onClick ).toHaveBeenCalledOnce();
+	} );
+
+	it( 'renders a titled `errorNotice` without an action as a plain card', async () => {
+		await render( {
+			messages: [ userMessage( 'Make it orange' ) ],
+			errorNotice: { title: 'Your message wasn’t sent', message: 'Site credits reset on Nov 15.' },
+		} );
+
+		const messages = container.querySelector( '[data-slot="messages"]' )!;
+		expect( messages.querySelector( 'a' ) ).toBeNull();
+		expect( messages.textContent ).toContain( 'Your message wasn’t sent' );
+		expect( messages.textContent ).toContain( 'Site credits reset on Nov 15.' );
+	} );
+
+	it( 'announces a title-only `errorNotice` as its title', async () => {
+		const question = userMessage( 'Make it orange' );
+		await render( { messages: [ question ], isProcessing: true } );
+		await render( {
+			messages: [ question ],
+			isProcessing: false,
+			errorNotice: { title: 'Your message wasn’t sent', message: '' },
+		} );
+
+		expect( announcement() ).toBe( 'Your message wasn’t sent' );
+	} );
+
+	it( 'announces a titled `errorNotice` with its title first', async () => {
+		const question = userMessage( 'Make it orange' );
+		await render( { messages: [ question ], isProcessing: true } );
+		await render( {
+			messages: [ question ],
+			isProcessing: false,
+			errorNotice: { title: 'Your message wasn’t sent', message: 'Site credits reset on Nov 15.' },
+		} );
+
+		expect( announcement() ).toBe( 'Your message wasn’t sent. Site credits reset on Nov 15.' );
+	} );
+
 	it( 'renders no notice without `errorNotice`', async () => {
 		await render( {
 			messages: [ userMessage( 'Make it orange' ) ],

@@ -6,6 +6,7 @@ import { cn } from '../../utils/classNames';
 import { getLatestTurnStartIndex, getVisibleMessages } from '../../utils/message-helpers';
 import { SourcesCard } from '../sources';
 import { Message } from './Message';
+import { MessageCard } from './MessageCard';
 import styles from './Messages.module.css';
 import { Notice } from './Notice';
 import { ThinkingMessage } from './ThinkingMessage';
@@ -121,7 +122,8 @@ export function Messages( {
 	}, [ isProcessing, liveRegionText ] );
 
 	// Announce the notice in the message list when it appears or changes, as with a reply.
-	const noticeMessage = errorNotice?.message;
+	const noticeMessage =
+		errorNotice && [ errorNotice.title, errorNotice.message ].filter( Boolean ).join( '. ' );
 	const announcedNoticeRef = useRef( noticeMessage );
 	useEffect( () => {
 		if ( noticeMessage && noticeMessage !== announcedNoticeRef.current ) {
@@ -213,7 +215,16 @@ export function Messages( {
 					{ /* A DOM element for the ref AnimatePresence's popLayout measures with. */ }
 					{ errorNotice && (
 						<div key="error-notice">
-							<Notice { ...errorNotice } className={ styles.errorNotice } />
+							{ errorNotice.title ? (
+								<MessageCard
+									title={ errorNotice.title }
+									description={ errorNotice.message }
+									url={ errorNotice.action?.href }
+									onClick={ errorNotice.action?.onClick }
+								/>
+							) : (
+								<Notice { ...errorNotice } className={ styles.errorNotice } />
+							) }
 						</div>
 					) }
 				</AnimatePresence>
