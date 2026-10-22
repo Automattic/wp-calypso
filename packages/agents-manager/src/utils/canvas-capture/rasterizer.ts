@@ -29,7 +29,6 @@
 import {
 	drawScaledCopy,
 	getBackgroundImageUrls,
-	recallImagePixels,
 	rememberImagePixels,
 	URL_PATTERN,
 } from './image-pixels';
@@ -620,7 +619,14 @@ const fontCache = new Map< string, string >();
  * and re-encode the same photograph each time. Bounded, unlike the fonts: the
  * images change with what is framed.
  */
-const imageCache = new Map< string, { dataUri: string; pixels: HTMLCanvasElement | null } >();
+interface EncodedImage {
+	dataUri: string;
+	/** An `<img>`'s kept pixels; the measurement reads no CSS background. */
+	pixels: HTMLCanvasElement | null;
+}
+
+// In-flight encodes too, so an image shown twice in one capture is fetched once.
+const imageCache = new Map< string, Promise< EncodedImage > >();
 const MAX_CACHED_IMAGES = 12;
 
 /** Forgets the inlined images. For tests. */
@@ -847,10 +853,10 @@ const toBase64 = ( buffer: ArrayBuffer ): string => bytesToBase64( new Uint8Arra
 
 /** Fetches, scales and encodes one image for `fetchImageAsDataUri`. */
 const encodeImage = async (
-	element: Element,
 	url: string,
-	box: DOMRect | null
-): Promise< string > => {
+	box: DOMRect | null,
+	keepPixels: boolean
+): Promise< EncodedImage > => {
 	// A cors-mode request, so it rejects for any server that does not allow
 	// this origin, rather than handing back pixels that would taint the canvas.
 	const response = await fetchWithDeadline( url, IMAGE_FETCH_TIMEOUT );
@@ -863,7 +869,10 @@ const encodeImage = async (
 
 	// Vector, and already small: drawn at any size without re-encoding.
 	if ( blob.type === 'image/svg+xml' ) {
-		return `data:image/svg+xml;base64,${ toBase64( await blob.arrayBuffer() ) }`;
+		return {
+			dataUri: `data:image/svg+xml;base64,${ toBase64( await blob.arrayBuffer() ) }`,
+			pixels: null,
+		};
 	}
 
 	const bitmap = await createImageBitmap( blob );
@@ -882,14 +891,7 @@ const encodeImage = async (
 		throw new Error( 'No 2d context available' );
 	}
 
-	// Only an `<img>`'s: the measurement reads no CSS background.
-	const pixels =
-		element.tagName === 'IMG' ? drawScaledCopy( canvas, canvas.width, canvas.height ) : null;
-
-	if ( pixels ) {
-		rememberImagePixels( element, url, pixels );
-	}
-
+	const pixels = keepPixels ? drawScaledCopy( canvas, canvas.width, canvas.height ) : null;
 	const encoded = await new Promise< Blob | null >( ( resolve ) =>
 		canvas.toBlob( resolve, IMAGE_MIME, INLINED_IMAGE_QUALITY )
 	);
@@ -899,7 +901,10 @@ const encodeImage = async (
 	}
 
 	// The blob's own type: a browser that cannot encode WebP falls back to PNG.
-	return `data:${ encoded.type };base64,${ toBase64( await encoded.arrayBuffer() ) }`;
+	return {
+		dataUri: `data:${ encoded.type };base64,${ toBase64( await encoded.arrayBuffer() ) }`,
+		pixels,
+	};
 };
 
 /**
@@ -909,9 +914,10 @@ const encodeImage = async (
  * megabytes, every one of which would be base64-encoded into the SVG and
  * parsed again by the renderer, only to be drawn into a few hundred pixels.
  * The scale is the one `cover` would use, so an image fitted to its box is
- * never drawn larger than it was encoded. One drawn at its own size — a
- * repeated cover's tiles, a fixed one's viewport-sized background — is kept
- * at that size, since shrinking it would change what the capture shows.
+ * never drawn larger than it was encoded; a fixed background is fitted to
+ * the viewport instead. One drawn at its own size, as a repeated cover's tiles
+ * are, is kept at that size, since shrinking it would change what the
+ * capture shows.
  * A small copy of the pixels is kept for the contrast measurement, which
  * reads text over a cover's photograph against them.
  * @param element The live element showing the image.
@@ -929,27 +935,33 @@ const fetchImageAsDataUri = async (
 		return url;
 	}
 
-	const key = `${ url } ${ box ? `${ Math.round( box.width ) }x${ Math.round( box.height ) }` : 'own' }`;
-	const cached = imageCache.get( key );
+	// By kind too, since only an `<img>`'s encode keeps pixels.
+	const isImage = element.tagName === 'IMG';
+	const size = box ? `${ Math.round( box.width ) }x${ Math.round( box.height ) }` : 'own';
+	const key = `${ isImage ? 'img' : 'background' } ${ size } ${ url }`;
+	let encoded = imageCache.get( key );
 
-	if ( cached ) {
-		if ( cached.pixels ) {
-			rememberImagePixels( element, url, cached.pixels );
-		}
+	// Re-set on a hit too, so the eviction below drops the least recently used.
+	imageCache.delete( key );
 
-		return cached.dataUri;
+	if ( ! encoded ) {
+		encoded = encodeImage( url, box, isImage );
+		// Only successes stay: a failure cached would refuse the image for
+		// the rest of the session.
+		encoded.catch( () => imageCache.delete( key ) );
 	}
 
-	const dataUri = await encodeImage( element, url, box );
-
-	imageCache.set( key, {
-		dataUri,
-		pixels: element.tagName === 'IMG' ? recallImagePixels( element, url ) : null,
-	} );
+	imageCache.set( key, encoded );
 
 	// Oldest first, as a Map iterates.
 	if ( imageCache.size > MAX_CACHED_IMAGES ) {
 		imageCache.delete( imageCache.keys().next().value as string );
+	}
+
+	const { dataUri, pixels } = await encoded;
+
+	if ( pixels ) {
+		rememberImagePixels( element, url, pixels );
 	}
 
 	return dataUri;
@@ -1018,6 +1030,7 @@ export const inlineBlockImages = async (
 		// instances of this window's `HTMLImageElement`.
 		let url: string | undefined;
 		let fitted: boolean;
+		let fittedTo = box;
 
 		if ( element.tagName === 'IMG' ) {
 			const image = element as HTMLImageElement;
@@ -1032,13 +1045,16 @@ export const inlineBlockImages = async (
 			// one with quotes in it is cut short by the url pattern, and the
 			// rewrite would leave broken CSS where the background was.
 			url = urls.length === 1 && ! urls[ 0 ].startsWith( 'data:' ) ? urls[ 0 ] : undefined;
-			fitted =
-				[ 'cover', 'contain' ].includes( style.backgroundSize ) &&
-				style.backgroundAttachment !== 'fixed';
+			fitted = [ 'cover', 'contain' ].includes( style.backgroundSize );
+
+			// A fixed background is sized to the viewport, not its box.
+			if ( fitted && style.backgroundAttachment === 'fixed' ) {
+				fittedTo = { width: view.innerWidth, height: view.innerHeight } as DOMRect;
+			}
 		}
 
 		if ( url ) {
-			candidates.push( { element, url, box: fitted ? box : null } );
+			candidates.push( { element, url, box: fitted ? fittedTo : null } );
 		}
 	}
 

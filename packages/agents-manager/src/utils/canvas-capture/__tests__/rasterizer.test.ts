@@ -1,3 +1,4 @@
+import { recallImagePixels } from '../image-pixels';
 import {
 	buildSvg,
 	clearFontCache,
@@ -386,6 +387,8 @@ describe( 'inlineBlockImages', () => {
 				backgroundAttachment,
 				objectFit: '',
 			} ),
+			innerWidth: 400,
+			innerHeight: 300,
 		} );
 
 		return { root, view };
@@ -474,6 +477,52 @@ describe( 'inlineBlockImages', () => {
 		expect( fetchMock() ).toHaveBeenCalledTimes( 2 );
 	} );
 
+	it( 'fetches an image shown twice in one capture once', async () => {
+		stubSvg();
+		const { root, view } = blockWith(
+			'<img src="https://example.com/a.svg" /><img src="https://example.com/a.svg" />'
+		);
+
+		const inlined = await inlineBlockImages( [ root ], view );
+
+		expect( fetchMock() ).toHaveBeenCalledTimes( 1 );
+		expect( inlined.size ).toBe( 2 );
+	} );
+
+	it( 'keeps an image used on every capture over ones used once', async () => {
+		stubSvg();
+		const capture = async ( name: string ) => {
+			const { root, view } = blockWith( `<img src="https://example.com/${ name }.svg" />` );
+
+			await inlineBlockImages( [ root ], view );
+		};
+
+		await capture( 'hero' );
+
+		for ( let index = 0; index < 12; index++ ) {
+			await capture( 'hero' );
+			await capture( `other-${ index }` );
+		}
+
+		fetchMock().mockClear();
+		await capture( 'hero' );
+
+		expect( fetchMock() ).not.toHaveBeenCalled();
+	} );
+
+	it( 'fetches an image again after a failed fetch', async () => {
+		stubFetch( async () => {
+			throw new TypeError( 'Failed to fetch' );
+		} );
+		const { root, view } = blockWith( '<img src="https://example.com/a.svg" />' );
+
+		await inlineBlockImages( [ root ], view );
+		stubSvg();
+		const inlined = await inlineBlockImages( [ root ], view );
+
+		expect( inlined.size ).toBe( 1 );
+	} );
+
 	it( 'caps how many images one capture fetches', async () => {
 		stubSvg();
 		const { root, view } = blockWith(
@@ -550,7 +599,7 @@ describe( 'inlineBlockImages', () => {
 		// change what the capture shows.
 		it.each( [
 			[ 'a repeated background', { backgroundSize: 'auto' } ],
-			[ 'a fixed background', { backgroundAttachment: 'fixed' } ],
+			[ 'a fixed repeated background', { backgroundSize: 'auto', backgroundAttachment: 'fixed' } ],
 		] )( 'keeps %s at its own size', async ( _, style ) => {
 			const { root, view } = blockWith( '<div class="bg"></div>', {
 				backgroundImage: 'url("https://example.com/tile.jpg")',
@@ -560,6 +609,37 @@ describe( 'inlineBlockImages', () => {
 			await inlineBlockImages( [ root ], view );
 
 			expect( drawImage ).toHaveBeenCalledWith( expect.anything(), 0, 0, 2000, 1000 );
+		} );
+
+		// Sized to the viewport, which is all the browser draws of it.
+		it( 'fits a fixed background to the viewport, not its box', async () => {
+			const { root, view } = blockWith( '<div class="bg"></div>', {
+				backgroundImage: 'url("https://example.com/parallax.jpg")',
+				backgroundAttachment: 'fixed',
+			} );
+
+			await inlineBlockImages( [ root ], view );
+
+			// max( 400 / 2000, 300 / 1000 ) is 0.3.
+			expect( drawImage ).toHaveBeenCalledWith( expect.anything(), 0, 0, 600, 300 );
+		} );
+
+		// Only an `<img>`'s encode keeps pixels, so the two are cached apart.
+		it( 'keeps an image’s pixels though a background of the same photo was cached first', async () => {
+			const background = blockWith( '<div class="bg"></div>', {
+				backgroundImage: 'url("https://example.com/photo.jpg")',
+			} );
+			const image = blockWith( '<img src="https://example.com/photo.jpg" />' );
+
+			await inlineBlockImages( [ background.root ], background.view );
+			await inlineBlockImages( [ image.root ], image.view );
+
+			expect(
+				recallImagePixels(
+					image.root.querySelector( 'img' ) as Element,
+					'https://example.com/photo.jpg'
+				)
+			).not.toBeNull();
 		} );
 
 		it( 'shrinks a background sized to cover its box', async () => {

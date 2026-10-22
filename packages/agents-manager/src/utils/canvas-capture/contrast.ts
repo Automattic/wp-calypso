@@ -457,17 +457,23 @@ function copyLiveImage( image: HTMLImageElement ): HTMLCanvasElement | null {
 	}
 }
 
-/** Where `object-position` puts the image along one axis, given the room left over. */
-function objectOffset( value: string | undefined, room: number ): number {
-	if ( value?.endsWith( '%' ) ) {
-		return ( parseFloat( value ) / 100 ) * room;
+/**
+ * Where `object-position` puts the image along one axis, given the room left
+ * over; centred when unset, and `null` for anything but a plain percentage or
+ * length, such as the `calc()` an edge offset computes to, rather than a guess.
+ */
+function objectOffset( value: string | undefined, room: number ): number | null {
+	if ( ! value ) {
+		return room / 2;
 	}
 
-	if ( value?.endsWith( 'px' ) ) {
-		return parseFloat( value );
+	const match = /^(-?[\d.]+)(%|px)$/.exec( value );
+
+	if ( ! match ) {
+		return null;
 	}
 
-	return room / 2;
+	return match[ 2 ] === '%' ? ( parseFloat( match[ 1 ] ) / 100 ) * room : parseFloat( match[ 1 ] );
 }
 
 /**
@@ -508,8 +514,28 @@ function mapToImage(
 	}
 
 	const [ positionX, positionY ] = ( style.objectPosition || '' ).split( /\s+/ );
-	const left = box.left + objectOffset( positionX, box.width - width * scaleX );
-	const top = box.top + objectOffset( positionY, box.height - height * scaleY );
+	const offsetX = objectOffset( positionX, box.width - width * scaleX );
+	const offsetY = objectOffset( positionY, box.height - height * scaleY );
+
+	if ( offsetX === null || offsetY === null ) {
+		return null;
+	}
+
+	const left = box.left + offsetX;
+	const top = box.top + offsetY;
+	const drawn = {
+		left,
+		top,
+		right: left + width * scaleX,
+		bottom: top + height * scaleY,
+	} as DOMRect;
+
+	// Text running past the image, as over a contained image's letterbox,
+	// sits partly on whatever is behind it, which is not read here.
+	if ( ! contains( drawn, area ) ) {
+		return null;
+	}
+
 	const x = clamp( Math.floor( ( area.left - left ) / scaleX ), 0, width );
 	const y = clamp( Math.floor( ( area.top - top ) / scaleY ), 0, height );
 	const right = clamp( Math.ceil( ( area.right - left ) / scaleX ), 0, width );
@@ -613,7 +639,7 @@ function findCoverBackdrop(
 	pathChild: Element | null,
 	textRect: DOMRect,
 	view: Window
-): Pick< Backdrop, 'colours' | 'cover' > | null {
+): { colours: Rgba[]; cover: NonNullable< Backdrop[ 'cover' ] > } | null {
 	const children = Array.from( cover.children );
 	const overlay = children.find( ( child ) =>
 		child.classList.contains( 'wp-block-cover__background' )
@@ -719,7 +745,7 @@ function findBackdrop( element: Element, view: Window ): Backdrop | null {
 				? findCoverBackdrop( current, pathChild, textRect, view )
 				: null;
 
-			if ( ! cover?.colours ) {
+			if ( ! cover ) {
 				return null;
 			}
 

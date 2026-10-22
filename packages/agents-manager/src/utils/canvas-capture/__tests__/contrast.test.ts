@@ -1224,6 +1224,26 @@ describe( 'text over a cover image', () => {
 			'img'
 		) as HTMLImageElement;
 
+	const withImageStyle = ( styles: Styles ) => {
+		const image = getCanvasImage();
+		const getComputedStyle = image.ownerDocument.defaultView?.getComputedStyle as jest.Mock;
+		const computed = getComputedStyle.getMockImplementation();
+
+		getComputedStyle.mockImplementation( ( element: Element, pseudo?: string ) => {
+			const style = computed?.( element, pseudo );
+
+			if ( element === image ) {
+				Object.entries( styles ).forEach( ( [ property, value ] ) =>
+					Object.defineProperty( style, property, { value } )
+				);
+			}
+
+			return style;
+		} );
+
+		return image;
+	};
+
 	interface CoverOptions {
 		overlay?: Styles;
 		overlayClass?: string;
@@ -1438,19 +1458,53 @@ describe( 'text over a cover image', () => {
 				children: [ text( 'line', DARK_INK ) ],
 			} ),
 		] );
-		const image = getCanvasImage();
-		const getComputedStyle = image.ownerDocument.defaultView?.getComputedStyle as jest.Mock;
-		const computed = getComputedStyle.getMockImplementation();
+		withImageStyle( { objectFit: 'none' } );
 
-		getComputedStyle.mockImplementation( ( element: Element, pseudo?: string ) => {
-			const style = computed?.( element, pseudo );
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+	} );
 
-			if ( element === image ) {
-				Object.defineProperty( style, 'objectFit', { value: 'none' } );
-			}
+	// Centring it instead would read the wrong part of the photograph.
+	it( 'leaves text over a photo placed where the measurement cannot work out to the picture', () => {
+		mountCanvas( [
+			cover( {
+				overlay: HERO_OVERLAY,
+				pixels: photo( MID_TONED ),
+				children: [ text( 'line', DARK_INK ) ],
+			} ),
+		] );
+		withImageStyle( { objectPosition: '2em 50%' } );
 
-			return style;
-		} );
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+	} );
+
+	it( 'measures text over a photo placed at a plain position', () => {
+		mountCanvas( [
+			cover( {
+				overlay: HERO_OVERLAY,
+				pixels: photo( MID_TONED ),
+				children: [ text( 'line', DARK_INK ) ],
+			} ),
+		] );
+		withImageStyle( { objectPosition: '30% 70%' } );
+
+		expect( describeTextContrast( [ 'hero' ] )?.failures ).toBe( 1 );
+	} );
+
+	// Over the letterbox, the text sits on whatever is behind the image.
+	it( 'leaves text running past a contained photo to the picture', () => {
+		mountCanvas( [
+			cover( {
+				overlay: HERO_OVERLAY,
+				pixels: photo( MID_TONED ),
+				children: [ text( 'line', DARK_INK ) ],
+			} ),
+		] );
+		const image = withImageStyle( { objectFit: 'contain' } );
+
+		// The 2:1 photograph starts 120px down its 840px box, so the line of
+		// text at 100–140px is half over the letterbox.
+		image.getBoundingClientRect = () =>
+			( { top: 0, left: 0, width: 1200, height: 840, right: 1200, bottom: 840 } ) as DOMRect;
 
 		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
 	} );
