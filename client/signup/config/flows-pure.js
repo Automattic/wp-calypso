@@ -18,6 +18,7 @@ const getUserSocialStepOrFallback = () =>
 export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
+	getSiteSelectedDestination = noop,
 	getLaunchDestination = noop,
 	getDomainSignupFlowDestination = noop,
 	getEmailSignupFlowDestination = noop,
@@ -166,15 +167,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'onboarding-registrationless',
-			steps: [ 'domains', 'plans-new', 'user-new' ],
-			destination: getSignupDestination,
-			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
-			lastModified: '2020-06-26',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'rewind-setup',
 			steps: [ 'rewind-form-creds', 'rewind-were-backing' ],
 			destination: '/activity-log',
@@ -252,7 +244,7 @@ export function generateFlows( {
 		{
 			name: 'site-selected',
 			steps: [ 'plans-site-selected-legacy' ],
-			destination: getSignupDestination,
+			destination: getSiteSelectedDestination,
 			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
 			description: 'A flow to test updating an existing site with `Signup`',
 			lastModified: '2017-01-19',

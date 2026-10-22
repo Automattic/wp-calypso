@@ -1,26 +1,29 @@
+import { isBusiness, isPersonal, isPremium } from '@automattic/calypso-products';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
 	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
-import { DOMAIN_FOR_GRAVATAR_FLOW, isDomainForGravatarFlow } from '@automattic/onboarding';
+import {
+	DOMAIN_FOR_GRAVATAR_FLOW,
+	isDomainForGravatarFlow,
+	ONBOARDING_FLOW,
+} from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { SITE_SELECTED_REF } from 'calypso/landing/stepper/constants';
 import { getOnboardingPostCheckoutDestination } from 'calypso/landing/stepper/declarative-flow/helpers/get-onboarding-post-checkout-destination';
+import { withLocale } from 'calypso/landing/stepper/declarative-flow/helpers/with-locale';
+import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
 
 function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
-	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
-
-	// Append the locale slug for the userless checkout page.
-	if ( 'no-site' === dependencies.siteSlug && true === dependencies.allowUnauthenticated ) {
-		checkoutURL += `/${ localeSlug }`;
-	}
+	const checkoutURL = `/checkout/${ dependencies.siteSlug }`;
 
 	const isDomainOnly = [ 'domain', DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName );
 	const isGravatarDomain = isDomainForGravatarFlow( flowName );
@@ -45,6 +48,10 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 			},
 			`/start/with-plugin/plans-with-plugin${ localeSlug ? `/${ localeSlug }` : '' }`
 		);
+	} else if ( flowName === 'site-selected' ) {
+		// site-selected: its destination is the post-checkout step, which would treat leaving
+		// checkout as a purchase, so land on My Home instead.
+		backDestination = getSignupDestination( { ...dependencies, localeSlug, flowName } );
 	}
 
 	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
@@ -122,6 +129,33 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 	} );
 
 	return redirectTo;
+}
+
+/**
+ * A site that already exists (e.g. a domain-only site turned into a full one) lands on the same
+ * post-checkout step as the onboarding flow once it buys a plan that can include Big Sky, so it
+ * gets the setup-your-site-ai chooser. Other plans, such as Commerce with its Atomic transfer,
+ * go straight to My Home.
+ * @param {Object} dependencies the signup dependency store
+ * @param {string} localeSlug the signup locale
+ * @returns {string} the URL to land on after checkout
+ */
+function getSiteSelectedDestination( dependencies, localeSlug ) {
+	const { siteSlug, redirect_to, cartItems } = dependencies;
+	const planCartItem = getPlanCartItem( cartItems );
+
+	const canIncludeBigSky =
+		!! planCartItem &&
+		( isPersonal( planCartItem ) || isPremium( planCartItem ) || isBusiness( planCartItem ) );
+
+	if ( redirect_to || ! siteSlug || ! canIncludeBigSky ) {
+		return getSignupDestination( dependencies );
+	}
+
+	return addQueryArgs(
+		{ siteSlug, ref: SITE_SELECTED_REF },
+		withLocale( `/setup/${ ONBOARDING_FLOW }/post-checkout-onboarding`, localeSlug )
+	);
 }
 
 /**
@@ -273,6 +307,7 @@ function getHostingFlowDestination( { stepperHostingFlow } ) {
 const flows = generateFlows( {
 	getRedirectDestination,
 	getSignupDestination,
+	getSiteSelectedDestination,
 	getLaunchDestination,
 	getDomainSignupFlowDestination,
 	getEmailSignupFlowDestination,

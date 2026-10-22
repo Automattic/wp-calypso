@@ -337,20 +337,24 @@ describe( '<RemoteAbilitiesSection>', () => {
 		} );
 	} );
 
-	test( 'an exact anchor tool shows just that ability in just its card', () => {
+	test( 'abilities with no saved choice follow the default', () => {
 		seed( { abilities: catalog } );
-		render(
-			<RemoteAbilitiesSection
-				site={ JETPACK_SITE }
-				category="write"
-				anchorTool="jetpack-forms/delete-form"
-			/>,
-			{ queryClient }
-		);
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" defaultEnabled />, {
+			queryClient,
+		} );
 
-		expect( screen.getByRole( 'checkbox', { name: 'Delete form' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'checkbox', { name: 'Update form' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'heading', { name: 'Akismet' } ) ).not.toBeInTheDocument();
+		expect( getPluginIntent( 'Akismet' ) ).toBeChecked();
+		expect( getPluginIntent( 'Jetpack Forms' ) ).toBeChecked();
+	} );
+
+	test( 'a saved choice beats the default', () => {
+		seed( { abilities: catalog, remoteGroups: { 'write:jetpack-forms': false } } );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" defaultEnabled />, {
+			queryClient,
+		} );
+
+		expect( getPluginIntent( 'Akismet' ) ).toBeChecked();
+		expect( getPluginIntent( 'Jetpack Forms' ) ).not.toBeChecked();
 	} );
 
 	test( 'search filters abilities and opens matching cards without expanding', () => {

@@ -1,8 +1,8 @@
 import { configureWordPressMigration } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
-import { isAllowedRedirectUrl } from '@automattic/calypso-url';
+import { getUrlParts, isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { Onboard, type OnboardActions } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW } from '@automattic/onboarding';
 import { canInstallPlugins, type SiteExcerptData } from '@automattic/sites';
 import { useQueryClient } from '@tanstack/react-query';
@@ -18,6 +18,7 @@ import {
 	isPlatformImportable,
 	getFullImporterUrl,
 } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/helper';
+import { type CopySiteEligibility } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-check';
 import { type SiteMigrationIdentifyAction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-identify';
 import { isHostingSupportedForSSHMigration } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-ssh-share-access/utils/hosting-provider-validation';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -26,6 +27,7 @@ import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin'
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
@@ -199,6 +201,26 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const query = useQuery();
 		const flowState = useFlowState();
 		const handoff = flowState.get( 'migrationHandoff' );
+		const { hostname, protocol } = getUrlParts( query.get( 'from' ) || '' );
+		const checkSourceEligibility =
+			config.isEnabled( 'migration/reprint-flow' ) &&
+			query.get( 'isWpcom' ) === 'true' &&
+			query.get( 'platform' ) === 'wordpress' &&
+			!! hostname &&
+			( protocol === 'http:' || protocol === 'https:' );
+		const { data: sourceSite, isLoading: isLoadingSource } = useSiteQuery( hostname, {
+			enabled: checkSourceEligibility,
+		} );
+		const { shouldShowSiteCopyItem, isFetching: isFetchingSiteCopy } = useSiteCopy(
+			sourceSite ?? undefined,
+			{ enabled: checkSourceEligibility }
+		);
+		let copySiteEligibility: CopySiteEligibility = 'ineligible';
+		if ( checkSourceEligibility && ( isLoadingSource || isFetchingSiteCopy ) ) {
+			copySiteEligibility = 'loading';
+		} else if ( shouldShowSiteCopyItem ) {
+			copySiteEligibility = 'eligible';
+		}
 		const hasDestination =
 			config.isEnabled( 'migration/reprint-flow' ) &&
 			query.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
@@ -232,6 +254,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 					query.get( 'action' ) !== 'import',
 			},
 			'site-migration-check': {
+				copySiteEligibility,
 				destinationSiteSlug: hasDestination ? siteSlug : undefined,
 				destinationSiteUrl: hasDestination ? site?.URL : undefined,
 				destinationPlanName: site?.plan?.product_name_short || site?.plan?.product_name,
@@ -267,6 +290,16 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const locale = useLocale();
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
+		const copySourceSlug =
+			currentStep === STEPS.SITE_MIGRATION_CHECK.slug && urlQueryParams.get( 'isWpcom' ) === 'true'
+				? getUrlParts( fromQueryParam || '' ).hostname
+				: undefined;
+		const { data: copySourceSite } = useSiteQuery( copySourceSlug, {
+			enabled: !! copySourceSlug,
+		} );
+		const { startSiteCopy } = useSiteCopy( copySourceSite ?? undefined, {
+			enabled: !! copySourceSlug,
+		} );
 		const actionQueryParam = urlQueryParams.get( 'action' );
 		const platformQueryParam = ( urlQueryParams.get( 'platform' ) ||
 			'unknown' ) as ImporterPlatform;
@@ -452,7 +485,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 					const { from, platform, action, host, isWpcom } = providedDependencies as {
 						from: string;
 						platform: ImporterPlatform;
-						action: SiteMigrationIdentifyAction | 'back' | 'select-existing-site';
+						action:
+							| SiteMigrationIdentifyAction
+							| 'back'
+							| 'select-existing-site'
+							| 'copy-site'
+							| 'transfer-domain'
+							| 'get-access';
 						host?: string;
 						isWpcom?: boolean;
 					};
@@ -461,6 +500,28 @@ const siteMigration: FlowV2< typeof initialize > = {
 							...state,
 							migrationArrivalChecked: true,
 						} ) );
+					}
+					const { hostname, protocol } = getUrlParts( from || '' );
+					if (
+						slug === STEPS.SITE_MIGRATION_CHECK.slug &&
+						config.isEnabled( 'migration/reprint-flow' ) &&
+						urlQueryParams.get( 'isWpcom' ) === 'true' &&
+						platform === 'wordpress' &&
+						hostname &&
+						( protocol === 'http:' || protocol === 'https:' )
+					) {
+						if ( action === 'copy-site' ) {
+							startSiteCopy();
+							return exitFlow( addQueryArgs( { sourceSlug: hostname }, '/setup/copy-site' ) );
+						}
+						if ( action === 'transfer-domain' ) {
+							return exitFlow( addQueryArgs( { new: hostname }, '/setup/domain-transfer/intro' ) );
+						}
+						if ( action === 'get-access' ) {
+							return window.location.assign(
+								localizeUrl( 'https://wordpress.com/support/account-recovery/' )
+							);
+						}
 					}
 					if (
 						slug === STEPS.SITE_MIGRATION_CHECK.slug &&

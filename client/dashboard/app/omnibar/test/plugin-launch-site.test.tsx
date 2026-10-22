@@ -66,12 +66,12 @@ function LaunchHarness( {
 	adminBarNodes?: AdminBarNode[];
 } ) {
 	const { nodeBuilder, panel } = useLaunchSiteNodeBuilder( { site } );
-	const { siteActions = [] } = buildOmnibarNodesFromAdminBarNodes( adminBarNodes, {
+	const { sitePlugins = [] } = buildOmnibarNodesFromAdminBarNodes( adminBarNodes, {
 		'launch-site': nodeBuilder,
 	} );
 	return (
 		<>
-			{ siteActions.map( ( node ) => (
+			{ sitePlugins.map( ( node ) => (
 				<button key={ node.id } onClick={ node.onClick } disabled={ node.disabled }>
 					{ node.title }
 				</button>

@@ -55,6 +55,7 @@ import { useSocialService } from './use-social-service';
 import { useUpdateEmail } from './use-update-email';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
+import 'calypso/components/account-template/style.scss';
 import './style.scss';
 
 // Social providers shown on the mobile treatment per the design. Also keeps the
@@ -406,20 +407,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			<>
 				{ localeSuggestions }
 				{ planCard }
-				<Step.Heading
-					text={ headingText }
-					subText={ headingSubText }
-					align={ isEmailFirstVariant ? 'left' : undefined }
-				/>
+				<Step.Heading text={ headingText } subText={ headingSubText } />
 			</>
 		);
-
-		// Leaving the flow would walk past a gate the user is still owed, and Continue is already
-		// the way back from the account screen.
-		const backButton =
-			navigation.goBack && ! isEditingEmail ? (
-				<Step.BackButton onClick={ navigation.goBack } />
-			) : undefined;
 
 		const topBar = (
 			<Step.TopBar
@@ -430,12 +420,16 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 						? () => recordTracksEvent( 'calypso_signup_logo_click', { flow, step: stepName } )
 						: undefined
 				}
-				leftElement={ backButton }
 				rightElement={
 					hideLoginLink || isEmailFirstVariant || isEditingEmail || showsInFormLoginLink ? null : (
-						<Step.LinkButton href={ loginLink } onClick={ () => recordLoginLinkClick( 'top-bar' ) }>
-							{ translate( 'Log in' ) }
-						</Step.LinkButton>
+						<nav className="account-template__top-bar-links">
+							<Step.LinkButton
+								href={ loginLink }
+								onClick={ () => recordLoginLinkClick( 'top-bar' ) }
+							>
+								{ translate( 'Log in' ) }
+							</Step.LinkButton>
+						</nav>
 					)
 				}
 			/>
@@ -455,7 +449,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 						verticalAlign="center"
 						headingColumnWidth={ 4 }
 						columnWidth={ 4 }
-						heading={ heading }
+						heading={ <div className="account-template">{ heading }</div> }
 						topBar={ topBar }
 						noGap
 					>
@@ -474,10 +468,12 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				} ) }
 				verticalAlign="center"
 				columnWidth={ 4 }
-				heading={ heading }
 				topBar={ topBar }
 			>
-				{ stepContent }
+				<div className="account-template">
+					{ heading }
+					{ stepContent }
+				</div>
 			</Step.CenteredColumnLayout>
 		);
 	}

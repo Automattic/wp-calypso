@@ -25,6 +25,8 @@ module.exports.loader = ( { includePaths, postCssOptions } ) => ( {
 				url: {
 					filter: ( path ) => ! path.startsWith( '/' ),
 				},
+				// Keep css-loader 6's default object with kebab-case keys (`styles[ 'is-current' ]`).
+				modules: { auto: true, namedExport: false, exportLocalsConvention: 'as-is' },
 			},
 		},
 		{
