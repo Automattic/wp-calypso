@@ -129,7 +129,8 @@ Rollout (AM-118) waits for Agents Manager, the Jetpack AI sidebar and WooCommerc
 
 These steps work for any owner, such as Agents Manager, the Jetpack AI sidebar or WooCommerce AI.
 Agents Manager's pickers are a worked example: `AGENTS_MANAGER_CATALOG` in `catalogs.ts`, and
-wpcom's `ability.color-palette.php`.
+wpcom's `ability.color-palette.php`. If the basic components can express the UI, skip step 1 and
+return them with `surface_result()`.
 
 1. **Declare the component in your catalog** (your provider's `interactiveUi`, or Agents Manager's
    own): its props as JSON Schema in the document, and its name mapped to the existing React
