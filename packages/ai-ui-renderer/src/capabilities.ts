@@ -139,9 +139,8 @@ function withDiscriminator(
 	};
 }
 
-// A document as A2UI reads it: only the root keys A2UI allows, its `$id` as A2UI's catalogs set
-// it, each component and function discriminated by name, and each function's
-// `requiresUserActivation`, which A2UI defaults to false but this renderer to true.
+// A document in A2UI's form. Each function states `requiresUserActivation`, since A2UI defaults it
+// to false but this renderer to true.
 function toInlineCatalog( {
 	catalogId,
 	title,

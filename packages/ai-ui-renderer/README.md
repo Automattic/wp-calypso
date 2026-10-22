@@ -70,9 +70,9 @@ before loading the renderer:
   match its document. Check catalogs with it before advertising them, since
   `createInteractiveUiCatalog()` rejects those that fail.
 - `getInteractiveUiRendererCapabilities( documents )` returns A2UI's `a2uiRendererCapabilities`
-  for the Basic catalog and those catalogs: their IDs, and their documents as inline catalogs as
-  A2UI reads them, with only the root keys it allows, `$id`, `protocolVersion`, each component's
-  `component` and each function's `@call` naming it, and each function's `requiresUserActivation`.
+  for the Basic catalog and those catalogs: their IDs, and their documents in A2UI's form, with
+  `$id`, `protocolVersion`, each component and function named in `component` or `@call`, and each
+  function's `requiresUserActivation`.
   Send it to the agent, so it shows only UI the host can render.
 - `BASIC_CATALOG_ID` is A2UI's Basic catalog ID.
 
