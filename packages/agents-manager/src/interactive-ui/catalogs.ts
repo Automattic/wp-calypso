@@ -46,7 +46,7 @@ export function filterInteractiveUiCatalogs( catalogs: InteractiveUiCatalogDefin
 	} );
 }
 
-/** What the chat renders, as A2UI's `a2uiRendererCapabilities`, for its client context. */
+/** What the chat renders, as A2UI's `a2uiRendererCapabilities`, for each message's metadata. */
 export function getInteractiveUiCapabilities(
 	providerCatalogs: InteractiveUiCatalogDefinition[] = []
 ) {

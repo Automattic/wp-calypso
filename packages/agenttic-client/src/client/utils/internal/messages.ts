@@ -129,8 +129,12 @@ export async function enhanceMessage(
 	// Then enhance with context (sync)
 	enhancedMessage = enhanceMessageWithContext( enhancedMessage, contextProvider );
 
-	// Remove metadata before sending to agent (metadata is currently only client-side only to manage message timestammps)
+	// The message's own metadata stays on the client, which uses it for timestamps; the agent gets
+	// only what the context provider gives it.
 	const { metadata, ...messageForAgent } = enhancedMessage;
+	const agentMetadata = contextProvider?.getMessageMetadata?.();
 
-	return messageForAgent;
+	return agentMetadata && Object.keys( agentMetadata ).length > 0
+		? { ...messageForAgent, metadata: agentMetadata }
+		: messageForAgent;
 }

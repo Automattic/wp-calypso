@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { enhanceMessageWithContext, enhanceMessageWithTools } from '../messages';
+import { enhanceMessage, enhanceMessageWithContext, enhanceMessageWithTools } from '../messages';
 import type { Ability, Message, ToolProvider } from '../../../types/index';
 
 describe( 'enhanceMessageWithTools', () => {
@@ -426,5 +426,32 @@ describe( 'enhanceMessageWithContext', () => {
 			type: 'data',
 			data: { clientContext: { url: 'https://example.com' } },
 		} );
+	} );
+} );
+
+describe( 'enhanceMessage', () => {
+	const message: Message = {
+		role: 'user',
+		kind: 'message',
+		messageId: 'm-1',
+		parts: [ { type: 'text', text: 'Hi' } ],
+		metadata: { timestamp: 1 },
+	};
+
+	it( 'sends the agent the context provider’s message metadata, not the client’s', async () => {
+		const enhanced = await enhanceMessage( message, undefined, {
+			getClientContext: () => ( {} ),
+			getMessageMetadata: () => ( { a2uiRendererCapabilities: { 'v1.0': {} } } ),
+		} );
+
+		expect( enhanced.metadata ).toEqual( { a2uiRendererCapabilities: { 'v1.0': {} } } );
+	} );
+
+	it( 'sends no metadata when the context provider has none', async () => {
+		const enhanced = await enhanceMessage( message, undefined, {
+			getClientContext: () => ( {} ),
+		} );
+
+		expect( enhanced ).not.toHaveProperty( 'metadata' );
 	} );
 } );
