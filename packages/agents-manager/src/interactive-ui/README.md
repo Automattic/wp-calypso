@@ -86,8 +86,7 @@ come.
   Every function treats its arguments as untrusted.
 - **Custom components own their side effects**: the change itself, its checkpoint, keyed by
   `surfaceId`, and its own Tracks events. They turn off their controls with `disabled`, and skip
-  their side effects and Tracks with `isMessageStale`, chat state a surface can't override. One
-  that owns its state, such as a plan the user keeps editing, may stay usable when stale. As for
+  their side effects and Tracks with `isMessageStale`, chat state a surface can't override. As for
   `show-component` messages, Agents Manager records `jetpack_big_sky_chat_response_rendered` for
   each one on a current surface, and the actions it reports through `onResponseAction`
   (`jetpack_big_sky_chat_response_action`), with its name as `component_type` and its surface ID
