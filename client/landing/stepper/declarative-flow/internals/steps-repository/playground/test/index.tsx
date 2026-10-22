@@ -4,7 +4,7 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { Step } from '@automattic/onboarding';
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlaygroundStep from '..';
@@ -32,6 +32,7 @@ jest.mock( '../components/playground-error', () => ( {
 } ) );
 
 let mockPlaygroundClientInstance;
+let getClientRectsSpy: jest.SpyInstance;
 
 const renderPlaygroundStep = (
 	props?: Partial< StepProps >,
@@ -57,6 +58,14 @@ describe( 'Playground', () => {
 			blueprint: null,
 			client: mockPlaygroundClientInstance,
 		} );
+		// jsdom has no layout, so the Modal can't find a tabbable element to focus on mount.
+		getClientRectsSpy = jest
+			.spyOn( HTMLElement.prototype, 'getClientRects' )
+			.mockReturnValue( [ {} ] as unknown as DOMRectList );
+	} );
+
+	afterEach( () => {
+		getClientRectsSpy.mockRestore();
 	} );
 
 	describe( 'step', () => {
@@ -127,6 +136,7 @@ describe( 'Playground', () => {
 			} );
 
 			await userEvent.click( getSaveStoreButton() );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue to save' } ) );
 
 			expect( getLaunchEventProps() ).toEqual(
 				expect.objectContaining( { is_woocommerce_intent: true } )
@@ -153,11 +163,155 @@ describe( 'Playground', () => {
 		} );
 	} );
 
+	describe( 'saving the WooCommerce playground', () => {
+		const wooEntry = '/setup/onboarding/playground?blueprint=123&playground=1&intent=woocommerce';
+		const tracksProps = {
+			flow: 'onboarding',
+			step: 'playground',
+			blueprint: 'bpl-123',
+			is_woocommerce_intent: true,
+		};
+		const querySaveModal = () => screen.queryByRole( 'dialog', { name: 'Save my store' } );
+		const getKeepBuildingButton = () => screen.getByRole( 'button', { name: 'Keep building' } );
+		const getContinueButton = () => screen.getByRole( 'button', { name: 'Continue to save' } );
+		const getSaveEventCalls = () =>
+			recordTracksEvent.mock.calls.filter(
+				( [ eventName ] ) =>
+					eventName.startsWith( 'calypso_playground_save_modal_' ) ||
+					eventName === 'calypso_playground_launch_site'
+			);
+
+		const renderWooPlaygroundStep = async ( submit = jest.fn() ) => {
+			await act( async () => {
+				renderPlaygroundStep( { navigation: { submit } }, { initialEntry: wooEntry } );
+			} );
+		};
+
+		const openSaveModal = async () => {
+			await userEvent.click( getSaveStoreButton() );
+			await waitFor( () => expect( getKeepBuildingButton() ).toHaveFocus() );
+		};
+
+		it( 'should launch directly without the save modal outside the WooCommerce entry', async () => {
+			const submit = jest.fn();
+
+			await act( async () => {
+				renderPlaygroundStep(
+					{ navigation: { submit } },
+					{ initialEntry: '/setup/onboarding/playground?blueprint=123&playground=1' }
+				);
+			} );
+
+			await userEvent.click( getLaunchButton() );
+
+			expect( querySaveModal() ).not.toBeInTheDocument();
+			expect( submit ).toHaveBeenCalledTimes( 1 );
+			expect( getSaveEventCalls().map( ( [ eventName ] ) => eventName ) ).toEqual( [
+				'calypso_playground_launch_site',
+			] );
+		} );
+
+		it( 'should keep the save store button disabled when playground query parameter is missing', async () => {
+			await act( async () => {
+				renderPlaygroundStep(
+					{},
+					{ initialEntry: '/setup/onboarding/playground?blueprint=123&intent=woocommerce' }
+				);
+			} );
+
+			expect( getSaveStoreButton() ).toBeDisabled();
+		} );
+
+		it( 'should open the save modal instead of launching', async () => {
+			const submit = jest.fn();
+			await renderWooPlaygroundStep( submit );
+
+			await openSaveModal();
+
+			expect( querySaveModal() ).toBeVisible();
+			expect(
+				screen.getByText( 'Keep your store safe and pick up where you left off anytime.' )
+			).toBeVisible();
+			expect( screen.getByRole( 'heading', { name: 'When you save, you unlock' } ) ).toBeVisible();
+			const benefits = screen.getAllByRole( 'listitem' );
+			expect( benefits.map( ( benefit ) => benefit.textContent ) ).toEqual( [
+				'Your store, everywhereAccess it anytime from your account',
+				'Time to explore14-day free trial. No credit card needed',
+				'Only pay when you’re readyLaunch on your own timeline',
+			] );
+			expect( getContinueButton() ).toBeEnabled();
+			expect( submit ).not.toHaveBeenCalled();
+			expect( getSaveEventCalls() ).toEqual( [
+				[ 'calypso_playground_save_modal_open', tracksProps ],
+			] );
+		} );
+
+		it.each( [
+			[ 'the Keep building button', () => userEvent.click( getKeepBuildingButton() ) ],
+			[
+				'the close button',
+				() =>
+					userEvent.click( within( querySaveModal() ).getByRole( 'button', { name: 'Close' } ) ),
+			],
+			[ 'Escape', () => userEvent.keyboard( '{Escape}' ) ],
+			[
+				'an outside click',
+				() => {
+					const overlay = querySaveModal().closest( '.components-modal__screen-overlay' );
+					return userEvent.pointer( [
+						{ keys: '[MouseLeft>]', target: overlay },
+						{ keys: '[/MouseLeft]', target: overlay },
+					] );
+				},
+			],
+		] )( 'should keep building and return focus when dismissed with %s', async ( _, dismiss ) => {
+			const submit = jest.fn();
+			await renderWooPlaygroundStep( submit );
+
+			await openSaveModal();
+			await dismiss();
+
+			await waitFor( () => expect( querySaveModal() ).not.toBeInTheDocument() );
+			expect( getSaveStoreButton() ).toHaveFocus();
+			expect( getSaveStoreButton() ).toBeEnabled();
+			expect( submit ).not.toHaveBeenCalled();
+			expect( getSaveEventCalls() ).toEqual( [
+				[ 'calypso_playground_save_modal_open', tracksProps ],
+				[ 'calypso_playground_save_modal_keep_building', tracksProps ],
+			] );
+		} );
+
+		it( 'should launch the site once when continuing to save', async () => {
+			const submit = jest.fn();
+			await renderWooPlaygroundStep( submit );
+
+			await openSaveModal();
+			await userEvent.click( getContinueButton() );
+
+			expect( submit ).toHaveBeenCalledTimes( 1 );
+			expect( getContinueButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+			expect(
+				screen.getByRole( 'button', { name: 'Save my store', hidden: true } )
+			).toBeDisabled();
+			expect( getSaveEventCalls() ).toEqual( [
+				[ 'calypso_playground_save_modal_open', tracksProps ],
+				[ 'calypso_playground_save_modal_continue', tracksProps ],
+				[ 'calypso_playground_launch_site', { ...tracksProps, intent: 'plans-playground' } ],
+			] );
+
+			await userEvent.click( getContinueButton() );
+			await userEvent.keyboard( '{Escape}' );
+
+			expect( querySaveModal() ).toBeVisible();
+			expect( submit ).toHaveBeenCalledTimes( 1 );
+			expect( getSaveEventCalls() ).toHaveLength( 3 );
+		} );
+	} );
+
 	describe( 'leaving the WooCommerce playground', () => {
 		const wooEntry = '/setup/onboarding/playground?blueprint=123&playground=1&intent=woocommerce';
 		const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' );
 		const assign = jest.fn();
-		let getClientRectsSpy: jest.SpyInstance;
 
 		const getBackButton = () => screen.getByRole( 'button', { name: 'Back' } );
 		const getCloseButton = () => screen.getByRole( 'button', { name: 'Close' } );
@@ -192,15 +346,10 @@ describe( 'Playground', () => {
 				configurable: true,
 				value: { ...window.location, assign },
 			} );
-			// jsdom has no layout, so the Modal can't find a tabbable element to focus on mount.
-			getClientRectsSpy = jest
-				.spyOn( HTMLElement.prototype, 'getClientRects' )
-				.mockReturnValue( [ {} ] as unknown as DOMRectList );
 		} );
 
 		afterEach( () => {
 			Object.defineProperty( window, 'location', locationDescriptor );
-			getClientRectsSpy.mockRestore();
 		} );
 
 		it( 'should not show the Back and close buttons outside the WooCommerce entry', async () => {

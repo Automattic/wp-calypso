@@ -9,6 +9,7 @@ import { isPlaygroundWooIntent } from 'calypso/landing/stepper/utils/playground-
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PlaygroundIframe } from './components/playground-iframe';
 import { PlaygroundLeaveModal } from './components/playground-leave-modal';
+import { PlaygroundSaveModal } from './components/playground-save-modal';
 import { getBlueprintLabelForTracking } from './lib/blueprint';
 import { DEFAULT_PLAN_INTENT, WOO_START_HOSTS_URL } from './lib/constants';
 import type { Step as StepType } from '../../types';
@@ -30,11 +31,20 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 	const [ leaveModalTrigger, setLeaveModalTrigger ] = useState< LeaveModalTrigger | null >( null );
 	const [ isLeaving, setIsLeaving ] = useState( false );
 
+	const [ isSaveModalOpen, setIsSaveModalOpen ] = useState( false );
+
 	const isWooCommerceIntent = isPlaygroundWooIntent( flow, stepName, query.get( 'intent' ) );
 
 	const setPlaygroundClient = ( client: PlaygroundClient ) => {
 		playgroundClientRef.current = client;
 	};
+
+	const getTracksProps = () => ( {
+		flow,
+		step: 'playground',
+		blueprint: getBlueprintLabelForTracking( query ),
+		is_woocommerce_intent: isWooCommerceIntent,
+	} );
 
 	const launchSite = async () => {
 		if ( ! submit || isLaunching ) {
@@ -45,11 +55,8 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 
 		try {
 			recordTracksEvent( 'calypso_playground_launch_site', {
-				flow,
-				step: 'playground',
-				blueprint: getBlueprintLabelForTracking( query ),
+				...getTracksProps(),
 				intent: DEFAULT_PLAN_INTENT,
-				is_woocommerce_intent: isWooCommerceIntent,
 			} );
 
 			submit();
@@ -59,13 +66,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 	};
 
 	const recordLeaveModalEvent = ( eventName: string, trigger: LeaveModalTrigger ) => {
-		recordTracksEvent( eventName, {
-			flow,
-			step: 'playground',
-			blueprint: getBlueprintLabelForTracking( query ),
-			is_woocommerce_intent: isWooCommerceIntent,
-			trigger,
-		} );
+		recordTracksEvent( eventName, { ...getTracksProps(), trigger } );
 	};
 
 	const openLeaveModal = ( trigger: LeaveModalTrigger ) => {
@@ -88,6 +89,29 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 		setIsLeaving( true );
 		recordLeaveModalEvent( 'calypso_playground_leave_modal_continue', leaveModalTrigger );
 		window.location.assign( WOO_START_HOSTS_URL );
+	};
+
+	const openSaveModal = () => {
+		recordTracksEvent( 'calypso_playground_save_modal_open', getTracksProps() );
+		setIsSaveModalOpen( true );
+	};
+
+	const closeSaveModal = () => {
+		if ( isLaunching ) {
+			return;
+		}
+
+		recordTracksEvent( 'calypso_playground_save_modal_keep_building', getTracksProps() );
+		setIsSaveModalOpen( false );
+	};
+
+	const continueToSave = () => {
+		if ( ! submit || isLaunching ) {
+			return;
+		}
+
+		recordTracksEvent( 'calypso_playground_save_modal_continue', getTracksProps() );
+		launchSite();
 	};
 
 	return (
@@ -113,7 +137,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 							<>
 								<Step.PrimaryButton
 									className={ isWooCommerceIntent ? 'playground__woo-launch-button' : undefined }
-									onClick={ launchSite }
+									onClick={ isWooCommerceIntent ? openSaveModal : launchSite }
 									disabled={ isLaunching || ! readyForLaunch }
 								>
 									{ isWooCommerceIntent ? __( 'Save my store' ) : __( 'Launch on WordPress.com' ) }
@@ -143,6 +167,13 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 					onConfirm={ leavePlayground }
 					onCancel={ keepBuilding }
 					isConfirming={ isLeaving }
+				/>
+			) }
+			{ isSaveModalOpen && (
+				<PlaygroundSaveModal
+					onConfirm={ continueToSave }
+					onCancel={ closeSaveModal }
+					isConfirming={ isLaunching }
 				/>
 			) }
 		</>
