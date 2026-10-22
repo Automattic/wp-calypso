@@ -32,7 +32,7 @@ export function PlaygroundIntro( { progress }: { progress: PlaygroundBootProgres
 
 	return (
 		<div className="playground-intro">
-			<div className="playground-intro__logo">
+			<div className="playground-intro__logo" aria-hidden="true">
 				<WooTopBarLogo />
 			</div>
 			<div className="playground-intro__content">
