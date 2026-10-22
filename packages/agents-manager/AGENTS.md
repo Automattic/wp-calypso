@@ -131,7 +131,7 @@ Agents Manager hosts interactive UI surfaces from `interactive-ui/`: the hook th
 - **Add a component to a catalog, not to the converter.** Agents Manager's go in `AGENTS_MANAGER_CATALOG` (`interactive-ui/catalogs.ts`): their props as JSON Schema in its document, and the component itself, through `lazyComponent()` when it carries editor code. Providers declare theirs as `interactiveUi`.
 - **Components act like the basic ones.** Turn off custom controls with `disabled`, skip side effects with `isMessageStale`, and key a checkpoint by `surfaceId`. The host records the shared response events, so report actions through `onResponseAction` instead of recording them.
 - **Functions run from a click** unless their document sets `requiresUserActivation: false`, and treat their arguments as untrusted.
-- **Keep the renderer in its lazy chunk:** import only types from `@automattic/ai-ui-renderer`, and values only from its `capabilities` entry.
+- **Keep the renderer in its lazy chunk:** import only types from `@automattic/ai-ui-renderer`, and values only from its `capabilities` entry and `style.scss`.
 
 ## Pitfalls
 

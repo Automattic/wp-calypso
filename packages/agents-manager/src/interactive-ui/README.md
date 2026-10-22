@@ -43,6 +43,7 @@ come.
   - `session.ts` keeps each conversation's session, through a new chat's bootstrap, and tells
     surfaces restored from history from new ones.
   - `catalogs.ts` builds the catalogs, and the renderer capabilities the client context sends.
+  - `response-tracking.tsx` records the shared response events for each catalog component.
 - **Custom components and functions** live in the project that owns them: Agents Manager's here
   (AM-117), and its providers' (WooCommerce AI, the Jetpack AI sidebar) in their own repos.
   Providers declare their catalog in the provider contract's `interactiveUi` field
