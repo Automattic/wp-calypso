@@ -1338,9 +1338,18 @@ export default function pages() {
 		// Shows who still links to the old path (the Referer is sent with the event), so we know
 		// when it can go. The Sec-Fetch headers tell a followed link from a typed, scripted or
 		// restored navigation, and `retry` marks the chunk-retry reload in `layout/error.jsx`.
-		// Only these and the site are sent: the query can carry coupons and redirect URLs.
+		// Only these and the site are sent: the query can carry coupons and redirect URLs, and the
+		// Referer is cut down to its origin and path for the same reason.
 		if ( calypsoEnv === 'production' && req.method === 'GET' ) {
 			const stringArg = ( value ) => ( typeof value === 'string' ? value : undefined );
+			const refererPage = ( referer ) => {
+				try {
+					const { origin, pathname } = new URL( referer );
+					return origin + pathname;
+				} catch {
+					return undefined;
+				}
+			};
 
 			try {
 				analytics.tracks.recordEvent(
@@ -1349,6 +1358,7 @@ export default function pages() {
 						path: req.path,
 						ref: stringArg( req.query.ref ),
 						query_source: stringArg( req.query.source ),
+						referer: refererPage( req.get( 'Referer' ) ),
 						site_slug: stringArg( req.query.siteSlug ),
 						retry: stringArg( req.query.retry ),
 						fetch_site: req.get( 'Sec-Fetch-Site' ),

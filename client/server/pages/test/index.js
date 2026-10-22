@@ -1416,6 +1416,7 @@ describe( 'main app', () => {
 					path: '/start/launch-site/plans-launch',
 					ref: 'admin-bar',
 					query_source: undefined,
+					referer: undefined,
 					site_slug: 'example.wordpress.com',
 					retry: undefined,
 					fetch_site: undefined,
@@ -1427,8 +1428,9 @@ describe( 'main app', () => {
 		} );
 
 		it( 'records how the browser navigated to the hit', async () => {
-			const fetchHeaders = {
-				'Sec-Fetch-Site': 'none',
+			const headers = {
+				Referer: 'https://example.wordpress.com/wp-admin/options-reading.php?settings-updated=1#x',
+				'Sec-Fetch-Site': 'cross-site',
 				'Sec-Fetch-Mode': 'navigate',
 				'Sec-Fetch-User': '?1',
 			};
@@ -1436,18 +1438,34 @@ describe( 'main app', () => {
 				request: {
 					url: '/start/launch-site/domains-launch',
 					query: { ...query, retry: '1' },
-					get: jest.fn( ( header ) => fetchHeaders[ header ] ),
+					get: jest.fn( ( header ) => headers[ header ] ),
 				},
 			} );
 			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
 				'calypso_legacy_launch_site_redirect',
 				expect.objectContaining( {
+					referer: 'https://example.wordpress.com/wp-admin/options-reading.php',
 					site_slug: 'example.wordpress.com',
 					retry: '1',
-					fetch_site: 'none',
+					fetch_site: 'cross-site',
 					fetch_mode: 'navigate',
 					fetch_user: '?1',
 				} ),
+				request
+			);
+		} );
+
+		it( 'drops a Referer that is not a URL', async () => {
+			const { request } = await app.run( {
+				request: {
+					url: '/start/launch-site',
+					query,
+					get: jest.fn( ( header ) => ( header === 'Referer' ? 'not a url' : undefined ) ),
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				expect.objectContaining( { referer: undefined } ),
 				request
 			);
 		} );
