@@ -59,7 +59,6 @@ interface Step extends StepDependendencies {
 	delayApiRequestUntilComplete?: boolean;
 	providesToken?: boolean;
 	stepName: string;
-	allowUnauthenticated?: boolean;
 	isPasswordlessSignupForm?: boolean;
 }
 
@@ -388,12 +387,9 @@ export default class SignupFlowController {
 		const allStepsSubmitted =
 			signupProgress.filter( ( step ) => step.status !== 'in-progress' ).length ===
 			currentSteps.length;
-		const allowUnauthenticated =
-			getSignupDependencyStore( this._reduxStore.getState() )?.allowUnauthenticated ?? false;
-
 		return (
 			dependenciesSatisfied &&
-			( allowUnauthenticated || providesToken || this._canMakeAuthenticatedRequests() ) &&
+			( providesToken || this._canMakeAuthenticatedRequests() ) &&
 			( ! steps[ step.stepName ].delayApiRequestUntilComplete || allStepsSubmitted )
 		);
 	}
