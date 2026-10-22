@@ -33,7 +33,7 @@ export function useWizardHistory( previewScope: string ) {
 	);
 	const marker = location.state.agencySiteWizard;
 	// Hot updates can clear the draft cache while the browser retains its history.
-	const entry =
+	const entry: WizardSnapshot | undefined =
 		marker?.scope === scope ? ( entries.get( marker.id ) ?? marker.snapshot ) : undefined;
 	const push = useCallback(
 		( snapshot: WizardSnapshot, replace = false ) => {

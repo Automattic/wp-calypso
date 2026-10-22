@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
-import type { ComponentProps, ReactNode } from 'react';
+import type { DragEventHandler, ReactNode } from 'react';
 
 export function Choice( {
 	title,
@@ -19,16 +19,18 @@ export function Choice( {
 	illustration?: ReactNode;
 	href?: string;
 	className?: string;
-} & Pick< ComponentProps< typeof Button >, 'disabled' | 'isBusy' | 'onDragOver' | 'onDrop' > ) {
+	disabled?: boolean;
+	isBusy?: boolean;
+	onDragOver?: DragEventHandler< HTMLElement >;
+	onDrop?: DragEventHandler< HTMLElement >;
+} ) {
 	return (
 		<Button
 			{ ...buttonProps }
 			className={ clsx( 'agency-site-wizard__choice', className ) }
 			type="button"
 			onClick={ onClick }
-			href={ href }
-			target={ href ? '_blank' : undefined }
-			rel={ href ? 'noreferrer' : undefined }
+			{ ...( href ? { href, target: '_blank', rel: 'noreferrer' } : {} ) }
 		>
 			{ illustration }
 			<span className="agency-site-wizard__choice-heading">

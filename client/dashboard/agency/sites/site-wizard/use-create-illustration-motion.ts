@@ -188,7 +188,7 @@ function productionMotion( svg: SVGSVGElement ) {
 }
 
 export default function useCreateIllustrationMotion(
-	ref: RefObject< SVGSVGElement >,
+	ref: RefObject< SVGSVGElement | null >,
 	kind: 'development' | 'production'
 ) {
 	useEffect( () => {

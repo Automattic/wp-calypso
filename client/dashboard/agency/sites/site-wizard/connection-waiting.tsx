@@ -17,9 +17,9 @@ export default function ConnectionWaiting( {
 	onCheck: () => void;
 } ) {
 	const [ checking, setChecking ] = useState( false );
-	const timer = useRef< ReturnType< typeof setTimeout > >();
+	const timer = useRef< ReturnType< typeof setTimeout > >( undefined );
 	const statusId = useId();
-	let status = hasChecked ? __( 'Not connected yet' ) : __( 'Finished setting up?' );
+	let status: string = hasChecked ? __( 'Not connected yet' ) : __( 'Finished setting up?' );
 	if ( checking ) {
 		status = __( 'Checking connection…' );
 	}

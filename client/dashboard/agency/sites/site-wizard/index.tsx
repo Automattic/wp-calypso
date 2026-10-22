@@ -206,7 +206,7 @@ export default function SiteWizard( {
 			} else {
 				simulation.onCreateHosted( siteAddress, data.name, data.host, isDevelopment );
 			}
-			let completion = __( 'Your new site is ready' );
+			let completion: string = __( 'Your new site is ready' );
 			if ( isDevelopment ) {
 				completion = __( 'Your development site is ready' );
 			}

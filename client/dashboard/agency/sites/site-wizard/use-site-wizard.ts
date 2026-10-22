@@ -101,7 +101,7 @@ export default function useSiteWizard( onStart: () => void, scope: string ) {
 	const { entry, marker, index, push: pushHistory } = navigation;
 	const [ snapshot, setSnapshot ] = useState( () => navigation.entry ?? createInitialSnapshot() );
 	const current = useRef( snapshot );
-	const entryId = useRef< string >();
+	const entryId = useRef< string | undefined >( undefined );
 	const historyIndex = useRef( navigation.index );
 	const [ error, setError ] = useState( '' );
 	const { history, data, result } = snapshot;

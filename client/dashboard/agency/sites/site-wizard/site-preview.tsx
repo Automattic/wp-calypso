@@ -51,7 +51,7 @@ export default function SitePreview( {
 		provider?.is_cdn;
 	const platform = sample ? 'wordpress' : analysis.data?.platform;
 	const platformName = platform === 'wordpress' ? 'WordPress' : platform;
-	let privacy = __( 'Unknown until connected' );
+	let privacy: string = __( 'Unknown until connected' );
 	if ( knownSite?.is_private === true ) {
 		privacy = __( 'Private' );
 	} else if ( knownSite?.is_coming_soon === true ) {
