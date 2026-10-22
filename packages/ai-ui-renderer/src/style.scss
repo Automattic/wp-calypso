@@ -1,5 +1,62 @@
 @import '@wordpress/base-styles/colors';
 
+// A2UI's mode classes, on the surface or an ancestor. Otherwise the surface follows the page.
+:where( .a2ui-dark ) {
+	color-scheme: dark;
+}
+
+:where( .a2ui-light ) {
+	color-scheme: light;
+}
+
+// A2UI's theme tokens (https://a2ui.org/guides/theming/) that WordPress components read, and their
+// defaults. Keep `THEME_PROPERTIES` in `utils/theme.ts` in sync.
+$wp-components-colors: (
+	( accent, primary, var( --wp-admin-theme-color, #3858e9 ) ),
+	( accent-darker-10, primary-hover, var( --wp-admin-theme-color-darker-10, #2145e6 ) ),
+	( accent-darker-20, primary-dark, var( --wp-admin-theme-color-darker-20, #183ad6 ) ),
+	( accent-inverted, on-primary, var( --wpds-color-foreground-interactive-brand-strong, #fff ) ),
+	(
+		background,
+		input,
+		light-dark( var( --wpds-color-background-surface-neutral-strong, #fff ), #2f2f2f )
+	),
+	(
+		foreground,
+		on-input,
+		light-dark( var( --wpds-color-foreground-content-neutral, #1e1e1e ), #f0f0f0 )
+	)
+);
+
+// An unset token keeps the host's WordPress components color. A custom property can't read the
+// value it inherits, so the root saves the host's for its children.
+.ai-ui-renderer,
+.ai-ui-renderer__modal {
+	@each $name, $token, $default in $wp-components-colors {
+		--ai-ui-renderer-host-#{$name}: var( --wp-components-color-#{$name} );
+	}
+
+	> * {
+		@each $name, $token, $default in $wp-components-colors {
+			--wp-components-color-#{$name}: var(
+				--a2ui-color-#{$token},
+				var( --ai-ui-renderer-host-#{$name}, #{$default} )
+			);
+		}
+	}
+}
+
+.ai-ui-renderer .ai-ui-renderer__card,
+.ai-ui-renderer__modal .components-modal__frame {
+	background-color: var( --a2ui-color-surface, light-dark( #fff, #1e1e1e ) );
+	color: var( --a2ui-color-on-surface, light-dark( #1e1e1e, #f0f0f0 ) );
+}
+
+// WordPress components color the modal's headings.
+.ai-ui-renderer__modal .components-modal__frame :is( h1, h2, h3 ) {
+	color: inherit;
+}
+
 .ai-ui-renderer {
 	border: 0;
 	padding: 0;
@@ -8,11 +65,6 @@
 
 	.ai-ui-renderer__audio-player {
 		width: 100%;
-	}
-
-	.ai-ui-renderer__card {
-		background-color: var( --color-background, #fff );
-		color: var( --color-foreground, #1e1e1e );
 	}
 
 	.ai-ui-renderer__choice-picker {
@@ -27,11 +79,12 @@
 
 	.ai-ui-renderer__divider {
 		align-self: stretch;
-		border-top: 1px solid #ddd;
+		border: 0 solid var( --a2ui-color-border, light-dark( #ddd, #3c3c3c ) );
+		border-top-width: 1px;
 
 		&[aria-orientation='vertical'] {
-			border-top: 0;
-			border-left: 1px solid #ddd;
+			border-top-width: 0;
+			border-left-width: 1px;
 		}
 	}
 
@@ -50,15 +103,15 @@
 			border-radius: 50%;
 		}
 
-		&--smallFeature {
+		&--small-feature {
 			width: 100px;
 		}
 
-		&--mediumFeature {
+		&--medium-feature {
 			width: 240px;
 		}
 
-		&--largeFeature,
+		&--large-feature,
 		&--header {
 			width: 400px;
 		}
@@ -67,14 +120,10 @@
 			height: 200px;
 		}
 
-		@each $fit in ( contain, cover, fill, none ) {
+		@each $fit in ( contain, cover, fill, none, scale-down ) {
 			&--fit-#{$fit} {
 				object-fit: $fit;
 			}
-		}
-
-		&--fit-scaleDown {
-			object-fit: scale-down;
 		}
 	}
 
@@ -115,9 +164,9 @@
 					start: flex-start,
 					end: flex-end,
 					center: center,
-					spaceAround: space-around,
-					spaceBetween: space-between,
-					spaceEvenly: space-evenly,
+					space-around: space-around,
+					space-between: space-between,
+					space-evenly: space-evenly,
 					stretch: stretch
 				)
 		{

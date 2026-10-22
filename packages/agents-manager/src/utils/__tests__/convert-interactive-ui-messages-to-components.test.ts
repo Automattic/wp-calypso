@@ -11,14 +11,14 @@ import type { ComponentType } from 'react';
 
 const operations = [
 	{
-		version: 'v0.9' as const,
+		version: 'v1.0' as const,
 		createSurface: {
 			surfaceId: 'surface',
-			catalogId: 'https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json',
+			catalogId: 'https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json',
 		},
 	},
 	{
-		version: 'v0.9' as const,
+		version: 'v1.0' as const,
 		updateComponents: {
 			surfaceId: 'surface',
 			components: [ { id: 'root', component: 'Text', text: 'Surface' } ],
@@ -151,7 +151,7 @@ describe( 'markInteractiveUiActionReplies', () => {
 
 	it( 'starts a turn at the shown reply to an action', () => {
 		const action = createMessage( 'action', 'user', [
-			{ type: 'context', text: JSON.stringify( { version: 'v0.9', action: { name: 'greet' } } ) },
+			{ type: 'context', text: JSON.stringify( { version: 'v1.0', action: { name: 'greet' } } ) },
 		] );
 		const toolCall = createMessage( 'tool-call', 'agent', [ { type: 'text', text: '{}' } ] );
 		const dataOnly = createMessage( 'data-only', 'agent', [ { type: 'data', data: {} } ] );

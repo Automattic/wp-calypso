@@ -3,7 +3,7 @@ import type { UIMessage } from '@automattic/agenttic-client';
 import type { InteractiveUiMessage, InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 /** The A2UI protocol version the interactive UI speaks. */
-export const INTERACTIVE_UI_VERSION = 'v0.9';
+export const INTERACTIVE_UI_VERSION = 'v1.0';
 
 const INTERACTIVE_UI_TOOL_ID = 'wpcom__render_interactive_ui';
 
