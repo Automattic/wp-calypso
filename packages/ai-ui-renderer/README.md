@@ -71,8 +71,8 @@ before loading the renderer:
 - `getInteractiveUiRendererCapabilities( documents )` returns A2UI's `a2uiRendererCapabilities`
   for the Basic catalog and those catalogs: their IDs, and their documents in A2UI's form, with
   `$id`, `protocolVersion`, each component and function named in `component` or `@call`, and each
-  function's `requiresUserActivation`.
-  Send it to the agent, so it shows only UI the host can render.
+  function's `requiresUserActivation`. Send it in each message's metadata, as A2UI's A2A binding
+  does, so the agent shows only UI the host can render.
 - `BASIC_CATALOG_ID` is A2UI's Basic catalog ID.
 
 ## Rendering
