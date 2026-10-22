@@ -5,7 +5,6 @@
 @import "calypso/assets/stylesheets/shared/mixins/clear-fix";
 @import "calypso/assets/stylesheets/shared/mixins/heading";
 @import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
-@import "calypso/assets/stylesheets/shared/mixins/stats-fade-text";
 @import "calypso/assets/stylesheets/shared/extends";
 
 .stats-module {
@@ -174,11 +173,6 @@ ul.module-header-actions {
 	position: absolute;
 	right: 0;
 	top: 0;
-
-	// Fade really long module titles
-	&::before {
-		@include stats-fade-text( color-mix(in srgb, var(--color-surface) 0%, transparent), var( --color-surface ) );
-	}
 
 	.module-header-action {
 		display: inline-block;

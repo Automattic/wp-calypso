@@ -97,6 +97,8 @@ export interface Message {
 	disabled?: boolean;
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
 	sources?: AgentSource[]; // Agent message sources/citations rendered beneath the body
+	/** Starts a turn though no user message shows before it, such as a reply to a click in a message. */
+	startsTurn?: boolean;
 }
 
 /**

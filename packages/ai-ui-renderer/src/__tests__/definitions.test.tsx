@@ -28,7 +28,10 @@ const greeting: InteractiveUiComponentDefinition< GreetingProps > = {
 
 function renderSurface(
 	components: InteractiveUiMessage[],
-	functions: InteractiveUiFunctionDefinition[] = []
+	{
+		functions = [],
+		hostProps,
+	}: { functions?: InteractiveUiFunctionDefinition[]; hostProps?: Record< string, unknown > } = {}
 ) {
 	const onAction = jest.fn();
 	const onError = jest.fn();
@@ -54,7 +57,7 @@ function renderSurface(
 		throw new Error( 'The surface was not created.' );
 	}
 
-	render( <InteractiveUiSurface surface={ surface } /> );
+	render( <InteractiveUiSurface surface={ surface } hostProps={ hostProps } /> );
 
 	return { onAction, onError };
 }
@@ -91,6 +94,21 @@ it( 'renders a host component with its bound values resolved and its action call
 	);
 } );
 
+it( 'gives a host component the host’s props over the surface’s', async () => {
+	renderSurface(
+		[
+			updateComponents( {
+				component: 'HostGreeting',
+				name: 'Ada',
+				onGreet: { event: { name: 'greet' } },
+			} ),
+		],
+		{ hostProps: { name: 'Host' } }
+	);
+
+	expect( await screen.findByRole( 'button' ) ).toHaveTextContent( 'Hi Host' );
+} );
+
 it( 'hides a surface with a component its catalog lacks, and reports it', async () => {
 	const { onError } = renderSurface( [ updateComponents( { component: 'HostMissing' } ) ] );
 
@@ -114,7 +132,7 @@ describe( 'host functions', () => {
 
 	it( 'runs when a Button calls it, instead of sending an action', async () => {
 		const execute = jest.fn();
-		const { onAction } = renderSurface( [ button ], [ createHostRun( execute ) ] );
+		const { onAction } = renderSurface( [ button ], { functions: [ createHostRun( execute ) ] } );
 
 		fireEvent.click( await screen.findByRole( 'button', { name: 'Run' } ) );
 
@@ -131,7 +149,7 @@ describe( 'host functions', () => {
 		],
 		[ 'rejects', () => Promise.reject( new Error( 'Failed' ) ) ],
 	] )( 'reports a failure when it %s', async ( _description, execute ) => {
-		const { onError } = renderSurface( [ button ], [ createHostRun( execute ) ] );
+		const { onError } = renderSurface( [ button ], { functions: [ createHostRun( execute ) ] } );
 
 		fireEvent.click( await screen.findByRole( 'button', { name: 'Run' } ) );
 
@@ -150,9 +168,9 @@ describe( 'host functions', () => {
 			onGreet: { event: { name: 'greet' } },
 		} );
 
-		expect( () => renderSurface( [ valueCallingFunction ], [ createHostRun( execute ) ] ) ).toThrow(
-			"Validation failed for component 'HostGreeting'"
-		);
+		expect( () =>
+			renderSurface( [ valueCallingFunction ], { functions: [ createHostRun( execute ) ] } )
+		).toThrow( "Validation failed for component 'HostGreeting'" );
 		expect( execute ).not.toHaveBeenCalled();
 	} );
 } );

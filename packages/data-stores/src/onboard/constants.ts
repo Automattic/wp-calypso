@@ -43,5 +43,6 @@ export enum SiteIntent {
 	FreePostSetup = 'free-post-setup', // non-signup flow
 	SiteMigration = 'site-migration',
 	UpdateDesign = 'update-design', // non-signup flow
-	UpdateOptions = 'update-options', // non-signup flow
+	/** @deprecated The update-options flow has been removed. */
+	UpdateOptions = 'update-options',
 }
