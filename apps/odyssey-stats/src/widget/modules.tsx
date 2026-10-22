@@ -22,6 +22,8 @@ interface ModuleCardProps {
 	isLoading: boolean;
 	isError: boolean;
 	canManageModule: boolean;
+	/** Whether the route behind the Install and Activate buttons would let the viewer through. */
+	canActivate: boolean;
 	className?: string;
 	manageUrl?: string;
 }
@@ -39,20 +41,32 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 	activateProduct,
 	manageUrl,
 	canManageModule,
+	canActivate,
 	isLoading,
 	isError,
 	className = null,
 } ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( false );
+	const [ failure, setFailure ] = useState< string | null >( null );
 	const onActivateProduct = () => {
 		setDisabled( true );
-		activateProduct().catch( () => setDisabled( false ) );
+		setFailure( null );
+		activateProduct().catch( ( activationError: { message?: string } ) => {
+			setDisabled( false );
+			setFailure(
+				activationError?.message ||
+					( translate( 'Something went wrong. Please try again.' ) as string )
+			);
+		} );
 	};
+
+	const needsActivation = error === 'not_active' || error === 'not_installed';
+	const canAct = canManageModule && ( ! needsActivation || canActivate );
 
 	// Nothing worth showing: the figure is unknown and the viewer cannot act on it, so a
 	// zero would read as a real count.
-	if ( isError && ! canManageModule ) {
+	if ( isError && ! canAct ) {
 		return null;
 	}
 
@@ -71,7 +85,7 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 			) }
 			{ ! isLoading && (
 				<>
-					{ isError && canManageModule && (
+					{ isError && canAct && (
 						<div className="stats-widget-module__info">
 							{ error === 'not_active' && (
 								<Button
@@ -101,6 +115,11 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 							{ ! [ 'not_active', 'not_installed', 'invalid_key' ].includes( error ) && (
 								<p>{ translate( 'An error occurred.' ) }</p>
 							) }
+							{ failure && (
+								<p className="stats-widget-module__error" role="alert">
+									{ failure }
+								</p>
+							) }
 						</div>
 					) }
 				</>
@@ -112,6 +131,10 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseUrl } ) => {
 	const translate = useTranslate();
 	const canManageModules = canCurrentUser( siteId, 'manage_options' );
+	// My Jetpack installs and activates the Akismet plugin, so its route asks for
+	// `activate_plugins`, which a site administrator on a multisite network lacks unless the
+	// network grants it. Protect is a Jetpack module, and `/settings` needs only `manage_options`.
+	const canActivatePlugins = canCurrentUser( siteId, 'activate_plugins' );
 	const protect = useModuleDataQuery( 'protect' );
 	const akismet = useModuleDataQuery( 'akismet' );
 
@@ -172,6 +195,7 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 					error={ protect.error instanceof Error ? protect.error.message : '' }
 					isLoading={ protect.isPending }
 					canManageModule={ canManageModules }
+					canActivate={ canManageModules }
 					activateProduct={ activateProtect }
 				/>
 				<ModuleCard
@@ -187,6 +211,7 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 					error={ akismet.error instanceof Error ? akismet.error.message : '' }
 					isLoading={ akismet.isPending }
 					canManageModule={ canManageModules }
+					canActivate={ canActivatePlugins }
 					activateProduct={ activateAkismet }
 					manageUrl={ akismetUrl }
 				/>
