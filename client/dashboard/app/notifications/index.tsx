@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
+import { __, isRTL } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
@@ -21,7 +21,7 @@ import './style.scss';
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
 
 /**
- * Returns the position of the omnibar bell, or the right end of the omnibar when the bell is missing.
+ * Returns the position of the omnibar bell, or the end of the omnibar when the bell is missing.
  */
 function getBellRect() {
 	const omnibar = document.getElementById( 'wpcom-omnibar' );
@@ -30,7 +30,8 @@ function getBellRect() {
 		return bell.getBoundingClientRect();
 	}
 	const { top = 0, height = 0 } = omnibar?.getBoundingClientRect() ?? {};
-	return new DOMRect( document.documentElement.clientWidth, top, 0, height );
+	const x = isRTL() ? 0 : document.documentElement.clientWidth;
+	return new DOMRect( x, top, 0, height );
 }
 
 const bellAnchor = { getBoundingClientRect: getBellRect };
