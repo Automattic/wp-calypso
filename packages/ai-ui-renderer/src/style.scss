@@ -54,6 +54,24 @@ $wp-components-colors: (
 			var( --wp-components-color-accent-darker-20 ),
 			color-mix( in srgb, var( --wp-components-color-accent ) 40%, #{$white} )
 		);
+		--ai-ui-renderer-accent-fill: light-dark(
+			var( --wp-components-color-accent ),
+			color-mix( in srgb, var( --wp-components-color-accent ) 80%, #{$white} )
+		);
+	}
+
+	// Newer WordPress components read the design system's tokens instead. They're set a level
+	// down, since the colors above fall back to the host's tokens.
+	> * * {
+		--wpds-color-foreground-content-neutral: var( --wp-components-color-foreground );
+		--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
+		--wpds-color-foreground-interactive-neutral-active: var( --wp-components-color-foreground );
+		--wpds-color-background-surface-neutral-strong: var( --wp-components-color-background );
+		--wpds-color-background-interactive-brand-strong: var( --wp-components-color-accent );
+		--wpds-color-foreground-interactive-brand-strong: var( --wp-components-color-accent-inverted );
+		--wpds-color-foreground-interactive-brand: var( --ai-ui-renderer-accent-text );
+		--wpds-color-foreground-interactive-brand-active: var( --ai-ui-renderer-accent-text-hover );
+		--wpds-color-stroke-focus: var( --wp-components-color-accent );
 	}
 }
 
@@ -225,8 +243,9 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 		--wp-components-color-accent-darker-20: var( --ai-ui-renderer-accent-text-hover );
 	}
 
-	.components-tab-panel__tabs {
-		--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
-		--wpds-color-foreground-interactive-neutral-active: var( --wp-components-color-foreground );
+	// A checked control's fill sits on the surface, so it gets a lighter accent in dark mode.
+	.components-checkbox-control__input,
+	.components-radio-control__input {
+		--wp-components-color-accent: var( --ai-ui-renderer-accent-fill );
 	}
 }
