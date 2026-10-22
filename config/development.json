@@ -65,6 +65,7 @@
 		"current-site/notice": true,
 		"dark-mode": false,
 		"dashboard/enable-percentage-rollout": true,
+		"dashboard/notifications-inbox": true,
 		"dashboard/plans": true,
 		"dashboard/rollout-advance-notice": true,
 		"dashboard/simulate-full-rollout": false,

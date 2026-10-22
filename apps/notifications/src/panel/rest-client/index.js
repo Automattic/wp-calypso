@@ -6,7 +6,7 @@ import { store } from '../state';
 import actions from '../state/actions';
 import getAllNotes from '../state/selectors/get-all-notes';
 import getFilteredNoteIds from '../state/selectors/get-filtered-note-ids';
-import { getFilters } from '../templates/filters';
+import { getFilter } from '../templates/filters';
 import { fetchNote, listNotes, sendLastSeenTime, subscribeToNoteStream } from './wpcom';
 
 const debug = debugFactory( 'notifications:rest-client' );
@@ -438,7 +438,7 @@ function getNotesList() {
 /**
  * Set the active tab and (re)fetch its filtered notes.
  *
- * Pass a tab name such as `'unread'` (see getFilters); `'all'` is the unfiltered
+ * Pass a tab name such as `'unread'` (see getFilter); `'all'` is the unfiltered
  * list. For a filtered tab this kicks off a fetch; the tab's cached id list is
  * kept (never cleared here) so a revisit shows its last result while the fetch
  * refreshes it in the background.
@@ -446,7 +446,7 @@ function getNotesList() {
  */
 function setFilter( filterName ) {
 	this.filterName = filterName ?? 'all';
-	this.filter = getFilters()[ this.filterName ]?.query ?? null;
+	this.filter = getFilter( this.filterName ).query;
 
 	if ( this.filter && this.isVisible ) {
 		this.getFilteredNotes();

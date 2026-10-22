@@ -56,3 +56,33 @@ export const getFilters = () => ( {
 		filter: ( { type } ) => 'comment_like' === type || 'like' === type,
 	},
 } );
+
+/**
+ * Returns the named tab filter, a server-side type filter for names of the form
+ * `types:<csv>` or `types-unread:<csv>`, or the All filter for unknown names.
+ */
+export const getFilter = ( name ) => {
+	const filters = getFilters();
+	if ( filters[ name ] ) {
+		return filters[ name ];
+	}
+
+	const match = /^types(-unread)?:(.+)$/.exec( name ?? '' );
+	if ( ! match ) {
+		return filters.all;
+	}
+
+	const [ , unreadSuffix, csv ] = match;
+	const isUnreadOnly = !! unreadSuffix;
+	const types = csv.split( ',' );
+
+	return {
+		...filters.all,
+		name,
+		emptyMessage: __( 'No notifications match this filter.' ),
+		query: isUnreadOnly ? { type: csv, unread: 1 } : { type: csv },
+		filter: ( note ) =>
+			types.includes( note.type ) &&
+			( ! isUnreadOnly || ! getNoteIsRead( store.getState(), note ) ),
+	};
+};
