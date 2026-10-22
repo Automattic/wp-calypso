@@ -17,6 +17,8 @@ type OwnProps = {
 	hideExpandedContent?: boolean;
 	useSplitButton?: boolean;
 	extraContent?: React.ReactNode;
+	/** Holds Restore back and says why, e.g. until known threats are acknowledged nearby. */
+	restoreDisabledHint?: string;
 };
 
 const Toolbar: React.FC< OwnProps > = ( {
@@ -29,6 +31,7 @@ const Toolbar: React.FC< OwnProps > = ( {
 	hideExpandedContent = false,
 	useSplitButton = false,
 	extraContent,
+	restoreDisabledHint,
 } ) => {
 	const isRewindable = isSuccessfulRealtimeBackup( activity );
 	const { streams } = activity;
@@ -58,6 +61,7 @@ const Toolbar: React.FC< OwnProps > = ( {
 					availableActions={ availableActions }
 					onClickClone={ onClickClone }
 					useSplitButton={ useSplitButton }
+					restoreDisabledHint={ restoreDisabledHint }
 				/>
 			) }
 			{ extraContent }
