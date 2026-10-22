@@ -569,6 +569,26 @@ describe( 'image tiles', () => {
 		).toHaveLength( 1 );
 	} );
 
+	it( 'captions the site mark as the logo, whatever the engine named its file', () => {
+		render(
+			<BuildWowStreamCanvas
+				stream={ imageStream(
+					{
+						'site-logo.png': {
+							status: 'generating',
+							url: null,
+							query: 'rhythm-pulse-mark.png',
+							aspectRatio: null,
+						},
+					},
+					0
+				) }
+			/>
+		);
+		expect( screen.getByText( 'Logo' ) ).toBeVisible();
+		expect( screen.queryByText( 'pulse mark' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'reads a file-style image name as words without the site name', () => {
 		const base = streamView().state.plan!;
 		render(

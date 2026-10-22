@@ -7,7 +7,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { BuildHtmlPreview } from './html-preview';
 import { useBuildImagePreview } from './use-build-image-preview';
 import { ViewSwitch } from './view-switch';
-import type { StreamPage, StreamPlanImage, StreamSwatch, StreamTypeface } from './reducer';
+import type {
+	StreamImage,
+	StreamPage,
+	StreamPlanImage,
+	StreamSwatch,
+	StreamTypeface,
+} from './reducer';
 import type { BuildWowStreamView } from './use-build-wow-stream';
 import type { CanvasView } from './view-switch';
 import type { CSSProperties } from 'react';
@@ -230,6 +236,12 @@ function imageTiles(
 	siteTitle: string | null
 ) {
 	const plannedQueries = plannedImages.map( ( image ) => imageCaption( image.query, siteTitle ) );
+	const tileCaption = ( id: string, image: StreamImage ) => {
+		if ( id === SITE_MARK_IMAGE_ID ) {
+			return __( 'Logo' );
+		}
+		return image.query ? imageCaption( image.query, siteTitle ) : undefined;
+	};
 	const entries = Object.entries( images );
 	const tiles: {
 		key: string;
@@ -246,7 +258,7 @@ function imageTiles(
 			src: image.status === 'ready' ? loadedImage( id, image.url, sources ) : undefined,
 			isMark: id === SITE_MARK_IMAGE_ID,
 			isGenerating: image.status === 'generating',
-			caption: image.query ? imageCaption( image.query, siteTitle ) : undefined,
+			caption: tileCaption( id, image ),
 		} ) );
 	// Pending tiles carry the planned subjects nobody has reported yet; when the
 	// reports don't name their subjects, the slots fill in plan order instead.
@@ -350,10 +362,6 @@ function DesignBrief( {
 	const showPages = pages.length > 0 || awaitingPages;
 	const progress = pageProgress( pages, state?.sections ?? {}, state?.previews ?? {}, isComplete );
 	const sectionCount = sectionCountLabel( pages, progress.built );
-	const progressLabels: Partial< Record< PageProgress, string > > = {
-		building: __( 'building' ),
-		done: __( 'done' ),
-	};
 	const { tiles, ready: readyImages } = imageTiles(
 		state?.images ?? {},
 		plan?.images ?? [],
@@ -526,11 +534,6 @@ function DesignBrief( {
 													</button>
 												) : (
 													<span>{ page.title }</span>
-												) }
-												{ progressLabels[ progress.byPage[ page.slug ] ] && (
-													<VisuallyHidden>
-														{ `, ${ progressLabels[ progress.byPage[ page.slug ] ] }` }
-													</VisuallyHidden>
 												) }
 											</li>
 										) ) }
