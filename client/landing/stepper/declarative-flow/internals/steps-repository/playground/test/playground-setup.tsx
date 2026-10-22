@@ -2,11 +2,13 @@
  * @jest-environment jsdom
  */
 import { act, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { appStates } from 'calypso/state/imports/constants';
 import { mockStepProps, renderStep } from '../../test/helpers';
 import PlaygroundSetupStep from '../components/playground-setup';
 import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../lib/constants';
+import { useImportBlueprint } from '../lib/import-blueprint';
 import {
 	ImportFailureError,
 	ImportTimeoutError,
@@ -20,6 +22,10 @@ jest.mock( '../lib/import-playground', () => ( {
 	...jest.requireActual( '../lib/import-playground' ),
 	importPlaygroundSite: jest.fn(),
 	removeSandboxPlugins: jest.fn(),
+} ) );
+
+jest.mock( '../lib/import-blueprint', () => ( {
+	useImportBlueprint: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
@@ -42,6 +48,8 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 } ) );
 
 const importPlaygroundSiteMock = importPlaygroundSite as jest.Mock;
+const importBlueprintMock = jest.fn();
+( useImportBlueprint as jest.Mock ).mockReturnValue( { mutateAsync: importBlueprintMock } );
 
 /**
  * Renders the step while the import reports the given phase and never finishes.
@@ -57,16 +65,26 @@ async function renderDuring( progress: PlaygroundImportProgress ) {
 	return renderSetupStep();
 }
 
-async function renderSetupStep() {
+async function renderSetupStep( search = 'playground=abc&siteSlug=example.wordpress.com' ) {
 	const props = mockStepProps();
+	const initialEntry = `/setup/onboarding/importerPlayground?${ search }`;
+	let rendered: ReturnType< typeof renderStep >;
 	await act( async () => {
-		renderStep( <PlaygroundSetupStep { ...props } />, {
-			initialEntry:
-				'/setup/onboarding/importerPlayground?playground=abc&siteSlug=example.wordpress.com',
-		} );
+		rendered = renderStep( <PlaygroundSetupStep { ...props } />, { initialEntry } );
 	} );
-	return props;
+	const rerender = async ( nextProps: typeof props ) => {
+		await act( async () => {
+			rendered.rerender(
+				<MemoryRouter initialEntries={ [ initialEntry ] }>
+					<PlaygroundSetupStep { ...nextProps } />
+				</MemoryRouter>
+			);
+		} );
+	};
+	return { ...props, rerender };
 }
+
+const BLUEPRINT_SEARCH = 'blueprint=my-blueprint&siteSlug=example.wordpress.com';
 
 describe( 'PlaygroundSetupStep', () => {
 	beforeEach( () => {
@@ -195,6 +213,68 @@ describe( 'PlaygroundSetupStep', () => {
 			'href',
 			'/home/example.wordpress.com'
 		);
+	} );
+
+	it( 'submits once a blueprint import finishes', async () => {
+		importBlueprintMock.mockResolvedValueOnce( { importId: '1' } );
+		const props = await renderSetupStep( BLUEPRINT_SEARCH );
+
+		expect( importBlueprintMock ).toHaveBeenCalledWith( {
+			blueprint: 'my-blueprint',
+			siteId: 123,
+		} );
+		expect( importPlaygroundSiteMock ).not.toHaveBeenCalled();
+		expect( props.navigation.submit ).toHaveBeenCalledWith( {
+			siteSlug: 'example.wordpress.com',
+			siteId: 123,
+		} );
+	} );
+
+	it( 'shows an error with a retry when a blueprint import fails', async () => {
+		importBlueprintMock.mockRejectedValueOnce( new Error( 'nope' ) );
+		importBlueprintMock.mockReturnValueOnce( new Promise( () => {} ) );
+		const props = await renderSetupStep( BLUEPRINT_SEARCH );
+
+		expect( screen.getByText( 'Your site could not be imported' ) ).toBeVisible();
+		expect( props.navigation.submit ).not.toHaveBeenCalled();
+		expect( importBlueprintMock ).toHaveBeenCalledTimes( 1 );
+
+		await act( async () => {
+			screen.getByRole( 'button', { name: 'Try again' } ).click();
+		} );
+
+		expect( importBlueprintMock ).toHaveBeenCalledTimes( 2 );
+		expect( importPlaygroundSiteMock ).not.toHaveBeenCalled();
+		expect( screen.queryByText( 'Your site could not be imported' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Loading your Playground site...' ) ).toBeVisible();
+	} );
+
+	it( 'records a failed blueprint import', async () => {
+		importBlueprintMock.mockRejectedValueOnce( new Error( 'nope' ) );
+		await renderSetupStep( BLUEPRINT_SEARCH );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_playground_blueprint_import_failed',
+			{ site_id: 123 }
+		);
+	} );
+
+	it( 'starts a blueprint import once even when the flow re-renders with a new submit', async () => {
+		importBlueprintMock.mockReturnValueOnce( new Promise( () => {} ) );
+		const props = await renderSetupStep( BLUEPRINT_SEARCH );
+
+		await props.rerender( { ...props, navigation: { ...props.navigation, submit: jest.fn() } } );
+
+		expect( importBlueprintMock ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'offers only the dashboard when the saved Playground is gone', async () => {
+		await renderSetupStep( 'siteSlug=example.wordpress.com' );
+
+		expect( screen.getByText( /could not be found in this browser/ ) ).toBeVisible();
+		expect( importPlaygroundSiteMock ).not.toHaveBeenCalled();
+		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Go to dashboard' } ) ).toBeVisible();
 	} );
 
 	it( 'offers only the dashboard when the upload is not a Playground export', async () => {
