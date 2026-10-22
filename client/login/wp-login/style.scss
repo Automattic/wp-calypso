@@ -71,16 +71,6 @@ body.is-section-login {
 	width: 100%;
 }
 
-.wp-login__site-return-link {
-	overflow: hidden;
-	position: relative;
-	white-space: nowrap;
-
-	&::after {
-		@include long-content-fade( $color: var( --color-neutral-0 ) );
-	}
-}
-
 .layout.is-jetpack-login:not( .is-wccom-oauth-flow ):not( .is-woocommerce-core-profiler-flow ):not( .is-jetpack-connector-login ) {
 	@include jetpack-connect-colors();
 }

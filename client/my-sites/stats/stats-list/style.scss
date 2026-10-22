@@ -64,12 +64,6 @@
 			transition: opacity 0.3s ease 0.15s;
 		}
 
-		.module-content-list-item-right {
-			&::before {
-				display: none;
-			}
-		}
-
 		.module-content-list-item-actions {
 			cursor: pointer;
 			opacity: 1;
