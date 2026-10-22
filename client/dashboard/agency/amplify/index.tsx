@@ -10,6 +10,7 @@ import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import { getFeatureName } from './constants';
 import AmplifyDevStateControls, {
+	AmplifyIllustrationsContext,
 	makePreviewReports,
 	makePreviewUsage,
 	useAmplifyDevSettings,
@@ -72,6 +73,7 @@ export default function AgencyAmplify() {
 		state = 'reports';
 	}
 	const isPreview = mode !== 'live';
+	const illustrations = isDevelopment && areDevSettingsReady ? devSettings.illustrations : 'i1';
 	const usagePreview =
 		isDevelopment && areDevSettingsReady ? makePreviewUsage( devSettings.usage ) : null;
 	const usage = usagePreview ? usagePreview.usage : reportsQuery.data?.usage;
@@ -130,94 +132,102 @@ export default function AgencyAmplify() {
 	};
 
 	return (
-		<PageLayout
-			header={
-				<PageHeader
-					title={ getFeatureName() }
-					description={ __(
-						'Win more business by auditing a prospect’s homepage, spotting the problems, and pitching the fix.'
-					) }
-					actions={
-						state !== 'empty' ? (
-							<HStack spacing={ 4 } alignment="center" expanded={ false }>
-								<AmplifyUsageMeter usage={ usage } status={ usageStatus } />
-								{ state === 'reports' && (
-									<Button
-										variant="tertiary"
-										className="dashboard-amplify-learn-more-button"
-										onClick={ openLearnMore }
-									>
-										{ __( 'Learn more' ) }
-									</Button>
-								) }
-								{ newReportButton }
-							</HStack>
-						) : undefined
-					}
-				/>
-			}
-		>
-			<div className="dashboard-amplify-view">
-				{ state === 'empty' && (
-					<EmptyState.Wrapper>
-						<EmptyState>
-							<AmplifyReportCreator
-								agencyId={ agencyId }
-								canScan={ canScan }
-								usage={ usage }
-								usageStatus={ usageStatus }
-								limitNotice={ limitNotice }
-								onUsageError={ handleUsageError }
-								onCreated={ () => {
-									if ( isDevelopment ) {
-										setDevSettings( ( previous ) => ( { ...previous, mode: 'live' } ) );
-									}
-								} }
-							/>
-						</EmptyState>
-					</EmptyState.Wrapper>
-				) }
-				{ state === 'reports' && (
-					<div className="dashboard-amplify-results">
-						{ limitNotice }
-						<AmplifyReportsList agencyId={ agencyId } reports={ reports } isPreview={ isPreview } />
-					</div>
-				) }
-				{ state === 'loading' && (
-					<AmplifyReportsList agencyId={ agencyId } reports={ [] } isLoading />
-				) }
-				{ state === 'error' && (
-					<div className="dashboard-amplify-results__error" role="alert">
-						<Text>{ __( 'Unable to load reports. Please try again.' ) }</Text>
-						{ mode === 'live' && (
-							<Button variant="secondary" onClick={ () => reportsQuery.refetch() }>
-								{ __( 'Retry' ) }
-							</Button>
+		<AmplifyIllustrationsContext.Provider value={ illustrations }>
+			<PageLayout
+				header={
+					<PageHeader
+						title={ getFeatureName() }
+						description={ __(
+							'Win more business by auditing a prospect’s homepage, spotting the problems, and pitching the fix.'
 						) }
-					</div>
-				) }
-			</div>
-			{ isNewReportOpen && (
-				<AmplifyNewReportModal
-					agencyId={ agencyId }
-					canScan={ canScan }
-					usage={ usage }
-					usageStatus={ usageStatus }
-					limitNotice={ limitNotice }
-					onUsageError={ handleUsageError }
-					onClose={ () => setIsNewReportOpen( false ) }
-					onCreated={ () => {
-						setIsNewReportOpen( false );
-						if ( isDevelopment ) {
-							setDevSettings( ( previous ) => ( { ...previous, mode: 'live' } ) );
+						actions={
+							state !== 'empty' ? (
+								<HStack spacing={ 4 } alignment="center" expanded={ false }>
+									<AmplifyUsageMeter usage={ usage } status={ usageStatus } />
+									{ state === 'reports' && (
+										<Button
+											variant="tertiary"
+											className="dashboard-amplify-learn-more-button"
+											onClick={ openLearnMore }
+										>
+											{ __( 'Learn more' ) }
+										</Button>
+									) }
+									{ newReportButton }
+								</HStack>
+							) : undefined
 						}
-					} }
-				/>
-			) }
-			{ isLearnMoreOpen && <AmplifyLearnMoreModal onClose={ () => setIsLearnMoreOpen( false ) } /> }
-			{ isDevelopment && areDevSettingsReady && (
-				<AmplifyDevStateControls settings={ devSettings } onChange={ setDevSettings } />
-			) }
-		</PageLayout>
+					/>
+				}
+			>
+				<div className="dashboard-amplify-view">
+					{ state === 'empty' && (
+						<EmptyState.Wrapper>
+							<EmptyState>
+								<AmplifyReportCreator
+									agencyId={ agencyId }
+									canScan={ canScan }
+									usage={ usage }
+									usageStatus={ usageStatus }
+									limitNotice={ limitNotice }
+									onUsageError={ handleUsageError }
+									onCreated={ () => {
+										if ( isDevelopment ) {
+											setDevSettings( ( previous ) => ( { ...previous, mode: 'live' } ) );
+										}
+									} }
+								/>
+							</EmptyState>
+						</EmptyState.Wrapper>
+					) }
+					{ state === 'reports' && (
+						<div className="dashboard-amplify-results">
+							{ limitNotice }
+							<AmplifyReportsList
+								agencyId={ agencyId }
+								reports={ reports }
+								isPreview={ isPreview }
+							/>
+						</div>
+					) }
+					{ state === 'loading' && (
+						<AmplifyReportsList agencyId={ agencyId } reports={ [] } isLoading />
+					) }
+					{ state === 'error' && (
+						<div className="dashboard-amplify-results__error" role="alert">
+							<Text>{ __( 'Unable to load reports. Please try again.' ) }</Text>
+							{ mode === 'live' && (
+								<Button variant="secondary" onClick={ () => reportsQuery.refetch() }>
+									{ __( 'Retry' ) }
+								</Button>
+							) }
+						</div>
+					) }
+				</div>
+				{ isNewReportOpen && (
+					<AmplifyNewReportModal
+						agencyId={ agencyId }
+						canScan={ canScan }
+						usage={ usage }
+						usageStatus={ usageStatus }
+						limitNotice={ limitNotice }
+						onUsageError={ handleUsageError }
+						onClose={ () => setIsNewReportOpen( false ) }
+						onCreated={ () => {
+							setIsNewReportOpen( false );
+							if ( isDevelopment ) {
+								setDevSettings( ( previous ) => ( { ...previous, mode: 'live' } ) );
+							}
+						} }
+					/>
+				) }
+				{ isLearnMoreOpen && (
+					<AmplifyLearnMoreModal onClose={ () => setIsLearnMoreOpen( false ) } />
+				) }
+				{ isDevelopment && areDevSettingsReady && (
+					<AmplifyDevStateControls settings={ devSettings } onChange={ setDevSettings } />
+				) }
+			</PageLayout>
+		</AmplifyIllustrationsContext.Provider>
 	);
 }

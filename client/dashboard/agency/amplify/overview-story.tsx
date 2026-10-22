@@ -1,13 +1,15 @@
-import { Button, Panel, PanelBody, __experimentalHeading as Heading } from '@wordpress/components';
+import { Button, __experimentalHeading as Heading } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import InlineSupportLink from '../../components/inline-support-link';
 import { getReportTiming } from './constants';
+import { useAmplifyIllustrations } from './dev-state-controls';
 import { SampleReportPage } from './sample-report';
 import { getSampleFindings, getSampleLenses, getSeverityLabel } from './sample-report-data';
 import AmplifySampleReportModal from './sample-report-modal';
 import { PERSPECTIVES } from './score-preview';
+import { severityFor } from './score-severity';
 import type { SamplePageKey } from './sample-report';
 
 // TODO: replace with the knowledge base articles once they're published.
@@ -115,13 +117,67 @@ function ReportStackGraphic( { onOpen }: { onOpen: () => void } ) {
 	);
 }
 
+function PerspectivesGraphic() {
+	return (
+		<div className="dashboard-amplify-story__perspectives" aria-hidden="true">
+			<div className="dashboard-amplify-story__mini-report">
+				<span>{ __( 'People' ) }</span>
+				<strong>46/100</strong>
+				<i />
+				<i />
+				<i />
+			</div>
+			<div className="dashboard-amplify-story__mini-report">
+				<span>{ __( 'AI agents' ) }</span>
+				<strong>50/100</strong>
+				<i />
+				<i />
+				<i />
+			</div>
+		</div>
+	);
+}
+
+function CategoriesGraphic() {
+	return (
+		<div className="dashboard-amplify-story__categories" aria-hidden="true">
+			<span>{ __( 'Category breakdown' ) }</span>
+			{ [
+				{ label: __( 'Trust signals' ), score: 4, max: 18 },
+				{ label: __( 'Mobile experience' ), score: 7, max: 12 },
+				{ label: __( 'Content quality' ), score: 11, max: 12 },
+			].map( ( item ) => (
+				<div className="dashboard-amplify-story__category" key={ item.label }>
+					<span>{ item.label }</span>
+					<div>
+						<i
+							data-severity={ severityFor( item.score, item.max ) }
+							style={ { width: `${ ( item.score / item.max ) * 100 }%` } }
+						/>
+					</div>
+					<strong>
+						{ item.score }/{ item.max }
+					</strong>
+				</div>
+			) ) }
+		</div>
+	);
+}
+
 function PromptGraphic() {
+	const illustrations = useAmplifyIllustrations();
+	const prompt =
+		illustrations === 'sample'
+			? __(
+					'Turn this report into a 5-slide pitch deck in our agency’s voice, leading with the three biggest gaps.'
+				)
+			: __(
+					'Rewrite the homepage headline so it clearly names who this business serves and the outcome it delivers.'
+				);
 	return (
 		<div className="dashboard-amplify-story__prompt" aria-hidden="true">
 			<p>
-				{ __(
-					'Turn this report into a 5-slide pitch deck in our agency’s voice, leading with the three biggest gaps.'
-				) }
+				<span>{ prompt }</span>
 				<span className="dashboard-amplify-story__prompt-caret" />
 			</p>
 			<div className="dashboard-amplify-story__prompt-actions">
@@ -292,6 +348,7 @@ function ScoreCategories() {
 export default function AmplifyOverviewStory() {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isSampleOpen, setIsSampleOpen ] = useState( false );
+	const illustrations = useAmplifyIllustrations();
 	return (
 		<div className="dashboard-amplify-story">
 			<section
@@ -299,14 +356,18 @@ export default function AmplifyOverviewStory() {
 				aria-labelledby="amplify-categories-title"
 			>
 				<div className="dashboard-amplify-story__graphic">
-					<ReportStackGraphic
-						onOpen={ () => {
-							recordTracksEvent( 'calypso_a4a_amplify_sample_report_open', {
-								source: 'story-graphic',
-							} );
-							setIsSampleOpen( true );
-						} }
-					/>
+					{ illustrations === 'sample' ? (
+						<ReportStackGraphic
+							onOpen={ () => {
+								recordTracksEvent( 'calypso_a4a_amplify_sample_report_open', {
+									source: 'story-graphic',
+								} );
+								setIsSampleOpen( true );
+							} }
+						/>
+					) : (
+						<PerspectivesGraphic />
+					) }
 				</div>
 				<div className="dashboard-amplify-story__copy">
 					<Heading id="amplify-categories-title" level={ 2 }>
@@ -335,7 +396,7 @@ export default function AmplifyOverviewStory() {
 				aria-labelledby="amplify-perspectives-title"
 			>
 				<div className="dashboard-amplify-story__graphic">
-					<FindingGraphic />
+					{ illustrations === 'sample' ? <FindingGraphic /> : <CategoriesGraphic /> }
 				</div>
 				<div className="dashboard-amplify-story__copy">
 					<Heading id="amplify-perspectives-title" level={ 2 }>
@@ -374,23 +435,14 @@ export default function AmplifyOverviewStory() {
 				<p className="dashboard-amplify-story__faq-intro">
 					{ __( 'A few things to know before you create or share a report.' ) }
 				</p>
-				<Panel className="dashboard-amplify-story__faq-list">
+				<div className="dashboard-amplify-story__faq-list">
 					{ FAQS.map( ( faq ) => (
-						<PanelBody
-							key={ faq.id }
-							title={ faq.question }
-							initialOpen={ false }
-							onToggle={ ( isOpen ) =>
-								recordTracksEvent(
-									isOpen ? 'calypso_a4a_amplify_faq_open' : 'calypso_a4a_amplify_faq_close',
-									{ faq_id: faq.id }
-								)
-							}
-						>
+						<div className="dashboard-amplify-story__faq-item" key={ faq.id }>
+							<Heading level={ 3 }>{ faq.question }</Heading>
 							<p>{ faq.answer }</p>
-						</PanelBody>
+						</div>
 					) ) }
-				</Panel>
+				</div>
 			</section>
 			{ isSampleOpen && <AmplifySampleReportModal onClose={ () => setIsSampleOpen( false ) } /> }
 		</div>
