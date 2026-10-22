@@ -1,15 +1,16 @@
 # AI UI Renderer
 
-`@automattic/ai-ui-renderer` renders A2UI v0.9 surfaces with WordPress components. Hosts own
-session lifetime, action delivery, and error handling. See the
-[interactive UI architecture](../agents-manager/INTERACTIVE-UI.md) for how hosts and
-providers use it.
+`@automattic/ai-ui-renderer` renders A2UI v1.0 surfaces with WordPress components. It holds only
+basic or shared components: each chat's own components live in its project. Hosts own session
+lifetime, action delivery, and error handling. See the
+[interactive UI architecture](../agents-manager/INTERACTIVE-UI.md) for how hosts and providers
+use it.
 
 ## Usage
 
-Build a catalog with `createInteractiveUiCatalog({ id, components, functions })`: the basic
-components below and A2UI's built-in functions, plus the host's own. The ID defaults to A2UI's
-Basic catalog; give a catalog with your own components its own versioned ID. Duplicate names
+Build an A2UI v1.0 catalog with `createInteractiveUiCatalog({ id, components, functions })`: the
+basic components below and A2UI's built-in functions, plus the host's own. The ID defaults to the
+Basic catalog's; give a catalog with your own components its own versioned ID. Duplicate names
 throw.
 
 Define a component or function as a plain object, so it can ship in another bundle without its
@@ -24,64 +25,88 @@ const titlePicker: InteractiveUiComponentDefinition< TitlePickerProps > = {
 };
 ```
 
-`schema` builds with the renderer's `zod`, A2UI's `ActionSchema` and `DataBindingSchema`, and
-value schemas that take a literal or a data binding (`StringValueSchema`, `NumberValueSchema`,
-`BooleanValueSchema`). The component gets resolved props: bound values read from the data model,
-a `set<Prop>` setter for each, actions as functions to call, and the host's `hostProps`. A
-function definition has a `name`, `returnType`, `schema` and `execute( args )`, which may be
-async; its arguments come from the agent, so treat them as untrusted.
+- `schema` builds with the renderer's `zod`, A2UI's `ActionSchema` and `DataBindingSchema`, and
+  `StringValueSchema`, `NumberValueSchema` and `BooleanValueSchema`, which take a literal or a
+  data binding.
+- The component gets resolved props: bound values, a `set<Prop>` setter for each, actions as
+  functions to call, and the host's `hostProps`.
+- A function definition has a `name`, `returnType`, `schema` and `execute( args )`, which may be
+  async. Its arguments come from the agent, so treat them as untrusted.
 
-Create a runtime with `createInteractiveUiRuntime({ catalogs, onAction, onError })` and pass it
-ordered batches with `runtime.processMessages(messages, ownerId)`. The owner is what
-the host shows the surfaces next to, such as a chat message. Keep the runtime for the
-session to preserve edits, then call `runtime.dispose()`.
+## Rendering
 
-Render each of an owner's surfaces (`runtime.getSurfaceIds(ownerId)`, then
-`runtime.getSurface(id)`) with `InteractiveUiSurface`, and re-render after each
-`processMessages()` call. It adds the `ai-ui-renderer` root fieldset and Markdown, waits
-for the surface's root component, hides a surface that uses a component its catalog lacks
-(reporting it through `onError`), and hides a surface that fails to render until its `revision`
-changes. Pass `disabled` to disable its controls, including an open modal's, and `hostProps` to
-give the components that definitions add props of your own, such as chat state. The host's props
-override the surface's props of the same name; pass a stable object to avoid re-renders.
+1. Create a runtime with `createInteractiveUiRuntime({ catalogs, onAction, onError })`. Keep it
+   for the session to preserve edits, then call `runtime.dispose()`.
+2. Pass it ordered batches with `runtime.processMessages(messages, ownerId)`. The owner is what
+   the host shows the surfaces next to, such as a chat message.
+3. Render each of an owner's surfaces (`runtime.getSurfaceIds(ownerId)`, then
+   `runtime.getSurface(id)`) with `InteractiveUiSurface`, and re-render after each
+   `processMessages()` call.
 
-Import `@automattic/ai-ui-renderer/style.scss` and the WordPress components stylesheet.
-Hosts need Sass support and supply their own stacking rule for `.ai-ui-renderer__modal`.
+`InteractiveUiSurface` waits for the surface's root component. It hides a surface that uses an
+unknown component, reporting it through `onError`, and one that fails to render until its
+`revision` changes. Its props:
 
-Select a theme with `createSurface.theme: { name: 'commerce' }` or the
-`InteractiveUiSurface` `theme` prop, which takes precedence. Theme names in
-messages must start with a lowercase letter and contain only lowercase letters,
-digits, and hyphens. Other message theme names are ignored without preventing
-the surface from rendering. The renderer adds `ai-ui-renderer--theme-<name>` to the
-surface fieldsets and the modal overlay. Consumers load their own
-CSS scoped to that class; no theme keeps the default styles.
+- `disabled` disables its controls, including an open modal's.
+- `hostProps` gives the host's components props of your own, such as chat state. They override
+  the surface's props of the same name; pass a stable object to avoid re-renders.
+- `className` adds classes to the surface and its modal overlay ([Theming](#theming)).
+
+Import `@automattic/ai-ui-renderer/style.scss` (Sass) and the WordPress components stylesheet,
+and give the modal overlay (`ai-ui-renderer__modal`) a stacking rule.
+
+## Theming
+
+Surfaces follow [A2UI's theming](https://a2ui.org/guides/theming/): a host sets A2UI's color
+tokens, and the renderer applies them to the basic components and the WordPress components they
+use, including newer ones that read WordPress's `--wpds-*` design tokens.
+
+| Token                                                                             | Colors                                      |
+| --------------------------------------------------------------------------------- | ------------------------------------------- |
+| `--a2ui-color-primary`, `--a2ui-color-primary-hover`, `--a2ui-color-primary-dark` | Primary buttons and checked controls        |
+| `--a2ui-color-on-primary`                                                         | Text on the primary color                   |
+| `--a2ui-color-surface`, `--a2ui-color-on-surface`                                 | Cards and the modal                         |
+| `--a2ui-color-input`, `--a2ui-color-on-input`                                     | Inputs, and the text and labels of controls |
+| `--a2ui-color-border`                                                             | Card outlines and dividers                  |
+
+Set them on the class you pass as `className`, or on an ancestor. Pick light or dark with the
+page's `color-scheme`, or A2UI's `a2ui-dark` or `a2ui-light` class:
+
+```scss
+.my-chat__surface {
+	--a2ui-color-surface: var( --my-chat-background );
+	--a2ui-color-on-surface: var( --my-chat-text );
+}
+
+.my-chat.is-dark .my-chat__surface {
+	color-scheme: dark;
+	--a2ui-color-input: #2f2f2f;
+}
+```
+
+An unset token keeps the host's WordPress components color (`--wp-components-color-*`), or else a
+default from WordPress's palette that follows the light or dark mode. The modal renders outside the
+host, so it copies its surface's theme when it opens.
+
+Custom components should use the tokens, such as `var( --a2ui-color-on-surface )`, or WordPress
+components, which follow them, never a chat's own variables.
 
 ## Basic components
 
-`Text`, `TextField`, `Button`, `Column`, `Image`, `Icon`, `Row`, `List`, `Card`,
-`Divider`, `CheckBox`, `ChoicePicker`, `DateTimeInput`, `Video`, `AudioPlayer`, `Tabs`,
-`Modal`, and `Slider`.
+`Text`, `TextField`, `Button`, `Column`, `Image`, `Icon`, `Row`, `List`, `Card`, `Divider`,
+`CheckBox`, `ChoicePicker`, `DateTimeInput`, `Video`, `AudioPlayer`, `Tabs`, `Modal` and
+`Slider`.
 
-- Layouts use arrays of child IDs. Cards wrap a single child and use the host's
-  `--color-background` and `--color-foreground`.
-- Icons map supported Basic catalog names to WordPress icons.
-- Choice pickers support single and multiple selection and store selected values as
-  string arrays.
-- Buttons send an `event` to the agent, or call a catalog function with `functionCall`.
-- Bind input values and button action context to the same data paths to submit edits.
-- Date/time inputs use local ISO date/time strings, enable date, time, or both with
-  `enableDate`/`enableTime`, and show the browser's validation message on blur.
-- Text fields support `shortText`, `longText`, `number`, and `obscured` (password)
-  variants; their values remain strings.
-- Sliders store numbers and use `min` and `max` to set their range.
-- Video and audio URLs support data bindings and render native players with controls.
-- Tabs contain `{ title, child }` entries.
-- Modals reference a `Button` trigger and a content component. The trigger opens the
-  dialog locally instead of sending its action; buttons inside the dialog send actions
-  normally. Dialog inputs share the surface data model and are disabled with it.
-- Input and choice-group labels use WordPress control typography and spacing.
+- Buttons send an `event` to the agent, or call a catalog function with `functionCall`. To submit
+  edits, bind the inputs and the action's context to the same data paths.
+- A modal's `Button` trigger opens it instead of sending its action. Its inputs share the
+  surface's data model and are disabled with it.
+- Text fields keep their values as strings, choice pickers as string arrays, and date/time inputs
+  as local ISO strings.
+- Components ignore A2UI v1.0 properties they don't support, such as `weight`, `accessibility`
+  and `checks`, instead of rejecting the surface.
 
 ## Development
 
-Build with `yarn workspace @automattic/ai-ui-renderer build`. Run its tests with
-`yarn jest --config packages/ai-ui-renderer/jest.config.js --runInBand`.
+Build with `yarn workspace @automattic/ai-ui-renderer build`, and test with
+`yarn test-packages packages/ai-ui-renderer`.

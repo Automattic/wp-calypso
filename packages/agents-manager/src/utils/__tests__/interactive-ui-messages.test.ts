@@ -10,14 +10,14 @@ import type { UIMessage } from '@automattic/agenttic-client';
 
 const operations = [
 	{
-		version: 'v0.9' as const,
+		version: 'v1.0' as const,
 		createSurface: {
 			surfaceId: 'test-surface',
-			catalogId: 'https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json',
+			catalogId: 'https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json',
 		},
 	},
 	{
-		version: 'v0.9' as const,
+		version: 'v1.0' as const,
 		updateComponents: {
 			surfaceId: 'test-surface',
 			components: [ { id: 'root', component: 'Text', text: 'Test surface' } ],
@@ -183,7 +183,7 @@ describe( 'applyInteractiveUiBatch', () => {
 			onError: jest.fn(),
 		} );
 		const rejected = {
-			version: 'v0.9' as const,
+			version: 'v1.0' as const,
 			updateComponents: { surfaceId: 'missing-surface', components: [ { id: 'root' } ] },
 		};
 
