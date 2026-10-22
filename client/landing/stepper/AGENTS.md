@@ -452,9 +452,8 @@ async function initialize() {
 **Don't add a new flow by default.** Extend the main onboarding flow
 (`/setup/onboarding`) instead, customizing it through step props (see "Step
 customization" above). Only if it genuinely can't cover the use case, stop and
-get a P2 proposal agreed before writing any flow code, naming who will own the
-flow, up to and including deleting it. If you're an AI agent, don't scaffold a
-new flow on your own: ask the developer for that proposal first.
+ask the developer for an agreed P2 proposal before writing any flow code,
+naming who will own the flow, up to and including deleting it.
 
 Each flow is another copy of signup logic. It drifts from the main flow, so
 customers get inconsistent steps for the same task, and every change to the
