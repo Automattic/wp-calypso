@@ -73,6 +73,7 @@ export function InteractiveUiSurfaces( { messageId, presentation, isMessageStale
 						<InteractiveUiSurface
 							surface={ surface }
 							disabled={ isDisabled || isStale }
+							theme="agents-manager"
 							revision={ revision }
 							hostProps={ isStale ? STALE_HOST_PROPS : CURRENT_HOST_PROPS }
 						/>
