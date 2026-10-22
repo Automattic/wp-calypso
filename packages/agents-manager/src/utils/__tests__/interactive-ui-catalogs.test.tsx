@@ -1,11 +1,13 @@
 import * as renderer from '@automattic/ai-ui-renderer';
 import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
+import { render, screen } from '@testing-library/react';
 import {
 	AGENTS_MANAGER_CATALOG_ID,
 	createInteractiveUiCatalogs,
 	filterInteractiveUiCatalogs,
 	getInteractiveUiCapabilities,
 } from '../interactive-ui-catalogs';
+import * as tracks from '../tracks';
 import type { InteractiveUiCatalogDefinition } from '@automattic/ai-ui-renderer';
 
 const WOO_CATALOG_ID = 'urn:automattic:woocommerce-ai:interactive-ui:v1';
@@ -22,6 +24,11 @@ function createCatalog(
 
 afterEach( () => jest.restoreAllMocks() );
 
+afterAll( () => {
+	// The real Tracks module was spied on; let later suites install their own mocks.
+	jest.resetModules();
+} );
+
 it( 'builds the Basic catalog, Agents Manager’s and each provider’s', () => {
 	const catalogs = createInteractiveUiCatalogs( renderer, [ createCatalog( WOO_CATALOG_ID ) ] );
 
@@ -30,6 +37,51 @@ it( 'builds the Basic catalog, Agents Manager’s and each provider’s', () => 
 		AGENTS_MANAGER_CATALOG_ID,
 		WOO_CATALOG_ID,
 	] );
+} );
+
+it( 'records the shared response event when a provider’s component renders', async () => {
+	const recordBigSkyTracksEvent = jest
+		.spyOn( tracks, 'recordBigSkyTracksEvent' )
+		.mockImplementation( () => undefined );
+	const catalogs = createInteractiveUiCatalogs( renderer, [
+		createCatalog( WOO_CATALOG_ID, { WooAiProductCard: () => <p>Product</p> } ),
+	] );
+	const runtime = renderer.createInteractiveUiRuntime( {
+		catalogs,
+		onAction: jest.fn(),
+		onError: jest.fn(),
+	} );
+
+	runtime.processMessages(
+		[
+			{
+				version: 'v1.0',
+				createSurface: {
+					surfaceId: 'product',
+					catalogId: WOO_CATALOG_ID,
+					components: [ { id: 'root', component: 'WooAiProductCard' } ],
+				},
+			},
+		],
+		'message'
+	);
+
+	render(
+		<renderer.InteractiveUiSurface
+			surface={ runtime.getSurface( 'product' )! }
+			hostProps={ { isMessageStale: false } }
+		/>
+	);
+
+	expect( await screen.findByText( 'Product' ) ).toBeVisible();
+	expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+		'jetpack_big_sky_chat_response_rendered',
+		{
+			component_type: 'WooAiProductCard',
+			tool_id: 'wpcom__render_interactive_ui',
+			tool_call_id: 'product',
+		}
+	);
 } );
 
 it( 'skips a catalog that fails to build, and keeps the others', () => {
@@ -80,7 +132,10 @@ it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () 
 		'v1.0': {
 			supportedCatalogIds: [ BASIC_CATALOG_ID, AGENTS_MANAGER_CATALOG_ID, WOO_CATALOG_ID ],
 			inlineCatalogs: [
-				{ catalogId: AGENTS_MANAGER_CATALOG_ID, protocolVersion: '1.0' },
+				expect.objectContaining( {
+					catalogId: AGENTS_MANAGER_CATALOG_ID,
+					protocolVersion: '1.0',
+				} ),
 				{ ...wooCatalog.catalog, protocolVersion: '1.0' },
 			],
 		},

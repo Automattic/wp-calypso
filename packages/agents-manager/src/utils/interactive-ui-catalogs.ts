@@ -3,6 +3,7 @@ import {
 	BASIC_CATALOG_ID,
 	getInteractiveUiRendererCapabilities,
 } from '@automattic/ai-ui-renderer/capabilities';
+import { withChatResponseTracking } from '../components/chat-response-tracking';
 import type {
 	InteractiveUiCatalog,
 	InteractiveUiCatalogDefinition,
@@ -55,8 +56,8 @@ export function getInteractiveUiCapabilities(
 
 /**
  * Builds the catalogs a conversation's surfaces render with: A2UI's Basic catalog, Agents
- * Manager's, and each provider's. A catalog whose document isn't valid A2UI is skipped, so only
- * its own surfaces don't render.
+ * Manager's, and each provider's, whose components record the shared response events. A catalog
+ * whose document isn't valid A2UI is skipped, so only its own surfaces don't render.
  */
 export function createInteractiveUiCatalogs(
 	renderer: InteractiveUiRenderer,
@@ -65,8 +66,17 @@ export function createInteractiveUiCatalogs(
 	const catalogs = [ renderer.createInteractiveUiCatalog() ];
 
 	for ( const definition of [ AGENTS_MANAGER_CATALOG, ...providerCatalogs ] ) {
+		const components = Object.entries( definition.components ?? {} ).map(
+			( [ name, component ] ) => [ name, withChatResponseTracking( name, component ) ]
+		);
+
 		try {
-			catalogs.push( renderer.createInteractiveUiCatalog( definition ) );
+			catalogs.push(
+				renderer.createInteractiveUiCatalog( {
+					...definition,
+					components: Object.fromEntries( components ),
+				} )
+			);
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
 			console.error(

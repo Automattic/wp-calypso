@@ -81,9 +81,12 @@ come.
 - **Functions run from a click.** A2UI runs a catalog's functions only from a click, never from a
   value, unless its document sets `requiresUserActivation: false` for one without side effects.
   Every function treats its arguments as untrusted.
-- **Components own their side effects:** the change itself, its checkpoint and its Tracks events.
-  Agents Manager passes chat state as props, such as `isMessageStale`, which a surface can't
-  override.
+- **Components own their side effects:** the change itself, its checkpoint and its own Tracks
+  events. Agents Manager passes chat state as props, such as `isMessageStale`, which a surface can't
+  override. As for `show-component` messages, it records `jetpack_big_sky_chat_response_rendered`
+  for each catalog component on a current surface, and the actions it reports through
+  `onResponseAction` (`jetpack_big_sky_chat_response_action`), with the component's name as
+  `component_type` and its surface ID as `tool_call_id`.
 - **Agents Manager decides when a surface is stale**, with the rule `show-component` uses
   (`src/utils/stale-chat-ui.ts`): the user has replied past the last message that changed it, or
   the editor has another page open than the one its envelope names. Like a restored picker, a
