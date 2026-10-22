@@ -77,7 +77,9 @@ export default function ProductStoreCard( {
 
 	return (
 		<BodyCard
-			title={ getProductListTitle( product, variants.length > 1 ) }
+			title={
+				variants.length > 1 ? getProductShortTitle( product, true ) : getProductListTitle( product )
+			}
 			byline={ getCardByline( product ) }
 			description={ getProductDescription( product.slug ).description ?? undefined }
 			tile={ <ProductTile product={ product } /> }

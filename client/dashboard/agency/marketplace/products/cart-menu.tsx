@@ -18,7 +18,7 @@ import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom
 import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../paths';
 import { getCheckoutUrl, getLegacyCheckoutUrl } from './lib/checkout-url';
 import { getTermSuffix } from './lib/product-pricing';
-import { getProductListTitle } from './lib/product-title';
+import { getProductTitle } from './lib/product-title';
 import { useCartLines } from './use-cart-lines';
 import type { TermPricing } from '../use-term-pricing';
 import type { CartItemRef, ShoppingCartItem } from './use-shopping-cart';
@@ -44,7 +44,7 @@ interface Props {
 const getCartProductName = ( product: AgencyProduct ) =>
 	product.slug === WPCOM_CREATOR_PLAN_SLUG
 		? __( 'WordPress.com Site' )
-		: getProductListTitle( product );
+		: getProductTitle( product.name );
 
 export default function CartMenu( {
 	items,
