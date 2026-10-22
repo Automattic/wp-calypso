@@ -84,24 +84,26 @@ function LaunchHarness( {
 describe( 'useLaunchSiteNodeBuilder', () => {
 	afterEach( () => nock.cleanAll() );
 
-	test( 'renders the pre-launch modal panel when a paid, custom-domain site is launched from the omnibar', async () => {
+	test( 'launches a paid, custom-domain site immediately from the omnibar', async () => {
 		const user = userEvent.setup();
 		mockDomainsApi( [
 			createMockDomain( 'kaonashi.wordpress.com', false ),
 			createMockDomain( 'kaonashi.com' ),
 		] );
+		const launchScope = nock( 'https://public-api.wordpress.com' )
+			.post( /\/sites\/1\/launch$/ )
+			.reply( 200, {} );
 
 		render( <LaunchHarness site={ createMockSite() } /> );
 
 		const launchButton = await screen.findByRole( 'button', { name: 'Luncurkan situs' } );
 		// The button is disabled until the domains query settles, which is what
-		// tells the hook the site has a custom domain and should open the modal.
+		// tells the hook the site has a custom domain and can launch in place.
 		await waitFor( () => expect( launchButton ).toBeEnabled() );
 		await user.click( launchButton );
 
-		expect(
-			await screen.findByRole( 'dialog', { name: 'Launching makes your site public' } )
-		).toBeVisible();
+		await waitFor( () => expect( launchScope.isDone() ).toBe( true ) );
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'takes the title and position from the admin bar', async () => {
