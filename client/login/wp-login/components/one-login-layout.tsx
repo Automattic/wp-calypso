@@ -105,7 +105,7 @@ const OneLoginLayout = ( {
 	const currentRoute = useSelector( getCurrentRoute );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWooJPC = useSelector( isWooJPCFlow );
-	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
+	const { headingText, subHeadingText, subHeadingTextSecondary, siteIcon } = useLoginContext();
 	const validatedHeadingText = ensureHeadingProvided( headingText );
 	const { topBarLogo, hasCustomBranding } = usePartnerBranding();
 	const signupLink = useSignupLink( { signupUrl: signupUrlProp, origin: 'login-layout' } );
@@ -221,6 +221,11 @@ const OneLoginLayout = ( {
 			>
 				{ notice }
 				<div className="wp-login__one-login-layout-heading">
+					{ showLogo && ! headingLogo && siteIcon && (
+						<div className="wp-login__one-login-layout-heading-logo is-site-icon">
+							<img src={ siteIcon.src } width={ 64 } height={ 64 } alt={ siteIcon.alt } />
+						</div>
+					) }
 					{ showLogo && (
 						<HeadingLogo
 							isJetpack={ isJetpack }

@@ -140,6 +140,11 @@ export class RequestLoginEmailForm extends Component {
 			this.usernameOrEmailRef.current?.focus();
 		}
 
+		if ( this.state.site !== prevState.site ) {
+			const src = this.state.site?.icon?.img ?? this.state.site?.icon?.ico ?? null;
+			this.context?.setSiteIcon?.( src ? { src, alt: `${ this.state.site?.name } icon` } : null );
+		}
+
 		if ( this.state.site?.name && prevState.site?.name !== this.state.site?.name ) {
 			this.setRequestLoginHeaders();
 		}
@@ -230,7 +235,6 @@ export class RequestLoginEmailForm extends Component {
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
-		const siteIcon = this.state.site?.icon?.img ?? this.state.site?.icon?.ico ?? null;
 
 		if ( showCheckYourEmail ) {
 			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
@@ -270,16 +274,6 @@ export class RequestLoginEmailForm extends Component {
 
 		return (
 			<div className="magic-login__form">
-				{ siteIcon && (
-					<div className="magic-login__form-header-icon">
-						<img
-							src={ siteIcon }
-							width={ 64 }
-							height={ 64 }
-							alt={ `${ this.state.site?.name } icon` }
-						/>
-					</div>
-				) }
 				{ isGravPoweredClient && this.getGravatarHeader() }
 				<LoggedOutForm className="magic-login__form-form" onSubmit={ onSubmit }>
 					{ currentUser && currentUser.username && (
