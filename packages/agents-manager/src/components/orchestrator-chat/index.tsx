@@ -38,9 +38,9 @@ import useSiteSetupChecklist from '../../hooks/use-site-setup-checklist';
 import useSourcesAction from '../../hooks/use-sources-action';
 import { useStreamedCheckpointMessages } from '../../hooks/use-streamed-checkpoint-messages';
 import { useSuggestionTracking } from '../../hooks/use-suggestion-tracking';
-import convertInteractiveUiMessagesToComponents from '../../interactive-ui/convert-interactive-ui-messages-to-components';
 import { markSessionSent } from '../../utils/agent-session';
 import { convertBigSkyMessageToUIMessage } from '../../utils/convert-big-sky-message';
+import { convertInteractiveUiMessagesToComponents } from '../../utils/convert-interactive-ui-messages-to-components';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
 } from '../../utils/convert-tool-messages-to-components';
@@ -60,6 +60,7 @@ import type { BigSkyMessage } from '../../types';
 import type {
 	AbilitiesSetupHook,
 	GetChatComponent,
+	LoadedProviders,
 	UseSuggestionsHook,
 	SiteBuildUtils,
 	TransformMessages,
@@ -94,6 +95,8 @@ interface Props {
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
+	/** The providers' interactive UI components and functions. */
+	interactiveUi?: LoadedProviders[ 'interactiveUi' ];
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
 	/** Rewrite the transcript before it is displayed. See `TransformMessages`. */
@@ -122,6 +125,7 @@ export default function OrchestratorChat( {
 	useProviderAbilitiesSetup,
 	useSuggestions,
 	getChatComponent,
+	interactiveUi,
 	siteBuildUtils,
 	transformMessages,
 	useCheckpoint,
@@ -139,7 +143,8 @@ export default function OrchestratorChat( {
 
 	// Streamed task updates, recorded before the agent config's own `onTaskUpdate` runs.
 	const {
-		sessionIdentity,
+		scopeIdentity,
+		sessionId,
 		streamGeneration,
 		isCurrentStreamGeneration,
 		recordTaskUpdate,
@@ -471,14 +476,18 @@ export default function OrchestratorChat( {
 		withRetainedShowComponents,
 	] );
 
-	// Interactive UI forms in agent replies, and the actions they send.
+	// Interactive UI surfaces in agent replies, and the actions they send.
 	const displayedMessages = useInteractiveUi( {
 		messages,
 		convertedMessages,
-		conversationId: sessionIdentity,
-		isProcessing: isProcessing || isUploadingImages,
+		scopeIdentity,
+		sessionId,
+		isProcessing,
+		isUploadingImages,
 		agentConfig,
 		submitContextMessage,
+		interactiveUi,
+		currentPostId,
 	} );
 
 	const messageCount = displayedMessages.length;

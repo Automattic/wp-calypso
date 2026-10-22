@@ -15,13 +15,12 @@ import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, { LayoutHeaderTitle as Title } from 'calypso/layout/hosting-dashboard/header';
 import { useSelector } from 'calypso/state';
 import { getUserBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import useFetchClientSubscriptions from '../../hooks/use-fetch-client-subscriptions';
 import {
-	SubscriptionAction,
-	SubscriptionPrice,
-	SubscriptionPurchase,
-	SubscriptionStatus,
-} from './field-content';
+	CancelSubscriptionDialog,
+	canCancelSubscription,
+} from '../../cancel-subscription-confirmation-dialog';
+import useFetchClientSubscriptions from '../../hooks/use-fetch-client-subscriptions';
+import { SubscriptionPrice, SubscriptionPurchase, SubscriptionStatus } from './field-content';
 import SubscriptionsListMobileView from './mobile-view';
 import PurchaseConfirmationMessage from './purchase-confirmation-message';
 import type { Subscription } from '../../types';
@@ -35,8 +34,9 @@ export default function SubscriptionsList() {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
-		fields: [ 'purchase', 'price', 'subscription-status', 'actions' ],
+		fields: [ 'purchase', 'price', 'subscription-status' ],
 	} );
+	const [ subscriptionToCancel, setSubscriptionToCancel ] = useState< Subscription | null >( null );
 
 	const { data, isFetching, refetch } = useFetchClientSubscriptions();
 	const { data: products, isFetching: isFetchingProducts } = useFetchClientProducts();
@@ -113,23 +113,21 @@ export default function SubscriptionsList() {
 				enableHiding: false,
 				enableSorting: false,
 			},
+		],
+		[ isBillingTypeBD, isFetchingProducts, products, translate ]
+	);
+
+	const actions = useMemo(
+		() => [
 			{
-				id: 'actions',
-				label: translate( 'Actions' ).toUpperCase(),
-				getValue: () => '-',
-				render: ( { item }: { item: Subscription } ): ReactNode => {
-					return (
-						<SubscriptionAction
-							subscription={ item }
-							onCancelSubscription={ onCancelSubscription }
-						/>
-					);
-				},
-				enableHiding: false,
-				enableSorting: false,
+				id: 'cancel-subscription',
+				label: translate( 'Cancel subscription' ),
+				isPrimary: true,
+				isEligible: canCancelSubscription,
+				callback: ( [ item ]: Subscription[] ) => setSubscriptionToCancel( item ),
 			},
 		],
-		[ isBillingTypeBD, isFetchingProducts, onCancelSubscription, products, translate ]
+		[ translate ]
 	);
 	const { data: items, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( data ?? [], dataViewsState, fields );
@@ -163,7 +161,7 @@ export default function SubscriptionsList() {
 								itemFieldId: 'id',
 								enableSearch: false,
 								fields: fields,
-								actions: [],
+								actions,
 								setDataViewsState: setDataViewsState,
 								dataViewsState: dataViewsState,
 								defaultLayouts: { table: {} },
@@ -178,6 +176,14 @@ export default function SubscriptionsList() {
 						onCancelSubscription={ onCancelSubscription }
 						isFetchingProducts={ isFetchingProducts }
 						products={ products }
+					/>
+				) }
+
+				{ subscriptionToCancel && (
+					<CancelSubscriptionDialog
+						subscription={ subscriptionToCancel }
+						onCancelSubscription={ onCancelSubscription }
+						onClose={ () => setSubscriptionToCancel( null ) }
 					/>
 				) }
 			</LayoutBody>

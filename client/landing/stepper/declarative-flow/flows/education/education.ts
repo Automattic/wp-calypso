@@ -23,7 +23,10 @@ import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { withLocale } from '../../helpers/with-locale';
 import { STEPS } from '../../internals/steps';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
@@ -160,14 +163,16 @@ const education: FlowV2< typeof initialize > = {
 					}
 
 					if ( providedDependencies.processingResult !== ProcessingResult.SUCCESS ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, {
+							errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
+						} );
 					}
 
 					const siteSlug = providedDependencies.siteSlug as string | undefined;
 					const siteId = providedDependencies.siteId as number | undefined;
 
 					if ( ! siteSlug ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'processing_missing_site' } );
 					}
 
 					const destination = addQueryArgs( `/home/${ siteSlug }`, { ref: flowName } );

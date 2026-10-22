@@ -13,8 +13,8 @@ export function buildOmnibarNodesFromAdminBarNodes(
 	resolveHref?: OmnibarHrefResolver
 ): OmnibarNodes {
 	const omnibarNodes: OmnibarNodes = {};
-	const siteActionNodes: OmnibarNode[] = [];
-	const pluginNodes: OmnibarNode[] = [];
+	const sitePluginNodes: OmnibarNode[] = [];
+	const userPluginNodes: OmnibarNode[] = [];
 
 	const nodeMap = new Map< string, OmnibarNode >();
 	for ( const node of adminBarNodes ) {
@@ -64,49 +64,31 @@ export function buildOmnibarNodesFromAdminBarNodes(
 			case 'new-content': {
 				omnibarNode.icon = <span className="dashicons-before dashicons-plus" />;
 				omnibarNode.className = 'omnibar__new-content';
-				siteActionNodes.push( omnibarNode );
 				break;
 			}
 			case 'comments': {
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
-				omnibarNode.title = undefined;
+				omnibarNode.title = doc.querySelector( '.pending-count' )?.textContent?.trim();
 				omnibarNode.label = doc.querySelector( '.screen-reader-text' )?.textContent?.trim();
 				omnibarNode.icon = <span className="dashicons-before dashicons-admin-comments" />;
-				omnibarNode.meta = {
-					subtitle: doc.querySelector( '.pending-count' )?.textContent?.trim(),
-				};
-				siteActionNodes.push( omnibarNode );
 				break;
 			}
 			case 'updates': {
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
-				omnibarNode.title = undefined;
+				omnibarNode.title = doc.querySelector( '.ab-label' )?.textContent?.trim();
 				omnibarNode.label = doc.querySelector( '.screen-reader-text' )?.textContent?.trim();
 				omnibarNode.icon = <span className="dashicons-before dashicons-update" />;
 				omnibarNode.className = 'omnibar__updates';
-				omnibarNode.meta = {
-					subtitle: doc.querySelector( '.ab-label' )?.textContent?.trim(),
-				};
-				siteActionNodes.push( omnibarNode );
 				break;
 			}
 			case 'command-palette': {
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
-				omnibarNode.title = undefined;
+				omnibarNode.title = doc.querySelector( 'kbd' )?.textContent?.trim();
 				omnibarNode.label = doc.querySelector( '.screen-reader-text' )?.textContent?.trim();
 				omnibarNode.icon = <span className="dashicons-before dashicons-search" />;
-				omnibarNode.meta = {
-					subtitle: doc.querySelector( 'kbd' )?.textContent?.trim(),
-				};
 				// The node points at `#` and relies on an inline onclick handler.
 				omnibarNode.href = undefined;
 				omnibarNode.onClick = () => ( dispatch( 'core/commands' ) as { open: () => void } ).open();
-				siteActionNodes.push( omnibarNode );
-				break;
-			}
-			case 'stats':
-			case 'launch-site': {
-				siteActionNodes.push( omnibarNode );
 				break;
 			}
 			case 'my-account': {
@@ -149,22 +131,23 @@ export function buildOmnibarNodesFromAdminBarNodes(
 
 		if ( builder ) {
 			Object.assign( omnibarNode, built );
+		}
 
-			// The tree walk skips `top-secondary`, so a builder is what surfaces those nodes.
-			if ( node.parent === 'top-secondary' ) {
-				pluginNodes.push( omnibarNode );
-			}
+		if ( ! node.parent && omnibarNode !== omnibarNodes.home && omnibarNode !== omnibarNodes.site ) {
+			sitePluginNodes.push( omnibarNode );
+		} else if ( node.parent === 'top-secondary' && omnibarNode !== omnibarNodes.user ) {
+			userPluginNodes.push( omnibarNode );
 		}
 
 		nodeMap.set( node.id, omnibarNode );
 	}
 
-	if ( siteActionNodes.length > 0 ) {
-		omnibarNodes.siteActions = siteActionNodes;
+	if ( sitePluginNodes.length > 0 ) {
+		omnibarNodes.sitePlugins = sitePluginNodes;
 	}
 
-	if ( pluginNodes.length > 0 ) {
-		omnibarNodes.plugins = pluginNodes;
+	if ( userPluginNodes.length > 0 ) {
+		omnibarNodes.userPlugins = userPluginNodes;
 	}
 
 	for ( const node of adminBarNodes ) {

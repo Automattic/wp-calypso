@@ -85,6 +85,11 @@ const ErrorStep: StepType< {
 		const localeBucket = 'en' === locale ? 'en' : 'non_en';
 		bumpStat( 'calypso_stepper_error_step', `${ flow }_${ localeBucket }` );
 
+		// Only a flow navigation writes the step data. After a document load or a history arrival,
+		// the persisted step data can come from an earlier arrival, even in another flow, so the
+		// log line flags it.
+		const isFlowArrival = ! isOnlyStepMounted( 'error' ) && navigationType !== NavigationType.Pop;
+
 		// Some flows navigate here without storing an error. Log those arrivals too,
 		// so every bump of the stat above has a log line to split by error code.
 		logToLogstash( {
@@ -97,6 +102,7 @@ const ErrorStep: StepType< {
 				variant: variantSlug,
 				previous_step: previousStep,
 				error_reason: errorReason,
+				is_flow_arrival: isFlowArrival,
 			},
 			properties: {
 				flow,

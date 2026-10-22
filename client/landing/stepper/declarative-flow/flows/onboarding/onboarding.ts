@@ -11,6 +11,7 @@ import { matchPath } from 'react-router';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import {
+	SITE_SELECTED_REF,
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
 	WOO_HOSTING_SOLUTIONS_REF,
 } from 'calypso/landing/stepper/constants';
@@ -47,8 +48,6 @@ import {
 import {
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
-	getBuildWowStreamQueryArgs,
-	isBuildWowStreamRequested,
 	logBuildWowEvent,
 	requestBuildWowSite,
 	type BuildWowGraph,
@@ -86,7 +85,10 @@ import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
 import { useIsPostPlanSelectionEmailVerification } from '../../internals/steps-repository/__user/use-email-verification-gate';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import { getOnboardingStepperPosition } from './step-counter-config';
 import type { WowFunnelDest } from '../../../utils/wow-funnel';
@@ -344,6 +346,15 @@ const onboarding: FlowV2< typeof initialize > = {
 			[ preselectedPlan, couponParam, storageParam ]
 		);
 	},
+	useStepsProps() {
+		// The site-selected signup flow records its own completion before checkout, so the
+		// hand-off's processing pass must not record a second one.
+		const isSiteSelectedHandOff = useQuery().get( 'ref' ) === SITE_SELECTED_REF;
+
+		return {
+			[ STEPS.PROCESSING.slug ]: { skipSignupComplete: isSiteSelectedHandOff },
+		};
+	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 		// Variant B: the account step doesn't gate; the verification step is met after the free plan
@@ -374,6 +385,8 @@ const onboarding: FlowV2< typeof initialize > = {
 		const shouldSkipPlans = shouldSkipPlansStep( queryParams, planCartItem );
 		const coupon = queryParams.get( 'coupon' );
 		const refParameter = queryParams.get( 'ref' );
+		// A site-selected purchase finishes in this flow, but lands and completes as that flow.
+		const postCheckoutFlowName = refParameter === SITE_SELECTED_REF ? SITE_SELECTED_REF : flowName;
 		const siteSlugParam = queryParams.get( 'siteSlug' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
@@ -631,14 +644,8 @@ const onboarding: FlowV2< typeof initialize > = {
 					// A fully free order never reaches checkout, so the post-plan-selection gate is met here,
 					// right after the plan is chosen, before the site is created.
 					if ( postPlanSelectionEmailVerification && ! pickedPlan ) {
-						const streamArgs = getBuildWowStreamQueryArgs(
-							isBuildWowStreamRequested( queryParams )
-						);
 						return navigate(
-							addQueryArgs( 'email-verification', {
-								...streamArgs,
-								next: addQueryArgs( 'create-site', streamArgs ),
-							} ) as typeof currentStepSlug,
+							'email-verification?next=create-site' as typeof currentStepSlug,
 							undefined,
 							false
 						);
@@ -652,14 +659,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					// entry behind it. Pushed, Back off the destination lands here again, and the
 					// step advances on sight of a verified account without being asked — into site
 					// creation, under the name the site it just went back past already holds.
-					return navigate(
-						addQueryArgs(
-							next,
-							getBuildWowStreamQueryArgs( isBuildWowStreamRequested( queryParams ) )
-						) as typeof currentStepSlug,
-						undefined,
-						true
-					);
+					return navigate( next as typeof currentStepSlug, undefined, true );
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
@@ -733,7 +733,6 @@ const onboarding: FlowV2< typeof initialize > = {
 									siteId,
 									ref: refParameter,
 									graph,
-									streamEvents: isBuildWowStreamRequested( queryParams ),
 								} )
 							);
 							return;
@@ -769,7 +768,6 @@ const onboarding: FlowV2< typeof initialize > = {
 							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
 								siteSlug: siteSlugParam,
 								...( refParameter ? { ref: refParameter } : {} ),
-								...getBuildWowStreamQueryArgs( isBuildWowStreamRequested( queryParams ) ),
 							} )
 						);
 						return;
@@ -779,7 +777,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					const dependencies: ProvidedDependencies = providedDependencies;
 					const [ defaultDestination, backDestination, backDestinationDomains ] =
 						getOnboardingPostCheckoutDestination( {
-							flowName,
+							flowName: postCheckoutFlowName,
 							locale,
 							siteSlug: dependencies.siteSlug as string,
 						} );
@@ -790,7 +788,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					);
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
-						setSignupCompleteFlowName( flowName );
+						setSignupCompleteFlowName( postCheckoutFlowName );
 						setSignupCompleteSlug( providedDependencies.siteSlug );
 
 						if ( providedDependencies.goToCheckout ) {
@@ -814,7 +812,6 @@ const onboarding: FlowV2< typeof initialize > = {
 											{
 												siteSlug,
 												...( refParameter ? { ref: refParameter } : {} ),
-												...getBuildWowStreamQueryArgs( isBuildWowStreamRequested( queryParams ) ),
 											}
 										);
 
@@ -828,7 +825,6 @@ const onboarding: FlowV2< typeof initialize > = {
 										next: 'post-checkout-onboarding',
 										siteSlug,
 										...( refParameter ? { ref: refParameter } : {} ),
-										...getBuildWowStreamQueryArgs( isBuildWowStreamRequested( queryParams ) ),
 									}
 								);
 							}
@@ -897,10 +893,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					} else {
 						// NO_ACTION reaches here only without a siteSlug to send it back with.
 						return navigate( 'error' as typeof currentStepSlug, {
-							errorReason:
-								providedDependencies.processingResult === ProcessingResult.NO_ACTION
-									? 'processing_no_action'
-									: 'processing_failed',
+							errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
 						} );
 					}
 					return;
@@ -985,6 +978,21 @@ const onboarding: FlowV2< typeof initialize > = {
 			setPlanCartItem,
 			setProductCartItems,
 		] );
+
+		/**
+		 * The `site-selected` signup flow hands its purchase over to post-checkout-onboarding
+		 * without ever entering this flow, so whatever the store still holds belongs to some
+		 * earlier, unfinished run. Left in place, a stale connected-domain cart item would send
+		 * processing to that domain's setup page instead of the chooser.
+		 */
+		useEffect( () => {
+			if (
+				currentStepSlug === STEPS.POST_CHECKOUT_ONBOARDING.slug &&
+				getCurrentQueryParams().get( 'ref' ) === SITE_SELECTED_REF
+			) {
+				resetOnboardStore();
+			}
+		}, [ currentStepSlug, resetOnboardStore ] );
 
 		/**
 		 * Load Survicate and set visitor traits on each step navigation.

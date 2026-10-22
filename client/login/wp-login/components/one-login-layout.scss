@@ -1,12 +1,6 @@
-@import "@automattic/typography/styles/variables";
-
-.wp-login__one-login-layout-content-wrapper {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 2em;
-}
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 // The wrapper centers its children, so a notice would otherwise shrink to its
 // text. Span it, like the heading and form below.
@@ -17,7 +11,6 @@
 .wp-login__one-login-layout-heading {
 	color: var( --color-neutral-100 );
 	font-size: $font-body;
-	text-align: center;
 }
 
 .wp-login__one-login-layout-heading-logo {
@@ -29,9 +22,15 @@
 	}
 }
 
-.wp-login__one-login-layout-top-right {
-	display: flex;
-	gap: rem( 16px );
+// Hidden in CSS rather than by a viewport hook: the page is server-rendered, so a hook would
+// jump on hydration. `display: contents` keeps the link in the parent's flex gap when shown;
+// `display: none` removes it from the accessibility tree when hidden.
+.wp-login__top-right-mobile {
+	display: contents;
+
+	@include break-large {
+		display: none;
+	}
 }
 
 .wp-login__one-login-layout-tos {
@@ -51,35 +50,6 @@
 
 .wp-login__one-login-layout-heading-subtext {
 	text-wrap: balance;
-	color: var( --color-text-subtle, var( --studio-gray-50 ) );
-	margin-block: 0.5rem 0;
-	font-size: $font-body;
-
-	a {
-		color: var( --color-text-subtle, var( --studio-gray-50 ) );
-		text-decoration: underline;
-	}
-
-	// Dotcom-prominent variant for real subtitles (vs. the default ToS-style
-	// quiet treatment). Slightly darker (`--color-text` resolves to
-	// studio-gray-80) and a step up on the typography scale.
-	&.is-prominent {
-		color: var( --color-text, var( --studio-gray-80 ) );
-		font-size: $font-body-large;
-
-		a {
-			color: var( --color-text, var( --studio-gray-80 ) );
-		}
-	}
-
-	&.is-secondary {
-		font-size: $font-body-extra-small;
-		color: var( --color-text-subtle, var( --studio-gray-50 ) );
-
-		a {
-			color: var( --color-text-subtle, var( --studio-gray-50 ) );
-		}
-	}
 }
 
 .wp-login__one-login-header-client-name {
