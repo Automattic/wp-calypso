@@ -1,6 +1,7 @@
 import {
 	buildSvg,
 	clearFontCache,
+	clearImageCache,
 	clusterSpans,
 	collectStyleText,
 	getBands,
@@ -49,6 +50,7 @@ afterEach( () => {
 	delete abortSignal.timeout;
 	delete globals.fetch;
 	clearFontCache();
+	clearImageCache();
 } );
 
 const box = ( {
@@ -450,6 +452,26 @@ describe( 'inlineBlockImages', () => {
 		await inlineBlockImages( [ root, root.querySelector( '.inner' ) as Element ], view );
 
 		expect( fetchMock() ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	// A capture follows every edit, and the same photograph would otherwise
+	// be decoded and re-encoded each time.
+	it( 'fetches an image again only when it is wanted at another size', async () => {
+		stubSvg();
+		const first = blockWith( '<img src="https://example.com/a.svg" />' );
+		const second = blockWith( '<img src="https://example.com/a.svg" />' );
+
+		await inlineBlockImages( [ first.root ], first.view );
+		const inlined = await inlineBlockImages( [ second.root ], second.view );
+
+		expect( fetchMock() ).toHaveBeenCalledTimes( 1 );
+		expect( inlined.size ).toBe( 1 );
+
+		( second.root.querySelector( 'img' ) as Element ).getBoundingClientRect = () =>
+			box( { left: 0, top: 0, width: 400, height: 200 } ) as DOMRect;
+		await inlineBlockImages( [ second.root ], second.view );
+
+		expect( fetchMock() ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	it( 'caps how many images one capture fetches', async () => {

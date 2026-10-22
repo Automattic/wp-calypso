@@ -165,6 +165,10 @@ const text = ( clientId: string, textStyle: Styles = NAVY_TEXT ): CanvasBlock =>
 
 const notesOf = ( clientIds: string[] ) => describeTextContrast( clientIds )?.notes ?? [];
 
+beforeEach( () => {
+	jest.mocked( getPaletteColors ).mockReturnValue( [] );
+} );
+
 afterEach( () => {
 	document.body.innerHTML = '';
 	jest.resetAllMocks();
@@ -1187,27 +1191,38 @@ describe( 'text over a cover image', () => {
 	const COVER_RECT = { top: 0, left: 0, width: 1200, height: 600 };
 
 	/** Kept pixels, as the capture leaves them: one grey per column, left to right. */
-	const photo = ( greys: number[], { tainted = false } = {} ) =>
+	const photo = ( greys: number[], { tainted = false, alpha = 255 } = {} ) =>
 		( {
 			width: greys.length,
-			height: 1,
+			height: greys.length / 2,
 			getContext: () => ( {
-				getImageData: ( x: number, y: number, width: number ) => {
+				getImageData: ( x: number, y: number, width: number, rows: number ) => {
 					if ( tainted ) {
 						throw new DOMException( 'The canvas has been tainted', 'SecurityError' );
 					}
 
 					return {
 						data: Uint8ClampedArray.from(
-							greys.slice( x, x + width ).flatMap( ( grey ) => [ grey, grey, grey, 255 ] )
+							Array.from( { length: rows }, () =>
+								greys.slice( x, x + width ).flatMap( ( grey ) => [ grey, grey, grey, alpha ] )
+							).flat()
 						),
 					};
 				},
 			} ),
 		} ) as unknown as HTMLCanvasElement;
 
-	// From darker to lighter, so the 10th and 90th percentiles are 72 and 168.
-	const MID_TONED = Array.from( { length: 121 }, ( _, index ) => 60 + index );
+	// From darker to lighter, so the 10th and 90th percentiles are 71 and 167.
+	const MID_TONED = Array.from( { length: 120 }, ( _, index ) => 60 + index );
+
+	// A line of text across the cover, which jsdom does not lay out.
+	const TEXT_RECT = { top: 100, left: 0, width: 1200, height: 40 };
+	const boxed = ( block: CanvasBlock ): CanvasBlock => ( { textRect: TEXT_RECT, ...block } );
+
+	const getCanvasImage = () =>
+		( document.querySelector( 'iframe' ) as HTMLIFrameElement ).contentDocument?.querySelector(
+			'img'
+		) as HTMLImageElement;
 
 	interface CoverOptions {
 		overlay?: Styles;
@@ -1245,7 +1260,7 @@ describe( 'text over a cover image', () => {
 				element.append( span );
 			}
 		},
-		children,
+		children: children.map( boxed ),
 	} );
 
 	// WPAGENT-224: `customOverlayColor: #1a1510` at `dimRatio: 55`.
@@ -1328,14 +1343,14 @@ describe( 'text over a cover image', () => {
 		mountCanvas( [
 			cover( {
 				overlay: { backgroundColor: 'rgb(255, 255, 255)', opacity: '0.2' },
-				pixels: photo( Array.from( { length: 21 }, ( _, index ) => 220 + index ) ),
+				pixels: photo( Array.from( { length: 20 }, ( _, index ) => 220 + index ) ),
 				children: [ text( 'line', WHITE_TEXT ) ],
 			} ),
 		] );
 
 		const contrast = describeTextContrast( [ 'hero' ] );
 
-		// 0.2 × 255 + 0.8 × 238, the 90th percentile, is 241.4.
+		// 0.2 × 255 + 0.8 × 237, the 90th percentile, is 240.6.
 		expect( contrast?.notes[ 0 ] ).toMatch(
 			/^Text contrast too low: paragraph \(line\) — #FFFFFF text on #F1F1F1/
 		);
@@ -1399,6 +1414,60 @@ describe( 'text over a cover image', () => {
 		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
 	} );
 
+	// Reading the whole image instead is no safe stand-in: a bright band
+	// behind the text barely moves a mostly dark photograph's percentiles.
+	it( 'leaves text with no box of its own over the photo to the picture', () => {
+		mountCanvas( [
+			cover( {
+				overlay: HERO_OVERLAY,
+				pixels: photo( MID_TONED ),
+				children: [
+					{ ...text( 'line', DARK_INK ), textRect: { top: 0, left: 0, width: 0, height: 0 } },
+				],
+			} ),
+		] );
+
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+	} );
+
+	it( 'leaves text over a photo the measurement cannot map to the picture', () => {
+		mountCanvas( [
+			cover( {
+				overlay: HERO_OVERLAY,
+				pixels: photo( MID_TONED ),
+				children: [ text( 'line', DARK_INK ) ],
+			} ),
+		] );
+		const image = getCanvasImage();
+		const getComputedStyle = image.ownerDocument.defaultView?.getComputedStyle as jest.Mock;
+		const computed = getComputedStyle.getMockImplementation();
+
+		getComputedStyle.mockImplementation( ( element: Element, pseudo?: string ) => {
+			const style = computed?.( element, pseudo );
+
+			if ( element === image ) {
+				Object.defineProperty( style, 'objectFit', { value: 'none' } );
+			}
+
+			return style;
+		} );
+
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+	} );
+
+	// What shows through is the cover's background or the page behind it.
+	it( 'leaves text over a transparent part of the photo to the picture', () => {
+		mountCanvas( [
+			cover( {
+				overlay: HERO_OVERLAY,
+				pixels: photo( MID_TONED, { alpha: 0 } ),
+				children: [ text( 'line', DARK_INK ) ],
+			} ),
+		] );
+
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+	} );
+
 	it( 'measures text on an opaque overlay, which hides the image', () => {
 		mountCanvas( [
 			cover( {
@@ -1419,16 +1488,19 @@ describe( 'text over a cover image, read more than once or more than one way', (
 	const PHOTO = 'https://example.com/food.jpg';
 	const COVER_RECT = { top: 0, left: 0, width: 1200, height: 600 };
 	const DARK_INK = { color: 'rgb(37, 45, 36)', fontSize: '16px' };
-	const greys = Array.from( { length: 121 }, ( _, index ) => 60 + index );
-	const imageData = ( x: number, y: number, width: number ) => ( {
+	const TEXT_RECT = { top: 100, left: 0, width: 1200, height: 40 };
+	const greys = Array.from( { length: 120 }, ( _, index ) => 60 + index );
+	const imageData = ( x: number, y: number, width: number, rows: number ) => ( {
 		data: Uint8ClampedArray.from(
-			greys.slice( x, x + width ).flatMap( ( grey ) => [ grey, grey, grey, 255 ] )
+			Array.from( { length: rows }, () =>
+				greys.slice( x, x + width ).flatMap( ( grey ) => [ grey, grey, grey, 255 ] )
+			).flat()
 		),
 	} );
 	const kept = () =>
 		( {
 			width: greys.length,
-			height: 1,
+			height: greys.length / 2,
 			getContext: () => ( { getImageData: imageData } ),
 		} ) as unknown as HTMLCanvasElement;
 
@@ -1457,7 +1529,7 @@ describe( 'text over a cover image, read more than once or more than one way', (
 				Object.defineProperties( image, {
 					complete: { value: true },
 					naturalWidth: { value: greys.length },
-					naturalHeight: { value: 1 },
+					naturalHeight: { value: greys.length / 2 },
 				} );
 			}
 
@@ -1472,7 +1544,7 @@ describe( 'text over a cover image, read more than once or more than one way', (
 				element.append( span );
 			}
 		},
-		children,
+		children: children.map( ( child ) => ( { textRect: TEXT_RECT, ...child } ) ),
 	} );
 
 	it( 'gives each of two matching covers its own note, naming its own cover', () => {

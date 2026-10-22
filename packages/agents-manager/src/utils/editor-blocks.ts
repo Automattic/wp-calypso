@@ -118,17 +118,14 @@ export const getBlockRootClientId = ( clientId: string ): string | undefined =>
 export const getSelectedBlockClientId = (): string | undefined =>
 	blockEditorSelect()?.getSelectedBlockClientId?.() ?? undefined;
 
+const getPalette = () => blockEditorSelect()?.getSettings?.().colors ?? [];
+
 /** The colour a palette slug stands for, or `undefined` when the palette lacks it. */
 export const getPaletteColor = ( slug: string ): string | undefined =>
-	blockEditorSelect()
-		?.getSettings?.()
-		.colors?.find( ( entry ) => entry.slug === slug )?.color;
+	getPalette().find( ( entry ) => entry.slug === slug )?.color;
 
 /** The colours of the editor's palette, as its entries give them. */
-export const getPaletteColors = (): string[] =>
-	blockEditorSelect()
-		?.getSettings?.()
-		.colors?.map( ( entry ) => entry.color ) ?? [];
+export const getPaletteColors = (): string[] => getPalette().map( ( entry ) => entry.color );
 
 /** The post the editor holds, or `undefined` while it is still loading. */
 export function getCurrentPost(): CurrentPost | undefined {

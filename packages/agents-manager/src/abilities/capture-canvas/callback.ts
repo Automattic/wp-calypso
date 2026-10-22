@@ -50,7 +50,7 @@ export async function captureCanvasCallback( rawInput: unknown ): Promise< Abili
 		const inlinedImages = fileParts[ 0 ].metadata?.inlinedImages;
 		const images =
 			typeof inlinedImages === 'number' && inlinedImages > 0
-				? 'Images inside those blocks are shown as they really are where they could be loaded; any other photograph is a flat placeholder box at its real size, so treat a grey rectangle as an image that is present, not as a missing one.'
+				? 'Some images inside those blocks are shown as they really are. The rest, and every photograph outside them, are flat placeholder boxes at their real size, so treat any grey rectangle as an image that is present, not as a missing or broken one.'
 				: 'Photographs are shown as flat placeholder boxes at their real size, so treat any grey rectangle as an image that is present, not as a missing one.';
 
 		described = `Here is the canvas around ${ framed } ${

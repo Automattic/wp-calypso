@@ -29,6 +29,7 @@
 import {
 	drawScaledCopy,
 	getBackgroundImageUrls,
+	recallImagePixels,
 	rememberImagePixels,
 	URL_PATTERN,
 } from './image-pixels';
@@ -613,6 +614,21 @@ const FONT_FACE_PATTERN = /@font-face\s*\{[^}]*\}/gi;
 const fontCache = new Map< string, string >();
 
 /**
+ * Inlined images, keyed by URL and the size they were scaled to, with the
+ * pixels kept for the contrast measurement. Like a font, an image at a given
+ * URL does not change, and a capture after every edit would otherwise decode
+ * and re-encode the same photograph each time. Bounded, unlike the fonts: the
+ * images change with what is framed.
+ */
+const imageCache = new Map< string, { dataUri: string; pixels: HTMLCanvasElement | null } >();
+const MAX_CACHED_IMAGES = 12;
+
+/** Forgets the inlined images. For tests. */
+export const clearImageCache = (): void => {
+	imageCache.clear();
+};
+
+/**
  * Forgets the inlined fonts, so the next capture fetches them again.
  *
  * Nothing in normal use needs this — the entries cannot go stale. It exists so
@@ -829,33 +845,12 @@ const bytesToBase64 = ( bytes: Uint8Array ): string => {
 
 const toBase64 = ( buffer: ArrayBuffer ): string => bytesToBase64( new Uint8Array( buffer ) );
 
-/**
- * An image as a data URI no larger than the box it renders in.
- *
- * Downscaled because a photograph straight from the media library can run to
- * megabytes, every one of which would be base64-encoded into the SVG and
- * parsed again by the renderer, only to be drawn into a few hundred pixels.
- * The scale is the one `cover` would use, so an image fitted to its box is
- * never drawn larger than it was encoded. One drawn at its own size — a
- * repeated cover's tiles, a fixed one's viewport-sized background — is kept
- * at that size, since shrinking it would change what the capture shows.
- * A small copy of the pixels is kept for the contrast measurement, which
- * reads text over a cover's photograph against them.
- * @param element The live element showing the image.
- * @param url     The image's URL.
- * @param box     The size it renders at, in CSS pixels, when it is fitted to
- *                it; `null` when it is drawn at its own size.
- * @returns The data URI.
- */
-const fetchImageAsDataUri = async (
+/** Fetches, scales and encodes one image for `fetchImageAsDataUri`. */
+const encodeImage = async (
 	element: Element,
 	url: string,
 	box: DOMRect | null
 ): Promise< string > => {
-	if ( url.startsWith( 'data:' ) ) {
-		return url;
-	}
-
 	// A cors-mode request, so it rejects for any server that does not allow
 	// this origin, rather than handing back pixels that would taint the canvas.
 	const response = await fetchWithDeadline( url, IMAGE_FETCH_TIMEOUT );
@@ -887,7 +882,9 @@ const fetchImageAsDataUri = async (
 		throw new Error( 'No 2d context available' );
 	}
 
-	const pixels = drawScaledCopy( canvas, canvas.width, canvas.height );
+	// Only an `<img>`'s: the measurement reads no CSS background.
+	const pixels =
+		element.tagName === 'IMG' ? drawScaledCopy( canvas, canvas.width, canvas.height ) : null;
 
 	if ( pixels ) {
 		rememberImagePixels( element, url, pixels );
@@ -903,6 +900,59 @@ const fetchImageAsDataUri = async (
 
 	// The blob's own type: a browser that cannot encode WebP falls back to PNG.
 	return `data:${ encoded.type };base64,${ toBase64( await encoded.arrayBuffer() ) }`;
+};
+
+/**
+ * An image as a data URI no larger than the box it renders in.
+ *
+ * Downscaled because a photograph straight from the media library can run to
+ * megabytes, every one of which would be base64-encoded into the SVG and
+ * parsed again by the renderer, only to be drawn into a few hundred pixels.
+ * The scale is the one `cover` would use, so an image fitted to its box is
+ * never drawn larger than it was encoded. One drawn at its own size — a
+ * repeated cover's tiles, a fixed one's viewport-sized background — is kept
+ * at that size, since shrinking it would change what the capture shows.
+ * A small copy of the pixels is kept for the contrast measurement, which
+ * reads text over a cover's photograph against them.
+ * @param element The live element showing the image.
+ * @param url     The image's URL.
+ * @param box     The size it renders at, in CSS pixels, when it is fitted to
+ *                it; `null` when it is drawn at its own size.
+ * @returns The data URI.
+ */
+const fetchImageAsDataUri = async (
+	element: Element,
+	url: string,
+	box: DOMRect | null
+): Promise< string > => {
+	if ( url.startsWith( 'data:' ) ) {
+		return url;
+	}
+
+	const key = `${ url } ${ box ? `${ Math.round( box.width ) }x${ Math.round( box.height ) }` : 'own' }`;
+	const cached = imageCache.get( key );
+
+	if ( cached ) {
+		if ( cached.pixels ) {
+			rememberImagePixels( element, url, cached.pixels );
+		}
+
+		return cached.dataUri;
+	}
+
+	const dataUri = await encodeImage( element, url, box );
+
+	imageCache.set( key, {
+		dataUri,
+		pixels: element.tagName === 'IMG' ? recallImagePixels( element, url ) : null,
+	} );
+
+	// Oldest first, as a Map iterates.
+	if ( imageCache.size > MAX_CACHED_IMAGES ) {
+		imageCache.delete( imageCache.keys().next().value as string );
+	}
+
+	return dataUri;
 };
 
 /**
@@ -1791,11 +1841,6 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 		return value;
 	};
 
-	// Split, because the two halves have different fixes if this ever needs
-	// speeding up: reading ~12,000 rules is CPU, and inlining fonts is fetches
-	// and base64. Caching the first needs invalidation that catches a stylesheet
-	// rewritten in place; caching the second needs none at all, since a font at
-	// a given URL never changes.
 	// Started alongside the CSS, which it does not depend on: both are mostly
 	// waiting on the network. Never rejects. The whole page keeps its
 	// placeholders: scaled to fit, no photograph in it is legible, and they
@@ -1805,6 +1850,12 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 		: time( 'images', () =>
 				inlineBlockImages( findImageRoots( canvasDocument, clientIds ), canvasWindow )
 			);
+
+	// Split, because the two halves have different fixes if this ever needs
+	// speeding up: reading ~12,000 rules is CPU, and inlining fonts is fetches
+	// and base64. Caching the first needs invalidation that catches a stylesheet
+	// rewritten in place; caching the second needs none at all, since a font at
+	// a given URL never changes.
 	const styleText = await time( 'css', () =>
 		getPreparedStyleText( canvasDocument, ( stats ) => {
 			stages.css_read = stats.read;

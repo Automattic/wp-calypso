@@ -21,12 +21,7 @@
 import { createShortIdLookup } from '../block-ids';
 import { getBlock, getBlocks, getPaletteColors } from '../editor-blocks';
 import { getCanvasDocument } from '../editor-canvas';
-import {
-	drawScaledCopy,
-	getBackgroundImageUrls,
-	recallImagePixels,
-	rememberImagePixels,
-} from './image-pixels';
+import { drawScaledCopy, recallImagePixels, rememberImagePixels } from './image-pixels';
 
 const MAX_TEXT_BLOCKS = 40;
 // Text runs read in one block: a paragraph's links, spans and highlights.
@@ -477,9 +472,11 @@ function objectOffset( value: string | undefined, room: number ): number {
 
 /**
  * The pixels of `pixels` an `<img>` shows inside `area`, through its
- * `object-fit` and `object-position`. An image fitted some other way is read
- * whole, which can only find the text's backdrop darker or lighter than it is.
- * `null` when the image shows nothing there.
+ * `object-fit` and `object-position`. `null` when the image shows nothing
+ * there, or where it lands cannot be worked out: the text has no box, or the
+ * image is fitted some other way. Reading the whole image instead is no safe
+ * stand-in: a bright band behind the text barely moves the percentiles of a
+ * mostly dark photograph.
  */
 function mapToImage(
 	image: Element,
@@ -489,14 +486,9 @@ function mapToImage(
 ): Region | null {
 	const box = image.getBoundingClientRect();
 	const { width, height } = pixels;
-	const whole = { x: 0, y: 0, width, height };
 
-	if ( ! hasSize( box ) ) {
+	if ( ! hasSize( box ) || ! hasSize( area ) ) {
 		return null;
-	}
-
-	if ( ! hasSize( area ) ) {
-		return whole;
 	}
 
 	const style = view.getComputedStyle( image );
@@ -512,7 +504,7 @@ function mapToImage(
 		const pick = fit === 'cover' ? Math.max : Math.min;
 		scaleX = scaleY = pick( box.width / width, box.height / height );
 	} else {
-		return whole;
+		return null;
 	}
 
 	const [ positionX, positionY ] = ( style.objectPosition || '' ).split( /\s+/ );
@@ -527,50 +519,35 @@ function mapToImage(
 }
 
 /**
- * The dark and the light end of the image's tones behind the text, or `null`
- * when its pixels cannot be had: not loaded, more than one image layered, or
- * a canvas the browser will not read back because the image is cross-origin.
+ * The dark and the light end of the tones of a cover's `<img>` behind the
+ * text, or `null` when its pixels cannot be had: not loaded, a canvas the
+ * browser will not read back because the image is cross-origin, or a part of
+ * the image that lets what is behind it show through.
  *
  * The pixels the capture kept are used first, since it fetched them over CORS;
- * failing that, the editor's own copy, which reads only when same-origin. A
- * CSS background, as a fixed or repeated cover paints, is read whole: where it
- * lands depends on the scroll and the tiling, and the whole image can only
- * find the text's backdrop darker or lighter than it is.
+ * failing that, the editor's own copy, which reads only when same-origin.
  */
-function sampleImage( source: Element, textRect: DOMRect, view: Window ): Rgba[] | null {
-	const isImage = source.localName === 'img';
-	let url: string | undefined;
-
-	if ( isImage ) {
-		const image = source as HTMLImageElement;
-		url = image.currentSrc || image.src;
-	} else {
-		const urls = getBackgroundImageUrls( view.getComputedStyle( source ).backgroundImage );
-		url = urls.length === 1 ? urls[ 0 ] : undefined;
-	}
+function sampleImage( image: HTMLImageElement, textRect: DOMRect, view: Window ): Rgba[] | null {
+	const url = image.currentSrc || image.src;
 
 	if ( ! url ) {
 		return null;
 	}
 
-	let pixels = recallImagePixels( source, url );
+	let pixels = recallImagePixels( image, url );
 
 	// Kept like the capture's own copies, so the other runs over this image
 	// read it without drawing it again. A tainted copy is kept too: it fails
 	// as cheaply the next time.
-	if ( ! pixels && isImage ) {
-		pixels = copyLiveImage( source as HTMLImageElement );
+	if ( ! pixels ) {
+		pixels = copyLiveImage( image );
 
 		if ( pixels ) {
-			rememberImagePixels( source, url, pixels );
+			rememberImagePixels( image, url, pixels );
 		}
 	}
 
-	const region =
-		pixels &&
-		( isImage
-			? mapToImage( source, pixels, textRect, view )
-			: { x: 0, y: 0, width: pixels.width, height: pixels.height } );
+	const region = pixels && mapToImage( image, pixels, textRect, view );
 
 	if ( ! pixels || ! region ) {
 		return null;
@@ -600,19 +577,13 @@ function sampleImage( source: Element, textRect: DOMRect, view: Window ): Rgba[]
 		for ( let x = 0; x < region.width; x += step ) {
 			const index = ( y * region.width + x ) * 4;
 
-			// A transparent part of the image is taken to show white, as an
-			// unpainted canvas does.
-			samples.push(
-				composite(
-					{
-						r: data[ index ],
-						g: data[ index + 1 ],
-						b: data[ index + 2 ],
-						a: data[ index + 3 ] / 255,
-					},
-					WHITE
-				)
-			);
+			// What shows through a transparent part is the cover's background
+			// or the page behind it, which is not read here.
+			if ( data[ index + 3 ] < 255 ) {
+				return null;
+			}
+
+			samples.push( { r: data[ index ], g: data[ index + 1 ], b: data[ index + 2 ], a: 1 } );
 		}
 	}
 
@@ -705,9 +676,10 @@ function findCoverBackdrop(
 	}
 
 	// Without an image, what shows through the overlay is whatever is behind
-	// the cover, which is left to the picture.
-	const imageSource = image ?? ( ownImage ? cover : undefined );
-	const samples = imageSource && sampleImage( imageSource, textRect, view );
+	// the cover. A CSS background, as a fixed or repeated cover paints, lands
+	// where the scroll and the tiling put it. Both are left to the picture.
+	const samples =
+		image?.localName === 'img' && sampleImage( image as HTMLImageElement, textRect, view );
 
 	if ( ! samples ) {
 		return null;
@@ -751,10 +723,17 @@ function findBackdrop( element: Element, view: Window ): Backdrop | null {
 				return null;
 			}
 
+			// The block a correction would target; a cover with none is left
+			// to the picture rather than reported as the page background.
+			const clientId = current.closest( '[data-block]' )?.getAttribute( 'data-block' );
+
+			if ( ! clientId ) {
+				return null;
+			}
+
 			const colours = cover.colours.map( ( under ) =>
 				layers.reduceRight( ( below, over ) => composite( over, below ), under )
 			);
-			const clientId = current.closest( '[data-block]' )?.getAttribute( 'data-block' ) ?? undefined;
 
 			return { colour: colours[ 0 ], colours, clientId, cover: cover.cover };
 		}
@@ -894,7 +873,7 @@ function findReadableText( runs: Run[] ): string | undefined {
 		);
 	const readable =
 		READABLE_CANDIDATES.find( readsOnAll ) ??
-		( getPaletteColors() ?? [] )
+		getPaletteColors()
 			.map( parseColour )
 			.find( ( candidate ): candidate is Rgba => candidate?.a === 1 && readsOnAll( candidate ) );
 
