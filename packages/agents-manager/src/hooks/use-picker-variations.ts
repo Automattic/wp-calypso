@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { INTERACTIVE_UI_TOOL_ID } from '../interactive-ui/messages';
-import { checkpointKeys, hasCheckpoint, setCheckpoint } from '../utils/checkpoints';
+import {
+	checkpointKeys,
+	clearCheckpoint,
+	hasCheckpoint,
+	setCheckpoint,
+} from '../utils/checkpoints';
 import ensureCurrentFirst, {
 	dedupeByTitle,
 	findMatchingVariation,
@@ -132,9 +137,12 @@ export default function usePickerVariations( {
 		( variation: StyleVariation ) => {
 			hasSortedRef.current = true;
 
+			const checkpointId =
+				surfaceId && variationType && ! hasCheckpoint( surfaceId ) ? surfaceId : null;
+
 			// Taken before the first pick lands, so it holds the user's own styles.
-			if ( surfaceId && variationType && ! hasCheckpoint( surfaceId ) ) {
-				setCheckpoint( surfaceId, [ CHECKPOINT_KEYS[ variationType ] ], {
+			if ( checkpointId && variationType ) {
+				setCheckpoint( checkpointId, [ CHECKPOINT_KEYS[ variationType ] ], {
 					toolId: INTERACTIVE_UI_TOOL_ID,
 					summary: `Picked a ${ variationType } style from the picker`,
 				} );
@@ -152,6 +160,9 @@ export default function usePickerVariations( {
 				if ( variationType ) {
 					setSiteEditorAction( `${ variationType }PickerItemSelected`, variation.title ?? null );
 				}
+			} else if ( checkpointId ) {
+				// Nothing landed, such as before the styles load, so the next pick takes it instead.
+				clearCheckpoint( checkpointId );
 			}
 		},
 		[ setStyles, variationType, surfaceId ]

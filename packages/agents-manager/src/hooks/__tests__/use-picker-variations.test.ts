@@ -23,9 +23,11 @@ jest.mock( '../../utils/site-editor-context', () => ( {
 } ) );
 
 const mockSetCheckpoint = jest.fn();
+const mockClearCheckpoint = jest.fn();
 const mockHasCheckpoint = jest.fn< boolean, [ string ] >( () => false );
 jest.mock( '../../utils/checkpoints', () => ( {
 	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
+	clearCheckpoint: ( id: string ) => mockClearCheckpoint( id ),
 	hasCheckpoint: ( id: string ) => mockHasCheckpoint( id ),
 	setCheckpoint: ( ...args: unknown[] ) => mockSetCheckpoint( ...args ),
 } ) );
@@ -111,6 +113,19 @@ describe( 'usePickerVariations', () => {
 		expect( mockSetCheckpoint.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 			mockSetStyles.mock.invocationCallOrder[ 0 ]
 		);
+		expect( mockClearCheckpoint ).not.toHaveBeenCalled();
+	} );
+
+	it( 'drops the checkpoint of a first pick that doesn’t land, such as before the styles load', () => {
+		mockSetStyles.mockReturnValueOnce( false );
+		const { result } = renderHook( () =>
+			usePickerVariations( makeOptions( { variationType: 'color', surfaceId: 'colors-1' } ) )
+		);
+
+		act( () => result.current.handleSelect( variations[ 0 ] ) );
+
+		expect( mockSetCheckpoint ).toHaveBeenCalledTimes( 1 );
+		expect( mockClearCheckpoint ).toHaveBeenCalledWith( 'colors-1' );
 	} );
 
 	it( 'takes no checkpoint off a surface, where show-component took one', () => {

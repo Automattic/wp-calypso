@@ -25,6 +25,7 @@ jest.mock( '../variation-picker', () => {
 
 jest.mock( '../../utils/checkpoints', () => ( {
 	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
+	clearCheckpoint: jest.fn(),
 	hasCheckpoint: jest.fn(),
 	setCheckpoint: jest.fn(),
 } ) );
