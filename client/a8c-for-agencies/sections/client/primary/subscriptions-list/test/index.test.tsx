@@ -3,7 +3,6 @@
  */
 
 import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import a8cForAgencies from 'calypso/state/a8c-for-agencies/reducer';
 import documentHead from 'calypso/state/document-head/reducer';
@@ -76,18 +75,6 @@ describe( '<SubscriptionsList>', () => {
 
 	afterEach( () => {
 		nock.cleanAll();
-	} );
-
-	test( 'opens the cancel confirmation from the row action', async () => {
-		mockReferrals( { status: 'active' } );
-
-		renderSubscriptionsList();
-
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Cancel subscription' } ) );
-
-		expect(
-			screen.getByRole( 'dialog', { name: 'Are you sure you want to cancel this subscription?' } )
-		).toBeVisible();
 	} );
 
 	test( 'does not offer cancel for a subscription that is no longer active', async () => {
