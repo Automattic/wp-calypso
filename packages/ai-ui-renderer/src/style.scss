@@ -220,7 +220,7 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 		border-color: var( --wp-components-color-foreground );
 	}
 
-	.components-button:is( .is-secondary, .is-tertiary, .is-link ) {
+	.components-button:is( .is-secondary, .is-tertiary, .is-link ):not( .is-destructive ) {
 		--wp-components-color-accent: var( --ai-ui-renderer-accent-text );
 		--wp-components-color-accent-darker-20: var( --ai-ui-renderer-accent-text-hover );
 	}
