@@ -36,7 +36,17 @@ export function AnnouncementLogo( {
 	announcement: Announcement;
 	size: number;
 } ) {
-	const { src, alt } = ANNOUNCEMENT_LOGOS[ announcement.logo ];
+	return <AnnouncementLogoImage logo={ announcement.logo } size={ size } />;
+}
+
+export function AnnouncementLogoImage( {
+	logo,
+	size,
+}: {
+	logo: Announcement[ 'logo' ];
+	size: number;
+} ) {
+	const { src, alt } = ANNOUNCEMENT_LOGOS[ logo ];
 	return (
 		<img
 			className="a4a-news-logo"
