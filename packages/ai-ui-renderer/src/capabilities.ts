@@ -98,19 +98,16 @@ export function assertInteractiveUiCatalogDefinition( {
 		throw new Error( 'An interactive UI catalog needs a `catalogId`.' );
 	}
 
-	assertSchemas( 'component', catalog.components ?? {} );
-	assertSchemas( 'function', catalog.functions ?? {} );
-	assertFunctions( ( catalog.functions ?? {} ) as Record< string, ObjectSchema > );
+	const { components: componentSchemas = {}, functions: functionSchemas = {} } = catalog;
 
-	assertImplementations(
-		'component',
-		Object.keys( catalog.components ?? {} ),
-		components,
-		isComponent
-	);
+	assertSchemas( 'component', componentSchemas );
+	assertSchemas( 'function', functionSchemas );
+	assertFunctions( functionSchemas as Record< string, ObjectSchema > );
+
+	assertImplementations( 'component', Object.keys( componentSchemas ), components, isComponent );
 	assertImplementations(
 		'function',
-		Object.keys( catalog.functions ?? {} ),
+		Object.keys( functionSchemas ),
 		functions,
 		( value ) => typeof value === 'function'
 	);
