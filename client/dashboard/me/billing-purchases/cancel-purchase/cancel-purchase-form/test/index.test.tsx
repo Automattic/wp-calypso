@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { disable } from '@automattic/calypso-config';
-import { screen } from '@testing-library/react';
+import { disable, enable } from '@automattic/calypso-config';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../../../test-utils';
 import CancelPurchaseForm from '../index';
@@ -261,7 +261,69 @@ describe( '<CancelPurchaseForm />', () => {
 			disable( 'purchases/split-cancel-remove' );
 		} );
 
+		test( 'shows the cards for a reason that has them when the cards flag is on', () => {
+			enable( 'purchases/cancel-options-cards' );
+
+			render( <CancelPurchaseForm { ...upsellStepProps } questionOneText="noLongerNeedSite" /> );
+
+			const cards = screen.getByRole( 'list', { name: cardsListName } );
+			expect( within( cards ).getAllByRole( 'listitem' ) ).toHaveLength( 2 );
+			expect(
+				within( cards ).getByRole( 'link', { name: /Switch to a different plan/ } )
+			).toBeVisible();
+			expect(
+				within( cards ).getByRole( 'button', { name: /Speak with our support team/ } )
+			).toBeVisible();
+		} );
+
+		test( 'shows the cards instead of the Personal offer when the cards flag is on', () => {
+			enable( 'purchases/cancel-options-cards' );
+
+			render(
+				<CancelPurchaseForm
+					{ ...upsellStepProps }
+					questionOneText="tooExpensive"
+					upsell="downgrade-personal"
+				/>
+			);
+
+			const cards = screen.getByRole( 'list', { name: cardsListName } );
+			expect( within( cards ).getAllByRole( 'listitem' ) ).toHaveLength( 4 );
+			expect(
+				within( cards ).getByRole( 'link', { name: /Switch to a different plan/ } )
+			).toBeVisible();
+			expect(
+				within( cards ).getByRole( 'link', { name: /Renew now and pay less/ } )
+			).toBeVisible();
+			expect(
+				within( cards ).getByRole( 'button', { name: /Switch to monthly payments/ } )
+			).toBeVisible();
+			expect(
+				within( cards ).getByRole( 'button', { name: /Speak with our support team/ } )
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'heading', { name: 'Switch to a more affordable plan' } )
+			).not.toBeInTheDocument();
+		} );
+
 		test( 'shows the Personal offer instead of the cards when the cards flag is off', () => {
+			render(
+				<CancelPurchaseForm
+					{ ...upsellStepProps }
+					questionOneText="tooExpensive"
+					upsell="downgrade-personal"
+				/>
+			);
+
+			expect(
+				screen.getByRole( 'heading', { name: 'Switch to a more affordable plan' } )
+			).toBeVisible();
+			expect( screen.queryByRole( 'list', { name: cardsListName } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'keeps the Personal offer when only the split cancel/remove flag is on', () => {
+			enable( 'purchases/split-cancel-remove' );
+
 			render(
 				<CancelPurchaseForm
 					{ ...upsellStepProps }
