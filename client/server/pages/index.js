@@ -35,7 +35,7 @@ import { JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/constants';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
-import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
+import { isInStepContainerV2FlowContext, isPlaygroundWooIntentRequest } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -312,6 +312,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		showGdprBanner,
 		showStepContainerV2Loader: isInStepContainerV2FlowContext( request.path, request.query ),
+		isPlaygroundWoo: isPlaygroundWooIntentRequest( request.path, request.query ),
 		dashboard: getDashboardFromHostname( request.hostname ),
 	} );
 

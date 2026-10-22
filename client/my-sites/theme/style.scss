@@ -82,8 +82,14 @@ $button-border: 4px;
 		padding: 24px 44px;
 
 		@media screen and ( min-width: 960px ) {
-			padding: 24px 20px;
+			padding: 24px $theme-sheet-content-padding-x;
 		}
+	}
+
+	// NavigationHeader is border-box while the columns below are content-box, so
+	// its max-width has to include the padding for the breadcrumb to line up.
+	.theme__sheet .navigation-header {
+		max-width: $theme-sheet-content-max-width + 2 * $theme-sheet-content-padding-x;
 	}
 }
 
@@ -144,7 +150,7 @@ $button-border: 4px;
 	grid-template-rows: auto 1fr;
 	margin: 0 auto;
 	max-width: $theme-sheet-content-max-width;
-	padding: $theme-sheet-content-padding-y $theme-sheet-content-padding-x;
+	padding: 0 $theme-sheet-content-padding-x $theme-sheet-content-padding-y;
 
 	@include breakpoint-deprecated( '<960px' ) {
 		display: flex;
@@ -365,8 +371,11 @@ $button-border: 4px;
 	$iframe-viewport-height: 1040px;
 	$iframe-viewport-height-scaled: calc( $iframe-viewport-height / 2 );
 	min-height: $iframe-viewport-height-scaled;
-	padding: 0 24px;
 	box-sizing: border-box;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		padding-inline: 24px;
+	}
 
 	.theme-preview__frame-wrapper {
 		max-height: 100vw;
@@ -377,8 +386,6 @@ $button-border: 4px;
 		}
 
 		@include breakpoint-deprecated( '>960px' ) {
-			padding: auto;
-
 			max-height: calc( 100vh - var( --masterbar-height ) );
 
 			.theme-preview__frame {

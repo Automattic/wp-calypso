@@ -44,6 +44,7 @@ import ZendeskChat from '../zendesk-chat';
 import type {
 	AbilitiesSetupHook,
 	GetChatComponent,
+	LoadedProviders,
 	UseSuggestionsHook,
 	SiteBuildUtils,
 	TransformMessages,
@@ -73,6 +74,8 @@ interface Props {
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
+	/** The providers' interactive UI components and functions. */
+	interactiveUi?: LoadedProviders[ 'interactiveUi' ];
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
 	transformMessages?: TransformMessages;
@@ -88,6 +91,7 @@ export default function AgentDock( {
 	markdownExtensions = {},
 	useProviderAbilitiesSetup,
 	getChatComponent,
+	interactiveUi,
 	useSuggestions,
 	siteBuildUtils,
 	transformMessages,
@@ -424,6 +428,7 @@ export default function AgentDock( {
 			useProviderAbilitiesSetup={ useProviderAbilitiesSetup }
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
+			interactiveUi={ interactiveUi }
 			siteBuildUtils={ siteBuildUtils }
 			transformMessages={ transformMessages }
 			useCheckpoint={ useCheckpoint }

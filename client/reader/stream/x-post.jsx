@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
+import UnreadIndicator from 'calypso/blocks/reader-post-card/unread-indicator';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import {
@@ -182,7 +183,10 @@ export class CrossPost extends PureComponent {
 				onClick={ this.handleCardClick }
 				className={ articleClasses }
 			>
-				<UserAvatar user={ post.author } size={ 40 } />
+				<div className="reader__x-post-avatar">
+					{ this.props.isUnread && <UnreadIndicator /> }
+					<UserAvatar user={ post.author } size={ 40 } />
+				</div>
 
 				<div className="reader__x-post">
 					{ post.title && (

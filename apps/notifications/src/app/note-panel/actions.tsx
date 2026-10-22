@@ -136,7 +136,10 @@ export default function NotePanelActions() {
 							/>
 						}
 					/>
-					<Menu.Popover modal={ false }>
+					<Menu.Popover
+						modal={ false }
+						onKeyDown={ ( event: React.KeyboardEvent ) => event.stopPropagation() }
+					>
 						<Menu.Group>
 							<Menu.GroupLabel>
 								{ __( 'Layout' ) }

@@ -166,6 +166,7 @@
 	"sections": {
 		"a8c-for-agencies": false,
 		"a8c-for-agencies-auth": false,
+		"a8c-for-agencies-error": false,
 		"a8c-for-agencies-landing": false,
 		"a8c-for-agencies-feedback": false,
 		"a8c-for-agencies-overview": false,

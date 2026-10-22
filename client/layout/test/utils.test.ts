@@ -1,7 +1,39 @@
 import { SITE_SETUP_FLOW, ONBOARDING_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
-import { isInStepContainerV2FlowContext, getStepperFlowFromContext } from '../utils';
+import {
+	isInStepContainerV2FlowContext,
+	getStepperFlowFromContext,
+	isPlaygroundWooIntentRequest,
+} from '../utils';
 
 describe( 'layout/utils', () => {
+	describe( 'isPlaygroundWooIntentRequest', () => {
+		it( 'should return true for the Playground step with the woocommerce intent', () => {
+			const query = { intent: 'woocommerce' };
+
+			expect( isPlaygroundWooIntentRequest( '/setup/onboarding/playground', query ) ).toBe( true );
+			expect( isPlaygroundWooIntentRequest( '/setup/onboarding/playground/es', query ) ).toBe(
+				true
+			);
+		} );
+
+		it( 'should return false without the woocommerce intent', () => {
+			expect( isPlaygroundWooIntentRequest( '/setup/onboarding/playground', {} ) ).toBe( false );
+			expect(
+				isPlaygroundWooIntentRequest( '/setup/onboarding/playground', { intent: 'build' } )
+			).toBe( false );
+		} );
+
+		it( 'should return false for other steps and flows', () => {
+			const query = { intent: 'woocommerce' };
+
+			expect( isPlaygroundWooIntentRequest( '/setup/onboarding/domains', query ) ).toBe( false );
+			expect( isPlaygroundWooIntentRequest( '/setup/entrepreneur/playground', query ) ).toBe(
+				false
+			);
+			expect( isPlaygroundWooIntentRequest( '/setup/onboarding', query ) ).toBe( false );
+		} );
+	} );
+
 	describe( 'isInStepContainerV2FlowContext', () => {
 		describe( 'setup path', () => {
 			it( 'should return false when path starts with /setup and flow is a not supported flow', () => {
