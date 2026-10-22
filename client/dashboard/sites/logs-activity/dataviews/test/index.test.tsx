@@ -292,8 +292,9 @@ test( 'marks a backup known to contain threats', async () => {
 		/This backup is known to contain .+ security threats\. Restoring it may bring malware back to your site\./;
 	expect( badges[ 0 ].parentElement ).toHaveTextContent( warning );
 	expect( badges[ 0 ] ).not.toHaveAttribute( 'title' );
+	// A badge isn't interactive, so no tooltip: screen readers get the warning as hidden text.
 	await userEvent.hover( badges[ 0 ] );
-	expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( warning );
+	expect( screen.queryByRole( 'tooltip' ) ).not.toBeInTheDocument();
 } );
 
 test( "doesn't look up known threats for a site without backups", async () => {

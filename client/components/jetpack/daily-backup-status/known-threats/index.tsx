@@ -342,8 +342,8 @@ export function getKnownThreatsWarning(
 }
 
 /**
- * The badge alone, without Scan: nothing else on the page says what it means, so the warning is
- * its tooltip and, for screen readers, hidden text beside it.
+ * The badge alone, without Scan: nothing else on the page says what it means, so screen readers
+ * get the warning as hidden text beside it. Not in a tooltip: a badge isn't interactive.
  */
 function KnownThreatsBadgeWithWarning( { flagged }: { flagged: number } ) {
 	const translate = useTranslate();
@@ -351,11 +351,7 @@ function KnownThreatsBadgeWithWarning( { flagged }: { flagged: number } ) {
 
 	return (
 		<>
-			<Tooltip text={ String( warning ) } className="backup-known-threats__tooltip">
-				<span>
-					<KnownThreatsBadge flagged={ flagged } />
-				</span>
-			</Tooltip>
+			<KnownThreatsBadge flagged={ flagged } />
 			<VisuallyHidden>{ warning }</VisuallyHidden>
 		</>
 	);
@@ -363,7 +359,7 @@ function KnownThreatsBadgeWithWarning( { flagged }: { flagged: number } ) {
 
 interface BackupKnownThreatsToggleProps {
 	state: BackupKnownThreatsState;
-	/** Where the warning isn't shown nearby: the badge, with the warning as its tooltip, comes first. */
+	/** Where the warning isn't shown nearby: the badge comes first. */
 	withBadge?: boolean;
 }
 
@@ -373,7 +369,7 @@ interface KnownThreatsToggleButtonProps {
 	onToggle: () => void;
 	/** The id of the region the toggle shows; referenced only while it is open. */
 	controlsId?: string;
-	/** Where the warning isn't shown nearby: the badge, with the warning as its tooltip, comes first. */
+	/** Where the warning isn't shown nearby: the badge comes first. */
 	withBadge?: boolean;
 }
 
@@ -425,12 +421,8 @@ export function KnownThreatsToggleButton( {
 			wrap
 			className="backup-known-threats__summary"
 		>
-			{ /* Hovering the badge shows the warning; screen readers get it as the toggle's description. */ }
-			<Tooltip text={ String( warning ) } className="backup-known-threats__tooltip">
-				<span>
-					<KnownThreatsBadge flagged={ flagged } />
-				</span>
-			</Tooltip>
+			{ /* Screen readers get the warning as the toggle's description. */ }
+			<KnownThreatsBadge flagged={ flagged } />
 			{ toggle }
 			<VisuallyHidden id={ warningId }>{ warning }</VisuallyHidden>
 		</HStack>
