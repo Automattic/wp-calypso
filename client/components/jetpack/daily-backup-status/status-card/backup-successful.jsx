@@ -144,14 +144,16 @@ const BackupSuccessful = ( {
 				/>
 			) }
 			{ ! isCloneFlow && actionableRewindId && (
-				<KnownThreatsNotice
-					siteId={ siteId }
-					rewindId={ actionableRewindId }
-					requireAcknowledgement
-					acknowledged={ acknowledged }
-					onAcknowledgedChange={ onAcknowledgedChange }
-					onKnownThreatsChange={ setHasKnownThreats }
-				/>
+				<div className="status-card__known-threats">
+					<KnownThreatsNotice
+						siteId={ siteId }
+						rewindId={ actionableRewindId }
+						requireAcknowledgement
+						acknowledged={ acknowledged }
+						onAcknowledgedChange={ onAcknowledgedChange }
+						onKnownThreatsChange={ setHasKnownThreats }
+					/>
+				</div>
 			) }
 
 			{ isCloneFlow && (
