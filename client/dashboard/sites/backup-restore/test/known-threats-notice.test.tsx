@@ -168,12 +168,12 @@ test( 'disables Restore now until the box is ticked', async () => {
 	expect( restoreButton() ).toHaveAccessibleDescription(
 		'To restore this backup, confirm that you understand it contains known threats.'
 	);
-	// Mouse users see the same hint as a tooltip.
-	await user.hover( restoreButton() );
-	expect( await screen.findByRole( 'tooltip', {}, { timeout: 2000 } ) ).toHaveTextContent(
-		'To restore this backup, confirm that you understand it contains known threats.'
-	);
-	await user.unhover( restoreButton() );
+	// Shown as text, not in a tooltip.
+	expect(
+		screen.getByText(
+			'To restore this backup, confirm that you understand it contains known threats.'
+		)
+	).toBeVisible();
 
 	await user.click( checkbox );
 	expect( restoreButton() ).toBeEnabled();
@@ -326,10 +326,10 @@ test( 'links to the latest backup without known threats', async () => {
 		"It's the most recent backup with no known security threats."
 	);
 	expect( link ).not.toHaveAttribute( 'title' );
-	await userEvent.setup().hover( link );
-	expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
-		"It's the most recent backup with no known security threats."
-	);
+	// Shown as text, not in a tooltip.
+	expect(
+		screen.getByText( "It's the most recent backup with no known security threats." )
+	).toBeVisible();
 } );
 
 test( 'moves focus to the restore point after opening the clean backup', async () => {
@@ -441,11 +441,12 @@ test( 'granular form requires the acknowledgement before restoring selected file
 	expect( restore ).toHaveAccessibleDescription(
 		'To restore this backup, confirm that you understand it contains known threats.'
 	);
-	await user.hover( restore );
-	expect( await screen.findByRole( 'tooltip', {}, { timeout: 2000 } ) ).toHaveTextContent(
-		'To restore this backup, confirm that you understand it contains known threats.'
-	);
-	await user.unhover( restore );
+	// Shown as text, not in a tooltip.
+	expect(
+		screen.getByText(
+			'To restore this backup, confirm that you understand it contains known threats.'
+		)
+	).toBeVisible();
 
 	await user.click( restore );
 	expect( restoreScope.isDone() ).toBe( false );

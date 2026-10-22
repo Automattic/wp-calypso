@@ -62,7 +62,7 @@ afterEach( () => {
 	mockSetNodeCheckState.mockClear();
 } );
 
-test( 'holds Restore back with the hint as its description and tooltip', async () => {
+test( 'holds Restore back with the hint as its description', async () => {
 	const user = userEvent.setup();
 	const { onRequestGranularRestore } = renderCard( {
 		isRestoreEnabled: true,
@@ -72,8 +72,6 @@ test( 'holds Restore back with the hint as its description and tooltip', async (
 	const restore = screen.getByRole( 'button', { name: 'Restore' } );
 	expect( restore ).toHaveAttribute( 'aria-disabled', 'true' );
 	expect( restore ).toHaveAccessibleDescription( hint );
-	await user.hover( restore );
-	expect( await screen.findByRole( 'tooltip', {}, { timeout: 2000 } ) ).toHaveTextContent( hint );
 
 	await user.click( restore );
 	expect( onRequestGranularRestore ).not.toHaveBeenCalled();

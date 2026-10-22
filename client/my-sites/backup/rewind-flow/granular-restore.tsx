@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
-import { Tooltip, VisuallyHidden, Button as WordPressButton } from '@wordpress/components';
+import { Button as WordPressButton } from '@wordpress/components';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { Icon, arrowLeft, backup, chevronDown, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -528,22 +528,22 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					<Button className="rewind-flow__back-button" href={ goBackUrl } onClick={ onCancel }>
 						{ translate( 'Cancel' ) }
 					</Button>
-					{ /* The tooltip shows the hint on hover and focus; screen readers get it from the description. */ }
-					<Tooltip text={ awaitingAcknowledgement ? acknowledgementHint : undefined }>
-						<Button
-							className={ clsx( 'rewind-flow__primary-button', {
-								disabled: awaitingAcknowledgement,
-							} ) }
-							primary
-							onClick={ awaitingAcknowledgement ? undefined : onConfirm }
-							aria-disabled={ awaitingAcknowledgement || undefined }
-							aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
-						>
-							{ translate( 'Restore now' ) }
-						</Button>
-					</Tooltip>
+					{ /* The reason shows beside the button, which also takes it as its description. */ }
+					<Button
+						className={ clsx( 'rewind-flow__primary-button', {
+							disabled: awaitingAcknowledgement,
+						} ) }
+						primary
+						onClick={ awaitingAcknowledgement ? undefined : onConfirm }
+						aria-disabled={ awaitingAcknowledgement || undefined }
+						aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
+					>
+						{ translate( 'Restore now' ) }
+					</Button>
 					{ awaitingAcknowledgement && (
-						<VisuallyHidden id={ acknowledgementHintId }>{ acknowledgementHint }</VisuallyHidden>
+						<p className="rewind-flow__acknowledgement-hint" id={ acknowledgementHintId }>
+							{ acknowledgementHint }
+						</p>
 					) }
 				</div>
 				<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />

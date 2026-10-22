@@ -4,11 +4,12 @@ import {
 	siteSettingsQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Tooltip, VisuallyHidden } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useId } from 'react';
 import { useIntlLocale } from '../../../app/locale';
 import RouterLinkButton from '../../../components/router-link-button';
+import { Text } from '../../../components/text';
 import { formatDate, formatDateWithOffset } from '../../../utils/datetime';
 
 // The Activity Log entries a successful backup ends with.
@@ -129,23 +130,24 @@ export function RestoreThatOneInsteadLink( {
 
 	const reason = __( "It's the most recent backup with no known security threats." );
 
+	// The reason shows under the link, which also takes it as its description.
 	return (
-		<>
-			<Tooltip text={ reason }>
-				<RouterLinkButton
-					__next40pxDefaultSize
-					variant="link"
-					to={ restoreLinkTo }
-					params={ { siteSlug, rewindId: String( latestWithoutKnownThreats ) } }
-					aria-describedby={ descriptionId }
-					onClick={ () => {
-						rewindIdAwaitingFocus = String( latestWithoutKnownThreats );
-					} }
-				>
-					{ label }
-				</RouterLinkButton>
-			</Tooltip>
-			<VisuallyHidden id={ descriptionId }>{ reason }</VisuallyHidden>
-		</>
+		<VStack spacing={ 1 } alignment="flex-start">
+			<RouterLinkButton
+				__next40pxDefaultSize
+				variant="link"
+				to={ restoreLinkTo }
+				params={ { siteSlug, rewindId: String( latestWithoutKnownThreats ) } }
+				aria-describedby={ descriptionId }
+				onClick={ () => {
+					rewindIdAwaitingFocus = String( latestWithoutKnownThreats );
+				} }
+			>
+				{ label }
+			</RouterLinkButton>
+			<Text variant="muted" size={ 12 } id={ descriptionId }>
+				{ reason }
+			</Text>
+		</VStack>
 	);
 }

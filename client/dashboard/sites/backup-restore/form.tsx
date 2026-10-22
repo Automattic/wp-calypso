@@ -1,11 +1,6 @@
 import { siteBackupRestoreInitiateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	Button,
-	Tooltip,
-	VisuallyHidden,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -14,6 +9,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useId, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
+import { Text } from '../../components/text';
 import KnownThreatsNotice from '../backups/known-threats/known-threats-notice';
 import { useRestoreInsteadFocusRef } from '../backups/known-threats/restore-that-one-instead-link';
 import WooSubscriptionsNotice from './woo-subscriptions-notice';
@@ -191,21 +187,21 @@ function SiteBackupRestoreForm( {
 				/>
 
 				<ButtonStack justify="flex-start">
-					{ /* The tooltip shows the hint on hover and focus; screen readers get it from the description. */ }
-					<Tooltip text={ awaitingAcknowledgement ? acknowledgementHint : undefined }>
-						<Button
-							variant="primary"
-							type="submit"
-							isBusy={ isRestoreMutationPending }
-							disabled={ isRestoreDisabled }
-							accessibleWhenDisabled={ awaitingAcknowledgement }
-							aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
-						>
-							{ __( 'Restore now' ) }
-						</Button>
-					</Tooltip>
+					{ /* The reason shows beside the button, which also takes it as its description. */ }
+					<Button
+						variant="primary"
+						type="submit"
+						isBusy={ isRestoreMutationPending }
+						disabled={ isRestoreDisabled }
+						accessibleWhenDisabled={ awaitingAcknowledgement }
+						aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
+					>
+						{ __( 'Restore now' ) }
+					</Button>
 					{ awaitingAcknowledgement && (
-						<VisuallyHidden id={ acknowledgementHintId }>{ acknowledgementHint }</VisuallyHidden>
+						<Text variant="muted" id={ acknowledgementHintId }>
+							{ acknowledgementHint }
+						</Text>
 					) }
 				</ButtonStack>
 			</VStack>

@@ -3,7 +3,6 @@ import {
 	Card,
 	Button,
 	CardBody,
-	Tooltip,
 	VisuallyHidden,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -380,18 +379,17 @@ function FileInfoCard( {
 							<ButtonStack style={ { width: 'auto', flexShrink: 0 } } alignment="top">
 								{ renderDownloadButton() }
 								{ item.type !== 'wordpress' && (
-									<Tooltip text={ isRestoreHeldBack ? restoreDisabledHint : undefined }>
-										<Button
-											disabled={ ! isRestoreEnabled || isRestoreHeldBack }
-											accessibleWhenDisabled={ isRestoreHeldBack }
-											aria-describedby={ isRestoreHeldBack ? restoreHintId : undefined }
-											onClick={ restoreFile }
-											variant="primary"
-											size="compact"
-										>
-											{ __( 'Restore' ) }
-										</Button>
-									</Tooltip>
+									// The warning's checkbox shows why it's off; screen readers get it from the description.
+									<Button
+										disabled={ ! isRestoreEnabled || isRestoreHeldBack }
+										accessibleWhenDisabled={ isRestoreHeldBack }
+										aria-describedby={ isRestoreHeldBack ? restoreHintId : undefined }
+										onClick={ restoreFile }
+										variant="primary"
+										size="compact"
+									>
+										{ __( 'Restore' ) }
+									</Button>
 								) }
 								{ isRestoreHeldBack && (
 									<VisuallyHidden id={ restoreHintId }>{ restoreDisabledHint }</VisuallyHidden>
