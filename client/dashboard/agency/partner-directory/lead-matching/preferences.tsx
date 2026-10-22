@@ -148,7 +148,7 @@ function LeadMatchingPreferencesForm( {
 				await saveAvailability( update );
 			} catch {
 				trackResult( 'error' );
-				createErrorNotice( __( 'Something went wrong saving your availability.' ), {
+				createErrorNotice( __( 'Failed to save availability.' ), {
 					type: 'snackbar',
 				} );
 				return;
@@ -160,7 +160,7 @@ function LeadMatchingPreferencesForm( {
 				await savePreferences( getLeadMatchingProfile( formData, profile, isAvailable ) );
 			} catch {
 				trackResult( 'error' );
-				createErrorNotice( __( 'Something went wrong saving your preferences.' ), {
+				createErrorNotice( __( 'Failed to save lead matching preferences.' ), {
 					type: 'snackbar',
 				} );
 				return;
@@ -168,7 +168,7 @@ function LeadMatchingPreferencesForm( {
 		}
 
 		trackResult( 'success' );
-		createSuccessNotice( __( 'Your lead matching preferences were saved!' ), {
+		createSuccessNotice( __( 'Lead matching preferences saved.' ), {
 			type: 'snackbar',
 		} );
 		backToLeadMatching();
