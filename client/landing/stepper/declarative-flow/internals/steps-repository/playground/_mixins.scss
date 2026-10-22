@@ -1,0 +1,12 @@
+@mixin playground-woo-button {
+	--wp-components-color-accent: var( --studio-woocommerce-purple-40 );
+	--wp-components-color-accent-darker-10: var( --studio-woocommerce-purple-50 );
+	--wp-components-color-accent-darker-20: var( --studio-woocommerce-purple-60 );
+	height: auto;
+	min-height: 3rem;
+	padding-inline: 1.5rem;
+	border-radius: 8px;
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 1.5;
+}

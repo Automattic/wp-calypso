@@ -1,3 +1,8 @@
+@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import './mixins';
+
 .playground {
 	width: 100%;
 
@@ -17,14 +22,33 @@
 }
 
 .step-container-v2__top-bar .components-button.playground__woo-launch-button {
-	--wp-components-color-accent: var( --studio-woocommerce-purple-40 );
-	--wp-components-color-accent-darker-10: var( --studio-woocommerce-purple-50 );
-	--wp-components-color-accent-darker-20: var( --studio-woocommerce-purple-60 );
-	height: auto;
-	min-height: 3rem;
-	padding-inline: 1.5rem;
-	border-radius: 8px;
-	font-size: 1rem;
-	font-weight: 500;
+	@include playground-woo-button;
+	padding-inline: 1rem;
+
+	@include break-small {
+		padding-inline: 1.5rem;
+	}
+}
+
+.step-container-v2__top-bar .components-button.playground__woo-back-button {
+	font-weight: 400;
 	line-height: 1.5;
+	text-decoration: none;
+	gap: 0;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.playground__woo-back-button-label {
+	@media ( max-width: #{ $break-small - 1 } ) {
+		@include onboarding-screen-reader-text;
+	}
+}
+
+.step-container-v2__top-bar .components-button.playground__woo-close-button {
+	@include break-small {
+		margin-inline-start: 1rem;
+	}
 }

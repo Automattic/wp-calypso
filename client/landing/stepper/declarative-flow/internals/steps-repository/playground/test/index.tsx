@@ -3,6 +3,7 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
+import { Step } from '@automattic/onboarding';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -149,6 +150,168 @@ describe( 'Playground', () => {
 				intent: 'plans-playground',
 				is_woocommerce_intent: false,
 			} );
+		} );
+	} );
+
+	describe( 'leaving the WooCommerce playground', () => {
+		const wooEntry = '/setup/onboarding/playground?blueprint=123&playground=1&intent=woocommerce';
+		const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' );
+		const assign = jest.fn();
+		let getClientRectsSpy: jest.SpyInstance;
+
+		const getBackButton = () => screen.getByRole( 'button', { name: 'Back' } );
+		const getCloseButton = () => screen.getByRole( 'button', { name: 'Close' } );
+		const queryLeaveModal = () => screen.queryByRole( 'dialog', { name: 'Leave without saving' } );
+		const getLeaveEventCalls = () =>
+			recordTracksEvent.mock.calls.filter( ( [ eventName ] ) =>
+				eventName.startsWith( 'calypso_playground_leave_modal_' )
+			);
+
+		const renderWooPlaygroundStep = async () => {
+			await act( async () => {
+				renderStep(
+					<Step.StepContainerV2Provider
+						value={ {
+							flowName: 'onboarding',
+							stepName: 'playground',
+							recordTracksEvent,
+							logo: null,
+						} }
+					>
+						<PlaygroundStep
+							{ ...mockStepProps( { flow: 'onboarding', stepName: 'playground' } ) }
+						/>
+					</Step.StepContainerV2Provider>,
+					{ initialEntry: wooEntry }
+				);
+			} );
+		};
+
+		beforeEach( () => {
+			Object.defineProperty( window, 'location', {
+				configurable: true,
+				value: { ...window.location, assign },
+			} );
+			// jsdom has no layout, so the Modal can't find a tabbable element to focus on mount.
+			getClientRectsSpy = jest
+				.spyOn( HTMLElement.prototype, 'getClientRects' )
+				.mockReturnValue( [ {} ] as unknown as DOMRectList );
+		} );
+
+		afterEach( () => {
+			Object.defineProperty( window, 'location', locationDescriptor );
+			getClientRectsSpy.mockRestore();
+		} );
+
+		it( 'should not show the Back and close buttons outside the WooCommerce entry', async () => {
+			await act( async () => {
+				renderPlaygroundStep(
+					{},
+					{ initialEntry: '/setup/onboarding/playground?blueprint=123&playground=1' }
+				);
+			} );
+
+			expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Close' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should show the Back and close buttons for the WooCommerce entry', async () => {
+			await renderWooPlaygroundStep();
+
+			expect( getBackButton() ).toBeVisible();
+			expect( getCloseButton() ).toBeVisible();
+			expect( queryLeaveModal() ).not.toBeInTheDocument();
+		} );
+
+		it.each( [
+			[ 'back', getBackButton ],
+			[ 'close', getCloseButton ],
+		] )(
+			'should open the leave modal from the %s button and return focus when kept building',
+			async ( trigger, getTrigger ) => {
+				await renderWooPlaygroundStep();
+
+				await userEvent.click( getTrigger() );
+
+				expect( queryLeaveModal() ).toBeVisible();
+				expect(
+					screen.getByText(
+						'All the store information you’ve entered will be lost if you leave now.'
+					)
+				).toBeVisible();
+				await waitFor( () =>
+					expect( screen.getByRole( 'button', { name: 'Keep building' } ) ).toHaveFocus()
+				);
+
+				await userEvent.click( screen.getByRole( 'button', { name: 'Keep building' } ) );
+
+				expect( queryLeaveModal() ).not.toBeInTheDocument();
+				expect( getTrigger() ).toHaveFocus();
+				expect( assign ).not.toHaveBeenCalled();
+				expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+					'calypso_signup_previous_step_button_click',
+					expect.anything()
+				);
+				expect( getLeaveEventCalls() ).toEqual( [
+					[
+						'calypso_playground_leave_modal_open',
+						{
+							flow: 'onboarding',
+							step: 'playground',
+							blueprint: 'bpl-123',
+							is_woocommerce_intent: true,
+							trigger,
+						},
+					],
+					[
+						'calypso_playground_leave_modal_keep_building',
+						expect.objectContaining( { trigger, is_woocommerce_intent: true } ),
+					],
+				] );
+			}
+		);
+
+		it( 'should keep building when the modal is dismissed with Escape', async () => {
+			await renderWooPlaygroundStep();
+
+			await userEvent.click( getCloseButton() );
+			await waitFor( () =>
+				expect( screen.getByRole( 'button', { name: 'Keep building' } ) ).toHaveFocus()
+			);
+			await userEvent.keyboard( '{Escape}' );
+
+			await waitFor( () => expect( queryLeaveModal() ).not.toBeInTheDocument() );
+			expect( getCloseButton() ).toHaveFocus();
+			expect( assign ).not.toHaveBeenCalled();
+			expect( getLeaveEventCalls().map( ( [ eventName ] ) => eventName ) ).toEqual( [
+				'calypso_playground_leave_modal_open',
+				'calypso_playground_leave_modal_keep_building',
+			] );
+		} );
+
+		it( 'should send the user to WooCommerce.com when continuing without saving', async () => {
+			await renderWooPlaygroundStep();
+
+			await userEvent.click( getBackButton() );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue without saving' } ) );
+
+			expect( assign ).toHaveBeenCalledWith( 'https://woocommerce.com/start/#hosts' );
+			expect( getLeaveEventCalls() ).toEqual( [
+				[ 'calypso_playground_leave_modal_open', expect.objectContaining( { trigger: 'back' } ) ],
+				[
+					'calypso_playground_leave_modal_continue',
+					{
+						flow: 'onboarding',
+						step: 'playground',
+						blueprint: 'bpl-123',
+						is_woocommerce_intent: true,
+						trigger: 'back',
+					},
+				],
+			] );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue without saving' } ) );
+			expect( assign ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 

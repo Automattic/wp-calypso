@@ -1,0 +1,59 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '../../mixins';
+
+.components-modal__frame.playground-confirm-modal {
+	border-radius: 16px 16px 0 0;
+
+	@include break-small {
+		width: var( --playground-confirm-modal-width, 436px );
+		border-radius: 16px;
+	}
+
+	.components-modal__content {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		margin-top: 0;
+		padding: 1.5rem;
+	}
+
+	.components-modal__header {
+		position: static;
+		height: auto;
+		padding: 0;
+		align-items: flex-start;
+	}
+
+	.components-modal__header-heading {
+		font-size: $font-title-medium;
+		font-weight: 700;
+		line-height: 1.25;
+		letter-spacing: -0.02em;
+	}
+
+	.components-modal__children-container {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+}
+
+.playground-confirm-modal__body > p {
+	margin: 0;
+	color: var( --studio-gray-60 );
+	font-size: $font-body-large;
+	line-height: 1.5;
+}
+
+.playground-confirm-modal__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 1rem;
+}
+
+.playground-confirm-modal .playground-confirm-modal__actions .components-button {
+	@include playground-woo-button;
+}
