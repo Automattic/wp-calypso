@@ -239,9 +239,9 @@ function ConnectedOmnibar( {
 	} );
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
 	const findPluginNode = ( id: string ) =>
-		baseOmnibarNodes.plugins?.find( ( node ) => node.id === id );
+		baseOmnibarNodes.userPlugins?.find( ( node ) => node.id === id );
 
-	const plugins = baseOmnibarNodes.user
+	const userPlugins = baseOmnibarNodes.user
 		? [
 				languageSwitcherNode,
 				shoppingCartNode,
@@ -256,7 +256,7 @@ function ConnectedOmnibar( {
 		{
 			...baseOmnibarNodes,
 			site: siteNode,
-			plugins,
+			userPlugins,
 		},
 		recordNodeClick
 	);

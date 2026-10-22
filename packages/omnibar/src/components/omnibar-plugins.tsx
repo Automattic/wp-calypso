@@ -1,6 +1,14 @@
 import { OmnibarMenu } from './omnibar-menu';
 import type { OmnibarNode } from '../types';
 
-export function OmnibarPluginsNode( { nodes }: { nodes: OmnibarNode[] } ) {
-	return nodes.map( ( node ) => <OmnibarMenu key={ node.id } node={ node } /> );
+export function OmnibarPluginsNode( {
+	nodes,
+	className,
+}: {
+	nodes: OmnibarNode[];
+	className?: string;
+} ) {
+	return nodes.map( ( node ) => (
+		<OmnibarMenu key={ node.id } node={ node } className={ className } />
+	) );
 }

@@ -3,6 +3,7 @@ import { InteractiveUiSurfaces } from '../../components/interactive-ui-surfaces'
 import {
 	attachInteractiveUiPresentation,
 	convertInteractiveUiMessagesToComponents,
+	markInteractiveUiActionReplies,
 } from '../convert-interactive-ui-messages-to-components';
 import type { InteractiveUiPresentation } from '../../hooks/use-interactive-ui';
 import type { AgentsManagerUIMessage } from '../convert-tool-messages-to-components';
@@ -44,9 +45,11 @@ const surfacesPart = {
 function createPresentation( {
 	surfaceOwnerId,
 	hasLoadError = false,
+	staleSurfaceIds = [],
 }: {
 	surfaceOwnerId?: string;
 	hasLoadError?: boolean;
+	staleSurfaceIds?: string[];
 } ): InteractiveUiPresentation {
 	const runtime = createInteractiveUiRuntime( {
 		catalogs: [ createInteractiveUiCatalog() ],
@@ -66,6 +69,7 @@ function createPresentation( {
 		retryLoad: jest.fn(),
 		revision: 0,
 		isDisabled: false,
+		staleSurfaceIds: new Set( staleSurfaceIds ),
 	};
 }
 
@@ -101,8 +105,25 @@ describe( 'attachInteractiveUiPresentation', () => {
 		const [ attached ] = attachInteractiveUiPresentation( [ message ], presentation );
 
 		expect( attached.content ).toEqual( [
-			{ ...surfacesPart, componentProps: { messageId: 'agent', presentation } },
+			{
+				...surfacesPart,
+				componentProps: { messageId: 'agent', presentation, isMessageStale: false },
+			},
 		] );
+	} );
+
+	it( 'disables a message whose surfaces are all stale', () => {
+		const presentation = createPresentation( {
+			surfaceOwnerId: 'agent',
+			staleSurfaceIds: [ 'surface' ],
+		} );
+
+		const [ attached ] = attachInteractiveUiPresentation( [ message ], presentation );
+
+		expect( attached ).toMatchObject( {
+			disabled: true,
+			content: [ { componentProps: { isMessageStale: true } } ],
+		} );
 	} );
 
 	it( 'drops the surfaces part while its message has no surface yet', () => {
@@ -122,5 +143,34 @@ describe( 'attachInteractiveUiPresentation', () => {
 		);
 
 		expect( attached ).toBe( textMessage );
+	} );
+} );
+
+describe( 'markInteractiveUiActionReplies', () => {
+	const reply = createMessage( 'reply', 'agent', [ { type: 'text', text: 'Hello, Ada!' } ] );
+
+	it( 'starts a turn at the shown reply to an action', () => {
+		const action = createMessage( 'action', 'user', [
+			{ type: 'context', text: JSON.stringify( { version: 'v0.9', action: { name: 'greet' } } ) },
+		] );
+		const toolCall = createMessage( 'tool-call', 'agent', [ { type: 'text', text: '{}' } ] );
+		const dataOnly = createMessage( 'data-only', 'agent', [ { type: 'data', data: {} } ] );
+
+		const [ , marked ] = markInteractiveUiActionReplies(
+			[ dataOnly, reply ],
+			[ action, toolCall, dataOnly, reply ]
+		);
+
+		expect( marked.startsTurn ).toBe( true );
+	} );
+
+	it( 'leaves a reply to other hidden context in its turn', () => {
+		const navigation = createMessage( 'navigation', 'user', [
+			{ type: 'context', text: 'Navigated to the About page.' },
+		] );
+
+		const [ marked ] = markInteractiveUiActionReplies( [ reply ], [ navigation, reply ] );
+
+		expect( marked ).toBe( reply );
 	} );
 } );

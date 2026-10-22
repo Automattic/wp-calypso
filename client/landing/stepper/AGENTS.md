@@ -129,12 +129,11 @@ export default myFlow;
 
 ### Site creation & processing
 
-| `STEPS.*` constant   | slug                 | Purpose                                                          |
-| -------------------- | -------------------- | ---------------------------------------------------------------- |
-| `PROCESSING`         | `processing`         | Runs `setPendingAction`, shows progress bar, then submits result |
-| `SITE_CREATION_STEP` | `create-site`        | Creates the site explicitly (use when you need a separate step)  |
-| `FLEX_SITE_CREATION` | `flex-site-creation` | Flexible site creation variant                                   |
-| `SITE_LAUNCH`        | `site-launch`        | Launches (un-privatizes) an existing site                        |
+| `STEPS.*` constant   | slug          | Purpose                                                          |
+| -------------------- | ------------- | ---------------------------------------------------------------- |
+| `PROCESSING`         | `processing`  | Runs `setPendingAction`, shows progress bar, then submits result |
+| `SITE_CREATION_STEP` | `create-site` | Creates the site explicitly (use when you need a separate step)  |
+| `SITE_LAUNCH`        | `site-launch` | Launches (un-privatizes) an existing site                        |
 
 ### Post-signup
 
@@ -448,6 +447,18 @@ async function initialize() {
 ```
 
 ## How to add a new flow (four touchpoints)
+
+**Don't add a new flow by default.** Extend the main onboarding flow
+(`/setup/onboarding`) instead, customizing it through step props (see "Step
+customization" above). Only if it genuinely can't cover the use case, stop and
+ask the developer for an agreed P2 proposal before writing any flow code,
+naming who will own the flow, up to and including deleting it.
+
+Each flow is another copy of signup logic. It drifts from the main flow, so
+customers get inconsistent steps for the same task, and every change to the
+Stepper framework has to migrate it too. Once the project behind it ends, it's
+usually abandoned: nobody knows who owns it or how to test it, and it lingers
+as dead code until a cleanup removes it.
 
 ### 1. Add flow constant
 

@@ -141,7 +141,8 @@ export default function OrchestratorChat( {
 
 	// Streamed task updates, recorded before the agent config's own `onTaskUpdate` runs.
 	const {
-		sessionIdentity,
+		scopeIdentity,
+		sessionId,
 		streamGeneration,
 		isCurrentStreamGeneration,
 		recordTaskUpdate,
@@ -460,11 +461,14 @@ export default function OrchestratorChat( {
 	const displayedMessages = useInteractiveUi( {
 		messages,
 		convertedMessages,
-		conversationId: sessionIdentity,
-		isProcessing: isProcessing || isUploadingImages,
+		scopeIdentity,
+		sessionId,
+		isProcessing,
+		isUploadingImages,
 		agentConfig,
 		submitContextMessage,
 		interactiveUi,
+		currentPostId,
 	} );
 
 	const messageCount = displayedMessages.length;

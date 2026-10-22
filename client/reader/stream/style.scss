@@ -165,6 +165,11 @@
 		display: flex;
 		align-items: center;
 
+		.reader__x-post-avatar {
+			position: relative;
+			display: flex;
+		}
+
 		.reader__post-title {
 			font-size: $font-body;
 			line-height: normal;

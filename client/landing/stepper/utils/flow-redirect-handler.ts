@@ -37,6 +37,7 @@ const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 	{ flow: 'migration-signup', to: '/setup/site-migration' },
 	{ flow: 'hosted-site-migration', to: '/setup/site-migration' },
 	{ flow: 'domain-upsell', to: '/setup/domain-and-plan' },
+	{ flow: 'flex-site', to: '/sites' },
 	{
 		flow: 'readymade-template',
 		// Bare `/home` follows the account's landing-page preference, which may be another site.

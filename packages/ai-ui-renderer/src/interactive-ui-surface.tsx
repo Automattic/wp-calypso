@@ -2,7 +2,7 @@ import { renderMarkdown } from '@a2ui/markdown-it';
 import { A2uiSurface, MarkdownContext } from '@a2ui/react/v0_9';
 import { Component, useEffect, useMemo } from '@wordpress/element';
 import clsx from 'clsx';
-import { InteractiveUiSurfaceContext } from './context';
+import { InteractiveUiSurfaceContext, InteractiveUiHostPropsContext } from './context';
 import type { ComponentProps, ReactNode } from 'react';
 
 interface SurfaceBoundaryProps {
@@ -30,6 +30,8 @@ class SurfaceBoundary extends Component< SurfaceBoundaryProps, { hasFailed: bool
 
 type Surface = ComponentProps< typeof A2uiSurface >[ 'surface' ];
 
+const NO_HOST_PROPS = {};
+
 // Matches A2UI: a component uses the catalog it names, if any, or else the surface's.
 function getUnknownComponentType( surface: Surface ) {
 	for ( const [ , component ] of surface.componentsModel.entries ) {
@@ -50,6 +52,11 @@ interface InteractiveUiSurfaceProps {
 	theme?: string;
 	/** A change retries a surface that failed to render. */
 	revision?: number;
+	/**
+	 * Props for the components that definitions add, such as the host's chat state. Pass a stable
+	 * object: a new one re-renders those components.
+	 */
+	hostProps?: Record< string, unknown >;
 }
 
 /**
@@ -62,6 +69,7 @@ export function InteractiveUiSurface( {
 	disabled = false,
 	theme,
 	revision = 0,
+	hostProps = NO_HOST_PROPS,
 }: InteractiveUiSurfaceProps ) {
 	const messageThemeName = surface.theme?.name;
 	const themeName =
@@ -95,11 +103,13 @@ export function InteractiveUiSurface( {
 	return (
 		<SurfaceBoundary revision={ revision }>
 			<InteractiveUiSurfaceContext.Provider value={ surfaceContext }>
-				<MarkdownContext.Provider value={ renderMarkdown }>
-					<fieldset className={ clsx( 'ai-ui-renderer', themeClassName ) } disabled={ disabled }>
-						<A2uiSurface surface={ surface } />
-					</fieldset>
-				</MarkdownContext.Provider>
+				<InteractiveUiHostPropsContext.Provider value={ hostProps }>
+					<MarkdownContext.Provider value={ renderMarkdown }>
+						<fieldset className={ clsx( 'ai-ui-renderer', themeClassName ) } disabled={ disabled }>
+							<A2uiSurface surface={ surface } />
+						</fieldset>
+					</MarkdownContext.Provider>
+				</InteractiveUiHostPropsContext.Provider>
 			</InteractiveUiSurfaceContext.Provider>
 		</SurfaceBoundary>
 	);

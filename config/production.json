@@ -160,7 +160,6 @@
 		"site-spec": true,
 		"site-spec/build-wow-blocks-first": false,
 		"site-spec/build-wow-streaming": false,
-		"sites/drive-migrations": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
 		"stats/archive-breakdown": true,
