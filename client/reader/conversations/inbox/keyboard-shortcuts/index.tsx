@@ -1,5 +1,5 @@
 import {
-	IconButton,
+	Button,
 	Dropdown,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -34,13 +34,15 @@ export function KeyboardShortcuts( { isOpen, onToggle }: Props ) {
 			open={ isOpen }
 			onToggle={ onToggle }
 			popoverProps={ { placement: 'bottom-end' } }
+			className="conversations-inbox__shortcuts-dropdown"
 			renderToggle={ ( { isOpen: open, onToggle: toggle } ) => (
-				<IconButton
+				<Button
 					__next40pxDefaultSize
 					icon={ keyboard }
 					label={ translate( 'Keyboard shortcuts' ) }
 					aria-expanded={ open }
 					onClick={ toggle }
+					size="small"
 				/>
 			) }
 			renderContent={ () => (
@@ -48,7 +50,7 @@ export function KeyboardShortcuts( { isOpen, onToggle }: Props ) {
 					{ shortcuts.map( ( { key, label } ) => (
 						<HStack as="li" key={ key } spacing={ 2.5 } justify="flex-start">
 							<kbd>{ key }</kbd>
-							<Text>{ label }</Text>
+							<Text className="conversations-inbox__shortcuts-label">{ label }</Text>
 						</HStack>
 					) ) }
 				</VStack>

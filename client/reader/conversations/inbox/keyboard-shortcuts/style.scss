@@ -19,4 +19,11 @@
 		font-size: 0.75rem;
 		font-weight: 600;
 	}
+	.conversations-inbox__shortcuts-label {
+		white-space: nowrap;
+	}
+}
+
+.conversations-inbox__shortcuts-dropdown {
+	display: flex;
 }
