@@ -70,6 +70,24 @@ export function assertInteractiveUiCatalogDefinition( {
 	);
 }
 
+// A document as A2UI reads it: its `$id` names it as A2UI's catalogs do, and each function states
+// `requiresUserActivation`, which A2UI defaults to false but this renderer to true.
+function toInlineCatalog( { functions, ...catalog }: InteractiveUiCatalogDocument ) {
+	return {
+		...catalog,
+		$id: catalog.catalogId,
+		protocolVersion: '1.0',
+		...( functions && {
+			functions: Object.fromEntries(
+				Object.entries( functions ).map( ( [ name, definition ] ) => [
+					name,
+					{ requiresUserActivation: true, ...definition },
+				] )
+			),
+		} ),
+	};
+}
+
 /**
  * A2UI's `a2uiRendererCapabilities` for a host that renders the Basic catalog and these: their IDs,
  * and their documents for the agent.
@@ -78,7 +96,7 @@ export function getInteractiveUiRendererCapabilities( catalogs: InteractiveUiCat
 	return {
 		'v1.0': {
 			supportedCatalogIds: [ BASIC_CATALOG_ID, ...catalogs.map( ( { catalogId } ) => catalogId ) ],
-			inlineCatalogs: catalogs.map( ( catalog ) => ( { ...catalog, protocolVersion: '1.0' } ) ),
+			inlineCatalogs: catalogs.map( toInlineCatalog ),
 		},
 	};
 }

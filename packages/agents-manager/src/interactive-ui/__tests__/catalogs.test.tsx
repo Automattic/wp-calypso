@@ -125,17 +125,34 @@ it( 'keeps only valid provider catalogs, the first with each ID', () => {
 } );
 
 it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () => {
-	const wooCatalog = createCatalog( WOO_CATALOG_ID );
+	const wooCatalog = {
+		catalog: {
+			catalogId: WOO_CATALOG_ID,
+			functions: {
+				wooAiOpenProduct: { type: 'object' },
+				wooAiFormatPrice: { type: 'object', requiresUserActivation: false },
+			},
+		},
+	};
 
 	expect( getInteractiveUiCapabilities( [ wooCatalog ] ) ).toEqual( {
 		'v1.0': {
 			supportedCatalogIds: [ BASIC_CATALOG_ID, AGENTS_MANAGER_CATALOG_ID, WOO_CATALOG_ID ],
 			inlineCatalogs: [
 				expect.objectContaining( {
+					$id: AGENTS_MANAGER_CATALOG_ID,
 					catalogId: AGENTS_MANAGER_CATALOG_ID,
 					protocolVersion: '1.0',
 				} ),
-				{ ...wooCatalog.catalog, protocolVersion: '1.0' },
+				{
+					$id: WOO_CATALOG_ID,
+					catalogId: WOO_CATALOG_ID,
+					protocolVersion: '1.0',
+					functions: {
+						wooAiOpenProduct: { type: 'object', requiresUserActivation: true },
+						wooAiFormatPrice: { type: 'object', requiresUserActivation: false },
+					},
+				},
 			],
 		},
 	} );
