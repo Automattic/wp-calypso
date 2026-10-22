@@ -58,6 +58,7 @@ function assertSchemas( kind: 'component' | 'function', definitions: Record< str
 	for ( const [ name, schema ] of Object.entries( definitions ) ) {
 		if (
 			! isObject( schema ) ||
+			( 'type' in schema && schema.type !== 'object' ) ||
 			( 'properties' in schema && ! isObject( schema.properties ) ) ||
 			( 'required' in schema && ! Array.isArray( schema.required ) )
 		) {
@@ -163,8 +164,8 @@ function toInlineCatalog( {
 		} ),
 		...( functions && {
 			functions: mapDefinitions( functions, ( definition, name ) => ( {
-				requiresUserActivation: true,
 				...withDiscriminator( definition, '@call', name ),
+				requiresUserActivation: definition.requiresUserActivation ?? true,
 			} ) ),
 		} ),
 	};

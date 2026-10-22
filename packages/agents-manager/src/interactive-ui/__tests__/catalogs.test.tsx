@@ -142,7 +142,7 @@ it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () 
 				},
 			},
 			functions: {
-				wooAiOpenProduct: { type: 'object', returnType: 'void' },
+				wooAiOpenProduct: { type: 'object', returnType: 'void', requiresUserActivation: undefined },
 				wooAiFormatPrice: {
 					type: 'object',
 					returnType: 'string',

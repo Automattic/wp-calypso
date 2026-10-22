@@ -110,6 +110,14 @@ it.each< { problem: string; definition: InteractiveUiCatalogDefinition; error: s
 		error: 'The interactive UI component HostColorPicker needs an object schema.',
 	},
 	{
+		problem: 'a component of another type',
+		definition: {
+			...hostCatalog,
+			catalog: { ...hostCatalog.catalog, components: { HostColorPicker: { type: 'string' } } },
+		},
+		error: 'The interactive UI component HostColorPicker needs an object schema.',
+	},
+	{
 		problem: 'a function without a return type',
 		definition: {
 			...hostCatalog,
