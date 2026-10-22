@@ -47,7 +47,7 @@ function StripeWalletContent( {
 	const onAvailablePaymentMethodsChange = useCallback(
 		( { paymentMethods }: StripeExpressCheckoutElementAvailablePaymentMethodsChangeEvent ) => {
 			setIsLoading( false );
-			togglePaymentMethod( 'stripe-wallet', Boolean( paymentMethods ) );
+			togglePaymentMethod( 'stripe-wallet', Boolean( paymentMethods?.link?.available ) );
 		},
 		[ togglePaymentMethod ]
 	);
