@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { PLAN_PREMIUM, PLAN_PERSONAL } from '@automattic/calypso-products';
+import { PLAN_ECOMMERCE, PLAN_PREMIUM, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -162,6 +162,46 @@ describe( 'CheckoutThankYou', () => {
 		);
 
 		expect( await screen.getByTestId( 'component--plan-only-thank-you' ) ).toBeInTheDocument();
+	} );
+
+	describe( 'eCommerce plan purchase', () => {
+		const props = {
+			...defaultProps,
+			receiptId: 12,
+			selectedSite: {
+				ID: 12,
+			},
+			sitePlans: {
+				hasLoadedFromServer: true,
+			},
+			hasLoadedReceipts: true,
+			receipt: {
+				purchases: [ { productSlug: PLAN_ECOMMERCE } ],
+			},
+			refreshSitePlans: ( selectedSite ) => selectedSite,
+			transferComplete: true,
+		};
+
+		it( 'keeps showing the transfer screen until WooCommerce is installed', () => {
+			render(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...props } isWooCommerceInstalled={ false } />
+				</Provider>
+			);
+
+			expect( screen.getByText( 'transfer-pending' ) ).toBeVisible();
+		} );
+
+		it( 'shows the thank-you page once WooCommerce is installed', () => {
+			render(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...props } isWooCommerceInstalled />
+				</Provider>
+			);
+
+			expect( screen.queryByText( 'transfer-pending' ) ).not.toBeInTheDocument();
+			expect( screen.getByTestId( 'component--plan-only-thank-you' ) ).toBeVisible();
+		} );
 	} );
 
 	describe( 'domain-only page', () => {
