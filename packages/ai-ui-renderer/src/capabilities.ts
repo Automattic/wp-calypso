@@ -70,20 +70,53 @@ export function assertInteractiveUiCatalogDefinition( {
 	);
 }
 
-// A document as A2UI reads it: its `$id` names it as A2UI's catalogs do, and each function states
-// `requiresUserActivation`, which A2UI defaults to false but this renderer to true.
-function toInlineCatalog( { functions, ...catalog }: InteractiveUiCatalogDocument ) {
+interface ComponentSchema {
+	properties?: object;
+	required?: string[];
+}
+
+function mapDefinitions(
+	definitions: Record< string, object >,
+	map: ( definition: object, name: string ) => object
+) {
+	return Object.fromEntries(
+		Object.entries( definitions ).map( ( [ name, definition ] ) => [
+			name,
+			map( definition, name ),
+		] )
+	);
+}
+
+// A component names itself in its required `component` prop, A2UI's discriminator rule.
+function withComponentName(
+	{ properties, required = [], ...schema }: ComponentSchema,
+	name: string
+) {
+	return {
+		...schema,
+		properties: { ...properties, component: { const: name } },
+		required: [ 'component', ...required.filter( ( key ) => key !== 'component' ) ],
+	};
+}
+
+// A document as A2UI reads it: its `$id` names it as A2UI's catalogs do, each component is
+// discriminated by name, and each function states `requiresUserActivation`, which A2UI defaults
+// to false but this renderer to true.
+function toInlineCatalog( { components, functions, ...catalog }: InteractiveUiCatalogDocument ) {
 	return {
 		...catalog,
 		$id: catalog.catalogId,
 		protocolVersion: '1.0',
-		...( functions && {
-			functions: Object.fromEntries(
-				Object.entries( functions ).map( ( [ name, definition ] ) => [
-					name,
-					{ requiresUserActivation: true, ...definition },
-				] )
+		...( components && {
+			components: mapDefinitions( components, ( definition, name ) =>
+				withComponentName( definition as ComponentSchema, name )
 			),
+		} ),
+		...( functions && {
+			functions: mapDefinitions( functions, ( definition ) => ( {
+				requiresUserActivation: true,
+				...definition,
+			} ) ),
 		} ),
 	};
 }

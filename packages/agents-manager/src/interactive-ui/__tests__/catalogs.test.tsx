@@ -128,6 +128,13 @@ it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () 
 	const wooCatalog = {
 		catalog: {
 			catalogId: WOO_CATALOG_ID,
+			components: {
+				WooAiProductCard: {
+					type: 'object',
+					properties: { name: { type: 'string' } },
+					required: [ 'name' ],
+				},
+			},
 			functions: {
 				wooAiOpenProduct: { type: 'object' },
 				wooAiFormatPrice: { type: 'object', requiresUserActivation: false },
@@ -148,6 +155,13 @@ it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () 
 					$id: WOO_CATALOG_ID,
 					catalogId: WOO_CATALOG_ID,
 					protocolVersion: '1.0',
+					components: {
+						WooAiProductCard: {
+							type: 'object',
+							properties: { name: { type: 'string' }, component: { const: 'WooAiProductCard' } },
+							required: [ 'component', 'name' ],
+						},
+					},
 					functions: {
 						wooAiOpenProduct: { type: 'object', requiresUserActivation: true },
 						wooAiFormatPrice: { type: 'object', requiresUserActivation: false },

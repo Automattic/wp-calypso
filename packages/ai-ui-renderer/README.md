@@ -69,7 +69,8 @@ before loading the renderer:
   `createInteractiveUiCatalog()` rejects those that fail.
 - `getInteractiveUiRendererCapabilities( documents )` returns A2UI's `a2uiRendererCapabilities`
   for the Basic catalog and those catalogs: their IDs, and their documents as inline catalogs with
-  the fields A2UI expects (`$id`, `protocolVersion`, and each function's `requiresUserActivation`).
+  the fields A2UI expects (`$id`, `protocolVersion`, each component's `component` name, and each
+  function's `requiresUserActivation`).
   Send it to the agent, so it shows only UI the host can render.
 - `BASIC_CATALOG_ID` is A2UI's Basic catalog ID.
 
