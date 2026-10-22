@@ -9,9 +9,9 @@ use it.
 ## Usage
 
 Build an A2UI v1.0 catalog with `createInteractiveUiCatalog({ id, components, functions })`: the
-basic components below and A2UI's built-in functions, plus the host's own. The ID defaults to
-A2UI's Basic catalog's; give a catalog with your own components its own versioned ID. Duplicate
-names throw.
+basic components below and A2UI's built-in functions, plus the host's own. The ID defaults to the
+Basic catalog's; give a catalog with your own components its own versioned ID. Duplicate names
+throw.
 
 Define a component or function as a plain object, so it can ship in another bundle without its
 own A2UI or `zod`:
@@ -85,9 +85,8 @@ page's `color-scheme`, or A2UI's `a2ui-dark` or `a2ui-light` class:
 ```
 
 An unset token keeps the host's WordPress components color (`--wp-components-color-*`), or else a
-default from WordPress's palette that follows the light or dark mode. In dark mode, text-style
-buttons and checked controls use a lighter shade of the primary color, so they stay readable. The
-modal renders outside the host, so it copies its surface's theme when it opens.
+default from WordPress's palette that follows the light or dark mode. The modal renders outside the
+host, so it copies its surface's theme when it opens.
 
 Custom components should use the tokens, such as `var( --a2ui-color-on-surface )`, or WordPress
 components, which follow them, never a chat's own variables.
