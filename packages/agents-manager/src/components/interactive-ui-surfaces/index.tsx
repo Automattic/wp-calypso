@@ -67,7 +67,7 @@ export function InteractiveUiSurfaces( { messageId, presentation, isMessageStale
 					<div
 						key={ surfaceId }
 						className={ clsx( 'agents-manager-interactive-ui-surfaces__surface', {
-							'is-stale': isStale && ! isMessageStale,
+							'agents-manager-interactive-ui-surfaces__surface--stale': isStale && ! isMessageStale,
 						} ) }
 					>
 						<InteractiveUiSurface
