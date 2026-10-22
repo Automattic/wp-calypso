@@ -92,6 +92,168 @@ describe( 'SiteMigrationIdentify', () => {
 		jest.restoreAllMocks();
 	} );
 
+	describe.each( [ false, true ] )( 'Substack sources with reprint flow %s', ( isReprintFlow ) => {
+		const publicationOrigin = 'https://publication.substack.com';
+		const resolvedUrl = 'https://newsletter.example.com/';
+		const substackResponse: UrlData = {
+			...API_RESPONSE_WITH_OTHER_PLATFORM,
+			url: resolvedUrl,
+			platform: 'substack',
+		};
+		const getContinueButton = () =>
+			screen.getByRole( 'button', { name: isReprintFlow ? 'Continue' : 'Check my site' } );
+		const mockHosting = ( domain = 'newsletter.example.com' ) =>
+			mockApi()
+				.get( `/wpcom/v2/site-profiler/hosting-provider/${ domain }` )
+				.reply( 200, { hosting_provider: { slug: 'cloudflare' } } );
+
+		beforeEach( () => {
+			jest
+				.spyOn( config, 'isEnabled' )
+				.mockImplementation( ( flag ) =>
+					flag === 'migration/reprint-flow' ? isReprintFlow : originalIsEnabled( flag )
+				);
+		} );
+		afterEach( () => nock.cleanAll() );
+
+		it.each( [
+			`${ publicationOrigin }/p/my-post?utm_source=email#comments`,
+			'publication.substack.com/publish/post/155313808',
+		] )(
+			'analyzes the publication root for %s and continues with the resolved address',
+			async ( url ) => {
+				const submit = jest.fn();
+				render( { navigation: { submit } } );
+				const analysis = mockApi()
+					.get( '/wpcom/v2/imports/analyze-url' )
+					.query( { site_url: publicationOrigin } )
+					.reply( 200, substackResponse );
+				const hosting = mockHosting();
+
+				await user.type( getInput(), url );
+				await user.click( getContinueButton() );
+				expect( getInput() ).not.toBeVisible();
+
+				await waitFor( () =>
+					expect( submit ).toHaveBeenCalledWith( {
+						action: 'continue',
+						from: resolvedUrl,
+						platform: 'substack',
+						host: 'cloudflare',
+					} )
+				);
+				expect( analysis.isDone() ).toBe( true );
+				expect( hosting.isDone() ).toBe( true );
+				expect( submit ).toHaveBeenCalledTimes( 1 );
+			}
+		);
+
+		it( 'normalizes a post address supplied through the from parameter on submission', async () => {
+			const submit = jest.fn();
+			const url = `${ publicationOrigin }/publish/post/155313808`;
+			render(
+				{ navigation: { submit } },
+				{ initialEntry: `/some-path?from=${ encodeURIComponent( url ) }` }
+			);
+			expect( getInput() ).toHaveValue( url );
+			expect( submit ).not.toHaveBeenCalled();
+			const analysis = mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: publicationOrigin } )
+				.reply( 200, substackResponse );
+			mockHosting();
+
+			await user.click( getContinueButton() );
+
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { from: resolvedUrl } ) )
+			);
+			expect( analysis.isDone() ).toBe( true );
+		} );
+
+		it( 'normalizes a post address checked on arrival', async () => {
+			const submit = jest.fn();
+			const url = `${ publicationOrigin }/publish/post/155313808`;
+			const analysis = mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: publicationOrigin } )
+				.reply( 200, substackResponse );
+			const hosting = mockHosting();
+			renderStep(
+				<SiteMigrationIdentify { ...mockStepProps( { navigation: { submit } } ) } checkOnArrival />,
+				{ initialEntry: `/some-path?from=${ encodeURIComponent( url ) }` }
+			);
+
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith( {
+					action: 'continue',
+					from: resolvedUrl,
+					platform: 'substack',
+					host: 'cloudflare',
+				} )
+			);
+			expect( analysis.isDone() ).toBe( true );
+			expect( hosting.isDone() ).toBe( true );
+			expect( submit ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'preserves WordPress subdirectories, query parameters, and fragments for analysis', async () => {
+			const submit = jest.fn();
+			const url = 'https://example.com/blog/?tag=test#intro';
+			render( { navigation: { submit } } );
+			const analysis = mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: url } )
+				.reply( 200, { ...API_RESPONSE_WORDPRESS_PLATFORM, url: 'https://example.com/blog/' } );
+			mockHosting( 'example.com' );
+
+			await user.type( getInput(), url );
+			await user.click( getContinueButton() );
+
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith(
+					expect.objectContaining( { from: 'https://example.com/blog/', platform: 'wordpress' } )
+				)
+			);
+			expect( analysis.isDone() ).toBe( true );
+		} );
+
+		it( 'retains the entered post address after an API failure and allows another check', async () => {
+			const submit = jest.fn();
+			const url = `${ publicationOrigin }/p/my-post`;
+			render( { navigation: { submit } } );
+			const analysis = mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: publicationOrigin } )
+				.reply( 500, {} )
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: publicationOrigin } )
+				.reply( 200, substackResponse );
+
+			await user.type( getInput(), url );
+			await user.click( getContinueButton() );
+
+			const errorMessage = isReprintFlow
+				? 'We couldn’t check your site. Try again.'
+				: 'Please enter a valid website address. You can copy and paste.';
+			const errorNotice = isReprintFlow
+				? await screen.findByRole( 'alert' )
+				: await screen.findByText( errorMessage );
+			expect( errorNotice ).toHaveTextContent( errorMessage );
+			expect( getInput() ).toBeVisible();
+			expect( getInput() ).toHaveValue( url );
+			expect( submit ).not.toHaveBeenCalled();
+
+			mockHosting();
+			await user.click( getContinueButton() );
+
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { from: resolvedUrl } ) )
+			);
+			expect( analysis.isDone() ).toBe( true );
+		} );
+	} );
+
 	it( 'allows retrying failed submissions and restores the form on cached Back', async () => {
 		jest.mocked( useSiteSlug ).mockReturnValue( MOCK_WORDPRESS_SITE_SLUG );
 
