@@ -3,13 +3,14 @@ import { ModalApi } from '@a2ui/web_core/v0_9';
 import { Modal as GutenbergModal } from '@wordpress/components';
 import { useContext, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { InteractiveUiDisabledContext, ModalTriggerContext } from './context';
+import clsx from 'clsx';
+import { InteractiveUiSurfaceContext, ModalTriggerContext } from './context';
 
 export const Modal = createComponentImplementation(
 	{ name: ModalApi.name, schema: ModalApi.schema.pick( { trigger: true, content: true } ) },
 	( { props, buildChild } ) => {
 		const [ isOpen, setIsOpen ] = useState( false );
-		const isDisabled = useContext( InteractiveUiDisabledContext );
+		const { disabled: isDisabled, themeClassName } = useContext( InteractiveUiSurfaceContext );
 		return (
 			<>
 				<ModalTriggerContext.Provider value={ () => setIsOpen( true ) }>
@@ -18,10 +19,13 @@ export const Modal = createComponentImplementation(
 				{ isOpen && (
 					<GutenbergModal
 						title={ __( 'Details', 'default' ) }
-						overlayClassName="ai-ui-renderer__modal"
+						overlayClassName={ clsx( 'ai-ui-renderer__modal', themeClassName ) }
 						onRequestClose={ () => setIsOpen( false ) }
 					>
-						<fieldset className="ai-ui-renderer" disabled={ isDisabled }>
+						<fieldset
+							className={ clsx( 'ai-ui-renderer', themeClassName ) }
+							disabled={ isDisabled }
+						>
 							{ buildChild( props.content ) }
 						</fieldset>
 					</GutenbergModal>

@@ -160,7 +160,7 @@ describe( 'LoginForm', () => {
 		const password = screen.getByLabelText( /^password$/i );
 		expect( password ).toBeInTheDocument();
 
-		const btn = screen.getByRole( 'button', { name: /Log In/i } );
+		const btn = screen.getByRole( 'button', { name: /^Log in$/ } );
 		expect( btn ).toBeInTheDocument();
 	} );
 
@@ -233,14 +233,14 @@ describe( 'LoginForm', () => {
 		expect( btn ).toBeInTheDocument();
 	} );
 
-	test( 'shows "Log In" button text for regular accounts', async () => {
+	test( 'shows "Log in" button text for regular accounts', async () => {
 		render( <LoginForm isSocialFirst />, {
 			initialState: {
 				login: { authAccountType: 'regular' },
 			},
 		} );
 
-		const btn = screen.getByRole( 'button', { name: /Log In/i } );
+		const btn = screen.getByRole( 'button', { name: /^Log in$/ } );
 		expect( btn ).toBeInTheDocument();
 	} );
 
@@ -356,7 +356,7 @@ describe( 'LoginForm', () => {
 			} );
 
 			renderRegularLoginForm();
-			await userEvent.click( screen.getByRole( 'button', { name: /Log In/i } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: /^Log in$/ } ) );
 
 			await waitFor( () => expect( mockFetch ).toHaveBeenCalled() );
 
@@ -373,7 +373,7 @@ describe( 'LoginForm', () => {
 			} );
 
 			renderRegularLoginForm();
-			await userEvent.click( screen.getByRole( 'button', { name: /Log In/i } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: /^Log in$/ } ) );
 
 			await waitFor( () => expect( mockFetch ).toHaveBeenCalled() );
 
@@ -391,7 +391,7 @@ describe( 'LoginForm', () => {
 			} );
 
 			renderRegularLoginForm();
-			await userEvent.click( screen.getByRole( 'button', { name: /Log In/i } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: /^Log in$/ } ) );
 
 			await waitFor( () => expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 ) );
 		} );

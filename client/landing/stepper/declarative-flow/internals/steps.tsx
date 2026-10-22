@@ -61,11 +61,6 @@ export const STEPS = {
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
-	FLEX_SITE_CREATION: {
-		slug: 'flex-site-creation',
-		asyncComponent: () => import( './steps-repository/flex-site-creation' ),
-	},
-
 	NEWSLETTER_SETUP: {
 		slug: 'newsletterSetup',
 		asyncComponent: () => import( './steps-repository/newsletter-setup' ),
@@ -169,11 +164,6 @@ export const STEPS = {
 	},
 
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
-
-	OPTIONS: {
-		slug: 'options',
-		asyncComponent: () => import( './steps-repository/site-options' ),
-	},
 
 	PLANS: { slug: 'plans', asyncComponent: () => import( './steps-repository/plans' ) },
 

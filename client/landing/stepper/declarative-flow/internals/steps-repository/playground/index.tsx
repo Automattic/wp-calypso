@@ -21,14 +21,16 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 	// For preventing double click on launch button
 	const [ isLaunching, setIsLaunching ] = useState( false );
 
+	const hasWooCommerceIntentInUrl = query.get( 'intent' ) === 'woocommerce';
+
 	useEffect( () => {
-		if ( query.get( 'intent' ) === 'woocommerce' ) {
+		if ( hasWooCommerceIntentInUrl ) {
 			sessionStorage.setItem( SESSION_KEY_PLAYGROUND_WOO_INTENT, '1' );
 		}
-	}, [ query ] );
+	}, [ hasWooCommerceIntentInUrl ] );
 
 	const isWooCommerceIntent =
-		query.get( 'intent' ) === 'woocommerce' ||
+		hasWooCommerceIntentInUrl ||
 		sessionStorage.getItem( SESSION_KEY_PLAYGROUND_WOO_INTENT ) === '1';
 
 	const setPlaygroundClient = ( client: PlaygroundClient ) => {
@@ -48,6 +50,9 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 				step: 'playground',
 				blueprint: getBlueprintLabelForTracking( query ),
 				intent: DEFAULT_PLAN_INTENT,
+				// URL only, like the flow's routing to the WooCommerce trial; the
+				// sessionStorage fallback used for the button label isn't checked there.
+				is_woocommerce_intent: hasWooCommerceIntentInUrl,
 			} );
 
 			submit();

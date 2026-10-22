@@ -1,0 +1,117 @@
+@import "@automattic/typography/styles/variables";
+
+$toolbar-height: 48px;
+// The whole composer, toolbar included; past it the writing area scrolls.
+$composer-max-height: 400px;
+
+// The box and type, which the editor's own styles read as variables.
+.comments__block-editor {
+	--jetpack-comments-pad: 24px;
+	--jetpack-comments-font-family: #{$sans};
+	--jetpack-comments-font-size: #{$font-body};
+	--jetpack-comments-line-height: 24px;
+	--jetpack-comments-color: var(--color-text);
+	--jetpack-comments-background: var(--color-surface);
+	border: 1px solid var(--color-neutral-5);
+	border-radius: 2px;
+	background: var(--color-surface);
+	color: var(--color-text);
+
+	&:focus-within {
+		border-color: var(--color-primary);
+	}
+}
+
+// Open from the start, not only once a block has tools, so the box doesn't grow on focus.
+// The classes outrank the editor's open rule, which loads after this.
+.comments__block-editor .comments__block-editor-toolbar,
+.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
+	box-sizing: border-box;
+	min-block-size: $toolbar-height + 1px;
+	padding-inline: 12px;
+	border-block-end: 1px solid var(--color-neutral-5);
+}
+
+.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
+	grid-template-rows: 1fr;
+	visibility: visible;
+	transition: none;
+	animation: none;
+}
+
+// The writing area, the same for the stand-in and the editor, so the swap doesn't move it.
+.comments__block-editor .comments__block-editor-textarea,
+.comments__block-editor .jetpack-comments__editor .editor-styles-wrapper {
+	box-sizing: border-box;
+	min-block-size: calc(4lh + 2 * var(--jetpack-comments-pad));
+	max-block-size: $composer-max-height - $toolbar-height - 1px;
+	overflow-y: auto;
+}
+
+.comments__block-editor-content {
+	position: relative;
+}
+
+.comments__block-editor .comments__block-editor-textarea {
+	display: block;
+	inline-size: 100%;
+	margin: 0;
+	padding: var(--jetpack-comments-pad);
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	color: inherit;
+	font-family: var(--jetpack-comments-font-family);
+	font-size: var(--jetpack-comments-font-size);
+	line-height: var(--jetpack-comments-line-height);
+	outline: none;
+	resize: none;
+	field-sizing: content;
+
+	// The shade the editor gives its own placeholder, so the handoff keeps it.
+	&::placeholder {
+		color: currentColor;
+		opacity: 0.62;
+	}
+}
+
+// Over the textarea while the editor downloads, its dots bouncing one after another.
+.comments__block-editor-loading {
+	position: absolute;
+	inset-block-start: var(--jetpack-comments-pad);
+	inset-inline-start: var(--jetpack-comments-pad);
+	font-family: var(--jetpack-comments-font-family);
+	font-size: var(--jetpack-comments-font-size);
+	line-height: var(--jetpack-comments-line-height);
+	opacity: 0.62;
+	pointer-events: none;
+
+	span {
+		display: inline-block;
+		animation: comments-block-editor-bounce 1s ease-in-out infinite;
+
+		@media (prefers-reduced-motion: reduce) {
+			animation: none;
+		}
+	}
+
+	span:nth-child(2) {
+		animation-delay: 0.15s;
+	}
+
+	span:nth-child(3) {
+		animation-delay: 0.3s;
+	}
+}
+
+@keyframes comments-block-editor-bounce {
+	0%,
+	60%,
+	100% {
+		transform: none;
+	}
+
+	30% {
+		transform: translateY(-0.3em);
+	}
+}

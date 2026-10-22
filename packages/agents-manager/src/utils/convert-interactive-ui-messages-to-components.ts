@@ -1,7 +1,8 @@
 import { InteractiveUiSurfaces } from '../components/interactive-ui-surfaces';
-import { getInteractiveUiMessagesFromText } from './interactive-ui-messages';
+import { isInteractiveUiActionMessage, parseInteractiveUiText } from './interactive-ui-messages';
 import type { AgentsManagerUIMessage } from './convert-tool-messages-to-components';
 import type { InteractiveUiPresentation } from '../hooks/use-interactive-ui';
+import type { UIMessage } from '@automattic/agenttic-client';
 import type { ComponentType } from 'react';
 
 /**
@@ -21,7 +22,7 @@ export function convertInteractiveUiMessagesToComponents(
 		return {
 			...message,
 			content: message.content.flatMap( ( content ) => {
-				if ( content.type !== 'text' || ! getInteractiveUiMessagesFromText( content.text ) ) {
+				if ( content.type !== 'text' || ! parseInteractiveUiText( content.text ) ) {
 					return [ content ];
 				}
 
@@ -51,7 +52,8 @@ function isInteractiveUiSurfacesPart( content: MessageContentPart ) {
 
 /**
  * Hands each message's interactive UI part the current presentation, and drops the part while
- * its message has no surface to show yet, unless the renderer failed to load.
+ * its message has no surface to show yet, unless the renderer failed to load. Disables a message
+ * whose surfaces are all stale, as `show-component` does, so Agenttic greys it out with its actions.
  */
 export function attachInteractiveUiPresentation(
 	messages: AgentsManagerUIMessage[],
@@ -62,10 +64,15 @@ export function attachInteractiveUiPresentation(
 			return message;
 		}
 
-		const hasSurfaces = !! presentation.runtime?.getSurfaceIds( message.id ).length;
+		const surfaceIds = presentation.runtime?.getSurfaceIds( message.id ) ?? [];
+		const hasSurfaces = surfaceIds.length > 0;
+		const isMessageStale =
+			hasSurfaces &&
+			surfaceIds.every( ( surfaceId ) => presentation.staleSurfaceIds.has( surfaceId ) );
 
 		return {
 			...message,
+			...( isMessageStale && { disabled: true } ),
 			content: message.content.flatMap( ( content ) => {
 				if ( ! isInteractiveUiSurfacesPart( content ) ) {
 					return [ content ];
@@ -75,8 +82,60 @@ export function attachInteractiveUiPresentation(
 					return [];
 				}
 
-				return [ { ...content, componentProps: { ...content.componentProps, presentation } } ];
+				return [
+					{
+						...content,
+						componentProps: { ...content.componentProps, presentation, isMessageStale },
+					},
+				];
 			} ),
 		};
 	} );
+}
+
+// Agenttic hides a message with only context or data parts, as `getVisibleMessages()` does.
+function isShownByAgenttic( message: AgentsManagerUIMessage ) {
+	return message.content.some(
+		( content ) => content.type !== 'context' && content.type !== 'data'
+	);
+}
+
+/**
+ * Starts a turn at each reply to an interactive UI action. The action's message is hidden, so
+ * Agenttic would otherwise treat the reply as part of the turn before it.
+ */
+export function markInteractiveUiActionReplies(
+	displayedMessages: AgentsManagerUIMessage[],
+	messages: UIMessage[]
+): AgentsManagerUIMessage[] {
+	const shownMessageIds = new Set(
+		displayedMessages.filter( isShownByAgenttic ).map( ( message ) => message.id )
+	);
+	const replyIds = new Set< string >();
+	let isAwaitingReply = false;
+
+	for ( const message of messages ) {
+		if ( isInteractiveUiActionMessage( message ) ) {
+			isAwaitingReply = true;
+			continue;
+		}
+
+		if ( ! shownMessageIds.has( message.id ) ) {
+			continue;
+		}
+
+		if ( isAwaitingReply && message.role === 'agent' ) {
+			replyIds.add( message.id );
+		}
+
+		isAwaitingReply = false;
+	}
+
+	if ( replyIds.size === 0 ) {
+		return displayedMessages;
+	}
+
+	return displayedMessages.map( ( message ) =>
+		replyIds.has( message.id ) ? { ...message, startsTurn: true } : message
+	);
 }

@@ -6,7 +6,6 @@ const frozenDeprecatedV1Flows = [
 	'newsletter',
 	'entrepreneur',
 	'update-design',
-	'update-options',
 	'domain-and-plan',
 	'build',
 	'write',
