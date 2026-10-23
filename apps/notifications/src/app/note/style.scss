@@ -157,14 +157,14 @@
 	}
 
 	// Links
-	a,
-	a:visited {
+	a:not(.wpnc__button),
+	a:not(.wpnc__button):visited {
 		color: var(--wp-admin-theme-color);
 	}
 
-	a:hover,
-	a:focus,
-	a:active {
+	a:not(.wpnc__button):hover,
+	a:not(.wpnc__button):focus,
+	a:not(.wpnc__button):active {
 		color: var(--wp-admin-theme-color);
 	}
 
