@@ -7,10 +7,9 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useReducedMotion, useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { check, chevronLeft, chevronRight, closeSmall } from '@wordpress/icons';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ResourceBadges from './resource-badges';
 import ResourcePreview from './resource-preview';
 import type { AgencyEnablementResource } from '@automattic/api-core';
@@ -23,8 +22,6 @@ interface ResourceModalProps {
 	onOpen: ( resource: AgencyEnablementResource ) => void;
 	isRead: boolean;
 	onToggleRead: () => void;
-	/** Where the modal was opened from, so it can grow out of that card or row. */
-	origin?: DOMRect;
 }
 
 /**
@@ -39,44 +36,11 @@ export default function ResourceModal( {
 	onOpen,
 	isRead,
 	onToggleRead,
-	origin,
 }: ResourceModalProps ) {
 	// Previous points back along the reading direction, so it swaps in RTL.
 	const [ previousKey, nextKey, previousIcon, nextIcon ] = isRTL()
 		? ( [ 'ArrowRight', 'ArrowLeft', chevronRight, chevronLeft ] as const )
 		: ( [ 'ArrowLeft', 'ArrowRight', chevronLeft, chevronRight ] as const );
-
-	const contentRef = useRef< HTMLDivElement >( null );
-	const isReducedMotion = useReducedMotion();
-	// Below this the modal is a bottom sheet, which keeps its own slide-up.
-	const isCentered = useViewportMatch( 'small' );
-
-	// Grows the modal out of the card or row it was opened from.
-	useLayoutEffect( () => {
-		// Modal forwards its ref to the overlay rather than the frame.
-		const frame = contentRef.current?.closest< HTMLElement >( '.components-modal__frame' );
-		if ( ! frame || ! origin || isReducedMotion || ! isCentered ) {
-			return;
-		}
-
-		const bounds = frame.getBoundingClientRect();
-		const x = origin.x + origin.width / 2 - ( bounds.x + bounds.width / 2 );
-		const y = origin.y + origin.height / 2 - ( bounds.y + bounds.height / 2 );
-		const animation = frame.animate(
-			[
-				{
-					transform: `translate( ${ x }px, ${ y }px ) scale( ${ origin.width / bounds.width }, ${
-						origin.height / bounds.height
-					} )`,
-					opacity: 0.35,
-				},
-				{ transform: 'none', opacity: 1 },
-			],
-			{ duration: 200, easing: 'cubic-bezier( 0.22, 1, 0.36, 1 )' }
-		);
-
-		return () => animation.cancel();
-	}, [ origin, isReducedMotion, isCentered ] );
 
 	// Content fades in as you move between resources, but not on opening.
 	const openedId = useRef( resource.id );
@@ -139,7 +103,7 @@ export default function ResourceModal( {
 			// The preview leads the modal, with the navigation over it, so it draws its own header.
 			__experimentalHideHeader
 		>
-			<VStack spacing={ 6 } ref={ contentRef }>
+			<VStack spacing={ 6 }>
 				<div className="dashboard-resources-learn__modal-media">
 					{ /* Keyed so it fades in anew; the controls aren't, so focus stays on them. */ }
 					<div key={ resource.id } className={ fadeClassName }>

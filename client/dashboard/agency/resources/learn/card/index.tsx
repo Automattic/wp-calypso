@@ -1,5 +1,5 @@
 import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
-import { memo, useRef } from 'react';
+import { memo } from 'react';
 import { Card, CardBody } from '../../../../components/card';
 import ResourceBadges from '../resource-badges';
 import ResourceLink from '../resource-link';
@@ -15,18 +15,11 @@ interface ResourceCardProps {
 }
 
 function ResourceCard( { resource, onSelect }: ResourceCardProps ) {
-	const cardRef = useRef< HTMLDivElement >( null );
-
 	return (
-		<Card ref={ cardRef } className="dashboard-resources-learn__card" isBorderless>
+		<Card className="dashboard-resources-learn__card" isBorderless>
 			<ResourceCardHeader
 				resource={ resource }
-				title={
-					<ResourceLink
-						resource={ resource }
-						onSelect={ ( item, event ) => onSelect( item, event, cardRef.current ) }
-					/>
-				}
+				title={ <ResourceLink resource={ resource } onSelect={ onSelect } /> }
 			/>
 			<CardBody>
 				<VStack spacing={ 3 } justify="flex-start">

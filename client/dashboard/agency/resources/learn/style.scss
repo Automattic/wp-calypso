@@ -202,19 +202,6 @@ $resource-brands: (
 	}
 }
 
-// Doubled up for specificity over the Modal's own frame rules; its closing
-// animation is more specific still, so it keeps working.
-.dashboard-resources-learn__modal.components-modal__frame {
-	@include break-small() {
-		// Pinned near the top rather than centered, so it doesn't jump as content
-		// height changes between resources.
-		margin: 10vh auto auto;
-		max-block-size: calc( 90vh - #{$grid-unit-50} );
-		// Replaced by growing out of the card it was opened from.
-		animation-name: none;
-	}
-}
-
 .dashboard-resources-learn__modal-fade {
 	@include animation__fade-in( 0.15s, 0s, ease-out );
 }

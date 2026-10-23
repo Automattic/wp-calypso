@@ -158,7 +158,6 @@ export default function ResourceLibrary( {
 			{ selected && (
 				<ResourceModal
 					resource={ selected }
-					origin={ selection.origin }
 					onClose={ selection.clear }
 					onPrevious={ previous && ( () => selection.preview( previous ) ) }
 					onNext={ next && ( () => selection.preview( next ) ) }

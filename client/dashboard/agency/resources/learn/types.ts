@@ -10,12 +10,5 @@ export type RecordTracksEvent = (
 	properties?: Record< string, unknown >
 ) => void;
 
-/**
- * Selects a resource from a card or list row, given the click that selected it
- * and, from a card, the card itself for the modal to grow out of.
- */
-export type SelectResource = (
-	resource: AgencyEnablementResource,
-	event: MouseEvent,
-	origin?: Element | null
-) => void;
+/** Selects a resource from a card or list row, given the click that selected it. */
+export type SelectResource = ( resource: AgencyEnablementResource, event: MouseEvent ) => void;
