@@ -281,6 +281,11 @@ describe( 'getLicenseActions eligibility', () => {
 		expect( isEligible( 'revoke-license', bundleParent ) ).toBe( true );
 	} );
 
+	it( 'hides revoke for Titan inboxes, which are cancelled in Pressable', () => {
+		const titan = license( { license_key: 'pressable-addon-titan-inbox_abc', quantity: 5 } );
+		expect( setup()( 'revoke-license', titan ) ).toBe( false );
+	} );
+
 	it( 'gates a bundle on the revoke capability alone, like classic', () => {
 		const referralBundle = license( {
 			quantity: 5,
