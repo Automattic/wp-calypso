@@ -3,6 +3,7 @@
 ## trunk
 
 - Updated dependencies:
+  - babel-loader to ^10.1.1 (needs thread-loader 4, below, for `this.utils` in workers)
   - thread-loader to ^4.0.4
   - css-minimizer-webpack-plugin to ^8.0.0 (cssnano 7)
 - Changed: `minify` turns off cssnano's `:is()` selector folding, which changes what selectors containing combinators match. Passing your own `preset` in `cssMinimizerOptions` replaces this default and turns folding back on.
