@@ -153,14 +153,18 @@ return them with `surface_result()`.
    React component. It keeps its side effects, skips them when `isMessageStale` is set, and loads
    on demand if it carries editor code. It follows the [custom component rules](#rules).
 2. **Return a surface from the ability** (wpcom) when `Agent_Ability::can_show_interactive_ui()`
-   passes: in an agent's chat, on a site with the sticker, for a request with no steps after the
-   component (`followUpTasks`), since a surface ends the turn. Otherwise, keep returning the
-   `show-component` result. `Interactive_UI::component_result()` shows one component under the
-   agent's summary, for the post the editor has open; `surface_result()` takes a layout of your
-   own, with its data model and, when it acts on a post, `post_id`. Both build on Agents Manager's
-   catalog, which the gate checks, so a component from your own catalog names it as its
-   `catalogId`, and the ability also checks that catalog with
-   `Interactive_UI::is_enabled( $context, $catalog_id )`.
+   passes: in an agent's chat whose client renders Agents Manager's catalog, on a site with the
+   sticker, for a request with no steps after the component (`followUpTasks`), since a surface ends
+   the turn. Otherwise, keep returning the `show-component` result.
+   - `Interactive_UI::component_result()` shows one component under the agent's summary, for the
+     post the editor has open; `surface_result()` takes a layout of your own, with its data model
+     and, when it acts on a post, its ID (`$post_id`).
+   - Both build on Agents Manager's catalog, which the gate checks, so a component from your own
+     catalog names it as its `catalogId`, and the ability also checks that catalog with
+     `Interactive_UI::is_enabled( $context, $catalog_id )`.
+   - The model's history keeps the component's name and string props, but not its array props,
+     such as a picker's style variations (`Interactive_UI::text_for_model()`). Put what the agent
+     needs to remember in the summary or a string prop.
 3. **Test both paths.** With the sticker, the surface renders, goes stale after a reply, a reload
    or a page switch, keeps its undo, and records the shared response events under its component's
    name and surface ID. Without it, the old UI shows as before.

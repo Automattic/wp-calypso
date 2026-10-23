@@ -130,7 +130,7 @@ Agents Manager hosts interactive UI surfaces from `interactive-ui/`: the hook th
 - **Surfaces come from wpcom**, which stores them with the conversation: an ability returns one through `Interactive_UI`, or the agent composes one with `wpcom/render-interactive-ui`. A browser ability's `agentMessage` isn't stored, so it can't carry one.
 - **Basic components first.** Add a custom component only for what the basic ones can't express, such as a picker's style previews.
 - **Add a component to a catalog, not to the converter.** Agents Manager's go in `AGENTS_MANAGER_CATALOG` (`interactive-ui/catalogs.ts`): their props as portable JSON Schema (`interactive-ui/README.md`) in its document, and the component itself, through `lazyComponent()` when it carries editor code. Providers declare theirs as `interactiveUi`.
-- **Custom components own their side effects.** Turn off their controls with `disabled`, skip side effects with `isMessageStale`, and key a checkpoint by `surfaceId`. The host records the shared response events, so report actions through `onResponseAction` instead of recording them.
+- **Custom components own their side effects.** Turn off their controls with `disabled`, skip side effects with `isMessageStale`, and key a checkpoint by `surfaceId`. They keep their own Tracks events, but the host records the shared response events, so report a response action through `onResponseAction` rather than recording that event.
 - **Functions run from a click** unless their document sets `requiresUserActivation: false`, and treat their arguments as untrusted.
 - **Keep the renderer in its lazy chunk:** import only types from `@automattic/ai-ui-renderer`, and values only from its `capabilities` entry and `style.scss`.
 

@@ -44,7 +44,7 @@ export default function FontPicker( {
 	} );
 
 	// Pre-load every variation's fonts in the editor canvas so previews and
-	// applying a pick don't flash unstyled text. A stale picker can't apply one.
+	// applying a pick don't flash unstyled text. A stale picker skips it, since it can't apply a pick.
 	useEffect( () => {
 		if ( isMessageStale ) {
 			return;
