@@ -3,6 +3,7 @@ import {
 	clearFontCache,
 	clusterSpans,
 	collectStyleText,
+	drawPageToBlob,
 	getBands,
 	getCaptureRect,
 	getCaptureRects,
@@ -13,6 +14,7 @@ import {
 	pinViewportPositionedElements,
 	rasterizeCanvas,
 	replaceImagesWithPlaceholders,
+	UnfaithfulCaptureError,
 	whenStill,
 } from '../rasterizer';
 
@@ -893,4 +895,155 @@ describe( 'rasterizeCanvas', () => {
 
 		await expect( rasterizeCanvas( context ) ).resolves.toBeNull();
 	} );
+} );
+
+describe( 'drawPageToBlob', () => {
+	type Rgba = [ number, number, number, number ];
+	type Sampler = ( x: number, y: number ) => Rgba;
+
+	const WHITE: Rgba = [ 255, 255, 255, 255 ];
+
+	// One line of antialiased text near the top left of every band: the kind of
+	// band a page of short FAQ questions is made of.
+	const sparseText: Sampler = ( x, y ) =>
+		x >= 40 && x < 340 && y >= 40 && y < 56
+			? [ 20 + ( ( x * 7 + y * 13 ) % 160 ), 20 + ( ( x * 7 + y * 13 ) % 160 ), 20, 255 ]
+			: WHITE;
+
+	const contexts = new WeakMap< HTMLCanvasElement, ReturnType< typeof fakeContext > >();
+	let paint: Sampler;
+	let images: HTMLImageElement[];
+
+	// Enough of a 2d context to draw, scale and read back pixels. Scaling
+	// averages the source pixels each destination pixel covers, as a browser's
+	// downscale does, so small text fades into a few greys the way it really does.
+	function fakeContext( canvas: HTMLCanvasElement ) {
+		const data = new Uint8ClampedArray( canvas.width * canvas.height * 4 );
+		const at: Sampler = ( x, y ) => {
+			const index = ( y * canvas.width + x ) * 4;
+
+			return [ data[ index ], data[ index + 1 ], data[ index + 2 ], data[ index + 3 ] ];
+		};
+
+		return {
+			at,
+			clearRect: ( x: number, y: number, width: number, height: number ) => {
+				for ( let row = y; row < y + height; row++ ) {
+					data.fill( 0, ( row * canvas.width + x ) * 4, ( row * canvas.width + x + width ) * 4 );
+				}
+			},
+			drawImage: ( source: unknown, ...args: number[] ) => {
+				const sample =
+					source instanceof HTMLCanvasElement
+						? ( contexts.get( source ) as ReturnType< typeof fakeContext > ).at
+						: paint;
+				const [ sx, sy, sw, sh, dx, dy, dw, dh ] =
+					args.length === 2
+						? [
+								0,
+								0,
+								canvas.width,
+								canvas.height,
+								args[ 0 ],
+								args[ 1 ],
+								canvas.width,
+								canvas.height,
+							]
+						: args;
+
+				for ( let y = 0; y < dh; y++ ) {
+					for ( let x = 0; x < dw; x++ ) {
+						const left = Math.floor( sx + ( x * sw ) / dw );
+						const right = Math.max( left + 1, Math.floor( sx + ( ( x + 1 ) * sw ) / dw ) );
+						const top = Math.floor( sy + ( y * sh ) / dh );
+						const bottom = Math.max( top + 1, Math.floor( sy + ( ( y + 1 ) * sh ) / dh ) );
+						const sum = [ 0, 0, 0, 0 ];
+
+						for ( let row = top; row < bottom; row++ ) {
+							for ( let column = left; column < right; column++ ) {
+								sample( column, row ).forEach( ( value, channel ) => ( sum[ channel ] += value ) );
+							}
+						}
+
+						const count = ( right - left ) * ( bottom - top );
+						data.set(
+							sum.map( ( value ) => Math.round( value / count ) ),
+							( ( dy + y ) * canvas.width + dx + x ) * 4
+						);
+					}
+				}
+			},
+			getImageData: ( x: number, y: number, width: number, height: number ) => ( {
+				data: data.slice( ( y * canvas.width + x ) * 4, ( ( y + height ) * canvas.width + x ) * 4 ),
+			} ),
+		};
+	}
+
+	const page = { width: 1200, height: 6400 };
+	const bandHeight = 800;
+	const draw = () =>
+		drawPageToBlob( document.createElement( 'div' ), '', page, bandHeight, [
+			{ top: 0, bottom: page.height },
+		] );
+
+	beforeEach( () => {
+		paint = sparseText;
+		jest.spyOn( HTMLCanvasElement.prototype, 'getContext' ).mockImplementation( function (
+			this: HTMLCanvasElement
+		) {
+			if ( ! contexts.has( this ) ) {
+				contexts.set( this, fakeContext( this ) );
+			}
+
+			return contexts.get( this ) as unknown as CanvasRenderingContext2D;
+		} );
+		HTMLCanvasElement.prototype.toBlob = function ( callback: BlobCallback ) {
+			callback( new Blob( [ 'png' ] ) );
+		};
+		images = [];
+		jest.spyOn( window, 'Image' ).mockImplementation( () => {
+			const image = { decode: async () => undefined } as HTMLImageElement;
+			images.push( image );
+
+			return image;
+		} );
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
+	} );
+
+	it( 'keeps a tall page whose bands hold little text, judging each band at native scale', async () => {
+		// Scaled to fit 1400px, each band is about 260x175 and its line of text
+		// a few grey pixels: judged there, the band looked blank and the whole
+		// capture was refused.
+		await expect( draw() ).resolves.toBeInstanceOf( Blob );
+	} );
+
+	it( 'frames the short band at the foot of the page at the viewport height', async () => {
+		// A shorter frame resolves `vh` against itself, so a full-height cover
+		// shrinks, the page below it moves up, and the last band shows nothing
+		// but the body's background.
+		await drawPageToBlob( document.createElement( 'div' ), '', { width: 1200, height: 6000 }, 800, [
+			{ top: 0, bottom: 6000 },
+		] );
+
+		const frameHeights = images.map(
+			( image ) => atob( image.src.split( ',' )[ 1 ] ).match( /<svg[^>]* height="(\d+)"/ )?.[ 1 ]
+		);
+
+		expect( frameHeights ).toEqual( Array( 8 ).fill( '800' ) );
+	} );
+
+	it( 'still refuses a band that drew nothing, saying where it was', async () => {
+		paint = () => WHITE;
+
+		const refusal = draw();
+
+		await expect( refusal ).rejects.toBeInstanceOf( UnfaithfulCaptureError );
+		await expect( refusal ).rejects.toMatchObject( {
+			reason: 'blank',
+			details: { band_y: 0, band_index: 0, band_count: 8, page_height: 6400, scale: 0.219 },
+		} );
+	}, 10000 );
 } );

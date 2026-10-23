@@ -167,10 +167,17 @@ type CaptureFailureReason = 'stylesheet' | 'font' | 'blank' | 'canvas' | 'error'
  */
 export class UnfaithfulCaptureError extends Error {
 	reason: CaptureFailureReason;
+	/** Numbers that place the failure, unlike the message safe to record as analytics properties. */
+	details: Record< string, number >;
 
-	constructor( message: string, reason: CaptureFailureReason = 'error' ) {
+	constructor(
+		message: string,
+		reason: CaptureFailureReason = 'error',
+		details: Record< string, number > = {}
+	) {
 		super( message );
 		this.reason = reason;
+		this.details = details;
 	}
 }
 
@@ -1421,13 +1428,16 @@ const drawRegionsToBlobs = async (
 /**
  * Renders the whole page by rasterizing it in bands and stitching them.
  *
- * Bands are drawn straight into the final, already-scaled canvas rather than
- * into a full-size intermediate, which for a page this tall would run to tens of
- * megabytes before being thrown away.
+ * Each band is drawn at native scale into one band-sized scratch canvas, then
+ * copied scaled into the final page. A full-size intermediate would run to tens
+ * of megabytes for a page this tall before being thrown away.
  *
- * Individual bands are not held to the blank check — the gaps between sections
- * are legitimately empty — but the finished page is, so a systematic rendering
- * failure is still caught.
+ * The blank check runs on the scratch canvas, never on the scaled page. On a
+ * tall page a band's text shrinks to a few grey pixels that the sampling misses,
+ * so a band that rendered fine was refused as blank. Bands over a gap between
+ * sections are legitimately empty and are not checked. Nor is the finished
+ * page: scaled, it has the same problem, and every band that should draw
+ * something has already been checked.
  * @param clone               The cloned body, reused across bands.
  * @param styleText           CSS to embed.
  * @param documentSize        The page's laid-out size.
@@ -1437,7 +1447,7 @@ const drawRegionsToBlobs = async (
  * @param inkSpans            Page spans that should draw something.
  * @returns The stitched image.
  */
-const drawPageToBlob = async (
+export const drawPageToBlob = async (
 	clone: Element,
 	styleText: string,
 	documentSize: { width: number; height: number },
@@ -1451,21 +1461,30 @@ const drawPageToBlob = async (
 	canvas.width = Math.round( documentSize.width * scale );
 	canvas.height = Math.round( documentSize.height * scale );
 
-	const context = canvas.getContext( '2d', { willReadFrequently: true } );
+	const scratch = document.createElement( 'canvas' );
+	scratch.width = documentSize.width;
+	scratch.height = bandHeight;
 
-	if ( ! context ) {
+	const context = canvas.getContext( '2d' );
+	const scratchContext = scratch.getContext( '2d', { willReadFrequently: true } );
+
+	if ( ! context || ! scratchContext ) {
 		throw new UnfaithfulCaptureError( 'No 2d context available', 'canvas' );
 	}
 
-	for ( const band of bands ) {
+	for ( const [ bandIndex, band ] of bands.entries() ) {
 		offsetCloneToBand( clone as HTMLElement, band.y, documentSize.width );
 
-		const image = await decodeSvg(
-			buildSvg( new window.XMLSerializer().serializeToString( clone ), styleText, {
-				width: documentSize.width,
-				height: band.height,
-			} )
-		);
+		// Framed at the viewport's height even when the band is the short one at
+		// the foot of the page. The frame is the initial containing block, so a
+		// shorter one resolves `vh` against it: a full-height cover shrinks,
+		// everything below it moves up, and the offset lands past the end of
+		// the page. Only the band's own rows are copied out below.
+		const svg = buildSvg( new window.XMLSerializer().serializeToString( clone ), styleText, {
+			width: documentSize.width,
+			height: bandHeight,
+		} );
+		const image = await decodeSvg( svg );
 
 		// Destination edges are rounded from the band's own boundaries rather
 		// than from a rounded height, so consecutive bands share an edge exactly
@@ -1482,24 +1501,14 @@ const drawPageToBlob = async (
 
 		for ( const settleMs of RENDER_SETTLE_STEPS ) {
 			await settle( settleMs );
-			context.clearRect( 0, top, canvas.width, bottom - top );
-			context.drawImage(
-				image,
-				0,
-				0,
-				documentSize.width,
-				band.height,
-				0,
-				top,
-				canvas.width,
-				bottom - top
-			);
+			scratchContext.clearRect( 0, 0, scratch.width, scratch.height );
+			scratchContext.drawImage( image, 0, 0 );
 
 			rendered =
 				! inkExpected ||
-				! looksUnrendered( context, canvas.width, canvas.height, {
-					top,
-					height: bottom - top,
+				! looksUnrendered( scratchContext, scratch.width, scratch.height, {
+					top: 0,
+					height: band.height,
 				} );
 
 			if ( rendered ) {
@@ -1510,14 +1519,25 @@ const drawPageToBlob = async (
 		// Refused rather than kept: on the assembled page one lost band among
 		// six is invisible, a result complete apart from a missing section.
 		if ( ! rendered ) {
-			throw new UnfaithfulCaptureError( `The band at ${ band.y }px rendered blank`, 'blank' );
+			throw new UnfaithfulCaptureError( `The band at ${ band.y }px rendered blank`, 'blank', {
+				band_y: band.y,
+				band_index: bandIndex,
+				band_count: bands.length,
+				page_height: documentSize.height,
+				scale: Math.round( scale * 1000 ) / 1000,
+			} );
 		}
-	}
 
-	if ( looksUnrendered( context, canvas.width, canvas.height ) ) {
-		throw new UnfaithfulCaptureError(
-			`The page rendered blank across all ${ bands.length } bands`,
-			'blank'
+		context.drawImage(
+			scratch,
+			0,
+			0,
+			documentSize.width,
+			band.height,
+			0,
+			top,
+			canvas.width,
+			bottom - top
 		);
 	}
 
@@ -1659,7 +1679,8 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 					...diagnostics,
 					stages,
 				} ) }`,
-				( error as UnfaithfulCaptureError ).reason || 'error'
+				( error as UnfaithfulCaptureError ).reason || 'error',
+				( error as UnfaithfulCaptureError ).details
 			);
 		}
 	} );
