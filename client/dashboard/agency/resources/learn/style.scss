@@ -84,9 +84,7 @@ $resource-brands: (
 	inline-size: calc( var( --resource-logo-width ) * 0.8 );
 }
 
-// Heading has no letter-spacing prop. Nested for specificity over its runtime styles.
-.dashboard-resources-learn__modal .dashboard-resources-learn__modal-title {
-	letter-spacing: -0.035em;
+.dashboard-resources-learn__modal-title {
 	text-wrap: pretty;
 }
 
