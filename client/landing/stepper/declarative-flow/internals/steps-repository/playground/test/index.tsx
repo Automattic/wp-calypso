@@ -4,9 +4,10 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { Step } from '@automattic/onboarding';
-import { act, cleanup, screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import PlaygroundStep from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
@@ -19,6 +20,10 @@ jest.mock( '../lib/initialize-playground' );
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn( () => Promise.resolve() ),
 } ) );
 
 // Mock the PlaygroundError component to simplify testing
@@ -56,6 +61,7 @@ const getSaveStoreButton = () => screen.getByRole( 'button', { name: 'Save my st
 describe( 'Playground', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		recordTracksEvent.mockReset();
 		mockPlaygroundClientInstance = {
 			run: jest.fn().mockImplementation( () => Promise.resolve( { text: 'plans-playground' } ) ),
 		};
@@ -373,76 +379,84 @@ describe( 'Playground', () => {
 			expect( getSaveEventCalls() ).toEqual( [] );
 		} );
 
-		describe( 'waiting for Tracks before leaving', () => {
-			beforeEach( () => {
-				jest.useFakeTimers();
-			} );
+		it( 'should submit straight away and leave the wait for Tracks to the flow', async () => {
+			const submit = jest.fn();
+			await renderWooPlaygroundStep( submit );
 
-			afterEach( () => {
-				jest.useRealTimers();
-			} );
+			await openSaveModal();
+			await userEvent.click( getContinueButton() );
 
-			const continueToSave = async () => {
-				const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-				await user.click( getSaveStoreButton() );
-				await user.click( getContinueButton() );
-			};
+			expect( submit ).toHaveBeenCalledTimes( 1 );
+		} );
 
-			it( 'should submit only after the save events have had time to send', async () => {
-				const submit = jest.fn();
+		describe( 'when the launch fails', () => {
+			const getFailedEventCalls = () =>
+				recordTracksEvent.mock.calls.filter(
+					( [ eventName ] ) => eventName === 'calypso_playground_launch_site_failed'
+				);
+
+			it( 'should let the user try again and record the failure', async () => {
+				const submit = jest
+					.fn()
+					.mockImplementationOnce( () => {
+						throw new Error( 'Routing failed' );
+					} )
+					.mockImplementation( () => {} );
 				await renderWooPlaygroundStep( submit );
 
-				await continueToSave();
+				await openSaveModal();
+				await userEvent.click( getContinueButton() );
 
+				expect( submit ).toHaveBeenCalledTimes( 1 );
+				expect( querySaveModal() ).toBeVisible();
+				expect( getContinueButton() ).not.toHaveAttribute( 'aria-disabled' );
 				expect( getSaveEventCalls().map( ( [ eventName ] ) => eventName ) ).toEqual( [
 					'calypso_playground_save_modal_open',
 					'calypso_playground_save_modal_continue',
 					'calypso_playground_launch_site',
 				] );
-				expect( getContinueButton() ).toHaveAttribute( 'aria-disabled', 'true' );
-				expect( submit ).not.toHaveBeenCalled();
+				expect( getFailedEventCalls() ).toEqual( [
+					[
+						'calypso_playground_launch_site_failed',
+						{ ...tracksProps, intent: 'plans-playground', error_message: 'Routing failed' },
+					],
+				] );
+				expect( logToLogstash ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						feature: 'calypso_client',
+						tags: [ 'playground-launch' ],
+						message: 'Routing failed',
+						properties: expect.objectContaining( { ...tracksProps, intent: 'plans-playground' } ),
+					} )
+				);
 
-				act( () => {
-					jest.advanceTimersByTime( 249 );
-				} );
-				expect( submit ).not.toHaveBeenCalled();
+				await userEvent.click( getContinueButton() );
 
-				act( () => {
-					jest.advanceTimersByTime( 1 );
-				} );
-				expect( submit ).toHaveBeenCalledTimes( 1 );
+				expect( submit ).toHaveBeenCalledTimes( 2 );
+				expect( getFailedEventCalls() ).toHaveLength( 1 );
 			} );
 
-			it( 'should not submit after the step unmounts', async () => {
+			it( 'should not stay busy when recording the launch event throws', async () => {
 				const submit = jest.fn();
+				recordTracksEvent.mockImplementation( ( eventName ) => {
+					if ( eventName === 'calypso_playground_launch_site' ) {
+						throw new Error( 'Tracks failed' );
+					}
+				} );
 				await renderWooPlaygroundStep( submit );
 
-				await continueToSave();
-				cleanup();
+				await openSaveModal();
+				await userEvent.click( getContinueButton() );
 
-				act( () => {
-					jest.advanceTimersByTime( 1000 );
-				} );
 				expect( submit ).not.toHaveBeenCalled();
-			} );
-
-			it( 'should not submit when the page is restored from the back/forward cache first', async () => {
-				const submit = jest.fn();
-				await renderWooPlaygroundStep( submit );
-
-				await continueToSave();
-				const event = new Event( 'pageshow' );
-				Object.defineProperty( event, 'persisted', { value: true } );
-				act( () => {
-					window.dispatchEvent( event );
-				} );
-
-				act( () => {
-					jest.advanceTimersByTime( 1000 );
-				} );
-				expect( submit ).not.toHaveBeenCalled();
-				expect( querySaveModal() ).not.toBeInTheDocument();
-				expect( getSaveStoreButton() ).toBeEnabled();
+				expect( getContinueButton() ).not.toHaveAttribute( 'aria-disabled' );
+				expect( getKeepBuildingButton() ).not.toHaveAttribute( 'aria-disabled' );
+				expect( getFailedEventCalls() ).toEqual( [
+					[
+						'calypso_playground_launch_site_failed',
+						expect.objectContaining( { error_message: 'Tracks failed' } ),
+					],
+				] );
 			} );
 		} );
 
@@ -698,6 +712,22 @@ describe( 'Playground', () => {
 			await userEvent.click( getExitButton() );
 			expect( queryLeaveModal() ).toBeVisible();
 			expect( getContinueButton() ).not.toHaveAttribute( 'aria-disabled' );
+		} );
+
+		it( 'should redirect once when Continue is handled twice before the step re-renders', async () => {
+			await renderWooPlaygroundStep();
+
+			await userEvent.click( getBackButton() );
+			await waitFor( () => expect( getKeepBuildingButton() ).toHaveFocus() );
+			const continueButton = getContinueButton();
+			// Two clicks in one act() run before React re-renders, so both see the step as idle.
+			act( () => {
+				continueButton.click();
+				continueButton.click();
+			} );
+
+			await new Promise( ( resolve ) => setTimeout( resolve, 400 ) );
+			expect( assign ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'should not send the user away when restored before the redirect', async () => {

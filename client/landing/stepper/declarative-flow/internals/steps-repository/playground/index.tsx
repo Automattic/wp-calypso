@@ -1,12 +1,14 @@
+import config from '@automattic/calypso-config';
 import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { isPlaygroundWooIntent } from 'calypso/landing/stepper/utils/playground-woo-intent';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { PlaygroundIframe } from './components/playground-iframe';
 import { PlaygroundLeaveModal } from './components/playground-leave-modal';
 import { PlaygroundSaveModal } from './components/playground-save-modal';
@@ -43,12 +45,15 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 		playgroundClientRef.current = client;
 	};
 
-	const getTracksProps = () => ( {
-		flow,
-		step: 'playground',
-		blueprint: getBlueprintLabelForTracking( query ),
-		is_woocommerce_intent: isWooCommerceIntent,
-	} );
+	const tracksProps = useMemo(
+		() => ( {
+			flow,
+			step: 'playground',
+			blueprint: getBlueprintLabelForTracking( query ),
+			is_woocommerce_intent: isWooCommerceIntent,
+		} ),
+		[ flow, query, isWooCommerceIntent ]
+	);
 
 	useEffect( () => {
 		// Coming back with the browser's Back button can restore this page from the
@@ -68,54 +73,64 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 	}, [] );
 
 	const navigateAfterTracksFlush = ( navigate: () => void ) => {
+		clearTimeout( navigationTimeoutRef.current );
 		navigationTimeoutRef.current = setTimeout( navigate, TRACKS_FLUSH_DELAY );
 	};
 
-	const submitLaunch = () => {
-		try {
-			submit?.();
-		} catch ( error ) {
-			setIsBusy( false );
-		}
-	};
-
-	const launchSite = ( preLaunchEvent?: string ) => {
+	const launchSite = () => {
 		if ( ! canLaunch ) {
 			return;
 		}
 
 		setIsBusy( true );
-		if ( preLaunchEvent ) {
-			recordTracksEvent( preLaunchEvent, getTracksProps() );
+		const launchTracksProps = { ...tracksProps, intent: DEFAULT_PLAN_INTENT };
+		try {
+			recordTracksEvent( 'calypso_playground_launch_site', launchTracksProps );
+			submit?.();
+		} catch ( error ) {
+			setIsBusy( false );
+			const message = error instanceof Error ? error.message : String( error );
+			void logToLogstash( {
+				feature: 'calypso_client',
+				tags: [ 'playground-launch' ],
+				message,
+				site_id: undefined,
+				properties: {
+					env: config( 'env_id' ),
+					...launchTracksProps,
+				},
+			} ).catch( () => {} );
+			// The launch event, and the save modal's continue event, are already recorded,
+			// so record the failure too for the funnel to discount them.
+			recordTracksEvent( 'calypso_playground_launch_site_failed', {
+				...launchTracksProps,
+				error_message: message,
+			} );
 		}
-		recordTracksEvent( 'calypso_playground_launch_site', {
-			...getTracksProps(),
-			intent: DEFAULT_PLAN_INTENT,
-		} );
+	};
 
-		// For the Woo intent the flow leaves Stepper with a full page load, so give
-		// Tracks time to send the events first. Otherwise it navigates within Stepper.
-		if ( isWooCommerceIntent ) {
-			navigateAfterTracksFlush( submitLaunch );
-		} else {
-			submitLaunch();
+	const saveStore = () => {
+		if ( activeModal !== 'save' || ! canLaunch ) {
+			return;
 		}
+
+		recordTracksEvent( 'calypso_playground_save_modal_continue', tracksProps );
+		launchSite();
 	};
 
 	const recordLeaveModalEvent = ( eventName: string, trigger: LeaveModalTrigger ) => {
-		recordTracksEvent( eventName, { ...getTracksProps(), trigger } );
+		recordTracksEvent( eventName, { ...tracksProps, trigger } );
 	};
 
 	const openModal = ( modal: ActiveModal ) => {
-		if ( isBusy || activeModal ) {
+		// Leaving doesn't need a launchable playground, only an idle step.
+		const canOpen = modal === 'save' ? canLaunch : ! isBusy;
+		if ( activeModal || ! canOpen ) {
 			return;
 		}
 
 		if ( modal === 'save' ) {
-			if ( ! canLaunch ) {
-				return;
-			}
-			recordTracksEvent( 'calypso_playground_save_modal_open', getTracksProps() );
+			recordTracksEvent( 'calypso_playground_save_modal_open', tracksProps );
 		} else {
 			recordLeaveModalEvent( 'calypso_playground_leave_modal_open', modal );
 		}
@@ -128,7 +143,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 		}
 
 		if ( activeModal === 'save' ) {
-			recordTracksEvent( 'calypso_playground_save_modal_keep_building', getTracksProps() );
+			recordTracksEvent( 'calypso_playground_save_modal_keep_building', tracksProps );
 		} else {
 			recordLeaveModalEvent( 'calypso_playground_leave_modal_keep_building', activeModal );
 		}
@@ -140,8 +155,8 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 			return;
 		}
 
-		setIsBusy( true );
 		recordLeaveModalEvent( 'calypso_playground_leave_modal_continue', activeModal );
+		setIsBusy( true );
 		navigateAfterTracksFlush( () => window.location.assign( WOO_START_HOSTS_URL ) );
 	};
 
@@ -216,7 +231,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 			) }
 			{ activeModal === 'save' && (
 				<PlaygroundSaveModal
-					onConfirm={ () => launchSite( 'calypso_playground_save_modal_continue' ) }
+					onConfirm={ saveStore }
 					onCancel={ keepBuilding }
 					isConfirming={ isBusy }
 				/>
