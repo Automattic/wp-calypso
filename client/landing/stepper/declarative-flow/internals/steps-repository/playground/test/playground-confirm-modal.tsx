@@ -11,14 +11,13 @@ const renderModal = ( props: Partial< Parameters< typeof PlaygroundConfirmModal 
 	const renderWith = ( overrides: typeof props ) => (
 		<PlaygroundConfirmModal
 			title="Confirm title"
+			description="Body copy"
 			confirmLabel="Do it"
 			cancelLabel="Keep building"
 			onConfirm={ onConfirm }
 			onCancel={ onCancel }
 			{ ...overrides }
-		>
-			<p>Body copy</p>
-		</PlaygroundConfirmModal>
+		/>
 	);
 
 	const { rerender } = render( renderWith( props ) );
@@ -52,6 +51,18 @@ describe( 'PlaygroundConfirmModal', () => {
 		expect( screen.getByRole( 'button', { name: 'Keep building' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Do it' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Close' } ) ).toBeVisible();
+	} );
+
+	it( 'describes the dialog with the description only', () => {
+		renderModal( { children: <p>More details</p> } );
+
+		const dialog = screen.getByRole( 'dialog', { name: 'Confirm title' } );
+		expect( dialog ).toHaveAccessibleDescription( 'Body copy' );
+		expect( screen.getByText( 'Body copy' ) ).toBeVisible();
+		expect( screen.getByText( 'More details' ) ).toBeVisible();
+		expect( screen.getByText( 'Body copy' ).nextElementSibling ).toBe(
+			screen.getByText( 'More details' )
+		);
 	} );
 
 	it( 'uses the cancel label it is given', () => {

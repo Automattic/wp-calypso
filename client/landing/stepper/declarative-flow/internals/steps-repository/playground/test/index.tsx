@@ -465,11 +465,9 @@ describe( 'Playground', () => {
 				await userEvent.click( getTrigger() );
 
 				expect( queryLeaveModal() ).toBeVisible();
-				expect(
-					screen.getByText(
-						'All the store information you’ve entered will be lost if you leave now.'
-					)
-				).toBeVisible();
+				expect( queryLeaveModal() ).toHaveAccessibleDescription(
+					'All the store information you’ve entered will be lost if you leave now.'
+				);
 				await waitFor( () => expect( getKeepBuildingButton() ).toHaveFocus() );
 
 				await userEvent.click( getKeepBuildingButton() );
