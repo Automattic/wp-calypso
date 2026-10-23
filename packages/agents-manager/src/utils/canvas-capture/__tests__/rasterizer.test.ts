@@ -171,6 +171,14 @@ describe( 'clusterSpans', () => {
 				{ top: 4000, bottom: 4200, count: 1 },
 			],
 		],
+		[
+			'takes into a tall group a block that lies inside it',
+			[
+				{ top: 100, bottom: 1600 },
+				{ top: 600, bottom: 900 },
+			],
+			[ { top: 100, bottom: 1600, count: 2 } ],
+		],
 		[ 'has no groups for no spans', [], [] ],
 	] )( '%s', ( _name, spans, expected ) => {
 		expect( clusterSpans( spans, 1000 ) ).toEqual( expected );
@@ -229,13 +237,70 @@ describe( 'getCaptureRects', () => {
 		).toBeNull();
 	} );
 
-	it( 'falls back to the whole page for a block taller than a screenful', () => {
-		// A band would show its middle and silently drop the rest.
+	it( 'stacks full-size bands down a block taller than a screenful', () => {
+		// One band would show its middle and silently drop the rest; the whole
+		// page would show all of it too small to check (WPAGENT-229).
 		const { canvasDocument, canvasWindow } = setup( {
 			hero: box( { left: 0, top: 200, width: 900, height: 2500 } ),
 		} );
 
-		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'hero' ] ) ).toBeNull();
+		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'hero' ] ) ).toEqual( [
+			{ x: 0, y: 200, width: 981, height: 1000, framed: 1 },
+			{ x: 0, y: 1200, width: 981, height: 1000, framed: 1 },
+			{ x: 0, y: 2200, width: 981, height: 1000, framed: 1 },
+		] );
+	} );
+
+	it( 'keeps the last stacked band on the page', () => {
+		const { canvasDocument, canvasWindow } = setup(
+			{ footer: box( { left: 0, top: 1500, width: 900, height: 1400 } ) },
+			{ documentHeight: 3000 }
+		);
+
+		expect(
+			getCaptureRects( canvasDocument, canvasWindow, [ 'footer' ] )?.map( ( rect ) => rect.y )
+		).toEqual( [ 1500, 2000 ] );
+	} );
+
+	it( 'gives a block inside a tall one no band of its own', () => {
+		// The FAQ list named for comparison sits inside the edited section: its
+		// own band landed between the section's two, out of order, showing
+		// nothing they did not.
+		const { canvasDocument, canvasWindow } = setup( {
+			section: box( { left: 0, top: 2600, width: 900, height: 1400 } ),
+			list: box( { left: 0, top: 3100, width: 600, height: 300 } ),
+		} );
+
+		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'section', 'list' ] ) ).toEqual( [
+			{ x: 0, y: 2600, width: 981, height: 1000, framed: 2 },
+			{ x: 0, y: 3600, width: 981, height: 1000, framed: 2 },
+		] );
+	} );
+
+	it( 'orders bands top to bottom and drops one the others already show', () => {
+		// The list starts inside the section but runs past its foot, so it is
+		// its own group; its band falls wholly within the section's two.
+		const { canvasDocument, canvasWindow } = setup(
+			{
+				section: box( { left: 0, top: 1000, width: 900, height: 1500 } ),
+				list: box( { left: 0, top: 2400, width: 600, height: 300 } ),
+			},
+			{ documentHeight: 3000 }
+		);
+
+		expect(
+			getCaptureRects( canvasDocument, canvasWindow, [ 'list', 'section' ] )?.map(
+				( rect ) => rect.y
+			)
+		).toEqual( [ 1000, 2000 ] );
+	} );
+
+	it( 'falls back to the whole page for a block that needs more bands than the cap', () => {
+		const { canvasDocument, canvasWindow } = setup( {
+			longform: box( { left: 0, top: 0, width: 900, height: 4500 } ),
+		} );
+
+		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'longform' ] ) ).toBeNull();
 	} );
 
 	it( 'falls back to the viewport when nothing resolved', () => {
@@ -1033,6 +1098,23 @@ describe( 'drawPageToBlob', () => {
 		);
 
 		expect( frameHeights ).toEqual( Array( 8 ).fill( '800' ) );
+	} );
+
+	it( 'embeds the body inside a copy of the canvas root, so rules from `html` match', async () => {
+		// `html :where(.has-border-color) { border-style: solid }` is what draws
+		// a block's border; with no <html> above the body, none were drawn.
+		const root = document.createElement( 'html' );
+		root.className = 'block-editor-iframe__html';
+		const body = document.createElement( 'body' );
+		root.append( body );
+
+		await drawPageToBlob( body, '', { width: 1200, height: 800 }, 800, [] );
+
+		const svg = atob( images[ 0 ].src.split( ',' )[ 1 ] );
+
+		expect( svg ).toMatch(
+			/<html xmlns="http:\/\/www\.w3\.org\/1999\/xhtml" class="block-editor-iframe__html"><body/
+		);
 	} );
 
 	it( 'still refuses a band that drew nothing, saying where it was', async () => {

@@ -141,7 +141,11 @@ const RENDER_OVERRIDES =
 	'*{content-visibility:visible!important;contain:none!important;}' +
 	'*,*::before,*::after{animation-delay:-1s!important;animation-duration:1ms!important;' +
 	'animation-iteration-count:1!important;animation-fill-mode:both!important;' +
-	'transition:none!important;}';
+	'transition:none!important;}' +
+	// The canvas's own <html>, copied around the body so rules written from
+	// `html` match. A zoomed-out editor scales and clips it, which in the
+	// capture would scale and clip the page a second time.
+	'html{transform:none!important;overflow:visible!important;}';
 
 interface CaptureRect {
 	x: number;
@@ -367,7 +371,13 @@ export const clusterSpans = (
 		.forEach( ( span ) => {
 			const current = clusters[ clusters.length - 1 ];
 
-			if ( current && Math.max( current.bottom, span.bottom ) - current.top <= viewportHeight ) {
+			// A group already taller than the viewport takes in anything that does
+			// not make it taller: its bands already show it.
+			if (
+				current &&
+				Math.max( current.bottom, span.bottom ) - current.top <=
+					Math.max( viewportHeight, current.bottom - current.top )
+			) {
 				current.bottom = Math.max( current.bottom, span.bottom );
 				current.count += 1;
 
@@ -417,6 +427,63 @@ const bandForSpan = (
 };
 
 /**
+ * Bands top to bottom, less any the others already show between them. A band
+ * centred on a group can land inside the stack on a taller group nearby, and a
+ * picture of what another picture shows only reads as a second place.
+ */
+const dropCoveredBands = ( rects: CaptureRect[] ): CaptureRect[] => {
+	const isCovered = ( rect: CaptureRect, others: CaptureRect[] ) => {
+		let reach = rect.y;
+
+		others
+			.filter( ( other ) => other.y <= rect.y + rect.height )
+			.forEach( ( other ) => {
+				if ( other.y <= reach + 1 ) {
+					reach = Math.max( reach, other.y + other.height );
+				}
+			} );
+
+		return reach >= rect.y + rect.height - 1;
+	};
+
+	return [ ...rects ]
+		.sort( ( a, b ) => a.y - b.y )
+		.reduce< CaptureRect[] >(
+			( kept, rect, index, all ) =>
+				isCovered(
+					rect,
+					[ ...kept, ...all.slice( index + 1 ) ].sort( ( a, b ) => a.y - b.y )
+				)
+					? kept
+					: [ ...kept, rect ],
+			[]
+		);
+};
+
+/**
+ * Viewport-tall bands stacked down a span taller than one, from its top. The
+ * last is kept on the page, so it may overlap the one before it.
+ */
+const stackBandsOnSpan = (
+	span: { top: number; bottom: number; count: number },
+	canvasWindow: Window,
+	documentHeight: number
+): CaptureRect[] => {
+	const height = canvasWindow.innerHeight;
+
+	return Array.from(
+		{ length: Math.ceil( ( span.bottom - span.top ) / height ) },
+		( _, index ) => ( {
+			x: 0,
+			y: Math.max( 0, Math.min( span.top + index * height, documentHeight - height ) ),
+			width: canvasWindow.innerWidth,
+			height,
+			framed: span.count,
+		} )
+	);
+};
+
+/**
  * The region to capture, in canvas document coordinates.
  *
  * Always a full-width band the height of the viewport. Any blocks given decide
@@ -463,14 +530,14 @@ export const getCaptureRect = (
  * itself — and the comparisons this exists for are exactly the ones that need
  * two distant areas both legible.
  *
- * `null` means the blocks cannot be covered this way, and the caller should fall
- * back to the whole page. Two ways that happens:
+ * A group taller than the viewport gets bands stacked down it, one screenful
+ * each, rather than one band centred on it: that would show its middle and
+ * silently drop the rest, which is the failure this whole path exists to avoid.
  *
- * - More groups than `MAX_CAPTURES`. A sweeping change — every heading on the
- *   page recoloured — lands in a dozen places, and a dozen pictures is not a
- *   better answer than one overview.
- * - A group taller than the viewport. A band would show its middle and silently
- *   drop the rest, which is the failure this whole path exists to avoid.
+ * `null` means more bands than `MAX_CAPTURES` would be needed, and the caller
+ * should fall back to the whole page. A sweeping change — every heading on the
+ * page recoloured — lands in a dozen places, and a dozen pictures is not a
+ * better answer than one overview; nor is a stack of them down a long section.
  * @param canvasDocument The canvas document.
  * @param canvasWindow   The canvas window.
  * @param clientIds      Blocks to frame.
@@ -496,15 +563,19 @@ export const getCaptureRects = (
 		return null;
 	}
 
-	if ( clusters.some( ( cluster ) => cluster.bottom - cluster.top > viewportHeight ) ) {
-		return null;
-	}
-
 	const documentHeight = getDocumentSize( canvasDocument, canvasWindow ).height;
 
-	// Already top to bottom: `clusterSpans` groups in that order, and a band
-	// sits at its group's midpoint.
-	return clusters.map( ( cluster ) => bandForSpan( cluster, canvasWindow, documentHeight ) );
+	// Already top to bottom: `clusterSpans` groups in that order, a band sits at
+	// its group's midpoint, and a stack runs down its group.
+	const rects = dropCoveredBands(
+		clusters.flatMap( ( cluster ) =>
+			cluster.bottom - cluster.top > viewportHeight
+				? stackBandsOnSpan( cluster, canvasWindow, documentHeight )
+				: [ bandForSpan( cluster, canvasWindow, documentHeight ) ]
+		)
+	);
+
+	return rects.length > MAX_CAPTURES ? null : rects;
 };
 
 /**
@@ -956,6 +1027,15 @@ const getPreparedStyleText = async (
 };
 
 /**
+ * The cloned body as XHTML, inside the copy of the canvas's `<html>` it was
+ * given, when it was given one.
+ * @param clone The cloned body.
+ * @returns The markup to embed.
+ */
+const serializePage = ( clone: Element ): string =>
+	new window.XMLSerializer().serializeToString( clone.parentElement ?? clone );
+
+/**
  * Wraps serialized markup and CSS in an SVG framing one band of the page.
  *
  * The whole body is embedded rather than just the edited blocks: a block's
@@ -998,9 +1078,12 @@ export const buildSvg = (
 		// renderer gives up partway, and these are the rules that decide whether
 		// any content paints at all.
 		`<style xmlns="http://www.w3.org/1999/xhtml"><![CDATA[${ RENDER_OVERRIDES }]]></style>`,
-		// The serialized `<body>` goes in as a sibling of the style rather than
-		// inside a wrapper. Nested in a `<div>` it is no longer the document
-		// body, and rules written against `body` stop applying to it.
+		// The serialized page goes in as a sibling of the style rather than
+		// inside a wrapper. Nested in a `<div>` the body is no longer the
+		// document body, and rules written against `body` stop applying to it.
+		// The page is normally the canvas's `<html>` holding the clone: block
+		// supports write rules from `html`, such as the solid style a border
+		// colour needs, and without it those borders draw as nothing.
 		markup,
 		'</foreignObject>',
 		'</svg>',
@@ -1405,7 +1488,7 @@ const drawRegionsToBlobs = async (
 		// well-formed XML, and HTML serialization leaves void elements unclosed
 		// and bare ampersands unescaped.
 		const serializeStartedAt = performance.now();
-		const markup = new window.XMLSerializer().serializeToString( clone );
+		const markup = serializePage( clone );
 		serialize += performance.now() - serializeStartedAt;
 		markupBytes += markup.length;
 
@@ -1480,7 +1563,7 @@ export const drawPageToBlob = async (
 		// shorter one resolves `vh` against it: a full-height cover shrinks,
 		// everything below it moves up, and the offset lands past the end of
 		// the page. Only the band's own rows are copied out below.
-		const svg = buildSvg( new window.XMLSerializer().serializeToString( clone ), styleText, {
+		const svg = buildSvg( serializePage( clone ), styleText, {
 			width: documentSize.width,
 			height: bandHeight,
 		} );
@@ -1624,6 +1707,8 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 	);
 	const clone = await time( 'clone', () => {
 		const cloned = body.cloneNode( true ) as Element;
+		// Attributes only: its class and language, for the rules written from it.
+		canvasDocument.documentElement?.cloneNode( false ).appendChild( cloned );
 		replaceImagesWithPlaceholders( body, cloned, canvasWindow );
 
 		// Whenever the document is rendered more than once. A single band
