@@ -95,8 +95,8 @@ import type { WowFunnelDest } from '../../../utils/wow-funnel';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { Store } from 'redux';
 
-// Query args that customize onboarding. They're kept when the user comes back from checkout.
-// Don't add args that preselect or skip a step (plan, storage): going Back would skip it again.
+// Query args that change what onboarding offers or where it lands, kept when the user comes back
+// from checkout. Args that choose for the user (plan, storage) stay off: going Back would skip that step.
 const CHECKOUT_RETURN_PRESERVED_QUERY_ARGS = [
 	'ref',
 	'coupon',
