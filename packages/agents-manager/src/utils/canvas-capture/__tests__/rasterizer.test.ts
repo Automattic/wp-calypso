@@ -984,29 +984,43 @@ describe( 'drawPageToBlob', () => {
 	let paint: Sampler;
 	let images: HTMLImageElement[];
 
+	// The pixels the decoded image paints, at a given size: the same for every
+	// band, so painted once per size rather than once per draw.
+	const painted = new Map< string, Uint8ClampedArray >();
+
+	function paintImage( width: number, height: number ) {
+		const key = `${ width }x${ height }`;
+		let pixels = painted.get( key );
+
+		if ( ! pixels ) {
+			pixels = new Uint8ClampedArray( width * height * 4 );
+
+			for ( let y = 0; y < height; y++ ) {
+				for ( let x = 0; x < width; x++ ) {
+					pixels.set( paint( x, y ), ( y * width + x ) * 4 );
+				}
+			}
+
+			painted.set( key, pixels );
+		}
+
+		return pixels;
+	}
+
 	// Enough of a 2d context to draw, scale and read back pixels. Scaling
 	// averages the source pixels each destination pixel covers, as a browser's
 	// downscale does, so small text fades into a few greys the way it really does.
 	function fakeContext( canvas: HTMLCanvasElement ) {
 		const data = new Uint8ClampedArray( canvas.width * canvas.height * 4 );
-		const at: Sampler = ( x, y ) => {
-			const index = ( y * canvas.width + x ) * 4;
-
-			return [ data[ index ], data[ index + 1 ], data[ index + 2 ], data[ index + 3 ] ];
-		};
 
 		return {
-			at,
+			data,
 			clearRect: ( x: number, y: number, width: number, height: number ) => {
 				for ( let row = y; row < y + height; row++ ) {
 					data.fill( 0, ( row * canvas.width + x ) * 4, ( row * canvas.width + x + width ) * 4 );
 				}
 			},
 			drawImage: ( source: unknown, ...args: number[] ) => {
-				const sample =
-					source instanceof HTMLCanvasElement
-						? ( contexts.get( source ) as ReturnType< typeof fakeContext > ).at
-						: paint;
 				const [ sx, sy, sw, sh, dx, dy, dw, dh ] =
 					args.length === 2
 						? [
@@ -1020,26 +1034,47 @@ describe( 'drawPageToBlob', () => {
 								canvas.height,
 							]
 						: args;
+				const fromCanvas = source instanceof HTMLCanvasElement;
+				const sourceWidth = fromCanvas ? source.width : sx + sw;
+				const pixels = fromCanvas
+					? ( contexts.get( source ) as ReturnType< typeof fakeContext > ).data
+					: paintImage( sourceWidth, sy + sh );
+
+				// Unscaled: whole rows at a time.
+				if ( sw === dw && sh === dh ) {
+					for ( let y = 0; y < dh; y++ ) {
+						const from = ( ( sy + y ) * sourceWidth + sx ) * 4;
+
+						data.set(
+							pixels.subarray( from, from + dw * 4 ),
+							( ( dy + y ) * canvas.width + dx ) * 4
+						);
+					}
+
+					return;
+				}
 
 				for ( let y = 0; y < dh; y++ ) {
+					const top = Math.floor( sy + ( y * sh ) / dh );
+					const bottom = Math.max( top + 1, Math.floor( sy + ( ( y + 1 ) * sh ) / dh ) );
+
 					for ( let x = 0; x < dw; x++ ) {
 						const left = Math.floor( sx + ( x * sw ) / dw );
 						const right = Math.max( left + 1, Math.floor( sx + ( ( x + 1 ) * sw ) / dw ) );
-						const top = Math.floor( sy + ( y * sh ) / dh );
-						const bottom = Math.max( top + 1, Math.floor( sy + ( ( y + 1 ) * sh ) / dh ) );
-						const sum = [ 0, 0, 0, 0 ];
-
-						for ( let row = top; row < bottom; row++ ) {
-							for ( let column = left; column < right; column++ ) {
-								sample( column, row ).forEach( ( value, channel ) => ( sum[ channel ] += value ) );
-							}
-						}
-
 						const count = ( right - left ) * ( bottom - top );
-						data.set(
-							sum.map( ( value ) => Math.round( value / count ) ),
-							( ( dy + y ) * canvas.width + dx + x ) * 4
-						);
+						const to = ( ( dy + y ) * canvas.width + dx + x ) * 4;
+
+						for ( let channel = 0; channel < 4; channel++ ) {
+							let sum = 0;
+
+							for ( let row = top; row < bottom; row++ ) {
+								for ( let column = left; column < right; column++ ) {
+									sum += pixels[ ( row * sourceWidth + column ) * 4 + channel ];
+								}
+							}
+
+							data[ to + channel ] = Math.round( sum / count );
+						}
 					}
 				}
 			},
@@ -1057,6 +1092,7 @@ describe( 'drawPageToBlob', () => {
 		] );
 
 	beforeEach( () => {
+		painted.clear();
 		paint = sparseText;
 		jest.spyOn( HTMLCanvasElement.prototype, 'getContext' ).mockImplementation( function (
 			this: HTMLCanvasElement
