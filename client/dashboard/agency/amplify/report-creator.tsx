@@ -7,16 +7,15 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Text } from '../../components/text';
-import AmplifyAlsoUseful from './also-useful';
 import { getReportTiming } from './constants';
 import AmplifyOverviewStory from './overview-story';
 import { WebsiteAddressPicker, getStartErrorMessage } from './scan-form';
 import AmplifyScorePreview from './score-preview';
 import { normalizeAmplifyUrl } from './url';
-import { AmplifyScansLeft } from './usage-meter';
+import { AmplifyLimitReached, AmplifyScansLeft } from './usage-meter';
 import type { SiteOption } from './scan-form';
 import type { AmplifyUsageStatus } from './usage';
-import type { AmplifyMode, AmplifyUsage } from '@automattic/api-core';
+import type { AgencyTierId, AmplifyMode, AmplifyUsage } from '@automattic/api-core';
 
 const REPORT_MODES: {
 	value: AmplifyMode;
@@ -64,7 +63,7 @@ export function AmplifyOverviewIntro( {
 				<div className="dashboard-amplify-overview__summary">
 					<Text>
 						{ __(
-							'Website visitors leave when their questions go unanswered, and AI agents skip sites they can’t parse. Our audit covers both audiences and gives you a report of what to fix, so you can approach prospective clients with a pitch built on evidence.'
+							'Visitors leave when their questions go unanswered, and AI agents skip sites they can’t read. Get a report on both, and pitch prospects with evidence.'
 						) }
 					</Text>
 				</div>
@@ -78,7 +77,7 @@ export default function AmplifyReportCreator( {
 	canScan = true,
 	usage,
 	usageStatus = 'unknown',
-	limitNotice,
+	tierId,
 	initialUrl = '',
 	initialMode = 'full',
 	isModal = false,
@@ -90,8 +89,7 @@ export default function AmplifyReportCreator( {
 	canScan?: boolean;
 	usage?: AmplifyUsage;
 	usageStatus?: AmplifyUsageStatus;
-	/** Awaiting review, not approved, or cap notice, shown above the form. */
-	limitNotice?: React.ReactNode;
+	tierId?: AgencyTierId;
 	initialUrl?: string;
 	initialMode?: AmplifyMode;
 	isModal?: boolean;
@@ -169,64 +167,73 @@ export default function AmplifyReportCreator( {
 					</Text>
 				</div>
 			) }
-			{ limitNotice && <div className="dashboard-amplify-overview__limit">{ limitNotice }</div> }
-			<form className="dashboard-amplify-overview__url-form" onSubmit={ handleSubmit }>
-				<div className="dashboard-amplify-overview__url-row">
-					<WebsiteAddressPicker
-						agencyId={ agencyId }
-						label={ __( 'Homepage URL' ) }
-						placeholder={ __( 'Paste a prospect’s URL or pick a client site' ) }
-						idPrefix="amplify-report-connected-site"
-						value={ urlInput }
-						selectedSite={ selectedSite }
-						onChange={ ( value ) => {
-							setUrlInput( value );
-							setSelectedSite( null );
-							setUrlError( '' );
+			{ usageStatus === 'cap' ? (
+				<AmplifyLimitReached agencyId={ agencyId } usage={ usage } tierId={ tierId } />
+			) : (
+				<>
+					<form className="dashboard-amplify-overview__url-form" onSubmit={ handleSubmit }>
+						<div className="dashboard-amplify-overview__url-row">
+							<WebsiteAddressPicker
+								agencyId={ agencyId }
+								label={ __( 'Homepage URL' ) }
+								placeholder={ __( 'Paste a prospect’s URL or pick a client site' ) }
+								idPrefix="amplify-report-connected-site"
+								value={ urlInput }
+								selectedSite={ selectedSite }
+								onChange={ ( value ) => {
+									setUrlInput( value );
+									setSelectedSite( null );
+									setUrlError( '' );
+								} }
+								onClear={ () => {
+									setUrlInput( '' );
+									setSelectedSite( null );
+									setUrlError( '' );
+								} }
+								onSelectSite={ ( site: SiteOption ) => {
+									setUrlInput( site.hostname );
+									setSelectedSite( site.url );
+									setUrlError( '' );
+								} }
+								invalid={ !! urlError }
+								portalSuggestions={ isModal }
+							/>
+							<button
+								type="submit"
+								className="components-button is-primary dashboard-amplify-overview__submit"
+								aria-busy={ start.isPending }
+								disabled={ start.isPending || ! agencyId || ! canScan }
+							>
+								{ start.isPending ? <Spinner /> : __( 'Create report' ) }
+							</button>
+						</div>
+						{ urlError && (
+							<p className="dashboard-amplify-overview__url-error" role="alert">
+								{ urlError }
+							</p>
+						) }
+						<AmplifyScansLeft
+							agencyId={ agencyId }
+							usage={ usage }
+							status={ usageStatus }
+							tierId={ tierId }
+						/>
+					</form>
+					<RadioControl
+						className="dashboard-amplify-overview__mode-options"
+						label={ __( 'Report type' ) }
+						selected={ mode }
+						options={ REPORT_MODES }
+						onChange={ ( selectedMode ) => {
+							const nextMode = selectedMode as AmplifyMode;
+							setMode( nextMode );
+							recordTracksEvent( 'calypso_a4a_amplify_report_type_select', {
+								mode: nextMode,
+							} );
 						} }
-						onClear={ () => {
-							setUrlInput( '' );
-							setSelectedSite( null );
-							setUrlError( '' );
-						} }
-						onSelectSite={ ( site: SiteOption ) => {
-							setUrlInput( site.hostname );
-							setSelectedSite( site.url );
-							setUrlError( '' );
-						} }
-						invalid={ !! urlError }
-						portalSuggestions={ isModal }
 					/>
-					<button
-						type="submit"
-						className="components-button is-primary dashboard-amplify-overview__submit"
-						aria-busy={ start.isPending }
-						disabled={ start.isPending || ! agencyId || ! canScan }
-					>
-						{ start.isPending ? <Spinner /> : __( 'Create report' ) }
-					</button>
-				</div>
-				{ urlError && (
-					<p className="dashboard-amplify-overview__url-error" role="alert">
-						{ urlError }
-					</p>
-				) }
-				<AmplifyScansLeft usage={ usage } status={ usageStatus } />
-			</form>
-			<RadioControl
-				className="dashboard-amplify-overview__mode-options"
-				label={ __( 'Report type' ) }
-				selected={ mode }
-				options={ REPORT_MODES }
-				onChange={ ( selectedMode ) => {
-					const nextMode = selectedMode as AmplifyMode;
-					setMode( nextMode );
-					recordTracksEvent( 'calypso_a4a_amplify_report_type_select', {
-						mode: nextMode,
-					} );
-				} }
-			/>
-			{ ! isModal && <AmplifyAlsoUseful /> }
+				</>
+			) }
 			{ ! isModal && <AmplifyOverviewStory /> }
 		</section>
 	);

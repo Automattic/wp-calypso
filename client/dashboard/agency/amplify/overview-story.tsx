@@ -1,16 +1,13 @@
-import { Button, __experimentalHeading as Heading } from '@wordpress/components';
+import { Button, ExternalLink, __experimentalHeading as Heading } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import InlineSupportLink from '../../components/inline-support-link';
-import { getReportTiming } from './constants';
-import { useAmplifyIllustrations } from './dev-state-controls';
-import { SampleReportPage } from './sample-report';
-import { getSampleFindings, getSampleLenses, getSeverityLabel } from './sample-report-data';
+import { getReportTiming, getTierAllowances } from './constants';
 import AmplifySampleReportModal from './sample-report-modal';
+import { SAMPLE_REPORT_OVERVIEW } from './sample-report-pages';
 import { PERSPECTIVES } from './score-preview';
 import { severityFor } from './score-severity';
-import type { SamplePageKey } from './sample-report';
 
 // TODO: replace with the knowledge base articles once they're published.
 const KB_URLS: Record< 'human' | 'ai', string > = {
@@ -35,6 +32,17 @@ const FAQS = [
 				'Most reports are ready in %s. You can leave the page while it runs, and the report appears in your list when it’s done.'
 			),
 			getReportTiming()
+		),
+	},
+	{
+		id: 'limits',
+		question: __( 'How many reports can I create?' ),
+		answer: sprintf(
+			/* translators: 1: monthly reports for Account Activated, 2: for Agency Partner, 3: for Pro Agency Partner, 4: for VIP Pro & Premier */
+			__(
+				'It depends on your agency tier: %1$d reports a month for Account Activated, %2$d for Agency Partner, %3$d for Pro Agency Partner, and %4$d for VIP Pro & Premier. Your allowance resets on the 1st of every month, and Agency Partners and above can ask for more.'
+			),
+			...( getTierAllowances().map( ( tier ) => tier.scans ) as [ number, number, number, number ] )
 		),
 	},
 	{
@@ -74,114 +82,148 @@ const FAQS = [
 	},
 ];
 
-/** The sample report's top Critical finding, shown as a finding card. */
-function FindingGraphic() {
-	const finding = getSampleFindings()[ 0 ];
-	const lens = getSampleLenses().find( ( item ) => item.key === finding.lens );
+const SAMPLE_CATEGORY = { score: 8.5, max: 17 };
+
+// “8.5/17” in Knockout, the report's numeral face, traced to outlines so the font isn't shipped.
+const SAMPLE_CATEGORY_SCORE_PATH =
+	'M266 547V415C266 375 251 346 225 331C251 315 266 286 266 247V119C266 44 219 -10 146 -10C74 -10 26 44 26 119V247C26 286 41 315 67 331C41 346 26 375 26 415V547C26 623 74 676 146 676C219 676 266 623 266 547ZM172 271C172 286 161 297 146 297C131 297 120 286 120 271V117C120 101 131 90 146 90C161 90 172 101 172 117ZM172 549C172 565 161 576 146 576C131 576 120 565 120 549V390C120 374 131 364 146 364C161 364 172 374 172 390Z M391 666V549H312V666Z M667 0H451L438 332L525 341C525 329 537 318 548 318C559 318 571 329 571 343V549C571 565 561 576 546 576C531 576 520 565 520 546V476H432V550C432 614 471 676 544 676C616 676 665 623 665 547V324C665 272 636 235 592 235C564 235 541 246 525 265L532 97H613C646 97 665 70 667 0Z M901 -63H846L673 730H728Z M1038 666V0H983C983 22 972 42 941 42V666Z M1340 42V0H1104V102H1245C1196 233 1142 450 1127 666H1233C1242 429 1278 242 1340 42Z';
+
+/** A category from the sample report: score, what's working and what to improve. */
+function CategoryGraphic() {
+	const ref = useRef< HTMLDivElement >( null );
+	const [ isVisible, setIsVisible ] = useState( false );
+	const { score, max } = SAMPLE_CATEGORY;
+
+	useEffect( () => {
+		const element = ref.current;
+		if ( ! element || typeof IntersectionObserver === 'undefined' ) {
+			setIsVisible( true );
+			return;
+		}
+		const observer = new IntersectionObserver(
+			( [ entry ] ) => {
+				if ( entry.isIntersecting ) {
+					setIsVisible( true );
+					observer.disconnect();
+				}
+			},
+			{ threshold: 0.4 }
+		);
+		observer.observe( element );
+		return () => observer.disconnect();
+	}, [] );
+
 	return (
-		<div className="dashboard-amplify-story__finding" aria-hidden="true">
-			<span className="dashboard-amplify-story__finding-severity">
-				{ getSeverityLabel( finding.severity ) }
+		<div
+			ref={ ref }
+			className="dashboard-amplify-story__category-card"
+			data-visible={ isVisible }
+			aria-hidden="true"
+		>
+			<div
+				className="dashboard-amplify-story__category-card-score"
+				data-severity={ severityFor( score, max ) }
+			>
+				<svg viewBox="0 -12 1348 690" focusable="false">
+					<path d={ SAMPLE_CATEGORY_SCORE_PATH } />
+				</svg>
+				<span>
+					<i style={ { width: `${ ( score / max ) * 100 }%` } } />
+				</span>
+			</div>
+			<span className="dashboard-amplify-story__category-card-heading">
+				{ __( 'What’s working' ) }
 			</span>
-			<span className="dashboard-amplify-story__finding-meta">
-				{ lens?.label } · { finding.category }
+			<ol>
+				<li>{ __( 'The address and opening days are easy to find in the footer.' ) }</li>
+			</ol>
+			<span className="dashboard-amplify-story__category-card-heading">
+				{ __( 'What to improve' ) }
 			</span>
-			<strong>{ finding.title }</strong>
-			<p>{ finding.detail }</p>
-			<p>
-				<b>{ __( 'Why it matters:' ) }</b> { finding.impact }
-			</p>
-			<p className="dashboard-amplify-story__finding-improve">
-				<b>{ __( 'How to improve:' ) }</b> { finding.improve }
-			</p>
+			<ol>
+				<li>{ __( 'Visitors scroll past three photos before they can book.' ) }</li>
+				<li>{ __( 'The only button says “Learn more”.' ) }</li>
+				<li>{ __( 'Nothing says how quickly private-dining enquiries are answered.' ) }</li>
+			</ol>
 		</div>
 	);
 }
 
-/** Three sample report pages fanned out; opens the full sample. */
-function ReportStackGraphic( { onOpen }: { onOpen: () => void } ) {
-	const pages: SamplePageKey[] = [ 'findings-top', 'scores', 'cover' ];
+/** The sample report's first pages, fanned out; opens the full sample. */
+function ReportPagesGraphic( { onOpen }: { onOpen: () => void } ) {
 	return (
 		<button
 			type="button"
-			className="dashboard-amplify-story__report-stack"
+			className="dashboard-amplify-story__pages"
 			onClick={ onOpen }
 			aria-label={ __( 'View a sample report' ) }
 		>
-			{ pages.map( ( page ) => (
-				<span key={ page } className="dashboard-amplify-story__report-page" data-page={ page }>
-					<SampleReportPage page={ page } isDecorative />
-				</span>
+			{ SAMPLE_REPORT_OVERVIEW.map( ( src ) => (
+				<img key={ src } src={ src } alt="" />
 			) ) }
 		</button>
 	);
 }
 
-function PerspectivesGraphic() {
+/** The same report, run on three kinds of homepage. */
+function AudiencesGraphic() {
+	const sites = [
+		{ kind: 'prospect', label: __( 'Prospect' ), url: 'oliveandember.example', score: 43 },
+		{ kind: 'client', label: __( 'Client' ), url: 'brightsmile.example', score: 71 },
+		{ kind: 'agency', label: __( 'Your agency' ), url: 'youragency.example', score: 88 },
+	];
 	return (
-		<div className="dashboard-amplify-story__perspectives" aria-hidden="true">
-			<div className="dashboard-amplify-story__mini-report">
-				<span>{ __( 'People' ) }</span>
-				<strong>46/100</strong>
-				<i />
-				<i />
-				<i />
-			</div>
-			<div className="dashboard-amplify-story__mini-report">
-				<span>{ __( 'AI agents' ) }</span>
-				<strong>50/100</strong>
-				<i />
-				<i />
-				<i />
-			</div>
-		</div>
-	);
-}
-
-function CategoriesGraphic() {
-	return (
-		<div className="dashboard-amplify-story__categories" aria-hidden="true">
-			<span>{ __( 'Category breakdown' ) }</span>
-			{ [
-				{ label: __( 'Trust signals' ), score: 4, max: 18 },
-				{ label: __( 'Mobile experience' ), score: 7, max: 12 },
-				{ label: __( 'Content quality' ), score: 11, max: 12 },
-			].map( ( item ) => (
-				<div className="dashboard-amplify-story__category" key={ item.label }>
-					<span>{ item.label }</span>
-					<div>
-						<i
-							data-severity={ severityFor( item.score, item.max ) }
-							style={ { width: `${ ( item.score / item.max ) * 100 }%` } }
-						/>
+		<div className="dashboard-amplify-story__audiences" aria-hidden="true">
+			{ sites.map( ( site ) => (
+				<div
+					key={ site.kind }
+					className="dashboard-amplify-story__audience"
+					data-kind={ site.kind }
+				>
+					<div className="dashboard-amplify-story__audience-bar">
+						<i />
+						<i />
+						<i />
+						<span>{ site.url }</span>
 					</div>
-					<strong>
-						{ item.score }/{ item.max }
-					</strong>
+					<div className="dashboard-amplify-story__audience-body">
+						<span className="dashboard-amplify-story__audience-label">{ site.label }</span>
+						<Badge intent={ getScoreIntent( site.score ) }>{ `${ site.score }/100` }</Badge>
+					</div>
+					<div className="dashboard-amplify-story__audience-lines">
+						<i />
+						<i />
+						<i />
+					</div>
 				</div>
 			) ) }
 		</div>
 	);
 }
 
+function getScoreIntent( score: number ) {
+	if ( score >= 80 ) {
+		return 'stable';
+	}
+	return score >= 50 ? 'medium' : 'high';
+}
+
 function PromptGraphic() {
-	const illustrations = useAmplifyIllustrations();
-	const prompt =
-		illustrations === 'sample'
-			? __(
-					'Turn this report into a 5-slide pitch deck in our agency’s voice, leading with the three biggest gaps.'
-				)
-			: __(
-					'Rewrite the homepage headline so it clearly names who this business serves and the outcome it delivers.'
-				);
 	return (
 		<div className="dashboard-amplify-story__prompt" aria-hidden="true">
 			<p>
-				<span>{ prompt }</span>
+				<span>
+					{ __(
+						'Turn this report into a 5-slide pitch deck in our agency’s voice, leading with the three biggest gaps.'
+					) }
+				</span>
 				<span className="dashboard-amplify-story__prompt-caret" />
 			</p>
 			<div className="dashboard-amplify-story__prompt-actions">
-				<span>+</span>
+				<span className="dashboard-amplify-story__prompt-attachment">
+					<span className="dashboard-amplify-story__prompt-file">{ __( 'PDF' ) }</span>
+					<span>prospect-report.pdf</span>
+				</span>
 				<span className="dashboard-amplify-story__prompt-send">↑</span>
 			</div>
 		</div>
@@ -266,20 +308,19 @@ function ScoreCategories() {
 						<p>
 							<span>
 								{ type === 'human'
-									? __( 'People: trust, clarity, and what builds confidence.' )
-									: __( 'AI agents: how ChatGPT, Perplexity, and others read and rank the site.' ) }
+									? __( 'Whether a first-time visitor trusts the business enough to get in touch.' )
+									: __(
+											'Whether AI tools can read the site, understand the business, and recommend it.'
+										) }
 							</span>{ ' ' }
-							<InlineSupportLink
-								supportLink={ KB_URLS[ type ] }
-								forceOpenInHelpCenter
+							<ExternalLink
+								href={ KB_URLS[ type ] }
 								onClick={ () =>
 									recordTracksEvent( 'calypso_a4a_amplify_rubric_kb_click', { lens: type } )
 								}
 							>
-								{ type === 'human'
-									? __( 'See everything the people audit covers' )
-									: __( 'See everything the AI audit covers' ) }
-							</InlineSupportLink>
+								{ __( 'Learn more' ) }
+							</ExternalLink>
 						</p>
 						<div className="dashboard-amplify-story__rubric-grid">
 							{ PERSPECTIVES[ type ].metrics.map( ( metric, index ) => {
@@ -348,7 +389,6 @@ function ScoreCategories() {
 export default function AmplifyOverviewStory() {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isSampleOpen, setIsSampleOpen ] = useState( false );
-	const illustrations = useAmplifyIllustrations();
 	return (
 		<div className="dashboard-amplify-story">
 			<section
@@ -356,18 +396,14 @@ export default function AmplifyOverviewStory() {
 				aria-labelledby="amplify-categories-title"
 			>
 				<div className="dashboard-amplify-story__graphic">
-					{ illustrations === 'sample' ? (
-						<ReportStackGraphic
-							onOpen={ () => {
-								recordTracksEvent( 'calypso_a4a_amplify_sample_report_open', {
-									source: 'story-graphic',
-								} );
-								setIsSampleOpen( true );
-							} }
-						/>
-					) : (
-						<PerspectivesGraphic />
-					) }
+					<ReportPagesGraphic
+						onOpen={ () => {
+							recordTracksEvent( 'calypso_a4a_amplify_sample_report_open', {
+								source: 'story-graphic',
+							} );
+							setIsSampleOpen( true );
+						} }
+					/>
 				</div>
 				<div className="dashboard-amplify-story__copy">
 					<Heading id="amplify-categories-title" level={ 2 }>
@@ -375,7 +411,7 @@ export default function AmplifyOverviewStory() {
 					</Heading>
 					<p>
 						{ __(
-							'A comprehensive PDF report with detailed findings on problem areas, so you can approach a prospect with proof of why their site needs work and a clear roadmap for how you’ll improve it once they hire your agency.'
+							'A detailed PDF of everything holding the site back. Bring prospects proof of the problems, and a clear plan for how you’ll fix them once they hire you.'
 						) }
 					</p>
 					<Button
@@ -396,7 +432,7 @@ export default function AmplifyOverviewStory() {
 				aria-labelledby="amplify-perspectives-title"
 			>
 				<div className="dashboard-amplify-story__graphic">
-					{ illustrations === 'sample' ? <FindingGraphic /> : <CategoriesGraphic /> }
+					<CategoryGraphic />
 				</div>
 				<div className="dashboard-amplify-story__copy">
 					<Heading id="amplify-perspectives-title" level={ 2 }>
@@ -404,7 +440,7 @@ export default function AmplifyOverviewStory() {
 					</Heading>
 					<p>
 						{ __(
-							'Every finding names the problem, why it costs the business customers, and how to improve it, so you walk into the pitch with specifics instead of opinions.'
+							'Each finding names the problem, explains why it costs the business customers, and shows how to fix it. You walk into the pitch with specifics, not opinions.'
 						) }
 					</p>
 				</div>
@@ -421,6 +457,25 @@ export default function AmplifyOverviewStory() {
 					<p>
 						{ __(
 							'Feed the PDF into your AI tool of choice to turn it into a branded report or pitch deck in your agency’s voice.'
+						) }
+					</p>
+				</div>
+			</section>
+
+			<section
+				className="dashboard-amplify-story__section"
+				aria-labelledby="amplify-audiences-title"
+			>
+				<div className="dashboard-amplify-story__graphic">
+					<AudiencesGraphic />
+				</div>
+				<div className="dashboard-amplify-story__copy">
+					<Heading id="amplify-audiences-title" level={ 2 }>
+						{ __( 'Not just for new clients' ) }
+					</Heading>
+					<p>
+						{ __(
+							'Run one on a current client’s site to plan their next round of work, or on your own homepage to see it the way prospects do.'
 						) }
 					</p>
 				</div>

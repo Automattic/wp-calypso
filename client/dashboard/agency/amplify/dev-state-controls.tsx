@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type {
 	AgencyApprovalStatus,
 	AgencyTierId,
@@ -12,11 +12,9 @@ import './dev-state-controls.scss';
 export type AmplifyPreviewMode = 'live' | 'first' | 'one' | 'dozens' | 'loading' | 'error';
 export type AmplifyUsagePreview =
 	'live' | 'fresh' | 'low' | 'cap-activated' | 'cap-partner' | 'pending' | 'rejected';
-export type AmplifyIllustrations = 'i1' | 'sample';
 type Settings = {
 	mode: AmplifyPreviewMode;
 	usage: AmplifyUsagePreview;
-	illustrations: AmplifyIllustrations;
 	x: number;
 	y: number;
 	collapsed: boolean;
@@ -27,16 +25,11 @@ const PANEL_WIDTH = 224;
 const DEFAULT_SETTINGS: Settings = {
 	mode: 'live',
 	usage: 'live',
-	illustrations: 'i1',
 	x: 16,
 	y: 16,
 	collapsed: false,
 };
 const MODES: AmplifyPreviewMode[] = [ 'live', 'first', 'one', 'dozens', 'loading', 'error' ];
-const ILLUSTRATIONS: { value: AmplifyIllustrations; label: string }[] = [
-	{ value: 'i1', label: __( 'Shaun (i1 scores)' ) },
-	{ value: 'sample', label: __( 'Jeff (sample report)' ) },
-];
 const USAGE_PREVIEWS: { value: AmplifyUsagePreview; label: string }[] = [
 	{ value: 'live', label: __( 'Live usage' ) },
 	{ value: 'fresh', label: __( 'Plenty left (3 of 15)' ) },
@@ -122,9 +115,6 @@ function readSettings(): Settings {
 			usage: USAGE_PREVIEWS.some( ( option ) => option.value === saved.usage )
 				? saved.usage
 				: DEFAULT_SETTINGS.usage,
-			illustrations: ILLUSTRATIONS.some( ( option ) => option.value === saved.illustrations )
-				? saved.illustrations
-				: DEFAULT_SETTINGS.illustrations,
 			x: Number.isFinite( saved.x )
 				? clamp( saved.x, window.innerWidth - PANEL_WIDTH )
 				: DEFAULT_SETTINGS.x,
@@ -136,15 +126,6 @@ function readSettings(): Settings {
 	} catch {
 		return DEFAULT_SETTINGS;
 	}
-}
-
-/** Which set of story illustrations to show; switchable from the dev panel. */
-export const AmplifyIllustrationsContext = createContext< AmplifyIllustrations >(
-	DEFAULT_SETTINGS.illustrations
-);
-
-export function useAmplifyIllustrations() {
-	return useContext( AmplifyIllustrationsContext );
 }
 
 export function useAmplifyDevSettings( enabled: boolean ) {
@@ -321,25 +302,6 @@ export default function AmplifyDevStateControls( {
 									checked={ settings.usage === option.value }
 									onChange={ () =>
 										onChange( ( previous ) => ( { ...previous, usage: option.value } ) )
-									}
-								/>
-								{ option.label }
-							</label>
-						) ) }
-					</div>
-				</fieldset>
-				<fieldset>
-					<legend>{ __( 'Illustrations' ) }</legend>
-					<div className="dashboard-amplify-dev-controls__choices">
-						{ ILLUSTRATIONS.map( ( option ) => (
-							<label key={ option.value }>
-								<input
-									type="radio"
-									name="amplify-dev-illustrations"
-									value={ option.value }
-									checked={ settings.illustrations === option.value }
-									onChange={ () =>
-										onChange( ( previous ) => ( { ...previous, illustrations: option.value } ) )
 									}
 								/>
 								{ option.label }
