@@ -3,6 +3,7 @@ import {
 	clearFontCache,
 	clusterSpans,
 	collectStyleText,
+	drawPageToBlob,
 	getBands,
 	getCaptureRect,
 	getCaptureRects,
@@ -13,6 +14,7 @@ import {
 	pinViewportPositionedElements,
 	rasterizeCanvas,
 	replaceImagesWithPlaceholders,
+	UnfaithfulCaptureError,
 	whenStill,
 } from '../rasterizer';
 
@@ -169,6 +171,14 @@ describe( 'clusterSpans', () => {
 				{ top: 4000, bottom: 4200, count: 1 },
 			],
 		],
+		[
+			'takes into a tall group a block that lies inside it',
+			[
+				{ top: 100, bottom: 1600 },
+				{ top: 600, bottom: 900 },
+			],
+			[ { top: 100, bottom: 1600, count: 2 } ],
+		],
 		[ 'has no groups for no spans', [], [] ],
 	] )( '%s', ( _name, spans, expected ) => {
 		expect( clusterSpans( spans, 1000 ) ).toEqual( expected );
@@ -227,13 +237,97 @@ describe( 'getCaptureRects', () => {
 		).toBeNull();
 	} );
 
-	it( 'falls back to the whole page for a block taller than a screenful', () => {
-		// A band would show its middle and silently drop the rest.
+	it( 'stacks full-size bands down a block taller than a screenful', () => {
+		// One band would show its middle and silently drop the rest; the whole
+		// page would show all of it too small to check (WPAGENT-229).
 		const { canvasDocument, canvasWindow } = setup( {
 			hero: box( { left: 0, top: 200, width: 900, height: 2500 } ),
 		} );
 
-		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'hero' ] ) ).toBeNull();
+		// Counted once, in the first band: the counts add up to the blocks shown.
+		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'hero' ] ) ).toEqual( [
+			{ x: 0, y: 200, width: 981, height: 1000, framed: 1 },
+			{ x: 0, y: 1200, width: 981, height: 1000, framed: 0 },
+			{ x: 0, y: 2200, width: 981, height: 1000, framed: 0 },
+		] );
+	} );
+
+	it( 'keeps the last stacked band on the page', () => {
+		const { canvasDocument, canvasWindow } = setup(
+			{ footer: box( { left: 0, top: 1500, width: 900, height: 1400 } ) },
+			{ documentHeight: 3000 }
+		);
+
+		expect(
+			getCaptureRects( canvasDocument, canvasWindow, [ 'footer' ] )?.map( ( rect ) => rect.y )
+		).toEqual( [ 1500, 2000 ] );
+	} );
+
+	it( 'gives a block inside a tall one no band of its own', () => {
+		// The FAQ list named for comparison sits inside the edited section: its
+		// own band landed between the section's two, out of order, showing
+		// nothing they did not.
+		const { canvasDocument, canvasWindow } = setup( {
+			section: box( { left: 0, top: 2600, width: 900, height: 1400 } ),
+			list: box( { left: 0, top: 3100, width: 600, height: 300 } ),
+		} );
+
+		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'section', 'list' ] ) ).toEqual( [
+			{ x: 0, y: 2600, width: 981, height: 1000, framed: 2 },
+			{ x: 0, y: 3600, width: 981, height: 1000, framed: 0 },
+		] );
+	} );
+
+	it( 'orders bands top to bottom and drops one the others already show', () => {
+		// The list starts inside the section but runs past its foot, so it is
+		// its own group; its band falls wholly within the section's two.
+		const { canvasDocument, canvasWindow } = setup(
+			{
+				section: box( { left: 0, top: 1000, width: 900, height: 1500 } ),
+				list: box( { left: 0, top: 2400, width: 600, height: 300 } ),
+			},
+			{ documentHeight: 3000 }
+		);
+
+		const rects = getCaptureRects( canvasDocument, canvasWindow, [ 'list', 'section' ] );
+
+		expect( rects?.map( ( rect ) => rect.y ) ).toEqual( [ 1000, 2000 ] );
+		// The dropped band's block is still counted, in the band that shows it.
+		expect( rects?.map( ( rect ) => rect.framed ) ).toEqual( [ 1, 1 ] );
+	} );
+
+	it( 'keeps the band of a block that would otherwise straddle the seam between two', () => {
+		// The stack's two bands cover it between them, but neither shows it whole.
+		const { canvasDocument, canvasWindow } = setup( {
+			section: box( { left: 0, top: 0, width: 900, height: 1100 } ),
+			card: box( { left: 0, top: 950, width: 900, height: 300 } ),
+		} );
+
+		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'section', 'card' ] ) ).toEqual( [
+			{ x: 0, y: 0, width: 981, height: 1000, framed: 1 },
+			{ x: 0, y: 600, width: 981, height: 1000, framed: 1 },
+			{ x: 0, y: 1000, width: 981, height: 1000, framed: 0 },
+		] );
+	} );
+
+	it( 'drops the band of a block one band of a stack already shows whole', () => {
+		const { canvasDocument, canvasWindow } = setup( {
+			section: box( { left: 0, top: 0, width: 900, height: 1500 } ),
+			card: box( { left: 0, top: 1450, width: 900, height: 250 } ),
+		} );
+
+		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'section', 'card' ] ) ).toEqual( [
+			{ x: 0, y: 0, width: 981, height: 1000, framed: 1 },
+			{ x: 0, y: 1000, width: 981, height: 1000, framed: 1 },
+		] );
+	} );
+
+	it( 'falls back to the whole page for a block that needs more bands than the cap', () => {
+		const { canvasDocument, canvasWindow } = setup( {
+			longform: box( { left: 0, top: 0, width: 900, height: 4500 } ),
+		} );
+
+		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'longform' ] ) ).toBeNull();
 	} );
 
 	it( 'falls back to the viewport when nothing resolved', () => {
@@ -762,6 +856,10 @@ describe( 'buildSvg', () => {
 		expect( svg ).toContain( 'animation-duration:1ms!important' );
 		expect( svg ).toContain( 'animation-fill-mode:both!important' );
 		expect( svg ).toContain( 'transition:none!important' );
+		// The copy of a zoomed-out editor's <html> must not zoom the page again.
+		expect( svg ).toContain( 'scale:none!important' );
+		expect( svg ).toContain( 'translate:none!important' );
+		expect( svg ).toContain( 'margin:0!important' );
 		expect( svg.indexOf( 'p{margin:0}' ) ).toBeLessThan( svg.indexOf( 'content-visibility' ) );
 	} );
 
@@ -893,4 +991,227 @@ describe( 'rasterizeCanvas', () => {
 
 		await expect( rasterizeCanvas( context ) ).resolves.toBeNull();
 	} );
+} );
+
+describe( 'drawPageToBlob', () => {
+	type Rgba = [ number, number, number, number ];
+	type Sampler = ( x: number, y: number ) => Rgba;
+
+	const WHITE: Rgba = [ 255, 255, 255, 255 ];
+
+	// One line of antialiased text near the top left of every band: the kind of
+	// band a page of short FAQ questions is made of.
+	const sparseText: Sampler = ( x, y ) =>
+		x >= 40 && x < 340 && y >= 40 && y < 56
+			? [ 20 + ( ( x * 7 + y * 13 ) % 160 ), 20 + ( ( x * 7 + y * 13 ) % 160 ), 20, 255 ]
+			: WHITE;
+
+	const contexts = new WeakMap< HTMLCanvasElement, ReturnType< typeof fakeContext > >();
+	let paint: Sampler;
+	let images: HTMLImageElement[];
+
+	// The pixels the decoded image paints, at a given size: the same for every
+	// band, so painted once per size rather than once per draw.
+	const painted = new Map< string, Uint8ClampedArray >();
+
+	function paintImage( width: number, height: number ) {
+		const key = `${ width }x${ height }`;
+		let pixels = painted.get( key );
+
+		if ( ! pixels ) {
+			pixels = new Uint8ClampedArray( width * height * 4 );
+
+			for ( let y = 0; y < height; y++ ) {
+				for ( let x = 0; x < width; x++ ) {
+					pixels.set( paint( x, y ), ( y * width + x ) * 4 );
+				}
+			}
+
+			painted.set( key, pixels );
+		}
+
+		return pixels;
+	}
+
+	// Enough of a 2d context to draw, scale and read back pixels. Scaling
+	// averages the source pixels each destination pixel covers, as a browser's
+	// downscale does, so small text fades into a few greys the way it really does.
+	function fakeContext( canvas: HTMLCanvasElement ) {
+		const data = new Uint8ClampedArray( canvas.width * canvas.height * 4 );
+
+		return {
+			data,
+			clearRect: ( x: number, y: number, width: number, height: number ) => {
+				for ( let row = y; row < y + height; row++ ) {
+					data.fill( 0, ( row * canvas.width + x ) * 4, ( row * canvas.width + x + width ) * 4 );
+				}
+			},
+			drawImage: ( source: unknown, ...args: number[] ) => {
+				const [ sx, sy, sw, sh, dx, dy, dw, dh ] =
+					args.length === 2
+						? [
+								0,
+								0,
+								canvas.width,
+								canvas.height,
+								args[ 0 ],
+								args[ 1 ],
+								canvas.width,
+								canvas.height,
+							]
+						: args;
+				const fromCanvas = source instanceof HTMLCanvasElement;
+				const sourceWidth = fromCanvas ? source.width : sx + sw;
+				const pixels = fromCanvas
+					? ( contexts.get( source ) as ReturnType< typeof fakeContext > ).data
+					: paintImage( sourceWidth, sy + sh );
+
+				// Unscaled: whole rows at a time.
+				if ( sw === dw && sh === dh ) {
+					for ( let y = 0; y < dh; y++ ) {
+						const from = ( ( sy + y ) * sourceWidth + sx ) * 4;
+
+						data.set(
+							pixels.subarray( from, from + dw * 4 ),
+							( ( dy + y ) * canvas.width + dx ) * 4
+						);
+					}
+
+					return;
+				}
+
+				for ( let y = 0; y < dh; y++ ) {
+					const top = Math.floor( sy + ( y * sh ) / dh );
+					const bottom = Math.max( top + 1, Math.floor( sy + ( ( y + 1 ) * sh ) / dh ) );
+
+					for ( let x = 0; x < dw; x++ ) {
+						const left = Math.floor( sx + ( x * sw ) / dw );
+						const right = Math.max( left + 1, Math.floor( sx + ( ( x + 1 ) * sw ) / dw ) );
+						const count = ( right - left ) * ( bottom - top );
+						const to = ( ( dy + y ) * canvas.width + dx + x ) * 4;
+
+						for ( let channel = 0; channel < 4; channel++ ) {
+							let sum = 0;
+
+							for ( let row = top; row < bottom; row++ ) {
+								for ( let column = left; column < right; column++ ) {
+									sum += pixels[ ( row * sourceWidth + column ) * 4 + channel ];
+								}
+							}
+
+							data[ to + channel ] = Math.round( sum / count );
+						}
+					}
+				}
+			},
+			getImageData: ( x: number, y: number, width: number, height: number ) => ( {
+				data: data.slice( ( y * canvas.width + x ) * 4, ( ( y + height ) * canvas.width + x ) * 4 ),
+			} ),
+		};
+	}
+
+	const page = { width: 1200, height: 6400 };
+	const bandHeight = 800;
+	const draw = () =>
+		drawPageToBlob( document.createElement( 'div' ), '', page, bandHeight, [
+			{ top: 0, bottom: page.height },
+		] );
+
+	beforeEach( () => {
+		painted.clear();
+		paint = sparseText;
+		jest.spyOn( HTMLCanvasElement.prototype, 'getContext' ).mockImplementation( function (
+			this: HTMLCanvasElement
+		) {
+			if ( ! contexts.has( this ) ) {
+				contexts.set( this, fakeContext( this ) );
+			}
+
+			return contexts.get( this ) as unknown as CanvasRenderingContext2D;
+		} );
+		HTMLCanvasElement.prototype.toBlob = function ( callback: BlobCallback ) {
+			callback( new Blob( [ 'png' ] ) );
+		};
+		images = [];
+		jest.spyOn( window, 'Image' ).mockImplementation( () => {
+			const image = { decode: async () => undefined } as HTMLImageElement;
+			images.push( image );
+
+			return image;
+		} );
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
+	} );
+
+	it( 'keeps a tall page whose bands hold little text, judging each band at native scale', async () => {
+		// Scaled to fit 1400px, each band is about 260x175 and its line of text
+		// a few grey pixels: judged there, the band looked blank and the whole
+		// capture was refused.
+		await expect( draw() ).resolves.toBeInstanceOf( Blob );
+	} );
+
+	it( 'frames the short band at the foot of the page at the viewport height', async () => {
+		// A shorter frame resolves `vh` against itself, so a full-height cover
+		// shrinks, the page below it moves up, and the last band shows nothing
+		// but the body's background.
+		await drawPageToBlob( document.createElement( 'div' ), '', { width: 1200, height: 6000 }, 800, [
+			{ top: 0, bottom: 6000 },
+		] );
+
+		const frameHeights = images.map(
+			( image ) => atob( image.src.split( ',' )[ 1 ] ).match( /<svg[^>]* height="(\d+)"/ )?.[ 1 ]
+		);
+
+		expect( frameHeights ).toEqual( Array( 8 ).fill( '800' ) );
+	} );
+
+	it( 'embeds the body inside a copy of the canvas root, so rules from `html` match', async () => {
+		// `html :where(.has-border-color) { border-style: solid }` is what draws
+		// a block's border; with no <html> above the body, none were drawn.
+		const root = document.createElement( 'html' );
+		root.className = 'block-editor-iframe__html';
+		const body = document.createElement( 'body' );
+		root.append( body );
+
+		await drawPageToBlob( body, '', { width: 1200, height: 800 }, 800, [] );
+
+		const svg = atob( images[ 0 ].src.split( ',' )[ 1 ] );
+
+		expect( svg ).toMatch(
+			/<html xmlns="http:\/\/www\.w3\.org\/1999\/xhtml" class="block-editor-iframe__html"><body/
+		);
+	} );
+
+	it( 'refuses a page where no band drew anything, even with no ink expected', async () => {
+		// A page of embeds and iframes has nothing the ink check can see, and
+		// a rendering failure would otherwise come back as an empty page.
+		paint = () => WHITE;
+
+		await expect(
+			drawPageToBlob( document.createElement( 'div' ), '', page, bandHeight, [] )
+		).rejects.toMatchObject( {
+			reason: 'blank',
+			details: { band_count: 8, page_height: 6400 },
+		} );
+	} );
+
+	it( 'keeps a page where some band drew something, though none was expected to', async () => {
+		await expect(
+			drawPageToBlob( document.createElement( 'div' ), '', page, bandHeight, [] )
+		).resolves.toBeInstanceOf( Blob );
+	} );
+
+	it( 'still refuses a band that drew nothing, saying where it was', async () => {
+		paint = () => WHITE;
+
+		const refusal = draw();
+
+		await expect( refusal ).rejects.toBeInstanceOf( UnfaithfulCaptureError );
+		await expect( refusal ).rejects.toMatchObject( {
+			reason: 'blank',
+			details: { band_y: 0, band_index: 0, band_count: 8, page_height: 6400, scale: 0.219 },
+		} );
+	}, 10000 );
 } );

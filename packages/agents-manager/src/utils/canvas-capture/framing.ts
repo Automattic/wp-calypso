@@ -52,14 +52,31 @@ export function getUnframedClientIds( clientIds: string[] ): string[] {
 /**
  * What shape of picture, or pictures, a capture came back as.
  *
- * Three outcomes, and a reader that cannot tell them apart will misread two of
- * them. A set of bands is several different places on one page, not several
- * attempts at the same place; a whole page is everything at once but too small
- * to read. Saying neither leaves both looking like an ordinary screenful.
+ * Four outcomes, and a reader that cannot tell them apart will misread them. A
+ * set of bands is several different places on one page, not several attempts
+ * at the same place; a whole page is everything at once but too small to read;
+ * after a custom CSS edit, both come back, and only the full-size pictures can
+ * settle detail. Saying nothing leaves each looking like an ordinary screenful.
  * @param fileParts The capture.
  * @returns A sentence about the set, or empty for a plain screenful.
  */
 export function describeCaptureShape( fileParts: FilePart[] ): string {
+	const areas = fileParts.filter( ( part ) => ! part.metadata?.fullPage ).length;
+
+	// After a custom CSS edit: the blocks the call named at full size, then the
+	// page. Named, not edited: a CSS-only call frames only the blocks it is
+	// compared against, and the reference note says whether those resolved.
+	if ( areas && areas < fileParts.length ) {
+		const first =
+			areas === 1
+				? 'The first picture is at full size, framed on the blocks this call named'
+				: `The first ${ areas } pictures are at full size, framed on the blocks this call named, each a different area of the page, top to bottom`;
+
+		return `${ first }. The last is the whole page, scaled down to fit, so its body text will not be legible — check the edit in the full-size ${
+			areas === 1 ? 'picture' : 'pictures'
+		}, and read the whole page for colour, type scale, spacing and section rhythm.`;
+	}
+
 	if ( fileParts[ 0 ]?.metadata?.fullPage ) {
 		return 'It is the whole page, scaled down to fit, so body text will not be legible — read it for colour, type scale, spacing and section rhythm, and ask for a picture of a specific area when the wording or fine detail matters.';
 	}

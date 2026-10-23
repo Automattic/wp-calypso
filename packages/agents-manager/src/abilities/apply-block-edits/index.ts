@@ -104,6 +104,27 @@ export const applyBlockEditsAbility: Ability = {
 						description:
 							'The blocks painting backgrounds that edited text fails contrast against, with the text over each, for a correction to target.',
 					},
+					widthShortfalls: {
+						type: 'array',
+						items: {
+							type: 'object',
+							properties: {
+								clientId: { type: 'string' },
+								width: { type: 'number' },
+								parentClientId: { type: 'string' },
+								parentWidth: {
+									type: 'number',
+									description: "The parent's content box, which the block would fill if stretched.",
+								},
+								alignItems: {
+									type: 'string',
+									description: "The parent's computed align-items.",
+								},
+							},
+						},
+						description:
+							'Blocks around the edit narrower than their parent because a flex column does not stretch them, for a width correction to target. Absent when there are none.',
+					},
 					outcome: {
 						type: 'string',
 						enum: [ 'updated', 'no-changes' ],

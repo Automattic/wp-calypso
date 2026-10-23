@@ -1,5 +1,5 @@
 jest.mock( '../../editor-canvas', () => ( { getCanvasDocument: jest.fn() } ) );
-jest.mock( '../../tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
+jest.mock( '../../tracks', () => ( { getIsTest: jest.fn(), recordBigSkyTracksEvent: jest.fn() } ) );
 jest.mock( '../rasterizer', () => ( {
 	...jest.requireActual( '../rasterizer' ),
 	rasterizeCanvas: jest.fn(),
@@ -102,5 +102,23 @@ it.each( [
 	expect( mockRecordEvent ).toHaveBeenCalledWith( 'jetpack_big_sky_canvas_capture_failed', {
 		reason,
 		full_page: false,
+	} );
+} );
+
+it( 'records where a refusal happened alongside its reason', async () => {
+	mockRasterizeCanvas.mockRejectedValue(
+		new UnfaithfulCaptureError( 'The band at 800px rendered blank', 'blank', {
+			band_y: 800,
+			band_count: 8,
+		} )
+	);
+
+	await captureCanvasFileParts( { fullPage: true } );
+
+	expect( mockRecordEvent ).toHaveBeenCalledWith( 'jetpack_big_sky_canvas_capture_failed', {
+		reason: 'blank',
+		full_page: true,
+		band_y: 800,
+		band_count: 8,
 	} );
 } );
