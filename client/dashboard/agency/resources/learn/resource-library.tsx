@@ -11,7 +11,6 @@ import {
 import { useEvent } from '@wordpress/compose';
 import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import clsx from 'clsx';
 import { useMemo } from 'react';
 import { Card } from '../../../components/card';
 import { DataViews, DataViewsEmptyStateLayout } from '../../../components/dataviews';
@@ -89,8 +88,7 @@ export default function ResourceLibrary( {
 					renderItemLink={ ( { item, ...props } ) => (
 						<ResourceLink
 							{ ...props }
-							className={ clsx( props.className, 'dashboard-resources-learn__item-link' ) }
-							data-product={ item.product }
+							style={ { textDecoration: 'none' } }
 							resource={ item }
 							onOpen={ onOpenResource }
 						/>

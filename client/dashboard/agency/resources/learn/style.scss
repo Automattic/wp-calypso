@@ -13,10 +13,8 @@ $resource-brands: (
 	'wordpress-vip': #d8a45f,
 );
 
-// Each product's brand color, for the card header tint and the list's hover.
-.dashboard-resources-learn__card-header,
-.dashboard-resources-learn__item-link,
-.dashboard-resources-learn__list-brand {
+// Each product's brand color, for the card header tint.
+.dashboard-resources-learn__card-header {
 	--resource-brand: #{$studio-gray-100};
 
 	@each $product, $color in $resource-brands {
@@ -66,30 +64,6 @@ $resource-brands: (
 	mask-size: contain;
 	mask-position: left center;
 	mask-repeat: no-repeat;
-}
-
-// List view: DataViews renders the title as the item link, stretched over its
-// row so the whole row opens the resource, and the row takes on the product's
-// brand color on hover.
-.dashboard-resources-learn__filters .dataviews-view-table tr {
-	position: relative;
-
-	&:is( :hover, :focus-within ) {
-		.dashboard-resources-learn__item-link,
-		.dashboard-resources-learn__list-brand {
-			color: var( --resource-brand );
-		}
-	}
-}
-
-.dashboard-resources-learn__item-link {
-	text-decoration: none;
-
-	&::after {
-		content: '';
-		position: absolute;
-		inset: 0;
-	}
 }
 
 // A resource's link, stretched with ::after over its card so the whole of it is
