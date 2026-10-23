@@ -10,6 +10,7 @@ import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
+import { buildDashboardLink } from 'calypso/dashboard/app/routing';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
@@ -27,7 +28,6 @@ import {
 	getLaunchReturnUrl,
 	type LaunchParams,
 } from 'calypso/lib/site-launch/destination';
-import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import {
 	clearSignupCompleteFlowName,
 	clearSignupCompleteSiteID,
@@ -296,7 +296,10 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				const mappingDomain = getSingleMappingDomain( getLaunchDomainItems() );
 
 				if ( mappingDomain ) {
-					destination = domainMappingSetup( launchParams.siteSlug, mappingDomain, '', false, true );
+					destination = buildDashboardLink(
+						'dotcom',
+						`/domains/${ mappingDomain }/domain-connection-setup`
+					);
 				}
 			} catch {
 				// Unknown contents: let checkout show whatever the cart already holds.

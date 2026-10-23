@@ -4,6 +4,7 @@
 import { launchSite } from '@automattic/api-core';
 import { addProductsToCart, clearStepPersistedState } from '@automattic/onboarding';
 import { renderHook } from '@testing-library/react';
+import { buildDashboardLink } from 'calypso/dashboard/app/routing';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	clearSignupCompleteFlowName,
@@ -155,6 +156,7 @@ const ALL_STEPS = [
 const domainItem = { product_slug: 'domain_reg', meta: 'example.com' };
 const transferItem = { product_slug: 'domain_transfer', meta: 'example.org' };
 const mappingItem = { product_slug: 'domain_map', meta: 'example.net' };
+const setupUrl = buildDashboardLink( 'dotcom', '/domains/example.net/domain-connection-setup' );
 const planItem = { product_slug: 'personal-bundle' };
 const storageItem = {
 	product_slug: 'wordpress_com_1gb_space_addon_yearly',
@@ -225,6 +227,7 @@ describe( 'launch-site flow', () => {
 			value: {
 				...window.location,
 				href: 'http://localhost/setup/launch-site/domains?siteSlug=example.wordpress.com',
+				search: '?siteSlug=example.wordpress.com',
 				assign: jest.fn(),
 				replace: jest.fn(),
 			},
@@ -581,7 +584,6 @@ describe( 'launch-site flow', () => {
 
 			await submit( STEPS.PROCESSING.slug, launched ).result;
 
-			const setupUrl = '/domains/mapping/example.wordpress.com/setup/example.net?firstVisit=true';
 			const url = new URL( replaced(), 'http://localhost/' );
 			expect( url.pathname ).toBe( '/checkout/example.wordpress.com' );
 			expect( url.searchParams.get( 'redirect_to' ) ).toBe( setupUrl );
@@ -589,6 +591,18 @@ describe( 'launch-site flow', () => {
 				'/plugins/example.wordpress.com'
 			);
 			expect( persistSignupDestination ).toHaveBeenCalledWith( setupUrl );
+		} );
+
+		it( 'lands on the dotcom Dashboard connection setup for a launch from A4A', async () => {
+			mockOnboard.domainCartItems = [ mappingItem ];
+			mockQuery.dashboard = 'a4a';
+			window.location.search = '?dashboard=a4a';
+
+			await submit( STEPS.PROCESSING.slug, launched ).result;
+
+			expect( new URL( replaced(), 'http://localhost/' ).searchParams.get( 'redirect_to' ) ).toBe(
+				setupUrl
+			);
 		} );
 
 		it( 'keeps the launch destination when connecting a domain alongside another', async () => {
