@@ -2,7 +2,7 @@ import { Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import AmplifyReportCreator from './report-creator';
 import type { AmplifyUsageStatus } from './usage';
-import type { AmplifyMode, AmplifyUsage } from '@automattic/api-core';
+import type { AgencyTierId, AmplifyMode, AmplifyUsage } from '@automattic/api-core';
 
 export default function AmplifyNewReportModal( {
 	agencyId,
@@ -11,7 +11,7 @@ export default function AmplifyNewReportModal( {
 	canScan,
 	usage,
 	usageStatus,
-	limitNotice,
+	tierId,
 	onClose,
 	onCreated,
 	onUsageError,
@@ -22,7 +22,7 @@ export default function AmplifyNewReportModal( {
 	canScan?: boolean;
 	usage?: AmplifyUsage;
 	usageStatus?: AmplifyUsageStatus;
-	limitNotice?: React.ReactNode;
+	tierId?: AgencyTierId;
 	onClose: () => void;
 	onCreated: () => void;
 	onUsageError?: ( code: string ) => void;
@@ -41,7 +41,7 @@ export default function AmplifyNewReportModal( {
 				canScan={ canScan }
 				usage={ usage }
 				usageStatus={ usageStatus }
-				limitNotice={ limitNotice }
+				tierId={ tierId }
 				isModal
 				onCreated={ onCreated }
 				onUsageError={ onUsageError }
