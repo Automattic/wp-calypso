@@ -48,36 +48,47 @@ import type { OnboardActions, OnboardSelect, SiteSelect } from '@automattic/data
 import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type { Store } from 'redux';
 
-// The cart endpoint can leave a request unanswered, and the user waits on the processing screen.
-const CART_READ_TIMEOUT_MS = 5000;
+// The cart endpoint occasionally leaves a request unanswered while asking again succeeds at once,
+// so `findCartKeyFromSiteSlug` makes short attempts. The user waits on the processing screen.
+const CART_READ_ATTEMPTS = 3;
+const CART_READ_ATTEMPT_TIMEOUT_MS = 1000;
+
+// The site's cart, or null when it doesn't answer in time.
+function readCart( siteId: number ): Promise< ResponseCart | null > {
+	let timer: ReturnType< typeof setTimeout > | undefined;
+	const timeout = new Promise< null >( ( resolve ) => {
+		timer = setTimeout( () => resolve( null ), CART_READ_ATTEMPT_TIMEOUT_MS );
+	} );
+
+	return Promise.race( [ fetchShoppingCart( siteId ), timeout ] ).finally( () =>
+		clearTimeout( timer )
+	);
+}
 
 /**
  * The connection for `domain` as the site's cart holds it, or null. Adding to the cart swallows its
  * own failures, so this reads back the cart checkout will open, which is keyed by site ID.
  */
 async function findMappingInCart( siteId: number, domain: string ): Promise< string | null > {
-	let timer: ReturnType< typeof setTimeout > | undefined;
-	const timeout = new Promise< null >( ( resolve ) => {
-		timer = setTimeout( () => resolve( null ), CART_READ_TIMEOUT_MS );
-	} );
-
 	try {
-		const cart: ResponseCart | null = await Promise.race( [
-			fetchShoppingCart( siteId ),
-			timeout,
-		] );
-		const mapping = cart?.products.find(
-			( product ) =>
-				product.product_slug === DomainProductSlugs.DOMAIN_MAPPING &&
-				product.meta.toLowerCase() === domain.toLowerCase()
-		);
+		for ( let attempt = 1; attempt <= CART_READ_ATTEMPTS; attempt++ ) {
+			const cart = await readCart( siteId );
 
-		return mapping?.meta ?? null;
+			if ( cart ) {
+				const mapping = cart.products.find(
+					( product ) =>
+						product.product_slug === DomainProductSlugs.DOMAIN_MAPPING &&
+						product.meta.toLowerCase() === domain.toLowerCase()
+				);
+
+				return mapping?.meta ?? null;
+			}
+		}
 	} catch {
-		return null;
-	} finally {
-		clearTimeout( timer );
+		// An error answer, unlike silence, won't change by asking again.
 	}
+
+	return null;
 }
 
 // Mirrors the event legacy signup records when it auto-skips a step, keyed by the legacy step names.

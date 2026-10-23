@@ -698,28 +698,50 @@ describe( 'launch-site flow', () => {
 				expect( checkoutParam( 'redirect_to' ) ).toBe( launchDestination );
 			} );
 
-			it( 'keeps the launch destination when the cart cannot be read', async () => {
+			it( 'keeps the launch destination, without asking again, when the cart answers with an error', async () => {
 				( fetchShoppingCart as jest.Mock ).mockRejectedValueOnce( new Error( 'offline' ) );
 
 				await submit( STEPS.PROCESSING.slug, launched ).result;
 
+				expect( fetchShoppingCart ).toHaveBeenCalledTimes( 1 );
 				expect( checkoutParam( 'redirect_to' ) ).toBe( launchDestination );
 			} );
 
-			it( 'keeps the launch destination when the cart takes too long to answer', async () => {
-				jest.useFakeTimers();
+			describe( 'when the cart does not answer', () => {
+				const unanswered = () => new Promise( () => {} );
 
-				try {
-					( fetchShoppingCart as jest.Mock ).mockReturnValueOnce( new Promise( () => {} ) );
+				beforeEach( () => {
+					jest.useFakeTimers();
+				} );
+
+				afterEach( () => {
+					jest.useRealTimers();
+				} );
+
+				it( 'asks again and lands on the connection setup once it answers', async () => {
+					( fetchShoppingCart as jest.Mock ).mockReturnValueOnce( unanswered() );
 
 					const { result } = submit( STEPS.PROCESSING.slug, launched );
-					await jest.advanceTimersByTimeAsync( 5000 );
+					await jest.advanceTimersByTimeAsync( 1000 );
 					await result;
 
+					expect( fetchShoppingCart ).toHaveBeenCalledTimes( 2 );
+					expect( checkoutParam( 'redirect_to' ) ).toBe( setupUrl );
+				} );
+
+				it( 'keeps the launch destination after three silent attempts', async () => {
+					( fetchShoppingCart as jest.Mock )
+						.mockReturnValueOnce( unanswered() )
+						.mockReturnValueOnce( unanswered() )
+						.mockReturnValueOnce( unanswered() );
+
+					const { result } = submit( STEPS.PROCESSING.slug, launched );
+					await jest.advanceTimersByTimeAsync( 3000 );
+					await result;
+
+					expect( fetchShoppingCart ).toHaveBeenCalledTimes( 3 );
 					expect( checkoutParam( 'redirect_to' ) ).toBe( launchDestination );
-				} finally {
-					jest.useRealTimers();
-				}
+				} );
 			} );
 
 			it( 'does not read the cart when only registering a domain', async () => {
