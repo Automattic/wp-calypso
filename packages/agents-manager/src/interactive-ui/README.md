@@ -115,11 +115,14 @@ come.
   stays visible and disabled: its controls look disabled, while display-only content such as text
   or a chart looks as before. Once all of a message's surfaces are stale, its actions, such as
   feedback, are disabled too.
-- **Style with A2UI's theme tokens.** Custom components color themselves with the `--a2ui-*`
-  tokens and the renderer's disabled colors, or use WordPress components, which the renderer themes
-  with them, so they follow each host's theme ([theming](../../../ai-ui-renderer/README.md#theming)).
-  Check them in light and dark mode, enabled and disabled
-  ([how](../../../ai-ui-renderer/README.md#theming-a-new-component)).
+- **Style with A2UI's theme tokens.** For a new or changed component, basic or custom:
+  - Color it with the `--a2ui-*` tokens and the renderer's disabled colors, or use WordPress
+    components, which the renderer themes with them, so it follows each host's theme
+    ([theming](../../../ai-ui-renderer/README.md#theming)). Never use the chat's own variables.
+  - Check it in the chat's light and dark modes, enabled and disabled (a stale surface).
+  - If a WordPress component hard-codes light colors, or styles its disabled state only from its
+    `disabled` prop, give it a rule: in the renderer's `style.scss` for a basic component, or in
+    the custom component's own stylesheet.
 - **Load only what the surface renders.** Editor-only components load on demand, in the editor.
 
 ## Try it

@@ -3,7 +3,7 @@
  * Maps to odie-assistant.php endpoints on WordPress.com
  */
 
-import { generateMessageId, isA2uiDataPart } from '../client/utils/core';
+import { isA2uiDataPart } from '../client/utils/core';
 import type { FilePart, Message, Part, TextPart } from '../client/types/index';
 
 /**
@@ -44,6 +44,8 @@ export interface ServerMessage {
 	context?: ServerMessageContext | unknown[];
 	created_at: string; // MySQL datetime format: "2025-11-06 14:29:49"
 	ts?: number;
+	/** The ID the message had live, if the server recorded it. */
+	a2a_message_id?: string;
 }
 
 /**
@@ -231,7 +233,9 @@ export function serverMessageToMessage( serverMessage: ServerMessage ): Message 
 		role,
 		kind: 'message',
 		parts,
-		messageId: generateMessageId(),
+		// The ID it had live, so every copy names it the same. Without one, its row ID, which some
+		// agents also use live.
+		messageId: serverMessage.a2a_message_id || String( serverMessage.message_id ),
 		metadata: {
 			timestamp,
 			serverId: serverMessage.message_id,
