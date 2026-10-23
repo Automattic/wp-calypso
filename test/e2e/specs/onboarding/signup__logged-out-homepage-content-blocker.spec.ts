@@ -46,7 +46,8 @@ function isBlockedScriptLoad( error: string, blockedUrls: string[], pageUrl: str
 }
 
 /**
- * Where the TeamCity build reads the run summary from, to show it in the failure alert.
+ * Where the TeamCity build reads the run summary from. Its first line, the Calypso commit,
+ * goes in the failure alert; the filter list versions after it go in the build log.
  */
 const RUN_SUMMARY_PATH = 'output/content-blocker-run-summary.txt';
 
@@ -117,9 +118,10 @@ test.describe(
 					fetchServedCommit( environment.CALYPSO_BASE_URL ),
 				] );
 
-				const summary = `Calypso ${ servedCommit } · lists: ${ FILTER_LISTS.map( ( url ) =>
-					listVersions.get( url )
-				).join( ', ' ) }`;
+				const summary = [
+					`Calypso ${ servedCommit }`,
+					...FILTER_LISTS.map( ( url ) => listVersions.get( url ) ),
+				].join( '\n' );
 				await testInfo.attach( 'run-summary.txt', { body: summary } );
 				await mkdir( 'output', { recursive: true } );
 				await writeFile( RUN_SUMMARY_PATH, summary );

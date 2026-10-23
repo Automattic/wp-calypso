@@ -1243,14 +1243,16 @@ object LoggedOutSignupContentBlockerE2ETests : BuildType({
 			name = "Add the run summary to the build status"
 			id = "add_run_summary"
 			// The spec writes which Calypso commit production served and which filter list
-			// versions it used, so a failure alert shows what changed since the last pass.
+			// versions it used, so a failure shows what changed since the last pass.
 			executionMode = BuildStep.ExecutionMode.ALWAYS
 			scriptContent = """
 				SUMMARY_FILE=test/e2e/output/content-blocker-run-summary.txt
 				[[ -f "${'$'}SUMMARY_FILE" ]] || exit 0
+				echo "Filter lists:"
+				tail -n +2 "${'$'}SUMMARY_FILE"
 				# Escape the characters TeamCity service messages reserve.
-				SUMMARY=${'$'}(sed -e "s/|/||/g" -e "s/'/|'/g" -e "s/\[/|[/g" -e "s/\]/|]/g" "${'$'}SUMMARY_FILE")
-				echo "##teamcity[buildStatus text='{build.status.text} · ${'$'}SUMMARY']"
+				COMMIT=${'$'}(head -n 1 "${'$'}SUMMARY_FILE" | sed -e "s/|/||/g" -e "s/'/|'/g" -e "s/\[/|[/g" -e "s/\]/|]/g")
+				echo "##teamcity[buildStatus text='{build.status.text} · ${'$'}COMMIT']"
 			"""
 		}
 	}
