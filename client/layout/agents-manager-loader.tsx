@@ -2,7 +2,7 @@ import { omnibarAgentsManagerEnabledQuery, queryClient } from '@automattic/api-q
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import { useCanShowOmnibarAiChatButton } from 'calypso/dashboard/app/omnibar/use-can-show-omnibar-ai-chat-button';
+import { useCanShowAiChatNode } from 'calypso/dashboard/app/omnibar/node-ai-chat-can-show';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { isSiteSection } from 'calypso/state/ui/selectors';
 import { useHelpCenterSite } from './use-help-center-site';
@@ -27,7 +27,7 @@ export default function AgentsManagerLoader( {
 	const { selectedSite, site } = useHelpCenterSite();
 	const isPlugins = sectionName === 'plugins';
 	const isReady = useSectionAgentProvider( sectionName, !! user );
-	const canShowOmnibarAiChatButton = useCanShowOmnibarAiChatButton();
+	const canShowAiChatNode = useCanShowAiChatNode();
 
 	useEffect( () => {
 		const { queryKey } = omnibarAgentsManagerEnabledQuery();
@@ -53,7 +53,7 @@ export default function AgentsManagerLoader( {
 			site={ isPlugins ? ( selectedSite ?? null ) : site }
 			currentSiteId={ isPlugins || isSiteSpecific ? selectedSite?.ID : undefined }
 			isInternalOnly={ isInternalOnly }
-			hasMasterbarAiChatButton={ isMasterbarVisible && canShowOmnibarAiChatButton }
+			hasMasterbarAiChatButton={ isMasterbarVisible && canShowAiChatNode }
 		/>
 	);
 }
