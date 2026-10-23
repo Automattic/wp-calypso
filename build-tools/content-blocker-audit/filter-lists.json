@@ -1,0 +1,35 @@
+{
+	"description": "Filter lists the content-blocker chunk audit evaluates. These are the lists enabled by default, or one click away, in uBlock Origin, AdGuard and Brave. Changing this list changes what the audit treats as blocked.",
+	"lists": [
+		{ "id": "easylist", "url": "https://easylist.to/easylist/easylist.txt" },
+		{ "id": "easyprivacy", "url": "https://easylist.to/easylist/easyprivacy.txt" },
+		{ "id": "easylist-cookie", "url": "https://secure.fanboy.co.nz/fanboy-cookiemonster.txt" },
+		{ "id": "fanboy-annoyance", "url": "https://secure.fanboy.co.nz/fanboy-annoyance.txt" },
+		{ "id": "ublock-filters", "url": "https://ublockorigin.github.io/uAssets/filters/filters.txt" },
+		{ "id": "ublock-privacy", "url": "https://ublockorigin.github.io/uAssets/filters/privacy.txt" },
+		{
+			"id": "adguard-base",
+			"url": "https://filters.adtidy.org/extension/ublock/filters/2_without_easylist.txt"
+		},
+		{
+			"id": "adguard-tracking",
+			"url": "https://filters.adtidy.org/extension/ublock/filters/3.txt"
+		},
+		{
+			"id": "adguard-annoyances",
+			"url": "https://filters.adtidy.org/extension/ublock/filters/14.txt"
+		}
+	],
+	"pageHosts": [ "wordpress.com" ],
+	"assetHosts": [ "wordpress.com" ],
+	"controls": [
+		{
+			"name": "async-load-calypso-blocks-cookie-banner.0123456789abcdef0123.min.js",
+			"reason": "Chunk name that blanked logged-out onboarding before #112944 renamed it; matched by the `-cookie-banner.` rule in EasyList Cookie."
+		},
+		{
+			"name": "async-load-calypso-blocks-cookie-banner.0123456789abcdef0123.min.css",
+			"reason": "Stylesheet for the same chunk."
+		}
+	]
+}
