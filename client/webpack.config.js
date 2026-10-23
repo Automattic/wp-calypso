@@ -351,8 +351,7 @@ const webpackConfig = {
 			),
 			__i18n_text_domain__: JSON.stringify( 'default' ),
 			global: 'window',
-			// The Sentry SDK uses this release when `initSentry()` doesn't set one. Defined on every
-			// build so the definitions, and with them the persistent cache, match the cache seed.
+			// The Sentry SDK uses this release when `initSentry()` doesn't set one.
 			__SENTRY_RELEASE__: shouldCreateSentryRelease ? JSON.stringify( sentryRelease ) : 'undefined',
 		} ),
 		// Node polyfills
