@@ -920,6 +920,17 @@ describe( 'JetpackAuthorize', () => {
 			expect( windowOpenSpy ).toHaveBeenCalledWith( redirectAfterAuth, expect.any( String ) );
 		} );
 
+		test( 'a standard entry-point name without a return URL falls back to the plans page', async () => {
+			await approve( {
+				authQuery: { from: 'jetpack_premium_analytics_onboarding', redirectAfterAuth: null },
+			} );
+
+			expect( windowOpenSpy ).toHaveBeenCalledWith(
+				`${ JPC_PATH_PLANS }/${ SITE_SLUG }`,
+				expect.any( String )
+			);
+		} );
+
 		test( 'a standard entry-point name does not pre-empt the A4A source redirect', async () => {
 			global.window.location.search = '?source=a8c-for-agencies';
 

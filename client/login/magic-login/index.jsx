@@ -276,7 +276,7 @@ export class MagicLogin extends Component {
 			isWooJPC,
 			isJetpackLogin,
 			isUnifiedConnectionFlow,
-			isFromJetpackConnector,
+			showsUnifiedContent,
 			connectorPlugins,
 		} = this.props;
 		const { usernameOrEmail } = this.state;
@@ -338,7 +338,7 @@ export class MagicLogin extends Component {
 		return (
 			<OneLoginLayout
 				isJetpack={ isJetpackLogin }
-				isFromJetpackConnector={ isFromJetpackConnector }
+				showsUnifiedContent={ showsUnifiedContent }
 				isUnifiedConnectionFlow={ isUnifiedConnectionFlow }
 				connectorPlugins={ connectorPlugins }
 				linkLogoToHome
@@ -395,13 +395,13 @@ const MagicLoginWithContext = ( props ) => {
 export const getConnectionFlowFromRedirectTo = ( redirectToOriginal, currentQuery = {} ) => {
 	const redirectToParams = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] );
 	const from = redirectToParams.get( 'from' ) || currentQuery.from || null;
-	const isFromJetpackConnector = isUnifiedFlow( from );
-	const rawPlugins = isFromJetpackConnector
+	const showsUnifiedContent = isUnifiedFlow( from );
+	const rawPlugins = showsUnifiedContent
 		? redirectToParams.get( 'plugins' ) || currentQuery.plugins || ''
 		: '';
 	return {
-		isUnifiedConnectionFlow: 'jetpack-onboarding' === from || isFromJetpackConnector,
-		isFromJetpackConnector,
+		isUnifiedConnectionFlow: 'jetpack-onboarding' === from || showsUnifiedContent,
+		showsUnifiedContent,
 		connectorPlugins: rawPlugins
 			.split( ',' )
 			.map( ( s ) => s.trim() )

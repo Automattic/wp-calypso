@@ -359,7 +359,7 @@ export class JetpackAuthorize extends Component {
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
 		} else if ( this.isFromMigrationPlugin() ) {
 			navigate( `/setup/site-migration?ref=jetpack-connect&from=${ urlToSlug( homeUrl ) }` );
-		} else if ( this.isFromStandardEntryPoint() ) {
+		} else if ( this.isFromStandardEntryPoint() && redirectAfterAuth ) {
 			// Standard entry points put their own marker in the return URL, so
 			// there's no plans page and no `from` to append.
 			debug( `Redirecting straight back to: ${ redirectAfterAuth }` );

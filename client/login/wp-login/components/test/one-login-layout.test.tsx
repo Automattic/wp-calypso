@@ -129,8 +129,8 @@ describe( 'OneLoginLayout logo link', () => {
 		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'does not link the logo for Jetpack connector logins', () => {
-		renderLayout( { linkLogoToHome: true, isFromJetpackConnector: true } );
+	test( 'does not link the logo on the unified connection screen', () => {
+		renderLayout( { linkLogoToHome: true, showsUnifiedContent: true } );
 		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
 	} );
 

@@ -134,7 +134,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 		);
 
 		expect( params ).toEqual( {
-			isFromJetpackConnector: true,
+			showsUnifiedContent: true,
 			isUnifiedConnectionFlow: true,
 			connectorPlugins: [ 'jetpack', 'woocommerce' ],
 		} );
@@ -146,7 +146,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 		);
 
 		expect( params.isUnifiedConnectionFlow ).toBe( true );
-		expect( params.isFromJetpackConnector ).toBe( false );
+		expect( params.showsUnifiedContent ).toBe( false );
 		expect( params.connectorPlugins ).toEqual( [] );
 	} );
 
@@ -158,7 +158,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 			);
 
 			expect( params ).toEqual( {
-				isFromJetpackConnector: true,
+				showsUnifiedContent: true,
 				isUnifiedConnectionFlow: true,
 				connectorPlugins: [ 'jetpack-premium-analytics' ],
 			} );
@@ -173,7 +173,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 			);
 
 			expect( params ).toEqual( {
-				isFromJetpackConnector: false,
+				showsUnifiedContent: false,
 				isUnifiedConnectionFlow: false,
 				connectorPlugins: [],
 			} );
@@ -185,7 +185,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 			'/jetpack/connect/authorize?from=my-jetpack&plugins=jetpack,woocommerce'
 		);
 
-		expect( params.isFromJetpackConnector ).toBe( false );
+		expect( params.showsUnifiedContent ).toBe( false );
 		expect( params.isUnifiedConnectionFlow ).toBe( false );
 		expect( params.connectorPlugins ).toEqual( [] );
 	} );
@@ -196,7 +196,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 			plugins: 'jetpack,woocommerce',
 		} );
 
-		expect( params.isFromJetpackConnector ).toBe( true );
+		expect( params.showsUnifiedContent ).toBe( true );
 		expect( params.isUnifiedConnectionFlow ).toBe( true );
 		expect( params.connectorPlugins ).toEqual( [ 'jetpack', 'woocommerce' ] );
 	} );
@@ -207,7 +207,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 			{ from: 'my-jetpack', plugins: 'woocommerce' }
 		);
 
-		expect( params.isFromJetpackConnector ).toBe( true );
+		expect( params.showsUnifiedContent ).toBe( true );
 		expect( params.connectorPlugins ).toEqual( [ 'jetpack' ] );
 	} );
 
@@ -224,13 +224,13 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 			'/jetpack/connect/authorize?from=jetpack-connector'
 		);
 
-		expect( params.isFromJetpackConnector ).toBe( true );
+		expect( params.showsUnifiedContent ).toBe( true );
 		expect( params.connectorPlugins ).toEqual( [] );
 	} );
 
 	it( 'returns sensible defaults when redirect_to is missing', () => {
 		expect( getConnectionFlowFromRedirectTo( undefined ) ).toEqual( {
-			isFromJetpackConnector: false,
+			showsUnifiedContent: false,
 			isUnifiedConnectionFlow: false,
 			connectorPlugins: [],
 		} );
