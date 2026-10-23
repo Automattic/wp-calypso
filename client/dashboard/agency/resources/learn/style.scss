@@ -166,9 +166,19 @@ $resource-brands: (
 			padding: 0;
 		}
 
+		// Fills its row, so useFitTitle() fits it to the room left by the rest,
+		// in as many lines as that takes.
 		.dashboard-resources-learn__card-title {
+			// 31px across a tile's 400px-wide header, as designed.
+			/* stylelint-disable-next-line unit-allowed-list -- sized to the header, its query container */
+			--resource-title-fluid: 7.75cqi;
+			--resource-title-max-lines: none;
+
 			grid-area: 2 / 1;
-			align-self: end;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
+			margin-block-start: 0;
 		}
 	}
 
