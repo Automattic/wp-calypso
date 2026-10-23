@@ -191,7 +191,7 @@ export default function RemoteAbilitiesSection( {
 				<SectionHeader
 					title={ __( 'Site-published abilities' ) }
 					description={ __(
-						'Advanced: choose which abilities this site’s plugins publish to external AI agents. Off by default.'
+						'Choose which abilities this site’s plugins publish to external AI agents.'
 					) }
 					level={ 3 }
 				/>
