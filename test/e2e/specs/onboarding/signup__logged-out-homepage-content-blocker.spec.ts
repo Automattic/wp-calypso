@@ -32,6 +32,17 @@ const CALYPSO_SCRIPT_OR_STYLESHEET = /\/calypso\/[^?#]*\.(?:js|css)(?:[?#]|$)/;
 const CALYPSO_STACK_FRAME = /\/calypso\/[^\s)]*\.js/;
 
 /**
+ * `@automattic/load-script` rejects with this when a script fails to load. For a script
+ * the lists blocked, such as Tracks, that is the blocker working, not Calypso breaking.
+ */
+const FAILED_SCRIPT_LOAD = /^Failed to load script "([^"]+)"/;
+
+function isBlockedScriptLoad( error: string, blockedUrls: string[], pageUrl: string ): boolean {
+	const src = FAILED_SCRIPT_LOAD.exec( error )?.[ 1 ];
+	return !! src && blockedUrls.includes( new URL( src, pageUrl ).href );
+}
+
+/**
  * Fails on error responses, which `fromLists` would otherwise parse as filters, and
  * on stalled connections. `fromLists` retries a rejected fetch.
  */
@@ -146,7 +157,13 @@ test.describe(
 			await test.step( 'And Calypso raised no uncaught errors on the user step', async function () {
 				await testInfo.attach( 'page-errors.txt', { body: pageErrors.join( '\n\n' ) } );
 				// Third-party scripts throw on production for reasons unrelated to blocking.
-				expect( pageErrors.filter( ( error ) => CALYPSO_STACK_FRAME.test( error ) ) ).toEqual( [] );
+				expect(
+					pageErrors.filter(
+						( error ) =>
+							CALYPSO_STACK_FRAME.test( error ) &&
+							! isBlockedScriptLoad( error, blockedUrls, page.url() )
+					)
+				).toEqual( [] );
 			} );
 		} );
 	}
