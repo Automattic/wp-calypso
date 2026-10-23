@@ -1,0 +1,121 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+// Covers the whole step, top bar included, until the Playground is ready.
+.playground-intro {
+	position: fixed;
+	inset: 0;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	background: var( --color-surface );
+	color: var( --color-text );
+}
+
+// Matches the Woo top bar, so the logo stays put when the intro is removed.
+.playground-intro__logo {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	box-sizing: border-box;
+	min-height: 4.5rem;
+	padding: 0.75rem var( --step-container-v2-top-bar-padding );
+
+	@include break-small {
+		padding-inline: 1.5rem;
+	}
+}
+
+.playground-intro__content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 3rem;
+	width: 100%;
+	max-width: calc( 1130px + 2rem );
+	margin-inline: auto;
+	padding: 2rem 1rem;
+	box-sizing: border-box;
+
+	@include break-medium {
+		gap: 8rem;
+		padding-block-start: 3.5rem;
+	}
+}
+
+.playground-intro__header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	max-width: 548px;
+	text-align: center;
+
+	@include break-medium {
+		margin-block-end: 0.875rem;
+	}
+}
+
+.playground-intro .playground-intro__title {
+	color: var( --color-text );
+	letter-spacing: -0.02em;
+	text-wrap: balance;
+}
+
+.playground-intro__subtitle,
+.playground-intro__caption {
+	margin: 0;
+	color: var( --color-text-subtle );
+	/* stylelint-disable-next-line scales/font-sizes -- 18px, per the design. */
+	font-size: 1.125rem;
+	line-height: 1.5;
+}
+
+.playground-intro__points {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1.5rem;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	list-style: none;
+
+	@include break-small {
+		grid-template-columns: repeat( 3, 1fr );
+		gap: 2rem;
+	}
+
+	@include break-large {
+		gap: 4rem;
+		padding-inline: 4rem;
+	}
+}
+
+.playground-intro__point {
+	display: flex;
+	align-items: flex-start;
+	gap: 1rem;
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+.playground-intro__point-icon {
+	flex-shrink: 0;
+	fill: var( --studio-gray-60 );
+}
+
+.playground-intro__progress {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	width: 100%;
+	max-width: 296px;
+}
+
+.playground-intro .playground-intro__progress-bar {
+	--wp-components-color-foreground: var( --studio-woocommerce-purple-40 );
+	width: 100%;
+	height: 6px;
+}

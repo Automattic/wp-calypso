@@ -26,6 +26,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 
 	// For preventing double click on launch button
 	const [ isLaunching, setIsLaunching ] = useState( false );
+	const [ isIntroShown, setIsIntroShown ] = useState( false );
 
 	const [ leaveModalTrigger, setLeaveModalTrigger ] = useState< LeaveModalTrigger | null >( null );
 	const [ isLeaving, setIsLeaving ] = useState( false );
@@ -125,52 +126,59 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 			<Step.PlaygroundLayout
 				className="playground"
 				topBar={
-					<Step.TopBar
-						leftElement={
-							isWooCommerceIntent && (
-								<Step.BackButton
-									className="playground__woo-back-button"
-									enableTracksEvent={ false }
-									iconSize={ 20 }
-									aria-haspopup="dialog"
-									disabled={ isLaunching }
-									accessibleWhenDisabled
-									onClick={ () => openLeaveModal( 'back' ) }
-								>
-									<span className="playground__woo-back-button-label">{ __( 'Back' ) }</span>
-								</Step.BackButton>
-							)
-						}
-						rightElement={
-							<>
-								<Step.PrimaryButton
-									className={ isWooCommerceIntent ? 'playground__woo-launch-button' : undefined }
-									onClick={ launchSite }
-									disabled={ isLaunching || isLeaving || ! readyForLaunch }
-								>
-									{ isWooCommerceIntent ? __( 'Save my store' ) : __( 'Launch on WordPress.com' ) }
-								</Step.PrimaryButton>
-								{ isWooCommerceIntent && (
-									<Button
-										className="playground__woo-close-button"
-										size="small"
-										icon={ close }
-										label={ __( 'Exit' ) }
+					// The intro covers the top bar, so keep assistive tech out of it too.
+					<div className="playground__top-bar" inert={ isIntroShown }>
+						<Step.TopBar
+							leftElement={
+								isWooCommerceIntent && (
+									<Step.BackButton
+										className="playground__woo-back-button"
+										enableTracksEvent={ false }
+										iconSize={ 20 }
 										aria-haspopup="dialog"
 										disabled={ isLaunching }
 										accessibleWhenDisabled
-										onClick={ () => openLeaveModal( 'close' ) }
-									/>
-								) }
-							</>
-						}
-					/>
+										onClick={ () => openLeaveModal( 'back' ) }
+									>
+										<span className="playground__woo-back-button-label">{ __( 'Back' ) }</span>
+									</Step.BackButton>
+								)
+							}
+							rightElement={
+								<>
+									<Step.PrimaryButton
+										className={ isWooCommerceIntent ? 'playground__woo-launch-button' : undefined }
+										onClick={ launchSite }
+										disabled={ isLaunching || isLeaving || ! readyForLaunch }
+									>
+										{ isWooCommerceIntent
+											? __( 'Save my store' )
+											: __( 'Launch on WordPress.com' ) }
+									</Step.PrimaryButton>
+									{ isWooCommerceIntent && (
+										<Button
+											className="playground__woo-close-button"
+											size="small"
+											icon={ close }
+											label={ __( 'Exit' ) }
+											aria-haspopup="dialog"
+											disabled={ isLaunching }
+											accessibleWhenDisabled
+											onClick={ () => openLeaveModal( 'close' ) }
+										/>
+									) }
+								</>
+							}
+						/>
+					</div>
 				}
 			>
 				<PlaygroundIframe
 					className="playground__onboarding-iframe"
 					hasPlaygroundClient={ Boolean( playgroundClientRef.current ) }
 					setPlaygroundClient={ setPlaygroundClient }
+					withIntro={ isWooCommerceIntent }
+					onIntroChange={ setIsIntroShown }
 				/>
 			</Step.PlaygroundLayout>
 			{ leaveModalTrigger && (
