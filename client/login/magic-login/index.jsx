@@ -8,6 +8,7 @@ import { shouldUseMagicCode } from 'calypso/blocks/login/utils/should-use-magic-
 import GlobalNotices from 'calypso/components/global-notices';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
+import { isUnifiedFlow } from 'calypso/jetpack-connect/entry-points';
 import {
 	isAndroidOAuth2Client,
 	isGravPoweredOAuth2Client,
@@ -394,12 +395,12 @@ const MagicLoginWithContext = ( props ) => {
 export const getConnectionFlowFromRedirectTo = ( redirectToOriginal, currentQuery = {} ) => {
 	const redirectToParams = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] );
 	const from = redirectToParams.get( 'from' ) || currentQuery.from || null;
-	const isFromJetpackConnector = from === 'jetpack-connector';
+	const isFromJetpackConnector = isUnifiedFlow( from );
 	const rawPlugins = isFromJetpackConnector
 		? redirectToParams.get( 'plugins' ) || currentQuery.plugins || ''
 		: '';
 	return {
-		isUnifiedConnectionFlow: [ 'jetpack-onboarding', 'jetpack-connector' ].includes( from ),
+		isUnifiedConnectionFlow: 'jetpack-onboarding' === from || isFromJetpackConnector,
 		isFromJetpackConnector,
 		connectorPlugins: rawPlugins
 			.split( ',' )

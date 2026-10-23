@@ -149,6 +149,38 @@ describe( 'JetpackSignup', () => {
 		expect( container.querySelector( '.connect-screen-features-section' ) ).not.toBeInTheDocument();
 	} );
 
+	test.each( [ 'jetpack_premium_analytics_onboarding', 'delete_connection_owner_notice' ] )(
+		'from=%s renders the connector header and the existing-account link',
+		( from ) => {
+			const { container } = render(
+				<JetpackSignup
+					{ ...DEFAULT_PROPS }
+					authQuery={ { ...DEFAULT_PROPS.authQuery, from, plugins: [ 'jetpack' ] } }
+				/>
+			);
+
+			expect(
+				container.querySelector( '.jetpack-connect__authorize-form-wrapper--connector' )
+			).toBeInTheDocument();
+			expect( container.querySelector( '.connect-screen-brand-header' ) ).toBeInTheDocument();
+			expect( screen.getByText( /Already have a WordPress.com account\?/ ) ).toBeInTheDocument();
+		}
+	);
+
+	test.each( [ 'jetpack-newsletter', 'jetpack-x_y' ] )(
+		'from=%s keeps the legacy signup header',
+		( from ) => {
+			const { container } = render(
+				<JetpackSignup { ...DEFAULT_PROPS } authQuery={ { ...DEFAULT_PROPS.authQuery, from } } />
+			);
+
+			expect(
+				container.querySelector( '.jetpack-connect__authorize-form-wrapper--connector' )
+			).not.toBeInTheDocument();
+			expect( container.querySelector( '.connect-screen-brand-header' ) ).not.toBeInTheDocument();
+		}
+	);
+
 	test( 'non-unified flow renders neither the existing-account link nor the features section', () => {
 		const { container } = render(
 			<JetpackSignup
@@ -198,40 +230,6 @@ describe( 'JetpackSignup', () => {
 		);
 	} );
 
-	describe( 'isFromJetpackConnector', () => {
-		const isFromJetpackConnector = new JetpackSignup().isFromJetpackConnector;
-
-		test( 'is from jetpack connector', () => {
-			const props = {
-				authQuery: {
-					from: 'jetpack-connector',
-				},
-			};
-
-			expect( isFromJetpackConnector( props ) ).toBe( true );
-		} );
-
-		test( 'does not match jetpack-connector prefix variants', () => {
-			const props = {
-				authQuery: {
-					from: 'jetpack-connector-v2',
-				},
-			};
-
-			expect( isFromJetpackConnector( props ) ).toBe( false );
-		} );
-
-		test( 'is not from jetpack connector', () => {
-			const props = {
-				authQuery: {
-					from: 'jetpack-onboarding',
-				},
-			};
-
-			expect( isFromJetpackConnector( props ) ).toBe( false );
-		} );
-	} );
-
 	describe( 'isFromJetpackOnboarding', () => {
 		const isFromJetpackOnboarding = new JetpackSignup().isFromJetpackOnboarding;
 
@@ -259,34 +257,15 @@ describe( 'JetpackSignup', () => {
 	describe( 'isUnifiedConnectionFlow', () => {
 		const instance = new JetpackSignup();
 
-		test( 'returns true for jetpack-onboarding', () => {
-			const props = {
-				authQuery: {
-					from: 'jetpack-onboarding',
-				},
-			};
-
-			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( true );
-		} );
-
-		test( 'returns true for jetpack-connector', () => {
-			const props = {
-				authQuery: {
-					from: 'jetpack-connector',
-				},
-			};
-
-			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( true );
-		} );
-
-		test( 'returns false for other flows', () => {
-			const props = {
-				authQuery: {
-					from: 'woocommerce-onboarding',
-				},
-			};
-
-			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( false );
+		test.each( [
+			[ 'jetpack-onboarding', true ],
+			[ 'jetpack-connector', true ],
+			[ 'jetpack_premium_analytics_onboarding', true ],
+			[ 'woocommerce-onboarding', false ],
+			[ 'jetpack-newsletter', false ],
+			[ 'jetpack-x_y', false ],
+		] )( 'from=%s → %s', ( from, expected ) => {
+			expect( instance.isUnifiedConnectionFlow( { authQuery: { from } } ) ).toBe( expected );
 		} );
 	} );
 } );

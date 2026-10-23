@@ -10,7 +10,8 @@ The user-facing flows that connect a self-hosted WordPress site to WordPress.com
 
 The authorize page (`authorize.jsx`) chooses its visual treatment from the `from` query parameter on the URL. The high-level branches:
 
-- `from=jetpack-connector` — unified connector flow (`renderContent()` connector branch). Plugin-aware via `connection-content/`. The only branch that supports secondary connections (see signal table below).
+- `from=jetpack-connector` — the Connectors card, the first entry point on the unified flow (`isUnifiedFlow()` in [`entry-points.ts`](./entry-points.ts); the `renderContent()` unified branch). Plugin-aware via `connection-content/`. The unified flow is the only one that supports secondary connections (see signal table below).
+- Standard entry-point names (`^[a-z][a-z0-9]*(_[a-z0-9]+)+$`, at most 64 characters, e.g. `jetpack_premium_analytics_onboarding`) — the unified flow, like `jetpack-connector`. After approving, they go straight back to `redirect_after_auth`: no plans page, no `from` appended. Legacy values all contain a hyphen, so they never match.
 - `from=jetpack-onboarding` — unified flow (no plugin-aware cards), shares wrapper with the connector branch via `isUnifiedConnectionFlow()`.
 - `from=my-jetpack`, `from=connect-after-checkout` — legacy My Jetpack connect/reconnect surfaces.
 - `from=woocommerce-core-profiler`, `from=woocommerce-onboarding`, `from=woocommerce-services-auto-authorize`, `from=woocommerce-setup-wizard`, plus any `wooDnaConfig().isWooDnaFlow()` match — Woo JPC / Woo DNA flows.
@@ -18,7 +19,7 @@ The authorize page (`authorize.jsx`) chooses its visual treatment from the `from
 - Per-plugin redirects (`jetpack-boost*`, `jetpack-backup*`, `jetpack-search*`, `jetpack-social*`, `jetpack-videopress*`, `blaze-ads*`, `automattic-for-agencies-client*`, `jpo*`, `connection-ui*`, `jetpack-partner-coupon*`, `wpcom-migration*`) — handled with dedicated `isFrom…()` helpers in `authorize.jsx`; most are pass-through redirects to wp-admin after authorize.
 - Anything else — default Calypso authorize card (`jetpack-connect__logged-in-card`).
 
-When adding a new `from` value, prefer extending the unified `jetpack-connector` flow (and adding the plugin to `connection-content/`) over creating a new `isFrom…()` branch.
+When adding a new entry point, give it a standard name: it gets the unified screen with no Calypso change. Add the plugin to `connection-content/` if it's new. Don't create a new `isFrom…()` branch.
 
 ## Authorize-page signals
 

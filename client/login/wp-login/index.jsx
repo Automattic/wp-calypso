@@ -13,6 +13,7 @@ import SignupExistingAccountNotice from 'calypso/blocks/login/signup-existing-ac
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
+import { isUnifiedFlow } from 'calypso/jetpack-connect/entry-points';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import {
 	isJetpackCloudOAuth2Client,
@@ -568,7 +569,7 @@ export default connect(
 
 		const redirectParams = new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] );
 		const connectorFromParam = redirectParams.get( 'from' ) || currentQuery?.from;
-		const isFromJetpackConnector = connectorFromParam === 'jetpack-connector';
+		const isFromJetpackConnector = isUnifiedFlow( connectorFromParam );
 		const connectorPlugins = isFromJetpackConnector
 			? ( redirectParams.get( 'plugins' ) || currentQuery?.plugins || '' )
 					.split( ',' )

@@ -150,6 +150,36 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 		expect( params.connectorPlugins ).toEqual( [] );
 	} );
 
+	it.each( [ 'jetpack_premium_analytics_onboarding', 'delete_connection_owner_notice' ] )(
+		'flags the connector flow and parses plugins for the standard entry-point name %s',
+		( from ) => {
+			const params = getConnectionFlowFromRedirectTo(
+				`/jetpack/connect/authorize?from=${ from }&plugins=jetpack-premium-analytics`
+			);
+
+			expect( params ).toEqual( {
+				isFromJetpackConnector: true,
+				isUnifiedConnectionFlow: true,
+				connectorPlugins: [ 'jetpack-premium-analytics' ],
+			} );
+		}
+	);
+
+	it.each( [ 'jetpack-newsletter', 'jetpack-x_y' ] )(
+		'treats the legacy value %s as outside the unified flow',
+		( from ) => {
+			const params = getConnectionFlowFromRedirectTo(
+				`/jetpack/connect/authorize?from=${ from }&plugins=jetpack`
+			);
+
+			expect( params ).toEqual( {
+				isFromJetpackConnector: false,
+				isUnifiedConnectionFlow: false,
+				connectorPlugins: [],
+			} );
+		}
+	);
+
 	it( 'does not flag the connector for unrelated from values and ignores plugins', () => {
 		const params = getConnectionFlowFromRedirectTo(
 			'/jetpack/connect/authorize?from=my-jetpack&plugins=jetpack,woocommerce'
