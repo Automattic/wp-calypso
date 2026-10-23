@@ -18,6 +18,7 @@ import type { ReactNode } from 'react';
 // The route-specific navigation each variant (dotcom, A4A) wires to its own route tree,
 // so the page shell below stays route-agnostic. Passing `null` clears back to the index route.
 export interface BackupsNavigation {
+	listPath: string;
 	selectBackup: ( rewindId: string | null ) => void;
 	requestRestore: ( rewindId: string ) => void;
 	requestDownload: ( rewindId: string, downloadId?: number ) => void;
@@ -27,7 +28,6 @@ interface BackupsPageProps {
 	site: Site;
 	navigation: BackupsNavigation;
 	rewindId?: string;
-	backupsPath: string;
 	searchParams?: Record< string, unknown >;
 	hasBackups?: boolean;
 	extraNotices?: ReactNode;
@@ -37,7 +37,6 @@ export function BackupsPage( {
 	site,
 	navigation,
 	rewindId,
-	backupsPath,
 	searchParams,
 	hasBackups = true,
 	extraNotices,
@@ -53,7 +52,7 @@ export function BackupsPage( {
 		timezoneString,
 		gmtOffset,
 		defaultDays: 30,
-		selectionPath: backupsPath,
+		selectionPath: navigation.listPath,
 	} );
 
 	const { activityLog, isLoadingActivityLog, selectedBackup, isSmallViewport } =
