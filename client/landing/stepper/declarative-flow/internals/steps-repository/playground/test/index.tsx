@@ -127,6 +127,10 @@ describe( 'Playground', () => {
 				name: 'Build first, choose hosting later',
 			} );
 			expect( Boolean( heading ) ).toBe( shown );
+			const topBarButton = screen.getByRole( 'button', {
+				name: /Save my store|Launch on WordPress.com/,
+			} );
+			expect( Boolean( topBarButton.closest( '[inert]' ) ) ).toBe( shown );
 		} );
 	} );
 

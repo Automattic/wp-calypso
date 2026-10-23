@@ -7,7 +7,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { getBlueprintID } from '../../lib/blueprint';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getBlueprintID, getBlueprintLabelForTracking } from '../../lib/blueprint';
 import { BlueprintLoadError } from '../../lib/blueprint-load-error';
 import { INITIAL_BOOT_PROGRESS } from '../../lib/boot-progress';
 import { initializeWordPressPlayground } from '../../lib/initialize-playground';
@@ -27,12 +28,14 @@ export function PlaygroundIframe( {
 	hasPlaygroundClient,
 	setPlaygroundClient,
 	withIntro = false,
+	onIntroChange,
 }: {
 	className?: string;
 	hasPlaygroundClient: boolean;
 	setPlaygroundClient: ( client: PlaygroundClient ) => void;
 	// Covers the page with the Woo intro, instead of the loader, while a new Playground boots.
 	withIntro?: boolean;
+	onIntroChange?: ( isShown: boolean ) => void;
 } ) {
 	const { __ } = useI18n();
 	const iframeRef = useRef< HTMLIFrameElement >( null );
@@ -49,6 +52,11 @@ export function PlaygroundIframe( {
 	const [ attempt, setAttempt ] = useState( 0 );
 	const { setBlueprint } = useDispatch( ONBOARD_STORE );
 	const [ query ] = useSearchParams();
+	const isIntroShown = Boolean( bootProgress );
+
+	useEffect( () => {
+		onIntroChange?.( isIntroShown );
+	}, [ isIntroShown, onIntroChange ] );
 
 	const retry = () => {
 		// A failed dynamic import can remain cached for the lifetime of the document.
@@ -77,8 +85,13 @@ export function PlaygroundIframe( {
 
 		// Decided per attempt, as "Start a new playground" changes the URL.
 		const showIntro = withIntro && isNewBlueprintBoot( searchParams );
+		const blueprint = getBlueprintLabelForTracking( searchParams );
+		const introShownAt = Date.now();
 		setIsLoading( true );
 		setBootProgress( showIntro ? INITIAL_BOOT_PROGRESS : null );
+		if ( showIntro ) {
+			recordTracksEvent( 'calypso_playground_woo_intro_show', { blueprint } );
+		}
 
 		initializeWordPressPlayground(
 			iframeRef.current,
@@ -92,6 +105,10 @@ export function PlaygroundIframe( {
 				if ( showIntro ) {
 					setBootProgress( null );
 					speak( __( 'Your store is ready.' ) );
+					recordTracksEvent( 'calypso_playground_woo_intro_ready', {
+						blueprint,
+						duration_ms: Date.now() - introShownAt,
+					} );
 				}
 
 				const id = getBlueprintID( query );
@@ -132,7 +149,7 @@ export function PlaygroundIframe( {
 				id="wp"
 				title="WordPress Playground"
 				// Keeps focus out of the Playground while the intro covers it.
-				inert={ Boolean( bootProgress ) }
+				inert={ isIntroShown }
 			/>
 		</div>
 	);

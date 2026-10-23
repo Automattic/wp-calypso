@@ -21,6 +21,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 
 	// For preventing double click on launch button
 	const [ isLaunching, setIsLaunching ] = useState( false );
+	const [ isIntroShown, setIsIntroShown ] = useState( false );
 
 	const isWooCommerceIntent = isPlaygroundWooIntent( flow, stepName, query.get( 'intent' ) );
 
@@ -56,17 +57,20 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 			<Step.PlaygroundLayout
 				className="playground"
 				topBar={
-					<Step.TopBar
-						rightElement={
-							<Step.PrimaryButton
-								className={ isWooCommerceIntent ? 'playground__woo-launch-button' : undefined }
-								onClick={ launchSite }
-								disabled={ isLaunching || ! readyForLaunch }
-							>
-								{ isWooCommerceIntent ? __( 'Save my store' ) : __( 'Launch on WordPress.com' ) }
-							</Step.PrimaryButton>
-						}
-					/>
+					// The intro covers the top bar, so keep assistive tech out of it too.
+					<div className="playground__top-bar" inert={ isIntroShown }>
+						<Step.TopBar
+							rightElement={
+								<Step.PrimaryButton
+									className={ isWooCommerceIntent ? 'playground__woo-launch-button' : undefined }
+									onClick={ launchSite }
+									disabled={ isLaunching || ! readyForLaunch }
+								>
+									{ isWooCommerceIntent ? __( 'Save my store' ) : __( 'Launch on WordPress.com' ) }
+								</Step.PrimaryButton>
+							}
+						/>
+					</div>
 				}
 			>
 				<PlaygroundIframe
@@ -74,6 +78,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 					hasPlaygroundClient={ Boolean( playgroundClientRef.current ) }
 					setPlaygroundClient={ setPlaygroundClient }
 					withIntro={ isWooCommerceIntent }
+					onIntroChange={ setIsIntroShown }
 				/>
 			</Step.PlaygroundLayout>
 		</>
