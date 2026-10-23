@@ -140,30 +140,22 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 		} );
 	} );
 
-	it( 'recognises jetpack-onboarding as part of the unified flow without flagging the connector', () => {
+	it.each( [
+		'jetpack-onboarding',
+		'jetpack-onboarding-wizard',
+		'jetpack_premium_analytics_onboarding',
+		'delete_connection_owner_notice',
+	] )( 'flags the connector flow and parses plugins for from=%s', ( from ) => {
 		const params = getConnectionFlowFromRedirectTo(
-			'/jetpack/connect/authorize?from=jetpack-onboarding'
+			`/jetpack/connect/authorize?from=${ from }&plugins=jetpack-premium-analytics`
 		);
 
-		expect( params.isUnifiedConnectionFlow ).toBe( true );
-		expect( params.showsUnifiedContent ).toBe( false );
-		expect( params.connectorPlugins ).toEqual( [] );
+		expect( params ).toEqual( {
+			showsUnifiedContent: true,
+			isUnifiedConnectionFlow: true,
+			connectorPlugins: [ 'jetpack-premium-analytics' ],
+		} );
 	} );
-
-	it.each( [ 'jetpack_premium_analytics_onboarding', 'delete_connection_owner_notice' ] )(
-		'flags the connector flow and parses plugins for the standard entry-point name %s',
-		( from ) => {
-			const params = getConnectionFlowFromRedirectTo(
-				`/jetpack/connect/authorize?from=${ from }&plugins=jetpack-premium-analytics`
-			);
-
-			expect( params ).toEqual( {
-				showsUnifiedContent: true,
-				isUnifiedConnectionFlow: true,
-				connectorPlugins: [ 'jetpack-premium-analytics' ],
-			} );
-		}
-	);
 
 	it.each( [ 'jetpack-newsletter', 'jetpack-x_y' ] )(
 		'treats the legacy value %s as outside the unified flow',

@@ -279,9 +279,11 @@ describe( 'JetpackAuthorize', () => {
 		expect( screen.getByRole( 'article', { name: 'Jetpack Boost' } ) ).toBeInTheDocument();
 	} );
 
-	describe( 'standard entry-point names', () => {
+	describe( 'unified connection screen', () => {
 		test.each( [
 			'jetpack-connector',
+			'jetpack-onboarding',
+			'jetpack-onboarding-wizard',
 			'jetpack_premium_analytics_onboarding',
 			'delete_connection_owner_notice',
 		] )( 'from=%s shows the unified connection screen', ( from ) => {
@@ -319,10 +321,34 @@ describe( 'JetpackAuthorize', () => {
 				expect( screen.queryByRole( 'article' ) ).not.toBeInTheDocument();
 			}
 		);
+
+		test( 'from=my-jetpack keeps the static permissions screen', () => {
+			const { container } = renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ { ...DEFAULT_PROPS.authQuery, from: 'my-jetpack', plugins: [ 'jetpack' ] } }
+				/>
+			);
+
+			expect(
+				container.querySelector( '.jetpack-connect__authorize-form-wrapper--connector' )
+			).not.toBeInTheDocument();
+			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
+				/Now let.s connect your account/
+			);
+			expect(
+				screen.getByText( 'This connection on an.example.site allows Jetpack to:' )
+			).toBeInTheDocument();
+			expect( screen.queryByRole( 'article' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'secondary connection branches', () => {
-		test.each( [ 'jetpack-connector', 'jetpack_premium_analytics_onboarding' ] )(
+		test.each( [
+			'jetpack-connector',
+			'jetpack-onboarding',
+			'jetpack_premium_analytics_onboarding',
+		] )(
 			'admin secondary connection from=%s shows secondary cards and Connect account button, no blocking notice',
 			( from ) => {
 				renderWithRedux(
@@ -622,34 +648,13 @@ describe( 'JetpackAuthorize', () => {
 	describe( 'isFromJetpackOnboardingFlow', () => {
 		const isFromJetpackOnboarding = new JetpackAuthorize().isFromJetpackOnboarding;
 
-		test( 'is from jetpack onboarding', () => {
-			const props = {
-				authQuery: {
-					from: 'jetpack-onboarding',
-				},
-			};
-
-			expect( isFromJetpackOnboarding( props ) ).toBe( true );
-		} );
-
-		test( 'does not match jetpack-onboarding prefix variants', () => {
-			const props = {
-				authQuery: {
-					from: 'jetpack-onboarding-v2',
-				},
-			};
-
-			expect( isFromJetpackOnboarding( props ) ).toBe( false );
-		} );
-
-		test( 'is not from jetpack onboarding', () => {
-			const props = {
-				authQuery: {
-					from: 'not-jetpack-onboarding',
-				},
-			};
-
-			expect( isFromJetpackOnboarding( props ) ).toBe( false );
+		test.each( [
+			[ 'jetpack-onboarding', true ],
+			[ 'jetpack-onboarding-wizard', true ],
+			[ 'not-jetpack-onboarding', false ],
+			[ 'my-jetpack', false ],
+		] )( 'from=%s → %s', ( from, expected ) => {
+			expect( isFromJetpackOnboarding( { authQuery: { from } } ) ).toBe( expected );
 		} );
 	} );
 
@@ -692,10 +697,12 @@ describe( 'JetpackAuthorize', () => {
 
 		test.each( [
 			[ 'jetpack-onboarding', true ],
+			[ 'jetpack-onboarding-wizard', true ],
 			[ 'jetpack-connector', true ],
 			[ 'jetpack_premium_analytics_onboarding', true ],
 			[ 'delete_connection_owner_notice', true ],
 			[ 'woocommerce-onboarding', false ],
+			[ 'my-jetpack', false ],
 			[ 'jetpack-newsletter', false ],
 			[ 'jetpack-x_y', false ],
 		] )( 'from=%s → %s', ( from, expected ) => {
@@ -896,13 +903,16 @@ describe( 'JetpackAuthorize', () => {
 				/>
 			);
 
-			await userEvent.click( screen.getByText( 'Return to your site' ) );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Return to your site' } ) );
 		};
 
 		test.each( [
 			[ 'jetpack_premium_analytics_onboarding', redirectAfterAuth ],
 			[ 'delete_connection_owner_notice', redirectAfterAuth ],
 			[ 'jetpack-connector', `${ redirectAfterAuth }&from=jetpack-connector` ],
+			[ 'jetpack-onboarding', `${ redirectAfterAuth }&from=jetpack-onboarding` ],
+			[ 'jetpack-onboarding-wizard', `${ redirectAfterAuth }&from=jetpack-onboarding-wizard` ],
+			[ 'my-jetpack', plansPage ],
 			[ 'jetpack-newsletter', plansPage ],
 			[ 'jetpack-x_y', plansPage ],
 		] )( 'from=%s goes to %s', async ( from, expected ) => {

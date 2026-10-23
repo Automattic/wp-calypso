@@ -395,13 +395,13 @@ const MagicLoginWithContext = ( props ) => {
 export const getConnectionFlowFromRedirectTo = ( redirectToOriginal, currentQuery = {} ) => {
 	const redirectToParams = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] );
 	const from = redirectToParams.get( 'from' ) || currentQuery.from || null;
-	const showsUnifiedContent = isUnifiedFlow( from );
-	const rawPlugins = showsUnifiedContent
+	const isUnifiedConnectionFlow = isUnifiedFlow( from );
+	const rawPlugins = isUnifiedConnectionFlow
 		? redirectToParams.get( 'plugins' ) || currentQuery.plugins || ''
 		: '';
 	return {
-		isUnifiedConnectionFlow: 'jetpack-onboarding' === from || showsUnifiedContent,
-		showsUnifiedContent,
+		isUnifiedConnectionFlow,
+		showsUnifiedContent: isUnifiedConnectionFlow,
 		connectorPlugins: rawPlugins
 			.split( ',' )
 			.map( ( s ) => s.trim() )
