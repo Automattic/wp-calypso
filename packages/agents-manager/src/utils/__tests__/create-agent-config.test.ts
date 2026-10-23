@@ -230,6 +230,23 @@ describe( 'createAgentConfig', () => {
 		);
 	} );
 
+	it( 'lists the providers’ interactive UI catalogs in each message’s metadata', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
+			interactiveUiCatalogs: [ { catalog: { catalogId: 'urn:woo-ai:v1' } } ],
+		} );
+
+		expect( config.contextProvider?.getMessageMetadata?.() ).toHaveProperty(
+			[ 'a2uiRendererCapabilities', 'v1.0', 'supportedCatalogIds' ],
+			expect.arrayContaining( [ 'urn:woo-ai:v1' ] )
+		);
+		expect( config.contextProvider?.getClientContext() ).not.toHaveProperty(
+			'a2uiRendererCapabilities'
+		);
+	} );
+
 	it( 'merges site editor actions into default client context', async () => {
 		setSiteEditorAction( 'colorPickerItemSelected', 'Ruby' );
 

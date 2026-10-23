@@ -56,12 +56,13 @@ function BenefitRow( {
 			variant: ( isSmallViewport ? 'secondary' : 'tertiary' ) as ComponentProps<
 				typeof ButtonComponent
 			>[ 'variant' ],
+			style: isSmallViewport ? { justifyContent: 'center' } : undefined,
 		};
 
 		const buttons = benefit.actions.map( ( action ) => {
 			if ( action.id === 'download-badge' ) {
 				return renderDownloadBadges ? (
-					<span key={ action.id }>{ renderDownloadBadges( buttonProps ) }</span>
+					<Fragment key={ action.id }>{ renderDownloadBadges( buttonProps ) }</Fragment>
 				) : null;
 			}
 			if ( action.id === 'schedule-call' ) {

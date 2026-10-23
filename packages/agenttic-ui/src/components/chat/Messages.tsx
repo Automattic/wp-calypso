@@ -6,9 +6,11 @@ import { cn } from '../../utils/classNames';
 import { getLatestTurnStartIndex, getVisibleMessages } from '../../utils/message-helpers';
 import { SourcesCard } from '../sources';
 import { Message } from './Message';
+import { MessageCard } from './MessageCard';
 import styles from './Messages.module.css';
+import { Notice } from './Notice';
 import { ThinkingMessage } from './ThinkingMessage';
-import type { Message as MessageType } from '../../types';
+import type { Message as MessageType, NoticeConfig } from '../../types';
 import type { ComponentType } from 'react';
 
 interface MessagesProps {
@@ -19,6 +21,7 @@ interface MessagesProps {
 	/** Whether reply text is streaming in. When set, it drives the thinking indicator. */
 	isReplying?: boolean;
 	error?: string | null;
+	errorNotice?: NoticeConfig;
 	emptyView?: React.ReactNode;
 	messageRenderer?: ComponentType< { children: string } >;
 	thinkingMessage?: string;
@@ -52,6 +55,7 @@ export function Messages( {
 	isStreaming = isProcessing,
 	isReplying,
 	error,
+	errorNotice,
 	emptyView,
 	messageRenderer,
 	thinkingMessage,
@@ -101,6 +105,8 @@ export function Messages( {
 	useEffect( () => {
 		if ( isProcessing ) {
 			textWhenProcessingStartedRef.current ??= liveRegionText;
+			// Emptied for the turn, so the same text is read out again when it ends.
+			setAnnouncement( '' );
 			return;
 		}
 		const textWhenStarted = textWhenProcessingStartedRef.current;
@@ -114,6 +120,17 @@ export function Messages( {
 		const latest = agentMessages?.[ agentMessages.length - 1 ];
 		setAnnouncement( getSpokenText( latest?.querySelector( '[data-slot="message-bubble"]' ) ) );
 	}, [ isProcessing, liveRegionText ] );
+
+	// Announce the notice in the message list when it appears or changes, as with a reply.
+	const noticeMessage =
+		errorNotice && [ errorNotice.title, errorNotice.message ].filter( Boolean ).join( '. ' );
+	const announcedNoticeRef = useRef( noticeMessage );
+	useEffect( () => {
+		if ( noticeMessage && noticeMessage !== announcedNoticeRef.current ) {
+			setAnnouncement( noticeMessage );
+		}
+		announcedNoticeRef.current = noticeMessage;
+	}, [ noticeMessage ] );
 
 	if ( visibleMessages.length === 0 && ! isProcessing ) {
 		if ( emptyView ) {
@@ -136,7 +153,7 @@ export function Messages( {
 
 	return (
 		<>
-			{ /* Live region for announcing AI responses - hidden from view */ }
+			{ /* Live region for announcing AI responses and the error notice - hidden from view */ }
 			<div
 				aria-live="polite"
 				aria-atomic="true"
@@ -193,6 +210,21 @@ export function Messages( {
 							} }
 						>
 							{ error }
+						</div>
+					) }
+					{ /* A DOM element for the ref AnimatePresence's popLayout measures with. */ }
+					{ errorNotice && (
+						<div key="error-notice" className={ errorNotice.title ? styles.errorCard : undefined }>
+							{ errorNotice.title ? (
+								<MessageCard
+									title={ errorNotice.title }
+									description={ errorNotice.message }
+									url={ errorNotice.action?.href }
+									onClick={ errorNotice.action?.onClick }
+								/>
+							) : (
+								<Notice { ...errorNotice } className={ styles.errorNotice } />
+							) }
 						</div>
 					) }
 				</AnimatePresence>

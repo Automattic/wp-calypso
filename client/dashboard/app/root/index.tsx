@@ -17,17 +17,17 @@ import { PageViewTracker } from '../../components/page-view-tracker';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import NotFound from '../404';
 import AccountRecoveryInterstitial from '../account-recovery-interstitial';
+import AgentsManagerLoader from '../agents-manager/agents-manager-loader';
 import { bumpStat } from '../analytics';
 import { CheckoutSuccessFlashMessage } from '../checkout-success-flash-message';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
+import DefaultHelpCenter from '../help-center/help-center';
 import { useTrackVisitedAreas } from '../hooks/use-visit-counter';
 import MutationErrorTracker from '../mutation-error-tracker';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
 import { useOmnibarEvent } from '../omnibar/events';
-import OmnibarAgentsManager from '../omnibar/omnibar-agents-manager';
-import OmnibarHelpCenter from '../omnibar/omnibar-help-center';
 import { useSyncOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import { ResurrectedWelcomeModalGate } from '../resurrected-welcome-modal';
@@ -56,7 +56,7 @@ function Root() {
 		'dashboard/account-recovery-interstitial'
 	);
 	const { name, supports, components, LoadingLogo = WordPressLogo } = useAppContext();
-	const HelpCenter = components.helpCenter ?? OmnibarHelpCenter;
+	const HelpCenter = components.helpCenter ?? DefaultHelpCenter;
 	const isResurrectedWelcomeModalEnabled =
 		supports.resurrectedWelcomeModal && ! isDashboardBackport() && ! isE2ETest();
 	const isFetching = useIsFetching();
@@ -189,7 +189,7 @@ function Root() {
 			{ supports.commandPalette && <CommandPalette /> }
 			{ supports.notifications && <Notifications anchor /> }
 			{ supports.help && <HelpCenter /> }
-			<OmnibarAgentsManager pathname={ pathname } />
+			<AgentsManagerLoader pathname={ pathname } />
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />
 			{ isResurrectedWelcomeModalEnabled && (

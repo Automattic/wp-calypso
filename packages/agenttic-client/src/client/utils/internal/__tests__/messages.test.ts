@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { enhanceMessageWithTools } from '../messages';
+import { enhanceMessage, enhanceMessageWithContext, enhanceMessageWithTools } from '../messages';
 import type { Ability, Message, ToolProvider } from '../../../types/index';
 
 describe( 'enhanceMessageWithTools', () => {
@@ -371,5 +371,99 @@ describe( 'enhanceMessageWithTools', () => {
 		expect( abilityPart.data.input_schema ).toEqual( ability.input_schema );
 		expect( abilityPart.data.output_schema ).toEqual( ability.output_schema );
 		expect( abilityPart.data.meta ).toEqual( ability.meta );
+	} );
+} );
+
+describe( 'enhanceMessageWithContext', () => {
+	const message: Message = {
+		role: 'user',
+		kind: 'message',
+		messageId: 'm-1',
+		parts: [ { type: 'text', text: 'Help me with: design' } ],
+		metadata: { promptSource: 'site-setup-checklist', promptSourceId: 'design' },
+	};
+
+	it( 'sends the message’s prompt source in the client context metadata', () => {
+		const enhanced = enhanceMessageWithContext( message, {
+			getClientContext: () => ( { url: 'https://example.com', metadata: { source: 'sitespec' } } ),
+		} );
+
+		expect( enhanced.parts.at( -1 ) ).toMatchObject( {
+			type: 'data',
+			data: {
+				clientContext: {
+					url: 'https://example.com',
+					metadata: {
+						source: 'sitespec',
+						promptSource: 'site-setup-checklist',
+						promptSourceId: 'design',
+					},
+				},
+			},
+		} );
+	} );
+
+	it( 'still sends the prompt source when the host has no context provider', () => {
+		const enhanced = enhanceMessageWithContext( message );
+
+		expect( enhanced.parts.at( -1 ) ).toMatchObject( {
+			type: 'data',
+			data: {
+				clientContext: {
+					metadata: { promptSource: 'site-setup-checklist', promptSourceId: 'design' },
+				},
+			},
+		} );
+	} );
+
+	it( 'leaves the context alone without a prompt source', () => {
+		const enhanced = enhanceMessageWithContext(
+			{ ...message, metadata: { archived: true } },
+			{ getClientContext: () => ( { url: 'https://example.com' } ) }
+		);
+
+		expect( enhanced.parts.at( -1 ) ).toMatchObject( {
+			type: 'data',
+			data: { clientContext: { url: 'https://example.com' } },
+		} );
+	} );
+} );
+
+describe( 'enhanceMessage', () => {
+	const message: Message = {
+		role: 'user',
+		kind: 'message',
+		messageId: 'm-1',
+		parts: [ { type: 'text', text: 'Hi' } ],
+		metadata: { timestamp: 1 },
+	};
+
+	it( 'sends the agent the context provider’s message metadata, not the client’s', async () => {
+		const enhanced = await enhanceMessage( message, undefined, {
+			getClientContext: () => ( {} ),
+			getMessageMetadata: () => ( { a2uiRendererCapabilities: { 'v1.0': {} } } ),
+		} );
+
+		expect( enhanced.metadata ).toEqual( { a2uiRendererCapabilities: { 'v1.0': {} } } );
+	} );
+
+	it.each( [
+		[ 'gives none', {} ],
+		[ 'gives an empty object', { getMessageMetadata: () => ( {} ) } ],
+		[
+			'fails to give it',
+			{
+				getMessageMetadata: () => {
+					throw new Error( 'Unavailable' );
+				},
+			},
+		],
+	] )( 'sends no metadata when the context provider %s', async ( _case, provider ) => {
+		const enhanced = await enhanceMessage( message, undefined, {
+			getClientContext: () => ( {} ),
+			...provider,
+		} );
+
+		expect( enhanced ).not.toHaveProperty( 'metadata' );
 	} );
 } );

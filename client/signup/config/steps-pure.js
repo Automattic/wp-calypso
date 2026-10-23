@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { PLAN_ECOMMERCE_MONTHLY, PLAN_ECOMMERCE } from '@automattic/calypso-products';
+import { PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 
 const noop = () => {};
@@ -467,18 +467,6 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			props: {
 				nonInteractive: true,
-			},
-		},
-
-		'plans-ecommerce-monthly': {
-			stepName: 'plans-ecommerce-monthly',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_ECOMMERCE_MONTHLY,
-				themeSlugWithRepo: 'pub/twentytwentytwo',
 			},
 		},
 
