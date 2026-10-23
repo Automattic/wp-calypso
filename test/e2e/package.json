@@ -39,6 +39,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-e2e": "workspace:^",
+		"@ghostery/adblocker-playwright": "2.20.1",
 		"@playwright/browser-chromium": "1.57.0",
 		"@playwright/test": "1.57.0",
 		"@types/archiver": "^5.3.1",

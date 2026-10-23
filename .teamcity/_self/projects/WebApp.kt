@@ -28,6 +28,7 @@ object WebApp : Project({
 	buildType(PlaywrightTestDashboardPRMatrix)
 	buildType(PlaywrightTestA4APRMatrix)
 	buildType(AuthenticationE2ETests)
+	buildType(LoggedOutSignupContentBlockerE2ETests)
 })
 
 object BuildDockerImage : BuildType({
@@ -1218,6 +1219,76 @@ object AuthenticationE2ETests : BuildType({
 			branchFilter = "+:<default>"
 			triggerBuild = always()
 			withPendingChangesOnly = true
+		}
+	}
+})
+
+object LoggedOutSignupContentBlockerE2ETests : BuildType({
+	templates(CalypsoE2ETestsBuildTemplate)
+	id("calypso_WebApp_Calypso_E2E_Logged_Out_Signup_Content_Blocker")
+	uuid = "a845946a-7e81-44ed-88f5-1aae87662d25"
+	name = "Logged-out signup content-blocker E2E Tests"
+	description = "Opens the logged-out wordpress.com homepage in a browser that runs common content-blocker lists and checks that Get started still reaches a usable signup step (DOTOBRD-569)."
+	// Failures come from production or the filter lists, not the trunk commit a scheduled run is pinned to.
+	disableSettings("calypso_e2e_commit_status_publisher")
+
+	params {
+		param("TEST_GROUP", "@content-blocker")
+		param("CALYPSO_BASE_URL", "https://wordpress.com")
+		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Add the run summary to the build status"
+			id = "add_run_summary"
+			// The spec writes which Calypso commit production served and which filter list
+			// versions it used, so a failure shows what changed since the last pass.
+			executionMode = BuildStep.ExecutionMode.ALWAYS
+			scriptContent = """
+				SUMMARY_FILE=test/e2e/output/content-blocker-run-summary.txt
+				[[ -f "${'$'}SUMMARY_FILE" ]] || exit 0
+				echo "Filter lists:"
+				tail -n +2 "${'$'}SUMMARY_FILE"
+				# Escape the characters TeamCity service messages reserve.
+				COMMIT=${'$'}(head -n 1 "${'$'}SUMMARY_FILE" | sed -e "s/|/||/g" -e "s/'/|'/g" -e "s/\[/|[/g" -e "s/\]/|]/g")
+				echo "##teamcity[buildStatus text='{build.status.text} · ${'$'}COMMIT']"
+			"""
+		}
+	}
+
+	features {
+		matrix {
+			param("PROJECT", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile"),
+			))
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#dotcom-quake"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
+	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = cron {
+				hours = "*/6"
+			}
+			branchFilter = "+:<default>"
+			triggerBuild = always()
+			// The check targets what production serves, which changes without a trunk commit.
+			withPendingChangesOnly = false
 		}
 	}
 })
