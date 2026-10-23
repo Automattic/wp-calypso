@@ -1,5 +1,6 @@
 import {
 	getAgentManager,
+	getApprovalRequest,
 	loadAllMessagesFromServer,
 	loadChatFromServer,
 	type Message,
@@ -12,6 +13,7 @@ import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
+import { restoreConversationApprovals } from '../utils/action-approval-api';
 import { isUnsentSession } from '../utils/agent-session';
 import { getConversationBotId } from '../utils/conversation-bot-id';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
@@ -38,6 +40,7 @@ type ReplyWait = 'idle' | 'waiting' | 'resuming' | 'timed-out';
 const MAX_PAGES = 10;
 
 interface Config {
+	hasPendingApproval?: boolean;
 	/** Whether an unanswered question may be waited on; false while a turn runs. */
 	waitForReply?: boolean;
 	/** Called with the unanswered question when the user picks Retry. */
@@ -47,10 +50,11 @@ interface Config {
 		toolResults: ToolResultInput[],
 		turnToolCalls: TurnToolCall[]
 	) => Promise< boolean >;
-	onSuccess?: ( messages: Message[], sessionId: string ) => void;
+	onSuccess?: ( messages: Message[], sessionId: string, chatId?: number ) => void;
 }
 
 interface Result {
+	chatId?: number;
 	isLoading: boolean;
 	notice: NoticeConfig | undefined;
 	/** A resume failed, usually as another page answered first; the chat hides its send error until the next turn. */
@@ -69,12 +73,13 @@ interface Result {
  * a resume that loses to another page just keeps waiting.
  */
 export default function useConversation( {
+	hasPendingApproval: hasLivePendingApproval,
 	waitForReply = false,
 	onRetry,
 	onResume,
 	onSuccess = () => {},
 }: Config ): Result {
-	const { agentConfig } = useAgentsManagerContext();
+	const { agentConfig, siteKey, currentUser } = useAgentsManagerContext();
 	const { agentId, sessionId, authProvider } = agentConfig!;
 
 	// Keep a ref to the latest callback to avoid re-triggering effects when it changes.
@@ -97,39 +102,62 @@ export default function useConversation( {
 	const [ hasFailedResume, setHasFailedResume ] = useState( false );
 
 	const queryClient = useQueryClient();
-	const queryKey = [ 'agents-manager-conversation', sessionId ];
+	const queryKey = [
+		'agents-manager-conversation',
+		sessionId,
+		...( agentConfig?.enableActionApprovals ? [ siteKey, currentUser?.ID, agentId ] : [] ),
+	];
 
 	// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
-	const { data, isLoading, error } = useQuery( {
+	const { data, isLoading, error, refetch } = useQuery( {
 		queryKey,
 		queryFn: async () => {
 			const urlSearchParams = new URLSearchParams( window.location.search );
 			const hasAgentParam = urlSearchParams.has( 'agent' );
 			const botId = getConversationBotId( agentId, hasAgentParam );
-			const config = { botId, apiBaseUrl: API_BASE_URL, authProvider };
+			const config = {
+				botId,
+				apiBaseUrl: API_BASE_URL,
+				authProvider,
+				enableActionApprovals: agentConfig?.enableActionApprovals,
+			};
 
 			// Only the newest page can change while a reply is awaited.
 			const loaded = queryClient.getQueryData< ServerLoadResult >( queryKey );
 			if ( replyWaitRef.current === 'waiting' && loaded ) {
 				const newestPage = await loadChatFromServer( sessionId, config, 1, 50, true );
-				return {
+				const merged = {
 					...newestPage,
 					messages: mergeNewestPage( loaded.messages, newestPage.messages ),
 				};
+				return agentConfig?.enableActionApprovals ? restoreConversationApprovals( merged ) : merged;
 			}
 
-			return await loadAllMessagesFromServer( sessionId, config, MAX_PAGES, true );
+			const history = await loadAllMessagesFromServer( sessionId, config, MAX_PAGES, true );
+			return agentConfig?.enableActionApprovals ? restoreConversationApprovals( history ) : history;
 		},
 		// Public Reader Chat does not expose conversation history, and the
 		// server-side history endpoint requires permissions public readers
 		// usually do not have.
 		enabled: !! sessionId && ! isUnsent && ! isReaderChatAgent( agentId ),
 		refetchOnWindowFocus: false,
-		refetchInterval: replyWait === 'waiting' ? REPLY_POLL_INTERVAL_MS : false,
+		refetchInterval:
+			! hasLivePendingApproval && replyWait === 'waiting' ? REPLY_POLL_INTERVAL_MS : false,
 		// The wait's cap keeps running in a background tab, so polling has to as well.
 		refetchIntervalInBackground: true,
 	} );
 
+	const hasPendingApproval =
+		hasLivePendingApproval ??
+		!! (
+			agentConfig?.enableActionApprovals &&
+			data?.messages.some( ( message ) =>
+				message.parts.some( ( part ) => {
+					const request = getApprovalRequest( part );
+					return request && [ 'pending', 'approved', 'executing' ].includes( request.state );
+				} )
+			)
+		);
 	const question = data && getUnansweredQuestion( data.messages );
 	const newestId = data ? getNewestServerId( data.messages ) : 0;
 
@@ -142,7 +170,7 @@ export default function useConversation( {
 
 	useEffect(
 		() => {
-			if ( waitForReply ) {
+			if ( waitForReply && ! hasPendingApproval ) {
 				return;
 			}
 
@@ -161,7 +189,7 @@ export default function useConversation( {
 			}
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- only when the chat starts processing
-		[ waitForReply ]
+		[ waitForReply, hasPendingApproval ]
 	);
 
 	useEffect(
@@ -197,10 +225,11 @@ export default function useConversation( {
 			}
 
 			loadedNewestIdRef.current = newestId;
-			onSuccessRef.current( data.messages, data.sessionId || sessionId );
+			onSuccessRef.current( data.messages, data.sessionId || sessionId, data.chatId );
 
 			if (
 				waitForReply &&
+				! hasPendingApproval &&
 				! isTurnInFlight &&
 				question &&
 				Date.now() - question.lastActivityAt < MAX_REPLY_WAIT_MS
@@ -214,14 +243,14 @@ export default function useConversation( {
 
 	// Restarts with each new message: a long turn still adding results is not over.
 	useEffect( () => {
-		if ( replyWait !== 'waiting' ) {
+		if ( hasPendingApproval || replyWait !== 'waiting' ) {
 			return;
 		}
 
 		const timer = setTimeout( () => setReplyWait( 'timed-out' ), MAX_REPLY_WAIT_MS );
 
 		return () => clearTimeout( timer );
-	}, [ replyWait, newestId ] );
+	}, [ replyWait, newestId, hasPendingApproval ] );
 
 	const pendingTools = data?.pendingClientTools;
 	const pendingToolsRef = useRef( pendingTools );
@@ -231,6 +260,7 @@ export default function useConversation( {
 			? pendingTools.calls.map( ( call ) => call.toolCallId ).join( ',' )
 			: '';
 	const canResume =
+		! hasPendingApproval &&
 		replyWait === 'waiting' &&
 		!! onResume &&
 		!! pendingCalls &&
@@ -294,6 +324,29 @@ export default function useConversation( {
 	}, [ error ] );
 
 	let notice: NoticeConfig | undefined;
+	if ( error && agentConfig?.enableActionApprovals ) {
+		return {
+			chatId: data?.chatId,
+			isLoading,
+			hasFailedResume: false,
+			notice: {
+				message: __(
+					'Approval history could not be loaded. Retry before continuing.',
+					__i18n_text_domain__
+				),
+				action: {
+					label: __( 'Retry', __i18n_text_domain__ ),
+					onClick: () => {
+						void refetch();
+					},
+				},
+			},
+		};
+	}
+
+	if ( hasPendingApproval ) {
+		return { chatId: data?.chatId, isLoading, notice: undefined, hasFailedResume: false };
+	}
 
 	if ( replyWait === 'waiting' ) {
 		notice = { message: __( 'Waiting for the reply…', __i18n_text_domain__ ), dismissible: false };
@@ -321,5 +374,5 @@ export default function useConversation( {
 		};
 	}
 
-	return { isLoading, notice, hasFailedResume };
+	return { chatId: data?.chatId, isLoading, notice, hasFailedResume };
 }

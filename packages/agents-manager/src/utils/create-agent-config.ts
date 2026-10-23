@@ -305,6 +305,7 @@ export async function createAgentConfig(
 			...( sessionUserId !== undefined && { userId: sessionUserId } ),
 		} ),
 		enableStreaming: true,
+		enableActionApprovals: !! sessionUserId && ! isReaderChatAgent( agentId ),
 	};
 
 	if ( onTaskUpdate ) {
@@ -335,6 +336,22 @@ export async function createAgentConfig(
 			providerIds
 		);
 	}
+
+	const baseContextProvider = config.contextProvider!;
+	config.contextProvider = {
+		getClientContext: () => {
+			const context = baseContextProvider.getClientContext();
+			const capabilities =
+				typeof context.capabilities === 'object' && context.capabilities !== null
+					? ( { ...context.capabilities } as Record< string, unknown > )
+					: {};
+			delete capabilities.action_approval;
+			if ( config.enableActionApprovals ) {
+				capabilities.action_approval = true;
+			}
+			return { ...context, capabilities };
+		},
+	};
 
 	return config;
 }

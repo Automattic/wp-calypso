@@ -147,3 +147,35 @@ Calypso, the Dashboard and `apps/agents-manager` import `src/` directly (`calyps
 ## License
 
 GPL-2.0-or-later
+
+### Action approvals
+
+Signed-in mounts with conversation history advertise `capabilities.action_approval`
+in client context; Reader Chat never advertises it. `enableActionApprovals` opts
+Agenttic into retaining the versioned display data. The action approvals hook
+owns records scoped to user, site, agent, and session, keyed by
+`approval:<proposalId>`. Stream events and history echoes upsert that record;
+`convertActionApprovalMessages` is the only card renderer. New-chat session
+bootstrap preserves records; switching scope drops them and rejects stale callbacks.
+
+Pending proposals and active decision/continuation requests block composer,
+suggestion, host, retry, regeneration, and context sends. On approval-enabled mounts, hydration disables the
+composer until history is ready; other mounts retain their existing behavior. Failed continuations show an unknown outcome
+and a manual retry without keeping the composer locked. Approval data is never a browser tool call.
+
+Decisions POST with the authentication provider's headers unchanged. A successful
+decision sends a hidden `approvalResume` control message; a failed continuation
+can be retried without posting the decision again. Already-decided responses
+reconcile the card without resuming. Scope changes abort outstanding requests.
+
+History restores the opt-in `approvals` array returned with the existing Odie
+history request, using the server's numeric `chatId`, before browser recovery.
+An absent field adds no cards or requests. The list endpoint is used only to
+reconcile a card after continuation. Restored pending cards
+remain answerable; restored A2UI surfaces retain their existing disabled behavior.
+`description` carries the site and target. Typed text never implies a decision.
+
+Cards replace their original transcript anchors, including history tool-call
+messages carrying `context.approval`; authoritative state updates retain that
+position. Remounts reconcile from history: pending cards remain answerable,
+approved records offer continuation-only retry, and terminal records unlock sends.

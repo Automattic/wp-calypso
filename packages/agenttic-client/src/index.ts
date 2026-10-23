@@ -135,3 +135,11 @@ export type { OdieBotConfig } from './react/odieConfig';
 
 // Agents API REST adapter for WordPress-native chat surfaces.
 export * from './agents-api';
+
+export {
+	parseApprovalRequest,
+	getApprovalRequest,
+	hasApprovalRequest,
+	normalizeApprovalMessages,
+} from './react/actionApprovals';
+export type { ApprovalRequest } from './react/actionApprovals';

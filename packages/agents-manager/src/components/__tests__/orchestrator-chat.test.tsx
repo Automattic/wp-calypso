@@ -41,7 +41,7 @@ const mockUseCheckpointAction = jest.fn();
 const mockUseConversation = jest.fn();
 const mockUseImageUpload = jest.fn();
 const mockIsReaderChatAgent = jest.fn();
-let mockAgentConfig: { agentId: string; sessionId?: string } = {
+let mockAgentConfig: { agentId: string; sessionId?: string; enableActionApprovals?: boolean } = {
 	agentId: 'wp-orchestrator',
 };
 let mockTabSessionId: string | undefined = 'session-id';
@@ -171,8 +171,10 @@ const mockAgentChat = jest.fn(
 		onInputChange,
 		emptyViewSuggestions = [],
 		onContextCardAction,
+		isChatInputDisabled,
 	}: {
 		messages?: unknown[];
+		isChatInputDisabled?: boolean;
 		onSuggestionClick: (
 			suggestion: Suggestion | string,
 			availableSuggestions?: Suggestion[]
@@ -191,6 +193,7 @@ const mockAgentChat = jest.fn(
 		) => void;
 	} ) => (
 		<>
+			<textarea aria-label="Chat message" disabled={ isChatInputDisabled } />
 			<button
 				onClick={ () => {
 					const suggestion = {
@@ -321,6 +324,7 @@ const mockAgentChat = jest.fn(
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
+		...jest.requireActual( '../../../../agenttic-client/src/react/actionApprovals' ),
 		extractToolCallsFromMessage: ( message: { parts: Array< { type: string; data?: object } > } ) =>
 			message.parts.filter(
 				( { type, data } ) =>
@@ -378,6 +382,11 @@ jest.mock( '@wordpress/data', () => {
 		},
 	};
 } );
+jest.mock(
+	'@automattic/agenttic-ui',
+	() => jest.requireActual( '../../../../agenttic-ui/src/components/approval/ApprovalCard' ),
+	{ virtual: true }
+);
 jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 jest.mock( 'react-router-dom', () => ( {
@@ -1912,6 +1921,82 @@ describe( 'OrchestratorChat', () => {
 			'calypso_agents_manager_chat_response_stopped',
 			{ stopped_during: 'response' }
 		);
+	} );
+
+	it.each( [ true, false, undefined ] )(
+		'gates history-loading input only for approval-enabled mounts (%s)',
+		( enableActionApprovals ) => {
+			mockAgentConfig = { agentId: 'wp-orchestrator', enableActionApprovals };
+			mockUseConversation.mockReturnValue( { isLoading: true } );
+			render( chat() );
+			const input = screen.getByRole( 'textbox', { name: 'Chat message' } );
+			expect( input ).toHaveProperty( 'disabled', enableActionApprovals === true );
+		}
+	);
+
+	it( 'locks the composer and host sends for a streamed approval until it is cancelled', async () => {
+		mockAgentConfig = { agentId: 'wp-orchestrator', enableActionApprovals: true };
+		const sent: string[] = [];
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				onSubmit: async ( text: string ) => {
+					sent.push( text );
+				},
+			} )
+		);
+		render( chat() );
+		act( () => {
+			mockUseConversation.mock.calls.at( -1 )![ 0 ].onSuccess( [], 'test-session', 123 );
+		} );
+		const approval = ( state: string ): TaskUpdate => ( {
+			id: 'approval-task',
+			text: '',
+			final: true,
+			status: {
+				state: 'input-required',
+				message: {
+					role: 'agent',
+					kind: 'message',
+					messageId: 'approval-message',
+					parts: [
+						{
+							type: 'data',
+							data: {
+								approvalRequest: {
+									version: 1,
+									proposalId: 'proposal',
+									chatId: 123,
+									consumer: 'wp-agent',
+									origin: 'execute',
+									state,
+									ability: 'wpcom/example',
+									description: 'Remove plugin from site',
+									notice: 'Removes data',
+									allowForChat: false,
+								},
+							},
+						},
+					],
+				},
+			},
+		} );
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.( approval( 'pending' ) );
+		} );
+		expect( screen.getByRole( 'textbox', { name: 'Chat message' } ) ).toBeDisabled();
+		const hostSend = mockRegisteredActions.submitChatMessage as ( text: string ) => Promise< void >;
+		await act( async () => {
+			await hostSend( 'Next request' );
+		} );
+		expect( sent ).toHaveLength( 0 );
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.( approval( 'cancelled' ) );
+		} );
+		expect( screen.getByRole( 'textbox', { name: 'Chat message' } ) ).not.toBeDisabled();
+		await act( async () => {
+			await hostSend( 'Next request' );
+		} );
+		expect( sent ).toEqual( [ 'Next request' ] );
 	} );
 
 	describe( 'chat error tracking', () => {

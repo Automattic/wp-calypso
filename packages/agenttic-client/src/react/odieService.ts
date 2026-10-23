@@ -8,6 +8,7 @@ import type { ServerChat, ServerConversationListItem, ServerLoadResult } from '.
 import type { AuthProvider } from '../client/types/index';
 
 export interface OdieServiceConfig {
+	enableActionApprovals?: boolean;
 	botId: string;
 	apiBaseUrl?: string;
 	authProvider?: AuthProvider;
@@ -94,7 +95,11 @@ export async function loadChatFromServer(
 		const serverChat: ServerChat = await response.json();
 
 		// Transform to client format
-		const result = serverChatToLoadResult( serverChat, allowToolMessages );
+		const result = serverChatToLoadResult(
+			serverChat,
+			allowToolMessages,
+			config.enableActionApprovals
+		);
 
 		logger(
 			'Loaded %d messages from server (page %d/%d)',

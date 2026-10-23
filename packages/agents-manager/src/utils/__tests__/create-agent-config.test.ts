@@ -389,3 +389,23 @@ describe( 'createAgentConfig', () => {
 		expect( context ).toHaveProperty( 'isTest', false );
 	} );
 } );
+
+it.each( [
+	[ 'wp-orchestrator', 123, true ],
+	[ 'wp-orchestrator', undefined, false ],
+	[ 'reader-chat', 123, false ],
+	[ 'reader-chat', undefined, false ],
+] )(
+	'advertises approvals only with signed-in history (%s, %s)',
+	async ( agentId, sessionUserId, enabled ) => {
+		const config = await createAgentConfig( {
+			agentId: String( agentId ),
+			sessionId: 'session',
+			sessionSiteKey: 'site',
+			sessionUserId: typeof sessionUserId === 'number' ? sessionUserId : undefined,
+		} );
+		const context = config.contextProvider?.getClientContext();
+		expect( config.enableActionApprovals ).toBe( enabled );
+		expect( context?.capabilities ).toEqual( enabled ? { action_approval: true } : {} );
+	}
+);

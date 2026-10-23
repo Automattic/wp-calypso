@@ -198,6 +198,27 @@ Supported slots include `card`, `question`, `choices`, `choice`, `label`,
 `font-heading`, `font-body`, `image`, `layout-hint`, `freeform`,
 `freeform-label`, `freeform-input`, and `freeform-submit`.
 
+### Action approvals
+
+`ApprovalCard` is an opt-in, presentational component. Pass `proposalId`,
+`description`, `notice`, `allowForChat`, `state`, and `onDecision`, with optional
+`site` and `target` display strings. It renders supplied text without interpreting
+HTML. The host owns authentication, decisions, execution, and status updates.
+
+States are `pending`, `sending`, `done`, `declined`, `failed`, `cancelled`, and
+`outcome_unknown`. Only pending cards accept decisions; sending cards retain
+disabled controls. A click synchronously locks the card and calls `onDecision`
+with `allow_once`, `allow_for_chat`, or `decline`. The host can unlock a failed
+decision attempt by moving `state` from `sending` back to `pending`, allowing a
+manual retry. Changing `proposalId` also resets the lock. The host must handle
+errors and update `state`.
+`done` means execution completed, not merely that approval was recorded.
+
+Use the package stylesheet and an `.agenttic` ancestor, as for other components.
+The card exposes `data-agenttic-approval-card` and `data-slot` hooks for styling.
+The current approval wire contract has no site or target display fields; a host
+must supply those optional strings from trusted context when available.
+
 ### AgentUI Components
 
 **AgentUI** - Convenience wrapper with default layout

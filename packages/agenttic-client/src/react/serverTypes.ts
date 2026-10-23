@@ -4,6 +4,8 @@
  */
 
 import { generateMessageId } from '../client/utils/core';
+import { parseApprovalRequest } from './actionApprovals';
+import type { ApprovalRequest } from './actionApprovals';
 import type { FilePart, Message, Part, TextPart } from '../client/types/index';
 
 /**
@@ -61,6 +63,7 @@ export interface ServerChat {
 	updated_at: string;
 	/** Set on page 1 when the last turn is waiting on browser tool calls. */
 	pending_client_tools?: PendingClientTools;
+	approvals?: unknown[];
 }
 
 /**
@@ -102,6 +105,7 @@ export interface ServerLoadResult {
 	chatId: number;
 	sessionId?: string;
 	pendingClientTools?: PendingClientTools;
+	approvals?: ApprovalRequest[];
 }
 
 /**
@@ -130,7 +134,10 @@ export interface ServerConversationListItem {
  * Transform server message to client Message format
  * @param serverMessage - Server message from odie-assistant API
  */
-export function serverMessageToMessage( serverMessage: ServerMessage ): Message {
+export function serverMessageToMessage(
+	serverMessage: ServerMessage,
+	enableActionApprovals = false
+): Message {
 	const parts: Part[] = [];
 	const context = serverMessage.context;
 
@@ -147,7 +154,10 @@ export function serverMessageToMessage( serverMessage: ServerMessage ): Message 
 		( context.flags as Record< string, unknown > ).context_only === true;
 
 	// Add text content if available
-	if ( serverMessage.content ) {
+	if (
+		serverMessage.content &&
+		! ( enableActionApprovals && serverMessage.role === 'tool_call' )
+	) {
 		const textPart: TextPart = {
 			type: 'text',
 			text: serverMessage.content,
@@ -156,6 +166,13 @@ export function serverMessageToMessage( serverMessage: ServerMessage ): Message 
 			} ),
 		};
 		parts.push( textPart );
+	}
+
+	if ( enableActionApprovals && context && ! Array.isArray( context ) ) {
+		const approvalRequest = parseApprovalRequest( context.approvalRequest ?? context.approval );
+		if ( approvalRequest ) {
+			parts.push( { type: 'data', data: { approvalRequest } } );
+		}
 	}
 
 	// Add file parts from context (images/attachments)
@@ -246,12 +263,18 @@ function isThinkToolMessage( msg: ServerMessage ): boolean {
  */
 export function serverChatToLoadResult(
 	serverChat: ServerChat,
-	allowToolMessages = false
+	allowToolMessages = false,
+	enableActionApprovals = false
 ): ServerLoadResult {
 	const filteredServerMessages = serverChat.messages.filter( ( msg ) => {
 		// Always filter out `tool_call` messages
 		if ( msg.role === 'tool_call' ) {
-			return false;
+			return !! (
+				enableActionApprovals &&
+				msg.context &&
+				! Array.isArray( msg.context ) &&
+				parseApprovalRequest( msg.context.approvalRequest ?? msg.context.approval )
+			);
 		}
 
 		// Handle `tool_result` messages
@@ -272,7 +295,9 @@ export function serverChatToLoadResult(
 		return true;
 	} );
 
-	const messages = filteredServerMessages.map( serverMessageToMessage );
+	const messages = filteredServerMessages.map( ( message ) =>
+		serverMessageToMessage( message, enableActionApprovals )
+	);
 
 	const pagination: PaginationMeta = {
 		currentPage: serverChat.metadata?.current_page ?? 1,
@@ -282,10 +307,22 @@ export function serverChatToLoadResult(
 		hasMore: ( serverChat.metadata?.current_page ?? 1 ) < ( serverChat.metadata?.total_pages ?? 1 ),
 	};
 
+	const approvals =
+		enableActionApprovals && serverChat.approvals !== undefined
+			? serverChat.approvals.map( ( value ) => {
+					const request = parseApprovalRequest( value );
+					if ( ! request || request.chatId !== serverChat.chat_id ) {
+						throw new Error( 'Invalid approval history record' );
+					}
+					return request;
+				} )
+			: undefined;
+
 	return {
 		messages,
 		pagination,
 		chatId: serverChat.chat_id,
+		...( approvals !== undefined && { approvals } ),
 		sessionId: serverChat.session_id,
 		...( serverChat.pending_client_tools && {
 			pendingClientTools: serverChat.pending_client_tools,

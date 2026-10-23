@@ -11,6 +11,11 @@ import {
 } from '../client/utils/index';
 import { log } from '../client/utils/logger';
 import {
+	hasApprovalRequest,
+	isApprovalResumeMessage,
+	normalizeApprovalMessages,
+} from './actionApprovals';
+import {
 	clearConversation,
 	type ConversationStorageConfig,
 	loadConversation,
@@ -186,6 +191,7 @@ export interface AgentManagerConfig extends ClientConfig {
  * Agent instance with conversation tracking
  */
 interface ManagedAgent {
+	enableActionApprovals?: boolean;
 	client: Client;
 	sessionId: string | null;
 	conversationStorageKey?: string;
@@ -303,6 +309,7 @@ function createAgentManager(): AgentManager {
 			}
 
 			const managedAgent: ManagedAgent = {
+				enableActionApprovals: config.enableActionApprovals,
 				client,
 				sessionId,
 				conversationStorageKey,
@@ -469,7 +476,11 @@ function createAgentManager(): AgentManager {
 
 			// If caller provided their own abort signal, listen to it too
 			if ( abortSignal ) {
-				abortSignal.addEventListener( 'abort', () => abortController.abort() );
+				if ( abortSignal.aborted ) {
+					abortController.abort();
+				} else {
+					abortSignal.addEventListener( 'abort', () => abortController.abort(), { once: true } );
+				}
 			}
 
 			// Track conversation history locally to avoid race conditions
@@ -496,7 +507,9 @@ function createAgentManager(): AgentManager {
 			if ( optionsMessage ) {
 				// When a pre-built message is provided (e.g., tool results),
 				// prepend conversation history so the server has full context.
-				const historyParts = conversationMessagesToDataParts( resolvedConversationHistory );
+				const historyParts = isApprovalResumeMessage( optionsMessage )
+					? []
+					: conversationMessagesToDataParts( resolvedConversationHistory );
 				messageObj = {
 					...optionsMessage,
 					parts: [ ...historyParts, ...optionsMessage.parts ],
@@ -561,11 +574,17 @@ function createAgentManager(): AgentManager {
 			}
 			// Tool-result follow-ups reuse the opener's in-flight id; only
 			// real user turns that persist start a new one.
-			if ( withHistory && ! isToolResultOnlyMessage( userMessage ) ) {
+			if (
+				withHistory &&
+				! isToolResultOnlyMessage( userMessage ) &&
+				! isApprovalResumeMessage( userMessage )
+			) {
 				managedAgent.inFlightUserMessageId = userMessage.messageId;
 			}
 
-			currentConversationHistory = [ ...currentConversationHistory, userMessage ];
+			if ( ! isApprovalResumeMessage( userMessage ) ) {
+				currentConversationHistory = [ ...currentConversationHistory, userMessage ];
+			}
 
 			// Update agent's conversation history immediately
 			managedAgent.conversationHistory = currentConversationHistory;
@@ -643,6 +662,27 @@ function createAgentManager(): AgentManager {
 							}
 							await clearConversation( oldSessionId );
 						}
+					}
+
+					if (
+						managedAgent.enableActionApprovals &&
+						hasApprovalRequest( update.status?.message )
+					) {
+						currentConversationHistory = normalizeApprovalMessages( [
+							...currentConversationHistory,
+							{
+								...extractNewContentFromMessage( update.status!.message!, true ),
+								metadata: { timestamp: Date.now(), ...update.status!.message!.metadata },
+							},
+						] );
+						managedAgent.conversationHistory = currentConversationHistory;
+						managedAgent.inFlightUserMessageId = null;
+						sawTurnTerminus = true;
+						if ( withHistory ) {
+							await persistConversationHistory( key, currentConversationHistory );
+						}
+						yield update;
+						continue;
 					}
 
 					// Save tool interactions when input is required (this saves the agent message with tool calls)

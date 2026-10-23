@@ -1,4 +1,5 @@
 import { generateMessageId } from '../client/utils/core';
+import { getApprovalRequest } from './actionApprovals';
 import type { DataPart, FilePart, Message, TextPart } from '../client/types/index';
 
 /**
@@ -7,10 +8,16 @@ import type { DataPart, FilePart, Message, TextPart } from '../client/types/inde
  * @param message - The message to extract new content from
  * @returns A clean message with only new content parts
  */
-export function extractNewContentFromMessage( message: Message ): Message {
+export function extractNewContentFromMessage(
+	message: Message,
+	enableActionApprovals = false
+): Message {
 	const newParts = message.parts.filter( ( part ) => {
 		// Keep text parts as they represent the actual message content
 		if ( part.type === 'text' ) {
+			return true;
+		}
+		if ( enableActionApprovals && getApprovalRequest( part ) ) {
 			return true;
 		}
 		if ( part.type === 'data' ) {

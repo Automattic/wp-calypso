@@ -12,6 +12,7 @@ let mockParkedNavigationCallId: string | undefined;
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
+		...jest.requireActual( '../../../../agenttic-client/src/react/actionApprovals' ),
 		getAgentManager: () => ( { isTurnInFlight: mockIsTurnInFlight } ),
 		isOdieBotId: () => false,
 		createOdieBotId: ( agentId: string ) => agentId,
@@ -597,3 +598,118 @@ describe( 'useConversation', () => {
 		} );
 	} );
 } );
+
+it( 'cancels polling and scheduled browser recovery when an approval arrives', () => {
+	jest.useFakeTimers();
+	mockUseAgentsManagerContext.mockReturnValue( {
+		agentConfig: { agentId: 'wp-orchestrator', sessionId: 'approval-session' },
+	} );
+	mockLoadedConversation( [ { ...question, metadata: { serverId: 1, timestamp: Date.now() } } ], {
+		state: 'unanswered',
+		calls: [ { toolCallId: 'call', toolId: 'tool', arguments: {} } ],
+	} );
+	const resumed: unknown[] = [];
+	const { result, rerender } = renderHook(
+		( { pending } ) =>
+			useConversation( {
+				waitForReply: true,
+				hasPendingApproval: pending,
+				onResume: async ( calls ) => {
+					resumed.push( calls );
+					return true;
+				},
+			} ),
+		{ initialProps: { pending: false } }
+	);
+	expect( lastQueryOptions().refetchInterval ).toBe( 3000 );
+	rerender( { pending: true } );
+	act( () => {
+		jest.advanceTimersByTime( MAX_REPLY_WAIT_MS + RESUME_AFTER_MS );
+	} );
+	expect( lastQueryOptions().refetchInterval ).toBe( false );
+	expect( resumed ).toHaveLength( 0 );
+	expect( result.current.notice ).toBeUndefined();
+	jest.useRealTimers();
+} );
+
+it.each( [ true, false ] )(
+	'loads history without extra requests and respects restored approvals (%s)',
+	async ( hasApprovals ) => {
+		jest.useFakeTimers();
+		const originalFetch = globalThis.fetch;
+		const approval = {
+			version: 1,
+			proposalId: 'restore',
+			chatId: 456,
+			consumer: 'wp-agent',
+			origin: 'execute',
+			state: 'pending',
+			ability: 'wpcom/example',
+			description: 'Remove plugin',
+			notice: 'Removes data',
+			allowForChat: false,
+		};
+		globalThis.fetch = jest.fn();
+		mockUseAgentsManagerContext.mockReturnValue( {
+			agentConfig: {
+				agentId: 'wp-orchestrator',
+				sessionId: 'opaque-session',
+				enableActionApprovals: true,
+				authProvider: async () => ( { Authorization: 'raw-jwt' } ),
+			},
+		} );
+		mockUseQuery.mockReturnValue( { data: undefined, isLoading: true } );
+		mockLoadAllMessagesFromServer.mockResolvedValue( {
+			chatId: 456,
+			...( hasApprovals && { approvals: [ approval ] } ),
+			sessionId: 'opaque-session',
+			messages: [ { ...question, metadata: { serverId: 1, timestamp: Date.now() } } ],
+			pendingClientTools: {
+				state: 'unanswered',
+				calls: [ { toolCallId: 'call', toolId: 'tool', arguments: {} } ],
+			},
+		} );
+		const received: unknown[] = [];
+		const resumed: unknown[] = [];
+		const { result, rerender } = renderHook( () =>
+			useConversation( {
+				waitForReply: true,
+				onSuccess: ( ...args ) => {
+					received.push( args );
+				},
+				onResume: async ( calls ) => {
+					resumed.push( calls );
+					return true;
+				},
+			} )
+		);
+		try {
+			let historyPromise: Promise< unknown >;
+			await act( async () => {
+				historyPromise = lastQueryOptions().queryFn();
+			} );
+			expect( received ).toHaveLength( 0 );
+			act( () => {
+				jest.advanceTimersByTime( RESUME_AFTER_MS );
+			} );
+			expect( resumed ).toHaveLength( 0 );
+			let history: unknown;
+			await act( async () => {
+				history = await historyPromise;
+			} );
+			mockUseQuery.mockReturnValue( { data: history, isLoading: false } );
+			rerender();
+			await act( async () => {
+				jest.advanceTimersByTime( MAX_REPLY_WAIT_MS + RESUME_AFTER_MS );
+			} );
+			expect( globalThis.fetch ).not.toHaveBeenCalled();
+			expect( result.current.chatId ).toBe( 456 );
+			expect( received ).toHaveLength( 1 );
+			expect( resumed ).toHaveLength( hasApprovals ? 0 : 1 );
+			expect( lastQueryOptions().refetchInterval ).toBe( false );
+		} finally {
+			globalThis.fetch = originalFetch;
+			jest.useRealTimers();
+		}
+	}
+);

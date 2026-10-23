@@ -57,6 +57,12 @@ export { ConversationView } from './components/views/ConversationView';
 export { MinimizedView } from './components/views/MinimizedView';
 export { ImageRenderer } from './components/chat/ImageRenderer';
 export { QuestionCard } from './components/question';
+export { ApprovalCard } from './components/approval/ApprovalCard';
+export type {
+	ApprovalCardProps,
+	ApprovalCardState,
+	ApprovalDecision,
+} from './components/approval/ApprovalCard';
 export type { QuestionCardProps } from './components/question';
 export { SourcesCard } from './components/sources';
 export type { SourcesCardProps } from './components/sources';

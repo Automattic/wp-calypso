@@ -5,6 +5,7 @@ import type { UseCreditsResult } from './use-credits';
 import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client';
 
 interface UseGatedRegenerateHandlerOptions {
+	isBlocked?: () => boolean;
 	getRegenerateHandler: UseAgentChatReturn[ 'getRegenerateHandler' ];
 	beforeSubmit: UseCreditsResult[ 'beforeSubmit' ];
 	/** Resets the turn state the regeneration rewinds. */
@@ -18,6 +19,7 @@ interface UseGatedRegenerateHandlerOptions {
  * and it rewinds the turn state the regenerated reply left behind.
  */
 export function useGatedRegenerateHandler( {
+	isBlocked,
 	getRegenerateHandler,
 	beforeSubmit,
 	onRegenerationStart,
@@ -31,7 +33,7 @@ export function useGatedRegenerateHandler( {
 			}
 
 			return async () => {
-				if ( ! beforeSubmit() ) {
+				if ( isBlocked?.() || ! beforeSubmit() ) {
 					return;
 				}
 
@@ -54,6 +56,6 @@ export function useGatedRegenerateHandler( {
 				}
 			};
 		},
-		[ beforeSubmit, getRegenerateHandler, onRegenerationEnd, onRegenerationStart ]
+		[ isBlocked, beforeSubmit, getRegenerateHandler, onRegenerationEnd, onRegenerationStart ]
 	);
 }

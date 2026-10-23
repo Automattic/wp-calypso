@@ -13,6 +13,7 @@ import type { RefObject } from 'react';
 type SendMessageOptions = { withImages?: boolean };
 
 interface UseChatComposerOptions {
+	isBlocked?: () => boolean;
 	isReaderChat: boolean;
 	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
 	abortCurrentRequest: UseAgentChatReturn[ 'abortCurrentRequest' ];
@@ -34,6 +35,7 @@ interface UseChatComposerOptions {
  * was, so the user can retry without retyping.
  */
 export function useChatComposer( {
+	isBlocked,
 	isReaderChat,
 	onSubmit,
 	abortCurrentRequest,
@@ -41,6 +43,10 @@ export function useChatComposer( {
 	flushPendingNavigation,
 	suggestionPromptsRef,
 }: UseChatComposerOptions ) {
+	const canSubmit = useCallback(
+		() => ! isBlocked?.() && beforeSubmit(),
+		[ isBlocked, beforeSubmit ]
+	);
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ uploadError, setUploadError ] = useState< string | null >( null );
 
@@ -90,7 +96,7 @@ export function useChatComposer( {
 
 			// Drop sends that arrive while a batch uploads (suggestion clicks,
 			// programmatic submits) instead of interleaving a second message.
-			if ( isUploadingRef.current || isUploadingImages ) {
+			if ( isBlocked?.() || isUploadingRef.current || isUploadingImages ) {
 				return;
 			}
 
@@ -164,6 +170,10 @@ export function useChatComposer( {
 				setInputValue( ( currentValue ) => ( currentValue === message ? '' : currentValue ) );
 			}
 
+			if ( isBlocked?.() ) {
+				return;
+			}
+
 			// A new message is a new intent, so it starts unbound and unblocked.
 			// Otherwise the previous turn's canvas would judge it (`useCanvasMoveAbort`
 			// aborts on sight if the user has since navigated), and that turn's leftover
@@ -178,6 +188,10 @@ export function useChatComposer( {
 			try {
 				// First, so this message follows the parked call's tool result. Never throws.
 				await flushPendingNavigation();
+				if ( isBlocked?.() ) {
+					wasLastSendDispatchedRef.current = false;
+					return;
+				}
 
 				// Images dispatch via Agenttic's `imageUrls` option — the resulting
 				// `FilePart`s persist in conversation history with their metadata.
@@ -194,6 +208,7 @@ export function useChatComposer( {
 		},
 		[
 			flushPendingNavigation,
+			isBlocked,
 			inputValue,
 			isUploadingImages,
 			onSubmit,
@@ -276,19 +291,24 @@ export function useChatComposer( {
 	// for any caller.
 	const submitContextMessage = useCallback(
 		async ( message: string, options: SubmitOptions ) => {
-			if ( isUploadingRef.current || isUploadingImages || ! beforeSubmit() ) {
+			if ( isBlocked?.() || isUploadingRef.current || isUploadingImages || ! beforeSubmit() ) {
 				return;
 			}
 
 			startTurn();
 			startNewUserRequest();
 			await flushPendingNavigation();
+			if ( isBlocked?.() ) {
+				wasLastSendDispatchedRef.current = false;
+				return;
+			}
 			await onSubmit( message, options );
 		},
-		[ beforeSubmit, flushPendingNavigation, isUploadingImages, onSubmit ]
+		[ beforeSubmit, flushPendingNavigation, isUploadingImages, isBlocked, onSubmit ]
 	);
 
 	return {
+		beforeSubmit: canSubmit,
 		inputValue,
 		setInputValue,
 		setChatInput,

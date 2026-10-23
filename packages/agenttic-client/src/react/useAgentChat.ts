@@ -2,8 +2,16 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
+import {
+	createApprovalResumeMessage,
+	isApprovalResumeMessage,
+	getApprovalRequest,
+	hasApprovalRequest,
+	normalizeApprovalMessages,
+} from './actionApprovals';
 import { getAgentManager, type ToolResultInput, type TurnToolCall } from './agentManager';
 import { useRegenerate } from './useRegenerate';
+import type { ApprovalResume } from './actionApprovals';
 import type {
 	AuthProvider,
 	Message as ClientMessage,
@@ -84,7 +92,9 @@ export interface ImageData {
 
 // Extra options for submitting a message
 export interface SubmitOptions {
-	type?: ContentType | 'tool_result' | 'tool_results'; // `text` for normal visible text (default), `context` for hidden context, `tool_result` for tool result (hidden from UI), `tool_results` for the results of several calls of one turn (hidden from UI)
+	type?: ContentType | 'tool_result' | 'tool_results' | 'approval_resume'; // `text` for normal visible text (default), `context` for hidden context, `tool_result` for tool result (hidden from UI), `tool_results` for the results of several calls of one turn (hidden from UI)
+	approvalResume?: ApprovalResume;
+	abortSignal?: AbortSignal;
 	archived?: boolean;
 	imageUrls?: ( string | ImageData )[]; // Array of image URLs or image objects with metadata
 	sessionId?: string; // Optional `sessionId` to use for this message (overrides agent's `sessionId`)
@@ -185,8 +195,12 @@ export interface UseMessageActionsReturn {
 // Exported for unit tests; not re-exported from the package entry.
 export const transformClientMessageToUI = (
 	clientMessage: ClientMessage,
-	messageActionsRegistrations: MessageActionsRegistration[] = []
+	messageActionsRegistrations: MessageActionsRegistration[] = [],
+	enableActionApprovals = false
 ): UIMessage | null => {
+	if ( isApprovalResumeMessage( clientMessage ) ) {
+		return null;
+	}
 	// Filter out tool-related messages that shouldn't appear in UI
 	const hasToolContent = clientMessage.parts.some( ( part ) => {
 		if ( part.type === 'data' ) {
@@ -222,6 +236,9 @@ export const transformClientMessageToUI = (
 				if ( imageUrl ) {
 					return createImageComponent( imageUrl );
 				}
+			}
+			if ( enableActionApprovals && getApprovalRequest( part ) ) {
+				return { type: 'data' as const, data: { approvalRequest: getApprovalRequest( part ) } };
 			}
 			if ( part.type === 'data' ) {
 				// Handle `data` parts that might contain `component` information
@@ -327,6 +344,7 @@ const validateAgentConfig = ( config: {
 
 // Hook configuration interface
 export interface UseAgentChatConfig {
+	enableActionApprovals?: boolean;
 	agentId: string;
 	agentUrl: string;
 	sessionId: string;
@@ -445,6 +463,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 	// Guard against concurrent sends racing on `conversationHistory`
 	const isSendingRef = useRef( false );
+	const sendWaiters = useRef( new Set< () => void >() );
+	const mounted = useRef( true );
+	useEffect( () => {
+		mounted.current = true;
+		const waiters = sendWaiters.current;
+		return () => {
+			mounted.current = false;
+			waiters.forEach( ( release ) => release() );
+		};
+	}, [] );
 
 	const stateRef = useRef( state );
 	useEffect( () => {
@@ -471,11 +499,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	// Transform client messages to UI messages
 	const transformMessages = useCallback(
 		( messages: ClientMessage[] ): UIMessage[] => {
-			return messages
-				.map( ( msg ) => transformClientMessageToUI( msg, registrationsRef.current ) )
+			return ( config.enableActionApprovals ? normalizeApprovalMessages( messages ) : messages )
+				.map( ( msg ) =>
+					transformClientMessageToUI( msg, registrationsRef.current, config.enableActionApprovals )
+				)
 				.filter( ( msg ): msg is UIMessage => msg !== null );
 		},
-		[] // registrationsRef is stable, so no deps needed
+		[ config.enableActionApprovals ]
 	);
 
 	// Initialize agent
@@ -511,6 +541,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					toolProvider: config.toolProvider || createNoOpToolProvider(),
 					authProvider: config.authProvider,
 					enableStreaming: config.enableStreaming,
+					enableActionApprovals: config.enableActionApprovals,
 					odieBotId: config.odieBotId,
 					credentials: config.credentials,
 				} );
@@ -568,6 +599,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		config.toolProvider,
 		config.authProvider,
 		config.enableStreaming,
+		config.enableActionApprovals,
 		config.odieBotId,
 		config.credentials,
 		isValidConfig,
@@ -581,6 +613,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				throw new Error( 'Invalid agent configuration' );
 			}
 
+			const isApprovalResume = options?.type === 'approval_resume';
+			const resumeMessage =
+				isApprovalResume && config.enableActionApprovals && options?.approvalResume
+					? createApprovalResumeMessage( options.approvalResume )
+					: undefined;
+			if ( isApprovalResume && ! resumeMessage ) {
+				throw new Error( 'Approval resume is not enabled or is missing its payload' );
+			}
 			const isToolResults = options?.type === 'tool_results';
 			const isToolResult = options?.type === 'tool_result' || isToolResults;
 
@@ -594,7 +634,22 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				throw new Error( '`toolCallId` and `toolId` are required when type is `tool_result`' );
 			}
 
-			if ( isSendingRef.current ) {
+			if ( isApprovalResume ) {
+				while ( isSendingRef.current && mounted.current && ! options?.abortSignal?.aborted ) {
+					await new Promise< void >( ( resolve ) => {
+						const release = () => {
+							sendWaiters.current.delete( release );
+							options?.abortSignal?.removeEventListener( 'abort', release );
+							resolve();
+						};
+						sendWaiters.current.add( release );
+						options?.abortSignal?.addEventListener( 'abort', release, { once: true } );
+					} );
+				}
+				if ( ! mounted.current || options?.abortSignal?.aborted ) {
+					throw new DOMException( 'Approval resume cancelled', 'AbortError' );
+				}
+			} else if ( isSendingRef.current ) {
 				return;
 			}
 			isSendingRef.current = true;
@@ -637,7 +692,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const messageTimestamp = Date.now();
 
 			// Create user message immediately for UI (skipped for tool results)
-			if ( ! isToolResult ) {
+			if ( ! isToolResult && ! isApprovalResume ) {
 				const contentType = ( options?.type || 'text' ) as ContentType;
 				const userMessage = internalOptions?.messageOverride
 					? transformClientMessageToUI( internalOptions.messageOverride, [] )
@@ -689,7 +744,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 				// Pass metadata including archived flag and content type if provided
 				const messageOptions: any = {};
-				const hasContentType = !! options?.type && ! isToolResult;
+				const hasContentType = !! options?.type && ! isToolResult && ! isApprovalResume;
 				if ( options?.archived || hasContentType ) {
 					messageOptions.metadata = {
 						...( options?.archived && { archived: true } ),
@@ -705,6 +760,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					messageOptions.imageUrls = options.imageUrls;
 				}
 
+				if ( resumeMessage ) {
+					messageOptions.message = resumeMessage;
+					messageOptions.abortSignal = options?.abortSignal;
+				}
 				if ( internalOptions?.messageOverride ) {
 					messageOptions.message = internalOptions.messageOverride;
 				}
@@ -740,6 +799,23 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						} catch ( observerError ) {
 							logger( 'Error in onTaskUpdate callback: %O', observerError );
 						}
+					}
+
+					if ( config.enableActionApprovals && hasApprovalRequest( update.status?.message ) ) {
+						const history = agentManager.getConversationHistory( agentKey );
+						const incoming = transformMessages( history );
+						setState( ( prev ) => ( {
+							...prev,
+							clientMessages: history,
+							uiMessages: [
+								...filterUiOnlyMessages(
+									prev.uiMessages,
+									new Set( incoming.map( ( message ) => message.id ) )
+								),
+								...incoming,
+							],
+						} ) );
+						continue;
 					}
 
 					// Reply text means the agent is talking; any other update means it's working.
@@ -879,6 +955,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					}
 				}
 
+				if ( isApprovalResume && options?.abortSignal?.aborted ) {
+					throw new DOMException( 'Approval resume cancelled', 'AbortError' );
+				}
+
 				// Only update from conversation history if we didn't already handle the final message
 				if ( ! finalMessageAdded ) {
 					// Update internal messages and transform for UI
@@ -893,7 +973,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 						// Transform client messages to UI format
 						const transformedClientMessages = updatedClientHistory
-							.map( ( msg ) => transformClientMessageToUI( msg, registrationsRef.current ) )
+							.map( ( msg ) =>
+								transformClientMessageToUI(
+									msg,
+									registrationsRef.current,
+									config.enableActionApprovals
+								)
+							)
 							.filter( ( msg ): msg is UIMessage => msg !== null );
 
 						// Find UI-only messages (messages not in client history, e.g. injected by tools)
@@ -935,6 +1021,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							error: null, // Don't show error for user-initiated abort
 						} ) );
 					}
+					if ( isApprovalResume ) {
+						throw error;
+					}
 					return; // Don't re-throw AbortError
 				}
 
@@ -952,9 +1041,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				throw error;
 			} finally {
 				isSendingRef.current = false;
+				sendWaiters.current.forEach( ( release ) => release() );
 			}
 		},
-		[ agentConfig.agentId, isValidConfig ]
+		[ agentConfig.agentId, isValidConfig, config.enableActionApprovals, transformMessages ]
 	);
 
 	const onSubmit = useCallback(

@@ -1,0 +1,54 @@
+.card {
+	background: var( --color-background );
+	color: var( --color-foreground );
+	border: 1px solid color-mix( in srgb, var( --color-foreground ) 10%, transparent );
+	border-radius: var( --radius-lg );
+	padding: var( --spacing-4 );
+	display: flex;
+	flex-direction: column;
+	gap: var( --spacing-3 );
+	overflow-wrap: anywhere;
+}
+
+.card:focus-visible {
+	outline: 2px solid var( --color-ring );
+	outline-offset: 2px;
+}
+
+.title,
+.notice,
+.status,
+.details {
+	margin: 0;
+}
+
+.title {
+	font-weight: var( --font-weight-semibold );
+}
+
+.notice,
+.details,
+.status {
+	font-size: var( --text-sm );
+	line-height: var( --text-sm--line-height );
+}
+
+.notice {
+	color: var( --color-muted-foreground );
+}
+
+.details {
+	display: grid;
+	grid-template-columns: auto minmax( 0, 1fr );
+	gap: var( --spacing-2 );
+}
+
+.details dd {
+	margin: 0;
+}
+
+.actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var( --spacing-2 );
+}

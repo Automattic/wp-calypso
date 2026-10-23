@@ -11,6 +11,7 @@ import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
 import useAbilitiesRegistration from '../../hooks/use-abilities-registration';
+import { useActionApprovals } from '../../hooks/use-action-approvals';
 import useAgentTraceIds from '../../hooks/use-agent-trace-ids';
 import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
 import { useBroadcastTurnActivity } from '../../hooks/use-broadcast-turn-activity';
@@ -38,6 +39,7 @@ import useSourcesAction from '../../hooks/use-sources-action';
 import { useStreamedCheckpointMessages } from '../../hooks/use-streamed-checkpoint-messages';
 import { useSuggestionTracking } from '../../hooks/use-suggestion-tracking';
 import { markSessionSent } from '../../utils/agent-session';
+import { convertActionApprovalMessages } from '../../utils/convert-action-approval-messages';
 import { convertBigSkyMessageToUIMessage } from '../../utils/convert-big-sky-message';
 import { convertInteractiveUiMessagesToComponents } from '../../utils/convert-interactive-ui-messages-to-components';
 import convertToolMessagesToComponents, {
@@ -151,6 +153,21 @@ export default function OrchestratorChat( {
 		getCheckpointMessage,
 		invalidateLoadedCheckpoints,
 	} = useStreamedCheckpointMessages();
+	const {
+		getCards: getApprovalCards,
+		error: approvalError,
+		recordTaskUpdate: recordApprovalUpdate,
+		onHistoryFetch,
+		isBlocked: isApprovalBlocked,
+		hasPendingApproval,
+	} = useActionApprovals( {
+		enabled: agentConfig?.enableActionApprovals === true,
+		authProvider: agentConfig?.authProvider,
+		waitForHistory: true,
+		scopeIdentity,
+		sessionId,
+		onFetch: invalidateLoadedCheckpoints,
+	} );
 	const { retriedToolCallIds, recordRetriedToolCall } = useRetriedToolCalls( streamGeneration );
 	const trackResponseOutcome = useResponseOutcomeTracking();
 
@@ -168,6 +185,7 @@ export default function OrchestratorChat( {
 				if ( isCurrentStreamGeneration( streamGeneration ) ) {
 					recordRetriedToolCall( update );
 					recordTaskUpdate( update );
+					recordApprovalUpdate( update );
 				}
 
 				trackResponseOutcome( update );
@@ -178,6 +196,7 @@ export default function OrchestratorChat( {
 		agentConfig,
 		isCurrentStreamGeneration,
 		recordRetriedToolCall,
+		recordApprovalUpdate,
 		recordTaskUpdate,
 		streamGeneration,
 		trackResponseOutcome,
@@ -230,6 +249,7 @@ export default function OrchestratorChat( {
 	);
 	const getGatedRegenerateHandler = useGatedRegenerateHandler( {
 		getRegenerateHandler,
+		isBlocked: isApprovalBlocked,
 		beforeSubmit: credits.beforeSubmit,
 		onRegenerationStart: handleRegenerationStart,
 		onRegenerationEnd: finishCheckpointRegeneration,
@@ -251,6 +271,7 @@ export default function OrchestratorChat( {
 	// A ref, as the prompts on screen are derived after this hook.
 	const suggestionPromptsRef = useRef< Set< string > >( new Set() );
 	const {
+		beforeSubmit: beforeChatSubmit,
 		inputValue,
 		setInputValue,
 		setChatInput,
@@ -264,6 +285,7 @@ export default function OrchestratorChat( {
 		submitContextMessage,
 		stopResponse,
 	} = useChatComposer( {
+		isBlocked: isApprovalBlocked,
 		isReaderChat,
 		onSubmit,
 		abortCurrentRequest,
@@ -286,7 +308,8 @@ export default function OrchestratorChat( {
 	} = useConversationHydration( {
 		hadParkedNavigation,
 		loadMessages,
-		onFetch: invalidateLoadedCheckpoints,
+		onFetch: onHistoryFetch,
+		hasPendingApproval,
 		isProcessing,
 		onRetry: submitRetryMessage,
 		onSubmit,
@@ -367,6 +390,10 @@ export default function OrchestratorChat( {
 				! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 		);
 		currentMessages = withRetainedShowComponents( currentMessages );
+		currentMessages = convertActionApprovalMessages(
+			currentMessages,
+			getApprovalCards( onSubmit )
+		);
 
 		// Read before grouping and conversion below: a checkpoint lives in the tool
 		// message's raw JSON.
@@ -439,6 +466,8 @@ export default function OrchestratorChat( {
 			] );
 		} );
 	}, [
+		getApprovalCards,
+		onSubmit,
 		currentPostId,
 		getChatComponent,
 		getCheckpointActionsForMessage,
@@ -537,7 +566,7 @@ export default function OrchestratorChat( {
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}
-			error={ chatError || uploadError }
+			error={ approvalError || chatError || uploadError }
 			onSubmit={ submitComposerMessage }
 			onAbort={ stopResponse }
 			isLoadingConversation={ isLoadingConversation }
@@ -558,8 +587,12 @@ export default function OrchestratorChat( {
 			imageUpload={ imageUpload }
 			notice={ credits.notice ?? replyNotice }
 			trailingActions={ credits.trailingActions }
-			beforeSubmit={ credits.beforeSubmit }
-			isChatInputDisabled={ isChatInputDisabled }
+			beforeSubmit={ beforeChatSubmit }
+			isChatInputDisabled={
+				isChatInputDisabled ||
+				hasPendingApproval ||
+				( agentConfig?.enableActionApprovals === true && isLoadingConversation )
+			}
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
 			onCancelFeedback={ resetFeedback }

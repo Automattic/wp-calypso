@@ -294,6 +294,7 @@ export interface AuthProvider {
 }
 
 export interface ClientConfig {
+	enableActionApprovals?: boolean;
 	agentId: string;
 	agentUrl: string;
 	authProvider?: AuthProvider;

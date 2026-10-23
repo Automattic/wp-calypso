@@ -10,11 +10,12 @@ import { hasNewAgentReply } from '../utils/tool-call-resume';
 import useConversation from './use-conversation';
 
 interface UseConversationHydrationOptions {
+	hasPendingApproval?: boolean;
 	/** A `wp-admin-navigate` resume is pending; its history must not be replaced. */
 	hadParkedNavigation: boolean;
 	loadMessages: UseAgentChatReturn[ 'loadMessages' ];
 	/** Called with the fetched transcript, even when the live history is kept instead. */
-	onFetch: ( loadedMessages: Message[] ) => void;
+	onFetch: ( loadedMessages: Message[], chatId?: number ) => void;
 	/** Whether a turn is running; a running turn ends the wait for a reply. */
 	isProcessing: boolean;
 	/** Called with the unanswered question when the user picks Retry. */
@@ -37,6 +38,7 @@ interface UseConversationHydrationOptions {
  * and whether a resume failed (`hasFailedResume`).
  */
 export function useConversationHydration( {
+	hasPendingApproval = false,
 	hadParkedNavigation,
 	loadMessages,
 	onFetch,
@@ -63,11 +65,12 @@ export function useConversationHydration( {
 		);
 	}
 
-	const { isLoading, notice, hasFailedResume } = useConversation( {
-		waitForReply: ! isProcessing,
+	const { chatId, isLoading, notice, hasFailedResume } = useConversation( {
+		waitForReply: ! isProcessing && ! hasPendingApproval,
+		hasPendingApproval,
 		onRetry,
 		onResume: resumeToolCalls,
-		onSuccess: ( loadedMessages, serverSessionId ) => {
+		onSuccess: ( loadedMessages, serverSessionId, loadedChatId ) => {
 			const agentId = agentConfig!.agentId;
 
 			// The agent may have been discarded (e.g. a site switch) while this
@@ -77,7 +80,7 @@ export function useConversationHydration( {
 				return;
 			}
 
-			onFetch( loadedMessages );
+			onFetch( loadedMessages, loadedChatId );
 
 			// Keep the live history while a turn is in flight: a remount mid-turn
 			// (History and back, reopening the panel) fetches a transcript without
@@ -103,5 +106,5 @@ export function useConversationHydration( {
 		},
 	} );
 
-	return { isLoading, notice, hasFailedResume };
+	return { chatId, isLoading, notice, hasFailedResume };
 }

@@ -203,6 +203,7 @@ export function extractToolCallsFromMessage( message: Message ): ToolCallDataPar
 	return message.parts.filter(
 		( part ): part is ToolCallDataPart =>
 			part.type === 'data' &&
+			! ( 'approvalRequest' in part.data ) &&
 			'toolCallId' in part.data &&
 			'toolId' in part.data &&
 			'arguments' in part.data

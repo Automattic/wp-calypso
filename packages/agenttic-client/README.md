@@ -646,3 +646,28 @@ permissions and the general publishing rules.
 
    If git asks to confirm pushing to trunk, that is fine here — you are pushing
    tags, not commits, and branch protection guards against the rest.
+
+### Opt-in approval display data
+
+Set `enableActionApprovals: true` on `useAgentChat` to preserve validated
+`approvalRequest` data and normalize each proposal to one `approval:<proposalId>`
+message across streamed status/final echoes. The default remains off. Display
+requests are not executable tools and are omitted from outgoing model history.
+`parseApprovalRequest` and `getApprovalRequest` validate this versioned payload;
+`normalizeApprovalMessages` separates it from prose and upserts repeated proposals.
+
+The server conversion helpers accept an optional approval opt-in (second argument
+for `serverMessageToMessage`, third for `serverChatToLoadResult`); Odie service
+configuration exposes the same `enableActionApprovals` option. They preserve a
+validated request under message context `approvalRequest` or `approval`. This is
+conversion support only: decision POST remains the consumer's responsibility.
+With the opt-in, `serverChatToLoadResult` also validates the top-level `approvals`
+array against the numeric chat ID and carries it into `ServerLoadResult`. It is
+independent of transcript pagination. An absent field stays absent; conversion
+does not fetch additional records.
+
+With this opt-in, `onSubmit('', { type: 'approval_resume', approvalResume:
+{ proposalId, chatId }, abortSignal })` sends a control data part on the normal
+stream. It waits for the active send to finish, creates no user bubble or pending
+user question, and rejects on cancellation. The consumer owns decision and
+continuation retry policy.
