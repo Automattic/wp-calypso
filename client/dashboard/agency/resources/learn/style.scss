@@ -102,11 +102,6 @@ $resource-brands: (
 	inset: $grid-unit-15 $grid-unit-15 auto;
 }
 
-.dashboard-resources-learn__modal-close {
-	background: var( --wpds-color-background-surface-neutral-strong, #{$white} );
-	border-radius: 50%;
-}
-
 .dashboard-resources-learn__preview {
 	position: relative;
 	display: flex;

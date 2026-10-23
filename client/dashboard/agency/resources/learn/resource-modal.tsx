@@ -141,7 +141,6 @@ export default function ResourceModal( {
 							/>
 						</HStack>
 						<Button
-							className="dashboard-resources-learn__modal-close"
 							icon={ closeSmall }
 							label={ __( 'Close' ) }
 							__next40pxDefaultSize
