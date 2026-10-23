@@ -95,6 +95,21 @@ import type { WowFunnelDest } from '../../../utils/wow-funnel';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { Store } from 'redux';
 
+// Kept on every URL that brings a run back into onboarding after checkout: checkout's return and
+// Back links, the email-verification return and a reloaded processing step. Each one shapes how
+// the run ends. Args that preselect or skip a step (plan, storage) must stay off, or going back
+// would skip the step the user returned to.
+const CHECKOUT_RETURN_PRESERVED_QUERY_ARGS = [
+	'ref',
+	'coupon',
+	'blog_post',
+	'playground',
+	'blueprint',
+	'build_dest',
+	'wow_funnel',
+	'dest',
+] as const;
+
 /**
  * Where a funnel run lands once it is paid for.
  *
@@ -410,6 +425,12 @@ const onboarding: FlowV2< typeof initialize > = {
 		const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
 		// From the Reader's "Create a site to reblog": the run ends in the new site's editor.
 		const blogPostToReblog = queryParams.get( 'blog_post' );
+		const checkoutReturnQueryArgs = Object.fromEntries(
+			CHECKOUT_RETURN_PRESERVED_QUERY_ARGS.flatMap( ( arg ) => {
+				const value = queryParams.get( arg );
+				return value ? [ [ arg, value ] ] : [];
+			} )
+		);
 
 		/**
 		 * Returns where to land after checkout, or `defaultDestination` when nothing overrides it.
@@ -775,8 +796,7 @@ const onboarding: FlowV2< typeof initialize > = {
 						window.location.replace(
 							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
 								siteSlug: siteSlugParam,
-								...( refParameter ? { ref: refParameter } : {} ),
-								...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
+								...checkoutReturnQueryArgs,
 							} )
 						);
 						return;
@@ -820,7 +840,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
 											{
 												siteSlug,
-												...( refParameter ? { ref: refParameter } : {} ),
+												...checkoutReturnQueryArgs,
 											}
 										);
 
@@ -835,16 +855,10 @@ const onboarding: FlowV2< typeof initialize > = {
 									{
 										next: 'post-checkout-onboarding',
 										siteSlug,
-										...( refParameter ? { ref: refParameter } : {} ),
-										...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
+										...checkoutReturnQueryArgs,
 									}
 								);
 							}
-
-							// Leaving checkout must not turn a reblog into plain onboarding.
-							const checkoutBackQueryArgs = blogPostToReblog
-								? { blog_post: blogPostToReblog, ...( refParameter ? { ref: refParameter } : {} ) }
-								: {};
 
 							const checkoutStepperPosition = getOnboardingStepperPosition(
 								'checkout',
@@ -872,11 +886,11 @@ const onboarding: FlowV2< typeof initialize > = {
 									checkoutBackUrl: pathToUrl(
 										addQueryArgs(
 											shouldSkipPlans ? backDestinationDomains : backDestination,
-											checkoutBackQueryArgs
+											checkoutReturnQueryArgs
 										)
 									),
 									checkoutBackUrlDomains: pathToUrl(
-										addQueryArgs( backDestinationDomains, checkoutBackQueryArgs )
+										addQueryArgs( backDestinationDomains, checkoutReturnQueryArgs )
 									),
 									coupon,
 									steps_current: checkoutStepperPosition.current,

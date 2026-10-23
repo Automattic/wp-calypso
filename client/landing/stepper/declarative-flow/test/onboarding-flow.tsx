@@ -193,8 +193,8 @@ describe( 'Onboarding Flow', () => {
 				expect(
 					await getCheckoutBackUrls( '/setup/onboarding/processing?playground=abc' )
 				).toEqual( {
-					plans: PLANS_STEP,
-					domains: DOMAINS_STEP,
+					plans: `${ PLANS_STEP }&playground=abc`,
+					domains: `${ DOMAINS_STEP }&playground=abc`,
 				} );
 				expect( retrieveSignupDestination() ).toContain( '/setup/site-setup/importerPlayground' );
 			} );
@@ -327,38 +327,6 @@ describe( 'Onboarding Flow', () => {
 				expect( checkoutUrl.searchParams.get( 'redirect_to' ) ).toBe( REBLOG_EDITOR );
 			} );
 
-			// Without this, refreshing processing on the way back from checkout forgets the post.
-			it( 'keeps the post when processing is reloaded with nothing pending', async () => {
-				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
-
-				await runUseStepNavigationSubmit( {
-					currentStep: STEPS.PROCESSING.slug,
-					currentURL: `/setup/onboarding/processing?siteSlug=test-site.wordpress.com&blog_post=${ encodeURIComponent(
-						POST_URL
-					) }`,
-					dependencies: { processingResult: ProcessingResult.NO_ACTION },
-				} );
-				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
-
-				const resumeUrl = new URL(
-					( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ],
-					'http://x'
-				);
-				expect( resumeUrl.pathname ).toBe( '/setup/onboarding/post-checkout-onboarding' );
-				expect( resumeUrl.searchParams.get( 'blog_post' ) ).toBe( POST_URL );
-			} );
-
-			// Without this, leaving checkout to change the plan or domain forgets the post.
-			it( 'keeps the post on checkout back URLs', async () => {
-				const checkoutUrl = new URL( await finishProcessing( { goToCheckout: true } ), 'http://x' );
-
-				for ( const backUrl of [ 'checkoutBackUrl', 'checkoutBackUrlDomains' ] ) {
-					const back = new URL( checkoutUrl.searchParams.get( backUrl ) ?? '' );
-					expect( back.searchParams.get( 'blog_post' ) ).toBe( POST_URL );
-					expect( back.searchParams.get( 'ref' ) ).toBe( 'reblog' );
-				}
-			} );
-
 			// Without this, a reblog order skips the post-plan email-verification gate.
 			it( 'returns a paid site through email verification, keeping the post', async () => {
 				mockPostPlanSelectionEmailVerification = true;
@@ -370,6 +338,102 @@ describe( 'Onboarding Flow', () => {
 
 				expect( returnUrl.pathname ).toBe( '/setup/onboarding/email-verification' );
 				expect( returnUrl.searchParams.get( 'blog_post' ) ).toBe( POST_URL );
+			} );
+		} );
+
+		describe( 'checkout return URLs', () => {
+			const PRESERVED = {
+				ref: 'some-ref',
+				coupon: 'SAVE20',
+				blog_post: 'https://example.blog/a-post/?utm_source=x&lang=es',
+				playground: 'playground-id',
+				blueprint: 'blueprint-slug',
+				build_dest: 'simple',
+				wow_funnel: 'some-funnel',
+				dest: 'editor',
+			};
+			// Preselect args: carried back, they would skip the step the user returned to.
+			const PRESELECTED = { plan: 'value_bundle', storage: '50gb_space' };
+
+			beforeEach( () => {
+				mockPostPlanSelectionEmailVerification = false;
+				dispatch( ONBOARD_STORE ).resetOnboardStore();
+			} );
+
+			const submitProcessing = async (
+				query: Record< string, string >,
+				dependencies: Record< string, unknown >
+			) => {
+				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+				await runUseStepNavigationSubmit( {
+					currentStep: STEPS.PROCESSING.slug,
+					currentURL: `/setup/onboarding/processing?${ new URLSearchParams( {
+						siteSlug: 'test-site.wordpress.com',
+						...query,
+					} ) }`,
+					dependencies,
+				} );
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+				return new URL( ( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ], 'http://x' );
+			};
+
+			// The checked args a URL carries; a stray preselect arg shows up here and fails the match.
+			const carriedArgs = ( url: string | null ) => {
+				const { searchParams } = new URL( url ?? '', 'http://x' );
+				return Object.fromEntries(
+					[ ...Object.keys( PRESERVED ), ...Object.keys( PRESELECTED ) ].flatMap( ( arg ) =>
+						searchParams.has( arg ) ? [ [ arg, searchParams.get( arg ) ] ] : []
+					)
+				);
+			};
+
+			const paidOrder = {
+				siteSlug: 'test-site.wordpress.com',
+				siteId: 123,
+				processingResult: ProcessingResult.SUCCESS,
+				goToCheckout: true,
+			};
+
+			it( 'keeps them on both checkout Back links', async () => {
+				const checkoutUrl = await submitProcessing( { ...PRESERVED, ...PRESELECTED }, paidOrder );
+
+				expect( carriedArgs( checkoutUrl.searchParams.get( 'checkoutBackUrl' ) ) ).toEqual(
+					PRESERVED
+				);
+				expect( carriedArgs( checkoutUrl.searchParams.get( 'checkoutBackUrlDomains' ) ) ).toEqual(
+					PRESERVED
+				);
+			} );
+
+			it( 'keeps them when processing is reloaded with nothing pending', async () => {
+				const resumeUrl = await submitProcessing(
+					{ ...PRESERVED, ...PRESELECTED },
+					{ processingResult: ProcessingResult.NO_ACTION }
+				);
+
+				expect( resumeUrl.pathname ).toBe( '/setup/onboarding/post-checkout-onboarding' );
+				expect( carriedArgs( resumeUrl.toString() ) ).toEqual( PRESERVED );
+			} );
+
+			// The run-shaping args (reblog, blueprint, playground, WoW) send checkout elsewhere, so
+			// these two returns are only reached by a plain run.
+			const PLAIN = { ref: 'some-ref', coupon: 'SAVE20' };
+
+			it( 'keeps them on the return to the post-checkout step', async () => {
+				const checkoutUrl = await submitProcessing( { ...PLAIN, ...PRESELECTED }, paidOrder );
+
+				expect( carriedArgs( checkoutUrl.searchParams.get( 'redirect_to' ) ) ).toEqual( PLAIN );
+			} );
+
+			it( 'keeps them on the email-verification return', async () => {
+				mockPostPlanSelectionEmailVerification = true;
+				const checkoutUrl = await submitProcessing( { ...PLAIN, ...PRESELECTED }, paidOrder );
+				const returnUrl = checkoutUrl.searchParams.get( 'redirect_to' );
+
+				expect( new URL( returnUrl ?? '', 'http://x' ).pathname ).toBe(
+					'/setup/onboarding/email-verification'
+				);
+				expect( carriedArgs( returnUrl ) ).toEqual( PLAIN );
 			} );
 		} );
 
