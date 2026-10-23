@@ -46,6 +46,8 @@ interface Props {
 	suggestions: Suggestion[];
 	/** Error message to display, if any. */
 	error?: string | null;
+	/** Error to display as a notice in the message list, with or instead of `error`. */
+	errorNotice?: NoticeConfig;
 	/** Chat header menu options. */
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Suggestions displayed when the chat is empty. */
@@ -169,6 +171,7 @@ export default function AgentChat( {
 	messages,
 	suggestions,
 	error = null,
+	errorNotice,
 	chatHeaderOptions,
 	emptyViewSuggestions = [],
 	groupWritingSuggestions = false,
@@ -313,6 +316,7 @@ export default function AgentChat( {
 			isReplying={ isReplying }
 			thinkingMessage={ thinkingMessage ?? undefined }
 			error={ error }
+			errorNotice={ errorNotice }
 			onSubmit={ onSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			freeDrag={ ! isDocked }
