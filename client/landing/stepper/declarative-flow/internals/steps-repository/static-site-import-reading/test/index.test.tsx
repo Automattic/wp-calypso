@@ -372,6 +372,39 @@ describe( 'StaticSiteImportReading', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
+	it( 'shows the captured homepage while the build runs, keeping its first URL', () => {
+		jest.useFakeTimers();
+		const queryClient = new QueryClient( {
+			defaultOptions: { queries: { staleTime: Infinity } },
+		} );
+		const { queryKey } = staticSiteImportSessionQuery( 'abc123' );
+		queryClient.setQueryData( queryKey, session( 'building' ) );
+		render(
+			'/static-site-import-reading?from=busybearscleaning.com&importSessionId=abc123',
+			queryClient
+		);
+		expect( screen.queryByRole( 'img' ) ).not.toBeInTheDocument();
+
+		act( () => {
+			queryClient.setQueryData(
+				queryKey,
+				session( 'building', { preview_image_url: 'https://public-api.wordpress.com/a.png' } )
+			);
+			jest.advanceTimersByTime( 0 );
+		} );
+		const image = screen.getByRole( 'img', { name: 'The homepage of busybearscleaning.com' } );
+		expect( image ).toHaveAttribute( 'src', 'https://public-api.wordpress.com/a.png' );
+
+		act( () => {
+			queryClient.setQueryData(
+				queryKey,
+				session( 'building', { preview_image_url: 'https://public-api.wordpress.com/b.png' } )
+			);
+			jest.advanceTimersByTime( 0 );
+		} );
+		expect( image ).toHaveAttribute( 'src', 'https://public-api.wordpress.com/a.png' );
+	} );
+
 	it( 'resumes the session in the URL without starting another one', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )

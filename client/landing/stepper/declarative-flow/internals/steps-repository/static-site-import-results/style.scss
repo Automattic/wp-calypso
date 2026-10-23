@@ -33,17 +33,6 @@
 		}
 	}
 
-	.static-site-import-results__screenshot {
-		overflow: hidden;
-		aspect-ratio: 2 / 1;
-
-		img {
-			display: block;
-			width: 100%;
-			height: auto;
-		}
-	}
-
 	.static-site-import-results__muted {
 		color: var( --color-text-subtle );
 	}

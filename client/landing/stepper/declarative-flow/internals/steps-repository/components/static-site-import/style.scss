@@ -1,0 +1,10 @@
+.static-site-import__preview-image {
+	overflow: hidden;
+	aspect-ratio: 2 / 1;
+
+	img {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+}

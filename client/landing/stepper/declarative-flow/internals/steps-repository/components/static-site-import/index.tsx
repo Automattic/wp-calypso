@@ -9,11 +9,14 @@ import {
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
 import { getPlatformName, getSourceHost, toSourceUrl } from './utils';
 import type { ReactNode } from 'react';
+
+import './style.scss';
 
 export * from './confidence';
 export * from './utils';
@@ -60,6 +63,35 @@ export const ImportCard = ( { title, children }: { title?: ReactNode; children: 
 		</CardBody>
 	</Card>
 );
+
+/**
+ * The homepage as we captured it, once the session has a preview image. Keeps the
+ * first signed URL: every poll mints a new one, which would reload the image.
+ */
+export const PreviewImage = ( { url, host }: { url?: string; host: string } ) => {
+	const { __ } = useI18n();
+	const [ src, setSrc ] = useState( url );
+	if ( url && ! src ) {
+		setSrc( url );
+	}
+
+	if ( ! src ) {
+		return null;
+	}
+
+	return (
+		<Card className="static-site-import__preview-image">
+			<img
+				src={ src }
+				alt={ sprintf(
+					/* translators: %s: the site's domain, e.g. example.com. */
+					__( 'The homepage of %s' ),
+					host
+				) }
+			/>
+		</Card>
+	);
+};
 
 export const SourceCard = () => {
 	const { __ } = useI18n();

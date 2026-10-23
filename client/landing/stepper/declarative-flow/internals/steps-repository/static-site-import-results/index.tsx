@@ -21,6 +21,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { getIntlLocale } from 'calypso/dashboard/utils/locale';
 import {
 	ImportCard,
+	PreviewImage,
 	getStaticSiteImportConfidence,
 	useStaticSiteImportSource,
 	useStaticSiteImportTicket,
@@ -352,18 +353,7 @@ const StaticSiteImportResults: StepType< { submits: StaticSiteImportResultsSubmi
 							</Card>
 						) }
 
-						{ host && session?.preview_image_url && (
-							<Card className="static-site-import-results__screenshot">
-								<img
-									src={ session.preview_image_url }
-									alt={ sprintf(
-										/* translators: %s: the site's domain, e.g. example.com. */
-										__( 'The homepage of %s' ),
-										host
-									) }
-								/>
-							</Card>
-						) }
+						{ host && <PreviewImage url={ session?.preview_image_url } host={ host } /> }
 
 						<ImportCard>
 							{ hasPreview && (
