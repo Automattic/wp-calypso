@@ -36,11 +36,6 @@ config:
 
 	@cd $(DESKTOP_DIR) && yarn run build:config
 
-secrets:
-	$(info Making app secrets...)
-
-	@cd $(DESKTOP_DIR) && yarn run build:secrets
-
 # Note: cannot prepend desktop/package.json with full path: cannot be resolved on Windows.
 package: PACKAGE_ELECTRON_VERSION = $(shell cd $(DESKTOP_DIR) && node -e "console.log(require('./package.json').devDependencies.electron.replace('^',''))")
 package:
