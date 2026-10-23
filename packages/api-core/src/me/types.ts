@@ -84,3 +84,14 @@ export interface User {
 export interface TwoStep {
 	two_step_reauthorization_required: boolean;
 }
+
+export interface LogoutUserArgs {
+	logout_nonce: string;
+	redirect_to?: string;
+	client_id: string;
+	client_secret: string;
+}
+
+export interface LogoutUserResponse {
+	redirect_to?: string;
+}
