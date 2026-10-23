@@ -1,3 +1,4 @@
+import { TZDate } from '@date-fns/tz';
 import { useRouter, useSearch } from '@tanstack/react-router';
 import { getUnixTime, fromUnixTime, isValid as isValidDate, subDays } from 'date-fns';
 import { useMemo, useRef, useEffect, useCallback } from 'react';
@@ -111,7 +112,15 @@ export function useDateRange( {
 				return;
 			}
 			const end = new Date();
-			const start = subDays( end, defaultDays - 1 );
+			// Preserve the site clock across its DST changes, independently of browser DST.
+			let start: Date;
+			if ( timezoneString ) {
+				start = subDays( new TZDate( end, timezoneString ), defaultDays - 1 );
+			} else if ( typeof gmtOffset === 'number' ) {
+				start = new Date( end.getTime() - ( defaultDays - 1 ) * 86_400_000 );
+			} else {
+				start = subDays( end, defaultDays - 1 );
+			}
 
 			const from = getUnixTime( start );
 			const to = getUnixTime( end );
