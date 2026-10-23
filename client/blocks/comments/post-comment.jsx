@@ -295,6 +295,7 @@ class PostComment extends PureComponent {
 				commentText={ this.props.commentText }
 				onUpdateCommentText={ this.props.onUpdateCommentText }
 				onCommentSubmit={ this.props.onCommentSubmit }
+				onReplyCancel={ this.props.onReplyCancel }
 				isInlineComment={ this.props.isInlineComment }
 			/>
 		);

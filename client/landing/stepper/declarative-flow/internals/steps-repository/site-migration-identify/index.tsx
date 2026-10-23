@@ -120,6 +120,8 @@ export const Analyzer: FC< Props > = ( {
 	// Update loading state to include hosting check
 	const isScanning =
 		! shownIssue && ( isHeld || isFetching || isFetchingHosting || ( isFetched && ! hasError ) );
+	// The checking screen and its outcomes take the form's place, along with what goes with it.
+	const isFormHidden = isReprintFlow && ( isScanning || !! shownIssue );
 
 	useEffect( () => {
 		// Only complete when we have both site info AND hosting info (or hosting check failed)
@@ -237,10 +239,7 @@ export const Analyzer: FC< Props > = ( {
 					) }
 				</div>
 			) }
-			<div
-				className="import__capture-container"
-				hidden={ isReprintFlow && ( isScanning || !! shownIssue ) }
-			>
+			<div className="import__capture-container" hidden={ isFormHidden }>
 				{ isReprintFlow && siteURL && hasError && ! isScanning && ! shownIssue && (
 					<Notice
 						status="error"
@@ -278,10 +277,12 @@ export const Analyzer: FC< Props > = ( {
 					nextLabelText={ isReprintFlow ? translate( 'Continue' ) : translate( 'Check my site' ) }
 				/>
 			</div>
-			<ChecklistCard
-				title={ translate( 'Why should you host with us?' ) }
-				items={ hostingDetailItems }
-			/>
+			{ ! isFormHidden && (
+				<ChecklistCard
+					title={ translate( 'Why should you host with us?' ) }
+					items={ hostingDetailItems }
+				/>
+			) }
 		</>
 	);
 };

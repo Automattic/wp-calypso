@@ -212,33 +212,88 @@ describe( 'SiteMigrationCheck', () => {
 		expect( submit ).toHaveBeenCalledWith( { action: 'back' } );
 	} );
 
-	it( 'shows the WordPress.com result with unfinished choices disabled and no copy promise', async () => {
-		const submit = jest.fn();
-		renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit } } ) } />, {
+	it.each( [ 'ineligible', 'eligible' ] as const )(
+		'shows the WordPress.com actions with copy eligibility %s',
+		async ( copySiteEligibility ) => {
+			const canCopySite = copySiteEligibility === 'eligible';
+			const submit = jest.fn();
+			renderStep(
+				<SiteMigrationCheck
+					{ ...mockStepProps( { navigation: { submit } } ) }
+					copySiteEligibility={ copySiteEligibility }
+				/>,
+				{
+					initialEntry:
+						'/site-migration-check?from=https://cotrim.dev/&platform=wordpress&isWpcom=true',
+				}
+			);
+			expect(
+				screen.getByRole( 'heading', { name: 'Your site is already on WordPress.com' } )
+			).toBeVisible();
+			expect( screen.getByText( 'cotrim.dev' ) ).toBeVisible();
+			expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toHaveAttribute(
+				'href',
+				'https://cotrim.dev/'
+			);
+			expect(
+				screen.queryAllByRole( 'button', { name: /Make a copy of your site/ } )
+			).toHaveLength( canCopySite ? 1 : 0 );
+			expect( screen.getByText( 'Make a copy of your site' ) ).toBeVisible();
+			expect( screen.queryAllByRole( 'link', { name: /Make a copy of your site/ } ) ).toHaveLength(
+				canCopySite ? 0 : 1
+			);
+			for ( const [ name, action ] of [
+				...( canCopySite ? [ [ /Make a copy of your site/, 'copy-site' ] as const ] : [] ),
+				[ /Transfer your domain/, 'transfer-domain' ],
+				[ /Get access to your site/, 'get-access' ],
+			] ) {
+				await userEvent.click( screen.getByRole( 'button', { name } ) );
+				expect( submit ).toHaveBeenLastCalledWith( {
+					action,
+					from: 'https://cotrim.dev/',
+					platform: 'wordpress',
+					host: undefined,
+				} );
+			}
+			expect( screen.queryByText( 'Site preview' ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
+			for ( const name of [ 'Back', 'Not the site you meant? Enter a different URL' ] ) {
+				await userEvent.click( screen.getByRole( 'button', { name } ) );
+				expect( submit ).toHaveBeenLastCalledWith( { action: 'back' } );
+			}
+		}
+	);
+
+	it( 'explains why an ineligible site can’t be copied', () => {
+		renderStep( <SiteMigrationCheck { ...mockStepProps() } copySiteEligibility="ineligible" />, {
 			initialEntry:
 				'/site-migration-check?from=https://cotrim.dev/&platform=wordpress&isWpcom=true',
 		} );
-		expect(
-			screen.getByRole( 'heading', { name: 'Your site is already on WordPress.com' } )
-		).toBeVisible();
-		expect( screen.getByText( 'cotrim.dev' ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toHaveAttribute(
-			'href',
-			'https://cotrim.dev/'
+		const link = screen.getByRole( 'link', { name: /Make a copy of your site/ } );
+		expect( link ).toHaveTextContent( 'This site isn’t eligible to be copied. Learn more' );
+		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/support/copy-a-site/' );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+	} );
+
+	it( 'shows a disabled copy action while eligibility is loading', async () => {
+		const submit = jest.fn();
+		renderStep(
+			<SiteMigrationCheck
+				{ ...mockStepProps( { navigation: { submit } } ) }
+				copySiteEligibility="loading"
+			/>,
+			{
+				initialEntry:
+					'/site-migration-check?from=https://cotrim.dev/&platform=wordpress&isWpcom=true',
+			}
 		);
-		for ( const name of [
-			/Make a copy of your site/,
-			/Transfer your domain/,
-			/Get access to your site/,
-		] ) {
-			expect( screen.getByRole( 'button', { name } ) ).toBeDisabled();
-		}
-		expect( screen.queryByText( 'Site preview' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
+		const button = screen.getByRole( 'button', { name: /Make a copy of your site/ } );
+		expect( button ).toBeDisabled();
+		expect( button ).toHaveTextContent( 'Checking if your site can be copied…' );
+		expect(
+			screen.queryByRole( 'link', { name: /Make a copy of your site/ } )
+		).not.toBeInTheDocument();
+		await userEvent.click( button );
 		expect( submit ).not.toHaveBeenCalled();
-		for ( const name of [ 'Back', 'Not the site you meant? Enter a different URL' ] ) {
-			await userEvent.click( screen.getByRole( 'button', { name } ) );
-			expect( submit ).toHaveBeenLastCalledWith( { action: 'back' } );
-		}
 	} );
 } );

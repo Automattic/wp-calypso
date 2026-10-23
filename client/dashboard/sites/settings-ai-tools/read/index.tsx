@@ -10,7 +10,7 @@ import {
 import languages from '@automattic/languages';
 import { useFuzzySearch } from '@automattic/search';
 import { useSuspenseQuery, useMutation, useQuery } from '@tanstack/react-query';
-import { useLocation, useParams } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -19,7 +19,7 @@ import {
 	SearchControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Fragment, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useDeferredValue, useMemo, useState } from 'react';
 import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../me/mcp/groups';
 import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import {
@@ -28,7 +28,9 @@ import {
 	getSiteContextToolIds,
 	getSiteMcpAbilities,
 	getSiteRemoteGroups,
+	getSiteLevelEnabled,
 	isRemoteAbilityEnabled,
+	isRemoteKeyEnabled,
 	mergeSiteMcpAbilities,
 } from '../../../../me/mcp/utils';
 import { useAnalytics } from '../../../app/analytics';
@@ -96,13 +98,8 @@ export default function SiteAIToolsRead() {
 		.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
 
 	// Tool search: fuzzy-filters the wpcom tools on this page and is passed down
-	// to the site-published section. A tool anchor in the URL seeds the search
-	// with the anchored tool's label so it lands visible and open.
-	const locationHash = ( useLocation().hash ?? '' ).replace( /^#/, '' );
+	// to the site-published section.
 	const [ search, setSearch ] = useState( '' );
-	// A tool anchor filters to exactly that tool until the user edits the search.
-	const [ anchorTool, setAnchorTool ] = useState< string | null >( null );
-	const anchorSeeded = useRef( false );
 	const deferredSearch = useDeferredValue( search );
 	const query = deferredSearch.trim();
 
@@ -113,9 +110,9 @@ export default function SiteAIToolsRead() {
 		keys: [ 'tool.title', 'tool.description' ],
 		query,
 	} );
-	const filteredTools = anchorTool
-		? allTools.filter( ( [ toolId ] ) => toolId === anchorTool )
-		: filteredSearchable.map( ( { toolId, tool } ) => [ toolId, tool ] as [ string, McpAbility ] );
+	const filteredTools = filteredSearchable.map(
+		( { toolId, tool } ) => [ toolId, tool ] as [ string, McpAbility ]
+	);
 	const groups = groupToolsByGroup( filteredTools, groupDescriptors ) as ToolGroup[];
 
 	// Site-published abilities on this page, for the page-level toggle and its
@@ -144,31 +141,26 @@ export default function SiteAIToolsRead() {
 		( group ) => group.abilityKeys
 	);
 
-	useEffect( () => {
-		if ( anchorSeeded.current || search || ! locationHash ) {
-			return;
-		}
-		anchorSeeded.current = true;
-		const wpcomHit = allTools.find( ( [ toolId ] ) => toolId === locationHash );
-		const remoteHit = [ ...remoteNamespaces.values() ]
-			.flatMap( ( group ) => group.abilities )
-			.find( ( ability ) => ability.name === locationHash );
-		const label = wpcomHit?.[ 1 ].title ?? remoteHit?.label;
-		if ( label ) {
-			setSearch( label );
-			setAnchorTool( locationHash );
-		}
-	}, [ search, locationHash, allTools, remoteNamespaces ] );
+	// Site-published abilities with no saved choice follow the user's MCP access:
+	// on when MCP is on for this site and any tool of this category is enabled.
+	const remoteDefaultEnabled =
+		getSiteLevelEnabled( userSettings || {}, site.ID ) &&
+		allTools.some( ( [ , tool ] ) => tool.enabled );
 
 	const pageAllEnabled =
 		allTools.length > 0 &&
 		allTools.every( ( [ , tool ] ) => tool.enabled ) &&
-		[ ...remoteGroupKeys, ...remoteAbilityKeys ].every(
-			( key ) => savedRemoteGroups[ key ] === true
+		[ ...remoteGroupKeys, ...remoteAbilityKeys ].every( ( key ) =>
+			isRemoteKeyEnabled( savedRemoteGroups, key, remoteDefaultEnabled )
 		) &&
 		[ ...remoteNamespaces.values() ].every( ( group ) =>
 			group.abilities.every( ( ability ) =>
-				isRemoteAbilityEnabled( savedRemoteGroups, ability.name, ability.meta?.annotations )
+				isRemoteAbilityEnabled(
+					savedRemoteGroups,
+					ability.name,
+					ability.meta?.annotations,
+					remoteDefaultEnabled
+				)
 			)
 		);
 
@@ -332,7 +324,6 @@ export default function SiteAIToolsRead() {
 						placeholder={ __( 'Search tools' ) }
 						onChange={ ( value: string ) => {
 							setSearch( value );
-							setAnchorTool( null );
 						} }
 						__nextHasNoMarginBottom
 					/>
@@ -361,7 +352,7 @@ export default function SiteAIToolsRead() {
 					site={ site }
 					category={ TOOL_CATEGORY }
 					search={ query }
-					anchorTool={ anchorTool }
+					defaultEnabled={ remoteDefaultEnabled }
 				/>
 			</div>
 		</PageLayout>

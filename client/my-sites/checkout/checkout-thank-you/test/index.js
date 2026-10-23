@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { PLAN_PREMIUM, PLAN_PERSONAL } from '@automattic/calypso-products';
+import { PLAN_ECOMMERCE, PLAN_PREMIUM, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -54,11 +54,7 @@ const translate = ( x ) => x;
 
 const defaultProps = {
 	translate,
-	receipt: {
-		data: {},
-	},
 	loadTrackingTool: () => {},
-	fetchReceipt: () => {},
 	siteHomeUrl: '',
 	domainOnlySiteFlow: false,
 	hasReceivedRemotePreferences: true,
@@ -127,11 +123,9 @@ describe( 'CheckoutThankYou', () => {
 			sitePlans: {
 				hasLoadedFromServer: true,
 			},
+			hasLoadedReceipts: true,
 			receipt: {
-				hasLoadedFromServer: true,
-				data: {
-					purchases: [ { productSlug: 'jetpack_personal' } ],
-				},
+				purchases: [ { productSlug: 'jetpack_personal' } ],
 			},
 			refreshSitePlans: ( selectedSite ) => selectedSite,
 			planSlug: PLAN_PREMIUM,
@@ -156,11 +150,9 @@ describe( 'CheckoutThankYou', () => {
 			sitePlans: {
 				hasLoadedFromServer: true,
 			},
+			hasLoadedReceipts: true,
 			receipt: {
-				hasLoadedFromServer: true,
-				data: {
-					purchases: [ { productSlug: PLAN_PERSONAL } ],
-				},
+				purchases: [ { productSlug: PLAN_PERSONAL } ],
 			},
 			refreshSitePlans: ( selectedSite ) => selectedSite,
 			planSlug: PLAN_PREMIUM,
@@ -175,27 +167,64 @@ describe( 'CheckoutThankYou', () => {
 		expect( await screen.getByTestId( 'component--plan-only-thank-you' ) ).toBeInTheDocument();
 	} );
 
+	describe( 'eCommerce plan purchase', () => {
+		const props = {
+			...defaultProps,
+			receiptId: 12,
+			selectedSite: {
+				ID: 12,
+			},
+			sitePlans: {
+				hasLoadedFromServer: true,
+			},
+			hasLoadedReceipts: true,
+			receipt: {
+				purchases: [ { productSlug: PLAN_ECOMMERCE } ],
+			},
+			refreshSitePlans: ( selectedSite ) => selectedSite,
+			transferComplete: true,
+		};
+
+		it( 'keeps showing the transfer screen until WooCommerce is installed', () => {
+			render(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...props } isWooCommerceInstalled={ false } />
+				</Provider>
+			);
+
+			expect( screen.getByText( 'transfer-pending' ) ).toBeVisible();
+		} );
+
+		it( 'shows the thank-you page once WooCommerce is installed', () => {
+			render(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...props } isWooCommerceInstalled />
+				</Provider>
+			);
+
+			expect( screen.queryByText( 'transfer-pending' ) ).not.toBeInTheDocument();
+			expect( screen.getByTestId( 'component--plan-only-thank-you' ) ).toBeVisible();
+		} );
+	} );
+
 	describe( 'domain-only page', () => {
 		const props = {
 			...defaultProps,
 			receiptId: 12,
+			hasLoadedReceipts: true,
 			receipt: {
-				hasLoadedFromServer: true,
-				data: {
-					purchases: [
-						{
-							isDomainRegistration: true,
-							productSlug: 'dotcom_domain',
-							productType: 'domain',
-							meta: 'example.com',
-							blogId: 123,
-							isHundredYearDomain: false,
-							delayedProvisioning: false,
-						},
-					],
-					failedPurchases: [],
-					currency: 'USD',
-				},
+				purchases: [
+					{
+						isDomainRegistration: true,
+						productSlug: 'dotcom_domain',
+						productType: 'domain',
+						meta: 'example.com',
+						blogId: 123,
+						isHundredYearDomain: false,
+						delayedProvisioning: false,
+					},
+				],
+				currency: 'USD',
 			},
 			refreshSitePlans: () => {},
 		};

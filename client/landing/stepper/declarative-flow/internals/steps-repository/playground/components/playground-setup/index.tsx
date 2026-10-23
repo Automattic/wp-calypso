@@ -9,10 +9,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import {
-	SESSION_KEY_FROM_PLAYGROUND_PUBLISH,
-	SESSION_KEY_PLAYGROUND_WOO_INTENT,
-} from '../../lib/constants';
+import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../../lib/constants';
 import { useImportBlueprint } from '../../lib/import-blueprint';
 import {
 	importPlaygroundSite,
@@ -201,9 +198,7 @@ export const PlaygroundSetupStep: Step< {
 		}
 
 		if ( progress?.phase === 'packing' ) {
-			const isStore =
-				sessionStorage.getItem( SESSION_KEY_PLAYGROUND_WOO_INTENT ) === '1' ||
-				sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
+			const isStore = sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
 
 			return renderProgress(
 				isStore ? __( 'Packing up your store' ) : __( 'Packing up your site' )

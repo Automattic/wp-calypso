@@ -23,7 +23,10 @@ export type WordPressMigrationSourceConnection = {
 
 export type WordPressMigrationSourceConnectionOption = WordPressMigrationSourceConnection & {
 	key?: string | null;
+	plugin_url?: string;
 	install_url?: string;
+	connect_url?: string;
+	manual_url?: string;
 };
 
 export type WordPressMigrationConfiguration = {

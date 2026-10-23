@@ -2,6 +2,7 @@ import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, people, tag, trendingUp, currencyDollar } from '@wordpress/icons';
+import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { a4aLink } from '../../utils/link';
 import { useAppContext } from '../context';
@@ -55,7 +56,14 @@ export default function AgencySidebar() {
 	const canAccessPartnerDirectory =
 		!! supports.agency.partnerDirectory && canAccess( agencyPartnerDirectoryRoute );
 	const canAccessTiers = !! supports.agency.tiers && canAccess( agencyTiersRoute );
-	const canAccessEarn = !! supports.agency.earn && earnSectionRoutes.some( canAccess );
+	const canAccessPayoutSettings =
+		canAccess( earnPayoutSettingsRoute ) && isAgencyApproved( activeAgency );
+	const canAccessEarn =
+		!! supports.agency.earn &&
+		( canAccessPayoutSettings ||
+			earnSectionRoutes.some(
+				( route ) => route !== earnPayoutSettingsRoute && canAccess( route )
+			) );
 	const canAccessTeam = !! supports.agency.team && canAccess( agencyTeamRoute );
 	const canAccessMcp = !! supports.agency.mcp && canAccess( mcpRoute );
 	const canAccessBilling =
@@ -147,7 +155,7 @@ export default function AgencySidebar() {
 					{ canAccess( earnWooPaymentsRoute ) && (
 						<SidebarMenuItem to="/woopayments">{ __( 'WooPayments' ) }</SidebarMenuItem>
 					) }
-					{ canAccess( earnPayoutSettingsRoute ) && (
+					{ canAccessPayoutSettings && (
 						<SidebarMenuItem to="/payout-settings">{ __( 'Payout settings' ) }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>

@@ -347,7 +347,7 @@ describe( 'SiteMigrationIdentify', () => {
 			expect(
 				screen.getByRole( 'progressbar', { name: 'Checking your site' } )
 			).toBeInTheDocument();
-			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
+			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
 			expect( screen.getByRole( 'link', { name: 'View site ↗' } ) ).toHaveAttribute(
 				'href',
 				'https://example.com'
@@ -362,7 +362,7 @@ describe( 'SiteMigrationIdentify', () => {
 			expect(
 				screen.getByRole( 'progressbar', { name: 'Checking your site' } )
 			).toBeInTheDocument();
-			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
+			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
 			expect( submit ).not.toHaveBeenCalled();
 			await waitFor( () => expect( completeHost ).toEqual( expect.any( Function ) ) );
 			await act( async () => completeHost?.() );

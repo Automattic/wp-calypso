@@ -130,8 +130,10 @@ export function renderRebloggingEmptySites( context ) {
 	const actionURL = addQueryArgs(
 		{
 			blog_post: context.query?.url,
+			// Keeps reblog signups separable from the rest of onboarding in its Tracks events.
+			ref: 'reblog',
 		},
-		'/setup/reblogging'
+		'/setup/onboarding'
 	);
 
 	context.primary = createElement( () =>

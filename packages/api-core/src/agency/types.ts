@@ -108,6 +108,70 @@ export interface AgencyProfileUpdate {
 }
 
 /**
+ * An agency's lead matching preferences, grouped the way
+ * GET and PUT /wpcom/v2/agency/$agencyId/lead-matching exchange them.
+ */
+export interface AgencyLeadMatchingProfile {
+	availability: {
+		accepting_work: boolean;
+		lead_eligibility: string | null;
+		profile_v2_complete: boolean;
+	};
+	geography_and_language: {
+		supported_regions: string[];
+		global_remote: boolean;
+		supported_languages: string[];
+	};
+	business_fit: {
+		supported_business_types: string[];
+		ideal_business_types: string[];
+		supported_company_sizes: string[];
+	};
+	platform_and_hosting: {
+		supported_hosting_environments: string[];
+		migration_platforms: string[];
+		can_recommend_better_hosting: boolean;
+	};
+	ecommerce: {
+		supports_ecommerce_projects: boolean;
+		ecommerce_focus: boolean;
+		supported_complexity_flags: string[];
+	};
+	project_types: {
+		supported_project_types: string[];
+		accepts_small_fixes: boolean;
+	};
+	service_and_budget: {
+		max_service_level: string;
+		supported_budget_bands: string[];
+		minimum_budget_band: string;
+	};
+	timing: {
+		supported_start_timings: string[];
+		supports_hard_deadlines: boolean;
+	};
+	delivery_model: {
+		supported_decision_processes: string[];
+		offers_care_plans: boolean;
+		trains_clients: boolean;
+		works_with_internal_technical_teams: boolean;
+		requires_maintenance_plan: boolean;
+	};
+}
+
+export interface AgencyLeadMatchingSyncState {
+	status?: string;
+	last_synced_at?: string | null;
+	error?: string | null;
+}
+
+export interface AgencyLeadMatchingResponse {
+	agency_id: number;
+	lead_matching_profile: AgencyLeadMatchingProfile | null;
+	sync?: AgencyLeadMatchingSyncState;
+}
+
+/**
  * Response from POST /wpcom/v2/agency/$agencyId/media.
  */
 export interface AgencyMediaUpload {

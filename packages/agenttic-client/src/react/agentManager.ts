@@ -194,7 +194,7 @@ interface ManagedAgent {
 	storageConfig: ConversationStorageConfig;
 	conversationHistory: Message[];
 	currentAbortController: AbortController | null;
-	/** User turn awaiting delivery resolution across tool follow-ups. */
+	/** User turn still running, across its tool follow-ups. */
 	inFlightUserMessageId: string | null;
 }
 
@@ -560,12 +560,8 @@ function createAgentManager(): AgentManager {
 				userMessage.parts.push( ...imageParts );
 			}
 			// Tool-result follow-ups reuse the opener's in-flight id; only
-			// mark a new pending delivery for real user turns that persist.
+			// real user turns that persist start a new one.
 			if ( withHistory && ! isToolResultOnlyMessage( userMessage ) ) {
-				userMessage.metadata = {
-					...( userMessage.metadata || {} ),
-					deliveryStatus: 'pending',
-				};
 				managedAgent.inFlightUserMessageId = userMessage.messageId;
 			}
 
@@ -723,31 +719,7 @@ function createAgentManager(): AgentManager {
 						// Clear tool call tracking for next batch
 						currentToolCallIds = [];
 
-						// Resolve only the in-flight opener; older pending stay.
-						const inFlightId = managedAgent.inFlightUserMessageId;
-						const nextStatus =
-							update.status?.state === 'failed' || update.status?.state === 'canceled'
-								? 'failed'
-								: 'complete';
-						if ( inFlightId ) {
-							currentConversationHistory = currentConversationHistory.map( ( m ) => {
-								if ( m.messageId !== inFlightId ) {
-									return m;
-								}
-								const status = m.metadata?.deliveryStatus;
-								if ( status === 'pending' || status === 'streaming' ) {
-									return {
-										...m,
-										metadata: {
-											...( m.metadata || {} ),
-											deliveryStatus: nextStatus,
-										},
-									};
-								}
-								return m;
-							} );
-							managedAgent.inFlightUserMessageId = null;
-						}
+						managedAgent.inFlightUserMessageId = null;
 
 						if ( update.status?.message ) {
 							const finalAgentMessage = extractNewContentFromMessage( update.status.message );

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
+import { isAgencyApproved } from '../marketplace/is-agency-approved';
 
 type CommissionType = 'referrals' | 'migrations' | 'woopayments';
 
@@ -38,7 +39,8 @@ export function useMissingPaymentSettings( {
 } ) {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
-	const enabled = !! agencyId && hasCommissionActivity;
+	// Payout settings stay closed until the agency is approved, so there is nowhere to send it.
+	const enabled = !! agencyId && isAgencyApproved( agency ) && hasCommissionActivity;
 	const {
 		data: tipaltiData,
 		isSuccess,

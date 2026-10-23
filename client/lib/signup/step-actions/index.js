@@ -214,31 +214,6 @@ export const getNewSiteParams = ( {
 	return newSiteParams;
 };
 
-function saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback ) {
-	const cartItem = getSignupDependencyStore( state )?.cartItem;
-	const newCartItems = [ cartItem, domainItem ].filter( ( item ) => item );
-
-	const newCartItemsToAdd = newCartItems.map( ( item ) =>
-		addPrivacyProtectionIfSupported( item, state )
-	);
-
-	try {
-		window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCartItemsToAdd ) );
-		window.localStorage.setItem( 'siteParams', JSON.stringify( newSiteParams ) );
-	} catch ( e ) {
-		throw new Error( 'An unexpected error occured while saving your cart: ' + e );
-	}
-
-	const providedDependencies = {
-		domainItem,
-		themeItem,
-		siteId: undefined,
-		siteSlug: 'no-site',
-	};
-
-	callback( undefined, providedDependencies );
-}
-
 export function createSiteWithCart( callback, dependencies, stepData, reduxStore ) {
 	const {
 		domainItem,
@@ -264,7 +239,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	const isFreeThemePreselected = ( themeSlugWithRepo ?? '' ).startsWith( 'pub' ) && ! themeItem;
 	const state = reduxStore.getState();
-	const bearerToken = getSignupDependencyStore( state )?.bearer_token ?? null;
 
 	const isManageSiteFlow = getSignupDependencyStore( state )?.isManageSiteFlow ?? false;
 
@@ -286,11 +260,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		state,
 		siteAccentColor,
 	} );
-
-	if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
-		saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback );
-		return;
-	}
 
 	const locale = getLocaleSlug();
 
@@ -777,7 +746,6 @@ export function createAccount(
 	{
 		userData,
 		flowName,
-		lastKnownFlow,
 		queryArgs,
 		service,
 		access_token,
@@ -788,20 +756,6 @@ export function createAccount(
 		recaptchaToken,
 	}
 ) {
-	const flowToCheck = flowName || lastKnownFlow;
-
-	if ( 'onboarding-registrationless' === flowToCheck ) {
-		const { cartItem, domainItem, cartItems } = dependencies;
-		const isPurchasingItem =
-			! isEmpty( cartItem ) || ! isEmpty( domainItem ) || ! isEmpty( cartItems );
-
-		// If purchasing item in this flow, return without creating a user account.
-		if ( isPurchasingItem ) {
-			const providedDependencies = { allowUnauthenticated: true };
-			return setTimeout( () => callback( undefined, providedDependencies ), 0 );
-		}
-	}
-
 	const SIGNUP_TYPE_SOCIAL = 'social';
 	const SIGNUP_TYPE_DEFAULT = 'default';
 
@@ -1001,38 +955,6 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 	if ( customDomains.length > 0 ) {
 		const tracksEventValue = customDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );
 		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
-	}
-}
-
-export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencies, nextProps ) {
-	if ( 'onboarding-registrationless' !== nextProps.flowName ) {
-		return;
-	}
-
-	const { submitSignupStep } = nextProps;
-	const cartItem = nextProps?.signupDependencies?.cartItem ?? false;
-	const domainItem = nextProps?.signupDependencies?.domainItem ?? false;
-	const isPurchasingItem = ! isEmpty( cartItem ) || ! isEmpty( domainItem );
-
-	if ( isPurchasingItem ) {
-		if ( flows.excludedSteps.includes( stepName ) ) {
-			return;
-		}
-
-		submitSignupStep(
-			{ stepName },
-			{ bearer_token: null, username: null, marketing_price_group: null }
-		);
-		recordExcludeStepEvent( stepName, null );
-
-		const fulfilledDependencies = [ 'bearer_token', 'username', 'marketing_price_group' ];
-
-		if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
-			flows.excludeStep( stepName );
-		}
-	} else if ( flows.excludedSteps.includes( stepName ) ) {
-		flows.resetExcludedStep( stepName );
-		nextProps.removeStep( { stepName } );
 	}
 }
 

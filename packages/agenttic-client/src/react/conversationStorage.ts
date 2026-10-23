@@ -1,8 +1,9 @@
-import { generateMessageId } from '../client/utils/core';
+import { generateMessageId, isA2uiDataPart } from '../client/utils/core';
 import { logger } from '../client/utils/logger';
 import { DEFAULT_API_BASE_URL, loadChatFromServer, type OdieServiceConfig } from './odieService';
 import type { PaginationMeta } from './serverTypes';
 import type {
+	A2uiDataPart,
 	AuthProvider,
 	ContentType,
 	DataPart,
@@ -30,22 +31,6 @@ export interface ConversationLoadResult {
 }
 
 /**
- * Delivery/run status for reconciliation across page loads. See
- * {@link getUnresolvedMessages}.
- *
- * - `pending`  — user message queued locally, outbound request not yet
- *                confirmed by the server.
- * - `sent`     — reserved for consumers; this package does not write it.
- * - `streaming` — reserved for consumers; this package does not write it.
- * - `complete` — agent turn finished normally.
- * - `failed`   — outbound request rejected or in-flight turn known-abandoned.
- *
- * A stored message with no `deliveryStatus` is treated as `complete` for
- * backwards compatibility with existing stored conversations.
- */
-export type DeliveryStatus = 'pending' | 'sent' | 'streaming' | 'complete' | 'failed';
-
-/**
  * Simplified stored message format for efficient serialization
  */
 interface StoredMessage {
@@ -54,7 +39,6 @@ interface StoredMessage {
 	contentType?: ContentType;
 	timestamp: number;
 	archived?: boolean;
-	deliveryStatus?: DeliveryStatus;
 	files?: Array< {
 		name: string;
 		mimeType?: string;
@@ -78,6 +62,11 @@ interface StoredMessage {
 		flags?: Record< string, unknown >;
 		sources?: unknown;
 	};
+	/** Where the prompt came from (see `SubmitOptions.promptSource`), kept as message metadata. */
+	promptSource?: string;
+	promptSourceId?: string;
+	/** An interactive UI surface, as A2UI's A2A data part. */
+	a2ui?: A2uiDataPart;
 }
 
 /**
@@ -162,6 +151,36 @@ function extractStorableContent( message: Message ): StoredMessage {
 		}
 	}
 
+	// The prompt source: a live message keeps it as metadata, one restored from
+	// the server as a `data` part. Either way it is kept, so a conversation
+	// restored from storage still says which messages came from where.
+	let promptSource: string | undefined;
+	let promptSourceId: string | undefined;
+	const metadataPromptSource = message.metadata?.promptSource;
+	if ( typeof metadataPromptSource === 'string' && metadataPromptSource !== '' ) {
+		promptSource = metadataPromptSource;
+		const metadataPromptSourceId = message.metadata?.promptSourceId;
+		if ( typeof metadataPromptSourceId === 'string' && metadataPromptSourceId !== '' ) {
+			promptSourceId = metadataPromptSourceId;
+		}
+	} else {
+		for ( const part of message.parts ) {
+			if ( part.type !== 'data' || ! part.data || typeof part.data !== 'object' ) {
+				continue;
+			}
+			const data = part.data as Record< string, unknown >;
+			if ( typeof data.promptSource === 'string' && data.promptSource !== '' ) {
+				promptSource = data.promptSource;
+				if ( typeof data.promptSourceId === 'string' && data.promptSourceId !== '' ) {
+					promptSourceId = data.promptSourceId;
+				}
+				break;
+			}
+		}
+	}
+
+	const a2ui = message.parts.find( isA2uiDataPart );
+
 	// Determine the role - if this message contains tool interactions, store as "agent"
 	// regardless of the original message role
 	const hasToolInteractions = toolCalls.length > 0 || toolResults.length > 0;
@@ -173,30 +192,19 @@ function extractStorableContent( message: Message ): StoredMessage {
 	// Extract archived flag from message metadata
 	const archived = ( message.metadata?.archived as boolean ) ?? undefined;
 
-	// Extract deliveryStatus if present. Consumers set this via
-	// `message.metadata.deliveryStatus` when they know the wire state
-	// (queued / server-confirmed / streaming / complete / failed).
-	const rawStatus = message.metadata?.deliveryStatus;
-	const deliveryStatus: DeliveryStatus | undefined =
-		rawStatus === 'pending' ||
-		rawStatus === 'sent' ||
-		rawStatus === 'streaming' ||
-		rawStatus === 'complete' ||
-		rawStatus === 'failed'
-			? rawStatus
-			: undefined;
-
 	return {
 		role: storageRole,
 		content: textParts || '(No text content)',
 		timestamp,
 		...( archived !== undefined && { archived } ),
 		...( contentType && { contentType } ),
-		...( deliveryStatus && { deliveryStatus } ),
 		...( files.length > 0 && { files } ),
 		...( toolCalls.length > 0 && { toolCalls } ),
 		...( toolResults.length > 0 && { toolResults } ),
 		...( agentMessageData && { agentMessageData } ),
+		...( promptSource && { promptSource } ),
+		...( promptSourceId && { promptSourceId } ),
+		...( a2ui && { a2ui } ),
 	};
 }
 
@@ -232,6 +240,11 @@ function restoreMessage( stored: StoredMessage ): Message {
 				},
 			} );
 		}
+	}
+
+	// Add the interactive UI surface
+	if ( isA2uiDataPart( stored.a2ui ) ) {
+		parts.push( stored.a2ui );
 	}
 
 	// Add tool call parts
@@ -287,127 +300,11 @@ function restoreMessage( stored: StoredMessage ): Message {
 			...( stored.archived !== undefined && {
 				archived: stored.archived,
 			} ),
-			...( stored.deliveryStatus && {
-				deliveryStatus: stored.deliveryStatus,
-			} ),
+			// As metadata, the live representation: the UI surfaces it as a `data` part.
+			...( stored.promptSource && { promptSource: stored.promptSource } ),
+			...( stored.promptSourceId && { promptSourceId: stored.promptSourceId } ),
 		},
 	};
-}
-
-/**
- * Return messages that were in-flight when the conversation was last
- * persisted. These are the candidates for reconciliation on chat panel boot
- * — a matching server-side session may still be running, may have completed
- * without the client seeing it, or may never have existed. Callers decide
- * which of those applies and how to surface the outcome.
- *
- * Uses `Message.metadata.deliveryStatus` written by {@link restoreMessage}.
- * @param messages - The restored conversation messages.
- */
-export function getUnresolvedMessages( messages: Message[] ): Message[] {
-	return messages.filter( ( m ) => {
-		const status = m.metadata?.deliveryStatus;
-		return status === 'pending' || status === 'streaming';
-	} );
-}
-
-/**
- * Joined text parts — messageId is regenerated on restore, so text matches.
- * @param message - The message whose text parts to join.
- */
-function messageTextContent( message: Message ): string {
-	return message.parts
-		.filter( ( part ): part is TextPart => part.type === 'text' )
-		.map( ( part ) => part.text )
-		.join( '\n' );
-}
-
-/**
- * Count user turns by text so duplicate prompts are distinct occurrences.
- * @param messages - The messages to count user turns in.
- */
-function userTextCounts( messages: Message[] ): Map< string, number > {
-	const counts = new Map< string, number >();
-	for ( const message of messages ) {
-		if ( message.role !== 'user' ) {
-			continue;
-		}
-		const text = messageTextContent( message );
-		counts.set( text, ( counts.get( text ) ?? 0 ) + 1 );
-	}
-	return counts;
-}
-
-function markFailed( message: Message ): Message {
-	return {
-		...message,
-		metadata: {
-			...( message.metadata || {} ),
-			deliveryStatus: 'failed' as DeliveryStatus,
-		},
-	};
-}
-
-/**
- * Reconcile local conversation against server when unresolved markers exist.
- *
- * Server list wins for known turns. Local unresolved user turns that exceed
- * the server's per-text count (later duplicates first) are appended as
- * `failed`. Affirmative empty/null fetch marks all local unresolved as
- * `failed`. A thrown fetch leaves them pending so a later retry can
- * reconcile instead of prompting a duplicate send.
- * @param messages    - Locally-loaded messages.
- * @param fetchServer - Server loader; null when no matching session exists.
- */
-export async function reconcileWithServer(
-	messages: Message[],
-	fetchServer: () => Promise< Message[] | null >
-): Promise< Message[] > {
-	const unresolved = getUnresolvedMessages( messages );
-	if ( unresolved.length === 0 ) {
-		return messages;
-	}
-
-	let serverMessages: Message[] | null = null;
-	try {
-		serverMessages = await fetchServer();
-	} catch {
-		// Offline / 500: the server may still have the turn. Leave pending
-		// so the next successful reconcile can recover instead of retrying.
-		return messages;
-	}
-
-	if ( serverMessages && serverMessages.length > 0 ) {
-		const extras = new Map< string, number >();
-		const serverCounts = userTextCounts( serverMessages );
-		for ( const [ text, localCount ] of userTextCounts( messages ) ) {
-			extras.set( text, Math.max( 0, localCount - ( serverCounts.get( text ) ?? 0 ) ) );
-		}
-
-		const orphanedFailed: Message[] = [];
-		for ( let i = unresolved.length - 1; i >= 0; i-- ) {
-			const message = unresolved[ i ]!;
-			const text = messageTextContent( message );
-			const extra = extras.get( text ) ?? 0;
-			if ( extra > 0 ) {
-				extras.set( text, extra - 1 );
-				orphanedFailed.unshift( markFailed( message ) );
-			}
-		}
-
-		if ( orphanedFailed.length === 0 ) {
-			return serverMessages;
-		}
-		return [ ...serverMessages, ...orphanedFailed ];
-	}
-
-	return messages.map( ( m ) => {
-		const status = m.metadata?.deliveryStatus;
-		if ( status === 'pending' || status === 'streaming' ) {
-			return markFailed( m );
-		}
-		return m;
-	} );
 }
 
 // Module-level cache for conversation storage
