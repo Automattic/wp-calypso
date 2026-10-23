@@ -71,6 +71,7 @@ const shouldCreateSentryRelease =
 	( process.env.MANUAL_SENTRY_RELEASE === 'true' || process.env.IS_DEFAULT_BRANCH === 'true' ) &&
 	process.env.SENTRY_AUTH_TOKEN?.length > 1;
 const sentryRelease = `calypso_${ process.env.COMMIT_SHA }`;
+const sentryErrors = [];
 let sourceMapType = process.env.SOURCEMAP;
 if ( ! sourceMapType && shouldCreateSentryRelease ) {
 	sourceMapType = 'hidden-source-map';
@@ -351,6 +352,9 @@ const webpackConfig = {
 			),
 			__i18n_text_domain__: JSON.stringify( 'default' ),
 			global: 'window',
+			// The Sentry SDK uses this release when `initSentry()` doesn't set one. Defined on every
+			// build so the definitions, and with them the persistent cache, match the cache seed.
+			__SENTRY_RELEASE__: shouldCreateSentryRelease ? JSON.stringify( sentryRelease ) : 'undefined',
 		} ),
 		// Node polyfills
 		new webpack.ProvidePlugin( {
@@ -422,11 +426,6 @@ const webpackConfig = {
 		// Equivalent to the CLI flag --progress=profile
 		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
 
-		// The Sentry SDK uses this release when `initSentry()` doesn't set one. The plugin's own
-		// `release.inject` would prepend the same value to every chunk instead.
-		shouldCreateSentryRelease &&
-			new webpack.DefinePlugin( { __SENTRY_RELEASE__: JSON.stringify( sentryRelease ) } ),
-
 		// NOTE: Sentry should be the last webpack plugin in the array.
 		shouldCreateSentryRelease &&
 			sentryWebpackPlugin( {
@@ -438,6 +437,7 @@ const webpackConfig = {
 				sourcemaps: { disable: true },
 				release: {
 					name: sentryRelease,
+					// `__SENTRY_RELEASE__` covers this without prepending the release to every chunk.
 					inject: false,
 					setCommits: false,
 					uploadLegacySourcemaps: {
@@ -447,10 +447,23 @@ const webpackConfig = {
 				},
 				errorHandler: ( err ) => {
 					// Sentry should _never_ fail the webpack build, so only log here:
+					sentryErrors.push( err );
 					console.error( 'Sentry Webpack Plugin Error:', err.message );
 					console.error( 'Sentry Full error:', err );
 				},
 			} ),
+		// The handler above has no compilation, so report its errors as build warnings once
+		// the plugin's upload, which runs in an earlier `afterEmit` tap, has finished.
+		shouldCreateSentryRelease && {
+			apply: ( compiler ) =>
+				compiler.hooks.afterEmit.tap( 'SentryErrorWarnings', ( compilation ) => {
+					for ( const err of sentryErrors.splice( 0 ) ) {
+						compilation.warnings.push(
+							new webpack.WebpackError( 'Sentry Webpack Plugin: ' + err.message )
+						);
+					}
+				} ),
+		},
 		shouldHotReload && new webpack.HotModuleReplacementPlugin(),
 		shouldHotReload &&
 			new ReactRefreshWebpackPlugin( {
