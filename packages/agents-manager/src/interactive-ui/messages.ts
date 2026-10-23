@@ -73,6 +73,7 @@ export function getInteractiveUiBatches( messages: UIMessage[] ): InteractiveUiB
 
 		return message.content.flatMap( ( content ) => {
 			const part = readInteractiveUiPart( content );
+
 			if ( ! part ) {
 				return [];
 			}
