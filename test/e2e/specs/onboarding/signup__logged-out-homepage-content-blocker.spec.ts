@@ -81,18 +81,22 @@ async function fetchList( url: string ): Promise< Response > {
 
 /**
  * The Calypso commit the server under test is running, from the `COMMIT_SHA` global
- * every Calypso page sets.
+ * every Calypso page sets. Tried twice, since a single stalled request would leave the
+ * alert without it.
  */
 async function fetchServedCommit( baseUrl: string ): Promise< string > {
-	try {
-		const response = await fetch( new URL( '/setup/onboarding/user', baseUrl ), {
-			signal: AbortSignal.timeout( 20_000 ),
-		} );
-		const sha = /var COMMIT_SHA = "([0-9a-f]+)"/.exec( await response.text() )?.[ 1 ];
-		return sha?.slice( 0, 11 ) ?? '(unknown)';
-	} catch {
-		return '(unknown)';
+	for ( let attempt = 1; attempt <= 2; attempt++ ) {
+		try {
+			const response = await fetch( new URL( '/setup/onboarding/user', baseUrl ), {
+				signal: AbortSignal.timeout( 20_000 ),
+			} );
+			const sha = /var COMMIT_SHA = "([0-9a-f]+)"/.exec( await response.text() )?.[ 1 ];
+			if ( sha ) {
+				return sha.slice( 0, 11 );
+			}
+		} catch {}
 	}
+	return '(unknown)';
 }
 
 /**
