@@ -84,18 +84,6 @@ $resource-brands: (
 	inline-size: calc( var( --resource-logo-width ) * 0.8 );
 }
 
-// Joins the previous and next buttons into one bordered control; no core
-// component draws a connected pair of icon buttons.
-.dashboard-resources-learn__modal-navigation {
-	border: 1px solid var( --wpds-color-stroke-surface-neutral, #{$gray-300} );
-	border-radius: $radius-medium;
-	background: var( --wpds-color-background-surface-neutral-strong, #{$white} );
-
-	> .components-button + .components-button {
-		border-inline-start: 1px solid var( --wpds-color-stroke-surface-neutral, #{$gray-300} );
-	}
-}
-
 // Heading has no letter-spacing prop. Nested for specificity over its runtime styles.
 .dashboard-resources-learn__modal .dashboard-resources-learn__modal-title {
 	letter-spacing: -0.035em;

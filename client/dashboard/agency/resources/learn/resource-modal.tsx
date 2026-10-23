@@ -116,9 +116,8 @@ export default function ResourceModal( {
 						className="dashboard-resources-learn__modal-controls"
 					>
 						<HStack
-							spacing={ 0 }
+							spacing={ 1 }
 							expanded={ false }
-							className="dashboard-resources-learn__modal-navigation"
 							role="group"
 							aria-label={ __( 'Resource navigation' ) }
 						>
