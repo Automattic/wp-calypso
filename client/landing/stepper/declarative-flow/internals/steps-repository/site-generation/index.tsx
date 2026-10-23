@@ -1,14 +1,8 @@
-import { isAutomatticianQuery } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
-import { useQuery as useDataQuery } from '@tanstack/react-query';
 import { useReducedMotion } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import {
-	BUILD_WOW_STREAMING_FLAG,
-	getBuildWowGraph,
-} from 'calypso/landing/stepper/utils/build-wow';
+import { getBuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 import { useBuildWowStream } from './stream/use-build-wow-stream';
 import { useSiteGeneration } from './use-site-generation';
 import { SiteGenerationView } from './view';
@@ -49,17 +43,11 @@ const SiteGeneration: StepType = function SiteGeneration() {
 		steps,
 		completionDelayMs: previewReady && ! shouldReduceMotion ? 2600 : 0,
 	} );
-	const streamingEnabled = config.isEnabled( BUILD_WOW_STREAMING_FLAG );
-	const { data: isAutomattician = false } = useDataQuery( {
-		...isAutomatticianQuery(),
-		enabled: streamingEnabled,
-	} );
-	const streamingAllowed = streamingEnabled && isAutomattician;
-	const stream = useBuildWowStream( streamingAllowed ? ( state.streamInfo ?? null ) : null );
+	const stream = useBuildWowStream( state.streamInfo ?? null );
 	// The build only asks for a feed; the server may decline it. Show the live
 	// canvas once the status response advertises a stream, even before the
 	// event subscription delivers its first state.
-	const streamRequested = streamingAllowed && Boolean( state.streamInfo );
+	const streamRequested = Boolean( state.streamInfo );
 
 	const reload = () => {
 		window.location.reload();
@@ -74,7 +62,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 				onPreviewReady={ setPreviewReady }
 				siteSlug={ siteSlug }
 				state={ state }
-				stream={ streamingAllowed ? stream : null }
+				stream={ stream }
 				streamRequested={ streamRequested }
 			/>
 		</>

@@ -2,8 +2,6 @@
  * @jest-environment jsdom
  */
 
-import config from '@automattic/calypso-config';
-import { useQuery as useDataQuery } from '@tanstack/react-query';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { pollForBuildWowStatus } from '../build-status-poller';
 import SiteGeneration from '../index';
@@ -13,15 +11,6 @@ import { SiteGenerationView } from '../view';
 import type { SiteGenerationState } from '../use-site-generation';
 
 let mockState: SiteGenerationState;
-
-jest.mock( '@automattic/calypso-config', () =>
-	Object.assign( jest.fn(), { isEnabled: jest.fn() } )
-);
-
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
-} ) );
 
 jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
@@ -51,14 +40,9 @@ describe( 'SiteGeneration recovery', () => {
 	const originalLocation = window.location;
 	const navigation = { submit: jest.fn() };
 	const useSiteGenerationMock = useSiteGeneration as jest.Mock;
-	const useDataQueryMock = useDataQuery as jest.Mock;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		useDataQueryMock.mockReturnValue( { data: true } );
-		jest
-			.mocked( config.isEnabled )
-			.mockImplementation( ( flag ) => flag === 'site-spec/build-wow-streaming' );
 		useSiteGenerationMock.mockImplementation( () => mockState );
 		mockState = {
 			status: 'failed',
@@ -152,81 +136,40 @@ describe( 'SiteGeneration recovery', () => {
 		] );
 	} );
 
-	it.each( [ true, false ] )(
-		'waits for the server to advertise a stream with streaming enabled: %s',
-		( enabled ) => {
-			jest.mocked( config.isEnabled ).mockReturnValue( enabled );
-			window.location.search = '?build_wow=1&siteSlug=example.wordpress.com';
-			mockState = { ...mockState, status: 'working', streamInfo: null };
-			renderStep();
+	it( 'waits for the server to advertise a stream', () => {
+		window.location.search = '?build_wow=1&siteSlug=example.wordpress.com';
+		mockState = { ...mockState, status: 'working', streamInfo: null };
+		renderStep();
 
-			expect( SiteGenerationView ).toHaveBeenCalledWith(
-				expect.objectContaining( { streamRequested: false, siteSlug: 'example.wordpress.com' } ),
-				undefined
-			);
-			expect( useBuildWowStream ).toHaveBeenCalledWith( null );
-			expect( useDataQuery ).toHaveBeenCalledWith( expect.objectContaining( { enabled } ) );
-		}
-	);
+		expect( SiteGenerationView ).toHaveBeenCalledWith(
+			expect.objectContaining( { streamRequested: false, siteSlug: 'example.wordpress.com' } ),
+			undefined
+		);
+		expect( useBuildWowStream ).toHaveBeenCalledWith( null );
+	} );
 
-	it.each( [ true, false ] )(
-		'gates a server-advertised stream with streaming enabled: %s',
-		( enabled ) => {
-			jest.mocked( config.isEnabled ).mockReturnValue( enabled );
-			window.location.search = '?build_wow=1&siteSlug=example.wordpress.com';
-			mockState = {
-				...mockState,
-				status: 'working',
-				streamInfo: {
-					protocol: 1,
-					blogId: 123,
-					runId: 'run-1',
-					capabilities: [ 'progress' ],
-					eventsUrl: 'https://example.com/events',
-					snapshotUrl: 'https://example.com/snapshot',
-				},
-			};
-			renderStep();
+	it( 'follows a server-advertised stream', () => {
+		window.location.search = '?build_wow=1&siteSlug=example.wordpress.com';
+		mockState = {
+			...mockState,
+			status: 'working',
+			streamInfo: {
+				protocol: 1,
+				blogId: 123,
+				runId: 'run-1',
+				capabilities: [ 'progress' ],
+				eventsUrl: 'https://example.com/events',
+				snapshotUrl: 'https://example.com/snapshot',
+			},
+		};
+		renderStep();
 
-			expect( SiteGenerationView ).toHaveBeenCalledWith(
-				expect.objectContaining( { streamRequested: enabled, siteSlug: 'example.wordpress.com' } ),
-				undefined
-			);
-			expect( useBuildWowStream ).toHaveBeenCalledWith( enabled ? mockState.streamInfo : null );
-		}
-	);
-
-	it.each( [
-		{ enabled: false, isAutomattician: true },
-		{ enabled: true, isAutomattician: false },
-		{ enabled: true, isAutomattician: undefined },
-	] )(
-		'blocks streaming with flag=$enabled and Automattician=$isAutomattician',
-		( { enabled, isAutomattician } ) => {
-			jest.mocked( config.isEnabled ).mockReturnValue( enabled );
-			useDataQueryMock.mockReturnValue( { data: isAutomattician } );
-			window.location.search = '?build_wow=1&siteId=123';
-			mockState = {
-				...mockState,
-				status: 'working',
-				streamInfo: {
-					protocol: 1,
-					blogId: 123,
-					runId: 'run-1',
-					capabilities: [ 'preview:dsl-html' ],
-					eventsUrl: 'https://example.com/events',
-					snapshotUrl: 'https://example.com/snapshot',
-				},
-			};
-			renderStep();
-
-			expect( useBuildWowStream ).toHaveBeenCalledWith( null );
-			expect( SiteGenerationView ).toHaveBeenCalledWith(
-				expect.objectContaining( { streamRequested: false, stream: null } ),
-				undefined
-			);
-		}
-	);
+		expect( SiteGenerationView ).toHaveBeenCalledWith(
+			expect.objectContaining( { streamRequested: true, siteSlug: 'example.wordpress.com' } ),
+			undefined
+		);
+		expect( useBuildWowStream ).toHaveBeenCalledWith( mockState.streamInfo );
+	} );
 
 	it( 'reloads when checking again after a timeout', () => {
 		mockState.failureReason = 'timed-out';
