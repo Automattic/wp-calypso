@@ -12,7 +12,7 @@ module.exports = {
 	testEnvironment: 'node',
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)' ],
 	transform: {
-		'\\.(?:[jt]sx?|mjs)$': [ 'babel-jest', { rootMode: 'upward' } ],
+		'\\.(?:[jt]sx?|mjs)$': [ require.resolve( 'babel-jest' ), { rootMode: 'upward' } ],
 		'\\.(gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$':
 			require.resolve( './src/asset-transform.js' ),
 	},
