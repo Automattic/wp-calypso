@@ -75,6 +75,7 @@ export function PlaygroundConfirmModal( {
 			</DialogContent>
 			<DialogFooter className="playground-confirm-modal__actions">
 				<Button
+					__next40pxDefaultSize
 					className="playground-confirm-modal__cancel"
 					variant="tertiary"
 					onClick={ cancel }
@@ -84,6 +85,7 @@ export function PlaygroundConfirmModal( {
 					{ cancelLabel }
 				</Button>
 				<Button
+					__next40pxDefaultSize
 					className="playground-confirm-modal__confirm"
 					variant="primary"
 					onClick={ onConfirm }
