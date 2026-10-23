@@ -1,56 +1,48 @@
 import { isChatUiStale } from '../utils/stale-chat-ui';
-import type { UIMessage } from '@automattic/agenttic-client';
+import type { A2uiDataPart, UIMessage } from '@automattic/agenttic-client';
 import type { InteractiveUiMessage, InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 /** The A2UI protocol version the interactive UI speaks. */
 export const INTERACTIVE_UI_VERSION = 'v1.0';
 
-/** The tool ID wpcom's interactive UI envelope carries. */
+/** The tool wpcom renders interactive UI with, which the shared response events name. */
 export const INTERACTIVE_UI_TOOL_ID = 'wpcom__render_interactive_ui';
 
-interface ParsedInteractiveUiText {
+interface InteractiveUiPart {
 	operations: InteractiveUiMessage[];
-	/** The page the envelope's surfaces were built for, if any. */
+	/** The page the part's surfaces were built for, if any. */
 	postId?: number | string;
 }
 
-/** The A2UI messages in one text part of an agent message. */
-export interface InteractiveUiBatch extends ParsedInteractiveUiText {
+/** The A2UI messages in one part of an agent message. */
+export interface InteractiveUiBatch extends InteractiveUiPart {
 	messageId: string;
 	messageIndex: number;
-	/** Changes when the text part does, so the host can tell an earlier batch changed. */
+	/** Changes when the part does, so the host can tell an earlier batch changed. */
 	signature: string;
 }
 
 /**
- * Reads the A2UI messages in a text part: wpcom's `wpcom__render_interactive_ui` envelope, with
- * the page it was built for, or a raw message array. Returns `undefined` for any other text.
+ * Reads the A2UI messages, and the page they were built for, from a message's content part.
+ * Agenttic checks A2UI's A2A data part and keeps it under `a2ui`. Returns `undefined` for any
+ * other part.
  */
-export function parseInteractiveUiText( text?: string ): ParsedInteractiveUiText | undefined {
-	if ( ! text ) {
+export function readInteractiveUiPart(
+	content: UIMessage[ 'content' ][ number ]
+): InteractiveUiPart | undefined {
+	const part =
+		content.type === 'data' ? ( content.data?.a2ui as A2uiDataPart | undefined ) : undefined;
+
+	if ( ! part ) {
 		return undefined;
 	}
 
-	try {
-		const parsed = JSON.parse( text );
-		const isEnvelope = parsed?.tool_id === INTERACTIVE_UI_TOOL_ID;
-		const payload = isEnvelope ? parsed.data : parsed;
-		const operations = typeof payload === 'string' ? JSON.parse( payload ) : payload;
+	const { postId } = part.metadata;
 
-		if ( ! Array.isArray( operations ) || operations[ 0 ]?.version !== INTERACTIVE_UI_VERSION ) {
-			return undefined;
-		}
-
-		const postId = isEnvelope ? parsed.post_id : undefined;
-
-		return {
-			operations,
-			...( ( typeof postId === 'number' || typeof postId === 'string' ) && { postId } ),
-		};
-	} catch {
-		// Text that isn't JSON is an ordinary reply, not interactive UI.
-		return undefined;
-	}
+	return {
+		operations: part.data as InteractiveUiMessage[],
+		...( ( typeof postId === 'number' || typeof postId === 'string' ) && { postId } ),
+	};
 }
 
 /** Whether a message is the hidden context message an interactive UI action sends to the agent. */
@@ -72,7 +64,7 @@ export function isInteractiveUiActionMessage( message: UIMessage ): boolean {
 	);
 }
 
-/** Collects the interactive UI batches in agent messages, one per text part that carries them. */
+/** Collects the interactive UI batches in agent messages, one per part that carries them. */
 export function getInteractiveUiBatches( messages: UIMessage[] ): InteractiveUiBatch[] {
 	return messages.flatMap( ( message, messageIndex ) => {
 		if ( message.role !== 'agent' ) {
@@ -80,17 +72,17 @@ export function getInteractiveUiBatches( messages: UIMessage[] ): InteractiveUiB
 		}
 
 		return message.content.flatMap( ( content, contentIndex ) => {
-			const parsedText = parseInteractiveUiText( content.text );
-			if ( ! parsedText ) {
+			const part = readInteractiveUiPart( content );
+			if ( ! part ) {
 				return [];
 			}
 
 			return [
 				{
-					...parsedText,
+					...part,
 					messageId: message.id,
 					messageIndex,
-					signature: JSON.stringify( [ message.id, contentIndex, content.text ] ),
+					signature: JSON.stringify( [ message.id, contentIndex, part ] ),
 				},
 			];
 		} );

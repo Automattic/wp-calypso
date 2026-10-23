@@ -1,5 +1,5 @@
-import { generateMessageId } from '../client/utils/core';
-import type { DataPart, FilePart, Message, TextPart } from '../client/types/index';
+import { generateMessageId, isA2uiDataPart } from '../client/utils/core';
+import type { A2uiDataPart, DataPart, FilePart, Message, TextPart } from '../client/types/index';
 
 /**
  * Extract only the new content (non-history) parts from a message
@@ -14,6 +14,11 @@ export function extractNewContentFromMessage( message: Message ): Message {
 			return true;
 		}
 		if ( part.type === 'data' ) {
+			// INCLUDE interactive UI surfaces
+			if ( isA2uiDataPart( part ) ) {
+				return true;
+			}
+
 			// EXCLUDE conversation history data parts (role + text combinations)
 			if ( 'role' in part.data && 'text' in part.data ) {
 				return false;
@@ -66,6 +71,28 @@ export function extractNewContentFromMessage( message: Message ): Message {
 }
 
 /**
+ * Adds an interactive UI surface to the history: on the text item before it, so the agent reads
+ * them together, or on an item of its own when that text already has one or there is none.
+ * @param historyParts - The history, which this adds to
+ * @param role         - The role of the surface's message
+ * @param surface      - The surface
+ * @param textItem     - The history item of the text before it in its message, if any
+ */
+function addA2uiToHistory(
+	historyParts: ( DataPart | FilePart )[],
+	role: Message[ 'role' ],
+	surface: A2uiDataPart,
+	textItem?: DataPart
+): void {
+	if ( textItem && ! textItem.data.a2ui ) {
+		textItem.data.a2ui = surface;
+		return;
+	}
+
+	historyParts.push( { type: 'data', data: { role, text: '', a2ui: surface } } );
+}
+
+/**
  * Convert conversation messages to data parts for history
  * @param conversationMessages - Array of previous conversation messages
  * @returns Array of data parts representing conversation history
@@ -76,16 +103,22 @@ export function conversationMessagesToDataParts(
 	const historyParts: ( DataPart | FilePart )[] = [];
 
 	for ( const message of conversationMessages ) {
+		let textItem: DataPart | undefined;
+
 		for ( const part of message.parts ) {
 			if ( part.type === 'text' ) {
 				// Convert text parts to history data parts
-				historyParts.push( {
+				textItem = {
 					type: 'data',
 					data: {
 						role: message.role,
 						text: ( part as TextPart ).text,
 					},
-				} );
+				};
+				historyParts.push( textItem );
+			} else if ( isA2uiDataPart( part ) ) {
+				// INCLUDE interactive UI surfaces with their text
+				addA2uiToHistory( historyParts, message.role, part, textItem );
 			} else if ( part.type === 'file' ) {
 				// INCLUDE file parts in history so uploaded files persist across messages
 				historyParts.push( part as FilePart );
