@@ -1,4 +1,3 @@
-import { isAutomatticianQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -22,32 +21,11 @@ export function getBuildWowGraph( queryParams: URLSearchParams ): BuildWowGraph 
 	return BUILD_WOW_GRAPHS.find( ( graph ) => graph === requested );
 }
 
-export const BUILD_WOW_STREAMING_FLAG = 'site-spec/build-wow-streaming';
-
 /**
- * Whether a build asks for the optional live feed: only where the streaming
- * flag is on, and only for Automatticians. It only requests it: the server
- * decides eligibility and pins the choice to the run, and the status
- * endpoint's `stream` block says whether this run actually streams.
+ * The live feed's switch in Calypso. While it is on, every build asks for the
+ * feed and the generation screen follows the stream the server advertises.
  */
-async function shouldRequestBuildWowStream(): Promise< boolean > {
-	if ( ! config.isEnabled( BUILD_WOW_STREAMING_FLAG ) ) {
-		return false;
-	}
-
-	try {
-		// Loaded on demand so this module does not pull in Calypso's state setup.
-		const { getCalypsoQueryClient } = await import( 'calypso/state/query-client' );
-		const queryClient = getCalypsoQueryClient();
-		if ( ! queryClient ) {
-			return false;
-		}
-		const query = isAutomatticianQuery();
-		return query.select?.( await queryClient.fetchQuery( query ) ) ?? false;
-	} catch {
-		return false;
-	}
-}
+export const BUILD_WOW_STREAMING_FLAG = 'site-spec/build-wow-streaming';
 
 type BuildWowAtomicState = {
 	is_atomic?: boolean;
@@ -155,8 +133,11 @@ export async function requestBuildWowSite(
 	graph?: BuildWowGraph,
 	blueprintId?: string
 ): Promise< BuildWowResponse > {
-	// Like graph, only a call that queues a build carries the opt-in.
-	const streamEvents = Boolean( specId ) && ( await shouldRequestBuildWowStream() );
+	// Like graph, only a call that queues a build carries the opt-in, and only
+	// while the streaming flag is on. It only requests the live feed: the server
+	// decides eligibility and pins the choice to the run, and the status
+	// endpoint's `stream` block says whether this run actually streams.
+	const streamEvents = Boolean( specId ) && config.isEnabled( BUILD_WOW_STREAMING_FLAG );
 
 	return wpcom.req.post(
 		{
