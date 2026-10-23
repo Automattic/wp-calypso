@@ -1,7 +1,8 @@
 import { __experimentalHeading as Heading, ProgressBar } from '@wordpress/components';
-import { cloud, globe, Icon, tool } from '@wordpress/icons';
+import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { WooTopBarLogo } from 'calypso/landing/stepper/declarative-flow/internals/components/woo-top-bar-logo';
+import { cloud, rocket, tools } from './icons';
 import type { PlaygroundBootProgress } from '../../lib/boot-progress';
 
 import './style.scss';
@@ -17,7 +18,7 @@ export function PlaygroundIntro( { progress }: { progress: PlaygroundBootProgres
 
 	const points = [
 		{
-			icon: tool,
+			icon: tools,
 			text: __( 'Add and configure products, set up payments, customize your store design.' ),
 		},
 		{
@@ -25,7 +26,7 @@ export function PlaygroundIntro( { progress }: { progress: PlaygroundBootProgres
 			text: __( 'Save your store whenever you’re ready. This creates a safe home for your work.' ),
 		},
 		{
-			icon: globe,
+			icon: rocket,
 			text: __( 'Ready to go live whenever you decide. Or save and return later. No rush.' ),
 		},
 	];
