@@ -33,7 +33,7 @@
 	align-items: center;
 	gap: 3rem;
 	width: 100%;
-	max-width: 1130px;
+	max-width: calc( 1130px + 2rem );
 	margin-inline: auto;
 	padding: 2rem 1rem;
 	box-sizing: border-box;
