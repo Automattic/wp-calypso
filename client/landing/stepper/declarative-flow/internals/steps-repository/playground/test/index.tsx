@@ -162,7 +162,7 @@ describe( 'Playground', () => {
 			} );
 
 			await userEvent.click( getSaveStoreButton() );
-			await userEvent.click( screen.getByRole( 'button', { name: 'Continue to save' } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue to WordPress.com' } ) );
 
 			expect( getLaunchEventProps() ).toEqual(
 				expect.objectContaining( { is_woocommerce_intent: true } )
@@ -199,7 +199,8 @@ describe( 'Playground', () => {
 		};
 		const querySaveModal = () => screen.queryByRole( 'dialog', { name: 'Save my store' } );
 		const getKeepBuildingButton = () => screen.getByRole( 'button', { name: 'Keep building' } );
-		const getContinueButton = () => screen.getByRole( 'button', { name: 'Continue to save' } );
+		const getContinueButton = () =>
+			screen.getByRole( 'button', { name: 'Continue to WordPress.com' } );
 		const getSaveEventCalls = () =>
 			recordTracksEvent.mock.calls.filter(
 				( [ eventName ] ) =>
@@ -256,9 +257,11 @@ describe( 'Playground', () => {
 
 			expect( querySaveModal() ).toBeVisible();
 			expect(
-				screen.getByText( 'Keep your store safe and pick up where you left off anytime.' )
+				screen.getByText(
+					'Your store will be saved to WordPress.com. Access it anytime from your account to continue building or go live.'
+				)
 			).toBeVisible();
-			expect( screen.getByRole( 'heading', { name: 'When you save, you unlock' } ) ).toBeVisible();
+			expect( screen.getByRole( 'heading', { name: 'When you save, you unlock:' } ) ).toBeVisible();
 			const benefits = screen.getAllByRole( 'listitem' );
 			expect( benefits.map( ( benefit ) => benefit.textContent ) ).toEqual( [
 				'Your store, everywhereAccess it anytime from your account',
@@ -599,7 +602,7 @@ describe( 'Playground', () => {
 			await renderWooPlaygroundStep( { navigation: { submit } } );
 
 			await userEvent.click( getSaveStoreButton() );
-			await userEvent.click( screen.getByRole( 'button', { name: 'Continue to save' } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue to WordPress.com' } ) );
 			expect( submit ).toHaveBeenCalledTimes( 1 );
 
 			// The save modal hides the rest of the page from the accessibility tree.
