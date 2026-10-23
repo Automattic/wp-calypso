@@ -2,7 +2,7 @@ import { siteBackupActivityLogGroupCountsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { buildTimeRangeForActivityLog } from '../../utils/site-activity-log';
@@ -58,13 +58,8 @@ export function BackupsList( {
 			return { after: undefined, before: undefined };
 		}
 
-		return buildTimeRangeForActivityLog(
-			dateRange.start,
-			dateRange.end,
-			timezoneString,
-			gmtOffset
-		);
-	}, [ dateRange, timezoneString, gmtOffset ] );
+		return buildTimeRangeForActivityLog( dateRange.start, dateRange.end );
+	}, [ dateRange ] );
 
 	const { data: groupCountsData } = useQuery(
 		siteBackupActivityLogGroupCountsQuery( siteId, after, before )
@@ -72,11 +67,6 @@ export function BackupsList( {
 
 	const fields = getFields( groupCountsData?.groups, timezoneString, gmtOffset );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( activityLog, view, fields );
-
-	useEffect( () => {
-		updateView( { ...view, page: 1 } );
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- reset page only when dateRange changes
-	}, [ dateRange ] );
 
 	const onChangeSelection = ( selection: string[] ) => {
 		const backup =
