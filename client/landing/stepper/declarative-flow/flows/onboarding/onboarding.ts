@@ -388,6 +388,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		// A site-selected purchase finishes in this flow, but lands and completes as that flow.
 		const postCheckoutFlowName = refParameter === SITE_SELECTED_REF ? SITE_SELECTED_REF : flowName;
 		const siteSlugParam = queryParams.get( 'siteSlug' );
+		const siteIdParam = queryParams.get( 'siteId' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
@@ -796,6 +797,7 @@ const onboarding: FlowV2< typeof initialize > = {
 						window.location.replace(
 							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
 								siteSlug: siteSlugParam,
+								...( siteIdParam ? { siteId: siteIdParam } : {} ),
 								...( refParameter ? { ref: refParameter } : {} ),
 								...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
 							} )

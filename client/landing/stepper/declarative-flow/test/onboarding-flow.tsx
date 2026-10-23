@@ -253,6 +253,21 @@ describe( 'Onboarding Flow', () => {
 				expect( returnUrl.pathname ).toBe( '/setup/onboarding/email-verification' );
 				expect( returnUrl.searchParams.get( 'siteId' ) ).toBe( '123' );
 			} );
+
+			it( 'carries the site ID when processing is reloaded with nothing pending', async () => {
+				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+				await runUseStepNavigationSubmit( {
+					currentStep: STEPS.PROCESSING.slug,
+					currentURL: '/setup/onboarding/processing?siteSlug=test-site.wordpress.com&siteId=123',
+					dependencies: { processingResult: ProcessingResult.NO_ACTION },
+				} );
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+				const resumeUrl = new URL( window.location.replace.mock.calls[ 0 ][ 0 ], 'http://x' );
+				expect( resumeUrl.pathname ).toBe( '/setup/onboarding/post-checkout-onboarding' );
+				expect( resumeUrl.searchParams.get( 'siteId' ) ).toBe( '123' );
+			} );
 		} );
 
 		describe( 'AI Launchpad and no-guidance destinations', () => {
