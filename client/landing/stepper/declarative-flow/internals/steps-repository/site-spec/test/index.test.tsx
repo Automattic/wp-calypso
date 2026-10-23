@@ -32,7 +32,8 @@ jest.mock( '@automattic/calypso-config', () => {
 
 				return values[ key ];
 			} ),
-			{ isEnabled: jest.fn( () => false ) }
+			// Streaming is on in every environment, so builds ask for the live feed.
+			{ isEnabled: ( flag: string ) => flag === 'site-spec/build-wow-streaming' }
 		),
 	};
 } );
