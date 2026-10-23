@@ -154,7 +154,11 @@ export const leaveCheckout = ( {
 	navigate( closeUrl );
 };
 
-const JETPACK_CLOUD_HOSTNAMES = [ 'cloud.jetpack.com', 'jetpack.cloud.localhost' ];
+const JETPACK_CLOUD_HOSTNAMES = [
+	'cloud.jetpack.com',
+	'horizon.cloud.jetpack.com',
+	'jetpack.cloud.localhost',
+];
 
 /**
  * Jetpack Cloud sends its purchases pages here for renewals and upgrades, and

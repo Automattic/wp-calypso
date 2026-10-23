@@ -92,6 +92,16 @@ describe( 'leaveCheckout', () => {
 			expect( navigate ).not.toHaveBeenCalled();
 		} );
 
+		it( 'should redirect to cancel_to when it is a Jetpack Cloud horizon URL', () => {
+			const cancelTo = 'https://horizon.cloud.jetpack.com/purchases/subscriptions/example.com/123';
+			window.location.search = `?cancel_to=${ encodeURIComponent( cancelTo ) }`;
+
+			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
+
+			expect( window.location.href ).toBe( cancelTo );
+			expect( navigate ).not.toHaveBeenCalled();
+		} );
+
 		it( 'should not redirect to cancel_to on a host that only starts with Jetpack Cloud', () => {
 			window.location.search = `?cancel_to=${ encodeURIComponent(
 				'https://cloud.jetpack.com.evil.com/purchases'

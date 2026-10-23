@@ -46,6 +46,16 @@ describe( 'useValidCheckoutBackUrl', () => {
 		expect( result.current ).toBe( `https://cloud.jetpack.com/pricing/${ siteSlug }` );
 	} );
 
+	it.each( [ 'https://cloud.jetpack.com/pricing', 'https://horizon.cloud.jetpack.com/pricing' ] )(
+		'returns the Jetpack Cloud back url %p',
+		( checkoutBackUrl ) => {
+			( getInitialQueryArguments as jest.Mock ).mockReturnValue( { checkoutBackUrl } );
+			const { result } = renderWithSite( {} );
+
+			expect( result.current ).toBe( checkoutBackUrl );
+		}
+	);
+
 	it( 'returns no back url for atomic sites', () => {
 		const { result } = renderWithSite( { jetpack: true, is_wpcom_atomic: true } );
 
