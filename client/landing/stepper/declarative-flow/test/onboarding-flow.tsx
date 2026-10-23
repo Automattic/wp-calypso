@@ -327,6 +327,27 @@ describe( 'Onboarding Flow', () => {
 				expect( checkoutUrl.searchParams.get( 'redirect_to' ) ).toBe( REBLOG_EDITOR );
 			} );
 
+			// Without this, refreshing processing on the way back from checkout forgets the post.
+			it( 'keeps the post when processing is reloaded with nothing pending', async () => {
+				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+				await runUseStepNavigationSubmit( {
+					currentStep: STEPS.PROCESSING.slug,
+					currentURL: `/setup/onboarding/processing?siteSlug=test-site.wordpress.com&blog_post=${ encodeURIComponent(
+						POST_URL
+					) }`,
+					dependencies: { processingResult: ProcessingResult.NO_ACTION },
+				} );
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+				const resumeUrl = new URL(
+					( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ],
+					'http://x'
+				);
+				expect( resumeUrl.pathname ).toBe( '/setup/onboarding/post-checkout-onboarding' );
+				expect( resumeUrl.searchParams.get( 'blog_post' ) ).toBe( POST_URL );
+			} );
+
 			// Without this, leaving checkout to change the plan or domain forgets the post.
 			it( 'keeps the post on checkout back URLs', async () => {
 				const checkoutUrl = new URL( await finishProcessing( { goToCheckout: true } ), 'http://x' );
