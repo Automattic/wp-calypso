@@ -186,8 +186,15 @@ $resource-brands: (
 }
 
 @media ( prefers-reduced-motion: no-preference ) {
+	// Drifts only while its tile is hovered or focused, like the illustrations,
+	// pausing where it is rather than jumping back.
 	.dashboard-resources-learn__recommendation .dashboard-resources-learn__card-header::before {
-		animation: dashboard-resources-learn__drift 24s ease-in-out infinite alternate;
+		animation: dashboard-resources-learn__drift 24s ease-in-out infinite alternate paused;
+	}
+
+	.dashboard-resources-learn__recommendation:is( :hover, :has( :focus-visible ) )
+		.dashboard-resources-learn__card-header::before {
+		animation-play-state: running;
 	}
 
 	.dashboard-resources-learn__recommendation:nth-child( even )
