@@ -51,6 +51,7 @@ export function PlanExpiryStatus( { site }: { site: Site } ) {
 	// each side already uses. `urgency` is the one property the wp-admin banner
 	// does not carry: it derives color from the day count rather than choosing it.
 	const eventProperties = {
+		site_id: site.ID,
 		product_slug: site.plan?.product_slug,
 		source: 'plan',
 		surface: 'dashboard-sites-list',

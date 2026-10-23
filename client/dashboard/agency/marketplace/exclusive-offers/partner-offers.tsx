@@ -40,14 +40,17 @@ function PartnerOfferCard( {
 }: {
 	item: PartnerOffer;
 	recordTracksEvent: RecordTracksEvent;
-	onCtaClick?: ( offer: PartnerOffer ) => void;
+	onCtaClick?: ( offer: PartnerOffer, event: React.MouseEvent ) => void;
 	shouldUseRouterLink: boolean;
 } ) {
 	const offerType = filterOptions.offerTypes.find( ( option ) => option.value === item.offerType );
 
-	const handleCTAClick = () => {
-		onCtaClick?.( item );
-		recordTracksEvent( 'calypso_a4a_exclusive_offers_cta_click', { offer_id: item.id } );
+	const handleCTAClick = ( event: React.MouseEvent ) => {
+		onCtaClick?.( item, event );
+		// A host that stops the click (an offer the agency can't take yet) records its own event.
+		if ( ! event.defaultPrevented ) {
+			recordTracksEvent( 'calypso_a4a_exclusive_offers_cta_click', { offer_id: item.id } );
+		}
 	};
 
 	const handleViewTermsClick = () => {
@@ -136,7 +139,7 @@ export default function PartnerOffers( {
 }: {
 	links: PartnerOfferLinks;
 	recordTracksEvent?: RecordTracksEvent;
-	onCtaClick?: ( offer: PartnerOffer ) => void;
+	onCtaClick?: ( offer: PartnerOffer, event: React.MouseEvent ) => void;
 	/**
 	 * Set to false in apps without the dashboard's TanStack Router, so the CTAs
 	 * render plain anchors for the host app's own router to pick up.

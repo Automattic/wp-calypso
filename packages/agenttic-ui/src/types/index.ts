@@ -97,6 +97,8 @@ export interface Message {
 	disabled?: boolean;
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
 	sources?: AgentSource[]; // Agent message sources/citations rendered beneath the body
+	/** Starts a turn though no user message shows before it, such as a reply to a click in a message. */
+	startsTurn?: boolean;
 }
 
 /**
@@ -145,6 +147,11 @@ export interface AgentUIProps {
 	/** Whether reply text is streaming in. When set, it drives the thinking indicator. */
 	isReplying?: boolean;
 	error?: string | null;
+	/**
+	 * An error shown as a notice in the message list, alongside or instead of `error`. The message
+	 * list reads its message out as written when it appears or changes; `EmbeddedAgentUI` doesn't.
+	 */
+	errorNotice?: NoticeConfig;
 	onSubmit: ( message: string, files?: File[] ) => void | Promise< void >;
 
 	// UI-specific props
@@ -229,6 +236,8 @@ export interface AgentUIProps {
 
 export interface NoticeConfig {
 	icon?: React.ReactNode | null | false;
+	/** As `errorNotice`, shows a message card with this title, `message` below it and `action.href` as its link; an action without `href` has no place on the card. */
+	title?: string;
 	message: string;
 	action?:
 		| { label: string; onClick: () => void; href?: never }

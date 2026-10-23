@@ -93,28 +93,6 @@ test.describe(
 			);
 		} );
 
-		test( 'Reblogging flow shows transfer-or-connect after entering an owned domain', async ( {
-			page,
-			accountDefaultUser,
-			componentDomainSearch,
-			pageUseADomainIAlreadyOwn,
-		} ) => {
-			await test.step( 'Given I am authenticated', async () => {
-				await accountDefaultUser.authenticate( page );
-			} );
-
-			await test.step( 'And I am on the reblogging domains step', async () => {
-				await page.goto( DataHelper.getCalypsoURL( '/setup/reblogging' ) );
-			} );
-
-			await assertLandsOnTransferOrConnect(
-				page,
-				componentDomainSearch,
-				pageUseADomainIAlreadyOwn,
-				OWNED_DOMAIN
-			);
-		} );
-
 		test( 'Domain-and-plan flow shows transfer-or-connect after entering an owned domain', async ( {
 			page,
 			accountAtomic,

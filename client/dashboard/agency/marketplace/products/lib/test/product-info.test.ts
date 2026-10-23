@@ -23,6 +23,14 @@ describe( 'getProductBenefits', () => {
 		).not.toHaveLength( 0 );
 	} );
 
+	test( 'finds benefits for WooCommerce Subscriptions, including gifting', () => {
+		expect(
+			getProductBenefits( product( 'woocommerce-subscriptions', 'woocommerce-extensions' ) )
+		).toContain(
+			'Allow shoppers to gift subscriptions to each other, helping you reach new shoppers and grow recurring revenue with less effort'
+		);
+	} );
+
 	test( 'returns nothing for products outside the catalog', () => {
 		expect( getProductBenefits( product( 'pressable-addon-sites-5', 'pressable-addon' ) ) ).toEqual(
 			[]

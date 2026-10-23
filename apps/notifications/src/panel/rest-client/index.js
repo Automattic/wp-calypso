@@ -751,6 +751,12 @@ function updateLastSeenTime( proposedTime, fromStorage ) {
 }
 
 function refreshNotes() {
+	if ( this.subscribed ) {
+		if ( this.inbox.length ) {
+			this.main();
+		}
+		return;
+	}
 	debug( 'Refreshing notes...' );
 
 	getNotesList.call( this );

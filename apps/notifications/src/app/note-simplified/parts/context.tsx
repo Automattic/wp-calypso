@@ -7,7 +7,7 @@ export default function Context( { note }: { note: Note } ) {
 
 	return (
 		<>
-			{ post && <PostCard post={ post } site={ site } /> }
+			{ post && <PostCard post={ post } site={ site } url={ comment?.url } /> }
 			{ comment && (
 				<Thread>
 					<ThreadParent comment={ comment } />

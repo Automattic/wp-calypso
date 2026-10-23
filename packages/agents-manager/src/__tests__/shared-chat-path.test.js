@@ -22,7 +22,11 @@ const EDITOR_PACKAGES = [
 	'@wordpress/abilities',
 ];
 
-const isEditorPackage = ( specifier ) =>
+// The renderer's main entry carries A2UI; its `capabilities` entry and styles are light.
+const RENDERER_ENTRY = '@automattic/ai-ui-renderer';
+
+const isLazyOnly = ( specifier ) =>
+	specifier === RENDERER_ENTRY ||
 	EDITOR_PACKAGES.some( ( name ) => specifier === name || specifier.startsWith( `${ name }/` ) );
 
 const isLocalImport = ( specifier ) =>
@@ -92,7 +96,7 @@ function getValueImports( file ) {
 		.map( ( statement ) => statement.moduleSpecifier.text );
 }
 
-function findEditorImportChains() {
+function findLazyImportChains() {
 	// Maps each reached file to its import chain from `index.ts`. Adding while iterating
 	// walks breadth first, so each chain is a shortest one.
 	const chains = new Map( [ [ PACKAGE_INDEX, [ toSourceRelativePath( PACKAGE_INDEX ) ] ] ] );
@@ -100,7 +104,7 @@ function findEditorImportChains() {
 
 	for ( const [ file, chain ] of chains ) {
 		for ( const specifier of getValueImports( file ) ) {
-			if ( isEditorPackage( specifier ) ) {
+			if ( isLazyOnly( specifier ) ) {
 				leaks.push( [ ...chain, specifier ].join( ' → ' ) );
 				continue;
 			}
@@ -126,9 +130,10 @@ function findEditorImportChains() {
 }
 
 // A failure lists each import chain. Read editor stores by name, drop the import, or use
-// `import type`; see "No static editor imports" under Performance in AGENTS.md.
+// `import type`; see "No static editor imports" under Performance in AGENTS.md. Take renderer
+// values from its `capabilities` entry instead.
 describe( 'shared chat path', () => {
-	it( 'imports editor packages only through `import()` or `import type`', () => {
-		expect( findEditorImportChains() ).toEqual( [] );
+	it( 'imports editor packages and the interactive UI renderer only through `import()` or `import type`', () => {
+		expect( findLazyImportChains() ).toEqual( [] );
 	} );
 } );

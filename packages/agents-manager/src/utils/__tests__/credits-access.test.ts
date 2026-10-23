@@ -1,6 +1,9 @@
 import {
+	getCreditsBackNotice,
 	getCreditsCtaType,
 	getCreditsNoticeMessage,
+	getCreditsOutNotice,
+	getCreditsRefusalNotice,
 	getCreditsPurchaseAction,
 	getCreditsPurchaseOptions,
 	parseCreditsAccess,
@@ -196,5 +199,72 @@ describe( 'getCreditsNoticeMessage', () => {
 		expect( getCreditsNoticeMessage( 'low', 1, 'site-admin' ) ).toBe(
 			'1 credit left. Ask a site admin to add more.'
 		);
+	} );
+} );
+
+describe( 'getCreditsOutNotice', () => {
+	it( 'stays until the balance changes, with the purchase action', () => {
+		const action = { label: 'Add credits', href: TOP_UP_URL };
+		expect( getCreditsOutNotice( 0, undefined, action ) ).toEqual( {
+			icon: false,
+			message: 'You’ve used all your site credits.',
+			action,
+			dismissible: false,
+		} );
+	} );
+
+	it( 'points someone who can’t buy to a site admin, with no action', () => {
+		expect( getCreditsOutNotice( 0, 'site-admin', undefined ) ).toEqual( {
+			icon: false,
+			message: 'You’ve used all your site credits. Ask a site admin to add more.',
+			action: undefined,
+			dismissible: false,
+		} );
+	} );
+} );
+
+describe( 'getCreditsBackNotice', () => {
+	it( 'says so, with no action', () => {
+		expect( getCreditsBackNotice() ).toEqual( {
+			icon: false,
+			message: 'Your site has credits again.',
+			action: undefined,
+			dismissible: false,
+		} );
+	} );
+
+	it( 'offers the action it is given', () => {
+		const action = { label: 'Continue', onClick: () => {} };
+		expect( getCreditsBackNotice( action ).action ).toBe( action );
+	} );
+} );
+
+describe( 'getCreditsRefusalNotice', () => {
+	it( 'titles the refused message and offers the credits pack as its link', () => {
+		const action = { label: 'Add credits', href: TOP_UP_URL };
+		expect( getCreditsRefusalNotice( 'top_up', action ) ).toEqual( {
+			icon: false,
+			title: 'Your message wasn’t sent',
+			message: 'Add credits to keep working.',
+			action,
+			dismissible: false,
+		} );
+	} );
+
+	it( 'offers the upgrade with matching words', () => {
+		const action = { label: 'Upgrade', href: UPGRADE_URL };
+		expect( getCreditsRefusalNotice( 'upgrade', action ).message ).toBe(
+			'Upgrade to keep working.'
+		);
+	} );
+
+	it( 'gives someone who can’t buy the title alone', () => {
+		expect( getCreditsRefusalNotice( 'top_up', undefined ) ).toEqual( {
+			icon: false,
+			title: 'Your message wasn’t sent',
+			message: '',
+			action: undefined,
+			dismissible: false,
+		} );
 	} );
 } );

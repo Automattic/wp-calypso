@@ -1,0 +1,15 @@
+.woo-top-bar-logo {
+	display: flex;
+	align-items: center;
+	height: var( --step-container-v2-top-bar-content-height );
+}
+
+.woo-top-bar-logo__svg {
+	display: block;
+}
+
+// Matches the Playground step's Woo top bar, which grows to fit its CTA, so the
+// logo doesn't move when the step replaces a loader.
+.step-container-v2__top-bar:has( .woo-top-bar-logo ) {
+	min-height: 4.5rem;
+}

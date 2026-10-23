@@ -167,15 +167,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'onboarding-registrationless',
-			steps: [ 'domains', 'plans-new', 'user-new' ],
-			destination: getSignupDestination,
-			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
-			lastModified: '2020-06-26',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'rewind-setup',
 			steps: [ 'rewind-form-creds', 'rewind-were-backing' ],
 			destination: '/activity-log',
@@ -196,17 +187,6 @@ export function generateFlows( {
 		{
 			name: 'ecommerce',
 			steps: [ userSocialStep, 'domains', 'plans-ecommerce-fulfilled' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
-		},
-		{
-			name: 'ecommerce-monthly',
-			steps: [ userSocialStep, 'domains', 'plans-ecommerce-monthly' ],
 			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2023-10-11',

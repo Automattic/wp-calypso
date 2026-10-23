@@ -373,61 +373,6 @@ async function executeToolCallBatch(
 }
 
 /**
- * Extract conversation history from a message's data parts
- * @param message - The message to extract conversation history from
- * @returns Array of conversation messages reconstructed from data parts
- */
-export function extractConversationHistory( message: Message ): Message[] {
-	const conversationMessages: Message[] = [];
-	let currentMessage: Partial< Message > | null = null;
-
-	for ( const part of message.parts ) {
-		if ( part.type === 'data' && part.data ) {
-			// History message parts
-			if ( 'role' in part.data && 'text' in part.data ) {
-				if ( currentMessage && currentMessage.role !== part.data.role ) {
-					// Role changed, finalize current message
-					if ( currentMessage.role && currentMessage.parts ) {
-						conversationMessages.push( currentMessage as Message );
-					}
-					currentMessage = {
-						role: part.data.role as 'user' | 'agent',
-						parts: [],
-					};
-				} else if ( ! currentMessage ) {
-					currentMessage = {
-						role: part.data.role as 'user' | 'agent',
-						parts: [],
-					};
-				}
-
-				if ( currentMessage.parts ) {
-					currentMessage.parts.push( {
-						type: 'text',
-						text: part.data.text,
-					} as TextPart );
-				}
-			}
-			// Tool call and result parts - add to current message
-			else if (
-				currentMessage &&
-				currentMessage.parts &&
-				( 'toolCallId' in part.data || 'toolId' in part.data )
-			) {
-				currentMessage.parts.push( part );
-			}
-		}
-	}
-
-	// Finalize last message
-	if ( currentMessage && currentMessage.role && currentMessage.parts ) {
-		conversationMessages.push( currentMessage as Message );
-	}
-
-	return conversationMessages;
-}
-
-/**
  * Convert conversation history back to data parts
  * @param conversationHistory - Array of conversation messages to convert
  * @returns Array of data parts representing the conversation history

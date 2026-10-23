@@ -8,6 +8,7 @@ import { isContextOnlyMessage } from './context-only-message';
 import { getLatestUserMessageIndex } from './latest-message';
 import lazyComponent from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
+import { isChatUiStale } from './stale-chat-ui';
 import {
 	APPLY_BLOCK_EDITS_TOOL_ID,
 	getApplyBlockEditsOutcome,
@@ -28,6 +29,8 @@ export interface AgentsManagerUIMessage extends UIMessage {
 	traceId?: string;
 	/** Suppress Agenttic's transient thinking indicator while this message is the latest one. */
 	suppressThinking?: boolean;
+	/** Starts a turn though no user message shows before it, as a reply to an interactive UI action. */
+	startsTurn?: boolean;
 }
 
 type AmComponentType = ShowComponentType | typeof OPEN_HELP_CENTER_BUTTON_TYPE;
@@ -227,6 +230,16 @@ function followsTerminalApplyBlockEditsOutcome(
 }
 
 /**
+ * Drops a message's narration after a terminal block-edit outcome, but keeps a component beside it,
+ * such as an interactive UI surface.
+ */
+function withoutNarration( message: UIMessage ): UIMessage[] {
+	const content = message.content.filter( ( part ) => part.type === 'component' );
+
+	return content.length > 0 ? [ { ...message, content } ] : [];
+}
+
+/**
  * Converts tool-related messages to component messages.
  */
 export default function convertToolMessagesToComponents( {
@@ -295,7 +308,9 @@ export default function convertToolMessagesToComponents( {
 		try {
 			textData = JSON.parse( firstContentText );
 		} catch ( _error ) {
-			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
+			return followsTerminalApplyBlockEditsOutcome( array, index )
+				? withoutNarration( message )
+				: [ message ];
 		}
 
 		if (
@@ -303,7 +318,9 @@ export default function convertToolMessagesToComponents( {
 			textData === null ||
 			typeof textData.tool_id !== 'string'
 		) {
-			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
+			return followsTerminalApplyBlockEditsOutcome( array, index )
+				? withoutNarration( message )
+				: [ message ];
 		}
 
 		// Handle `show-component` tool message
@@ -350,16 +367,15 @@ export default function convertToolMessagesToComponents( {
 				];
 			}
 
-			// A picker only stays interactive until the user replies past it — after
-			// that it documents a previous step.
-			const hasUserReplied = latestUserMessageIndex > index;
-
-			// In the site editor, React-Query caching keeps past conversations alive when the
-			// user navigates to a different page. Compare the picker's `postId` with the
-			// current editor page to disable pickers that no longer belong to this page.
-			const isPageChanged =
-				!! postId && !! currentPostId && String( postId ) !== String( currentPostId );
-			const isStale = hasUserReplied || ! isCurrent || isPageChanged;
+			// History rows carry no `isCurrent`, so a restored picker is stale too.
+			const isStale =
+				! isCurrent ||
+				isChatUiStale( {
+					messageIndex: index,
+					latestUserMessageIndex,
+					postId,
+					currentPostId,
+				} );
 			const shouldTrackResponse = ! isStale;
 			let responseActionProps = {};
 			if ( ! amComponent ) {

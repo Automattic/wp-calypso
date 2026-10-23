@@ -17,7 +17,6 @@ import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/
 import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
-import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import {
 	domainMapping,
@@ -457,12 +456,12 @@ const DomainSearchUI = (
 	};
 
 	// For /start flows, we want to show the free domain for a year discount for all flows
-	// except if we're in a site context, in the free or monthly plan flows or in the domain-only flow
+	// except if we're in a site context, in the free flow or in the domain-only flow
 	const isFirstDomainFreeForFirstYear = useMemo( () => {
 		if (
 			siteSlug ||
 			siteId ||
-			isMonthlyOrFreeFlow( flowName ) ||
+			isFreeFlow( flowName ) ||
 			isDomainOnlyFlow ||
 			isDomainForGravatarFlow( flowName )
 		) {

@@ -92,14 +92,14 @@ describe( '<McpRead> search and anchors', () => {
 		expect( screen.queryByRole( 'checkbox', { name: 'List posts' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'a tool anchor loads just that setting with its group open', () => {
+	test( 'a tool anchor opens its group and keeps the other tools visible', () => {
 		window.location.hash = '#wpcom-mcp/pages-list';
 		seed();
 		render( <McpRead />, { queryClient } );
 
-		expect( screen.getByRole( 'searchbox' ) ).toHaveValue( 'List pages' );
+		expect( screen.getByRole( 'searchbox' ) ).toHaveValue( '' );
 		expect( screen.getByRole( 'checkbox', { name: 'List pages' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'checkbox', { name: 'List posts' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'checkbox', { name: 'List posts' } ) ).toBeVisible();
 		expect( document.getElementById( 'wpcom-mcp/pages-list' ) ).not.toBeNull();
 	} );
 

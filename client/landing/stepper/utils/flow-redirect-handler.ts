@@ -21,6 +21,12 @@ const AI_SITE_BUILDER_REDIRECT: RedirectRule = {
 	replace: true,
 };
 
+// Bare `/home` follows the account's landing-page preference, which may be another site.
+const toSiteHome = ( searchParams: URLSearchParams ) => {
+	const site = searchParams.get( 'siteId' ) || searchParams.get( 'siteSlug' );
+	return site ? `/home/${ encodeURIComponent( site ) }` : '/home';
+};
+
 // Flows to redirect and treat as removed throughout Calypso.
 const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 	{ flow: 'ai-assembler', to: '/start:lang?' },
@@ -37,14 +43,11 @@ const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 	{ flow: 'migration-signup', to: '/setup/site-migration' },
 	{ flow: 'hosted-site-migration', to: '/setup/site-migration' },
 	{ flow: 'domain-upsell', to: '/setup/domain-and-plan' },
-	{
-		flow: 'readymade-template',
-		// Bare `/home` follows the account's landing-page preference, which may be another site.
-		to: ( searchParams ) => {
-			const site = searchParams.get( 'siteId' ) || searchParams.get( 'siteSlug' );
-			return site ? `/home/${ encodeURIComponent( site ) }` : '/home';
-		},
-	},
+	{ flow: 'flex-site', to: '/sites' },
+	{ flow: 'connect-domain', to: '/start:lang?' },
+	{ flow: 'reblogging', to: '/setup/onboarding:lang?' },
+	{ flow: 'readymade-template', to: toSiteHome },
+	{ flow: 'update-options', to: toSiteHome },
 ];
 
 const FLOW_REDIRECTS = [ AI_SITE_BUILDER_REDIRECT, ...REMOVED_TAILORED_FLOWS ];
