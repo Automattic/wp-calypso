@@ -3,6 +3,8 @@ import type {
 	Agency,
 	AgencyHostingReferral,
 	AgencyHostingReferralResponse,
+	AgencyLeadMatchingProfile,
+	AgencyLeadMatchingResponse,
 	AgencyMediaUpload,
 	AgencyPartnerDirectoryApplicationUpdate,
 	AgencyProfileUpdate,
@@ -23,6 +25,23 @@ export async function updateAgencyPartnerDirectoryApplication(
 			method: 'PUT',
 		},
 		update
+	);
+}
+
+/**
+ * Replaces the agency's lead matching preferences with the given profile.
+ */
+export async function updateAgencyLeadMatching(
+	agencyId: number,
+	profile: AgencyLeadMatchingProfile
+): Promise< AgencyLeadMatchingResponse > {
+	return wpcom.req.put(
+		{
+			path: `/agency/${ agencyId }/lead-matching`,
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
+		},
+		profile
 	);
 }
 
