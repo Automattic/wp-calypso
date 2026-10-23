@@ -71,7 +71,6 @@ const shouldCreateSentryRelease =
 	( process.env.MANUAL_SENTRY_RELEASE === 'true' || process.env.IS_DEFAULT_BRANCH === 'true' ) &&
 	process.env.SENTRY_AUTH_TOKEN?.length > 1;
 const sentryRelease = `calypso_${ process.env.COMMIT_SHA }`;
-const sentryErrors = [];
 let sourceMapType = process.env.SOURCEMAP;
 if ( ! sourceMapType && shouldCreateSentryRelease ) {
 	sourceMapType = 'hidden-source-map';
@@ -447,23 +446,10 @@ const webpackConfig = {
 				},
 				errorHandler: ( err ) => {
 					// Sentry should _never_ fail the webpack build, so only log here:
-					sentryErrors.push( err );
 					console.error( 'Sentry Webpack Plugin Error:', err.message );
 					console.error( 'Sentry Full error:', err );
 				},
 			} ),
-		// The handler above has no compilation, so report its errors as build warnings once
-		// the plugin's upload, which runs in an earlier `afterEmit` tap, has finished.
-		shouldCreateSentryRelease && {
-			apply: ( compiler ) =>
-				compiler.hooks.afterEmit.tap( 'SentryErrorWarnings', ( compilation ) => {
-					for ( const err of sentryErrors.splice( 0 ) ) {
-						compilation.warnings.push(
-							new webpack.WebpackError( 'Sentry Webpack Plugin: ' + err.message )
-						);
-					}
-				} ),
-		},
 		shouldHotReload && new webpack.HotModuleReplacementPlugin(),
 		shouldHotReload &&
 			new ReactRefreshWebpackPlugin( {
