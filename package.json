@@ -70,7 +70,6 @@
 		"build-desktop": "cd desktop && yarn run build",
 		"build-desktop:app": "cd desktop && yarn run build",
 		"build-desktop:config": "cd desktop && yarn run build:config",
-		"build-desktop:secrets": "cd desktop && yarn run build:secrets",
 		"build-docker": "node bin/build-docker.js",
 		"build-languages": "yarn run translate && node bin/build-languages.js",
 		"build-languages-if-enabled": "node -e \"(process.env.BUILD_TRANSLATION_CHUNKS === 'true' || process.env.ENABLE_FEATURES === 'use-translation-chunks') && process.exit(1)\" || yarn run build-languages",
