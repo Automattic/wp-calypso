@@ -4,6 +4,7 @@ import {
 	canSetAsPrimaryIgnoringSsl,
 	findRegistrantWhois,
 	findPrivacyServiceWhois,
+	getSuggestedPrimaryDomain,
 	isPendingPrimaryDomain,
 } from '../domain';
 
@@ -93,6 +94,129 @@ describe( 'utils', () => {
 					user,
 				} )
 			).toBe( false );
+		} );
+	} );
+
+	describe( 'getSuggestedPrimaryDomain', () => {
+		const defaultAddress = {
+			domain: 'example.wordpress.com',
+			subtype: { id: DomainSubtype.DEFAULT_ADDRESS, label: 'Default address' },
+			domain_status: { id: DomainStatus.ACTIVE, label: 'Active', type: 'success' },
+			can_set_as_primary: true,
+			primary_domain: true,
+			set_primary_domain_pending: false,
+		};
+		const customDomain = {
+			domain: 'example.com',
+			subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Registration' },
+			domain_status: { id: DomainStatus.ACTIVE, label: 'Active', type: 'success' },
+			can_set_as_primary: true,
+			primary_domain: false,
+			set_primary_domain_pending: false,
+		};
+		const site = {
+			plan: { is_free: false, features: { active: [ 'set-primary-custom-domain' ] } },
+			options: { is_redirect: false },
+		};
+		const user = { meta: { data: { flags: { active_flags: [] } } } };
+
+		test( 'returns the only custom domain while the site uses its default address', () => {
+			expect(
+				getSuggestedPrimaryDomain( { domains: [ defaultAddress, customDomain ], site, user } )
+			).toEqual( { domain: 'example.com', currentAddress: 'example.wordpress.com' } );
+		} );
+
+		test( 'suggests a connected domain too', () => {
+			const connectedDomain = {
+				...customDomain,
+				subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Connection' },
+			};
+			expect(
+				getSuggestedPrimaryDomain( { domains: [ defaultAddress, connectedDomain ], site, user } )
+			).toEqual( { domain: 'example.com', currentAddress: 'example.wordpress.com' } );
+		} );
+
+		test( 'ignores domains that are still being transferred in', () => {
+			const transferDomain = {
+				...customDomain,
+				subtype: { id: DomainSubtype.DOMAIN_TRANSFER, label: 'Transfer' },
+			};
+			expect(
+				getSuggestedPrimaryDomain( { domains: [ defaultAddress, transferDomain ], site, user } )
+			).toBeUndefined();
+		} );
+
+		test( 'ignores domains with a connection error', () => {
+			const brokenDomain = {
+				...customDomain,
+				domain_status: { id: DomainStatus.CONNECTION_ERROR, label: 'Error', type: 'error' },
+			};
+			expect(
+				getSuggestedPrimaryDomain( { domains: [ defaultAddress, brokenDomain ], site, user } )
+			).toBeUndefined();
+		} );
+
+		test( 'returns undefined when the site is a redirect', () => {
+			expect(
+				getSuggestedPrimaryDomain( {
+					domains: [ defaultAddress, customDomain ],
+					site: { ...site, options: { is_redirect: true } },
+					user,
+				} )
+			).toBeUndefined();
+		} );
+
+		test( 'returns undefined when several custom domains could become primary', () => {
+			expect(
+				getSuggestedPrimaryDomain( {
+					domains: [ defaultAddress, customDomain, { ...customDomain, domain: 'example.org' } ],
+					site,
+					user,
+				} )
+			).toBeUndefined();
+		} );
+
+		test( 'returns undefined when a custom domain is already primary', () => {
+			expect(
+				getSuggestedPrimaryDomain( {
+					domains: [
+						{ ...defaultAddress, primary_domain: false },
+						{ ...customDomain, primary_domain: true },
+					],
+					site,
+					user,
+				} )
+			).toBeUndefined();
+		} );
+
+		test( 'returns undefined when the plan cannot set a custom primary domain', () => {
+			expect(
+				getSuggestedPrimaryDomain( {
+					domains: [ defaultAddress, customDomain ],
+					site: { ...site, plan: { is_free: true, features: { active: [] } } },
+					user,
+				} )
+			).toBeUndefined();
+		} );
+
+		test( 'returns undefined while a primary domain change is pending', () => {
+			expect(
+				getSuggestedPrimaryDomain( {
+					domains: [ defaultAddress, { ...customDomain, set_primary_domain_pending: true } ],
+					site,
+					user,
+				} )
+			).toBeUndefined();
+		} );
+
+		test( 'ignores domains that cannot be set as primary', () => {
+			expect(
+				getSuggestedPrimaryDomain( {
+					domains: [ defaultAddress, { ...customDomain, can_set_as_primary: false } ],
+					site,
+					user,
+				} )
+			).toBeUndefined();
 		} );
 	} );
 
