@@ -13,9 +13,12 @@ import { UrlData } from '../../../../../../../blocks/import/types';
 import { StepProps } from '../../../types';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';
 
+const mockFlowState = new Map< string, unknown >();
+
 jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
 	useFlowState: jest.fn( () => ( {
-		get: jest.fn().mockReturnValue( { entryPoint: 'goals' } ),
+		get: jest.fn( ( key: string ) => mockFlowState.get( key ) ),
+		set: jest.fn( ( key: string, value: unknown ) => mockFlowState.set( key, value ) ),
 	} ) ),
 } ) );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug' );
@@ -79,6 +82,8 @@ describe( 'SiteMigrationIdentify', () => {
 	afterAll( () => configure( { asyncUtilTimeout, unstable_advanceTimersWrapper: advanceTimers } ) );
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockFlowState.clear();
+		mockFlowState.set( 'flow', { entryPoint: 'goals' } );
 		jest.useFakeTimers();
 		user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		jest
@@ -203,6 +208,73 @@ describe( 'SiteMigrationIdentify', () => {
 
 		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'existent-site.com' );
 		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it.each( [
+		{ enteredUrl: 'example.com', isReprintFlow: false },
+		{ enteredUrl: 'https://example.com/blog/?tag=test#section', isReprintFlow: false },
+		{ enteredUrl: 'example.com', isReprintFlow: true },
+		{ enteredUrl: 'https://example.com/blog/?tag=test#section', isReprintFlow: true },
+	] )(
+		'restores $enteredUrl after a redirect with Reprint enabled: $isReprintFlow',
+		async ( { enteredUrl, isReprintFlow } ) => {
+			jest
+				.mocked( config.isEnabled )
+				.mockImplementation( ( flag ) =>
+					flag === 'migration/reprint-flow' ? isReprintFlow : originalIsEnabled( flag )
+				);
+			const submit = jest.fn();
+			const resolvedUrl = 'https://redirected.example.com';
+			const { unmount } = render( { navigation: { submit } } );
+
+			mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: enteredUrl } )
+				.reply( 200, { ...API_RESPONSE_WORDPRESS_PLATFORM, url: resolvedUrl } );
+			mockApi()
+				.get( '/wpcom/v2/site-profiler/hosting-provider/redirected.example.com' )
+				.reply( 200, { hosting_provider: { slug: 'unknown' } } );
+
+			await user.type( getInput(), enteredUrl );
+			await user.click( screen.getByRole( 'button', { name: /Check my site|Continue/ } ) );
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith(
+					expect.objectContaining( { from: resolvedUrl, platform: 'wordpress', host: 'unknown' } )
+				)
+			);
+
+			unmount();
+			render( {}, { initialEntry: `/some-path?from=${ encodeURIComponent( resolvedUrl ) }` } );
+
+			expect( getInput() ).toHaveValue( enteredUrl );
+		}
+	);
+
+	it( 'remembers an edited address when returning to the identification step', async () => {
+		const submit = jest.fn();
+		mockFlowState.set( 'migrationSourceUrl', 'https://previous.example.com' );
+		const { unmount } = render(
+			{ navigation: { submit } },
+			{ initialEntry: '/some-path?from=https://previous-target.example.com' }
+		);
+
+		mockApi()
+			.get( '/wpcom/v2/imports/analyze-url' )
+			.query( { site_url: 'https://example.com' } )
+			.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
+		mockApi()
+			.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
+			.reply( 200, { hosting_provider: { slug: 'unknown' } } );
+
+		await user.clear( getInput() );
+		await user.type( getInput(), 'https://example.com' );
+		await user.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
+		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+
+		unmount();
+		render( {}, { initialEntry: '/some-path?from=https://previous-target.example.com' } );
+
+		expect( getInput() ).toHaveValue( 'https://example.com' );
 	} );
 
 	it( 'sends again the same value set on the url', async () => {

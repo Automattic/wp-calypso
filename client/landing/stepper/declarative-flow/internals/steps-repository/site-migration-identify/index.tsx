@@ -16,6 +16,7 @@ import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { urlToDomain } from 'calypso/lib/url';
 import { ChecklistCard } from '../../components/checklist-card';
+import { useFlowState } from '../../state-manager/store';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import warningIcon from './warning.svg';
 import type { Step as StepType } from '../../types';
@@ -50,6 +51,7 @@ export const Analyzer: FC< Props > = ( {
 	onSiteURLChange,
 } ) => {
 	const translate = useTranslate();
+	const { get, set } = useFlowState();
 	const onCompleteRef = useRef( onComplete );
 	onCompleteRef.current = onComplete;
 	const {
@@ -251,12 +253,14 @@ export const Analyzer: FC< Props > = ( {
 				) }
 				<CaptureInput
 					onInputEnter={ ( url ) => {
+						set( 'migrationSourceUrl', url );
 						if ( isReprintFlow && url === siteURL ) {
 							refetch();
 						} else {
 							onSiteURLChange( url );
 						}
 					} }
+					initialUrl={ get( 'migrationSourceUrl' ) }
 					onInputChange={ () => onSiteURLChange( '' ) }
 					hasError={ ! isReprintFlow && hasError }
 					skipInitialChecking
