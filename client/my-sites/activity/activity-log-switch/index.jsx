@@ -3,6 +3,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import { getSiteUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -55,7 +56,7 @@ class ActivityLogSwitch extends Component {
 						href={
 							canAutoconfigure
 								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ siteSlug }`
+								: `${ settingsPath( siteSlug ) }#credentials`
 						}
 					>
 						{ translate( 'Continue setup' ) }

@@ -456,11 +456,6 @@ export function generateSteps( {
 			providesDependencies: [],
 		},
 
-		'rewind-form-creds': {
-			stepName: 'rewind-form-creds',
-			providesDependencies: [ 'rewindconfig' ],
-		},
-
 		launch: {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,

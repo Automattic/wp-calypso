@@ -97,6 +97,15 @@ describe( 'redirectLegacyFlow', () => {
 		expect( next ).not.toHaveBeenCalled();
 	} );
 
+	it( 'sends retired rewind-setup to the credentials settings', () => {
+		const next = run( { flowName: 'rewind-setup' }, { siteSlug: 'example.wordpress.com' } );
+
+		expect( window.location.replace ).toHaveBeenCalledWith(
+			'/settings/jetpack/example.wordpress.com#credentials'
+		);
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
 	it( 'still redirects legacy plan flows', () => {
 		run( { flowName: 'business' } );
 

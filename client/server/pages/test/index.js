@@ -1550,6 +1550,16 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Retired rewind-setup route', () => {
+		it.each( [
+			[ { siteSlug: 'example.com' }, '/settings/jetpack/example.com#credentials' ],
+			[ {}, '/activity-log' ],
+		] )( 'redirects with %o to %s', async ( query, destination ) => {
+			const { response } = await app.run( { request: { url: '/start/rewind-setup', query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, destination );
+		} );
+	} );
+
 	describe( 'Route /cspreport', () => {
 		let customApp;
 
