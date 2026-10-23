@@ -686,20 +686,23 @@ const onboarding: FlowV2< typeof initialize > = {
 					const prompt = providedDependencies?.prompt as string | undefined;
 					const graph = providedDependencies?.graph as BuildWowGraph | undefined;
 
+					const openLegacyBuilder = () =>
+						window.location.assign(
+							addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
+								siteSlug,
+								// Skip siteId when it's 0/falsy: useSiteData returns 0 before
+								// the site object hydrates, and "0" in the URL poisons the
+								// next page's site lookup.
+								...( siteId && siteId !== '0' ? { siteId } : {} ),
+								fromPostCheckoutSetupSite: '1',
+								...( refParameter ? { ref: refParameter } : {} ),
+								...( prompt ? { prompt } : {} ),
+							} )
+						);
+
 					switch ( setupChoice ) {
 						case 'build-with-ai':
-							window.location.assign(
-								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
-									siteSlug,
-									// Skip siteId when it's 0/falsy: useSiteData returns 0 before
-									// the site object hydrates, and "0" in the URL poisons the
-									// next page's site lookup.
-									...( siteId && siteId !== '0' ? { siteId } : {} ),
-									fromPostCheckoutSetupSite: '1',
-									...( refParameter ? { ref: refParameter } : {} ),
-									...( prompt ? { prompt } : {} ),
-								} )
-							);
+							openLegacyBuilder();
 							return;
 						case 'generate-theme': {
 							// Provision an Atomic (WP Cloud) site up front so the custom
@@ -731,6 +734,19 @@ const onboarding: FlowV2< typeof initialize > = {
 									site_identifier: siteIdentifier,
 									error: error instanceof Error ? error.message : String( error ),
 								} );
+								// The server turns a store away when it will not build it, for example
+								// while its store builder is switched off; the store still gets the
+								// legacy builder.
+								if (
+									providedDependencies?.buildsStore &&
+									( error as { code?: string } )?.code === 'site_not_eligible'
+								) {
+									logBuildWowEvent( 'start_store_legacy_fallback', {
+										site_identifier: siteIdentifier,
+									} );
+									openLegacyBuilder();
+									return;
+								}
 								return navigate( 'error' as typeof currentStepSlug, {
 									errorReason: 'build_wow_start_failed',
 								} );

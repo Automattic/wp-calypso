@@ -116,6 +116,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 			siteSlug,
 			siteId,
 			graph,
+			...( planBuildsStoreOnBuildWow( planSlug ) ? { buildsStore: true } : {} ),
 		} );
 	};
 

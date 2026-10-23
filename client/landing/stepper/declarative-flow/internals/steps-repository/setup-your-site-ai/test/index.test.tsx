@@ -248,6 +248,7 @@ describe( 'SetupYourSiteAIStep', () => {
 				siteSlug: 'example.wordpress.com',
 				siteId: 123,
 				graph: 'dsl',
+				buildsStore: true,
 			} );
 		} );
 

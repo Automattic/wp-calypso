@@ -170,6 +170,26 @@ describe( 'onboarding navigations to the error step', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'error', { errorReason: 'build_wow_start_failed' } );
 	} );
 
+	it.each( [
+		[
+			'a site that is not a store',
+			Object.assign( new Error( 'Not eligible' ), { code: 'site_not_eligible' } ),
+			{},
+		],
+		[ 'a store for another reason', new Error( 'Request failed' ), { buildsStore: true } ],
+	] )( 'labels a build-wow start that turned away %s', async ( _label, error, dependencies ) => {
+		mockGetBuildWowSiteIdentifier.mockReturnValue( 'example.wordpress.com' );
+		mockRequestBuildWowSite.mockRejectedValue( error );
+
+		const navigate = await submitStep( 'setup-your-site-ai', {
+			setupChoice: 'generate-theme',
+			siteSlug: 'example.wordpress.com',
+			...dependencies,
+		} );
+
+		expect( navigate ).toHaveBeenCalledWith( 'error', { errorReason: 'build_wow_start_failed' } );
+	} );
+
 	it( 'labels a failed processing result', async () => {
 		const navigate = await submitStep( 'processing', {
 			processingResult: ProcessingResult.FAILURE,
@@ -230,5 +250,24 @@ describe( 'onboarding build-wow site spec hand-off', () => {
 		} );
 
 		expect( getSpecSiteId() ).toBe( '456' );
+	} );
+
+	it( 'opens the legacy builder when build-wow turns a store away', async () => {
+		mockRequestBuildWowSite.mockRejectedValue(
+			Object.assign( new Error( 'Not eligible' ), { code: 'site_not_eligible' } )
+		);
+
+		const navigate = await submitStep( 'setup-your-site-ai', {
+			setupChoice: 'generate-theme',
+			siteSlug: 'example.wordpress.com',
+			siteId: 123,
+			buildsStore: true,
+		} );
+
+		expect( navigate ).not.toHaveBeenCalled();
+		const builderUrl = new URL( assign.mock.calls[ 0 ][ 0 ], 'http://x' );
+		expect( builderUrl.pathname ).toBe( '/setup/site-setup/launch-big-sky' );
+		expect( builderUrl.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
+		expect( builderUrl.searchParams.get( 'siteId' ) ).toBe( '123' );
 	} );
 } );
