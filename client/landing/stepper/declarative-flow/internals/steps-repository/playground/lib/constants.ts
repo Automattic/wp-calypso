@@ -10,3 +10,7 @@ export const FALLBACK_PHP_VERSION = '8.4';
 export const DEFAULT_PLAN_INTENT = 'plans-playground';
 
 export const WOO_START_HOSTS_URL = 'https://woocommerce.com/start/#hosts';
+
+// How long to wait after recording a Tracks event before a full page navigation,
+// so the queued event has time to go out before the page unloads.
+export const TRACKS_FLUSH_DELAY = 250;

@@ -19,6 +19,7 @@ export function PlaygroundLeaveModal( {
 			className="playground-leave-modal"
 			title={ __( 'Leave without saving' ) }
 			confirmLabel={ __( 'Continue without saving' ) }
+			cancelLabel={ __( 'Keep building' ) }
 			onConfirm={ onConfirm }
 			onCancel={ onCancel }
 			isConfirming={ isConfirming }
