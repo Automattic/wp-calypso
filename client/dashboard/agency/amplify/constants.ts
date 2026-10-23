@@ -16,11 +16,15 @@ export const getReportTiming = () => __( '10 to 20 minutes' );
  * The API's `usage.limit` is the source of truth; this table only powers the
  * explainer so agencies can see what the next tier unlocks.
  */
-export const getTierAllowances = (): { label: string; scans: number }[] => [
-	{ label: __( 'Account Activated' ), scans: 5 },
-	{ label: __( 'Agency Partner' ), scans: 15 },
-	{ label: __( 'Pro Agency Partner' ), scans: 30 },
-	{ label: __( 'VIP Pro & Premier' ), scans: 60 },
+export const getTierAllowances = (): { label: string; scans: number; tiers: AgencyTierId[] }[] => [
+	{ label: __( 'Account activated' ), scans: 5, tiers: [ 'emerging-partner' ] },
+	{ label: __( 'Agency Partner' ), scans: 15, tiers: [ 'agency-partner' ] },
+	{ label: __( 'Pro Agency Partner' ), scans: 30, tiers: [ 'pro-agency-partner' ] },
+	{
+		label: __( 'VIP Pro & Premier' ),
+		scans: 60,
+		tiers: [ 'vip-pro-agency-partner', 'premier-partner' ],
+	},
 ];
 
 /** Agency Partner and above get "Need more? Contact us" at the cap. */

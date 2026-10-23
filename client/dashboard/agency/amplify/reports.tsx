@@ -4,53 +4,73 @@ import {
 	retryAmplifyReportMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Button, Modal, __experimentalHStack as HStack } from '@wordpress/components';
+import {
+	Button,
+	ExternalLink,
+	Modal,
+	VisuallyHidden,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
+import { useResizeObserver } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
-import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { box as archiveBoxIcon } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { Badge } from '@wordpress/ui';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import clsx from 'clsx';
+import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useIntlLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { Text } from '../../components/text';
-import SiteScreenshot from './site-screenshot';
-import type { AmplifyReport } from '@automattic/api-core';
+import SitePreview from '../../sites/site-preview';
+import type { AgencySite, AmplifyReport } from '@automattic/api-core';
 import type { Field, SupportedLayouts, View } from '@wordpress/dataviews';
 
-const TABLE_STYLES = {
-	humanScore: { align: 'end' as const },
-	aiScore: { align: 'end' as const },
-	created: { align: 'end' as const },
-	actions: { align: 'end' as const },
-};
+import '../../components/site-icon/style.scss';
 
 const REPORT_LAYOUTS: SupportedLayouts = {
 	table: {
-		titleField: 'site',
-		mediaField: 'preview',
+		layout: { density: 'balanced', styles: { actions: { align: 'end' } } },
 		showMedia: true,
-		descriptionField: undefined,
-		showDescription: false,
-		layout: { aspectRatio: '16/9', styles: TABLE_STYLES },
+		mediaField: 'icon',
+		titleField: 'site',
+		descriptionField: 'url',
+	},
+	grid: {
+		layout: { previewSize: 290 },
+		showMedia: true,
+		mediaField: 'preview',
+		titleField: 'site',
+		descriptionField: 'url',
 	},
 };
 
 const DEFAULT_VIEW: View = {
 	type: 'table',
 	page: 1,
-	perPage: 10,
-	titleField: 'site',
-	mediaField: 'preview',
+	perPage: 12,
 	showMedia: true,
-	layout: { aspectRatio: '16/9', styles: TABLE_STYLES },
-	fields: [ 'humanScore', 'aiScore', 'created', 'actions' ],
+	mediaField: 'icon',
+	titleField: 'site',
+	descriptionField: 'url',
+	layout: { density: 'balanced', styles: { actions: { align: 'end' } } },
+	fields: [ 'humanScore', 'aiScore', 'actions' ],
 	filters: [],
 	sort: { field: 'created', direction: 'desc' },
 };
+
+function getStatusLabels(): Record< AmplifyReport[ 'status' ], string > {
+	return {
+		pending: __( 'Waiting to start' ),
+		in_progress: __( 'In progress' ),
+		completed: __( 'Ready' ),
+		failed: __( 'Failed' ),
+	};
+}
 
 function formatCreated( value: string, locale: string ) {
 	const date = new Date( value );
@@ -77,7 +97,11 @@ function siteKey( value: string ): string | null {
 	}
 }
 
-function Score( { score }: { score: number | null } ) {
+/** Failed rows leave the score cells empty so the failure reason can run across them. */
+function Score( { score, isEmpty = false }: { score: number | null; isEmpty?: boolean } ) {
+	if ( isEmpty ) {
+		return null;
+	}
 	if ( score === null ) {
 		return <Text variant="muted">—</Text>;
 	}
@@ -88,6 +112,118 @@ function Score( { score }: { score: number | null } ) {
 		intent = 'medium';
 	}
 	return <Badge intent={ intent }>{ `${ score }/100` }</Badge>;
+}
+
+function ReportSiteIcon( {
+	title,
+	site,
+	size,
+}: {
+	title: string;
+	site?: AgencySite;
+	size: number;
+} ) {
+	const icon = site?.icon?.img || site?.icon?.ico;
+	const className = clsx( { 'is-small': size <= 16 } );
+	if ( icon ) {
+		return (
+			<img
+				className={ clsx( 'site-icon', className ) }
+				src={ icon }
+				alt=""
+				width={ size }
+				height={ size }
+				loading="lazy"
+				style={ { display: 'block', flexShrink: 0, width: size, height: size, objectFit: 'cover' } }
+			/>
+		);
+	}
+	return (
+		<div
+			aria-hidden="true"
+			className={ clsx( 'site-letter', className ) }
+			style={ { width: size, height: size, minWidth: size, fontSize: size * 0.5 } }
+		>
+			<span>{ title.charAt( 0 ) }</span>
+		</div>
+	);
+}
+
+function ReportPreview( { url }: { url: string } ) {
+	const [ resizeListener, { width } ] = useResizeObserver();
+	return (
+		<div
+			style={ {
+				display: 'block',
+				height: '100%',
+				width: '100%',
+				borderRadius: 'inherit',
+				overflow: 'hidden',
+			} }
+		>
+			{ resizeListener }
+			{ width && <SitePreview url={ url } scale={ width / 1200 } height={ 1200 } /> }
+		</div>
+	);
+}
+
+function displayUrl( value: string ) {
+	return value.replace( /^https?:\/\//, '' ).replace( /\/$/, '' );
+}
+
+function ArchiveReportModal( {
+	agencyId,
+	report,
+	closeModal,
+}: {
+	agencyId: number;
+	report: AmplifyReport;
+	closeModal?: () => void;
+} ) {
+	const { recordTracksEvent } = useAnalytics();
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const archive = useMutation( archiveAmplifyReportMutation( agencyId ) );
+	return (
+		<VStack spacing={ 6 }>
+			<Text>
+				{ sprintf(
+					/* translators: %s: website URL */
+					__( 'Archive the report for %s? It will disappear from this list.' ),
+					displayUrl( report.url )
+				) }
+			</Text>
+			<ButtonStack justify="flex-end">
+				<Button __next40pxDefaultSize variant="tertiary" onClick={ closeModal }>
+					{ __( 'Cancel' ) }
+				</Button>
+				<Button
+					__next40pxDefaultSize
+					variant="primary"
+					isDestructive
+					isBusy={ archive.isPending }
+					disabled={ archive.isPending }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_a4a_amplify_report_archive_confirm', {
+							report_id: report.id,
+							mode: report.mode,
+						} );
+						archive.mutate( report.id, {
+							onSuccess: () => {
+								createSuccessNotice( __( 'The report has been archived.' ), { type: 'snackbar' } );
+								closeModal?.();
+							},
+							onError: () =>
+								createErrorNotice( __( 'Could not archive the report. Please try again.' ), {
+									type: 'snackbar',
+								} ),
+						} );
+					} }
+				>
+					{ __( 'Archive' ) }
+				</Button>
+			</ButtonStack>
+		</VStack>
+	);
 }
 
 export default function AmplifyReportsList( {
@@ -105,25 +241,35 @@ export default function AmplifyReportsList( {
 	const locale = useIntlLocale();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
-	const showSearch = reports.length >= 12;
-	useEffect( () => {
-		if ( ! showSearch ) {
-			setView( ( previous ) => {
-				if ( ! previous.search && previous.page === 1 ) {
-					return previous;
-				}
-				return { ...previous, search: '', page: 1 };
-			} );
-		}
-	}, [ showSearch ] );
 	const [ reportToArchive, setReportToArchive ] = useState< AmplifyReport | null >( null );
-	const archive = useMutation( archiveAmplifyReportMutation( agencyId ) );
 	const {
 		mutate: retryReport,
 		isPending: isRetryPending,
 		variables: retryVariables,
 	} = useMutation( retryAmplifyReportMutation( agencyId ) );
 	const retryingId = isRetryPending ? retryVariables : null;
+	const onRetry = useCallback(
+		( item: AmplifyReport ) => {
+			recordTracksEvent( 'calypso_a4a_amplify_report_retry_click', {
+				report_id: item.id,
+				mode: item.mode,
+			} );
+			// BACKEND REQUIRED: the retry endpoint must not count failed or
+			// timed-out runs toward `usage.used`. The success notice promises it.
+			retryReport( item.id, {
+				onSuccess: () =>
+					createSuccessNotice(
+						__( 'Report restarted. Failed reports don’t count toward your allowance.' ),
+						{ type: 'snackbar' }
+					),
+				onError: () =>
+					createErrorNotice( __( 'Could not restart the report. Please try again.' ), {
+						type: 'snackbar',
+					} ),
+			} );
+		},
+		[ createErrorNotice, createSuccessNotice, recordTracksEvent, retryReport ]
+	);
 	const firstSites = useQuery( {
 		...paginatedAgencySitesQuery( { page: 1, per_page: 20 }, agencyId ),
 		enabled: !! agencyId && reports.length > 0 && ! isPreview,
@@ -133,195 +279,124 @@ export default function AmplifyReportsList( {
 		...paginatedAgencySitesQuery( { page: 1, per_page: siteCount || 20 }, agencyId ),
 		enabled: !! agencyId && reports.length > 0 && ! isPreview && siteCount > 20,
 	} );
-	const siteTitles = useMemo( () => {
-		const titles = new Map< string, string >();
+	const agencySites = useMemo( () => {
+		const sites = new Map< string, AgencySite >();
 		for ( const site of allSites.data?.sites ?? firstSites.data?.sites ?? [] ) {
 			const key = siteKey( site.url_with_scheme ?? site.url );
-			if ( key && site.blogname ) {
-				titles.set( key, site.blogname );
+			if ( key ) {
+				sites.set( key, site );
 			}
 		}
-		return titles;
+		return sites;
 	}, [ allSites.data?.sites, firstSites.data?.sites ] );
+	const siteFor = useCallback(
+		( report: AmplifyReport ) => agencySites.get( siteKey( report.url ) ?? '' ),
+		[ agencySites ]
+	);
 	const titleFor = useCallback(
 		( report: AmplifyReport ) =>
-			report.site_title || siteTitles.get( siteKey( report.url ) ?? '' ) || null,
-		[ siteTitles ]
+			report.site_title || siteFor( report )?.blogname || displayUrl( report.url ),
+		[ siteFor ]
 	);
 
 	const fields = useMemo< Field< AmplifyReport >[] >(
 		() => [
 			{
+				id: 'icon',
+				label: __( 'Site icon' ),
+				render: ( { item } ) => (
+					<ReportSiteIcon
+						title={ titleFor( item ) }
+						site={ siteFor( item ) }
+						size={ view.type === 'grid' ? 64 : 48 }
+					/>
+				),
+				enableSorting: false,
+			},
+			{
+				id: 'preview',
+				label: __( 'Preview' ),
+				render: ( { item } ) => <ReportPreview url={ item.url } />,
+				enableSorting: false,
+				enableHiding: false,
+			},
+			{
 				id: 'site',
 				label: __( 'Site' ),
-				getValue: ( { item } ) => titleFor( item ) ?? item.url,
-				render: ( { item } ) => {
-					const title = titleFor( item );
-					const failure =
-						item.status === 'failed' ? (
-							<span className="dashboard-amplify-report-site__failure">
-								{ item.failure_reason || __( 'The report didn’t finish.' ) }
-							</span>
-						) : null;
-					return title ? (
-						<span className="dashboard-amplify-report-site">
-							<strong>{ title }</strong>
-							<span className="dashboard-amplify-url">{ item.url }</span>
-							{ failure }
-						</span>
-					) : (
-						<span className="dashboard-amplify-report-site">
-							<span className="dashboard-amplify-url dashboard-amplify-url--standalone">
-								{ item.url }
-							</span>
-							{ failure }
-						</span>
-					);
-				},
-				enableSorting: true,
+				getValue: ( { item } ) => titleFor( item ),
 				enableGlobalSearch: true,
 				enableHiding: false,
 			},
 			{
 				id: 'url',
 				label: __( 'URL' ),
-				getValue: ( { item } ) => item.url,
-				enableSorting: false,
+				getValue: ( { item } ) => displayUrl( item.url ),
+				render: ( { item } ) => (
+					<VStack spacing={ 0 }>
+						<ExternalLink className="dataviews-url-field" href={ item.url }>
+							{ displayUrl( item.url ) }
+						</ExternalLink>
+						{ item.status === 'failed' && (
+							<Text intent="error" size={ 12 } className="dashboard-amplify-report-failure">
+								{ item.failure_reason || __( 'The report didn’t finish.' ) }
+							</Text>
+						) }
+					</VStack>
+				),
 				enableGlobalSearch: true,
 			},
 			{
-				id: 'preview',
-				label: __( 'Site preview' ),
-				render: ( { item } ) => (
-					<SiteScreenshot
-						url={ item.url }
-						alt={ sprintf(
-							/* translators: %s: site title or URL */
-							__( 'Preview of %s' ),
-							titleFor( item ) ?? item.url
-						) }
-						compact
-					/>
-				),
-				enableSorting: false,
-				enableHiding: false,
+				id: 'status',
+				label: __( 'Status' ),
+				getValue: ( { item } ) => item.status,
+				elements: Object.entries( getStatusLabels() ).map( ( [ value, label ] ) => ( {
+					value,
+					label,
+				} ) ),
+				filterBy: { operators: [ 'isAny' ] },
+				render: ( { item } ) => <Text>{ getStatusLabels()[ item.status ] }</Text>,
+			},
+			{
+				id: 'mode',
+				label: __( 'Report type' ),
+				getValue: ( { item } ) => item.mode,
+				elements: [
+					{ value: 'full', label: __( 'Full report' ) },
+					{ value: 'human', label: __( 'People' ) },
+					{ value: 'ai', label: __( 'AI agents' ) },
+				],
+				filterBy: { operators: [ 'isAny' ] },
 			},
 			{
 				id: 'humanScore',
 				label: __( 'People' ),
+				type: 'integer',
 				getValue: ( { item } ) => item.score.human ?? -1,
-				render: ( { item } ) =>
-					item.status === 'completed' ? (
-						<Score score={ item.score.human } />
-					) : (
-						<Text variant="muted">—</Text>
-					),
-				enableSorting: true,
+				render: ( { item } ) => (
+					<Score
+						score={ item.status === 'completed' ? item.score.human : null }
+						isEmpty={ item.status === 'failed' }
+					/>
+				),
+				filterBy: false,
 			},
 			{
 				id: 'aiScore',
 				label: __( 'AI agents' ),
+				type: 'integer',
 				getValue: ( { item } ) => item.score.ai ?? -1,
-				render: ( { item } ) =>
-					item.status === 'completed' ? (
-						<Score score={ item.score.ai } />
-					) : (
-						<Text variant="muted">—</Text>
-					),
-				enableSorting: true,
-			},
-			{
-				id: 'actions',
-				label: __( 'Actions' ),
-				header: <span className="dashboard-amplify-results__sr-only">{ __( 'Actions' ) }</span>,
-				getValue: ( { item } ) => item.status,
-				render: ( { item } ) => {
-					let actionContent;
-					if ( item.status === 'completed' ) {
-						actionContent = (
-							<Button
-								variant="secondary"
-								size="compact"
-								href={ item.pdf_url ?? undefined }
-								target="_blank"
-								rel="noopener noreferrer"
-								disabled={ ! item.pdf_url }
-								onClick={ () =>
-									recordTracksEvent( 'calypso_a4a_amplify_report_download_click', {
-										report_id: item.id,
-										mode: item.mode,
-									} )
-								}
-							>
-								{ __( 'Download PDF' ) }
-							</Button>
-						);
-					} else if ( item.status === 'failed' ) {
-						actionContent = (
-							<Button
-								variant="secondary"
-								size="compact"
-								isBusy={ retryingId === item.id }
-								disabled={ isPreview || !! retryingId }
-								accessibleWhenDisabled
-								onClick={ () => {
-									recordTracksEvent( 'calypso_a4a_amplify_report_retry_click', {
-										report_id: item.id,
-										mode: item.mode,
-									} );
-									// BACKEND REQUIRED: the retry endpoint must not count failed or
-									// timed-out runs toward `usage.used`. The success notice promises it.
-									retryReport( item.id, {
-										onSuccess: () =>
-											createSuccessNotice(
-												__( 'Report restarted. Failed reports don’t count toward your allowance.' ),
-												{ type: 'snackbar' }
-											),
-										onError: () =>
-											createErrorNotice( __( 'Could not restart the report. Please try again.' ), {
-												type: 'snackbar',
-											} ),
-									} );
-								} }
-							>
-								{ __( 'Retry' ) }
-							</Button>
-						);
-					} else {
-						actionContent = (
-							<Text variant="muted">
-								{ item.status === 'pending' ? __( 'Waiting to start' ) : __( 'In progress' ) }
-							</Text>
-						);
-					}
-					return (
-						<div className="dashboard-amplify-results__row-actions">
-							{ actionContent }
-							<Button
-								className="dashboard-amplify-results__archive"
-								icon={ archiveBoxIcon }
-								label={ __( 'Archive report' ) }
-								size="compact"
-								showTooltip
-								variant="tertiary"
-								disabled={ isPreview || archive.isPending }
-								onClick={ () => {
-									setReportToArchive( item );
-									recordTracksEvent( 'calypso_a4a_amplify_report_archive_click', {
-										report_id: item.id,
-										mode: item.mode,
-									} );
-								} }
-							/>
-						</div>
-					);
-				},
-				enableSorting: false,
-				enableHiding: false,
+				render: ( { item } ) => (
+					<Score
+						score={ item.status === 'completed' ? item.score.ai : null }
+						isEmpty={ item.status === 'failed' }
+					/>
+				),
+				filterBy: false,
 			},
 			{
 				id: 'created',
 				label: __( 'Created' ),
+				type: 'datetime',
 				getValue: ( { item } ) => item.created_at ?? '',
 				render: ( { item } ) =>
 					item.created_at ? (
@@ -337,24 +412,78 @@ export default function AmplifyReportsList( {
 					) : (
 						'—'
 					),
-				enableSorting: true,
+				filterBy: false,
+			},
+			{
+				id: 'actions',
+				label: __( 'Actions' ),
+				header: <VisuallyHidden>{ __( 'Actions' ) }</VisuallyHidden>,
+				render: ( { item } ) => (
+					<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
+						{ item.status === 'completed' && (
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								size="compact"
+								href={ item.pdf_url ?? undefined }
+								target="_blank"
+								rel="noopener noreferrer"
+								disabled={ ! item.pdf_url }
+								accessibleWhenDisabled
+								onClick={ () =>
+									recordTracksEvent( 'calypso_a4a_amplify_report_download_click', {
+										report_id: item.id,
+										mode: item.mode,
+									} )
+								}
+							>
+								{ __( 'Download PDF' ) }
+							</Button>
+						) }
+						{ item.status === 'failed' && (
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								size="compact"
+								isBusy={ retryingId === item.id }
+								disabled={ isPreview || !! retryingId }
+								accessibleWhenDisabled
+								onClick={ () => onRetry( item ) }
+							>
+								{ __( 'Retry' ) }
+							</Button>
+						) }
+						{ ( item.status === 'pending' || item.status === 'in_progress' ) && (
+							<Text variant="muted">{ getStatusLabels()[ item.status ] }</Text>
+						) }
+						<Button
+							__next40pxDefaultSize
+							size="compact"
+							icon={ archiveBoxIcon }
+							label={ __( 'Archive report' ) }
+							showTooltip
+							disabled={ isPreview }
+							accessibleWhenDisabled
+							onClick={ () => {
+								recordTracksEvent( 'calypso_a4a_amplify_report_archive_click', {
+									report_id: item.id,
+									mode: item.mode,
+								} );
+								setReportToArchive( item );
+							} }
+						/>
+					</HStack>
+				),
+				enableSorting: false,
+				enableHiding: false,
+				filterBy: false,
 			},
 		],
-		[
-			archive.isPending,
-			createErrorNotice,
-			createSuccessNotice,
-			isPreview,
-			locale,
-			recordTracksEvent,
-			retryReport,
-			retryingId,
-			titleFor,
-		]
+		[ isPreview, locale, onRetry, recordTracksEvent, retryingId, siteFor, titleFor, view.type ]
 	);
 
 	const { data: visibleReports, paginationInfo } = filterSortAndPaginate( reports, view, fields );
-	const isFiltered = !! view.search;
+	const isFiltered = !! view.search || !! view.filters?.length;
 
 	return (
 		<>
@@ -377,61 +506,19 @@ export default function AmplifyReportsList( {
 							isBorderless
 						/>
 					}
-				>
-					{ showSearch && (
-						<HStack justify="space-between" style={ { padding: '16px 24px' } }>
-							<WPDataViews.Search />
-							<WPDataViews.ViewConfig />
-						</HStack>
-					) }
-					<WPDataViews.Layout />
-					<WPDataViews.Footer />
-				</DataViews>
+				/>
 			</DataViewsCard>
 			{ reportToArchive && (
 				<Modal
 					title={ __( 'Archive report?' ) }
-					onRequestClose={ () => setReportToArchive( null ) }
 					size="small"
+					onRequestClose={ () => setReportToArchive( null ) }
 				>
-					<Text>
-						{ sprintf(
-							/* translators: %s: website URL */
-							__( 'Archive the report for %s? It will disappear from this list.' ),
-							reportToArchive.url
-						) }
-					</Text>
-					<ButtonStack justify="flex-end">
-						<Button variant="tertiary" onClick={ () => setReportToArchive( null ) }>
-							{ __( 'Cancel' ) }
-						</Button>
-						<Button
-							variant="primary"
-							isDestructive
-							isBusy={ archive.isPending }
-							disabled={ archive.isPending }
-							onClick={ () => {
-								recordTracksEvent( 'calypso_a4a_amplify_report_archive_confirm', {
-									report_id: reportToArchive.id,
-									mode: reportToArchive.mode,
-								} );
-								archive.mutate( reportToArchive.id, {
-									onSuccess: () => {
-										createSuccessNotice( __( 'The report has been archived.' ), {
-											type: 'snackbar',
-										} );
-										setReportToArchive( null );
-									},
-									onError: () =>
-										createErrorNotice( __( 'Could not archive the report. Please try again.' ), {
-											type: 'snackbar',
-										} ),
-								} );
-							} }
-						>
-							{ __( 'Archive' ) }
-						</Button>
-					</ButtonStack>
+					<ArchiveReportModal
+						agencyId={ agencyId }
+						report={ reportToArchive }
+						closeModal={ () => setReportToArchive( null ) }
+					/>
 				</Modal>
 			) }
 		</>
