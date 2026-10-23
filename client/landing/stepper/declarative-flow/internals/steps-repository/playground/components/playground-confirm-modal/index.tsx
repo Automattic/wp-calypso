@@ -3,11 +3,16 @@ import { useInstanceId } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
+
 import './style.scss';
 
 interface PlaygroundConfirmModalProps {
 	title: string;
-	children: ReactNode;
+	/**
+	 * The first paragraph of the body, and the dialog's accessible description.
+	 */
+	description: string;
+	children?: ReactNode;
 	confirmLabel: string;
 	cancelLabel: string;
 	onConfirm: () => void;
@@ -26,6 +31,7 @@ interface PlaygroundConfirmModalProps {
 
 export function PlaygroundConfirmModal( {
 	title,
+	description,
 	children,
 	confirmLabel,
 	cancelLabel,
@@ -34,7 +40,10 @@ export function PlaygroundConfirmModal( {
 	isConfirming = false,
 	className,
 }: PlaygroundConfirmModalProps ) {
-	const bodyId = useInstanceId( PlaygroundConfirmModal, 'playground-confirm-modal__body' );
+	const descriptionId = useInstanceId(
+		PlaygroundConfirmModal,
+		'playground-confirm-modal__description'
+	);
 
 	// Modal calls `onRequestClose` from the render that started its exit
 	// animation, after the animation ends, so read the latest value from a ref.
@@ -52,7 +61,7 @@ export function PlaygroundConfirmModal( {
 	return (
 		<ConfirmDialog
 			title={ title }
-			aria={ { describedby: bodyId } }
+			aria={ { describedby: descriptionId } }
 			onRequestClose={ cancel }
 			focusOnMount="firstContentElement"
 			isDismissible={ ! isConfirming }
@@ -60,7 +69,8 @@ export function PlaygroundConfirmModal( {
 			shouldCloseOnClickOutside={ ! isConfirming }
 			className={ clsx( 'playground-confirm-modal', className ) }
 		>
-			<DialogContent id={ bodyId } className="playground-confirm-modal__body">
+			<DialogContent className="playground-confirm-modal__body">
+				<p id={ descriptionId }>{ description }</p>
 				{ children }
 			</DialogContent>
 			<DialogFooter className="playground-confirm-modal__actions">

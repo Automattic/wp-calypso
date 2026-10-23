@@ -46,6 +46,9 @@
 }
 
 .playground-confirm-modal .playground-confirm-modal__body {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 	margin: 0;
 	font-size: inherit;
 

@@ -15,15 +15,10 @@ export const DialogFooter = ( { children, className }: DialogFooterProps ) => {
 interface DialogContentProps {
 	children: React.ReactNode;
 	className?: string;
-	id?: string;
 }
 
-export const DialogContent = ( { children, className, id }: DialogContentProps ) => {
-	return (
-		<div id={ id } className={ clsx( 'confirm-dialog__content', className ) }>
-			{ children }
-		</div>
-	);
+export const DialogContent = ( { children, className }: DialogContentProps ) => {
+	return <div className={ clsx( 'confirm-dialog__content', className ) }>{ children }</div>;
 };
 
 type ConfirmDialogProps = ComponentProps< typeof Modal >;

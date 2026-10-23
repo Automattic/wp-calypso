@@ -18,13 +18,14 @@ export function PlaygroundLeaveModal( {
 		<PlaygroundConfirmModal
 			className="playground-leave-modal"
 			title={ __( 'Leave without saving' ) }
+			description={ __(
+				'All the store information you’ve entered will be lost if you leave now.'
+			) }
 			confirmLabel={ __( 'Continue without saving' ) }
 			cancelLabel={ __( 'Keep building' ) }
 			onConfirm={ onConfirm }
 			onCancel={ onCancel }
 			isConfirming={ isConfirming }
-		>
-			<p>{ __( 'All the store information you’ve entered will be lost if you leave now.' ) }</p>
-		</PlaygroundConfirmModal>
+		/>
 	);
 }
