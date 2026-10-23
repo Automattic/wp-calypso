@@ -18,7 +18,10 @@ import HostingOverview from './hosting-overview';
 import { getPressableOwnershipType } from './lib/get-pressable-ownership-type';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
-import { PLAN_CATEGORY_ENTERPRISE, PLAN_CATEGORY_PREMIUM } from './pressable-overview/constants';
+import {
+	PLAN_CATEGORY_LEGACY_ENTERPRISE,
+	PLAN_CATEGORY_PERFORMANCE_TIER,
+} from './pressable-overview/constants';
 import DownloadProducts from './primary/download-products';
 import ProductsOverview from './products-overview';
 import ReferHosting from './refer-hosting';
@@ -131,7 +134,7 @@ export const marketplaceReferEnterpriseHostingContext: Callback = ( context, nex
 				title="Marketplace > Hosting > Refer Enterprise Hosting"
 				path={ context.path }
 			/>
-			<ReferHosting type={ PLAN_CATEGORY_ENTERPRISE } />
+			<ReferHosting type={ PLAN_CATEGORY_LEGACY_ENTERPRISE } />
 		</>
 	);
 	next();
@@ -142,7 +145,7 @@ export const marketplaceReferPremiumPlanContext: Callback = ( context, next ) =>
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting > Refer Premium Plan" path={ context.path } />
-			<ReferHosting type={ PLAN_CATEGORY_PREMIUM } />
+			<ReferHosting type={ PLAN_CATEGORY_PERFORMANCE_TIER } />
 		</>
 	);
 	next();

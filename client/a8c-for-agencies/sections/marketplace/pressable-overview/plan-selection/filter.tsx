@@ -10,12 +10,12 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	FILTER_TYPE_INSTALL,
 	FILTER_TYPE_VISITS,
-	PLAN_CATEGORY_STANDARD,
-	PLAN_CATEGORY_ENTERPRISE,
+	PLAN_CATEGORY_LEGACY_STANDARD,
+	PLAN_CATEGORY_LEGACY_ENTERPRISE,
 	FILTER_TYPE_STORAGE,
-	PLAN_CATEGORY_SIGNATURE,
-	PLAN_CATEGORY_SIGNATURE_HIGH,
-	PLAN_CATEGORY_PREMIUM,
+	PLAN_CATEGORY_STANDARD_TIER,
+	PLAN_CATEGORY_AGENCY_TIER,
+	PLAN_CATEGORY_PERFORMANCE_TIER,
 } from '../constants';
 import getNormalizedSliderSelection from '../lib/get-normalized-slider-selection';
 import getPressablePlan, { PressablePlan } from '../lib/get-pressable-plan';
@@ -34,7 +34,7 @@ type Props = {
 	onSelectPlan: ( plan: APIProductFamilyProduct | null ) => void;
 	// Whether the existing plan is still being loaded
 	isLoading?: boolean;
-	areSignaturePlans?: boolean;
+	isCurrentCatalog?: boolean;
 	selectedTab: string;
 	setSelectedTab: ( tab: string ) => void;
 	isReferralMode: boolean;
@@ -46,7 +46,7 @@ export default function PlanSelectionFilter( {
 	onSelectPlan,
 	pressablePlan,
 	isLoading,
-	areSignaturePlans: areSignaturePlans = false,
+	isCurrentCatalog: isCurrentCatalog = false,
 	selectedTab,
 	setSelectedTab,
 	isReferralMode,
@@ -58,37 +58,37 @@ export default function PlanSelectionFilter( {
 		key: 'pressable-filter-type',
 		defaultValue: FILTER_TYPE_INSTALL,
 	} );
-	const [ disableStandardTab, setDisableStandardTab ] = useState( false );
+	const [ isStandardTabDisabled, setIsStandardTabDisabled ] = useState( false );
 
 	const isMobile = useMobileBreakpoint();
 	const isDesktop = useDesktopBreakpoint();
 
-	const isPremiumPlanTab = selectedTab === PLAN_CATEGORY_PREMIUM;
+	const isPerformanceTab = selectedTab === PLAN_CATEGORY_PERFORMANCE_TIER;
 
-	// Currently, we only want the premium plans for referral mode
-	const hasNewPremiumPlans =
+	// Currently, we only want the Performance plans for referral mode
+	const canReferPerformancePlans =
 		isReferralMode && plans.some( ( plan ) => plan.slug.startsWith( 'pressable-premium-' ) );
 
-	const lowPlanOptions = useMemo(
+	const standardTabOptions = useMemo(
 		() =>
 			getSliderOptions(
 				filterType,
 				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
-				areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD,
+				isCurrentCatalog ? PLAN_CATEGORY_STANDARD_TIER : PLAN_CATEGORY_LEGACY_STANDARD,
 				isMobile
 			),
-		[ filterType, isMobile, plans, areSignaturePlans ]
+		[ filterType, isMobile, plans, isCurrentCatalog ]
 	);
 
-	const highPlanOptions = useMemo(
+	const agencyTabOptions = useMemo(
 		() => [
 			...getSliderOptions(
 				filterType,
 				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
-				areSignaturePlans ? PLAN_CATEGORY_SIGNATURE_HIGH : PLAN_CATEGORY_ENTERPRISE,
+				isCurrentCatalog ? PLAN_CATEGORY_AGENCY_TIER : PLAN_CATEGORY_LEGACY_ENTERPRISE,
 				isMobile
 			),
-			...( isPremiumPlanTab
+			...( isPerformanceTab
 				? []
 				: [
 						{
@@ -98,15 +98,15 @@ export default function PlanSelectionFilter( {
 						},
 					] ),
 		],
-		[ filterType, isMobile, plans, isPremiumPlanTab, translate, areSignaturePlans ]
+		[ filterType, isMobile, plans, isPerformanceTab, translate, isCurrentCatalog ]
 	);
 
-	const premiumPlanOptions = useMemo(
+	const performanceTabOptions = useMemo(
 		() => [
 			...getSliderOptions(
 				filterType,
 				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
-				PLAN_CATEGORY_PREMIUM,
+				PLAN_CATEGORY_PERFORMANCE_TIER,
 				isMobile
 			),
 			{
@@ -133,18 +133,18 @@ export default function PlanSelectionFilter( {
 
 	const selectedOptions = useMemo( (): Option[] => {
 		switch ( selectedTab ) {
-			case PLAN_CATEGORY_STANDARD:
-			case PLAN_CATEGORY_SIGNATURE:
-				return lowPlanOptions;
-			case PLAN_CATEGORY_ENTERPRISE:
-			case PLAN_CATEGORY_SIGNATURE_HIGH:
-				return highPlanOptions;
-			case PLAN_CATEGORY_PREMIUM:
-				return premiumPlanOptions;
+			case PLAN_CATEGORY_LEGACY_STANDARD:
+			case PLAN_CATEGORY_STANDARD_TIER:
+				return standardTabOptions;
+			case PLAN_CATEGORY_LEGACY_ENTERPRISE:
+			case PLAN_CATEGORY_AGENCY_TIER:
+				return agencyTabOptions;
+			case PLAN_CATEGORY_PERFORMANCE_TIER:
+				return performanceTabOptions;
 			default:
 				return [];
 		}
-	}, [ selectedTab, lowPlanOptions, highPlanOptions, premiumPlanOptions ] );
+	}, [ selectedTab, standardTabOptions, agencyTabOptions, performanceTabOptions ] );
 
 	const selectedOptionIndex = useMemo( () => {
 		return selectedOptions.findIndex(
@@ -167,14 +167,14 @@ export default function PlanSelectionFilter( {
 			setSelectedTab( tab );
 
 			if (
-				hasNewPremiumPlans &&
-				tab === PLAN_CATEGORY_PREMIUM &&
+				canReferPerformancePlans &&
+				tab === PLAN_CATEGORY_PERFORMANCE_TIER &&
 				filterType === FILTER_TYPE_INSTALL
 			) {
 				setFilterType( FILTER_TYPE_VISITS );
 			}
 		},
-		[ filterType, hasNewPremiumPlans, setSelectedTab, setFilterType ]
+		[ filterType, canReferPerformancePlans, setSelectedTab, setFilterType ]
 	);
 
 	const additionalWrapperClass =
@@ -191,16 +191,16 @@ export default function PlanSelectionFilter( {
 
 			// Depending on the category of the existing plan, we might want to show other category slider at the most min or max
 			const isStandardCategory =
-				PLAN_CATEGORY_STANDARD === category || PLAN_CATEGORY_SIGNATURE === category;
+				PLAN_CATEGORY_LEGACY_STANDARD === category || PLAN_CATEGORY_STANDARD_TIER === category;
 			const isEnterpriseCategory =
-				PLAN_CATEGORY_ENTERPRISE === category || PLAN_CATEGORY_SIGNATURE_HIGH === category;
+				PLAN_CATEGORY_LEGACY_ENTERPRISE === category || PLAN_CATEGORY_AGENCY_TIER === category;
 			const isPlanStandardCategory =
-				PLAN_CATEGORY_STANDARD === pressablePlan?.category ||
-				PLAN_CATEGORY_SIGNATURE === pressablePlan?.category;
+				PLAN_CATEGORY_LEGACY_STANDARD === pressablePlan?.category ||
+				PLAN_CATEGORY_STANDARD_TIER === pressablePlan?.category;
 			const isPlanEnterpriseCategory =
-				PLAN_CATEGORY_ENTERPRISE === pressablePlan?.category ||
-				PLAN_CATEGORY_SIGNATURE_HIGH === pressablePlan?.category;
-			const isPlanPremiumCategory = PLAN_CATEGORY_PREMIUM === pressablePlan?.category;
+				PLAN_CATEGORY_LEGACY_ENTERPRISE === pressablePlan?.category ||
+				PLAN_CATEGORY_AGENCY_TIER === pressablePlan?.category;
+			const isPlanPremiumCategory = PLAN_CATEGORY_PERFORMANCE_TIER === pressablePlan?.category;
 
 			if ( isStandardCategory && ! isPlanStandardCategory ) {
 				return categoryOptions.length - 1;
@@ -247,64 +247,55 @@ export default function PlanSelectionFilter( {
 	useEffect( () => {
 		// Ensure standard tab is not disabled if no existing plan
 		if ( ! pressablePlan ) {
-			setDisableStandardTab( false );
+			setIsStandardTabDisabled( false );
 			return;
 		}
 
 		// Disable the standard tab if the existing plan is the highest standard plan or higher
 		const isStandardCategory =
-			pressablePlan.category === PLAN_CATEGORY_STANDARD ||
-			pressablePlan.category === PLAN_CATEGORY_SIGNATURE;
+			pressablePlan.category === PLAN_CATEGORY_LEGACY_STANDARD ||
+			pressablePlan.category === PLAN_CATEGORY_STANDARD_TIER;
 		if (
 			! isStandardCategory ||
-			pressablePlan.slug === lowPlanOptions[ lowPlanOptions.length - 1 ]?.value
+			pressablePlan.slug === standardTabOptions[ standardTabOptions.length - 1 ]?.value
 		) {
-			setDisableStandardTab( true );
+			setIsStandardTabDisabled( true );
 		} else {
-			setDisableStandardTab( false );
+			setIsStandardTabDisabled( false );
 		}
-	}, [ pressablePlan, lowPlanOptions, areSignaturePlans ] );
+	}, [ pressablePlan, standardTabOptions, isCurrentCatalog ] );
 
 	const tabs = useMemo(
 		() => [
-			...( areSignaturePlans
+			...( isCurrentCatalog
 				? [
 						{
-							name: PLAN_CATEGORY_SIGNATURE,
-							title: isDesktop
-								? translate( 'Signature plans 1-10' )
-								: translate( 'Signature 1-10' ),
-							disabled: disableStandardTab,
+							name: PLAN_CATEGORY_STANDARD_TIER,
+							title: isDesktop ? translate( 'Standard plans' ) : translate( 'Standard' ),
+							disabled: isStandardTabDisabled,
 						},
 						{
-							name: PLAN_CATEGORY_SIGNATURE_HIGH,
-							title: isDesktop
-								? translate( 'Signature plans 11-17' )
-								: translate( 'Signature 11-17' ),
+							name: PLAN_CATEGORY_AGENCY_TIER,
+							title: isDesktop ? translate( 'Agency plans' ) : translate( 'Agency' ),
 						},
 					]
 				: [
 						{
-							name: PLAN_CATEGORY_STANDARD,
+							name: PLAN_CATEGORY_LEGACY_STANDARD,
 							title: isDesktop ? translate( 'Signature plans' ) : translate( 'Signature' ),
-							disabled: disableStandardTab,
+							disabled: isStandardTabDisabled,
 						},
 						{
-							name: PLAN_CATEGORY_ENTERPRISE,
+							name: PLAN_CATEGORY_LEGACY_ENTERPRISE,
 							title: isDesktop ? translate( 'Enterprise plans' ) : translate( 'Enterprise' ),
 						},
 					] ),
-			hasNewPremiumPlans
-				? {
-						name: PLAN_CATEGORY_PREMIUM,
-						title: isDesktop ? translate( 'Premium plans 1-11' ) : translate( 'Premium 1-11' ),
-					}
-				: {
-						name: PLAN_CATEGORY_PREMIUM,
-						title: isDesktop ? translate( 'Premium plans' ) : translate( 'Premium' ),
-					},
+			{
+				name: PLAN_CATEGORY_PERFORMANCE_TIER,
+				title: isDesktop ? translate( 'Performance plans' ) : translate( 'Performance' ),
+			},
 		],
-		[ areSignaturePlans, isDesktop, translate, disableStandardTab, hasNewPremiumPlans ]
+		[ isCurrentCatalog, isDesktop, translate, isStandardTabDisabled ]
 	);
 
 	if ( isLoading ) {
@@ -352,57 +343,66 @@ export default function PlanSelectionFilter( {
 			>
 				{ ( tab ) => {
 					switch ( tab.name ) {
-						case PLAN_CATEGORY_STANDARD:
-						case PLAN_CATEGORY_SIGNATURE:
+						case PLAN_CATEGORY_LEGACY_STANDARD:
+						case PLAN_CATEGORY_STANDARD_TIER:
 							return (
 								<>
 									<FilterByPicker />
 									<A4ASlider
 										value={
-											PLAN_CATEGORY_STANDARD === selectedTab ||
-											PLAN_CATEGORY_SIGNATURE === selectedTab
+											PLAN_CATEGORY_LEGACY_STANDARD === selectedTab ||
+											PLAN_CATEGORY_STANDARD_TIER === selectedTab
 												? selectedOptionIndex
 												: 0
 										}
 										onChange={ onSelectOption }
-										options={ lowPlanOptions }
+										options={ standardTabOptions }
 										minimum={ getSliderMinimum(
-											areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD,
-											lowPlanOptions
+											isCurrentCatalog
+												? PLAN_CATEGORY_STANDARD_TIER
+												: PLAN_CATEGORY_LEGACY_STANDARD,
+											standardTabOptions
 										) }
 									/>
 								</>
 							);
-						case PLAN_CATEGORY_ENTERPRISE:
-						case PLAN_CATEGORY_SIGNATURE_HIGH:
+						case PLAN_CATEGORY_LEGACY_ENTERPRISE:
+						case PLAN_CATEGORY_AGENCY_TIER:
 							return (
 								<>
 									<FilterByPicker />
 									<A4ASlider
 										value={
-											PLAN_CATEGORY_ENTERPRISE === selectedTab ||
-											PLAN_CATEGORY_SIGNATURE_HIGH === selectedTab
+											PLAN_CATEGORY_LEGACY_ENTERPRISE === selectedTab ||
+											PLAN_CATEGORY_AGENCY_TIER === selectedTab
 												? selectedOptionIndex
 												: 0
 										}
 										onChange={ onSelectOption }
-										options={ highPlanOptions }
+										options={ agencyTabOptions }
 										minimum={ getSliderMinimum(
-											areSignaturePlans ? PLAN_CATEGORY_SIGNATURE_HIGH : PLAN_CATEGORY_ENTERPRISE,
-											highPlanOptions
+											isCurrentCatalog
+												? PLAN_CATEGORY_AGENCY_TIER
+												: PLAN_CATEGORY_LEGACY_ENTERPRISE,
+											agencyTabOptions
 										) }
 									/>
 								</>
 							);
-						case PLAN_CATEGORY_PREMIUM:
-							return hasNewPremiumPlans ? (
+						case PLAN_CATEGORY_PERFORMANCE_TIER:
+							return canReferPerformancePlans ? (
 								<>
 									<FilterByPicker hideInstallOption />
 									<A4ASlider
-										value={ PLAN_CATEGORY_PREMIUM === selectedTab ? selectedOptionIndex : 0 }
+										value={
+											PLAN_CATEGORY_PERFORMANCE_TIER === selectedTab ? selectedOptionIndex : 0
+										}
 										onChange={ onSelectOption }
-										options={ premiumPlanOptions }
-										minimum={ getSliderMinimum( PLAN_CATEGORY_PREMIUM, premiumPlanOptions ) }
+										options={ performanceTabOptions }
+										minimum={ getSliderMinimum(
+											PLAN_CATEGORY_PERFORMANCE_TIER,
+											performanceTabOptions
+										) }
 									/>
 								</>
 							) : null;

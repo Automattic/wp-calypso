@@ -88,7 +88,7 @@ export default function PressablePlanTable( {
 			? [
 					{
 						value: CUSTOM_PLAN_OPTION,
-						name: __( 'Custom' ),
+						name: isPremium ? __( 'Performance Custom' ) : __( 'Custom' ),
 						// Every Premium plan is one site; a custom pooled plan is past 500.
 						installs: isPremium ? '1' : __( '500+' ),
 						visits: __( '10M+' ),
