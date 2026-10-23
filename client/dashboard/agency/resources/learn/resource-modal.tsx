@@ -149,6 +149,7 @@ export default function ResourceModal( {
 						/>
 					</HStack>
 				</div>
+				{ /* Keyed to fade in anew; the actions below aren't, so focus stays on them. */ }
 				<VStack spacing={ 6 } key={ resource.id } className={ fadeClassName }>
 					<VStack spacing={ 3 }>
 						<Heading
@@ -165,34 +166,34 @@ export default function ResourceModal( {
 						</Text>
 					</VStack>
 					<ResourceBadges resource={ resource } showFeatured />
-					<HStack justify="space-between" wrap>
-						<HStack spacing={ 2 } expanded={ false }>
-							<Button
-								variant="primary"
-								href={ resource.external_url }
-								target="_blank"
-								rel="noopener noreferrer"
-								onClick={ () => onOpen( resource ) }
-								__next40pxDefaultSize
-							>
-								{ __( 'Open in new tab' ) }
-							</Button>
-							<Button variant="tertiary" onClick={ copyLink } __next40pxDefaultSize>
-								{ copyLabel }
-							</Button>
-						</HStack>
+				</VStack>
+				<HStack justify="space-between" wrap>
+					<HStack spacing={ 2 } expanded={ false }>
 						<Button
-							variant="tertiary"
-							icon={ isRead ? check : undefined }
-							isPressed={ isRead }
-							onClick={ onToggleRead }
+							variant="primary"
+							href={ resource.external_url }
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => onOpen( resource ) }
 							__next40pxDefaultSize
 						>
-							{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
-							<span>{ isRead ? __( 'Read' ) : __( 'Mark as read' ) }</span>
+							{ __( 'Open in new tab' ) }
+						</Button>
+						<Button variant="tertiary" onClick={ copyLink } __next40pxDefaultSize>
+							{ copyLabel }
 						</Button>
 					</HStack>
-				</VStack>
+					<Button
+						variant="tertiary"
+						icon={ isRead ? check : undefined }
+						isPressed={ isRead }
+						onClick={ onToggleRead }
+						__next40pxDefaultSize
+					>
+						{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+						<span>{ isRead ? __( 'Read' ) : __( 'Mark as read' ) }</span>
+					</Button>
+				</HStack>
 			</VStack>
 		</Modal>
 	);

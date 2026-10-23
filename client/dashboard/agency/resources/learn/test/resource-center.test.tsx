@@ -201,6 +201,18 @@ describe( '<ResourceCenter>', () => {
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
+	test( 'keeps focus on the action in use while moving between resources', async () => {
+		renderLibrary();
+
+		await userEvent.click( await screen.findByRole( 'link', { name: 'Woo case study' } ) );
+		const dialog = await screen.findByRole( 'dialog', { name: 'Woo case study' } );
+		within( dialog ).getByRole( 'button', { name: 'Mark as read' } ).focus();
+		await userEvent.keyboard( '{ArrowRight}' );
+
+		expect( await screen.findByRole( 'dialog', { name: 'Jetpack battle card' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Mark as read' } ) ).toHaveFocus();
+	} );
+
 	test( 'links each resource to its details, so they open in a new tab or can be shared', async () => {
 		renderLibrary();
 
