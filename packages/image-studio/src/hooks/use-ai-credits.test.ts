@@ -63,6 +63,17 @@ const planSnapshot = ( remaining: number, overrides: Record< string, unknown > =
 	...overrides,
 } );
 
+/** A Business site's balance, with packs on top of its plan credits. */
+const withPacks = ( planRemaining: number, packsRemaining: number ) =>
+	planSnapshot( planRemaining, {
+		plan_tier: 'business',
+		credits_available: planRemaining + packsRemaining,
+		exhausted: planRemaining + packsRemaining === 0,
+		top_up_credits_purchased: 100_000,
+		top_up_credits_used: 100_000 - packsRemaining,
+		top_up_credits_remaining: packsRemaining,
+	} );
+
 /** The flags WordPress.com sends with the balance for the person who bought the plan. */
 const PLAN_BUYER = { can_buy_credits: true, can_upgrade: true };
 const SECOND_ADMIN = { can_buy_credits: true, can_upgrade: false };
@@ -135,6 +146,19 @@ describe( 'useAiCredits', () => {
 		);
 		return ( body: unknown, ok = true ) => resolve( { ok, json: async () => body } );
 	};
+
+	/** Holds the next credits request open until it is aborted, which rejects it as fetch does. */
+	const fetchUntilAborted = () =>
+		fetchMock.mockImplementationOnce(
+			( _url: string, { signal }: RequestInit ) =>
+				new Promise( ( _resolve, reject ) => {
+					signal?.addEventListener( 'abort', () =>
+						reject( new DOMException( 'The operation was aborted.', 'AbortError' ) )
+					);
+				} )
+		);
+
+	const signalOf = ( request: number ): AbortSignal => fetchMock.mock.calls[ request ][ 1 ].signal;
 
 	const renderCredits = (
 		mode = ImageStudioMode.Generate,
@@ -494,17 +518,6 @@ describe( 'useAiCredits', () => {
 	} );
 
 	describe( 'the top-ups balance', () => {
-		/** A Business site's balance, with packs on top of its plan credits. */
-		const withPacks = ( planRemaining: number, packsRemaining: number ) =>
-			planSnapshot( planRemaining, {
-				plan_tier: 'business',
-				credits_available: planRemaining + packsRemaining,
-				exhausted: planRemaining + packsRemaining === 0,
-				top_up_credits_purchased: 100_000,
-				top_up_credits_used: 100_000 - packsRemaining,
-				top_up_credits_remaining: packsRemaining,
-			} );
-
 		it.each( [
 			[ 'the packs left', withPacks( 1_000, 3_000 ), 3_000 ],
 			[ '0 for used-up packs', withPacks( 1_000, 0 ), 0 ],
@@ -1266,5 +1279,226 @@ describe( 'useAiCredits', () => {
 		} );
 
 		expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();
+	} );
+
+	it( 'aborts a running check when the modal closes, without logging it as a failure', async () => {
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		fetchUntilAborted();
+		const { unmount } = renderCredits();
+		await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
+
+		unmount();
+		await act( async () => {} );
+
+		expect( signalOf( 0 ).aborted ).toBe( true );
+		expect( consoleError ).not.toHaveBeenCalled();
+		consoleError.mockRestore();
+	} );
+
+	it( 'aborts a running check when the credentials change', async () => {
+		fetchMock.mockReturnValue( new Promise( () => {} ) );
+		const { rerender } = renderCredits();
+		await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
+
+		rerender( {
+			mode: ImageStudioMode.Generate,
+			authProvider: async () => ( { Authorization: 'Bearer next' } ),
+		} );
+
+		expect( signalOf( 0 ).aborted ).toBe( true );
+	} );
+
+	it( 'ignores a late answer to the old credentials’ check', async () => {
+		const answer = deferFetch();
+		const { result, rerender } = renderCredits();
+		await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
+
+		respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
+		rerender( {
+			mode: ImageStudioMode.Generate,
+			authProvider: async () => ( { Authorization: 'Bearer next' } ),
+		} );
+		await waitFor( () => expect( result.current.meter ).toEqual( meterAt( 75 ) ) );
+
+		await act( async () => {
+			answer( { ai_credits: planSnapshot( 0 ), ...PLAN_BUYER } );
+		} );
+
+		expect( result.current.meter ).toEqual( meterAt( 75 ) );
+		expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'on returning to the page', () => {
+		const RETURN_EVENTS = [ 'focus', 'online', 'visibilitychange' ];
+
+		/** Fires each event where the browser does, and lets a check it starts get its credentials. */
+		const returnToPage = ( events: string[] ) =>
+			act( async () => {
+				events.forEach( ( event ) =>
+					( event === 'visibilitychange' ? document : window ).dispatchEvent( new Event( event ) )
+				);
+			} );
+
+		afterEach( () => {
+			Reflect.deleteProperty( document, 'visibilityState' );
+		} );
+
+		it( 'shows credits bought in checkout’s tab once the page has focus again', async () => {
+			respondWith( { ai_credits: planSnapshot( 0, { plan_tier: 'business' } ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.isLimitReached ).toBe( true ) );
+
+			respondWith( { ai_credits: withPacks( 0, 100_000 ), ...PLAN_BUYER } );
+			await returnToPage( [ 'focus' ] );
+
+			await waitFor( () => expect( result.current.isLimitReached ).toBe( false ) );
+			expect( result.current.notice ).toBeUndefined();
+			expect( result.current.meter?.status ).toMatchObject( { remaining: 100_000 } );
+			expect( result.current.beforeSubmit() ).toBe( true );
+		} );
+
+		it.each( [ 'visibilitychange', 'online' ] )(
+			'checks the balance again on %s',
+			async ( event ) => {
+				respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
+				const { result } = renderCredits();
+				await waitFor( () => expect( result.current.meter ).toEqual( meterAt( 75 ) ) );
+
+				respondWith( { ai_credits: planSnapshot( 20_000 ), ...PLAN_BUYER } );
+				await returnToPage( [ event ] );
+
+				await waitFor( () => expect( result.current.meter ).toEqual( meterAt( 50 ) ) );
+				expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+			}
+		);
+
+		it( 'doesn’t check while the page is hidden', async () => {
+			respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+			Object.defineProperty( document, 'visibilityState', { configurable: true, value: 'hidden' } );
+			await returnToPage( RETURN_EVENTS );
+
+			expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'starts one check for events that arrive while it runs', async () => {
+			respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+			const answer = deferFetch();
+			await returnToPage( [ 'focus', 'visibilitychange' ] );
+			await returnToPage( [ 'online' ] );
+			expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+
+			await act( async () => {
+				answer( { ai_credits: planSnapshot( 20_000 ), ...PLAN_BUYER } );
+			} );
+			expect( result.current.meter ).toEqual( meterAt( 50 ) );
+		} );
+
+		it( 'doesn’t start a check while the opening check runs', async () => {
+			const answer = deferFetch();
+			const { result } = renderCredits();
+			await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
+
+			await returnToPage( RETURN_EVENTS );
+			expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+
+			await act( async () => {
+				answer( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
+			} );
+			expect( result.current.meter ).toEqual( meterAt( 75 ) );
+		} );
+
+		it.each( [
+			{ name: 'the page names no site', data: undefined, auth: authProvider },
+			{
+				name: 'the site is self-hosted',
+				data: { blogId: BLOG_ID, siteType: 'jetpack' },
+				auth: authProvider,
+			},
+			{
+				name: 'the page isn’t in dev mode',
+				data: { blogId: BLOG_ID, siteType: 'simple', isDevMode: false },
+				auth: authProvider,
+			},
+			{
+				name: 'the credentials haven’t arrived',
+				data: { blogId: BLOG_ID, siteType: 'simple' },
+				auth: undefined,
+			},
+		] as const )( 'doesn’t check when $name', async ( { data, auth } ) => {
+			window.imageStudioData = data;
+			renderHook( () => useAiCredits( { mode: ImageStudioMode.Generate, authProvider: auth } ) );
+
+			await returnToPage( RETURN_EVENTS );
+
+			expect( fetchMock ).not.toHaveBeenCalled();
+		} );
+
+		it( 'keeps the balance and the Upgrade link when the check fails', async () => {
+			respondWith( { ai_credits: planSnapshot( 6_000 ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			const answer = deferFetch();
+			await returnToPage( [ 'focus' ] );
+			await act( async () => {
+				answer( {}, false );
+			} );
+
+			expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+			expect( result.current.notice ).toMatchObject( {
+				message: '6k credits left.',
+				action: upgradeAction,
+			} );
+			expect( result.current.meter ).toEqual( meterAt( 15 ) );
+		} );
+
+		it( 'records no notice event when the balance stays at the same level', async () => {
+			respondWith( { ai_credits: planSnapshot( 6_000 ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			respondWith( { ai_credits: planSnapshot( 5_000 ), ...PLAN_BUYER } );
+			await returnToPage( [ 'focus' ] );
+
+			await waitFor( () => expect( result.current.notice?.message ).toBe( '5k credits left.' ) );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'records the notice as a refresh when the balance changes level', async () => {
+			respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.meter ).toBeDefined() );
+
+			respondWith( { ai_credits: planSnapshot( 6_000 ), ...PLAN_BUYER } );
+			await returnToPage( [ 'focus' ] );
+
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Generate,
+				trigger: 'refresh',
+				...noticeCredits( 'low', 6_000 ),
+			} );
+		} );
+
+		it( 'keeps the popover open', async () => {
+			respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.meter ).toBeDefined() );
+			act( () => {
+				result.current.meter?.onToggle( true );
+			} );
+
+			respondWith( { ai_credits: planSnapshot( 20_000 ), ...PLAN_BUYER } );
+			await returnToPage( [ 'focus' ] );
+
+			await waitFor( () => expect( result.current.meter ).toEqual( meterAt( 50, true ) ) );
+		} );
 	} );
 } );
