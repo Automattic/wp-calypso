@@ -157,6 +157,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 									</Step.PrimaryButton>
 									{ isWooCommerceIntent && (
 										<Button
+											__next40pxDefaultSize
 											className="playground__woo-close-button"
 											size="small"
 											icon={ close }
