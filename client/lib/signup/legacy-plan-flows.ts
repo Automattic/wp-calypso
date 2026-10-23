@@ -3,6 +3,7 @@ import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_3_YEARS,
 	PLAN_BUSINESS_MONTHLY,
+	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_PERSONAL_3_YEARS,
@@ -32,6 +33,7 @@ export const REDIRECTED_PLAN_FLOWS = {
 	'business-monthly': PLAN_BUSINESS_MONTHLY,
 	'business-2y': PLAN_BUSINESS_2_YEARS,
 	'business-3y': PLAN_BUSINESS_3_YEARS,
+	'ecommerce-monthly': PLAN_ECOMMERCE_MONTHLY,
 
 	// Landpack emits these spellings. They never matched a flow name, so they lose their
 	// preselection today; mapping them fixes the pages already cached.
@@ -56,10 +58,11 @@ const PRESELECTABLE_PLANS: ReadonlySet< string > = new Set(
  * Whether onboarding will preselect a plan on request.
  *
  * Deliberately narrower than "is a WordPress.com plan": a plan reached through its own
- * eligibility gate — the Student plan behind the Education flow's invite check, or an
- * ecommerce plan whose flow arranges an Atomic transfer — must not become selectable by
- * hand-writing a query argument. The backend remains the authority; this only decides what
- * onboarding is willing to preselect.
+ * eligibility gate, such as the Student plan behind the Education flow's invite check, must
+ * not become selectable by hand-writing a query argument. Commerce has no such gate (the
+ * plans grid offers it to anyone); annual Commerce is left out only because
+ * `/start/ecommerce` still sells it. The backend remains the authority; this only decides
+ * what onboarding is willing to preselect.
  */
 export function isPreselectablePlan( slug: string ): slug is PreselectablePlan {
 	return PRESELECTABLE_PLANS.has( slug );

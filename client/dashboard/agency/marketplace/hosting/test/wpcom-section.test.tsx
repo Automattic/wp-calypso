@@ -23,12 +23,12 @@ const plan: AgencyProduct = {
 
 // The development CTA opens the configuration modal in place, which needs an
 // agency to create against and an address to suggest.
-function mockDevSiteModal() {
+function mockDevSiteModal( approvalStatus = 'approved' ) {
 	nock( API )
 		.persist()
 		.get( '/wpcom/v2/agency' )
 		.query( true )
-		.reply( 200, [ { id: 1 } ] );
+		.reply( 200, [ { id: 1, approval_status: approvalStatus } ] );
 	nock( API )
 		.persist()
 		.get( '/wpcom/v2/site-suggestions' )
@@ -86,9 +86,20 @@ describe( '<WpcomSection>', () => {
 		expect( devSiteButton() ).toBeDisabled();
 	} );
 
-	test( 'blocks the development CTA until the agency is approved', () => {
+	test( 'opens the approval gate instead of the configuration while the agency is in review', async () => {
+		mockDevSiteModal( 'pending' );
 		renderSection( { isAgencyApproved: false } );
 
-		expect( devSiteButton() ).toBeDisabled();
+		await waitFor( () => expect( devSiteButton() ).toBeEnabled() );
+		await userEvent.click( devSiteButton() );
+
+		expect(
+			await screen.findByRole( 'dialog', {
+				name: 'Development sites unlock once you’re approved',
+			} )
+		).toBeVisible();
+		expect(
+			screen.queryByRole( 'dialog', { name: 'Configure your new site' } )
+		).not.toBeInTheDocument();
 	} );
 } );

@@ -5,9 +5,8 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	getJetpackSearchCustomizeUrl,
@@ -22,8 +21,6 @@ class CheckoutThankYouHeader extends PureComponent {
 		isAtomic: PropTypes.bool,
 		primaryCta: PropTypes.func,
 		purchases: PropTypes.array,
-		recordTracksEvent: PropTypes.func.isRequired,
-		recordStartTransferClickInThankYou: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		_n: PropTypes.func.isRequired,
@@ -36,7 +33,7 @@ class CheckoutThankYouHeader extends PureComponent {
 
 		const { selectedSite } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_thank_you_no_site_receipt_error' );
+		recordTracksEvent( 'calypso_thank_you_no_site_receipt_error' );
 
 		page( selectedSite?.slug ? `/home/${ selectedSite.slug }` : '/home' );
 	};
@@ -58,7 +55,7 @@ class CheckoutThankYouHeader extends PureComponent {
 
 		const { selectedSite } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_thank_you_back_to_hosting' );
+		recordTracksEvent( 'calypso_thank_you_back_to_hosting' );
 
 		window.location.href = `/sites/${ selectedSite.slug }/settings`;
 	};
@@ -154,15 +151,9 @@ class CheckoutThankYouHeader extends PureComponent {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => ( {
-		isAtomic: isAtomicSite( state, ownProps.selectedSite?.ID ),
-		jetpackSearchCustomizeUrl: getJetpackSearchCustomizeUrl( state, ownProps.selectedSite?.ID ),
-		jetpackSearchDashboardUrl: getJetpackSearchDashboardUrl( state, ownProps.selectedSite?.ID ),
-		upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
-	} ),
-	{
-		recordStartTransferClickInThankYou,
-		recordTracksEvent,
-	}
-)( localize( withI18n( CheckoutThankYouHeader ) ) );
+export default connect( ( state, ownProps ) => ( {
+	isAtomic: isAtomicSite( state, ownProps.selectedSite?.ID ),
+	jetpackSearchCustomizeUrl: getJetpackSearchCustomizeUrl( state, ownProps.selectedSite?.ID ),
+	jetpackSearchDashboardUrl: getJetpackSearchDashboardUrl( state, ownProps.selectedSite?.ID ),
+	upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
+} ) )( localize( withI18n( CheckoutThankYouHeader ) ) );

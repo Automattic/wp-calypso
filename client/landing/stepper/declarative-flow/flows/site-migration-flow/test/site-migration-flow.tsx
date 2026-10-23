@@ -16,8 +16,10 @@ import { useFlowNavigation } from 'calypso/landing/stepper/declarative-flow/inte
 import { useStepNavigationWithTracking } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-step-navigation-with-tracking';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
+import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import {
 	getAssertionConditionResult,
+	getFlowLocation,
 	renderFlow,
 	runFlowNavigation,
 } from 'calypso/landing/stepper/declarative-flow/test/helpers';
@@ -705,6 +707,26 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'PROCESSING', () => {
+			it.each( [
+				[ ProcessingResult.SUCCESS, 'site_not_created' ],
+				[ ProcessingResult.NO_ACTION, 'processing_no_action' ],
+				[ ProcessingResult.FAILURE, 'processing_failed' ],
+			] )(
+				'names the cause when processing ends with %s and no site',
+				( processingResult, errorReason ) => {
+					const destination = runNavigation( {
+						from: STEPS.PROCESSING,
+						dependencies: { siteCreated: false, processingResult },
+					} );
+
+					expect( destination ).toMatchDestination( { step: STEPS.ERROR, query: null } );
+					expect( getFlowLocation().state ).toEqual( {
+						message: 'Site not created',
+						errorReason,
+					} );
+				}
+			);
+
 			it( 'redirects to SITE_MIGRATION_HOW_TO_MIGRATE when the platform is wordpress', () => {
 				const destination = runNavigation( {
 					from: STEPS.PROCESSING,

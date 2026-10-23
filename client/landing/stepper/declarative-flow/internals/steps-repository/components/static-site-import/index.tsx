@@ -35,8 +35,13 @@ export const useStaticSiteImportTicket = () => {
 	const { sourceUrl } = useStaticSiteImportSource();
 	const { sendTicketAsync, isPending, isError } = useSubmitMigrationTicket();
 
-	const sendTicket = ( context: string ) =>
-		sendTicketAsync( { locale, blog_url: siteSlug, from_url: sourceUrl, context } );
+	const sendTicket = () =>
+		sendTicketAsync( {
+			locale,
+			blog_url: siteSlug,
+			from_url: sourceUrl,
+			context: 'site_is_not_wordpress',
+		} );
 
 	return { sendTicket, isPending, isError };
 };

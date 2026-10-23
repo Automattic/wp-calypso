@@ -1,16 +1,13 @@
+import { productsQuery } from '@automattic/api-queries';
 import { Button } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useMemo } from 'react';
-import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySites from 'calypso/components/data/query-sites';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	isProductsListFetching as getIsProductListFetching,
-	getProductName,
-} from 'calypso/state/products-list/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { filterAllowedRedirect } from '../src/lib/pending-page';
 import useGetJetpackActivationConfirmationInfo from './use-get-jetpack-activation-confirmation-info';
@@ -31,11 +28,11 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 
 	const hasProductInfo = productSlug !== 'no_product';
 
-	const productName = useSelector( ( state ) =>
-		hasProductInfo ? getProductName( state, productSlug ) : null
-	);
-
-	const isProductListFetching = useSelector( getIsProductListFetching );
+	const { data: products, isLoading: isProductListFetching } = useQuery( {
+		...productsQuery( 'jetpack' ),
+		enabled: hasProductInfo,
+	} );
+	const productName = hasProductInfo ? products?.[ productSlug ]?.product_name : null;
 
 	// In the siteless-checkout flow, the subscription is transferred from temporary-site to the user's target site.
 	const subscriptionTransferSucceeded = destinationSiteId > 0;
@@ -67,7 +64,6 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 	return (
 		<>
 			{ subscriptionTransferSucceeded && <QuerySites siteId={ destinationSiteId } /> }
-			{ hasProductInfo && <QueryProducts type="jetpack" /> }
 			<PageViewTracker
 				options={ { useJetpackGoogleAnalytics: true } }
 				path="/checkout/jetpack/thank-you/licensing-auto-activate-completed/:product"

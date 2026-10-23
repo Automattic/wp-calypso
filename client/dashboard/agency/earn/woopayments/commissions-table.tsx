@@ -166,8 +166,20 @@ export default function CommissionsTable( {
 	const actions = useMemo(
 		() => [
 			{
+				id: 'continue-setup',
+				label: __( 'Continue setup' ),
+				callback( items: SitesWithWooPaymentsState[] ) {
+					recordTracksEvent( 'calypso_a4a_woopayments_setup_in_wp_admin' );
+					onContinueSetup( items[ 0 ].blogId );
+				},
+				isEligible( item: SitesWithWooPaymentsState ) {
+					return ! item.state;
+				},
+			},
+			{
 				id: 'visit-wp-admin',
 				label: __( 'Visit WP Admin' ),
+				isPrimary: true,
 				icon: external,
 				callback( items: SitesWithWooPaymentsState[] ) {
 					const isInstalled = items[ 0 ].state === 'active';
@@ -192,7 +204,7 @@ export default function CommissionsTable( {
 				},
 			},
 		],
-		[ recordTracksEvent, handleDownloadCommissionsReport ]
+		[ recordTracksEvent, onContinueSetup, handleDownloadCommissionsReport ]
 	);
 
 	return (

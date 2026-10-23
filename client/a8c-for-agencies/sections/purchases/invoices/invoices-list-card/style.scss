@@ -2,19 +2,17 @@
 @import "@wordpress/base-styles/mixins";
 
 .invoices-list-card__actions {
-	text-align: left;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
 
 	@include break-xlarge() {
-		text-align: right;
+		justify-content: flex-end;
 	}
 
 	.button {
 		&:focus {
 			border-width: 1px;
-		}
-
-		+ .button {
-			margin-inline-start: 12px;
 		}
 	}
 }

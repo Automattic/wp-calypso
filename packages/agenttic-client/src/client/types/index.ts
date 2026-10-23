@@ -101,6 +101,20 @@ export interface ContextDataPart extends DataPart {
 	};
 }
 
+/**
+ * An interactive UI surface, as A2UI's A2A binding sends it: a data part of A2UI messages, named by
+ * its MIME type. `postId` names the post a surface acts on.
+ */
+export interface A2uiDataPart {
+	type: 'data';
+	data: unknown[];
+	metadata: {
+		mimeType: 'application/a2ui+json';
+		postId?: number;
+		[ key: string ]: unknown;
+	};
+}
+
 export interface ConversationHistoryPart extends DataPart {
 	data: {
 		role: 'user' | 'model';
@@ -217,7 +231,8 @@ export type Part =
 	| ToolResultDataPart
 	| ContextDataPart
 	| AbilityDataPart
-	| ProgressDataPart;
+	| ProgressDataPart
+	| A2uiDataPart;
 
 export interface Message {
 	role: 'user' | 'agent';
@@ -450,4 +465,6 @@ export type ClientContext = Record< string, unknown >;
 
 export interface ContextProvider {
 	getClientContext: () => ClientContext;
+	/** Metadata the agent reads on every message, such as A2UI's `a2uiRendererCapabilities`. */
+	getMessageMetadata?: () => Record< string, unknown >;
 }

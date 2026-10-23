@@ -46,7 +46,11 @@ import {
 	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { getTld } from '@automattic/domain-search';
-import { isDomainForGravatarFlow, isHundredYearDomainFlow } from '@automattic/onboarding';
+import {
+	FREE_FLOW,
+	isDomainForGravatarFlow,
+	isHundredYearDomainFlow,
+} from '@automattic/onboarding';
 import { parseNextDomainCondition } from '@automattic/shopping-cart';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
@@ -858,10 +862,6 @@ export function isPaidDomain( domainPriceRule: string ): boolean {
 	return DOMAIN_PRICE_RULE.PRICE === domainPriceRule;
 }
 
-export const isMonthlyOrFreeFlow = ( flowName: string | undefined ): boolean => {
-	return Boolean( flowName && [ 'free', 'ecommerce-monthly' ].includes( flowName ) );
-};
-
 export function getDomainPriceRule(
 	withPlansOnly: boolean,
 	selectedSite: undefined | SiteDetails,
@@ -895,7 +895,7 @@ export function getDomainPriceRule(
 		return DOMAIN_PRICE_RULE.DOMAIN_MOVE_PRICE;
 	}
 
-	if ( isMonthlyOrFreeFlow( flowName ) ) {
+	if ( flowName === FREE_FLOW ) {
 		return DOMAIN_PRICE_RULE.PRICE;
 	}
 

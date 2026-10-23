@@ -1,4 +1,4 @@
-import { fetchUser, isWpError, User } from '@automattic/api-core';
+import { fetchUser, isWpError, logoutUser, User } from '@automattic/api-core';
 import { clearQueryClient, disablePersistQueryClient } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { setUser } from '@automattic/calypso-sentry';
@@ -327,7 +327,16 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	return <AuthContext.Provider value={ value }>{ children }</AuthContext.Provider>;
 }
 
-export async function logout( user: User ): Promise< void > {
+/**
+ * Ends the user's session and returns where to send them afterwards. Priority:
+ *
+ * 1. OAuth dashboards with no static logout_url: redirect through the OAuth flow with
+ *    implicit=false, allowing the user to switch accounts.
+ * 2. always_use_logout_url: force the static logout_url from config.
+ * 3. user.logout_URL: end the WordPress.com session that the cookie belongs to.
+ * 4. Fallback: the static logout_url from config, or the dashboard root.
+ */
+async function endSession( user: User ): Promise< string > {
 	let configLogoutUrl = config( 'logout_url' ) as string | false;
 
 	// Apply locale subdomain to static logout URLs (e.g., |subdomain|wordpress.com)
@@ -336,27 +345,36 @@ export async function logout( user: User ): Promise< void > {
 		configLogoutUrl = configLogoutUrl.replace( '|subdomain|', subdomain );
 	}
 
-	// Determine where to send the user after logout. Priority:
-	//
-	// 1. OAuth dashboards with no static logout_url: redirect through the
-	//    OAuth flow with implicit=false, allowing the user to switch accounts.
-	// 2. always_use_logout_url: force the static logout_url from config,
-	//    ignoring the user's API-provided logout URL.
-	// 3. user.logout_URL: the WP.com logout URL from the /me API response.
-	// 4. Fallback: the static logout_url from config, or the dashboard root.
-	let logoutUrl = '';
 	if ( config.isEnabled( 'oauth' ) && ! configLogoutUrl ) {
 		const state = crypto.randomUUID();
 		sessionStorage.setItem( 'wpcom_oauth_state', state );
 
-		logoutUrl = getOAuthAuthorizeUrl( { state, isLogout: true } );
-	} else if ( config.isEnabled( 'always_use_logout_url' ) && configLogoutUrl ) {
-		logoutUrl = configLogoutUrl;
-	} else if ( user.logout_URL ) {
-		logoutUrl = user.logout_URL;
-	} else {
-		logoutUrl = configLogoutUrl || window.location.origin;
+		return getOAuthAuthorizeUrl( { state, isLogout: true } );
 	}
+	if ( config.isEnabled( 'always_use_logout_url' ) && configLogoutUrl ) {
+		return configLogoutUrl;
+	}
+	if ( user.logout_URL ) {
+		return await endWpcomSession( user.logout_URL );
+	}
+	return configLogoutUrl || window.location.origin;
+}
+
+async function endWpcomSession( logoutUrl: string ): Promise< string > {
+	try {
+		const { redirect_to } = await logoutUser( {
+			logout_nonce: new URL( logoutUrl ).searchParams.get( '_wpnonce' ) ?? '',
+			client_id: String( config( 'wpcom_signup_id' ) ),
+			client_secret: String( config( 'wpcom_signup_key' ) ),
+		} );
+		return redirect_to || wpcomLink( '/log-in' );
+	} catch {
+		return logoutUrl;
+	}
+}
+
+export async function logout( user: User ): Promise< void > {
+	const destination = await endSession( user );
 
 	disablePersistQueryClient();
 	clearQueryClient();
@@ -367,7 +385,7 @@ export async function logout( user: User ): Promise< void > {
 	disablePersistence();
 	clearStore();
 
-	window.location.href = logoutUrl;
+	window.location.href = destination;
 }
 
 /**

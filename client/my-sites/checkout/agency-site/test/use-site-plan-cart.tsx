@@ -33,14 +33,21 @@ function renderCart( productSlug: string, term: 'monthly' | 'yearly' = 'yearly' 
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
 	} );
-	queryClient.setQueryData( activeAgencyQuery().queryKey, { id: AGENCY_ID } as Agency );
+	queryClient.setQueryData( activeAgencyQuery().queryKey, {
+		id: AGENCY_ID,
+		approval_status: 'approved',
+	} as Agency );
 	queryClient.setQueryData( agencyProductsQuery( AGENCY_ID ).queryKey, products );
 
-	return renderHook( () => useSitePlanCart( SITE_ID, productSlug, term ), {
-		wrapper: ( { children }: PropsWithChildren ) => (
-			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-		),
-	} );
+	return renderHook(
+		() =>
+			useSitePlanCart( SITE_ID, productSlug, term, 'https://agencies-beta.automattic.com/sites' ),
+		{
+			wrapper: ( { children }: PropsWithChildren ) => (
+				<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+			),
+		}
+	);
 }
 
 describe( 'useSitePlanCart', () => {

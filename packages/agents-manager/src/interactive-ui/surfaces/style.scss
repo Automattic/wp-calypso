@@ -1,0 +1,19 @@
+@import '../../styles/variables';
+
+// Surfaces take the chat's colors. Agenttic's dark mode is a class, not a color scheme, so it
+// also sets the inputs, border and scheme.
+.agents-manager-interactive-ui-surfaces__renderer {
+	--a2ui-color-surface: var( --color-background );
+	--a2ui-color-on-surface: var( --color-foreground );
+}
+
+.agenttic.dark .agents-manager-interactive-ui-surfaces__renderer {
+	--a2ui-color-input: var( --color-popover-muted );
+	--a2ui-color-on-input: var( --color-foreground );
+	--a2ui-color-border: var( --color-input-border );
+	color-scheme: dark;
+}
+
+.ai-ui-renderer__modal.agents-manager-interactive-ui-surfaces__renderer {
+	z-index: $agents-manager-z-index-focused + 1;
+}
