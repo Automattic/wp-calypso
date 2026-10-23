@@ -290,7 +290,7 @@ describe( 'Onboarding Flow', () => {
 		} );
 
 		describe( 'reblog destination', () => {
-			const POST_URL = 'https://example.blog/2026/10/a-post/';
+			const POST_URL = 'https://example.blog/2026/10/a-post/?utm_source=x&lang=es';
 			const REBLOG_EDITOR = `/post/test-site.wordpress.com?url=${ encodeURIComponent( POST_URL ) }`;
 
 			beforeEach( () => {
@@ -302,7 +302,7 @@ describe( 'Onboarding Flow', () => {
 
 				await runUseStepNavigationSubmit( {
 					currentStep: STEPS.PROCESSING.slug,
-					currentURL: `/setup/onboarding/processing?blog_post=${ encodeURIComponent( POST_URL ) }`,
+					currentURL: `/setup/onboarding/processing?blog_post=${ encodeURIComponent( POST_URL ) }&ref=reblog`,
 					dependencies: {
 						siteSlug: 'test-site.wordpress.com',
 						siteId: 123,
@@ -334,6 +334,7 @@ describe( 'Onboarding Flow', () => {
 				for ( const backUrl of [ 'checkoutBackUrl', 'checkoutBackUrlDomains' ] ) {
 					const back = new URL( checkoutUrl.searchParams.get( backUrl ) ?? '' );
 					expect( back.searchParams.get( 'blog_post' ) ).toBe( POST_URL );
+					expect( back.searchParams.get( 'ref' ) ).toBe( 'reblog' );
 				}
 			} );
 

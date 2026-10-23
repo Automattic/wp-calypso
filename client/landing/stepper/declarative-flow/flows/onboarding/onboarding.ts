@@ -408,12 +408,12 @@ const onboarding: FlowV2< typeof initialize > = {
 		);
 		const wowFunnelSlug = getWowFunnelSlug( queryParams );
 		const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
-		// Set by the Reader's "Create a site to reblog" prompt: the run ends in the new site's
-		// editor with that post ready to reblog, never on My Home or the setup chooser.
+		// From the Reader's "Create a site to reblog": the run ends in the new site's editor.
 		const blogPostToReblog = queryParams.get( 'blog_post' );
-		// Every URL that re-enters onboarding after checkout carries the post along, or the run
-		// forgets it and finishes as plain onboarding.
-		const reblogQueryArgs = blogPostToReblog ? { blog_post: blogPostToReblog } : {};
+		// For every URL that re-enters onboarding after checkout.
+		const reblogQueryArgs = blogPostToReblog
+			? { blog_post: blogPostToReblog, ...( refParameter ? { ref: refParameter } : {} ) }
+			: {};
 
 		/**
 		 * Returns where to land after checkout, or `defaultDestination` when nothing overrides it.
@@ -855,8 +855,8 @@ const onboarding: FlowV2< typeof initialize > = {
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 									// build_dest=wow, the WoW funnel (dest=editor) and a reblog go
 									// straight from checkout to their destination — no
-									// post-checkout-onboarding hop, no chooser. A reblog still meets the
-									// email-verification gate first; processing then lands it on the editor.
+									// post-checkout-onboarding hop, no chooser. A reblog meets the
+									// email-verification gate first.
 									redirect_to:
 										blueprintArchiveSlug ||
 										blueprintSimpleSlug ||
@@ -894,8 +894,8 @@ const onboarding: FlowV2< typeof initialize > = {
 							// transferred domain forces a paid plan (use-my-domain hides the free
 							// plan), and a paid funnel order's checkout redirect_to is the funnel
 							// destination itself, so it never comes back through here. A paid reblog
-							// does, after email verification, and ends on the editor as the
-							// reblogging flow's runs did.
+							// does, after email verification, and skips the domain setup instructions
+							// below, as the reblogging flow did.
 							window.location.replace( destination );
 						} else if ( domainCartItem?.meta && isDomainMapping( domainCartItem ) ) {
 							// A connected domain still has to be pointed at the site once it is paid
