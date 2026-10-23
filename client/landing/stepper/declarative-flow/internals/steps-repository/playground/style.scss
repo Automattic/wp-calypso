@@ -3,6 +3,10 @@
 @import '@wordpress/base-styles/mixins';
 @import './mixins';
 
+.playground__top-bar {
+	display: contents;
+}
+
 .playground {
 	width: 100%;
 
