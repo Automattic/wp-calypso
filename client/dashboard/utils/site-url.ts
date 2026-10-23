@@ -12,6 +12,7 @@ import { isDashboardBackport } from './is-dashboard-backport';
 import {
 	dashboardLink,
 	dashboardLinkWithBackport,
+	jetpackCloudLink,
 	redirectToDashboardLink,
 	wpcomLink,
 } from './link';
@@ -99,7 +100,7 @@ export function getSitePlanUrl(
 	}
 
 	if ( isSelfHostedJetpackConnected( site ) ) {
-		return `https://cloud.jetpack.com/purchases/subscriptions/${ site.slug }`;
+		return jetpackCloudLink( `/purchases/subscriptions/${ site.slug }` );
 	}
 
 	if ( site.is_a4a_dev_site ) {

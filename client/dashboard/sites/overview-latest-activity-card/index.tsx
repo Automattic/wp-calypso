@@ -11,6 +11,7 @@ import { TextSkeleton } from '../../components/text-skeleton';
 import TimeSince from '../../components/time-since';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { jetpackCloudLink } from '../../utils/link';
 import { getActivityLogHiddenGroups } from '../../utils/site-features';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
@@ -49,7 +50,7 @@ const fields: Field< ActivityLogEntry >[] = [
 
 function getActivityLogUrl( site: Site ) {
 	if ( isSelfHostedJetpackConnected( site ) ) {
-		return `https://cloud.jetpack.com/activity-log/${ site.slug }`;
+		return jetpackCloudLink( `/activity-log/${ site.slug }` );
 	}
 
 	return isDashboardBackport()

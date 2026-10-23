@@ -1,11 +1,11 @@
 import { isDashboardBackport } from './is-dashboard-backport';
-import { wpcomLink } from './link';
+import { jetpackCloudLink, wpcomLink } from './link';
 import { isSelfHostedJetpackConnected } from './site-types';
 import type { Site } from '@automattic/api-core';
 
 export function getBackupUrl( site: Site ) {
 	if ( isSelfHostedJetpackConnected( site ) ) {
-		return `https://cloud.jetpack.com/backup/${ site.slug }`;
+		return jetpackCloudLink( `/backup/${ site.slug }` );
 	}
 
 	return isDashboardBackport()

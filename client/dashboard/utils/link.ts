@@ -88,7 +88,14 @@ export function a4aLink( path: string ) {
 		return new URL( path, `http://agencies.localhost:${ port }` ).href;
 	}
 
-	return new URL( path, 'https://agencies.automattic.com' ).href;
+	return new URL( path, config( 'a8c_for_agencies_url' ) ).href;
+}
+
+/**
+ * This function returns a link to Jetpack Cloud.
+ */
+export function jetpackCloudLink( path: string ) {
+	return new URL( path, config( 'jetpack_cloud_url' ) ).href;
 }
 
 /**

@@ -7,6 +7,7 @@ import { useAnalytics } from '../../app/analytics';
 import { siteDomainsRoute } from '../../app/router/sites';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { jetpackCloudLink } from '../../utils/link';
 import { getSiteBlockingStatus } from '../../utils/site-status';
 import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
@@ -78,7 +79,7 @@ export function useActions(): Action< Site >[] {
 			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
 				recordTracksEvent( 'calypso_dashboard_sites_action_click', { action: 'jetpack-cloud' } );
-				window.open( `https://cloud.jetpack.com/landing/${ site.slug }` );
+				window.open( jetpackCloudLink( `/landing/${ site.slug }` ) );
 			},
 			isEligible: ( item: Site ) => isSelfHostedJetpackConnected( item ),
 		},
