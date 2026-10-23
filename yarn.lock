@@ -736,7 +736,7 @@ __metadata:
     "@wordpress/browserslist-config": "npm:^6.48.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.57.0"
     autoprefixer: "npm:^10.4.21"
-    babel-loader: "npm:^8.2.3"
+    babel-loader: "npm:^10.1.1"
     browserslist: "npm:^4.24.5"
     css-loader: "npm:^7.1.5"
     css-minimizer-webpack-plugin: "npm:^8.0.0"
@@ -10985,7 +10985,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/json-schema@npm:*, @types/json-schema@npm:^7.0.15, @types/json-schema@npm:^7.0.5, @types/json-schema@npm:^7.0.8":
+"@types/json-schema@npm:*, @types/json-schema@npm:^7.0.15, @types/json-schema@npm:^7.0.8":
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
   checksum: a996a745e6c5d60292f36731dd41341339d4eeed8180bb09226e5c8d23759067692b1d88e5d91d72ee83dfc00d3aca8e7bd43ea120516c17922cbcb7c3e252db
@@ -14763,7 +14763,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^6.12.4, ajv@npm:^6.12.5, ajv@npm:^6.12.6, ajv@npm:^6.14.0":
+"ajv@npm:^6.12.5, ajv@npm:^6.12.6, ajv@npm:^6.14.0":
   version: 6.15.0
   resolution: "ajv@npm:6.15.0"
   dependencies:
@@ -15453,7 +15453,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-loader@npm:^10.0.0":
+"babel-loader@npm:^10.0.0, babel-loader@npm:^10.1.1":
   version: 10.1.1
   resolution: "babel-loader@npm:10.1.1"
   dependencies:
@@ -15468,21 +15468,6 @@ __metadata:
     webpack:
       optional: true
   checksum: 09a14b66aadfc98b4fde123bcdf6e5481fb0a8a0daad1e225ea27656fd006a426d6446d34763b6af94f7a7333c52c9bead9ebefb42ad5b09a27bad65b6dac8f7
-  languageName: node
-  linkType: hard
-
-"babel-loader@npm:^8.2.3":
-  version: 8.2.3
-  resolution: "babel-loader@npm:8.2.3"
-  dependencies:
-    find-cache-dir: "npm:^3.3.1"
-    loader-utils: "npm:^1.4.0"
-    make-dir: "npm:^3.1.0"
-    schema-utils: "npm:^2.6.5"
-  peerDependencies:
-    "@babel/core": ^7.0.0
-    webpack: ">=2"
-  checksum: 2457fca8d97ea0ff966b3dabe5abeaa4c2430af3e917ccf163067daf5ae3329adebb97baa78033215b40940a1ad03050aef34f6b468af4583c00ab9853fc6c6c
   languageName: node
   linkType: hard
 
@@ -24056,7 +24041,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json5@npm:^1.0.1, json5@npm:^1.0.2":
+"json5@npm:^1.0.2":
   version: 1.0.2
   resolution: "json5@npm:1.0.2"
   dependencies:
@@ -24398,17 +24383,6 @@ __metadata:
   version: 4.3.2
   resolution: "loader-runner@npm:4.3.2"
   checksum: 35297f2d1cadcef8995c4ba2c4e27ef397f508014c5cdcdae43456ed27d07d3bfc3e81a5460857184517a02576917363f5f8f98cb22500c124f00c33eb6ec7b1
-  languageName: node
-  linkType: hard
-
-"loader-utils@npm:^1.4.0":
-  version: 1.4.2
-  resolution: "loader-utils@npm:1.4.2"
-  dependencies:
-    big.js: "npm:^5.2.2"
-    emojis-list: "npm:^3.0.0"
-    json5: "npm:^1.0.1"
-  checksum: 2b726088b5526f7605615e3e28043ae9bbd2453f4a85898e1151f3c39dbf7a2b65d09f3996bc588d92ac7e717ded529d3e1ea3ea42c433393be84a58234a2f53
   languageName: node
   linkType: hard
 
@@ -24852,7 +24826,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"make-dir@npm:^3.0.0, make-dir@npm:^3.0.2, make-dir@npm:^3.1.0":
+"make-dir@npm:^3.0.0, make-dir@npm:^3.0.2":
   version: 3.1.0
   resolution: "make-dir@npm:3.1.0"
   dependencies:
@@ -30942,17 +30916,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"schema-utils@npm:^2.6.5":
-  version: 2.7.1
-  resolution: "schema-utils@npm:2.7.1"
-  dependencies:
-    "@types/json-schema": "npm:^7.0.5"
-    ajv: "npm:^6.12.4"
-    ajv-keywords: "npm:^3.5.2"
-  checksum: f484f34464edd8758712d5d3ba25a306e367dac988aecaf4ce112e99baae73f33a807b5cf869240bb6648c80720b36af2d7d72be3a27faa49a2d4fc63fa3f85f
-  languageName: node
-  linkType: hard
-
 "schema-utils@npm:^3.1.1":
   version: 3.3.0
   resolution: "schema-utils@npm:3.3.0"
@@ -34923,7 +34886,7 @@ __metadata:
     "@wordpress/url": "npm:^4.48.0"
     "@zip.js/zip.js": "npm:2.8.17"
     animate.css: "npm:^4.1.1"
-    babel-loader: "npm:^8.2.3"
+    babel-loader: "npm:^10.1.1"
     bunyan: "npm:^1.8.15"
     calypso: "workspace:^"
     chalk: "npm:^4.1.2"
@@ -35085,7 +35048,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": "npm:^7.29.7"
     "@babel/runtime": "npm:^7.29.10"
-    babel-loader: "npm:^8.2.3"
+    babel-loader: "npm:^10.1.1"
     debug: "npm:^4.4.1"
     npm-run-all: "npm:^4.1.5"
     postcss: "npm:^8.5.15"
