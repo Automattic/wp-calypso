@@ -162,7 +162,7 @@ describe( '<TitanPlanGrid>', () => {
 		renderGrid( { domain: undefined, domainName: '', currentTier: undefined, onSelect } );
 		await waitForProducts();
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Get Premium' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Get Plus' } ) );
 
 		expect( onSelect ).toHaveBeenCalledWith( TitanPlanTier.Premium );
 	} );
