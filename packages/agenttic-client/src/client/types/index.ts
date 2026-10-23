@@ -450,4 +450,6 @@ export type ClientContext = Record< string, unknown >;
 
 export interface ContextProvider {
 	getClientContext: () => ClientContext;
+	/** Metadata the agent reads on every message, such as A2UI's `a2uiRendererCapabilities`. */
+	getMessageMetadata?: () => Record< string, unknown >;
 }

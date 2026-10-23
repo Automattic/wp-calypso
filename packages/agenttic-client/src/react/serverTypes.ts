@@ -18,12 +18,15 @@ export interface ServerFilePart {
 }
 
 /**
- * Context structure that may contain file parts, sources, and flags (e.g. forward_to_human_support)
+ * Context structure that may contain file parts, sources, flags (e.g. forward_to_human_support)
+ * and where the client said the prompt came from (`clientContext.metadata.promptSource`).
  */
 export interface ServerMessageContext {
 	file_parts?: ServerFilePart[];
 	sources?: unknown;
 	flags?: Record< string, unknown >;
+	promptSource?: string;
+	promptSourceId?: string;
 	[ key: string ]: unknown;
 }
 
@@ -176,19 +179,27 @@ export function serverMessageToMessage( serverMessage: ServerMessage ): Message 
 		}
 	}
 
-	// Preserve flags (e.g. forward_to_human_support) and sources from context as a data part.
+	// Preserve flags (e.g. forward_to_human_support), sources and the prompt
+	// source from context as a data part.
 	if ( context && ! Array.isArray( context ) ) {
 		const ctx = context as ServerMessageContext;
 		const hasFlags = ctx.flags && typeof ctx.flags === 'object' && ctx.flags !== null;
 		const hasSources = Array.isArray( ctx.sources ) && ctx.sources.length > 0;
+		const hasPromptSource = typeof ctx.promptSource === 'string' && ctx.promptSource !== '';
 
-		if ( hasFlags || hasSources ) {
+		if ( hasFlags || hasSources || hasPromptSource ) {
 			const data: Record< string, unknown > = {};
 			if ( hasFlags ) {
 				data.flags = ctx.flags;
 			}
 			if ( hasSources ) {
 				data.sources = ctx.sources;
+			}
+			if ( hasPromptSource ) {
+				data.promptSource = ctx.promptSource;
+				if ( typeof ctx.promptSourceId === 'string' && ctx.promptSourceId !== '' ) {
+					data.promptSourceId = ctx.promptSourceId;
+				}
 			}
 			parts.push( {
 				type: 'data',

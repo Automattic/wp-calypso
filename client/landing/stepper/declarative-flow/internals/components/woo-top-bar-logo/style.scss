@@ -7,3 +7,9 @@
 .woo-top-bar-logo__svg {
 	display: block;
 }
+
+// Matches the Playground step's Woo top bar, which grows to fit its CTA, so the
+// logo doesn't move when the step replaces a loader.
+.step-container-v2__top-bar:has( .woo-top-bar-logo ) {
+	min-height: 4.5rem;
+}

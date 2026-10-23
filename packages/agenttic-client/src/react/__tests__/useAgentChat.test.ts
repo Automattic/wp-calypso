@@ -192,6 +192,38 @@ describe( 'useAgentChat', () => {
 			expect( result?.content ).toEqual( [ { type: 'data', data: { flags } } ] );
 		} );
 
+		it( 'preserves `promptSource` data parts', () => {
+			const result = transformClientMessageToUI(
+				buildMessage( [ { type: 'data', data: { promptSource: 'site-setup-checklist' } } ] )
+			);
+
+			expect( result?.content ).toEqual( [
+				{ type: 'data', data: { promptSource: 'site-setup-checklist' } },
+			] );
+		} );
+
+		it( 'surfaces a live message’s prompt source metadata as the same data part', () => {
+			const result = transformClientMessageToUI( {
+				...buildMessage( [ { type: 'text', text: 'Help me with: design' } ] ),
+				role: 'user',
+				metadata: { promptSource: 'site-setup-checklist', promptSourceId: 'design' },
+			} );
+
+			expect( result?.content ).toEqual( [
+				{ type: 'text', text: 'Help me with: design' },
+				{ type: 'data', data: { promptSource: 'site-setup-checklist', promptSourceId: 'design' } },
+			] );
+		} );
+
+		it( 'does not duplicate a prompt source that already came as a data part', () => {
+			const result = transformClientMessageToUI( {
+				...buildMessage( [ { type: 'data', data: { promptSource: 'site-setup-checklist' } } ] ),
+				metadata: { promptSource: 'site-setup-checklist' },
+			} );
+
+			expect( result?.content ).toHaveLength( 1 );
+		} );
+
 		it( 'keeps `text` content and drops unknown `data` in the same message', () => {
 			const result = transformClientMessageToUI(
 				buildMessage( [

@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import {
-	CONNECT_DOMAIN_FLOW,
 	DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
@@ -106,9 +105,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 	'update-design': () =>
 		import( /* webpackChunkName: "update-design-flow" */ './flows/update-design/update-design' ),
 
-	'update-options': () =>
-		import( /* webpackChunkName: "update-options-flow" */ './flows/update-options/update-options' ),
-
 	[ DOMAIN_AND_PLAN_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "domain-and-plan-flow" */ './flows/domain-and-plan/domain-and-plan'
@@ -117,9 +113,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 	build: () => import( /* webpackChunkName: "build-flow" */ './flows/build/build' ),
 
 	write: () => import( /* webpackChunkName: "write-flow" */ './flows/write/write' ),
-
-	[ CONNECT_DOMAIN_FLOW ]: () =>
-		import( /* webpackChunkName: "connect-domain" */ './flows/connect-domain/connect-domain' ),
 
 	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
 		import(
