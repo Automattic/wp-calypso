@@ -1,4 +1,4 @@
-import { launchSite } from '@automattic/api-core';
+import { DomainProductSlugs, fetchShoppingCart, launchSite } from '@automattic/api-core';
 import {
 	addProductsToCart,
 	clearStepPersistedState,
@@ -45,8 +45,40 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import { getLaunchSiteSteps } from './get-launch-site-steps';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { OnboardActions, OnboardSelect, SiteSelect } from '@automattic/data-stores';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type { Store } from 'redux';
+
+// The cart endpoint can leave a request unanswered, and the user waits on the processing screen.
+const CART_READ_TIMEOUT_MS = 5000;
+
+/**
+ * The connection for `domain` as the site's cart holds it, or null. Adding to the cart swallows its
+ * own failures, so this reads back the cart checkout will open, which is keyed by site ID.
+ */
+async function findMappingInCart( siteId: number, domain: string ): Promise< string | null > {
+	let timer: ReturnType< typeof setTimeout > | undefined;
+	const timeout = new Promise< null >( ( resolve ) => {
+		timer = setTimeout( () => resolve( null ), CART_READ_TIMEOUT_MS );
+	} );
+
+	try {
+		const cart: ResponseCart | null = await Promise.race( [
+			fetchShoppingCart( siteId ),
+			timeout,
+		] );
+		const mapping = cart?.products.find(
+			( product ) =>
+				product.product_slug === DomainProductSlugs.DOMAIN_MAPPING &&
+				product.meta.toLowerCase() === domain.toLowerCase()
+		);
+
+		return mapping?.meta ?? null;
+	} catch {
+		return null;
+	} finally {
+		clearTimeout( timer );
+	}
+}
 
 // Mirrors the event legacy signup records when it auto-skips a step, keyed by the legacy step names.
 function recordExcludedStep( step: 'domains-launch' | 'plans-launch', value: string ) {
@@ -287,27 +319,20 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 		// The site is already live, so nothing here may keep the user from moving on.
 		const finishLaunch = async () => {
-			let destination = getLaunchDestination( launchParams );
+			const launchDestination = getLaunchDestination( launchParams );
 			let cartItems: MinimalRequestCartProduct[] | null;
+			let mappingDomain: string | null = null;
 
 			try {
 				cartItems = getLaunchCartItems();
-
-				const mappingDomain = getSingleMappingDomain( getLaunchDomainItems() );
-
-				if ( mappingDomain ) {
-					destination = buildDashboardLink(
-						'dotcom',
-						`/domains/${ mappingDomain }/domain-connection-setup`
-					);
-				}
+				mappingDomain = getSingleMappingDomain( getLaunchDomainItems() );
 			} catch {
 				// Unknown contents: let checkout show whatever the cart already holds.
 				cartItems = null;
 			}
 
 			if ( cartItems?.length === 0 ) {
-				return window.location.replace( destination );
+				return window.location.replace( launchDestination );
 			}
 
 			try {
@@ -318,8 +343,18 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				// Checkout opens on whatever made it into the cart.
 			}
 
-			// Checkout reads these to send the user on once they have paid.
-			persistSignupDestination( destination );
+			// A connected domain still has to be pointed at the site once it is paid for, but only
+			// send the user to its setup when the connection really is in the cart.
+			const connectedDomain =
+				mappingDomain && siteId ? await findMappingInCart( siteId, mappingDomain ) : null;
+			const destination = connectedDomain
+				? buildDashboardLink( 'dotcom', `/domains/${ connectedDomain }/domain-connection-setup` )
+				: launchDestination;
+
+			// Checkout reads these to send the user on once they have paid. The cookie outlives this
+			// checkout, since leaving it doesn't clear it, so it keeps the launch destination: a later
+			// purchase without a `redirect_to` must not end on this domain's setup.
+			persistSignupDestination( launchDestination );
 			setSignupCompleteSlug( launchParams.siteSlug );
 			setSignupCompleteFlowName( LAUNCH_SITE_FLOW );
 

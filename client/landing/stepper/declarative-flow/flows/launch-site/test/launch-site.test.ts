@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { launchSite } from '@automattic/api-core';
+import { fetchShoppingCart, launchSite } from '@automattic/api-core';
 import { addProductsToCart, clearStepPersistedState } from '@automattic/onboarding';
 import { renderHook } from '@testing-library/react';
 import { buildDashboardLink } from 'calypso/dashboard/app/routing';
@@ -34,6 +34,7 @@ let mockOnboard: {
 let mockProductsList: Record< string, unknown > = {};
 let mockSite: unknown = null;
 let mockDomains: unknown[] | Error = [];
+let mockCart: unknown = { products: [] };
 let mockUserId: number | null = 1;
 
 // Both packages import themselves while loading, so the real exports are read lazily rather than spread.
@@ -56,6 +57,7 @@ const mockResetOnboardStore = jest.fn();
 jest.mock( '@automattic/api-core', () =>
 	lazilyOverride( '@automattic/api-core', {
 		launchSite: jest.fn( () => Promise.resolve() ),
+		fetchShoppingCart: jest.fn( () => Promise.resolve( mockCart ) ),
 	} )
 );
 
@@ -157,6 +159,7 @@ const domainItem = { product_slug: 'domain_reg', meta: 'example.com' };
 const transferItem = { product_slug: 'domain_transfer', meta: 'example.org' };
 const mappingItem = { product_slug: 'domain_map', meta: 'example.net' };
 const setupUrl = buildDashboardLink( 'dotcom', '/domains/example.net/domain-connection-setup' );
+const cartWithMapping = { products: [ { product_slug: 'domain_map', meta: 'example.net' } ] };
 const planItem = { product_slug: 'personal-bundle' };
 const storageItem = {
 	product_slug: 'wordpress_com_1gb_space_addon_yearly',
@@ -235,6 +238,7 @@ describe( 'launch-site flow', () => {
 		} );
 		mockSite = null;
 		mockDomains = [];
+		mockCart = { products: [] };
 		setFlowSteps( ALL_STEPS );
 	} );
 
@@ -579,21 +583,38 @@ describe( 'launch-site flow', () => {
 		} );
 
 		it( 'lands on the connection setup after checkout when connecting a domain', async () => {
+			mockSite = paidSite;
+			mockCart = cartWithMapping;
 			mockOnboard.domainCartItems = [ mappingItem ];
 			mockQuery.redirect_to = '/plugins/example.wordpress.com';
 
 			await submit( STEPS.PROCESSING.slug, launched ).result;
 
+			expect( fetchShoppingCart ).toHaveBeenCalledWith( paidSite.ID );
 			const url = new URL( replaced(), 'http://localhost/' );
 			expect( url.pathname ).toBe( '/checkout/example.wordpress.com' );
 			expect( url.searchParams.get( 'redirect_to' ) ).toBe( setupUrl );
 			expect( url.searchParams.get( 'checkoutBackUrl' ) ).toContain(
 				'/plugins/example.wordpress.com'
 			);
-			expect( persistSignupDestination ).toHaveBeenCalledWith( setupUrl );
+		} );
+
+		it( 'keeps the launch destination in the cookie when connecting a domain', async () => {
+			mockSite = paidSite;
+			mockCart = cartWithMapping;
+			mockOnboard.domainCartItems = [ mappingItem ];
+
+			await submit( STEPS.PROCESSING.slug, launched ).result;
+
+			expect( persistSignupDestination ).toHaveBeenCalledWith(
+				'/home/example.wordpress.com?celebrateLaunch=true'
+			);
+			expect( persistSignupDestination ).not.toHaveBeenCalledWith( setupUrl );
 		} );
 
 		it( 'lands on the dotcom Dashboard connection setup for a launch from A4A', async () => {
+			mockSite = paidSite;
+			mockCart = cartWithMapping;
 			mockOnboard.domainCartItems = [ mappingItem ];
 			mockQuery.dashboard = 'a4a';
 			window.location.search = '?dashboard=a4a';
@@ -603,6 +624,70 @@ describe( 'launch-site flow', () => {
 			expect( new URL( replaced(), 'http://localhost/' ).searchParams.get( 'redirect_to' ) ).toBe(
 				setupUrl
 			);
+		} );
+
+		it( 'finds the connection in the cart whatever the case it was typed in', async () => {
+			mockSite = paidSite;
+			mockCart = cartWithMapping;
+			mockOnboard.domainCartItems = [ { ...mappingItem, meta: 'Example.NET' } ];
+
+			await submit( STEPS.PROCESSING.slug, launched ).result;
+
+			expect( new URL( replaced(), 'http://localhost/' ).searchParams.get( 'redirect_to' ) ).toBe(
+				setupUrl
+			);
+		} );
+
+		it( 'keeps the launch destination when the connection did not make it into the cart', async () => {
+			mockSite = paidSite;
+			mockOnboard.domainCartItems = [ mappingItem ];
+
+			await submit( STEPS.PROCESSING.slug, launched ).result;
+
+			expect( new URL( replaced(), 'http://localhost/' ).searchParams.get( 'redirect_to' ) ).toBe(
+				'/home/example.wordpress.com?celebrateLaunch=true'
+			);
+		} );
+
+		it( 'keeps the launch destination when the cart cannot be read', async () => {
+			mockSite = paidSite;
+			mockOnboard.domainCartItems = [ mappingItem ];
+			( fetchShoppingCart as jest.Mock ).mockRejectedValueOnce( new Error( 'offline' ) );
+
+			await submit( STEPS.PROCESSING.slug, launched ).result;
+
+			expect( new URL( replaced(), 'http://localhost/' ).searchParams.get( 'redirect_to' ) ).toBe(
+				'/home/example.wordpress.com?celebrateLaunch=true'
+			);
+		} );
+
+		it( 'keeps the launch destination when the cart takes too long to answer', async () => {
+			jest.useFakeTimers();
+
+			try {
+				mockSite = paidSite;
+				mockOnboard.domainCartItems = [ mappingItem ];
+				( fetchShoppingCart as jest.Mock ).mockReturnValueOnce( new Promise( () => {} ) );
+
+				const { result } = submit( STEPS.PROCESSING.slug, launched );
+				await jest.advanceTimersByTimeAsync( 5000 );
+				await result;
+
+				expect( new URL( replaced(), 'http://localhost/' ).searchParams.get( 'redirect_to' ) ).toBe(
+					'/home/example.wordpress.com?celebrateLaunch=true'
+				);
+			} finally {
+				jest.useRealTimers();
+			}
+		} );
+
+		it( 'does not read the cart when no domain is being connected', async () => {
+			mockSite = paidSite;
+			mockOnboard.domainCartItems = [ domainItem ];
+
+			await submit( STEPS.PROCESSING.slug, launched ).result;
+
+			expect( fetchShoppingCart ).not.toHaveBeenCalled();
 		} );
 
 		it( 'keeps the launch destination when connecting a domain alongside another', async () => {
