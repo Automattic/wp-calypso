@@ -22,8 +22,13 @@ export default function AgencySiteBackupsListPage() {
 		{ rewindId?: string } | undefined;
 	const rewindId = routeParams?.rewindId;
 
-	const navigation = useMemo< BackupsNavigation >(
-		() => ( {
+	const navigation = useMemo< BackupsNavigation >( () => {
+		const listRoute = {
+			to: agencySiteBackupsIndexRoute.fullPath,
+			params: { siteSlug },
+		} as const;
+		return {
+			listPath: router.buildLocation( listRoute ).pathname,
 			selectBackup: ( id ) =>
 				id
 					? router.navigate( {
@@ -32,8 +37,7 @@ export default function AgencySiteBackupsListPage() {
 							search: ( query: Record< string, string > ) => query,
 						} )
 					: router.navigate( {
-							to: agencySiteBackupsIndexRoute.fullPath,
-							params: { siteSlug },
+							...listRoute,
 							search: ( query: Record< string, string > ) => query,
 						} ),
 			requestRestore: ( id ) =>
@@ -52,18 +56,13 @@ export default function AgencySiteBackupsListPage() {
 							to: agencySiteBackupDownloadRoute.fullPath,
 							params: { siteSlug, rewindId: id },
 						} ),
-		} ),
-		[ router, siteSlug ]
-	);
+		};
+	}, [ router, siteSlug ] );
 
 	return (
 		<BackupsPage
 			site={ site }
 			navigation={ navigation }
-			backupsPath={
-				router.buildLocation( { to: agencySiteBackupsIndexRoute.fullPath, params: { siteSlug } } )
-					.pathname
-			}
 			rewindId={ rewindId }
 			searchParams={ searchParams }
 		/>
