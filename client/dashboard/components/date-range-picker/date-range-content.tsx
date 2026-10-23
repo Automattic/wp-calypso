@@ -9,7 +9,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { RangeCalendar } from '@wordpress/ui';
 import { startOfMonth, subMonths } from 'date-fns';
 import { useState } from 'react';
-import { formatYmd, parseYmdLocal } from '../../utils/datetime';
+import { formatSiteYmd, parseYmdLocal } from '../../utils/datetime';
 import { ButtonStack } from '../button-stack';
 import { DateInputs } from './date-inputs';
 import { PresetsListbox } from './presets-listbox';
@@ -27,7 +27,6 @@ type DateRangeContentProps = {
 	setFromStr: ( string: string ) => void;
 	setToStr: ( string: string ) => void;
 	timezoneString?: string;
-	gmtOffset?: number;
 	onChange: ( next: { start: Date; end: Date } ) => void;
 	onClose?: () => void;
 	compositeActiveId: string | null;
@@ -52,7 +51,6 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		setFromStr,
 		setToStr,
 		timezoneString,
-		gmtOffset,
 		onChange,
 		onClose,
 		compositeActiveId,
@@ -120,8 +118,8 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		}
 		setFromDraft( range.from );
 		setToDraft( range.to );
-		setFromStr( formatYmd( range.from, timezoneString, gmtOffset ) );
-		setToStr( formatYmd( range.to, timezoneString, gmtOffset ) );
+		setFromStr( formatSiteYmd( range.from ) );
+		setToStr( formatSiteYmd( range.to ) );
 		onChange( { start: range.from, end: range.to } );
 		onClose?.();
 	};
@@ -139,42 +137,32 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		return undefined;
 	} )();
 
-	// Site “today” as a site-day Date
-	const siteToday =
-		parseYmdLocal( formatYmd( today, timezoneString, gmtOffset ) ) ??
-		new Date( today.getFullYear(), today.getMonth(), today.getDate() );
-
-	// Month anchors in site time
-	const siteMonthStart = startOfMonth( siteToday );
+	// `today` and drafts already carry site calendar days, not instants.
+	const siteMonthStart = startOfMonth( today );
 	const prevMonthStart = subMonths( siteMonthStart, 1 );
 
 	// Build calendar month refs
-	const makeTZMonthFromDate = ( d: Date ) =>
+	const inCalendarTimeZone = ( d: Date ) =>
 		timeZoneForCalendar
-			? new TZDate( Date.UTC( d.getFullYear(), d.getMonth(), 1, 12 ), timeZoneForCalendar )
-			: new Date( d.getFullYear(), d.getMonth(), 1 );
+			? new TZDate( d.getFullYear(), d.getMonth(), d.getDate(), timeZoneForCalendar )
+			: d;
 
 	const defaultMonth = showTwoMonths
-		? makeTZMonthFromDate( prevMonthStart )
-		: makeTZMonthFromDate( siteMonthStart );
+		? inCalendarTimeZone( prevMonthStart )
+		: inCalendarTimeZone( siteMonthStart );
 
-	const endMonth = makeTZMonthFromDate( siteMonthStart );
+	const endMonth = inCalendarTimeZone( siteMonthStart );
 
 	// Use TZDate for calendar selection when a valid IANA time zone is available
-	const value =
-		timeZoneForCalendar && ( fromDraft || toDraft )
-			? {
-					from: fromDraft ? new TZDate( +fromDraft, timeZoneForCalendar ) : undefined,
-					to: toDraft ? new TZDate( +toDraft, timeZoneForCalendar ) : undefined,
-				}
-			: { from: fromDraft ?? undefined, to: toDraft ?? undefined };
+	const value = {
+		from: fromDraft ? inCalendarTimeZone( fromDraft ) : undefined,
+		to: toDraft ? inCalendarTimeZone( toDraft ) : undefined,
+	};
 
 	// `today` is a site day held as a browser-local midnight, but the calendar matches days in
 	// `timeZoneForCalendar`, so rebuild it as that day's midnight in the site zone.
 	const disabledMatcher = {
-		after: timeZoneForCalendar
-			? new TZDate( today.getFullYear(), today.getMonth(), today.getDate(), timeZoneForCalendar )
-			: today,
+		after: inCalendarTimeZone( today ),
 	};
 
 	return (
@@ -304,12 +292,17 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 						value={ value }
 						onValueChange={ ( range ) => {
 							// A click after a complete range starts a new one with no end, so `to` must be cleared too.
-							const from = range?.from ? new Date( range.from.getTime() ) : undefined;
-							const to = range?.to ? new Date( range.to.getTime() ) : undefined;
+							// Preserve the calendar's zoned day before returning browser-local day carriers.
+							const from = range?.from
+								? new Date( range.from.getFullYear(), range.from.getMonth(), range.from.getDate() )
+								: undefined;
+							const to = range?.to
+								? new Date( range.to.getFullYear(), range.to.getMonth(), range.to.getDate() )
+								: undefined;
 							setFromDraft( from );
 							setToDraft( to );
-							setFromStr( from ? formatYmd( from, timezoneString, gmtOffset ) : '' );
-							setToStr( to ? formatYmd( to, timezoneString, gmtOffset ) : '' );
+							setFromStr( from ? formatSiteYmd( from ) : '' );
+							setToStr( to ? formatSiteYmd( to ) : '' );
 							setIsTyping( false );
 						} }
 					/>

@@ -6,6 +6,7 @@ import '@testing-library/jest-dom';
 import { LogType } from '@automattic/api-core';
 import { screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import MockDate from 'mockdate';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import SiteLogs from '../index';
@@ -227,5 +228,86 @@ describe( '<SiteLogs> feature callouts', () => {
 		expect( within( await screen.findByRole( 'article' ) ).getByText( title ) ).toBeVisible();
 		expect( router.state.location.search ).toEqual( {} );
 		expect( window.location.search ).toBe( '' );
+	} );
+} );
+
+describe( '<SiteLogs> site calendar request bounds', () => {
+	afterEach( () => MockDate.reset() );
+
+	test.each( [
+		{
+			zone: 'America/New_York',
+			now: '2025-01-03T12:00:00Z',
+			firstDayLabel: 'Jan 1, 2025',
+			after: '2025-01-01T05:00:00.000Z',
+			before: '2025-01-03T04:59:59.000Z',
+			selectedAfter: '2025-01-02T05:00:00.000Z',
+			selectedBefore: '2025-01-03T04:59:59.000Z',
+		},
+		{
+			zone: 'Asia/Tokyo',
+			now: '2025-01-03T12:00:00Z',
+			firstDayLabel: 'Jan 1, 2025',
+			after: '2024-12-31T15:00:00.000Z',
+			before: '2025-01-02T14:59:59.000Z',
+			selectedAfter: '2025-01-01T15:00:00.000Z',
+			selectedBefore: '2025-01-02T14:59:59.000Z',
+		},
+		{
+			zone: 'America/New_York',
+			now: '2025-03-10T12:00:00Z',
+			firstDayLabel: 'Mar 8, 2025',
+			after: '2025-03-08T05:00:00.000Z',
+			before: '2025-03-10T03:59:59.000Z',
+			selectedAfter: '2025-03-09T05:00:00.000Z',
+			selectedBefore: '2025-03-10T03:59:59.000Z',
+		},
+	] )( 'keeps URL, picker and Activity requests aligned in $zone at $now', async ( bounds ) => {
+		MockDate.set( bounds.now );
+		mockSiteAndSettings( { timezoneString: bounds.zone } );
+		window.history.replaceState(
+			{ __TSR_index: 3 },
+			'',
+			`/?from=${ Date.parse( bounds.after ) / 1000 }&to=${ Date.parse( bounds.before ) / 1000 }`
+		);
+		const requests: Record< string, unknown >[] = [];
+		nock( API_BASE )
+			.persist()
+			.get( `/wpcom/v2/sites/${ mockSiteId }/activity` )
+			.query( ( query ) => {
+				requests.push( query );
+				return true;
+			} )
+			.reply( 200, { current: { orderedItems: [] }, totalItems: 0, totalPages: 0 } );
+		nock( API_BASE )
+			.persist()
+			.get( `/wpcom/v2/sites/${ mockSiteId }/activity/count/group` )
+			.query( true )
+			.reply( 200, { groups: {} } );
+		const { router } = render( <SiteLogs logType={ LogType.ACTIVITY } siteSlug="test-site" /> );
+		await waitFor( () =>
+			expect( requests ).toContainEqual(
+				expect.objectContaining( {
+					after: bounds.after,
+					before: bounds.before,
+				} )
+			)
+		);
+		const picker = screen.getByRole( 'button', { name: /^Date range:/ } );
+		expect( picker ).toHaveAccessibleName( expect.stringContaining( bounds.firstDayLabel ) );
+		await userEvent.click( picker );
+		await userEvent.click( screen.getByRole( 'option', { name: 'Yesterday' } ) );
+		await waitFor( () =>
+			expect( requests ).toContainEqual(
+				expect.objectContaining( {
+					after: bounds.selectedAfter,
+					before: bounds.selectedBefore,
+				} )
+			)
+		);
+		expect( router.state.location.search ).toMatchObject( {
+			from: Date.parse( bounds.selectedAfter ) / 1000,
+			to: Date.parse( bounds.selectedBefore ) / 1000,
+		} );
 	} );
 } );

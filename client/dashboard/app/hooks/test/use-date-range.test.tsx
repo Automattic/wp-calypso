@@ -84,6 +84,7 @@ describe( 'useDateRange', () => {
 		[ {}, '/logs', 2 ],
 		[ { resetPageOnChange: true }, '/logs', undefined ],
 		[ { selectionPath: '/backups' }, '/backups', 2 ],
+		[ { selectionPath: '/backups', resetPageOnChange: true }, '/backups', undefined ],
 	] )( 'writes dates atomically with options %j', async ( options, pathname, page ) => {
 		const router = await restoreRange( '?page=2&severity=warning', options );
 		router.history.block( { blockerFn: async () => false, enableBeforeUnload: false } );

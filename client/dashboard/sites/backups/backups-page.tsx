@@ -53,6 +53,7 @@ export function BackupsPage( {
 		gmtOffset,
 		defaultDays: 30,
 		selectionPath: navigation.listPath,
+		resetPageOnChange: true,
 	} );
 
 	const { activityLog, isLoadingActivityLog, selectedBackup, isSmallViewport } =
@@ -60,8 +61,6 @@ export function BackupsPage( {
 			site,
 			rewindId,
 			dateRange,
-			timezoneString,
-			gmtOffset,
 			enabled: hasBackups,
 		} );
 	const isMobileDetailsView = isSmallViewport && !! selectedBackup;
