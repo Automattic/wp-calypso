@@ -26,6 +26,19 @@ describe( 'serverMessageToMessage', () => {
 		] );
 	} );
 
+	it( 'restores an interactive UI surface, even without text, and skips a malformed one', () => {
+		const surface = {
+			type: 'data',
+			data: [ { version: 'v1.0', deleteSurface: { surfaceId: 'form' } } ],
+			metadata: { mimeType: 'application/a2ui+json', postId: 7 },
+		};
+		const reply = ( a2ui: unknown ) =>
+			serverMessageToMessage( { ...buildServerMessage( { a2ui } ), role: 'bot', content: '' } );
+
+		expect( reply( surface ).parts ).toEqual( [ surface ] );
+		expect( reply( { ...surface, data: 'not messages' } ).parts ).toEqual( [] );
+	} );
+
 	it( 'adds no data part for a context without flags, sources or prompt source', () => {
 		const message = serverMessageToMessage( buildServerMessage( { url: 'https://example.com' } ) );
 

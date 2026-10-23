@@ -16,9 +16,10 @@ come.
      testable.
    - **The agent composes it** with `wpcom/render-interactive-ui`, for one-off forms and choices
      from the basic components, or a provider's (AM-116).
-2. Both return a `wpcom__render_interactive_ui` envelope of A2UI messages, stored with the
-   conversation. An ability's envelope also names the page it built the surface for (`post_id`).
-   Agents Manager also accepts a raw array of A2UI messages.
+2. Both send A2UI's A2A data part, with the `application/a2ui+json` MIME type, beside the reply's
+   text, which may be empty. An ability's part names the page it built the surface for
+   (`metadata.postId`). wpcom stores the part with the reply, and Agenttic keeps it under `a2ui`
+   and sends it back in the history, so the agent can update the surface.
 3. Once the reply has streamed, the host feeds those messages to the conversation's runtime, which
    shows each surface under its message. Reloading rebuilds the surfaces from history.
 4. A button's event goes to the agent as a context message, `{ "version": "v1.0", "action": … }`,
@@ -38,8 +39,8 @@ come.
     A2UI's tokens from Agenttic's), disables a stale one, and stacks the modal above the chat.
     Surfaces sit in a `data-agenttic-isolated` wrapper, so their controls keep their own typography
     while replies keep the chat's typography reset.
-  - `messages.ts` and `convert-messages-to-components.ts` find surfaces in the transcript and which
-    of them are stale.
+  - `messages.ts` and `convert-messages-to-components.ts` find surfaces in the transcript, from
+    each message's `a2ui` part, and which of them are stale.
   - `session.ts` keeps each conversation's session, through a new chat's bootstrap, and tells
     surfaces restored from history from new ones.
   - `catalogs.ts` builds the catalogs, and the renderer capabilities each message sends.
@@ -93,7 +94,7 @@ come.
   as `tool_call_id`.
 - **Agents Manager decides when a surface is stale**, with the rule `show-component` uses
   (`src/utils/stale-chat-ui.ts`): the user has replied past the last message that changed it, or
-  the editor has another page open than the one its envelope names. Like a restored picker, a
+  the editor has another page open than the one its part names. Like a restored picker, a
   surface restored from history, in a past chat or after a reload, is stale too. A stale surface
   stays visible and disabled: its controls look disabled, while display-only content such as text
   or a chart looks as before. Once all of a message's surfaces are stale, its actions, such as

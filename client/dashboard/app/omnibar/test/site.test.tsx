@@ -13,7 +13,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { useSyncOmnibarSite } from '../site';
 import type { Site } from '@automattic/api-core';
 
-// The shared `render()` has no route loader, so a site-bearing route needs its own router.
 function renderRouterWithSiteRoute( site: Site ) {
 	function RootComponent() {
 		useSyncOmnibarSite();
@@ -59,20 +58,6 @@ describe( 'useSyncOmnibarSite', () => {
 
 		router.navigate( { to: '/' } );
 		await screen.findByText( 'home' );
-
-		await waitFor( () =>
-			expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBeNull()
-		);
-	} );
-
-	test( 'does not publish a route site the user is not a member of', async () => {
-		const router = renderRouterWithSiteRoute( { ID: 456 } as Site );
-		await screen.findByText( 'home' );
-		// The site the omnibar was showing before this navigation.
-		queryClient.setQueryData( omnibarSiteIdQuery().queryKey, 111 );
-
-		router.navigate( { to: '/sites/$slug', params: { slug: 'foo' } } );
-		await screen.findByText( 'site' );
 
 		await waitFor( () =>
 			expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBeNull()

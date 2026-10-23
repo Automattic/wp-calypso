@@ -3,7 +3,7 @@ import {
 	applyInteractiveUiBatch,
 	getInteractiveUiBatches,
 	getStaleInteractiveUiSurfaceIds,
-	parseInteractiveUiText,
+	readInteractiveUiPart,
 } from '../messages';
 import type { InteractiveUiBatch } from '../messages';
 import type { UIMessage } from '@automattic/agenttic-client';
@@ -25,50 +25,40 @@ const operations = [
 	},
 ];
 
-const envelope = JSON.stringify( {
-	tool_id: 'wpcom__render_interactive_ui',
+const part = {
+	type: 'data' as const,
 	data: operations,
-} );
+	metadata: { mimeType: 'application/a2ui+json' as const },
+};
+
+// Agenttic keeps A2UI's A2A data part under `a2ui`.
+const surfaceContent = { type: 'data' as const, data: { a2ui: part } };
 
 describe( 'interactive UI response messages', () => {
-	it( 'extracts ordered surface operations from the tool envelope', () => {
-		expect( parseInteractiveUiText( envelope ) ).toEqual( { operations } );
-	} );
+	it( 'reads the A2UI messages, and the page they were built for, from the A2UI data part', () => {
+		const pagePart = { ...part, metadata: { ...part.metadata, postId: 7 } };
 
-	it( 'reads the page the envelope was built for', () => {
-		const pageEnvelope = JSON.stringify( {
-			tool_id: 'wpcom__render_interactive_ui',
-			post_id: 7,
-			data: operations,
+		expect( readInteractiveUiPart( surfaceContent ) ).toEqual( { operations } );
+		expect( readInteractiveUiPart( { type: 'data', data: { a2ui: pagePart } } ) ).toEqual( {
+			operations,
+			postId: 7,
 		} );
-
-		expect( parseInteractiveUiText( pageEnvelope ) ).toEqual( { operations, postId: 7 } );
-	} );
-
-	it( 'accepts stringified envelope data', () => {
-		expect(
-			parseInteractiveUiText(
-				JSON.stringify( {
-					tool_id: 'wpcom__render_interactive_ui',
-					data: JSON.stringify( operations ),
-				} )
-			)
-		).toEqual( { operations } );
-	} );
-
-	it( 'accepts raw protocol message arrays', () => {
-		expect( parseInteractiveUiText( JSON.stringify( operations ) ) ).toEqual( { operations } );
 	} );
 
 	it.each( [
-		[ 'plain text', 'Here you go.' ],
 		[
-			'an unrelated tool response',
-			JSON.stringify( { tool_id: 'wpcom__other_tool', data: operations } ),
+			'the old text envelope',
+			{
+				type: 'text' as const,
+				text: JSON.stringify( { tool_id: 'wpcom__render_interactive_ui', data: operations } ),
+			},
 		],
-		[ 'another protocol version', JSON.stringify( [ { ...operations[ 0 ], version: 'v0.8' } ] ) ],
-	] )( 'ignores %s', ( _description, text ) => {
-		expect( parseInteractiveUiText( text ) ).toBeUndefined();
+		[
+			'another data part',
+			{ type: 'data' as const, data: { sources: [ 'https://example.com' ] } },
+		],
+	] )( 'ignores %s', ( _description, content ) => {
+		expect( readInteractiveUiPart( content ) ).toBeUndefined();
 	} );
 
 	it( 'associates only agent response operations with their message', () => {
@@ -76,7 +66,7 @@ describe( 'interactive UI response messages', () => {
 			{
 				id: 'user',
 				role: 'user',
-				content: [ { type: 'text', text: envelope } ],
+				content: [ surfaceContent ],
 				timestamp: 0,
 				archived: false,
 				showIcon: false,
@@ -84,10 +74,7 @@ describe( 'interactive UI response messages', () => {
 			{
 				id: 'agent',
 				role: 'agent',
-				content: [
-					{ type: 'text', text: 'Here you go.' },
-					{ type: 'text', text: envelope },
-				],
+				content: [ { type: 'text', text: 'Here you go.' }, surfaceContent ],
 				timestamp: 1,
 				archived: false,
 				showIcon: true,
@@ -99,7 +86,7 @@ describe( 'interactive UI response messages', () => {
 				operations,
 				messageId: 'agent',
 				messageIndex: 1,
-				signature: JSON.stringify( [ 'agent', 1, envelope ] ),
+				signature: JSON.stringify( [ 'agent', { operations } ] ),
 			},
 		] );
 	} );
