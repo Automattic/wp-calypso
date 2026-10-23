@@ -102,6 +102,20 @@ describe( '<EarnReferrals>', () => {
 		await waitFor( () => expect( newReferralButton() ).not.toBeInTheDocument() );
 	} );
 
+	test( 'opens the approval gate from Get started and leaves out payout details while in review', async () => {
+		sessionStorage.clear();
+		mockEndpoints( { referrals: [], approvalStatus: 'pending' } );
+		render( <EarnReferrals /> );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Get started' } ) );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Referrals unlock once you’re approved' } )
+		).toBeVisible();
+		expect( sessionStorage.getItem( 'marketplace-type' ) ).toBeNull();
+		expect( screen.queryByRole( 'link', { name: 'Add my details' } ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'asks for payout details with referral-specific copy, and keeps it on screen', async () => {
 		mockEndpoints( { isPayable: false } );
 		render( <EarnReferrals /> );
