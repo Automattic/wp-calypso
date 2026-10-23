@@ -68,6 +68,12 @@ jest.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: () => [ false, null ],
 } ) );
 
+let mockPostPlanSelectionEmailVerification = false;
+jest.mock( '../internals/steps-repository/__user/use-email-verification-gate', () => ( {
+	...jest.requireActual( '../internals/steps-repository/__user/use-email-verification-gate' ),
+	useIsPostPlanSelectionEmailVerification: () => mockPostPlanSelectionEmailVerification,
+} ) );
+
 describe( 'Onboarding Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
@@ -287,6 +293,10 @@ describe( 'Onboarding Flow', () => {
 			const POST_URL = 'https://example.blog/2026/10/a-post/';
 			const REBLOG_EDITOR = `/post/test-site.wordpress.com?url=${ encodeURIComponent( POST_URL ) }`;
 
+			beforeEach( () => {
+				mockPostPlanSelectionEmailVerification = false;
+			} );
+
 			const finishProcessing = async ( dependencies: Record< string, unknown > ) => {
 				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
 
@@ -315,6 +325,29 @@ describe( 'Onboarding Flow', () => {
 				const checkoutUrl = new URL( await finishProcessing( { goToCheckout: true } ), 'http://x' );
 
 				expect( checkoutUrl.searchParams.get( 'redirect_to' ) ).toBe( REBLOG_EDITOR );
+			} );
+
+			// Without this, leaving checkout to change the plan or domain forgets the post.
+			it( 'keeps the post on checkout back URLs', async () => {
+				const checkoutUrl = new URL( await finishProcessing( { goToCheckout: true } ), 'http://x' );
+
+				for ( const backUrl of [ 'checkoutBackUrl', 'checkoutBackUrlDomains' ] ) {
+					const back = new URL( checkoutUrl.searchParams.get( backUrl ) ?? '' );
+					expect( back.searchParams.get( 'blog_post' ) ).toBe( POST_URL );
+				}
+			} );
+
+			// Without this, a reblog order skips the post-plan email-verification gate.
+			it( 'returns a paid site through email verification, keeping the post', async () => {
+				mockPostPlanSelectionEmailVerification = true;
+				const checkoutUrl = new URL( await finishProcessing( { goToCheckout: true } ), 'http://x' );
+				const returnUrl = new URL(
+					checkoutUrl.searchParams.get( 'redirect_to' ) ?? '',
+					'http://x'
+				);
+
+				expect( returnUrl.pathname ).toBe( '/setup/onboarding/email-verification' );
+				expect( returnUrl.searchParams.get( 'blog_post' ) ).toBe( POST_URL );
 			} );
 		} );
 

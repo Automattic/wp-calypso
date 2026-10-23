@@ -411,6 +411,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		// Set by the Reader's "Create a site to reblog" prompt: the run ends in the new site's
 		// editor with that post ready to reblog, never on My Home or the setup chooser.
 		const blogPostToReblog = queryParams.get( 'blog_post' );
+		// Every URL that re-enters onboarding after checkout carries the post along, or the run
+		// forgets it and finishes as plain onboarding.
+		const reblogQueryArgs = blogPostToReblog ? { blog_post: blogPostToReblog } : {};
 
 		/**
 		 * Returns where to land after checkout, or `defaultDestination` when nothing overrides it.
@@ -777,6 +780,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
 								siteSlug: siteSlugParam,
 								...( refParameter ? { ref: refParameter } : {} ),
+								...reblogQueryArgs,
 							} )
 						);
 						return;
@@ -827,13 +831,16 @@ const onboarding: FlowV2< typeof initialize > = {
 							// Variant B: a paid order meets the post-plan-selection gate on return from checkout,
 							// before post-checkout-onboarding. The Playground import path keeps its own
 							// return target.
-							if ( postPlanSelectionEmailVerification && ! playgroundId ) {
+							const returnsThroughVerification =
+								postPlanSelectionEmailVerification && ! playgroundId;
+							if ( returnsThroughVerification ) {
 								redirectTo = addQueryArgs(
 									withLocale( '/setup/onboarding/email-verification', locale ),
 									{
 										next: 'post-checkout-onboarding',
 										siteSlug,
 										...( refParameter ? { ref: refParameter } : {} ),
+										...reblogQueryArgs,
 									}
 								);
 							}
@@ -848,12 +855,13 @@ const onboarding: FlowV2< typeof initialize > = {
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 									// build_dest=wow, the WoW funnel (dest=editor) and a reblog go
 									// straight from checkout to their destination — no
-									// post-checkout-onboarding hop, no chooser.
+									// post-checkout-onboarding hop, no chooser. A reblog still meets the
+									// email-verification gate first; processing then lands it on the editor.
 									redirect_to:
 										blueprintArchiveSlug ||
 										blueprintSimpleSlug ||
 										isKnownWowFunnel( wowFunnelSlug ) ||
-										blogPostToReblog
+										( blogPostToReblog && ! returnsThroughVerification )
 											? destination
 											: redirectTo,
 									signup: 1,
@@ -861,9 +869,14 @@ const onboarding: FlowV2< typeof initialize > = {
 									// A skipping visit's last screen was the domain step, so that is where
 									// leaving checkout belongs.
 									checkoutBackUrl: pathToUrl(
-										shouldSkipPlans ? backDestinationDomains : backDestination
+										addQueryArgs(
+											shouldSkipPlans ? backDestinationDomains : backDestination,
+											reblogQueryArgs
+										)
 									),
-									checkoutBackUrlDomains: pathToUrl( backDestinationDomains ),
+									checkoutBackUrlDomains: pathToUrl(
+										addQueryArgs( backDestinationDomains, reblogQueryArgs )
+									),
 									coupon,
 									steps_current: checkoutStepperPosition.current,
 									steps_total: checkoutStepperPosition.total,
@@ -880,7 +893,9 @@ const onboarding: FlowV2< typeof initialize > = {
 							// This can stay ahead of the domain branches below: a connected or
 							// transferred domain forces a paid plan (use-my-domain hides the free
 							// plan), and a paid funnel order's checkout redirect_to is the funnel
-							// destination itself, so it never comes back through here.
+							// destination itself, so it never comes back through here. A paid reblog
+							// does, after email verification, and ends on the editor as the
+							// reblogging flow's runs did.
 							window.location.replace( destination );
 						} else if ( domainCartItem?.meta && isDomainMapping( domainCartItem ) ) {
 							// A connected domain still has to be pointed at the site once it is paid

@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
+import { Site } from '@automattic/data-stores';
 import { createSite } from '@automattic/onboarding';
 import { render, waitFor } from '@testing-library/react';
 import { useFlowState } from '../../../state-manager/store';
@@ -280,6 +281,16 @@ describe( 'create-site', () => {
 		( createSite as jest.Mock ).mockResolvedValueOnce( undefined );
 
 		await expect( runStep() ).rejects.toThrow( 'Failed to create site' );
+	} );
+
+	// Without this, a reblog's site waits behind Coming Soon while its owner publishes the reblog.
+	it( 'creates a public site for an onboarding reblog run', async () => {
+		mockQueryParams = new URLSearchParams( 'blog_post=https://example.blog/a-post/' );
+		await runStep();
+		await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+		expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ 2 ] ).toBe(
+			Site.Visibility.PublicIndexed
+		);
 	} );
 
 	describe( 'AI Launchpad enablement', () => {

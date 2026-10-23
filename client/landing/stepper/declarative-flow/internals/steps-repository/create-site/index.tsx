@@ -186,6 +186,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const flowState = useFlowState();
 	const queryClient = useQueryClient();
+	const urlQueryParams = useQuery();
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';
@@ -201,9 +202,10 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	let siteVisibility = Site.Visibility.PublicIndexed;
 	const wooFlows = [ ENTREPRENEUR_FLOW ];
 
-	// These flows default to "Coming Soon"
+	// These flows default to "Coming Soon". A reblog run lands in the editor to publish the post,
+	// so its site starts public, as the reblogging flow's sites did.
 	if (
-		isOnboardingFlow( flow ) ||
+		( isOnboardingFlow( flow ) && ! urlQueryParams.get( 'blog_post' ) ) ||
 		isCopySiteFlow( flow ) ||
 		isWriteOnFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
@@ -223,7 +225,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const isManageSiteFlow = Boolean(
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
-	const urlQueryParams = useQuery();
 	const platform = urlQueryParams.get( 'platform' ) || '';
 	const useThemeHeadstart =
 		! isNewHostedSiteCreationFlow( flow ) && ! isNewSiteMigrationFlow( flow );
