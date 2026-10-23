@@ -220,49 +220,6 @@ function followsTerminalApplyBlockEditsOutcome(
 	return false;
 }
 
-function hasToolSummaryFlag( message: UIMessage ): boolean {
-	return message.content.some(
-		( content ) =>
-			content.type === 'data' &&
-			( content.data?.flags as { tool_summary?: unknown } | undefined )?.tool_summary === true
-	);
-}
-
-/**
- * Whether to show a hidden ack that repeats a tool's summary (`tool_summary`). A reloaded chat has
- * no tool messages, so it shows when its turn has none.
- */
-function isRestoredToolSummary( messages: UIMessage[], currentIndex: number ): boolean {
-	if ( ! hasToolSummaryFlag( messages[ currentIndex ] ) ) {
-		return false;
-	}
-
-	for ( let index = currentIndex - 1; index >= 0; index-- ) {
-		const earlierMessage = messages[ index ];
-		if ( earlierMessage.role === 'user' && ! isContextOnlyMessage( earlierMessage ) ) {
-			return true;
-		}
-
-		if (
-			hasAgentRole( earlierMessage ) &&
-			typeof getToolMessageData( earlierMessage )?.toolId === 'string'
-		) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-function withContextAsText( message: UIMessage ): UIMessage {
-	return {
-		...message,
-		content: message.content.map( ( content ) =>
-			content.type === 'context' ? { ...content, type: 'text' } : content
-		),
-	};
-}
-
 /**
  * Drops a message's narration after a terminal block-edit outcome, but keeps a component beside it,
  * such as an interactive UI surface.
@@ -292,7 +249,7 @@ export default function convertToolMessagesToComponents( {
 		array: UIMessage[]
 	): AgentsManagerUIMessage | AgentsManagerUIMessage[] => {
 		if ( isContextOnlyMessage( message ) ) {
-			return isRestoredToolSummary( array, index ) ? [ withContextAsText( message ) ] : [];
+			return [];
 		}
 
 		const firstContentText = message.content?.[ 0 ]?.text;
