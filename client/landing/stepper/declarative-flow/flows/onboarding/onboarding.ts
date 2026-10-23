@@ -408,6 +408,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		);
 		const wowFunnelSlug = getWowFunnelSlug( queryParams );
 		const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
+		// Set by the Reader's "Create a site to reblog" prompt: the run ends in the new site's
+		// editor with that post ready to reblog, never on My Home or the setup chooser.
+		const blogPostToReblog = queryParams.get( 'blog_post' );
 
 		/**
 		 * Returns where to land after checkout, or `defaultDestination` when nothing overrides it.
@@ -445,6 +448,12 @@ const onboarding: FlowV2< typeof initialize > = {
 					customThemeBuild: isBlueprintCustomThemeBuild( queryParams ),
 					ref: refParameter,
 					locale,
+				} );
+			}
+
+			if ( blogPostToReblog && providedDependencies.siteSlug ) {
+				return addQueryArgs( `/post/${ providedDependencies.siteSlug }`, {
+					url: blogPostToReblog,
 				} );
 			}
 
@@ -837,11 +846,14 @@ const onboarding: FlowV2< typeof initialize > = {
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									// build_dest=wow and the WoW funnel (dest=editor) go
+									// build_dest=wow, the WoW funnel (dest=editor) and a reblog go
 									// straight from checkout to their destination — no
 									// post-checkout-onboarding hop, no chooser.
 									redirect_to:
-										blueprintArchiveSlug || blueprintSimpleSlug || isKnownWowFunnel( wowFunnelSlug )
+										blueprintArchiveSlug ||
+										blueprintSimpleSlug ||
+										isKnownWowFunnel( wowFunnelSlug ) ||
+										blogPostToReblog
 											? destination
 											: redirectTo,
 									signup: 1,
@@ -860,10 +872,11 @@ const onboarding: FlowV2< typeof initialize > = {
 						} else if (
 							blueprintArchiveSlug ||
 							blueprintSimpleSlug ||
-							isKnownWowFunnel( wowFunnelSlug )
+							isKnownWowFunnel( wowFunnelSlug ) ||
+							blogPostToReblog
 						) {
-							// build_dest=wow, build_dest=simple and the WoW funnel never show the
-							// setup-your-site-ai chooser; go straight to their destination.
+							// build_dest=wow, build_dest=simple, the WoW funnel and a reblog never
+							// show the setup-your-site-ai chooser; go straight to their destination.
 							// This can stay ahead of the domain branches below: a connected or
 							// transferred domain forces a paid plan (use-my-domain hides the free
 							// plan), and a paid funnel order's checkout redirect_to is the funnel

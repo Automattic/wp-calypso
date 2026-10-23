@@ -131,7 +131,7 @@ export function renderRebloggingEmptySites( context ) {
 		{
 			blog_post: context.query?.url,
 		},
-		'/setup/reblogging'
+		'/setup/onboarding'
 	);
 
 	context.primary = createElement( () =>

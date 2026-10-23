@@ -283,6 +283,41 @@ describe( 'Onboarding Flow', () => {
 			} );
 		} );
 
+		describe( 'reblog destination', () => {
+			const POST_URL = 'https://example.blog/2026/10/a-post/';
+			const REBLOG_EDITOR = `/post/test-site.wordpress.com?url=${ encodeURIComponent( POST_URL ) }`;
+
+			const finishProcessing = async ( dependencies: Record< string, unknown > ) => {
+				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+				await runUseStepNavigationSubmit( {
+					currentStep: STEPS.PROCESSING.slug,
+					currentURL: `/setup/onboarding/processing?blog_post=${ encodeURIComponent( POST_URL ) }`,
+					dependencies: {
+						siteSlug: 'test-site.wordpress.com',
+						siteId: 123,
+						processingResult: ProcessingResult.SUCCESS,
+						...dependencies,
+					},
+				} );
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+				return ( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ];
+			};
+
+			// Without this, a free site eligible for the AI builder stops at the setup chooser.
+			it( 'lands a free site in the editor with the post to reblog', async () => {
+				expect( await finishProcessing( { postCheckoutBigSky: true } ) ).toBe( REBLOG_EDITOR );
+			} );
+
+			// Without this, checkout returns to the setup chooser and the post is lost.
+			it( 'sends a paid site from checkout straight to the editor', async () => {
+				const checkoutUrl = new URL( await finishProcessing( { goToCheckout: true } ), 'http://x' );
+
+				expect( checkoutUrl.searchParams.get( 'redirect_to' ) ).toBe( REBLOG_EDITOR );
+			} );
+		} );
+
 		describe( 'Survicate side effect', () => {
 			it( 'calls addSurvicate with user data when logged in on step changes', () => {
 				const loggedInState = {
