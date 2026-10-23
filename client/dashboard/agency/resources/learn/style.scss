@@ -1,4 +1,81 @@
+@import '@automattic/color-studio/dist/color-variables';
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+// Product brand colors. Most come from Color Studio; VIP's gold is from its brand
+// palette and Pressable's red-orange from https://pressable.com/press-kit/.
+$resource-brands: (
+	'automattic-for-agencies': $studio-gray-100,
+	'jetpack': $studio-jetpack-green-50,
+	'pressable': #dd3a03,
+	'woocommerce': $studio-woocommerce-purple-50,
+	'wordpress-com': $studio-wordpress-blue-50,
+	'wordpress-vip': #d8a45f,
+);
+
+// Each product's brand color, for the card header tint.
+.dashboard-resources-learn__card-header {
+	--resource-brand: #{$studio-gray-100};
+
+	@each $product, $color in $resource-brands {
+		&[data-product='#{$product}'] {
+			--resource-brand: #{$color};
+		}
+	}
+}
+
+// Holds the Library for focus lookups without becoming a layout box, so its
+// sections stay items of the page's stack.
+.dashboard-resources-learn__results {
+	display: contents;
+}
+
 // The DataViews wrapper paints its own surface; the filter bar sits on the page background.
-.dashboard-resource-center__filters {
+.dashboard-resources-learn__filters {
 	--wp-dataviews-color-background: transparent;
+
+	// Only rendered while the filters are open, so the gap goes with them.
+	.dashboard-resources-learn__filters-toggled {
+		margin-block-start: $grid-unit-15;
+	}
+}
+
+.dashboard-resources-learn__product-logo {
+	display: block;
+	block-size: 20px;
+	inline-size: var( --resource-logo-width );
+	max-inline-size: 100%;
+	background: currentColor;
+	mask-image: var( --resource-logo-image );
+	mask-size: contain;
+	mask-position: left center;
+	mask-repeat: no-repeat;
+}
+
+// A resource's link, stretched with ::after over its card so the whole of it is
+// clickable, and drawing the focus ring around it.
+.dashboard-resources-learn__link {
+	color: inherit;
+	text-decoration: none;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+	}
+
+	&:focus {
+		box-shadow: none;
+		outline: none;
+	}
+
+	&:focus-visible::after {
+		outline: 2px solid var( --wpds-color-stroke-focus, var( --wp-admin-theme-color ) );
+		outline-offset: -2px;
+	}
+}
+
+.dashboard-resources-learn__list-brand .dashboard-resources-learn__product-logo {
+	block-size: 16px;
+	inline-size: calc( var( --resource-logo-width ) * 0.8 );
 }
