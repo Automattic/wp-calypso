@@ -1,3 +1,4 @@
+import { mkdir, writeFile } from 'fs/promises';
 import { DataHelper, LoggedOutHomePage } from '@automattic/calypso-e2e';
 import { FiltersEngine, Request, fromPlaywrightDetails } from '@ghostery/adblocker-playwright';
 import { expect, tags, test } from '../../lib/pw-base';
@@ -45,15 +46,52 @@ function isBlockedScriptLoad( error: string, blockedUrls: string[], pageUrl: str
 }
 
 /**
+ * Where the TeamCity build reads the run summary from, to show it in the failure alert.
+ */
+const RUN_SUMMARY_PATH = 'output/content-blocker-run-summary.txt';
+
+/**
+ * Each list's title and version, by URL, from the header of the copy this run used.
+ */
+const listVersions = new Map< string, string >();
+
+function describeList( url: string, text: string ): string {
+	const header = text.slice( 0, 2_000 );
+	const field = ( name: string ) =>
+		new RegExp( `^! ${ name }: (.+)$`, 'm' ).exec( header )?.[ 1 ].trim();
+	const version = field( 'Version' ) ?? field( 'TimeUpdated' ) ?? field( 'Last modified' );
+	return `${ field( 'Title' ) ?? url } ${ version ?? '(unversioned)' }`;
+}
+
+/**
  * Fails on error responses, which `fromLists` would otherwise parse as filters, and
- * on stalled connections. `fromLists` retries a rejected fetch.
+ * on stalled connections, including while reading the body. `fromLists` retries a
+ * rejected fetch.
  */
 async function fetchList( url: string ): Promise< Response > {
 	const response = await fetch( url, { signal: AbortSignal.timeout( 20_000 ) } );
 	if ( ! response.ok ) {
 		throw new Error( `${ url } responded ${ response.status }` );
 	}
-	return response;
+	const text = await response.text();
+	listVersions.set( url, describeList( url, text ) );
+	return new Response( text );
+}
+
+/**
+ * The Calypso commit the server under test is running, from the `COMMIT_SHA` global
+ * every Calypso page sets.
+ */
+async function fetchServedCommit( baseUrl: string ): Promise< string > {
+	try {
+		const response = await fetch( new URL( '/setup/onboarding/user', baseUrl ), {
+			signal: AbortSignal.timeout( 20_000 ),
+		} );
+		const sha = /var COMMIT_SHA = "([0-9a-f]+)"/.exec( await response.text() )?.[ 1 ];
+		return sha?.slice( 0, 11 ) ?? '(unknown)';
+	} catch {
+		return '(unknown)';
+	}
 }
 
 /**
@@ -74,7 +112,17 @@ test.describe(
 			const pageErrors: string[] = [];
 
 			await test.step( 'Given my browser blocks requests the way Brave and uBlock Origin do', async function () {
-				const blocker = await FiltersEngine.fromLists( fetchList, FILTER_LISTS );
+				const [ blocker, servedCommit ] = await Promise.all( [
+					FiltersEngine.fromLists( fetchList, FILTER_LISTS ),
+					fetchServedCommit( environment.CALYPSO_BASE_URL ),
+				] );
+
+				const summary = `Calypso ${ servedCommit } · lists: ${ FILTER_LISTS.map( ( url ) =>
+					listVersions.get( url )
+				).join( ', ' ) }`;
+				await testInfo.attach( 'run-summary.txt', { body: summary } );
+				await mkdir( 'output', { recursive: true } );
+				await writeFile( RUN_SUMMARY_PATH, summary );
 
 				const control = Request.fromRawDetails( {
 					url: KNOWN_BLOCKED_URL,
