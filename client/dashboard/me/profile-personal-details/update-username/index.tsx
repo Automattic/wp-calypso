@@ -5,6 +5,7 @@ import {
 	RadioControl,
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
+	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
@@ -103,6 +104,7 @@ export default function UsernameUpdateForm( {
 				label={ __( 'Confirm new username' ) }
 				id="username_confirm"
 				name="username_confirm"
+				prefix={ <InputControlPrefixWrapper>@</InputControlPrefixWrapper> }
 				value={ userLoginConfirm }
 				onChange={ ( value ) => onConfirmChange( value || '' ) }
 				autoCapitalize="off"
@@ -125,7 +127,7 @@ export default function UsernameUpdateForm( {
 			{ showRadioOptions && (
 				<VStack spacing={ 3 }>
 					<RadioControl
-						label={ __( 'Do you also want a new site with a matching address?' ) }
+						label={ __( 'Would you like a matching blog address too?' ) }
 						selected={ usernameAction }
 						options={ Object.entries( actions ).map( ( [ value, label ] ) => ( {
 							value,
