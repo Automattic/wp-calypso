@@ -1,6 +1,8 @@
+import { __experimentalHeading as Heading } from '@wordpress/components';
 import { Icon, cloud, gift, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { PlaygroundConfirmModal } from '../playground-confirm-modal';
+
 import './style.scss';
 
 interface PlaygroundSaveModalProps {
@@ -38,18 +40,18 @@ export function PlaygroundSaveModal( {
 		<PlaygroundConfirmModal
 			className="playground-save-modal"
 			title={ __( 'Save my store' ) }
+			description={ __(
+				'Your store will be saved to WordPress.com. Access it anytime from your account to continue building or go live.'
+			) }
 			confirmLabel={ __( 'Continue to WordPress.com' ) }
 			cancelLabel={ __( 'Keep building' ) }
 			onConfirm={ onConfirm }
 			onCancel={ onCancel }
 			isConfirming={ isConfirming }
 		>
-			<p>
-				{ __(
-					'Your store will be saved to WordPress.com. Access it anytime from your account to continue building or go live.'
-				) }
-			</p>
-			<h2 className="playground-save-modal__heading">{ __( 'When you save, you unlock:' ) }</h2>
+			<Heading level={ 2 } size={ 18 } weight={ 600 } lineHeight={ 1.5 }>
+				{ __( 'When you save, you unlock:' ) }
+			</Heading>
 			<ul className="playground-save-modal__benefits">
 				{ benefits.map( ( { icon, title, description } ) => (
 					<li key={ title } className="playground-save-modal__benefit">

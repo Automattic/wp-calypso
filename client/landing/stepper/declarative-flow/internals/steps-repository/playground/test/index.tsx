@@ -4,7 +4,7 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { Step } from '@automattic/onboarding';
-import { act, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlaygroundStep from '..';
@@ -39,7 +39,12 @@ const renderPlaygroundStep = (
 	renderOptions?: RenderStepOptions
 ) => {
 	const combinedProps = {
-		...mockStepProps( { flow: 'onboarding', stepName: 'playground', ...props } ),
+		...mockStepProps( {
+			flow: 'onboarding',
+			stepName: 'playground',
+			navigation: { submit: jest.fn() },
+			...props,
+		} ),
 	};
 
 	return renderStep( <PlaygroundStep { ...combinedProps } />, renderOptions );
@@ -261,6 +266,9 @@ describe( 'Playground', () => {
 					'Your store will be saved to WordPress.com. Access it anytime from your account to continue building or go live.'
 				)
 			).toBeVisible();
+			expect( querySaveModal() ).toHaveAccessibleDescription(
+				'Your store will be saved to WordPress.com. Access it anytime from your account to continue building or go live.'
+			);
 			expect( screen.getByRole( 'heading', { name: 'When you save, you unlock:' } ) ).toBeVisible();
 			const benefits = screen.getAllByRole( 'listitem' );
 			expect( benefits.map( ( benefit ) => benefit.textContent ) ).toEqual( [
@@ -317,7 +325,7 @@ describe( 'Playground', () => {
 			await openSaveModal();
 			await userEvent.click( getContinueButton() );
 
-			expect( submit ).toHaveBeenCalledTimes( 1 );
+			await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
 			expect( getContinueButton() ).toHaveAttribute( 'aria-disabled', 'true' );
 			expect(
 				screen.getByRole( 'button', { name: 'Save my store', hidden: true } )
@@ -334,6 +342,108 @@ describe( 'Playground', () => {
 			expect( querySaveModal() ).toBeVisible();
 			expect( submit ).toHaveBeenCalledTimes( 1 );
 			expect( getSaveEventCalls() ).toHaveLength( 3 );
+		} );
+
+		it( 'should announce that the save store button opens a dialog', async () => {
+			await renderWooPlaygroundStep();
+
+			expect( getSaveStoreButton() ).toHaveAttribute( 'aria-haspopup', 'dialog' );
+		} );
+
+		it( 'should not announce a dialog for the launch button outside the WooCommerce entry', async () => {
+			await act( async () => {
+				renderPlaygroundStep(
+					{},
+					{ initialEntry: '/setup/onboarding/playground?blueprint=123&playground=1' }
+				);
+			} );
+
+			expect( getLaunchButton() ).not.toHaveAttribute( 'aria-haspopup' );
+		} );
+
+		it( 'should not open the save modal when the step cannot submit', async () => {
+			await act( async () => {
+				renderPlaygroundStep( { navigation: {} }, { initialEntry: wooEntry } );
+			} );
+
+			expect( getSaveStoreButton() ).toBeDisabled();
+			await userEvent.click( getSaveStoreButton() );
+
+			expect( querySaveModal() ).not.toBeInTheDocument();
+			expect( getSaveEventCalls() ).toEqual( [] );
+		} );
+
+		describe( 'waiting for Tracks before leaving', () => {
+			beforeEach( () => {
+				jest.useFakeTimers();
+			} );
+
+			afterEach( () => {
+				jest.useRealTimers();
+			} );
+
+			const continueToSave = async () => {
+				const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+				await user.click( getSaveStoreButton() );
+				await user.click( getContinueButton() );
+			};
+
+			it( 'should submit only after the save events have had time to send', async () => {
+				const submit = jest.fn();
+				await renderWooPlaygroundStep( submit );
+
+				await continueToSave();
+
+				expect( getSaveEventCalls().map( ( [ eventName ] ) => eventName ) ).toEqual( [
+					'calypso_playground_save_modal_open',
+					'calypso_playground_save_modal_continue',
+					'calypso_playground_launch_site',
+				] );
+				expect( getContinueButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+				expect( submit ).not.toHaveBeenCalled();
+
+				act( () => {
+					jest.advanceTimersByTime( 249 );
+				} );
+				expect( submit ).not.toHaveBeenCalled();
+
+				act( () => {
+					jest.advanceTimersByTime( 1 );
+				} );
+				expect( submit ).toHaveBeenCalledTimes( 1 );
+			} );
+
+			it( 'should not submit after the step unmounts', async () => {
+				const submit = jest.fn();
+				await renderWooPlaygroundStep( submit );
+
+				await continueToSave();
+				cleanup();
+
+				act( () => {
+					jest.advanceTimersByTime( 1000 );
+				} );
+				expect( submit ).not.toHaveBeenCalled();
+			} );
+
+			it( 'should not submit when the page is restored from the back/forward cache first', async () => {
+				const submit = jest.fn();
+				await renderWooPlaygroundStep( submit );
+
+				await continueToSave();
+				const event = new Event( 'pageshow' );
+				Object.defineProperty( event, 'persisted', { value: true } );
+				act( () => {
+					window.dispatchEvent( event );
+				} );
+
+				act( () => {
+					jest.advanceTimersByTime( 1000 );
+				} );
+				expect( submit ).not.toHaveBeenCalled();
+				expect( querySaveModal() ).not.toBeInTheDocument();
+				expect( getSaveStoreButton() ).toBeEnabled();
+			} );
 		} );
 
 		it( 'should close the modal when the page is restored from the back/forward cache', async () => {
@@ -401,7 +511,12 @@ describe( 'Playground', () => {
 						} }
 					>
 						<PlaygroundStep
-							{ ...mockStepProps( { flow: 'onboarding', stepName: 'playground', ...props } ) }
+							{ ...mockStepProps( {
+								flow: 'onboarding',
+								stepName: 'playground',
+								navigation: { submit: jest.fn() },
+								...props,
+							} ) }
 						/>
 					</Step.StepContainerV2Provider>,
 					{ initialEntry: wooEntry }
@@ -601,7 +716,7 @@ describe( 'Playground', () => {
 
 			await userEvent.click( getSaveStoreButton() );
 			await userEvent.click( screen.getByRole( 'button', { name: 'Continue to WordPress.com' } ) );
-			expect( submit ).toHaveBeenCalledTimes( 1 );
+			await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
 
 			// The save modal hides the rest of the page from the accessibility tree.
 			const backButton = screen.getByRole( 'button', { name: 'Back', hidden: true } );
@@ -614,6 +729,34 @@ describe( 'Playground', () => {
 
 			expect( queryLeaveModal() ).not.toBeInTheDocument();
 			expect( getLeaveEventNames() ).toEqual( [] );
+		} );
+
+		it( 'should not open the leave modal while the save modal is open', async () => {
+			await renderWooPlaygroundStep();
+
+			await userEvent.click( getSaveStoreButton() );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Exit', hidden: true } ) );
+
+			expect( screen.getByRole( 'dialog', { name: 'Save my store' } ) ).toBeVisible();
+			expect( screen.getAllByRole( 'dialog' ) ).toHaveLength( 1 );
+			expect( getLeaveEventNames() ).toEqual( [] );
+		} );
+
+		it( 'should not open the save modal while the leave modal is open', async () => {
+			await renderWooPlaygroundStep();
+
+			await userEvent.click( getBackButton() );
+			await userEvent.click(
+				screen.getByRole( 'button', { name: 'Save my store', hidden: true } )
+			);
+
+			expect( queryLeaveModal() ).toBeVisible();
+			expect( screen.getAllByRole( 'dialog' ) ).toHaveLength( 1 );
+			expect(
+				recordTracksEvent.mock.calls.filter( ( [ eventName ] ) =>
+					eventName.startsWith( 'calypso_playground_save_modal_' )
+				)
+			).toEqual( [] );
 		} );
 
 		it( 'should not let the user save the store while leaving', async () => {
