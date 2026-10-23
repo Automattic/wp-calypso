@@ -320,6 +320,13 @@ describe( 'create-site', () => {
 			expect( getAiLaunchpadEnabledArg() ).toBe( false );
 		} );
 
+		it( 'does not enable it for a reblog run', async () => {
+			mockQueryParams = new URLSearchParams( 'blog_post=https://example.blog/a-post/' );
+			await runStep();
+			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+			expect( getAiLaunchpadEnabledArg() ).toBe( false );
+		} );
+
 		it( 'does not enable it for a playground-publish run', async () => {
 			sessionStorage.setItem( 'from-playground-publish', '1' );
 			await runStep();
