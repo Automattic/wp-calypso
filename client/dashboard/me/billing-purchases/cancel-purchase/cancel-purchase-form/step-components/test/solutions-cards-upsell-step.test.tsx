@@ -202,6 +202,12 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 			{ product_slug: 'personal-bundle', bill_period_days: 365 },
 			'change-plan,find-guides,ask-ai-assistant,speak-with-support',
 		],
+		[
+			'something else related to price/value',
+			'otherPriceValue',
+			{},
+			'ask-ai-assistant,speak-with-support',
+		],
 	] )( 'shows the cards for %s', ( _, cancellationReason, overrides, solutionIds ) => {
 		const recordEvent = jest.fn();
 
@@ -227,5 +233,35 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 			cancellation_reason: cancellationReason,
 		} );
 		expect( recordEvent ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'ask-ai-assistant opens the AI assistant with the answer for "Another reason"', async () => {
+		const user = userEvent.setup();
+		const closeDialog = jest.fn();
+		const recordEvent = jest.fn();
+
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="anotherReasonOne"
+				purchase={ purchase }
+				closeDialog={ closeDialog }
+				onDeclineUpsell={ jest.fn() }
+				recordEvent={ recordEvent }
+			/>
+		);
+
+		await user.click( screen.getByRole( 'button', { name: /Ask WordPress Agent/ } ) );
+
+		expect( mockSetOpenOdieWithContext ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				section: 'pre-cancellation-upsell',
+				initialMessage: expect.stringContaining( 'anotherReasonOne' ),
+			} )
+		);
+		expect( closeDialog ).toHaveBeenCalledTimes( 1 );
+		expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_card_click', {
+			solution_id: 'ask-ai-assistant',
+			cancellation_reason: 'anotherReasonOne',
+		} );
 	} );
 } );
