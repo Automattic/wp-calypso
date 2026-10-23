@@ -4,17 +4,12 @@
 import { act, render, renderHook, screen } from '@testing-library/react';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import { useBlackboxProtection } from '../use-blackbox-protection';
+import type { BlackboxState } from 'calypso/types';
 
-let reportBlocked: ( blocked: boolean ) => void = () => {};
-
-jest.mock(
-	'../blackbox-challenge',
-	() =>
-		( { onSubmitBlockedChange }: { onSubmitBlockedChange: ( blocked: boolean ) => void } ) => {
-			reportBlocked = onSubmitBlockedChange;
-			return null;
-		}
-);
+jest.mock( '../utils/blackbox-sdk', () => ( {
+	...jest.requireActual( '../utils/blackbox-sdk' ),
+	loadBlackboxSdk: jest.fn( () => Promise.resolve() ),
+} ) );
 
 jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
 	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
@@ -35,18 +30,34 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 describe( 'useBlackboxProtection resetOnError', () => {
-	const reset = jest.fn();
+	let sdk: { setState: ( state: BlackboxState ) => void };
+	let reset: jest.Mock;
 
 	beforeEach( () => {
-		reset.mockClear();
+		jest.useFakeTimers();
+		let snapshot: BlackboxState = { status: 'ready', sessionId: 'sid' };
+		const listeners = new Set< ( state: BlackboxState ) => void >();
+		sdk = {
+			setState: ( state ) => {
+				snapshot = Object.freeze( state );
+				listeners.forEach( ( listener ) => listener( snapshot ) );
+			},
+		};
+		reset = jest.fn( () => sdk.setState( { status: 'loading' } ) );
 		window.Blackbox = {
 			configure: jest.fn(),
+			reset,
+			flush: jest.fn(),
+			getSnapshot: () => snapshot,
+			subscribe: ( listener ) => {
+				listeners.add( listener );
+				listener( snapshot );
+				return () => {
+					listeners.delete( listener );
+				};
+			},
 			collect: jest.fn(),
 			getSessionId: jest.fn(),
-			flush: jest.fn(),
-			getSnapshot: jest.fn(),
-			subscribe: jest.fn(),
-			reset,
 		};
 		( getBlackboxSessionId as jest.Mock ).mockReset();
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( undefined );
@@ -54,6 +65,7 @@ describe( 'useBlackboxProtection resetOnError', () => {
 
 	afterEach( () => {
 		delete window.Blackbox;
+		jest.useRealTimers();
 	} );
 
 	function renderProtection( initialProps: {
@@ -78,6 +90,7 @@ describe( 'useBlackboxProtection resetOnError', () => {
 		await act( async () => {} );
 
 		expect( reset ).toHaveBeenCalledTimes( 1 );
+		expect( getBlackboxSessionId ).not.toHaveBeenCalled();
 	} );
 
 	it( 'keeps the session while protection is suspended', () => {
@@ -127,44 +140,40 @@ describe( 'useBlackboxProtection resetOnError', () => {
 		);
 	}
 
-	it( 'enables submit when the replacement collect finishes without a challenge', async () => {
-		let finishCollect: ( sessionId: string ) => void = () => {};
-		( getBlackboxSessionId as jest.Mock ).mockReturnValue(
-			new Promise( ( resolve ) => {
-				finishCollect = resolve;
-			} )
-		);
+	it( 'blocks replacement loading and enables submit when the session is ready', async () => {
 		const { rerender } = render( <ContinueButton resetOnError={ null } /> );
+		await act( async () => {} );
+		expect( screen.getByRole( 'button' ) ).toBeEnabled();
 
-		act( () => reportBlocked( false ) );
 		rerender( <ContinueButton resetOnError={ { code: 403 } } /> );
-		act( () => reportBlocked( false ) );
-		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeDisabled();
+		expect( screen.getByRole( 'button' ) ).toBeDisabled();
+		expect( getBlackboxSessionId ).not.toHaveBeenCalled();
 
-		await act( async () => {
-			finishCollect( 'ABCDEFGHIJKLMNOPQRSTuv' );
-		} );
-
-		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeEnabled();
+		act( () => sdk.setState( { status: 'ready', sessionId: 'replacement' } ) );
+		expect( screen.getByRole( 'button' ) ).toBeEnabled();
 	} );
 
-	it( 'stays blocked when the replacement collect raises a challenge', async () => {
-		let finishCollect: ( sessionId: string ) => void = () => {};
-		( getBlackboxSessionId as jest.Mock ).mockReturnValue(
-			new Promise( ( resolve ) => {
-				finishCollect = resolve;
-			} )
-		);
+	it( 'keeps submit blocked until the replacement challenge ends', async () => {
 		const { rerender } = render( <ContinueButton resetOnError={ null } /> );
-
-		act( () => reportBlocked( false ) );
+		await act( async () => {} );
 		rerender( <ContinueButton resetOnError={ { code: 403 } } /> );
-		act( () => reportBlocked( true ) );
 
-		await act( async () => {
-			finishCollect( 'ABCDEFGHIJKLMNOPQRSTuv' );
-		} );
+		act( () => sdk.setState( { status: 'challenge', sessionId: 'replacement' } ) );
+		act( () => jest.advanceTimersByTime( 5000 ) );
+		expect( screen.getByRole( 'button' ) ).toBeDisabled();
 
-		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeDisabled();
+		act( () => sdk.setState( { status: 'ready', sessionId: 'replacement' } ) );
+		expect( screen.getByRole( 'button' ) ).toBeEnabled();
+	} );
+
+	it( 'enables submit after the replacement loading deadline', async () => {
+		const { rerender } = render( <ContinueButton resetOnError={ null } /> );
+		await act( async () => {} );
+		rerender( <ContinueButton resetOnError={ { code: 403 } } /> );
+
+		act( () => jest.advanceTimersByTime( 4999 ) );
+		expect( screen.getByRole( 'button' ) ).toBeDisabled();
+		act( () => jest.advanceTimersByTime( 1 ) );
+		expect( screen.getByRole( 'button' ) ).toBeEnabled();
 	} );
 } );
