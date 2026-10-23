@@ -226,10 +226,6 @@ export interface UseMessageActionsReturn {
 	clearAllMessageActions: () => void;
 }
 
-// Whether a UI content part is an interactive UI surface, which the UI keeps under `a2ui`.
-const isA2uiContent = ( content: UIMessage[ 'content' ][ number ] ): boolean =>
-	content.type === 'data' && isA2uiDataPart( content.data?.a2ui );
-
 // Transform client message (with parts) to UI message (with content)
 // Exported for unit tests; not re-exported from the package entry.
 export const transformClientMessageToUI = (
@@ -926,7 +922,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 											finalMessage.content[ 0 ].text.length > msg.content[ 0 ].text.length;
 
 										// The streamed bubble has only text, so add the final message's surfaces
-										const surfaceContent = finalMessage.content.filter( isA2uiContent );
+										const surfaceContent = finalMessage.content.filter(
+											( content ) => content.type === 'data' && isA2uiDataPart( content.data?.a2ui )
+										);
 
 										return {
 											...finalMessage,

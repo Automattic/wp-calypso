@@ -72,7 +72,7 @@ export function extractNewContentFromMessage( message: Message ): Message {
 
 /**
  * Adds an interactive UI surface to the history: on the text item before it, so the agent reads
- * them together, or on an item of its own when that text already has one or there is none.
+ * them together, or on an item of its own when there is none.
  * @param historyParts - The history, which this adds to
  * @param role         - The role of the surface's message
  * @param surface      - The surface
@@ -84,7 +84,7 @@ function addA2uiToHistory(
 	surface: A2uiDataPart,
 	textItem?: DataPart
 ): void {
-	if ( textItem && ! textItem.data.a2ui ) {
+	if ( textItem ) {
 		textItem.data.a2ui = surface;
 		return;
 	}

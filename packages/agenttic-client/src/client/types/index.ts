@@ -119,7 +119,6 @@ export interface ConversationHistoryPart extends DataPart {
 	data: {
 		role: 'user' | 'model';
 		text: string;
-		a2ui?: A2uiDataPart;
 	};
 }
 

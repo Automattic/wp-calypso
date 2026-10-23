@@ -86,7 +86,7 @@ describe( 'interactive UI response messages', () => {
 				operations,
 				messageId: 'agent',
 				messageIndex: 1,
-				signature: JSON.stringify( [ 'agent', 1, { operations } ] ),
+				signature: JSON.stringify( [ 'agent', { operations } ] ),
 			},
 		] );
 	} );

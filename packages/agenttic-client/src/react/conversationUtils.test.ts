@@ -87,14 +87,6 @@ describe( 'interactive UI surfaces in history', () => {
 	it.each( [
 		[ 'with the text before it', [ text, surface ], [ { text: 'Here you go.', a2ui: surface } ] ],
 		[ 'on its own without text', [ surface ], [ { text: '', a2ui: surface } ] ],
-		[
-			'on its own after text that has one',
-			[ text, surface, surface ],
-			[
-				{ text: 'Here you go.', a2ui: surface },
-				{ text: '', a2ui: surface },
-			],
-		],
 	] )( 'sends a surface to the agent %s', ( _description, parts, items ) => {
 		expect( conversationMessagesToDataParts( [ reply( parts ) ] ) ).toEqual(
 			items.map( ( item ) => ( { type: 'data', data: { role: 'agent', ...item } } ) )

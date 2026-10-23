@@ -71,7 +71,7 @@ export function getInteractiveUiBatches( messages: UIMessage[] ): InteractiveUiB
 			return [];
 		}
 
-		return message.content.flatMap( ( content, contentIndex ) => {
+		return message.content.flatMap( ( content ) => {
 			const part = readInteractiveUiPart( content );
 			if ( ! part ) {
 				return [];
@@ -82,7 +82,7 @@ export function getInteractiveUiBatches( messages: UIMessage[] ): InteractiveUiB
 					...part,
 					messageId: message.id,
 					messageIndex,
-					signature: JSON.stringify( [ message.id, contentIndex, part ] ),
+					signature: JSON.stringify( [ message.id, part ] ),
 				},
 			];
 		} );
