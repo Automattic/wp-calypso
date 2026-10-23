@@ -59,11 +59,14 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 	getSignupCompleteSlug: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/utils/build-wow-plans', () => ( {
-	planSupportsBuildWow: ( slug?: string ) =>
-		!! slug && slug !== 'pro-plan' && ! slug.startsWith( 'ecommerce-bundle' ),
-	planBuildsStoreOnBuildWow: ( slug?: string ) => !! slug?.startsWith( 'ecommerce-bundle' ),
-} ) );
+jest.mock( 'calypso/landing/stepper/utils/build-wow-plans', () => {
+	const isCommerce = ( slug?: string ) => /^ecommerce-(trial-)?bundle/.test( slug ?? '' );
+	return {
+		planSupportsBuildWow: ( slug?: string ) =>
+			!! slug && slug !== 'pro-plan' && ! isCommerce( slug ),
+		planBuildsStoreOnBuildWow: isCommerce,
+	};
+} );
 
 jest.mock( '../../../../../hooks/use-plan-cart-item', () => ( {
 	usePlanCartItem: jest.fn(),
@@ -236,21 +239,24 @@ describe( 'SetupYourSiteAIStep', () => {
 			} );
 		} );
 
-		it( 'submits the generate-theme choice from the custom design card on Commerce', () => {
-			setSitePlan( 'ecommerce-bundle' );
+		it.each( [ 'ecommerce-bundle', 'ecommerce-trial-bundle-monthly' ] )(
+			'submits the generate-theme choice from the custom design card on %s',
+			( planSlug ) => {
+				setSitePlan( planSlug );
 
-			renderStep();
+				renderStep();
 
-			clickCustomDesign();
+				clickCustomDesign();
 
-			expect( navigation.submit ).toHaveBeenCalledWith( {
-				setupChoice: 'generate-theme',
-				siteSlug: 'example.wordpress.com',
-				siteId: 123,
-				graph: 'dsl',
-				buildsStore: true,
-			} );
-		} );
+				expect( navigation.submit ).toHaveBeenCalledWith( {
+					setupChoice: 'generate-theme',
+					siteSlug: 'example.wordpress.com',
+					siteId: 123,
+					graph: 'dsl',
+					buildsStore: true,
+				} );
+			}
+		);
 
 		it( 'keeps the Woo hosting solutions form on build-with-ai', () => {
 			mockQueryParams = new URLSearchParams( { ref: WOO_HOSTING_SOLUTIONS_REF } );
@@ -399,17 +405,20 @@ describe( 'SetupYourSiteAIStep', () => {
 			isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec' );
 		} );
 
-		it( 'keeps Commerce on build-with-ai', () => {
-			setSitePlan( 'ecommerce-bundle' );
+		it.each( [ 'ecommerce-bundle', 'ecommerce-trial-bundle-monthly' ] )(
+			'keeps %s on build-with-ai',
+			( planSlug ) => {
+				setSitePlan( planSlug );
 
-			renderStep();
+				renderStep();
 
-			clickCustomDesign();
+				clickCustomDesign();
 
-			expect( navigation.submit ).toHaveBeenCalledWith(
-				expect.objectContaining( { setupChoice: 'build-with-ai' } )
-			);
-		} );
+				expect( navigation.submit ).toHaveBeenCalledWith(
+					expect.objectContaining( { setupChoice: 'build-with-ai' } )
+				);
+			}
+		);
 
 		it( 'submits the build-with-ai choice from the custom design card', () => {
 			renderStep();

@@ -20,6 +20,7 @@ describe( 'planSupportsBuildWow', () => {
 		'pro-plan',
 		'ecommerce-bundle',
 		'ecommerce-bundle-monthly',
+		'ecommerce-trial-bundle-monthly',
 		'not-a-plan',
 	] )( 'rejects %s', ( slug ) => {
 		expect( planSupportsBuildWow( slug ) ).toBe( false );
@@ -32,12 +33,14 @@ describe( 'planSupportsBuildWow', () => {
 } );
 
 describe( 'planBuildsStoreOnBuildWow', () => {
-	it.each( [ 'ecommerce-bundle', 'ecommerce-bundle-monthly', 'ecommerce-bundle-2y' ] )(
-		'accepts the Commerce plan %s',
-		( slug ) => {
-			expect( planBuildsStoreOnBuildWow( slug ) ).toBe( true );
-		}
-	);
+	it.each( [
+		'ecommerce-bundle',
+		'ecommerce-bundle-monthly',
+		'ecommerce-bundle-2y',
+		'ecommerce-trial-bundle-monthly',
+	] )( 'accepts the Commerce plan %s', ( slug ) => {
+		expect( planBuildsStoreOnBuildWow( slug ) ).toBe( true );
+	} );
 
 	it.each( [ 'free_plan', 'personal-bundle', 'value_bundle', 'business-bundle', 'not-a-plan' ] )(
 		'rejects %s',
