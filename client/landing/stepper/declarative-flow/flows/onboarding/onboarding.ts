@@ -95,10 +95,8 @@ import type { WowFunnelDest } from '../../../utils/wow-funnel';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { Store } from 'redux';
 
-// Kept on every URL that brings a run back into onboarding after checkout: checkout's return and
-// Back links, the email-verification return and a reloaded processing step. Each one shapes how
-// the run ends. Args that preselect or skip a step (plan, storage) must stay off, or going back
-// would skip the step the user returned to.
+// Query args that customize a run. They're kept when the run comes back from checkout.
+// Don't add args that preselect or skip a step (plan, storage): going Back would skip it again.
 const CHECKOUT_RETURN_PRESERVED_QUERY_ARGS = [
 	'ref',
 	'coupon',
