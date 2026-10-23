@@ -1,3 +1,6 @@
+import useDefaultWpcomPlansIntent from './use-default-wpcom-plans-intent';
+import type { PlansIntent } from '@automattic/plans-grid-next';
+
 type PlansGridRedesignExperimentResult = {
 	isLoading: boolean;
 	/**
@@ -9,7 +12,7 @@ type PlansGridRedesignExperimentResult = {
 	 */
 	usePlansGridRedesignNewDescription: boolean;
 	/**
-	 * When true, show the differentiator header (4 bullet points). Signup only.
+	 * When true, show the differentiator header (4 bullet points). Signup with the default intent only.
 	 */
 	showDifferentiatorHeader: boolean;
 	/**
@@ -28,16 +31,20 @@ type PlansGridRedesignExperimentResult = {
 
 interface UsePlansGridRedesignExperimentParams {
 	isInSignup: boolean;
+	intent?: PlansIntent;
 }
 
 function usePlansGridRedesignExperiment( {
 	isInSignup,
+	intent,
 }: UsePlansGridRedesignExperimentParams ): PlansGridRedesignExperimentResult {
+	const defaultWpcomPlansIntent = useDefaultWpcomPlansIntent();
+
 	return {
 		isLoading: false,
 		usePlansGridRedesign: true,
 		usePlansGridRedesignNewDescription: true,
-		showDifferentiatorHeader: isInSignup,
+		showDifferentiatorHeader: isInSignup && intent === defaultWpcomPlansIntent,
 		usePlansGridRedesignFeatures: true,
 		showEnterpriseBottomCard: false,
 		showWooCommerceBottomCard: false,
