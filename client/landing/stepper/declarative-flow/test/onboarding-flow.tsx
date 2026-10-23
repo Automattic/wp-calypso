@@ -68,6 +68,12 @@ jest.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: () => [ false, null ],
 } ) );
 
+let mockPostPlanSelectionEmailVerification = false;
+jest.mock( '../internals/steps-repository/__user/use-email-verification-gate', () => ( {
+	...jest.requireActual( '../internals/steps-repository/__user/use-email-verification-gate' ),
+	useIsPostPlanSelectionEmailVerification: () => mockPostPlanSelectionEmailVerification,
+} ) );
+
 describe( 'Onboarding Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
@@ -280,6 +286,90 @@ describe( 'Onboarding Flow', () => {
 				expect( checkoutUrl ).toContain( '/checkout/test-site.wordpress.com' );
 				expect( checkoutUrl ).toContain( 'checkoutBackUrl=' );
 				expect( checkoutUrl ).toContain( '/setup/onboarding/plans' );
+			} );
+		} );
+
+		describe( 'reblog destination', () => {
+			const POST_URL = 'https://example.blog/2026/10/a-post/?utm_source=x&lang=es';
+			const REBLOG_EDITOR = `/post/test-site.wordpress.com?url=${ encodeURIComponent( POST_URL ) }`;
+
+			beforeEach( () => {
+				mockPostPlanSelectionEmailVerification = false;
+			} );
+
+			const finishProcessing = async ( dependencies: Record< string, unknown > ) => {
+				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+				await runUseStepNavigationSubmit( {
+					currentStep: STEPS.PROCESSING.slug,
+					currentURL: `/setup/onboarding/processing?blog_post=${ encodeURIComponent( POST_URL ) }&ref=reblog`,
+					dependencies: {
+						siteSlug: 'test-site.wordpress.com',
+						siteId: 123,
+						processingResult: ProcessingResult.SUCCESS,
+						...dependencies,
+					},
+				} );
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+				return ( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ];
+			};
+
+			// Without this, a free site eligible for the AI builder stops at the setup chooser.
+			it( 'lands a free site in the editor with the post to reblog', async () => {
+				expect( await finishProcessing( { postCheckoutBigSky: true } ) ).toBe( REBLOG_EDITOR );
+			} );
+
+			// Without this, checkout returns to the setup chooser and the post is lost.
+			it( 'sends a paid site from checkout straight to the editor', async () => {
+				const checkoutUrl = new URL( await finishProcessing( { goToCheckout: true } ), 'http://x' );
+
+				expect( checkoutUrl.searchParams.get( 'redirect_to' ) ).toBe( REBLOG_EDITOR );
+			} );
+
+			// Without this, refreshing processing on the way back from checkout forgets the post.
+			it( 'keeps the post when processing is reloaded with nothing pending', async () => {
+				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+				await runUseStepNavigationSubmit( {
+					currentStep: STEPS.PROCESSING.slug,
+					currentURL: `/setup/onboarding/processing?siteSlug=test-site.wordpress.com&blog_post=${ encodeURIComponent(
+						POST_URL
+					) }`,
+					dependencies: { processingResult: ProcessingResult.NO_ACTION },
+				} );
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+				const resumeUrl = new URL(
+					( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ],
+					'http://x'
+				);
+				expect( resumeUrl.pathname ).toBe( '/setup/onboarding/post-checkout-onboarding' );
+				expect( resumeUrl.searchParams.get( 'blog_post' ) ).toBe( POST_URL );
+			} );
+
+			// Without this, leaving checkout to change the plan or domain forgets the post.
+			it( 'keeps the post on checkout back URLs', async () => {
+				const checkoutUrl = new URL( await finishProcessing( { goToCheckout: true } ), 'http://x' );
+
+				for ( const backUrl of [ 'checkoutBackUrl', 'checkoutBackUrlDomains' ] ) {
+					const back = new URL( checkoutUrl.searchParams.get( backUrl ) ?? '' );
+					expect( back.searchParams.get( 'blog_post' ) ).toBe( POST_URL );
+					expect( back.searchParams.get( 'ref' ) ).toBe( 'reblog' );
+				}
+			} );
+
+			// Without this, a reblog order skips the post-plan email-verification gate.
+			it( 'returns a paid site through email verification, keeping the post', async () => {
+				mockPostPlanSelectionEmailVerification = true;
+				const checkoutUrl = new URL( await finishProcessing( { goToCheckout: true } ), 'http://x' );
+				const returnUrl = new URL(
+					checkoutUrl.searchParams.get( 'redirect_to' ) ?? '',
+					'http://x'
+				);
+
+				expect( returnUrl.pathname ).toBe( '/setup/onboarding/email-verification' );
+				expect( returnUrl.searchParams.get( 'blog_post' ) ).toBe( POST_URL );
 			} );
 		} );
 
