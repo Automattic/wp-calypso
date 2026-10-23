@@ -251,23 +251,6 @@
 		}
 	}
 
-	// The last row sits directly on the grid's bottom border, so it drops its
-	// own border and the highlighted plan's vertical borders end on the grid's.
-	tbody:last-child > tr:last-child {
-		@include plans-grid-medium-large {
-			border-bottom: none;
-
-			> .popular-plan-parent-class {
-				align-self: stretch;
-
-				&::before,
-				&::after {
-					bottom: -12px; // the row's bottom padding
-				}
-			}
-		}
-	}
-
 	.plan-comparison-grid__title {
 		margin-top: 0;
 		margin-bottom: 12px;

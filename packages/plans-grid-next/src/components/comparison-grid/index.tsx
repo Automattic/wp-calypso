@@ -75,6 +75,7 @@ const findFeatureWithAlias = (
 
 const featureGroupRowTitleCellMaxWidth = 450;
 const rowCellMaxWidth = 290;
+const rowPaddingBlock = 12;
 
 const JetpackIconContainer = styled.div`
 	padding-inline-start: 3px;
@@ -169,9 +170,26 @@ const Row = styled.div< {
 		display: flex;
 		align-items: center;
 		margin: 0 20px;
-		padding: 12px 0;
+		padding: ${ rowPaddingBlock }px 0;
 		border-bottom: 1px solid #eee;
 	` ) }
+
+	// The last row sits directly on the grid's bottom border, so it drops its
+	// own border and the highlighted plan's vertical borders end on the grid's.
+	tbody:last-child > &:last-child {
+		${ plansGridMediumLarge( css`
+			border-bottom: none;
+
+			& > .popular-plan-parent-class {
+				align-self: stretch;
+
+				&::before,
+				&::after {
+					bottom: -${ rowPaddingBlock }px;
+				}
+			}
+		` ) }
+	}
 
 	${ ( props ) =>
 		props.isHighlighted &&
@@ -181,7 +199,7 @@ const Row = styled.div< {
 				border-top: 1px solid #eee;
 				font-weight: bold;
 				margin: -1px 0 0;
-				padding: 12px 20px;
+				padding: ${ rowPaddingBlock }px 20px;
 				color: #3a434a;
 			` ) }
 		` };
