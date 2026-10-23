@@ -1,6 +1,6 @@
 import { staticSiteImportSessionQuery } from '@automattic/api-queries';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
-import { MShotsImage, Step } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -35,8 +35,6 @@ import type { ReactNode } from 'react';
 import './style.scss';
 
 export type StaticSiteImportResultsSubmits = { action: 'continue' | 'restart' | 'expert' };
-
-const MSHOTS_OPTIONS = { vpw: 1200, vph: 800, w: 1200, screen_height: 800 };
 
 const strong = { strong: <strong />, span: <span className="static-site-import-results__muted" /> };
 
@@ -339,7 +337,7 @@ const StaticSiteImportResults: StepType< { submits: StaticSiteImportResultsSubmi
 							<Card>
 								<CardBody>
 									<HStack wrap>
-										<span id="static-site-import-results-host">{ host }</span>
+										<span>{ host }</span>
 										<ExternalLink href={ sourceUrl }>
 											{ platformName
 												? sprintf(
@@ -354,17 +352,15 @@ const StaticSiteImportResults: StepType< { submits: StaticSiteImportResultsSubmi
 							</Card>
 						) }
 
-						{ host && (
+						{ host && session?.preview_image_url && (
 							<Card className="static-site-import-results__screenshot">
-								<MShotsImage
-									url={ sourceUrl }
+								<img
+									src={ session.preview_image_url }
 									alt={ sprintf(
 										/* translators: %s: the site's domain, e.g. example.com. */
 										__( 'The homepage of %s' ),
 										host
 									) }
-									aria-labelledby="static-site-import-results-host"
-									options={ MSHOTS_OPTIONS }
 								/>
 							</Card>
 						) }
