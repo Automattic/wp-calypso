@@ -39,11 +39,13 @@ import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import {
+	BLUEPRINT_BUILD_QUERY_PARAM,
 	getBlueprintArchiveSiteSpecUrl,
 	getSpecMetaFromQuery,
 	getStandaloneBlueprintArchiveSlug,
 	getStandaloneBlueprintSimpleSlug,
 	isBlueprintCustomThemeBuild,
+	SPEC_META_QUERY_PARAMS,
 } from '../../../utils/blueprint-archive-import';
 import {
 	getBuildWowSiteIdentifier,
@@ -104,6 +106,8 @@ const CHECKOUT_RETURN_PRESERVED_QUERY_ARGS = [
 	'playground',
 	'blueprint',
 	'build_dest',
+	BLUEPRINT_BUILD_QUERY_PARAM,
+	...SPEC_META_QUERY_PARAMS,
 	'wow_funnel',
 	'dest',
 ] as const;

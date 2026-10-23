@@ -349,6 +349,9 @@ describe( 'Onboarding Flow', () => {
 				playground: 'playground-id',
 				blueprint: 'blueprint-slug',
 				build_dest: 'simple',
+				build: 'custom-theme',
+				site_title: 'A site',
+				zoom_booking_url: 'https://zoom.example/book',
 				wow_funnel: 'some-funnel',
 				dest: 'editor',
 			};
