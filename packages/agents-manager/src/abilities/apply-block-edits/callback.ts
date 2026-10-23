@@ -5,6 +5,7 @@ import {
 	captureCanvas,
 	describeCaptureShape,
 	describeMeasuredLayout,
+	describeMeasuredWidths,
 	describeTextContrast,
 	describeUnmoved,
 	getUnframedClientIds,
@@ -390,10 +391,12 @@ export async function applyBlockEditsCallback(
 
 	// Captured after every path that reached the page, the no-change and
 	// failure ones most of all: there the block tree cannot say whether the
-	// user's problem is fixed. A call that changes custom CSS gets the whole
-	// page, which the CSS can reach anywhere of, with or without block edits;
-	// a request refused before any write, or a call stopped by a move, gets
-	// none.
+	// user's problem is fixed. A call that changes custom CSS also gets the
+	// whole page, which the CSS can reach anywhere of, after the full-size
+	// picture of the blocks it touched: scaled to fit, the page hides exactly
+	// the detail an edit to those blocks needs checking against, such as a
+	// row's width or a muted border. A request refused before any write, or a
+	// call stopped by a move, gets none.
 	//
 	// A relative request — "make this match Project details" — cannot be checked
 	// from a picture of the edited side alone, so the blocks it is being compared
@@ -414,13 +417,22 @@ export async function applyBlockEditsCallback(
 		);
 
 	const wholePage = edits?.customCSS !== undefined;
+	const framedClientIds = [ ...changedClientIds, ...referenceClientIds ];
+	const canCapture = !! edits && ! getBlockingMove();
+	// A CSS-only call has no blocks to frame, and without any the capture falls
+	// back to wherever the user is scrolled, which the whole page already shows.
+	const blockParts =
+		canCapture && ( ! wholePage || framedClientIds.length )
+			? await captureCanvas( { clientIds: framedClientIds, fullPage: false } )
+			: null;
+	// Not again when the blocks were too spread out for bands, and the
+	// rasterizer already fell back to the whole page.
+	const pageParts =
+		canCapture && wholePage && ! blockParts?.[ 0 ]?.metadata?.fullPage
+			? await captureCanvas( { clientIds: framedClientIds, fullPage: true } )
+			: null;
 	const fileParts =
-		! edits || getBlockingMove()
-			? null
-			: await captureCanvas( {
-					clientIds: [ ...changedClientIds, ...referenceClientIds ],
-					fullPage: wholePage,
-				} );
+		blockParts || pageParts ? [ ...( blockParts ?? [] ), ...( pageParts ?? [] ) ] : null;
 
 	// Two separate facts about the pictures that came back. The shape says how
 	// many there are and what they cover, which the rasterizer decides from how
@@ -446,6 +458,7 @@ export async function applyBlockEditsCallback(
 			describeReferenceFraming( referenceClientIds, getUnframedClientIds( referenceClientIds ) ),
 			...( contrast?.notes ?? [] ),
 			...describeMeasuredLayout( changedClientIds ),
+			...describeMeasuredWidths( changedClientIds ),
 			layoutBefore && result.outcome === 'updated' ? describeUnmoved( layoutBefore ) : '',
 		].filter( Boolean );
 

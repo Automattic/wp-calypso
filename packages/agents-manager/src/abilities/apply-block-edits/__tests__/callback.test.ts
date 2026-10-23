@@ -9,6 +9,7 @@ jest.mock( '../../../utils/canvas-capture', () => ( {
 	...jest.requireActual( '../../../utils/canvas-capture' ),
 	captureCanvas: jest.fn(),
 	describeMeasuredLayout: jest.fn(),
+	describeMeasuredWidths: jest.fn(),
 	describeTextContrast: jest.fn(),
 	describeUnmoved: jest.fn(),
 	snapshotLayout: jest.fn(),
@@ -57,6 +58,7 @@ import { getBlockingMove } from '../../../utils/canvas-binding';
 import {
 	captureCanvas,
 	describeMeasuredLayout,
+	describeMeasuredWidths,
 	describeTextContrast,
 	describeUnmoved,
 	snapshotLayout,
@@ -144,6 +146,7 @@ beforeEach( () => {
 		.mockResolvedValue( { recoveredTargetIds: new Set(), insertedClientIds: [] } );
 	jest.mocked( captureCanvas ).mockResolvedValue( null );
 	jest.mocked( describeMeasuredLayout ).mockReturnValue( [] );
+	jest.mocked( describeMeasuredWidths ).mockReturnValue( [] );
 	jest.mocked( describeTextContrast ).mockReturnValue( null );
 	jest.mocked( snapshotLayout ).mockReturnValue( null );
 	jest.mocked( describeUnmoved ).mockReturnValue( '' );
@@ -741,7 +744,9 @@ describe( 'applyBlockEditsCallback', () => {
 			const headerBlock = { ...paragraph( 'Header' ), clientId: 'h1' };
 
 			beforeEach( () => {
-				jest.mocked( captureCanvas ).mockResolvedValue( [ band( { fullPage: true } ) ] );
+				jest
+					.mocked( captureCanvas )
+					.mockImplementation( async ( { fullPage } = {} ) => [ band( { fullPage } ) ] );
 				jest.mocked( getPageBlocks ).mockReturnValue( {
 					blocks: [ paragraph( 'Old' ) ],
 					templateParts: [ { slug: 'header', blocks: [ headerBlock ] } ],
@@ -779,6 +784,52 @@ describe( 'applyBlockEditsCallback', () => {
 				expect( describeTextContrast ).toHaveBeenCalledWith( [ 'resolved-a1', 'p1', 'h1' ], {
 					wholePage: true,
 				} );
+			} );
+
+			it( 'sends the edited blocks at full size before the whole page, and says which is which', async () => {
+				// Scaled to fit, the page hid a row's width and its muted borders,
+				// and the edit was passed on the summary's word (WPAGENT-229).
+				jest.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'p{}' } ) );
+
+				const result = await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
+
+				expect( jest.mocked( captureCanvas ).mock.calls ).toEqual( [
+					[ { clientIds: [ 'resolved-a1' ], fullPage: false } ],
+					[ { clientIds: [ 'resolved-a1' ], fullPage: true } ],
+				] );
+				expect( result.__file_parts?.map( ( part ) => part.metadata?.fullPage ) ).toEqual( [
+					false,
+					true,
+				] );
+				expect( result.result.captureNotes?.[ 0 ] ).toMatch(
+					/^The first picture is the edited blocks at full size\. The last is the whole page/
+				);
+			} );
+
+			it( 'takes the whole page once when the edited blocks already fell back to it', async () => {
+				jest.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'p{}' } ) );
+				jest.mocked( captureCanvas ).mockResolvedValue( [ band( { fullPage: true } ) ] );
+
+				const result = await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
+
+				expect( captureCanvas ).toHaveBeenCalledTimes( 1 );
+				expect( result.__file_parts ).toHaveLength( 1 );
+			} );
+
+			it( 'keeps the whole page when the full-size capture is refused', async () => {
+				jest.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'p{}' } ) );
+				jest
+					.mocked( captureCanvas )
+					.mockImplementation( async ( { fullPage } = {} ) =>
+						fullPage ? [ band( { fullPage } ) ] : null
+					);
+
+				const result = await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
+
+				expect( result.__file_parts?.map( ( part ) => part.metadata?.fullPage ) ).toEqual( [
+					true,
+				] );
+				expect( result.result.captureNotes?.[ 0 ] ).toContain( 'not be legible' );
 			} );
 		} );
 

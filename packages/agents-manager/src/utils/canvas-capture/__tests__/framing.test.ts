@@ -90,4 +90,26 @@ describe( 'describeCaptureShape', () => {
 	it( 'says nothing for no files', () => {
 		expect( describeCaptureShape( [] ) ).toBe( '' );
 	} );
+
+	it( 'says which picture is full size when a CSS edit sent both', () => {
+		const message = describeCaptureShape( [
+			part( { fullPage: false } ),
+			part( { fullPage: true } ),
+		] );
+
+		expect( message ).toMatch( /^The first picture is the edited blocks at full size\./ );
+		expect( message ).toContain( 'The last is the whole page' );
+		expect( message ).toContain( 'check the edit in the full-size picture,' );
+	} );
+
+	it( 'counts the full-size pictures when the edited blocks took several', () => {
+		const message = describeCaptureShape( [
+			part( { fullPage: false } ),
+			part( { fullPage: false } ),
+			part( { fullPage: true } ),
+		] );
+
+		expect( message ).toMatch( /^The first 2 pictures are the edited blocks at full size/ );
+		expect( message ).toContain( 'full-size pictures,' );
+	} );
 } );

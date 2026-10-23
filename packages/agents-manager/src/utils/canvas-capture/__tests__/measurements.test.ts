@@ -8,7 +8,12 @@ jest.mock( '../../editor-blocks', () => ( {
 } ) );
 
 import { getBlock, getBlockRootClientId, getBlocks } from '../../editor-blocks';
-import { describeMeasuredLayout, describeUnmoved, snapshotLayout } from '../measurements';
+import {
+	describeMeasuredLayout,
+	describeMeasuredWidths,
+	describeUnmoved,
+	snapshotLayout,
+} from '../measurements';
 import type { EditorBlock } from '../../editor-blocks';
 
 interface Rect {
@@ -412,5 +417,98 @@ describe( 'whether anything moved', () => {
 		mountCanvas( [ header( { build: editorSiteLogo( null ) } ) ] );
 
 		expect( snapshotLayout( [ 'zteD' ] ) ).toBeNull();
+	} );
+} );
+
+describe( 'describeMeasuredWidths', () => {
+	const details = ( clientId: string, top: number ): CanvasBlock => ( {
+		clientId,
+		name: 'core/details',
+		rect: { top, left: 20, width: 412, height: 40 },
+		text: 'Question?',
+	} );
+
+	/**
+	 * The FAQ of WPAGENT-229: the list group sits in a flex column that does not
+	 * stretch its children, so it is only as wide as its widest question, and
+	 * the questions inside it fill it.
+	 */
+	const faq = ( listWidth = 412 ): CanvasBlock => ( {
+		clientId: 'v3nd',
+		name: 'core/group',
+		rect: { top: 0, left: 0, width: 1140, height: 200 },
+		style: {
+			display: 'flex',
+			flexDirection: 'column',
+			alignItems: 'flex-start',
+			paddingLeft: '20px',
+			paddingRight: '20px',
+		},
+		children: [
+			{
+				clientId: 'tu1q',
+				name: 'core/group',
+				rect: { top: 0, left: 20, width: listWidth, height: 160 },
+				children: [ 'd1', 'd2', 'd3', 'd4' ].map( ( clientId, index ) =>
+					details( clientId, index * 40 )
+				),
+			},
+		],
+	} );
+
+	const sizePage = ( width: number ) => {
+		const canvasDocument = ( document.querySelector( 'iframe' ) as HTMLIFrameElement )
+			.contentDocument as Document;
+		withRect( canvasDocument.body, { top: 0, left: 0, width, height: 2000 } );
+	};
+
+	it( 'names the narrow parent when the edited blocks already fill it', () => {
+		// The first attempt in the trace: width: 100% on the questions, which
+		// were already as wide as the list.
+		mountCanvas( [ faq() ] );
+
+		expect( describeMeasuredWidths( [ 'd1', 'd2', 'd3', 'd4' ] ) ).toEqual( [
+			'Width: details (d1), details (d2), details (d3), details (d4) fill the width of group (tu1q), but group (tu1q) is only 412px wide inside group (v3nd), whose content box is 1100px wide; group (v3nd) is a flex column with align-items: flex-start.',
+		] );
+	} );
+
+	it( 'says how wide an edited block is against the box it sits in', () => {
+		mountCanvas( [ faq() ] );
+
+		expect( describeMeasuredWidths( [ 'tu1q' ] ) ).toEqual( [
+			'Width: group (tu1q) is 412px wide inside group (v3nd), whose content box is 1100px wide; group (v3nd) is a flex column with align-items: flex-start.',
+		] );
+	} );
+
+	it( 'confirms a block that fills every box up to the page', () => {
+		mountCanvas( [ faq( 1100 ) ] );
+		sizePage( 1140 );
+
+		expect( describeMeasuredWidths( [ 'tu1q' ] ) ).toEqual( [
+			"Width: group (tu1q) fills the full 1140px width of the page's content area.",
+		] );
+	} );
+
+	it( 'says when a max-width is what holds a block narrow', () => {
+		mountCanvas( [
+			{
+				clientId: 'p1',
+				name: 'core/paragraph',
+				rect: { top: 0, left: 0, width: 645, height: 20 },
+				style: { maxWidth: '645px' },
+				text: 'Hello',
+			},
+		] );
+		sizePage( 1140 );
+
+		expect( describeMeasuredWidths( [ 'p1' ] ) ).toEqual( [
+			"Width: paragraph (p1) is 645px wide inside the page's content area, whose content box is 1140px wide. It is held there by its max-width of 645px.",
+		] );
+	} );
+
+	it( 'gives nothing for a block the canvas does not lay out', () => {
+		mountCanvas( [ { ...details( 'd1', 0 ), rect: { top: 0, left: 0, width: 0, height: 0 } } ] );
+
+		expect( describeMeasuredWidths( [ 'd1' ] ) ).toEqual( [] );
 	} );
 } );

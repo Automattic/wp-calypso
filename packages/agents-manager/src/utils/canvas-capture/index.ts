@@ -11,7 +11,12 @@ import type { FilePart } from '@automattic/agenttic-client';
 export { describeCaptureShape, getUnframedClientIds } from './framing';
 export { describeTextContrast } from './contrast';
 export type { ContrastBackdrop, TextContrast } from './contrast';
-export { describeMeasuredLayout, describeUnmoved, snapshotLayout } from './measurements';
+export {
+	describeMeasuredLayout,
+	describeMeasuredWidths,
+	describeUnmoved,
+	snapshotLayout,
+} from './measurements';
 export type { LayoutSnapshot } from './measurements';
 
 type CaptureModule = typeof import( './capture' );
