@@ -85,6 +85,18 @@ describe( 'redirectLegacyFlow', () => {
 		);
 	} );
 
+	it( 'sends the retired WooCommerce installer to the plugin page', () => {
+		const next = run(
+			{ flowName: 'woocommerce-install', stepName: 'store-address' },
+			{ siteSlug: 'example.wordpress.com' }
+		);
+
+		expect( window.location.replace ).toHaveBeenCalledWith(
+			'/plugins/woocommerce/example.wordpress.com'
+		);
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
 	it( 'still redirects legacy plan flows', () => {
 		run( { flowName: 'business' } );
 
