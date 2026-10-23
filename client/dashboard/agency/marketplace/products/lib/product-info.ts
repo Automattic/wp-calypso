@@ -318,6 +318,25 @@ const getProductInfoMap = (): Record< string, ProductInfo > => ( {
 			__( 'Blogs' ),
 		],
 	},
+	'woocommerce-subscriptions': {
+		benefits: [
+			__( 'Multiple billing schedules available to suit your store’s needs' ),
+			__( 'Integration with over 25 payment gateways for automatic recurring payments' ),
+			__(
+				'Supports manual renewal payments through any WooCommerce payment gateway, along with automatic email invoices and receipts'
+			),
+			__( 'Supports automatic rebilling on failed subscription payments' ),
+			__( 'Give subscribers the ability to manage their own plan' ),
+			__(
+				'Allow shoppers to gift subscriptions to each other, helping you reach new shoppers and grow recurring revenue with less effort'
+			),
+			__( 'Built-in renewal notifications and automatic emails' ),
+			__(
+				'Detailed reports allow you to keep track of recurring revenue, the number of active subscribers, and more'
+			),
+		],
+		recommendedFor: [],
+	},
 } );
 
 export function getProductBenefits( product: AgencyProduct ): string[] {
