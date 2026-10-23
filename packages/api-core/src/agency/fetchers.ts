@@ -3,8 +3,8 @@ import type {
 	AgencyApiResponse,
 	AgencyBlog,
 	AgencyProgramStats,
+	AgencyEnablementResourcesResponse,
 	AgencyLeadMatchingResponse,
-	AgencyResourcesResponse,
 	McpSettings,
 	McpSettingsUpdate,
 	TipaltiIFrameUrl,
@@ -18,16 +18,19 @@ export async function fetchAgency(): Promise< AgencyApiResponse > {
 	} );
 }
 
-export async function fetchAgencyResources(): Promise< AgencyResourcesResponse > {
+export async function fetchAgencyProgramStats(): Promise< AgencyProgramStats > {
 	return wpcom.req.get( {
-		path: '/agency/resources',
+		path: '/agency/stats',
 		apiNamespace: 'wpcom/v2',
 	} );
 }
 
-export async function fetchAgencyProgramStats(): Promise< AgencyProgramStats > {
+/**
+ * Fetches enablement resources with the v2 taxonomy.
+ */
+export async function fetchAgencyEnablementResources(): Promise< AgencyEnablementResourcesResponse > {
 	return wpcom.req.get( {
-		path: '/agency/stats',
+		path: '/agency/resources/v2',
 		apiNamespace: 'wpcom/v2',
 	} );
 }

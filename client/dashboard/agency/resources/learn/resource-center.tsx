@@ -1,3 +1,5 @@
+import { agencyResourceEventMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import {
 	Modal,
 	__experimentalSpacer as Spacer,
@@ -5,46 +7,54 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import BrowseAllResources from './browse-all-resources';
-import { formatAgencyResources } from './format-resources';
-import ResourceSection from './resource-section';
-import { useFilterResources } from './use-filter-resources';
 import { getYouTubeEmbedUrl } from './youtube-embed';
 import type { ResourceItem, RecordTracksEvent } from './types';
-import type { AgencyResourcesResponse } from '@automattic/api-core';
 
 interface ResourceCenterProps {
-	data: AgencyResourcesResponse | undefined;
+	resources: ResourceItem[];
 	recordTracksEvent?: RecordTracksEvent;
-	onResourceClick?: ( resource: ResourceItem ) => void;
+	/** The agency opened resources are recorded against, once it has loaded. */
+	agencyId: number | undefined;
 }
 
 export default function ResourceCenter( {
-	data,
+	resources: unsortedResources,
 	recordTracksEvent = () => {},
-	onResourceClick,
+	agencyId,
 }: ResourceCenterProps ) {
 	const [ showVideoModal, setShowVideoModal ] = useState( false );
 	const [ selectedResource, setSelectedResource ] = useState< ResourceItem | null >( null );
+
+	const { mutate: recordResourceEvent } = useMutation(
+		agencyResourceEventMutation( agencyId ?? 0 )
+	);
+
+	const handleResourceClick = useCallback(
+		( resource: ResourceItem ) => {
+			if ( agencyId ) {
+				recordResourceEvent( { resource_id: resource.id, resource_name: resource.name } );
+			}
+		},
+		[ agencyId, recordResourceEvent ]
+	);
 
 	const handleOpenVideoModal = ( resource: ResourceItem ) => {
 		setSelectedResource( resource );
 		setShowVideoModal( true );
 	};
 
-	const resources = useMemo( () => {
-		if ( ! data?.results ) {
-			return [];
-		}
-		// Sort by created_at descending (newest first).
-		return formatAgencyResources( data.results ).sort(
-			( a, b ) => new Date( b.createdAt ).getTime() - new Date( a.createdAt ).getTime()
-		);
-	}, [ data ] );
-
-	const { topResources, artOfTheDealResources, browseAllResources } =
-		useFilterResources( resources );
+	const resources = useMemo(
+		() =>
+			// Featured first, then by created_at descending (newest first).
+			[ ...unsortedResources ].sort(
+				( a, b ) =>
+					Number( b.isFeatured ) - Number( a.isFeatured ) ||
+					new Date( b.createdAt ).getTime() - new Date( a.createdAt ).getTime()
+			),
+		[ unsortedResources ]
+	);
 
 	return (
 		<>
@@ -56,37 +66,11 @@ export default function ResourceCenter( {
 				</Text>
 			</Spacer>
 
-			<ResourceSection
-				title={ __( 'Top resources' ) }
-				resources={ topResources }
-				onOpenVideoModal={ handleOpenVideoModal }
-				recordTracksEvent={ recordTracksEvent }
-				onResourceClick={ onResourceClick }
-				maxResources={ 3 }
-				showLogo
-				columnMinWidth={ 320 }
-				tracksEventName="calypso_a4a_resource_center_top_resource_click"
-			/>
-
-			<ResourceSection
-				title={ __( 'Client conversations that work' ) }
-				description={ __(
-					'Learn practical ways to have better client conversations, build trust, and guide decisions that lead to new business and extended partnerships.'
-				) }
-				resources={ artOfTheDealResources }
-				onOpenVideoModal={ handleOpenVideoModal }
-				recordTracksEvent={ recordTracksEvent }
-				onResourceClick={ onResourceClick }
-				maxResources={ 2 }
-				columnMinWidth={ 380 }
-				tracksEventName="calypso_a4a_resource_center_art_of_deal_click"
-			/>
-
 			<BrowseAllResources
-				resources={ browseAllResources }
+				resources={ resources }
 				onOpenVideoModal={ handleOpenVideoModal }
 				recordTracksEvent={ recordTracksEvent }
-				onResourceClick={ onResourceClick }
+				onResourceClick={ handleResourceClick }
 			/>
 
 			{ showVideoModal && selectedResource && (
