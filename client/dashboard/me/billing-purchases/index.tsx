@@ -28,7 +28,6 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
-import { useIsSplitCancelRemoveEnabled } from './cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	WIDE_FIELDS,
 	DESKTOP_FIELDS,
@@ -49,7 +48,6 @@ export default function PurchasesList() {
 	const supportsMonetizeSubscriptions = Boolean(
 		supports.me && supports.me.billing && supports.me.billing.monetizeSubscriptions
 	);
-	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const currentSearchParams = purchasesRoute.useSearch();
 	const { removed, removedDomain, removedId } = purchasesIndexRoute.useSearch();
 	// Capture notice data on first render — useSearch() may lose the values
@@ -199,7 +197,7 @@ export default function PurchasesList() {
 				/>
 			}
 		>
-			{ isSplitCancelRemoveEnabled && showRemovedNotice && (
+			{ showRemovedNotice && (
 				<PurchaseRemovedNotice
 					productNoun={ removedNoticeData?.productNoun ?? '' }
 					atomicDomain={ removedNoticeData?.atomicDomain }
