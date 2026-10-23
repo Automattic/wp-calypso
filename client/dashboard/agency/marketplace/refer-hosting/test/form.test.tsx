@@ -114,7 +114,9 @@ describe( '<ReferHostingForm>', () => {
 			{ queryClient }
 		);
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Submit Premium plan referral' } ) );
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'Submit Performance plan referral' } )
+		);
 
 		expect(
 			await screen.findByRole( 'dialog', { name: 'Referrals unlock once you’re approved' } )
