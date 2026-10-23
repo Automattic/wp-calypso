@@ -478,7 +478,7 @@ describe( 'describeMeasuredWidths', () => {
 		// were already as wide as the list.
 		mountCanvas( [ faq() ] );
 
-		expect( describeMeasuredWidths( [ 'd1', 'd2', 'd3', 'd4' ] ) ).toEqual( [
+		expect( describeMeasuredWidths( [ 'd1', 'd2', 'd3', 'd4' ] ).notes ).toEqual( [
 			'Width: details (d1), details (d2), details (d3), details (d4) are as wide as the boxes they sit in allow, up to group (tu1q), but group (tu1q) is only 412px wide inside group (v3nd), whose content box is 1100px wide; group (v3nd) is a flex column with align-items: flex-start.',
 		] );
 	} );
@@ -486,7 +486,7 @@ describe( 'describeMeasuredWidths', () => {
 	it( 'says how wide an edited block is against the box it sits in', () => {
 		mountCanvas( [ faq() ] );
 
-		expect( describeMeasuredWidths( [ 'tu1q' ] ) ).toEqual( [
+		expect( describeMeasuredWidths( [ 'tu1q' ] ).notes ).toEqual( [
 			'Width: group (tu1q) is 412px wide inside group (v3nd), whose content box is 1100px wide; group (v3nd) is a flex column with align-items: flex-start.',
 		] );
 	} );
@@ -495,7 +495,7 @@ describe( 'describeMeasuredWidths', () => {
 		mountCanvas( [ faq( 1100 ) ] );
 		sizePage( 1140 );
 
-		expect( describeMeasuredWidths( [ 'tu1q' ] ) ).toEqual( [
+		expect( describeMeasuredWidths( [ 'tu1q' ] ).notes ).toEqual( [
 			"Width: group (tu1q) is 1100px wide, as wide as the boxes it sits in allow, up to the page's content area (1140px).",
 		] );
 	} );
@@ -512,7 +512,7 @@ describe( 'describeMeasuredWidths', () => {
 		] );
 		sizePage( 1140 );
 
-		expect( describeMeasuredWidths( [ 'p1' ] ) ).toEqual( [
+		expect( describeMeasuredWidths( [ 'p1' ] ).notes ).toEqual( [
 			"Width: paragraph (p1) is 645px wide inside the page's content area, whose content box is 1140px wide. It is held there by its max-width of 645px.",
 		] );
 	} );
@@ -536,7 +536,7 @@ describe( 'describeMeasuredWidths', () => {
 		] );
 		sizePage( 1200 );
 
-		expect( describeMeasuredWidths( [ 'p1' ] ) ).toEqual( [
+		expect( describeMeasuredWidths( [ 'p1' ] ).notes ).toEqual( [
 			"Width: paragraph (p1) is 1120px wide, as wide as the boxes it sits in allow, up to the page's content area (1200px).",
 		] );
 	} );
@@ -561,14 +561,80 @@ describe( 'describeMeasuredWidths', () => {
 			},
 		] );
 
-		expect( describeMeasuredWidths( [ 'h1' ] ) ).toEqual( [
+		expect( describeMeasuredWidths( [ 'h1' ] ).notes ).toEqual( [
 			'Width: heading (h1) is as wide as the boxes it sits in allow, up to the inner container of cover (c1), but the inner container of cover (c1) is only 600px wide inside cover (c1), whose content box is 1100px wide.',
 		] );
+	} );
+
+	describe( 'shortfalls', () => {
+		const faqShortfall = {
+			clientId: 'tu1q',
+			width: 412,
+			parentClientId: 'v3nd',
+			parentWidth: 1100,
+			alignItems: 'flex-start',
+		};
+
+		it( 'names the narrow block, not the edited blocks inside it, once', () => {
+			// The correction stretches the list; stretching the questions,
+			// already as wide as the list, changes nothing.
+			mountCanvas( [ faq() ] );
+
+			expect( describeMeasuredWidths( [ 'd1', 'd2', 'd3', 'd4' ] ).shortfalls ).toEqual( [
+				faqShortfall,
+			] );
+		} );
+
+		it( 'names an edited block that is itself the narrow one', () => {
+			mountCanvas( [ faq() ] );
+
+			expect( describeMeasuredWidths( [ 'tu1q' ] ).shortfalls ).toEqual( [ faqShortfall ] );
+		} );
+
+		it( 'has none once the block fills its parent', () => {
+			mountCanvas( [ faq( 1100 ) ] );
+			sizePage( 1140 );
+
+			expect( describeMeasuredWidths( [ 'tu1q' ] ).shortfalls ).toEqual( [] );
+		} );
+
+		it( 'has none for a narrow wrapper, which cannot take a class', () => {
+			mountCanvas( [
+				{
+					clientId: 'c1',
+					name: 'core/cover',
+					rect: { top: 0, left: 0, width: 1100, height: 400 },
+					style: { display: 'flex', flexDirection: 'column', alignItems: 'center' },
+					wrap: { top: 0, left: 250, width: 600, height: 400 },
+					children: [
+						{
+							clientId: 'h1',
+							name: 'core/heading',
+							rect: { top: 0, left: 250, width: 600, height: 40 },
+							text: 'Title',
+						},
+					],
+				},
+			] );
+
+			expect( describeMeasuredWidths( [ 'h1' ] ).shortfalls ).toEqual( [] );
+		} );
+
+		it( 'has none outside a flex column, where align-items does not set the width', () => {
+			mountCanvas( [
+				{
+					...faq(),
+					style: { display: 'flex', flexDirection: 'row', alignItems: 'flex-start' },
+				},
+			] );
+
+			expect( describeMeasuredWidths( [ 'tu1q' ] ).shortfalls ).toEqual( [] );
+		} );
 	} );
 
 	it( 'gives nothing for a block the canvas does not lay out', () => {
 		mountCanvas( [ { ...details( 'd1', 0 ), rect: { top: 0, left: 0, width: 0, height: 0 } } ] );
 
-		expect( describeMeasuredWidths( [ 'd1' ] ) ).toEqual( [] );
+		expect( describeMeasuredWidths( [ 'd1' ] ).notes ).toEqual( [] );
 	} );
 } );

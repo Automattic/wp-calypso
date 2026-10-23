@@ -17,7 +17,7 @@ export {
 	describeUnmoved,
 	snapshotLayout,
 } from './measurements';
-export type { LayoutSnapshot } from './measurements';
+export type { LayoutSnapshot, WidthShortfall } from './measurements';
 
 type CaptureModule = typeof import( './capture' );
 

@@ -146,7 +146,7 @@ beforeEach( () => {
 		.mockResolvedValue( { recoveredTargetIds: new Set(), insertedClientIds: [] } );
 	jest.mocked( captureCanvas ).mockResolvedValue( null );
 	jest.mocked( describeMeasuredLayout ).mockReturnValue( [] );
-	jest.mocked( describeMeasuredWidths ).mockReturnValue( [] );
+	jest.mocked( describeMeasuredWidths ).mockReturnValue( { notes: [], shortfalls: [] } );
 	jest.mocked( describeTextContrast ).mockReturnValue( null );
 	jest.mocked( snapshotLayout ).mockReturnValue( null );
 	jest.mocked( describeUnmoved ).mockReturnValue( '' );
@@ -804,6 +804,33 @@ describe( 'applyBlockEditsCallback', () => {
 				expect( result.result.captureNotes?.[ 0 ] ).toMatch(
 					/^The first picture is at full size, framed on the blocks this call named\. The last is the whole page/
 				);
+			} );
+
+			it( 'sends width shortfalls for the server to correct, and leaves the field out without any', async () => {
+				const shortfall = {
+					clientId: 'favu',
+					width: 379,
+					parentClientId: 'sl5w',
+					parentWidth: 1098,
+					alignItems: 'flex-start',
+				};
+
+				jest.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'p{}' } ) );
+				jest
+					.mocked( describeMeasuredWidths )
+					.mockReturnValue( { notes: [ 'Width: …' ], shortfalls: [ shortfall ] } );
+
+				const result = await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
+
+				expect( describeMeasuredWidths ).toHaveBeenCalledWith( [ 'resolved-a1' ] );
+				expect( result.result.widthShortfalls ).toEqual( [ shortfall ] );
+				expect( result.result.captureNotes ).toContain( 'Width: …' );
+
+				jest.mocked( describeMeasuredWidths ).mockReturnValue( { notes: [], shortfalls: [] } );
+
+				const without = await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
+
+				expect( without.result ).not.toHaveProperty( 'widthShortfalls' );
 			} );
 
 			it( 'takes the whole page once when the edited blocks already fell back to it', async () => {

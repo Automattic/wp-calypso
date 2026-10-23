@@ -11,6 +11,7 @@ import {
 	getUnframedClientIds,
 	snapshotLayout,
 	type ContrastBackdrop,
+	type WidthShortfall,
 	type LayoutSnapshot,
 } from '../../utils/canvas-capture';
 import { checkpointKeys, sealCheckpointForSwap, withCheckpoint } from '../../utils/checkpoints';
@@ -68,6 +69,8 @@ interface ApplyBlockEditsResultData {
 	contrastFailures?: number;
 	/** The blocks painting backgrounds that text fails contrast against, for the server to name in a correction. */
 	contrastBackdrops?: ContrastBackdrop[];
+	/** Blocks narrower than their parent because a flex column does not stretch them, for the server to correct. */
+	widthShortfalls?: WidthShortfall[];
 	error?: string;
 	details?: Record< string, unknown >;
 	outcome?: ApplyBlockEditsOutcome;
@@ -446,19 +449,22 @@ export async function applyBlockEditsCallback(
 	// easy to miss in a scaled-down picture. Custom CSS can recolour any block
 	// on the page, edited or not, so with it the whole page is measured, the
 	// edited blocks first. The server acts on the failure count rather than
-	// the notes' wording, so the field is left out when no text was measured.
+	// the notes' wording, so the field is left out when no text was measured;
+	// and on the width shortfalls rather than the width notes, for the same
+	// reason, so they too are left out when there are none.
 	// Kept out of `message`, which the user may see as the reply.
 	if ( fileParts ) {
 		const contrast = describeTextContrast(
 			wholePage ? [ ...changedClientIds, ...getPageClientIds() ] : changedClientIds,
 			{ wholePage }
 		);
+		const widths = describeMeasuredWidths( changedClientIds );
 		const captureNotes = [
 			describeCaptureShape( fileParts ),
 			describeReferenceFraming( referenceClientIds, getUnframedClientIds( referenceClientIds ) ),
 			...( contrast?.notes ?? [] ),
 			...describeMeasuredLayout( changedClientIds ),
-			...describeMeasuredWidths( changedClientIds ),
+			...widths.notes,
 			layoutBefore && result.outcome === 'updated' ? describeUnmoved( layoutBefore ) : '',
 		].filter( Boolean );
 
@@ -467,6 +473,7 @@ export async function applyBlockEditsCallback(
 			...( captureNotes.length > 0 && { captureNotes } ),
 			...( typeof contrast?.failures === 'number' && { contrastFailures: contrast.failures } ),
 			...( contrast && contrast.backdrops.length > 0 && { contrastBackdrops: contrast.backdrops } ),
+			...( widths.shortfalls.length > 0 && { widthShortfalls: widths.shortfalls } ),
 		};
 	}
 

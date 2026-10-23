@@ -227,7 +227,7 @@ function createMeasurer() {
 		return box;
 	};
 
-	return { measureOnce, visibleOf };
+	return { measureOnce, visibleOf, findShortId };
 }
 
 // Which side of the centre an offset falls on, or empty within the tolerance.
@@ -540,6 +540,8 @@ export function describeUnmoved( snapshot: LayoutSnapshot ): string {
 }
 
 const MAX_WIDTH_NOTES = 4;
+// The server keeps at most this many.
+const MAX_WIDTH_SHORTFALLS = 8;
 // How many elements up from an edited block to look for the box that sets its
 // width. Elements, not blocks: a block's children often sit in a wrapper of
 // its own, such as a cover's inner container.
@@ -610,6 +612,31 @@ function describeContainerLayout( container: string, reading: WidthReading ): st
 }
 
 /**
+ * A block narrower than its parent's content box, inside a flex column that
+ * does not stretch it: the case an automatic correction can fix by
+ * stretching the block itself. Short ids, the same the notes use.
+ */
+export interface WidthShortfall {
+	clientId: string;
+	width: number;
+	parentClientId: string;
+	/** The parent's content box, which the block would fill if stretched. */
+	parentWidth: number;
+	/** The parent's computed `align-items`. */
+	alignItems: string;
+}
+
+/** The width notes for the model to read, and the shortfalls for the server to act on. */
+export interface MeasuredWidths {
+	notes: string[];
+	/**
+	 * One per narrow block, which is often not the block edited: an edit to
+	 * the items in a list leaves the list as narrow as it was.
+	 */
+	shortfalls: WidthShortfall[];
+}
+
+/**
  * How wide the edited blocks are, and what sets that width.
  *
  * "Full width" cannot be checked from a picture without something to compare
@@ -620,22 +647,23 @@ function describeContainerLayout( container: string, reading: WidthReading ): st
  * Edited blocks narrowed by the same box share a note. A block whose width
  * cannot be read gives no note. Never throws.
  * @param clientIds The edited blocks.
- * @returns Capture notes, one per box that sets a width.
+ * @returns Capture notes, one per box that sets a width, and the shortfalls a
+ * correction can fix.
  */
-export function describeMeasuredWidths( clientIds: string[] ): string[] {
+export function describeMeasuredWidths( clientIds: string[] ): MeasuredWidths {
 	try {
 		return measureWidths( clientIds );
 	} catch {
-		return [];
+		return { notes: [], shortfalls: [] };
 	}
 }
 
-function measureWidths( clientIds: string[] ): string[] {
+function measureWidths( clientIds: string[] ): MeasuredWidths {
 	const canvasDocument = clientIds.length ? getCanvasDocument() : null;
 	const measurer = canvasDocument ? createMeasurer() : null;
 
 	if ( ! canvasDocument || ! measurer ) {
-		return [];
+		return { notes: [], shortfalls: [] };
 	}
 
 	const blockOf = ( element: Element ) => element.closest< HTMLElement >( '[data-block]' );
@@ -699,7 +727,41 @@ function measureWidths( clientIds: string[] ): string[] {
 		}
 	}
 
-	return [ ...notes.values() ]
+	// Only a block can take a class, so a narrow wrapper gives no shortfall;
+	// and only in a flex column does `align-items` decide a child's width.
+	const shortIdOf = ( element: HTMLElement ) => {
+		const clientId = element.dataset.block ?? '';
+
+		return measurer.findShortId( clientId ) ?? clientId;
+	};
+	const shortfalls = [ ...notes.values() ]
+		.flatMap( ( { setter, container, reading } ): WidthShortfall[] => {
+			const parent = blockOf( container );
+			const { display, flexDirection, alignItems } = reading.containerStyle;
+
+			if (
+				! setter ||
+				blockOf( setter ) !== setter ||
+				! parent ||
+				! [ 'flex', 'inline-flex' ].includes( display ) ||
+				! flexDirection.startsWith( 'column' )
+			) {
+				return [];
+			}
+
+			return [
+				{
+					clientId: shortIdOf( setter ),
+					width: px( reading.width ),
+					parentClientId: shortIdOf( parent ),
+					parentWidth: px( reading.available ),
+					alignItems: alignItems || 'normal',
+				},
+			];
+		} )
+		.slice( 0, MAX_WIDTH_SHORTFALLS );
+
+	const widthNotes = [ ...notes.values() ]
 		.slice( 0, MAX_WIDTH_NOTES )
 		.map( ( { edited, setter, container, reading } ) => {
 			if ( ! setter ) {
@@ -734,4 +796,6 @@ function measureWidths( clientIds: string[] ): string[] {
 					', '
 				) } ${ are } as wide as the boxes ${ they } in allow, up to ${ setterLabel }, but ${ setterLabel } is only ${ where }`;
 		} );
+
+	return { notes: widthNotes, shortfalls };
 }
