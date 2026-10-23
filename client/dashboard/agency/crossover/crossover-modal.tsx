@@ -10,7 +10,6 @@ import { useInstanceId } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	Icon,
-	arrowRight,
 	chartBar,
 	close,
 	currencyDollar,
@@ -20,6 +19,7 @@ import {
 	plugins,
 	wordpress,
 } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
@@ -116,6 +116,19 @@ function ContinueButton( { product, onClick }: { product: string; onClick: () =>
 	);
 }
 
+// From the agency's ring over to the destination's, above the marks' middle,
+// landing like a Mac installer's drag arrow. The dots are the curve
+// M6 28 Q36 -12 82 26 cut 9px short of the head, so the last dot keeps a
+// dot's gap from it; the head's arms follow the curve's end tangent.
+function CrossoverArc() {
+	return (
+		<svg className="a4a-crossover-arc" viewBox="0 0 88 72" aria-hidden="true">
+			<path className="a4a-crossover-arc-line" d="M6 28 Q33.6 -8.9 74.9 20.5" pathLength={ 100 } />
+			<path className="a4a-crossover-arc-head" d="M80.9 21.1 L82 26 L77 25.9" />
+		</svg>
+	);
+}
+
 /**
  * The handoff: the two products side by side on the tour's field, then what
  * the agency does there, that this tab stays, and how to tell where they are
@@ -127,12 +140,12 @@ function CrossoverModal( { request }: { request: CrossoverRequest } ) {
 	const { dontShowAgain, setDontShowAgain, onCancel, onContinue } = useLeaveActions( request );
 
 	const rows = [
-		{ icon: DESTINATION_ICONS[ request.destination ], text: destination.description },
 		{
 			icon: external,
 			text: __( 'It opens in a new tab. This tab stays on Automattic for Agencies.' ),
 		},
 		{ icon: HINT_ICONS[ request.destination ], text: destination.hint },
+		{ icon: DESTINATION_ICONS[ request.destination ], text: destination.description },
 	];
 
 	return (
@@ -149,16 +162,24 @@ function CrossoverModal( { request }: { request: CrossoverRequest } ) {
 				<div className="a4a-crossover-field" style={ { backgroundImage: `url(${ glow })` } }>
 					<HStack spacing={ 0 } justify="center" alignment="top" expanded={ false }>
 						<VStack className="a4a-crossover-product" spacing={ 3 } alignment="center">
-							<img className="a4a-crossover-mark is-agencies" src={ agenciesMark } alt="" />
+							<div className="a4a-crossover-ring">
+								<img className="a4a-crossover-mark is-agencies" src={ agenciesMark } alt="" />
+							</div>
 							<Text size={ 12 } lineHeight="16px">
 								{ __( 'Automattic for Agencies' ) }
 							</Text>
 						</VStack>
-						<div className="a4a-crossover-path" aria-hidden="true">
-							<Icon icon={ arrowRight } size={ 24 } />
-						</div>
+						<CrossoverArc />
 						<VStack className="a4a-crossover-product" spacing={ 3 } alignment="center">
-							<img className="a4a-crossover-mark" src={ destination.mark } alt="" />
+							<div className="a4a-crossover-ring">
+								<img
+									className={ clsx( 'a4a-crossover-mark', {
+										'is-wordmark': request.destination === 'tipalti',
+									} ) }
+									src={ destination.mark }
+									alt=""
+								/>
+							</div>
 							<Text size={ 12 } lineHeight="16px">
 								{ destination.product }
 							</Text>

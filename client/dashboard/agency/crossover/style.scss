@@ -36,31 +36,61 @@ $modal-padding: $grid-unit-30;
 }
 
 .a4a-crossover-product {
-	inline-size: 160px;
+	inline-size: 144px;
 	text-align: center;
 }
 
-// The product marks share one height; a wordmark (Tipalti) runs wider.
+// The product's mark inside a ring, as on WordPress.com's Connect screen.
+.a4a-crossover-ring {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 72px;
+	block-size: 72px;
+	border: 1px solid $gray-200;
+	border-radius: 50%;
+	background-color: $white;
+}
+
+// The product marks share one height; a wordmark (Tipalti) is set by width.
 .a4a-crossover-mark {
 	display: block;
 	inline-size: auto;
-	block-size: 64px;
+	block-size: 40px;
 
 	&.is-agencies {
-		inline-size: 64px;
+		inline-size: 40px;
 		object-fit: contain;
+	}
+
+	&.is-wordmark {
+		inline-size: 48px;
+		block-size: auto;
 	}
 }
 
-.a4a-crossover-path {
-	display: flex;
-	align-items: center;
-	block-size: 64px;
-	color: $gray-700;
+// Reaches into the columns' side space so its ends sit just off each ring.
+.a4a-crossover-arc {
+	flex-shrink: 0;
+	inline-size: 88px;
+	block-size: 72px;
+	margin-inline: -28px;
+	overflow: visible;
+	fill: none;
+	stroke: $gray-700;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: 2;
+}
 
-	svg {
-		fill: currentColor;
-	}
+// 16 even gaps over the normalized length, so a dot lands on each end.
+.a4a-crossover-arc-line {
+	stroke-dasharray: 0 6.25;
+}
+
+// Thinner than the dots, so the tip stays as light as the line.
+.a4a-crossover-arc-head {
+	stroke-width: 1.5;
 }
 
 .a4a-crossover-content {
