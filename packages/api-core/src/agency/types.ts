@@ -415,6 +415,8 @@ export interface AgencyEnablementResource {
 
 	/** Surfaced first in every view. Labelled "Top resource" in the UI. */
 	is_featured: boolean;
+	/** Shown in the Library's "Recommended for you" row. */
+	is_recommended: boolean;
 	created_at: string;
 }
 

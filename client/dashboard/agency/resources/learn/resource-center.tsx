@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo } from 'react';
 import ResourceLibrary from './resource-library';
-import type { RecordTracksEvent } from './types';
+import type { RecordTracksEvent, ResourceSource } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
@@ -44,10 +44,11 @@ export default function ResourceCenter( {
 	onSelectedIdChange,
 }: ResourceCenterProps ) {
 	const previewResource = useCallback(
-		( resource: AgencyEnablementResource ) =>
+		( resource: AgencyEnablementResource, source: ResourceSource ) =>
 			recordTracksEvent( 'calypso_a4a_resource_center_preview', {
 				resource_id: resource.id,
 				resource_name: resource.name,
+				source,
 			} ),
 		[ recordTracksEvent ]
 	);

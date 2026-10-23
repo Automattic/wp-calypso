@@ -21,6 +21,7 @@ function resource( overrides: Partial< AgencyEnablementResource > = {} ) {
 		content_type: 'guide',
 		format: 'pdf',
 		is_featured: false,
+		is_recommended: false,
 		created_at: '2026-01-01T00:00:00Z',
 		...overrides,
 	} satisfies AgencyEnablementResource;
