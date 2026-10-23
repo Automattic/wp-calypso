@@ -296,6 +296,32 @@ describe( 'getCaptureRects', () => {
 		expect( rects?.map( ( rect ) => rect.framed ) ).toEqual( [ 1, 1 ] );
 	} );
 
+	it( 'keeps the band of a block that would otherwise straddle the seam between two', () => {
+		// The stack's two bands cover it between them, but neither shows it whole.
+		const { canvasDocument, canvasWindow } = setup( {
+			section: box( { left: 0, top: 0, width: 900, height: 1100 } ),
+			card: box( { left: 0, top: 950, width: 900, height: 300 } ),
+		} );
+
+		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'section', 'card' ] ) ).toEqual( [
+			{ x: 0, y: 0, width: 981, height: 1000, framed: 1 },
+			{ x: 0, y: 600, width: 981, height: 1000, framed: 1 },
+			{ x: 0, y: 1000, width: 981, height: 1000, framed: 0 },
+		] );
+	} );
+
+	it( 'drops the band of a block one band of a stack already shows whole', () => {
+		const { canvasDocument, canvasWindow } = setup( {
+			section: box( { left: 0, top: 0, width: 900, height: 1500 } ),
+			card: box( { left: 0, top: 1450, width: 900, height: 250 } ),
+		} );
+
+		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'section', 'card' ] ) ).toEqual( [
+			{ x: 0, y: 0, width: 981, height: 1000, framed: 1 },
+			{ x: 0, y: 1000, width: 981, height: 1000, framed: 1 },
+		] );
+	} );
+
 	it( 'falls back to the whole page for a block that needs more bands than the cap', () => {
 		const { canvasDocument, canvasWindow } = setup( {
 			longform: box( { left: 0, top: 0, width: 900, height: 4500 } ),

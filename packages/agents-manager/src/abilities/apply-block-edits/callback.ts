@@ -430,12 +430,22 @@ export async function applyBlockEditsCallback(
 			: null;
 	// Not again when the blocks were too spread out for bands, and the
 	// rasterizer already fell back to the whole page.
-	const pageParts =
-		canCapture && wholePage && ! blockParts?.[ 0 ]?.metadata?.fullPage
-			? await captureCanvas( { clientIds: framedClientIds, fullPage: true } )
-			: null;
+	const pageCaptureRan = canCapture && wholePage && ! blockParts?.[ 0 ]?.metadata?.fullPage;
+	const pageParts = pageCaptureRan
+		? await captureCanvas( { clientIds: framedClientIds, fullPage: true } )
+		: null;
+	// Numbered across the set when both came back: each capture numbers its
+	// own pictures from one.
 	const fileParts =
-		blockParts || pageParts ? [ ...( blockParts ?? [] ), ...( pageParts ?? [] ) ] : null;
+		blockParts && pageParts
+			? [ ...blockParts, ...pageParts ].map( ( part, index, all ) => ( {
+					...part,
+					metadata: { ...part.metadata, regionIndex: index + 1, regionCount: all.length },
+				} ) )
+			: ( blockParts ?? pageParts );
+	// The bands came back but the page did not: without saying so, the
+	// pictures read as everything the CSS could reach.
+	const pageMissing = pageCaptureRan && ! pageParts && !! blockParts;
 
 	// Two separate facts about the pictures that came back. The shape says how
 	// many there are and what they cover, which the rasterizer decides from how
@@ -458,9 +468,16 @@ export async function applyBlockEditsCallback(
 			wholePage ? [ ...changedClientIds, ...getPageClientIds() ] : changedClientIds,
 			{ wholePage }
 		);
-		const widths = describeMeasuredWidths( changedClientIds );
+		// A CSS-only call changes no block, so the blocks it names are the ones
+		// whose width it is about.
+		const widths = describeMeasuredWidths(
+			changedClientIds.length ? changedClientIds : referenceClientIds
+		);
 		const captureNotes = [
 			describeCaptureShape( fileParts ),
+			pageMissing
+				? 'The picture of the whole page could not be made, so only the areas shown can be checked; the custom CSS can change the rest of the page too.'
+				: '',
 			describeReferenceFraming( referenceClientIds, getUnframedClientIds( referenceClientIds ) ),
 			...( contrast?.notes ?? [] ),
 			...describeMeasuredLayout( changedClientIds ),

@@ -154,7 +154,11 @@ interface CaptureRect {
 	y: number;
 	width: number;
 	height: number;
-	/** How many of the named blocks the band was framed on. */
+	/**
+	 * How many of the named blocks the band was framed on, each counted in the
+	 * first band that shows it so the counts add up to the blocks shown. A
+	 * stack's later bands count none: they continue its first band's blocks.
+	 */
 	framed: number;
 }
 
@@ -428,39 +432,38 @@ const bandForSpan = (
 	};
 };
 
+/** A band, with the group it was centred on, or none for a band in a stack. */
+interface CandidateBand {
+	rect: CaptureRect;
+	span: { top: number; bottom: number } | null;
+}
+
 /**
- * Bands top to bottom, less any the others already show between them. A band
- * centred on a group can land inside the stack on a taller group nearby, and a
- * picture of what another picture shows only reads as a second place.
+ * Bands top to bottom, less any centred band whose group another band shows
+ * whole. A band centred on a group can land inside the stack on a taller group
+ * nearby, and a picture of what another picture shows only reads as a second
+ * place. Shown whole by one band, not by several between them, which would
+ * leave the group split over a seam; and a stack's bands always stay, since
+ * no one band shows a group that needed a stack.
+ * @param bands The bands, each with the group it was centred on, or none for a stack's.
+ * @returns The bands to capture.
  */
-const dropCoveredBands = ( rects: CaptureRect[] ): CaptureRect[] => {
-	const isCovered = ( rect: CaptureRect, others: CaptureRect[] ) => {
-		let reach = rect.y;
-
-		others
-			.filter( ( other ) => other.y <= rect.y + rect.height )
-			.forEach( ( other ) => {
-				if ( other.y <= reach + 1 ) {
-					reach = Math.max( reach, other.y + other.height );
-				}
-			} );
-
-		return reach >= rect.y + rect.height - 1;
-	};
-
-	return [ ...rects ]
-		.sort( ( a, b ) => a.y - b.y )
-		.reduce< CaptureRect[] >(
-			( kept, rect, index, all ) =>
-				isCovered(
-					rect,
-					[ ...kept, ...all.slice( index + 1 ) ].sort( ( a, b ) => a.y - b.y )
+const dropBandsShownElsewhere = ( bands: CandidateBand[] ): CaptureRect[] =>
+	bands
+		.filter(
+			( { span }, index ) =>
+				! span ||
+				! bands.some(
+					( other, otherIndex ) =>
+						otherIndex !== index &&
+						// Of two centred bands that show each other's group, keep the first.
+						( ! other.span || otherIndex < index ) &&
+						other.rect.y <= span.top + 1 &&
+						other.rect.y + other.rect.height >= span.bottom - 1
 				)
-					? kept
-					: [ ...kept, rect ],
-			[]
-		);
-};
+		)
+		.map( ( { rect } ) => rect )
+		.sort( ( a, b ) => a.y - b.y );
 
 /**
  * Viewport-tall bands stacked down a span taller than one, from its top. The
@@ -569,11 +572,14 @@ export const getCaptureRects = (
 
 	// Already top to bottom: `clusterSpans` groups in that order, a band sits at
 	// its group's midpoint, and a stack runs down its group.
-	const rects = dropCoveredBands(
-		clusters.flatMap( ( cluster ) =>
+	const rects = dropBandsShownElsewhere(
+		clusters.flatMap( ( cluster ): CandidateBand[] =>
 			cluster.bottom - cluster.top > viewportHeight
-				? stackBandsOnSpan( cluster, canvasWindow, documentHeight )
-				: [ bandForSpan( cluster, canvasWindow, documentHeight ) ]
+				? stackBandsOnSpan( cluster, canvasWindow, documentHeight ).map( ( rect ) => ( {
+						rect,
+						span: null,
+					} ) )
+				: [ { rect: bandForSpan( cluster, canvasWindow, documentHeight ), span: cluster } ]
 		)
 	);
 
@@ -583,14 +589,19 @@ export const getCaptureRects = (
 
 	// Counted again over the bands that are left: a stack's bands each hold
 	// part of the same blocks, and a dropped band's blocks are in another. Each
-	// block counts once, in the first band it shows in, so the counts add up to
-	// the blocks the pictures hold.
+	// block counts once, so the counts add up to the blocks the pictures hold:
+	// in the first band that shows it whole, or failing that, the first that
+	// shows any of it.
 	const framed = rects.map( () => 0 );
 
 	spans.forEach( ( span ) => {
-		const index = rects.findIndex(
-			( rect ) => span.bottom > rect.y && span.top < rect.y + rect.height
+		const whole = rects.findIndex(
+			( rect ) => rect.y <= span.top + 1 && rect.y + rect.height >= span.bottom - 1
 		);
+		const index =
+			whole >= 0
+				? whole
+				: rects.findIndex( ( rect ) => span.bottom > rect.y && span.top < rect.y + rect.height );
 
 		if ( index >= 0 ) {
 			framed[ index ]++;
@@ -1701,9 +1712,10 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 	await whenStill( canvasDocument, canvasWindow, clientIds );
 
 	// Areas close together share a band; areas far apart get one each, so both
-	// sides of a comparison stay at native scale. `null` means bands cannot
-	// honestly cover them — too many, or one taller than a screenful — and the
-	// whole page, scaling and all, is the only picture that shows everything.
+	// sides of a comparison stay at native scale, and a group taller than a
+	// screenful gets a stack of bands. `null` means more bands than the cap
+	// would be needed, and the whole page, scaling and all, is the only
+	// picture that shows everything.
 	const rects = getCaptureRects( canvasDocument, canvasWindow, clientIds );
 	const wholePage = Boolean( fullPage ) || rects === null;
 	const bands = rects ?? [];
@@ -1834,7 +1846,8 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 			imagesArePlaceholders: true,
 			fullPage: wholePage,
 			// Blocks framed by this band, not by the capture as a whole, so a
-			// reader can tell which picture holds what it asked about.
+			// reader can tell which picture holds what it asked about. Each is
+			// counted once, in the first band that shows it.
 			framed: wholePage
 				? ( getEditedSpan( canvasDocument, canvasWindow, clientIds )?.count ?? 0 )
 				: bands[ index ].framed,

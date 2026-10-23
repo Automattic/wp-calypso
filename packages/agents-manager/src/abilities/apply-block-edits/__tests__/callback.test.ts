@@ -801,6 +801,16 @@ describe( 'applyBlockEditsCallback', () => {
 					false,
 					true,
 				] );
+				// Numbered across both captures, not from one in each.
+				expect(
+					result.__file_parts?.map( ( { metadata } ) => [
+						metadata?.regionIndex,
+						metadata?.regionCount,
+					] )
+				).toEqual( [
+					[ 1, 2 ],
+					[ 2, 2 ],
+				] );
 				expect( result.result.captureNotes?.[ 0 ] ).toMatch(
 					/^The first picture is at full size, framed on the blocks this call named\. The last is the whole page/
 				);
@@ -841,6 +851,37 @@ describe( 'applyBlockEditsCallback', () => {
 
 				expect( captureCanvas ).toHaveBeenCalledTimes( 1 );
 				expect( result.__file_parts ).toHaveLength( 1 );
+			} );
+
+			it( 'says when the whole page could not be captured alongside the full-size pictures', async () => {
+				jest.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'p{}' } ) );
+				jest
+					.mocked( captureCanvas )
+					.mockImplementation( async ( { fullPage } = {} ) =>
+						fullPage ? null : [ band( { fullPage } ) ]
+					);
+
+				const result = await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
+
+				expect( result.__file_parts ).toHaveLength( 1 );
+				expect( result.result.captureNotes ).toContainEqual(
+					expect.stringContaining( 'whole page could not be made' )
+				);
+			} );
+
+			it( 'measures widths on the named blocks when only the CSS changed', async () => {
+				// A CSS-only fix to "make the questions full width" changes no
+				// block, and would otherwise go unmeasured.
+				jest.mocked( normalizeEdits ).mockReturnValue( edits( { updates: [], customCSS: 'p{}' } ) );
+				jest.mocked( getEditedClientIds ).mockReturnValue( [] );
+
+				await applyBlockEditsCallback( {
+					customCSS: 'p{}',
+					toolCallId: 'call-1',
+					visualCheckClientIds: [ 'ref1' ],
+				} );
+
+				expect( describeMeasuredWidths ).toHaveBeenCalledWith( [ 'resolved-ref1' ] );
 			} );
 
 			it( 'keeps the whole page when the full-size capture is refused', async () => {

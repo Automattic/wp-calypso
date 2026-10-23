@@ -598,6 +598,29 @@ describe( 'describeMeasuredWidths', () => {
 			expect( describeMeasuredWidths( [ 'tu1q' ] ).shortfalls ).toEqual( [] );
 		} );
 
+		it.each( [
+			[ 'its own max-width holds it', { style: { maxWidth: '412px' } }, {} ],
+			[
+				'its side margins take up the rest of the row',
+				{ style: { marginLeft: '344px', marginRight: '344px' } },
+				{},
+			],
+			[ 'the column already stretches it', {}, { alignItems: 'stretch' } ],
+		] )( 'has none when %s, which a stretch cannot change', ( _name, list, column ) => {
+			const base = faq();
+			const [ tu1q ] = base.children as CanvasBlock[];
+
+			mountCanvas( [
+				{
+					...base,
+					style: { ...base.style, ...column },
+					children: [ { ...tu1q, ...list } ],
+				},
+			] );
+
+			expect( describeMeasuredWidths( [ 'tu1q' ] ).shortfalls ).toEqual( [] );
+		} );
+
 		it( 'has none for a narrow wrapper, which cannot take a class', () => {
 			mountCanvas( [
 				{
@@ -630,6 +653,23 @@ describe( 'describeMeasuredWidths', () => {
 
 			expect( describeMeasuredWidths( [ 'tu1q' ] ).shortfalls ).toEqual( [] );
 		} );
+	} );
+
+	it( 'does not read a percentage max-width as pixels', () => {
+		const base = faq( 100 );
+		const [ tu1q ] = base.children as CanvasBlock[];
+
+		mountCanvas( [ { ...base, children: [ { ...tu1q, style: { maxWidth: '100%' } } ] } ] );
+
+		expect( describeMeasuredWidths( [ 'tu1q' ] ).notes[ 0 ] ).not.toContain( 'max-width' );
+	} );
+
+	it( 'describes the narrow block alone when a block inside it is edited too', () => {
+		mountCanvas( [ faq() ] );
+
+		expect( describeMeasuredWidths( [ 'd1', 'tu1q' ] ).notes ).toEqual( [
+			'Width: group (tu1q) is 412px wide inside group (v3nd), whose content box is 1100px wide; group (v3nd) is a flex column with align-items: flex-start.',
+		] );
 	} );
 
 	it( 'gives nothing for a block the canvas does not lay out', () => {

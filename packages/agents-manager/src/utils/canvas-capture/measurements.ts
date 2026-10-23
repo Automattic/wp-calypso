@@ -727,8 +727,20 @@ function measureWidths( clientIds: string[] ): MeasuredWidths {
 		}
 	}
 
-	// Only a block can take a class, so a narrow wrapper gives no shortfall;
-	// and only in a flex column does `align-items` decide a child's width.
+	// Held by its own max-width, which a computed style gives in the units it
+	// was written in: a percentage is not a width to compare against.
+	const isCapped = ( { style, width }: WidthReading ) =>
+		style.maxWidth.endsWith( 'px' ) &&
+		Math.abs( parseFloat( style.maxWidth ) - width ) <= TOLERANCE;
+	// Side margins that take up the rest of the box, auto ones included: a
+	// stretch cannot widen a block past them.
+	const marginsTakeTheRoom = ( { style, width, available }: WidthReading ) =>
+		width + ( parseFloat( style.marginLeft ) || 0 ) + ( parseFloat( style.marginRight ) || 0 ) >=
+		available - TOLERANCE;
+
+	// Only for what a stretch can fix: a block, since a wrapper cannot take a
+	// class, in a flex column that does not already stretch its children,
+	// where nothing of the block's own holds it narrow.
 	const shortIdOf = ( element: HTMLElement ) => {
 		const clientId = element.dataset.block ?? '';
 
@@ -744,7 +756,10 @@ function measureWidths( clientIds: string[] ): MeasuredWidths {
 				blockOf( setter ) !== setter ||
 				! parent ||
 				! [ 'flex', 'inline-flex' ].includes( display ) ||
-				! flexDirection.startsWith( 'column' )
+				! flexDirection.startsWith( 'column' ) ||
+				[ '', 'normal', 'stretch' ].includes( alignItems ) ||
+				isCapped( reading ) ||
+				marginsTakeTheRoom( reading )
 			) {
 				return [];
 			}
@@ -755,7 +770,7 @@ function measureWidths( clientIds: string[] ): MeasuredWidths {
 					width: px( reading.width ),
 					parentClientId: shortIdOf( parent ),
 					parentWidth: px( reading.available ),
-					alignItems: alignItems || 'normal',
+					alignItems,
 				},
 			];
 		} )
@@ -775,16 +790,16 @@ function measureWidths( clientIds: string[] ): MeasuredWidths {
 			const setterLabel = labelOf( setter );
 			const containerLabel = labelOf( container );
 			const layout = describeContainerLayout( containerLabel, reading );
-			const maxWidth = parseFloat( reading.style.maxWidth );
-			const capped =
-				Math.abs( maxWidth - reading.width ) <= TOLERANCE
-					? ` It is held there by its max-width of ${ px( maxWidth ) }px.`
-					: '';
+			const capped = isCapped( reading )
+				? ` It is held there by its max-width of ${ px( parseFloat( reading.style.maxWidth ) ) }px.`
+				: '';
 			const where = `${ px( reading.width ) }px wide inside ${ containerLabel }, whose content box is ${ px(
 				reading.available
 			) }px wide${ layout ? `; ${ layout }` : '' }.${ capped }`;
 
-			if ( edited.length === 1 && edited[ 0 ] === setter ) {
+			// Edited itself: its own width is the point, and blocks edited inside
+			// it are only as wide as it lets them be.
+			if ( edited.includes( setter ) ) {
 				return `Width: ${ setterLabel } is ${ where }`;
 			}
 
