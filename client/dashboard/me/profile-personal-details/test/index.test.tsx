@@ -135,6 +135,29 @@ describe( '<PersonalDetailsSection>', () => {
 		} );
 	} );
 
+	test( 'explains what each field is for', async () => {
+		mockUserSettings( settings );
+		mockIsAutomattician( false );
+
+		render( <PersonalDetailsSection /> );
+		await screen.findByRole( 'textbox', { name: 'Email address' }, { timeout: 2000 } );
+
+		expect( screen.getByText( 'Avatar' ) ).toBeVisible();
+		expect( screen.getAllByRole( 'button', { name: 'Change avatar' } )[ 0 ] ).toBeVisible();
+		expect(
+			screen.getByText( 'For invoices and domain contacts. Not shown on your posts or comments.' )
+		).toBeVisible();
+		expect( screen.getByText( 'Sign-in and @mentions. Changes can’t be undone.' ) ).toBeVisible();
+		expect( screen.getByText( 'The name shown on your posts and comments.' ) ).toBeVisible();
+		expect( screen.getByText( 'Sign-in and account emails. Not shown publicly.' ) ).toBeVisible();
+		expect( screen.getByText( 'A short bio shown on your public profile.' ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				'Your name links here when you comment. Only on WordPress.com, not on your Gravatar profile.'
+			)
+		).toBeVisible();
+	} );
+
 	describe( 'username field', () => {
 		test( 'disables username field for Automatticians', async () => {
 			mockUserSettings( settings );
@@ -413,7 +436,7 @@ describe( '<PersonalDetailsSection>', () => {
 			} );
 		} );
 	} );
-	describe( 'profile photo', () => {
+	describe( 'avatar', () => {
 		test( 'HTML entities get decoded before avatar URL is rendered', async () => {
 			mockUserSettings( {
 				...settings,

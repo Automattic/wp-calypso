@@ -8,6 +8,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import AccountDeletionSection from '../profile-deletion';
 import PersonalDetailsSection from '../profile-personal-details';
+import GravatarLogo from './gravatar-logo';
 
 export default function Account() {
 	const { user } = useAuth();
@@ -19,19 +20,19 @@ export default function Account() {
 				<PageHeader
 					description={
 						<>
-							{ __( 'Set your name, bio, and other public-facing information.' ) }{ ' ' }
 							{ createInterpolateElement(
 								sprintf(
-									/* translators: %s: User email */
+									/* translators: %s: the user's email address */
 									__(
-										'Your profile photo, display name, and bio are also your public Gravatar profile, which sites that use Gravatar show wherever you use <strong>%s</strong>. Edit them here or on your <external>Gravatar profile</external>; changes apply to both.'
+										'Set the name, avatar, and details that identify you on WordPress.com. Most of them are also your <logo/><gravatar>Gravatar profile</gravatar>, shown on other sites when you comment with <strong>%s</strong>.'
 									),
 									user.email
 								),
 								{
 									strong: <strong />,
+									logo: <GravatarLogo />,
 									// @ts-expect-error children prop is injected by createInterpolateElement
-									external: <ExternalLink href="https://gravatar.com/profile" />,
+									gravatar: <ExternalLink href="https://gravatar.com/profile" />,
 								}
 							) }{ ' ' }
 							<InlineSupportLink supportContext="manage-profile" />

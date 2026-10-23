@@ -23,8 +23,8 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 	const [ isOverlayVisible, setIsOverlayVisible ] = useState< boolean >( false );
 
 	const uploadButtonLabel = isEmailVerified
-		? __( 'Change profile photo' )
-		: __( 'Verify your email to change profile photo' );
+		? __( 'Change avatar' )
+		: __( 'Verify your email to change your avatar' );
 
 	// Initialize the Gravatar Quick Editor to manage avatars in a dedicated Gravatar UI
 	const quickEditorRef = useRef< GravatarQuickEditorCore | null >( null );
@@ -170,13 +170,13 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 					</div>
 				</button>
 				<Button variant="tertiary" onClick={ openGravatarEditor }>
-					{ __( 'Change profile photo' ) }
+					{ __( 'Change avatar' ) }
 				</Button>
 			</ButtonStack>
 
 			{ showEmailVerificationNotice && (
 				<Notice variant="warning" onClose={ closeVerifyEmailDialog }>
-					{ __( 'Please verify your email address to change your profile photo.' ) }
+					{ __( 'Please verify your email address to change your avatar.' ) }
 				</Notice>
 			) }
 		</VStack>

@@ -225,7 +225,7 @@ export default function EmailSection( {
 			return __( 'Your email has not been verified yet.' );
 		}
 
-		return null;
+		return __( 'Sign-in and account emails. Not shown publicly.' );
 	}, [
 		isEmailPending,
 		isEmailVerified,

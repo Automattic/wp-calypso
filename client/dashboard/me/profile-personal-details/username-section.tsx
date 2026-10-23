@@ -1,9 +1,13 @@
 import { updateUsernameMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
+	FlexBlock,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
+	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
 import { useState, useCallback } from 'react';
@@ -26,6 +30,8 @@ interface UsernameSectionProps {
 	isEmailVerified: boolean;
 	canChangeUsername: boolean;
 	onCancel: () => void;
+	/** Rendered beside the username input on wide screens, below it on narrow ones. */
+	inlineField?: React.ReactNode;
 }
 /*
 	Username section:
@@ -41,7 +47,9 @@ export default function UsernameSection( {
 	isEmailVerified,
 	canChangeUsername,
 	onCancel,
+	inlineField,
 }: UsernameSectionProps ) {
+	const isMobile = useViewportMatch( 'small', '<' );
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const [ userLoginConfirm, setUserLoginConfirm ] = useState( '' );
 	const [ usernameAction, setUsernameAction ] = useState< string >( 'none' );
@@ -71,9 +79,7 @@ export default function UsernameSection( {
 				return __( 'Username can be changed once your email address is verified.' );
 			}
 
-			return __(
-				'Your unique @handle. You can sign in with it, people use it to @mention you, and it’s part of your Gravatar and author page addresses. Changing it is permanent.'
-			);
+			return __( 'Sign-in and @mentions. Changes can’t be undone.' );
 		}
 
 		// Success state
@@ -136,41 +142,53 @@ export default function UsernameSection( {
 		updateUsername( { username: value, action } );
 	};
 
+	// Not using DataForm to avoid focus issues on the custom Edit property
+	const usernameInput = (
+		<InputControl
+			__next40pxDefaultSize
+			id="username-input"
+			label={ __( 'Username' ) }
+			prefix={ <InputControlPrefixWrapper>@</InputControlPrefixWrapper> }
+			value={ value || '' }
+			onChange={ handleUsernameChange }
+			disabled={ isAutomattician || ! isEmailVerified || ! canChangeUsername }
+			autoCapitalize="off"
+			autoComplete="username"
+			autoCorrect="off"
+			aria-invalid={
+				hasUsernameChange && validationResult && ! isUsernameValid( validationResult )
+					? 'true'
+					: 'false'
+			}
+			className={ ( () => {
+				if ( ! hasUsernameChange ) {
+					return '';
+				}
+				if ( validationResult && ! isUsernameValid( validationResult ) ) {
+					return 'has-error';
+				}
+				if ( isUsernameValid( validationResult ) ) {
+					return 'has-success';
+				}
+				return '';
+			} )() }
+			help={ getHelpText() }
+		/>
+	);
+
 	return (
 		<>
-			{ /* Not using DataForm to avoid focus issues on the custom Edit property */ }
-			<VStack spacing={ 1 }>
-				{ /* Username input field */ }
-				<InputControl
-					__next40pxDefaultSize
-					id="username-input"
-					label={ __( 'Username' ) }
-					value={ value || '' }
-					onChange={ handleUsernameChange }
-					disabled={ isAutomattician || ! isEmailVerified || ! canChangeUsername }
-					autoCapitalize="off"
-					autoComplete="username"
-					autoCorrect="off"
-					aria-invalid={
-						hasUsernameChange && validationResult && ! isUsernameValid( validationResult )
-							? 'true'
-							: 'false'
-					}
-					className={ ( () => {
-						if ( ! hasUsernameChange ) {
-							return '';
-						}
-						if ( validationResult && ! isUsernameValid( validationResult ) ) {
-							return 'has-error';
-						}
-						if ( isUsernameValid( validationResult ) ) {
-							return 'has-success';
-						}
-						return '';
-					} )() }
-					help={ getHelpText() }
-				/>
-			</VStack>
+			{ isMobile || ! inlineField ? (
+				<VStack spacing={ 4 }>
+					{ usernameInput }
+					{ inlineField }
+				</VStack>
+			) : (
+				<HStack alignment="top" spacing={ 4 }>
+					<FlexBlock>{ usernameInput }</FlexBlock>
+					<FlexBlock>{ inlineField }</FlexBlock>
+				</HStack>
+			) }
 
 			{ /* Update username form */ }
 			<VStack

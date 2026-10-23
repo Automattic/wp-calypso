@@ -35,9 +35,7 @@ const fields: Field< UserSettings >[] = [
 		id: 'display_name',
 		label: __( 'Display name' ),
 		type: 'text',
-		description: __(
-			'The name everyone sees: on your posts, comments, and profile. You can change it any time.'
-		),
+		description: __( 'The name shown on your posts and comments.' ),
 		isValid: {
 			custom: ( item ) => {
 				const value = item.display_name;
@@ -62,7 +60,9 @@ const fields: Field< UserSettings >[] = [
 		id: 'user_URL',
 		label: __( 'Web address' ),
 		type: 'text',
-		description: __( 'A link to your website. Your name links to it on comments you leave.' ),
+		description: __(
+			'Your name links here when you comment. Only on WordPress.com, not on your Gravatar profile.'
+		),
 		isValid: {
 			custom: ( item ) => {
 				const value = item.user_URL?.trim();
@@ -94,9 +94,9 @@ const displayNameForm: Form = {
 	fields: [ 'display_name' ],
 };
 
-const profileForm: Form = {
+const bioForm: Form = {
 	layout: { type: 'regular' as const, labelPosition: 'top' as const },
-	fields: [ 'user_URL', 'description' ],
+	fields: [ 'description', 'user_URL' ],
 };
 
 const allFieldsForm: Form = {
@@ -188,44 +188,14 @@ export default function PersonalDetailsSection() {
 
 						<NavigationBlocker shouldBlock={ isDirty } />
 
-						{ /* Profile photo */ }
-						<BaseControl label={ __( 'Profile photo' ) } __nextHasNoMarginBottom>
+						{ /* Avatar */ }
+						<BaseControl label={ __( 'Avatar' ) } __nextHasNoMarginBottom>
 							<EditGravatar
 								avatarUrl={ data.avatar_URL }
 								userEmail={ userSettings.user_email }
 								isEmailVerified={ isEmailVerified }
 							/>
 						</BaseControl>
-
-						{ /* Email address */ }
-						<EmailSection
-							value={ data.user_email || '' }
-							onChange={ ( value ) => handleFieldChange( { user_email: value } ) }
-							disabled={ isSaving }
-							userSettings={ userSettings }
-							isEmailVerified={ isEmailVerified }
-							onValidationChange={ setIsEmailValid }
-						/>
-
-						{ /* Username */ }
-						<UsernameSection
-							value={ data.user_login || '' }
-							onChange={ ( value ) => handleFieldChange( { user_login: value } ) }
-							currentUsername={ currentUsername }
-							isAutomattician={ isAutomattician }
-							isEmailVerified={ isEmailVerified }
-							canChangeUsername={ canChangeUsername }
-							onCancel={ handleUsernameCancel }
-						/>
-
-						{ /* Display name */ }
-						<DataForm< UserSettings >
-							data={ data }
-							fields={ fields }
-							validity={ validity }
-							form={ displayNameForm }
-							onChange={ handleFieldChange }
-						/>
 
 						{ /* First & last name */ }
 						<VStack spacing={ 2 }>
@@ -237,18 +207,46 @@ export default function PersonalDetailsSection() {
 								onChange={ handleFieldChange }
 							/>
 							<Text variant="muted">
-								{ __(
-									'Only used where a formal name is needed, such as your contact details when you buy a domain. Not shown on your posts or comments.'
-								) }
+								{ __( 'For invoices and domain contacts. Not shown on your posts or comments.' ) }
 							</Text>
 						</VStack>
 
-						{ /* Web address & about me */ }
+						{ /* Username & display name */ }
+						<UsernameSection
+							value={ data.user_login || '' }
+							onChange={ ( value ) => handleFieldChange( { user_login: value } ) }
+							currentUsername={ currentUsername }
+							isAutomattician={ isAutomattician }
+							isEmailVerified={ isEmailVerified }
+							canChangeUsername={ canChangeUsername }
+							onCancel={ handleUsernameCancel }
+							inlineField={
+								<DataForm< UserSettings >
+									data={ data }
+									fields={ fields }
+									validity={ validity }
+									form={ displayNameForm }
+									onChange={ handleFieldChange }
+								/>
+							}
+						/>
+
+						{ /* Email address */ }
+						<EmailSection
+							value={ data.user_email || '' }
+							onChange={ ( value ) => handleFieldChange( { user_email: value } ) }
+							disabled={ isSaving }
+							userSettings={ userSettings }
+							isEmailVerified={ isEmailVerified }
+							onValidationChange={ setIsEmailValid }
+						/>
+
+						{ /* About me & web address */ }
 						<DataForm< UserSettings >
 							data={ data }
 							fields={ fields }
 							validity={ validity }
-							form={ profileForm }
+							form={ bioForm }
 							onChange={ handleFieldChange }
 						/>
 
