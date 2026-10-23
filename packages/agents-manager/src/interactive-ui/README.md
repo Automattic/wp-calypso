@@ -17,7 +17,7 @@ come.
    - **The agent composes it** with `wpcom/render-interactive-ui`, for one-off forms and choices
      from the basic components, or the components of the catalogs the client lists.
 2. Both send A2UI's A2A data part, with the `application/a2ui+json` MIME type, beside the reply's
-   text, which may be empty. An ability's part names the page it built the surface for
+   text, which may be empty. An ability's part names the post its surface acts on, if any
    (`metadata.postId`). wpcom stores the part with the reply, and Agenttic keeps it under `a2ui`
    and sends it back in the history, so the agent can update the surface.
 3. Once the reply has streamed, the host feeds those messages to the conversation's runtime, which
@@ -110,7 +110,7 @@ come.
   as `tool_call_id`.
 - **Agents Manager decides when a surface is stale**, with the rule `show-component` uses
   (`src/utils/stale-chat-ui.ts`): the user has replied past the last message that changed it, or
-  the editor has another page open than the one its part names. Like a restored picker, a
+  the editor has another post open than the one its part names. Like a restored picker, a
   surface restored from history, in a past chat or after a reload, is stale too. A stale surface
   stays visible and disabled: its controls look disabled, while display-only content such as text
   or a chart looks as before. Once all of a message's surfaces are stale, its actions, such as
@@ -128,7 +128,8 @@ Button."
 
 ## Migrating a chat UI
 
-This section is temporary: remove it once every chat UI has moved (AM-119).
+This section is temporary: remove it once every chat UI has moved (AM-119). Rollout (AM-118)
+waits for Agents Manager, the Jetpack AI sidebar and WooCommerce AI.
 
 - **A server ability returning `show-component`** (the Jetpack AI sidebar's components): the
   ability returns a surface with a catalog component wrapping the same React component, as
@@ -138,8 +139,6 @@ This section is temporary: remove it once every chat UI has moved (AM-119).
 - **Markdown cards** (WooCommerce AI's `markdownComponents`): its abilities run in the browser, so
   the agent composes surfaces with its catalog's components instead. A card keeps its side effects,
   such as the batch plan's confirm and undo, and shows under the reply rather than within its text.
-
-Rollout (AM-118) waits for Agents Manager, the Jetpack AI sidebar and WooCommerce AI.
 
 ### Moving an ability's component
 
@@ -156,15 +155,20 @@ return them with `surface_result()`.
    passes: in an agent's chat whose client renders Agents Manager's catalog, on a site with the
    sticker, for a request with no steps after the component (`followUpTasks`), since a surface ends
    the turn. Otherwise, keep returning the `show-component` result.
-   - `Interactive_UI::component_result()` shows one component under the agent's summary, for the
-     post the editor has open; `surface_result()` takes a layout of your own, with its data model
-     and, when it acts on a post, its ID (`$post_id`).
-   - Both build on Agents Manager's catalog, which the gate checks, so a component from your own
-     catalog names it as its `catalogId`, and the ability also checks that catalog with
-     `Interactive_UI::is_enabled( $context, $catalog_id )`.
-   - The model's history keeps the component's name and string props, but not its array props,
-     such as a picker's style variations (`Interactive_UI::text_for_model()`). Put what the agent
-     needs to remember in the summary or a string prop.
+   - **Helpers:** `Interactive_UI::component_result()` shows one component under the agent's
+     summary, and `surface_result()` takes a layout of your own, with its data model.
+   - **Post:** pass either helper the post the UI acts on (`$post_id`), as `show-component` results
+     carry `postId`, so it goes stale while the editor has another post open. Site-wide UI, such as
+     the style pickers, passes none.
+   - **Your own catalog:** both helpers build on Agents Manager's catalog, which the gate checks. A
+     component from your catalog names your catalog as its `catalogId`, and the ability also checks
+     it with `Interactive_UI::is_enabled( $context, $catalog_id )`.
+   - **History:** the model's history keeps the component's name and string props, but not its
+     array props, such as a picker's style variations (`Interactive_UI::text_for_model()`). Put
+     what the agent needs to remember in the summary or a string prop.
+   - **Order:** deploy it once step 1 has reached every client, through Agents Manager's release
+     for its own components. A client without the component still lists the catalog's ID, so it
+     would get the surface and show nothing.
 3. **Test both paths.** With the sticker, the surface renders, goes stale after a reply, a reload
-   or a page switch, keeps its undo, and records the shared response events under its component's
-   name and surface ID. Without it, the old UI shows as before.
+   or, if it acts on a post, a post switch, keeps its undo, and records the shared response events
+   under its component's name and surface ID. Without it, the old UI shows as before.
