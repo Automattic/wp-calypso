@@ -18,6 +18,7 @@ import type { FunctionComponent, ReactNode } from 'react';
 interface Props {
 	dontHaveSiteAddressLabel?: string;
 	hasError?: boolean;
+	isBusy?: boolean;
 	hideImporterListLink?: boolean;
 	label?: ReactNode;
 	nextLabelText?: string;
@@ -33,6 +34,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		onInputChange,
 		onDontHaveSiteAddressClick,
 		hasError,
+		isBusy,
 		skipInitialChecking,
 		label,
 		placeholder = 'artfulbaker.blog',
@@ -90,6 +92,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 
 	function onFormSubmit( e: FormEvent< HTMLFormElement > ) {
 		e.preventDefault();
+		if ( isBusy ) {
+			return;
+		}
 		if ( isValid ) {
 			onInputEnter( urlValue );
 		}
@@ -118,6 +123,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					autoComplete="off"
 					autoCorrect="off"
 					spellCheck="false"
+					readOnly={ isBusy }
 					value={ urlValue }
 					placeholder={ placeholder }
 					onChange={ onChange }
@@ -137,7 +143,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				</FormSettingExplanation>
 			</FormFieldset>
 
-			<NextButton type="submit">{ nextLabelText ?? translate( 'Continue' ) }</NextButton>
+			<NextButton type="submit" isBusy={ isBusy } aria-disabled={ isBusy }>
+				{ nextLabelText ?? translate( 'Continue' ) }
+			</NextButton>
 
 			<div className="action-buttons__importer-list">
 				{ ! hideImporterListLink &&
@@ -148,7 +156,12 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 						{
 							button: createElement( Button, {
 								borderless: true,
-								onClick: () => onDontHaveSiteAddressClick( isValid ? urlValue : undefined ),
+								'aria-disabled': isBusy,
+								onClick: () => {
+									if ( ! isBusy ) {
+										onDontHaveSiteAddressClick( isValid ? urlValue : undefined );
+									}
+								},
 							} ),
 						}
 					) }
