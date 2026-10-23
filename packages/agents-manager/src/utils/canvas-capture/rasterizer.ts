@@ -143,9 +143,11 @@ const RENDER_OVERRIDES =
 	'animation-iteration-count:1!important;animation-fill-mode:both!important;' +
 	'transition:none!important;}' +
 	// The canvas's own <html>, copied around the body so rules written from
-	// `html` match. A zoomed-out editor scales and clips it, which in the
-	// capture would scale and clip the page a second time.
-	'html{transform:none!important;overflow:visible!important;}';
+	// `html` match. Zoomed out, the editor scales, shifts, pads and clips it,
+	// which in the capture would do it all a second time: the bands are
+	// measured from the page as laid out, not as zoomed.
+	'html{transform:none!important;scale:none!important;translate:none!important;' +
+	'margin:0!important;padding:0!important;overflow:visible!important;}';
 
 interface CaptureRect {
 	x: number;
@@ -575,7 +577,27 @@ export const getCaptureRects = (
 		)
 	);
 
-	return rects.length > MAX_CAPTURES ? null : rects;
+	if ( rects.length > MAX_CAPTURES ) {
+		return null;
+	}
+
+	// Counted again over the bands that are left: a stack's bands each hold
+	// part of the same blocks, and a dropped band's blocks are in another. Each
+	// block counts once, in the first band it shows in, so the counts add up to
+	// the blocks the pictures hold.
+	const framed = rects.map( () => 0 );
+
+	spans.forEach( ( span ) => {
+		const index = rects.findIndex(
+			( rect ) => span.bottom > rect.y && span.top < rect.y + rect.height
+		);
+
+		if ( index >= 0 ) {
+			framed[ index ]++;
+		}
+	} );
+
+	return rects.map( ( rect, index ) => ( { ...rect, framed: framed[ index ] } ) );
 };
 
 /**
@@ -1515,12 +1537,12 @@ const drawRegionsToBlobs = async (
  * copied scaled into the final page. A full-size intermediate would run to tens
  * of megabytes for a page this tall before being thrown away.
  *
- * The blank check runs on the scratch canvas, never on the scaled page. On a
- * tall page a band's text shrinks to a few grey pixels that the sampling misses,
- * so a band that rendered fine was refused as blank. Bands over a gap between
- * sections are legitimately empty and are not checked. Nor is the finished
- * page: scaled, it has the same problem, and every band that should draw
- * something has already been checked.
+ * The blank check runs on the scratch canvas, never on the scaled page: on a
+ * tall page a band's text shrinks to a few grey pixels that the sampling
+ * misses. A band that should draw something must, and a band over a gap
+ * between sections may be empty. A page where no band drew anything is
+ * refused as well, since a systematic rendering failure looks exactly like
+ * that and a page with nothing the ink check can see might hide one.
  * @param clone               The cloned body, reused across bands.
  * @param styleText           CSS to embed.
  * @param documentSize        The page's laid-out size.
@@ -1554,6 +1576,8 @@ export const drawPageToBlob = async (
 	if ( ! context || ! scratchContext ) {
 		throw new UnfaithfulCaptureError( 'No 2d context available', 'canvas' );
 	}
+
+	let drewAnything = false;
 
 	for ( const [ bandIndex, band ] of bands.entries() ) {
 		offsetCloneToBand( clone as HTMLElement, band.y, documentSize.width );
@@ -1611,6 +1635,13 @@ export const drawPageToBlob = async (
 			} );
 		}
 
+		drewAnything ||=
+			inkExpected ||
+			! looksUnrendered( scratchContext, scratch.width, scratch.height, {
+				top: 0,
+				height: band.height,
+			} );
+
 		context.drawImage(
 			scratch,
 			0,
@@ -1621,6 +1652,18 @@ export const drawPageToBlob = async (
 			top,
 			canvas.width,
 			bottom - top
+		);
+	}
+
+	if ( ! drewAnything ) {
+		throw new UnfaithfulCaptureError(
+			`The page rendered blank across all ${ bands.length } bands`,
+			'blank',
+			{
+				band_count: bands.length,
+				page_height: documentSize.height,
+				scale: Math.round( scale * 1000 ) / 1000,
+			}
 		);
 	}
 
@@ -1707,7 +1750,7 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 	);
 	const clone = await time( 'clone', () => {
 		const cloned = body.cloneNode( true ) as Element;
-		// Attributes only: its class and language, for the rules written from it.
+		// The element alone, with its attributes, for the rules written from it.
 		canvasDocument.documentElement?.cloneNode( false ).appendChild( cloned );
 		replaceImagesWithPlaceholders( body, cloned, canvasWindow );
 

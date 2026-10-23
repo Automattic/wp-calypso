@@ -802,7 +802,7 @@ describe( 'applyBlockEditsCallback', () => {
 					true,
 				] );
 				expect( result.result.captureNotes?.[ 0 ] ).toMatch(
-					/^The first picture is the edited blocks at full size\. The last is the whole page/
+					/^The first picture is at full size, framed on the blocks this call named\. The last is the whole page/
 				);
 			} );
 

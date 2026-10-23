@@ -37,6 +37,8 @@ interface CanvasBlock {
 	style?: Partial< CSSStyleDeclaration >;
 	/** Builds the block's own markup instead, for the editor's real nesting. */
 	build?: ( element: HTMLElement, canvasDocument: Document ) => void;
+	/** A wrapper that is not a block, at this box, holding the children: a cover's inner container. */
+	wrap?: Rect;
 	children?: CanvasBlock[];
 }
 
@@ -73,7 +75,16 @@ function mountCanvas( roots: CanvasBlock[] ) {
 		block.build?.( element, canvasDocument );
 		container.append( element );
 		store[ block.clientId ] = { block, parent };
-		block.children?.forEach( ( child ) => mount( child, element, block.clientId ) );
+
+		const childContainer = block.wrap
+			? withRect( canvasDocument.createElement( 'div' ), block.wrap )
+			: element;
+
+		if ( block.wrap ) {
+			element.append( childContainer );
+		}
+
+		block.children?.forEach( ( child ) => mount( child, childContainer, block.clientId ) );
 	};
 
 	roots.forEach( ( root ) => mount( root, canvasDocument.body ) );
@@ -468,7 +479,7 @@ describe( 'describeMeasuredWidths', () => {
 		mountCanvas( [ faq() ] );
 
 		expect( describeMeasuredWidths( [ 'd1', 'd2', 'd3', 'd4' ] ) ).toEqual( [
-			'Width: details (d1), details (d2), details (d3), details (d4) fill the width of group (tu1q), but group (tu1q) is only 412px wide inside group (v3nd), whose content box is 1100px wide; group (v3nd) is a flex column with align-items: flex-start.',
+			'Width: details (d1), details (d2), details (d3), details (d4) are as wide as the boxes they sit in allow, up to group (tu1q), but group (tu1q) is only 412px wide inside group (v3nd), whose content box is 1100px wide; group (v3nd) is a flex column with align-items: flex-start.',
 		] );
 	} );
 
@@ -485,7 +496,7 @@ describe( 'describeMeasuredWidths', () => {
 		sizePage( 1140 );
 
 		expect( describeMeasuredWidths( [ 'tu1q' ] ) ).toEqual( [
-			"Width: group (tu1q) fills the full 1140px width of the page's content area.",
+			"Width: group (tu1q) is 1100px wide, as wide as the boxes it sits in allow, up to the page's content area (1140px).",
 		] );
 	} );
 
@@ -503,6 +514,55 @@ describe( 'describeMeasuredWidths', () => {
 
 		expect( describeMeasuredWidths( [ 'p1' ] ) ).toEqual( [
 			"Width: paragraph (p1) is 645px wide inside the page's content area, whose content box is 1140px wide. It is held there by its max-width of 645px.",
+		] );
+	} );
+
+	it( "states the block's own width when padding above it, not a narrow box, takes the room", () => {
+		mountCanvas( [
+			{
+				clientId: 'g1',
+				name: 'core/group',
+				rect: { top: 0, left: 0, width: 1200, height: 100 },
+				style: { paddingLeft: '40px', paddingRight: '40px' },
+				children: [
+					{
+						clientId: 'p1',
+						name: 'core/paragraph',
+						rect: { top: 0, left: 40, width: 1120, height: 20 },
+						text: 'Hello',
+					},
+				],
+			},
+		] );
+		sizePage( 1200 );
+
+		expect( describeMeasuredWidths( [ 'p1' ] ) ).toEqual( [
+			"Width: paragraph (p1) is 1120px wide, as wide as the boxes it sits in allow, up to the page's content area (1200px).",
+		] );
+	} );
+
+	it( 'names a wrapper that is not a block when it is the narrow box', () => {
+		// A cover lays its content out in an inner container of its own, which
+		// is where a narrow content width lives.
+		mountCanvas( [
+			{
+				clientId: 'c1',
+				name: 'core/cover',
+				rect: { top: 0, left: 0, width: 1100, height: 400 },
+				wrap: { top: 0, left: 250, width: 600, height: 400 },
+				children: [
+					{
+						clientId: 'h1',
+						name: 'core/heading',
+						rect: { top: 0, left: 250, width: 600, height: 40 },
+						text: 'Title',
+					},
+				],
+			},
+		] );
+
+		expect( describeMeasuredWidths( [ 'h1' ] ) ).toEqual( [
+			'Width: heading (h1) is as wide as the boxes it sits in allow, up to the inner container of cover (c1), but the inner container of cover (c1) is only 600px wide inside cover (c1), whose content box is 1100px wide.',
 		] );
 	} );
 

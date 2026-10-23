@@ -122,6 +122,13 @@ function paintsBox( style: CSSStyleDeclaration ): boolean {
 	);
 }
 
+/**
+ * How much the canvas is scaled: zoomed-out editing scales it with a
+ * transform, which the bounding rect includes and the layout width does not.
+ */
+const layoutScale = ( element: HTMLElement, rect: DOMRect ): number =>
+	element.offsetWidth > 0 ? rect.width / element.offsetWidth : 1;
+
 function measure(
 	canvasDocument: Document,
 	clientId: string,
@@ -135,7 +142,7 @@ function measure(
 	}
 
 	const view = canvasDocument.defaultView;
-	const scale = element.offsetWidth > 0 ? rect.width / element.offsetWidth : 1;
+	const scale = layoutScale( element, rect );
 	const toCanvasBox = ( boxRect: DOMRect ) =>
 		toBox( boxRect, scale, view?.scrollX ?? 0, view?.scrollY ?? 0 );
 	const name = getBlock( clientId )?.name ?? 'block';
@@ -533,11 +540,13 @@ export function describeUnmoved( snapshot: LayoutSnapshot ): string {
 }
 
 const MAX_WIDTH_NOTES = 4;
-// How far up from an edited block to look for the box that sets its width.
-const MAX_WIDTH_DEPTH = 6;
+// How many elements up from an edited block to look for the box that sets its
+// width. Elements, not blocks: a block's children often sit in a wrapper of
+// its own, such as a cover's inner container.
+const MAX_WIDTH_DEPTH = 12;
 
 interface WidthReading {
-	/** The block's laid-out width. */
+	/** The element's laid-out width. */
 	width: number;
 	/** The width of the content box it sits in: its container's, less padding and borders. */
 	available: number;
@@ -545,24 +554,17 @@ interface WidthReading {
 	style: CSSStyleDeclaration;
 }
 
-/** A block's width against the content box of the element it sits in, in canvas CSS pixels. */
-function readWidth( canvasDocument: Document, clientId: string ): WidthReading | null {
-	const element = canvasDocument.querySelector< HTMLElement >( `[data-block="${ clientId }"]` );
-	const container = element?.parentElement;
-	const view = canvasDocument.defaultView;
-
-	if ( ! element || ! container || ! view ) {
-		return null;
-	}
-
+/** An element's width against its container's content box, in canvas CSS pixels. */
+function readWidth( element: HTMLElement, container: HTMLElement ): WidthReading | null {
+	const view = element.ownerDocument.defaultView;
 	const rect = element.getBoundingClientRect();
 	const containerRect = container.getBoundingClientRect();
 
-	if ( ! hasSize( rect ) || ! hasSize( containerRect ) ) {
+	if ( ! view || ! hasSize( rect ) || ! hasSize( containerRect ) ) {
 		return null;
 	}
 
-	const scale = element.offsetWidth > 0 ? rect.width / element.offsetWidth : 1;
+	const scale = layoutScale( element, rect );
 	const containerStyle = view.getComputedStyle( container );
 	const insets = [
 		containerStyle.paddingLeft,
@@ -594,7 +596,7 @@ function describeContainerLayout( container: string, reading: WidthReading ): st
 	if ( containerStyle.flexDirection.startsWith( 'column' ) ) {
 		const alignSelf =
 			style.alignSelf && style.alignSelf !== 'auto'
-				? `, and the block has align-self: ${ style.alignSelf }`
+				? `, and the narrow box has align-self: ${ style.alignSelf }`
 				: '';
 
 		return `${ container } is a flex column with align-items: ${
@@ -602,21 +604,23 @@ function describeContainerLayout( container: string, reading: WidthReading ): st
 		}${ alignSelf }`;
 	}
 
-	return `${ container } is a flex row, and the block has flex-grow: ${ style.flexGrow || '0' }`;
+	return `${ container } is a flex row, and the narrow box has flex-grow: ${
+		style.flexGrow || '0'
+	}`;
 }
 
 /**
  * How wide the edited blocks are, and what sets that width.
  *
  * "Full width" cannot be checked from a picture without something to compare
- * against, and the block that is narrow is often not the one edited: blocks
+ * against, and the box that is narrow is often not the block edited: blocks
  * that fill their parent look the same however narrow the parent is. So from
- * each edited block this walks up to the first block narrower than the box it
- * sits in, and states both widths and that box's layout. Edited blocks that
- * share the block setting their width share a note. A block whose width
+ * each edited block this walks up the elements to the first one narrower than
+ * the content box it sits in, and states both widths and that box's layout.
+ * Edited blocks narrowed by the same box share a note. A block whose width
  * cannot be read gives no note. Never throws.
  * @param clientIds The edited blocks.
- * @returns Capture notes, one per block that sets a width.
+ * @returns Capture notes, one per box that sets a width.
  */
 export function describeMeasuredWidths( clientIds: string[] ): string[] {
 	try {
@@ -634,68 +638,100 @@ function measureWidths( clientIds: string[] ): string[] {
 		return [];
 	}
 
-	const labelOf = ( clientId: string ) => measurer.measureOnce( clientId )?.label;
-	// Keyed by the block that sets the width, or '' when every block up to the
-	// top of the page fills its parent.
-	const groups = new Map<
-		string,
-		{ editedIds: string[]; edited: string[]; reading: WidthReading }
+	const blockOf = ( element: Element ) => element.closest< HTMLElement >( '[data-block]' );
+	const labelOf = ( element: HTMLElement ): string => {
+		const block = blockOf( element );
+
+		if ( ! block ) {
+			return "the page's content area";
+		}
+
+		const label = measurer.measureOnce( block.dataset.block ?? '' )?.label ?? 'a block';
+
+		return block === element ? label : `the inner container of ${ label }`;
+	};
+
+	// Keyed by the box that sets the width; a block that fills every box up
+	// to the page gets a note of its own.
+	const notes = new Map<
+		HTMLElement | string,
+		{ edited: HTMLElement[]; setter?: HTMLElement; container: HTMLElement; reading: WidthReading }
 	>();
 
 	for ( const clientId of clientIds ) {
-		const label = labelOf( clientId );
-		let current = clientId;
+		const element = canvasDocument.querySelector< HTMLElement >( `[data-block="${ clientId }"]` );
+		let current = element;
 
-		for ( let depth = 0; label && depth <= MAX_WIDTH_DEPTH; depth++ ) {
-			const reading = readWidth( canvasDocument, current );
+		for ( let depth = 0; element && current && depth < MAX_WIDTH_DEPTH; depth++ ) {
+			const container = current.parentElement;
+			const reading = container && readWidth( current, container );
 
-			if ( ! reading ) {
+			if ( ! container || ! reading ) {
 				break;
 			}
-
-			const parent = getBlockRootClientId( current );
 
 			const narrower = reading.available - reading.width > TOLERANCE;
 
-			if ( narrower || ! parent ) {
-				const key = narrower ? current : '';
-				const group = groups.get( key ) ?? { editedIds: [], edited: [], reading };
+			if ( narrower ) {
+				const note = notes.get( current ) ?? { edited: [], setter: current, container, reading };
 
-				group.editedIds.push( clientId );
-				group.edited.push( label );
-				groups.set( key, group );
+				note.edited.push( element );
+				notes.set( current, note );
 				break;
 			}
 
-			current = parent;
+			// Filled every box up to the page: the reading at the top says how
+			// wide the page's content area is, the block's own how wide it is.
+			if ( ! blockOf( container ) ) {
+				const own = element === current ? reading : readWidth( element, current );
+
+				if ( own ) {
+					notes.set( clientId, {
+						edited: [ element ],
+						container,
+						reading: { ...own, available: reading.available },
+					} );
+				}
+				break;
+			}
+
+			current = container;
 		}
 	}
 
-	return [ ...groups ]
+	return [ ...notes.values() ]
 		.slice( 0, MAX_WIDTH_NOTES )
-		.map( ( [ setter, { editedIds, edited, reading } ] ) => {
-			const width = px( reading.width );
-			const fill = edited.length === 1 ? 'fills' : 'fill';
-
+		.map( ( { edited, setter, container, reading } ) => {
 			if ( ! setter ) {
-				return `Width: ${ edited.join( ', ' ) } ${ fill } the full ${ width }px width of the page's content area.`;
+				return `Width: ${ labelOf( edited[ 0 ] ) } is ${ px(
+					reading.width
+				) }px wide, as wide as the boxes it sits in allow, up to the page's content area (${ px(
+					reading.available
+				) }px).`;
 			}
 
-			const parent = getBlockRootClientId( setter );
-			const container = ( parent && labelOf( parent ) ) || "the page's content area";
-			const setterLabel = labelOf( setter ) ?? 'a block';
-			const layout = describeContainerLayout( container, reading );
+			const setterLabel = labelOf( setter );
+			const containerLabel = labelOf( container );
+			const layout = describeContainerLayout( containerLabel, reading );
 			const maxWidth = parseFloat( reading.style.maxWidth );
 			const capped =
 				Math.abs( maxWidth - reading.width ) <= TOLERANCE
 					? ` It is held there by its max-width of ${ px( maxWidth ) }px.`
 					: '';
-			const where = `${ width }px wide inside ${ container }, whose content box is ${ px(
+			const where = `${ px( reading.width ) }px wide inside ${ containerLabel }, whose content box is ${ px(
 				reading.available
 			) }px wide${ layout ? `; ${ layout }` : '' }.${ capped }`;
 
-			return editedIds.length === 1 && editedIds[ 0 ] === setter
-				? `Width: ${ setterLabel } is ${ where }`
-				: `Width: ${ edited.join( ', ' ) } ${ fill } the width of ${ setterLabel }, but ${ setterLabel } is only ${ where }`;
+			if ( edited.length === 1 && edited[ 0 ] === setter ) {
+				return `Width: ${ setterLabel } is ${ where }`;
+			}
+
+			const [ are, they ] = edited.length === 1 ? [ 'is', 'it sits' ] : [ 'are', 'they sit' ];
+
+			return `Width: ${ edited
+				.map( labelOf )
+				.join(
+					', '
+				) } ${ are } as wide as the boxes ${ they } in allow, up to ${ setterLabel }, but ${ setterLabel } is only ${ where }`;
 		} );
 }

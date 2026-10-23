@@ -244,10 +244,11 @@ describe( 'getCaptureRects', () => {
 			hero: box( { left: 0, top: 200, width: 900, height: 2500 } ),
 		} );
 
+		// Counted once, in the first band: the counts add up to the blocks shown.
 		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'hero' ] ) ).toEqual( [
 			{ x: 0, y: 200, width: 981, height: 1000, framed: 1 },
-			{ x: 0, y: 1200, width: 981, height: 1000, framed: 1 },
-			{ x: 0, y: 2200, width: 981, height: 1000, framed: 1 },
+			{ x: 0, y: 1200, width: 981, height: 1000, framed: 0 },
+			{ x: 0, y: 2200, width: 981, height: 1000, framed: 0 },
 		] );
 	} );
 
@@ -273,7 +274,7 @@ describe( 'getCaptureRects', () => {
 
 		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'section', 'list' ] ) ).toEqual( [
 			{ x: 0, y: 2600, width: 981, height: 1000, framed: 2 },
-			{ x: 0, y: 3600, width: 981, height: 1000, framed: 2 },
+			{ x: 0, y: 3600, width: 981, height: 1000, framed: 0 },
 		] );
 	} );
 
@@ -288,11 +289,11 @@ describe( 'getCaptureRects', () => {
 			{ documentHeight: 3000 }
 		);
 
-		expect(
-			getCaptureRects( canvasDocument, canvasWindow, [ 'list', 'section' ] )?.map(
-				( rect ) => rect.y
-			)
-		).toEqual( [ 1000, 2000 ] );
+		const rects = getCaptureRects( canvasDocument, canvasWindow, [ 'list', 'section' ] );
+
+		expect( rects?.map( ( rect ) => rect.y ) ).toEqual( [ 1000, 2000 ] );
+		// The dropped band's block is still counted, in the band that shows it.
+		expect( rects?.map( ( rect ) => rect.framed ) ).toEqual( [ 1, 1 ] );
 	} );
 
 	it( 'falls back to the whole page for a block that needs more bands than the cap', () => {
@@ -829,6 +830,10 @@ describe( 'buildSvg', () => {
 		expect( svg ).toContain( 'animation-duration:1ms!important' );
 		expect( svg ).toContain( 'animation-fill-mode:both!important' );
 		expect( svg ).toContain( 'transition:none!important' );
+		// The copy of a zoomed-out editor's <html> must not zoom the page again.
+		expect( svg ).toContain( 'scale:none!important' );
+		expect( svg ).toContain( 'translate:none!important' );
+		expect( svg ).toContain( 'margin:0!important' );
 		expect( svg.indexOf( 'p{margin:0}' ) ).toBeLessThan( svg.indexOf( 'content-visibility' ) );
 	} );
 
@@ -1115,6 +1120,25 @@ describe( 'drawPageToBlob', () => {
 		expect( svg ).toMatch(
 			/<html xmlns="http:\/\/www\.w3\.org\/1999\/xhtml" class="block-editor-iframe__html"><body/
 		);
+	} );
+
+	it( 'refuses a page where no band drew anything, even with no ink expected', async () => {
+		// A page of embeds and iframes has nothing the ink check can see, and
+		// a rendering failure would otherwise come back as an empty page.
+		paint = () => WHITE;
+
+		await expect(
+			drawPageToBlob( document.createElement( 'div' ), '', page, bandHeight, [] )
+		).rejects.toMatchObject( {
+			reason: 'blank',
+			details: { band_count: 8, page_height: 6400 },
+		} );
+	} );
+
+	it( 'keeps a page where some band drew something, though none was expected to', async () => {
+		await expect(
+			drawPageToBlob( document.createElement( 'div' ), '', page, bandHeight, [] )
+		).resolves.toBeInstanceOf( Blob );
 	} );
 
 	it( 'still refuses a band that drew nothing, saying where it was', async () => {

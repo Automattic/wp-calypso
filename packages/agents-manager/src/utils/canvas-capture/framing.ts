@@ -63,12 +63,14 @@ export function getUnframedClientIds( clientIds: string[] ): string[] {
 export function describeCaptureShape( fileParts: FilePart[] ): string {
 	const areas = fileParts.filter( ( part ) => ! part.metadata?.fullPage ).length;
 
-	// After a custom CSS edit: the edited blocks at full size, then the page.
+	// After a custom CSS edit: the blocks the call named at full size, then the
+	// page. Named, not edited: a CSS-only call frames only the blocks it is
+	// compared against, and the reference note says whether those resolved.
 	if ( areas && areas < fileParts.length ) {
 		const first =
 			areas === 1
-				? 'The first picture is the edited blocks at full size'
-				: `The first ${ areas } pictures are the edited blocks at full size, each a different area of the page, top to bottom`;
+				? 'The first picture is at full size, framed on the blocks this call named'
+				: `The first ${ areas } pictures are at full size, framed on the blocks this call named, each a different area of the page, top to bottom`;
 
 		return `${ first }. The last is the whole page, scaled down to fit, so its body text will not be legible — check the edit in the full-size ${
 			areas === 1 ? 'picture' : 'pictures'

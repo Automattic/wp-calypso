@@ -97,7 +97,9 @@ describe( 'describeCaptureShape', () => {
 			part( { fullPage: true } ),
 		] );
 
-		expect( message ).toMatch( /^The first picture is the edited blocks at full size\./ );
+		expect( message ).toMatch(
+			/^The first picture is at full size, framed on the blocks this call named\./
+		);
 		expect( message ).toContain( 'The last is the whole page' );
 		expect( message ).toContain( 'check the edit in the full-size picture,' );
 	} );
@@ -109,7 +111,9 @@ describe( 'describeCaptureShape', () => {
 			part( { fullPage: true } ),
 		] );
 
-		expect( message ).toMatch( /^The first 2 pictures are the edited blocks at full size/ );
+		expect( message ).toMatch(
+			/^The first 2 pictures are at full size, framed on the blocks this call named/
+		);
 		expect( message ).toContain( 'full-size pictures,' );
 	} );
 } );
