@@ -18,7 +18,7 @@ function EmailActions() {
 
 	const handleAddMailboxClick = () => {
 		trackEmptyStateActionClick( 'add-mailbox' );
-		navigate( { to: '/emails/choose-domain' } );
+		navigate( { to: '/emails/choose-email-solution' } );
 	};
 
 	const handleAddForwarderClick = () => {

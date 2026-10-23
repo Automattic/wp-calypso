@@ -107,7 +107,6 @@ export default myFlow;
 | --------------------- | --------------------- | ---------------------------------- |
 | `SEGMENTATION_SURVEY` | `segmentation-survey` | Survey to segment user by use case |
 | `DESIGN_SETUP`        | `design-setup`        | Select a theme / design            |
-| `SITE_OPTIONS`        | `options`             | Set site title, tagline, icon      |
 | `BUSINESS_INFO`       | `businessInfo`        | Business details (name, category)  |
 | `STORE_ADDRESS`       | `storeAddress`        | WooCommerce store address          |
 | `SITE_SPEC`           | `site-spec`           | AI-assisted site specification     |
@@ -129,12 +128,11 @@ export default myFlow;
 
 ### Site creation & processing
 
-| `STEPS.*` constant   | slug                 | Purpose                                                          |
-| -------------------- | -------------------- | ---------------------------------------------------------------- |
-| `PROCESSING`         | `processing`         | Runs `setPendingAction`, shows progress bar, then submits result |
-| `SITE_CREATION_STEP` | `create-site`        | Creates the site explicitly (use when you need a separate step)  |
-| `FLEX_SITE_CREATION` | `flex-site-creation` | Flexible site creation variant                                   |
-| `SITE_LAUNCH`        | `site-launch`        | Launches (un-privatizes) an existing site                        |
+| `STEPS.*` constant   | slug          | Purpose                                                          |
+| -------------------- | ------------- | ---------------------------------------------------------------- |
+| `PROCESSING`         | `processing`  | Runs `setPendingAction`, shows progress bar, then submits result |
+| `SITE_CREATION_STEP` | `create-site` | Creates the site explicitly (use when you need a separate step)  |
+| `SITE_LAUNCH`        | `site-launch` | Launches (un-privatizes) an existing site                        |
 
 ### Post-signup
 
@@ -296,9 +294,9 @@ Call them via `dispatch( ONBOARD_STORE )` inside `initialize()`.
 | Call                                         | Effect                                                           |
 | -------------------------------------------- | ---------------------------------------------------------------- |
 | `setHidePlansFeatureComparison( true )`      | Hides the plan feature comparison table in `STEPS.UNIFIED_PLANS` |
-| `setIntent( Onboard.SiteIntent.Newsletter )` | Switches copy in intent-aware steps (site-options, etc.)         |
+| `setIntent( Onboard.SiteIntent.Newsletter )` | Switches copy in intent-aware steps                              |
 | `setIntent( Onboard.SiteIntent.Build )`      | Generic "build a site" intent                                    |
-| `setIntent( Onboard.SiteIntent.Sell )`       | Store intent — changes site-options labels                       |
+| `setIntent( Onboard.SiteIntent.Sell )`       | Store intent                                                     |
 | `setIntent( Onboard.SiteIntent.Write )`      | Blog intent                                                      |
 | `clearSignupDestinationCookie()`             | Ensures a fresh signup start (no redirect leftovers)             |
 
@@ -448,6 +446,18 @@ async function initialize() {
 ```
 
 ## How to add a new flow (four touchpoints)
+
+**Don't add a new flow by default.** Extend the main onboarding flow
+(`/setup/onboarding`) instead, customizing it through step props (see "Step
+customization" above). Only if it genuinely can't cover the use case, stop and
+ask the developer for an agreed P2 proposal before writing any flow code,
+naming who will own the flow, up to and including deleting it.
+
+Each flow is another copy of signup logic. It drifts from the main flow, so
+customers get inconsistent steps for the same task, and every change to the
+Stepper framework has to migrate it too. Once the project behind it ends, it's
+usually abandoned: nobody knows who owns it or how to test it, and it lingers
+as dead code until a cleanup removes it.
 
 ### 1. Add flow constant
 

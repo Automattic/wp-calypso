@@ -36,6 +36,7 @@ export type {
 	TextPart,
 	FilePart,
 	DataPart,
+	A2uiDataPart,
 	ToolDataPart,
 	ToolCallDataPart,
 	ContextDataPart,
@@ -80,6 +81,7 @@ export type {
 	Suggestion,
 	SuggestionOption,
 	SubmitOptions,
+	PromptSource,
 } from './react/useAgentChat';
 
 // Constants

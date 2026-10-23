@@ -44,7 +44,10 @@ const configuration = {
 		{
 			method: 'manual-wpcom-install',
 			key: 'public-key',
+			plugin_url: 'https://wordpress.org/plugins/wpcom-migration/',
 			install_url: 'https://www.example.com/wp-admin/plugin-install.php',
+			connect_url: 'https://www.example.com/wp-admin/admin.php?page=wpcom-migration-status',
+			manual_url: 'https://www.example.com/wp-admin/admin.php?page=wpcom-migration-manual',
 		},
 	],
 };
@@ -63,19 +66,41 @@ describe( 'WordPressMigration', () => {
 		window.history.replaceState( {}, '', '/' );
 	} );
 
-	it( 'shows the key to install, then follows the migration once it starts', async () => {
+	it( 'walks through connecting the source, then follows the migration once it starts', async () => {
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'not_started' ) );
 		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
 
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
-		expect( await screen.findByText( 'waiting for access to example.com' ) ).toBeVisible();
+		const [ manualInstall ] = configuration.available_source_connections;
+		expect(
+			await screen.findByRole( 'heading', { name: 'Install our plugin to start the migration' } )
+		).toBeVisible();
 		await waitFor( () =>
-			expect( screen.getByRole( 'textbox', { name: 'Secret key' } ) ).toHaveValue( 'public-key' )
+			expect( screen.getByRole( 'link', { name: /Install the plugin/ } ) ).toHaveAttribute(
+				'href',
+				manualInstall.install_url
+			)
 		);
-		expect( screen.getByRole( 'link', { name: /Install the plugin/ } ) ).toHaveAttribute(
+		expect(
+			screen.getByRole( 'button', { name: /Have our team handle this migration/ } )
+		).toBeDisabled();
+
+		// The install button comes first: the other ways in are only there for people who have trouble with it.
+		expect( screen.queryByRole( 'link', { name: /WordPress.org/ } ) ).not.toBeInTheDocument();
+		await userEvent.click( screen.getByRole( 'button', { name: /Having trouble/ } ) );
+		expect( screen.getByRole( 'link', { name: /WordPress.org/ } ) ).toHaveAttribute(
 			'href',
-			configuration.available_source_connections[ 0 ].install_url
+			manualInstall.plugin_url
+		);
+		expect( screen.getByRole( 'link', { name: /settings page/ } ) ).toHaveAttribute(
+			'href',
+			manualInstall.connect_url
+		);
+		expect( screen.getByRole( 'textbox', { name: 'Migration key' } ) ).toHaveValue( 'public-key' );
+		expect( screen.getByRole( 'link', { name: /migration key page/ } ) ).toHaveAttribute(
+			'href',
+			manualInstall.manual_url
 		);
 
 		const configure = mockApi()
@@ -84,10 +109,9 @@ describe( 'WordPressMigration', () => {
 		const run = mockApi().post( runPath, {} ).reply( 202, running );
 		mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
 
-		await userEvent.click( screen.getByRole( 'button', { name: /start the migration/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
-		expect( screen.getByText( 'migrating from example.com' ) ).toBeVisible();
 		expect(
 			screen.getAllByRole( 'progressbar' ).map( ( bar ) => bar.getAttribute( 'aria-label' ) )
 		).toEqual( [ 'Verifying', 'Copying', 'Finishing' ] );
@@ -163,7 +187,6 @@ describe( 'WordPressMigration', () => {
 			await screen.findByRole( 'heading', { name: 'Install our plugin to start the migration' } )
 		).toBeVisible();
 		expect( screen.getByText( 'source_connection_failed label' ) ).toBeVisible();
-		expect( screen.getByText( 'waiting for access to example.com' ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
 
 		const configure = mockApi()
@@ -173,9 +196,9 @@ describe( 'WordPressMigration', () => {
 		mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
 
 		await waitFor( () =>
-			expect( screen.getByRole( 'textbox', { name: 'Secret key' } ) ).toHaveValue( 'public-key' )
+			expect( screen.getByRole( 'button', { name: 'Start the migration' } ) ).toBeEnabled()
 		);
-		await userEvent.click( screen.getByRole( 'button', { name: /start the migration/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
 		expect( configure.isDone() ).toBe( true );
@@ -217,7 +240,9 @@ describe( 'WordPressMigration', () => {
 
 		const { router } = render( <WordPressMigration site={ site } />, { queryClient } );
 
-		expect( await screen.findByText( 'migrated from example.com' ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'heading', { name: 'Your site has been migrated' } )
+		).toBeVisible();
 		expect( screen.getByText( /One moment while we finish up/ ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Reload' } ) ).not.toBeInTheDocument();
 		expect( router.state.location.pathname ).toBe( '/' );

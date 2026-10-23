@@ -129,7 +129,7 @@
 		"signup/social-first": true,
 		"site-indicator": true,
 		"site-profiler/metrics": true,
-		"sites/drive-migrations": true,
+		"site-spec/build-wow-streaming": true,
 		"ssr/prefetch-timebox": true,
 		"stats/archive-breakdown": true,
 		"stats/chart-library": true,

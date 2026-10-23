@@ -137,10 +137,28 @@ describe( 'agency AddNewSite', () => {
 		expect( devSiteButton() ).toHaveAttribute( 'aria-disabled', 'true' );
 	} );
 
-	test( 'blocks the free development site until the agency is approved', async () => {
-		await renderMenu( { agency: { approval_status: 'pending' } } );
+	test( 'opens the approval gate instead of the setup while the agency is in review', async () => {
+		const { onSelectAction } = await renderMenu( { agency: { approval_status: 'pending' } } );
 
-		expect( devSiteButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+		await userEvent.click( devSiteButton() );
+
+		expect(
+			await screen.findByRole( 'dialog', {
+				name: 'Development sites unlock once you’re approved',
+			} )
+		).toBeVisible();
+		expect( onSelectAction ).not.toHaveBeenCalled();
+	} );
+
+	test( 'offers support in the approval gate when the agency was not approved', async () => {
+		await renderMenu( { agency: { approval_status: 'rejected' } } );
+
+		await userEvent.click( devSiteButton() );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'We haven’t approved your agency' } )
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Contact support' } ) ).toBeVisible();
 	} );
 
 	test( 'treats an agency with an empty approval status as approved', async () => {
@@ -151,10 +169,13 @@ describe( 'agency AddNewSite', () => {
 
 	// Classic's `hasApprovedAgencyStatus` accepts only 'approved' or an empty
 	// string, so a missing status is not an approval.
-	test( 'blocks the free development site when the agency has no approval status', async () => {
-		await renderMenu( { agency: { approval_status: undefined } } );
+	test( 'gates the free development site when the agency has no approval status', async () => {
+		const { onSelectAction } = await renderMenu( { agency: { approval_status: undefined } } );
 
-		expect( devSiteButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+		await userEvent.click( devSiteButton() );
+
+		expect( await screen.findByRole( 'dialog' ) ).toBeVisible();
+		expect( onSelectAction ).not.toHaveBeenCalled();
 	} );
 
 	test( 'ignores a pending site the backend has not licensed yet', async () => {

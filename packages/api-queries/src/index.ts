@@ -110,6 +110,7 @@ export * from './read-tags';
 export * from './read-teams';
 export * from './read-thumbnails';
 export * from './site-comments';
+export * from './site-comments-editor';
 export * from './reader-atmosphere';
 export * from './reader-fediverse';
 export * from './reader-mastodon';

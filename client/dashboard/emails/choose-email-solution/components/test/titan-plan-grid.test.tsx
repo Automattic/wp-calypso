@@ -155,4 +155,15 @@ describe( '<TitanPlanGrid>', () => {
 		expect( onUpgrade ).toHaveBeenCalledWith( TitanPlanTier.Premium );
 		expect( onDowngrade ).not.toHaveBeenCalled();
 	} );
+
+	test( 'hands the picked tier to onSelect when buying a new plan', async () => {
+		mockProducts();
+		const onSelect = jest.fn();
+		renderGrid( { domain: undefined, domainName: '', currentTier: undefined, onSelect } );
+		await waitForProducts();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Get Plus' } ) );
+
+		expect( onSelect ).toHaveBeenCalledWith( TitanPlanTier.Premium );
+	} );
 } );

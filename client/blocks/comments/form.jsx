@@ -1,9 +1,12 @@
 import './form.scss';
+import { siteCommentsEditorQuery } from '@automattic/api-queries';
 import { Button, FormInputValidation } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
+import { Button as WPButton } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useContext } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
@@ -17,8 +20,30 @@ import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getPreviousPath } from 'calypso/state/selectors/get-previous-path';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
+import CommentBlockEditor from './comment-block-editor';
+import { CommentEditorContext } from './comment-editor-context';
 
 const noop = () => {};
+
+// The words of the editor's block markup, for the textarea it falls back to. An inert document,
+// so nothing in the markup runs or loads.
+const blocksToText = ( markup ) =>
+	new DOMParser()
+		.parseFromString(
+			markup
+				.replace( /<\/(p|pre|blockquote|figcaption|ul|ol)>/gi, '$&\n\n' )
+				.replace( /<\/li>/gi, '$&\n' ),
+			'text/html'
+		)
+		.body.textContent.replace( /\n{3,}/g, '\n\n' )
+		.trim();
+
+// Whether the editor's markup holds anything to post. The editor reports an empty paragraph as
+// empty, but not an emptied list, quote, or code block.
+const hasBlockContent = ( markup ) => {
+	const body = new DOMParser().parseFromString( markup, 'text/html' ).body;
+	return !! body.textContent.trim() || !! body.querySelector( 'img' );
+};
 
 function PostCommentFormError( { type } ) {
 	const translate = useTranslate();
@@ -34,13 +59,26 @@ function PostCommentFormError( { type } ) {
 class PostCommentForm extends Component {
 	state = {
 		haveFocus: false,
+		editorFailed: false,
+		// Bumped to start the editor over, since it keeps its own content once mounted.
+		editorKey: 0,
+	};
+
+	handleCancel = () => {
+		if ( this.props.parentCommentId && this.props.onReplyCancel ) {
+			this.props.onReplyCancel();
+			return;
+		}
+
+		this.resetCommentText();
+		this.setState( ( { editorKey } ) => ( { haveFocus: false, editorKey: editorKey + 1 } ) );
 	};
 
 	handleKeyDown = ( event ) => {
 		// Use Ctrl+Enter to submit comment
 		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
 			event.preventDefault();
-			this.submit();
+			this.handleSubmit( event );
 		}
 
 		// Use ESC to remove the erroneous comment placeholder and just start over
@@ -62,7 +100,24 @@ class PostCommentForm extends Component {
 		this.setState( { haveFocus: true } );
 	};
 
+	handleEditorError = () => {
+		this.setState( { editorFailed: true } );
+		// The textarea cannot show block markup, so it gets the words instead.
+		const text = this.getCommentText();
+		if ( text.includes( '<!-- wp:' ) ) {
+			this.props.onUpdateCommentText( blocksToText( text ) );
+		}
+	};
+
+	handleBlur = () => {
+		this.setState( { haveFocus: false } );
+	};
+
 	handleTextChange = ( event ) => {
+		this.updateCommentText( event.target.value );
+	};
+
+	updateCommentText = ( value ) => {
 		if ( ! this.props.isLoggedIn ) {
 			return this.props.registerLastActionRequiresLogin( {
 				type: 'comment',
@@ -72,7 +127,7 @@ class PostCommentForm extends Component {
 			} );
 		}
 		// Update the comment text in the container's state
-		this.props.onUpdateCommentText( event.target.value );
+		this.props.onUpdateCommentText( value );
 	};
 
 	handleSubmit = ( event ) => {
@@ -81,7 +136,7 @@ class PostCommentForm extends Component {
 		const post = this.props.post;
 		const commentText = this.getCommentText().trim();
 
-		if ( ! commentText ) {
+		if ( ! this.hasCommentText() ) {
 			this.resetCommentText(); // Clean up any newlines
 			return false;
 		}
@@ -146,7 +201,8 @@ class PostCommentForm extends Component {
 	}
 
 	hasCommentText() {
-		return this.getCommentText().trim().length > 0;
+		const text = this.getCommentText();
+		return text.includes( '<!-- wp:' ) ? hasBlockContent( text ) : text.trim().length > 0;
 	}
 
 	render() {
@@ -184,38 +240,98 @@ class PostCommentForm extends Component {
 		} );
 
 		const isReply = !! this.props.parentCommentId;
+		const { composer } = this.props;
+		let submitLabel = translate( 'Send' );
+		if ( this.props.error ) {
+			submitLabel = translate( 'Resend' );
+		} else if ( composer ) {
+			submitLabel = translate( 'Reply' );
+		}
+		const placeholder = translate( 'Add a comment…' );
 
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
+		const avatar = (
+			<UserAvatar
+				user={ {
+					avatar_URL: currentUser?.avatar_URL,
+					wpcom_login: currentUser?.username,
+				} }
+				size={ composer ? 36 : undefined }
+				hideHovercard
+			/>
+		);
+
 		return (
-			<form className="comments__form">
+			<form className={ clsx( 'comments__form', { 'is-composer': composer } ) }>
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
 				<FormFieldset>
-					<UserAvatar
-						user={ {
-							avatar_URL: currentUser?.avatar_URL,
-							wpcom_login: currentUser?.username,
-						} }
-						hideHovercard
-					/>
-					<AutoresizingFormTextarea
-						value={ this.getCommentText() }
-						placeholder={ translate( 'Add a comment…' ) }
-						onKeyUp={ this.handleKeyUp }
-						onKeyDown={ this.handleKeyDown }
-						onFocus={ this.handleFocus }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleTextChange }
-						enableAutoFocus={ isReply }
-						siteId={ post.site_ID }
-					/>
-					<Button
-						className={ buttonClasses }
-						disabled={ this.getCommentText().length === 0 }
-						onClick={ this.handleSubmit }
-					>
-						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
-					</Button>
+					{ composer ? (
+						<div className="comments__form-author">
+							{ avatar }
+							<span className="comments__form-author-name">{ currentUser?.display_name }</span>
+						</div>
+					) : (
+						avatar
+					) }
+					{ this.props.editorSettings && ! this.state.editorFailed ? (
+						<CommentBlockEditor
+							key={ this.state.editorKey }
+							settings={ this.props.editorSettings }
+							value={ this.getCommentText() }
+							placeholder={ placeholder }
+							label={ isReply ? translate( 'Reply' ) : translate( 'Comment', { context: 'noun' } ) }
+							// Settings that arrive after a focus keep it.
+							takeFocus={ isReply || this.state.haveFocus }
+							onChange={ this.updateCommentText }
+							onError={ this.handleEditorError }
+							onKeyDown={ this.handleKeyDown }
+							onFocus={ this.handleFocus }
+						/>
+					) : (
+						<AutoresizingFormTextarea
+							value={ this.getCommentText() }
+							placeholder={ placeholder }
+							onKeyUp={ this.handleKeyUp }
+							onKeyDown={ this.handleKeyDown }
+							onFocus={ this.handleFocus }
+							onBlur={ this.handleBlur }
+							onChange={ this.handleTextChange }
+							enableAutoFocus={ isReply }
+							siteId={ post.site_ID }
+						/>
+					) }
+					{ composer ? (
+						<div className="comments__form-actions">
+							{ ! this.props.placeholderId && (
+								<WPButton
+									__next40pxDefaultSize
+									variant="tertiary"
+									// A reply closes; a root composer only has a draft to discard.
+									disabled={ ! isReply && ! this.hasCommentText() }
+									onClick={ this.handleCancel }
+								>
+									{ translate( 'Cancel' ) }
+								</WPButton>
+							) }
+							<WPButton
+								__next40pxDefaultSize
+								variant="primary"
+								disabled={ ! this.hasCommentText() }
+								onClick={ this.handleSubmit }
+							>
+								{ submitLabel }
+							</WPButton>
+						</div>
+					) : (
+						<Button
+							className={ buttonClasses }
+							disabled={ ! this.hasCommentText() }
+							onClick={ this.handleSubmit }
+						>
+							{ submitLabel }
+						</Button>
+					) }
 					{ error && <PostCommentFormError type={ errorType } /> }
 				</FormFieldset>
 			</form>
@@ -232,6 +348,12 @@ PostCommentForm.propTypes = {
 	onCommentSubmit: PropTypes.func,
 	isInlineComment: PropTypes.bool,
 	isLogedIn: PropTypes.bool,
+
+	onReplyCancel: PropTypes.func,
+
+	// From withCommentsEditorSettings: the inbox's composer layout, and the editor where its site has one.
+	composer: PropTypes.bool,
+	editorSettings: PropTypes.object,
 
 	// connect()ed props:
 	currentUser: PropTypes.object,
@@ -259,6 +381,22 @@ const withPostCommentActions = ( WrappedComponent ) => {
 	return WithPostCommentActions;
 };
 
+const withCommentsEditorSettings = ( WrappedComponent ) => {
+	const WithCommentsEditorSettings = ( props ) => {
+		const blockEditor = useContext( CommentEditorContext );
+		const query = siteCommentsEditorQuery( props.post?.site_ID );
+		const { data } = useQuery( { ...query, enabled: blockEditor && query.enabled } );
+
+		return <WrappedComponent { ...props } composer={ blockEditor } editorSettings={ data } />;
+	};
+
+	WithCommentsEditorSettings.displayName = `withCommentsEditorSettings(${
+		WrappedComponent.displayName || WrappedComponent.name || 'Component'
+	})`;
+
+	return WithCommentsEditorSettings;
+};
+
 export default compose(
 	connect(
 		( state ) => ( {
@@ -270,5 +408,6 @@ export default compose(
 		{ registerLastActionRequiresLogin }
 	),
 	withPostCommentActions,
+	withCommentsEditorSettings,
 	localize
 )( PostCommentForm );

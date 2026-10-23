@@ -277,7 +277,7 @@ function Authorize( {
 	}
 
 	return (
-		<OneLoginLayout isJetpack={ false } showLogo={ showLogo }>
+		<OneLoginLayout isJetpack={ false } showLogo={ showLogo } columnWidth={ 6 } isCentered>
 			{ content }
 		</OneLoginLayout>
 	);

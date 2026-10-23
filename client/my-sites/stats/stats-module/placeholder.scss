@@ -44,13 +44,12 @@
 		}
 	}
 
-	// Make text invisible
 	.module-content-list-header .label,
 	.module-content-list-header .value,
 	.module-header-title,
 	ul.module-content-tabs li:hover .label,
 	ul.module-content-tabs li.module-tab.is-selected:hover .label {
-		color: color-mix(in srgb, var(--color-surface) 0%, transparent);
+		color: inherit;
 	}
 }
 

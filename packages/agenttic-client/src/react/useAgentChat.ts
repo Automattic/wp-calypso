@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { isA2uiDataPart } from '../client/utils/core';
 import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
@@ -93,6 +94,50 @@ export interface SubmitOptions {
 	fileParts?: FilePart[]; // Optional when type is `tool_result`: files (typically images) produced by the tool
 	toolResults?: ToolResultInput[]; // Required when type is `tool_results`: one result per call being answered
 	turnToolCalls?: TurnToolCall[]; // Optional with `tool_results`: the turn's calls, added to history when this page never saw them
+	promptSource?: PromptSource; // Where the prompt came from (e.g. an item of a host's checklist); kept on the message and sent with the client context
+}
+
+/**
+ * Where a prompt came from, as opposed to who sent it: `source` names the host
+ * UI (e.g. `site-setup-checklist`), `id` the item within it. Not to be confused
+ * with `clientContext.metadata.source`, which names the calling client and is
+ * an analytics dimension. Kept as client metadata on the user message, sent to
+ * the server in the client context's `metadata`, and surfaced in the UI message
+ * as a `data` part either way, so a live message and one restored from the
+ * server look the same.
+ */
+export interface PromptSource {
+	source: string;
+	id?: string;
+}
+
+/** The client metadata a prompt source is kept under (flat, matching the server's stored context). */
+function promptSourceMetadata( promptSource: PromptSource | undefined ): Record< string, unknown > {
+	if ( ! promptSource ) {
+		return {};
+	}
+	return {
+		promptSource: promptSource.source,
+		...( promptSource.id && { promptSourceId: promptSource.id } ),
+	};
+}
+
+/** The `data` part that carries a prompt source in the UI. */
+function promptSourceDataPart( promptSource: PromptSource ): {
+	type: 'data';
+	data: Record< string, unknown >;
+} {
+	return { type: 'data', data: promptSourceMetadata( promptSource ) };
+}
+
+/** The prompt source a client message keeps in its metadata, if any. */
+function readPromptSource( metadata: Record< string, unknown > | undefined ): PromptSource | null {
+	const source = metadata?.promptSource;
+	if ( typeof source !== 'string' || source === '' ) {
+		return null;
+	}
+	const id = metadata?.promptSourceId;
+	return { source, ...( typeof id === 'string' && id !== '' && { id } ) };
 }
 
 // UI Message format (simplified for UI components)
@@ -224,6 +269,14 @@ export const transformClientMessageToUI = (
 				}
 			}
 			if ( part.type === 'data' ) {
+				// Keep an interactive UI surface under `a2ui` for the host to render
+				if ( isA2uiDataPart( part ) ) {
+					return {
+						type: 'data' as const,
+						data: { a2ui: part },
+					};
+				}
+
 				// Handle `data` parts that might contain `component` information
 				const data = part.data as any;
 				if ( data.component && data.componentProps ) {
@@ -252,6 +305,14 @@ export const transformClientMessageToUI = (
 						data,
 					};
 				}
+				// Preserve where a client said a prompt came from (restored from the
+				// stored context), so hosts can tell how a conversation started.
+				if ( typeof data.promptSource === 'string' && data.promptSource !== '' ) {
+					return {
+						type: 'data' as const,
+						data,
+					};
+				}
 				// Unknown `data` shapes are internal metadata. Drop them so
 				// they don't show up as raw JSON. Add a handler above to
 				// render a new shape.
@@ -265,6 +326,16 @@ export const transformClientMessageToUI = (
 			};
 		} )
 		.filter( ( item ): item is NonNullable< typeof item > => item !== null );
+
+	// A live user message keeps its prompt source as client metadata; a restored
+	// one already carries it as a `data` part (see `serverMessageToMessage`).
+	const livePromptSource = readPromptSource( clientMessage.metadata );
+	if (
+		livePromptSource &&
+		! content.some( ( part ) => part.type === 'data' && 'promptSource' in ( part.data ?? {} ) )
+	) {
+		content.push( promptSourceDataPart( livePromptSource ) );
+	}
 
 	// Drop messages with nothing to show. Keeping them would add empty
 	// entries to the list and throw off message counts.
@@ -639,6 +710,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			// Create user message immediately for UI (skipped for tool results)
 			if ( ! isToolResult ) {
 				const contentType = ( options?.type || 'text' ) as ContentType;
+				const promptSourcePart = options?.promptSource
+					? promptSourceDataPart( options.promptSource )
+					: null;
 				const userMessage = internalOptions?.messageOverride
 					? transformClientMessageToUI( internalOptions.messageOverride, [] )
 					: ( {
@@ -651,6 +725,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 									const url = typeof imageData === 'string' ? imageData : imageData.url;
 									return createImageComponent( url );
 								} ) ?? [] ),
+								...( promptSourcePart ? [ promptSourcePart ] : [] ),
 							],
 							timestamp: messageTimestamp,
 							archived: options?.archived ?? false,
@@ -690,10 +765,11 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// Pass metadata including archived flag and content type if provided
 				const messageOptions: any = {};
 				const hasContentType = !! options?.type && ! isToolResult;
-				if ( options?.archived || hasContentType ) {
+				if ( options?.archived || hasContentType || options?.promptSource ) {
 					messageOptions.metadata = {
 						...( options?.archived && { archived: true } ),
 						...( hasContentType && { contentType: options!.type } ),
+						...promptSourceMetadata( options?.promptSource ),
 					};
 				}
 				// Pass sessionId if provided (overrides agent's default sessionId)
@@ -845,10 +921,17 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 											msg.content[ 0 ]?.text &&
 											finalMessage.content[ 0 ].text.length > msg.content[ 0 ].text.length;
 
+										// The streamed bubble has only text, so add the final message's surfaces
+										const surfaceContent = finalMessage.content.filter(
+											( content ) => content.type === 'data' && isA2uiDataPart( content.data?.a2ui )
+										);
+
 										return {
 											...finalMessage,
 											reactKey: msg.reactKey || currentStreamingId, // Keep stable reactKey
-											content: useServerContent ? finalMessage.content : msg.content,
+											content: useServerContent
+												? finalMessage.content
+												: [ ...msg.content, ...surfaceContent ],
 										};
 									}
 									return msg;

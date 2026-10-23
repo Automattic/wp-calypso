@@ -173,6 +173,8 @@ const mockAgentChat = jest.fn(
 		onContextCardAction,
 	}: {
 		messages?: unknown[];
+		pinnedContent?: unknown;
+		emptyViewContent?: unknown;
 		onSuggestionClick: (
 			suggestion: Suggestion | string,
 			availableSuggestions?: Suggestion[]
@@ -288,6 +290,9 @@ const mockAgentChat = jest.fn(
 				Click auto-submit suggestion
 			</button>
 			<button onClick={ () => onInputChange?.( 'Describe these images' ) }>Type message</button>
+			<button onClick={ () => onInputChange?.( 'Describe these images ' ) }>
+				Type padded message
+			</button>
 			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit message</button>
 			<button
 				onClick={ () =>
@@ -439,27 +444,52 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
+const noSiteSetupChecklist = {
+	isLoading: false,
+	variant: null,
+	items: [],
+	focusHeaderOnMount: false,
+};
+const mockUseSiteSetupChecklist = jest.fn( (): unknown => noSiteSetupChecklist );
+jest.mock( '../../hooks/use-site-setup-checklist', () => ( {
+	__esModule: true,
+	default: () => mockUseSiteSetupChecklist(),
+} ) );
+jest.mock( '../site-setup-checklist', () => ( {
+	__esModule: true,
+	default: ( props: { variant: string } ) => (
+		<div data-testid={ `site-setup-checklist-${ props.variant }` } />
+	),
+} ) );
 // Returns `undefined` after a mock reset, which the wrapper reads as allowed.
 const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
 const mockCreditsVisibility = jest.fn();
 const mockCreditsNoticeVisibility = jest.fn();
 const mockTakeRefusalCode = jest.fn( (): string | undefined => undefined );
+const mockCreditsNotice = jest.fn( (): unknown => undefined );
+const mockRefusalNotice = jest.fn( (): unknown => undefined );
+let mockCreditsOnTryAgain: ( ( message: string ) => void ) | undefined;
 jest.mock( '../../hooks/use-credits', () => ( {
 	useCredits: ( {
 		agentConfig,
 		isOpen,
 		isNoticeVisible,
+		onTryAgain,
 	}: {
 		agentConfig: unknown;
 		isOpen: boolean;
 		isNoticeVisible: boolean;
+		onTryAgain?: ( message: string ) => void;
 	} ) => {
 		mockCreditsVisibility( isOpen );
 		mockCreditsNoticeVisibility( isNoticeVisible );
+		mockCreditsOnTryAgain = onTryAgain;
 		return {
 			chat: jest.requireMock( '@automattic/agenttic-client' ).useAgentChat( agentConfig ),
 			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
 			takeRefusalCode: mockTakeRefusalCode,
+			notice: mockCreditsNotice(),
+			refusalNotice: mockRefusalNotice(),
 		};
 	},
 } ) );
@@ -503,6 +533,7 @@ jest.mock( '../agent-chat', () => {
 
 import { getSessionId } from '../../utils/agent-session';
 import { takeActionOrigin } from '../../utils/action-origin';
+import { markNextPromptSource } from '../../utils/prompt-source';
 import {
 	bindToNavigationTarget,
 	bindToOpenCanvas,
@@ -764,6 +795,8 @@ describe( 'OrchestratorChat', () => {
 		mockUseRegenerateAction.mockReturnValue( () => [] );
 		mockUseConversation.mockReturnValue( { isLoading: false } );
 		mockUseAgentChat.mockReturnValue( agentChatReturn() );
+		mockCreditsNotice.mockReturnValue( undefined );
+		mockRefusalNotice.mockReturnValue( undefined );
 		mockUseImageUpload.mockReturnValue( createImageUpload() );
 		mockIsReaderChatAgent.mockReturnValue( false );
 		mockAgentConfig = { agentId: 'wp-orchestrator' };
@@ -1975,6 +2008,85 @@ describe( 'OrchestratorChat', () => {
 				[ 'calypso_agents_manager_chat_error', { error_type: 'credits' } ],
 				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
 			] );
+		} );
+	} );
+
+	describe( 'credits refusal notice', () => {
+		const refusalError =
+			'Streaming error: This site has used all of its AI credits, including top-ups.';
+		const outNotice = { message: 'You’ve used all your site credits.', dismissible: false };
+		const refusalNotice = {
+			message: 'You’ve used all your site credits.',
+			action: { label: 'Add credits', href: 'https://example.com/checkout' },
+			dismissible: false,
+		};
+		const chatProps = () =>
+			mockAgentChat.mock.calls.at( -1 )![ 0 ] as {
+				error?: string | null;
+				errorNotice?: unknown;
+				notice?: unknown;
+			};
+
+		beforeEach( () => {
+			mockCreditsNotice.mockReturnValue( outNotice );
+			mockRefusalNotice.mockReturnValue( refusalNotice );
+		} );
+
+		it( 'shows the refusal notice in place of the error, beside the composer’s notice', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: refusalError } ) );
+			render( chat() );
+
+			expect( chatProps().error ).toBeNull();
+			expect( chatProps().errorNotice ).toBe( refusalNotice );
+			expect( chatProps().notice ).toBe( outNotice );
+		} );
+
+		it( 'keeps the error text and the composer’s notice without a refusal notice', () => {
+			mockRefusalNotice.mockReturnValue( undefined );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: refusalError } ) );
+			render( chat() );
+
+			expect( chatProps().error ).toBe( refusalError );
+			expect( chatProps().errorNotice ).toBeUndefined();
+			expect( chatProps().notice ).toBe( outNotice );
+		} );
+
+		it( 'restores the composer’s notice once the error clears', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: refusalError } ) );
+			const { rerender } = render( chat() );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: null } ) );
+			rerender( chat() );
+
+			expect( chatProps().error ).toBeNull();
+			expect( chatProps().errorNotice ).toBeUndefined();
+			expect( chatProps().notice ).toBe( outNotice );
+		} );
+
+		it( 'shows neither the error nor its notice while a failed resume hides the error', () => {
+			mockUseConversation.mockReturnValue( { isLoading: false, hasFailedResume: true } );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: refusalError } ) );
+			render( chat() );
+
+			expect( chatProps().error ).toBeNull();
+			expect( chatProps().errorNotice ).toBeUndefined();
+			expect( chatProps().notice ).toBe( outNotice );
+		} );
+
+		it( 'still shows an upload error beside the refusal notice', async () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: refusalError } ) );
+			renderWithImageUpload(
+				createImageUpload( {
+					pendingImages: [ { id: 'p1' } ],
+					uploadImagesToWordPress: jest.fn().mockRejectedValue( new Error( 'network' ) ),
+				} )
+			);
+
+			fireEvent.click( screen.getByText( 'Submit message' ) );
+
+			await waitFor( () =>
+				expect( chatProps().error ).toBe( 'Failed to upload images. Please try again.' )
+			);
+			expect( chatProps().errorNotice ).toBe( refusalNotice );
 		} );
 	} );
 
@@ -4453,6 +4565,50 @@ describe( 'OrchestratorChat', () => {
 			expect( mockConversationConfig?.waitForReply ).toBe( false );
 		} );
 
+		it( 'resends a refused question through the retry path on the credits-back Continue', async () => {
+			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			const uploadImagesToWordPress = jest.fn();
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			renderWithImageUpload(
+				createImageUpload( { pendingImages: [ { id: 'p1' } ], uploadImagesToWordPress } )
+			);
+
+			await act( async () => {
+				mockCreditsOnTryAgain?.( 'ship the sale banner' );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( 'ship the sale banner' );
+			expect( uploadImagesToWordPress ).not.toHaveBeenCalled();
+		} );
+
+		it( 'sends the edited draft instead on the credits-back Continue', async () => {
+			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+			fireEvent.click( screen.getByText( 'Type message' ) );
+
+			await act( async () => {
+				mockCreditsOnTryAgain?.( 'ship the sale banner' );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' );
+			expect( screen.getByTestId( 'input-value' ).textContent ).toBe( '' );
+		} );
+
+		it( 'sends a padded draft as typed on Continue, so the box clears', async () => {
+			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+			fireEvent.click( screen.getByText( 'Type padded message' ) );
+
+			await act( async () => {
+				mockCreditsOnTryAgain?.( 'ship the sale banner' );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images ' );
+			expect( screen.getByTestId( 'input-value' ).textContent ).toBe( '' );
+		} );
+
 		it( 'retries through the normal send, leaving images staged for the draft', async () => {
 			const onSubmit = jest.fn().mockResolvedValue( undefined );
 			const uploadImagesToWordPress = jest.fn();
@@ -4515,6 +4671,77 @@ describe( 'OrchestratorChat', () => {
 			} );
 
 			expect( replied ).toBe( false );
+		} );
+	} );
+
+	describe( 'Site Setup checklist', () => {
+		afterEach( () => {
+			mockUseSiteSetupChecklist.mockReturnValue( noSiteSetupChecklist );
+		} );
+
+		it( 'renders the checklist into the empty view of a new chat, which stays empty', () => {
+			mockUseSiteSetupChecklist.mockReturnValue( { ...noSiteSetupChecklist, variant: 'empty' } );
+			mockUseAgentChat.mockReturnValue( agentChatReturn() );
+			const onHasMessagesChange = jest.fn();
+			render( chat( { onHasMessagesChange } ) );
+
+			const props = mockAgentChat.mock.calls.at( -1 )![ 0 ];
+			expect( props.pinnedContent ).toBeNull();
+			expect( ( props.emptyViewContent as { props: { variant: string } } ).props.variant ).toBe(
+				'empty'
+			);
+			expect( onHasMessagesChange ).toHaveBeenLastCalledWith( false );
+		} );
+
+		it( 'keeps the chat loading while the list is read', () => {
+			mockUseSiteSetupChecklist.mockReturnValue( { ...noSiteSetupChecklist, isLoading: true } );
+			mockUseAgentChat.mockReturnValue( agentChatReturn() );
+			render( chat( { emptyViewSuggestions: [ { id: 'a', label: 'A' } ] } ) );
+
+			const props = mockAgentChat.mock.calls.at( -1 )![ 0 ];
+			expect( props.isLoadingConversation ).toBe( true );
+			expect( props.emptyViewSuggestions ).toEqual( [] );
+		} );
+
+		it( 'sends a task prompt with its prompt source, and the next message without', async () => {
+			const onSubmit = jest.fn( async () => {} );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+			const { onSubmit: submit } = mockAgentChat.mock.calls.at( -1 )![ 0 ];
+
+			markNextPromptSource(
+				{ source: 'site-setup-checklist', id: 'design' },
+				'Help me with this task'
+			);
+			await act( async () => {
+				await submit( 'Help me with this task' );
+			} );
+			await act( async () => {
+				await submit( 'And now something else' );
+			} );
+
+			expect( onSubmit ).toHaveBeenNthCalledWith( 1, 'Help me with this task', {
+				promptSource: { source: 'site-setup-checklist', id: 'design' },
+			} );
+			expect( onSubmit ).toHaveBeenNthCalledWith( 2, 'And now something else' );
+		} );
+
+		it( 'pins the checklist above the messages, inert while a turn runs', () => {
+			mockUseSiteSetupChecklist.mockReturnValue( {
+				...noSiteSetupChecklist,
+				variant: 'pinned',
+				focusHeaderOnMount: true,
+			} );
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { messages: [ userMessage ], isProcessing: true } )
+			);
+			render( chat() );
+
+			const props = mockAgentChat.mock.calls.at( -1 )![ 0 ];
+			expect( props.emptyViewContent ).toBeNull();
+			expect( ( props.pinnedContent as { props: Record< string, unknown > } ).props ).toMatchObject(
+				{ variant: 'pinned', busy: true, focusHeaderOnMount: true }
+			);
 		} );
 	} );
 } );
