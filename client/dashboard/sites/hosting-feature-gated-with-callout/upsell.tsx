@@ -54,7 +54,7 @@ export default function UpsellCallout( {
 		image: illustrationUrl,
 		title: __( 'Fine-tune your WordPress site' ),
 		description: __(
-			'Get under the hood—control caching, choose your PHP version, control security, and test out upcoming WordPress releases.'
+			'Get under the hood—choose your PHP version, control security, and test out upcoming WordPress releases.'
 		),
 	};
 
