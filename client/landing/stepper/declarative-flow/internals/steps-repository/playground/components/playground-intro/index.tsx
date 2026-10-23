@@ -1,4 +1,4 @@
-import { ProgressBar } from '@wordpress/components';
+import { __experimentalHeading as Heading, ProgressBar } from '@wordpress/components';
 import { cloud, globe, Icon, tool } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { WooTopBarLogo } from 'calypso/landing/stepper/declarative-flow/internals/components/woo-top-bar-logo';
@@ -36,16 +36,27 @@ export function PlaygroundIntro( { progress }: { progress: PlaygroundBootProgres
 				<WooTopBarLogo />
 			</div>
 			<div className="playground-intro__content">
-				<h1 className="playground-intro__title">{ __( 'Build first, choose hosting later' ) }</h1>
-				<p className="playground-intro__subtitle">
-					{ __(
-						'Your store is loading. What you build here is real—the exact dashboard you’ll use when you go live.'
-					) }
-				</p>
+				<div className="playground-intro__header">
+					<Heading
+						level={ 1 }
+						className="playground-intro__title"
+						size={ 36 }
+						weight={ 700 }
+						lineHeight={ 1.1 }
+						align="center"
+					>
+						{ __( 'Build first, choose hosting later' ) }
+					</Heading>
+					<p className="playground-intro__subtitle">
+						{ __(
+							'Your store is loading. What you build here is real—the exact dashboard you’ll use when you go live.'
+						) }
+					</p>
+				</div>
 				<ul className="playground-intro__points">
 					{ points.map( ( { icon, text } ) => (
 						<li key={ text } className="playground-intro__point">
-							<Icon icon={ icon } size={ 20 } className="playground-intro__point-icon" />
+							<Icon icon={ icon } size={ 32 } className="playground-intro__point-icon" />
 							<span>{ text }</span>
 						</li>
 					) ) }
