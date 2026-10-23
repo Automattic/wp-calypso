@@ -130,8 +130,12 @@ describe( 'PlaygroundIframe intro', () => {
 		expect( speak ).toHaveBeenCalledWith( 'Your store is ready.' );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_playground_woo_intro_ready', {
 			blueprint: expect.any( String ),
-			duration_ms: expect.any( Number ),
+			duration_seconds: expect.any( Number ),
 		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_playground_woo_intro_failed',
+			expect.anything()
+		);
 	} );
 
 	it( 'gives way to the error screen when the boot fails', async () => {
@@ -141,6 +145,15 @@ describe( 'PlaygroundIframe intro', () => {
 
 		expect( await screen.findByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
 		expect( getIntroHeading() ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_playground_woo_intro_failed', {
+			blueprint: expect.any( String ),
+			reason: 'boot',
+			duration_seconds: expect.any( Number ),
+		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_playground_woo_intro_ready',
+			expect.anything()
+		);
 	} );
 
 	it( 'shows when the not-found countdown starts a new playground', async () => {
@@ -175,6 +188,11 @@ describe( 'PlaygroundIframe intro', () => {
 			await screen.findByRole( 'button', { name: 'Start a new playground' } )
 		);
 
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_playground_woo_intro_failed', {
+			blueprint: expect.any( String ),
+			reason: 'blueprint_load',
+			duration_seconds: expect.any( Number ),
+		} );
 		expect( initializeWordPressPlayground ).toHaveBeenCalledTimes( 2 );
 		expect( getIntroHeading() ).not.toBeInTheDocument();
 	} );

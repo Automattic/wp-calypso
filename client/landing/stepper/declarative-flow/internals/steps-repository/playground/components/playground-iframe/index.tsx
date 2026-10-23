@@ -87,6 +87,7 @@ export function PlaygroundIframe( {
 		const showIntro = withIntro && isNewBlueprintBoot( searchParams );
 		const blueprint = getBlueprintLabelForTracking( searchParams );
 		const introShownAt = Date.now();
+		const durationSeconds = () => Math.round( ( Date.now() - introShownAt ) / 1000 );
 		setIsLoading( true );
 		setBootProgress( showIntro ? INITIAL_BOOT_PROGRESS : null );
 		if ( showIntro ) {
@@ -107,7 +108,7 @@ export function PlaygroundIframe( {
 					speak( __( 'Your store is ready.' ) );
 					recordTracksEvent( 'calypso_playground_woo_intro_ready', {
 						blueprint,
-						duration_ms: Date.now() - introShownAt,
+						duration_seconds: durationSeconds(),
 					} );
 				}
 
@@ -121,6 +122,13 @@ export function PlaygroundIframe( {
 			.catch( ( error ) => {
 				setIsLoading( false );
 				setBootProgress( null );
+				if ( showIntro ) {
+					recordTracksEvent( 'calypso_playground_woo_intro_failed', {
+						blueprint,
+						reason: error instanceof BlueprintLoadError ? 'blueprint_load' : 'boot',
+						duration_seconds: durationSeconds(),
+					} );
+				}
 				setPlaygroundError( error instanceof Error ? error : new Error( String( error ) ) );
 			} );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
