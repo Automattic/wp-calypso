@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
@@ -34,7 +35,7 @@ function CheckoutV2( { siteSlug, planSlug, skipActiveCart = false }: CheckoutV2P
 
 	return (
 		<Layout
-			className="checkout checkout-v2"
+			className={ clsx( 'checkout checkout-v2', { 'is-prepared-checkout': skipActiveCart } ) }
 			title={ title }
 			withBorder
 			wide
@@ -58,7 +59,7 @@ function CheckoutV2( { siteSlug, planSlug, skipActiveCart = false }: CheckoutV2P
 			</LayoutTop>
 			<LayoutBody>
 				<BillingDragonCheckout
-					withA8cLogo={ false }
+					withA8cLogo={ skipActiveCart }
 					// A prepared cart never reads the frontend cart, and never clears it on success.
 					cartItems={ skipActiveCart ? [] : cartItems }
 					siteSlug={ siteSlug }
