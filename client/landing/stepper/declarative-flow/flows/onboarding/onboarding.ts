@@ -100,14 +100,19 @@ import type { Store } from 'redux';
 // Query args that persist when the user goes back from checkout. Leave out args that choose for the
 // user (plan, storage), or going Back would skip that step.
 const CHECKOUT_RETURN_PRESERVED_QUERY_ARGS = [
+	// Any signup
 	'ref',
 	'coupon',
+	// Reblog
 	'blog_post',
+	// Playground
 	'playground',
+	// Blueprint
 	'blueprint',
 	'build_dest',
 	BLUEPRINT_BUILD_QUERY_PARAM,
 	...SPEC_META_QUERY_PARAMS,
+	// WoW funnel
 	'wow_funnel',
 	'dest',
 ] as const;
