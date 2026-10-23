@@ -6,7 +6,6 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useEvent } from '@wordpress/compose';
 import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -18,7 +17,6 @@ import ResourceGrid from './resource-grid';
 import ResourceLink from './resource-link';
 import StageFilter from './stage-filter';
 import { useRevealMore } from './use-reveal-more';
-import type { FilterResources } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
@@ -39,17 +37,6 @@ export default function ResourceLibrary( {
 	onOpenResource,
 	onLoadMore,
 }: ResourceLibraryProps ) {
-	// Stable across renders, so memoized cards don't re-render while searching.
-	const filterResources: FilterResources = useEvent( ( field, value ) =>
-		onChangeView( {
-			...view,
-			filters: [
-				...( view.filters ?? [] ).filter( ( filter ) => filter.field !== field ),
-				{ field, operator: 'is', value },
-			],
-		} )
-	);
-
 	const fields = useResourceFields( resources );
 
 	// The library isn't paginated, so every match is shown.
@@ -111,11 +98,7 @@ export default function ResourceLibrary( {
 				</DataViews>
 			</div>
 			{ ! isList && filteredData.length > 0 && (
-				<ResourceGrid
-					resources={ visibleResources }
-					onOpenResource={ onOpenResource }
-					onFilterResources={ filterResources }
-				/>
+				<ResourceGrid resources={ visibleResources } onOpenResource={ onOpenResource } />
 			) }
 			{ filteredData.length > 0 && (
 				<Spacer marginTop={ 8 }>

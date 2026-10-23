@@ -4,7 +4,6 @@ import { Card, CardBody } from '../../../../components/card';
 import ResourceBadges from '../resource-badges';
 import ResourceLink from '../resource-link';
 import ResourceCardHeader from './header';
-import type { FilterResources } from '../types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
 import './style.scss';
@@ -12,10 +11,9 @@ import './style.scss';
 interface ResourceCardProps {
 	resource: AgencyEnablementResource;
 	onOpen: ( resource: AgencyEnablementResource ) => void;
-	onFilter: FilterResources;
 }
 
-function ResourceCard( { resource, onOpen, onFilter }: ResourceCardProps ) {
+function ResourceCard( { resource, onOpen }: ResourceCardProps ) {
 	return (
 		<Card className="dashboard-resources-learn__card" isBorderless>
 			<ResourceCardHeader
@@ -27,7 +25,7 @@ function ResourceCard( { resource, onOpen, onFilter }: ResourceCardProps ) {
 					<Text variant="muted" truncate numberOfLines={ 2 }>
 						{ resource.description }
 					</Text>
-					<ResourceBadges resource={ resource } onFilter={ onFilter } />
+					<ResourceBadges resource={ resource } />
 				</VStack>
 			</CardBody>
 		</Card>

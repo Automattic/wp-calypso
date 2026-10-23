@@ -126,19 +126,11 @@ describe( '<ResourceCenter>', () => {
 		);
 	} );
 
-	test( "narrows the results by a card's badge", async () => {
-		renderLibrary();
-
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Filter by Learn' } ) );
-
-		expect( getCardTitles() ).toEqual( [ 'Woo case study' ] );
-	} );
-
 	test( 'leaves out the badges a resource has no value for', async () => {
-		renderLibrary( { resources: [ resource( { audience: null, stage: null } ) ] } );
+		renderLibrary( { resources: [ resource( { audience: null } ) ] } );
 
-		expect( await screen.findByRole( 'button', { name: 'Filter by Guide' } ) ).toBeVisible();
-		expect( screen.getAllByRole( 'button', { name: /^Filter by/ } ) ).toHaveLength( 1 );
+		expect( await screen.findByText( 'Guide' ) ).toBeVisible();
+		expect( screen.queryByText( 'All audiences' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows an empty state when nothing matches', async () => {
