@@ -593,6 +593,32 @@ describe( 'convertToolMessagesToComponents', () => {
 		] );
 	} );
 
+	it( 'keeps an interactive UI surface beside trailing prose after a terminal outcome', () => {
+		const appliedOutcome = createApplyBlockEditsMessage(
+			'tool-call-1',
+			{
+				result: { success: true, message: 'Corrected one misspelling.', outcome: 'updated' },
+				followUpTasks: false,
+			},
+			{ id: 'applied-outcome' }
+		);
+		const surfaces = {
+			type: 'component' as const,
+			component: MockComponent as unknown as React.ComponentType,
+		};
+		const prose = createMessage( {
+			id: 'prose',
+			content: [ { type: 'text', text: 'Pick a color palette next.' }, surfaces ],
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ appliedOutcome, prose ],
+		} );
+
+		expect( result.map( ( message ) => message.id ) ).toEqual( [ 'applied-outcome', 'prose' ] );
+		expect( result[ 1 ].content ).toEqual( [ surfaces ] );
+	} );
+
 	describe( 'pending visual check', () => {
 		const pendingCheckOutcome = ( overrides?: Partial< UIMessage > ) =>
 			createApplyBlockEditsMessage(

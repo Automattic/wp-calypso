@@ -530,19 +530,6 @@ describe( 'getDomainPriceRule()', () => {
 				)
 			).toBe( 'PRICE' );
 		} );
-
-		test( 'should return PRICE if flowName is ecommerce-monthly', () => {
-			expect(
-				getDomainPriceRule(
-					true,
-					null,
-					{},
-					{ domain_name: 'domain.com', product_slug: 'domain' },
-					false,
-					'ecommerce-monthly'
-				)
-			).toBe( 'PRICE' );
-		} );
 	} );
 } );
 

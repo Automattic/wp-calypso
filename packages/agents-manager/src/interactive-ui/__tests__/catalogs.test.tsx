@@ -1,6 +1,7 @@
 import * as renderer from '@automattic/ai-ui-renderer';
 import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { ButtonPicker, ColorPicker, FontPicker } from '../../components/style-pickers';
 import * as tracks from '../../utils/tracks';
 import {
 	AGENTS_MANAGER_CATALOG_ID,
@@ -9,6 +10,12 @@ import {
 	getInteractiveUiCapabilities,
 } from '../catalogs';
 import type { InteractiveUiCatalogDefinition } from '@automattic/ai-ui-renderer';
+
+jest.mock( '../../components/style-pickers', () => ( {
+	ButtonPicker: jest.fn( () => null ),
+	ColorPicker: jest.fn( () => null ),
+	FontPicker: jest.fn( () => null ),
+} ) );
 
 const WOO_CATALOG_ID = 'urn:automattic:woocommerce-ai:interactive-ui:v1';
 
@@ -82,6 +89,64 @@ it( 'records the shared response event when a provider’s component renders', a
 			tool_call_id: 'product',
 		}
 	);
+} );
+
+it( 'renders the style pickers with the props their abilities send', async () => {
+	jest.spyOn( tracks, 'recordBigSkyTracksEvent' ).mockImplementation( () => undefined );
+	const onError = jest.fn();
+	const runtime = renderer.createInteractiveUiRuntime( {
+		catalogs: createInteractiveUiCatalogs( renderer ),
+		onAction: jest.fn(),
+		onError,
+	} );
+	const variations = [ { title: 'Bold', settings: { color: { palette: { theme: [] } } } } ];
+
+	runtime.processMessages(
+		[
+			{
+				version: 'v1.0',
+				createSurface: {
+					surfaceId: 'pickers',
+					catalogId: AGENTS_MANAGER_CATALOG_ID,
+					components: [
+						{ id: 'root', component: 'Column', children: [ 'colors', 'fonts', 'buttons' ] },
+						{ id: 'colors', component: 'AgentsManagerColorPicker', variations },
+						{
+							id: 'fonts',
+							component: 'AgentsManagerFontPicker',
+							themeVariations: variations,
+							dynamicVariations: variations,
+						},
+						{
+							id: 'buttons',
+							component: 'AgentsManagerButtonPicker',
+							buttonVariations: variations,
+							maxButtonsToShow: 6,
+						},
+					],
+				},
+			},
+		],
+		'message'
+	);
+
+	render( <renderer.InteractiveUiSurface surface={ runtime.getSurface( 'pickers' )! } /> );
+
+	await waitFor( () => expect( ButtonPicker ).toHaveBeenCalled() );
+
+	expect( jest.mocked( ColorPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+		variations,
+		surfaceId: 'pickers',
+	} );
+	expect( jest.mocked( FontPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+		themeVariations: variations,
+		dynamicVariations: variations,
+	} );
+	expect( jest.mocked( ButtonPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+		buttonVariations: variations,
+		maxButtonsToShow: 6,
+	} );
+	expect( onError ).not.toHaveBeenCalled();
 } );
 
 it( 'skips a catalog that fails to build, and keeps the others', () => {

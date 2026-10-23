@@ -70,22 +70,22 @@ function chooseTerserEcmaVersion( browsers ) {
 
 	// Test for ES2018 features. If missing fall back to ES2017.
 	if (
-		! isFeatureSupported( 'proposal-object-rest-spread', browsers ) ||
+		! isFeatureSupported( 'transform-object-rest-spread', browsers ) ||
 		! isFeatureSupported( 'transform-named-capturing-groups-regex', browsers ) ||
-		! isFeatureSupported( 'proposal-unicode-property-regex', browsers )
+		! isFeatureSupported( 'transform-unicode-property-regex', browsers )
 	) {
 		return 2017;
 	}
 
 	// Test for ES2019 features. If missing fall back to ES2018.
-	if ( ! isFeatureSupported( 'proposal-optional-catch-binding', browsers ) ) {
+	if ( ! isFeatureSupported( 'transform-optional-catch-binding', browsers ) ) {
 		return 2018;
 	}
 
 	// Test for ES2020 features. If missing fall back to ES2019.
 	if (
-		! isFeatureSupported( 'proposal-optional-chaining', browsers ) ||
-		! isFeatureSupported( 'proposal-nullish-coalescing-operator', browsers )
+		! isFeatureSupported( 'transform-optional-chaining', browsers ) ||
+		! isFeatureSupported( 'transform-nullish-coalescing-operator', browsers )
 	) {
 		return 2019;
 	}
@@ -125,7 +125,9 @@ module.exports = ( {
 		...terserOptions,
 	};
 	cssMinimizerOptions = {
-		preset: 'default',
+		// cssnano's `:is()` folding also wraps selectors that contain combinators, changing what they
+		// match: `P > :is(.a .b, .c .d)` requires `.b` itself to be a child of `P`, unlike `P > .a .b`.
+		preset: [ 'default', { minifySelectors: { convertToIs: false } } ],
 		...cssMinimizerOptions,
 	};
 

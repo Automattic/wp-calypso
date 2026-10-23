@@ -1,4 +1,4 @@
-import { PLAN_BUSINESS, PLAN_PERSONAL } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, PLAN_ECOMMERCE_MONTHLY, PLAN_PERSONAL } from '@automattic/calypso-products';
 import {
 	getLegacyPlanFlowRedirect,
 	isPreselectablePlan,
@@ -15,6 +15,7 @@ describe( 'legacy plan flows', () => {
 		expect( isPreselectablePlan( PLAN_PERSONAL ) ).toBe( true );
 		expect( isPreselectablePlan( 'wp_bundle_student_yearly' ) ).toBe( false );
 		expect( isPreselectablePlan( 'ecommerce-bundle' ) ).toBe( false );
+		expect( isPreselectablePlan( PLAN_ECOMMERCE_MONTHLY ) ).toBe( true );
 	} );
 
 	// The query is handed on whole, but the plan is the flow's to name, not the caller's.

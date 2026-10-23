@@ -38,8 +38,8 @@ export interface UserInfoNodeMeta {
 export interface OmnibarNodes {
 	home?: OmnibarNode;
 	site?: OmnibarNode;
-	sitePlugins?: OmnibarNode[];
-	userPlugins?: OmnibarNode[];
+	siteNodes?: OmnibarNode[];
+	userNodes?: OmnibarNode[];
 	user?: OmnibarNode;
 }
 

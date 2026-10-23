@@ -28,7 +28,6 @@
 		"build:app": "yarn electron-builder ${ELECTRON_BUILDER_ARGS:-} build --publish never",
 		"build:main": "yarn run build:config && webpack --stats-preset errors-only",
 		"build:config": "node bin/build-desktop-config.js",
-		"build:secrets": "node bin/build-desktop-secrets.js",
 		"test:e2e": "jest -c test/e2e/config/jest.config.js",
 		"test:unit": "jest -c test/unit/jest.config.js"
 	},
@@ -39,7 +38,7 @@
 		"@electron/rebuild": "4.0.4",
 		"@playwright/browser-chromium": "1.57.0",
 		"copy-webpack-plugin": "^14.0.0",
-		"electron": "42.11.3",
+		"electron": "42.11.9",
 		"electron-builder": "26.15.0",
 		"jest": "^30.5.2",
 		"playwright": "1.57.0",

@@ -3,7 +3,7 @@
  * Maps to odie-assistant.php endpoints on WordPress.com
  */
 
-import { generateMessageId } from '../client/utils/core';
+import { generateMessageId, isA2uiDataPart } from '../client/utils/core';
 import type { FilePart, Message, Part, TextPart } from '../client/types/index';
 
 /**
@@ -18,8 +18,9 @@ export interface ServerFilePart {
 }
 
 /**
- * Context structure that may contain file parts, sources, flags (e.g. forward_to_human_support)
- * and where the client said the prompt came from (`clientContext.metadata.promptSource`).
+ * Context structure that may contain file parts, sources, flags (e.g. forward_to_human_support),
+ * where the client said the prompt came from (`clientContext.metadata.promptSource`), and an
+ * interactive UI surface (`a2ui`, A2UI's A2A data part).
  */
 export interface ServerMessageContext {
 	file_parts?: ServerFilePart[];
@@ -27,6 +28,7 @@ export interface ServerMessageContext {
 	flags?: Record< string, unknown >;
 	promptSource?: string;
 	promptSourceId?: string;
+	a2ui?: unknown;
 	[ key: string ]: unknown;
 }
 
@@ -177,6 +179,11 @@ export function serverMessageToMessage( serverMessage: ServerMessage ): Message 
 				parts.push( part );
 			}
 		}
+	}
+
+	// Restore an interactive UI surface as the data part the reply sent it in
+	if ( context && ! Array.isArray( context ) && isA2uiDataPart( context.a2ui ) ) {
+		parts.push( context.a2ui );
 	}
 
 	// Preserve flags (e.g. forward_to_human_support), sources and the prompt

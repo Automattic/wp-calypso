@@ -26,7 +26,13 @@ const operations = [
 	},
 ];
 
-const envelope = JSON.stringify( { tool_id: 'wpcom__render_interactive_ui', data: operations } );
+// Agenttic keeps A2UI's A2A data part under `a2ui`.
+const surfaceContent = {
+	type: 'data' as const,
+	data: {
+		a2ui: { type: 'data', data: operations, metadata: { mimeType: 'application/a2ui+json' } },
+	},
+};
 
 function createMessage(
 	id: string,
@@ -77,8 +83,8 @@ describe( 'convertInteractiveUiMessagesToComponents', () => {
 	it( 'replaces an agent message’s interactive UI parts with one surfaces part', () => {
 		const message = createMessage( 'agent', 'agent', [
 			{ type: 'text', text: 'Here you go.' },
-			{ type: 'text', text: envelope },
-			{ type: 'text', text: envelope },
+			surfaceContent,
+			surfaceContent,
 		] );
 
 		const [ converted ] = convertInteractiveUiMessagesToComponents( [ message ] );
@@ -87,7 +93,7 @@ describe( 'convertInteractiveUiMessagesToComponents', () => {
 	} );
 
 	it( 'leaves user messages unchanged', () => {
-		const message = createMessage( 'user', 'user', [ { type: 'text', text: envelope } ] );
+		const message = createMessage( 'user', 'user', [ surfaceContent ] );
 
 		expect( convertInteractiveUiMessagesToComponents( [ message ] )[ 0 ] ).toBe( message );
 	} );

@@ -372,7 +372,7 @@ export function MediaStorage( { site }: { site?: Site } ) {
 	);
 }
 
-function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
+function SiteLaunchNag( { siteId, siteSlug }: { siteId: number; siteSlug: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { isCompleted, isNoGuidance, setupUrl } = useAiLaunchpad( siteSlug );
 
@@ -386,11 +386,16 @@ function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 	// uses `overflow:hidden` to prevent any of the fields from overflowing.
 	return (
 		<>
-			<ComponentViewTracker eventName="calypso_dashboard_sites_site_launch_nag_impression" />
+			<ComponentViewTracker
+				eventName="calypso_dashboard_sites_site_launch_nag_impression"
+				properties={ { site_id: siteId } }
+			/>
 			<ExternalLink
 				href={ href }
 				onClick={ () => {
-					recordTracksEvent( 'calypso_dashboard_sites_site_launch_nag_click' );
+					recordTracksEvent( 'calypso_dashboard_sites_site_launch_nag_click', {
+						site_id: siteId,
+					} );
 				} }
 			>
 				{ __( 'Finish setup' ) }
@@ -400,11 +405,13 @@ function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 }
 
 export function Visibility( {
+	siteId,
 	siteSlug,
 	visibility,
 	status,
 	isLaunched,
 }: {
+	siteId: number;
 	siteSlug: string;
 	visibility: SiteVisibility;
 	status: SiteBlockingStatus;
@@ -415,7 +422,7 @@ export function Visibility( {
 		<VStack spacing={ 1 }>
 			<span>{ visibilityLabels[ visibility ] }</span>
 			{ /* We don't want to show LaunchNag if there is any pending status. */ }
-			{ ! status && ! isLaunched && <SiteLaunchNag siteSlug={ siteSlug } /> }
+			{ ! status && ! isLaunched && <SiteLaunchNag siteId={ siteId } siteSlug={ siteSlug } /> }
 		</VStack>
 	);
 }

@@ -44,6 +44,8 @@ const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 	{ flow: 'hosted-site-migration', to: '/setup/site-migration' },
 	{ flow: 'domain-upsell', to: '/setup/domain-and-plan' },
 	{ flow: 'flex-site', to: '/sites' },
+	{ flow: 'connect-domain', to: '/start:lang?' },
+	{ flow: 'reblogging', to: '/setup/onboarding:lang?' },
 	{ flow: 'readymade-template', to: toSiteHome },
 	{ flow: 'update-options', to: toSiteHome },
 ];

@@ -3,6 +3,7 @@ import type {
 	AgencyApiResponse,
 	AgencyBlog,
 	AgencyProgramStats,
+	AgencyLeadMatchingResponse,
 	AgencyResourcesResponse,
 	McpSettings,
 	McpSettingsUpdate,
@@ -45,6 +46,15 @@ export async function fetchAgencyBlog( siteId: number ): Promise< AgencyBlog > {
 export async function fetchAgencyScheduleCallLink( agencyId: number ): Promise< string > {
 	return wpcom.req.get( {
 		path: `/agency/${ agencyId }/schedule-call-link`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+export async function fetchAgencyLeadMatching(
+	agencyId: number
+): Promise< AgencyLeadMatchingResponse > {
+	return wpcom.req.get( {
+		path: `/agency/${ agencyId }/lead-matching`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }

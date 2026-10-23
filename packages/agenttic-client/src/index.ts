@@ -36,6 +36,7 @@ export type {
 	TextPart,
 	FilePart,
 	DataPart,
+	A2uiDataPart,
 	ToolDataPart,
 	ToolCallDataPart,
 	ContextDataPart,

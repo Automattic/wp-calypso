@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { getWooCommercePluginPage } from 'calypso/lib/signup/legacy-woocommerce-install-flow';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -16,7 +17,7 @@ function redirectIfWooCommerceNotInstalled( context, next ) {
 		! isSiteStore( state, site.ID ) &&
 		! getSiteOption( state, site.ID, 'is_wpcom_store' )
 	) {
-		page.redirect( `/woocommerce-installation/${ site.slug }` );
+		page.redirect( getWooCommercePluginPage( site.slug ) );
 		return;
 	}
 
