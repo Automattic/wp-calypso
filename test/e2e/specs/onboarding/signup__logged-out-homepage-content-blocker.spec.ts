@@ -29,6 +29,8 @@ const KNOWN_BLOCKED_URL = 'https://example.com/cookie-banner.js';
 
 const CALYPSO_SCRIPT_OR_STYLESHEET = /\/calypso\/[^?#]*\.(?:js|css)(?:[?#]|$)/;
 
+const ONBOARDING_PATH = /\/setup\/onboarding(?:[/?#]|$)/;
+
 const CALYPSO_STACK_FRAME = /\/calypso\/[^\s)]*\.js/;
 
 /**
@@ -105,18 +107,24 @@ test.describe(
 				await loggedOutHomePage.visit();
 			} );
 
-			await test.step( 'And I follow the Get started button', async function () {
-				const userStepUrl = new URL(
-					swapBaseUrl( await loggedOutHomePage.getStartedHref(), environment.CALYPSO_BASE_URL )
-				);
-				if ( environment.CALYPSO_BASE_URL !== environment.WPCOM_BASE_URL ) {
-					// The cookie banner flag is on in production only.
-					userStepUrl.searchParams.set( 'flags', 'cookie-banner' );
-				}
+			await test.step( 'And I click the Get started button', async function () {
 				// Errors on the marketing homepage are not this check's concern; the user step's are.
-				page.on( 'pageerror', ( error ) =>
-					pageErrors.push( `${ error.message }\n${ error.stack ?? '' }` )
-				);
+				page.on( 'pageerror', ( error ) => {
+					if ( ONBOARDING_PATH.test( page.url() ) ) {
+						pageErrors.push( `${ error.message }\n${ error.stack ?? '' }` );
+					}
+				} );
+
+				const getStartedUrl = new URL( await loggedOutHomePage.getStartedHref(), page.url() ).href;
+				if ( environment.CALYPSO_BASE_URL === environment.WPCOM_BASE_URL ) {
+					await loggedOutHomePage.getStartedLink.click();
+					return;
+				}
+
+				// The homepage links to production, so open the user step on the build under test.
+				const userStepUrl = new URL( swapBaseUrl( getStartedUrl, environment.CALYPSO_BASE_URL ) );
+				// The cookie banner flag is on in production only.
+				userStepUrl.searchParams.set( 'flags', 'cookie-banner' );
 				await page.goto( userStepUrl.href, { waitUntil: 'domcontentloaded' } );
 			} );
 
@@ -130,7 +138,9 @@ test.describe(
 
 			await test.step( 'And the signup options are shown', async function () {
 				// Same budget UserSignupPage gives the signup form to hydrate.
-				await expect( continueWithEmailButton.or( emailInput ).first() ).toBeVisible( {
+				await expect(
+					continueWithEmailButton.or( emailInput ).filter( { visible: true } ).first()
+				).toBeVisible( {
 					timeout: 30_000,
 				} );
 			} );
