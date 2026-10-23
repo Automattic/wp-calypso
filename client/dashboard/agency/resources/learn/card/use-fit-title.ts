@@ -6,9 +6,11 @@ const SCALES = [ 1, 0.875, 0.75, 0.65 ];
 
 /**
  * Fits a card title to its header, at the largest scale that keeps it inside
- * its own box, within `--resource-title-max-lines` when the stylesheet sets
- * one, and without breaking a word. A title too long even at the smallest
- * scale is clamped to the lines that fit, and marked `data-clamped`.
+ * its own box without breaking a word. Where the stylesheet sets
+ * `--resource-title-max-lines`, it also keeps to the height of that many lines
+ * at full size, so a smaller title can take a line or two more in the same
+ * space. A title too long even at the smallest scale is clamped to the lines
+ * that fit, and marked `data-clamped`.
  *
  * Sets `--resource-title-scale` and `--resource-title-lines` on the title,
  * which holds its text in a single block-level child. Fits again whenever the
@@ -26,24 +28,23 @@ export function useFitTitle< T extends HTMLElement >( text: string ) {
 
 		let fitted = { width: 0, height: 0 };
 
+		const setScale = ( scale: number ) => {
+			title.style.setProperty( '--resource-title-scale', String( scale ) );
+			return parseFloat( getComputedStyle( content ).lineHeight );
+		};
+
 		// Whether the title fits at a scale, and the lines it has room for. The
 		// content's scrollHeight, as a title in a fixed-height row clips it to
 		// that row, and its scrollWidth, as only a word too wide for its line
 		// overflows while words can't break.
-		const measure = ( scale: number ) => {
-			title.style.setProperty( '--resource-title-scale', String( scale ) );
-			const lineHeight = parseFloat( getComputedStyle( content ).lineHeight );
+		const measure = ( scale: number, maxHeight: number ) => {
+			const lineHeight = setScale( scale );
 			// Without layout, as in tests, leave the title at its full size.
 			if ( ! lineHeight ) {
 				return { fits: true, room: 0 };
 			}
-			const maxLines = parseInt(
-				getComputedStyle( title ).getPropertyValue( '--resource-title-max-lines' )
-			);
-			const room = Math.min(
-				maxLines || Infinity,
-				Math.floor( title.getBoundingClientRect().height / lineHeight + 0.01 )
-			);
+			const height = Math.min( maxHeight, title.getBoundingClientRect().height );
+			const room = Math.floor( height / lineHeight + 0.01 );
 			const lines = Math.round( content.scrollHeight / lineHeight );
 			const breaksWord = content.scrollWidth > content.clientWidth + 1;
 			return { fits: lines <= room && ! breaksWord, room };
@@ -53,12 +54,17 @@ export function useFitTitle< T extends HTMLElement >( text: string ) {
 			title.removeAttribute( 'data-clamped' );
 			title.style.removeProperty( '--resource-title-lines' );
 			title.style.overflowWrap = 'normal';
-			let { fits, room } = measure( SCALES[ 0 ] );
-			for ( const scale of SCALES.slice( 1 ) ) {
+			const maxLines = parseInt(
+				getComputedStyle( title ).getPropertyValue( '--resource-title-max-lines' )
+			);
+			const maxHeight = maxLines ? maxLines * setScale( SCALES[ 0 ] ) + 0.5 : Infinity;
+			let fits = false;
+			let room = 0;
+			for ( const scale of SCALES ) {
+				( { fits, room } = measure( scale, maxHeight ) );
 				if ( fits ) {
 					break;
 				}
-				( { fits, room } = measure( scale ) );
 			}
 			title.style.removeProperty( 'overflow-wrap' );
 			if ( ! fits ) {
