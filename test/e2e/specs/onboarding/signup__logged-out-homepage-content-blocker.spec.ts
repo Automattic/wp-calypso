@@ -197,9 +197,16 @@ test.describe(
 
 				// Routed by hand rather than through PlaywrightBlocker so blocked requests are
 				// recorded and allowed ones fall back to the routes the page fixture registered.
+				// Like PlaywrightBlocker, never block the top-level document: no content blocker
+				// aborts a navigation, and a `$document` rule would read as a signup outage.
 				await page.route( '**/*', async ( route ) => {
 					const request = route.request();
-					if ( ! blocker.match( fromPlaywrightDetails( request ) ).match ) {
+					const frame = request.frame();
+					const details = fromPlaywrightDetails( request );
+					const isTopLevelDocument =
+						details.isMainFrame() ||
+						( details.type === 'document' && frame.parentFrame() === null );
+					if ( isTopLevelDocument || ! blocker.match( details ).match ) {
 						await route.fallback();
 						return;
 					}
