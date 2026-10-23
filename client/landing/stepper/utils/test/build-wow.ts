@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 import {
 	getBuildWowGraph,
@@ -6,6 +7,11 @@ import {
 	isBuildWowSiteEditorReady,
 	requestBuildWowSite,
 } from '../build-wow';
+
+jest.mock( '@automattic/calypso-config', () => ( {
+	__esModule: true,
+	default: { isEnabled: jest.fn( () => false ) },
+} ) );
 
 jest.mock( 'calypso/lib/logstash', () => ( {
 	logToLogstash: jest.fn( () => Promise.resolve() ),
@@ -122,11 +128,7 @@ describe( 'build-wow utilities', () => {
 		post.mockResolvedValue( {} );
 
 		await requestBuildWowSite( '123', 'spec-1', 'dsl' );
-		expect( post.mock.calls[ 0 ][ 1 ] ).toEqual( {
-			spec_id: 'spec-1',
-			graph: 'dsl',
-			stream_events: true,
-		} );
+		expect( post.mock.calls[ 0 ][ 1 ] ).toEqual( { spec_id: 'spec-1', graph: 'dsl' } );
 
 		// No spec means nothing is queued, so there is no build to record a
 		// graph against.
@@ -134,7 +136,7 @@ describe( 'build-wow utilities', () => {
 		expect( post.mock.calls[ 1 ][ 1 ] ).toEqual( {} );
 
 		await requestBuildWowSite( '123', 'spec-1' );
-		expect( post.mock.calls[ 2 ][ 1 ] ).toEqual( { spec_id: 'spec-1', stream_events: true } );
+		expect( post.mock.calls[ 2 ][ 1 ] ).toEqual( { spec_id: 'spec-1' } );
 	} );
 
 	describe( 'live feed opt-in', () => {
@@ -143,11 +145,17 @@ describe( 'build-wow utilities', () => {
 		beforeEach( () => {
 			post.mockReset();
 			post.mockResolvedValue( {} );
+			jest.mocked( config.isEnabled ).mockReturnValue( true );
 		} );
 
-		it( 'asks for the feed on a call that queues a build', async () => {
+		afterEach( () => {
+			jest.mocked( config.isEnabled ).mockReturnValue( false );
+		} );
+
+		it( 'asks for the feed where streaming is on, whoever builds', async () => {
 			await requestBuildWowSite( '123', 'spec-1', 'dsl' );
 
+			expect( config.isEnabled ).toHaveBeenCalledWith( 'site-spec/build-wow-streaming' );
 			expect( post.mock.calls[ 0 ][ 1 ] ).toEqual( {
 				spec_id: 'spec-1',
 				graph: 'dsl',
@@ -159,6 +167,14 @@ describe( 'build-wow utilities', () => {
 			await requestBuildWowSite( '123' );
 
 			expect( post.mock.calls[ 0 ][ 1 ] ).toEqual( {} );
+		} );
+
+		it( 'does not ask for the feed where streaming is off', async () => {
+			jest.mocked( config.isEnabled ).mockReturnValue( false );
+
+			await requestBuildWowSite( '123', 'spec-1' );
+
+			expect( post.mock.calls[ 0 ][ 1 ] ).toEqual( { spec_id: 'spec-1' } );
 		} );
 	} );
 } );

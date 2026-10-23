@@ -1,8 +1,12 @@
+import config from '@automattic/calypso-config';
 import { useReducedMotion } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getBuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
+import {
+	BUILD_WOW_STREAMING_FLAG,
+	getBuildWowGraph,
+} from 'calypso/landing/stepper/utils/build-wow';
 import { useBuildWowStream } from './stream/use-build-wow-stream';
 import { useSiteGeneration } from './use-site-generation';
 import { SiteGenerationView } from './view';
@@ -43,11 +47,12 @@ const SiteGeneration: StepType = function SiteGeneration() {
 		steps,
 		completionDelayMs: previewReady && ! shouldReduceMotion ? 2600 : 0,
 	} );
-	const stream = useBuildWowStream( state.streamInfo ?? null );
+	const streamingEnabled = config.isEnabled( BUILD_WOW_STREAMING_FLAG );
+	const stream = useBuildWowStream( streamingEnabled ? ( state.streamInfo ?? null ) : null );
 	// The build only asks for a feed; the server may decline it. Show the live
 	// canvas once the status response advertises a stream, even before the
 	// event subscription delivers its first state.
-	const streamRequested = Boolean( state.streamInfo );
+	const streamRequested = streamingEnabled && Boolean( state.streamInfo );
 
 	const reload = () => {
 		window.location.reload();
@@ -62,7 +67,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 				onPreviewReady={ setPreviewReady }
 				siteSlug={ siteSlug }
 				state={ state }
-				stream={ stream }
+				stream={ streamingEnabled ? stream : null }
 				streamRequested={ streamRequested }
 			/>
 		</>

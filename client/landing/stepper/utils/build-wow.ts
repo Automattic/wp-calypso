@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
@@ -19,6 +20,12 @@ export function getBuildWowGraph( queryParams: URLSearchParams ): BuildWowGraph 
 
 	return BUILD_WOW_GRAPHS.find( ( graph ) => graph === requested );
 }
+
+/**
+ * The live feed's switch in Calypso. While it is on, every build asks for the
+ * feed and the generation screen follows the stream the server advertises.
+ */
+export const BUILD_WOW_STREAMING_FLAG = 'site-spec/build-wow-streaming';
 
 type BuildWowAtomicState = {
 	is_atomic?: boolean;
@@ -126,11 +133,11 @@ export async function requestBuildWowSite(
 	graph?: BuildWowGraph,
 	blueprintId?: string
 ): Promise< BuildWowResponse > {
-	// Like graph, only a call that queues a build carries the opt-in. It only
-	// requests the live feed: the server decides eligibility and pins the choice
-	// to the run, and the status endpoint's `stream` block says whether this run
-	// actually streams.
-	const streamEvents = Boolean( specId );
+	// Like graph, only a call that queues a build carries the opt-in, and only
+	// while the streaming flag is on. It only requests the live feed: the server
+	// decides eligibility and pins the choice to the run, and the status
+	// endpoint's `stream` block says whether this run actually streams.
+	const streamEvents = Boolean( specId ) && config.isEnabled( BUILD_WOW_STREAMING_FLAG );
 
 	return wpcom.req.post(
 		{

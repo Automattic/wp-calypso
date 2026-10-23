@@ -195,6 +195,7 @@
 		"site-profiler/metrics": true,
 		"site-spec": true,
 		"site-spec/build-wow-blocks-first": true,
+		"site-spec/build-wow-streaming": true,
 		"ssr/prefetch-timebox": false,
 		"stats/archive-breakdown": true,
 		"stats/chart-library": true,
