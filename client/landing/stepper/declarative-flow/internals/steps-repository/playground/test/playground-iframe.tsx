@@ -107,7 +107,7 @@ describe( 'PlaygroundIframe intro', () => {
 		let resolveBoot: ( value: unknown ) => void = () => {};
 		jest.mocked( initializeWordPressPlayground ).mockReturnValue(
 			new Promise( ( resolve ) => {
-				resolveBoot = resolve;
+				resolveBoot = resolve as ( value: unknown ) => void;
 			} ) as ReturnType< typeof initializeWordPressPlayground >
 		);
 
