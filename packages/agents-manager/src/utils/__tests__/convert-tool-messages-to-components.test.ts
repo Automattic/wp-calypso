@@ -168,6 +168,53 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
+	describe( 'a tool summary acknowledgement', () => {
+		const SUMMARY = 'Changed your site title to “Welly Test 2”.';
+		const userMessage = createMessage( {
+			id: 'user',
+			role: 'user',
+			content: [ { type: 'text', text: 'Change my site title to Welly Test 2' } ],
+		} );
+		const acknowledgement = createMessage( {
+			id: 'ack',
+			content: [
+				{ type: 'context', text: SUMMARY },
+				{ type: 'data', data: { flags: { context_only: true, tool_summary: true } } },
+			],
+		} );
+
+		it( 'shows as text in a reloaded chat, which has no tool messages', () => {
+			const result = convertToolMessagesToComponents( {
+				messages: [ userMessage, acknowledgement ],
+			} );
+
+			expect( result ).toEqual( [
+				userMessage,
+				{
+					...acknowledgement,
+					content: [
+						{ type: 'text', text: SUMMARY },
+						{ type: 'data', data: { flags: { context_only: true, tool_summary: true } } },
+					],
+				},
+			] );
+		} );
+
+		it( 'stays hidden after the tool message that shows the summary', () => {
+			const toolMessage = createToolMessage(
+				'big_sky__edit_entity_record',
+				{ summary: SUMMARY },
+				{ id: 'tool' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ userMessage, toolMessage, acknowledgement ],
+			} );
+
+			expect( result.map( ( message ) => message.id ) ).toEqual( [ 'user', 'tool' ] );
+		} );
+	} );
+
 	it( 'renders tool messages as components', () => {
 		const message = createMessage( {
 			content: [

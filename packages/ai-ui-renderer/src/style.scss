@@ -58,6 +58,24 @@ $wp-components-colors: (
 			var( --wp-components-color-accent ),
 			color-mix( in srgb, var( --wp-components-color-accent ) 80%, #{$white} )
 		);
+
+		// Disabled controls mix the text into the input color, like WordPress's light grays
+		// (#f0f0f0, #dbdbdb and #949494 on white), so they follow the theme in dark mode too.
+		--ai-ui-renderer-disabled-background: color-mix(
+			in srgb,
+			var( --wp-components-color-background ) 94%,
+			var( --wp-components-color-foreground )
+		);
+		--ai-ui-renderer-disabled-border: color-mix(
+			in srgb,
+			var( --wp-components-color-background ) 85%,
+			var( --wp-components-color-foreground )
+		);
+		--ai-ui-renderer-disabled-foreground: color-mix(
+			in srgb,
+			var( --wp-components-color-background ) 45%,
+			var( --wp-components-color-foreground )
+		);
 	}
 
 	// Newer WordPress components read the design system's tokens instead. They're set on each
@@ -74,6 +92,10 @@ $wp-components-colors: (
 		--wpds-color-foreground-interactive-brand: var( --ai-ui-renderer-accent-text );
 		--wpds-color-foreground-interactive-brand-active: var( --ai-ui-renderer-accent-text-hover );
 		--wpds-color-stroke-focus: var( --wp-components-color-accent );
+		--wpds-color-foreground-interactive-neutral-disabled: var(
+			--ai-ui-renderer-disabled-foreground
+		);
+		--wpds-color-stroke-interactive-neutral-disabled: var( --ai-ui-renderer-disabled-border );
 	}
 }
 
@@ -236,19 +258,50 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 		background: var( --wp-components-color-background );
 	}
 
-	// Disabled controls mix the text into the input color, matching WordPress's light grays.
+	// A stale surface disables its controls through its fieldset, which WordPress components don't
+	// style (they read their own `disabled` prop), so these rules color the disabled controls.
 	.components-checkbox-control__input[type='checkbox']:is( :disabled, [aria-disabled='true'] ),
 	.components-radio-control__input[type='radio']:disabled {
-		background: color-mix(
-			in srgb,
-			var( --wp-components-color-background ) 94%,
-			var( --wp-components-color-foreground )
-		);
-		border-color: color-mix(
-			in srgb,
-			var( --wp-components-color-background ) 85%,
-			var( --wp-components-color-foreground )
-		);
+		background: var( --ai-ui-renderer-disabled-background );
+		border-color: var( --ai-ui-renderer-disabled-border );
+	}
+
+	:is( .components-text-control__input, .components-textarea-control__input ):disabled {
+		background: var( --ai-ui-renderer-disabled-background );
+		border-color: var( --ai-ui-renderer-disabled-border );
+		box-shadow: none;
+		color: var( --ai-ui-renderer-disabled-foreground );
+	}
+
+	.components-input-control__container:has( > .components-input-control__input:disabled ) {
+		background: var( --ai-ui-renderer-disabled-background );
+
+		.components-input-control__input {
+			color: var( --ai-ui-renderer-disabled-foreground );
+		}
+
+		.components-input-control__backdrop {
+			border-color: var( --ai-ui-renderer-disabled-border );
+		}
+	}
+
+	.components-range-control:has( input[type='range']:disabled ) {
+		--wp-components-color-accent: var( --ai-ui-renderer-disabled-foreground );
+		--wp-components-color-gray-300: var( --ai-ui-renderer-disabled-border );
+	}
+
+	// Only the basic Button's variants and the Tabs' tabs, so a custom component's own buttons, such
+	// as a picker's arrows, keep their styles.
+	:is(
+		.components-button.is-primary,
+		.components-button.is-secondary,
+		.components-tab-panel__tabs-item
+	):is( :disabled, [aria-disabled='true'] ) {
+		color: var( --ai-ui-renderer-disabled-foreground );
+
+		&.is-primary {
+			background: var( --ai-ui-renderer-disabled-background );
+		}
 	}
 
 	.components-radio-control__input[type='radio']:not( :checked, :disabled ) {

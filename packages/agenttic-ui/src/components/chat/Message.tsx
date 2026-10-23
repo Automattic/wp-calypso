@@ -74,7 +74,6 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >( functio
 			animate="visible"
 			data-slot="message"
 			data-role={ message.role }
-			data-turn-start={ message.startsTurn || undefined }
 			className={ cn(
 				styles.message,
 				styles[ message.role ],

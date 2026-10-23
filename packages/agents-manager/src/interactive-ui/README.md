@@ -116,8 +116,10 @@ come.
   or a chart looks as before. Once all of a message's surfaces are stale, its actions, such as
   feedback, are disabled too.
 - **Style with A2UI's theme tokens.** Custom components color themselves with the `--a2ui-*`
-  tokens, or use WordPress components, which the renderer themes with them, so they follow each
-  host's theme ([theming](../../../ai-ui-renderer/README.md#theming)).
+  tokens and the renderer's disabled colors, or use WordPress components, which the renderer themes
+  with them, so they follow each host's theme ([theming](../../../ai-ui-renderer/README.md#theming)).
+  Check them in light and dark mode, enabled and disabled
+  ([how](../../../ai-ui-renderer/README.md#theming-a-new-component)).
 - **Load only what the surface renders.** Editor-only components load on demand, in the editor.
 
 ## Try it
@@ -153,22 +155,25 @@ return them with `surface_result()`.
    on demand if it carries editor code. It follows the [custom component rules](#rules).
 2. **Return a surface from the ability** (wpcom) when `Agent_Ability::can_show_interactive_ui()`
    passes: in an agent's chat whose client renders Agents Manager's catalog, on a site with the
-   sticker, for a request with no steps after the component (`followUpTasks`), since a surface ends
-   the turn. Otherwise, keep returning the `show-component` result.
+   sticker. Otherwise, keep returning the `show-component` result.
    - **Helpers:** `Interactive_UI::component_result()` shows one component under the agent's
      summary, and `surface_result()` takes a layout of your own, with its data model.
    - **Post:** pass either helper the post the UI acts on (`$post_id`), as `show-component` results
      carry `postId`, so it goes stale while the editor has another post open. Site-wide UI, such as
      the style pickers, passes none.
+   - **Steps:** a surface ends the turn, even when steps remain (`followUpTasks`). For such a
+     request, pass `component_result()`'s `$has_next_step`: the surface then asks the user to say
+     when they're ready for the next step, and the agent continues once they do.
    - **Your own catalog:** both helpers build on Agents Manager's catalog, which the gate checks. A
      component from your catalog names your catalog as its `catalogId`, and the ability also checks
      it with `Interactive_UI::is_enabled( $context, $catalog_id )`.
-   - **History:** the model's history keeps the component's name and string props, but not its
-     array props, such as a picker's style variations (`Interactive_UI::text_for_model()`). Put
-     what the agent needs to remember in the summary or a string prop.
+   - **History:** the model's history keeps the component and its props, but not its list props,
+     such as a picker's style variations (`Interactive_UI::text_for_model()`). Put what the agent
+     needs to remember in the summary or a prop that isn't a list.
    - **Order:** deploy it once step 1 has reached every client, through Agents Manager's release
      for its own components. A client without the component still lists the catalog's ID, so it
      would get the surface and show nothing.
-3. **Test both paths.** With the sticker, the surface renders, goes stale after a reply, a reload
-   or, if it acts on a post, a post switch, keeps its undo, and records the shared response events
-   under its component's name and surface ID. Without it, the old UI shows as before.
+3. **Test both paths.** With the sticker, the surface renders (also for a request with a step after
+   it), goes stale after a reply, a reload or, if it acts on a post, a post switch, keeps its undo,
+   and records the shared response events under its component's name and surface ID. Without it,
+   the old UI shows as before.
