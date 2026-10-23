@@ -5,7 +5,7 @@ import type { InteractiveUiMessage, InteractiveUiRuntime } from '@automattic/ai-
 /** The A2UI protocol version the interactive UI speaks. */
 export const INTERACTIVE_UI_VERSION = 'v1.0';
 
-/** The tool wpcom renders interactive UI with, which the shared response events name. */
+/** The tool ID a surface's shared response events record. */
 export const INTERACTIVE_UI_TOOL_ID = 'wpcom__render_interactive_ui';
 
 interface InteractiveUiPart {
