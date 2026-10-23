@@ -148,6 +148,13 @@ const WHITE_TEXT = { color: 'rgb(255, 255, 255)', fontSize: '16px' };
 const UNMEASURED_ONE =
 	'Contrast could not be measured for 1 edited text block(s), whose text sits over an image or gradient or uses a colour that cannot be read; judge those from the picture.';
 
+// The unmeasured note, with why the block over the cover was left to the picture.
+const skippedOver = ( label: string, reason: string ) =>
+	`${ UNMEASURED_ONE } Of those, ${ label } sits over cover (hero), where ${ reason }.`;
+const UNREADABLE =
+	"its photograph's pixels could not be read, as when it has not loaded or its host does not allow it";
+const PLACEMENT = 'where its photograph sits behind the text cannot be worked out';
+
 const section = ( children: CanvasBlock[] ): CanvasBlock => ( {
 	clientId: 'sect',
 	name: 'core/group',
@@ -1224,15 +1231,15 @@ describe( 'text over a cover image', () => {
 			'img'
 		) as HTMLImageElement;
 
-	const withImageStyle = ( styles: Styles ) => {
-		const image = getCanvasImage();
-		const getComputedStyle = image.ownerDocument.defaultView?.getComputedStyle as jest.Mock;
+	/** Computed styles jsdom does not compute, such as a gradient, on one element. */
+	const withComputedStyle = < T extends Element >( element: T, styles: Styles ): T => {
+		const getComputedStyle = element.ownerDocument.defaultView?.getComputedStyle as jest.Mock;
 		const computed = getComputedStyle.getMockImplementation();
 
-		getComputedStyle.mockImplementation( ( element: Element, pseudo?: string ) => {
-			const style = computed?.( element, pseudo );
+		getComputedStyle.mockImplementation( ( target: Element, pseudo?: string ) => {
+			const style = computed?.( target, pseudo );
 
-			if ( element === image ) {
+			if ( target === element ) {
 				Object.entries( styles ).forEach( ( [ property, value ] ) =>
 					Object.defineProperty( style, property, { value } )
 				);
@@ -1241,8 +1248,15 @@ describe( 'text over a cover image', () => {
 			return style;
 		} );
 
-		return image;
+		return element;
 	};
+
+	const withImageStyle = ( styles: Styles ) => withComputedStyle( getCanvasImage(), styles );
+
+	const getOverlay = () =>
+		( document.querySelector( 'iframe' ) as HTMLIFrameElement ).contentDocument?.querySelector(
+			'.wp-block-cover__background'
+		) as HTMLElement;
 
 	interface CoverOptions {
 		overlay?: Styles;
@@ -1277,6 +1291,7 @@ describe( 'text over a cover image', () => {
 				const span = canvasDocument.createElement( 'span' );
 				span.className = `wp-block-cover__background ${ overlayClass }`;
 				Object.assign( span.style, { position: 'absolute', ...overlay } );
+				withRect( span, COVER_RECT );
 				element.append( span );
 			}
 		},
@@ -1399,18 +1414,66 @@ describe( 'text over a cover image', () => {
 		expect( describeTextContrast( [ 'hero' ] )?.backdrops[ 0 ].readableText ).toBe( '#707070' );
 	} );
 
-	it( 'leaves text over a gradient overlay to the picture', () => {
+	// The WPAGENT sandbox hero: a linear gradient over the overlay colour.
+	it( 'measures text against a gradient overlay where each part of the text sits', () => {
 		mountCanvas( [
 			cover( {
-				overlay: { backgroundColor: 'rgb(0, 0, 0)', opacity: '0.5' },
-				overlayClass: 'wp-block-cover__gradient-background',
+				overlay: { backgroundColor: 'rgba(0, 0, 0, 0)', opacity: '1' },
+				overlayClass: 'wp-block-cover__gradient-background has-background-gradient',
+				pixels: photo( Array( 120 ).fill( 230 ) ),
+				children: [
+					{
+						...text( 'left', WHITE_TEXT ),
+						textRect: { top: 100, left: 0, width: 200, height: 40 },
+					},
+					{
+						...text( 'right', WHITE_TEXT ),
+						textRect: { top: 200, left: 1000, width: 200, height: 40 },
+					},
+				],
+			} ),
+		] );
+		// Black at the left edge, clear at the right, over a light photograph.
+		withComputedStyle( getOverlay(), {
+			backgroundImage: 'linear-gradient(to right, rgb(0, 0, 0) 0%, rgba(0, 0, 0, 0) 100%)',
+		} );
+
+		const contrast = describeTextContrast( [ 'hero' ] );
+
+		expect( contrast?.failures ).toBe( 1 );
+		expect( contrast?.backdrops ).toEqual( [
+			{
+				clientId: 'hero',
+				name: 'core/cover',
+				ownBackground: true,
+				textClientIds: [ 'right' ],
+				readableText: '#000000',
+			},
+		] );
+		expect( contrast?.notes[ 0 ] ).toContain(
+			'comes from cover (hero): its gradient overlay, at 100% opacity, blended over the photograph behind the text.'
+		);
+	} );
+
+	it( 'leaves text over a gradient overlay it cannot work out to the picture', () => {
+		mountCanvas( [
+			cover( {
+				overlay: HERO_OVERLAY,
 				pixels: photo( MID_TONED ),
 				children: [ text( 'line', DARK_INK ) ],
 			} ),
 		] );
+		withComputedStyle( getOverlay(), {
+			backgroundImage: 'radial-gradient(circle, rgb(0, 0, 0) 0%, rgba(0, 0, 0, 0) 100%)',
+		} );
 
 		expect( describeTextContrast( [ 'hero' ] ) ).toEqual( {
-			notes: [ UNMEASURED_ONE ],
+			notes: [
+				skippedOver(
+					'paragraph (line)',
+					'its overlay is a gradient that cannot be worked out, such as a radial one'
+				),
+			],
 			failures: null,
 			backdrops: [],
 		} );
@@ -1425,13 +1488,13 @@ describe( 'text over a cover image', () => {
 			} ),
 		] );
 
-		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [ skippedOver( 'paragraph (line)', UNREADABLE ) ] );
 	} );
 
 	it( 'leaves text over a photo that has not loaded to the picture', () => {
 		mountCanvas( [ cover( { overlay: HERO_OVERLAY, children: [ text( 'line', DARK_INK ) ] } ) ] );
 
-		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [ skippedOver( 'paragraph (line)', UNREADABLE ) ] );
 	} );
 
 	// Reading the whole image instead is no safe stand-in: a bright band
@@ -1447,7 +1510,7 @@ describe( 'text over a cover image', () => {
 			} ),
 		] );
 
-		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [ skippedOver( 'paragraph (line)', PLACEMENT ) ] );
 	} );
 
 	it( 'leaves text over a photo the measurement cannot map to the picture', () => {
@@ -1460,7 +1523,7 @@ describe( 'text over a cover image', () => {
 		] );
 		withImageStyle( { objectFit: 'none' } );
 
-		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [ skippedOver( 'paragraph (line)', PLACEMENT ) ] );
 	} );
 
 	// Centring it instead would read the wrong part of the photograph.
@@ -1474,7 +1537,7 @@ describe( 'text over a cover image', () => {
 		] );
 		withImageStyle( { objectPosition: '2em 50%' } );
 
-		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [ skippedOver( 'paragraph (line)', PLACEMENT ) ] );
 	} );
 
 	it( 'measures text over a photo placed at a plain position', () => {
@@ -1506,7 +1569,7 @@ describe( 'text over a cover image', () => {
 		image.getBoundingClientRect = () =>
 			( { top: 0, left: 0, width: 1200, height: 840, right: 1200, bottom: 840 } ) as DOMRect;
 
-		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [ skippedOver( 'paragraph (line)', PLACEMENT ) ] );
 	} );
 
 	// What shows through is the cover's background or the page behind it.
@@ -1519,7 +1582,9 @@ describe( 'text over a cover image', () => {
 			} ),
 		] );
 
-		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [
+			skippedOver( 'paragraph (line)', 'its photograph is transparent behind the text' ),
+		] );
 	} );
 
 	it( 'measures text on an opaque overlay, which hides the image', () => {
@@ -1632,7 +1697,9 @@ describe( 'text over a cover image, read more than once or more than one way', (
 	] )( 'leaves text over an image with %s to the picture', ( _, imageStyle ) => {
 		mountCanvas( [ cover( 'hero', [ text( 'a', DARK_INK ) ], { imageStyle } ) ] );
 
-		expect( notesOf( [ 'hero' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( notesOf( [ 'hero' ] ) ).toEqual( [
+			skippedOver( 'paragraph (a)', 'its image is filtered, faded or blended, as a duotone does' ),
+		] );
 	} );
 
 	it( 'draws the editor’s own copy of the image once for every run over it', () => {
