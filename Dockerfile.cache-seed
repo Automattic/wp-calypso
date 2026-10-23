@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.20
 
-ARG node_version=24.15.0
+ARG node_version=24.22.1
 ARG commit_sha="(unknown)"
 ARG cache_seed_key="(unknown)"
 
