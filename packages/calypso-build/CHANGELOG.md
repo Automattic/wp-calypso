@@ -2,6 +2,7 @@
 
 ## trunk
 
+- Fixed: `minify` reads the `transform-*` feature names from `@babel/compat-data`, which Babel 8 kept, instead of the `proposal-*` names it removed. The chosen Terser `ecma` target is unchanged on Babel 7.
 - Updated dependencies:
   - babel-loader to ^10.1.1 (needs thread-loader 4, below, for `this.utils` in workers)
   - thread-loader to ^4.0.4
