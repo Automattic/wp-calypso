@@ -5,6 +5,7 @@ import { FEATURE_BIG_SKY } from '@automattic/calypso-products';
 import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
 import { waitForPluginsActive } from 'calypso/landing/stepper/utils/wait-for-plugins-active';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { mockStepProps, renderStep } from '../../test/helpers';
 import PostCheckoutOnboarding from '../post-checkout-onboarding';
 
@@ -173,6 +174,24 @@ describe( 'PostCheckoutOnboarding', () => {
 		await mockSetPendingAction.mock.calls[ 0 ][ 0 ]();
 
 		expect( waitForPluginsActive ).toHaveBeenCalledWith( 123, [ 'woocommerce' ] );
+	} );
+
+	it( 'skips the chooser when WooCommerce is still not active on a Commerce site', async () => {
+		( waitForPluginsActive as jest.Mock ).mockRejectedValueOnce(
+			new Error( 'plugin check timeout exceeded 300s' )
+		);
+		const props = renderWithFreshSite( siteWithPlan( 'ecommerce-bundle', [ FEATURE_BIG_SKY ] ) );
+
+		await waitFor( () => expect( props.navigation.submit ).toHaveBeenCalled() );
+
+		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+		const dependencies = await pendingAction();
+		expect( dependencies ).toMatchObject( { siteSlug: 'example.wordpress.com' } );
+		expect( dependencies ).not.toHaveProperty( 'postCheckoutBigSky' );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_onboarding_post_checkout_setup_error',
+			{ flow: 'onboarding', error_woocommerce_timeout: true }
+		);
 	} );
 
 	it.each( [

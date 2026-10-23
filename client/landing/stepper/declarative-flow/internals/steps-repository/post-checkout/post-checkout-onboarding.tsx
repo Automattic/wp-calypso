@@ -194,7 +194,6 @@ const PostCheckoutOnboarding: StepType< {
 				siteSlug,
 				hasExternalTheme,
 				hasPluginByGoal,
-				...( showBigSkyChoice ? { postCheckoutBigSky: true } : {} ),
 			};
 
 			if ( ! isJetpackOrAtomic ) {
@@ -210,17 +209,28 @@ const PostCheckoutOnboarding: StepType< {
 			// site may already be Atomic when this effect mounts while
 			// WooCommerce is still finishing installation. This covers both the
 			// Commerce plan (backend auto-install) and the Business plan (install
-			// via the transfer initiated above). A Commerce site headed for the
-			// onboarding setup chooser waits too, so neither builder opens on a
-			// half-made store.
-			if (
-				isWooHostingSolutions ||
-				( isCommercePlan && showBigSkyChoice && flow === ONBOARDING_FLOW )
-			) {
+			// via the transfer initiated above).
+			if ( isWooHostingSolutions ) {
 				await waitForPluginsActive( site.ID, [ 'woocommerce' ] );
+			} else if ( isCommercePlan && showBigSkyChoice && flow === ONBOARDING_FLOW ) {
+				// A Commerce site headed for the onboarding setup chooser waits too, so neither
+				// builder opens on a half-made store. A store still not ready after the wait skips
+				// the chooser instead of failing a paid checkout.
+				try {
+					await waitForPluginsActive( site.ID, [ 'woocommerce' ] );
+				} catch {
+					recordTracksEvent( 'calypso_onboarding_post_checkout_setup_error', {
+						flow,
+						error_woocommerce_timeout: true,
+					} );
+					return providedDependencies;
+				}
 			}
 
-			return providedDependencies;
+			return {
+				...providedDependencies,
+				...( showBigSkyChoice ? { postCheckoutBigSky: true } : {} ),
+			};
 		} );
 
 		submit?.( {
