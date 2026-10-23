@@ -1,5 +1,5 @@
 import { withDisabledActions } from '../utils/message-actions';
-import { isInteractiveUiActionMessage, parseInteractiveUiText } from './messages';
+import { isInteractiveUiActionMessage, readInteractiveUiPart } from './messages';
 import { InteractiveUiSurfaces } from './surfaces';
 import type { InteractiveUiPresentation } from './use-interactive-ui';
 import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
@@ -7,8 +7,8 @@ import type { UIMessage } from '@automattic/agenttic-client';
 import type { ComponentType } from 'react';
 
 /**
- * Replaces the interactive UI text parts of each agent message with one
- * `InteractiveUiSurfaces` part, which renders all of the message's surfaces.
+ * Replaces the interactive UI parts of each agent message with one `InteractiveUiSurfaces` part,
+ * which renders all of the message's surfaces under its text.
  */
 export function convertInteractiveUiMessagesToComponents(
 	messages: AgentsManagerUIMessage[]
@@ -23,7 +23,7 @@ export function convertInteractiveUiMessagesToComponents(
 		return {
 			...message,
 			content: message.content.flatMap( ( content ) => {
-				if ( content.type !== 'text' || ! parseInteractiveUiText( content.text ) ) {
+				if ( ! readInteractiveUiPart( content ) ) {
 					return [ content ];
 				}
 

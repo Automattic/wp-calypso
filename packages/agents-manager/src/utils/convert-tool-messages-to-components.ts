@@ -230,6 +230,16 @@ function followsTerminalApplyBlockEditsOutcome(
 }
 
 /**
+ * Drops a message's narration after a terminal block-edit outcome, but keeps a component beside it,
+ * such as an interactive UI surface.
+ */
+function withoutNarration( message: UIMessage ): UIMessage[] {
+	const content = message.content.filter( ( part ) => part.type === 'component' );
+
+	return content.length > 0 ? [ { ...message, content } ] : [];
+}
+
+/**
  * Converts tool-related messages to component messages.
  */
 export default function convertToolMessagesToComponents( {
@@ -298,7 +308,9 @@ export default function convertToolMessagesToComponents( {
 		try {
 			textData = JSON.parse( firstContentText );
 		} catch ( _error ) {
-			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
+			return followsTerminalApplyBlockEditsOutcome( array, index )
+				? withoutNarration( message )
+				: [ message ];
 		}
 
 		if (
@@ -306,7 +318,9 @@ export default function convertToolMessagesToComponents( {
 			textData === null ||
 			typeof textData.tool_id !== 'string'
 		) {
-			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
+			return followsTerminalApplyBlockEditsOutcome( array, index )
+				? withoutNarration( message )
+				: [ message ];
 		}
 
 		// Handle `show-component` tool message

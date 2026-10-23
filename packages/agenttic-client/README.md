@@ -531,10 +531,13 @@ interface UIMessage {
 	id: string;
 	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'image_url' | 'component';
+		type: 'text' | 'component' | 'context' | 'data';
 		text?: string;
-		image_url?: string;
 		component?: React.ComponentType;
+		componentProps?: any;
+		// Data the host reads, such as `sources`, or an interactive UI surface under `a2ui`:
+		// A2UI's A2A data part, for the host to render.
+		data?: Record< string, unknown >;
 	} >;
 	timestamp: number;
 	actions?: UIMessageAction[];

@@ -1,4 +1,5 @@
 import type {
+	A2uiDataPart,
 	Ability,
 	AbilityDataPart,
 	ClientContext,
@@ -287,6 +288,20 @@ export function createAgentTextMessage( text: string ): Message {
 			timestamp: Date.now(),
 		},
 	};
+}
+
+/**
+ * Whether a part is an interactive UI surface: A2UI's A2A data part, named by its MIME type.
+ * @param part The part, which may come from storage or the server.
+ */
+export function isA2uiDataPart( part: unknown ): part is A2uiDataPart {
+	const candidate = part as Partial< A2uiDataPart > | null | undefined;
+
+	return (
+		candidate?.type === 'data' &&
+		Array.isArray( candidate.data ) &&
+		candidate.metadata?.mimeType === 'application/a2ui+json'
+	);
 }
 
 /**
