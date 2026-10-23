@@ -369,20 +369,12 @@ export default {
 	},
 	setSelectedSiteForSignup( context, next ) {
 		const { getState, dispatch } = context.store;
-		const userLoggedIn = isUserLoggedIn( getState() );
-		const flowName = getFlowName( context.params, userLoggedIn );
 		const signupDependencies = getSignupDependencyStore( getState() );
-		let siteIdOrSlug;
-
-		if ( 'launch-site' === flowName ) {
-			siteIdOrSlug = context.query?.siteSlug || signupDependencies?.siteSlug;
-		} else {
-			siteIdOrSlug =
-				signupDependencies?.siteSlug ||
-				context.query?.siteSlug ||
-				signupDependencies?.siteId ||
-				context.query?.siteId;
-		}
+		const siteIdOrSlug =
+			signupDependencies?.siteSlug ||
+			context.query?.siteSlug ||
+			signupDependencies?.siteId ||
+			context.query?.siteId;
 
 		if ( ! siteIdOrSlug ) {
 			next();
