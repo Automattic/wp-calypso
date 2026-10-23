@@ -15,7 +15,9 @@ import { useResourceFields } from './dataviews/fields';
 import { DEFAULT_LAYOUTS } from './dataviews/views';
 import ResourceGrid from './resource-grid';
 import ResourceLink from './resource-link';
+import ResourceModal from './resource-modal';
 import StageFilter from './stage-filter';
+import { getNeighbors, useResourceSelection } from './use-resource-selection';
 import { useRevealMore } from './use-reveal-more';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
@@ -26,18 +28,33 @@ interface ResourceLibraryProps {
 	resources: AgencyEnablementResource[];
 	view: View;
 	onChangeView: ( view: View ) => void;
+	onPreviewResource: ( resource: AgencyEnablementResource ) => void;
 	onOpenResource: ( resource: AgencyEnablementResource ) => void;
 	onLoadMore: () => void;
+	readIds: number[];
+	onSetRead: ( resource: AgencyEnablementResource, isRead: boolean ) => void;
+	selectedId: number | null;
+	onSelectedIdChange: ( id: number | null ) => void;
 }
 
 export default function ResourceLibrary( {
 	resources,
 	view,
 	onChangeView,
+	onPreviewResource,
 	onOpenResource,
 	onLoadMore,
+	readIds,
+	onSetRead,
+	selectedId,
+	onSelectedIdChange,
 }: ResourceLibraryProps ) {
-	const fields = useResourceFields( resources );
+	const selection = useResourceSelection( {
+		onSelectedIdChange,
+		onPreview: onPreviewResource,
+	} );
+
+	const fields = useResourceFields( resources, readIds );
 
 	// The library isn't paginated, so every match is shown.
 	const { data: filteredData, paginationInfo } = useMemo(
@@ -58,6 +75,14 @@ export default function ResourceLibrary( {
 
 	const isList = view.type === 'table';
 
+	// The modal moves through every match, not only those loaded so far.
+	const neighbors = getNeighbors( filteredData, selectedId );
+	// A shared link can name a resource the saved filters hide; show it anyway,
+	// without neighbors to move to.
+	const selected =
+		neighbors.selected ?? resources.find( ( resource ) => resource.id === selectedId );
+	const { previous, next } = neighbors;
+
 	return (
 		<div ref={ containerRef } className="dashboard-resources-learn__results">
 			<div className="dashboard-resources-learn__filters">
@@ -74,7 +99,7 @@ export default function ResourceLibrary( {
 							{ ...props }
 							style={ { textDecoration: 'none' } }
 							resource={ item }
-							onOpen={ onOpenResource }
+							onSelect={ selection.select }
 						/>
 					) }
 					search
@@ -98,7 +123,7 @@ export default function ResourceLibrary( {
 				</DataViews>
 			</div>
 			{ ! isList && filteredData.length > 0 && (
-				<ResourceGrid resources={ visibleResources } onOpenResource={ onOpenResource } />
+				<ResourceGrid resources={ visibleResources } onSelectResource={ selection.select } />
 			) }
 			{ filteredData.length > 0 && (
 				<Spacer marginTop={ 8 }>
@@ -129,6 +154,17 @@ export default function ResourceLibrary( {
 						) }
 					</VStack>
 				</Spacer>
+			) }
+			{ selected && (
+				<ResourceModal
+					resource={ selected }
+					onClose={ selection.clear }
+					onPrevious={ previous && ( () => selection.preview( previous ) ) }
+					onNext={ next && ( () => selection.preview( next ) ) }
+					onOpen={ onOpenResource }
+					isRead={ readIds.includes( selected.id ) }
+					onToggleRead={ () => onSetRead( selected, ! readIds.includes( selected.id ) ) }
+				/>
 			) }
 			{ filteredData.length === 0 && (
 				<DataViewsEmptyStateLayout

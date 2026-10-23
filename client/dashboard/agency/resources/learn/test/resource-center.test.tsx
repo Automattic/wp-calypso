@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
@@ -56,15 +56,36 @@ const resources = [
 
 type ResourceCenterProps = ComponentProps< typeof ResourceCenter >;
 
-type LibraryProps = Omit< ResourceCenterProps, 'view' | 'onChangeView' >;
+type LibraryProps = Omit<
+	ResourceCenterProps,
+	'view' | 'onChangeView' | 'selectedId' | 'onSelectedIdChange' | 'readIds'
+> & { initialSelectedId?: number };
 
-function Library( props: LibraryProps ) {
+function Library( { initialSelectedId, onReadIdsChange, ...props }: LibraryProps ) {
 	const [ view, setView ] = useState( DEFAULT_VIEW );
-	return <ResourceCenter view={ view } onChangeView={ setView } { ...props } />;
+	const [ selectedId, setSelectedId ] = useState( initialSelectedId ?? null );
+	const [ readIds, setReadIds ] = useState< number[] >( [] );
+	return (
+		<ResourceCenter
+			view={ view }
+			onChangeView={ setView }
+			selectedId={ selectedId }
+			onSelectedIdChange={ setSelectedId }
+			readIds={ readIds }
+			onReadIdsChange={ ( ids ) => {
+				setReadIds( ids );
+				onReadIdsChange( ids );
+			} }
+			{ ...props }
+		/>
+	);
 }
 
 function renderLibrary( props: Partial< LibraryProps > = {} ) {
-	const callbacks = { recordTracksEvent: jest.fn() };
+	const callbacks = {
+		recordTracksEvent: jest.fn(),
+		onReadIdsChange: jest.fn(),
+	};
 	render( <Library resources={ resources } agencyId={ 1 } { ...callbacks } { ...props } /> );
 	return callbacks;
 }
@@ -152,15 +173,7 @@ describe( '<ResourceCenter>', () => {
 		expect( await screen.findByText( 'No resources yet' ) ).toBeVisible();
 	} );
 
-	test( 'links each resource to the resource itself, in a new tab', async () => {
-		renderLibrary();
-
-		const link = await screen.findByRole( 'link', { name: 'Jetpack battle card' } );
-		expect( link ).toHaveAttribute( 'href', 'https://example.com/pressable.pdf' );
-		expect( link ).toHaveAttribute( 'target', '_blank' );
-	} );
-
-	test( 'records opening a resource', async () => {
+	test( 'previews a resource, then records opening it', async () => {
 		const scope = nock( API )
 			.post( '/wpcom/v2/agency/resources/record-event', {
 				agency_id: 1,
@@ -172,11 +185,65 @@ describe( '<ResourceCenter>', () => {
 
 		await userEvent.click( await screen.findByRole( 'link', { name: 'Jetpack battle card' } ) );
 
+		const dialog = await screen.findByRole( 'dialog', { name: 'Jetpack battle card' } );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_resource_center_preview', {
+			resource_id: 2,
+			resource_name: 'Jetpack battle card',
+		} );
+		expect( scope.isDone() ).toBe( false );
+
+		await userEvent.click( within( dialog ).getByRole( 'link', { name: 'Open in new tab' } ) );
+
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_a4a_resource_center_browse_cta_click',
 			{ resource_id: 2, resource_name: 'Jetpack battle card' }
 		);
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+	} );
+
+	test( 'keeps focus on the action in use while moving between resources', async () => {
+		renderLibrary();
+
+		await userEvent.click( await screen.findByRole( 'link', { name: 'Woo case study' } ) );
+		const dialog = await screen.findByRole( 'dialog', { name: 'Woo case study' } );
+		within( dialog ).getByRole( 'button', { name: 'Mark as read' } ).focus();
+		await userEvent.keyboard( '{ArrowRight}' );
+
+		expect( await screen.findByRole( 'dialog', { name: 'Jetpack battle card' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Mark as read' } ) ).toHaveFocus();
+	} );
+
+	test( 'links each resource to its details, so they open in a new tab or can be shared', async () => {
+		renderLibrary();
+
+		expect( await screen.findByRole( 'link', { name: 'Jetpack battle card' } ) ).toHaveAttribute(
+			'href',
+			'?resource=2'
+		);
+	} );
+
+	test( 'opens the resource a link names', async () => {
+		renderLibrary( { initialSelectedId: 2 } );
+
+		expect( await screen.findByRole( 'dialog', { name: 'Jetpack battle card' } ) ).toBeVisible();
+	} );
+
+	test( 'marks a resource as read', async () => {
+		const { recordTracksEvent, onReadIdsChange } = renderLibrary();
+
+		await userEvent.click( await screen.findByRole( 'link', { name: 'Jetpack battle card' } ) );
+		const dialog = await screen.findByRole( 'dialog', { name: 'Jetpack battle card' } );
+		await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Mark as read' } ) );
+
+		expect( within( dialog ).getByRole( 'button', { name: 'Read' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_a4a_resource_center_read_status_change',
+			{ resource_id: 2, resource_name: 'Jetpack battle card', is_read: true }
+		);
+		expect( onReadIdsChange ).toHaveBeenCalledWith( [ 2 ] );
 	} );
 
 	test( 'reveals more results on request', async () => {

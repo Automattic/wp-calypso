@@ -4,21 +4,22 @@ import { Card, CardBody } from '../../../../components/card';
 import ResourceBadges from '../resource-badges';
 import ResourceLink from '../resource-link';
 import ResourceCardHeader from './header';
+import type { SelectResource } from '../types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
 import './style.scss';
 
 interface ResourceCardProps {
 	resource: AgencyEnablementResource;
-	onOpen: ( resource: AgencyEnablementResource ) => void;
+	onSelect: SelectResource;
 }
 
-function ResourceCard( { resource, onOpen }: ResourceCardProps ) {
+function ResourceCard( { resource, onSelect }: ResourceCardProps ) {
 	return (
 		<Card className="dashboard-resources-learn__card" isBorderless>
 			<ResourceCardHeader
 				resource={ resource }
-				title={ <ResourceLink resource={ resource } onOpen={ onOpen } /> }
+				title={ <ResourceLink resource={ resource } onSelect={ onSelect } /> }
 			/>
 			<CardBody>
 				<VStack spacing={ 3 } justify="flex-start">

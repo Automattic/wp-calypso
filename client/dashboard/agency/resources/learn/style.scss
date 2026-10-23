@@ -1,6 +1,9 @@
 @import '@automattic/color-studio/dist/color-variables';
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/animations';
 
 // Product brand colors. Most come from Color Studio; VIP's gold is from its brand
 // palette and Pressable's red-orange from https://pressable.com/press-kit/.
@@ -13,8 +16,9 @@ $resource-brands: (
 	'wordpress-vip': #d8a45f,
 );
 
-// Each product's brand color, for the card header tint.
-.dashboard-resources-learn__card-header {
+// Each product's brand color, for the card header and preview tints.
+.dashboard-resources-learn__card-header,
+.dashboard-resources-learn__preview {
 	--resource-brand: #{$studio-gray-100};
 
 	@each $product, $color in $resource-brands {
@@ -78,4 +82,56 @@ $resource-brands: (
 .dashboard-resources-learn__list-brand .dashboard-resources-learn__product-logo {
 	block-size: 16px;
 	inline-size: calc( var( --resource-logo-width ) * 0.8 );
+}
+
+.dashboard-resources-learn__modal-title {
+	text-wrap: pretty;
+}
+
+// The preview runs to the modal's edges, cancelling its content padding, with
+// the navigation and close button over it.
+.dashboard-resources-learn__modal-media {
+	position: relative;
+	margin: calc( -1 * #{$grid-unit-30} ) calc( -1 * #{$grid-unit-30} ) 0;
+}
+
+.dashboard-resources-learn__modal-controls {
+	position: absolute;
+	inset: $grid-unit-15 $grid-unit-15 auto;
+}
+
+.dashboard-resources-learn__preview {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	block-size: clamp( 200px, 32dvh, 280px );
+	box-sizing: border-box;
+	// Insets the thumbnail like a sheet of paper, cropped where the frame ends.
+	padding: 36px clamp( 36px, 13%, 72px ) 0;
+	overflow: hidden;
+	color: var( --resource-brand );
+	background: var( --wpds-color-background-surface-neutral, #{$gray-100} );
+	border-block-end: 1px solid var( --wpds-color-stroke-surface-neutral, #{$gray-300} );
+
+	.dashboard-resource-illustration {
+		inline-size: 120px;
+		block-size: 120px;
+	}
+}
+
+.dashboard-resources-learn__preview-image {
+	align-self: flex-start;
+	inline-size: 100%;
+	min-block-size: 100%;
+	object-fit: cover;
+	object-position: top;
+	border-radius: $radius-large $radius-large 0 0;
+	box-shadow:
+		0 0 0 1px rgba( $black, 0.08 ),
+		0 8px 24px rgba( $black, 0.1 );
+}
+
+.dashboard-resources-learn__modal-fade {
+	@include animation__fade-in( 0.15s, 0s, ease-out );
 }
