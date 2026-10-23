@@ -16,11 +16,10 @@ come.
      testable.
    - **The agent composes it** with `wpcom/render-interactive-ui`, for one-off forms and choices
      from the basic components, or a provider's (AM-116).
-2. Both send their A2UI messages as A2UI's A2A data part, with the `application/a2ui+json` MIME
-   type, beside the reply's text, which may be empty. An ability's part also names the page it
-   built the surface for (`metadata.postId`). wpcom stores the part with the reply, and Agenttic
-   keeps it with its message, under `a2ui`, and sends it back in the history, so the agent can
-   update the surface.
+2. Both send A2UI's A2A data part, with the `application/a2ui+json` MIME type, beside the reply's
+   text, which may be empty. An ability's part names the page it built the surface for
+   (`metadata.postId`). wpcom stores the part with the reply, and Agenttic keeps it under `a2ui`
+   and sends it back in the history, so the agent can update the surface.
 3. Once the reply has streamed, the host feeds those messages to the conversation's runtime, which
    shows each surface under its message. Reloading rebuilds the surfaces from history.
 4. A button's event goes to the agent as a context message, `{ "version": "v1.0", "action": … }`,
