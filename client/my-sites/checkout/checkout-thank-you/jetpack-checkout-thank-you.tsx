@@ -1,13 +1,10 @@
-import { siteBySlugQuery } from '@automattic/api-queries';
+import { productsQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { Button, Card } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import QueryProducts from 'calypso/components/data/query-products-list';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { useSelector } from 'calypso/state';
-import { isProductsListFetching, getProductName } from 'calypso/state/products-list/selectors';
 import type { FunctionComponent } from 'react';
 
 interface Props {
@@ -25,16 +22,13 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 
 	const hasProductInfo = productSlug !== 'no_product';
 
-	const productName = useSelector( ( state ) =>
-		hasProductInfo ? getProductName( state, productSlug ) : null
-	);
-
-	const productListFetching = useSelector( isProductsListFetching );
+	const productsRequest = useQuery( { ...productsQuery( 'jetpack' ), enabled: hasProductInfo } );
+	const productName = hasProductInfo ? productsRequest.data?.[ productSlug ]?.product_name : null;
 
 	const siteRequest = useQuery( siteBySlugQuery( site ) );
 	const siteName = siteRequest.data?.name;
 	const siteUrl = siteRequest.data?.URL;
-	const isLoading = siteRequest.isLoading || productListFetching;
+	const isLoading = siteRequest.isLoading || productsRequest.isLoading;
 
 	return (
 		<Main className="jetpack-checkout-thank-you">
@@ -46,7 +40,6 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 			/>
 			<Card className="jetpack-checkout-thank-you__card">
 				<JetpackLogo full size={ 45 } />
-				{ hasProductInfo && <QueryProducts type="jetpack" /> }
 				<h2 className="jetpack-checkout-thank-you__main-message">
 					{ /* the single space literal below is intentional for rendering purposes */ }
 					{ translate( 'Thank you for your purchase!' ) }{ ' ' }

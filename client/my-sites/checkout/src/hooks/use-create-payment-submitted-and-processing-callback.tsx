@@ -16,7 +16,6 @@ import {
 import { useSelector, useDispatch } from 'calypso/state';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
-import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -156,17 +155,6 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			if ( url.includes( destinationFromCookie ) ) {
 				debug( 'clearing redirect url cookie' );
 				clearSignupDestinationCookie();
-			}
-
-			if (
-				receiptId &&
-				transactionResult &&
-				'purchases' in transactionResult &&
-				transactionResult.purchases &&
-				transactionResult.success
-			) {
-				debug( 'fetching receipt' );
-				reduxDispatch( fetchReceiptCompleted( receiptId, transactionResult ) );
 			}
 
 			if ( siteId ) {

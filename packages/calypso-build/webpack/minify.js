@@ -125,7 +125,9 @@ module.exports = ( {
 		...terserOptions,
 	};
 	cssMinimizerOptions = {
-		preset: 'default',
+		// cssnano's `:is()` folding also wraps selectors that contain combinators, changing what they
+		// match: `P > :is(.a .b, .c .d)` requires `.b` itself to be a child of `P`, unlike `P > .a .b`.
+		preset: [ 'default', { minifySelectors: { convertToIs: false } } ],
 		...cssMinimizerOptions,
 	};
 

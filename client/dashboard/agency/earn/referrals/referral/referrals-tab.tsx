@@ -91,6 +91,7 @@ export default function ReferralReferralsTab() {
 			{
 				id: 'resend-email',
 				label: __( 'Resend email' ),
+				isPrimary: true,
 				isEligible: ( item ) => item.status === 'pending',
 				disabled: isResending,
 				callback: ( items ) => {

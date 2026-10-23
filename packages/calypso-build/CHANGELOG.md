@@ -2,6 +2,11 @@
 
 ## trunk
 
+- Updated dependencies:
+  - babel-loader to ^10.1.1 (needs thread-loader 4, below, for `this.utils` in workers)
+  - thread-loader to ^4.0.4
+  - css-minimizer-webpack-plugin to ^8.0.0 (cssnano 7)
+- Changed: `minify` turns off cssnano's `:is()` selector folding, which changes what selectors containing combinators match. Passing your own `preset` in `cssMinimizerOptions` replaces this default and turns folding back on.
 - Updated css-loader to ^7.1.5. The Sass loader keeps css-loader 6's CSS Modules exports (a default object with class names as written), so `import styles from './style.module.scss'` and `styles[ 'is-current' ]` keep working.
 - Breaking: The `webpack` peer dependency is now `^5.101.0`, the minimum webpack-cli 7 supports.
 - Updated dependencies:

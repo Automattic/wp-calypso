@@ -4,9 +4,12 @@
 @import '../../mixins';
 
 .components-modal__frame.playground-confirm-modal {
+	// Read by ConfirmDialog's `max-width`.
+	--max-width: 100%;
 	border-radius: 16px 16px 0 0;
 
 	@include break-small {
+		--max-width: calc( 100% - 2rem );
 		width: var( --playground-confirm-modal-width, 436px );
 		border-radius: 16px;
 	}
@@ -22,6 +25,8 @@
 	.components-modal__header {
 		position: static;
 		height: auto;
+		// Keeps the header height when the × is hidden while confirming.
+		min-height: 2rem;
 		padding: 0;
 		align-items: flex-start;
 	}
@@ -40,20 +45,35 @@
 	}
 }
 
-.playground-confirm-modal__body > p {
+.playground-confirm-modal .playground-confirm-modal__body {
 	margin: 0;
-	color: var( --studio-gray-60 );
-	font-size: $font-body-large;
-	line-height: 1.5;
+	font-size: inherit;
+
+	> p {
+		margin: 0;
+		color: var( --studio-gray-60 );
+		font-size: $font-body-large;
+		line-height: 1.5;
+	}
 }
 
-.playground-confirm-modal__actions {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: flex-end;
-	gap: 1rem;
-}
+.playground-confirm-modal .playground-confirm-modal__actions {
+	flex-direction: column;
+	gap: 0.5rem;
 
-.playground-confirm-modal .playground-confirm-modal__actions .components-button {
-	@include playground-woo-button;
+	@include break-small {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 2rem;
+	}
+
+	.components-button {
+		@include playground-woo-button;
+		justify-content: center;
+	}
+
+	.components-button.playground-confirm-modal__cancel {
+		padding-inline: 0.5rem;
+	}
 }

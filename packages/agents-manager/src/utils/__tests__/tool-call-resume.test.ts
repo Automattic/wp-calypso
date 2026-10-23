@@ -13,6 +13,17 @@ describe( 'hasNewAgentReply', () => {
 		expect( hasNewAgentReply( new Set( [ 'm-question' ] ), history ) ).toBe( true );
 	} );
 
+	it( 'finds a new agent message with only an interactive UI surface', () => {
+		const surface = {
+			messageId: 'm-reply',
+			role: 'agent',
+			kind: 'message',
+			parts: [ { type: 'data', data: [], metadata: { mimeType: 'application/a2ui+json' } } ],
+		} as Message;
+
+		expect( hasNewAgentReply( new Set( [ 'm-question' ] ), [ question, surface ] ) ).toBe( true );
+	} );
+
 	it( 'ignores a new agent message whose text is blank', () => {
 		const history = [ question, message( 'm-reply', 'agent', '  ' ) ];
 

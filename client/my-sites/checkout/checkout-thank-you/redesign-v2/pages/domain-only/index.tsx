@@ -23,7 +23,7 @@ import attachToSite from './icons/attach-to-site.svg';
 import useDomainOnly from './icons/domain-only.svg';
 import addMailbox from './icons/mailbox.svg';
 import startSite from './icons/start-site.svg';
-import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+import type { ReceiptPurchase } from 'calypso/my-sites/checkout/checkout-thank-you/receipt';
 
 import './style.scss';
 

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import { isAgencyApproved } from 'calypso/dashboard/agency/marketplace/is-agency-approved';
 import type { AgencyProduct } from '@automattic/api-core';
 import type { CartKey, RequestCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
@@ -21,11 +22,13 @@ export type BuildAgencyCartLines = (
  * Fills a WordPress.com cart for the agency of the user who is logged in, out
  * of the products that agency can buy. `buildLines` turns them into the cart's
  * lines; no line means there is nothing to buy, reported as `emptyCartError`.
+ * An agency that is not approved goes to `notApprovedExitUrl` instead.
  */
 export function useFilledAgencyCart(
 	cartKey: CartKey,
 	buildLines: BuildAgencyCartLines,
-	emptyCartError: TranslateResult
+	emptyCartError: TranslateResult,
+	notApprovedExitUrl: string
 ) {
 	const translate = useTranslate();
 	const [ isReady, setIsReady ] = useState( false );
@@ -38,10 +41,18 @@ export function useFilledAgencyCart(
 		isError: isAgencyError,
 	} = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
+	// The backend rejects the payment of an agency that is not approved, so it never gets a cart.
+	const isNotApproved = !! agencyId && ! isAgencyApproved( agency );
 	const { data: products, isError: isProductsError } = useQuery( agencyProductsQuery( agencyId ) );
 
 	useEffect( () => {
-		if ( isReady || error ) {
+		if ( isNotApproved ) {
+			window.location.replace( notApprovedExitUrl );
+		}
+	}, [ isNotApproved, notApprovedExitUrl ] );
+
+	useEffect( () => {
+		if ( isReady || error || isNotApproved ) {
 			return;
 		}
 		if ( isAgencyError || ( isAgencyLoaded && ! agencyId ) ) {
@@ -75,6 +86,7 @@ export function useFilledAgencyCart(
 		error,
 		isAgencyError,
 		isAgencyLoaded,
+		isNotApproved,
 		isProductsError,
 		isReady,
 		products,
@@ -83,7 +95,7 @@ export function useFilledAgencyCart(
 	] );
 
 	useEffect( () => {
-		if ( isReady || error ) {
+		if ( isReady || error || isNotApproved ) {
 			return;
 		}
 		const timeoutId = setTimeout(
@@ -91,7 +103,7 @@ export function useFilledAgencyCart(
 			CART_TIMEOUT_MS
 		);
 		return () => clearTimeout( timeoutId );
-	}, [ isReady, error, translate ] );
+	}, [ isReady, error, isNotApproved, translate ] );
 
 	return { isReady, error };
 }

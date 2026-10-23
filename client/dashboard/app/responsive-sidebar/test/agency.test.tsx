@@ -36,7 +36,8 @@ const config = {
 function mockAgency(
 	capabilities: string[],
 	amplifyAllowed = true,
-	partnerDirectoryAllowed = true
+	partnerDirectoryAllowed = true,
+	approvalStatus = 'approved'
 ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
@@ -44,6 +45,7 @@ function mockAgency(
 		.reply( 200, [
 			{
 				id: 1,
+				approval_status: approvalStatus,
 				partner_directory: { allowed: partnerDirectoryAllowed, directories: [] },
 				amplify: { allowed: amplifyAllowed },
 				user: { capabilities },
@@ -54,9 +56,10 @@ function mockAgency(
 async function renderSidebar(
 	capabilities: string[],
 	amplifyAllowed = true,
-	partnerDirectoryAllowed = true
+	partnerDirectoryAllowed = true,
+	approvalStatus = 'approved'
 ) {
-	mockAgency( capabilities, amplifyAllowed, partnerDirectoryAllowed );
+	mockAgency( capabilities, amplifyAllowed, partnerDirectoryAllowed, approvalStatus );
 	render(
 		<AppProvider config={ config }>
 			<AgencySidebar />
@@ -167,6 +170,19 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.getByRole( 'link', { name: 'Payout settings' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Referrals' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'link', { name: 'WooPayments' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'hides Payout settings until the agency is approved', async () => {
+		await renderSidebar( [ 'a4a_read_referrals' ], true, true, 'pending' );
+
+		expect( screen.getByRole( 'link', { name: 'Referrals' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Payout settings' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'drops the Earn menu when Payout settings is all it would hold and the agency is not approved', async () => {
+		await renderSidebar( [ 'a4a_read_migrations' ], true, true, 'pending' );
+
+		expect( screen.queryByRole( 'button', { name: 'Earn' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'lists Migrations under Clients', async () => {

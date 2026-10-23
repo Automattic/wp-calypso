@@ -39,6 +39,7 @@ export function PlaygroundSaveModal( {
 			className="playground-save-modal"
 			title={ __( 'Save my store' ) }
 			confirmLabel={ __( 'Continue to save' ) }
+			cancelLabel={ __( 'Keep building' ) }
 			onConfirm={ onConfirm }
 			onCancel={ onCancel }
 			isConfirming={ isConfirming }

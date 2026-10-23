@@ -20,9 +20,27 @@ export function savedKeyForPost( post: Post ): ReadSavedKey | null {
 }
 
 /**
- * Whether the web app offers to save the post. Not RSS posts yet: `/read/saved`
- * doesn't list them (READ-801).
+ * Every key the post may already be saved under, starting with
+ * `savedKeyForPost()`. A Jetpack post comes back as external while its
+ * WordPress.com copy fails to load, so it can be saved under its feed item and
+ * shown later with a blog and post ID. Feed item IDs are global, so a match on
+ * one is always the same post.
+ */
+export function savedKeysForPost( post: Post ): ReadSavedKey[] {
+	const key = savedKeyForPost( post );
+	if ( ! key ) {
+		return [];
+	}
+
+	return ! post.is_external && post.feed_item_ID
+		? [ key, { feed_item_id: post.feed_item_ID } ]
+		: [ key ];
+}
+
+/**
+ * Whether the web app offers to save the post: only when it has the IDs the
+ * saved posts API needs.
  */
 export function canSavePost( post: Post ): boolean {
-	return ! post.is_external && savedKeyForPost( post ) !== null;
+	return savedKeyForPost( post ) !== null;
 }

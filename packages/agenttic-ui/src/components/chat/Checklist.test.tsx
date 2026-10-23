@@ -336,6 +336,18 @@ describe( 'Checklist', () => {
 		expect( onCollapsedChange ).toHaveBeenCalledWith( false );
 		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
 	} );
+
+	it( 'moves focus to the header on mount only when asked to', () => {
+		render();
+		expect( document.activeElement ).not.toBe( header() );
+
+		act( () => {
+			root.unmount();
+		} );
+		root = createRoot( container );
+		render( { focusHeaderOnMount: true } );
+		expect( document.activeElement ).toBe( header() );
+	} );
 } );
 
 describe( 'AgentUIChecklist', () => {
