@@ -750,7 +750,7 @@ __metadata:
     sass-loader: "npm:^16.0.5"
     semver: "npm:^7.7.2"
     terser-webpack-plugin: "npm:^5.6.1"
-    thread-loader: "npm:^3.0.4"
+    thread-loader: "npm:^4.0.4"
     typescript: "npm:^6.0.3"
     webpack-cli: "npm:^7.2.3"
     yargs: "npm:^17.7.2"
@@ -24424,7 +24424,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loader-utils@npm:^2.0.0, loader-utils@npm:^2.0.4":
+"loader-utils@npm:^2.0.4":
   version: 2.0.4
   resolution: "loader-utils@npm:2.0.4"
   dependencies:
@@ -30965,7 +30965,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"schema-utils@npm:^3.0.0, schema-utils@npm:^3.1.1":
+"schema-utils@npm:^3.1.1":
   version: 3.3.0
   resolution: "schema-utils@npm:3.3.0"
   dependencies:
@@ -32618,18 +32618,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"thread-loader@npm:^3.0.4":
-  version: 3.0.4
-  resolution: "thread-loader@npm:3.0.4"
+"thread-loader@npm:^4.0.4":
+  version: 4.0.4
+  resolution: "thread-loader@npm:4.0.4"
   dependencies:
     json-parse-better-errors: "npm:^1.0.2"
     loader-runner: "npm:^4.1.0"
-    loader-utils: "npm:^2.0.0"
     neo-async: "npm:^2.6.2"
-    schema-utils: "npm:^3.0.0"
+    schema-utils: "npm:^4.2.0"
   peerDependencies:
-    webpack: ^4.27.0 || ^5.0.0
-  checksum: f34dcd56b8af0f2cc50c9479683a9176fff03207c77598099f1024a46bbf689852e0a37e8afd2514f33aabae61fe13bcaedde7a64f7b51679897f70739987f73
+    webpack: ^5.0.0
+  checksum: 0cf5636865afa02366b95044d74df01c34479fcf363057e58c12279e93f2e3c840a7e7f222f4a71b2b22e4244b378280778d67c576c342e72fc0cbc0a63ae19d
   languageName: node
   linkType: hard
 
