@@ -17,7 +17,11 @@ export type BuildHtmlPreviewProps = {
 	isActive: boolean;
 	isGenerating: boolean;
 	isComplete: boolean;
+	isFinishing?: boolean;
 	onHomeReady?: ( ready: boolean ) => void;
+	onTour?: ( title: string | null ) => void;
+	/** A page the user asked to see; the frame scrolls it into view. */
+	focus?: { route: string; nonce: number } | null;
 	/** Object URLs of the generated images the preview has loaded, by theme asset path. */
 	onImages?: ( images: Record< string, string > ) => void;
 };
@@ -98,7 +102,10 @@ function PreviewScene( {
 	isActive,
 	isGenerating,
 	isComplete,
+	isFinishing = false,
 	onHomeReady,
+	onTour,
+	focus,
 	onImages,
 }: BuildHtmlPreviewProps ) {
 	const iframe = useRef< HTMLIFrameElement >( null );
@@ -116,6 +123,8 @@ function PreviewScene( {
 	const handshakeTimer = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
 	const callback = useRef( onHomeReady );
 	callback.current = onHomeReady;
+	const tourCallback = useRef( onTour );
+	tourCallback.current = onTour;
 	const imagesCallback = useRef( onImages );
 	imagesCallback.current = onImages;
 	const imageUrls = useRef( new Map< string, string >() );
@@ -150,6 +159,7 @@ function PreviewScene( {
 		active: isActive,
 		generating: isGenerating,
 		complete: isComplete,
+		finishing: isFinishing,
 		waiting: __( 'Your homepage is taking shape.' ),
 		imageError: __( 'Image preview unavailable' ),
 	};
@@ -328,6 +338,10 @@ function PreviewScene( {
 				callback.current?.( event.data.homeReady );
 				return;
 			}
+			if ( event.data.type === 'tour' ) {
+				tourCallback.current?.( event.data.title );
+				return;
+			}
 			clearTimeout( handshakeTimer.current );
 			connected.current = true;
 			setUnavailable( false );
@@ -373,6 +387,7 @@ function PreviewScene( {
 			connected.current = false;
 			clearTimeout( handshakeTimer.current );
 			callback.current?.( false );
+			tourCallback.current?.( null );
 			const hadImages = urls.size > 0;
 			urls.forEach( ( url ) => URL.revokeObjectURL( url ) );
 			urls.clear();
@@ -389,7 +404,13 @@ function PreviewScene( {
 	}, [ unavailable ] );
 	useEffect( () => {
 		post( 'config', config.current );
-	}, [ isActive, isGenerating, isComplete, post ] );
+	}, [ isActive, isGenerating, isComplete, isFinishing, post ] );
+
+	useEffect( () => {
+		if ( focus ) {
+			post( 'focus', { route: focus.route } );
+		}
+	}, [ focus, post ] );
 	useEffect( () => {
 		for ( const [ route, packet ] of documents.current ) {
 			if ( references.current.get( route )?.epoch !== packet.epoch ) {

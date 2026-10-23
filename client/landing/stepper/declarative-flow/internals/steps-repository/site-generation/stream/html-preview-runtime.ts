@@ -24,12 +24,19 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
   const timers = new Set();
   const reveals = new Set();
   const media = matchMedia('(prefers-reduced-motion: reduce)');
-  let port = null, active = false, complete = false;
+  let port = null, active = false, complete = false, finishing = false;
   let version = 0, bytes = 0, frame = 0, disposed = false;
   let waitingText = '', imageErrorText = '';
   let homeReady = false, homeTimer = null;
   let completeAt = null;
   let presentation = 'building', presenting = false, needsLayout = false;
+  // The walk through the finished pages while the host polishes the site.
+  const TOUR_HOLD = 5600;
+  let tour = null, tourInterrupted = false;
+  // With the preview up, a lull with nothing arriving also starts the walk;
+  // the next arrival ends it so the camera can follow the work instead.
+  const IDLE_MS = 6000;
+  let idleTimer = null, idleWalk = false;
   // Set by a capacity rejection; until something is evicted, document updates prune too.
   let pressure = false;
   const viewport = document.createElement('div');
@@ -68,6 +75,8 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
     '@keyframes preview-sheen{0%{transform:translateX(-66.667%);opacity:0}12%,85%{opacity:1}100%{transform:translateX(0);opacity:0}}',
     '@keyframes preview-lift{0%,100%{filter:brightness(1)}45%{filter:brightness(1.04)}}',
     '@keyframes preview-halo{0%,100%{opacity:0}40%{opacity:1}}',
+    '.preview-scene.is-touring .preview-page{transition:opacity 700ms ease}.preview-scene.is-touring .preview-page:not(.is-touring){opacity:.6}',
+    '.preview-page.is-touring .preview-surface{box-shadow:0 0 0 2px color-mix(in srgb,Highlight 24%,transparent),0 14px 36px color-mix(in srgb,CanvasText 14%,transparent);transition:box-shadow 700ms ease}',
     '@media(prefers-reduced-motion:reduce){*,*:after{animation:none!important;transition:none!important}.completion-sheen{display:none}.is-polished{outline:2px solid color-mix(in srgb,Highlight 30%,transparent)}}'
   ].join('\n');
   document.head.append(style);
@@ -86,6 +95,7 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
       presentation='showcase';pages.forEach(page=>{page.revealed=true;});
     }
     motions.forEach(animation => animation.cancel()); motions.clear();
+    if (tour) { if (tour.animation) tour.animation.cancel(); tour.animation=null; clearTimeout(tour.read); tour.read=null; }
     hidden.forEach(node => { node.style.visibility = ''; }); hidden.clear();
     flightLayer.replaceChildren();
     completions.forEach(cleanup => cleanup()); completions.clear();
@@ -105,6 +115,7 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
   }
   function finishPresentation() {
     presenting=false;
+    setTimeout(startTour,600);
     if (disposed) return;
     if (needsLayout) { needsLayout=false;layout(false); }
     if (pending.size || pages.get('/')?.featurePending) flush();
@@ -113,7 +124,7 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
   function advancePresentation() {
     if (disposed || presenting || !active || document.hidden) return;
     const home=pages.get('/');
-    if (!home || !home.meaningful || (!home.ready && !complete) || (home.featurePending && !complete && !media.matches)) return;
+    if (!home || !home.meaningful || (!home.ready && !complete && !finishing) || (home.featurePending && !complete && !media.matches)) return;
     if (media.matches || complete) {
       presentation='showcase';releaseBufferedPages();layout(false).then(checkCompletion);return;
     }
@@ -324,6 +335,7 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
             const animation=image.animate([{opacity:0},{opacity:1}],{duration:720,easing:'cubic-bezier(.4,0,.2,1)'});
             reveals.add(animation);
             animation.finished.catch(() => {}).then(() => reveals.delete(animation));
+            spotlightImage(page,image);
           }
           page.fadeUntil = Math.max(page.fadeUntil,performance.now()+(media.matches ? 0 : 720));
           checkCompletion();
@@ -552,12 +564,17 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
     const moving=active && !complete && !document.hidden && !media.matches;
     const selected=homepageArrivals(moving);
     if (moving) selected.push(...arrivals.filter(entry=>entry.page.route!=='/' && entry.page.revealed && presentation==='showcase' && hasSectionContent(entry.node)));
+    // Only something the user can see moving counts as activity for the idle
+    // walk; a re-render that changes nothing on screen must not hold it off.
+    if (selected.length) noteActivity();
     selected.forEach(entry => { entry.node.style.visibility='hidden';hidden.add(entry.node); });
     const current=version;
     if (!moving || !selected.length) { layout(moving).then(()=>{advancePresentation();checkCompletion();});return; }
     presenting=true;
     layout(true).then(async () => {
       for (const entry of selected) {
+        if (current!==version) return;
+        await follow(entry.page);
         if (current!==version) return;
         await fly(entry,0,current);
       }
@@ -591,9 +608,29 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
     }
     if (count) page.fadeUntil=Math.max(page.fadeUntil,performance.now()+650);
   }
+  // A picture that has just landed gets a ring that fades out, and the camera
+  // moves to it when it landed off screen (no more than once every few
+  // seconds, and never while the user or the walk has the camera).
+  let lastImageGlide=0;
+  function spotlightImage(page,image) {
+    const ring=image.animate([
+      {boxShadow:'0 0 0 2px color-mix(in srgb,Highlight 45%,transparent)'},
+      {boxShadow:'0 0 0 16px color-mix(in srgb,Highlight 0%,transparent)'}
+    ],{duration:900,easing:'cubic-bezier(.22,1,.36,1)'});
+    reveals.add(ring); ring.finished.catch(() => {}).then(() => reveals.delete(ring));
+    if (tour || tourInterrupted || presenting || page.position.hidden || !page.revealed) return;
+    const now=performance.now();
+    if (now-lastImageGlide<3500) return;
+    const rect=image.getBoundingClientRect(), room=viewport.clientHeight;
+    if (rect.top>=0 && rect.bottom<=room) return;
+    lastImageGlide=now;
+    const maxTop=Math.max(0,scene.offsetHeight-room);
+    glideTo(Math.min(maxTop,Math.max(0,viewport.scrollTop+rect.top-Math.max(0,(room-rect.height)/2))),800);
+  }
   function markReady(id, entry, image) {
     if (disposed || resources.get(id)!==entry || entry.ready) return;
     entry.ready=true;
+    if (image) noteActivity();
     pages.forEach(page => {
       applyResources(page);
       if (image && page.html.includes(id)) revealBackgrounds(page, entry.url);
@@ -661,10 +698,117 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
       },Math.min(index++*90,180));
     });
   }
+  function tourPages() {
+    return Array.from(pages.values()).filter(page=>page.meaningful && page.revealed && !page.position.hidden)
+      .sort((a,b)=>a.route==='/'?-1:b.route==='/'?1:(a.y-b.y)||(a.x-b.x));
+  }
+  // One camera for the walk and for following section flights; a user scroll
+  // (interruptCamera) takes it back until the host moves to the finishing phase.
+  // A cancelled glide still settles: flush() awaits it before the next flight.
+  let cameraFrame=0, cameraSettle=null;
+  function cancelCamera() {
+    if (cameraFrame) cancelAnimationFrame(cameraFrame);
+    cameraFrame=0;
+    const settle=cameraSettle; cameraSettle=null;
+    if (settle) settle();
+  }
+  function glideTo(top, duration) {
+    return new Promise(resolve=>{
+      cancelCamera();
+      const start=viewport.scrollTop, delta=top-start, began=performance.now();
+      if (Math.abs(delta)<2 || media.matches || document.hidden) { viewport.scrollTop=top; resolve(); return; }
+      cameraSettle=resolve;
+      const step=now=>{
+        const p=Math.min(1,(now-began)/duration), e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+        viewport.scrollTop=start+delta*e;
+        if (p<1) cameraFrame=requestAnimationFrame(step); else { cameraFrame=0; cameraSettle=null; resolve(); }
+      };
+      cameraFrame=requestAnimationFrame(step);
+    });
+  }
+  function glide(top, duration) { if (tour) glideTo(top,duration); }
+  function follow(page) {
+    if (tourInterrupted || tour || media.matches || page.route==='/' || presentation!=='showcase') return Promise.resolve();
+    const offset=page.y-viewport.scrollTop, room=viewport.clientHeight;
+    if (offset>=0 && offset<room*.55) return Promise.resolve();
+    const maxTop=Math.max(0,scene.offsetHeight-room);
+    return glideTo(Math.min(maxTop,Math.max(0,page.y-40)),700);
+  }
+  function stopTour() {
+    if (!tour) return;
+    clearTimeout(tour.timer); clearTimeout(tour.read);
+    cancelCamera();
+    if (tour.animation) tour.animation.cancel();
+    tour=null;
+    scene.classList.remove('is-touring');
+    pages.forEach(page=>page.position.classList.remove('is-touring'));
+    send('tour',{title:null});
+  }
+  function tourStep() {
+    if (!tour) return;
+    const list=tourPages();
+    if (!list.length) { tour.timer=setTimeout(tourStep,1000); return; }
+    const page=list[tour.index%list.length];
+    pages.forEach(item=>item.position.classList.toggle('is-touring',item===page));
+    const visual=page.height*page.scale, room=viewport.clientHeight;
+    const maxTop=Math.max(0,scene.offsetHeight-room);
+    const top=Math.min(maxTop,Math.max(0,page.y-24-Math.max(0,(room-visual-24)/2)));
+    const end=Math.min(maxTop,page.y+visual+28-room);
+    glide(top,900);
+    if (end>top+40) tour.read=setTimeout(()=>glide(end,TOUR_HOLD-1500),1100);
+    const base='translate('+page.x+'px,'+page.y+'px) scale('+page.scale+')';
+    const lift='translate('+page.x+'px,'+(page.y-3)+'px) scale('+(page.scale*1.012)+')';
+    tour.animation=page.position.animate([{transform:base},{transform:lift,offset:.5},{transform:base}],{duration:TOUR_HOLD,easing:'ease-in-out'});
+    send('tour',{title:page.title.slice(0,100)});
+    tour.timer=setTimeout(()=>{ tour.index++; tourStep(); },TOUR_HOLD);
+  }
+  let resumeTimer=null, focused=false;
+  // The highlight a chip tap puts on a page comes off whenever the user, the
+  // walk or the host takes over; a running walk keeps its own.
+  function releaseFocus() {
+    clearTimeout(resumeTimer); resumeTimer=null;
+    if (!focused) return;
+    focused=false;
+    if (tour) return;
+    scene.classList.remove('is-touring');
+    pages.forEach(item=>item.position.classList.remove('is-touring'));
+    send('tour',{title:null});
+  }
+  // A page the user asked for: the camera goes there and the walk waits.
+  function focusPage(route) {
+    const target=pages.get(route);
+    if (!target || !target.meaningful || !target.revealed || target.position.hidden) return;
+    stopTour(); releaseFocus(); tourInterrupted=true; focused=true;
+    scene.classList.add('is-touring');
+    pages.forEach(item=>item.position.classList.toggle('is-touring',item===target));
+    const visual=target.height*target.scale, room=viewport.clientHeight, maxTop=Math.max(0,scene.offsetHeight-room);
+    glideTo(Math.min(maxTop,Math.max(0,target.y-24-Math.max(0,(room-visual-24)/2))),700);
+    send('tour',{title:target.title.slice(0,100)});
+    resumeTimer=setTimeout(()=>{ tourInterrupted=false; releaseFocus(); startTour(); },12000);
+  }
+  function noteActivity() {
+    idleWalk=false;
+    clearTimeout(idleTimer);
+    if (tour && !finishing) stopTour();
+    if (active && !complete && !document.hidden) idleTimer=setTimeout(()=>{ idleWalk=true; startTour(); },IDLE_MS);
+  }
+  function startTour() {
+    if (tour || tourInterrupted || disposed || !(finishing || idleWalk) || complete || !active || document.hidden || media.matches || presenting) return;
+    if (!tourPages().length) return;
+    clearTimeout(resumeTimer); resumeTimer=null; focused=false;
+    tour={index:0,timer:null,read:null,animation:null};
+    scene.classList.add('is-touring');
+    tourStep();
+  }
   function config(data) {
     if (typeof data.active!=='boolean' || typeof data.generating!=='boolean' || typeof data.complete!=='boolean') return;
     const changed=active!==data.active || complete!==data.complete;
     active=data.active;complete=data.complete;
+    const wasFinishing=finishing; finishing=data.finishing===true;
+    if (complete || !active || (wasFinishing && !finishing)) stopTour();
+    if (finishing && !wasFinishing) { tourInterrupted=false; reframe(); }
+    if (finishing && !complete && active) setTimeout(startTour,600);
+    if (!complete && active) noteActivity();
     if (!complete) completeAt=null;
     waitingText=typeof data.waiting==='string'?data.waiting.slice(0,180):'';
     imageErrorText=typeof data.imageError==='string'?data.imageError.slice(0,180):'';
@@ -684,6 +828,7 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
       pending.set(data.route,data);if(!active || document.hidden){if(frame)cancelAnimationFrame(frame);frame=0;flush();}else if(!frame)frame=requestAnimationFrame(flush);
     } else if(data.type==='assets')addAssets(data.assets);
     else if(data.type==='config')config(data);
+    else if(data.type==='focus' && typeof data.route==='string' && data.route.length<=200 && /^\/[^\s?#\\]*$/.test(data.route))focusPage(data.route);
     else if(data.type==='routes' && Array.isArray(data.routes) && data.routes.length<=24){if(data.routes.some(route=>typeof route!=='string'||!/^\/[^\s?#\\]*$/.test(route)||route.length>200))return;const signature=data.routes.slice().sort().join('\n');if(signature===roster)return;roster=signature;const removed=Array.from(pages.keys()).some(route=>!data.routes.includes(route));if(removed)cancelMotion();pages.forEach(page=>{if(!data.routes.includes(page.route))removePage(page);});pending.forEach((_,route)=>{if(!data.routes.includes(route))pending.delete(route);});if(pruneResources(true))pressure=false;emitStatus();if(!presenting)layout(false).then(()=>{advancePresentation();checkCompletion();});}
   }
   function connect(event) {
@@ -691,18 +836,24 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
     port=event.ports[0];window.removeEventListener('message',connect);port.onmessage=receive;port.start();send('ready',{});
   }
   function interruptCamera() {
+    tourInterrupted=true;
+    cancelCamera();
+    stopTour();
+    releaseFocus();
+    resumeTimer=setTimeout(()=>{ tourInterrupted=false; startTour(); },8000);
     if (presentation!=='returning' && presentation!=='revealing') return;
     cancelMotion();layout(false).then(checkCompletion);
   }
   viewport.addEventListener('wheel',interruptCamera,{passive:true});
   viewport.addEventListener('touchstart',interruptCamera,{passive:true});
+  viewport.addEventListener('pointerdown',interruptCamera,{passive:true});
   viewport.addEventListener('keydown',event=>{if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(event.key))interruptCamera();});
   window.addEventListener('message',connect);
   window.addEventListener('resize',reframe);
-  document.addEventListener('visibilitychange',()=>{cancelMotion();cancelReveals();pages.forEach(page=>{page.polishing=false;page.fadeTimer=null;});if(!document.hidden)flush();});
-  media.addEventListener('change',()=>{cancelMotion();cancelReveals();pages.forEach(page=>{page.polishing=false;page.fadeTimer=null;});flush();});
+  document.addEventListener('visibilitychange',()=>{cancelMotion();cancelReveals();stopTour();cancelCamera();pages.forEach(page=>{page.polishing=false;page.fadeTimer=null;});if(!document.hidden){flush();setTimeout(startTour,600);}});
+  media.addEventListener('change',()=>{cancelMotion();cancelReveals();stopTour();cancelCamera();pages.forEach(page=>{page.polishing=false;page.fadeTimer=null;});flush();setTimeout(startTour,600);});
   document.addEventListener('click',event=>event.preventDefault(),true);
   document.addEventListener('submit',event=>event.preventDefault(),true);
-  window.addEventListener('pagehide',()=>{disposed=true;if(homeTimer!==null)clearTimeout(homeTimer);cancelMotion();cancelReveals();pages.forEach(page=>page.observer.disconnect());resources.forEach(asset=>URL.revokeObjectURL(asset.url));resources.clear();if(port)port.close();});
+  window.addEventListener('pagehide',()=>{disposed=true;stopTour();cancelCamera();clearTimeout(idleTimer);clearTimeout(resumeTimer);if(homeTimer!==null)clearTimeout(homeTimer);cancelMotion();cancelReveals();pages.forEach(page=>page.observer.disconnect());resources.forEach(asset=>URL.revokeObjectURL(asset.url));resources.clear();if(port)port.close();});
 })();
 `;
