@@ -99,6 +99,7 @@ export const useCheckoutHelpCenter = (): {
 		isLoggedIn &&
 		! isCartLoading &&
 		! isCartUpdating &&
+		responseCart.products.length > 0 &&
 		! isOtherBrandCheckout &&
 		! hasPremiumSupport;
 
