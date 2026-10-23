@@ -720,8 +720,9 @@ const onboarding: FlowV2< typeof initialize > = {
 								} );
 							}
 
+							let buildWowBlogId: number | undefined;
 							try {
-								await requestBuildWowSite( siteIdentifier );
+								buildWowBlogId = ( await requestBuildWowSite( siteIdentifier ) )?.blog_id;
 								logBuildWowEvent( 'start_success', {
 									site_identifier: siteIdentifier,
 								} );
@@ -735,10 +736,14 @@ const onboarding: FlowV2< typeof initialize > = {
 								} );
 							}
 
+							// The chooser can submit before it has loaded the site, without its ID;
+							// the build-wow start answers with it.
+							const specSiteId = siteId && String( siteId ) !== '0' ? siteId : buildWowBlogId;
+
 							window.location.assign(
 								getBuildWowSiteSpecUrl( {
 									siteSlug,
-									siteId,
+									siteId: specSiteId,
 									ref: refParameter,
 									graph,
 								} )
@@ -820,6 +825,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
 											{
 												siteSlug,
+												siteId: providedDependencies.siteId,
 												...( refParameter ? { ref: refParameter } : {} ),
 											}
 										);
@@ -835,6 +841,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									{
 										next: 'post-checkout-onboarding',
 										siteSlug,
+										siteId: providedDependencies.siteId,
 										...( refParameter ? { ref: refParameter } : {} ),
 										...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
 									}

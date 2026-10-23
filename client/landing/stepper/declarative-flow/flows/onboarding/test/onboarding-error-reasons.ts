@@ -186,3 +186,49 @@ describe( 'onboarding navigations to the error step', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'error', { errorReason: 'processing_no_action' } );
 	} );
 } );
+
+describe( 'onboarding build-wow site spec hand-off', () => {
+	const originalLocation = window.location;
+	const assign = jest.fn();
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockGetBuildWowSiteIdentifier.mockReturnValue( 'example.wordpress.com' );
+		mockRequestBuildWowSite.mockResolvedValue( {} );
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			value: { ...originalLocation, assign },
+		} );
+	} );
+
+	afterAll( () => {
+		Object.defineProperty( window, 'location', { configurable: true, value: originalLocation } );
+	} );
+
+	const getSpecSiteId = () =>
+		new URL( assign.mock.calls[ 0 ][ 0 ], 'http://x' ).searchParams.get( 'siteId' );
+
+	it( 'passes on the site ID the chooser submitted', async () => {
+		await submitStep( 'setup-your-site-ai', {
+			setupChoice: 'generate-theme',
+			siteSlug: 'example.wordpress.com',
+			siteId: 123,
+		} );
+
+		expect( getSpecSiteId() ).toBe( '123' );
+	} );
+
+	// The chooser can submit with siteId 0: the site store cannot match an Atomic
+	// site to its wordpress.com slug.
+	it( 'takes the site ID from the build-wow start when the chooser submitted none', async () => {
+		mockRequestBuildWowSite.mockResolvedValue( { blog_id: 456 } );
+
+		await submitStep( 'setup-your-site-ai', {
+			setupChoice: 'generate-theme',
+			siteSlug: 'example.wordpress.com',
+			siteId: 0,
+		} );
+
+		expect( getSpecSiteId() ).toBe( '456' );
+	} );
+} );
