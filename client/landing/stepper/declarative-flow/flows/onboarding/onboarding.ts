@@ -410,10 +410,6 @@ const onboarding: FlowV2< typeof initialize > = {
 		const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
 		// From the Reader's "Create a site to reblog": the run ends in the new site's editor.
 		const blogPostToReblog = queryParams.get( 'blog_post' );
-		// For every URL that re-enters onboarding after checkout.
-		const reblogQueryArgs = blogPostToReblog
-			? { blog_post: blogPostToReblog, ...( refParameter ? { ref: refParameter } : {} ) }
-			: {};
 
 		/**
 		 * Returns where to land after checkout, or `defaultDestination` when nothing overrides it.
@@ -780,7 +776,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
 								siteSlug: siteSlugParam,
 								...( refParameter ? { ref: refParameter } : {} ),
-								...reblogQueryArgs,
+								...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
 							} )
 						);
 						return;
@@ -840,10 +836,15 @@ const onboarding: FlowV2< typeof initialize > = {
 										next: 'post-checkout-onboarding',
 										siteSlug,
 										...( refParameter ? { ref: refParameter } : {} ),
-										...reblogQueryArgs,
+										...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
 									}
 								);
 							}
+
+							// Leaving checkout must not turn a reblog into plain onboarding.
+							const checkoutBackQueryArgs = blogPostToReblog
+								? { blog_post: blogPostToReblog, ...( refParameter ? { ref: refParameter } : {} ) }
+								: {};
 
 							const checkoutStepperPosition = getOnboardingStepperPosition(
 								'checkout',
@@ -871,11 +872,11 @@ const onboarding: FlowV2< typeof initialize > = {
 									checkoutBackUrl: pathToUrl(
 										addQueryArgs(
 											shouldSkipPlans ? backDestinationDomains : backDestination,
-											reblogQueryArgs
+											checkoutBackQueryArgs
 										)
 									),
 									checkoutBackUrlDomains: pathToUrl(
-										addQueryArgs( backDestinationDomains, reblogQueryArgs )
+										addQueryArgs( backDestinationDomains, checkoutBackQueryArgs )
 									),
 									coupon,
 									steps_current: checkoutStepperPosition.current,
