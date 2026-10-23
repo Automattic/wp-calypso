@@ -17,7 +17,7 @@ import { TextSkeleton } from '../../../components/text-skeleton';
 import { wpcomLink } from '../../../utils/link';
 import { WPCOM_CREATOR_PLAN_SLUG } from '../lib/wpcom-hosting';
 import { getTermSuffix } from '../products/lib/product-pricing';
-import { getProductShortTitle } from '../products/lib/product-title';
+import { getProductTitle } from '../products/lib/product-title';
 import type { CartLine } from '../products/use-cart-lines';
 import type { TermPricing } from '../use-term-pricing';
 import type { AgencyProduct } from '@automattic/api-core';
@@ -51,7 +51,7 @@ const getLineName = ( product: AgencyProduct, quantity: number ) => {
 	const name =
 		product.slug === WPCOM_CREATOR_PLAN_SLUG
 			? __( 'WordPress.com Site' )
-			: getProductShortTitle( product );
+			: getProductTitle( product.name );
 	return quantity > 1
 		? sprintf(
 				/* translators: %1$s is the product name, %2$d the quantity. */
