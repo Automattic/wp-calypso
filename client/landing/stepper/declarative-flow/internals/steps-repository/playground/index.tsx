@@ -1,21 +1,29 @@
+import config from '@automattic/calypso-config';
 import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { isPlaygroundWooIntent } from 'calypso/landing/stepper/utils/playground-woo-intent';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { PlaygroundIframe } from './components/playground-iframe';
 import { PlaygroundLeaveModal } from './components/playground-leave-modal';
+import { PlaygroundSaveModal } from './components/playground-save-modal';
 import { getBlueprintLabelForTracking } from './lib/blueprint';
 import { DEFAULT_PLAN_INTENT, TRACKS_FLUSH_DELAY, WOO_START_HOSTS_URL } from './lib/constants';
 import type { Step as StepType } from '../../types';
 import type { PlaygroundClient } from './lib/types';
+
 import './style.scss';
 
 type LeaveModalTrigger = 'back' | 'close';
+type ActiveModal = 'save' | LeaveModalTrigger;
+
+const isLeaveModal = ( modal: ActiveModal | null ): modal is LeaveModalTrigger =>
+	modal === 'back' || modal === 'close';
 
 export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 	const { submit } = navigation;
@@ -24,100 +32,132 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 	const [ query ] = useSearchParams();
 	const readyForLaunch = query.has( 'playground' );
 
-	// For preventing double click on launch button
-	const [ isLaunching, setIsLaunching ] = useState( false );
 	const [ isIntroShown, setIsIntroShown ] = useState( false );
-
-	const [ leaveModalTrigger, setLeaveModalTrigger ] = useState< LeaveModalTrigger | null >( null );
-	const [ isLeaving, setIsLeaving ] = useState( false );
-	const leaveTimeoutRef = useRef< ReturnType< typeof setTimeout > >( undefined );
+	const [ activeModal, setActiveModal ] = useState< ActiveModal | null >( null );
+	// Set once the user launches or leaves, so nothing else can start until the page changes.
+	const [ isBusy, setIsBusy ] = useState( false );
+	const navigationTimeoutRef = useRef< ReturnType< typeof setTimeout > >( undefined );
 
 	const isWooCommerceIntent = isPlaygroundWooIntent( flow, stepName, query.get( 'intent' ) );
+	const canLaunch = Boolean( submit ) && readyForLaunch && ! isBusy;
 
 	const setPlaygroundClient = ( client: PlaygroundClient ) => {
 		playgroundClientRef.current = client;
 	};
 
+	const tracksProps = useMemo(
+		() => ( {
+			flow,
+			step: 'playground',
+			blueprint: getBlueprintLabelForTracking( query ),
+			is_woocommerce_intent: isWooCommerceIntent,
+		} ),
+		[ flow, query, isWooCommerceIntent ]
+	);
+
 	useEffect( () => {
 		// Coming back with the browser's Back button can restore this page from the
-		// back/forward cache, mid-leave, so put it back in a usable state.
+		// back/forward cache, mid-leave or mid-save, so put it back in a usable state.
 		const onPageShow = ( event: PageTransitionEvent ) => {
 			if ( event.persisted ) {
-				clearTimeout( leaveTimeoutRef.current );
-				setIsLeaving( false );
-				setLeaveModalTrigger( null );
+				clearTimeout( navigationTimeoutRef.current );
+				setIsBusy( false );
+				setActiveModal( null );
 			}
 		};
 		window.addEventListener( 'pageshow', onPageShow );
 		return () => {
 			window.removeEventListener( 'pageshow', onPageShow );
-			clearTimeout( leaveTimeoutRef.current );
+			clearTimeout( navigationTimeoutRef.current );
 		};
 	}, [] );
 
-	const launchSite = async () => {
-		if ( ! submit || isLaunching || isLeaving ) {
+	const navigateAfterTracksFlush = ( navigate: () => void ) => {
+		clearTimeout( navigationTimeoutRef.current );
+		navigationTimeoutRef.current = setTimeout( navigate, TRACKS_FLUSH_DELAY );
+	};
+
+	const launchSite = () => {
+		if ( ! canLaunch ) {
 			return;
 		}
 
-		setIsLaunching( true );
-
+		setIsBusy( true );
+		const launchTracksProps = { ...tracksProps, intent: DEFAULT_PLAN_INTENT };
 		try {
-			recordTracksEvent( 'calypso_playground_launch_site', {
-				flow,
-				step: 'playground',
-				blueprint: getBlueprintLabelForTracking( query ),
-				intent: DEFAULT_PLAN_INTENT,
-				is_woocommerce_intent: isWooCommerceIntent,
-			} );
-
-			submit();
+			recordTracksEvent( 'calypso_playground_launch_site', launchTracksProps );
+			submit?.();
 		} catch ( error ) {
-			setIsLaunching( false );
+			setIsBusy( false );
+			const message = error instanceof Error ? error.message : String( error );
+			void logToLogstash( {
+				feature: 'calypso_client',
+				tags: [ 'playground-launch' ],
+				message,
+				site_id: undefined,
+				properties: {
+					env: config( 'env_id' ),
+					...launchTracksProps,
+				},
+			} ).catch( () => {} );
+			// The launch event, and the save modal's continue event, are already recorded,
+			// so record the failure too for the funnel to discount them.
+			recordTracksEvent( 'calypso_playground_launch_site_failed', {
+				...launchTracksProps,
+				error_message: message,
+			} );
 		}
+	};
+
+	const saveStore = () => {
+		if ( activeModal !== 'save' || ! canLaunch ) {
+			return;
+		}
+
+		recordTracksEvent( 'calypso_playground_save_modal_continue', tracksProps );
+		launchSite();
 	};
 
 	const recordLeaveModalEvent = ( eventName: string, trigger: LeaveModalTrigger ) => {
-		recordTracksEvent( eventName, {
-			flow,
-			step: 'playground',
-			blueprint: getBlueprintLabelForTracking( query ),
-			is_woocommerce_intent: isWooCommerceIntent,
-			trigger,
-		} );
+		recordTracksEvent( eventName, { ...tracksProps, trigger } );
 	};
 
-	const openLeaveModal = ( trigger: LeaveModalTrigger ) => {
-		if ( isLaunching || isLeaving ) {
+	const openModal = ( modal: ActiveModal ) => {
+		// Leaving doesn't need a launchable playground, only an idle step.
+		const canOpen = modal === 'save' ? canLaunch : ! isBusy;
+		if ( activeModal || ! canOpen ) {
 			return;
 		}
 
-		recordLeaveModalEvent( 'calypso_playground_leave_modal_open', trigger );
-		setLeaveModalTrigger( trigger );
+		if ( modal === 'save' ) {
+			recordTracksEvent( 'calypso_playground_save_modal_open', tracksProps );
+		} else {
+			recordLeaveModalEvent( 'calypso_playground_leave_modal_open', modal );
+		}
+		setActiveModal( modal );
 	};
 
 	const keepBuilding = () => {
-		if ( isLeaving ) {
+		if ( isBusy || ! activeModal ) {
 			return;
 		}
 
-		if ( leaveModalTrigger ) {
-			recordLeaveModalEvent( 'calypso_playground_leave_modal_keep_building', leaveModalTrigger );
+		if ( activeModal === 'save' ) {
+			recordTracksEvent( 'calypso_playground_save_modal_keep_building', tracksProps );
+		} else {
+			recordLeaveModalEvent( 'calypso_playground_leave_modal_keep_building', activeModal );
 		}
-		setLeaveModalTrigger( null );
+		setActiveModal( null );
 	};
 
 	const leavePlayground = () => {
-		if ( ! leaveModalTrigger || isLeaving || isLaunching ) {
+		if ( isBusy || ! isLeaveModal( activeModal ) ) {
 			return;
 		}
 
-		setIsLeaving( true );
-		recordLeaveModalEvent( 'calypso_playground_leave_modal_continue', leaveModalTrigger );
-		leaveTimeoutRef.current = setTimeout(
-			() => window.location.assign( WOO_START_HOSTS_URL ),
-			TRACKS_FLUSH_DELAY
-		);
+		recordLeaveModalEvent( 'calypso_playground_leave_modal_continue', activeModal );
+		setIsBusy( true );
+		navigateAfterTracksFlush( () => window.location.assign( WOO_START_HOSTS_URL ) );
 	};
 
 	return (
@@ -136,9 +176,9 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 										enableTracksEvent={ false }
 										iconSize={ 20 }
 										aria-haspopup="dialog"
-										disabled={ isLaunching }
+										disabled={ isBusy }
 										accessibleWhenDisabled
-										onClick={ () => openLeaveModal( 'back' ) }
+										onClick={ () => openModal( 'back' ) }
 									>
 										<span className="playground__woo-back-button-label">{ __( 'Back' ) }</span>
 									</Step.BackButton>
@@ -148,8 +188,9 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 								<>
 									<Step.PrimaryButton
 										className={ isWooCommerceIntent ? 'playground__woo-launch-button' : undefined }
-										onClick={ launchSite }
-										disabled={ isLaunching || isLeaving || ! readyForLaunch }
+										aria-haspopup={ isWooCommerceIntent ? 'dialog' : undefined }
+										onClick={ () => ( isWooCommerceIntent ? openModal( 'save' ) : launchSite() ) }
+										disabled={ ! canLaunch }
 									>
 										{ isWooCommerceIntent
 											? __( 'Save my store' )
@@ -163,9 +204,9 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 											icon={ close }
 											label={ __( 'Exit' ) }
 											aria-haspopup="dialog"
-											disabled={ isLaunching }
+											disabled={ isBusy }
 											accessibleWhenDisabled
-											onClick={ () => openLeaveModal( 'close' ) }
+											onClick={ () => openModal( 'close' ) }
 										/>
 									) }
 								</>
@@ -182,11 +223,18 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 					onIntroChange={ setIsIntroShown }
 				/>
 			</Step.PlaygroundLayout>
-			{ leaveModalTrigger && (
+			{ isLeaveModal( activeModal ) && (
 				<PlaygroundLeaveModal
 					onConfirm={ leavePlayground }
 					onCancel={ keepBuilding }
-					isConfirming={ isLeaving }
+					isConfirming={ isBusy }
+				/>
+			) }
+			{ activeModal === 'save' && (
+				<PlaygroundSaveModal
+					onConfirm={ saveStore }
+					onCancel={ keepBuilding }
+					isConfirming={ isBusy }
 				/>
 			) }
 		</>
