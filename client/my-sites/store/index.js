@@ -16,7 +16,7 @@ function redirectIfWooCommerceNotInstalled( context, next ) {
 		! isSiteStore( state, site.ID ) &&
 		! getSiteOption( state, site.ID, 'is_wpcom_store' )
 	) {
-		page.redirect( `/woocommerce-installation/${ site.slug }` );
+		page.redirect( `/plugins/woocommerce/${ site.slug }` );
 		return;
 	}
 

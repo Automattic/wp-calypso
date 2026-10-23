@@ -569,26 +569,6 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			apiRequestFunction: submitWebsiteContent,
 		},
-
-		// Woocommerce Install steps.
-		'store-address': {
-			stepName: 'store-address',
-			dependencies: [ 'siteSlug', 'back_to' ],
-			optionalDependencies: [ 'back_to' ],
-		},
-		'business-info': {
-			stepName: 'business-info',
-			dependencies: [ 'siteSlug' ],
-		},
-		confirm: {
-			stepName: 'confirm',
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'siteConfirmed' ],
-		},
-		transfer: {
-			stepName: 'transfer',
-			dependencies: [ 'siteSlug', 'siteConfirmed' ],
-		},
 	};
 }
 

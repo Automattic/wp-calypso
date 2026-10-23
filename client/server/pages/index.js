@@ -1381,6 +1381,17 @@ export default function pages() {
 		res.redirect( 302, getLegacyLaunchSiteRedirect( req.query ) );
 	} );
 
+	// The retired WooCommerce installer; WooCommerce is now added from its plugin page.
+	const wooCommercePluginPage = ( site ) =>
+		site ? `/plugins/woocommerce/${ encodeURIComponent( site ) }` : '/plugins/woocommerce';
+	app.get( [ '/start/woocommerce-install', '/start/woocommerce-install/*' ], ( req, res ) => {
+		const siteSlug = typeof req.query.siteSlug === 'string' ? req.query.siteSlug : '';
+		res.redirect( 302, wooCommercePluginPage( siteSlug ) );
+	} );
+	app.get( [ '/woocommerce-installation', '/woocommerce-installation/:site' ], ( req, res ) => {
+		res.redirect( 302, wooCommercePluginPage( req.params.site ) );
+	} );
+
 	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
 		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );

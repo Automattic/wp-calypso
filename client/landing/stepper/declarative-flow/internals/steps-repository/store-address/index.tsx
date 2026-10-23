@@ -1,5 +1,5 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import { StepContainer } from '@automattic/onboarding';
+import { NextButton, StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { ComboboxControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -12,13 +12,32 @@ import FormInput from 'calypso/components/forms/form-text-input';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { ActionSection, StyledNextButton } from 'calypso/signup/steps/woocommerce-install';
 import { useComingFromThemeActivationParam } from '../../../../hooks/use-coming-from-theme-activation';
 import { useCountries } from '../../../../hooks/use-countries';
 import SupportCard from './support-card';
 import type { Step } from '../../types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import './style.scss';
+
+const ActionSection = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	flex-wrap: wrap;
+	margin-top: 40px;
+	gap: 4%;
+
+	@media ( max-width: 320px ) {
+		align-items: center;
+	}
+`;
+
+const StyledNextButton = styled( NextButton )`
+	@media ( max-width: 320px ) {
+		width: 100%;
+		margin-bottom: 20px;
+	}
+`;
 
 type FormFields =
 	| 'store_address_1'

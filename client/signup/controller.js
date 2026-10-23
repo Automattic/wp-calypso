@@ -244,16 +244,6 @@ export default {
 		const { providesDependenciesInQuery, excludeFromManageSiteFlows, persistsDomainsOnReEntry } =
 			flows.getFlow( flowName, userLoggedIn );
 
-		// Update initialContext to help woocommerce-install support site switching.
-		if ( 'woocommerce-install' === flowName ) {
-			if ( context?.query?.back_to ) {
-				// forces back_to update
-				context.store.dispatch( updateDependencies( { back_to: context.query.back_to } ) );
-			}
-
-			initialContext = context;
-		}
-
 		const { query } = initialContext;
 
 		// wait for the step component module to load
@@ -375,8 +365,7 @@ export default {
 		const signupDependencies = getSignupDependencyStore( getState() );
 		let siteIdOrSlug;
 
-		if ( 'woocommerce-install' === flowName || 'launch-site' === flowName ) {
-			// forces query precedence on woocommerce-install
+		if ( 'launch-site' === flowName ) {
 			siteIdOrSlug = context.query?.siteSlug || signupDependencies?.siteSlug;
 		} else {
 			siteIdOrSlug =
