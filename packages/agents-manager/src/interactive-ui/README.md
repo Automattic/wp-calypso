@@ -55,10 +55,10 @@ come.
 - **One catalog per owner.** Agents Manager, WooCommerce AI and the Jetpack AI sidebar each
   declare one catalog: an A2UI catalog document and the code that implements it
   ([how](../../../ai-ui-renderer/README.md#catalogs)). Each catalog includes the basic components,
-  so a surface names one, and a component from another names its own as its `catalogId`: an
-  ability's surfaces use its owner's, such as `AGENTS_MANAGER_CATALOG_ID`, and the agent's A2UI's
-  Basic catalog. Conversations store surfaces, so change a catalog only in ways that keep old
-  surfaces rendering.
+  so a surface names one: an ability's surfaces use Agents Manager's (`AGENTS_MANAGER_CATALOG_ID`),
+  which wpcom's helpers build with, and the agent's A2UI's Basic catalog. A component from another
+  catalog, such as a provider's, names it as its `catalogId`. Conversations store surfaces, so
+  change a catalog only in ways that keep old surfaces rendering.
 - **Portable schemas.** wpcom sends your components' props to whichever model provider runs the
   chat, so write them in JSON Schema every provider accepts: `type`, `properties`, `required`,
   `items`, `enum`, `additionalProperties`, `anyOf`, `oneOf`, `title`, `description`, `pattern` and
