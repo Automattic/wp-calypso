@@ -6,7 +6,7 @@ import {
 import { queryClient, siteUpdateSchedulesQuery } from '@automattic/api-queries';
 import { useCallback } from 'react';
 import { useAnalytics } from '../../../app/analytics';
-import { normalizeScheduleId, prepareTimestamp } from '../helpers';
+import { normalizeScheduleId, prepareTimestamp } from '../utils';
 import { useEligibleSites } from './use-eligible-sites';
 import type { Frequency, Weekday } from '../types';
 
