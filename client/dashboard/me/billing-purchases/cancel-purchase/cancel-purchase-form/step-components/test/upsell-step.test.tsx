@@ -7,7 +7,11 @@ import { render } from '../../../../../../test-utils';
 import UpsellStep from '../upsell-step';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
-const purchase = {} as Purchase;
+const purchase = {
+	site_slug: 'example.wordpress.com',
+	is_plan: true,
+	is_plan_type_downgradable: true,
+} as Purchase;
 
 const plans = [ { product_slug: 'personal-bundle', product_name: 'Personal' } ] as PlanProduct[];
 
@@ -50,7 +54,7 @@ describe( '<UpsellStep />', () => {
 		expect( screen.queryByText( /refund/i ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'downgrade-personal accept calls onClickDowngrade', async () => {
+	test( 'downgrade-personal accept links to the plans page with the cancel-flow ref', async () => {
 		const user = userEvent.setup();
 		const onClickDowngrade = jest.fn();
 
@@ -64,10 +68,13 @@ describe( '<UpsellStep />', () => {
 			/>
 		);
 
-		await user.click( screen.getByRole( 'button', { name: 'Switch to the Personal plan' } ) );
+		const link = screen.getByRole( 'link', { name: 'Switch to the Personal plan' } );
+		const url = new URL( link.getAttribute( 'href' ) as string );
+		expect( url.searchParams.get( 'ref' ) ).toBe( 'cancel-flow-downgrade-personal' );
 
-		expect( onClickDowngrade ).toHaveBeenCalledTimes( 1 );
-		expect( onClickDowngrade ).toHaveBeenCalledWith( 'downgrade-personal' );
+		await user.click( link );
+
+		expect( onClickDowngrade ).not.toHaveBeenCalled();
 	} );
 
 	test( 'downgrade-monthly accept calls onClickDowngrade', async () => {
