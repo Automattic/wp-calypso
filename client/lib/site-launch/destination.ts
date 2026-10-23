@@ -129,9 +129,8 @@ export function getLaunchDestination( params: LaunchParams ): string {
 }
 
 /**
- * @param params      The launch parameters.
- * @param destination Where checkout lands once the user has paid. Leaving checkout still returns
- *                    to the launch destination.
+ * The checkout a launch ends on. Paying lands on `destination`, the launch destination unless given
+ * another; leaving checkout always returns to the launch destination.
  */
 export function getLaunchCheckoutUrl(
 	params: LaunchParams,
