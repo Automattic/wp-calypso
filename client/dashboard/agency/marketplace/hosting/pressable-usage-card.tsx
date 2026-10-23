@@ -65,22 +65,18 @@ export default function PressableUsageCard( { existingPlan }: { existingPlan: Ag
 			<CardHeader>
 				<SectionHeader
 					level={ 3 }
-					title={
-						<HStack as="span" spacing={ 1 } justify="flex-start" expanded={ false }>
-							<span>
-								{ sprintf(
-									/* translators: %s is the plan name, e.g. "Pressable Standard 3". */
-									__( 'Your %s plan' ),
-									existingPlan.name
-								) }
-							</span>
-							{ formerName && <PressableRenamedPlanNote formerName={ formerName } /> }
-						</HStack>
-					}
+					title={ sprintf(
+						/* translators: %s is the plan name, e.g. "Pressable Standard 3". */
+						__( 'Your %s plan' ),
+						existingPlan.name
+					) }
 				/>
 			</CardHeader>
 			<CardBody>
 				<VStack spacing={ 4 } alignment="stretch">
+					{ formerName && (
+						<PressableRenamedPlanNote formerName={ formerName } name={ existingPlan.name } />
+					) }
 					<PressableUsageStats usage={ usage } capacity={ capacity } />
 					{ activeTitanOrders.length > 0 && (
 						<VStack spacing={ 4 }>
