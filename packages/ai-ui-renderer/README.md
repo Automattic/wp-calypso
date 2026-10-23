@@ -132,8 +132,22 @@ An unset token keeps the host's WordPress components color (`--wp-components-col
 default from WordPress's palette that follows the light or dark mode. The modal renders outside the
 host, so it copies its surface's theme when it opens.
 
-Custom components should use the tokens, such as `var( --a2ui-color-on-surface )`, or WordPress
-components, which follow them, never a chat's own variables.
+Disabled controls use the renderer's disabled colors (`--ai-ui-renderer-disabled-background`,
+`--ai-ui-renderer-disabled-border` and `--ai-ui-renderer-disabled-foreground`): WordPress's grays in
+light mode, and the matching shades in dark mode. A stale surface disables its controls through its
+fieldset, which WordPress components don't style (they read their own `disabled` prop), so
+`style.scss` colors the basic components' disabled controls.
+
+### Theming a new component
+
+When you add a basic or custom component:
+
+1. Color it with the tokens, such as `var( --a2ui-color-on-surface )`, and the disabled colors, or
+   use WordPress components, which follow them. Never use a chat's own variables.
+2. Check it in light and dark mode, enabled and disabled (a stale surface).
+3. If a WordPress component hard-codes light colors, or styles its disabled state only from its
+   `disabled` prop, add a rule for it: in `style.scss` for a basic component, or in the custom
+   component's own stylesheet.
 
 ## Basic components
 

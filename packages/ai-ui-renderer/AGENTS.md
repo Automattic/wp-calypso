@@ -22,4 +22,5 @@ modal stacking rules in consumers.
 WordPress components come in two copies: Calypso bundles `@wordpress/components`, while wp-admin and
 the editor use the page's Gutenberg copy, which may be newer. Both read some colors from the
 `--wpds-*` design tokens, and `style.scss` maps the theme onto those too, so check a theme change
-against both, in light and dark mode.
+against both, in light and dark mode. Theme a new or changed component as README.md's "Theming a
+new component" says: light and dark mode, enabled and disabled.
