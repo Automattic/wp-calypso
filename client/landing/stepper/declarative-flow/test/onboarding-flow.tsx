@@ -415,8 +415,8 @@ describe( 'Onboarding Flow', () => {
 				expect( carriedArgs( resumeUrl.toString() ) ).toEqual( PRESERVED );
 			} );
 
-			// The run-shaping args (reblog, blueprint, playground, WoW) send checkout elsewhere, so
-			// these two returns are only reached by a plain run.
+			// Reblog, blueprint, playground and WoW args send checkout elsewhere, so only plain
+			// onboarding reaches these two returns.
 			const PLAIN = { ref: 'some-ref', coupon: 'SAVE20' };
 
 			it( 'keeps them on the return to the post-checkout step', async () => {
