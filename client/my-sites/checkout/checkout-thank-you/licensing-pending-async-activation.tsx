@@ -1,7 +1,8 @@
+import { productsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useState, useCallback, useEffect, useMemo } from 'react';
-import QueryProducts from 'calypso/components/data/query-products-list';
 import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -9,7 +10,6 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
-import { getProductName, getProductsList } from 'calypso/state/products-list/selectors';
 import getJetpackCheckoutSupportTicketDestinationSiteId from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-destination-site-id';
 import getJetpackCheckoutSupportTicketIncompatibleProductIds from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-incompatible-products';
 import getSupportTicketRequestStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
@@ -44,10 +44,6 @@ type JetpackSite = {
 	slug: string;
 };
 
-interface ProductsList {
-	[ P: string ]: Product;
-}
-
 const LicensingPendingAsyncActivation: FC< Props > = ( {
 	productSlug,
 	receiptId = 0,
@@ -61,10 +57,11 @@ const LicensingPendingAsyncActivation: FC< Props > = ( {
 
 	const hasProductInfo = productSlug !== 'no_product';
 
-	const productName = useSelector( ( state ) =>
-		hasProductInfo ? getProductName( state, productSlug ) : null
-	);
-	const productsList: ProductsList = useSelector( getProductsList );
+	const { data: products } = useQuery( {
+		...productsQuery( 'jetpack' ),
+		enabled: hasProductInfo,
+	} );
+	const productName = hasProductInfo ? ( products?.[ productSlug ]?.product_name ?? null ) : null;
 	const jetpackSites = useSelector( getJetpackSites ) as JetpackSite[];
 
 	const supportTicketRequestStatus = useSelector( ( state ) =>
@@ -192,7 +189,6 @@ const LicensingPendingAsyncActivation: FC< Props > = ( {
 		incompatibleProductIds,
 		licenseActivationPageUrl,
 		productName,
-		productsList,
 		productSlug,
 		redirectTo,
 		selectedSite,
@@ -207,7 +203,6 @@ const LicensingPendingAsyncActivation: FC< Props > = ( {
 
 	return (
 		<Main className="checkout-thank-you__pending">
-			{ hasProductInfo && <QueryProducts type="jetpack" /> }
 			<PageViewTracker
 				options={ { useJetpackGoogleAnalytics: true } }
 				path="/checkout/jetpack/thank-you/licensing-pending-async-activation/:product"

@@ -14,6 +14,10 @@ import {
 	getLegacyPlanFlowRedirect,
 	shouldRedirectLegacyPlanFlow,
 } from 'calypso/lib/signup/legacy-plan-flows';
+import {
+	LEGACY_WOOCOMMERCE_INSTALL_FLOW,
+	getWooCommercePluginPage,
+} from 'calypso/lib/signup/legacy-woocommerce-install-flow';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -132,6 +136,11 @@ export default {
 			return;
 		}
 
+		if ( flowName === LEGACY_WOOCOMMERCE_INSTALL_FLOW ) {
+			window.location.replace( getWooCommercePluginPage( context.query?.siteSlug ) );
+			return;
+		}
+
 		next();
 	},
 
@@ -244,16 +253,6 @@ export default {
 		const { providesDependenciesInQuery, excludeFromManageSiteFlows, persistsDomainsOnReEntry } =
 			flows.getFlow( flowName, userLoggedIn );
 
-		// Update initialContext to help woocommerce-install support site switching.
-		if ( 'woocommerce-install' === flowName ) {
-			if ( context?.query?.back_to ) {
-				// forces back_to update
-				context.store.dispatch( updateDependencies( { back_to: context.query.back_to } ) );
-			}
-
-			initialContext = context;
-		}
-
 		const { query } = initialContext;
 
 		// wait for the step component module to load
@@ -338,9 +337,9 @@ export default {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
 		}
 
-		if ( 'launch-site' === flowName ) {
+		if ( [ 'launch-site', 'site-selected' ].includes( flowName ) ) {
 			// The dependency store persists between visits, and `back_to`, `redirect_to` and `ref` are
-			// optional, so an abandoned launch would otherwise decide where the next one leaves the user.
+			// optional, so an abandoned flow would otherwise decide where the next one leaves the user.
 			// Re-read them from the query the flow was entered with.
 			context.store.dispatch(
 				updateDependencies( {
@@ -370,21 +369,12 @@ export default {
 	},
 	setSelectedSiteForSignup( context, next ) {
 		const { getState, dispatch } = context.store;
-		const userLoggedIn = isUserLoggedIn( getState() );
-		const flowName = getFlowName( context.params, userLoggedIn );
 		const signupDependencies = getSignupDependencyStore( getState() );
-		let siteIdOrSlug;
-
-		if ( 'woocommerce-install' === flowName || 'launch-site' === flowName ) {
-			// forces query precedence on woocommerce-install
-			siteIdOrSlug = context.query?.siteSlug || signupDependencies?.siteSlug;
-		} else {
-			siteIdOrSlug =
-				signupDependencies?.siteSlug ||
-				context.query?.siteSlug ||
-				signupDependencies?.siteId ||
-				context.query?.siteId;
-		}
+		const siteIdOrSlug =
+			signupDependencies?.siteSlug ||
+			context.query?.siteSlug ||
+			signupDependencies?.siteId ||
+			context.query?.siteId;
 
 		if ( ! siteIdOrSlug ) {
 			next();

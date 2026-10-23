@@ -301,6 +301,7 @@ function AgentSetup( {
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
 				providerIds: providers.providerIds,
+				interactiveUiCatalogs: providers.interactiveUiCatalogs,
 				environment: sectionName || 'calypso',
 				agentId,
 				version,
@@ -351,6 +352,7 @@ function AgentSetup( {
 			useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
 			useSuggestions={ loadedProviders.useSuggestions }
 			getChatComponent={ loadedProviders.getChatComponent }
+			interactiveUiCatalogs={ loadedProviders.interactiveUiCatalogs }
 			siteBuildUtils={ loadedProviders.siteBuildUtils }
 			transformMessages={ loadedProviders.transformMessages }
 			useCheckpoint={ loadedProviders.useCheckpoint }

@@ -24,7 +24,11 @@ jest.mock( '../../hooks/use-mobile-checkout-sticky-summary-experiment', () => ( 
 	useMobileCheckoutStickySummaryExperiment: () => ( { isMobileCheckoutStickySummary: false } ),
 } ) );
 
-function renderOrderReview( cart: ResponseCart, queryClient: QueryClient ) {
+function renderOrderReview(
+	cart: ResponseCart,
+	queryClient: QueryClient,
+	selectedSiteId: number | null = null
+) {
 	( useShoppingCart as jest.Mock ).mockReturnValue( { responseCart: cart } );
 	return renderWithProvider(
 		<CheckoutProvider paymentMethods={ [] } paymentProcessors={ {} }>
@@ -44,6 +48,7 @@ function renderOrderReview( cart: ResponseCart, queryClient: QueryClient ) {
 			queryClient,
 			initialState: {
 				currentUser: { id: 1, user: { ID: 1, email: 'buyer@example.com' } },
+				ui: { selectedSiteId },
 			},
 		}
 	);
@@ -67,5 +72,19 @@ describe( 'WPCheckoutOrderReview', () => {
 
 		expect( screen.getByText( /^Account:/ ) ).toBeInTheDocument();
 		expect( screen.queryByText( /^Site:/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( "shows the selected site's mapped domain", async () => {
+		const queryClient = new QueryClient();
+		queryClient.setQueryData( siteByIdQuery( 123 ).queryKey, {
+			ID: 123,
+			slug: 'mapped.example',
+			URL: 'https://mapped.example',
+			options: { is_mapped_domain: true },
+		} as Site );
+
+		renderOrderReview( { ...getEmptyResponseCart(), blog_id: 123 }, queryClient, 123 );
+
+		expect( await screen.findByText( 'Site: mapped.example' ) ).toBeInTheDocument();
 	} );
 } );

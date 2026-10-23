@@ -26,6 +26,7 @@ import {
 import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login, lostPassword } from 'calypso/lib/paths';
+import useEntryClarityExperiment from 'calypso/lib/signup/use-entry-clarity-experiment';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -73,6 +74,8 @@ export class Login extends Component {
 		twoFactorAuthType: PropTypes.string,
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
+		isWoo: PropTypes.bool,
+		isEntryClarityTreatment: PropTypes.bool,
 	};
 
 	static defaultProps = { isJetpack: false, isLoginView: true };
@@ -168,54 +171,70 @@ export class Login extends Component {
 		return <LocaleSuggestions locale={ locale } path={ path } />;
 	}
 
+	handleLostPasswordClick = ( event ) => {
+		event.preventDefault();
+		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+		page(
+			login( {
+				redirectTo: this.props.redirectTo,
+				locale: this.props.locale,
+				action:
+					this.props.isWooJPC || this.props.isJetpack ? 'jetpack/lostpassword' : 'lostpassword',
+				oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+				from: this.props.currentQuery?.from,
+			} )
+		);
+	};
+
+	/**
+	 * Where "Lost your password?" goes, shared by its footer and password label row copies.
+	 *
+	 * Jetpack, Woo and OAuth2 sign-ins stay on the Calypso screen: it carries the
+	 * passwordless magic-link branch and the client context, and wp-login.php has neither.
+	 */
+	getLostPasswordLinkProps() {
+		const keepCalypsoForm =
+			this.props.isWooJPC || this.props.isJetpack || !! this.props.oauth2Client;
+
+		if ( keepCalypsoForm ) {
+			return { href: '/', onClick: this.handleLostPasswordClick };
+		}
+
+		return {
+			// No redirect_to. wp-login.php honours it in place of checkemail=confirm, and
+			// the recovery-email and SMS steps hang off checkemail=confirm.
+			href: lostPassword( { locale: this.props.locale } ),
+			rel: 'external',
+			onClick: () => this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' ),
+		};
+	}
+
+	/**
+	 * The footer's copy, which is where this link lives below 960px.
+	 */
 	getLostPasswordLink() {
 		if ( this.props.twoFactorAuthType ) {
 			return null;
 		}
 
-		// Jetpack, Woo and OAuth2 sign-ins stay on the Calypso screen: it carries the
-		// passwordless magic-link branch and the client context, and wp-login.php has neither.
-		const keepCalypsoForm =
-			this.props.isWooJPC || this.props.isJetpack || !! this.props.oauth2Client;
+		return (
+			<a className="one-login__footer-link" { ...this.getLostPasswordLinkProps() }>
+				{ this.props.translate( 'Lost your password?' ) }
+			</a>
+		);
+	}
 
-		if ( ! keepCalypsoForm ) {
-			return (
-				<a
-					className="one-login__footer-link"
-					// No redirect_to. wp-login.php honours it in place of checkemail=confirm, and
-					// the recovery-email and SMS steps hang off checkemail=confirm.
-					href={ lostPassword( { locale: this.props.locale } ) }
-					rel="external"
-					onClick={ () =>
-						this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' )
-					}
-				>
-					{ this.props.translate( 'Lost your password?' ) }
-				</a>
-			);
+	/**
+	 * The same link for desktop, where it sits on the password field's label row, beside the
+	 * field it resets. Only one of the two is ever visible: see login-form.scss.
+	 */
+	getLostPasswordFormLink() {
+		if ( this.props.twoFactorAuthType ) {
+			return null;
 		}
 
 		return (
-			<a
-				className="one-login__footer-link"
-				href="/"
-				onClick={ ( event ) => {
-					event.preventDefault();
-					this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
-					page(
-						login( {
-							redirectTo: this.props.redirectTo,
-							locale: this.props.locale,
-							action:
-								this.props.isWooJPC || this.props.isJetpack
-									? 'jetpack/lostpassword'
-									: 'lostpassword',
-							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-							from: this.props.currentQuery?.from,
-						} )
-					);
-				} }
-			>
+			<a className="login__form-lost-password" { ...this.getLostPasswordLinkProps() }>
 				{ this.props.translate( 'Lost your password?' ) }
 			</a>
 		);
@@ -273,6 +292,7 @@ export class Login extends Component {
 			action,
 			currentRoute,
 			isLoginView,
+			isEntryClarityTreatment,
 		} = this.props;
 
 		// It's used to toggle UIs for the login page of Gravatar powered clients only (excluding 2FA relevant pages).
@@ -284,6 +304,12 @@ export class Login extends Component {
 			! currentRoute.startsWith( '/log-in/sms' ) &&
 			! currentRoute.startsWith( '/log-in/webauthn' ) &&
 			! currentRoute.startsWith( '/log-in/backup' );
+
+		// Gravatar-powered clients and Woo render their own lost-password link.
+		const lostPasswordFormLink =
+			isEntryClarityTreatment && ! isGravPoweredClient && ! this.props.isWoo
+				? this.getLostPasswordFormLink()
+				: undefined;
 
 		return (
 			<LoginBlock
@@ -299,13 +325,17 @@ export class Login extends Component {
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				fromSite={ fromSite }
+				lostPasswordLink={ lostPasswordFormLink }
 				footer={
 					isGravPoweredLoginPage ? (
 						<GravPoweredLoginBlockFooter />
 					) : (
 						<OneLoginFooter
 							isLoginView={ isLoginView }
+							signupUrl={ signupUrl }
+							showSignupPrompt={ isEntryClarityTreatment }
 							lostPasswordLink={ this.getLostPasswordLink() }
+							lostPasswordLinkMobileOnly={ !! lostPasswordFormLink }
 							loginLink={ this.getLoginLink() }
 							supportLink={ this.getSupportLink() }
 						/>
@@ -349,6 +379,7 @@ export class Login extends Component {
 			isGenericOauth,
 			isGravPoweredClient,
 			isJetpack,
+			isEntryClarityTreatment,
 			action,
 			partnerConfig,
 		} = this.props;
@@ -378,7 +409,7 @@ export class Login extends Component {
 
 				<DocumentHead
 					title={ getPartnerFormattedWindowTitle(
-						translate( 'Log In', { textOnly: true } ),
+						translate( 'Log in', { textOnly: true } ),
 						partnerConfig
 					) }
 					skipTitleFormatting
@@ -400,6 +431,10 @@ export class Login extends Component {
 		);
 
 		const isLostPasswordView = action === 'lostpassword' || action === 'jetpack/lostpassword';
+		// The login form sits beside the social buttons, so it needs the wider, centered layout.
+		// Lost password and two-step screens follow the layout's default: the 432px account
+		// template, or centered with a logo above the title.
+		const isLoginFormView = ! isLostPasswordView && ! this.props.twoFactorAuthType;
 
 		return (
 			<>
@@ -410,8 +445,11 @@ export class Login extends Component {
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
+						columnWidth={ isLoginFormView ? 6 : undefined }
+						isCentered={ isLoginFormView || undefined }
+						// The footer carries the route to signup on desktop instead.
+						signupLinkMobileOnly={ isEntryClarityTreatment }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
-						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
 						notice={ notices }
 						linkLogoToHome
 					>
@@ -499,6 +537,11 @@ const LoginWithContext = ( props ) => {
 		props,
 		translate
 	);
+	// Logged-out visitors on the main login view, the same audience as the signup step. Gravatar-
+	// powered logins have their own layout, which the treatment does not change.
+	const isEntryClarityTreatment = useEntryClarityExperiment(
+		props.isLoginView && ! props.isUserLoggedIn && ! props.isGravPoweredClient
+	);
 
 	return (
 		<LoginContextProvider
@@ -506,7 +549,11 @@ const LoginWithContext = ( props ) => {
 			initialSubHeading={ subHeadingPrimary }
 			initialSubHeadingSecondary={ subHeadingSecondary }
 		>
-			<Login { ...props } translate={ translate } />
+			<Login
+				{ ...props }
+				translate={ translate }
+				isEntryClarityTreatment={ isEntryClarityTreatment }
+			/>
 		</LoginContextProvider>
 	);
 };

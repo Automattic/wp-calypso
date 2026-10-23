@@ -230,6 +230,12 @@ export interface Purchase {
 	 */
 	included_domain: string;
 
+	/**
+	 * If this subscription is for a plan with a bundled domain, the ID of that
+	 * domain's subscription. Otherwise null.
+	 */
+	included_domain_purchase_id: number | null;
+
 	included_domain_purchase_amount: number;
 	introductory_offer: RawPurchaseIntroductoryOffer | null;
 

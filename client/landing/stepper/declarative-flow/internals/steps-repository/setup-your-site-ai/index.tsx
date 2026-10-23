@@ -88,6 +88,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'build-with-ai',
 			has_prompt: Boolean( trimmedPrompt ),
+			...( ref ? { ref } : {} ),
 		} );
 
 		navigation.submit( {
@@ -102,6 +103,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'generate-theme',
 			graph,
+			...( ref ? { ref } : {} ),
 		} );
 
 		navigation.submit( {
@@ -129,6 +131,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		}
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'blank-site',
+			...( ref ? { ref } : {} ),
 		} );
 
 		navigation.submit( {

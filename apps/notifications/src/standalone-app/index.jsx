@@ -53,23 +53,23 @@ const ACTION_HANDLERS = {
 				: sendMessage( { action: 'renderAllSeen' } ),
 	],
 	CLOSE_PANEL: [ () => sendMessage( { action: 'togglePanel' } ) ],
-	OPEN_LINK: [ ( st, { href } ) => window.open( href, '_blank' ) ],
+	OPEN_LINK: [ ( st, { href } ) => window.open( href, '_blank', 'noopener' ) ],
 	OPEN_SITE: [
 		( st, { siteId, href } ) => {
 			sendMessage( { action: 'openSite', siteId } );
-			window.open( href, '_blank' );
+			window.open( href, '_blank', 'noopener' );
 		},
 	],
 	OPEN_POST: [
 		( st, { siteId, postId, href } ) => {
 			sendMessage( { action: 'openPost', siteId, postId } );
-			window.open( href, '_blank' );
+			window.open( href, '_blank', 'noopener' );
 		},
 	],
 	OPEN_COMMENT: [
 		( st, { siteId, postId, commentId, href } ) => {
 			sendMessage( { action: 'openComment', siteId, postId, commentId } );
-			window.open( href, '_blank' );
+			window.open( href, '_blank', 'noopener' );
 		},
 	],
 	// Note: the host widescreen resize is driven from the detail pane's

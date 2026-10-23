@@ -1,7 +1,6 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	Button,
-	Tooltip,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalNumberControl as NumberControl,
@@ -18,6 +17,7 @@ import { Card, CardBody, CardDivider } from '../../../components/card';
 import Divider from '../../../components/divider';
 import { TextBlur } from '../../../components/text-blur';
 import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
+import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
 import { getWpcomTieredPrice } from '../products/lib/product-pricing';
 import { MAX_CART_ITEM_QUANTITY } from '../products/use-shopping-cart';
 import { DevSiteConfigurationModal } from '../purchases/site-configuration-modal';
@@ -89,23 +89,12 @@ function DevSitesCallout( {
 }: Pick< Props, 'availableDevSites' | 'isAgencyApproved' > ) {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isConfiguringSite, setIsConfiguringSite ] = useState( false );
-
-	const button = (
-		<Button
-			variant="secondary"
-			size="compact"
-			disabled={ ! availableDevSites || ! isAgencyApproved }
-			onClick={ () => {
-				recordTracksEvent( 'calypso_a4a_hosting_page_create_wpcom_dev_site_click' );
-				setIsConfiguringSite( true );
-			} }
-		>
-			{ __( 'Create a development site' ) }
-		</Button>
-	);
+	const isGated = useIsApprovalGated();
+	const [ isGateOpen, setIsGateOpen ] = useState( false );
 
 	return (
 		<>
+			{ isGateOpen && <ApprovalGate kind="dev-site" onClose={ () => setIsGateOpen( false ) } /> }
 			{ isConfiguringSite && (
 				<DevSiteConfigurationModal closeModal={ () => setIsConfiguringSite( false ) } />
 			) }
@@ -133,17 +122,21 @@ function DevSitesCallout( {
 				}
 				imageVariant="full-bleed"
 				actions={
-					isAgencyApproved ? (
-						button
-					) : (
-						<Tooltip
-							text={ __(
-								'Your agency is not yet approved. Please wait for approval before creating a development site.'
-							) }
-						>
-							<span>{ button }</span>
-						</Tooltip>
-					)
+					<Button
+						variant="secondary"
+						size="compact"
+						disabled={ ! isGated && ( ! availableDevSites || ! isAgencyApproved ) }
+						onClick={ () => {
+							if ( isGated ) {
+								setIsGateOpen( true );
+								return;
+							}
+							recordTracksEvent( 'calypso_a4a_hosting_page_create_wpcom_dev_site_click' );
+							setIsConfiguringSite( true );
+						} }
+					>
+						{ __( 'Create a development site' ) }
+					</Button>
 				}
 			/>
 		</>

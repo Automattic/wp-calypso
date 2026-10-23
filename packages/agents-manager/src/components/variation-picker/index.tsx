@@ -32,9 +32,17 @@ interface Props {
 	maxToShow?: number;
 	onSelect?: ( variation: StyleVariation ) => void;
 	activeVariationTitle?: string | null;
+	disabled?: boolean;
 }
 
-function VariationPicker( { variations, type, maxToShow, onSelect, activeVariationTitle }: Props ) {
+function VariationPicker( {
+	variations,
+	type,
+	maxToShow,
+	onSelect,
+	activeVariationTitle,
+	disabled = false,
+}: Props ) {
 	const [ pageIndex, setPageIndex ] = useState( 0 );
 	const [ width, setWidth ] = useState( 0 );
 	const resizeRef = useResizeObserver( ( [ entry ] ) => setWidth( entry.contentRect.width ) );
@@ -78,6 +86,7 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 									variation={ variation }
 									type={ type }
 									isActive={ variation.title === activeVariationTitle }
+									isDisabled={ disabled }
 									onSelect={ onSelect }
 								/>
 							</div>

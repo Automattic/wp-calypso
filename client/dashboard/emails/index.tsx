@@ -10,7 +10,7 @@ import { useMemo, useState } from 'react';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
-import { addEmailForwarderRoute, chooseDomainRoute, emailsRoute } from '../app/router/emails';
+import { addEmailForwarderRoute, chooseEmailPlanRoute, emailsRoute } from '../app/router/emails';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../components/dataviews';
 import InlineSupportLink from '../components/inline-support-link';
 import { PageHeader } from '../components/page-header';
@@ -180,7 +180,7 @@ function Emails() {
 								<Button
 									variant="primary"
 									__next40pxDefaultSize
-									onClick={ () => navigate( { to: chooseDomainRoute.to } ) }
+									onClick={ () => navigate( { to: chooseEmailPlanRoute.to } ) }
 								>
 									{ __( 'Add mailbox' ) }
 								</Button>

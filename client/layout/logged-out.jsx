@@ -322,7 +322,12 @@ const LayoutLoggedOut = ( {
 					<AsyncLoad require={ loadA8cForAgenciesStyle } placeholder={ null } />
 				) }
 				<div id="content" className="layout__content">
-					<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
+					<AsyncLoad
+						require={ loadGlobalNotices }
+						placeholder={ null }
+						loadFailureFallback={ null }
+						id="notices"
+					/>
 					<div id="primary" className="layout__primary">
 						{ primary }
 					</div>

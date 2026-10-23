@@ -4,17 +4,16 @@ import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { type JSX } from 'react';
-import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { useLoginContext } from 'calypso/login/login-context';
-import { useDispatch, useSelector } from 'calypso/state';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { useSelector } from 'calypso/state';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
-import HeadingLogo from './heading-logo';
+import useSignupLink from '../hooks/use-signup-link';
+import HeadingLogo, { useHeadingLogo } from './heading-logo';
+import 'calypso/components/account-template/style.scss';
 import './one-login-layout.scss';
 
 export const ensureHeadingProvided = (
@@ -46,22 +45,27 @@ interface OneLoginLayoutProps {
 	isSectionSignup?: boolean;
 	loginUrl?: string;
 	isLostPasswordView?: boolean;
+	/**
+	 * Keeps the "Create an account" link in the top bar below 960px only. The main login view
+	 * passes this in the entry clarity treatment, where its footer carries the route to signup on
+	 * desktop.
+	 */
+	signupLinkMobileOnly?: boolean;
 	noThanksRedirectUrl?: string;
 	/**
-	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`. Defaults to 6.
+	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`.
+	 * Defaults to 4, the 432px column every account screen shares, or 6 with a logo above the title.
 	 */
 	columnWidth?: 4 | 5 | 6 | 8 | 10;
+	/**
+	 * Centers the heading over a wider layout, like the main login screen's side-by-side
+	 * form and social buttons. Defaults to left-aligned, or centered with a logo above the title.
+	 */
+	isCentered?: boolean;
 	/**
 	 * Optional flag to control whether the heading logo should be displayed. Defaults to true.
 	 */
 	showLogo?: boolean;
-	/**
-	 * When true, the primary subtext slot is rendered in the dotcom-prominent
-	 * variant (slightly darker text color and a step up on the typography
-	 * scale). Use it when the primary line is a real subtitle rather than the
-	 * default quiet ToS treatment.
-	 */
-	subHeadingProminent?: boolean;
 	/**
 	 * Rendered above the heading. Pass a component that returns `null` when it
 	 * has nothing to show, so the layout keeps its spacing.
@@ -84,10 +88,11 @@ const OneLoginLayout = ( {
 	isSectionSignup,
 	loginUrl,
 	isLostPasswordView,
+	signupLinkMobileOnly,
 	noThanksRedirectUrl,
-	columnWidth,
+	columnWidth: columnWidthProp,
+	isCentered: isCenteredProp,
 	showLogo = true,
-	subHeadingProminent = false,
 	notice,
 	linkLogoToHome = false,
 }: OneLoginLayoutProps ) => {
@@ -98,35 +103,33 @@ const OneLoginLayout = ( {
 	// For logged-in users, use their user locale setting. For logged-out users, use URL locale.
 	const locale = isLoggedIn && userLocale ? userLocale : urlLocale;
 	const currentRoute = useSelector( getCurrentRoute );
-	const currentQuery = useSelector( getCurrentQueryArguments );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWooJPC = useSelector( isWooJPCFlow );
-	const dispatch = useDispatch();
 	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
 	const validatedHeadingText = ensureHeadingProvided( headingText );
 	const { topBarLogo, hasCustomBranding } = usePartnerBranding();
+	const signupLink = useSignupLink( { signupUrl: signupUrlProp, origin: 'login-layout' } );
+	const headingLogo = useHeadingLogo( { isJetpack, isFromJetpackConnector, connectorPlugins } );
+
+	// Product and partner logins with a logo above the title (Woo, Jetpack, Crowdsignal,
+	// Akismet...) are designed around it, so they stay centered. A logo in the top bar
+	// doesn't count: those screens follow the account template.
+	const hasLogoAboveTitle = showLogo && headingLogo !== null;
+	const columnWidth = columnWidthProp ?? ( hasLogoAboveTitle ? 6 : 4 );
+	const isCentered = isCenteredProp ?? hasLogoAboveTitle;
 
 	const renderSignUpLink = () => {
-		// use '?signup_url' if explicitly passed as URL query param
-		const signupUrl: string = signupUrlProp
-			? window.location.origin + pathWithLeadingSlash( signupUrlProp )
-			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale );
-
-		const handleClick = ( event: React.MouseEvent< HTMLElement > ) => {
-			recordTracksEvent( 'calypso_login_sign_up_link_click', { origin: 'login-layout' } );
-
-			if ( isLoggedIn ) {
-				event.preventDefault();
-				dispatch( redirectToLogout( signupUrl ) );
-			}
-		};
-
 		if ( isLostPasswordView ) {
 			return null;
 		}
 
 		return (
-			<Step.LinkButton href={ signupUrl } key="sign-up-link" onClick={ handleClick } rel="external">
+			<Step.LinkButton
+				href={ signupLink.href }
+				key="sign-up-link"
+				onClick={ signupLink.onClick }
+				rel="external"
+			>
 				{ translate( 'Create an account' ) }
 			</Step.LinkButton>
 		);
@@ -180,9 +183,17 @@ const OneLoginLayout = ( {
 	};
 
 	const topBar = (): JSX.Element => {
+		const signupOrLoginLink = isSectionSignup ? renderLoginLink() : renderSignUpLink();
+
+		// Hidden in CSS rather than by a viewport hook: the page is server-rendered, so a hook
+		// would render the mobile arrangement and jump on hydration.
 		const rightElement = (
-			<nav className="wp-login__one-login-layout-top-right">
-				{ isSectionSignup ? renderLoginLink() : renderSignUpLink() }
+			<nav className="wp-login__one-login-layout-top-right account-template__top-bar-links">
+				{ signupLinkMobileOnly ? (
+					<span className="wp-login__top-right-mobile">{ signupOrLoginLink }</span>
+				) : (
+					signupOrLoginLink
+				) }
 				{ renderNoThanksLink() }
 			</nav>
 		);
@@ -197,15 +208,17 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const effectiveColumnWidth: 4 | 5 | 6 | 8 | 10 = ( columnWidth ?? 6 ) as 4 | 5 | 6 | 8 | 10;
-
 	return (
 		<Step.CenteredColumnLayout
-			columnWidth={ effectiveColumnWidth }
+			columnWidth={ columnWidth }
 			topBar={ topBar() }
 			verticalAlign="center"
 		>
-			<div className="wp-login__one-login-layout-content-wrapper">
+			<div
+				className={ clsx( 'wp-login__one-login-layout-content-wrapper', 'account-template', {
+					'is-centered': isCentered,
+				} ) }
+			>
 				{ notice }
 				<div className="wp-login__one-login-layout-heading">
 					{ showLogo && (
@@ -223,13 +236,7 @@ const OneLoginLayout = ( {
 						}
 					/>
 					<div className="wp-login__one-login-layout-heading-subtext-wrapper">
-						<h2
-							className={ clsx( 'wp-login__one-login-layout-heading-subtext', {
-								'is-prominent': subHeadingProminent,
-							} ) }
-						>
-							{ subHeadingText }
-						</h2>
+						<h2 className="wp-login__one-login-layout-heading-subtext">{ subHeadingText }</h2>
 						{ subHeadingTextSecondary && (
 							<h3 className="wp-login__one-login-layout-heading-subtext is-secondary">
 								{ subHeadingTextSecondary }

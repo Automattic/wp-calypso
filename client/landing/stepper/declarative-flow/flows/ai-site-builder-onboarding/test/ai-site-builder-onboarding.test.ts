@@ -56,6 +56,8 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 	clearSignupCompleteFlowName: jest.fn(),
 	clearSignupCompleteSlug: jest.fn(),
 	clearSignupCompleteSiteID: jest.fn(),
+	getSignupCompleteSiteID: jest.fn(),
+	getSignupCompleteSlug: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/state/ui/actions', () => ( {
@@ -314,6 +316,96 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
 				expect( persistSignupDestination ).toHaveBeenCalledWith( getRedirectTo() );
 			} );
+		} );
+	} );
+
+	describe( 'error reasons', () => {
+		const originalLocation = window.location;
+
+		const submitFrom = async ( slug: string, providedDependencies: Record< string, unknown > ) => {
+			const navigate = jest.fn();
+			const { submit } = aiSiteBuilderOnboarding.useStepNavigation( slug as never, navigate );
+			await submit?.( { slug, providedDependencies } as never );
+			return navigate;
+		};
+
+		beforeEach( () => {
+			jest.clearAllMocks();
+			mockQueryParams = new URLSearchParams();
+			isEnabled.mockReturnValue( true );
+			( useSelect as jest.Mock ).mockReturnValue( { product_slug: 'business-bundle' } );
+			( useDispatch as jest.Mock ).mockReturnValue( {
+				setStaticHomepageOnSite: jest.fn(),
+				setIntentOnSite: jest.fn(),
+			} );
+			Object.defineProperty( window, 'location', {
+				value: { assign: jest.fn(), replace: jest.fn() },
+				writable: true,
+			} );
+		} );
+
+		afterEach( () => {
+			( resolveSelect as jest.Mock ).mockReset();
+			Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
+		} );
+
+		it( 'names the cause when processing fails', async () => {
+			const navigate = await submitFrom( STEPS.PROCESSING.slug, {
+				processingResult: ProcessingResult.FAILURE,
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith(
+				STEPS.ERROR.slug,
+				{ errorReason: 'processing_failed' },
+				true
+			);
+		} );
+
+		it( 'replaces processing with the plans step when a reload drops the pending action', async () => {
+			const navigate = await submitFrom( STEPS.PROCESSING.slug, {
+				processingResult: ProcessingResult.NO_ACTION,
+			} );
+
+			expect( navigate ).toHaveBeenCalledTimes( 1 );
+			expect( navigate ).toHaveBeenCalledWith( STEPS.UNIFIED_PLANS.slug, undefined, true );
+		} );
+
+		it( 'replaces create-site with processing so Back cannot create another site', async () => {
+			const navigate = await submitFrom( STEPS.SITE_CREATION_STEP.slug, {} );
+
+			expect( navigate ).toHaveBeenCalledWith( STEPS.PROCESSING.slug, undefined, true );
+		} );
+
+		it( 'names the cause when processing succeeds without a site', async () => {
+			const navigate = await submitFrom( STEPS.PROCESSING.slug, {
+				processingResult: ProcessingResult.SUCCESS,
+				goToCheckout: true,
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith(
+				STEPS.ERROR.slug,
+				{ errorReason: 'processing_missing_site' },
+				true
+			);
+		} );
+
+		it( 'names the cause when the created site cannot be loaded', async () => {
+			( resolveSelect as jest.Mock ).mockReturnValue( {
+				getSite: jest.fn().mockResolvedValue( undefined ),
+			} );
+
+			const navigate = await submitFrom( STEPS.PROCESSING.slug, {
+				processingResult: ProcessingResult.SUCCESS,
+				goToCheckout: true,
+				siteId: 123,
+				siteSlug: 'example.wordpress.com',
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith(
+				STEPS.ERROR.slug,
+				{ errorReason: 'site_lookup_failed' },
+				true
+			);
 		} );
 	} );
 } );

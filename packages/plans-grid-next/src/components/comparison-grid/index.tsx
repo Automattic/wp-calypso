@@ -5,6 +5,7 @@ import {
 	getPlans,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
+	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_GUIDED_WEBSITE_BUILDER,
 	FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
 	FEATURE_REALTIME_BACKUPS_JP,
@@ -74,6 +75,7 @@ const findFeatureWithAlias = (
 
 const featureGroupRowTitleCellMaxWidth = 450;
 const rowCellMaxWidth = 290;
+const rowPaddingBlock = 12;
 
 const JetpackIconContainer = styled.div`
 	padding-inline-start: 3px;
@@ -103,6 +105,14 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 			props.isHiddenInMobile ? 'rotateZ( 180deg )' : 'rotateZ( 0deg )' };
 		flex-shrink: 0;
 	}
+
+	${ ( props ) =>
+		props.isHiddenInMobile &&
+		css`
+			tbody:last-child & {
+				border-bottom: none;
+			}
+		` }
 
 	${ plansGridMediumLarge( css`
 		padding-inline-start: 0;
@@ -160,9 +170,26 @@ const Row = styled.div< {
 		display: flex;
 		align-items: center;
 		margin: 0 20px;
-		padding: 12px 0;
+		padding: ${ rowPaddingBlock }px 0;
 		border-bottom: 1px solid #eee;
 	` ) }
+
+	// The last row sits directly on the grid's bottom border, so it drops its
+	// own border and the highlighted plan's vertical borders end on the grid's.
+	tbody:last-child > &:last-child {
+		${ plansGridMediumLarge( css`
+			border-bottom: none;
+
+			& > .popular-plan-parent-class {
+				align-self: stretch;
+
+				&::before,
+				&::after {
+					bottom: -${ rowPaddingBlock }px;
+				}
+			}
+		` ) }
+	}
 
 	${ ( props ) =>
 		props.isHighlighted &&
@@ -172,7 +199,7 @@ const Row = styled.div< {
 				border-top: 1px solid #eee;
 				font-weight: bold;
 				margin: -1px 0 0;
-				padding: 12px 20px;
+				padding: ${ rowPaddingBlock }px 20px;
 				color: #3a434a;
 			` ) }
 		` };
@@ -611,6 +638,9 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		// Use the short title for the guided website builder in the comparison grid.
 		comparisonGridTitle = translate( 'Guided website builder', { textOnly: true } );
 	}
+	if ( featureSlug === FEATURE_BACKUP_DAILY_V2 ) {
+		comparisonGridTitle = translate( 'Automated daily backups', { textOnly: true } );
+	}
 
 	const planFeatures = [
 		...gridPlan.features.wpcomFeatures,
@@ -778,6 +808,9 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	if ( featureSlug === FEATURE_GUIDED_WEBSITE_BUILDER ) {
 		// Use the short title for the guided website builder in the comparison grid.
 		title = translate( 'Guided website builder', { textOnly: true } );
+	}
+	if ( featureSlug === FEATURE_BACKUP_DAILY_V2 ) {
+		title = translate( 'Automated daily backups', { textOnly: true } );
 	}
 	const headerAriaLabel: string = typeof title === 'string' ? title : '';
 
@@ -1159,19 +1192,19 @@ const ComparisonGrid = ( {
 				/>
 			) ) }
 
-			<tfoot className="plan-comparison-grid__footer">
-				{ planFeatureFootnotes?.footnoteList && (
+			{ planFeatureFootnotes.footnoteList.length > 0 && (
+				<tfoot className="plan-comparison-grid__footer">
 					<FeatureFootnotes as="tr">
 						<td>
 							<ol>
-								{ planFeatureFootnotes?.footnoteList?.map( ( footnote, index ) => {
+								{ planFeatureFootnotes.footnoteList.map( ( footnote, index ) => {
 									return <li key={ `${ footnote }-${ index }` }>{ footnote }</li>;
 								} ) }
 							</ol>
 						</td>
 					</FeatureFootnotes>
-				) }
-			</tfoot>
+				</tfoot>
+			) }
 		</table>
 	);
 };

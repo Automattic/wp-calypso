@@ -76,10 +76,7 @@ const isDarkFooterPage = ( state: AppState ) => {
 	if ( route.startsWith( '/site-profiler' ) ) {
 		return isEnabled( 'site-profiler/metrics' );
 	}
-	return (
-		DARK_FOOTER_ROUTES.some( ( prefix ) => route.startsWith( prefix ) ) &&
-		! route.startsWith( '/patterns/site-layouts/' )
-	);
+	return DARK_FOOTER_ROUTES.some( ( prefix ) => route.startsWith( prefix ) );
 };
 
 export function GlobalFooter( props: FooterProps ) {

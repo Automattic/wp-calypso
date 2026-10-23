@@ -23,15 +23,14 @@ import {
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
-import {
-	getBuildWowSiteSpecUrl,
-	getBuildWowStreamQueryArgs,
-	isBuildWowStreamRequested,
-} from '../../../utils/build-wow';
+import { getBuildWowSiteSpecUrl } from '../../../utils/build-wow';
 import { planSupportsBuildWow } from '../../../utils/build-wow-plans';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
@@ -52,7 +51,6 @@ function getBuildWowDestination( {
 	source,
 	prompt,
 	specId,
-	streamEvents,
 }: {
 	siteSlug: string;
 	siteId: number | string;
@@ -60,17 +58,8 @@ function getBuildWowDestination( {
 	source: string | null;
 	prompt: string;
 	specId: string | null;
-	streamEvents: boolean;
 } ): string {
-	const specUrl = getBuildWowSiteSpecUrl( {
-		siteSlug,
-		siteId,
-		ref,
-		source,
-		prompt,
-		graph: 'dsl',
-		streamEvents,
-	} );
+	const specUrl = getBuildWowSiteSpecUrl( { siteSlug, siteId, ref, source, prompt, graph: 'dsl' } );
 
 	return specId ? addQueryArgs( specUrl, { spec_id: specId } ) : specUrl;
 }
@@ -226,16 +215,28 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					return navigate( STEPS.SITE_CREATION_STEP.slug );
 				}
 
+				// create-site creates a site as soon as it mounts, so it must not stay in history,
+				// where a Back would reach it.
 				case STEPS.SITE_CREATION_STEP.slug:
-					return navigate( STEPS.PROCESSING.slug );
+					return navigate( STEPS.PROCESSING.slug, undefined, true );
 
 				case STEPS.PROCESSING.slug: {
-					if ( providedDependencies.processingResult === ProcessingResult.FAILURE ) {
-						return navigate( STEPS.ERROR.slug );
+					// NO_ACTION follows a reload or a Back from checkout, after initialize has reset
+					// the onboard store. Nothing failed, so the customer picks a plan again, which is
+					// also where checkoutBackUrl leads. The processing step has no timeout, so
+					// returning here would leave the customer on the spinner.
+					if ( providedDependencies.processingResult === ProcessingResult.NO_ACTION ) {
+						return navigate( STEPS.UNIFIED_PLANS.slug, undefined, true );
 					}
 
 					if ( providedDependencies.processingResult !== ProcessingResult.SUCCESS ) {
-						return;
+						return navigate(
+							STEPS.ERROR.slug,
+							{
+								errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
+							},
+							true
+						);
 					}
 
 					if ( ! providedDependencies.goToCheckout ) {
@@ -246,13 +247,13 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					const siteSlug = ( providedDependencies.siteSlug || getSignupCompleteSlug() ) as string;
 
 					if ( ! siteId || ! siteSlug ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'processing_missing_site' }, true );
 					}
 
 					const site = await resolveSelect( SITE_STORE ).getSite( siteId );
 
 					if ( ! site || ! site.URL ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'site_lookup_failed' }, true );
 					}
 
 					// The build-wow endpoint prepares the site itself, so the Big Sky editor
@@ -270,19 +271,10 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					const source = query.get( 'source' );
 					const ref = query.get( 'ref' );
 					const specId = query.get( 'spec_id' );
-					const streamEvents = isBuildWowStreamRequested( query );
 					window.sessionStorage.removeItem( 'stored_ai_prompt' );
 
 					const destination = useBuildWow
-						? getBuildWowDestination( {
-								siteSlug,
-								siteId,
-								ref,
-								source,
-								prompt,
-								specId,
-								streamEvents,
-							} )
+						? getBuildWowDestination( { siteSlug, siteId, ref, source, prompt, specId } )
 						: await prepareSiteEditorDestination( {
 								site,
 								siteId,
@@ -303,7 +295,6 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						...( source && { source } ),
 						...( ref && { ref } ),
 						...( specId && { spec_id: specId } ),
-						...getBuildWowStreamQueryArgs( streamEvents ),
 					};
 					const checkoutBackUrl = pathToUrl(
 						addQueryArgs(

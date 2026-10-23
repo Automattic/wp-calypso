@@ -16,7 +16,7 @@ export interface OmnibarNode {
 	disabled?: boolean;
 	active?: boolean;
 	className?: string;
-	meta?: SiteActionNodeMeta & UserInfoNodeMeta;
+	meta?: UserInfoNodeMeta;
 	render?: ( node: OmnibarNode ) => React.ReactNode;
 	children?: OmnibarNode[];
 }
@@ -30,10 +30,6 @@ export type OmnibarHrefResolver = ( href: string ) => string;
 
 export type OmnibarNodeTransformer = ( node: OmnibarNode ) => OmnibarNode;
 
-export interface SiteActionNodeMeta {
-	subtitle?: string;
-}
-
 export interface UserInfoNodeMeta {
 	displayName?: string;
 	username?: string;
@@ -42,9 +38,8 @@ export interface UserInfoNodeMeta {
 export interface OmnibarNodes {
 	home?: OmnibarNode;
 	site?: OmnibarNode;
-	siteActions?: OmnibarNode[];
-	sitePlugins?: OmnibarNode[];
-	plugins?: OmnibarNode[];
+	siteNodes?: OmnibarNode[];
+	userNodes?: OmnibarNode[];
 	user?: OmnibarNode;
 }
 

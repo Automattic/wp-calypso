@@ -45,6 +45,7 @@ export interface SiteOptions {
 	created_at?: string;
 	difm_lite_site_options?: DifmLiteSiteOptions;
 	is_domain_only?: boolean;
+	is_mapped_domain?: boolean;
 	is_redirect?: boolean;
 	is_difm_lite_in_progress?: boolean;
 	is_gating_business_q1?: boolean;

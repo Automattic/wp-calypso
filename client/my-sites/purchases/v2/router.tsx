@@ -88,6 +88,9 @@ const createRouteTree = () => {
 				appRouterMe.changePaymentMethodRoute,
 				appRouterMe.cancelPurchaseRoute,
 				appRouterMe.siteActionsRoute,
+				...( calypsoConfig.isEnabled( 'purchases/site-transfer' )
+					? [ appRouterMe.movePurchaseRoute ]
+					: [] ),
 			] ),
 		] ),
 		billingHistoryRoute.addChildren( [

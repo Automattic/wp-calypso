@@ -47,11 +47,9 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@a2ui/markdown-it": "0.2.0",
-		"@a2ui/react": "0.12.0",
-		"@a2ui/web_core": "0.12.0",
 		"@automattic/agenttic-client": "workspace:^",
 		"@automattic/agenttic-ui": "workspace:^",
+		"@automattic/ai-ui-renderer": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
@@ -82,8 +80,7 @@
 		"history": "^5.3.0",
 		"i18n-calypso": "workspace:^",
 		"react-router-dom": "7.18.2",
-		"wpcom-proxy-request": "workspace:^",
-		"zod": "^3.25.76"
+		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",

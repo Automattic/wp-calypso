@@ -107,7 +107,6 @@ export function useSiteGeneration( {
 	source,
 	specId,
 	graph,
-	streamEvents = false,
 	completionDelayMs = 0,
 	steps,
 }: {
@@ -116,8 +115,6 @@ export function useSiteGeneration( {
 	specId?: string | null;
 	/** Graph the build was queued with, so a retry rebuilds on the same one. */
 	graph?: BuildWowGraph;
-	/** The live-feed opt-in, so a retry asks for it again. */
-	streamEvents?: boolean;
 	completionDelayMs?: number;
 	steps: Array< Pick< SiteGenerationStep, 'id' | 'label' > >;
 } ): SiteGenerationState {
@@ -244,11 +241,7 @@ export function useSiteGeneration( {
 			spec_id: specId,
 		} );
 		try {
-			if ( streamEvents ) {
-				await requestBuildWowSite( siteIdentifier, specId, graph, undefined, true );
-			} else {
-				await requestBuildWowSite( siteIdentifier, specId, graph );
-			}
+			await requestBuildWowSite( siteIdentifier, specId, graph );
 			clearStoredStepTimer( siteIdentifier );
 			setStreamInfo( null );
 			setHostState( undefined );
@@ -268,7 +261,7 @@ export function useSiteGeneration( {
 			isRetryingRef.current = false;
 			setIsRetryingBuild( false );
 		}
-	}, [ siteIdentifier, specId, graph, streamEvents ] );
+	}, [ siteIdentifier, specId, graph ] );
 
 	let failureReason: SiteGenerationFailureReason | undefined;
 	if ( ! hasRequiredParameters ) {

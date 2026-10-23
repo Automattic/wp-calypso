@@ -4,6 +4,7 @@
 
 import { EmailProvider } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../test-utils';
 import Emails from '../index';
@@ -129,6 +130,29 @@ describe( '<Emails>', () => {
 
 		expect(
 			await screen.findByText( 'You have 2 free mailboxes waiting to be set up.' )
+		).toBeVisible();
+	} );
+
+	test( 'opens the DNS records from a Titan mailbox row action', async () => {
+		const titanAccount = {
+			account_type: EmailProvider.Titan,
+			can_user_add_email: true,
+			status: 'active',
+			maximum_mailboxes: 1,
+			warnings: [],
+			domains: [ { domain: DOMAIN, is_primary: true } ],
+			emails: [
+				{ mailbox: 'hello', domain: DOMAIN, email_type: 'email', role: 'standard', warnings: [] },
+			],
+		} as unknown as EmailAccount;
+		mockApi( { domains: [ nonOwnedDomain ], accounts: [ titanAccount ] } );
+		render( <Emails /> );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Actions' } ) );
+		await userEvent.click( await screen.findByRole( 'menuitem', { name: 'View DNS records' } ) );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: `DNS records for ${ DOMAIN }` } )
 		).toBeVisible();
 	} );
 } );

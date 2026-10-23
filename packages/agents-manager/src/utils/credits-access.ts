@@ -1,6 +1,7 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { formatCreditsShort } from './credits';
 import type { CreditsPurchaseKind, CreditsPurchaseLink } from './live-credits';
+import type { NoticeConfig } from '@automattic/agenttic-ui';
 
 /** Who may buy, from the `/ai/credits` response. A turn's final update doesn't carry it. */
 export interface CreditsAccess {
@@ -20,11 +21,11 @@ export interface CreditsPurchaseOptions {
 	/** Which purchase `purchaseUrl` starts; set together with it. */
 	purchaseKind?: CreditsPurchaseKind;
 	askToUpgrade?: CreditsAskToUpgrade;
-	/** The dot's details message, shown in place of the purchase button. */
+	/** The meter's details message, shown in place of the purchase button. */
 	purchaseHint?: string;
 }
 
-/** A purchase link, shaped like the chat notice's link action so one object serves the notice and the dot. */
+/** A purchase link, shaped like the chat notice's link action so one object serves the notice and the meter. */
 export interface CreditsPurchaseAction {
 	label: string;
 	href: string;
@@ -175,4 +176,53 @@ export function getCreditsNoticeMessage(
 		_n( '%s credit left.', '%s credits left.', remaining, __i18n_text_domain__ ),
 		formatCreditsShort( remaining )
 	);
+}
+
+/** The zero-balance notice, which stays until the balance changes. */
+export function getCreditsOutNotice(
+	remaining: number,
+	askToUpgrade: CreditsAskToUpgrade | undefined,
+	action: CreditsPurchaseAction | undefined
+): NoticeConfig {
+	return {
+		icon: false,
+		message: getCreditsNoticeMessage( 'out', remaining, askToUpgrade ),
+		action,
+		dismissible: false,
+	};
+}
+
+/**
+ * The card in the thread for a reply refused for no credits, with the purchase as its link
+ * and words that match it. Someone who can't buy gets the title alone; the composer's
+ * notice says who may buy.
+ */
+export function getCreditsRefusalNotice(
+	purchaseKind: CreditsPurchaseKind | undefined,
+	action: CreditsPurchaseAction | undefined
+): NoticeConfig {
+	let message = '';
+	if ( action ) {
+		message =
+			purchaseKind === 'top_up'
+				? __( 'Add credits to keep working.', __i18n_text_domain__ )
+				: __( 'Upgrade to keep working.', __i18n_text_domain__ );
+	}
+	return {
+		icon: false,
+		title: __( 'Your message wasn’t sent', __i18n_text_domain__ ),
+		message,
+		action,
+		dismissible: false,
+	};
+}
+
+/** After a reply refused for no credits, once the balance is above 0 again, with Try again where the chat can resend. */
+export function getCreditsBackNotice( action?: NoticeConfig[ 'action' ] ): NoticeConfig {
+	return {
+		icon: false,
+		message: __( 'Your site has credits again.', __i18n_text_domain__ ),
+		action,
+		dismissible: false,
+	};
 }

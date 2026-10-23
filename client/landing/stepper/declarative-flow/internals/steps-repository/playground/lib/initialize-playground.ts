@@ -1,15 +1,18 @@
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getBlueprint } from './blueprint';
+import { createBootProgressCallbacks } from './boot-progress';
 import { PLAYGROUND_HOST } from './constants';
 import { PlaygroundNotFoundError } from './playground-not-found-error';
+import type { PlaygroundBootProgress } from './boot-progress';
 import type { Blueprint, BlueprintV1, MountDescriptor, PlaygroundClient } from './types';
 
 export async function initializeWordPressPlayground(
 	iframe: HTMLIFrameElement,
 	recommendedPhpVersion: string,
 	setSearchParams: ( callback: ( prev: URLSearchParams ) => URLSearchParams ) => void,
-	onPlaygroundClientLoaded?: () => void
+	onPlaygroundClientLoaded?: () => void,
+	onBootProgress?: ( progress: PlaygroundBootProgress ) => void
 ): Promise< { blueprint: Blueprint | null; client: PlaygroundClient } > {
 	let isWordPressInstalled = false;
 	let needsUrlUpdate = false;
@@ -51,6 +54,9 @@ export async function initializeWordPressPlayground(
 				blueprint: blueprint as BlueprintV1,
 				shouldInstallWordPress: ! isWordPressInstalled,
 				mounts: isWordPressInstalled ? [ mountDescriptor ] : [],
+				...( onBootProgress && ! isWordPressInstalled
+					? createBootProgressCallbacks( onBootProgress )
+					: {} ),
 			} );
 		} catch ( error ) {
 			if ( isWordPressInstalled ) {

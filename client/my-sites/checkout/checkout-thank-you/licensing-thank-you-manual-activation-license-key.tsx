@@ -1,14 +1,10 @@
+import { productsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useMemo } from 'react';
 import licensingActivationPluginBanner from 'calypso/assets/images/jetpack/licensing-activation-plugin-banner.svg';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { useSelector } from 'calypso/state';
-import {
-	isProductsListFetching as getIsProductListFetching,
-	getProductName,
-} from 'calypso/state/products-list/selectors';
 import JetpackInstructionList from './jetpack-instruction-list';
 import JetpackLicenseKeyClipboard, {
 	JetpackLicenseKeyProps,
@@ -22,11 +18,10 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 
 	const hasProductInfo = productSlug !== 'no_product';
 
-	const productName = useSelector( ( state ) =>
-		hasProductInfo ? getProductName( state, productSlug ) : null
+	const { data: products, isLoading: isProductListFetching } = useQuery(
+		productsQuery( 'jetpack' )
 	);
-
-	const isProductListFetching = useSelector( getIsProductListFetching );
+	const productName = hasProductInfo ? products?.[ productSlug ]?.product_name : null;
 
 	const items = useMemo(
 		() => [
@@ -55,7 +50,6 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 
 	return (
 		<>
-			<QueryProductsList type="jetpack" />
 			<PageViewTracker
 				options={ { useJetpackGoogleAnalytics: true } }
 				path="/checkout/jetpack/thank-you/licensing-manual-activation-license-key/:product"

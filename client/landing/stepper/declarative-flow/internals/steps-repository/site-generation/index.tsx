@@ -1,13 +1,11 @@
-import { isAutomatticianQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useQuery as useDataQuery } from '@tanstack/react-query';
 import { useReducedMotion } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import {
+	BUILD_WOW_STREAMING_FLAG,
 	getBuildWowGraph,
-	isBuildWowStreamRequested,
 } from 'calypso/landing/stepper/utils/build-wow';
 import { useBuildWowStream } from './stream/use-build-wow-stream';
 import { useSiteGeneration } from './use-site-generation';
@@ -23,7 +21,6 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const source = query.get( 'source' );
 	const specId = query.get( 'specId' );
 	const graph = getBuildWowGraph( query );
-	const streamEvents = isBuildWowStreamRequested( query );
 	// Fallback checklist only: the server-computed ui.steps from the status
 	// endpoint is authoritative (labels included, already localized). This
 	// list covers the moments before the first response arrives, and backends
@@ -47,18 +44,15 @@ const SiteGeneration: StepType = function SiteGeneration() {
 		source,
 		specId,
 		graph,
-		streamEvents,
 		steps,
 		completionDelayMs: previewReady && ! shouldReduceMotion ? 2600 : 0,
 	} );
-	const streamingEnabled = config.isEnabled( 'site-spec/build-wow-streaming' );
-	const { data: isAutomattician = false } = useDataQuery( {
-		...isAutomatticianQuery(),
-		enabled: streamingEnabled,
-	} );
-	const streamingAllowed = streamingEnabled && isAutomattician;
-	const stream = useBuildWowStream( streamingAllowed ? ( state.streamInfo ?? null ) : null );
-	const streamRequested = streamingAllowed && ( streamEvents || Boolean( state.streamInfo ) );
+	const streamingEnabled = config.isEnabled( BUILD_WOW_STREAMING_FLAG );
+	const stream = useBuildWowStream( streamingEnabled ? ( state.streamInfo ?? null ) : null );
+	// The build only asks for a feed; the server may decline it. Show the live
+	// canvas once the status response advertises a stream, even before the
+	// event subscription delivers its first state.
+	const streamRequested = streamingEnabled && Boolean( state.streamInfo );
 
 	const reload = () => {
 		window.location.reload();
@@ -73,7 +67,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 				onPreviewReady={ setPreviewReady }
 				siteSlug={ siteSlug }
 				state={ state }
-				stream={ streamingAllowed ? stream : null }
+				stream={ streamingEnabled ? stream : null }
 				streamRequested={ streamRequested }
 			/>
 		</>

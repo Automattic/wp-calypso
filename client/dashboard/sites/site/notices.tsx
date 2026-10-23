@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { Notice } from '../../components/notice';
-import { canAccessSftpSettings } from '../../utils/site-features';
+import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
 import type { Site } from '@automattic/api-core';
 
 export function InaccessibleJetpackNotice( { error, site }: { error: Error; site?: Site } ) {
@@ -20,6 +20,10 @@ export function InaccessibleJetpackNotice( { error, site }: { error: Error; site
 		} );
 	}, [ error.message ] );
 
+	// Deliberately ignores the plan: the SFTP/SSH settings page upsells sites that lack the feature.
+	const canViewSftpSshSettingsRoute =
+		!! site?.capabilities?.manage_options && siteTypeSupportsFeature( site, 'settingsServer' );
+
 	return (
 		<Notice
 			variant="error"
@@ -29,7 +33,7 @@ export function InaccessibleJetpackNotice( { error, site }: { error: Error; site
 					<ExternalLink href={ JETPACK_SUPPORT_CONNECTION_ISSUES }>
 						{ __( 'Troubleshoot your Jetpack connection' ) }
 					</ExternalLink>
-					{ site && canAccessSftpSettings( site ) && (
+					{ site && canViewSftpSshSettingsRoute && (
 						<Link to={ `/sites/${ site.slug }/settings/sftp-ssh` }>
 							{ __( 'Connect over SFTP/SSH' ) }
 						</Link>

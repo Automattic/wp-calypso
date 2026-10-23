@@ -138,6 +138,65 @@ describe( 'Signup Flows Configuration', () => {
 		} );
 	} );
 
+	describe( 'site-selected destination', () => {
+		beforeAll( () => {
+			jest.restoreAllMocks();
+		} );
+
+		const getDestination = ( dependencies, localeSlug ) =>
+			flows
+				.getFlows()
+				[ 'site-selected' ].destination(
+					{ flowName: 'site-selected', ...dependencies },
+					localeSlug
+				);
+
+		test.each( [
+			'personal-bundle',
+			'personal-bundle-monthly',
+			'value_bundle',
+			'value_bundle-2y',
+			'business-bundle',
+			'business-bundle-monthly',
+		] )( 'hands a %s purchase over to the onboarding post-checkout step', ( product_slug ) => {
+			expect( getDestination( { siteSlug: 'example.com', cartItems: [ { product_slug } ] } ) ).toBe(
+				'/setup/onboarding/post-checkout-onboarding?siteSlug=example.com&ref=site-selected'
+			);
+		} );
+
+		test.each( [
+			[ 'the free plan', [ { product_slug: 'free_plan' } ] ],
+			[ 'a plan without Big Sky', [ { product_slug: 'ecommerce-bundle' } ] ],
+			[ 'an empty cart', [] ],
+			[ 'no cart', null ],
+		] )( 'lands on My Home with %s', ( _label, cartItems ) => {
+			expect( getDestination( { siteSlug: 'example.com', cartItems } ) ).toBe(
+				'/home/example.com?ref=site-selected'
+			);
+		} );
+
+		test( 'keeps the locale on the post-checkout step', () => {
+			expect(
+				getDestination(
+					{ siteSlug: 'example.com', cartItems: [ { product_slug: 'personal-bundle' } ] },
+					'fr'
+				)
+			).toBe(
+				'/setup/onboarding/post-checkout-onboarding/fr?siteSlug=example.com&ref=site-selected'
+			);
+		} );
+
+		test( 'lands on redirect_to instead of the chooser when one is given', () => {
+			expect(
+				getDestination( {
+					siteSlug: 'example.com',
+					redirect_to: '/sites/example.com',
+					cartItems: [ { product_slug: 'personal-bundle' } ],
+				} )
+			).toBe( '/sites/example.com' );
+		} );
+	} );
+
 	describe( 'getLaunchReturnUrl', () => {
 		test( 'returns to the exact wp-admin screen back_to names', () => {
 			expect(
@@ -241,6 +300,30 @@ describe( 'Signup Flows Configuration', () => {
 			expect( result ).toContain( 'plugin%3Dsensei-pro' );
 			expect( result ).toContain( 'billing_period%3DANNUALLY' );
 			expect( result ).toContain( 'intervalType%3Dyearly' );
+		} );
+
+		test( 'should return to My Home instead of the post-checkout step for the site-selected flow', () => {
+			const flowsModule = require( 'calypso/signup/config/flows' );
+			const { filterDestination } = flowsModule.default;
+
+			const dependencies = {
+				siteSlug: 'test-site',
+				cartItems: [ { product_slug: 'personal-bundle' } ],
+			};
+			const destination =
+				'/setup/onboarding/post-checkout-onboarding?siteSlug=test-site&ref=site-selected';
+
+			const result = filterDestination( destination, dependencies, 'site-selected', 'en' );
+			const { checkoutBackUrl, redirect_to } = Object.fromEntries(
+				new URL( result, 'https://wordpress.com' ).searchParams
+			);
+
+			const backUrl = new URL( checkoutBackUrl );
+
+			expect( backUrl.pathname + backUrl.search ).toBe(
+				'/home/test-site?ref=site-selected&skippedCheckout=1'
+			);
+			expect( redirect_to ).toBe( destination );
 		} );
 
 		test( 'should still include an empty billing_period for a free plugin', () => {

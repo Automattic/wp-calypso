@@ -39,7 +39,6 @@ import {
 } from 'calypso/state/immediate-login/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
-import { setSelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.jsx';
 import { hydrate, render } from './web-util.js';
@@ -552,12 +551,10 @@ export const notFound = ( context, next ) => {
 };
 
 /**
- * Middleware to set the selected site ID based on the `origin_site_id` query parameter.
+ * Middleware to remove the `origin_site_id` query parameter.
  */
 export const setSelectedSiteIdByOrigin = ( context, next ) => {
-	const originSiteId = ( context.query.origin_site_id ?? '' ).trim();
-	if ( originSiteId ) {
-		context.store.dispatch( setSelectedSiteId( originSiteId ) );
+	if ( context.query.origin_site_id !== undefined ) {
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_site_id' ) );
 	}
 	next();

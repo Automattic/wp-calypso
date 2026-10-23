@@ -3,6 +3,7 @@ import {
 	getJetpackCheckoutRedirectUrl,
 	getSiteAdminUrl,
 	isJetpackNotAtomicSite,
+	siteHasPaidPlan,
 } from '../hooks/use-checkout-site';
 import { createTestSite } from './util';
 import type { Site } from '@automattic/api-core';
@@ -72,6 +73,34 @@ describe( 'getActivePlanSlug', () => {
 		expect(
 			getActivePlanSlug( createTestSite( { plan: { ...plan!, expired: true } } ) )
 		).toBeUndefined();
+	} );
+} );
+
+describe( 'siteHasPaidPlan', () => {
+	const plan = {
+		product_slug: 'personal-bundle',
+		is_free: false,
+		expired: false,
+	} as Site[ 'plan' ];
+
+	it( 'is true for a paid plan', () => {
+		expect( siteHasPaidPlan( createTestSite( { plan } ) ) ).toBe( true );
+	} );
+
+	it( 'is true for an expired paid plan', () => {
+		expect( siteHasPaidPlan( createTestSite( { plan: { ...plan!, expired: true } } ) ) ).toBe(
+			true
+		);
+	} );
+
+	it( 'is false for a free plan', () => {
+		expect( siteHasPaidPlan( createTestSite( { plan: { ...plan!, is_free: true } } ) ) ).toBe(
+			false
+		);
+	} );
+
+	it( 'is false without a site', () => {
+		expect( siteHasPaidPlan( undefined ) ).toBe( false );
 	} );
 } );
 

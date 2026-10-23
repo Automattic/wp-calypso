@@ -106,6 +106,34 @@ describe( 'StaticSiteImportResults', () => {
 		expect( submit ).toHaveBeenCalledWith( { action: 'continue' } );
 	} );
 
+	it( 'asks for an expert as a non-WordPress migration', async () => {
+		mockSession( {
+			pages: 12,
+			quality_pass: true,
+			inspection: { measured: true, confidence: 'bounded-sample', capabilities: { commerce: 2 } },
+		} );
+		let ticket: Record< string, unknown > = {};
+		const ticketRequest = mockApi()
+			.post( '/wpcom/v2/help/migration-ticket/new', ( body ) => {
+				ticket = body;
+				return true;
+			} )
+			.reply( 200, { success: true } );
+
+		const submit = render();
+
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'Talk to a migration expert' } )
+		);
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'expert' } ) );
+		expect( ticketRequest.isDone() ).toBe( true );
+		expect( ticket ).toMatchObject( {
+			from_url: 'https://busybearscleaning.com',
+			context: 'site_is_not_wordpress',
+		} );
+	} );
+
 	it( 'offers to read the site again when the session is gone', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )

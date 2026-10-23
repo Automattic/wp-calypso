@@ -7,7 +7,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 type RedirectRule = {
 	flow: string;
-	to: string;
+	to: string | ( ( searchParams: URLSearchParams ) => string );
 	shouldRedirect?: ( searchParams: URLSearchParams ) => boolean;
 	replace?: boolean;
 };
@@ -19,6 +19,12 @@ const AI_SITE_BUILDER_REDIRECT: RedirectRule = {
 	shouldRedirect: ( searchParams ) =>
 		! searchParams.has( 'siteId' ) && ! searchParams.has( 'siteSlug' ),
 	replace: true,
+};
+
+// Bare `/home` follows the account's landing-page preference, which may be another site.
+const toSiteHome = ( searchParams: URLSearchParams ) => {
+	const site = searchParams.get( 'siteId' ) || searchParams.get( 'siteSlug' );
+	return site ? `/home/${ encodeURIComponent( site ) }` : '/home';
 };
 
 // Flows to redirect and treat as removed throughout Calypso.
@@ -37,6 +43,11 @@ const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 	{ flow: 'migration-signup', to: '/setup/site-migration' },
 	{ flow: 'hosted-site-migration', to: '/setup/site-migration' },
 	{ flow: 'domain-upsell', to: '/setup/domain-and-plan' },
+	{ flow: 'flex-site', to: '/sites' },
+	{ flow: 'connect-domain', to: '/start:lang?' },
+	{ flow: 'reblogging', to: '/setup/onboarding:lang?' },
+	{ flow: 'readymade-template', to: toSiteHome },
+	{ flow: 'update-options', to: toSiteHome },
 ];
 
 const FLOW_REDIRECTS = [ AI_SITE_BUILDER_REDIRECT, ...REMOVED_TAILORED_FLOWS ];
@@ -69,7 +80,8 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	const [ , lang ] = normalizedPathname.match( langPattern ) ?? [];
 
 	// Replace the ":lang?" placeholder in the "to" field with the matched language or empty string if not present
-	const redirectUrl = route.to.replace( ':lang?', lang ? `/${ lang }` : '' );
+	const to = typeof route.to === 'function' ? route.to( searchParams ) : route.to;
+	const redirectUrl = to.replace( ':lang?', lang ? `/${ lang }` : '' );
 
 	// Construct the final URL with search parameters if present
 	const finalUrl = `${ redirectUrl }${ search }`;

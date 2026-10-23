@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { EmailAccount, Mailbox, TitanControlPanelContext } from './types';
+import type { EmailAccount, Mailbox, TitanControlPanelContext, TitanDkimRecord } from './types';
 
 export function fetchMailboxes( siteId: number ): Promise< Mailbox[] > {
 	return wpcom.req
@@ -40,4 +40,11 @@ export function fetchTitanControlPanelAutoLoginUrl(
 			context ? { context } : {}
 		)
 		.then( ( data: { auto_login_url: string } ) => data.auto_login_url );
+}
+
+export function fetchTitanDkimRecord( domain: string ): Promise< TitanDkimRecord > {
+	return wpcom.req.get( {
+		path: `/emails/titan/${ encodeURIComponent( domain ) }/dkim-record`,
+		apiNamespace: 'wpcom/v2',
+	} );
 }

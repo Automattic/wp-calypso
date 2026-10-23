@@ -92,6 +92,22 @@ describe( 'flow redirect handler', () => {
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
+	it.each( [
+		[
+			'?siteId=123&siteSlug=example.wordpress.com',
+			'/home/123?siteId=123&siteSlug=example.wordpress.com',
+		],
+		[
+			'?siteSlug=example.wordpress.com',
+			'/home/example.wordpress.com?siteSlug=example.wordpress.com',
+		],
+		[ '', '/home' ],
+	] )( 'sends readymade-template links with %p to that site’s Home', ( search, expected ) => {
+		redirectPathIfNecessary( '/setup/readymade-template/launchpad', search );
+
+		expect( window.location.href ).toBe( expected );
+	} );
+
 	it( 'does not classify existing AI Site Builder sites as removed', () => {
 		expect( isRemovedFlow( 'ai-site-builder' ) ).toBe( false );
 	} );

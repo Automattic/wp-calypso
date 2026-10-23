@@ -4,7 +4,7 @@
 import config from '@automattic/calypso-config';
 import { useQuery as useDataQuery } from '@tanstack/react-query';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import { SITE_SELECTED_REF, WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { usePlanCartItem } from '../../../../../hooks/use-plan-cart-item';
@@ -162,6 +162,42 @@ describe( 'SetupYourSiteAIStep', () => {
 				siteSlug: 'example.wordpress.com',
 			} );
 		} );
+
+		it.each( [
+			{
+				selection: 'blank-site',
+				choose: () =>
+					fireEvent.click( screen.getByRole( 'button', { name: 'Start with a pre-made design' } ) ),
+				properties: { selection: 'blank-site' },
+			},
+			{
+				selection: 'generate-theme',
+				choose: () => clickCustomDesign(),
+				properties: { selection: 'generate-theme', graph: 'dsl' },
+			},
+			{
+				selection: 'build-with-ai',
+				plan: 'pro-plan',
+				choose: () => clickCustomDesign(),
+				properties: { selection: 'build-with-ai', has_prompt: false },
+			},
+		] )(
+			'tags the $selection selection with the ref the step was reached with',
+			( { plan, choose, properties } ) => {
+				mockQueryParams = new URLSearchParams( { ref: SITE_SELECTED_REF } );
+				if ( plan ) {
+					setSitePlan( plan );
+				}
+
+				renderStep();
+				choose();
+
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_onboarding_setup_your_site_with_ai_selection',
+					{ ...properties, ref: SITE_SELECTED_REF }
+				);
+			}
+		);
 
 		it( 'submits the generate-theme choice from the custom design card on an Atomic-capable plan', () => {
 			renderStep();

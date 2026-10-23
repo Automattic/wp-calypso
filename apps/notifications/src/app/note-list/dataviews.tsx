@@ -1,6 +1,8 @@
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
+	atSymbol,
+	cart,
 	chartBar,
 	caution,
 	check,
@@ -8,7 +10,6 @@ import {
 	info,
 	lockOutline,
 	plus,
-	store,
 	thumbsUp,
 	update,
 } from '@wordpress/icons';
@@ -21,14 +22,14 @@ import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pe
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
-import { splitSubject } from './simplified-subject';
-import type { LayoutStyle, Note } from '../types';
+import { getNotePreview } from '../note-simplified';
+import type { LayoutStyle, Note, Range, Subject } from '../types';
 import type { Field } from '@wordpress/dataviews';
 import type { JSX } from 'react';
 import './dataviews-overrides.scss';
 
 const iconMap: { [ key in string ]: JSX.Element } = {
-	'\uf814': comment, // mention
+	'\uf814': atSymbol,
 	'\uf300': comment,
 	'\uf801': plus,
 	'\uf455': info,
@@ -40,8 +41,10 @@ const iconMap: { [ key in string ]: JSX.Element } = {
 	'\uf467': comment, // reply
 	'\uf414': caution, // warning
 	'\uf418': check,
-	'\uf447': store, // cart
+	'\uf447': cart,
 };
+
+const REPLY_NOTICON = '\uf467';
 
 const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -73,11 +76,28 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 	return timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
 };
 
-// Temporary and English-only: the API sends the subject as one finished sentence, so
-// splitting it here relies on word order. Returns null when unsure and the row falls back
-// to the detailed layout. The real fix is the server carrying the action as its own string.
-const simplify = ( item: Note, layoutStyle: LayoutStyle ) =>
-	layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
+const simplify = (
+	item: Note,
+	layoutStyle: LayoutStyle
+): { action: Subject; preview?: string } | null => {
+	const summary = item.meta?.summary;
+
+	if ( layoutStyle !== 'simplified' || ! summary ) {
+		return null;
+	}
+
+	const replyId = item.meta?.ids?.reply_comment;
+	// The summary leaves out the reply icon the subject shows when you've replied,
+	// so add it back as a zero-width noticon range at the start of the text.
+	const replyIconRanges: Range[] = replyId
+		? [ { type: 'noticon', value: REPLY_NOTICON, indices: [ 0, 0 ], id: replyId, parent: null } ]
+		: [];
+
+	return {
+		action: { ...summary, ranges: [ ...replyIconRanges, ...( summary.ranges ?? [] ) ] },
+		preview: getNotePreview( item ),
+	};
+};
 
 export const SelectedNoteIdContext = createContext< string | undefined >( undefined );
 
@@ -152,7 +172,9 @@ export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note 
 				const simplified = simplify( item, layoutStyle );
 
 				if ( simplified ) {
-					return <div className="wpnc__excerpt">{ simplified.title }</div>;
+					return simplified.preview ? (
+						<div className="wpnc__excerpt">{ simplified.preview }</div>
+					) : null;
 				}
 
 				return item.subject.length > 1 ? (

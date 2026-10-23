@@ -8,7 +8,6 @@ import { actions as emailActions } from './email';
 import { actions as paymentsActions } from './payments';
 import { actions as planActions } from './plan';
 import { actions as postActions } from './post';
-import { actions as readymadeTemplateActions } from './readymade-templates';
 import { actions as setupActions } from './setup';
 import { actions as siteActions } from './site';
 import { actions as subscribersActions } from './subscribers';
@@ -29,7 +28,6 @@ const DEFINITIONS: TaskActionTable = {
 	...emailActions,
 	...subscribersActions,
 	...contentActions,
-	...readymadeTemplateActions,
 	...bioActions,
 	...paymentsActions,
 };
@@ -85,10 +83,6 @@ export function getEnhancedTasks( {
 	if ( ! tasks ) {
 		return [];
 	}
-
-	// We have to use the site id if the flow allows the user to change the site address
-	// as the domain name of the site may be changed.
-	// See https://github.com/Automattic/wp-calypso/pull/84532.
 
 	const context: TaskContext = {
 		site,

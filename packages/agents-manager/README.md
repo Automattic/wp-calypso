@@ -8,7 +8,7 @@ An internal workspace package, not published to npm — add `@automattic/agents-
 
 ## Usage
 
-### Basic Integration
+### Basic integration
 
 The main component is `AgentsManager`. It handles agent initialization, session management, and UI rendering.
 
@@ -29,11 +29,11 @@ function MyApp() {
 }
 ```
 
-### External Provider Extensions
+### External providers
 
-Plugins register provider modules through the PHP filter `agents_manager_agent_providers` (Jetpack's `agents-manager` package). The entries reach the client as `agentsManagerData.agentProviders`, and `loadExternalProviders()` imports them.
+Plugins register provider modules through the PHP filter `agents_manager_agent_providers` (Jetpack's `agents-manager` package). The entries reach the client as `agentsManagerData.agentProviders`, and Agents Manager imports them.
 
-See `src/extension-types.ts` for the tool and context provider interfaces, and `LoadedProviders` in `src/utils/load-external-providers.ts` for everything else a provider module can export, such as suggestions (and opting out of the default empty-view ones), markdown components and extensions, chat components, message transforms, abilities setup, checkpoint hooks, site-build utilities and capabilities.
+See `src/extension-types.ts` for the tool and context provider interfaces, and `LoadedProviders` in `src/utils/load-external-providers.ts` for everything else a provider module can export: suggestions, markdown components and extensions, an interactive UI catalog, chat components, message transforms, task updates, abilities setup, checkpoint hooks, site-build utilities and capabilities.
 
 ### Opening and closing the chat
 
@@ -61,33 +61,37 @@ function ToggleAgentButton() {
 
 `AGENTS_MANAGER_STORE` holds the saved UI preferences (`getAgentsManagerState()`). Its `isOpen` is the saved preference, not the effective state; use `isAgentsManagerChatVisible()` for that.
 
-### Window API (cross-app integration)
+A host that renders its own AI chat entry button reads `useAiChatEntryState()` for `isChatVisible`, and wraps its label text in `<AiChatEntryLabel>`, which shows it only while the chat is hidden.
 
-The Agents Manager exposes a `window.__agentsManagerActions` API and window events for controlling the UI from outside the React tree (e.g., from a host app, legacy code, or a separate bundle).
+### Dedicated AI experiences
 
-See `src/hooks/custom-actions/README.md` for details.
+A host that owns a dedicated AI experience can set the [document-scoped presentation configuration](src/hooks/custom-actions/README.md#document-scoped-presentation) before loading Agents Manager, to keep the chat open and hide the wp-admin and editor entry toggles. The chat state APIs report the effective open state, and close requests are ignored while `dismissible` is `false`.
 
-### URL Parameters
+### Window API
+
+Agents Manager exposes a `window.__agentsManagerActions` API and window events, to control the chat from outside its React tree: a host app, legacy code or a separate bundle. See `src/hooks/custom-actions/README.md`.
+
+### URL parameters
 
 The host page URL can carry these query parameters:
 
-| Parameter       | Description                                                                                                                                                                              |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ai-open`       | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied.                            |
-| `agent`         | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`). Ignored when the host passes an `agentId` prop.                                                        |
-| `version`       | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                                                      |
-| `am_credits`    | Seeds a mock site-credits balance as a percentage, for demos and testing on pages without a site, outside Reader Chat (e.g., `?am_credits=55`). Read once when the chat mounts.          |
-| `am_plan`       | With `am_credits`, the mock plan: `paid`, or `free` (the default).                                                                                                                       |
-| `wp-agent-chat` | The chat session to resume, handed off by a same-tab link from another origin (e.g. wp-admin to Calypso) so the conversation continues there. Stripped from the URL after being applied. |
-| `wp-agent-site` | The site scope of the handed-off session. The session is resumed only on pages for that site, and stored for it otherwise.                                                               |
+| Parameter       | Description                                                                                                                                                                                        |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ai-open`       | `ai-open=true` opens the chat (docked or undocked) on page load, e.g. for links from emails. Stripped from the URL after being applied.                                                            |
+| `agent`         | Overrides the agent ID, for testing (e.g. `?agent=wpcom-workflow-support_chat`). Ignored when the host passes an `agentId` prop.                                                                   |
+| `version`       | Overrides the agent version, for testing (e.g. `?version=1.0.25`).                                                                                                                                 |
+| `am_credits`    | Seeds a mock site credits balance as a percentage, for demos and testing on pages without a site, outside Reader Chat (e.g. `?am_credits=55`).                                                     |
+| `am_plan`       | With `am_credits`, the mock plan: `paid`, or `free` (the default).                                                                                                                                 |
+| `wp-agent-chat` | The orchestrator session to resume, handed off by a same-tab link from another origin (e.g. wp-admin to Calypso) so the conversation continues there. Stripped from the URL, with `wp-agent-site`. |
+| `wp-agent-site` | The handed-off session's site. The session resumes only on pages for that site, and is stored for it otherwise.                                                                                    |
 
-## API Reference
+## API reference
 
-### AgentsManager Props
+### `AgentsManager` props
 
 | Prop                             | Type                                   | Description                                                                                                              |
 | -------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `sectionName`                    | `string`                               | The name of the current section (e.g., 'wp-admin', 'gutenberg').                                                         |
+| `sectionName`                    | `string`                               | The name of the current section (e.g. `wp-admin`, `gutenberg`).                                                          |
 | `currentUser`                    | `CurrentUser` (optional)               | Current user (from `@automattic/data-stores`). Sets `isLoggedIn`.                                                        |
 | `site`                           | `AgentsManagerSite \| null` (optional) | The selected site object (from `@automattic/data-stores`).                                                               |
 | `currentRoute`                   | `string` (optional)                    | The current route path.                                                                                                  |
@@ -99,15 +103,17 @@ The host page URL can carry these query parameters:
 | `isInternalOnly`                 | `boolean` (optional)                   | Shows an "A8C Only" badge in the chat header when the current screen enables the agent for internal users only.          |
 | `hasMasterbarAiChatButton`       | `boolean` (optional)                   | Whether the host's masterbar renders the AI chat button, so the chat minimizes to it instead of a floating bubble.       |
 
-### Exported Hooks and Utilities
+### Exports
 
-Feedback utilities are also exported: `submitFeedback`, `rateMessage`, and the `FeedbackInput` component. Chat UI actions (`openAgentsManagerChat`, `closeAgentsManagerChat`, `isAgentsManagerChatVisible`), `recordAgentsManagerTracksEvent` and `getAgentsManagerInlineData()` (the server-injected `agentsManagerData` payload) are exported as well. A host rendering its own AI chat entry button reads `useAiChatEntryState()` for `isChatVisible` and wraps its label text in `<AiChatEntryLabel>`, which shows it only while the chat is hidden.
+Besides the default `AgentsManager` component:
 
-Chats that show site credits use `formatCreditsShort()`, which gives an amount such as "800" or "8.5k" and rounds down, and `CREDITS_LOW_BALANCE`, the 10,000-credit paid-plan balance below which the credits dot turns red and the low-balance notice shows. Chats outside the dock that show the site credits dot use `CreditsMeter`, `parseLiveCreditsStatus` and `getCreditsPurchaseLink`, which picks the same link as the dock by the site's plan. Personal and Premium get Upgrade, to the plans page. Business and Commerce get Add credits, to checkout for one 100,000-credit pack. Both links carry `CREDITS_UPGRADE_SOURCE` as their `source`, and Tracks events send the same value as `ref`. `getCreditsPurchaseLink()` takes the site's domain or ID, whether it's a Simple site, and the `ai_session_id` the chat's click event sends. Both links carry that session as `ai_session_id`, which checkout saves on the purchase beside `source`, and the plans page passes on to checkout. That joins a purchase to the click and the conversation behind it. A missing or empty session, or `none`, leaves the parameter out. Add credits carries a return address, as Jetpack AI's upgrade link does: the post open in a Simple site's editor, or else the site's home. Checkout gets it as both `redirect_to` and `cancel_to`. Upgrade carries neither. The plans page passes `redirect_to` on to checkout, which would then skip its own pages after a plan purchase, and only its downgrade and renewal buttons read `cancel_to`. Checkout refuses an upgrade from most people who didn't buy the plan, so these chats pass the link through `getCreditsPurchaseOptions()` with the flags `parseCreditsAccess()` reads from the `/ai/credits` response. It keeps an upgrade link only when the response says `can_upgrade: true`, and a credits pack link only when it says `can_buy_credits: true`. For people the response says can't buy, it gives a `purchaseHint` for `CreditsMeter` and a value to pass to `getCreditsNoticeMessage()` for the low and zero-balance notices. When the response doesn't say, it gives nothing. `getCreditsPurchaseAction()` turns a kept link into a button labelled Upgrade or Add credits that opens in a new tab. The notice's `action` and `CreditsMeter`'s `action` both take it, and a chat can add an `onClick` to record the click. `getCreditsCtaType()` turns the same result into the `cta_type` that Tracks events send.
+- **Chat**: `openAgentsManagerChat`, `closeAgentsManagerChat`, `isAgentsManagerChatVisible` and `AGENTS_MANAGER_STORE` ([Opening and closing the chat](#opening-and-closing-the-chat)).
+- **Entry button**: `useAiChatEntryState` and `AiChatEntryLabel`.
+- **Feedback**: `submitFeedback`, `rateMessage` and the `FeedbackInput` component.
+- **Site credits**: the balance, purchase links, notices and Tracks values other chats share with the dock ([`SITE-CREDITS.md`](./SITE-CREDITS.md)).
+- **Other**: `recordAgentsManagerTracksEvent`, and `getAgentsManagerInlineData()` for the server-injected `agentsManagerData`.
 
-Hosts that own a dedicated AI experience can set the [document-scoped presentation configuration](src/hooks/custom-actions/README.md#document-scoped-presentation) before loading Agents Manager to keep chat open and hide wp-admin/editor entry toggles. Chat state APIs report the effective open state, and close requests are ignored while `dismissible` is `false`.
-
-### Exported Types
+Types:
 
 ```tsx
 import type {
@@ -132,38 +138,7 @@ import type {
 
 ## Interactive chat surfaces
 
-The `wpcom/render-interactive-ui` tool returns an envelope with
-`tool_id: wpcom__render_interactive_ui` and an ordered array of A2UI v0.9 messages
-in `data`. Agents Manager also accepts raw A2UI message arrays. The renderer uses
-the A2UI SDK internally. Application helpers, components, and modules use
-interactive UI naming; imported SDK types and protocol identifiers retain their
-A2UI names.
-
-The demo catalog supports `Text`, `TextField`, `Button`, `Column`, `Image`, `Icon`,
-`Row`, `List`, `Card`, `Divider`, `CheckBox`, `ChoicePicker`, `DateTimeInput`,
-`Video`, `AudioPlayer`, `Tabs`, `Modal`, and `Slider`.
-Layouts use arrays of child IDs; cards wrap a single child and follow the chat
-theme colors. Icons map supported
-Basic catalog names to WordPress icons. Choice pickers support single and multiple
-selection and store selected values as string arrays. Bind input values and button
-action context to the same data paths to submit edits. Date/time inputs use local
-ISO date/time strings and enable date, time, or both with `enableDate`/`enableTime`.
-Date/time inputs show the browser's validation message below the field on blur.
-Text fields support `shortText`, `longText`, `number`, and `obscured` (password)
-variants; their values remain strings. Sliders store numbers and use `min` and
-`max` to set their range. Video and audio URLs support data bindings and render
-native players with playback controls. Tabs contain `{ title, child }` entries.
-Modals reference a `Button` trigger and a content component. The trigger opens
-the dialog locally instead of sending its action; buttons inside the dialog send
-actions normally. Dialog inputs share the surface data model and are disabled
-alongside the surface while the agent is processing.
-Input and choice-group labels use WordPress control typography and spacing.
-Interactive surfaces use `data-agenttic-isolated` so their controls retain their
-own typography while normal replies keep the chat's default typography reset.
-Choice-label alignment is scoped to the interactive surface because other chat
-widgets can load older Agenttic typography styles on the same page.
-Rebuild `@automattic/agenttic-ui` before the app when its styles change; the app
-consumes that package's built CSS.
+The agent can show buttons, forms and pickers in the chat. [`@automattic/ai-ui-renderer`](../ai-ui-renderer/README.md) renders them and holds only the basic or shared components; each chat's own components live in its project, such as Agents Manager, WooCommerce AI or the Jetpack AI sidebar. See [`src/interactive-ui/README.md`](./src/interactive-ui/README.md) for how it works.
 
 ## Development
 

@@ -53,6 +53,7 @@ export const SITE_OPTIONS = [
 	'is_gating_business_q1',
 	'is_legacy_gating_site',
 	'is_domain_only',
+	'is_mapped_domain',
 	'is_redirect',
 	'is_wpforteams_site',
 	'jetpack_connection_active_plugins',

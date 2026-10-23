@@ -36,7 +36,7 @@ import {
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, Outlet } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import {
 	SITE_ACTION_TITLES,
@@ -391,6 +391,25 @@ export const changePaymentMethodRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/billing-purchases/change-payment-method' ).then( ( d ) =>
 		createLazyRoute( 'purchases-purchase-settings-change-payment-method' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const movePurchaseRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				// translators: Moving a subscription, such as a plan or domain, to a different site.
+				title: _x( 'Move to another site', 'subscription site transfer' ),
+			},
+		],
+	} ),
+	getParentRoute: () => purchaseSettingsRoute,
+	path: 'move',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/move-purchase' ).then( ( d ) =>
+		createLazyRoute( 'purchases-purchase-settings-move' )( {
 			component: d.default,
 		} )
 	)
@@ -1494,6 +1513,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 					changePaymentMethodRoute,
 					cancelPurchaseRoute,
 					siteActionsRoute,
+					...( isEnabled( 'purchases/site-transfer' ) ? [ movePurchaseRoute ] : [] ),
 				] ),
 			] ),
 			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),

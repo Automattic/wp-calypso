@@ -24,9 +24,9 @@ import {
 	has100YearDomain,
 	planItem,
 } from 'calypso/lib/cart-values/cart-items';
-import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useSelector } from 'calypso/state';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { siteHasPaidPlan, useCheckoutSite } from '../src/hooks/use-checkout-site';
 import useCartKey from '../use-cart-key';
 
 export interface CartFreeUserPlanUpsellProps {
@@ -155,10 +155,11 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 		isLoading: isLoadingCart,
 		isPendingUpdate: isCartPendingUpdate,
 	} = useShoppingCart( cartKey );
-	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const { data: site } = useCheckoutSite( selectedSiteId );
 	const isRegisteringOrTransferringDomain =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
-	const hasPaidPlan = siteHasPaidPlan( selectedSite );
+	const hasPaidPlan = siteHasPaidPlan( site );
 	const hasPlanInCart = hasPlan( responseCart );
 	const hasHundredYearDomainInCart = has100YearDomain( responseCart );
 	const upsellProductSlug = PLAN_PERSONAL;
@@ -170,7 +171,7 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 	const planPrice = useGetPriceForProduct( upsellProductSlug );
 	const planName = upsellPlan?.getTitle();
 
-	if ( ! selectedSite?.ID ) {
+	if ( ! site ) {
 		return null;
 	}
 	if ( isCartPendingUpdate || isLoadingCart ) {

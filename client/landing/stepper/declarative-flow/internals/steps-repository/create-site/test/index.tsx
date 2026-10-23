@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
+import { Site } from '@automattic/data-stores';
 import { createSite } from '@automattic/onboarding';
 import { render, waitFor } from '@testing-library/react';
 import { useFlowState } from '../../../state-manager/store';
@@ -44,7 +45,6 @@ jest.mock( '@automattic/onboarding', () => ( {
 	isEntrepreneurFlow: () => false,
 	isNewHostedSiteCreationFlow: () => false,
 	isNewsletterFlow: () => false,
-	isReadymadeFlow: () => false,
 	isWriteOnFlow: () => false,
 	isOnboardingFlow: ( flow: string ) => flow === 'onboarding',
 	isNewSiteMigrationFlow: () => false,
@@ -283,6 +283,16 @@ describe( 'create-site', () => {
 		await expect( runStep() ).rejects.toThrow( 'Failed to create site' );
 	} );
 
+	// Without this, a reblog's site waits behind Coming Soon while its owner publishes the reblog.
+	it( 'creates a public site for an onboarding reblog run', async () => {
+		mockQueryParams = new URLSearchParams( 'blog_post=https://example.blog/a-post/' );
+		await runStep();
+		await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+		expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ 2 ] ).toBe(
+			Site.Visibility.PublicIndexed
+		);
+	} );
+
 	describe( 'AI Launchpad enablement', () => {
 		it( 'enables the AI Launchpad for onboarding sites', async () => {
 			await runStep();
@@ -305,6 +315,13 @@ describe( 'create-site', () => {
 
 		it( 'does not enable it for a playground run', async () => {
 			mockQueryParams = new URLSearchParams( 'playground=some-playground' );
+			await runStep();
+			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+			expect( getAiLaunchpadEnabledArg() ).toBe( false );
+		} );
+
+		it( 'does not enable it for a reblog run', async () => {
+			mockQueryParams = new URLSearchParams( 'blog_post=https://example.blog/a-post/' );
 			await runStep();
 			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
 			expect( getAiLaunchpadEnabledArg() ).toBe( false );
