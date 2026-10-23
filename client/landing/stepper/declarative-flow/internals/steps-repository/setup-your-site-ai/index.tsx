@@ -14,9 +14,8 @@ import { arrowUp, layout } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
-import { commerceUsesBuildWow } from 'calypso/landing/stepper/utils/build-wow';
 import {
-	planMayBuildStoreOnBuildWow,
+	planBuildsStoreOnBuildWow,
 	planSupportsBuildWow,
 } from 'calypso/landing/stepper/utils/build-wow-plans';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -50,10 +49,9 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	// to plain onboarding without the site-spec feature; the card falls back to the
 	// legacy builder there.
 	const planSlug = boughtPlanSlug ?? site?.plan?.product_slug;
-	const offerBuildWow = config.isEnabled( 'site-spec' ) && planSupportsBuildWow( planSlug );
-	// Commerce accounts off the store rollout stay on the legacy builder.
-	const mayOfferStoreBuildWow =
-		config.isEnabled( 'site-spec' ) && planMayBuildStoreOnBuildWow( planSlug );
+	const offerBuildWow =
+		config.isEnabled( 'site-spec' ) &&
+		( planSupportsBuildWow( planSlug ) || planBuildsStoreOnBuildWow( planSlug ) );
 	// Staging and development only, for Automatticians: a build on the blocks-first
 	// graph, to compare it with the DSL build the main card runs.
 	const canOfferBuildWowBlocksFirst =
@@ -147,15 +145,12 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		} );
 	};
 
-	const handleCustomDesignClick = async () => {
+	const handleCustomDesignClick = () => {
 		if ( ! claimSubmit() ) {
 			return;
 		}
 
-		if (
-			offerBuildWow ||
-			( mayOfferStoreBuildWow && ( await commerceUsesBuildWow( siteSlug || siteId ) ) )
-		) {
+		if ( offerBuildWow ) {
 			submitGenerateTheme( 'dsl' );
 			return;
 		}

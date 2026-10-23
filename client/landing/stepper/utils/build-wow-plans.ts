@@ -9,7 +9,7 @@ import {
  * Which plans route the AI build through build-wow. The post-checkout AI
  * setup chooser offers "Create a custom design" on Personal and higher, and
  * Personal, Premium and Business land on build-wow. Commerce is left to
- * planMayBuildStoreOnBuildWow().
+ * planBuildsStoreOnBuildWow().
  */
 export function planSupportsBuildWow( planSlug: string | null | undefined ): boolean {
 	return (
@@ -19,9 +19,8 @@ export function planSupportsBuildWow( planSlug: string | null | undefined ): boo
 }
 
 /**
- * A Commerce build makes a store, which build-wow does only for the accounts on
- * the store rollout; commerceUsesBuildWow() asks the server about the account.
+ * Commerce builds a store, also on build-wow; the server picks the generator.
  */
-export function planMayBuildStoreOnBuildWow( planSlug: string | null | undefined ): boolean {
+export function planBuildsStoreOnBuildWow( planSlug: string | null | undefined ): boolean {
 	return !! planSlug && isEcommercePlan( planSlug );
 }
