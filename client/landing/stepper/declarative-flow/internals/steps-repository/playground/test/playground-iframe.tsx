@@ -5,6 +5,7 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { speak } from '@wordpress/a11y';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PlaygroundIframe } from '../components/playground-iframe';
 import { BlueprintLoadError } from '../lib/blueprint-load-error';
 import { initializeWordPressPlayground } from '../lib/initialize-playground';
@@ -12,6 +13,7 @@ import { PlaygroundNotFoundError } from '../lib/playground-not-found-error';
 
 jest.mock( '../lib/initialize-playground' );
 jest.mock( '@wordpress/a11y', () => ( { speak: jest.fn() } ) );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
 jest.mock( 'calypso/data/php-versions', () => ( {
 	getPHPVersions: () => ( { recommendedValue: '8.3' } ),
 } ) );
@@ -114,15 +116,22 @@ describe( 'PlaygroundIframe intro', () => {
 		expect( getIntroHeading() ).toBeVisible();
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Downloading WordPress' );
 		expect( container.querySelector( 'iframe' ) ).toHaveAttribute( 'inert' );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_playground_woo_intro_show', {
+			blueprint: expect.any( String ),
+		} );
 
 		const onBootProgress = jest.mocked( initializeWordPressPlayground ).mock.calls[ 0 ][ 4 ]!;
-		act( () => onBootProgress( { stage: 'woocommerce', value: 60 } ) );
+		act( () => onBootProgress( { stage: 'woocommerce' } ) );
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Downloading WooCommerce' );
 
 		await act( async () => resolveBoot( { blueprint: null, client: {} } ) );
 		expect( getIntroHeading() ).not.toBeInTheDocument();
 		expect( container.querySelector( 'iframe' ) ).not.toHaveAttribute( 'inert' );
 		expect( speak ).toHaveBeenCalledWith( 'Your store is ready.' );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_playground_woo_intro_ready', {
+			blueprint: expect.any( String ),
+			duration_ms: expect.any( Number ),
+		} );
 	} );
 
 	it( 'gives way to the error screen when the boot fails', async () => {
@@ -177,5 +186,6 @@ describe( 'PlaygroundIframe intro', () => {
 
 		expect( getIntroHeading() ).not.toBeInTheDocument();
 		expect( jest.mocked( initializeWordPressPlayground ).mock.calls[ 0 ][ 4 ] ).toBeUndefined();
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 } );

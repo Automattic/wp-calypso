@@ -6,7 +6,8 @@ export type PlaygroundBootStage = 'wordpress' | 'woocommerce' | 'store';
 
 export interface PlaygroundBootProgress {
 	stage: PlaygroundBootStage;
-	// Percent complete; undefined while WordPress boots, as the client reports no progress for it.
+	// Percent complete; undefined while WordPress boots and WooCommerce installs, as the client
+	// reports no progress during either.
 	value?: number;
 }
 
@@ -37,13 +38,21 @@ export function createBootProgressCallbacks(
 	let completed = 0;
 	let isWooCommercePending = false;
 
-	const report = () =>
+	const report = () => {
+		// Steps report nothing while they run, so a fixed value would look stuck
+		// through the WooCommerce download; keep the bar indeterminate until then.
+		if ( isWooCommercePending ) {
+			onProgress( { stage: 'woocommerce' } );
+			return;
+		}
+
 		onProgress( {
-			stage: isWooCommercePending ? 'woocommerce' : 'store',
+			stage: 'store',
 			value:
 				STEPS_START +
 				( total ? Math.round( ( ( STEPS_END - STEPS_START ) * completed ) / total ) : 0 ),
 		} );
+	};
 
 	return {
 		onBlueprintValidated: ( declaration: { steps?: unknown[] } ) => {

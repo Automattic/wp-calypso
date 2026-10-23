@@ -17,8 +17,8 @@ describe( 'createBootProgressCallbacks', () => {
 			'WooCommerce pending until its install step completes',
 			[ login, installWooCommerce, setSiteOptions, installOther ],
 			[
-				{ stage: 'woocommerce', value: 50 },
-				{ stage: 'woocommerce', value: 60 },
+				{ stage: 'woocommerce' },
+				{ stage: 'woocommerce' },
 				{ stage: 'store', value: 70 },
 				{ stage: 'store', value: 80 },
 				{ stage: 'store', value: 90 },
