@@ -9,6 +9,23 @@
 		var( --color-surface )
 	);
 
+	// Mix the variant's tint into the surface, not into transparency, so whatever
+	// sits behind a notice can't show through and dull it. The border takes the
+	// same tint instead of the card's neutral grey, which clashes with the fill.
+	&.components-card {
+		background-color: color-mix(
+			in srgb,
+			var( --dashboard-notice__tint-color ) 4%,
+			var( --dashboard-notice-action__background-color )
+		);
+		box-shadow: 0 0 0 1px
+			color-mix(
+				in srgb,
+				var( --dashboard-notice__tint-color ) 20%,
+				var( --dashboard-notice-action__background-color )
+			);
+	}
+
 	/**
 	 * Density
 	 */
@@ -40,7 +57,7 @@
 	 * Variant
 	 */
 	&.is-info {
-		background-color: color-mix(in srgb, var(--wp-admin-theme-color) 4%, transparent);
+		--dashboard-notice__tint-color: var(--wp-admin-theme-color);
 
 		.dashboard-notice__icon {
 			fill: var(--wp-admin-theme-color);
@@ -48,7 +65,7 @@
 	}
 
 	&.is-warning {
-		background-color: color-mix(in srgb, var(--dashboard__background-color-warning) 4%, transparent);
+		--dashboard-notice__tint-color: var(--dashboard__background-color-warning);
 
 		.dashboard-notice__icon {
 			fill: #a77f30;
@@ -56,7 +73,7 @@
 	}
 
 	&.is-success {
-		background-color: color-mix(in srgb, var(--dashboard__background-color-success) 4%, transparent);
+		--dashboard-notice__tint-color: var(--dashboard__background-color-success);
 
 		.dashboard-notice__icon {
 			fill: #2c723e;
@@ -64,7 +81,7 @@
 	}
 
 	&.is-error {
-		background-color: color-mix(in srgb, var(--dashboard__background-color-error) 4%, transparent);
+		--dashboard-notice__tint-color: var(--dashboard__background-color-error);
 
 		.dashboard-notice__icon {
 			fill: #8c0b0b;
