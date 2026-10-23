@@ -34,20 +34,6 @@ $resource-brands: (
 .dashboard-resources-learn__filters {
 	--wp-dataviews-color-background: transparent;
 
-	// The toolbar toggles. Nested for specificity over the component's own
-	// runtime styles.
-	.dashboard-resources-learn__layout-toggle,
-	.dashboard-resources-learn__stage-filter {
-		// Match the compact search input; the control has no compact size.
-		block-size: $button-size-compact;
-		// Show the border the control otherwise only draws on hover.
-		border-color: $gray-400;
-	}
-
-	.dashboard-resources-learn__layout-toggle {
-		margin-inline-end: $grid-unit-05;
-	}
-
 	// Only rendered while the filters are open, so the gap goes with them.
 	.dashboard-resources-learn__filters-toggled {
 		margin-block-start: $grid-unit-15;

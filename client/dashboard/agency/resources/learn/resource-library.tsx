@@ -5,8 +5,6 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	__experimentalToggleGroupControl as ToggleGroupControl,
-	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { useEvent } from '@wordpress/compose';
 import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -15,12 +13,11 @@ import { useMemo } from 'react';
 import { Card } from '../../../components/card';
 import { DataViews, DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { useResourceFields } from './dataviews/fields';
-import { LAYOUT_FIELDS } from './dataviews/views';
+import { DEFAULT_LAYOUTS } from './dataviews/views';
 import ResourceGrid from './resource-grid';
 import ResourceLink from './resource-link';
 import StageFilter from './stage-filter';
 import { useRevealMore } from './use-reveal-more';
-import type { LayoutType } from './dataviews/views';
 import type { FilterResources } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
@@ -83,7 +80,7 @@ export default function ResourceLibrary( {
 					view={ view }
 					onChangeView={ onChangeView }
 					paginationInfo={ paginationInfo }
-					defaultLayouts={ { grid: {}, table: {} } }
+					defaultLayouts={ DEFAULT_LAYOUTS }
 					getItemId={ ( item ) => String( item.id ) }
 					renderItemLink={ ( { item, ...props } ) => (
 						<ResourceLink
@@ -98,21 +95,7 @@ export default function ResourceLibrary( {
 					<HStack justify="space-between" wrap>
 						<HStack justify="flex-start" expanded={ false }>
 							<WPDataViews.Search label={ __( 'Search resources' ) } />
-							<ToggleGroupControl
-								className="dashboard-resources-learn__layout-toggle"
-								label={ __( 'Layout' ) }
-								value={ view.type }
-								hideLabelFromVision
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-								onChange={ ( value ) => {
-									const type: LayoutType = value === 'table' ? 'table' : 'grid';
-									onChangeView( { ...view, type, fields: LAYOUT_FIELDS[ type ] } );
-								} }
-							>
-								<ToggleGroupControlOption value="grid" label={ __( 'Grid' ) } />
-								<ToggleGroupControlOption value="table" label={ __( 'List' ) } />
-							</ToggleGroupControl>
+							<WPDataViews.LayoutSwitcher />
 							<WPDataViews.FiltersToggle />
 						</HStack>
 						<StageFilter view={ view } onChangeView={ onChangeView } />

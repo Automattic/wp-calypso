@@ -92,7 +92,6 @@ export default function StageFilter( { view, onChangeView }: StageFilterProps ) 
 
 	return (
 		<ToggleGroupControl
-			className="dashboard-resources-learn__stage-filter"
 			label={ __( 'Stage' ) }
 			value={ stage }
 			hideLabelFromVision
