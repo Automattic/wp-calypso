@@ -221,6 +221,7 @@ describe( 'SiteSpec early provisioning step', () => {
 			},
 			{
 				spec_id: 'spec-456',
+				stream_events: true,
 			}
 		);
 
@@ -263,7 +264,7 @@ describe( 'SiteSpec early provisioning step', () => {
 
 		expect( wpcomPostMock ).toHaveBeenCalledWith(
 			expect.objectContaining( { path: '/sites/example.wordpress.com/big-sky/build-wow' } ),
-			{ spec_id: 'spec-dsl', graph: 'dsl' }
+			{ spec_id: 'spec-dsl', graph: 'dsl', stream_events: true }
 		);
 		const redirect = new URL( window.location.href, 'https://wordpress.com' );
 		expect( redirect.pathname ).toBe( '/setup/ai-site-builder-spec/site-generation' );
@@ -297,7 +298,7 @@ describe( 'SiteSpec early provisioning step', () => {
 		expect( mockUseSiteSpec ).not.toHaveBeenCalled();
 		expect( wpcomPostMock ).toHaveBeenCalledWith(
 			expect.objectContaining( { path: '/sites/example.wordpress.com/big-sky/build-wow' } ),
-			{ spec_id: 'spec-entry' }
+			{ spec_id: 'spec-entry', stream_events: true }
 		);
 		const redirect = new URL( window.location.href, 'https://wordpress.com' );
 		expect( redirect.pathname ).toBe( '/setup/ai-site-builder-spec/site-generation' );
@@ -682,7 +683,7 @@ describe( 'SiteSpec blueprint archive import', () => {
 			// blueprint_id is what lets the server take a site that is already on Atomic.
 			expect( wpcomPostMock ).toHaveBeenCalledWith(
 				{ path: '/sites/example.wordpress.com/big-sky/build-wow', apiNamespace: 'wpcom/v2' },
-				{ spec_id: 'spec-789', blueprint_id: '961' }
+				{ spec_id: 'spec-789', blueprint_id: '961', stream_events: true }
 			);
 
 			const destination = new URL( redirectTo, 'https://wordpress.com' );
