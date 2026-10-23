@@ -356,19 +356,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'woocommerce-install',
-			get pageTitle() {
-				return translate( 'Add WooCommerce to your site' );
-			},
-			steps: [ 'store-address', 'business-info', 'confirm', 'transfer' ],
-			destination: '/',
-			description: 'Onboarding and installation flow for woocommerce on all plans.',
-			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
-			optionalDependenciesInQuery: [ 'back_to' ],
-			lastModified: '2021-12-21',
-			disallowResume: false,
-		},
-		{
 			name: 'onboarding-affiliate',
 			steps: [ userSocialStep, 'domains', 'plans-affiliate' ],
 			destination: getSignupDestination,

@@ -19,7 +19,6 @@ import {
 	NOTICE_CELEBRATE_SITE_COPY,
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
 	NOTICE_HOME_LIMITED_TIME_OFFER_COUPON,
-	NOTICE_SITE_LAUNCH_SELLER_UPSELL,
 	NOTICE_STAGING_SITE,
 	SECTION_BLOGGING_PROMPT,
 	SECTION_BLOGANUARY_BLOGGING_PROMPT,
@@ -69,7 +68,6 @@ import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
 import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
 import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
-import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices/site-launch-seller-upsell';
 import StagingSiteNotice from 'calypso/my-sites/customer-home/cards/notices/staging-site';
 import Affiliates from 'calypso/my-sites/customer-home/cards/tasks/affiliates';
 import CodeForThePeople from 'calypso/my-sites/customer-home/cards/tasks/code-for-the-people';
@@ -107,7 +105,6 @@ const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
 	[ NOTICE_CELEBRATE_SITE_MIGRATION ]: CelebrateSiteMigration,
 	[ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE ]: CelebrateSiteSetupComplete,
 	[ NOTICE_HOME_LIMITED_TIME_OFFER_COUPON ]: NoticeHomeLimitedTimeOfferCoupon,
-	[ NOTICE_SITE_LAUNCH_SELLER_UPSELL ]: SiteLaunchSellerUpsell,
 	[ NOTICE_STAGING_SITE ]: StagingSiteNotice,
 	[ TASK_AFFILIATES ]: Affiliates,
 	[ TASK_CODE_FOR_THE_PEOPLE ]: CodeForThePeople,

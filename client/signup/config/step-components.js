@@ -34,10 +34,6 @@ const stepNameToModuleName = {
 	'difm-store-options': 'site-options',
 	'difm-page-picker': 'page-picker',
 	'website-content': 'website-content',
-	'store-address': 'woocommerce-install/step-store-address',
-	'business-info': 'woocommerce-install/step-business-info',
-	confirm: 'woocommerce-install/confirm',
-	transfer: 'woocommerce-install/transfer',
 	'social-profiles': 'social-profiles',
 };
 

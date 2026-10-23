@@ -46,6 +46,7 @@ import {
 	getLegacyPlanFlowRedirect,
 	shouldRedirectLegacyPlanFlow,
 } from 'calypso/lib/signup/legacy-plan-flows';
+import { getWooCommercePluginPage } from 'calypso/lib/signup/legacy-woocommerce-install-flow';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
@@ -1379,6 +1380,13 @@ export default function pages() {
 		}
 
 		res.redirect( 302, getLegacyLaunchSiteRedirect( req.query ) );
+	} );
+
+	app.get( [ '/start/woocommerce-install', '/start/woocommerce-install/*' ], ( req, res ) => {
+		res.redirect( 302, getWooCommercePluginPage( req.query.siteSlug ) );
+	} );
+	app.get( [ '/woocommerce-installation', '/woocommerce-installation/:site' ], ( req, res ) => {
+		res.redirect( 302, getWooCommercePluginPage( req.params.site ) );
 	} );
 
 	// Special Calypso routes which also appear on `my.wordpress.com`
