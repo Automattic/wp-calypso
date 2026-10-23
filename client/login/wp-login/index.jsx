@@ -122,7 +122,7 @@ export class Login extends Component {
 			'isFromAkismet',
 			'isFromPassport',
 			'isFromAutomatticForAgenciesPlugin',
-			'showsUnifiedContent',
+			'isUnifiedConnectionFlow',
 			'connectorPlugins',
 			'partnerConfig',
 			'isGravPoweredClient',
@@ -442,7 +442,7 @@ export class Login extends Component {
 				{ ! isGravPoweredClient && (
 					<OneLoginLayout
 						isJetpack={ isJetpack }
-						showsUnifiedContent={ this.props.showsUnifiedContent }
+						isUnifiedConnectionFlow={ this.props.isUnifiedConnectionFlow }
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
@@ -479,7 +479,7 @@ function getInitialHeadingState( props, translate ) {
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
-		showsUnifiedContent,
+		isUnifiedConnectionFlow,
 		connectorPlugins,
 		partnerConfig,
 		isGravPoweredClient,
@@ -505,7 +505,7 @@ function getInitialHeadingState( props, translate ) {
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
-		showsUnifiedContent,
+		isUnifiedConnectionFlow,
 		connectorPlugins,
 		partnerConfig,
 		isGravPoweredClient,
@@ -521,7 +521,7 @@ function getInitialHeadingState( props, translate ) {
 		translate,
 		isWooJPC,
 		partnerConfig,
-		showsUnifiedContent,
+		isUnifiedConnectionFlow,
 		connectorPlugins,
 	} );
 
@@ -569,8 +569,8 @@ export default connect(
 
 		const redirectParams = new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] );
 		const connectorFromParam = redirectParams.get( 'from' ) || currentQuery?.from;
-		const showsUnifiedContent = isUnifiedFlow( connectorFromParam );
-		const connectorPlugins = showsUnifiedContent
+		const isUnifiedConnectionFlow = isUnifiedFlow( connectorFromParam );
+		const connectorPlugins = isUnifiedConnectionFlow
 			? ( redirectParams.get( 'plugins' ) || currentQuery?.plugins || '' )
 					.split( ',' )
 					.map( trimString )
@@ -616,7 +616,7 @@ export default connect(
 				'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from ||
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
-			showsUnifiedContent,
+			isUnifiedConnectionFlow,
 			connectorPlugins,
 			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),

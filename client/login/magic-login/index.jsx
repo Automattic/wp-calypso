@@ -276,7 +276,6 @@ export class MagicLogin extends Component {
 			isWooJPC,
 			isJetpackLogin,
 			isUnifiedConnectionFlow,
-			showsUnifiedContent,
 			connectorPlugins,
 		} = this.props;
 		const { usernameOrEmail } = this.state;
@@ -338,7 +337,6 @@ export class MagicLogin extends Component {
 		return (
 			<OneLoginLayout
 				isJetpack={ isJetpackLogin }
-				showsUnifiedContent={ showsUnifiedContent }
 				isUnifiedConnectionFlow={ isUnifiedConnectionFlow }
 				connectorPlugins={ connectorPlugins }
 				linkLogoToHome
@@ -401,7 +399,6 @@ export const getConnectionFlowFromRedirectTo = ( redirectToOriginal, currentQuer
 		: '';
 	return {
 		isUnifiedConnectionFlow,
-		showsUnifiedContent: isUnifiedConnectionFlow,
 		connectorPlugins: rawPlugins
 			.split( ',' )
 			.map( ( s ) => s.trim() )
