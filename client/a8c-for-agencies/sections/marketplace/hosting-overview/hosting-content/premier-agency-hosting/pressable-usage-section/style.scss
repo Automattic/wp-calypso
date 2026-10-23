@@ -1,10 +1,9 @@
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .pressable-usage-section {
 	border-block-end: 1px solid var( --color-neutral-5 );
 	padding-block: 32px;
-
 
 	.page-section__header-title {
 		@include heading-x-large;
@@ -27,4 +26,8 @@
 	justify-content: space-between;
 	margin-block-end: 16px;
 	align-items: center;
+}
+
+.pressable-usage-card__rename-notice.a4a-layout__banner {
+	margin-block: 0 16px;
 }

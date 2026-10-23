@@ -81,4 +81,6 @@ export interface UserPreferences {
 	/** The welcome tour section to pick back up at after leaving the tour to explore a page. */
 	'a4a-dashboard-onboarding-tour-section'?: string;
 	'a4a-overview-welcome-band-dismissed'?: boolean;
+	/** Shared with the classic A4A dashboard: a dismissal there hides the notice here. */
+	'a4a-pressable-plan-rename-notice-dismissed'?: boolean;
 }

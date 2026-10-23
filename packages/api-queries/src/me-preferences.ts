@@ -45,6 +45,7 @@ const defaultValues: Required< UserPreferences > = {
 	'a4a-agency-approval-notice-dismissed': false,
 	'a4a-dashboard-onboarding-tour-section': '',
 	'a4a-overview-welcome-band-dismissed': false,
+	'a4a-pressable-plan-rename-notice-dismissed': false,
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
@@ -76,6 +77,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'a4a-agency-approval-notice-dismissed': 'a4aappr',
 	'a4a-dashboard-onboarding-tour-section': 'a4adtour',
 	'a4a-overview-welcome-band-dismissed': 'a4awelc',
+	'a4a-pressable-plan-rename-notice-dismissed': 'a4aprsrn',
 	'hosting-dashboard-difm-offer-dismissed': 'difmofr',
 };
 
