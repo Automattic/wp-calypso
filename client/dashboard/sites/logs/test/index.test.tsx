@@ -4,7 +4,7 @@
 
 import '@testing-library/jest-dom';
 import { LogType } from '@automattic/api-core';
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -87,39 +87,6 @@ describe( 'SiteLogs page', () => {
 		await screen.findByRole( 'button', { name: /^Date range:/ } );
 
 		expect( screen.queryByText( /paths aren’t shown here/ ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'URL from/to params are normalized from ms to seconds', async () => {
-		const replaceSpy = jest.spyOn( window.history, 'replaceState' );
-		const msFrom = 1730000000000; // ms
-		const msTo = 1730086400000; // ms
-		const originalHref = window.location.href;
-		Object.defineProperty( window, 'location', {
-			value: { href: `https://example.com?from=${ msFrom }&to=${ msTo }` },
-			writable: true,
-		} );
-
-		render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
-
-		// Wait for the specific normalization to land. Waiting on a bare
-		// `replaceSpy.toHaveBeenCalled()` is flaky because the router fires
-		// its own `replaceState` during initial navigation, which can
-		// satisfy the waiter before the normalization effect has run.
-		await waitFor( () => {
-			const hrefArgs = replaceSpy.mock.calls
-				.map( ( call ) => call?.[ 2 ] )
-				.filter( ( v ): v is string => typeof v === 'string' );
-			expect(
-				hrefArgs.some( ( h ) => h.includes( `from=${ Math.floor( msFrom / 1000 ) }` ) )
-			).toBe( true );
-			expect( hrefArgs.some( ( h ) => h.includes( `to=${ Math.floor( msTo / 1000 ) }` ) ) ).toBe(
-				true
-			);
-		} );
-
-		// restore
-		Object.defineProperty( window, 'location', { value: { href: originalHref } } );
-		replaceSpy.mockRestore();
 	} );
 
 	test( 'auto-refresh is blocked for non-last-7 range and shows warning notice', async () => {

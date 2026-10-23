@@ -1,7 +1,7 @@
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
 import { siteLogsInfiniteQuery } from '@automattic/api-queries';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
+import { useRouter, useSearch } from '@tanstack/react-router';
 import { ToggleControl, Button, Spinner } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { View, Filter, Field } from '@wordpress/dataviews';
@@ -89,27 +89,9 @@ function SiteLogsDataViews( {
 		[ persistedView, startPosition ]
 	);
 
-	// We want to parse 'from' and 'to' from the URL.
-	const parseUrlSeconds = useMemo( () => {
-		const searchParams = new URLSearchParams( search );
-
-		const readSeconds = ( key: 'from' | 'to' ) => {
-			const raw = searchParams.get( key );
-			if ( ! raw ) {
-				return null;
-			}
-			const number = Number.parseInt( raw, 10 );
-			if ( ! Number.isFinite( number ) ) {
-				return null;
-			}
-			// Enforce seconds-only here. The page-level normalizer will rewrite ms→s on mount.
-			return number > 1e11 ? null : number;
-		};
-
-		const from = readSeconds( 'from' );
-		const to = readSeconds( 'to' );
-		return from != null && to != null ? { from, to } : null;
-	}, [ search ] );
+	const { from: urlFrom, to: urlTo } = useSearch( { strict: false } );
+	const parseUrlSeconds =
+		urlFrom !== undefined && urlTo !== undefined ? { from: urlFrom, to: urlTo } : null;
 
 	const computed = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),

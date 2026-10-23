@@ -5,7 +5,7 @@
 import { queryClient } from '@automattic/api-queries';
 import { defaultParseSearch } from '@tanstack/react-router';
 import nock from 'nock';
-import { siteOverviewRoute } from '../sites';
+import { siteBackupsRoute, siteLogsRoute, siteOverviewRoute } from '../sites';
 
 const site = {
 	ID: 1,
@@ -67,5 +67,20 @@ describe( 'siteOverviewRoute search', () => {
 		const search = validateSearch( defaultParseSearch( '?difmOffer=unknown' ) );
 
 		expect( search.difmOffer ).toBeUndefined();
+	} );
+} );
+
+describe( 'date range routes search', () => {
+	test.each( [
+		[ 'siteLogsRoute', siteLogsRoute ],
+		[ 'siteBackupsRoute', siteBackupsRoute ],
+	] )( '%s normalizes millisecond from/to params to seconds', ( _, route ) => {
+		const validateSearch = route.options.validateSearch as unknown as (
+			search: Record< string, unknown >
+		) => { from?: number; to?: number };
+
+		const search = validateSearch( defaultParseSearch( '?from=1729987200000&to=1730159999000' ) );
+
+		expect( search ).toMatchObject( { from: 1729987200, to: 1730159999 } );
 	} );
 } );

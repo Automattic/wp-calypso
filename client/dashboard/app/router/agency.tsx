@@ -86,6 +86,7 @@ import {
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
+import { validateDateRangeSearch } from '../../utils/date-range-search';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { AUTH_QUERY_KEY } from '../auth';
@@ -1227,6 +1228,7 @@ export const agencySiteBackupsRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Backups' ) } ] } ),
 	getParentRoute: () => agencySiteRoute,
 	path: 'backups',
+	validateSearch: validateDateRangeSearch,
 	loader: async ( { params: { siteSlug } } ) => {
 		const [ agencySite, site ] = await Promise.all( [
 			queryClient.ensureQueryData( agencySiteQuery( siteSlug ) ),
@@ -1353,6 +1355,7 @@ export const agencySiteActivityRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Activity' ) } ] } ),
 	getParentRoute: () => agencySiteLogsRoute,
 	path: 'activity',
+	validateSearch: validateDateRangeSearch,
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( ! site.__inaccessible_jetpack_error ) {
