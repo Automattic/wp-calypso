@@ -1,4 +1,9 @@
-import { getInteractiveUiSession, trackInteractiveUiHistory } from '../session';
+import {
+	disposeInteractiveUiRuntime,
+	getInteractiveUiSession,
+	trackInteractiveUiHistory,
+} from '../session';
+import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 const SCOPE = JSON.stringify( [ 'site', 1, 'agent' ] );
 
@@ -16,6 +21,22 @@ describe( 'getInteractiveUiSession', () => {
 		const session = getInteractiveUiSession( undefined, SCOPE, 'session-1' );
 
 		expect( getInteractiveUiSession( session, scopeIdentity, sessionId ) ).not.toBe( session );
+	} );
+} );
+
+describe( 'disposeInteractiveUiRuntime', () => {
+	it( 'disposes of the runtime and forgets its batches, so they apply again', () => {
+		const dispose = jest.fn();
+		const session = getInteractiveUiSession( undefined, SCOPE, 'session-1' );
+		session.runtime = { dispose } as unknown as InteractiveUiRuntime;
+		session.appliedBatches = [
+			{ operations: [], messageId: 'agent', messageIndex: 1, signature: 'a' },
+		];
+
+		disposeInteractiveUiRuntime( session );
+
+		expect( dispose ).toHaveBeenCalledTimes( 1 );
+		expect( session ).toMatchObject( { runtime: undefined, appliedBatches: [] } );
 	} );
 } );
 

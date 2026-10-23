@@ -2,18 +2,23 @@ import { useCallback, useEffect, useMemo } from '@wordpress/element';
 import usePickerVariations from '../../hooks/use-picker-variations';
 import { injectFontFamiliesIntoEditorIframe } from '../../utils/font-families-to-css';
 import VariationPicker from '../variation-picker';
+import type { PickerSurfaceProps } from '../style-pickers/types';
 import type { StyleVariation } from '../styles-preview';
 
-interface Props {
+interface Props extends PickerSurfaceProps {
 	variations?: StyleVariation[];
 	themeVariations?: StyleVariation[];
 	dynamicVariations?: StyleVariation[];
+	isMessageStale?: boolean;
 }
 
 export default function FontPicker( {
 	variations = [],
 	themeVariations = [],
 	dynamicVariations = [],
+	surfaceId,
+	disabled,
+	isMessageStale,
 }: Props ) {
 	// Combine theme + dynamic + direct variations; the picker hook dedupes by title.
 	const fontVariations = useMemo( () => {
@@ -25,6 +30,7 @@ export default function FontPicker( {
 
 	const { sortedVariations, activeTitle, handleSelect } = usePickerVariations( {
 		variations: fontVariations,
+		surfaceId,
 		variationType: 'font',
 		getLiveValue: ( globalStyles ) => globalStyles.settings?.typography?.fontFamilies?.theme,
 		getValue: ( variation ) => variation.settings?.typography?.fontFamilies?.theme,
@@ -38,8 +44,12 @@ export default function FontPicker( {
 	} );
 
 	// Pre-load every variation's fonts in the editor canvas so previews and
-	// applying a pick don't flash unstyled text.
+	// applying a pick don't flash unstyled text. A stale picker skips it, since it can't apply a pick.
 	useEffect( () => {
+		if ( isMessageStale ) {
+			return;
+		}
+
 		const families = sortedVariations.flatMap(
 			( v ) => v.settings?.typography?.fontFamilies?.theme ?? []
 		);
@@ -69,6 +79,7 @@ export default function FontPicker( {
 		<VariationPicker
 			variations={ sortedVariations }
 			type="font"
+			disabled={ disabled }
 			onSelect={ handlePick }
 			activeVariationTitle={ activeTitle }
 		/>
