@@ -71,7 +71,7 @@
 		"sass-loader": "^16.0.5",
 		"stylelint": "^17.16.0",
 		"stylelint-scss": "^7.3.0",
-		"typescript": "^6.0.3"
+		"typescript": "^7.0.2"
 	},
 	"peerDependencies": {
 		"@babel/core": "*",

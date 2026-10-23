@@ -58,7 +58,7 @@
 		"semver": "^7.7.2",
 		"terser-webpack-plugin": "^5.6.1",
 		"thread-loader": "^4.0.4",
-		"typescript": "^6.0.3",
+		"typescript": "^7.0.2",
 		"webpack-cli": "^7.2.3",
 		"yargs": "^17.7.2"
 	},
