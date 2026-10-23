@@ -411,6 +411,7 @@ export function Visibility( {
 	status,
 	isLaunched,
 }: {
+	siteId: number;
 	siteSlug: string;
 	visibility: SiteVisibility;
 	status: SiteBlockingStatus;
