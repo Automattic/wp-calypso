@@ -3,10 +3,11 @@
  */
 
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { render } from '../../../../../test-utils';
 import CancelPurchaseForm from '../index';
-import { FEEDBACK_STEP, NEXT_ADVENTURE_STEP } from '../steps';
-import type { Purchase } from '@automattic/api-core';
+import { FEEDBACK_STEP, NEXT_ADVENTURE_STEP, UPSELL_STEP } from '../steps';
+import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 	return {
@@ -97,5 +98,43 @@ describe( '<CancelPurchaseForm />', () => {
 
 		expect( screen.queryByRole( 'radio' ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Complete removal' } ) ).toBeEnabled();
+	} );
+
+	test( 'offers a free month of the current plan', async () => {
+		const user = userEvent.setup();
+		const freeMonthOfferClick = jest.fn();
+
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ UPSELL_STEP }
+				allSteps={ [ FEEDBACK_STEP, UPSELL_STEP ] }
+				purchase={ makePurchase( {
+					product_name: 'Business',
+					product_slug: 'business-bundle-monthly',
+					bill_period_days: 31,
+				} ) }
+				plans={ [
+					{
+						product_slug: 'business-bundle-monthly',
+						product_name: 'WordPress.com Business',
+					} as PlanProduct,
+				] }
+				questionOneText="foundBetterValue"
+				upsell="free-month-offer"
+				freeMonthOfferClick={ freeMonthOfferClick }
+			/>
+		);
+
+		expect( screen.getByRole( 'heading', { name: 'How about a free month?' } ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				'We get it – building a site takes time. But we’d love to see you stick around to build on what you started. How about a free month of your WordPress.com Business plan subscription to continue building your site?'
+			)
+		).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Get a free month' } ) );
+
+		expect( freeMonthOfferClick ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
