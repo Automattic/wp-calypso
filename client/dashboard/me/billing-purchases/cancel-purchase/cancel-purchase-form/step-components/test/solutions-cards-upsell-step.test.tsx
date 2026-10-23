@@ -186,4 +186,30 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 		).toBeVisible();
 		expect( renewCard ).toHaveAttribute( 'href', expect.stringContaining( 'coupon=DONTGO25' ) );
 	} );
+
+	test( 'switch-to-monthly card on an annual plan is a button that calls onSwitchToMonthly and stays on the cards step', async () => {
+		const user = userEvent.setup();
+		const onSwitchToMonthly = jest.fn();
+
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="tooExpensive"
+				purchase={ purchase }
+				closeDialog={ jest.fn() }
+				onDeclineUpsell={ jest.fn() }
+				onSwitchToMonthly={ onSwitchToMonthly }
+			/>
+		);
+
+		const monthlyCard = await screen.findByRole( 'button', {
+			name: /Switch to monthly payments/,
+		} );
+		await user.click( monthlyCard );
+
+		expect( onSwitchToMonthly ).toHaveBeenCalledTimes( 1 );
+		expect( monthlyCard ).toBeVisible();
+		expect(
+			screen.queryByRole( 'heading', { name: 'Switch to flexible monthly payments' } )
+		).not.toBeInTheDocument();
+	} );
 } );
