@@ -17,6 +17,7 @@ export default function PressableRenamedPlanNote( { formerName }: { formerName: 
 	return (
 		<>
 			<Button
+				__next40pxDefaultSize
 				ref={ setAnchor }
 				variant="tertiary"
 				size="small"

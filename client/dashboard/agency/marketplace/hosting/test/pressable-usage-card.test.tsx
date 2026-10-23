@@ -4,7 +4,7 @@
 import '@testing-library/jest-dom';
 import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../../test-utils';
 import { pressableLicensesQuery } from '../lib/pressable-products';
@@ -46,10 +46,12 @@ describe( '<PressableUsageCard>', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'About your plan name' } ) );
 
-		expect( await screen.findByText( 'Formerly Pressable Signature 2' ) ).toBeInTheDocument();
+		await waitFor( () =>
+			expect( screen.getByText( 'Formerly Pressable Signature 2' ) ).toBeVisible()
+		);
 		expect(
 			screen.getByText( 'Your price, features, sites, visits, and storage haven’t changed.' )
-		).toBeInTheDocument();
+		).toBeVisible();
 	} );
 
 	test( 'says nothing while the plan still has its old name', () => {
