@@ -359,8 +359,6 @@
 		"nanoid@npm:^3.3.16": "3.3.17",
 		"phoenix@npm:^1.5.1": "1.5.15",
 		"protobufjs@npm:^7.3.0": "7.6.5",
-		"serialize-javascript@npm:^6.0.0": "7.0.5",
-		"serialize-javascript@npm:^6.0.2": "7.0.5",
 		"shell-quote@npm:^1.6.1": "1.9.0",
 		"tar@npm:7.5.11": "7.5.22",
 		"tar@npm:^6.0.2": "7.5.22",
