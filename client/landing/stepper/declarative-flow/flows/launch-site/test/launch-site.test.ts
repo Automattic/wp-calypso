@@ -631,11 +631,11 @@ describe( 'launch-site flow', () => {
 				expect( checkoutParam( 'checkoutBackUrl' ) ).toContain( '/plugins/example.wordpress.com' );
 			} );
 
-			it( 'keeps the launch destination in the cookie, which a later checkout could read', async () => {
+			it( 'leaves no cookie behind for a later checkout to land on', async () => {
 				await submit( STEPS.PROCESSING.slug, launched ).result;
 
-				expect( persistSignupDestination ).toHaveBeenCalledWith( launchDestination );
-				expect( persistSignupDestination ).not.toHaveBeenCalledWith( setupUrl );
+				expect( persistSignupDestination ).not.toHaveBeenCalled();
+				expect( clearSignupDestinationCookie ).toHaveBeenCalled();
 			} );
 
 			it( 'lands on the dotcom Dashboard connection setup for a launch from A4A', async () => {
@@ -685,6 +685,8 @@ describe( 'launch-site flow', () => {
 				await submit( STEPS.PROCESSING.slug, launched ).result;
 
 				expect( checkoutParam( 'redirect_to' ) ).toBe( launchDestination );
+				expect( persistSignupDestination ).toHaveBeenCalledWith( launchDestination );
+				expect( clearSignupDestinationCookie ).not.toHaveBeenCalled();
 			} );
 
 			it( 'keeps the launch destination when adding to the cart fails', async () => {

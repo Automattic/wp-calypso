@@ -351,10 +351,15 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				? buildDashboardLink( 'dotcom', `/domains/${ connectedDomain }/domain-connection-setup` )
 				: launchDestination;
 
-			// Checkout reads these to send the user on once they have paid. The cookie outlives this
-			// checkout, since leaving it doesn't clear it, so it keeps the launch destination: a later
-			// purchase without a `redirect_to` must not end on this domain's setup.
-			persistSignupDestination( launchDestination );
+			// Checkout reads these to send the user on once they have paid. A later checkout without a
+			// `redirect_to` falls back to the cookie, and paying clears it only when it matches the
+			// destination. The connection setup needs no fallback, so drop the cookie rather than leave
+			// one behind for a later purchase to land on.
+			if ( connectedDomain ) {
+				clearSignupDestinationCookie();
+			} else {
+				persistSignupDestination( launchDestination );
+			}
 			setSignupCompleteSlug( launchParams.siteSlug );
 			setSignupCompleteFlowName( LAUNCH_SITE_FLOW );
 
