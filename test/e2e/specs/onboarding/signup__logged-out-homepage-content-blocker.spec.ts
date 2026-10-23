@@ -1,4 +1,5 @@
 import { mkdir, writeFile } from 'fs/promises';
+import path from 'path';
 import { DataHelper, LoggedOutHomePage } from '@automattic/calypso-e2e';
 import { FiltersEngine, Request, fromPlaywrightDetails } from '@ghostery/adblocker-playwright';
 import { expect, tags, test } from '../../lib/pw-base';
@@ -49,7 +50,13 @@ function isBlockedScriptLoad( error: string, blockedUrls: string[], pageUrl: str
  * Where the TeamCity build reads the run summary from. Its first line, the Calypso commit,
  * goes in the failure alert; the filter list versions after it go in the build log.
  */
-const RUN_SUMMARY_PATH = 'output/content-blocker-run-summary.txt';
+const RUN_SUMMARY_PATH = path.resolve(
+	__dirname,
+	'..',
+	'..',
+	'output',
+	'content-blocker-run-summary.txt'
+);
 
 /**
  * Each list's title and version, by URL, from the header of the copy this run used.
@@ -127,7 +134,7 @@ test.describe(
 					...FILTER_LISTS.map( ( url ) => listVersions.get( url ) ),
 				].join( '\n' );
 				await testInfo.attach( 'run-summary.txt', { body: summary } );
-				await mkdir( 'output', { recursive: true } );
+				await mkdir( path.dirname( RUN_SUMMARY_PATH ), { recursive: true } );
 				await writeFile( RUN_SUMMARY_PATH, summary );
 
 				const control = Request.fromRawDetails( {
@@ -170,7 +177,10 @@ test.describe(
 				} );
 
 				const getStartedUrl = new URL( await loggedOutHomePage.getStartedHref(), page.url() ).href;
-				if ( environment.CALYPSO_BASE_URL === environment.WPCOM_BASE_URL ) {
+				if (
+					new URL( environment.CALYPSO_BASE_URL ).origin ===
+					new URL( environment.WPCOM_BASE_URL ).origin
+				) {
 					await loggedOutHomePage.getStartedLink.click();
 					return;
 				}
