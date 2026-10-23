@@ -13,7 +13,7 @@ const {
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
-const SentryCliPlugin = require( '@sentry/webpack-plugin' );
+const { sentryWebpackPlugin } = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const Dotenv = require( 'dotenv-webpack' );
@@ -70,6 +70,7 @@ const shouldProfile = process.env.PROFILE === 'true';
 const shouldCreateSentryRelease =
 	( process.env.MANUAL_SENTRY_RELEASE === 'true' || process.env.IS_DEFAULT_BRANCH === 'true' ) &&
 	process.env.SENTRY_AUTH_TOKEN?.length > 1;
+const sentryRelease = `calypso_${ process.env.COMMIT_SHA }`;
 let sourceMapType = process.env.SOURCEMAP;
 if ( ! sourceMapType && shouldCreateSentryRelease ) {
 	sourceMapType = 'hidden-source-map';
@@ -421,19 +422,32 @@ const webpackConfig = {
 		// Equivalent to the CLI flag --progress=profile
 		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
 
+		// The Sentry SDK uses this release when `initSentry()` doesn't set one. The plugin's own
+		// `release.inject` would prepend the same value to every chunk instead.
+		shouldCreateSentryRelease &&
+			new webpack.DefinePlugin( { __SENTRY_RELEASE__: JSON.stringify( sentryRelease ) } ),
+
 		// NOTE: Sentry should be the last webpack plugin in the array.
 		shouldCreateSentryRelease &&
-			new SentryCliPlugin( {
+			sentryWebpackPlugin( {
 				org: 'a8c',
 				project: 'calypso',
 				authToken: process.env.SENTRY_AUTH_TOKEN,
-				release: `calypso_${ process.env.COMMIT_SHA }`,
-				include: filePaths.path,
-				urlPrefix: `~${ filePaths.publicPath }`,
-				errorHandler: ( err, invokeErr, compilation ) => {
-					// Sentry should _never_ fail the webpack build, so only emit warnings here:
-					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
-					console.error( 'Sentry CLI Plugin Error:', err.message );
+				telemetry: false,
+				// Upload source maps by release and URL, without injecting debug IDs into every chunk.
+				sourcemaps: { disable: true },
+				release: {
+					name: sentryRelease,
+					inject: false,
+					setCommits: false,
+					uploadLegacySourcemaps: {
+						paths: [ filePaths.path ],
+						urlPrefix: `~${ filePaths.publicPath }`,
+					},
+				},
+				errorHandler: ( err ) => {
+					// Sentry should _never_ fail the webpack build, so only log here:
+					console.error( 'Sentry Webpack Plugin Error:', err.message );
 					console.error( 'Sentry Full error:', err );
 				},
 			} ),
