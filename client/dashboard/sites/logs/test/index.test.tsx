@@ -4,7 +4,7 @@
 
 import '@testing-library/jest-dom';
 import { LogType } from '@automattic/api-core';
-import { screen, within, waitFor } from '@testing-library/react';
+import { act, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import nock from 'nock';
@@ -229,6 +229,116 @@ describe( '<SiteLogs> feature callouts', () => {
 		expect( router.state.location.search ).toEqual( {} );
 		expect( window.location.search ).toBe( '' );
 	} );
+} );
+
+describe( '<SiteLogs> live site calendar ranges', () => {
+	afterEach( () => {
+		jest.useRealTimers();
+		MockDate.reset();
+	} );
+
+	test.each< {
+		name: string;
+		timezoneString?: string;
+		gmtOffset?: number;
+		now: string;
+		start: string;
+		startAfterTick?: string;
+		firstDay: string;
+	} >( [
+		{
+			name: 'New York spring forward',
+			timezoneString: 'America/New_York',
+			now: '2025-03-10T04:30:00Z',
+			start: '2025-03-04T05:30:00Z',
+			firstDay: 'Mar 4, 2025',
+		},
+		{
+			name: 'New York fall back',
+			timezoneString: 'America/New_York',
+			now: '2025-11-03T05:30:00Z',
+			start: '2025-10-28T04:30:00Z',
+			firstDay: 'Oct 28, 2025',
+		},
+		{
+			name: 'the spring-forward clock change',
+			timezoneString: 'America/New_York',
+			now: '2025-03-09T06:59:55Z',
+			start: '2025-03-03T06:59:55Z',
+			startAfterTick: '2025-03-03T08:00:05Z',
+			firstDay: 'Mar 3, 2025',
+		},
+		{
+			name: 'the fall-back clock change',
+			timezoneString: 'America/New_York',
+			now: '2025-11-02T05:59:55Z',
+			start: '2025-10-27T05:59:55Z',
+			startAfterTick: '2025-10-27T05:00:05Z',
+			firstDay: 'Oct 27, 2025',
+		},
+		{
+			name: 'Tokyo without site DST',
+			timezoneString: 'Asia/Tokyo',
+			now: '2025-03-10T04:30:00Z',
+			start: '2025-03-04T04:30:00Z',
+			firstDay: 'Mar 4, 2025',
+		},
+		{
+			name: 'fixed fractional site offset',
+			gmtOffset: 5.75,
+			now: '2025-03-10T04:30:00Z',
+			start: '2025-03-04T04:30:00Z',
+			firstDay: 'Mar 4, 2025',
+		},
+	] )(
+		'keeps refresh enabled across $name',
+		async ( { now, start, startAfterTick, firstDay, ...settings } ) => {
+			MockDate.set( now );
+			mockSiteAndSettings( settings );
+			const requests = mockPhpLogs( [] );
+			window.history.replaceState( { __TSR_index: 3 }, '', '/?keep=present' );
+			const { router } = render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
+			const search = () => new URLSearchParams( router.state.location.searchStr );
+			const checkbox = await screen.findByRole( 'checkbox', { name: 'Auto-refresh' } );
+			await waitFor( () => expect( search().has( 'to' ) ).toBe( true ) );
+			// Let the initial network/suspense work settle before controlling the refresh timer.
+			jest.useFakeTimers( { now: Date.parse( now ), doNotFake: [ 'nextTick', 'setImmediate' ] } );
+			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+			const length = window.history.length;
+			const index = window.history.state.__TSR_index;
+			await user.click( checkbox );
+			const assertLiveRange = async ( expectedStart: number, expectedEnd: number ) => {
+				await waitFor( () => {
+					const from = Number( search().get( 'from' ) );
+					const to = Number( search().get( 'to' ) );
+					expect( to ).toBeGreaterThanOrEqual( expectedEnd );
+					// Literal site-clock bounds remain six calendar days apart as the timer advances.
+					expect( from ).toBe( expectedStart + to - expectedEnd );
+					expect( requests ).toContainEqual(
+						expect.objectContaining( { start: String( from ), end: String( to ) } )
+					);
+				} );
+				expect( checkbox ).toBeChecked();
+				expect( screen.getByRole( 'button', { name: /^Date range:/ } ) ).toHaveAccessibleName(
+					expect.stringContaining( firstDay )
+				);
+				expect(
+					screen.queryByText( 'Auto-refresh only works with "Last 7 days" preset' )
+				).not.toBeInTheDocument();
+				expect( search().get( 'keep' ) ).toBe( 'present' );
+				expect( window.history.state.__TSR_index ).toBe( index );
+				expect( window.history.length ).toBe( length );
+			};
+			await assertLiveRange( Date.parse( start ) / 1000, Date.parse( now ) / 1000 );
+			const previousEnd = Number( search().get( 'to' ) );
+			await act( async () => jest.advanceTimersByTimeAsync( 10_000 ) );
+			expect( Number( search().get( 'to' ) ) ).toBeGreaterThanOrEqual( previousEnd + 10 );
+			await assertLiveRange(
+				startAfterTick ? Date.parse( startAfterTick ) / 1000 : Date.parse( start ) / 1000 + 10,
+				Date.parse( now ) / 1000 + 10
+			);
+		}
+	);
 } );
 
 describe( '<SiteLogs> site calendar request bounds', () => {
