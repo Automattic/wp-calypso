@@ -105,6 +105,14 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 		flex-shrink: 0;
 	}
 
+	${ ( props ) =>
+		props.isHiddenInMobile &&
+		css`
+			tbody:last-child & {
+				border-bottom: none;
+			}
+		` }
+
 	${ plansGridMediumLarge( css`
 		padding-inline-start: 0;
 		border: none;
@@ -1166,19 +1174,19 @@ const ComparisonGrid = ( {
 				/>
 			) ) }
 
-			<tfoot className="plan-comparison-grid__footer">
-				{ planFeatureFootnotes?.footnoteList && (
+			{ planFeatureFootnotes.footnoteList.length > 0 && (
+				<tfoot className="plan-comparison-grid__footer">
 					<FeatureFootnotes as="tr">
 						<td>
 							<ol>
-								{ planFeatureFootnotes?.footnoteList?.map( ( footnote, index ) => {
+								{ planFeatureFootnotes.footnoteList.map( ( footnote, index ) => {
 									return <li key={ `${ footnote }-${ index }` }>{ footnote }</li>;
 								} ) }
 							</ol>
 						</td>
 					</FeatureFootnotes>
-				) }
-			</tfoot>
+				</tfoot>
+			) }
 		</table>
 	);
 };
