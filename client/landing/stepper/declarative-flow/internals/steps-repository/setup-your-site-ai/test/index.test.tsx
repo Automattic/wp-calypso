@@ -3,8 +3,9 @@
  */
 import config from '@automattic/calypso-config';
 import { useQuery as useDataQuery } from '@tanstack/react-query';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { SITE_SELECTED_REF, WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import { commerceUsesBuildWow } from 'calypso/landing/stepper/utils/build-wow';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { usePlanCartItem } from '../../../../../hooks/use-plan-cart-item';
@@ -60,7 +61,13 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 } ) );
 
 jest.mock( 'calypso/landing/stepper/utils/build-wow-plans', () => ( {
-	planSupportsBuildWow: ( slug?: string ) => !! slug && slug !== 'pro-plan',
+	planSupportsBuildWow: ( slug?: string ) =>
+		!! slug && slug !== 'pro-plan' && ! slug.startsWith( 'ecommerce-bundle' ),
+	planMayBuildStoreOnBuildWow: ( slug?: string ) => !! slug?.startsWith( 'ecommerce-bundle' ),
+} ) );
+
+jest.mock( 'calypso/landing/stepper/utils/build-wow', () => ( {
+	commerceUsesBuildWow: jest.fn(),
 } ) );
 
 jest.mock( '../../../../../hooks/use-plan-cart-item', () => ( {
@@ -234,6 +241,42 @@ describe( 'SetupYourSiteAIStep', () => {
 			} );
 		} );
 
+		it( 'submits the generate-theme choice for Commerce on the store rollout', async () => {
+			setSitePlan( 'ecommerce-bundle' );
+			( commerceUsesBuildWow as jest.Mock ).mockResolvedValue( true );
+
+			renderStep();
+
+			clickCustomDesign();
+
+			await waitFor( () =>
+				expect( navigation.submit ).toHaveBeenCalledWith( {
+					setupChoice: 'generate-theme',
+					siteSlug: 'example.wordpress.com',
+					siteId: 123,
+					graph: 'dsl',
+				} )
+			);
+			expect( commerceUsesBuildWow ).toHaveBeenCalledWith( 'example.wordpress.com' );
+		} );
+
+		it( 'submits the build-with-ai choice for Commerce off the store rollout', async () => {
+			setSitePlan( 'ecommerce-bundle' );
+			( commerceUsesBuildWow as jest.Mock ).mockResolvedValue( false );
+
+			renderStep();
+
+			clickCustomDesign();
+
+			await waitFor( () =>
+				expect( navigation.submit ).toHaveBeenCalledWith( {
+					setupChoice: 'build-with-ai',
+					siteSlug: 'example.wordpress.com',
+					siteId: 123,
+				} )
+			);
+		} );
+
 		it( 'keeps the Woo hosting solutions form on build-with-ai', () => {
 			mockQueryParams = new URLSearchParams( { ref: WOO_HOSTING_SOLUTIONS_REF } );
 
@@ -379,6 +422,21 @@ describe( 'SetupYourSiteAIStep', () => {
 	describe( 'with the site-spec feature disabled', () => {
 		beforeEach( () => {
 			isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec' );
+		} );
+
+		it( 'keeps Commerce on build-with-ai without asking about the store rollout', async () => {
+			setSitePlan( 'ecommerce-bundle' );
+
+			renderStep();
+
+			clickCustomDesign();
+
+			await waitFor( () =>
+				expect( navigation.submit ).toHaveBeenCalledWith(
+					expect.objectContaining( { setupChoice: 'build-with-ai' } )
+				)
+			);
+			expect( commerceUsesBuildWow ).not.toHaveBeenCalled();
 		} );
 
 		it( 'submits the build-with-ai choice from the custom design card', () => {

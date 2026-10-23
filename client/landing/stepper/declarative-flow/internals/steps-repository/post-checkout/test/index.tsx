@@ -4,6 +4,7 @@
 import { FEATURE_BIG_SKY } from '@automattic/calypso-products';
 import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
+import { waitForPluginsActive } from 'calypso/landing/stepper/utils/wait-for-plugins-active';
 import { mockStepProps, renderStep } from '../../test/helpers';
 import PostCheckoutOnboarding from '../post-checkout-onboarding';
 
@@ -81,6 +82,10 @@ jest.mock( 'calypso/landing/stepper/hooks/use-wait-for-atomic', () => ( {
 	} ),
 } ) );
 
+jest.mock( 'calypso/landing/stepper/utils/wait-for-plugins-active', () => ( {
+	waitForPluginsActive: jest.fn( async () => {} ),
+} ) );
+
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
@@ -99,9 +104,9 @@ describe( 'PostCheckoutOnboarding', () => {
 		mockSiteTransferStatus.isTransferring = false;
 	} );
 
-	const renderWithFreshSite = ( site: unknown ) => {
+	const renderWithFreshSite = ( site: unknown, flow = 'onboarding' ) => {
 		mockGetSite.mockResolvedValue( site );
-		const props = mockStepProps( { flow: 'onboarding', stepName: 'post-checkout-onboarding' } );
+		const props = mockStepProps( { flow, stepName: 'post-checkout-onboarding' } );
 		renderStep( <PostCheckoutOnboarding { ...props } />, {
 			queryClient: new QueryClient( { defaultOptions: { queries: { retry: false } } } ),
 		} );
@@ -135,6 +140,56 @@ describe( 'PostCheckoutOnboarding', () => {
 
 		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
 		await expect( pendingAction() ).resolves.toMatchObject( { postCheckoutBigSky: true } );
+	} );
+
+	it.each( [ 'personal-bundle', 'value_bundle', 'business-bundle', 'ecommerce-bundle' ] )(
+		'offers the chooser after a %s checkout',
+		async ( planSlug ) => {
+			const props = renderWithFreshSite( siteWithPlan( planSlug, [ FEATURE_BIG_SKY ] ) );
+
+			await waitFor( () => expect( props.navigation.submit ).toHaveBeenCalled() );
+
+			const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+			await expect( pendingAction() ).resolves.toMatchObject( { postCheckoutBigSky: true } );
+		}
+	);
+
+	it.each( [
+		[ 'a free site', siteWithPlan( 'free_plan', [ FEATURE_BIG_SKY ] ) ],
+		[ 'a plan without Big Sky', siteWithPlan( 'ecommerce-bundle' ) ],
+	] )( 'skips the chooser for %s', async ( _label, site ) => {
+		const props = renderWithFreshSite( site );
+
+		await waitFor( () => expect( props.navigation.submit ).toHaveBeenCalled() );
+
+		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+		await expect( pendingAction() ).resolves.not.toHaveProperty( 'postCheckoutBigSky' );
+	} );
+
+	it( 'waits for WooCommerce before a Commerce site reaches the chooser', async () => {
+		const props = renderWithFreshSite( siteWithPlan( 'ecommerce-bundle', [ FEATURE_BIG_SKY ] ) );
+
+		await waitFor( () => expect( props.navigation.submit ).toHaveBeenCalled() );
+		await mockSetPendingAction.mock.calls[ 0 ][ 0 ]();
+
+		expect( waitForPluginsActive ).toHaveBeenCalledWith( 123, [ 'woocommerce' ] );
+	} );
+
+	it.each( [
+		[ 'a Business site', siteWithPlan( 'business-bundle', [ FEATURE_BIG_SKY ] ), 'onboarding' ],
+		[ 'a Commerce site that skips the chooser', siteWithPlan( 'ecommerce-bundle' ), 'onboarding' ],
+		[
+			'a Commerce site in a flow without the chooser',
+			siteWithPlan( 'ecommerce-bundle', [ FEATURE_BIG_SKY ] ),
+			'onboarding-unified',
+		],
+	] )( 'does not wait for WooCommerce on %s', async ( _label, site, flow ) => {
+		const props = renderWithFreshSite( site, flow );
+
+		await waitFor( () => expect( props.navigation.submit ).toHaveBeenCalled() );
+		await mockSetPendingAction.mock.calls[ 0 ][ 0 ]();
+
+		expect( waitForPluginsActive ).not.toHaveBeenCalled();
 	} );
 
 	describe( 'while the site is moving to Atomic', () => {

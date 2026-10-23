@@ -7,7 +7,7 @@ import {
 	isPremium,
 } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
-import { Step } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, Step } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -62,7 +62,10 @@ const PostCheckoutOnboarding: StepType< {
 
 	const showBigSkyChoice =
 		!! site?.plan &&
-		( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) &&
+		( isPersonal( site.plan ) ||
+			isPremium( site.plan ) ||
+			isBusiness( site.plan ) ||
+			isEcommerce( site.plan ) ) &&
 		site.plan.features?.active?.includes( FEATURE_BIG_SKY );
 
 	const intent = useSelect(
@@ -207,8 +210,13 @@ const PostCheckoutOnboarding: StepType< {
 			// site may already be Atomic when this effect mounts while
 			// WooCommerce is still finishing installation. This covers both the
 			// Commerce plan (backend auto-install) and the Business plan (install
-			// via the transfer initiated above).
-			if ( isWooHostingSolutions ) {
+			// via the transfer initiated above). A Commerce site headed for the
+			// onboarding setup chooser waits too, so neither builder opens on a
+			// half-made store.
+			if (
+				isWooHostingSolutions ||
+				( isCommercePlan && showBigSkyChoice && flow === ONBOARDING_FLOW )
+			) {
 				await waitForPluginsActive( site.ID, [ 'woocommerce' ] );
 			}
 
