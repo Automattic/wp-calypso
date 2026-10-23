@@ -89,7 +89,6 @@ function SiteLogsDataViews( {
 		[ persistedView, startPosition ]
 	);
 
-	// 'from' and 'to' are normalized to seconds by the route's validateSearch.
 	const { from: urlFrom, to: urlTo } = useSearch( { strict: false } );
 	const parseUrlSeconds =
 		urlFrom !== undefined && urlTo !== undefined ? { from: urlFrom, to: urlTo } : null;
