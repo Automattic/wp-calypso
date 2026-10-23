@@ -264,7 +264,13 @@ describe( '<CancelPurchaseForm />', () => {
 		test( 'shows the cards for a reason that has them when the cards flag is on', () => {
 			enable( 'purchases/cancel-options-cards' );
 
-			render( <CancelPurchaseForm { ...upsellStepProps } questionOneText="noLongerNeedSite" /> );
+			render(
+				<CancelPurchaseForm
+					{ ...upsellStepProps }
+					questionOneText="noLongerNeedSite"
+					solutionsReason="noLongerNeedSite"
+				/>
+			);
 
 			const cards = screen.getByRole( 'list', { name: cardsListName } );
 			expect( within( cards ).getAllByRole( 'listitem' ) ).toHaveLength( 2 );
@@ -283,6 +289,7 @@ describe( '<CancelPurchaseForm />', () => {
 				<CancelPurchaseForm
 					{ ...upsellStepProps }
 					questionOneText="tooExpensive"
+					solutionsReason="tooExpensive"
 					upsell="downgrade-personal"
 				/>
 			);
@@ -311,6 +318,7 @@ describe( '<CancelPurchaseForm />', () => {
 				<CancelPurchaseForm
 					{ ...upsellStepProps }
 					questionOneText="tooExpensive"
+					solutionsReason="tooExpensive"
 					upsell="downgrade-personal"
 				/>
 			);
@@ -328,6 +336,7 @@ describe( '<CancelPurchaseForm />', () => {
 				<CancelPurchaseForm
 					{ ...upsellStepProps }
 					questionOneText="tooExpensive"
+					solutionsReason="tooExpensive"
 					upsell="downgrade-personal"
 				/>
 			);
@@ -336,6 +345,28 @@ describe( '<CancelPurchaseForm />', () => {
 				screen.getByRole( 'heading', { name: 'Switch to a more affordable plan' } )
 			).toBeVisible();
 			expect( screen.queryByRole( 'list', { name: cardsListName } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'shows the cards for the answer, not the typed text', () => {
+			enable( 'purchases/cancel-options-cards' );
+
+			render(
+				<CancelPurchaseForm
+					{ ...upsellStepProps }
+					questionOneText="test reason"
+					solutionsReason="otherPriceValue"
+					upsell="solutions-cards"
+				/>
+			);
+
+			const cards = screen.getByRole( 'list', { name: cardsListName } );
+			expect( within( cards ).getAllByRole( 'listitem' ) ).toHaveLength( 2 );
+			expect(
+				within( cards ).getByRole( 'button', { name: /Ask WordPress Agent/ } )
+			).toBeVisible();
+			expect(
+				within( cards ).getByRole( 'button', { name: /Speak with our support team/ } )
+			).toBeVisible();
 		} );
 	} );
 } );

@@ -12,7 +12,7 @@ import {
 } from '@automattic/api-queries';
 import { disable, enable } from '@automattic/calypso-config';
 import { QueryClient } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
@@ -101,6 +101,59 @@ describe( '<CancelPurchase />', () => {
 
 		afterAll( () => {
 			disable( 'purchases/cancel-options-cards' );
+		} );
+
+		test( 'shows Ask AI and Support for "Another reason" with text typed', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderRemoveFlow();
+			await startSurvey( user );
+
+			await user.click( await screen.findByRole( 'radio', { name: 'Another reason…' } ) );
+			await user.type(
+				screen.getByRole( 'textbox', { name: 'Can you please specify?' } ),
+				'test reason'
+			);
+			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+
+			const options = await findOptions();
+			expect(
+				within( options ).getByRole( 'button', { name: /Ask WordPress Agent/ } )
+			).toBeVisible();
+			expect(
+				within( options ).getByRole( 'button', { name: /Speak with our support team/ } )
+			).toBeVisible();
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_cancellation_solution_cards_view',
+				expect.objectContaining( {
+					solution_ids: 'ask-ai-assistant,speak-with-support',
+					cancellation_reason: 'anotherReasonOne',
+				} )
+			);
+		} );
+
+		test( 'shows Ask AI and Support for a "Something else" answer with text typed', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderRemoveFlow();
+			await startSurvey( user );
+
+			await user.click( await screen.findByRole( 'radio', { name: 'Too expensive' } ) );
+			await user.click(
+				screen.getByRole( 'radio', { name: 'Something else related to price/value' } )
+			);
+			await user.type(
+				screen.getByRole( 'textbox', { name: 'Can you please specify?' } ),
+				'test reason'
+			);
+			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+
+			expect( await findOptions() ).toBeVisible();
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_cancellation_solution_cards_view',
+				expect.objectContaining( {
+					solution_ids: 'ask-ai-assistant,speak-with-support',
+					cancellation_reason: 'otherPriceValue',
+				} )
+			);
 		} );
 
 		test( 'keeps "Something else related to changed needs" without cards once text is typed', async () => {
