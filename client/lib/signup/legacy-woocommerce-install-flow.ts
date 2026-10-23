@@ -10,6 +10,6 @@ export const LEGACY_WOOCOMMERCE_INSTALL_FLOW = 'woocommerce-install';
  */
 export function getWooCommercePluginPage( siteSlug?: unknown ): string {
 	return typeof siteSlug === 'string' && siteSlug
-		? `/plugins/woocommerce/${ encodeURIComponent( siteSlug ) }`
+		? `/plugins/woocommerce/${ siteSlug }`
 		: '/plugins/woocommerce';
 }

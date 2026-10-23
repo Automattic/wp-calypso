@@ -1538,7 +1538,11 @@ describe( 'main app', () => {
 				'/plugins/woocommerce/example.com',
 			],
 			[ '/start/woocommerce-install/store-address/fr', {}, '/plugins/woocommerce' ],
-			[ '/woocommerce-installation/example.com', {}, '/plugins/woocommerce/example.com' ],
+			[
+				'/woocommerce-installation/example.com::shop',
+				{},
+				'/plugins/woocommerce/example.com::shop',
+			],
 			[ '/woocommerce-installation', {}, '/plugins/woocommerce' ],
 		] )( 'redirects %s to the WooCommerce plugin page', async ( url, query, destination ) => {
 			const { response } = await app.run( { request: { url, query } } );
