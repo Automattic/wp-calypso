@@ -55,7 +55,7 @@ function parseObjectLiteral( source ) {
 function collectAssetsFromPage( html, pageUrl ) {
 	const publicPath = /\.p="([^"]+)"/.exec( html )?.[ 1 ];
 	if ( ! publicPath ) {
-		const hint = html.includes( '/__challenge/' ) ? ' (the response is a bot challenge page)' : '';
+		const hint = isBotChallenge( html ) ? ' (the response is a bot challenge page)' : '';
 		throw new Error( `Could not find the webpack public path in ${ pageUrl }${ hint }` );
 	}
 	const base = new URL( publicPath, pageUrl ).href;
@@ -68,7 +68,7 @@ function collectAssetsFromPage( html, pageUrl ) {
 
 	const chunkMaps =
 		/\.(u|miniCssF)=\w+=>(?:""\+)?\(\((\{[^}]*\})\)\[\w+\]\|\|\w+\)\+"\."\+\(?(\{[^}]*\})\)?\[\w+\]\+"([^"]+)"/g;
-	let found = 0;
+	const missing = new Set( [ 'script', 'stylesheet' ] );
 	for ( const [ , kind, namesSource, hashesSource, suffix ] of html.matchAll( chunkMaps ) ) {
 		const names = parseObjectLiteral( namesSource );
 		const hashes = parseObjectLiteral( hashesSource );
@@ -80,10 +80,14 @@ function collectAssetsFromPage( html, pageUrl ) {
 				add( new URL( file.replace( '.css', '.rtl.css' ), base ).href, type );
 			}
 		}
-		found++;
+		missing.delete( type );
 	}
-	if ( ! found ) {
-		throw new Error( `Could not find webpack chunk maps in ${ pageUrl }` );
+	// The runtime always emits both maps; a missing one means the regex above no
+	// longer matches the minified output, so fail rather than audit half the chunks.
+	if ( missing.size ) {
+		throw new Error(
+			`Could not find webpack chunk maps in ${ pageUrl } (missing: ${ [ ...missing ].join( ', ' ) })`
+		);
 	}
 
 	for ( const [ , src ] of html.matchAll( /<script[^>]+src="([^"]+\.js)"/g ) ) {
@@ -121,8 +125,10 @@ const wait = ( ms ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
  * @param {Object} options
  * @param {number} options.attempts Total attempts.
  * @param {number} options.delayMs  Delay before the first retry; doubles after each one.
+ * @param {Function} options.rejectBody Given the body of a 2xx response, returns why it
+ *                                      should be retried, or nothing to accept it.
  */
-async function fetchWithRetry( url, { attempts = 3, delayMs = 2000 } = {} ) {
+async function fetchWithRetry( url, { attempts = 3, delayMs = 2000, rejectBody } = {} ) {
 	let lastError;
 	for ( let attempt = 1; attempt <= attempts; attempt++ ) {
 		if ( attempt > 1 ) {
@@ -131,7 +137,13 @@ async function fetchWithRetry( url, { attempts = 3, delayMs = 2000 } = {} ) {
 		try {
 			const response = await fetch( url, { signal: AbortSignal.timeout( 30000 ) } );
 			if ( response.ok ) {
-				return await response.text();
+				const body = await response.text();
+				const reason = rejectBody?.( body );
+				if ( ! reason ) {
+					return body;
+				}
+				lastError = reason;
+				continue;
 			}
 			lastError = `HTTP ${ response.status }`;
 			if ( response.status !== 429 && response.status < 500 ) {
@@ -142,6 +154,25 @@ async function fetchWithRetry( url, { attempts = 3, delayMs = 2000 } = {} ) {
 		}
 	}
 	throw new Error( `Could not fetch ${ url }: ${ lastError }` );
+}
+
+function isBotChallenge( html ) {
+	return html.includes( '/__challenge/' );
+}
+
+/**
+ * Fetch a wordpress.com page. The bot challenge comes back as a 200, and clears
+ * on its own within seconds, so it is retried like a server error.
+ * @param {string} url
+ * @param {Object} options Options for `fetchWithRetry`.
+ */
+function fetchPage( url, options = {} ) {
+	return fetchWithRetry( url, {
+		attempts: 4,
+		delayMs: 5000,
+		rejectBody: ( html ) => ( isBotChallenge( html ) ? 'bot challenge page' : undefined ),
+		...options,
+	} );
 }
 
 /**
@@ -170,7 +201,9 @@ async function loadCached( file, url, label, { offline, refresh, fetchOptions } 
 
 /**
  * Load the configured filter lists, downloading any that are not cached yet,
- * along with the sublists they `!#include`.
+ * along with the sublists they `!#include` on the audited platforms. A sublist
+ * that cannot be downloaded is left out with a warning: the list still works
+ * without it, and a missing optional file should not fail the whole run.
  * @param {Object}  config           Parsed `filter-lists.json`.
  * @param {Object}  options
  * @param {string}  options.cacheDir Directory holding `<id>.txt` copies of each list.
@@ -189,20 +222,26 @@ async function loadFilterLists(
 			const list = await loadCached( path.join( cacheDir, `${ id }.txt` ), url, id, options );
 			const includes = {};
 			let stale = list.stale;
-			for ( const name of listIncludes( list.text ) ) {
-				// Includes are plain sibling file names; anything else is not followed.
-				if ( ! /^[\w.-]+\.txt$/.test( name ) ) {
-					continue;
-				}
-				const include = await loadCached(
-					path.join( cacheDir, `${ id }--${ name }` ),
-					new URL( name, url ).href,
-					`${ id }/${ name }`,
-					options
-				);
-				includes[ name ] = include.text;
-				stale ||= include.stale;
-			}
+			await Promise.all(
+				listIncludes( list.text )
+					// Includes are plain sibling file names; anything else is not followed.
+					.filter( ( name ) => /^[\w.-]+\.txt$/.test( name ) )
+					.map( async ( name ) => {
+						const label = `${ id }/${ name }`;
+						try {
+							const include = await loadCached(
+								path.join( cacheDir, `${ id }--${ name }` ),
+								new URL( name, url ).href,
+								label,
+								options
+							);
+							includes[ name ] = include.text;
+							stale ||= include.stale;
+						} catch ( error ) {
+							console.warn( `Skipping sublist "${ label }": ${ error.message }` );
+						}
+					} )
+			);
 			return { id, url, text: list.text, includes, stale, ...describeList( list.text ) };
 		} )
 	);
@@ -298,6 +337,7 @@ module.exports = {
 	buildMatcher,
 	collectAssets,
 	collectAssetsFromPage,
+	fetchPage,
 	fetchWithRetry,
 	loadFilterLists,
 };

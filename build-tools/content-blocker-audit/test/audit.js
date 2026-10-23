@@ -5,6 +5,7 @@ import {
 	audit,
 	collectAssets,
 	collectAssetsFromPage,
+	fetchPage,
 	fetchWithRetry,
 	loadFilterLists,
 } from '../audit';
@@ -111,6 +112,12 @@ describe( 'collectAssetsFromPage', () => {
 			'Could not find webpack chunk maps'
 		);
 	} );
+
+	test( 'fails when only one of the chunk maps can be read', () => {
+		const withoutCss = html.replace( /c\.miniCssF=[^\n]*/, 'c.miniCssF=a=>unexpected(a);' );
+		expect( withoutCss ).not.toBe( html );
+		expect( () => collectAssetsFromPage( withoutCss, PAGE_URL ) ).toThrow( 'missing: stylesheet' );
+	} );
 } );
 
 describe( 'audit', () => {
@@ -209,13 +216,36 @@ describe( 'fetching', () => {
 		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	test( 'retries a page that comes back as a bot challenge', async () => {
+		const challenge = '<script src="/__challenge/probes.js"></script>';
+		global.fetch = jest
+			.fn()
+			.mockResolvedValueOnce( respond( 200, challenge ) )
+			.mockResolvedValueOnce( respond( 200, '<html>real</html>' ) );
+		await expect( fetchPage( PAGE_URL, { delayMs: 0 } ) ).resolves.toBe( '<html>real</html>' );
+		expect( global.fetch ).toHaveBeenCalledTimes( 2 );
+
+		global.fetch = jest.fn().mockResolvedValue( respond( 200, challenge ) );
+		await expect( fetchPage( PAGE_URL, { attempts: 2, delayMs: 0 } ) ).rejects.toThrow(
+			'bot challenge page'
+		);
+		expect( global.fetch ).toHaveBeenCalledTimes( 2 );
+	} );
+
 	test( 'downloads included sublists next to the list', async () => {
 		const cacheDir = fs.mkdtempSync( path.join( os.tmpdir(), 'content-blocker-lists-' ) );
 		try {
 			const bodies = {
-				'https://example.com/filters/main.txt':
-					'! Title: Main\n!#include extra.txt\n!#include ../escape/x.txt',
+				'https://example.com/filters/main.txt': [
+					'! Title: Main',
+					'!#include extra.txt',
+					'!#include ../escape/x.txt',
+					'!#if env_mobile',
+					'!#include mobile.txt',
+					'!#endif',
+				].join( '\n' ),
 				'https://example.com/filters/extra.txt': '-extra.',
+				'https://example.com/filters/mobile.txt': '-mobile.',
 			};
 			global.fetch = jest.fn( async ( url ) =>
 				bodies[ url ] ? respond( 200, bodies[ url ] ) : respond( 404 )
@@ -227,6 +257,30 @@ describe( 'fetching', () => {
 			expect( list.includes ).toEqual( { 'extra.txt': '-extra.' } );
 			expect( list.title ).toBe( 'Main' );
 			expect( global.fetch ).toHaveBeenCalledTimes( 2 );
+		} finally {
+			fs.rmSync( cacheDir, { recursive: true, force: true } );
+		}
+	} );
+
+	test( 'skips a sublist that cannot be downloaded', async () => {
+		const cacheDir = fs.mkdtempSync( path.join( os.tmpdir(), 'content-blocker-lists-' ) );
+		try {
+			const bodies = {
+				'https://example.com/filters/main.txt': '-main.\n!#include gone.txt\n!#include extra.txt',
+				'https://example.com/filters/extra.txt': '-extra.',
+			};
+			global.fetch = jest.fn( async ( url ) =>
+				bodies[ url ] ? respond( 200, bodies[ url ] ) : respond( 404 )
+			);
+			const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+			const [ list ] = await loadFilterLists(
+				{ lists: [ { id: 'main', url: 'https://example.com/filters/main.txt' } ] },
+				{ cacheDir, fetchOptions: { delayMs: 0 } }
+			);
+			expect( list.includes ).toEqual( { 'extra.txt': '-extra.' } );
+			expect( warn ).toHaveBeenCalledWith(
+				expect.stringContaining( 'Skipping sublist "main/gone.txt"' )
+			);
 		} finally {
 			fs.rmSync( cacheDir, { recursive: true, force: true } );
 		}

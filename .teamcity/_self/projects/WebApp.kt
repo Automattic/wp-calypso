@@ -1244,7 +1244,8 @@ object ContentBlockerChunkAudit : BuildType({
 				mkdir -p artifacts
 
 				# The audit only needs Node and the files in build-tools/, so there is no yarn install.
-				# Each entry point inlines its own chunk maps, so one page per entry point is audited.
+				# All entry points share one webpack runtime, so the chunk maps are the same on every
+				# page; the extra pages only add their own entry-* files, which the runtime does not list.
 				# --refresh downloads the current filter lists; the versions used are in the JSON report.
 				node bin/audit-content-blocker-chunks.js \
 					--refresh \

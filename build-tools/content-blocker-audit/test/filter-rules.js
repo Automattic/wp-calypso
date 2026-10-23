@@ -26,6 +26,20 @@ describe( 'parseRule', () => {
 		expect( parseRule( '||wordpress.com^$csp=script-src none' ) ).toBeNull();
 		expect( parseRule( '$removeparam=utm_source' ) ).toBeNull();
 		expect( parseRule( '/cookie-banner.$redirect-rule=noop.js' ) ).toBeNull();
+		expect( parseRule( '/ads/$removeparam=/^utm_/' ) ).toBeNull();
+		expect( parseRule( '/track/$replace=/a/b/' ) ).toBeNull();
+	} );
+
+	test( 'separates options from patterns that start with a slash', () => {
+		expect( parseRule( '/ads/banner$script' ) ).toMatchObject( {
+			pattern: '/ads/banner',
+			types: [ 'script' ],
+		} );
+		expect( parseRule( '/foo$bar/' ) ).toMatchObject( { pattern: '/foo$bar/', types: null } );
+		expect( parseRule( '/foo$/$script' ) ).toMatchObject( {
+			pattern: '/foo$/',
+			types: [ 'script' ],
+		} );
 	} );
 
 	test( 'ignores rules with options it does not understand', () => {
@@ -123,6 +137,12 @@ describe( 'createMatcher', () => {
 			match( [ '-cookie-banner.', '@@||wordpress.com^$document' ], 'x-cookie-banner.min.js' )
 				.blocked
 		).toBe( false );
+		expect(
+			match( [ '-cookie-banner.', '@@||wordpress.com^$all' ], 'x-cookie-banner.min.js' ).blocked
+		).toBe( false );
+		expect(
+			match( [ '-cookie-banner.', '@@||wordpress.com^$image' ], 'x-cookie-banner.min.js' ).blocked
+		).toBe( true );
 	} );
 
 	test( 'drops rules disabled with $badfilter', () => {

@@ -148,10 +148,22 @@ function patternToRegExp( pattern, matchCase ) {
 }
 
 function splitOptions( text ) {
-	// A regex rule may contain `$` inside the expression, so only look for options after it.
-	const regexEnd = text.startsWith( '/' ) ? text.lastIndexOf( '/' ) : -1;
+	const startsOptions = ( dollar ) => /^[\w~-]/.test( text.slice( dollar + 1 ) );
+	if ( text.startsWith( '/' ) ) {
+		// In a regex rule the options follow the closing slash; a `$` anywhere else,
+		// including inside an option value such as `$removeparam=/^utm_/`, is not a
+		// separator.
+		for ( let dollar = text.indexOf( '$' ); dollar > 0; dollar = text.indexOf( '$', dollar + 1 ) ) {
+			if ( text[ dollar - 1 ] === '/' && startsOptions( dollar ) ) {
+				return [ text.slice( 0, dollar ), text.slice( dollar + 1 ) ];
+			}
+		}
+		if ( text.endsWith( '/' ) ) {
+			return [ text, '' ];
+		}
+	}
 	const dollar = text.lastIndexOf( '$' );
-	if ( dollar >= 0 && dollar > regexEnd && /^[\w~-]/.test( text.slice( dollar + 1 ) ) ) {
+	if ( dollar >= 0 && startsOptions( dollar ) ) {
 		return [ text.slice( 0, dollar ), text.slice( dollar + 1 ) ];
 	}
 	return [ text, '' ];
@@ -321,15 +333,6 @@ function appliesToParty( rule, requestHost, pageHost ) {
 	return isFirstParty === ( rule.party === 'first' );
 }
 
-/**
- * Whether a parsed rule matches a request.
- * @param {Object} rule    Rule returned by `parseRule`.
- * @param {Object} request `{ url, type, pageUrl, method }`
- */
-function ruleMatches( rule, request ) {
-	return matchesRequest( rule, withHosts( request ) );
-}
-
 function withHosts( request ) {
 	return {
 		...request,
@@ -396,10 +399,13 @@ function createMatcher( rules ) {
 				type: 'document',
 				requestHost: request.pageHost,
 			};
+			// An exception with no type option never covers the page itself.
 			const allowedBy = exceptions.filter(
 				( rule ) =>
 					matchesRequest( rule, request ) ||
-					( rule.types?.includes( 'document' ) && matchesRequest( rule, documentRequest ) )
+					( rule.types &&
+						appliesToType( rule, 'document' ) &&
+						matchesRequest( rule, documentRequest ) )
 			);
 			const important = blockedBy.filter( ( rule ) => rule.important );
 			const blocked = important.length > 0 || allowedBy.length === 0;
@@ -456,35 +462,16 @@ function evaluateCondition( expression, environment ) {
 const INCLUDE = /^!#include\s+(\S+)/;
 
 /**
- * Names of the sublists a filter list pulls in with `!#include`.
- * @param {string} text Filter list contents.
+ * Walk a filter list, tracking `!#if` blocks, and call `onLine` for each line
+ * that is active on at least one of the audited platforms. `!#include` lines
+ * are reported through `onInclude` instead; when it returns text, that sublist
+ * is walked in place with `nested` set.
  */
-function listIncludes( text ) {
-	return [
-		...new Set(
-			text
-				.split( /\r?\n/ )
-				.map( ( line ) => INCLUDE.exec( line.trim() )?.[ 1 ] )
-				.filter( Boolean )
-		),
-	];
-}
-
-/**
- * Parse a whole filter list. Rules inside `!#if` blocks are kept only when the
- * condition holds on at least one of the audited platforms. `!#include` lines
- * are replaced by the matching entry of `includes`, whose rules are recorded
- * as coming from `<list>/<name>`.
- * @param {string} text     Filter list contents.
- * @param {string} list     Name recorded on each rule.
- * @param {Object} includes Contents of included sublists, keyed by name.
- */
-function parseFilterList( text, list, includes = {} ) {
+function walkFilterList( text, { onLine, onInclude } ) {
 	// One stack of open `!#if` blocks per environment: whether each block is active.
 	const stacks = ENVIRONMENTS.map( () => [] );
-	const rules = [];
 	const active = () => stacks.some( ( stack ) => stack.every( Boolean ) );
-	const parseText = ( source, label, nested ) => {
+	const walk = ( source, nested ) => {
 		source.split( /\r?\n/ ).forEach( ( line, index ) => {
 			const directive = /^!#(if|else|endif)\b\s*(.*)$/.exec( line.trim() );
 			if ( directive ) {
@@ -506,21 +493,61 @@ function parseFilterList( text, list, includes = {} ) {
 			const include = INCLUDE.exec( line.trim() )?.[ 1 ];
 			if ( include ) {
 				// uBlock Origin only follows includes in the top-level list.
-				if ( ! nested && includes[ include ] !== undefined ) {
+				const sublist = nested ? undefined : onInclude( include );
+				if ( sublist !== undefined ) {
 					const depth = stacks.map( ( stack ) => stack.length );
-					parseText( includes[ include ], `${ list }/${ include }`, true );
+					walk( sublist, true );
 					// An unbalanced sublist must not leak `!#if` state into its parent.
 					stacks.forEach( ( stack, i ) => ( stack.length = depth[ i ] ) );
 				}
 				return;
 			}
-			const rule = parseRule( line, { list: label, line: index + 1 } );
+			onLine( line, index + 1, nested );
+		} );
+	};
+	walk( text, false );
+}
+
+/**
+ * Names of the sublists a filter list pulls in with `!#include`, leaving out
+ * those inside `!#if` blocks that do not apply to the audited platforms.
+ * @param {string} text Filter list contents.
+ */
+function listIncludes( text ) {
+	const names = new Set();
+	walkFilterList( text, {
+		onLine: () => {},
+		onInclude: ( name ) => {
+			names.add( name );
+		},
+	} );
+	return [ ...names ];
+}
+
+/**
+ * Parse a whole filter list. Rules inside `!#if` blocks are kept only when the
+ * condition holds on at least one of the audited platforms. `!#include` lines
+ * are replaced by the matching entry of `includes`, whose rules are recorded
+ * as coming from `<list>/<name>`.
+ * @param {string} text     Filter list contents.
+ * @param {string} list     Name recorded on each rule.
+ * @param {Object} includes Contents of included sublists, keyed by name.
+ */
+function parseFilterList( text, list, includes = {} ) {
+	const rules = [];
+	let label = list;
+	walkFilterList( text, {
+		onInclude: ( name ) => {
+			label = `${ list }/${ name }`;
+			return includes[ name ];
+		},
+		onLine: ( line, number, nested ) => {
+			const rule = parseRule( line, { list: nested ? label : list, line: number } );
 			if ( rule ) {
 				rules.push( rule );
 			}
-		} );
-	};
-	parseText( text, list, false );
+		},
+	} );
 	return rules;
 }
 
@@ -562,7 +589,5 @@ module.exports = {
 	parseFilterList,
 	listIncludes,
 	createMatcher,
-	ruleMatches,
-	hostMatches,
 	isRelevantRule,
 };

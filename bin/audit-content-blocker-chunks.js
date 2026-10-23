@@ -38,7 +38,7 @@ const {
 	buildMatcher,
 	collectAssets,
 	collectAssetsFromPage,
-	fetchWithRetry,
+	fetchPage,
 	loadFilterLists,
 } = require( '../build-tools/content-blocker-audit/audit' );
 const config = require( '../build-tools/content-blocker-audit/filter-lists.json' );
@@ -93,12 +93,20 @@ async function main() {
 		};
 	} );
 
-	for ( const pageUrl of values.page ?? [] ) {
-		sources.push( {
-			source: pageUrl,
-			pageUrl,
-			...collectAssetsFromPage( await fetchWithRetry( pageUrl ), pageUrl ),
-		} );
+	sources.push(
+		...( await Promise.all(
+			( values.page ?? [] ).map( async ( pageUrl ) => ( {
+				source: pageUrl,
+				pageUrl,
+				...collectAssetsFromPage( await fetchPage( pageUrl ), pageUrl ),
+			} ) )
+		) )
+	);
+
+	for ( const { source, assets } of sources ) {
+		if ( ! assets.length ) {
+			throw new Error( `No JavaScript or CSS files found in ${ source }. Is the build complete?` );
+		}
 	}
 
 	const matcher = buildMatcher( lists, config );
