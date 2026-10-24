@@ -115,7 +115,7 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 					searchParams.get( 'provision_target' ) || searchParams.get( 'early_provision_target' ),
 			} ),
 		} );
-	} else {
+	} else if ( route !== WRITE_REDIRECT ) {
 		recordTracksEvent( 'calypso_tailored_flows_redirect', {
 			redirect_from_url: location.pathname + location.search,
 			redirect_to_url: finalUrl,
