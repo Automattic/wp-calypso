@@ -1,5 +1,7 @@
 ## next
 
+- Fix cookie banner checkbox toggle alignment in wp-admin (#97983)
+
 ## 2.1.1
 
 - Declare React 19 compatibility for package consumers (#111721).
