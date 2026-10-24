@@ -11,6 +11,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { convertAvailabilityToSuggestion } from '../../helpers/convert-availability-to-suggestion';
+import { DomainPriceRule } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchNotice } from '../../ui';
 
@@ -19,11 +20,18 @@ interface ConnectedDomainMoveNoticeProps {
 }
 
 export const ConnectedDomainMoveNotice = ( { availability }: ConnectedDomainMoveNoticeProps ) => {
-	const { cart } = useDomainSearch();
+	const { cart, events } = useDomainSearch();
 	const [ isConfirmOpen, setIsConfirmOpen ] = useState( false );
 
 	const domain = availability.domain_name;
 	const site = availability.other_site_domain;
+
+	// The FQDN is the only result offered here, so it takes the first position.
+	const suggestion = {
+		...convertAvailabilityToSuggestion( availability ),
+		position: 0,
+		price_rule: DomainPriceRule.DOMAIN_MOVE_PRICE,
+	};
 
 	const {
 		mutate: moveDomain,
@@ -31,7 +39,16 @@ export const ConnectedDomainMoveNotice = ( { availability }: ConnectedDomainMove
 		error,
 		reset,
 	} = useMutation( {
-		mutationFn: () => cart.onAddItem( convertAvailabilityToSuggestion( availability ) ),
+		mutationFn: () => cart.onAddItem( suggestion ),
+		onSuccess: () => {
+			events.onAddDomainToCart(
+				domain,
+				suggestion.position,
+				suggestion.is_premium ?? false,
+				suggestion.vendor
+			);
+			setIsConfirmOpen( false );
+		},
 		networkMode: 'always',
 		retry: false,
 	} );
@@ -106,7 +123,10 @@ export const ConnectedDomainMoveNotice = ( { availability }: ConnectedDomainMove
 							</Button>
 							<Button
 								variant="primary"
-								onClick={ () => moveDomain() }
+								onClick={ () => {
+									events.onSuggestionInteract( suggestion );
+									moveDomain();
+								} }
 								isBusy={ isPending }
 								disabled={ isPending }
 								__next40pxDefaultSize

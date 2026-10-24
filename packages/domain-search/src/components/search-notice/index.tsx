@@ -66,12 +66,15 @@ const shouldHideAvailabilityNotice = (
 
 /**
  * Whether a domain connected to another of the user's sites can be moved to the site being
- * created. Only offered without a current site, where the move goes to the new site.
+ * created. Only offered without a current site, where the move goes to the new site, and in
+ * flows that offer moves at all (domain-only flows don't).
  */
 const isConnectedDomainMoveToNewSite = (
 	availability: DomainAvailability,
+	includeOwnedDomainInSuggestions: boolean,
 	currentSiteUrl?: string
 ): availability is DomainAvailability & { other_site_domain: string } =>
+	includeOwnedDomainInSuggestions &&
 	! currentSiteUrl &&
 	availability.status === DomainAvailabilityStatus.MAPPED_OTHER_SITE_SAME_USER &&
 	!! availability.product_slug &&
@@ -104,14 +107,14 @@ export const SearchNotice = () => {
 	);
 
 	const movableConnectedDomain =
-		availability && isConnectedDomainMoveToNewSite( availability, currentSiteUrl )
+		availability &&
+		isConnectedDomainMoveToNewSite( availability, includeOwnedDomainInSuggestions, currentSiteUrl )
 			? availability
 			: undefined;
 
 	const notice = useMemo( () => {
 		if (
 			! availability ||
-			movableConnectedDomain ||
 			shouldHideAvailabilityNotice( availability, includeOwnedDomainInSuggestions )
 		) {
 			return null;
@@ -143,21 +146,15 @@ export const SearchNotice = () => {
 		}
 
 		return getAvailabilityNotice( query, availability, events, currentSiteUrl );
-	}, [
-		query,
-		availability,
-		events,
-		currentSiteUrl,
-		includeOwnedDomainInSuggestions,
-		movableConnectedDomain,
-	] );
+	}, [ query, availability, events, currentSiteUrl, includeOwnedDomainInSuggestions ] );
 
 	// A failed suggestions request still renders the exact-match card when the FQDN is
-	// available, so its error would contradict the card.
+	// available, or the move offer for a connected domain, so its error would contradict them.
 	const isFqdnShown =
 		!! availability && isFqdnShownAsSuggestion( availability, includeOwnedDomainInSuggestions );
 	const errorMessage =
-		( isFqdnShown ? undefined : suggestionError?.message ) ?? availabilityError?.message;
+		( isFqdnShown || movableConnectedDomain ? undefined : suggestionError?.message ) ??
+		availabilityError?.message;
 
 	if ( errorMessage ) {
 		return <DomainSearchNotice status="error">{ errorMessage }</DomainSearchNotice>;
