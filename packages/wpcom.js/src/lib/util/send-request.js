@@ -64,7 +64,11 @@ export default function sendRequest( params, query, body, fn ) {
 		params.token = this.token;
 	}
 
-	debug( 'params: %o', params );
+	// Never log the token itself: consumers run with `DEBUG=*` to troubleshoot,
+	// and that output ends up in issues and support tickets.
+	if ( debug.enabled ) {
+		debug( 'params: %o', redactToken( params ) );
+	}
 
 	// if callback is provided, behave traditionally
 	if ( 'function' === typeof fn ) {
@@ -82,4 +86,17 @@ export default function sendRequest( params, query, body, fn ) {
 			err ? reject( err ) : resolve( res );
 		} );
 	} );
+}
+
+/**
+ * Return a shallow copy of `params` with the OAuth token replaced by a
+ * placeholder, for debug output only.
+ * @param {Object} params - request params
+ * @returns {Object} params safe to log
+ */
+export function redactToken( params ) {
+	if ( ! params || ! params.token ) {
+		return params;
+	}
+	return { ...params, token: '[redacted]' };
 }
