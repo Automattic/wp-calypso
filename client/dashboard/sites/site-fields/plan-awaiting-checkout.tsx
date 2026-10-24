@@ -21,6 +21,16 @@ import type { Site, WowFunnelPendingSite } from '@automattic/api-core';
 const RESUMABLE_FUNNELS = [ 'default', 'blueprint' ];
 const ENTRY_URL_ARGS: Record< string, string > = { blueprint_slug: 'blueprint' };
 
+/**
+ * Whether a site could be one a funnel built before its owner paid: on Atomic and on the Free plan.
+ * Only those sites ask the server, which for nearly every user is none.
+ * @param site The site to check.
+ * @returns Whether the site is worth asking about.
+ */
+function couldBeUnpaidFunnelSite( site: Site ): boolean {
+	return !! site.is_wpcom_atomic && !! site.plan?.is_free;
+}
+
 function canResumeFromEntryUrl( pending: WowFunnelPendingSite ): boolean {
 	return (
 		RESUMABLE_FUNNELS.includes( pending.funnel_slug ) &&
@@ -47,7 +57,7 @@ function canResumeFromEntryUrl( pending: WowFunnelPendingSite ): boolean {
  * @returns The held site's funnel run when this row is it and can be resumed, otherwise undefined.
  */
 export function useSiteAwaitingCheckout( site: Site ): WowFunnelPendingSite | undefined {
-	const couldBeAwaitingCheckout = !! site.is_wpcom_atomic && !! site.plan?.is_free;
+	const couldBeAwaitingCheckout = couldBeUnpaidFunnelSite( site );
 
 	const { data } = useQuery( {
 		...wowFunnelPendingQuery(),
@@ -59,6 +69,43 @@ export function useSiteAwaitingCheckout( site: Site ): WowFunnelPendingSite | un
 	}
 
 	return canResumeFromEntryUrl( data ) ? data : undefined;
+}
+
+/**
+ * Is this site a Studio preview its owner has not bought yet?
+ *
+ * A preview reads as an ordinary Free site, but launching it for free is not the way forward:
+ * buying a plan is what keeps it. Asked from the same lookup as useSiteAwaitingCheckout(), with
+ * the same gate.
+ * @param site The site to check.
+ * @returns Whether the answer is still loading, and whether the site is a standing preview.
+ */
+export function useSiteIsStudioPreview( site: Site ): {
+	isLoading: boolean;
+	isStudioPreview: boolean;
+} {
+	const couldBePreview = couldBeUnpaidFunnelSite( site );
+
+	const { data, isLoading } = useQuery( {
+		...wowFunnelPendingQuery(),
+		enabled: couldBePreview,
+	} );
+
+	return {
+		isLoading: couldBePreview && isLoading,
+		isStudioPreview:
+			couldBePreview &&
+			!! data?.studio_previews?.some( ( preview ) => preview.blog_id === site.ID ),
+	};
+}
+
+/**
+ * Where the owner of a Studio preview buys it: any plan that includes Atomic keeps the site.
+ * @param site The preview.
+ * @returns The URL to send the owner to.
+ */
+export function getStudioPreviewPlansUrl( site: Site ): string {
+	return wpcomLink( `/plans/${ site.slug }` );
 }
 
 /**
@@ -79,6 +126,25 @@ export function getFinishSetupUrl( pending: WowFunnelPendingSite ): string {
 	}
 
 	return wpcomLink( addQueryArgs( '/setup/onboarding', query ) );
+}
+
+export function PlanStudioPreview( { site }: { site: Site } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	return (
+		<Text>
+			<ExternalLink
+				href={ getStudioPreviewPlansUrl( site ) }
+				onClick={ () =>
+					recordTracksEvent( 'calypso_dashboard_sites_plan_studio_preview_click', {
+						surface: 'dashboard-sites-list',
+					} )
+				}
+			>
+				{ __( 'Choose a plan' ) }
+			</ExternalLink>
+		</Text>
+	);
 }
 
 export function PlanAwaitingCheckout( { pending }: { pending: WowFunnelPendingSite } ) {

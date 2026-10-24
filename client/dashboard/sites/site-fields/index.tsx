@@ -34,7 +34,12 @@ import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import SitePreview from '../site-preview';
-import { PlanAwaitingCheckout, useSiteAwaitingCheckout } from './plan-awaiting-checkout';
+import {
+	PlanAwaitingCheckout,
+	PlanStudioPreview,
+	useSiteAwaitingCheckout,
+	useSiteIsStudioPreview,
+} from './plan-awaiting-checkout';
 import { PlanExpiryStatus } from './plan-expiry-status';
 import { useIsSiteUnreachable } from './site-unreachable-status';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
@@ -428,8 +433,9 @@ export function Visibility( {
 }
 
 /**
- * The line under the plan name: where to finish buying a site held for checkout, or else how the
- * plan's expiry stands. One place that decides which, so the plan cell does not.
+ * The line under the plan name: where to finish buying a site held for checkout or a Studio
+ * preview, or else how the plan's expiry stands. One place that decides which, so the plan cell
+ * does not.
  *
  * This does not keep the page's own elements stable when the held-site lookup answers: one of the
  * two is still unmounted for the other, as the expiry status already mounts once its purchase
@@ -438,15 +444,32 @@ export function Visibility( {
 function PlanSubStatus( {
 	site,
 	awaitingCheckout,
+	isStudioPreview,
 }: {
 	site: Site;
 	awaitingCheckout: WowFunnelPendingSite | undefined;
+	isStudioPreview: boolean;
 } ) {
 	if ( awaitingCheckout ) {
 		return <PlanAwaitingCheckout pending={ awaitingCheckout } />;
 	}
 
+	if ( isStudioPreview ) {
+		return <PlanStudioPreview site={ site } />;
+	}
+
 	return <PlanExpiryStatus site={ site } />;
+}
+
+function planLabel(
+	value: string,
+	awaitingCheckout: WowFunnelPendingSite | undefined,
+	isStudioPreview: boolean
+): string {
+	if ( awaitingCheckout ) {
+		return __( 'Awaiting checkout' );
+	}
+	return isStudioPreview ? __( 'Studio preview' ) : value;
 }
 
 export function Plan( {
@@ -461,6 +484,7 @@ export function Plan( {
 	value: string;
 } ) {
 	const awaitingCheckout = useSiteAwaitingCheckout( site );
+	const { isStudioPreview } = useSiteIsStudioPreview( site );
 
 	if ( isSelfHostedJetpackConnected ) {
 		if ( ! isJetpack ) {
@@ -474,8 +498,12 @@ export function Plan( {
 			{ /* The same span either way, with only its text changing: the answer arrives after
 			     first paint, and swapping elements across that boundary crashes under Google
 			     Translate (react/react#11538). */ }
-			<span>{ awaitingCheckout ? __( 'Awaiting checkout' ) : value }</span>
-			<PlanSubStatus site={ site } awaitingCheckout={ awaitingCheckout } />
+			<span>{ planLabel( value, awaitingCheckout, isStudioPreview ) }</span>
+			<PlanSubStatus
+				site={ site }
+				awaitingCheckout={ awaitingCheckout }
+				isStudioPreview={ isStudioPreview }
+			/>
 		</VStack>
 	);
 }
