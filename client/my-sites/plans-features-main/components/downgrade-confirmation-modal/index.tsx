@@ -28,6 +28,17 @@ interface DowngradeConfirmationModalProps {
 	 * when the scheduled downgrade will take effect. Shown for delayed downgrades.
 	 */
 	renewalDate?: string;
+	/**
+	 * When true, the scheduled change moves to a shorter billing term (e.g.
+	 * annual to monthly), so the copy talks about a plan change rather than a
+	 * downgrade and names the new price.
+	 */
+	isTermChange?: boolean;
+	/**
+	 * Pre-formatted, localized price the renewal will charge with its term (e.g.
+	 * "$8/month"). Shown for term changes.
+	 */
+	renewalPriceText?: string;
 	/** Pre-formatted, localized refund amount (e.g. "$48.00"). */
 	refundText?: string;
 	/** When true, the confirm action is in flight; disable buttons and show a spinner. */
@@ -51,6 +62,9 @@ function ModalBody( {
 	isInstantDowngrade,
 	isDelayedDowngrade,
 	renewalDate,
+	isTermChange,
+	isChangeToMonthly,
+	renewalPriceText,
 	refundText,
 	isRechargeable,
 	changePaymentMethodUrl,
@@ -62,6 +76,9 @@ function ModalBody( {
 	isInstantDowngrade?: boolean;
 	isDelayedDowngrade?: boolean;
 	renewalDate?: string;
+	isTermChange?: boolean;
+	isChangeToMonthly?: boolean;
+	renewalPriceText?: string;
 	refundText?: string;
 	isRechargeable?: boolean;
 	changePaymentMethodUrl?: string;
@@ -100,29 +117,62 @@ function ModalBody( {
 						) }
 					</Notice>
 				) }
-				<p className="downgrade-confirmation-modal__description">
-					{ renewalDate
-						? translate(
-								'Your plan will change from %(currentPlan)s to %(targetPlan)s at your next renewal on %(renewalDate)s. Until then you’ll continue using %(currentPlan)s.',
-								{
-									args: {
-										currentPlan: currentPlanName,
-										targetPlan: targetPlanName,
-										renewalDate,
-									},
-									comment:
-										'Message shown when scheduling a plan downgrade for a specific renewal date',
-								}
-							)
-						: translate(
-								'Your plan will change from %(currentPlan)s to %(targetPlan)s at your next renewal. Until then you’ll continue using %(currentPlan)s.',
-								{
-									args: { currentPlan: currentPlanName, targetPlan: targetPlanName },
-									comment:
-										'Message shown when scheduling a plan downgrade for end of the current billing term',
-								}
-							) }
-				</p>
+				{ isChangeToMonthly && (
+					<Notice
+						status="warning"
+						isDismissible={ false }
+						className="downgrade-confirmation-modal__payment-notice"
+					>
+						{ translate(
+							'Monthly plans don’t include some benefits that come with yearly and longer plans. Check what you’ll lose below before you switch.',
+							{
+								comment:
+									'Warning shown when scheduling a change from a yearly or longer plan to a monthly plan',
+							}
+						) }
+					</Notice>
+				) }
+				{ isTermChange && renewalDate && renewalPriceText ? (
+					<p className="downgrade-confirmation-modal__description">
+						{ translate(
+							'Your plan will change from %(currentPlan)s to %(targetPlan)s at your next renewal on %(renewalDate)s, and you’ll pay %(price)s from then on. Until then you’ll continue using %(currentPlan)s.',
+							{
+								args: {
+									currentPlan: currentPlanName,
+									targetPlan: targetPlanName,
+									renewalDate,
+									price: renewalPriceText,
+								},
+								comment:
+									'Message shown when scheduling a change to a shorter billing term. %(price)s includes the term, e.g. "$8/month".',
+							}
+						) }
+					</p>
+				) : (
+					<p className="downgrade-confirmation-modal__description">
+						{ renewalDate
+							? translate(
+									'Your plan will change from %(currentPlan)s to %(targetPlan)s at your next renewal on %(renewalDate)s. Until then you’ll continue using %(currentPlan)s.',
+									{
+										args: {
+											currentPlan: currentPlanName,
+											targetPlan: targetPlanName,
+											renewalDate,
+										},
+										comment:
+											'Message shown when scheduling a plan downgrade for a specific renewal date',
+									}
+								)
+							: translate(
+									'Your plan will change from %(currentPlan)s to %(targetPlan)s at your next renewal. Until then you’ll continue using %(currentPlan)s.',
+									{
+										args: { currentPlan: currentPlanName, targetPlan: targetPlanName },
+										comment:
+											'Message shown when scheduling a plan downgrade for end of the current billing term',
+									}
+								) }
+					</p>
+				) }
 				{ lostFeatures.length > 0 && (
 					<>
 						<p className="downgrade-confirmation-modal__description">
@@ -218,6 +268,8 @@ const DowngradeConfirmationModal = ( {
 	isInstantDowngrade,
 	isDelayedDowngrade,
 	renewalDate,
+	isTermChange,
+	renewalPriceText,
 	refundText,
 	isConfirming,
 	isRechargeable,
@@ -228,7 +280,7 @@ const DowngradeConfirmationModal = ( {
 	const translate = useTranslate();
 
 	const { data: cancelFeaturesData, isLoading } = useQuery( {
-		...purchaseCancelFeaturesQuery( purchaseId ?? 0, 'treatment', targetPlanSlug ?? undefined ),
+		...purchaseCancelFeaturesQuery( purchaseId ?? 0, undefined, targetPlanSlug ?? undefined ),
 		enabled: !! purchaseId && !! targetPlanSlug && isOpen,
 		// The feature delta is fixed for the dialog's lifetime. Don't refetch on
 		// window focus: in the instant-downgrade flow the dialog stays open (with its
@@ -244,11 +296,23 @@ const DowngradeConfirmationModal = ( {
 
 	const lostFeatures = cancelFeaturesData?.features ?? [];
 
-	const title = isDelayedDowngrade
-		? String( translate( 'Schedule downgrade' ) )
-		: String( translate( 'Confirm downgrade' ) );
+	const isScheduledTermChange = isDelayedDowngrade && isTermChange;
+
+	const title = ( () => {
+		if ( isScheduledTermChange ) {
+			return String( translate( 'Schedule plan change' ) );
+		}
+		return isDelayedDowngrade
+			? String( translate( 'Schedule downgrade' ) )
+			: String( translate( 'Confirm downgrade' ) );
+	} )();
 
 	const confirmButtonLabel = ( () => {
+		if ( isScheduledTermChange ) {
+			return translate( 'Schedule change', {
+				comment: 'Button label to confirm scheduling a change to a shorter billing term at renewal',
+			} );
+		}
 		if ( isDelayedDowngrade ) {
 			return translate( 'Schedule downgrade', {
 				comment: 'Button label to confirm scheduling a plan downgrade for end of billing term',
@@ -281,6 +345,9 @@ const DowngradeConfirmationModal = ( {
 				isInstantDowngrade={ isInstantDowngrade }
 				isDelayedDowngrade={ isDelayedDowngrade }
 				renewalDate={ renewalDate }
+				isTermChange={ isScheduledTermChange }
+				isChangeToMonthly={ isScheduledTermChange && !! cancelFeaturesData?.is_change_to_monthly }
+				renewalPriceText={ renewalPriceText }
 				refundText={ refundText }
 				isRechargeable={ isRechargeable }
 				changePaymentMethodUrl={ changePaymentMethodUrl }
