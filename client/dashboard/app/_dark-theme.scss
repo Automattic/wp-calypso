@@ -96,6 +96,12 @@
 			var( --dashboard-surface__background-color ) 90%,
 			var( --dashboard__text-color )
 		);
+		box-shadow: 0 0 0 1px
+			color-mix(
+				in srgb,
+				var( --dashboard-notice__tint-color ) 24%,
+				var( --dashboard-surface__background-color )
+			);
 
 		&.is-info {
 			background-color: color-mix(
