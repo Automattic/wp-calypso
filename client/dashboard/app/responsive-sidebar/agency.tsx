@@ -4,10 +4,10 @@ import { __ } from '@wordpress/i18n';
 import { home, globe, people, tag, trendingUp, currencyDollar } from '@wordpress/icons';
 import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
-import { a4aLink } from '../../utils/link';
 import { useAppContext } from '../context';
 import {
 	agencyPartnerDirectoryRoute,
+	agencyAmplifyRoute,
 	agencySitesRoute,
 	agencyTeamRoute,
 	agencyTiersRoute,
@@ -48,7 +48,7 @@ export default function AgencySidebar() {
 	const canAccessMigrations = !! supports.agency.earn && canAccess( earnMigrationsRoute );
 	const canAccessAmplify =
 		!! ( supports.agency.amplify && activeAgency?.amplify?.allowed ) &&
-		hasAnyCapability( capabilities, 'a4a_read_amplify' );
+		canAccess( agencyAmplifyRoute );
 	const accessibleMarketplaceSections = marketplaceSections.filter( ( section ) =>
 		isMarketplaceSectionAvailable( section, agencySupports, capabilities )
 	);
@@ -88,7 +88,7 @@ export default function AgencySidebar() {
 					label={ __( 'Clients' ) }
 					icon={ people }
 					to="/sites"
-					activePaths={ [ '/dev-tools', '/migrations' ] }
+					activePaths={ [ '/dev-tools', '/migrations', '/amplify' ] }
 				>
 					{ canAccessSites && <SidebarMenuItem to="/sites">{ __( 'Sites' ) }</SidebarMenuItem> }
 					{ /* Plugins lives in the WP.com dashboard; the gate mirrors the classic app's. */ }
@@ -104,7 +104,7 @@ export default function AgencySidebar() {
 						<SidebarMenuItem to="/migrations">{ __( 'Migrations' ) }</SidebarMenuItem>
 					) }
 					{ canAccessAmplify && (
-						<SidebarMenuItem href={ a4aLink( '/amplify' ) }>{ __( 'Amplify' ) }</SidebarMenuItem>
+						<SidebarMenuItem to="/amplify">{ __( 'Amplify' ) }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }

@@ -1,0 +1,115 @@
+.agency-site-wizard__sheet-entries path {
+	opacity: 0;
+	stroke-dasharray: 1;
+	stroke-dashoffset: 1;
+}
+
+@media ( prefers-reduced-motion: no-preference ) {
+	.agency-site-wizard__intake-option:is( :hover, :focus-visible ):not( :disabled ) {
+		.agency-site-wizard__sheet-page {
+			animation: agency-intake-sheet 2.4s ease-in-out infinite;
+		}
+
+		.agency-site-wizard__sheet-entries path {
+			animation: agency-intake-row 2.4s ease-in-out infinite;
+		}
+
+		.agency-site-wizard__sheet-entries path:nth-child( 2 ) {
+			animation-delay: 110ms;
+		}
+
+		.agency-site-wizard__sheet-entries path:nth-child( 3 ) {
+			animation-delay: 220ms;
+		}
+
+		.agency-site-wizard__account-back {
+			animation: agency-intake-window-back 2.6s ease-in-out infinite;
+		}
+
+		.agency-site-wizard__account-front {
+			animation: agency-intake-window-front 2.6s ease-in-out infinite;
+		}
+	}
+}
+
+@keyframes agency-intake-sheet {
+	0%,
+	36%,
+	100% {
+		transform: translateY( 0 );
+	}
+	8% {
+		transform: translateY( 0.7px );
+	}
+	19% {
+		transform: translateY( -1.5px );
+	}
+	28% {
+		transform: translateY( 0.3px );
+	}
+}
+
+@keyframes agency-intake-row {
+	0%,
+	16%,
+	88%,
+	100% {
+		opacity: 0;
+		stroke-dashoffset: 1;
+	}
+	18% {
+		opacity: 0.7;
+		stroke-dashoffset: 1;
+	}
+	34%,
+	64% {
+		opacity: 0.7;
+		stroke-dashoffset: 0;
+	}
+	82% {
+		opacity: 0;
+		stroke-dashoffset: 0;
+	}
+}
+
+@keyframes agency-intake-window-front {
+	0%,
+	88%,
+	100% {
+		transform: translate( 0, 0 );
+	}
+	10% {
+		transform: translate( -0.7px, -0.6px );
+	}
+	34% {
+		transform: translate( 3px, 3px );
+	}
+	46%,
+	60% {
+		transform: translate( 2px, 2px );
+	}
+	80% {
+		transform: translate( -0.4px, -0.4px );
+	}
+}
+
+@keyframes agency-intake-window-back {
+	0%,
+	86%,
+	100% {
+		transform: translate( 0, 0 );
+	}
+	10% {
+		transform: translate( 0.5px, 0.5px );
+	}
+	30% {
+		transform: translate( -2.5px, -2px );
+	}
+	42%,
+	58% {
+		transform: translate( -2px, -1.5px );
+	}
+	78% {
+		transform: translate( 0.3px, 0.3px );
+	}
+}

@@ -1,0 +1,297 @@
+@use '@automattic/color-studio/dist/color-variables' as brand;
+
+.agency-sites-story {
+	max-inline-size: 1080px;
+	margin-inline: auto;
+	margin-block-start: 80px;
+	padding-block-start: 64px;
+	border-block-start: 1px solid color-mix( in srgb, var( --color-border-subtle ) 55%, transparent );
+}
+
+.agency-sites-story__section {
+	--sites-story-accent: #{brand.$studio-orange-50};
+	display: grid;
+	grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	align-items: center;
+	gap: clamp( 32px, 6vw, 88px );
+	margin-block-end: 88px;
+}
+
+.agency-sites-story__section[data-topic='work'] {
+	--sites-story-accent: var( --color-primary );
+}
+
+.agency-sites-story__section[data-topic='work'] .agency-sites-story__graphic {
+	order: 2;
+}
+
+.agency-sites-story__section[data-topic='migration'] {
+	--sites-story-accent: var( --color-warning );
+}
+
+.agency-sites-story__section[data-topic='portfolio'] .agency-sites-story__graphic {
+	aspect-ratio: 4 / 3;
+}
+
+.agency-sites-story__graphic {
+	display: grid;
+	place-items: center;
+	min-inline-size: 0;
+	min-block-size: 280px;
+	box-sizing: border-box;
+	padding: 28px;
+	border-radius: 8px;
+	background-image: linear-gradient(
+		140deg,
+		color-mix( in srgb, var( --sites-story-accent ) 9%, var( --color-surface ) ),
+		color-mix( in srgb, var( --sites-story-accent ) 3%, var( --color-surface ) )
+	);
+}
+
+.agency-sites-story__copy h2,
+.agency-sites-story__faq > h2 {
+	margin: 0;
+	font-size: clamp( 24px, 2.5vw, 28px );
+	font-weight: 500;
+	line-height: 1.25;
+	letter-spacing: -0.02em;
+	text-wrap: balance;
+}
+
+.agency-sites-story__copy p,
+.agency-sites-story__faq p {
+	margin-block: 16px 0;
+	color: var( --color-text-subtle );
+	font-size: 16px;
+	line-height: 1.65;
+	text-wrap: pretty;
+}
+
+.agency-sites-story__portfolio,
+.agency-sites-story__site-actions,
+.agency-sites-story__contact {
+	box-sizing: border-box;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 4px;
+	background: var( --color-surface );
+	box-shadow: 0 8px 24px color-mix( in srgb, var( --color-text ) 6%, transparent );
+}
+
+.agency-sites-story__graphic svg {
+	flex-shrink: 0;
+	fill: currentColor;
+}
+
+.agency-sites-story__portfolio {
+	inline-size: 100%;
+	font-size: 11px;
+	line-height: 1.4;
+}
+
+.agency-sites-story__portfolio-table {
+	inline-size: 100%;
+	margin: 0;
+	border-collapse: collapse;
+	table-layout: fixed;
+	text-align: start;
+}
+
+.agency-sites-story__portfolio-table th {
+	padding: 12px 6px;
+	font-size: 9px;
+	font-weight: 500;
+	text-align: start;
+	text-transform: uppercase;
+}
+
+.agency-sites-story__portfolio-table td {
+	padding: 16px 6px;
+	border-block-start: 1px solid var( --color-border-subtle );
+	color: var( --color-text-subtle );
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.agency-sites-story__portfolio-table :is( th, td ):first-child {
+	inline-size: 49%;
+	padding-inline-start: 12px;
+}
+
+.agency-sites-story__portfolio-table :is( th, td ):nth-child( 2 ) {
+	inline-size: 19%;
+}
+
+.agency-sites-story__portfolio-table :is( th, td ):last-child {
+	padding-inline-end: 12px;
+}
+
+.agency-sites-story__site-identity {
+	display: grid;
+	grid-template-columns: 24px minmax( 0, 1fr );
+	align-items: center;
+	gap: 8px;
+}
+
+.agency-sites-story__site-icon {
+	display: grid;
+	place-items: center;
+	block-size: 24px;
+	border-radius: 3px;
+	background: color-mix( in srgb, var( --sites-story-accent ) 15%, var( --color-surface ) );
+	color: var( --sites-story-accent );
+	font-size: 14px;
+}
+
+.agency-sites-story__site-name {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 2px;
+	min-inline-size: 0;
+}
+
+.agency-sites-story__site-name strong,
+.agency-sites-story__site-name bdi {
+	margin: 0;
+	line-height: 1.4;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.agency-sites-story__site-name strong {
+	color: var( --color-text );
+	font-weight: 500;
+}
+
+.agency-sites-story__site-name bdi {
+	font-size: 10px;
+}
+
+.agency-sites-story__menu-preview {
+	inline-size: min( 100%, 224px );
+}
+
+.agency-sites-story__menu-trigger {
+	display: grid;
+	place-items: center;
+	inline-size: 32px;
+	block-size: 28px;
+	margin-inline-start: auto;
+	margin-block-end: 8px;
+	color: var( --sites-story-accent );
+}
+
+.agency-sites-story__site-actions {
+	margin: 0;
+	padding: 8px;
+	list-style: none;
+	font-size: 13px;
+}
+
+.agency-sites-story__site-actions li {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 8px 10px;
+	line-height: 1.5;
+}
+
+.agency-sites-story__contact {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	inline-size: min( 100%, 320px );
+	padding: 28px 24px;
+	text-align: center;
+}
+
+.agency-sites-story__contact-avatar {
+	display: grid;
+	place-items: center;
+	inline-size: 80px;
+	block-size: 80px;
+	margin-block-end: 20px;
+	border-radius: 50%;
+	background: color-mix( in srgb, var( --sites-story-accent ) 13%, var( --color-surface ) );
+	color: var( --color-text );
+}
+
+.agency-sites-story__contact strong {
+	font-size: 18px;
+	font-weight: 500;
+}
+
+.agency-sites-story__contact > span:not( .agency-sites-story__contact-avatar ) {
+	margin-block-start: 4px;
+	color: var( --color-text-subtle );
+	font-size: 12px;
+}
+
+.agency-sites-story__contact p {
+	margin-block: 20px;
+	color: var( --color-text-subtle );
+	font-size: 14px;
+	line-height: 1.6;
+	text-wrap: pretty;
+}
+
+.agency-sites-story__contact .components-button {
+	--wp-components-color-accent: var( --color-text );
+	--wp-components-color-accent-darker-20: var( --color-text );
+}
+
+.agency-sites-story__faq {
+	max-inline-size: 760px;
+	margin-inline: auto;
+}
+
+.agency-sites-story__faq-list {
+	display: grid;
+	gap: 28px;
+	margin-block: 32px;
+}
+
+.agency-sites-story__faq h3 {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 500;
+	line-height: 1.4;
+	text-wrap: balance;
+}
+
+.agency-sites-story__faq p {
+	margin-block-start: 8px;
+}
+
+@container ( max-width: 780px ) {
+	.agency-sites-story {
+		margin-block-start: 56px;
+		padding-block-start: 40px;
+	}
+
+	.agency-sites-story__section {
+		grid-template-columns: minmax( 0, 1fr );
+		gap: 24px;
+		margin-block-end: 56px;
+	}
+
+	.agency-sites-story__section[data-topic='work'] .agency-sites-story__graphic {
+		order: 0;
+	}
+
+	.agency-sites-story__graphic {
+		padding: 24px 16px;
+	}
+}
+
+@container ( max-width: 480px ) {
+	.agency-sites-story__portfolio-table .agency-sites-story__host-column {
+		display: none;
+	}
+
+	.agency-sites-story__portfolio-table :is( th, td ):first-child {
+		inline-size: 65%;
+	}
+}

@@ -196,6 +196,7 @@ interface BaseConfigurationFormProps {
 	closeModal?: () => void;
 	/** Lets a surrounding modal hold itself open until the site is created. */
 	onCreatingChange?: ( isCreating: boolean ) => void;
+	preview?: { siteAddress: SiteAddress; onCreate: ( address: string ) => void };
 }
 
 /**
@@ -208,10 +209,11 @@ type SiteConfigurationFormProps =
 	| ( BaseConfigurationFormProps & { isDevSite: false; pendingSiteId: number } );
 
 function SiteConfigurationForm( props: SiteConfigurationFormProps ) {
-	const { agencyId, closeModal, onCreatingChange, isDevSite } = props;
+	const { agencyId, closeModal, onCreatingChange, isDevSite, preview } = props;
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
-	const siteAddress = useSiteAddress( agencyId );
+	const liveSiteAddress = useSiteAddress( agencyId, ! preview );
+	const siteAddress = preview?.siteAddress ?? liveSiteAddress;
 	const { phpVersions, recommendedValue } = getPHPVersions();
 
 	const [ formData, setFormData ] = useState< SiteConfigurationFormData >( {
@@ -284,6 +286,11 @@ function SiteConfigurationForm( props: SiteConfigurationFormProps ) {
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
+		if ( preview ) {
+			preview.onCreate( siteAddress.address );
+			closeModal?.();
+			return;
+		}
 
 		const configuration = {
 			php_version: formData.php_version,
@@ -432,7 +439,13 @@ export default function SiteConfigurationModal( {
  * than a DataViews action, so unlike the license modal above it brings its own
  * `<Modal>`, and there is no pending site to look up first.
  */
-export function DevSiteConfigurationModal( { closeModal }: { closeModal: () => void } ) {
+export function DevSiteConfigurationModal( {
+	closeModal,
+	preview,
+}: {
+	closeModal: () => void;
+	preview?: BaseConfigurationFormProps[ 'preview' ];
+} ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: agency, isLoading } = useQuery( activeAgencyQuery() );
 	const [ isCreating, setIsCreating ] = useState( false );
@@ -455,19 +468,20 @@ export function DevSiteConfigurationModal( { closeModal }: { closeModal: () => v
 			shouldCloseOnEsc={ ! isCreating }
 			shouldCloseOnClickOutside={ ! isCreating }
 		>
-			{ isLoading && (
+			{ ! preview && isLoading && (
 				<VStack spacing={ 4 } alignment="center">
 					<Spinner />
 				</VStack>
 			) }
-			{ ! isLoading && ! agency?.id && (
+			{ ! preview && ! isLoading && ! agency?.id && (
 				<Notice variant="error">
 					{ __( 'We couldn’t load your agency details. Please refresh the page and try again.' ) }
 				</Notice>
 			) }
-			{ ! isLoading && !! agency?.id && (
+			{ ( preview || ( ! isLoading && !! agency?.id ) ) && (
 				<SiteConfigurationForm
-					agencyId={ agency.id }
+					agencyId={ agency?.id ?? 0 }
+					preview={ preview }
 					isDevSite
 					closeModal={ closeModal }
 					onCreatingChange={ setIsCreating }

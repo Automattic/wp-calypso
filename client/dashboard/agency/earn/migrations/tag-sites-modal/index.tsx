@@ -16,6 +16,7 @@ import {
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import { useState } from 'react';
+import { simulateMigration } from '../../../design-preview';
 import MigrationsAddSitesTable from './add-sites-table';
 import type { SiteItem } from '../hooks/use-fetch-all-managed-sites-for-commission';
 import type { RecordTracksEvent, TaggedSite } from '../types';
@@ -74,6 +75,16 @@ export default function MigrationsTagSitesModal( {
 		: migrationSourceHost.length > 0;
 
 	const handleAddSites = () => {
+		if (
+			simulateMigration(
+				'tag',
+				selectedSites.map( ( site ) => site.id )
+			)
+		) {
+			onSuccess( 'Preview: sites tagged.' );
+			onClose();
+			return;
+		}
 		tagSitesForMigration(
 			{
 				siteIds: selectedSites.map( ( site ) => site.id ),

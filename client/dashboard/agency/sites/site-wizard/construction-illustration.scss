@@ -1,0 +1,19 @@
+.agency-construction__tile,
+.agency-construction__tile-play {
+	transform-box: view-box;
+	transform-origin: var( --tile-origin );
+}
+
+.agency-construction__tile {
+	transform: var( --tile-from );
+}
+
+.agency-construction__tile-content {
+	transform: var( --tile-content-from );
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.agency-construction__tile {
+		transform: none;
+	}
+}
