@@ -1,10 +1,16 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import { ENTREPRENEUR_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import { PLAN_ECOMMERCE } from '@automattic/calypso-products';
+import { getLanguageSlugs } from '@automattic/i18n-utils';
+import {
+	ENTREPRENEUR_FLOW,
+	NEW_HOSTED_SITE_FLOW,
+	SITE_MIGRATION_FLOW,
+} from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useMatch, useSearchParams } from 'react-router-dom';
 import { anonIdCache, useCachedAnswers } from 'calypso/data/segmentaton-survey';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useEntrepreneurAdminDestination } from 'calypso/landing/stepper/hooks/use-entrepreneur-admin-destination';
@@ -21,9 +27,42 @@ import {
 } from '../../internals/steps-repository/playground/lib/constants';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { ENTREPRENEUR_TRIAL_SURVEY_KEY } from '../../internals/steps-repository/segmentation-survey';
-import type { Flow, ProvidedDependencies, StepperStep } from '../../internals/types';
+import {
+	AssertConditionState,
+	type Flow,
+	type ProvidedDependencies,
+	type StepperStep,
+} from '../../internals/types';
 
 const SEGMENTATION_SURVEY_SLUG = 'start';
+
+// A trial started before the redirect went live is still being set up on these steps,
+// so they stay reachable.
+const POST_SITE_CREATION_STEPS: string[] = [
+	STEPS.PROCESSING.slug,
+	STEPS.WAIT_FOR_ATOMIC.slug,
+	STEPS.WAIT_FOR_PLUGIN_INSTALL.slug,
+	STEPS.IMPORTER_PLAYGROUND.slug,
+	STEPS.ERROR.slug,
+];
+
+// The Woo Playground A/B test still creates trials until it ends (DOTPM-565). The session
+// flag covers the login round trip, which can drop the query string.
+function isPlaygroundPublish( searchParams: URLSearchParams ) {
+	return (
+		searchParams.get( 'from' ) === 'playground-publish' ||
+		sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1'
+	);
+}
+
+// A logged-out visitor's locale comes from the last path segment, so the redirect has to keep it.
+function getCommercePurchaseUrl( searchParams: URLSearchParams, lang?: string ) {
+	const path = `/setup/${ NEW_HOSTED_SITE_FLOW }${ lang ? `/${ lang }` : '' }`;
+	return addQueryArgs( path, {
+		...Object.fromEntries( searchParams ),
+		plan: PLAN_ECOMMERCE,
+	} );
+}
 
 const entrepreneurFlow: Flow = {
 	name: ENTREPRENEUR_FLOW,
@@ -43,13 +82,9 @@ const entrepreneurFlow: Flow = {
 			}
 		}, [ searchParams ] );
 
-		const isPlaygroundPublish =
-			searchParams.get( 'from' ) === 'playground-publish' ||
-			sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
-
 		// When launched from the Playground publish flow skip straight to site
 		// creation — the WC trial is provisioned in SITE_CREATION_STEP regardless.
-		if ( isPlaygroundPublish ) {
+		if ( isPlaygroundPublish( searchParams ) ) {
 			return stepsWithRequiredLogin( [
 				STEPS.SITE_CREATION_STEP,
 				STEPS.PROCESSING,
@@ -76,6 +111,29 @@ const entrepreneurFlow: Flow = {
 				STEPS.ERROR,
 			] ),
 		];
+	},
+
+	useAssertConditions() {
+		const [ searchParams ] = useSearchParams();
+		const match = useMatch( '/:flow/:step?/:lang?' );
+		const currentStep = match?.params.step ?? '';
+		// `/setup/entrepreneur/es` matches with the locale in place of a step.
+		const lang = getLanguageSlugs().includes( currentStep ) ? currentStep : match?.params.lang;
+
+		const shouldRedirect =
+			isEnabled( 'entrepreneur/redirect-to-commerce-purchase' ) &&
+			! isPlaygroundPublish( searchParams ) &&
+			! POST_SITE_CREATION_STEPS.includes( currentStep );
+
+		useEffect( () => {
+			if ( shouldRedirect ) {
+				window.location.replace( getCommercePurchaseUrl( searchParams, lang ) );
+			}
+		}, [ shouldRedirect, searchParams, lang ] );
+
+		return {
+			state: shouldRedirect ? AssertConditionState.CHECKING : AssertConditionState.SUCCESS,
+		};
 	},
 
 	useStepNavigation( currentStep, navigate ) {
