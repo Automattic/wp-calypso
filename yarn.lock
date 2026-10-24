@@ -699,7 +699,6 @@ __metadata:
     "@babel/core": "npm:^7.29.7"
     "@babel/helpers": "npm:^7.29.10"
     "@babel/plugin-transform-class-properties": "npm:^7.29.7"
-    "@babel/plugin-transform-react-jsx": "npm:^7.29.7"
     "@babel/plugin-transform-react-pure-annotations": "npm:^7.29.7"
     "@babel/plugin-transform-runtime": "npm:^7.29.7"
     "@babel/preset-env": "npm:^7.29.7"
@@ -708,7 +707,6 @@ __metadata:
     "@babel/register": "npm:^7.29.7"
     "@babel/runtime": "npm:^7.29.10"
     "@emotion/babel-plugin": "npm:^11.11.0"
-    "@wordpress/babel-plugin-import-jsx-pragma": "npm:^5.48.0"
     babel-plugin-transform-react-remove-prop-types: "npm:^0.4.24"
   languageName: unknown
   linkType: soft
@@ -12772,15 +12770,6 @@ __metadata:
   version: 4.48.0
   resolution: "@wordpress/autop@npm:4.48.0"
   checksum: 3e843274dd45c1c552556e3b1f229a09820a5e3fefffc4c4f18234c1ca3bb9a94c88296a7a1d756c66edbae084fb4959b30d1076b886347e9d086a48be897874
-  languageName: node
-  linkType: hard
-
-"@wordpress/babel-plugin-import-jsx-pragma@npm:5.48.0":
-  version: 5.48.0
-  resolution: "@wordpress/babel-plugin-import-jsx-pragma@npm:5.48.0"
-  peerDependencies:
-    "@babel/core": ^7.25.7
-  checksum: d2e134d847c1469fcdb908a12984ebca938c7023f02fea7d8a28bd7aea09764c61a21f5ca7ee0f86ac24833c3b2e545de6b946a8cdcabd72e3a18f1ba8421f8e
   languageName: node
   linkType: hard
 
