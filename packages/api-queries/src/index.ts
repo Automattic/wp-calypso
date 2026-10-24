@@ -137,6 +137,7 @@ export * from './site-do-it-for-me';
 export * from './site-domains';
 export * from './site-plan-change-features';
 export * from './site-features';
+export * from './site-health';
 export * from './site-jetpack-connection';
 export * from './site-jetpack-keys';
 export * from './site-jetpack-modules';

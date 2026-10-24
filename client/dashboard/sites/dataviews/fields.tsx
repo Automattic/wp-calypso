@@ -1,3 +1,4 @@
+import { SITE_ISSUES } from '@automattic/api-core';
 import { queryClient } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { __ } from '@wordpress/i18n';
@@ -26,6 +27,7 @@ import {
 	Uptime,
 	Visibility,
 } from '../site-fields';
+import { getSiteIssueLabels, SiteHealth } from '../site-fields/site-health';
 import type { AppConfig } from '../../app/context';
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator, View } from '@wordpress/dataviews';
@@ -40,6 +42,7 @@ function getDefaultFields( {
 	queries: AppConfig[ 'queries' ];
 } ): Field< Site >[] {
 	const visibilityLabels = getVisibilityLabels();
+	const issueLabels = getSiteIssueLabels();
 	return [
 		{
 			id: 'name',
@@ -149,6 +152,18 @@ function getDefaultFields( {
 					isLaunched={ item.launch_status === 'launched' || item.launch_status === false }
 				/>
 			),
+		},
+		{
+			// Not `status`: `sanitizeFields` turns a saved `status` column into `visibility`.
+			id: 'issues',
+			label: __( 'Status' ),
+			elements: SITE_ISSUES.map( ( value ) => ( { value, label: issueLabels[ value ] } ) ),
+			// `/me/sites` takes one issue at a time.
+			filterBy: {
+				operators: [ 'is' ],
+			},
+			render: ( { item } ) => <SiteHealth site={ item } />,
+			enableSorting: false,
 		},
 		{
 			id: 'wp_version',

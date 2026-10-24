@@ -1,5 +1,7 @@
+import { SITE_ISSUES } from '@automattic/api-core';
 import { useMemo } from 'react';
 import { useFields } from '../../../sites/dataviews';
+import { getSiteIssueLabels } from '../../../sites/site-fields/site-health';
 import { getHostField, getPhpVersionField, getWpVersionField } from './endpoint-fields';
 import { toAgencyField } from './hydrate';
 import {
@@ -13,6 +15,20 @@ import type { AgencySite, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export { getAgencyActions, useAgencyActions } from './actions';
+
+// The hydrated column can't filter, so the filter is added back here and
+// applied by `/jetpack-agency/sites`, not `/me/sites`.
+function withIssueFilter( field: Field< AgencySite > | null ): Field< AgencySite > | null {
+	if ( ! field ) {
+		return null;
+	}
+	const labels = getSiteIssueLabels();
+	return {
+		...field,
+		elements: SITE_ISSUES.map( ( value ) => ( { value, label: labels[ value ] } ) ),
+		filterBy: { operators: [ 'is' ], isPrimary: true },
+	};
+}
 
 export function useAgencyFields( {
 	viewType,
@@ -34,6 +50,7 @@ export function useAgencyFields( {
 			getSiteNameField( onSiteClick ),
 			getSiteUrlField(),
 			getSiteIconField( viewType ),
+			withIssueFilter( shared( 'issues' ) ),
 			shared( 'subscribers_count' ),
 			shared( 'backup' ),
 			shared( 'plan' ),

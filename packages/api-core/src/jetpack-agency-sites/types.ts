@@ -1,3 +1,5 @@
+import type { SiteIssue } from '../site-health';
+
 export interface AgencySite {
 	blog_id: number;
 	a4a_site_id?: number;
@@ -33,6 +35,8 @@ export interface FetchAgencySitesOptions {
 	page?: number;
 	per_page?: number;
 	not_multisite?: boolean;
+	// Sent as its own `<issue>=true` flag.
+	issue?: SiteIssue;
 }
 
 export interface FetchAgencySitesResponse {
