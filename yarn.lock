@@ -19900,7 +19900,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^65.3.2":
+"eslint-plugin-jsdoc@npm:^65.3.4":
   version: 65.4.2
   resolution: "eslint-plugin-jsdoc@npm:65.4.2"
   dependencies:
@@ -20052,7 +20052,7 @@ __metadata:
   peerDependencies:
     eslint: ^10.13.0
     eslint-plugin-inclusive-language: ^2.2.1
-    eslint-plugin-jsdoc: ^65.3.2
+    eslint-plugin-jsdoc: ^65.3.4
     eslint-plugin-react: ^7.37.5
     eslint-plugin-react-hooks: ^7.1.1
   peerDependenciesMeta:
@@ -35047,7 +35047,7 @@ __metadata:
     eslint-plugin-import: "npm:^2.32.0"
     eslint-plugin-inclusive-language: "npm:^2.2.1"
     eslint-plugin-jest: "npm:^29.17.0"
-    eslint-plugin-jsdoc: "npm:^65.3.2"
+    eslint-plugin-jsdoc: "npm:^65.3.4"
     eslint-plugin-jsx-a11y: "npm:^6.10.2"
     eslint-plugin-prettier: "npm:^5.5.7"
     eslint-plugin-react: "npm:^7.37.5"
