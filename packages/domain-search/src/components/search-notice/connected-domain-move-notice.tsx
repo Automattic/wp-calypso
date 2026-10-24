@@ -60,6 +60,7 @@ export const ConnectedDomainMoveNotice = ( { availability }: ConnectedDomainMove
 			</DomainSearchNotice>
 			{ isConfirmOpen && (
 				<Modal
+					size="medium"
 					title={
 						/* translators: %s is the domain name */
 						sprintf( __( 'Move %s to your new site?' ), domain )
