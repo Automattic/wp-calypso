@@ -155,6 +155,27 @@ export interface DomainAvailability {
 	 * @example [ "exact-match", "tld-exact" ]
 	 */
 	match_reasons?: string[];
+
+	/**
+	 * Whether the domain offered as a move is only connected to WordPress.com, not registered with it
+	 */
+	is_connected_domain?: boolean;
+
+	/**
+	 * ID of the site the domain is removed from if the move proceeds
+	 * @example 123456
+	 */
+	will_remove_from_site?: number;
+
+	/**
+	 * Whether the owner's email subscriptions for the domain move along with it
+	 */
+	moves_email_subscriptions?: boolean;
+
+	/**
+	 * Whether the destination site needs a plan with domain mapping before it can receive the domain
+	 */
+	requires_plan?: boolean;
 }
 
 export enum DomainAvailabilityStatus {
