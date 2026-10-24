@@ -1,4 +1,5 @@
 import page, { Context } from '@automattic/calypso-router';
+import { BUILD_FLOW, WRITE_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from 'calypso/lib/url';
 // Adapts route paths to also include wildcard
 // subroutes under the root level section.
@@ -31,7 +32,8 @@ export function redirectToLaunchpad(
 			siteSlug,
 			verified: verifiedParam ? 1 : undefined,
 		},
-		`/setup/${ launchpadFlow }/launchpad`
+		// Blog sites' Launchpad lives in the build flow; going there directly skips Stepper's redirect.
+		`/setup/${ launchpadFlow === WRITE_FLOW ? BUILD_FLOW : launchpadFlow }/launchpad`
 	);
 	window.location.replace( launchpadRedirectionURL );
 }
