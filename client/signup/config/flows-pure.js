@@ -162,8 +162,10 @@ export function generateFlows( {
 			destination: getEmailSignupFlowDestination,
 			description:
 				'Copy of the onboarding flow that includes non-skippable domain and email steps; the flow is used by the Professional Email landing page',
-			lastModified: '2023-10-11',
+			lastModified: '2026-10-24',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'tier', 'billing' ],
+			optionalDependenciesInQuery: [ 'tier', 'billing' ],
 			hideProgressIndicator: true,
 		},
 		{

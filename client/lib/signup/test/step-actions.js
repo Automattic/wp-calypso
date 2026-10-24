@@ -16,6 +16,7 @@ import {
 	createSiteWithCart,
 	getPluginBillingPeriodForPlan,
 	isDomainFulfilled,
+	isMailboxFulfilled,
 	isPlanFulfilled,
 	pickMarketplacePluginVariant,
 } from '../step-actions';
@@ -192,6 +193,44 @@ describe( 'isDomainFulfilled', () => {
 		expect( submitSignupStep ).not.toHaveBeenCalled();
 
 		isDomainFulfilled( stepName, undefined, nextProps );
+
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'isMailboxFulfilled()', () => {
+	const submitSignupStep = jest.fn();
+	const domainItem = { meta: 'example.com', product_slug: 'dotcom_domain' };
+
+	beforeEach( () => {
+		flows.excludeStep.mockClear();
+		submitSignupStep.mockClear();
+	} );
+
+	test( 'adds the selected tier to the cart and skips the step when the URL picked a tier', () => {
+		const nextProps = {
+			signupDependencies: { domainItem, tier: 'premium', billing: 'monthly' },
+			submitSignupStep,
+		};
+
+		isMailboxFulfilled( 'mailbox', undefined, nextProps );
+
+		const emailItem = expect.objectContaining( {
+			product_slug: 'wp_titan_mail_premium_monthly',
+			meta: 'example.com',
+		} );
+		expect( submitSignupStep ).toHaveBeenCalledWith(
+			{ stepName: 'mailbox', emailItem, wasSkipped: true },
+			{ domainItem, emailItem }
+		);
+		expect( flows.excludeStep ).toHaveBeenCalledWith( 'mailbox' );
+	} );
+
+	test( 'keeps the step when the URL did not pick a tier', () => {
+		const nextProps = { signupDependencies: { domainItem }, submitSignupStep };
+
+		isMailboxFulfilled( 'mailbox', undefined, nextProps );
 
 		expect( submitSignupStep ).not.toHaveBeenCalled();
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
