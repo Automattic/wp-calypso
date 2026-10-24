@@ -10,11 +10,12 @@ import { useExitFlow } from '../../../hooks/use-exit-flow';
 import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../../../stores';
+import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { useLaunchpadDecider } from '../../internals/hooks/use-launchpad-decider';
 import { STEPS } from '../../internals/steps';
 import { Flow, ProvidedDependencies } from '../../internals/types';
 
-const steps = [ STEPS.LAUNCHPAD, STEPS.PROCESSING ];
+const steps = stepsWithRequiredLogin( [ STEPS.LAUNCHPAD, STEPS.SUBSCRIBERS, STEPS.PROCESSING ] );
 
 const build: Flow = {
 	name: BUILD_FLOW,
@@ -82,6 +83,9 @@ const build: Flow = {
 				case 'launchpad': {
 					return navigate( 'processing' );
 				}
+				case 'subscribers': {
+					return navigate( 'launchpad' );
+				}
 			}
 			return providedDependencies;
 		};
@@ -99,7 +103,11 @@ const build: Flow = {
 			}
 		};
 
-		return { goNext, submit };
+		const goToStep = ( step: string ) => {
+			navigate( step );
+		};
+
+		return { goNext, goToStep, submit };
 	},
 };
 

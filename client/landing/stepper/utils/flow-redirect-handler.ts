@@ -2,6 +2,8 @@ import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_ONBOARDING_FLOW,
 	BLOG_FLOW,
+	BUILD_FLOW,
+	WRITE_FLOW,
 } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
@@ -18,6 +20,13 @@ const AI_SITE_BUILDER_REDIRECT: RedirectRule = {
 	// Existing free-trial sites still use the legacy domains and plans steps to upgrade and launch.
 	shouldRedirect: ( searchParams ) =>
 		! searchParams.has( 'siteId' ) && ! searchParams.has( 'siteSlug' ),
+	replace: true,
+};
+
+// Blog sites' Launchpad, hosted by the build flow. Not a removed flow: My Home still opens it for them.
+const WRITE_REDIRECT: RedirectRule = {
+	flow: WRITE_FLOW,
+	to: `/setup/${ BUILD_FLOW }/launchpad:lang?`,
 	replace: true,
 };
 
@@ -50,7 +59,7 @@ const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 	{ flow: 'update-options', to: toSiteHome },
 ];
 
-const FLOW_REDIRECTS = [ AI_SITE_BUILDER_REDIRECT, ...REMOVED_TAILORED_FLOWS ];
+const FLOW_REDIRECTS = [ AI_SITE_BUILDER_REDIRECT, WRITE_REDIRECT, ...REMOVED_TAILORED_FLOWS ];
 
 export const isRemovedFlow = ( flowToCheck: string ) =>
 	!! REMOVED_TAILORED_FLOWS.find( ( { flow } ) => flow === flowToCheck );
@@ -106,7 +115,7 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 					searchParams.get( 'provision_target' ) || searchParams.get( 'early_provision_target' ),
 			} ),
 		} );
-	} else {
+	} else if ( route !== WRITE_REDIRECT ) {
 		recordTracksEvent( 'calypso_tailored_flows_redirect', {
 			redirect_from_url: location.pathname + location.search,
 			redirect_to_url: finalUrl,
