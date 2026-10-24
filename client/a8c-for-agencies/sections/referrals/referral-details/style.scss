@@ -6,6 +6,25 @@
 	margin-block-start: 16px;
 }
 
+.referral-products {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.referral-products__name {
+	color: var(--wpds-color-foreground-content-neutral, #1e1e1e);
+}
+
+.referral-titan-details {
+	color: var(--color-neutral-40);
+}
+
+.referral-titan-details__item + .referral-titan-details__item::before {
+	content: "\00b7";
+	margin-inline: 6px;
+}
+
 .referrals-purchases__assign-button {
 	padding: 0;
 	position: relative;
