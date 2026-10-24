@@ -3,9 +3,9 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import Grid from '../../components/grid';
 import { PendingTierCard, RejectedTierCard } from './application-status-cards';
-import EventCard from './event-card';
 import GrowthCard from './growth-card';
 import HelpfulLinksCard from './helpful-links-card';
+import NewsCard from './news';
 import ReferralEarningsCard from './referral-earnings-card';
 import TierOverviewCard from './tier-overview-card';
 import WooPaymentsRevenueCard from './woopayments-revenue-card';
@@ -70,8 +70,6 @@ export default function AgencyOverviewContent( {
 	approvalStatus,
 	capabilities,
 	hasPartnerDirectoryListing,
-	isEligibleForPressableIntroOffer,
-	isEligibleForPressableExpansionOffer,
 	links,
 	shouldUseRouterLink,
 	onScheduleCall,
@@ -148,15 +146,17 @@ export default function AgencyOverviewContent( {
 				/>
 			</VStack>
 			<VStack spacing={ spacing } justify="flex-start">
-				<HelpfulLinksCard links={ links.helpful } recordTracksEvent={ recordTracksEvent } />
-				<EventCard
-					isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
-					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
-					aiMcpHref={ links.aiMcp }
-					pressableHostingHref={ links.pressableHosting }
+				<NewsCard
+					links={ {
+						aiMcp: links.aiMcp,
+						pressableHosting: links.pressableHosting,
+						referrals: links.referrals,
+						tiers: links.tiers,
+					} }
 					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }
 				/>
+				<HelpfulLinksCard links={ links.helpful } recordTracksEvent={ recordTracksEvent } />
 			</VStack>
 		</Grid>
 	);
