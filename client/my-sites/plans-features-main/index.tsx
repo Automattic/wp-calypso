@@ -1591,7 +1591,9 @@ const PlansFeaturesMain = ( {
 					isDelayedDowngrade={ downgradeMode === 'delayed' }
 					renewalDate={ downgradeRenewalDate }
 					isTermChange={ isPendingDowngradeTermChange }
-					renewalPriceText={ downgradeRenewalPriceText ?? undefined }
+					renewalPriceText={
+						downgradeRenewalPriceText ? String( downgradeRenewalPriceText ) : undefined
+					}
 					refundText={ downgradeRefundText }
 					isConfirming={ cancelAndRefundMutation.isPending || isDowngrading }
 					isRechargeable={ currentPurchase?.is_rechargeable ?? false }
