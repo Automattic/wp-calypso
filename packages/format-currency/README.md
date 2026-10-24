@@ -117,13 +117,17 @@ Since rounding errors are common in floating point math, sometimes a price is pr
 
 If the number is greater than 0, setting this to true will include its sign (eg: `+$35.00`). Has no effect on negative numbers or 0.
 
+### `isRtl?: boolean`
+
+Whether the currency should be formatted for a right-to-left (RTL) context. If not specified, this will be auto-detected from the document direction (`document.dir`) or the specified locale. In an RTL context, negative amounts include the Unicode Left-to-Right Mark (`\u200E`) before the sign to ensure it appears on the correct side of the number without flipping.
+
 ## CurrencyObject
 
 An object with the following properties:
 
-### `sign: '-' | '+' | ''`
+### `sign: '-' | '+' | '' | '\u200E-' | '\u200E+'`
 
-The negative sign for the price, if it is negative, or the positive sign if `signForPositive` is set.
+The negative sign for the price, if it is negative, or the positive sign if `signForPositive` is set. In RTL contexts, this may include the Unicode Left-to-Right Mark (`\u200E-`) to keep the sign on the correct side.
 
 ### `symbol: string`
 

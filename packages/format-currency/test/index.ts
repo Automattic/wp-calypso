@@ -513,3 +513,111 @@ describe( 'getCurrencyObject()', () => {
 		} );
 	} );
 } );
+describe( 'RTL currency formatting', () => {
+	let formatter: CurrencyFormatter;
+
+	beforeEach( () => {
+		formatter = createFormatter();
+	} );
+
+	describe( 'formatCurrency in RTL', () => {
+		test( 'prepends LRM (\u200E) to negative currency when isRtl is true', () => {
+			const money = formatter.formatCurrency( -1234.56, 'USD', { isRtl: true } );
+			expect( money ).toBe( '\u200E-$1,234.56' );
+		} );
+
+		test( 'prepends LRM (\u200E) to negative EUR currency when isRtl is true', () => {
+			const money = formatter.formatCurrency( -1234.56, 'EUR', { locale: 'de-DE', isRtl: true } );
+			expect( money ).toBe( '\u200E-1.234,56\u00a0€' );
+		} );
+
+		test( 'formats negative ILS in Hebrew with LRM to keep minus on left', () => {
+			const money = formatter.formatCurrency( -16.8, 'ILS', { locale: 'he' } );
+			expect( money ).toContain( '\u200E-' );
+		} );
+
+		test( 'prepends LRM (\u200E) to positive currency when signForPositive and isRtl are true', () => {
+			const money = formatter.formatCurrency( 1234.56, 'USD', { signForPositive: true, isRtl: true } );
+			expect( money ).toBe( '\u200E+$1,234.56' );
+		} );
+
+		test( 'does not add LRM to positive currency without sign in RTL', () => {
+			const money = formatter.formatCurrency( 1234.56, 'USD', { isRtl: true } );
+			expect( money ).toBe( '$1,234.56' );
+		} );
+
+		test( 'auto-detects document.dir = "rtl" in browser environment', () => {
+			const originalDir = typeof document !== 'undefined' ? document.dir : undefined;
+			try {
+				if ( typeof document !== 'undefined' ) {
+					document.dir = 'rtl';
+				}
+				const money = formatter.formatCurrency( -140, 'USD' );
+				expect( money ).toBe( '\u200E-$140.00' );
+			} finally {
+				if ( typeof document !== 'undefined' && originalDir !== undefined ) {
+					document.dir = originalDir;
+				}
+			}
+		} );
+
+		test( 'respects isRtl: false override even when document.dir is rtl', () => {
+			const originalDir = typeof document !== 'undefined' ? document.dir : undefined;
+			try {
+				if ( typeof document !== 'undefined' ) {
+					document.dir = 'rtl';
+				}
+				const money = formatter.formatCurrency( -140, 'USD', { isRtl: false } );
+				expect( money ).toBe( '-$140.00' );
+			} finally {
+				if ( typeof document !== 'undefined' && originalDir !== undefined ) {
+					document.dir = originalDir;
+				}
+			}
+		} );
+	} );
+
+	describe( 'getCurrencyObject in RTL', () => {
+		test( 'returns \u200E- sign when isRtl is true', () => {
+			const money = formatter.getCurrencyObject( -1234.56, 'USD', { isRtl: true } );
+			expect( money ).toEqual( {
+				symbol: '$',
+				symbolPosition: 'before',
+				integer: '1,234',
+				fraction: '.56',
+				sign: '\u200E-',
+				hasNonZeroFraction: true,
+			} );
+		} );
+
+		test( 'returns \u200E- sign for Hebrew locale', () => {
+			const money = formatter.getCurrencyObject( -16.8, 'ILS', { locale: 'he' } );
+			expect( money.sign ).toBe( '\u200E-' );
+		} );
+
+		test( 'returns \u200E+ sign when signForPositive and isRtl are true', () => {
+			const money = formatter.getCurrencyObject( 1234.56, 'USD', { signForPositive: true, isRtl: true } );
+			expect( money.sign ).toBe( '\u200E+' );
+		} );
+
+		test( 'auto-detects document.dir = "rtl" for getCurrencyObject', () => {
+			const originalDir = typeof document !== 'undefined' ? document.dir : undefined;
+			try {
+				if ( typeof document !== 'undefined' ) {
+					document.dir = 'rtl';
+				}
+				const money = formatter.getCurrencyObject( -140, 'USD' );
+				expect( money.sign ).toBe( '\u200E-' );
+			} finally {
+				if ( typeof document !== 'undefined' && originalDir !== undefined ) {
+					document.dir = originalDir;
+				}
+			}
+		} );
+
+		test( 'returns standard minus sign in LTR', () => {
+			const money = formatter.getCurrencyObject( -140, 'USD', { isRtl: false } );
+			expect( money.sign ).toBe( '-' );
+		} );
+	} );
+} );

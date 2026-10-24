@@ -139,6 +139,13 @@ export interface CurrencyObjectOptions {
 	 * sign (eg: `+$35.00`). Has no effect on negative numbers or 0.
 	 */
 	signForPositive?: boolean;
+
+	/**
+	 * Whether the currency should be formatted for a right-to-left (RTL) context.
+	 * If not specified, this will be auto-detected from the document direction
+	 * (document.dir) or the specified locale.
+	 */
+	isRtl?: boolean;
 }
 
 export interface CurrencyObject {
@@ -146,7 +153,7 @@ export interface CurrencyObject {
 	 * The negative sign for the price, if it is negative, or the positive sign
 	 * if `signForPositive` is set.
 	 */
-	sign: '-' | '+' | '';
+	sign: '-' | '+' | '' | '\u200E-' | '\u200E+';
 
 	/**
 	 * The currency symbol for the formatted price.
