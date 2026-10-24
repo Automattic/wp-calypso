@@ -31837,7 +31837,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stream-json@npm:^3.5.0":
+"stream-json@npm:^3.7.0":
   version: 3.7.0
   resolution: "stream-json@npm:3.7.0"
   dependencies:
@@ -35094,7 +35094,7 @@ __metadata:
     stackframe: "npm:^1.1.1"
     stacktrace-gps: "npm:^3.0.3"
     storybook: "npm:^10.6.2"
-    stream-json: "npm:^3.5.0"
+    stream-json: "npm:^3.7.0"
     stylelint: "npm:^17.16.0"
     stylelint-scss: "npm:^7.3.0"
     swiper: "npm:^12.1.2"
