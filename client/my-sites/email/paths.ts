@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { isFreeUrlDomainName } from '@automattic/domains-table';
 import { stringify } from 'qs';
 import {
 	isUnderDomainManagementAll,
@@ -271,3 +272,19 @@ export const getEmailCheckoutPath = (
 
 export const getMailboxesPath = ( siteName?: string | null ) =>
 	siteName ? `/mailboxes/${ siteName }` : '/mailboxes';
+
+/**
+ * The dashboard emails list for a site. The site slug is only a usable domain
+ * filter when it is a custom domain: a free subdomain, a site ID or a
+ * subdirectory site (example.com::blog) would filter the list to nothing.
+ */
+export function getDashboardEmailsPath( siteSlug: string ) {
+	if (
+		! siteSlug.includes( '.' ) ||
+		siteSlug.includes( '::' ) ||
+		isFreeUrlDomainName( siteSlug )
+	) {
+		return '/emails';
+	}
+	return `/emails?domainName=${ encodeURIComponent( siteSlug ) }`;
+}
