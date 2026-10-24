@@ -119,6 +119,14 @@ describe( 'flow redirect handler', () => {
 		expect( isRemovedFlow( 'write' ) ).toBe( false );
 	} );
 
+	it( 'keeps a write link’s locale, including ones outside the shared pattern', () => {
+		redirectPathIfNecessary( '/setup/write/launchpad/sr_latin', '?siteSlug=example.wordpress.com' );
+
+		expect( replace ).toHaveBeenCalledWith(
+			'/setup/build/launchpad/sr_latin?siteSlug=example.wordpress.com'
+		);
+	} );
+
 	it( 'does not classify existing AI Site Builder sites as removed', () => {
 		expect( isRemovedFlow( 'ai-site-builder' ) ).toBe( false );
 	} );

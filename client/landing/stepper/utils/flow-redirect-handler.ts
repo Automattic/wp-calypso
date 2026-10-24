@@ -1,3 +1,4 @@
+import { getLanguageSlugs } from '@automattic/i18n-utils';
 import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_ONBOARDING_FLOW,
@@ -86,7 +87,14 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	}
 
 	// Find the language code in the pathname if present
-	const [ , lang ] = normalizedPathname.match( langPattern ) ?? [];
+	let lang: string | undefined = normalizedPathname.match( langPattern )?.[ 1 ];
+
+	// Write links lead to a live flow, so keep any supported locale, including ones like sr_latin
+	// that the pattern misses.
+	if ( route === WRITE_REDIRECT ) {
+		const lastSegment = normalizedPathname.split( '/' ).at( -2 ) ?? '';
+		lang = getLanguageSlugs().includes( lastSegment ) ? lastSegment : undefined;
+	}
 
 	// Replace the ":lang?" placeholder in the "to" field with the matched language or empty string if not present
 	const to = typeof route.to === 'function' ? route.to( searchParams ) : route.to;

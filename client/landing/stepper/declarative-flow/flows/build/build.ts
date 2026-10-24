@@ -103,11 +103,7 @@ const build: Flow = {
 			}
 		};
 
-		const goToStep = ( step: string ) => {
-			navigate( step );
-		};
-
-		return { goNext, goToStep, submit };
+		return { goNext, goToStep: navigate, submit };
 	},
 };
 
