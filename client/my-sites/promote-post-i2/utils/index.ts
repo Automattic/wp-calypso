@@ -236,7 +236,6 @@ export const canPromoteAgainCampaign = ( status: string ) => {
 	}
 
 	return [
-		campaignStatus.SCHEDULED,
 		campaignStatus.ACTIVE,
 		campaignStatus.FINISHED,
 		campaignStatus.CREATED,
