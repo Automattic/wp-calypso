@@ -2,19 +2,27 @@ import { OnboardSelect } from '@automattic/data-stores';
 import { BUILD_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { STEPPER_TRACKS_EVENT_SIGNUP_STEP_START } from '../../../constants';
 import { useExitFlow } from '../../../hooks/use-exit-flow';
 import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
-import { ONBOARD_STORE } from '../../../stores';
+import { ONBOARD_STORE, USER_STORE } from '../../../stores';
+import { getLoginUrl } from '../../../utils/path';
 import { useLaunchpadDecider } from '../../internals/hooks/use-launchpad-decider';
 import { STEPS } from '../../internals/steps';
-import { Flow, ProvidedDependencies } from '../../internals/types';
+import {
+	AssertConditionResult,
+	AssertConditionState,
+	Flow,
+	ProvidedDependencies,
+} from '../../internals/types';
+import type { UserSelect } from '@automattic/data-stores';
 
-const steps = [ STEPS.LAUNCHPAD, STEPS.PROCESSING ];
+const steps = [ STEPS.LAUNCHPAD, STEPS.SUBSCRIBERS, STEPS.PROCESSING ];
 
 const build: Flow = {
 	name: BUILD_FLOW,
@@ -82,6 +90,9 @@ const build: Flow = {
 				case 'launchpad': {
 					return navigate( 'processing' );
 				}
+				case 'subscribers': {
+					return navigate( 'launchpad' );
+				}
 			}
 			return providedDependencies;
 		};
@@ -99,7 +110,75 @@ const build: Flow = {
 			}
 		};
 
-		return { goNext, submit };
+		const goToStep = ( step: string ) => {
+			navigate( step );
+		};
+
+		return { goNext, goToStep, submit };
+	},
+
+	useAssertConditions(): AssertConditionResult {
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+
+		const queryParams = new URLSearchParams( window.location.search );
+		const flowName = this.name;
+
+		const locale = useFlowLocale();
+
+		const flags = queryParams.get( 'flags' );
+		const siteSlug = queryParams.get( 'siteSlug' );
+
+		const getStartUrl = () => {
+			let hasFlowParams = false;
+			const flowParams = new URLSearchParams();
+
+			if ( siteSlug ) {
+				flowParams.set( 'siteSlug', siteSlug );
+				hasFlowParams = true;
+			}
+
+			if ( locale && locale !== 'en' ) {
+				flowParams.set( 'locale', locale );
+				hasFlowParams = true;
+			}
+
+			const redirectTarget =
+				window?.location?.pathname +
+				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
+
+			const logInUrl = getLoginUrl( {
+				variationName: flowName,
+				redirectTo: redirectTarget,
+				locale,
+			} );
+
+			return logInUrl + ( flags ? `&flags=${ flags }` : '' );
+		};
+
+		// Despite sending a CHECKING state, this function gets called again with the
+		// /setup/build/launchpad route which has no locale in the path so we need to
+		// redirect off of the first render.
+		// This effects both /setup/build/<locale> starting points and /setup/build/launchpad/<locale> urls.
+		// The double call also happens on urls without locale.
+		useEffect( () => {
+			if ( ! userIsLoggedIn ) {
+				const logInUrl = getStartUrl();
+				window.location.assign( logInUrl );
+			}
+		}, [] );
+
+		if ( ! userIsLoggedIn ) {
+			result = {
+				state: AssertConditionState.FAILURE,
+				message: 'build-flow requires a logged in user',
+			};
+		}
+
+		return result;
 	},
 };
 
