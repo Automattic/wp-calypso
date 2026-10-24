@@ -1595,12 +1595,12 @@ describe( 'SearchNotice', () => {
 			).toBeVisible();
 			expect(
 				screen.getByText(
-					`${ DOMAIN } will point to your new site instead of other-site.com. Visitors will no longer reach other-site.com at ${ DOMAIN }.`
+					'After checkout, other-site.com will no longer be reachable at this domain.'
 				)
 			).toBeVisible();
 			expect( onAddItem ).not.toHaveBeenCalled();
 
-			await user.click( screen.getByRole( 'button', { name: 'Move domain' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Use this domain' } ) );
 
 			expect( onAddItem ).toHaveBeenCalledWith(
 				expect.objectContaining( { domain_name: DOMAIN, product_slug: 'domain_move_internal' } )
@@ -1640,9 +1640,7 @@ describe( 'SearchNotice', () => {
 			expect(
 				screen.getByText( `Your email subscriptions for ${ DOMAIN } will move along with it.` )
 			).toBeVisible();
-			expect(
-				screen.getByText( 'Connected domains need a paid plan on your new site.' )
-			).toBeVisible();
+			expect( screen.getByText( 'Connected domains require a paid plan.' ) ).toBeVisible();
 		} );
 
 		it( 'leaves out the email and plan sentences when they do not apply', async () => {
@@ -1673,7 +1671,7 @@ describe( 'SearchNotice', () => {
 			);
 
 			await user.click( await screen.findByRole( 'button', { name: 'move it to your new site' } ) );
-			await user.click( screen.getByRole( 'button', { name: 'Move domain' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Use this domain' } ) );
 
 			const [ error ] = await screen.findAllByText( 'Something went wrong' );
 

@@ -73,11 +73,9 @@ export const ConnectedDomainMoveNotice = ( { availability }: ConnectedDomainMove
 					<VStack spacing={ 4 }>
 						<p>
 							{ sprintf(
-								/* translators: %(domain)s is the domain name, %(site)s is the other site domain */
-								__(
-									'%(domain)s will point to your new site instead of %(site)s. Visitors will no longer reach %(site)s at %(domain)s.'
-								),
-								{ domain, site }
+								/* translators: %s is the other site domain */
+								__( 'After checkout, %s will no longer be reachable at this domain.' ),
+								site
 							) }
 						</p>
 						{ availability.moves_email_subscriptions && (
@@ -90,7 +88,7 @@ export const ConnectedDomainMoveNotice = ( { availability }: ConnectedDomainMove
 							</p>
 						) }
 						{ availability.requires_plan && (
-							<p>{ __( 'Connected domains need a paid plan on your new site.' ) }</p>
+							<p>{ __( 'Connected domains require a paid plan.' ) }</p>
 						) }
 						{ error && (
 							<Notice status="error" isDismissible={ false }>
@@ -113,7 +111,7 @@ export const ConnectedDomainMoveNotice = ( { availability }: ConnectedDomainMove
 								disabled={ isPending }
 								__next40pxDefaultSize
 							>
-								{ __( 'Move domain' ) }
+								{ __( 'Use this domain' ) }
 							</Button>
 						</HStack>
 					</VStack>
