@@ -31,15 +31,32 @@ describe( 'StaticSiteImportResults', () => {
 		nock.cleanAll();
 	} );
 
-	const mockSession = ( preview_summary: object ) =>
-		mockApi().get( '/wpcom/v2/static-site-import-session/abc123' ).query( true ).reply( 200, {
-			session_id: 'abc123',
-			status: 'new',
-			state: 'preview_ready',
-			source_digest: 'digest',
-			preview_summary,
-			site_url: '',
-		} );
+	const mockSession = ( preview_summary: object, fields: object = {} ) =>
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, {
+				session_id: 'abc123',
+				status: 'new',
+				state: 'preview_ready',
+				source_digest: 'digest',
+				preview_summary,
+				site_url: '',
+				...fields,
+			} );
+
+	it( 'shows the captured homepage only when the session has a preview image', async () => {
+		mockSession(
+			{ pages: 12, quality_pass: true },
+			{ preview_image_url: 'https://public-api.wordpress.com/preview.png' }
+		);
+
+		render();
+
+		expect(
+			await screen.findByRole( 'img', { name: 'The homepage of busybearscleaning.com' } )
+		).toHaveAttribute( 'src', 'https://public-api.wordpress.com/preview.png' );
+	} );
 
 	it( 'moves the whole site when everything can come across', async () => {
 		mockSession( {
@@ -60,6 +77,7 @@ describe( 'StaticSiteImportResults', () => {
 			} )
 		).toBeVisible();
 		expect( screen.getByText( '12 pages' ) ).toBeVisible();
+		expect( screen.queryByRole( 'img', { name: /The homepage of/ } ) ).not.toBeInTheDocument();
 
 		await userEvent.click( button );
 		expect( submit ).toHaveBeenCalledWith( { action: 'continue' } );

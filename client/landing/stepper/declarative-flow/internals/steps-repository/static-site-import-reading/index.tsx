@@ -21,7 +21,11 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import { ImportCard, useStaticSiteImportSource } from '../components/static-site-import';
+import {
+	ImportCard,
+	PreviewImage,
+	useStaticSiteImportSource,
+} from '../components/static-site-import';
 import type { Step as StepType } from '../../types';
 
 import './style.scss';
@@ -194,6 +198,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 								</CardBody>
 							</Card>
 						) }
+						{ host && <PreviewImage url={ session?.preview_image_url } host={ host } /> }
 						<ImportCard>
 							<HStack justify="flex-start" spacing={ 2 } role="status">
 								{ ! isReady && ! isFailed && (

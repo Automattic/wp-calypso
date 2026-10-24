@@ -80,6 +80,8 @@ export interface StaticSiteImportSession {
 	archive_hash?: string;
 	/** A short-lived link to the preview's Playground archive, only while `preview_ready`. */
 	archive_url?: string;
+	/** A short-lived link to a screenshot of the captured homepage, when the capture rendered one. */
+	preview_image_url?: string;
 	receipt?: { success: boolean; code?: string };
 }
 
