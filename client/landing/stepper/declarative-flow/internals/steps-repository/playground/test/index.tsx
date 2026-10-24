@@ -3,7 +3,8 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
-import { act, screen, waitFor } from '@testing-library/react';
+import { Step } from '@automattic/onboarding';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlaygroundStep from '..';
@@ -175,6 +176,276 @@ describe( 'Playground', () => {
 				intent: 'plans-playground',
 				is_woocommerce_intent: false,
 			} );
+		} );
+	} );
+
+	describe( 'leaving the WooCommerce playground', () => {
+		const wooEntry = '/setup/onboarding/playground?blueprint=123&playground=1&intent=woocommerce';
+		const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' );
+		const assign = jest.fn();
+		let getClientRectsSpy: jest.SpyInstance;
+
+		const getBackButton = () => screen.getByRole( 'button', { name: 'Back' } );
+		const getExitButton = () => screen.getByRole( 'button', { name: 'Exit' } );
+		const getKeepBuildingButton = () => screen.getByRole( 'button', { name: 'Keep building' } );
+		const getContinueButton = () =>
+			screen.getByRole( 'button', { name: 'Continue without saving' } );
+		const queryLeaveModal = () => screen.queryByRole( 'dialog', { name: 'Leave without saving' } );
+		const getLeaveEventNames = () =>
+			recordTracksEvent.mock.calls
+				.map( ( [ eventName ] ) => eventName )
+				.filter( ( eventName ) => eventName.startsWith( 'calypso_playground_leave_modal_' ) );
+		const getLeaveEventCalls = () =>
+			recordTracksEvent.mock.calls.filter( ( [ eventName ] ) =>
+				eventName.startsWith( 'calypso_playground_leave_modal_' )
+			);
+
+		const dispatchPageShow = ( persisted: boolean ) => {
+			const event = new Event( 'pageshow' );
+			Object.defineProperty( event, 'persisted', { value: persisted } );
+			act( () => {
+				window.dispatchEvent( event );
+			} );
+		};
+
+		const renderWooPlaygroundStep = async ( props: Partial< StepProps > = {} ) => {
+			await act( async () => {
+				renderStep(
+					<Step.StepContainerV2Provider
+						value={ {
+							flowName: 'onboarding',
+							stepName: 'playground',
+							recordTracksEvent,
+							logo: null,
+						} }
+					>
+						<PlaygroundStep
+							{ ...mockStepProps( { flow: 'onboarding', stepName: 'playground', ...props } ) }
+						/>
+					</Step.StepContainerV2Provider>,
+					{ initialEntry: wooEntry }
+				);
+			} );
+		};
+
+		const continueWithoutSaving = async () => {
+			await userEvent.click( getBackButton() );
+			await waitFor( () => expect( getKeepBuildingButton() ).toHaveFocus() );
+			await userEvent.click( getContinueButton() );
+		};
+
+		beforeEach( () => {
+			Object.defineProperty( window, 'location', {
+				configurable: true,
+				value: { ...window.location, assign },
+			} );
+			// jsdom has no layout, so the Modal can't find a tabbable element to focus on mount.
+			getClientRectsSpy = jest
+				.spyOn( HTMLElement.prototype, 'getClientRects' )
+				.mockReturnValue( [ {} ] as unknown as DOMRectList );
+		} );
+
+		afterEach( () => {
+			Object.defineProperty( window, 'location', locationDescriptor );
+			getClientRectsSpy.mockRestore();
+		} );
+
+		it( 'should not show the Back and Exit buttons outside the WooCommerce entry', async () => {
+			await act( async () => {
+				renderPlaygroundStep(
+					{},
+					{ initialEntry: '/setup/onboarding/playground?blueprint=123&playground=1' }
+				);
+			} );
+
+			expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Exit' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should show the Back and Exit buttons for the WooCommerce entry', async () => {
+			await renderWooPlaygroundStep();
+
+			expect( getBackButton() ).toBeVisible();
+			expect( getExitButton() ).toBeVisible();
+			expect( queryLeaveModal() ).not.toBeInTheDocument();
+		} );
+
+		it( 'should announce that the Back and Exit buttons open a dialog', async () => {
+			await renderWooPlaygroundStep();
+
+			expect( getBackButton() ).toHaveAttribute( 'aria-haspopup', 'dialog' );
+			expect( getExitButton() ).toHaveAttribute( 'aria-haspopup', 'dialog' );
+			expect( screen.queryByRole( 'button', { name: 'Close' } ) ).not.toBeInTheDocument();
+		} );
+
+		it.each( [
+			[ 'back', getBackButton ],
+			[ 'close', getExitButton ],
+		] )(
+			'should open the leave modal from the %s button and return focus when kept building',
+			async ( trigger, getTrigger ) => {
+				await renderWooPlaygroundStep();
+
+				await userEvent.click( getTrigger() );
+
+				expect( queryLeaveModal() ).toBeVisible();
+				expect( queryLeaveModal() ).toHaveAccessibleDescription(
+					'All the store information you’ve entered will be lost if you leave now.'
+				);
+				await waitFor( () => expect( getKeepBuildingButton() ).toHaveFocus() );
+
+				await userEvent.click( getKeepBuildingButton() );
+
+				expect( queryLeaveModal() ).not.toBeInTheDocument();
+				expect( getTrigger() ).toHaveFocus();
+				expect( assign ).not.toHaveBeenCalled();
+				expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+					'calypso_signup_previous_step_button_click',
+					expect.anything()
+				);
+				expect( getLeaveEventCalls() ).toEqual( [
+					[
+						'calypso_playground_leave_modal_open',
+						{
+							flow: 'onboarding',
+							step: 'playground',
+							blueprint: 'bpl-123',
+							is_woocommerce_intent: true,
+							trigger,
+						},
+					],
+					[
+						'calypso_playground_leave_modal_keep_building',
+						expect.objectContaining( { trigger, is_woocommerce_intent: true } ),
+					],
+				] );
+			}
+		);
+
+		it( 'should keep building when the modal is dismissed with Escape', async () => {
+			await renderWooPlaygroundStep();
+
+			await userEvent.click( getExitButton() );
+			await waitFor( () => expect( getKeepBuildingButton() ).toHaveFocus() );
+			await userEvent.keyboard( '{Escape}' );
+
+			await waitFor( () => expect( queryLeaveModal() ).not.toBeInTheDocument() );
+			expect( getExitButton() ).toHaveFocus();
+			expect( assign ).not.toHaveBeenCalled();
+			expect( getLeaveEventNames() ).toEqual( [
+				'calypso_playground_leave_modal_open',
+				'calypso_playground_leave_modal_keep_building',
+			] );
+		} );
+
+		it( 'should record the continue event before sending the user to WooCommerce.com', async () => {
+			await renderWooPlaygroundStep();
+
+			await continueWithoutSaving();
+
+			expect( getLeaveEventCalls() ).toEqual( [
+				[ 'calypso_playground_leave_modal_open', expect.objectContaining( { trigger: 'back' } ) ],
+				[
+					'calypso_playground_leave_modal_continue',
+					{
+						flow: 'onboarding',
+						step: 'playground',
+						blueprint: 'bpl-123',
+						is_woocommerce_intent: true,
+						trigger: 'back',
+					},
+				],
+			] );
+			// The redirect waits for Tracks to send the event.
+			expect( assign ).not.toHaveBeenCalled();
+			await waitFor( () =>
+				expect( assign ).toHaveBeenCalledWith( 'https://woocommerce.com/start/#hosts' )
+			);
+
+			await userEvent.click( getContinueButton() );
+			expect( assign ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should ignore every dismissal while leaving', async () => {
+			await renderWooPlaygroundStep();
+
+			await continueWithoutSaving();
+
+			expect( getContinueButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+			expect( getKeepBuildingButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+			expect(
+				within( queryLeaveModal() ).queryByRole( 'button', { name: 'Close' } )
+			).not.toBeInTheDocument();
+
+			await userEvent.click( getKeepBuildingButton() );
+			await userEvent.keyboard( '{Escape}' );
+			await userEvent.click(
+				document.querySelector( '.components-modal__screen-overlay' ) as HTMLElement
+			);
+
+			expect( queryLeaveModal() ).toBeVisible();
+			await waitFor( () => expect( assign ).toHaveBeenCalledTimes( 1 ) );
+			expect( getLeaveEventNames() ).toEqual( [
+				'calypso_playground_leave_modal_open',
+				'calypso_playground_leave_modal_continue',
+			] );
+		} );
+
+		it( 'should close the modal when the page is restored from the back/forward cache', async () => {
+			await renderWooPlaygroundStep();
+
+			await continueWithoutSaving();
+			await waitFor( () => expect( assign ).toHaveBeenCalledTimes( 1 ) );
+
+			dispatchPageShow( false );
+			expect( queryLeaveModal() ).toBeVisible();
+
+			dispatchPageShow( true );
+			expect( queryLeaveModal() ).not.toBeInTheDocument();
+			expect( getSaveStoreButton() ).toBeEnabled();
+
+			await userEvent.click( getExitButton() );
+			expect( queryLeaveModal() ).toBeVisible();
+			expect( getContinueButton() ).not.toHaveAttribute( 'aria-disabled' );
+		} );
+
+		it( 'should not send the user away when restored before the redirect', async () => {
+			await renderWooPlaygroundStep();
+
+			await continueWithoutSaving();
+			dispatchPageShow( true );
+
+			await new Promise( ( resolve ) => setTimeout( resolve, 400 ) );
+			expect( assign ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should not let the user leave while the store is being saved', async () => {
+			const submit = jest.fn();
+			await renderWooPlaygroundStep( { navigation: { submit } } );
+
+			await userEvent.click( getSaveStoreButton() );
+			expect( submit ).toHaveBeenCalledTimes( 1 );
+
+			expect( getBackButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+			expect( getExitButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+
+			await userEvent.click( getBackButton() );
+			await userEvent.click( getExitButton() );
+
+			expect( queryLeaveModal() ).not.toBeInTheDocument();
+			expect( getLeaveEventNames() ).toEqual( [] );
+		} );
+
+		it( 'should not let the user save the store while leaving', async () => {
+			const submit = jest.fn();
+			await renderWooPlaygroundStep( { navigation: { submit } } );
+
+			await continueWithoutSaving();
+
+			// The modal hides the rest of the page from the accessibility tree.
+			const saveButton = screen.getByRole( 'button', { name: 'Save my store', hidden: true } );
+			expect( saveButton ).toBeDisabled();
+			expect( submit ).not.toHaveBeenCalled();
 		} );
 	} );
 
