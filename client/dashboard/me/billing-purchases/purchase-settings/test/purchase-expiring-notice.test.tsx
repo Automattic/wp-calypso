@@ -41,10 +41,13 @@ describe( '<PurchaseExpiringNotice />', () => {
 		jest.useRealTimers();
 	} );
 
-	test( 'shows the free trial end date for a free introductory offer', () => {
+	test( 'shows the free trial end date when the trial has no payment method', () => {
 		render(
 			<PurchaseExpiringNotice
-				purchase={ makePurchase( { introductory_offer: makeTrialOffer() } ) }
+				purchase={ makePurchase( {
+					expiry_status: 'manual-renew',
+					introductory_offer: makeTrialOffer(),
+				} ) }
 				purchaseAttachedTo={ undefined }
 				isDomainWithoutSite={ false }
 			/>
@@ -55,6 +58,24 @@ describe( '<PurchaseExpiringNotice />', () => {
 				"Your Professional Email free trial ends on January 22, 2027. Update your payment information so you don't lose out on your paid features!"
 			)
 		).toBeVisible();
+	} );
+
+	test( 'keeps the auto-renewal wording when the trial has a saved card', () => {
+		render(
+			<PurchaseExpiringNotice
+				purchase={ makePurchase( {
+					expiry_status: 'manual-renew',
+					payment_type: 'credit_card',
+					is_rechargeable: true,
+					introductory_offer: makeTrialOffer(),
+				} ) }
+				purchaseAttachedTo={ undefined }
+				isDomainWithoutSite={ false }
+			/>
+		);
+
+		expect( screen.queryByText( /free trial/ ) ).not.toBeInTheDocument();
+		expect( screen.getByText( /Please enable auto-renewal/ ) ).toBeVisible();
 	} );
 
 	test( 'shows the expiry wording once the purchase renews past the trial', () => {

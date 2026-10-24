@@ -157,21 +157,6 @@ function ExpiringText( {
 	purchase: Purchase;
 	isDomainWithoutSite: boolean;
 } ) {
-	const locale = useLocale();
-
-	if ( isFreeTrialEndingOnExpiryDate( purchase ) ) {
-		return sprintf(
-			// translators: %(purchaseName)s: the name of the product, %(date)s: a formatted date, like "January 22, 2027"
-			__(
-				"Your %(purchaseName)s free trial ends on %(date)s. Update your payment information so you don't lose out on your paid features!"
-			),
-			{
-				purchaseName: purchase.product_name,
-				date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
-			}
-		);
-	}
-
 	if (
 		purchase.site_slug &&
 		purchase.expiry_status === 'manual-renew' &&
@@ -244,6 +229,7 @@ export function ExpiringLaterText( {
 	autoRenewingUpgradesAction?: () => void;
 	isDomainWithoutSite?: boolean;
 } ) {
+	const locale = useLocale();
 	const purchaseName = purchase.is_domain ? ( purchase.meta ?? '' ) : purchase.product_name;
 	const expiry = getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' );
 
@@ -339,6 +325,19 @@ export function ExpiringLaterText( {
 			),
 			{
 				link: <Button variant="link" onClick={ autoRenewingUpgradesAction } />,
+			}
+		);
+	}
+
+	if ( isFreeTrialEndingOnExpiryDate( purchase ) ) {
+		return sprintf(
+			// translators: %(purchaseName)s: the name of the product, %(date)s: a formatted date, like "January 22, 2027"
+			__(
+				"Your %(purchaseName)s free trial ends on %(date)s. Update your payment information so you don't lose out on your paid features!"
+			),
+			{
+				purchaseName,
+				date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 			}
 		);
 	}
