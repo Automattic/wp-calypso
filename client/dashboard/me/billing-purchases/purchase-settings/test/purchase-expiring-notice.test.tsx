@@ -50,7 +50,11 @@ describe( '<PurchaseExpiringNotice />', () => {
 			/>
 		);
 
-		expect( screen.getByText( 'Your free trial ends on January 22, 2027.' ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				"Your Professional Email free trial ends on January 22, 2027. Update your payment information so you don't lose out on your paid features!"
+			)
+		).toBeVisible();
 	} );
 
 	test( 'shows the expiry wording once the purchase renews past the trial', () => {

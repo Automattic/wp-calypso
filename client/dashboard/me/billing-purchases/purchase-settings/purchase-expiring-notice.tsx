@@ -161,9 +161,12 @@ function ExpiringText( {
 
 	if ( isFreeTrialEndingOnExpiryDate( purchase ) ) {
 		return sprintf(
-			// translators: %(date)s: a formatted date, like "January 22, 2027"
-			__( 'Your free trial ends on %(date)s.' ),
+			// translators: %(purchaseName)s: the name of the product, %(date)s: a formatted date, like "January 22, 2027"
+			__(
+				"Your %(purchaseName)s free trial ends on %(date)s. Update your payment information so you don't lose out on your paid features!"
+			),
 			{
+				purchaseName: purchase.product_name,
 				date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 			}
 		);
