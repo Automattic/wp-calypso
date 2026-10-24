@@ -28,3 +28,6 @@ export const isEnabled = configApi.isEnabled.bind( configApi );
 export const enabledFeatures = configApi.enabledFeatures.bind( configApi );
 export const enable = configApi.enable.bind( configApi );
 export const disable = configApi.disable.bind( configApi );
+
+// Odyssey Stats runs inside wp-admin, never on calypso.live.
+export const isCalypsoLive = () => false;
