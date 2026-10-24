@@ -17,6 +17,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { DEFAULT_PAGE_SIZE } from './constants';
+import { getLastSearchPage, getPluginsPage } from './pagination';
 import { search, searchBySlug } from './search-api';
 import { getPluginsListKey } from './utils';
 import type { ESHits, ESResponse, Plugin, PluginQueryOptions } from './types';
@@ -120,6 +121,56 @@ export const useESPlugin = (
 };
 
 type PageParam = string | number;
+
+export const getESPluginsQueryParams = ( options: PluginQueryOptions, locale: string ) => {
+	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
+	const page = getPluginsPage( options.page, getLastSearchPage( pageSize ) );
+	const resolvedLocale = options.locale || locale;
+	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
+
+	return {
+		queryKey: [
+			'es-plugins-page',
+			{ ...options, locale: resolvedLocale, pageSize, page, searchTerm, author },
+		],
+		queryFn: (): Promise< ESResponse > =>
+			search( {
+				query: searchTerm,
+				author,
+				groupId: options.category === 'popular' ? 'wporg' : 'marketplace',
+				category: options.category,
+				pageHandle: undefined,
+				from: ( page - 1 ) * pageSize,
+				pageSize,
+				locale: getWpLocaleBySlug( resolvedLocale as LanguageSlug ),
+				slugs: options.slugs,
+			} ),
+	};
+};
+
+export const useESPlugins = (
+	options: PluginQueryOptions,
+	{ enabled = true }: { enabled?: boolean } = {}
+) => {
+	const locale = useSelector( getCurrentUserLocale );
+	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
+	const lastPage = getLastSearchPage( pageSize );
+	const page = getPluginsPage( options.page, lastPage );
+
+	return useQuery( {
+		...getESPluginsQueryParams( options, locale ),
+		select: ( { data }: ESResponse ) => ( {
+			plugins: mapIndexResultsToPluginData( data.results ),
+			pagination: {
+				page,
+				pages: Math.min( Math.ceil( data.total / pageSize ), lastPage ),
+				results: data.total,
+			},
+		} ),
+		enabled,
+		staleTime: 10000,
+	} );
+};
 
 export const getESPluginsInfiniteQueryParams = (
 	options: PluginQueryOptions,

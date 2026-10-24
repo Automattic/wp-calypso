@@ -37,6 +37,7 @@ function generateApiQueryString( {
 	groupId,
 	category,
 	pageHandle,
+	from,
 	pageSize,
 	locale,
 	slugs,
@@ -58,6 +59,7 @@ function generateApiQueryString( {
 	} = {
 		fields: [ ...RETURNABLE_FIELDS ],
 		page_handle: pageHandle,
+		...( from !== undefined && { from } ),
 		query: encodeURIComponent( query ?? '' ),
 		sort: mapSortToApiValue( sort ),
 		size: pageSize,
