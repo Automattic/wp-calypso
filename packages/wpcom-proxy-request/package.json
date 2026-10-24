@@ -55,6 +55,6 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"postcss": "^8.5.15",
-		"webpack": "^5.111.1"
+		"webpack": "^5.112.2"
 	}
 }
