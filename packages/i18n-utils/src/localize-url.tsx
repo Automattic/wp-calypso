@@ -129,7 +129,14 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 		return prefixLocalizedUrlPath( localesWithGoBlog )( url, localeSlug );
 	},
 	'wordpress.com/pricing/': prefixLocalizedUrlPath( localesForPricePlans ),
-	'wordpress.com/tos/': prefixLocalizedUrlPath( magnificentNonEnLocales ),
+	'automattic.com/tos/': ( url: URL, localeSlug: Locale ): URL => {
+		// Translated terms are only published on wordpress.com.
+		if ( magnificentNonEnLocales.includes( localeSlug ) ) {
+			url.host = 'wordpress.com';
+			url.pathname = localeSlug + url.pathname;
+		}
+		return url;
+	},
 	'wordpress.com/wp-admin/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', wpLoginLocales ),
 	'jetpack.com': prefixLocalizedUrlPath( jetpackComLocales ),
