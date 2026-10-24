@@ -124,6 +124,7 @@ import { MobileCheckoutStickySummary } from './mobile-checkout-sticky-summary';
 import { mobileCheckoutStickySummaryRadioDotStyles } from './mobile-checkout-sticky-summary-styles';
 import { NonRenewableDomain, SearchForNewDomainButton } from './non-renewable-domain';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
+import PaymentMethodStepTitle from './payment-method-step-title';
 import { PaymentMethodFilter } from './payment-methods-filter';
 import { getRefundWindowCopy } from './refund-policies';
 import SecondaryCartPromotions from './secondary-cart-promotions';
@@ -1061,6 +1062,12 @@ export default function CheckoutMainContent( {
 						/>
 					) }
 					<PaymentMethodStep
+						titleContent={
+							<PaymentMethodStepTitle
+								currency={ responseCart.currency }
+								isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
+							/>
+						}
 						activeStepHeader={
 							<PaymentMethodFilter
 								areStoredCardsFiltered={ areStoredCardsFiltered }
@@ -1079,10 +1086,6 @@ export default function CheckoutMainContent( {
 						onPageLoadError={ onPageLoadError }
 						waitForPaymentMethodIds={ [ 'apple-pay', 'google-pay' ] }
 						{ ...( isMobileCheckoutStickySummary && {
-							/* Figma 3971:13237 — the active heading reads "Payment method"
-							   under the experiment (vs. composite-checkout's default
-							   "Pick a payment method"). */
-							titleContent: <>{ translate( 'Payment method' ) }</>,
 							/* Figma 3971:13239 — secure-encryption notice sits as a
 							   13/regular/Gray 60 paragraph between the step heading
 							   and the methods card. activeStepHeader renders directly
@@ -1429,10 +1432,8 @@ const mobileCheckoutStickySummaryStyles = css`
 	   inside scales to fit the padded inner area while preserving
 	   its intrinsic aspect ratio (preserveAspectRatio defaults to
 	   xMidYMid meet, centering the path). PaymentMethodLogos spans
-	   render with either .credit-card__logos (credit card) or
-	   .payment-logos (PayPal, Bancontact, Apple Pay, etc.) — cover
-	   both. */
-	.checkout-payment-methods .credit-card__logos,
+	   render with .payment-logos (PayPal, Bancontact, Apple Pay,
+	   etc.). CreditCardLogos owns the equivalent card styles. */
 	.checkout-payment-methods .payment-logos {
 		flex: 0 0 auto;
 		flex-wrap: nowrap;
@@ -1443,12 +1444,10 @@ const mobileCheckoutStickySummaryStyles = css`
 	   absolutely positioned (top 14px / right 10px), so it escapes the
 	   row and lands over the divider. Flatten both so every chip is an
 	   in-flow flex item the row can centre. */
-	.checkout-payment-methods .credit-card__logos > span,
 	.checkout-payment-methods .payment-logos > span {
 		position: static;
 		transform: none;
 	}
-	.checkout-payment-methods .credit-card__logos svg,
 	.checkout-payment-methods .payment-logos svg {
 		position: static;
 		background: ${ colorStudio.colors[ 'White' ] };
@@ -1458,26 +1457,6 @@ const mobileCheckoutStickySummaryStyles = css`
 		box-sizing: border-box;
 		height: 22px;
 		width: 32px;
-	}
-	/* "+N" overflow pill — Figma 3971:13264. Same 32x22 chip
-	   silhouette as the brand logos, but the inner content is a
-	   centered 11px medium label instead of an SVG. */
-	.checkout-payment-methods .credit-card__logos-overflow {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		min-width: 22px;
-		height: 22px;
-		padding: 0 6px;
-		background: ${ colorStudio.colors[ 'White' ] };
-		border: 1px solid var( --wp-components-color-gray-200, #e0e0e0 );
-		border-radius: 4px;
-		box-sizing: border-box;
-		font-size: 11px;
-		font-weight: 500;
-		line-height: 20px;
-		color: var( --wp-components-color-gray-900, #1e1e1e );
-		flex: 0 0 auto;
 	}
 	/* Lock icon at the end of the Card number input — Figma
 	   3971:13273. The StripeFieldWrapper.number is the chrome
