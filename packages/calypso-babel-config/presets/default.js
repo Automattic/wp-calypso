@@ -48,7 +48,7 @@ module.exports = ( api, opts ) => ( {
 		[
 			require.resolve( '@babel/plugin-transform-runtime' ),
 			{
-				corejs: false, // we polyfill so we don't need core-js
+				corejs: false,
 				helpers: true,
 				regenerator: false,
 				useESModules: false,

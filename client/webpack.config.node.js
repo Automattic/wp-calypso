@@ -56,11 +56,6 @@ function getExternals() {
 				// is also safe to bundle although it's not a monorepo package.
 				/^@automattic\/number-formatters(\/|$)/,
 
-				// bundle the core-js polyfills. We pick only a very small subset of the library
-				// to polyfill a few things that are not supported by the latest LTS Node.js,
-				// and this avoids shipping the entire library which is fairly big.
-				/^core-js\//,
-
 				// Ensure that file-loader files imported from packages in node_modules are
 				// _not_ externalized and can be processed by the fileLoader.
 				fileLoader.test,
