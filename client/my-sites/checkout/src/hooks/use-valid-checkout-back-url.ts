@@ -14,6 +14,7 @@ const getAllowedHosts = ( siteSlug?: string ): string[] => {
 		'jetpack.com',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
+		'horizon.cloud.jetpack.com',
 		...( hostname ? [ hostname ] : [] ),
 		...( siteSlug ? [ siteSlug.includes( '::' ) ? siteSlug.split( '::' )[ 0 ] : siteSlug ] : [] ),
 	];
