@@ -10,8 +10,8 @@ export interface BlackboxProtection {
 	isSubmitBlocked: boolean;
 	/** Challenge container element to render in the form. */
 	challenge: ReactElement;
-	/** Resolves the Blackbox session ID (no-op when disabled). */
-	getSessionId: () => Promise< string | undefined >;
+	/** Resolves an ID, undefined without a session, or null when the form becomes inactive. */
+	getSessionId: () => Promise< string | undefined | null >;
 	/** Resets the Blackbox session so a retry starts fresh. */
 	reset: () => void;
 }
@@ -51,8 +51,6 @@ export function useBlackboxProtection( {
 	const enabled =
 		! suspended && !! apiKey && config.isEnabled( 'blackbox' ) && config.isEnabled( feature );
 	const [ challengeBlocksSubmit, setChallengeBlocksSubmit ] = useState( enabled );
-	const [ replacementInFlight, setReplacementInFlight ] = useState( false );
-	const isSubmitBlocked = challengeBlocksSubmit || replacementInFlight;
 
 	// Re-block during render when a suspended surface re-enables: the challenge
 	// only re-blocks from a post-paint effect, which would leave the submit
@@ -81,30 +79,13 @@ export function useBlackboxProtection( {
 	}, [] );
 
 	useEffect( () => {
-		if ( ! enabled || ! resetOnError ) {
-			setReplacementInFlight( false );
-			return;
+		if ( enabled && resetOnError ) {
+			reset();
 		}
-
-		let cancelled = false;
-		// reset() aborts the visible challenge before the replacement collect
-		// decides, and that abort would re-enable submit. Hold it until the
-		// collect settles; a challenge that starts keeps its own block.
-		setReplacementInFlight( true );
-		reset();
-		getSessionId().finally( () => {
-			if ( ! cancelled ) {
-				setReplacementInFlight( false );
-			}
-		} );
-
-		return () => {
-			cancelled = true;
-		};
-	}, [ enabled, resetOnError, reset, getSessionId ] );
+	}, [ enabled, resetOnError, reset ] );
 
 	return {
-		isSubmitBlocked,
+		isSubmitBlocked: challengeBlocksSubmit,
 		challenge: (
 			<BlackboxChallenge
 				enabled={ enabled }

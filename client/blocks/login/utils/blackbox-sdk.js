@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
+import { rememberBlackboxKey } from 'calypso/blocks/login/utils/blackbox-surface';
 
 let loadPromise = null;
 
@@ -62,6 +63,8 @@ export function loadBlackboxSdk( apiKey ) {
 				if ( error ) {
 					didFailSynchronously = true;
 					loadPromise = null;
+				} else {
+					rememberBlackboxKey( window.Blackbox, apiKey );
 				}
 				resolve();
 			},

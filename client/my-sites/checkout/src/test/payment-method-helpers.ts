@@ -46,6 +46,15 @@ describe( 'createAccount', () => {
 		nock.cleanAll();
 	} );
 
+	it( 'cancels account creation when checkout becomes inactive', async () => {
+		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( null );
+		const getRequestBody = interceptUsersNew();
+		await expect( createAccount( createAccountArgs ) ).rejects.toMatchObject( {
+			name: 'AbortError',
+		} );
+		expect( getRequestBody() ).toBeUndefined();
+	} );
+
 	it( 'attaches blackbox_session_id when available', async () => {
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 		const getRequestBody = interceptUsersNew();
@@ -93,6 +102,9 @@ describe( 'createAccount', () => {
 			configure: jest.fn(),
 			collect: jest.fn(),
 			getSessionId: jest.fn(),
+			flush: jest.fn(),
+			getSnapshot: jest.fn(),
+			subscribe: jest.fn(),
 			reset,
 		};
 		interceptUsersNew( 500, { error: 'internal_server_error', message: 'fail' } );

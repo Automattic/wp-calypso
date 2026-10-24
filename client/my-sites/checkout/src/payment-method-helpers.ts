@@ -91,6 +91,10 @@ export async function createAccount( {
 			? await getBlackboxSessionId( blackboxApiKey )
 			: undefined;
 
+	if ( blackboxSessionId === null ) {
+		throw new DOMException( 'Checkout is no longer active.', 'AbortError' );
+	}
+
 	try {
 		const response = await createUser( {
 			email,

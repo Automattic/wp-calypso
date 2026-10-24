@@ -348,6 +348,16 @@ describe( 'LoginForm', () => {
 			delete window.Blackbox;
 		} );
 
+		test( 'cancels an inactive form without sending a login request', async () => {
+			getBlackboxSessionId.mockResolvedValue( null );
+			renderRegularLoginForm();
+			await userEvent.click( screen.getByRole( 'button', { name: /Log In/i } ) );
+			await waitFor( () =>
+				expect( screen.getByRole( 'button', { name: /Log In/i } ) ).toBeEnabled()
+			);
+			expect( mockFetch ).not.toHaveBeenCalled();
+		} );
+
 		test( 'attaches blackbox_session_id to the login request when available', async () => {
 			getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 			mockFetch.mockResolvedValueOnce( {
