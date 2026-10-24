@@ -80,6 +80,7 @@ import middlewareCache from '../middleware/cache.js';
 import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
 import { registerCspReportRoute } from './csp-report';
+import renderPublicError from './error';
 import { getFrameHeaders } from './frame-options';
 const debug = debugFactory( 'calypso:pages' );
 
@@ -1258,6 +1259,7 @@ export default function pages() {
 	app.use( cookieParser() );
 	app.use( middlewareAssets() );
 	app.use( middlewareCache() );
+	app.get( /^\/error$/, renderPublicError );
 	app.use( setupLoggedInContext );
 	app.use( middlewareUnsupportedBrowser() );
 

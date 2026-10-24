@@ -1,5 +1,8 @@
 import { IncomingMessage } from 'http';
 import mockFs from 'mock-fs';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import ErrorDocument from 'calypso/document/error';
 import sections from 'calypso/sections';
 
 jest.mock( 'child_process', () => ( {
@@ -196,7 +199,7 @@ const buildApp = ( environment ) => {
 			defaultCookies.wordpress_logged_in = false;
 			tearDown.push( () => delete defaultCookies.wordpress_logged_in );
 		},
-		withMockFilesystem() {
+		withMockFilesystem( files = {} ) {
 			const assetsList = [
 				'/calypso/evergreen/entry-main.1.min.js',
 				'/calypso/evergreen/entry-main.2.min.js',
@@ -222,6 +225,9 @@ const buildApp = ( environment ) => {
 					'entry-dashboard-dotcom': assetsList.map( ( asset ) =>
 						asset.replace( 'entry-main', 'entry-dashboard-dotcom' )
 					),
+					'entry-public-error': assetsList.map( ( asset ) =>
+						asset.replace( 'entry-main', 'entry-public-error' )
+					),
 					...Object.fromEntries(
 						sections.map( ( section ) => [
 							section.name,
@@ -237,6 +243,7 @@ const buildApp = ( environment ) => {
 			mockFs( {
 				'./build/assets.json': JSON.stringify( assets ),
 				'./public/languages/lang-revisions.json': JSON.stringify( { es: 1234 } ),
+				...files,
 			} );
 			tearDown.push( () => mockFs.restore() );
 		},
@@ -1883,4 +1890,88 @@ describe( 'dashboard app', () => {
 			'https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fmy.wordpress.com%2Fsites'
 		);
 	} );
+} );
+
+it( 'serves a complete public error document on classic A4A and A4A Dashboard hosts', async () => {
+	for ( const [ environment, hostname ] of [
+		[ 'a8c-for-agencies-production', 'agencies.automattic.com' ],
+		[ 'dashboard-production', 'agencies-beta.automattic.com' ],
+	] ) {
+		const app = buildApp( environment );
+		app.withMockFilesystem( {
+			'./public/languages/ar-v1.1.json': JSON.stringify( {
+				'': { localeSlug: 'ar', lang: 'ar', plural_forms: 'nplurals=2; plural=(n != 1);' },
+				'Checkout link expired': [ 'انتهت صلاحية رابط الدفع' ],
+			} ),
+		} );
+		const mocks = app.getMocks();
+		// Jest cannot resolve renderJsx's webpack require.context; render the actual document here.
+		mocks.renderJsx.mockImplementation(
+			( view, props ) =>
+				'<!DOCTYPE html>' + renderToStaticMarkup( createElement( ErrorDocument, props ) )
+		);
+		try {
+			const { response } = await app.run( {
+				request: { hostname, url: '/error?code=a4a_pressable_titan_redirect_expired&locale=fr' },
+			} );
+			const html = response.send.mock.calls[ 0 ][ 0 ];
+			expect( response.statusCode ).toBe( 200 );
+			expect( mocks.renderJsx ).toHaveBeenCalledWith( 'error', expect.any( Object ) );
+			expect( response.setHeader ).toHaveBeenCalledWith( 'Cache-Control', 'private, no-store' );
+			expect( html ).toContain( '<!DOCTYPE html><html lang="en" dir="ltr">' );
+			expect( html ).toContain( '<title>Checkout link expired</title>' );
+			expect( html ).toContain( '>Checkout link expired</h2>' );
+			expect( html ).toContain( 'This link has expired. Request a new link from Pressable.' );
+			expect( html ).toMatch(
+				/<a[^>]+href="https:\/\/my\.pressable\.com\/"[^>]*>Return to Pressable<\/a>/
+			);
+			expect( html ).toContain( 'entry-public-error.3.min.css' );
+			expect( html ).toContain( 'Automattic for Agencies' );
+			expect( html ).toContain( 'width=device-width, initial-scale=1' );
+			expect( html ).not.toMatch( /<script|maximum-scale|rest-proxy|configData|initialReduxState/ );
+
+			const overridden = await app.run( {
+				request: {
+					hostname,
+					url: '/error?code=a4a_pressable_titan_redirect_expired&return_to=home&locale=ar',
+					cookies: { wordpress_logged_in: true },
+				},
+			} );
+			const translatedHtml = overridden.response.send.mock.calls[ 0 ][ 0 ];
+			expect( translatedHtml ).toContain( '<html lang="ar" dir="rtl">' );
+			expect( translatedHtml ).toContain( '>انتهت صلاحية رابط الدفع</h2>' );
+			expect( translatedHtml ).toContain( 'entry-public-error.4.min.rtl.css' );
+			expect( translatedHtml ).toMatch( /<a[^>]+href="\/"[^>]*>Return home<\/a>/ );
+
+			const fallback = await app.run( {
+				request: {
+					hostname,
+					url: '/error?code=__proto__&return_to=https://evil.example/&message=untrusted&locale=../ar',
+				},
+			} );
+			const fallbackHtml = fallback.response.send.mock.calls[ 0 ][ 0 ];
+			expect( fallbackHtml ).toContain( '<html lang="en" dir="ltr">' );
+			expect( fallbackHtml ).toContain( '>Something went wrong</h2>' );
+			expect( fallbackHtml ).toMatch( /<a[^>]+href="\/"[^>]*>Return home<\/a>/ );
+			expect( fallbackHtml ).not.toMatch( /evil\.example|untrusted|<script/ );
+			expect( mocks.createReduxStore ).not.toHaveBeenCalled();
+			expect( mocks.getBootstrappedUser ).not.toHaveBeenCalled();
+			expect( mocks.serverRender ).not.toHaveBeenCalled();
+		} finally {
+			app.reset();
+		}
+	}
+
+	const app = buildApp( 'dashboard-production' );
+	app.withMockFilesystem();
+	app.withServerRender( 'dashboard shell' );
+	try {
+		const { response } = await app.run( {
+			request: { hostname: 'my.wordpress.com', url: '/error' },
+		} );
+		expect( response.statusCode ).toBe( 404 );
+		expect( app.getMocks().renderJsx ).not.toHaveBeenCalled();
+	} finally {
+		app.reset();
+	}
 } );

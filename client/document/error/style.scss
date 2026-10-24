@@ -1,0 +1,18 @@
+@import 'calypso/assets/stylesheets/style';
+@import '@automattic/components/src/button/style';
+@import 'calypso/components/empty-content/style';
+@import 'calypso/layout/style';
+@import 'calypso/a8c-for-agencies/style';
+
+.a4a-error-document {
+	--color-surface-backdrop: var( --color-neutral-0 );
+}
+
+.a4a-error-page .empty-content__title {
+	margin-block-end: 20px;
+}
+
+.a4a-error-page .empty-content__action:focus-visible {
+	outline: 2px solid var( --color-primary );
+	outline-offset: 2px;
+}
