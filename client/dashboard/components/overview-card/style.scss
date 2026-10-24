@@ -1,6 +1,5 @@
 @import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
 .dashboard-overview-card {
@@ -16,25 +15,11 @@
 		display: flex;
 		flex-direction: column;
 	}
-
-	.dashboard-callout {
-		.dashboard-callout__h-container {
-			padding: #{$grid-unit-20};
-
-			@include break-medium {
-				padding: #{$grid-unit-30};
-			}
-		}
-	}
 }
 
 .dashboard-overview-card__content {
 	border-radius: $radius-large;
 	padding: #{$grid-unit-20};
-
-	@include break-medium {
-		padding: #{$grid-unit-30};
-	}
 
 	// HStacks are width 100% and will try to grow as wide as the card body.
 	// We need to ensure this new padding is included as part of that 100%.

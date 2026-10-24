@@ -4,11 +4,13 @@
 
 .dashboard-page-layout {
 	// Page-level rhythm. Together with the block padding these drive the
-	// sidebar/content cross-column alignment: block padding (24px) + page
-	// header row (40px) + header-to-content gap (24px) must equal the
-	// sidebar's offset to its first menu item (88px).
+	// sidebar/content cross-column alignment. Without a sidebar logo, the
+	// block padding (24px) lines the first menu item up with the page header
+	// row. With one, block padding (24px) + page header row (40px) +
+	// header-to-content gap (20px) must equal the sidebar's offset to its
+	// first menu item (84px).
 	--dashboard-page-header__row-height: 40px;
-	--dashboard-page-header__content-gap: #{$grid-unit-30};
+	--dashboard-page-header__content-gap: 20px;
 
 	--page-layout-block-padding: #{$grid-unit-30};
 	--page-layout-inline-padding: #{$grid-unit-20};
