@@ -10,6 +10,7 @@ import type { PresetId } from './utils';
 import './style.scss';
 
 export type DateRangePickerProps = {
+	// Browser-local Dates carrying site calendar days. onChange returns the same representation.
 	start: Date;
 	end: Date;
 	onChange: ( next: { start: Date; end: Date } ) => void;
@@ -147,7 +148,6 @@ function DateRangePickerInner( {
 			setFromStr={ setFromStr }
 			setToStr={ setToStr }
 			timezoneString={ timezoneString }
-			gmtOffset={ gmtOffset }
 			onChange={ onChange }
 			onClose={ onClose }
 			compositeActiveId={ compositeActiveId }

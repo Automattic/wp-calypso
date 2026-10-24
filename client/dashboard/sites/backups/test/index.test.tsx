@@ -4,11 +4,15 @@
 
 import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
+import { useSearch } from '@tanstack/react-router';
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
+import { BackupsPage } from '../backups-page';
 import { BackupsListPage } from '../index';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
+import type { ReactElement } from 'react';
 
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
@@ -40,7 +44,7 @@ jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_x: ( text: string ) => text,
 	isRTL: () => false,
-	sprintf: ( text: string ) => text,
+	sprintf: jest.requireActual( '@wordpress/i18n' ).sprintf,
 } ) );
 
 jest.mock(
@@ -149,15 +153,25 @@ jest.mock( '../../../app/router/sites', () => ( {
 	siteBackupsRoute: {
 		useSearch: () => ( {} ),
 	},
+	siteBackupsIndexRoute: {
+		fullPath: '/sites/$siteSlug/backups/',
+	},
 } ) );
 
-function renderBackupsListPage( {
-	backupEntries = mockBackupEntries,
-	activityLogTimes = 2,
-}: {
-	backupEntries?: ActivityLogEntry[];
-	activityLogTimes?: number;
-} = {} ) {
+function renderBackupsListPage(
+	{
+		backupEntries = mockBackupEntries,
+		activityLogTimes = 2,
+		timezoneString = '',
+		requests = [],
+	}: {
+		backupEntries?: ActivityLogEntry[];
+		activityLogTimes?: number;
+		timezoneString?: string;
+		requests?: Record< string, unknown >[];
+	} = {},
+	page: ReactElement = <BackupsListPage />
+) {
 	nock( API_BASE ).get( '/rest/v1.1/sites/test-site' ).query( true ).reply( 200, mockSite );
 
 	nock( API_BASE )
@@ -165,13 +179,16 @@ function renderBackupsListPage( {
 		.reply( 200, {
 			settings: {
 				gmt_offset: 0,
-				timezone_string: '',
+				timezone_string: timezoneString,
 			},
 		} );
 
 	nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/activity/rewindable` )
-		.query( true )
+		.query( ( query ) => {
+			requests.push( { kind: 'entries', ...query } );
+			return true;
+		} )
 		.times( activityLogTimes )
 		.reply( 200, {
 			current: {
@@ -180,6 +197,14 @@ function renderBackupsListPage( {
 			totalItems: backupEntries.length,
 			totalPages: 1,
 		} );
+	nock( API_BASE )
+		.persist()
+		.get( `/wpcom/v2/sites/${ mockSiteId }/activity/rewindable/count/group` )
+		.query( ( query ) => {
+			requests.push( { kind: 'counts', ...query } );
+			return true;
+		} )
+		.reply( 200, { groups: {} } );
 
 	nock( API_BASE )
 		.persist()
@@ -187,7 +212,7 @@ function renderBackupsListPage( {
 		.query( true )
 		.reply( 200, { calypso_preferences: {} } );
 
-	return render( <BackupsListPage /> );
+	return render( page );
 }
 
 test.each( summaryTestCases )(
@@ -201,3 +226,79 @@ test.each( summaryTestCases )(
 		} );
 	}
 );
+
+// Exercise the shared page with live router search, used by both site and agency wrappers.
+function RoutedBackupsPage() {
+	const searchParams = useSearch( { strict: false } );
+	return (
+		<BackupsPage
+			site={ mockSite }
+			searchParams={ searchParams }
+			navigation={ {
+				listPath: '/',
+				selectBackup: () => {},
+				requestRestore: () => {},
+				requestDownload: () => {},
+			} }
+		/>
+	);
+}
+
+test.each( [
+	[ 'America/New_York', '2025-01-01T05:00:00Z', '2025-01-03T04:59:59Z' ],
+	[ 'Asia/Tokyo', '2024-12-31T15:00:00Z', '2025-01-02T14:59:59Z' ],
+] )(
+	'keeps Backups entries and counts on selected site days in %s',
+	async ( timezoneString, after, before ) => {
+		window.history.replaceState(
+			{ __TSR_index: 3 },
+			'',
+			`/?from=${ Date.parse( after ) / 1000 }&to=${ Date.parse( before ) / 1000 }`
+		);
+		const requests: Record< string, unknown >[] = [];
+		renderBackupsListPage( { timezoneString, requests }, <RoutedBackupsPage /> );
+		await waitFor( () => {
+			for ( const kind of [ 'entries', 'counts' ] ) {
+				expect( requests ).toContainEqual(
+					expect.objectContaining( {
+						kind,
+						after: '2025-01-01 00:00:00',
+						before: '2025-01-02 23:59:59',
+					} )
+				);
+			}
+		} );
+		expect( screen.getByRole( 'button', { name: /^Date range:/ } ) ).toHaveAccessibleName(
+			expect.stringContaining( 'Jan 1, 2025' )
+		);
+	}
+);
+
+test( 'replaces Backups page 2 and dates together without a follow-up history push', async () => {
+	HTMLElement.prototype.scrollTo = () => {};
+	window.history.replaceState( { __TSR_index: 3 }, '', '/?keep=present' );
+	const backupEntries = Array.from( { length: 21 }, ( _, index ) => ( {
+		...mockBackupEntries[ 0 ],
+		activity_id: String( index ),
+		rewind_id: `backup-${ index }`,
+	} ) );
+	const { router } = renderBackupsListPage( { backupEntries }, <RoutedBackupsPage /> );
+	await userEvent.click( await screen.findByRole( 'button', { name: 'Next page' } ) );
+	await waitFor( () =>
+		expect( new URLSearchParams( router.state.location.searchStr ).get( 'page' ) ).toBe( '2' )
+	);
+	const index = router.state.location.state.__TSR_index;
+	const length = window.history.length;
+	await userEvent.click( screen.getByRole( 'button', { name: /^Date range:/ } ) );
+	await userEvent.click( screen.getByRole( 'option', { name: 'Last 7 days' } ) );
+	await waitFor( () =>
+		expect( new URLSearchParams( router.state.location.searchStr ).get( 'page' ) ).toBeNull()
+	);
+	expect( router.state.location.search ).toMatchObject( {
+		keep: 'present',
+		from: expect.any( Number ),
+		to: expect.any( Number ),
+	} );
+	expect( router.state.location.state.__TSR_index ).toBe( index );
+	expect( window.history.length ).toBe( length );
+} );
