@@ -189,7 +189,7 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 				return `/people/viewers/${ site?.slug }/${ user?.ID }`;
 
 			default:
-				return canLinkToProfile() && `/people/edit/${ site?.slug }/${ user?.login }`;
+				return canLinkToProfile() && `/people/edit/${ site?.slug }/user/${ user?.ID }`;
 		}
 	};
 

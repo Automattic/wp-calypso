@@ -9,9 +9,10 @@ function useUpdateUserMutation( siteId, queryOptions = {} ) {
 		mutationFn: ( { userId, variables } ) =>
 			wp.req.post( `/sites/${ siteId }/users/${ userId }`, variables ),
 		...queryOptions,
-		onSuccess( data, ...rest ) {
+		onSuccess( data, variables, ...rest ) {
+			queryClient.setQueryData( getCacheKey( siteId, Number( variables.userId ) ), data );
 			queryClient.setQueryData( getCacheKey( siteId, data.login ), data );
-			queryOptions.onSuccess?.( data, ...rest );
+			queryOptions.onSuccess?.( data, variables, ...rest );
 		},
 	} );
 
