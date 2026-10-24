@@ -547,8 +547,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						{ isMcpEnabled && (
 							<RouterLinkSummaryButton
 								to={ `/sites/${ siteSlug }/settings/ai-tools/setup` }
-								title={ __( 'Connect external AI agent' ) }
-								description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+								title={ __( 'Connect to ChatGPT, Claude, and other external AI tools' ) }
+								description={ __( 'Get step-by-step setup instructions for your AI tool.' ) }
 								decoration={ <Icon icon={ connection } size={ 24 } /> }
 							/>
 						) }

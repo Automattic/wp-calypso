@@ -251,8 +251,8 @@ function McpComponent() {
 					{ mcpEnabled && (
 						<RouterLinkSummaryButton
 							to="/me/preferences/mcp/setup"
-							title={ __( 'Connect external AI assistant' ) }
-							description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+							title={ __( 'Connect to ChatGPT, Claude, and other external AI tools' ) }
+							description={ __( 'Get step-by-step setup instructions for your AI tool.' ) }
 							decoration={ <Icon icon={ connection } size={ 24 } /> }
 						/>
 					) }

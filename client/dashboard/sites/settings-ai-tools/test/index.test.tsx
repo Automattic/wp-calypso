@@ -286,7 +286,9 @@ describe( '<AIToolsSettings>', () => {
 			screen.queryByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
 		).not.toBeInTheDocument();
 		expect(
-			screen.queryByRole( 'link', { name: /^Connect external AI agent/ } )
+			screen.queryByRole( 'link', {
+				name: /^Connect to ChatGPT, Claude, and other external AI tools/,
+			} )
 		).not.toBeInTheDocument();
 	} );
 
@@ -300,7 +302,11 @@ describe( '<AIToolsSettings>', () => {
 		).toBeEnabled();
 		expect( screen.getByRole( 'link', { name: /^Read/ } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /^Write/ } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: /^Connect external AI agent/ } ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'link', {
+				name: /^Connect to ChatGPT, Claude, and other external AI tools/,
+			} )
+		).toBeVisible();
 		expect( screen.queryByText( 'Upgrade required' ) ).not.toBeInTheDocument();
 	} );
 

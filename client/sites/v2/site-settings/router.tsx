@@ -79,7 +79,9 @@ const aiToolsWriteRoute = createRoute( {
 const aiToolsSetupRoute = createRoute( {
 	path: 'setup',
 	getParentRoute: () => aiToolsLayoutRoute,
-	head: () => ( { meta: [ { title: __( 'Connect AI agent' ) } ] } ),
+	head: () => ( {
+		meta: [ { title: __( 'Connect to ChatGPT, Claude, and other external AI tools' ) } ],
+	} ),
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-ai-tools/setup' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools-setup-v2' )( {
