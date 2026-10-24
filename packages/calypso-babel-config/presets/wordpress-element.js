@@ -2,7 +2,7 @@ module.exports = () => ( {
 	// No JSX syntax in .ts files; see the note in the default preset.
 	overrides: [
 		{
-			exclude: /\.[cm]?ts$/,
+			exclude: /\.ts$/,
 			plugins: [
 				[
 					require.resolve( '@wordpress/babel-plugin-import-jsx-pragma' ),

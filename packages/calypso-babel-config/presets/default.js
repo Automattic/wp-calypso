@@ -33,7 +33,7 @@ module.exports = ( api, opts ) => ( {
 	// itself; Babel 8's doesn't, and preset-react and the Emotion plugin both turn it on.
 	overrides: [
 		{
-			exclude: /\.[cm]?ts$/,
+			exclude: /\.ts$/,
 			presets: [
 				[
 					require.resolve( '@babel/preset-react' ),
