@@ -3,6 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
+import { HostingFeatures } from '@automattic/api-core';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -33,6 +34,7 @@ jest.mock( '@wordpress/data', () => ( {
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_x: ( text: string ) => text,
+	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
 	isRTL: () => false,
 	sprintf: ( text: string ) => text,
 } ) );
@@ -65,6 +67,11 @@ jest.mock( '../../../../app/router/sites', () => ( {
 const mockSite: DeepPartial< Site > = {
 	ID: mockSiteId,
 	slug: 'test-site',
+};
+
+const mockSiteWithBackups: DeepPartial< Site > = {
+	...mockSite,
+	plan: { features: { active: [ HostingFeatures.BACKUPS_SELF_SERVE ] } },
 };
 
 const mockActivityLogsData = {
@@ -139,10 +146,18 @@ const mockActivityLogsData = {
 };
 
 function renderActivityLogsDataViews(
-	{ activityLogs }: { activityLogs: unknown[] } = {
+	{
+		activityLogs,
+		backups = [],
+		site = mockSite,
+	}: { activityLogs: unknown[]; backups?: unknown[]; site?: DeepPartial< Site > } = {
 		activityLogs: mockActivityLogsData.activityLogs,
 	}
 ) {
+	nock( API_BASE )
+		.get( `/wpcom/v3/sites/${ mockSiteId }/rewind/backups` )
+		.query( true )
+		.reply( 200, { backups, totalPages: 1 } );
 	nock( API_BASE )
 		.get( '/rest/v1.1/me/preferences' )
 		.query( true )
@@ -162,7 +177,7 @@ function renderActivityLogsDataViews(
 		<SiteActivityLogsDataViews
 			gmtOffset={ -8 }
 			timezoneString="America/Los_Angeles"
-			site={ mockSite as Site }
+			site={ site as Site }
 			dateRange={ { start: new Date(), end: new Date() } }
 			autoRefresh={ false }
 			setAutoRefresh={ jest.fn() }
@@ -231,4 +246,61 @@ test( 'data is properly displayed', async () => {
 		'href',
 		'/plugins/jetpack/testsite-slug'
 	);
+} );
+
+test( 'marks a backup known to contain threats', async () => {
+	renderActivityLogsDataViews( {
+		site: mockSiteWithBackups,
+		activityLogs: [
+			{
+				...mockActivityLogsData.activityLogs[ 1 ],
+				name: 'rewind__backup_complete_full',
+				rewind_id: '1792244435.274',
+				summary: 'Backup and scan complete',
+			},
+			{
+				...mockActivityLogsData.activityLogs[ 1 ],
+				activity_id: 'activity-2',
+				name: 'rewind__complete',
+				rewind_id: '1792244500.1',
+				summary: 'Restore complete',
+			},
+			mockActivityLogsData.activityLogs[ 0 ],
+		],
+		backups: [
+			{
+				object: {
+					backup_period: '1792244301',
+					known_threats: {
+						malware: 3,
+						database: 0,
+						vulnerable: 1,
+						ignored: 0,
+						flagged: 3,
+						fixed: 3,
+					},
+				},
+			},
+		],
+	} );
+
+	expect( await screen.findByText( 'Backup and scan complete' ) ).toBeInTheDocument();
+	const badges = await screen.findAllByText( /Known threats/ );
+	expect( badges ).toHaveLength( 1 );
+	// `sprintf` is mocked, so the count stays a placeholder.
+	const warning =
+		/This backup is known to contain .+ security threats\. Restoring it may bring malware back to your site\./;
+	expect( badges[ 0 ].parentElement ).toHaveTextContent( warning );
+	expect( badges[ 0 ] ).not.toHaveAttribute( 'title' );
+	// A badge isn't interactive, so no tooltip: screen readers get the warning as hidden text.
+	await userEvent.hover( badges[ 0 ] );
+	expect( screen.queryByRole( 'tooltip' ) ).not.toBeInTheDocument();
+} );
+
+test( "doesn't look up known threats for a site without backups", async () => {
+	renderActivityLogsDataViews();
+
+	expect( await screen.findByText( 'Backup completed' ) ).toBeInTheDocument();
+	expect( nock.pendingMocks() ).toContainEqual( expect.stringContaining( '/rewind/backups' ) );
+	expect( screen.queryByText( /Known threats/ ) ).not.toBeInTheDocument();
 } );

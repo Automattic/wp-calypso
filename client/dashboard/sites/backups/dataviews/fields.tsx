@@ -1,8 +1,14 @@
+import { getKnownThreatsForRewindId, isFlagged } from '@automattic/api-core';
 import { Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { FormattedTime } from '../../../components/formatted-time';
 import { gridiconToWordPressIcon } from '../../../utils/gridicons';
-import type { ActivityLogEntry, ActivityLogGroupCountResponse } from '@automattic/api-core';
+import { KnownThreatsBadge } from '../known-threats/known-threats-badge';
+import type {
+	ActivityLogEntry,
+	ActivityLogGroupCountResponse,
+	BackupsKnownThreatsPage,
+} from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
 const getActivityLogTypeSlugFromName = ( name?: string ): string => {
@@ -27,7 +33,8 @@ const getActivityLogTypeDescriptionFromName = (
 export function getFields(
 	activityLogTypes?: ActivityLogGroupCountResponse[ 'groups' ],
 	timezoneString?: string,
-	gmtOffset?: number
+	gmtOffset?: number,
+	knownThreatsPage?: BackupsKnownThreatsPage
 ): Field< ActivityLogEntry >[] {
 	const activityLogTypeElements = activityLogTypes
 		? Object.entries( activityLogTypes )
@@ -62,6 +69,11 @@ export function getFields(
 				const actor = item.actor?.name ? ` ${ sprintf( __( 'by %s' ), item.actor.name ) }` : '';
 				return item.summary + actor;
 			},
+			render: ( { item } ) => {
+				// translators: %s is the name of the person who performed the action
+				const actor = item.actor?.name ? ` ${ sprintf( __( 'by %s' ), item.actor.name ) }` : '';
+				return <span>{ item.summary + actor }</span>;
+			},
 			enableGlobalSearch: true,
 		},
 		{
@@ -82,6 +94,26 @@ export function getFields(
 			id: 'content_text',
 			label: __( 'Content' ),
 			getValue: ( { item } ) => item.content.text,
+			render: ( { item } ) => {
+				const knownThreats =
+					item.rewind_id && knownThreatsPage
+						? getKnownThreatsForRewindId( knownThreatsPage, item.rewind_id )
+						: null;
+				// Under the content line: the title is truncated to one line in the list.
+				// The always-mounted spans dodge a Google Translate DOM crash (react/react#11538).
+				return (
+					<span>
+						<span>{ item.content.text }</span>
+						<span>
+							{ knownThreats && isFlagged( knownThreats ) && (
+								<span className="dashboard-backups__known-threats">
+									<KnownThreatsBadge count={ knownThreats.flagged } showWarning />
+								</span>
+							) }
+						</span>
+					</span>
+				);
+			},
 			enableGlobalSearch: true,
 		},
 		{

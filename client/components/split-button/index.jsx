@@ -18,6 +18,8 @@ class SplitButton extends PureComponent {
 		position: PropTypes.string,
 		disabled: PropTypes.bool,
 		disableMain: PropTypes.bool,
+		/** The id of the element that describes the main button, e.g. why it's disabled. */
+		mainDescribedBy: PropTypes.string,
 		disableMenu: PropTypes.bool,
 		compact: PropTypes.bool,
 		primary: PropTypes.bool,
@@ -90,6 +92,7 @@ class SplitButton extends PureComponent {
 			children,
 			disabled,
 			disableMain,
+			mainDescribedBy,
 			disableMenu,
 			className,
 			popoverClassName,
@@ -121,6 +124,7 @@ class SplitButton extends PureComponent {
 						primary={ primary }
 						scary={ scary }
 						disabled={ disabled || disableMain }
+						aria-describedby={ mainDescribedBy }
 						className="split-button__main"
 						onClick={ onClick }
 						href={ this.props.href }

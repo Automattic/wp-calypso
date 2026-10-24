@@ -189,6 +189,18 @@ a.rewind-flow-notice__title-warning:visited {
 	}
 }
 
+// Why Restore is off, beside the buttons (it wraps under them on narrow screens).
+.rewind-flow__acknowledgement-hint {
+	display: inline-block;
+	margin: 0;
+	margin-inline-start: 12px;
+	// The buttons sit at the top of the row and are 40px tall; centre the line on them.
+	margin-block-start: 10px;
+	vertical-align: top;
+	font-size: 0.875rem;
+	color: var( --color-text-subtle );
+}
+
 .rewind-flow-expired__primary-button {
 	border: 1px solid;
 	color: #3a6fac;

@@ -49,3 +49,10 @@
 		padding: 1.6em;
 	}
 }
+
+// The list column is too narrow for the badge beside the content line, so it gets its own
+// line, lined up with the text above it.
+.dashboard-backups__known-threats {
+	display: block;
+	margin-block-start: 4px;
+}

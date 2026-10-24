@@ -45,6 +45,7 @@ export function BackupsListPage() {
 							params: { siteSlug },
 							search: ( query: Record< string, string > ) => query,
 						} ),
+			restoreLinkTo: siteBackupRestoreRoute.fullPath,
 			requestRestore: ( id ) =>
 				router.navigate( {
 					to: siteBackupRestoreRoute.fullPath,

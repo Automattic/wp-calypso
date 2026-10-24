@@ -49,6 +49,8 @@ type OwnProps = {
 	activity: Activity;
 	availableActions?: Array< string >;
 	onClickClone?: ( period: string ) => void;
+	toolbarExtraContent?: React.ReactNode;
+	children?: React.ReactNode;
 };
 
 const ActivityCard: React.FC< OwnProps > = ( {
@@ -58,6 +60,8 @@ const ActivityCard: React.FC< OwnProps > = ( {
 	activity,
 	availableActions,
 	onClickClone,
+	toolbarExtraContent,
+	children,
 } ) => {
 	const [ showContent, toggleShowContent ] = useToggleContent();
 
@@ -131,8 +135,10 @@ const ActivityCard: React.FC< OwnProps > = ( {
 						onToggleContent={ toggleShowContent }
 						availableActions={ availableActions }
 						onClickClone={ onClickClone }
+						extraContent={ toolbarExtraContent }
 					/>
 				) }
+				{ children }
 
 				{ showStreamsContent && (
 					<div className="activity-card__content">

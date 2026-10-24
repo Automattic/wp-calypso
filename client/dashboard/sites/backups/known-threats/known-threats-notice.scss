@@ -1,0 +1,8 @@
+// The acknowledgement is the decision the notice asks for, so it gets its own section below a
+// rule, away from the clean-backup link above it.
+.known-threats-notice__acknowledgement {
+	margin-block-start: var( --wpds-dimension-gap-xs, 4px );
+	padding-block-start: var( --wpds-dimension-padding-lg, 16px );
+	border-block-start: var( --wpds-border-width-xs, 1px ) solid
+		var( --wpds-color-stroke-surface-warning );
+}

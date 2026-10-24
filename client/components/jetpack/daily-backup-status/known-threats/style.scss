@@ -1,0 +1,119 @@
+.backup-known-threats {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
+	margin: 8px 0 16px;
+
+	.backup-known-threats__region {
+		align-self: stretch;
+	}
+}
+
+// Mirrors the dashboard known-threats badge (same tokens).
+.backup-known-threats__badge {
+	display: inline-flex;
+	align-items: center;
+	gap: var( --wpds-dimension-gap-xs, 4px );
+	margin-inline-end: 8px;
+	padding-block: var( --wpds-dimension-padding-xs, 4px );
+	padding-inline: var( --wpds-dimension-padding-sm, 8px );
+	border-radius: var( --wpds-border-radius-lg, 8px );
+	background-color: var( --wpds-color-background-surface-warning, var( --color-warning-5 ) );
+	color: var( --wpds-color-foreground-content-warning, var( --color-warning-80 ) );
+	font-family: var( --wpds-typography-font-family-body, inherit );
+	font-size: var( --wpds-typography-font-size-sm, 12px );
+	font-weight: var( --wpds-typography-font-weight-default, 400 );
+	line-height: var( --wpds-typography-line-height-xs, 16px );
+
+	.gridicon {
+		position: static;
+		top: 0;
+		flex-shrink: 0;
+		margin-block-start: 0;
+		width: 16px;
+		height: 16px;
+		fill: currentColor;
+	}
+}
+
+// The row's gap spaces the badge from the toggle.
+.backup-known-threats__summary .backup-known-threats__badge {
+	margin-inline-end: 0;
+}
+
+.backup-known-threats__status {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+
+	.components-spinner {
+		margin: 0;
+	}
+}
+
+.backup-known-threats__details {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+
+	p {
+		margin: 0;
+	}
+}
+
+.backup-known-threats__list {
+	display: flex;
+	flex-direction: column;
+	align-self: stretch;
+	gap: 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.backup-known-threats__threat {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin: 0;
+}
+
+.backup-known-threats__threat-name {
+	font-weight: 600;
+}
+
+.backup-known-threats__threat-where,
+.backup-known-threats__threat-details {
+	font-size: 0.875rem;
+}
+
+.backup-known-threats__threat-where {
+	overflow-wrap: break-word;
+}
+
+// Legacy card and toolbar link rules (`.card a:not(.components-external-link)`, `.activity-card__toolbar--reverse a`)
+// strip the underline and resize links; keep the @wordpress/components link look, as on the Dashboard.
+.backup-known-threats__restore-link.components-button.is-link {
+	font-size: 13px;
+	text-decoration: underline;
+}
+
+// Why the clean backup is recommended, shown under its link.
+.backup-known-threats__restore-instead {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+}
+
+.backup-known-threats__restore-reason {
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+}
+
+.backup-known-threats__warning {
+	margin: 0;
+}

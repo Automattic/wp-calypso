@@ -35,3 +35,11 @@
 .site-activity-logs__event-title {
 	font-weight: 500;
 }
+
+// Follows the event text on its line; the pill is taller than a line, so it sits on the text's middle.
+.site-activity-logs__event-badge {
+	display: inline-block;
+	margin-inline-start: 8px;
+	margin-block: -4px;
+	vertical-align: middle;
+}

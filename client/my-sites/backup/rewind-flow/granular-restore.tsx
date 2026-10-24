@@ -3,8 +3,9 @@ import { Button, Card, Gridicon } from '@automattic/components';
 import { Button as WordPressButton } from '@wordpress/components';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { Icon, arrowLeft, backup, chevronDown, chevronRight } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useId } from 'react';
 import restoreSuccessImage from 'calypso/assets/images/illustrations/jetpack-restore-success.svg';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
@@ -42,6 +43,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { backupContentsPath } from '../paths';
 import Error from './error';
+import KnownThreatsNotice, { getKnownThreatsTracksProps } from './known-threats-notice';
 import GranularRestoreLoading from './loading-placeholder/granular-restore';
 import ProgressBar from './progress-bar';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
@@ -173,6 +175,18 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const browserSelectedList = fileBrowserState.getSelectedList( Number( rewindId ) );
 
 	const [ loading, setLoading ] = useState( true );
+	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
+	const [ acknowledgedRewindId, setAcknowledgedRewindId ] = useState< string | null >( null );
+	const acknowledged = acknowledgedRewindId === rewindId;
+	const onAcknowledgedChange = useCallback(
+		( value: boolean ) => setAcknowledgedRewindId( value ? rewindId : null ),
+		[ rewindId ]
+	);
+	const awaitingAcknowledgement = hasKnownThreats && ! acknowledged;
+	const acknowledgementHintId = useId();
+	const acknowledgementHint = translate(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	) as string;
 
 	const requestRestore = useCallback( () => {
 		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -245,9 +259,12 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_granular_restore_confirm', {
 				has_credentials: hasCredentials,
+				...getKnownThreatsTracksProps( hasKnownThreats, acknowledged ),
 			} )
 		);
 	}, [
+		acknowledged,
+		hasKnownThreats,
 		isPreflightEnabled,
 		credentialsAreValid,
 		dispatch,
@@ -484,6 +501,18 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					rewindId={ rewindId }
 					includesDatabase={ hasSelectedTables }
 				/>
+				<KnownThreatsNotice
+					siteId={ siteId }
+					rewindId={ rewindId }
+					requireAcknowledgement
+					acknowledged={ acknowledged }
+					onAcknowledgedChange={ onAcknowledgedChange }
+					onKnownThreatsChange={ setHasKnownThreats }
+					// "Cancel" comes between the checkbox and the restore button.
+					acknowledgedMessage={
+						translate( 'You can now restore this backup with "Restore now", below.' ) as string
+					}
+				/>
 				<>
 					{ backupCurrentlyInProgress && (
 						<RewindFlowNotice
@@ -499,9 +528,23 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					<Button className="rewind-flow__back-button" href={ goBackUrl } onClick={ onCancel }>
 						{ translate( 'Cancel' ) }
 					</Button>
-					<Button className="rewind-flow__primary-button" primary onClick={ onConfirm }>
+					{ /* The reason shows beside the button, which also takes it as its description. */ }
+					<Button
+						className={ clsx( 'rewind-flow__primary-button', {
+							disabled: awaitingAcknowledgement,
+						} ) }
+						primary
+						onClick={ awaitingAcknowledgement ? undefined : onConfirm }
+						aria-disabled={ awaitingAcknowledgement || undefined }
+						aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
+					>
 						{ translate( 'Restore now' ) }
 					</Button>
+					{ awaitingAcknowledgement && (
+						<p className="rewind-flow__acknowledgement-hint" id={ acknowledgementHintId }>
+							{ acknowledgementHint }
+						</p>
+					) }
 				</div>
 				<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
 			</>
