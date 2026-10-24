@@ -1,4 +1,6 @@
 import { TitanMailSlugs } from '@automattic/api-core';
+import { titanMail } from 'calypso/lib/cart-values/cart-items';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const TITAN_SLUGS_BY_TIER: Record< string, Record< string, string > > = {
 	pro: {
@@ -26,4 +28,24 @@ export function getTitanProductSlug( tier?: unknown, billing?: unknown ): string
 			: TITAN_SLUGS_BY_TIER.pro;
 
 	return billing === 'monthly' ? slugsByBilling.monthly : slugsByBilling.yearly;
+}
+
+/**
+ * Builds the cart item for a single new Titan mailbox on the given domain.
+ */
+export function getTitanEmailItem(
+	domain: string,
+	tier?: unknown,
+	billing?: unknown
+): MinimalRequestCartProduct {
+	return titanMail(
+		{
+			domain,
+			quantity: 1,
+			extra: {
+				new_quantity: 1,
+			},
+		},
+		getTitanProductSlug( tier, billing )
+	);
 }

@@ -1,4 +1,4 @@
-import { getTitanProductSlug } from '../get-titan-product-slug';
+import { getTitanEmailItem, getTitanProductSlug } from '../titan-email-item';
 
 describe( 'getTitanProductSlug', () => {
 	test.each( [
@@ -17,5 +17,16 @@ describe( 'getTitanProductSlug', () => {
 		expect( getTitanProductSlug( 'gold', 'weekly' ) ).toBe( 'wp_titan_mail_yearly' );
 		expect( getTitanProductSlug( 'toString', 'monthly' ) ).toBe( 'wp_titan_mail_monthly' );
 		expect( getTitanProductSlug( 'ultra' ) ).toBe( 'wp_titan_mail_ultra_yearly' );
+	} );
+} );
+
+describe( 'getTitanEmailItem', () => {
+	test( 'builds a one-mailbox cart item for the selected tier', () => {
+		expect( getTitanEmailItem( 'example.com', 'ultra', 'monthly' ) ).toMatchObject( {
+			product_slug: 'wp_titan_mail_ultra_monthly',
+			meta: 'example.com',
+			quantity: 1,
+			extra: { new_quantity: 1 },
+		} );
 	} );
 } );
