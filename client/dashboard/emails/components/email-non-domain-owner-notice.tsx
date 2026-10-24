@@ -41,7 +41,21 @@ export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerMessageProp
 
 	let reasonText;
 
-	if ( ownerUserName ) {
+	if (
+		domain?.current_user_is_owner &&
+		domain.current_user_cannot_add_email_reason?.errors[ 'domain-expired' ] !== undefined
+	) {
+		reasonText = createInterpolateElement(
+			sprintf(
+				// Translators: %(selectedDomainName)s is the domain name.
+				__(
+					'Email services cannot be purchased for <strong>%(selectedDomainName)s</strong> because the domain has expired. Please <contactSupportLink>contact support</contactSupportLink> for help renewing it.'
+				),
+				{ selectedDomainName }
+			),
+			elements
+		);
+	} else if ( ownerUserName ) {
 		reasonText = createInterpolateElement(
 			sprintf(
 				// Translators: %(ownerUserName)s is the user name of the owner of the domain, %(selectedDomainName)s is the domain name.
