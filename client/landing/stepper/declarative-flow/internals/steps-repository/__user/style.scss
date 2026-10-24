@@ -1,3 +1,4 @@
+@import "@wordpress/theme/design-tokens.css";
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
@@ -18,6 +19,24 @@ $breakpoint-mobile: 660px;
 
 	.form-fieldset {
 		margin-bottom: 8px;
+	}
+
+	.selected-plan-card {
+		box-sizing: border-box;
+		inline-size: 100%;
+		// The account template already separates the card from the heading by 2rem; 48px in total.
+		margin-block-end: 1rem;
+		margin-inline: auto;
+		padding: var(--wpds-dimension-padding-md);
+		border: var(--wpds-border-width-xs) solid var(--color-border-subtle);
+		border-radius: var(--wpds-border-radius-lg);
+		background: var(--color-surface);
+		text-align: start;
+
+		// The heading row is wider than the form; match the form column (4 columns).
+		@include break-small {
+			max-inline-size: calc(4 * var(--step-container-v2-content-column-width) + 3 * var(--step-container-v2-content-column-gap));
+		}
 	}
 
 	.locale-suggestions {
