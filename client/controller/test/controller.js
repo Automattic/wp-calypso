@@ -310,4 +310,46 @@ describe( 'redirectMyJetpack', () => {
 		expect( pageSpy ).toHaveBeenCalledWith( redirectUrl );
 		expect( next ).not.toHaveBeenCalled();
 	} );
+
+	const buildStatsContext = ( source ) => {
+		const statsQuery = { ...query, source };
+		const productSlug = 'jetpack_stats_yearly:-q-10000';
+		return {
+			...context,
+			query: statsQuery,
+			params: { domainOrProduct: productSlug, product: '123123' },
+			path: addQueryArgs( statsQuery, `/checkout/123123/${ productSlug }` ),
+			pathname: `/checkout/123123/${ productSlug }`,
+		};
+	};
+
+	it.each( [ 'my-jetpack', 'jetpack_premium_analytics_upsell' ] )(
+		'sends a logged-out buyer of a Stats tier with source=%s to siteless checkout',
+		( source ) => {
+			const statsContext = buildStatsContext( source );
+			const redirectUrl = addQueryArgs(
+				{
+					connect_after_checkout: true,
+					from_site_slug: statsContext.query.site,
+					admin_url: statsContext.query.redirect_to.split( '?' )[ 0 ],
+				},
+				statsContext.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
+			);
+
+			redirectMyJetpack( statsContext, next );
+
+			expect( pageSpy ).toHaveBeenCalledWith( redirectUrl );
+			expect( next ).not.toHaveBeenCalled();
+		}
+	);
+
+	it.each( [ 'jetpack_premium_analytics_onboarding', 'jetpack-newsletter', undefined ] )(
+		'leaves a logged-out buyer with source=%s to the login redirect',
+		( source ) => {
+			redirectMyJetpack( buildStatsContext( source ), next );
+
+			expect( pageSpy ).not.toHaveBeenCalled();
+			expect( next ).toHaveBeenCalled();
+		}
+	);
 } );
