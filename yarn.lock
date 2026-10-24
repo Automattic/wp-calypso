@@ -822,7 +822,7 @@ __metadata:
     chalk: "npm:^4.1.2"
     form-data: "npm:^4.0.6"
     mailosaur: "npm:^8.4.0"
-    nock: "npm:^14.0.17"
+    nock: "npm:^15.0.1"
     playwright: "npm:1.57.0"
     totp-generator: "npm:^0.0.14"
     tslib: "npm:^2.8.1"
@@ -1184,7 +1184,7 @@ __metadata:
     "@wordpress/url": "npm:^4.48.0"
     debug: "npm:^4.4.1"
     i18n-calypso: "workspace:^"
-    nock: "npm:^14.0.17"
+    nock: "npm:^15.0.1"
     qs: "npm:^6.15.2"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1323,7 +1323,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     copyfiles: "npm:^2.4.1"
     moment: "npm:^2.30.1"
-    nock: "npm:^14.0.17"
+    nock: "npm:^15.0.1"
     qs: "npm:^6.15.2"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -7096,6 +7096,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mswjs/interceptors@npm:^0.44.0":
+  version: 0.44.0
+  resolution: "@mswjs/interceptors@npm:0.44.0"
+  dependencies:
+    "@open-draft/until": "npm:^3.0.1"
+    "@types/debug": "npm:^4.1.13"
+    debug: "npm:^4.4.3"
+    is-node-process: "npm:^1.2.0"
+    outvariant: "npm:^1.4.3"
+    rettime: "npm:^0.11.11"
+  checksum: 4bb2eb1cee5d549809f3456b811dbefa2727d28b82083e48801a9329f8070ef433667cc1996f995dfbbe450f160a147c3ceb6455826b2ed62104bb3f0e87c2f5
+  languageName: node
+  linkType: hard
+
 "@napi-rs/lzma-linux-x64-gnu@npm:1.5.1":
   version: 1.5.1
   resolution: "@napi-rs/lzma-linux-x64-gnu@npm:1.5.1"
@@ -7294,6 +7308,13 @@ __metadata:
   version: 2.1.0
   resolution: "@open-draft/until@npm:2.1.0"
   checksum: 61d3f99718dd86bb393fee2d7a785f961dcaf12f2055f0c693b27f4d0cd5f7a03d498a6d9289773b117590d794a43cd129366fd8e99222e4832f67b1653d54cf
+  languageName: node
+  linkType: hard
+
+"@open-draft/until@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@open-draft/until@npm:3.0.1"
+  checksum: a89d1e5016241d7de5dee89840efbe9250d8102315a275c181aa68269c405e41a7f1724441fbe867af8a873c0f35c97c5f11917f480053a55924b80c2368bfb0
   languageName: node
   linkType: hard
 
@@ -10814,12 +10835,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/debug@npm:^4.0.0, @types/debug@npm:^4.1.12, @types/debug@npm:^4.1.6":
-  version: 4.1.12
-  resolution: "@types/debug@npm:4.1.12"
+"@types/debug@npm:^4.0.0, @types/debug@npm:^4.1.12, @types/debug@npm:^4.1.13, @types/debug@npm:^4.1.6":
+  version: 4.1.13
+  resolution: "@types/debug@npm:4.1.13"
   dependencies:
     "@types/ms": "npm:*"
-  checksum: 5dcd465edbb5a7f226e9a5efd1f399c6172407ef5840686b73e3608ce135eeca54ae8037dcd9f16bdb2768ac74925b820a8b9ecc588a58ca09eca6acabe33e2f
+  checksum: e5e124021bbdb23a82727eee0a726ae0fc8a3ae1f57253cbcc47497f259afb357de7f6941375e773e1abbfa1604c1555b901a409d762ec2bb4c1612131d4afb7
   languageName: node
   linkType: hard
 
@@ -16396,7 +16417,7 @@ __metadata:
     moment: "npm:^2.30.1"
     moment-timezone: "npm:^0.5.48"
     moment-timezone-data-webpack-plugin: "npm:^1.5.1"
-    nock: "npm:^14.0.17"
+    nock: "npm:^15.0.1"
     path-browserify: "npm:^1.0.1"
     phone: "npm:^3.1.71"
     photon: "workspace:^"
@@ -26833,14 +26854,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nock@npm:^14.0.17":
-  version: 14.0.17
-  resolution: "nock@npm:14.0.17"
+"nock@npm:^15.0.1":
+  version: 15.0.2
+  resolution: "nock@npm:15.0.2"
   dependencies:
-    "@mswjs/interceptors": "npm:^0.41.0"
-    json-stringify-safe: "npm:^5.0.1"
-    propagate: "npm:^2.0.0"
-  checksum: 4ea2f6c3ffcf1d6d1d23d708588cfe0c1815f59f63a15e6a6b9d0f01174e0b0224da7e485d6c3149df68dee929ce360ed8299d651d88e19021aa2e541e59aaf7
+    "@mswjs/interceptors": "npm:^0.44.0"
+  checksum: 959154b39426ca34a84335f839a9ee7856f76ee8062b8ec1060051420edd93ec1e5b13ef459f669b3a9c0f66c77aa9135d056cedb38d7ce7e09d63b6547dd8a5
   languageName: node
   linkType: hard
 
@@ -28999,13 +29018,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"propagate@npm:^2.0.0":
-  version: 2.0.1
-  resolution: "propagate@npm:2.0.1"
-  checksum: 01e1023b60ae4050d1a2783f976d7db702022dbdb70dba797cceedad8cfc01b3939c41e77032f8c32aa9d93192fe937ebba1345e8604e5ce61fd3b62ee3003b8
-  languageName: node
-  linkType: hard
-
 "proper-lockfile@npm:^2.0.1":
   version: 2.0.1
   resolution: "proper-lockfile@npm:2.0.1"
@@ -30406,6 +30418,13 @@ __metadata:
   version: 0.12.0
   resolution: "retry@npm:0.12.0"
   checksum: 59933e8501727ba13ad73ef4a04d5280b3717fd650408460c987392efe9d7be2040778ed8ebe933c5cbd63da3dcc37919c141ef8af0a54a6e4fca5a2af177bfe
+  languageName: node
+  linkType: hard
+
+"rettime@npm:^0.11.11":
+  version: 0.11.12
+  resolution: "rettime@npm:0.11.12"
+  checksum: d785a4b82535ccff6a47e9418456140d3b9317914e4a5134c41ba2e07f0573397b76e299ab9f4bbb73227a19f370056c2d5df6c4703193a9c5741f24705bd952
   languageName: node
   linkType: hard
 
@@ -35082,7 +35101,7 @@ __metadata:
     mixedindentlint: "npm:^1.2.0"
     moment: "npm:^2.30.1"
     ncp: "npm:^2.0.0"
-    nock: "npm:^14.0.17"
+    nock: "npm:^15.0.1"
     npm-run-all: "npm:^4.1.5"
     photon: "workspace:^"
     postcss: "npm:^8.5.15"
