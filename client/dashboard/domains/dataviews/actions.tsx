@@ -225,6 +225,9 @@ export const useActions = ( {
 			},
 			{
 				id: 'set-primary-site-address',
+				// Shown inline (not only in the actions menu) so the domain someone just
+				// bought is one click away from becoming their site address.
+				isPrimary: true,
 				label: __( 'Make primary site address' ),
 				supportsBulk: false,
 				callback: ( domains: DomainSummary[] ) => {
