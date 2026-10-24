@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 
 const noop = () => {};
@@ -166,18 +165,6 @@ export function generateSteps( {
 			props: {
 				hideFreePlan: true,
 				hideEnterprisePlan: true,
-			},
-		},
-
-		'plans-ecommerce-fulfilled': {
-			stepName: 'plans-ecommerce-fulfilled',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_ECOMMERCE,
-				themeSlugWithRepo: 'pub/twentytwentytwo',
 			},
 		},
 

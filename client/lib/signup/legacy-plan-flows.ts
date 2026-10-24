@@ -3,6 +3,7 @@ import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_3_YEARS,
 	PLAN_BUSINESS_MONTHLY,
+	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
@@ -33,6 +34,7 @@ export const REDIRECTED_PLAN_FLOWS = {
 	'business-monthly': PLAN_BUSINESS_MONTHLY,
 	'business-2y': PLAN_BUSINESS_2_YEARS,
 	'business-3y': PLAN_BUSINESS_3_YEARS,
+	ecommerce: PLAN_ECOMMERCE,
 	'ecommerce-monthly': PLAN_ECOMMERCE_MONTHLY,
 
 	// Landpack emits these spellings. They never matched a flow name, so they lose their
@@ -60,8 +62,7 @@ const PRESELECTABLE_PLANS: ReadonlySet< string > = new Set(
  * Deliberately narrower than "is a WordPress.com plan": a plan reached through its own
  * eligibility gate, such as the Student plan behind the Education flow's invite check, must
  * not become selectable by hand-writing a query argument. Commerce has no such gate (the
- * plans grid offers it to anyone); annual Commerce is left out only because
- * `/start/ecommerce` still sells it. The backend remains the authority; this only decides
+ * plans grid offers it to anyone). The backend remains the authority; this only decides
  * what onboarding is willing to preselect.
  */
 export function isPreselectablePlan( slug: string ): slug is PreselectablePlan {
@@ -70,7 +71,8 @@ export function isPreselectablePlan( slug: string ): slug is PreselectablePlan {
 
 /**
  * Whether a plan can buy a storage add-on. Annual Business and annual Commerce are the two
- * that can; the plans grid holds the canonical list, and only Business is redirected here.
+ * that can; the plans grid holds the canonical list. Only Business takes it here, because the
+ * legacy Commerce flows never offered a storage add-on.
  */
 export function supportsStorageAddOn( slug: string ): boolean {
 	return slug === REDIRECTED_PLAN_FLOWS.business;
