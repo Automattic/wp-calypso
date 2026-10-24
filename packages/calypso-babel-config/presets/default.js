@@ -61,5 +61,7 @@ module.exports = ( api, opts ) => ( {
 			},
 		],
 		require.resolve( '@automattic/babel-plugin-preserve-i18n' ),
+		// preset-react's `/*#__PURE__*/` marking for React calls, kept for .ts files too.
+		require.resolve( '@babel/plugin-transform-react-pure-annotations' ),
 	],
 } );
