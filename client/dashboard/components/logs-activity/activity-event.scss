@@ -26,6 +26,8 @@
 .site-activity-logs__event-content {
 	flex: 1 0 0;
 	flex-wrap: wrap;
+	// DataViews table cells are `white-space: nowrap`; without this, long descriptions overflow into the next columns.
+	white-space: normal;
 
 	> span {
 		color: var(--dashboard__text-muted-color);
