@@ -1,5 +1,5 @@
 import { type DomainAvailability } from '@automattic/api-core';
-import { useMutation } from '@tanstack/react-query';
+import { useIsMutating, useMutation } from '@tanstack/react-query';
 import {
 	Button,
 	Modal,
@@ -52,6 +52,9 @@ export const ConnectedDomainMoveNotice = ( { availability }: ConnectedDomainMove
 		networkMode: 'always',
 		retry: false,
 	} );
+
+	// Another add-to-cart in flight would leave the move with a stale list of cart items.
+	const isMutating = !! useIsMutating();
 
 	const closeConfirm = () => {
 		setIsConfirmOpen( false );
@@ -128,7 +131,7 @@ export const ConnectedDomainMoveNotice = ( { availability }: ConnectedDomainMove
 									moveDomain();
 								} }
 								isBusy={ isPending }
-								disabled={ isPending }
+								disabled={ isMutating }
 								__next40pxDefaultSize
 							>
 								{ __( 'Use this domain' ) }

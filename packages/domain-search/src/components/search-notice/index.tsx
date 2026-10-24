@@ -72,10 +72,10 @@ const shouldHideAvailabilityNotice = (
 const isConnectedDomainMoveToNewSite = (
 	availability: DomainAvailability,
 	includeOwnedDomainInSuggestions: boolean,
-	currentSiteUrl?: string
+	hasCurrentSite: boolean
 ): availability is DomainAvailability & { other_site_domain: string } =>
 	includeOwnedDomainInSuggestions &&
-	! currentSiteUrl &&
+	! hasCurrentSite &&
 	availability.status === DomainAvailabilityStatus.MAPPED_OTHER_SITE_SAME_USER &&
 	!! availability.product_slug &&
 	isDomainMoveInternal( { product_slug: availability.product_slug } ) &&
@@ -99,6 +99,7 @@ export const SearchNotice = () => {
 		queries,
 		events,
 		currentSiteUrl,
+		currentSiteId,
 		config: { includeOwnedDomainInSuggestions },
 	} = useDomainSearch();
 	const { error: suggestionError } = useQuery( queries.domainSuggestions( query ) );
@@ -108,7 +109,11 @@ export const SearchNotice = () => {
 
 	const movableConnectedDomain =
 		availability &&
-		isConnectedDomainMoveToNewSite( availability, includeOwnedDomainInSuggestions, currentSiteUrl )
+		isConnectedDomainMoveToNewSite(
+			availability,
+			includeOwnedDomainInSuggestions,
+			!! currentSiteUrl || !! currentSiteId
+		)
 			? availability
 			: undefined;
 

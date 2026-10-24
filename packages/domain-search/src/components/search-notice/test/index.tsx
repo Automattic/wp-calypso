@@ -3,8 +3,10 @@ import {
 	type DomainSuggestion,
 	DomainAvailabilityStatus,
 } from '@automattic/api-core';
-import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { useMutation } from '@tanstack/react-query';
+import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useEffect } from 'react';
 import { SearchNotice } from '..';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
 import { buildCart } from '../../../test-helpers/factories/cart';
@@ -1652,6 +1654,56 @@ describe( 'SearchNotice', () => {
 			expect(
 				screen.queryByRole( 'button', { name: 'move it to your new site' } )
 			).not.toBeInTheDocument();
+		} );
+
+		it( 'keeps the contact support notice when there is only a current site ID', async () => {
+			mockMovableConnectedDomain();
+
+			render(
+				<TestDomainSearchWithCustomCart query={ DOMAIN } currentSiteId={ 123 }>
+					<SearchNotice />
+				</TestDomainSearchWithCustomCart>
+			);
+
+			expect( await screen.findByRole( 'link', { name: 'Contact us' } ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: 'move it to your new site' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'waits for another add-to-cart to finish before allowing the move', async () => {
+			const user = userEvent.setup();
+			let finishOtherAdd = () => {};
+			const otherAdd = new Promise< void >( ( resolve ) => {
+				finishOtherAdd = resolve;
+			} );
+			mockMovableConnectedDomain();
+
+			const OtherAddToCart = () => {
+				const { mutate } = useMutation( { mutationFn: () => otherAdd } );
+
+				useEffect( () => mutate(), [ mutate ] );
+
+				return null;
+			};
+
+			render(
+				<TestDomainSearchWithCustomCart query={ DOMAIN }>
+					<OtherAddToCart />
+					<SearchNotice />
+				</TestDomainSearchWithCustomCart>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'move it to your new site' } ) );
+
+			expect( screen.getByRole( 'button', { name: 'Use this domain' } ) ).toBeDisabled();
+			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeEnabled();
+
+			finishOtherAdd();
+
+			await waitFor( () =>
+				expect( screen.getByRole( 'button', { name: 'Use this domain' } ) ).toBeEnabled()
+			);
 		} );
 
 		it( 'moves the domain only after the user confirms', async () => {
