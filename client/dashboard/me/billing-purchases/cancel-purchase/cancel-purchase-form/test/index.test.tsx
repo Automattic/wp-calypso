@@ -2,10 +2,11 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { disable, enable } from '@automattic/calypso-config';
+import { screen, within } from '@testing-library/react';
 import { render } from '../../../../../test-utils';
 import CancelPurchaseForm from '../index';
-import { FEEDBACK_STEP, NEXT_ADVENTURE_STEP } from '../steps';
+import { FEEDBACK_STEP, NEXT_ADVENTURE_STEP, UPSELL_STEP } from '../steps';
 import type { Purchase } from '@automattic/api-core';
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
@@ -97,5 +98,106 @@ describe( '<CancelPurchaseForm />', () => {
 
 		expect( screen.queryByRole( 'radio' ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Complete removal' } ) ).toBeEnabled();
+	} );
+
+	describe( 'option cards', () => {
+		const premiumPurchase = makePurchase( {
+			product_name: 'WordPress.com Premium',
+			product_slug: 'value_bundle',
+			bill_period_days: 365,
+			currency_code: 'USD',
+			site_slug: 'example.wordpress.com',
+		} );
+		const upsellStepProps = {
+			...defaultProps,
+			surveyStep: UPSELL_STEP,
+			allSteps: [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ],
+			purchase: premiumPurchase,
+			clickNext: noop,
+			onSubmit: noop,
+		};
+		const cardsListName = 'Before canceling, you can consider these options:';
+
+		afterEach( () => {
+			disable( 'purchases/cancel-options-cards' );
+			disable( 'purchases/split-cancel-remove' );
+		} );
+
+		test( 'shows the cards for a reason that has them when the cards flag is on', () => {
+			enable( 'purchases/cancel-options-cards' );
+
+			render( <CancelPurchaseForm { ...upsellStepProps } questionOneText="noLongerNeedSite" /> );
+
+			const cards = screen.getByRole( 'list', { name: cardsListName } );
+			expect( within( cards ).getAllByRole( 'listitem' ) ).toHaveLength( 2 );
+			expect(
+				within( cards ).getByRole( 'link', { name: /Switch to a different plan/ } )
+			).toBeVisible();
+			expect(
+				within( cards ).getByRole( 'button', { name: /Speak with our support team/ } )
+			).toBeVisible();
+		} );
+
+		test( 'shows the cards instead of the Personal offer when the cards flag is on', () => {
+			enable( 'purchases/cancel-options-cards' );
+
+			render(
+				<CancelPurchaseForm
+					{ ...upsellStepProps }
+					questionOneText="tooExpensive"
+					upsell="downgrade-personal"
+				/>
+			);
+
+			const cards = screen.getByRole( 'list', { name: cardsListName } );
+			expect( within( cards ).getAllByRole( 'listitem' ) ).toHaveLength( 4 );
+			expect(
+				within( cards ).getByRole( 'link', { name: /Switch to a different plan/ } )
+			).toBeVisible();
+			expect(
+				within( cards ).getByRole( 'link', { name: /Renew now and pay less/ } )
+			).toBeVisible();
+			expect(
+				within( cards ).getByRole( 'button', { name: /Switch to monthly payments/ } )
+			).toBeVisible();
+			expect(
+				within( cards ).getByRole( 'button', { name: /Speak with our support team/ } )
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'heading', { name: 'Switch to a more affordable plan' } )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'shows the Personal offer instead of the cards when the cards flag is off', () => {
+			render(
+				<CancelPurchaseForm
+					{ ...upsellStepProps }
+					questionOneText="tooExpensive"
+					upsell="downgrade-personal"
+				/>
+			);
+
+			expect(
+				screen.getByRole( 'heading', { name: 'Switch to a more affordable plan' } )
+			).toBeVisible();
+			expect( screen.queryByRole( 'list', { name: cardsListName } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'keeps the Personal offer when only the split cancel/remove flag is on', () => {
+			enable( 'purchases/split-cancel-remove' );
+
+			render(
+				<CancelPurchaseForm
+					{ ...upsellStepProps }
+					questionOneText="tooExpensive"
+					upsell="downgrade-personal"
+				/>
+			);
+
+			expect(
+				screen.getByRole( 'heading', { name: 'Switch to a more affordable plan' } )
+			).toBeVisible();
+			expect( screen.queryByRole( 'list', { name: cardsListName } ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );
