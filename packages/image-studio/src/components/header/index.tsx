@@ -4,7 +4,18 @@ import { useKeyboardShortcut } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Fragment, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { chevronLeft, chevronRight, close, external, redo, undo } from '@wordpress/icons';
+import {
+	chevronLeft,
+	chevronRight,
+	close,
+	external,
+	flipHorizontal,
+	flipVertical,
+	redo,
+	rotateLeft,
+	rotateRight,
+	undo,
+} from '@wordpress/icons';
 import { isAppleOS } from '@wordpress/keycodes';
 import {
 	type ImageStudioActions,
@@ -15,6 +26,7 @@ import { type ImageStudioConfig, ImageStudioMode, ToolbarOption } from '../../ty
 import { trackImageStudioToolClick } from '../../utils/tracking';
 import { AltIcon } from '../icons/AltIcon';
 import { LassoIcon } from '../icons/LassoIcon';
+import type { ImageTransform } from '../../utils/image-edit-modifiers';
 import './style.scss';
 
 interface HeaderProps {
@@ -26,6 +38,7 @@ interface HeaderProps {
 	onClose: () => void;
 	onAnnotationUndo?: () => void;
 	onAnnotationRedo?: () => void;
+	onTransform?: ( transform: ImageTransform ) => void;
 	hasPendingAnnotations?: boolean;
 	hasUndoneAnnotations?: boolean;
 	setActiveToolbarOption: ( toolbarOption: ToolbarOption | null ) => void;
@@ -47,6 +60,7 @@ export const Header = ( {
 	onClose,
 	onAnnotationUndo,
 	onAnnotationRedo,
+	onTransform,
 	setActiveToolbarOption,
 	activeToolbarOption,
 	config,
@@ -280,6 +294,47 @@ export const Header = ( {
 									/>
 								</div>
 							) }
+							<div className="image-studio-header__toolbar-group">
+								{ [
+									{
+										name: 'rotate_left' as const,
+										icon: rotateLeft,
+										label: __( 'Rotate left', __i18n_text_domain__ ),
+										transform: { type: 'rotate', direction: 'left' } as ImageTransform,
+									},
+									{
+										name: 'rotate_right' as const,
+										icon: rotateRight,
+										label: __( 'Rotate right', __i18n_text_domain__ ),
+										transform: { type: 'rotate', direction: 'right' } as ImageTransform,
+									},
+									{
+										name: 'flip_horizontal' as const,
+										icon: flipHorizontal,
+										label: __( 'Flip horizontally', __i18n_text_domain__ ),
+										transform: { type: 'flip', axis: 'horizontal' } as ImageTransform,
+									},
+									{
+										name: 'flip_vertical' as const,
+										icon: flipVertical,
+										label: __( 'Flip vertically', __i18n_text_domain__ ),
+										transform: { type: 'flip', axis: 'vertical' } as ImageTransform,
+									},
+								].map( ( tool ) => (
+									<Button
+										key={ tool.name }
+										variant="tertiary"
+										icon={ tool.icon }
+										label={ tool.label }
+										showTooltip
+										disabled={ isAiProcessing || isSaving || isAnnotationMode }
+										onClick={ () => {
+											trackImageStudioToolClick( tool.name );
+											onTransform?.( tool.transform );
+										} }
+									/>
+								) ) }
+							</div>
 							<div className="image-studio-header__toolbar-group">
 								{ classicEditorUrl && onClassicMediaEditorNavigation && (
 									<Button
