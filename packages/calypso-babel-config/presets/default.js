@@ -26,14 +26,25 @@ module.exports = ( api, opts ) => ( {
 				exclude: [ 'transform-typeof-symbol', 'web.immediate' ],
 			},
 		],
-		[
-			require.resolve( '@babel/preset-react' ),
-			{
-				runtime: 'automatic',
-				importSource: opts.importSource ?? process.env.IMPORT_SOURCE,
-			},
-		],
 		[ require.resolve( '@babel/preset-typescript' ), { allowDeclareFields: true } ],
+	],
+	// JSX syntax only for files that can contain it: in a .ts file, `<T>value` assertions and generic
+	// arrows (`<T>( x ) =>`) would parse as JSX. Babel 7's TypeScript plugin turned JSX off for .ts
+	// itself; Babel 8's doesn't, and preset-react and the Emotion plugin both turn it on.
+	overrides: [
+		{
+			exclude: /\.ts$/,
+			presets: [
+				[
+					require.resolve( '@babel/preset-react' ),
+					{
+						runtime: 'automatic',
+						importSource: opts.importSource ?? process.env.IMPORT_SOURCE,
+					},
+				],
+			],
+			plugins: [ require.resolve( '@emotion/babel-plugin' ) ],
+		},
 	],
 	plugins: [
 		require.resolve( '@babel/plugin-proposal-class-properties' ),
@@ -50,6 +61,7 @@ module.exports = ( api, opts ) => ( {
 			},
 		],
 		require.resolve( '@automattic/babel-plugin-preserve-i18n' ),
-		require.resolve( '@emotion/babel-plugin' ),
+		// preset-react's `/*#__PURE__*/` marking for React calls, kept for .ts files too.
+		require.resolve( '@babel/plugin-transform-react-pure-annotations' ),
 	],
 } );
