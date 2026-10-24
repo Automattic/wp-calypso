@@ -306,7 +306,7 @@
 		"stackframe": "^1.1.1",
 		"stacktrace-gps": "^3.0.3",
 		"storybook": "^10.6.2",
-		"stream-json": "^3.5.0",
+		"stream-json": "^3.7.0",
 		"stylelint": "^17.16.0",
 		"stylelint-scss": "^7.3.0",
 		"tslib": "^2.8.1",
