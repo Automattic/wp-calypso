@@ -111,8 +111,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 
 	build: () => import( /* webpackChunkName: "build-flow" */ './flows/build/build' ),
 
-	write: () => import( /* webpackChunkName: "write-flow" */ './flows/write/write' ),
-
 	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "transferring-hosted-site-flow" */ './flows/transferring-hosted-site-flow/transferring-hosted-site-flow'
