@@ -162,6 +162,21 @@ function McpSetupComponent( { path } ) {
 
 			<Card>
 				<CardBody>
+					<VStack spacing={ 3 }>
+						<Text as="p" weight={ 600 }>
+							{ translate( 'Self-hosted WordPress site requirements' ) }
+						</Text>
+						<Text as="p" size="medium">
+							{ translate(
+								'To use MCP tools with a self-hosted WordPress site, the site must have Jetpack installed and connected to WordPress.com, a paid Jetpack AI or Jetpack Complete plan, and MCP access enabled in Jetpack AI settings. The free Jetpack plugin alone is not sufficient.'
+							) }
+						</Text>
+					</VStack>
+				</CardBody>
+			</Card>
+
+			<Card>
+				<CardBody>
 					<SelectControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
