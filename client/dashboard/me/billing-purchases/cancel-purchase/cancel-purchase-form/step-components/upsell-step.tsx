@@ -53,6 +53,20 @@ function Upsell( { ...props }: UpsellProps ) {
 	);
 }
 
+export function getFreeMonthOfferTitle(): string {
+	return __( 'How about a free month?' );
+}
+
+export function getFreeMonthOfferText( planName: string ): string {
+	return sprintf(
+		/* translators: %(currentPlan)s is the name of the plan to which the customer is subscribed */
+		__(
+			'We get it – building a site takes time. But we’d love to see you stick around to build on what you started. How about a free month of your %(currentPlan)s plan subscription to continue building your site?'
+		),
+		{ currentPlan: planName }
+	);
+}
+
 function getLiveChatUrl( type: string, purchase: Purchase ) {
 	switch ( type ) {
 		case 'live-chat:plans':
@@ -320,7 +334,7 @@ export default function UpsellStep( {
 		case 'free-month-offer':
 			return (
 				<Upsell
-					title={ __( 'How about a free month?' ) }
+					title={ getFreeMonthOfferTitle() }
 					acceptButtonText={ __( 'Get a free month' ) }
 					onAccept={ () => props.onClickFreeMonthOffer?.() }
 					intent={ props.intent }
@@ -328,13 +342,7 @@ export default function UpsellStep( {
 					onDecline={ props.onDeclineUpsell }
 					isBusy={ cancellationInProgress }
 				>
-					{ sprintf(
-						/* translators: %(currentPlan)s is the name of the plan to which the customer is subscribed */
-						__(
-							'We get it – building a site takes time. But we’d love to see you stick around to build on what you started. How about a free month of your %(currentPlan)s plan subscription to continue building your site?'
-						),
-						{ currentPlan: planName }
-					) }
+					{ getFreeMonthOfferText( planName ) }
 				</Upsell>
 			);
 	}
