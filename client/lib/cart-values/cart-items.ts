@@ -503,6 +503,16 @@ export function titanMailYearly( properties: TitanProductProps ): MinimalRequest
 }
 
 /**
+ * Creates a new shopping cart item for any Titan Mail product slug.
+ */
+export function titanMail(
+	properties: TitanProductProps,
+	productSlug: string
+): MinimalRequestCartProduct {
+	return titanMailProduct( withNewMailboxCount( properties ), productSlug );
+}
+
+/**
  * Creates a new shopping cart item for Titan Mail Monthly.
  */
 export function titanMailMonthly( properties: TitanProductProps ): MinimalRequestCartProduct {
