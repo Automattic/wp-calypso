@@ -9,6 +9,7 @@ export function getAvailabilityErrorMessage( {
 	domainName,
 	dashboard,
 	selectedSite,
+	getDomainSearchUrl = undefined,
 	registerNowAction = undefined,
 } ) {
 	const { status, mappable, maintenance_end_time, other_site_domain, other_site_domain_only } =
@@ -16,7 +17,9 @@ export function getAvailabilityErrorMessage( {
 
 	if ( [ status, mappable ].includes( domainAvailability.AVAILABLE ) ) {
 		if ( selectedSite ) {
-			const searchPageLink = domainAddNew( selectedSite.slug, domainName );
+			const searchPageLink = getDomainSearchUrl
+				? getDomainSearchUrl( status === domainAvailability.TLD_NOT_SUPPORTED ? '' : domainName )
+				: domainAddNew( selectedSite.slug, domainName );
 			return createInterpolateElement(
 				__( "This domain isn't registered. Did you mean to <a>search for a domain</a> instead?" ),
 				{

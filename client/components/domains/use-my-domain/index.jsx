@@ -55,6 +55,7 @@ function UseMyDomain( props ) {
 		setUseMyDomainMode,
 		isStepper = false,
 		stepLocation,
+		getDomainSearchUrl,
 		registerNowAction,
 		hideHeader,
 		render,
@@ -159,10 +160,18 @@ function UseMyDomain( props ) {
 				domainName: filteredDomainName,
 				dashboard,
 				selectedSite,
+				getDomainSearchUrl,
 				registerNowAction,
 			} ),
 		};
-	}, [ filterDomainName, domainName, selectedSite, registerNowAction, dashboard ] );
+	}, [
+		filterDomainName,
+		domainName,
+		selectedSite,
+		getDomainSearchUrl,
+		registerNowAction,
+		dashboard,
+	] );
 
 	const getAvailability = useCallback( async () => {
 		const filteredDomainName = filterDomainName( domainName );
@@ -183,6 +192,7 @@ function UseMyDomain( props ) {
 				domainName: filteredDomainName,
 				dashboard,
 				selectedSite,
+				getDomainSearchUrl,
 				registerNowAction,
 			} ),
 		};
@@ -191,6 +201,7 @@ function UseMyDomain( props ) {
 		domainName,
 		getWpcomAvailabilityErrors,
 		selectedSite,
+		getDomainSearchUrl,
 		registerNowAction,
 		dashboard,
 	] );
@@ -496,6 +507,7 @@ UseMyDomain.propTypes = {
 	setUseMyDomainMode: PropTypes.func,
 	isStepper: PropTypes.bool,
 	stepLocation: PropTypes.object,
+	getDomainSearchUrl: PropTypes.func,
 	registerNowAction: PropTypes.func,
 	hideHeader: PropTypes.bool,
 	render: PropTypes.func,
