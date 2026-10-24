@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Replace `@babel/plugin-proposal-class-properties` with `@babel/plugin-transform-class-properties` in the loose-mode Babel plugins
+
 ### Added
 
 - Initial release
