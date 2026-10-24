@@ -67,7 +67,7 @@
 		"@size-limit/file": "^8.2.6",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/react": "^16.3.3",
-		"@testing-library/user-event": "^14.6.7",
+		"@testing-library/user-event": "^14.6.8",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.57.0",
 		"autoprefixer": "^10.4.21",
 		"babel-jest": "^30.5.2",

@@ -104,7 +104,7 @@
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
-		"@testing-library/user-event": "^14.6.7",
+		"@testing-library/user-event": "^14.6.8",
 		"@types/canvas-confetti": "^1.6.0",
 		"@types/node": "^24.12.2",
 		"postcss": "^8.5.15",
