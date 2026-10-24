@@ -73,4 +73,14 @@ describe( 'DowngradeConfirmationModal', () => {
 			within( screen.getByRole( 'dialog' ) ).queryByText( /Monthly plans don’t include/ )
 		).toBeNull();
 	} );
+
+	test( 'shows no monthly warning outside a term change', () => {
+		mockFeatures( { features: [], is_change_to_monthly: true } );
+
+		render( <DowngradeConfirmationModal { ...defaultProps } /> );
+
+		expect(
+			within( screen.getByRole( 'dialog' ) ).queryByText( /Monthly plans don’t include/ )
+		).toBeNull();
+	} );
 } );
