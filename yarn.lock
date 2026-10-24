@@ -421,7 +421,7 @@ __metadata:
     "@automattic/calypso-eslint-config": "workspace:^"
     "@types/react": "npm:^18.0.0 || ^19.0.0"
     "@types/react-dom": "npm:^18.0.0 || ^19.0.0"
-    "@vitejs/plugin-react": "npm:^4.0.0"
+    "@vitejs/plugin-react": "npm:^4.7.0"
     react: "npm:^18.0.0"
     react-dom: "npm:^18.0.0"
     typescript: "npm:^5.9.3"
@@ -447,7 +447,7 @@ __metadata:
     "@types/node": "npm:^20.0.0"
     "@types/react": "npm:^18.0.0 || ^19.0.0"
     "@types/react-dom": "npm:^18.0.0 || ^19.0.0"
-    "@vitejs/plugin-react": "npm:^4.0.0"
+    "@vitejs/plugin-react": "npm:^4.7.0"
     "@wordpress/i18n": "npm:^6.1.0"
     autoprefixer: "npm:^10.4.0"
     class-variance-authority: "npm:^0.7.1"
@@ -12429,7 +12429,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-react@npm:^4.0.0":
+"@vitejs/plugin-react@npm:^4.7.0":
   version: 4.7.0
   resolution: "@vitejs/plugin-react@npm:4.7.0"
   dependencies:
