@@ -16,14 +16,11 @@ module.exports = ( api, opts ) => ( {
 		[
 			require.resolve( '@babel/preset-env' ),
 			{
-				corejs: opts.corejs ? opts.corejs : 3.6,
 				debug: opts.debug ? opts.debug : false,
 				bugfixes: opts.bugfixes ? opts.bugfixes : false,
 				modules: modulesOption( opts ),
-				useBuiltIns: opts.useBuiltIns ? opts.useBuiltIns : 'entry',
 				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
-				// Exclude `web.immediate`: the non-standard setImmediate is unused and needed by no target browser.
-				exclude: [ 'transform-typeof-symbol', 'web.immediate' ],
+				exclude: [ 'transform-typeof-symbol' ],
 			},
 		],
 		[ require.resolve( '@babel/preset-typescript' ), { allowDeclareFields: true } ],
