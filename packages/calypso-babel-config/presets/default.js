@@ -26,6 +26,7 @@ module.exports = ( api, opts ) => ( {
 				exclude: [ 'transform-typeof-symbol', 'web.immediate' ],
 			},
 		],
+		[ require.resolve( '@babel/preset-typescript' ), { allowDeclareFields: true } ],
 	],
 	// JSX syntax only for files that can contain it: in a .ts file, `<T>value` assertions and generic
 	// arrows (`<T>( x ) =>`) would parse as JSX. Babel 7's TypeScript plugin turned JSX off for .ts
@@ -41,13 +42,8 @@ module.exports = ( api, opts ) => ( {
 						importSource: opts.importSource ?? process.env.IMPORT_SOURCE,
 					},
 				],
-				[ require.resolve( '@babel/preset-typescript' ), { allowDeclareFields: true } ],
 			],
 			plugins: [ require.resolve( '@emotion/babel-plugin' ) ],
-		},
-		{
-			test: /\.[cm]?ts$/,
-			presets: [ [ require.resolve( '@babel/preset-typescript' ), { allowDeclareFields: true } ] ],
 		},
 	],
 	plugins: [
