@@ -37,7 +37,6 @@
 		"@babel/runtime": "^7.29.10",
 		"@emotion/babel-plugin": "^11.11.0",
 		"@wordpress/babel-plugin-import-jsx-pragma": "^5.48.0",
-		"babel-plugin-dynamic-import-node": "^2.3.3",
 		"babel-plugin-transform-react-remove-prop-types": "^0.4.24"
 	}
 }
