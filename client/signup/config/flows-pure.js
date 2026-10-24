@@ -185,17 +185,6 @@ export function generateFlows( {
 			disallowResume: true,
 		},
 		{
-			name: 'ecommerce',
-			steps: [ userSocialStep, 'domains', 'plans-ecommerce-fulfilled' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
-		},
-		{
 			name: 'wpcc',
 			steps: [ 'oauth2-user' ],
 			destination: getRedirectDestination,
