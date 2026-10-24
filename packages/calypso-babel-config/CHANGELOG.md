@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Breaking: Remove the `wordpress-element` preset and its `@wordpress/babel-plugin-import-jsx-pragma` and `@babel/plugin-transform-react-jsx` dependencies. Use the `default` preset, whose React automatic runtime matches what `@wordpress/babel-preset-default` does.
 - Remove `babel-plugin-dynamic-import-node` from the `test` environment. `@babel/preset-env` already rewrites `import()` for Jest.
 - Stop passing `useBuiltIns: 'entry'` and `corejs` to `@babel/preset-env` in the `default` and `dependencies` presets, and drop the `corejs` and `useBuiltIns` preset options. `core-js` entry imports are no longer replaced with the polyfills the targets need.
 - Replace `@babel/plugin-proposal-class-properties` with `@babel/plugin-transform-class-properties` in the default preset
