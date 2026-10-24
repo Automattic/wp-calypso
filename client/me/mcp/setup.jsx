@@ -280,33 +280,21 @@ function McpSetupComponent( { path } ) {
 							) }
 
 							{ selectedMcpClient === 'chatgpt' && (
-								<ol className="mcp-setup__steps">
-									<li>
-										<Text as="p" size="medium">
-											{ createInterpolateElement(
-												/* translators: <ChatGptSettings/> is a link to the ChatGPT plugins settings page */
-												translate( 'Open <ChatGptSettings/>.' ),
-												{
-													ChatGptSettings: (
-														<ExternalLink href="https://chatgpt.com/plugins">
-															{ translate( 'ChatGPT plugins settings' ) }
-														</ExternalLink>
-													),
-												}
-											) }
-										</Text>
-									</li>
-									<li>
-										<Text as="p" size="medium">
-											{ translate( 'Search for WordPress.com.' ) }
-										</Text>
-									</li>
-									<li>
-										<Text as="p" size="medium">
-											{ translate( 'Click “Install plugin”.' ) }
-										</Text>
-									</li>
-								</ol>
+								<VStack spacing={ 4 }>
+									<Text as="p" size="medium">
+										{ translate(
+											'Install the WordPress.com plugin in ChatGPT, then sign in with your WordPress.com account when prompted.'
+										) }
+									</Text>
+									<Button
+										variant="primary"
+										href="https://chatgpt.com/plugins/wordpress-com"
+										target="_blank"
+										className="mcp-setup__action-button"
+									>
+										{ translate( 'Install in ChatGPT' ) }
+									</Button>
+								</VStack>
 							) }
 
 							{ selectedMcpClient === 'cursor' && (
