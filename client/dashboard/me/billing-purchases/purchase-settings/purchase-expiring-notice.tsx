@@ -3,10 +3,11 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useLocale } from '../../../app/locale';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
 import { isEligibleForPlanExpiryNotice } from '../../../components/plan-expiry-notice';
-import { getCalendarDaysUntil, getRelativeDayString } from '../../../utils/datetime';
+import { formatDate, getCalendarDaysUntil, getRelativeDayString } from '../../../utils/datetime';
 import {
 	isIncludedWithPlan,
 	isExpiring,
@@ -14,6 +15,7 @@ import {
 	isRecentMonthlyPurchase,
 	isAkismetFreeProduct,
 	getRenewalUrlFromPurchase,
+	isFreeTrialEndingOnExpiryDate,
 } from '../../../utils/purchase';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
@@ -155,6 +157,18 @@ function ExpiringText( {
 	purchase: Purchase;
 	isDomainWithoutSite: boolean;
 } ) {
+	const locale = useLocale();
+
+	if ( isFreeTrialEndingOnExpiryDate( purchase ) ) {
+		return sprintf(
+			// translators: %(date)s: a formatted date, like "January 22, 2027"
+			__( 'Your free trial ends on %(date)s.' ),
+			{
+				date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
+			}
+		);
+	}
+
 	if (
 		purchase.site_slug &&
 		purchase.expiry_status === 'manual-renew' &&
