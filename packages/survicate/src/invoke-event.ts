@@ -3,6 +3,7 @@ import { select, subscribe } from '@wordpress/data';
 import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
 import { isModalOpen } from './modal-detection';
+import { getActiveSuppressorReason } from './suppressors';
 import { recordSurveySuppressed, type SuppressionReason } from './track-suppression';
 
 const HELP_CENTER_STORE = 'automattic/help-center';
@@ -55,7 +56,8 @@ export function observeHelpCenter( onOpen: () => void, onClose: () => void ): ()
  * Why surveys should currently be suppressed, or `null` if they shouldn't.
  * Checked most- to least-specific: a support session lasts the whole page
  * lifetime, and the Help Center (store-based check — more reliable than DOM
- * for a non-`aria-modal` panel) takes precedence over a generic modal, so
+ * for a non-`aria-modal` panel) and consumer-registered suppressors (see
+ * `suppressors.ts`) take precedence over a generic modal, so
  * `modal` is reported only when it is the sole reason — which is exactly what
  * measures the incremental effect of the modal rule.
  */
@@ -65,6 +67,10 @@ export function getSuppressionReason(): SuppressionReason | null {
 	}
 	if ( isHelpCenterOpen() ) {
 		return 'help_center';
+	}
+	const suppressorReason = getActiveSuppressorReason();
+	if ( suppressorReason ) {
+		return suppressorReason;
 	}
 	if ( isModalOpen() ) {
 		return 'modal';
