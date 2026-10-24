@@ -23,7 +23,8 @@ import type { PlaygroundImportProgress } from '../../lib/import-playground';
 import type { PlaygroundClient } from '../../lib/types';
 import './style.scss';
 
-type ImportFailureReason = 'timeout' | 'unsupported_file_type' | 'import_failure';
+type ImportFailureReason =
+	'timeout' | 'unsupported_file_type' | 'playground_not_found' | 'import_failure';
 
 function getFailureReason( error: unknown ): ImportFailureReason {
 	if ( error instanceof ImportTimeoutError ) {
@@ -50,44 +51,54 @@ export const PlaygroundSetupStep: Step< {
 
 	const [ progress, setProgress ] = useState< PlaygroundImportProgress | null >( null );
 	const [ failureReason, setFailureReason ] = useState< ImportFailureReason | null >( null );
+	// navigation.submit is recreated on every flow render, so the effect's deps
+	// change while a blueprint import is pending. The ref makes each attempt run
+	// exactly once; "Try again" bumps the attempt.
+	const [ blueprintAttempt, setBlueprintAttempt ] = useState( 0 );
+	const startedBlueprintAttemptRef = useRef< number | null >( null );
 	const keepOpenSubtitle = __(
 		'This usually takes a few minutes. Keep this window open until your site is ready.'
 	);
 
 	useEffect( () => {
-		// If blueprint exists, import it and then submit
 		const blueprint = query.get( 'blueprint' );
-		if ( blueprint && submit && siteId ) {
-			const runBlueprintImport = async () => {
-				try {
-					await importBlueprint( { blueprint, siteId } );
-					submit( {
-						siteSlug,
-						siteId,
-					} );
-				} catch ( error ) {
-					// Add error handling
-					// eslint-disable-next-line no-console
-					console.error( error );
-				}
-			};
-			runBlueprintImport();
+		if ( ! blueprint || ! submit || ! siteId ) {
+			return;
 		}
-	}, [ query, submit, siteSlug, siteId, importBlueprint ] );
+		if ( startedBlueprintAttemptRef.current === blueprintAttempt ) {
+			return;
+		}
+		startedBlueprintAttemptRef.current = blueprintAttempt;
+
+		const runBlueprintImport = async () => {
+			try {
+				await importBlueprint( { blueprint, siteId } );
+			} catch ( error ) {
+				recordTracksEvent( 'calypso_playground_blueprint_import_failed', { site_id: siteId } );
+				setFailureReason( 'import_failure' );
+				return;
+			}
+			submit( { siteSlug, siteId } );
+		};
+		runBlueprintImport();
+	}, [ query, submit, siteSlug, siteId, importBlueprint, blueprintAttempt ] );
 
 	const startImport = async ( client: PlaygroundClient ) => {
 		if ( ! client || ! submit ) {
 			return;
 		}
 
-		const playgroundSlug = query.get( 'playground' );
-		if ( ! playgroundSlug ) {
-			return;
-		}
-
 		playgroundClientRef.current = client;
 		setFailureReason( null );
 		setProgress( null );
+
+		// The saved Playground can be gone from this browser, in which case the
+		// iframe boots a blank site and there is nothing to import.
+		const playgroundSlug = query.get( 'playground' );
+		if ( ! playgroundSlug ) {
+			setFailureReason( 'playground_not_found' );
+			return;
+		}
 
 		// The Playground publish flow (entrepreneur) exports a WooCommerce sandbox
 		// that carries sandbox-only plugins.
@@ -127,7 +138,10 @@ export const PlaygroundSetupStep: Step< {
 	const retryImport = () => {
 		if ( playgroundClientRef.current ) {
 			startImport( playgroundClientRef.current );
+			return;
 		}
+		setFailureReason( null );
+		setBlueprintAttempt( ( previous ) => previous + 1 );
 	};
 
 	// Without a percentage, the bar pulses.
@@ -154,6 +168,9 @@ export const PlaygroundSetupStep: Step< {
 		),
 		unsupported_file_type: __(
 			'WordPress.com did not recognize this Playground site as a site export, so it could not be imported.'
+		),
+		playground_not_found: __(
+			'Your Playground site could not be found in this browser, so there is nothing to import.'
 		),
 		import_failure: __(
 			'Something went wrong while importing your Playground site. Please try again.'
