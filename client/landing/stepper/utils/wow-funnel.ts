@@ -14,7 +14,7 @@ import {
  * validated server-side against the registry in wp-content/lib/atomic/funnels.php; the client only
  * passes it through.
  *
- * Entry URL shape: /setup/onboarding?wow_funnel=<slug>&dest=<dest>[&blueprint=<id>]
+ * Entry URL shape: /setup/onboarding?wow_funnel=<slug>&dest=<dest>[&blueprint=<id>][&share=<token>]
  */
 
 /**
@@ -84,6 +84,12 @@ const WOW_FUNNEL_CONFIG: Record< string, Partial< WowFunnelConfig > > = {
 		interstitials: [ 'site-spec' ],
 		readiness: 'import',
 		// The archive restore is genuinely long; this matches the wait site-spec already ran.
+		waitTimeoutSeconds: 900,
+	},
+	// A ready static-site import preview, delivered onto the site before checkout. The hand-off
+	// waits for that import, which runs behind the transfer like the blueprint one.
+	'static-site-import': {
+		readiness: 'import',
 		waitTimeoutSeconds: 900,
 	},
 };
@@ -183,6 +189,7 @@ export function getWowFunnelEntryQueryArgs(
 	return {
 		wow_funnel: funnelSlug,
 		...( funnelArgs.blueprint_slug ? { blueprint: funnelArgs.blueprint_slug } : {} ),
+		...( funnelArgs.share_token ? { share: funnelArgs.share_token } : {} ),
 	};
 }
 
@@ -190,7 +197,8 @@ export function getWowFunnelEntryQueryArgs(
  * Input the funnel's server-side follow-up needs, read off the entry URL.
  *
  * Sent as `wow_funnel_args` to /sites/new, where the registered funnel's follow-up consumes it —
- * the blueprint funnel, for instance, seeds its archive import from `blueprint_slug`. Empty for
+ * the blueprint funnel, for instance, seeds its archive import from `blueprint_slug`, and the
+ * static-site-import funnel delivers the preview its `share_token` names. Empty for
  * funnels that do no follow-up work.
  */
 export function getWowFunnelSlug( queryParams: URLSearchParams ): string | null {
@@ -209,6 +217,12 @@ export function getWowFunnelArgs( queryParams: URLSearchParams ): Record< string
 	const blueprint = queryParams.get( 'blueprint' );
 	if ( blueprint ) {
 		args.blueprint_slug = blueprint;
+	}
+
+	// The share token of a static-site import preview, for the static-site-import funnel.
+	const share = queryParams.get( 'share' );
+	if ( share ) {
+		args.share_token = share;
 	}
 
 	return args;

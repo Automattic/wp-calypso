@@ -103,6 +103,19 @@ describe( 'getWowFunnelEntryQueryArgs', () => {
 		} );
 	} );
 
+	it( 'round-trips a static-site import share token through the entry URL', () => {
+		const funnelArgs = { share_token: 'header.payload.signature' };
+		const query = getWowFunnelEntryQueryArgs( 'static-site-import', funnelArgs );
+		expect( query ).toEqual( {
+			wow_funnel: 'static-site-import',
+			share: 'header.payload.signature',
+		} );
+
+		const params = new URLSearchParams( query );
+		expect( getWowFunnelArgs( params ) ).toEqual( funnelArgs );
+		expect( isKnownWowFunnel( getWowFunnelSlug( params ) ) ).toBe( true );
+	} );
+
 	it( 'round-trips through the entry URL parsers', () => {
 		const params = new URLSearchParams(
 			getWowFunnelEntryQueryArgs( 'blueprint', { blueprint_slug: 'coachava' } )
@@ -203,6 +216,13 @@ describe( 'getWowFunnelConfig', () => {
 		expect( config.interstitials ).toEqual( [] );
 		expect( config.dest ).toBe( 'editor' );
 		expect( config.readiness ).toBe( 'transfer' );
+	} );
+
+	it( 'waits for the delivered import before handing a static-site import over', () => {
+		const config = getWowFunnelConfig( 'static-site-import' );
+		expect( config.interstitials ).toEqual( [] );
+		expect( config.readiness ).toBe( 'import' );
+		expect( config.dest ).toBe( 'editor' );
 	} );
 
 	it( 'applies per-funnel overrides over the defaults', () => {
