@@ -1,5 +1,6 @@
 #### Unreleased
 
+- `i18n-no-variables` checks every option of a `translate()` call. It stopped after the first option, so a variable in a later one, such as `context` after `comment`, wasn't reported.
 - Breaking: Updated peer dependency `eslint-plugin-jsdoc` to 65.1.0 and `eslint-plugin-react-hooks` to 7.1.1. `jsdoc/check-param-names` now also checks the properties of object-typed parameters.
 - Turned off the rules `eslint-plugin-jsdoc` added to its recommended config after v50: `escape-inline-tags`, `reject-any-type`, `reject-function-type`, `require-throws-type`, `require-yields-type` and `ts-no-empty-object-type`.
 - Breaking: Requires ESLint 10.13 or later in 10.x. The presets are flat config only: `recommended` and `react`. The eslintrc presets `plugin:wpcalypso/recommended` and `plugin:wpcalypso/react` are removed, since ESLint 10 can't load eslintrc; stay on 8.x to keep using them. Scope the presets to your JavaScript files with `files` and `extends`, as the README shows.
