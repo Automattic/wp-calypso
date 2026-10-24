@@ -698,7 +698,7 @@ __metadata:
     "@babel/cli": "npm:^7.29.7"
     "@babel/core": "npm:^7.29.7"
     "@babel/helpers": "npm:^7.29.10"
-    "@babel/plugin-proposal-class-properties": "npm:^7.18.6"
+    "@babel/plugin-transform-class-properties": "npm:^7.29.7"
     "@babel/plugin-transform-react-jsx": "npm:^7.29.7"
     "@babel/plugin-transform-react-pure-annotations": "npm:^7.29.7"
     "@babel/plugin-transform-runtime": "npm:^7.29.7"
@@ -2957,7 +2957,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-create-class-features-plugin@npm:^7.18.6, @babel/helper-create-class-features-plugin@npm:^7.29.7":
+"@babel/helper-create-class-features-plugin@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/helper-create-class-features-plugin@npm:7.29.7"
   dependencies:
@@ -3215,18 +3215,6 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0
   checksum: 547bddf129eed825c0a3c706828c579bfedd0fa850054ded515e90af91fa1a643bb88461e49b59946d95737622766ae0db2c04346ee319e06e49852c270a2c2f
-  languageName: node
-  linkType: hard
-
-"@babel/plugin-proposal-class-properties@npm:^7.18.6":
-  version: 7.18.6
-  resolution: "@babel/plugin-proposal-class-properties@npm:7.18.6"
-  dependencies:
-    "@babel/helper-create-class-features-plugin": "npm:^7.18.6"
-    "@babel/helper-plugin-utils": "npm:^7.18.6"
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: d5172ac6c9948cdfc387e94f3493ad86cb04035cf7433f86b5d358270b1b9752dc25e176db0c5d65892a246aca7bdb4636672e15626d7a7de4bc0bd0040168d9
   languageName: node
   linkType: hard
 
