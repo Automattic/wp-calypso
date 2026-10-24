@@ -38,14 +38,24 @@ function plan(
 const signature1 = plan( 'Signature 1', 'signature', [ 1, 30000, 20 ] );
 const signature2 = plan( 'Signature 2', 'signature', [ 3, 75000, 35 ] );
 const signature3 = plan( 'Signature 3', 'signature', [ 5, 125000, 50 ] );
-const signature10 = plan( 'Signature 10', 'signature', [ 150, 3000000, 450 ] );
+const signature4 = plan( 'Signature 4', 'signature', [ 10, 100000, 35 ] );
+const signature5 = plan( 'Signature 5', 'signature-high', [ 20, 400000, 75 ] );
+const signature7 = plan( 'Signature 7', 'signature-high', [ 40, 600000, 125 ] );
 const signature11 = plan( 'Signature 11', 'signature-high', [ 200, 3000000, 500 ] );
 const premium1 = plan( 'Premium 1', 'premium', [ 1, 150000, 30 ] );
 const premium2 = plan( 'Premium 2', 'premium', [ 1, 300000, 60 ] );
 const standard1 = plan( 'Standard 1', 'standard', [ 1, 30000, 20 ] );
 const enterprise4 = plan( 'Enterprise 4', 'enterprise', [ 100, 1000000, 200 ] );
 
-const signatureCatalog = [ signature1, signature11, premium1, premium2 ];
+const signatureCatalog = [
+	signature1,
+	signature4,
+	signature5,
+	signature7,
+	signature11,
+	premium1,
+	premium2,
+];
 const legacyCatalog = [ standard1, enterprise4 ];
 
 function renderSection( props: Partial< React.ComponentProps< typeof PressableSection > > = {} ) {
@@ -61,11 +71,11 @@ function renderSection( props: Partial< React.ComponentProps< typeof PressableSe
 	);
 }
 
-const gateText = /Premium plans are sold through referrals/;
-const premiumType = /Premium plans 1–11/;
+const gateText = /Performance plans are sold through referrals/;
+const performanceType = /Performance plans/;
 const planTable = () => screen.queryByRole( 'table' );
 
-describe( '<PressableSection> Premium plans', () => {
+describe( '<PressableSection> Performance plans', () => {
 	beforeEach( () => {
 		sessionStorage.clear();
 		nock( API )
@@ -78,7 +88,7 @@ describe( '<PressableSection> Premium plans', () => {
 	test( 'with referrals off, the picker stays and the rail shows the gate', async () => {
 		renderSection();
 
-		await userEvent.click( screen.getByRole( 'radio', { name: premiumType } ) );
+		await userEvent.click( screen.getByRole( 'radio', { name: performanceType } ) );
 
 		expect( screen.getByRole( 'radio', { name: 'Premium 1' } ) ).toBeChecked();
 		expect( screen.getByText( 'Pressable Premium 1' ) ).toBeVisible();
@@ -89,7 +99,7 @@ describe( '<PressableSection> Premium plans', () => {
 	test( 'with referrals on, the rail shows the price card', async () => {
 		renderSection( { isReferralMode: true } );
 
-		await userEvent.click( screen.getByRole( 'radio', { name: premiumType } ) );
+		await userEvent.click( screen.getByRole( 'radio', { name: performanceType } ) );
 
 		expect( screen.getByRole( 'radio', { name: 'Premium 1' } ) ).toBeChecked();
 		expect( screen.getByRole( 'button', { name: 'Add Premium 1 to referral' } ) ).toBeVisible();
@@ -99,10 +109,10 @@ describe( '<PressableSection> Premium plans', () => {
 	test( 'on the legacy catalog there is no plan to pick, only the gate and the usage card', async () => {
 		renderSection( { products: legacyCatalog, existingPlan: standard1, ownership: 'agency' } );
 
-		await userEvent.click( screen.getByRole( 'radio', { name: /Premium plans/ } ) );
+		await userEvent.click( screen.getByRole( 'radio', { name: performanceType } ) );
 
 		expect( planTable() ).not.toBeInTheDocument();
-		expect( screen.getByText( 'Pressable Premium' ) ).toBeVisible();
+		expect( screen.getByText( 'Pressable Performance' ) ).toBeVisible();
 		expect( screen.getByText( gateText ) ).toBeVisible();
 		expect( screen.getByTestId( 'usage-card' ) ).toBeVisible();
 	} );
@@ -132,9 +142,9 @@ describe( '<PressableSection> plan table', () => {
 	test( 'disables the plan type below the agency’s plan', () => {
 		renderSection( { products: ownerCatalog, existingPlan: signature11, ownership: 'agency' } );
 
-		const lowType = screen.getByRole( 'radio', { name: /Signature plans 1–10/ } );
-		expect( lowType ).toHaveAttribute( 'aria-disabled', 'true' );
-		expect( lowType ).toHaveTextContent( 'Below your plan' );
+		const standardType = screen.getByRole( 'radio', { name: /Standard plans/ } );
+		expect( standardType ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( standardType ).toHaveTextContent( 'Below your plan' );
 	} );
 
 	test( 'lists every plan in referral mode, whatever the agency owns', () => {
@@ -149,41 +159,73 @@ describe( '<PressableSection> plan table', () => {
 		expect( screen.queryByText( 'Current plan' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'keeps Premium plans open for an agency on a Signature plan', async () => {
+	test( 'keeps Performance plans open for an agency on a Standard plan', async () => {
 		renderSection( {
 			products: ownerCatalog,
 			existingPlan: signature2,
 			ownership: 'agency',
 		} );
 
-		await userEvent.click( screen.getByRole( 'radio', { name: premiumType } ) );
+		await userEvent.click( screen.getByRole( 'radio', { name: performanceType } ) );
 
 		expect( screen.getByRole( 'radio', { name: 'Premium 1' } ) ).toBeEnabled();
 		expect( screen.getByRole( 'radio', { name: 'Premium 2' } ) ).toBeEnabled();
 	} );
 
-	test( 'does not mark Premium as below the plan of a legacy Premium owner', () => {
+	test( 'does not mark Performance as below the plan of a legacy Premium owner', () => {
 		renderSection( {
 			products: [ ...legacyCatalog, premium1 ],
 			existingPlan: premium1,
 			ownership: 'agency',
 		} );
 
-		const premiumTab = screen.getByRole( 'radio', { name: /Premium plans/ } );
-		expect( premiumTab ).not.toHaveAttribute( 'aria-disabled', 'true' );
-		expect( premiumTab ).not.toHaveTextContent( 'Below your plan' );
+		const performanceTab = screen.getByRole( 'radio', { name: performanceType } );
+		expect( performanceTab ).not.toHaveAttribute( 'aria-disabled', 'true' );
+		expect( performanceTab ).not.toHaveTextContent( 'Below your plan' );
 	} );
 
-	test( 'opens the larger plans for an agency on the largest Signature 1–10 plan', () => {
+	test( 'opens the Agency plans for an agency on the largest Standard plan', () => {
 		renderSection( {
-			products: [ signature1, signature10, signature11, premium1 ],
-			existingPlan: signature10,
+			products: [ signature1, signature4, signature5, signature11, premium1 ],
+			existingPlan: signature4,
 			ownership: 'agency',
 		} );
 
-		const lowType = screen.getByRole( 'radio', { name: /Signature plans 1–10/ } );
-		expect( lowType ).toHaveAttribute( 'aria-disabled', 'true' );
-		expect( lowType ).toHaveTextContent( 'Your plan type' );
+		const standardType = screen.getByRole( 'radio', { name: /Standard plans/ } );
+		expect( standardType ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( standardType ).toHaveTextContent( 'Your plan type' );
+		expect( screen.getByRole( 'radio', { name: 'Signature 5' } ) ).toBeChecked();
+	} );
+} );
+
+describe( '<PressableSection> Agency plans', () => {
+	beforeEach( () => {
+		sessionStorage.clear();
+		nock( API )
+			.persist()
+			.get( '/wpcom/v2/agency' )
+			.query( true )
+			.reply( 200, [ { id: 1 } ] );
+	} );
+
+	test( 'the Agency tab opens on its smallest plan', async () => {
+		renderSection();
+
+		await userEvent.click( screen.getByRole( 'radio', { name: /Agency plans/ } ) );
+
+		expect( screen.getByRole( 'radio', { name: 'Signature 5' } ) ).toBeChecked();
+	} );
+
+	test( 'an agency on an Agency plan opens on Agency with only bigger plans to pick', () => {
+		renderSection( { existingPlan: signature7, ownership: 'agency' } );
+
+		expect( screen.getByRole( 'radio', { name: /Standard plans/ } ) ).toHaveAttribute(
+			'aria-disabled',
+			'true'
+		);
+		expect( screen.getByRole( 'radio', { name: /Agency plans/ } ) ).toBeChecked();
+		expect( screen.queryByRole( 'radio', { name: 'Signature 5' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'radio', { name: 'Signature 7' } ) ).toBeDisabled();
 		expect( screen.getByRole( 'radio', { name: 'Signature 11' } ) ).toBeChecked();
 	} );
 } );
