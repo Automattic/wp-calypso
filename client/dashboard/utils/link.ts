@@ -46,6 +46,7 @@ export function dashboardOrigins(): string[] {
 	const origins = [
 		`http://my.localhost:${ port }`,
 		'https://my.wordpress.com',
+		'https://horizon.my.wordpress.com',
 		`http://my.a4a.localhost:${ port }`,
 		'https://agencies-beta.automattic.com',
 	];
