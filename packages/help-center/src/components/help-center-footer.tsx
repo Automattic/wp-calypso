@@ -2,6 +2,7 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { Button, CardFooter } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSiteConnectionHealth } from '../data/use-site-connection-health';
@@ -32,9 +33,15 @@ export const HelpCenterContactButton = () => {
 	const { recentConversations } = useGetHistoryChats();
 	const recordTracksEvent = useHelpCenterTracksEvent();
 
+	const openRecentConversation = recentConversations.find(
+		( conversation ) => conversation.metadata?.status === 'open'
+	);
+
 	const showContactHumanButton = isOdieRoute && isEligibleForChat && isSiteUnreachable;
 	const isResolvingHumanRoute =
 		isOdieRoute && ( isLoadingSupportStatus || isCheckingConnectionHealth );
+	// "Get help" resumes the open chat, so offer a way to start over without the ellipsis menu.
+	const showNewChatButton = isOdieRoute && !! openRecentConversation && ! showContactHumanButton;
 
 	const handleContactHumanClick = () => {
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
@@ -61,10 +68,6 @@ export const HelpCenterContactButton = () => {
 			button_type: 'ai',
 		} );
 
-		const openRecentConversation = recentConversations.find(
-			( conversation ) => conversation.metadata?.status === 'open'
-		);
-
 		if ( url === '/odie' && openRecentConversation ) {
 			navigate( getChatLinkFromConversation( openRecentConversation ) );
 		} else {
@@ -76,8 +79,28 @@ export const HelpCenterContactButton = () => {
 		setMessage( '' );
 	};
 
+	const handleNewChatClick = () => {
+		recordTracksEvent( 'calypso_inlinehelp_clear_conversation', { source: 'footer' } );
+		navigate( '/odie' );
+		setMessage( '' );
+	};
+
 	return (
-		<CardFooter className="help-center__container-footer">
+		<CardFooter
+			className={ clsx( 'help-center__container-footer', {
+				'help-center__container-footer--has-new-chat': showNewChatButton,
+			} ) }
+		>
+			{ showNewChatButton && (
+				<Button
+					onClick={ handleNewChatClick }
+					variant="secondary"
+					className="button help-center-contact-page__button help-center-contact-page__button--new-chat"
+					__next40pxDefaultSize
+				>
+					{ __( 'New chat', __i18n_text_domain__ ) }
+				</Button>
+			) }
 			{ showContactHumanButton ? (
 				<Button
 					onClick={ handleContactHumanClick }
