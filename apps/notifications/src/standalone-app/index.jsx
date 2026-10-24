@@ -233,7 +233,6 @@ const NotesWrapper = ( { wpcom } ) => {
 			wpcom={ wpcom }
 			isDismissible={ isMobileViewport }
 			isViewSettingsEnabled={ isViewSettingsEnabled }
-			isSimplifiedNoteEnabled={ isViewSettingsEnabled }
 			preferences={ preferences }
 			onPreferenceChange={ handlePreferenceChange }
 		/>
