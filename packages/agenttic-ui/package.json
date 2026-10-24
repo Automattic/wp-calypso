@@ -56,7 +56,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"engines": {
-		"node": ">=20.0.0"
+		"node": ">=v20.20.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
@@ -65,7 +65,7 @@
 		"@storybook/addon-docs": "^10.6.2",
 		"@storybook/react": "^10.6.2",
 		"@storybook/react-vite": "^10.6.2",
-		"@types/node": "^20.0.0",
+		"@types/node": "^20.19.43",
 		"@types/react": "^18.0.0 || ^19.0.0",
 		"@types/react-dom": "^18.0.0 || ^19.0.0",
 		"@vitejs/plugin-react": "^4.7.0",
