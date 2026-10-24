@@ -36,10 +36,11 @@ export function useDateRange( {
 			return getDefaultDateRange( timezoneString, gmtOffset, defaultDays );
 		}
 		// URL bounds are instants; the picker expects local Dates carrying site calendar days.
-		return {
-			start: parseYmdLocal( formatYmd( range.start, timezoneString, gmtOffset ) )!,
-			end: parseYmdLocal( formatYmd( range.end, timezoneString, gmtOffset ) )!,
-		};
+		const start = parseYmdLocal( formatYmd( range.start, timezoneString, gmtOffset ) );
+		const end = parseYmdLocal( formatYmd( range.end, timezoneString, gmtOffset ) );
+		return start && end
+			? { start, end }
+			: getDefaultDateRange( timezoneString, gmtOffset, defaultDays );
 	}, [ from, to, timezoneString, gmtOffset, defaultDays ] );
 
 	const initializedUrl = useRef( false );
