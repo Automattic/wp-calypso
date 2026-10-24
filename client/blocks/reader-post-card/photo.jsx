@@ -49,12 +49,14 @@ class PostPhoto extends Component {
 	};
 
 	componentDidMount() {
-		this.resizeListener = window.addEventListener( 'resize', debounce( this.setCardWidth, 50 ) );
+		this.resizeListener = debounce( this.setCardWidth, 50 );
+		window.addEventListener( 'resize', this.resizeListener );
 		this.setCardWidth();
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.resizeListener );
+		this.resizeListener.cancel();
 	}
 
 	renderFeaturedImage() {
