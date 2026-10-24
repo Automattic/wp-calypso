@@ -115,4 +115,14 @@ describe( 'useDateRange', () => {
 		await act( async () => router.history.back() );
 		expect( await screen.findByText( '2025-01-01 to 2025-01-02' ) ).toBeVisible();
 	} );
+
+	test( 'falls back to the default range when URL dates cannot be represented by the picker', async () => {
+		await restoreRange( '?from=253402300800&to=253402387199' );
+
+		const today = new Date();
+		const start = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 6 );
+		expect(
+			screen.getByText( `${ formatSiteYmd( start ) } to ${ formatSiteYmd( today ) }` )
+		).toBeVisible();
+	} );
 } );
