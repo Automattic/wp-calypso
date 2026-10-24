@@ -25,6 +25,8 @@ Use `@testing-library/react` to test whole slices of the front-end dashboard and
 
 Use the `render()` function from `client/dashboard/test-utils.tsx`, which will render your component with context providers so that hooks work as expected. You can also avoid some manual mocking by using `nock` to mock and assert against network requests.
 
+`render()` only registers a root route, so `useParams()` has no params and links built from the app's route objects (e.g. `pluginRoute.to`) fail. For code that needs real routes or params, build the route tree and a test router yourself, as `domains/dataviews/test/field-domain-name.test.tsx` does.
+
 ### Mocking Network Requests
 
 Use `nock` to intercept HTTP requests made by queries and mutations. All dashboard API calls go through `https://public-api.wordpress.com`.

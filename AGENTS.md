@@ -100,6 +100,8 @@ yarn               # Install dependencies first if you haven't already
 yarn typecheck-client
 ```
 
+If `yarn typecheck-client` runs out of memory (`JavaScript heap out of memory`), rerun it with `NODE_OPTIONS=--max-old-space-size=8192`.
+
 If it fails, fix the type errors at the source — do not silence them with `// @ts-expect-error`, `// @ts-ignore`, or `as any` unless you can justify it in the PR description. Other CI type-checks worth running when relevant: `yarn typecheck-packages`, `yarn typecheck-apps`.
 
 ## Creating Pull Requests
