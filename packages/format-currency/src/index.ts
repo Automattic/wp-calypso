@@ -131,12 +131,24 @@ export function createFormatter(): CurrencyFormatter {
 		const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision ?? 0, options );
 		const formatter = getFormatter( numberAsFloat, validCurrency, options );
 		const parts = formatter.formatToParts( numberAsFloat );
+		const rtl = isRTL( options, locale );
+		let hasSeenLrm = false;
 
 		return parts.reduce( ( formatted, part ) => {
+			if ( part.value.includes( '\u200E' ) ) {
+				hasSeenLrm = true;
+			}
 			switch ( part.type ) {
 				case 'currency':
 					if ( currencyOverride?.symbol ) {
 						return formatted + currencyOverride.symbol;
+					}
+					return formatted + part.value;
+				case 'minusSign':
+				case 'plusSign':
+					if ( rtl && ! hasSeenLrm ) {
+						hasSeenLrm = true;
+						return formatted + '\u200E' + part.value;
 					}
 					return formatted + part.value;
 				default:
@@ -233,10 +245,10 @@ export function createFormatter(): CurrencyFormatter {
 					hasDecimalBeenSet = true;
 					return;
 				case 'minusSign':
-					sign = '-' as CurrencyObject[ 'sign' ];
+					sign = ( isRTL( options, locale ) ? '\u200E-' : '-' ) as CurrencyObject[ 'sign' ];
 					return;
 				case 'plusSign':
-					sign = '+' as CurrencyObject[ 'sign' ];
+					sign = ( isRTL( options, locale ) ? '\u200E+' : '+' ) as CurrencyObject[ 'sign' ];
 					return;
 			}
 		} );
@@ -299,6 +311,24 @@ export function createFormatter(): CurrencyFormatter {
 		setDefaultLocale,
 		geolocateCurrencySymbol,
 	};
+}
+
+function isRTL( options?: CurrencyObjectOptions, locale?: string ): boolean {
+	if ( options?.isRtl !== undefined ) {
+		return options.isRtl;
+	}
+	if (
+		typeof document !== 'undefined' &&
+		( document.dir === 'rtl' ||
+			document.documentElement?.dir === 'rtl' ||
+			document.body?.dir === 'rtl' )
+	) {
+		return true;
+	}
+	const loc = locale ?? '';
+	return /^(ar|arc|arz|az[-_]arab|ckb|dv|fa|he|iw|ks|ku[-_]arab|mzn|nqo|pnb|ps|sd|ug|ur|yi)\b/i.test(
+		loc
+	);
 }
 
 function getLocaleFromBrowser() {
