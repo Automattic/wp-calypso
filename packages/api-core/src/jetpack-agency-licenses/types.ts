@@ -116,3 +116,9 @@ export interface AgencyDevLicenses {
 	/** How many free development licenses are still unused. */
 	available: number;
 }
+
+/**
+ * The store each of an agency's attached Woo licenses is on, according to WooCommerce.com,
+ * keyed by license ID. `site_url` is null when WooCommerce.com could not be reached.
+ */
+export type WooCommerceLicenseSites = Record< string, { site_url: string | null } >;

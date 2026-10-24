@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+import { fetchWooCommerceLicenseSites } from '@automattic/api-core';
+import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
@@ -8,6 +10,11 @@ import a8cForAgencies from 'calypso/state/a8c-for-agencies/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import LicensePreview from '../index';
 import type { License } from 'calypso/state/partner-portal/types';
+
+jest.mock( '@automattic/api-core', () => ( {
+	...jest.requireActual( '@automattic/api-core' ),
+	fetchWooCommerceLicenseSites: jest.fn(),
+} ) );
 
 jest.mock( 'calypso/a8c-for-agencies/hooks/use-help-center', () => ( {
 	__esModule: true,
@@ -92,7 +99,10 @@ const initialState = {
 	},
 };
 
-function renderPreview( license: License ) {
+function renderPreview(
+	license: License,
+	queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } )
+) {
 	return renderWithProvider(
 		<LicensePreview
 			license={ license }
@@ -103,7 +113,7 @@ function renderPreview( license: License ) {
 			quantity={ license.quantity }
 			meta={ license.meta }
 		/>,
-		{ initialState, reducers: { a8cForAgencies } }
+		{ initialState, reducers: { a8cForAgencies }, queryClient }
 	);
 }
 
@@ -148,5 +158,39 @@ describe( 'LicensePreview', () => {
 		renderPreview( { ...baseLicense, subscription: titanLicense.subscription } );
 
 		expect( screen.queryByText( /90-day trial/ ) ).not.toBeInTheDocument();
+	} );
+
+	describe( 'Woo license site', () => {
+		const wooLicense: License = {
+			...baseLicense,
+			licenseKey: 'woocommerce-subscriptions_abc',
+			product: 'WooCommerce Subscriptions',
+			siteUrl: 'https://old-store.example',
+			attachedAt: '2026-10-02 00:00:00',
+		};
+
+		it( 'shows the store WooCommerce.com has the license on', async () => {
+			jest.mocked( fetchWooCommerceLicenseSites ).mockResolvedValue( {
+				[ wooLicense.licenseId ]: { site_url: 'https://new-store.example' },
+			} );
+			renderPreview( wooLicense );
+
+			expect( await screen.findByText( 'new-store.example' ) ).toBeVisible();
+			expect( screen.queryByText( 'old-store.example' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows no site while the store is looked up', () => {
+			jest.mocked( fetchWooCommerceLicenseSites ).mockReturnValue( new Promise( () => {} ) );
+			renderPreview( wooLicense );
+
+			expect( screen.queryByText( 'old-store.example' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'falls back to the license’s own site when the lookup fails', async () => {
+			jest.mocked( fetchWooCommerceLicenseSites ).mockRejectedValue( new Error( 'Unavailable' ) );
+			renderPreview( wooLicense );
+
+			expect( await screen.findByText( 'old-store.example' ) ).toBeVisible();
+		} );
 	} );
 } );
