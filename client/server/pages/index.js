@@ -270,13 +270,15 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
-	const authHelper = config.isEnabled( 'dev/auth-helper' );
-	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
-	const storeSandboxHelper = config.isEnabled( 'dev/store-sandbox-helper' );
+	const isCalypsoLive = isCalypsoLiveHostname( request.hostname );
+	const authHelper = isCalypsoLive || config.isEnabled( 'dev/auth-helper' );
+	const accountSettingsHelper = isCalypsoLive || config.isEnabled( 'dev/account-settings-helper' );
+	const storeSandboxHelper = isCalypsoLive || config.isEnabled( 'dev/store-sandbox-helper' );
 	const blackboxHelper = config.isEnabled( 'dev/blackbox-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
-		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
+		( isCalypsoLive || config.isEnabled( 'dev/preferences-helper' ) ) &&
+		entrypoint !== 'entry-gutenboarding';
 	const featuresHelper = config.isEnabled( 'dev/features-helper' );
 
 	const flags = ( request.query.flags || '' ).split( ',' );
@@ -335,7 +337,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	}
 
 	// calypso.live passes the branch along, so that it can be shown in the environment badge.
-	if ( isCalypsoLiveHostname( request.hostname ) && request.query.branch ) {
+	if ( isCalypsoLive && request.query.branch ) {
 		context.branchName = request.query.branch;
 	}
 
