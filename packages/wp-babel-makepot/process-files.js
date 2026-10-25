@@ -1,6 +1,5 @@
 const path = require( 'path' );
 const { Worker } = require( 'worker_threads' );
-const makePot = require( './index' );
 
 const partitionFilepaths = ( filepaths, workerCount ) => {
 	const partitions = Array.from( { length: workerCount }, () => [] );
@@ -63,12 +62,9 @@ module.exports = async ( filepaths, options = {} ) => {
 		return;
 	}
 
-	if ( jobs <= 1 || filepaths.length === 1 ) {
-		filepaths.forEach( ( filepath ) => makePot( filepath, makePotOptions ) );
-		return;
-	}
-
-	const workerCount = Math.min( jobs, filepaths.length );
+	// Even one job runs in a worker: workers load Babel with Node's own loader, which can require() the
+	// ESM-only Babel 8, whereas loading it here would break under Jest's module loader.
+	const workerCount = Math.max( 1, Math.min( jobs, filepaths.length ) );
 	const partitions = partitionFilepaths( filepaths, workerCount );
 
 	await Promise.all( partitions.map( ( partition ) => runWorker( partition, makePotOptions ) ) );
