@@ -45,6 +45,7 @@ describe( 'Messages', () => {
 			root.unmount();
 		} );
 		container.remove();
+		delete ( Element.prototype as Partial< Element > ).checkVisibility;
 	} );
 
 	async function render( props: Parameters< typeof Messages >[ 0 ] ): Promise< void > {
@@ -79,6 +80,75 @@ describe( 'Messages', () => {
 		expect( announcement() ).toBe( 'Bold and a link first second' );
 	} );
 
+	it( 'announces a new reply with the same text as the previous one', async () => {
+		const question = userMessage( 'Make it orange' );
+		const firstReply = agentMessage( 'Done.' );
+		await render( { messages: [ question, firstReply ], isProcessing: false } );
+		await render( { messages: [ question, firstReply ], isProcessing: true } );
+		await render( {
+			messages: [ question, firstReply, agentMessage( 'Done.', 'agent-2' ) ],
+			isProcessing: false,
+		} );
+
+		expect( announcement() ).toBe( 'Done.' );
+	} );
+
+	it( 'announces a hidden reply that the host shows after the turn ends', async () => {
+		const question = userMessage( 'Make it blue' );
+		const note: MessageType = {
+			...agentMessage( '' ),
+			id: 'note',
+			content: [ { type: 'component', component: () => <p>Chose blue</p> } ],
+		};
+		const reply: MessageType = {
+			...agentMessage( '' ),
+			id: 'reply',
+			content: [ { type: 'data', data: {} } ],
+		};
+		await render( { messages: [ question, note ], isProcessing: true } );
+		await render( { messages: [ question, note, reply ], isProcessing: false } );
+
+		expect( announcement() ).toBe( '' );
+
+		await render( {
+			messages: [
+				question,
+				note,
+				{ ...reply, content: [ { type: 'component', component: () => <p>Pick a font</p> } ] },
+			],
+			isProcessing: false,
+		} );
+
+		expect( announcement() ).toBe( 'Pick a font' );
+	} );
+
+	it( 'does not read out another conversation opened while a reply is still hidden', async () => {
+		const question = userMessage( 'Make it blue' );
+		const reply: MessageType = {
+			...agentMessage( '' ),
+			id: 'reply',
+			content: [ { type: 'data', data: {} } ],
+		};
+		await render( { messages: [ question ], isProcessing: true } );
+		await render( { messages: [ question, reply ], isProcessing: false } );
+		await render( {
+			messages: [ userMessage( 'Hi' ), agentMessage( 'Earlier reply' ) ],
+			isProcessing: false,
+		} );
+
+		expect( announcement() ).toBe( '' );
+
+		await render( {
+			messages: [
+				question,
+				{ ...reply, content: [ { type: 'component', component: () => <p>Pick a font</p> } ] },
+			],
+			isProcessing: false,
+		} );
+
+		expect( announcement() ).toBe( '' );
+	} );
+
 	it( 'does not read out a conversation that is already on screen when it opens', async () => {
 		await render( {
 			messages: [ userMessage( 'Hi' ), agentMessage( 'Earlier reply' ) ],
@@ -89,9 +159,13 @@ describe( 'Messages', () => {
 	} );
 
 	it( 'leaves out content hidden from assistive technology', async () => {
+		// jsdom has no `checkVisibility`; mirror browsers, where `[hidden]` is not displayed.
+		Element.prototype.checkVisibility = function () {
+			return ! this.closest( '[hidden]' );
+		};
 		const Renderer = ( { children }: { children: string } ) => (
 			<p>
-				{ children } <span aria-hidden="true">→</span> done
+				{ children } <span aria-hidden="true">→</span> done<span hidden> twice</span>
 			</p>
 		);
 		const question = userMessage( 'Change it' );

@@ -1,29 +1,16 @@
-import { createInteractiveUiCatalog, createInteractiveUiRuntime } from '@automattic/ai-ui-renderer';
+import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
 import {
 	applyInteractiveUiBatch,
+	getRejectedInteractiveUiMessageIds,
+	getUsableInteractiveUiSurfaceIds,
 	getInteractiveUiBatches,
 	getStaleInteractiveUiSurfaceIds,
+	keepInteractiveUiSurfacesInTranscript,
 	readInteractiveUiPart,
 } from '../messages';
+import { createBatch, createRuntime, operations } from './fixtures/surface';
 import type { InteractiveUiBatch } from '../messages';
 import type { UIMessage } from '@automattic/agenttic-client';
-
-const operations = [
-	{
-		version: 'v1.0' as const,
-		createSurface: {
-			surfaceId: 'test-surface',
-			catalogId: 'https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json',
-		},
-	},
-	{
-		version: 'v1.0' as const,
-		updateComponents: {
-			surfaceId: 'test-surface',
-			components: [ { id: 'root', component: 'Text', text: 'Test surface' } ],
-		},
-	},
-];
 
 const part = {
 	type: 'data' as const,
@@ -85,7 +72,6 @@ describe( 'interactive UI response messages', () => {
 			{
 				operations,
 				messageId: 'agent',
-				messageIndex: 1,
 				signature: JSON.stringify( [ 'agent', { operations } ] ),
 			},
 		] );
@@ -93,68 +79,75 @@ describe( 'interactive UI response messages', () => {
 } );
 
 describe( 'getStaleInteractiveUiSurfaceIds', () => {
-	function createBatch( messageIndex: number, postId?: number ): InteractiveUiBatch {
-		return {
-			operations,
-			messageId: `agent-${ messageIndex }`,
-			messageIndex,
-			signature: String( messageIndex ),
-			...( postId && { postId } ),
-		};
-	}
+	const pageBatch = ( postId: number ) => ( { ...createBatch( operations, 'agent' ), postId } );
+	const options = {
+		messageIndexes: new Map( [ [ 'agent', 1 ] ] ),
+		latestUserMessageIndex: 0,
+		restoredMessageIds: new Set< string >(),
+	};
 
 	it.each( [
 		[
 			'the user has replied past it',
-			createBatch( 1 ),
-			{ latestUserMessageIndex: 2, restoredSignatures: new Set< string >() },
+			createBatch( operations, 'agent' ),
+			{ ...options, latestUserMessageIndex: 2 },
 		],
-		[
-			'the editor has another page open',
-			createBatch( 1, 7 ),
-			{ latestUserMessageIndex: 0, restoredSignatures: new Set< string >(), currentPostId: 8 },
-		],
+		[ 'the editor has another page open', pageBatch( 7 ), { ...options, currentPostId: 8 } ],
 		[
 			'it was restored from history',
-			createBatch( 1 ),
-			{ latestUserMessageIndex: 0, restoredSignatures: new Set( [ '1' ] ) },
+			createBatch( operations, 'agent' ),
+			{ ...options, restoredMessageIds: new Set( [ 'agent' ] ) },
 		],
-	] )( 'marks a surface stale when %s', ( _description, batch, options ) => {
-		expect( getStaleInteractiveUiSurfaceIds( [ batch ], options ) ).toEqual(
+		[
+			'its message has left the transcript',
+			createBatch( operations, 'agent' ),
+			{ ...options, messageIndexes: new Map() },
+		],
+	] )( 'marks a surface stale when %s', ( _description, batch, staleOptions ) => {
+		expect( getStaleInteractiveUiSurfaceIds( [ batch ], staleOptions ) ).toEqual(
 			new Set( [ 'test-surface' ] )
 		);
 	} );
 
 	it( 'skips malformed operations', () => {
 		const batch = {
-			...createBatch( 1 ),
+			...createBatch( operations, 'agent' ),
 			operations: [ ...operations, null ] as unknown as InteractiveUiBatch[ 'operations' ],
 		};
 
 		expect(
-			getStaleInteractiveUiSurfaceIds( [ batch ], {
-				latestUserMessageIndex: 2,
-				restoredSignatures: new Set< string >(),
-			} )
+			getStaleInteractiveUiSurfaceIds( [ batch ], { ...options, latestUserMessageIndex: 2 } )
 		).toEqual( new Set( [ 'test-surface' ] ) );
 	} );
 
 	it( 'keeps a surface’s page when a later update doesn’t name one', () => {
-		const update = { ...createBatch( 2 ), operations: [ operations[ 1 ] ] };
+		const update = createBatch( [ operations[ 1 ] ], 'update' );
 
 		expect(
-			getStaleInteractiveUiSurfaceIds( [ createBatch( 1, 7 ), update ], {
-				latestUserMessageIndex: 0,
-				restoredSignatures: new Set< string >(),
+			getStaleInteractiveUiSurfaceIds( [ pageBatch( 7 ), update ], {
+				...options,
+				messageIndexes: new Map( [
+					[ 'agent', 1 ],
+					[ 'update', 2 ],
+				] ),
 				currentPostId: 8,
 			} )
 		).toEqual( new Set( [ 'test-surface' ] ) );
 	} );
 
 	it( 'judges a surface by the last batch that changed it', () => {
+		const update = createBatch( [ operations[ 1 ] ], 'update' );
+
 		const staleSurfaceIds = getStaleInteractiveUiSurfaceIds(
-			[ createBatch( 1 ), createBatch( 3 ) ],
-			{ latestUserMessageIndex: 2, restoredSignatures: new Set< string >() }
+			[ createBatch( operations, 'agent' ), update ],
+			{
+				...options,
+				messageIndexes: new Map( [
+					[ 'agent', 1 ],
+					[ 'update', 3 ],
+				] ),
+				latestUserMessageIndex: 2,
+			}
 		);
 
 		expect( staleSurfaceIds.size ).toBe( 0 );
@@ -162,28 +155,95 @@ describe( 'getStaleInteractiveUiSurfaceIds', () => {
 } );
 
 describe( 'applyInteractiveUiBatch', () => {
-	it( 'keeps only the messages the runtime accepts', () => {
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		const runtime = createInteractiveUiRuntime( {
-			catalogs: [ createInteractiveUiCatalog() ],
-			onAction: jest.fn(),
-			onError: jest.fn(),
-		} );
-		const rejected = {
+	const rejected = {
+		version: 'v1.0' as const,
+		updateComponents: { surfaceId: 'missing-surface', components: [ { id: 'root' } ] },
+	};
+
+	it.each( [
+		[ 'marks a batch with a rejected message', [ rejected, ...operations ], true ],
+		[ 'leaves a fully applied batch unmarked', operations, false ],
+	] )( '%s and keeps only its applied messages', ( _, batchOperations, hasRejections ) => {
+		expect(
+			applyInteractiveUiBatch( createRuntime(), createBatch( batchOperations, 'agent' ) )
+		).toMatchObject( { operations, hasRejections } );
+	} );
+} );
+
+describe( 'getRejectedInteractiveUiMessageIds', () => {
+	it( 'gives the live messages with rejected A2UI messages, not restored ones', () => {
+		const batches = [
+			{ ...createBatch( operations, 'live' ), hasRejections: true },
+			{ ...createBatch( operations, 'applied' ), hasRejections: false },
+			{ ...createBatch( operations, 'restored' ), hasRejections: true },
+		];
+
+		expect( getRejectedInteractiveUiMessageIds( batches, new Set( [ 'restored' ] ) ) ).toEqual(
+			new Set( [ 'live' ] )
+		);
+	} );
+} );
+
+describe( 'getUsableInteractiveUiSurfaceIds', () => {
+	const surfaceOperations = ( surfaceId: string, text: unknown ) => [
+		{ version: 'v1.0' as const, createSurface: { surfaceId, catalogId: BASIC_CATALOG_ID } },
+		{
 			version: 'v1.0' as const,
-			updateComponents: { surfaceId: 'missing-surface', components: [ { id: 'root' } ] },
-		};
+			updateComponents: { surfaceId, components: [ { id: 'root', component: 'Text', text } ] },
+		},
+	];
 
-		const applied = applyInteractiveUiBatch( runtime, {
-			operations: [ rejected, ...operations ],
-			messageId: 'agent',
-			messageIndex: 1,
-			signature: '1',
-		} );
+	it( 'gives each surface of the batches once, leaving out stale ones', () => {
+		const runtime = createRuntime();
+		const batches = [ createBatch( operations, 'agent' ), createBatch( [], 'agent' ) ];
 
-		expect( applied.operations ).toEqual( operations );
-		expect( consoleError ).toHaveBeenCalledTimes( 1 );
+		runtime.processMessages(
+			[ ...surfaceOperations( 'form', 'Form' ), ...surfaceOperations( 'picker', 'Picker' ) ],
+			'agent'
+		);
 
-		consoleError.mockRestore();
+		expect( getUsableInteractiveUiSurfaceIds( runtime, batches, new Set( [ 'picker' ] ) ) ).toEqual(
+			[ 'form' ]
+		);
+	} );
+
+	it( 'leaves out a surface whose components were rejected, as it never shows', () => {
+		const runtime = createRuntime();
+
+		runtime.processMessages( surfaceOperations( 'form', 5 ), 'agent' );
+
+		expect( runtime.getSurfaceIds( 'agent' ) ).toEqual( [ 'form' ] );
+		expect(
+			getUsableInteractiveUiSurfaceIds( runtime, [ createBatch( [], 'agent' ) ], new Set() )
+		).toEqual( [] );
+	} );
+} );
+
+describe( 'keepInteractiveUiSurfacesInTranscript', () => {
+	it( 'leaves out a surface that a message which left the transcript changed', () => {
+		const batches = [
+			createBatch(
+				[
+					{
+						version: 'v1.0',
+						createSurface: { surfaceId: 'form', catalogId: BASIC_CATALOG_ID, sendDataModel: true },
+					},
+				],
+				'agent-1'
+			),
+			createBatch(
+				[
+					{
+						version: 'v1.0',
+						updateDataModel: { surfaceId: 'form', path: '/', value: { name: 'Ada' } },
+					},
+				],
+				'agent-2'
+			),
+		];
+
+		expect(
+			keepInteractiveUiSurfacesInTranscript( [ 'form' ], batches, new Map( [ [ 'agent-1', 0 ] ] ) )
+		).toEqual( [] );
 	} );
 } );

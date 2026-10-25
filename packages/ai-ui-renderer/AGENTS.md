@@ -7,15 +7,16 @@ its own catalog that `createInteractiveUiCatalog()` builds. See README.md for us
 commands, and `packages/agents-manager/src/interactive-ui/README.md` for the architecture.
 
 Code lives in `components/` (`InteractiveUiSurface` and the Basic catalog's components), `contexts/`
-(what a surface shares with its components), `hooks/`, and `utils/` (catalogs, definitions, runtime,
-shared schemas, theme, and `kebabCase()`). `index.ts` is the public API, `style.scss` the
-stylesheet, and `capabilities.ts` the entry hosts load before the renderer, so it imports no A2UI or
-React.
+(what a surface shares with its components, each read through its `use…()` hook), `hooks/`, and
+`utils/` (catalogs, definitions, runtime, shared schemas, theme, `getInteractiveUiOperation()` and
+`kebabCase()`). `index.ts` is the public API, `style.scss` the stylesheet, and `capabilities.ts` the
+entry hosts load before the renderer, so it imports no A2UI or React.
 
 Name CSS classes BEM-style under the `ai-ui-renderer` block, with kebab-case modifiers
-(`ai-ui-renderer__image--small-feature`); `kebabCase()` turns A2UI's enum values into them.
-`InteractiveUiSurface` owns the styled fieldset and disabled state, including modal controls. Style
-colors with A2UI's `--a2ui-*` tokens and their defaults, keeping `THEME_PROPERTIES` in
+(`ai-ui-renderer__image--small-feature`); `kebabCase()` turns A2UI's enum values into them, and
+`clsx()` joins conditional ones. `InteractiveUiSurface` owns the styled root and shares its disabled
+state, which the components that change something read: inputs, and buttons that run an action.
+Style colors with A2UI's `--a2ui-*` tokens and their defaults, keeping `THEME_PROPERTIES` in
 `utils/theme.ts` in sync with `style.scss`. Keep host-specific chat isolation, token values and
 modal stacking rules in consumers.
 

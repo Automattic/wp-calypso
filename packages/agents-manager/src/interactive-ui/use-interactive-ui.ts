@@ -4,19 +4,28 @@ import { getLatestUserMessageIndex } from '../utils/latest-message';
 import { createInteractiveUiCatalogs } from './catalogs';
 import {
 	attachInteractiveUiPresentation,
-	markInteractiveUiActionReplies,
+	presentInteractiveUiActions,
 } from './convert-messages-to-components';
 import {
 	applyInteractiveUiBatch,
+	getRejectedInteractiveUiMessageIds,
+	getUsableInteractiveUiSurfaceIds,
 	getInteractiveUiBatches,
 	getStaleInteractiveUiSurfaceIds,
 	INTERACTIVE_UI_VERSION,
+	keepInteractiveUiSurfacesInTranscript,
 } from './messages';
 import {
 	disposeInteractiveUiRuntime,
 	getInteractiveUiSession,
+	showInteractiveUiSession,
 	trackInteractiveUiHistory,
 } from './session';
+import {
+	recordInteractiveUiAction,
+	recordRenderedInteractiveUiSurfaces,
+	reportInteractiveUiError,
+} from './tracks';
 import type { InteractiveUiRenderer } from './catalogs';
 import type { InteractiveUiSession } from './session';
 import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
@@ -33,7 +42,11 @@ interface UseInteractiveUiOptions {
 	/** The agent is replying. */
 	isProcessing: boolean;
 	isUploadingImages: boolean;
-	submitContextMessage: ( message: string, options: SubmitOptions ) => Promise< void >;
+	submitContextMessage: (
+		message: string,
+		options: SubmitOptions,
+		onDispatch?: () => void
+	) => Promise< void >;
 	/** The providers' interactive UI catalogs. */
 	interactiveUiCatalogs: LoadedProviders[ 'interactiveUiCatalogs' ];
 	/** The page the editor has open, if any. */
@@ -47,8 +60,19 @@ export interface InteractiveUiPresentation {
 	isRetryingLoad: boolean;
 	retryLoad: () => void;
 	revision: number;
-	isDisabled: boolean;
+	/**
+	 * The agent is replying or images are uploading, so surfaces disable their inputs and actions,
+	 * without going stale.
+	 */
+	isBusy: boolean;
 	staleSurfaceIds: ReadonlySet< string >;
+	/** The live messages whose A2UI messages the runtime rejected some of, which show a notice. */
+	rejectedMessageIds: ReadonlySet< string >;
+	/**
+	 * The messages restored from history. Their surfaces that can't be shown stay hidden, as that can
+	 * have a cause other than the reply, such as a host without the surface's catalog.
+	 */
+	restoredMessageIds: ReadonlySet< string >;
 }
 
 // Kept for the page, so a remounted chat, such as after the history screen, has it right away.
@@ -59,8 +83,10 @@ let loadedRenderer: InteractiveUiRenderer | undefined;
  * attached. Loads the renderer once a reply has a surface, applies the surfaces once the reply has
  * streamed, rebuilds them when an earlier reply changes, and sends their actions to the agent as
  * hidden context messages. Marks surfaces stale as `show-component` does, restored ones included,
- * offers a retry when the renderer fails to load, and starts a new turn at each reply to an
- * action, since the action's message is hidden.
+ * records the live ones and their actions in Tracks, reports their errors, and offers a retry when
+ * the renderer fails to load. An action's message is hidden, so it shows the action's `userMessage`
+ * as a note on the user's side, or starts a new turn at the action's reply when there's no note. The
+ * chat's messages send the data of the surfaces the user can use.
  */
 export function useInteractiveUi( {
 	messages,
@@ -78,17 +104,42 @@ export function useInteractiveUi( {
 	// The transcript's surfaces, which wait while the agent replies or images upload.
 	const messageBatches = useMemo( () => getInteractiveUiBatches( messages ), [ messages ] );
 	const hasMessageBatches = messageBatches.length > 0;
+	const messageIndexes = useMemo(
+		() => new Map( messages.map( ( message, index ) => [ message.id, index ] as const ) ),
+		[ messages ]
+	);
 	const latestUserMessageIndex = getLatestUserMessageIndex( messages );
 	const isBusy = isProcessing || isUploadingImages;
-
-	// The latest inputs, for actions from a runtime created on an earlier render.
-	const actionInputsRef = useRef( { agentConfig, isBusy, submitContextMessage } );
-	actionInputsRef.current = { agentConfig, isBusy, submitContextMessage };
 
 	// The conversation's session, and which of its surfaces come from history.
 	const sessionRef = useRef< InteractiveUiSession | undefined >( undefined );
 	sessionRef.current = getInteractiveUiSession( sessionRef.current, scopeIdentity, sessionId );
 	const conversationSession = sessionRef.current;
+
+	const { restoredMessageIds } = conversationSession.history;
+
+	// Follows the batches the runtime has applied, not one still streaming, so a surface never
+	// changes staleness before its data does.
+	const staleSurfaceIds = useMemo(
+		() =>
+			getStaleInteractiveUiSurfaceIds( conversationSession.appliedBatches, {
+				messageIndexes,
+				latestUserMessageIndex,
+				restoredMessageIds,
+				currentPostId,
+			} ),
+		[
+			conversationSession.appliedBatches,
+			messageIndexes,
+			restoredMessageIds,
+			latestUserMessageIndex,
+			currentPostId,
+		]
+	);
+
+	// The latest inputs, for actions from a runtime created on an earlier render.
+	const actionInputsRef = useRef( { agentConfig, isBusy, staleSurfaceIds, submitContextMessage } );
+	actionInputsRef.current = { agentConfig, isBusy, staleSurfaceIds, submitContextMessage };
 
 	// Before the batches apply, so restored surfaces are stale from their first paint.
 	useLayoutEffect( () => {
@@ -98,8 +149,8 @@ export function useInteractiveUi( {
 		} );
 	}, [ conversationSession, isProcessing, messageBatches ] );
 
-	// The renderer, loaded on demand to keep it out of the initial bundle. A retry starts a new
-	// attempt while the error stays on screen, so the retry button can show it's busy.
+	// The renderer and its styles, loaded on demand to keep them out of the initial bundle. A retry
+	// starts a new attempt while the error stays on screen, so the retry button can show it's busy.
 	const [ renderer, setRenderer ] = useState( () => loadedRenderer );
 	const [ loadAttempt, setLoadAttempt ] = useState( 0 );
 	const [ failedLoadAttempt, setFailedLoadAttempt ] = useState< number >();
@@ -111,8 +162,11 @@ export function useInteractiveUi( {
 
 		let isLoadCancelled = false;
 
-		void import( /* webpackChunkName: "am-interactive-ui" */ '@automattic/ai-ui-renderer' ).then(
-			( rendererModule ) => {
+		void Promise.all( [
+			import( /* webpackChunkName: "am-interactive-ui" */ '@automattic/ai-ui-renderer' ),
+			import( /* webpackChunkName: "am-interactive-ui" */ '@automattic/ai-ui-renderer/style.scss' ),
+		] ).then(
+			( [ rendererModule ] ) => {
 				loadedRenderer = rendererModule;
 
 				if ( ! isLoadCancelled ) {
@@ -143,6 +197,8 @@ export function useInteractiveUi( {
 		[ conversationSession ]
 	);
 
+	useEffect( () => showInteractiveUiSession( conversationSession ), [ conversationSession ] );
+
 	// Applies new batches once the reply has streamed, so a surface never changes mid-stream, and
 	// before paint, so a surface-only reply, such as a picker, doesn't pop in later and shift the
 	// chat.
@@ -171,21 +227,24 @@ export function useInteractiveUi( {
 				onAction: async ( action ) => {
 					const latestInputs = actionInputsRef.current;
 
-					if ( ! latestInputs.agentConfig || latestInputs.isBusy ) {
+					if (
+						! latestInputs.agentConfig ||
+						latestInputs.isBusy ||
+						latestInputs.staleSurfaceIds.has( action.surfaceId )
+					) {
 						return;
 					}
 
 					const actionMessage = JSON.stringify( { version: INTERACTIVE_UI_VERSION, action } );
 
-					await latestInputs.submitContextMessage( actionMessage, {
-						type: 'context',
-						sessionId: latestInputs.agentConfig.sessionId,
-					} );
+					await latestInputs.submitContextMessage(
+						actionMessage,
+						{ type: 'context', sessionId: latestInputs.agentConfig.sessionId },
+						() => recordInteractiveUiAction( action, conversationSession )
+					);
 				},
-				onError: ( error ) => {
-					// eslint-disable-next-line no-console
-					console.error( '[AgentsManager] Interactive UI error:', error );
-				},
+				onError: ( error, ownerId ) =>
+					reportInteractiveUiError( error, ownerId, conversationSession ),
 			} );
 		}
 
@@ -195,26 +254,75 @@ export function useInteractiveUi( {
 				...conversationSession.appliedBatches,
 				...newBatches.map( ( batch ) => applyInteractiveUiBatch( runtime, batch ) ),
 			];
+
+			recordRenderedInteractiveUiSurfaces( conversationSession );
 		}
 
 		setRuntimeRevision( ( currentRevision ) => currentRevision + 1 );
 	}, [ messageBatches, isBusy, renderer, catalogs, conversationSession ] );
 
-	// Follows the batches the runtime has applied, not one still streaming, so a surface never
-	// changes staleness before its data does.
-	const staleSurfaceIds = useMemo(
-		() =>
-			getStaleInteractiveUiSurfaceIds( conversationSession.appliedBatches, {
-				latestUserMessageIndex,
-				restoredSignatures: conversationSession.history.restoredSignatures,
+	// Keeps `usableSurfaceIds` current, as its doc on `InteractiveUiSession` describes.
+	const wasProcessingRef = useRef( false );
+
+	useLayoutEffect( () => {
+		const { runtime, appliedBatches, usableSurfaceIds } = conversationSession;
+		const isTurnStart = isProcessing && ! wasProcessingRef.current;
+		wasProcessingRef.current = isProcessing;
+
+		if ( ! runtime ) {
+			conversationSession.usableSurfaceIds = [];
+			return;
+		}
+
+		if ( ! isBusy ) {
+			conversationSession.usableSurfaceIds = getUsableInteractiveUiSurfaceIds(
+				runtime,
+				appliedBatches,
+				staleSurfaceIds
+			);
+			return;
+		}
+
+		// A turn's prompt, regenerated or not, is the last message as the turn starts, and the turn sends
+		// the surfaces that weren't stale before it. It's found by position, as Agenttic can change a
+		// message's ID.
+		if ( isTurnStart && latestUserMessageIndex === messages.length - 1 ) {
+			const staleBeforePrompt = getStaleInteractiveUiSurfaceIds( appliedBatches, {
+				messageIndexes,
+				latestUserMessageIndex: getLatestUserMessageIndex( messages.slice( 0, -1 ) ),
+				restoredMessageIds,
 				currentPostId,
-			} ),
-		[
-			conversationSession.appliedBatches,
-			conversationSession.history.restoredSignatures,
-			latestUserMessageIndex,
-			currentPostId,
-		]
+			} );
+
+			conversationSession.usableSurfaceIds = getUsableInteractiveUiSurfaceIds(
+				runtime,
+				appliedBatches,
+				staleBeforePrompt
+			);
+			return;
+		}
+
+		conversationSession.usableSurfaceIds = keepInteractiveUiSurfacesInTranscript(
+			usableSurfaceIds,
+			appliedBatches,
+			messageIndexes
+		);
+	}, [
+		conversationSession,
+		isProcessing,
+		isBusy,
+		staleSurfaceIds,
+		messages,
+		messageIndexes,
+		latestUserMessageIndex,
+		restoredMessageIds,
+		currentPostId,
+	] );
+
+	const rejectedMessageIds = useMemo(
+		() =>
+			getRejectedInteractiveUiMessageIds( conversationSession.appliedBatches, restoredMessageIds ),
+		[ conversationSession.appliedBatches, restoredMessageIds ]
 	);
 
 	// The transcript with its surfaces attached.
@@ -226,8 +334,10 @@ export function useInteractiveUi( {
 			isRetryingLoad,
 			retryLoad: () => setLoadAttempt( ( attempt ) => attempt + 1 ),
 			revision: runtimeRevision,
-			isDisabled: isBusy,
+			isBusy,
 			staleSurfaceIds,
+			rejectedMessageIds,
+			restoredMessageIds,
 		} ),
 		[
 			conversationSession.runtime,
@@ -237,12 +347,14 @@ export function useInteractiveUi( {
 			runtimeRevision,
 			isBusy,
 			staleSurfaceIds,
+			rejectedMessageIds,
+			restoredMessageIds,
 		]
 	);
 
 	return useMemo(
 		() =>
-			markInteractiveUiActionReplies(
+			presentInteractiveUiActions(
 				attachInteractiveUiPresentation( convertedMessages, presentation ),
 				messages
 			),

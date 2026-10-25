@@ -7,6 +7,7 @@ import OpenHelpCenterButton from '../components/open-help-center-button';
 import { ButtonPicker, ColorPicker, FontPicker } from '../components/style-pickers';
 import { isContextOnlyMessage } from './context-only-message';
 import { getLatestUserMessageIndex } from './latest-message';
+import { withLazyBoundary } from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
 import { isChatUiStale } from './stale-chat-ui';
 import {
@@ -37,11 +38,13 @@ type AmComponentType = ShowComponentType | typeof OPEN_HELP_CENTER_BUTTON_TYPE;
 
 // AM-owned components by type. These take precedence over provider
 // components — AM is the single source of truth for each of these types.
-// The pickers load on demand; the Help Center button ships inline.
+// The pickers load on demand, and `withLazyBoundary()` gives them the
+// `Suspense` and error boundary a surface would; the Help Center button
+// ships inline.
 const AM_COMPONENTS: Record< AmComponentType, React.ComponentType > = {
-	'button-picker': ButtonPicker,
-	'color-picker': ColorPicker,
-	'font-picker': FontPicker,
+	'button-picker': withLazyBoundary( ButtonPicker ),
+	'color-picker': withLazyBoundary( ColorPicker ),
+	'font-picker': withLazyBoundary( FontPicker ),
 	'open-help-center-button': OpenHelpCenterButton,
 };
 

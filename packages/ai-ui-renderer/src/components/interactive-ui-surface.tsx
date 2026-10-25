@@ -1,12 +1,16 @@
 import { renderMarkdown } from '@a2ui/markdown-it';
 import { A2uiSurface, MarkdownContext } from '@a2ui/react';
-import { Component, useEffect, useMemo, useRef } from '@wordpress/element';
+import { Component, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import clsx from 'clsx';
 import { InteractiveUiSurfaceContext, InteractiveUiHostPropsContext } from '../contexts/surface';
 import type { ComponentProps, ReactNode } from 'react';
 
+type Surface = ComponentProps< typeof A2uiSurface >[ 'surface' ];
+
 interface SurfaceErrorBoundaryProps {
 	children: ReactNode;
+	surface: Surface;
+	fallback: ReactNode;
 	revision: number;
 }
 
@@ -17,6 +21,13 @@ class SurfaceErrorBoundary extends Component< SurfaceErrorBoundaryProps, { hasFa
 		return { hasFailed: true };
 	}
 
+	componentDidCatch( error: unknown ) {
+		void this.props.surface.dispatchError( {
+			code: 'RENDER_FAILED',
+			message: error instanceof Error ? error.message : String( error ),
+		} );
+	}
+
 	componentDidUpdate( previous: Readonly< SurfaceErrorBoundaryProps > ) {
 		if ( this.state.hasFailed && previous.revision !== this.props.revision ) {
 			this.setState( { hasFailed: false } );
@@ -24,11 +35,9 @@ class SurfaceErrorBoundary extends Component< SurfaceErrorBoundaryProps, { hasFa
 	}
 
 	render() {
-		return this.state.hasFailed ? null : this.props.children;
+		return this.state.hasFailed ? this.props.fallback : this.props.children;
 	}
 }
-
-type Surface = ComponentProps< typeof A2uiSurface >[ 'surface' ];
 
 const NO_HOST_PROPS = {};
 
@@ -45,12 +54,14 @@ function getUnknownComponentType( surface: Surface ) {
 
 interface InteractiveUiSurfaceProps {
 	surface: Surface;
-	/** Disables the surface's controls, including those in an open modal. */
+	/** Disables the surface's inputs and actions, including those in an open modal. */
 	disabled?: boolean;
 	/** Classes for the surface and its modal, such as A2UI's `a2ui-dark` or `a2ui-light`. */
 	className?: string;
 	/** A change retries a surface that failed to render. */
 	revision?: number;
+	/** Shown instead of a surface that fails to render or uses a component its catalog lacks. */
+	fallback?: ReactNode;
 	/**
 	 * Props for the components that definitions add, such as the host's chat state. Pass a stable
 	 * object: a new one re-renders those components.
@@ -59,26 +70,36 @@ interface InteractiveUiSurfaceProps {
 }
 
 /**
- * Renders a surface with Markdown once its root component has arrived, and nothing if it fails
- * to render or uses a component its catalog lacks. The checks don't subscribe, so hosts re-render
- * after processing messages.
+ * Renders a surface with Markdown once its root component has arrived, and the `fallback` if it
+ * fails to render or uses a component its catalog lacks, reporting either through the runtime's
+ * `onError`. Its root and component-type lookups don't subscribe, so hosts re-render after
+ * processing messages.
  */
 export function InteractiveUiSurface( {
 	surface,
 	disabled = false,
 	className,
 	revision = 0,
+	fallback = null,
 	hostProps = NO_HOST_PROPS,
 }: InteractiveUiSurfaceProps ) {
-	const rootRef = useRef< HTMLFieldSetElement >( null );
+	const rootRef = useRef< HTMLDivElement >( null );
+	const [ isShowingErrors, setIsShowingErrors ] = useState( false );
 	const surfaceContext = useMemo(
-		() => ( { surfaceId: surface.id, disabled, className, rootRef } ),
-		[ surface.id, disabled, className ]
+		() => ( {
+			surfaceId: surface.id,
+			disabled,
+			isShowingErrors,
+			showErrors: () => setIsShowingErrors( true ),
+			className,
+			rootRef,
+		} ),
+		[ surface.id, disabled, isShowingErrors, className ]
 	);
 
 	const unknownComponentType = getUnknownComponentType( surface );
 
-	// A2UI would show a red placeholder for it, so hide the surface and report the type instead.
+	// A2UI would show a red placeholder for it, so show the fallback and report the type instead.
 	useEffect( () => {
 		if ( unknownComponentType ) {
 			void surface.dispatchError( {
@@ -89,22 +110,22 @@ export function InteractiveUiSurface( {
 		}
 	}, [ surface, unknownComponentType ] );
 
-	if ( ! surface.componentsModel.has( surface.rootId ) || unknownComponentType ) {
+	if ( ! surface.componentsModel.has( surface.rootId ) ) {
 		return null;
 	}
 
+	if ( unknownComponentType ) {
+		return fallback;
+	}
+
 	return (
-		<SurfaceErrorBoundary revision={ revision }>
+		<SurfaceErrorBoundary surface={ surface } fallback={ fallback } revision={ revision }>
 			<InteractiveUiSurfaceContext.Provider value={ surfaceContext }>
 				<InteractiveUiHostPropsContext.Provider value={ hostProps }>
 					<MarkdownContext.Provider value={ renderMarkdown }>
-						<fieldset
-							ref={ rootRef }
-							className={ clsx( 'ai-ui-renderer', className ) }
-							disabled={ disabled }
-						>
+						<div ref={ rootRef } className={ clsx( 'ai-ui-renderer', className ) }>
 							<A2uiSurface surface={ surface } />
-						</fieldset>
+						</div>
 					</MarkdownContext.Provider>
 				</InteractiveUiHostPropsContext.Provider>
 			</InteractiveUiSurfaceContext.Provider>

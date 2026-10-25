@@ -1,4 +1,11 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as *;
+
+// Spaces the surfaces and the notice like the message's paragraphs.
+.agents-manager-interactive-ui-surfaces {
+	display: flex;
+	flex-direction: column;
+	gap: var( --spacing-3 );
+}
 
 // Surfaces take the chat's colors. Agenttic's dark mode is a class, not a color scheme, so it
 // also sets the inputs, border and scheme.
@@ -16,4 +23,17 @@
 
 .ai-ui-renderer__modal.agents-manager-interactive-ui-surfaces__renderer {
 	z-index: $agents-manager-z-index-focused + 1;
+}
+
+// Muted, as it's not the agent's reply. `.agenttic` outranks Agenttic's message text styles.
+.agenttic .agents-manager-interactive-ui-surfaces__failure {
+	margin: 0;
+	color: var( --color-muted-foreground );
+}
+
+// One notice per message, whether surfaces fell back or the runtime rejected some messages.
+.agenttic
+	.agents-manager-interactive-ui-surfaces__failure
+	~ .agents-manager-interactive-ui-surfaces__failure {
+	display: none;
 }

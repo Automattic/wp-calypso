@@ -1,11 +1,11 @@
 import { isSessionBootstrap } from '../utils/agent-session';
-import type { InteractiveUiBatch } from './messages';
-import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
+import type { AppliedInteractiveUiBatch, InteractiveUiBatch } from './messages';
+import type { InteractiveUiDataModel, InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 /** Where a chat session's history ends, so its surfaces can be told apart from new ones. */
 interface InteractiveUiHistory {
-	/** The signatures of batches restored from history, such as a past chat's. */
-	restoredSignatures: Set< string >;
+	/** The messages restored from history, such as a past chat's, whose batches are restored. */
+	restoredMessageIds: Set< string >;
 	hasBeenIdle: boolean;
 	hasStartedTurn: boolean;
 }
@@ -16,9 +16,26 @@ export interface InteractiveUiSession {
 	scopeIdentity: string;
 	sessionId: string;
 	runtime?: InteractiveUiRuntime;
-	appliedBatches: InteractiveUiBatch[];
+	appliedBatches: AppliedInteractiveUiBatch[];
 	history: InteractiveUiHistory;
+	/**
+	 * The errors reported, by owner, surface, code and message, so a rebuild or retry doesn't report
+	 * one again.
+	 */
+	reportedErrorKeys: Set< string >;
+	/** The surfaces recorded as rendered, so a rebuild doesn't record one again. */
+	renderedSurfaceIds: Set< string >;
+	/**
+	 * The surfaces whose data the next message sends: those the user can use while the agent is idle.
+	 * A turn started by a prompt, regenerated or not, sends those that weren't stale before it, minus
+	 * those of a message that left the transcript.
+	 */
+	usableSurfaceIds: string[];
 }
+
+// The session of the conversation the chat shows, whose surfaces' data its messages send. Set
+// only while a chat shows it: cleared when the chat unmounts or shows another conversation.
+let shownSession: InteractiveUiSession | undefined;
 
 /**
  * The session for a conversation: the current one while the chat shows the same conversation,
@@ -44,8 +61,41 @@ export function getInteractiveUiSession(
 	return {
 		...next,
 		appliedBatches: [],
-		history: { restoredSignatures: new Set(), hasBeenIdle: false, hasStartedTurn: false },
+		history: { restoredMessageIds: new Set(), hasBeenIdle: false, hasStartedTurn: false },
+		reportedErrorKeys: new Set(),
+		renderedSurfaceIds: new Set(),
+		usableSurfaceIds: [],
 	};
+}
+
+/**
+ * Makes a session the one whose surfaces' data the chat's messages send, and returns a function
+ * that stops it, unless another session has replaced it.
+ */
+export function showInteractiveUiSession( session: InteractiveUiSession ) {
+	shownSession = session;
+
+	return () => {
+		if ( shownSession === session ) {
+			shownSession = undefined;
+		}
+	};
+}
+
+/**
+ * A2UI's `a2uiRendererDataModel` for a message to the agent, for the shown session: the data of its
+ * surfaces that the user could use before sending it, for those that set `sendDataModel`. It's
+ * `undefined` when there's none, and it never throws, as Agenttic would then drop all of the
+ * message's metadata, the renderer capabilities included.
+ */
+export function getShownInteractiveUiDataModel(): InteractiveUiDataModel | undefined {
+	try {
+		return shownSession?.runtime?.getDataModel( shownSession.usableSurfaceIds );
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error( '[AgentsManager] Failed to read the interactive UI data:', error );
+		return undefined;
+	}
 }
 
 /** Disposes of a session's runtime and forgets the batches it applied, so they apply again. */
@@ -56,10 +106,10 @@ export function disposeInteractiveUiRuntime( session: InteractiveUiSession ) {
 }
 
 /**
- * Records the batches restored from history: those in the transcript before the session's first
- * turn, which starts when the agent begins a reply. Right after a switch, the previous
- * conversation's reply can still be in progress, so only a reply begun once the session has been
- * idle counts.
+ * Records the messages restored from history: those with batches in the transcript before the
+ * session's first turn, which starts when the agent begins a reply. Right after a switch, the
+ * previous conversation's reply can still be in progress, so only a reply begun once the session
+ * has been idle counts.
  */
 export function trackInteractiveUiHistory(
 	history: InteractiveUiHistory,
@@ -71,7 +121,7 @@ export function trackInteractiveUiHistory(
 
 	if ( ! isProcessing ) {
 		history.hasBeenIdle = true;
-		batches.forEach( ( batch ) => history.restoredSignatures.add( batch.signature ) );
+		batches.forEach( ( batch ) => history.restoredMessageIds.add( batch.messageId ) );
 	} else if ( history.hasBeenIdle ) {
 		history.hasStartedTurn = true;
 	}

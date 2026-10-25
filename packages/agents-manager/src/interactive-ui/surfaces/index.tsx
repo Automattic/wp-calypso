@@ -1,7 +1,6 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import type { InteractiveUiPresentation } from '../use-interactive-ui';
-import '@automattic/ai-ui-renderer/style.scss';
 import './style.scss';
 
 // Stable, so the components re-render only when their staleness changes.
@@ -14,16 +13,20 @@ interface Props {
 }
 
 /**
- * Shows a message's interactive UI surfaces, or a retry when the renderer failed to load. A stale
- * surface disables its controls, so display-only content such as text or a chart looks as before.
+ * Shows a message's interactive UI surfaces, or a retry when the renderer failed to load. A live
+ * reply shows one notice: in place of its first surface that can't be shown, or else after its
+ * surfaces when the runtime rejected some of its A2UI messages. A stale or busy surface disables
+ * its inputs and actions, while its display, tabs and modal triggers stay usable.
  */
 export function InteractiveUiSurfaces( { messageId, presentation }: Props ) {
 	const {
 		runtime,
 		renderer,
 		revision,
-		isDisabled,
+		isBusy,
 		staleSurfaceIds,
+		rejectedMessageIds,
+		restoredMessageIds,
 		hasLoadError,
 		isRetryingLoad,
 		retryLoad,
@@ -55,10 +58,15 @@ export function InteractiveUiSurfaces( { messageId, presentation }: Props ) {
 	}
 
 	const { InteractiveUiSurface } = renderer;
+	const failureNotice = restoredMessageIds.has( messageId ) ? null : (
+		<p className="agents-manager-interactive-ui-surfaces__failure" role="status">
+			{ __( 'Couldn’t show this. Try asking again.', __i18n_text_domain__ ) }
+		</p>
+	);
 
 	// Opts the surfaces out of the chat's typography reset.
 	return (
-		<div data-agenttic-isolated>
+		<div className="agents-manager-interactive-ui-surfaces" data-agenttic-isolated>
 			{ runtime.getSurfaceIds( messageId ).map( ( surfaceId ) => {
 				const surface = runtime.getSurface( surfaceId );
 				const isStale = staleSurfaceIds.has( surfaceId );
@@ -67,13 +75,15 @@ export function InteractiveUiSurfaces( { messageId, presentation }: Props ) {
 					<InteractiveUiSurface
 						key={ surfaceId }
 						surface={ surface }
-						disabled={ isDisabled || isStale }
+						disabled={ isBusy || isStale }
 						className="agents-manager-interactive-ui-surfaces__renderer"
 						revision={ revision }
+						fallback={ failureNotice }
 						hostProps={ isStale ? STALE_HOST_PROPS : CURRENT_HOST_PROPS }
 					/>
 				) : null;
 			} ) }
+			{ rejectedMessageIds.has( messageId ) && failureNotice }
 		</div>
 	);
 }

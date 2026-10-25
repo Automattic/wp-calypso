@@ -1,4 +1,4 @@
-@import '@wordpress/base-styles/colors';
+@use '@wordpress/base-styles/colors' as *;
 
 // A2UI's mode classes, on the surface or an ancestor. Otherwise the surface follows the page.
 :where( .a2ui-dark ) {
@@ -29,38 +29,55 @@ $wp-components-colors: (
 );
 
 // An unset token keeps the host's WordPress components color, or else the default. A custom
-// property can't read the value it inherits, so the root resolves it for its children.
+// property can't read the value it inherits, so the root resolves the host colors for its children.
 .ai-ui-renderer,
 .ai-ui-renderer__modal {
+	$accent: var( --a2ui-color-primary, var( --ai-ui-renderer-host-accent ) );
+
 	@each $name, $token, $default in $wp-components-colors {
 		--ai-ui-renderer-host-#{$name}: var( --wp-components-color-#{$name}, #{$default} );
 	}
+
+	// Like A2UI (`computeColorVariant()` in web_core), a custom primary without its own shades gets
+	// a mixed dark shade, and hover uses the dark shade. A2UI lightens on hover in dark mode, but
+	// that's unreadable under WordPress's white label, so hover stays dark. Without a custom primary
+	// or dark shade these are invalid, so the host's shades apply.
+	--ai-ui-renderer-primary-dark: color-mix( in oklab, var( --a2ui-color-primary ) 85%, #{$black} );
+	--ai-ui-renderer-primary-hover: var(
+		--a2ui-color-primary-dark,
+		var( --ai-ui-renderer-primary-dark )
+	);
+
+	// One accent can't fill a button under white text and also be readable text on a dark
+	// surface, so accent-colored text gets a lighter shade in dark mode. They mix the token, not
+	// `--wp-components-color-accent`, since a root Button sets that from them below.
+	--ai-ui-renderer-accent-text: light-dark(
+		#{$accent},
+		color-mix( in srgb, #{$accent} 55%, #{$white} )
+	);
+	--ai-ui-renderer-accent-text-hover: light-dark(
+		var(
+			--a2ui-color-primary-dark,
+			var( --ai-ui-renderer-primary-dark, var( --ai-ui-renderer-host-accent-darker-20 ) )
+		),
+		color-mix( in srgb, #{$accent} 40%, #{$white} )
+	);
+	--ai-ui-renderer-accent-fill: light-dark(
+		#{$accent},
+		color-mix( in srgb, #{$accent} 80%, #{$white} )
+	);
 
 	> * {
 		@each $name, $token, $default in $wp-components-colors {
 			--wp-components-color-#{$name}: var(
 				--a2ui-color-#{$token},
-				var( --ai-ui-renderer-host-#{$name} )
+				var( --ai-ui-renderer-#{$token}, var( --ai-ui-renderer-host-#{$name} ) )
 			);
 		}
 
-		// One accent can't fill a button under white text and also be readable text on a dark
-		// surface, so accent-colored text gets a lighter shade in dark mode.
-		--ai-ui-renderer-accent-text: light-dark(
-			var( --wp-components-color-accent ),
-			color-mix( in srgb, var( --wp-components-color-accent ) 55%, #{$white} )
-		);
-		--ai-ui-renderer-accent-text-hover: light-dark(
-			var( --wp-components-color-accent-darker-20 ),
-			color-mix( in srgb, var( --wp-components-color-accent ) 40%, #{$white} )
-		);
-		--ai-ui-renderer-accent-fill: light-dark(
-			var( --wp-components-color-accent ),
-			color-mix( in srgb, var( --wp-components-color-accent ) 80%, #{$white} )
-		);
-
 		// Disabled controls mix the text into the input color, like WordPress's light grays
-		// (#f0f0f0, #dbdbdb and #949494 on white), so they follow the theme in dark mode too.
+		// (#f0f0f0, #dbdbdb and #949494 on white), so they follow the theme in dark mode too. The
+		// border's #dbdbdb also strokes enabled parts, such as a slider's rail.
 		--ai-ui-renderer-disabled-background: color-mix(
 			in srgb,
 			var( --wp-components-color-background ) 94%,
@@ -91,7 +108,8 @@ $wp-components-colors: (
 		--wpds-color-foreground-interactive-brand-strong: var( --wp-components-color-accent-inverted );
 		--wpds-color-foreground-interactive-brand: var( --ai-ui-renderer-accent-text );
 		--wpds-color-foreground-interactive-brand-active: var( --ai-ui-renderer-accent-text-hover );
-		--wpds-color-stroke-focus: var( --wp-components-color-accent );
+		--wpds-color-stroke-focus: var( --ai-ui-renderer-accent-fill );
+		--wpds-color-stroke-surface-neutral: var( --ai-ui-renderer-disabled-border );
 		--wpds-color-foreground-interactive-neutral-disabled: var(
 			--ai-ui-renderer-disabled-foreground
 		);
@@ -114,11 +132,6 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 }
 
 .ai-ui-renderer {
-	border: 0;
-	padding: 0;
-	margin: 0;
-	min-width: 0;
-
 	.ai-ui-renderer__audio-player {
 		width: 100%;
 	}
@@ -129,8 +142,24 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 		margin: 0;
 	}
 
-	.ai-ui-renderer__date-time-input--error .components-base-control__help {
-		color: $alert-red;
+	// Host dark themes, such as Reader's, restyle WordPress components with long selectors, so the
+	// renderer's error and disabled colors use `!important`.
+
+	// An error message and its field, lighter in dark mode so they stay readable.
+	.ai-ui-renderer__field--error {
+		$error-color: light-dark( $alert-red, color-mix( in srgb, #{$alert-red} 55%, #{$white} ) );
+
+		:is( .components-base-control__help, .components-checkbox-control__help ) {
+			color: $error-color !important;
+		}
+
+		:is(
+			.components-text-control__input,
+			.components-textarea-control__input,
+			.components-input-control__backdrop
+		) {
+			border-color: $error-color !important;
+		}
 	}
 
 	.ai-ui-renderer__card {
@@ -256,51 +285,79 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 	// These WordPress controls hard-code light colors instead of reading the theme's.
 	.components-checkbox-control__input[type='checkbox']:not( :checked, :indeterminate, :disabled ) {
 		background: var( --wp-components-color-background );
+		border-color: var( --wp-components-color-foreground );
 	}
 
-	// A stale surface disables its controls through its fieldset, which WordPress components don't
-	// style (they read their own `disabled` prop), so these rules color the disabled controls.
+	// WordPress's focus ring has a white gap and the admin color, so it gets the control's accent
+	// with the surface showing through the gap.
+	:is(
+		.components-checkbox-control__input[type='checkbox'],
+		.components-radio-control__input[type='radio']
+	):focus {
+		box-shadow: none;
+		outline: var( --wp-admin-border-width-focus ) solid var( --wp-components-color-accent );
+		outline-offset: var( --wp-admin-border-width-focus );
+	}
+
+	// WordPress components color disabled controls with light grays, or not at all, so these rules
+	// give them the disabled colors, which follow the theme.
 	.components-checkbox-control__input[type='checkbox']:is( :disabled, [aria-disabled='true'] ),
 	.components-radio-control__input[type='radio']:disabled {
-		background: var( --ai-ui-renderer-disabled-background );
-		border-color: var( --ai-ui-renderer-disabled-border );
+		background: var( --ai-ui-renderer-disabled-background ) !important;
+		border-color: var( --ai-ui-renderer-disabled-border ) !important;
+	}
+
+	.components-checkbox-control:has( :disabled ),
+	.components-radio-control__input[type='radio']:disabled {
+		--wp-components-color-gray-400: var( --ai-ui-renderer-disabled-foreground );
+	}
+
+	.components-radio-control__input[type='radio']:checked:disabled::before {
+		background-color: var( --ai-ui-renderer-disabled-foreground );
 	}
 
 	:is( .components-text-control__input, .components-textarea-control__input ):disabled {
 		background: var( --ai-ui-renderer-disabled-background );
-		border-color: var( --ai-ui-renderer-disabled-border );
+		border-color: var( --ai-ui-renderer-disabled-border ) !important;
 		box-shadow: none;
-		color: var( --ai-ui-renderer-disabled-foreground );
+		color: var( --ai-ui-renderer-disabled-foreground ) !important;
 	}
 
 	.components-input-control__container:has( > .components-input-control__input:disabled ) {
-		background: var( --ai-ui-renderer-disabled-background );
+		background: var( --ai-ui-renderer-disabled-background ) !important;
+		// The disabled colors already dim the field, so a host's dimming would dim it twice.
+		opacity: 1 !important;
 
 		.components-input-control__input {
-			color: var( --ai-ui-renderer-disabled-foreground );
+			color: var( --ai-ui-renderer-disabled-foreground ) !important;
 		}
 
 		.components-input-control__backdrop {
-			border-color: var( --ai-ui-renderer-disabled-border );
+			border-color: var( --ai-ui-renderer-disabled-border ) !important;
 		}
 	}
 
-	.components-range-control:has( input[type='range']:disabled ) {
-		--wp-components-color-accent: var( --ai-ui-renderer-disabled-foreground );
+	.components-range-control {
 		--wp-components-color-gray-300: var( --ai-ui-renderer-disabled-border );
 	}
 
-	// Only the basic Button's variants and the Tabs' tabs, so a custom component's own buttons, such
-	// as a picker's arrows, keep their styles.
-	:is(
-		.components-button.is-primary,
-		.components-button.is-secondary,
-		.components-tab-panel__tabs-item
-	):is( :disabled, [aria-disabled='true'] ) {
-		color: var( --ai-ui-renderer-disabled-foreground );
+	.components-range-control:has( input[type='range']:disabled ) {
+		--wp-components-color-gray-100: var( --ai-ui-renderer-disabled-background );
+		--wp-components-color-gray-400: var( --ai-ui-renderer-disabled-foreground );
+	}
 
-		&.is-primary {
-			background: var( --ai-ui-renderer-disabled-background );
+	// Only the basic Button, so a custom component's own buttons, such as a picker's arrows, keep
+	// their styles. Its label is centered on every host, as Calypso centers every WordPress Button.
+	.ai-ui-renderer__button {
+		justify-content: center;
+
+		&[aria-disabled='true'] {
+			color: var( --ai-ui-renderer-disabled-foreground ) !important;
+
+			&.is-primary {
+				background: var( --ai-ui-renderer-disabled-background ) !important;
+				border-color: transparent !important;
+			}
 		}
 	}
 
@@ -313,9 +370,33 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 		--wp-components-color-accent-darker-20: var( --ai-ui-renderer-accent-text-hover );
 	}
 
-	// A checked control's fill sits on the surface, so it gets a lighter accent in dark mode.
+	// A checked control's or a slider's fill, and a field's focus ring, sit on the surface, so they
+	// get a lighter accent in dark mode.
 	.components-checkbox-control__input,
-	.components-radio-control__input {
+	.components-radio-control__input,
+	.components-range-control__wrapper,
+	.components-text-control__input,
+	.components-textarea-control__input,
+	.components-input-control__container {
 		--wp-components-color-accent: var( --ai-ui-renderer-accent-fill );
+	}
+
+	// A checked control's mark sits on its fill: the primary color in light mode, like a primary
+	// button's text, and the lighter accent in dark mode, so the mark takes the input color there.
+	:is( svg.components-checkbox-control__checked, svg.components-checkbox-control__indeterminate ) {
+		fill: light-dark(
+			var( --wp-components-color-accent-inverted ),
+			var( --wp-components-color-background )
+		);
+	}
+
+	.components-radio-control__input[type='radio']:checked:not( :disabled )::before {
+		$mark: light-dark(
+			var( --wp-components-color-accent-inverted ),
+			var( --wp-components-color-background )
+		);
+
+		background-color: $mark;
+		border-color: $mark;
 	}
 }

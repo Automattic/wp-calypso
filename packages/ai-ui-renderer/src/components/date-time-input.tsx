@@ -3,8 +3,9 @@ import { TextControl } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { z } from 'zod';
+import { useFieldProps } from '../hooks/use-field-props';
 import { useInputValue } from '../hooks/use-input-value';
-import { StringValueSchema } from '../utils/schemas';
+import { ChecksSchema, StringValueSchema } from '../utils/schemas';
 import type { FocusEvent } from 'react';
 
 export const DateTimeInput = createComponentImplementation(
@@ -17,11 +18,17 @@ export const DateTimeInput = createComponentImplementation(
 			enableTime: z.boolean().optional(),
 			min: StringValueSchema.optional(),
 			max: StringValueSchema.optional(),
+			checks: ChecksSchema,
 		} ),
 	},
 	( { props, context } ) => {
 		const [ value, onChange ] = useInputValue( props.value ?? '', props.setValue, context );
-		const [ errorMessage, setErrorMessage ] = useState( '' );
+		const [ validationMessage, setValidationMessage ] = useState( '' );
+		const { fieldProps, touch } = useFieldProps(
+			validationMessage
+				? [ validationMessage, ...( props.validationErrors ?? [] ) ]
+				: props.validationErrors
+		);
 
 		if ( ! props.enableDate && ! props.enableTime ) {
 			return null;
@@ -51,17 +58,16 @@ export const DateTimeInput = createComponentImplementation(
 
 		return (
 			<TextControl
-				className={ errorMessage ? 'ai-ui-renderer__date-time-input--error' : undefined }
+				{ ...fieldProps }
 				type={ type }
 				label={ props.label ?? __( 'Date and time', 'default' ) }
 				value={ toInputValue( value ) }
 				min={ toInputValue( props.min ) || undefined }
 				max={ toInputValue( props.max ) || undefined }
-				help={ errorMessage }
-				aria-invalid={ !! errorMessage }
-				onBlur={ ( event: FocusEvent< HTMLInputElement > ) =>
-					setErrorMessage( event.currentTarget.validationMessage )
-				}
+				onBlur={ ( event: FocusEvent< HTMLInputElement > ) => {
+					setValidationMessage( event.currentTarget.validationMessage );
+					touch();
+				} }
 				onChange={ onChange }
 			/>
 		);
