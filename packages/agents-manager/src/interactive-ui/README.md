@@ -1,16 +1,20 @@
 # Interactive UI
 
-The agent can show UI in the chat when it helps, such as buttons, forms and pickers, so people can
-finish their request there. It uses A2UI v1.0.
+Interactive UI lets the agent show UI in the chat, such as buttons, forms and pickers, so people can
+finish their request there. It's built on [A2UI v1.0](https://a2ui.org).
 
-Agents Manager owns this architecture, and its providers (such as the Jetpack AI sidebar and
-WooCommerce AI) and other hosts (such as MCP apps) follow it. Ticket numbers mark parts still to
-come.
+- **Who follows it:** Agents Manager owns this architecture. Its providers, such as the Jetpack AI
+  sidebar and WooCommerce AI, and other hosts, such as MCP apps, follow it.
+- **Where it runs:** on sites with the `a2ui-render-interactive-ui` blog sticker, in clients that
+  render the surface's catalog. Elsewhere, the chat keeps its older UI.
+- **What's shared:** the [renderer](../../../ai-ui-renderer/README.md) is a shared library with the
+  basic components. Custom components live in the project that owns them.
+
+Ticket numbers mark parts still to come.
 
 ## How it works
 
-1. **wpcom builds a surface** on sites with the `a2ui-render-interactive-ui` blog sticker, for a
-   client that renders its catalog, in one of three ways:
+1. **wpcom builds a surface** for a client that renders its catalog, in one of three ways:
    - **An ability builds it in code**, for a known flow such as a picker or a hand-off button
      (AM-117). The agent only calls the ability, so the surface is reliable, cheap in tokens and
      testable.
@@ -275,10 +279,10 @@ waits for Agents Manager, the Jetpack AI sidebar and WooCommerce AI.
 - **A client button** (Agents Manager's Help Center button): a server ability returns a basic
   `Button` that calls a catalog function.
 - **Markdown cards** (WooCommerce AI's `markdownComponents`): its abilities run in the browser, so
-  they return a card hint for its catalog's component instead. A card keeps its side effects, such
-  as an undo, and shows under the reply rather than within its text
-  ([Browser ability cards](#browser-ability-cards)). The batch plan keeps wpcom's own card
-  (`PROPOSAL_TOOL_IDS`) until that code is retired.
+  they return a card hint for its catalog's component instead
+  ([Moving a browser ability's card](#moving-a-browser-abilitys-card)). A card keeps its side
+  effects, such as an undo, and shows under the reply rather than within its text. The batch plan
+  keeps wpcom's own card (`PROPOSAL_TOOL_IDS`) until that code is retired.
 
 ### Moving an ability's component
 
@@ -328,3 +332,21 @@ return them with `surface_result()`.
    undone (through `restore-checkpoint` for a checkpoint in Agents Manager's store), and records
    the shared response events under its component's name and surface ID. Without it, the old UI
    shows as before.
+
+### Moving a browser ability's card
+
+For a card a browser ability's result renders today, such as a fenced Markdown card:
+
+1. **Declare the card in your catalog** (your provider's `interactiveUi`), as step 1 above: its
+   props as portable JSON Schema, and its name mapped to a component that wraps the existing card.
+   Skip its render tracking when `isMessageStale` is set, so a past chat doesn't record it again.
+2. **Export the catalog** from your provider module as `interactiveUi`
+   ([Try it](#try-it) covers a catalog that doesn't show up).
+3. **Add the hint** in `toolProvider.executeAbility()`, after the ability returns, to the results
+   that have a card: `__interactive_ui` with your catalog's ID, the component and the card's fields
+   as `props` ([Browser ability cards](#browser-ability-cards)).
+4. **Keep the fallback:** change the ability's instructions to write the fenced card unless the
+   result carries `card_shown`, and keep your fence renderer, so sites without the sticker, older
+   clients and past chats still show the card.
+5. **Test both paths.** With the sticker, the card shows under the reply and the reply has no fenced
+   block. Without it, the fenced card shows as before.

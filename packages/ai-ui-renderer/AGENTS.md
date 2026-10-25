@@ -1,10 +1,11 @@
 # AI UI Renderer
 
-Shared A2UI v1.0 catalog and rendering primitives. Keep chat message handling, session lifetime,
-and MCP transport in consumers. Preserve component schemas, bindings, and actions when moving
-code. Only basic or shared components live here; a chat's own components live in its project, in
-its own catalog that `createInteractiveUiCatalog()` builds. See README.md for usage and build
-commands, and `packages/agents-manager/src/interactive-ui/README.md` for the architecture.
+A shared component library for A2UI v1.0: the Basic catalog's components and shared rendering
+primitives. Don't add a custom component here; it belongs in its owner's project, in its own catalog
+that `createInteractiveUiCatalog()` builds. Keep chat message handling, session lifetime, and MCP
+transport in consumers, and preserve component schemas, bindings, and actions when moving code. See
+README.md for usage and build commands, and `packages/agents-manager/src/interactive-ui/README.md`
+for the architecture.
 
 Code lives in `components/` (`InteractiveUiSurface` and the Basic catalog's components), `contexts/`
 (what a surface shares with its components, each read through its `use…()` hook), `hooks/`, and

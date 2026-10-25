@@ -1,10 +1,39 @@
 # AI UI Renderer
 
-`@automattic/ai-ui-renderer` renders A2UI v1.0 surfaces with WordPress components. It holds only
-basic or shared components: each chat's own components live in its project. Hosts own session
-lifetime, action delivery, and error handling. See the
-[interactive UI architecture](../agents-manager/src/interactive-ui/README.md) for how hosts and
-providers use it.
+`@automattic/ai-ui-renderer` is a shared component library that renders
+[A2UI v1.0](https://a2ui.org) surfaces with WordPress components.
+
+- **What's here:** the Basic catalog's components, the runtime, `InteractiveUiSurface` and the
+  styles, which every host shares.
+- **What isn't:** custom components. Put one in your own project, in your own catalog
+  ([Catalogs](#catalogs)), not here. Chat, session, transport and error handling stay in the host.
+- **How hosts use it:** see the
+  [interactive UI architecture](../agents-manager/src/interactive-ui/README.md).
+
+## Basic components
+
+`Text`, `TextField`, `Button`, `Column`, `Image`, `Icon`, `Row`, `List`, `Card`, `Divider`,
+`CheckBox`, `ChoicePicker`, `DateTimeInput`, `Video`, `AudioPlayer`, `Tabs`, `Modal` and
+`Slider`.
+
+- Buttons send an `event` to the agent, or call a catalog function with `functionCall`. To submit
+  edits, bind the inputs and the action's context to the same data paths.
+- A modal's `Button` trigger opens it instead of sending its action, and stays usable on a
+  disabled surface. Its inputs share the surface's data model and are disabled with it.
+- Text fields keep their values as strings, choice pickers as string arrays, and date/time inputs
+  as local ISO strings.
+- `Button`, `TextField`, `CheckBox`, `ChoicePicker`, `Slider` and `DateTimeInput` take A2UI's
+  `checks`. A button is disabled while any of its own checks fails, with their messages as its
+  accessible description, and a field shows its first failed check once it's touched (when the
+  person leaves a text or date field, or changes a check box, a choice or a slider) or once the
+  person clicks a disabled button whose checks fail. A check of a path with no value runs on it as
+  empty: `required`, `email` and `numeric` fail, and `length` and `regex` check an empty string. One
+  that can't run, such as `numeric` given a text field's string, also fails and is reported through
+  `onError`. A failed check shows its own `message`, never the English one A2UI's validation
+  functions return, so give every check a `message` in the person's language: one without shows
+  A2UI's generic English "Validation failed".
+- Components ignore A2UI v1.0 properties they don't support, such as `weight` and
+  `accessibility`, instead of rejecting the surface.
 
 ## Catalogs
 
@@ -183,31 +212,6 @@ When you add a basic or custom component:
 2. Check it in light and dark mode, enabled and disabled (a stale surface).
 3. If a WordPress component hard-codes light colors, enabled or disabled, add a rule for it: in
    `style.scss` for a basic component, or in the custom component's own stylesheet.
-
-## Basic components
-
-`Text`, `TextField`, `Button`, `Column`, `Image`, `Icon`, `Row`, `List`, `Card`, `Divider`,
-`CheckBox`, `ChoicePicker`, `DateTimeInput`, `Video`, `AudioPlayer`, `Tabs`, `Modal` and
-`Slider`.
-
-- Buttons send an `event` to the agent, or call a catalog function with `functionCall`. To submit
-  edits, bind the inputs and the action's context to the same data paths.
-- A modal's `Button` trigger opens it instead of sending its action, and stays usable on a
-  disabled surface. Its inputs share the surface's data model and are disabled with it.
-- Text fields keep their values as strings, choice pickers as string arrays, and date/time inputs
-  as local ISO strings.
-- `Button`, `TextField`, `CheckBox`, `ChoicePicker`, `Slider` and `DateTimeInput` take A2UI's
-  `checks`. A button is disabled while any of its own checks fails, with their messages as its
-  accessible description, and a field shows its first failed check once it's touched (when the
-  person leaves a text or date field, or changes a check box, a choice or a slider) or once the
-  person clicks a disabled button whose checks fail. A check of a path with no value runs on it as
-  empty: `required`, `email` and `numeric` fail, and `length` and `regex` check an empty string. One
-  that can't run, such as `numeric` given a text field's string, also fails and is reported through
-  `onError`. A failed check shows its own `message`, never the English one A2UI's validation
-  functions return, so give every check a `message` in the person's language: one without shows
-  A2UI's generic English "Validation failed".
-- Components ignore A2UI v1.0 properties they don't support, such as `weight` and
-  `accessibility`, instead of rejecting the surface.
 
 ## Development
 
