@@ -48,17 +48,25 @@ const renderButton = (
 		return dispatch( action );
 	};
 
-	return render(
+	const queryClient = makeQueryClient();
+	const tree = ( followSuccess?: ( following: boolean ) => void ) => (
 		<Provider store={ store }>
-			<QueryClientProvider client={ makeQueryClient() }>
+			<QueryClientProvider client={ queryClient }>
 				<FollowButtonContainer
 					siteUrl="https://example.com/feed"
 					onFollowToggle={ onFollowToggle }
-					onFollowSuccess={ onFollowSuccess }
+					onFollowSuccess={ followSuccess }
 				/>
 			</QueryClientProvider>
 		</Provider>
 	);
+	const result = render( tree( onFollowSuccess ) );
+
+	return {
+		...result,
+		rerenderWithFollowSuccess: ( followSuccess: ( following: boolean ) => void ) =>
+			result.rerender( tree( followSuccess ) ),
+	};
 };
 
 const verificationNotices = ( actions: NoticeAction[] ) =>
@@ -161,6 +169,29 @@ describe( 'FollowButtonContainer', () => {
 
 			await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
 			await waitFor( () => expect( onFollowSuccess ).toHaveBeenCalledWith( true ) );
+		} );
+
+		it( 'calls the callback from the click, even if the prop changes before the request finishes', async () => {
+			const followScope = nock( BASE )
+				.post( '/rest/v1.1/read/following/mine/new' )
+				.delay( 250 )
+				.reply( 200, {
+					subscribed: true,
+					subscription: { ID: '123', URL: 'https://example.com/feed' },
+				} );
+			const firstOnFollowSuccess = jest.fn();
+			const laterOnFollowSuccess = jest.fn();
+
+			const { rerenderWithFollowSuccess } = renderButton( [], jest.fn(), {
+				emailVerified: true,
+				onFollowSuccess: firstOnFollowSuccess,
+			} );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
+			rerenderWithFollowSuccess( laterOnFollowSuccess );
+
+			await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
+			await waitFor( () => expect( firstOnFollowSuccess ).toHaveBeenCalledWith( true ) );
+			expect( laterOnFollowSuccess ).not.toHaveBeenCalled();
 		} );
 
 		it( 'is not called when the follow request fails', async () => {

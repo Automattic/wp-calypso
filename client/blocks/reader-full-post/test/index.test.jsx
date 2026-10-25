@@ -459,7 +459,7 @@ describe( 'FullPostView subscribe notice', () => {
 	it( 'confirms a completed subscription', () => {
 		const { instance, successNotice } = createInstance();
 
-		instance.showFollowSuccessNotice( true );
+		instance.showFollowSuccessNotice( true, 'Example Blog' );
 
 		expect( successNotice ).toHaveBeenCalledWith(
 			'Success! You are now subscribed to "Example Blog".',
@@ -470,7 +470,7 @@ describe( 'FullPostView subscribe notice', () => {
 	it( 'confirms a completed unsubscription', () => {
 		const { instance, successNotice } = createInstance();
 
-		instance.showFollowSuccessNotice( false );
+		instance.showFollowSuccessNotice( false, 'Example Blog' );
 
 		expect( successNotice ).toHaveBeenCalledWith(
 			'Success! You are now unsubscribed from "Example Blog".',

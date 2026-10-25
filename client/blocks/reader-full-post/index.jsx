@@ -99,9 +99,7 @@ export class FullPostView extends Component {
 	openSuggestedFollowsModal = ( followClicked ) => {
 		this.setState( { isSuggestedFollowsModalOpen: followClicked } );
 	};
-	showFollowSuccessNotice = ( following ) => {
-		const siteName = getSiteName( { site: this.props.site, post: this.props.post } );
-
+	showFollowSuccessNotice = ( following, siteName ) => {
 		this.props.successNotice(
 			following
 				? translate( 'Success! You are now subscribed to "%s".', { args: siteName } )
@@ -816,7 +814,9 @@ export class FullPostView extends Component {
 									feedUrl={ feedUrl }
 									siteUrl={ post.site_URL }
 									onFollowToggle={ this.openSuggestedFollowsModal }
-									onFollowSuccess={ this.showFollowSuccessNotice }
+									onFollowSuccess={ ( following ) =>
+										this.showFollowSuccessNotice( following, siteName )
+									}
 								/>
 							) }
 
