@@ -15,7 +15,7 @@ import { useLaunchpadDecider } from '../../internals/hooks/use-launchpad-decider
 import { STEPS } from '../../internals/steps';
 import { Flow, ProvidedDependencies } from '../../internals/types';
 
-const steps = stepsWithRequiredLogin( [ STEPS.LAUNCHPAD, STEPS.SUBSCRIBERS, STEPS.PROCESSING ] );
+const steps = stepsWithRequiredLogin( [ STEPS.LAUNCHPAD, STEPS.PROCESSING ] );
 
 const build: Flow = {
 	name: BUILD_FLOW,
@@ -83,9 +83,6 @@ const build: Flow = {
 				case 'launchpad': {
 					return navigate( 'processing' );
 				}
-				case 'subscribers': {
-					return navigate( 'launchpad' );
-				}
 			}
 			return providedDependencies;
 		};
@@ -103,7 +100,7 @@ const build: Flow = {
 			}
 		};
 
-		return { goNext, goToStep: navigate, submit };
+		return { goNext, submit };
 	},
 };
 
