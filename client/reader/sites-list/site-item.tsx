@@ -2,6 +2,7 @@ import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
+import { decodeEntities } from 'calypso/lib/formatting';
 import { useSite } from 'calypso/reader/data/site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
@@ -41,7 +42,8 @@ export function ReaderSiteItem( {
 	const linkUrl = getStreamUrl( feedId, siteId ) ?? feedUrl;
 
 	function onFollowSuccess( isFollowing: boolean ): void {
-		const displayName: string = name || filterURLForDisplay( feedUrl ?? '' );
+		const displayName: string =
+			decodeEntities( name ?? '' ) || filterURLForDisplay( feedUrl ?? '' );
 
 		dispatch(
 			successNotice(

@@ -72,6 +72,19 @@ describe( 'ReaderFeedHeaderFollow', () => {
 		);
 	} );
 
+	test( 'decodes HTML entities in the site name', () => {
+		renderWithProvider(
+			<ReaderFeedHeaderFollow site={ { ...site, name: 'Maya&#039;s Food Blog' } } feed={ feed } />
+		);
+
+		act( () => lastFollowButtonProps().onFollowSuccess?.( true ) );
+
+		expect( successNotice ).toHaveBeenCalledWith(
+			'Success! You are now subscribed to "Maya\'s Food Blog".',
+			{ duration: 3000 }
+		);
+	} );
+
 	test( 'shows the unsubscribed notice once the unfollow succeeds', () => {
 		renderWithProvider(
 			<ReaderFeedHeaderFollow site={ { ...site, is_following: true } } feed={ feed } />

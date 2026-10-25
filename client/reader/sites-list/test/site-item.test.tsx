@@ -217,6 +217,20 @@ describe( 'RecommendedFeedItem', () => {
 			);
 		} );
 
+		test( 'decodes HTML entities in the site name', () => {
+			renderComponent( {
+				...defaultProps,
+				site: { ...defaultFeed, name: 'Maya&#039;s Food Blog' },
+			} );
+
+			getOnFollowSuccess()?.( true );
+
+			expect( mockedSuccessNotice ).toHaveBeenCalledWith(
+				"Success! You are now subscribed to Maya's Food Blog.",
+				{ duration: 2000 }
+			);
+		} );
+
 		test( 'shows unsubscribed notice when unfollowed', () => {
 			renderComponent();
 
