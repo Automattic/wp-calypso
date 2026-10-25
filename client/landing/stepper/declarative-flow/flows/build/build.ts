@@ -26,6 +26,10 @@ const build: Flow = {
 	useSteps() {
 		return steps;
 	},
+	// Everyone here already has an account, so log them in rather than offering signup.
+	useLoginParams() {
+		return { customLoginPath: '/log-in' };
+	},
 	useTracksEventProps() {
 		const goals = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
