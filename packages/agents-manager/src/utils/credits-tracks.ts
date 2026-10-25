@@ -1,5 +1,6 @@
 /**
- * Tracks props for the site credits notice, its dismissal, the credits popover and their Upgrade and Add credits clicks.
+ * Tracks props for the site credits notice, its dismissal, the credits popover and their Upgrade and Add credits clicks,
+ * and the refusal codes a failed reply carries.
  */
 import {
 	type CreditsStatus,
@@ -36,6 +37,12 @@ export function getCreditsUserRole( canBuyCredits?: boolean ): 'admin' | 'non_ad
 
 	return canBuyCredits ? 'admin' : 'non_admin';
 }
+
+/** Every site credits refusal's code starts with this. */
+export const CREDITS_REFUSAL_PREFIX = 'ai_credit_allowance_';
+
+/** The site has used all its credits; the only refusal the chat offers a purchase for. */
+export const CREDITS_EXHAUSTED_REFUSAL = 'ai_credit_allowance_exhausted';
 
 /**
  * The code a failed reply carries in its data part, such as

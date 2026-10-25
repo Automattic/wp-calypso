@@ -1412,7 +1412,60 @@ describe( 'main app', () => {
 			} );
 			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
 				'calypso_legacy_launch_site_redirect',
-				{ path: '/start/launch-site/plans-launch', ref: 'admin-bar', query_source: undefined },
+				{
+					path: '/start/launch-site/plans-launch',
+					ref: 'admin-bar',
+					query_source: undefined,
+					referer: undefined,
+					site_slug: 'example.wordpress.com',
+					retry: undefined,
+					fetch_site: undefined,
+					fetch_mode: undefined,
+					fetch_user: undefined,
+				},
+				request
+			);
+		} );
+
+		it( 'records how the browser navigated to the hit', async () => {
+			const headers = {
+				Referer: 'https://example.wordpress.com/wp-admin/options-reading.php?settings-updated=1#x',
+				'Sec-Fetch-Site': 'cross-site',
+				'Sec-Fetch-Mode': 'navigate',
+				'Sec-Fetch-User': '?1',
+			};
+			const { request } = await app.run( {
+				request: {
+					url: '/start/launch-site/domains-launch',
+					query: { ...query, retry: '1' },
+					get: jest.fn( ( header ) => headers[ header ] ),
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				expect.objectContaining( {
+					referer: 'https://example.wordpress.com/wp-admin/options-reading.php',
+					site_slug: 'example.wordpress.com',
+					retry: '1',
+					fetch_site: 'cross-site',
+					fetch_mode: 'navigate',
+					fetch_user: '?1',
+				} ),
+				request
+			);
+		} );
+
+		it( 'drops a Referer that is not a URL', async () => {
+			const { request } = await app.run( {
+				request: {
+					url: '/start/launch-site',
+					query,
+					get: jest.fn( ( header ) => ( header === 'Referer' ? 'not a url' : undefined ) ),
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				expect.objectContaining( { referer: undefined } ),
 				request
 			);
 		} );
@@ -1434,7 +1487,11 @@ describe( 'main app', () => {
 			} );
 			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
 				'calypso_legacy_launch_site_redirect',
-				{ path: '/start/launch-site', ref: undefined, query_source: undefined },
+				expect.objectContaining( {
+					path: '/start/launch-site',
+					ref: undefined,
+					query_source: undefined,
+				} ),
 				request
 			);
 		} );
@@ -1470,6 +1527,26 @@ describe( 'main app', () => {
 		it( 'leaves flows that only share the prefix alone', async () => {
 			const { response } = await app.run( { request: { url: '/start/launch-site-foo' } } );
 			expect( response.redirect ).not.toHaveBeenCalledWith( 302, expect.anything() );
+		} );
+	} );
+
+	describe( 'Retired WooCommerce installer routes', () => {
+		it.each( [
+			[
+				'/start/woocommerce-install',
+				{ siteSlug: 'example.com' },
+				'/plugins/woocommerce/example.com',
+			],
+			[ '/start/woocommerce-install/store-address/fr', {}, '/plugins/woocommerce' ],
+			[
+				'/woocommerce-installation/example.com::shop',
+				{},
+				'/plugins/woocommerce/example.com::shop',
+			],
+			[ '/woocommerce-installation', {}, '/plugins/woocommerce' ],
+		] )( 'redirects %s to the WooCommerce plugin page', async ( url, query, destination ) => {
+			const { response } = await app.run( { request: { url, query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, destination );
 		} );
 	} );
 

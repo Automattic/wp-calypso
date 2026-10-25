@@ -37,6 +37,7 @@ describe( '<Visibility>', () => {
 	test( 'for unlaunched sites, it renders "Coming soon" with a "Finish setup" link', () => {
 		const { container, getByRole } = render(
 			<Visibility
+				siteId={ 1 }
 				siteSlug="test.wordpress.com"
 				visibility="private"
 				status={ null }
@@ -53,6 +54,7 @@ describe( '<Visibility>', () => {
 	test( 'for unlaunched sites with an active AI Launchpad, "Finish setup" links to the wp-admin site setup page', () => {
 		const { getByRole } = render(
 			<Visibility
+				siteId={ 1 }
 				siteSlug="test.wordpress.com"
 				visibility="private"
 				status={ null }
@@ -73,6 +75,7 @@ describe( '<Visibility>', () => {
 		} as Site;
 		const { queryByRole } = render(
 			<Visibility
+				siteId={ 1 }
 				siteSlug="test.wordpress.com"
 				visibility="private"
 				status={ null }
@@ -90,6 +93,7 @@ describe( '<Visibility>', () => {
 		} as Site;
 		const { queryByRole } = render(
 			<Visibility
+				siteId={ 1 }
 				siteSlug="test.wordpress.com"
 				visibility="private"
 				status={ null }
@@ -105,6 +109,7 @@ describe( '<Visibility>', () => {
 	test( 'for coming soon sites, it renders "Coming soon"', () => {
 		const { container } = render(
 			<Visibility
+				siteId={ 1 }
 				siteSlug="test.wordpress.com"
 				visibility="coming_soon"
 				status={ null }
@@ -116,14 +121,26 @@ describe( '<Visibility>', () => {
 
 	test( 'for private sites, it renders "Private"', () => {
 		const { container } = render(
-			<Visibility siteSlug="test.wordpress.com" visibility="private" status={ null } isLaunched />
+			<Visibility
+				siteId={ 1 }
+				siteSlug="test.wordpress.com"
+				visibility="private"
+				status={ null }
+				isLaunched
+			/>
 		);
 		expect( container.textContent ).toBe( 'Private' );
 	} );
 
 	test( 'for public sites, it renders "Public"', () => {
 		const { container } = render(
-			<Visibility siteSlug="test.wordpress.com" visibility="public" status={ null } isLaunched />
+			<Visibility
+				siteId={ 1 }
+				siteSlug="test.wordpress.com"
+				visibility="public"
+				status={ null }
+				isLaunched
+			/>
 		);
 		expect( container.textContent ).toBe( 'Public' );
 	} );

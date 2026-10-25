@@ -185,28 +185,6 @@ export function generateFlows( {
 			disallowResume: true,
 		},
 		{
-			name: 'ecommerce',
-			steps: [ userSocialStep, 'domains', 'plans-ecommerce-fulfilled' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
-		},
-		{
-			name: 'ecommerce-monthly',
-			steps: [ userSocialStep, 'domains', 'plans-ecommerce-monthly' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
-		},
-		{
 			name: 'wpcc',
 			steps: [ 'oauth2-user' ],
 			destination: getRedirectDestination,
@@ -365,19 +343,6 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'siteId', 'siteSlug' ],
 			lastModified: '2025-02-27',
 			hideProgressIndicator: true,
-		},
-		{
-			name: 'woocommerce-install',
-			get pageTitle() {
-				return translate( 'Add WooCommerce to your site' );
-			},
-			steps: [ 'store-address', 'business-info', 'confirm', 'transfer' ],
-			destination: '/',
-			description: 'Onboarding and installation flow for woocommerce on all plans.',
-			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
-			optionalDependenciesInQuery: [ 'back_to' ],
-			lastModified: '2021-12-21',
-			disallowResume: false,
 		},
 		{
 			name: 'onboarding-affiliate',

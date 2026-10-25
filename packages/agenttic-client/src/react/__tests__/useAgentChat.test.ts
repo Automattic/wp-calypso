@@ -151,6 +151,18 @@ describe( 'useAgentChat', () => {
 			expect( result ).toBeNull();
 		} );
 
+		it( 'keeps an interactive UI surface under `a2ui`, even without text', () => {
+			const surface: Part = {
+				type: 'data',
+				data: [ { version: 'v1.0', deleteSurface: { surfaceId: 'form' } } ],
+				metadata: { mimeType: 'application/a2ui+json' },
+			};
+
+			const result = transformClientMessageToUI( buildMessage( [ surface ] ) );
+
+			expect( result?.content ).toEqual( [ { type: 'data', data: { a2ui: surface } } ] );
+		} );
+
 		it( 'drops a message that has no parts', () => {
 			// Nothing to render, so the message is dropped rather than left as
 			// an empty entry in the list.

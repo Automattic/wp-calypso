@@ -17,6 +17,17 @@
 	}
 }
 
+/* Outweighs the notice's own .container rule, whichever module loads last. */
+.container .errorNotice {
+	margin: 0;
+	border-radius: var( --radius-lg );
+}
+
+/* The card lines up with the messages, which carry this padding themselves. */
+.container .errorCard {
+	padding: 0 var( --spacing-4 );
+}
+
 /* Hide scrollbar visually during animations */
 /* stylelint-disable-next-line selector-pseudo-class-no-unknown -- CSS Modules :global */
 :global( .animating ) .container::-webkit-scrollbar {
@@ -28,9 +39,4 @@
 .container [data-role='agent']:has( + [data-role='agent'] ),
 .container [data-role='assistant']:has( + [data-role='assistant'] ) {
 	margin-bottom: calc( -1 * var( --spacing-6 ) );
-}
-
-/* Restore the full gap before an agent message that starts a turn, such as a reply to a click */
-.container [data-role='agent'] + [data-role='agent'][data-turn-start] {
-	margin-top: var( --spacing-6 );
 }

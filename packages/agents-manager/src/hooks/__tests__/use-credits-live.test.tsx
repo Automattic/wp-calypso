@@ -18,20 +18,21 @@ import { setResolvedAgentId } from '../../utils/resolved-agent-id';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { useCredits } from '../use-credits';
 import type { AgentConfig } from '../../utils/create-agent-config';
-import type { CreditsStatus } from '../../utils/credits';
+import type { CreditsPlanTier, CreditsStatus } from '../../utils/credits';
 import type { CreditsPurchaseAction } from '../../utils/credits-access';
 import type { TaskUpdate, UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 let mockIsProcessing = false;
+let mockMessages: unknown[] = [];
 let mockConfig: UseAgentChatConfig;
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
 		useAgentChat: ( config: UseAgentChatConfig ) => {
 			mockConfig = config;
-			return { isProcessing: mockIsProcessing };
+			return { isProcessing: mockIsProcessing, messages: mockMessages };
 		},
 	} ),
 	{ virtual: true }
@@ -103,6 +104,22 @@ const exhausted = ( blocked = false ) =>
 	creditSnapshot( { credits_used: 2500, credits_remaining: 0, exhausted: true, blocked } );
 const receive = ( snapshot: unknown, state: 'completed' | 'failed' | 'canceled' = 'completed' ) =>
 	act( async () => mockConfig.onTaskUpdate?.( terminal( snapshot, state ) ) );
+const failed = ( parts: unknown[] ): TaskUpdate =>
+	( {
+		id: 'task',
+		status: {
+			state: 'failed',
+			message: { role: 'agent', kind: 'message', messageId: 'm', parts },
+		},
+		final: true,
+		text: '',
+	} ) as TaskUpdate;
+const refuse = ( aiCredits: unknown, code = 'ai_credit_allowance_exhausted' ) =>
+	act( async () =>
+		mockConfig.onTaskUpdate?.( { ...failed( [ { type: 'data', data: { code } } ] ), aiCredits } )
+	);
+const low = ( plan_tier: CreditsPlanTier = 'personal' ) =>
+	creditSnapshot( { credits_remaining: 5, credits_used: 2495, plan_tier } );
 const fetchMock = jest.fn();
 // `null` leaves a field out, as an older server does; the server itself sends
 // `can_upgrade: null` when it can't tell who bought the plan.
@@ -133,6 +150,7 @@ beforeEach( () => {
 	jest.useFakeTimers();
 	jest.setSystemTime( new Date( '2026-09-21T12:00:00Z' ) );
 	mockIsProcessing = false;
+	mockMessages = [ { id: 'm' } ];
 	window.history.replaceState( {}, '', '/' );
 	fetchMock.mockReset().mockImplementation( () => new Promise( () => {} ) );
 	authProvider.mockReset().mockResolvedValue( { Authorization: 'Bearer site-jwt' } );
@@ -975,6 +993,15 @@ describe( 'while the host says the page isn’t in dev mode', () => {
 		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
 		expect( fetchMock ).not.toHaveBeenCalled();
 	} );
+
+	it( 'draws a zero a reply brought while hidden as soon as the chat reopens, since it can’t read', async () => {
+		const view = renderCredits( { isOpen: false } );
+		await receive( exhausted() );
+		view.rerender( defaultOptions );
+		await flush();
+		expect( props( view.result.current ).status.remaining ).toBe( 0 );
+		expect( fetchMock ).not.toHaveBeenCalled();
+	} );
 } );
 describe( 'the dev mode gate', () => {
 	afterEach( () => {
@@ -1541,6 +1568,78 @@ it( 'waits while closed, reads on opening, and refreshes on reopen and a fresh m
 	expect( props( fresh.result.current ).status.remaining ).toBe( 2450 );
 	expect( fetchMock ).toHaveBeenCalledTimes( 3 );
 } );
+it( 'confirms, on reopening, a zero last shown before minimising', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	const view = renderCredits();
+	await flush();
+	fetchMock.mockResolvedValueOnce( response( exhausted() ) );
+	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+	await flush();
+	expect( view.result.current.notice ).toBeDefined();
+
+	view.rerender( { ...defaultOptions, isOpen: false } );
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	view.rerender( defaultOptions );
+	expect( view.result.current.trailingActions ).toBeUndefined();
+	expect( view.result.current.notice ).toBeUndefined();
+
+	await flush();
+	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+	expect( view.result.current.notice?.dismissible ).toBe( true );
+} );
+it( 'confirms a second zero that arrived while minimised before drawing it again', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	const view = renderCredits();
+	await flush();
+	view.rerender( { ...defaultOptions, isOpen: false } );
+	await receive( exhausted() );
+	await receive( exhausted() );
+
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	view.rerender( defaultOptions );
+	expect( view.result.current.trailingActions ).toBeUndefined();
+	await flush();
+	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+} );
+it( 'blocks a send while the reopening read confirms a zero', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	const view = renderCredits();
+	await flush();
+	view.rerender( { ...defaultOptions, isOpen: false } );
+	await receive( exhausted() );
+
+	const read = deferred< ReturnType< typeof response > >();
+	fetchMock.mockReturnValueOnce( read.promise );
+	view.rerender( defaultOptions );
+	act( () => expect( view.result.current.beforeSubmit() ).toBe( false ) );
+
+	await act( async () => read.resolve( response( creditSnapshot() ) ) );
+	act( () => expect( view.result.current.beforeSubmit() ).toBe( true ) );
+} );
+it( 'draws a turn’s zero on reopening once the turn ends, without another read', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	const view = renderCredits();
+	await flush();
+	mockIsProcessing = true;
+	view.rerender( { ...defaultOptions, isOpen: false } );
+	await receive( exhausted() );
+
+	view.rerender( defaultOptions );
+	expect( view.result.current.trailingActions ).toBeUndefined();
+	mockIsProcessing = false;
+	view.rerender( defaultOptions );
+	await flush();
+	expect( props( view.result.current ).status.remaining ).toBe( 0 );
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+} );
+it( 'keeps drawing a balance above 0 while the reopening read runs', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	const view = renderCredits();
+	await flush();
+	view.rerender( { ...defaultOptions, isOpen: false } );
+	view.rerender( defaultOptions );
+	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+} );
 it( 'expires the old balance and reads the next period without sending a prompt', async () => {
 	fetchMock.mockResolvedValueOnce(
 		response(
@@ -1744,8 +1843,6 @@ describe( 'credits Tracks events', () => {
 		jest
 			.mocked( recordAgentsManagerTracksEvent )
 			.mock.calls.filter( ( [ eventName ] ) => eventName.includes( '_credits_' ) );
-	const low = () =>
-		creditSnapshot( { credits_remaining: 5, credits_used: 2495, plan_tier: 'personal' } );
 	const healthy = () =>
 		creditSnapshot( {
 			credits_limit: CREDITS_LOW_BALANCE * 2,
@@ -1784,12 +1881,10 @@ describe( 'credits Tracks events', () => {
 		await receive( low() );
 		await receive( { ...exhausted(), plan_tier: 'personal' } );
 		expect(
-			creditsEvents().map( ( [ name, eventProps ] ) => [ name, eventProps?.state ] )
-		).toEqual( [
-			[ 'calypso_agents_manager_credits_notice_shown', 'low' ],
-			[ 'calypso_agents_manager_credits_notice_shown', 'zero' ],
-			[ 'calypso_agents_manager_credits_meter_opened', 'zero' ],
-		] );
+			creditsEvents()
+				.filter( ( [ name ] ) => name === 'calypso_agents_manager_credits_notice_shown' )
+				.map( ( [ , eventProps ] ) => eventProps?.state )
+		).toEqual( [ 'low', 'zero' ] );
 	} );
 
 	it( 'keeps a recorded notice across a remount and a new conversation, but not for another user', async () => {
@@ -2223,17 +2318,74 @@ describe( 'credits Tracks events', () => {
 			}
 		);
 
-		it( 'waits while a reply’s 0 opens it with the chat hidden, then records once when shown', async () => {
-			const { showChat, isPopoverOpen } = await renderHealthy();
+		it( 'waits while a reply’s 0 opens it with the chat hidden, then records once when the opening read confirms it', async () => {
+			const { view, showChat, isPopoverOpen } = await renderHealthy();
 			showChat( false );
 			await receive( zero() );
 			expect( isPopoverOpen() ).toBe( true );
 			expect( opened() ).toEqual( [] );
+			fetchMock.mockResolvedValueOnce( response( zero() ) );
 			showChat( true );
+			expect( view.result.current.trailingActions ).toBeUndefined();
+			expect( view.result.current.notice ).toBeUndefined();
+			expect( opened() ).toEqual( [] );
+			await flush();
+			expect( isPopoverOpen() ).toBe( true );
+			expect( view.result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
 			expect( opened() ).toEqual( [ byItself ] );
 			showChat( false );
 			showChat( true );
+			await flush();
 			expect( opened() ).toEqual( [ byItself ] );
+		} );
+
+		it( 'draws credits bought elsewhere on reopening, with no popover and no event', async () => {
+			const { view, showChat, isPopoverOpen } = await renderHealthy();
+			showChat( false );
+			await receive( zero() );
+			fetchMock.mockResolvedValueOnce( response( healthy() ) );
+			showChat( true );
+			await flush();
+			expect( isPopoverOpen() ).toBe( false );
+			expect( view.result.current.notice ).toBeUndefined();
+			expect( props( view.result.current ).status.remaining ).toBe( CREDITS_LOW_BALANCE );
+			expect( opened() ).toEqual( [] );
+		} );
+
+		it( 'records nothing when the opening read fails after a reply’s 0 while hidden', async () => {
+			const { view, showChat } = await renderHealthy();
+			showChat( false );
+			await receive( zero() );
+			fetchMock.mockRejectedValueOnce( new TypeError( 'Failed to fetch' ) );
+			showChat( true );
+			await flush();
+			expect( view.result.current.trailingActions ).toBeUndefined();
+			expect( opened() ).toEqual( [] );
+		} );
+
+		it( 'records again when credits return and a later reply uses them up', async () => {
+			const { isPopoverOpen } = await renderHealthy();
+			await receive( zero() );
+			await receive( healthy() );
+			expect( isPopoverOpen() ).toBe( false );
+			await receive( zero() );
+			expect( opened() ).toEqual( [ byItself, byItself ] );
+		} );
+
+		it.each( [
+			[ 'closes a popover that opened by itself', false ],
+			[ 'keeps a popover opened by a click', true ],
+		] )( '%s once a read finds credits again', async ( _case, openedByClick ) => {
+			const { view, isPopoverOpen } = await renderHealthy();
+			if ( openedByClick ) {
+				act( () => props( view.result.current ).onToggle( true ) );
+			}
+			await receive( zero() );
+			expect( isPopoverOpen() ).toBe( true );
+			fetchMock.mockResolvedValueOnce( response( healthy() ) );
+			act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+			await flush();
+			expect( isPopoverOpen() ).toBe( openedByClick );
 		} );
 
 		it.each( [ 'a reply without a balance', 'the period resetting' ] )(
@@ -2292,7 +2444,9 @@ describe( 'credits Tracks events', () => {
 				act( () => props( view.result.current ).onToggle( true ) );
 				showChat( chat === 'showing' );
 				await receive( zero() );
+				fetchMock.mockResolvedValueOnce( response( zero() ) );
 				showChat( true );
+				await flush();
 				expect( isPopoverOpen() ).toBe( true );
 				expect( opened() ).toEqual( [ byClick ] );
 			}
@@ -2324,9 +2478,12 @@ describe( 'credits Tracks events', () => {
 					void mockConfig.onTaskUpdate?.( terminal( zero() ) );
 				} );
 				expect( isPopoverOpen() ).toBe( true );
+				fetchMock.mockResolvedValue( response( zero() ) );
 				showChat( true );
+				await flush();
 				showChat( false );
 				showChat( true );
+				await flush();
 				expect( opened() ).toEqual( [ byClick, byItself ] );
 			}
 		);
@@ -2343,7 +2500,7 @@ describe( 'credits Tracks events', () => {
 	describe( 'purchase clicks', () => {
 		const clicked = 'calypso_agents_manager_credits_cta_clicked';
 		const clicks = () => creditsEvents().filter( ( [ name ] ) => name === clicked );
-		const upgrade = { cta_type: 'upgrade', ref: 'wp_ai_credits' };
+		const upgrade = { cta_type: 'upgrade', ref: 'wp_ai_credits', placement: 'none' };
 
 		it( 'records every click on the notice’s link with the balance’s state at the click', async () => {
 			fetchMock.mockResolvedValueOnce( response( low() ) );
@@ -2383,6 +2540,7 @@ describe( 'credits Tracks events', () => {
 						plan_tier: 'commerce',
 						cta_type: 'top_up',
 						ref: 'wp_ai_credits',
+						placement: 'none',
 					},
 				],
 			] );
@@ -2410,11 +2568,91 @@ describe( 'credits Tracks events', () => {
 							plan_tier,
 							cta_type: ctaType,
 							ref: 'wp_ai_credits',
+							placement: 'none',
 						},
 					],
 				] );
 			}
 		);
+
+		describe( 'after a refusal', () => {
+			const zeroClick = {
+				...base,
+				state: 'zero',
+				credits_left: 0,
+				plan_tier: 'business',
+				cta_type: 'top_up',
+				ref: 'wp_ai_credits',
+			};
+			const refused = async () => {
+				fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
+				const { result } = renderCredits( freshScope() );
+				await flush();
+				await refuse( { ...exhausted( true ), plan_tier: 'business' } );
+				return result;
+			};
+
+			it( 'records a click on the refusal notice’s link with its placement', async () => {
+				const result = await refused();
+				act( () => result.current.refusalNotice?.action?.onClick?.() );
+				expect( clicks() ).toEqual( [ [ clicked, { ...zeroClick, placement: 'refusal' } ] ] );
+			} );
+
+			it( 'records a click on the held refusal notice’s link with the balance it last showed', async () => {
+				const result = await refused();
+				fetchMock.mockResolvedValueOnce( { ok: false, json: async () => ( {} ) } );
+				act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+				await flush();
+				expect( result.current.trailingActions ).toBeUndefined();
+				act( () => result.current.refusalNotice?.action?.onClick?.() );
+				expect( clicks() ).toEqual( [ [ clicked, { ...zeroClick, placement: 'refusal' } ] ] );
+			} );
+
+			it( 'records clicks on the notice’s and popover’s links with placement none', async () => {
+				const result = await refused();
+				act( () => result.current.notice?.action?.onClick?.() );
+				act( () => props( result.current ).action?.onClick?.() );
+				expect( clicks() ).toEqual( [
+					[ clicked, { ...zeroClick, placement: 'none' } ],
+					[ clicked, { ...zeroClick, placement: 'none' } ],
+				] );
+			} );
+		} );
+
+		it( 'records the exhausted notice once when a refusal drains the balance', async () => {
+			const scope = freshScope();
+			fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
+			const view = renderCredits( scope );
+			await flush();
+			await refuse( { ...exhausted( true ), plan_tier: 'business' } );
+			view.rerender( { ...defaultOptions, ...scope } );
+			expect(
+				creditsEvents()
+					.filter( ( [ name ] ) => name === 'calypso_agents_manager_credits_notice_shown' )
+					.map( ( [ , eventProps ] ) => ( eventProps as { state: string } ).state )
+			).toEqual( [ 'low', 'zero' ] );
+		} );
+
+		it( 'records the low notice once it shows, not while the credits-back notice covers it', async () => {
+			const scope = freshScope();
+			const shownStates = () =>
+				creditsEvents()
+					.filter( ( [ name ] ) => name === 'calypso_agents_manager_credits_notice_shown' )
+					.map( ( [ , eventProps ] ) => ( eventProps as { state: string } ).state );
+			fetchMock.mockResolvedValueOnce( response( healthy() ) );
+			const view = renderCredits( scope );
+			await flush();
+			await refuse( { ...exhausted( true ), plan_tier: 'business' } );
+			fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
+			act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+			await flush();
+			expect( view.result.current.notice?.message ).toBe( 'Your site has credits again.' );
+			expect( view.result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
+			expect( shownStates() ).toEqual( [ 'zero' ] );
+			mockIsProcessing = true;
+			view.rerender( { ...defaultOptions, ...scope } );
+			expect( shownStates() ).toEqual( [ 'zero', 'low' ] );
+		} );
 
 		it( 'records nothing from a previous site’s links', async () => {
 			const scope = freshScope();
@@ -2442,16 +2680,6 @@ describe( 'credits Tracks events', () => {
 } );
 
 describe( 'refusal code', () => {
-	const failed = ( parts: unknown[] ): TaskUpdate =>
-		( {
-			id: 'task',
-			status: {
-				state: 'failed',
-				message: { role: 'agent', kind: 'message', messageId: 'm', parts },
-			},
-			final: true,
-			text: '',
-		} ) as TaskUpdate;
 	const refusal = failed( [
 		{ type: 'text', text: 'You’ve used all your site credits.' },
 		{ type: 'data', data: { code: 'ai_credit_allowance_exhausted' } },
@@ -2490,5 +2718,352 @@ describe( 'refusal code', () => {
 		const { result } = renderCredits( { siteKey: '456' } );
 		await act( async () => mockConfig.onTaskUpdate?.( refusal ) );
 		expect( result.current.takeRefusalCode() ).toBe( 'ai_credit_allowance_exhausted' );
+	} );
+
+	describe( 'refusal notice', () => {
+		const openThenRefuse = async (
+			plan_tier: CreditsPlanTier,
+			canBuyCredits?: boolean,
+			canUpgrade?: boolean
+		) => {
+			fetchMock.mockResolvedValueOnce( response( low( plan_tier ), canBuyCredits, canUpgrade ) );
+			const view = renderCredits();
+			await flush();
+			await refuse( { ...exhausted( true ), plan_tier } );
+			return view;
+		};
+
+		it.each( [
+			[ 'business', 'Add credits', ADD_CREDITS_URL, 'Add credits to keep working.' ],
+			[ 'personal', 'Upgrade', UPGRADE_URL, 'Upgrade to keep working.' ],
+		] as const )(
+			'offers the exhausted notice’s action for a %s site the reply was refused for',
+			async ( plan_tier, label, href, message ) => {
+				const { result } = await openThenRefuse( plan_tier );
+				expect( result.current.refusalNotice ).toEqual( {
+					icon: false,
+					title: 'Your message wasn’t sent',
+					message,
+					action: {
+						label,
+						href,
+						target: '_blank',
+						rel: 'noopener noreferrer',
+						onClick: expect.any( Function ),
+					},
+					dismissible: false,
+				} );
+			}
+		);
+
+		it( 'keeps the composer’s zero notice and its button while the card shows', async () => {
+			const { result } = await openThenRefuse( 'business' );
+			expect( result.current.notice ).toEqual( {
+				icon: false,
+				message: 'You’ve used all your site credits.',
+				action: expect.objectContaining( { label: 'Add credits', href: ADD_CREDITS_URL } ),
+				dismissible: false,
+			} );
+		} );
+
+		it( 'leaves who to ask to the composer’s notice, and gives the card no link', async () => {
+			const { result } = await openThenRefuse( 'business', false );
+			expect( result.current.refusalNotice?.message ).toBe( '' );
+			expect( result.current.refusalNotice?.action ).toBeUndefined();
+			expect( result.current.notice?.message ).toBe(
+				'You’ve used all your site credits. Ask a site admin to add more.'
+			);
+		} );
+
+		it( 'gives the card no link for an admin who didn’t buy the plan', async () => {
+			const { result } = await openThenRefuse( 'personal', true, false );
+			expect( result.current.refusalNotice?.message ).toBe( '' );
+			expect( result.current.refusalNotice?.action ).toBeUndefined();
+			expect( result.current.notice?.message ).toBe(
+				'You’ve used all your site credits. Ask the plan owner to upgrade.'
+			);
+		} );
+
+		it.each( [ 'ai_credit_allowance_not_included', 'ai_credit_allowance_unavailable' ] )(
+			'leaves a %s refusal to the error text',
+			async ( code ) => {
+				fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
+				const { result } = renderCredits();
+				await flush();
+				await refuse( { ...exhausted( true ), plan_tier: 'business' }, code );
+				expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+				expect( result.current.refusalNotice ).toBeUndefined();
+			}
+		);
+
+		it( 'has none for a reply that drains the balance without a refusal', async () => {
+			fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
+			const { result } = renderCredits();
+			await flush();
+			await receive( { ...exhausted(), plan_tier: 'business' } );
+			expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+			expect( result.current.refusalNotice ).toBeUndefined();
+		} );
+
+		it( 'has none where credits are off, as in Reader Chat', async () => {
+			const { result } = renderCredits( { enabled: false } );
+			await refuse( { ...exhausted( true ), plan_tier: 'business' } );
+			expect( result.current.refusalNotice ).toBeUndefined();
+		} );
+
+		it( 'has none without a live balance', async () => {
+			const { result } = renderCredits( { siteKey: '456' } );
+			await refuse( { ...exhausted( true ), plan_tier: 'business' } );
+			expect( result.current.refusalNotice ).toBeUndefined();
+		} );
+
+		it( 'keeps the notice after the code is read, and the code for one read', async () => {
+			const { result } = await openThenRefuse( 'business' );
+			expect( result.current.takeRefusalCode() ).toBe( 'ai_credit_allowance_exhausted' );
+			expect( result.current.takeRefusalCode() ).toBeUndefined();
+			expect( result.current.refusalNotice?.action?.label ).toBe( 'Add credits' );
+		} );
+
+		it( 'drops the notice when the next turn starts', async () => {
+			const view = await openThenRefuse( 'business' );
+			expect( view.result.current.refusalNotice ).toBeDefined();
+			mockIsProcessing = true;
+			view.rerender( defaultOptions );
+			expect( view.result.current.refusalNotice ).toBeUndefined();
+		} );
+
+		describe( 'once credits are back', () => {
+			const backNotice = {
+				icon: false,
+				message: 'Your site has credits again.',
+				action: undefined,
+				dismissible: false,
+			};
+			const question = ( ...content: Array< { type: string; text?: string } > ) => [
+				{ id: 'q', role: 'user', content },
+			];
+			const read = async ( answer: unknown ) => {
+				fetchMock.mockResolvedValueOnce( answer );
+				act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+				await flush();
+			};
+			const topUp = () => read( response( creditSnapshot( { plan_tier: 'business' } ) ) );
+
+			it( 'says so in the composer’s notice, and keeps the card in the thread', async () => {
+				const { result } = await openThenRefuse( 'business' );
+				await topUp();
+				expect( props( result.current ).status.remaining ).toBe( 2450 );
+				expect( result.current.notice ).toEqual( backNotice );
+				expect( result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
+				expect( result.current.refusalNotice?.action?.label ).toBe( 'Add credits' );
+			} );
+
+			it( 'says so over the low notice on a low balance', async () => {
+				const { result } = await openThenRefuse( 'business' );
+				await read( response( low( 'business' ) ) );
+				expect( result.current.notice ).toEqual( backNotice );
+			} );
+
+			it( 'offers Continue, which resends the refused question', async () => {
+				const onTryAgain = jest.fn();
+				mockMessages = question( { type: 'text', text: 'Make it shorter' } );
+				fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
+				const { result } = renderCredits( { onTryAgain } );
+				await flush();
+				await refuse( { ...exhausted( true ), plan_tier: 'business' } );
+				await topUp();
+				expect( result.current.notice?.message ).toBe( 'Your site has credits again.' );
+				expect( result.current.notice?.action?.label ).toBe( 'Continue' );
+				act( () => result.current.notice?.action?.onClick?.() );
+				expect( onTryAgain ).toHaveBeenCalledWith( 'Make it shorter' );
+			} );
+
+			it( 'offers no Continue for a question with images, which is asked again by hand', async () => {
+				mockMessages = question( { type: 'text', text: 'Match this' }, { type: 'component' } );
+				fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
+				const { result } = renderCredits( { onTryAgain: jest.fn() } );
+				await flush();
+				await refuse( { ...exhausted( true ), plan_tier: 'business' } );
+				await topUp();
+				expect( result.current.notice ).toEqual( backNotice );
+			} );
+
+			it( 'offers no Continue where the chat can’t resend', async () => {
+				mockMessages = question( { type: 'text', text: 'Make it shorter' } );
+				const { result } = await openThenRefuse( 'business' );
+				await topUp();
+				expect( result.current.notice ).toEqual( backNotice );
+			} );
+
+			it( 'leaves the popover closed', async () => {
+				const { result } = await openThenRefuse( 'business' );
+				await topUp();
+				expect( props( result.current ).isOpen ).toBe( false );
+			} );
+
+			it( 'drops the card when the next turn starts, and the composer shows the balance', async () => {
+				const view = await openThenRefuse( 'business' );
+				await topUp();
+				mockIsProcessing = true;
+				view.rerender( defaultOptions );
+				expect( view.result.current.refusalNotice ).toBeUndefined();
+				expect( view.result.current.notice?.message ).toBe( '2.4k credits left.' );
+			} );
+
+			it( 'offers the card again for the next refusal', async () => {
+				const view = await openThenRefuse( 'business' );
+				await topUp();
+				mockIsProcessing = true;
+				view.rerender( defaultOptions );
+				mockIsProcessing = false;
+				view.rerender( defaultOptions );
+				await refuse( { ...exhausted( true ), plan_tier: 'business' } );
+				expect( view.result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
+				expect( view.result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+			} );
+
+			it( 'holds nothing over for a next refusal that brings no balance', async () => {
+				const view = await openThenRefuse( 'business' );
+				await topUp();
+				mockIsProcessing = true;
+				view.rerender( defaultOptions );
+				mockIsProcessing = false;
+				view.rerender( defaultOptions );
+				await refuse( undefined );
+				expect( view.result.current.trailingActions ).toBeUndefined();
+				expect( view.result.current.refusalNotice ).toBeUndefined();
+			} );
+
+			it( 'drops the notice when the thread empties', async () => {
+				const view = await openThenRefuse( 'business' );
+				await topUp();
+				mockMessages = [];
+				view.rerender( defaultOptions );
+				expect( view.result.current.refusalNotice ).toBeUndefined();
+			} );
+
+			it( 'drops the notice on another site visit', async () => {
+				const view = await openThenRefuse( 'business' );
+				await topUp();
+				view.rerender( {
+					...defaultOptions,
+					siteKey: '456',
+					agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+				} );
+				expect( view.result.current.refusalNotice ).toBeUndefined();
+			} );
+
+			it.each( [ 'ai_credit_allowance_not_included', 'ai_credit_allowance_unavailable' ] )(
+				'still leaves a %s refusal to the error text',
+				async ( code ) => {
+					fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
+					const { result } = renderCredits();
+					await flush();
+					await refuse( { ...exhausted( true ), plan_tier: 'business' }, code );
+					await topUp();
+					expect( result.current.refusalNotice ).toBeUndefined();
+				}
+			);
+
+			it( 'keeps the card, and its link, while a read fails', async () => {
+				const { result } = await openThenRefuse( 'business' );
+				const card = result.current.refusalNotice;
+				await read( { ok: false, json: async () => ( {} ) } );
+				expect( result.current.trailingActions ).toBeUndefined();
+				expect( result.current.refusalNotice ).toBe( card );
+				expect( card?.action?.label ).toBe( 'Add credits' );
+			} );
+
+			it( 'keeps the card while a read fails, and the composer follows the next read', async () => {
+				const { result } = await openThenRefuse( 'business' );
+				await topUp();
+				const card = result.current.refusalNotice;
+				await read( { ok: false, json: async () => ( {} ) } );
+				expect( result.current.trailingActions ).toBeUndefined();
+				expect( result.current.refusalNotice ).toBe( card );
+				expect( result.current.notice ).toBeUndefined();
+				await read( response( { ...exhausted(), plan_tier: 'business' } ) );
+				expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+				expect( result.current.notice?.action?.label ).toBe( 'Add credits' );
+			} );
+
+			it( 'keeps the card while the period resets, then says so in the composer', async () => {
+				fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
+				const { result } = renderCredits();
+				await flush();
+				await refuse( {
+					...exhausted( true ),
+					plan_tier: 'business',
+					resets_at: '2026-09-21T12:00:01Z',
+				} );
+				const reset = deferred< unknown >();
+				fetchMock.mockReturnValueOnce( reset.promise );
+				await act( async () => jest.advanceTimersByTime( 1000 ) );
+				expect( result.current.trailingActions ).toBeUndefined();
+				expect( result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
+				reset.resolve( response( creditSnapshot( { plan_tier: 'business' } ) ) );
+				await flush();
+				expect( result.current.notice ).toEqual( backNotice );
+				expect( result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
+			} );
+		} );
+
+		it( 'drops the notice on another site visit', async () => {
+			const view = await openThenRefuse( 'business' );
+			expect( view.result.current.refusalNotice ).toBeDefined();
+			view.rerender( {
+				...defaultOptions,
+				siteKey: '456',
+				agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+			} );
+			expect( view.result.current.refusalNotice ).toBeUndefined();
+		} );
+
+		it( 'keeps the notice when a reply from the previous site ends late', async () => {
+			const view = renderCredits();
+			const previousSiteConfig = mockConfig;
+			view.rerender( {
+				...defaultOptions,
+				siteKey: '456',
+				agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+			} );
+			await refuse( { ...exhausted( true ), plan_tier: 'business', blog_id: 456 } );
+			expect( view.result.current.refusalNotice ).toBeDefined();
+
+			await act( async () => previousSiteConfig.onTaskUpdate?.( terminal( creditSnapshot() ) ) );
+			expect( view.result.current.refusalNotice ).toBeDefined();
+		} );
+
+		it( 'drops the notice when the thread empties, leaving the composer’s', async () => {
+			const view = await openThenRefuse( 'business' );
+			expect( view.result.current.refusalNotice ).toBeDefined();
+			mockMessages = [];
+			view.rerender( defaultOptions );
+			expect( view.result.current.refusalNotice ).toBeUndefined();
+			expect( view.result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+		} );
+
+		it( 'leaves the popover closed when a refusal drains the balance', async () => {
+			const { result } = await openThenRefuse( 'business' );
+			expect( props( result.current ).status.remaining ).toBe( 0 );
+			expect( props( result.current ).isOpen ).toBe( false );
+		} );
+
+		it( 'keeps the popover closed once the refusal clears with the balance still 0', async () => {
+			const view = await openThenRefuse( 'business' );
+			mockIsProcessing = true;
+			view.rerender( defaultOptions );
+			expect( view.result.current.refusalNotice ).toBeUndefined();
+			expect( props( view.result.current ).status.remaining ).toBe( 0 );
+			expect( props( view.result.current ).isOpen ).toBe( false );
+		} );
+
+		it( 'still opens the popover when a reply drains the balance without a refusal', async () => {
+			fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
+			const { result } = renderCredits();
+			await flush();
+			await receive( { ...exhausted(), plan_tier: 'business' } );
+			expect( props( result.current ).isOpen ).toBe( true );
+		} );
 	} );
 } );

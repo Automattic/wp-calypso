@@ -247,7 +247,7 @@ const StaticSiteImportResults: StepType< { submits: StaticSiteImportResultsSubmi
 
 		const onTalkToExpert = async () => {
 			try {
-				await sendTicket( `Static site import: needs an expert for ${ blockers.join( ', ' ) }.` );
+				await sendTicket();
 				navigation.submit?.( { action: 'expert' } );
 			} catch {
 				// Shown by the error notice.

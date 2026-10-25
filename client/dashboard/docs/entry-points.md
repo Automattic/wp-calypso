@@ -30,19 +30,19 @@ import Logo from './logo';
 import './style.scss';
 
 boot( {
-  basePath: '/newproduct',
-  mainRoute: '/sites', // Or whichever route should be the default
-  Logo,
-  supports: {
-    overview: true,
-    sites: true,
-    domains: false,
-    emails: false,
-    reader: false,
-    help: true,
-    notifications: false,
-    me: true,
-  },
+	basePath: '/newproduct',
+	mainRoute: '/sites', // Or whichever route should be the default
+	Logo,
+	supports: {
+		overview: true,
+		sites: true,
+		domains: false,
+		emails: false,
+		reader: false,
+		help: true,
+		notifications: false,
+		me: true,
+	},
 } );
 ```
 
@@ -124,7 +124,6 @@ For example, you can override theme variables or add entry point-specific stylin
 	// Secondary menu
 	--dashboard-secondary-menu-item__color: #{$gray-900};
 }
-
 ```
 
 ## Customizing Content and Features

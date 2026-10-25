@@ -388,6 +388,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		// A site-selected purchase finishes in this flow, but lands and completes as that flow.
 		const postCheckoutFlowName = refParameter === SITE_SELECTED_REF ? SITE_SELECTED_REF : flowName;
 		const siteSlugParam = queryParams.get( 'siteSlug' );
+		const siteIdParam = queryParams.get( 'siteId' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
@@ -408,6 +409,8 @@ const onboarding: FlowV2< typeof initialize > = {
 		);
 		const wowFunnelSlug = getWowFunnelSlug( queryParams );
 		const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
+		// From the Reader's "Create a site to reblog": the run ends in the new site's editor.
+		const blogPostToReblog = queryParams.get( 'blog_post' );
 
 		/**
 		 * Returns where to land after checkout, or `defaultDestination` when nothing overrides it.
@@ -445,6 +448,12 @@ const onboarding: FlowV2< typeof initialize > = {
 					customThemeBuild: isBlueprintCustomThemeBuild( queryParams ),
 					ref: refParameter,
 					locale,
+				} );
+			}
+
+			if ( blogPostToReblog && providedDependencies.siteSlug ) {
+				return addQueryArgs( `/post/${ providedDependencies.siteSlug }`, {
+					url: blogPostToReblog,
 				} );
 			}
 
@@ -678,20 +687,23 @@ const onboarding: FlowV2< typeof initialize > = {
 					const prompt = providedDependencies?.prompt as string | undefined;
 					const graph = providedDependencies?.graph as BuildWowGraph | undefined;
 
+					const openLegacyBuilder = () =>
+						window.location.assign(
+							addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
+								siteSlug,
+								// Skip siteId when it's 0/falsy: useSiteData returns 0 before
+								// the site object hydrates, and "0" in the URL poisons the
+								// next page's site lookup.
+								...( siteId && siteId !== '0' ? { siteId } : {} ),
+								fromPostCheckoutSetupSite: '1',
+								...( refParameter ? { ref: refParameter } : {} ),
+								...( prompt ? { prompt } : {} ),
+							} )
+						);
+
 					switch ( setupChoice ) {
 						case 'build-with-ai':
-							window.location.assign(
-								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
-									siteSlug,
-									// Skip siteId when it's 0/falsy: useSiteData returns 0 before
-									// the site object hydrates, and "0" in the URL poisons the
-									// next page's site lookup.
-									...( siteId && siteId !== '0' ? { siteId } : {} ),
-									fromPostCheckoutSetupSite: '1',
-									...( refParameter ? { ref: refParameter } : {} ),
-									...( prompt ? { prompt } : {} ),
-								} )
-							);
+							openLegacyBuilder();
 							return;
 						case 'generate-theme': {
 							// Provision an Atomic (WP Cloud) site up front so the custom
@@ -712,8 +724,9 @@ const onboarding: FlowV2< typeof initialize > = {
 								} );
 							}
 
+							let buildWowBlogId: number | undefined;
 							try {
-								await requestBuildWowSite( siteIdentifier );
+								buildWowBlogId = ( await requestBuildWowSite( siteIdentifier ) )?.blog_id;
 								logBuildWowEvent( 'start_success', {
 									site_identifier: siteIdentifier,
 								} );
@@ -722,15 +735,32 @@ const onboarding: FlowV2< typeof initialize > = {
 									site_identifier: siteIdentifier,
 									error: error instanceof Error ? error.message : String( error ),
 								} );
+								// The server turns a store away when it will not build it, for example
+								// while its store builder is switched off; the store still gets the
+								// legacy builder.
+								if (
+									providedDependencies?.buildsStore &&
+									( error as { code?: string } )?.code === 'site_not_eligible'
+								) {
+									logBuildWowEvent( 'start_store_legacy_fallback', {
+										site_identifier: siteIdentifier,
+									} );
+									openLegacyBuilder();
+									return;
+								}
 								return navigate( 'error' as typeof currentStepSlug, {
 									errorReason: 'build_wow_start_failed',
 								} );
 							}
 
+							// The chooser can submit before it has loaded the site, without its ID;
+							// the build-wow start answers with it.
+							const specSiteId = siteId && String( siteId ) !== '0' ? siteId : buildWowBlogId;
+
 							window.location.assign(
 								getBuildWowSiteSpecUrl( {
 									siteSlug,
-									siteId,
+									siteId: specSiteId,
 									ref: refParameter,
 									graph,
 								} )
@@ -767,7 +797,9 @@ const onboarding: FlowV2< typeof initialize > = {
 						window.location.replace(
 							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
 								siteSlug: siteSlugParam,
+								...( siteIdParam ? { siteId: siteIdParam } : {} ),
 								...( refParameter ? { ref: refParameter } : {} ),
+								...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
 							} )
 						);
 						return;
@@ -811,6 +843,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
 											{
 												siteSlug,
+												siteId: providedDependencies.siteId,
 												...( refParameter ? { ref: refParameter } : {} ),
 											}
 										);
@@ -818,16 +851,25 @@ const onboarding: FlowV2< typeof initialize > = {
 							// Variant B: a paid order meets the post-plan-selection gate on return from checkout,
 							// before post-checkout-onboarding. The Playground import path keeps its own
 							// return target.
-							if ( postPlanSelectionEmailVerification && ! playgroundId ) {
+							const returnsThroughVerification =
+								postPlanSelectionEmailVerification && ! playgroundId;
+							if ( returnsThroughVerification ) {
 								redirectTo = addQueryArgs(
 									withLocale( '/setup/onboarding/email-verification', locale ),
 									{
 										next: 'post-checkout-onboarding',
 										siteSlug,
+										siteId: providedDependencies.siteId,
 										...( refParameter ? { ref: refParameter } : {} ),
+										...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
 									}
 								);
 							}
+
+							// Leaving checkout must not turn a reblog into plain onboarding.
+							const checkoutBackQueryArgs = blogPostToReblog
+								? { blog_post: blogPostToReblog, ...( refParameter ? { ref: refParameter } : {} ) }
+								: {};
 
 							const checkoutStepperPosition = getOnboardingStepperPosition(
 								'checkout',
@@ -837,11 +879,15 @@ const onboarding: FlowV2< typeof initialize > = {
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									// build_dest=wow and the WoW funnel (dest=editor) go
+									// build_dest=wow, the WoW funnel (dest=editor) and a reblog go
 									// straight from checkout to their destination — no
-									// post-checkout-onboarding hop, no chooser.
+									// post-checkout-onboarding hop, no chooser. A reblog meets the
+									// email-verification gate first.
 									redirect_to:
-										blueprintArchiveSlug || blueprintSimpleSlug || isKnownWowFunnel( wowFunnelSlug )
+										blueprintArchiveSlug ||
+										blueprintSimpleSlug ||
+										isKnownWowFunnel( wowFunnelSlug ) ||
+										( blogPostToReblog && ! returnsThroughVerification )
 											? destination
 											: redirectTo,
 									signup: 1,
@@ -849,9 +895,14 @@ const onboarding: FlowV2< typeof initialize > = {
 									// A skipping visit's last screen was the domain step, so that is where
 									// leaving checkout belongs.
 									checkoutBackUrl: pathToUrl(
-										shouldSkipPlans ? backDestinationDomains : backDestination
+										addQueryArgs(
+											shouldSkipPlans ? backDestinationDomains : backDestination,
+											checkoutBackQueryArgs
+										)
 									),
-									checkoutBackUrlDomains: pathToUrl( backDestinationDomains ),
+									checkoutBackUrlDomains: pathToUrl(
+										addQueryArgs( backDestinationDomains, checkoutBackQueryArgs )
+									),
 									coupon,
 									steps_current: checkoutStepperPosition.current,
 									steps_total: checkoutStepperPosition.total,
@@ -860,14 +911,17 @@ const onboarding: FlowV2< typeof initialize > = {
 						} else if (
 							blueprintArchiveSlug ||
 							blueprintSimpleSlug ||
-							isKnownWowFunnel( wowFunnelSlug )
+							isKnownWowFunnel( wowFunnelSlug ) ||
+							blogPostToReblog
 						) {
-							// build_dest=wow, build_dest=simple and the WoW funnel never show the
-							// setup-your-site-ai chooser; go straight to their destination.
+							// build_dest=wow, build_dest=simple, the WoW funnel and a reblog never
+							// show the setup-your-site-ai chooser; go straight to their destination.
 							// This can stay ahead of the domain branches below: a connected or
 							// transferred domain forces a paid plan (use-my-domain hides the free
 							// plan), and a paid funnel order's checkout redirect_to is the funnel
-							// destination itself, so it never comes back through here.
+							// destination itself, so it never comes back through here. A paid reblog
+							// does, after email verification, and skips the domain setup instructions
+							// below, as the reblogging flow did.
 							window.location.replace( destination );
 						} else if ( domainCartItem?.meta && isDomainMapping( domainCartItem ) ) {
 							// A connected domain still has to be pointed at the site once it is paid

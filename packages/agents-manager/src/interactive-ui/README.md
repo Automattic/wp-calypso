@@ -9,16 +9,17 @@ come.
 
 ## How it works
 
-1. **wpcom builds a surface** on sites with the `a2ui-render-interactive-ui` blog sticker, in one of
-   two ways:
+1. **wpcom builds a surface** on sites with the `a2ui-render-interactive-ui` blog sticker, for a
+   client that renders its catalog, in one of two ways:
    - **An ability builds it in code**, for a known flow such as a picker or a hand-off button
      (AM-117). The agent only calls the ability, so the surface is reliable, cheap in tokens and
      testable.
    - **The agent composes it** with `wpcom/render-interactive-ui`, for one-off forms and choices
-     from the basic components, or a provider's (AM-116).
-2. Both return a `wpcom__render_interactive_ui` envelope of A2UI messages, stored with the
-   conversation. An ability's envelope also names the page it built the surface for (`post_id`).
-   Agents Manager also accepts a raw array of A2UI messages.
+     from the basic components, or the components of the catalogs the client lists.
+2. Both send A2UI's A2A data part, with the `application/a2ui+json` MIME type, beside the reply's
+   text, which may be empty. An ability's part names the post its surface acts on, if any
+   (`metadata.postId`). wpcom stores the part with the reply, and Agenttic keeps it under `a2ui`
+   and sends it back in the history, so the agent can update the surface.
 3. Once the reply has streamed, the host feeds those messages to the conversation's runtime, which
    shows each surface under its message. Reloading rebuilds the surfaces from history.
 4. A button's event goes to the agent as a context message, `{ "version": "v1.0", "action": … }`,
@@ -38,15 +39,16 @@ come.
     A2UI's tokens from Agenttic's), disables a stale one, and stacks the modal above the chat.
     Surfaces sit in a `data-agenttic-isolated` wrapper, so their controls keep their own typography
     while replies keep the chat's typography reset.
-  - `messages.ts` and `convert-messages-to-components.ts` find surfaces in the transcript and which
-    of them are stale.
+  - `messages.ts` and `convert-messages-to-components.ts` find surfaces in the transcript, from
+    each message's `a2ui` part, and which of them are stale.
   - `session.ts` keeps each conversation's session, through a new chat's bootstrap, and tells
     surfaces restored from history from new ones.
   - `catalogs.ts` builds the catalogs, and the renderer capabilities each message sends.
   - `with-chat-response-tracking.tsx` records the shared response events for each catalog
     component.
-- **Custom components and functions** live in the project that owns them: Agents Manager's here
-  (AM-117), and its providers' (WooCommerce AI, the Jetpack AI sidebar) in their own repos.
+- **Custom components and functions** live in the project that owns them: Agents Manager's in this
+  package, such as its color, font and button pickers (declared in `AGENTS_MANAGER_CATALOG` in
+  `catalogs.ts`), and its providers' (WooCommerce AI, the Jetpack AI sidebar) in their own repos.
   Providers declare their catalog in the provider contract's `interactiveUi` field
   (`LoadedProviders` in `src/utils/load-external-providers.ts`).
 
@@ -54,10 +56,24 @@ come.
 
 - **One catalog per owner.** Agents Manager, WooCommerce AI and the Jetpack AI sidebar each
   declare one catalog: an A2UI catalog document and the code that implements it
-  ([how](../../../ai-ui-renderer/README.md#catalogs)). Each catalog includes the basic components,
-  so a surface names one: the agent composes with A2UI's Basic catalog or one the client lists,
-  and an ability uses its owner's, such as `AGENTS_MANAGER_CATALOG_ID`. Conversations store
+  ([how](../../../ai-ui-renderer/README.md#catalogs)). Each catalog includes the basic components.
+  A surface's default catalog is Agents Manager's (`AGENTS_MANAGER_CATALOG_ID`) when an ability
+  builds it with wpcom's helpers, and A2UI's Basic catalog when the agent composes it. A component
+  from another catalog, such as a provider's, names its own as its `catalogId`. Conversations store
   surfaces, so change a catalog only in ways that keep old surfaces rendering.
+- **Portable schemas.** wpcom sends your components' props to whichever model provider runs the
+  chat, so use only JSON Schema they all accept:
+  - `type`, `properties`, `required`, `items`, `enum`, `additionalProperties`, `anyOf`, `oneOf`,
+    `title`, `description`, `pattern`, `minimum`, `maximum`, `minLength`, `maxLength`, `minItems`
+    and `maxItems`;
+  - `$ref`s to A2UI's shared types, such as `DynamicString` and `Action`.
+
+  wpcom leaves out a component that uses anything else, such as another `$ref` or an empty object,
+  one named like a basic component or an earlier catalog's, and one past the 64 KB the client's
+  components share.
+
+- **Instructions guide the agent.** Your catalog's `instructions` tell the agent how to use your
+  components, and which only your abilities build, as Agents Manager's say of its pickers.
 - **Basic components first.** Build a surface from the basic components when they can express it,
   and add a custom component only for what they can't, such as a picker's style previews. Basic
   components need no catalog change, render in every host, and the agent can compose them.
@@ -67,17 +83,18 @@ come.
 - **The client lists what it renders.** Agents Manager sends A2UI's `a2uiRendererCapabilities` in
   each message's metadata, as A2UI's A2A binding does: the IDs of the catalogs it renders, and
   their documents. It checks each provider's catalog first, and skips and logs an invalid one or a
-  later one with a taken ID, so the others keep working. wpcom offers interactive UI only for the
-  catalogs a client lists, and builds the agent's tool from their documents (AM-116). The
-  documents come from the browser, so wpcom only describes and validates with them.
+  later one with a taken ID, so the others keep working. wpcom offers a surface only for a catalog
+  the client lists, and lists their components in the agent's tool, each with its catalog's
+  instructions. The documents come from the browser, so wpcom only describes and validates with
+  them.
 - **Surfaces follow A2UI v1.0.** Component IDs are identifiers (letters, digits and underscores),
   each component has one parent (a Modal renders its trigger, so it isn't also placed in a layout),
   bindings are `{"@path": "/field"}` and function calls `{"@call": "name"}`. A2UI rejects a surface
   with any other ID or with a cycle, and Agents Manager then shows nothing and logs
   `[AgentsManager] Failed to apply an interactive UI message`. A component with two parents renders
   twice, and `{"path": …}` is read as plain data. `wpcom/render-interactive-ui` checks all of these
-  so the agent can retry, and abilities that build surfaces with `Interactive_UI::surface_result()`
-  follow them too.
+  so the agent can retry, and abilities' surfaces follow them through the `Interactive_UI`
+  helpers.
 - **Owner-prefixed names.** Names are scoped by catalog, but prefix yours with your owner, such as
   `ExampleCard` and `exampleOpenItem` for an owner named Example, so the agent can tell catalogs
   apart.
@@ -93,14 +110,16 @@ come.
   as `tool_call_id`.
 - **Agents Manager decides when a surface is stale**, with the rule `show-component` uses
   (`src/utils/stale-chat-ui.ts`): the user has replied past the last message that changed it, or
-  the editor has another page open than the one its envelope names. Like a restored picker, a
+  the editor has another post open than the one its part names. Like a restored picker, a
   surface restored from history, in a past chat or after a reload, is stale too. A stale surface
   stays visible and disabled: its controls look disabled, while display-only content such as text
   or a chart looks as before. Once all of a message's surfaces are stale, its actions, such as
   feedback, are disabled too.
 - **Style with A2UI's theme tokens.** Custom components color themselves with the `--a2ui-*`
-  tokens, or use WordPress components, which the renderer themes with them, so they follow each
-  host's theme ([theming](../../../ai-ui-renderer/README.md#theming)).
+  tokens and the renderer's disabled colors, or use WordPress components, which the renderer themes
+  with them, so they follow each host's theme ([theming](../../../ai-ui-renderer/README.md#theming)).
+  Check them in light and dark mode, enabled and disabled
+  ([how](../../../ai-ui-renderer/README.md#theming-a-new-component)).
 - **Load only what the surface renders.** Editor-only components load on demand, in the editor.
 
 ## Try it
@@ -111,27 +130,50 @@ Button."
 
 ## Migrating a chat UI
 
-This section is temporary: remove it once every chat UI has moved (AM-119).
+This section is temporary: remove it once every chat UI has moved (AM-119). Rollout (AM-118)
+waits for Agents Manager, the Jetpack AI sidebar and WooCommerce AI.
 
-- **A server ability returning `show-component`** (Agents Manager's color, font and button
-  pickers, the Jetpack AI sidebar's components): the ability returns a surface with a catalog
-  component wrapping the same React component.
+- **A server ability returning `show-component`** (the Jetpack AI sidebar's components): the
+  ability returns a surface with a catalog component wrapping the same React component, as
+  Agents Manager's color, font and button pickers already do.
 - **A client button** (Agents Manager's Help Center button): a server ability returns a basic
   `Button` that calls a catalog function.
 - **Markdown cards** (WooCommerce AI's `markdownComponents`): its abilities run in the browser, so
-  the agent composes surfaces with display-only catalog components instead (AM-116).
-
-Rollout (AM-118) waits for Agents Manager, the Jetpack AI sidebar and WooCommerce AI.
+  the agent composes surfaces with its catalog's components instead. A card keeps its side effects,
+  such as the batch plan's confirm and undo, and shows under the reply rather than within its text.
 
 ### Moving an ability's component
 
-1. **Declare the component in your catalog.** Add its props to your catalog document as JSON
-   Schema, and map its name to the existing React component in your `interactiveUi`. It keeps its
-   side effects, and skips them when `isMessageStale` is set. One with editor code still loads on
-   demand.
-2. **Return a surface from the ability** (wpcom). On sites with the sticker
-   (`Interactive_UI::is_enabled()`), return `Interactive_UI::surface_result()` with your catalog's
-   ID (AM-116), the component and its props, the data model it binds to, and `post_id` when it acts
-   on a post. Elsewhere, keep returning the `show-component` result.
-3. **Test both paths.** With the sticker, the surface renders, goes stale after a reply, a reload
-   or a page switch, and keeps its undo and Tracks events. Without it, the old UI shows as before.
+These steps work for any owner, such as Agents Manager, the Jetpack AI sidebar or WooCommerce AI.
+Agents Manager's pickers are a worked example: `AGENTS_MANAGER_CATALOG` in `catalogs.ts`, and
+wpcom's `ability.color-palette.php`. If the basic components can express the UI, skip step 1 and
+return them with `surface_result()`.
+
+1. **Declare the component in your catalog** (your provider's `interactiveUi`, or Agents Manager's
+   own): its props as portable JSON Schema in the document, and its name mapped to the existing
+   React component. It keeps its side effects, skips them when `isMessageStale` is set, and loads
+   on demand if it carries editor code. It follows the [custom component rules](#rules).
+2. **Return a surface from the ability** (wpcom) when `Agent_Ability::can_show_interactive_ui()`
+   passes: in an agent's chat whose client renders Agents Manager's catalog, on a site with the
+   sticker. Otherwise, keep returning the `show-component` result.
+   - **Helpers:** `Interactive_UI::component_result()` shows one component under the agent's
+     summary, and `surface_result()` takes a layout of your own, with its data model.
+   - **Post:** pass either helper the post the UI acts on (`$post_id`), as `show-component` results
+     carry `postId`, so it goes stale while the editor has another post open. Site-wide UI, such as
+     the style pickers, passes none.
+   - **Steps:** a surface ends the turn, even when steps remain (`followUpTasks`). For such a
+     request, pass `component_result()`'s `$has_next_step`: the surface then asks the user to say
+     when they're ready for the next step, and the agent continues once they do.
+   - **Your own catalog:** both helpers build on Agents Manager's catalog, which the gate checks. A
+     component from your catalog names your catalog as its `catalogId`, and the ability also checks
+     it with `Interactive_UI::is_enabled( $context, $catalog_id )`.
+   - **History:** the model's history keeps the component and its props, but not its list props,
+     such as a picker's style variations (`Interactive_UI::text_for_model()`). Put what the agent
+     needs to remember in the summary or a prop that isn't a list.
+   - **Order:** deploy it once step 1 has reached every client, through Agents Manager's release
+     for its own components. A client without the component still lists the catalog's ID, so it
+     would get the surface and show nothing.
+3. **Test both paths.** With the sticker, the surface renders (also for a request with a step after
+   it), goes stale after a reply, a reload or, if it acts on a post, a post switch, keeps its undo,
+   and records the shared response events under its component's name and surface ID. Without it,
+   the old UI shows as before.

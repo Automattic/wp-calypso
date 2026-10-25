@@ -14,6 +14,10 @@ import {
 	getLegacyPlanFlowRedirect,
 	shouldRedirectLegacyPlanFlow,
 } from 'calypso/lib/signup/legacy-plan-flows';
+import {
+	LEGACY_WOOCOMMERCE_INSTALL_FLOW,
+	getWooCommercePluginPage,
+} from 'calypso/lib/signup/legacy-woocommerce-install-flow';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -132,6 +136,11 @@ export default {
 			return;
 		}
 
+		if ( flowName === LEGACY_WOOCOMMERCE_INSTALL_FLOW ) {
+			window.location.replace( getWooCommercePluginPage( context.query?.siteSlug ) );
+			return;
+		}
+
 		next();
 	},
 
@@ -243,16 +252,6 @@ export default {
 		const stepSectionName = getStepSectionName( context.params );
 		const { providesDependenciesInQuery, excludeFromManageSiteFlows, persistsDomainsOnReEntry } =
 			flows.getFlow( flowName, userLoggedIn );
-
-		// Update initialContext to help woocommerce-install support site switching.
-		if ( 'woocommerce-install' === flowName ) {
-			if ( context?.query?.back_to ) {
-				// forces back_to update
-				context.store.dispatch( updateDependencies( { back_to: context.query.back_to } ) );
-			}
-
-			initialContext = context;
-		}
 
 		const { query } = initialContext;
 
@@ -370,21 +369,12 @@ export default {
 	},
 	setSelectedSiteForSignup( context, next ) {
 		const { getState, dispatch } = context.store;
-		const userLoggedIn = isUserLoggedIn( getState() );
-		const flowName = getFlowName( context.params, userLoggedIn );
 		const signupDependencies = getSignupDependencyStore( getState() );
-		let siteIdOrSlug;
-
-		if ( 'woocommerce-install' === flowName || 'launch-site' === flowName ) {
-			// forces query precedence on woocommerce-install
-			siteIdOrSlug = context.query?.siteSlug || signupDependencies?.siteSlug;
-		} else {
-			siteIdOrSlug =
-				signupDependencies?.siteSlug ||
-				context.query?.siteSlug ||
-				signupDependencies?.siteId ||
-				context.query?.siteId;
-		}
+		const siteIdOrSlug =
+			signupDependencies?.siteSlug ||
+			context.query?.siteSlug ||
+			signupDependencies?.siteId ||
+			context.query?.siteId;
 
 		if ( ! siteIdOrSlug ) {
 			next();

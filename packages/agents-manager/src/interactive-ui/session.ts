@@ -48,6 +48,13 @@ export function getInteractiveUiSession(
 	};
 }
 
+/** Disposes of a session's runtime and forgets the batches it applied, so they apply again. */
+export function disposeInteractiveUiRuntime( session: InteractiveUiSession ) {
+	session.runtime?.dispose();
+	session.runtime = undefined;
+	session.appliedBatches = [];
+}
+
 /**
  * Records the batches restored from history: those in the transcript before the session's first
  * turn, which starts when the agent begins a reply. Right after a switch, the previous

@@ -189,16 +189,22 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 				# Resolve the Playwright grep flag. When IGNORE_TEST_GROUP_FOR_E2E_CHANGES is
 				# "true", adapt TEST_GROUP to the changed E2E files (union with changed specs,
-				# or run all but @p2 on a non-spec change; see bin/e2e-grep-flag.sh for the P2
-				# cases); otherwise use TEST_GROUP as is.
+				# or run all but @p2 and @content-blocker on a non-spec change; see
+				# bin/e2e-grep-flag.sh for the P2 cases); otherwise use TEST_GROUP as is. With no
+				# TEST_GROUP, run all tests but @content-blocker, which has its own scheduled build.
 				if [[ "%IGNORE_TEST_GROUP_FOR_E2E_CHANGES%" == "true" ]]; then
-					GREP_FLAG=${'$'}(TEST_GROUP="%TEST_GROUP%" ./bin/e2e-grep-flag.sh)
+					# The script always prints a flag, so a failure must not fall through to
+					# running every test.
+					GREP_FLAG=${'$'}(TEST_GROUP="%TEST_GROUP%" ./bin/e2e-grep-flag.sh) || {
+						echo "bin/e2e-grep-flag.sh failed; not running tests." >&2
+						exit 1
+					}
 				elif [[ -n "%TEST_GROUP%" ]]; then
 					GREP_FLAG="--grep=%TEST_GROUP%"
 				else
-					GREP_FLAG=""
+					GREP_FLAG="--grep-invert=@content-blocker(\s|${'$'})"
 				fi
-				echo "Playwright grep flag: ${'$'}{GREP_FLAG:-(none, running all tests)}"
+				echo "Playwright grep flag: ${'$'}GREP_FLAG"
 
 				cd test/e2e
 				# Clear any stale teardown-leak markers from a reused checkout before this run.
@@ -210,7 +216,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				echo "DASHBOARD_BASE_URL=%DASHBOARD_BASE_URL%"
 				export DASHBOARD_BASE_URL="%DASHBOARD_BASE_URL%"
 				echo "Running Playwright tests for project: %PROJECT%"
-				yarn test:pw:%PROJECT% ${'$'}GREP_FLAG
+				yarn test:pw:%PROJECT% "${'$'}GREP_FLAG"
 				"""
 			dockerImage = "%docker_image_e2e%"
 		}
