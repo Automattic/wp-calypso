@@ -473,7 +473,9 @@ describe( 'onboarding flow tracks event props', () => {
 	// The consumer keys its effect on object identity, so a new object each render records
 	// another signup start.
 	it( 'returns a stable object across renders', () => {
-		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( 'coupon=WC_ABC' ) );
+		( useQuery as jest.Mock ).mockReturnValue(
+			new URLSearchParams( 'plan=personal-bundle&coupon=WC_ABC' )
+		);
 
 		const { result, rerender } = renderHook( () =>
 			onboarding.useTracksEventProps?.call( onboarding )
@@ -483,6 +485,15 @@ describe( 'onboarding flow tracks event props', () => {
 
 		expect( result.current ).toBe( first );
 		expect( first?.eventsProperties.calypso_signup_start ).toEqual( {
+			preselected_plan: 'personal-bundle',
+			coupon: 'WC_ABC',
+		} );
+
+		// WordCamp coupon links name no plan.
+		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( 'coupon=WC_ABC' ) );
+		rerender();
+
+		expect( result.current?.eventsProperties.calypso_signup_start ).toEqual( {
 			coupon: 'WC_ABC',
 		} );
 	} );
