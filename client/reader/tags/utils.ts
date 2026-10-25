@@ -2,26 +2,33 @@ import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import { decodeEntities } from '@wordpress/html-entities';
 import type { Tag } from './controller';
 
-const safeDecodeURIComponent = ( value: string ): string => {
-	try {
-		return decodeURIComponent( value );
-	} catch {
-		return value;
-	}
-};
+// The tags endpoints can return slugs with non-ASCII characters already
+// percent-encoded (e.g. `b%c3%a4ume`). Only those escapes are decoded, since
+// the tag route decodes its param twice and needs `%25` and `%2F` kept as is.
+const decodeNonAsciiEscapes = ( value: string ): string =>
+	value.replace( /(?:%[89a-f][0-9a-f])+/gi, ( escapes ) => {
+		try {
+			return decodeURIComponent( escapes );
+		} catch {
+			return escapes;
+		}
+	} );
 
-// The tags endpoints can return slugs that are already percent-encoded
-// (e.g. `b%c3%a4ume`), so decode before encoding to avoid `%25` in links.
+const hasNonAscii = ( value: string ): boolean => /[^\p{ASCII}]/u.test( value );
+
 export const getTagPath = ( slug: string ): string =>
-	addLocaleToPathLocaleInFront( `/tag/${ encodeURIComponent( safeDecodeURIComponent( slug ) ) }` );
+	addLocaleToPathLocaleInFront( `/tag/${ encodeURIComponent( decodeNonAsciiEscapes( slug ) ) }` );
 
-// Some titles come back as HTML entities, and some have non-ASCII characters
-// replaced with `?` while the slug keeps them intact.
-export const getTagTitle = ( { slug, title }: Tag ): string => {
-	const decodedTitle = decodeEntities( title ?? '' );
-	const decodedSlug = safeDecodeURIComponent( slug ?? '' );
-	if ( decodedTitle.includes( '?' ) && /[^\p{ASCII}]/u.test( decodedSlug ) ) {
-		return decodedSlug;
+// Some titles come back with their non-ASCII characters dropped or replaced
+// with `?`, or cut off mid-entity, while the slug keeps the characters intact.
+export const recoverTagTitle = ( slug: string, title: string ): string => {
+	const decodedSlug = decodeNonAsciiEscapes( slug ?? '' );
+	const isMissingCharacters = hasNonAscii( decodedSlug ) && ! hasNonAscii( title ?? '' );
+	if ( isMissingCharacters || /&(?:#\d*)?$/.test( title ?? '' ) ) {
+		return decodedSlug.replace( /-/g, ' ' );
 	}
-	return decodedTitle;
+	return title;
 };
+
+export const getTagTitle = ( { slug, title }: Tag ): string =>
+	recoverTagTitle( slug, decodeEntities( title ?? '' ) );

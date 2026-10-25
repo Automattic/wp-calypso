@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { getTagPath, getTagTitle } from '../utils';
+import { getTagPath, getTagTitle, recoverTagTitle } from '../utils';
 
 jest.mock( '@automattic/i18n-utils', () => ( {
 	addLocaleToPathLocaleInFront: ( path: string ) => path,
@@ -17,8 +17,9 @@ describe( 'getTagPath', () => {
 		expect( getTagPath( 'photography' ) ).toBe( '/tag/photography' );
 	} );
 
-	it( 'keeps slugs with a stray percent sign', () => {
-		expect( getTagPath( '100%' ) ).toBe( '/tag/100%25' );
+	it( 'keeps encoded reserved characters escaped for the tag route', () => {
+		expect( getTagPath( '100%25' ) ).toBe( '/tag/100%2525' );
+		expect( getTagPath( 'a%2fb' ) ).toBe( '/tag/a%252fb' );
 	} );
 } );
 
@@ -29,10 +30,26 @@ describe( 'getTagTitle', () => {
 
 	it( 'falls back to the slug when the title lost its non-ASCII characters', () => {
 		expect( getTagTitle( { slug: 'b%c3%a4ume', title: 'b??ume' } ) ).toBe( 'bäume' );
+		expect( getTagTitle( { slug: 'm%c3%a9t%c3%a9o', title: 'Mto' } ) ).toBe( 'météo' );
+	} );
+
+	it( 'falls back to the slug when the title is cut off mid-entity', () => {
+		expect( getTagTitle( { slug: 'verst%c3%a4ndnis', title: 'Verst&#228;ndn&amp;' } ) ).toBe(
+			'verständnis'
+		);
 	} );
 
 	it( 'keeps titles that are already correct', () => {
 		expect( getTagTitle( { slug: 'fu%c3%9fball', title: 'FUẞBALL' } ) ).toBe( 'FUẞBALL' );
+		expect( getTagTitle( { slug: 'caf%c3%a9-kultur', title: 'Café Kultur?' } ) ).toBe(
+			'Café Kultur?'
+		);
 		expect( getTagTitle( { slug: 'what', title: 'What?' } ) ).toBe( 'What?' );
+	} );
+} );
+
+describe( 'recoverTagTitle', () => {
+	it( 'does not decode entities a second time', () => {
+		expect( recoverTagTitle( 'art', 'Art &copywriting' ) ).toBe( 'Art &copywriting' );
 	} );
 } );
