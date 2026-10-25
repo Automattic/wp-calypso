@@ -486,6 +486,16 @@ describe( 'onboarding flow tracks event props', () => {
 			preselected_plan: 'personal-bundle',
 		} );
 	} );
+
+	it( 'reports a coupon that comes without a plan', () => {
+		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( 'coupon=WC_ABC' ) );
+
+		const { result } = renderHook( () => onboarding.useTracksEventProps?.call( onboarding ) );
+
+		expect( result.current?.eventsProperties.calypso_signup_start ).toEqual( {
+			coupon: 'WC_ABC',
+		} );
+	} );
 } );
 
 describe( 'onboarding flow plans-page experiment enrolment', () => {

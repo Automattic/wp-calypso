@@ -323,28 +323,28 @@ const onboarding: FlowV2< typeof initialize > = {
 	useTracksEventProps() {
 		const query = useQuery();
 		const preselectedPlan = getPreselectedPlan( query );
-		// Reported raw, as the legacy flows reported their declared query dependencies.
-		const couponParam = preselectedPlan ? query.get( 'coupon' ) : null;
+		// Reported raw, as the legacy flows reported their declared query dependencies. The
+		// coupon stands alone too: WordCamp coupon links name no plan.
+		const couponParam = query.get( 'coupon' );
 		const storageParam = preselectedPlan ? query.get( 'storage' ) : null;
 
 		// A new object each render would record a new signup start, so this has to be memoised.
-		return useMemo(
-			() => ( {
+		return useMemo( () => {
+			// The redirect collapses the legacy flows' `flow` values into `onboarding`. This is
+			// how that traffic stays separable.
+			const signupStartProperties = {
+				...( preselectedPlan ? { preselected_plan: preselectedPlan } : {} ),
+				...( couponParam ? { coupon: couponParam } : {} ),
+				...( storageParam ? { storage: storageParam } : {} ),
+			};
+
+			return {
 				isLoading: false,
-				// The redirect collapses the plan flows' `flow` values into `onboarding`. This
-				// is how that traffic stays separable.
-				eventsProperties: preselectedPlan
-					? {
-							[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
-								preselected_plan: preselectedPlan,
-								...( couponParam ? { coupon: couponParam } : {} ),
-								...( storageParam ? { storage: storageParam } : {} ),
-							},
-						}
+				eventsProperties: Object.keys( signupStartProperties ).length
+					? { [ STEPPER_TRACKS_EVENT_SIGNUP_START ]: signupStartProperties }
 					: {},
-			} ),
-			[ preselectedPlan, couponParam, storageParam ]
-		);
+			};
+		}, [ preselectedPlan, couponParam, storageParam ] );
 	},
 	useStepsProps() {
 		// The site-selected signup flow records its own completion before checkout, so the
