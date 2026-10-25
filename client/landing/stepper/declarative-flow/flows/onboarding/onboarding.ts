@@ -868,9 +868,16 @@ const onboarding: FlowV2< typeof initialize > = {
 							}
 
 							// Leaving checkout must not turn a reblog into plain onboarding.
-							const checkoutBackQueryArgs = blogPostToReblog
-								? { blog_post: blogPostToReblog, ...( refParameter ? { ref: refParameter } : {} ) }
-								: {};
+							// The plans grid prices a coupon only from the URL.
+							const checkoutBackQueryArgs = {
+								...( blogPostToReblog
+									? {
+											blog_post: blogPostToReblog,
+											...( refParameter ? { ref: refParameter } : {} ),
+										}
+									: {} ),
+								...( coupon ? { coupon } : {} ),
+							};
 
 							const checkoutStepperPosition = getOnboardingStepperPosition(
 								'checkout',
