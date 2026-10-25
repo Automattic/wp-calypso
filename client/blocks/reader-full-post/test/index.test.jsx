@@ -444,3 +444,39 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
+
+describe( 'FullPostView subscribe notice', () => {
+	const createInstance = () => {
+		const successNotice = jest.fn();
+		const instance = new FullPostView( {
+			post: { ID: 1, site_ID: 100, site_name: 'Example Blog' },
+			successNotice,
+		} );
+		instance.setState = jest.fn();
+		return { instance, successNotice };
+	};
+
+	it( 'confirms the subscription and opens the suggested follows dialog', () => {
+		const { instance, successNotice } = createInstance();
+
+		instance.openSuggestedFollowsModal( true );
+
+		expect( successNotice ).toHaveBeenCalledWith(
+			'Success! You are now subscribed to "Example Blog".',
+			{ duration: 3000 }
+		);
+		expect( instance.setState ).toHaveBeenCalledWith( { isSuggestedFollowsModalOpen: true } );
+	} );
+
+	it( 'confirms the unsubscription without opening the dialog', () => {
+		const { instance, successNotice } = createInstance();
+
+		instance.openSuggestedFollowsModal( false );
+
+		expect( successNotice ).toHaveBeenCalledWith(
+			'Success! You are now unsubscribed from "Example Blog".',
+			{ duration: 3000 }
+		);
+		expect( instance.setState ).toHaveBeenCalledWith( { isSuggestedFollowsModalOpen: false } );
+	} );
+} );
