@@ -6,6 +6,26 @@ exports[`makePot > concatenated pot should match its snapshot 1`] = `
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\\n"
 
+#: test/examples/optional-calls.js:16
+msgid "ab"
+msgstr ""
+
+#: test/examples/optional-calls.js:17
+msgid "tpl  after"
+msgstr ""
+
+#: test/examples/optional-calls.js:19
+msgid "With ctx"
+msgstr ""
+
+#: test/examples/optional-calls.js:20
+msgid "Methods"
+msgstr ""
+
+#: test/examples/optional-calls.js:23
+msgid "concat doubletpl"
+msgstr ""
+
 #: test/examples/private-fields.js:2
 msgid "Private property"
 msgstr ""
@@ -63,6 +83,67 @@ msgid_plural "Second param should be extracted as plural instead of context"
 msgstr[0] ""
 msgstr[1] ""
 
+#: test/examples/translator-comments.jsx:3
+msgid "two above"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:5
+#. one above
+msgid "one above"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:6
+msgid "same line"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:9
+#. block spanning lines
+msgid "after block"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:12
+#. inside parens
+msgid "in parens"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:17
+msgid "jsx child"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:18
+#. jsx before expr
+msgid "jsx expr"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:23
+msgid "nested next line"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:27
+#. second
+msgid "two comments"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:28
+#: test/examples/translator-comments.jsx:30
+#. dup comment
+msgid "dup"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:33
+#. in function
+msgid "returned"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:37
+#. object property
+msgid "prop value"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:38
+msgid "no comment"
+msgstr ""
+
 #: test/examples/typescript-decorators.ts:5
 msgid "Decorator Preset"
 msgstr ""
@@ -70,6 +151,21 @@ msgstr ""
 #: test/examples/typescript-react.tsx:8
 msgid "Typescript react component string"
 msgstr ""
+
+#: test/examples/optional-calls.js:18
+#. opt comment
+msgctxt "ctx opt"
+msgid "Count"
+msgid_plural "Counts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: test/examples/optional-calls.js:22
+msgctxt "ctx nx"
+msgid "One"
+msgid_plural "Many"
+msgstr[0] ""
+msgstr[1] ""
 
 #: test/examples/react-1.jsx:13
 #: test/examples/react-2.jsx:8
@@ -118,11 +214,13 @@ msgstr[1] ""
 
 exports[`makePot > pot files should match their snapshots 1`] = `
 [
+  "output/test-examples-optional-calls.js.pot",
   "output/test-examples-private-fields.js.pot",
   "output/test-examples-react-1.jsx.pot",
   "output/test-examples-react-2.jsx.pot",
   "output/test-examples-translate-1.js.pot",
   "output/test-examples-translate-2.js.pot",
+  "output/test-examples-translator-comments.jsx.pot",
   "output/test-examples-typescript-decorators.ts.pot",
   "output/test-examples-typescript-react.tsx.pot",
   "output/test-examples-wordpress-i18n.js.pot",
@@ -130,6 +228,46 @@ exports[`makePot > pot files should match their snapshots 1`] = `
 `;
 
 exports[`makePot > pot files should match their snapshots 2`] = `
+"msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\\n"
+
+#: test/examples/optional-calls.js:16
+msgid "ab"
+msgstr ""
+
+#: test/examples/optional-calls.js:17
+msgid "tpl  after"
+msgstr ""
+
+#: test/examples/optional-calls.js:19
+msgid "With ctx"
+msgstr ""
+
+#: test/examples/optional-calls.js:20
+msgid "Methods"
+msgstr ""
+
+#: test/examples/optional-calls.js:23
+msgid "concat doubletpl"
+msgstr ""
+
+#: test/examples/optional-calls.js:18
+#. opt comment
+msgctxt "ctx opt"
+msgid "Count"
+msgid_plural "Counts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: test/examples/optional-calls.js:22
+msgctxt "ctx nx"
+msgid "One"
+msgid_plural "Many"
+msgstr[0] ""
+msgstr[1] """
+`;
+
+exports[`makePot > pot files should match their snapshots 3`] = `
 "msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\\n"
 
@@ -142,7 +280,7 @@ msgid "Private method"
 msgstr """
 `;
 
-exports[`makePot > pot files should match their snapshots 3`] = `
+exports[`makePot > pot files should match their snapshots 4`] = `
 "msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\\n"
 
@@ -159,7 +297,7 @@ msgstr[0] ""
 msgstr[1] """
 `;
 
-exports[`makePot > pot files should match their snapshots 4`] = `
+exports[`makePot > pot files should match their snapshots 5`] = `
 "msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\\n"
 
@@ -176,7 +314,7 @@ msgstr[0] ""
 msgstr[1] """
 `;
 
-exports[`makePot > pot files should match their snapshots 5`] = `
+exports[`makePot > pot files should match their snapshots 6`] = `
 "msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\\n"
 
@@ -207,7 +345,7 @@ msgstr[0] ""
 msgstr[1] """
 `;
 
-exports[`makePot > pot files should match their snapshots 6`] = `
+exports[`makePot > pot files should match their snapshots 7`] = `
 "msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\\n"
 
@@ -237,7 +375,73 @@ msgstr[0] ""
 msgstr[1] """
 `;
 
-exports[`makePot > pot files should match their snapshots 7`] = `
+exports[`makePot > pot files should match their snapshots 8`] = `
+"msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\\n"
+
+#: test/examples/translator-comments.jsx:3
+msgid "two above"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:5
+#. one above
+msgid "one above"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:6
+msgid "same line"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:9
+#. block spanning lines
+msgid "after block"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:12
+#. inside parens
+msgid "in parens"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:17
+msgid "jsx child"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:18
+#. jsx before expr
+msgid "jsx expr"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:23
+msgid "nested next line"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:27
+#. second
+msgid "two comments"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:28
+#: test/examples/translator-comments.jsx:30
+#. dup comment
+msgid "dup"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:33
+#. in function
+msgid "returned"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:37
+#. object property
+msgid "prop value"
+msgstr ""
+
+#: test/examples/translator-comments.jsx:38
+msgid "no comment"
+msgstr """
+`;
+
+exports[`makePot > pot files should match their snapshots 9`] = `
 "msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\\n"
 
@@ -246,7 +450,7 @@ msgid "Decorator Preset"
 msgstr """
 `;
 
-exports[`makePot > pot files should match their snapshots 8`] = `
+exports[`makePot > pot files should match their snapshots 10`] = `
 "msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\\n"
 
@@ -255,7 +459,7 @@ msgid "Typescript react component string"
 msgstr """
 `;
 
-exports[`makePot > pot files should match their snapshots 9`] = `
+exports[`makePot > pot files should match their snapshots 11`] = `
 "msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\\n"
 

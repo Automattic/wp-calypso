@@ -1,9 +1,18 @@
 # Changelog
 
-## Unreleased
+## 2.0.0
 
-- Apply `@babel/preset-react` only outside `.ts` files, so `<T>value` assertions and generic arrows in them don't parse as JSX on Babel 8.
-- Run the package's tests with Vitest instead of Jest, which can't load the ES modules Babel 8 ships.
+### Breaking changes
+
+- Extract strings by parsing files with [oxc-parser](https://www.npmjs.com/package/oxc-parser) instead of compiling them with Babel. The package no longer depends on Babel or reads a project's Babel or browserslist configuration, which could make extraction fail. The extracted strings are unchanged.
+- Require Node.js `^20.19.0` or `>=22.12.0`.
+- Remove the `--preset` option and the presets it selected. JavaScript, JSX, TypeScript and decorators parse without one.
+
+### Other changes
+
+- Extraction is about 5 times faster with `--jobs 1` and 3 times faster with `--jobs auto` on Calypso's sources.
+- When a `Plural-Forms` header is passed in `headers`, plural strings get one empty `msgstr` per plural form instead of a single one.
+- Run the package's tests with Vitest.
 
 ## 1.2.0
 

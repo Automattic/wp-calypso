@@ -5,11 +5,9 @@ const process = require( 'process' );
 const program = require( 'commander' );
 const glob = require( 'glob' );
 const version = require( './package.json' ).version;
-const presets = require( './presets' );
 const processFiles = require( './process-files' );
 const concatPot = require( './utils/concat-pot' );
 
-const presetsKeys = Object.keys( presets );
 const DEFAULT_JOBS = '1';
 
 const getAvailableParallelism = () =>
@@ -52,11 +50,6 @@ program
 	)
 	.option( '-i, --ignore <type>', 'Add pattern to exclude matches' )
 	.option(
-		'-p, --preset <type>',
-		`Set babel preset. Available options: ${ presetsKeys.join( ', ' ) }`,
-		'default'
-	)
-	.option(
 		'-o, --output <type>',
 		'Set the filename for POT concatenation output. Set `false` to disable concatenation.',
 		'build/bundle-strings.pot'
@@ -71,23 +64,16 @@ program
 		DEFAULT_JOBS
 	)
 	.action( async ( command, [ files = '.' ] = [] ) => {
-		if ( ! presetsKeys.includes( program.preset ) ) {
-			throw new Error(
-				`Invalid babel preset. Please use any of available options: ${ presetsKeys.join( ', ' ) }`
-			);
-		}
-
 		// Replace `~` with actual home directory as glob can't use it.
 		const filesGlob = files.trim().replace( /^~/, os.homedir() ).split( /\s/gm );
 		const ignore = program.ignore && program.ignore.split( ',' );
 
-		const { preset, dir, base, output, linesFilter } = program;
+		const { dir, base, output, linesFilter } = program;
 		const matchingFiles = getMatchingFiles( filesGlob, ignore );
 		const jobs = resolveJobs( program.jobs, matchingFiles.length );
 
 		await processFiles( matchingFiles, {
 			jobs,
-			preset,
 			base,
 			dir,
 		} );
