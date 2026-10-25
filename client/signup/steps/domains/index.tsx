@@ -410,8 +410,6 @@ const DomainSearchUI = (
 		} else if ( isWithThemeFlow( flowName ) ) {
 			backUrl = '/themes';
 			backLabelText = __( 'Back to themes' );
-		} else if ( 'plans-first' === flowName ) {
-			backUrl = getStepUrl( flowName, previousStepName );
 		} else {
 			backUrl = defaultBackUrl;
 			backLabelText = sitesBackLabelText;
