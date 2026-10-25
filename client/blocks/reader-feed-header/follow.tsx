@@ -81,18 +81,20 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	const following = reduxFollowing || !! site?.is_following;
 
 	const openSuggestedFollowsModal = ( followClicked: boolean ) => {
+		setIsSuggestedFollowsModalOpen( followClicked );
+	};
+
+	const showFollowSuccessNotice = ( followed: boolean ) => {
 		const displayName = site?.name || filterURLForDisplay( resolvedFeed?.feed_URL ?? '' );
 
 		dispatch(
 			successNotice(
-				following
-					? translate( 'Success! You are now unsubscribed from "%s".', { args: displayName } )
-					: translate( 'Success! You are now subscribed to "%s".', { args: displayName } ),
+				followed
+					? translate( 'Success! You are now subscribed to "%s".', { args: displayName } )
+					: translate( 'Success! You are now unsubscribed from "%s".', { args: displayName } ),
 				{ duration: 3000 }
 			)
 		);
-
-		setIsSuggestedFollowsModalOpen( followClicked );
 	};
 
 	const onCloseSuggestedFollowModal = () => {
@@ -139,6 +141,7 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 								hasButtonStyle
 								iconSize={ 24 }
 								onFollowToggle={ openSuggestedFollowsModal }
+								onFollowSuccess={ showFollowSuccessNotice }
 							/>
 
 							{ site && following && ! isEmailBlocked && (

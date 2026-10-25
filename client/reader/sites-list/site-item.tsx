@@ -40,7 +40,7 @@ export function ReaderSiteItem( {
 	const isCompactView = variant === 'compact';
 	const linkUrl = getStreamUrl( feedId, siteId ) ?? feedUrl;
 
-	function onFollowToggle( isFollowing: boolean ): void {
+	function onFollowSuccess( isFollowing: boolean ): void {
 		const displayName: string = name || filterURLForDisplay( feedUrl ?? '' );
 
 		dispatch(
@@ -81,7 +81,7 @@ export function ReaderSiteItem( {
 					iconSize={ followIconSize }
 					followSource={ followSource }
 					isButtonOnly={ isCompactView }
-					onFollowToggle={ onFollowToggle }
+					onFollowSuccess={ onFollowSuccess }
 				/>
 			) }
 		</li>
