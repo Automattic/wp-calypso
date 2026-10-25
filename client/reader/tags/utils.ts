@@ -22,12 +22,17 @@ export const getTagPath = ( slug: string ): string =>
 // Some titles come back with their non-ASCII characters dropped or replaced
 // with `?`, or cut off mid-entity, while the slug keeps the characters intact.
 export const recoverTagTitle = ( slug: string, title: string ): string => {
-	const decodedSlug = decodeNonAsciiEscapes( slug ?? '' );
-	if ( ! hasNonAscii( decodedSlug ) ) {
+	const slugTitle = decodeNonAsciiEscapes( slug ?? '' ).replace( /-/g, ' ' );
+	if ( ! hasNonAscii( slugTitle ) ) {
 		return title;
 	}
-	if ( ! hasNonAscii( title ?? '' ) || /&(?:#\d*)?$/.test( title ?? '' ) ) {
-		return decodedSlug.replace( /-/g, ' ' );
+	const untruncated = ( title ?? '' ).replace( /&(?:#\d*)?$/, '' );
+	const isTruncated =
+		untruncated !== title &&
+		untruncated.length < slugTitle.length &&
+		slugTitle.startsWith( untruncated.toLowerCase() );
+	if ( ! hasNonAscii( title ?? '' ) || isTruncated ) {
+		return slugTitle;
 	}
 	return title;
 };
