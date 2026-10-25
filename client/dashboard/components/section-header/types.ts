@@ -36,6 +36,13 @@ export interface SectionHeaderProps {
 	 */
 	prefix?: React.ReactNode;
 	/**
+	 * Insets the header horizontally so it lines up with the content inside
+	 * the cards on the page. Use it for headers placed directly on the page,
+	 * not for headers inside a card.
+	 * @default false
+	 */
+	inset?: boolean;
+	/**
 	 * Optional class name to be applied to the component.
 	 */
 	className?: string;

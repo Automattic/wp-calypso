@@ -180,6 +180,7 @@ function McpComponent() {
 				<VStack spacing={ 4 }>
 					<SectionHeader
 						level={ 2 }
+						inset
 						title={ __( 'MCP' ) }
 						description={ __(
 							'Control how external AI agents access your WordPress.com account and sites.'

@@ -210,6 +210,7 @@ export default function McpMcpSites() {
 					<VStack spacing={ 2 }>
 						<SectionHeader
 							level={ 3 }
+							inset
 							title={ managedSitesTitle }
 							description={ managedSitesDescription }
 						/>

@@ -43,6 +43,7 @@ const RecoveryErrorNotice = ( { error }: { error: JetpackRecoverySessionError } 
 	<VStack spacing={ 3 }>
 		<SectionHeader
 			level={ 3 }
+			inset
 			title={ error.kind === 'themes' ? __( 'Suspected theme' ) : __( 'Suspected plugin' ) }
 		/>
 		<Notice variant="error">
@@ -200,7 +201,7 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 					/>
 				) ) }
 				<VStack spacing={ 3 }>
-					<SectionHeader level={ 3 } title={ __( 'What you can try next' ) } />
+					<SectionHeader level={ 3 } title={ __( 'What you can try next' ) } inset />
 					<Card>
 						{ items.map( ( item, index ) => (
 							<Fragment key={ index }>
