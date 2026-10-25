@@ -1950,6 +1950,10 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	describe( 'interactive UI data', () => {
+		// The chat imports the renderer on demand, which is slow from a cold cache, so load it once
+		// here instead of within the first test's timeout.
+		beforeAll( () => import( '@automattic/ai-ui-renderer' ), 30000 );
+
 		const formMessage = {
 			id: 'form-message',
 			role: 'agent',
