@@ -1,4 +1,5 @@
 @use "sass:math";
+@use "./mixins/dark-theme" as ui-mixins;
 @import "@automattic/typography/styles/variables";
 @import "@automattic/typography/styles/fonts";
 @import "calypso/assets/stylesheets/shared/typography";
@@ -306,7 +307,11 @@
 	}
 
 	.wp-block-table.is-style-stripes tbody tr:nth-child(odd) {
-		background-color: var(--color-neutral-5);
+		background-color: var(--color-neutral-0);
+
+		@include ui-mixins.when-dark-theme {
+			background-color: var(--wp-components-color-gray-200);
+		}
 	}
 
 	.wp-block-table.is-style-stripes td,
