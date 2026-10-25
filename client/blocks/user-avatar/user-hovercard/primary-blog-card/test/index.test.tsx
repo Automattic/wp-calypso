@@ -162,6 +162,21 @@ describe( 'PrimaryBlogCard', () => {
 			);
 		} );
 
+		test( 'decodes HTML entities in the blog title', () => {
+			const user = {
+				...defaultUser,
+				primary_blog: { ...defaultUser.primary_blog!, title: 'Maya&#039;s Food Blog' },
+			};
+
+			renderWithProvider( <PrimaryBlogCard user={ user } /> );
+			fireOnFollowSuccess( true );
+
+			expect( mockedSuccessNotice ).toHaveBeenCalledWith(
+				'Success! You are now subscribed to "Maya\'s Food Blog".',
+				{ duration: 3000 }
+			);
+		} );
+
 		test( 'falls back to URL when blog title is empty', () => {
 			const user = {
 				...defaultUser,

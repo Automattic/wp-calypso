@@ -31,7 +31,7 @@ function PrimaryBlogCard( { user }: PrimaryBlogCardProps ): JSX.Element | null {
 	const siteUrl = getStreamUrl( primaryBlog.feed_ID, primaryBlog.ID );
 
 	const onFollowSuccess = ( following: boolean ): void => {
-		const siteName = primaryBlog.title || primaryBlog.URL;
+		const siteName = decodeEntities( primaryBlog.title ) || primaryBlog.URL;
 
 		dispatch(
 			successNotice(
