@@ -17,9 +17,15 @@
 `Slider`.
 
 - Buttons send an `event` to the agent, or call a catalog function with `functionCall`. To submit
-  edits, bind the inputs and the action's context to the same data paths.
+  edits, bind the inputs and the action's context to the same data paths. The agent gets the
+  event's `name` and `context`, so name it for what it does, such as `save_title`, and put in its
+  context what acting on it needs, such as the item's ID.
+- Values, such as a `Text`'s `text`, take a literal or a `{"@path": …}` binding, never a
+  `{"@call": …}` as A2UI's Basic catalog allows: only actions and checks call functions. So send
+  display text ready to show: formatted, such as a date or a price, and in the person's language.
 - A modal's `Button` trigger opens it instead of sending its action, and stays usable on a
-  disabled surface. Its inputs share the surface's data model and are disabled with it.
+  disabled surface. Its inputs share the surface's data model and are disabled with it. Its own
+  buttons send their actions and leave it open; only the person closes it.
 - Text fields keep their values as strings, choice pickers as string arrays, and date/time inputs
   as local ISO strings.
 - `Button`, `TextField`, `CheckBox`, `ChoicePicker`, `Slider` and `DateTimeInput` take A2UI's
@@ -45,10 +51,11 @@ code that implements it. Add a custom component only for what the basic ones can
 const exampleCatalog: InteractiveUiCatalogDefinition = {
 	catalog: {
 		catalogId: 'urn:automattic:example:interactive-ui:v1',
-		instructions: 'Use ExampleCard to show one item.',
+		instructions: 'Show only items from earlier tool results.',
 		components: {
 			ExampleCard: {
 				type: 'object',
+				description: 'One item, with a button to open it.',
 				properties: {
 					title: { $ref: 'common_types.json#/$defs/DynamicString' },
 					onSelect: { $ref: 'common_types.json#/$defs/Action' },
@@ -77,17 +84,27 @@ const exampleCatalog: InteractiveUiCatalogDefinition = {
   Props are JSON Schema, with A2UI's shared types from `common_types.json#/$defs/`, such as
   `DynamicString` and `Action`. A component rejects props it doesn't declare, so declare `weight`
   if it can sit in a `Row` or `Column`.
-- A component gets resolved props: bound values, a `set<Prop>` setter for each, actions as
-  functions to call, its `surfaceId`, `disabled` and `isShowingErrors` state, and the host's
-  `hostProps`. One that declares `checks` (an array of `CheckRule`s) also gets `isValid` and
+- A component gets resolved props: bound values, a `set<Prop>` setter for each `Dynamic…` or
+  `DataBinding` prop, actions as functions to call, its `surfaceId`, `disabled` and
+  `isShowingErrors` state, and the host's `hostProps`. These replace the surface's props of the
+  same name, so don't declare props with those names. A setter writes only to a bound path and
+  does nothing for a literal value, so keep an input's value in local state too, as the basic
+  inputs do. It doesn't get A2UI's `buildChild`, so it can't render other components: a
+  `ComponentId` or `ChildList` prop arrives as IDs only. Make custom components leaves, laid out
+  with the basic ones.
+- A component that declares `checks` (an array of `CheckRule`s) also gets `isValid` and
   `validationErrors`, its failed checks' messages. Like the [basic components](#basic-components),
   show the first message once the person touches the field or `isShowingErrors` is true (an
   invalid Button was clicked), and disable inputs and actions with `disabled` while keeping what
   only shows or reveals content usable. A `lazy()` component renders nothing while it loads.
+- Keep a custom component accessible like the basic components: label its fields, show a failed
+  check's message as the field's `help` with `aria-invalid`, and set `accessibleWhenDisabled` on
+  buttons, since the surface disables them right after a click and a plainly `disabled` button
+  drops keyboard focus.
 - A function declares its `returnType`, and may be async. Its arguments come from the agent, so
   treat them as untrusted. It runs only from a click, unless the document sets
-  `requiresUserActivation: false` so a value or a check can call it, such as one that formats
-  text.
+  `requiresUserActivation: false` so a check or a custom component's `Dynamic…` prop can call it,
+  such as one that formats text.
 - `agentComposable: false` on a definition marks a catalog that only abilities build surfaces
   with, such as one whose components need data the agent can't supply. Hosts still list its ID,
   but don't send its document, so the agent can't compose with it. It defaults to `true`.

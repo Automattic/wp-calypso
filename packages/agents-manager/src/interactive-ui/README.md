@@ -15,9 +15,9 @@ Ticket numbers mark parts still to come.
 ## How it works
 
 1. **wpcom builds a surface** for a client that renders its catalog, in one of three ways:
-   - **An ability builds it in code**, for a known flow such as a picker or a hand-off button
-     (AM-117). The agent only calls the ability, so the surface is reliable, cheap in tokens and
-     testable.
+   - **An ability builds it in code**, for a known flow such as a style picker or, in AM-117, a
+     hand-off button. The agent only calls the ability, so the surface is reliable, cheap in
+     tokens and testable.
    - **A browser ability asks for a card** with an `__interactive_ui` hint in its result, for a
      known flow that runs in the page. wpcom builds the card and shows it under the reply that ends
      the turn.
@@ -82,8 +82,15 @@ Ticket numbers mark parts still to come.
   A surface's default catalog is the ability's when an ability builds it with wpcom's helpers
   (Agents Manager's, `AGENTS_MANAGER_CATALOG_ID`, unless it passes its own), the hinted component's
   for a browser ability's card, and A2UI's Basic catalog when the agent composes it, where a
-  provider's component names its own catalog as its `catalogId`. Conversations store surfaces, so
-  change a catalog only in ways that keep old surfaces rendering.
+  provider's component names its own catalog as its `catalogId`.
+- **Only add to a catalog.** Conversations store surfaces, and wpcom and each client deploy
+  separately, so treat a catalog as an API. Add components, functions and optional props, and keep
+  its ID. Never remove, rename or retype a component, function or prop, make a prop required, or
+  narrow an `enum`: a restored surface that no longer matches stays hidden. To replace a component,
+  add one under a new name, build only that, and keep the old one's code for stored surfaces; in a
+  composable catalog, tell the agent in its `instructions` to use the new one. A component rejects
+  props and `enum` values its schema doesn't declare, so wpcom sends a new one only once it has
+  reached every client ([order](#moving-an-abilitys-component)).
 - **Owner-prefixed names.** Prefix your component and function names with your owner, such as
   `ExampleCard` and `exampleOpenItem` for an owner named Example. The agent's tool lists every
   composable catalog's components together, so wpcom leaves out one named like a basic component or
@@ -91,18 +98,28 @@ Ticket numbers mark parts still to come.
 - **Ability-only catalogs aren't sent to the agent.** Set `agentComposable: false` on a catalog
   definition whose components only your abilities build, such as Agents Manager's pickers, whose
   style variations the agent can't make up. The client still lists its ID, so abilities can show
-  it, but not its document, so the agent can't compose with it. The flag covers the whole catalog,
-  so if only some of your components are ability-only, leave it composable and say which in its
-  `instructions`, which tell the agent how to use your components.
+  it, but not its document or `instructions`, so the agent can't compose with it: explain those
+  surfaces and their events in your abilities' own instructions. The flag covers the whole
+  catalog, so if only some of your components are ability-only, leave it composable and say so in
+  their `description`s.
 - **Portable schemas.** wpcom sends your components' props to whichever model provider runs the
   chat, so use only JSON Schema they all accept:
   - `type`, `properties`, `required`, `items`, `enum`, `additionalProperties`, `anyOf`, `oneOf`,
     `title`, `description`, `pattern`, `minimum`, `maximum`, `minLength`, `maxLength`, `minItems`
     and `maxItems`;
-  - `$ref`s to A2UI's shared types, such as `DynamicString`, `Action` and `CheckRule`.
+  - `$ref`s to these A2UI shared types: `ComponentId`, `Child`, `ChildList`, `DataBinding`,
+    `DynamicString`, `DynamicNumber`, `DynamicBoolean`, `DynamicStringList`, `Action` (`event`
+    only) and `CheckRule`.
 
-  wpcom leaves out a component that uses anything else, such as another `$ref` or an empty object,
-  and one past the 64 KB the client's components share.
+  wpcom leaves out a component that uses anything else, such as `default`, `const`, a `$ref` to
+  another shared type like `DynamicValue`, or an empty object, and one past the 64 KB the client's
+  components share.
+
+  The agent picks and fills composable components from their and their props' `description`s,
+  and from your catalog's `instructions` for what all its components share. Write both in
+  untranslated English, like an ability's description, since only the model reads them. wpcom
+  adds the instructions to every component's description, so they count toward the 64 KB once per
+  component: keep them short, or later components are silently left out.
 
 - **Basic components first.** Build a surface from the basic components when they can express it,
   and add a custom component only for what they can't, such as a picker's style previews. Basic
@@ -110,19 +127,23 @@ Ticket numbers mark parts still to come.
 - **Surfaces come from wpcom**, which stores them with the conversation. A browser ability's
   `agentMessage` only shows live: it isn't stored, and the stream can drop it. So a browser ability
   that needs UI returns a card hint ([Browser ability cards](#browser-ability-cards)).
-- **Surfaces follow A2UI v1.0.** Component IDs are identifiers (letters, digits and underscores),
-  each component has one parent (a Modal renders its trigger, so it isn't also placed in a layout),
-  bindings are `{"@path": "/field"}` and function calls `{"@call": "name"}`. A2UI rejects a surface
-  with any other ID or with a cycle, and Agents Manager then shows a notice instead. A component
-  with two parents renders twice, and `{"path": …}` is read as plain data.
+- **Surfaces follow A2UI v1.0.** Component IDs are identifiers (letters, digits and underscores,
+  not starting with a digit), each component has one parent (a Modal renders its trigger, so it
+  isn't also placed in a layout), bindings are `{"@path": "/field"}` and function calls
+  `{"@call": "name"}`. A2UI rejects a surface with any other ID or with a cycle, and Agents Manager
+  then shows a notice instead. A component with two parents renders twice, and `{"path": …}` is
+  read as plain data.
   `wpcom/render-interactive-ui` checks these so the agent can retry. `component_result()` builds
   valid IDs, but `surface_result()` takes your components as they are, so follow these rules in
   them. wpcom also gives every new surface its own ID (`<name>-<uuid>`), and a rejected message
   can't change an earlier surface: the runtime skips the rest of its batch for that surface.
-- **Functions run from a click.** A2UI runs a catalog's functions only from a click, never from a
-  value or a check, unless its document sets `requiresUserActivation: false` for one without side
-  effects.
-  Every function treats its arguments as untrusted.
+- **Functions run from a click.** Set `requiresUserActivation: false` only on a function without
+  side effects ([catalogs](../../../ai-ui-renderer/README.md#catalogs)). A function call doesn't
+  reach the agent, and Agents Manager only logs and records one that throws or rejects, so use an
+  `event` for what the agent must know, and show a function's failure to the user yourself.
+- **Arguments and props are untrusted.** A function's arguments and a component's props carry the
+  agent's or the site's content, so never render them as raw HTML, and check an ID or a URL before
+  acting on it or making it a link.
 - **Custom components own their side effects**: the change itself, its checkpoint, keyed by
   `surfaceId`, and its own Tracks events. A checkpoint in Agents Manager's store, as its pickers
   take, is undone by the agent through `restore-checkpoint`: a surface message has no message
@@ -134,8 +155,8 @@ Ticket numbers mark parts still to come.
   (`jetpack_big_sky_chat_response_action`), with its name as `component_type` and its surface ID
   as `tool_call_id`.
 - **Style with A2UI's theme tokens.** Custom components color themselves with the `--a2ui-*`
-  tokens and the renderer's disabled colors, or use WordPress components, which the renderer themes
-  with them, so they follow each host's theme
+  tokens and the renderer's accent and disabled colors, or use WordPress components, which the
+  renderer themes with them, so they follow each host's theme
   ([theming](../../../ai-ui-renderer/README.md#theming)). Check them in light and dark mode,
   enabled and disabled ([how](../../../ai-ui-renderer/README.md#theming-a-new-component)).
 - **Load only what the surface renders.** Editor-only components load on demand, in the editor.
@@ -177,8 +198,9 @@ Ticket numbers mark parts still to come.
   use just before sending, those that weren't stale then; a regenerated prompt sends the same ones,
   except those the regenerated reply created or changed. It leaves out the values obscured
   `TextField`s bind to. wpcom shows the data to the agent as the user's, for that request only, and
-  never stores it. Bind inputs to the data model: a value a component keeps in its own state isn't
-  sent.
+  never stores it. Past 32 KB across the surfaces one message sends, it shows the agent none of it,
+  so keep a sent data model to what the user edits. Bind inputs to the data model: a value a
+  component keeps in its own state isn't sent.
 - **Failures show a notice.** In a live reply, Agents Manager shows “Couldn’t show this. Try asking
   again.” in muted text in place of the first surface that can't render (one with a component its
   catalog lacks, or one that throws), or under the message when the runtime rejected some of its
@@ -315,14 +337,15 @@ return them with `surface_result()`.
      the style pickers, passes none.
    - **Steps:** a surface ends the turn, even when steps remain (`followUpTasks`). For such a
      request, pass `component_result()`'s `$has_next_step`: the surface then asks the user to say
-     when they're ready for the next step, and the agent continues once they do.
+     when they're ready for the next step, and the agent continues once they do. `surface_result()`
+     has no such flag, so add that line to your layout's text yourself.
    - **Your own catalog:** the gate and both helpers take Agents Manager's catalog by default, so
      pass yours to each, such as `can_show_interactive_ui( catalog_id: self::CATALOG_ID )` and
      `component_result( …, catalog_id: self::CATALOG_ID )`. The surface is then built on it.
    - **History:** the model's history keeps a surface's components and props, but a custom
      component drops its list props, such as a picker's style variations
      (`Interactive_UI::text_for_model()`). Put what the agent needs to remember in the summary or a
-     prop that isn't a list.
+     prop that isn't a list, and keep it small: the model's history keeps it for the rest of the chat.
    - **Order:** deploy it once step 1 has reached every client, through Agents Manager's release
      for its own components and the Jetpack AI sidebar's (it builds that sidebar's bundle). A client
      without the component still lists the catalog's ID, so it would get the surface and show only
@@ -348,5 +371,6 @@ For a card a browser ability's result renders today, such as a fenced Markdown c
 4. **Keep the fallback:** change the ability's instructions to write the fenced card unless the
    result carries `card_shown`, and keep your fence renderer, so sites without the sticker, older
    clients and past chats still show the card.
-5. **Test both paths.** With the sticker, the card shows under the reply and the reply has no fenced
-   block. Without it, the fenced card shows as before.
+5. **Test both paths.** With the sticker, the card shows under the reply, the reply has no fenced
+   block, and a reload shows the card again, stale, without recording its render. Without it, the
+   fenced card shows as before.
