@@ -26,20 +26,16 @@ module.exports = babelConfig( {
 
 ## Presets
 
-It exports three presets:
+It exports two presets:
 
 - `presets/default`: default preset used in Calypso
 - `presets/dependencies`: used to transpile selected NPM dependencies from ESnext to the target's ES version.
-- `presets/wordpress-element`: used to transpile code for Wordpress
 
 Example:
 
 ```js
 module.exports = {
-	presets: [
-		'@automattic/calypso-babel-config/presets/wordpress-element',
-		'@automattic/calypso-babel-config/presets/default',
-	],
+	presets: [ '@automattic/calypso-babel-config/presets/default' ],
 	plugins: [ 'my-custom-babel-plugin' ],
 };
 ```

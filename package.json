@@ -374,7 +374,6 @@
 		"@wordpress/annotations": "3.48.0",
 		"@wordpress/api-fetch": "7.48.0",
 		"@wordpress/autop": "4.48.0",
-		"@wordpress/babel-plugin-import-jsx-pragma": "5.48.0",
 		"@wordpress/babel-plugin-makepot": "6.48.0",
 		"@wordpress/babel-preset-default": "8.48.0",
 		"@wordpress/base-styles": "^9.1.0",
