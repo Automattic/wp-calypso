@@ -37,7 +37,6 @@ import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
 import { useHasNonRenewableDomainError } from '../hooks/use-has-non-renewable-domain-error';
 import { useHasWrongAccountRenewalError } from '../hooks/use-has-wrong-account-renewal-error';
-import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
@@ -654,9 +653,6 @@ export default function CheckoutMain( {
 		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
 	};
 
-	const { isLoading: isMobileCheckoutStickySummaryLoading } =
-		useMobileCheckoutStickySummaryExperiment();
-
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
 	//
@@ -681,10 +677,6 @@ export default function CheckoutMain( {
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
 		{ name: translate( 'Loading Site' ), isLoading: isSiteLoading },
-		{
-			name: translate( 'Loading checkout' ),
-			isLoading: isMobileCheckoutStickySummaryLoading,
-		},
 	];
 
 	if ( shouldSetMigrationSticker ) {

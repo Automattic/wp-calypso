@@ -1,10 +1,7 @@
 import { RadioButton } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, type FunctionComponent } from 'react';
-import { mobileCheckoutStickySummaryRadioDotStyles } from 'calypso/my-sites/checkout/src/components/mobile-checkout-sticky-summary-styles';
-import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import { ItemVariantRadioPrice } from './variant-radio-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant, OnChangeItemVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
@@ -13,13 +10,6 @@ const TermOptions = styled.ul`
 	flex-basis: 100%;
 	margin: 16px 0;
 	padding: 0;
-
-	&.is-mobile-checkout-sticky-summary {
-		background: var( --color-surface );
-		border: 1px solid var( --studio-gray-5 );
-		border-radius: 8px;
-		overflow: hidden;
-	}
 `;
 
 const TermOptionsItem = styled.li`
@@ -29,36 +19,6 @@ const TermOptionsItem = styled.li`
 
 	:first-of-type {
 		margin-top: 0;
-	}
-
-	.is-mobile-checkout-sticky-summary & {
-		margin: 0;
-	}
-
-	.is-mobile-checkout-sticky-summary &:not( :last-of-type ) {
-		border-block-end: 1px solid var( --studio-gray-5 );
-	}
-
-	/* Flatten the per-row card border from RadioButton — the ul is the card now. */
-	.is-mobile-checkout-sticky-summary & .has-highlight {
-		border-radius: 0;
-	}
-	.is-mobile-checkout-sticky-summary & .has-highlight::before,
-	.is-mobile-checkout-sticky-summary & .has-highlight:hover::before {
-		border: none;
-	}
-
-	/* Tighten the label and reposition the radio dot to the Figma's 16px gutter. */
-	.is-mobile-checkout-sticky-summary & label {
-		${ mobileCheckoutStickySummaryRadioDotStyles }
-		padding-block: 16px;
-		padding-inline-start: 40px;
-		padding-inline-end: 16px;
-		min-height: 0;
-		gap: 8px;
-		font-size: 16px;
-		line-height: 24px;
-		color: var( --studio-gray-100 );
 	}
 `;
 
@@ -113,7 +73,6 @@ export const ItemVariationRadioButtons: FunctionComponent< ItemVariationPickerPr
 	variants,
 } ) => {
 	const translate = useTranslate();
-	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 	const [ optimisticSelectedItem, setOptimisticSelectedItem ] = useState(
 		selectedItem.product_slug
 	);
@@ -137,9 +96,7 @@ export const ItemVariationRadioButtons: FunctionComponent< ItemVariationPickerPr
 		<TermOptions
 			role="radiogroup"
 			aria-label={ translate( 'Pick a product term' ) }
-			className={ clsx( 'item-variation-picker', {
-				'is-mobile-checkout-sticky-summary': isMobileCheckoutStickySummary,
-			} ) }
+			className="item-variation-picker"
 		>
 			{ variants.map( ( productVariant: WPCOMProductVariant ) => (
 				<ProductVariant
