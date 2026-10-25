@@ -18,6 +18,8 @@ import {
 	A4A_LICENSES_LINK,
 	EXTERNAL_PRESSABLE_AUTH_URL,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import useWooCommerceLicenseSite from 'calypso/a8c-for-agencies/data/purchases/use-woocommerce-license-site';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import {
 	isPressableAddonProduct,
@@ -107,7 +109,7 @@ export default function LicensePreview( {
 }: Props ) {
 	const licenseKey = license.licenseKey;
 	const blogId = license.blogId;
-	const siteUrl = license.siteUrl;
+	const { siteUrl, isLoading: isLoadingSite } = useWooCommerceLicenseSite( license );
 	const issuedAt = license.issuedAt;
 	const attachedAt = license.attachedAt;
 	const revokedAt = license.revokedAt;
@@ -348,7 +350,7 @@ export default function LicensePreview( {
 					) : (
 						<>
 							<div className="license-preview__product-small">{ productName }</div>
-							{ titanDomain || domain }
+							{ isLoadingSite ? <TextPlaceholder /> : titanDomain || domain }
 							{ isPressableLicense && ! isTitanLicense && ! revokedAt && (
 								<ManageInPressable attachedAt={ attachedAt } />
 							) }

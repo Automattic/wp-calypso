@@ -1,7 +1,7 @@
 import { JetpackLicenseFilter } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { parseDateAsUTC } from '../../../utils/datetime';
-import type { JetpackLicense } from '@automattic/api-core';
+import type { JetpackLicense, WooCommerceLicenseSites } from '@automattic/api-core';
 
 export type LicenseStatus = 'assigned' | 'unassigned' | 'revoked';
 
@@ -170,4 +170,37 @@ export function getSiteHostname( siteUrl: string ): string {
 	} catch {
 		return siteUrl;
 	}
+}
+
+// WooCommerce.com can move a Woo extension's subscription to another store, which leaves
+// the license's own site URL pointing at the store it was first assigned to. For these
+// licenses WooCommerce.com is the source of truth for the site.
+export function isWooCommerceSiteLicense( license: JetpackLicense ): boolean {
+	return (
+		license.license_key.startsWith( 'woocommerce-' ) &&
+		!! license.attached_at &&
+		! license.revoked_at
+	);
+}
+
+/**
+ * Points each Woo license at the store WooCommerce.com has it on. While that lookup is in
+ * flight the site is unknown rather than the possibly stale one, so nothing links to the
+ * wrong store; the license's own URL is only kept when WooCommerce.com can't tell us.
+ */
+export function withWooCommerceSites(
+	licenses: JetpackLicense[],
+	wooCommerceSites: WooCommerceLicenseSites | undefined,
+	isLoadingWooCommerceSites: boolean
+): JetpackLicense[] {
+	return licenses.map( ( license ) => {
+		if ( ! isWooCommerceSiteLicense( license ) ) {
+			return license;
+		}
+		if ( isLoadingWooCommerceSites ) {
+			return { ...license, siteurl: null };
+		}
+		const siteUrl = wooCommerceSites?.[ license.license_id ]?.site_url;
+		return siteUrl ? { ...license, siteurl: siteUrl } : license;
+	} );
 }

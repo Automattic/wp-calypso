@@ -3,9 +3,9 @@
  */
 import { JetpackLicenseFilter, JetpackLicenseSortField } from '@automattic/api-core';
 import { render, screen } from '@testing-library/react';
-import { DEFAULT_VIEW, RenewalCell, toFetchOptions } from '../dataviews';
+import { DEFAULT_VIEW, RenewalCell, getLicenseFields, toFetchOptions } from '../dataviews';
 import type { JetpackLicense } from '@automattic/api-core';
-import type { View } from '@wordpress/dataviews';
+import type { NormalizedField, View } from '@wordpress/dataviews';
 
 describe( 'toFetchOptions', () => {
 	it( 'maps the default view to the not-revoked filter sorted by issue date', () => {
@@ -96,5 +96,57 @@ describe( 'Renewal/expiry field', () => {
 		render( <RenewalCell license={ license } locale="en" /> );
 		expect( screen.getByText( 'Oct 21, 2026' ) ).toBeVisible();
 		expect( screen.getByText( 'Auto-renew off' ) ).toBeVisible();
+	} );
+} );
+
+describe( 'Site field', () => {
+	const license: JetpackLicense = {
+		license_id: 7,
+		license_key: 'woocommerce-subscriptions_abc',
+		product_id: 1,
+		product: 'WooCommerce Subscriptions',
+		user_id: null,
+		username: null,
+		blog_id: null,
+		siteurl: null,
+		has_downloads: false,
+		issued_at: '2026-09-21 00:00:00',
+		attached_at: '2026-09-22 00:00:00',
+		revoked_at: null,
+		owner_type: 'jetpack_partner_key',
+		quantity: null,
+		parent_license_id: null,
+		meta: null,
+		referral: null,
+	};
+
+	function renderSite( item: JetpackLicense, isLoadingWooCommerceSites: boolean ) {
+		const field = getLicenseFields( {
+			locale: 'en',
+			isAgencyOwner: true,
+			provisioningLicenseKeys: new Set(),
+			isLoadingWooCommerceSites,
+			onManageSite: jest.fn(),
+		} ).find( ( { id } ) => id === 'site' );
+		if ( ! field?.render ) {
+			throw new Error( 'The site field has no renderer' );
+		}
+		const SiteField = field.render;
+		// The site cell reads nothing from `field`, so the normalised props DataViews adds don't matter.
+		render( <SiteField item={ item } field={ field as NormalizedField< JetpackLicense > } /> );
+	}
+
+	it( 'shows no site for a Woo license while its store is looked up', () => {
+		renderSite( license, true );
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Not assigned' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'links to the store once it is known', () => {
+		renderSite( { ...license, siteurl: 'https://new-store.example' }, false );
+		expect( screen.getByRole( 'link', { name: /new-store\.example/ } ) ).toHaveAttribute(
+			'href',
+			'https://new-store.example'
+		);
 	} );
 } );
