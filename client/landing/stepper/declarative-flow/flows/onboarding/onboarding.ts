@@ -340,9 +340,10 @@ const onboarding: FlowV2< typeof initialize > = {
 
 			return {
 				isLoading: false,
-				eventsProperties: Object.keys( signupStartProperties ).length
-					? { [ STEPPER_TRACKS_EVENT_SIGNUP_START ]: signupStartProperties }
-					: {},
+				eventsProperties:
+					preselectedPlan || couponParam
+						? { [ STEPPER_TRACKS_EVENT_SIGNUP_START ]: signupStartProperties }
+						: {},
 			};
 		}, [ preselectedPlan, couponParam, storageParam ] );
 	},

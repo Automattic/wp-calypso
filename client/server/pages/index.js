@@ -1313,9 +1313,10 @@ export default function pages() {
 		app.use( render404ForUnknownHostname );
 	}
 
-	// Legacy `/start/<plan>` flows, and `/start/plans-first`, are now served by Stepper's onboarding
-	// flow with the plan preselected. This has to be registered ahead of the dashboard `/start` route and the section
-	// loop below, which bind `/start` for the signup section and would otherwise match first. The
+	// Legacy `/start/<plan>` flows are now served by Stepper's onboarding flow with the plan
+	// preselected, and `/start/plans-first` by onboarding as is. This has to be registered ahead
+	// of the dashboard `/start` route and the section loop below, which bind `/start` for the
+	// signup section and would otherwise match first. The
 	// `/*` variant covers step segments — `/start/personal/domains` is a shape real `redirect_to`
 	// values use.
 	const legacyPlanFlowRoute = `/start/:flow(${ REDIRECTED_FLOWS.join( '|' ) })`;
