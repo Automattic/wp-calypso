@@ -10,6 +10,7 @@ import { useFollowedTags, useTagBySlug } from 'calypso/reader/data/tags';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
+import { getTagTitle } from 'calypso/reader/tags/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import EmptyContent from './empty';
@@ -73,7 +74,7 @@ class TagStream extends Component {
 		const emptyContent = () => <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
 		const tag = this.props.tags?.find( ( t ) => t.slug === this.props.encodedTagSlug );
 		const titleText =
-			tag?.title ||
+			( tag?.title && getTagTitle( tag ) ) ||
 			this.props.initialTitle ||
 			titleCase( this.props.decodedTagSlug.replace( /-/g, ' ' ) );
 
