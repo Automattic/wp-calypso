@@ -2692,9 +2692,9 @@ __metadata:
     gettext-parser: "npm:^4.0.3"
     glob: "npm:^7.2.3"
     i18n-calypso: "workspace:^"
-    jest: "npm:^30.5.2"
     react: "npm:^18.3.1"
     rimraf: "npm:^3.0.2"
+    vitest: "npm:^3.2.6"
   bin:
     wp-babel-makepot: ./cli.js
   languageName: unknown
