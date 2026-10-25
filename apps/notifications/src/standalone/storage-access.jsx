@@ -30,16 +30,21 @@ export async function hasCookieAccess() {
 }
 
 /**
- * Asks the user to allow cookie access, with a link to the full notifications page as a fallback.
+ * Explains why notifications need cookie access and lets the user allow it or open notifications on WordPress.com instead.
  */
 export function StorageAccessPrompt( { canRequestAccess, onAccessGranted } ) {
 	const translate = useTranslate();
 	const [ isDenied, setIsDenied ] = useState( false );
-	const showsAllowButton = canRequestAccess && ! isDenied;
+	let promptState = 'ask';
+	if ( ! canRequestAccess ) {
+		promptState = 'unavailable';
+	} else if ( isDenied ) {
+		promptState = 'denied';
+	}
 
 	useEffect( () => {
-		bumpStat( 'notes-storage-access', showsAllowButton ? 'prompt_shown' : 'fallback_shown' );
-	}, [ showsAllowButton ] );
+		bumpStat( 'notes-storage-access', `${ promptState }_shown` );
+	}, [ promptState ] );
 
 	const requestAccess = async () => {
 		bumpStat( 'notes-storage-access', 'allow_clicked' );
@@ -54,30 +59,44 @@ export function StorageAccessPrompt( { canRequestAccess, onAccessGranted } ) {
 		onAccessGranted();
 	};
 
+	const promptCopy = {
+		ask: {
+			heading: translate( 'Show your notifications on this site?' ),
+			body: translate(
+				'Your browser blocks WordPress.com from using its cookies on other sites. Allow access to see your notifications here, or open them on WordPress.com.'
+			),
+		},
+		denied: {
+			heading: translate( 'Access wasn’t allowed' ),
+			body: translate( 'You can try again, or see your notifications on WordPress.com instead.' ),
+		},
+		unavailable: {
+			heading: translate( 'Your notifications can’t load here' ),
+			body: translate(
+				'Make sure you’re logged in to WordPress.com. Some browser privacy settings also stop notifications from loading on other sites, so you can open them on WordPress.com instead.'
+			),
+		},
+	}[ promptState ];
+
 	return (
 		<div className="wpnc__empty-notes-container wpnc__storage-access">
 			<div className="wpnc__empty-notes">
-				<h2>
-					{ showsAllowButton
-						? translate( 'Allow access to see your notifications' )
-						: translate( 'Your notifications can’t load here' ) }
-				</h2>
-				{ showsAllowButton && (
-					<p>
+				<h2>{ promptCopy.heading }</h2>
+				<p>{ promptCopy.body }</p>
+				<div className="wpnc__storage-access-actions">
+					{ promptState !== 'unavailable' && (
 						<button type="button" onClick={ requestAccess }>
-							{ translate( 'Allow access' ) }
+							{ promptState === 'denied' ? translate( 'Try again' ) : translate( 'Allow access' ) }
 						</button>
-					</p>
-				) }
-				<p>
+					) }
 					<a
 						href={ READER_NOTIFICATIONS_URL }
 						target="_top"
-						onClick={ () => bumpStat( 'notes-storage-access', 'fallback_clicked' ) }
+						onClick={ () => bumpStat( 'notes-storage-access', 'open_full_page_clicked' ) }
 					>
-						{ translate( 'Open notifications on WordPress.com' ) }
+						{ translate( 'Open on WordPress.com' ) }
 					</a>
-				</p>
+				</div>
 			</div>
 		</div>
 	);
