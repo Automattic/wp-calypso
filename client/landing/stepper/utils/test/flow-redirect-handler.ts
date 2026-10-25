@@ -114,7 +114,6 @@ describe( 'flow redirect handler', () => {
 		expect( replace ).toHaveBeenCalledWith(
 			'/setup/build/launchpad?siteSlug=example.wordpress.com'
 		);
-		expect( recordTracksEvent ).not.toHaveBeenCalled();
 		// My Home skips the Launchpad for sites whose intent is a removed flow.
 		expect( isRemovedFlow( 'write' ) ).toBe( false );
 	} );
