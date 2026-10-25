@@ -60,8 +60,12 @@ function FollowButtonContainer( {
 		feedId,
 		blogId: siteId,
 	} );
-	const { mutate: followSite, isPending: isFollowingPending } = useFollowSite();
-	const { mutate: unfollowSite, isPending: isUnfollowingPending } = useUnfollowSite();
+	const {
+		mutate: followSite,
+		mutateAsync: followSiteAsync,
+		isPending: isFollowingPending,
+	} = useFollowSite();
+	const { mutateAsync: unfollowSiteAsync, isPending: isUnfollowingPending } = useUnfollowSite();
 
 	const dispatch = useDispatch();
 
@@ -106,12 +110,11 @@ function FollowButtonContainer( {
 			return;
 		}
 
-		const mutationOptions = { onSuccess: () => onFollowSuccess?.( followingSite ) };
-		if ( followingSite ) {
-			followSite( { feedUrl: siteUrl, source: followSource }, mutationOptions );
-		} else {
-			unfollowSite( { feedUrl: siteUrl, source: followSource }, mutationOptions );
-		}
+		const toggleSite = followingSite ? followSiteAsync : unfollowSiteAsync;
+		// The promise settles even if this button unmounts first. Errors are already shown by the mutation hooks.
+		toggleSite( { feedUrl: siteUrl, source: followSource } )
+			.then( () => onFollowSuccess?.( followingSite ) )
+			.catch( () => {} );
 
 		onFollowToggle( followingSite );
 	};

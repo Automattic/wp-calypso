@@ -478,6 +478,14 @@ describe( 'FullPostView subscribe notice', () => {
 		);
 	} );
 
+	it( 'skips the notice when there is no site name to show', () => {
+		const { instance, successNotice } = createInstance();
+
+		instance.showFollowSuccessNotice( true, null );
+
+		expect( successNotice ).not.toHaveBeenCalled();
+	} );
+
 	it( 'opens the suggested follows dialog on click without confirming yet', () => {
 		const { instance, successNotice } = createInstance();
 

@@ -211,4 +211,54 @@ describe( 'FollowButtonContainer', () => {
 			expect( onFollowSuccess ).not.toHaveBeenCalled();
 		} );
 	} );
+
+	describe( 'onFollowSuccess for an existing subscription', () => {
+		beforeEach( () => {
+			nock( BASE )
+				.persist()
+				.get( /.*/ )
+				.query( true )
+				.reply( 200, {
+					subscriptions: [
+						{
+							ID: '7',
+							URL: 'https://example.com/feed',
+							feed_URL: 'https://example.com/feed',
+							is_following: true,
+						},
+					],
+					total_subscriptions: 1,
+					page: 1,
+					number: 1,
+				} );
+		} );
+
+		it( 'is called with false once the unfollow request succeeds', async () => {
+			const unfollowScope = nock( BASE )
+				.post( '/rest/v1.1/read/following/mine/delete' )
+				.reply( 200, { subscribed: false } );
+			const onFollowSuccess = jest.fn();
+
+			renderButton( [], jest.fn(), { emailVerified: true, onFollowSuccess } );
+			await userEvent.click( await screen.findByRole( 'button', { name: 'Unsubscribe' } ) );
+
+			await waitFor( () => expect( unfollowScope.isDone() ).toBe( true ) );
+			await waitFor( () => expect( onFollowSuccess ).toHaveBeenCalledWith( false ) );
+		} );
+
+		it( 'is still called when the button unmounts before the request finishes', async () => {
+			const unfollowScope = nock( BASE )
+				.post( '/rest/v1.1/read/following/mine/delete' )
+				.delay( 250 )
+				.reply( 200, { subscribed: false } );
+			const onFollowSuccess = jest.fn();
+
+			const { unmount } = renderButton( [], jest.fn(), { emailVerified: true, onFollowSuccess } );
+			await userEvent.click( await screen.findByRole( 'button', { name: 'Unsubscribe' } ) );
+			unmount();
+
+			await waitFor( () => expect( unfollowScope.isDone() ).toBe( true ) );
+			await waitFor( () => expect( onFollowSuccess ).toHaveBeenCalledWith( false ) );
+		} );
+	} );
 } );

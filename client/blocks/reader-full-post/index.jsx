@@ -100,6 +100,10 @@ export class FullPostView extends Component {
 		this.setState( { isSuggestedFollowsModalOpen: followClicked } );
 	};
 	showFollowSuccessNotice = ( following, siteName ) => {
+		if ( ! siteName ) {
+			return;
+		}
+
 		this.props.successNotice(
 			following
 				? translate( 'Success! You are now subscribed to "%s".', { args: siteName } )
