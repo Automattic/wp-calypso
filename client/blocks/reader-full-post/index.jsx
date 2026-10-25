@@ -97,16 +97,17 @@ export class FullPostView extends Component {
 	};
 
 	openSuggestedFollowsModal = ( followClicked ) => {
+		this.setState( { isSuggestedFollowsModalOpen: followClicked } );
+	};
+	showFollowSuccessNotice = ( following ) => {
 		const siteName = getSiteName( { site: this.props.site, post: this.props.post } );
 
 		this.props.successNotice(
-			followClicked
+			following
 				? translate( 'Success! You are now subscribed to "%s".', { args: siteName } )
 				: translate( 'Success! You are now unsubscribed from "%s".', { args: siteName } ),
 			{ duration: 3000 }
 		);
-
-		this.setState( { isSuggestedFollowsModalOpen: followClicked } );
 	};
 	onCloseSuggestedFollowModal = () => {
 		this.setState( { isSuggestedFollowsModalOpen: false } );
@@ -815,6 +816,7 @@ export class FullPostView extends Component {
 									feedUrl={ feedUrl }
 									siteUrl={ post.site_URL }
 									onFollowToggle={ this.openSuggestedFollowsModal }
+									onFollowSuccess={ this.showFollowSuccessNotice }
 								/>
 							) }
 

@@ -30,6 +30,7 @@ interface FollowButtonContainerProps {
 	isButtonOnly?: boolean;
 	followApiSource?: string;
 	onFollowToggle: ( following: boolean ) => void;
+	onFollowSuccess?: ( following: boolean ) => void;
 }
 
 function FollowButtonContainer( {
@@ -48,6 +49,7 @@ function FollowButtonContainer( {
 	isButtonOnly,
 	followApiSource,
 	onFollowToggle,
+	onFollowSuccess,
 }: FollowButtonContainerProps ): JSX.Element {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
@@ -104,10 +106,11 @@ function FollowButtonContainer( {
 			return;
 		}
 
+		const mutationOptions = { onSuccess: () => onFollowSuccess?.( followingSite ) };
 		if ( followingSite ) {
-			followSite( { feedUrl: siteUrl, source: followSource } );
+			followSite( { feedUrl: siteUrl, source: followSource }, mutationOptions );
 		} else {
-			unfollowSite( { feedUrl: siteUrl, source: followSource } );
+			unfollowSite( { feedUrl: siteUrl, source: followSource }, mutationOptions );
 		}
 
 		onFollowToggle( followingSite );

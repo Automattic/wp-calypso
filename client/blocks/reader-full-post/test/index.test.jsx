@@ -456,27 +456,34 @@ describe( 'FullPostView subscribe notice', () => {
 		return { instance, successNotice };
 	};
 
-	it( 'confirms the subscription and opens the suggested follows dialog', () => {
+	it( 'confirms a completed subscription', () => {
 		const { instance, successNotice } = createInstance();
 
-		instance.openSuggestedFollowsModal( true );
+		instance.showFollowSuccessNotice( true );
 
 		expect( successNotice ).toHaveBeenCalledWith(
 			'Success! You are now subscribed to "Example Blog".',
 			{ duration: 3000 }
 		);
-		expect( instance.setState ).toHaveBeenCalledWith( { isSuggestedFollowsModalOpen: true } );
 	} );
 
-	it( 'confirms the unsubscription without opening the dialog', () => {
+	it( 'confirms a completed unsubscription', () => {
 		const { instance, successNotice } = createInstance();
 
-		instance.openSuggestedFollowsModal( false );
+		instance.showFollowSuccessNotice( false );
 
 		expect( successNotice ).toHaveBeenCalledWith(
 			'Success! You are now unsubscribed from "Example Blog".',
 			{ duration: 3000 }
 		);
-		expect( instance.setState ).toHaveBeenCalledWith( { isSuggestedFollowsModalOpen: false } );
+	} );
+
+	it( 'opens the suggested follows dialog on click without confirming yet', () => {
+		const { instance, successNotice } = createInstance();
+
+		instance.openSuggestedFollowsModal( true );
+
+		expect( instance.setState ).toHaveBeenCalledWith( { isSuggestedFollowsModalOpen: true } );
+		expect( successNotice ).not.toHaveBeenCalled();
 	} );
 } );

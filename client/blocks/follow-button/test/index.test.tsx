@@ -22,13 +22,20 @@ const makeQueryClient = () =>
 		defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
 	} );
 
-const renderButton = ( actions: NoticeAction[], onFollowToggle: () => void = () => {} ) => {
+const renderButton = (
+	actions: NoticeAction[],
+	onFollowToggle: () => void = () => {},
+	{
+		emailVerified = false,
+		onFollowSuccess,
+	}: { emailVerified?: boolean; onFollowSuccess?: ( following: boolean ) => void } = {}
+) => {
 	const store = createStore(
 		(
 			state = {
 				currentUser: {
 					id: 1,
-					user: { email_verified: false },
+					user: { email_verified: emailVerified },
 				},
 			}
 		) => {
@@ -47,6 +54,7 @@ const renderButton = ( actions: NoticeAction[], onFollowToggle: () => void = () 
 				<FollowButtonContainer
 					siteUrl="https://example.com/feed"
 					onFollowToggle={ onFollowToggle }
+					onFollowSuccess={ onFollowSuccess }
 				/>
 			</QueryClientProvider>
 		</Provider>
@@ -123,4 +131,53 @@ describe( 'FollowButtonContainer', () => {
 			);
 		}
 	);
+
+	describe( 'onFollowSuccess', () => {
+		beforeEach( () => {
+			nock( BASE ).persist().get( /.*/ ).query( true ).reply( 200, {
+				subscriptions: [],
+				total_subscriptions: 0,
+				page: 1,
+				number: 0,
+			} );
+		} );
+
+		it( 'is called once the follow request succeeds, not when the button is clicked', async () => {
+			const followScope = nock( BASE )
+				.post( '/rest/v1.1/read/following/mine/new' )
+				.delay( 250 )
+				.reply( 200, {
+					subscribed: true,
+					subscription: { ID: '123', URL: 'https://example.com/feed' },
+				} );
+			const onFollowToggle = jest.fn();
+			const onFollowSuccess = jest.fn();
+
+			renderButton( [], onFollowToggle, { emailVerified: true, onFollowSuccess } );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
+
+			expect( onFollowToggle ).toHaveBeenCalledWith( true );
+			expect( onFollowSuccess ).not.toHaveBeenCalled();
+
+			await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
+			await waitFor( () => expect( onFollowSuccess ).toHaveBeenCalledWith( true ) );
+		} );
+
+		it( 'is not called when the follow request fails', async () => {
+			const followScope = nock( BASE )
+				.post( '/rest/v1.1/read/following/mine/new' )
+				.reply( 500, { error: 'unknown', message: 'Something went wrong' } );
+			const actions: NoticeAction[] = [];
+			const onFollowSuccess = jest.fn();
+
+			renderButton( actions, jest.fn(), { emailVerified: true, onFollowSuccess } );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
+
+			await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
+			await waitFor( () =>
+				expect( actions.some( ( action ) => action.type === 'NOTICE_CREATE' ) ).toBe( true )
+			);
+			expect( onFollowSuccess ).not.toHaveBeenCalled();
+		} );
+	} );
 } );
