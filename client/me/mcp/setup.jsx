@@ -130,7 +130,7 @@ function McpSetupComponent( { path } ) {
 		return renderLayout(
 			<>
 				<HeaderCake backText={ translate( 'Back' ) } backHref="/me/mcp">
-					{ translate( 'Connect AI agent' ) }
+					{ translate( 'Connect to ChatGPT, Claude, and other external AI tools' ) }
 				</HeaderCake>
 				<Card>
 					<CardBody>
@@ -157,7 +157,7 @@ function McpSetupComponent( { path } ) {
 	return renderLayout(
 		<>
 			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/mcp">
-				{ translate( 'Connect AI agent' ) }
+				{ translate( 'Connect to ChatGPT, Claude, and other external AI tools' ) }
 			</HeaderCake>
 
 			<Card>
