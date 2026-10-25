@@ -64,7 +64,7 @@ $wp-components-colors: (
 	);
 	--ai-ui-renderer-accent-fill: light-dark(
 		#{$accent},
-		color-mix( in srgb, #{$accent} 80%, #{$white} )
+		color-mix( in srgb, #{$accent} 70%, #{$white} )
 	);
 
 	> * {
@@ -131,9 +131,29 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 	color: inherit;
 }
 
+// The modal's close button and scrolling content sit outside the surface, so their hover color and
+// focus ring get its lighter accents too.
+.ai-ui-renderer__modal .components-modal__header .components-button {
+	--wp-components-color-accent: var( --ai-ui-renderer-accent-text );
+}
+
+.ai-ui-renderer__modal .components-modal__content.is-scrollable:focus-visible {
+	box-shadow: inset 0 0 0 var( --wp-admin-border-width-focus, 2px )
+		var( --ai-ui-renderer-accent-fill );
+}
+
 .ai-ui-renderer {
+	// Long URLs and IDs wrap instead of overflowing, also in the modal, outside the host's text rules.
+	overflow-wrap: anywhere;
+
 	.ai-ui-renderer__audio-player {
-		width: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+
+		audio {
+			width: 100%;
+		}
 	}
 
 	.ai-ui-renderer__choice-picker {
@@ -244,6 +264,81 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 		min-width: 0;
 	}
 
+	// Hosts style Markdown's elements for their own background, such as wp-admin's dark headings and
+	// Calypso's light code and quote fills, so a Text's follow the surface instead. A2UI's layout gaps
+	// space it, so its outer margins go.
+	.ai-ui-renderer__text {
+		> :first-child {
+			margin-top: 0;
+		}
+
+		> :last-child {
+			margin-bottom: 0;
+		}
+
+		:is( h1, h2, h3, h4, h5, h6, th ) {
+			color: inherit;
+		}
+
+		a {
+			color: var( --ai-ui-renderer-accent-text );
+
+			&:is( :hover, :active, :focus ) {
+				color: var( --ai-ui-renderer-accent-text-hover );
+			}
+
+			&:focus {
+				box-shadow: 0 0 0 var( --wp-admin-border-width-focus, 2px )
+					var( --ai-ui-renderer-accent-text );
+			}
+		}
+
+		hr {
+			height: 0;
+			border: 0;
+			border-top: 1px solid $border-color;
+			background: none;
+		}
+
+		:is( code, pre ) {
+			background: color-mix( in srgb, currentColor 10%, transparent );
+		}
+
+		pre {
+			padding: 8px 12px;
+			border-radius: 2px;
+			overflow-x: auto;
+		}
+
+		pre code {
+			margin: 0;
+			padding: 0;
+			background: none;
+		}
+
+		blockquote {
+			margin-inline: 0;
+			padding: 0 0 0 12px;
+			border-inline-start: 3px solid $border-color;
+			background: none;
+		}
+
+		table {
+			border-collapse: collapse;
+		}
+
+		:is( th, td ) {
+			padding: 8px 12px;
+			border: 1px solid $border-color;
+			text-align: start;
+		}
+	}
+
+	// Tabs wrap in a narrow chat instead of overflowing it.
+	.components-tab-panel__tabs {
+		flex-wrap: wrap;
+	}
+
 	.ai-ui-renderer__row {
 		flex-wrap: wrap;
 
@@ -282,8 +377,10 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 		align-items: center;
 	}
 
-	// These WordPress controls hard-code light colors instead of reading the theme's.
-	.components-checkbox-control__input[type='checkbox']:not( :checked, :indeterminate, :disabled ) {
+	// These WordPress controls, and wp-admin's input rules, hard-code light colors instead of reading
+	// the theme's.
+	.components-checkbox-control__input[type='checkbox']:not( :checked, :indeterminate, :disabled ),
+	.components-radio-control__input[type='radio']:not( :checked, :disabled ) {
 		background: var( --wp-components-color-background );
 		border-color: var( --wp-components-color-foreground );
 	}
@@ -361,10 +458,6 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 		}
 	}
 
-	.components-radio-control__input[type='radio']:not( :checked, :disabled ) {
-		border-color: var( --wp-components-color-foreground );
-	}
-
 	.components-button:is( .is-secondary, .is-tertiary, .is-link ):not( .is-destructive ) {
 		--wp-components-color-accent: var( --ai-ui-renderer-accent-text );
 		--wp-components-color-accent-darker-20: var( --ai-ui-renderer-accent-text-hover );
@@ -388,6 +481,12 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 			var( --wp-components-color-accent-inverted ),
 			var( --wp-components-color-background )
 		);
+	}
+
+	// Calypso fills a checked radio with its own accent instead of the control's.
+	.components-radio-control__input[type='radio']:checked:not( :disabled ) {
+		background-color: var( --wp-components-color-accent );
+		border-color: var( --wp-components-color-accent );
 	}
 
 	.components-radio-control__input[type='radio']:checked:not( :disabled )::before {

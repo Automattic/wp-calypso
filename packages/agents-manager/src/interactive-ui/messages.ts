@@ -67,7 +67,7 @@ export function readInteractiveUiActionMessage(
 			continue;
 		}
 
-		let parsed;
+		let parsed: unknown;
 
 		try {
 			parsed = JSON.parse( content.text );
@@ -76,7 +76,14 @@ export function readInteractiveUiActionMessage(
 			continue;
 		}
 
-		const action: unknown = parsed?.version === INTERACTIVE_UI_VERSION ? parsed.action : undefined;
+		const action =
+			typeof parsed === 'object' &&
+			parsed !== null &&
+			'version' in parsed &&
+			parsed.version === INTERACTIVE_UI_VERSION &&
+			'action' in parsed
+				? parsed.action
+				: undefined;
 
 		if ( typeof action !== 'object' || action === null ) {
 			continue;

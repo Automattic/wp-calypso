@@ -3,7 +3,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { useAutoScroll } from '../../hooks/useAutoScroll';
 import { cn } from '../../utils/classNames';
-import { getLatestTurnStartIndex, getVisibleMessages } from '../../utils/message-helpers';
+import {
+	getHiddenReplyId,
+	getLatestTurnStartIndex,
+	getVisibleMessages,
+} from '../../utils/message-helpers';
 import { SourcesCard } from '../sources';
 import { Message } from './Message';
 import { MessageCard } from './MessageCard';
@@ -38,6 +42,7 @@ function getSpokenText( element: Element | null | undefined ): string {
 		acceptNode: ( node ) => {
 			const parent = node.parentElement;
 			const hidden = parent?.closest( '[aria-hidden="true"]' );
+
 			return ( hidden && element.contains( hidden ) ) || parent?.checkVisibility?.() === false
 				? NodeFilter.FILTER_REJECT
 				: NodeFilter.FILTER_ACCEPT;
@@ -48,20 +53,6 @@ function getSpokenText( element: Element | null | undefined ): string {
 		parts.push( walker.currentNode.textContent ?? '' );
 	}
 	return parts.join( ' ' ).replace( /\s+/g, ' ' ).trim();
-}
-
-// A reply whose content the host adds after the turn ends.
-function getHiddenReplyId(
-	messages: MessageType[],
-	visibleMessages: MessageType[]
-): string | null {
-	const lastMessage = messages.at( -1 );
-
-	if ( lastMessage?.role !== 'agent' ) {
-		return null;
-	}
-
-	return visibleMessages.some( ( { id } ) => id === lastMessage.id ) ? null : lastMessage.id;
 }
 
 export function Messages( {
@@ -118,6 +109,7 @@ export function Messages( {
 	const hiddenReplyId = getHiddenReplyId( messages, visibleMessages );
 	const replyWhenProcessingStartedRef = useRef< string | null >( null );
 	const pendingReplyIdRef = useRef< string | null >( null );
+
 	useEffect( () => {
 		if ( isProcessing ) {
 			replyWhenProcessingStartedRef.current ??= replyKey;

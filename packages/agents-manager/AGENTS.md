@@ -128,7 +128,7 @@ The editor abilities (`abilities/editor-abilities.ts`) load as an async chunk on
 
 Agents Manager hosts interactive UI surfaces from `interactive-ui/`. Its `README.md` has the architecture, where each piece lives, and the rules surfaces and catalog components follow: read it before changing either.
 
-- **Add a component to a catalog, not to the converter.** Agents Manager's go in `AGENTS_MANAGER_CATALOG` (`interactive-ui/catalogs.ts`): their props as portable JSON Schema (`interactive-ui/README.md`) in its document, and the component itself, loaded on demand when it carries editor code (see Performance). That catalog is ability-only (`agentComposable: false`), so only abilities build its components; the agent composes with the basic ones. Providers declare theirs as `interactiveUi`.
+- **Add a component to `AGENTS_MANAGER_CATALOG`** (`interactive-ui/catalogs.ts`), not to the converter's `AM_COMPONENTS`.
 - **Keep the renderer in its lazy chunk:** import only types from `@automattic/ai-ui-renderer`, and values only from its `capabilities` entry. `use-interactive-ui.ts` loads the renderer and its `style.scss` together.
 
 ## Pitfalls

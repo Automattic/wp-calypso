@@ -20,6 +20,7 @@ const batch = createBatch( operations, 'agent' );
 function createSession( batches: InteractiveUiBatch[] = [], runtime = createRuntime() ) {
 	const session = getInteractiveUiSession( undefined, 'scope', 'session-1' );
 	session.runtime = runtime;
+
 	session.appliedBatches = batches.map( ( applied ) =>
 		applyInteractiveUiBatch( runtime, applied )
 	);
@@ -124,6 +125,7 @@ describe( 'recordRenderedInteractiveUiSurfaces', () => {
 		const session = createSession( [ createBatch( [ create ], 'agent' ) ], runtime );
 
 		recordRenderedInteractiveUiSurfaces( session );
+
 		expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
 
 		session.appliedBatches = [

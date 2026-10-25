@@ -30,19 +30,16 @@ Ticket numbers mark parts still to come.
 3. Once the reply has streamed, the host feeds those messages to the conversation's runtime, which
    shows each surface under its message. Reloading rebuilds the surfaces from history.
 4. A button's event goes to the agent as a context message, `{ "version": "v1.0", "action": … }`,
-   and its `functionCall` runs a catalog function in the browser. Only surfaces that abilities
-   build can call one: the agent composes `event` actions only, so don't tell it to call your
-   functions in your catalog's `instructions`. While the agent replies or images upload, the
-   surfaces' inputs and actions are disabled, without the surfaces going stale. The context message
-   is hidden, so the chat shows the event's `userMessage`, if any, as a note instead
+   and its `functionCall` runs a catalog function in the browser. While the agent replies or images
+   upload, the surfaces' inputs and actions are disabled, without the surfaces going stale. The
+   context message is hidden, so the chat shows the event's `userMessage`, if any, as a note instead
    ([An action shows what the user chose](#what-agents-manager-does)).
 
 ## Where the code lives
 
-- **`@automattic/ai-ui-renderer`** renders surfaces for any host: the basic or shared components,
-  `createInteractiveUiCatalog()`, `createInteractiveUiRuntime()`, `InteractiveUiSurface` and the
-  styles, plus a light `capabilities` entry hosts use before loading it. It has no chat, session or
-  transport code. See its [README](../../../ai-ui-renderer/README.md).
+- **`@automattic/ai-ui-renderer`** renders surfaces for any host, with the basic components and
+  their styles, and has no chat, session or transport code. See its
+  [README](../../../ai-ui-renderer/README.md).
 - **Agents Manager** hosts them in the chat, from this folder:
   - `use-interactive-ui.ts` keeps a runtime per conversation, loads the renderer and its styles on
     demand and sends actions to the agent.
@@ -95,13 +92,13 @@ Ticket numbers mark parts still to come.
   `ExampleCard` and `exampleOpenItem` for an owner named Example. The agent's tool lists every
   composable catalog's components together, so wpcom leaves out one named like a basic component or
   an earlier catalog's.
-- **Ability-only catalogs aren't sent to the agent.** Set `agentComposable: false` on a catalog
-  definition whose components only your abilities build, such as Agents Manager's pickers, whose
-  style variations the agent can't make up. The client still lists its ID, so abilities can show
-  it, but not its document or `instructions`, so the agent can't compose with it: explain those
-  surfaces and their events in your abilities' own instructions. The flag covers the whole
-  catalog, so if only some of your components are ability-only, leave it composable and say so in
-  their `description`s.
+- **Ability-only catalogs aren't sent to the agent.** Set `agentComposable: false`
+  ([catalogs](../../../ai-ui-renderer/README.md#catalogs)) on a catalog definition whose components
+  only your abilities build, such as Agents Manager's pickers, whose style variations the agent
+  can't make up. Its `instructions` don't reach the agent either, so explain those surfaces and
+  their events in your abilities' own instructions. The flag covers the whole catalog, so if only
+  some of your components are ability-only, leave it composable and say so in their
+  `description`s.
 - **Portable schemas.** wpcom sends your components' props to whichever model provider runs the
   chat, so use only JSON Schema they all accept:
   - `type`, `properties`, `required`, `items`, `enum`, `additionalProperties`, `anyOf`, `oneOf`,
@@ -135,30 +132,27 @@ Ticket numbers mark parts still to come.
   read as plain data.
   `wpcom/render-interactive-ui` checks these so the agent can retry. `component_result()` builds
   valid IDs, but `surface_result()` takes your components as they are, so follow these rules in
-  them. wpcom also gives every new surface its own ID (`<name>-<uuid>`), and a rejected message
-  can't change an earlier surface: the runtime skips the rest of its batch for that surface.
+  them. wpcom also gives every new surface its own ID (`<name>-<uuid>`).
 - **Functions run from a click.** Set `requiresUserActivation: false` only on a function without
-  side effects ([catalogs](../../../ai-ui-renderer/README.md#catalogs)). A function call doesn't
-  reach the agent, and Agents Manager only logs and records one that throws or rejects, so use an
-  `event` for what the agent must know, and show a function's failure to the user yourself.
+  side effects ([catalogs](../../../ai-ui-renderer/README.md#catalogs)). Only surfaces that
+  abilities build can call one: the agent composes `event` actions only, so don't tell it to call
+  your functions in your catalog's `instructions`. A function call doesn't reach the agent, and
+  Agents Manager only logs and records one that throws or rejects, so use an `event` for what the
+  agent must know, and show a function's failure to the user yourself.
 - **Arguments and props are untrusted.** A function's arguments and a component's props carry the
   agent's or the site's content, so never render them as raw HTML, and check an ID or a URL before
   acting on it or making it a link.
 - **Custom components own their side effects**: the change itself, its checkpoint, keyed by
   `surfaceId`, and its own Tracks events. A checkpoint in Agents Manager's store, as its pickers
   take, is undone by the agent through `restore-checkpoint`: a surface message has no message
-  Undo, which a `show-component` result gets from its `calypsoCheckpointId`. The components turn
-  off their inputs and actions with `disabled`, keeping their display parts usable, and skip their
-  side effects and Tracks with `isMessageStale`, chat state a surface can't override. As for
-  `show-component` messages, Agents Manager records `jetpack_big_sky_chat_response_rendered` for
-  each one on a current surface, and the actions it reports through `onResponseAction`
-  (`jetpack_big_sky_chat_response_action`), with its name as `component_type` and its surface ID
-  as `tool_call_id`.
-- **Style with A2UI's theme tokens.** Custom components color themselves with the `--a2ui-*`
-  tokens and the renderer's accent and disabled colors, or use WordPress components, which the
-  renderer themes with them, so they follow each host's theme
-  ([theming](../../../ai-ui-renderer/README.md#theming)). Check them in light and dark mode,
-  enabled and disabled ([how](../../../ai-ui-renderer/README.md#theming-a-new-component)).
+  Undo, which a `show-component` result gets from its `calypsoCheckpointId`. The components handle
+  `disabled` as the basic ones do ([catalogs](../../../ai-ui-renderer/README.md#catalogs)), and
+  skip their side effects and Tracks with `isMessageStale`, chat state a surface can't override.
+  They report their actions through `onResponseAction` and don't record the shared response events
+  themselves ([Surfaces are recorded](#what-agents-manager-does)).
+- **Style with A2UI's theme tokens**, or use WordPress components, which the renderer themes, so
+  custom components follow each host's theme
+  ([how](../../../ai-ui-renderer/README.md#theming-a-new-component)).
 - **Load only what the surface renders.** Editor-only components load on demand, in the editor.
   Retry a failed import inside the `lazy()` loader, after a short pause, since `lazy()` caches a
   rejected one, and add no error boundary of your own, so a failure still shows the notice and is
@@ -166,27 +160,24 @@ Ticket numbers mark parts still to come.
 
 ## What Agents Manager does
 
-- **The client lists what it renders.** Agents Manager sends A2UI's `a2uiRendererCapabilities` in
-  each message's metadata, as A2UI's A2A binding does: the IDs of the catalogs it renders, and the
-  documents of those the agent can compose with. It checks each provider's catalog first, and
-  skips and logs an invalid one or a later one with a taken ID, so the others keep working. wpcom
-  offers a surface only for a catalog the client lists, and lists the documents' components in the
-  agent's tool, each with its catalog's instructions. The documents come from the browser, so
-  wpcom only describes and validates with them.
+- **The client lists what it renders.** Agents Manager sends A2UI's `a2uiRendererCapabilities`
+  ([Capabilities](../../../ai-ui-renderer/README.md#capabilities)) in each message's metadata. It
+  checks each provider's catalog first, and skips and logs an invalid one or a later one with a
+  taken ID, so the others keep working. wpcom offers a surface only for a catalog the client lists,
+  and lists the documents' components in the agent's tool, each with its catalog's instructions.
 - **Agents Manager decides when a surface is stale**, with the rule `show-component` uses
   (`src/utils/stale-chat-ui.ts`): the user has replied past the last message that changed it, or
-  the editor has another post open than the one its part names. Like a restored picker, a
-  surface restored from history, in a past chat or after a reload, is stale too. A stale surface
-  stays visible, its inputs and actions disabled as while the agent replies, and its display, tabs
-  and modal triggers usable. Only staleness sets `isMessageStale` and leaves the surface's data
-  out of the next message. Once all of a message's surfaces are stale, its actions that change
-  something, such as feedback, are disabled too, while copy stays usable.
+  the editor has another post open than the one its part names. A surface restored from history,
+  in a past chat or after a reload, is stale too. A stale surface stays visible, disabled as while
+  the agent replies ([`disabled`](../../../ai-ui-renderer/README.md#rendering)). Only staleness
+  sets `isMessageStale` and leaves the surface's data out of the next message. Once all of a
+  message's surfaces are stale, its actions that change something, such as feedback, are disabled
+  too, while copy stays usable.
 - **An action shows what the user chose.** Agents Manager shows an event's `userMessage`, such as
-  “Save the title”, as a note on the user's side before the agent's reply: the user's bubble,
-  outlined instead of filled, after its own prefix, “You chose:”, so it never reads as text the user
-  typed. Only the note is shown: the action's message stays hidden context, so it doesn't count as
-  the user's reply for staleness, checkpoints or the latest user message, and the note has no
-  actions, such as copy. Without a `userMessage`, the reply starts the turn and nothing shows, as
+  “Save the title”, as a note on the user's side before the agent's reply, after a “You chose:”
+  prefix, so it never reads as text the user typed. Only the note is shown: the action's message
+  stays hidden context, so it doesn't count as the user's reply for staleness, checkpoints or the
+  latest user message. Without a `userMessage`, the reply starts the turn and nothing shows, as
   Agents Manager doesn't make one from the button's label, so `wpcom/render-interactive-ui` asks the
   agent to always include one, and an ability gives each of its `event` Buttons one, both in the
   user's language to match the translated prefix.
@@ -196,15 +187,16 @@ Ticket numbers mark parts still to come.
   clicking. wpcom sets it on composed surfaces created with inputs, and an ability sets it through
   `surface_result()`'s `$send_data_model`. Agents Manager sends only the surfaces the user could
   use just before sending, those that weren't stale then; a regenerated prompt sends the same ones,
-  except those the regenerated reply created or changed. It leaves out the values obscured
-  `TextField`s bind to. wpcom shows the data to the agent as the user's, for that request only, and
-  never stores it. Past 32 KB across the surfaces one message sends, it shows the agent none of it,
-  so keep a sent data model to what the user edits. Bind inputs to the data model: a value a
-  component keeps in its own state isn't sent.
+  except those the regenerated reply created or changed. Each surface's data comes from the
+  renderer's `getDataModel()`, which leaves some values out
+  ([rendering](../../../ai-ui-renderer/README.md#rendering)). wpcom shows the data to the agent as
+  the user's, for that request only, and never stores it. Past 32 KB across the surfaces one
+  message sends, it shows the agent none of it, so keep a sent data model to what the user edits.
+  Bind inputs to the data model: a value a component keeps in its own state isn't sent.
 - **Failures show a notice.** In a live reply, Agents Manager shows “Couldn’t show this. Try asking
-  again.” in muted text in place of the first surface that can't render (one with a component its
-  catalog lacks, or one that throws), or under the message when the runtime rejected some of its
-  A2UI messages, even if no surface is left. A message shows only one notice. A surface restored
+  again.” in place of the first surface that can't render (one with a component its catalog
+  lacks, or one that throws), or under the message when the runtime rejected some of its A2UI
+  messages, even if no surface is left. A message shows only one notice. A surface restored
   from history that can't be shown, for example on a host without its catalog, or when its
   `createSurface` is outside the loaded history, stays hidden. If the renderer itself fails to load,
   every message with surfaces, restored ones included, shows “Couldn’t load this. Check your
@@ -222,8 +214,11 @@ Ticket numbers mark parts still to come.
   action. An error's message and an action's name and context can carry the agent's content or the
   user's input, so they aren't recorded. Each surface is recorded once per conversation and each
   error once per message, neither for a message restored from history. A surface built only from
-  basic components records only these, and a catalog component also records the shared response
-  events ([Custom components own their side effects](#rules)).
+  basic components records only these. As with `show-component` messages, Agents Manager also
+  records the shared response events for each catalog component on a current surface:
+  `jetpack_big_sky_chat_response_rendered`, and `jetpack_big_sky_chat_response_action` for each
+  action it reports through `onResponseAction`, with its name as `component_type` and its surface
+  ID as `tool_call_id`.
 
 ## Browser ability cards
 
@@ -267,8 +262,8 @@ return {
   check `props` against the component's schema, so props the component rejects, such as one it
   doesn't declare, still note `card_shown` but show the failure notice.
 - **When it doesn't:** without the sticker, in a client without your catalog, or for a result the
-  content filter blocks, wpcom strips the hint without the note, and an older wpcom, or an agent
-  other than wp-orchestrator, passes it on unread. It also strips a hint that isn't that shape or is
+  content filter blocks, wpcom strips the hint without the note, and an agent other than
+  wp-orchestrator passes it on unread. It also strips a hint that isn't that shape or is
   over 8 KB as JSON, and tags the trace `invalid_interactive_ui_hint`. A result with
   `returnToAgent: false` never reaches wpcom, so it gets no card. A hinted result whose turn then
   ends on a later ability's `returnToAgent: false` loses its card but still notes `card_shown`, so
@@ -308,7 +303,6 @@ waits for Agents Manager, the Jetpack AI sidebar and WooCommerce AI.
 
 ### Moving an ability's component
 
-These steps work for any owner, such as Agents Manager, the Jetpack AI sidebar or WooCommerce AI.
 Agents Manager's pickers are a worked example: `AGENTS_MANAGER_CATALOG` in `catalogs.ts`, and
 wpcom's `ability.color-palette.php`. If the basic components can express the UI, skip step 1 and
 return them with `surface_result()`.
@@ -318,13 +312,11 @@ return them with `surface_result()`.
    React component. It then gets a surface component's props
    ([props](../../../ai-ui-renderer/README.md#catalogs)), not `show-component`'s: its ID is
    `surfaceId` in place of `toolCallId`, and it gets no `summary` or `contentType`, since
-   `component_result()` shows the summary above it. It keeps its side effects, skips them when
-   `isMessageStale` is set, and loads on demand if it carries editor code. It follows the [custom
-   component rules](#rules). If only your abilities build your catalog's components, set
-   `agentComposable: false` on its definition. If your component's undo is the message Undo (a
-   provider `useCheckpoint` checkpoint, as the Jetpack AI sidebar's pickers use), or its result
-   sets `responseTrackingProperties` (such as the Jetpack AI sidebar's review counts), keep
-   returning `show-component` for it: surfaces don't support either yet.
+   `component_result()` shows the summary above it. It keeps its side effects and follows the
+   [custom component rules](#rules). If your component's undo is the message Undo (a provider
+   `useCheckpoint` checkpoint, as the Jetpack AI sidebar's pickers use), or its result sets
+   `responseTrackingProperties` (such as the Jetpack AI sidebar's review counts), keep returning
+   `show-component` for it: surfaces don't support either yet.
 2. **Return a surface from the ability** (wpcom) when `Agent_Ability::can_show_interactive_ui()`
    passes: in an agent's chat whose client renders the component's catalog, on a site with the
    sticker. Otherwise, keep returning the `show-component` result.

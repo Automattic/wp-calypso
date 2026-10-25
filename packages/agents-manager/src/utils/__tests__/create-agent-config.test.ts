@@ -255,6 +255,7 @@ describe( 'createAgentConfig', () => {
 			sessionSiteKey: 'no-site',
 			agentId: DOLLY_AGENT_ID,
 		} );
+
 		const dataModel = { version: 'v1.0', surfaces: { form: { name: 'Ada' } } };
 		const session = getInteractiveUiSession( undefined, 'scope', 'session-1' );
 		session.runtime = { getDataModel: () => dataModel } as unknown as InteractiveUiRuntime;

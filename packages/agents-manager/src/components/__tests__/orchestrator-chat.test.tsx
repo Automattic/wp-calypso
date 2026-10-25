@@ -5,6 +5,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { DataPart, TaskState, TaskUpdate } from '@automattic/agenttic-client';
 import type { Suggestion } from '@automattic/agenttic-ui';
+import type { InteractiveUiPresentation } from '../../interactive-ui/use-interactive-ui';
 import type { ComponentProps } from 'react';
 
 const mockUseAgentChat = jest.fn();
@@ -1949,7 +1950,7 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	describe( 'interactive UI data', () => {
+	describe( 'interactive UI', () => {
 		// The chat imports the renderer on demand, which is slow from a cold cache, so load it once
 		// here instead of within the first test's timeout.
 		beforeAll( () => import( '@automattic/ai-ui-renderer' ), 30000 );
@@ -1990,13 +1991,17 @@ describe( 'OrchestratorChat', () => {
 			],
 			timestamp: 1,
 		};
+
 		const formDataModel = { version: 'v1.0', surfaces: { form: { name: 'Ada' } } };
+		const prompt = { ...userMessage, id: 'user-2', timestamp: 2 };
 
 		// The form arrives in a reply, so it isn't restored from history.
 		async function renderLiveForm() {
 			const { rerender } = render( chat() );
+
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
 			rerender( chat() );
+
 			mockUseAgentChat.mockReturnValue(
 				agentChatReturn( { messages: [ userMessage, formMessage ] } )
 			);
@@ -2010,23 +2015,9 @@ describe( 'OrchestratorChat', () => {
 		async function dispatchFormAction( messageId = 'form-message', surfaceId = 'form' ) {
 			const messages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
 				id: string;
-				content: Array< {
-					componentProps?: {
-						presentation?: {
-							runtime?: {
-								getSurface: ( id: string ) =>
-									| {
-											dispatchAction: (
-												payload: unknown,
-												sourceComponentId: string
-											) => Promise< void >;
-									  }
-									| undefined;
-							};
-						};
-					};
-				} >;
+				content: Array< { componentProps?: { presentation?: InteractiveUiPresentation } } >;
 			} >;
+
 			const runtime = messages
 				.find( ( message ) => message.id === messageId )!
 				.content.find( ( content ) => content.componentProps?.presentation )!.componentProps!
@@ -2052,6 +2043,7 @@ describe( 'OrchestratorChat', () => {
 
 			await dispatchFormAction();
 
+			expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
 			expect( actionEventCalls() ).toEqual( [] );
 			expect( mockUseAgentChat.mock.results.at( -1 )!.value.onSubmit ).not.toHaveBeenCalled();
 		} );
@@ -2060,9 +2052,7 @@ describe( 'OrchestratorChat', () => {
 			const rerender = await renderLiveForm();
 
 			mockUseAgentChat.mockReturnValue(
-				agentChatReturn( {
-					messages: [ userMessage, formMessage, { ...userMessage, id: 'user-2', timestamp: 2 } ],
-				} )
+				agentChatReturn( { messages: [ userMessage, formMessage, prompt ] } )
 			);
 			rerender( chat() );
 
@@ -2078,6 +2068,7 @@ describe( 'OrchestratorChat', () => {
 			await dispatchFormAction();
 
 			const onSubmit = jest.mocked( mockUseAgentChat.mock.results.at( -1 )!.value.onSubmit );
+
 			const recordedCall = jest
 				.mocked( recordAgentsManagerTracksEvent )
 				.mock.calls.findIndex(
@@ -2094,15 +2085,25 @@ describe( 'OrchestratorChat', () => {
 			).toBeLessThan( onSubmit.mock.invocationCallOrder[ 0 ] );
 		} );
 
+		it( 'records a live surface once it renders', async () => {
+			await renderLiveForm();
+
+			expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+				'calypso_agents_manager_interactive_ui_rendered',
+				{ surface_id: 'form', catalog_id: BASIC_CATALOG_ID, component_type: 'Text' }
+			);
+		} );
+
 		describe( 'once Agenttic gives the prompt a new ID', () => {
-			const prompt = { ...userMessage, id: 'user-2', timestamp: 2 };
 			const newFormMessage = {
 				...JSON.parse(
 					JSON.stringify( formMessage ).replaceAll( '"form"', '"new-form"' ).replace( 'Ada', '' )
 				),
 				id: 'new-form-message',
 			};
+
 			const newFormDataModel = { version: 'v1.0', surfaces: { 'new-form': { name: '' } } };
+
 			// A reply that ends without a streamed message is rebuilt from Agenttic's history, which
 			// gives each user message a new ID.
 			const rebuiltMessages = [
@@ -2119,6 +2120,7 @@ describe( 'OrchestratorChat', () => {
 					agentChatReturn( { messages: [ userMessage, formMessage, prompt ], isProcessing: true } )
 				);
 				rerender( chat() );
+
 				mockUseAgentChat.mockReturnValue( agentChatReturn( { messages: rebuiltMessages } ) );
 				rerender( chat() );
 
@@ -2131,6 +2133,7 @@ describe( 'OrchestratorChat', () => {
 
 			it( 'sends only the newer form’s data with its action', async () => {
 				const rerender = await renderRebuiltReply();
+
 				const actionMessage = {
 					id: 'user-3',
 					role: 'user',
@@ -2139,6 +2142,7 @@ describe( 'OrchestratorChat', () => {
 				};
 
 				await dispatchFormAction( 'new-form-message', 'new-form' );
+
 				mockUseAgentChat.mockReturnValue(
 					agentChatReturn( { messages: [ ...rebuiltMessages, actionMessage ], isProcessing: true } )
 				);
@@ -2164,12 +2168,12 @@ describe( 'OrchestratorChat', () => {
 
 		it( 'sends the data a regenerated prompt first sent', async () => {
 			const rerender = await renderLiveForm();
-			const prompt = { ...userMessage, id: 'user-2', timestamp: 2 };
 
 			mockUseAgentChat.mockReturnValue(
 				agentChatReturn( { messages: [ userMessage, formMessage, prompt ], isProcessing: true } )
 			);
 			rerender( chat() );
+
 			mockUseAgentChat.mockReturnValue(
 				agentChatReturn( {
 					messages: [
@@ -2196,17 +2200,18 @@ describe( 'OrchestratorChat', () => {
 
 		it( 'doesn’t send a form an unanswered prompt replied past while images upload', async () => {
 			const rerender = await renderLiveForm();
-			const prompt = { ...userMessage, id: 'user-2', timestamp: 2 };
 
 			// The prompt is stopped before its reply starts.
 			mockUseAgentChat.mockReturnValue(
 				agentChatReturn( { messages: [ userMessage, formMessage, prompt ], isProcessing: true } )
 			);
 			rerender( chat() );
+
 			mockUseAgentChat.mockReturnValue(
 				agentChatReturn( { messages: [ userMessage, formMessage, prompt ] } )
 			);
 			rerender( chat() );
+
 			mockUseImageUpload.mockReturnValue( createImageUpload( { isUploadingImages: true } ) );
 			rerender( chat() );
 

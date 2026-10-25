@@ -83,6 +83,7 @@ describe( 'Messages', () => {
 	it( 'announces a new reply with the same text as the previous one', async () => {
 		const question = userMessage( 'Make it orange' );
 		const firstReply = agentMessage( 'Done.' );
+
 		await render( { messages: [ question, firstReply ], isProcessing: false } );
 		await render( { messages: [ question, firstReply ], isProcessing: true } );
 		await render( {
@@ -105,6 +106,7 @@ describe( 'Messages', () => {
 			id: 'reply',
 			content: [ { type: 'data', data: {} } ],
 		};
+
 		await render( { messages: [ question, note ], isProcessing: true } );
 		await render( { messages: [ question, note, reply ], isProcessing: false } );
 
@@ -129,6 +131,7 @@ describe( 'Messages', () => {
 			id: 'reply',
 			content: [ { type: 'data', data: {} } ],
 		};
+
 		await render( { messages: [ question ], isProcessing: true } );
 		await render( { messages: [ question, reply ], isProcessing: false } );
 		await render( {
@@ -163,6 +166,7 @@ describe( 'Messages', () => {
 		Element.prototype.checkVisibility = function () {
 			return ! this.closest( '[hidden]' );
 		};
+
 		const Renderer = ( { children }: { children: string } ) => (
 			<p>
 				{ children } <span aria-hidden="true">→</span> done<span hidden> twice</span>

@@ -16,6 +16,27 @@ export const operations = [
 	},
 ];
 
+export const surfacePart = {
+	type: 'data' as const,
+	data: operations,
+	metadata: { mimeType: 'application/a2ui+json' as const },
+};
+
+// Agenttic keeps A2UI's A2A data part under `a2ui`.
+export const surfaceContent = { type: 'data' as const, data: { a2ui: surfacePart } };
+
+// A form surface that sends its data to the agent.
+export const formOperations = [
+	{
+		version: 'v1.0' as const,
+		createSurface: { surfaceId: 'form', catalogId: BASIC_CATALOG_ID, sendDataModel: true },
+	},
+	{
+		version: 'v1.0' as const,
+		updateDataModel: { surfaceId: 'form', path: '/', value: { name: 'Ada' } },
+	},
+];
+
 export const createRuntime = () =>
 	createInteractiveUiRuntime( {
 		catalogs: [ createInteractiveUiCatalog() ],

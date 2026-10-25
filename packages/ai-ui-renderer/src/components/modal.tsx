@@ -6,12 +6,17 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { z } from 'zod';
 import { ModalTriggerContext, useInteractiveUiSurface } from '../contexts/surface';
+import { StringValueSchema } from '../utils/schemas';
 import { copyTheme } from '../utils/theme';
 
 export const Modal = createComponentImplementation(
 	{
 		name: 'Modal',
-		schema: z.object( { trigger: ComponentIdSchema, content: ComponentIdSchema } ),
+		schema: z.object( {
+			trigger: ComponentIdSchema,
+			content: ComponentIdSchema,
+			accessibility: z.object( { label: StringValueSchema.optional() } ).optional(),
+		} ),
 	},
 	( { props, buildChild } ) => {
 		const [ isOpen, setIsOpen ] = useState( false );
@@ -35,7 +40,8 @@ export const Modal = createComponentImplementation(
 				{ isOpen && (
 					<GutenbergModal
 						ref={ copySurfaceTheme }
-						title={ __( 'Details', 'default' ) }
+						size="medium"
+						title={ props.accessibility?.label || __( 'Details', 'default' ) }
 						overlayClassName={ clsx( 'ai-ui-renderer__modal', className ) }
 						onRequestClose={ () => setIsOpen( false ) }
 					>

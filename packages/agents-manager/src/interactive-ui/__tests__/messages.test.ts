@@ -6,24 +6,23 @@ import {
 	getInteractiveUiBatches,
 	getStaleInteractiveUiSurfaceIds,
 	keepInteractiveUiSurfacesInTranscript,
+	readInteractiveUiActionMessage,
 	readInteractiveUiPart,
 } from '../messages';
-import { createBatch, createRuntime, operations } from './fixtures/surface';
+import {
+	createBatch,
+	createRuntime,
+	formOperations,
+	operations,
+	surfaceContent,
+	surfacePart,
+} from './fixtures/surface';
 import type { InteractiveUiBatch } from '../messages';
 import type { UIMessage } from '@automattic/agenttic-client';
 
-const part = {
-	type: 'data' as const,
-	data: operations,
-	metadata: { mimeType: 'application/a2ui+json' as const },
-};
-
-// Agenttic keeps A2UI's A2A data part under `a2ui`.
-const surfaceContent = { type: 'data' as const, data: { a2ui: part } };
-
 describe( 'interactive UI response messages', () => {
 	it( 'reads the A2UI messages, and the page they were built for, from the A2UI data part', () => {
-		const pagePart = { ...part, metadata: { ...part.metadata, postId: 7 } };
+		const pagePart = { ...surfacePart, metadata: { ...surfacePart.metadata, postId: 7 } };
 
 		expect( readInteractiveUiPart( surfaceContent ) ).toEqual( { operations } );
 		expect( readInteractiveUiPart( { type: 'data', data: { a2ui: pagePart } } ) ).toEqual( {
@@ -78,8 +77,38 @@ describe( 'interactive UI response messages', () => {
 	} );
 } );
 
+describe( 'readInteractiveUiActionMessage', () => {
+	function createContextMessage( text: string ): UIMessage {
+		return {
+			id: 'context',
+			role: 'user',
+			content: [ { type: 'context', text } ],
+			timestamp: 0,
+			archived: false,
+			showIcon: false,
+		};
+	}
+
+	it.each( [
+		[ 'no `userMessage`', { name: 'greet' } ],
+		[ 'a blank `userMessage`', { name: 'greet', userMessage: '  ' } ],
+	] )( 'reads an action with %s as one without a note', ( _description, action ) => {
+		const message = createContextMessage( JSON.stringify( { version: 'v1.0', action } ) );
+
+		expect( readInteractiveUiActionMessage( message ) ).toEqual( {} );
+	} );
+
+	it( 'ignores other hidden context', () => {
+		const message = createContextMessage( 'Navigated to the About page.' );
+
+		expect( readInteractiveUiActionMessage( message ) ).toBeUndefined();
+	} );
+} );
+
 describe( 'getStaleInteractiveUiSurfaceIds', () => {
-	const pageBatch = ( postId: number ) => ( { ...createBatch( operations, 'agent' ), postId } );
+	const batch = createBatch( operations, 'agent' );
+	const update = createBatch( [ operations[ 1 ] ], 'update' );
+
 	const options = {
 		messageIndexes: new Map( [ [ 'agent', 1 ] ] ),
 		latestUserMessageIndex: 0,
@@ -87,44 +116,38 @@ describe( 'getStaleInteractiveUiSurfaceIds', () => {
 	};
 
 	it.each( [
+		[ 'the user has replied past it', batch, { ...options, latestUserMessageIndex: 2 } ],
 		[
-			'the user has replied past it',
-			createBatch( operations, 'agent' ),
-			{ ...options, latestUserMessageIndex: 2 },
+			'the editor has another page open',
+			{ ...batch, postId: 7 },
+			{ ...options, currentPostId: 8 },
 		],
-		[ 'the editor has another page open', pageBatch( 7 ), { ...options, currentPostId: 8 } ],
 		[
 			'it was restored from history',
-			createBatch( operations, 'agent' ),
+			batch,
 			{ ...options, restoredMessageIds: new Set( [ 'agent' ] ) },
 		],
-		[
-			'its message has left the transcript',
-			createBatch( operations, 'agent' ),
-			{ ...options, messageIndexes: new Map() },
-		],
-	] )( 'marks a surface stale when %s', ( _description, batch, staleOptions ) => {
-		expect( getStaleInteractiveUiSurfaceIds( [ batch ], staleOptions ) ).toEqual(
+		[ 'its message has left the transcript', batch, { ...options, messageIndexes: new Map() } ],
+	] )( 'marks a surface stale when %s', ( _description, staleBatch, staleOptions ) => {
+		expect( getStaleInteractiveUiSurfaceIds( [ staleBatch ], staleOptions ) ).toEqual(
 			new Set( [ 'test-surface' ] )
 		);
 	} );
 
 	it( 'skips malformed operations', () => {
-		const batch = {
-			...createBatch( operations, 'agent' ),
+		const malformed = {
+			...batch,
 			operations: [ ...operations, null ] as unknown as InteractiveUiBatch[ 'operations' ],
 		};
 
 		expect(
-			getStaleInteractiveUiSurfaceIds( [ batch ], { ...options, latestUserMessageIndex: 2 } )
+			getStaleInteractiveUiSurfaceIds( [ malformed ], { ...options, latestUserMessageIndex: 2 } )
 		).toEqual( new Set( [ 'test-surface' ] ) );
 	} );
 
 	it( 'keeps a surface’s page when a later update doesn’t name one', () => {
-		const update = createBatch( [ operations[ 1 ] ], 'update' );
-
 		expect(
-			getStaleInteractiveUiSurfaceIds( [ pageBatch( 7 ), update ], {
+			getStaleInteractiveUiSurfaceIds( [ { ...batch, postId: 7 }, update ], {
 				...options,
 				messageIndexes: new Map( [
 					[ 'agent', 1 ],
@@ -136,21 +159,16 @@ describe( 'getStaleInteractiveUiSurfaceIds', () => {
 	} );
 
 	it( 'judges a surface by the last batch that changed it', () => {
-		const update = createBatch( [ operations[ 1 ] ], 'update' );
+		const staleSurfaceIds = getStaleInteractiveUiSurfaceIds( [ batch, update ], {
+			...options,
+			messageIndexes: new Map( [
+				[ 'agent', 1 ],
+				[ 'update', 3 ],
+			] ),
+			latestUserMessageIndex: 2,
+		} );
 
-		const staleSurfaceIds = getStaleInteractiveUiSurfaceIds(
-			[ createBatch( operations, 'agent' ), update ],
-			{
-				...options,
-				messageIndexes: new Map( [
-					[ 'agent', 1 ],
-					[ 'update', 3 ],
-				] ),
-				latestUserMessageIndex: 2,
-			}
-		);
-
-		expect( staleSurfaceIds.size ).toBe( 0 );
+		expect( staleSurfaceIds ).toEqual( new Set() );
 	} );
 } );
 
@@ -221,26 +239,8 @@ describe( 'getUsableInteractiveUiSurfaceIds', () => {
 
 describe( 'keepInteractiveUiSurfacesInTranscript', () => {
 	it( 'leaves out a surface that a message which left the transcript changed', () => {
-		const batches = [
-			createBatch(
-				[
-					{
-						version: 'v1.0',
-						createSurface: { surfaceId: 'form', catalogId: BASIC_CATALOG_ID, sendDataModel: true },
-					},
-				],
-				'agent-1'
-			),
-			createBatch(
-				[
-					{
-						version: 'v1.0',
-						updateDataModel: { surfaceId: 'form', path: '/', value: { name: 'Ada' } },
-					},
-				],
-				'agent-2'
-			),
-		];
+		const [ create, update ] = formOperations;
+		const batches = [ createBatch( [ create ], 'agent-1' ), createBatch( [ update ], 'agent-2' ) ];
 
 		expect(
 			keepInteractiveUiSurfacesInTranscript( [ 'form' ], batches, new Map( [ [ 'agent-1', 0 ] ] ) )

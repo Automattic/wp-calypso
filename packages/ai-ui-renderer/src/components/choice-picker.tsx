@@ -27,10 +27,12 @@ export const ChoicePicker = createComponentImplementation(
 		const [ value, setValue ] = useInputValue( props.value ?? [], props.setValue, context );
 		const { fieldProps, touch } = useFieldProps( props.validationErrors );
 		const { baseControlProps, controlProps } = useBaseControlProps( { help: fieldProps.help } );
+
 		const onChange = ( selected: string[] ) => {
 			setValue( selected );
 			touch();
 		};
+
 		const options = props.options.map( ( option ) => ( {
 			...option,
 			label: typeof option.label === 'string' ? option.label : option.value,
@@ -40,6 +42,7 @@ export const ChoicePicker = createComponentImplementation(
 			return (
 				<RadioControl
 					{ ...fieldProps }
+					{ ...controlProps }
 					label={ props.label }
 					options={ options }
 					selected={ value[ 0 ] ?? '' }
@@ -63,6 +66,7 @@ export const ChoicePicker = createComponentImplementation(
 								checked={ value.includes( option.value ) }
 								disabled={ fieldProps.disabled }
 								aria-invalid={ fieldProps[ 'aria-invalid' ] }
+								aria-describedby={ controlProps[ 'aria-describedby' ] }
 								onChange={ ( checked ) =>
 									onChange(
 										checked

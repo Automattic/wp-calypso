@@ -12,6 +12,7 @@ export function getInteractiveUiOperation(
 
 	const [ name, operation ] =
 		Object.entries( message ).find( ( [ key ] ) => key !== 'version' ) ?? [];
+
 	const surfaceId =
 		typeof operation === 'object' && operation !== null && 'surfaceId' in operation
 			? operation.surfaceId

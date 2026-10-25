@@ -23,6 +23,7 @@ let onError: jest.Mock;
 beforeEach( () => {
 	onAction = jest.fn();
 	onError = jest.fn();
+
 	runtime = createInteractiveUiRuntime( {
 		catalogs: [ createInteractiveUiCatalog(), crashingCatalog ],
 		onAction,
@@ -108,6 +109,43 @@ it( 'themes the modal like its surface', async () => {
 	expect( overlay?.style.getPropertyValue( '--a2ui-color-surface' ) ).toBe( 'black' );
 	expect( overlay?.style.getPropertyValue( 'color-scheme' ) ).toBe( 'dark' );
 	expect( overlay?.style.getPropertyValue( '--ai-ui-renderer-host-accent' ) ).toBe( 'green' );
+} );
+
+it( 'titles a modal with its accessibility label', async () => {
+	const surface = createSurface( [
+		{
+			id: 'root',
+			component: 'Modal',
+			trigger: 'trigger',
+			content: 'address',
+			accessibility: { label: 'Edit address' },
+		},
+		{ id: 'trigger', component: 'Button', child: 'label', action: { event: { name: 'open' } } },
+		{ id: 'label', component: 'Text', text: 'Edit' },
+		{ id: 'address', component: 'Text', text: '1 Main St' },
+	] );
+
+	render( <InteractiveUiSurface surface={ surface } /> );
+
+	fireEvent.click( screen.getByRole( 'button', { name: 'Edit' } ) );
+
+	expect( await screen.findByRole( 'dialog', { name: 'Edit address' } ) ).toBeVisible();
+} );
+
+it( 'shows an AudioPlayer’s description as its name', () => {
+	const surface = createSurface( [
+		{
+			id: 'root',
+			component: 'AudioPlayer',
+			url: 'https://example.com/a.mp3',
+			description: 'Intro',
+		},
+	] );
+
+	render( <InteractiveUiSurface surface={ surface } /> );
+
+	expect( screen.getByText( 'Intro' ) ).toBeVisible();
+	expect( screen.getByLabelText( 'Intro' ) ).toHaveAttribute( 'src', 'https://example.com/a.mp3' );
 } );
 
 it( 'disables a disabled surface’s inputs and actions, but not its tabs or modal', async () => {
@@ -296,6 +334,7 @@ describe( 'checks', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
 
 		await waitFor( () => expect( name ).toHaveAccessibleDescription( 'Fill this in.' ) );
+		expect( name ).toHaveFocus();
 		expect( onAction ).not.toHaveBeenCalled();
 	} );
 
@@ -325,6 +364,36 @@ describe( 'checks', () => {
 		expect( input ).toBeInvalid();
 	} );
 
+	it( 'clears a DateTimeInput’s browser error once the date becomes valid', async () => {
+		const surface = createSurface( [
+			{
+				id: 'root',
+				component: 'DateTimeInput',
+				label: 'Date',
+				enableDate: true,
+				min: '2026-01-10',
+				value: { '@path': '/date' },
+			},
+		] );
+
+		render( <InteractiveUiSurface surface={ surface } /> );
+
+		const input = screen.getByLabelText( 'Date' );
+
+		fireEvent.change( input, { target: { value: '2026-01-01' } } );
+		fireEvent.blur( input );
+
+		await waitFor( () =>
+			expect( input ).toHaveAccessibleDescription( 'Constraints not satisfied' )
+		);
+		expect( input ).toBeInvalid();
+
+		fireEvent.input( input, { target: { value: '2026-01-15' } } );
+
+		await waitFor( () => expect( input ).not.toHaveAccessibleDescription() );
+		expect( input ).toBeValid();
+	} );
+
 	it.each( [
 		[ 'CheckBox', { label: 'Agree', value: false }, 'checkbox', fireEvent.click ],
 		[
@@ -340,7 +409,7 @@ describe( 'checks', () => {
 			( control: HTMLElement ) => fireEvent.change( control, { target: { value: '5' } } ),
 		],
 	] )(
-		'marks a %s invalid once the person changes it',
+		'marks a %s invalid, with its check’s message, once the person changes it',
 		async ( component, props, role, change ) => {
 			const surface = createSurface( [
 				{
@@ -360,6 +429,7 @@ describe( 'checks', () => {
 			change( control );
 
 			await waitFor( () => expect( control ).toBeInvalid() );
+			expect( control ).toHaveAccessibleDescription( 'Not yet.' );
 		}
 	);
 
@@ -388,5 +458,6 @@ describe( 'checks', () => {
 
 		await waitFor( () => expect( topics ).toHaveAccessibleDescription( 'Fill this in.' ) );
 		expect( news ).toBeInvalid();
+		expect( news ).toHaveAccessibleDescription( 'Fill this in.' );
 	} );
 } );

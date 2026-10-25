@@ -24,7 +24,8 @@
   `{"@call": …}` as A2UI's Basic catalog allows: only actions and checks call functions. So send
   display text ready to show: formatted, such as a date or a price, and in the person's language.
 - A modal's `Button` trigger opens it instead of sending its action, and stays usable on a
-  disabled surface. Its inputs share the surface's data model and are disabled with it. Its own
+  disabled surface. Its title, which also names the dialog, is its `accessibility.label`, or
+  "Details". Its inputs share the surface's data model and are disabled with it. Its own
   buttons send their actions and leave it open; only the person closes it.
 - Text fields keep their values as strings, choice pickers as string arrays, and date/time inputs
   as local ISO strings.
@@ -32,20 +33,24 @@
   `checks`. A button is disabled while any of its own checks fails, with their messages as its
   accessible description, and a field shows its first failed check once it's touched (when the
   person leaves a text or date field, or changes a check box, a choice or a slider) or once the
-  person clicks a disabled button whose checks fail. A check of a path with no value runs on it as
-  empty: `required`, `email` and `numeric` fail, and `length` and `regex` check an empty string. One
-  that can't run, such as `numeric` given a text field's string, also fails and is reported through
+  person clicks a disabled button whose checks fail, which also moves focus to the surface's first
+  invalid field outside a hidden tab. A check of a path with no value runs on it as empty:
+  `required`, `email` and `numeric` fail, and `length` and `regex` check an empty string. One that
+  can't run, such as `numeric` given a text field's string, also fails and is reported through
   `onError`. A failed check shows its own `message`, never the English one A2UI's validation
-  functions return, so give every check a `message` in the person's language: one without shows
+  functions return, so give every check a `message` in the person's language that names the field
+  and says what to enter, as a button reads all of its failing messages together: one without shows
   A2UI's generic English "Validation failed".
-- Components ignore A2UI v1.0 properties they don't support, such as `weight` and
-  `accessibility`, instead of rejecting the surface.
+- An `Image`'s `description` is its alt text, so one without it is decorative. An `AudioPlayer`'s
+  shows above the player and names it.
+- Components ignore A2UI v1.0 properties they don't support, such as `weight` and the
+  `accessibility` of components other than `Modal`, instead of rejecting the surface.
 
 ## Catalogs
 
 A host or provider with its own components and functions declares one catalog: an
 [A2UI v1.0 catalog document](https://a2ui.org/specification/v1_0/catalog_definition.json) and the
-code that implements it. Add a custom component only for what the basic ones can't express.
+code that implements it.
 
 ```ts
 const exampleCatalog: InteractiveUiCatalogDefinition = {
@@ -98,9 +103,9 @@ const exampleCatalog: InteractiveUiCatalogDefinition = {
   invalid Button was clicked), and disable inputs and actions with `disabled` while keeping what
   only shows or reveals content usable. A `lazy()` component renders nothing while it loads.
 - Keep a custom component accessible like the basic components: label its fields, show a failed
-  check's message as the field's `help` with `aria-invalid`, and set `accessibleWhenDisabled` on
-  buttons, since the surface disables them right after a click and a plainly `disabled` button
-  drops keyboard focus.
+  check's message as the field's `help` with `aria-invalid` on its focusable control, which a click
+  on an invalid button focuses, and set `accessibleWhenDisabled` on buttons, since the surface
+  disables them right after a click and a plainly `disabled` button drops keyboard focus.
 - A function declares its `returnType`, and may be async. Its arguments come from the agent, so
   treat them as untrusted. It runs only from a click, unless the document sets
   `requiresUserActivation: false` so a check or a custom component's `Dynamic…` prop can call it,
@@ -123,11 +128,9 @@ before loading the renderer:
   Check catalogs with it before advertising them, since
   `createInteractiveUiCatalog()` rejects those that fail.
 - `getInteractiveUiRendererCapabilities( definitions )` returns A2UI's `a2uiRendererCapabilities`
-  for the Basic catalog and those catalogs: their IDs (`supportedCatalogIds`), and the documents
-  of those that aren't `agentComposable: false` (`inlineCatalogs`) in A2UI's form, with `$id`,
-  `protocolVersion`, each component and function named in `component` or `@call`, and each
-  function's `requiresUserActivation`. Send it in each message's metadata, as A2UI's A2A binding
-  does, so the agent shows only UI the host can render.
+  for the Basic catalog and those catalogs: their IDs (`supportedCatalogIds`), and the documents of
+  those that aren't `agentComposable: false` (`inlineCatalogs`) in A2UI's form. Send it in each
+  message's metadata, as A2UI's A2A binding does, so the agent shows only UI the host can render.
 - `getInteractiveUiOperation( message )` returns an A2UI message's operation name and surface ID,
   or `undefined` for a malformed message, as the agent's messages aren't validated.
 - `BASIC_CATALOG_ID` is A2UI's Basic catalog ID.
@@ -138,11 +141,9 @@ before loading the renderer:
    for the session to preserve edits, then call `runtime.dispose()`. Like A2UI, it rejects a
    message with an invalid `path`, or one that would make a cycle or too deep a layout, even with
    components from earlier messages.
-2. Pass it ordered batches with `runtime.processMessages(messages, ownerId)`. The owner is what
-   the host shows the surfaces next to, such as a chat message. It returns the messages it
-   applied. Unlike A2UI's A2A binding, which goes on to the rest, it skips the batch's later
-   messages for a surface once one fails, so a rejected `createSurface` can't let its updates
-   change an earlier surface with the same ID.
+2. Pass it ordered batches with `runtime.processMessages(messages, ownerId)`. The owner is what the
+   host shows the surfaces next to, such as a chat message. It returns the messages it applied. Once
+   a message for a surface fails, it skips the batch's later messages for that surface.
 3. Render each of an owner's surfaces (`runtime.getSurfaceIds(ownerId)`, then
    `runtime.getSurface(id)`) with `InteractiveUiSurface`, and re-render after each
    `processMessages()` call.
@@ -177,9 +178,8 @@ overlay (`ai-ui-renderer__modal`) a stacking rule.
 
 ## Theming
 
-Surfaces follow [A2UI's theming](https://a2ui.org/guides/theming/): a host sets A2UI's color
-tokens, and the renderer applies them to the basic components and the WordPress components they
-use, including newer ones that read WordPress's `--wpds-*` design tokens.
+Surfaces follow [A2UI's theming](https://a2ui.org/guides/theming/): a host sets A2UI's color tokens,
+and the renderer applies them to the basic components and the WordPress components they use.
 
 | Token                                                                             | Colors                                                   |
 | --------------------------------------------------------------------------------- | -------------------------------------------------------- |
@@ -210,10 +210,8 @@ default from WordPress's palette that follows the light or dark mode. A custom
 The modal renders outside the host, so it copies its surface's theme when it opens.
 
 Disabled controls use the renderer's disabled colors (`--ai-ui-renderer-disabled-background`,
-`--ai-ui-renderer-disabled-border` and `--ai-ui-renderer-disabled-foreground`): WordPress's grays in
-light mode, and the matching shades in dark mode. WordPress components color disabled controls with
-light grays, or not at all, so `style.scss` gives the basic components' disabled controls these
-colors.
+`--ai-ui-renderer-disabled-border` and `--ai-ui-renderer-disabled-foreground`), which follow the
+light or dark mode.
 
 Accent-colored text and fills on the surface use the renderer's accent colors
 (`--ai-ui-renderer-accent-text`, `--ai-ui-renderer-accent-text-hover` and
@@ -227,8 +225,9 @@ When you add a basic or custom component:
    primary-colored text or fills on the surface, and the disabled colors, or use WordPress
    components, which follow them. Never use a chat's own variables.
 2. Check it in light and dark mode, enabled and disabled (a stale surface).
-3. If a WordPress component hard-codes light colors, enabled or disabled, add a rule for it: in
-   `style.scss` for a basic component, or in the custom component's own stylesheet.
+3. If a WordPress component hard-codes light colors, enabled or disabled, or doesn't color its
+   disabled state, add a rule for it: in `style.scss` for a basic component, or in the custom
+   component's own stylesheet.
 
 ## Development
 

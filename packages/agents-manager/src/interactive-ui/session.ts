@@ -1,5 +1,12 @@
 import { isSessionBootstrap } from '../utils/agent-session';
+import { getLatestUserMessageIndex } from '../utils/latest-message';
+import {
+	getStaleInteractiveUiSurfaceIds,
+	getUsableInteractiveUiSurfaceIds,
+	keepInteractiveUiSurfacesInTranscript,
+} from './messages';
 import type { AppliedInteractiveUiBatch, InteractiveUiBatch } from './messages';
+import type { UIMessage } from '@automattic/agenttic-client';
 import type { InteractiveUiDataModel, InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 /** Where a chat session's history ends, so its surfaces can be told apart from new ones. */
@@ -82,6 +89,55 @@ export function showInteractiveUiSession( session: InteractiveUiSession ) {
 	};
 }
 
+interface UsableInteractiveUiSurfaceOptions {
+	isBusy: boolean;
+	/** The agent has just begun a reply. */
+	isTurnStart: boolean;
+	messages: UIMessage[];
+	messageIndexes: ReadonlyMap< string, number >;
+	latestUserMessageIndex: number;
+	staleSurfaceIds: ReadonlySet< string >;
+	currentPostId?: number | string;
+}
+
+/** A session's next `usableSurfaceIds`, by the rule its doc describes. */
+export function getInteractiveUiSessionUsableSurfaceIds(
+	{ runtime, appliedBatches, usableSurfaceIds, history }: InteractiveUiSession,
+	{
+		isBusy,
+		isTurnStart,
+		messages,
+		messageIndexes,
+		latestUserMessageIndex,
+		staleSurfaceIds,
+		currentPostId,
+	}: UsableInteractiveUiSurfaceOptions
+): string[] {
+	if ( ! runtime ) {
+		return [];
+	}
+
+	if ( ! isBusy ) {
+		return getUsableInteractiveUiSurfaceIds( runtime, appliedBatches, staleSurfaceIds );
+	}
+
+	// A turn's prompt, regenerated or not, is the last message as the turn starts, and the turn sends
+	// the surfaces that weren't stale before it. It's found by position, as Agenttic can change a
+	// message's ID.
+	if ( isTurnStart && latestUserMessageIndex === messages.length - 1 ) {
+		const staleBeforePrompt = getStaleInteractiveUiSurfaceIds( appliedBatches, {
+			messageIndexes,
+			latestUserMessageIndex: getLatestUserMessageIndex( messages.slice( 0, -1 ) ),
+			restoredMessageIds: history.restoredMessageIds,
+			currentPostId,
+		} );
+
+		return getUsableInteractiveUiSurfaceIds( runtime, appliedBatches, staleBeforePrompt );
+	}
+
+	return keepInteractiveUiSurfacesInTranscript( usableSurfaceIds, appliedBatches, messageIndexes );
+}
+
 /**
  * A2UI's `a2uiRendererDataModel` for a message to the agent, for the shown session: the data of its
  * surfaces that the user could use before sending it, for those that set `sendDataModel`. It's
@@ -94,6 +150,7 @@ export function getShownInteractiveUiDataModel(): InteractiveUiDataModel | undef
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( '[AgentsManager] Failed to read the interactive UI data:', error );
+
 		return undefined;
 	}
 }

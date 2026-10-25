@@ -9,15 +9,14 @@ import {
 import {
 	applyInteractiveUiBatch,
 	getRejectedInteractiveUiMessageIds,
-	getUsableInteractiveUiSurfaceIds,
 	getInteractiveUiBatches,
 	getStaleInteractiveUiSurfaceIds,
 	INTERACTIVE_UI_VERSION,
-	keepInteractiveUiSurfacesInTranscript,
 } from './messages';
 import {
 	disposeInteractiveUiRuntime,
 	getInteractiveUiSession,
+	getInteractiveUiSessionUsableSurfaceIds,
 	showInteractiveUiSession,
 	trackInteractiveUiHistory,
 } from './session';
@@ -104,10 +103,12 @@ export function useInteractiveUi( {
 	// The transcript's surfaces, which wait while the agent replies or images upload.
 	const messageBatches = useMemo( () => getInteractiveUiBatches( messages ), [ messages ] );
 	const hasMessageBatches = messageBatches.length > 0;
+
 	const messageIndexes = useMemo(
 		() => new Map( messages.map( ( message, index ) => [ message.id, index ] as const ) ),
 		[ messages ]
 	);
+
 	const latestUserMessageIndex = getLatestUserMessageIndex( messages );
 	const isBusy = isProcessing || isUploadingImages;
 
@@ -261,51 +262,23 @@ export function useInteractiveUi( {
 		setRuntimeRevision( ( currentRevision ) => currentRevision + 1 );
 	}, [ messageBatches, isBusy, renderer, catalogs, conversationSession ] );
 
-	// Keeps `usableSurfaceIds` current, as its doc on `InteractiveUiSession` describes.
 	const wasProcessingRef = useRef( false );
 
 	useLayoutEffect( () => {
-		const { runtime, appliedBatches, usableSurfaceIds } = conversationSession;
 		const isTurnStart = isProcessing && ! wasProcessingRef.current;
 		wasProcessingRef.current = isProcessing;
 
-		if ( ! runtime ) {
-			conversationSession.usableSurfaceIds = [];
-			return;
-		}
-
-		if ( ! isBusy ) {
-			conversationSession.usableSurfaceIds = getUsableInteractiveUiSurfaceIds(
-				runtime,
-				appliedBatches,
-				staleSurfaceIds
-			);
-			return;
-		}
-
-		// A turn's prompt, regenerated or not, is the last message as the turn starts, and the turn sends
-		// the surfaces that weren't stale before it. It's found by position, as Agenttic can change a
-		// message's ID.
-		if ( isTurnStart && latestUserMessageIndex === messages.length - 1 ) {
-			const staleBeforePrompt = getStaleInteractiveUiSurfaceIds( appliedBatches, {
+		conversationSession.usableSurfaceIds = getInteractiveUiSessionUsableSurfaceIds(
+			conversationSession,
+			{
+				isBusy,
+				isTurnStart,
+				messages,
 				messageIndexes,
-				latestUserMessageIndex: getLatestUserMessageIndex( messages.slice( 0, -1 ) ),
-				restoredMessageIds,
+				latestUserMessageIndex,
+				staleSurfaceIds,
 				currentPostId,
-			} );
-
-			conversationSession.usableSurfaceIds = getUsableInteractiveUiSurfaceIds(
-				runtime,
-				appliedBatches,
-				staleBeforePrompt
-			);
-			return;
-		}
-
-		conversationSession.usableSurfaceIds = keepInteractiveUiSurfacesInTranscript(
-			usableSurfaceIds,
-			appliedBatches,
-			messageIndexes
+			}
 		);
 	}, [
 		conversationSession,
@@ -315,7 +288,6 @@ export function useInteractiveUi( {
 		messages,
 		messageIndexes,
 		latestUserMessageIndex,
-		restoredMessageIds,
 		currentPostId,
 	] );
 

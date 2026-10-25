@@ -141,6 +141,7 @@ export function presentInteractiveUiActions(
 	const shownMessageIds = new Set(
 		displayedMessages.filter( isShownByAgenttic ).map( ( message ) => message.id )
 	);
+
 	const notesByNextMessageId = new Map< string, AgentsManagerUIMessage[] >();
 	const replyIds = new Set< string >();
 	let pendingNotes: AgentsManagerUIMessage[] = [];

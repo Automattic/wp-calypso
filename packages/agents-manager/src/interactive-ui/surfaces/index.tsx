@@ -34,7 +34,7 @@ export function InteractiveUiSurfaces( { messageId, presentation }: Props ) {
 
 	if ( hasLoadError ) {
 		return (
-			<div role="alert">
+			<div className="agents-manager-interactive-ui-surfaces__load-error" role="alert">
 				<p>
 					{ isRetryingLoad
 						? __( 'Trying again…', __i18n_text_domain__ )
@@ -58,6 +58,7 @@ export function InteractiveUiSurfaces( { messageId, presentation }: Props ) {
 	}
 
 	const { InteractiveUiSurface } = renderer;
+
 	const failureNotice = restoredMessageIds.has( messageId ) ? null : (
 		<p className="agents-manager-interactive-ui-surfaces__failure" role="status">
 			{ __( 'Couldn’t show this. Try asking again.', __i18n_text_domain__ ) }

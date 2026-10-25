@@ -1,4 +1,3 @@
-import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
 import {
 	disposeInteractiveUiRuntime,
 	getInteractiveUiSession,
@@ -6,7 +5,7 @@ import {
 	showInteractiveUiSession,
 	trackInteractiveUiHistory,
 } from '../session';
-import { createRuntime } from './fixtures/surface';
+import { createBatch, createRuntime, formOperations } from './fixtures/surface';
 import type { InteractiveUiDataModel, InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 const SCOPE = JSON.stringify( [ 'site', 1, 'agent' ] );
@@ -33,9 +32,7 @@ describe( 'disposeInteractiveUiRuntime', () => {
 		const dispose = jest.fn();
 		const session = getInteractiveUiSession( undefined, SCOPE, 'session-1' );
 		session.runtime = { dispose } as unknown as InteractiveUiRuntime;
-		session.appliedBatches = [
-			{ operations: [], messageId: 'agent', signature: 'a', hasRejections: false },
-		];
+		session.appliedBatches = [ { ...createBatch( [], 'agent' ), hasRejections: false } ];
 
 		disposeInteractiveUiRuntime( session );
 
@@ -65,11 +62,13 @@ describe( 'showInteractiveUiSession', () => {
 			createSession( 'session-1', replacedDataModel )
 		);
 		const hide = showInteractiveUiSession( createSession( 'session-2', dataModel ) );
+
 		hideReplaced();
 
 		expect( getShownInteractiveUiDataModel() ).toBe( dataModel );
 
 		hide();
+
 		expect( getShownInteractiveUiDataModel() ).toBeUndefined();
 	} );
 } );
@@ -83,19 +82,8 @@ describe( 'getShownInteractiveUiDataModel', () => {
 	function showFormSession() {
 		const session = getInteractiveUiSession( undefined, SCOPE, 'session-1' );
 		session.runtime = createRuntime();
-		session.runtime.processMessages(
-			[
-				{
-					version: 'v1.0',
-					createSurface: { surfaceId: 'form', catalogId: BASIC_CATALOG_ID, sendDataModel: true },
-				},
-				{
-					version: 'v1.0',
-					updateDataModel: { surfaceId: 'form', path: '/', value: { name: 'Ada' } },
-				},
-			],
-			'agent'
-		);
+		session.runtime.processMessages( formOperations, 'agent' );
+
 		hide = showInteractiveUiSession( session );
 
 		return session;
@@ -116,12 +104,14 @@ describe( 'getShownInteractiveUiDataModel', () => {
 
 	it( 'gives nothing instead of throwing, which would drop the message’s other metadata', () => {
 		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+
 		const session = getInteractiveUiSession( undefined, SCOPE, 'session-1' );
 		session.runtime = {
 			getDataModel: () => {
 				throw new Error( 'Broken' );
 			},
 		} as unknown as InteractiveUiRuntime;
+
 		hide = showInteractiveUiSession( session );
 
 		expect( getShownInteractiveUiDataModel() ).toBeUndefined();
@@ -131,7 +121,7 @@ describe( 'getShownInteractiveUiDataModel', () => {
 } );
 
 describe( 'trackInteractiveUiHistory', () => {
-	const batch = { operations: [], messageId: 'agent', signature: 'restored' };
+	const batch = createBatch( [], 'agent' );
 
 	function createHistory() {
 		return getInteractiveUiSession( undefined, SCOPE, 'session-1' ).history;

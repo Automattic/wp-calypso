@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { useFieldProps } from '../hooks/use-field-props';
 import { useInputValue } from '../hooks/use-input-value';
 import { ChecksSchema, StringValueSchema } from '../utils/schemas';
-import type { FocusEvent } from 'react';
+import type { FocusEvent, InputEvent } from 'react';
 
 export const DateTimeInput = createComponentImplementation(
 	{
@@ -24,6 +24,7 @@ export const DateTimeInput = createComponentImplementation(
 	( { props, context } ) => {
 		const [ value, onChange ] = useInputValue( props.value ?? '', props.setValue, context );
 		const [ validationMessage, setValidationMessage ] = useState( '' );
+
 		const { fieldProps, touch } = useFieldProps(
 			validationMessage
 				? [ validationMessage, ...( props.validationErrors ?? [] ) ]
@@ -67,6 +68,12 @@ export const DateTimeInput = createComponentImplementation(
 				onBlur={ ( event: FocusEvent< HTMLInputElement > ) => {
 					setValidationMessage( event.currentTarget.validationMessage );
 					touch();
+				} }
+				// A shown browser error clears as soon as the value is valid, as a check's does.
+				onInput={ ( event: InputEvent< HTMLInputElement > ) => {
+					if ( validationMessage ) {
+						setValidationMessage( event.currentTarget.validationMessage );
+					}
 				} }
 				onChange={ onChange }
 			/>

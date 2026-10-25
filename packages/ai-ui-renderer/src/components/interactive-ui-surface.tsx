@@ -85,6 +85,7 @@ export function InteractiveUiSurface( {
 }: InteractiveUiSurfaceProps ) {
 	const rootRef = useRef< HTMLDivElement >( null );
 	const [ isShowingErrors, setIsShowingErrors ] = useState( false );
+
 	const surfaceContext = useMemo(
 		() => ( {
 			surfaceId: surface.id,

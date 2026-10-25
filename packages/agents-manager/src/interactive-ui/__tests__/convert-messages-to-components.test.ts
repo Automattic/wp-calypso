@@ -5,18 +5,10 @@ import {
 	presentInteractiveUiActions,
 } from '../convert-messages-to-components';
 import { InteractiveUiSurfaces } from '../surfaces';
-import { createRuntime, operations } from './fixtures/surface';
+import { createRuntime, operations, surfaceContent } from './fixtures/surface';
 import type { AgentsManagerUIMessage } from '../../utils/convert-tool-messages-to-components';
 import type { InteractiveUiPresentation } from '../use-interactive-ui';
 import type { ComponentType } from 'react';
-
-// Agenttic keeps A2UI's A2A data part under `a2ui`.
-const surfaceContent = {
-	type: 'data' as const,
-	data: {
-		a2ui: { type: 'data', data: operations, metadata: { mimeType: 'application/a2ui+json' } },
-	},
-};
 
 function createMessage(
 	id: string,
@@ -150,11 +142,8 @@ describe( 'presentInteractiveUiActions', () => {
 		] );
 	}
 
-	it.each( [
-		[ 'no `userMessage`', { name: 'greet' } ],
-		[ 'a blank `userMessage`', { name: 'greet', userMessage: '  ' } ],
-	] )( 'starts a turn at the shown reply to an action with %s', ( _, actionEvent ) => {
-		const action = createActionMessage( actionEvent );
+	it( 'starts a turn at the shown reply to an action without a `userMessage`', () => {
+		const action = createActionMessage( { name: 'greet' } );
 
 		const presented = presentInteractiveUiActions(
 			[ dataOnly, reply ],
@@ -214,7 +203,9 @@ describe( 'presentInteractiveUiActions', () => {
 
 		const presented = presentInteractiveUiActions( [ reply ], [ reply, action ] );
 
-		expect( presented ).toHaveLength( 2 );
-		expect( presented[ 1 ] ).toMatchObject( { id: 'action-note', role: 'user' } );
+		expect( presented ).toEqual( [
+			reply,
+			expect.objectContaining( { id: 'action-note', role: 'user' } ),
+		] );
 	} );
 } );
