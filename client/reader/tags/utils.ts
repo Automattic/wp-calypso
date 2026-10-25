@@ -23,8 +23,10 @@ export const getTagPath = ( slug: string ): string =>
 // with `?`, or cut off mid-entity, while the slug keeps the characters intact.
 export const recoverTagTitle = ( slug: string, title: string ): string => {
 	const decodedSlug = decodeNonAsciiEscapes( slug ?? '' );
-	const isMissingCharacters = hasNonAscii( decodedSlug ) && ! hasNonAscii( title ?? '' );
-	if ( isMissingCharacters || /&(?:#\d*)?$/.test( title ?? '' ) ) {
+	if ( ! hasNonAscii( decodedSlug ) ) {
+		return title;
+	}
+	if ( ! hasNonAscii( title ?? '' ) || /&(?:#\d*)?$/.test( title ?? '' ) ) {
 		return decodedSlug.replace( /-/g, ' ' );
 	}
 	return title;

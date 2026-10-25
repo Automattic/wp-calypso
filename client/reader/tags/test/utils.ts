@@ -45,6 +45,7 @@ describe( 'getTagTitle', () => {
 			'Café Kultur?'
 		);
 		expect( getTagTitle( { slug: 'what', title: 'What?' } ) ).toBe( 'What?' );
+		expect( getTagTitle( { slug: 'rock', title: 'Rock &amp;' } ) ).toBe( 'Rock &' );
 	} );
 } );
 
