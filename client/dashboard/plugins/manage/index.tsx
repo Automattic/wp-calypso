@@ -19,6 +19,7 @@ import { usePlugin } from '../plugin/use-plugin';
 import { PluginSites } from './components/plugin-sites';
 import { PluginSwitcher } from './components/plugin-switcher';
 import { PluginsEmptyState } from './components/plugins-empty-state';
+import { usePluginsEmptyReason } from './hooks/use-plugins-empty-reason';
 import { useSitesById } from './hooks/use-sites-by-id';
 import { mapApiPluginsToDataViewPlugins } from './utils';
 import type { PluginListRow } from './types';
@@ -50,7 +51,7 @@ export default function PluginsList() {
 		isLoading: pluginsQueryLoading,
 		isError: pluginsQueryError,
 	} = useQuery( pluginsQuery() );
-	const { sitesById, isLoadingSites, hasSites } = useSitesById();
+	const { sitesById, isLoadingSites } = useSitesById();
 	const sitesPluginsLoading = pluginsQueryLoading || isLoadingSites;
 	const { pluginId: pluginSlug } = useParams( { strict: false } );
 	const fields = useMemo( () => {
@@ -67,15 +68,10 @@ export default function PluginsList() {
 		() => filterSortAndPaginate( allPlugins, view, fields ),
 		[ allPlugins, fields, view ]
 	);
-	// Plugins are only listed for sites with `update_plugins`, so without such a site the list
-	// is known to be empty before the (slow) plugins request returns.
-	const hasNoPluginSites = ! isLoadingSites && sitesById?.size === 0;
-	const isEmpty =
-		!! sitesById &&
-		( hasNoPluginSites ||
-			( ! sitesPluginsLoading && ! pluginsQueryError && allPlugins.length === 0 ) );
+	const emptyReason = usePluginsEmptyReason();
 	// A direct plugin link can still be installed from its "Available on" tab, as long as there is a site to install it on.
-	const showEmptyState = isEmpty && ( ! pluginSlug || ! hasSites );
+	const showEmptyState =
+		emptyReason === 'no-sites' || ( emptyReason === 'no-plugins' && ! pluginSlug );
 	const selectedPluginSlug = pluginSlug || plugins[ 0 ]?.slug;
 	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
 
@@ -157,7 +153,7 @@ export default function PluginsList() {
 					/>
 				}
 			>
-				<PluginsEmptyState hasSites={ hasSites } />
+				<PluginsEmptyState reason={ emptyReason } />
 				<PerformanceTrackerStop />
 			</PageLayout>
 		);

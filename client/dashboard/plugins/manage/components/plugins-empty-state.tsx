@@ -6,6 +6,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import EmptyState from '../../../components/empty-state';
 import { wpcomLink } from '../../../utils/link';
+import type { PluginsEmptyReason } from '../hooks/use-plugins-empty-reason';
 
 const CONTEXT = 'dashboard-plugins';
 const EMPTY_STATE_REF = 'dashboard-plugins-empty-state';
@@ -82,6 +83,6 @@ function NoPluginsEmptyState() {
 	);
 }
 
-export function PluginsEmptyState( { hasSites }: { hasSites: boolean } ) {
-	return hasSites ? <NoPluginsEmptyState /> : <NoSitesEmptyState />;
+export function PluginsEmptyState( { reason }: { reason: PluginsEmptyReason } ) {
+	return reason === 'no-sites' ? <NoSitesEmptyState /> : <NoPluginsEmptyState />;
 }

@@ -51,11 +51,8 @@ export const pluginsManageRoute = createRoute( {
 	loader: async ( { context } ) => {
 		queryClient.prefetchQuery( marketplacePluginsQuery() );
 		queryClient.prefetchQuery( pluginsQuery() );
-		await Promise.all( [
-			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			// The sites decide which layout the page renders, so settle them before first paint.
-			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
-		] );
+		queryClient.prefetchQuery( context.config.queries.sitesQuery() );
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},
 } );
 

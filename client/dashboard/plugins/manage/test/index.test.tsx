@@ -68,27 +68,40 @@ const pluginSite = {
 	capabilities: { update_plugins: true },
 };
 
-// Holds the plugins request open until the returned `release` is called, so tests can check
-// what the page renders while plugins are still loading.
+// Hold the sites or plugins request open until `releaseSites` or `releasePlugins` is called, so
+// tests can check what the page renders while that request is still loading.
+let releaseSites: () => void = () => {};
 let releasePlugins: () => void = () => {};
 
-afterEach( () => releasePlugins() );
+afterEach( () => {
+	releaseSites();
+	releasePlugins();
+} );
 
 function mockApiEndpoints( {
 	sites,
 	plugins,
 	pluginsStatus = 200,
+	holdSites = false,
 	holdPlugins = false,
 }: {
 	sites: Record< string, unknown >[];
 	plugins: Record< string, unknown[] >;
 	pluginsStatus?: number;
+	holdSites?: boolean;
 	holdPlugins?: boolean;
 } ) {
-	nock( 'https://public-api.wordpress.com' )
+	const sitesScope = nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.2/me/sites' )
-		.query( true )
-		.reply( 200, { sites } );
+		.query( true );
+
+	if ( holdSites ) {
+		sitesScope.reply( ( _uri, _body, callback ) => {
+			releaseSites = () => callback( null, [ 200, { sites } ] );
+		} );
+	} else {
+		sitesScope.reply( 200, { sites } );
+	}
 
 	const pluginsScope = nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/sites/plugins' )
@@ -260,5 +273,67 @@ describe( '<PluginsList> empty states', () => {
 		expect(
 			await screen.findByRole( 'heading', { name: 'No plugins installed yet' } )
 		).toBeVisible();
+	} );
+
+	test( 'shows the no-site empty state from the user’s site counts without waiting for sites', async () => {
+		mockApiEndpoints( { sites: [], plugins: {}, holdSites: true, holdPlugins: true } );
+
+		render( <PluginsList />, { user: { ID: 1, visible_site_count: 0 } as User } );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'You need a site to install a plugin' } )
+		).toBeVisible();
+	} );
+
+	test( 'shows the no-plugins empty state from the user’s site counts when they have no Atomic or Jetpack sites', async () => {
+		mockApiEndpoints( { sites: [], plugins: {}, holdSites: true, holdPlugins: true } );
+
+		render( <PluginsList />, {
+			user: {
+				ID: 1,
+				visible_site_count: 1,
+				atomic_visible_site_count: 0,
+				jetpack_visible_site_count: 0,
+			} as User,
+		} );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'No plugins installed yet' } )
+		).toBeVisible();
+	} );
+
+	test( 'shows the no-plugins empty state from an empty plugins response without waiting for sites', async () => {
+		mockApiEndpoints( { sites: [ pluginSite ], plugins: {}, holdSites: true } );
+
+		render( <PluginsList />, {
+			user: { ID: 1, visible_site_count: 1, atomic_visible_site_count: 1 } as User,
+		} );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'No plugins installed yet' } )
+		).toBeVisible();
+	} );
+
+	test( 'lists plugins once loaded even when the user’s site counts say there are none', async () => {
+		mockApiEndpoints( {
+			sites: [ { ...pluginSite, site_migration: {} } ],
+			plugins: {
+				'1': [ { id: 'test-plugin/test-plugin.php', slug: 'test-plugin', name: 'Test Plugin' } ],
+			},
+		} );
+
+		render( <PluginsList />, {
+			user: {
+				ID: 1,
+				visible_site_count: 1,
+				atomic_visible_site_count: 0,
+				jetpack_visible_site_count: 0,
+			} as User,
+		} );
+
+		expect( ( await screen.findAllByText( 'Test Plugin' ) )[ 0 ] ).toBeVisible();
+		expect(
+			screen.queryByRole( 'heading', { name: 'No plugins installed yet' } )
+		).not.toBeInTheDocument();
 	} );
 } );
