@@ -160,6 +160,22 @@ describe( 'createNotificationSound', () => {
 		sound.dispose();
 	} );
 
+	it( 'does not play if the tab is hidden while audio is starting', async () => {
+		setHasBeenActive( true );
+		audioContext.resume.mockImplementation( () =>
+			Promise.resolve().then( () => {
+				audioContext.state = 'running';
+			} )
+		);
+		const sound = createNotificationSound();
+		const result = sound.play();
+		Object.defineProperty( document, 'hidden', { configurable: true, value: true } );
+
+		await expect( result ).resolves.toBe( 'hidden' );
+		expect( audioContext.createOscillator ).not.toHaveBeenCalled();
+		sound.dispose();
+	} );
+
 	it( 'gives up on an alert when audio does not start in time', async () => {
 		setHasBeenActive( true );
 		audioContext.resume.mockImplementation( () => new Promise( () => {} ) );
