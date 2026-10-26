@@ -1,0 +1,55 @@
+{
+	"name": "@automattic/wp-oxc-makepot",
+	"version": "1.0.0",
+	"description": "Extracts translatable strings from JavaScript and TypeScript source into POT files, using oxc-parser.",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"main": "index.js",
+	"author": "Automattic Inc.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/wp-oxc-makepot"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"keywords": [
+		"makepot",
+		"i18n",
+		"pot",
+		"calypso"
+	],
+	"license": "GPL-2.0-or-later",
+	"bin": "./cli.js",
+	"files": [
+		"cli.js",
+		"index.js",
+		"process-files.js",
+		"worker.js",
+		"utils",
+		"CHANGELOG.md",
+		"README.md"
+	],
+	"engines": {
+		"node": "^20.19.0 || >=22.12.0"
+	},
+	"scripts": {
+		"start": "./cli.js",
+		"test": "rm -rf test/output && vitest run"
+	},
+	"dependencies": {
+		"commander": "^5.1.0",
+		"gettext-parser": "^4.0.3",
+		"glob": "^7.2.3",
+		"oxc-parser": "^0.155.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-eslint-config": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"i18n-calypso": "workspace:^",
+		"react": "^18.3.1",
+		"rimraf": "^3.0.2",
+		"vitest": "^3.2.6"
+	}
+}

@@ -5,8 +5,25 @@ const rimraf = require( 'rimraf' );
 const processFiles = require( '../process-files' );
 const concatPot = require( '../utils/concat-pot' );
 
-const runExtraction = ( filepaths, dir, baseDir, jobs ) =>
-	processFiles( filepaths, { dir, base: baseDir, jobs } );
+const getPreset = ( filepath ) => ( filepath.includes( 'decorators' ) ? 'decorators' : 'default' );
+
+const runExtraction = async ( filepaths, dir, baseDir, jobs ) => {
+	const filepathsByPreset = filepaths.reduce( ( groups, filepath ) => {
+		const preset = getPreset( filepath );
+
+		if ( ! groups[ preset ] ) {
+			groups[ preset ] = [];
+		}
+
+		groups[ preset ].push( filepath );
+
+		return groups;
+	}, {} );
+
+	for ( const [ preset, presetFilepaths ] of Object.entries( filepathsByPreset ) ) {
+		await processFiles( presetFilepaths, { preset, dir, base: baseDir, jobs } );
+	}
+};
 
 describe( 'makePot', () => {
 	const potOutputDir = path.join( __dirname, 'output/' );

@@ -47,6 +47,7 @@ paths=(
 	packages/calypso-babel-config
 	packages/babel-plugin-i18n-calypso
 	packages/wp-babel-makepot
+	packages/wp-oxc-makepot
 	packages/calypso-color-schemes
 	packages/create-calypso-config
 	packages/languages

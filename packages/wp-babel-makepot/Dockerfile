@@ -1,9 +1,9 @@
 FROM node:24.22.1
 
-# /src is where we expect the source files to extract strings from
+# /src is where we expect source javascript to run our babel config over
 RUN mkdir /src
 
-# `cwd`/build/ is the default output location
+# `cwd`/build/ is the default output location for @automattic/babel-plugin-i18n-calypso
 RUN mkdir /build
 
 # Copy + install packages
@@ -11,6 +11,7 @@ COPY ./package.json /
 COPY ./package-lock.json /
 COPY ./index.js /
 COPY ./cli.js /
+COPY ./presets/ /presets/
 COPY ./process-files.js /
 COPY ./worker.js /
 COPY ./utils/ /utils/

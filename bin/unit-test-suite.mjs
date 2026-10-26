@@ -96,11 +96,11 @@ const testBuildTools = withUnitTestInfo(
 // Includes ETK and Odyssey Stats, migrated here from their individual builds.
 const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1 --workerIdleMemoryLimit=1GB' );
 
-// Vitest, because extraction loads Babel, and Jest can't require() the ES modules Babel 8 ships.
-const testMakepot = {
+// wp-oxc-makepot's tests run on Vitest, outside the shared Jest projects.
+const testWpOxcMakepot = {
 	name: 'yarn',
-	args: 'workspace @automattic/wp-babel-makepot test',
-	testId: 'test_wp_babel_makepot',
+	args: 'workspace @automattic/wp-oxc-makepot test',
+	testId: 'test_wp_oxc_makepot',
 };
 
 const testWorkspaces = {
@@ -136,7 +136,7 @@ try {
 		await runTask( testPackages );
 		await runTask( testServer );
 		await runTask( testBuildTools );
-		await runTask( testMakepot );
+		await runTask( testWpOxcMakepot );
 		await runTask( testWorkspaces );
 		await runTask( testApps );
 	} )();

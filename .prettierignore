@@ -9,6 +9,7 @@ dist/
 node_modules/
 /packages/webpack-rtl-plugin/test/dist*/
 /packages/wp-babel-makepot/test/examples
+/packages/wp-oxc-makepot/test/examples
 /desktop/build/
 /desktop/client/
 /desktop/config/
