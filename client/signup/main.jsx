@@ -569,8 +569,35 @@ class Signup extends Component {
 
 		if ( flows.excludedSteps.includes( stepName ) ) {
 			this._recordStepsInOrder( { forStep: stepName } );
-			this.goToNextStep( flowName );
+			this.skipExcludedStep( nextProps );
 		}
+	};
+
+	// The excluded step is gone from `getFlow()` and `this.props` may still describe the
+	// previous step, so resolve the successor from the full step order. Replacing the history
+	// entry keeps browser Back from landing on the excluded step again.
+	skipExcludedStep = ( { flowName, isLoggedIn, stepName } ) => {
+		const allSteps = flows.getFlows()[ flowName ]?.steps ?? [];
+		const availableSteps = flows.getFlow( flowName, isLoggedIn ).steps;
+		const nextStepName = allSteps
+			.slice( allSteps.indexOf( stepName ) + 1 )
+			.find( ( step ) => availableSteps.includes( step ) );
+
+		if ( ! nextStepName || this.isEveryStepSubmitted() ) {
+			this.goToNextStep( flowName );
+			return;
+		}
+
+		const locale = ! isLoggedIn ? this.props.locale : '';
+		page.replace(
+			getStepUrl(
+				flowName,
+				nextStepName,
+				this.props.progress?.[ nextStepName ]?.stepSectionName || '',
+				locale,
+				this.getCurrentFlowSupportedQueryParams()
+			)
+		);
 	};
 
 	preloadNextStep() {
