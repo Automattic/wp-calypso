@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import A4ALogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg';
 import EvolveDigitalLogo from 'calypso/assets/images/a8c-for-agencies/events/evolvedigital-logo.svg';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
@@ -62,12 +62,9 @@ export const FEATURED_EVENT: FeaturedEvent | null = {
 		__(
 			'Automattic is a Presenting Sponsor of EvolveDigital NYC 2026, bringing the teams behind WordPress.com, WordPress VIP, and WooCommerce to a room of developers, designers, strategists, and digital leaders from higher ed, government, nonprofits, and agencies.'
 		),
-		sprintf(
-			/* translators: %s is a ticket discount code, shown as-is. */
-			__(
-				'Spend two days at Civic Hall with the people shaping the future of the open web. As an Automattic for Agencies partner, you get 50%% off General Admission tickets with the code <strong><code>%s</code></strong>, so come say hello to our team while you’re there.'
-			),
-			'Automattic50Off'
+		/* translators: Automattic50Off is a ticket discount code. Keep it exactly as written. */
+		__(
+			'Spend two days at Civic Hall with the people shaping the future of the open web. As an Automattic for Agencies partner, you get 50% off General Admission tickets with the code <strong><code>Automattic50Off</code></strong>, so come say hello to our team while you’re there.'
 		),
 	],
 	ctas: [

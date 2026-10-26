@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import EventCard from '../event-card';
 
 describe( '<EventCard>', () => {
@@ -34,7 +35,8 @@ describe( '<EventCard>', () => {
 		);
 	} );
 
-	test( 'shows the EvolveDigital NYC 2026 card and tracks ticket clicks', () => {
+	test( 'shows the EvolveDigital NYC 2026 card and tracks ticket clicks', async () => {
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		const recordTracksEvent = jest.fn();
 		render(
 			<EventCard
@@ -54,7 +56,7 @@ describe( '<EventCard>', () => {
 		const purchase = screen.getByRole( 'link', { name: /Purchase tickets/ } );
 		expect( purchase ).toHaveAttribute( 'href', 'https://www.evolvedigital.com/' );
 
-		fireEvent.click( purchase );
+		await user.click( purchase );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_overview_event_cta_click', {
 			event_id: 'a4a-evolvedigital-nyc-2026',
 			cta_id: 'purchase-tickets',
