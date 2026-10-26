@@ -1,4 +1,7 @@
-import { STATIC_SITE_IMPORT_CAPTURE_SETTLED_STATES } from '@automattic/api-core';
+import {
+	STATIC_SITE_IMPORT_CAPTURE_SETTLED_STATES,
+	getStaticSiteImportErrorCode,
+} from '@automattic/api-core';
 import {
 	createStaticSiteImportSessionMutation,
 	pollStaticSiteImportSessionUntil,
@@ -27,6 +30,8 @@ import type { Step as StepType } from '../../types';
 import './style.scss';
 
 const COMPLETION_DELAY_MS = 1500;
+// A site check refused the source or the built site; no other import route applies.
+const REFUSED_CODES = [ 'static_site_import_source_refused', 'static_site_capture_blocked' ];
 
 export type StaticSiteImportReadingSubmits =
 	| { action: 'session-created'; importSessionId: string }
@@ -66,6 +71,9 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		} );
 		const state = createError || pollError ? 'failed' : ( session?.state ?? 'capture_queued' );
 		const isFailed = state === 'failed';
+		const isRefused = REFUSED_CODES.includes(
+			getStaticSiteImportErrorCode( createError ) ?? session?.receipt?.code ?? ''
+		);
 		const isReady = ! isFailed && STATIC_SITE_IMPORT_CAPTURE_SETTLED_STATES.includes( state );
 
 		const hasSubmitted = useRef( false );
@@ -74,7 +82,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 			navigation.submit?.( result );
 		} );
 		useEffect( () => {
-			if ( hasSubmitted.current ) {
+			if ( hasSubmitted.current || isRefused ) {
 				return;
 			}
 			if ( ! sourceUrl || isFailed ) {
@@ -85,7 +93,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 				}, COMPLETION_DELAY_MS );
 				return () => clearTimeout( timeout );
 			}
-		}, [ isFailed, isReady, sessionId, sourceUrl ] );
+		}, [ isFailed, isRefused, isReady, sessionId, sourceUrl ] );
 
 		const { phase, finding_pages: findingPages } = session?.progress ?? {};
 		const [ lastPageCounts, setLastPageCounts ] = useState( {
@@ -152,6 +160,25 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		const progressLabel =
 			stages[ activeStageIndex ]?.message ??
 			( isReady ? __( 'Your site is ready' ) : __( 'We couldn’t read your site' ) );
+
+		if ( isRefused ) {
+			return (
+				<>
+					<DocumentHead title={ __( 'We can’t import this site' ) } />
+					<Step.CenteredColumnLayout
+						className="step-container-v2--static-site-import-reading"
+						columnWidth={ 8 }
+						topBar={ <Step.TopBar /> }
+						heading={
+							<Step.Heading
+								text={ __( 'We can’t import this site' ) }
+								subText={ __( 'Its content isn’t allowed on WordPress.com.' ) }
+							/>
+						}
+					/>
+				</>
+			);
+		}
 
 		return (
 			<>

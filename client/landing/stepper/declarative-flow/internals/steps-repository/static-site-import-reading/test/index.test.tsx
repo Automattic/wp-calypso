@@ -407,6 +407,38 @@ describe( 'StaticSiteImportReading', () => {
 		}
 	} );
 
+	it.each( [
+		[
+			'source',
+			() =>
+				mockApi().post( '/wpcom/v2/static-site-import-session' ).query( true ).reply( 403, {
+					code: 'static_site_import_source_refused',
+					message: 'This site cannot be imported.',
+				} ),
+			'/static-site-import-reading?from=busybearscleaning.com',
+		],
+		[
+			'built site',
+			() =>
+				mockApi()
+					.get( '/wpcom/v2/static-site-import-session/abc123' )
+					.query( true )
+					.reply(
+						200,
+						session( 'failed', {
+							receipt: { success: false, code: 'static_site_capture_blocked' },
+						} )
+					),
+			'/static-site-import-reading?from=busybearscleaning.com&importSessionId=abc123',
+		],
+	] )( 'stops at a refused %s instead of offering another route', async ( _, mock, path ) => {
+		mock();
+		const submit = render( path );
+
+		expect( await screen.findByText( 'We can’t import this site' ) ).toBeVisible();
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
 	it( 'reports a failed capture', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
