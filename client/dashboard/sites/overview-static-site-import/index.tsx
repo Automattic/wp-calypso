@@ -8,10 +8,9 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, border, published, thumbsDown, thumbsUp } from '@wordpress/icons';
+import { Icon, border, external, published } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
-import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { getCurrentDashboard } from '../../app/routing';
 import { Card, CardBody } from '../../components/card';
@@ -93,52 +92,6 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 				);
 			} ) }
 		</VStack>
-	);
-}
-
-function Feedback( { siteId, platform }: { siteId: number; platform?: string } ) {
-	const { recordTracksEvent } = useAnalytics();
-	const { setShowHelpCenter } = useHelpCenter();
-	const [ vote, setVote ] = useState< 'good' | 'bad' | null >( null );
-
-	const onVote = ( rating: 'good' | 'bad' ) => {
-		setVote( rating );
-		recordTracksEvent( 'calypso_dashboard_static_site_import_feedback', {
-			site_id: siteId,
-			source_platform: platform,
-			rating,
-		} );
-		if ( rating === 'bad' ) {
-			setShowHelpCenter( true );
-		}
-	};
-
-	if ( vote === 'good' ) {
-		return <Text>{ __( 'Thanks for the feedback!' ) }</Text>;
-	}
-
-	return (
-		<HStack justify="flex-start" expanded={ false } wrap>
-			<Text>{ __( 'Does it look right?' ) }</Text>
-			<Button
-				icon={ thumbsUp }
-				iconSize={ 16 }
-				size="compact"
-				style={ { color: 'var(--dashboard__foreground-color-success)' } }
-				onClick={ () => onVote( 'good' ) }
-			>
-				{ __( 'Looks right' ) }
-			</Button>
-			<Button
-				icon={ thumbsDown }
-				iconSize={ 16 }
-				size="compact"
-				style={ { color: 'var(--dashboard__foreground-color-error)' } }
-				onClick={ () => onVote( 'bad' ) }
-			>
-				{ __( 'Something’s off' ) }
-			</Button>
-		</HStack>
 	);
 }
 
@@ -252,9 +205,9 @@ export function StaticSiteImportNotice( {
 			title={ __( 'Your site is ready' ) }
 			onClose={ () => setIsDismissed( true ) }
 			actions={
-				<HStack justify="space-between" wrap>
+				<>
 					{ keepsDomain && (
-						<Button variant="link" href={ connectDomainUrl }>
+						<Button variant="primary" href={ connectDomainUrl }>
 							{ sprintf(
 								/* translators: %s: the site's domain, e.g. example.com. */
 								__( 'Connect %s' ),
@@ -262,20 +215,29 @@ export function StaticSiteImportNotice( {
 							) }
 						</Button>
 					) }
-					<Feedback siteId={ site.ID } platform={ platform } />
-				</HStack>
+					<Button
+						variant="secondary"
+						href={ site.URL }
+						target="_blank"
+						rel="noopener noreferrer"
+						icon={ external }
+						iconPosition="right"
+					>
+						{ __( 'Preview site' ) }
+					</Button>
+				</>
 			}
 		>
 			{ sourceHost
 				? sprintf(
 						/* translators: %s: the domain of the site that was moved, e.g. example.com. */
 						__(
-							'%s has been rebuilt on WordPress.com. It stays private until you switch your address over.'
+							'%s is copied and running on WordPress.com. It stays private until you point your domain to it.'
 						),
 						sourceHost
 					)
 				: __(
-						'Your site has been rebuilt on WordPress.com. It stays private until you launch it.'
+						'Your site is copied and running on WordPress.com. It stays private until you launch it.'
 					) }
 		</Notice>
 	);

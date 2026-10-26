@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import { StaticSiteImportNotice, StaticSiteImportProgress, useStaticSiteImport } from '../index';
@@ -69,26 +68,34 @@ describe( 'StaticSiteImportCard', () => {
 		await waitFor( () => expect( approve.isDone() ).toBe( true ) );
 	} );
 
-	it( 'asks for feedback and offers the kept domain once the site is ready', async () => {
+	it( 'offers to connect the kept domain and preview the site once it is ready', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
 			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
 
-		const { recordTracksEvent } = render( <StaticSiteImport /> );
+		render( <StaticSiteImport /> );
 
 		expect( await screen.findByText( 'Your site is ready' ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Connect busybearscleaning.com' } ) ).toHaveAttribute(
+		expect(
+			screen.getByText(
+				'busybearscleaning.com is copied and running on WordPress.com. It stays private until you point your domain to it.'
+			)
+		).toBeVisible();
+
+		const connect = screen.getByRole( 'link', { name: 'Connect busybearscleaning.com' } );
+		expect( connect ).toHaveAttribute(
 			'href',
 			expect.stringContaining( 'initialQuery=busybearscleaning.com' )
 		);
+		expect( connect ).toHaveClass( 'is-primary' );
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Looks right' } ) );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_static_site_import_feedback',
-			{ site_id: 42, source_platform: 'wix', rating: 'good' }
-		);
-		expect( screen.getByText( 'Thanks for the feedback!' ) ).toBeVisible();
+		const preview = screen.getByRole( 'link', { name: /Preview site/ } );
+		expect( preview ).toHaveAttribute( 'href', 'https://busybears.wordpress.com' );
+		expect( preview ).toHaveClass( 'is-secondary' );
+
+		expect( screen.queryByText( 'Does it look right?' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'offers to read the site again when the preview has expired', async () => {
