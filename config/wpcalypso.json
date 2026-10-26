@@ -56,6 +56,7 @@
 		"domain-transfer-redesign": true,
 		"email-accounts/enabled": true,
 		"emails/titan-tiers": false,
+		"entrepreneur/redirect-to-commerce-purchase": true,
 		"footer-redesign/2026": true,
 		"footer/dark": false,
 		"footer/light": false,
