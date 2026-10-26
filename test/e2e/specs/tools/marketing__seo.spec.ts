@@ -1,5 +1,15 @@
 import { DataHelper } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
+import type { TestAccount } from '@automattic/calypso-e2e';
+
+// Temporary: once a site lists the new Jetpack › SEO page in its admin menu, Traffic hides
+// its legacy SEO settings, so these tests no longer apply. Remove this spec once every host
+// has the new page.
+async function hasJetpackSeoPage( account: TestAccount ): Promise< boolean > {
+	const menu = await account.restAPI.getAdminMenu( account.getSiteURL( { protocol: false } ) );
+
+	return menu.some( ( item ) => item.children?.some( ( child ) => child.slug === 'jetpack-seo' ) );
+}
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Marketing: SEO' ),
@@ -11,6 +21,8 @@ test.describe(
 			page,
 			pageMarketing,
 		} ) => {
+			test.skip( await hasJetpackSeoPage( accountAtomic ), 'SEO settings moved to Jetpack › SEO' );
+
 			const frontPageText = helperData.getRandomPhrase();
 			const externalPreviewText = helperData.getRandomPhrase();
 
@@ -48,6 +60,11 @@ test.describe(
 			page,
 			pageJetpackTraffic,
 		} ) => {
+			test.skip(
+				await hasJetpackSeoPage( accountSimpleSiteFreePlan ),
+				'SEO settings moved to Jetpack › SEO'
+			);
+
 			await test.step( `Given I am authenticated as '${ accountSimpleSiteFreePlan.accountName }'`, async function () {
 				await accountSimpleSiteFreePlan.authenticate( page );
 			} );
