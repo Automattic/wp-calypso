@@ -1,10 +1,62 @@
+import { Visibility } from '@automattic/data-stores';
 import { addQueryArgs } from '@wordpress/url';
+import { translate } from 'i18n-calypso';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteStepName,
 } from 'calypso/signup/storageUtils';
+
+export const goToUnifiedCheckout = ( {
+	flowName,
+	plan,
+	userIsLoggedIn,
+	destination,
+	cancelDestination,
+	siteIntent,
+	extraQueryParams = {},
+}: {
+	flowName: string;
+	plan: string;
+	userIsLoggedIn: boolean;
+	destination: string;
+	cancelDestination: string;
+	siteIntent?: string;
+	extraQueryParams?: Record< string, string >;
+} ) => {
+	const siteParams = {
+		blog_name: '',
+		blog_title: translate( 'My Site' ),
+		public: Visibility.PublicNotIndexed,
+		options: {
+			site_creation_flow: flowName,
+			wpcom_public_coming_soon: 1,
+			...( siteIntent && { site_intent: siteIntent } ),
+		},
+		find_available_url: true,
+		validate: false,
+	};
+
+	try {
+		window.localStorage.setItem( 'siteParams', JSON.stringify( siteParams ) );
+	} catch {
+		// Checkout can use its default site settings when storage is unavailable.
+	}
+
+	setSignupCompleteFlowName( flowName );
+	persistSignupDestination( destination );
+
+	window.location.assign(
+		addQueryArgs( `/checkout/unified/${ encodeURIComponent( plan ) }`, {
+			...extraQueryParams,
+			flow: flowName,
+			redirect_to: destination,
+			cancel_to: cancelDestination,
+			...( ! userIsLoggedIn && { signup: 1 } ),
+		} )
+	);
+};
 
 interface GoToCheckoutProps {
 	flowName: string;

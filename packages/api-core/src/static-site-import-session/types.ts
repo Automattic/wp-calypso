@@ -6,12 +6,6 @@ export const STATIC_SITE_IMPORT_TERMINAL_STATES: readonly StaticSiteImportState[
 	'failed',
 ];
 
-export const STATIC_SITE_IMPORT_CAPTURE_SETTLED_STATES: readonly StaticSiteImportState[] = [
-	'preview_ready',
-	'queued',
-	...STATIC_SITE_IMPORT_TERMINAL_STATES,
-];
-
 export type StaticSiteImportCapability =
 	'booking' | 'commerce' | 'dialogs' | 'embeds' | 'forms' | 'media' | 'membership' | 'navigation';
 
@@ -85,6 +79,7 @@ export interface StaticSiteImportSession {
 
 export interface ApproveStaticSiteImportSessionParams {
 	sessionId: string;
-	archiveHash: string;
+	/** Omit to approve before the build lands; the server delivers once it does. */
+	archiveHash?: string;
 	destinationBlogId: number;
 }

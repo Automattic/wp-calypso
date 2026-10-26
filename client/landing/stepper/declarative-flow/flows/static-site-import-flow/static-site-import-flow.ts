@@ -8,21 +8,16 @@ import {
 	getFullImporterUrl,
 	isPlatformImportable,
 } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/helper';
-import {
-	getProcessingErrorReason,
-	type ProcessingResult,
-} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
+import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { siteSetupImportListPath } from '../site-migration-flow/paths';
 import { canUseStaticSiteImport } from './helpers';
 import type { OnboardActions } from '@automattic/data-stores';
@@ -34,15 +29,7 @@ import type {
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
-const BASE_STEPS = [
-	STEPS.STATIC_SITE_IMPORT_READING,
-	STEPS.STATIC_SITE_IMPORT_RESULTS,
-	STEPS.UNIFIED_PLANS,
-	STEPS.SITE_CREATION_STEP,
-	STEPS.PROCESSING,
-	STEPS.STATIC_SITE_IMPORT_EXPERT,
-	STEPS.ERROR,
-];
+const BASE_STEPS = [ STEPS.UNIFIED_PLANS, STEPS.STATIC_SITE_IMPORT_READING, STEPS.ERROR ];
 
 // Sources are identified by site-migration, which hands eligible ones here with `from` and `platform`.
 function initialize() {
@@ -57,7 +44,20 @@ function initialize() {
 		return false as const;
 	}
 
-	return stepsWithRequiredLogin( BASE_STEPS );
+	if ( searchParams.has( 'siteId' ) || searchParams.has( 'siteSlug' ) ) {
+		return stepsWithRequiredLogin( BASE_STEPS );
+	}
+
+	if ( window.location.pathname.endsWith( `/${ STEPS.STATIC_SITE_IMPORT_READING.slug }` ) ) {
+		window.location.replace( `/setup/${ STATIC_SITE_IMPORT_FLOW }/plans${ search }` );
+		return false as const;
+	}
+
+	return [
+		STEPS.UNIFIED_PLANS,
+		...stepsWithRequiredLogin( [ STEPS.STATIC_SITE_IMPORT_READING ] ),
+		STEPS.ERROR,
+	];
 }
 
 const hasSite = ( siteId?: number, siteSlug?: string ) => Boolean( siteId && siteSlug );
@@ -72,9 +72,8 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 	initialize,
 	useStepsProps() {
 		const urlQueryParams = useQuery();
-		const hasDestinationSite = hasSite(
-			Number( urlQueryParams.get( 'siteId' ) ),
-			urlQueryParams.get( 'siteSlug' ) ?? ''
+		const hasDestinationSite = Boolean(
+			urlQueryParams.get( 'siteId' ) || urlQueryParams.get( 'siteSlug' )
 		);
 
 		return {
@@ -93,16 +92,17 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 	useAssertConditions(): AssertConditionResult {
 		const { isAdmin, isFetching } = useIsSiteAdmin();
 		const query = useQuery();
+		const userIsLoggedIn = useSelector( isUserLoggedIn );
 		const hasDestinationSite = Boolean( query.get( 'siteId' ) || query.get( 'siteSlug' ) );
 		useEffect( () => {
-			if ( isAdmin === false ) {
+			if ( userIsLoggedIn && hasDestinationSite && isAdmin === false ) {
 				window.location.assign( '/start' );
 			}
-		}, [ isAdmin ] );
+		}, [ userIsLoggedIn, hasDestinationSite, isAdmin ] );
 
 		return {
 			state:
-				hasDestinationSite && isFetching
+				hasDestinationSite && userIsLoggedIn && isFetching
 					? AssertConditionState.CHECKING
 					: AssertConditionState.SUCCESS,
 		};
@@ -110,12 +110,17 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 
 	useStepNavigation( currentStep, navigate: NavigateV2< typeof BASE_STEPS > ) {
 		const flowPath = this.variantSlug ?? this.name;
-		const { siteId, siteSlug, site } = useSiteData();
+		const siteData = useSiteData();
 		const urlQueryParams = useQuery();
+		const hasDestinationSite = Boolean(
+			urlQueryParams.get( 'siteId' ) || urlQueryParams.get( 'siteSlug' )
+		);
+		const siteId = hasDestinationSite ? siteData.siteId : 0;
+		const siteSlug = hasDestinationSite ? siteData.siteSlug : '';
+		const site = hasDestinationSite ? siteData.site : undefined;
 		const from = urlQueryParams.get( 'from' ) ?? '';
 		const platform = ( urlQueryParams.get( 'platform' ) || 'unknown' ) as ImporterPlatform;
-		const siteCount = useSelector( getCurrentUserSiteCount );
-		const recordSignupComplete = useRecordSignupComplete( flowPath );
+		const userIsLoggedIn = useSelector( isUserLoggedIn );
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 
 		const isSiteOnPaidPlan = Boolean( site?.plan ) && ! site?.plan?.is_free;
@@ -127,14 +132,7 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 
 		const exitToMigrationFlow = ( source: string, sourcePlatform: ImporterPlatform ) => {
 			if ( ! hasSite( siteId, siteSlug ) ) {
-				const step = siteCount && siteCount > 1 ? STEPS.PICK_SITE : STEPS.SITE_CREATION_STEP;
-				return exitFlow(
-					addQueryArgs(
-						{ from: source, platform: sourcePlatform },
-						`/setup/${ SITE_MIGRATION_FLOW }/${ step.slug }`
-					),
-					true
-				);
+				return navigate( STEPS.UNIFIED_PLANS.slug );
 			}
 
 			if ( isPlatformImportable( sourcePlatform ) && source ) {
@@ -153,30 +151,48 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 			);
 		};
 
-		const restartReading = () =>
-			navigate( `${ STEPS.STATIC_SITE_IMPORT_READING.slug }?importSessionId=` );
+		// The address form lives in the migration flow; `from` fills it in again.
+		const backToIdentify = () =>
+			window.location.assign(
+				addQueryArgs(
+					{
+						from,
+						siteId: hasSite( siteId, siteSlug ) ? siteId : undefined,
+						siteSlug: hasSite( siteId, siteSlug ) ? siteSlug : undefined,
+					},
+					`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`
+				)
+			);
 
 		// The site's Overview in the dashboard approves the move and follows it from here.
-		const getSiteOverviewUrl = ( destinationSiteSlug: string ) =>
+		const getSiteOverviewUrl = (
+			destinationSiteSlug: string,
+			importSessionId = urlQueryParams.get( 'importSessionId' )
+		) =>
 			addQueryArgs(
 				{
-					importSessionId: urlQueryParams.get( 'importSessionId' ),
+					importSessionId,
 					from,
 					platform,
 				},
 				dashboardLink( `/sites/${ destinationSiteSlug }` )
 			);
 
-		const goToImportCheckout = ( destinationSiteSlug: string, plan?: string ) =>
-			goToCheckout( {
-				flowName: flowPath,
-				stepName: STEPS.UNIFIED_PLANS.slug,
-				siteSlug: destinationSiteSlug,
-				destination: getSiteOverviewUrl( destinationSiteSlug ),
-				from,
-				plan,
-				historyBack: true,
-			} );
+		const getReadingUrl = () =>
+			addQueryArgs(
+				{
+					...Object.fromEntries( urlQueryParams ),
+					siteId: undefined,
+					siteSlug: undefined,
+				},
+				`/setup/${ flowPath }/${ STEPS.STATIC_SITE_IMPORT_READING.slug }`
+			);
+
+		useEffect( () => {
+			if ( currentStep === STEPS.UNIFIED_PLANS.slug && isSiteOnPaidPlan ) {
+				navigate( STEPS.STATIC_SITE_IMPORT_READING.slug, undefined, true );
+			}
+		}, [ currentStep, isSiteOnPaidPlan, navigate ] );
 
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
@@ -187,99 +203,61 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 						return exitToMigrationFlow( from, platform );
 					}
 
-					if ( providedDependencies.action === 'session-created' ) {
-						return navigate(
-							`${ STEPS.STATIC_SITE_IMPORT_READING.slug }?importSessionId=${ encodeURIComponent(
-								providedDependencies.importSessionId
-							) }`,
-							undefined,
-							true
-						);
+					const { importSessionId } = providedDependencies;
+					if ( hasSite( siteId, siteSlug ) && isSiteOnPaidPlan ) {
+						return exitFlow( getSiteOverviewUrl( siteSlug, importSessionId ), true );
 					}
 
 					return navigate(
-						`${ STEPS.STATIC_SITE_IMPORT_RESULTS.slug }?importSessionId=${ encodeURIComponent(
-							providedDependencies.importSessionId
-						) }`,
+						`${ STEPS.UNIFIED_PLANS.slug }?importSessionId=${ encodeURIComponent( importSessionId ) }`,
 						undefined,
 						true
 					);
 				}
 
-				case STEPS.STATIC_SITE_IMPORT_RESULTS.slug: {
-					if ( providedDependencies.action === 'restart' ) {
-						return restartReading();
-					}
-
-					if ( providedDependencies.action === 'expert' ) {
-						return navigate( STEPS.STATIC_SITE_IMPORT_EXPERT.slug );
-					}
-
-					if ( hasSite( siteId, siteSlug ) && isSiteOnPaidPlan ) {
-						return exitFlow( getSiteOverviewUrl( siteSlug ) );
-					}
-
-					return navigate( STEPS.UNIFIED_PLANS.slug );
-				}
-
 				case STEPS.UNIFIED_PLANS.slug: {
 					const planCartItem = providedDependencies?.cartItems?.[ 0 ];
-					if ( planCartItem ) {
-						setPlanCartItem( planCartItem );
+					if ( ! planCartItem?.product_slug ) {
+						return navigate( STEPS.ERROR.slug, { errorReason: 'no_plan_selected' } );
 					}
+					setPlanCartItem( planCartItem );
+					const cancelDestination = addQueryArgs(
+						Object.fromEntries( urlQueryParams ),
+						`/setup/${ flowPath }/plans`
+					);
 
-					// A new site gets the plan in its cart when it's created; an existing one needs it here.
 					if ( hasSite( siteId, siteSlug ) ) {
-						return goToImportCheckout( siteSlug, planCartItem?.product_slug );
-					}
-
-					return navigate( STEPS.SITE_CREATION_STEP.slug );
-				}
-
-				case STEPS.SITE_CREATION_STEP.slug:
-					return navigate( STEPS.PROCESSING.slug, undefined, true );
-
-				case STEPS.PROCESSING.slug: {
-					const {
-						siteCreated,
-						siteId: createdSiteId,
-						siteSlug: createdSiteSlug,
-						goToCheckout: shouldGoToCheckout,
-						processingResult,
-					} = providedDependencies as {
-						siteCreated?: boolean;
-						siteId: number;
-						siteSlug: string;
-						goToCheckout?: boolean;
-						processingResult?: ProcessingResult;
-					};
-
-					if ( ! siteCreated ) {
-						// A reload of the processing step drops the pending action and submits
-						// NO_ACTION, which says nothing about whether the site exists.
-						return navigate( STEPS.ERROR.slug, {
-							message: 'Site not created',
-							errorReason: getProcessingErrorReason( processingResult, 'site_not_created' ),
+						return goToCheckout( {
+							flowName: flowPath,
+							stepName: STEPS.UNIFIED_PLANS.slug,
+							siteSlug,
+							plan: planCartItem.product_slug,
+							destination: addQueryArgs( { siteId, siteSlug }, getReadingUrl() ),
+							cancelDestination,
 						} );
 					}
 
-					recordSignupComplete( { siteId: createdSiteId } );
-
-					if ( shouldGoToCheckout ) {
-						return goToImportCheckout( createdSiteSlug );
-					}
-
-					return exitFlow( getSiteOverviewUrl( createdSiteSlug ), true );
+					return goToUnifiedCheckout( {
+						flowName: flowPath,
+						plan: planCartItem.product_slug,
+						userIsLoggedIn,
+						// The pending page resolves the literal placeholder from the purchase receipt.
+						destination: `${ getReadingUrl() }&siteId=:siteId`,
+						cancelDestination,
+						siteIntent: Onboard.SiteIntent.SiteMigration,
+						extraQueryParams: Object.fromEntries(
+							[ 'coupon', 'ref', 'source' ]
+								.filter( ( param ) => urlQueryParams.has( param ) )
+								.map( ( param ) => [ param, urlQueryParams.get( param )! ] )
+						),
+					} );
 				}
-
-				case STEPS.STATIC_SITE_IMPORT_EXPERT.slug:
-					return navigate( STEPS.UNIFIED_PLANS.slug );
 			}
 		};
 
 		const goBack = () => {
 			if ( currentStep === STEPS.UNIFIED_PLANS.slug ) {
-				return navigate( STEPS.STATIC_SITE_IMPORT_RESULTS.slug );
+				return backToIdentify();
 			}
 		};
 

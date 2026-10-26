@@ -636,7 +636,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 									siteId: hasDestinationSite ? siteId : undefined,
 									siteSlug: hasDestinationSite ? siteSlug : undefined,
 								},
-								`/setup/${ STATIC_SITE_IMPORT_FLOW }/${ STEPS.STATIC_SITE_IMPORT_READING.slug }`
+								`/setup/${ STATIC_SITE_IMPORT_FLOW }/${ STEPS.UNIFIED_PLANS.slug }`
 							)
 						);
 					}
