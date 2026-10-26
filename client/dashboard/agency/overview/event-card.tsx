@@ -65,7 +65,16 @@ function SingleEventCard( {
 							<Text key={ paragraph } size={ 13 } lineHeight="20px">
 								{ createInterpolateElement( paragraph, {
 									strong: <strong />,
-									code: <code />,
+									// Calypso's global `code` rule sets its own size and weight.
+									code: (
+										<code
+											style={ {
+												fontSize: 'inherit',
+												fontWeight: 'inherit',
+												lineHeight: 'inherit',
+											} }
+										/>
+									),
 								} ) }
 							</Text>
 						) ) }
