@@ -43,6 +43,8 @@ CRITICAL: This is a **public repository**. Never put an internal link or hostnam
 
 > **Note**: The Calypso dev server uses the `PORT` environment variable (check repo-root `.env`) and falls back to port `3000`. Do not create or modify `.env` unless explicitly asked.
 
+> **Note**: Keep the `@automattic/` scope whenever a command sends a workspace package name to the npm registry (`npm view`, `npx`, `yarn add`, `yarn npm info`). For a `"private": true` package, read its `package.json` instead of the registry.
+
 ```bash
 # Setup
 yarn install

@@ -494,7 +494,6 @@ export default function OrchestratorChat( {
 		sessionId,
 		isProcessing,
 		isUploadingImages,
-		agentConfig,
 		submitContextMessage,
 		interactiveUiCatalogs,
 		currentPostId,

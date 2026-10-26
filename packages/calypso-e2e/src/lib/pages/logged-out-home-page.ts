@@ -9,6 +9,7 @@ export class LoggedOutHomePage {
 	private page: Page;
 	readonly logInMenuItem: Locator;
 	readonly exploreThemesLink: Locator;
+	readonly getStartedLink: Locator;
 	readonly heading: Locator;
 
 	/**
@@ -21,7 +22,29 @@ export class LoggedOutHomePage {
 			name: 'Explore themes',
 			exact: true,
 		} );
+		// The primary CTA repeats down the page; the first visible one is the hero button.
+		this.getStartedLink = this.page
+			.getByRole( 'link', { name: 'Get started', exact: true } )
+			.filter( { visible: true } )
+			.first();
 		this.heading = this.page.getByRole( 'heading', { name: 'WordPress' } ).first();
+	}
+
+	/**
+	 * Returns the href of the "Get started" call to action, the entry to onboarding.
+	 * returns {Promise<string>}
+	 */
+	async getStartedHref(): Promise< string > {
+		return waitForLocatorAttribute(
+			this.getStartedLink,
+			'href',
+			/\/setup\/onboarding\/?(?:[?#].*)?$/,
+			{
+				timeout: 10_000,
+				description: 'Get started link',
+				state: 'visible',
+			}
+		);
 	}
 
 	/**

@@ -141,6 +141,23 @@ export interface SiteContextualPlan {
 	available_for_downgrade?: boolean;
 
 	/**
+	 * Whether moving to this plan can be done now, with the cheaper plan
+	 * provisioned at once and the difference refunded (`POST /upgrades/{id}/cancel`
+	 * with `type: 'downgrade'`). Some changes, such as a lower tier on a shorter
+	 * term, are only ever made at renewal. Always false for the free plan.
+	 * Present on non-current plans.
+	 */
+	is_instant_downgrade_available?: boolean;
+
+	/**
+	 * Whether moving to this plan can be scheduled for the current plan's renewal
+	 * (`POST /upgrades/{id}/delayed-downgrade`). The endpoint still requires a
+	 * stored payment method. Always false for the free plan. Present on
+	 * non-current plans.
+	 */
+	is_delayed_downgrade_available?: boolean;
+
+	/**
 	 * Whether this plan has passed its expiry date. If this is set on the
 	 * current plan, that means that the plan is still active but is now within
 	 * its grace period. Once the grace period ends, the plan will no longer be

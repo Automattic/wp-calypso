@@ -1,5 +1,6 @@
 import usePickerVariations from '../../hooks/use-picker-variations';
 import VariationPicker from '../variation-picker';
+import type { PickerSurfaceProps } from '../style-pickers/types';
 import type { StyleVariation } from '../styles-preview';
 
 const MAX_BUTTONS_TO_SHOW = 12;
@@ -7,7 +8,7 @@ const MAX_BUTTONS_TO_SHOW = 12;
 const getButtonBorder = ( variation: StyleVariation ): unknown =>
 	( variation.styles?.elements?.button as Record< string, unknown > | undefined )?.border;
 
-interface Props {
+interface Props extends PickerSurfaceProps {
 	buttonVariations?: StyleVariation[];
 	maxButtonsToShow?: number;
 }
@@ -15,9 +16,12 @@ interface Props {
 export default function ButtonPicker( {
 	buttonVariations,
 	maxButtonsToShow = MAX_BUTTONS_TO_SHOW,
+	surfaceId,
+	disabled,
 }: Props ) {
 	const { sortedVariations, activeTitle, handleSelect } = usePickerVariations( {
 		variations: buttonVariations,
+		surfaceId,
 		variationType: 'button',
 		getLiveValue: ( globalStyles ) => globalStyles.styles?.elements?.button?.border,
 		getValue: getButtonBorder,
@@ -41,6 +45,7 @@ export default function ButtonPicker( {
 			variations={ sortedVariations }
 			maxToShow={ maxButtonsToShow }
 			type="button"
+			disabled={ disabled }
 			onSelect={ handleSelect }
 			activeVariationTitle={ activeTitle }
 		/>

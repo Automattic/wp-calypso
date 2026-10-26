@@ -141,9 +141,13 @@ export interface UseCreditsResult {
  * avoid reading usage while a task is still running. Live balances also record
  * the credits Tracks events, and failed replies keep their refusal code, since
  * the chat's error only carries the reply's text. The code labels one Tracks
- * error; the refusal notice keeps it until the next turn. While AI credits are only
- * on internal test sites, pages the host says aren't in dev mode don't ask,
- * since nearly every site answers 404; a balance a turn reports still shows.
+ * error; the refusal notice keeps it until the next turn. A zero last shown while
+ * the chat was hidden isn't drawn again until the opening read, or a turn that
+ * ends while it shows, confirms it, since credits bought in another tab would
+ * otherwise greet the user as a stale zero.
+ * While AI credits are only on internal test sites, pages the host says aren't
+ * in dev mode don't ask, since nearly every site answers 404; a balance a turn
+ * reports still shows.
  */
 export function useCredits( {
 	enabled,
@@ -180,6 +184,11 @@ export function useCredits( {
 		scope: typeof scope;
 		snapshot: CreditSnapshot;
 		isFromTurn: boolean;
+		/**
+		 * A zero last shown while the chat was hidden, kept off screen while the chat
+		 * shows until a read or a turn settles it.
+		 */
+		isUnconfirmed?: boolean;
 	} >();
 	// Who may buy, from the balance read. Terminal updates don't carry it.
 	const [ upgradeAccess, setUpgradeAccess ] = useState< { scope: typeof scope } & CreditsAccess >();
@@ -234,6 +243,13 @@ export function useCredits( {
 		},
 		[ scope ]
 	);
+	const confirmBalance = useCallback( () => {
+		setBalance( ( current ) =>
+			current?.scope === scope && current.isUnconfirmed
+				? { ...current, isUnconfirmed: false }
+				: current
+		);
+	}, [ scope ] );
 	const invalidateBalance = useCallback( () => {
 		if ( currentScope.current === scope && scope.active ) {
 			setBalance( undefined );
@@ -294,14 +310,15 @@ export function useCredits( {
 	const processingRef = useRef( isProcessing );
 	processingRef.current = isProcessing;
 	const refreshBalance = useCallback( async () => {
-		if (
-			! isOpen ||
-			! canReadBalance( scope ) ||
-			! scope.active ||
-			currentScope.current !== scope ||
-			processingRef.current ||
-			balanceRequest.current
-		) {
+		if ( ! isOpen || ! scope.active || currentScope.current !== scope ) {
+			return;
+		}
+		if ( ! canReadBalance( scope ) ) {
+			// Nothing can confirm the zero, so draw it.
+			confirmBalance();
+			return;
+		}
+		if ( processingRef.current || balanceRequest.current ) {
 			return;
 		}
 		const { authProvider } = scope;
@@ -346,7 +363,7 @@ export function useCredits( {
 				balanceRequest.current = undefined;
 			}
 		}
-	}, [ scope, isOpen, invalidateBalance ] );
+	}, [ scope, isOpen, confirmBalance, invalidateBalance ] );
 	useEffect( () => {
 		scope.active = true;
 		return () => {
@@ -383,7 +400,9 @@ export function useCredits( {
 			setRefusal( undefined );
 		}
 	}, [ isProcessing ] );
-	const snapshot = balance?.scope === scope ? balance.snapshot : undefined;
+	const isAwaitingConfirmation = isOpen && balance?.scope === scope && !! balance.isUnconfirmed;
+	const snapshot =
+		balance?.scope === scope && ! isAwaitingConfirmation ? balance.snapshot : undefined;
 	useEffect( () => {
 		if ( ! snapshot ) {
 			return;
@@ -411,6 +430,10 @@ export function useCredits( {
 		const previous = wasProcessingRef.current;
 		if ( previous.scope === scope && previous.isProcessing && ! isProcessing && enabled ) {
 			if ( scope.siteId ) {
+				// A turn that ends while the chat shows is the latest word on the balance.
+				if ( isOpen ) {
+					confirmBalance();
+				}
 				if ( previous.validTerminalRevision === scope.validTerminalRevision ) {
 					invalidateBalance();
 					void refreshBalance();
@@ -430,7 +453,17 @@ export function useCredits( {
 					? previous.validTerminalRevision
 					: scope.validTerminalRevision,
 		};
-	}, [ isProcessing, enabled, isMockEnabled, seed, scope, invalidateBalance, refreshBalance ] );
+	}, [
+		isProcessing,
+		enabled,
+		isMockEnabled,
+		seed,
+		scope,
+		isOpen,
+		confirmBalance,
+		invalidateBalance,
+		refreshBalance,
+	] );
 
 	const status = useMemo( () => {
 		if ( ! enabled ) {
@@ -444,6 +477,10 @@ export function useCredits( {
 
 	const isExhausted = status ? isCreditsExhausted( status ) : false;
 	const isLow = status ? isCreditsLow( status ) : false;
+	// Only an earlier render knows a zero was shown while hidden, so it's state, marked while rendering.
+	if ( ! isOpen && isExhausted && balance?.scope === scope && ! balance.isUnconfirmed ) {
+		setBalance( { ...balance, isUnconfirmed: true } );
+	}
 	// Big Sky's clearMessages empties the thread but keeps the chat's error, which then draws nowhere.
 	const isRefusedForCredits =
 		refusal?.scope === scope &&
@@ -473,6 +510,12 @@ export function useCredits( {
 		) {
 			setIsPopoverOpen( true, { byItself: true } );
 		}
+		// A popover the zero opened would announce, and record, a balance that's gone.
+		if ( status && ! isExhausted ) {
+			setPopover( ( current ) =>
+				current?.scope === scope && current.byItself ? undefined : current
+			);
+		}
 		wasExhaustedRef.current = { scope, hasBalance: !! status, isExhausted };
 	}, [ scope, status, isExhausted, isRefusedForCredits, setIsPopoverOpen ] );
 
@@ -480,14 +523,14 @@ export function useCredits( {
 	// drain the balance while the chat is collapsed or minimised.
 	const recordedOpeningRef = useRef< typeof popover >( undefined );
 	useEffect( () => {
-		if ( ! isOpen || ! isPopoverOpen || ! popover?.byItself ) {
+		if ( ! isOpen || ! isPopoverOpen || ! popover?.byItself || ! isExhausted ) {
 			return;
 		}
 		if ( recordedOpeningRef.current !== popover ) {
 			recordedOpeningRef.current = popover;
 			recordCreditsEvent( 'calypso_agents_manager_credits_meter_opened', { trigger: 'exhausted' } );
 		}
-	}, [ isOpen, isPopoverOpen, popover, recordCreditsEvent ] );
+	}, [ isOpen, isPopoverOpen, popover, isExhausted, recordCreditsEvent ] );
 
 	const handleAction = useCallback( () => {
 		setIsPopoverOpen( false );
@@ -708,7 +751,8 @@ export function useCredits( {
 			return true;
 		}
 		if ( ! status ) {
-			return true;
+			// An unconfirmed zero still blocks; the opening read settles it in a moment.
+			return ! isAwaitingConfirmation;
 		}
 
 		if ( isExhausted ) {
@@ -725,6 +769,7 @@ export function useCredits( {
 		status,
 		isExhausted,
 		snapshot,
+		isAwaitingConfirmation,
 		invalidateBalance,
 		refreshBalance,
 		setIsPopoverOpen,

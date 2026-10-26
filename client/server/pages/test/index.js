@@ -1530,6 +1530,26 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Retired WooCommerce installer routes', () => {
+		it.each( [
+			[
+				'/start/woocommerce-install',
+				{ siteSlug: 'example.com' },
+				'/plugins/woocommerce/example.com',
+			],
+			[ '/start/woocommerce-install/store-address/fr', {}, '/plugins/woocommerce' ],
+			[
+				'/woocommerce-installation/example.com::shop',
+				{},
+				'/plugins/woocommerce/example.com::shop',
+			],
+			[ '/woocommerce-installation', {}, '/plugins/woocommerce' ],
+		] )( 'redirects %s to the WooCommerce plugin page', async ( url, query, destination ) => {
+			const { response } = await app.run( { request: { url, query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, destination );
+		} );
+	} );
+
 	describe( 'Route /cspreport', () => {
 		let customApp;
 

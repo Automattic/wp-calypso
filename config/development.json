@@ -162,6 +162,7 @@
 		"page/export": true,
 		"performance/apm": true,
 		"plans/migration-trial": true,
+		"plans/scheduled-term-change": true,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
 		"plugins/stepper-plans": true,

@@ -13,7 +13,10 @@ export const List = createComponentImplementation(
 		} ),
 	},
 	( { props, buildChild } ) => (
+		// Safari drops the list role of a list without markers.
+		// eslint-disable-next-line jsx-a11y/no-redundant-roles
 		<ul
+			role="list"
 			className={ clsx(
 				'ai-ui-renderer__list',
 				{ 'ai-ui-renderer__list--horizontal': props.direction === 'horizontal' },

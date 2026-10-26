@@ -108,6 +108,24 @@ describe( 'flow redirect handler', () => {
 		expect( window.location.href ).toBe( expected );
 	} );
 
+	it( 'sends blog sites’ Launchpad to the build flow without treating write as removed', () => {
+		redirectPathIfNecessary( '/setup/write/launchpad', '?siteSlug=example.wordpress.com' );
+
+		expect( replace ).toHaveBeenCalledWith(
+			'/setup/build/launchpad?siteSlug=example.wordpress.com'
+		);
+		// My Home skips the Launchpad for sites whose intent is a removed flow.
+		expect( isRemovedFlow( 'write' ) ).toBe( false );
+	} );
+
+	it( 'keeps a write link’s locale, including ones outside the shared pattern', () => {
+		redirectPathIfNecessary( '/setup/write/launchpad/sr_latin', '?siteSlug=example.wordpress.com' );
+
+		expect( replace ).toHaveBeenCalledWith(
+			'/setup/build/launchpad/sr_latin?siteSlug=example.wordpress.com'
+		);
+	} );
+
 	it( 'does not classify existing AI Site Builder sites as removed', () => {
 		expect( isRemovedFlow( 'ai-site-builder' ) ).toBe( false );
 	} );
