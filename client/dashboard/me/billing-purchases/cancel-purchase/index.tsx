@@ -53,6 +53,7 @@ import {
 	CancelFlowType,
 	getCancelIntentFromSearch,
 	getDisplayVariant,
+	getDowngradeRefundAmount,
 	getIncludedDomainPurchase,
 	type CancelIntent,
 	type DisplayVariant,
@@ -1798,7 +1799,7 @@ function CancelPurchaseInner() {
 			questionTwoOrder={ state.questionTwoOrder }
 			questionTwoRadio={ state.questionTwoRadio }
 			questionTwoText={ state.questionTwoText }
-			refundAmount={ purchase.total_refund_amount }
+			refundAmount={ getDowngradeRefundAmount( purchase, downgradePlan?.product_id ) }
 			siteSlug={ siteSlug }
 			solution={ state.solution }
 			surveyStep={ state.surveyStep }
