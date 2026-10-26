@@ -17,6 +17,12 @@ jest.mock( '../../../components/inline-support-link', () => ( {
 	),
 } ) );
 
+const mockHasEnTranslation = jest.fn( () => true );
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	useHasEnTranslation: () => mockHasEnTranslation,
+} ) );
+
 describe( 'NameServersForm', () => {
 	const defaultProps = {
 		domainName: 'example.com',
@@ -339,6 +345,19 @@ describe( 'NameServersForm', () => {
 			);
 
 			expect( screen.queryByText( warning ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Translation Fallback', () => {
+		afterEach( () => mockHasEnTranslation.mockReturnValue( true ) );
+
+		it( 'keeps the previous lookup copy until the new one is translated', () => {
+			mockHasEnTranslation.mockReturnValue( false );
+
+			render( <NameServersForm { ...defaultProps } /> );
+
+			expect( screen.queryByText( /Not sure what to enter/ ) ).not.toBeInTheDocument();
+			expect( screen.getByText( /the name servers for popular hosts/ ) ).toBeVisible();
 		} );
 	} );
 } );

@@ -4,6 +4,7 @@ import {
 	domainNameServersMutation,
 	siteByIdQuery,
 } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -26,6 +27,7 @@ export default function NameServers() {
 	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
 	const { recordTracksEvent } = useAnalytics();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const {
 		data: { nameServers, isUsingDefaultNameServers, defaultNameServers },
@@ -79,9 +81,13 @@ export default function NameServers() {
 			header={
 				<PageHeader
 					description={ createInterpolateElement(
-						__(
+						hasEnTranslation(
 							'Name servers tell the internet where to find this domain name’s site and email. <learnMoreLink />'
-						),
+						)
+							? __(
+									'Name servers tell the internet where to find this domain name’s site and email. <learnMoreLink />'
+								)
+							: __( 'Change the name servers for your domain. <learnMoreLink />' ),
 						{
 							learnMoreLink: <InlineSupportLink supportContext="nameservers" />,
 						}

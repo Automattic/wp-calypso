@@ -1,3 +1,4 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -13,15 +14,21 @@ export function NameServersLayout( {
 	children?: ReactNode;
 	notices?: ReactNode;
 } ) {
+	const hasEnTranslation = useHasEnTranslation();
+
 	return (
 		<PageLayout
 			size="small"
 			header={
 				<PageHeader
 					description={ createInterpolateElement(
-						__(
+						hasEnTranslation(
 							'Name servers tell the internet where to find this domain name’s site and email. <learnMoreLink />'
-						),
+						)
+							? __(
+									'Name servers tell the internet where to find this domain name’s site and email. <learnMoreLink />'
+								)
+							: __( 'Change the name servers for your domain. <learnMoreLink />' ),
 						{
 							learnMoreLink: <InlineSupportLink supportContext="nameservers" />,
 						}

@@ -1,3 +1,4 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import {
 	Button,
 	__experimentalText as Text,
@@ -111,6 +112,7 @@ export default function NameServersForm( {
 	onSubmit,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
+	const hasEnTranslation = useHasEnTranslation();
 	const [ formData, setFormData ] = useState< FormData >( () => {
 		// Start with a partial object
 		const initialData = {
@@ -250,9 +252,13 @@ export default function NameServersForm( {
 						<Text>
 							{ createInterpolateElement(
 								/* translators: <link> will be replaced with an anchor tag to open the support article in a new tab */
-								__(
+								hasEnTranslation(
 									'Not sure what to enter? <link>Look up</link> the name servers for popular hosts.'
-								),
+								)
+									? __(
+											'Not sure what to enter? <link>Look up</link> the name servers for popular hosts.'
+										)
+									: __( '<link>Look up</link> the name servers for popular hosts.' ),
 								{
 									link: (
 										<InlineSupportLink
