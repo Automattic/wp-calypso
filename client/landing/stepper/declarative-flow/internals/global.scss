@@ -85,9 +85,7 @@ button {
 .copy-site,
 .intro,
 .free-setup,
-.free-post-setup,
 .free,
-.celebration-step,
 .use-my-domain:not( :has( .step-container-v2 ) ),
 .domain-transfer,
 .update-design,
@@ -362,7 +360,6 @@ button {
 }
 
 .free,
-.free-post-setup,
 .update-design {
 	.signup-header h1 {
 		display: none;
