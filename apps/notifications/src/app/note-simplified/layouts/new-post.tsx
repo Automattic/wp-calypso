@@ -7,7 +7,18 @@ import type { Note } from '../../types';
 
 export default function NewPostNote( { note }: { note: Note } ) {
 	const { post, site, actor, actor_count: actorCount } = note.meta ?? {};
-	const authorName = post?.author_name || actor?.name;
+	const author = actor?.name && (
+		<span className="wpnc-simplified__quiet-links">
+			{ actor.url ? (
+				<a href={ actor.url } target="_blank" rel="noreferrer">
+					{ actor.name }
+				</a>
+			) : (
+				actor.name
+			) }
+			{ ' · ' }
+		</span>
+	);
 
 	return (
 		<>
@@ -16,7 +27,7 @@ export default function NewPostNote( { note }: { note: Note } ) {
 					site={ site }
 					details={
 						<>
-							{ authorName && `${ authorName } · ` }
+							{ author }
 							<NoteMeta note={ note } />
 						</>
 					}
