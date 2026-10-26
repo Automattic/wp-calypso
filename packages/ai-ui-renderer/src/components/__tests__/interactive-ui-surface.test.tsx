@@ -20,6 +20,11 @@ let runtime: InteractiveUiRuntime;
 let onAction: jest.Mock;
 let onError: jest.Mock;
 
+// JSDOM lacks PointerEvent, which UI uses when activating choice controls.
+beforeAll( () => {
+	Object.defineProperty( window, 'PointerEvent', { value: MouseEvent, configurable: true } );
+} );
+
 beforeEach( () => {
 	onAction = jest.fn();
 	onError = jest.fn();
@@ -69,9 +74,9 @@ it.each( [
 } );
 
 it.each( [
-	[ undefined, 'is-secondary' ],
-	[ 'primary', 'is-primary' ],
-	[ 'borderless', 'is-tertiary' ],
+	[ undefined, 'is-outline' ],
+	[ 'primary', 'is-solid' ],
+	[ 'borderless', 'is-minimal' ],
 ] )( 'renders a Button with variant %p as WordPress’s %s Button', ( variant, className ) => {
 	const surface = createSurface( [
 		{ id: 'root', component: 'Button', child: 'label', action: { event: { name: 'go' } }, variant },
@@ -80,7 +85,7 @@ it.each( [
 
 	render( <InteractiveUiSurface surface={ surface } /> );
 
-	expect( screen.getByRole( 'button', { name: 'Go' } ) ).toHaveClass( className );
+	expect( screen.getByRole( 'button', { name: 'Go' } ).className ).toContain( `__${ className }` );
 	expect( onError ).not.toHaveBeenCalled();
 } );
 
@@ -200,7 +205,11 @@ it( 'disables a disabled surface’s inputs and actions, but not its tabs or mod
 		screen.getByRole( 'checkbox', { name: 'Agree' } ),
 		screen.getByRole( 'radio', { name: 'Small' } ),
 		screen.getByRole( 'checkbox', { name: 'News' } ),
+	].forEach( ( input ) => expect( input ).toHaveAttribute( 'aria-disabled', 'true' ) );
+
+	[
 		screen.getByRole( 'slider', { name: 'Volume' } ),
+		screen.getByRole( 'spinbutton', { name: 'Volume' } ),
 		screen.getByLabelText( 'Date' ),
 	].forEach( ( input ) => expect( input ).toBeDisabled() );
 
@@ -295,7 +304,7 @@ describe( 'checks', () => {
 			target: { value: 'Ada' },
 		} );
 
-		await waitFor( () => expect( save ).not.toHaveAttribute( 'aria-disabled' ) );
+		await waitFor( () => expect( save ).not.toHaveAttribute( 'aria-disabled', 'true' ) );
 		expect( save ).not.toHaveAccessibleDescription();
 
 		fireEvent.click( save );

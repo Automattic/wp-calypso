@@ -173,8 +173,8 @@ content. Its second argument is the owner of the rejected message's batch or of 
 - `className` adds classes to the surface and its modal overlay ([Theming](#theming)).
 
 Import `@automattic/ai-ui-renderer/style.scss` (Sass) with the renderer, in the same lazy
-`import()` when you load it on demand, and the WordPress components stylesheet, and give the modal
-overlay (`ai-ui-renderer__modal`) a stacking rule.
+`import()` when you load it on demand, and give the modal overlay (`ai-ui-renderer__modal`) a
+stacking rule. WordPress UI components load their own styles.
 
 ## Theming
 

@@ -1,13 +1,13 @@
 import { createComponentImplementation, MarkdownContext } from '@a2ui/react';
 import { ActionSchema, ComponentIdSchema } from '@a2ui/web_core/v1_0';
-import { Button as GutenbergButton } from '@wordpress/components';
-import { flushSync } from '@wordpress/element';
+import { flushSync, useId } from '@wordpress/element';
+import { Button as WordPressButton, VisuallyHidden } from '@wordpress/ui';
 import { z } from 'zod';
 import { useInteractiveUiSurface, useModalTrigger } from '../contexts/surface';
 import { ChecksSchema } from '../utils/schemas';
-import type { MouseEvent } from 'react';
+import type { SyntheticEvent } from 'react';
 
-const VARIANTS = { default: 'secondary', primary: 'primary', borderless: 'tertiary' } as const;
+const VARIANTS = { default: 'outline', primary: 'solid', borderless: 'minimal' } as const;
 
 export const Button = createComponentImplementation(
 	{
@@ -20,6 +20,7 @@ export const Button = createComponentImplementation(
 		} ),
 	},
 	( { props, buildChild } ) => {
+		const descriptionId = useId();
 		const openModal = useModalTrigger();
 		const { disabled, showErrors } = useInteractiveUiSurface();
 		const isInvalid = props.isValid === false;
@@ -27,7 +28,7 @@ export const Button = createComponentImplementation(
 		const isDisabled = isInvalid || ( disabled && ! openModal );
 
 		// Shows the surface's errors and moves to the first one, skipping fields on hidden tabs.
-		const showFirstError = ( event: MouseEvent< HTMLElement > ) => {
+		const showFirstError = ( event: SyntheticEvent< HTMLElement > ) => {
 			const container = event.currentTarget.closest( '.ai-ui-renderer' );
 
 			flushSync( () => showErrors?.() );
@@ -38,21 +39,37 @@ export const Button = createComponentImplementation(
 		};
 
 		return (
-			<GutenbergButton
-				className="ai-ui-renderer__button"
-				variant={ VARIANTS[ props.variant ?? 'default' ] }
-				disabled={ isDisabled }
-				accessibleWhenDisabled
-				// WordPress swallows the click on a disabled Button in the bubble phase, and its
-				// `onMouseDown` `preventDefault` keeps the focused field from blurring.
-				onClickCapture={ isInvalid && ! disabled ? showFirstError : undefined }
-				description={ isInvalid ? props.validationErrors?.join( ' ' ) : undefined }
-				onClick={ openModal ?? ( () => props.action() ) }
-			>
-				<MarkdownContext.Provider value={ undefined }>
-					{ buildChild( props.child ) }
-				</MarkdownContext.Provider>
-			</GutenbergButton>
+			<>
+				<WordPressButton
+					className="ai-ui-renderer__button"
+					variant={ VARIANTS[ props.variant ?? 'default' ] }
+					disabled={ isDisabled }
+					focusableWhenDisabled
+					// Disabled buttons suppress activation, so validation runs during capture.
+					onClickCapture={ isInvalid && ! disabled ? showFirstError : undefined }
+					onKeyDownCapture={
+						isInvalid && ! disabled
+							? ( event ) => {
+									if ( event.key === 'Enter' || event.key === ' ' ) {
+										event.preventDefault();
+										showFirstError( event );
+									}
+								}
+							: undefined
+					}
+					aria-describedby={ isInvalid ? descriptionId : undefined }
+					onClick={ ( event ) => ( openModal ? openModal( event.currentTarget ) : props.action() ) }
+				>
+					<MarkdownContext.Provider value={ undefined }>
+						{ buildChild( props.child ) }
+					</MarkdownContext.Provider>
+				</WordPressButton>
+				{ isInvalid && (
+					<VisuallyHidden id={ descriptionId }>
+						{ props.validationErrors?.join( ' ' ) }
+					</VisuallyHidden>
+				) }
+			</>
 		);
 	}
 );
