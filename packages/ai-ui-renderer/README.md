@@ -219,66 +219,34 @@ Fills, such as a primary Button or a checked check box, keep the primary in both
 ## Adding a component
 
 Add a basic component in `src/components`, or a custom one to its owner's catalog
-([Catalogs](#catalogs)). One in Agents Manager's catalog also follows Agents Manager's
+([Catalogs](#catalogs)). One in Agents Manager's catalog also follows its
 [rules](../agents-manager/src/interactive-ui/README.md#rules). Build it from WordPress components,
-which handle most of this: `@wordpress/ui`, or `@wordpress/components` where your project uses
-them, as Agents Manager does. It's done when every item below holds.
+`@wordpress/ui` or the `@wordpress/components` your project uses, which handle most of this:
 
-**Accessibility**
-
-- Every field and icon-only button has a label, and an image that means something has alt text.
-- Tab reaches each control in reading order, Enter or Space acts on it, arrow keys move within a
-  group, such as radios or tabs, and Escape closes what it opens. Focus shows a visible ring.
-- Color is never the only signal: an error also has a message, and a checked control a mark.
-- A screen reader announces its state, such as checked, selected or invalid.
-- Its buttons stay focusable when disabled (`focusableWhenDisabled` in `@wordpress/ui`,
-  `accessibleWhenDisabled` in `@wordpress/components`), since the surface disables them right
-  after a click and a plainly `disabled` button drops keyboard focus.
-
-**Validation**
-
-- An input takes `checks` and shows its first failed check's message as its description
-  (`description` in `@wordpress/ui`, `help` in `@wordpress/components`), with `aria-invalid` on
-  its focusable control, so an invalid `Button` can focus it. Basic inputs get both from
-  `useFieldProps()`.
-- The message shows once the person touches the input (leaves a text or date field, or changes
-  any other input) or activates a `Button` whose checks fail, and clears once the value passes. A
-  custom component gets the messages and that state as props ([Catalogs](#catalogs)).
-
-**States and layout**
-
-- Hover, focus, pressed, checked and invalid each look different from the resting state.
-- With `disabled`, set while the agent replies or once the surface is stale, its inputs and
-  actions are disabled and use the disabled colors, while what only shows or reveals content, such
-  as a tab, stays usable.
-- In a narrow chat, long text, such as a URL, wraps, and nothing overflows the surface.
-- Its own text, such as a default label, is translated, and a longer translation still fits.
-- It shows the agent's text as given, so a custom component's prop `description`s ask for text
-  ready to read: formatted, such as a date, and in the person's language.
-
-**Colors**
-
-- Every color comes from A2UI's tokens (`--a2ui-color-*`), the renderer's accent and disabled
-  colors (`--ai-ui-renderer-*`, see [Theming](#theming)), or `@wordpress/ui` components, which
-  `style.scss` themes. It uses none of a chat's own variables and no fixed colors.
-  `@wordpress/components` follow only A2UI's tokens (through `--wp-components-color-*`), so give
-  them the accent and disabled colors yourself.
-- Text has 4.5:1 contrast with its background, and other parts, such as borders, focus rings and
-  checked marks, have 3:1 (WCAG AA).
-- Where a WordPress component hard-codes a light color or leaves a state uncolored, a rule fixes
-  it: in `style.scss` for a basic component, or in the custom component's own stylesheet.
-
-**Check it**
-
-- In light and dark mode (the page's `color-scheme`, or the `a2ui-light` or `a2ui-dark` class), in
-  every state above, with the keyboard alone and with a screen reader.
-- In Agents Manager's chat in dark mode, if Agents Manager renders it (every basic component, and
-  each one in its catalog). That mode sets its own surface, input and border colors
-  ([`surfaces/style.scss`](../agents-manager/src/interactive-ui/surfaces/style.scss)).
-  [Try it](../agents-manager/src/interactive-ui/README.md#try-it) shows how to get a surface.
-- For a basic component, add cases for its value, its checks and its disabled state to
-  `src/components/__tests__/interactive-ui-surface.test.tsx`, and run the tests
-  ([Development](#development)).
+- Label fields and icon-only buttons, give meaningful images alt text, and let a screen reader
+  announce the state, such as checked or invalid.
+- Make it work with the keyboard alone, with a visible focus ring: Tab reaches it, Enter or Space
+  acts on it, arrow keys move within a group and Escape closes what it opens. Keep buttons
+  focusable when disabled (`focusableWhenDisabled`, or `accessibleWhenDisabled` in
+  `@wordpress/components`).
+- Give an input `checks`, and show its first failed check as its description with `aria-invalid`
+  on its focusable control, as the [basic components](#basic-components) do. Basic inputs get both
+  from `useFieldProps()`.
+- Make every state look distinct (hover, focus, pressed, checked, invalid and disabled), never by
+  color alone. While `disabled`, disable inputs and actions, but keep what only shows or reveals
+  content usable.
+- Wrap long text in a narrow chat, translate the component's own text, and show the agent's text
+  as given.
+- Take colors from A2UI's tokens, the renderer's accent and disabled colors ([Theming](#theming))
+  or `@wordpress/ui` components, never a chat's own variables or fixed colors, with 4.5:1 contrast
+  for text and 3:1 for other parts. `@wordpress/components` follow only A2UI's tokens, so give them
+  the accent and disabled colors yourself. Fix a WordPress component that hard-codes a light color
+  in `style.scss` for a basic component, or in the custom component's own stylesheet.
+- Check it in light and dark mode, in every state, with the keyboard and a screen reader. Agents
+  Manager shows every basic component and those in its catalog, so check them in its chat's dark
+  mode too ([Try it](../agents-manager/src/interactive-ui/README.md#try-it)). Give a basic
+  component test cases for its value, checks and disabled state in
+  `src/components/__tests__/interactive-ui-surface.test.tsx`.
 
 ## Development
 
