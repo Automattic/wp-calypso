@@ -134,10 +134,10 @@ function PreviewFeedback( { siteId, platform }: { siteId: number; platform?: str
 			onClose={ () => setIsDismissed( true ) }
 			actions={
 				<>
-					<Button variant="secondary" onClick={ () => onVote( 'good' ) }>
+					<Button __next40pxDefaultSize variant="secondary" onClick={ () => onVote( 'good' ) }>
 						{ __( 'Looks right' ) }
 					</Button>
-					<Button variant="secondary" onClick={ () => onVote( 'bad' ) }>
+					<Button __next40pxDefaultSize variant="secondary" onClick={ () => onVote( 'bad' ) }>
 						{ __( 'Something’s off' ) }
 					</Button>
 				</>
@@ -253,53 +253,52 @@ export function StaticSiteImportNotice( {
 
 	const feedback = hasPreviewed && <PreviewFeedback siteId={ site.ID } platform={ platform } />;
 
-	if ( isDismissed ) {
-		return feedback || null;
-	}
-
 	return (
 		<>
-			<Notice
-				variant="success"
-				title={ __( 'Your site is ready' ) }
-				onClose={ () => setIsDismissed( true ) }
-				actions={
-					<>
-						<Button variant="primary" href={ connectDomainUrl }>
-							{ keepsDomain
-								? sprintf(
-										/* translators: %s: the site's domain, e.g. example.com. */
-										__( 'Connect %s' ),
-										sourceHost
-									)
-								: __( 'Connect domain' ) }
-						</Button>
-						<Button
-							variant="secondary"
-							href={ site.URL }
-							target="_blank"
-							rel="noopener noreferrer"
-							icon={ external }
-							iconPosition="right"
-							onClick={ () => setHasPreviewed( true ) }
-						>
-							{ __( 'Preview site' ) }
-						</Button>
-					</>
-				}
-			>
-				{ sourceHost
-					? sprintf(
-							/* translators: %s: the domain of the site that was moved, e.g. example.com. */
-							__(
-								'%s is copied and running on WordPress.com. It stays private until you point your domain to it.'
-							),
-							sourceHost
-						)
-					: __(
-							'Your site is copied and running on WordPress.com. It stays private until you launch it.'
-						) }
-			</Notice>
+			{ ! isDismissed && (
+				<Notice
+					variant="success"
+					title={ __( 'Your site is ready' ) }
+					onClose={ () => setIsDismissed( true ) }
+					actions={
+						<>
+							<Button __next40pxDefaultSize variant="primary" href={ connectDomainUrl }>
+								{ keepsDomain
+									? sprintf(
+											/* translators: %s: the site's domain, e.g. example.com. */
+											__( 'Connect %s' ),
+											sourceHost
+										)
+									: __( 'Connect domain' ) }
+							</Button>
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								href={ site.URL }
+								target="_blank"
+								rel="noopener noreferrer"
+								icon={ external }
+								iconPosition="right"
+								onClick={ () => setHasPreviewed( true ) }
+							>
+								{ __( 'Preview site' ) }
+							</Button>
+						</>
+					}
+				>
+					{ sourceHost
+						? sprintf(
+								/* translators: %s: the domain of the site that was moved, e.g. example.com. */
+								__(
+									'%s is copied and running on WordPress.com. It stays private until you point your domain to it.'
+								),
+								sourceHost
+							)
+						: __(
+								'Your site is copied and running on WordPress.com. It stays private until you launch it.'
+							) }
+				</Notice>
+			) }
 			{ feedback }
 		</>
 	);

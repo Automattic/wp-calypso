@@ -148,6 +148,68 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.getByText( 'Thanks for the feedback!' ) ).toBeVisible();
 	} );
 
+	it( 'keeps the feedback answer when the ready notice is closed', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+
+		const { recordTracksEvent } = render( <StaticSiteImport /> );
+
+		await userEvent.click( await screen.findByRole( 'link', { name: /Preview site/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Looks right' } ) );
+
+		const [ dismissReadyNotice ] = screen.getAllByRole( 'button', { name: 'Dismiss' } );
+		await userEvent.click( dismissReadyNotice );
+
+		expect( screen.queryByText( 'Your site is ready' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Thanks for the feedback!' ) ).toBeVisible();
+		expect( screen.queryByText( 'Does your site look right?' ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_static_site_import_feedback',
+			expect.anything()
+		);
+	} );
+
+	it( 'records a bad rating when the user says something is off', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+
+		const { recordTracksEvent } = render( <StaticSiteImport /> );
+
+		await userEvent.click( await screen.findByRole( 'link', { name: /Preview site/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Something’s off' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_static_site_import_feedback',
+			{ site_id: 42, source_platform: 'wix', rating: 'bad' }
+		);
+		expect( screen.getByText( 'Thanks for the feedback!' ) ).toBeVisible();
+	} );
+
+	it( 'hides the feedback question when it is closed', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+
+		const { recordTracksEvent } = render( <StaticSiteImport /> );
+
+		await userEvent.click( await screen.findByRole( 'link', { name: /Preview site/ } ) );
+		const [ , dismissFeedback ] = screen.getAllByRole( 'button', { name: 'Dismiss' } );
+		await userEvent.click( dismissFeedback );
+
+		expect( screen.queryByText( 'Does your site look right?' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_dashboard_static_site_import_feedback',
+			expect.anything()
+		);
+	} );
+
 	it( 'offers to read the site again when the preview has expired', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
