@@ -14,6 +14,8 @@ import {
 	getWooHumanSupportRoute,
 	getWooHumanSupportRouteFromFlags,
 } from '../human-routing/woo-human-routing';
+import { WooHumanSupportRouteOutcome } from './woo-human-support-route-outcome';
+import type { WooHumanSupportOutcome } from './woo-human-support-route-outcome';
 import type { HumanRoutingDecision, HumanSupportQuestionType } from '../human-routing/types';
 import type { HumanSupportRouting, HumanSupportRoutingStepProps } from '@automattic/odie-client';
 import './woo-human-support-routing-step.scss';
@@ -48,6 +50,7 @@ export function WooHumanSupportRoutingStep( {
 	const [ productSlug, setProductSlug ] = useState< string | null >( null );
 	const [ storeChoice, setStoreChoice ] = useState< string | null >( null );
 	const [ otherStoreUrl, setOtherStoreUrl ] = useState( '' );
+	const [ outcome, setOutcome ] = useState< WooHumanSupportOutcome | null >( null );
 	const stepRef = useRef< HTMLDivElement >( null );
 	const actionsRef = useRef< HTMLDivElement >( null );
 	// A second click before the step closes would start a second chat.
@@ -56,10 +59,10 @@ export function WooHumanSupportRoutingStep( {
 	const flagsDecision = getWooHumanSupportRouteFromFlags( request.flags );
 	const isSupportBlocked = !! handoff?.isSupportBlocked;
 
-	// The chat only scrolls for new messages, so bring the questions into view.
+	// The chat only scrolls for new messages, so bring the questions, and then the outcome, into view.
 	useEffect( () => {
 		stepRef.current?.scrollIntoView?.( { behavior: 'smooth', block: 'nearest' } );
-	}, [] );
+	}, [ outcome ] );
 
 	const stores = wooHandoff?.connectedStores ?? [];
 	const products = wooHandoff?.supportedProducts ?? [];
@@ -118,7 +121,18 @@ export function WooHumanSupportRoutingStep( {
 			created_from: request.createdFrom,
 		} );
 
-		// Until the other routes are built (WOOPUBR-2404), they start a chat, as every request does today.
+		if ( route === 'forums' || route === 'ai-reply-then-forums' ) {
+			setOutcome( { route } );
+			return;
+		}
+
+		if ( route === 'link-out' && product?.externalSupportUrl ) {
+			setOutcome( { route, productName: product.name, url: product.externalSupportUrl } );
+			return;
+		}
+
+		// Until the ticket and email routes are built (WOOPUBR-2404), they start a chat, as every
+		// request does today.
 		startChat();
 	};
 
@@ -165,6 +179,14 @@ export function WooHumanSupportRoutingStep( {
 						}
 					) }
 				</p>
+			</div>
+		);
+	}
+
+	if ( outcome ) {
+		return (
+			<div className="help-center-woo-routing-step" ref={ stepRef }>
+				<WooHumanSupportRouteOutcome outcome={ outcome } onDone={ dismiss } />
 			</div>
 		);
 	}
