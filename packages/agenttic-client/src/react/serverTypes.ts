@@ -245,6 +245,30 @@ export function serverMessageToMessage( serverMessage: ServerMessage ): Message 
 }
 
 /**
+ * Keeps each message ID on one message of a conversation joined from history pages. A retried
+ * turn can store one ID on two rows, and the server names only the newest of them on a page, so
+ * when the rows are on different pages the newest keeps the ID too, and the others take their
+ * row IDs.
+ * @param messages - Messages mapped by `serverMessageToMessage`, from one or more pages
+ */
+export function withUniqueMessageIds( messages: Message[] ): Message[] {
+	const newestRows = new Map< string, number >();
+	for ( const { messageId, metadata } of messages ) {
+		const serverId = Number( metadata?.serverId );
+		if ( serverId > ( newestRows.get( messageId ) ?? 0 ) ) {
+			newestRows.set( messageId, serverId );
+		}
+	}
+
+	return messages.map( ( message ) => {
+		const serverId = Number( message.metadata?.serverId );
+		return serverId > 0 && serverId !== newestRows.get( message.messageId )
+			? { ...message, messageId: String( serverId ) }
+			: message;
+	} );
+}
+
+/**
  * Check if a message is a `wpcom__think` tool message
  * @param msg - Server message to check
  */

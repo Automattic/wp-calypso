@@ -2,6 +2,7 @@ import {
 	getAgentManager,
 	loadAllMessagesFromServer,
 	loadChatFromServer,
+	withUniqueMessageIds,
 	type Message,
 	type ServerLoadResult,
 	type ToolResultInput,
@@ -114,7 +115,7 @@ export default function useConversation( {
 				const newestPage = await loadChatFromServer( sessionId, config, 1, 50, true );
 				return {
 					...newestPage,
-					messages: mergeNewestPage( loaded.messages, newestPage.messages ),
+					messages: withUniqueMessageIds( mergeNewestPage( loaded.messages, newestPage.messages ) ),
 				};
 			}
 
