@@ -71,6 +71,22 @@ describe( '<CancelPurchaseForm />', () => {
 		vi.clearAllMocks();
 	} );
 
+	const premiumPurchase = makePurchase( {
+		product_name: 'WordPress.com Premium',
+		product_slug: 'value_bundle',
+		bill_period_days: 365,
+		currency_code: 'USD',
+		site_slug: 'example.wordpress.com',
+	} );
+	const upsellStepProps = {
+		...defaultProps,
+		surveyStep: UPSELL_STEP,
+		allSteps: [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ],
+		purchase: premiumPurchase,
+		clickNext: noop,
+		onSubmit: noop,
+	};
+
 	test( 'asks for a cancellation reason for a Google Workspace purchase', () => {
 		render(
 			<CancelPurchaseForm
@@ -242,21 +258,6 @@ describe( '<CancelPurchaseForm />', () => {
 	} );
 
 	describe( 'option cards', () => {
-		const premiumPurchase = makePurchase( {
-			product_name: 'WordPress.com Premium',
-			product_slug: 'value_bundle',
-			bill_period_days: 365,
-			currency_code: 'USD',
-			site_slug: 'example.wordpress.com',
-		} );
-		const upsellStepProps = {
-			...defaultProps,
-			surveyStep: UPSELL_STEP,
-			allSteps: [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ],
-			purchase: premiumPurchase,
-			clickNext: noop,
-			onSubmit: noop,
-		};
 		const cardsListName = 'Before canceling, you can consider these options:';
 
 		afterEach( () => {
@@ -460,6 +461,52 @@ describe( '<CancelPurchaseForm />', () => {
 			expect(
 				screen.queryByRole( 'button', { name: /^How about a free month\?/ } )
 			).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'offer clicks', () => {
+		test( 'adds the purchase ID to the built-by click', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = render(
+				<CancelPurchaseForm { ...upsellStepProps } upsell="built-by" />
+			);
+
+			await user.click( screen.getByRole( 'button', { name: 'Get help building my site' } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_cancellation_upsell_step_buily_by_click',
+				{ purchase_id: 123 }
+			);
+		} );
+
+		test( 'adds the purchase ID to the upgrade click', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = render(
+				<CancelPurchaseForm { ...upsellStepProps } upsell="upgrade-atomic" />
+			);
+
+			await user.click( screen.getByRole( 'link', { name: /I want the/ } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_cancellation_upgrade_at_step_upgrade_click',
+				{ purchase_id: 123 }
+			);
+		} );
+
+		test( 'adds the purchase ID to the live chat click and keeps its type', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = render(
+				<CancelPurchaseForm { ...upsellStepProps } upsell="live-chat:plans" />
+			);
+
+			await user.click(
+				screen.getByRole( 'button', { name: 'Connect with a Happiness Engineer' } )
+			);
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_cancellation_upsell_step_live_chat_click',
+				{ type: 'live-chat:plans', purchase_id: 123 }
+			);
 		} );
 	} );
 } );

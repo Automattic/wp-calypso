@@ -627,7 +627,7 @@ function CancelPurchaseInner() {
 					setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
 				},
 			} );
-			recordEvent( 'calypso_purchases_free_month_offer_form_submit' );
+			recordEvent( 'calypso_purchases_free_month_offer_form_submit', { purchase_id: purchase.ID } );
 			setState( ( state ) => ( { ...state, solution: 'free-month-offer', isSubmitting: true } ) );
 		}
 	};

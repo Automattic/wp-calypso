@@ -13,14 +13,14 @@ import {
 } from '@automattic/api-queries';
 import { disable, enable } from '@automattic/calypso-config';
 import { QueryClient } from '@tanstack/react-query';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import CancelPurchase from '../index';
 import KeepSubscriptionButton from '../keep-subscription-button';
-import type { Domain, PlanProduct, Purchase } from '@automattic/api-core';
+import type { Domain, PlanProduct, PlanProductDowngrade, Purchase } from '@automattic/api-core';
 
 vi.mock( '../../../../app/router/domains', () => ( {
 	domainRoute: { fullPath: '/domains/$domainName' },
@@ -128,6 +128,55 @@ async function pickFoundBetterValue( user: ReturnType< typeof userEvent.setup > 
 
 const optionsListName = 'Before canceling, you can consider these options:';
 
+const personalAnnual: Partial< Purchase > = {
+	product_id: 1009,
+	product_name: 'WordPress.com Personal',
+	product_slug: 'personal-bundle',
+};
+
+const personalAnnualPlan = {
+	product_id: 1009,
+	product_name: 'WordPress.com Personal',
+	product_slug: 'personal-bundle',
+	bill_period: 365,
+	downgrade_paths: [ { product_id: 1019, bill_period: 31 } ],
+} as PlanProduct;
+
+const personalMonthlyPlan = {
+	product_id: 1019,
+	product_name: 'WordPress.com Personal',
+	product_slug: 'personal-bundle-monthly',
+	bill_period: 31,
+	downgrade_paths: [] as PlanProductDowngrade[],
+} as PlanProduct;
+
+const renderPersonalFlow = () =>
+	renderRemoveFlow( {
+		purchase: personalAnnual,
+		plans: [ personalAnnualPlan, personalMonthlyPlan ],
+	} );
+
+async function answerTooExpensive( user: ReturnType< typeof userEvent.setup > ) {
+	await startSurvey( user );
+	await user.click( await screen.findByRole( 'radio', { name: 'Too expensive' } ) );
+	await user.click(
+		screen.getByRole( 'radio', { name: 'The plan is too expensive for the features offered.' } )
+	);
+	await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+}
+
+// Holds the reply until `release()`, so a test can check what fires before the API result.
+function mockHeldPurchaseRequest( action: 'cancel' | 'extend' ) {
+	let release!: () => void;
+	const pending = new Promise< void >( ( resolve ) => {
+		release = resolve;
+	} );
+	const scope = nock( 'https://public-api.wordpress.com' )
+		.post( `/wpcom/v2/upgrades/${ purchase.ID }/${ action }` )
+		.reply( 200, () => pending.then( () => ( { status: 'completed', message: 'ok' } ) ) );
+	return { scope, release };
+}
+
 describe( '<CancelPurchase />', () => {
 	beforeEach( () => {
 		window.history.replaceState( {}, '', '/?intent=remove' );
@@ -163,6 +212,43 @@ describe( '<CancelPurchase />', () => {
 			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
 				'calypso_cancellation_solution_cards_view',
 				expect.anything()
+			);
+		} );
+
+	} );
+
+	describe( 'with the cards flag off', () => {
+
+		test( 'adds the purchase ID to the free month offer event, before the API result', async () => {
+			const user = userEvent.setup();
+			const freeMonth = mockHeldPurchaseRequest( 'extend' );
+			const { recordTracksEvent, router } = renderRemoveFlow( {
+				purchase: {
+					product_id: 1019,
+					product_slug: 'personal-bundle-monthly',
+					bill_period_days: 31,
+				},
+				plans: [ personalAnnualPlan, personalMonthlyPlan ],
+			} );
+			await startSurvey( user );
+
+			await user.click( await screen.findByRole( 'radio', { name: 'Too hard to use' } ) );
+			await user.click(
+				screen.getByRole( 'radio', {
+					name: 'The platform/dashboard is too complicated or confusing to navigate',
+				} )
+			);
+			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+			await user.click( await screen.findByRole( 'button', { name: 'Get a free month' } ) );
+			await waitFor( () => expect( freeMonth.scope.isDone() ).toBe( true ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_purchases_free_month_offer_form_submit',
+				expect.objectContaining( { purchase_id: 123 } )
+			);
+			freeMonth.release();
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( `/me/billing/purchases/${ purchase.ID }` )
 			);
 		} );
 	} );
