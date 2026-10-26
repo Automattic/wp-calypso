@@ -139,7 +139,7 @@ class Signup extends Component {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
-		let providedDependencies = this.getDependenciesInQuery();
+		let providedDependencies = this.getEntryDependencies();
 
 		// Prevent duplicate sites, check pau2Xa-1Io-p2#comment-6759.
 		// Note that there are in general three ways of touching this code that can be obscured:
@@ -743,6 +743,17 @@ class Signup extends Component {
 		const requiredDependenciesInQuery = flow?.providesDependenciesInQuery ?? [];
 
 		return this.extractFlowDependenciesFromQuery( requiredDependenciesInQuery );
+	};
+
+	getEntryDependencies = () => {
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+		const clearedDependencies = flow?.clearsMissingDependenciesInQuery
+			? Object.fromEntries(
+					( flow.optionalDependenciesInQuery ?? [] ).map( ( key ) => [ key, undefined ] )
+				)
+			: {};
+
+		return { ...clearedDependencies, ...this.getDependenciesInQuery() };
 	};
 
 	getCurrentFlowSupportedQueryParams = () => {

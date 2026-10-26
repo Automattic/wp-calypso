@@ -17,15 +17,18 @@ const TITAN_SLUGS_BY_TIER: Record< string, Record< string, string > > = {
 	},
 };
 
+export function isTitanTier( tier?: unknown ): tier is string {
+	return typeof tier === 'string' && Object.hasOwn( TITAN_SLUGS_BY_TIER, tier );
+}
+
 /**
  * Maps the `tier` and `billing` query params of the email onboarding flow to a
  * Titan product slug. Missing or unknown values fall back to Essential yearly.
  */
 export function getTitanProductSlug( tier?: unknown, billing?: unknown ): string {
-	const slugsByBilling =
-		typeof tier === 'string' && Object.hasOwn( TITAN_SLUGS_BY_TIER, tier )
-			? TITAN_SLUGS_BY_TIER[ tier ]
-			: TITAN_SLUGS_BY_TIER.pro;
+	const slugsByBilling = isTitanTier( tier )
+		? TITAN_SLUGS_BY_TIER[ tier ]
+		: TITAN_SLUGS_BY_TIER.pro;
 
 	return billing === 'monthly' ? slugsByBilling.monthly : slugsByBilling.yearly;
 }

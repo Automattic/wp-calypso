@@ -166,6 +166,7 @@ export function generateFlows( {
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'tier', 'billing' ],
 			optionalDependenciesInQuery: [ 'tier', 'billing' ],
+			clearsMissingDependenciesInQuery: true,
 			hideProgressIndicator: true,
 		},
 		{

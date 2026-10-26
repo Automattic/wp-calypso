@@ -1,4 +1,16 @@
-import { getTitanEmailItem, getTitanProductSlug } from '../titan-email-item';
+import { getTitanEmailItem, getTitanProductSlug, isTitanTier } from '../titan-email-item';
+
+describe( 'isTitanTier', () => {
+	test( 'accepts only the known tiers', () => {
+		expect( isTitanTier( 'pro' ) ).toBe( true );
+		expect( isTitanTier( 'premium' ) ).toBe( true );
+		expect( isTitanTier( 'ultra' ) ).toBe( true );
+		expect( isTitanTier( 'gold' ) ).toBe( false );
+		expect( isTitanTier( 'toString' ) ).toBe( false );
+		expect( isTitanTier( [ 'pro' ] ) ).toBe( false );
+		expect( isTitanTier( undefined ) ).toBe( false );
+	} );
+} );
 
 describe( 'getTitanProductSlug', () => {
 	test.each( [

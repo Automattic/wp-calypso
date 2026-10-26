@@ -10,8 +10,10 @@ import {
 } from '@automattic/calypso-products';
 import { DIFM_FLOW, DIFM_FLOW_STORE } from '@automattic/onboarding';
 import nock from 'nock';
+import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
 import {
+	addPlanToCart,
 	createSiteAndAddDIFMToCart,
 	createSiteWithCart,
 	getPluginBillingPeriodForPlan,
@@ -234,6 +236,45 @@ describe( 'isMailboxFulfilled()', () => {
 
 		expect( submitSignupStep ).not.toHaveBeenCalled();
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
+	} );
+
+	test( 'keeps the step when the URL picked an unknown tier', () => {
+		const nextProps = { signupDependencies: { domainItem, tier: 'gold' }, submitSignupStep };
+
+		isMailboxFulfilled( 'mailbox', undefined, nextProps );
+
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'addPlanToCart()', () => {
+	test( 'adds the email item for the currently selected domain', async () => {
+		const addProductsToCart = jest.fn().mockResolvedValue( {} );
+		jest.spyOn( cartManagerClient, 'getCartKeyForSiteSlug' ).mockResolvedValue( 123 );
+		jest
+			.spyOn( cartManagerClient, 'forCartKey' )
+			.mockReturnValue( { actions: { addProductsToCart } } );
+		const reduxStore = {
+			getState: () => ( { currentUser: { id: null }, productsList: { items: {} } } ),
+			dispatch: jest.fn(),
+		};
+		const dependencies = {
+			siteSlug: 'example.wordpress.com',
+			domainItem: { meta: 'new-domain.com' },
+			emailItem: { product_slug: 'wp_titan_mail_premium_monthly', meta: 'old-domain.com' },
+		};
+
+		await new Promise( ( resolve ) =>
+			addPlanToCart( resolve, dependencies, { cartItems: [] }, reduxStore )
+		);
+
+		expect( addProductsToCart ).toHaveBeenCalledWith( [
+			expect.objectContaining( {
+				product_slug: 'wp_titan_mail_premium_monthly',
+				meta: 'new-domain.com',
+			} ),
+		] );
 	} );
 } );
 

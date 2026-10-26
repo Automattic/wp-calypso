@@ -201,7 +201,7 @@ export function generateSteps( {
 			stepName: 'mailbox-plan',
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug', 'emailItem' ],
+			dependencies: [ 'siteSlug', 'emailItem', 'domainItem' ],
 			providesDependencies: [ 'themeSlugWithRepo', 'cartItems' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {

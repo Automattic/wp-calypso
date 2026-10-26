@@ -33,7 +33,7 @@ import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
-import { getTitanEmailItem } from 'calypso/signup/steps/emails/titan-email-item';
+import { getTitanEmailItem, isTitanTier } from 'calypso/signup/steps/emails/titan-email-item';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	buildDIFMCartExtrasObject,
@@ -618,8 +618,13 @@ export function addWithPluginPlanToCart( callback, dependencies, stepProvidedIte
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
 	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
-	const { emailItem, siteSlug } = dependencies;
+	const { domainItem, siteSlug } = dependencies;
 	const { cartItems, lastKnownFlow } = stepProvidedItems;
+	// A skipped mailbox step isn't revisited, so its email item can predate a later domain change.
+	const emailItem =
+		dependencies.emailItem && domainItem?.meta
+			? { ...dependencies.emailItem, meta: domainItem.meta }
+			: dependencies.emailItem;
 	if ( isEmpty( cartItems ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
 		setTimeout( callback, 0 );
@@ -967,7 +972,7 @@ export function isMailboxFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { signupDependencies, submitSignupStep } = nextProps;
 	const { domainItem, tier, billing } = signupDependencies ?? {};
 
-	if ( ! tier || flows.excludedSteps.includes( stepName ) ) {
+	if ( ! isTitanTier( tier ) || flows.excludedSteps.includes( stepName ) ) {
 		return;
 	}
 
