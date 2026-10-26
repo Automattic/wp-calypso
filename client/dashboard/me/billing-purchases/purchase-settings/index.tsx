@@ -1105,6 +1105,7 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { recordTracksEvent } = useAnalytics();
 
 	// Auto-renew and the payment method are the partner's to manage rather than
 	// the customer's, so the whole card goes for a partner-managed subscription.
@@ -1138,7 +1139,19 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 								} );
 								return;
 							}
-							setAutoRenew( { purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled } );
+							setAutoRenew(
+								{ purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled },
+								{
+									onSuccess: ( { success } ) => {
+										if ( success && newData.is_auto_renew_enabled ) {
+											recordTracksEvent( 'calypso_purchases_auto_renew_enabled', {
+												purchase_id: purchase.ID,
+												product_slug: purchase.product_slug,
+											} );
+										}
+									},
+								}
+							);
 						}
 					} }
 				/>
