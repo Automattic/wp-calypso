@@ -11,6 +11,8 @@ import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
 import useAbilitiesRegistration from '../../hooks/use-abilities-registration';
+import { useActionApprovalSubmission } from '../../hooks/use-action-approval-submission';
+import { useActionApprovals } from '../../hooks/use-action-approvals';
 import useAgentTraceIds from '../../hooks/use-agent-trace-ids';
 import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
 import { useBroadcastTurnActivity } from '../../hooks/use-broadcast-turn-activity';
@@ -54,6 +56,7 @@ import {
 	hasDisabledCheckpointAction,
 	withComputedActions,
 } from '../../utils/message-actions';
+import { ActionApprovalFooter } from '../action-approval-footer';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import SiteSetupChecklist from '../site-setup-checklist';
@@ -155,6 +158,8 @@ export default function OrchestratorChat( {
 		invalidateLoadedCheckpoints,
 	} = useStreamedCheckpointMessages();
 	const { retriedToolCallIds, recordRetriedToolCall } = useRetriedToolCalls( streamGeneration );
+	const { approvals, isAwaitingApprovalAnswer, recordApprovalUpdate, updateApproval } =
+		useActionApprovals( streamGeneration );
 	const trackResponseOutcome = useResponseOutcomeTracking();
 
 	// Credits runs after the chat, so task updates reach it through its visit.
@@ -178,6 +183,7 @@ export default function OrchestratorChat( {
 				if ( isCurrentStreamGeneration( streamGeneration ) ) {
 					recordRetriedToolCall( update );
 					recordTaskUpdate( update );
+					recordApprovalUpdate( update );
 				}
 
 				trackResponseOutcome( update );
@@ -188,6 +194,7 @@ export default function OrchestratorChat( {
 		agentConfig,
 		creditsVisit,
 		isCurrentStreamGeneration,
+		recordApprovalUpdate,
 		recordRetriedToolCall,
 		recordTaskUpdate,
 		streamGeneration,
@@ -300,6 +307,15 @@ export default function OrchestratorChat( {
 		suggestionPromptsRef,
 	} );
 
+	// Held calls' cards, answered with a hidden command message.
+	const { withActionApprovalCards, isErrorOnCard } = useActionApprovalSubmission( {
+		approvals,
+		updateApproval,
+		submitContextMessage,
+		isProcessing,
+		streamGeneration,
+	} );
+
 	// What's in the box wins, as it sits right under the notice; the refused question is the fallback.
 	// The draft goes as typed, so the composer recognises and clears it.
 	retrySendRef.current = ( message ) =>
@@ -352,7 +368,7 @@ export default function OrchestratorChat( {
 	) : null;
 
 	const chatError = useChatError( {
-		error: hasFailedResume ? null : error,
+		error: hasFailedResume || isErrorOnCard ? null : error,
 		isReaderChat,
 		takeRefusalCode: credits.takeRefusalCode,
 		refusalNotice: credits.refusalNotice,
@@ -475,7 +491,7 @@ export default function OrchestratorChat( {
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
 
-		return currentMessages.map( ( message ) => {
+		const messagesWithActions = currentMessages.map( ( message ) => {
 			const checkpointActions = checkpointActionsByMessageId.get( message.id ) ?? [];
 			const isDisabled =
 				hasDisabledCheckpointAction( checkpointActions ) ||
@@ -499,6 +515,9 @@ export default function OrchestratorChat( {
 				} ),
 			] );
 		} );
+
+		// Added last, so no message action or "latest message" check counts a card.
+		return withActionApprovalCards( messagesWithActions );
 	}, [
 		currentPostId,
 		getChatComponent,
@@ -515,6 +534,7 @@ export default function OrchestratorChat( {
 		siteBuildUtils,
 		thinkingMessage,
 		transformMessages,
+		withActionApprovalCards,
 		withRetainedShowComponents,
 	] );
 
@@ -628,6 +648,7 @@ export default function OrchestratorChat( {
 			onCancelFeedback={ resetFeedback }
 			onContextCardAction={ handleContextCardAction }
 			onContextCardDismiss={ dismissContextCard }
+			alternativeFooter={ isAwaitingApprovalAnswer ? <ActionApprovalFooter /> : undefined }
 		/>
 	);
 }

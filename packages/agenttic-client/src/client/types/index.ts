@@ -334,6 +334,7 @@ export interface SendMessageParams {
 	sessionId?: string;
 	metadata?: Record< string, unknown >;
 	withHistory?: boolean; // Default: true - whether to include conversation history
+	excludeFromHistory?: boolean; // Default: false - send this message with the history as usual, but leave it out of the local history later turns send (e.g. a command the server drops)
 	abortSignal?: AbortSignal; // Optional: abort signal for canceling inflight requests
 	enableStreaming?: boolean; // Override client's default streaming setting for this request
 	imageUrls?: ( string | ImageData )[]; // Optional: array of image URLs or image objects with metadata
