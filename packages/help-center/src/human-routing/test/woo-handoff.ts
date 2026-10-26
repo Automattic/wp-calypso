@@ -1,5 +1,7 @@
 import {
+	getWooChatValues,
 	getWooRoutingInput,
+	normalizeStoreUrl,
 	isProductAsked,
 	isProductRequired,
 	isStoreAsked,
@@ -134,5 +136,31 @@ describe( 'which questions are asked', () => {
 		expect( isStoreAsked( 'start-scale-store', null ) ).toBe( false );
 		expect( isStoreRequired( 'technical-support' ) ).toBe( true );
 		expect( isStoreRequired( 'pre-sales' ) ).toBe( false );
+	} );
+} );
+
+describe( 'getWooChatValues', () => {
+	it( 'sends the store as the Site URL and the product to the Product field', () => {
+		expect(
+			getWooChatValues( {
+				storeUrl: 'https://store.example',
+				product: { ...subscriptions, zendeskSlug: 'woocommerce_subscriptions' },
+			} )
+		).toEqual( {
+			siteUrl: 'https://store.example',
+			ticketFields: { 25254766: 'woocommerce_subscriptions' },
+		} );
+	} );
+
+	it( 'sends nothing it doesn’t know', () => {
+		expect( getWooChatValues( { storeUrl: null, product: null } ) ).toEqual( {} );
+		// Without a Zendesk slug, the Product field stays empty rather than guessed.
+		expect( getWooChatValues( { storeUrl: null, product: subscriptions } ) ).toEqual( {} );
+	} );
+
+	it( 'adds https:// to a typed store address', () => {
+		expect( normalizeStoreUrl( 'store.example' ) ).toBe( 'https://store.example' );
+		expect( normalizeStoreUrl( 'http://store.example' ) ).toBe( 'http://store.example' );
+		expect( normalizeStoreUrl( 'HTTPS://store.example' ) ).toBe( 'HTTPS://store.example' );
 	} );
 } );

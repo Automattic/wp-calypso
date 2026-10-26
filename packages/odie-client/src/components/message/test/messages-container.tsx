@@ -96,7 +96,7 @@ const mockSetPendingHumanSupportRequest = jest.fn();
 const RoutingStep = ( { request, startChat, dismiss }: HumanSupportRoutingStepProps ) => (
 	<div>
 		<p>Routing { request.createdFrom }</p>
-		<button onClick={ startChat }>Start chat</button>
+		<button onClick={ () => startChat() }>Start chat</button>
 		<button onClick={ dismiss }>Dismiss</button>
 	</div>
 );
@@ -303,6 +303,36 @@ describe( 'MessagesContainer routing step', () => {
 			isFromError: false,
 			escalationOnSecondAttempt: true,
 		} );
+	} );
+
+	it( 'passes what the step learned to the chat', async () => {
+		const StepWithValues = ( { startChat }: HumanSupportRoutingStepProps ) => (
+			<button
+				onClick={ () =>
+					startChat( {
+						siteUrl: 'https://store.example',
+						ticketFields: { 25254766: 'woocommerce_subscriptions' },
+					} )
+				}
+			>
+				Start chat
+			</button>
+		);
+		mockContext( {
+			humanSupportRouting: { Step: StepWithValues },
+			pendingHumanSupportRequest: request,
+		} );
+		render( container() );
+
+		await userEvent.click( screen.getByText( 'Start chat' ) );
+
+		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				createdFrom: 'automatic_escalation',
+				siteUrl: 'https://store.example',
+				ticketFields: { 25254766: 'woocommerce_subscriptions' },
+			} )
+		);
 	} );
 
 	it( 'drops the request when the step dismisses it', async () => {

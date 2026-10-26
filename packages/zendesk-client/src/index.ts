@@ -19,6 +19,8 @@ export {
 } from './use-get-zendesk-conversation-history';
 export { calculateUnread } from './use-get-unread-conversations';
 
+export { getTicketFieldMetadata } from './ticket-field-metadata';
+export type { ZendeskTicketFields } from './ticket-field-metadata';
 export {
 	isTestModeEnvironment,
 	getSmoochIntegrationId,
