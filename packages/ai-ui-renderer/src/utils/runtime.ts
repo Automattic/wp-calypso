@@ -1,4 +1,4 @@
-import { MessageProcessor } from '@a2ui/web_core';
+import { MessageProcessor, RELAXED_VALIDATION } from '@a2ui/web_core';
 import type { InteractiveUiCatalog } from './catalog';
 import type { ReactComponentImplementation } from '@a2ui/react';
 import type { A2uiErrorPayload, ActionPayload } from '@a2ui/web_core';
@@ -24,7 +24,11 @@ export function createInteractiveUiRuntime( {
 	onAction,
 	onError,
 }: InteractiveUiRuntimeOptions ) {
-	const processor = new MessageProcessor< ReactComponentImplementation >( catalogs, onAction );
+	// Relaxed validation still rejects cycles and over-deep layouts, which would never finish
+	// rendering, even across updates.
+	const processor = new MessageProcessor< ReactComponentImplementation >( catalogs, onAction, {
+		validationConfig: RELAXED_VALIDATION,
+	} );
 
 	const surfaceOwnerIds = new Map< string, string >();
 	let currentOwnerId = '';

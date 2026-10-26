@@ -480,6 +480,12 @@ describe( 'AgentChat', () => {
 		] );
 	} );
 
+	it( 'renders pinned content above the messages', () => {
+		renderAgentChat( { pinnedContent: <div data-testid="pinned" /> } );
+
+		expect( screen.getByTestId( 'pinned' ) ).toBeInTheDocument();
+	} );
+
 	it( 'expands when open', () => {
 		renderAgentChat( { isOpen: true } );
 

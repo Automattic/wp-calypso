@@ -1,8 +1,9 @@
 import { createContext } from '@wordpress/element';
 import type { RefObject } from 'react';
 
-/** What a surface's components share: its disabled state, and its theme for an open modal. */
+/** What a surface's components share: its ID, disabled state, and theme for an open modal. */
 export const InteractiveUiSurfaceContext = createContext< {
+	surfaceId?: string;
 	disabled: boolean;
 	/** The host's classes for the surface, which its modal takes too. */
 	className?: string;

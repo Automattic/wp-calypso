@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { markActionOrigin, takeActionOrigin } from '../utils/action-origin';
 import { startNewUserRequest } from '../utils/canvas-binding';
 import { consumeNextMessageExternalContextEntries } from '../utils/external-context';
+import { consumePromptSource, markNextPromptSource } from '../utils/prompt-source';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../utils/tracks';
 import { startTurn } from '../utils/turn-id';
 import { useImageUpload } from './use-image-upload';
@@ -175,18 +176,31 @@ export function useChatComposer( {
 			startNewUserRequest();
 
 			wasLastSendDispatchedRef.current = true;
+			// A checklist click declared where this exact prompt came from; the
+			// message keeps it and the server gets it with the client context.
+			const promptSource = consumePromptSource( message );
+			const submitOptions: SubmitOptions = {
+				...( imageUrls && { imageUrls } ),
+				...( promptSource && { promptSource } ),
+			};
 			try {
 				// First, so this message follows the parked call's tool result. Never throws.
 				await flushPendingNavigation();
 
 				// Images dispatch via Agenttic's `imageUrls` option — the resulting
 				// `FilePart`s persist in conversation history with their metadata.
-				await ( imageUrls ? onSubmit( message, { imageUrls } ) : onSubmit( message ) );
+				await ( Object.keys( submitOptions ).length > 0
+					? onSubmit( message, submitOptions )
+					: onSubmit( message ) );
 			} catch {
 				// A rejected dispatch already surfaces via Agenttic's error state;
-				// put the message back (unless a newer draft replaced it) for a retry.
+				// put the message back (unless a newer draft replaced it) for a retry,
+				// labeled like the original.
 				wasLastSendDispatchedRef.current = false;
 				setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
+				if ( promptSource ) {
+					markNextPromptSource( promptSource, message );
+				}
 				return;
 			}
 

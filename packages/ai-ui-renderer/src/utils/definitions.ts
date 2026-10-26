@@ -1,80 +1,74 @@
 import { createComponentImplementation } from '@a2ui/react';
-import { ActionSchema, DataBindingSchema } from '@a2ui/web_core/v1_0';
 import { createElement, useContext } from '@wordpress/element';
-import { z } from 'zod';
-import { InteractiveUiHostPropsContext } from '../contexts/surface';
-import { BooleanValueSchema, NumberValueSchema, StringValueSchema } from './schemas';
+import { InteractiveUiHostPropsContext, InteractiveUiSurfaceContext } from '../contexts/surface';
 import type { ReactComponentImplementation } from '@a2ui/react';
-import type { FunctionImplementation } from '@a2ui/web_core';
+import type { ComponentApi, FunctionImplementation } from '@a2ui/web_core';
 import type { ComponentType } from 'react';
 
-// Definitions from other bundles build their schemas with these, not their own `zod` and A2UI.
-const SCHEMA_KIT = {
-	z,
-	ActionSchema,
-	DataBindingSchema,
-	StringValueSchema,
-	NumberValueSchema,
-	BooleanValueSchema,
-};
+/**
+ * An A2UI v1.0 catalog document (https://a2ui.org/specification/v1_0/catalog_definition.json): the
+ * catalog's components and functions as JSON Schema, which the server reads too.
+ */
+export interface InteractiveUiCatalogDocument {
+	/** A versioned ID, such as `urn:automattic:example:interactive-ui:v1`. */
+	catalogId: string;
+	/** How the agent should use the catalog. */
+	instructions?: string;
+	/** Each component's props, by name, such as `ExampleCard`. */
+	components?: Record< string, object >;
+	/** Each function's call, by name, such as `exampleOpenItem`. */
+	functions?: Record< string, object >;
+}
 
-/** What a definition's `schema` builds with: the renderer's `zod` and A2UI's shared schemas. */
-type InteractiveUiSchemaKit = typeof SCHEMA_KIT;
+/** A host's or provider's own catalog: its document and the code that implements it. */
+export interface InteractiveUiCatalogDefinition {
+	catalog: InteractiveUiCatalogDocument;
 
-/** A component that a host or provider adds to a catalog, with no dependency on A2UI. */
-export interface InteractiveUiComponentDefinition< Props = Record< string, unknown > > {
-	/** Prefixed with its owner, such as `AgentsManagerColorPicker`. */
-	name: string;
 	/**
-	 * Builds the props schema. The component gets bound values resolved, a `set<Prop>` setter for
-	 * each, actions as functions to call, and the host's props.
+	 * Each of the document's components. They get bound values resolved, a `set<Prop>` setter for
+	 * each, actions as functions, their `surfaceId` and `disabled` state, and the host's props.
 	 */
-	schema: ( kit: InteractiveUiSchemaKit ) => z.AnyZodObject;
-	component: ComponentType< Props >;
+	// A catalog holds components with different props types.
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	components?: Record< string, ComponentType< any > >;
+
+	/**
+	 * Each of the document's functions, which may be async. Their arguments come from the agent, so
+	 * treat them as untrusted. They run only from a click unless the document sets
+	 * `requiresUserActivation: false`.
+	 */
+	functions?: Record< string, ( args: Record< string, unknown > ) => unknown >;
 }
 
-// A catalog holds definitions with different props types.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyInteractiveUiComponentDefinition = InteractiveUiComponentDefinition< any >;
-
-/** A function that a host or provider adds to a catalog, called from an action such as a click. */
-export interface InteractiveUiFunctionDefinition {
-	/** Prefixed with its owner, such as `agentsManagerOpenHelpCenter`. */
-	name: string;
-	returnType: FunctionImplementation[ 'returnType' ];
-	/** Builds the arguments schema. The arguments come from the agent, so treat them as untrusted. */
-	schema: ( kit: InteractiveUiSchemaKit ) => z.ZodTypeAny;
-	execute: ( args: Record< string, unknown > ) => unknown;
-}
-
-export function toComponentImplementation( {
-	name,
-	schema,
-	component,
-}: AnyInteractiveUiComponentDefinition ): ReactComponentImplementation {
+export function toComponentImplementation(
+	{ name, schema, allowedParents, allowedChildren }: ComponentApi,
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	component: ComponentType< any >
+): ReactComponentImplementation {
 	function DefinitionComponent( { props }: { props: Record< string, unknown > } ) {
+		const { surfaceId, disabled } = useContext( InteractiveUiSurfaceContext );
 		const hostProps = useContext( InteractiveUiHostPropsContext );
 
-		// The host's props win, so a surface can't override host state such as staleness.
-		return createElement( component, { ...props, ...hostProps } );
+		// Like the basic components, it's disabled with its surface. The surface's own state and
+		// the host's props win, so a surface can't override them.
+		return createElement( component, { ...props, surfaceId, disabled, ...hostProps } );
 	}
 
-	return createComponentImplementation(
-		{ name, schema: schema( SCHEMA_KIT ) },
-		DefinitionComponent
-	);
+	return {
+		...createComponentImplementation( { name, schema }, DefinitionComponent ),
+		allowedParents,
+		allowedChildren,
+	};
 }
 
-export function toFunctionImplementation( {
-	name,
-	returnType,
-	schema,
-	execute,
-}: InteractiveUiFunctionDefinition ): FunctionImplementation {
+export function toFunctionImplementation(
+	api: Omit< FunctionImplementation, 'execute' >,
+	execute: ( args: Record< string, unknown > ) => unknown
+): FunctionImplementation {
 	return {
-		name,
-		returnType,
-		schema: schema( SCHEMA_KIT ),
+		...api,
+		// Values can call functions too, so one runs only from a click unless its document opts out.
+		requiresUserActivation: api.requiresUserActivation ?? true,
 		execute: ( args, context ) => {
 			const result = execute( args );
 
@@ -85,7 +79,7 @@ export function toFunctionImplementation( {
 					context.surface?.dispatchError( {
 						code: 'EXPRESSION_ERROR',
 						message: error instanceof Error ? error.message : String( error ),
-						expression: name,
+						expression: api.name,
 					} )
 				);
 			}

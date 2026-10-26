@@ -5,6 +5,7 @@ import {
 	getPlans,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
+	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_GUIDED_WEBSITE_BUILDER,
 	FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
 	FEATURE_REALTIME_BACKUPS_JP,
@@ -611,6 +612,9 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		// Use the short title for the guided website builder in the comparison grid.
 		comparisonGridTitle = translate( 'Guided website builder', { textOnly: true } );
 	}
+	if ( featureSlug === FEATURE_BACKUP_DAILY_V2 ) {
+		comparisonGridTitle = translate( 'Automated daily backups', { textOnly: true } );
+	}
 
 	const planFeatures = [
 		...gridPlan.features.wpcomFeatures,
@@ -778,6 +782,9 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	if ( featureSlug === FEATURE_GUIDED_WEBSITE_BUILDER ) {
 		// Use the short title for the guided website builder in the comparison grid.
 		title = translate( 'Guided website builder', { textOnly: true } );
+	}
+	if ( featureSlug === FEATURE_BACKUP_DAILY_V2 ) {
+		title = translate( 'Automated daily backups', { textOnly: true } );
 	}
 	const headerAriaLabel: string = typeof title === 'string' ? title : '';
 

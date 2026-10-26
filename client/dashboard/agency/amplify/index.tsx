@@ -1,6 +1,6 @@
 import { activeAgencyQuery, amplifyReportsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import { Button, Tooltip, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
@@ -8,14 +8,19 @@ import EmptyState from '../../components/empty-state';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
+import { AgencyNotices } from '../components/agency-notices';
+import { getFeatureName } from './constants';
 import AmplifyDevStateControls, {
 	makePreviewReports,
+	makePreviewUsage,
 	useAmplifyDevSettings,
 } from './dev-state-controls';
 import AmplifyLearnMoreModal from './learn-more-modal';
 import AmplifyNewReportModal from './new-report-modal';
 import AmplifyReportCreator from './report-creator';
 import AmplifyReportsList from './reports';
+import { canStartScan, getUsageStatus } from './usage';
+import { AmplifyApprovalNotice, AmplifyUsageCard } from './usage-meter';
 import './style.scss';
 
 export default function AgencyAmplify() {
@@ -26,6 +31,7 @@ export default function AgencyAmplify() {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isNewReportOpen, setIsNewReportOpen ] = useState( false );
 	const [ isLearnMoreOpen, setIsLearnMoreOpen ] = useState( false );
+	const [ notActivated, setNotActivated ] = useState( false );
 	const [ devSettings, setDevSettings, areDevSettingsReady ] =
 		useAmplifyDevSettings( isDevelopment );
 	const previewReports = useMemo(
@@ -67,11 +73,49 @@ export default function AgencyAmplify() {
 		state = 'reports';
 	}
 	const isPreview = mode !== 'live';
+	const usagePreview =
+		isDevelopment && areDevSettingsReady ? makePreviewUsage( devSettings.usage ) : null;
+	const usage = usagePreview ? usagePreview.usage : reportsQuery.data?.usage;
+	const tierId = usagePreview ? usagePreview.tierId : agency?.tier?.id;
+	const usageStatus = getUsageStatus( usage, {
+		approvalStatus: usagePreview ? usagePreview.approvalStatus : agency?.approval_status,
+		notActivated: ! usagePreview && notActivated,
+	} );
+	const canScan = canStartScan( usageStatus );
+	const handleUsageError = ( code: string ) => {
+		if ( code === 'amplify_account_not_activated' ) {
+			setNotActivated( true );
+		}
+		reportsQuery.refetch();
+	};
 
 	const openNewReport = () => {
 		recordTracksEvent( 'calypso_a4a_amplify_new_report_click' );
 		setIsNewReportOpen( true );
 	};
+	let newReportButton = (
+		<Button
+			variant="primary"
+			onClick={ openNewReport }
+			disabled={ ! canScan }
+			accessibleWhenDisabled
+		>
+			{ __( 'New report' ) }
+		</Button>
+	);
+	if ( ! canScan ) {
+		newReportButton = (
+			<Tooltip
+				text={
+					usageStatus === 'cap'
+						? __( 'You’ve used all your reports for this month.' )
+						: __( 'Reports unlock once your account is activated.' )
+				}
+			>
+				{ newReportButton }
+			</Tooltip>
+		);
+	}
 	const openLearnMore = () => {
 		recordTracksEvent( 'calypso_a4a_amplify_learn_more_click' );
 		setIsLearnMoreOpen( true );
@@ -79,13 +123,26 @@ export default function AgencyAmplify() {
 
 	return (
 		<PageLayout
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'amplify-approval',
+							isEligible: usageStatus === 'pending' || usageStatus === 'rejected',
+							notice: <AmplifyApprovalNotice agencyId={ agencyId } status={ usageStatus } />,
+						},
+					] }
+				/>
+			}
 			header={
 				<PageHeader
-					title={ __( 'Amplify' ) }
-					description={ __( 'Homepage reports for pitches and client check-ins.' ) }
+					title={ getFeatureName() }
+					description={ __(
+						'Win more business by auditing a prospect’s homepage, spotting the problems, and pitching the fix.'
+					) }
 					actions={
 						state !== 'empty' ? (
-							<>
+							<HStack spacing={ 2 } alignment="center" expanded={ false }>
 								{ state === 'reports' && (
 									<Button
 										variant="tertiary"
@@ -95,10 +152,8 @@ export default function AgencyAmplify() {
 										{ __( 'Learn more' ) }
 									</Button>
 								) }
-								<Button variant="primary" onClick={ openNewReport }>
-									{ __( 'New report' ) }
-								</Button>
-							</>
+								{ newReportButton }
+							</HStack>
 						) : undefined
 					}
 				/>
@@ -110,7 +165,11 @@ export default function AgencyAmplify() {
 						<EmptyState>
 							<AmplifyReportCreator
 								agencyId={ agencyId }
-								usage={ reportsQuery.data?.usage }
+								canScan={ canScan }
+								usage={ usage }
+								usageStatus={ usageStatus }
+								tierId={ tierId }
+								onUsageError={ handleUsageError }
 								onCreated={ () => {
 									if ( isDevelopment ) {
 										setDevSettings( ( previous ) => ( { ...previous, mode: 'live' } ) );
@@ -122,6 +181,12 @@ export default function AgencyAmplify() {
 				) }
 				{ state === 'reports' && (
 					<div className="dashboard-amplify-results">
+						<AmplifyUsageCard
+							agencyId={ agencyId }
+							usage={ usage }
+							status={ usageStatus }
+							tierId={ tierId }
+						/>
 						<AmplifyReportsList agencyId={ agencyId } reports={ reports } isPreview={ isPreview } />
 					</div>
 				) }
@@ -142,7 +207,11 @@ export default function AgencyAmplify() {
 			{ isNewReportOpen && (
 				<AmplifyNewReportModal
 					agencyId={ agencyId }
-					usage={ reportsQuery.data?.usage }
+					canScan={ canScan }
+					usage={ usage }
+					usageStatus={ usageStatus }
+					tierId={ tierId }
+					onUsageError={ handleUsageError }
 					onClose={ () => setIsNewReportOpen( false ) }
 					onCreated={ () => {
 						setIsNewReportOpen( false );

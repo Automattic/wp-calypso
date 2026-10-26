@@ -1,4 +1,5 @@
-import { BASIC_CATALOG_ID, createInteractiveUiCatalog } from '../catalog';
+import { BASIC_CATALOG_ID } from '../../capabilities';
+import { createInteractiveUiCatalog } from '../catalog';
 import { createInteractiveUiRuntime } from '../runtime';
 
 const HOST_CATALOG_ID = 'urn:host:catalog:v1';
@@ -20,7 +21,7 @@ function createRuntime() {
 	return createInteractiveUiRuntime( {
 		catalogs: [
 			createInteractiveUiCatalog(),
-			createInteractiveUiCatalog( { id: HOST_CATALOG_ID } ),
+			createInteractiveUiCatalog( { catalog: { catalogId: HOST_CATALOG_ID } } ),
 		],
 		onAction: jest.fn(),
 		onError: jest.fn(),
@@ -74,6 +75,43 @@ it( 'accepts the A2UI v1.0 properties a basic component ignores, such as weight'
 	);
 
 	expect( runtime.getSurface( 'weighted' )?.componentsModel.has( 'root' ) ).toBe( true );
+} );
+
+it( 'rejects an update that makes a cycle with earlier components', () => {
+	const runtime = createRuntime();
+
+	runtime.processMessages(
+		[
+			{
+				version: 'v1.0',
+				createSurface: {
+					surfaceId: 'cycle',
+					catalogId: BASIC_CATALOG_ID,
+					components: [
+						{ id: 'root', component: 'Card', child: 'outer' },
+						{ id: 'outer', component: 'Card', child: 'inner' },
+						{ id: 'inner', component: 'Text', text: 'Hi' },
+					],
+				},
+			},
+		],
+		'message-1'
+	);
+
+	expect( () =>
+		runtime.processMessages(
+			[
+				{
+					version: 'v1.0',
+					updateComponents: {
+						surfaceId: 'cycle',
+						components: [ { id: 'inner', component: 'Card', child: 'outer' } ],
+					},
+				},
+			],
+			'message-1'
+		)
+	).toThrow( /Circular reference/ );
 } );
 
 it( 'forgets a deleted surface', () => {

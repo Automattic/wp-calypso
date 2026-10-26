@@ -3,40 +3,81 @@
 `@automattic/ai-ui-renderer` renders A2UI v1.0 surfaces with WordPress components. It holds only
 basic or shared components: each chat's own components live in its project. Hosts own session
 lifetime, action delivery, and error handling. See the
-[interactive UI architecture](../agents-manager/INTERACTIVE-UI.md) for how hosts and providers
-use it.
+[interactive UI architecture](../agents-manager/src/interactive-ui/README.md) for how hosts and
+providers use it.
 
-## Usage
+## Catalogs
 
-Build an A2UI v1.0 catalog with `createInteractiveUiCatalog({ id, components, functions })`: the
-basic components below and A2UI's built-in functions, plus the host's own. The ID defaults to the
-Basic catalog's; give a catalog with your own components its own versioned ID. Duplicate names
-throw.
-
-Define a component or function as a plain object, so it can ship in another bundle without its
-own A2UI or `zod`:
+A host or provider with its own components and functions declares one catalog: an
+[A2UI v1.0 catalog document](https://a2ui.org/specification/v1_0/catalog_definition.json) and the
+code that implements it.
 
 ```ts
-const titlePicker: InteractiveUiComponentDefinition< TitlePickerProps > = {
-	name: 'JetpackAiTitlePicker',
-	schema: ( { z, ActionSchema } ) =>
-		z.object( { titles: z.array( z.string() ), onPick: ActionSchema } ),
-	component: TitlePicker,
+const exampleCatalog: InteractiveUiCatalogDefinition = {
+	catalog: {
+		catalogId: 'urn:automattic:example:interactive-ui:v1',
+		instructions: 'Use ExampleCard to show one item.',
+		components: {
+			ExampleCard: {
+				type: 'object',
+				properties: {
+					title: { $ref: 'common_types.json#/$defs/DynamicString' },
+					onSelect: { $ref: 'common_types.json#/$defs/Action' },
+				},
+				required: [ 'title' ],
+			},
+		},
+		functions: {
+			exampleOpenItem: {
+				type: 'object',
+				returnType: 'void',
+				properties: {
+					'@call': { const: 'exampleOpenItem' },
+					args: { type: 'object', properties: { itemId: { type: 'number' } } },
+				},
+				required: [ '@call', 'args' ],
+			},
+		},
+	},
+	components: { ExampleCard },
+	functions: { exampleOpenItem: ( args ) => openItem( Number( args.itemId ) ) },
 };
 ```
 
-- `schema` builds with the renderer's `zod`, A2UI's `ActionSchema` and `DataBindingSchema`, and
-  `StringValueSchema`, `NumberValueSchema` and `BooleanValueSchema`, which take a literal or a
-  data binding.
-- The component gets resolved props: bound values, a `set<Prop>` setter for each, actions as
-  functions to call, and the host's `hostProps`.
-- A function definition has a `name`, `returnType`, `schema` and `execute( args )`, which may be
-  async. Its arguments come from the agent, so treat them as untrusted.
+- The document is plain JSON, so the server reads the same one ([capabilities](#capabilities)).
+  Props are JSON Schema, with A2UI's shared types from `common_types.json#/$defs/`, such as
+  `DynamicString` and `Action`. A component rejects props it doesn't declare, so declare `weight`
+  if it can sit in a `Row` or `Column`.
+- A component gets resolved props: bound values, a `set<Prop>` setter for each, actions as
+  functions to call, its `surfaceId` and `disabled` state, and the host's `hostProps`. Disable
+  its controls with `disabled`, as the basic components are.
+- A function may be async. Its arguments come from the agent, so treat them as untrusted. It runs
+  only from a click, unless the document sets `requiresUserActivation: false` so a value can call
+  it, such as one that formats text.
+
+`createInteractiveUiCatalog()` builds A2UI's Basic catalog, and
+`createInteractiveUiCatalog( definition )` a catalog with the basic components and functions plus
+the definition's own, which replace basic ones of the same name.
+
+## Capabilities
+
+The `@automattic/ai-ui-renderer/capabilities` entry has no A2UI or React code, so a host can use it
+before loading the renderer:
+
+- `assertInteractiveUiCatalogDefinition( definition )` throws when a definition has no ID, or its
+  code doesn't match its document. Check catalogs with it before advertising them, since
+  `createInteractiveUiCatalog()` rejects those that fail.
+- `getInteractiveUiRendererCapabilities( documents )` returns A2UI's `a2uiRendererCapabilities`
+  for the Basic catalog and those catalogs: their IDs, and their documents as inline catalogs.
+  Send it to the agent, so it shows only UI the host can render.
+- `BASIC_CATALOG_ID` is A2UI's Basic catalog ID.
 
 ## Rendering
 
 1. Create a runtime with `createInteractiveUiRuntime({ catalogs, onAction, onError })`. Keep it
-   for the session to preserve edits, then call `runtime.dispose()`.
+   for the session to preserve edits, then call `runtime.dispose()`. Like A2UI, it rejects a
+   message with an invalid `path`, or one that would make a cycle or too deep a layout, even with
+   components from earlier messages.
 2. Pass it ordered batches with `runtime.processMessages(messages, ownerId)`. The owner is what
    the host shows the surfaces next to, such as a chat message.
 3. Render each of an owner's surfaces (`runtime.getSurfaceIds(ownerId)`, then

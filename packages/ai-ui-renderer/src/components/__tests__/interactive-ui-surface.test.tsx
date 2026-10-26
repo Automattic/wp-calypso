@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
-import { BASIC_CATALOG_ID, createInteractiveUiCatalog } from '../../utils/catalog';
+import { BASIC_CATALOG_ID } from '../../capabilities';
+import { createInteractiveUiCatalog } from '../../utils/catalog';
 import { createInteractiveUiRuntime } from '../../utils/runtime';
 import { InteractiveUiSurface } from '../interactive-ui-surface';
 import type { InteractiveUiRuntime } from '../../utils/runtime';

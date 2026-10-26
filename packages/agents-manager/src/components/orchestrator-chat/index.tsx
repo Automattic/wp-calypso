@@ -28,18 +28,19 @@ import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestio
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useGatedRegenerateHandler } from '../../hooks/use-gated-regenerate-handler';
 import { useInlineSuggestionClick } from '../../hooks/use-inline-suggestion-click';
-import { useInteractiveUi } from '../../hooks/use-interactive-ui';
 import { useNavigationContinuation } from '../../hooks/use-navigation-continuation';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import { useResponseOutcomeTracking } from '../../hooks/use-response-outcome-tracking';
 import { useRetriedToolCalls } from '../../hooks/use-retried-tool-calls';
 import { useShowComponentRetention } from '../../hooks/use-show-component-retention';
+import useSiteSetupChecklist from '../../hooks/use-site-setup-checklist';
 import useSourcesAction from '../../hooks/use-sources-action';
 import { useStreamedCheckpointMessages } from '../../hooks/use-streamed-checkpoint-messages';
 import { useSuggestionTracking } from '../../hooks/use-suggestion-tracking';
+import { convertInteractiveUiMessagesToComponents } from '../../interactive-ui/convert-messages-to-components';
+import { useInteractiveUi } from '../../interactive-ui/use-interactive-ui';
 import { markSessionSent } from '../../utils/agent-session';
 import { convertBigSkyMessageToUIMessage } from '../../utils/convert-big-sky-message';
-import { convertInteractiveUiMessagesToComponents } from '../../utils/convert-interactive-ui-messages-to-components';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
 } from '../../utils/convert-tool-messages-to-components';
@@ -54,6 +55,7 @@ import {
 } from '../../utils/message-actions';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import SiteSetupChecklist from '../site-setup-checklist';
 import type { BigSkyMessage } from '../../types';
 import type {
 	AbilitiesSetupHook,
@@ -93,8 +95,8 @@ interface Props {
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
-	/** The providers' interactive UI components and functions. */
-	interactiveUi?: LoadedProviders[ 'interactiveUi' ];
+	/** The providers' interactive UI catalogs. */
+	interactiveUiCatalogs?: LoadedProviders[ 'interactiveUiCatalogs' ];
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
 	/** Rewrite the transcript before it is displayed. See `TransformMessages`. */
@@ -123,7 +125,7 @@ export default function OrchestratorChat( {
 	useProviderAbilitiesSetup,
 	useSuggestions,
 	getChatComponent,
-	interactiveUi,
+	interactiveUiCatalogs,
 	siteBuildUtils,
 	transformMessages,
 	useCheckpoint,
@@ -291,6 +293,23 @@ export default function OrchestratorChat( {
 		onRetry: submitRetryMessage,
 		onSubmit,
 	} );
+	const siteSetupChecklist = useSiteSetupChecklist( {
+		enabled: ! isReaderChat,
+		isProcessing,
+		isLoadingConversation,
+		messages,
+	} );
+	// The empty view waits for the checklist too, or it flashes before the list.
+	const isPreparingConversation = isLoadingConversation || siteSetupChecklist.isLoading;
+	const siteSetupChecklistNode = siteSetupChecklist.variant ? (
+		<SiteSetupChecklist
+			variant={ siteSetupChecklist.variant }
+			items={ siteSetupChecklist.items }
+			busy={ isProcessing }
+			focusHeaderOnMount={ siteSetupChecklist.focusHeaderOnMount }
+		/>
+	) : null;
+
 	const chatError = useChatError( {
 		error: hasFailedResume ? null : error,
 		isReaderChat,
@@ -467,7 +486,7 @@ export default function OrchestratorChat( {
 		isUploadingImages,
 		agentConfig,
 		submitContextMessage,
-		interactiveUi,
+		interactiveUiCatalogs,
 		currentPostId,
 	} );
 
@@ -487,7 +506,7 @@ export default function OrchestratorChat( {
 	// Empty-view suggestions and their tracking.
 	const displayedEmptyViewSuggestions = getDisplayedEmptyViewSuggestions( {
 		isVisible: suggestionsVisible,
-		isChatEmpty: ! isLoadingConversation && ! hasMessages,
+		isChatEmpty: ! isPreparingConversation && ! hasMessages,
 		emptyViewSuggestions,
 		registeredSuggestions: suggestions,
 		dynamicSuggestions,
@@ -499,7 +518,7 @@ export default function OrchestratorChat( {
 
 	const { onSuggestionsRendered, trackSuggestionClick } = useSuggestionTracking( {
 		contextualSuggestionIds,
-		hasSuggestionsToRender: ! isLoadingConversation && displayedEmptyViewSuggestions.length > 0,
+		hasSuggestionsToRender: ! isPreparingConversation && displayedEmptyViewSuggestions.length > 0,
 	} );
 
 	const handleSuggestionClick = useCallback(
@@ -540,7 +559,9 @@ export default function OrchestratorChat( {
 			error={ chatError || uploadError }
 			onSubmit={ submitComposerMessage }
 			onAbort={ stopResponse }
-			isLoadingConversation={ isLoadingConversation }
+			isLoadingConversation={ isPreparingConversation }
+			pinnedContent={ siteSetupChecklist.variant === 'pinned' ? siteSetupChecklistNode : null }
+			emptyViewContent={ siteSetupChecklist.variant === 'empty' ? siteSetupChecklistNode : null }
 			isDocked={ isDocked }
 			isOpen={ isOpen }
 			onClose={ onClose }

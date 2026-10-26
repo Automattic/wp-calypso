@@ -16,6 +16,12 @@
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
 		},
+		"./capabilities": {
+			"calypso:src": "./src/capabilities.ts",
+			"types": "./dist/types/capabilities.d.ts",
+			"import": "./dist/esm/capabilities.js",
+			"require": "./dist/cjs/capabilities.js"
+		},
 		"./style.scss": {
 			"calypso:src": "./src/style.scss",
 			"default": "./dist/esm/style.scss"

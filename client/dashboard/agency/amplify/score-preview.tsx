@@ -14,6 +14,7 @@ type ScoreMetric = {
 type ScorePerspective = {
 	type: 'human' | 'ai';
 	label: string;
+	title: string;
 	description: string;
 	score: number;
 	metrics: ScoreMetric[];
@@ -23,7 +24,8 @@ type ScorePerspective = {
 export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 	human: {
 		type: 'human',
-		label: __( 'First-time visitors' ),
+		label: __( 'People' ),
+		title: __( 'How visitors judge a site' ),
 		description: __( 'Actionable advice for each category to help new visitors feel at home.' ),
 		score: 46,
 		metrics: [
@@ -62,7 +64,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			{
 				label: __( 'Content Quality' ),
 				description: __(
-					'Is the writing compelling, clear, and professional? Errors and poor readability erode trust before a client has read a single sentence.'
+					'Is the writing compelling, clear, and professional? Errors and poor readability erode trust before a visitor has read a single sentence.'
 				),
 				score: 11,
 				max: 12,
@@ -78,7 +80,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			{
 				label: __( 'Accessibility' ),
 				description: __(
-					'Does the site work for everyone? Amplify measures against WCAG AA, the standard referenced by courts and regulators globally.'
+					'Does the site work for everyone? We check key accessibility signals like contrast, text alternatives, and labels. It isn’t a full WCAG conformance audit.'
 				),
 				score: 8,
 				max: 10,
@@ -95,9 +97,10 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 	},
 	ai: {
 		type: 'ai',
-		label: __( 'AI systems' ),
+		label: __( 'AI agents' ),
+		title: __( 'How AI interprets a site' ),
 		description: __(
-			'Actionable advice for each category to help AI systems understand your site.'
+			'Actionable advice for each category to help AI agents understand your site.'
 		),
 		score: 50,
 		metrics: [
@@ -112,7 +115,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			{
 				label: __( 'Structured Data' ),
 				description: __(
-					'Schema markup tells AI tools exactly what the site is about rather than making them infer it. The difference between an AI accurately describing your client and producing a generic summary.'
+					'Schema markup tells AI tools exactly what the site is about rather than making them infer it. The difference between an AI accurately describing the business and producing a generic summary.'
 				),
 				score: 3,
 				max: 18,

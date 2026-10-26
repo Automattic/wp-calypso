@@ -16,7 +16,7 @@ export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting'
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { data: referrals } = useQuery( referralsQuery( agency?.id ?? 0 ) );
 	const isMobile = useViewportMatch( 'mobile', '<' );
-	// Shown until the agency's first referral, in both modes, so the header doesn't shift on toggle.
+	// Kept in the tree in both modes, hidden in buy mode, so the header doesn't shift on toggle.
 	// Phones have no room for it beside the switch.
 	const showEarnings = ! isMobile && referrals?.length === 0;
 
@@ -30,7 +30,11 @@ export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting'
 				onChange={ onChange }
 			/>
 			{ showEarnings && (
-				<Badge intent="informational">
+				<Badge
+					intent="informational"
+					aria-hidden={ checked ? undefined : true }
+					style={ { visibility: checked ? 'visible' : 'hidden' } }
+				>
 					{ kind === 'hosting'
 						? sprintf(
 								/* translators: %d is the commission percentage. */

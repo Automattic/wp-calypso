@@ -72,8 +72,8 @@ export function InteractiveUiSurface( {
 }: InteractiveUiSurfaceProps ) {
 	const rootRef = useRef< HTMLFieldSetElement >( null );
 	const surfaceContext = useMemo(
-		() => ( { disabled, className, rootRef } ),
-		[ disabled, className ]
+		() => ( { surfaceId: surface.id, disabled, className, rootRef } ),
+		[ surface.id, disabled, className ]
 	);
 
 	const unknownComponentType = getUnknownComponentType( surface );

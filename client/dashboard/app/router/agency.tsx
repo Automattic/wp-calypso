@@ -53,6 +53,7 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { getFeatureName as getAmplifyFeatureName } from '../../agency/amplify/constants';
 import { isReferralCheckoutUrl } from '../../agency/earn/referrals/lib/referral-checkout-url';
 import {
 	getPressableOwnershipType,
@@ -220,7 +221,7 @@ export const agencyTiersRoute = createRoute( {
 // `/amplify` – prospect-site analyses and reports.
 export const agencyAmplifyRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_amplify' },
-	head: () => ( { meta: [ { title: __( 'Amplify' ) } ] } ),
+	head: () => ( { meta: [ { title: getAmplifyFeatureName() } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'amplify',
 	beforeLoad: async ( { cause } ) => {

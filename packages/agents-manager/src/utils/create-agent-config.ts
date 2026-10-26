@@ -7,6 +7,7 @@
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
+import { getInteractiveUiCapabilities } from '../interactive-ui/catalogs';
 import { saveSessionId } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
@@ -17,6 +18,7 @@ import { getAgentsManagerSurface, getIsA11n, getIsTest } from './tracks';
 import { getTurnId } from './turn-id';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
+import type { InteractiveUiCatalogDefinition } from '@automattic/ai-ui-renderer';
 
 export interface AgentConfig extends UseAgentChatConfig {
 	/** Scope captured by the authentication provider during initialization. */
@@ -34,6 +36,8 @@ export interface CreateAgentConfigOptions {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
 	providerIds?: string[];
+	/** The providers' interactive UI catalogs, which the client context lists with the chat's own. */
+	interactiveUiCatalogs?: InteractiveUiCatalogDefinition[];
 	environment?: string;
 	/** Override the agent ID (e.g., from query string). Defaults to ORCHESTRATOR_AGENT_ID. */
 	agentId?: string;
@@ -120,9 +124,21 @@ function normalizeSiteId( siteId: unknown ): number | undefined {
 	return Number.isFinite( numericSiteId ) && numericSiteId > 0 ? numericSiteId : undefined;
 }
 
-function getProviderIdsContext( providerIds?: string[] ): { loadedProviderIds?: string[] } {
-	return providerIds?.length ? { loadedProviderIds: providerIds } : {};
+/**
+ * The client context's provider IDs, and A2UI's renderer capabilities for the interactive UI
+ * catalogs the chat renders.
+ */
+function getProviderContext(
+	providerIds?: string[],
+	interactiveUiCatalogs?: InteractiveUiCatalogDefinition[]
+) {
+	return {
+		...( providerIds?.length ? { loadedProviderIds: providerIds } : {} ),
+		a2uiRendererCapabilities: getInteractiveUiCapabilities( interactiveUiCatalogs ),
+	};
 }
+
+type ProviderContext = ReturnType< typeof getProviderContext >;
 
 /**
  * Only the host's explicit opt-in is sent: the server records nothing without it.
@@ -157,7 +173,7 @@ async function createWrappedContextProvider(
 	version?: string,
 	environment?: string,
 	currentRoute?: string,
-	providerIds?: string[]
+	providerContext?: ProviderContext
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
 	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
@@ -199,7 +215,7 @@ async function createWrappedContextProvider(
 				...( Object.keys( mergedSiteEditorActions ).length > 0 && {
 					siteEditorActions: mergedSiteEditorActions,
 				} ),
-				...getProviderIdsContext( providerIds ),
+				...providerContext,
 				...getTrackingContext(),
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
@@ -220,7 +236,7 @@ async function createDefaultContextProvider(
 	siteId?: number,
 	agentId?: string,
 	version?: string,
-	providerIds?: string[]
+	providerContext?: ProviderContext
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
 	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
@@ -260,7 +276,7 @@ async function createDefaultContextProvider(
 				...( hostData.siteName ? { siteName: hostData.siteName } : {} ),
 				...( hostData.siteUrl ? { siteUrl: hostData.siteUrl } : {} ),
 				...( contextEntries ? { contextEntries } : {} ),
-				...getProviderIdsContext( providerIds ),
+				...providerContext,
 				...getTrackingContext(),
 				// TODO: Remove once agenttic-client supports top-level constructorArguments
 				...( Object.keys( constructorArguments ).length && { constructorArguments } ),
@@ -286,6 +302,7 @@ export async function createAgentConfig(
 		toolProvider,
 		contextProvider,
 		providerIds,
+		interactiveUiCatalogs,
 		environment = 'calypso',
 		agentId = ORCHESTRATOR_AGENT_ID,
 		version,
@@ -315,6 +332,8 @@ export async function createAgentConfig(
 		config.toolProvider = wrapToolProvider( toolProvider );
 	}
 
+	const providerContext = getProviderContext( providerIds, interactiveUiCatalogs );
+
 	if ( contextProvider ) {
 		config.contextProvider = await createWrappedContextProvider(
 			contextProvider,
@@ -323,7 +342,7 @@ export async function createAgentConfig(
 			version,
 			environment,
 			currentRoute,
-			providerIds
+			providerContext
 		);
 	} else {
 		config.contextProvider = await createDefaultContextProvider(
@@ -332,7 +351,7 @@ export async function createAgentConfig(
 			siteId,
 			agentId,
 			version,
-			providerIds
+			providerContext
 		);
 	}
 
