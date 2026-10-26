@@ -156,7 +156,7 @@ function DomainForwarding() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					description={ createInterpolateElement(
-						__( 'Forward your domain or subdomain to another address. <learnMoreLink />' ),
+						__( 'Forward your domain name or subdomain to another address. <learnMoreLink />' ),
 						{
 							learnMoreLink: <InlineSupportLink supportContext="domain-forwarding" />,
 						}
@@ -168,7 +168,7 @@ function DomainForwarding() {
 							variant="primary"
 							__next40pxDefaultSize
 						>
-							{ __( 'Add Domain Forwarding' ) }
+							{ __( 'Add forwarding' ) }
 						</RouterLinkButton>
 					}
 				/>
