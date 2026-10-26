@@ -28,19 +28,19 @@
   "Details". Its inputs share the surface's data model and are disabled with it. Its own
   buttons send their actions and leave it open; only the person closes it.
 - Text fields keep their values as strings, choice pickers as string arrays, and date/time inputs
-  as local ISO strings.
+  as local ISO strings. A slider moves in whole numbers from its `min`, or in `steps` equal parts.
 - `Button`, `TextField`, `CheckBox`, `ChoicePicker`, `Slider` and `DateTimeInput` take A2UI's
   `checks`. A button is disabled while any of its own checks fails, with their messages as its
   accessible description, and a field shows its first failed check once it's touched (when the
   person leaves a text or date field, or changes a check box, a choice or a slider) or once the
-  person clicks a disabled button whose checks fail, which also moves focus to the surface's first
-  invalid field outside a hidden tab. A check of a path with no value runs on it as empty:
-  `required`, `email` and `numeric` fail, and `length` and `regex` check an empty string. One that
-  can't run, such as `numeric` given a text field's string, also fails and is reported through
-  `onError`. A failed check shows its own `message`, never the English one A2UI's validation
-  functions return, so give every check a `message` in the person's language that names the field
-  and says what to enter, as a button reads all of its failing messages together: one without shows
-  A2UI's generic English "Validation failed".
+  person clicks a disabled button whose checks fail (or presses Enter or Space on it), which also
+  moves focus to the surface's first invalid field outside a hidden tab. A check of a path with no
+  value runs on it as empty: `required`, `email` and `numeric` fail, and `length` and `regex` check
+  an empty string. One that can't run, such as `numeric` given a text field's string, also fails
+  and is reported through `onError`. A failed check shows its own `message`, never the English one
+  A2UI's validation functions return, so give every check a `message` in the person's language
+  that names the field and says what to enter, as a button reads all of its failing messages
+  together: one without shows A2UI's generic English "Validation failed".
 - An `Image`'s `description` is its alt text, so one without it is decorative. An `AudioPlayer`'s
   shows above the player and names it.
 - Components ignore A2UI v1.0 properties they don't support, such as `weight` and the
@@ -98,14 +98,10 @@ const exampleCatalog: InteractiveUiCatalogDefinition = {
   `ComponentId` or `ChildList` prop arrives as IDs only. Make custom components leaves, laid out
   with the basic ones.
 - A component that declares `checks` (an array of `CheckRule`s) also gets `isValid` and
-  `validationErrors`, its failed checks' messages. Like the [basic components](#basic-components),
-  show the first message once the person touches the field or `isShowingErrors` is true (an
-  invalid Button was clicked), and disable inputs and actions with `disabled` while keeping what
-  only shows or reveals content usable. A `lazy()` component renders nothing while it loads.
-- Keep a custom component accessible like the basic components: label its fields, show a failed
-  check's message as the field's `help` with `aria-invalid` on its focusable control, which a click
-  on an invalid button focuses, and set `accessibleWhenDisabled` on buttons, since the surface
-  disables them right after a click and a plainly `disabled` button drops keyboard focus.
+  `validationErrors`, its failed checks' messages. `isShowingErrors` turns true once the person
+  activates a `Button` whose checks fail. Show the messages and handle `disabled` as
+  [Adding a component](#adding-a-component) says. A `lazy()` component renders nothing while it
+  loads.
 - A function declares its `returnType`, and may be async. Its arguments come from the agent, so
   treat them as untrusted. It runs only from a click, unless the document sets
   `requiresUserActivation: false` so a check or a custom component's `Dynamic…` prop can call it,
@@ -187,7 +183,7 @@ and the renderer applies them to the basic components and the WordPress componen
 | `--a2ui-color-on-primary`                                                         | Text and marks on the primary color                      |
 | `--a2ui-color-surface`, `--a2ui-color-on-surface`                                 | Cards and the modal                                      |
 | `--a2ui-color-input`, `--a2ui-color-on-input`                                     | Inputs, and the text and labels of controls              |
-| `--a2ui-color-border`                                                             | Card outlines and dividers                               |
+| `--a2ui-color-border`                                                             | Card and modal outlines, and dividers                    |
 
 Set them on the class you pass as `className`, or on an ancestor. Pick light or dark with the
 page's `color-scheme`, or A2UI's `a2ui-dark` or `a2ui-light` class:
@@ -213,21 +209,76 @@ Disabled controls use the renderer's disabled colors (`--ai-ui-renderer-disabled
 `--ai-ui-renderer-disabled-border` and `--ai-ui-renderer-disabled-foreground`), which follow the
 light or dark mode.
 
-Accent-colored text and fills on the surface use the renderer's accent colors
-(`--ai-ui-renderer-accent-text`, `--ai-ui-renderer-accent-text-hover` and
-`--ai-ui-renderer-accent-fill`), which are lighter in dark mode so they stay readable.
+Primary-colored text and lines, such as focus rings, the tab marker, the slider and a checked
+control's edge, use the renderer's accent colors (`--ai-ui-renderer-accent-text`,
+`--ai-ui-renderer-accent-text-hover` and `--ai-ui-renderer-accent-line`), which are lighter in dark
+mode so they stand out on the surface.
+Fills, such as a primary Button or a checked check box, keep the primary in both modes, under
+`--a2ui-color-on-primary`.
 
-### Theming a new component
+## Adding a component
 
-When you add a basic or custom component:
+Add a basic component in `src/components`, or a custom one to its owner's catalog
+([Catalogs](#catalogs)). One in Agents Manager's catalog also follows Agents Manager's
+[rules](../agents-manager/src/interactive-ui/README.md#rules). Build it from WordPress components,
+which handle most of this: `@wordpress/ui`, or `@wordpress/components` where your project uses
+them, as Agents Manager does. It's done when every item below holds.
 
-1. Color it with the tokens, such as `var( --a2ui-color-on-surface )`, the accent colors for
-   primary-colored text or fills on the surface, and the disabled colors, or use WordPress
-   components, which follow them. Never use a chat's own variables.
-2. Check it in light and dark mode, enabled and disabled (a stale surface).
-3. If a WordPress component hard-codes light colors, enabled or disabled, or doesn't color its
-   disabled state, add a rule for it: in `style.scss` for a basic component, or in the custom
-   component's own stylesheet.
+**Accessibility**
+
+- Every field and icon-only button has a label, and an image that means something has alt text.
+- Tab reaches each control in reading order, Enter or Space acts on it, arrow keys move within a
+  group, such as radios or tabs, and Escape closes what it opens. Focus shows a visible ring.
+- Color is never the only signal: an error also has a message, and a checked control a mark.
+- A screen reader announces its state, such as checked, selected or invalid.
+- Its buttons stay focusable when disabled (`focusableWhenDisabled` in `@wordpress/ui`,
+  `accessibleWhenDisabled` in `@wordpress/components`), since the surface disables them right
+  after a click and a plainly `disabled` button drops keyboard focus.
+
+**Validation**
+
+- An input takes `checks` and shows its first failed check's message as its description
+  (`description` in `@wordpress/ui`, `help` in `@wordpress/components`), with `aria-invalid` on
+  its focusable control, so an invalid `Button` can focus it. Basic inputs get both from
+  `useFieldProps()`.
+- The message shows once the person touches the input (leaves a text or date field, or changes
+  any other input) or activates a `Button` whose checks fail, and clears once the value passes. A
+  custom component gets the messages and that state as props ([Catalogs](#catalogs)).
+
+**States and layout**
+
+- Hover, focus, pressed, checked and invalid each look different from the resting state.
+- With `disabled`, set while the agent replies or once the surface is stale, its inputs and
+  actions are disabled and use the disabled colors, while what only shows or reveals content, such
+  as a tab, stays usable.
+- In a narrow chat, long text, such as a URL, wraps, and nothing overflows the surface.
+- Its own text, such as a default label, is translated, and a longer translation still fits.
+- It shows the agent's text as given, so a custom component's prop `description`s ask for text
+  ready to read: formatted, such as a date, and in the person's language.
+
+**Colors**
+
+- Every color comes from A2UI's tokens (`--a2ui-color-*`), the renderer's accent and disabled
+  colors (`--ai-ui-renderer-*`, see [Theming](#theming)), or `@wordpress/ui` components, which
+  `style.scss` themes. It uses none of a chat's own variables and no fixed colors.
+  `@wordpress/components` follow only A2UI's tokens (through `--wp-components-color-*`), so give
+  them the accent and disabled colors yourself.
+- Text has 4.5:1 contrast with its background, and other parts, such as borders, focus rings and
+  checked marks, have 3:1 (WCAG AA).
+- Where a WordPress component hard-codes a light color or leaves a state uncolored, a rule fixes
+  it: in `style.scss` for a basic component, or in the custom component's own stylesheet.
+
+**Check it**
+
+- In light and dark mode (the page's `color-scheme`, or the `a2ui-light` or `a2ui-dark` class), in
+  every state above, with the keyboard alone and with a screen reader.
+- In Agents Manager's chat in dark mode, if Agents Manager renders it (every basic component, and
+  each one in its catalog). That mode sets its own surface, input and border colors
+  ([`surfaces/style.scss`](../agents-manager/src/interactive-ui/surfaces/style.scss)).
+  [Try it](../agents-manager/src/interactive-ui/README.md#try-it) shows how to get a surface.
+- For a basic component, add cases for its value, its checks and its disabled state to
+  `src/components/__tests__/interactive-ui-surface.test.tsx`, and run the tests
+  ([Development](#development)).
 
 ## Development
 
