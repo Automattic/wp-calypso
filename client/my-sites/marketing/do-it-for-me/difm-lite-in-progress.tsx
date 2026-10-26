@@ -7,7 +7,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -206,9 +205,5 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 		/>
 	);
 }
-
-DIFMLiteInProgress.propTypes = {
-	siteId: PropTypes.number.isRequired,
-};
 
 export default DIFMLiteInProgress;

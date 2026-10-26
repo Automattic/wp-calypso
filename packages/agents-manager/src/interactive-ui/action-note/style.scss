@@ -1,0 +1,12 @@
+// The user's bubble, outlined instead of filled, so the note lines up with what the user typed
+// without reading as it. `.agenttic` outranks Agenttic's message styles.
+.agenttic .agents-manager-interactive-ui-action-note {
+	margin: 0;
+}
+
+.agenttic
+	[data-role='user']
+	[data-slot='message-bubble']:has( > .agents-manager-interactive-ui-action-note ) {
+	background: none;
+	box-shadow: inset 0 0 0 1px var( --color-input-border );
+}

@@ -1,21 +1,26 @@
 import { createComponentImplementation } from '@a2ui/react';
 import { ComponentIdSchema } from '@a2ui/web_core/v1_0';
 import { Modal as GutenbergModal } from '@wordpress/components';
-import { useCallback, useContext, useState } from '@wordpress/element';
+import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { z } from 'zod';
-import { InteractiveUiSurfaceContext, ModalTriggerContext } from '../contexts/surface';
+import { ModalTriggerContext, useInteractiveUiSurface } from '../contexts/surface';
+import { StringValueSchema } from '../utils/schemas';
 import { copyTheme } from '../utils/theme';
 
 export const Modal = createComponentImplementation(
 	{
 		name: 'Modal',
-		schema: z.object( { trigger: ComponentIdSchema, content: ComponentIdSchema } ),
+		schema: z.object( {
+			trigger: ComponentIdSchema,
+			content: ComponentIdSchema,
+			accessibility: z.object( { label: StringValueSchema.optional() } ).optional(),
+		} ),
 	},
 	( { props, buildChild } ) => {
 		const [ isOpen, setIsOpen ] = useState( false );
-		const { disabled: isDisabled, className, rootRef } = useContext( InteractiveUiSurfaceContext );
+		const { className, rootRef } = useInteractiveUiSurface();
 
 		// The modal renders outside the host, so it takes the theme its surface resolved.
 		const copySurfaceTheme = useCallback(
@@ -35,13 +40,12 @@ export const Modal = createComponentImplementation(
 				{ isOpen && (
 					<GutenbergModal
 						ref={ copySurfaceTheme }
-						title={ __( 'Details', 'default' ) }
+						size="medium"
+						title={ props.accessibility?.label || __( 'Details', 'default' ) }
 						overlayClassName={ clsx( 'ai-ui-renderer__modal', className ) }
 						onRequestClose={ () => setIsOpen( false ) }
 					>
-						<fieldset className="ai-ui-renderer" disabled={ isDisabled }>
-							{ buildChild( props.content ) }
-						</fieldset>
+						<div className="ai-ui-renderer">{ buildChild( props.content ) }</div>
 					</GutenbergModal>
 				) }
 			</>

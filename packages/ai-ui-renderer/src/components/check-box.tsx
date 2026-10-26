@@ -1,8 +1,9 @@
 import { createComponentImplementation } from '@a2ui/react';
 import { CheckboxControl } from '@wordpress/components';
 import { z } from 'zod';
+import { useFieldProps } from '../hooks/use-field-props';
 import { useInputValue } from '../hooks/use-input-value';
-import { BooleanValueSchema, StringValueSchema } from '../utils/schemas';
+import { BooleanValueSchema, ChecksSchema, StringValueSchema } from '../utils/schemas';
 
 export const CheckBox = createComponentImplementation(
 	{
@@ -10,11 +11,23 @@ export const CheckBox = createComponentImplementation(
 		schema: z.object( {
 			label: StringValueSchema,
 			value: BooleanValueSchema,
+			checks: ChecksSchema,
 		} ),
 	},
 	( { props, context } ) => {
-		const [ value, onChange ] = useInputValue( props.value ?? false, props.setValue, context );
+		const [ value, setValue ] = useInputValue( props.value ?? false, props.setValue, context );
+		const { fieldProps, touch } = useFieldProps( props.validationErrors );
 
-		return <CheckboxControl label={ props.label } checked={ value } onChange={ onChange } />;
+		return (
+			<CheckboxControl
+				{ ...fieldProps }
+				label={ props.label }
+				checked={ value }
+				onChange={ ( checked ) => {
+					setValue( checked );
+					touch();
+				} }
+			/>
+		);
 	}
 );

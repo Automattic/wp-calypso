@@ -777,12 +777,6 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
-		name: 'woocommerce-installation',
-		paths: [ '/woocommerce-installation' ],
-		module: 'calypso/my-sites/woocommerce',
-		group: 'woocommerce-installation',
-	},
-	{
 		name: 'woocommerce',
 		paths: [ '/store' ],
 		module: 'calypso/my-sites/store',
