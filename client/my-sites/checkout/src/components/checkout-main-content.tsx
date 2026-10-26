@@ -1077,7 +1077,7 @@ export default function CheckoutMainContent( {
 						validatingButtonText={ validatingButtonText }
 						validatingButtonAriaLabel={ validatingButtonText }
 						onPageLoadError={ onPageLoadError }
-						waitForPaymentMethodIds={ [ 'apple-pay', 'google-pay', 'stripe-wallet' ] }
+						waitForPaymentMethodIds={ [ 'apple-pay', 'google-pay' ] }
 						{ ...( isMobileCheckoutStickySummary && {
 							/* Figma 3971:13237 — the active heading reads "Payment method"
 							   under the experiment (vs. composite-checkout's default

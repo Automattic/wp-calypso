@@ -179,8 +179,7 @@ export type CheckoutPaymentMethodSlug =
 	| 'apple-pay' // a synonym for 'web-pay'
 	| 'google-pay' // a synonym for 'web-pay'
 	| 'stripe-upi'
-	| 'stripe-blik'
-	| 'stripe-wallet';
+	| 'stripe-blik';
 
 /**
  * Payment method slugs as returned by the WPCOM backend.
@@ -205,8 +204,7 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix'
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico'
 	| 'WPCOM_Billing_Stripe_Upi'
-	| 'WPCOM_Billing_Stripe_Blik'
-	| 'WPCOM_Billing_Stripe_Wallet';
+	| 'WPCOM_Billing_Stripe_Blik';
 
 export type ContactDetailsType = 'gsuite' | 'tax' | 'domain' | 'none';
 

@@ -49,8 +49,6 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'stripe-upi';
 		case 'WPCOM_Billing_Stripe_Blik':
 			return 'stripe-blik';
-		case 'WPCOM_Billing_Stripe_Wallet':
-			return 'stripe-wallet';
 		default:
 			throw new Error( `Unknown payment method '${ paymentMethod }'` );
 	}
@@ -107,8 +105,6 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_Stripe_Upi';
 		case 'stripe-blik':
 			return 'WPCOM_Billing_Stripe_Blik';
-		case 'stripe-wallet':
-			return 'WPCOM_Billing_Stripe_Wallet';
 	}
 	return null;
 }
@@ -133,7 +129,6 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_Web_Payment':
 		case 'WPCOM_Billing_Stripe_Upi':
 		case 'WPCOM_Billing_Stripe_Blik':
-		case 'WPCOM_Billing_Stripe_Wallet':
 			return slug;
 	}
 	return null;
@@ -170,7 +165,6 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'free-purchase':
 		case 'stripe-upi':
 		case 'stripe-blik':
-		case 'stripe-wallet':
 			return slug;
 		case 'apple-pay':
 		case 'google-pay':
