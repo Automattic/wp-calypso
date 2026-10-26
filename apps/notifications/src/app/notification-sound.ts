@@ -162,6 +162,9 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 				if ( disposed ) {
 					return 'disposed';
 				}
+				if ( document.hidden ) {
+					return 'hidden';
+				}
 				return context.state === 'running' ? playTone( context ) : 'not_activated';
 			} );
 		},
