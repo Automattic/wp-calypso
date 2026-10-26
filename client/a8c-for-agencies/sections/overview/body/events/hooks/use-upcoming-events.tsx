@@ -42,7 +42,12 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 						'Automattic is a Presenting Sponsor of EvolveDigital NYC 2026, bringing the teams behind WordPress.com, WordPress VIP, and WooCommerce to a room of developers, designers, strategists, and digital leaders from higher ed, government, nonprofits, and agencies.'
 					),
 					translate(
-						'Spend two days at Civic Hall with the people shaping the future of the open web, and come say hello to our team while you’re there.'
+						'Spend two days at Civic Hall with the people shaping the future of the open web. As an Automattic for Agencies partner, you get 50%% off tickets with the code {{strong}}{{code}}%(code)s{{/code}}{{/strong}}, so come say hello to our team while you’re there.',
+						{
+							args: { code: 'Automattic50Off' },
+							components: { strong: <strong />, code: <code /> },
+							comment: 'The code is a ticket discount code, shown as-is.',
+						}
 					),
 				],
 				ctas: [

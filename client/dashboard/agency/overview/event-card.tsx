@@ -5,6 +5,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { createInterpolateElement } from '@wordpress/element';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
@@ -62,7 +63,10 @@ function SingleEventCard( {
 					<VStack spacing={ 4 }>
 						{ description.map( ( paragraph ) => (
 							<Text key={ paragraph } size={ 13 } lineHeight="20px">
-								{ paragraph }
+								{ createInterpolateElement( paragraph, {
+									strong: <strong />,
+									code: <code />,
+								} ) }
 							</Text>
 						) ) }
 					</VStack>

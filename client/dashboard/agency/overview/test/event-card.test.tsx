@@ -45,6 +45,10 @@ describe( '<EventCard>', () => {
 			/>
 		);
 
+		expect( screen.getByText( /you get 50% off tickets with the code/ ) ).toBeVisible();
+		expect( screen.getByRole( 'code' ) ).toHaveTextContent( 'Automattic50Off' );
+		expect( screen.getByRole( 'strong' ) ).toContainElement( screen.getByRole( 'code' ) );
+
 		const purchase = screen.getByRole( 'link', { name: /Purchase tickets/ } );
 		expect( purchase ).toHaveAttribute( 'href', 'https://www.evolvedigital.com/' );
 
