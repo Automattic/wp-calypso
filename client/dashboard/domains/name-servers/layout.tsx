@@ -19,7 +19,9 @@ export function NameServersLayout( {
 			header={
 				<PageHeader
 					description={ createInterpolateElement(
-						__( 'Change the name servers for your domain. <learnMoreLink />' ),
+						__(
+							'Name servers tell the internet where to find this domain name’s site and email. <learnMoreLink />'
+						),
 						{
 							learnMoreLink: <InlineSupportLink supportContext="nameservers" />,
 						}

@@ -3,7 +3,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
-	ToggleControl,
+	RadioControl,
 } from '@wordpress/components';
 import { Field, DataForm, NormalizedField, useFormValidity } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -11,6 +11,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState, useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import InlineSupportLink from '../../components/inline-support-link';
+import Notice from '../../components/notice';
 import { MIN_NAME_SERVERS_LENGTH, MAX_NAME_SERVERS_LENGTH, FormData, NameServerKey } from './types';
 import UpsellNudge from './upsell-nudge';
 import { validateHostname } from './utils';
@@ -43,9 +44,9 @@ const createNameServerField = ( index: number, formData: FormData, isBusy?: bool
 			},
 		},
 		isVisible: ( item: FormData ) => {
-			// For WP.com nameservers, show field only if it has a value
+			// WP.com name servers are listed as text, not as fields
 			if ( item.useWpcomNameServers ) {
-				return Boolean( item[ `nameServer${ index }` as NameServerKey ] );
+				return false;
 			}
 
 			// For custom nameservers, show fields 3 and 4 only if previous field has value
@@ -58,7 +59,7 @@ const createNameServerField = ( index: number, formData: FormData, isBusy?: bool
 		},
 	};
 
-	return formData.useWpcomNameServers || isBusy
+	return isBusy
 		? {
 				...baseField,
 				Edit: ( { field }: { field: Field< FormData > } ) => (
@@ -145,18 +146,34 @@ export default function NameServersForm( {
 	const wpcomNameServersField = useMemo< Field< FormData > >(
 		() => ( {
 			id: 'useWpcomNameServers',
-			label: __( 'Use WordPress.com name servers' ),
+			label: __( 'Where this domain name points' ),
 			type: 'boolean',
-			Edit: ( { onChange, data } ) => {
+			Edit: ( { field, onChange, data } ) => {
 				return (
 					<VStack spacing={ 4 }>
-						<ToggleControl
-							__nextHasNoMarginBottom
-							label={ __( 'Use WordPress.com name servers' ) }
-							checked={ data.useWpcomNameServers }
+						<RadioControl
+							label={ field.label }
+							hideLabelFromVision
+							selected={ data.useWpcomNameServers ? 'wpcom' : 'custom' }
 							disabled={ isBusy }
-							onChange={ ( value ) => {
-								// Track toggle button click
+							options={ [
+								{
+									label: __( 'WordPress.com name servers' ),
+									value: 'wpcom',
+									description: __(
+										'Your site, email and DNS records are managed here. Nothing to set up.'
+									),
+								},
+								{
+									label: __( 'Custom name servers' ),
+									value: 'custom',
+									description: __( 'Enter the servers another provider gave you.' ),
+								},
+							] }
+							onChange={ ( selected ) => {
+								const value = selected === 'wpcom';
+
+								// Track name server type change
 								recordTracksEvent(
 									'calypso_dashboard_domain_management_name_servers_wpcom_name_servers_toggle_button_click',
 									{
@@ -181,29 +198,6 @@ export default function NameServersForm( {
 						/>
 						{ showUpsellNudge && (
 							<UpsellNudge domainName={ domainName } domainSiteSlug={ domainSiteSlug } />
-						) }
-						{ ! data.useWpcomNameServers && (
-							<Text>
-								{ createInterpolateElement(
-									/* translators: <link> will be replaced with an anchor tag to open the support article in a new tab */
-									__( '<link>Look up</link> the name servers for popular hosts.' ),
-									{
-										link: (
-											<InlineSupportLink
-												supportContext="change-name-servers-finding-out-new-ns"
-												onClick={ () => {
-													recordTracksEvent(
-														'calypso_dashboard_domain_management_name_servers_wpcom_name_servers_look_up_click',
-														{
-															domain: domainName,
-														}
-													);
-												} }
-											/>
-										),
-									}
-								) }
-							</Text>
 						) }
 					</VStack>
 				);
@@ -245,6 +239,46 @@ export default function NameServersForm( {
 						setFormData( ( data ) => ( { ...data, ...value } ) );
 					} }
 				/>
+				{ formData.useWpcomNameServers ? (
+					<VStack spacing={ 2 }>
+						{ getFormNameServers( formData ).map( ( nameServer, index ) => (
+							<Text key={ index }>{ nameServer }</Text>
+						) ) }
+					</VStack>
+				) : (
+					<>
+						<Text>
+							{ createInterpolateElement(
+								/* translators: <link> will be replaced with an anchor tag to open the support article in a new tab */
+								__(
+									'Not sure what to enter? <link>Look up</link> the name servers for popular hosts.'
+								),
+								{
+									link: (
+										<InlineSupportLink
+											supportContext="change-name-servers-finding-out-new-ns"
+											onClick={ () => {
+												recordTracksEvent(
+													'calypso_dashboard_domain_management_name_servers_wpcom_name_servers_look_up_click',
+													{
+														domain: domainName,
+													}
+												);
+											} }
+										/>
+									),
+								}
+							) }
+						</Text>
+						{ isUsingDefaultNameServers && (
+							<Notice>
+								{ __(
+									'After you save, the new host is in charge of this domain. Your WordPress.com site and email will stop working at this address.'
+								) }
+							</Notice>
+						) }
+					</>
+				) }
 				<div>
 					<Button
 						__next40pxDefaultSize

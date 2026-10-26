@@ -45,6 +45,20 @@ export const WithNameservers: Story = {
 		domainSiteSlug: 'example.wordpress.com',
 		defaultNameServers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
 		nameServers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
+		isUsingDefaultNameServers: true,
+		isBusy: false,
+		showUpsellNudge: false,
+		onSubmit: action( 'onSubmit' ),
+	},
+};
+
+export const WithCustomNameservers: Story = {
+	args: {
+		domainName: 'example.com',
+		domainSiteSlug: 'example.wordpress.com',
+		defaultNameServers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
+		nameServers: [ 'ns1.example-host.com', 'ns2.example-host.com' ],
+		isUsingDefaultNameServers: false,
 		isBusy: false,
 		showUpsellNudge: false,
 		onSubmit: action( 'onSubmit' ),
