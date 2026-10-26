@@ -189,10 +189,35 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 		}
 	}
 
-	.ai-ui-renderer__choice-picker {
+	.ai-ui-renderer__choice-picker,
+	.ai-ui-renderer__slider {
 		border: 0;
 		padding: 0;
 		margin: 0;
+	}
+
+	.ai-ui-renderer__slider-control {
+		flex: 1;
+		min-width: 0;
+		width: 100%;
+		height: var( --wpds-dimension-size-lg, 40px );
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		accent-color: var( --ai-ui-renderer-accent-fill );
+
+		&:focus-visible {
+			outline: 2px solid var( --ai-ui-renderer-accent-fill );
+			outline-offset: 2px;
+			border-radius: var( --wpds-border-radius-sm, 2px );
+		}
+	}
+
+	.ai-ui-renderer__slider-value {
+		flex: 0 0 80px;
+		min-width: 0;
+		font-variant-numeric: tabular-nums;
 	}
 
 	// Host dark themes, such as Reader's, restyle WordPress components with long selectors, so the
@@ -480,15 +505,6 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 		}
 	}
 
-	.components-range-control {
-		--wp-components-color-gray-300: var( --ai-ui-renderer-disabled-border );
-	}
-
-	.components-range-control:has( input[type='range']:disabled ) {
-		--wp-components-color-gray-100: var( --ai-ui-renderer-disabled-background );
-		--wp-components-color-gray-400: var( --ai-ui-renderer-disabled-foreground );
-	}
-
 	// Only the basic Button, so a custom component's own buttons, such as a picker's arrows, keep
 	// their styles. Its label is centered on every host, as Calypso centers every WordPress Button.
 	.ai-ui-renderer__button {
@@ -508,7 +524,6 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 	// get a lighter accent in dark mode.
 	.components-checkbox-control__input,
 	.components-radio-control__input,
-	.components-range-control__wrapper,
 	.components-text-control__input,
 	.components-textarea-control__input,
 	.components-input-control__container {
