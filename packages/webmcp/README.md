@@ -61,6 +61,20 @@ On the email-login screen, `wpcom_request_email_login` accepts `emailOrUsername`
 login link for an existing account. It retains the onboarding return destination and does not
 create an account. Open the received link in the same browser to finish authentication.
 
+The next onboarding step offers `wpcom_search_domains` and
+`wpcom_get_domain_search_results`. Search with a `query`, then read the results until
+`isLoading` is false. Results include domain names, standard and renewal prices, pricing
+rules, the offered free address, and the current cart. `FREE_FOR_FIRST_YEAR` requires an
+eligible paid plan; checkout confirms the final price.
+
+Use `wpcom_select_domain` with a `domainName` from those results. It runs the page's
+availability check and cart action. A trademark notice must be reviewed on screen.
+`wpcom_continue_with_domains` continues with the selected cart items;
+`wpcom_skip_domain` uses the offered free address or chooses a domain later when the
+screen allows skipping. These actions do not purchase a domain or choose a plan.
+The standard domain search screen registers these tools wherever it appears in Calypso;
+the Name Pulse search variant does not yet provide them. Leaving the screen removes them.
+
 `@automattic/webmcp/playground` connects a Playground client with a caller-owned abort signal.
 Aborting it removes the Playground registrations and stops the WordPress proxy. The local patch
 to `@wp-playground/mcp` adds this signal option and fixes its client declaration export. The
@@ -82,6 +96,13 @@ Verify that invalid input returns an error without submitting. After the account
 to the terms, call it with an unused email and verify that signup advances or shows its error or
 challenge. Read verification email through a connected inbox when needed. Drive test actions
 through WebMCP and inspect the rendered page to confirm the result.
+
+For a domain check, launch a Playground and complete authentication. Search through
+`wpcom_search_domains`, compare `wpcom_get_domain_search_results` with the page, and
+select a suggested domain. Continue with the cart, then check that the plans screen
+retains the Playground ID and the domain tools have disappeared. Go back and repeat
+with `wpcom_skip_domain`. Invalid queries, unknown domains, and continuing with an
+empty cart should return readable errors without advancing the flow.
 
 To check upstream compatibility, install the preview from
 [WordPress/ai#1081](https://github.com/WordPress/ai/pull/1081) in the disposable Playground, enable

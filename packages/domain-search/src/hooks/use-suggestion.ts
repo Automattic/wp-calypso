@@ -29,7 +29,7 @@ export interface PriceRulesConfig {
 	freeForFirstYearTlds?: string[];
 }
 
-const getPriceRuleForSuggestion = ( {
+export const getPriceRuleForSuggestion = ( {
 	suggestion,
 	priceRules,
 }: {
