@@ -196,7 +196,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 	return (
 		<>
 			{ isSyncing && (
-				<Notice variant="warning" density="medium">
+				<Notice variant="warning">
 					<Text>
 						{ __(
 							'A sync is currently in progress. Deleting this site will cancel the sync and any unfinished changes will be lost.'
@@ -204,7 +204,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 					</Text>
 				</Notice>
 			) }
-			<Notice variant="warning" density="medium">
+			<Notice variant="warning">
 				<Text>
 					{ createInterpolateElement(
 						__(
