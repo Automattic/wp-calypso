@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import { StaticSiteImportNotice, StaticSiteImportProgress, useStaticSiteImport } from '../index';
@@ -123,6 +124,28 @@ describe( 'StaticSiteImportCard', () => {
 			expect.stringContaining( '/setup/domain/use-my-domain' )
 		);
 		expect( connect ).not.toHaveAttribute( 'href', expect.stringContaining( 'initialQuery' ) );
+	} );
+
+	it( 'asks whether the site looks right only after it has been previewed', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+
+		const { recordTracksEvent } = render( <StaticSiteImport /> );
+
+		const preview = await screen.findByRole( 'link', { name: /Preview site/ } );
+		expect( screen.queryByText( 'Does your site look right?' ) ).not.toBeInTheDocument();
+
+		await userEvent.click( preview );
+		expect( screen.getByText( 'Does your site look right?' ) ).toBeVisible();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Looks right' } ) );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_static_site_import_feedback',
+			{ site_id: 42, source_platform: 'wix', rating: 'good' }
+		);
+		expect( screen.getByText( 'Thanks for the feedback!' ) ).toBeVisible();
 	} );
 
 	it( 'offers to read the site again when the preview has expired', async () => {
