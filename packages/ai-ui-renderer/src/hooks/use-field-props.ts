@@ -17,7 +17,7 @@ export function useFieldProps( validationErrors: string[] = [] ) {
 	return {
 		fieldProps: {
 			className: clsx( { 'ai-ui-renderer__field--error': error } ),
-			help: error,
+			description: error,
 			'aria-invalid': !! error,
 			disabled,
 		},

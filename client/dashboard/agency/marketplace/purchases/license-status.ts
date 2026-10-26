@@ -142,6 +142,9 @@ export function getLicenseTags( license: JetpackLicense ): string[] {
 	if ( license.meta?.a4a_is_dev_site === '1' ) {
 		tags.push( __( 'Development' ) );
 	}
+	if ( ! isPartnerLicense( license ) ) {
+		tags.push( __( 'Standard license' ) );
+	}
 
 	return tags;
 }

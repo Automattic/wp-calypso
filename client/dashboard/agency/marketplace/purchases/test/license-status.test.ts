@@ -265,6 +265,10 @@ describe( 'getLicenseTags', () => {
 			)
 		).toEqual( [ 'Referral', 'Development' ] );
 	} );
+
+	it( 'tags licenses purchased on Jetpack.com as standard licenses', () => {
+		expect( getLicenseTags( license( { owner_type: 'user' } ) ) ).toEqual( [ 'Standard license' ] );
+	} );
 } );
 
 describe( 'isRecentlyTransferred', () => {
