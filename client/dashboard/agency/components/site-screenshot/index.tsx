@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
+import './style.scss';
 
 export default function SiteScreenshot( {
 	url,
@@ -58,7 +59,7 @@ export default function SiteScreenshot( {
 	const placeholder = decorative ? null : <span>{ statusText }</span>;
 
 	return (
-		<div className="dashboard-amplify-site-shot" aria-hidden={ decorative || undefined }>
+		<div className="agency-site-screenshot" aria-hidden={ decorative || undefined }>
 			{ ready && ! failed ? (
 				<img src={ src } alt={ alt } loading="lazy" onError={ () => setFailed( true ) } />
 			) : (
