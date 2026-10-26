@@ -58,6 +58,7 @@ const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 	{ flow: 'reblogging', to: '/setup/onboarding:lang?' },
 	{ flow: 'readymade-template', to: toSiteHome },
 	{ flow: 'update-options', to: toSiteHome },
+	{ flow: 'woo-hosted-plans', to: '/setup/plan-upgrade' },
 ];
 
 const FLOW_REDIRECTS = [ AI_SITE_BUILDER_REDIRECT, WRITE_REDIRECT, ...REMOVED_TAILORED_FLOWS ];

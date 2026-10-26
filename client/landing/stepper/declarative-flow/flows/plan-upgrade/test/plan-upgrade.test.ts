@@ -5,12 +5,17 @@ import { STEPS } from '../../../internals/steps';
 import planUpgradeFlow from '../plan-upgrade';
 
 let mockQuery: Record< string, string > = {};
+let mockSitePlan = 'personal-bundle';
 
 jest.mock( '@automattic/onboarding', () => ( { PLAN_UPGRADE_FLOW: 'plan-upgrade' } ) );
 jest.mock( 'calypso/landing/stepper/stores', () => ( { SITE_STORE: 'SITE_STORE' } ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: () => ( { get: ( key: string ) => mockQuery[ key ] ?? null } ),
+} ) );
+
+jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+	useSite: () => ( { plan: { product_slug: mockSitePlan } } ),
 } ) );
 
 const mockClearSignupDestination = jest.fn();
@@ -39,6 +44,7 @@ describe( 'plan-upgrade flow', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockQuery = { siteSlug: 'example.wordpress.com' };
+		mockSitePlan = 'personal-bundle';
 		Object.defineProperty( window, 'location', {
 			value: { ...window.location, assign: jest.fn() },
 			writable: true,
@@ -136,5 +142,14 @@ describe( 'plan-upgrade flow', () => {
 		mockQuery.cancel_to = 'https://example.wordpress.com.evil.example/wp-admin/';
 
 		expect( goBack() ).toContain( '/sites' );
+	} );
+
+	// Without it, a Woo Hosted store is offered WordPress.com plans it can't move to.
+	it( 'offers a Woo Hosted store the Woo Hosted plans', () => {
+		mockSitePlan = 'woo_hosted_basic_plan_monthly';
+
+		expect( planUpgradeFlow.useStepsProps!()[ STEPS.UNIFIED_PLANS.slug ] ).toMatchObject( {
+			intent: 'plans-woo-hosted',
+		} );
 	} );
 } );
