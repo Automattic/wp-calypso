@@ -84,6 +84,7 @@ function getCardHref(
 	cardId: string,
 	changePlanUrl: string,
 	changePlanCardUrl: string,
+	switchToMonthlyUrl: string,
 	renewNowUrl: string,
 	subscriptionsUrl: string | undefined,
 	siteSlug: string,
@@ -91,6 +92,9 @@ function getCardHref(
 ): string | undefined {
 	if ( cardId === 'change-plan' ) {
 		return changePlanCardUrl;
+	}
+	if ( cardId === 'switch-to-monthly' ) {
+		return switchToMonthlyUrl;
 	}
 	if ( cardId === 'upgrade-for-full-access' ) {
 		return changePlanUrl;
@@ -134,6 +138,7 @@ function getCardOnClick(
 		'built-by',
 		'change-plan',
 		'renew-now-pay-less',
+		'switch-to-monthly',
 		'switch-to-yearly',
 		'upgrade-for-full-access',
 		'get-theme-addon',
@@ -253,7 +258,6 @@ export default function SolutionsCardsUpsellStep( {
 	intent,
 	onClickDowngrade,
 	onDeclineUpsell,
-	onSwitchToMonthly,
 	purchase,
 	recordEvent,
 	refundAmount,
@@ -320,6 +324,7 @@ export default function SolutionsCardsUpsellStep( {
 
 	const changePlanUrl = wpcomLink( `/plans/${ purchase.site_slug }` );
 	const changePlanCardUrl = getCancelFlowPlanChangeUrl( purchase, 'change-plan' );
+	const switchToMonthlyUrl = getCancelFlowPlanChangeUrl( purchase, 'switch-to-monthly' );
 	const purchaseSettingsUrl = getPurchaseSettingsUrl( purchase );
 	const renewNowUrl = addQueryArgs(
 		wpcomLink(
@@ -354,12 +359,7 @@ export default function SolutionsCardsUpsellStep( {
 				window.location.href = renewNowUrl;
 				break;
 			case 'switch-to-monthly':
-				( document.activeElement as HTMLElement )?.blur();
-				if ( onSwitchToMonthly ) {
-					onSwitchToMonthly();
-				} else {
-					setShowDowngradeStep( true );
-				}
+				window.location.href = switchToMonthlyUrl;
 				break;
 			case 'switch-to-yearly':
 				if ( yearlyPlanUrl ) {
@@ -455,6 +455,7 @@ export default function SolutionsCardsUpsellStep( {
 						card.id,
 						changePlanUrl,
 						changePlanCardUrl,
+						switchToMonthlyUrl,
 						renewNowUrl,
 						subscriptionsUrl,
 						purchase.site_slug,

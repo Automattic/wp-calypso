@@ -229,6 +229,11 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 			solutionId: 'change-plan',
 			ref: 'cancel-flow-change-plan',
 		},
+		{
+			card: 'Switch to monthly payments',
+			solutionId: 'switch-to-monthly',
+			ref: 'cancel-flow-switch-to-monthly',
+		},
 	] )( '$card opens the plans page and records the click', async ( { card, solutionId, ref } ) => {
 		const user = userEvent.setup();
 		const recordEvent = jest.fn();

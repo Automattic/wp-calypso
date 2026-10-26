@@ -303,7 +303,7 @@ describe( '<CancelPurchaseForm />', () => {
 				within( cards ).getByRole( 'link', { name: /Renew now and pay less/ } )
 			).toBeVisible();
 			expect(
-				within( cards ).getByRole( 'button', { name: /Switch to monthly payments/ } )
+				within( cards ).getByRole( 'link', { name: /Switch to monthly payments/ } )
 			).toBeVisible();
 			expect(
 				within( cards ).getByRole( 'button', { name: /Speak with our support team/ } )
