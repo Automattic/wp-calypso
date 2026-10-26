@@ -9,7 +9,7 @@ interface Props {
 	action?: string;
 	isWooJPC?: boolean;
 	partnerConfig?: PartnerConfig | null;
-	isFromJetpackConnector?: boolean;
+	showsUnifiedContent?: boolean;
 	connectorPlugins?: string[];
 	translate: LocalizeProps[ 'translate' ];
 }
@@ -24,7 +24,7 @@ const getHeadingSubText = ( {
 	translate,
 	isWooJPC,
 	partnerConfig,
-	isFromJetpackConnector,
+	showsUnifiedContent,
 	connectorPlugins,
 }: Props ) => {
 	if ( ! isSocialFirst || twoFactorAuthType ) {
@@ -79,13 +79,13 @@ const getHeadingSubText = ( {
 		</span>
 	);
 
-	// Unified connection flow (jetpack-connector): a prominent, dotcom-styled
+	// Unified connection flow: a prominent, dotcom-styled
 	// subtitle sourced from the shared resolver sits between the H1 and the
 	// existing ToS line. The resolver returns the family-driven benefit
 	// clause for the active plugin set; the ToS keeps its established
 	// subtle styling underneath. Lostpassword keeps the standard
 	// reset-instructions copy.
-	if ( isFromJetpackConnector && 'lostpassword' !== action ) {
+	if ( showsUnifiedContent && 'lostpassword' !== action ) {
 		return {
 			primary: getLoginCopy( connectorPlugins ).subtitle,
 			secondary: tos,
