@@ -163,6 +163,19 @@ describe( 'Static site import flow', () => {
 			} );
 		} );
 
+		it( 'keeps the destination site when going back to the address form', () => {
+			runFlowNavigation(
+				staticSiteImportFlow,
+				{ from: STEPS.STATIC_SITE_IMPORT_READING, query: { ...SESSION, ...SITE } },
+				'back'
+			);
+
+			expect( lastExit() ).toMatchObject( {
+				path: '/setup/site-migration/site-migration-identify',
+				query: { from: 'busybearscleaning.com', siteId: '42', siteSlug: 'busybears.wordpress.com' },
+			} );
+		} );
+
 		it( 'goes straight to the importer for an existing site', () => {
 			runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READING,

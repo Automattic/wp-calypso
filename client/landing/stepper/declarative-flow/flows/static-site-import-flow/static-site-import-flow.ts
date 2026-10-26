@@ -332,7 +332,11 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 					// The address form lives in the migration flow; `from` fills it in again.
 					return window.location.assign(
 						addQueryArgs(
-							{ from },
+							{
+								from,
+								siteId: hasSite( siteId, siteSlug ) ? siteId : undefined,
+								siteSlug: hasSite( siteId, siteSlug ) ? siteSlug : undefined,
+							},
 							`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`
 						)
 					);
