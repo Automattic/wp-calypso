@@ -1117,6 +1117,7 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { recordTracksEvent } = useAnalytics();
 
 	if ( String( user.ID ) !== String( purchase.user_id ) ) {
 		return null;
@@ -1164,13 +1165,20 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 							setAutoRenew(
 								{ purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled },
 								{
-									onSuccess: ( _data, { autoRenew } ) =>
+									onSuccess: ( { success }, { autoRenew } ) => {
 										createSuccessNotice(
 											autoRenew
 												? __( 'Auto-renew has been enabled.' )
 												: __( 'Auto-renew has been disabled.' ),
 											{ type: 'snackbar' }
-										),
+										);
+										if ( success && autoRenew ) {
+											recordTracksEvent( 'calypso_purchases_auto_renew_enabled', {
+												purchase_id: purchase.ID,
+												product_slug: purchase.product_slug,
+											} );
+										}
+									},
 								}
 							);
 						}
