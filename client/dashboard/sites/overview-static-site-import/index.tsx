@@ -193,7 +193,7 @@ export function StaticSiteImportNotice( {
 
 	const keepsDomain = domainChoice === 'keep' && Boolean( sourceHost );
 	const connectDomainUrl = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
-		initialQuery: sourceHost,
+		initialQuery: keepsDomain ? sourceHost : undefined,
 		siteSlug: site.slug,
 		dashboard: getCurrentDashboard(),
 		back_to: redirectToDashboardLink(),
@@ -206,15 +206,15 @@ export function StaticSiteImportNotice( {
 			onClose={ () => setIsDismissed( true ) }
 			actions={
 				<>
-					{ keepsDomain && (
-						<Button variant="primary" href={ connectDomainUrl }>
-							{ sprintf(
-								/* translators: %s: the site's domain, e.g. example.com. */
-								__( 'Connect %s' ),
-								sourceHost
-							) }
-						</Button>
-					) }
+					<Button variant="primary" href={ connectDomainUrl }>
+						{ keepsDomain
+							? sprintf(
+									/* translators: %s: the site's domain, e.g. example.com. */
+									__( 'Connect %s' ),
+									sourceHost
+								)
+							: __( 'Connect domain' ) }
+					</Button>
 					<Button
 						variant="secondary"
 						href={ site.URL }

@@ -98,6 +98,33 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'offers to connect a domain when the old address was not kept', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+
+		function FreeAddressImport() {
+			const siteImport = useStaticSiteImport( site, search.importSessionId );
+			return siteImport && siteImport.status !== 'moving' ? (
+				<StaticSiteImportNotice
+					site={ site }
+					siteImport={ siteImport }
+					search={ { ...search, domainChoice: 'free' } }
+				/>
+			) : null;
+		}
+		render( <FreeAddressImport /> );
+
+		const connect = await screen.findByRole( 'link', { name: 'Connect domain' } );
+		expect( connect ).toHaveClass( 'is-primary' );
+		expect( connect ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/setup/domain/use-my-domain' )
+		);
+		expect( connect ).not.toHaveAttribute( 'href', expect.stringContaining( 'initialQuery' ) );
+	} );
+
 	it( 'offers to read the site again when the preview has expired', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
