@@ -5,7 +5,6 @@ import { act, render, screen } from '@testing-library/react';
 import { useRef } from 'react';
 import { createBlackboxInstance } from '../__mocks__/blackbox-instance';
 import { loadBlackboxSdk } from '../blackbox-sdk';
-import { getBlackboxSessionId } from '../get-blackbox-session-id';
 import { useBlackbox } from '../use-blackbox';
 
 jest.mock( '../blackbox-sdk', () => ( {
@@ -112,18 +111,21 @@ describe( 'useBlackbox', () => {
 		expect( screen.getByTestId( 'state' ) ).toHaveTextContent( 'ready/inactive/empty' );
 	} );
 
-	test.each( [ 'disable', 'unmount' ] )( 'cancels a pending submission on %s', async ( action ) => {
+	test.each( [ 'disable', 'unmount' ] )( 'ignores a late SDK load after %s', async ( action ) => {
+		let loaded;
+		loadBlackboxSdk.mockReturnValue(
+			new Promise( ( resolve ) => {
+				loaded = resolve;
+			} )
+		);
 		const { rerender, unmount } = render( <TestComponent /> );
-		await act( async () => {} );
-		act( () => sdk.setState( { status: 'challenge', sessionId: 'sid' } ) );
-		const pending = getBlackboxSessionId( 'test-api-key' );
-		await act( async () => {} );
 		if ( action === 'disable' ) {
 			rerender( <TestComponent enabled={ false } /> );
 		} else {
 			unmount();
 		}
-		await expect( pending ).resolves.toBeNull();
+		await act( async () => loaded() );
+		expect( sdk.api.configure ).not.toHaveBeenCalled();
 		expect( sdk.listeners.size ).toBe( 0 );
 	} );
 
