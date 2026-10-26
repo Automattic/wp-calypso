@@ -16088,7 +16088,6 @@ __metadata:
     component-query: "npm:^0.0.3"
     cookie: "npm:^0.7.2"
     cookie-parser: "npm:^1.4.7"
-    core-js-bundle: "npm:^3.6.4"
     creditcards: "npm:^3.1.0"
     cronstrue: "npm:^3.11.0"
     d3-array: "npm:^2.4.0"
@@ -17180,13 +17179,6 @@ __metadata:
     copyfiles: copyfiles
     copyup: copyfiles
   checksum: e65cd055ec9acc14997b0ace83973d73f8d9c68167cbf4293c40b52d100af09a8c8da329042d52dc33422c0a8cbf74c6efb25e9ae088667721653659bd67bf57
-  languageName: node
-  linkType: hard
-
-"core-js-bundle@npm:^3.6.4":
-  version: 3.16.2
-  resolution: "core-js-bundle@npm:3.16.2"
-  checksum: b6d09df97ac3d2baca3f3aed7c30aaa378a7e9a5935cd56283d1dd14a8cfe7d3c76f3aa36038aee812c4fa68e4999311f586e9a3107abf392c54262d647bf15d
   languageName: node
   linkType: hard
 
