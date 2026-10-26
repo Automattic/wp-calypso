@@ -49,103 +49,104 @@ const receive = (
 beforeEach( () => setFlag( false ) );
 
 describe( 'useIsOnSale', () => {
-	it( 'keeps today’s bundles and hides Pro while Pro is off sale', () => {
+	it( 'follows the catalog through launch, a Pro-only rollback and a full restore', () => {
 		const { store, result } = setup( useIsOnSale );
-		expect( result.current( 'jetpack_security_t1_yearly' ) ).toBe( true );
-		expect( result.current( 'jetpack_pro_yearly' ) ).toBe( false );
+		const offered = () =>
+			[ 'jetpack_pro_yearly', 'jetpack_security_t1_yearly', 'jetpack_starter_yearly' ].filter(
+				result.current
+			);
+		const steps: [ Parameters< typeof receive >[ 0 ], string[] ][] = [
+			[ { security: true }, [ 'jetpack_security_t1_yearly', 'jetpack_starter_yearly' ] ],
+			[ { pro: true }, [ 'jetpack_pro_yearly' ] ],
+			[ {}, [] ],
+			[ { security: true }, [ 'jetpack_security_t1_yearly', 'jetpack_starter_yearly' ] ],
+		];
 
-		act( () => {
-			store.dispatch( receive( {} ) );
-		} );
-		expect( result.current( 'jetpack_security_t1_yearly' ) ).toBe( true );
-		expect( result.current( 'jetpack_pro_yearly' ) ).toBe( false );
+		for ( const [ catalog, expected ] of steps ) {
+			act( () => {
+				store.dispatch( receive( catalog ) );
+			} );
+			expect( offered() ).toEqual( expected );
+		}
 	} );
 
-	it( 'hides every off-sale bundle once Pro is on sale', () => {
+	it.each( [
+		[ 'cold', [] ],
+		[ 'partial', [ receive( { security: true }, true ) ] ],
+		[ 'failed', [ { type: PRODUCTS_LIST_REQUEST_FAILURE } ] ],
+	] )( 'offers no bundle after a %s load', ( _, actions: AnyAction[] ) => {
 		const { store, result } = setup( useIsOnSale );
 
 		act( () => {
-			store.dispatch( receive( { pro: true } ) );
+			actions.forEach( ( action ) => store.dispatch( action ) );
 		} );
-		expect( result.current( 'jetpack_pro_yearly' ) ).toBe( true );
 		expect( result.current( 'jetpack_security_t1_yearly' ) ).toBe( false );
 	} );
 
 	it( 'hides every off-sale bundle while the flag is on', () => {
 		setFlag( true );
 		const { store, result } = setup( useIsOnSale );
-		expect( result.current( 'jetpack_security_t1_yearly' ) ).toBe( false );
 
 		act( () => {
 			store.dispatch( receive( { security: true } ) );
 		} );
 		expect( result.current( 'jetpack_security_t1_yearly' ) ).toBe( true );
-		expect( result.current( 'jetpack_pro_yearly' ) ).toBe( false );
+		expect( result.current( 'jetpack_starter_yearly' ) ).toBe( false );
 	} );
 } );
 
 describe( 'useOnSaleStatus', () => {
 	const useStatus = () => useOnSaleStatus( 'jetpack_security_t1_yearly' );
 
-	it( 'reports on sale without waiting while Pro is off sale', () => {
+	it.each( [
+		[ 'before launch', { security: true }, 'on-sale' ],
+		[ 'after launch', { pro: true }, 'off-sale' ],
+		[ 'after a Pro-only rollback', {}, 'off-sale' ],
+	] )( 'follows the catalog %s', ( _, catalog, expected ) => {
 		const { store, result } = setup( useStatus );
-		expect( result.current ).toBe( 'on-sale' );
 
 		act( () => {
-			store.dispatch( receive( {} ) );
+			store.dispatch( receive( catalog ) );
+		} );
+		expect( result.current ).toBe( expected );
+	} );
+
+	it( 'stays unknown on a cold load until the list arrives', () => {
+		const { store, result } = setup( useStatus );
+		expect( result.current ).toBe( 'unknown' );
+
+		act( () => {
+			store.dispatch( { type: PRODUCTS_LIST_REQUEST } );
+		} );
+		expect( result.current ).toBe( 'unknown' );
+
+		act( () => {
+			store.dispatch( receive( { security: true } ) );
 		} );
 		expect( result.current ).toBe( 'on-sale' );
 	} );
 
-	it( 'reports off sale once Pro is on sale and the product is not', () => {
+	it( 'stays unknown after an unrelated slug-filtered list', () => {
 		const { store, result } = setup( useStatus );
 
 		act( () => {
-			store.dispatch( receive( { pro: true } ) );
+			store.dispatch( receive( { security: true }, true ) );
+		} );
+		expect( result.current ).toBe( 'unknown' );
+	} );
+
+	it( 'reports off sale after a failed request, but not while retrying', () => {
+		const { store, result } = setup( useStatus );
+
+		act( () => {
+			store.dispatch( { type: PRODUCTS_LIST_REQUEST } );
+			store.dispatch( { type: PRODUCTS_LIST_REQUEST_FAILURE } );
 		} );
 		expect( result.current ).toBe( 'off-sale' );
-	} );
 
-	describe( 'while the flag is on', () => {
-		beforeEach( () => setFlag( true ) );
-
-		it( 'stays unknown on a cold load until the list arrives', () => {
-			const { store, result } = setup( useStatus );
-			expect( result.current ).toBe( 'unknown' );
-
-			act( () => {
-				store.dispatch( { type: PRODUCTS_LIST_REQUEST } );
-			} );
-			expect( result.current ).toBe( 'unknown' );
-
-			act( () => {
-				store.dispatch( receive( { security: true } ) );
-			} );
-			expect( result.current ).toBe( 'on-sale' );
+		act( () => {
+			store.dispatch( { type: PRODUCTS_LIST_REQUEST } );
 		} );
-
-		it( 'stays unknown after an unrelated slug-filtered list', () => {
-			const { store, result } = setup( useStatus );
-
-			act( () => {
-				store.dispatch( receive( { security: true }, true ) );
-			} );
-			expect( result.current ).toBe( 'unknown' );
-		} );
-
-		it( 'reports off sale after a failed request, but not while retrying', () => {
-			const { store, result } = setup( useStatus );
-
-			act( () => {
-				store.dispatch( { type: PRODUCTS_LIST_REQUEST } );
-				store.dispatch( { type: PRODUCTS_LIST_REQUEST_FAILURE } );
-			} );
-			expect( result.current ).toBe( 'off-sale' );
-
-			act( () => {
-				store.dispatch( { type: PRODUCTS_LIST_REQUEST } );
-			} );
-			expect( result.current ).toBe( 'unknown' );
-		} );
+		expect( result.current ).toBe( 'unknown' );
 	} );
 } );

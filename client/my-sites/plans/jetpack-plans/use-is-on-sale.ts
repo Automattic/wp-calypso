@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { JETPACK_PRO_PLANS, PLAN_JETPACK_PRO_YEARLY } from '@automattic/calypso-products';
+import { JETPACK_PRO_PLANS, PLAN_JETPACK_SECURITY_T1_YEARLY } from '@automattic/calypso-products';
 import { useCallback } from 'react';
 import { useSelector } from 'calypso/state';
 import {
@@ -11,11 +11,11 @@ import {
 
 type ProductsList = Parameters< typeof isListedProductOnSale >[ 0 ];
 
-/* Every bundle follows the catalog once Pro is on sale, or while the flag previews that.
- * Until then only Pro does, so today's lineup stays exactly as it was. */
+/* Every bundle follows the catalog unless a fresh list still offers Security, as before launch or
+ * after a full restore, so turning Pro alone off cannot bring the retired bundles back. */
 const isGatingEveryBundle = ( productsList: ProductsList ) =>
 	config.isEnabled( 'jetpack/pro-bundles' ) ||
-	isListedProductOnSale( productsList, PLAN_JETPACK_PRO_YEARLY );
+	! isListedProductOnSale( productsList, PLAN_JETPACK_SECURITY_T1_YEARLY );
 
 /**
  * Whether a bundle may be offered.
