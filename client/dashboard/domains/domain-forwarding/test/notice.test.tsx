@@ -114,7 +114,7 @@ test( 'shows info notice when domain is primary domain on non-domain-only site',
 	render( <TestWrapper /> );
 
 	expect(
-		screen.getAllByText( /this domain is your site’s main address/i ).length
+		screen.getAllByText( /example\.com is your site’s main address/i ).length
 	).toBeGreaterThan( 0 );
 	expect( screen.getAllByText( /set a new primary site address/i ).length ).toBeGreaterThan( 0 );
 
