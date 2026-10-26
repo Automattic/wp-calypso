@@ -18,6 +18,17 @@
 	font-weight: 600;
 }
 
+.wpnc-simplified__meta {
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: $grid-unit-05;
+
+	> :not(:last-child)::after {
+		content: "·" / "";
+		margin-inline-start: $grid-unit-05;
+	}
+}
+
 .wpnc-simplified__thread {
 	margin: 0;
 	padding: 0;
