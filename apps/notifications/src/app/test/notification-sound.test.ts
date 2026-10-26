@@ -120,11 +120,13 @@ describe( 'createNotificationSound', () => {
 		sound.dispose();
 	} );
 
-	it( 'keeps listening for clicks when the browser refuses to start audio', () => {
+	it( 'keeps listening for clicks when the browser refuses to start audio', async () => {
 		setHasBeenActive( true );
 		audioContext.resume.mockImplementation( () => Promise.resolve() );
 		const sound = createNotificationSound();
-		expect( sound.play() ).toBe( 'not_activated' );
+		const result = sound.play();
+		jest.advanceTimersByTime( 1000 );
+		await expect( result ).resolves.toBe( 'not_activated' );
 		const resumeCalls = audioContext.resume.mock.calls.length;
 
 		document.dispatchEvent( new Event( 'pointerdown' ) );
@@ -138,6 +140,34 @@ describe( 'createNotificationSound', () => {
 		document.dispatchEvent( new Event( 'pointerdown' ) );
 
 		expect( sound.play() ).toBe( 'not_activated' );
+		expect( audioContext.createOscillator ).not.toHaveBeenCalled();
+		sound.dispose();
+	} );
+
+	it( 'waits for audio that is still starting before playing', async () => {
+		setHasBeenActive( true );
+		audioContext.resume.mockImplementation( () =>
+			Promise.resolve().then( () => {
+				audioContext.state = 'running';
+			} )
+		);
+		const sound = createNotificationSound();
+		const result = sound.play();
+
+		expect( audioContext.createOscillator ).not.toHaveBeenCalled();
+		await expect( result ).resolves.toBe( 'played' );
+		expect( audioContext.createOscillator ).toHaveBeenCalledTimes( 1 );
+		sound.dispose();
+	} );
+
+	it( 'gives up on an alert when audio does not start in time', async () => {
+		setHasBeenActive( true );
+		audioContext.resume.mockImplementation( () => new Promise( () => {} ) );
+		const sound = createNotificationSound();
+		const result = sound.play();
+
+		jest.advanceTimersByTime( 1000 );
+		await expect( result ).resolves.toBe( 'not_activated' );
 		expect( audioContext.createOscillator ).not.toHaveBeenCalled();
 		sound.dispose();
 	} );

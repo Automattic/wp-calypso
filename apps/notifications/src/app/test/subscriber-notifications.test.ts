@@ -60,6 +60,19 @@ describe( 'subscribeSubscriberNotifications', () => {
 		stop();
 	} );
 
+	it( 'reports the sound result once audio that was still starting settles', async () => {
+		sound.play.mockReturnValueOnce( Promise.resolve( 'played' ) );
+		const onSound = jest.fn();
+		const stop = subscribeSubscriberNotifications( {}, jest.fn(), jest.fn(), { onSound } );
+
+		onLiveNotification( candidate );
+		expect( onSound ).not.toHaveBeenCalled();
+
+		await Promise.resolve();
+		expect( onSound ).toHaveBeenCalledWith( 'played', candidate );
+		stop();
+	} );
+
 	it( 'does not report a sound result for a rejected candidate', () => {
 		const onSound = jest.fn();
 		const stop = subscribeSubscriberNotifications( {}, jest.fn(), () => false, { onSound } );
