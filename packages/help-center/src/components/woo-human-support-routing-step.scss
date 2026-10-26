@@ -1,0 +1,28 @@
+.help-center-woo-routing-step {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	// Lines up with the chat messages.
+	margin: 16px;
+	padding: 16px;
+	border: 1px solid var( --studio-gray-5 );
+	border-radius: 8px;
+	background: var( --color-surface );
+
+	.help-center-woo-routing-step__title {
+		margin: 0;
+		font-size: 1rem;
+		font-weight: 600;
+	}
+
+	.help-center-woo-routing-step__intro {
+		margin: 0;
+		color: var( --studio-gray-60 );
+	}
+
+	.help-center-woo-routing-step__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+	}
+}
