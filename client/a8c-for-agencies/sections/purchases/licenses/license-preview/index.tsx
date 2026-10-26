@@ -418,6 +418,9 @@ export default function LicensePreview( {
 					<div className="license-preview__badge-container">
 						{ ( !! isParentLicense || isTitanLicense ) && bundleCountContent }
 						{ isDevelopmentSite && <Badge intent="draft">{ translate( 'Development' ) }</Badge> }
+						{ licenseType === LicenseType.Standard && (
+							<Badge intent="stable">{ translate( 'Standard license' ) }</Badge>
+						) }
 						{ shouldShowTransferredBadge() && <TransferredBadge /> }
 					</div>
 				</div>

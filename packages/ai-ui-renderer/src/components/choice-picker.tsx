@@ -1,12 +1,8 @@
 import { createComponentImplementation } from '@a2ui/react';
 import { DataBindingSchema } from '@a2ui/web_core/v1_0';
-import {
-	BaseControl,
-	CheckboxControl,
-	RadioControl,
-	useBaseControlProps,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { useId } from '@wordpress/element';
+import { CheckboxControl, Field, Fieldset, Radio, RadioGroup, Stack } from '@wordpress/ui';
+import clsx from 'clsx';
 import { z } from 'zod';
 import { useFieldProps } from '../hooks/use-field-props';
 import { useInputValue } from '../hooks/use-input-value';
@@ -26,7 +22,9 @@ export const ChoicePicker = createComponentImplementation(
 	( { props, context } ) => {
 		const [ value, setValue ] = useInputValue( props.value ?? [], props.setValue, context );
 		const { fieldProps, touch } = useFieldProps( props.validationErrors );
-		const { baseControlProps, controlProps } = useBaseControlProps( { help: fieldProps.help } );
+		const descriptionId = useId();
+		const describedBy = fieldProps.description ? descriptionId : undefined;
+		const isMultiple = props.variant === 'multipleSelection';
 
 		const onChange = ( selected: string[] ) => {
 			setValue( selected );
@@ -38,36 +36,36 @@ export const ChoicePicker = createComponentImplementation(
 			label: typeof option.label === 'string' ? option.label : option.value,
 		} ) );
 
-		if ( props.variant !== 'multipleSelection' ) {
-			return (
-				<RadioControl
-					{ ...fieldProps }
-					{ ...controlProps }
-					label={ props.label }
-					options={ options }
-					selected={ value[ 0 ] ?? '' }
-					onChange={ ( selected ) => onChange( [ selected ] ) }
-				/>
-			);
-		}
-
-		// A group of checkboxes has no WordPress control, so `BaseControl` adds the error.
 		return (
-			<BaseControl { ...baseControlProps } className={ fieldProps.className }>
-				<fieldset { ...controlProps } className="ai-ui-renderer__choice-picker">
-					{ props.label && (
-						<BaseControl.VisualLabel as="legend">{ props.label }</BaseControl.VisualLabel>
-					) }
-					<VStack spacing={ 3 }>
-						{ options.map( ( option ) => (
+			<Fieldset.Root
+				className={ clsx( 'ai-ui-renderer__choice-picker', fieldProps.className ) }
+				disabled={ fieldProps.disabled }
+				render={
+					isMultiple ? undefined : (
+						<RadioGroup
+							value={ value[ 0 ] ?? '' }
+							disabled={ fieldProps.disabled }
+							onValueChange={ ( selected ) => {
+								if ( typeof selected === 'string' ) {
+									onChange( [ selected ] );
+								}
+							} }
+						/>
+					)
+				}
+			>
+				{ props.label && <Fieldset.Legend>{ props.label }</Fieldset.Legend> }
+				<Stack direction="column" gap="md">
+					{ options.map( ( option ) =>
+						isMultiple ? (
 							<CheckboxControl
 								key={ option.value }
 								label={ option.label }
 								checked={ value.includes( option.value ) }
 								disabled={ fieldProps.disabled }
 								aria-invalid={ fieldProps[ 'aria-invalid' ] }
-								aria-describedby={ controlProps[ 'aria-describedby' ] }
-								onChange={ ( checked ) =>
+								aria-describedby={ describedBy }
+								onCheckedChange={ ( checked ) =>
 									onChange(
 										checked
 											? [ ...value, option.value ]
@@ -75,10 +73,27 @@ export const ChoicePicker = createComponentImplementation(
 									)
 								}
 							/>
-						) ) }
-					</VStack>
-				</fieldset>
-			</BaseControl>
+						) : (
+							<Field.Root key={ option.value }>
+								<Field.Item render={ <Stack direction="row" gap="sm" align="center" /> }>
+									<Radio
+										value={ option.value }
+										disabled={ fieldProps.disabled }
+										aria-invalid={ fieldProps[ 'aria-invalid' ] }
+										aria-describedby={ describedBy }
+									/>
+									<Field.Label variant="plain">{ option.label }</Field.Label>
+								</Field.Item>
+							</Field.Root>
+						)
+					) }
+				</Stack>
+				{ fieldProps.description && (
+					<Fieldset.Description id={ descriptionId }>
+						{ fieldProps.description }
+					</Fieldset.Description>
+				) }
+			</Fieldset.Root>
 		);
 	}
 );

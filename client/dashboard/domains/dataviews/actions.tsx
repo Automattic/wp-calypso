@@ -22,6 +22,7 @@ import {
 	domainTransferToOtherSiteRoute,
 	domainsContactInfoRoute,
 } from '../../app/router/domains';
+import { chooseEmailSolutionRoute } from '../../app/router/emails';
 import { getCurrentDashboard } from '../../app/routing';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ComponentViewTracker from '../../components/component-view-tracker';
@@ -213,6 +214,32 @@ export const useActions = ( {
 						to: domainDnsRoute.fullPath,
 						params: {
 							domainName: domain.domain,
+						},
+					} );
+				},
+				isEligible: ( item: DomainSummary ) => {
+					return (
+						item.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+						item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
+					);
+				},
+			},
+			{
+				id: 'add-mailbox',
+				label: __( 'Add mailbox' ),
+				supportsBulk: false,
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'add-mailbox',
+						domain: domain.domain,
+					} );
+
+					router.navigate( {
+						to: chooseEmailSolutionRoute.fullPath,
+						params: {
+							domain: domain.domain,
 						},
 					} );
 				},
