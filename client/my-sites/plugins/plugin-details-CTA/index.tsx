@@ -515,21 +515,12 @@ interface GetStartedButtonProps {
 	onClick: MouseEventHandler;
 	plugin: PluginDetailsPlugin;
 	isMarketplaceProduct: boolean;
-	startFreeTrial?: boolean;
 }
 
-function GetStartedButton( {
-	onClick,
-	plugin,
-	isMarketplaceProduct,
-	startFreeTrial = false,
-}: GetStartedButtonProps ) {
+function GetStartedButton( { onClick, plugin, isMarketplaceProduct }: GetStartedButtonProps ) {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
 	const billingPeriod = useSelector( getBillingInterval );
-	const buttonText = startFreeTrial
-		? translate( 'Start your free trial' )
-		: translate( 'Get started' );
 	const startUrl = addQueryArgs(
 		{
 			ref: sectionName + '-lp',
@@ -540,7 +531,7 @@ function GetStartedButton( {
 			intervalType:
 				isMarketplaceProduct && billingPeriod === IntervalLength.MONTHLY ? 'monthly' : 'yearly',
 		},
-		startFreeTrial ? 'start/hosting' : '/start/with-plugin'
+		'/start/with-plugin'
 	);
 	return (
 		<Button
@@ -550,7 +541,7 @@ function GetStartedButton( {
 			onClick={ onClick }
 			href={ startUrl }
 		>
-			{ buttonText }
+			{ translate( 'Get started' ) }
 		</Button>
 	);
 }

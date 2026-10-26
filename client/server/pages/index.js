@@ -40,6 +40,7 @@ import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { login } from 'calypso/lib/paths';
+import { getLegacyHostingFlowRedirect } from 'calypso/lib/signup/legacy-hosting-flow';
 import { getLegacyLaunchSiteRedirect } from 'calypso/lib/signup/legacy-launch-site-flow';
 import {
 	REDIRECTED_FLOWS,
@@ -1388,6 +1389,10 @@ export default function pages() {
 	} );
 	app.get( [ '/woocommerce-installation', '/woocommerce-installation/:site' ], ( req, res ) => {
 		res.redirect( 302, getWooCommercePluginPage( req.params.site ) );
+	} );
+
+	app.get( [ '/start/hosting', '/start/hosting/*' ], ( req, res ) => {
+		res.redirect( 302, getLegacyHostingFlowRedirect( req.originalUrl ) );
 	} );
 
 	// Special Calypso routes which also appear on `my.wordpress.com`

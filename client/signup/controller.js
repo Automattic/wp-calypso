@@ -7,6 +7,10 @@ import store from 'store';
 import { notFound } from 'calypso/controller';
 import { login } from 'calypso/lib/paths';
 import {
+	LEGACY_HOSTING_FLOW,
+	getLegacyHostingFlowRedirect,
+} from 'calypso/lib/signup/legacy-hosting-flow';
+import {
 	LEGACY_LAUNCH_SITE_FLOW,
 	getLegacyLaunchSiteRedirect,
 } from 'calypso/lib/signup/legacy-launch-site-flow';
@@ -138,6 +142,11 @@ export default {
 
 		if ( flowName === LEGACY_WOOCOMMERCE_INSTALL_FLOW ) {
 			window.location.replace( getWooCommercePluginPage( context.query?.siteSlug ) );
+			return;
+		}
+
+		if ( flowName === LEGACY_HOSTING_FLOW ) {
+			window.location.replace( getLegacyHostingFlowRedirect( context.path ) );
 			return;
 		}
 
