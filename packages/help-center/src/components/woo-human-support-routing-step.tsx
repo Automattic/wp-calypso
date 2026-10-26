@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useWooHandoff } from '../data/use-woo-handoff';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import {
+	getWooChatValues,
 	getWooRoutingInput,
 	isProductAsked,
 	isStoreAsked,
@@ -127,7 +128,7 @@ export function WooHumanSupportRoutingStep( {
 
 		// Until the ticket and email routes are built (WOOPUBR-2404), they start a chat, as every
 		// request does today.
-		startChat();
+		startChat( getWooChatValues( { storeUrl, product: showProduct ? product : null } ) );
 	};
 
 	// The support form turns these merchants away too, with the same message. It's the answer, so

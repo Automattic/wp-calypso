@@ -1,5 +1,6 @@
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import {
+	getTicketFieldMetadata,
 	useUpdateZendeskUserFields,
 	ZENDESK_CUSTOM_FIELD_AI_CHAT_ID,
 	ZENDESK_CUSTOM_FIELD_WEBSITE_URL,
@@ -18,6 +19,7 @@ import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { useOpenInteractionStatusMap } from './use-open-interaction-status-map';
+import type { HumanSupportChatValues } from '../types';
 
 // Zendesk routes and prioritizes the checkout support experiment's chats by this tag.
 const CHECKOUT_SUPPORT_TAG = 'wpcom_checkout_chat';
@@ -65,12 +67,17 @@ export const useCreateZendeskConversation = () => {
 		isFromError = false,
 		errorReason = '',
 		escalationOnSecondAttempt = false,
+		siteUrl: requestedSiteUrl,
+		ticketFields = {},
+		tags = [],
 	}: {
 		createdFrom?: string;
 		isFromError?: boolean;
 		errorReason?: string;
 		escalationOnSecondAttempt?: boolean;
-	} ) => {
+	} & HumanSupportChatValues ) => {
+		const siteUrl = requestedSiteUrl || selectedSiteURL || window.location.href;
+
 		if (
 			isSubmittingZendeskUserFields ||
 			chat.conversationId ||
@@ -153,7 +160,7 @@ export const useCreateZendeskConversation = () => {
 				messaging_initial_message: userFieldMessage || undefined,
 				messaging_site_id: selectedSiteId || null,
 				messaging_ai_chat_id: chatId || undefined,
-				messaging_url: selectedSiteURL || window.location.href,
+				messaging_url: siteUrl,
 				messaging_flow: userFieldFlowName || null,
 				messaging_source: window.location.href,
 			} );
@@ -162,7 +169,7 @@ export const useCreateZendeskConversation = () => {
 				messaging_initial_message: userFieldMessage || undefined,
 				messaging_site_id: selectedSiteId || null,
 				messaging_ai_chat_id: chatId || undefined,
-				messaging_url: selectedSiteURL || window.location.href,
+				messaging_url: siteUrl,
 				messaging_flow: userFieldFlowName || null,
 				messaging_source: window.location.href,
 			} );
@@ -182,22 +189,25 @@ export const useCreateZendeskConversation = () => {
 		// from. Ticket-field metadata travels atomically with the conversation, so
 		// duplicate the critical fields here. See DOTSUP-472.
 		const ticketFieldMetadata = {
-			[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_WEBSITE_URL }` ]:
-				selectedSiteURL || window.location.href,
+			[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_WEBSITE_URL }` ]: siteUrl,
 			[ `zen:ticket_field:${ ZENDESK_SOURCE_URL_TICKET_FIELD_ID }` ]: window.location.href,
 			...( chatId
 				? { [ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_AI_CHAT_ID }` ]: String( chatId ) }
 				: {} ),
+			// What the host learned about this request, such as the product.
+			...getTicketFieldMetadata( ticketFields ),
 		};
-
 		// Chats in the checkout support experiment also get a tag for their variation, so Zendesk can
 		// tell the variations apart. A user sent back to an open chat gets no new conversation, so
 		// that chat keeps the tags it started with.
 		const conversationTags = [
-			...( zendeskConversationTags ?? [] ),
-			...( checkoutSupportVariation
-				? [ CHECKOUT_SUPPORT_TAG, `${ CHECKOUT_SUPPORT_TAG }_${ checkoutSupportVariation }` ]
-				: [] ),
+			...new Set( [
+				...( zendeskConversationTags ?? [] ),
+				...tags,
+				...( checkoutSupportVariation
+					? [ CHECKOUT_SUPPORT_TAG, `${ CHECKOUT_SUPPORT_TAG }_${ checkoutSupportVariation }` ]
+					: [] ),
+			] ),
 		];
 
 		const SMOOCH_READY_TIMEOUT_MS = 10000;
@@ -291,7 +301,7 @@ export const useCreateZendeskConversation = () => {
 				support_interaction: activeInteractionId || null,
 				created_from: createdFrom,
 				messaging_site_id: selectedSiteId || null,
-				messaging_url: selectedSiteURL || null,
+				messaging_url: requestedSiteUrl || selectedSiteURL || null,
 				smooch_waited_ms: smoochWaitedMs,
 				smooch_attempts: smoochAttempts,
 			} );

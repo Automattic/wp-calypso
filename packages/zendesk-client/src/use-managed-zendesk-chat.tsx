@@ -26,6 +26,7 @@ import {
 	ZENDESK_CUSTOM_FIELD_AI_CHAT_ID,
 	ZENDESK_CUSTOM_FIELD_AI_MESSAGE_ID,
 } from './constants';
+import { getTicketFieldMetadata } from './ticket-field-metadata';
 import {
 	ConversationData,
 	ZendeskConversation,
@@ -49,22 +50,13 @@ import {
 	playNotificationSound,
 	SUPPORTED_IMAGE_TYPES,
 } from './util';
+import type { ZendeskTicketFields } from './ticket-field-metadata';
 import type { AgentticMessage, ZendeskMessage, ZendeskContentType } from './types';
-
-type ZendeskTicketFields = Record< string | number, string | number | boolean | null | undefined >;
 
 // Stable empty-object references so defaults don't change identity on every
 // render and retrigger the conversation-creation effect.
 const EMPTY_ARRAY: string[] = [];
 const EMPTY_TICKET_FIELDS: ZendeskTicketFields = {};
-
-function getTicketFieldMetadata( ticketFields: ZendeskTicketFields ) {
-	return Object.fromEntries(
-		Object.entries( ticketFields )
-			.filter( ( [ , value ] ) => value !== undefined && value !== null && value !== '' )
-			.map( ( [ id, value ] ) => [ `zen:ticket_field:${ id }`, value ] )
-	);
-}
 
 function getStringStateValue( value: unknown ) {
 	return typeof value === 'string' && value !== '' ? value : undefined;
