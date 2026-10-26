@@ -4,6 +4,8 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import clsx from 'clsx';
+import { html } from '../../../panel/indices-to-html';
+import { p } from '../../../panel/templates/functions';
 import NoteIcon from '../../note-icon';
 import { NoteTime } from './note-meta';
 import type { NoteActor, NoteParentComment } from '../../types';
@@ -77,6 +79,11 @@ export function ThreadParent( {
 	comment: NoteParentComment;
 	truncate?: boolean;
 } ) {
+	const content =
+		comment.content?.text && truncate
+			? { ...comment.content, text: comment.content.text.replace( /\n/g, ' ' ) }
+			: comment.content;
+
 	return (
 		<ThreadItem
 			className="wpnc-simplified__thread-parent"
@@ -96,7 +103,7 @@ export function ThreadParent( {
 					'is-truncated': truncate,
 				} ) }
 			>
-				{ comment.text }
+				{ content?.text ? p( html( content ), '' ) : comment.text }
 			</div>
 		</ThreadItem>
 	);
