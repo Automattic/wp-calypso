@@ -1,5 +1,6 @@
 const soundCooldownMs = 3000;
 const soundDurationSeconds = 0.4;
+const resumeTimeoutMs = 1000;
 
 export type NotificationSoundResult =
 	| 'played'
@@ -28,6 +29,7 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 	let lastPlayedAt: number | undefined;
 	let disposed = false;
 	let unavailableReason: 'unsupported' | 'create_failed' | undefined;
+	let resuming: Promise< void > | undefined;
 
 	function reportError( error: unknown, stage: NotificationSoundErrorStage ) {
 		try {
@@ -75,16 +77,42 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 		}
 
 		const context = audioContext;
+		let resume: Promise< void >;
+		try {
+			resume = context.resume();
+		} catch ( error ) {
+			reportError( error, 'resume' );
+			return;
+		}
 		// Safari needs a fresh gesture to start audio, so keep listening until it runs.
-		settle(
-			() =>
-				context.resume().then( () => {
-					if ( context.state === 'running' ) {
-						removeGestureListeners();
-					}
-				} ),
-			'resume'
+		resuming = resume.then(
+			() => {
+				if ( context.state === 'running' ) {
+					removeGestureListeners();
+				}
+			},
+			( error ) => reportError( error, 'resume' )
 		);
+	}
+
+	function playTone( context: AudioContext ): NotificationSoundResult {
+		try {
+			const oscillator = context.createOscillator();
+			const gain = context.createGain();
+			oscillator.type = 'sine';
+			oscillator.frequency.setValueAtTime( 660, context.currentTime );
+			gain.gain.setValueAtTime( 0.2, context.currentTime );
+			gain.gain.exponentialRampToValueAtTime( 0.001, context.currentTime + soundDurationSeconds );
+			oscillator.connect( gain );
+			gain.connect( context.destination );
+			oscillator.start();
+			oscillator.stop( context.currentTime + soundDurationSeconds );
+		} catch ( error ) {
+			reportError( error, 'play' );
+			return 'failed';
+		}
+
+		return 'played';
 	}
 
 	document.addEventListener( 'pointerdown', activateAudio );
@@ -95,7 +123,7 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 	}
 
 	return {
-		play(): NotificationSoundResult {
+		play(): NotificationSoundResult | Promise< NotificationSoundResult > {
 			if ( disposed ) {
 				return 'disposed';
 			}
@@ -111,7 +139,8 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 					return unavailableReason;
 				}
 			}
-			if ( audioContext?.state !== 'running' ) {
+			const context = audioContext;
+			if ( ! context || ( context.state !== 'running' && ! hasBeenActivated() ) ) {
 				return 'not_activated';
 			}
 
@@ -121,26 +150,20 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 			}
 			lastPlayedAt = now;
 
-			try {
-				const oscillator = audioContext.createOscillator();
-				const gain = audioContext.createGain();
-				oscillator.type = 'sine';
-				oscillator.frequency.setValueAtTime( 660, audioContext.currentTime );
-				gain.gain.setValueAtTime( 0.2, audioContext.currentTime );
-				gain.gain.exponentialRampToValueAtTime(
-					0.001,
-					audioContext.currentTime + soundDurationSeconds
-				);
-				oscillator.connect( gain );
-				gain.connect( audioContext.destination );
-				oscillator.start();
-				oscillator.stop( audioContext.currentTime + soundDurationSeconds );
-			} catch ( error ) {
-				reportError( error, 'play' );
-				return 'failed';
+			if ( context.state === 'running' ) {
+				return playTone( context );
 			}
 
-			return 'played';
+			// The page was clicked but audio is still starting, so give it a moment.
+			return Promise.race( [
+				resuming,
+				new Promise< void >( ( resolve ) => setTimeout( resolve, resumeTimeoutMs ) ),
+			] ).then( () => {
+				if ( disposed ) {
+					return 'disposed';
+				}
+				return context.state === 'running' ? playTone( context ) : 'not_activated';
+			} );
 		},
 		dispose() {
 			if ( disposed ) {
