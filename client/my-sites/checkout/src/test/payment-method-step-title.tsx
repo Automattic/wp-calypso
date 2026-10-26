@@ -8,6 +8,7 @@ import {
 	PaymentMethodStep,
 	createCheckoutStepGroupStore,
 	useTogglePaymentMethod,
+	usePaymentMethodId,
 } from '@automattic/composite-checkout';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -27,10 +28,12 @@ jest.mock( '../components/payment-logos', () => ( {
 
 function ToggleCardAvailability() {
 	const togglePaymentMethod = useTogglePaymentMethod();
+	const [ , setPaymentMethodId ] = usePaymentMethodId();
 	return (
 		<>
 			<button onClick={ () => togglePaymentMethod( 'card', false ) }>Disable card payments</button>
 			<button onClick={ () => togglePaymentMethod( 'card', true ) }>Enable card payments</button>
+			<button onClick={ () => setPaymentMethodId( 'card' ) }>Select card payments</button>
 		</>
 	);
 }
@@ -39,8 +42,16 @@ function renderPaymentStep( {
 	currency = 'USD',
 	isMobileCheckoutStickySummary = false,
 	methodId = 'card',
+	selectedMethodId = methodId,
 	isContactComplete = false,
 	isPaymentComplete = false,
+}: {
+	currency?: string;
+	isMobileCheckoutStickySummary?: boolean;
+	methodId?: string;
+	selectedMethodId?: string;
+	isContactComplete?: boolean;
+	isPaymentComplete?: boolean;
 } = {} ) {
 	const store = createCheckoutStepGroupStore();
 	const logoProps = { currency, isMobileCheckoutStickySummary };
@@ -57,11 +68,19 @@ function renderPaymentStep( {
 		submitButton: <button>Pay</button>,
 		getAriaLabel: () => 'Credit card',
 	};
+	const selectedMethod: PaymentMethod = {
+		id: selectedMethodId,
+		paymentProcessorId: selectedMethodId,
+		label: selectedMethodId === 'paypal' ? 'PayPal' : 'Saved card',
+		inactiveContent: <p>{ selectedMethodId === 'paypal' ? 'PayPal' : 'Visa ending in 1234' }</p>,
+		submitButton: <button>Pay</button>,
+		getAriaLabel: () => selectedMethodId,
+	};
 	render(
 		<CheckoutProvider
-			paymentMethods={ [ method ] }
+			paymentMethods={ selectedMethodId === methodId ? [ method ] : [ method, selectedMethod ] }
 			paymentProcessors={ {} }
-			selectFirstAvailablePaymentMethod
+			initiallySelectedPaymentMethodId={ selectedMethodId }
 		>
 			<ToggleCardAvailability />
 			<CheckoutStepGroup store={ store }>
@@ -145,19 +164,43 @@ describe( 'PaymentMethodStepTitle', () => {
 		);
 	} );
 
-	it( 'shows the logos with a saved-card summary and preserves the edit action', async () => {
-		const user = userEvent.setup();
-		const store = renderPaymentStep( { isContactComplete: true, isPaymentComplete: true } );
-		act( () => store.actions.setStepCompleteStatus( { 1: true, 2: true } ) );
-		await waitFor( () => expect( screen.getByText( 'Visa ending in 1234' ) ).toBeVisible() );
-		expect( getPaymentHeading() ).toHaveTextContent( 'Payment method' );
-		expect( getPaymentHeading().querySelector( '.credit-card__logos' ) ).toBeVisible();
-		await user.click( screen.getByRole( 'button', { name: 'Edit the payment method' } ) );
-		await waitFor( () => {
+	it.each( [ 'paypal', 'existing-card' ] )(
+		'uses the small-phone visibility rule when %s is selected',
+		async ( selectedMethodId ) => {
+			const user = userEvent.setup();
+			renderPaymentStep( { selectedMethodId } );
+			expect( getPaymentHeading().querySelector( '.credit-card__logos' ) ).not.toBeVisible();
+			await user.click( screen.getByRole( 'button', { name: 'Select card payments' } ) );
+			expect( getPaymentHeading().querySelector( '.credit-card__logos' ) ).toBeVisible();
+		}
+	);
+
+	it.each( [
+		[ 'card', 'Visa ending in 1234' ],
+		[ 'existing-card', 'Visa ending in 1234' ],
+		[ 'paypal', 'PayPal' ],
+	] )(
+		'hides heading logos after completing payment with %s and preserves Edit',
+		async ( selectedMethodId, summary ) => {
+			const user = userEvent.setup();
+			const store = renderPaymentStep( {
+				selectedMethodId,
+				isContactComplete: true,
+				isPaymentComplete: true,
+			} );
+			act( () => store.actions.setStepCompleteStatus( { 1: true, 2: true } ) );
+			await waitFor( () => expect( screen.getByText( summary, { selector: 'p' } ) ).toBeVisible() );
+			expect( getPaymentHeading() ).toHaveTextContent( 'Payment method' );
 			expect( getPaymentHeading().querySelector( '.credit-card__logos' ) ).not.toBeInTheDocument();
-		} );
-		expect( getPaymentHeading() ).toHaveTextContent( 'Pick a payment method' );
-	} );
+			await user.click( screen.getByRole( 'button', { name: 'Edit the payment method' } ) );
+			await waitFor( () => {
+				expect(
+					getPaymentHeading().querySelector( '.credit-card__logos' )
+				).not.toBeInTheDocument();
+			} );
+			expect( getPaymentHeading() ).toHaveTextContent( 'Pick a payment method' );
+		}
+	);
 
 	it( 'updates both title variants when WordPress translations load', async () => {
 		const user = userEvent.setup();
