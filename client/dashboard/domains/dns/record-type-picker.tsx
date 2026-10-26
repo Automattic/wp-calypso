@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import type { DnsRecordType } from '@automattic/api-core';
+import './record-type-picker.scss';
 
 const COMMON_RECORD_TYPES: DnsRecordType[] = [ 'A', 'CNAME', 'MX', 'TXT' ];
 
@@ -48,6 +49,7 @@ export default function RecordTypePicker( { value, disabled, onChange }: RecordT
 	return (
 		<VStack spacing={ 3 } alignment="flex-start">
 			<RadioControl
+				className="dns-record-type-picker"
 				label={ __( 'What kind of record?' ) }
 				selected={ value }
 				disabled={ disabled }
