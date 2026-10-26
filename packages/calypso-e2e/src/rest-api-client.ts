@@ -1370,11 +1370,14 @@ export class RestAPIClient {
 			params
 		);
 
-		if ( ! Array.isArray( response ) ) {
-			throw new Error( `${ response.code }: ${ response.message }` );
+		// Sites on the redesigned sidebar wrap the menu in `{ menu, groups, layoutDelta }`.
+		const menu = Array.isArray( response ) ? response : response?.menu;
+
+		if ( ! Array.isArray( menu ) ) {
+			throw new Error( `Unexpected admin menu response: ${ JSON.stringify( response ) }` );
 		}
 
-		return response;
+		return menu;
 	}
 
 	/* Shopping Cart */

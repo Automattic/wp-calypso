@@ -3,8 +3,8 @@ import { expect, tags, test } from '../../lib/pw-base';
 import type { TestAccount } from '@automattic/calypso-e2e';
 
 // Temporary: once a site lists the new Jetpack › SEO page in its admin menu, Traffic hides
-// its legacy SEO settings, so these tests no longer apply. Remove this spec once every host
-// has the new page.
+// its legacy SEO settings (see `isJetpackSeoPageAvailable` in client/sites/marketing/traffic),
+// so these tests no longer apply. Remove this spec once every host has the new page.
 async function hasJetpackSeoPage( account: TestAccount ): Promise< boolean > {
 	const menu = await account.restAPI.getAdminMenu( account.getSiteURL( { protocol: false } ) );
 
