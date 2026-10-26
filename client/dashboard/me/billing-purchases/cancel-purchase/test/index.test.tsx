@@ -16,6 +16,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
+import { UPSELL_STEP } from '../cancel-purchase-form/steps';
 import CancelPurchase from '../index';
 import type { PlanProduct, PlanProductDowngrade, Purchase } from '@automattic/api-core';
 
@@ -52,7 +53,7 @@ function mockSiteRequests() {
 		.reply( 200, { active: [], available: {} } )
 		.get( `/rest/v1.1/sites/${ purchase.blog_id }` )
 		.query( true )
-		.reply( 200, { ID: purchase.blog_id, slug: purchase.site_slug } )
+		.reply( 200, { ID: purchase.blog_id, slug: purchase.site_slug, is_wpcom_atomic: false } )
 		.get( `/wpcom/v2/sites/${ purchase.blog_id }/atomic/transfers/latest` )
 		.query( true )
 		.reply( 200, {} )
@@ -128,6 +129,22 @@ async function answerTooExpensive( user: ReturnType< typeof userEvent.setup > ) 
 	);
 	await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
 }
+
+async function answerAnotherReason( user: ReturnType< typeof userEvent.setup > ) {
+	await startSurvey( user );
+	await user.click( await screen.findByRole( 'radio', { name: 'Another reason…' } ) );
+	await user.type(
+		screen.getByRole( 'textbox', { name: 'Can you please specify?' } ),
+		'test reason'
+	);
+	await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+}
+
+const EXPOSURE = 'calypso_purchases_cancel_options_eligible';
+
+const exposureCalls = (
+	recordTracksEvent: ( name: string, properties?: Record< string, unknown > ) => void
+) => jest.mocked( recordTracksEvent ).mock.calls.filter( ( [ name ] ) => name === EXPOSURE );
 
 // Holds the reply until `release()`, so a test can check what fires before the API result.
 function mockHeldPurchaseRequest( action: 'cancel' | 'extend' ) {
@@ -208,6 +225,65 @@ describe( '<CancelPurchase />', () => {
 			);
 		} );
 
+		test( 'records the exposure with the flow props when the reason has options', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderPersonalFlow();
+
+			await answerTooExpensive( user );
+
+			expect( await findOptions() ).toBeVisible();
+			expect( exposureCalls( recordTracksEvent ) ).toEqual( [
+				[
+					EXPOSURE,
+					{
+						purchase_id: 123,
+						cancellation_reason: 'tooExpensive',
+						cancellation_flow: 'remove',
+						product_slug: 'personal-bundle',
+						is_atomic: false,
+					},
+				],
+			] );
+		} );
+
+		test( 'records the same exposure reason as the cards for "Another reason" with text typed', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderRemoveFlow();
+
+			await answerAnotherReason( user );
+
+			expect( await findOptions() ).toBeVisible();
+			expect( exposureCalls( recordTracksEvent ) ).toEqual( [
+				[
+					EXPOSURE,
+					expect.objectContaining( { purchase_id: 123, cancellation_reason: 'anotherReasonOne' } ),
+				],
+			] );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_cancellation_solution_cards_view',
+				expect.objectContaining( { cancellation_reason: 'anotherReasonOne' } )
+			);
+		} );
+
+		test( 'skips the exposure for "Something else related to changed needs" with text typed', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderRemoveFlow();
+			await startSurvey( user );
+
+			await user.click( await screen.findByRole( 'radio', { name: 'No longer need a site' } ) );
+			await user.click(
+				screen.getByRole( 'radio', { name: 'Something else related to changed needs' } )
+			);
+			await user.type(
+				screen.getByRole( 'textbox', { name: 'Can you please specify?' } ),
+				'test reason'
+			);
+			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+
+			expect( await screen.findByRole( 'button', { name: 'Complete removal' } ) ).toBeVisible();
+			expect( exposureCalls( recordTracksEvent ) ).toHaveLength( 0 );
+		} );
+
 		test( 'adds the purchase ID to the downgrade event from the Switch to monthly card, before the API result', async () => {
 			const user = userEvent.setup();
 			const downgrade = mockHeldPurchaseRequest( 'cancel' );
@@ -233,6 +309,51 @@ describe( '<CancelPurchase />', () => {
 	} );
 
 	describe( 'with the cards flag off', () => {
+		test( 'records the exposure before moving on to the offer', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderPersonalFlow();
+
+			await answerTooExpensive( user );
+
+			expect(
+				await screen.findByRole( 'button', { name: 'Switch to monthly payments' } )
+			).toBeVisible();
+			expect( exposureCalls( recordTracksEvent ) ).toEqual( [
+				[
+					EXPOSURE,
+					{
+						purchase_id: 123,
+						cancellation_reason: 'tooExpensive',
+						cancellation_flow: 'remove',
+						product_slug: 'personal-bundle',
+						is_atomic: false,
+					},
+				],
+			] );
+			const calls = jest.mocked( recordTracksEvent ).mock.calls;
+			const exposureIndex = calls.findIndex( ( [ name ] ) => name === EXPOSURE );
+			const offerIndex = calls.findIndex(
+				( [ name, properties ] ) =>
+					name === 'calypso_purchases_cancel_survey_step' && properties?.new_step === UPSELL_STEP
+			);
+			expect( offerIndex ).toBeGreaterThan( exposureIndex );
+		} );
+
+		test( 'records the answer as the exposure reason for "Another reason" with text typed', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderRemoveFlow();
+
+			await answerAnotherReason( user );
+
+			expect( await screen.findByRole( 'button', { name: 'Complete removal' } ) ).toBeVisible();
+			expect( exposureCalls( recordTracksEvent ) ).toEqual( [
+				[
+					EXPOSURE,
+					expect.objectContaining( { purchase_id: 123, cancellation_reason: 'anotherReasonOne' } ),
+				],
+			] );
+		} );
+
 		test( 'adds the purchase ID to the downgrade event from the Switch to monthly offer, before the API result', async () => {
 			const user = userEvent.setup();
 			const downgrade = mockHeldPurchaseRequest( 'cancel' );

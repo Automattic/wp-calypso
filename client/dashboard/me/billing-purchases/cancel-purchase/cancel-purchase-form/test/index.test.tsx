@@ -7,8 +7,9 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../../../test-utils';
 import CancelPurchaseForm from '../index';
-import { FEEDBACK_STEP, NEXT_ADVENTURE_STEP, UPSELL_STEP } from '../steps';
+import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, NEXT_ADVENTURE_STEP, UPSELL_STEP } from '../steps';
 import type { Purchase } from '@automattic/api-core';
+import type { ComponentProps } from 'react';
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 	return {
@@ -255,6 +256,158 @@ describe( '<CancelPurchaseForm />', () => {
 				'calypso_cancellation_upsell_step_live_chat_click',
 				{ type: 'live-chat:plans', purchase_id: 123 }
 			);
+		} );
+	} );
+
+	describe( 'exposure event', () => {
+		const EXPOSURE = 'calypso_purchases_cancel_options_eligible';
+
+		function renderReasonStep(
+			props: Partial< ComponentProps< typeof CancelPurchaseForm > > = {}
+		) {
+			const recordEvent = jest.fn();
+			const clickNext = jest.fn();
+			const onSubmit = jest.fn();
+			const result = render(
+				<CancelPurchaseForm
+					{ ...defaultProps }
+					allSteps={ [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ] }
+					purchase={ makePurchase() }
+					questionOneRadio="price/budget"
+					questionOneText="tooExpensive"
+					solutionsReason="tooExpensive"
+					recordEvent={ recordEvent }
+					clickNext={ clickNext }
+					onSubmit={ onSubmit }
+					{ ...props }
+				/>
+			);
+			return { ...result, recordEvent, clickNext, onSubmit };
+		}
+
+		test( 'records the exposure before leaving the reason step', async () => {
+			const user = userEvent.setup();
+			const { recordEvent, clickNext } = renderReasonStep();
+
+			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+
+			expect( recordEvent ).toHaveBeenCalledTimes( 1 );
+			expect( recordEvent ).toHaveBeenCalledWith( EXPOSURE, {
+				purchase_id: 123,
+				cancellation_reason: 'tooExpensive',
+			} );
+			expect( clickNext ).toHaveBeenCalledTimes( 1 );
+			expect( recordEvent.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+				clickNext.mock.invocationCallOrder[ 0 ]
+			);
+		} );
+
+		test( 'records the exposure from "Continue"', async () => {
+			const user = userEvent.setup();
+			const { recordEvent, clickNext } = renderReasonStep( {
+				intent: 'cancel',
+				questionOneRadio: 'wrongPlanOrSite',
+				questionOneText: 'wrongPlan',
+				solutionsReason: 'wrongPlan',
+			} );
+
+			await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			expect( clickNext ).toHaveBeenCalledTimes( 1 );
+			expect( recordEvent ).toHaveBeenCalledTimes( 1 );
+			expect( recordEvent ).toHaveBeenCalledWith( EXPOSURE, {
+				purchase_id: 123,
+				cancellation_reason: 'wrongPlan',
+			} );
+		} );
+
+		test( 'skips the exposure when "Continue" leaves question two', async () => {
+			const user = userEvent.setup();
+			// An Atomic revert step after question two gives question two a "Continue" button.
+			const { recordEvent, clickNext } = renderReasonStep( {
+				intent: 'cancel',
+				allSteps: [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP, ATOMIC_REVERT_STEP ],
+				surveyStep: NEXT_ADVENTURE_STEP,
+				isNextAdventureValid: true,
+			} );
+
+			await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			expect( clickNext ).toHaveBeenCalledTimes( 1 );
+			expect( recordEvent ).not.toHaveBeenCalled();
+		} );
+
+		test( 'records "Another reason" as the exposure reason with text typed', async () => {
+			const user = userEvent.setup();
+			const { recordEvent } = renderReasonStep( {
+				questionOneRadio: 'anotherReasonOne',
+				questionOneText: 'test reason',
+				solutionsReason: 'anotherReasonOne',
+			} );
+
+			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+
+			expect( recordEvent ).toHaveBeenCalledTimes( 1 );
+			expect( recordEvent ).toHaveBeenCalledWith( EXPOSURE, {
+				purchase_id: 123,
+				cancellation_reason: 'anotherReasonOne',
+			} );
+		} );
+
+		test.each( [
+			[ 'a reason without options', 'technicalIssues', 'pluginOrThemeConflicts' ],
+			[
+				'"Something else related to changed needs" with text typed',
+				'noLongerNeedSite',
+				'test reason',
+			],
+		] )( 'skips the exposure for %s', async ( _, questionOneRadio, solutionsReason ) => {
+			const user = userEvent.setup();
+			const { recordEvent, clickNext } = renderReasonStep( {
+				questionOneRadio,
+				questionOneText: solutionsReason,
+				solutionsReason,
+			} );
+
+			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+
+			expect( clickNext ).toHaveBeenCalledTimes( 1 );
+			expect( recordEvent ).not.toHaveBeenCalled();
+		} );
+
+		test( 'skips the exposure when the survey is skipped', async () => {
+			const user = userEvent.setup();
+			const { recordEvent, onSubmit } = renderReasonStep( { intent: 'cancel' } );
+
+			await user.click( screen.getByRole( 'button', { name: 'Skip survey' } ) );
+
+			expect( onSubmit ).toHaveBeenCalledTimes( 1 );
+			expect( recordEvent ).not.toHaveBeenCalled();
+		} );
+
+		test.each( [
+			[ 'a product other than a plan', { is_plan: false } ],
+			[ 'a Jetpack plan', { is_jetpack_plan_or_product: true } ],
+		] )( 'skips the exposure for %s', async ( _, overrides ) => {
+			const user = userEvent.setup();
+			const { recordEvent, clickNext } = renderReasonStep( {
+				purchase: makePurchase( overrides ),
+			} );
+
+			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+
+			expect( clickNext ).toHaveBeenCalledTimes( 1 );
+			expect( recordEvent ).not.toHaveBeenCalled();
+		} );
+
+		test( 'waits for a click to record the exposure', () => {
+			const first = renderReasonStep();
+			first.unmount();
+			const second = renderReasonStep();
+
+			expect( screen.getByRole( 'button', { name: 'Continue removal' } ) ).toBeEnabled();
+			expect( first.recordEvent ).not.toHaveBeenCalled();
+			expect( second.recordEvent ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
