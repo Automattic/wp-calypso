@@ -241,6 +241,111 @@ describe( 'StaticSiteImportReading', () => {
 		expect( submit ).toHaveBeenCalledWith( { action: 'continue', importSessionId: 'abc123' } );
 	} );
 
+	describe( 'overall percentage', () => {
+		const renderWith = ( response: StaticSiteImportSession ) => {
+			const queryClient = new QueryClient( {
+				defaultOptions: { queries: { staleTime: Infinity } },
+			} );
+			const { queryKey } = staticSiteImportSessionQuery( 'abc123' );
+			queryClient.setQueryData( queryKey, response );
+			render(
+				'/static-site-import-reading?from=busybearscleaning.com&importSessionId=abc123',
+				queryClient
+			);
+			return ( next: StaticSiteImportSession ) =>
+				act( () => {
+					queryClient.setQueryData( queryKey, next );
+					jest.advanceTimersByTime( 0 );
+				} );
+		};
+
+		it.each( [
+			{
+				name: 'finding the site',
+				response: session( 'capturing', { progress: { phase: 'inspecting' } } ),
+				percentage: '0%',
+			},
+			{
+				name: 'reading pages',
+				response: session( 'capturing', {
+					progress: { phase: 'capturing', pages_captured: 3, pages_total: 12 },
+				} ),
+				percentage: '31%',
+			},
+			{
+				name: 'reading images',
+				response: session( 'capturing', {
+					progress: { phase: 'capturing', pages_captured: 8, pages_total: 8 },
+				} ),
+				percentage: '50%',
+			},
+			{
+				name: 'checking the design',
+				response: session( 'capturing', { progress: { phase: 'building' } } ),
+				percentage: '75%',
+			},
+			{
+				name: 'ready',
+				response: session( 'preview_ready' ),
+				percentage: '100%',
+			},
+		] )( 'shows $percentage while $name', ( { response, percentage } ) => {
+			renderWith( response );
+
+			const element = screen.getByText( percentage );
+			expect( element ).toBeVisible();
+			expect( element ).toHaveAttribute( 'aria-hidden', 'true' );
+			expect( screen.getByRole( 'status' ) ).not.toHaveTextContent( '%' );
+		} );
+
+		it( 'hides the percentage when reading fails', () => {
+			renderWith(
+				session( 'failed', {
+					progress: { phase: 'exporting', pages_captured: 8, pages_total: 8 },
+				} )
+			);
+
+			expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'We couldn’t read your site' );
+			expect( screen.queryByText( /%/ ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'never goes backwards', () => {
+			jest.useFakeTimers();
+			const update = renderWith(
+				session( 'capturing', {
+					progress: { phase: 'capturing', pages_captured: 6, pages_total: 8 },
+				} )
+			);
+			expect( screen.getByText( '43%' ) ).toBeVisible();
+
+			update(
+				session( 'capturing', {
+					progress: { phase: 'capturing', pages_captured: 6, pages_total: 16 },
+				} )
+			);
+			expect( screen.getByRole( 'progressbar', { name: 'Pages' } ) ).toHaveAttribute(
+				'value',
+				'37.5'
+			);
+			expect( screen.getByText( '43%' ) ).toBeVisible();
+
+			update(
+				session( 'capturing', {
+					progress: { phase: 'capturing', finding_pages: true, pages_total: 16 },
+				} )
+			);
+			expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Finding your site' );
+			expect( screen.getByText( '43%' ) ).toBeVisible();
+
+			update(
+				session( 'capturing', {
+					progress: { phase: 'capturing', pages_captured: 14, pages_total: 16 },
+				} )
+			);
+			expect( screen.getByText( '46%' ) ).toBeVisible();
+		} );
+	} );
+
 	it( 'resets retained page counts when the import session changes', () => {
 		const queryClient = new QueryClient( {
 			defaultOptions: { queries: { staleTime: Infinity } },
@@ -271,12 +376,14 @@ describe( 'StaticSiteImportReading', () => {
 			'value',
 			'100'
 		);
+		expect( screen.getByText( '50%' ) ).toBeVisible();
 
 		act( () => changeSession() );
 
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Reading your pages' );
 		expect( screen.getByRole( 'progressbar', { name: 'Pages' } ) ).toHaveAttribute( 'value', '0' );
 		expect( screen.getByRole( 'progressbar', { name: 'Images' } ) ).toHaveAttribute( 'value', '0' );
+		expect( screen.getByText( '25%' ) ).toBeVisible();
 	} );
 
 	it( 'shows all bars completed before continuing to results', () => {

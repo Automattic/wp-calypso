@@ -4,6 +4,7 @@ import {
 	pollStaticSiteImportSessionUntil,
 	staticSiteImportSessionQuery,
 } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
@@ -153,6 +154,23 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 			stages[ activeStageIndex ]?.message ??
 			( isReady ? __( 'Your site is ready' ) : __( 'We couldn’t read your site' ) );
 
+		// Each stage weighs the same; only Pages reports progress within its stage today.
+		const stagePercentage =
+			activeStageIndex >= 0
+				? Math.floor(
+						( activeStageIndex * 100 + ( stages[ activeStageIndex ].progress ?? 0 ) ) /
+							stages.length
+					)
+				: 0;
+		const [ maxPercentage, setMaxPercentage ] = useState( { sessionId, value: 0 } );
+		const percentage = Math.max(
+			isReady ? 100 : stagePercentage,
+			maxPercentage.sessionId === sessionId ? maxPercentage.value : 0
+		);
+		if ( maxPercentage.sessionId !== sessionId || maxPercentage.value !== percentage ) {
+			setMaxPercentage( { sessionId, value: percentage } );
+		}
+
 		return (
 			<>
 				<DocumentHead title={ __( 'Reading your site' ) } />
@@ -195,13 +213,27 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 							</Card>
 						) }
 						<ImportCard>
-							<HStack justify="flex-start" spacing={ 2 } role="status">
-								{ ! isReady && ! isFailed && (
-									<Spinner className="static-site-import-reading__spinner" />
+							<HStack justify="space-between" spacing={ 2 }>
+								<HStack justify="flex-start" spacing={ 2 } role="status">
+									{ ! isReady && ! isFailed && (
+										<Spinner className="static-site-import-reading__spinner" />
+									) }
+									<Text size={ 16 } weight={ 500 }>
+										{ progressLabel }
+									</Text>
+								</HStack>
+								{ ! isFailed && (
+									<Text
+										className="static-site-import-reading__percentage"
+										variant="muted"
+										size={ 16 }
+										aria-hidden="true"
+									>
+										{ formatNumber( percentage / 100, {
+											numberFormatOptions: { style: 'percent' },
+										} ) }
+									</Text>
 								) }
-								<Text size={ 16 } weight={ 500 }>
-									{ progressLabel }
-								</Text>
 							</HStack>
 							<div className="static-site-import-reading__progress">
 								{ stages.map( ( stage, index ) => {
