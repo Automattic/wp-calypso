@@ -11,6 +11,7 @@ import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus, useShouldUseWapuu } from '../hooks';
 import { useHasOpenZendeskChat } from '../hooks/use-has-open-zendesk-chat';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
+import { WOO_HUMAN_SUPPORT_ROUTING } from './woo-human-support-routing-step';
 import type { JSX } from 'react';
 import './help-center-chat.scss';
 
@@ -90,6 +91,9 @@ export function HelpCenterChat( {
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
 			zendeskConversationTags={ featureConfig.chat.zendeskConversationTags }
 			zendeskIntegrationKey={ featureConfig.chat.zendeskIntegrationKey }
+			humanSupportRouting={
+				featureConfig.chat.humanSupportRouting === 'woo' ? WOO_HUMAN_SUPPORT_ROUTING : null
+			}
 			externalChatProvider={ externalChatProvider }
 			externalChatId={ externalChatId }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
