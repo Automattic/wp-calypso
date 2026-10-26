@@ -86,7 +86,7 @@ import {
 	REMOTE_PATH_AUTH,
 } from './constants';
 import Disclaimer from './disclaimer';
-import { isJetpackOnboarding, isStandardEntryPoint, isUnifiedFlow } from './entry-points';
+import { isStandardEntryPoint, isUnifiedFlow } from './entry-points';
 import { getConnectorFeatureCards, getSecondaryAdminFeatureCards } from './feature-cards';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import HelpButton from './help-button';
@@ -524,7 +524,8 @@ export class JetpackAuthorize extends Component {
 	}
 
 	isFromJetpackOnboarding( props = this.props ) {
-		return isJetpackOnboarding( props.authQuery.from );
+		const { from } = props.authQuery;
+		return from === 'jetpack-onboarding';
 	}
 
 	isFromJetpackConnector( props = this.props ) {
@@ -1406,7 +1407,7 @@ export class JetpackAuthorize extends Component {
 			: null;
 		const isSecondary = this.isSecondaryConnection();
 		let authCopy = null;
-		if ( isUnifiedConnection && isSecondary ) {
+		if ( isSecondary ) {
 			authCopy = getSecondaryAuthCopy( this.isAdminConnection(), this.props.authQuery.plugins );
 		} else if ( isUnifiedConnection ) {
 			authCopy = getAuthCopy( this.props.authQuery.plugins );
@@ -1456,7 +1457,7 @@ export class JetpackAuthorize extends Component {
 							siteId={ authSiteId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
-						{ isUnifiedConnection && connectorBranding && authCopy && (
+						{ isUnifiedConnection && (
 							<BrandHeader
 								logo={ connectorBranding.logo }
 								logoAlt=""

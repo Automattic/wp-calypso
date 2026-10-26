@@ -283,7 +283,6 @@ describe( 'JetpackAuthorize', () => {
 		test.each( [
 			'jetpack-connector',
 			'jetpack-onboarding',
-			'jetpack-onboarding-wizard',
 			'jetpack_premium_analytics_onboarding',
 			'delete_connection_owner_notice',
 		] )( 'from=%s shows the unified connection screen', ( from ) => {
@@ -304,7 +303,7 @@ describe( 'JetpackAuthorize', () => {
 			expect( screen.getByText( 'Connect account' ) ).toBeInTheDocument();
 		} );
 
-		test.each( [ 'jetpack-newsletter', 'jetpack-x_y' ] )(
+		test.each( [ 'jetpack-onboarding-wizard', 'jetpack-newsletter', 'jetpack-x_y' ] )(
 			'from=%s keeps the legacy authorize card',
 			( from ) => {
 				const { container } = renderWithRedux(
@@ -321,6 +320,22 @@ describe( 'JetpackAuthorize', () => {
 				expect( screen.queryByRole( 'article' ) ).not.toBeInTheDocument();
 			}
 		);
+
+		// Only the Connectors card gets the newer account wording; see disclaimer.jsx.
+		test.each( [
+			[ 'jetpack-connector', 'By connecting your account' ],
+			[ 'jetpack-onboarding', 'By connecting your site' ],
+			[ 'jetpack_premium_analytics_onboarding', 'By connecting your site' ],
+		] )( 'from=%s shows the consent text "%s"', ( from, consent ) => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ { ...DEFAULT_PROPS.authQuery, from, plugins: [ 'jetpack' ] } }
+				/>
+			);
+
+			expect( screen.getByText( new RegExp( consent ) ) ).toBeVisible();
+		} );
 
 		test( 'from=my-jetpack keeps the static permissions screen', () => {
 			const { container } = renderWithRedux(
@@ -650,7 +665,8 @@ describe( 'JetpackAuthorize', () => {
 
 		test.each( [
 			[ 'jetpack-onboarding', true ],
-			[ 'jetpack-onboarding-wizard', true ],
+			[ 'jetpack-onboarding-v2', false ],
+			[ 'jetpack-onboarding-wizard', false ],
 			[ 'not-jetpack-onboarding', false ],
 			[ 'my-jetpack', false ],
 		] )( 'from=%s → %s', ( from, expected ) => {
@@ -697,10 +713,10 @@ describe( 'JetpackAuthorize', () => {
 
 		test.each( [
 			[ 'jetpack-onboarding', true ],
-			[ 'jetpack-onboarding-wizard', true ],
 			[ 'jetpack-connector', true ],
 			[ 'jetpack_premium_analytics_onboarding', true ],
 			[ 'delete_connection_owner_notice', true ],
+			[ 'jetpack-onboarding-wizard', false ],
 			[ 'woocommerce-onboarding', false ],
 			[ 'my-jetpack', false ],
 			[ 'jetpack-newsletter', false ],
@@ -911,7 +927,7 @@ describe( 'JetpackAuthorize', () => {
 			[ 'delete_connection_owner_notice', redirectAfterAuth ],
 			[ 'jetpack-connector', `${ redirectAfterAuth }&from=jetpack-connector` ],
 			[ 'jetpack-onboarding', `${ redirectAfterAuth }&from=jetpack-onboarding` ],
-			[ 'jetpack-onboarding-wizard', `${ redirectAfterAuth }&from=jetpack-onboarding-wizard` ],
+			[ 'jetpack-onboarding-wizard', plansPage ],
 			[ 'my-jetpack', plansPage ],
 			[ 'jetpack-newsletter', plansPage ],
 			[ 'jetpack-x_y', plansPage ],

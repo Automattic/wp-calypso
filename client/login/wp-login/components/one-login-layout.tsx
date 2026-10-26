@@ -31,8 +31,8 @@ export const ensureHeadingProvided = (
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
 	/**
-	 * Jetpack onboarding or connector flow, which the user is completing from a
-	 * Jetpack site.
+	 * The unified connection flow (`isUnifiedFlow()`), which the user is
+	 * completing from a Jetpack site.
 	 */
 	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];

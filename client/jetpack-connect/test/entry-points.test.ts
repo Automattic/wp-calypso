@@ -1,4 +1,4 @@
-import { isJetpackOnboarding, isStandardEntryPoint, isUnifiedFlow } from '../entry-points';
+import { isStandardEntryPoint, isUnifiedFlow } from '../entry-points';
 
 describe( 'isStandardEntryPoint', () => {
 	test.each( [
@@ -30,28 +30,15 @@ describe( 'isStandardEntryPoint', () => {
 	} );
 } );
 
-describe( 'isJetpackOnboarding', () => {
-	test.each( [
-		[ 'jetpack-onboarding', true ],
-		[ 'jetpack-onboarding-wizard', true ],
-		[ 'not-jetpack-onboarding', false ],
-		[ 'jetpack-connector', false ],
-		[ 'my-jetpack', false ],
-		[ null, false ],
-		[ undefined, false ],
-	] )( '%p → %p', ( from, expected ) => {
-		expect( isJetpackOnboarding( from ) ).toBe( expected );
-	} );
-} );
-
 describe( 'isUnifiedFlow', () => {
 	test.each( [
 		[ 'jetpack-connector', true ],
 		[ 'jetpack-onboarding', true ],
-		[ 'jetpack-onboarding-wizard', true ],
 		[ 'jetpack_premium_analytics_onboarding', true ],
 		[ 'delete_connection_owner_notice', true ],
 		[ 'jetpack-connector-v2', false ],
+		[ 'jetpack-onboarding-v2', false ],
+		[ 'jetpack-onboarding-wizard', false ],
 		[ 'my-jetpack-connection', false ],
 		[ 'jetpack-newsletter', false ],
 		[ 'my-jetpack', false ],

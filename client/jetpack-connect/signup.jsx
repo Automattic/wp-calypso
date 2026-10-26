@@ -342,7 +342,7 @@ export class JetpackSignup extends Component {
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
 				<div className="jetpack-connect__authorize-form">
-					{ isUnifiedConnection && connectorBranding && signupCopy ? (
+					{ isUnifiedConnection ? (
 						<BrandHeader
 							logo={ connectorBranding.logo }
 							logoAlt=""

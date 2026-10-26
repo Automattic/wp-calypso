@@ -112,8 +112,8 @@ describe( 'JetpackSignup', () => {
 	} );
 
 	// Unified-flow signup surface contract:
-	//  - The existing-account escape hatch renders for both unified flows
-	//    (jetpack-connector and jetpack-onboarding).
+	//  - The existing-account escape hatch renders for every unified flow
+	//    (`isUnifiedFlow()`).
 	//  - The features section is intentionally NOT rendered on signup —
 	//    it lives on the authorize surface only. The signup page already
 	//    carries the brand context via BrandHeader, so duplicating the
@@ -151,7 +151,6 @@ describe( 'JetpackSignup', () => {
 
 	test.each( [
 		'jetpack-onboarding',
-		'jetpack-onboarding-wizard',
 		'jetpack_premium_analytics_onboarding',
 		'delete_connection_owner_notice',
 	] )( 'from=%s renders the connector header and the existing-account link', ( from ) => {
@@ -169,7 +168,7 @@ describe( 'JetpackSignup', () => {
 		expect( screen.getByText( /Already have a WordPress.com account\?/ ) ).toBeInTheDocument();
 	} );
 
-	test.each( [ 'my-jetpack', 'jetpack-newsletter', 'jetpack-x_y' ] )(
+	test.each( [ 'jetpack-onboarding-wizard', 'my-jetpack', 'jetpack-newsletter', 'jetpack-x_y' ] )(
 		'from=%s keeps the legacy signup header',
 		( from ) => {
 			const { container } = render(
@@ -237,9 +236,9 @@ describe( 'JetpackSignup', () => {
 
 		test.each( [
 			[ 'jetpack-onboarding', true ],
-			[ 'jetpack-onboarding-wizard', true ],
 			[ 'jetpack-connector', true ],
 			[ 'jetpack_premium_analytics_onboarding', true ],
+			[ 'jetpack-onboarding-wizard', false ],
 			[ 'woocommerce-onboarding', false ],
 			[ 'my-jetpack', false ],
 			[ 'jetpack-newsletter', false ],

@@ -141,7 +141,6 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 
 	it.each( [
 		'jetpack-onboarding',
-		'jetpack-onboarding-wizard',
 		'jetpack_premium_analytics_onboarding',
 		'delete_connection_owner_notice',
 	] )( 'flags the connector flow and parses plugins for from=%s', ( from ) => {
@@ -155,7 +154,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 		} );
 	} );
 
-	it.each( [ 'jetpack-newsletter', 'jetpack-x_y' ] )(
+	it.each( [ 'jetpack-onboarding-wizard', 'jetpack-newsletter', 'jetpack-x_y' ] )(
 		'treats the legacy value %s as outside the unified flow',
 		( from ) => {
 			const params = getConnectionFlowFromRedirectTo(

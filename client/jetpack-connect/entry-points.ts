@@ -19,22 +19,14 @@ export function isStandardEntryPoint( from?: string | null ): boolean {
 }
 
 /**
- * Whether `from` comes from Jetpack's onboarding in My Jetpack: the
- * single-screen takeover sends `jetpack-onboarding`, the setup wizard
- * `jetpack-onboarding-wizard`.
- */
-export function isJetpackOnboarding( from?: string | null ): boolean {
-	return typeof from === 'string' && from.startsWith( 'jetpack-onboarding' );
-}
-
-/**
  * Whether `from` gets the unified connection flow: the plugin-aware logo,
  * title, subtitle and feature cards on the authorize, signup and login
- * screens, first built for the Connectors card (`jetpack-connector`). New
- * entry points get it by using a standard name.
+ * screens. `jetpack-connector` (the Connectors card) and `jetpack-onboarding`
+ * (My Jetpack's onboarding takeover) are matched exactly because they have
+ * already shipped. New entry points get it by using a standard name.
  */
 export function isUnifiedFlow( from?: string | null ): boolean {
 	return (
-		from === 'jetpack-connector' || isJetpackOnboarding( from ) || isStandardEntryPoint( from )
+		from === 'jetpack-connector' || from === 'jetpack-onboarding' || isStandardEntryPoint( from )
 	);
 }
