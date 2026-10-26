@@ -13,6 +13,7 @@ import {
 	usePlanBillingPeriod,
 } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import clsx from 'clsx';
 import { useCallback, useMemo, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
@@ -111,8 +112,7 @@ export default function MigrationPlansGrid( {
 		[ gridPlans ]
 	);
 
-	// The pricing differentiation list is a single ordered list (no grouping), otherwise
-	// features get scattered across groups causing gaps and can be filtered out.
+	// The pricing differentiation list renders storage before the rest of the features.
 	const featureGroupMap = useMemo( () => {
 		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
 		return useVar42NoAiFeatures
@@ -157,7 +157,9 @@ export default function MigrationPlansGrid( {
 			) }
 			<FeaturesGrid
 				allFeaturesList={ getFeaturesList() }
-				className="migration-plans-grid__features-grid"
+				className={ clsx( 'migration-plans-grid__features-grid', {
+					'is-plan-differentiators-experiment': isExperimentVariant,
+				} ) }
 				coupon={ coupon }
 				currentSitePlanSlug={ currentPlan?.productSlug }
 				generatedWPComSubdomain={ generatedWPComSubdomain }
