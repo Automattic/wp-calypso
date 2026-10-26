@@ -3,40 +3,72 @@ import { useQuery } from '@tanstack/react-query';
 import { Button, __experimentalHeading as Heading } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { calendar, Icon, people } from '@wordpress/icons';
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useDesignPreview } from '../../design-preview';
 import { TIER_OVERVIEW_CONTENT } from '../../overview/constants';
 import { useScheduleCall } from '../../tiers/use-schedule-call';
-import PortfolioIllustration from './portfolio-illustration';
-import SiteAccessIllustration from './site-access-illustration';
+import PortfolioSitesList from './portfolio-sites';
+import SiteActionsMenu from './site-access-illustration';
+import type { AgencyPartnerManager } from '@automattic/api-core';
 import './overview-story.scss';
 
+function PartnerManagerPhoto( { avatarUrl }: { avatarUrl?: string | null } ) {
+	const [ hasFailed, setHasFailed ] = useState( false );
+	if ( ! avatarUrl || hasFailed ) {
+		return (
+			<span className="agency-sites-story__person-photo is-placeholder">
+				<Icon icon={ people } size={ 48 } />
+			</span>
+		);
+	}
+	return (
+		<img
+			className="agency-sites-story__person-photo"
+			src={ avatarUrl }
+			alt=""
+			width={ 112 }
+			height={ 112 }
+			onError={ () => setHasFailed( true ) }
+		/>
+	);
+}
+
 function MigrationContact( {
+	partnerManager,
 	hasPartnerManager,
 	onScheduleCall,
 	isSchedulingCall,
 }: {
+	partnerManager?: AgencyPartnerManager | null;
 	hasPartnerManager: boolean;
 	onScheduleCall: () => void;
 	isSchedulingCall: boolean;
 } ) {
 	return (
-		<div className="agency-sites-story__contact">
-			<span className="agency-sites-story__contact-avatar" aria-hidden="true">
-				<Icon icon={ people } size={ 44 } />
-			</span>
-			<strong>
-				{ hasPartnerManager ? __( 'Your partner manager' ) : __( 'Your agency team' ) }
+		<div className="agency-sites-story__person">
+			<div className="agency-sites-story__person-portrait">
+				<PartnerManagerPhoto avatarUrl={ partnerManager?.avatar_url } />
+				<p className="agency-sites-story__person-bubble">
+					{ __( 'Let’s plan your move together.' ) }
+				</p>
+			</div>
+			<strong className="agency-sites-story__person-name">
+				{ partnerManager?.name ??
+					( hasPartnerManager ? __( 'Your partner manager' ) : __( 'Your agency team' ) ) }
 			</strong>
-			<span>{ __( 'Automattic for Agencies' ) }</span>
-			<p>{ __( 'Let’s talk through your sites and plan the move together.' ) }</p>
+			<span className="agency-sites-story__person-role">
+				{ partnerManager
+					? __( 'Partner manager, Automattic for Agencies' )
+					: __( 'Automattic for Agencies' ) }
+			</span>
 			<Button
-				variant="secondary"
+				variant="primary"
 				icon={ calendar }
 				onClick={ onScheduleCall }
 				isBusy={ isSchedulingCall }
 				disabled={ isSchedulingCall }
+				__next40pxDefaultSize
 			>
 				{ __( 'Schedule a call' ) }
 			</Button>
@@ -46,8 +78,9 @@ function MigrationContact( {
 
 export default function SitesOverviewStory() {
 	const id = useId();
-	const { portfolioIllustration, siteAccessIllustration } = useDesignPreview();
 	const { data: agency } = useQuery( activeAgencyQuery() );
+	const { samplePartnerManager } = useDesignPreview();
+	const partnerManager = agency?.partner_manager ?? samplePartnerManager;
 	const { recordTracksEvent } = useAnalytics();
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
 	const agencyTier = agency?.tier?.id ?? 'emerging-partner';
@@ -59,7 +92,7 @@ export default function SitesOverviewStory() {
 			description: __(
 				'Bring your clients’ WordPress sites into one view, even when they use different hosts. Find a site, see where it’s hosted, and check its status without keeping track of a dozen different bookmarks.'
 			),
-			graphic: <PortfolioIllustration variant={ portfolioIllustration } />,
+			graphic: <PortfolioSitesList />,
 		},
 		{
 			key: 'work',
@@ -67,20 +100,22 @@ export default function SitesOverviewStory() {
 			description: __(
 				'Go from your portfolio to a site’s WordPress admin or live homepage. Whether you’re publishing a client update or checking the finished page, your next stop is close at hand.'
 			),
-			graphic: <SiteAccessIllustration variant={ siteAccessIllustration } />,
+			graphic: <SiteActionsMenu />,
 		},
 		{
 			key: 'migration',
 			title: __( 'Get a hand moving your portfolio' ),
-			description: hasPartnerManager
-				? __(
-						'Moving a group of sites to WordPress.com or Pressable? Talk with your partner manager about hosting, migration help, and a schedule that works for your clients.'
-					)
-				: __(
-						'Moving a group of sites to WordPress.com or Pressable? Talk with our agency team about hosting, migration help, and a schedule that works for your clients.'
-					),
+			description:
+				partnerManager || hasPartnerManager
+					? __(
+							'Moving a group of sites to WordPress.com or Pressable? Talk with your partner manager about hosting, migration help, and a schedule that works for your clients.'
+						)
+					: __(
+							'Moving a group of sites to WordPress.com or Pressable? Talk with our agency team about hosting, migration help, and a schedule that works for your clients.'
+						),
 			graphic: (
 				<MigrationContact
+					partnerManager={ partnerManager }
 					hasPartnerManager={ hasPartnerManager }
 					isSchedulingCall={ isSchedulingCall }
 					onScheduleCall={ () => {
@@ -154,14 +189,6 @@ export default function SitesOverviewStory() {
 						</div>
 					) ) }
 				</div>
-				<Button
-					variant="link"
-					href="https://agencieshelp.automattic.com/knowledge-base/adding-sites-to-the-sites-dashboard/"
-					target="_blank"
-					rel="noreferrer"
-				>
-					{ __( 'Read the guide to adding sites' ) }
-				</Button>
 			</section>
 		</div>
 	);

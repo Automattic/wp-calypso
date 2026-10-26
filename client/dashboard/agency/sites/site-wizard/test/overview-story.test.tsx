@@ -47,3 +47,19 @@ test( 'offers agency-team help when a dedicated partner manager is not included'
 	expect( screen.queryByText( 'Your partner manager' ) ).not.toBeInTheDocument();
 	expect( screen.getByRole( 'button', { name: 'Schedule a call' } ) ).toBeVisible();
 } );
+
+test( 'introduces the assigned partner manager by name', async () => {
+	nock( BASE )
+		.get( '/wpcom/v2/agency' )
+		.reply( 200, [
+			{
+				id: 123,
+				tier: { id: 'pro-agency-partner' },
+				partner_manager: { name: 'Alex Rivera', avatar_url: 'https://example.com/alex.jpg' },
+			},
+		] );
+	render( <SitesOverviewStory /> );
+	expect( await screen.findByText( 'Alex Rivera' ) ).toBeVisible();
+	expect( screen.getByText( 'Partner manager, Automattic for Agencies' ) ).toBeVisible();
+	expect( screen.queryByText( 'Your partner manager' ) ).not.toBeInTheDocument();
+} );

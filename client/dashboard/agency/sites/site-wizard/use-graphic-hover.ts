@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import type { RefObject } from 'react';
 
-export default function useSectionHover( ref: RefObject< Element | null > ) {
+export default function useGraphicHover( ref: RefObject< Element | null > ) {
 	const [ hovered, setHovered ] = useState( false );
 	useEffect( () => {
-		const section = ref.current?.closest( '.agency-sites-story__section' );
+		const graphic = ref.current?.closest( '.agency-sites-story__graphic' );
 		if (
-			! section ||
+			! graphic ||
 			typeof window.matchMedia !== 'function' ||
 			window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches
 		) {
@@ -14,11 +14,11 @@ export default function useSectionHover( ref: RefObject< Element | null > ) {
 		}
 		const enter = () => setHovered( true );
 		const leave = () => setHovered( false );
-		section.addEventListener( 'pointerenter', enter );
-		section.addEventListener( 'pointerleave', leave );
+		graphic.addEventListener( 'pointerenter', enter );
+		graphic.addEventListener( 'pointerleave', leave );
 		return () => {
-			section.removeEventListener( 'pointerenter', enter );
-			section.removeEventListener( 'pointerleave', leave );
+			graphic.removeEventListener( 'pointerenter', enter );
+			graphic.removeEventListener( 'pointerleave', leave );
 		};
 	}, [ ref ] );
 	return hovered;

@@ -1,0 +1,83 @@
+// Amplify's hero gradient with grey site screenshots multiplied into it; sits between the
+// wizard backdrop and its content (both z-index -1, so DOM order paints this on top).
+.agency-hosted-showcase {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline: 0;
+	z-index: -1;
+	block-size: 240px;
+	overflow: hidden;
+	border-radius: inherit;
+	pointer-events: none;
+	user-select: none;
+	background: linear-gradient(
+		135deg,
+		color-mix( in srgb, var( --color-primary ) 14%, var( --color-surface ) ),
+		color-mix( in srgb, var( --color-primary ) 5%, var( --color-surface ) )
+	);
+	mask-image: linear-gradient( to bottom, var( --color-surface ) 30%, transparent 100% );
+}
+
+// Keeps the heading and description readable over the tiles.
+.agency-hosted-showcase::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(
+		ellipse 34% 20% at 50% 36%,
+		color-mix( in srgb, var( --color-surface ) 80%, transparent ),
+		transparent
+	);
+}
+
+.agency-hosted-showcase__grid {
+	position: absolute;
+	inset-block-start: -60px;
+	inset-inline-start: 50%;
+	display: grid;
+	grid-template-columns: repeat( 8, 168px );
+	gap: 16px;
+	opacity: 0.2;
+	filter: grayscale( 1 ) contrast( 0.4 ) brightness( 1.5 );
+	mix-blend-mode: multiply;
+	transform: translateX( -50% ) perspective( 1400px ) rotateX( 28deg ) rotateZ( -8deg );
+	transform-origin: 50% 0;
+}
+
+.agency-hosted-showcase__tile {
+	display: block;
+	inline-size: 100%;
+	block-size: auto;
+	aspect-ratio: 16 / 9;
+	object-fit: cover;
+	border-radius: 4px;
+	background: var( --color-surface );
+	box-shadow:
+		0 0 0 1px var( --color-border-subtle ),
+		0 6px 16px color-mix( in srgb, var( --color-text ) 8%, transparent );
+}
+
+.agency-hosted-showcase__grain {
+	position: absolute;
+	inset: 0;
+	background-image: url( ../../amplify/paper-grain.svg );
+	animation: agency-wizard-amplify-grain-drift-solo 28s linear infinite;
+}
+
+@keyframes agency-wizard-amplify-grain-drift-solo {
+	to {
+		background-position: 160px 160px;
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.agency-hosted-showcase__grain {
+		animation: none;
+	}
+}
+
+@media ( forced-colors: active ) {
+	.agency-hosted-showcase {
+		display: none;
+	}
+}

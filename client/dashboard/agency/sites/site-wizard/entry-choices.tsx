@@ -8,12 +8,10 @@ export default function EntryChoices( {
 	onConnect,
 	onMove,
 	onCreate,
-	plugMotionReplay,
 }: {
 	onConnect: () => void;
 	onMove: () => void;
 	onCreate: () => void;
-	plugMotionReplay?: number;
 } ) {
 	const options = [
 		{
@@ -47,9 +45,7 @@ export default function EntryChoices( {
 			{ options.map( ( option ) => (
 				<div className="agency-site-wizard__entry-option" key={ option.kind }>
 					<Choice
-						illustration={
-							<EntryIllustration kind={ option.kind } plugMotionReplay={ plugMotionReplay } />
-						}
+						illustration={ <EntryIllustration kind={ option.kind } /> }
 						title={ option.title }
 						description={ option.description }
 						onClick={ option.onClick }

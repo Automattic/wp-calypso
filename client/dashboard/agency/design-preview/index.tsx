@@ -1,21 +1,15 @@
 import { SelectControl, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useSyncExternalStore } from 'react';
-import {
-	PORTFOLIO_DIRECTIONS,
-	isPortfolioIllustrationVariant,
-} from '../sites/site-wizard/portfolio-variants';
-import {
-	SITE_ACCESS_VARIANTS,
-	isSiteAccessIllustrationVariant,
-} from '../sites/site-wizard/site-access-variants';
 import FloatingPreviewPanel, { usePreviewPanelSettings } from './floating-panel';
 import FlowMap from './flow-map';
 import './style.scss';
-import type { PortfolioIllustrationVariant } from '../sites/site-wizard/portfolio-variants';
-import type { SiteAccessIllustrationVariant } from '../sites/site-wizard/site-access-variants';
 import type { WizardJump } from '../sites/site-wizard/use-site-wizard';
-import type { AgencySite, MigrationCommissionSite } from '@automattic/api-core';
+import type {
+	AgencyPartnerManager,
+	AgencySite,
+	MigrationCommissionSite,
+} from '@automattic/api-core';
 
 const enabled = process.env.NODE_ENV === 'development';
 const listeners = new Set< () => void >();
@@ -56,9 +50,6 @@ let snapshot = {
 	canTag: true,
 	candidates: '2',
 	tagged: [] as MigrationCommissionSite[],
-	plugMotionReplay: 0,
-	portfolioIllustration: 'connected' as PortfolioIllustrationVariant,
-	siteAccessIllustration: 'menu' as SiteAccessIllustrationVariant,
 	wizardJump: null as WizardJump | null,
 	wizardPosition: null as WizardJump | null,
 };
@@ -131,15 +122,34 @@ export function addPreviewSites( sites: AgencySite[], replaceExisting = false ) 
 	}
 	update( { siteRows } );
 }
+// The A4A partner managers, so agencies without an assigned manager still see a real person.
+const gravatar = ( hash: string ) => `https://gravatar.com/avatar/${ hash }?s=240&d=mp`;
+const sampleManagers: AgencyPartnerManager[] = [
+	{
+		name: 'Shane Tabrizi',
+		avatar_url: gravatar( '6d403d067c9f019d7bbe3521f41d01c6f4f8e91289ccb30203950e0b2e7e5be7' ),
+	},
+	{
+		name: 'Kyle Runner',
+		avatar_url: gravatar( 'd4fe637a3e04b1c4068da20438eb05416fdc9c60ae8df6f2f8ac1e41fd110c90' ),
+	},
+	{
+		name: 'Ross Spadaro',
+		avatar_url: gravatar( '97ebb08281ac2e3452389d9e377a9a5908451ebbfccf555c96d1d1fd2d52a357' ),
+	},
+	{
+		name: 'Andrew Merino',
+		avatar_url: gravatar( 'b57b3147fcfb21c3bd96f90f69d268c44ef58dee177b31ab2ea1e84a6538ec85' ),
+	},
+];
+const samplePartnerManager = sampleManagers[ Math.floor( Math.random() * sampleManagers.length ) ];
 export function useDesignPreview() {
 	const state = useSyncExternalStore( subscribe, getSnapshot, getSnapshot );
 	return {
 		...state,
 		sitesActive: enabled && state.sites !== 'live',
 		migrationsActive: enabled && state.migrations !== 'live',
-		plugMotionReplay: enabled ? state.plugMotionReplay : 0,
-		portfolioIllustration: enabled ? state.portfolioIllustration : ( 'connected' as const ),
-		siteAccessIllustration: enabled ? state.siteAccessIllustration : ( 'menu' as const ),
+		samplePartnerManager: enabled ? samplePartnerManager : null,
 	};
 }
 export function simulateMigration( action: 'tag' | 'untag' | 'review', ids: number[] ) {
@@ -186,12 +196,6 @@ export default function DesignPreviewControls( { surface }: { surface: 'sites' |
 			setPreviewPreset( 'migrations', saved.migrations );
 			update( {
 				canTag: saved.canTag !== false,
-				portfolioIllustration: isPortfolioIllustrationVariant( saved.portfolioIllustration )
-					? saved.portfolioIllustration
-					: 'connected',
-				siteAccessIllustration: isSiteAccessIllustrationVariant( saved.siteAccessIllustration )
-					? saved.siteAccessIllustration
-					: 'menu',
 				candidates: [ '0', '1', '2', '24' ].includes( saved.candidates ) ? saved.candidates : '2',
 			} );
 		} catch {
@@ -210,29 +214,16 @@ export default function DesignPreviewControls( { surface }: { surface: 'sites' |
 					migrations: state.migrations,
 					canTag: state.canTag,
 					candidates: state.candidates,
-					portfolioIllustration: state.portfolioIllustration,
-					siteAccessIllustration: state.siteAccessIllustration,
 				} )
 			);
 		} catch {
 			/* Storage may be unavailable. */
 		}
-	}, [
-		state.sites,
-		state.migrations,
-		state.canTag,
-		state.candidates,
-		state.portfolioIllustration,
-		state.siteAccessIllustration,
-	] );
+	}, [ state.sites, state.migrations, state.canTag, state.candidates ] );
 	if ( ! enabled || ! ready ) {
 		return null;
 	}
 	const options = PRESETS[ surface ];
-	const portfolioDirection =
-		PORTFOLIO_DIRECTIONS.find( ( direction ) =>
-			direction.variants.some( ( variant ) => variant.value === state.portfolioIllustration )
-		) ?? PORTFOLIO_DIRECTIONS[ 0 ];
 	const labels: Record< string, string > = {
 		live: 'Live account',
 		'0': 'No sites',
@@ -272,42 +263,6 @@ export default function DesignPreviewControls( { surface }: { surface: 'sites' |
 			</label>
 			{ surface === 'sites' && (
 				<>
-					<SelectControl
-						label="Portfolio illustration"
-						value={ portfolioDirection.value }
-						options={ PORTFOLIO_DIRECTIONS.map( ( { value, label } ) => ( { value, label } ) ) }
-						onChange={ ( value ) => {
-							const direction = PORTFOLIO_DIRECTIONS.find( ( option ) => option.value === value );
-							if ( direction ) {
-								update( { portfolioIllustration: direction.variants[ 0 ].value } );
-							}
-						} }
-					/>
-					<fieldset className="agency-design-preview-panel__illustration-options">
-						<legend>{ portfolioDirection.label }</legend>
-						{ portfolioDirection.variants.map( ( { value, label } ) => (
-							<label key={ value }>
-								<input
-									type="radio"
-									name="portfolio-illustration"
-									value={ value }
-									checked={ state.portfolioIllustration === value }
-									onChange={ () => update( { portfolioIllustration: value } ) }
-								/>
-								<span>{ label }</span>
-							</label>
-						) ) }
-					</fieldset>
-					<SelectControl
-						label="Site access illustration"
-						value={ state.siteAccessIllustration }
-						options={ SITE_ACCESS_VARIANTS.map( ( { value, label } ) => ( { value, label } ) ) }
-						onChange={ ( value ) => {
-							if ( isSiteAccessIllustrationVariant( value ) ) {
-								update( { siteAccessIllustration: value } );
-							}
-						} }
-					/>
 					<button
 						type="button"
 						className="dashboard-amplify-dev-controls__reset"
@@ -347,18 +302,6 @@ export default function DesignPreviewControls( { surface }: { surface: 'sites' |
 						options={ [ '0', '1', '2', '24' ].map( ( value ) => ( { value, label: value } ) ) }
 						onChange={ ( candidates ) => update( { candidates } ) }
 					/>
-				</details>
-			) }
-			{ surface === 'sites' && (
-				<details>
-					<summary>Illustrations</summary>
-					<button
-						type="button"
-						className="dashboard-amplify-dev-controls__reset"
-						onClick={ () => update( { plugMotionReplay: state.plugMotionReplay + 1 } ) }
-					>
-						{ __( 'Replay plug animation' ) }
-					</button>
 				</details>
 			) }
 		</FloatingPreviewPanel>

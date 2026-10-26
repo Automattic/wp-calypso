@@ -126,7 +126,7 @@ function wireDisplacement( index: number, impulses: CordImpulse[] ): Point {
 
 const REST_CORD = cordOutline( CORD_POINTS, [] );
 
-export default function ConnectIllustration( { replay = 0 }: { replay?: number } ) {
+export default function ConnectIllustration() {
 	const svgRef = useRef< SVGSVGElement >( null );
 	const cordRef = useRef< SVGPathElement >( null );
 	const headRef = useRef< SVGGElement >( null );
@@ -354,9 +354,6 @@ export default function ConnectIllustration( { replay = 0 }: { replay?: number }
 		reducedMotion.addEventListener( 'change', onMotionPreferenceChange );
 		if ( hovered || focused ) {
 			startStream();
-		} else if ( replay > 0 ) {
-			addSurge( performance.now() );
-			play();
 		}
 		return () => {
 			reset();
@@ -366,7 +363,7 @@ export default function ConnectIllustration( { replay = 0 }: { replay?: number }
 			target.removeEventListener( 'blur', onBlur );
 			reducedMotion.removeEventListener( 'change', onMotionPreferenceChange );
 		};
-	}, [ replay ] );
+	}, [] );
 
 	return (
 		<svg

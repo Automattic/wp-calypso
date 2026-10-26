@@ -22,6 +22,7 @@ import ConnectionSetup, { ConnectionInstructions, ConnectionSites } from './conn
 import ConnectionWaiting from './connection-waiting';
 import CreateChoices from './create-choices';
 import EntryChoices from './entry-choices';
+import HostedShowcase from './hosted-showcase';
 import HostingChoice from './hosting-choice';
 import SitesOverviewStory from './overview-story';
 import { parseSiteList, SITE_REVIEW_BULK_THRESHOLD } from './site-intake';
@@ -57,7 +58,7 @@ export default function SiteWizard( {
 	isFirstSite,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { plugMotionReplay, wizardJump, sitesRevision } = useDesignPreview();
+	const { wizardJump, sitesRevision } = useDesignPreview();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const developmentLicenses = useQuery( {
 		...agencyDevLicensesQuery( agency?.id ?? 0 ),
@@ -294,7 +295,6 @@ export default function SiteWizard( {
 					onConnect={ () => chooseJourney( 'connect', 'url' ) }
 					onMove={ () => chooseJourney( 'migrate', 'source' ) }
 					onCreate={ () => go( 'new' ) }
-					plugMotionReplay={ plugMotionReplay }
 				/>
 			);
 			break;
@@ -846,6 +846,7 @@ export default function SiteWizard( {
 		<div className="agency-site-wizard" data-step={ step }>
 			<Card className="agency-site-wizard__workspace">
 				<AmplifyBackdrop />
+				{ isFirstSite && step === 'start' && <HostedShowcase /> }
 				<div className="agency-site-wizard__navigation">
 					{ canGoBack && (
 						<Button

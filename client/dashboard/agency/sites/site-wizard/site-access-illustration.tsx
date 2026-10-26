@@ -1,49 +1,28 @@
 import { __ } from '@wordpress/i18n';
-import { external, Icon, moreVertical } from '@wordpress/icons';
 import { useEffect, useRef, useState } from 'react';
-import useSectionHover from './use-section-hover';
-import type { SiteAccessIllustrationVariant } from './site-access-variants';
+import useGraphicHover from './use-graphic-hover';
 import './site-access-illustration.scss';
 
 function getSiteActions() {
 	return [
-		{ label: __( 'WP Admin' ), external: true },
-		{ label: __( 'Visit site' ), external: true },
-		{ label: __( 'Set up site' ) },
-		{ label: __( 'Change domain' ), external: true },
-		{ label: __( 'Settings' ) },
-		{ label: __( 'View activity' ) },
-		{ label: __( 'Copy this site' ), external: true },
-		{ label: __( 'Remove site' ) },
+		__( 'WP Admin' ),
+		__( 'Visit site' ),
+		__( 'Set up site' ),
+		__( 'Change domain' ),
+		__( 'Settings' ),
+		__( 'View activity' ),
+		__( 'Copy this site' ),
+		__( 'Remove site' ),
 	];
-}
-
-function SiteActionsMenu() {
-	const actions = getSiteActions();
-	return (
-		<div className="agency-sites-story__menu-preview">
-			<span className="agency-sites-story__menu-trigger">
-				<Icon icon={ moreVertical } size={ 24 } />
-			</span>
-			<ul className="agency-sites-story__site-actions">
-				{ actions.map( ( action ) => (
-					<li key={ action.label }>
-						<span>{ action.label }</span>
-						{ action.external && <Icon icon={ external } size={ 14 } /> }
-					</li>
-				) ) }
-			</ul>
-		</div>
-	);
 }
 
 const MENU_ITEM_HEIGHT = 36;
 const MENU_STEP_MS = 900;
 
-function CleanMenu() {
+export default function SiteActionsMenu() {
 	const actions = getSiteActions();
 	const menuRef = useRef< HTMLDivElement >( null );
-	const hovered = useSectionHover( menuRef );
+	const hovered = useGraphicHover( menuRef );
 	const [ active, setActive ] = useState( 0 );
 	useEffect( () => {
 		if ( ! hovered ) {
@@ -66,24 +45,11 @@ function CleanMenu() {
 					style={ { transform: `translateY( ${ active * MENU_ITEM_HEIGHT }px )` } }
 				/>
 				{ actions.map( ( action, index ) => (
-					<li key={ action.label } data-active={ index === active || undefined }>
-						{ action.label }
+					<li key={ action } data-active={ index === active || undefined }>
+						{ action }
 					</li>
 				) ) }
 			</ul>
 		</div>
 	);
-}
-
-export default function SiteAccessIllustration( {
-	variant,
-}: {
-	variant: SiteAccessIllustrationVariant;
-} ) {
-	switch ( variant ) {
-		case 'menu-clean':
-			return <CleanMenu />;
-		default:
-			return <SiteActionsMenu />;
-	}
 }

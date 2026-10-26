@@ -54,9 +54,6 @@ $agency-mini-site-tones: (
 	inline-size: 100%;
 	font-size: 12px;
 	line-height: 1.4;
-}
-
-.agency-portfolio-sites--list {
 	display: flex;
 	flex-direction: column;
 	align-self: stretch;
@@ -114,101 +111,4 @@ $agency-mini-site-tones: (
 .agency-portfolio-sites__host {
 	color: var( --color-text-subtle );
 	font-size: 11px;
-}
-
-.agency-portfolio-sites--grid {
-	display: grid;
-	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
-	align-self: stretch;
-	gap: 18px 14px;
-	overflow: hidden;
-	mask-image: linear-gradient( to bottom, var( --color-surface ) 66%, transparent 96% );
-}
-
-.agency-portfolio-sites__tile {
-	display: flex;
-	flex-direction: column;
-	min-inline-size: 0;
-}
-
-.agency-portfolio-sites__tile .agency-mini-site {
-	inline-size: 100%;
-	block-size: auto;
-	margin-block-end: 8px;
-	border-radius: 8px;
-	box-shadow:
-		0 0 0 1px var( --color-border-subtle ),
-		0 6px 16px color-mix( in srgb, var( --color-text ) 6%, transparent );
-}
-
-.agency-portfolio-sites__tile strong {
-	font-size: 12px;
-}
-
-.agency-portfolio-sites__tile bdi {
-	font-size: 10px;
-}
-
-.agency-portfolio-sites__dimmed {
-	opacity: 0.4;
-}
-
-.agency-portfolio-sites__rim {
-	stroke: var( --color-text );
-	stroke-width: 7;
-}
-
-.agency-portfolio-sites__handle {
-	stroke: var( --color-text );
-	stroke-width: 16;
-}
-
-.agency-portfolio-sites__glint {
-	stroke: var( --color-surface );
-	stroke-width: 4;
-	opacity: 0.8;
-}
-
-@media ( prefers-reduced-motion: no-preference ) and ( hover: hover ) {
-	.agency-sites-story__section:hover .agency-portfolio-sites__tile .agency-mini-site {
-		animation: agency-portfolio-refresh 1100ms var( --arrival-delay ) ease-out both;
-	}
-
-	.agency-sites-story__section:hover .agency-portfolio-sites__lens {
-		animation: agency-portfolio-lens 2400ms ease-in-out both;
-	}
-
-	.agency-sites-story__section:hover .agency-portfolio-sites__lens-view {
-		animation: agency-portfolio-lens-view 2400ms ease-in-out both;
-	}
-}
-
-@keyframes agency-portfolio-refresh {
-	0% {
-		clip-path: inset( 0 );
-	}
-	20% {
-		clip-path: inset( 0 0 100% 0 round 8px );
-	}
-	100% {
-		clip-path: inset( 0 round 8px );
-	}
-}
-
-@keyframes agency-portfolio-lens {
-	0% {
-		transform: none;
-	}
-	100% {
-		transform: translate( var( --lens-x ), var( --lens-y ) );
-	}
-}
-
-@keyframes agency-portfolio-lens-view {
-	0% {
-		transform: none;
-	}
-	100% {
-		transform: translate( var( --lens-counter-x ), var( --lens-counter-y ) );
-	}
 }

@@ -1,12 +1,12 @@
 import { __ } from '@wordpress/i18n';
-import { useEffect, useId, useRef } from 'react';
-import useSectionHover from './use-section-hover';
-import type { CSSProperties, SVGProps } from 'react';
+import { useEffect, useRef } from 'react';
+import useGraphicHover from './use-graphic-hover';
+import type { SVGProps } from 'react';
 import './portfolio-sites.scss';
 
-export type Tone = 'blue' | 'green' | 'pink' | 'yellow' | 'purple' | 'celadon' | 'red' | 'orange';
+type Tone = 'blue' | 'green' | 'pink' | 'yellow' | 'purple' | 'celadon' | 'red' | 'orange';
 
-export function MiniSite( {
+function MiniSite( {
 	layout,
 	tone,
 	...props
@@ -137,11 +137,11 @@ function getSites() {
 
 const BROWSE_SPEED = 30;
 
-function SitesList() {
+export default function PortfolioSitesList() {
 	const sites = getSites();
 	const trackRef = useRef< HTMLDivElement >( null );
 	const motion = useRef( { offset: 0, speed: 0, last: 0, frame: 0 } );
-	const hovered = useSectionHover( trackRef );
+	const hovered = useGraphicHover( trackRef );
 	useEffect( () => {
 		const track = trackRef.current;
 		const state = motion.current;
@@ -168,7 +168,7 @@ function SitesList() {
 		return () => cancelAnimationFrame( state.frame );
 	}, [ hovered ] );
 	return (
-		<div className="agency-portfolio-sites agency-portfolio-sites--list">
+		<div className="agency-portfolio-sites">
 			<div className="agency-portfolio-sites__viewport">
 				<div className="agency-portfolio-sites__track" ref={ trackRef }>
 					{ [ ...sites, ...sites ].map( ( site, index ) => (
@@ -185,119 +185,4 @@ function SitesList() {
 			</div>
 		</div>
 	);
-}
-
-function SitesGrid() {
-	return (
-		<div className="agency-portfolio-sites agency-portfolio-sites--grid">
-			{ getSites().map( ( site, index ) => (
-				<div
-					className="agency-portfolio-sites__tile"
-					key={ site.url }
-					style={
-						{
-							'--arrival-delay': `${ ( index % 3 ) * 90 + Math.floor( index / 3 ) * 160 }ms`,
-						} as CSSProperties
-					}
-				>
-					<MiniSite layout={ site.layout } tone={ site.tone } />
-					<strong>{ site.name }</strong>
-					<bdi>{ site.url }</bdi>
-				</div>
-			) ) }
-		</div>
-	);
-}
-
-const MOSAIC = { columns: 5, rows: 4, width: 84, height: 47, gap: 10, x: 10, y: 61 };
-const TONES: Tone[] = [ 'blue', 'green', 'pink', 'orange', 'purple', 'celadon', 'red', 'yellow' ];
-const LENS = { column: 1, row: 1, radius: 72, zoom: 1.9 };
-
-function Mosaic() {
-	return (
-		<>
-			{ Array.from( { length: MOSAIC.columns * MOSAIC.rows }, ( _, index ) => {
-				const column = index % MOSAIC.columns;
-				const row = Math.floor( index / MOSAIC.columns );
-				return (
-					<MiniSite
-						key={ index }
-						layout={ ( index * 3 + row ) % 5 }
-						tone={ TONES[ ( index * 5 + row ) % TONES.length ] }
-						x={ MOSAIC.x + column * ( MOSAIC.width + MOSAIC.gap ) }
-						y={ MOSAIC.y + row * ( MOSAIC.height + MOSAIC.gap ) }
-						width={ MOSAIC.width }
-						height={ MOSAIC.height }
-					/>
-				);
-			} ) }
-		</>
-	);
-}
-
-function SitesLens() {
-	const clipId = useId();
-	const cx = MOSAIC.x + LENS.column * ( MOSAIC.width + MOSAIC.gap ) + MOSAIC.width / 2;
-	const cy = MOSAIC.y + LENS.row * ( MOSAIC.height + MOSAIC.gap ) + MOSAIC.height / 2;
-	const travel = { x: 2 * ( MOSAIC.width + MOSAIC.gap ), y: MOSAIC.height + MOSAIC.gap };
-	return (
-		<svg
-			className="agency-portfolio-art agency-portfolio-sites__mosaic"
-			viewBox="0 0 480 340"
-			aria-hidden="true"
-			focusable="false"
-			style={
-				{
-					'--lens-x': `${ travel.x }px`,
-					'--lens-y': `${ travel.y }px`,
-					'--lens-counter-x': `${ -travel.x * LENS.zoom }px`,
-					'--lens-counter-y': `${ -travel.y * LENS.zoom }px`,
-				} as CSSProperties
-			}
-		>
-			<defs>
-				<clipPath id={ clipId }>
-					<circle cx={ cx } cy={ cy } r={ LENS.radius } />
-				</clipPath>
-			</defs>
-			<g className="agency-portfolio-sites__dimmed">
-				<Mosaic />
-			</g>
-			<g className="agency-portfolio-sites__lens">
-				<g clipPath={ `url(#${ clipId })` }>
-					<circle className="agency-portfolio-art__paper" cx={ cx } cy={ cy } r={ LENS.radius } />
-					<g className="agency-portfolio-sites__lens-view">
-						<g
-							transform={ `translate(${ cx } ${ cy }) scale(${ LENS.zoom }) translate(${ -cx } ${ -cy })` }
-						>
-							<Mosaic />
-						</g>
-					</g>
-				</g>
-				<path
-					className="agency-portfolio-sites__handle"
-					d={ `M${ cx + LENS.radius * 0.72 } ${ cy + LENS.radius * 0.72 }l46 46` }
-				/>
-				<circle className="agency-portfolio-sites__rim" cx={ cx } cy={ cy } r={ LENS.radius } />
-				<path
-					className="agency-portfolio-sites__glint"
-					d={ `M${ cx - 48 } ${ cy - 26 }a54 54 0 0 1 30-26` }
-				/>
-			</g>
-		</svg>
-	);
-}
-
-export default function PortfolioSites( {
-	variant,
-}: {
-	variant: 'sites-list' | 'sites-grid' | 'sites-lens';
-} ) {
-	if ( variant === 'sites-list' ) {
-		return <SitesList />;
-	}
-	if ( variant === 'sites-grid' ) {
-		return <SitesGrid />;
-	}
-	return <SitesLens />;
 }
