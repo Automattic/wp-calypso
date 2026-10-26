@@ -38,8 +38,11 @@ jest.mock( '../../context', () => ( {
 	useOdieAssistantContext: jest.fn(),
 } ) );
 
+const mockRequestHumanSupport = jest.fn();
+
 jest.mock( '../../hooks', () => ( {
 	useCreateZendeskConversation: () => jest.fn(),
+	useRequestHumanSupport: () => mockRequestHumanSupport,
 } ) );
 
 jest.mock( '../../hooks/use-logged-out-session', () => ( {
@@ -138,5 +141,62 @@ describe( 'useSendOdieMessage – checkout support variation', () => {
 		const body = await sendMessage();
 
 		expect( body.context ).not.toHaveProperty( 'checkoutSupportVariation' );
+	} );
+} );
+
+describe( 'useSendOdieMessage – asking for a human', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+			chat_id: 5,
+			messages: [
+				{
+					message_id: 1,
+					content: 'Let me connect you with a Happiness Engineer.',
+					role: 'bot',
+					type: 'message',
+					context: {
+						site_id: null,
+						flags: {
+							forward_to_human_support: true,
+							is_emergency: true,
+							emergency_type: 'checkout_broken',
+							route_to_email: false,
+						},
+					},
+				},
+			],
+		} );
+	} );
+
+	it( "passes the bot's flags with the request", async () => {
+		mockContext( { isUserEligibleForPaidSupport: true, canConnectToZendesk: true } );
+
+		await sendMessage();
+
+		expect( mockRequestHumanSupport ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				createdFrom: 'automatic_escalation',
+				flags: { isEmergency: true, emergencyType: 'checkout_broken', routeToEmail: false },
+			} )
+		);
+	} );
+
+	it( 'lets a routing step decide for a user without paid support', async () => {
+		mockContext( { canConnectToZendesk: true, humanSupportRouting: { Step: () => null } } );
+
+		await sendMessage();
+
+		expect( mockRequestHumanSupport ).toHaveBeenCalledWith(
+			expect.objectContaining( { createdFrom: 'automatic_escalation' } )
+		);
+	} );
+
+	it( "doesn't ask for a human for a user without paid support or a routing step", async () => {
+		mockContext( { canConnectToZendesk: true } );
+
+		await sendMessage();
+
+		expect( mockRequestHumanSupport ).not.toHaveBeenCalled();
 	} );
 } );

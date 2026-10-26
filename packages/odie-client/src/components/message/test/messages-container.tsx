@@ -2,8 +2,14 @@
  * @jest-environment jsdom
  */
 import { act, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { useOdieAssistantContext } from '../../../context';
 import { CHAT_CLIENT_TIMEOUT_MS, MessagesContainer } from '../messages-container';
+import type {
+	HumanSupportRequest,
+	HumanSupportRouting,
+	HumanSupportRoutingStepProps,
+} from '../../../types';
 
 const mockCreateZendeskConversation = jest.fn();
 const mockNavigate = jest.fn();
@@ -52,6 +58,11 @@ jest.mock( '../../../data/use-current-support-interaction', () => ( {
 jest.mock( '../../../hooks', () => ( {
 	useAutoScroll: () => false,
 	useCreateZendeskConversation: () => mockCreateZendeskConversation,
+	// Without a routing step, asking for a human starts the chat.
+	useRequestHumanSupport:
+		() =>
+		( { flags, ...request }: { flags: unknown; createdFrom: string } ) =>
+			mockCreateZendeskConversation( request ),
 	useZendeskMessageListener: () => {},
 	useUpdateDocumentTitle: () => {},
 } ) );
@@ -76,11 +87,23 @@ jest.mock( '../thinking-placeholder', () => ( {
 } ) );
 jest.mock( '../zendesk-typing-indicator', () => ( { ZendeskTypingIndicator: () => null } ) );
 
+const mockSetPendingHumanSupportRequest = jest.fn();
+
+const RoutingStep = ( { request, startChat, dismiss }: HumanSupportRoutingStepProps ) => (
+	<div>
+		<p>Routing { request.createdFrom }</p>
+		<button onClick={ startChat }>Start chat</button>
+		<button onClick={ dismiss }>Dismiss</button>
+	</div>
+);
+
 const mockContext = ( {
 	isUserEligibleForPaidSupport = true,
 	isChatLoaded = true,
 	forceEmailSupport = false,
 	chatStatus = 'loaded',
+	humanSupportRouting = null as HumanSupportRouting | null,
+	pendingHumanSupportRequest = null as HumanSupportRequest | null,
 } = {} ) => {
 	( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
 		chat: {
@@ -96,6 +119,9 @@ const mockContext = ( {
 		isUserEligibleForPaidSupport,
 		forceEmailSupport,
 		isLoadingZendeskHistory: false,
+		humanSupportRouting,
+		pendingHumanSupportRequest,
+		setPendingHumanSupportRequest: mockSetPendingHumanSupportRequest,
 	} );
 };
 
@@ -220,5 +246,72 @@ describe( 'MessagesContainer direct link to a human', () => {
 			expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( { createdFrom: 'direct_url' } );
 			expect( mockAddMessage ).not.toHaveBeenCalled();
 		} );
+	} );
+} );
+
+describe( 'MessagesContainer routing step', () => {
+	const request: HumanSupportRequest = {
+		createdFrom: 'automatic_escalation',
+		isFromError: false,
+		escalationOnSecondAttempt: true,
+		flags: { isEmergency: true, emergencyType: 'site_down', routeToEmail: false },
+	};
+
+	it( 'shows the routing step for a pending request', () => {
+		mockContext( {
+			humanSupportRouting: { Step: RoutingStep },
+			pendingHumanSupportRequest: request,
+		} );
+		render( container() );
+
+		expect( screen.getByText( 'Routing automatic_escalation' ) ).toBeInTheDocument();
+		expect( mockCreateZendeskConversation ).not.toHaveBeenCalled();
+	} );
+
+	it( "doesn't show it without a pending request", () => {
+		mockContext( { humanSupportRouting: { Step: RoutingStep } } );
+		render( container() );
+
+		expect( screen.queryByText( /Routing/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'starts the chat for the request when the step chooses chat', async () => {
+		mockContext( {
+			humanSupportRouting: { Step: RoutingStep },
+			pendingHumanSupportRequest: request,
+		} );
+		render( container() );
+
+		await userEvent.click( screen.getByText( 'Start chat' ) );
+
+		expect( mockSetPendingHumanSupportRequest ).toHaveBeenCalledWith( null );
+		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( {
+			createdFrom: 'automatic_escalation',
+			isFromError: false,
+			escalationOnSecondAttempt: true,
+		} );
+	} );
+
+	it( 'drops the request when the step dismisses it', async () => {
+		mockContext( {
+			humanSupportRouting: { Step: RoutingStep },
+			pendingHumanSupportRequest: request,
+		} );
+		render( container() );
+
+		await userEvent.click( screen.getByText( 'Dismiss' ) );
+
+		expect( mockSetPendingHumanSupportRequest ).toHaveBeenCalledWith( null );
+		expect( mockCreateZendeskConversation ).not.toHaveBeenCalled();
+	} );
+
+	it( 'requests a human from a direct link without paid support', () => {
+		// The routing step decides who gets a human.
+		renderDirectLink( {
+			isUserEligibleForPaidSupport: false,
+			humanSupportRouting: { Step: RoutingStep },
+		} );
+
+		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( { createdFrom: 'direct_url' } );
 	} );
 } );

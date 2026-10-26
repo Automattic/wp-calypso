@@ -15,6 +15,11 @@ export {
 	isZendeskSurveyMessage,
 } from './csat';
 export { isStaleOdieChat } from './chat-utils';
+export {
+	getHumanSupportFlags,
+	getLatestHumanSupportFlags,
+	NO_HUMAN_SUPPORT_FLAGS,
+} from './human-support-flags';
 import type { Chat, Message } from '../types';
 
 export const getIsRequestingHumanSupport = ( message: Message ) => {
