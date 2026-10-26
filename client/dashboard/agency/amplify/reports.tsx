@@ -27,6 +27,7 @@ import { ButtonStack } from '../../components/button-stack';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { Text } from '../../components/text';
 import SitePreview from '../../sites/site-preview';
+import SiteScreenshot from '../components/site-screenshot';
 import type { AgencySite, AmplifyReport } from '@automattic/api-core';
 import type { Field, SupportedLayouts, View } from '@wordpress/dataviews';
 
@@ -34,7 +35,11 @@ import '../../components/site-icon/style.scss';
 
 const REPORT_LAYOUTS: SupportedLayouts = {
 	table: {
-		layout: { density: 'balanced', styles: { actions: { align: 'end' } } },
+		layout: {
+			density: 'balanced',
+			aspectRatio: '16/9',
+			styles: { actions: { align: 'end' } },
+		},
 		showMedia: true,
 		mediaField: 'icon',
 		titleField: 'site',
@@ -57,7 +62,7 @@ const DEFAULT_VIEW: View = {
 	mediaField: 'icon',
 	titleField: 'site',
 	descriptionField: 'url',
-	layout: { density: 'balanced', styles: { actions: { align: 'end' } } },
+	layout: { density: 'balanced', aspectRatio: '16/9', styles: { actions: { align: 'end' } } },
 	fields: [ 'humanScore', 'aiScore', 'actions' ],
 	filters: [],
 	sort: { field: 'created', direction: 'desc' },
@@ -303,14 +308,13 @@ export default function AmplifyReportsList( {
 		() => [
 			{
 				id: 'icon',
-				label: __( 'Site icon' ),
-				render: ( { item } ) => (
-					<ReportSiteIcon
-						title={ titleFor( item ) }
-						site={ siteFor( item ) }
-						size={ view.type === 'grid' ? 64 : 48 }
-					/>
-				),
+				label: __( 'Site preview' ),
+				render: ( { item } ) =>
+					view.type === 'grid' ? (
+						<ReportSiteIcon title={ titleFor( item ) } site={ siteFor( item ) } size={ 64 } />
+					) : (
+						<SiteScreenshot key={ item.url } url={ item.url } alt="" compact decorative />
+					),
 				enableSorting: false,
 			},
 			{
@@ -487,7 +491,7 @@ export default function AmplifyReportsList( {
 
 	return (
 		<>
-			<DataViewsCard>
+			<DataViewsCard className="dashboard-amplify-reports">
 				<DataViews< AmplifyReport >
 					data={ visibleReports }
 					fields={ fields }
