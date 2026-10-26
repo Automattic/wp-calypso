@@ -389,7 +389,7 @@ describe( 'Playground', () => {
 			expect( submit ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		describe( 'when the launch fails', () => {
+		describe( 'when the launch throws synchronously', () => {
 			const getFailedEventCalls = () =>
 				recordTracksEvent.mock.calls.filter(
 					( [ eventName ] ) => eventName === 'calypso_playground_launch_site_failed'
@@ -399,7 +399,7 @@ describe( 'Playground', () => {
 				const submit = jest
 					.fn()
 					.mockImplementationOnce( () => {
-						throw new Error( 'Routing failed' );
+						throw new Error( 'Submit failed' );
 					} )
 					.mockImplementation( () => {} );
 				await renderWooPlaygroundStep( submit );
@@ -418,14 +418,14 @@ describe( 'Playground', () => {
 				expect( getFailedEventCalls() ).toEqual( [
 					[
 						'calypso_playground_launch_site_failed',
-						{ ...tracksProps, intent: 'plans-playground', error_message: 'Routing failed' },
+						{ ...tracksProps, intent: 'plans-playground', error_message: 'Submit failed' },
 					],
 				] );
 				expect( logToLogstash ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						feature: 'calypso_client',
 						tags: [ 'playground-launch' ],
-						message: 'Routing failed',
+						message: 'Submit failed',
 						properties: expect.objectContaining( { ...tracksProps, intent: 'plans-playground' } ),
 					} )
 				);

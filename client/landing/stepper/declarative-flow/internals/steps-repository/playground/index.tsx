@@ -88,13 +88,14 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 			recordTracksEvent( 'calypso_playground_launch_site', launchTracksProps );
 			submit?.();
 		} catch ( error ) {
+			// Only synchronous throws land here, such as from recording events: Stepper doesn't
+			// await the flow's async submit, so its rejections bypass this.
 			setIsBusy( false );
 			const message = error instanceof Error ? error.message : String( error );
 			void logToLogstash( {
 				feature: 'calypso_client',
 				tags: [ 'playground-launch' ],
 				message,
-				site_id: undefined,
 				properties: {
 					env: config( 'env_id' ),
 					...launchTracksProps,
