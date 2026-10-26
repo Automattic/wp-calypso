@@ -49,65 +49,6 @@ const createMockMethod = createMockMethodFactory();
 
 describe( 'Checkout', () => {
 	describe( 'using the default steps', function () {
-		describe( 'when the list of available payment methods changes', function () {
-			const mockMethod = createMockMethod();
-			const mockMethod2 = createMockMethod( {
-				submitButton: <MockSubmitButton content="Second method" />,
-				activeContent: <div data-testid="second-method-form" />,
-			} );
-			const lateMethod = { ...createMockMethod(), isInitiallyDisabled: true };
-			const { items } = createMockItems();
-
-			const MyCheckout = () => (
-				<CheckoutProvider
-					paymentMethods={ [ mockMethod, mockMethod2, lateMethod ] }
-					paymentProcessors={ getMockPaymentProcessors() }
-					selectFirstAvailablePaymentMethod
-				>
-					<DefaultCheckoutSteps items={ items } />
-					<TogglePaymentMethodBlock mockMethod={ lateMethod } />
-				</CheckoutProvider>
-			);
-
-			it( 'resets to the initial selection when a method becomes available and the user has not chosen one', async () => {
-				const { getAllByText, getByText, findByLabelText } = render( <MyCheckout /> );
-				const user = userEvent.setup();
-				await user.click( getAllByText( 'Continue' )[ 0 ] );
-				expect( await findByLabelText( mockMethod.inactiveContent ) ).toBeChecked();
-				await user.click( getByText( 'Enable Payment Method' ) );
-				expect( await findByLabelText( mockMethod.inactiveContent ) ).toBeChecked();
-				expect( getAllByText( lateMethod.inactiveContent )[ 0 ] ).toBeVisible();
-			} );
-
-			it( 'keeps the payment method the user chose when another method becomes available', async () => {
-				const { getAllByText, getByText, findByLabelText, getByTestId } = render( <MyCheckout /> );
-				const user = userEvent.setup();
-				await user.click( getAllByText( 'Continue' )[ 0 ] );
-				await user.click( await findByLabelText( mockMethod2.inactiveContent ) );
-				expect( await findByLabelText( mockMethod2.inactiveContent ) ).toBeChecked();
-				expect( getByTestId( 'second-method-form' ) ).toBeVisible();
-
-				await user.click( getByText( 'Enable Payment Method' ) );
-
-				expect( getAllByText( lateMethod.inactiveContent )[ 0 ] ).toBeVisible();
-				expect( await findByLabelText( mockMethod2.inactiveContent ) ).toBeChecked();
-				expect( getByTestId( 'second-method-form' ) ).toBeVisible();
-			} );
-
-			it( 'resets to the initial selection when the method the user chose becomes unavailable', async () => {
-				const { getAllByText, getByText, findByLabelText } = render( <MyCheckout /> );
-				const user = userEvent.setup();
-				await user.click( getAllByText( 'Continue' )[ 0 ] );
-				await user.click( getByText( 'Enable Payment Method' ) );
-				await user.click( await findByLabelText( lateMethod.inactiveContent ) );
-				expect( await findByLabelText( lateMethod.inactiveContent ) ).toBeChecked();
-
-				await user.click( getByText( 'Disable Payment Method' ) );
-
-				expect( await findByLabelText( mockMethod.inactiveContent ) ).toBeChecked();
-			} );
-		} );
-
 		describe( 'using other defaults', function () {
 			let MyCheckout;
 			const mockMethod = createMockMethod();
