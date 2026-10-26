@@ -10,7 +10,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, border, external, published } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { getCurrentDashboard } from '../../app/routing';
@@ -198,11 +198,38 @@ export function StaticSiteImportNotice( {
 	siteImport: StaticSiteImport;
 	search: StaticSiteImportSearch;
 } ) {
+	const { recordTracksEvent } = useAnalytics();
 	const { setShowHelpCenter } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const [ hasPreviewed, setHasPreviewed ] = useState( false );
 	const { from, platform, domainChoice } = search;
 	const sourceHost = getSourceHost( from );
+	const isReady = siteImport.status === 'finished';
+	const trackingProps = {
+		site_id: site.ID,
+		source_platform: platform,
+		domain_choice: domainChoice,
+	};
+
+	// Counts notices shown, so clicks on its buttons can be read as a rate.
+	const hasRecordedImpression = useRef( false );
+	useEffect( () => {
+		if ( ! isReady || hasRecordedImpression.current ) {
+			return;
+		}
+		hasRecordedImpression.current = true;
+		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_impression', {
+			site_id: site.ID,
+			source_platform: platform,
+			domain_choice: domainChoice,
+		} );
+	}, [ isReady, recordTracksEvent, site.ID, platform, domainChoice ] );
+
+	const recordClick = ( action: 'connect_domain' | 'preview_site' ) =>
+		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_click', {
+			...trackingProps,
+			action,
+		} );
 
 	if ( siteImport.status === 'failed' ) {
 		const restartUrl = addQueryArgs(
@@ -259,10 +286,21 @@ export function StaticSiteImportNotice( {
 				<Notice
 					variant="success"
 					title={ __( 'Your site is ready' ) }
-					onClose={ () => setIsDismissed( true ) }
+					onClose={ () => {
+						recordTracksEvent(
+							'calypso_dashboard_static_site_import_ready_notice_dismiss',
+							trackingProps
+						);
+						setIsDismissed( true );
+					} }
 					actions={
 						<>
-							<Button __next40pxDefaultSize variant="primary" href={ connectDomainUrl }>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								href={ connectDomainUrl }
+								onClick={ () => recordClick( 'connect_domain' ) }
+							>
 								{ keepsDomain
 									? sprintf(
 											/* translators: %s: the site's domain, e.g. example.com. */
@@ -279,7 +317,10 @@ export function StaticSiteImportNotice( {
 								rel="noopener noreferrer"
 								icon={ external }
 								iconPosition="right"
-								onClick={ () => setHasPreviewed( true ) }
+								onClick={ () => {
+									recordClick( 'preview_site' );
+									setHasPreviewed( true );
+								} }
 							>
 								{ __( 'Preview site' ) }
 							</Button>

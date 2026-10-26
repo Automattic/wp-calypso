@@ -165,11 +165,12 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.queryByText( 'Your site is ready' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Thanks for the feedback!' ) ).toBeVisible();
 		expect( screen.queryByText( 'Does your site look right?' ) ).not.toBeInTheDocument();
-		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_static_site_import_feedback',
-			expect.anything()
-		);
+		const feedbackEvents = jest
+			.mocked( recordTracksEvent )
+			.mock.calls.filter(
+				( [ name ] ) => name === 'calypso_dashboard_static_site_import_feedback'
+			);
+		expect( feedbackEvents ).toHaveLength( 1 );
 	} );
 
 	it( 'records a bad rating when the user says something is off', async () => {
@@ -208,6 +209,61 @@ describe( 'StaticSiteImportCard', () => {
 			'calypso_dashboard_static_site_import_feedback',
 			expect.anything()
 		);
+	} );
+
+	describe( 'Tracks', () => {
+		const finished = () =>
+			mockApi()
+				.get( '/wpcom/v2/static-site-import-session/abc123' )
+				.query( true )
+				.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+		const props = { site_id: 42, source_platform: 'wix', domain_choice: 'keep' };
+
+		it( 'records the ready notice being shown once', async () => {
+			finished();
+			const { recordTracksEvent } = render( <StaticSiteImport /> );
+
+			await screen.findByText( 'Your site is ready' );
+			const impressions = jest
+				.mocked( recordTracksEvent )
+				.mock.calls.filter(
+					( [ name ] ) => name === 'calypso_dashboard_static_site_import_ready_notice_impression'
+				);
+			expect( impressions ).toEqual( [
+				[ 'calypso_dashboard_static_site_import_ready_notice_impression', props ],
+			] );
+		} );
+
+		it( 'records which button in the ready notice was clicked', async () => {
+			finished();
+			const { recordTracksEvent } = render( <StaticSiteImport /> );
+
+			const connect = await screen.findByRole( 'link', { name: 'Connect busybearscleaning.com' } );
+			connect.addEventListener( 'click', ( event ) => event.preventDefault() );
+			await userEvent.click( connect );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_static_site_import_ready_notice_click',
+				{ ...props, action: 'connect_domain' }
+			);
+
+			await userEvent.click( screen.getByRole( 'link', { name: /Preview site/ } ) );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_static_site_import_ready_notice_click',
+				{ ...props, action: 'preview_site' }
+			);
+		} );
+
+		it( 'records the ready notice being closed', async () => {
+			finished();
+			const { recordTracksEvent } = render( <StaticSiteImport /> );
+
+			await screen.findByText( 'Your site is ready' );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_static_site_import_ready_notice_dismiss',
+				props
+			);
+		} );
 	} );
 
 	it( 'offers to read the site again when the preview has expired', async () => {
