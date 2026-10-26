@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import A4ALogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg';
+import EvolveDigitalLogo from 'calypso/assets/images/a8c-for-agencies/events/evolvedigital-logo.svg';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
 import {
 	AI_MCP_ANNOUNCEMENT_BLOG_POST_URL,
@@ -51,29 +52,34 @@ export interface FeaturedEvent {
  * legacy list lives in client/a8c-for-agencies/sections/overview/body/events.
  */
 export const FEATURED_EVENT: FeaturedEvent | null = {
-	id: 'a4a-bfcm-webinar-2026',
-	logo: A4ALogo,
-	logoAlt: __( 'Automattic for Agencies' ),
-	when: __( 'Upcoming webinar' ),
-	title: __( 'Building a repeatable Black Friday playbook' ),
-	subtitle: __( 'Support your clients during peak season' ),
+	id: 'a4a-evolvedigital-nyc-2026',
+	logo: EvolveDigitalLogo,
+	logoAlt: __( 'EvolveDigital' ),
+	when: __( 'November 19–20 · Civic Hall, NYC' ),
+	title: __( 'Join us at EvolveDigital NYC 2026' ),
+	subtitle: __( 'Automattic for Agencies & EvolveDigital' ),
 	description: [
 		__(
-			'Join us September 29th at 11 AM ET (4 PM BST) for a live panel with experts from Woo, Pressable, and Automattic. Learn how to make peak-season readiness a process you run every year, instead of one you rebuild from scratch. Includes product demos & a fireside chat.'
+			'Automattic is a Presenting Sponsor of EvolveDigital NYC 2026, bringing the teams behind WordPress.com, WordPress VIP, and WooCommerce to a room of developers, designers, strategists, and digital leaders from higher ed, government, nonprofits, and agencies.'
+		),
+		__(
+			'Spend two days at Civic Hall with the people shaping the future of the open web, and come say hello to our team while you’re there.'
 		),
 	],
 	ctas: [
 		{
-			id: 'rsvp',
-			label: __( 'RSVP now' ),
-			url: 'https://automattic.registration.goldcast.io/webinar/f6c62e86-e9b6-48f3-a9c6-961e4fcf67be',
+			id: 'purchase-tickets',
+			label: __( 'Purchase tickets' ),
+			url: 'https://www.evolvedigital.com/',
 			variant: 'primary',
 			isExternal: true,
+			legacyTrackEventName:
+				'calypso_a4a_overview_events_evolvedigital_nyc_2026_purchase_tickets_click',
 		},
 	],
-	// Hidden once the webinar starts (11 AM ET), not at midnight UTC, which
-	// would drop it the evening before for US agencies.
-	endsAt: '2026-09-29T15:00:00Z',
+	// Hidden at midnight ET when the event starts (November 19), not at
+	// midnight UTC, which would drop it the evening before for US agencies.
+	endsAt: '2026-11-19T05:00:00Z',
 };
 
 /**
