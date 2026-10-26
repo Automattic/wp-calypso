@@ -131,6 +131,7 @@ export default function UpsellStep( {
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upsell_step_live_chat_click', {
 							type: upsell,
+							purchase_id: purchase.ID,
 						} );
 						window.location.href = getLiveChatUrl( upsell, purchase );
 						const initialMessage =
@@ -176,7 +177,9 @@ export default function UpsellStep( {
 					title={ __( 'Let us build your site for you' ) }
 					acceptButtonText={ __( 'Get help building my site' ) }
 					onAccept={ () => {
-						recordTracksEvent( 'calypso_cancellation_upsell_step_buily_by_click' );
+						recordTracksEvent( 'calypso_cancellation_upsell_step_buily_by_click', {
+							purchase_id: purchase.ID,
+						} );
 						window.location.replace( builtByURL );
 					} }
 					intent={ props.intent }
@@ -210,7 +213,9 @@ export default function UpsellStep( {
 						} ).replace( '/cancel', '' ) }`
 					) }
 					onAccept={ () => {
-						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
+						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click', {
+							purchase_id: purchase.ID,
+						} );
 					} }
 					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }

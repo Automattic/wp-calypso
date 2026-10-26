@@ -12,12 +12,12 @@ import {
 } from '@automattic/api-queries';
 import { disable, enable } from '@automattic/calypso-config';
 import { QueryClient } from '@tanstack/react-query';
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
 import CancelPurchase from '../index';
-import type { PlanProduct, Purchase } from '@automattic/api-core';
+import type { PlanProduct, PlanProductDowngrade, Purchase } from '@automattic/api-core';
 
 jest.mock( '../../../../app/router/me', () => ( {
 	cancelPurchaseRoute: { fullPath: '__root__', useParams: () => ( { purchaseId: '123' } ) },
@@ -92,6 +92,55 @@ const optionsListName = 'Before canceling, you can consider these options:';
 
 const findOptions = () => screen.findByRole( 'list', { name: optionsListName } );
 
+const personalAnnual: Partial< Purchase > = {
+	product_id: 1009,
+	product_name: 'WordPress.com Personal',
+	product_slug: 'personal-bundle',
+};
+
+const personalAnnualPlan = {
+	product_id: 1009,
+	product_name: 'WordPress.com Personal',
+	product_slug: 'personal-bundle',
+	bill_period: 365,
+	downgrade_paths: [ { product_id: 1019, bill_period: 31 } ],
+} as PlanProduct;
+
+const personalMonthlyPlan = {
+	product_id: 1019,
+	product_name: 'WordPress.com Personal',
+	product_slug: 'personal-bundle-monthly',
+	bill_period: 31,
+	downgrade_paths: [] as PlanProductDowngrade[],
+} as PlanProduct;
+
+const renderPersonalFlow = () =>
+	renderRemoveFlow( {
+		purchase: personalAnnual,
+		plans: [ personalAnnualPlan, personalMonthlyPlan ],
+	} );
+
+async function answerTooExpensive( user: ReturnType< typeof userEvent.setup > ) {
+	await startSurvey( user );
+	await user.click( await screen.findByRole( 'radio', { name: 'Too expensive' } ) );
+	await user.click(
+		screen.getByRole( 'radio', { name: 'The plan is too expensive for the features offered.' } )
+	);
+	await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+}
+
+// Holds the reply until `release()`, so a test can check what fires before the API result.
+function mockHeldPurchaseRequest( action: 'cancel' | 'extend' ) {
+	let release!: () => void;
+	const pending = new Promise< void >( ( resolve ) => {
+		release = resolve;
+	} );
+	const scope = nock( 'https://public-api.wordpress.com' )
+		.post( `/wpcom/v2/upgrades/${ purchase.ID }/${ action }` )
+		.reply( 200, () => pending.then( () => ( { status: 'completed', message: 'ok' } ) ) );
+	return { scope, release };
+}
+
 describe( '<CancelPurchase />', () => {
 	beforeEach( () => {
 		window.history.replaceState( {}, '', '/?intent=remove' );
@@ -156,6 +205,89 @@ describe( '<CancelPurchase />', () => {
 					solution_ids: 'ask-ai-assistant,speak-with-support',
 					cancellation_reason: 'otherPriceValue',
 				} )
+			);
+		} );
+
+		test( 'adds the purchase ID to the downgrade event from the Switch to monthly card, before the API result', async () => {
+			const user = userEvent.setup();
+			const downgrade = mockHeldPurchaseRequest( 'cancel' );
+			// The switch reloads the purchases list after the API result.
+			nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.2/upgrades' ).reply( 200, [] );
+			const { recordTracksEvent, router } = renderPersonalFlow();
+
+			await answerTooExpensive( user );
+			await user.click(
+				await screen.findByRole( 'button', { name: /Switch to monthly payments/ } )
+			);
+			await waitFor( () => expect( downgrade.scope.isDone() ).toBe( true ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_purchases_downgrade_form_submit',
+				expect.objectContaining( { purchase_id: 123 } )
+			);
+			downgrade.release();
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/me/billing/purchases' )
+			);
+		} );
+	} );
+
+	describe( 'with the cards flag off', () => {
+		test( 'adds the purchase ID to the downgrade event from the Switch to monthly offer, before the API result', async () => {
+			const user = userEvent.setup();
+			const downgrade = mockHeldPurchaseRequest( 'cancel' );
+			const { recordTracksEvent, router } = renderPersonalFlow();
+
+			await answerTooExpensive( user );
+			await user.click(
+				await screen.findByRole( 'button', { name: 'Switch to monthly payments' } )
+			);
+			await waitFor( () => expect( downgrade.scope.isDone() ).toBe( true ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_purchases_downgrade_form_submit',
+				expect.objectContaining( {
+					purchase_id: 123,
+					product_slug: 'personal-bundle',
+					cancellation_flow: 'remove',
+				} )
+			);
+			downgrade.release();
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/me/billing/purchases' )
+			);
+		} );
+
+		test( 'adds the purchase ID to the free month offer event, before the API result', async () => {
+			const user = userEvent.setup();
+			const freeMonth = mockHeldPurchaseRequest( 'extend' );
+			const { recordTracksEvent, router } = renderRemoveFlow( {
+				purchase: {
+					product_id: 1019,
+					product_slug: 'personal-bundle-monthly',
+					bill_period_days: 31,
+				},
+				plans: [ personalAnnualPlan, personalMonthlyPlan ],
+			} );
+			await startSurvey( user );
+
+			await user.click( await screen.findByRole( 'radio', { name: 'Too hard to use' } ) );
+			await user.click(
+				screen.getByRole( 'radio', {
+					name: 'The platform/dashboard is too complicated or confusing to navigate',
+				} )
+			);
+			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+			await user.click( await screen.findByRole( 'button', { name: 'Get a free month' } ) );
+			await waitFor( () => expect( freeMonth.scope.isDone() ).toBe( true ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_purchases_free_month_offer_form_submit',
+				expect.objectContaining( { purchase_id: 123 } )
+			);
+			freeMonth.release();
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/me/billing/purchases' )
 			);
 		} );
 	} );
