@@ -21,19 +21,20 @@
 	color-scheme: dark;
 }
 
-// The retry button sits outside the renderer, so in dark mode it gets a lighter accent, like the
-// renderer's, and dark busy stripes.
+// The retry button sits outside the renderer, so in dark mode it gets the renderer's lighter
+// accent and focus ring, and dark busy stripes.
 .agenttic.dark .agents-manager-interactive-ui-surfaces__load-error .components-button {
-	--wp-components-color-accent: color-mix(
-		in srgb,
-		var( --wp-admin-theme-color, #3858e9 ) 55%,
-		#fff
-	);
-	--wp-components-color-accent-darker-20: color-mix(
-		in srgb,
-		var( --wp-admin-theme-color, #3858e9 ) 40%,
-		#fff
-	);
+	$accent: var( --wp-admin-theme-color, #3858e9 );
+
+	--wp-components-color-accent: color-mix( in oklab, #{$accent} 55%, #fff );
+	--wp-components-color-accent-darker-20: color-mix( in oklab, #{$accent} 40%, #fff );
+	--wpds-color-stroke-focus: color-mix( in oklab, #{$accent} 70%, #fff );
+
+	@supports ( color: oklch( from red max( l, 0.5 ) c h ) ) {
+		--wp-components-color-accent: oklch( from #{$accent} max( l, 0.66 ) c h );
+		--wp-components-color-accent-darker-20: oklch( from #{$accent} max( l, 0.74 ) c h );
+		--wpds-color-stroke-focus: oklch( from #{$accent} max( l, 0.62 ) c h );
+	}
 
 	&.is-busy {
 		border-color: var( --color-input-border );
