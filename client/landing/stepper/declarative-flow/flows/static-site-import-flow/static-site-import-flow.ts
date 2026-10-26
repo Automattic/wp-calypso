@@ -328,6 +328,14 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 
 		const goBack = () => {
 			switch ( currentStep ) {
+				case STEPS.STATIC_SITE_IMPORT_READING.slug:
+					// The address form lives in the migration flow; `from` fills it in again.
+					return window.location.assign(
+						addQueryArgs(
+							{ from },
+							`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`
+						)
+					);
 				case STEPS.STATIC_SITE_IMPORT_ADDRESS.slug:
 					return navigate( STEPS.STATIC_SITE_IMPORT_RESULTS.slug );
 				case STEPS.DOMAIN_SEARCH.slug:

@@ -159,7 +159,13 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 				<Step.CenteredColumnLayout
 					className="step-container-v2--static-site-import-reading"
 					columnWidth={ 8 }
-					topBar={ <Step.TopBar /> }
+					topBar={
+						<Step.TopBar
+							leftElement={
+								navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
+							}
+						/>
+					}
 					heading={
 						<Step.Heading
 							text={ __( 'Reading your site' ) }

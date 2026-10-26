@@ -150,6 +150,19 @@ describe( 'Static site import flow', () => {
 			} );
 		} );
 
+		it( 'goes back to the address form with the entered address', () => {
+			runFlowNavigation(
+				staticSiteImportFlow,
+				{ from: STEPS.STATIC_SITE_IMPORT_READING, query: SESSION },
+				'back'
+			);
+
+			expect( lastExit() ).toMatchObject( {
+				path: '/setup/site-migration/site-migration-identify',
+				query: { from: 'busybearscleaning.com' },
+			} );
+		} );
+
 		it( 'goes straight to the importer for an existing site', () => {
 			runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READING,
