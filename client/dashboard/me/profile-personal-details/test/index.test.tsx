@@ -391,5 +391,41 @@ describe( '<PersonalDetailsSection>', () => {
 				expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
 			} );
 		} );
+
+		test( 'keeps the error on the email field when the address is already in use', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+
+			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
+			await user.clear( emailInput );
+			await user.type( emailInput, 'taken@example.com' );
+			expect( await screen.findByText( 'Email address looks good!' ) ).toBeVisible();
+
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings' )
+				.reply( 400, {
+					error: 'invalid_input',
+					message: 'That e-mail address is already being used.',
+				} );
+
+			await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+
+			expect(
+				await screen.findByText( 'That e-mail address is already being used.' )
+			).toBeVisible();
+			expect( screen.queryByText( 'Email address looks good!' ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
+
+			await user.clear( emailInput );
+			await user.type( emailInput, 'free@example.com' );
+			expect(
+				screen.queryByText( 'That e-mail address is already being used.' )
+			).not.toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeEnabled();
+		} );
 	} );
 } );

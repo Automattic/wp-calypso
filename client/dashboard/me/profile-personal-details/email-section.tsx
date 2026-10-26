@@ -34,6 +34,7 @@ interface EmailSectionProps {
 	userSettings: UserSettings;
 	isEmailVerified: boolean;
 	onValidationChange?: ( isValid: boolean ) => void;
+	serverError?: string | null;
 }
 
 type EmailFormData = { user_email: string };
@@ -45,8 +46,19 @@ const EmailFieldContext = createContext< {
 } >( { help: null, className: '', disabled: false } );
 
 // Defined at module level so DataForm gets a stable component and the input keeps focus while typing.
-function EmailEdit( { data, field, onChange }: DataFormControlProps< EmailFormData > ) {
-	const { help, className, disabled } = useContext( EmailFieldContext );
+function EmailEdit( { data, field, onChange, validity }: DataFormControlProps< EmailFormData > ) {
+	const context = useContext( EmailFieldContext );
+	const { disabled } = context;
+	const customError = validity?.custom?.type === 'invalid' ? validity.custom.message : null;
+	const help = customError ? (
+		<>
+			<Icon icon={ info } size={ 16 } />
+			{ customError }
+		</>
+	) : (
+		context.help
+	);
+	const className = customError ? 'has-error' : context.className;
 	return (
 		<InputControl
 			__next40pxDefaultSize
@@ -102,6 +114,7 @@ export default function EmailSection( {
 	userSettings,
 	isEmailVerified,
 	onValidationChange,
+	serverError,
 }: EmailSectionProps ) {
 	const mutation = cancelPendingEmailChangeMutation();
 	const isEmailWritePending = useIsEmailWritePending();
@@ -282,6 +295,13 @@ export default function EmailSection( {
 		isEmailWritePending,
 	] );
 
+	const validity = useMemo(
+		() =>
+			serverError
+				? ( { user_email: { custom: { type: 'invalid', message: serverError } } } as const )
+				: undefined,
+		[ serverError ]
+	);
 	const formData = useMemo( () => ( { user_email: value } ), [ value ] );
 	const help = getHelpText();
 	const className = getValidationClass();
@@ -297,6 +317,7 @@ export default function EmailSection( {
 					data={ formData }
 					fields={ emailFields }
 					form={ emailForm }
+					validity={ validity }
 					onChange={ ( edits ) => onChange( edits.user_email ?? '' ) }
 				/>
 			</EmailFieldContext.Provider>

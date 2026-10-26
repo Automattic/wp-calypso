@@ -1,3 +1,4 @@
+import { isWpError } from '@automattic/api-core';
 import {
 	isAutomatticianQuery,
 	userEmailSettingsMutation,
@@ -11,8 +12,10 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, Form } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo, useCallback } from 'react';
 import { useAuth } from '../../app/auth';
 import { NavigationBlocker } from '../../app/navigation-blocker';
@@ -34,12 +37,20 @@ export default function PersonalDetailsSection() {
 
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
 	const [ isEmailValid, setIsEmailValid ] = useState< boolean >( true );
+	const [ emailError, setEmailError ] = useState< { email: string; message: string } | null >(
+		null
+	);
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const snackbar = { success: __( 'Settings saved.' ), error: { source: 'server' as const } };
 	const mutation = useMutation( withSnackbar( userSettingsMutation(), snackbar ) );
 	// Two instances rather than one whose options change with the payload, which a save already
 	// in flight would pick up.
-	const emailMutation = useMutation( withSnackbar( userEmailSettingsMutation(), snackbar ) );
+	// The error is shown on the field when the server rejects the address itself, so the snackbar
+	// is only a fallback and is raised by `handleSubmit` instead of through the mutation's meta.
+	const emailMutation = useMutation(
+		withSnackbar( userEmailSettingsMutation(), { success: snackbar.success } )
+	);
 
 	const data = useMemo( () => ( { ...userSettings, ...edits } ), [ userSettings, edits ] );
 
@@ -67,6 +78,16 @@ export default function PersonalDetailsSection() {
 			onSuccess: () => {
 				setEdits( {} );
 			},
+			onError: ( error ) => {
+				if ( save !== emailMutation ) {
+					return;
+				}
+				if ( isWpError( error ) && error.error === 'invalid_input' ) {
+					setEmailError( { email: submissionEdits.user_email ?? '', message: error.message } );
+					return;
+				}
+				createErrorNotice( error.message, { type: 'snackbar' } );
+			},
 		} );
 	};
 
@@ -84,6 +105,8 @@ export default function PersonalDetailsSection() {
 		}
 		return data[ key as keyof UserSettings ] !== userSettings[ key as keyof UserSettings ];
 	} );
+
+	const currentEmailError = emailError?.email === data.user_email ? emailError.message : null;
 
 	const isSaving = mutation.isPending || emailMutation.isPending;
 
@@ -155,6 +178,7 @@ export default function PersonalDetailsSection() {
 							userSettings={ userSettings }
 							isEmailVerified={ isEmailVerified }
 							onValidationChange={ setIsEmailValid }
+							serverError={ currentEmailError }
 						/>
 
 						<HStack justify="flex-start">
@@ -162,7 +186,7 @@ export default function PersonalDetailsSection() {
 								variant="primary"
 								type="submit"
 								isBusy={ isSaving }
-								disabled={ isSaving || ! isDirty || ! isEmailValid }
+								disabled={ isSaving || ! isDirty || ! isEmailValid || !! currentEmailError }
 							>
 								{ __( 'Save' ) }
 							</Button>
