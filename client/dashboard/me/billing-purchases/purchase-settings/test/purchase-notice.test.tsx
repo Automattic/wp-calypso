@@ -128,7 +128,7 @@ describe( '<PurchaseNotice />', () => {
 		expect( screen.getByText( /Your subscription is cancelled/ ) ).toBeVisible();
 	} );
 
-	test( 'hides the cancelled notice when it is closed', async () => {
+	test( 'hides the cancelled notice when it is dismissed', async () => {
 		const user = userEvent.setup();
 		mockSearch = { cancelled: true };
 		render( <PurchaseNotice purchase={ makePurchase() } /> );
