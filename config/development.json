@@ -55,7 +55,6 @@
 		"calypso/refund-eligibility-notice": false,
 		"calypso/write-on-flow": true,
 		"checkout/stripe-upi": true,
-		"checkout/stripe-wallet": true,
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": true,
 		"comments/filters-in-posts": true,
