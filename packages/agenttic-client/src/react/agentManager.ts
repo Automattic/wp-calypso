@@ -455,6 +455,7 @@ function createAgentManager(): AgentManager {
 				metadata,
 				sessionId,
 				message: optionsMessage,
+				excludeFromHistory = false,
 				...otherOptions
 			} = options;
 			const { client } = managedAgent;
@@ -568,7 +569,9 @@ function createAgentManager(): AgentManager {
 				managedAgent.inFlightUserMessageId = userMessage.messageId;
 			}
 
-			currentConversationHistory = [ ...currentConversationHistory, userMessage ];
+			if ( ! excludeFromHistory ) {
+				currentConversationHistory = [ ...currentConversationHistory, userMessage ];
+			}
 
 			// Update agent's conversation history immediately
 			managedAgent.conversationHistory = currentConversationHistory;

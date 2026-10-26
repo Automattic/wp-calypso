@@ -507,6 +507,40 @@ describe( 'agentManager', () => {
 			expect( parts.some( ( part: any ) => 'arguments' in ( part.data ?? {} ) ) ).toBe( true );
 		} );
 
+		it( 'sends an excluded message with the history but leaves it out of the history', async () => {
+			const earlierMessage = {
+				role: 'user',
+				kind: 'message',
+				parts: [ { type: 'text', text: 'Uninstall Hello Dolly' } ],
+				messageId: 'm1',
+			} as Message;
+			await agentManager.replaceMessages( 'test-key', [ earlierMessage ] );
+			vi.mocked( createTextMessage ).mockReturnValueOnce( {
+				role: 'user',
+				kind: 'message',
+				parts: [ { type: 'text', text: '/approve 123' } ],
+				messageId: 'command',
+			} as Message );
+			mockClient.sendMessageStream.mockImplementation( async function* () {} );
+
+			for await ( const update of agentManager.sendMessageStream( 'test-key', '/approve 123', {
+				excludeFromHistory: true,
+			} ) ) {
+				void update;
+			}
+
+			const sentParts = mockClient.sendMessageStream.mock.calls[ 0 ][ 0 ].message.parts;
+			expect( sentParts ).toContainEqual( { type: 'text', text: '/approve 123' } );
+			expect( sentParts ).toContainEqual( {
+				type: 'data',
+				data: { role: 'user', text: 'Uninstall Hello Dolly' },
+			} );
+			expect( mockClient.sendMessageStream.mock.calls[ 0 ][ 0 ] ).not.toHaveProperty(
+				'excludeFromHistory'
+			);
+			expect( agentManager.getConversationHistory( 'test-key' ) ).toEqual( [ earlierMessage ] );
+		} );
+
 		it( 'sendToolResults pairs every call of a turn this page never saw', async () => {
 			// A turn resumed after a page change: this page only has the question.
 			await agentManager.replaceMessages( 'test-key', [

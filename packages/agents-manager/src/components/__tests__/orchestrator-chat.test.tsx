@@ -188,6 +188,7 @@ const mockAgentChat = jest.fn(
 		emptyViewSuggestions?: Suggestion[];
 		onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 		isLoadingConversation?: boolean;
+		alternativeFooter?: unknown;
 		onContextCardAction?: (
 			card: { id: string },
 			action: { label: string; prompt: string; type: 'submit' }
@@ -505,6 +506,10 @@ jest.mock( '../../utils/external-context', () => ( {
 } ) );
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatAgent: () => mockIsReaderChatAgent(),
+} ) );
+// Agenttic UI is ESM-only, so Jest can't load the footer's `AgentUI` parts.
+jest.mock( '../action-approval-footer', () => ( {
+	ActionApprovalFooter: () => null,
 } ) );
 jest.mock( '../agent-chat', () => {
 	const { useEffect, useRef } = jest.requireActual< typeof import( 'react' ) >( 'react' );
@@ -2439,6 +2444,65 @@ describe( 'OrchestratorChat', () => {
 			} );
 
 			expect( outcomeCalls() ).toEqual( [] );
+		} );
+	} );
+
+	describe( 'action approvals', () => {
+		const heldCallUpdate = ( result: unknown ) =>
+			( {
+				id: 'task-approval',
+				kind: 'status',
+				final: false,
+				status: {
+					state: 'working',
+					message: {
+						role: 'agent',
+						parts: [
+							{
+								type: 'data',
+								data: {
+									toolCallId: 'toolu_abc',
+									toolId: 'wpcom__plugins',
+									arguments: { action: 'uninstall', plugin: 'hello-dolly' },
+								},
+							},
+							{
+								type: 'data',
+								data: { toolCallId: 'toolu_abc', toolId: 'wpcom__plugins', result },
+							},
+						],
+					},
+				},
+			} ) as unknown as TaskUpdate;
+		type ApprovalCardMessage = {
+			id: string;
+			content: Array< { componentProps?: { approval?: { status: string } } } >;
+		};
+		const lastAgentChatProps = () =>
+			mockAgentChat.mock.calls[ mockAgentChat.mock.calls.length - 1 ][ 0 ];
+		const approvalStatus = () =>
+			( lastAgentChatProps().messages as ApprovalCardMessage[] | undefined )?.find(
+				( message ) => message.id === 'action-approval-toolu_abc'
+			)?.content[ 0 ].componentProps?.approval?.status;
+
+		it( 'hides the composer while a held call waits, and brings it back once answered', async () => {
+			render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.(
+					heldCallUpdate( { proposal_id: 123, status: 'awaiting_user_approval' } )
+				);
+			} );
+
+			expect( lastAgentChatProps().alternativeFooter ).toBeTruthy();
+			expect( approvalStatus() ).toBe( 'pending' );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( heldCallUpdate( { status: 'declined' } ) );
+			} );
+
+			expect( lastAgentChatProps().alternativeFooter ).toBeUndefined();
+			expect( approvalStatus() ).toBe( 'declined' );
 		} );
 	} );
 

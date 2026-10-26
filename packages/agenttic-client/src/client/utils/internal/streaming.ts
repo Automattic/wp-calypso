@@ -1,12 +1,25 @@
 import { extractProgressDataFromMessage, extractTextFromMessage, generateMessageId } from '../core';
 import { logger } from '../logger';
 import type {
+	JsonRpcError,
 	Message,
 	StreamDelta,
 	Task,
 	TaskUpdate,
 	ToolCallStreamDelta,
 } from '../../types/index';
+
+/**
+ * The error a JSON-RPC error event throws. Its `data` is kept, so callers can
+ * tell errors apart by the server's own code (e.g. `approval_already_decided`).
+ * @param error - The JSON-RPC error
+ */
+function createStreamError( error: JsonRpcError ): Error {
+	const streamError = new Error( `Streaming error: ${ error.message }` );
+	return error.data === undefined
+		? streamError
+		: Object.assign( streamError, { data: error.data } );
+}
 
 /**
  * Parse a stream chunk from a server-sent events stream.
@@ -205,9 +218,7 @@ export async function* parseSSEStream(
 				hasProcessedDelta = true;
 			}
 
-			const streamError = event.error
-				? new Error( `Streaming error: ${ event.error.message }` )
-				: null;
+			const streamError = event.error ? createStreamError( event.error ) : null;
 			if ( streamError && ! event.result?.status ) {
 				throw streamError;
 			}
