@@ -296,27 +296,11 @@ export const STEPS = {
 			),
 	},
 
-	STATIC_SITE_IMPORT_RESULTS: {
-		slug: 'static-site-import-results',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-results'
-			),
-	},
-
 	STATIC_SITE_IMPORT_ADDRESS: {
 		slug: 'static-site-import-address',
 		asyncComponent: () =>
 			import(
 				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-address'
-			),
-	},
-
-	STATIC_SITE_IMPORT_EXPERT: {
-		slug: 'static-site-import-expert',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-expert'
 			),
 	},
 

@@ -104,4 +104,19 @@ describe( 'StaticSiteImportCard', () => {
 			expect.stringContaining( '/setup/static-site-import/static-site-import-reading' )
 		);
 	} );
+
+	it( 'stops at a refused site instead of offering to read it again', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply(
+				200,
+				session( 'failed', { receipt: { success: false, code: 'static_site_capture_blocked' } } )
+			);
+
+		render( <StaticSiteImport /> );
+
+		expect( await screen.findByText( 'We can’t import this site' ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Read my site again' } ) ).not.toBeInTheDocument();
+	} );
 } );

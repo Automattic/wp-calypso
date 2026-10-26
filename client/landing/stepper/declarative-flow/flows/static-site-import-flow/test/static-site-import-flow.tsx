@@ -72,7 +72,7 @@ describe( 'Static site import flow', () => {
 		jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: false, isFetching: false } );
 
 		renderFlow( staticSiteImportFlow ).runUseAssertionCondition( {
-			currentStep: STEPS.STATIC_SITE_IMPORT_RESULTS.slug,
+			currentStep: STEPS.STATIC_SITE_IMPORT_READING.slug,
 		} );
 
 		expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
@@ -109,20 +109,7 @@ describe( 'Static site import flow', () => {
 	} );
 
 	describe( 'reading', () => {
-		it( 'records the new session in the URL', () => {
-			const destination = runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_READING,
-				dependencies: { action: 'session-created', importSessionId: 'abc123' },
-				query: { ...SOURCE, importSessionId: '' },
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_READING,
-				query: { importSessionId: 'abc123' },
-			} );
-		} );
-
-		it( 'shows the results once the site is read', () => {
+		it( 'asks for an address once the session has started', () => {
 			const destination = runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READING,
 				dependencies: { action: 'continue', importSessionId: 'abc123' },
@@ -130,8 +117,40 @@ describe( 'Static site import flow', () => {
 			} );
 
 			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_RESULTS,
+				step: STEPS.STATIC_SITE_IMPORT_ADDRESS,
 				query: { importSessionId: 'abc123' },
+			} );
+		} );
+
+		it( 'goes to plans for an existing site on a free plan', () => {
+			const destination = runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies: { action: 'continue', importSessionId: 'abc123' },
+				query: { ...SOURCE, ...SITE },
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.UNIFIED_PLANS,
+				query: { importSessionId: 'abc123' },
+			} );
+		} );
+
+		it( 'sends a site already on a paid plan straight to its overview', () => {
+			jest.mocked( useSite ).mockReturnValue( {
+				ID: 42,
+				URL: 'https://busybears.wordpress.com',
+				plan: { is_free: false },
+			} );
+
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies: { action: 'continue', importSessionId: 'abc123' },
+				query: { ...SOURCE, ...SITE },
+			} );
+
+			expect( lastExit() ).toMatchObject( {
+				path: expect.stringMatching( new RegExp( `/sites/${ SITE.siteSlug }$` ) ),
+				query: { importSessionId: 'abc123', from: SOURCE.from },
 			} );
 		} );
 
@@ -161,76 +180,16 @@ describe( 'Static site import flow', () => {
 		} );
 	} );
 
-	describe( 'results', () => {
-		it( 'asks for an address when there is no site yet', () => {
-			const destination = runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_RESULTS,
-				dependencies: { action: 'continue' },
-				query: SESSION,
-			} );
+	it( 'goes back from the address step to the migration flow’s address form', () => {
+		runFlowNavigation(
+			staticSiteImportFlow,
+			{ from: STEPS.STATIC_SITE_IMPORT_ADDRESS, query: SESSION },
+			'back'
+		);
 
-			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_ADDRESS,
-				query: null,
-			} );
-		} );
-
-		it( 'hands a site with a store or bookings to a migration expert', () => {
-			const destination = runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_RESULTS,
-				dependencies: { action: 'expert' },
-				query: SESSION,
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_EXPERT,
-				query: null,
-			} );
-		} );
-
-		it( 'lets the user move the rest of the site after talking to an expert', () => {
-			const destination = runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_EXPERT,
-				dependencies: { action: 'continue-alone' },
-				query: SESSION,
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_ADDRESS,
-				query: null,
-			} );
-		} );
-
-		it( 'reads the site again when the preview has expired', () => {
-			const destination = runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_RESULTS,
-				dependencies: { action: 'restart' },
-				query: SESSION,
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_READING,
-				query: { importSessionId: '' },
-			} );
-		} );
-
-		it( 'sends a site already on a paid plan straight to its overview', () => {
-			jest.mocked( useSite ).mockReturnValue( {
-				ID: 42,
-				URL: 'https://busybears.wordpress.com',
-				plan: { is_free: false },
-			} );
-
-			runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_RESULTS,
-				dependencies: { action: 'continue' },
-				query: { ...SESSION, ...SITE },
-			} );
-
-			expect( lastExit() ).toMatchObject( {
-				path: expect.stringMatching( new RegExp( `/sites/${ SITE.siteSlug }$` ) ),
-				query: { importSessionId: 'abc123', from: SOURCE.from },
-			} );
+		expect( lastExit() ).toMatchObject( {
+			path: '/setup/site-migration/site-migration-identify',
+			query: { from: SOURCE.from },
 		} );
 	} );
 

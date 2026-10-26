@@ -23,6 +23,8 @@ export interface StaticSiteImport {
 	status: 'moving' | 'finished' | 'failed';
 	session?: StaticSiteImportSession;
 	errorCode?: string;
+	/** A site check refused the built site, so no other route applies. */
+	isRefused?: boolean;
 	/** The preview expired or is gone, so the source has to be read again. */
 	needsRestart: boolean;
 	/** Set when starting the move failed and it's worth asking again. */
@@ -84,9 +86,11 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 
 	const errorCode =
 		getStaticSiteImportErrorCode( approveError ) ?? getStaticSiteImportErrorCode( sessionError );
+	const isRefused = session?.receipt?.code === 'static_site_capture_blocked';
 	const needsRestart =
-		RESTART_CODES.includes( errorCode ?? '' ) ||
-		( session?.state === 'failed' && ! session.site_url );
+		! isRefused &&
+		( RESTART_CODES.includes( errorCode ?? '' ) ||
+			( session?.state === 'failed' && ! session.site_url ) );
 	const approveFailed =
 		Boolean( approveError ) && errorCode !== 'static_site_import_session_already_approved';
 	const hasFailed =
@@ -100,6 +104,7 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 			status: 'failed',
 			session,
 			errorCode,
+			isRefused,
 			needsRestart,
 			retry:
 				approveFailed && ! needsRestart

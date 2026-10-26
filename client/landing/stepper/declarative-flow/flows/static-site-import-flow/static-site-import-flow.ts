@@ -39,13 +39,11 @@ import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 const BASE_STEPS = [
 	STEPS.STATIC_SITE_IMPORT_READING,
-	STEPS.STATIC_SITE_IMPORT_RESULTS,
 	STEPS.STATIC_SITE_IMPORT_ADDRESS,
 	STEPS.DOMAIN_SEARCH,
 	STEPS.UNIFIED_PLANS,
 	STEPS.SITE_CREATION_STEP,
 	STEPS.PROCESSING,
-	STEPS.STATIC_SITE_IMPORT_EXPERT,
 	STEPS.ERROR,
 ];
 
@@ -172,14 +170,27 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 			);
 		};
 
-		const restartReading = () =>
-			navigate( `${ STEPS.STATIC_SITE_IMPORT_READING.slug }?importSessionId=` );
+		// The address form lives in the migration flow; `from` fills it in again.
+		const backToIdentify = () =>
+			window.location.assign(
+				addQueryArgs(
+					{
+						from,
+						siteId: hasSite( siteId, siteSlug ) ? siteId : undefined,
+						siteSlug: hasSite( siteId, siteSlug ) ? siteSlug : undefined,
+					},
+					`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`
+				)
+			);
 
 		// The site's Overview in the dashboard approves the move and follows it from here.
-		const getSiteOverviewUrl = ( destinationSiteSlug: string ) =>
+		const getSiteOverviewUrl = (
+			destinationSiteSlug: string,
+			importSessionId = urlQueryParams.get( 'importSessionId' )
+		) =>
 			addQueryArgs(
 				{
-					importSessionId: urlQueryParams.get( 'importSessionId' ),
+					importSessionId,
 					from,
 					platform,
 					domainChoice,
@@ -207,41 +218,19 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 						return exitToMigrationFlow( from, platform );
 					}
 
-					if ( providedDependencies.action === 'session-created' ) {
-						return navigate(
-							`${ STEPS.STATIC_SITE_IMPORT_READING.slug }?importSessionId=${ encodeURIComponent(
-								providedDependencies.importSessionId
-							) }`,
-							undefined,
-							true
-						);
+					const { importSessionId } = providedDependencies;
+					if ( hasSite( siteId, siteSlug ) && isSiteOnPaidPlan ) {
+						return exitFlow( getSiteOverviewUrl( siteSlug, importSessionId ), true );
 					}
 
+					const next = hasSite( siteId, siteSlug )
+						? STEPS.UNIFIED_PLANS.slug
+						: STEPS.STATIC_SITE_IMPORT_ADDRESS.slug;
 					return navigate(
-						`${ STEPS.STATIC_SITE_IMPORT_RESULTS.slug }?importSessionId=${ encodeURIComponent(
-							providedDependencies.importSessionId
-						) }`,
+						`${ next }?importSessionId=${ encodeURIComponent( importSessionId ) }`,
 						undefined,
 						true
 					);
-				}
-
-				case STEPS.STATIC_SITE_IMPORT_RESULTS.slug: {
-					if ( providedDependencies.action === 'restart' ) {
-						return restartReading();
-					}
-
-					if ( providedDependencies.action === 'expert' ) {
-						return navigate( STEPS.STATIC_SITE_IMPORT_EXPERT.slug );
-					}
-
-					if ( hasSite( siteId, siteSlug ) ) {
-						return isSiteOnPaidPlan
-							? exitFlow( getSiteOverviewUrl( siteSlug ) )
-							: navigate( STEPS.UNIFIED_PLANS.slug );
-					}
-
-					return navigate( STEPS.STATIC_SITE_IMPORT_ADDRESS.slug );
 				}
 
 				case STEPS.STATIC_SITE_IMPORT_ADDRESS.slug: {
@@ -320,21 +309,18 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 
 					return exitFlow( getSiteOverviewUrl( createdSiteSlug ), true );
 				}
-
-				case STEPS.STATIC_SITE_IMPORT_EXPERT.slug:
-					return navigate( STEPS.STATIC_SITE_IMPORT_ADDRESS.slug );
 			}
 		};
 
 		const goBack = () => {
 			switch ( currentStep ) {
 				case STEPS.STATIC_SITE_IMPORT_ADDRESS.slug:
-					return navigate( STEPS.STATIC_SITE_IMPORT_RESULTS.slug );
+					return backToIdentify();
 				case STEPS.DOMAIN_SEARCH.slug:
 					return navigate( STEPS.STATIC_SITE_IMPORT_ADDRESS.slug );
 				case STEPS.UNIFIED_PLANS.slug:
 					if ( hasSite( siteId, siteSlug ) ) {
-						return navigate( STEPS.STATIC_SITE_IMPORT_RESULTS.slug );
+						return backToIdentify();
 					}
 					return navigate(
 						domainChoice === 'register'
