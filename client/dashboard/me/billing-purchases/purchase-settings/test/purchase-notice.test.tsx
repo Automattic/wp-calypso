@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
 import { PurchaseNotice } from '../purchase-notice';
-import type { Purchase } from '@automattic/api-core';
+import type { Purchase, User } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const fn = jest.fn( () => '' );
@@ -80,6 +80,19 @@ describe( '<PurchaseNotice />', () => {
 		expect(
 			await screen.findByText(
 				'Your subscription is cancelled and you won’t be billed again. You’ll continue to have access to the plan until April 6, 2027.'
+			)
+		).toBeVisible();
+	} );
+
+	test( 'shows the cancelled notice date in the user’s locale', async () => {
+		mockSearch = { cancelled: true };
+		render( <PurchaseNotice purchase={ makePurchase() } />, {
+			user: { ID: 1, language: 'de', locale_variant: 'de_formal' } as User,
+		} );
+
+		expect(
+			await screen.findByText(
+				'Your subscription is cancelled and you won’t be billed again. You’ll continue to have access to the plan until 6. April 2027.'
 			)
 		).toBeVisible();
 	} );
