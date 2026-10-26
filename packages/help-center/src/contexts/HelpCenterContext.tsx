@@ -5,6 +5,7 @@ import {
 import { useContext, createContext, useMemo } from '@wordpress/element';
 import { PRODUCT_PRESETS } from '../feature-config';
 import type { HelpCenterFeatureConfig, HelpCenterProduct } from '../feature-config';
+import type { WooHandoffData } from '../human-routing/woo-handoff';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 import type { JSX } from 'react';
 
@@ -34,6 +35,10 @@ export type HelpCenterRequiredInformation = {
 	 * Page the launcher was opened from, when the host page sets one. Tailors the greeting and title.
 	 */
 	launcherContext?: string;
+	/**
+	 * What WooCommerce.com knows about the signed-in merchant, to route requests for a human.
+	 */
+	wooHandoff?: WooHandoffData | null;
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
