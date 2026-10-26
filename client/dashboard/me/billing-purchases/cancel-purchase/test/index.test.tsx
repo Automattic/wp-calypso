@@ -17,7 +17,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
 import CancelPurchase from '../index';
-import type { Purchase } from '@automattic/api-core';
+import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 jest.mock( '../../../../app/router/me', () => ( {
 	cancelPurchaseRoute: { fullPath: '__root__', useParams: () => ( { purchaseId: '123' } ) },
@@ -64,12 +64,15 @@ function mockSiteRequests() {
 		.reply( 200, [] );
 }
 
-function renderRemoveFlow() {
+function renderRemoveFlow( {
+	purchase: overrides = {},
+	plans = [],
+}: { purchase?: Partial< Purchase >; plans?: PlanProduct[] } = {} ) {
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
 	} );
-	queryClient.setQueryData( purchaseQuery( purchase.ID ).queryKey, purchase );
-	queryClient.setQueryData( plansQuery().queryKey, [] );
+	queryClient.setQueryData( purchaseQuery( purchase.ID ).queryKey, { ...purchase, ...overrides } );
+	queryClient.setQueryData( plansQuery().queryKey, plans );
 	queryClient.setQueryData( purchaseCancelFeaturesQuery( purchase.ID ).queryKey, [] );
 	queryClient.setQueryData( productsQuery().queryKey, {} );
 	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {} );
