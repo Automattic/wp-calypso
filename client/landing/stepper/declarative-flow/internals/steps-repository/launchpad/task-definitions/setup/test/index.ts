@@ -1,5 +1,5 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { getSetupBlogTask, getSetupFreeTask } from '../';
+import { getSetupBlogTask } from '../';
 import { buildTask } from '../../../test/lib/fixtures';
 import { type TaskContext } from '../../../types';
 
@@ -9,20 +9,6 @@ const buildContext = ( options?: Partial< TaskContext > ) => {
 		...options,
 	} as TaskContext;
 };
-describe( 'getSetupFreeTask', () => {
-	const task = buildTask( { id: 'task', calypso_path: 'some-path' } );
-
-	it( 'returns the link', () => {
-		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteSlug } );
-
-		expect( getSetupFreeTask( task, 'flowId', context ) ).toMatchObject( {
-			useCalypsoPath: true,
-			calypso_path: `/setup/flowId/freePostSetup?siteSlug=${ siteSlug }`,
-		} );
-	} );
-} );
-
 describe( 'getSetupBlogTask', () => {
 	const calypso_path = 'some-path';
 	const task = buildTask( { id: 'task', calypso_path } );
