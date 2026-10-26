@@ -1,5 +1,6 @@
 /**
- * The wp-admin page the Premium Analytics ("Stats v2") dashboard is served from.
+ * The wp-admin page the Premium Analytics ("Stats v2") dashboard is served from. Jetpack also
+ * publishes it as `JetpackScriptData.analytics.page_slug`, for callers running inside wp-admin.
  */
 const PREMIUM_ANALYTICS_PAGE = 'jetpack-premium-analytics-wp-admin';
 
@@ -108,8 +109,13 @@ function boundaryOf(
  * Kept free of imports so the Odyssey bundle can use it without pulling in the dashboard's data layer.
  * @param route The dashboard route, e.g. `/`, `/post/123` or `/reports/posts`.
  * @param range The days to open on. Left off when unusable, so the route opens on its default range.
+ * @param page  The wp-admin page slug the dashboard is served from.
  */
-export function getPremiumAnalyticsPath( route = '/', range?: PremiumAnalyticsRange ): string {
+export function getPremiumAnalyticsPath(
+	route = '/',
+	range?: PremiumAnalyticsRange,
+	page = PREMIUM_ANALYTICS_PAGE
+): string {
 	let path = route;
 
 	if ( range && DAY.test( range.from ) && DAY.test( range.to ) ) {
@@ -122,5 +128,5 @@ export function getPremiumAnalyticsPath( route = '/', range?: PremiumAnalyticsRa
 		}
 	}
 
-	return `admin.php?${ new URLSearchParams( { page: PREMIUM_ANALYTICS_PAGE, p: path } ) }`;
+	return `admin.php?${ new URLSearchParams( { page, p: path } ) }`;
 }

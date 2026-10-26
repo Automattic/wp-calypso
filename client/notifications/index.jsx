@@ -254,7 +254,7 @@ export class Notifications extends Component {
 						link: href,
 					} );
 				}
-				window.open( href, '_blank' );
+				window.open( href, '_blank', 'noopener' );
 			},
 		],
 		OPEN_POST: [

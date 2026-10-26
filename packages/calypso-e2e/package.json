@@ -36,7 +36,7 @@
 		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
-		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",

@@ -21,7 +21,7 @@ import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guid
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
@@ -43,7 +43,6 @@ import {
 } from '../overview-static-site-import';
 import SubscribersCard from '../overview-subscribers-card';
 import VisibilityCard from '../overview-visibility-card';
-import VisibilityCardCiab from '../overview-visibility-card-ciab';
 import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { EmailBlockNotice, getEmailBlock } from './email-block-notice';
@@ -89,15 +88,6 @@ function getGridLayout( {
 }
 
 function SiteOverviewPrimaryCards( { site, gap }: { site: Site; gap: GapSize } ) {
-	if ( isCommerceGarden( site ) ) {
-		return (
-			<Grid columns={ 1 } rows={ 2 } gap={ gap }>
-				<PlanCard site={ site } />
-				<VisibilityCardCiab site={ site } />
-			</Grid>
-		);
-	}
-
 	return (
 		<>
 			<PlanCard site={ site } />
@@ -136,7 +126,6 @@ function SiteOverviewSecondaryCards( {
 	isSmallViewport: boolean;
 } ) {
 	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
-	const isCommerceGardenSite = isCommerceGarden( site );
 
 	return (
 		<>
@@ -147,23 +136,17 @@ function SiteOverviewSecondaryCards( {
 				spacing={ spacing }
 				alignment="flex-start"
 			>
-				{ isCommerceGardenSite ? (
-					<DomainsCard site={ site } />
-				) : (
-					<>
-						{ ! site.__inaccessible_jetpack_error && (
-							<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
-						) }
-						<VStack spacing={ spacing } justify="start">
-							{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
-								<>
-									<DIFMOfferCard site={ site } />
-									<DomainsCard site={ site } />
-								</>
-							) }
-						</VStack>
-					</>
+				{ ! site.__inaccessible_jetpack_error && (
+					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
 				) }
+				<VStack spacing={ spacing } justify="start">
+					{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
+						<>
+							<DIFMOfferCard site={ site } />
+							<DomainsCard site={ site } />
+						</>
+					) }
+				</VStack>
 			</HStack>
 			{ /* Divider re-ordered by CSS to appear above the HStack */ }
 			<Divider
@@ -187,9 +170,8 @@ function SiteOverview( {
 	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
 	const gap = isSmallViewport ? 'lg' : 'xl';
-	const isCommerceGardenSite = isCommerceGarden( site );
 	const gridLayout = getGridLayout( {
-		count: isCommerceGardenSite ? 1 : 3,
+		count: 3,
 		isLargeViewport,
 		isSmallViewport,
 	} );
@@ -206,23 +188,6 @@ function SiteOverview( {
 	const renderActions = () => {
 		if ( ! site.options?.admin_url ) {
 			return null;
-		}
-
-		if ( isCommerceGardenSite ) {
-			return (
-				<Button
-					__next40pxDefaultSize
-					variant="primary"
-					href={ site.options.admin_url }
-					onClick={ () =>
-						recordTracksEvent( 'calypso_dashboard_site_overview_wp_admin_clicked', {
-							site_id: site.ID,
-						} )
-					}
-				>
-					{ __( 'Manage store' ) }
-				</Button>
-			);
 		}
 
 		return (
@@ -251,7 +216,6 @@ function SiteOverview( {
 
 	return (
 		<PageLayout
-			size={ isCommerceGardenSite ? 'small' : 'large' }
 			header={
 				<PageHeader
 					title={ getSiteDisplayName( site ) }

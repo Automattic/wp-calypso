@@ -1,0 +1,11 @@
+@import '@wordpress/base-styles/variables';
+
+// The modal's own content padding with its header hidden; the callout pulls into it.
+$modal-padding: $grid-unit-30;
+
+// The callout fills the modal edge to edge, so the modal adds no frame of its own around it.
+.a4a-approval-gate {
+	inline-size: 760px;
+	max-inline-size: calc( 100% + #{$modal-padding * 2} );
+	margin: -$modal-padding;
+}

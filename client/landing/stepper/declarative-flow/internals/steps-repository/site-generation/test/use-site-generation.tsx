@@ -280,6 +280,8 @@ describe( 'useSiteGeneration', () => {
 
 			expect( window.location.assign ).not.toHaveBeenCalled();
 			expect( result.current.status ).toBe( 'working' );
+			expect( result.current.isComplete ).toBe( true );
+			expect( result.current.isLocalPreview ).toBe( true );
 			expect( result.current.failureReason ).toBeUndefined();
 		} finally {
 			Object.defineProperty( window, 'location', {
@@ -313,6 +315,8 @@ describe( 'useSiteGeneration', () => {
 			} );
 
 			expect( result.current.status ).toBe( 'working' );
+			expect( result.current.isComplete ).toBe( true );
+			expect( result.current.isLocalPreview ).toBe( true );
 			expect( result.current.failureReason ).toBeUndefined();
 		} finally {
 			jest.useRealTimers();
@@ -340,6 +344,128 @@ describe( 'useSiteGeneration', () => {
 		} finally {
 			jest.useRealTimers();
 		}
+	} );
+
+	describe( 'completion presentation', () => {
+		beforeEach( () => {
+			Object.defineProperty( window, 'location', {
+				value: { ...originalLocation, assign: jest.fn() },
+				configurable: true,
+			} );
+		} );
+		afterEach( () => {
+			Object.defineProperty( window, 'location', { value: originalLocation, configurable: true } );
+		} );
+		const response = {
+			build_status: 'live',
+			site_editor_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
+		};
+
+		it( 'shows authoritative completion then redirects within a fixed bound', () => {
+			const { result } = renderHook( () =>
+				useSiteGeneration( {
+					siteIdentifier: '123',
+					steps: STEPS,
+					completionDelayMs: 10000,
+				} )
+			);
+			act( () => statusPollMock.mock.calls[ 0 ][ 0 ].onReady( response ) );
+			expect( result.current.isComplete ).toBe( true );
+			expect( result.current.hostState ).toBe( 'ready' );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			act( () => jest.advanceTimersByTime( 2599 ) );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			act( () => jest.advanceTimersByTime( 1 ) );
+			expect( window.location.assign ).toHaveBeenCalledTimes( 1 );
+			act( () => jest.advanceTimersByTime( 30 * 60 * 1000 ) );
+			expect( result.current.failureReason ).toBeUndefined();
+		} );
+
+		it( 'uses the latest preview eligibility without restarting status polling', () => {
+			const { rerender } = renderHook(
+				( { delay } ) =>
+					useSiteGeneration( {
+						siteIdentifier: '123',
+						steps: STEPS,
+						completionDelayMs: delay,
+					} ),
+				{ initialProps: { delay: 0 } }
+			);
+			rerender( { delay: 2600 } );
+			expect( statusPollMock ).toHaveBeenCalledTimes( 1 );
+			act( () => statusPollMock.mock.calls[ 0 ][ 0 ].onReady( response ) );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			act( () => jest.advanceTimersByTime( 2600 ) );
+			expect( window.location.assign ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it.each( [
+			[ true, false ],
+			[ false, false ],
+			[ true, true ],
+			[ false, true ],
+		] )(
+			'keeps stream identity when terminal metadata is omitted: %s, local feed: %s',
+			( omitStream, isLocal ) => {
+				( getBuildWowApiOverride as jest.Mock ).mockReturnValueOnce(
+					isLocal ? 'http://calypso.localhost:4001/api/calypso' : null
+				);
+				const { result } = renderHook( () =>
+					useSiteGeneration( {
+						siteIdentifier: '123',
+						steps: STEPS,
+						completionDelayMs: 2600,
+					} )
+				);
+				const info = {
+					protocol: 1,
+					blogId: 123,
+					runId: 'run-1',
+					capabilities: [ 'preview:dsl-html' ],
+					eventsUrl: 'https://public-api.wordpress.com/events',
+					snapshotUrl: 'https://public-api.wordpress.com/snapshot',
+				};
+				const callbacks = statusPollMock.mock.calls[ 0 ][ 0 ];
+				act( () => callbacks.onStream( info ) );
+				act( () => callbacks.onStream( { ...info, capabilities: [ ...info.capabilities ] } ) );
+				expect( result.current.streamInfo ).toBe( info );
+				act( () => {
+					callbacks.onStream( omitStream ? null : { ...info } );
+					callbacks.onReady( response );
+				} );
+				expect( result.current.streamInfo ).toBe( info );
+				expect( result.current.isComplete ).toBe( true );
+				act( () => jest.advanceTimersByTime( 3000 ) );
+				expect( window.location.assign ).toHaveBeenCalledTimes( isLocal ? 0 : 1 );
+			}
+		);
+
+		it( 'skips completion motion when the document is hidden', () => {
+			const hidden = jest.spyOn( document, 'hidden', 'get' ).mockReturnValue( true );
+			try {
+				renderHook( () =>
+					useSiteGeneration( { siteIdentifier: '123', steps: STEPS, completionDelayMs: 2600 } )
+				);
+				act( () => statusPollMock.mock.calls[ 0 ][ 0 ].onReady( response ) );
+				expect( window.location.assign ).toHaveBeenCalledTimes( 1 );
+			} finally {
+				hidden.mockRestore();
+			}
+		} );
+
+		it( 'cancels the pending redirect on unmount', () => {
+			const { unmount } = renderHook( () =>
+				useSiteGeneration( {
+					siteIdentifier: '123',
+					steps: STEPS,
+					completionDelayMs: 2600,
+				} )
+			);
+			act( () => statusPollMock.mock.calls[ 0 ][ 0 ].onReady( response ) );
+			unmount();
+			act( () => jest.advanceTimersByTime( 3000 ) );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	it( 'starts on the fallback checklist until the server checklist arrives', () => {

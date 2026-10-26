@@ -134,7 +134,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 		);
 
 		expect( params ).toEqual( {
-			isFromJetpackConnector: true,
+			showsUnifiedContent: true,
 			isUnifiedConnectionFlow: true,
 			connectorPlugins: [ 'jetpack', 'woocommerce' ],
 		} );
@@ -146,16 +146,46 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 		);
 
 		expect( params.isUnifiedConnectionFlow ).toBe( true );
-		expect( params.isFromJetpackConnector ).toBe( false );
+		expect( params.showsUnifiedContent ).toBe( false );
 		expect( params.connectorPlugins ).toEqual( [] );
 	} );
+
+	it.each( [ 'jetpack_premium_analytics_onboarding', 'delete_connection_owner_notice' ] )(
+		'flags the connector flow and parses plugins for the standard entry-point name %s',
+		( from ) => {
+			const params = getConnectionFlowFromRedirectTo(
+				`/jetpack/connect/authorize?from=${ from }&plugins=jetpack-premium-analytics`
+			);
+
+			expect( params ).toEqual( {
+				showsUnifiedContent: true,
+				isUnifiedConnectionFlow: true,
+				connectorPlugins: [ 'jetpack-premium-analytics' ],
+			} );
+		}
+	);
+
+	it.each( [ 'jetpack-newsletter', 'jetpack-x_y' ] )(
+		'treats the legacy value %s as outside the unified flow',
+		( from ) => {
+			const params = getConnectionFlowFromRedirectTo(
+				`/jetpack/connect/authorize?from=${ from }&plugins=jetpack`
+			);
+
+			expect( params ).toEqual( {
+				showsUnifiedContent: false,
+				isUnifiedConnectionFlow: false,
+				connectorPlugins: [],
+			} );
+		}
+	);
 
 	it( 'does not flag the connector for unrelated from values and ignores plugins', () => {
 		const params = getConnectionFlowFromRedirectTo(
 			'/jetpack/connect/authorize?from=my-jetpack&plugins=jetpack,woocommerce'
 		);
 
-		expect( params.isFromJetpackConnector ).toBe( false );
+		expect( params.showsUnifiedContent ).toBe( false );
 		expect( params.isUnifiedConnectionFlow ).toBe( false );
 		expect( params.connectorPlugins ).toEqual( [] );
 	} );
@@ -166,7 +196,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 			plugins: 'jetpack,woocommerce',
 		} );
 
-		expect( params.isFromJetpackConnector ).toBe( true );
+		expect( params.showsUnifiedContent ).toBe( true );
 		expect( params.isUnifiedConnectionFlow ).toBe( true );
 		expect( params.connectorPlugins ).toEqual( [ 'jetpack', 'woocommerce' ] );
 	} );
@@ -177,7 +207,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 			{ from: 'my-jetpack', plugins: 'woocommerce' }
 		);
 
-		expect( params.isFromJetpackConnector ).toBe( true );
+		expect( params.showsUnifiedContent ).toBe( true );
 		expect( params.connectorPlugins ).toEqual( [ 'jetpack' ] );
 	} );
 
@@ -194,13 +224,13 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 			'/jetpack/connect/authorize?from=jetpack-connector'
 		);
 
-		expect( params.isFromJetpackConnector ).toBe( true );
+		expect( params.showsUnifiedContent ).toBe( true );
 		expect( params.connectorPlugins ).toEqual( [] );
 	} );
 
 	it( 'returns sensible defaults when redirect_to is missing', () => {
 		expect( getConnectionFlowFromRedirectTo( undefined ) ).toEqual( {
-			isFromJetpackConnector: false,
+			showsUnifiedContent: false,
 			isUnifiedConnectionFlow: false,
 			connectorPlugins: [],
 		} );

@@ -78,8 +78,9 @@ export function getSessionId(
 
 /**
  * The active session ID for non-React callers (ability callbacks, the Tracks
- * wrapper) — read under the agent scope the Provider publishes, so the answer
- * matches the mounted chat's on every surface, Dolly included.
+ * wrapper) and the credits purchase link, which must match its click event — read
+ * under the agent scope the Provider publishes, so the answer matches the mounted
+ * chat's on every surface, Dolly included.
  */
 export function getActiveSessionId(): string {
 	return getSessionId( getResolvedAgentId() );

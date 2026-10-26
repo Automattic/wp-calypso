@@ -7,7 +7,7 @@ import {
 	isPremium,
 } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
-import { Step } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, Step } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -53,7 +53,7 @@ const PostCheckoutOnboarding: StepType< {
 	const siteSlug = useSiteSlugParam() ?? '';
 	const {
 		data: site,
-		isLoading: isLoadingSite,
+		isFetchedAfterMount: isSiteFetchedAfterMount,
 		isError: isErrorSite,
 	} = useQuery( {
 		...siteBySlugQuery( siteSlug ),
@@ -62,7 +62,10 @@ const PostCheckoutOnboarding: StepType< {
 
 	const showBigSkyChoice =
 		!! site?.plan &&
-		( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) &&
+		( isPersonal( site.plan ) ||
+			isPremium( site.plan ) ||
+			isBusiness( site.plan ) ||
+			isEcommerce( site.plan ) ) &&
 		site.plan.features?.active?.includes( FEATURE_BIG_SKY );
 
 	const intent = useSelect(
@@ -107,8 +110,14 @@ const PostCheckoutOnboarding: StepType< {
 
 	const waitForAtomic = async () => {
 		await waitForTransfer();
-		await setIntentOnSite( siteSlug, intent );
-		await setGoalsOnSite( siteSlug, goals );
+		// An existing site handed over from another flow arrives with an empty store; don't let
+		// that overwrite the intent and goals the site already has.
+		if ( intent ) {
+			await setIntentOnSite( siteSlug, intent );
+		}
+		if ( goals.length ) {
+			await setGoalsOnSite( siteSlug, goals );
+		}
 		await waitForFeature();
 		await waitForLatestSiteData();
 	};
@@ -171,7 +180,9 @@ const PostCheckoutOnboarding: StepType< {
 			hasError ||
 			! site ||
 			! siteSlug ||
-			isLoadingSite ||
+			// The site can come from the persisted query cache with its pre-purchase plan, which
+			// would hide the chooser, so wait for a fetch made after checkout.
+			! isSiteFetchedAfterMount ||
 			isLoadingMarketplaceThemeProducts ||
 			isLoadingSiteTransferStatusData
 		) {
@@ -183,7 +194,6 @@ const PostCheckoutOnboarding: StepType< {
 				siteSlug,
 				hasExternalTheme,
 				hasPluginByGoal,
-				...( showBigSkyChoice ? { postCheckoutBigSky: true } : {} ),
 			};
 
 			if ( ! isJetpackOrAtomic ) {
@@ -202,9 +212,25 @@ const PostCheckoutOnboarding: StepType< {
 			// via the transfer initiated above).
 			if ( isWooHostingSolutions ) {
 				await waitForPluginsActive( site.ID, [ 'woocommerce' ] );
+			} else if ( isCommercePlan && showBigSkyChoice && flow === ONBOARDING_FLOW ) {
+				// A Commerce site headed for the onboarding setup chooser waits too, so neither
+				// builder opens on a half-made store. A store still not ready after the wait skips
+				// the chooser instead of failing a paid checkout.
+				try {
+					await waitForPluginsActive( site.ID, [ 'woocommerce' ] );
+				} catch {
+					recordTracksEvent( 'calypso_onboarding_post_checkout_setup_error', {
+						flow,
+						error_woocommerce_timeout: true,
+					} );
+					return providedDependencies;
+				}
 			}
 
-			return providedDependencies;
+			return {
+				...providedDependencies,
+				...( showBigSkyChoice ? { postCheckoutBigSky: true } : {} ),
+			};
 		} );
 
 		submit?.( {
@@ -215,7 +241,7 @@ const PostCheckoutOnboarding: StepType< {
 		hasError,
 		site,
 		siteSlug,
-		isLoadingSite,
+		isSiteFetchedAfterMount,
 		isLoadingMarketplaceThemeProducts,
 		isLoadingSiteTransferStatusData,
 		isJetpackOrAtomic,

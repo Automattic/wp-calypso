@@ -733,14 +733,6 @@ body.is-section-plugins #primary {
 	}
 }
 
-.plugin-details__reviews {
-	margin-bottom: 40px;
-
-	@media screen and ( max-width: 1040px ) {
-		padding: 16px;
-	}
-}
-
 .full-width-section.plugins__marketplace-footer {
 	--scss-font-title-large: 2.5rem;
 	--scss-font-body: 1.375rem;
@@ -804,18 +796,6 @@ body.is-section-plugins #primary {
 	}
 }
 
-.banner.card.plugin-details__reviews-banner {
-	&:hover {
-		cursor: pointer;
-		box-shadow:
-			0 0 1px var( --color-neutral ),
-			0 2px 4px var( --color-neutral-10 );
-	}
-
-	~ .plugin-details__page .plugin-details__layout {
-		padding-top: calc( $layout-padding-top - 40px );
-	}
-}
 body.is-section-plugins:has(.is-full-width-layout) {
 	.plugins-browser__content-wrapper {
 		background-color: var(--studio-white);

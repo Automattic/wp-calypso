@@ -12,7 +12,7 @@ import siteConnectionReducer from 'calypso/state/site-connection/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from '../../../client/test-helpers/testing-library';
 import { JetpackAuthorize } from '../authorize';
-import { JPC_PATH_PLANS } from '../constants';
+import { JPC_A4A_PATH, JPC_PATH_PLANS } from '../constants';
 import { OFFER_RESET_FLOW_TYPES } from '../flow-types';
 
 const noop = () => {};
@@ -279,36 +279,81 @@ describe( 'JetpackAuthorize', () => {
 		expect( screen.getByRole( 'article', { name: 'Jetpack Boost' } ) ).toBeInTheDocument();
 	} );
 
-	describe( 'secondary connection branches', () => {
-		test( 'admin secondary connection shows secondary cards and Connect account button, no blocking notice', () => {
-			renderWithRedux(
+	describe( 'standard entry-point names', () => {
+		test.each( [
+			'jetpack-connector',
+			'jetpack_premium_analytics_onboarding',
+			'delete_connection_owner_notice',
+		] )( 'from=%s shows the unified connection screen', ( from ) => {
+			const { container } = renderWithRedux(
 				<JetpackAuthorize
 					{ ...DEFAULT_PROPS }
-					authQuery={ {
-						...DEFAULT_PROPS.authQuery,
-						from: 'jetpack-connector',
-						hasConnectedOwner: true,
-						plugins: [ 'jetpack' ],
-						scope: 'administrator:fooBarBaz',
-					} }
+					authQuery={ { ...DEFAULT_PROPS.authQuery, from, plugins: [ 'jetpack' ] } }
 				/>
 			);
 
-			// Secondary admin card renders with its single management-voice bullet.
-			// The "/track every change/" substring is unique to the card bullet —
-			// the secondary subtitle also mentions "activity log", so a looser
-			// regex would match two elements.
-			expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
-			expect( screen.getByText( /track every change/ ) ).toBeInTheDocument();
-
-			// The blocking "already connected by other user" notice is NOT shown.
 			expect(
-				screen.queryByText( /already connected to a different WordPress.com user/ )
-			).not.toBeInTheDocument();
-
-			// The Connect account button is present.
+				container.querySelector( '.jetpack-connect__authorize-form-wrapper--connector' )
+			).toBeInTheDocument();
+			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
+				'Connect your account'
+			);
+			expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Connect account' ) ).toBeInTheDocument();
 		} );
+
+		test.each( [ 'jetpack-newsletter', 'jetpack-x_y' ] )(
+			'from=%s keeps the legacy authorize card',
+			( from ) => {
+				const { container } = renderWithRedux(
+					<JetpackAuthorize
+						{ ...DEFAULT_PROPS }
+						authQuery={ { ...DEFAULT_PROPS.authQuery, from, plugins: [ 'jetpack' ] } }
+					/>
+				);
+
+				expect(
+					container.querySelector( '.jetpack-connect__authorize-form-wrapper--connector' )
+				).not.toBeInTheDocument();
+				expect( container.querySelector( '.jetpack-connect__logged-in-card' ) ).toBeInTheDocument();
+				expect( screen.queryByRole( 'article' ) ).not.toBeInTheDocument();
+			}
+		);
+	} );
+
+	describe( 'secondary connection branches', () => {
+		test.each( [ 'jetpack-connector', 'jetpack_premium_analytics_onboarding' ] )(
+			'admin secondary connection from=%s shows secondary cards and Connect account button, no blocking notice',
+			( from ) => {
+				renderWithRedux(
+					<JetpackAuthorize
+						{ ...DEFAULT_PROPS }
+						authQuery={ {
+							...DEFAULT_PROPS.authQuery,
+							from,
+							hasConnectedOwner: true,
+							plugins: [ 'jetpack' ],
+							scope: 'administrator:fooBarBaz',
+						} }
+					/>
+				);
+
+				// Secondary admin card renders with its single management-voice bullet.
+				// The "/track every change/" substring is unique to the card bullet —
+				// the secondary subtitle also mentions "activity log", so a looser
+				// regex would match two elements.
+				expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
+				expect( screen.getByText( /track every change/ ) ).toBeInTheDocument();
+
+				// The blocking "already connected by other user" notice is NOT shown.
+				expect(
+					screen.queryByText( /already connected to a different WordPress.com user/ )
+				).not.toBeInTheDocument();
+
+				// The Connect account button is present.
+				expect( screen.getByText( 'Connect account' ) ).toBeInTheDocument();
+			}
+		);
 
 		test( 'non-admin secondary connection shows no feature cards and uses simple subtitle', () => {
 			renderWithRedux(
@@ -645,34 +690,16 @@ describe( 'JetpackAuthorize', () => {
 	describe( 'isUnifiedConnectionFlow', () => {
 		const instance = new JetpackAuthorize();
 
-		test( 'returns true for jetpack-onboarding', () => {
-			const props = {
-				authQuery: {
-					from: 'jetpack-onboarding',
-				},
-			};
-
-			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( true );
-		} );
-
-		test( 'returns true for jetpack-connector', () => {
-			const props = {
-				authQuery: {
-					from: 'jetpack-connector',
-				},
-			};
-
-			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( true );
-		} );
-
-		test( 'returns false for other flows', () => {
-			const props = {
-				authQuery: {
-					from: 'woocommerce-onboarding',
-				},
-			};
-
-			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( false );
+		test.each( [
+			[ 'jetpack-onboarding', true ],
+			[ 'jetpack-connector', true ],
+			[ 'jetpack_premium_analytics_onboarding', true ],
+			[ 'delete_connection_owner_notice', true ],
+			[ 'woocommerce-onboarding', false ],
+			[ 'jetpack-newsletter', false ],
+			[ 'jetpack-x_y', false ],
+		] )( 'from=%s → %s', ( from, expected ) => {
+			expect( instance.isUnifiedConnectionFlow( { authQuery: { from } } ) ).toBe( expected );
 		} );
 	} );
 
@@ -833,6 +860,84 @@ describe( 'JetpackAuthorize', () => {
 				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect_to=${ encodeURIComponent(
 					DEFAULT_PROPS.authQuery.redirectAfterAuth
 				) }`,
+				expect.any( String )
+			);
+		} );
+	} );
+
+	describe( 'redirect after approving', () => {
+		const { redirectAfterAuth } = DEFAULT_PROPS.authQuery;
+		const plansPage = `${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect_to=${ encodeURIComponent(
+			redirectAfterAuth
+		) }`;
+		let originalWindowLocation;
+
+		beforeEach( () => {
+			originalWindowLocation = global.window.location;
+			delete global.window.location;
+			global.window.location = {
+				href: 'http://wwww.example.com',
+				origin: 'http://www.example.com',
+			};
+		} );
+
+		afterEach( () => {
+			global.window.location = originalWindowLocation;
+		} );
+
+		const approve = async ( props ) => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					isAlreadyOnSitesList
+					isFetchingSites
+					{ ...props }
+					authQuery={ { ...DEFAULT_PROPS.authQuery, alreadyAuthorized: true, ...props.authQuery } }
+				/>
+			);
+
+			await userEvent.click( screen.getByText( 'Return to your site' ) );
+		};
+
+		test.each( [
+			[ 'jetpack_premium_analytics_onboarding', redirectAfterAuth ],
+			[ 'delete_connection_owner_notice', redirectAfterAuth ],
+			[ 'jetpack-connector', `${ redirectAfterAuth }&from=jetpack-connector` ],
+			[ 'jetpack-newsletter', plansPage ],
+			[ 'jetpack-x_y', plansPage ],
+		] )( 'from=%s goes to %s', async ( from, expected ) => {
+			await approve( { authQuery: { from } } );
+
+			expect( windowOpenSpy ).toHaveBeenCalledWith( expected, expect.any( String ) );
+		} );
+
+		test( 'a standard entry-point name skips the stored-plan checkout', async () => {
+			await approve( {
+				authQuery: { from: 'jetpack_premium_analytics_onboarding' },
+				selectedPlanSlug: OFFER_RESET_FLOW_TYPES[ 0 ],
+			} );
+
+			expect( windowOpenSpy ).toHaveBeenCalledWith( redirectAfterAuth, expect.any( String ) );
+		} );
+
+		test( 'a standard entry-point name without a return URL falls back to the plans page', async () => {
+			await approve( {
+				authQuery: { from: 'jetpack_premium_analytics_onboarding', redirectAfterAuth: null },
+			} );
+
+			expect( windowOpenSpy ).toHaveBeenCalledWith(
+				`${ JPC_PATH_PLANS }/${ SITE_SLUG }`,
+				expect.any( String )
+			);
+		} );
+
+		test( 'a standard entry-point name does not pre-empt the A4A source redirect', async () => {
+			global.window.location.search = '?source=a8c-for-agencies';
+
+			await approve( { authQuery: { from: 'jetpack_premium_analytics_onboarding' } } );
+
+			expect( windowOpenSpy ).toHaveBeenCalledWith(
+				`${ JPC_A4A_PATH }?site_connected=${ SITE_SLUG }`,
 				expect.any( String )
 			);
 		} );

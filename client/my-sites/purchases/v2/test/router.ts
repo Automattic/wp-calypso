@@ -5,6 +5,13 @@ import * as appRouterMe from 'calypso/dashboard/app/router/me';
 import { isJetpackCloud } from 'calypso/dashboard/utils/jetpack';
 import { getJetpackCloudExternalUrl } from '../router';
 
+jest.mock( '@automattic/calypso-config', () => {
+	const actual = jest.requireActual( '@automattic/calypso-config' );
+	const config = ( key: string ) => actual( key );
+	config.isEnabled = ( flag: string ) =>
+		flag === 'purchases/site-transfer' || actual.isEnabled( flag );
+	return config;
+} );
 jest.mock( 'calypso/dashboard/utils/jetpack', () => ( {
 	isJetpackCloud: jest.fn( () => false ),
 } ) );
@@ -28,6 +35,7 @@ describe( 'site-level purchases backport router', () => {
 			appRouterMe.siteActionsRoute,
 			'/purchases/subscriptions/$siteSlug/$purchaseId/site-actions/$action',
 		],
+		[ appRouterMe.movePurchaseRoute, '/purchases/subscriptions/$siteSlug/$purchaseId/move' ],
 		[ appRouterMe.receiptRoute, '/purchases/billing-history/$siteSlug/$receiptId' ],
 		[ appRouterMe.addPaymentMethodRoute, '/purchases/payment-methods/$siteSlug/add' ],
 	] )( 'serves %# at the site-level URL', ( route, expected ) => {

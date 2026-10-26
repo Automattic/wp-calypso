@@ -22,7 +22,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import CheckoutQueryClientProvider from '../checkout-query-client-provider';
 import { isJetpackNotAtomicSite, useCheckoutSite } from '../src/hooks/use-checkout-site';
 import useCountryList from '../src/hooks/use-country-list';
@@ -139,7 +139,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const cartKey = useCartKey();
 	const { responseCart, updateLocation, replaceProductsInCart, isPendingUpdate, applyCoupon } =
 		useShoppingCart( cartKey );
-	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const paymentMethodsState = useStoredPaymentMethods( {
 		type: 'card',
 	} );
@@ -167,8 +167,8 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			isJetpackNotAtomic,
 			reduxDispatch,
 			responseCart,
-			siteSlug: selectedSite?.slug ?? '',
-			siteId: selectedSite?.ID,
+			siteSlug: selectedSiteSlug ?? '',
+			siteId: selectedSiteId ?? undefined,
 			stripe,
 			stripeConfiguration,
 			contactDetails: {
@@ -183,7 +183,8 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			stripe,
 			stripeConfiguration,
 			reduxDispatch,
-			selectedSite,
+			selectedSiteSlug,
+			selectedSiteId,
 			responseCart,
 			isAkismetSitelessCheckout,
 			isJetpackNotAtomic,
@@ -227,7 +228,6 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		storedCard,
 		productToAdd,
 		countries,
-		selectedSite,
 		cartKey,
 		requestSent,
 		setRequestSent,
@@ -273,12 +273,12 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 
 function EnsureSelectedSite( { siteSlug, children }: PropsWithChildren< { siteSlug: SiteSlug } > ) {
 	const reduxDispatch = useDispatch();
-	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
 
 	// Set the selected site if it is not set already.
 	// This is necessary for the cart and post-purchase actions to function correctly.
-	const hasSelectedSiteId = siteId === selectedSite?.ID;
+	const hasSelectedSiteId = !! siteId && siteId === selectedSiteId;
 	useEffect( () => {
 		if ( ! hasSelectedSiteId && siteId ) {
 			reduxDispatch( setSelectedSiteId( siteId ) );

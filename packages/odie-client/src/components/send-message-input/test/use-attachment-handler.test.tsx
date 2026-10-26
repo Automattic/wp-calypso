@@ -185,3 +185,23 @@ describe( 'useAttachmentHandler – chat token', () => {
 		expect( mockUseAuthenticateZendeskMessaging ).toHaveBeenLastCalledWith( false, 'messenger' );
 	} );
 } );
+
+describe( 'useAttachmentHandler – messaging integration', () => {
+	it( "uploads files on the chat's messaging integration", async () => {
+		( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+			...( useOdieAssistantContext as jest.Mock )(),
+			zendeskIntegrationKey: 'woo',
+		} );
+		const { result } = renderHook( () => useAttachmentHandler() );
+		const file = new File( [ 'status' ], 'system-status.txt', { type: 'text/plain' } );
+
+		await act( async () => result.current.handleFileUpload( [ file ] ) );
+		await act( async () => result.current.sendAttachments() );
+
+		await waitFor( () => {
+			expect( mockAttachFileToConversation ).toHaveBeenCalledWith(
+				expect.objectContaining( { file, integrationKey: 'woo' } )
+			);
+		} );
+	} );
+} );

@@ -8,7 +8,8 @@ const PACKAGE_JSON_PATH = path.join( ROOT_DIR, 'package.json' );
 const DOCKERFILE_PATH = path.join( ROOT_DIR, 'Dockerfile' );
 
 const EXPECTED_WORKSPACES = [ 'client', 'desktop', 'apps/*', 'packages/*', 'test/e2e' ];
-const BLOCK_BEGIN = '# BEGIN: workspace package manifests (must stay in sync with package.json workspaces)';
+const BLOCK_BEGIN =
+	'# BEGIN: workspace package manifests (must stay in sync with package.json workspaces)';
 const BLOCK_END = '# END: workspace package manifests';
 const EXPECTED_COPY_LINES = [
 	'COPY --parents \\',

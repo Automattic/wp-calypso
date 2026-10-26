@@ -49,22 +49,24 @@ function queryReferrers( siteId: number, params: QueryReferrersParams ) {
  * Top referrers over a range's days, totalled rather than broken down by day.
  * @param siteId The site to query.
  * @param days   The range's first and last day.
+ * @param max    How many groups to ask for: the number the caller renders.
  */
 export default function useReferrersQuery(
 	siteId: number,
-	days: Pick< ResolvedDateRange, 'startDate' | 'endDate' >
+	days: Pick< ResolvedDateRange, 'startDate' | 'endDate' >,
+	max: number
 ) {
 	const { startDate, endDate } = days;
 	return useQuery( {
 		...getDefaultQueryParams< ReferresResponse >(),
-		queryKey: [ 'stats-widget', 'referrers', siteId, startDate, endDate ],
+		queryKey: [ 'stats-widget', 'referrers', siteId, startDate, endDate, max ],
 		queryFn: () =>
 			queryReferrers( siteId, {
 				period: 'day',
 				start_date: startDate,
 				date: endDate,
 				summarize: 1,
-				max: 0,
+				max,
 			} ),
 		select: ( data ) => {
 			return data?.summary?.groups.map( ( group: ReferrerGroup ) => {

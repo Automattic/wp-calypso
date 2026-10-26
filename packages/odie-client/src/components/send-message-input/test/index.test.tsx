@@ -61,13 +61,14 @@ function makeChat( overrides: Partial< Chat > = {} ): Chat {
 	} as Chat;
 }
 
-function mockChat( chat: Chat ) {
+function mockChat( chat: Chat, { isUserEligibleForPaidSupport = false } = {} ) {
 	jest.mocked( useOdieAssistantContext ).mockReturnValue( {
 		trackEvent: jest.fn(),
 		chat,
 		canConnectToZendesk: true,
 		forceEmailSupport: false,
 		isChatRestricted: false,
+		isUserEligibleForPaidSupport,
 	} as unknown as ReturnType< typeof useOdieAssistantContext > );
 }
 
@@ -138,5 +139,34 @@ describe( 'OdieSendMessageButton initial query', () => {
 
 		expect( sendMessage ).not.toHaveBeenCalled();
 		expect( screen.getByRole( 'textbox', { name: 'Chat input' } ) ).toHaveValue( '' );
+	} );
+} );
+
+describe( 'OdieSendMessageButton while a chat with a human starts', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		jest.mocked( useSendChatMessage ).mockReturnValue( { sendMessage, abort: jest.fn() } );
+	} );
+
+	it( 'holds the message while going straight to a human', () => {
+		mockChat( makeChat(), { isUserEligibleForPaidSupport: true } );
+		renderInput( route( { provider: 'zendesk', query: QUERY } ) );
+
+		expect( sendMessage ).not.toHaveBeenCalled();
+		expect( screen.getByRole( 'textbox', { name: 'Chat input' } ) ).toHaveValue( QUERY );
+	} );
+
+	it( 'holds the message while the chat is handed to a human', () => {
+		mockChat( makeChat( { status: 'transfer' } ) );
+		renderInput( route( { query: QUERY } ) );
+
+		expect( sendMessage ).not.toHaveBeenCalled();
+	} );
+
+	it( 'sends the message to the AI when the user can’t go straight to a human', () => {
+		mockChat( makeChat() );
+		renderInput( route( { provider: 'zendesk', query: QUERY } ) );
+
+		expect( sendMessage ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

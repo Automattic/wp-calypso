@@ -1,15 +1,14 @@
 import { Task } from '@automattic/launchpad';
 import { addQueryArgs } from '@wordpress/url';
-import { getSiteIdOrSlug } from '../../task-helper';
 import { TaskAction } from '../../types';
 
 export const getDesignSelectedTask: TaskAction = ( task, flow, context ): Task => {
-	const { site, siteSlug } = context;
+	const { siteSlug } = context;
 
 	return {
 		...task,
 		calypso_path: addQueryArgs( task.calypso_path, {
-			...getSiteIdOrSlug( flow, site, siteSlug ),
+			siteSlug,
 			flowToReturnTo: flow,
 		} ),
 		useCalypsoPath: true,
@@ -19,12 +18,12 @@ export const getDesignSelectedTask: TaskAction = ( task, flow, context ): Task =
 export const getDesignCompletedTask = getDesignSelectedTask;
 
 export const getDesignEditedTask: TaskAction = ( task, flow, context ) => {
-	const { site, siteSlug } = context;
+	const { siteSlug } = context;
 
 	return {
 		...task,
 		calypso_path: addQueryArgs( task.calypso_path, {
-			...getSiteIdOrSlug( flow, site, siteSlug ),
+			siteSlug,
 			canvas: 'edit',
 		} ),
 		useCalypsoPath: true,

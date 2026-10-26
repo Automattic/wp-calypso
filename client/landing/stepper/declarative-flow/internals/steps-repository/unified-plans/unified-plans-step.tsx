@@ -758,7 +758,7 @@ function UnifiedPlansStep( {
 									) : undefined
 								}
 								rightElement={
-									isOnboardingFlow( flowName ) ? (
+									stepCounter || isOnboardingFlow( flowName ) ? (
 										<>
 											{ stepCounter && (
 												<Step.StepCounter
@@ -766,9 +766,11 @@ function UnifiedPlansStep( {
 													total={ stepCounter.total }
 												/>
 											) }
-											<Step.LinkButton onClick={ toggleHelpCenter }>
-												{ translate( 'Need help?' ) }
-											</Step.LinkButton>
+											{ isOnboardingFlow( flowName ) && (
+												<Step.LinkButton onClick={ toggleHelpCenter }>
+													{ translate( 'Need help?' ) }
+												</Step.LinkButton>
+											) }
 										</>
 									) : undefined
 								}

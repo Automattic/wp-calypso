@@ -1,5 +1,5 @@
 import { getCheckpointIdForMessage } from '../hooks/use-checkpoint-action';
-import { isContextOnlyMessage } from './convert-tool-messages-to-components';
+import { isContextOnlyMessage } from './context-only-message';
 import { getLatestUserMessageIndex } from './latest-message';
 import type { UIMessage } from '@automattic/agenttic-client';
 

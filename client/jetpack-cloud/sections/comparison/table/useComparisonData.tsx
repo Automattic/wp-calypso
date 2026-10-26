@@ -30,10 +30,20 @@ const allChecked: ComparisonDataItem[ 'features' ][ number ][ 'info' ] = {
 	COMPLETE: { content: <CheckIcon /> },
 };
 
+// Pro has every Complete feature; only its limits are listed explicitly.
+const withProDefaultingToComplete = ( data: ComparisonDataItem[] ): ComparisonDataItem[] =>
+	data.map( ( section ) => ( {
+		...section,
+		features: section.features.map( ( feature ) => ( {
+			...feature,
+			info: { PRO: feature.info.COMPLETE, ...feature.info },
+		} ) ),
+	} ) );
+
 export const useComparisonData = () => {
 	const translate = useTranslate();
 
-	return useMemo< Array< ComparisonDataItem > >(
+	const data = useMemo< Array< ComparisonDataItem > >(
 		() => [
 			{
 				sectionId: 'security',
@@ -74,6 +84,20 @@ export const useComparisonData = () => {
 									</>
 								),
 							},
+							PRO: {
+								highlight: true,
+								content: (
+									<>
+										{ translate( 'Real-time backups' ) }
+										<br data-screen="desktop" />
+										<span data-screen="mobile"> - </span>
+										{ translate( '%(amount)s storage', {
+											args: { amount: '50GB' },
+											comment: '%s is a storage amount like 1TB or 10GB',
+										} ) }
+									</>
+								),
+							},
 						},
 					},
 					{
@@ -106,6 +130,10 @@ export const useComparisonData = () => {
 								highlight: true,
 								content: translate( '60K API calls/mo' ),
 							},
+							PRO: {
+								highlight: true,
+								content: translate( '10K API calls/mo' ),
+							},
 						},
 					},
 					{
@@ -126,6 +154,10 @@ export const useComparisonData = () => {
 							COMPLETE: {
 								highlight: true,
 								content: translate( '1-year archive' ),
+							},
+							PRO: {
+								highlight: true,
+								content: translate( '30-day archive' ),
 							},
 						},
 					},
@@ -169,6 +201,10 @@ export const useComparisonData = () => {
 							COMPLETE: {
 								highlight: true,
 								content: translate( 'Up to 100k records' ),
+							},
+							PRO: {
+								highlight: true,
+								content: translate( 'Up to 10k records' ),
 							},
 						},
 					},
@@ -280,6 +316,18 @@ export const useComparisonData = () => {
 										{ /* Space between description and parenthesis on mobile */ }
 										<span data-screen="mobile"> </span>
 										{ translate( '(100k page views)' ) }
+									</>
+								),
+							},
+							PRO: {
+								highlight: true,
+								content: (
+									<>
+										{ translate( 'Advanced stats' ) }
+										<br data-screen="desktop" />
+										{ /* Space between description and parenthesis on mobile */ }
+										<span data-screen="mobile"> </span>
+										{ translate( '(50k page views)' ) }
 									</>
 								),
 							},
@@ -469,4 +517,6 @@ export const useComparisonData = () => {
 		],
 		[ translate ]
 	);
+
+	return useMemo( () => withProDefaultingToComplete( data ), [ data ] );
 };

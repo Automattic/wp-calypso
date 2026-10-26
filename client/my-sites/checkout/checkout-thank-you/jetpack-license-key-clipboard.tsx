@@ -4,8 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import useUserLicenseByReceiptQuery from 'calypso/data/jetpack-licensing/use-user-license-by-receipt-query';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 export interface JetpackLicenseKeyProps {
 	productSlug: string | 'no_product';
@@ -17,7 +16,6 @@ const JetpackLicenseKeyClipboard: React.FC< JetpackLicenseKeyProps > = ( {
 	receiptId,
 } ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const [ copied, setCopied ] = useState( false );
 
@@ -34,13 +32,11 @@ const JetpackLicenseKeyClipboard: React.FC< JetpackLicenseKeyProps > = ( {
 
 	const onCopy = useCallback( () => {
 		setCopied( true );
-		dispatch(
-			recordTracksEvent( 'calypso_siteless_checkout_manual_activation_license_key_copy', {
-				product_slug: productSlug,
-				license_key: licenseKey,
-			} )
-		);
-	}, [ dispatch, licenseKey, productSlug ] );
+		recordTracksEvent( 'calypso_siteless_checkout_manual_activation_license_key_copy', {
+			product_slug: productSlug,
+			license_key: licenseKey,
+		} );
+	}, [ licenseKey, productSlug ] );
 
 	useEffect( () => {
 		if ( copied ) {

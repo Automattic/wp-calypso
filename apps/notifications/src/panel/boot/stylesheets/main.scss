@@ -460,7 +460,8 @@ $with-sidebar-min-page-width: 1114px;
 				font-weight: 600;
 			}
 
-			.wpnc__subject .wpnc__site {
+			.wpnc__subject .wpnc__site,
+			.wpnc__subject .wpnc__a {
 				font-weight: 600;
 			}
 
@@ -818,6 +819,10 @@ $with-sidebar-min-page-width: 1114px;
 			color: var(--color-text-subtle);
 			background: transparent;
 		}
+	}
+
+	.wpnc__note-body--needs-top-spacing .wpnc__body {
+		padding-top: $wpnc__padding-large;
 	}
 
 	.wpnc__single-view .wpnc__comment .wpnc__body .wpnc__user {

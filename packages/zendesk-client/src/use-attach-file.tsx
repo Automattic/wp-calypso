@@ -1,13 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
-import {
-	SMOOCH_APP_ID,
-	SMOOCH_APP_ID_STAGING,
-	SMOOCH_INTEGRATION_ID,
-	SMOOCH_INTEGRATION_ID_STAGING,
-	WIDGET_URL,
-	WIDGET_URL_STAGING,
-} from './constants';
-import { isTestModeEnvironment } from './util';
+import { SMOOCH_APP_ID, SMOOCH_APP_ID_STAGING, WIDGET_URL, WIDGET_URL_STAGING } from './constants';
+import { getSmoochIntegrationId, isTestModeEnvironment } from './util';
+import type { SmoochIntegrationKey } from './types';
 
 export const useAttachFileToConversation = () => {
 	return useMutation( {
@@ -16,14 +10,17 @@ export const useAttachFileToConversation = () => {
 			clientId,
 			conversationId,
 			file,
+			integrationKey,
 		}: {
 			authData: { isLoggedIn: boolean; jwt: string; externalId: string | undefined };
 			clientId: string;
 			conversationId: string;
 			file: File;
+			/** The integration Smooch was initialized with. Defaults to the WordPress.com one. */
+			integrationKey?: SmoochIntegrationKey | null;
 		} ) => {
 			const isTestMode = isTestModeEnvironment();
-			const integrationId = isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID;
+			const integrationId = getSmoochIntegrationId( integrationKey );
 			const url = isTestMode ? WIDGET_URL_STAGING : WIDGET_URL;
 			const appId = isTestMode ? SMOOCH_APP_ID_STAGING : SMOOCH_APP_ID;
 

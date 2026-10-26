@@ -112,6 +112,7 @@ export class LoginForm extends Component {
 		isJetpack: PropTypes.bool,
 		isUserAccountEmailUpdateRedirect: PropTypes.bool,
 		loginButtonText: PropTypes.string,
+		lostPasswordLink: PropTypes.node,
 		isGravatarFixedAccountLogin: PropTypes.bool.isRequired,
 		isGravPoweredClient: PropTypes.bool,
 	};
@@ -454,7 +455,7 @@ export class LoginForm extends Component {
 			return translate( 'Continue' );
 		}
 
-		return translate( 'Log In' );
+		return translate( 'Log in' );
 	};
 
 	showJetpackConnectSiteOnly = () => {
@@ -706,6 +707,7 @@ export class LoginForm extends Component {
 			isGravatarFixedAccountLogin,
 			isSocialFirst,
 			isUserAccountEmailUpdateRedirect,
+			lostPasswordLink,
 		} = this.props;
 
 		const isLastUsedPassword =
@@ -890,9 +892,20 @@ export class LoginForm extends Component {
 						} ) }
 						aria-hidden={ isPasswordHidden }
 					>
-						<FormLabel htmlFor="password" hasCoreStylesNoCaps>
-							{ this.props.translate( 'Password' ) }
-						</FormLabel>
+						{ /* Only while the password is shown: `is-hidden` keeps the block in the DOM,
+						   and a link there would still take focus. */ }
+						{ lostPasswordLink && ! isPasswordHidden ? (
+							<div className="login__form-password-label-row">
+								<FormLabel htmlFor="password" hasCoreStylesNoCaps>
+									{ this.props.translate( 'Password' ) }
+								</FormLabel>
+								{ lostPasswordLink }
+							</div>
+						) : (
+							<FormLabel htmlFor="password" hasCoreStylesNoCaps>
+								{ this.props.translate( 'Password' ) }
+							</FormLabel>
+						) }
 
 						<FormPasswordInput
 							autoCapitalize="off"

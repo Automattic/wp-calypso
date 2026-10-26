@@ -4,6 +4,7 @@ import { __experimentalHStack as HStack, ToggleControl } from '@wordpress/compon
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
+import { ApprovalGate } from '../approval-gate';
 import {
 	HOSTING_REFERRAL_COMMISSION_PERCENTAGE,
 	PRODUCTS_REFERRAL_COMMISSION_PERCENTAGE,
@@ -11,17 +12,18 @@ import {
 import { useReferralToggle } from './use-referral-toggle';
 
 export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting' } ) {
-	const { checked, disabled, onChange } = useReferralToggle();
+	const { checked, disabled, onChange, isGateOpen, closeGate } = useReferralToggle();
 
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { data: referrals } = useQuery( referralsQuery( agency?.id ?? 0 ) );
 	const isMobile = useViewportMatch( 'mobile', '<' );
-	// Shown until the agency's first referral, in both modes, so the header doesn't shift on toggle.
+	// Kept in the tree in both modes, hidden in buy mode, so the header doesn't shift on toggle.
 	// Phones have no room for it beside the switch.
 	const showEarnings = ! isMobile && referrals?.length === 0;
 
 	return (
 		<HStack spacing={ 2 } expanded={ false } alignment="center">
+			{ isGateOpen && <ApprovalGate kind="referral" onClose={ closeGate } /> }
 			<ToggleControl
 				__nextHasNoMarginBottom
 				checked={ checked }
@@ -30,7 +32,11 @@ export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting'
 				onChange={ onChange }
 			/>
 			{ showEarnings && (
-				<Badge intent="informational">
+				<Badge
+					intent="informational"
+					aria-hidden={ checked ? undefined : true }
+					style={ { visibility: checked ? 'visible' : 'hidden' } }
+				>
 					{ kind === 'hosting'
 						? sprintf(
 								/* translators: %d is the commission percentage. */

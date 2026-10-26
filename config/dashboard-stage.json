@@ -5,13 +5,8 @@
 	"client_slug": "browser",
 	"survicate_enabled": true,
 	"hostname": "my.wordpress.com",
-	"hostname_allowlist": [ "my.wordpress.com", "my.woo.ai", "agencies-beta.automattic.com" ],
+	"hostname_allowlist": [ "my.wordpress.com", "agencies-beta.automattic.com" ],
 	"hostname_overrides": {
-		"my.woo.ai": {
-			"oauth_client_id": 134405,
-			"wpcom_login_url": false,
-			"features": { "oauth": true, "wpcom-user-bootstrap": false }
-		},
 		"agencies-beta.automattic.com": {
 			"favicon_url": "/calypso/images/favicons/favicon-a4a-stage.ico",
 			"favicon_brand": "a4a",
@@ -39,7 +34,6 @@
 		"calypso/ai-site-builder-flow": true,
 		"catch-js-errors": true,
 		"ciab/allow-domain-features": true,
-		"ciab/custom-branding": true,
 		"cookie-banner": false,
 		"dark-mode": true,
 		"dashboard/account-recovery-interstitial": false,
@@ -65,6 +59,7 @@
 		"plans/upgradeable-storage": true,
 		"posthog-tracking": true,
 		"purchases/split-cancel-remove": false,
+		"purchases/site-transfer": false,
 		"resurrected-users/90-day-eligibility": true,
 		"rum-tracking/logstash": true,
 		"site-spec": true,

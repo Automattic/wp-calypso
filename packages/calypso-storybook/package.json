@@ -20,7 +20,7 @@
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"devDependencies": {
-		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-docs": "^10.6.2",
 		"@storybook/addon-themes": "^10.6.2",
@@ -32,10 +32,8 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",
-		"css-loader": "^6.11.0",
-		"sass-loader": "^16.0.5",
-		"style-loader": "^1.3.0",
-		"webpack": "^5.99.8"
+		"sass-loader": "^16.0.8",
+		"webpack": "^5.111.1"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1 || ^19.0.0",

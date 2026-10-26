@@ -15,9 +15,6 @@ import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
-import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
-import { isCommerceGarden } from 'calypso/dashboard/utils/site-types';
 import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -31,7 +28,6 @@ import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import { isJetpackNotAtomicSite, useCheckoutSite } from '../hooks/use-checkout-site';
-import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
@@ -60,6 +56,7 @@ import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
 import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
+import stripeWalletProcessor from '../lib/stripe-wallet-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import upiProcessor from '../lib/upi-processor';
 import { useValueStore } from '../lib/value-store';
@@ -106,6 +103,8 @@ export interface CheckoutMainProps {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
+	/** Reports whether the form is SUBMITTING, including payment preparation and transaction processing. */
+	onFormSubmittingChange?: ( isFormSubmitting: boolean ) => void;
 	connectAfterCheckout?: boolean;
 	/**
 	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
@@ -142,6 +141,7 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
+	onFormSubmittingChange,
 	connectAfterCheckout,
 	fromSiteSlug,
 	adminUrl,
@@ -150,9 +150,7 @@ export default function CheckoutMain( {
 	const translate = useTranslate();
 
 	const { data: site, isLoading: isSiteLoading } = useCheckoutSite( siteId );
-	const isJetpackNotAtomic =
-		( isJetpackNotAtomicSite( site ) && ! ( site && isCommerceGarden( site ) ) ) ||
-		sitelessCheckoutType === 'jetpack';
+	const isJetpackNotAtomic = isJetpackNotAtomicSite( site ) || sitelessCheckoutType === 'jetpack';
 	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
 	const cartKey = useCartKey();
 
@@ -594,6 +592,8 @@ export default function CheckoutMain( {
 				),
 			'stripe-blik': ( transactionData: unknown ) =>
 				blikProcessor( transactionData, dataForProcessor, translate ),
+			'stripe-wallet': ( transactionData: unknown ) =>
+				stripeWalletProcessor( transactionData, dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>
@@ -657,7 +657,6 @@ export default function CheckoutMain( {
 		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
 	};
 
-	const [ isCheckoutUiRedesignLoading ] = useCheckoutUiRedesignExperiment();
 	const { isLoading: isMobileCheckoutStickySummaryLoading } =
 		useMobileCheckoutStickySummaryExperiment();
 
@@ -687,7 +686,7 @@ export default function CheckoutMain( {
 		{ name: translate( 'Loading Site' ), isLoading: isSiteLoading },
 		{
 			name: translate( 'Loading checkout' ),
-			isLoading: isCheckoutUiRedesignLoading || isMobileCheckoutStickySummaryLoading,
+			isLoading: isMobileCheckoutStickySummaryLoading,
 		},
 	];
 
@@ -853,15 +852,14 @@ export default function CheckoutMain( {
 		paymentMethods
 	);
 
-	const dashboard = getDashboardFromHostname( window?.location?.hostname );
 	const stepContainerV2Context = useMemo(
 		() => ( {
 			flowName: '',
 			stepName: '',
 			recordTracksEvent: () => {},
-			logo: getDashboardStepperLogo( dashboard ),
+			logo: null,
 		} ),
-		[ dashboard ]
+		[]
 	);
 
 	return (
@@ -895,6 +893,7 @@ export default function CheckoutMain( {
 							<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
 						}
 						onStepChanged={ handleStepChanged }
+						onFormSubmittingChange={ onFormSubmittingChange }
 						customizedPreviousPath={ customizedPreviousPath }
 						isRemovingProductFromCart={ isRemovingProductFromCart }
 						areThereErrors={ areThereErrors }

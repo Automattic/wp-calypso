@@ -54,7 +54,11 @@ describe( 'StaticSiteImportResults', () => {
 		expect( button ).toBeDisabled();
 		await waitFor( () => expect( button ).toBeEnabled() );
 		expect( screen.getByRole( 'heading', { name: 'We can move your site' } ) ).toBeVisible();
-		expect( screen.getByText( 'High confidence. Everything can come with you.' ) ).toBeVisible();
+		expect(
+			screen.getByText( 'High confidence. Everything can come with you.', {
+				selector: '.components-notice__content > span',
+			} )
+		).toBeVisible();
 		expect( screen.getByText( '12 pages' ) ).toBeVisible();
 
 		await userEvent.click( button );
@@ -74,7 +78,9 @@ describe( 'StaticSiteImportResults', () => {
 			await screen.findByRole( 'heading', { name: 'We can move almost all of your site' } )
 		).toBeVisible();
 		expect(
-			screen.getByText( 'Good confidence. 1 thing to set up after the move.' )
+			screen.getByText( 'Good confidence. 1 thing to set up after the move.', {
+				selector: '.components-notice__content > span',
+			} )
 		).toBeVisible();
 		expect( screen.getByText( 'Your contact form' ) ).toBeVisible();
 	} );
@@ -98,6 +104,34 @@ describe( 'StaticSiteImportResults', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Continue without these items' } ) );
 		expect( submit ).toHaveBeenCalledWith( { action: 'continue' } );
+	} );
+
+	it( 'asks for an expert as a non-WordPress migration', async () => {
+		mockSession( {
+			pages: 12,
+			quality_pass: true,
+			inspection: { measured: true, confidence: 'bounded-sample', capabilities: { commerce: 2 } },
+		} );
+		let ticket: Record< string, unknown > = {};
+		const ticketRequest = mockApi()
+			.post( '/wpcom/v2/help/migration-ticket/new', ( body ) => {
+				ticket = body;
+				return true;
+			} )
+			.reply( 200, { success: true } );
+
+		const submit = render();
+
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'Talk to a migration expert' } )
+		);
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'expert' } ) );
+		expect( ticketRequest.isDone() ).toBe( true );
+		expect( ticket ).toMatchObject( {
+			from_url: 'https://busybearscleaning.com',
+			context: 'site_is_not_wordpress',
+		} );
 	} );
 
 	it( 'offers to read the site again when the session is gone', async () => {

@@ -27,4 +27,4 @@ yarn dev --sync
 
 `package.json` is linted using ESLint. Run `yarn eslint apps/*/package.json` to validate them.
 
-If you need exceptions to linting rules, add a `./eslintrc.js` file to your app and disable the relevant rules.
+If you need exceptions to linting rules, add an `eslint.config.mjs` to your app that builds on `@automattic/calypso-eslint-config`, and add that package to its `devDependencies`. See the [package's README](../packages/calypso-eslint-config/README.md) for an example.

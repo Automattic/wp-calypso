@@ -1,4 +1,3 @@
-import '@automattic/calypso-polyfills';
 import { setLocaleData } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import { setLocale } from 'i18n-calypso';

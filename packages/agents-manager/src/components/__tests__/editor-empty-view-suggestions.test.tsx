@@ -7,7 +7,10 @@ import EditorEmptyViewSuggestions from '../editor-empty-view-suggestions';
 import type { Suggestion } from '@automattic/agenttic-ui';
 import type { ReactNode } from 'react';
 
+const MESSAGE_ID = 'site-ready';
+const SITE_READY_MESSAGE = { id: MESSAGE_ID, role: 'agent', content: [] };
 const mockHandleSuggestionSubmit = jest.fn();
+let mockMessages: unknown[] = [];
 let mockListContext: { variant?: string; reportSuggestionsRendered?: unknown } = {};
 
 jest.mock(
@@ -16,6 +19,10 @@ jest.mock(
 		const React = jest.requireActual< typeof import( 'react' ) >( 'react' );
 		const Context = React.createContext( {
 			variant: 'floating',
+			// A getter, as the factory runs before `mockMessages` is set.
+			get messages() {
+				return mockMessages;
+			},
 			handleSuggestionSubmit: ( ...args: unknown[] ) => mockHandleSuggestionSubmit( ...args ),
 			reportSuggestionsRendered: () => {},
 		} );
@@ -52,8 +59,12 @@ jest.mock(
 );
 
 describe( 'EditorEmptyViewSuggestions', () => {
+	beforeEach( () => {
+		mockMessages = [ SITE_READY_MESSAGE ];
+	} );
+
 	it( 'lists every editor empty-view suggestion vertically, even in the floating chat', () => {
-		render( <EditorEmptyViewSuggestions /> );
+		render( <EditorEmptyViewSuggestions messageId={ MESSAGE_ID } /> );
 
 		const list = screen.getByRole( 'list', { name: 'vertical suggestions' } );
 
@@ -66,17 +77,39 @@ describe( 'EditorEmptyViewSuggestions', () => {
 	} );
 
 	it( 'keeps the list out of the rendered suggestions tracking', () => {
-		render( <EditorEmptyViewSuggestions /> );
+		render( <EditorEmptyViewSuggestions messageId={ MESSAGE_ID } /> );
 
 		expect( mockListContext.reportSuggestionsRendered ).toBeUndefined();
 	} );
 
 	it( 'sends a clicked suggestion through Agenttic', () => {
 		const suggestions = getEditorEmptyViewSuggestions();
-		render( <EditorEmptyViewSuggestions /> );
+		render( <EditorEmptyViewSuggestions messageId={ MESSAGE_ID } /> );
 
 		fireEvent.click( screen.getByRole( 'button', { name: suggestions[ 0 ].label } ) );
 
 		expect( mockHandleSuggestionSubmit ).toHaveBeenCalledWith( suggestions[ 0 ], suggestions );
+	} );
+
+	it( 'goes away once the user replies', () => {
+		mockMessages = [
+			SITE_READY_MESSAGE,
+			{ id: 'reply', role: 'user', content: [ { type: 'text', text: 'Add a page' } ] },
+		];
+
+		render( <EditorEmptyViewSuggestions messageId={ MESSAGE_ID } /> );
+
+		expect( screen.queryByRole( 'list' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'stays when only a hidden context message follows', () => {
+		mockMessages = [
+			SITE_READY_MESSAGE,
+			{ id: 'continuation', role: 'user', content: [ { type: 'context', text: 'Navigated' } ] },
+		];
+
+		render( <EditorEmptyViewSuggestions messageId={ MESSAGE_ID } /> );
+
+		expect( screen.getByRole( 'list' ) ).toBeInTheDocument();
 	} );
 } );

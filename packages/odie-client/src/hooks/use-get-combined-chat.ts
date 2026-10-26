@@ -311,11 +311,7 @@ export const useGetCombinedChat = (
 								messages: [
 									...( odieChat ? filteredOdieMessages : [] ),
 									// Without an Odie chat, the user went straight to a human.
-									...getOdieTransferMessages(
-										currentSupportInteraction?.bot_slug,
-										hasEnTranslation,
-										! odieId
-									),
+									...getOdieTransferMessages( hasEnTranslation, ! odieId ),
 									getZendeskChatStartedMetaMessage(),
 									...( deduplicateZDMessages( [
 										...( cachedHistory ?? [] ),

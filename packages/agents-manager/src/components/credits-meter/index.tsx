@@ -1,6 +1,7 @@
-import { StatusIndicator } from '@automattic/agenttic-ui';
 import { Button, Dropdown } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { caution, info } from '@wordpress/icons';
+import clsx from 'clsx';
 import {
 	type CreditsPool,
 	type CreditsStatus,
@@ -8,10 +9,11 @@ import {
 	formatCreditsDetail,
 	formatCreditsLeft,
 	formatPercent,
-	getCreditsLabel,
-	getCreditsTone,
+	getCreditsToggleLabel,
+	isCreditsAlert,
 	isCreditsExhausted,
 } from '../../utils/credits';
+import type { CreditsPurchaseAction } from '../../utils/credits-access';
 import './style.scss';
 
 interface Props {
@@ -20,11 +22,9 @@ interface Props {
 	onToggle: ( willOpen: boolean ) => void;
 	/** Mock CTA: Upgrade on free plans, Add credits on paid ones. */
 	onAction?: () => void;
-	/** Plans page for a live balance with a supported upgradeable tier. */
-	upgradeUrl?: string;
-	/** Runs when that link is clicked, for example to record the click. */
-	onUpgradeClick?: () => void;
-	/** Shown instead of a CTA to people who can't upgrade the site themselves. */
+	/** The live balance's Upgrade or Add credits link. */
+	action?: CreditsPurchaseAction;
+	/** Shown instead of a CTA to people who can't buy for the site themselves. */
 	purchaseHint?: string;
 	/** Full balance and purchases page, when available. */
 	manageUrl?: string;
@@ -82,11 +82,9 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
 					<span className="agents-manager-credits-meter__pool-date">{ pool.dateLabel }</span>
 				) }
 				<span
-					className={
-						isExhausted
-							? 'agents-manager-credits-meter__pool-percent is-exhausted'
-							: 'agents-manager-credits-meter__pool-percent'
-					}
+					className={ clsx( 'agents-manager-credits-meter__pool-percent', {
+						'is-exhausted': isExhausted,
+					} ) }
 				>
 					{ isExhausted
 						? sprintf(
@@ -115,10 +113,11 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
 }
 
 /**
- * The composer's credits indicator: a dot in the trailing slot, red when the
- * balance is low or used up, a tooltip on hover or focus, and a popover on
- * click listing each credit pool with a single CTA. The tooltip gives a paid
- * site's credits left as an amount and a free plan's as a percentage. Each
+ * The composer's credits indicator: an info icon in the trailing slot that
+ * becomes an alert icon on a red tint when the balance is low or used up, a
+ * tooltip on hover or focus, and a popover on click listing each credit pool
+ * with a single CTA. The tooltip gives a paid site's credits left as an amount
+ * and a free plan's as a percentage, led by the state when low or out. Each
  * pool row leads with its percentage, except top-ups, which have no allowance
  * and show their balance alone.
  */
@@ -127,13 +126,12 @@ export default function CreditsMeter( {
 	isOpen,
 	onToggle,
 	onAction,
-	upgradeUrl,
-	onUpgradeClick,
+	action,
 	purchaseHint,
 	manageUrl,
 }: Props ) {
-	const label = getCreditsLabel( status );
-	const tone = getCreditsTone( status );
+	const label = getCreditsToggleLabel( status );
+	const isAlert = isCreditsAlert( status );
 	const isExhausted = isCreditsExhausted( status );
 	const isFree = status.plan === 'free';
 
@@ -154,9 +152,9 @@ export default function CreditsMeter( {
 			} }
 			renderToggle={ ( { onToggle: toggle } ) => (
 				<Button
-					className="agents-manager-credits-meter__toggle"
-					icon={ <StatusIndicator tone={ tone } /> }
-					iconSize={ 12 }
+					className={ clsx( 'agents-manager-credits-meter__toggle', { 'is-alert': isAlert } ) }
+					icon={ isAlert ? caution : info }
+					iconSize={ 24 }
 					label={ label }
 					showTooltip={ ! isOpen }
 					aria-expanded={ isOpen }
@@ -195,17 +193,27 @@ export default function CreditsMeter( {
 					{ purchaseHint && (
 						<p className="agents-manager-credits-meter__message">{ purchaseHint }</p>
 					) }
-					{ ( upgradeUrl || onAction ) && (
+					{ action && (
 						<Button
 							className="agents-manager-credits-meter__cta"
-							variant={ upgradeUrl || isFree ? 'primary' : 'secondary' }
-							onClick={ upgradeUrl ? onUpgradeClick : onAction }
-							href={ upgradeUrl }
-							target={ upgradeUrl ? '_blank' : undefined }
-							rel={ upgradeUrl ? 'noopener noreferrer' : undefined }
+							variant="primary"
+							onClick={ action.onClick }
+							href={ action.href }
+							target={ action.target }
+							rel={ action.rel }
 							__next40pxDefaultSize
 						>
-							{ upgradeUrl || isFree
+							{ action.label }
+						</Button>
+					) }
+					{ ! action && onAction && (
+						<Button
+							className="agents-manager-credits-meter__cta"
+							variant={ isFree ? 'primary' : 'secondary' }
+							onClick={ onAction }
+							__next40pxDefaultSize
+						>
+							{ isFree
 								? __( 'Upgrade', __i18n_text_domain__ )
 								: __( 'Add credits', __i18n_text_domain__ ) }
 						</Button>

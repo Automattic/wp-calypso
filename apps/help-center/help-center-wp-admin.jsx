@@ -134,7 +134,6 @@ function AdminHelpCenterContent() {
 			hasPurchases={ false }
 			onboardingUrl="https://wordpress.com/start"
 			handleClose={ closeCallback }
-			product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
 			{ ...customProps }
 		/>
 	);

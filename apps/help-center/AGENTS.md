@@ -4,18 +4,18 @@ Build and deployment layer for the Help Center on Simple and Atomic sites. Most 
 
 ## Overview
 
-This app takes `@automattic/help-center` and bundles it into 6 separate webpack entry points deployed to `widgets.wp.com/help-center/`. Jetpack enqueues these bundles on various types of websites and pages (editor, wp-admin, logged out pages (/support and /forums), CIAB)
+This app takes `@automattic/help-center` and bundles it into 6 separate webpack entry points deployed to `widgets.wp.com/help-center/`. Jetpack enqueues these bundles on various types of websites and pages (editor, wp-admin, logged out pages (/support and /forums))
 
 ## Entry Points
 
-| Entry point                              | Context                                      |
-| ---------------------------------------- | -------------------------------------------- |
-| `help-center-gutenberg.js`               | Gutenberg editor (connected)                 |
-| `help-center-gutenberg-disconnected.js`  | Gutenberg editor (disconnected from Jetpack) |
-| `help-center-wp-admin.js`                | wp-admin bar (connected)                     |
-| `help-center-wp-admin-disconnected.js`   | wp-admin bar (disconnected from Jetpack)     |
-| `help-center-customizer.js`              | Customizer                                   |
-| `help-center-logged-out.js`              | Logged-out view                              |
+| Entry point                             | Context                                      |
+| --------------------------------------- | -------------------------------------------- |
+| `help-center-gutenberg.js`              | Gutenberg editor (connected)                 |
+| `help-center-gutenberg-disconnected.js` | Gutenberg editor (disconnected from Jetpack) |
+| `help-center-wp-admin.js`               | wp-admin bar (connected)                     |
+| `help-center-wp-admin-disconnected.js`  | wp-admin bar (disconnected from Jetpack)     |
+| `help-center-customizer.js`             | Customizer                                   |
+| `help-center-logged-out.js`             | Logged-out view                              |
 
 Each entry point is a standalone JS file in the app root (e.g., `help-center-gutenberg.js`) that imports from `@automattic/help-center` and wires up the environment-specific bootstrap logic.
 
@@ -37,7 +37,7 @@ Both commands use `calypso-apps-builder` to compile webpack bundles and sync the
 
 1. Sandbox `widgets.wp.com` (the sites themselves do not need sandboxing).
 2. Run `yarn dev --sync` from `apps/help-center/`.
-3. Visit any Simple, Atomic, or CIAB site.
+3. Visit any Simple or Atomic site.
 4. Open the Help Center and verify your changes.
 
 ## Deployment
@@ -57,7 +57,7 @@ For PRs that **only** touch `apps/help-center/` (build config, entry point wirin
 
 1. Sandbox `widgets.wp.com` (the sites themselves do not need sandboxing).
 2. Run `cd apps/help-center && yarn dev --sync`.
-3. Visit any Simple, Atomic, or CIAB site.
+3. Visit any Simple or Atomic site.
 4. Open the Help Center and verify it loads and functions correctly.
 ```
 

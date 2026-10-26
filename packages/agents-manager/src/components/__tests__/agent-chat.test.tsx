@@ -12,6 +12,7 @@ const mockSetFloatingPosition = jest.fn();
 const mockContainerProps = jest.fn();
 const mockContainerCallbacks = jest.fn();
 const mockContainerSuggestionClick = jest.fn();
+const mockContainerErrors = jest.fn();
 const mockSuggestionsProps = jest.fn();
 const mockInputProps = jest.fn();
 const mockImageUploaderProps = jest.fn();
@@ -31,11 +32,15 @@ jest.mock(
 			onSuggestionClick,
 			onSuggestionsRendered,
 			onTypingStatusChange,
+			error,
+			errorNotice,
 		}: {
 			children: ReactNode;
 			emptyView: ReactNode;
 			floatingChatState?: string;
 			triggerTitle?: string;
+			error?: string | null;
+			errorNotice?: unknown;
 			suggestions?: Suggestion[];
 			onSuggestionClick?: (
 				selectedSuggestion: Suggestion,
@@ -45,6 +50,7 @@ jest.mock(
 			onTypingStatusChange?: ( isTyping: boolean ) => void;
 		} ) {
 			mockContainerProps( { floatingChatState, triggerTitle } );
+			mockContainerErrors( { error, errorNotice } );
 			mockContainerCallbacks( { onSuggestionsRendered, onTypingStatusChange } );
 			mockContainerSuggestionClick.mockImplementation( onSuggestionClick ?? ( () => {} ) );
 			return (
@@ -478,6 +484,22 @@ describe( 'AgentChat', () => {
 		expect( onSuggestionClick ).toHaveBeenCalledWith( { ...suggestion, prompt: option.value }, [
 			suggestion,
 		] );
+	} );
+
+	it( 'renders pinned content above the messages', () => {
+		renderAgentChat( { pinnedContent: <div data-testid="pinned" /> } );
+
+		expect( screen.getByTestId( 'pinned' ) ).toBeInTheDocument();
+	} );
+
+	it( 'passes the error notice to the chat with the error', () => {
+		const errorNotice = { message: 'You’ve used all your site credits.' };
+		renderAgentChat( { error: 'Failed to upload images. Please try again.', errorNotice } );
+
+		expect( mockContainerErrors ).toHaveBeenLastCalledWith( {
+			error: 'Failed to upload images. Please try again.',
+			errorNotice,
+		} );
 	} );
 
 	it( 'expands when open', () => {

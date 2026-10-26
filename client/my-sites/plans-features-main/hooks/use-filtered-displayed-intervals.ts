@@ -7,13 +7,20 @@ import {
 	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
+import { getSitePlanTermMonths, isScheduledTermChangeEnabled } from '../scheduled-term-change';
 import { useFCCARestrictions } from './use-fcca-restrictions';
+import type { SitePlanData } from 'calypso/state/sites/plans/types';
 
 interface Props {
 	flowName?: string | null;
 	displayedIntervals: UrlFriendlyTermType[];
 	paidDomainName?: string;
 	productSlug?: string;
+	/**
+	 * The site's plans. A shorter term than the current plan's stays visible
+	 * when one of its plans can be scheduled for the current plan's renewal.
+	 */
+	sitePlans?: SitePlanData[] | null;
 }
 
 const useFilteredDisplayedIntervals = ( {
@@ -21,6 +28,7 @@ const useFilteredDisplayedIntervals = ( {
 	displayedIntervals,
 	paidDomainName,
 	productSlug,
+	sitePlans,
 }: Props ) => {
 	const { shouldRestrict3YearPlans } = useFCCARestrictions();
 	const is3yearlyRestricted = shouldRestrict3YearPlans();
@@ -34,12 +42,23 @@ const useFilteredDisplayedIntervals = ( {
 				getPlan( productSlug )?.term || ''
 			);
 
+			const scheduledChangeTermMonths = new Set(
+				isScheduledTermChangeEnabled()
+					? sitePlans
+							?.filter( ( sitePlan ) => sitePlan.isDelayedDowngradeAvailable )
+							.map( getSitePlanTermMonths )
+					: []
+			);
+
 			filteredIntervals = displayedIntervals.filter( ( intervalType ) => {
 				const intervalInMonths = getBillingMonthsForTerm(
 					URL_FRIENDLY_TERMS_MAPPING[ intervalType ] || ''
 				);
 
-				return intervalInMonths >= currentPlanIntervalInMonths;
+				return (
+					intervalInMonths >= currentPlanIntervalInMonths ||
+					scheduledChangeTermMonths.has( intervalInMonths )
+				);
 			} );
 		}
 
@@ -57,7 +76,14 @@ const useFilteredDisplayedIntervals = ( {
 		}
 
 		return filteredIntervals;
-	}, [ productSlug, displayedIntervals, flowName, paidDomainName, is3yearlyRestricted ] );
+	}, [
+		productSlug,
+		displayedIntervals,
+		flowName,
+		paidDomainName,
+		is3yearlyRestricted,
+		sitePlans,
+	] );
 };
 
 export default useFilteredDisplayedIntervals;

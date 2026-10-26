@@ -8,6 +8,7 @@ import {
 	TERM_MONTHLY,
 	isSupersedingJetpackItem,
 	JETPACK_COMPLETE_PLANS,
+	JETPACK_PRO_PLANS,
 	JETPACK_SECURITY_PLANS,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
@@ -34,9 +35,11 @@ import {
 	INDIRECT_CHECKOUT_PRODUCTS_LIST,
 	ITEM_TYPE_PLAN,
 } from '../../constants';
+import { getYearlySlugFromMonthly } from '../../convert-slug-terms';
 import { buildCheckoutURL } from '../../get-purchase-url-callback';
 import productButtonLabel from '../../product-card/product-button-label';
-import { SelectorProduct } from '../../types';
+import { Duration, SelectorProduct } from '../../types';
+import useIsOnSale from '../../use-is-on-sale';
 import { UseStoreItemInfoProps } from '../types';
 import { useShoppingCartTracker } from './use-shopping-cart-tracker';
 const getIsDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
@@ -60,6 +63,17 @@ const getIsMultisiteCompatible = ( item: SelectorProduct ) => {
 	 ).includes( item.productSlug );
 };
 
+export const isUpgradeableToYearly = (
+	ownedItem: SelectorProduct,
+	selectedTerm: Duration,
+	isOnSale: ( productSlug: string ) => boolean
+) =>
+	selectedTerm === TERM_ANNUALLY &&
+	ownedItem.term === TERM_MONTHLY &&
+	ownedItem.type === ITEM_TYPE_PLAN &&
+	// A retired plan keeps its monthly renewals but cannot be bought yearly.
+	isOnSale( getYearlySlugFromMonthly( ownedItem.productSlug ) ?? '' );
+
 export const useStoreItemInfo = ( {
 	createCheckoutURL,
 	duration: selectedTerm,
@@ -75,6 +89,7 @@ export const useStoreItemInfo = ( {
 	);
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const dispatch = useDispatch();
+	const isOnSale = useIsOnSale();
 
 	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 	const translate = useTranslate();
@@ -125,11 +140,8 @@ export const useStoreItemInfo = ( {
 	//Once the feature is enabled, remove the last condition to enable the upgrade button
 	const getIsUpgradeableToYearly = useCallback(
 		( item: SelectorProduct ) =>
-			getIsOwned( item ) &&
-			selectedTerm === TERM_ANNUALLY &&
-			item.term === TERM_MONTHLY &&
-			item.type === ITEM_TYPE_PLAN,
-		[ getIsOwned, selectedTerm ]
+			getIsOwned( item ) && isUpgradeableToYearly( item, selectedTerm, isOnSale ),
+		[ getIsOwned, selectedTerm, isOnSale ]
 	);
 
 	const getIsPlanFeature = useCallback(
@@ -140,16 +152,18 @@ export const useStoreItemInfo = ( {
 
 	const getIsIncludedInPlan = useCallback(
 		( item: SelectorProduct ) => {
-			// If user owns the Jetpack Complete Plan/bundle, then JetPack Security plan/bundle should
-			// be considered as included in the Complete plan ("Part of the current plan").
-			const siteHasCompletePlan =
+			// If user owns the Jetpack Complete or Pro Plan/bundle, then JetPack Security plan/bundle should
+			// be considered as included in that plan ("Part of the current plan").
+			const siteHasCompleteOrProPlan =
 				sitePlan?.product_slug &&
-				( JETPACK_COMPLETE_PLANS as ReadonlyArray< string > ).includes( sitePlan.product_slug );
+				( [ ...JETPACK_COMPLETE_PLANS, ...JETPACK_PRO_PLANS ] as ReadonlyArray< string > ).includes(
+					sitePlan.product_slug
+				);
 			const itemIsSecurity = ( JETPACK_SECURITY_PLANS as ReadonlyArray< string > ).includes(
 				item.productSlug
 			);
 
-			if ( siteHasCompletePlan && itemIsSecurity ) {
+			if ( siteHasCompleteOrProPlan && itemIsSecurity ) {
 				return true;
 			}
 			return ! getIsOwned( item ) && getIsPlanFeature( item );

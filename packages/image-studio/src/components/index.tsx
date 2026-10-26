@@ -227,8 +227,7 @@ function ImageStudioAgentChat( {
 					creditsMeter && (
 						<CreditsMeter
 							status={ creditsMeter.status }
-							upgradeUrl={ creditsMeter.upgradeUrl }
-							onUpgradeClick={ creditsMeter.onUpgradeClick }
+							action={ creditsMeter.action }
 							purchaseHint={ creditsMeter.purchaseHint }
 							isOpen={ creditsMeter.isOpen }
 							onToggle={ creditsMeter.onToggle }
@@ -242,7 +241,7 @@ function ImageStudioAgentChat( {
 						{ /* Suggestions load during the credits check but wait for it to show, so they never flash and vanish. */ }
 						{ ! isLimitReached && ! isCheckingCredits && suggestionsComponent }
 						<AgentUI.Notice />
-						{ /* Stacked puts the pickers on the same row as the credits dot and send button. */ }
+						{ /* Stacked puts the pickers on the same row as the credits meter and send button. */ }
 						<AgentUI.Input
 							layout="stacked"
 							disabled={ isStopDisabled ? true : undefined }

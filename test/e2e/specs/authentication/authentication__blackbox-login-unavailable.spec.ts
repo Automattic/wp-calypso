@@ -1,3 +1,4 @@
+import { captureLoginEndpoint } from '../../lib/blackbox-test-key';
 import { expect, tags, test } from '../../lib/pw-base';
 import type { LoginPage } from '@automattic/calypso-e2e';
 import type { Page } from 'playwright';
@@ -30,22 +31,13 @@ async function expectPasswordLoginSucceedsWithoutSessionId(
 		timeout: BLACKBOX_FAIL_OPEN_BUDGET_MS,
 	} );
 
-	const loginResponse = page.waitForResponse(
-		( response ) =>
-			response.request().method() === 'POST' && response.url().includes( 'action=login-endpoint' )
-	);
-	const loginRequest = page.waitForRequest(
-		( request ) => request.method() === 'POST' && request.url().includes( 'action=login-endpoint' )
-	);
+	const loginEndpoint = captureLoginEndpoint( page );
 
 	await pageLogin.clickSubmit();
-	const request = await loginRequest;
-	const response = await loginResponse;
-	const body = await response.json();
-	const postData = new URLSearchParams( request.postData() ?? '' );
+	const { postData, status, body } = await loginEndpoint;
 
 	expect( postData.get( 'blackbox_session_id' ) ).toBeNull();
-	expect( response.status() ).toBe( 200 );
+	expect( status ).toBe( 200 );
 	expect( body?.success ).toBe( true );
 }
 

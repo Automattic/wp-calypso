@@ -45,18 +45,18 @@
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
-		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
-		"copy-webpack-plugin": "^10.2.4",
+		"@wordpress/dependency-extraction-webpack-plugin": "^6.57.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "^3.57.0",
+		"copy-webpack-plugin": "^14.0.0",
 		"postcss-prefix-selector": "^1.16.1",
 		"sass": "1.77.8",
-		"webpack": "^5.99.8"
+		"webpack": "^5.111.1"
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/element": "^8.0.0",
-		"postcss": "^8.5.15",
+		"postcss": "^8.5.30",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^5.0.1"

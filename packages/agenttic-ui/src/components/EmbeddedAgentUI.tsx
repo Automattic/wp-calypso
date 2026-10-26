@@ -120,6 +120,7 @@ export function EmbeddedAgentUIMessages( {
 		isProcessing,
 		isReplying,
 		error,
+		errorNotice,
 		emptyView,
 		thinkingMessage,
 		messagesPosition,
@@ -161,6 +162,7 @@ export function EmbeddedAgentUIMessages( {
 			) ) }
 			{ isProcessing && ! isReplying && <ThinkingMessage content={ thinkingMessage } /> }
 			{ error && <div className="agenttic-embedded__error">{ error }</div> }
+			{ errorNotice && <EmbeddedNotice notice={ errorNotice } /> }
 		</div>
 	);
 }
@@ -217,16 +219,7 @@ export function EmbeddedAgentUISuggestions( {
 	);
 }
 
-export function EmbeddedAgentUINotice( {
-	className,
-}: {
-	className?: string;
-} = {} ) {
-	const { notice } = useEmbeddedAgentUIContext();
-	if ( ! notice ) {
-		return null;
-	}
-
+function EmbeddedNotice( { notice, className }: { notice: NoticeConfig; className?: string } ) {
 	return (
 		<div
 			className={ [
@@ -256,6 +249,19 @@ export function EmbeddedAgentUINotice( {
 			) }
 		</div>
 	);
+}
+
+export function EmbeddedAgentUINotice( {
+	className,
+}: {
+	className?: string;
+} = {} ) {
+	const { notice } = useEmbeddedAgentUIContext();
+	if ( ! notice ) {
+		return null;
+	}
+
+	return <EmbeddedNotice notice={ notice } className={ className } />;
 }
 
 export function EmbeddedAgentUIInput( {

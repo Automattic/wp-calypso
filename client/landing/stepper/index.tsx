@@ -1,4 +1,3 @@
-import '@automattic/calypso-polyfills';
 import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
@@ -276,9 +275,18 @@ async function main() {
 					<BrowserRouter basename="setup">
 						<FlowRenderer flow={ flow } steps={ flowSteps } />
 						{ config.isEnabled( 'cookie-banner' ) && (
-							<AsyncLoad require={ loadCookieBanner } placeholder={ null } />
+							<AsyncLoad
+								require={ loadCookieBanner }
+								placeholder={ null }
+								loadFailureFallback={ null }
+							/>
 						) }
-						<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
+						<AsyncLoad
+							require={ loadGlobalNotices }
+							placeholder={ null }
+							loadFailureFallback={ null }
+							id="notices"
+						/>
 					</BrowserRouter>
 					{ ! FLOWS_WITHOUT_HELP_CENTER.has( flowName ) &&
 						( flowName === WOO_HOSTED_PLANS_FLOW ? (

@@ -5,7 +5,7 @@ import {
 } from '@automattic/sites';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
@@ -41,6 +41,8 @@ const SitePickerStep: Step< {
 	const ref = urlQueryParams.get( 'ref' );
 	const [ destinationSite, setDestinationSite ] = useState< SiteExcerptData >();
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
+	// Some destinations leave via a full page load, which keeps the picker clickable until it unloads.
+	const hasSelectedSiteRef = useRef( false );
 	const siteCount = useSelector( getCurrentUserSiteCount );
 
 	// Fetch hosting provider when ref=move-lp and we have a from URL
@@ -81,13 +83,18 @@ const SitePickerStep: Step< {
 	};
 
 	const selectSite = ( site: SiteExcerptData ) => {
+		if ( hasSelectedSiteRef.current ) {
+			return;
+		}
+		hasSelectedSiteRef.current = true;
+
 		recordTracksEvent( 'calypso_import_site_picker_select_site', {
 			id: site?.ID,
 			slug: site?.slug,
 			title: site?.title,
 		} );
 		const host = hostingProviderData?.hosting_provider?.slug;
-		navigation.submit?.( { action: 'select-site', site, host, shouldSkipSubmitTracking: true } );
+		navigation.submit?.( { action: 'select-site', site, host } );
 	};
 
 	const onSelectSite = ( site: SiteExcerptData ) => {

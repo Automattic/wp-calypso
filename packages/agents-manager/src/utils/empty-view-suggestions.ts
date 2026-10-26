@@ -43,7 +43,7 @@ export function mergeEmptyViewSuggestions(
 interface GetDisplayedEmptyViewSuggestionsOptions {
 	/** Whether the layout shows the chat; Agenttic can't tell when it's hidden. */
 	isVisible: boolean;
-	/** Loaded, with no messages and no draft: typing swaps the empty-view chips for the registered ones. */
+	/** Loaded, with no messages: the empty-view chips stay until a message is sent. */
 	isChatEmpty: boolean;
 	emptyViewSuggestions: Suggestion[];
 	registeredSuggestions: Suggestion[];

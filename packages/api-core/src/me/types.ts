@@ -26,7 +26,6 @@ export interface User {
 	email: string;
 	email_bouncing?: boolean;
 	email_verified: boolean;
-	garden_site_count: number;
 	had_hosting_trial: boolean;
 	has_jetpack_partner_access?: boolean;
 	has_unseen_notes: boolean;
@@ -84,4 +83,15 @@ export interface User {
 
 export interface TwoStep {
 	two_step_reauthorization_required: boolean;
+}
+
+export interface LogoutUserArgs {
+	logout_nonce: string;
+	redirect_to?: string;
+	client_id: string;
+	client_secret: string;
+}
+
+export interface LogoutUserResponse {
+	redirect_to?: string;
 }

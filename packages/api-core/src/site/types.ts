@@ -45,6 +45,7 @@ export interface SiteOptions {
 	created_at?: string;
 	difm_lite_site_options?: DifmLiteSiteOptions;
 	is_domain_only?: boolean;
+	is_mapped_domain?: boolean;
 	is_redirect?: boolean;
 	is_difm_lite_in_progress?: boolean;
 	is_gating_business_q1?: boolean;
@@ -135,11 +136,7 @@ export interface Site {
 	was_migration_trial: boolean;
 	was_hosting_trial: boolean;
 	was_upgraded_from_trial: boolean;
-	is_garden: boolean;
 	is_multisite?: boolean;
-	garden_name: string | null;
-	garden_partner: string | null;
-	garden_is_provisioned: boolean | null;
 	/** Present when requested via SITE_FIELDS; indicates Big Sky / AI builder availability. */
 	big_sky_enabled?: boolean;
 	atomic_email_block?: AtomicEmailBlock | null;

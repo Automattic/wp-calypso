@@ -4,6 +4,7 @@ import {
 	fetchDomainMailboxAccounts,
 	fetchMailboxes,
 	fetchTitanControlPanelAutoLoginUrl,
+	fetchTitanDkimRecord,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { userMailboxesQuery } from './me-mailboxes';
@@ -21,6 +22,19 @@ export const mailboxAccountsQuery = ( siteId: number, domain: string ) =>
 		queryKey: [ 'mailboxes', siteId, domain ],
 		queryFn: () => fetchDomainMailboxAccounts( siteId, domain ),
 		enabled: Boolean( siteId ),
+	} );
+
+/**
+ * Titan issues the DKIM key once and returns the same one on every call, but each
+ * fetch still reaches Titan, so the record is never refetched while cached.
+ */
+export const titanDkimRecordQuery = ( domain: string ) =>
+	queryOptions( {
+		queryKey: [ 'titan-dkim-record', domain ],
+		queryFn: () => fetchTitanDkimRecord( domain ),
+		staleTime: Infinity,
+		refetchOnWindowFocus: false,
+		retry: false,
 	} );
 
 export const createTitanMailboxMutation = () => {

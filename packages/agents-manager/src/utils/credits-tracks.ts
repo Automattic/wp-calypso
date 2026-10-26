@@ -1,7 +1,14 @@
 /**
- * Tracks props for the site credits notice, its dismissal, the credits popover and their Upgrade clicks.
+ * Tracks props for the site credits notice, its dismissal, the credits popover and their Upgrade and Add credits clicks,
+ * and the refusal codes a failed reply carries.
  */
-import { type CreditsStatus, isCreditsExhausted, isCreditsLow } from './credits';
+import {
+	type CreditsStatus,
+	getAgentEnvironment,
+	getTopUpCreditsLeft,
+	isCreditsExhausted,
+	isCreditsLow,
+} from './credits';
 import { recordAgentsManagerTracksEvent } from './tracks';
 import type { ContextProvider, TaskUpdate } from '@automattic/agenttic-client';
 
@@ -13,7 +20,7 @@ export type CreditsTracksEventName =
 	| 'calypso_agents_manager_credits_meter_opened'
 	| 'calypso_agents_manager_credits_cta_clicked';
 
-/** By the same rules as the dot and the notices, so it follows `CREDITS_LOW_BALANCE`. */
+/** By the same rules as the meter and the notices, so it follows `CREDITS_LOW_BALANCE`. */
 export function getCreditsState( status: CreditsStatus ): CreditsState {
 	if ( isCreditsExhausted( status ) ) {
 		return 'zero';
@@ -30,6 +37,12 @@ export function getCreditsUserRole( canBuyCredits?: boolean ): 'admin' | 'non_ad
 
 	return canBuyCredits ? 'admin' : 'non_admin';
 }
+
+/** Every site credits refusal's code starts with this. */
+export const CREDITS_REFUSAL_PREFIX = 'ai_credit_allowance_';
+
+/** The site has used all its credits; the only refusal the chat offers a purchase for. */
+export const CREDITS_EXHAUSTED_REFUSAL = 'ai_credit_allowance_exhausted';
 
 /**
  * The code a failed reply carries in its data part, such as
@@ -48,16 +61,6 @@ export function getTaskRefusalCode( update: TaskUpdate ): string | undefined {
 	}
 
 	return undefined;
-}
-
-/** The client context's `environment`, sent unchanged as the server's credit events do. */
-function getAgentEnvironment( contextProvider?: ContextProvider ): string {
-	try {
-		const environment = contextProvider?.getClientContext().environment;
-		return typeof environment === 'string' && environment !== '' ? environment : 'none';
-	} catch {
-		return 'none';
-	}
 }
 
 /** WordPress.com sets `_currentSiteType` on editor pages only, so other surfaces send `none`. */
@@ -81,6 +84,7 @@ export function recordCreditsTracksEvent(
 		agent_environment: getAgentEnvironment( contextProvider ),
 		state: getCreditsState( status ),
 		credits_left: status.remaining ?? 'none',
+		top_up_credits_left: getTopUpCreditsLeft( status ),
 		plan_tier: status.planTier ?? 'none',
 		...props,
 	} );

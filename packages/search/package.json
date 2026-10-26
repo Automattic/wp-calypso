@@ -36,7 +36,7 @@
 	"types": "dist/types",
 	"dependencies": {
 		"@automattic/typography": "workspace:^",
-		"@babel/runtime": "^7.27.1",
+		"@babel/runtime": "^7.29.10",
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^8.2.0",
@@ -59,15 +59,15 @@
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
-		"@testing-library/user-event": "^14.6.7",
+		"@testing-library/user-event": "^14.6.8",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/is-shallow-equal": "^5.48.0",
-		"postcss": "^8.5.15",
+		"postcss": "^8.5.30",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"storybook": "^10.6.2",
 		"typescript": "^6.0.3",
-		"webpack": "^5.99.8"
+		"webpack": "^5.111.1"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

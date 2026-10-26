@@ -1,5 +1,4 @@
 import { buildA4ADashboardLink, isAllowedA4ADashboardHostname } from '../app-a4a/routing';
-import { buildCiabDashboardLink } from '../app-ciab/routing';
 import { buildDotcomDashboardLink, isAllowedDotcomDashboardHostname } from '../app-dotcom/routing';
 import type { DashboardType } from './types';
 
@@ -35,7 +34,7 @@ export function getDashboardFromQuery(): DashboardType | undefined {
 	const params = new URLSearchParams( window.location.search );
 	const dashboard = params.get( 'dashboard' );
 
-	if ( dashboard === 'a4a' || dashboard === 'ciab' || dashboard === 'dotcom' ) {
+	if ( dashboard === 'a4a' || dashboard === 'dotcom' ) {
 		return dashboard;
 	}
 	return undefined;
@@ -45,9 +44,6 @@ export function getDashboardFromQuery(): DashboardType | undefined {
  * Builds a link for the specified dashboard.
  */
 export function buildDashboardLink( dashboard: DashboardType, path: string = '' ) {
-	if ( dashboard === 'ciab' ) {
-		return buildCiabDashboardLink( path );
-	}
 	if ( dashboard === 'a4a' ) {
 		return buildA4ADashboardLink( path );
 	}

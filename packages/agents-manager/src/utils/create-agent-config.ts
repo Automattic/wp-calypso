@@ -7,6 +7,8 @@
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
+import { getInteractiveUiCapabilities } from '../interactive-ui/catalogs';
+import { getShownInteractiveUiDataModel } from '../interactive-ui/session';
 import { saveSessionId } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
@@ -17,6 +19,7 @@ import { getAgentsManagerSurface, getIsA11n, getIsTest } from './tracks';
 import { getTurnId } from './turn-id';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
+import type { InteractiveUiCatalogDefinition } from '@automattic/ai-ui-renderer';
 
 export interface AgentConfig extends UseAgentChatConfig {
 	/** Scope captured by the authentication provider during initialization. */
@@ -34,6 +37,8 @@ export interface CreateAgentConfigOptions {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
 	providerIds?: string[];
+	/** The providers' interactive UI catalogs, which each message lists with the chat's own. */
+	interactiveUiCatalogs?: InteractiveUiCatalogDefinition[];
 	environment?: string;
 	/** Override the agent ID (e.g., from query string). Defaults to ORCHESTRATOR_AGENT_ID. */
 	agentId?: string;
@@ -120,9 +125,12 @@ function normalizeSiteId( siteId: unknown ): number | undefined {
 	return Number.isFinite( numericSiteId ) && numericSiteId > 0 ? numericSiteId : undefined;
 }
 
-function getProviderIdsContext( providerIds?: string[] ): { loadedProviderIds?: string[] } {
+/** The client context's provider IDs. */
+function getProviderContext( providerIds?: string[] ) {
 	return providerIds?.length ? { loadedProviderIds: providerIds } : {};
 }
+
+type ProviderContext = ReturnType< typeof getProviderContext >;
 
 /**
  * Only the host's explicit opt-in is sent: the server records nothing without it.
@@ -157,8 +165,8 @@ async function createWrappedContextProvider(
 	version?: string,
 	environment?: string,
 	currentRoute?: string,
-	providerIds?: string[]
-): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
+	providerContext?: ProviderContext
+): Promise< NonNullable< UseAgentChatConfig[ 'contextProvider' ] > > {
 	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
 		getClientContext: () => {
@@ -199,7 +207,7 @@ async function createWrappedContextProvider(
 				...( Object.keys( mergedSiteEditorActions ).length > 0 && {
 					siteEditorActions: mergedSiteEditorActions,
 				} ),
-				...getProviderIdsContext( providerIds ),
+				...providerContext,
 				...getTrackingContext(),
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
@@ -220,8 +228,8 @@ async function createDefaultContextProvider(
 	siteId?: number,
 	agentId?: string,
 	version?: string,
-	providerIds?: string[]
-): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
+	providerContext?: ProviderContext
+): Promise< NonNullable< UseAgentChatConfig[ 'contextProvider' ] > > {
 	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
 		getClientContext: () => {
@@ -260,7 +268,7 @@ async function createDefaultContextProvider(
 				...( hostData.siteName ? { siteName: hostData.siteName } : {} ),
 				...( hostData.siteUrl ? { siteUrl: hostData.siteUrl } : {} ),
 				...( contextEntries ? { contextEntries } : {} ),
-				...getProviderIdsContext( providerIds ),
+				...providerContext,
 				...getTrackingContext(),
 				// TODO: Remove once agenttic-client supports top-level constructorArguments
 				...( Object.keys( constructorArguments ).length && { constructorArguments } ),
@@ -286,6 +294,7 @@ export async function createAgentConfig(
 		toolProvider,
 		contextProvider,
 		providerIds,
+		interactiveUiCatalogs,
 		environment = 'calypso',
 		agentId = ORCHESTRATOR_AGENT_ID,
 		version,
@@ -315,26 +324,41 @@ export async function createAgentConfig(
 		config.toolProvider = wrapToolProvider( toolProvider );
 	}
 
-	if ( contextProvider ) {
-		config.contextProvider = await createWrappedContextProvider(
-			contextProvider,
-			siteId,
-			agentId,
-			version,
-			environment,
-			currentRoute,
-			providerIds
-		);
-	} else {
-		config.contextProvider = await createDefaultContextProvider(
-			currentRoute,
-			environment,
-			siteId,
-			agentId,
-			version,
-			providerIds
-		);
-	}
+	const providerContext = getProviderContext( providerIds );
+	const clientContextProvider = contextProvider
+		? await createWrappedContextProvider(
+				contextProvider,
+				siteId,
+				agentId,
+				version,
+				environment,
+				currentRoute,
+				providerContext
+			)
+		: await createDefaultContextProvider(
+				currentRoute,
+				environment,
+				siteId,
+				agentId,
+				version,
+				providerContext
+			);
+
+	// A2UI's A2A binding: the agent reads the renderer's capabilities from each message, and the data
+	// of the surfaces that ask for it.
+	const a2uiRendererCapabilities = getInteractiveUiCapabilities( interactiveUiCatalogs );
+
+	config.contextProvider = {
+		...clientContextProvider,
+		getMessageMetadata: () => {
+			const a2uiRendererDataModel = getShownInteractiveUiDataModel();
+
+			return {
+				a2uiRendererCapabilities,
+				...( a2uiRendererDataModel && { a2uiRendererDataModel } ),
+			};
+		},
+	};
 
 	return config;
 }

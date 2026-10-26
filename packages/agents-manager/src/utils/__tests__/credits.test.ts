@@ -6,8 +6,11 @@ import {
 	formatCreditsLeft,
 	formatCreditsShort,
 	formatPercent,
+	getAgentEnvironment,
 	getCreditsLabel,
-	getCreditsTone,
+	getCreditsToggleLabel,
+	getTopUpCreditsLeft,
+	isCreditsAlert,
 	isCreditsExhausted,
 	isCreditsLow,
 } from '../credits';
@@ -78,32 +81,78 @@ describe( 'credit states', () => {
 	} );
 } );
 
-describe( 'getCreditsTone', () => {
+describe( 'isCreditsAlert', () => {
 	it.each( [
-		[ 100, 'primary' ],
-		[ 20.01, 'primary' ],
-		[ 20, 'error' ],
-		[ 19.99, 'error' ],
-		[ 0.4, 'error' ],
-		[ 0, 'error' ],
-	] as const )( 'uses the unrounded free share at %s%%', ( percent, tone ) => {
-		expect( getCreditsTone( free( percent ) ) ).toBe( tone );
+		[ 100, false ],
+		[ 20.01, false ],
+		[ 20, true ],
+		[ 19.99, true ],
+		[ 0.4, true ],
+		[ 0, true ],
+	] )( 'uses the unrounded free share at %s%%', ( percent, isAlert ) => {
+		expect( isCreditsAlert( free( percent ) ) ).toBe( isAlert );
 	} );
 
 	it.each( [
-		[ 25000, 'muted' ],
-		[ 10000, 'muted' ],
-		[ 9999, 'error' ],
-		[ 800, 'error' ],
-		[ 1, 'error' ],
-		[ 0, 'error' ],
-	] as const )( 'uses the paid amount at %i credits', ( remaining, tone ) => {
-		expect( getCreditsTone( paid( 100, remaining ) ) ).toBe( tone );
+		[ 25000, false ],
+		[ 10000, false ],
+		[ 9999, true ],
+		[ 800, true ],
+		[ 1, true ],
+		[ 0, true ],
+	] )( 'uses the paid amount at %i credits', ( remaining, isAlert ) => {
+		expect( isCreditsAlert( paid( 100, remaining ) ) ).toBe( isAlert );
 	} );
 
 	it( 'ignores the plan share on paid plans', () => {
-		expect( getCreditsTone( { ...paid( 10 ), remaining: 205000 } ) ).toBe( 'muted' );
-		expect( getCreditsTone( { ...paid( 0 ), remaining: 25000 } ) ).toBe( 'muted' );
+		expect( isCreditsAlert( { ...paid( 10 ), remaining: 205000 } ) ).toBe( false );
+		expect( isCreditsAlert( { ...paid( 0 ), remaining: 25000 } ) ).toBe( false );
+	} );
+} );
+
+describe( 'getTopUpCreditsLeft', () => {
+	const withTopUps = ( remaining: number ): CreditsStatus => ( {
+		...paid( 0, remaining ),
+		pools: [ ...paid( 0 ).pools, { id: 'topups', label: 'Top-ups', remaining } ],
+	} );
+
+	it( 'sends the top-ups row’s balance', () => {
+		expect( getTopUpCreditsLeft( withTopUps( 67000 ) ) ).toBe( 67000 );
+	} );
+
+	it( 'sends 0, not none, for a used-up pack', () => {
+		expect( getTopUpCreditsLeft( withTopUps( 0 ) ) ).toBe( 0 );
+	} );
+
+	it.each( [
+		[ 'a paid plan', paid( 50 ) ],
+		[ 'a free plan', free( 50 ) ],
+	] )( 'sends none for %s without a top-ups row', ( _plan, status ) => {
+		expect( getTopUpCreditsLeft( status ) ).toBe( 'none' );
+	} );
+} );
+
+describe( 'getAgentEnvironment', () => {
+	it( 'sends the client context environment unchanged', () => {
+		expect(
+			getAgentEnvironment( { getClientContext: () => ( { environment: 'image-studio' } ) } )
+		).toBe( 'image-studio' );
+	} );
+
+	it.each( [
+		[ 'no context provider', undefined ],
+		[ 'no environment', { getClientContext: () => ( {} ) } ],
+		[ 'an empty environment', { getClientContext: () => ( { environment: '' } ) } ],
+		[
+			'a context that throws',
+			{
+				getClientContext: () => {
+					throw new Error( 'No store' );
+				},
+			},
+		],
+	] )( 'sends none for %s', ( _case, contextProvider ) => {
+		expect( getAgentEnvironment( contextProvider ) ).toBe( 'none' );
 	} );
 } );
 
@@ -149,6 +198,28 @@ describe( 'getCreditsLabel', () => {
 		expect( getCreditsLabel( paid( 0, 1 ) ) ).toBe( `${ localNumber( 1 ) } credit left` );
 		expect( getCreditsLabel( paid( 0 ) ) ).toBe( `${ localNumber( 0 ) } credits left` );
 		expect( getCreditsLabel( paid( 0, 2 ) ) ).toBe( `${ localNumber( 2 ) } credits left` );
+	} );
+} );
+
+describe( 'getCreditsToggleLabel', () => {
+	it( 'gives the amount alone while credits are fine', () => {
+		expect( getCreditsToggleLabel( paid( 0, 12000 ) ) ).toBe(
+			`${ localNumber( 12 ) }k credits left`
+		);
+		expect( getCreditsToggleLabel( free( 55 ) ) ).toBe( '55% of free credits left' );
+	} );
+
+	it( 'leads with the state when credits are low or out', () => {
+		expect( getCreditsToggleLabel( paid( 0, 9999 ) ) ).toBe(
+			`Low on credits: ${ localNumber( 9.9 ) }k credits left`
+		);
+		expect( getCreditsToggleLabel( free( 0.4 ) ) ).toBe(
+			'Low on credits: <1% of free credits left'
+		);
+		expect( getCreditsToggleLabel( paid( 0 ) ) ).toBe(
+			`Out of credits: ${ localNumber( 0 ) } credits left`
+		);
+		expect( getCreditsToggleLabel( free( 0 ) ) ).toBe( 'Out of credits: 0% of free credits left' );
 	} );
 } );
 

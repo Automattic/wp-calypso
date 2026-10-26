@@ -3,14 +3,16 @@ import {
 	CREDITS_UPGRADE_SOURCE,
 	getCreditsCtaType,
 	getCreditsNoticeMessage,
+	getCreditsPurchaseAction,
+	getCreditsPurchaseLink,
 	getCreditsPurchaseOptions,
-	getCreditsUpgradeUrl,
+	getTopUpCreditsLeft,
 	parseCreditsAccess,
 	parseLiveCreditsStatus,
 } from '@automattic/agents-manager';
 import { useEvent } from '@wordpress/compose';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { getSessionId } from '../utils/session';
 import {
 	getImageStudioBlogId,
 	getImageStudioIsDevMode,
@@ -27,6 +29,7 @@ import {
 import type { ImageStudioMode } from '../types';
 import type {
 	CreditsAccess,
+	CreditsPurchaseAction,
 	CreditsPurchaseOptions,
 	CreditsStatus,
 } from '@automattic/agents-manager';
@@ -62,18 +65,19 @@ function getMeterDetails(
 		state: level ? CREDITS_STATE_BY_LEVEL[ level ] : 'ok',
 		planTier: status.planTier ?? 'none',
 		creditsLeft: status.remaining,
+		topUpCreditsLeft: getTopUpCreditsLeft( status ),
 	};
 }
 
 function getNoticeCredits(
 	status: PaidCreditsStatus,
 	level: SiteCreditsLevel | null,
-	{ upgradeUrl, askToUpgrade }: CreditsPurchaseOptions
+	{ purchaseKind, askToUpgrade }: CreditsPurchaseOptions
 ): UpgradeNoticeCredits {
 	return {
 		...getMeterDetails( status, level ),
-		ctaType: getCreditsCtaType( !! upgradeUrl, askToUpgrade ),
-		ref: upgradeUrl ? CREDITS_UPGRADE_SOURCE : 'none',
+		ctaType: getCreditsCtaType( purchaseKind, askToUpgrade ),
+		ref: purchaseKind ? CREDITS_UPGRADE_SOURCE : 'none',
 	};
 }
 
@@ -82,10 +86,21 @@ function getSiteCreditsBlogId(): number | null {
 	return getImageStudioSiteType() === 'jetpack' ? null : getImageStudioBlogId();
 }
 
-/** Resolves to undefined when the site is not on AI credits or the request fails. */
+/** The link carries the session the click event sends as `ai_session_id`. */
+function getSitePurchaseLink( status: PaidCreditsStatus, blogId: number ) {
+	return getCreditsPurchaseLink(
+		status,
+		blogId,
+		getImageStudioSiteType() === 'simple',
+		getSessionId()
+	);
+}
+
+/** Resolves to undefined when the site is not on AI credits or the request fails or is aborted. */
 async function fetchSiteCredits(
 	blogId: number,
-	authProvider: AuthProvider
+	authProvider: AuthProvider,
+	signal: AbortSignal
 ): Promise< { aiCredits: unknown; access: CreditsAccess } | undefined > {
 	try {
 		const headers = await authProvider();
@@ -93,6 +108,7 @@ async function fetchSiteCredits(
 			method: 'GET',
 			headers,
 			cache: 'no-store',
+			signal,
 		} );
 		// A site that is not on AI credits answers 404.
 		if ( ! response.ok ) {
@@ -101,7 +117,10 @@ async function fetchSiteCredits(
 		const data = await response.json();
 		return { aiCredits: data?.ai_credits, access: parseCreditsAccess( data ) };
 	} catch ( error ) {
-		window.console?.error?.( '[Image Studio] Failed to fetch site AI credits:', error );
+		// An abort means the modal closed or its credentials changed, not that the request failed.
+		if ( ! signal.aborted ) {
+			window.console?.error?.( '[Image Studio] Failed to fetch site AI credits:', error );
+		}
 		return undefined;
 	}
 }
@@ -114,15 +133,14 @@ export interface AiCreditsState {
 	isLoading: boolean;
 	/** For the chat config: a turn's final update carries the new balance. */
 	onTaskUpdate: ( update: TaskUpdate ) => void;
-	/** For the chat container: at zero, blocks Send and opens the dot's details, keeping the draft. */
+	/** For the chat container: at zero, blocks Send and opens the meter's details, keeping the draft. */
 	beforeSubmit: () => boolean;
-	/** The Agent's credits dot, for sites on a paid plan. */
+	/** The Agent's credits meter, for sites on a paid plan. */
 	meter?: {
 		status: CreditsStatus;
-		upgradeUrl?: string;
-		/** Records a click on that link, so popover clicks join the notice's events. */
-		onUpgradeClick?: () => void;
-		/** Shown instead of Upgrade to people who can't upgrade the plan. */
+		/** Upgrade or Add credits, by the site's plan. Its click joins the notice's events. */
+		action?: CreditsPurchaseAction;
+		/** Shown instead of that button to people who can't buy it. */
 		purchaseHint?: string;
 		isOpen: boolean;
 		onToggle: ( isOpen: boolean ) => void;
@@ -130,9 +148,11 @@ export interface AiCreditsState {
 }
 
 /**
- * Reads the site's AI credit balance when the modal opens; each turn's final update brings
- * the next one. While credits are only on internal test sites, pages outside dev mode don't
- * ask, since nearly every site answers 404; a turn's balance still shows.
+ * Reads the site's AI credit balance when the modal opens, and again when the page regains
+ * focus or comes back online, as after buying credits in checkout's tab; each turn's final
+ * update brings the next one. Only one read runs at a time. While credits are only on
+ * internal test sites, pages outside dev mode don't ask, since nearly every site answers 404;
+ * a turn's balance still shows.
  * @param options              - Hook options
  * @param options.mode         - Image Studio mode ('edit' or 'generate') for tracking
  * @param options.authProvider - The agent's credentials, once its config has loaded
@@ -151,15 +171,18 @@ export function useAiCredits( {
 	const [ isLoading, setIsLoading ] = useState( blogId !== null && ! isRequestSkipped );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
 	const [ isMeterOpen, setIsMeterOpen ] = useState( false );
-	// Only the opening check says who may buy; a turn's balance doesn't.
+	// Only a credits check says who may buy; a turn's balance doesn't.
 	const [ access, setAccess ] = useState< CreditsAccess >();
 	const accessRef = useRef< CreditsAccess | undefined >( undefined );
 	const canCheck = blogId !== null && ! isRequestSkipped && !! authProvider;
 	// Cancelled when the credentials change or the modal closes, so an older check's answer is dropped.
 	const checkToken = useRef( { isCancelled: false } );
+	// The check in flight, aborted when its token is cancelled. Returning to the page fires focus
+	// and visibilitychange together, so another check doesn't start while one runs.
+	const runningCheck = useRef< AbortController | undefined >( undefined );
 	// A notice event waits for a running check to answer or fail, so it can say whether
-	// Upgrade shows; a skipped check leaves nothing to wait for. The opening check's 5-second
-	// timeout doesn't count: a late answer can still add Upgrade.
+	// Upgrade or Add credits shows; a skipped check leaves nothing to wait for. The opening
+	// check's 5-second timeout doesn't count: a late answer can still add the button.
 	const isAccessSettled = useRef( isRequestSkipped );
 	const heldNotice = useRef< { level: SiteCreditsLevel; trigger: UpgradeNoticeTrigger } | null >(
 		null
@@ -182,7 +205,7 @@ export function useAiCredits( {
 				return;
 			}
 			const purchaseOptions = getCreditsPurchaseOptions(
-				getCreditsUpgradeUrl( next, blogId ),
+				getSitePurchaseLink( next, blogId ),
 				accessRef.current
 			);
 			trackImageStudioUpgradeNoticeShown( {
@@ -219,7 +242,7 @@ export function useAiCredits( {
 		}
 	);
 
-	// The Agent's parser, so the notice, the send block and the dot always agree. An unreadable
+	// The Agent's parser, so the notice, the send block and the meter always agree. An unreadable
 	// balance keeps whatever was known, so a fluke never clears or shows a notice.
 	const applyCredits = useEvent(
 		( snapshot: unknown, trigger: UpgradeNoticeTrigger, holdNotice = false ) => {
@@ -232,7 +255,7 @@ export function useAiCredits( {
 			}
 			latestStatus.current = next;
 			const level = getSiteCreditsLevel( next.remaining );
-			// A known balance running out opens the dot's details once. The first read stays quiet.
+			// A known balance running out opens the meter's details once. The first read stays quiet.
 			if ( level === 'out' && shown.current.level !== undefined && shown.current.level !== 'out' ) {
 				openMeter( next, level, 'exhausted' );
 			}
@@ -257,11 +280,19 @@ export function useAiCredits( {
 		if ( blogId === null || ! authProvider ) {
 			return Promise.resolve();
 		}
+		if ( runningCheck.current ) {
+			return Promise.resolve();
+		}
 		const token = checkToken.current;
 		const turnBalancesBefore = turnBalanceCount.current;
+		const request = new AbortController();
+		runningCheck.current = request;
 		isAccessSettled.current = false;
 
-		return fetchSiteCredits( blogId, authProvider ).then( ( result ) => {
+		return fetchSiteCredits( blogId, authProvider, request.signal ).then( ( result ) => {
+			if ( runningCheck.current === request ) {
+				runningCheck.current = undefined;
+			}
 			if ( token.isCancelled ) {
 				return;
 			}
@@ -287,9 +318,24 @@ export function useAiCredits( {
 		const timeout = setTimeout( () => setIsLoading( false ), SITE_CREDITS_TIMEOUT_MS );
 		checkCredits( 'open' ).then( () => clearTimeout( timeout ) );
 
+		// Checkout opens in a new tab: the balance can change while the page is out of view or offline.
+		const refresh = () => {
+			if ( document.visibilityState !== 'hidden' ) {
+				checkCredits( 'refresh' );
+			}
+		};
+		window.addEventListener( 'focus', refresh );
+		window.addEventListener( 'online', refresh );
+		document.addEventListener( 'visibilitychange', refresh );
+
 		return () => {
 			token.isCancelled = true;
+			runningCheck.current?.abort();
+			runningCheck.current = undefined;
 			clearTimeout( timeout );
+			window.removeEventListener( 'focus', refresh );
+			window.removeEventListener( 'online', refresh );
+			document.removeEventListener( 'visibilitychange', refresh );
 		};
 	}, [ canCheck, authProvider, checkCredits ] );
 
@@ -311,9 +357,13 @@ export function useAiCredits( {
 	} );
 
 	const level = status ? getSiteCreditsLevel( status.remaining ) : null;
-	const { upgradeUrl, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
-		status && blogId !== null ? getCreditsUpgradeUrl( status, blogId ) : undefined,
+	const { purchaseUrl, purchaseKind, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
+		status && blogId !== null ? getSitePurchaseLink( status, blogId ) : undefined,
 		access
+	);
+	const purchaseAction = useMemo(
+		() => getCreditsPurchaseAction( { purchaseUrl, purchaseKind } ),
+		[ purchaseUrl, purchaseKind ]
 	);
 	const isNoticeHidden = level === 'low' && isLowNoticeDismissed;
 
@@ -321,13 +371,13 @@ export function useAiCredits( {
 	// link. A popover click can report `state: ok`, since the popover opens on a healthy balance.
 	const trackUpgradeClick = useEvent( ( trigger: UpgradeLinkTrigger ) => {
 		// Callers pass it only with a link; this narrows the types.
-		if ( ! status || ! upgradeUrl ) {
+		if ( ! status || ! purchaseKind ) {
 			return;
 		}
 		trackImageStudioUpgradeNoticeClick( {
 			mode,
 			trigger,
-			...getNoticeCredits( status, level, { upgradeUrl } ),
+			...getNoticeCredits( status, level, { purchaseKind } ),
 		} );
 	} );
 
@@ -359,8 +409,10 @@ export function useAiCredits( {
 			meter: status
 				? {
 						status,
-						upgradeUrl,
-						onUpgradeClick: upgradeUrl ? () => trackUpgradeClick( 'popover' ) : undefined,
+						action: purchaseAction && {
+							...purchaseAction,
+							onClick: () => trackUpgradeClick( 'popover' ),
+						},
 						purchaseHint,
 						isOpen: isMeterOpen,
 						onToggle: toggleMeter,
@@ -373,22 +425,17 @@ export function useAiCredits( {
 							message: getCreditsNoticeMessage( level, status.remaining, askToUpgrade ),
 							dismissible: level === 'low',
 							onDismiss: () => setIsLowNoticeDismissed( true ),
-							action: upgradeUrl
-								? {
-										label: __( 'Upgrade', __i18n_text_domain__ ),
-										href: upgradeUrl,
-										target: '_blank',
-										rel: 'noopener noreferrer',
-										onClick: () => trackUpgradeClick( shown.current.trigger ),
-									}
-								: undefined,
+							action: purchaseAction && {
+								...purchaseAction,
+								onClick: () => trackUpgradeClick( shown.current.trigger ),
+							},
 						}
 					: undefined,
 		} ),
 		[
 			status,
 			level,
-			upgradeUrl,
+			purchaseAction,
 			askToUpgrade,
 			purchaseHint,
 			isNoticeHidden,

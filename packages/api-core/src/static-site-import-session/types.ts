@@ -58,11 +58,19 @@ export interface StaticSiteImportPreviewSummary {
 	fidelity?: StaticSiteImportFidelity;
 }
 
+export interface StaticSiteImportProgress {
+	phase?: 'installing' | 'inspecting' | 'capturing' | 'building' | 'exporting';
+	finding_pages?: boolean;
+	pages_captured?: number;
+	pages_total?: number;
+}
+
 export interface StaticSiteImportSession {
 	session_id: string;
 	/** Legacy import record status; drive the UI from `state`. */
 	status: string;
 	state: StaticSiteImportState;
+	progress?: StaticSiteImportProgress;
 	source_digest: string;
 	/** PHP serialises an empty summary as `[]`. */
 	preview_summary: StaticSiteImportPreviewSummary | [];

@@ -221,6 +221,7 @@ describe( '<Plan>', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_sites_plan_renew_nag_impression',
 			{
+				site_id: SITE_ID,
 				product_slug: 'business-bundle',
 				source: 'plan',
 				surface: 'dashboard-sites-list',

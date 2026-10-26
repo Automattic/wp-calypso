@@ -1,13 +1,16 @@
+import { getLanguageSlugs } from '@automattic/i18n-utils';
 import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_ONBOARDING_FLOW,
 	BLOG_FLOW,
+	BUILD_FLOW,
+	WRITE_FLOW,
 } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 type RedirectRule = {
 	flow: string;
-	to: string;
+	to: string | ( ( searchParams: URLSearchParams ) => string );
 	shouldRedirect?: ( searchParams: URLSearchParams ) => boolean;
 	replace?: boolean;
 };
@@ -19,6 +22,19 @@ const AI_SITE_BUILDER_REDIRECT: RedirectRule = {
 	shouldRedirect: ( searchParams ) =>
 		! searchParams.has( 'siteId' ) && ! searchParams.has( 'siteSlug' ),
 	replace: true,
+};
+
+// Blog sites' Launchpad, hosted by the build flow. Not a removed flow: My Home still opens it for them.
+const WRITE_REDIRECT: RedirectRule = {
+	flow: WRITE_FLOW,
+	to: `/setup/${ BUILD_FLOW }/launchpad:lang?`,
+	replace: true,
+};
+
+// Bare `/home` follows the account's landing-page preference, which may be another site.
+const toSiteHome = ( searchParams: URLSearchParams ) => {
+	const site = searchParams.get( 'siteId' ) || searchParams.get( 'siteSlug' );
+	return site ? `/home/${ encodeURIComponent( site ) }` : '/home';
 };
 
 // Flows to redirect and treat as removed throughout Calypso.
@@ -37,9 +53,14 @@ const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 	{ flow: 'migration-signup', to: '/setup/site-migration' },
 	{ flow: 'hosted-site-migration', to: '/setup/site-migration' },
 	{ flow: 'domain-upsell', to: '/setup/domain-and-plan' },
+	{ flow: 'flex-site', to: '/sites' },
+	{ flow: 'connect-domain', to: '/start:lang?' },
+	{ flow: 'reblogging', to: '/setup/onboarding:lang?' },
+	{ flow: 'readymade-template', to: toSiteHome },
+	{ flow: 'update-options', to: toSiteHome },
 ];
 
-const FLOW_REDIRECTS = [ AI_SITE_BUILDER_REDIRECT, ...REMOVED_TAILORED_FLOWS ];
+const FLOW_REDIRECTS = [ AI_SITE_BUILDER_REDIRECT, WRITE_REDIRECT, ...REMOVED_TAILORED_FLOWS ];
 
 export const isRemovedFlow = ( flowToCheck: string ) =>
 	!! REMOVED_TAILORED_FLOWS.find( ( { flow } ) => flow === flowToCheck );
@@ -66,10 +87,18 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	}
 
 	// Find the language code in the pathname if present
-	const [ , lang ] = normalizedPathname.match( langPattern ) ?? [];
+	let lang: string | undefined = normalizedPathname.match( langPattern )?.[ 1 ];
+
+	// Write links lead to a live flow, so keep any supported locale, including ones like sr_latin
+	// that the pattern misses.
+	if ( route === WRITE_REDIRECT ) {
+		const lastSegment = normalizedPathname.split( '/' ).at( -2 ) ?? '';
+		lang = getLanguageSlugs().includes( lastSegment ) ? lastSegment : undefined;
+	}
 
 	// Replace the ":lang?" placeholder in the "to" field with the matched language or empty string if not present
-	const redirectUrl = route.to.replace( ':lang?', lang ? `/${ lang }` : '' );
+	const to = typeof route.to === 'function' ? route.to( searchParams ) : route.to;
+	const redirectUrl = to.replace( ':lang?', lang ? `/${ lang }` : '' );
 
 	// Construct the final URL with search parameters if present
 	const finalUrl = `${ redirectUrl }${ search }`;

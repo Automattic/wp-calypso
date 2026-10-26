@@ -1,12 +1,14 @@
 import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
+import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { clearStepPersistedState, NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { pathToUrl } from 'calypso/lib/url';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -19,71 +21,81 @@ import {
 	clearSignupCompleteSlug,
 	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
+import { shouldSkipPlansStep } from '../../../utils/preselected-plan';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
+import { withLocale } from '../../helpers/with-locale';
 import { STEPS } from '../../internals/steps';
+import { hasPurchaseStepsParameter } from '../../internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import { getOnboardingStepperPosition } from '../onboarding/step-counter-config';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import type { Store } from 'redux';
 
-async function initialize( reduxStore: Store ) {
+function initializeSignupState(
+	reduxDispatch: Store[ 'dispatch' ],
+	queryParams: URLSearchParams,
+	eligibleForFreeHostingTrial: boolean,
+	shouldReset: boolean
+) {
 	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
+	if ( shouldReset ) {
+		resetOnboardStore();
+		// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
+		reduxDispatch( setSelectedSiteId( null ) );
+		clearStepPersistedState( NEW_HOSTED_SITE_FLOW );
+		clearSignupDestinationCookie();
+		clearSignupCompleteFlowName();
+		clearSignupCompleteSlug();
+		clearSignupCompleteSiteID();
+	}
 
-	await resetOnboardStore();
-	// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
-	reduxStore.dispatch( setSelectedSiteId( null ) );
-	clearStepPersistedState( NEW_HOSTED_SITE_FLOW );
-	clearSignupDestinationCookie();
-	clearSignupCompleteFlowName();
-	clearSignupCompleteSlug();
-	clearSignupCompleteSiteID();
-
-	const queryParams = getCurrentQueryParams();
-	const showDomainStep = queryParams.has( 'showDomainStep' );
 	const productSlug = queryParams.get( 'plan' );
+	const utmSource = queryParams.get( 'utm_source' );
+	if (
+		productSlug &&
+		isDotComPlan( { product_slug: productSlug } ) &&
+		( ! isFreeHostingTrial( productSlug ) || eligibleForFreeHostingTrial )
+	) {
+		setPlanCartItem( {
+			product_slug: productSlug,
+			extra: {
+				...( utmSource && { hideProductVariants: utmSource === 'wordcamp' } ),
+			},
+		} );
+	}
+}
 
+async function initialize( reduxStore: Store ) {
+	const queryParams = getCurrentQueryParams();
 	const eligibleForFreeHostingTrial = isUserEligibleForFreeHostingTrial( reduxStore.getState() );
 
-	const steps = [];
+	if ( ! hasPurchaseStepsParameter( queryParams ) ) {
+		initializeSignupState( reduxStore.dispatch, queryParams, eligibleForFreeHostingTrial, true );
+	}
 
-	if ( showDomainStep ) {
+	const productSlug = queryParams.get( 'plan' );
+	const steps = [];
+	if ( queryParams.has( 'showDomainStep' ) ) {
 		steps.push( STEPS.DOMAIN_SEARCH );
 	}
-
-	const utmSource = queryParams.get( 'utm_source' );
-
 	if ( ! productSlug || ! isDotComPlan( { product_slug: productSlug } ) ) {
 		steps.push( STEPS.UNIFIED_PLANS, STEPS.TRIAL_ACKNOWLEDGE );
-	} else if ( ! isFreeHostingTrial( productSlug ) ) {
-		await setPlanCartItem( {
-			product_slug: productSlug,
-			extra: {
-				...( utmSource && {
-					hideProductVariants: utmSource === 'wordcamp',
-				} ),
-			},
-		} );
-	} else if ( eligibleForFreeHostingTrial ) {
-		await setPlanCartItem( {
-			product_slug: productSlug,
-			extra: {
-				...( utmSource && {
-					hideProductVariants: utmSource === 'wordcamp',
-				} ),
-			},
-		} );
-
-		steps.push( STEPS.TRIAL_ACKNOWLEDGE, STEPS.UNIFIED_PLANS );
-	} else {
-		steps.push( STEPS.UNIFIED_PLANS );
+	} else if ( isFreeHostingTrial( productSlug ) ) {
+		if ( eligibleForFreeHostingTrial ) {
+			steps.push( STEPS.TRIAL_ACKNOWLEDGE, STEPS.UNIFIED_PLANS );
+		} else {
+			steps.push( STEPS.UNIFIED_PLANS );
+		}
 	}
-
 	steps.push( STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
 
 	return stepsWithRequiredLogin( steps );
@@ -116,12 +128,15 @@ const hosting: FlowV2< typeof initialize > = {
 
 		const query = useQuery();
 
+		const locale = useFlowLocale();
 		const utmSource = query.get( 'utm_source' );
 		const studioSiteId = query.get( 'studioSiteId' );
 		const autoOpenPush = query.get( 'autoOpenPush' );
 
 		const flowName = this.name;
+		const showPurchaseSteps = hasPurchaseStepsParameter( query );
 		const showDomainStep = query.has( 'showDomainStep' );
+		const shouldSkipPlans = shouldSkipPlansStep( query, planCartItem, NEW_HOSTED_SITE_FLOW );
 		const isWooPartner = useIsValidWooPartner();
 
 		const getGoBack = () => {
@@ -153,7 +168,7 @@ const hosting: FlowV2< typeof initialize > = {
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
-					if ( planCartItem ) {
+					if ( showPurchaseSteps ? shouldSkipPlans : planCartItem ) {
 						return navigate( STEPS.SITE_CREATION_STEP.slug );
 					}
 
@@ -192,12 +207,12 @@ const hosting: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_CREATION_STEP.slug:
-					return navigate( STEPS.PROCESSING.slug );
+					return navigate( STEPS.PROCESSING.slug, undefined, showPurchaseSteps );
 
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
-						setSignupCompleteSiteID( providedDependencies.siteId );
+						setSignupCompleteSiteID( showPurchaseSteps ? siteId : providedDependencies.siteId );
 						const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
 						const destinationParams: Record< string, string > = {
 							siteId,
@@ -232,14 +247,33 @@ const hosting: FlowV2< typeof initialize > = {
 							if ( couponCode ) {
 								resetCouponCode();
 							}
-							return window.location.assign(
-								addQueryArgs(
-									`/checkout/${ encodeURIComponent(
-										( providedDependencies?.siteSlug as string ) ?? ''
-									) }`,
-									{ redirect_to: destination, coupon: couponCode }
-								)
+							const checkoutBackUrl = ( step: 'domains' | 'plans' ) =>
+								pathToUrl(
+									addQueryArgs( withLocale( `/setup/${ flowName }/${ step }`, locale ), {
+										...Object.fromEntries( query ),
+										plan: undefined,
+										siteSlug,
+									} )
+								);
+							const stepPosition = getOnboardingStepperPosition( 'checkout', shouldSkipPlans );
+							const checkoutUrl = addQueryArgs(
+								`/checkout/${ encodeURIComponent( ( providedDependencies?.siteSlug as string ) ?? '' ) }`,
+								{
+									redirect_to: destination,
+									coupon: couponCode,
+									...( showPurchaseSteps && {
+										showDomainStep: '',
+										showPurchaseSteps: 'true',
+										checkoutBackUrl: checkoutBackUrl( shouldSkipPlans ? 'domains' : 'plans' ),
+										checkoutBackUrlDomains: checkoutBackUrl( 'domains' ),
+										steps_current: stepPosition.current,
+										steps_total: stepPosition.total,
+									} ),
+								}
 							);
+							return showPurchaseSteps
+								? window.location.replace( checkoutUrl )
+								: window.location.assign( checkoutUrl );
 						}
 
 						return navigate( STEPS.UNIFIED_PLANS.slug );
@@ -254,6 +288,25 @@ const hosting: FlowV2< typeof initialize > = {
 		};
 	},
 	useSideEffect( currentStepSlug ) {
+		const reduxDispatch = useReduxDispatch();
+		const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
+		const signupStateInitialized = useRef( false );
+		useEffect( () => {
+			if ( signupStateInitialized.current ) {
+				return;
+			}
+			signupStateInitialized.current = true;
+			const query = getCurrentQueryParams();
+			if ( hasPurchaseStepsParameter( query ) ) {
+				initializeSignupState(
+					reduxDispatch,
+					query,
+					eligibleForFreeHostingTrial,
+					! currentStepSlug || getLanguageSlugs().includes( currentStepSlug )
+				);
+			}
+		}, [ currentStepSlug, reduxDispatch, eligibleForFreeHostingTrial ] );
+
 		const studioSiteId = useQuery().get( 'studioSiteId' );
 		const autoOpenPush = useQuery().get( 'autoOpenPush' );
 		const section = useQuery().get( 'section' );

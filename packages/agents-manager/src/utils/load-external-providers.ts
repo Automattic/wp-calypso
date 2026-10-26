@@ -24,6 +24,8 @@ import {
 import { findAbilityByName } from '../abilities/ability-name';
 import { handlePageDesignTaskUpdate } from '../abilities/stream-page-design/stream';
 import { wooFallbackToolProvider } from '../abilities/woocommerce';
+import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../constants';
+import { filterInteractiveUiCatalogs } from '../interactive-ui/catalogs';
 import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
 import { bigSkyPageContextProvider, isBigSkyEnabled } from './big-sky-page-context';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
@@ -42,6 +44,7 @@ import type {
 } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
+import type { InteractiveUiCatalogDefinition } from '@automattic/ai-ui-renderer';
 import type { ReactNode } from 'react';
 
 /**
@@ -150,6 +153,22 @@ export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilitie
 	}
 }
 
+/** Tells the agent which files the user can attach, so it never asks for one the composer rejects. */
+function withAcceptedUploadTypes(
+	contextProvider: ContextProvider | undefined
+): ContextProvider | undefined {
+	if ( ! contextProvider ) {
+		return contextProvider;
+	}
+
+	return {
+		getClientContext: () => ( {
+			...contextProvider.getClientContext(),
+			acceptedUploadTypes: DEFAULT_ACCEPTED_UPLOAD_TYPES,
+		} ),
+	};
+}
+
 export interface LoadedProviders {
 	/** Optional stable provider identifier exported by a provider module. */
 	providerId?: string;
@@ -170,6 +189,10 @@ export interface LoadedProviders {
 	suppressEmptyViewDefaults?: boolean;
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
+	/** A provider's own interactive UI catalog: its document, components and functions. */
+	interactiveUi?: InteractiveUiCatalogDefinition;
+	/** Every loaded provider's interactive UI catalog, one per catalog ID. */
+	interactiveUiCatalogs?: InteractiveUiCatalogDefinition[];
 	useAbilitiesSetup?: AbilitiesSetupHook;
 	useSuggestions?: UseSuggestionsHook;
 	getChatComponent?: GetChatComponent;
@@ -632,6 +655,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allContextProviders: ContextProvider[] = isBigSkySite ? [ bigSkyPageContextProvider ] : [];
 	const allMarkdownComponents: MarkdownComponents[] = [];
 	const allMarkdownExtensions: MarkdownExtensions[] = [];
+	const allInteractiveUiCatalogs: InteractiveUiCatalogDefinition[] = [];
 	const allGetChatComponents: GetChatComponent[] = [];
 	const allTransformMessages: TransformMessages[] = [];
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
@@ -717,6 +741,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		if ( module.markdownExtensions ) {
 			allMarkdownExtensions.push( module.markdownExtensions );
 		}
+		if ( module.interactiveUi ) {
+			allInteractiveUiCatalogs.push( module.interactiveUi );
+		}
 
 		// First-write-wins for the singleton export.
 		if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
@@ -743,8 +770,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// chat's Undo first and paints the page-design stream.
 	const isEditor = isEditorPage();
 	const contextProvider = mergeContextProviders( allContextProviders );
-	const mergedContextProvider = withCanvasBinding(
-		isEditor ? withPageContext( contextProvider ) : contextProvider
+	const mergedContextProvider = withAcceptedUploadTypes(
+		withCanvasBinding( isEditor ? withPageContext( contextProvider ) : contextProvider )
 	);
 	const mergedMarkdownComponents = mergeMarkdownComponentsFromProviders( allMarkdownComponents );
 	const mergedMarkdownExtensions = mergeMarkdownExtensionsFromProviders( allMarkdownExtensions );
@@ -886,6 +913,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		getEmptyViewSuggestions: mergedGetEmptyViewSuggestions,
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: { ...defaultMarkdownExtensions, ...mergedMarkdownExtensions },
+		interactiveUiCatalogs: filterInteractiveUiCatalogs( allInteractiveUiCatalogs ),
 		providerIds: allProviderIds.length ? allProviderIds : undefined,
 		useAbilitiesSetup: mergedAbilitiesSetup,
 		onTaskUpdate: isEditor ? handlePageDesignTaskUpdate : undefined,

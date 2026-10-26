@@ -24,6 +24,7 @@ import {
 	isWithinRefundWindowDowngradeEligible,
 	isA4ASubscriptionMeta,
 	isA4ABillingDragonPurchase,
+	isJetpackCrmProduct,
 } from '../purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -847,5 +848,26 @@ describe( 'getDelayedDowngradeRenewalPriceText', () => {
 				() => false
 			)
 		).toBeNull();
+	} );
+} );
+
+describe( 'isJetpackCrmProduct', () => {
+	it.each( [
+		'jetpack_complete',
+		'jetpack-complete_abc123',
+		'jetpack_pro_yearly',
+		'jetpack_pro_bi_yearly',
+		'jetpack-pro_abc123',
+		'jetpack_crm',
+	] )( 'returns true for %s', ( keyOrSlug ) => {
+		expect( isJetpackCrmProduct( keyOrSlug ) ).toBe( true );
+	} );
+
+	it.each( [
+		'jetpack_professional',
+		'jetpack-professional_abc123',
+		'jetpack_security_t1_yearly',
+	] )( 'returns false for %s', ( keyOrSlug ) => {
+		expect( isJetpackCrmProduct( keyOrSlug ) ).toBe( false );
 	} );
 } );

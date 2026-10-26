@@ -31,7 +31,6 @@ test( 'import rules check workspace packages from source', () => {
 			cwd: repoRoot,
 			input: code,
 			encoding: 'utf8',
-			env: { ...process.env, ESLINT_USE_FLAT_CONFIG: 'false' },
 		}
 	);
 	expect( eslint.error ).toBeUndefined();

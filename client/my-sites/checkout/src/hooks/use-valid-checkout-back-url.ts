@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { useMemo } from 'react';
-import { isCommerceGarden } from 'calypso/dashboard/utils/site-types';
 import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getSiteId } from 'calypso/state/sites/selectors';
@@ -38,7 +37,6 @@ const useValidCheckoutBackUrl = (
 	);
 	const { data: site } = useCheckoutSite( selectedSiteId );
 	const jetpackSite = isJetpackNotAtomicSite( site );
-	const isCommerce = site ? isCommerceGarden( site ) : false;
 
 	return useMemo( () => {
 		if ( ! backUrl ) {
@@ -53,7 +51,7 @@ const useValidCheckoutBackUrl = (
 			}
 			// For Jetpack specific checkout, if navigated with direct link
 			// We should redirect to the jetpack pricing page
-			if ( jetpackSite && ! isCommerce ) {
+			if ( jetpackSite ) {
 				return 'https://cloud.jetpack.com/pricing/' + ( siteSlug || '' );
 			}
 			return undefined;
@@ -66,7 +64,7 @@ const useValidCheckoutBackUrl = (
 		}
 
 		return undefined;
-	}, [ backUrl, queryArgName, isCommerce, jetpackSite, siteSlug ] );
+	}, [ backUrl, queryArgName, jetpackSite, siteSlug ] );
 };
 
 export default useValidCheckoutBackUrl;

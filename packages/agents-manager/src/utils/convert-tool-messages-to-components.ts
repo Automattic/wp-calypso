@@ -4,8 +4,12 @@ import ChatResponseRenderedTracker, {
 } from '../components/chat-response-tracking';
 import { EscalationButton } from '../components/escalation-button';
 import OpenHelpCenterButton from '../components/open-help-center-button';
-import lazyComponent from './lazy-component';
+import { ButtonPicker, ColorPicker, FontPicker } from '../components/style-pickers';
+import { isContextOnlyMessage } from './context-only-message';
+import { getLatestUserMessageIndex } from './latest-message';
+import { withLazyBoundary } from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
+import { isChatUiStale } from './stale-chat-ui';
 import {
 	APPLY_BLOCK_EDITS_TOOL_ID,
 	getApplyBlockEditsOutcome,
@@ -26,26 +30,21 @@ export interface AgentsManagerUIMessage extends UIMessage {
 	traceId?: string;
 	/** Suppress Agenttic's transient thinking indicator while this message is the latest one. */
 	suppressThinking?: boolean;
+	/** Starts a turn though no user message shows before it, as a reply to an interactive UI action. */
+	startsTurn?: boolean;
 }
 
 type AmComponentType = ShowComponentType | typeof OPEN_HELP_CENTER_BUTTON_TYPE;
 
 // AM-owned components by type. These take precedence over provider
 // components — AM is the single source of truth for each of these types.
-//
-// The pickers carry the block-editor preview stack, so they load on demand:
-// a picker row fetches its chunk when it first renders, and other chats never
-// download it. The Help Center button is a plain button and ships inline.
+// The pickers load on demand, and `withLazyBoundary()` gives them the
+// `Suspense` and error boundary a surface would; the Help Center button
+// ships inline.
 const AM_COMPONENTS: Record< AmComponentType, React.ComponentType > = {
-	'button-picker': lazyComponent(
-		() => import( /* webpackChunkName: "am-button-picker" */ '../components/button-picker' )
-	),
-	'color-picker': lazyComponent(
-		() => import( /* webpackChunkName: "am-color-picker" */ '../components/color-picker' )
-	),
-	'font-picker': lazyComponent(
-		() => import( /* webpackChunkName: "am-font-picker" */ '../components/font-picker' )
-	),
+	'button-picker': withLazyBoundary( ButtonPicker ),
+	'color-picker': withLazyBoundary( ColorPicker ),
+	'font-picker': withLazyBoundary( FontPicker ),
 	'open-help-center-button': OpenHelpCenterButton,
 };
 
@@ -64,29 +63,6 @@ interface Options {
 	canEscalateToHuman?: boolean;
 	/** Block-edit tool calls the server has replaced with a retry. */
 	retriedToolCallIds?: ReadonlySet< string >;
-}
-
-interface MessageWithContextFlags extends UIMessage {
-	context?: {
-		flags?: {
-			context_only?: boolean;
-		};
-	};
-}
-
-export function isContextOnlyMessage( message: UIMessage ): boolean {
-	return (
-		( message as MessageWithContextFlags ).context?.flags?.context_only === true ||
-		message.content?.some( ( content ) => {
-			if ( content.type === 'context' ) {
-				return true;
-			}
-
-			const flags =
-				content.type === 'data' ? ( content.data?.flags as { context_only?: boolean } ) : undefined;
-			return flags?.context_only === true;
-		} )
-	);
 }
 
 function getShowComponentSummary( message: UIMessage ): string | undefined {
@@ -180,15 +156,6 @@ function hasLaterApplyBlockEditsOutcome(
 	return false;
 }
 
-// Hidden context messages (e.g. navigation continuations) do not start a turn.
-function isInLatestTurn( messages: UIMessage[], currentIndex: number ): boolean {
-	return ! messages
-		.slice( currentIndex + 1 )
-		.some(
-			( laterMessage ) => laterMessage.role === 'user' && ! isContextOnlyMessage( laterMessage )
-		);
-}
-
 /**
  * Whether the deferred reply for a promised visual check is still outstanding.
  *
@@ -257,6 +224,16 @@ function followsTerminalApplyBlockEditsOutcome(
 }
 
 /**
+ * Drops a message's narration after a terminal block-edit outcome, but keeps a component beside it,
+ * such as an interactive UI surface.
+ */
+function withoutNarration( message: UIMessage ): UIMessage[] {
+	const content = message.content.filter( ( part ) => part.type === 'component' );
+
+	return content.length > 0 ? [ { ...message, content } ] : [];
+}
+
+/**
  * Converts tool-related messages to component messages.
  */
 export default function convertToolMessagesToComponents( {
@@ -267,6 +244,8 @@ export default function convertToolMessagesToComponents( {
 	canEscalateToHuman = true,
 	retriedToolCallIds,
 }: Options ): AgentsManagerUIMessage[] {
+	const latestUserMessageIndex = getLatestUserMessageIndex( messages );
+
 	const convertMessage = (
 		message: UIMessage,
 		index: number,
@@ -323,7 +302,9 @@ export default function convertToolMessagesToComponents( {
 		try {
 			textData = JSON.parse( firstContentText );
 		} catch ( _error ) {
-			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
+			return followsTerminalApplyBlockEditsOutcome( array, index )
+				? withoutNarration( message )
+				: [ message ];
 		}
 
 		if (
@@ -331,7 +312,9 @@ export default function convertToolMessagesToComponents( {
 			textData === null ||
 			typeof textData.tool_id !== 'string'
 		) {
-			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
+			return followsTerminalApplyBlockEditsOutcome( array, index )
+				? withoutNarration( message )
+				: [ message ];
 		}
 
 		// Handle `show-component` tool message
@@ -378,21 +361,15 @@ export default function convertToolMessagesToComponents( {
 				];
 			}
 
-			// A picker only stays interactive until the user replies past it — after
-			// that it documents a previous step. Hidden context messages (e.g.
-			// navigation continuations) are not real replies.
-			const hasUserReplied = array
-				.slice( index + 1 )
-				.some(
-					( laterMessage ) => laterMessage.role === 'user' && ! isContextOnlyMessage( laterMessage )
-				);
-
-			// In the site editor, React-Query caching keeps past conversations alive when the
-			// user navigates to a different page. Compare the picker's `postId` with the
-			// current editor page to disable pickers that no longer belong to this page.
-			const isPageChanged =
-				!! postId && !! currentPostId && String( postId ) !== String( currentPostId );
-			const isStale = hasUserReplied || ! isCurrent || isPageChanged;
+			// History rows carry no `isCurrent`, so a restored picker is stale too.
+			const isStale =
+				! isCurrent ||
+				isChatUiStale( {
+					messageIndex: index,
+					latestUserMessageIndex,
+					postId,
+					currentPostId,
+				} );
 			const shouldTrackResponse = ! isStale;
 			let responseActionProps = {};
 			if ( ! amComponent ) {
@@ -461,6 +438,7 @@ export default function convertToolMessagesToComponents( {
 			const blockEditOutcome = getApplyBlockEditsOutcome( textData.tool_id, textData.data );
 			const isLegacySuccessfulApplyBlockEditsResult =
 				textData.tool_id === APPLY_BLOCK_EDITS_TOOL_ID && textData.data?.result?.success === true;
+
 			if (
 				isBlockEditToolId( textData.tool_id ) &&
 				! blockEditOutcome &&
@@ -468,6 +446,7 @@ export default function convertToolMessagesToComponents( {
 			) {
 				return [];
 			}
+
 			// Retries are known only from the live stream: rehydrated history has no
 			// `retryingToolCallId`, so after a reload a retried no-change reappears. A
 			// later edit in the same turn is not proof of a retry, so none is inferred.
@@ -478,21 +457,26 @@ export default function convertToolMessagesToComponents( {
 			) {
 				return [];
 			}
+
 			// The server may answer a no-change with a retry, which would hide the
 			// summary again; withhold it until the turn ends so it never flashes.
-			if ( isProcessing && blockEditOutcome === 'no-changes' && isInLatestTurn( array, index ) ) {
+			const isInLatestTurn = latestUserMessageIndex <= index;
+			if ( isProcessing && blockEditOutcome === 'no-changes' && isInLatestTurn ) {
 				return [];
 			}
+
 			const summary = getDisplayMessageFromToolData( textData.data );
 			if ( ! summary && blockEditOutcome !== 'no-changes' ) {
 				return [];
 			}
+
 			if (
 				typeof textData.tool_call_id === 'string' &&
 				hasLaterApplyBlockEditsOutcome( array, index, textData.tool_call_id )
 			) {
 				return [];
 			}
+
 			// While a promised check is still running, the transient thinking indicator
 			// already reads as the agent working, so the summary is withheld rather than
 			// replaced by a second, static one. The summary returns as soon as any
@@ -505,6 +489,7 @@ export default function convertToolMessagesToComponents( {
 			) {
 				return [];
 			}
+
 			const content =
 				blockEditOutcome === 'no-changes'
 					? [

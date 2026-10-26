@@ -160,8 +160,8 @@ export interface BigSkyMessage {
 	showIcon?: boolean;
 
 	/**
-	 * Optional: lists AM's editor empty-view suggestions under the message, e.g.
-	 * to offer next steps after a site build.
+	 * Optional: lists AM's editor empty-view suggestions under the message until
+	 * the user replies, e.g. to offer next steps after a site build.
 	 */
 	hasEditorEmptyViewSuggestions?: boolean;
 }

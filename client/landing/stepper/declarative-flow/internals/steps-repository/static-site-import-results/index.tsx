@@ -7,17 +7,17 @@ import {
 	Card,
 	CardBody,
 	ExternalLink,
+	Notice,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { _n, sprintf } from '@wordpress/i18n';
-import { Icon, check } from '@wordpress/icons';
+import { Icon, caution, check, error as errorIcon, published } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import Notice from 'calypso/dashboard/components/notice';
 import { getIntlLocale } from 'calypso/dashboard/utils/locale';
 import {
 	ImportCard,
@@ -43,14 +43,13 @@ const strong = { strong: <strong />, span: <span className="static-site-import-r
 type Row = { title: ReactNode; text?: string; link?: { href: string; label: string } };
 
 const FoundRow = ( { title, text, link, isWarning }: Row & { isWarning?: boolean } ) => (
-	<HStack justify="flex-start" alignment="top" spacing={ 4 }>
-		{ isWarning ? (
-			<span className="static-site-import-results__warning" aria-hidden="true">
-				!
-			</span>
-		) : (
-			<Icon icon={ check } size={ 24 } fill="var( --studio-green-50 )" />
-		) }
+	<HStack
+		className={ `static-site-import-results__row${ isWarning ? ' is-warning' : '' }` }
+		justify="flex-start"
+		alignment="top"
+		spacing={ 2 }
+	>
+		<Icon icon={ isWarning ? caution : check } size={ 20 } />
 		<VStack spacing={ 1 }>
 			<span>{ title }</span>
 			{ text && <Text variant="muted">{ text }</Text> }
@@ -248,7 +247,7 @@ const StaticSiteImportResults: StepType< { submits: StaticSiteImportResultsSubmi
 
 		const onTalkToExpert = async () => {
 			try {
-				await sendTicket( `Static site import: needs an expert for ${ blockers.join( ', ' ) }.` );
+				await sendTicket();
 				navigation.submit?.( { action: 'expert' } );
 			} catch {
 				// Shown by the error notice.
@@ -274,8 +273,9 @@ const StaticSiteImportResults: StepType< { submits: StaticSiteImportResultsSubmi
 				return (
 					<VStack spacing={ 4 }>
 						{ ticketFailed && (
-							<Notice variant="error">
-								{ __( 'We couldn’t reach our migrations team. Please try again.' ) }
+							<Notice status="error" isDismissible={ false }>
+								<Icon icon={ errorIcon } size={ 24 } />
+								<span>{ __( 'We couldn’t reach our migrations team. Please try again.' ) }</span>
 							</Notice>
 						) }
 						<div className="static-site-import-results__choices">
@@ -371,13 +371,18 @@ const StaticSiteImportResults: StepType< { submits: StaticSiteImportResultsSubmi
 
 						<ImportCard>
 							{ hasPreview && (
-								<Notice variant={ outcome === 'everything' ? 'success' : 'warning' }>
-									{ confidenceNotice }
+								<Notice
+									status={ outcome === 'everything' ? 'success' : 'warning' }
+									isDismissible={ false }
+									spokenMessage={ confidenceNotice }
+								>
+									<Icon icon={ outcome === 'everything' ? published : caution } size={ 24 } />
+									<span>{ confidenceNotice }</span>
 								</Notice>
 							) }
 
 							{ hasPreview && (
-								<VStack spacing={ 4 }>
+								<VStack spacing={ 2.5 }>
 									{ foundRows.map( ( row, index ) => (
 										<FoundRow key={ `found-${ index }` } { ...row } />
 									) ) }
@@ -391,10 +396,13 @@ const StaticSiteImportResults: StepType< { submits: StaticSiteImportResultsSubmi
 							) }
 
 							{ needsRestart && (
-								<Notice variant="error">
-									{ __(
-										'It’s been a while since we read your site, so we need to take a fresh look before moving it.'
-									) }
+								<Notice status="error" isDismissible={ false }>
+									<Icon icon={ errorIcon } size={ 24 } />
+									<span>
+										{ __(
+											'It’s been a while since we read your site, so we need to take a fresh look before moving it.'
+										) }
+									</span>
 								</Notice>
 							) }
 

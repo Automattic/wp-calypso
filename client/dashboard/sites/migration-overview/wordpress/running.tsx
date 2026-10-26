@@ -3,7 +3,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useHelpCenter } from '../../../app/help-center';
 import Grid from '../../../components/grid';
 import { Text } from '../../../components/text';
-import { MigrationCard } from './migration-card';
+import { MigrationCard, StatusIcon } from './migration-card';
 import type { WordPressMigrationStatus } from '@automattic/api-core';
 import './style.scss';
 
@@ -13,8 +13,7 @@ export function Running( { phase, sourceHost }: { phase: Phase; sourceHost: stri
 	const { setShowHelpCenter } = useHelpCenter();
 
 	const steps: { label: string; phases: Phase[] }[] = [
-		{ label: __( 'Connected' ), phases: [ 'prepare-source', 'prepare-destination' ] },
-		{ label: __( 'Preflight' ), phases: [ 'preflight' ] },
+		{ label: __( 'Verifying' ), phases: [ 'prepare-source', 'prepare-destination', 'preflight' ] },
 		{ label: __( 'Copying' ), phases: [ 'migration' ] },
 		{ label: __( 'Finishing' ), phases: [ 'cleanup' ] },
 	];
@@ -27,6 +26,7 @@ export function Running( { phase, sourceHost }: { phase: Phase; sourceHost: stri
 				__( 'Migrating %s' ),
 				sourceHost
 			) }
+			decoration={ <StatusIcon status="pending" /> }
 			actions={
 				<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
 					{ __( 'Something wrong? Contact us' ) }

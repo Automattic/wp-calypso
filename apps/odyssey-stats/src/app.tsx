@@ -6,7 +6,6 @@
 import './lib/init-app-config';
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
-import '@automattic/calypso-polyfills';
 import { createStore, applyMiddleware, compose, Store, Middleware } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { getPathWithUpdatedQueryString } from 'calypso/my-sites/stats/utils';

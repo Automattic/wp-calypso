@@ -178,13 +178,22 @@ class PasswordResetEmailValidator extends BaseValidator< string > {
 	}
 }
 
+interface PasswordValidatorOptions {
+	requireNumber?: boolean;
+	requireSpecialCharacter?: boolean;
+}
+
 class PasswordValidator extends BaseValidator< string > {
 	private readonly minimumPasswordLength: number;
+	private readonly requireNumber: boolean;
+	private readonly requireSpecialCharacter: boolean;
 	static readonly maximumPasswordLength = 100;
 
-	constructor( minimumPasswordLength: number ) {
+	constructor( minimumPasswordLength: number, options: PasswordValidatorOptions = {} ) {
 		super();
 		this.minimumPasswordLength = minimumPasswordLength;
+		this.requireNumber = options.requireNumber ?? false;
+		this.requireSpecialCharacter = options.requireSpecialCharacter ?? false;
 	}
 
 	static getPasswordTooShortError( minimumPasswordLength: number ): FieldError {
@@ -214,6 +223,16 @@ class PasswordValidator extends BaseValidator< string > {
 			args: firstForbiddenCharacter,
 			comment: '%s denotes a single character that is not allowed in this field',
 		} );
+	}
+
+	static getPasswordMissingNumberError(): FieldError {
+		return i18n.translate( 'This field must contain at least one number.' );
+	}
+
+	static getPasswordMissingSpecialCharacterError(): FieldError {
+		return i18n.translate(
+			'This field must contain at least one special character, such as ! @ # $ %.'
+		);
 	}
 
 	validateField( field: MailboxFormFieldBase< string > ): void {
@@ -249,6 +268,16 @@ class PasswordValidator extends BaseValidator< string > {
 
 		if ( value.endsWith( ' ' ) ) {
 			field.error = PasswordValidator.getPasswordEndsWithSpaceError();
+			return;
+		}
+
+		if ( this.requireNumber && ! /\d/.test( value ) ) {
+			field.error = PasswordValidator.getPasswordMissingNumberError();
+			return;
+		}
+
+		if ( this.requireSpecialCharacter && ! /[^A-Za-z0-9 ]/.test( value ) ) {
+			field.error = PasswordValidator.getPasswordMissingSpecialCharacterError();
 		}
 	}
 }

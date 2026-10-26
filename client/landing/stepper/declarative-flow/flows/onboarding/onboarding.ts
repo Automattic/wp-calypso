@@ -11,6 +11,7 @@ import { matchPath } from 'react-router';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import {
+	SITE_SELECTED_REF,
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
 	WOO_HOSTING_SOLUTIONS_REF,
 } from 'calypso/landing/stepper/constants';
@@ -84,7 +85,11 @@ import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
 import { useIsPostPlanSelectionEmailVerification } from '../../internals/steps-repository/__user/use-email-verification-gate';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import { TRACKS_FLUSH_DELAY } from '../../internals/steps-repository/playground/lib/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import { getOnboardingStepperPosition } from './step-counter-config';
 import type { WowFunnelDest } from '../../../utils/wow-funnel';
@@ -319,28 +324,38 @@ const onboarding: FlowV2< typeof initialize > = {
 	useTracksEventProps() {
 		const query = useQuery();
 		const preselectedPlan = getPreselectedPlan( query );
-		// Reported raw, as the legacy flows reported their declared query dependencies.
-		const couponParam = preselectedPlan ? query.get( 'coupon' ) : null;
+		// Reported raw, as the legacy flows reported their declared query dependencies. The
+		// coupon stands alone too: WordCamp coupon links name no plan.
+		const couponParam = query.get( 'coupon' );
 		const storageParam = preselectedPlan ? query.get( 'storage' ) : null;
 
 		// A new object each render would record a new signup start, so this has to be memoised.
-		return useMemo(
-			() => ( {
+		return useMemo( () => {
+			// The redirect collapses the legacy flows' `flow` values into `onboarding`. This is
+			// how that traffic stays separable.
+			const signupStartProperties = {
+				...( preselectedPlan ? { preselected_plan: preselectedPlan } : {} ),
+				...( couponParam ? { coupon: couponParam } : {} ),
+				...( storageParam ? { storage: storageParam } : {} ),
+			};
+
+			return {
 				isLoading: false,
-				// The redirect collapses the plan flows' `flow` values into `onboarding`. This
-				// is how that traffic stays separable.
-				eventsProperties: preselectedPlan
-					? {
-							[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
-								preselected_plan: preselectedPlan,
-								...( couponParam ? { coupon: couponParam } : {} ),
-								...( storageParam ? { storage: storageParam } : {} ),
-							},
-						}
-					: {},
-			} ),
-			[ preselectedPlan, couponParam, storageParam ]
-		);
+				eventsProperties:
+					preselectedPlan || couponParam
+						? { [ STEPPER_TRACKS_EVENT_SIGNUP_START ]: signupStartProperties }
+						: {},
+			};
+		}, [ preselectedPlan, couponParam, storageParam ] );
+	},
+	useStepsProps() {
+		// The site-selected signup flow records its own completion before checkout, so the
+		// hand-off's processing pass must not record a second one.
+		const isSiteSelectedHandOff = useQuery().get( 'ref' ) === SITE_SELECTED_REF;
+
+		return {
+			[ STEPS.PROCESSING.slug ]: { skipSignupComplete: isSiteSelectedHandOff },
+		};
 	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
@@ -372,7 +387,10 @@ const onboarding: FlowV2< typeof initialize > = {
 		const shouldSkipPlans = shouldSkipPlansStep( queryParams, planCartItem );
 		const coupon = queryParams.get( 'coupon' );
 		const refParameter = queryParams.get( 'ref' );
+		// A site-selected purchase finishes in this flow, but lands and completes as that flow.
+		const postCheckoutFlowName = refParameter === SITE_SELECTED_REF ? SITE_SELECTED_REF : flowName;
 		const siteSlugParam = queryParams.get( 'siteSlug' );
+		const siteIdParam = queryParams.get( 'siteId' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
@@ -393,6 +411,8 @@ const onboarding: FlowV2< typeof initialize > = {
 		);
 		const wowFunnelSlug = getWowFunnelSlug( queryParams );
 		const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
+		// From the Reader's "Create a site to reblog": the run ends in the new site's editor.
+		const blogPostToReblog = queryParams.get( 'blog_post' );
 
 		/**
 		 * Returns where to land after checkout, or `defaultDestination` when nothing overrides it.
@@ -430,6 +450,12 @@ const onboarding: FlowV2< typeof initialize > = {
 					customThemeBuild: isBlueprintCustomThemeBuild( queryParams ),
 					ref: refParameter,
 					locale,
+				} );
+			}
+
+			if ( blogPostToReblog && providedDependencies.siteSlug ) {
+				return addQueryArgs( `/post/${ providedDependencies.siteSlug }`, {
+					url: blogPostToReblog,
 				} );
 			}
 
@@ -651,7 +677,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				case 'wow-funnel-handoff':
 					// Success replaces location with the built site itself, so the only thing
 					// that reaches navigation here is a failed or timed-out wait.
-					return navigate( STEPS.ERROR.slug );
+					return navigate( STEPS.ERROR.slug, { errorReason: 'wow_funnel_handoff_failed' } );
 				case 'post-checkout-onboarding': {
 					setShouldShowNotification( providedDependencies?.siteId as number );
 					return navigate( 'processing' );
@@ -663,20 +689,23 @@ const onboarding: FlowV2< typeof initialize > = {
 					const prompt = providedDependencies?.prompt as string | undefined;
 					const graph = providedDependencies?.graph as BuildWowGraph | undefined;
 
+					const openLegacyBuilder = () =>
+						window.location.assign(
+							addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
+								siteSlug,
+								// Skip siteId when it's 0/falsy: useSiteData returns 0 before
+								// the site object hydrates, and "0" in the URL poisons the
+								// next page's site lookup.
+								...( siteId && siteId !== '0' ? { siteId } : {} ),
+								fromPostCheckoutSetupSite: '1',
+								...( refParameter ? { ref: refParameter } : {} ),
+								...( prompt ? { prompt } : {} ),
+							} )
+						);
+
 					switch ( setupChoice ) {
 						case 'build-with-ai':
-							window.location.assign(
-								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
-									siteSlug,
-									// Skip siteId when it's 0/falsy: useSiteData returns 0 before
-									// the site object hydrates, and "0" in the URL poisons the
-									// next page's site lookup.
-									...( siteId && siteId !== '0' ? { siteId } : {} ),
-									fromPostCheckoutSetupSite: '1',
-									...( refParameter ? { ref: refParameter } : {} ),
-									...( prompt ? { prompt } : {} ),
-								} )
-							);
+							openLegacyBuilder();
 							return;
 						case 'generate-theme': {
 							// Provision an Atomic (WP Cloud) site up front so the custom
@@ -692,11 +721,14 @@ const onboarding: FlowV2< typeof initialize > = {
 									site_slug: siteSlug,
 									site_id: siteId,
 								} );
-								return navigate( 'error' as typeof currentStepSlug );
+								return navigate( 'error' as typeof currentStepSlug, {
+									errorReason: 'build_wow_missing_site',
+								} );
 							}
 
+							let buildWowBlogId: number | undefined;
 							try {
-								await requestBuildWowSite( siteIdentifier );
+								buildWowBlogId = ( await requestBuildWowSite( siteIdentifier ) )?.blog_id;
 								logBuildWowEvent( 'start_success', {
 									site_identifier: siteIdentifier,
 								} );
@@ -705,13 +737,32 @@ const onboarding: FlowV2< typeof initialize > = {
 									site_identifier: siteIdentifier,
 									error: error instanceof Error ? error.message : String( error ),
 								} );
-								return navigate( 'error' as typeof currentStepSlug );
+								// The server turns a store away when it will not build it, for example
+								// while its store builder is switched off; the store still gets the
+								// legacy builder.
+								if (
+									providedDependencies?.buildsStore &&
+									( error as { code?: string } )?.code === 'site_not_eligible'
+								) {
+									logBuildWowEvent( 'start_store_legacy_fallback', {
+										site_identifier: siteIdentifier,
+									} );
+									openLegacyBuilder();
+									return;
+								}
+								return navigate( 'error' as typeof currentStepSlug, {
+									errorReason: 'build_wow_start_failed',
+								} );
 							}
+
+							// The chooser can submit before it has loaded the site, without its ID;
+							// the build-wow start answers with it.
+							const specSiteId = siteId && String( siteId ) !== '0' ? siteId : buildWowBlogId;
 
 							window.location.assign(
 								getBuildWowSiteSpecUrl( {
 									siteSlug,
-									siteId,
+									siteId: specSiteId,
 									ref: refParameter,
 									graph,
 								} )
@@ -748,7 +799,9 @@ const onboarding: FlowV2< typeof initialize > = {
 						window.location.replace(
 							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
 								siteSlug: siteSlugParam,
+								...( siteIdParam ? { siteId: siteIdParam } : {} ),
 								...( refParameter ? { ref: refParameter } : {} ),
+								...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
 							} )
 						);
 						return;
@@ -758,7 +811,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					const dependencies: ProvidedDependencies = providedDependencies;
 					const [ defaultDestination, backDestination, backDestinationDomains ] =
 						getOnboardingPostCheckoutDestination( {
-							flowName,
+							flowName: postCheckoutFlowName,
 							locale,
 							siteSlug: dependencies.siteSlug as string,
 						} );
@@ -769,7 +822,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					);
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
-						setSignupCompleteFlowName( flowName );
+						setSignupCompleteFlowName( postCheckoutFlowName );
 						setSignupCompleteSlug( providedDependencies.siteSlug );
 
 						if ( providedDependencies.goToCheckout ) {
@@ -792,6 +845,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
 											{
 												siteSlug,
+												siteId: providedDependencies.siteId,
 												...( refParameter ? { ref: refParameter } : {} ),
 											}
 										);
@@ -799,16 +853,32 @@ const onboarding: FlowV2< typeof initialize > = {
 							// Variant B: a paid order meets the post-plan-selection gate on return from checkout,
 							// before post-checkout-onboarding. The Playground import path keeps its own
 							// return target.
-							if ( postPlanSelectionEmailVerification && ! playgroundId ) {
+							const returnsThroughVerification =
+								postPlanSelectionEmailVerification && ! playgroundId;
+							if ( returnsThroughVerification ) {
 								redirectTo = addQueryArgs(
 									withLocale( '/setup/onboarding/email-verification', locale ),
 									{
 										next: 'post-checkout-onboarding',
 										siteSlug,
+										siteId: providedDependencies.siteId,
 										...( refParameter ? { ref: refParameter } : {} ),
+										...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
 									}
 								);
 							}
+
+							// Leaving checkout must not turn a reblog into plain onboarding.
+							// The plans grid prices a coupon only from the URL.
+							const checkoutBackQueryArgs = {
+								...( blogPostToReblog
+									? {
+											blog_post: blogPostToReblog,
+											...( refParameter ? { ref: refParameter } : {} ),
+										}
+									: {} ),
+								...( coupon ? { coupon } : {} ),
+							};
 
 							const checkoutStepperPosition = getOnboardingStepperPosition(
 								'checkout',
@@ -818,11 +888,15 @@ const onboarding: FlowV2< typeof initialize > = {
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									// build_dest=wow and the WoW funnel (dest=editor) go
+									// build_dest=wow, the WoW funnel (dest=editor) and a reblog go
 									// straight from checkout to their destination — no
-									// post-checkout-onboarding hop, no chooser.
+									// post-checkout-onboarding hop, no chooser. A reblog meets the
+									// email-verification gate first.
 									redirect_to:
-										blueprintArchiveSlug || blueprintSimpleSlug || isKnownWowFunnel( wowFunnelSlug )
+										blueprintArchiveSlug ||
+										blueprintSimpleSlug ||
+										isKnownWowFunnel( wowFunnelSlug ) ||
+										( blogPostToReblog && ! returnsThroughVerification )
 											? destination
 											: redirectTo,
 									signup: 1,
@@ -830,9 +904,14 @@ const onboarding: FlowV2< typeof initialize > = {
 									// A skipping visit's last screen was the domain step, so that is where
 									// leaving checkout belongs.
 									checkoutBackUrl: pathToUrl(
-										shouldSkipPlans ? backDestinationDomains : backDestination
+										addQueryArgs(
+											shouldSkipPlans ? backDestinationDomains : backDestination,
+											checkoutBackQueryArgs
+										)
 									),
-									checkoutBackUrlDomains: pathToUrl( backDestinationDomains ),
+									checkoutBackUrlDomains: pathToUrl(
+										addQueryArgs( backDestinationDomains, checkoutBackQueryArgs )
+									),
 									coupon,
 									steps_current: checkoutStepperPosition.current,
 									steps_total: checkoutStepperPosition.total,
@@ -841,14 +920,17 @@ const onboarding: FlowV2< typeof initialize > = {
 						} else if (
 							blueprintArchiveSlug ||
 							blueprintSimpleSlug ||
-							isKnownWowFunnel( wowFunnelSlug )
+							isKnownWowFunnel( wowFunnelSlug ) ||
+							blogPostToReblog
 						) {
-							// build_dest=wow, build_dest=simple and the WoW funnel never show the
-							// setup-your-site-ai chooser; go straight to their destination.
+							// build_dest=wow, build_dest=simple, the WoW funnel and a reblog never
+							// show the setup-your-site-ai chooser; go straight to their destination.
 							// This can stay ahead of the domain branches below: a connected or
 							// transferred domain forces a paid plan (use-my-domain hides the free
 							// plan), and a paid funnel order's checkout redirect_to is the funnel
-							// destination itself, so it never comes back through here.
+							// destination itself, so it never comes back through here. A paid reblog
+							// does, after email verification, and skips the domain setup instructions
+							// below, as the reblogging flow did.
 							window.location.replace( destination );
 						} else if ( domainCartItem?.meta && isDomainMapping( domainCartItem ) ) {
 							// A connected domain still has to be pointed at the site once it is paid
@@ -872,7 +954,10 @@ const onboarding: FlowV2< typeof initialize > = {
 							window.location.replace( destination );
 						}
 					} else {
-						return navigate( 'error' as typeof currentStepSlug );
+						// NO_ACTION reaches here only without a siteSlug to send it back with.
+						return navigate( 'error' as typeof currentStepSlug, {
+							errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
+						} );
 					}
 					return;
 				}
@@ -881,12 +966,14 @@ const onboarding: FlowV2< typeof initialize > = {
 					const locationParams = new URLSearchParams( window.location.search );
 					if ( locationParams.get( 'intent' ) === 'woocommerce' ) {
 						const playgroundId = locationParams.get( 'playground' );
-						return window.location.assign(
-							addQueryArgs( '/setup/entrepreneur', {
-								from: 'playground-publish',
-								...( playgroundId ? { playground: playgroundId } : {} ),
-							} )
-						);
+						const destination = addQueryArgs( '/setup/entrepreneur', {
+							from: 'playground-publish',
+							...( playgroundId ? { playground: playgroundId } : {} ),
+						} );
+						// This leaves Stepper with a full page load, so give Tracks time to send the
+						// step's events and Stepper's submit event first.
+						setTimeout( () => window.location.assign( destination ), TRACKS_FLUSH_DELAY );
+						return;
 					}
 					const backTo = window.location.pathname + window.location.search;
 					return navigate(
@@ -956,6 +1043,21 @@ const onboarding: FlowV2< typeof initialize > = {
 			setPlanCartItem,
 			setProductCartItems,
 		] );
+
+		/**
+		 * The `site-selected` signup flow hands its purchase over to post-checkout-onboarding
+		 * without ever entering this flow, so whatever the store still holds belongs to some
+		 * earlier, unfinished run. Left in place, a stale connected-domain cart item would send
+		 * processing to that domain's setup page instead of the chooser.
+		 */
+		useEffect( () => {
+			if (
+				currentStepSlug === STEPS.POST_CHECKOUT_ONBOARDING.slug &&
+				getCurrentQueryParams().get( 'ref' ) === SITE_SELECTED_REF
+			) {
+				resetOnboardStore();
+			}
+		}, [ currentStepSlug, resetOnboardStore ] );
 
 		/**
 		 * Load Survicate and set visitor traits on each step navigation.

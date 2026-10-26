@@ -64,7 +64,7 @@
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@babel/runtime": "^7.27.1",
+		"@babel/runtime": "^7.29.10",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/element": "^8.0.0",
 		"react": "^18.3.1 || ^19.0.0",
@@ -76,11 +76,11 @@
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
-		"postcss": "^8.5.15",
+		"postcss": "^8.5.30",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3",
-		"webpack": "^5.99.8"
+		"webpack": "^5.111.1"
 	},
 	"peerDependenciesMeta": {
 		"@babel/runtime": {

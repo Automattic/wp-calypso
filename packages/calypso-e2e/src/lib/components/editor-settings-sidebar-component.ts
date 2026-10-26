@@ -1,4 +1,4 @@
-import { Frame, Page } from 'playwright';
+import { Frame, Locator, Page } from 'playwright';
 import envVariables from '../../env-variables';
 import { EditorComponent } from './editor-component';
 import type { ArticlePublishSchedule, EditorSidebarTab, ArticlePrivacyOptions } from './types';
@@ -20,6 +20,8 @@ const selectors = {
 
 	// Schedule
 	scheduleButton: 'button.editor-post-schedule__dialog-toggle',
+	dataFormDropdownCloseButton:
+		'.dataforms-layouts-panel__field-dropdown .dataforms-layouts-panel__dropdown-header button[aria-label="Close"]',
 	schedulePopoverCloseButton:
 		'[data-wp-component="Popover"][aria-label="Change publish date"] [aria-label="Close"]',
 	scheduleInput: ( name: string ) => `.editor-post-schedule__dialog label:has-text("${ name }")`,
@@ -301,13 +303,25 @@ export class EditorSettingsSidebarComponent {
 	 * Opens the Schedule picker.
 	 */
 	async openSchedule(): Promise< void > {
-		if ( await this.targetIsOpen( selectors.scheduleButton ) ) {
+		const toggle = await this.getScheduleToggle();
+		if ( ( await toggle.getAttribute( 'aria-expanded' ) ) === 'true' ) {
 			return;
 		}
 
+		await toggle.click();
+	}
+
+	/**
+	 * Returns the button that toggles the schedule picker.
+	 */
+	private async getScheduleToggle(): Promise< Locator > {
 		const editorParent = await this.editor.parent();
-		const buttonLocator = editorParent.locator( selectors.scheduleButton );
-		await buttonLocator.click();
+		// The label gains an " (has errors)" suffix when the date fails validation.
+		// TODO: Drop the legacy selector once the DataForm post summary ships in stable Gutenberg.
+		return editorParent
+			.getByRole( 'button', { name: /^Edit Date/ } )
+			.or( editorParent.locator( selectors.scheduleButton ) )
+			.first();
 	}
 
 	/**
@@ -319,11 +333,19 @@ export class EditorSettingsSidebarComponent {
 		// For instance, if the current time is in the 'am' and the article is
 		// scheduled for 'pm', the act of clicking on the 'pm' button dismisses the
 		// scheduler.
-		if ( ! ( await this.targetIsOpen( selectors.scheduleButton ) ) ) {
+		const toggle = await this.getScheduleToggle();
+		if ( ( await toggle.getAttribute( 'aria-expanded' ) ) !== 'true' ) {
 			return;
 		}
 
 		const editorParent = await this.editor.parent();
+
+		// The DataForm summary closes from its own header, not by re-clicking the toggle.
+		const dataFormClose = editorParent.locator( selectors.dataFormDropdownCloseButton );
+		if ( await dataFormClose.count() ) {
+			await dataFormClose.click();
+			return;
+		}
 
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			const buttonLocator = editorParent.locator( selectors.schedulePopoverCloseButton );
@@ -341,6 +363,24 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async setScheduleDetails( date: ArticlePublishSchedule ): Promise< void > {
 		const editorParent = await this.editor.parent();
+
+		// The DataForm control is a single datetime-local input (YYYY-MM-DDTHH:mm).
+		// TODO: Drop the legacy inputs once the DataForm post summary ships in stable Gutenberg.
+		const dateTimeInput = editorParent.getByLabel( 'Date time', { exact: true } );
+		const legacyInput = editorParent.locator( selectors.scheduleInput( 'year' ) );
+		await dateTimeInput.or( legacyInput ).first().waitFor();
+
+		if ( await dateTimeInput.count() ) {
+			const pad = ( n: number ) => n.toString().padStart( 2, '0' );
+			const hours24 = ( date.hours % 12 ) + ( date.meridian === 'PM' ? 12 : 0 );
+			await dateTimeInput.fill(
+				`${ date.year }-${ pad( date.month + 1 ) }-${ pad( date.date ) }T${ pad(
+					hours24
+				) }:${ pad( date.minutes ) }`
+			);
+			return;
+		}
+
 		let key: keyof ArticlePublishSchedule;
 
 		for ( key in date ) {
@@ -522,9 +562,18 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async enterUrlSlug( slug: string ) {
 		const editorParent = await this.editor.parent();
-		// TODO: Once WordPress/gutenberg#63669 is everywhere, remove the alternation.
-		await editorParent.getByRole( 'button', { name: /Change link:/ } ).click();
+		// TODO: Drop "Change link:" once the DataForm post summary ships in stable Gutenberg.
+		await editorParent
+			.getByRole( 'button', { name: /^(Change link:|Edit Slug)/ } )
+			.first()
+			.click();
 		await editorParent.getByRole( 'textbox', { name: /^(Link|Slug)$/ } ).fill( slug );
+
+		const dataFormClose = editorParent.locator( selectors.dataFormDropdownCloseButton );
+		if ( await dataFormClose.count() ) {
+			await dataFormClose.click();
+			return;
+		}
 		await editorParent.getByRole( 'button', { name: 'Close', exact: true } ).click();
 	}
 }

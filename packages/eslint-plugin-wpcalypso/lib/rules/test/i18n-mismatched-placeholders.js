@@ -10,55 +10,60 @@
 //------------------------------------------------------------------------------
 
 const RuleTester = require( 'eslint' ).RuleTester;
-const rule = require( '../../../lib/rules/i18n-mismatched-placeholders' );
-const config = { env: { es6: true } }; // support for string templates
+const plugin = require( '../../..' );
+const { ERROR_MESSAGE } = require( '../../../lib/rules/i18n-mismatched-placeholders' );
+const config = { languageOptions: { ecmaVersion: 2015, sourceType: 'script' } }; // support for string templates
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( config ).run( 'i18n-mismatched-placeholders', rule, {
-	valid: [
-		{
-			code: "translate( 'Hello %s' );",
-		},
-		{
-			code: "translate( 'Hello %s', 'Hello %s' );",
-		},
-	],
+new RuleTester( config ).run(
+	'i18n-mismatched-placeholders',
+	plugin.rules[ 'i18n-mismatched-placeholders' ],
+	{
+		valid: [
+			{
+				code: "translate( 'Hello %s' );",
+			},
+			{
+				code: "translate( 'Hello %s', 'Hello %s' );",
+			},
+		],
 
-	invalid: [
-		{
-			code: "translate( 'One thing', '%s things', { count: 2 } );",
-			errors: [
-				{
-					message: rule.ERROR_MESSAGE,
-				},
-			],
-		},
-		{
-			code: "translate( '%s thing', 'Many things', { count: 2 } );",
-			errors: [
-				{
-					message: rule.ERROR_MESSAGE,
-				},
-			],
-		},
-		{
-			code: "translate( '%s%s', '%s', { count: 2 } );",
-			errors: [
-				{
-					message: rule.ERROR_MESSAGE,
-				},
-			],
-		},
-		{
-			code: 'translate( `%s%s`, `%s`, { count: 2 } );',
-			errors: [
-				{
-					message: rule.ERROR_MESSAGE,
-				},
-			],
-		},
-	],
-} );
+		invalid: [
+			{
+				code: "translate( 'One thing', '%s things', { count: 2 } );",
+				errors: [
+					{
+						message: ERROR_MESSAGE,
+					},
+				],
+			},
+			{
+				code: "translate( '%s thing', 'Many things', { count: 2 } );",
+				errors: [
+					{
+						message: ERROR_MESSAGE,
+					},
+				],
+			},
+			{
+				code: "translate( '%s%s', '%s', { count: 2 } );",
+				errors: [
+					{
+						message: ERROR_MESSAGE,
+					},
+				],
+			},
+			{
+				code: 'translate( `%s%s`, `%s`, { count: 2 } );',
+				errors: [
+					{
+						message: ERROR_MESSAGE,
+					},
+				],
+			},
+		],
+	}
+);
