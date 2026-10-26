@@ -98,16 +98,56 @@ $wp-components-colors: (
 	// Newer WordPress components read the design system's tokens instead. They're set on each
 	// descendant, so the root's defaults still read the host's, and each element's follow its own
 	// colors, such as a checked control's.
+	> *,
 	> * * {
 		--wpds-color-foreground-content-neutral: var( --wp-components-color-foreground );
 		--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
 		--wpds-color-foreground-interactive-neutral-active: var( --wp-components-color-foreground );
 		--wpds-color-background-surface-neutral-strong: var( --wp-components-color-background );
+		--wpds-color-background-interactive-neutral: var( --wp-components-color-background );
 		--wpds-color-background-interactive-neutral-active: var( --wp-components-color-background );
+		--wpds-color-background-interactive-neutral-disabled: var(
+			--ai-ui-renderer-disabled-background
+		);
+		--wpds-color-background-interactive-neutral-weak: var( --wp-components-color-background );
+		--wpds-color-background-interactive-neutral-weak-active: color-mix(
+			in srgb,
+			var( --wp-components-color-background ) 92%,
+			var( --wp-components-color-foreground )
+		);
+		--wpds-color-background-interactive-neutral-weak-disabled: var(
+			--ai-ui-renderer-disabled-background
+		);
 		--wpds-color-background-interactive-brand-strong: var( --wp-components-color-accent );
+		--wpds-color-background-interactive-brand-strong-active: var(
+			--wp-components-color-accent-darker-20
+		);
+		--wpds-color-background-interactive-brand-strong-disabled: var(
+			--ai-ui-renderer-disabled-background
+		);
+		--wpds-color-background-interactive-brand-weak: transparent;
+		--wpds-color-background-interactive-brand-weak-active: transparent;
+		--wpds-color-background-interactive-brand-weak-disabled: transparent;
 		--wpds-color-foreground-interactive-brand-strong: var( --wp-components-color-accent-inverted );
+		--wpds-color-foreground-interactive-brand-strong-active: var(
+			--wp-components-color-accent-inverted
+		);
+		--wpds-color-foreground-interactive-brand-strong-disabled: var(
+			--ai-ui-renderer-disabled-foreground
+		);
 		--wpds-color-foreground-interactive-brand: var( --ai-ui-renderer-accent-text );
 		--wpds-color-foreground-interactive-brand-active: var( --ai-ui-renderer-accent-text-hover );
+		--wpds-color-foreground-interactive-brand-disabled: var( --ai-ui-renderer-disabled-foreground );
+		--wpds-color-stroke-interactive-brand: var( --ai-ui-renderer-accent-text );
+		--wpds-color-stroke-interactive-brand-active: var( --ai-ui-renderer-accent-text-hover );
+		--wpds-color-stroke-interactive-brand-disabled: var( --ai-ui-renderer-disabled-border );
+		--wpds-color-stroke-interactive-neutral: color-mix(
+			in srgb,
+			var( --wp-components-color-background ) 50%,
+			var( --wp-components-color-foreground )
+		);
+		--wpds-color-stroke-interactive-neutral-active: var( --wp-components-color-foreground );
+		--wpds-color-stroke-interactive-neutral-strong: var( --ai-ui-renderer-accent-fill );
 		--wpds-color-stroke-focus: var( --ai-ui-renderer-accent-fill );
 		--wpds-color-stroke-surface-neutral: var( --ai-ui-renderer-disabled-border );
 		--wpds-color-foreground-interactive-neutral-disabled: var(
@@ -121,25 +161,18 @@ $wp-components-colors: (
 $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( $white, 0.1 ) ) );
 
 .ai-ui-renderer .ai-ui-renderer__card,
-.ai-ui-renderer__modal .components-modal__frame {
+.ai-ui-renderer__modal .ai-ui-renderer__dialog {
 	background-color: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) );
 	color: var( --a2ui-color-on-surface, light-dark( $gray-900, $gray-100 ) );
 }
 
-// WordPress components color the modal's headings.
-.ai-ui-renderer__modal .components-modal__frame :is( h1, h2, h3 ) {
-	color: inherit;
-}
+// The host's modal z-index also applies to the new portal's fixed-position children.
+.ai-ui-renderer__modal {
+	position: relative;
 
-// The modal's close button and scrolling content sit outside the surface, so their hover color and
-// focus ring get its lighter accents too.
-.ai-ui-renderer__modal .components-modal__header .components-button {
-	--wp-components-color-accent: var( --ai-ui-renderer-accent-text );
-}
-
-.ai-ui-renderer__modal .components-modal__content.is-scrollable:focus-visible {
-	box-shadow: inset 0 0 0 var( --wp-admin-border-width-focus, 2px )
-		var( --ai-ui-renderer-accent-fill );
+	[data-wp-ui-dialog-close-icon] svg {
+		fill: currentColor;
+	}
 }
 
 .ai-ui-renderer {
@@ -169,14 +202,15 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 	.ai-ui-renderer__field--error {
 		$error-color: light-dark( $alert-red, color-mix( in srgb, #{$alert-red} 55%, #{$white} ) );
 
-		:is( .components-base-control__help, .components-checkbox-control__help ) {
+		:is( p, .components-base-control__help, .components-checkbox-control__help ) {
 			color: $error-color !important;
 		}
 
 		:is(
 			.components-text-control__input,
 			.components-textarea-control__input,
-			.components-input-control__backdrop
+			.components-input-control__backdrop,
+			:has( > input[aria-invalid='true'], > textarea[aria-invalid='true'] )
 		) {
 			border-color: $error-color !important;
 		}
@@ -335,8 +369,20 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 	}
 
 	// Tabs wrap in a narrow chat instead of overflowing it.
-	.components-tab-panel__tabs {
+	.ai-ui-renderer__tabs {
 		flex-wrap: wrap;
+	}
+
+	:is( [role='checkbox'], [role='radio'] ) {
+		--wpds-color-background-interactive-brand-strong: var( --ai-ui-renderer-accent-fill );
+		--wpds-color-foreground-interactive-brand-strong: light-dark(
+			var( --wp-components-color-accent-inverted ),
+			var( --wp-components-color-background )
+		);
+	}
+
+	:is( .ai-ui-renderer__button, [role='checkbox'] ) svg {
+		fill: currentColor;
 	}
 
 	.ai-ui-renderer__row {
@@ -450,11 +496,6 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 
 		&[aria-disabled='true'] {
 			color: var( --ai-ui-renderer-disabled-foreground ) !important;
-
-			&.is-primary {
-				background: var( --ai-ui-renderer-disabled-background ) !important;
-				border-color: transparent !important;
-			}
 		}
 	}
 

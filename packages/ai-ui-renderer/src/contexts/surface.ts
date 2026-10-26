@@ -19,7 +19,9 @@ export const InteractiveUiSurfaceContext = createContext< {
 
 export const InteractiveUiHostPropsContext = createContext< Record< string, unknown > >( {} );
 
-export const ModalTriggerContext = createContext< ( () => void ) | undefined >( undefined );
+export const ModalTriggerContext = createContext<
+	( ( trigger?: HTMLElement ) => void ) | undefined
+>( undefined );
 
 export const useInteractiveUiSurface = () => useContext( InteractiveUiSurfaceContext );
 

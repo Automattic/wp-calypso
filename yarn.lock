@@ -493,6 +493,7 @@ __metadata:
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"
+    "@wordpress/ui": "npm:^0.23.0"
     clsx: "npm:^2.1.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"

@@ -24,10 +24,12 @@ export const Slider = createComponentImplementation(
 			context
 		);
 		const { fieldProps, touch } = useFieldProps( props.validationErrors );
+		const { description, ...rangeProps } = fieldProps;
 
 		return (
 			<RangeControl
-				{ ...fieldProps }
+				{ ...rangeProps }
+				help={ description }
 				label={ props.label ?? __( 'Value', 'default' ) }
 				min={ props.min ?? 0 }
 				max={ props.max }

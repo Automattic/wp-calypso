@@ -1,8 +1,8 @@
 import { createComponentImplementation } from '@a2ui/react';
 import { ComponentIdSchema } from '@a2ui/web_core/v1_0';
-import { Modal as GutenbergModal } from '@wordpress/components';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Dialog } from '@wordpress/ui';
 import clsx from 'clsx';
 import { z } from 'zod';
 import { ModalTriggerContext, useInteractiveUiSurface } from '../contexts/surface';
@@ -20,6 +20,8 @@ export const Modal = createComponentImplementation(
 	},
 	( { props, buildChild } ) => {
 		const [ isOpen, setIsOpen ] = useState( false );
+		const triggerRef = useRef< HTMLElement | null >( null );
+		const popupRef = useRef< HTMLDivElement | null >( null );
 		const { className, rootRef } = useInteractiveUiSurface();
 
 		// The modal renders outside the host, so it takes the theme its surface resolved.
@@ -33,22 +35,39 @@ export const Modal = createComponentImplementation(
 		);
 
 		return (
-			<>
-				<ModalTriggerContext.Provider value={ () => setIsOpen( true ) }>
+			<Dialog.Root open={ isOpen } onOpenChange={ setIsOpen }>
+				<ModalTriggerContext.Provider
+					value={ ( trigger ) => {
+						triggerRef.current = trigger ?? null;
+						setIsOpen( true );
+					} }
+				>
 					{ buildChild( props.trigger ) }
 				</ModalTriggerContext.Provider>
-				{ isOpen && (
-					<GutenbergModal
-						ref={ copySurfaceTheme }
-						size="medium"
-						title={ props.accessibility?.label || __( 'Details', 'default' ) }
-						overlayClassName={ clsx( 'ai-ui-renderer__modal', className ) }
-						onRequestClose={ () => setIsOpen( false ) }
-					>
+				<Dialog.Popup
+					ref={ popupRef }
+					className="ai-ui-renderer__dialog"
+					size="medium"
+					initialFocus={ popupRef }
+					finalFocus={ triggerRef }
+					portal={
+						<Dialog.Portal
+							ref={ copySurfaceTheme }
+							className={ clsx( 'ai-ui-renderer__modal', className ) }
+						/>
+					}
+				>
+					<Dialog.Header>
+						<Dialog.Title>
+							{ props.accessibility?.label || __( 'Details', 'default' ) }
+						</Dialog.Title>
+						<Dialog.CloseIcon />
+					</Dialog.Header>
+					<Dialog.Content>
 						<div className="ai-ui-renderer">{ buildChild( props.content ) }</div>
-					</GutenbergModal>
-				) }
-			</>
+					</Dialog.Content>
+				</Dialog.Popup>
+			</Dialog.Root>
 		);
 	}
 );
