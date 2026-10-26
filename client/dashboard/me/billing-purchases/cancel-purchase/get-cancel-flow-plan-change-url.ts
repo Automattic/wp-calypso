@@ -10,8 +10,8 @@ type CancelFlowPlanChangeRef =
 	'change-plan' | 'switch-to-monthly' | 'downgrade-personal' | 'downgrade-monthly';
 
 /**
- * Purchase Settings' plan-change link with `ref` added, falling back to bare
- * `/plans/<site>`.
+ * Purchase Settings' plan-change link with `ref` added (and `intervalType` set to
+ * monthly for the monthly offers), falling back to bare `/plans/<site>`.
  */
 export function getCancelFlowPlanChangeUrl(
 	purchase: Purchase,
@@ -21,5 +21,9 @@ export function getCancelFlowPlanChangeUrl(
 	if ( ! url ) {
 		return wpcomLink( `/plans/${ purchase.site_slug }` );
 	}
-	return addQueryArgs( url, { ref: `cancel-flow-${ refId }` } );
+	const isMonthlyOffer = refId === 'downgrade-monthly' || refId === 'switch-to-monthly';
+	return addQueryArgs( url, {
+		ref: `cancel-flow-${ refId }`,
+		...( isMonthlyOffer && { intervalType: 'monthly' } ),
+	} );
 }

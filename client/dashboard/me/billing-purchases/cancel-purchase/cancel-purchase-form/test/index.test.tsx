@@ -353,27 +353,30 @@ describe( '<CancelPurchaseForm />', () => {
 			upsell: 'downgrade-personal',
 			accept: 'Switch to the Personal plan',
 			ref: 'cancel-flow-downgrade-personal',
+			intervalType: 'yearly',
 		},
 		{
 			upsell: 'downgrade-monthly',
 			accept: 'Switch to monthly payments',
 			ref: 'cancel-flow-downgrade-monthly',
+			intervalType: 'monthly',
 		},
-	] )( '$accept opens the plans page', ( { upsell, accept, ref } ) => {
+	] )( '$accept opens the plans page', ( { upsell, accept, ref, intervalType } ) => {
 		render(
 			<CancelPurchaseForm
 				{ ...defaultProps }
 				surveyStep={ UPSELL_STEP }
 				allSteps={ [ UPSELL_STEP ] }
 				plans={ [ { product_slug: 'personal-bundle', product_name: 'Personal' } as PlanProduct ] }
-				purchase={ makePurchase( { is_plan_type_downgradable: true } ) }
+				purchase={ makePurchase( { is_plan_type_downgradable: true, bill_period_days: 365 } ) }
 				upsell={ upsell }
 			/>
 		);
 
-		const url = new URL(
+		const { searchParams } = new URL(
 			screen.getByRole( 'link', { name: accept } ).getAttribute( 'href' ) as string
 		);
-		expect( url.searchParams.get( 'ref' ) ).toBe( ref );
+		expect( searchParams.get( 'ref' ) ).toBe( ref );
+		expect( searchParams.getAll( 'intervalType' ) ).toEqual( [ intervalType ] );
 	} );
 } );
