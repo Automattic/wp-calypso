@@ -8,7 +8,6 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../inline-support-link';
-import { SectionHeader } from '../section-header';
 
 interface ContactFormPrivacyProps {
 	domainName: string;
@@ -25,36 +24,40 @@ export default function ContactFormPrivacy( {
 }: ContactFormPrivacyProps ) {
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 
+	const getPrivacyProtectionHelp = () => {
+		if ( ! domain.privacy_available ) {
+			return domain.private_domain
+				? __(
+						'Privacy protection must be enabled due to the registry’s policies. <learnMoreLink />'
+					)
+				: __(
+						'Privacy protection is not available due to the registry’s policies. <learnMoreLink />'
+					);
+		}
+
+		return domain.private_domain
+			? __(
+					'Your name, address, email and phone stay private. Anyone who looks the domain up in the public WHOIS record sees the registrar’s details instead. <learnMoreLink />'
+				)
+			: __(
+					'Your name, address, email and phone are public. Anyone who looks the domain up in the WHOIS record sees them. Turn on to keep them private. <learnMoreLink />'
+				);
+	};
+
 	const renderPrivacyProtection = () => {
 		return (
-			<>
-				<ToggleControl
-					__nextHasNoMarginBottom
-					checked={ domain.private_domain }
-					disabled={ isSubmitting || ! domain.privacy_available }
-					onChange={ onTogglePrivacyProtection }
-					label={ __( 'Privacy protection' ) }
-				/>
-
-				{ ! domain.privacy_available && (
-					<Text as="p" variant="muted">
-						{ createInterpolateElement(
-							domain.private_domain
-								? __(
-										'Privacy protection must be enabled due to the registry’s policies. <learnMoreLink />'
-									)
-								: __(
-										'Privacy protection is not available due to the registry’s policies. <learnMoreLink />'
-									),
-							{
-								learnMoreLink: (
-									<InlineSupportLink supportContext="domain-registrations-and-privacy" />
-								),
-							}
-						) }
-					</Text>
-				) }
-			</>
+			<ToggleControl
+				__nextHasNoMarginBottom
+				checked={ domain.private_domain }
+				disabled={ isSubmitting || ! domain.privacy_available }
+				onChange={ onTogglePrivacyProtection }
+				label={
+					domain.private_domain ? __( 'Privacy protection on' ) : __( 'Privacy protection off' )
+				}
+				help={ createInterpolateElement( getPrivacyProtectionHelp(), {
+					learnMoreLink: <InlineSupportLink supportContext="domain-registrations-and-privacy" />,
+				} ) }
+			/>
 		);
 	};
 
@@ -91,23 +94,8 @@ export default function ContactFormPrivacy( {
 
 	return (
 		<VStack spacing={ 4 }>
-			<SectionHeader title={ __( 'Privacy protection' ) } level={ 3 } />
-
 			{ renderPrivacyProtection() }
 			{ renderPrivacyDisclosure() }
-
-			{ domain.privacy_available && (
-				<Text as="p" variant="muted">
-					{ createInterpolateElement(
-						__( 'We recommend keeping privacy protection on. <learnMoreLink />' ),
-						{
-							learnMoreLink: (
-								<InlineSupportLink supportContext="domain-registrations-and-privacy" />
-							),
-						}
-					) }
-				</Text>
-			) }
 		</VStack>
 	);
 }
