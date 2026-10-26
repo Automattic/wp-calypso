@@ -64,7 +64,7 @@
 		"@types/wordpress__block-editor": "^11.5.16",
 		"@typescript-eslint/eslint-plugin": "^8.71.2",
 		"@typescript-eslint/parser": "^8.71.2",
-		"@wordpress/eslint-plugin": "^25.4.0",
+		"@wordpress/eslint-plugin": "^28.0.0",
 		"@wordpress/stylelint-config": "^26.1.0",
 		"css-loader": "^7.1.5",
 		"sass-embedded": "^1.89.0",

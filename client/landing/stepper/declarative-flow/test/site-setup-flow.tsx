@@ -54,6 +54,7 @@ describe( 'Site Setup Flow', () => {
 				currentStep: STEPS.IMPORT_LIST.slug,
 				dependencies: {
 					platform: 'wordpress',
+					url: 'importerWordpress',
 				},
 			} );
 
@@ -74,6 +75,7 @@ describe( 'Site Setup Flow', () => {
 				currentStep: STEPS.IMPORT_READY.slug,
 				dependencies: {
 					platform: 'wordpress',
+					url: 'importerWordpress',
 				},
 			} );
 
