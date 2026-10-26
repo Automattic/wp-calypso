@@ -18,7 +18,11 @@ export default function NewPostNote( { note }: { note: Note } ) {
 	return (
 		<>
 			{ post && site ? (
-				<SiteIdentity site={ site } details={ <NoteMeta note={ note }>{ author }</NoteMeta> } />
+				<SiteIdentity
+					site={ site }
+					url={ site.url }
+					details={ <NoteMeta note={ note }>{ author }</NoteMeta> }
+				/>
 			) : (
 				<Headline note={ note } />
 			) }
