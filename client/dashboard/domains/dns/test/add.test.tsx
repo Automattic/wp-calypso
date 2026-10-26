@@ -42,7 +42,11 @@ function mockUpdateDns() {
 }
 
 async function selectType( type: string ) {
-	await userEvent.selectOptions( await screen.findByRole( 'combobox', { name: 'Type' } ), type );
+	const showAllTypes = screen.queryByRole( 'button', { name: 'Show all record types' } );
+	if ( showAllTypes && ! screen.queryByRole( 'radio', { name: type } ) ) {
+		await userEvent.click( showAllTypes );
+	}
+	await userEvent.click( await screen.findByRole( 'radio', { name: type } ) );
 	await screen.findByRole( 'spinbutton', { name: /TTL/ } );
 }
 
@@ -146,5 +150,35 @@ describe( '<DomainAddDNS>', () => {
 		expect( getRecordsToAdd() ).toEqual( [
 			expect.objectContaining( { type: 'TXT', name: '_dmarc' } ),
 		] );
+	} );
+
+	test( 'shows the common record types first and the rest on request', async () => {
+		mockApi();
+		const user = userEvent.setup();
+		render( <DomainAddDNS /> );
+
+		expect( await screen.findByRole( 'radio', { name: 'TXT' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'radio', { name: 'AAAA' } ) ).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'Show all record types' } ) );
+
+		expect( screen.getByRole( 'radio', { name: 'AAAA' } ) ).toBeVisible();
+		expect(
+			screen.getByText( 'The same as an A record, for newer IPv6 addresses (like 2001:db8::1).' )
+		).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: 'Show all record types' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'explains when to pick TXT over CNAME', async () => {
+		mockApi();
+		render( <DomainAddDNS /> );
+
+		await selectType( 'TXT' );
+
+		expect(
+			screen.getByText( /Some providers offer a TXT or a CNAME for the same verification/ )
+		).toBeVisible();
 	} );
 } );
