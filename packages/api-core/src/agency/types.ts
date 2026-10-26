@@ -108,6 +108,70 @@ export interface AgencyProfileUpdate {
 }
 
 /**
+ * An agency's lead matching preferences, grouped the way
+ * GET and PUT /wpcom/v2/agency/$agencyId/lead-matching exchange them.
+ */
+export interface AgencyLeadMatchingProfile {
+	availability: {
+		accepting_work: boolean;
+		lead_eligibility: string | null;
+		profile_v2_complete: boolean;
+	};
+	geography_and_language: {
+		supported_regions: string[];
+		global_remote: boolean;
+		supported_languages: string[];
+	};
+	business_fit: {
+		supported_business_types: string[];
+		ideal_business_types: string[];
+		supported_company_sizes: string[];
+	};
+	platform_and_hosting: {
+		supported_hosting_environments: string[];
+		migration_platforms: string[];
+		can_recommend_better_hosting: boolean;
+	};
+	ecommerce: {
+		supports_ecommerce_projects: boolean;
+		ecommerce_focus: boolean;
+		supported_complexity_flags: string[];
+	};
+	project_types: {
+		supported_project_types: string[];
+		accepts_small_fixes: boolean;
+	};
+	service_and_budget: {
+		max_service_level: string;
+		supported_budget_bands: string[];
+		minimum_budget_band: string;
+	};
+	timing: {
+		supported_start_timings: string[];
+		supports_hard_deadlines: boolean;
+	};
+	delivery_model: {
+		supported_decision_processes: string[];
+		offers_care_plans: boolean;
+		trains_clients: boolean;
+		works_with_internal_technical_teams: boolean;
+		requires_maintenance_plan: boolean;
+	};
+}
+
+export interface AgencyLeadMatchingSyncState {
+	status?: string;
+	last_synced_at?: string | null;
+	error?: string | null;
+}
+
+export interface AgencyLeadMatchingResponse {
+	agency_id: number;
+	lead_matching_profile: AgencyLeadMatchingProfile | null;
+	sync?: AgencyLeadMatchingSyncState;
+}
+
+/**
  * Response from POST /wpcom/v2/agency/$agencyId/media.
  */
 export interface AgencyMediaUpload {
@@ -274,34 +338,102 @@ export interface AgencyBlog {
 }
 
 /**
- * A single learn/resource item, as returned by GET /wpcom/v2/agency/resources.
- */
-export interface AgencyResource {
-	id: number;
-	name: string;
-	description: string;
-	external_url: string;
-	format: string;
-	related_product: string;
-	related_product_type: string;
-	resource_type: string;
-	preview_image: string;
-	section: string;
-	created_at: string;
-	updated_at: string;
-}
-
-export interface AgencyResourcesResponse {
-	status: string;
-	results: AgencyResource[];
-	total: number;
-}
-
-/**
  * Response from GET /wpcom/v2/agency/stats. Public, program-wide counts.
  */
 export interface AgencyProgramStats {
 	active_agencies: number;
+}
+
+/**
+ * The enablement taxonomy used by the v2 resources endpoint.
+ *
+ * Every value is a stable slug rather than a display string: the client owns
+ * the translated labels, so renaming a label never breaks a saved filter.
+ */
+export type AgencyResourceProduct =
+	| 'automattic-for-agencies'
+	| 'jetpack'
+	| 'pressable'
+	| 'woocommerce'
+	| 'wordpress-com'
+	| 'wordpress-org'
+	| 'wordpress-vip';
+
+export type AgencyResourceStage = 'learn' | 'sell' | 'manage' | 'grow';
+
+export type AgencyResourceAudience = 'all' | 'developer' | 'business' | 'client';
+
+/**
+ * The resource hub's content types. A new one means updating this list, so
+ * derive filter options from the response rather than from it, and give any
+ * slug-keyed lookup a fallback: the API is not validated against this union at
+ * runtime.
+ */
+export type AgencyResourceContentType =
+	| 'battlecard'
+	| 'case-study'
+	| 'checklist'
+	| 'guide'
+	| 'one-pager'
+	| 'slide-deck'
+	| 'talk-track'
+	| 'technical-brief'
+	| 'video'
+	| 'webinar';
+
+/** The kind of file the resource is, and a filter axis of its own. */
+export type AgencyResourceFormat = 'pdf' | 'slides' | 'doc' | 'spreadsheet' | 'video' | 'webpage';
+
+/**
+ * A single resource from the enablement hub, as returned by
+ * GET /wpcom/v2/agency/resources/v2.
+ */
+export interface AgencyEnablementResource {
+	id: number;
+	name: string;
+	description: string;
+
+	/**
+	 * The resource itself: the file for a PDF or deck, the page for a webpage,
+	 * the watch URL for a video.
+	 */
+	external_url: string;
+
+	/**
+	 * An image of the resource, such as a document's first page or a still from
+	 * a video, shown in its details. Cards are built from `product`,
+	 * `content_type` and `name` instead.
+	 */
+	thumbnail_url: string | null;
+
+	product: AgencyResourceProduct;
+	/** Expected on every resource, but null where one was published without it. */
+	stage: AgencyResourceStage | null;
+	audience: AgencyResourceAudience | null;
+	content_type: AgencyResourceContentType | null;
+	format: AgencyResourceFormat | null;
+
+	/** Surfaced first in every view. Labelled "Top resource" in the UI. */
+	is_featured: boolean;
+	/** Shown in the Library's "Recommended for you" row. */
+	is_recommended: boolean;
+	created_at: string;
+}
+
+export interface AgencyEnablementResourcesResponse {
+	results: AgencyEnablementResource[];
+}
+
+/**
+ * An agency opening a resource, recorded against the agency.
+ */
+export interface AgencyResourceEvent {
+	resource_id: number;
+	resource_name: string;
+}
+
+export interface AgencyResourceEventResponse {
+	status: 'success';
 }
 
 export interface TipaltiIFrameUrl {

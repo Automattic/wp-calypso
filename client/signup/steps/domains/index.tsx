@@ -1,11 +1,6 @@
 import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
-import {
-	isDomainForGravatarFlow,
-	isEcommerceFlow,
-	isFreeFlow,
-	isWithThemeFlow,
-} from '@automattic/onboarding';
+import { isDomainForGravatarFlow, isFreeFlow, isWithThemeFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
@@ -17,7 +12,6 @@ import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/
 import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
-import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import {
 	domainMapping,
@@ -327,7 +321,6 @@ const DomainSearchUI = (
 				flowName: flowName,
 			} ),
 			allowedTlds,
-			deemphasizedTlds: isEcommerceFlow( flowName ) ? [ 'blog' ] : [],
 			skippable:
 				! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
@@ -417,8 +410,6 @@ const DomainSearchUI = (
 		} else if ( isWithThemeFlow( flowName ) ) {
 			backUrl = '/themes';
 			backLabelText = __( 'Back to themes' );
-		} else if ( 'plans-first' === flowName ) {
-			backUrl = getStepUrl( flowName, previousStepName );
 		} else {
 			backUrl = defaultBackUrl;
 			backLabelText = sitesBackLabelText;
@@ -457,12 +448,12 @@ const DomainSearchUI = (
 	};
 
 	// For /start flows, we want to show the free domain for a year discount for all flows
-	// except if we're in a site context, in the free or monthly plan flows or in the domain-only flow
+	// except if we're in a site context, in the free flow or in the domain-only flow
 	const isFirstDomainFreeForFirstYear = useMemo( () => {
 		if (
 			siteSlug ||
 			siteId ||
-			isMonthlyOrFreeFlow( flowName ) ||
+			isFreeFlow( flowName ) ||
 			isDomainOnlyFlow ||
 			isDomainForGravatarFlow( flowName )
 		) {

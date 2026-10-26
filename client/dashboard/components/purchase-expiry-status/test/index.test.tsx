@@ -203,7 +203,11 @@ describe( 'getPurchaseExpiryStatusText()', () => {
 	] )( 'describes %s with nothing to click', ( _label, overrides, text ) => {
 		render(
 			<>
-				{ getPurchaseExpiryStatusText( createPurchase( overrides as Partial< Purchase > ), 'en' ) }
+				{ getPurchaseExpiryStatusText(
+					createPurchase( overrides as Partial< Purchase > ),
+					'en',
+					() => true
+				) }
 			</>
 		);
 

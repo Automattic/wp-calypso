@@ -27,7 +27,7 @@ CRITICAL: This is a **public repository**. Never put an internal link or hostnam
 ## Packages
 
 - **Agents Manager** (`packages/agents-manager`) — shared component library for WordPress.com's unified AI agent experience, running in Calypso, the Dashboard, Simple and Atomic sites, the WooCommerce AI admin and Reader Chat. Also deployed via `apps/agents-manager/` to `widgets.wp.com`. See its `AGENTS.md` for architecture and conventions.
-- **AI UI Renderer** (`packages/ai-ui-renderer`) — reusable A2UI v0.9 catalog and rendering primitives built with WordPress components. Agents Manager consumes it; conversation handling and MCP transport stay in consumers.
+- **AI UI Renderer** (`packages/ai-ui-renderer`) — reusable A2UI v1.0 catalog and rendering primitives built with WordPress components. Agents Manager consumes it; conversation handling and MCP transport stay in consumers.
 - **Agenttic** (`packages/agenttic-client`, `packages/agenttic-ui`) — AI agent chat client library and UI components. Also published to npm for consumers outside this repo. ⚠️ Still on its pre-migration package layout (vite-built, ESM-only, flat `dist/`, no `calypso:src`); normalizing it is a future goal, but the published artifact shape is a contract with external consumers — read the Development and Releasing sections in `packages/agenttic-client/README.md` before restructuring or publishing.
 - **Help Center** (`packages/help-center`) — shared component library for WordPress.com support. Also deployed via `apps/help-center/` to `widgets.wp.com`.
 - **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation. When adding Image Studio entry points, read [packages/image-studio/AGENTS.md](packages/image-studio/AGENTS.md).
@@ -42,6 +42,8 @@ CRITICAL: This is a **public repository**. Never put an internal link or hostnam
 ## Development
 
 > **Note**: The Calypso dev server uses the `PORT` environment variable (check repo-root `.env`) and falls back to port `3000`. Do not create or modify `.env` unless explicitly asked.
+
+> **Note**: Keep the `@automattic/` scope whenever a command sends a workspace package name to the npm registry (`npm view`, `npx`, `yarn add`, `yarn npm info`). For a `"private": true` package, read its `package.json` instead of the registry.
 
 ```bash
 # Setup

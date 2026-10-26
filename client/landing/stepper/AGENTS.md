@@ -139,7 +139,6 @@ export default myFlow;
 | `STEPS.*` constant         | slug                       | Purpose                             |
 | -------------------------- | -------------------------- | ----------------------------------- |
 | `LAUNCHPAD`                | `launchpad`                | Post-creation checklist / dashboard |
-| `CELEBRATION_STEP`         | `celebration-step`         | Congratulations screen              |
 | `SUBSCRIBERS`              | `subscribers`              | Add newsletter subscribers          |
 | `POST_CHECKOUT_ONBOARDING` | `post-checkout-onboarding` | Onboarding after checkout           |
 
@@ -149,14 +148,12 @@ export default myFlow;
 | ------------------ | ----------------- | ----------------------------- |
 | `NEWSLETTER_SETUP` | `newsletterSetup` | Newsletter name, description  |
 | `NEWSLETTER_GOALS` | `newsletterGoals` | Newsletter monetization goals |
-| `FREE_POST_SETUP`  | `freePostSetup`   | Free newsletter post setup    |
 
 ### Site picker / utility
 
 | `STEPS.*` constant     | slug                   | Purpose                                     |
 | ---------------------- | ---------------------- | ------------------------------------------- |
 | `NEW_OR_EXISTING_SITE` | `new-or-existing-site` | Ask user to create new or use existing site |
-| `SITES_CHECKER`        | `check-sites`          | Check whether user has existing sites       |
 | `PICK_SITE`            | `site-picker`          | Pick from a list of existing sites          |
 | `SITE_PICKER`          | `sitePicker`           | Single site picker variant                  |
 | `TRIAL_ACKNOWLEDGE`    | `trialAcknowledge`     | User acknowledges trial conditions          |

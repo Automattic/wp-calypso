@@ -1,5 +1,52 @@
 .wordpress-migration__progress-bar {
 	// !important because the component's own styles can load after ours.
 	width: 100% !important;
-	--wp-components-color-foreground: var(--wp-admin-theme-color);
+	--wp-components-color-foreground: var( --wp-admin-theme-color );
+}
+
+// A link button in a vertical stack stretches to the card's width otherwise.
+.wordpress-migration__align-start {
+	align-self: flex-start;
+}
+
+// Lines its text up with the steps above, past the compact button's own padding.
+.wordpress-migration__fallbacks-toggle.components-button {
+	align-self: flex-start;
+	margin-inline-start: -12px;
+
+	// Closed, it's the last line before the buttons, where the card's larger gap leaves more space below it than above.
+	&[aria-expanded='false'] {
+		margin-block-end: -6px;
+	}
+}
+
+// The dashboard's lists have no bullets by default.
+.wordpress-migration__fallbacks {
+	margin: 0;
+	padding-inline-start: 20px;
+	list-style: disc;
+}
+
+// SectionHeader sets its decoration in a fixed 32px box, too far from the title for a small status icon, and centers it
+// on the title and description together. Keep it beside the title instead: one line of the title tall, at the top.
+// Its 32px minimum row height would then leave a title without a description sitting above a gap.
+.wordpress-migration__card-header {
+	--dashboard-section-header__heading-row-min-height: 0;
+
+	.dashboard-section-header__heading-row {
+		align-items: flex-start;
+		gap: 4px;
+	}
+
+	.dashboard-section-header__decoration {
+		width: auto;
+		height: 20px;
+	}
+}
+
+// SectionHeader greys out and enlarges its decoration's icon, this one is a small status.
+.dashboard-section-header__decoration svg.wordpress-migration__status-icon {
+	width: 22px;
+	height: 22px;
+	fill: var( --wp-admin-theme-color );
 }

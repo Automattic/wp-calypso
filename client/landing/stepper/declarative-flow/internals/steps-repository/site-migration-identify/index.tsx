@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
-import { Notice, ProgressBar } from '@wordpress/components';
+import { Notice, VisuallyHidden } from '@wordpress/components';
 import { next, published, shield } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -120,6 +120,7 @@ export const Analyzer: FC< Props > = ( {
 	// Update loading state to include hosting check
 	const isScanning =
 		! shownIssue && ( isHeld || isFetching || isFetchingHosting || ( isFetched && ! hasError ) );
+	const isFormHidden = isReprintFlow && !! shownIssue;
 
 	useEffect( () => {
 		// Only complete when we have both site info AND hosting info (or hosting check failed)
@@ -192,7 +193,12 @@ export const Analyzer: FC< Props > = ( {
 
 	return (
 		<>
-			{ isReprintFlow && ( isScanning || shownIssue ) && (
+			{ isReprintFlow && (
+				<VisuallyHidden role="status">
+					{ isScanning ? translate( 'Checking your site' ) : '' }
+				</VisuallyHidden>
+			) }
+			{ isFormHidden && (
 				<div className="site-migration-identify__checking">
 					<div className="site-migration-identify__summary">
 						<span>{ hostname }</span>
@@ -202,45 +208,28 @@ export const Analyzer: FC< Props > = ( {
 								: translate( 'View site ↗' ) }
 						</Step.LinkButton>
 					</div>
-					{ shownIssue ? (
-						<div className="site-migration-identify__status site-migration-identify__connection-issue">
-							<Notice status="warning" isDismissible={ false }>
-								<img src={ warningIcon } alt="" width={ 24 } height={ 24 } />
-								<span>{ translate( 'Couldn’t connect' ) }</span>
-							</Notice>
-							<p>
-								{ translate(
-									'Check the address and try again. If your site is down, our team can take a look and help you migrate it once it’s back.'
-								) }
-							</p>
-							<div className="site-migration-identify__actions">
-								<Step.PrimaryButton onClick={ () => refetch() }>
-									{ translate( 'Try again' ) }
-								</Step.PrimaryButton>
-							</div>
-							<Step.LinkButton onClick={ () => onSkip( sourceURL ) }>
-								{ translate( 'pick your current platform from a list' ) }
-							</Step.LinkButton>
+					<div className="site-migration-identify__status site-migration-identify__connection-issue">
+						<Notice status="warning" isDismissible={ false }>
+							<img src={ warningIcon } alt="" width={ 24 } height={ 24 } />
+							<span>{ translate( 'Couldn’t connect' ) }</span>
+						</Notice>
+						<p>
+							{ translate(
+								'Check the address and try again. If your site is down, our team can take a look and help you migrate it once it’s back.'
+							) }
+						</p>
+						<div className="site-migration-identify__actions">
+							<Step.PrimaryButton onClick={ () => refetch() }>
+								{ translate( 'Try again' ) }
+							</Step.PrimaryButton>
 						</div>
-					) : (
-						<div className="site-migration-identify__status" role="status" aria-live="polite">
-							<ProgressBar
-								className="site-migration-identify__progress-bar"
-								aria-label={ translate( 'Checking your site' ) }
-							/>
-							<p>
-								{ translate( 'We’re looking at %(site)s to see what we can move.', {
-									args: { site: hostname },
-								} ) }
-							</p>
-						</div>
-					) }
+						<Step.LinkButton onClick={ () => onSkip( sourceURL ) }>
+							{ translate( 'pick your current platform from a list' ) }
+						</Step.LinkButton>
+					</div>
 				</div>
 			) }
-			<div
-				className="import__capture-container"
-				hidden={ isReprintFlow && ( isScanning || !! shownIssue ) }
-			>
+			<div className="import__capture-container" hidden={ isFormHidden }>
 				{ isReprintFlow && siteURL && hasError && ! isScanning && ! shownIssue && (
 					<Notice
 						status="error"
@@ -260,6 +249,7 @@ export const Analyzer: FC< Props > = ( {
 					} }
 					onInputChange={ () => onSiteURLChange( '' ) }
 					hasError={ ! isReprintFlow && hasError }
+					isBusy={ isReprintFlow && isScanning }
 					skipInitialChecking
 					onDontHaveSiteAddressClick={ ( url ) => {
 						if ( ! isReprintFlow || ! url ) {
@@ -278,10 +268,12 @@ export const Analyzer: FC< Props > = ( {
 					nextLabelText={ isReprintFlow ? translate( 'Continue' ) : translate( 'Check my site' ) }
 				/>
 			</div>
-			<ChecklistCard
-				title={ translate( 'Why should you host with us?' ) }
-				items={ hostingDetailItems }
-			/>
+			{ ! isFormHidden && (
+				<ChecklistCard
+					title={ translate( 'Why should you host with us?' ) }
+					items={ hostingDetailItems }
+				/>
+			) }
 		</>
 	);
 };
@@ -342,10 +334,8 @@ const SiteMigrationIdentify: StepType< {
 
 	const isChecking = isReprintFlow && ! isVisible;
 	const goBack = isChecking || connectionIssue ? () => setSiteURL( '' ) : navigation?.goBack;
-	let title = isChecking ? translate( 'Checking your site' ) : translate( "Let's find your site" );
-	let subTitle = isChecking
-		? undefined
-		: translate( 'Enter your current site address below to get started.' );
+	let title = translate( "Let's find your site" );
+	let subTitle = translate( 'Enter your current site address below to get started.' );
 	if ( connectionIssue === 'unreachable' ) {
 		title = translate( 'We couldn’t reach your site' );
 		subTitle = translate(
@@ -387,15 +377,16 @@ const SiteMigrationIdentify: StepType< {
 			<Step.CenteredColumnLayout
 				className={ clsx( 'step-container-v2--site-migration-identify', {
 					'site-migration-identify--reprint': isReprintFlow,
-					'site-migration-identify--checking': isChecking,
 					'site-migration-identify--connection-issue': !! connectionIssue,
 				} ) }
-				columnWidth={ isChecking || connectionIssue ? 6 : 4 }
+				columnWidth={ connectionIssue ? 6 : 4 }
 				topBar={
 					<Step.TopBar leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : null } />
 				}
 				heading={
-					isChecking || isVisible ? <Step.Heading text={ title } subText={ subTitle } /> : undefined
+					isReprintFlow || isVisible ? (
+						<Step.Heading text={ title } subText={ subTitle } />
+					) : undefined
 				}
 			>
 				{ stepContent }

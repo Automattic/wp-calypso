@@ -2,7 +2,7 @@ import { hostingUpdateSchedulesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { WEEKDAYS } from '../constants';
-import { normalizeScheduleId } from '../helpers';
+import { normalizeScheduleId } from '../utils';
 import type { InitialValues } from '../components/schedule-form';
 
 type Result = {

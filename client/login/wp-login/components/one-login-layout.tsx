@@ -30,7 +30,7 @@ export const ensureHeadingProvided = (
 
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
-	isFromJetpackConnector?: boolean;
+	showsUnifiedContent?: boolean;
 	/**
 	 * Jetpack onboarding or connector flow, which the user is completing from a
 	 * Jetpack site.
@@ -80,7 +80,7 @@ interface OneLoginLayoutProps {
 
 const OneLoginLayout = ( {
 	isJetpack,
-	isFromJetpackConnector,
+	showsUnifiedContent,
 	isUnifiedConnectionFlow,
 	connectorPlugins,
 	children,
@@ -105,11 +105,11 @@ const OneLoginLayout = ( {
 	const currentRoute = useSelector( getCurrentRoute );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWooJPC = useSelector( isWooJPCFlow );
-	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
+	const { headingText, subHeadingText, subHeadingTextSecondary, siteIcon } = useLoginContext();
 	const validatedHeadingText = ensureHeadingProvided( headingText );
 	const { topBarLogo, hasCustomBranding } = usePartnerBranding();
 	const signupLink = useSignupLink( { signupUrl: signupUrlProp, origin: 'login-layout' } );
-	const headingLogo = useHeadingLogo( { isJetpack, isFromJetpackConnector, connectorPlugins } );
+	const headingLogo = useHeadingLogo( { isJetpack, showsUnifiedContent, connectorPlugins } );
 
 	// Product and partner logins with a logo above the title (Woo, Jetpack, Crowdsignal,
 	// Akismet...) are designed around it, so they stay centered. A logo in the top bar
@@ -170,7 +170,7 @@ const OneLoginLayout = ( {
 	const shouldLinkLogo =
 		linkLogoToHome &&
 		! isJetpack &&
-		! isFromJetpackConnector &&
+		! showsUnifiedContent &&
 		! isUnifiedConnectionFlow &&
 		! isWooJPC &&
 		! oauth2Client &&
@@ -221,10 +221,15 @@ const OneLoginLayout = ( {
 			>
 				{ notice }
 				<div className="wp-login__one-login-layout-heading">
+					{ showLogo && ! headingLogo && siteIcon && (
+						<div className="wp-login__one-login-layout-heading-logo is-site-icon">
+							<img src={ siteIcon.src } width={ 64 } height={ 64 } alt={ siteIcon.alt } />
+						</div>
+					) }
 					{ showLogo && (
 						<HeadingLogo
 							isJetpack={ isJetpack }
-							isFromJetpackConnector={ isFromJetpackConnector }
+							showsUnifiedContent={ showsUnifiedContent }
 							connectorPlugins={ connectorPlugins }
 						/>
 					) }
