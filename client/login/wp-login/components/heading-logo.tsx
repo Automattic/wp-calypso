@@ -52,7 +52,7 @@ const JETPACK_PUSH_LOGO_URL =
 
 interface Props {
 	isJetpack?: boolean;
-	isFromJetpackConnector?: boolean;
+	showsUnifiedContent?: boolean;
 	connectorPlugins?: string[];
 }
 
@@ -60,11 +60,7 @@ interface Props {
  * The product or partner logo shown above the heading, or `null` on a plain WordPress.com screen.
  * Screens with this logo keep a centered layout, so `OneLoginLayout` reads this too.
  */
-export const useHeadingLogo = ( {
-	isJetpack,
-	isFromJetpackConnector,
-	connectorPlugins,
-}: Props ) => {
+export const useHeadingLogo = ( { isJetpack, showsUnifiedContent, connectorPlugins }: Props ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
 	const isAkismet = useSelector( getIsAkismet );
@@ -109,7 +105,7 @@ export const useHeadingLogo = ( {
 				viewBox="0 0 60 24"
 			/>
 		);
-	} else if ( isFromJetpackConnector ) {
+	} else if ( showsUnifiedContent ) {
 		const connectorLogo = getConnectorLogoUrl( connectorPlugins );
 		logo = (
 			<img

@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useCallback } from 'react';
 import { useAnalytics } from '../../../app/analytics';
-import { normalizeScheduleId } from '../helpers';
+import { normalizeScheduleId } from '../utils';
 import { useEligibleSites } from './use-eligible-sites';
 
 type UseDeleteSchedulesOptions = {

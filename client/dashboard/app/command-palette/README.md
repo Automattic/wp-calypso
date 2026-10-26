@@ -19,15 +19,15 @@ The command palette component **must** be placed within the Router context:
 import CommandPalette from '../command-palette';
 
 function Root() {
-  return (
-    <div className="dashboard-root__layout">
-      <Header />
-      <main>
-        <Outlet />
-      </main>
-      <CommandPalette />
-    </div>
-  );
+	return (
+		<div className="dashboard-root__layout">
+			<Header />
+			<main>
+				<Outlet />
+			</main>
+			<CommandPalette />
+		</div>
+	);
 }
 ```
 
@@ -48,15 +48,15 @@ Navigation commands can be filtered based on feature flags from the app context:
 
 ```typescript
 export const navigationCommands: Command[] = [
-  {
-    name: 'dashboard-go-to-sites',
-    label: __( 'Go to Sites' ),
-    searchLabel: __( 'Navigate to Sites dashboard' ),
-    path: '/sites',  // Note the leading slash for absolute paths
-    icon: home,
-    feature: 'sites', // Only show if 'sites' feature is enabled in the app context
-  },
-  // ... other commands
+	{
+		name: 'dashboard-go-to-sites',
+		label: __( 'Go to Sites' ),
+		searchLabel: __( 'Navigate to Sites dashboard' ),
+		path: '/sites', // Note the leading slash for absolute paths
+		icon: home,
+		feature: 'sites', // Only show if 'sites' feature is enabled in the app context
+	},
+	// ... other commands
 ];
 ```
 
@@ -72,29 +72,29 @@ import { store as commandsStore } from '@wordpress/commands';
 import { dispatch } from '@wordpress/data';
 
 function YourComponent() {
-  const router = useRouter();
+	const router = useRouter();
 
-  useEffect(() => {
-    const { registerCommand } = dispatch(commandsStore);
+	useEffect( () => {
+		const { registerCommand } = dispatch( commandsStore );
 
-    registerCommand({
-      name: 'your-command-name',
-      label: 'Your Command Label',
-      callback: ({ close }) => {
-        // First close the palette
-        close();
-        // Then perform any action, like navigation
-        router.navigate({ to: '/your-path' });
-      },
-      icon: yourIcon,
-    });
+		registerCommand( {
+			name: 'your-command-name',
+			label: 'Your Command Label',
+			callback: ( { close } ) => {
+				// First close the palette
+				close();
+				// Then perform any action, like navigation
+				router.navigate( { to: '/your-path' } );
+			},
+			icon: yourIcon,
+		} );
 
-    return () => {
-      const { unregisterCommand } = dispatch(commandsStore);
-      unregisterCommand('your-command-name');
-    };
-  }, [router]);
+		return () => {
+			const { unregisterCommand } = dispatch( commandsStore );
+			unregisterCommand( 'your-command-name' );
+		};
+	}, [ router ] );
 
-  return <div>Your component content</div>;
+	return <div>Your component content</div>;
 }
 ```

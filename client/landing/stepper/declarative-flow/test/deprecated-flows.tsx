@@ -14,7 +14,6 @@ const frozenDeprecatedV1Flows = [
 	'plugin-bundle',
 	'hundred-year-plan',
 	'domain-user-transfer',
-	'reblogging',
 ];
 
 describe( 'Deprecated Flows', () => {

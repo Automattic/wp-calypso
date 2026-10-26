@@ -25,7 +25,6 @@ const stepNameToModuleName = {
 	'oauth2-user': 'user',
 	'oauth2-name': 'user',
 	'user-social': 'user',
-	'plans-ecommerce-fulfilled': 'plans',
 	'plans-theme-preselected': 'plans-theme-preselected',
 	'new-or-existing-site': 'new-or-existing-site',
 	'difm-site-picker': 'difm-site-picker',
@@ -34,10 +33,6 @@ const stepNameToModuleName = {
 	'difm-store-options': 'site-options',
 	'difm-page-picker': 'page-picker',
 	'website-content': 'website-content',
-	'store-address': 'woocommerce-install/step-store-address',
-	'business-info': 'woocommerce-install/step-business-info',
-	confirm: 'woocommerce-install/confirm',
-	transfer: 'woocommerce-install/transfer',
 	'social-profiles': 'social-profiles',
 };
 

@@ -13,8 +13,8 @@ export function buildOmnibarNodesFromAdminBarNodes(
 	resolveHref?: OmnibarHrefResolver
 ): OmnibarNodes {
 	const omnibarNodes: OmnibarNodes = {};
-	const sitePluginNodes: OmnibarNode[] = [];
-	const userPluginNodes: OmnibarNode[] = [];
+	const siteNodes: OmnibarNode[] = [];
+	const userNodes: OmnibarNode[] = [];
 
 	const nodeMap = new Map< string, OmnibarNode >();
 	for ( const node of adminBarNodes ) {
@@ -134,20 +134,20 @@ export function buildOmnibarNodesFromAdminBarNodes(
 		}
 
 		if ( ! node.parent && omnibarNode !== omnibarNodes.home && omnibarNode !== omnibarNodes.site ) {
-			sitePluginNodes.push( omnibarNode );
+			siteNodes.push( omnibarNode );
 		} else if ( node.parent === 'top-secondary' && omnibarNode !== omnibarNodes.user ) {
-			userPluginNodes.push( omnibarNode );
+			userNodes.push( omnibarNode );
 		}
 
 		nodeMap.set( node.id, omnibarNode );
 	}
 
-	if ( sitePluginNodes.length > 0 ) {
-		omnibarNodes.sitePlugins = sitePluginNodes;
+	if ( siteNodes.length > 0 ) {
+		omnibarNodes.siteNodes = siteNodes;
 	}
 
-	if ( userPluginNodes.length > 0 ) {
-		omnibarNodes.userPlugins = userPluginNodes;
+	if ( userNodes.length > 0 ) {
+		omnibarNodes.userNodes = userNodes;
 	}
 
 	for ( const node of adminBarNodes ) {
@@ -170,7 +170,7 @@ export function buildOmnibarNodesFromAdminBarNodes(
 	return omnibarNodes;
 }
 
-export function parseAdminBarTitle( node: AdminBarNode ) {
+export function parseAdminBarNodeTitle( node: AdminBarNode ) {
 	const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
 	return {
 		text: doc.body.textContent?.trim() || undefined,

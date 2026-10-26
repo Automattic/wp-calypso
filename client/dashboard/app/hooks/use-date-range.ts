@@ -1,8 +1,9 @@
-import { useRouter } from '@tanstack/react-router';
+import { useSearch } from '@tanstack/react-router';
 import { getUnixTime, fromUnixTime, isValid as isValidDate, subDays, isSameSecond } from 'date-fns';
 import { useState, useRef, useEffect } from 'react';
 import { buildTimeRangeInSeconds } from '../../sites/logs/utils';
 import { formatYmd, parseYmdLocal } from '../../utils/datetime';
+import type { DateRangeSearch } from '../../utils/date-range-search';
 
 interface UseDateRangeOptions {
 	timezoneString?: string;
@@ -17,8 +18,7 @@ export function useDateRange( {
 	autoRefresh = false,
 	defaultDays = 7,
 }: UseDateRangeOptions ) {
-	const router = useRouter();
-	const search = router.state.location.search;
+	const search = useSearch( { strict: false } );
 
 	const initial = getDefaultDateRange( timezoneString, gmtOffset, defaultDays );
 	const initialFromUrl = getInitialDateRangeFromSearch( search );
@@ -108,19 +108,19 @@ export function getDefaultDateRange(
 /**
  * Get the initial date range from the URL search parameters.
  */
-export function getInitialDateRangeFromSearch( search: string ): { start: Date; end: Date } | null {
-	const params = new URLSearchParams( search );
-	const valueAsNumber = ( value?: string | null ) => ( value ? Number( value ) : NaN );
-	const toDate = ( dateString?: string | null ) => {
-		const num = valueAsNumber( dateString );
-		if ( ! Number.isFinite( num ) ) {
+export function getInitialDateRangeFromSearch( {
+	from,
+	to,
+}: DateRangeSearch ): { start: Date; end: Date } | null {
+	const toDate = ( seconds?: number ) => {
+		if ( seconds === undefined ) {
 			return undefined;
 		}
-		const date = fromUnixTime( num );
+		const date = fromUnixTime( seconds );
 		return isValidDate( date ) ? date : undefined;
 	};
 
-	const start = toDate( params.get( 'from' ) );
-	const end = toDate( params.get( 'to' ) );
+	const start = toDate( from );
+	const end = toDate( to );
 	return start && end && start <= end ? { start, end } : null;
 }

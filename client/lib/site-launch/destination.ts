@@ -128,9 +128,16 @@ export function getLaunchDestination( params: LaunchParams ): string {
 	return addQueryArgs( getCelebrateLaunchArgs( url ), url );
 }
 
-export function getLaunchCheckoutUrl( params: LaunchParams ): string {
-	const destination = getLaunchDestination( params );
-	const backUrl = isURL( destination ) ? destination : pathToUrl( destination );
+/**
+ * The checkout a launch ends on. Paying lands on `destination`, the launch destination unless given
+ * another; leaving checkout always returns to the launch destination.
+ */
+export function getLaunchCheckoutUrl(
+	params: LaunchParams,
+	destination: string = getLaunchDestination( params )
+): string {
+	const launchDestination = getLaunchDestination( params );
+	const backUrl = isURL( launchDestination ) ? launchDestination : pathToUrl( launchDestination );
 	const dashboard = DASHBOARDS.find( ( type ) => type === params.dashboard );
 
 	return addQueryArgs(

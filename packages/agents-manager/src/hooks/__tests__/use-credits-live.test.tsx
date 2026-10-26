@@ -993,6 +993,15 @@ describe( 'while the host says the page isn’t in dev mode', () => {
 		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
 		expect( fetchMock ).not.toHaveBeenCalled();
 	} );
+
+	it( 'draws a zero a reply brought while hidden as soon as the chat reopens, since it can’t read', async () => {
+		const view = renderCredits( { isOpen: false } );
+		await receive( exhausted() );
+		view.rerender( defaultOptions );
+		await flush();
+		expect( props( view.result.current ).status.remaining ).toBe( 0 );
+		expect( fetchMock ).not.toHaveBeenCalled();
+	} );
 } );
 describe( 'the dev mode gate', () => {
 	afterEach( () => {
@@ -1559,6 +1568,78 @@ it( 'waits while closed, reads on opening, and refreshes on reopen and a fresh m
 	expect( props( fresh.result.current ).status.remaining ).toBe( 2450 );
 	expect( fetchMock ).toHaveBeenCalledTimes( 3 );
 } );
+it( 'confirms, on reopening, a zero last shown before minimising', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	const view = renderCredits();
+	await flush();
+	fetchMock.mockResolvedValueOnce( response( exhausted() ) );
+	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+	await flush();
+	expect( view.result.current.notice ).toBeDefined();
+
+	view.rerender( { ...defaultOptions, isOpen: false } );
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	view.rerender( defaultOptions );
+	expect( view.result.current.trailingActions ).toBeUndefined();
+	expect( view.result.current.notice ).toBeUndefined();
+
+	await flush();
+	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+	expect( view.result.current.notice?.dismissible ).toBe( true );
+} );
+it( 'confirms a second zero that arrived while minimised before drawing it again', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	const view = renderCredits();
+	await flush();
+	view.rerender( { ...defaultOptions, isOpen: false } );
+	await receive( exhausted() );
+	await receive( exhausted() );
+
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	view.rerender( defaultOptions );
+	expect( view.result.current.trailingActions ).toBeUndefined();
+	await flush();
+	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+} );
+it( 'blocks a send while the reopening read confirms a zero', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	const view = renderCredits();
+	await flush();
+	view.rerender( { ...defaultOptions, isOpen: false } );
+	await receive( exhausted() );
+
+	const read = deferred< ReturnType< typeof response > >();
+	fetchMock.mockReturnValueOnce( read.promise );
+	view.rerender( defaultOptions );
+	act( () => expect( view.result.current.beforeSubmit() ).toBe( false ) );
+
+	await act( async () => read.resolve( response( creditSnapshot() ) ) );
+	act( () => expect( view.result.current.beforeSubmit() ).toBe( true ) );
+} );
+it( 'draws a turn’s zero on reopening once the turn ends, without another read', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	const view = renderCredits();
+	await flush();
+	mockIsProcessing = true;
+	view.rerender( { ...defaultOptions, isOpen: false } );
+	await receive( exhausted() );
+
+	view.rerender( defaultOptions );
+	expect( view.result.current.trailingActions ).toBeUndefined();
+	mockIsProcessing = false;
+	view.rerender( defaultOptions );
+	await flush();
+	expect( props( view.result.current ).status.remaining ).toBe( 0 );
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+} );
+it( 'keeps drawing a balance above 0 while the reopening read runs', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	const view = renderCredits();
+	await flush();
+	view.rerender( { ...defaultOptions, isOpen: false } );
+	view.rerender( defaultOptions );
+	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+} );
 it( 'expires the old balance and reads the next period without sending a prompt', async () => {
 	fetchMock.mockResolvedValueOnce(
 		response(
@@ -1800,12 +1881,10 @@ describe( 'credits Tracks events', () => {
 		await receive( low() );
 		await receive( { ...exhausted(), plan_tier: 'personal' } );
 		expect(
-			creditsEvents().map( ( [ name, eventProps ] ) => [ name, eventProps?.state ] )
-		).toEqual( [
-			[ 'calypso_agents_manager_credits_notice_shown', 'low' ],
-			[ 'calypso_agents_manager_credits_notice_shown', 'zero' ],
-			[ 'calypso_agents_manager_credits_meter_opened', 'zero' ],
-		] );
+			creditsEvents()
+				.filter( ( [ name ] ) => name === 'calypso_agents_manager_credits_notice_shown' )
+				.map( ( [ , eventProps ] ) => eventProps?.state )
+		).toEqual( [ 'low', 'zero' ] );
 	} );
 
 	it( 'keeps a recorded notice across a remount and a new conversation, but not for another user', async () => {
@@ -2239,17 +2318,74 @@ describe( 'credits Tracks events', () => {
 			}
 		);
 
-		it( 'waits while a reply’s 0 opens it with the chat hidden, then records once when shown', async () => {
-			const { showChat, isPopoverOpen } = await renderHealthy();
+		it( 'waits while a reply’s 0 opens it with the chat hidden, then records once when the opening read confirms it', async () => {
+			const { view, showChat, isPopoverOpen } = await renderHealthy();
 			showChat( false );
 			await receive( zero() );
 			expect( isPopoverOpen() ).toBe( true );
 			expect( opened() ).toEqual( [] );
+			fetchMock.mockResolvedValueOnce( response( zero() ) );
 			showChat( true );
+			expect( view.result.current.trailingActions ).toBeUndefined();
+			expect( view.result.current.notice ).toBeUndefined();
+			expect( opened() ).toEqual( [] );
+			await flush();
+			expect( isPopoverOpen() ).toBe( true );
+			expect( view.result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
 			expect( opened() ).toEqual( [ byItself ] );
 			showChat( false );
 			showChat( true );
+			await flush();
 			expect( opened() ).toEqual( [ byItself ] );
+		} );
+
+		it( 'draws credits bought elsewhere on reopening, with no popover and no event', async () => {
+			const { view, showChat, isPopoverOpen } = await renderHealthy();
+			showChat( false );
+			await receive( zero() );
+			fetchMock.mockResolvedValueOnce( response( healthy() ) );
+			showChat( true );
+			await flush();
+			expect( isPopoverOpen() ).toBe( false );
+			expect( view.result.current.notice ).toBeUndefined();
+			expect( props( view.result.current ).status.remaining ).toBe( CREDITS_LOW_BALANCE );
+			expect( opened() ).toEqual( [] );
+		} );
+
+		it( 'records nothing when the opening read fails after a reply’s 0 while hidden', async () => {
+			const { view, showChat } = await renderHealthy();
+			showChat( false );
+			await receive( zero() );
+			fetchMock.mockRejectedValueOnce( new TypeError( 'Failed to fetch' ) );
+			showChat( true );
+			await flush();
+			expect( view.result.current.trailingActions ).toBeUndefined();
+			expect( opened() ).toEqual( [] );
+		} );
+
+		it( 'records again when credits return and a later reply uses them up', async () => {
+			const { isPopoverOpen } = await renderHealthy();
+			await receive( zero() );
+			await receive( healthy() );
+			expect( isPopoverOpen() ).toBe( false );
+			await receive( zero() );
+			expect( opened() ).toEqual( [ byItself, byItself ] );
+		} );
+
+		it.each( [
+			[ 'closes a popover that opened by itself', false ],
+			[ 'keeps a popover opened by a click', true ],
+		] )( '%s once a read finds credits again', async ( _case, openedByClick ) => {
+			const { view, isPopoverOpen } = await renderHealthy();
+			if ( openedByClick ) {
+				act( () => props( view.result.current ).onToggle( true ) );
+			}
+			await receive( zero() );
+			expect( isPopoverOpen() ).toBe( true );
+			fetchMock.mockResolvedValueOnce( response( healthy() ) );
+			act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+			await flush();
+			expect( isPopoverOpen() ).toBe( openedByClick );
 		} );
 
 		it.each( [ 'a reply without a balance', 'the period resetting' ] )(
@@ -2308,7 +2444,9 @@ describe( 'credits Tracks events', () => {
 				act( () => props( view.result.current ).onToggle( true ) );
 				showChat( chat === 'showing' );
 				await receive( zero() );
+				fetchMock.mockResolvedValueOnce( response( zero() ) );
 				showChat( true );
+				await flush();
 				expect( isPopoverOpen() ).toBe( true );
 				expect( opened() ).toEqual( [ byClick ] );
 			}
@@ -2340,9 +2478,12 @@ describe( 'credits Tracks events', () => {
 					void mockConfig.onTaskUpdate?.( terminal( zero() ) );
 				} );
 				expect( isPopoverOpen() ).toBe( true );
+				fetchMock.mockResolvedValue( response( zero() ) );
 				showChat( true );
+				await flush();
 				showChat( false );
 				showChat( true );
+				await flush();
 				expect( opened() ).toEqual( [ byClick, byItself ] );
 			}
 		);

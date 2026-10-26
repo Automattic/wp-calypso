@@ -20,7 +20,6 @@ module.exports = ( { outputPOT = 'build', importSource } = {} ) => ( {
 		},
 		test: {
 			presets: [ [ '@babel/preset-env', { targets: { node: 'current' } } ] ],
-			plugins: [ 'babel-plugin-dynamic-import-node' ],
 		},
 	},
 } );
