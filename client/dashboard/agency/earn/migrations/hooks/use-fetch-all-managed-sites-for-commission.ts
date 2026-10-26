@@ -1,6 +1,7 @@
 import { paginatedAgencySitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { urlToSlug } from '../../../../utils/url';
+import { sampleSites, useDesignPreview } from '../../../design-preview';
 import type { AgencySite } from '@automattic/api-core';
 
 export type SiteItem = {
@@ -20,6 +21,7 @@ export type SiteItem = {
  * use the `useFetchAllManagedSites` hook instead.
  */
 export const useFetchAllManagedSitesForCommission = () => {
+	const preview = useDesignPreview();
 	// Fetch a single site first to learn the total, then request them all.
 	const firstFetch = useQuery( paginatedAgencySitesQuery( { page: 1, per_page: 1 } ) );
 
@@ -43,6 +45,15 @@ export const useFetchAllManagedSitesForCommission = () => {
 
 	const showLoading = ! mappedSites.length && ( firstFetch.isFetching || allSites.isFetching );
 
+	if ( preview.migrationsActive ) {
+		return {
+			...allSites,
+			isLoading: false,
+			items: sampleSites
+				.slice( 0, Number( preview.candidates ) )
+				.map( ( site ) => ( { id: site.a4a_site_id!, site: site.url, rawSite: site } ) ),
+		};
+	}
 	return {
 		...allSites,
 		isLoading: showLoading || firstFetch.isLoading || allSites.isLoading,

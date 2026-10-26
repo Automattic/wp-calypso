@@ -1,0 +1,4 @@
+// Two-line site rows need a taller preview than the 32px DataViews default.
+.agency-sites-list .dataviews-view-table.has-media-aspect-ratio .dataviews-column-primary__media {
+	height: 48px;
+}

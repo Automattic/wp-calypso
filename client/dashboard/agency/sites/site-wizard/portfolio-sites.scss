@@ -1,0 +1,114 @@
+@use 'sass:list';
+@use '@automattic/color-studio/dist/color-variables' as brand;
+
+$agency-mini-site-tones: (
+	'blue': ( brand.$studio-blue-50, brand.$studio-blue-5 ),
+	'green': ( brand.$studio-green-40, brand.$studio-green-5 ),
+	'pink': ( brand.$studio-pink-40, brand.$studio-pink-5 ),
+	'yellow': ( brand.$studio-yellow-30, brand.$studio-yellow-5 ),
+	'purple': ( brand.$studio-purple-40, brand.$studio-purple-5 ),
+	'celadon': ( brand.$studio-celadon-40, brand.$studio-celadon-5 ),
+	'red': ( brand.$studio-red-40, brand.$studio-red-5 ),
+	'orange': ( brand.$studio-orange-40, brand.$studio-orange-5 ),
+);
+
+@each $name, $colors in $agency-mini-site-tones {
+	.agency-mini-site[data-tone='#{$name}'] {
+		--mini-site-tone: #{list.nth( $colors, 1 )};
+		--mini-site-soft: #{list.nth( $colors, 2 )};
+	}
+}
+
+.agency-mini-site {
+	display: block;
+	overflow: hidden;
+	stroke: none;
+}
+
+.agency-mini-site__page {
+	fill: color-mix( in srgb, var( --mini-site-soft ) 45%, var( --color-surface ) );
+}
+
+.agency-mini-site__tone {
+	fill: var( --mini-site-tone );
+}
+
+.agency-mini-site__soft {
+	fill: color-mix( in srgb, var( --mini-site-tone ) 22%, var( --color-surface ) );
+}
+
+.agency-mini-site__paper {
+	fill: var( --color-surface );
+}
+
+.agency-mini-site__ink {
+	fill: color-mix( in srgb, var( --color-text ) 82%, transparent );
+}
+
+.agency-mini-site__muted {
+	fill: color-mix( in srgb, var( --color-text ) 22%, transparent );
+}
+
+.agency-portfolio-sites {
+	box-sizing: border-box;
+	inline-size: 100%;
+	font-size: 12px;
+	line-height: 1.4;
+	display: flex;
+	flex-direction: column;
+	align-self: stretch;
+	overflow: hidden;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	background: var( --color-surface );
+	box-shadow: 0 8px 24px color-mix( in srgb, var( --color-text ) 6%, transparent );
+}
+
+
+.agency-portfolio-sites__viewport {
+	flex: 1;
+	min-block-size: 0;
+	overflow: hidden;
+	mask-image: linear-gradient( to bottom, var( --color-surface ) 62%, transparent );
+}
+
+.agency-portfolio-sites__row {
+	display: grid;
+	grid-template-columns: 64px minmax( 0, 1fr ) 96px;
+	align-items: center;
+	gap: 12px;
+	padding-inline: 16px;
+	padding-block: 10px;
+	border-block-end: 1px solid var( --color-border-subtle );
+}
+
+.agency-portfolio-sites__row .agency-mini-site {
+	inline-size: 64px;
+	block-size: 36px;
+	border-radius: 4px;
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+}
+
+.agency-portfolio-sites__identity {
+	display: flex;
+	flex-direction: column;
+	min-inline-size: 0;
+}
+
+.agency-portfolio-sites :is( strong, bdi ) {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.agency-portfolio-sites strong {
+	color: var( --color-text );
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.agency-portfolio-sites bdi,
+.agency-portfolio-sites__host {
+	color: var( --color-text-subtle );
+	font-size: 11px;
+}

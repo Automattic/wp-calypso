@@ -8,6 +8,7 @@ import { titleFieldTextOverflowStyles } from '../../../sites/site-fields';
 import { useIsSiteUnreachable } from '../../../sites/site-fields/site-unreachable-status';
 import SitePreview from '../../../sites/site-preview';
 import { getSiteVisibility, getVisibilityLabels } from '../../../utils/site-visibility';
+import SiteScreenshot from '../../components/site-screenshot';
 import AgencySiteIcon from '../site-icon';
 import { getDisplayUrl, getSiteName, getSiteUrl } from './site-data';
 import type { AgencySite, Site } from '@automattic/api-core';
@@ -17,7 +18,7 @@ export function getSiteIconField( viewType?: string ): Field< AgencySite > {
 	const isGrid = viewType === 'grid';
 	return {
 		id: 'site_icon',
-		label: __( 'Site icon' ),
+		label: __( 'Site preview' ),
 		enableSorting: false,
 		render: ( { item } ) =>
 			isGrid ? (
@@ -25,7 +26,13 @@ export function getSiteIconField( viewType?: string ): Field< AgencySite > {
 					<AgencySiteIcon site={ item } size={ 64 } />
 				</HStack>
 			) : (
-				<AgencySiteIcon site={ item } size={ 48 } />
+				<SiteScreenshot
+					key={ getSiteUrl( item ) }
+					url={ getSiteUrl( item ) }
+					alt=""
+					compact
+					decorative
+				/>
 			),
 	};
 }

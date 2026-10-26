@@ -12,7 +12,7 @@ const MIN_LENGTH = 4;
 const MAX_LENGTH = 50;
 const CHECK_DELAY_MS = 500;
 
-function getFormatError( address: string ): string | undefined {
+export function getFormatError( address: string ): string | undefined {
 	if ( address.match( /[^a-z0-9]/i ) ) {
 		return __( 'Your site address can only contain letters and numbers.' );
 	}
@@ -50,9 +50,9 @@ export type SiteAddress = {
  * The address a new site will be created at: suggested by the server, then
  * checked against the agency's account as the user edits it.
  */
-export function useSiteAddress( agencyId: number ): SiteAddress {
+export function useSiteAddress( agencyId: number, enabled = true ): SiteAddress {
 	const queryClient = useQueryClient();
-	const suggestion = useQuery( randomSiteNameQuery() );
+	const suggestion = useQuery( { ...randomSiteNameQuery(), enabled } );
 	const [ address, setAddress, debouncedAddress ] = useDebouncedState( '', CHECK_DELAY_MS );
 	const [ trustSuggestion, setTrustSuggestion ] = useState( true );
 
@@ -72,14 +72,14 @@ export function useSiteAddress( agencyId: number ): SiteAddress {
 
 	const validation = useQuery( {
 		...agencySiteAddressValidationQuery( agencyId, debouncedAddress ),
-		enabled: ! skipCheck,
+		enabled: enabled && ! skipCheck,
 	} );
 
 	const isTaken = ! skipCheck && validation.data?.valid === false;
 
 	const alternative = useQuery( {
 		...freeSuggestionQuery( debouncedAddress ),
-		enabled: isTaken,
+		enabled: enabled && isTaken,
 	} );
 
 	const isChecking = ! formatError && ( isDebouncing || ( ! skipCheck && validation.isFetching ) );

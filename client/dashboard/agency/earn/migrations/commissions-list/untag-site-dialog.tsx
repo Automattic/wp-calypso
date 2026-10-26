@@ -12,6 +12,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { simulateMigration } from '../../../design-preview';
 import type { ShowSuccessNotice, TaggedSite } from '../types';
 
 export default function UntagSiteDialog( {
@@ -31,6 +32,11 @@ export default function UntagSiteDialog( {
 	const { mutate, isPending } = useMutation( agencySiteTagsMutation( agencyId ) );
 
 	const onConfirm = () => {
+		if ( simulateMigration( 'untag', [ site.id ] ) ) {
+			onSuccess( 'Preview: site untagged.' );
+			onClose();
+			return;
+		}
 		// ConfirmDialog has no busy state on its confirm button, so guard against
 		// a second submit while the first is still in flight.
 		if ( isPending ) {

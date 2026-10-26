@@ -39,7 +39,7 @@ function toMenuItemProps( { children, href, ...rest }: ReturnType< typeof useLin
 	return { ...rest, href };
 }
 
-function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
+function AddNewSite( { onSelectAction, preview }: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
@@ -52,10 +52,10 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 		enabled: !! agencyId,
 	} );
 
-	const availablePendingSites = getAvailablePendingSites( pendingSites );
+	const availablePendingSites = getAvailablePendingSites( preview ? [] : pendingSites );
 	const hasPendingSites = availablePendingSites.length > 0;
 	const pressableOwnership = getPressableOwnershipType( agency );
-	const ownsPressableDirectly = pressableOwnership === 'regular';
+	const ownsPressableDirectly = ! preview && pressableOwnership === 'regular';
 
 	const isDesktop = useViewportMatch( 'medium' );
 	const Wrapper = isDesktop ? HStack : VStack;
@@ -148,8 +148,8 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 			</Column>
 			<Column>
 				<DevSiteCard
-					availableDevSites={ devLicenses?.available }
-					isAgencyApproved={ isAgencyApproved( agency ) }
+					availableDevSites={ preview?.availableDevSites ?? devLicenses?.available }
+					isAgencyApproved={ !! preview || isAgencyApproved( agency ) }
 					onClick={ () => selectAction( 'dev-site-configurations' ) }
 				/>
 			</Column>
