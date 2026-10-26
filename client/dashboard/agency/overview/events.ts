@@ -65,7 +65,7 @@ export const FEATURED_EVENT: FeaturedEvent | null = {
 		sprintf(
 			/* translators: %s is a ticket discount code, shown as-is. */
 			__(
-				'Spend two days at Civic Hall with the people shaping the future of the open web. As an Automattic for Agencies partner, you get 50%% off tickets with the code <strong><code>%s</code></strong>, so come say hello to our team while you’re there.'
+				'Spend two days at Civic Hall with the people shaping the future of the open web. As an Automattic for Agencies partner, you get 50%% off General Admission tickets with the code <strong><code>%s</code></strong>, so come say hello to our team while you’re there.'
 			),
 			'Automattic50Off'
 		),

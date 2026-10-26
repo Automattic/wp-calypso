@@ -45,7 +45,9 @@ describe( '<EventCard>', () => {
 			/>
 		);
 
-		expect( screen.getByText( /you get 50% off tickets with the code/ ) ).toBeVisible();
+		expect(
+			screen.getByText( /you get 50% off General Admission tickets with the code/ )
+		).toBeVisible();
 		expect( screen.getByRole( 'code' ) ).toHaveTextContent( 'Automattic50Off' );
 		expect( screen.getByRole( 'strong' ) ).toContainElement( screen.getByRole( 'code' ) );
 
