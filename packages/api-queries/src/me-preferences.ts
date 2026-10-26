@@ -40,7 +40,7 @@ const defaultValues: Required< UserPreferences > = {
 	'a4a-feedback': {},
 	'notifications-layout-style': 'simplified',
 	'notifications-view-settings-seen': false,
-	'notifications-subscriber-alerts-enabled': false,
+	'notifications-subscriber-alerts-enabled': true,
 	'pressable-limit-notification-dismissed': 0,
 	'a4a-agency-approval-notice-dismissed': false,
 	'a4a-dashboard-onboarding-tour-section': '',

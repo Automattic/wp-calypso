@@ -17,6 +17,12 @@ export type NotificationSoundOptions = {
 	onError?: ( error: unknown, stage: NotificationSoundErrorStage ) => void;
 };
 
+// True once the person has clicked or typed anywhere on the page, even before this code loaded.
+// Browsers let audio start after that, and a touch `pointerdown` alone does not count.
+function hasBeenActivated() {
+	return navigator.userActivation?.hasBeenActive === true;
+}
+
 export function createNotificationSound( { onError }: NotificationSoundOptions = {} ) {
 	let audioContext: AudioContext | undefined;
 	let lastPlayedAt: number | undefined;
@@ -69,12 +75,24 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 		}
 
 		const context = audioContext;
-		settle( () => context.resume(), 'resume' );
-		removeGestureListeners();
+		// Safari needs a fresh gesture to start audio, so keep listening until it runs.
+		settle(
+			() =>
+				context.resume().then( () => {
+					if ( context.state === 'running' ) {
+						removeGestureListeners();
+					}
+				} ),
+			'resume'
+		);
 	}
 
 	document.addEventListener( 'pointerdown', activateAudio );
 	document.addEventListener( 'keydown', activateAudio );
+
+	if ( hasBeenActivated() ) {
+		activateAudio();
+	}
 
 	return {
 		play(): NotificationSoundResult {
@@ -87,7 +105,13 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 			if ( unavailableReason ) {
 				return unavailableReason;
 			}
-			if ( ! audioContext ) {
+			if ( audioContext?.state !== 'running' && hasBeenActivated() ) {
+				activateAudio();
+				if ( unavailableReason ) {
+					return unavailableReason;
+				}
+			}
+			if ( audioContext?.state !== 'running' ) {
 				return 'not_activated';
 			}
 

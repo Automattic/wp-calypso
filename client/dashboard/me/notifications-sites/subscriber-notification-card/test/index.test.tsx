@@ -25,9 +25,9 @@ describe( 'SubscriberNotificationCard', () => {
 		} );
 	} );
 
-	it( 'defaults to off when the account has no saved preference', () => {
+	it( 'defaults to on when the account has no saved preference', () => {
 		setup();
-		expect( screen.getByRole( 'checkbox', { name: 'Subscriber alerts' } ) ).not.toBeChecked();
+		expect( screen.getByRole( 'checkbox', { name: 'Subscriber alerts' } ) ).toBeChecked();
 	} );
 
 	it( 'reflects the shared account preference', () => {
