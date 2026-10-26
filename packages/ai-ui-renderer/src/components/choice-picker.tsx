@@ -4,11 +4,13 @@ import {
 	BaseControl,
 	CheckboxControl,
 	RadioControl,
+	useBaseControlProps,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { z } from 'zod';
+import { useFieldProps } from '../hooks/use-field-props';
 import { useInputValue } from '../hooks/use-input-value';
-import { StringValueSchema } from '../utils/schemas';
+import { ChecksSchema, StringValueSchema } from '../utils/schemas';
 
 export const ChoicePicker = createComponentImplementation(
 	{
@@ -18,10 +20,19 @@ export const ChoicePicker = createComponentImplementation(
 			variant: z.enum( [ 'multipleSelection', 'mutuallyExclusive' ] ).optional(),
 			options: z.array( z.object( { label: StringValueSchema, value: z.string() } ) ),
 			value: z.union( [ z.array( z.string() ), DataBindingSchema ] ),
+			checks: ChecksSchema,
 		} ),
 	},
 	( { props, context } ) => {
-		const [ value, onChange ] = useInputValue( props.value ?? [], props.setValue, context );
+		const [ value, setValue ] = useInputValue( props.value ?? [], props.setValue, context );
+		const { fieldProps, touch } = useFieldProps( props.validationErrors );
+		const { baseControlProps, controlProps } = useBaseControlProps( { help: fieldProps.help } );
+
+		const onChange = ( selected: string[] ) => {
+			setValue( selected );
+			touch();
+		};
+
 		const options = props.options.map( ( option ) => ( {
 			...option,
 			label: typeof option.label === 'string' ? option.label : option.value,
@@ -30,6 +41,8 @@ export const ChoicePicker = createComponentImplementation(
 		if ( props.variant !== 'multipleSelection' ) {
 			return (
 				<RadioControl
+					{ ...fieldProps }
+					{ ...controlProps }
 					label={ props.label }
 					options={ options }
 					selected={ value[ 0 ] ?? '' }
@@ -38,28 +51,34 @@ export const ChoicePicker = createComponentImplementation(
 			);
 		}
 
+		// A group of checkboxes has no WordPress control, so `BaseControl` adds the error.
 		return (
-			<fieldset className="ai-ui-renderer__choice-picker">
-				{ props.label && (
-					<BaseControl.VisualLabel as="legend">{ props.label }</BaseControl.VisualLabel>
-				) }
-				<VStack spacing={ 3 }>
-					{ options.map( ( option ) => (
-						<CheckboxControl
-							key={ option.value }
-							label={ option.label }
-							checked={ value.includes( option.value ) }
-							onChange={ ( checked ) =>
-								onChange(
-									checked
-										? [ ...value, option.value ]
-										: value.filter( ( selected ) => selected !== option.value )
-								)
-							}
-						/>
-					) ) }
-				</VStack>
-			</fieldset>
+			<BaseControl { ...baseControlProps } className={ fieldProps.className }>
+				<fieldset { ...controlProps } className="ai-ui-renderer__choice-picker">
+					{ props.label && (
+						<BaseControl.VisualLabel as="legend">{ props.label }</BaseControl.VisualLabel>
+					) }
+					<VStack spacing={ 3 }>
+						{ options.map( ( option ) => (
+							<CheckboxControl
+								key={ option.value }
+								label={ option.label }
+								checked={ value.includes( option.value ) }
+								disabled={ fieldProps.disabled }
+								aria-invalid={ fieldProps[ 'aria-invalid' ] }
+								aria-describedby={ controlProps[ 'aria-describedby' ] }
+								onChange={ ( checked ) =>
+									onChange(
+										checked
+											? [ ...value, option.value ]
+											: value.filter( ( selected ) => selected !== option.value )
+									)
+								}
+							/>
+						) ) }
+					</VStack>
+				</fieldset>
+			</BaseControl>
 		);
 	}
 );

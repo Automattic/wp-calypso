@@ -1,5 +1,9 @@
 import { Catalog, SpecVersion } from '@a2ui/web_core';
-import { BASIC_FUNCTIONS } from '@a2ui/web_core/v1_0';
+import {
+	BASIC_FUNCTIONS as A2UI_BASIC_FUNCTIONS,
+	V10_VALIDATION_FUNCTION_IMPLEMENTATIONS,
+} from '@a2ui/web_core/v1_0';
+import { z } from 'zod';
 import { assertInteractiveUiCatalogDefinition, BASIC_CATALOG_ID } from '../capabilities';
 import { AudioPlayer } from '../components/audio-player';
 import { Button } from '../components/button';
@@ -22,6 +26,7 @@ import { Video } from '../components/video';
 import { toComponentImplementation, toFunctionImplementation } from './definitions';
 import type { InteractiveUiCatalogDefinition } from './definitions';
 import type { ReactComponentImplementation } from '@a2ui/react';
+import type { FunctionImplementation } from '@a2ui/web_core';
 
 // The basic components define their own schemas: values take a literal or a data binding, never a
 // function call, and only the variants they render.
@@ -46,6 +51,32 @@ const BASIC_COMPONENTS: readonly ReactComponentImplementation[] = [
 	Slider,
 ];
 
+const VALIDATION_FUNCTION_NAMES = new Set(
+	V10_VALIDATION_FUNCTION_IMPLEMENTATIONS.map( ( { name } ) => name )
+);
+
+// A2UI's validation functions return English messages, which would replace a check's own
+// `message`, so these return only whether the value is valid; a check without a `message` shows
+// A2UI's generic one. They also take a missing `value`, such as an unset path, as empty, where
+// A2UI's argument schema would reject the call.
+const BASIC_FUNCTIONS: readonly FunctionImplementation[] = A2UI_BASIC_FUNCTIONS.map(
+	( implementation ) => {
+		const { name, schema } = implementation;
+
+		if ( ! VALIDATION_FUNCTION_NAMES.has( name ) || ! ( schema instanceof z.ZodObject ) ) {
+			return implementation;
+		}
+
+		return {
+			...implementation,
+			schema: schema.extend( { value: schema.shape.value.optional() } ),
+			execute: ( ...args ) => ( {
+				valid: ( implementation.execute( ...args ) as { valid: boolean } ).valid,
+			} ),
+		};
+	}
+);
+
 export type InteractiveUiCatalog = Catalog< ReactComponentImplementation >;
 
 /**
@@ -61,7 +92,7 @@ export function createInteractiveUiCatalog(
 			BASIC_CATALOG_ID,
 			SpecVersion.V1_0,
 			[ ...BASIC_COMPONENTS ],
-			BASIC_FUNCTIONS
+			[ ...BASIC_FUNCTIONS ]
 		);
 	}
 

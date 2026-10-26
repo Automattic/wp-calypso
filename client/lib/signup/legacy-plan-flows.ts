@@ -16,8 +16,8 @@ import {
 } from '@automattic/calypso-products';
 
 /**
- * The legacy `/start/<plan>` signup flows, which exist only to preselect a plan, and the
- * data needed to serve them from Stepper's onboarding flow instead.
+ * The legacy `/start/<plan>` signup flows, which exist only to preselect a plan, plus
+ * `/start/plans-first`, and the data needed to serve them from Stepper's onboarding flow instead.
  */
 
 /** Flow name as it appears in the wild, mapped to the plan it preselects. */
@@ -48,6 +48,18 @@ export const REDIRECTED_PLAN_FLOWS = {
 } as const;
 
 export type RedirectedPlanFlow = keyof typeof REDIRECTED_PLAN_FLOWS;
+
+// Asked for the plan before the domain, for WordCamp coupon links. Onboarding asks in its own
+// order and takes the coupon to checkout, so this one names no plan.
+const PLANS_FIRST_FLOW = 'plans-first';
+
+type RedirectedFlow = RedirectedPlanFlow | typeof PLANS_FIRST_FLOW;
+
+/** Every flow redirected here, which the server's route matcher is built from. */
+export const REDIRECTED_FLOWS: readonly string[] = [
+	...Object.keys( REDIRECTED_PLAN_FLOWS ),
+	PLANS_FIRST_FLOW,
+];
 export type PreselectablePlan = ( typeof REDIRECTED_PLAN_FLOWS )[ RedirectedPlanFlow ];
 
 // Plans onboarding will preselect on request. Today exactly what the redirected flows sold;
@@ -79,8 +91,8 @@ export function supportsStorageAddOn( slug: string ): boolean {
 }
 
 /** Whether a flow should be redirected at all. */
-export function shouldRedirectLegacyPlanFlow( flow: string ): flow is RedirectedPlanFlow {
-	return flow in REDIRECTED_PLAN_FLOWS;
+export function shouldRedirectLegacyPlanFlow( flow: string ): flow is RedirectedFlow {
+	return REDIRECTED_FLOWS.includes( flow );
 }
 
 /**
@@ -94,7 +106,7 @@ export function shouldRedirectLegacyPlanFlow( flow: string ): flow is Redirected
  * @param locale   Locale slug to append, when it isn't the default.
  */
 export function getLegacyPlanFlowRedirect(
-	flow: RedirectedPlanFlow,
+	flow: RedirectedFlow,
 	query: Record< string, unknown > = {},
 	locale = ''
 ): string {
@@ -107,7 +119,9 @@ export function getLegacyPlanFlowRedirect(
 	}
 
 	// Last, so a caller cannot name its own plan through a flow that already names one.
-	forwarded.plan = REDIRECTED_PLAN_FLOWS[ flow ];
+	if ( flow !== PLANS_FIRST_FLOW ) {
+		forwarded.plan = REDIRECTED_PLAN_FLOWS[ flow ];
+	}
 
 	const search = new URLSearchParams( forwarded ).toString();
 
