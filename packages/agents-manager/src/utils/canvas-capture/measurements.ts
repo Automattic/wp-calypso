@@ -542,6 +542,10 @@ export function describeUnmoved( snapshot: LayoutSnapshot ): string {
 const MAX_WIDTH_NOTES = 4;
 // The server keeps at most this many.
 const MAX_WIDTH_SHORTFALLS = 8;
+// As many ids as the edit's other detail lists hold.
+const MAX_WIDTH_IDS = 10;
+// Larger: a block left off this list reads as not measured.
+const MAX_MEASURED_IDS = 50;
 // How many elements up from an edited block to look for the box that sets its
 // width. Elements, not blocks: a block's children often sit in a wrapper of
 // its own, such as a cover's inner container.
@@ -624,6 +628,12 @@ export interface WidthShortfall {
 	parentWidth: number;
 	/** The parent's computed `align-items`. */
 	alignItems: string;
+	/**
+	 * The measured blocks whose walk ended at this one, itself included when
+	 * it was measured: the server corrects only for blocks the call is about,
+	 * and the narrow block is often their ancestor.
+	 */
+	fromClientIds: string[];
 }
 
 /** The width notes for the model to read, and the shortfalls for the server to act on. */
@@ -634,6 +644,11 @@ export interface MeasuredWidths {
 	 * the items in a list leaves the list as narrow as it was.
 	 */
 	shortfalls: WidthShortfall[];
+	/**
+	 * The blocks whose width could be read, so "measured, and no shortfall"
+	 * can be told from "not measured".
+	 */
+	measuredClientIds: string[];
 }
 
 /**
@@ -654,7 +669,7 @@ export function describeMeasuredWidths( clientIds: string[] ): MeasuredWidths {
 	try {
 		return measureWidths( clientIds );
 	} catch {
-		return { notes: [], shortfalls: [] };
+		return { notes: [], shortfalls: [], measuredClientIds: [] };
 	}
 }
 
@@ -663,8 +678,15 @@ function measureWidths( clientIds: string[] ): MeasuredWidths {
 	const measurer = canvasDocument ? createMeasurer() : null;
 
 	if ( ! canvasDocument || ! measurer ) {
-		return { notes: [], shortfalls: [] };
+		return { notes: [], shortfalls: [], measuredClientIds: [] };
 	}
+
+	const shortIdOf = ( element: HTMLElement ) => {
+		const clientId = element.dataset.block ?? '';
+
+		return measurer.findShortId( clientId ) ?? clientId;
+	};
+	const measured: HTMLElement[] = [];
 
 	const blockOf = ( element: Element ) => element.closest< HTMLElement >( '[data-block]' );
 	const labelOf = ( element: HTMLElement ): string => {
@@ -705,6 +727,7 @@ function measureWidths( clientIds: string[] ): MeasuredWidths {
 
 				note.edited.push( element );
 				notes.set( current, note );
+				measured.push( element );
 				break;
 			}
 
@@ -719,6 +742,7 @@ function measureWidths( clientIds: string[] ): MeasuredWidths {
 						container,
 						reading: { ...own, available: reading.available },
 					} );
+					measured.push( element );
 				}
 				break;
 			}
@@ -741,13 +765,10 @@ function measureWidths( clientIds: string[] ): MeasuredWidths {
 	// Only for what a stretch can fix: a block, since a wrapper cannot take a
 	// class, in a flex column that does not already stretch its children,
 	// where nothing of the block's own holds it narrow.
-	const shortIdOf = ( element: HTMLElement ) => {
-		const clientId = element.dataset.block ?? '';
-
-		return measurer.findShortId( clientId ) ?? clientId;
-	};
+	const idsOf = ( elements: HTMLElement[], max = MAX_WIDTH_IDS ) =>
+		[ ...new Set( elements.map( shortIdOf ) ) ].slice( 0, max );
 	const shortfalls = [ ...notes.values() ]
-		.flatMap( ( { setter, container, reading } ): WidthShortfall[] => {
+		.flatMap( ( { edited, setter, container, reading } ): WidthShortfall[] => {
 			const parent = blockOf( container );
 			const { display, flexDirection, alignItems } = reading.containerStyle;
 
@@ -771,6 +792,7 @@ function measureWidths( clientIds: string[] ): MeasuredWidths {
 					parentClientId: shortIdOf( parent ),
 					parentWidth: px( reading.available ),
 					alignItems,
+					fromClientIds: idsOf( edited ),
 				},
 			];
 		} )
@@ -812,5 +834,5 @@ function measureWidths( clientIds: string[] ): MeasuredWidths {
 				) } ${ are } as wide as the boxes ${ they } in allow, up to ${ setterLabel }, but ${ setterLabel } is only ${ where }`;
 		} );
 
-	return { notes: widthNotes, shortfalls };
+	return { notes: widthNotes, shortfalls, measuredClientIds: idsOf( measured, MAX_MEASURED_IDS ) };
 }

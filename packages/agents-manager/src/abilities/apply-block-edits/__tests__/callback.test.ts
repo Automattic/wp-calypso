@@ -146,7 +146,9 @@ beforeEach( () => {
 		.mockResolvedValue( { recoveredTargetIds: new Set(), insertedClientIds: [] } );
 	jest.mocked( captureCanvas ).mockResolvedValue( null );
 	jest.mocked( describeMeasuredLayout ).mockReturnValue( [] );
-	jest.mocked( describeMeasuredWidths ).mockReturnValue( { notes: [], shortfalls: [] } );
+	jest
+		.mocked( describeMeasuredWidths )
+		.mockReturnValue( { notes: [], shortfalls: [], measuredClientIds: [] } );
 	jest.mocked( describeTextContrast ).mockReturnValue( null );
 	jest.mocked( snapshotLayout ).mockReturnValue( null );
 	jest.mocked( describeUnmoved ).mockReturnValue( '' );
@@ -823,24 +825,31 @@ describe( 'applyBlockEditsCallback', () => {
 					parentClientId: 'sl5w',
 					parentWidth: 1098,
 					alignItems: 'flex-start',
+					fromClientIds: [ 'favu' ],
 				};
 
 				jest.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'p{}' } ) );
-				jest
-					.mocked( describeMeasuredWidths )
-					.mockReturnValue( { notes: [ 'Width: …' ], shortfalls: [ shortfall ] } );
+				jest.mocked( describeMeasuredWidths ).mockReturnValue( {
+					notes: [ 'Width: …' ],
+					shortfalls: [ shortfall ],
+					measuredClientIds: [ 'favu' ],
+				} );
 
 				const result = await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
 
 				expect( describeMeasuredWidths ).toHaveBeenCalledWith( [ 'resolved-a1' ] );
 				expect( result.result.widthShortfalls ).toEqual( [ shortfall ] );
+				expect( result.result.measuredClientIds ).toEqual( [ 'favu' ] );
 				expect( result.result.captureNotes ).toContain( 'Width: …' );
 
-				jest.mocked( describeMeasuredWidths ).mockReturnValue( { notes: [], shortfalls: [] } );
+				jest
+					.mocked( describeMeasuredWidths )
+					.mockReturnValue( { notes: [], shortfalls: [], measuredClientIds: [] } );
 
 				const without = await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
 
 				expect( without.result ).not.toHaveProperty( 'widthShortfalls' );
+				expect( without.result ).not.toHaveProperty( 'measuredClientIds' );
 			} );
 
 			it( 'takes the whole page once when the edited blocks already fell back to it', async () => {

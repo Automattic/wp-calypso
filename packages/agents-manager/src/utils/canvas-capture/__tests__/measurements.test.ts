@@ -567,35 +567,47 @@ describe( 'describeMeasuredWidths', () => {
 	} );
 
 	describe( 'shortfalls', () => {
-		const faqShortfall = {
+		const faqShortfall = ( fromClientIds: string[] ) => ( {
 			clientId: 'tu1q',
 			width: 412,
 			parentClientId: 'v3nd',
 			parentWidth: 1100,
 			alignItems: 'flex-start',
-		};
+			fromClientIds,
+		} );
 
 		it( 'names the narrow block, not the edited blocks inside it, once', () => {
 			// The correction stretches the list; stretching the questions,
 			// already as wide as the list, changes nothing.
 			mountCanvas( [ faq() ] );
 
+			// Saying which edited blocks it came from, since the server corrects
+			// only for blocks the call is about.
 			expect( describeMeasuredWidths( [ 'd1', 'd2', 'd3', 'd4' ] ).shortfalls ).toEqual( [
-				faqShortfall,
+				faqShortfall( [ 'd1', 'd2', 'd3', 'd4' ] ),
 			] );
 		} );
 
 		it( 'names an edited block that is itself the narrow one', () => {
 			mountCanvas( [ faq() ] );
 
-			expect( describeMeasuredWidths( [ 'tu1q' ] ).shortfalls ).toEqual( [ faqShortfall ] );
+			expect( describeMeasuredWidths( [ 'tu1q' ] ) ).toEqual(
+				expect.objectContaining( {
+					shortfalls: [ faqShortfall( [ 'tu1q' ] ) ],
+					measuredClientIds: [ 'tu1q' ],
+				} )
+			);
 		} );
 
-		it( 'has none once the block fills its parent', () => {
+		it( 'has none once the block fills its parent, and still lists it as measured', () => {
+			// "Measured and wide enough", which the server tells from "not
+			// measured" by the list.
 			mountCanvas( [ faq( 1100 ) ] );
 			sizePage( 1140 );
 
-			expect( describeMeasuredWidths( [ 'tu1q' ] ).shortfalls ).toEqual( [] );
+			expect( describeMeasuredWidths( [ 'tu1q' ] ) ).toEqual(
+				expect.objectContaining( { shortfalls: [], measuredClientIds: [ 'tu1q' ] } )
+			);
 		} );
 
 		it.each( [
@@ -672,9 +684,13 @@ describe( 'describeMeasuredWidths', () => {
 		] );
 	} );
 
-	it( 'gives nothing for a block the canvas does not lay out', () => {
+	it( 'gives nothing for a block the canvas does not lay out, nor lists it as measured', () => {
 		mountCanvas( [ { ...details( 'd1', 0 ), rect: { top: 0, left: 0, width: 0, height: 0 } } ] );
 
-		expect( describeMeasuredWidths( [ 'd1' ] ).notes ).toEqual( [] );
+		expect( describeMeasuredWidths( [ 'd1' ] ) ).toEqual( {
+			notes: [],
+			shortfalls: [],
+			measuredClientIds: [],
+		} );
 	} );
 } );

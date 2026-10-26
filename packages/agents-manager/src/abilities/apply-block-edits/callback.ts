@@ -71,6 +71,8 @@ interface ApplyBlockEditsResultData {
 	contrastBackdrops?: ContrastBackdrop[];
 	/** Blocks narrower than their parent because a flex column does not stretch them, for the server to correct. */
 	widthShortfalls?: WidthShortfall[];
+	/** The blocks whose width was measured: without a shortfall, measured and wide enough. */
+	measuredClientIds?: string[];
 	error?: string;
 	details?: Record< string, unknown >;
 	outcome?: ApplyBlockEditsOutcome;
@@ -491,6 +493,9 @@ export async function applyBlockEditsCallback(
 			...( typeof contrast?.failures === 'number' && { contrastFailures: contrast.failures } ),
 			...( contrast && contrast.backdrops.length > 0 && { contrastBackdrops: contrast.backdrops } ),
 			...( widths.shortfalls.length > 0 && { widthShortfalls: widths.shortfalls } ),
+			...( widths.measuredClientIds.length > 0 && {
+				measuredClientIds: widths.measuredClientIds,
+			} ),
 		};
 	}
 

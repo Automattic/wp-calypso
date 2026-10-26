@@ -14,6 +14,9 @@ import type { BlockEdits, ResolveClientId } from './types';
 import type { EditorBlock, PageBlocks } from '../../utils/editor-blocks';
 
 const MAX_ITEMS = 10;
+// Separate from the lists above, which are capped short: the server reads this
+// as the whole set the call touched.
+const MAX_CHANGED_IDS = 50;
 const MAX_STRING_LENGTH = 300;
 
 type BlockSnapshot = Pick< EditorBlock, 'clientId' | 'name' | 'attributes' >;
@@ -75,6 +78,8 @@ type ValidationDetails = {
 	attributeResults?: AttributeResult[];
 	unsupportedAttributes?: UnsupportedAttribute[];
 	contentTextSnapshot?: string;
+	/** Every block the call updated or deleted, as the agent named it, deduplicated. */
+	changedClientIds?: string[];
 };
 
 type BlocksByClientId = Map< string, BlockSnapshot >;
@@ -430,6 +435,9 @@ export function getValidationDetails( {
 	const attributeResults = getAttributeResults( edits, resolve, previous, current );
 	const unsupportedAttributes = getUnsupportedAttributes( edits );
 	const contentTextSnapshot = getContentTextSnapshot( edits, current );
+	const changedClientIds = [
+		...new Set( [ ...edits.updates.map( ( update ) => update.clientId ), ...edits.deletes ] ),
+	].slice( 0, MAX_CHANGED_IDS );
 
 	return {
 		appliedOperations,
@@ -438,6 +446,7 @@ export function getValidationDetails( {
 		...( attributeResults.length && { attributeResults } ),
 		...( unsupportedAttributes.length && { unsupportedAttributes } ),
 		...( contentTextSnapshot && { contentTextSnapshot } ),
+		...( changedClientIds.length && { changedClientIds } ),
 	};
 }
 

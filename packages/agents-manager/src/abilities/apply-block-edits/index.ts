@@ -120,10 +120,22 @@ export const applyBlockEditsAbility: Ability = {
 									type: 'string',
 									description: "The parent's computed align-items.",
 								},
+								fromClientIds: {
+									type: 'array',
+									items: { type: 'string' },
+									description:
+										'The measured blocks whose walk up ended at this block, itself included when it was measured.',
+								},
 							},
 						},
 						description:
 							'Blocks around the edit narrower than their parent because a flex column does not stretch them, for a width correction to target. Absent when there are none.',
+					},
+					measuredClientIds: {
+						type: 'array',
+						items: { type: 'string' },
+						description:
+							'The blocks whose width was measured. One listed here with no width shortfall is wide enough; one not listed was not measured.',
 					},
 					outcome: {
 						type: 'string',

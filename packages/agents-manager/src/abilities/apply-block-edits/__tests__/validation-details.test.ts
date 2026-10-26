@@ -138,6 +138,29 @@ describe( 'getEditedClientIds', () => {
 } );
 
 describe( 'getValidationDetails', () => {
+	it( 'lists every block the call changed, past the cap on the attribute results', () => {
+		// The server needs the whole set the call touched, not the first ten
+		// attribute writes.
+		const ids = Array.from( { length: 12 }, ( _, index ) => `p${ index }` );
+		const details = validate(
+			edits( {
+				updates: [
+					...ids.map( ( clientId ) => ( {
+						clientId,
+						name: 'core/paragraph',
+						attributes: { content: 'After' },
+					} ) ),
+					{ clientId: 'p0', name: 'core/paragraph', attributes: { content: 'Again' } },
+				],
+			} ),
+			page( ids.map( ( clientId ) => block( clientId, 'core/paragraph', { content: 'Before' } ) ) ),
+			page( ids.map( ( clientId ) => block( clientId, 'core/paragraph', { content: 'After' } ) ) )
+		);
+
+		expect( details.attributeResults ).toHaveLength( 10 );
+		expect( details.changedClientIds ).toEqual( ids );
+	} );
+
 	it( 'reports a content change with the text the page now shows', () => {
 		const details = validate(
 			edits( { updates: [ contentUpdate( '<strong>After</strong> text' ) ] } ),
@@ -147,6 +170,7 @@ describe( 'getValidationDetails', () => {
 
 		expect( details ).toEqual( {
 			appliedOperations: { addedCount: 0, removedCount: 0, modifiedCount: 1 },
+			changedClientIds: [ 'para' ],
 			attributeResults: [
 				{
 					blockName: 'core/paragraph',
@@ -212,6 +236,7 @@ describe( 'getValidationDetails', () => {
 
 		expect( details ).toEqual( {
 			appliedOperations: { addedCount: 0, removedCount: 1, modifiedCount: 0 },
+			changedClientIds: [ 'gone', 'stuck', 'missing' ],
 			unresolvedTargets: [
 				{
 					operation: 'delete',
@@ -339,6 +364,7 @@ describe( 'getValidationDetails', () => {
 
 		expect( details ).toEqual( {
 			appliedOperations: { addedCount: 0, removedCount: 0, modifiedCount: 0 },
+			changedClientIds: [ 'title' ],
 			attributeResults: [
 				expect.objectContaining( { path: 'level', before: 2, after: 1, status: 'changed' } ),
 			],
