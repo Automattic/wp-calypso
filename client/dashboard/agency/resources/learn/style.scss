@@ -1,4 +1,324 @@
+@import '@automattic/color-studio/dist/color-variables';
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/animations';
+
+// Product brand colors. Most come from Color Studio; VIP's gold is from its brand
+// palette and Pressable's red-orange from https://pressable.com/press-kit/.
+$resource-brands: (
+	'automattic-for-agencies': $studio-gray-100,
+	'jetpack': $studio-jetpack-green-50,
+	'pressable': #dd3a03,
+	'woocommerce': $studio-woocommerce-purple-50,
+	'wordpress-com': $studio-wordpress-blue-50,
+	'wordpress-vip': #d8a45f,
+);
+
+// Each product's brand color, for the card header and preview tints.
+.dashboard-resources-learn__card-header,
+.dashboard-resources-learn__preview {
+	--resource-brand: #{$studio-gray-100};
+
+	@each $product, $color in $resource-brands {
+		&[data-product='#{$product}'] {
+			--resource-brand: #{$color};
+		}
+	}
+}
+
+// Holds the Library for focus lookups without becoming a layout box, so its
+// sections stay items of the page's stack.
+.dashboard-resources-learn__results {
+	display: contents;
+}
+
+// Doubles the page's gap, to set the row apart from the library under it.
+.dashboard-resources-learn__recommendations-section {
+	margin-block-end: $grid-unit-30;
+}
+
+// A row of branded tiles that scrolls sideways, a little over two at a time.
+// Padded all round, and pulled back out by as much, so a tile's hover lift
+// isn't clipped by the scroller, and doesn't widen it into showing a scrollbar.
+.dashboard-resources-learn__recommendations {
+	display: flex;
+	gap: $grid-unit-20;
+	margin: calc( -1 * #{$grid-unit-15} ) calc( -1 * #{$grid-unit-15} ) calc( -1 * #{$grid-unit-20} );
+	padding: $grid-unit-15 $grid-unit-15 $grid-unit-20;
+	scroll-padding-inline: $grid-unit-15;
+	list-style: none;
+	overflow-x: auto;
+	overscroll-behavior-inline: contain;
+	scroll-behavior: smooth;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: thin;
+
+	@media ( prefers-reduced-motion: reduce ) {
+		scroll-behavior: auto;
+	}
+}
+
+.dashboard-resources-learn__recommendation {
+	flex: 0 0 calc( ( 100% - #{$grid-unit-20} * 2 ) / 2.25 );
+	min-inline-size: 280px;
+	block-size: 280px;
+	scroll-snap-align: start;
+	border-radius: $radius-large;
+	overflow: hidden;
+
+	// The card header, on its product's solid color: the wordmark, title and
+	// description down one side and the illustration across the other.
+	.dashboard-resources-learn__card-header {
+		--resource-card-ink: #{$studio-white};
+
+		display: grid;
+		grid-template-columns: minmax( 0, 3fr ) minmax( 0, 2fr );
+		grid-template-rows: auto minmax( 0, 1fr ) auto;
+		gap: $grid-unit-15 20px;
+		block-size: 100%;
+		padding: 20px;
+		isolation: isolate;
+		background: var( --resource-brand );
+
+		&:is( [data-product='pressable'], [data-product='wordpress-vip'] ) {
+			--resource-card-ink: #{$studio-gray-100};
+		}
+
+		// A faint pattern for the content type, drifting behind the content.
+		&::before {
+			content: '';
+			position: absolute;
+			inset: -12%;
+			z-index: -1;
+			opacity: 0.08;
+			background: radial-gradient( ellipse at 100% 0, currentColor, transparent 70% );
+			pointer-events: none;
+		}
+
+		&[data-content-type='guide']::before {
+			background: repeating-radial-gradient(
+				circle at 110% 10%,
+				transparent 0 28px,
+				currentColor 29px 30px,
+				transparent 31px 56px
+			);
+		}
+
+		&:is( [data-content-type='video'], [data-content-type='webinar'] )::before {
+			opacity: 0.18;
+			background: repeating-linear-gradient(
+				130deg,
+				transparent 0 12%,
+				currentColor 24%,
+				transparent 36% 48%
+			);
+		}
+
+		&[data-content-type='slide-deck']::before {
+			background:
+				linear-gradient( currentColor 1px, transparent 1px ),
+				linear-gradient( 90deg, currentColor 1px, transparent 1px );
+			background-size: 32px 32px;
+		}
+
+		&[data-content-type='checklist']::before {
+			background: repeating-linear-gradient(
+				-35deg,
+				transparent 0 30px,
+				currentColor 31px 32px,
+				transparent 33px 64px
+			);
+		}
+
+		&[data-content-type='one-pager']::before {
+			background: radial-gradient( circle at 100% 0, currentColor 0 35%, transparent 35.5% );
+		}
+
+		&[data-content-type='talk-track']::before {
+			background: radial-gradient( circle, currentColor 1px, transparent 2px );
+			background-size: 20px 20px;
+		}
+
+		&[data-content-type='case-study']::before {
+			background: linear-gradient(
+				155deg,
+				transparent 45%,
+				currentColor 45.5% 65%,
+				transparent 65.5%
+			);
+		}
+
+		.dashboard-resource-illustration {
+			position: static;
+			grid-area: 1 / 2 / 4 / 3;
+			align-self: center;
+			justify-self: center;
+			inline-size: min( 100%, 128px );
+			block-size: auto;
+			aspect-ratio: 1;
+		}
+
+		.dashboard-resources-learn__card-label {
+			grid-area: 1 / 1;
+			min-block-size: 0;
+			padding: 0;
+		}
+
+		.dashboard-resources-learn__card-title {
+			grid-area: 2 / 1;
+			align-self: end;
+		}
+	}
+
+	.dashboard-resources-learn__top-badge {
+		color: var( --resource-brand );
+	}
+
+	.dashboard-resources-learn__link::after {
+		border-radius: $radius-large;
+	}
+}
+
+.dashboard-resources-learn__recommendation-description {
+	grid-area: 3 / 1;
+}
+
+@media ( prefers-reduced-motion: no-preference ) {
+	// Drifts only while its tile is hovered or focused, like the illustrations,
+	// pausing where it is rather than jumping back.
+	.dashboard-resources-learn__recommendation .dashboard-resources-learn__card-header::before {
+		animation: dashboard-resources-learn__drift 24s ease-in-out infinite alternate paused;
+	}
+
+	.dashboard-resources-learn__recommendation:is( :hover, :has( :focus-visible ) )
+		.dashboard-resources-learn__card-header::before {
+		animation-play-state: running;
+	}
+
+	.dashboard-resources-learn__recommendation:nth-child( even )
+		.dashboard-resources-learn__card-header::before {
+		animation-delay: -12s;
+		animation-direction: alternate-reverse;
+	}
+}
+
+@keyframes dashboard-resources-learn__drift {
+	from {
+		transform: translate( -3%, -2% ) rotate( -3deg );
+	}
+	to {
+		transform: translate( 3%, 2% ) rotate( 3deg );
+	}
+}
+
 // The DataViews wrapper paints its own surface; the filter bar sits on the page background.
-.dashboard-resource-center__filters {
+.dashboard-resources-learn__filters {
 	--wp-dataviews-color-background: transparent;
+
+	// Only rendered while the filters are open, so the gap goes with them.
+	.dashboard-resources-learn__filters-toggled {
+		margin-block-start: $grid-unit-15;
+	}
+}
+
+.dashboard-resources-learn__product-logo {
+	display: block;
+	block-size: 20px;
+	inline-size: var( --resource-logo-width );
+	max-inline-size: 100%;
+	background: currentColor;
+	mask-image: var( --resource-logo-image );
+	mask-size: contain;
+	mask-position: left center;
+	mask-repeat: no-repeat;
+}
+
+// A resource's link, stretched with ::after over its card so the whole of it is
+// clickable, and drawing the focus ring around it. It keeps its card's ink in
+// every state, over the classic dashboard's global link colors.
+.dashboard-resources-learn__link {
+	text-decoration: none;
+
+	&,
+	&:visited,
+	&:hover,
+	&:focus,
+	&:active {
+		color: inherit;
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+	}
+
+	&:focus {
+		box-shadow: none;
+		outline: none;
+	}
+
+	&:focus-visible::after {
+		outline: 2px solid var( --wpds-color-stroke-focus, var( --wp-admin-theme-color ) );
+		outline-offset: -2px;
+	}
+}
+
+.dashboard-resources-learn__list-brand .dashboard-resources-learn__product-logo {
+	block-size: 16px;
+	inline-size: calc( var( --resource-logo-width ) * 0.8 );
+}
+
+.dashboard-resources-learn__modal-title {
+	text-wrap: pretty;
+}
+
+// The preview runs to the modal's edges, cancelling its content padding, with
+// the navigation and close button over it.
+.dashboard-resources-learn__modal-media {
+	position: relative;
+	margin: calc( -1 * #{$grid-unit-30} ) calc( -1 * #{$grid-unit-30} ) 0;
+}
+
+.dashboard-resources-learn__modal-controls {
+	position: absolute;
+	inset: $grid-unit-15 $grid-unit-15 auto;
+}
+
+.dashboard-resources-learn__preview {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	block-size: clamp( 200px, 32dvh, 280px );
+	box-sizing: border-box;
+	// Insets the thumbnail like a sheet of paper, cropped where the frame ends.
+	padding: 36px clamp( 36px, 13%, 72px ) 0;
+	overflow: hidden;
+	color: var( --resource-brand );
+	background: var( --wpds-color-background-surface-neutral, #{$gray-100} );
+	border-block-end: 1px solid var( --wpds-color-stroke-surface-neutral, #{$gray-300} );
+
+	.dashboard-resource-illustration {
+		inline-size: 120px;
+		block-size: 120px;
+	}
+}
+
+.dashboard-resources-learn__preview-image {
+	align-self: flex-start;
+	inline-size: 100%;
+	min-block-size: 100%;
+	object-fit: cover;
+	object-position: top;
+	border-radius: $radius-large $radius-large 0 0;
+	box-shadow:
+		0 0 0 1px rgba( $black, 0.08 ),
+		0 8px 24px rgba( $black, 0.1 );
+}
+
+.dashboard-resources-learn__modal-fade {
+	@include animation__fade-in( 0.15s, 0s, ease-out );
 }

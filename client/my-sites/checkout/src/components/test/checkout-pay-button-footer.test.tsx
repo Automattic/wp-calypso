@@ -4,18 +4,32 @@
 
 import { PRODUCT_AI_CREDITS_LIFETIME, PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { checkoutTheme } from '@automattic/composite-checkout';
+import { CheckoutProvider } from '@automattic/composite-checkout';
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-import { ThemeProvider } from '@emotion/react';
 import { render, screen } from '@testing-library/react';
 import CheckoutPayButtonFooter from '../checkout-pay-button-footer';
+import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
-function renderFooter( cart: ResponseCart ) {
+function makePaymentMethod( id: string ): PaymentMethod {
+	return {
+		id,
+		paymentProcessorId: id,
+		label: id,
+		submitButton: <button />,
+		getAriaLabel: () => id,
+	};
+}
+
+function renderFooter( cart: ResponseCart, selectedPaymentMethodId = 'card' ) {
 	return render(
-		<ThemeProvider theme={ checkoutTheme }>
+		<CheckoutProvider
+			paymentMethods={ [ makePaymentMethod( 'card' ), makePaymentMethod( 'free-purchase' ) ] }
+			paymentProcessors={ {} }
+			initiallySelectedPaymentMethodId={ selectedPaymentMethodId }
+		>
 			<CheckoutPayButtonFooter cart={ cart } />
-		</ThemeProvider>
+		</CheckoutProvider>
 	);
 }
 
@@ -58,6 +72,21 @@ describe( 'CheckoutPayButtonFooter', () => {
 		const wrapper = container.querySelector( '.checkout-pay-button-footer' );
 		// 4 direct children: SSL trust line, divider, legal notice, processor notice (modal is closed).
 		expect( wrapper?.childElementCount ).toBe( 4 );
+	} );
+
+	it( 'omits the SSL line when the free purchase method is selected', () => {
+		const { container } = renderFooter( getEmptyResponseCart(), 'free-purchase' );
+
+		expect( screen.queryByText( /SSL secure payment/ ) ).not.toBeInTheDocument();
+		// 3 direct children: divider, legal notice, processor notice.
+		const wrapper = container.querySelector( '.checkout-pay-button-footer' );
+		expect( wrapper?.childElementCount ).toBe( 3 );
+	} );
+
+	it( 'shows the SSL line on a free cart when a card is selected', () => {
+		renderFooter( getEmptyResponseCart(), 'card' );
+
+		expect( screen.getByText( /SSL secure payment/ ) ).toBeVisible();
 	} );
 
 	it( 'links the AI Credits Guidelines for a cart containing Studio Code AI Credits', () => {

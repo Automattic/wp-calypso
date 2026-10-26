@@ -3,6 +3,7 @@ import {
 	BASIC_CATALOG_ID,
 	getInteractiveUiRendererCapabilities,
 } from '@automattic/ai-ui-renderer/capabilities';
+import { ButtonPicker, ColorPicker, FontPicker } from '../components/style-pickers';
 import { withChatResponseTracking } from './with-chat-response-tracking';
 import type {
 	InteractiveUiCatalog,
@@ -14,9 +15,39 @@ export type InteractiveUiRenderer = typeof import( '@automattic/ai-ui-renderer' 
 /** The ID of Agents Manager's catalog, which its abilities build surfaces with. */
 export const AGENTS_MANAGER_CATALOG_ID = 'urn:automattic:agents-manager:interactive-ui:v1';
 
-// Agents Manager's own components join its catalog as its chat UIs move to interactive UI.
+// Style variations are theme.json partials, passed through to the editor as they are.
+const STYLE_VARIATIONS = { type: 'array', items: { type: 'object', additionalProperties: true } };
+
 const AGENTS_MANAGER_CATALOG: InteractiveUiCatalogDefinition = {
-	catalog: { catalogId: AGENTS_MANAGER_CATALOG_ID },
+	catalog: {
+		catalogId: AGENTS_MANAGER_CATALOG_ID,
+		components: {
+			AgentsManagerColorPicker: {
+				type: 'object',
+				properties: { variations: STYLE_VARIATIONS },
+				required: [ 'variations' ],
+			},
+			AgentsManagerFontPicker: {
+				type: 'object',
+				properties: { themeVariations: STYLE_VARIATIONS, dynamicVariations: STYLE_VARIATIONS },
+			},
+			AgentsManagerButtonPicker: {
+				type: 'object',
+				properties: {
+					buttonVariations: STYLE_VARIATIONS,
+					maxButtonsToShow: { type: 'integer' },
+				},
+				required: [ 'buttonVariations' ],
+			},
+		},
+	},
+	// Its pickers need style variations that only the color, font and button abilities fill in.
+	agentComposable: false,
+	components: {
+		AgentsManagerColorPicker: ColorPicker,
+		AgentsManagerFontPicker: FontPicker,
+		AgentsManagerButtonPicker: ButtonPicker,
+	},
 };
 
 /**
@@ -50,9 +81,7 @@ export function filterInteractiveUiCatalogs( catalogs: InteractiveUiCatalogDefin
 export function getInteractiveUiCapabilities(
 	providerCatalogs: InteractiveUiCatalogDefinition[] = []
 ) {
-	return getInteractiveUiRendererCapabilities(
-		[ AGENTS_MANAGER_CATALOG, ...providerCatalogs ].map( ( { catalog } ) => catalog )
-	);
+	return getInteractiveUiRendererCapabilities( [ AGENTS_MANAGER_CATALOG, ...providerCatalogs ] );
 }
 
 /**

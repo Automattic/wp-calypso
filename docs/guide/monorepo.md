@@ -22,10 +22,10 @@ Except those inside `/packages/*`, packages are not published to NPM.
 
 Not everything should be a package, only extract or create packages that adhere the following rules:
 
- - A package should have one clear purpose.
- - Avoid kitchen sink packages, utils packages or packages without a clear purpose but only exists to share code between different areas of the code base.
- - A package should have a clear and well documented public API.
- - Package requirements should be mentioned explicitely in the README. (For instance, if it depends on WP.com REST API or can only run in a specific context). The ideal packages don't have much requirements but it's understandable that some might require some context.
+- A package should have one clear purpose.
+- Avoid kitchen sink packages, utils packages or packages without a clear purpose but only exists to share code between different areas of the code base.
+- A package should have a clear and well documented public API.
+- Package requirements should be mentioned explicitely in the README. (For instance, if it depends on WP.com REST API or can only run in a specific context). The ideal packages don't have much requirements but it's understandable that some might require some context.
 
 **Note** Unfortunately, a lot of existing packages in Calypso don't follow these rules. This is a work in progress and we are trying to improve this over time. If you are creating a new package, please follow these rules.
 

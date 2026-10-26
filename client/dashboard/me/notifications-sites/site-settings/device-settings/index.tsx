@@ -20,8 +20,8 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { SettingsOption, SettingsPanel } from '../../../../../components/settings-panel';
 import { useAnalytics } from '../../../../app/analytics';
-import { getFieldLabel } from '../../helpers/translations';
 import { useSiteSettings } from '../../hooks';
+import { getFieldLabel } from '../../utils/translations';
 import { ApplySettingsToAllSitesConfirmationModal } from '../apply-settings-to-all-sites-confirmation-modal';
 
 export const DevicesSettings = ( { siteId }: { siteId: number } ) => {

@@ -2,6 +2,8 @@
 
 ## trunk
 
+- Breaking: `--env WP` no longer compiles JSX to `createElement` imported from `@wordpress/element`. JSX now uses React's automatic runtime (`react/jsx-runtime`) as in every other build, which WordPress registers as the `react-jsx-runtime` script since 6.6.
+- Fixed: `minify` reads the `transform-*` feature names from `@babel/compat-data`, which Babel 8 kept, instead of the `proposal-*` names it removed. The chosen Terser `ecma` target is unchanged on Babel 7.
 - Updated dependencies:
   - babel-loader to ^10.1.1 (needs thread-loader 4, below, for `this.utils` in workers)
   - thread-loader to ^4.0.4

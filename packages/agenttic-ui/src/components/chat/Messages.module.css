@@ -40,8 +40,3 @@
 .container [data-role='assistant']:has( + [data-role='assistant'] ) {
 	margin-bottom: calc( -1 * var( --spacing-6 ) );
 }
-
-/* Restore the full gap before an agent message that starts a turn, such as a reply to a click */
-.container [data-role='agent'] + [data-role='agent'][data-turn-start] {
-	margin-top: var( --spacing-6 );
-}

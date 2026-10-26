@@ -22,11 +22,14 @@ const EDITOR_PACKAGES = [
 	'@wordpress/abilities',
 ];
 
-// The renderer's main entry carries A2UI; its `capabilities` entry and styles are light.
+// The renderer's main entry carries A2UI, and its stylesheet loads with it; only its
+// `capabilities` entry is light.
 const RENDERER_ENTRY = '@automattic/ai-ui-renderer';
+const RENDERER_STYLES = `${ RENDERER_ENTRY }/style.scss`;
 
 const isLazyOnly = ( specifier ) =>
 	specifier === RENDERER_ENTRY ||
+	specifier === RENDERER_STYLES ||
 	EDITOR_PACKAGES.some( ( name ) => specifier === name || specifier.startsWith( `${ name }/` ) );
 
 const isLocalImport = ( specifier ) =>

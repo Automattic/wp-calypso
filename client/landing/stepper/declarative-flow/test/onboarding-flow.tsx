@@ -209,6 +209,67 @@ describe( 'Onboarding Flow', () => {
 			} );
 		} );
 
+		describe( 'post-checkout return URL', () => {
+			const getReturnUrl = async () => {
+				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+				runUseStepNavigationSubmit( {
+					currentStep: STEPS.PROCESSING.slug,
+					dependencies: {
+						siteSlug: 'test-site.wordpress.com',
+						siteId: 123,
+						goToCheckout: true,
+						processingResult: ProcessingResult.SUCCESS,
+					},
+				} );
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+				const checkoutUrl = new URL( window.location.replace.mock.calls[ 0 ][ 0 ], 'http://x' );
+				return new URL( checkoutUrl.searchParams.get( 'redirect_to' ) ?? '', 'http://x' );
+			};
+
+			beforeEach( () => {
+				dispatch( ONBOARD_STORE ).resetOnboardStore();
+				dispatch( ONBOARD_STORE ).setPlanCartItem( { product_slug: PLAN_PREMIUM } );
+			} );
+
+			afterEach( () => {
+				mockPostPlanSelectionEmailVerification = false;
+			} );
+
+			// Without the ID, a setup chooser choice made before the site loads hands
+			// build-wow a site-spec URL with no siteId.
+			it( 'carries the site ID to post-checkout onboarding', async () => {
+				const returnUrl = await getReturnUrl();
+
+				expect( returnUrl.pathname ).toBe( '/setup/onboarding/post-checkout-onboarding' );
+				expect( returnUrl.searchParams.get( 'siteId' ) ).toBe( '123' );
+			} );
+
+			it( 'carries the site ID through email verification', async () => {
+				mockPostPlanSelectionEmailVerification = true;
+				const returnUrl = await getReturnUrl();
+
+				expect( returnUrl.pathname ).toBe( '/setup/onboarding/email-verification' );
+				expect( returnUrl.searchParams.get( 'siteId' ) ).toBe( '123' );
+			} );
+
+			it( 'carries the site ID when processing is reloaded with nothing pending', async () => {
+				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+				await runUseStepNavigationSubmit( {
+					currentStep: STEPS.PROCESSING.slug,
+					currentURL: '/setup/onboarding/processing?siteSlug=test-site.wordpress.com&siteId=123',
+					dependencies: { processingResult: ProcessingResult.NO_ACTION },
+				} );
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+				const resumeUrl = new URL( window.location.replace.mock.calls[ 0 ][ 0 ], 'http://x' );
+				expect( resumeUrl.pathname ).toBe( '/setup/onboarding/post-checkout-onboarding' );
+				expect( resumeUrl.searchParams.get( 'siteId' ) ).toBe( '123' );
+			} );
+		} );
+
 		describe( 'AI Launchpad and no-guidance destinations', () => {
 			it( 'redirects to Site Setup wp-admin when AI Launchpad is enabled', async () => {
 				mockSiteOptions = { wpcom_ai_launchpad_enabled: true };

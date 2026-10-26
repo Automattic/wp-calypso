@@ -180,6 +180,34 @@ describe( 'NoteList simplified layout', () => {
 		);
 	} );
 
+	it( 'does not render a link inside the row, so the whole row opens the note', () => {
+		const domain = 'kettleandcrust.blog';
+		const text = `Act now! ${ domain } expired`;
+		const { container } = renderList( 'detailed', {
+			note: {
+				...noteAboutAPost(),
+				type: 'expired_domain',
+				subject: [
+					{
+						text,
+						ranges: [
+							{
+								type: 'a',
+								url: `https://${ domain }`,
+								indices: [ text.indexOf( domain ), text.indexOf( domain ) + domain.length ],
+							},
+						],
+						media: [],
+					},
+				],
+				meta: {},
+			} as never,
+		} );
+
+		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent( text );
+		expect( screen.queryByRole( 'link', { name: domain } ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'leads with the action, puts the post under it, and drops the excerpt', () => {
 		const { container } = renderList( 'simplified' );
 
