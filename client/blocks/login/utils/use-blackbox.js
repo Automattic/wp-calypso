@@ -1,9 +1,6 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
-import {
-	activateBlackboxSurface,
-	configureBlackbox,
-} from 'calypso/blocks/login/utils/blackbox-surface';
+import { configureBlackbox } from 'calypso/blocks/login/utils/blackbox-surface';
 
 const LOADING_SNAPSHOT = Object.freeze( { status: 'loading' } );
 const getLoadingSnapshot = () => LOADING_SNAPSHOT;
@@ -50,10 +47,10 @@ export function useBlackbox( { containerRef, enabled, apiKey } ) {
 		if ( ! isEnabled ) {
 			return;
 		}
-		const controller = activateBlackboxSurface( apiKey );
+		let cancelled = false;
 		loadBlackboxSdk( apiKey )
 			.then( () => {
-				if ( controller.signal.aborted ) {
+				if ( cancelled ) {
 					return;
 				}
 				const sdk = window.Blackbox;
@@ -77,11 +74,13 @@ export function useBlackbox( { containerRef, enabled, apiKey } ) {
 				}
 			} )
 			.catch( () => {
-				if ( ! controller.signal.aborted ) {
+				if ( ! cancelled ) {
 					setLoadingExpired( true );
 				}
 			} );
-		return () => controller.abort();
+		return () => {
+			cancelled = true;
+		};
 	}, [ apiKey, containerRef, isEnabled ] );
 
 	return {

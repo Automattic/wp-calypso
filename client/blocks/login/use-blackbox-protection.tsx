@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { activateBlackboxSurface } from 'calypso/blocks/login/utils/blackbox-surface';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import type { ReactElement } from 'react';
 
@@ -51,6 +52,14 @@ export function useBlackboxProtection( {
 	const enabled =
 		! suspended && !! apiKey && config.isEnabled( 'blackbox' ) && config.isEnabled( feature );
 	const [ challengeBlocksSubmit, setChallengeBlocksSubmit ] = useState( enabled );
+
+	useEffect( () => {
+		if ( ! enabled ) {
+			return;
+		}
+		const controller = activateBlackboxSurface( apiKey );
+		return () => controller.abort();
+	}, [ enabled, apiKey ] );
 
 	// Re-block during render when a suspended surface re-enables: the challenge
 	// only re-blocks from a post-paint effect, which would leave the submit
