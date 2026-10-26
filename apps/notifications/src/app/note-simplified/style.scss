@@ -24,7 +24,7 @@
 	column-gap: $grid-unit-05;
 
 	> :not(:last-child)::after {
-		content: "·" / "";
+		content: '·';
 		margin-inline-start: $grid-unit-05;
 	}
 }
