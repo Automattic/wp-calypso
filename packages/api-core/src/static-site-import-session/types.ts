@@ -79,6 +79,7 @@ export interface StaticSiteImportSession {
 
 export interface ApproveStaticSiteImportSessionParams {
 	sessionId: string;
-	archiveHash: string;
+	/** Omit to approve before the build lands; the server delivers once it does. */
+	archiveHash?: string;
 	destinationBlogId: number;
 }

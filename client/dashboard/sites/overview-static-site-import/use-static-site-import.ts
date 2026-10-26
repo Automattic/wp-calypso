@@ -62,22 +62,20 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 		reset: resetApprove,
 	} = useMutation( approveStaticSiteImportSessionMutation() );
 
-	// The user asked for the move before checkout; now the site has a plan, start it.
+	// Checkout was the consent, so name this site as the destination right away.
+	// The server delivers as soon as the build lands, even if the user has left.
 	const hasRequestedApproval = useRef( false );
 	useEffect( () => {
 		if (
 			! sessionId ||
 			hasRequestedApproval.current ||
-			session?.state !== 'preview_ready' ||
-			! session.archive_hash
+			! session ||
+			STATIC_SITE_IMPORT_TERMINAL_STATES.includes( session.state )
 		) {
 			return;
 		}
 		hasRequestedApproval.current = true;
-		approve(
-			{ sessionId, archiveHash: session.archive_hash, destinationBlogId: site.ID },
-			{ onSettled: () => refetch() }
-		);
+		approve( { sessionId, destinationBlogId: site.ID }, { onSettled: () => refetch() } );
 	}, [ approve, refetch, session, sessionId, site.ID ] );
 
 	if ( ! sessionId ) {

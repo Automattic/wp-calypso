@@ -47,14 +47,14 @@ function StaticSiteImport() {
 }
 
 describe( 'StaticSiteImportCard', () => {
-	it( 'starts the move the user asked for before checkout', async () => {
+	it( 'names this site as the destination while the site is still being read', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
-			.reply( 200, session( 'preview_ready', { archive_hash: 'hash' } ) );
+			.reply( 200, session( 'capturing' ) );
 		const approve = mockApi()
 			.post( '/wpcom/v2/static-site-import-session/abc123/approve', ( body ) => {
-				expect( body ).toEqual( { archive_hash: 'hash', destination_blog_id: 42 } );
+				expect( body ).toEqual( { destination_blog_id: 42 } );
 				return true;
 			} )
 			.reply( 200, session( 'queued' ) );
