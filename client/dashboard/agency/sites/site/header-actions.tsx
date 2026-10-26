@@ -12,6 +12,7 @@ import {
 	hasAnyCapability,
 } from '../../../app/router/agency';
 import { PageHeader } from '../../../components/page-header';
+import { leaveDashboard } from '../../crossover/store';
 import { OWNER_ROLE } from '../../team/constants';
 import { canActOnSite, getAdminUrl, isDevSite, isUrlOnlySite } from '../dataviews/site-data';
 import { isPressableSite } from '../lib';
@@ -94,8 +95,10 @@ export default function AgencySiteHeaderActions( {
 								{ isPressableSite( site ) && isAgencyOwner && (
 									<MenuItem
 										onClick={ () => {
-											track( 'manage-in-pressable' );
-											window.open( PRESSABLE_AGENCY_URL, '_blank', 'noreferrer,noopener' );
+											onClose();
+											leaveDashboard( 'pressable', PRESSABLE_AGENCY_URL, () =>
+												track( 'manage-in-pressable' )
+											);
 										} }
 									>
 										{ __( 'Manage in Pressable ↗' ) }

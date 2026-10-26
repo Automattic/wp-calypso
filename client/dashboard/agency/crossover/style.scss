@@ -1,0 +1,106 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+// The modal's own content padding with its header hidden; the field pulls into it.
+$modal-padding: $grid-unit-30;
+
+// Wide enough for the checkbox, Cancel and "Continue to WordPress.com" on one line.
+.a4a-crossover {
+	inline-size: 560px;
+	max-inline-size: calc( 100% + #{$modal-padding * 2} );
+	margin: -$modal-padding;
+}
+
+// Takes no height, so the field still starts at the top.
+.a4a-crossover-close {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	justify-content: flex-end;
+	block-size: 0;
+	padding-inline-end: $grid-unit-10;
+	translate: 0 $grid-unit-10;
+}
+
+// The onboarding tour's field: the A4A glow (set inline) on its tint.
+.a4a-crossover-field {
+	padding-block: $grid-unit-40;
+	padding-inline: $grid-unit-20;
+	background-color: var( --dashboard-marketplace-referral__tint-color );
+	background-position: center;
+	background-size: cover;
+}
+
+.a4a-crossover-product {
+	inline-size: 144px;
+	text-align: center;
+}
+
+// The product's mark inside a ring, as on WordPress.com's Connect screen.
+.a4a-crossover-ring {
+	inline-size: 72px;
+	block-size: 72px;
+	border: 1px solid $gray-200;
+	border-radius: 50%;
+	background-color: $white;
+}
+
+// The product marks share one size.
+.a4a-crossover-mark {
+	display: block;
+	inline-size: 40px;
+	block-size: 40px;
+	object-fit: contain;
+}
+
+// Reaches into the columns' side space so its ends sit just off each ring.
+.a4a-crossover-arc {
+	flex-shrink: 0;
+	inline-size: 88px;
+	block-size: 72px;
+	margin-inline: -28px;
+	overflow: visible;
+	fill: none;
+	stroke: $gray-700;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: 2;
+
+	[dir='rtl'] & {
+		scale: -1 1;
+	}
+}
+
+.a4a-crossover-arc-line {
+	stroke-dasharray: 0 6.25;
+}
+
+// Thinner than the dots, so the tip stays as light as the line.
+.a4a-crossover-arc-head {
+	stroke-width: 1.5;
+}
+
+.a4a-crossover-content {
+	padding: $modal-padding $modal-padding 0;
+}
+
+.a4a-crossover-rows {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		text-wrap: pretty;
+	}
+}
+
+.a4a-crossover-row-icon {
+	flex-shrink: 0;
+	fill: $gray-700;
+}
+
+.a4a-crossover-actions {
+	margin-block-start: $modal-padding;
+	padding: $grid-unit-20 $modal-padding $modal-padding;
+	border-block-start: 1px solid $gray-100;
+}

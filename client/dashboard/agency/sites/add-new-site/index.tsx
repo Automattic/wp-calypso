@@ -18,6 +18,7 @@ import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useAnalytics } from '../../../app/analytics';
 import Column from '../../../sites/add-new-site/column';
 import MenuItem from '../../../sites/add-new-site/menu-item';
+import { onLeaveClick } from '../../crossover/store';
 import { PRESSABLE_AGENCY_URL } from '../../marketplace/hosting/lib/pressable-plans';
 import { getMarketplaceHostingSectionRoute } from '../../marketplace/paths';
 import A4ALogo from './a4a-logo';
@@ -119,7 +120,9 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 						? {
 								href: PRESSABLE_AGENCY_URL,
 								target: '_blank',
-								onClick: () => recordNavigation( 'pressable' ),
+								onClick: onLeaveClick( 'pressable', PRESSABLE_AGENCY_URL, () =>
+									recordNavigation( 'pressable' )
+								),
 							}
 						: toMenuItemProps( pressableMarketplaceProps ) ) }
 					aria-label={ __( 'Add a new production site on Pressable' ) }
