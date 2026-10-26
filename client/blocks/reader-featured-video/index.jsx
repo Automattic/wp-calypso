@@ -43,6 +43,8 @@ class ReaderFeaturedVideo extends Component {
 		className: '',
 	};
 
+	videoMarkup = { __html: undefined };
+
 	// Root element is the embed node's parent.
 	getRootNode = () => this.videoEmbedRef?.parentNode ?? null;
 
@@ -150,6 +152,10 @@ class ReaderFeaturedVideo extends Component {
 		// if we can't retrieve a thumbnail that means there was an issue
 		// with the embed and we shouldn't display it
 		const showEmbed = !! thumbnailUrl;
+		const html = thumbnailUrl ? autoplayIframe : iframe;
+		if ( this.videoMarkup.__html !== html ) {
+			this.videoMarkup = { __html: html };
+		}
 
 		/* eslint-disable react/no-danger */
 		return (
@@ -158,7 +164,7 @@ class ReaderFeaturedVideo extends Component {
 					<div
 						ref={ this.setVideoEmbedRef }
 						className="reader-featured-video__video"
-						dangerouslySetInnerHTML={ { __html: thumbnailUrl ? autoplayIframe : iframe } }
+						dangerouslySetInnerHTML={ this.videoMarkup }
 					/>
 				) }
 			</div>
