@@ -41,6 +41,8 @@ import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import IntentToggle from 'calypso/my-sites/plans-features-main/components/intent-toggle';
+import useDefaultWpcomPlansIntent from 'calypso/my-sites/plans-features-main/hooks/use-default-wpcom-plans-intent';
+import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
@@ -296,6 +298,11 @@ function UnifiedPlansStep( {
 		setShowHelpCenter( ! isHelpCenterShown );
 	};
 	const stepCounter = useOnboardingStepCounter( flowName, 'plans' );
+	const defaultWpcomPlansIntent = useDefaultWpcomPlansIntent();
+	const { showDifferentiatorHeader } = usePlansGridRedesignExperiment( {
+		isInSignup,
+		intent: intent ?? defaultWpcomPlansIntent,
+	} );
 	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flowName ) );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
@@ -605,6 +612,11 @@ function UnifiedPlansStep( {
 			return translate(
 				'Compare plans and pick the one that works for where your site is headed.'
 			);
+		}
+
+		// The differentiator header under the heading replaces this generic subhead.
+		if ( showDifferentiatorHeader ) {
+			return null;
 		}
 
 		if ( isOnboardingFlow( flowName ) || intent === 'plans-upgrade' ) {
