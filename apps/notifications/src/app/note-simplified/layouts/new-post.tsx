@@ -6,7 +6,8 @@ import SiteIdentity from '../parts/site-identity';
 import type { Note } from '../../types';
 
 export default function NewPostNote( { note }: { note: Note } ) {
-	const { post, site, actor_count: actorCount } = note.meta ?? {};
+	const { post, site, actor, actor_count: actorCount } = note.meta ?? {};
+	const authorName = post?.author_name || actor?.name;
 
 	return (
 		<>
@@ -15,7 +16,7 @@ export default function NewPostNote( { note }: { note: Note } ) {
 					site={ site }
 					details={
 						<>
-							{ post.author_name && `${ post.author_name } · ` }
+							{ authorName && `${ authorName } · ` }
 							<NoteMeta note={ note } />
 						</>
 					}
