@@ -1,5 +1,8 @@
 jest.mock( '../../block-ids', () => ( {
-	createShortIdLookup: () => ( { findShortId: ( clientId: string ) => clientId } ),
+	createShortIdLookup: () => ( {
+		findShortId: ( clientId: string ) => clientId,
+		toShortId: ( clientId: string ) => clientId,
+	} ),
 } ) );
 jest.mock( '../../editor-blocks', () => ( {
 	getBlock: jest.fn(),
@@ -665,6 +668,21 @@ describe( 'describeMeasuredWidths', () => {
 
 			expect( describeMeasuredWidths( [ 'tu1q' ] ).shortfalls ).toEqual( [] );
 		} );
+	} );
+
+	it( "scales the container by its own transform, not the block's", () => {
+		// Scaled to 90% by custom CSS, the list still fills its parent; read
+		// against the list's scale, the parent would look 11% wider.
+		mountCanvas( [ faq( 990 ) ] );
+		sizePage( 1140 );
+
+		const canvasDocument = ( document.querySelector( 'iframe' ) as HTMLIFrameElement )
+			.contentDocument as Document;
+		Object.defineProperty( canvasDocument.querySelector( '[data-block="tu1q"]' ), 'offsetWidth', {
+			value: 1100,
+		} );
+
+		expect( describeMeasuredWidths( [ 'tu1q' ] ).shortfalls ).toEqual( [] );
 	} );
 
 	it( 'does not read a percentage max-width as pixels', () => {

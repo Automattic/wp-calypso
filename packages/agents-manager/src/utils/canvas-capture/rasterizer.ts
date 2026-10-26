@@ -147,7 +147,10 @@ const RENDER_OVERRIDES =
 	// which in the capture would do it all a second time: the bands are
 	// measured from the page as laid out, not as zoomed.
 	'html{transform:none!important;scale:none!important;translate:none!important;' +
-	'margin:0!important;padding:0!important;overflow:visible!important;}';
+	'margin:0!important;padding:0!important;overflow:visible!important;' +
+	// Mid-animation it is also pinned to the viewport and shifted up by the
+	// scroll position.
+	'position:static!important;top:auto!important;bottom:auto!important;}';
 
 interface CaptureRect {
 	x: number;
@@ -378,7 +381,10 @@ export const clusterSpans = (
 			const current = clusters[ clusters.length - 1 ];
 
 			// A group already taller than the viewport takes in anything that does
-			// not make it taller: its bands already show it.
+			// not make it taller: its bands already show it. One that runs past it
+			// keeps a band of its own, shown whole though it overlaps the stack,
+			// rather than joining it and being split over a seam; one a stack band
+			// shows whole loses its band to that one later.
 			if (
 				current &&
 				Math.max( current.bottom, span.bottom ) - current.top <=

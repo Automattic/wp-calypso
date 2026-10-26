@@ -439,10 +439,13 @@ export async function applyBlockEditsCallback(
 	const wholePage = edits?.customCSS !== undefined;
 	const framedClientIds = [ ...subjectClientIds, ...referenceClientIds ];
 	const canCapture = !! edits && ! getBlockingMove();
-	// A CSS-only call has no blocks to frame, and without any the capture falls
-	// back to wherever the user is scrolled, which the whole page already shows.
+	// With custom CSS the whole page comes as well, so the full-size capture
+	// is only worth taking on blocks the canvas lays out. Without any, it would
+	// fall back to wherever the user is scrolled, which the page already shows
+	// and which would pass for a picture of the blocks the call named.
 	const blockParts =
-		canCapture && ( ! wholePage || framedClientIds.length )
+		canCapture &&
+		( ! wholePage || getUnframedClientIds( framedClientIds ).length < framedClientIds.length )
 			? await captureCanvas( { clientIds: framedClientIds, fullPage: false } )
 			: null;
 	// Not again when the blocks were too spread out for bands, and the
@@ -451,14 +454,19 @@ export async function applyBlockEditsCallback(
 	const pageParts = pageCaptureRan
 		? await captureCanvas( { clientIds: framedClientIds, fullPage: true } )
 		: null;
-	// Numbered across the set when both came back: each capture numbers its
-	// own pictures from one.
+	// Both: the bands keep their own numbering, top to bottom, and their
+	// counts of the blocks they frame. The page is not another area below
+	// them, and counting its blocks again would count them twice.
 	const fileParts =
 		blockParts && pageParts
-			? [ ...blockParts, ...pageParts ].map( ( part, index, all ) => ( {
-					...part,
-					metadata: { ...part.metadata, regionIndex: index + 1, regionCount: all.length },
-				} ) )
+			? [
+					...blockParts,
+					...pageParts.map( ( part ) => {
+						const { regionIndex, regionCount, framed, ...metadata } = part.metadata ?? {};
+
+						return { ...part, metadata };
+					} ),
+				]
 			: ( blockParts ?? pageParts );
 	// The bands came back but the page did not: without saying so, the
 	// pictures read as everything the CSS could reach.

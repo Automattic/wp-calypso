@@ -175,7 +175,7 @@ function createMeasurer() {
 		return null;
 	}
 
-	const { findShortId } = createShortIdLookup();
+	const { findShortId, toShortId } = createShortIdLookup();
 	const measured = new Map< string, Measured | null >();
 	const visible = new Map< string, Visible >();
 
@@ -227,7 +227,7 @@ function createMeasurer() {
 		return box;
 	};
 
-	return { measureOnce, visibleOf, findShortId };
+	return { measureOnce, visibleOf, toShortId };
 }
 
 // Which side of the centre an offset falls on, or empty within the tolerance.
@@ -571,6 +571,9 @@ function readWidth( element: HTMLElement, container: HTMLElement ): WidthReading
 	}
 
 	const scale = layoutScale( element, rect );
+	// Each by its own scale: an element can carry a transform of its own, which
+	// the container does not share.
+	const containerScale = layoutScale( container, containerRect );
 	const containerStyle = view.getComputedStyle( container );
 	const insets = [
 		containerStyle.paddingLeft,
@@ -581,7 +584,7 @@ function readWidth( element: HTMLElement, container: HTMLElement ): WidthReading
 
 	return {
 		width: rect.width / scale,
-		available: containerRect.width / scale - insets,
+		available: containerRect.width / containerScale - insets,
 		containerStyle,
 		style: view.getComputedStyle( element ),
 	};
@@ -681,11 +684,9 @@ function measureWidths( clientIds: string[] ): MeasuredWidths {
 		return { notes: [], shortfalls: [], measuredClientIds: [] };
 	}
 
-	const shortIdOf = ( element: HTMLElement ) => {
-		const clientId = element.dataset.block ?? '';
-
-		return measurer.findShortId( clientId ) ?? clientId;
-	};
+	// Minted when a block has none yet, as an inserted one may not: the same
+	// id the agent will see it under, and the server matches against.
+	const shortIdOf = ( element: HTMLElement ) => measurer.toShortId( element.dataset.block ?? '' );
 	const measured: HTMLElement[] = [];
 
 	const blockOf = ( element: Element ) => element.closest< HTMLElement >( '[data-block]' );

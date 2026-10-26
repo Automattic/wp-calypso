@@ -860,6 +860,8 @@ describe( 'buildSvg', () => {
 		expect( svg ).toContain( 'scale:none!important' );
 		expect( svg ).toContain( 'translate:none!important' );
 		expect( svg ).toContain( 'margin:0!important' );
+		// Nor, mid-animation, pin it to the frame shifted up by the scroll.
+		expect( svg ).toContain( 'position:static!important' );
 		expect( svg.indexOf( 'p{margin:0}' ) ).toBeLessThan( svg.indexOf( 'content-visibility' ) );
 	} );
 

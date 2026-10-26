@@ -747,9 +747,13 @@ describe( 'applyBlockEditsCallback', () => {
 			const headerBlock = { ...paragraph( 'Header' ), clientId: 'h1' };
 
 			beforeEach( () => {
+				// Laid out, so the full-size capture is taken on them.
+				mountCanvasWith( [ 'resolved-a1', 'resolved-hvd0' ] );
 				jest
 					.mocked( captureCanvas )
-					.mockImplementation( async ( { fullPage } = {} ) => [ band( { fullPage } ) ] );
+					.mockImplementation( async ( { fullPage } = {} ) => [
+						band( { fullPage, regionIndex: 1, regionCount: 1, framed: 1 } ),
+					] );
 				jest.mocked( getPageBlocks ).mockReturnValue( {
 					blocks: [ paragraph( 'Old' ) ],
 					templateParts: [ { slug: 'header', blocks: [ headerBlock ] } ],
@@ -804,15 +808,11 @@ describe( 'applyBlockEditsCallback', () => {
 					false,
 					true,
 				] );
-				// Numbered across both captures, not from one in each.
-				expect(
-					result.__file_parts?.map( ( { metadata } ) => [
-						metadata?.regionIndex,
-						metadata?.regionCount,
-					] )
-				).toEqual( [
-					[ 1, 2 ],
-					[ 2, 2 ],
+				// The bands keep their numbering and counts; the page is not
+				// another area below them, nor a second count of their blocks.
+				expect( result.__file_parts?.map( ( { metadata } ) => metadata ) ).toEqual( [
+					{ fullPage: false, regionIndex: 1, regionCount: 1, framed: 1 },
+					{ fullPage: true },
 				] );
 				expect( result.result.captureNotes?.[ 0 ] ).toMatch(
 					/^The first picture is at full size, framed on the blocks this call named\. The last is the whole page/
@@ -860,6 +860,21 @@ describe( 'applyBlockEditsCallback', () => {
 				const result = await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
 
 				expect( captureCanvas ).toHaveBeenCalledTimes( 1 );
+				expect( result.__file_parts ).toHaveLength( 1 );
+			} );
+
+			it( 'takes only the whole page when none of the named blocks is laid out', async () => {
+				// A full-size capture would fall back to wherever the user is
+				// scrolled, and pass for a picture of the blocks.
+				unmountCanvas();
+				mountCanvasWith( [] );
+				jest.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'p{}' } ) );
+
+				const result = await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
+
+				expect( jest.mocked( captureCanvas ).mock.calls ).toEqual( [
+					[ { clientIds: [ 'resolved-a1' ], fullPage: true } ],
+				] );
 				expect( result.__file_parts ).toHaveLength( 1 );
 			} );
 

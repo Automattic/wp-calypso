@@ -5,6 +5,10 @@ jest.mock( '@wordpress/blocks', () => ( {
 	] ),
 } ) );
 jest.mock( '../../../utils/editor-blocks', () => ( { getBlock: jest.fn() } ) );
+// The agent's id for a block is its clientId here, so the lists read plainly.
+jest.mock( '../../../utils/block-ids', () => ( {
+	getAgentBlockId: ( clientId: string ) => clientId,
+} ) );
 
 import { getBlock } from '../../../utils/editor-blocks';
 import {
@@ -161,6 +165,18 @@ describe( 'getValidationDetails', () => {
 		expect( details.changedClientIds ).toEqual( ids );
 	} );
 
+	it( 'lists the blocks the call inserted among those it changed', () => {
+		const details = validate(
+			edits( {
+				inserts: [ { block: { name: 'core/paragraph', attributes: { content: 'New' } } } ],
+			} ),
+			page( [ paragraph( 'Before' ) ] ),
+			page( [ paragraph( 'Before' ), block( 'new1', 'core/paragraph', { content: 'New' } ) ] )
+		);
+
+		expect( details.changedClientIds ).toEqual( [ 'new1' ] );
+	} );
+
 	it( 'reports a content change with the text the page now shows', () => {
 		const details = validate(
 			edits( { updates: [ contentUpdate( '<strong>After</strong> text' ) ] } ),
@@ -170,7 +186,7 @@ describe( 'getValidationDetails', () => {
 
 		expect( details ).toEqual( {
 			appliedOperations: { addedCount: 0, removedCount: 0, modifiedCount: 1 },
-			changedClientIds: [ 'para' ],
+			changedClientIds: [ 'paragraph' ],
 			attributeResults: [
 				{
 					blockName: 'core/paragraph',
@@ -236,7 +252,8 @@ describe( 'getValidationDetails', () => {
 
 		expect( details ).toEqual( {
 			appliedOperations: { addedCount: 0, removedCount: 1, modifiedCount: 0 },
-			changedClientIds: [ 'gone', 'stuck', 'missing' ],
+			// A target that named no block touched nothing.
+			changedClientIds: [ 'gone', 'stuck' ],
 			unresolvedTargets: [
 				{
 					operation: 'delete',
