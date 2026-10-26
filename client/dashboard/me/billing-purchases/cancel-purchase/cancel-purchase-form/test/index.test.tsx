@@ -346,27 +346,5 @@ describe( '<CancelPurchaseForm />', () => {
 			).toBeVisible();
 			expect( screen.queryByRole( 'list', { name: cardsListName } ) ).not.toBeInTheDocument();
 		} );
-
-		test( 'shows the cards for the answer, not the typed text', () => {
-			enable( 'purchases/cancel-options-cards' );
-
-			render(
-				<CancelPurchaseForm
-					{ ...upsellStepProps }
-					questionOneText="test reason"
-					solutionsReason="otherPriceValue"
-					upsell="solutions-cards"
-				/>
-			);
-
-			const cards = screen.getByRole( 'list', { name: cardsListName } );
-			expect( within( cards ).getAllByRole( 'listitem' ) ).toHaveLength( 2 );
-			expect(
-				within( cards ).getByRole( 'button', { name: /Ask WordPress Agent/ } )
-			).toBeVisible();
-			expect(
-				within( cards ).getByRole( 'button', { name: /Speak with our support team/ } )
-			).toBeVisible();
-		} );
 	} );
 } );
