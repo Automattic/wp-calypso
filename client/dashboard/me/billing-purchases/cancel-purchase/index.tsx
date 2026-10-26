@@ -834,7 +834,7 @@ function CancelPurchaseInner() {
 					},
 				}
 			);
-			recordEvent( 'calypso_purchases_downgrade_form_submit' );
+			recordEvent( 'calypso_purchases_downgrade_form_submit', { purchase_id: purchase.ID } );
 			setState( ( state ) => ( { ...state, solution: 'downgrade', isSubmitting: true } ) );
 		}
 	};
@@ -851,7 +851,7 @@ function CancelPurchaseInner() {
 		}
 
 		setState( ( state ) => ( { ...state, isLoading: true, isSubmitting: true } ) );
-		recordEvent( 'calypso_purchases_downgrade_form_submit' );
+		recordEvent( 'calypso_purchases_downgrade_form_submit', { purchase_id: purchase.ID } );
 
 		try {
 			await cancelAndRefundMutation.mutateAsync( {
@@ -907,7 +907,7 @@ function CancelPurchaseInner() {
 					setState( ( state ) => ( { ...state, isLoading: false } ) );
 				},
 			} );
-			recordEvent( 'calypso_purchases_free_month_offer_form_submit' );
+			recordEvent( 'calypso_purchases_free_month_offer_form_submit', { purchase_id: purchase.ID } );
 			setState( ( state ) => ( { ...state, solution: 'free-month-offer', isSubmitting: true } ) );
 		}
 	};
