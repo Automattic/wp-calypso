@@ -8,6 +8,7 @@ import type { HumanSupportRequest } from '../../types';
 
 const mockCreateZendeskConversation = jest.fn();
 const mockSetPendingHumanSupportRequest = jest.fn();
+const mockSetChatStatus = jest.fn();
 const mockTrackEvent = jest.fn();
 
 jest.mock( '../../context', () => ( {
@@ -29,6 +30,7 @@ const mockContext = ( humanSupportRouting: unknown ) =>
 	( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
 		humanSupportRouting,
 		setPendingHumanSupportRequest: mockSetPendingHumanSupportRequest,
+		setChatStatus: mockSetChatStatus,
 		trackEvent: mockTrackEvent,
 	} );
 
@@ -50,6 +52,7 @@ describe( 'useRequestHumanSupport', () => {
 			escalationOnSecondAttempt: true,
 		} );
 		expect( mockSetPendingHumanSupportRequest ).not.toHaveBeenCalled();
+		expect( mockSetChatStatus ).not.toHaveBeenCalled();
 	} );
 
 	it( 'leaves the request to the routing step when there is one', () => {
@@ -59,6 +62,8 @@ describe( 'useRequestHumanSupport', () => {
 		result.current( request );
 
 		expect( mockSetPendingHumanSupportRequest ).toHaveBeenCalledWith( request );
+		// The bot's reply is in, so the chat isn't waiting on it any more.
+		expect( mockSetChatStatus ).toHaveBeenCalledWith( 'loaded' );
 		expect( mockCreateZendeskConversation ).not.toHaveBeenCalled();
 		expect( mockTrackEvent ).toHaveBeenCalledWith( 'human_support_routing_started', {
 			created_from: 'automatic_escalation',

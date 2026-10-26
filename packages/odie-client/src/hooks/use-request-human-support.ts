@@ -7,7 +7,7 @@ import type { HumanSupportRequest } from '../types';
  * request waits in the chat until the step decides where it goes.
  */
 export const useRequestHumanSupport = () => {
-	const { humanSupportRouting, setPendingHumanSupportRequest, trackEvent } =
+	const { humanSupportRouting, setPendingHumanSupportRequest, setChatStatus, trackEvent } =
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 
@@ -19,6 +19,8 @@ export const useRequestHumanSupport = () => {
 				route_to_email: request.flags.routeToEmail,
 			} );
 			setPendingHumanSupportRequest( request );
+			// Starting a chat would end the bot's "sending" state, so end it here while the step decides.
+			setChatStatus( 'loaded' );
 			return;
 		}
 
