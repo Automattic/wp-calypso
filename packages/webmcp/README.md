@@ -75,6 +75,19 @@ screen allows skipping. These actions do not purchase a domain or choose a plan.
 The standard domain search screen registers these tools wherever it appears in Calypso;
 the Name Pulse search variant does not yet provide them. Leaving the screen removes them.
 
+The signup plans grid offers `wpcom_get_plans`, `wpcom_set_plan_billing_interval`,
+and `wpcom_select_plan`. Read the offered plan slugs and billing intervals first.
+Pricing values use the currency's smallest unit: `monthly` is the monthly equivalent,
+and `full` is the total for the billing term. The response also includes discounts,
+introductory offers, renewal prices when supplied, and the current storage selection.
+
+After changing the `interval`, wait until `wpcom_get_plans` returns that interval and
+`isLoading: false`, then use a current `planSlug` to select a plan. Selection invokes
+the same action as its grid button, including the selected storage add-on and any
+confirmation dialog. It can create the site and advance to checkout; it does not
+submit payment. Complete confirmation dialogs on screen. The tools are removed
+when leaving the signup plans screen.
+
 `@automattic/webmcp/playground` connects a Playground client with a caller-owned abort signal.
 Aborting it removes the Playground registrations and stops the WordPress proxy. The local patch
 to `@wp-playground/mcp` adds this signal option and fixes its client declaration export. The
@@ -103,6 +116,13 @@ select a suggested domain. Continue with the cart, then check that the plans scr
 retains the Playground ID and the domain tools have disappeared. Go back and repeat
 with `wpcom_skip_domain`. Invalid queries, unknown domains, and continuing with an
 empty cart should return readable errors without advancing the flow.
+
+On the plans screen, compare `wpcom_get_plans` with the displayed plans and prices.
+Change to an offered billing interval, check the updated prices, and verify that a
+plan slug from the previous interval is rejected. Select a current plan and check
+that its normal confirmation or checkout screen opens. For a Playground, verify
+that the checkout return destination still contains the Playground ID. Stop before
+submitting payment, and check that the plan tools have disappeared.
 
 To check upstream compatibility, install the preview from
 [WordPress/ai#1081](https://github.com/WordPress/ai/pull/1081) in the disposable Playground, enable

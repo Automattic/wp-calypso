@@ -109,6 +109,7 @@ import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-interv
 import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import { usePlansWebMcp } from './hooks/use-plans-webmcp';
 import { useRenewalPricingExperiment } from './hooks/use-renewal-price-experiment';
 import useSelectedFeature from './hooks/use-selected-feature';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
@@ -1522,6 +1523,21 @@ const PlansFeaturesMain = ( {
 		selectedFeature,
 	} );
 
+	const useWebMcpAction = usePlansWebMcp( {
+		isInSignup,
+		isReady: isPlansGridReady,
+		isModalOpen,
+		plans: gridPlansForFeaturesGrid,
+		interval: compatibleIntervalType,
+		intervals: hidePlanSelector
+			? []
+			: filteredDisplayedIntervals.filter( ( interval ): interval is SupportedUrlFriendlyTermType =>
+					[ 'monthly', 'yearly', '2yearly', '3yearly' ].includes( interval )
+				),
+		setInterval: planTypeSelectorProps.onPlanIntervalUpdate,
+		useAction,
+	} );
+
 	return (
 		<>
 			<div className={ clsx( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }>
@@ -1701,7 +1717,7 @@ const PlansFeaturesMain = ( {
 										siteId={ siteId }
 										stickyRowOffset={ masterbarHeight }
 										useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-										useAction={ useAction }
+										useAction={ useWebMcpAction }
 										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
 										enterpriseFeaturesList={ enterpriseFeaturesList }
@@ -1777,7 +1793,7 @@ const PlansFeaturesMain = ( {
 													siteId={ siteId }
 													stickyRowOffset={ comparisonGridStickyRowOffset }
 													showRefundPeriod={ isAnyHostingFlow( flowName ) }
-													useAction={ useAction }
+													useAction={ useWebMcpAction }
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}
