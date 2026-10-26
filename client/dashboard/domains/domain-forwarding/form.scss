@@ -1,0 +1,23 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+// Lines the panel up with the medium card padding used on desktop.
+.domain-forwarding-form-options {
+	.components-panel__body-toggle.components-button {
+		font-weight: $font-weight-regular;
+	}
+
+	@include break-medium {
+		&.is-opened {
+			padding-inline: $grid-unit-30;
+
+			> .components-panel__body-title {
+				margin-inline: -$grid-unit-30;
+			}
+		}
+
+		.components-panel__body-toggle.components-button {
+			padding-inline: $grid-unit-30;
+		}
+	}
+}
