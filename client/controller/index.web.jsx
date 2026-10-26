@@ -392,7 +392,7 @@ export function redirectMyJetpack( context, next ) {
 			{
 				connect_after_checkout: true,
 				from_site_slug: context.query.site,
-				admin_url: context.query.redirect_to.split( '?' )[ 0 ],
+				admin_url: context.query.redirect_to?.split( '?' )[ 0 ],
 			},
 			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
 		);

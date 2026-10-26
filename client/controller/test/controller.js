@@ -343,6 +343,28 @@ describe( 'redirectMyJetpack', () => {
 		}
 	);
 
+	it( 'sends a logged-out buyer without redirect_to to siteless checkout without admin_url', () => {
+		const statsContext = buildStatsContext( 'jetpack_premium_analytics_upsell' );
+		const queryWithoutRedirect = { ...statsContext.query, redirect_to: undefined };
+		const contextWithoutRedirect = {
+			...statsContext,
+			query: queryWithoutRedirect,
+			path: addQueryArgs( queryWithoutRedirect, statsContext.pathname ),
+		};
+		const redirectUrl = addQueryArgs(
+			{
+				connect_after_checkout: true,
+				from_site_slug: queryWithoutRedirect.site,
+			},
+			contextWithoutRedirect.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
+		);
+
+		redirectMyJetpack( contextWithoutRedirect, next );
+
+		expect( pageSpy ).toHaveBeenCalledWith( redirectUrl );
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
 	it.each( [ 'jetpack_premium_analytics_onboarding', 'jetpack-newsletter', undefined ] )(
 		'leaves a logged-out buyer with source=%s to the login redirect',
 		( source ) => {
