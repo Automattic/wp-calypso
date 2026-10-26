@@ -693,7 +693,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-babel-config@workspace:packages/calypso-babel-config"
   dependencies:
-    "@automattic/babel-plugin-i18n-calypso": "workspace:^"
     "@automattic/babel-plugin-preserve-i18n": "workspace:^"
     "@babel/cli": "npm:^7.29.7"
     "@babel/core": "npm:^7.29.7"
