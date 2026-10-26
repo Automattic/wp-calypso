@@ -2,6 +2,7 @@ import {
 	userNotificationsSettingsMutation,
 	userNotificationsSettingsQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -13,6 +14,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import { AchievementsCard } from './achievements-card';
+import { EmailTrackingCard } from './email-tracking-card';
 import {
 	WPCOM_OPTION_KEYS,
 	WPCOM_TITLES,
@@ -136,6 +138,8 @@ export default function NotificationsExtras() {
 						</Text>
 					}
 				/>
+
+				{ isEnabled( 'me/email-tracking-consent' ) && <EmailTrackingCard /> }
 			</VStack>
 		</PageLayout>
 	);
