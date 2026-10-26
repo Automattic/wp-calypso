@@ -19,6 +19,7 @@ export {
 	getHumanSupportFlags,
 	getLatestHumanSupportFlags,
 	NO_HUMAN_SUPPORT_FLAGS,
+	withHumanSupportFlags,
 } from './human-support-flags';
 import type { Chat, Message } from '../types';
 

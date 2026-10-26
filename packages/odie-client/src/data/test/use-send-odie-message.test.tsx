@@ -53,6 +53,15 @@ jest.mock( '../../hooks/use-open-interaction-status-map', () => ( {
 	useOpenInteractionStatusMap: () => ( {} ),
 } ) );
 
+const mockGetOpenLiveInteractions = jest.fn( () => ( {
+	mostRecentSupportInteractionId: null as string | null,
+	hasReachedLimit: false,
+} ) );
+
+jest.mock( '../../utils/get-open-live-interactions', () => ( {
+	getOpenLiveInteractions: () => mockGetOpenLiveInteractions(),
+} ) );
+
 jest.mock( '../../utils/is-agents-manager-available', () => ( {
 	getIsAgentsManagerAvailable: () => false,
 } ) );
@@ -79,11 +88,15 @@ const userMessage: Message = {
 	type: 'message',
 };
 
+const mockSetChat = jest.fn();
+const mockSetPendingHumanSupportRequest = jest.fn();
+
 const mockContext = ( overrides: Record< string, unknown > = {} ) =>
 	( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
 		selectedSiteId: 1,
 		version: null,
-		setChat: jest.fn(),
+		setChat: mockSetChat,
+		setPendingHumanSupportRequest: mockSetPendingHumanSupportRequest,
 		setChatStatus: jest.fn(),
 		setExperimentVariationName: jest.fn(),
 		chat: { odieId: null, conversationId: null, messages: [], provider: 'odie', status: 'loaded' },
@@ -190,6 +203,44 @@ describe( 'useSendOdieMessage – asking for a human', () => {
 		expect( mockRequestHumanSupport ).toHaveBeenCalledWith(
 			expect.objectContaining( { createdFrom: 'automatic_escalation' } )
 		);
+	} );
+
+	it( "keeps the bot's flags on the existing-conversation prompt", async () => {
+		mockGetOpenLiveInteractions.mockReturnValueOnce( {
+			mostRecentSupportInteractionId: 'interaction-9',
+			hasReachedLimit: false,
+		} );
+		mockContext( { isUserEligibleForPaidSupport: true, canConnectToZendesk: true } );
+
+		await sendMessage();
+
+		// The prompt is shown instead of starting a chat; its button needs the bot's flags.
+		expect( mockRequestHumanSupport ).not.toHaveBeenCalled();
+		const updates = mockSetChat.mock.calls
+			.map( ( [ update ] ) => update )
+			.filter( ( update ) => typeof update === 'function' );
+		const chat = updates.reduce( ( prev, update ) => update( prev ), {
+			messages: [],
+			status: 'sending',
+		} );
+		expect( chat.messages.at( -1 ) ).toMatchObject( {
+			internal_message_id: 'existing-conversation-message',
+			context: {
+				flags: {
+					forward_to_human_support: true,
+					is_emergency: true,
+					emergency_type: 'checkout_broken',
+				},
+			},
+		} );
+	} );
+
+	it( 'drops a waiting request for a human when the user writes to the bot again', async () => {
+		mockContext( { canConnectToZendesk: true } );
+
+		await sendMessage();
+
+		expect( mockSetPendingHumanSupportRequest ).toHaveBeenCalledWith( null );
 	} );
 
 	it( "doesn't ask for a human for a user without paid support or a routing step", async () => {

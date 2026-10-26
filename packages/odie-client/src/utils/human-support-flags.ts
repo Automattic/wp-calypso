@@ -23,3 +23,25 @@ export const getLatestHumanSupportFlags = ( messages: Message[] = [] ): HumanSup
 
 	return message ? getHumanSupportFlags( message ) : NO_HUMAN_SUPPORT_FLAGS;
 };
+
+/**
+ * Carries the bot's flags onto a message shown in place of its request for a human, such as the
+ * existing-conversation prompt, so a request started from that message keeps them.
+ */
+export const withHumanSupportFlags = ( message: Message, botMessage: Message ): Message => {
+	const { is_emergency, emergency_type, route_to_email } = botMessage.context?.flags ?? {};
+
+	return {
+		...message,
+		context: {
+			site_id: null,
+			...message.context,
+			flags: {
+				...message.context?.flags,
+				...( is_emergency !== undefined && { is_emergency } ),
+				...( emergency_type !== undefined && { emergency_type } ),
+				...( route_to_email !== undefined && { route_to_email } ),
+			},
+		},
+	};
+};

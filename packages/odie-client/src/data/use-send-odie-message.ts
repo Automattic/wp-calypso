@@ -23,6 +23,7 @@ import {
 	getOdieIdFromInteraction,
 	getIsRequestingHumanSupport,
 	NO_HUMAN_SUPPORT_FLAGS,
+	withHumanSupportFlags,
 } from '../utils';
 import { hasRecentEscalationAttempt } from '../utils/chat-utils';
 import { getBotSlug } from '../utils/get-bot-slug';
@@ -126,6 +127,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		canConnectToZendesk,
 		forceEmailSupport,
 		humanSupportRouting,
+		setPendingHumanSupportRequest,
 		trackEvent,
 		newInteractionsBotSlug,
 		newLoggedOutInteractionsBotSlug,
@@ -218,7 +220,11 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 					setChat( ( prevChat ) => ( {
 						...prevChat,
 						...props,
-						messages: [ ...prevChat.messages, getExistingConversationMessage() ],
+						// Its "connect me with someone new" button needs the bot's flags.
+						messages: [
+							...prevChat.messages,
+							withHumanSupportFlags( getExistingConversationMessage(), message ),
+						],
 						status: 'loaded',
 					} ) );
 					return;
@@ -332,6 +338,9 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		},
 		onMutate: () => {
 			setChatStatus( 'sending' );
+			// Writing to the bot again moves on from a waiting request for a human. If the bot asks for
+			// a human again, the routing step comes back.
+			setPendingHumanSupportRequest( null );
 		},
 		onSuccess: async ( returnedChat ) => {
 			if (
