@@ -98,13 +98,29 @@ export function ThreadParent( {
 				)
 			}
 		>
-			<div
-				className={ clsx( 'wpnc-simplified__parent-text', {
-					'is-truncated': truncate,
-				} ) }
-			>
-				{ content?.text ? p( html( content ), '' ) : comment.text }
-			</div>
+			{ content?.text ? (
+				<div className="wpnc__note">
+					<div className="wpnc__body">
+						<div className="wpnc__body-content">
+							<div
+								className={ clsx( 'wpnc__comment', 'wpnc-simplified__parent-content', {
+									'is-truncated': truncate,
+								} ) }
+							>
+								{ p( html( content ) ) }
+							</div>
+						</div>
+					</div>
+				</div>
+			) : (
+				<div
+					className={ clsx( 'wpnc-simplified__parent-text', {
+						'is-truncated': truncate,
+					} ) }
+				>
+					{ comment.text }
+				</div>
+			) }
 		</ThreadItem>
 	);
 }

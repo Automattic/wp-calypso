@@ -102,14 +102,15 @@
 
 .wpnc-simplified__parent-text {
 	white-space: pre-line;
+}
 
-	&.is-truncated {
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 2;
-		overflow: hidden;
-		white-space: normal;
-	}
+.wpnc-simplified__parent-text.is-truncated,
+.wpnc-simplified__parent-content.is-truncated {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+	white-space: normal;
 }
 
 .wpnc-simplified__card {
