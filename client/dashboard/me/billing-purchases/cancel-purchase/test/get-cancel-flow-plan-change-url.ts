@@ -36,8 +36,13 @@ function parse( href: string ) {
 }
 
 describe( 'getCancelFlowPlanChangeUrl', () => {
-	test( 'sends a downgradable plan to the plans page with allow_downgrade and the ref', () => {
-		const { page, params } = parse( getCancelFlowPlanChangeUrl( makePurchase(), 'change-plan' ) );
+	test.each( [
+		[ 'a plan that can upgrade and downgrade', {} ],
+		[ 'a plan that can only downgrade', { is_upgradable: false } ],
+	] )( 'sends %s to the plans page with allow_downgrade and the ref', ( _, overrides ) => {
+		const { page, params } = parse(
+			getCancelFlowPlanChangeUrl( makePurchase( overrides ), 'change-plan' )
+		);
 
 		expect( page ).toBe( 'https://wordpress.com/setup/plan-upgrade' );
 		expect( params ).toEqual( {

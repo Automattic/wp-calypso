@@ -1,11 +1,9 @@
 /**
  * @jest-environment jsdom
- * @jest-environment-options {"url": "https://my.localhost/me/billing/purchases/123/cancel?intent=remove"}
  */
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../../../../test-utils';
-import { dashboardLink } from '../../../../../../utils/link';
 import SolutionsCardsUpsellStep from '../solutions-cards-upsell-step';
 import type { Purchase } from '@automattic/api-core';
 
@@ -257,7 +255,7 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'change-plan card links to the plans page with downgrades and the cancel-flow ref', async () => {
+	test( 'change-plan card links to the plans page with the cancel-flow ref', async () => {
 		render(
 			<SolutionsCardsUpsellStep
 				cancellationReason="tooExpensive"
@@ -268,12 +266,7 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 		);
 
 		const url = new URL( await getChangePlanHref() );
-		expect( url.pathname ).toBe( '/setup/plan-upgrade' );
-		expect( url.searchParams.get( 'allow_downgrade' ) ).toBe( 'true' );
 		expect( url.searchParams.get( 'ref' ) ).toBe( 'cancel-flow-change-plan' );
-		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
-			`${ dashboardLink( '/me/billing/purchases/:purchaseId' ) }?plan_changed=true`
-		);
 	} );
 
 	test( 'clicking change-plan records the click and goes where the card links', async () => {
@@ -302,9 +295,6 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 				cancellation_reason: 'tooExpensive',
 			} );
 			expect( window.location.href ).toBe( href );
-			expect( new URL( window.location.href ).searchParams.get( 'ref' ) ).toBe(
-				'cancel-flow-change-plan'
-			);
 		} finally {
 			Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
 		}
