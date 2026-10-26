@@ -20,7 +20,7 @@ import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import CancelPurchase from '../index';
 import KeepSubscriptionButton from '../keep-subscription-button';
-import type { Domain, Purchase } from '@automattic/api-core';
+import type { Domain, PlanProduct, Purchase } from '@automattic/api-core';
 
 vi.mock( '../../../../app/router/domains', () => ( {
 	domainRoute: { fullPath: '/domains/$domainName' },
@@ -78,14 +78,16 @@ function mockHasExtended( status: number, body: object ) {
 }
 
 function renderRemoveFlow( {
-	purchase: testPurchase = purchase,
+	purchase: overrides = {},
+	plans = [],
 	seedHasExtended = true,
-}: { purchase?: Purchase; seedHasExtended?: boolean } = {} ) {
+}: { purchase?: Partial< Purchase >; plans?: PlanProduct[]; seedHasExtended?: boolean } = {} ) {
+	const testPurchase = { ...purchase, ...overrides };
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
 	} );
 	queryClient.setQueryData( purchaseQuery( purchase.ID ).queryKey, testPurchase );
-	queryClient.setQueryData( plansQuery().queryKey, [] );
+	queryClient.setQueryData( plansQuery().queryKey, plans );
 	queryClient.setQueryData( purchaseCancelFeaturesQuery( purchase.ID ).queryKey, [] );
 	queryClient.setQueryData( productsQuery().queryKey, {} );
 	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {} );
