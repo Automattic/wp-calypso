@@ -43,6 +43,8 @@ export function WooHumanSupportRoutingStep( {
 	const [ storeChoice, setStoreChoice ] = useState< string | null >( null );
 	const [ otherStoreUrl, setOtherStoreUrl ] = useState( '' );
 	const stepRef = useRef< HTMLDivElement >( null );
+	// A second click before the step closes would start a second chat.
+	const hasContinuedRef = useRef( false );
 
 	// The chat only scrolls for new messages, so bring the questions into view.
 	useEffect( () => {
@@ -76,9 +78,10 @@ export function WooHumanSupportRoutingStep( {
 		( ! storeIsAsked || ! isStoreRequired( question ) || !! storeUrl );
 
 	const onContinue = () => {
-		if ( ! question ) {
+		if ( ! question || hasContinuedRef.current ) {
 			return;
 		}
+		hasContinuedRef.current = true;
 
 		const { route, rowId } = getWooHumanSupportRoute(
 			getWooRoutingInput( {

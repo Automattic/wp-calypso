@@ -104,6 +104,15 @@ describe( 'WooHumanSupportRoutingStep', () => {
 		expect( startChat ).toHaveBeenCalled();
 	} );
 
+	it( 'starts only one chat on a double click', async () => {
+		renderStep();
+
+		await userEvent.selectOptions( question(), 'account' );
+		await userEvent.dblClick( continueButton() );
+
+		expect( startChat ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'asks for the product and store for technical support', async () => {
 		renderStep();
 
