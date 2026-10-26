@@ -10,7 +10,7 @@ import type { ReactNode } from 'react';
 
 export default function SiteIdentity( { site, details }: { site: NoteSite; details?: ReactNode } ) {
 	return (
-		<HStack justify="flex-start" spacing={ 3 }>
+		<HStack alignment="top" justify="flex-start" spacing={ 3 }>
 			{ site.icon ? (
 				<img
 					className="wpnc-simplified__site-icon"
