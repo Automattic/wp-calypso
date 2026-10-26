@@ -613,89 +613,6 @@ function CancelPurchaseInner() {
 		} ) );
 	};
 
-	const downgradeClick = () => {
-		if ( ! state.isSubmitting ) {
-			if ( ! downgradePlan ) {
-				createErrorNotice( __( 'Cannot find a plan to downgrade to.' ), { type: 'snackbar' } );
-				return;
-			}
-
-			setState( ( state ) => ( { ...state, isLoading: true } ) );
-
-			cancelAndRefundMutation.mutate(
-				{
-					purchaseId: purchase.ID,
-					options: {
-						type: 'downgrade',
-						to_product_id: downgradePlan.product_id,
-					},
-				},
-				{
-					onSuccess: ( response ) => {
-						setState( ( state ) => ( { ...state, isLoading: false } ) );
-						createSuccessNotice( response.message, { type: 'snackbar' } );
-						navigate( { to: purchasesRoute.to } );
-					},
-					onError: ( error ) => {
-						setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
-						createErrorNotice( error.message, { type: 'snackbar' } );
-					},
-				}
-			);
-			recordEvent( 'calypso_purchases_downgrade_form_submit' );
-			setState( ( state ) => ( { ...state, solution: 'downgrade', isSubmitting: true } ) );
-		}
-	};
-
-	const onSwitchToMonthly = async () => {
-		if ( state.isSubmitting ) {
-			return;
-		}
-
-		const monthlyPlan = getDowngradePlanForPurchase( plans, purchase, 'downgrade-monthly' );
-		if ( ! monthlyPlan ) {
-			createErrorNotice( __( 'Failed to switch to monthly billing.' ), { type: 'snackbar' } );
-			return;
-		}
-
-		setState( ( state ) => ( { ...state, isLoading: true, isSubmitting: true } ) );
-		recordEvent( 'calypso_purchases_downgrade_form_submit' );
-
-		try {
-			await cancelAndRefundMutation.mutateAsync( {
-				purchaseId: purchase.ID,
-				options: {
-					type: 'downgrade',
-					to_product_id: monthlyPlan.product_id,
-				},
-			} );
-
-			// Fetch the refreshed purchases list to find the new monthly purchase.
-			const freshPurchases = await queryClient.fetchQuery( userPurchasesQuery() );
-			const newPurchase = freshPurchases?.find( ( p: Purchase ) => {
-				return p.product_id === monthlyPlan.product_id && p.blog_id === purchase.blog_id;
-			} );
-
-			if ( newPurchase ) {
-				navigate( {
-					to: purchaseSettingsRoute.fullPath,
-					params: { purchaseId: newPurchase.ID },
-					search: { downgraded: true },
-				} );
-			} else {
-				// Fallback: new purchase not found (eventual consistency edge case).
-				createSuccessNotice( __( 'Your plan has been switched to monthly billing.' ), {
-					type: 'snackbar',
-				} );
-				navigate( { to: purchasesRoute.to } );
-			}
-		} catch ( error ) {
-			createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
-		} finally {
-			setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
-		}
-	};
-
 	const freeMonthOfferClick = async () => {
 		if ( ! state.isSubmitting ) {
 			setState( ( state ) => ( { ...state, isLoading: true } ) );
@@ -947,7 +864,6 @@ function CancelPurchaseInner() {
 		}
 
 		const upsellType = getUpsellType( value, purchase, {
-			canDowngrade: !! downgradeClick,
 			canOfferFreeMonth: !! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
 		} );
 		const solutionsReason = getSolutionsReason( value, detailsValue, state.questionOneRadio );
@@ -1576,11 +1492,9 @@ function CancelPurchaseInner() {
 			clickNext={ clickNext }
 			closeDialog={ closeDialog }
 			disableButtons={ state.isLoading || isMutationPending }
-			downgradeClick={ downgradeClick }
 			downgradePlan={ downgradePlan }
 			flowType={ flowType }
 			freeMonthOfferClick={ freeMonthOfferClick }
-			onSwitchToMonthly={ onSwitchToMonthly }
 			hasBackupsFeature={ hasBackupsFeature }
 			importQuestionRadio={ state.importQuestionRadio }
 			includedDomainPurchase={ includedDomainPurchase }

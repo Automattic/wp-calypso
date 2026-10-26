@@ -79,7 +79,6 @@ type UpsellStepProps = {
 	downgradePlan?: PlanProduct | null;
 	includedDomainPurchase?: object;
 	intent?: string;
-	onClickDowngrade?: ( upsell: string ) => void;
 	onClickFreeMonthOffer?: () => void;
 	onDeclineUpsell?: () => void;
 	plans: PlanProduct[];

@@ -36,8 +36,7 @@ import { dashboardLink, wpcomLink } from '../../../../../utils/link';
 import { getPurchaseSettingsUrl, getPurchasesListUrl } from '../../../../../utils/site-url';
 import { getCancelFlowPlanChangeUrl } from '../../get-cancel-flow-plan-change-url';
 import { getSolutionsForReason, PRICE_MOTIVATED_REASONS } from '../../get-solutions-for-reason';
-import UpsellStep from './upsell-step';
-import type { PlanProduct, Purchase } from '@automattic/api-core';
+import type { Purchase } from '@automattic/api-core';
 
 const BUILT_BY_URL = wpcomLink( '/website-design-service/?ref=wpcom-cancel-flow' );
 const RENEW_COUPON = 'CANRENEW25OFF';
@@ -234,36 +233,24 @@ function getCardDescription( cardId: string ): string {
 type SolutionsCardsUpsellStepProps = {
 	cancellationReason?: string;
 	cancellationInProgress?: boolean;
-	cancelBundledDomain?: boolean;
 	closeDialog?: () => void;
-	downgradePlan?: PlanProduct | null;
-	includedDomainPurchase?: Purchase;
 	intent?: string;
-	onClickDowngrade?: ( upsell: string ) => void;
 	onDeclineUpsell?: () => void;
-	onSwitchToMonthly?: () => void;
 	purchase: Purchase;
 	recordEvent?: ( name: string, properties?: Record< string, unknown > ) => void;
-	refundAmount?: number;
 	yearlyPlanSlug?: string;
 };
 
 export default function SolutionsCardsUpsellStep( {
 	cancellationReason = '',
 	cancellationInProgress,
-	cancelBundledDomain,
 	closeDialog,
-	downgradePlan,
-	includedDomainPurchase,
 	intent,
-	onClickDowngrade,
 	onDeclineUpsell,
 	purchase,
 	recordEvent,
-	refundAmount,
 	yearlyPlanSlug,
 }: SolutionsCardsUpsellStepProps ) {
-	const [ showDowngradeStep, setShowDowngradeStep ] = React.useState( false );
 	const solutions = getSolutionsForReason( cancellationReason );
 	const { setNewMessagingChat, setOpenOdieWithContext } = useHelpCenter();
 	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
@@ -301,25 +288,6 @@ export default function SolutionsCardsUpsellStep( {
 
 	if ( ! filteredSolutions?.length ) {
 		return null;
-	}
-
-	if ( showDowngradeStep ) {
-		return (
-			<UpsellStep
-				upsell="downgrade-monthly"
-				cancellationReason={ cancellationReason }
-				cancellationInProgress={ cancellationInProgress }
-				cancelBundledDomain={ cancelBundledDomain }
-				currencyCode={ purchase.currency_code }
-				downgradePlan={ downgradePlan }
-				includedDomainPurchase={ includedDomainPurchase }
-				onClickDowngrade={ onClickDowngrade }
-				onDeclineUpsell={ () => setShowDowngradeStep( false ) }
-				plans={ [] }
-				purchase={ purchase }
-				refundAmount={ refundAmount }
-			/>
-		);
 	}
 
 	const changePlanUrl = wpcomLink( `/plans/${ purchase.site_slug }` );
