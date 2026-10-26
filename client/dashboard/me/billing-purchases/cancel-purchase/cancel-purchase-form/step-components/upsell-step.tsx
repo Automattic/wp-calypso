@@ -240,7 +240,7 @@ export default function UpsellStep( {
 				<Upsell
 					title={ __( 'Switch to flexible monthly payments' ) }
 					acceptButtonText={ __( 'Switch to monthly payments' ) }
-					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					acceptButtonUrl={ getCancelFlowPlanChangeUrl( purchase, 'downgrade-monthly' ) }
 					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }

@@ -354,6 +354,11 @@ describe( '<CancelPurchaseForm />', () => {
 			accept: 'Switch to the Personal plan',
 			ref: 'cancel-flow-downgrade-personal',
 		},
+		{
+			upsell: 'downgrade-monthly',
+			accept: 'Switch to monthly payments',
+			ref: 'cancel-flow-downgrade-monthly',
+		},
 	] )( '$accept opens the plans page', ( { upsell, accept, ref } ) => {
 		render(
 			<CancelPurchaseForm
