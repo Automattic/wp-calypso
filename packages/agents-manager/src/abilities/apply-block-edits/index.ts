@@ -50,6 +50,11 @@ export const applyBlockEditsAbility: Ability = {
 				description:
 					'ClientIds of the blocks this edit is being compared against, whenever the request is to make something look like something else on the page — in any property: "make this match the other section", "same color as the subscribe section background", "use the heading font from the hero", "make these buttons look like the ones above", "line these up", "same spacing as above". Name the blocks being matched TO, not the blocks being edited — and the block that carries what is being matched (for a section\'s background, the section\'s group). The result is checked against a capture that otherwise frames only what was edited, and a comparison cannot be judged from a picture that shows one side of it. Leave it out when the request is not relative to other blocks.',
 			},
+			visualCheckTargetClientId: {
+				type: 'string',
+				description:
+					'The block this call is about, set by the server. It is framed and measured like an edited block, so a call that changes only custom CSS can still be checked against it. Ignored when it names no block.',
+			},
 			reverseMap: {
 				type: 'object',
 				description: 'Optional reverse mapping for client IDs',

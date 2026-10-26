@@ -16,7 +16,7 @@ import {
 } from '../../utils/canvas-capture';
 import { checkpointKeys, sealCheckpointForSwap, withCheckpoint } from '../../utils/checkpoints';
 import { deepClone } from '../../utils/deep-clone';
-import { getPageBlocks, openUndoLevel } from '../../utils/editor-blocks';
+import { getBlock, getPageBlocks, openUndoLevel } from '../../utils/editor-blocks';
 import {
 	getCustomCss,
 	getEditedGlobalStyles,
@@ -55,6 +55,11 @@ interface ApplyBlockEditsInput extends RawBlockEdits {
 	visualCheckPending?: unknown;
 	/** Blocks this edit is being compared against, which the capture must also show. */
 	visualCheckClientIds?: unknown;
+	/**
+	 * The block the call is about, from the server: framed and measured like an
+	 * edited block, which on a CSS-only call there is none of.
+	 */
+	visualCheckTargetClientId?: unknown;
 }
 
 interface ApplyBlockEditsResultData {
@@ -411,6 +416,16 @@ export async function applyBlockEditsCallback(
 	const changedClientIds = edits
 		? [ ...getEditedClientIds( edits, resolver.resolve ), ...insertedClientIds ]
 		: [];
+	// The block the call is about joins the edited ones, unless it is one of
+	// them or names no block.
+	const targetClientId =
+		typeof input.visualCheckTargetClientId === 'string' && input.visualCheckTargetClientId
+			? resolver.resolve( input.visualCheckTargetClientId )
+			: undefined;
+	const subjectClientIds =
+		targetClientId && ! changedClientIds.includes( targetClientId ) && getBlock( targetClientId )
+			? [ ...changedClientIds, targetClientId ]
+			: changedClientIds;
 	const referenceClientIds = (
 		Array.isArray( input.visualCheckClientIds ) ? input.visualCheckClientIds : []
 	)
@@ -418,11 +433,11 @@ export async function applyBlockEditsCallback(
 		.map( resolver.resolve )
 		.filter(
 			( clientId, index, all ) =>
-				! changedClientIds.includes( clientId ) && all.indexOf( clientId ) === index
+				! subjectClientIds.includes( clientId ) && all.indexOf( clientId ) === index
 		);
 
 	const wholePage = edits?.customCSS !== undefined;
-	const framedClientIds = [ ...changedClientIds, ...referenceClientIds ];
+	const framedClientIds = [ ...subjectClientIds, ...referenceClientIds ];
 	const canCapture = !! edits && ! getBlockingMove();
 	// A CSS-only call has no blocks to frame, and without any the capture falls
 	// back to wherever the user is scrolled, which the whole page already shows.
@@ -470,10 +485,10 @@ export async function applyBlockEditsCallback(
 			wholePage ? [ ...changedClientIds, ...getPageClientIds() ] : changedClientIds,
 			{ wholePage }
 		);
-		// A CSS-only call changes no block, so the blocks it names are the ones
-		// whose width it is about.
+		// The edited blocks and the block the call is about; failing both, as on a
+		// CSS-only call with no target, the blocks it names for comparison.
 		const widths = describeMeasuredWidths(
-			changedClientIds.length ? changedClientIds : referenceClientIds
+			subjectClientIds.length ? subjectClientIds : referenceClientIds
 		);
 		const captureNotes = [
 			describeCaptureShape( fileParts ),

@@ -20,6 +20,7 @@ jest.mock( '../../../utils/checkpoints', () => ( {
 	withCheckpoint: jest.fn(),
 } ) );
 jest.mock( '../../../utils/editor-blocks', () => ( {
+	getBlock: jest.fn(),
 	getPageBlocks: jest.fn(),
 	openUndoLevel: jest.fn(),
 } ) );
@@ -64,7 +65,7 @@ import {
 	snapshotLayout,
 } from '../../../utils/canvas-capture';
 import { sealCheckpointForSwap, withCheckpoint } from '../../../utils/checkpoints';
-import { getPageBlocks, openUndoLevel } from '../../../utils/editor-blocks';
+import { getBlock, getPageBlocks, openUndoLevel } from '../../../utils/editor-blocks';
 import {
 	getCustomCss,
 	getEditedGlobalStyles,
@@ -891,6 +892,95 @@ describe( 'applyBlockEditsCallback', () => {
 				} );
 
 				expect( describeMeasuredWidths ).toHaveBeenCalledWith( [ 'resolved-ref1' ] );
+			} );
+
+			describe( 'with the block the call is about', () => {
+				const cssOnly = {
+					customCSS: 'p{}',
+					toolCallId: 'call-1',
+					visualCheckTargetClientId: 'hvd0',
+				};
+				const narrow = {
+					clientId: 'hvd0',
+					width: 379,
+					parentClientId: 'f6mp',
+					parentWidth: 1199,
+					alignItems: 'flex-start',
+					fromClientIds: [ 'hvd0' ],
+				};
+
+				beforeEach( () => {
+					// The correction round: custom CSS only, no block changed.
+					jest
+						.mocked( normalizeEdits )
+						.mockReturnValue( edits( { updates: [], customCSS: 'p{}' } ) );
+					jest.mocked( getEditedClientIds ).mockReturnValue( [] );
+					jest
+						.mocked( getBlock )
+						.mockImplementation( ( clientId ) =>
+							clientId === 'resolved-hvd0' ? paragraph( 'Target' ) : undefined
+						);
+				} );
+
+				it( 'frames and measures it on a CSS-only call, sending its shortfall', async () => {
+					jest.mocked( describeMeasuredWidths ).mockReturnValue( {
+						notes: [ 'Width: …' ],
+						shortfalls: [ narrow ],
+						measuredClientIds: [ 'hvd0' ],
+					} );
+
+					const result = await applyBlockEditsCallback( cssOnly );
+
+					expect( jest.mocked( captureCanvas ).mock.calls ).toEqual( [
+						[ { clientIds: [ 'resolved-hvd0' ], fullPage: false } ],
+						[ { clientIds: [ 'resolved-hvd0' ], fullPage: true } ],
+					] );
+					expect( describeMeasuredWidths ).toHaveBeenCalledWith( [ 'resolved-hvd0' ] );
+					expect( result.result.widthShortfalls ).toEqual( [ narrow ] );
+				} );
+
+				it( 'still frames it once the CSS has widened it, with no shortfall', async () => {
+					jest.mocked( describeMeasuredWidths ).mockReturnValue( {
+						notes: [ 'Width: …' ],
+						shortfalls: [],
+						measuredClientIds: [ 'hvd0' ],
+					} );
+
+					const result = await applyBlockEditsCallback( cssOnly );
+
+					expect( captureCanvas ).toHaveBeenCalledWith( {
+						clientIds: [ 'resolved-hvd0' ],
+						fullPage: false,
+					} );
+					expect( result.result ).not.toHaveProperty( 'widthShortfalls' );
+					expect( result.result.measuredClientIds ).toEqual( [ 'hvd0' ] );
+				} );
+
+				it( 'ignores a target that names no block', async () => {
+					await applyBlockEditsCallback( { ...cssOnly, visualCheckTargetClientId: 'gone' } );
+
+					expect( jest.mocked( captureCanvas ).mock.calls ).toEqual( [
+						[ { clientIds: [], fullPage: true } ],
+					] );
+					expect( describeMeasuredWidths ).toHaveBeenCalledWith( [] );
+				} );
+
+				it( 'does not count an edited target twice, nor as a reference', async () => {
+					jest.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'p{}' } ) );
+					jest.mocked( getEditedClientIds ).mockReturnValue( [ 'resolved-hvd0' ] );
+
+					await applyBlockEditsCallback( {
+						...input,
+						...cssOnly,
+						visualCheckClientIds: [ 'hvd0' ],
+					} );
+
+					expect( captureCanvas ).toHaveBeenCalledWith( {
+						clientIds: [ 'resolved-hvd0' ],
+						fullPage: false,
+					} );
+					expect( describeMeasuredWidths ).toHaveBeenCalledWith( [ 'resolved-hvd0' ] );
+				} );
 			} );
 
 			it( 'keeps the whole page when the full-size capture is refused', async () => {
