@@ -18,6 +18,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
+import { UPSELL_STEP } from '../cancel-purchase-form/steps';
 import CancelPurchase from '../index';
 import KeepSubscriptionButton from '../keep-subscription-button';
 import type { Domain, PlanProduct, PlanProductDowngrade, Purchase } from '@automattic/api-core';
@@ -59,7 +60,7 @@ function mockSiteRequests() {
 		.reply( 200, { active: [], available: {} } )
 		.get( `/rest/v1.1/sites/${ purchase.blog_id }` )
 		.query( true )
-		.reply( 200, { ID: purchase.blog_id, slug: purchase.site_slug } )
+		.reply( 200, { ID: purchase.blog_id, slug: purchase.site_slug, is_wpcom_atomic: false } )
 		.get( `/wpcom/v2/sites/${ purchase.blog_id }/atomic/transfers/latest` )
 		.query( true )
 		.reply( 200, {} )
@@ -128,6 +129,8 @@ async function pickFoundBetterValue( user: ReturnType< typeof userEvent.setup > 
 
 const optionsListName = 'Before canceling, you can consider these options:';
 
+const findOptions = () => screen.findByRole( 'list', { name: optionsListName } );
+
 const personalAnnual: Partial< Purchase > = {
 	product_id: 1009,
 	product_name: 'WordPress.com Personal',
@@ -165,8 +168,14 @@ async function answerTooExpensive( user: ReturnType< typeof userEvent.setup > ) 
 	await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
 }
 
+const EXPOSURE = 'calypso_purchases_cancel_options_eligible';
+
+const exposureCalls = (
+	recordTracksEvent: ( name: string, properties?: Record< string, unknown > ) => void
+) => vi.mocked( recordTracksEvent ).mock.calls.filter( ( [ name ] ) => name === EXPOSURE );
+
 // Holds the reply until `release()`, so a test can check what fires before the API result.
-function mockHeldPurchaseRequest( action: 'cancel' | 'extend' ) {
+function mockHeldPurchaseRequest( action: 'extend' ) {
 	let release!: () => void;
 	const pending = new Promise< void >( ( resolve ) => {
 		release = resolve;
@@ -215,9 +224,79 @@ describe( '<CancelPurchase />', () => {
 			);
 		} );
 
+		test( 'records the exposure with the flow props when the reason has options', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderPersonalFlow();
+
+			await answerTooExpensive( user );
+
+			expect( await findOptions() ).toBeVisible();
+			expect( exposureCalls( recordTracksEvent ) ).toEqual( [
+				[
+					EXPOSURE,
+					{
+						purchase_id: 123,
+						cancellation_reason: 'tooExpensive',
+						cancellation_flow: 'remove',
+						product_slug: 'personal-bundle',
+						is_atomic: false,
+					},
+				],
+			] );
+		} );
+
+		test( 'skips the exposure for "Something else related to changed needs" with text typed', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderRemoveFlow();
+			await startSurvey( user );
+
+			await user.click( await screen.findByRole( 'radio', { name: 'No longer need a site' } ) );
+			await user.click(
+				screen.getByRole( 'radio', { name: 'Something else related to changed needs' } )
+			);
+			await user.type(
+				screen.getByRole( 'textbox', { name: 'Can you please specify?' } ),
+				'test reason'
+			);
+			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+
+			expect( await screen.findByRole( 'button', { name: 'Complete removal' } ) ).toBeVisible();
+			expect( exposureCalls( recordTracksEvent ) ).toHaveLength( 0 );
+		} );
+
 	} );
 
 	describe( 'with the cards flag off', () => {
+		test( 'records the exposure before moving on to the offer', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderPersonalFlow();
+
+			await answerTooExpensive( user );
+
+			expect(
+				await screen.findByRole( 'link', { name: 'Switch to monthly payments' } )
+			).toBeVisible();
+			expect( exposureCalls( recordTracksEvent ) ).toEqual( [
+				[
+					EXPOSURE,
+					{
+						purchase_id: 123,
+						cancellation_reason: 'tooExpensive',
+						cancellation_flow: 'remove',
+						product_slug: 'personal-bundle',
+						is_atomic: false,
+					},
+				],
+			] );
+			const calls = vi.mocked( recordTracksEvent ).mock.calls;
+			const exposureIndex = calls.findIndex( ( [ name ] ) => name === EXPOSURE );
+			const offerIndex = calls.findIndex(
+				( [ name, properties ] ) =>
+					name === 'calypso_purchases_cancel_survey_step' && properties?.new_step === UPSELL_STEP
+			);
+			expect( offerIndex ).toBeGreaterThan( exposureIndex );
+		} );
+
 
 		test( 'adds the purchase ID to the free month offer event, before the API result', async () => {
 			const user = userEvent.setup();

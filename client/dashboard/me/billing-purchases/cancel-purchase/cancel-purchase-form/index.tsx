@@ -7,6 +7,7 @@ import { SectionHeader } from '../../../../components/section-header';
 import { formatDate } from '../../../../utils/datetime';
 import {
 	CANCEL_FLOW_TYPE,
+	isDotcomPlan,
 	isExpiredOrRemoved,
 	type CancelFlowType,
 	type CancelIntent,
@@ -311,6 +312,8 @@ function StepButtons( {
 	onKeepSubscriptionClick,
 	onSubmit,
 	purchase,
+	questionOneText,
+	recordEvent,
 	solution,
 	surveyStep,
 	allSteps,
@@ -324,6 +327,21 @@ function StepButtons( {
 
 	const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
+	// Cancel options experiment exposure, recorded the same way with the cards flag on or off.
+	const onClickNext = () => {
+		if (
+			surveyStep === FEEDBACK_STEP &&
+			isDotcomPlan( purchase ) &&
+			( getSolutionsForReason( questionOneText ?? '' )?.length ?? 0 ) > 0
+		) {
+			recordEvent?.( 'calypso_purchases_cancel_options_eligible', {
+				purchase_id: purchase.ID,
+				cancellation_reason: questionOneText,
+			} );
+		}
+		clickNext?.();
+	};
+
 	if ( surveyStep === UPSELL_STEP ) {
 		return null;
 	}
@@ -336,7 +354,7 @@ function StepButtons( {
 						variant="primary"
 						isDestructive
 						disabled={ ! canGoNext || isCancelling }
-						onClick={ clickNext }
+						onClick={ onClickNext }
 					>
 						{ __( 'Continue removal' ) }
 					</Button>
@@ -346,7 +364,7 @@ function StepButtons( {
 
 		return (
 			<ButtonStack justify="flex-start">
-				<Button variant="primary" disabled={ ! canGoNext || isCancelling } onClick={ clickNext }>
+				<Button variant="primary" disabled={ ! canGoNext || isCancelling } onClick={ onClickNext }>
 					{ __( 'Continue' ) }
 				</Button>
 				{ ( intent === 'cancel' || intent === 'auto-renew' ) && (
