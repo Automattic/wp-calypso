@@ -57,6 +57,7 @@
 		"@automattic/oauth-token": "workspace:^",
 		"@automattic/support-articles": "workspace:^",
 		"@automattic/urls": "workspace:^",
+		"@automattic/webmcp": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/abilities": "^0.14.0",

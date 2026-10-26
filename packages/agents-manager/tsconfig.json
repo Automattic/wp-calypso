@@ -15,6 +15,7 @@
 		{ "path": "../agenttic-ui" },
 		{ "path": "../ai-ui-renderer" },
 		{ "path": "../viewport" },
-		{ "path": "../support-articles" }
+		{ "path": "../support-articles" },
+		{ "path": "../webmcp" }
 	]
 }

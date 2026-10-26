@@ -342,6 +342,7 @@ __metadata:
     "@automattic/oauth-token": "workspace:^"
     "@automattic/support-articles": "workspace:^"
     "@automattic/urls": "workspace:^"
+    "@automattic/webmcp": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/dom": "npm:^10.4.2"
@@ -2636,6 +2637,30 @@ __metadata:
     typescript: "npm:^6.0.3"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
+  languageName: unknown
+  linkType: soft
+
+"@automattic/webmcp-app@workspace:apps/webmcp":
+  version: 0.0.0-use.local
+  resolution: "@automattic/webmcp-app@workspace:apps/webmcp"
+  dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/webmcp": "workspace:^"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.57.0"
+    webpack: "npm:^5.111.1"
+  peerDependencies:
+    postcss: ^8.5.30
+  languageName: unknown
+  linkType: soft
+
+"@automattic/webmcp@workspace:^, @automattic/webmcp@workspace:packages/webmcp":
+  version: 0.0.0-use.local
+  resolution: "@automattic/webmcp@workspace:packages/webmcp"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
 
