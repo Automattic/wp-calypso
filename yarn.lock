@@ -1169,7 +1169,6 @@ __metadata:
     "@automattic/number-formatters": "npm:^1.2.10"
     "@automattic/oauth-token": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
-    "@remix-run/router": "npm:^1.5.0"
     "@tanstack/query-core": "npm:^5.83.0"
     "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/api-fetch": "npm:^7.48.0"
@@ -9132,13 +9131,6 @@ __metadata:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: bcd1e052e1b16341a12a19bf4515f153ca09d1fa86ff7752a5d02d7c4db58e8baf80e6283e64411f1e388c65340dce2254b013083426806b5dbae38bd151e53e
-  languageName: node
-  linkType: hard
-
-"@remix-run/router@npm:^1.5.0":
-  version: 1.23.3
-  resolution: "@remix-run/router@npm:1.23.3"
-  checksum: 73622465dd9e9a2c5a7ced7d1151ea6e9195a8a979c99b4f70a67093eeff7f339daf03a7c6304709a9c27deb2081a8fff6737663aacb33529c1a12a0a0827a17
   languageName: node
   linkType: hard
 
