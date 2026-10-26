@@ -14,16 +14,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/automated-copy-site' ),
 	},
 
-	CELEBRATION: {
-		slug: 'celebration-step',
-		asyncComponent: () => import( './steps-repository/celebration-step' ),
-	},
-
-	CHECK_SITES: {
-		slug: 'check-sites',
-		asyncComponent: () => import( './steps-repository/sites-checker' ),
-	},
-
 	DESIGN_SETUP: {
 		slug: 'design-setup',
 		asyncComponent: () => import( './steps-repository/design-setup' ),
@@ -74,11 +64,6 @@ export const STEPS = {
 	SUBSCRIBERS: {
 		slug: 'subscribers',
 		asyncComponent: () => import( './steps-repository/subscribers' ),
-	},
-
-	FREE_POST_SETUP: {
-		slug: 'freePostSetup',
-		asyncComponent: () => import( './steps-repository/free-post-setup' ),
 	},
 
 	IMPORT: { slug: 'import', asyncComponent: () => import( './steps-repository/import' ) },

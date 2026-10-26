@@ -3,8 +3,9 @@ import type {
 	InteractiveUiCatalogDocument,
 } from './utils/definitions';
 
-// This entry has no A2UI or React code, so hosts can check and describe their catalogs without
-// loading the renderer.
+// This entry has no A2UI or React code, so hosts can use it without loading the renderer.
+
+export { getInteractiveUiOperation } from './utils/operation';
 
 /** The ID of A2UI's Basic catalog, which the basic components implement. */
 export const BASIC_CATALOG_ID = 'https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json';
@@ -153,14 +154,22 @@ function toInlineCatalog( {
 }
 
 /**
- * A2UI's `a2uiRendererCapabilities` for a host that renders the Basic catalog and these: their IDs,
- * and their documents for the agent.
+ * A2UI's `a2uiRendererCapabilities` for a host that renders the Basic catalog and these catalog
+ * definitions: their IDs, and, for the agent to compose with, the documents of those that aren't
+ * `agentComposable: false`.
  */
-export function getInteractiveUiRendererCapabilities( catalogs: InteractiveUiCatalogDocument[] ) {
+export function getInteractiveUiRendererCapabilities(
+	catalogs: Array< Pick< InteractiveUiCatalogDefinition, 'catalog' | 'agentComposable' > >
+) {
 	return {
 		'v1.0': {
-			supportedCatalogIds: [ BASIC_CATALOG_ID, ...catalogs.map( ( { catalogId } ) => catalogId ) ],
-			inlineCatalogs: catalogs.map( toInlineCatalog ),
+			supportedCatalogIds: [
+				BASIC_CATALOG_ID,
+				...catalogs.map( ( { catalog } ) => catalog.catalogId ),
+			],
+			inlineCatalogs: catalogs
+				.filter( ( { agentComposable } ) => agentComposable !== false )
+				.map( ( { catalog } ) => toInlineCatalog( catalog ) ),
 		},
 	};
 }
