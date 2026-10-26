@@ -27,11 +27,11 @@ export default function SiteIdentity( { site, details }: { site: NoteSite; detai
 				/>
 			) }
 			<VStack spacing={ 1 }>
-				<Text size={ 13 } weight={ 600 } truncate>
+				<Text size={ 13 } weight={ 600 } lineHeight="16px" truncate>
 					{ site.name }
 				</Text>
 				{ details && (
-					<Text size={ 12 } variant="muted">
+					<Text size={ 12 } lineHeight="16px" variant="muted">
 						{ details }
 					</Text>
 				) }

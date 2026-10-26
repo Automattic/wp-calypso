@@ -16,6 +16,7 @@ export default function MetaList( { children }: { children: ReactNode } ) {
 		<Text
 			className="wpnc-simplified__meta wpnc-simplified__quiet-links"
 			size={ 12 }
+			lineHeight="16px"
 			variant="muted"
 		>
 			{ items.map( ( item, index ) => (
