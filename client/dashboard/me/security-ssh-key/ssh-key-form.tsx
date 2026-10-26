@@ -79,7 +79,7 @@ export default function SshKeyForm( {
 		if ( ! isValid ) {
 			createErrorNotice(
 				__(
-					'Invalid SSH public key. It should begin with ssh-rsa, ssh-ed25519, sk-ssh-ed25519@openssh.com, ecdsa-sha2-nistp256, ecdsa-sha2-nistp384, or ecdsa-sha2-nistp521.'
+					'Invalid SSH public key. It should begin with ssh-rsa, ssh-ed25519, ecdsa-sha2-nistp256, ecdsa-sha2-nistp384, or ecdsa-sha2-nistp521.'
 				),
 				{
 					type: 'snackbar',
@@ -100,7 +100,7 @@ export default function SshKeyForm( {
 				id: 'key',
 				label: isEditing ? __( 'New Public ssh key' ) : __( 'Public ssh key' ),
 				description: __(
-					'Paste your SSH public key here. It should begin with ssh-rsa, ssh-ed25519, sk-ssh-ed25519@openssh.com, ecdsa-sha2-nistp256, ecdsa-sha2-nistp384 or ecdsa-sha2-nistp521…'
+					'Paste your SSH public key here. It should begin with ssh-rsa, ssh-ed25519, ecdsa-sha2-nistp256, ecdsa-sha2-nistp384 or ecdsa-sha2-nistp521…'
 				),
 				type: 'text',
 				Edit: ( { field, data, onChange } ) => {
