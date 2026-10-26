@@ -38,17 +38,7 @@ jest.mock( '@wordpress/dataviews', () => ( {
 			</output>
 		</div>
 	),
-	filterSortAndPaginate: ( data: StreamListItem[], view: View ) => {
-		const perPage = view.perPage ?? 15;
-		const start = ( ( view.page ?? 1 ) - 1 ) * perPage;
-		return {
-			data: data.slice( start, start + perPage ),
-			paginationInfo: {
-				totalItems: data.length,
-				totalPages: Math.ceil( data.length / perPage ),
-			},
-		};
-	},
+	filterSortAndPaginate: jest.requireActual( '@wordpress/dataviews' ).filterSortAndPaginate,
 } ) );
 
 jest.mock( 'calypso/reader/data/stream', () => {
