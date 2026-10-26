@@ -11,6 +11,12 @@ import SiteDomains from '../index';
 import type { Site, User } from '@automattic/api-core';
 
 let mockSearchParams: { action?: string } = {};
+let mockHasEnTranslation = true;
+
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	useHasEnTranslation: () => () => mockHasEnTranslation,
+} ) );
 
 jest.mock( '../../../app/router/sites', () => {
 	const actual = jest.requireActual( '../../../app/router/sites' );
@@ -101,19 +107,26 @@ const nonOwnerUser = {
 	meta: { data: { flags: { active_flags: [] } } },
 } as unknown as User;
 
+const siteWithPrimaryDomainFeature = {
+	...site,
+	plan: { is_free: false, features: { active: [ 'set-primary-custom-domain' ] } },
+} as unknown as Site;
+
 function mockApis( {
 	domains = [ domain, defaultAddressDomain ],
 	ssl,
 	preferences = {},
+	siteResponse = site,
 }: {
 	domains?: unknown[];
 	ssl?: { domain: string; certificate_provisioned: boolean };
 	preferences?: Record< string, unknown >;
+	siteResponse?: Site;
 } = {} ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ site.slug }` )
 		.query( true )
-		.reply( 200, site );
+		.reply( 200, siteResponse );
 
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.2/all-domains' )
@@ -148,6 +161,7 @@ function mockApis( {
 describe( '<SiteDomains>', () => {
 	beforeEach( () => {
 		mockSearchParams = {};
+		mockHasEnTranslation = true;
 		mockApis();
 	} );
 
@@ -155,20 +169,35 @@ describe( '<SiteDomains>', () => {
 		nock.cleanAll();
 	} );
 
-	test( 'shows "Add domain name" button for site owner', async () => {
+	test( 'shows "Use a domain name I own" and "Add new domain" buttons for site owner', async () => {
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await screen.findByRole( 'heading', { name: 'Domains' } );
+
+		expect( screen.getByRole( 'button', { name: 'Use a domain name I own' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Add new domain' } ) ).toBeVisible();
+	} );
+
+	test( 'shows "Use a domain name I own" and "Add new domain" buttons for non-owner', async () => {
+		render( <SiteDomains />, { user: nonOwnerUser } );
+
+		await screen.findByRole( 'heading', { name: 'Domains' } );
+
+		expect( screen.getByRole( 'button', { name: 'Use a domain name I own' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Add new domain' } ) ).toBeVisible();
+	} );
+
+	test( 'falls back to the previous copy until the new strings are translated', async () => {
+		mockHasEnTranslation = false;
+
 		render( <SiteDomains />, { user: ownerUser } );
 
 		await screen.findByRole( 'heading', { name: 'Domains' } );
 
 		expect( screen.getByRole( 'button', { name: 'Add domain name' } ) ).toBeVisible();
-	} );
-
-	test( 'shows "Add domain name" button for non-owner', async () => {
-		render( <SiteDomains />, { user: nonOwnerUser } );
-
-		await screen.findByRole( 'heading', { name: 'Domains' } );
-
-		expect( screen.getByRole( 'button', { name: 'Add domain name' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Add new domain' } ) ).not.toBeInTheDocument();
+		expect( await screen.findByRole( 'button', { name: 'Change site address' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Rename address' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'opens the change site address modal when deep linked', async () => {
@@ -179,19 +208,19 @@ describe( '<SiteDomains>', () => {
 		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
 	} );
 
-	test( 'shows "Change site address" action for the default address', async () => {
+	test( 'shows "Rename address" on the default address row and opens the change site address modal', async () => {
 		const user = userEvent.setup();
 		nock.cleanAll();
 		mockApis( { domains: [ defaultAddressDomain ] } );
 
 		render( <SiteDomains />, { user: ownerUser } );
 
-		await user.click( await screen.findByLabelText( 'Actions' ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Rename address' } ) );
 
-		expect( screen.getByText( 'Change site address' ) ).toBeVisible();
+		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
 	} );
 
-	test( 'hides "Change site address" action when the site is suspended', async () => {
+	test( 'hides "Rename address" when the site is suspended', async () => {
 		nock.cleanAll();
 		mockApis( { domains: [ { ...defaultAddressDomain, is_suspended_site: true } ] } );
 
@@ -200,7 +229,86 @@ describe( '<SiteDomains>', () => {
 		const table = await screen.findByRole( 'table' );
 		expect( within( table ).getByText( 'test-site.wordpress.com' ) ).toBeVisible();
 
+		expect( screen.queryByRole( 'button', { name: 'Rename address' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows "Settings" as the only row action, without an actions menu or bulk selection', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [ primaryCandidateDomain ],
+			ssl: { domain: primaryCandidateDomain.domain, certificate_provisioned: true },
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		await screen.findByText( 'SSL active' );
+
+		expect( within( table ).getByRole( 'button', { name: 'Settings' } ) ).toBeVisible();
 		expect( screen.queryByLabelText( 'Actions' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Make primary site address' ) ).not.toBeInTheDocument();
+		expect( screen.queryAllByRole( 'checkbox' ) ).toHaveLength( 0 );
+	} );
+
+	test( 'lists the free address first and the primary site address second', async () => {
+		nock.cleanAll();
+		mockApis( { domains: [ primaryCandidateDomain, domain, defaultAddressDomain ] } );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		expect(
+			within( table )
+				.getAllByText( /^(test-site\.|candidate\.)/ )
+				.map( ( element ) => element.textContent )
+		).toEqual( [ 'test-site.wordpress.com', 'test-site.com', 'candidate.com' ] );
+	} );
+
+	test( 'keeps the free address and the primary site address on top when sorting', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [ primaryCandidateDomain, domain, defaultAddressDomain ],
+			preferences: {
+				'hosting-dashboard-dataviews-view-site-domains': {
+					...SITE_CONTEXT_VIEW,
+					sort: { field: 'is_primary_domain', direction: 'asc' },
+				},
+			},
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		expect(
+			within( table )
+				.getAllByText( /^(test-site\.|candidate\.)/ )
+				.map( ( element ) => element.textContent )
+		).toEqual( [ 'test-site.wordpress.com', 'test-site.com', 'candidate.com' ] );
+	} );
+
+	test( 'changes the primary site address from a modal that can be dismissed', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( {
+			domains: [ primaryCandidateDomain, domain, defaultAddressDomain ],
+			siteResponse: siteWithPrimaryDomainFeature,
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await user.click(
+			await screen.findByRole( 'button', { name: 'Change primary site address' } )
+		);
+
+		const dialog = await screen.findByRole( 'dialog', { name: 'Primary site address' } );
+		expect(
+			within( dialog ).getByRole( 'combobox', { name: 'Primary site address' } )
+		).toHaveValue( 'test-site.com' );
+		expect( within( dialog ).getByRole( 'button', { name: 'Change address' } ) ).toBeDisabled();
+
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Cancel' } ) );
+
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'sorts domains by whether they are primary', async () => {
@@ -230,41 +338,5 @@ describe( '<SiteDomains>', () => {
 		await screen.findByRole( 'heading', { name: 'Domains' } );
 
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'hides "Make primary site address" action while SSL is still pending', async () => {
-		const user = userEvent.setup();
-		nock.cleanAll();
-		mockApis( {
-			domains: [ primaryCandidateDomain ],
-			ssl: { domain: primaryCandidateDomain.domain, certificate_provisioned: false },
-		} );
-
-		render( <SiteDomains />, { user: ownerUser } );
-
-		await screen.findByText( 'SSL pending' );
-
-		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
-		await user.click( actionsButtons[ 0 ] );
-
-		expect( screen.queryByText( 'Make primary site address' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'shows "Make primary site address" action once SSL is active', async () => {
-		const user = userEvent.setup();
-		nock.cleanAll();
-		mockApis( {
-			domains: [ primaryCandidateDomain ],
-			ssl: { domain: primaryCandidateDomain.domain, certificate_provisioned: true },
-		} );
-
-		render( <SiteDomains />, { user: ownerUser } );
-
-		await screen.findByText( 'SSL active' );
-
-		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
-		await user.click( actionsButtons[ 0 ] );
-
-		expect( screen.getByText( 'Make primary site address' ) ).toBeVisible();
 	} );
 } );

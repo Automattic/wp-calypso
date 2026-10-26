@@ -1,7 +1,7 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useRouter } from '@tanstack/react-router';
-import { Button, Dropdown, MenuItem } from '@wordpress/components';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../app/analytics';
 import { useAppContext } from '../app/context';
@@ -47,10 +47,9 @@ function DomainOnlyAddDomainButton() {
 	};
 
 	return (
-		<AddDomainDropdown
+		<AddDomainButtons
 			onSearchClick={ onSearchClick }
 			onTransferOrConnectClick={ onTransferOrConnectClick }
-			transferLabel={ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
 		/>
 	);
 }
@@ -69,73 +68,53 @@ function DefaultAddDomainButton() {
 	};
 
 	return (
-		<AddDomainDropdown
+		<AddDomainButtons
 			onSearchClick={ onSearchClick }
 			onTransferOrConnectClick={ onTransferOrConnectClick }
-			transferLabel={ __( 'Use a domain name I own' ) }
 		/>
 	);
 }
 
-function AddDomainDropdown( {
+function AddDomainButtons( {
 	onSearchClick,
 	onTransferOrConnectClick,
-	transferLabel,
 }: {
 	onSearchClick: () => void;
 	onTransferOrConnectClick: () => void;
-	transferLabel: string;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
+	const hasEnTranslation = useHasEnTranslation();
+
+	// The CTA used to be a dropdown: `add_domain_clicked` was recorded when it opened, followed by
+	// `add_domain_option_clicked` for the chosen option. Both are still recorded to keep funnels intact.
+	const recordOptionClick = ( option: 'search' | 'transfer_or_connect' ) => {
+		recordTracksEvent( 'calypso_dashboard_domains_add_domain_clicked' );
+		recordTracksEvent( 'calypso_dashboard_domains_add_domain_option_clicked', { option } );
+	};
 
 	return (
-		<Dropdown
-			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button
-					icon={ isOpen ? chevronUp : chevronDown }
-					iconPosition="right"
-					variant="primary"
-					__next40pxDefaultSize
-					onClick={ () => {
-						if ( ! isOpen ) {
-							recordTracksEvent( 'calypso_dashboard_domains_add_domain_clicked' );
-						}
-						onToggle();
-					} }
-					aria-expanded={ isOpen }
-				>
-					{ __( 'Add domain name' ) }
-				</Button>
-			) }
-			renderContent={ () => (
-				<>
-					<MenuItem
-						iconPosition="left"
-						icon={ search }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_dashboard_domains_add_domain_option_clicked', {
-								option: 'search',
-							} );
-							onSearchClick();
-						} }
-					>
-						{ __( 'Search domain names' ) }
-					</MenuItem>
-					<MenuItem
-						iconPosition="left"
-						icon={ globe }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_dashboard_domains_add_domain_option_clicked', {
-								option: 'transfer_or_connect',
-							} );
-							onTransferOrConnectClick();
-						} }
-					>
-						{ transferLabel }
-					</MenuItem>
-				</>
-			) }
-		/>
+		<HStack spacing={ 2 } expanded={ false }>
+			<Button
+				variant="tertiary"
+				__next40pxDefaultSize
+				onClick={ () => {
+					recordOptionClick( 'transfer_or_connect' );
+					onTransferOrConnectClick();
+				} }
+			>
+				{ __( 'Use a domain name I own' ) }
+			</Button>
+			<Button
+				variant="primary"
+				__next40pxDefaultSize
+				onClick={ () => {
+					recordOptionClick( 'search' );
+					onSearchClick();
+				} }
+			>
+				{ hasEnTranslation( 'Add new domain' ) ? __( 'Add new domain' ) : __( 'Add domain name' ) }
+			</Button>
+		</HStack>
 	);
 }
 

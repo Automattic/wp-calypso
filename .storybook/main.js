@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import storybookDefaultConfig from '@automattic/calypso-storybook';
+import webpack from 'webpack';
 
 const require = createRequire( import.meta.url );
 const sharedConfig = require( '../config/_shared.json' );
@@ -26,6 +27,17 @@ const configData = { ...sharedConfig, ...devConfig };
 
 export default {
 	...storybookConfig,
+
+	webpackFinal: async ( config ) => {
+		const finalConfig = await storybookConfig.webpackFinal( config );
+		finalConfig.plugins.push(
+			new webpack.NormalModuleReplacementPlugin(
+				/^calypso[\\/]server[\\/]lib[\\/]logger$/,
+				path.join( import.meta.dirname, 'mocks/server-logger.js' )
+			)
+		);
+		return finalConfig;
+	},
 
 	previewHead: ( head ) => `
 		${ head }

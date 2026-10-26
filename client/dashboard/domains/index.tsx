@@ -2,7 +2,6 @@ import { DomainSubtype } from '@automattic/api-core';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../app/analytics';
-import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
@@ -40,7 +39,6 @@ const defaultView = {
 };
 
 function Domains() {
-	const { user } = useAuth();
 	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 	const fields = useFields( { showPrimaryDomainBadge: false } );
@@ -60,7 +58,7 @@ function Domains() {
 		},
 	} );
 
-	const actions = useActions( { user, sites, domains } );
+	const actions = useActions( { sites } );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
 		domains ?? [],

@@ -21,6 +21,7 @@ import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-
 import AddDomainButton from '../../domains/add-domain-button';
 import {
 	filterSortAndPaginateDomains,
+	getSiteDomainPinnedRank,
 	useActions,
 	useFields,
 	DEFAULT_LAYOUTS,
@@ -60,7 +61,7 @@ function SiteDomains() {
 		site,
 	} );
 
-	const actions = useActions( { user, sites: [ site ], domains: siteDomains } );
+	const actions = useActions( { sites: [ site ] } );
 
 	const searchParams = siteDomainsRoute.useSearch();
 	const navigate = useNavigate();
@@ -81,7 +82,8 @@ function SiteDomains() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
 		siteDomains,
 		view,
-		fields
+		fields,
+		{ getPinnedRank: getSiteDomainPinnedRank }
 	);
 
 	// Hide actions column when no domain has eligible actions.
