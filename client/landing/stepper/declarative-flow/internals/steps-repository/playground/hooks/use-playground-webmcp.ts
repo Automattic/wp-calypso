@@ -10,12 +10,10 @@ function reportError( error: unknown ) {
 
 /** Keeps browser tools scoped to the current Playground without blocking onboarding. */
 export function usePlaygroundWebMcp( {
-	enabled,
 	client,
 	slug,
 	launch,
 }: {
-	enabled: boolean;
 	client: PlaygroundClient | null;
 	slug: string | null;
 	launch: () => Promise< boolean >;
@@ -26,7 +24,7 @@ export function usePlaygroundWebMcp( {
 	}, [ launch ] );
 
 	useEffect( () => {
-		if ( ! enabled || ! client || ! slug ) {
+		if ( ! client || ! slug ) {
 			return;
 		}
 
@@ -81,5 +79,5 @@ export function usePlaygroundWebMcp( {
 			controller.abort();
 			registry?.dispose();
 		};
-	}, [ enabled, client, slug ] );
+	}, [ client, slug ] );
 }

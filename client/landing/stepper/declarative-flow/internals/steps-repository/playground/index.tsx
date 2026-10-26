@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { ONBOARDING_FLOW, Step } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -165,7 +165,6 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 	};
 
 	usePlaygroundWebMcp( {
-		enabled: flow === ONBOARDING_FLOW && query.get( 'webmcp' ) === '1',
 		client: playgroundClient,
 		slug: query.get( 'playground' ),
 		launch: launchSite,

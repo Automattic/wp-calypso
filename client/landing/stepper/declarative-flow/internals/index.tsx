@@ -12,6 +12,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
+import { useAccountWebMcp } from '../../hooks/use-account-webmcp';
 import { useFirstStep } from '../../hooks/use-first-step';
 import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
@@ -74,6 +75,7 @@ export const FlowRenderer: React.FC< {
 	const { navigate, params } = useFlowNavigation( flow );
 	const currentStepRoute = ( params.step || '' ) as StepperStep[ 'slug' ];
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	useAccountWebMcp();
 	const { lang = null } = useParams();
 	const isValidStep = params.step != null && stepPaths.includes( currentStepRoute );
 	// Type as any, because we don't which flow is this.

@@ -142,18 +142,7 @@ export class RequestLoginEmailForm extends Component {
 	}
 
 	registerWebMcp = async () => {
-		let redirectTo;
-		try {
-			redirectTo = new URL( this.props.redirectTo || '/', window.location.origin );
-		} catch {
-			return;
-		}
-		if (
-			redirectTo.origin !== window.location.origin ||
-			! redirectTo.pathname.startsWith( '/setup/onboarding/' ) ||
-			this.props.onSubmitEmail ||
-			this.props.isGravPoweredClient
-		) {
+		if ( this.props.onSubmitEmail || this.props.isGravPoweredClient ) {
 			return;
 		}
 

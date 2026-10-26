@@ -10,7 +10,7 @@ import { debounce } from '@wordpress/compose';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import { withBlackboxProtection } from 'calypso/blocks/login/with-blackbox-protection';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
@@ -72,6 +72,138 @@ class PasswordlessSignupForm extends Component {
 	};
 
 	submitLock = false;
+	formRef = createRef();
+
+	componentDidMount() {
+		void this.registerWebMcp();
+	}
+
+	componentDidUpdate() {
+		void this.webMcpRegistry?.sync().catch( this.reportWebMcpError );
+	}
+
+	componentWillUnmount() {
+		this.webMcpController?.abort();
+		this.webMcpRegistry?.dispose();
+	}
+
+	isFormVisible = () => {
+		const form = this.formRef.current;
+		return Boolean(
+			form && form.getClientRects().length && getComputedStyle( form ).visibility !== 'hidden'
+		);
+	};
+
+	reportWebMcpError = ( error ) => {
+		// eslint-disable-next-line no-console
+		console.warn( '[WebMCP] Account registration integration failed:', error );
+	};
+
+	registerWebMcp = async () => {
+		if ( this.props.onUpdateEmail ) {
+			return;
+		}
+
+		const controller = new AbortController();
+		this.webMcpController = controller;
+		try {
+			const { getWebMcpModelContext, createWebMcpToolRegistry } = await import(
+				/* webpackChunkName: "webmcp" */ '@automattic/webmcp'
+			);
+			if ( controller.signal.aborted ) {
+				return;
+			}
+			const modelContext = getWebMcpModelContext();
+			if ( ! modelContext ) {
+				return;
+			}
+			this.webMcpRegistry = createWebMcpToolRegistry( {
+				modelContext,
+				getTools: () =>
+					this.isFormVisible()
+						? [
+								{
+									name: 'wpcom_register_account',
+									title: 'Create a WordPress.com account',
+									description:
+										'Create a real passwordless WordPress.com account with an email address, using this signup form and its validation and anti-abuse checks. Requires the account owner to agree to the terms shown on screen. May send a verification email. Continues the current signup flow after account creation.',
+									inputSchema: {
+										type: 'object',
+										properties: {
+											email: {
+												type: 'string',
+												format: 'email',
+												description: 'Email for the new account.',
+											},
+											acceptTermsOfService: {
+												type: 'boolean',
+												const: true,
+												description:
+													'The account owner agrees to the terms shown on the signup screen.',
+											},
+										},
+										required: [ 'email', 'acceptTermsOfService' ],
+										additionalProperties: false,
+									},
+									annotations: { readOnlyHint: false, consequentialHint: true },
+									execute: this.registerAccountFromTool,
+								},
+							]
+						: [],
+			} );
+			await this.webMcpRegistry.sync();
+		} catch ( error ) {
+			this.reportWebMcpError( error );
+		}
+	};
+
+	registerAccountFromTool = async ( { email, acceptTermsOfService } ) => {
+		const error = ( text ) => ( { isError: true, content: [ { type: 'text', text } ] } );
+		if ( acceptTermsOfService !== true ) {
+			return error( 'The account owner must agree to the terms shown on the signup screen.' );
+		}
+		if ( typeof email !== 'string' || getEmailAddressError( email.trim() ) ) {
+			return error( 'Provide a valid email address for the new account.' );
+		}
+		if (
+			! this.isFormVisible() ||
+			this.props.onUpdateEmail ||
+			this.props.disabled ||
+			this.props.disableSubmitButton ||
+			this.props.isSubmitBlocked ||
+			this.props.blackbox.isSubmitBlocked ||
+			this.submitLock ||
+			this.webMcpRequestPending
+		) {
+			return error( 'Signup is not ready. Check the form for a pending request or challenge.' );
+		}
+
+		this.webMcpRequestPending = true;
+		const controller = this.webMcpController;
+		try {
+			await new Promise( ( resolve ) =>
+				this.setState( { email: email.trim(), errorMessages: null }, resolve )
+			);
+			if ( controller.signal.aborted ) {
+				return error( 'The signup form is no longer active.' );
+			}
+			const created = await this.submitEmail();
+			if ( created !== true ) {
+				return error(
+					typeof created?.message === 'string'
+						? `${ created.errorCode || 'signup_failed' }: ${ created.message }`
+						: 'Account creation did not finish. Check the page for validation, errors, or a challenge.'
+				);
+			}
+			return {
+				content: [
+					{ type: 'text', text: 'Account created. Continue with the current signup step.' },
+				],
+			};
+		} finally {
+			this.webMcpRequestPending = false;
+		}
+	};
 
 	submitTracksEvent = ( isSuccessful, props ) => {
 		const tracksEventName = isSuccessful
@@ -82,9 +214,12 @@ class PasswordlessSignupForm extends Component {
 		} );
 	};
 
-	onFormSubmit = async ( event ) => {
+	onFormSubmit = ( event ) => {
 		event.preventDefault();
+		return this.submitEmail();
+	};
 
+	submitEmail = async () => {
 		if ( this.props.isSubmitBlocked || this.props.blackbox.isSubmitBlocked || this.submitLock ) {
 			return;
 		}
@@ -206,8 +341,10 @@ class PasswordlessSignupForm extends Component {
 			const response = await wpcom.req.post( '/users/new', body );
 
 			this.createAccountCallback( response );
+			return true;
 		} catch ( error ) {
 			this.createAccountError( error );
+			return { errorCode: error.error, message: error.message };
 		}
 	};
 
@@ -453,7 +590,7 @@ class PasswordlessSignupForm extends Component {
 		const terms = ! this.props.disableTosText && this.props.renderTerms?.();
 
 		return (
-			<div className="signup-form__passwordless-form-wrapper">
+			<div className="signup-form__passwordless-form-wrapper" ref={ this.formRef }>
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
 					<ValidationFieldset errorMessages={ errorMessages }>
 						<FormLabel htmlFor="signup-email">{ this.getLabelText() }</FormLabel>
