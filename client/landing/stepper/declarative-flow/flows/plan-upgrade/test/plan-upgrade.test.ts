@@ -15,7 +15,10 @@ jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 } ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
-	useSite: () => ( { plan: { product_slug: mockSitePlan } } ),
+	useSite: () => ( {
+		plan: { product_slug: mockSitePlan },
+		options: { admin_url: 'https://example.wordpress.com/wp-admin/' },
+	} ),
 } ) );
 
 const mockClearSignupDestination = jest.fn();
@@ -151,5 +154,12 @@ describe( 'plan-upgrade flow', () => {
 		expect( planUpgradeFlow.useStepsProps!()[ STEPS.UNIFIED_PLANS.slug ] ).toMatchObject( {
 			intent: 'plans-woo-hosted',
 		} );
+	} );
+
+	// The store admin's plan nudge links here with nowhere to go back to.
+	it( 'goes back to a Woo Hosted store admin when given nowhere to go back to', () => {
+		mockSitePlan = 'woo_hosted_basic_plan_monthly';
+
+		expect( goBack() ).toBe( 'https://example.wordpress.com/wp-admin/' );
 	} );
 } );

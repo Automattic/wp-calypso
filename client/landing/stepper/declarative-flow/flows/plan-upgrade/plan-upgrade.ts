@@ -85,7 +85,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		const safeBackTo =
 			backTo && ( ! isExternal( backTo ) || isValidBackTo || isSiteBackTo )
 				? backTo
-				: dashboardLink( '/sites' );
+				: ( isWooHosted && site?.options?.admin_url ) || dashboardLink( '/sites' );
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
