@@ -42,7 +42,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { login } from 'calypso/lib/paths';
 import { getLegacyLaunchSiteRedirect } from 'calypso/lib/signup/legacy-launch-site-flow';
 import {
-	REDIRECTED_PLAN_FLOWS,
+	REDIRECTED_FLOWS,
 	getLegacyPlanFlowRedirect,
 	shouldRedirectLegacyPlanFlow,
 } from 'calypso/lib/signup/legacy-plan-flows';
@@ -1314,11 +1314,12 @@ export default function pages() {
 	}
 
 	// Legacy `/start/<plan>` flows are now served by Stepper's onboarding flow with the plan
-	// preselected. This has to be registered ahead of the dashboard `/start` route and the section
-	// loop below, which bind `/start` for the signup section and would otherwise match first. The
+	// preselected, and `/start/plans-first` by onboarding as is. This has to be registered ahead
+	// of the dashboard `/start` route and the section loop below, which bind `/start` for the
+	// signup section and would otherwise match first. The
 	// `/*` variant covers step segments — `/start/personal/domains` is a shape real `redirect_to`
 	// values use.
-	const legacyPlanFlowRoute = `/start/:flow(${ Object.keys( REDIRECTED_PLAN_FLOWS ).join( '|' ) })`;
+	const legacyPlanFlowRoute = `/start/:flow(${ REDIRECTED_FLOWS.join( '|' ) })`;
 	app.get( [ legacyPlanFlowRoute, `${ legacyPlanFlowRoute }/*` ], ( req, res, next ) => {
 		if ( ! shouldRedirectLegacyPlanFlow( req.params.flow ) ) {
 			return next( 'route' );

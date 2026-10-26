@@ -26,10 +26,21 @@ describe( 'legacy plan flows', () => {
 		expect( url.searchParams.get( 'plan' ) ).toBe( PLAN_BUSINESS );
 	} );
 
+	// WordCamp coupon links land here; the coupon has to reach checkout, and no plan is implied.
+	it( 'sends plans-first to plain onboarding with its coupon', () => {
+		const url = target( 'plans-first', { coupon: 'WC_ABC', utm_source: 'wordcamp' } );
+
+		expect( url.pathname ).toBe( '/setup/onboarding' );
+		expect( url.searchParams.get( 'coupon' ) ).toBe( 'WC_ABC' );
+		expect( url.searchParams.get( 'utm_source' ) ).toBe( 'wordcamp' );
+		expect( url.searchParams.has( 'plan' ) ).toBe( false );
+	} );
+
 	// The server route matcher is built from the map, so a flow outside it must fall through
 	// to the legacy signup section rather than redirect.
 	it( 'redirects only the flows it maps', () => {
 		expect( shouldRedirectLegacyPlanFlow( 'business-monthly' ) ).toBe( true );
+		expect( shouldRedirectLegacyPlanFlow( 'plans-first' ) ).toBe( true );
 		expect( shouldRedirectLegacyPlanFlow( 'free' ) ).toBe( false );
 	} );
 } );
