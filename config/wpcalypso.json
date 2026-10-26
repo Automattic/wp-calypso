@@ -56,7 +56,7 @@
 		"domain-bundling": true,
 		"domain-transfer-redesign": true,
 		"email-accounts/enabled": true,
-		"emails/titan-tiers": false,
+		"emails/titan-tiers": true,
 		"footer-redesign/2026": true,
 		"footer/dark": false,
 		"footer/light": false,

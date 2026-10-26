@@ -52,7 +52,7 @@
 		"dolly/telegram": true,
 		"domain-bundling": true,
 		"domain-transfer-redesign": true,
-		"emails/titan-tiers": false,
+		"emails/titan-tiers": true,
 		"footer-redesign/2026": true,
 		"footer/dark": false,
 		"footer/light": false,
