@@ -245,10 +245,9 @@ export function serverMessageToMessage( serverMessage: ServerMessage ): Message 
 }
 
 /**
- * Keeps each message ID on one message of a conversation joined from history pages. A retried
- * turn can store one ID on two rows, and the server names only the newest of them on a page, so
- * when the rows are on different pages the newest keeps the ID too, and the others take their
- * row IDs.
+ * Keeps message IDs unique across joined history pages. A retried turn can store one ID on two
+ * rows, and the server dedupes only within a page, so here too the newest row keeps the ID and the
+ * others take their row IDs.
  * @param messages - Messages mapped by `serverMessageToMessage`, from one or more pages
  */
 export function withUniqueMessageIds( messages: Message[] ): Message[] {
