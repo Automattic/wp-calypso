@@ -390,7 +390,7 @@ export const domainContactInfoRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Contact details' ),
+				title: __( 'Contact details & privacy' ),
 			},
 		],
 	} ),
