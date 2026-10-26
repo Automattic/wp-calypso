@@ -397,7 +397,7 @@ __metadata:
     react-dom: "npm:^18.0.0"
     typescript: "npm:^5.9.3"
     unified: "npm:^11.0.5"
-    vite: "npm:^6.4.3"
+    vite: "npm:^6.4.4"
     vite-plugin-lib-inject-css: "npm:^2.2.2"
     vitest: "npm:^3.2.6"
   peerDependencies:
@@ -425,7 +425,7 @@ __metadata:
     react: "npm:^18.0.0"
     react-dom: "npm:^18.0.0"
     typescript: "npm:^5.9.3"
-    vite: "npm:^6.4.3"
+    vite: "npm:^6.4.4"
   languageName: unknown
   linkType: soft
 
@@ -466,7 +466,7 @@ __metadata:
     typescript: "npm:^5.9.3"
     unified: "npm:^11.0.5"
     use-debounce: "npm:^10.0.6"
-    vite: "npm:^6.4.3"
+    vite: "npm:^6.4.4"
     vite-plugin-lib-inject-css: "npm:^2.2.2"
     vitest: "npm:^3.2.6"
   peerDependencies:
@@ -34275,9 +34275,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^6.4.3":
-  version: 6.4.4
-  resolution: "vite@npm:6.4.4"
+"vite@npm:^6.4.4":
+  version: 6.4.5
+  resolution: "vite@npm:6.4.5"
   dependencies:
     esbuild: "npm:^0.25.0"
     fdir: "npm:^6.4.4"
@@ -34326,7 +34326,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 47cdacbf7b370c7962326238bd0d206c9d56d72e1e7b14f9fb0edca369d3dfa8d0fd7f16eb3c0d448959eb7c6969ff33a126039be06f216b232c47e63c49ba9b
+  checksum: e9bb246caa72197d2cac0ad05cf2c7c2f71d0affa45ce981e555176b26028db5769b98fc919ca7ff368499ae95c534710e56c4e4adfd8d57ea4b41c396ccd7b0
   languageName: node
   linkType: hard
 
