@@ -2,6 +2,7 @@ import { createComponentImplementation } from '@a2ui/react';
 import { ComponentIdSchema } from '@a2ui/web_core/v1_0';
 import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Icon, close } from '@wordpress/icons';
 import { Dialog } from '@wordpress/ui';
 import clsx from 'clsx';
 import { z } from 'zod';
@@ -61,7 +62,16 @@ export const Modal = createComponentImplementation(
 						<Dialog.Title>
 							{ props.accessibility?.label || __( 'Details', 'default' ) }
 						</Dialog.Title>
-						<Dialog.CloseIcon />
+						{ /* CloseIcon's tooltip needs private APIs that older WordPress hosts lack. */ }
+						<Dialog.Action
+							className="ai-ui-renderer__dialog-close"
+							variant="minimal"
+							tone="neutral"
+							size="compact"
+							aria-label={ __( 'Close', 'default' ) }
+						>
+							<Icon icon={ close } />
+						</Dialog.Action>
 					</Dialog.Header>
 					<Dialog.Content>
 						<div className="ai-ui-renderer">{ buildChild( props.content ) }</div>

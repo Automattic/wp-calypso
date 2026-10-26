@@ -170,8 +170,14 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 .ai-ui-renderer__modal {
 	position: relative;
 
-	[data-wp-ui-dialog-close-icon] svg {
-		fill: currentColor;
+	.ai-ui-renderer__dialog-close {
+		aspect-ratio: 1;
+		min-width: 0;
+		padding-inline: 0;
+
+		svg {
+			fill: currentColor;
+		}
 	}
 }
 
