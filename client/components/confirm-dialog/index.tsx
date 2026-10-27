@@ -21,28 +21,11 @@ export const DialogContent = ( { children, className }: DialogContentProps ) => 
 	return <div className={ clsx( 'confirm-dialog__content', className ) }>{ children }</div>;
 };
 
-interface ConfirmDialogProps {
-	onRequestClose: ComponentProps< typeof Modal >[ 'onRequestClose' ];
-	children: React.ReactNode;
-	title?: string;
-	style?: React.CSSProperties;
-	className?: string;
-}
+type ConfirmDialogProps = ComponentProps< typeof Modal >;
 
-export const ConfirmDialog = ( {
-	onRequestClose,
-	children,
-	title,
-	style,
-	className,
-}: ConfirmDialogProps ) => {
+export const ConfirmDialog = ( { children, className, ...modalProps }: ConfirmDialogProps ) => {
 	return (
-		<Modal
-			className={ clsx( 'confirm-dialog', className ) }
-			onRequestClose={ onRequestClose }
-			title={ title }
-			style={ style }
-		>
+		<Modal className={ clsx( 'confirm-dialog', className ) } { ...modalProps }>
 			{ children }
 		</Modal>
 	);

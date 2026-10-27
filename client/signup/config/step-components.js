@@ -25,7 +25,6 @@ const stepNameToModuleName = {
 	'oauth2-user': 'user',
 	'oauth2-name': 'user',
 	'user-social': 'user',
-	'plans-ecommerce-fulfilled': 'plans',
 	'plans-theme-preselected': 'plans-theme-preselected',
 	'new-or-existing-site': 'new-or-existing-site',
 	'difm-site-picker': 'difm-site-picker',

@@ -1,5 +1,6 @@
 import { withDisabledActions } from '../utils/message-actions';
-import { isInteractiveUiActionMessage, readInteractiveUiPart } from './messages';
+import { InteractiveUiActionNote } from './action-note';
+import { readInteractiveUiActionMessage, readInteractiveUiPart } from './messages';
 import { InteractiveUiSurfaces } from './surfaces';
 import type { InteractiveUiPresentation } from './use-interactive-ui';
 import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
@@ -53,9 +54,10 @@ function isInteractiveUiSurfacesPart( content: MessageContentPart ) {
 
 /**
  * Hands each message's interactive UI part the current presentation, and drops the part while
- * its message has no surface to show yet, unless the renderer failed to load. Stale surfaces
- * disable their own controls, and a message whose surfaces are all stale disables its actions
- * too. Unlike a stale `show-component` message, it isn't greyed out.
+ * its message has no surface to show yet, unless the renderer failed to load or the runtime
+ * rejected some of the message's A2UI messages, so the part shows a retry or a notice. Stale
+ * surfaces disable their own inputs and actions, and a message whose surfaces are all stale
+ * disables its actions too. Unlike a stale `show-component` message, it isn't greyed out.
  */
 export function attachInteractiveUiPresentation(
 	messages: AgentsManagerUIMessage[],
@@ -79,7 +81,11 @@ export function attachInteractiveUiPresentation(
 					return [ content ];
 				}
 
-				if ( ! hasSurfaces && ! presentation.hasLoadError ) {
+				if (
+					! hasSurfaces &&
+					! presentation.hasLoadError &&
+					! presentation.rejectedMessageIds.has( message.id )
+				) {
 					return [];
 				}
 
@@ -103,24 +109,61 @@ function isShownByAgenttic( message: AgentsManagerUIMessage ) {
 	);
 }
 
+// A display-only message on the user's side, so the action's own stays hidden context for
+// staleness, checkpoints and the latest user message.
+function createActionNote( message: UIMessage, userMessage: string ): AgentsManagerUIMessage {
+	return {
+		id: `${ message.id }-note`,
+		role: 'user',
+		content: [
+			{
+				type: 'component',
+				component: InteractiveUiActionNote as ComponentType,
+				componentProps: { userMessage },
+			},
+		],
+		timestamp: message.timestamp,
+		archived: false,
+		showIcon: false,
+	};
+}
+
 /**
- * Starts a turn at each reply to an interactive UI action. The action's message is hidden, so
- * Agenttic would otherwise treat the reply as part of the turn before it.
+ * Shows the interactive UI actions, whose messages are hidden: an action's `userMessage` as a note
+ * on the user's side before its reply. Without a note, the reply starts the turn, since Agenttic
+ * would otherwise treat it as part of the turn before it.
  */
-export function markInteractiveUiActionReplies(
+export function presentInteractiveUiActions(
 	displayedMessages: AgentsManagerUIMessage[],
 	messages: UIMessage[]
 ): AgentsManagerUIMessage[] {
+	const displayedMessageIds = new Set( displayedMessages.map( ( message ) => message.id ) );
 	const shownMessageIds = new Set(
 		displayedMessages.filter( isShownByAgenttic ).map( ( message ) => message.id )
 	);
+
+	const notesByNextMessageId = new Map< string, AgentsManagerUIMessage[] >();
 	const replyIds = new Set< string >();
+	let pendingNotes: AgentsManagerUIMessage[] = [];
 	let isAwaitingReply = false;
 
 	for ( const message of messages ) {
-		if ( isInteractiveUiActionMessage( message ) ) {
+		const action = readInteractiveUiActionMessage( message );
+
+		if ( action ) {
+			if ( action.userMessage ) {
+				pendingNotes.push( createActionNote( message, action.userMessage ) );
+			}
+
 			isAwaitingReply = true;
 			continue;
+		}
+
+		// Notes go before the reply even while it's hidden, so Agenttic sees that reply last.
+		if ( pendingNotes.length > 0 && displayedMessageIds.has( message.id ) ) {
+			notesByNextMessageId.set( message.id, pendingNotes );
+			pendingNotes = [];
+			isAwaitingReply = false;
 		}
 
 		if ( ! shownMessageIds.has( message.id ) ) {
@@ -134,11 +177,16 @@ export function markInteractiveUiActionReplies(
 		isAwaitingReply = false;
 	}
 
-	if ( replyIds.size === 0 ) {
+	if ( notesByNextMessageId.size === 0 && replyIds.size === 0 && pendingNotes.length === 0 ) {
 		return displayedMessages;
 	}
 
-	return displayedMessages.map( ( message ) =>
-		replyIds.has( message.id ) ? { ...message, startsTurn: true } : message
-	);
+	// A note shows last only while no message after its action exists yet.
+	return [
+		...displayedMessages.flatMap( ( message ) => [
+			...( notesByNextMessageId.get( message.id ) ?? [] ),
+			replyIds.has( message.id ) ? { ...message, startsTurn: true } : message,
+		] ),
+		...pendingNotes,
+	];
 }

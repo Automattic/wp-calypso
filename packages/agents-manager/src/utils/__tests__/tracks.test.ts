@@ -267,6 +267,9 @@ describe( 'tracks wrappers', () => {
 			'chat_response_completed',
 			'chat_response_stopped',
 			'chat_error',
+			'interactive_ui_rendered',
+			'interactive_ui_action',
+			'interactive_ui_error',
 		] )( 'puts the turn on %s', ( suffix ) => {
 			recordAgentsManagerTracksEvent( `calypso_agents_manager_${ suffix }` );
 			expect( lastEventProps().turn_id ).toBe( 'turn-1' );

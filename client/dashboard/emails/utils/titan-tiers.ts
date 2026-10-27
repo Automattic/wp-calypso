@@ -32,9 +32,9 @@ export function isTitanPlanTier( value: unknown ): value is TitanPlanTier {
 export function getTitanTierName( tier: TitanPlanTier ): string {
 	switch ( tier ) {
 		case TitanPlanTier.Pro:
-			return __( 'Pro' );
+			return __( 'Essential' );
 		case TitanPlanTier.Premium:
-			return __( 'Premium' );
+			return __( 'Plus' );
 		case TitanPlanTier.Ultra:
 			return __( 'Ultra' );
 	}

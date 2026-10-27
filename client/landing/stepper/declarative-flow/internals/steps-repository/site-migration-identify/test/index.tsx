@@ -224,7 +224,7 @@ describe( 'SiteMigrationIdentify', () => {
 	} );
 
 	it.each( [ false, true ] )(
-		'shows the source placeholder and hosting benefits (reprint: %s)',
+		'shows the source placeholder without a hosting pitch (reprint: %s)',
 		( enabled ) => {
 			jest
 				.spyOn( config, 'isEnabled' )
@@ -235,18 +235,8 @@ describe( 'SiteMigrationIdentify', () => {
 			render( { navigation: { submit } } );
 
 			expect( getInput() ).toHaveAttribute( 'placeholder', 'your-existing-site.com' );
-			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
-			expect(
-				screen.getByText(
-					/Blazing fast speeds with lightning-fast load times for a seamless experience/
-				)
-			).toBeVisible();
-			expect(
-				screen.getByText( /Unmatched reliability with 99.999% uptime and unmetered traffic./ )
-			).toBeVisible();
-			expect(
-				screen.getByText( /Round-the-clock security monitoring and DDoS protection./ )
-			).toBeVisible();
+			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( /Blazing fast speeds/ ) ).not.toBeInTheDocument();
 		}
 	);
 
@@ -291,7 +281,7 @@ describe( 'SiteMigrationIdentify', () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeVisible();
-			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
+			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
 			expect(
 				screen.queryByRole( 'button', { name: /Only have a backup file/ } )
 			).not.toBeInTheDocument();
@@ -341,30 +331,29 @@ describe( 'SiteMigrationIdentify', () => {
 					completeHost = () => callback( null, { hosting_provider: { slug: 'bluehost' } } );
 				} );
 			await user.clear( getInput() );
-			await checkSite( 'example.com' );
+			await user.type( getInput(), 'example.com{Enter}' );
 
-			expect( screen.getByRole( 'heading', { name: 'Checking your site' } ) ).toBeVisible();
-			expect(
-				screen.getByRole( 'progressbar', { name: 'Checking your site' } )
-			).toBeInTheDocument();
-			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'View site ↗' } ) ).toHaveAttribute(
-				'href',
-				'https://example.com'
-			);
-			expect( getInput() ).not.toBeVisible();
+			expect( screen.getByRole( 'heading', { name: "Let's find your site" } ) ).toBeVisible();
+			expect( screen.queryByRole( 'progressbar' ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Checking your site' );
+			expect( getInput() ).toBeVisible();
+			expect( getInput() ).toHaveFocus();
+			expect( getInput() ).toHaveAttribute( 'readonly' );
+			const continueButton = screen.getByRole( 'button', { name: 'Continue' } );
+			expect( continueButton ).toHaveClass( 'is-busy' );
+			expect( continueButton ).toHaveAttribute( 'aria-disabled', 'true' );
+			expect( continueButton ).toBeEnabled();
+			await user.type( getInput(), 'another-site.com{Enter}' );
+			expect( getInput() ).toHaveValue( 'example.com' );
+			await user.click( continueButton );
+			await user.click( screen.getByRole( 'button', { name: /pick your current platform/ } ) );
 			expect( submit ).not.toHaveBeenCalled();
 			await waitFor( () => expect( completePlatform ).toEqual( expect.any( Function ) ) );
 			await act( async () => completePlatform?.() );
-			await waitFor( () =>
-				expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toBeVisible()
-			);
-			expect(
-				screen.getByRole( 'progressbar', { name: 'Checking your site' } )
-			).toBeInTheDocument();
-			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
-			expect( submit ).not.toHaveBeenCalled();
 			await waitFor( () => expect( completeHost ).toEqual( expect.any( Function ) ) );
+			expect( continueButton ).toHaveClass( 'is-busy' );
+			expect( getInput() ).toHaveAttribute( 'readonly' );
+			expect( submit ).not.toHaveBeenCalled();
 			await act( async () => completeHost?.() );
 			await waitFor( () =>
 				expect( submit ).toHaveBeenCalledWith( {
@@ -374,6 +363,7 @@ describe( 'SiteMigrationIdentify', () => {
 					host: 'bluehost',
 				} )
 			);
+			expect( submit ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'checks a handed-over address right away', async () => {
@@ -385,7 +375,10 @@ describe( 'SiteMigrationIdentify', () => {
 				{ initialEntry: '/some-path?from=https://example.com&start=true&platform=wordpress' }
 			);
 
-			expect( screen.getByRole( 'heading', { name: 'Checking your site' } ) ).toBeVisible();
+			expect( getInput() ).toBeVisible();
+			expect( getInput() ).toHaveValue( 'https://example.com' );
+			expect( getInput() ).toHaveAttribute( 'readonly' );
+			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveClass( 'is-busy' );
 			await waitFor( () =>
 				expect( submit ).toHaveBeenCalledWith( {
 					action: 'continue',
@@ -438,7 +431,7 @@ describe( 'SiteMigrationIdentify', () => {
 				} );
 			}
 
-			expect( screen.getByRole( 'heading', { name: 'Checking your site' } ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveClass( 'is-busy' );
 			expect( submit ).not.toHaveBeenCalled();
 
 			await act( async () => jest.advanceTimersByTime( 100 ) );
@@ -470,6 +463,12 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( screen.getByRole( 'button', { name: /pick your current platform/ } ) ).toBeVisible();
 			expect( getInput() ).toBeVisible();
 			expect( getInput() ).toHaveValue( 'https://example.com' );
+			expect( getInput() ).not.toHaveAttribute( 'readonly' );
+			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveAttribute(
+				'aria-disabled',
+				'false'
+			);
+			expect( screen.getByRole( 'status' ) ).toBeEmptyDOMElement();
 			expect( submit ).not.toHaveBeenCalled();
 
 			mockAnalysis( API_RESPONSE_WORDPRESS_PLATFORM );
@@ -567,12 +566,13 @@ describe( 'SiteMigrationIdentify', () => {
 					completeRetry = () => callback( null, API_RESPONSE_WORDPRESS_PLATFORM );
 				} );
 			await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
-			await screen.findByRole( 'heading', { name: 'Checking your site' } );
+			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveClass( 'is-busy' );
 			await waitFor( () => expect( completeRetry ).toEqual( expect.any( Function ) ) );
 			await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
 			await act( async () => completeRetry?.() );
 			expect( getInput() ).toBeVisible();
 			expect( getInput() ).toHaveValue( 'https://example.com' );
+			expect( getInput() ).not.toHaveAttribute( 'readonly' );
 			expect( submit ).not.toHaveBeenCalled();
 		} );
 

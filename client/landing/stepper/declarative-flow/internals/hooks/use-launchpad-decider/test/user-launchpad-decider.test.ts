@@ -62,3 +62,14 @@ test( "doesn't append empty siteSlug to the post-flow url", () => {
 	} );
 	expect( emptySiteSlug ).toBe( '/setup/flow-name/launchpad?siteId=1234' );
 } );
+
+test( "doesn't send an empty siteId back to the launchpad", () => {
+	const exitFlow = jest.fn();
+	const navigate = jest.fn();
+
+	const { result } = renderHook( () => useLaunchpadDecider( { exitFlow, navigate } ) );
+
+	result.current.postFlowNavigator( { siteSlug: 'site.wordpress.com', siteId: null } );
+
+	expect( navigate ).toHaveBeenCalledWith( 'launchpad?siteSlug=site.wordpress.com' );
+} );

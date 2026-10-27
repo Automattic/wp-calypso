@@ -85,6 +85,7 @@ import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
 import { useIsPostPlanSelectionEmailVerification } from '../../internals/steps-repository/__user/use-email-verification-gate';
+import { TRACKS_FLUSH_DELAY } from '../../internals/steps-repository/playground/lib/constants';
 import {
 	getProcessingErrorReason,
 	ProcessingResult,
@@ -323,28 +324,29 @@ const onboarding: FlowV2< typeof initialize > = {
 	useTracksEventProps() {
 		const query = useQuery();
 		const preselectedPlan = getPreselectedPlan( query );
-		// Reported raw, as the legacy flows reported their declared query dependencies.
-		const couponParam = preselectedPlan ? query.get( 'coupon' ) : null;
+		// Reported raw, as the legacy flows reported their declared query dependencies. The
+		// coupon stands alone too: WordCamp coupon links name no plan.
+		const couponParam = query.get( 'coupon' );
 		const storageParam = preselectedPlan ? query.get( 'storage' ) : null;
 
 		// A new object each render would record a new signup start, so this has to be memoised.
-		return useMemo(
-			() => ( {
+		return useMemo( () => {
+			// The redirect collapses the legacy flows' `flow` values into `onboarding`. This is
+			// how that traffic stays separable.
+			const signupStartProperties = {
+				...( preselectedPlan ? { preselected_plan: preselectedPlan } : {} ),
+				...( couponParam ? { coupon: couponParam } : {} ),
+				...( storageParam ? { storage: storageParam } : {} ),
+			};
+
+			return {
 				isLoading: false,
-				// The redirect collapses the plan flows' `flow` values into `onboarding`. This
-				// is how that traffic stays separable.
-				eventsProperties: preselectedPlan
-					? {
-							[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
-								preselected_plan: preselectedPlan,
-								...( couponParam ? { coupon: couponParam } : {} ),
-								...( storageParam ? { storage: storageParam } : {} ),
-							},
-						}
-					: {},
-			} ),
-			[ preselectedPlan, couponParam, storageParam ]
-		);
+				eventsProperties:
+					preselectedPlan || couponParam
+						? { [ STEPPER_TRACKS_EVENT_SIGNUP_START ]: signupStartProperties }
+						: {},
+			};
+		}, [ preselectedPlan, couponParam, storageParam ] );
 	},
 	useStepsProps() {
 		// The site-selected signup flow records its own completion before checkout, so the
@@ -388,6 +390,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		// A site-selected purchase finishes in this flow, but lands and completes as that flow.
 		const postCheckoutFlowName = refParameter === SITE_SELECTED_REF ? SITE_SELECTED_REF : flowName;
 		const siteSlugParam = queryParams.get( 'siteSlug' );
+		const siteIdParam = queryParams.get( 'siteId' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
@@ -686,20 +689,23 @@ const onboarding: FlowV2< typeof initialize > = {
 					const prompt = providedDependencies?.prompt as string | undefined;
 					const graph = providedDependencies?.graph as BuildWowGraph | undefined;
 
+					const openLegacyBuilder = () =>
+						window.location.assign(
+							addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
+								siteSlug,
+								// Skip siteId when it's 0/falsy: useSiteData returns 0 before
+								// the site object hydrates, and "0" in the URL poisons the
+								// next page's site lookup.
+								...( siteId && siteId !== '0' ? { siteId } : {} ),
+								fromPostCheckoutSetupSite: '1',
+								...( refParameter ? { ref: refParameter } : {} ),
+								...( prompt ? { prompt } : {} ),
+							} )
+						);
+
 					switch ( setupChoice ) {
 						case 'build-with-ai':
-							window.location.assign(
-								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
-									siteSlug,
-									// Skip siteId when it's 0/falsy: useSiteData returns 0 before
-									// the site object hydrates, and "0" in the URL poisons the
-									// next page's site lookup.
-									...( siteId && siteId !== '0' ? { siteId } : {} ),
-									fromPostCheckoutSetupSite: '1',
-									...( refParameter ? { ref: refParameter } : {} ),
-									...( prompt ? { prompt } : {} ),
-								} )
-							);
+							openLegacyBuilder();
 							return;
 						case 'generate-theme': {
 							// Provision an Atomic (WP Cloud) site up front so the custom
@@ -720,8 +726,9 @@ const onboarding: FlowV2< typeof initialize > = {
 								} );
 							}
 
+							let buildWowBlogId: number | undefined;
 							try {
-								await requestBuildWowSite( siteIdentifier );
+								buildWowBlogId = ( await requestBuildWowSite( siteIdentifier ) )?.blog_id;
 								logBuildWowEvent( 'start_success', {
 									site_identifier: siteIdentifier,
 								} );
@@ -730,15 +737,32 @@ const onboarding: FlowV2< typeof initialize > = {
 									site_identifier: siteIdentifier,
 									error: error instanceof Error ? error.message : String( error ),
 								} );
+								// The server turns a store away when it will not build it, for example
+								// while its store builder is switched off; the store still gets the
+								// legacy builder.
+								if (
+									providedDependencies?.buildsStore &&
+									( error as { code?: string } )?.code === 'site_not_eligible'
+								) {
+									logBuildWowEvent( 'start_store_legacy_fallback', {
+										site_identifier: siteIdentifier,
+									} );
+									openLegacyBuilder();
+									return;
+								}
 								return navigate( 'error' as typeof currentStepSlug, {
 									errorReason: 'build_wow_start_failed',
 								} );
 							}
 
+							// The chooser can submit before it has loaded the site, without its ID;
+							// the build-wow start answers with it.
+							const specSiteId = siteId && String( siteId ) !== '0' ? siteId : buildWowBlogId;
+
 							window.location.assign(
 								getBuildWowSiteSpecUrl( {
 									siteSlug,
-									siteId,
+									siteId: specSiteId,
 									ref: refParameter,
 									graph,
 								} )
@@ -775,6 +799,7 @@ const onboarding: FlowV2< typeof initialize > = {
 						window.location.replace(
 							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
 								siteSlug: siteSlugParam,
+								...( siteIdParam ? { siteId: siteIdParam } : {} ),
 								...( refParameter ? { ref: refParameter } : {} ),
 								...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
 							} )
@@ -820,6 +845,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
 											{
 												siteSlug,
+												siteId: providedDependencies.siteId,
 												...( refParameter ? { ref: refParameter } : {} ),
 											}
 										);
@@ -835,6 +861,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									{
 										next: 'post-checkout-onboarding',
 										siteSlug,
+										siteId: providedDependencies.siteId,
 										...( refParameter ? { ref: refParameter } : {} ),
 										...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
 									}
@@ -842,9 +869,16 @@ const onboarding: FlowV2< typeof initialize > = {
 							}
 
 							// Leaving checkout must not turn a reblog into plain onboarding.
-							const checkoutBackQueryArgs = blogPostToReblog
-								? { blog_post: blogPostToReblog, ...( refParameter ? { ref: refParameter } : {} ) }
-								: {};
+							// The plans grid prices a coupon only from the URL.
+							const checkoutBackQueryArgs = {
+								...( blogPostToReblog
+									? {
+											blog_post: blogPostToReblog,
+											...( refParameter ? { ref: refParameter } : {} ),
+										}
+									: {} ),
+								...( coupon ? { coupon } : {} ),
+							};
 
 							const checkoutStepperPosition = getOnboardingStepperPosition(
 								'checkout',
@@ -932,12 +966,14 @@ const onboarding: FlowV2< typeof initialize > = {
 					const locationParams = new URLSearchParams( window.location.search );
 					if ( locationParams.get( 'intent' ) === 'woocommerce' ) {
 						const playgroundId = locationParams.get( 'playground' );
-						return window.location.assign(
-							addQueryArgs( '/setup/entrepreneur', {
-								from: 'playground-publish',
-								...( playgroundId ? { playground: playgroundId } : {} ),
-							} )
-						);
+						const destination = addQueryArgs( '/setup/entrepreneur', {
+							from: 'playground-publish',
+							...( playgroundId ? { playground: playgroundId } : {} ),
+						} );
+						// This leaves Stepper with a full page load, so give Tracks time to send the
+						// step's events and Stepper's submit event first.
+						setTimeout( () => window.location.assign( destination ), TRACKS_FLUSH_DELAY );
+						return;
 					}
 					const backTo = window.location.pathname + window.location.search;
 					return navigate(

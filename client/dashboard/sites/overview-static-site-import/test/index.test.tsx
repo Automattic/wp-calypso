@@ -19,7 +19,6 @@ const search = {
 	importSessionId: 'abc123',
 	from: 'busybearscleaning.com',
 	platform: 'wix',
-	domainChoice: 'keep',
 };
 
 const session = ( state: string, extra = {} ) => ( {
@@ -69,7 +68,7 @@ describe( 'StaticSiteImportCard', () => {
 		await waitFor( () => expect( approve.isDone() ).toBe( true ) );
 	} );
 
-	it( 'asks for feedback and offers the kept domain once the site is ready', async () => {
+	it( 'asks for feedback and offers to connect the source domain once the site is ready', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
@@ -89,6 +88,19 @@ describe( 'StaticSiteImportCard', () => {
 			{ site_id: 42, source_platform: 'wix', rating: 'good' }
 		);
 		expect( screen.getByText( 'Thanks for the feedback!' ) ).toBeVisible();
+	} );
+
+	it( 'omits the domain connection link when the source hostname is missing', () => {
+		render(
+			<StaticSiteImportNotice
+				site={ site }
+				siteImport={ { status: 'finished', needsRestart: false } }
+				search={ { ...search, from: undefined } }
+			/>
+		);
+
+		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: /^Connect / } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'offers to read the site again when the preview has expired', async () => {

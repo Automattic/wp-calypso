@@ -21,8 +21,6 @@ const STYLE_VARIATIONS = { type: 'array', items: { type: 'object', additionalPro
 const AGENTS_MANAGER_CATALOG: InteractiveUiCatalogDefinition = {
 	catalog: {
 		catalogId: AGENTS_MANAGER_CATALOG_ID,
-		instructions:
-			'The style pickers come from the color, font and button abilities, which fill in their variations; never compose them yourself.',
 		components: {
 			AgentsManagerColorPicker: {
 				type: 'object',
@@ -43,6 +41,8 @@ const AGENTS_MANAGER_CATALOG: InteractiveUiCatalogDefinition = {
 			},
 		},
 	},
+	// Its pickers need style variations that only the color, font and button abilities fill in.
+	agentComposable: false,
 	components: {
 		AgentsManagerColorPicker: ColorPicker,
 		AgentsManagerFontPicker: FontPicker,
@@ -81,9 +81,7 @@ export function filterInteractiveUiCatalogs( catalogs: InteractiveUiCatalogDefin
 export function getInteractiveUiCapabilities(
 	providerCatalogs: InteractiveUiCatalogDefinition[] = []
 ) {
-	return getInteractiveUiRendererCapabilities(
-		[ AGENTS_MANAGER_CATALOG, ...providerCatalogs ].map( ( { catalog } ) => catalog )
-	);
+	return getInteractiveUiRendererCapabilities( [ AGENTS_MANAGER_CATALOG, ...providerCatalogs ] );
 }
 
 /**

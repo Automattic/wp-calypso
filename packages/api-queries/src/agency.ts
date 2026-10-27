@@ -1,9 +1,11 @@
 import {
 	fetchAgency,
 	fetchAgencyLeadMatching,
-	fetchAgencyResources,
 	fetchAgencyProgramStats,
+	fetchAgencyEnablementResources,
+	recordAgencyResourceEvent,
 	fetchAgencyScheduleCallLink,
+	fetchAgencyApwdDiscountCode,
 	fetchAgencyMcpSettings,
 	updateAgencyLeadMatching,
 	updateAgencyMcpSettings,
@@ -12,7 +14,6 @@ import {
 	uploadAgencyPartnerDirectoryLogo,
 	fetchTipaltiIFrameUrl,
 	fetchTipaltiPayee,
-	recordAgencyResourceEvent,
 	submitAgencyPressablePremiumPlanReferral,
 	submitAgencyVipPartnerOpportunity,
 } from '@automattic/api-core';
@@ -24,6 +25,7 @@ import type {
 	AgencyLeadMatchingProfile,
 	AgencyPartnerDirectoryApplicationUpdate,
 	AgencyProfileUpdate,
+	AgencyResourceEvent,
 	AgencyVipPartnerOpportunity,
 	McpSettings,
 	McpSettingsUpdate,
@@ -106,17 +108,47 @@ export const agencyScheduleCallLinkQuery = ( agencyId: number ) =>
 		retry: false,
 	} );
 
-export const agencyResourcesQuery = () =>
+/**
+ * The agency's Advanced Professional WordPress Developer discount code, or null
+ * when it has no active coupon.
+ */
+export const agencyApwdDiscountCodeQuery = ( agencyId: number ) =>
 	queryOptions( {
-		queryKey: [ 'agency', 'resources' ] as const,
-		queryFn: fetchAgencyResources,
-		staleTime: 5 * 60 * 1000,
+		queryKey: [ 'agency', agencyId, 'apwd-discount-code' ] as const,
+		queryFn: () => fetchAgencyApwdDiscountCode( agencyId ),
+		// Matches the server's HubSpot cache.
+		staleTime: 15 * 60 * 1000,
+		retry: false,
+		// The code works as a coupon, so it stays out of localStorage.
+		meta: { persist: false },
 	} );
 
 export const agencyProgramStatsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'agency', 'program-stats' ] as const,
 		queryFn: fetchAgencyProgramStats,
+	} );
+
+/**
+ * Enablement resources with the v2 taxonomy.
+ */
+export const agencyEnablementResourcesQuery = () =>
+	queryOptions( {
+		queryKey: [ 'agency', 'resources', 'v2' ] as const,
+		queryFn: fetchAgencyEnablementResources,
+		staleTime: 5 * 60 * 1000,
+	} );
+
+/**
+ * Records engagement with a resource so it can be correlated to the agency.
+ *
+ * There is nothing to invalidate: the endpoint writes to the engagement log,
+ * not to the resource list.
+ */
+export const agencyResourceEventMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-resource-record' },
+		mutationFn: ( event: AgencyResourceEvent ) => recordAgencyResourceEvent( agencyId, event ),
 	} );
 
 export const tipaltiIFrameUrlQuery = ( agencyId: number ) =>
@@ -189,13 +221,6 @@ export const agencyPressablePremiumPlanReferralMutation = ( agencyId: number ) =
 		meta: { statId: 'agcy-press-prem-submit' },
 		mutationFn: ( referral: AgencyHostingReferral ) =>
 			submitAgencyPressablePremiumPlanReferral( agencyId, referral ),
-	} );
-
-export const agencyResourceEventMutation = ( agencyId: number ) =>
-	mutationOptions( {
-		meta: { statId: 'agcy-resource-record' },
-		mutationFn: ( resource: { id: number; name: string } ) =>
-			recordAgencyResourceEvent( agencyId, resource.id, resource.name ),
 	} );
 
 export const agencyLeadMatchingQuery = ( agencyId: number ) =>

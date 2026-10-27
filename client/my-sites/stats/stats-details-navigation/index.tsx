@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { TabPanel } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -80,12 +79,5 @@ function StatsDetailsNavigationImproved( {
 function StatsDetailsNavigation( props: StatsDetailsNavigationProps ) {
 	return <StatsDetailsNavigationImproved { ...props } />;
 }
-
-StatsDetailsNavigation.propTypes = {
-	postId: PropTypes.number.isRequired,
-	period: PropTypes.string,
-	statType: PropTypes.string,
-	givenSiteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
-};
 
 export default StatsDetailsNavigation;

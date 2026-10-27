@@ -29,6 +29,10 @@ export const Text = createComponentImplementation(
 			};
 		}, [ text, renderMarkdown ] );
 
-		return html === undefined ? <span>{ text }</span> : <RawHTML>{ html }</RawHTML>;
+		return html === undefined ? (
+			<span className="ai-ui-renderer__text">{ text }</span>
+		) : (
+			<RawHTML className="ai-ui-renderer__text">{ html }</RawHTML>
+		);
 	}
 );
