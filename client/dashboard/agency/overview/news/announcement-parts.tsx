@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
@@ -135,11 +135,20 @@ export function AnnouncementEyebrow( { children }: { children: string } ) {
 	);
 }
 
+/** Descriptions keep their line breaks, so a blank line starts a new paragraph. */
 export function AnnouncementDescription( { announcement }: { announcement: Announcement } ) {
+	const paragraphs = announcement.description
+		.split( /\n\s*\n/ )
+		.map( ( paragraph ) => paragraph.replace( /\s+/g, ' ' ).trim() )
+		.filter( Boolean );
 	return (
-		<Text as="p" size={ 13 } lineHeight="20px" className="a4a-news-pretty">
-			{ bindLastWords( announcement.description ) }
-		</Text>
+		<VStack spacing={ 2 }>
+			{ paragraphs.map( ( paragraph, index ) => (
+				<Text key={ index } as="p" size={ 13 } lineHeight="20px" className="a4a-news-pretty">
+					{ bindLastWords( paragraph ) }
+				</Text>
+			) ) }
+		</VStack>
 	);
 }
 
