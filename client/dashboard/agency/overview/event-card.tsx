@@ -5,6 +5,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { createInterpolateElement } from '@wordpress/element';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
@@ -62,7 +63,19 @@ function SingleEventCard( {
 					<VStack spacing={ 4 }>
 						{ description.map( ( paragraph ) => (
 							<Text key={ paragraph } size={ 13 } lineHeight="20px">
-								{ paragraph }
+								{ createInterpolateElement( paragraph, {
+									strong: <strong />,
+									// Calypso's global `code` rule sets its own size and weight.
+									code: (
+										<code
+											style={ {
+												fontSize: 'inherit',
+												fontWeight: 'inherit',
+												lineHeight: 'inherit',
+											} }
+										/>
+									),
+								} ) }
 							</Text>
 						) ) }
 					</VStack>
