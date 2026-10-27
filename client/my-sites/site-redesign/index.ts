@@ -6,13 +6,14 @@ import {
 	redirectLoggedOut,
 	render,
 } from 'calypso/controller';
-import { navigation, siteSelection } from 'calypso/my-sites/controller';
+import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
 import { renderSiteRedesign } from './controller';
 
 export default function () {
 	if ( ! isEnabled( 'themes/site-redesign' ) ) {
 		return;
 	}
+	page( '/site-redesign', redirectLoggedOut, siteSelection, sites, makeLayout, render );
 	page(
 		'/site-redesign/:site',
 		redirectLoggedOut,

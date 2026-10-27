@@ -5,7 +5,14 @@ import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { applyRedesign, fetchPreview, fetchRedesign, type Candidate, type Redesign } from '../api';
+import {
+	activateRedesign,
+	applyRedesign,
+	fetchPreview,
+	fetchRedesign,
+	type Candidate,
+	type Redesign,
+} from '../api';
 import SiteRedesign from '../main';
 
 jest.mock( '@automattic/calypso-router', () => {
@@ -88,7 +95,7 @@ describe( 'SiteRedesign', () => {
 			expect( frame ).toHaveAttribute( 'srcdoc', '<p>preview</p>' );
 		} );
 		expect( fetchPreview ).not.toHaveBeenCalledWith( 1, REDESIGN_ID, candidate( 5, 1 ).id );
-		expect( screen.getAllByRole( 'button', { name: 'Choose this design' } ) ).toHaveLength( 4 );
+		expect( screen.getAllByRole( 'button', { name: /Choose design/ } ) ).toHaveLength( 4 );
 	} );
 
 	it( 'keeps unfinished candidates from being chosen', async () => {
@@ -112,7 +119,7 @@ describe( 'SiteRedesign', () => {
 
 		expect( await screen.findByText( 'This one broke.' ) ).toBeVisible();
 		screen
-			.getAllByRole( 'button', { name: 'Choose this design' } )
+			.getAllByRole( 'button', { name: /Choose design/ } )
 			.forEach( ( button ) => expect( button ).toBeDisabled() );
 	} );
 
@@ -125,7 +132,7 @@ describe( 'SiteRedesign', () => {
 		} );
 		renderPage();
 
-		const [ , second ] = await screen.findAllByRole( 'button', { name: 'Choose this design' } );
+		const [ , second ] = await screen.findAllByRole( 'button', { name: /Choose design/ } );
 		await userEvent.click( second );
 
 		expect( applyRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID, candidate( 2 ).id );
@@ -147,7 +154,7 @@ describe( 'SiteRedesign', () => {
 		} );
 		renderPage();
 
-		const [ first ] = await screen.findAllByRole( 'button', { name: 'Choose this design' } );
+		const [ first ] = await screen.findAllByRole( 'button', { name: /Choose design/ } );
 		await userEvent.click( first );
 
 		expect(
@@ -216,8 +223,36 @@ describe( 'SiteRedesign', () => {
 		renderPage( true );
 
 		expect( await screen.findByText( 'Finishing your purchase…' ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Choose this design' } ) ).toBeNull();
+		expect( screen.queryByRole( 'button', { name: /Choose design/ } ) ).toBeNull();
 		expect( applyRedesign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'polls when the purchase listener started the apply first', async () => {
+		const pending = candidate( 3 ).id;
+		jest
+			.mocked( fetchRedesign )
+			.mockResolvedValueOnce(
+				session( {
+					pending_apply: pending,
+					eligibility: {
+						can_preview: true,
+						can_apply: true,
+						reason: null,
+						required_plan: 'personal',
+					},
+				} )
+			)
+			.mockResolvedValue(
+				session( { status: 'applying', apply: { status: 'delivering', error: null } } )
+			);
+		jest.mocked( applyRedesign ).mockRejectedValue( {
+			code: 'site_redesign_busy',
+			message: 'This redesign is busy.',
+		} );
+		renderPage( true );
+
+		expect( await screen.findByText( 'Installing your new design…' ) ).toBeVisible();
+		expect( screen.queryByText( 'This redesign is busy.' ) ).toBeNull();
 	} );
 
 	it( 'offers the Live Preview from the API once the theme is installed', async () => {
@@ -238,5 +273,63 @@ describe( 'SiteRedesign', () => {
 		);
 		expect( screen.getByRole( 'button', { name: 'Use this design' } ) ).toBeEnabled();
 		expect( applyRedesign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'activates the installed design from "Use this design"', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue(
+			session( {
+				status: 'installed',
+				apply: { status: 'installed', error: null },
+				applied: {
+					mode: 'installed',
+					preview_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
+					can_rollback: true,
+				},
+			} )
+		);
+		jest.mocked( activateRedesign ).mockResolvedValue(
+			session( {
+				status: 'applied',
+				apply: { status: 'succeeded', error: null },
+				applied: {
+					mode: 'activated',
+					preview_url: 'https://example.wordpress.com/',
+					can_rollback: true,
+				},
+			} )
+		);
+		renderPage();
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Use this design' } ) );
+
+		expect( activateRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID );
+		expect( await screen.findByRole( 'link', { name: 'View site' } ) ).toHaveAttribute(
+			'href',
+			'https://example.wordpress.com/'
+		);
+	} );
+
+	it( 'shows the rollback message when the switch failed', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue(
+			session( {
+				status: 'installed',
+				apply: {
+					status: 'installed',
+					error: { code: 'site_redesign_theme_does_not_load', message: 'The site did not load.' },
+				},
+				applied: {
+					mode: 'installed',
+					preview_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
+					can_rollback: true,
+				},
+			} )
+		);
+		renderPage();
+
+		expect(
+			await screen.findByText( /kept its current one\. The site did not load\./, {
+				selector: '.components-notice__content',
+			} )
+		).toBeVisible();
 	} );
 } );

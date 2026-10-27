@@ -18,6 +18,7 @@ jest.mock( 'calypso/controller', () => ( {
 } ) );
 jest.mock( 'calypso/my-sites/controller', () => ( {
 	navigation: jest.fn(),
+	sites: jest.fn(),
 	siteSelection: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/ui/selectors', () => ( {
@@ -36,8 +37,8 @@ describe( 'site redesign route', () => {
 		jest.mocked( isEnabled ).mockReturnValue( true );
 		registerSiteRedesign();
 
-		const [ path, ...handlers ] = jest.mocked( page ).mock.calls[ 0 ] as unknown[];
-		expect( path ).toBe( '/site-redesign/:site' );
+		const calls = jest.mocked( page ).mock.calls as unknown[][];
+		const [ , ...handlers ] = calls.find( ( [ path ] ) => path === '/site-redesign/:site' ) ?? [];
 		expect( redirectIfCurrentUserCannot ).toHaveBeenCalledWith( 'manage_options' );
 		expect( redirectIfCurrentUserCannot ).toHaveBeenCalledWith( 'edit_theme_options' );
 		const guards = [

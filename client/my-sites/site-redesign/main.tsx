@@ -153,6 +153,11 @@ function CandidateCard( {
 				variant="primary"
 				disabled={ ! canChoose || candidate.status !== 'succeeded' }
 				onClick={ onChoose }
+				aria-label={ sprintf(
+					/* translators: %d is the design number, 1 to 4. */
+					__( 'Choose design %d' ),
+					index + 1
+				) }
 			>
 				{ __( 'Choose this design' ) }
 			</Button>
@@ -285,11 +290,12 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 				</VStack>
 			);
 		}
-		if ( redesignQuery.isError ) {
-			return <Text>{ messageOf( redesignQuery.error ) }</Text>;
-		}
 		if ( ! redesign ) {
-			return <Spinner />;
+			return redesignQuery.isError ? (
+				<Text>{ messageOf( redesignQuery.error ) }</Text>
+			) : (
+				<Spinner />
+			);
 		}
 
 		if ( isWaitingForPurchase( redesign, resume ) ) {
