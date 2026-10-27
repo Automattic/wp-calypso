@@ -44,6 +44,7 @@ const candidate = ( n: number, batch = 2 ): Candidate => ( {
 	progress: { step: 'dsl-export', completed: 9, total: 9 },
 	error: null,
 	routes: [ { path: '/', title: 'Home', type: 'page', id: 1, complete: true } ],
+	route_count: 1,
 } );
 
 const session = ( overrides: Partial< Redesign > = {} ): Redesign => ( {
@@ -76,11 +77,14 @@ const renderPage = ( resume = false ) =>
 
 describe( 'SiteRedesign', () => {
 	beforeEach( () => {
-		jest
-			.mocked( fetchPreview )
-			.mockImplementation( ( _site, _id, generationId ) =>
-				Promise.resolve( { generation_id: generationId, path: '/', html: '<p>preview</p>' } )
-			);
+		jest.mocked( fetchPreview ).mockImplementation( ( _site, _id, generationId ) =>
+			Promise.resolve( {
+				generation_id: generationId,
+				path: '/',
+				html: '<p>preview</p>',
+				routes: [],
+			} )
+		);
 	} );
 	afterEach( () => jest.clearAllMocks() );
 

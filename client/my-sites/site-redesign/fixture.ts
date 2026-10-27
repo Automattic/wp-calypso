@@ -12,6 +12,7 @@ const STORAGE_KEY = 'site-redesign-fixture';
 const CANDIDATE_MS = [ 3000, 5000, 7000, 9000 ];
 const APPLY_STEPS = [ 'queued', 'delivering', 'installed' ];
 const STEP_MS = 2500;
+const HOME_ROUTE = { path: '/', title: 'Home', type: 'page', id: 1, complete: true };
 const PALETTES = [
 	[ '#1d3557', '#f1faee', 'Georgia, serif' ],
 	[ '#2a9d8f', '#fefae0', 'Helvetica, sans-serif' ],
@@ -69,7 +70,8 @@ function advance( stored: StoredSession, now: number ): Redesign {
 					...candidate,
 					status: 'succeeded',
 					progress: { step: 'dsl-export', completed: 9, total: 9 },
-					routes: [ { path: '/', title: 'Home', type: 'page', id: 1, complete: true } ],
+					routes: [ HOME_ROUTE ],
+					route_count: 1,
 				};
 			}
 			const completed = Math.floor( ( elapsed / total ) * 9 );
@@ -191,11 +193,19 @@ export function fixtureRequest< T >(
 			generation_id: query?.generation_id,
 			path: '/',
 			html: previewHtml( index ),
+			routes: [ HOME_ROUTE ],
 		} as T );
 	}
 	if ( method === 'POST' && action === 'generate' ) {
 		if ( [ 'generating', 'applying' ].includes( redesign.status ) ) {
 			return fail( 409, 'site_redesign_busy', 'A design is already being made.' );
+		}
+		if ( redesign.status === 'installed' ) {
+			return fail(
+				409,
+				'site_redesign_installed',
+				'A design is installed on this site. Use it, undo it or start over.'
+			);
 		}
 		const batch = Math.max( 0, ...redesign.candidates.map( ( c ) => c.batch ) ) + 1;
 		redesign.status = 'generating';
@@ -206,6 +216,7 @@ export function fixtureRequest< T >(
 			progress: { step: 'queued', completed: 0, total: 9 },
 			error: null,
 			routes: null,
+			route_count: null,
 		} ) );
 		return respond( { ...stored, redesign, generatedAt: now } );
 	}

@@ -17,7 +17,9 @@ export type Candidate = {
 	status: 'queued' | 'running' | 'succeeded' | 'failed';
 	progress: { step: string; completed: number; total: number } | null;
 	error: RedesignError | null;
+	/** Only the home page; `GET /preview` lists every page. */
 	routes: PreviewRoute[] | null;
+	route_count: number | null;
 };
 
 export type Eligibility = {
@@ -62,6 +64,7 @@ export type RedesignPreview = {
 	generation_id: string;
 	path: string;
 	html: string;
+	routes: PreviewRoute[];
 };
 
 export type ApiRequest = {
