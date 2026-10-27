@@ -8,6 +8,7 @@ import { SectionImport } from '../section-import';
 const renderSectionImport = ( siteImports ) => {
 	const props = {
 		canImport: false,
+		cancelImport: jest.fn(),
 		fetchImporterState: jest.fn(),
 		recordTracksEvent: jest.fn(),
 		siteId: 1,
@@ -24,6 +25,7 @@ const renderSectionImport = ( siteImports ) => {
 };
 
 const uploadFailure = ( errorData ) => ( {
+	importerId: 'wordpress-1',
 	type: 'importer-type-wordpress',
 	importerState: appStates.UPLOAD_FAILURE,
 	errorData,
@@ -33,6 +35,7 @@ describe( 'SectionImport', () => {
 	describe( 'importer state events', () => {
 		test( 'does not record the same state again on repeated updates', () => {
 			const importFailure = {
+				importerId: 'wordpress-1',
 				type: 'importer-type-wordpress',
 				importerState: appStates.IMPORT_FAILURE,
 			};
@@ -51,8 +54,10 @@ describe( 'SectionImport', () => {
 		test( 'records again when the state changes', () => {
 			const { recordTracksEvent, update } = renderSectionImport( [] );
 
-			update( [ { type: 'importer-type-wordpress', importerState: appStates.IMPORTING } ] );
-			update( [ { type: 'importer-type-wordpress', importerState: appStates.IMPORT_FAILURE } ] );
+			const wordpress = { importerId: 'wordpress-1', type: 'importer-type-wordpress' };
+
+			update( [ { ...wordpress, importerState: appStates.IMPORTING } ] );
+			update( [ { ...wordpress, importerState: appStates.IMPORT_FAILURE } ] );
 
 			expect( recordTracksEvent.mock.calls.map( ( [ name ] ) => name ) ).toEqual( [
 				'calypso_importer_import_start',
@@ -100,8 +105,16 @@ describe( 'SectionImport', () => {
 		} );
 
 		test( 'tracks each importer independently', () => {
-			const wordpress = { type: 'importer-type-wordpress', importerState: appStates.IMPORTING };
-			const medium = { type: 'importer-type-medium', importerState: appStates.IMPORTING };
+			const wordpress = {
+				importerId: 'wordpress-1',
+				type: 'importer-type-wordpress',
+				importerState: appStates.IMPORTING,
+			};
+			const medium = {
+				importerId: 'medium-1',
+				type: 'importer-type-medium',
+				importerState: appStates.IMPORTING,
+			};
 			const { recordTracksEvent, update } = renderSectionImport( [] );
 
 			update( [ wordpress, medium ] );
@@ -113,6 +126,24 @@ describe( 'SectionImport', () => {
 				[ 'calypso_importer_import_start', { importer_id: 'importer-type-wordpress' } ],
 				[ 'calypso_importer_import_start', { importer_id: 'importer-type-medium' } ],
 				[ 'calypso_importer_import_fail', { importer_id: 'importer-type-medium' } ],
+			] );
+		} );
+
+		test( 'records again for a new import job of the same importer', () => {
+			const readyForUpload = {
+				site: { ID: 1 },
+				type: 'importer-type-wordpress',
+				importerState: appStates.READY_FOR_UPLOAD,
+			};
+			const { recordTracksEvent, update } = renderSectionImport( [] );
+
+			update( [ { ...readyForUpload, importerId: 'wordpress-1' } ] );
+			update( [] );
+			update( [ { ...readyForUpload, importerId: 'wordpress-2' } ] );
+
+			expect( recordTracksEvent.mock.calls ).toEqual( [
+				[ 'calypso_importer_view', { importer_id: 'importer-type-wordpress' } ],
+				[ 'calypso_importer_view', { importer_id: 'importer-type-wordpress' } ],
 			] );
 		} );
 	} );

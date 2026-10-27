@@ -145,8 +145,8 @@ export class SectionImport extends Component {
 				importItem.errorData?.code,
 				importItem.errorData?.type,
 			] );
-			if ( this.lastTrackedStates.get( importerId ) !== trackedState ) {
-				this.lastTrackedStates.set( importerId, trackedState );
+			if ( this.lastTrackedStates.get( importItem.importerId ) !== trackedState ) {
+				this.lastTrackedStates.set( importItem.importerId, trackedState );
 				this.trackImporterStateChange( importerState, importerId, eventProps );
 			}
 		} );
