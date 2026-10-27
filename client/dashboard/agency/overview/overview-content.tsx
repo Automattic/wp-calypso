@@ -7,7 +7,7 @@ import { PendingTierCard, RejectedTierCard } from './application-status-cards';
 import EventCard from './event-card';
 import GrowthCard from './growth-card';
 import HelpfulLinksCard from './helpful-links-card';
-import MatchingProfilePreview from './matching-profile-preview';
+import MatchingProfilePreview, { getPreviewAnsweredCount } from './matching-profile-preview';
 import ReferralEarningsCard from './referral-earnings-card';
 import TierOverviewCard from './tier-overview-card';
 import WooPaymentsRevenueCard from './woopayments-revenue-card';
@@ -45,6 +45,8 @@ export interface AgencyOverviewContentProps {
 	/** Whether the agency already has an approved Partner Directory listing. */
 	hasPartnerDirectoryListing?: boolean;
 	showMatchingProfilePreview?: boolean;
+	/** How many lead matching questions the agency has answered. */
+	matchingProfileAnswered?: number;
 	/** Shows the Pressable introductory offer in the news column. */
 	isEligibleForPressableIntroOffer?: boolean;
 	/** Shows the Pressable expansion offer in the news column. */
@@ -75,6 +77,7 @@ export default function AgencyOverviewContent( {
 	capabilities,
 	hasPartnerDirectoryListing,
 	showMatchingProfilePreview = false,
+	matchingProfileAnswered = 0,
 	isEligibleForPressableIntroOffer,
 	isEligibleForPressableExpansionOffer,
 	links,
@@ -96,6 +99,9 @@ export default function AgencyOverviewContent( {
 	const isLocked = isPending || isRejected || ! canAccessEarnings;
 	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
 	const isDesignPreview = isEnabled( 'a4a-lead-matching-design-preview' );
+	const showMatchingPrompt = showMatchingProfilePreview || isDesignPreview;
+	const matchingAnswered =
+		( isDesignPreview ? getPreviewAnsweredCount() : undefined ) ?? matchingProfileAnswered;
 
 	return (
 		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
@@ -125,9 +131,10 @@ export default function AgencyOverviewContent( {
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
-				{ ( showMatchingProfilePreview || isDesignPreview ) && links.leadMatching && (
+				{ showMatchingPrompt && links.leadMatching && (
 					<MatchingProfilePreview
 						href={ links.leadMatching }
+						answered={ matchingAnswered }
 						agencyId={ agencyId }
 						isDesignPreview={ isDesignPreview }
 						recordTracksEvent={ recordTracksEvent }

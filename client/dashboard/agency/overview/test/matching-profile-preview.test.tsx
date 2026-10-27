@@ -22,13 +22,16 @@ test( 'records one CTA click and preserves flags on the native matching destinat
 	render(
 		<MatchingProfilePreview
 			href={ PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE }
+			answered={ 0 }
 			agencyId={ 123 }
 			isDesignPreview
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
 
-	const link = await screen.findByRole< HTMLAnchorElement >( 'link', { name: 'Complete profile' } );
+	const link = await screen.findByRole< HTMLAnchorElement >( 'link', {
+		name: 'Set up preferences',
+	} );
 	const destination = new URL( link.href );
 	expect( destination.origin ).toBe( window.location.origin );
 	expect( destination.pathname ).toBe( PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE );
@@ -62,12 +65,13 @@ test.each( [
 		render(
 			<MatchingProfilePreview
 				href={ PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE }
+				answered={ 6 }
 				agencyId={ 123 }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		);
 		const link = await screen.findByRole< HTMLAnchorElement >( 'link', {
-			name: 'Complete profile',
+			name: 'Finish preferences',
 		} );
 		expect( new URL( link.href ).searchParams.get( 'flags' ) ).toBe( expectedFlags );
 		expect( recordTracksEvent ).not.toHaveBeenCalled();

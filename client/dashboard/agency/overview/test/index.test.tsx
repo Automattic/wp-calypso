@@ -36,7 +36,7 @@ jest.mock( '../../earn/use-has-commission-activity', () => ( {
 
 const matchingKey = agencyLeadMatchingQuery( 123 ).queryKey;
 const matchingPath = '/wpcom/v2/agency/123/lead-matching';
-const profileLink = () => screen.queryByRole( 'link', { name: 'Complete profile' } );
+const profileLink = () => screen.queryByRole( 'link', { name: /^(Set up|Finish) preferences$/ } );
 
 function makeAgency(): Agency {
 	return {
@@ -152,7 +152,7 @@ test.each( [ 'agency', 'allowed', 'capability', 'approval' ] )(
 	}
 );
 
-test( 'forces the card for design review even for an inaccessible complete profile', async () => {
+test( 'forces the card for design review and reads the saved answers', async () => {
 	jest
 		.mocked( isEnabled )
 		.mockImplementation( ( flag ) => flag === 'a4a-lead-matching-design-preview' );
@@ -165,8 +165,10 @@ test( 'forces the card for design review even for an inaccessible complete profi
 	const scope = nock( API ).get( matchingPath ).query( true ).reply( 200, {} );
 	renderOverview( agency );
 
-	expect( await screen.findByRole( 'link', { name: 'Complete profile' } ) ).toBeVisible();
-	expect( scope.isDone() ).toBe( false );
+	expect(
+		await screen.findByRole( 'link', { name: /^(Set up|Finish) preferences$/ } )
+	).toBeVisible();
+	expect( scope.isDone() ).toBe( true );
 } );
 
 test( 'hides cached answers after a failed refetch', async () => {
@@ -175,7 +177,9 @@ test( 'hides cached answers after a failed refetch', async () => {
 		.query( true )
 		.reply( 200, { agency_id: 123, lead_matching_profile: incompleteProfile } );
 	renderOverview();
-	expect( await screen.findByRole( 'link', { name: 'Complete profile' } ) ).toBeVisible();
+	expect(
+		await screen.findByRole( 'link', { name: /^(Set up|Finish) preferences$/ } )
+	).toBeVisible();
 	nock( API ).get( matchingPath ).query( true ).reply( 500, { code: 'error', message: 'Error' } );
 	await act( async () => {
 		await queryClient.refetchQueries( { queryKey: matchingKey } );
@@ -191,7 +195,9 @@ test( 'follows saves, refreshes and agency changes through the native cache', as
 		.reply( 200, { agency_id: 123, lead_matching_profile: incompleteProfile } );
 	renderOverview();
 	const saveView = render( <SaveProfile />, { queryClient } );
-	expect( await screen.findByRole( 'link', { name: 'Complete profile' } ) ).toBeVisible();
+	expect(
+		await screen.findByRole( 'link', { name: /^(Set up|Finish) preferences$/ } )
+	).toBeVisible();
 
 	const failedSave = nock( API )
 		.put( matchingPath )
@@ -215,7 +221,9 @@ test( 'follows saves, refreshes and agency changes through the native cache', as
 	await act( async () => {
 		await queryClient.refetchQueries( { queryKey: matchingKey } );
 	} );
-	expect( await screen.findByRole( 'link', { name: 'Complete profile' } ) ).toBeVisible();
+	expect(
+		await screen.findByRole( 'link', { name: /^(Set up|Finish) preferences$/ } )
+	).toBeVisible();
 
 	let respond = () => {};
 	const switched = nock( API )

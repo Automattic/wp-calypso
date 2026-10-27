@@ -24,3 +24,12 @@ export function hasIncompleteSavedMatchingProfile(
 		REQUIRED_LEAD_MATCHING_FIELDS.length
 	);
 }
+
+/** How many of the required lead matching questions the saved profile answers. */
+export function getAnsweredMatchingProfileCount(
+	response: AgencyLeadMatchingResponse | undefined
+): number {
+	return getAnsweredRequiredFieldCount(
+		getLeadMatchingFormData( response?.lead_matching_profile ?? null )
+	);
+}

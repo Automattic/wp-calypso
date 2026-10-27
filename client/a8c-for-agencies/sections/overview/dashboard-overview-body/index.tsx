@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
@@ -22,7 +23,10 @@ import {
 	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
 	PROGRAM_INCENTIVES_URL,
 } from 'calypso/dashboard/agency/overview/constants';
-import { hasIncompleteSavedMatchingProfile } from 'calypso/dashboard/agency/overview/matching-profile-visibility';
+import {
+	getAnsweredMatchingProfileCount,
+	hasIncompleteSavedMatchingProfile,
+} from 'calypso/dashboard/agency/overview/matching-profile-visibility';
 import AgencyOverviewContent from 'calypso/dashboard/agency/overview/overview-content';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -46,7 +50,9 @@ function DashboardOverviewBodyContent( {
 		!! agency?.partner_directory?.allowed &&
 		!! agency?.user?.capabilities?.includes( 'a4a_read_partner_directory' ) &&
 		hasPartnerDirectoryListing;
-	const leadMatchingQuery = useLeadMatchingProfile( canAccessLeadMatching );
+	const leadMatchingQuery = useLeadMatchingProfile(
+		canAccessLeadMatching || isEnabled( 'a4a-lead-matching-design-preview' )
+	);
 
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall();
 
@@ -78,6 +84,7 @@ function DashboardOverviewBodyContent( {
 				leadMatchingQuery.isSuccess &&
 				hasIncompleteSavedMatchingProfile( agency.id, leadMatchingQuery.data )
 			}
+			matchingProfileAnswered={ getAnsweredMatchingProfileCount( leadMatchingQuery.data ) }
 			isEligibleForPressableIntroOffer={ isEligibleForIntroductoryOffer }
 			isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 			links={ {
