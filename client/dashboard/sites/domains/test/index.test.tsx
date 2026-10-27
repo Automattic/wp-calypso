@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { SITE_CONTEXT_VIEW } from '../../../domains/dataviews/views';
@@ -107,7 +107,7 @@ function mockApis( {
 	preferences = {},
 }: {
 	domains?: unknown[];
-	ssl?: { domain: string; certificate_provisioned: boolean };
+	ssl?: { domain: string; certificate_provisioned: boolean; is_newly_registered?: boolean };
 	preferences?: Record< string, unknown >;
 } = {} ) {
 	nock( 'https://public-api.wordpress.com' )
@@ -137,7 +137,7 @@ function mockApis( {
 			.reply( 200, {
 				data: {
 					certificate_provisioned: ssl.certificate_provisioned,
-					is_newly_registered: false,
+					is_newly_registered: ssl.is_newly_registered ?? false,
 					is_expired: false,
 				},
 			} )
@@ -266,5 +266,58 @@ describe( '<SiteDomains>', () => {
 		await user.click( actionsButtons[ 0 ] );
 
 		expect( screen.getByText( 'Make primary site address' ) ).toBeVisible();
+	} );
+
+	test( 'shows a newly registered domain as activating until its certificate is issued', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [ { ...domain, primary_domain: false }, defaultAddressDomain ],
+			ssl: { domain: domain.domain, certificate_provisioned: false, is_newly_registered: true },
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByText( 'Preparing your new domain name' ) ).toBeVisible();
+		expect( screen.getByText( 'Activating' ) ).toBeVisible();
+		expect( screen.getByRole( 'img', { name: 'Can take up to 15 minutes' } ) ).toBeVisible();
+		expect( screen.queryByText( 'SSL pending' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows a domain becoming the primary address as activating on its row', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [
+				{ ...domain, primary_domain: false, set_primary_domain_pending: true },
+				defaultAddressDomain,
+			],
+		} );
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/rest/v1.2/domain-details/${ domain.domain }/` )
+			.reply( 200, { ...domain, primary_domain: false, set_primary_domain_pending: true } )
+			.persist();
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/domains/ssl/${ domain.domain }/` )
+			.query( true )
+			.reply( 200, { data: { certificate_provisioned: false, is_newly_registered: false } } )
+			.persist();
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByText( 'Activating' ) ).toBeVisible();
+		expect( screen.getByText( 'Preparing your new domain name' ) ).toBeVisible();
+		expect( screen.queryByText( 'Setting up your custom domain' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows a registered domain with an issued certificate as active', async () => {
+		nock.cleanAll();
+		mockApis( {
+			ssl: { domain: domain.domain, certificate_provisioned: true, is_newly_registered: true },
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await waitFor( () => expect( screen.getAllByText( 'SSL active' ) ).toHaveLength( 2 ) );
+		expect( screen.queryByText( 'Activating' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Preparing your new domain name' ) ).not.toBeInTheDocument();
 	} );
 } );
