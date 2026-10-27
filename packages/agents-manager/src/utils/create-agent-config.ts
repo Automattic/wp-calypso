@@ -8,6 +8,7 @@
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { getInteractiveUiCapabilities } from '../interactive-ui/catalogs';
+import { getShownInteractiveUiDataModel } from '../interactive-ui/session';
 import { saveSessionId } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
@@ -343,14 +344,20 @@ export async function createAgentConfig(
 				providerContext
 			);
 
-	// A2UI's A2A binding: the agent reads the renderer's capabilities from each message.
-	const messageMetadata = {
-		a2uiRendererCapabilities: getInteractiveUiCapabilities( interactiveUiCatalogs ),
-	};
+	// A2UI's A2A binding: the agent reads the renderer's capabilities from each message, and the data
+	// of the surfaces that ask for it.
+	const a2uiRendererCapabilities = getInteractiveUiCapabilities( interactiveUiCatalogs );
 
 	config.contextProvider = {
 		...clientContextProvider,
-		getMessageMetadata: () => messageMetadata,
+		getMessageMetadata: () => {
+			const a2uiRendererDataModel = getShownInteractiveUiDataModel();
+
+			return {
+				a2uiRendererCapabilities,
+				...( a2uiRendererDataModel && { a2uiRendererDataModel } ),
+			};
+		},
 	};
 
 	return config;

@@ -6,7 +6,7 @@ import BackupActionsToolbar from 'calypso/components/jetpack/backup-actions-tool
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function render() {
-    const siteId = useSelector( getSelectedSiteId );
+	const siteId = useSelector( getSelectedSiteId );
 
 	return (
 		<div>

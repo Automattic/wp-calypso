@@ -31,6 +31,7 @@ import {
 	createPixPaymentMethod,
 	createPixAutomaticoPaymentMethod,
 } from '../../payment-methods/pix';
+import { createStripeWalletMethod } from '../../payment-methods/stripe-wallet';
 import { createWeChatMethod } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
 import useCreateExistingPayPalPPCP from './use-create-existing-paypal-ppcp';
@@ -365,6 +366,33 @@ function useCreateStripeUpi( {
 	);
 }
 
+function useCreateStripeWallet( {
+	isStripeLoading,
+	stripeLoadingError,
+	stripeConfiguration,
+	stripe,
+	responseCart,
+}: {
+	isStripeLoading: boolean;
+	stripeLoadingError: StripeLoadingError;
+	stripeConfiguration: StripeConfiguration | null;
+	stripe: Stripe | null;
+	responseCart: ReturnType< typeof useShoppingCart >[ 'responseCart' ];
+} ): PaymentMethod | null {
+	const isReady =
+		! isStripeLoading &&
+		! stripeLoadingError &&
+		stripe &&
+		stripeConfiguration &&
+		isEnabled( 'checkout/stripe-wallet' );
+
+	return useMemo( () => {
+		return isReady && stripe && stripeConfiguration
+			? createStripeWalletMethod( { stripe, stripeConfiguration, responseCart } )
+			: null;
+	}, [ isReady, stripe, stripeConfiguration, responseCart ] );
+}
+
 /**
  * Create all possible payment methods.
  *
@@ -502,6 +530,14 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
+	const stripeWalletMethod = useCreateStripeWallet( {
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+		responseCart,
+	} );
+
 	// In Germany, PayPal is the preferred option, so we display it before
 	// credit cards. See https://wp.me/pxLjZ-9aA
 	const shouldPreferPayPal = currentTaxCountryCode?.toUpperCase() === 'DE';
@@ -518,6 +554,7 @@ export default function useCreatePaymentMethods( {
 	return [
 		...existingCardMethods,
 		...existingPayPalPPCPMethods,
+		stripeWalletMethod,
 		applePayMethod,
 		googlePayMethod,
 		stripeUpiMethod,

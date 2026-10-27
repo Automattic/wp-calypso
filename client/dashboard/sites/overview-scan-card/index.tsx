@@ -1,5 +1,6 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteScanQuery } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
@@ -31,9 +32,9 @@ function getScanURL( site: Site ) {
 function ScanCardWithThreats( { scanUrl, scan }: { scanUrl: string; scan: SiteScan } ) {
 	const threatCount = scan.threats?.length ?? 0;
 	const heading = sprintf(
-		/* translators: %d: number of risks */
-		_n( '%d risk found', '%d risks found', threatCount ),
-		threatCount
+		/* translators: %s: formatted number of risks */
+		_n( '%s risk found', '%s risks found', threatCount ),
+		formatNumber( threatCount )
 	);
 
 	const hasFixableThreats = scan.threats?.some( ( threat ) => threat.fixable ) ?? false;
