@@ -21,7 +21,15 @@ export interface SiteSetupTasks {
 	summary: string;
 }
 
-const ABILITY_NAME = 'wpcom/get-site-setup-tasks';
+/** The `wpcom/start-site-setup-task` ability result: the status the task has after the write. */
+export interface SiteSetupTaskStart {
+	task_id: string;
+	status: Extract< SiteSetupTaskStatus, 'in-progress' | 'done' >;
+	summary: string;
+}
+
+const READ_ABILITY_NAME = 'wpcom/get-site-setup-tasks';
+const START_ABILITY_NAME = 'wpcom/start-site-setup-task';
 
 /** The site named by the wp-admin payload; the ability needs it outside an agent turn. */
 export function getSiteSetupSiteId(): number | null {
@@ -38,8 +46,25 @@ export function getSiteSetupSiteId(): number | null {
 export function fetchSiteSetupTasks( siteId: number ): Promise< SiteSetupTasks > {
 	return apiFetch< SiteSetupTasks >( {
 		method: 'GET',
-		path: addQueryArgs( `/wp-abilities/v1/abilities/${ ABILITY_NAME }/run`, {
+		path: addQueryArgs( `/wp-abilities/v1/abilities/${ READ_ABILITY_NAME }/run`, {
 			input: { wpcom_site: siteId },
 		} ),
+	} );
+}
+
+/**
+ * Runs the write ability through the Abilities REST API, a POST with the input
+ * in the body, as `webmcp/server-ability-provider` does. The backend records
+ * the task as started, or as done for a task that completes on click, exactly
+ * as the Site Setup page's own "Get started" does.
+ */
+export function startSiteSetupTask(
+	siteId: number,
+	taskId: string
+): Promise< SiteSetupTaskStart > {
+	return apiFetch< SiteSetupTaskStart >( {
+		method: 'POST',
+		path: `/wp-abilities/v1/abilities/${ START_ABILITY_NAME }/run`,
+		data: { input: { wpcom_site: siteId, task_id: taskId } },
 	} );
 }

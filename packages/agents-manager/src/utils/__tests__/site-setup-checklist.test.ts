@@ -3,7 +3,7 @@
  */
 import { consumePromptSource } from '../prompt-source';
 import {
-	getSiteSetupStartedTasks,
+	isChatStartedFromSiteSetup,
 	isSiteSetupChecklistEnabled,
 	toChecklistItems,
 } from '../site-setup-checklist';
@@ -43,8 +43,14 @@ describe( 'isSiteSetupChecklistEnabled', () => {
 } );
 
 describe( 'toChecklistItems', () => {
-	it( 'maps tasks to auto-submitting items with a prompt', () => {
-		const items = toChecklistItems( TASKS, new Set() );
+	const startTask = jest.fn( async () => {} );
+
+	beforeEach( () => {
+		startTask.mockClear();
+	} );
+
+	it( 'maps tasks to auto-submitting items with the server’s status', () => {
+		const items = toChecklistItems( TASKS, startTask );
 
 		expect( items ).toEqual( [
 			expect.objectContaining( {
@@ -61,15 +67,8 @@ describe( 'toChecklistItems', () => {
 		] );
 	} );
 
-	it( 'keeps a started task in progress until the server settles it', () => {
-		const items = toChecklistItems( TASKS, new Set( [ 'design', 'about' ] ) );
-
-		expect( items[ 0 ].status ).toBe( 'in-progress' );
-		expect( items[ 1 ].status ).toBe( 'done' );
-	} );
-
 	it( 'declares where the task prompt comes from before it is sent', async () => {
-		const [ item ] = toChecklistItems( TASKS, new Set() );
+		const [ item ] = toChecklistItems( TASKS, startTask );
 
 		expect( await item.action?.() ).toBe( true );
 		expect( consumePromptSource( item.prompt as string ) ).toEqual( {
@@ -77,9 +76,27 @@ describe( 'toChecklistItems', () => {
 			id: 'design',
 		} );
 	} );
+
+	it( 'records a picked to-do task as started before its prompt is sent', async () => {
+		const [ item ] = toChecklistItems( TASKS, startTask );
+
+		await item.action?.();
+
+		expect( startTask ).toHaveBeenCalledWith( TASKS[ 0 ] );
+	} );
+
+	it.each( [
+		[ 'done', 1 ],
+		[ 'in-progress', 3 ],
+	] )( 'does not start a task the server already has as %s', async ( _status, index ) => {
+		const items = toChecklistItems( TASKS, startTask );
+
+		expect( await items[ index ].action?.() ).toBe( true );
+		expect( startTask ).not.toHaveBeenCalled();
+	} );
 } );
 
-describe( 'getSiteSetupStartedTasks', () => {
+describe( 'isChatStartedFromSiteSetup', () => {
 	const message = (
 		role: 'user' | 'agent',
 		data?: { promptSource: string; promptSourceId?: string }
@@ -99,26 +116,27 @@ describe( 'getSiteSetupStartedTasks', () => {
 		promptSourceId,
 	} );
 
-	it( 'names the tasks picked from the checklist, live or restored', () => {
-		const started = getSiteSetupStartedTasks( [
-			message( 'user', checklist( 'theme' ) ),
-			message( 'agent' ),
-			message( 'user', checklist( 'about' ) ),
-			message( 'user', checklist( 'theme' ) ),
-		] );
-
-		expect( started && [ ...started ].sort() ).toEqual( [ 'about', 'theme' ] );
+	it( 'is true once a user message came from the checklist, live or restored', () => {
+		expect(
+			isChatStartedFromSiteSetup( [
+				message( 'user' ),
+				message( 'agent' ),
+				message( 'user', checklist( 'about' ) ),
+			] )
+		).toBe( true );
 	} );
 
 	it( 'still marks the chat as started when the stored message has no task id', () => {
-		expect( getSiteSetupStartedTasks( [ message( 'user', checklist() ) ] )?.size ).toBe( 0 );
+		expect( isChatStartedFromSiteSetup( [ message( 'user', checklist() ) ] ) ).toBe( true );
 	} );
 
-	it( 'is null for other sources, agent messages and plain chats', () => {
+	it( 'is false for other sources, agent messages and plain chats', () => {
 		expect(
-			getSiteSetupStartedTasks( [ message( 'user', { promptSource: 'background' } ) ] )
-		).toBeNull();
-		expect( getSiteSetupStartedTasks( [ message( 'agent', checklist( 'theme' ) ) ] ) ).toBeNull();
-		expect( getSiteSetupStartedTasks( [ message( 'user' ) ] ) ).toBeNull();
+			isChatStartedFromSiteSetup( [ message( 'user', { promptSource: 'background' } ) ] )
+		).toBe( false );
+		expect( isChatStartedFromSiteSetup( [ message( 'agent', checklist( 'theme' ) ) ] ) ).toBe(
+			false
+		);
+		expect( isChatStartedFromSiteSetup( [ message( 'user' ) ] ) ).toBe( false );
 	} );
 } );

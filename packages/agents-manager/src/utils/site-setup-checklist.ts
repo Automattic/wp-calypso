@@ -33,14 +33,14 @@ export function siteSetupTaskPrompt( task: SiteSetupTask ): string {
 }
 
 /**
- * Maps Site Setup tasks to checklist items. A task the user picked from the
- * list stays `in-progress` until the server reports it done or skipped. The
- * item's `action` runs before its prompt is sent and declares where the prompt
- * comes from, which the sent message then carries.
+ * Maps Site Setup tasks to checklist items. Status is the server's, so the
+ * chat and the Site Setup page always agree: picking a task to do records it
+ * there (`startTask`) before its prompt is sent. The item's `action` also
+ * declares where the prompt comes from, which the sent message then carries.
  */
 export function toChecklistItems(
 	tasks: SiteSetupTask[],
-	startedIds: ReadonlySet< string >
+	startTask: ( task: SiteSetupTask ) => Promise< void >
 ): ChecklistItem[] {
 	return tasks.map( ( task ) => {
 		const prompt = siteSetupTaskPrompt( task );
@@ -48,12 +48,15 @@ export function toChecklistItems(
 		return {
 			id: task.id,
 			label: task.title,
-			status: task.status === 'todo' && startedIds.has( task.id ) ? 'in-progress' : task.status,
+			status: task.status,
 			prompt,
 			autoSubmit: true,
 			disabled: task.disabled,
-			action: () => {
+			action: async () => {
 				markNextPromptSource( { source: SITE_SETUP_PROMPT_SOURCE, id: task.id }, prompt );
+				if ( task.status === 'todo' ) {
+					await startTask( task );
+				}
 				return true;
 			},
 		};
@@ -61,28 +64,17 @@ export function toChecklistItems(
 }
 
 /**
- * The tasks the conversation says were picked from the checklist: `null` when
- * no user message came from it, otherwise their ids (empty for messages stored
- * without one, which still mark the chat as started from the list).
+ * Whether the conversation was started from the checklist: a user message
+ * that came from it, live or restored. Decides where the list renders; a
+ * task's status never derives from it.
  */
-export function getSiteSetupStartedTasks( messages: UIMessage[] ): ReadonlySet< string > | null {
-	let started = false;
-	const ids = new Set< string >();
-
-	for ( const message of messages ) {
-		if ( message.role !== 'user' ) {
-			continue;
-		}
-		for ( const content of message.content ) {
-			if ( content.type !== 'data' || content.data?.promptSource !== SITE_SETUP_PROMPT_SOURCE ) {
-				continue;
-			}
-			started = true;
-			if ( typeof content.data.promptSourceId === 'string' && content.data.promptSourceId ) {
-				ids.add( content.data.promptSourceId );
-			}
-		}
-	}
-
-	return started ? ids : null;
+export function isChatStartedFromSiteSetup( messages: UIMessage[] ): boolean {
+	return messages.some(
+		( message ) =>
+			message.role === 'user' &&
+			message.content.some(
+				( content ) =>
+					content.type === 'data' && content.data?.promptSource === SITE_SETUP_PROMPT_SOURCE
+			)
+	);
 }

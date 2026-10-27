@@ -13,9 +13,11 @@ jest.mock( '../../utils/site-setup-checklist', () => ( {
 } ) );
 
 const mockFetchSiteSetupTasks = jest.fn();
+const mockStartSiteSetupTask = jest.fn();
 const mockGetSiteSetupSiteId = jest.fn( (): number | null => 123 );
 jest.mock( '../../utils/site-setup-tasks', () => ( {
 	fetchSiteSetupTasks: ( ...args: unknown[] ) => mockFetchSiteSetupTasks( ...args ),
+	startSiteSetupTask: ( ...args: unknown[] ) => mockStartSiteSetupTask( ...args ),
 	getSiteSetupSiteId: () => mockGetSiteSetupSiteId(),
 } ) );
 
@@ -55,6 +57,7 @@ const userMessage = ( id: string, promptSourceId?: string ): UIMessage => ( {
 
 const config = {
 	enabled: true,
+	isOpen: true,
 	isProcessing: false,
 	isLoadingConversation: false,
 	messages: [] as UIMessage[],
@@ -84,7 +87,7 @@ describe( 'useSiteSetupChecklist', () => {
 		} );
 	} );
 
-	it( 'pins the checklist, with the picked tasks in progress, once a message came from it', () => {
+	it( 'pins the checklist, with the server’s statuses, once a message came from it', () => {
 		const { result } = renderHook( () =>
 			useSiteSetupChecklist( { ...config, messages: [ userMessage( 'u1', 'design' ) ] } )
 		);
@@ -92,10 +95,39 @@ describe( 'useSiteSetupChecklist', () => {
 		expect( result.current ).toMatchObject( {
 			variant: 'pinned',
 			items: [
-				expect.objectContaining( { id: 'design', status: 'in-progress' } ),
+				expect.objectContaining( { id: 'design', status: 'todo' } ),
 				expect.objectContaining( { id: 'about', status: 'done' } ),
 			],
 		} );
+	} );
+
+	it( 'records a picked task on the server, then re-reads the list', async () => {
+		mockStartSiteSetupTask.mockResolvedValue( {
+			task_id: 'design',
+			status: 'in-progress',
+			summary: '',
+		} );
+		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
+
+		await expect( result.current.items[ 0 ].action?.() ).resolves.toBe( true );
+
+		expect( mockStartSiteSetupTask ).toHaveBeenCalledWith( 123, 'design' );
+		expect( mockRefetch ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'lets the prompt go when the start fails, and still re-reads the list', async () => {
+		mockStartSiteSetupTask.mockRejectedValue( new Error( 'nope' ) );
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
+
+		await expect( result.current.items[ 0 ].action?.() ).resolves.toBe( true );
+
+		expect( consoleError ).toHaveBeenCalledWith(
+			expect.stringContaining( '[AgentsManager]' ),
+			expect.any( Error )
+		);
+		expect( mockRefetch ).toHaveBeenCalledTimes( 1 );
+		consoleError.mockRestore();
 	} );
 
 	it( 'hands the focus over only on the empty → pinned move of the same session', () => {
@@ -182,6 +214,19 @@ describe( 'useSiteSetupChecklist', () => {
 		expect( mockRefetch ).not.toHaveBeenCalled();
 
 		rerender( { ...config, isProcessing: false } );
+		expect( mockRefetch ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 're-reads the list when the chat opens, not when it is already open', () => {
+		const { rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: { ...config, isOpen: false },
+		} );
+		expect( mockRefetch ).not.toHaveBeenCalled();
+
+		rerender( { ...config, isOpen: true } );
+		expect( mockRefetch ).toHaveBeenCalledTimes( 1 );
+
+		rerender( { ...config, isOpen: true, messages: [ userMessage( 'u1' ) ] } );
 		expect( mockRefetch ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

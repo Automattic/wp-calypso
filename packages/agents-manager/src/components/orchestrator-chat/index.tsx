@@ -304,6 +304,7 @@ export default function OrchestratorChat( {
 	} );
 	const siteSetupChecklist = useSiteSetupChecklist( {
 		enabled: ! isReaderChat,
+		isOpen,
 		isProcessing,
 		isLoadingConversation,
 		messages,
