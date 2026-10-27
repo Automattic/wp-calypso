@@ -72,7 +72,7 @@ export function useSiteAwaitingCheckout( site: Site ): WowFunnelPendingSite | un
 }
 
 /**
- * Is this site a Studio preview its owner has not bought yet?
+ * Is this site a preview site its owner has not bought yet?
  *
  * A preview reads as an ordinary Free site, but launching it for free is not the way forward:
  * buying a plan is what keeps it. Asked from the same lookup as useSiteAwaitingCheckout(), with
@@ -80,9 +80,9 @@ export function useSiteAwaitingCheckout( site: Site ): WowFunnelPendingSite | un
  * @param site The site to check.
  * @returns Whether the answer is still loading, and whether the site is a standing preview.
  */
-export function useSiteIsStudioPreview( site: Site ): {
+export function useSiteIsPreview( site: Site ): {
 	isLoading: boolean;
-	isStudioPreview: boolean;
+	isPreview: boolean;
 } {
 	const couldBePreview = couldBeUnpaidFunnelSite( site );
 
@@ -93,18 +93,17 @@ export function useSiteIsStudioPreview( site: Site ): {
 
 	return {
 		isLoading: couldBePreview && isLoading,
-		isStudioPreview:
-			couldBePreview &&
-			!! data?.studio_previews?.some( ( preview ) => preview.blog_id === site.ID ),
+		isPreview:
+			couldBePreview && !! data?.preview_sites?.some( ( preview ) => preview.blog_id === site.ID ),
 	};
 }
 
 /**
- * Where the owner of a Studio preview buys it: any plan that includes Atomic keeps the site.
+ * Where the owner of a preview site buys it: any plan that includes Atomic keeps the site.
  * @param site The preview.
  * @returns The URL to send the owner to.
  */
-export function getStudioPreviewPlansUrl( site: Site ): string {
+export function getPreviewPlansUrl( site: Site ): string {
 	return wpcomLink( `/plans/${ site.slug }` );
 }
 
@@ -128,15 +127,15 @@ export function getFinishSetupUrl( pending: WowFunnelPendingSite ): string {
 	return wpcomLink( addQueryArgs( '/setup/onboarding', query ) );
 }
 
-export function PlanStudioPreview( { site }: { site: Site } ) {
+export function PlanPreview( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
 
 	return (
 		<Text>
 			<ExternalLink
-				href={ getStudioPreviewPlansUrl( site ) }
+				href={ getPreviewPlansUrl( site ) }
 				onClick={ () =>
-					recordTracksEvent( 'calypso_dashboard_sites_plan_studio_preview_click', {
+					recordTracksEvent( 'calypso_dashboard_sites_plan_preview_click', {
 						surface: 'dashboard-sites-list',
 					} )
 				}

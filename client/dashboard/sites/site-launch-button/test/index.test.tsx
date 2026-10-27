@@ -274,11 +274,11 @@ describe( '<SiteLaunchButton>', () => {
 		}
 	} );
 
-	test( 'sends a Studio preview to plans instead of launching it', async () => {
+	test( 'sends a preview site to plans instead of launching it', async () => {
 		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
 		mockPendingFunnelApi( {
 			pending: false,
-			studio_previews: [ { blog_id: 1, site_slug: 'kaonashi.wordpress.com' } ],
+			preview_sites: [ { blog_id: 1, site_slug: 'kaonashi.wordpress.com' } ],
 		} );
 
 		render( <SiteLaunchButton site={ createAtomicFreeSite() } tracksContext="test" /> );
@@ -290,7 +290,7 @@ describe( '<SiteLaunchButton>', () => {
 		);
 	} );
 
-	test( 'an Atomic Free site that is not a Studio preview keeps the launch flow', async () => {
+	test( 'an Atomic Free site that is not a preview site keeps the launch flow', async () => {
 		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
 		mockPendingFunnelApi( { pending: false } );
 

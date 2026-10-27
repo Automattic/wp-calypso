@@ -402,10 +402,10 @@ describe( '<Plan>', () => {
 		expect( second.queryByRole( 'link' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'a Studio preview its owner has not bought links to plans', async () => {
+	test( 'a preview site its owner has not bought links to plans', async () => {
 		mockPendingFunnelSite( {
 			pending: false,
-			studio_previews: [ { blog_id: SITE_ID, site_slug: 'test.wordpress.com' } ],
+			preview_sites: [ { blog_id: SITE_ID, site_slug: 'test.wordpress.com' } ],
 		} );
 
 		const { container, findByRole } = renderPlan( { site: makeAtomicFreeSite() } );
@@ -413,14 +413,14 @@ describe( '<Plan>', () => {
 		const link = await findByRole( 'link' );
 		expect( link ).toHaveTextContent( 'Choose a plan' );
 		expect( link ).toHaveAttribute( 'href', wpcomLink( '/plans/test.wordpress.com' ) );
-		expect( container.textContent ).toContain( 'Studio preview' );
+		expect( container.textContent ).toContain( 'Preview' );
 		expect( container.textContent ).not.toContain( 'Free' );
 	} );
 
-	test( 'a Studio preview of another site leaves this row alone', async () => {
+	test( 'a preview site of another site leaves this row alone', async () => {
 		const scope = mockPendingFunnelSite( {
 			pending: false,
-			studio_previews: [ { blog_id: SITE_ID + 1, site_slug: 'other.wordpress.com' } ],
+			preview_sites: [ { blog_id: SITE_ID + 1, site_slug: 'other.wordpress.com' } ],
 		} );
 
 		const { container, queryByRole } = renderPlan( { site: makeAtomicFreeSite() } );

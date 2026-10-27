@@ -13,10 +13,7 @@ import {
 	isSitePlanBigSkyTrial,
 	isSitePlanPaid,
 } from '../plans';
-import {
-	getStudioPreviewPlansUrl,
-	useSiteIsStudioPreview,
-} from '../site-fields/plan-awaiting-checkout';
+import { getPreviewPlansUrl, useSiteIsPreview } from '../site-fields/plan-awaiting-checkout';
 import SiteLaunchModal from '../site-launch-modal';
 import type { Site } from '@automattic/api-core';
 
@@ -82,7 +79,7 @@ export function useSiteLaunch(
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ isExperimentLoading, variant ] = useSiteLaunchGatingVariant();
-	const { isLoading: isStudioPreviewLoading, isStudioPreview } = useSiteIsStudioPreview( site );
+	const { isLoading: isPreviewLoading, isPreview } = useSiteIsPreview( site );
 
 	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
 	const hasCustomDomain = domains.some( ( domain ) => domain.subscription_id !== null );
@@ -147,21 +144,21 @@ export function useSiteLaunch(
 	};
 
 	const baseResult = {
-		isLoading: isDomainsLoading || isStudioPreviewLoading,
+		isLoading: isDomainsLoading || isPreviewLoading,
 		isExperimentLoading,
 		isDisabled,
 		isBusy: launchMutation.isPending,
 		modal: null as ReactElement | null,
 	};
 
-	// A Studio preview is launched by buying it: any plan that includes Atomic keeps the site, and
+	// A preview site is launched by buying it: any plan that includes Atomic keeps the site, and
 	// a free launch would only be undone by its next build.
-	if ( isStudioPreview ) {
+	if ( isPreview ) {
 		return {
 			...baseResult,
 			isHidden: false,
 			isDisabled: false,
-			href: getStudioPreviewPlansUrl( site ),
+			href: getPreviewPlansUrl( site ),
 			onClick: track,
 		};
 	}
