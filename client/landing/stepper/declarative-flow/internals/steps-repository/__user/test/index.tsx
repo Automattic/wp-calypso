@@ -216,6 +216,52 @@ describe( 'User email signup step', () => {
 		} );
 	} );
 
+	describe( 'theme grid layout', () => {
+		const themeGridUrl = '/onboarding/user?ref=marketing_bar&signup_layout=theme_grid';
+		const pitch = 'Turn your idea into a real website';
+
+		it( 'puts the theme grid before an email-first form on desktop', () => {
+			renderUserStep( themeGridUrl );
+
+			const heading = screen.getByRole( 'heading', { name: 'Create an account to get started' } );
+			expect( heading ).toBeVisible();
+			expect( screen.getByText( pitch ) ).toBeVisible();
+			expect(
+				screen.getByText( pitch ).compareDocumentPosition( heading ) &
+					Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+			expect( screen.getByLabelText( 'Enter your email' ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: /Continue with email/i } )
+			).not.toBeInTheDocument();
+		} );
+
+		it.each( [
+			[ 'mobile', { isMobile: true } ],
+			[ 'the band between the breakpoints', { isMobile: false, isLarge: false } ],
+		] )( 'shows only the strip above the form on %s', ( _label, viewport ) => {
+			setViewport( viewport );
+
+			const { container } = renderUserStep( themeGridUrl );
+
+			expect( container.querySelector( '.signup-theme-grid--compact' ) ).toBeInTheDocument();
+			expect( screen.queryByText( pitch ) ).not.toBeInTheDocument();
+			expect(
+				screen.getByRole( 'heading', { name: 'Create an account to get started' } )
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'heading', { name: 'Welcome to WordPress.com' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'keeps the default layout without the parameter', () => {
+			const { container } = renderUserStep( '/onboarding/user?ref=marketing_bar' );
+
+			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+			expect( container.querySelector( '.signup-theme-grid' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'accepts-props overrides', () => {
 		it( 'overrides the heading with headerText', () => {
 			renderUserStep( '/onboarding/user', { headerText: 'Join thousands of creators' } );
@@ -296,6 +342,7 @@ describe( 'User email signup step', () => {
 		it.each( [
 			[ 'other flows', '/site-setup/user', 'site-setup' ],
 			[ 'Woo-referrer users', '/onboarding/user?ref=woo-hosting-solutions-flow', 'onboarding' ],
+			[ 'the theme grid layout', '/onboarding/user?signup_layout=theme_grid', 'onboarding' ],
 		] )( 'leaves %s out of the experiment', ( _label, url, flow ) => {
 			renderUserStep( url, {}, flow );
 
