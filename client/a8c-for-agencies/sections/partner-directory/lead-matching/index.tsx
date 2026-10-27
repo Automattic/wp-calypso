@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card, CardBody, ToggleControl, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
@@ -587,9 +586,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 					</FormField>
 				</FormSection>
 
-				{ isEnabled( 'a4a-lead-matching-contact-preview' ) && (
-					<ContactOptionsPreview key={ agency?.id } />
-				) }
+				<ContactOptionsPreview key={ agency?.id } />
 
 				<FormSection
 					title={ __( 'Regions and languages' ) }

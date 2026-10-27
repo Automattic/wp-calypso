@@ -4,7 +4,6 @@ import {
 	agencyLeadMatchingQuery,
 	agencyProfileMutation,
 } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, ToggleControl, __experimentalVStack as VStack } from '@wordpress/components';
@@ -113,22 +112,11 @@ function LeadMatchingPreferencesForm( {
 
 	const hasAvailabilityChange = isAvailable !== savedAvailability;
 	const hasAnswerChanges = toComparable( formData ) !== toComparable( savedFormData );
-	const previewSearch = isEnabled( 'a4a-lead-matching-contact-preview' )
-		? {
-				flags:
-					new URLSearchParams( window.location.search.replace( /\+/g, '%2B' ) ).get( 'flags' ) ??
-					'a4a-lead-matching-contact-preview',
-			}
-		: undefined;
 
 	// Leaving after a save skips the unsaved-changes prompt: the saved data
 	// can reach the form after this navigation starts.
 	const backToLeadMatching = () =>
-		navigate( {
-			to: PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE,
-			search: previewSearch,
-			ignoreBlocker: true,
-		} );
+		navigate( { to: PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE, ignoreBlocker: true } );
 
 	const onSubmit = async () => {
 		recordTracksEvent( 'calypso_a4a_partner_directory_lead_matching_submit', {
@@ -216,9 +204,7 @@ function LeadMatchingPreferencesForm( {
 							</VStack>
 						</CardBody>
 					</Card>
-					{ section === 'availability' && isEnabled( 'a4a-lead-matching-contact-preview' ) && (
-						<ContactOptionsPreview key={ agencyId } />
-					) }
+					{ section === 'availability' && <ContactOptionsPreview key={ agencyId } /> }
 				</Fragment>
 			) ) }
 
@@ -236,7 +222,6 @@ function LeadMatchingPreferencesForm( {
 					__next40pxDefaultSize
 					variant="tertiary"
 					to={ PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE }
-					search={ previewSearch }
 					disabled={ isSubmitting }
 				>
 					{ __( 'Cancel' ) }
