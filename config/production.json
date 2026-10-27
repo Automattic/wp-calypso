@@ -131,6 +131,7 @@
 		"plugins/universal-header": true,
 		"posthog-tracking": true,
 		"press-this": true,
+		"purchases/cancel-options-cards": false,
 		"purchases/new-payment-methods": true,
 		"purchases/split-cancel-remove": false,
 		"purchases/site-transfer": false,
