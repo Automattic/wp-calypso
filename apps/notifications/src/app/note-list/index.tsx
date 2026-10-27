@@ -17,6 +17,7 @@ import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields, SelectedNoteIdContext } from './dataviews';
 import {
+	useNoteListFocusOnNoteClose,
 	useNoteListFocusToLastSelectedNote,
 	useNoteListNavigationKeyboardShortcuts,
 } from './hooks';
@@ -199,6 +200,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const noteListRef = useRef< HTMLObjectElement >( null );
 
 	useNoteListFocusToLastSelectedNote( { noteListRef, notes: tab.notes } );
+	useNoteListFocusOnNoteClose( { noteListRef, notes: tab.notes, selectedNoteId } );
 	useNoteListNavigationKeyboardShortcuts( {
 		noteListRef,
 		visibleNotes,

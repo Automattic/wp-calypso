@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
@@ -18,6 +18,40 @@ function focusToNote( noteListRef: React.RefObject< HTMLObjectElement | null >, 
 	getNoteRow( noteListRef, note )?.focus();
 }
 
+/**
+ * Returns the given note, or the nearest visible one when it has been hidden.
+ */
+function findNoteToFocus(
+	notes: Note[],
+	noteId: number,
+	hiddenNoteIds: Record< number, boolean >
+): Note | undefined {
+	const noteIndex = notes.findIndex( ( note ) => note.id === noteId );
+	if ( noteIndex < 0 ) {
+		return undefined;
+	}
+
+	if ( hiddenNoteIds[ notes[ noteIndex ].id ] !== true ) {
+		return notes[ noteIndex ];
+	}
+
+	// Find the nearest visible note forwards.
+	for ( let i = noteIndex + 1; i < notes.length; i++ ) {
+		if ( hiddenNoteIds[ notes[ i ].id ] !== true ) {
+			return notes[ i ];
+		}
+	}
+
+	// Find the nearest visible note backwards.
+	for ( let i = noteIndex - 1; i >= 0; i-- ) {
+		if ( hiddenNoteIds[ notes[ i ].id ] !== true ) {
+			return notes[ i ];
+		}
+	}
+
+	return undefined;
+}
+
 // Set the focus in the note list to the last selected note,
 // or to the nearest one when the last selected note is no longer visible.
 export function useNoteListFocusToLastSelectedNote( {
@@ -32,41 +66,8 @@ export function useNoteListFocusToLastSelectedNote( {
 
 	useEffect(
 		() => {
-			let noteToFocus: Note | undefined = undefined;
-
 			if ( lastSelectedNoteId ) {
-				const noteIndex = notes.findIndex( ( note ) => note.id === lastSelectedNoteId );
-				if ( noteIndex < 0 ) {
-					return;
-				}
-
-				if ( hiddenNoteIds[ notes[ noteIndex ].id ] === true ) {
-					// The last selected note is no longer visible.
-
-					// Find the nearest visible note forwards.
-					for ( let i = noteIndex + 1; i < notes.length; i++ ) {
-						if ( hiddenNoteIds[ notes[ i ].id ] !== true ) {
-							noteToFocus = notes[ i ];
-							break;
-						}
-					}
-
-					if ( ! noteToFocus ) {
-						// Find the nearest visible note backwards.
-						for ( let i = noteIndex - 1; i >= 0; i-- ) {
-							if ( hiddenNoteIds[ notes[ i ].id ] !== true ) {
-								noteToFocus = notes[ i ];
-								break;
-							}
-						}
-					}
-				} else {
-					noteToFocus = notes[ noteIndex ];
-				}
-			}
-
-			if ( noteToFocus ) {
-				focusToNote( noteListRef, noteToFocus );
+				focusToNote( noteListRef, findNoteToFocus( notes, lastSelectedNoteId, hiddenNoteIds ) );
 			}
 		},
 
@@ -74,6 +75,44 @@ export function useNoteListFocusToLastSelectedNote( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
+}
+
+/**
+ * Moves focus back to the closed note's row, the nearest visible one, or the first row
+ * when a note closes while focus is in the detail pane.
+ */
+export function useNoteListFocusOnNoteClose( {
+	noteListRef,
+	notes,
+	selectedNoteId,
+}: {
+	noteListRef: React.RefObject< HTMLObjectElement | null >;
+	notes: Note[];
+	selectedNoteId: string | undefined;
+} ) {
+	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
+	const previousNoteIdRef = useRef( selectedNoteId );
+
+	useEffect( () => {
+		const previousNoteId = previousNoteIdRef.current;
+		previousNoteIdRef.current = selectedNoteId;
+		if ( previousNoteId === undefined || selectedNoteId !== undefined ) {
+			return;
+		}
+
+		const { activeElement } = document;
+		const shouldRestoreFocus =
+			activeElement === document.body || !! activeElement?.closest( '.wpnc-app__detail-pane' );
+		if ( ! shouldRestoreFocus ) {
+			return;
+		}
+
+		const noteToFocus = findNoteToFocus( notes, Number( previousNoteId ), hiddenNoteIds );
+		const rowToFocus =
+			getNoteRow( noteListRef, noteToFocus ) ??
+			noteListRef.current?.querySelector< HTMLElement >( '.dataviews-view-list__item' );
+		rowToFocus?.focus( { preventScroll: true } );
+	}, [ selectedNoteId, notes, hiddenNoteIds, noteListRef ] );
 }
 
 export function useNoteListNavigationKeyboardShortcuts( {
