@@ -127,7 +127,7 @@
 		"plans/migration-trial": true,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
-		"plugins/stepper-plans": false,
+		"plugins/stepper-plans": true,
 		"plugins/universal-header": true,
 		"posthog-tracking": true,
 		"press-this": true,
