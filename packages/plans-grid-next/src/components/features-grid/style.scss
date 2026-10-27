@@ -1244,7 +1244,8 @@ $redesign-table-cell-max-width: 280px;
 			color: var( --studio-gray-80 );
 			font-size: 12px;
 			line-height: 16px;
-			text-wrap: pretty;
+			// Chrome's `pretty` still leaves a lone last word in these narrow columns (e.g. "Deployments").
+			text-wrap: balance;
 		}
 	}
 
