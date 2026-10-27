@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Remove the `transform-typeof-symbol` exclusion from the `default` and `dependencies` presets; none of Calypso's targets need that transform. Projects targeting browsers without `Symbol` now get it, which is correct but slower. Also drop the `dependencies` preset's `@babel/plugin-transform-runtime` options that were already its defaults.
 - Breaking: Remove the `build_pot` environment, which extracted strings with `@automattic/babel-plugin-i18n-calypso`, and its `outputPOT` option, along with the dependency on that plugin. Use `@automattic/wp-babel-makepot` to extract strings. Also stop documenting the `isBrowser` option, which had no effect.
 - Remove `@babel/plugin-transform-runtime` options that were already its defaults (`corejs: false`, `helpers: true`, `useESModules: false`). The output is unchanged.
 - Breaking: Remove the `wordpress-element` preset and its `@wordpress/babel-plugin-import-jsx-pragma` and `@babel/plugin-transform-react-jsx` dependencies. Use the `default` preset, whose React automatic runtime matches what `@wordpress/babel-preset-default` does.
