@@ -937,8 +937,6 @@ __metadata:
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/core": "npm:^7.29.7"
-    "@babel/plugin-transform-class-properties": "npm:^7.29.7"
     "@storybook/addon-docs": "npm:^10.6.2"
     "@storybook/addon-themes": "npm:^10.6.2"
     "@storybook/addon-webpack5-compiler-babel": "npm:^4.0.1"
@@ -2045,7 +2043,6 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
-    "@babel/core": "npm:^7.29.7"
     "@size-limit/file": "npm:^8.2.6"
     "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/dom": "npm:^10.4.2"
@@ -2058,7 +2055,6 @@ __metadata:
     "@wordpress/icons": "npm:^13.3.0"
     "@wordpress/ui": "npm:^0.18.0"
     autoprefixer: "npm:^10.4.21"
-    babel-jest: "npm:^30.5.2"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
     debug: "npm:^4.4.1"
@@ -2601,7 +2597,6 @@ __metadata:
     stylelint-scss: "npm:^7.3.0"
     typescript: "npm:^6.0.3"
   peerDependencies:
-    "@babel/core": "*"
     "@wordpress/data": ^10.48.0
     "@wordpress/element": ^8.0.0
     "@wordpress/i18n": ^6.21.0
@@ -16136,7 +16131,6 @@ __metadata:
     redux-dynamic-middlewares: "npm:^2.2.0"
     redux-mock-store: "npm:^1.5.5"
     redux-thunk: "npm:^3.1.0"
-    regenerator-runtime: "npm:^0.13.9"
     social-logos: "npm:^3.4.0"
     source-map-support: "npm:^0.5.21"
     store: "npm:^2.0.12"
@@ -29794,13 +29788,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:^0.13.9":
-  version: 0.13.11
-  resolution: "regenerator-runtime@npm:0.13.11"
-  checksum: 12b069dc774001fbb0014f6a28f11c09ebfe3c0d984d88c9bced77fdb6fedbacbca434d24da9ae9371bfbf23f754869307fb51a4c98a8b8b18e5ef748677ca24
-  languageName: node
-  linkType: hard
-
 "regexp.prototype.flags@npm:^1.5.3, regexp.prototype.flags@npm:^1.5.4":
   version: 1.5.4
   resolution: "regexp.prototype.flags@npm:1.5.4"
@@ -35009,7 +34996,6 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/core": "npm:^7.29.7"
     "@babel/runtime": "npm:^7.29.10"
     debug: "npm:^4.4.1"
     npm-run-all: "npm:^4.1.5"
