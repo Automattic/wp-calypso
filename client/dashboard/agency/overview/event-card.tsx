@@ -15,6 +15,7 @@ import NewTabLabel from '../components/new-tab-label';
 import {
 	FEATURED_EVENT,
 	getAiMcpAnnouncement,
+	getCertificationPromoEvent,
 	getPressableExpansionOfferEvent,
 	getPressableIntroOfferEvent,
 } from './events';
@@ -24,7 +25,9 @@ import type { RecordTracksEvent } from '../tiers/types';
 interface EventCardProps {
 	isEligibleForPressableIntroOffer?: boolean;
 	isEligibleForPressableExpansionOffer?: boolean;
+	isEligibleForCertificationOffer?: boolean;
 	aiMcpHref: string;
+	tiersHref?: string;
 	pressableHostingHref: string;
 	shouldUseRouterLink?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
@@ -96,8 +99,10 @@ function SingleEventCard( {
 								},
 							};
 							if ( shouldUseRouterLink && ! cta.isExternal && isDashboardPath( cta.url ) ) {
+								// The router takes the hash separately; left in `to`, it is dropped.
+								const [ to, hash ] = cta.url.split( '#' );
 								return (
-									<RouterLinkButton key={ cta.id } { ...buttonProps } to={ cta.url }>
+									<RouterLinkButton key={ cta.id } { ...buttonProps } to={ to } hash={ hash }>
 										{ cta.label }
 									</RouterLinkButton>
 								);
@@ -124,7 +129,9 @@ function SingleEventCard( {
 export default function EventCard( {
 	isEligibleForPressableIntroOffer,
 	isEligibleForPressableExpansionOffer,
+	isEligibleForCertificationOffer,
 	aiMcpHref,
+	tiersHref,
 	pressableHostingHref,
 	shouldUseRouterLink = true,
 	recordTracksEvent,
@@ -132,6 +139,7 @@ export default function EventCard( {
 	const now = new Date();
 	const events = [
 		FEATURED_EVENT,
+		isEligibleForCertificationOffer && tiersHref ? getCertificationPromoEvent( tiersHref ) : null,
 		isEligibleForPressableIntroOffer ? getPressableIntroOfferEvent( pressableHostingHref ) : null,
 		isEligibleForPressableExpansionOffer
 			? getPressableExpansionOfferEvent( pressableHostingHref )
