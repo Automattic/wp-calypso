@@ -6,8 +6,10 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
+import { createContext, useContext } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import {
 	isUsernameValid,
@@ -15,6 +17,8 @@ import {
 	getAllowedActions,
 	type ValidationResult,
 } from './username-validation-utils';
+import type { DataFormControlProps, Field, Form } from '@wordpress/dataviews';
+import type { ReactNode } from 'react';
 
 interface UsernameUpdateFormProps {
 	hasUsernameChange: boolean;
@@ -28,6 +32,54 @@ interface UsernameUpdateFormProps {
 	onCancel: () => void;
 	onValidationChange: ( result: ValidationResult | null ) => void;
 }
+
+type UsernameConfirmFormData = { username_confirm: string };
+
+const UsernameConfirmFieldContext = createContext< {
+	help: ReactNode;
+	className: string;
+	isInvalid: boolean;
+} >( { help: null, className: '', isInvalid: false } );
+
+// Defined at module level so DataForm gets a stable component and the input keeps focus while typing.
+function UsernameConfirmEdit( {
+	data,
+	field,
+	onChange,
+}: DataFormControlProps< UsernameConfirmFormData > ) {
+	const { help, className, isInvalid } = useContext( UsernameConfirmFieldContext );
+	return (
+		<InputControl
+			__next40pxDefaultSize
+			label={ field.label }
+			id="username_confirm"
+			name="username_confirm"
+			value={ data.username_confirm }
+			onChange={ ( value?: string ) => onChange( { username_confirm: value ?? '' } ) }
+			autoCapitalize="off"
+			autoComplete="off"
+			autoCorrect="off"
+			aria-invalid={ isInvalid ? 'true' : 'false' }
+			aria-describedby="username-confirm-help"
+			className={ className }
+			help={ help }
+		/>
+	);
+}
+
+const usernameConfirmFields: Field< UsernameConfirmFormData >[] = [
+	{
+		id: 'username_confirm',
+		label: __( 'Confirm new username' ),
+		type: 'text',
+		Edit: UsernameConfirmEdit,
+	},
+];
+
+const usernameConfirmForm: Form = {
+	layout: { type: 'regular' },
+	fields: [ 'username_confirm' ],
+};
 
 /*
 	Form that appears when trying to update your username:
@@ -96,31 +148,25 @@ export default function UsernameUpdateForm( {
 		);
 	}
 
+	let className = '';
+	if ( isError ) {
+		className = 'has-error';
+	} else if ( usernameMatch && ! hasValidationError ) {
+		className = 'has-success';
+	}
+
 	return (
 		<VStack spacing={ 6 }>
-			<InputControl
-				__next40pxDefaultSize
-				label={ __( 'Confirm new username' ) }
-				id="username_confirm"
-				name="username_confirm"
-				value={ userLoginConfirm }
-				onChange={ ( value ) => onConfirmChange( value || '' ) }
-				autoCapitalize="off"
-				autoComplete="off"
-				autoCorrect="off"
-				aria-invalid={ isError ? 'true' : 'false' }
-				aria-describedby="username-confirm-help"
-				className={ ( () => {
-					if ( isError ) {
-						return 'has-error';
-					}
-					if ( usernameMatch && ! hasValidationError ) {
-						return 'has-success';
-					}
-					return '';
-				} )() }
-				help={ helpText }
-			/>
+			<UsernameConfirmFieldContext.Provider
+				value={ { help: helpText, className, isInvalid: !! isError } }
+			>
+				<DataForm< UsernameConfirmFormData >
+					data={ { username_confirm: userLoginConfirm } }
+					fields={ usernameConfirmFields }
+					form={ usernameConfirmForm }
+					onChange={ ( edits ) => onConfirmChange( edits.username_confirm ?? '' ) }
+				/>
+			</UsernameConfirmFieldContext.Provider>
 
 			{ showRadioOptions && (
 				<VStack spacing={ 3 }>

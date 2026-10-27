@@ -141,6 +141,34 @@ describe( '<PersonalDetailsSection>', () => {
 			).toBeVisible();
 		} );
 
+		test( 'keeps focus in the username inputs while typing', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			mockValidateUsername( 'newusername' );
+
+			render( <PersonalDetailsSection /> );
+
+			const usernameInput = await screen.findByRole( 'textbox', { name: 'Username' } );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'newusername' );
+
+			expect( usernameInput ).toHaveValue( 'newusername' );
+			expect( usernameInput ).toHaveFocus();
+
+			const confirmInput = await screen.findByRole( 'textbox', { name: 'Confirm new username' } );
+			await user.type( confirmInput, 'newusername' );
+
+			expect( confirmInput ).toHaveValue( 'newusername' );
+			expect( confirmInput ).toHaveFocus();
+
+			expect(
+				await screen.findByText( 'Thanks for confirming your new username!', undefined, {
+					timeout: 2000,
+				} )
+			).toBeVisible();
+		} );
+
 		test( 'shows username update form and submits username change', async () => {
 			const user = userEvent.setup();
 			mockUserSettings( settings );
