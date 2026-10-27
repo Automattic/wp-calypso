@@ -39,7 +39,6 @@ describe( '<CrossoverModalHost>', () => {
 
 	afterEach( () => {
 		open.mockRestore();
-		nock.cleanAll();
 		queryClient.clear();
 	} );
 
