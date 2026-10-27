@@ -44,7 +44,7 @@
 	"dependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch",
-		"@wordpress/block-library": "^9.48.0",
+		"@wordpress/block-library": "patch:@wordpress/block-library@npm%3A9.48.0#~/.yarn/patches/@wordpress-block-library-npm-9.48.0-c0dd0f7825.patch",
 		"@wordpress/blocks": "^15.21.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/data": "^10.48.0",

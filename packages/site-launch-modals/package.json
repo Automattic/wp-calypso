@@ -61,7 +61,7 @@
 		"@wordpress/compose": "^8.2.0",
 		"@wordpress/element": "^8.0.0",
 		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/icons": "^13.3.0",
+		"@wordpress/icons": "^15.5.0",
 		"canvas-confetti": "^1.6.0",
 		"tslib": "^2.8.1"
 	},

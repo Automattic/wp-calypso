@@ -54,7 +54,7 @@
 		"@automattic/typography": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/block-editor": "^15.21.0",
-		"@wordpress/block-library": "^9.48.0",
+		"@wordpress/block-library": "patch:@wordpress/block-library@npm%3A9.48.0#~/.yarn/patches/@wordpress-block-library-npm-9.48.0-c0dd0f7825.patch",
 		"@wordpress/blocks": "^15.21.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^8.2.0",

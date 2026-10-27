@@ -54,7 +54,7 @@
 		"@wordpress/compose": "^7.23.0",
 		"@wordpress/hooks": "^4.46.0",
 		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/icons": "^13.3.0"
+		"@wordpress/icons": "^15.5.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
