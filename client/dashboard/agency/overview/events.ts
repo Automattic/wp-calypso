@@ -1,7 +1,14 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import A4ALogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg';
 import EvolveDigitalLogo from 'calypso/assets/images/a8c-for-agencies/events/evolvedigital-logo.svg';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
+import WordPressLogo from 'calypso/assets/images/a8c-for-agencies/events/wporg-logo-green.svg';
+import {
+	BASE_DISCOUNT,
+	CERTIFICATION_EXAM_URL,
+	PROMO_LAST_DAY,
+	PROMO_MULTIPLIER,
+} from '../certification/constants';
 import {
 	AI_MCP_ANNOUNCEMENT_BLOG_POST_URL,
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
@@ -198,4 +205,41 @@ export const getAiMcpAnnouncement = ( aiMcpHref: string ): FeaturedEvent => ( {
 		},
 	],
 	endsAt: '2026-10-08',
+} );
+
+/**
+ * The Q1 2027 doubled developer certification discount, shown only to agencies
+ * with an active code, since "Get your code" leads to the tier page card.
+ */
+export const getCertificationPromoEvent = ( tiersHref: string ): FeaturedEvent => ( {
+	id: 'a4a-certification-promo-2027-q1',
+	logo: WordPressLogo,
+	logoAlt: __( 'WordPress' ),
+	when: __( 'Limited time offer · Until March 31, 2027' ),
+	title: __( 'Certify your developers at double the discount' ),
+	subtitle: __( 'Automattic for Agencies & WordPress Certifications' ),
+	description: [
+		sprintf(
+			/* translators: %d is the highest percentage discount, e.g. 50 */
+			__(
+				'Until March 31, 2027, your agency’s code takes twice the usual discount off the Advanced Professional WordPress Developer exam, up to %d%% for Premier Partners.'
+			),
+			BASE_DISCOUNT[ 'premier-partner' ] * PROMO_MULTIPLIER
+		),
+	],
+	ctas: [
+		{
+			id: 'get-your-code',
+			label: __( 'Get your code' ),
+			url: `${ tiersHref }#certification`,
+		},
+		{
+			id: 'about-the-exam',
+			label: __( 'About the exam' ),
+			url: CERTIFICATION_EXAM_URL,
+			isExternal: true,
+		},
+	],
+	// The same moment the "Doubled until" badge goes, which is UTC-based.
+	endsAt: `${ PROMO_LAST_DAY }T23:59:59.999Z`,
 } );
