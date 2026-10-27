@@ -8,19 +8,18 @@ import type { RecordTracksEvent } from '../tiers/types';
 export default function MatchingProfilePreview( {
 	href,
 	agencyId,
+	isDesignPreview = false,
 	recordTracksEvent,
 }: {
 	href: string;
 	agencyId?: number;
+	isDesignPreview?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 } ) {
 	// Calypso flags use a literal plus as an enable prefix, rather than a space.
 	const searchParams = new URLSearchParams( window.location.search.replace( /\+/g, '%2B' ) );
-	const previewHref = addQueryArgs( href, {
-		flags: [ searchParams.get( 'flags' ), 'a4a-lead-matching-design-preview' ]
-			.filter( Boolean )
-			.join( ',' ),
-	} );
+	const flags = searchParams.get( 'flags' );
+	const matchingHref = flags ? addQueryArgs( href, { flags } ) : href;
 
 	return (
 		<OverviewCard
@@ -35,11 +34,11 @@ export default function MatchingProfilePreview( {
 					<Button
 						__next40pxDefaultSize
 						variant="primary"
-						href={ previewHref }
+						href={ matchingHref }
 						onClick={ () =>
 							recordTracksEvent?.( 'calypso_a4a_overview_lead_matching_click', {
 								agency_id: agencyId,
-								is_design_preview: true,
+								is_design_preview: isDesignPreview,
 							} )
 						}
 					>

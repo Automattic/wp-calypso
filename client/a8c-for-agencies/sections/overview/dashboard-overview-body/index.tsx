@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
@@ -61,8 +60,6 @@ function DashboardOverviewBodyContent( {
 		? getAnsweredMatchingProfileCount( agencyId, leadMatching )
 		: undefined;
 	const contact = leadMatching?.lead_matching_profile?.contact;
-	const isLeadMatchingEnabled =
-		isEnabled( 'a4a-lead-matching-design-preview' ) && canAccessLeadMatching;
 
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall();
 
@@ -94,7 +91,7 @@ function DashboardOverviewBodyContent( {
 			capabilities={ agency.user?.capabilities }
 			hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
 			showMatchingProfilePreview={
-				isLeadMatchingEnabled &&
+				canAccessLeadMatching &&
 				isLeadMatchingSuccess &&
 				hasIncompleteSavedMatchingProfile( agency.id, leadMatching )
 			}

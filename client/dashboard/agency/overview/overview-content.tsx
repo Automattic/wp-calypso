@@ -103,6 +103,7 @@ export default function AgencyOverviewContent( {
 	const isLocked = isPending || isRejected || ! canAccessEarnings;
 	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
 	const certification = useCertification();
+	const isDesignPreview = isEnabled( 'a4a-lead-matching-design-preview' );
 
 	return (
 		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
@@ -132,15 +133,14 @@ export default function AgencyOverviewContent( {
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
-				{ isEnabled( 'a4a-lead-matching-design-preview' ) &&
-					showMatchingProfilePreview &&
-					links.leadMatching && (
-						<MatchingProfilePreview
-							href={ links.leadMatching }
-							agencyId={ agencyId }
-							recordTracksEvent={ recordTracksEvent }
-						/>
-					) }
+				{ ( showMatchingProfilePreview || isDesignPreview ) && links.leadMatching && (
+					<MatchingProfilePreview
+						href={ links.leadMatching }
+						agencyId={ agencyId }
+						isDesignPreview={ isDesignPreview }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
 				{ showContactOptionsAnnouncement && links.leadMatching && (
 					<SingleEventCard
 						event={ getLeadMatchingContactAnnouncement( links.leadMatching ) }

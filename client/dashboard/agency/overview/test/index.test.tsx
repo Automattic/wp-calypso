@@ -73,9 +73,7 @@ function SaveProfile() {
 beforeEach( () => {
 	queryClient.clear();
 	queryClient.setDefaultOptions( { queries: { retry: false }, mutations: { retry: false } } );
-	jest
-		.mocked( isEnabled )
-		.mockImplementation( ( flag ) => flag === 'a4a-lead-matching-design-preview' );
+	jest.mocked( isEnabled ).mockReturnValue( false );
 } );
 
 afterEach( () => {
@@ -125,13 +123,11 @@ test.each( [
 	expect( Boolean( profileLink() ) ).toBe( visible );
 } );
 
-test.each( [ 'flag', 'agency', 'allowed', 'capability', 'approval' ] )(
+test.each( [ 'agency', 'allowed', 'capability', 'approval' ] )(
 	'disables the matching query and hides cached data without %s',
 	async ( restriction ) => {
 		const agency = makeAgency();
-		if ( restriction === 'flag' ) {
-			jest.mocked( isEnabled ).mockReturnValue( false );
-		} else if ( restriction === 'allowed' ) {
+		if ( restriction === 'allowed' ) {
 			agency.partner_directory = { allowed: false, directories: [] };
 		} else if ( restriction === 'capability' ) {
 			agency.user = { capabilities: [] };
@@ -155,6 +151,23 @@ test.each( [ 'flag', 'agency', 'allowed', 'capability', 'approval' ] )(
 		expect( scope.isDone() ).toBe( false );
 	}
 );
+
+test( 'forces the card for design review even for an inaccessible complete profile', async () => {
+	jest
+		.mocked( isEnabled )
+		.mockImplementation( ( flag ) => flag === 'a4a-lead-matching-design-preview' );
+	const agency = makeAgency();
+	agency.partner_directory = { allowed: false, directories: [] };
+	queryClient.setQueryData( matchingKey, {
+		agency_id: 123,
+		lead_matching_profile: completeProfile,
+	} );
+	const scope = nock( API ).get( matchingPath ).query( true ).reply( 200, {} );
+	renderOverview( agency );
+
+	expect( await screen.findByRole( 'link', { name: 'Complete profile' } ) ).toBeVisible();
+	expect( scope.isDone() ).toBe( false );
+} );
 
 test( 'hides cached answers after a failed refetch', async () => {
 	nock( API )
