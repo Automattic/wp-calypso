@@ -42,7 +42,6 @@ module.exports = ( api, opts ) => ( {
 		},
 	],
 	plugins: [
-		require.resolve( '@babel/plugin-transform-class-properties' ),
 		[
 			require.resolve( '@babel/plugin-transform-runtime' ),
 			{
