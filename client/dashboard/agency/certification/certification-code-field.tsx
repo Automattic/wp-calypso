@@ -9,7 +9,9 @@ export default function CertificationCodeField( {
 	code,
 	source,
 	label = __( 'Your agency’s discount code' ),
-	help = __( 'Each developer can use it once, when buying the exam on Webassessor.' ),
+	help = __(
+		'Enter it when you buy the exam on Webassessor. Up to 20 uses per year, one per developer.'
+	),
 	onCopy,
 	recordTracksEvent,
 }: {

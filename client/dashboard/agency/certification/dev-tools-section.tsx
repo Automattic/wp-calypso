@@ -74,7 +74,6 @@ export default function CertificationDevToolsSection( {
 								<Heading level={ 2 } size={ 20 } weight={ 500 }>
 									{ __( 'Advanced Professional WordPress Developer' ) }
 								</Heading>
-								<Badge intent="draft">{ __( 'Certify' ) }</Badge>
 							</HStack>
 							<Text weight={ 500 }>{ __( 'Prove what your developers can build' ) }</Text>
 						</VStack>
@@ -135,7 +134,7 @@ export default function CertificationDevToolsSection( {
 								recordTracksEvent={ recordTracksEvent }
 								label={ __( 'Discount code' ) }
 								help={ __(
-									'Enter it when you buy the exam on Webassessor. One use per developer.'
+									'Enter it when you buy the exam on Webassessor. Up to 20 uses per year, one per developer.'
 								) }
 							/>
 						</div>

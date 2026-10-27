@@ -41,6 +41,8 @@ export function getCertificationShareMessage( {
 		/* translators: %s is the exam's web address */
 		sprintf( __( 'Sign up for the exam: %s' ), CERTIFICATION_EXAM_URL ),
 		'',
-		__( 'Each developer can use the code once, when buying the exam on Webassessor.' ),
+		__(
+			'Enter the code when you buy the exam on Webassessor. Our agency can use it up to 20 times per year, once per developer.'
+		),
 	].join( '\n' );
 }
