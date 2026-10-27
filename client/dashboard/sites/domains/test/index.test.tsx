@@ -283,28 +283,25 @@ describe( '<SiteDomains>', () => {
 		expect( screen.queryByText( 'SSL pending' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows a domain becoming the primary address as activating on its row', async () => {
+	test( 'shows a working domain as active while the backend still reports it as pending primary', async () => {
 		nock.cleanAll();
 		mockApis( {
 			domains: [
 				{ ...domain, primary_domain: false, set_primary_domain_pending: true },
 				defaultAddressDomain,
 			],
+			ssl: { domain: domain.domain, certificate_provisioned: true, is_newly_registered: true },
 		} );
 		nock( 'https://public-api.wordpress.com' )
 			.get( `/rest/v1.2/domain-details/${ domain.domain }/` )
 			.reply( 200, { ...domain, primary_domain: false, set_primary_domain_pending: true } )
 			.persist();
-		nock( 'https://public-api.wordpress.com' )
-			.get( `/wpcom/v2/domains/ssl/${ domain.domain }/` )
-			.query( true )
-			.reply( 200, { data: { certificate_provisioned: false, is_newly_registered: false } } )
-			.persist();
 
 		render( <SiteDomains />, { user: ownerUser } );
 
-		expect( await screen.findByText( 'Activating' ) ).toBeVisible();
-		expect( screen.getByText( 'Preparing your new domain name' ) ).toBeVisible();
+		await waitFor( () => expect( screen.getAllByText( 'SSL active' ) ).toHaveLength( 2 ) );
+		expect( screen.queryByText( 'Activating' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Preparing your new domain name' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Setting up your custom domain' ) ).not.toBeInTheDocument();
 	} );
 
