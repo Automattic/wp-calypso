@@ -1,9 +1,10 @@
-import { __experimentalText as Text } from '@wordpress/components';
 import { zipWithSignature } from '../../../panel/templates/functions';
 import { useAppContext } from '../../context';
 import FollowLink, { followStatTypes } from '../../templates/follow-link';
 import { formatFullTime, formatNoteTime } from '../format-note-time';
+import MetaList from './meta-list';
 import type { BlockWithSignature, Note } from '../../types';
+import type { ReactNode } from 'react';
 
 export const NoteTime = ( { timestamp, url }: { timestamp: string; url: string } ) => {
 	const { locale } = useAppContext();
@@ -31,22 +32,20 @@ const getFollow = ( note: Note ) => {
 		: undefined;
 };
 
-export default function NoteMeta( { note }: { note: Note } ) {
+export default function NoteMeta( { note, children }: { note: Note; children?: ReactNode } ) {
 	const follow = getFollow( note );
 
 	return (
-		<Text className="wpnc-simplified__quiet-links" size={ 12 } variant="muted">
+		<MetaList>
+			{ children }
 			<NoteTime timestamp={ note.timestamp } url={ note.url } />
 			{ follow && (
-				<>
-					{ ' · ' }
-					<FollowLink
-						site={ follow.siteId }
-						isFollowing={ follow.isFollowing }
-						noteType={ note.type as keyof typeof followStatTypes }
-					/>
-				</>
+				<FollowLink
+					site={ follow.siteId }
+					isFollowing={ follow.isFollowing }
+					noteType={ note.type as keyof typeof followStatTypes }
+				/>
 			) }
-		</Text>
+		</MetaList>
 	);
 }

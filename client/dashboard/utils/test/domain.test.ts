@@ -6,6 +6,7 @@ import {
 	findPrivacyServiceWhois,
 	isPendingPrimaryDomain,
 } from '../domain';
+import type { DomainSummary, Site, User, WhoisDataEntry } from '@automattic/api-core';
 
 describe( 'utils', () => {
 	const whoisData = [
@@ -17,7 +18,7 @@ describe( 'utils', () => {
 			org: 'Privacy R US',
 			type: WhoisType.PRIVACY_SERVICE,
 		},
-	];
+	] as WhoisDataEntry[];
 
 	describe( 'findRegistrantWhois', () => {
 		test( 'should return undefined when not registrant object found', () => {
@@ -42,7 +43,7 @@ describe( 'utils', () => {
 			subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Registration' },
 			can_set_as_primary: true,
 			primary_domain: false,
-		};
+		} as DomainSummary;
 
 		test( 'returns true when the backend reports the domain as pending', () => {
 			expect( isPendingPrimaryDomain( { ...baseDomain, set_primary_domain_pending: true } ) ).toBe(
@@ -67,9 +68,9 @@ describe( 'utils', () => {
 			can_set_as_primary: true,
 			primary_domain: false,
 			domain_status: { id: DomainStatus.ACTIVE, label: 'Active', type: 'success' },
-		};
-		const site = { options: { is_redirect: false } };
-		const user = { meta: { data: { flags: { active_flags: [] } } } };
+		} as DomainSummary;
+		const site = { options: { is_redirect: false } } as Site;
+		const user = { meta: { data: { flags: { active_flags: [] } } } } as unknown as User;
 
 		test( 'returns true for an eligible non-redirect domain', () => {
 			expect( canSetAsPrimaryIgnoringSsl( { domain: baseDomain, site, user } ) ).toBe( true );
@@ -79,7 +80,7 @@ describe( 'utils', () => {
 			expect(
 				canSetAsPrimaryIgnoringSsl( {
 					domain: baseDomain,
-					site: { options: { is_redirect: true } },
+					site: { options: { is_redirect: true } } as Site,
 					user,
 				} )
 			).toBe( false );
@@ -102,7 +103,7 @@ describe( 'utils', () => {
 			expired: false,
 			is_domain_only_site: false,
 			domain_status: { id: DomainStatus.ACTIVE, label: 'Active', type: 'success' },
-		};
+		} as DomainSummary;
 
 		test( 'returns true for an active domain with a subscription', () => {
 			expect( canEnableAutoRenew( baseDomain ) ).toBe( true );

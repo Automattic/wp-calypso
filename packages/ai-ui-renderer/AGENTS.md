@@ -20,5 +20,6 @@ modal stacking rules in consumers.
 
 WordPress UI components come from `@wordpress/ui` and load their own styles. `style.scss` maps the
 A2UI theme onto their `--wpds-*` design tokens and uses the host's WordPress component colors as
-fallbacks. Check theme changes in light and dark mode. Theme a new or changed component as
-README.md's "Theming a new component" says.
+fallbacks. wp-admin and the editor also set the `--wpds-*` size and font tokens from their own
+Gutenberg copy, so check a theme change in Calypso and wp-admin, in light and dark mode. Add or
+change a component as README.md's "Adding a component" says.

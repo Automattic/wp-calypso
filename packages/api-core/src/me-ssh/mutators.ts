@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { CreateSshKeyArgs } from './types';
+import type { CreateSshKeyArgs, UpdateSshKeyArgs } from './types';
 
 export async function createSshKey( data: CreateSshKeyArgs ) {
 	return wpcom.req.post(
@@ -11,19 +11,19 @@ export async function createSshKey( data: CreateSshKeyArgs ) {
 	);
 }
 
-export async function updateSshKey( key: string ) {
+export async function updateSshKey( { name, key }: UpdateSshKeyArgs ) {
 	return wpcom.req.put(
 		{
-			path: '/me/ssh-keys/default',
+			path: `/me/ssh-keys/${ encodeURIComponent( name ) }`,
 			apiNamespace: 'wpcom/v2',
 		},
 		{ key }
 	);
 }
 
-export async function deleteSshKey() {
+export async function deleteSshKey( name: string ) {
 	return wpcom.req.post( {
-		path: '/me/ssh-keys/default',
+		path: `/me/ssh-keys/${ encodeURIComponent( name ) }`,
 		apiNamespace: 'wpcom/v2',
 		method: 'DELETE',
 	} );
