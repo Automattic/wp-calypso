@@ -6,7 +6,10 @@ export type {
 	InteractiveUiDataModel,
 	InteractiveUiMessage,
 	InteractiveUiRuntime,
+	InteractiveUiRuntimeOptions,
+	InteractiveUiToolCall,
 } from './utils/runtime';
+export type { InteractiveUiActionMode } from './capabilities';
 export { InteractiveUiSurface } from './components/interactive-ui-surface';
 export type {
 	ActionPayload as InteractiveUiAction,

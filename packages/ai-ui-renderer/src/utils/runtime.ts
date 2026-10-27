@@ -14,11 +14,9 @@ export interface InteractiveUiDataModel {
 	surfaces: Record< string, Record< string, unknown > >;
 }
 
-interface InteractiveUiRuntimeOptions {
+interface InteractiveUiRuntimeBaseOptions {
 	/** From `createInteractiveUiCatalog()`. Each surface renders with the one its messages name. */
 	catalogs: InteractiveUiCatalog[];
-	/** Sends the surfaces' actions to the agent. */
-	onAction: ( action: ActionPayload ) => Promise< void >;
 	/**
 	 * Reports each error with the owner of its batch or surface, and the surface's ID when known:
 	 * a message the runtime rejects, or a surface's own error, such as a component its catalog
@@ -26,6 +24,27 @@ interface InteractiveUiRuntimeOptions {
 	 */
 	onError: ( error: A2uiErrorPayload, ownerId: string ) => void;
 }
+
+export interface InteractiveUiToolCall {
+	name: string;
+	arguments: Record< string, unknown >;
+}
+
+export type InteractiveUiRuntimeOptions = InteractiveUiRuntimeBaseOptions &
+	(
+		| {
+				actionMode?: 'agent';
+				/** Sends actions to the agent; the host controls message visibility. */
+				onAction: ( action: ActionPayload ) => Promise< void >;
+				onToolCall?: never;
+		  }
+		| {
+				actionMode: 'tool-call';
+				/** Executes the tool, handles its result, and throws if execution fails. */
+				onToolCall: ( call: InteractiveUiToolCall ) => Promise< void >;
+				onAction?: never;
+		  }
+	);
 
 /**
  * The data model paths a surface's obscured TextFields bind to, or `undefined` when one binds a
@@ -55,19 +74,39 @@ function getObscuredPaths( surface: SurfaceModel< ReactComponentImplementation >
  * Turns A2UI messages into surfaces, grouped by the owner the host shows them next to,
  * such as a chat message.
  */
-export function createInteractiveUiRuntime( {
-	catalogs,
-	onAction,
-	onError,
-}: InteractiveUiRuntimeOptions ) {
-	// Relaxed validation still rejects cycles and over-deep layouts, which would never finish
-	// rendering, even across updates.
-	const processor = new MessageProcessor< ReactComponentImplementation >( catalogs, onAction, {
-		validationConfig: RELAXED_VALIDATION,
-	} );
-
+export function createInteractiveUiRuntime( options: InteractiveUiRuntimeOptions ) {
+	const { catalogs, onError } = options;
 	const surfaceOwnerIds = new Map< string, string >();
 	let currentOwnerId = '';
+
+	// Relaxed validation still rejects cycles and over-deep layouts, which would never finish
+	// rendering, even across updates.
+	const processor = new MessageProcessor< ReactComponentImplementation >(
+		catalogs,
+		async ( action ) => {
+			if ( options.actionMode !== 'tool-call' ) {
+				await options.onAction( action );
+				return;
+			}
+
+			const ownerId = surfaceOwnerIds.get( action.surfaceId ) ?? '';
+
+			try {
+				await options.onToolCall( { name: action.name, arguments: action.context } );
+			} catch ( error ) {
+				onError(
+					{
+						code: 'TOOL_CALL_FAILED',
+						message: error instanceof Error ? error.message : String( error ),
+						surfaceId: action.surfaceId,
+						expression: action.name,
+					},
+					ownerId
+				);
+			}
+		},
+		{ validationConfig: RELAXED_VALIDATION }
+	);
 
 	// A surface disposes its error subscription along with itself.
 	const createdSubscription = processor.onSurfaceCreated( ( surface ) => {
