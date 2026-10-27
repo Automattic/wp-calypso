@@ -11,7 +11,7 @@ import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import getValidationMessage from './url-validation-message-helper';
+import getValidationMessage, { getValidationErrorReason } from './url-validation-message-helper';
 import type { OnInputChange, OnInputEnter } from './types';
 import type { FunctionComponent, ReactNode } from 'react';
 
@@ -104,6 +104,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 			lastInvalidValue.current = urlValue;
 			recordTracksEvent( 'calypso_importer_capture_input_invalid', {
 				url: urlValue,
+				error_code: getValidationErrorReason( urlValue ),
 			} );
 		}
 	}

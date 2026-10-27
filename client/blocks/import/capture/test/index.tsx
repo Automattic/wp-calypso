@@ -128,6 +128,13 @@ describe( 'CaptureInput', () => {
 		expect( onInputEnter ).toHaveBeenCalledWith( 'https://example.wordpress.com' );
 
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_importer_capture_input_invalid',
+			{
+				url: 'notaurl',
+				error_code: 'missing_tld',
+			}
+		);
 	} );
 
 	it( 'shows a custom CTA label', async () => {
