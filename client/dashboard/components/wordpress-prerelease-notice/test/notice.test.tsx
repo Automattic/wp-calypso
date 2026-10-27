@@ -12,7 +12,8 @@ const site = { ID: 123, slug: 'test-site.wordpress.com' } as Site;
 
 const prerelease: WordPressPrerelease = {
 	auto_enrolled: true,
-	version: '7.2-beta2',
+	version: '7.2',
+	stage: 'beta',
 	release_date: '2026-12-08',
 };
 
@@ -41,7 +42,7 @@ describe( '<WordPressPrereleaseNotice>', () => {
 		render(
 			<WordPressPrereleaseNotice
 				site={ site }
-				prerelease={ { ...prerelease, version: '7.2-RC1' } }
+				prerelease={ { ...prerelease, stage: 'rc' } }
 				recordTracksEvent={ jest.fn() }
 			/>
 		);

@@ -228,7 +228,8 @@ describe( '<WordPressSettings>', () => {
 				.query( true )
 				.reply( 200, {
 					auto_enrolled: true,
-					version: '7.0-RC2',
+					version: '7.0',
+					stage: 'rc',
 					release_date: '2026-12-08',
 					...prerelease,
 				} );

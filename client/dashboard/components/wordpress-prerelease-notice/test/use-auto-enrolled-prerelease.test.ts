@@ -1,6 +1,12 @@
 import { isAutoEnrolledBeforeRelease } from '../use-auto-enrolled-prerelease';
+import type { WordPressPrerelease } from '@automattic/api-core';
 
-const prerelease = { auto_enrolled: true, version: '7.2-RC1', release_date: '2026-12-08' };
+const prerelease: WordPressPrerelease = {
+	auto_enrolled: true,
+	version: '7.2',
+	stage: 'rc',
+	release_date: '2026-12-08',
+};
 
 describe( 'isAutoEnrolledBeforeRelease', () => {
 	test( 'is true for an auto-enrolled site before release day', () => {

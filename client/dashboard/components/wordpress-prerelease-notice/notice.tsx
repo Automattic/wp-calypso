@@ -2,10 +2,9 @@ import { userPreferenceOptimisticMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
-import { getMajorWordPressVersion, getWordPressPrereleaseName } from '../../utils/wp-version';
 import Notice from '../notice';
 import RouterLinkButton from '../router-link-button';
-import { formatReleaseDate } from './use-auto-enrolled-prerelease';
+import { formatReleaseDate, getPrereleaseName } from './use-auto-enrolled-prerelease';
 import type { Site, WordPressPrerelease } from '@automattic/api-core';
 
 /** Holds the release the notice was dismissed for, so the next one the site is auto-enrolled in shows it again. */
@@ -30,7 +29,7 @@ export function WordPressPrereleaseNotice( {
 
 	const handleDismiss = () => {
 		recordTracksEvent( 'calypso_dashboard_wp_prerelease_notice_dismiss', eventProperties );
-		saveDismissal( getMajorWordPressVersion( prerelease.version ) );
+		saveDismissal( prerelease.version );
 	};
 
 	return (
@@ -58,7 +57,7 @@ export function WordPressPrereleaseNotice( {
 					'Your site is running WordPress %(version)s as part of early access. If you’d rather wait for the %(releaseDate)s release, you can switch back.'
 				),
 				{
-					version: getWordPressPrereleaseName( prerelease.version ),
+					version: getPrereleaseName( prerelease ),
 					releaseDate: formatReleaseDate( prerelease.release_date, locale ),
 				}
 			) }

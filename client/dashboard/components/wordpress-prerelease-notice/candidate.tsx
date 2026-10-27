@@ -2,7 +2,6 @@ import { siteBySlugQuery, userPreferenceQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouterState } from '@tanstack/react-router';
 import { useAnalytics } from '../../app/analytics';
-import { getMajorWordPressVersion } from '../../utils/wp-version';
 import { WordPressPrereleaseNotice, getDismissalPreferenceName } from './notice';
 import { useAutoEnrolledWordPressPrerelease } from './use-auto-enrolled-prerelease';
 import type { ReactNode } from 'react';
@@ -38,11 +37,7 @@ export function useWordPressPrereleaseNoticeCandidate(): {
 	} );
 	const { recordTracksEvent } = useAnalytics();
 
-	if (
-		! site ||
-		! prerelease ||
-		dismissedVersion === getMajorWordPressVersion( prerelease.version )
-	) {
+	if ( ! site || ! prerelease || dismissedVersion === prerelease.version ) {
 		return null;
 	}
 

@@ -48,19 +48,7 @@ export function formatWordPressVersion(
 	return wpVersion;
 }
 
-/** "7.2" for "7.2-RC1" or "7.2.1". */
+/** "7.1" for "7.1.3". */
 export function getMajorWordPressVersion( wpVersion: string ) {
 	return wpVersion.match( /^\d+\.\d+/ )?.[ 0 ] ?? wpVersion;
-}
-
-/** "7.2 Beta" for "7.2-beta2" and "7.2 RC" for "7.2-RC1", as WordPress names its pre-releases. */
-export function getWordPressPrereleaseName( wpVersion: string ) {
-	const majorVersion = getMajorWordPressVersion( wpVersion );
-	if ( /-rc/i.test( wpVersion ) ) {
-		return `${ majorVersion } RC`;
-	}
-	if ( /-beta/i.test( wpVersion ) ) {
-		return `${ majorVersion } Beta`;
-	}
-	return majorVersion;
 }

@@ -26,6 +26,14 @@ export function isAutoEnrolledBeforeRelease( prerelease: WordPressPrerelease, no
 	return prerelease.auto_enrolled && now < Date.parse( `${ prerelease.release_date }T00:00:00Z` );
 }
 
+/** "7.2 Beta" or "7.2 RC", as WordPress names its pre-releases. */
+export function getPrereleaseName( {
+	version,
+	stage,
+}: Pick< WordPressPrerelease, 'version' | 'stage' > ) {
+	return `${ version } ${ stage === 'rc' ? 'RC' : 'Beta' }`;
+}
+
 /** "December 8" for "2026-12-08". The date is a calendar day, so it is read in UTC to keep it from shifting. */
 export function formatReleaseDate( releaseDate: string, locale: string ) {
 	return formatDate( new Date( `${ releaseDate }T00:00:00Z` ), locale, {

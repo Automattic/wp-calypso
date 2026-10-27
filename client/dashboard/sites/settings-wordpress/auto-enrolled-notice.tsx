@@ -4,8 +4,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useHelpCenter } from '../../app/help-center';
 import { useLocale } from '../../app/locale';
 import { Notice } from '../../components/notice';
-import { formatReleaseDate } from '../../components/wordpress-prerelease-notice';
-import { getMajorWordPressVersion, getWordPressPrereleaseName } from '../../utils/wp-version';
+import { formatReleaseDate, getPrereleaseName } from '../../components/wordpress-prerelease-notice';
+import { getMajorWordPressVersion } from '../../utils/wp-version';
 import type { WordPressPrerelease } from '@automattic/api-core';
 
 export function getSwitchBackLabel( stableVersion: string ) {
@@ -37,7 +37,7 @@ export function AutoEnrolledNotice( {
 			title={ sprintf(
 				// translators: %s: WordPress version and release stage, e.g. "7.2 Beta" or "7.2 RC"
 				__( 'Your site is running WordPress %s as part of early access' ),
-				getWordPressPrereleaseName( prerelease.version )
+				getPrereleaseName( prerelease )
 			) }
 		>
 			{ createInterpolateElement(
@@ -47,7 +47,7 @@ export function AutoEnrolledNotice( {
 						'We picked your site to run WordPress %(version)s before its %(releaseDate)s release, so we can find and fix issues before every site gets it. If you notice anything unexpected, <support>let us know</support>. If you’d rather wait for the release, you can switch back to WordPress %(stableVersion)s. We won’t include your site in future early access releases.'
 					),
 					{
-						version: getMajorWordPressVersion( prerelease.version ),
+						version: prerelease.version,
 						releaseDate: formatReleaseDate( prerelease.release_date, locale ),
 						stableVersion: getMajorWordPressVersion( stableVersion ),
 					}
