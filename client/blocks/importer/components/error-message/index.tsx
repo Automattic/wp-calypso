@@ -9,15 +9,26 @@ import './style.scss';
 interface Props {
 	primaryBtnText?: string;
 	onPrimaryBtnClick?: () => void;
+	errorData?: {
+		code?: string | number;
+		type?: string;
+	};
+	importerFileType?: string;
 }
 
 const ErrorMessage: React.FunctionComponent< Props > = ( props ) => {
 	const translate = useTranslate();
-	const { primaryBtnText, onPrimaryBtnClick } = props;
+	const { primaryBtnText, onPrimaryBtnClick, errorData, importerFileType } = props;
+	const errorCode = errorData?.code;
+	const errorType = errorData?.type;
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_site_importer_start_import_failure' );
-	}, [] );
+		recordTracksEvent( 'calypso_site_importer_start_import_failure', {
+			error_code: errorCode,
+			error_type: errorType,
+			importer_file_type: importerFileType,
+		} );
+	}, [ errorCode, errorType, importerFileType ] );
 
 	return (
 		<div className="import__error-message import-layout__center">
