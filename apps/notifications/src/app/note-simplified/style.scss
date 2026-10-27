@@ -34,6 +34,34 @@
 	padding: 0;
 	list-style: none;
 	overflow-wrap: anywhere;
+
+	&.is-reply > li > :last-child {
+		padding-inline-start: 48px;
+	}
+
+	&.is-reply .wpnc-simplified__thread-parent {
+		position: relative;
+
+		&::before {
+			content: "";
+			position: absolute;
+			inset-block: 48px -4px;
+			inset-inline-start: 17px;
+			width: 2px;
+			border-radius: 2px;
+			background: var(--wp-components-color-gray-300, #{$gray-300});
+		}
+
+		.wpnc-simplified__author,
+		.wpnc-simplified__parent-text {
+			font-size: 13px;
+			line-height: 20px;
+		}
+
+		.wpnc-simplified__parent-text {
+			color: var(--wp-components-color-gray-700, #{$gray-700});
+		}
+	}
 }
 
 .wpnc-simplified__card + .wpnc-simplified__thread,
