@@ -2365,6 +2365,21 @@ describe( 'OrchestratorChat', () => {
 				],
 			] );
 		} );
+
+		it( 'stops flagging errors once the page is restored from the back/forward cache', () => {
+			const { rerender } = render( chat() );
+
+			window.dispatchEvent( new Event( 'pagehide' ) );
+			window.dispatchEvent( new Event( 'pageshow' ) );
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'Load failed', errorDetails: { name: 'TypeError' } } )
+			);
+			rerender( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', errorProps( 'other', 'network' ) ],
+			] );
+		} );
 	} );
 
 	describe( 'credits refusal notice', () => {
