@@ -3,9 +3,12 @@
  */
 
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { dispatch } from '@wordpress/data';
+import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 import PersonalDetailsSection from '../index';
 import type { User, UserSettings } from '@automattic/api-core';
@@ -63,6 +66,12 @@ function mockAccountRecovery( {
 }
 
 describe( '<PersonalDetailsSection>', () => {
+	afterEach( () => {
+		act( () => {
+			dispatch( noticesStore ).removeAllNotices( 'snackbar' );
+		} );
+	} );
+
 	test( 'renders the form and saves the form', async () => {
 		const user = userEvent.setup();
 		mockUserSettings( settings );
@@ -476,6 +485,97 @@ describe( '<PersonalDetailsSection>', () => {
 			render( <PersonalDetailsSection /> );
 
 			expect( await screen.findByText( /lose access to account recovery/i ) ).toBeVisible();
+		} );
+
+		test( 'shows an email address error from the server on the field', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings' )
+				.reply( 400, {
+					error: 'invalid_input',
+					message: 'That e-mail address is already being used.',
+					data: { 'form-field': 'email' },
+				} );
+
+			render(
+				<>
+					<PersonalDetailsSection />
+					<Snackbars />
+				</>
+			);
+
+			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
+			await user.clear( emailInput );
+			await user.type( emailInput, 'taken@example.com' );
+			await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+			expect(
+				await screen.findByText( 'That e-mail address is already being used.' )
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: 'Dismiss this notice' } )
+			).not.toBeInTheDocument();
+			expect( emailInput ).toBeInvalid();
+
+			await user.clear( emailInput );
+			await user.type( emailInput, 'free@example.com' );
+
+			expect(
+				screen.queryByText( 'That e-mail address is already being used.' )
+			).not.toBeInTheDocument();
+			expect( emailInput ).toBeValid();
+		} );
+
+		test( 'shows an error that does not concern the email address in a snackbar', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings' )
+				.reply( 500, { error: 'server_error', message: 'Something went wrong.' } );
+
+			render(
+				<>
+					<PersonalDetailsSection />
+					<Snackbars />
+				</>
+			);
+
+			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
+			await user.clear( emailInput );
+			await user.type( emailInput, 'new@example.com' );
+			await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+			expect(
+				await screen.findByRole( 'button', { name: 'Dismiss this notice' } )
+			).toHaveTextContent( 'Something went wrong.' );
+			expect( emailInput ).toBeValid();
+		} );
+
+		test( 'shows an email address error on the field even if it was never left', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings' )
+				.reply( 400, {
+					error: 'invalid_input',
+					message: 'That e-mail address is already being used.',
+					data: { 'form-field': 'email' },
+				} );
+
+			render( <PersonalDetailsSection /> );
+
+			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
+			await user.clear( emailInput );
+			await user.type( emailInput, 'taken@example.com{Enter}' );
+
+			expect(
+				await screen.findByText( 'That e-mail address is already being used.' )
+			).toBeVisible();
+			expect( emailInput ).toHaveFocus();
 		} );
 
 		test( 'disables save when email is invalid', async () => {

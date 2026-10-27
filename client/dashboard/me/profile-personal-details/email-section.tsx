@@ -28,6 +28,10 @@ interface EmailSectionProps {
 	userSettings: UserSettings;
 	isEmailVerified: boolean;
 	onValidationChange?: ( isValid: boolean ) => void;
+	/**
+	 * An error from saving the email address, shown on the field until the address is changed.
+	 */
+	serverError?: string | null;
 }
 
 type EmailFormData = { user_email: string };
@@ -67,6 +71,7 @@ export default function EmailSection( {
 	userSettings,
 	isEmailVerified,
 	onValidationChange,
+	serverError,
 }: EmailSectionProps ) {
 	const mutation = cancelPendingEmailChangeMutation();
 	const isEmailWritePending = useIsEmailWritePending();
@@ -182,6 +187,10 @@ export default function EmailSection( {
 			return undefined;
 		}
 
+		if ( serverError ) {
+			return { user_email: { custom: { type: 'invalid', message: serverError } } };
+		}
+
 		if ( showBouncingEmailError ) {
 			return {
 				user_email: {
@@ -231,7 +240,14 @@ export default function EmailSection( {
 		}
 
 		return undefined;
-	}, [ isEmailPending, showBouncingEmailError, value, currentEmail, emailValidationState ] );
+	}, [
+		isEmailPending,
+		serverError,
+		showBouncingEmailError,
+		value,
+		currentEmail,
+		emailValidationState,
+	] );
 
 	const fields = useMemo(
 		(): Field< EmailFormData >[] => [
@@ -251,7 +267,7 @@ export default function EmailSection( {
 
 	return (
 		<VStack spacing={ 4 }>
-			<ShowValidityImmediatelyContext.Provider value={ showBouncingEmailError }>
+			<ShowValidityImmediatelyContext.Provider value={ showBouncingEmailError || !! serverError }>
 				<DataForm< EmailFormData >
 					data={ formData }
 					fields={ fields }
