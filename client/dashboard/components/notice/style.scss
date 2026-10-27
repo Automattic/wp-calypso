@@ -1,0 +1,7 @@
+// `@wordpress/ui` leaves icon tinting to `@wordpress/icons` 17+, where icons
+// fill with `currentColor` themselves. Calypso still resolves an older
+// `@wordpress/icons`, so the notice's own icons need it set here.
+.dashboard-notice > svg,
+.dashboard-notice > button > svg {
+	fill: currentColor;
+}

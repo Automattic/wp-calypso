@@ -2,6 +2,7 @@ import { Notice as UINotice } from '@wordpress/ui';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
 import type { NoticeProps } from './types';
+import './style.scss';
 
 /**
  * The Notice component is a visually non-obtrusive element that communicates the system status
