@@ -5,7 +5,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { purchaseSettingsRoute, changePaymentMethodRoute } from '../../../app/router/me';
-import Notice from '../../../components/notice';
+import Notice, { NoticeActionButton, NoticeActionLinkButton } from '../../../components/notice';
 import { getRelativeDayString, isWithinNext } from '../../../utils/datetime';
 import {
 	isExpiring,
@@ -129,14 +129,20 @@ function NoticeContent( {
 			<Notice
 				variant={ noticeStatus }
 				actions={
-					( noticeActionHref || noticeActionOnClick ) && (
-						<Button
-							variant="primary"
-							href={ noticeActionHref ?? undefined }
+					noticeActionHref ? (
+						<NoticeActionLinkButton
+							variant="solid"
+							href={ noticeActionHref }
 							onClick={ noticeActionOnClick ?? undefined }
 						>
 							{ noticeActionText }
-						</Button>
+						</NoticeActionLinkButton>
+					) : (
+						noticeActionOnClick && (
+							<NoticeActionButton variant="solid" onClick={ noticeActionOnClick }>
+								{ noticeActionText }
+							</NoticeActionButton>
+						)
 					)
 				}
 			>

@@ -1,6 +1,5 @@
-import { Link } from '@tanstack/react-router';
 import { cancelPurchaseRoute } from '../../../app/router/me';
-import Notice from '../../../components/notice';
+import Notice, { RouterNoticeActionLink } from '../../../components/notice';
 import { hasAmountAvailableToRefund } from '../../../utils/purchase';
 import { getRefundEligibilityPromoCopy, getRefundNoticeCopy } from './get-confirmation-copy';
 import RefundAmountString from './refund-amount-string';
@@ -27,13 +26,13 @@ export default function RefundEligibilityNotice( props: RefundEligibilityNoticeP
 			<Notice
 				variant="info"
 				actions={
-					<Link
+					<RouterNoticeActionLink
 						to={ cancelPurchaseRoute.fullPath }
 						params={ { purchaseId: String( purchase.ID ) } }
 						search={ { intent: 'remove' as const } }
 					>
 						{ linkLabel }
-					</Link>
+					</RouterNoticeActionLink>
 				}
 			>
 				{ prompt }

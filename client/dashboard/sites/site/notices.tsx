@@ -1,10 +1,8 @@
 import { JETPACK_SUPPORT_CONNECTION_ISSUES } from '@automattic/urls';
-import { Link } from '@tanstack/react-router';
-import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { Notice } from '../../components/notice';
+import { Notice, NoticeActionLink, RouterNoticeActionLink } from '../../components/notice';
 import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
 import type { Site } from '@automattic/api-core';
 
@@ -30,13 +28,13 @@ export function InaccessibleJetpackNotice( { error, site }: { error: Error; site
 			title={ __( 'Your Jetpack site cannot be reached at this time.' ) }
 			actions={
 				<>
-					<ExternalLink href={ JETPACK_SUPPORT_CONNECTION_ISSUES }>
+					<NoticeActionLink href={ JETPACK_SUPPORT_CONNECTION_ISSUES } openInNewTab>
 						{ __( 'Troubleshoot your Jetpack connection' ) }
-					</ExternalLink>
+					</NoticeActionLink>
 					{ site && canViewSftpSshSettingsRoute && (
-						<Link to={ `/sites/${ site.slug }/settings/sftp-ssh` }>
+						<RouterNoticeActionLink to={ `/sites/${ site.slug }/settings/sftp-ssh` }>
 							{ __( 'Connect over SFTP/SSH' ) }
-						</Link>
+						</RouterNoticeActionLink>
 					) }
 				</>
 			}

@@ -13,8 +13,10 @@ import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
-import Notice from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
+import Notice, {
+	NoticeActionLinkButton,
+	RouterNoticeActionLinkButton,
+} from '../../components/notice';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { ShareSiteForm } from './share-site-form';
@@ -193,21 +195,21 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 	// Dashboards without their own domains route (e.g. A4A) send users to the WordPress.com dashboard.
 	const manageDomainsButton =
 		isDashboardBackport() || supports.domains ? (
-			<RouterLinkButton
-				variant="secondary"
+			<RouterNoticeActionLinkButton
+				variant="outline"
 				to={
 					isDashboardBackport() ? `/domains/manage/${ site.slug }` : `/sites/${ site.slug }/domains`
 				}
 			>
 				{ __( 'Manage domains' ) }
-			</RouterLinkButton>
+			</RouterNoticeActionLinkButton>
 		) : (
-			<Button
-				variant="secondary"
+			<NoticeActionLinkButton
+				variant="outline"
 				href={ buildDashboardLink( 'dotcom', `/sites/${ site.slug }/domains` ) }
 			>
 				{ __( 'Manage domains' ) }
-			</Button>
+			</NoticeActionLinkButton>
 		);
 
 	return (
@@ -238,9 +240,12 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 											hasNonWpcomDomain ? (
 												manageDomainsButton
 											) : (
-												<Button variant="secondary" href={ getAddSiteDomainUrl( site.slug ) }>
+												<NoticeActionLinkButton
+													variant="outline"
+													href={ getAddSiteDomainUrl( site.slug ) }
+												>
 													{ __( 'Add new domain' ) }
-												</Button>
+												</NoticeActionLinkButton>
 											)
 										}
 									>

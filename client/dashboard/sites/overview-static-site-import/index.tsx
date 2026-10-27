@@ -15,7 +15,7 @@ import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { getCurrentDashboard } from '../../app/routing';
 import { Card, CardBody } from '../../components/card';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionButton, NoticeActionLink } from '../../components/notice';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
@@ -210,21 +210,21 @@ export function StaticSiteImportNotice( {
 				variant="error"
 				title={ __( 'We couldn’t finish your move' ) }
 				actions={
-					<HStack justify="flex-start" wrap>
+					<>
 						{ siteImport.needsRestart && (
-							<Button variant="link" href={ restartUrl }>
+							<NoticeActionLink href={ restartUrl }>
 								{ __( 'Read my site again' ) }
-							</Button>
+							</NoticeActionLink>
 						) }
 						{ siteImport.retry && (
-							<Button variant="link" onClick={ siteImport.retry }>
+							<NoticeActionButton variant="minimal" onClick={ siteImport.retry }>
 								{ __( 'Try again' ) }
-							</Button>
+							</NoticeActionButton>
 						) }
-						<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
+						<NoticeActionButton variant="minimal" onClick={ () => setShowHelpCenter( true ) }>
 							{ __( 'Get help' ) }
-						</Button>
-					</HStack>
+						</NoticeActionButton>
+					</>
 				}
 			>
 				{ siteImport.errorCode === 'static_site_import_atomic_unavailable'
@@ -253,13 +253,13 @@ export function StaticSiteImportNotice( {
 			actions={
 				<HStack justify="space-between" wrap>
 					{ sourceHost && (
-						<Button variant="link" href={ connectDomainUrl }>
+						<NoticeActionLink href={ connectDomainUrl }>
 							{ sprintf(
 								/* translators: %s: the site's domain, e.g. example.com. */
 								__( 'Connect %s' ),
 								sourceHost
 							) }
-						</Button>
+						</NoticeActionLink>
 					) }
 					<Feedback siteId={ site.ID } platform={ platform } />
 				</HStack>

@@ -1,13 +1,12 @@
 import { type Site } from '@automattic/api-core';
 import { siteApmEnabledMutation, siteBySlugQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import InlineSupportLink from '../../components/inline-support-link';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionButton } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
@@ -31,15 +30,14 @@ function ApmToggle( { site }: { site: Site } ) {
 				variant="success"
 				title={ __( 'APM is enabled' ) }
 				actions={
-					<Button
-						variant="primary"
-						size="compact"
-						isBusy={ isPending }
+					<NoticeActionButton
+						variant="solid"
+						loading={ isPending }
 						disabled={ isPending }
 						onClick={ handleClick }
 					>
 						{ __( 'Disable' ) }
-					</Button>
+					</NoticeActionButton>
 				}
 			/>
 		);
@@ -49,15 +47,14 @@ function ApmToggle( { site }: { site: Site } ) {
 		<Notice
 			title={ __( 'APM is disabled' ) }
 			actions={
-				<Button
-					variant="primary"
-					size="compact"
-					isBusy={ isPending }
+				<NoticeActionButton
+					variant="solid"
+					loading={ isPending }
 					disabled={ isPending }
 					onClick={ handleClick }
 				>
 					{ __( 'Enable' ) }
-				</Button>
+				</NoticeActionButton>
 			}
 		/>
 	);

@@ -5,7 +5,6 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalSpacer as Spacer,
 	Button,
-	ExternalLink,
 	Modal,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -18,7 +17,7 @@ import Markdown from 'react-markdown';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
-import { Notice } from '../../components/notice';
+import { Notice, NoticeActionLink } from '../../components/notice';
 import { Text } from '../../components/text';
 import { VIEWPORT_BREAKPOINTS } from './constants';
 import LLMNotice from './llm-notice';
@@ -99,9 +98,9 @@ const PerformanceInsightTip = () => {
 			<Notice
 				title={ __( 'Did you know' ) }
 				actions={
-					<ExternalLink href="https://wordpress.com/plugins/jetpack-boost">
+					<NoticeActionLink href="https://wordpress.com/plugins/jetpack-boost" openInNewTab>
 						{ __( 'Get Jetpack Boost' ) }
-					</ExternalLink>
+					</NoticeActionLink>
 				}
 			>
 				{ __(

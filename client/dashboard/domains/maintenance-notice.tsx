@@ -1,12 +1,11 @@
 import { domainQuery } from '@automattic/api-queries';
 import { getTld } from '@automattic/domain-search';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
 import { formatDistanceToNowStrict } from 'date-fns';
 import UnknownError from '../app/500';
 import { domainRoute } from '../app/router/domains';
-import Notice from '../components/notice';
+import Notice, { RouterNoticeActionLink } from '../components/notice';
 import { isTldInMaintenance } from '../utils/domain';
 
 export const TLDMaintenanceNotice = ( { showGoBackLink = true }: { showGoBackLink?: boolean } ) => {
@@ -18,9 +17,9 @@ export const TLDMaintenanceNotice = ( { showGoBackLink = true }: { showGoBackLin
 			variant="warning"
 			actions={
 				showGoBackLink ? (
-					<Link to={ domainRoute.fullPath } params={ { domainName } }>
+					<RouterNoticeActionLink to={ domainRoute.fullPath } params={ { domainName } }>
 						{ __( 'Go back to domain overview' ) }
-					</Link>
+					</RouterNoticeActionLink>
 				) : undefined
 			}
 		>

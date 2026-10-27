@@ -1,9 +1,8 @@
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionButton } from '../../components/notice';
 import type { AtomicEmailBlock, Site } from '@automattic/api-core';
 
 /**
@@ -48,9 +47,9 @@ export function EmailBlockNotice( { site }: { site: Site } ) {
 			variant="error"
 			title={ __( 'Your site can’t send email' ) }
 			actions={
-				<Button variant="primary" onClick={ handleContactClick }>
+				<NoticeActionButton variant="solid" onClick={ handleContactClick }>
 					{ __( 'Contact us' ) }
-				</Button>
+				</NoticeActionButton>
 			}
 		>
 			{ __(

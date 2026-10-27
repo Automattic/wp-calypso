@@ -1,13 +1,11 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAuth } from '../../../app/auth';
-import { Notice } from '../../../components/notice';
+import { Notice, NoticeActionButton, NoticeActionLinkButton } from '../../../components/notice';
 import { formatCooldown } from '../../../utils/email-verification-resend';
 import { wpcomLink } from '../../../utils/link';
 import { useEmailVerificationResend } from '../../../utils/use-email-verification-resend';
-import NewTabLabel from '../new-tab-label';
 
 export function useEmailToVerify() {
 	const { user } = useAuth();
@@ -48,24 +46,20 @@ export default function EmailVerificationNotice() {
 				// Resending to a pending address re-saves it, which WordPress.com only accepts from
 				// its own clients, so that resend happens there.
 				isEmailChangePending ? (
-					<Button
-						variant="primary"
-						size="compact"
+					<NoticeActionLinkButton
+						variant="solid"
 						href={ wpcomLink( '/me' ) }
 						target="_blank"
 						rel="noopener noreferrer"
-						__next40pxDefaultSize
 					>
-						<NewTabLabel>{ __( 'Resend email' ) }</NewTabLabel>
-					</Button>
+						{ __( 'Resend email' ) }
+					</NoticeActionLinkButton>
 				) : (
-					<Button
-						variant="primary"
-						size="compact"
+					<NoticeActionButton
+						variant="solid"
 						onClick={ resend }
 						disabled={ isAwaitingResend || isResending }
-						isBusy={ isResending }
-						__next40pxDefaultSize
+						loading={ isResending }
 					>
 						{ isAwaitingResend
 							? sprintf(
@@ -74,7 +68,7 @@ export default function EmailVerificationNotice() {
 									formatCooldown( secondsUntilResend )
 								)
 							: __( 'Resend email' ) }
-					</Button>
+					</NoticeActionButton>
 				)
 			}
 		>

@@ -2,8 +2,7 @@ import { userPreferenceQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import { Notice } from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
+import { Notice, RouterNoticeActionLinkButton } from '../../components/notice';
 
 /**
  * Whether the security key re-register notice is eligible to show. Read at the
@@ -25,9 +24,9 @@ export default function SecurityKeyReregisterNotice() {
 				variant="warning"
 				title={ __( 'Your security key needs to be replaced' ) }
 				actions={
-					<RouterLinkButton to="/me/security/two-step-auth" variant="primary">
+					<RouterNoticeActionLinkButton to="/me/security/two-step-auth" variant="solid">
 						{ __( 'Register a new key' ) }
-					</RouterLinkButton>
+					</RouterNoticeActionLinkButton>
 				}
 			>
 				{ __(
