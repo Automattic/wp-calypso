@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import emailValidator from 'email-validator';
 import type {
@@ -86,6 +87,10 @@ export function isAgencyProfileComplete( profile?: AgencyProfile | null ): boole
 export function hasApprovedDirectory(
 	application?: AgencyPartnerDirectoryApplication | null
 ): boolean {
+	// Design review only: opens the lead matching and profile screens for a test agency without an approved listing.
+	if ( isEnabled( 'a4a-lead-matching-contact-preview' ) ) {
+		return true;
+	}
 	return application?.directories?.some( ( { status } ) => status === 'approved' ) ?? false;
 }
 

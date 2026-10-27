@@ -217,7 +217,10 @@ function LeadMatchingPreferencesForm( {
 						</CardBody>
 					</Card>
 					{ section === 'availability' && isEnabled( 'a4a-lead-matching-contact-preview' ) && (
-						<ContactOptionsPreview key={ agencyId } />
+						<ContactOptionsPreview
+							key={ agencyId }
+							countryCode={ agency.profile?.company_details?.country }
+						/>
 					) }
 				</Fragment>
 			) ) }
