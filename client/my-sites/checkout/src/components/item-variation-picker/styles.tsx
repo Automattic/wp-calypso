@@ -63,7 +63,7 @@ export const OptionList = styled.ul`
 	margin: 0;
 	box-shadow: rgba( 0, 0, 0, 0.16 ) 0px 1px 4px;
 
-	> li {
+	.item-variant-option {
 		margin-top: -1px;
 
 		&:last-child {

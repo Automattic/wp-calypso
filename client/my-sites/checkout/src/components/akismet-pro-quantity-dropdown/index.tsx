@@ -95,7 +95,7 @@ const OptionList = styled.ul`
 	margin: 0;
 	box-shadow: rgba( 0, 0, 0, 0.16 ) 0px 1px 4px;
 
-	> li {
+	.item-variant-option {
 		margin-top: -1px;
 
 		&:last-child {
@@ -415,7 +415,9 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 							<Option
 								key={ `quantity-${ index + 1 }` }
 								className={
-									index + 1 === selectedQuantity ? 'item-variant-option--selected' : undefined
+									index + 1 === selectedQuantity
+										? 'item-variant-option item-variant-option--selected'
+										: 'item-variant-option'
 								}
 								role="option"
 								aria-selected={ index + 1 === selectedQuantity }
