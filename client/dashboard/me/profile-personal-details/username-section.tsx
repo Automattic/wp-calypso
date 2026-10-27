@@ -1,13 +1,9 @@
 import { updateUsernameMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	__experimentalInputControl as InputControl,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { Icon, info, check } from '@wordpress/icons';
-import { createContext, useContext, useMemo, useState, useCallback } from 'react';
+import { useMemo, useRef, useState, useCallback } from 'react';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { reloadWithFlashMessage } from '../../components/flash-message';
 import UsernameUpdateForm from './update-username';
@@ -18,8 +14,8 @@ import {
 	getUsernameValidationMessage,
 	type ValidationResult,
 } from './update-username/username-validation-utils';
-import type { DataFormControlProps, Field, Form } from '@wordpress/dataviews';
-import type { ReactNode } from 'react';
+import { ValidatedTextEdit } from './validated-text-edit';
+import type { DataFormControlProps, Field, Form, FormValidity } from '@wordpress/dataviews';
 
 interface UsernameSectionProps {
 	value: string;
@@ -33,41 +29,15 @@ interface UsernameSectionProps {
 
 type UsernameFormData = { user_login?: string };
 
-const UsernameFieldContext = createContext< {
-	help: ReactNode;
-	className: string;
-	isInvalid: boolean;
-	disabled: boolean;
-} >( { help: null, className: '', isInvalid: false, disabled: false } );
-
-function UsernameEdit( { data, field, onChange }: DataFormControlProps< UsernameFormData > ) {
-	const { help, className, isInvalid, disabled } = useContext( UsernameFieldContext );
-	return (
-		<InputControl
-			__next40pxDefaultSize
-			id="username-input"
-			label={ field.label }
-			value={ data.user_login ?? '' }
-			onChange={ ( newValue?: string ) => onChange( { user_login: newValue } ) }
-			disabled={ disabled }
-			autoCapitalize="off"
-			autoComplete="username"
-			autoCorrect="off"
-			aria-invalid={ isInvalid ? 'true' : 'false' }
-			className={ className }
-			help={ help }
-		/>
-	);
-}
-
-const usernameFields: Field< UsernameFormData >[] = [
-	{
-		id: 'user_login',
-		label: __( 'Username' ),
-		type: 'text',
-		Edit: UsernameEdit,
-	},
-];
+const UsernameEdit = ( props: DataFormControlProps< UsernameFormData > ) => (
+	<ValidatedTextEdit
+		{ ...props }
+		id="username-input"
+		autoCapitalize="off"
+		autoComplete="username"
+		autoCorrect="off"
+	/>
+);
 
 const usernameForm: Form = {
 	layout: { type: 'regular' },
@@ -93,6 +63,10 @@ export default function UsernameSection( {
 	const [ userLoginConfirm, setUserLoginConfirm ] = useState( '' );
 	const [ usernameAction, setUsernameAction ] = useState< string >( 'none' );
 	const [ validationResult, setValidationResult ] = useState< ValidationResult | null >( null );
+	const [ isValidatingUsername, setIsValidatingUsername ] = useState( false );
+	// The username most recently sent for validation, so a slow response for an older value
+	// can't overwrite the result for the current one.
+	const latestValidatedUsername = useRef< string | null >( null );
 
 	const { mutate: updateUsername, isPending } = useMutation( {
 		...withSnackbar( updateUsernameMutation(), {
@@ -105,54 +79,74 @@ export default function UsernameSection( {
 
 	const hasUsernameChange = !! ( value && value !== currentUsername );
 
-	// Input field helper text
-	const getHelpText = useCallback( () => {
-		// Static/conditional messages
+	const description = useMemo( () => {
+		if ( hasUsernameChange ) {
+			return undefined;
+		}
+
+		if ( isAutomattician ) {
+			return __( 'Automatticians cannot change their username.' );
+		}
+
+		// New users can't change their username until they've verified their email
+		if ( ! isEmailVerified ) {
+			return __( 'Username can be changed once your email address is verified.' );
+		}
+
+		return undefined;
+	}, [ hasUsernameChange, isAutomattician, isEmailVerified ] );
+
+	const validity = useMemo( (): FormValidity => {
 		if ( ! hasUsernameChange ) {
-			if ( isAutomattician ) {
-				return __( 'Automatticians cannot change their username.' );
-			}
-
-			// New users can't change their username until they've verified their email
-			if ( ! isEmailVerified ) {
-				return __( 'Username can be changed once your email address is verified.' );
-			}
-
-			return null;
+			return undefined;
 		}
 
-		// Success state
+		if ( isValidatingUsername ) {
+			return {
+				user_login: { custom: { type: 'validating', message: __( 'Checking username…' ) } },
+			};
+		}
+
 		if ( isUsernameValid( validationResult ) ) {
-			return (
-				<>
-					<Icon icon={ check } size={ 16 } />
-					{ __( 'Nice username!' ) }
-				</>
-			);
+			return { user_login: { custom: { type: 'valid', message: __( 'Nice username!' ) } } };
 		}
 
-		// Error state
 		const errorMessage = getUsernameValidationMessage( validationResult );
 		if ( errorMessage ) {
-			return (
-				<>
-					<Icon icon={ info } size={ 16 } />
-					{ errorMessage }
-				</>
-			);
+			return { user_login: { custom: { type: 'invalid', message: errorMessage } } };
 		}
 
-		return null;
-	}, [ hasUsernameChange, isAutomattician, isEmailVerified, validationResult ] );
+		return undefined;
+	}, [ hasUsernameChange, isValidatingUsername, validationResult ] );
+
+	const fields = useMemo(
+		(): Field< UsernameFormData >[] => [
+			{
+				id: 'user_login',
+				label: __( 'Username' ),
+				type: 'text',
+				description,
+				isDisabled: isAutomattician || ! isEmailVerified || ! canChangeUsername,
+				Edit: UsernameEdit,
+			},
+		],
+		[ description, isAutomattician, isEmailVerified, canChangeUsername ]
+	);
+
+	const clearValidation = useCallback( () => {
+		latestValidatedUsername.current = null;
+		setIsValidatingUsername( false );
+		setValidationResult( null );
+	}, [] );
 
 	// Event handlers to update the username
 	const cancelUsernameChange = useCallback( () => {
 		onChange( currentUsername );
-		setValidationResult( null );
+		clearValidation();
 		setUserLoginConfirm( '' );
 		setUsernameAction( 'none' );
 		onCancel();
-	}, [ onChange, currentUsername, onCancel ] );
+	}, [ onChange, currentUsername, clearValidation, onCancel ] );
 
 	const handleUsernameChange = ( newValue: string | undefined ) => {
 		onChange( newValue );
@@ -160,10 +154,18 @@ export default function UsernameSection( {
 		const lowerCaseValue = ( newValue || '' ).toLowerCase();
 		if ( lowerCaseValue !== currentUsername ) {
 			setUsernameAction( 'none' );
-			validateUsernameDebounced( lowerCaseValue, currentUsername, setValidationResult );
+			latestValidatedUsername.current = lowerCaseValue;
+			setIsValidatingUsername( true );
+			validateUsernameDebounced( lowerCaseValue, currentUsername, ( result ) => {
+				if ( latestValidatedUsername.current !== lowerCaseValue ) {
+					return;
+				}
+				setValidationResult( result );
+				setIsValidatingUsername( false );
+			} );
 		} else {
 			// Just clear validation when username matches current, don't fully cancel
-			setValidationResult( null );
+			clearValidation();
 			setUserLoginConfirm( '' );
 			setUsernameAction( 'none' );
 		}
@@ -181,38 +183,18 @@ export default function UsernameSection( {
 		updateUsername( { username: value, action } );
 	};
 
-	const isInvalid =
-		hasUsernameChange && !! validationResult && ! isUsernameValid( validationResult );
-	const getValidationClass = () => {
-		if ( ! hasUsernameChange ) {
-			return '';
-		}
-		if ( isInvalid ) {
-			return 'has-error';
-		}
-		if ( isUsernameValid( validationResult ) ) {
-			return 'has-success';
-		}
-		return '';
-	};
-
 	const formData = useMemo( () => ( { user_login: value || '' } ), [ value ] );
-	const help = getHelpText();
-	const className = getValidationClass();
-	const disabled = isAutomattician || ! isEmailVerified || ! canChangeUsername;
-	const fieldContext = { help, className, isInvalid, disabled };
 
 	return (
 		<>
 			<VStack spacing={ 1 }>
-				<UsernameFieldContext.Provider value={ fieldContext }>
-					<DataForm< UsernameFormData >
-						data={ formData }
-						fields={ usernameFields }
-						form={ usernameForm }
-						onChange={ ( edits ) => handleUsernameChange( edits.user_login ) }
-					/>
-				</UsernameFieldContext.Provider>
+				<DataForm< UsernameFormData >
+					data={ formData }
+					fields={ fields }
+					form={ usernameForm }
+					validity={ validity }
+					onChange={ ( edits ) => handleUsernameChange( edits.user_login ) }
+				/>
 			</VStack>
 
 			{ /* Update username form */ }

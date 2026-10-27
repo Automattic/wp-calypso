@@ -109,7 +109,9 @@ export default function PersonalDetailsSection() {
 	};
 
 	return (
-		<form onSubmit={ handleSubmit } aria-labelledby="personal-details-heading">
+		// noValidate: the username is saved separately and a bouncing email can still be kept, so an
+		// invalid input in either shouldn't block saving the rest of the card.
+		<form noValidate onSubmit={ handleSubmit } aria-labelledby="personal-details-heading">
 			<FlashMessage id="username" message={ __( 'Username saved.' ) } />
 			<Card>
 				<CardBody>

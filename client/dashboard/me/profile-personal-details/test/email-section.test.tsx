@@ -93,6 +93,7 @@ describe( '<EmailSection>', () => {
 		);
 
 		expect( await screen.findByText( BOUNCING_ERROR ) ).toBeVisible();
+		expect( screen.getByRole( 'textbox', { name: /email address/i } ) ).not.toHaveFocus();
 	} );
 
 	test( 'drops the bouncing message once a different address is typed', async () => {
@@ -107,6 +108,9 @@ describe( '<EmailSection>', () => {
 			/>,
 			{ user: bouncingUser }
 		);
+
+		await userEvent.click( screen.getByRole( 'textbox', { name: /email address/i } ) );
+		await userEvent.tab();
 
 		expect( await screen.findByText( 'Email address looks good!' ) ).toBeVisible();
 		expect( screen.queryByText( BOUNCING_ERROR ) ).not.toBeInTheDocument();
@@ -145,6 +149,9 @@ describe( '<EmailSection> TLD validation', () => {
 			/>
 		);
 
+		await userEvent.click( screen.getByRole( 'textbox', { name: /email address/i } ) );
+		await userEvent.tab();
+
 		expect( await screen.findByText( /gmail\.commmm/ ) ).toBeVisible();
 		expect( screen.getByText( /real domain/i ) ).toBeVisible();
 		expect( onValidationChange ).toHaveBeenLastCalledWith( false );
@@ -157,6 +164,7 @@ describe( '<EmailSection> TLD validation', () => {
 		expect( await screen.findByText( CUSTOM_DOMAIN_WARNING ) ).toBeVisible();
 
 		await userEvent.type( screen.getByRole( 'textbox', { name: /email address/i } ), 'mmm' );
+		await userEvent.tab();
 
 		expect( await screen.findByText( /real domain/i ) ).toBeVisible();
 		expect( screen.queryByText( CUSTOM_DOMAIN_WARNING ) ).not.toBeInTheDocument();
@@ -175,6 +183,9 @@ describe( '<EmailSection> TLD validation', () => {
 				onValidationChange={ onValidationChange }
 			/>
 		);
+
+		await userEvent.click( screen.getByRole( 'textbox', { name: /email address/i } ) );
+		await userEvent.tab();
 
 		expect( await screen.findByText( /looks good/i ) ).toBeVisible();
 		expect( onValidationChange ).toHaveBeenLastCalledWith( true );
