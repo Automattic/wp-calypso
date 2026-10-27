@@ -101,6 +101,19 @@ describe( 'getFeatureSelection', () => {
 		} );
 	} );
 
+	test( 'returns the migration card when the migration plugin is the only connected plugin', () => {
+		expect( getFeatureSelection( [ 'wpcom-migration' ] ) ).toEqual( { cardKeys: [ 'migration' ] } );
+	} );
+
+	test( 'drops the migration card when other plugins use the connection', () => {
+		expect( getFeatureSelection( [ 'wpcom-migration', 'jetpack' ] ) ).toEqual( {
+			cardKeys: [ 'jetpack' ],
+		} );
+		expect( getFeatureSelection( [ 'wpcom-migration', 'unknown-plugin' ] ) ).toEqual( {
+			cardKeys: [ 'other' ],
+		} );
+	} );
+
 	test( 'features the highest-priority known family for single-plugin inputs', () => {
 		expect( getFeatureSelection( [ 'automattic-for-agencies-client' ] ) ).toEqual( {
 			cardKeys: [ 'a4a' ],

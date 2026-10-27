@@ -18,7 +18,7 @@ import type { ReactNode } from 'react';
  * per-plugin override — share the single full Jetpack logo so the section
  * stays visually consistent across plugin combinations; the bullet copy
  * carries the per-plugin specifics. A4A and Woo each use their own full
- * wordmark; the `other` fallback has no logo (the bullet copy is the
+ * wordmark; the `migration` and `other` cards have no logo (the bullet copy is the
  * visual hook on its own).
  *
  * `size={ 32 }` aligns the inline SVG marks with the CSS-enforced
@@ -40,6 +40,7 @@ function getLogoForCardKey( key: FeatureCardKey ): ReactNode | string | undefine
 		case 'jetpack-social':
 		case 'jetpack-videopress':
 			return <JetpackLogo full size={ 32 } />;
+		case 'migration':
 		case 'other':
 		default:
 			return undefined;

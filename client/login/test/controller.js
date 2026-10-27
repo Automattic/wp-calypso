@@ -51,6 +51,22 @@ describe( 'redirectJetpack', () => {
 		// If a redirect didn't occur, the test passes
 		expect( next ).toHaveBeenCalled();
 	} );
+
+	it( 'sends the current migration plugin flow to the Jetpack login', () => {
+		const context = {
+			path: '/log-in',
+			params: {},
+			query: {
+				redirect_to:
+					'/jetpack/connect/authorize?redirect_after_auth=https%3A%2F%2Fexample.com%2Fwp-admin%2Fadmin.php%3Fpage%3Dwpcom-migration-status&from=wpcom_migration',
+			},
+			redirect: jest.fn(),
+		};
+
+		redirectJetpack( context, jest.fn() );
+
+		expect( context.redirect ).toHaveBeenCalledWith( '/log-in/jetpack' );
+	} );
 } );
 
 describe( 'login', () => {

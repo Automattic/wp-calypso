@@ -290,7 +290,6 @@ export function redirectJetpack( context, next ) {
 	const isUserComingFromPricingPage =
 		redirect_to?.includes( 'source=jetpack-plans' ) ||
 		redirect_to?.includes( 'source=jetpack-connect-plans' );
-	const isUserComingFromMigrationPlugin = redirect_to?.includes( 'wpcom-migration' );
 
 	/**
 	 * Send arrivals from the jetpack connect process or jetpack's pricing page
@@ -311,9 +310,7 @@ export function redirectJetpack( context, next ) {
 	}
 
 	if (
-		( isJetpack !== 'jetpack' &&
-			redirect_to?.includes( 'jetpack/connect' ) &&
-			! isUserComingFromMigrationPlugin ) ||
+		( isJetpack !== 'jetpack' && redirect_to?.includes( 'jetpack/connect' ) ) ||
 		isUserComingFromPricingPage
 	) {
 		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );

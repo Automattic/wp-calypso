@@ -3,6 +3,7 @@ import {
 	getLogoForFamilies,
 	getPluginDisplayName,
 	getPluginEntry,
+	isMigrationOnly,
 } from '../plugin-registry';
 
 describe( 'PLUGIN_REGISTRY', () => {
@@ -99,5 +100,14 @@ describe( 'getLogoForFamilies', () => {
 		expect( getLogoForFamilies( [ 'a4a', 'woo', 'jetpack' ] ) ).toMatch(
 			/jetpack-connect-all\.svg$/
 		);
+	} );
+} );
+
+describe( 'isMigrationOnly', () => {
+	test( 'is true only when the migration plugin is the sole connected plugin', () => {
+		expect( isMigrationOnly( [ 'wpcom-migration' ] ) ).toBe( true );
+		expect( isMigrationOnly( [ 'wpcom-migration', 'jetpack' ] ) ).toBe( false );
+		expect( isMigrationOnly( [ 'jetpack' ] ) ).toBe( false );
+		expect( isMigrationOnly( [] ) ).toBe( false );
 	} );
 } );

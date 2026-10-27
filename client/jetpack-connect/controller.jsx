@@ -389,13 +389,6 @@ export function signupForm( context, next ) {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 	const { query } = context;
 	const from = query.from;
-	if ( from && from.startsWith( 'wpcom-migration' ) ) {
-		const urlQueryArgs = {
-			redirect_to: context.path,
-			from,
-		};
-		return page( addQueryArgs( urlQueryArgs, '/start/account' ) );
-	}
 
 	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
 		// Force login for mobile app flow. App will intercept this request and prompt native login.

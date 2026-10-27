@@ -11,7 +11,7 @@ Secondary-connection content (cards + subtitle shown when a non-owner admin conn
 The plugin slug arrives in the URL as part of the `plugins` query parameter (comma-separated list). Calypso classifies each slug into a **family** (`a4a`, `woo`, `jetpack`, or `other`), then uses the family composition to select:
 
 1. **Composite logo** — the header logo shown on the authorize, login, and signup pages
-2. **Subtitle scenario** — one of 16 pre-composed subtitle strings per surface (auth, login, signup)
+2. **Subtitle scenario** — one of 17 pre-composed subtitle strings per surface (auth, login, signup)
 3. **Feature cards** — up to 3 brand-keyed cards in the "what you'll get" section
 4. **Secondary connection copy** — simplified content for users connecting after the site owner
 
@@ -23,7 +23,7 @@ families.ts ── getFamilyFromSlug() ──► Family ('a4a' | 'woo' | 'jetpac
     │
     ├── plugin-registry.ts ──► display name, isFullJetpack flag
     │
-    ├── scenarios.ts ──► SubtitleScenario (16 possibilities)
+    ├── scenarios.ts ──► SubtitleScenario (17 possibilities)
     │   └── copy.ts ──► subtitle strings for auth / login / signup / secondary
     │
     ├── selectors.ts ──► getFeatureSelection() ──► card keys
@@ -177,7 +177,7 @@ Add an entry to each of the three subtitle tables:
 
 ### 5. Secondary connection copy (`copy.ts`)
 
-`getSecondaryAuthCopy()` uses simplified family-level branching (not the full 16-scenario system). If your plugin falls into an existing family, the existing subtitle covers it. If you're adding a new family, add a branch:
+`getSecondaryAuthCopy()` uses simplified family-level branching (not the full 17-scenario system). If your plugin falls into an existing family, the existing subtitle covers it. If you're adding a new family, add a branch:
 
 ```typescript
 const hasYourFamily = families.includes( 'your-family' );
