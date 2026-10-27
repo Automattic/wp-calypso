@@ -9,6 +9,7 @@ export const SSHKeyTypes = {
 	EC_DSA_SHA2_NISTP256: 'ecdsa-sha2-nistp256',
 	EC_DSA_SHA2_NISTP384: 'ecdsa-sha2-nistp384',
 	EC_DSA_SHA2_NISTP521: 'ecdsa-sha2-nistp521',
+	SK_SSH_ED25519: 'sk-ssh-ed25519@openssh.com',
 } as const;
 
 export type SSHKeyType = ( typeof SSHKeyTypes )[ keyof typeof SSHKeyTypes ];
