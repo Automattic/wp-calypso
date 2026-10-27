@@ -63,7 +63,7 @@ export default function AgencyTiers() {
 				recordTracksEvent={ recordTracksEvent }
 			/>
 			<Divider style={ { color: 'var(--color-gray-100)' } } />
-			<CertificationTierPageCard />
+			<CertificationTierPageCard recordTracksEvent={ recordTracksEvent } />
 			<TierBenefits
 				currentAgencyTierId={ currentAgencyTierId }
 				recordTracksEvent={ recordTracksEvent }

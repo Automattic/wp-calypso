@@ -19,3 +19,6 @@ export const BASE_DISCOUNT: Record< AgencyTierId, number > = {
  */
 export const PROMO_MULTIPLIER = 2;
 export const PROMO_LAST_DAY = '2027-03-31';
+
+/** Where a certification card sits, sent with its Tracks events. */
+export type CertificationSource = 'agency_tier' | 'dev_tools';

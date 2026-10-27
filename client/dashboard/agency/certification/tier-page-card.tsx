@@ -17,6 +17,8 @@ import CertificationCodeField from './certification-code-field';
 import { CERTIFICATION_EXAM_URL } from './constants';
 import TierDiscountList from './tier-discount-list';
 import { useCertification } from './use-certification';
+import { useTrackCertificationView } from './use-track-certification-view';
+import type { RecordTracksEvent } from '../tiers/types';
 
 /**
  * The discount is a tier benefit, so it leads the benefit cards on the Agency
@@ -24,11 +26,14 @@ import { useCertification } from './use-certification';
  */
 export default function CertificationTierPageCard( {
 	onCodeCopy,
+	recordTracksEvent,
 }: {
 	onCodeCopy?: () => void;
+	recordTracksEvent?: RecordTracksEvent;
 } = {} ) {
 	const { isEligible, isLoading, code, tierId, discount, isPromo, promoLastDay } =
 		useCertification();
+	useTrackCertificationView( isEligible, 'agency_tier', recordTracksEvent );
 	const isSmallViewport = useViewportMatch( 'large', '<' );
 	// Same widths as the benefit cards below it.
 	const isMediumViewport = useViewportMatch( 'huge', '<' );
@@ -110,7 +115,12 @@ export default function CertificationTierPageCard( {
 								</Text>
 							</VStack>
 							<div style={ { width: '100%', maxWidth: '440px' } }>
-								<CertificationCodeField code={ code } onCopy={ onCodeCopy } />
+								<CertificationCodeField
+									code={ code }
+									source="agency_tier"
+									onCopy={ onCodeCopy }
+									recordTracksEvent={ recordTracksEvent }
+								/>
 							</div>
 							<Button
 								__next40pxDefaultSize
@@ -118,6 +128,11 @@ export default function CertificationTierPageCard( {
 								href={ CERTIFICATION_EXAM_URL }
 								target="_blank"
 								rel="noreferrer"
+								onClick={ () =>
+									recordTracksEvent?.( 'calypso_a4a_certification_exam_click', {
+										source: 'agency_tier',
+									} )
+								}
 							>
 								<NewTabLabel>{ __( 'Sign up for the exam' ) }</NewTabLabel>
 							</Button>

@@ -19,7 +19,7 @@ export default function DevTools() {
 				/>
 			}
 		>
-			<CertificationDevToolsSection />
+			<CertificationDevToolsSection recordTracksEvent={ recordTracksEvent } />
 			<DevToolsContent recordTracksEvent={ recordTracksEvent } />
 		</PageLayout>
 	);

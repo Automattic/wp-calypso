@@ -18,6 +18,8 @@ import CertificationCardSkeleton from './certification-card-skeleton';
 import CertificationCodeField from './certification-code-field';
 import { CERTIFICATION_EXAM_URL } from './constants';
 import { useCertification } from './use-certification';
+import { useTrackCertificationView } from './use-track-certification-view';
+import type { RecordTracksEvent } from '../tiers/types';
 
 /**
  * Leads the Dev tools page, written to the developers who take the exam. The
@@ -26,12 +28,15 @@ import { useCertification } from './use-certification';
 export default function CertificationDevToolsSection( {
 	tiersHref,
 	onCodeCopy,
+	recordTracksEvent,
 }: {
 	/** The tier page link for hosts without the dashboard router; without it, the link goes through the router. */
 	tiersHref?: string;
 	onCodeCopy?: () => void;
+	recordTracksEvent?: RecordTracksEvent;
 } ) {
 	const { isEligible, isLoading, code, discount, isPromo, promoLastDay } = useCertification();
+	useTrackCertificationView( isEligible, 'dev_tools', recordTracksEvent );
 	const isSmallViewport = useViewportMatch( 'large', '<' );
 
 	if ( isLoading ) {
@@ -45,6 +50,8 @@ export default function CertificationDevToolsSection( {
 	const tiersLinkProps = {
 		__next40pxDefaultSize: true,
 		variant: 'tertiary',
+		onClick: () =>
+			recordTracksEvent?.( 'calypso_a4a_certification_tiers_link_click', { source: 'dev_tools' } ),
 		children: __( 'See every tier’s discount' ),
 	} as const;
 
@@ -123,7 +130,9 @@ export default function CertificationDevToolsSection( {
 						<div style={ { width: '100%' } }>
 							<CertificationCodeField
 								code={ code }
+								source="dev_tools"
 								onCopy={ onCodeCopy }
+								recordTracksEvent={ recordTracksEvent }
 								label={ __( 'Discount code' ) }
 								help={ __(
 									'Enter it when you buy the exam on Webassessor. One use per developer.'
@@ -137,6 +146,11 @@ export default function CertificationDevToolsSection( {
 								href={ CERTIFICATION_EXAM_URL }
 								target="_blank"
 								rel="noreferrer"
+								onClick={ () =>
+									recordTracksEvent?.( 'calypso_a4a_certification_exam_click', {
+										source: 'dev_tools',
+									} )
+								}
 							>
 								<NewTabLabel>{ __( 'Sign up for the exam' ) }</NewTabLabel>
 							</Button>

@@ -74,7 +74,7 @@ export default function AgencyTierOverviewContent( {
 				recordTracksEvent={ recordTracks }
 			/>
 			<Divider style={ { color: 'var(--color-gray-100)', marginBlock: '16px' } } />
-			<CertificationTierPageCard onCodeCopy={ onCodeCopy } />
+			<CertificationTierPageCard onCodeCopy={ onCodeCopy } recordTracksEvent={ recordTracks } />
 			<TierBenefits
 				currentAgencyTierId={ currentAgencyTierId }
 				recordTracksEvent={ recordTracks }

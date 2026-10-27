@@ -12,8 +12,8 @@ export default function DevToolsContent() {
 	const dispatch = useDispatch();
 
 	const recordTracks = useCallback(
-		( eventName: string ) => {
-			dispatch( recordTracksEvent( eventName ) );
+		( eventName: string, properties?: Record< string, unknown > ) => {
+			dispatch( recordTracksEvent( eventName, properties ) );
 		},
 		[ dispatch ]
 	);
@@ -32,6 +32,7 @@ export default function DevToolsContent() {
 			<CertificationDevToolsSection
 				tiersHref={ `${ A4A_AGENCY_TIER_LINK }#certification` }
 				onCodeCopy={ onCodeCopy }
+				recordTracksEvent={ recordTracks }
 			/>
 			<DevTools recordTracksEvent={ recordTracks } />
 		</VStack>
