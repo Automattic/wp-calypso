@@ -1,6 +1,7 @@
 import { Notice as UINotice } from '@wordpress/ui';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
+import { caution } from './icons';
 import type { NoticeProps } from './types';
 import './style.scss';
 
@@ -38,7 +39,7 @@ function UnforwardedNotice(
 			ref={ ref }
 			className={ clsx( 'dashboard-notice', `is-${ variant }` ) }
 			intent={ variant }
-			icon={ icon }
+			icon={ icon === undefined && variant === 'warning' ? caution : icon }
 			// Most dashboard notices are static page content, so don't announce them on mount.
 			spokenMessage={ null }
 		>
