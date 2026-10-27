@@ -3,7 +3,7 @@
  */
 import { JetpackLicenseFilter, JetpackLicenseSortField } from '@automattic/api-core';
 import { render, screen } from '@testing-library/react';
-import { DEFAULT_VIEW, RenewalCell, toFetchOptions } from '../dataviews';
+import { DEFAULT_VIEW, ProductCell, RenewalCell, SiteCell, toFetchOptions } from '../dataviews';
 import type { JetpackLicense } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
@@ -96,5 +96,52 @@ describe( 'Renewal/expiry field', () => {
 		render( <RenewalCell license={ license } locale="en" /> );
 		expect( screen.getByText( 'Oct 21, 2026' ) ).toBeVisible();
 		expect( screen.getByText( 'Auto-renew off' ) ).toBeVisible();
+	} );
+} );
+
+describe( 'Titan inbox license', () => {
+	const titan = {
+		license_id: 2,
+		license_key: 'pressable-addon-titan-inbox_abc',
+		product: 'Titan Email',
+		issued_at: '2026-09-21 00:00:00',
+		revoked_at: null,
+		quantity: 5,
+		meta: { pressable_titan_domain: 'example.com' },
+		referral: null,
+		subscription: { trial_end: '2026-12-20T00:00:00+00:00', is_active_trial: true },
+	} as JetpackLicense;
+
+	it( 'shows the inbox count and trial under the product name', () => {
+		render( <ProductCell license={ titan } locale="en" /> );
+		expect( screen.getByText( '5 inboxes' ) ).toBeVisible();
+		expect( screen.getByText( '90-day trial ends Dec 20, 2026' ) ).toBeVisible();
+		expect( screen.queryByText( '×5' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows the domain in the Site column', () => {
+		render(
+			<SiteCell
+				license={ titan }
+				isAgencyOwner
+				isProvisioning={ false }
+				onManageSite={ jest.fn() }
+			/>
+		);
+		expect( screen.getByText( 'example.com' ) ).toBeVisible();
+		expect( screen.queryByText( 'Manage in Pressable' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows a dash rather than the Pressable link when the domain is missing', () => {
+		render(
+			<SiteCell
+				license={ { ...titan, meta: null } }
+				isAgencyOwner
+				isProvisioning={ false }
+				onManageSite={ jest.fn() }
+			/>
+		);
+		expect( screen.getByText( '—' ) ).toBeVisible();
+		expect( screen.queryByText( 'Manage in Pressable' ) ).not.toBeInTheDocument();
 	} );
 } );
