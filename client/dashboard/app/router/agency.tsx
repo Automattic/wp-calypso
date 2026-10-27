@@ -1,6 +1,7 @@
 import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
 import {
 	activeAgencyQuery,
+	agencyAnnouncementsQuery,
 	agencyDevSiteLicenseQuery,
 	agencyEnablementResourcesQuery,
 	agencyLeadMatchingQuery,
@@ -193,6 +194,17 @@ const agencyOverviewRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'overview',
+	loader: async () => {
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! agency?.id ) {
+			return;
+		}
+		// Loaded up front so News and updates doesn't push the cards below it down when
+		// it arrives. It's optional, so a failure leaves the module hidden, not the page.
+		await queryClient
+			.ensureQueryData( agencyAnnouncementsQuery( agency.id ) )
+			.catch( () => undefined );
+	},
 } ).lazy( () =>
 	import( '../../agency/overview' ).then( ( d ) =>
 		createLazyRoute( 'agency-overview' )( {
