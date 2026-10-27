@@ -91,6 +91,16 @@ const primaryCandidateDomain = {
 	can_set_as_primary: true,
 };
 
+const expiredDomain = {
+	...domain,
+	domain: 'expired.blog',
+	domain_status: { id: 'expired', label: 'Expired', type: 'error' },
+	expiry: '2026-09-04T00:00:00+00:00',
+	expired: true,
+	primary_domain: false,
+	subscription_id: '123',
+};
+
 const ownerUser = {
 	ID: OWNER_USER_ID,
 	username: 'owner',
@@ -338,5 +348,75 @@ describe( '<SiteDomains>', () => {
 		await screen.findByRole( 'heading', { name: 'Domains' } );
 
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'changes the primary site address from the primary row', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( {
+			domains: [ primaryCandidateDomain, domain, defaultAddressDomain ],
+			siteResponse: siteWithPrimaryDomainFeature,
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		const changePrimaryButtons = within( table ).getAllByRole( 'button', {
+			name: 'Change primary',
+		} );
+		expect( changePrimaryButtons ).toHaveLength( 1 );
+
+		await user.click( changePrimaryButtons[ 0 ] );
+
+		const dialog = await screen.findByRole( 'dialog', { name: 'Primary site address' } );
+		expect(
+			within( dialog ).getByRole( 'combobox', { name: 'Primary site address' } )
+		).toHaveValue( 'test-site.com' );
+	} );
+
+	test( 'hides "Change primary" when the plan does not allow a custom primary address', async () => {
+		nock.cleanAll();
+		mockApis( { domains: [ primaryCandidateDomain, domain, defaultAddressDomain ] } );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		expect(
+			within( table ).queryByRole( 'button', { name: 'Change primary' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'shows an expired domain notice instead of the primary site address notice', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [ expiredDomain, primaryCandidateDomain, domain, defaultAddressDomain ],
+			siteResponse: siteWithPrimaryDomainFeature,
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByText( 'Expired domain' ) ).toBeVisible();
+		expect( screen.getByText( /will be released if it is not renewed/ ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: 'Change primary site address' } )
+		).not.toBeInTheDocument();
+
+		const table = screen.getByRole( 'table' );
+		expect( within( table ).getByText( /^Expired on / ) ).toBeVisible();
+		expect( within( table ).getByRole( 'button', { name: 'Renew domain' } ) ).toBeVisible();
+		expect( within( table ).getByRole( 'button', { name: 'Change primary' } ) ).toBeVisible();
+	} );
+
+	test( 'dismisses the expired domain notice', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( { domains: [ expiredDomain, domain, defaultAddressDomain ] } );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await screen.findByText( 'Expired domain' );
+		await user.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
+
+		expect( screen.queryByText( 'Expired domain' ) ).not.toBeInTheDocument();
 	} );
 } );

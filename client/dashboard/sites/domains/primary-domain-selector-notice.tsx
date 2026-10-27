@@ -1,10 +1,4 @@
-import {
-	type DomainSummary,
-	type Site,
-	type User,
-	DomainSubtype,
-	DomainStatus,
-} from '@automattic/api-core';
+import { type DomainSummary, type Site, type User } from '@automattic/api-core';
 import {
 	Button,
 	__experimentalVStack as VStack,
@@ -13,13 +7,13 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { getSitePlanUpgradeUrl } from '../../utils/site-url';
-import { userHasFlag } from '../../utils/user';
 import ChangePrimaryDomainModal from './change-primary-domain-modal';
+import { usePrimaryDomainChange } from './use-primary-domain-change';
 
 interface PrimaryDomainSelectorNoticeProps {
 	domains: DomainSummary[];
@@ -33,33 +27,12 @@ const PrimaryDomainSelectorNotice = ( {
 	user,
 }: PrimaryDomainSelectorNoticeProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
-	const primaryWithPlanOnly = userHasFlag( user, 'calypso_allow_nonprimary_domains_without_plan' );
-	const isOnFreePlan = site?.plan?.is_free ?? false;
-	const canUserSetPrimaryDomainOnThisSite =
-		! ( primaryWithPlanOnly && isOnFreePlan ) &&
-		( site?.plan?.features?.active.includes( 'set-primary-custom-domain' ) ?? false );
-	const currentPrimaryDomain = domains.find( ( domain ) => domain.primary_domain )?.domain;
-	const domainsList = useMemo( () => {
-		if ( ! domains || ! site ) {
-			return [];
-		}
-		return domains.filter( ( domain ) => {
-			// Basic eligibility criteria
-			const isEligible =
-				( domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
-					domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
-					domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS ) &&
-				domain.can_set_as_primary &&
-				! domain.primary_domain &&
-				domain.domain_status.id !== DomainStatus.CONNECTION_ERROR;
-
-			if ( ! isEligible ) {
-				return false;
-			}
-
-			return true;
-		} );
-	}, [ domains, site ] );
+	const {
+		canUserSetPrimaryDomainOnThisSite,
+		canChangePrimaryDomain,
+		currentPrimaryDomain,
+		eligibleDomains,
+	} = usePrimaryDomainChange( { domains, site, user } );
 
 	if ( ! domains || ! site ) {
 		return null;
@@ -88,7 +61,7 @@ const PrimaryDomainSelectorNotice = ( {
 			return message;
 		}
 
-		if ( domainsList.length === 0 ) {
+		if ( eligibleDomains.length === 0 ) {
 			return createInterpolateElement(
 				__(
 					'Before changing your primary site address you must register or connect a new custom domain. <learnMoreLink />'
@@ -114,7 +87,7 @@ const PrimaryDomainSelectorNotice = ( {
 		<Notice variant="info" title={ __( 'Primary site address' ) }>
 			<VStack spacing={ 4 }>
 				<Text as="p">{ renderMessage() }</Text>
-				{ canUserSetPrimaryDomainOnThisSite && domainsList.length > 0 && (
+				{ canChangePrimaryDomain && (
 					<HStack justify="flex-start">
 						<Button variant="link" onClick={ () => setIsModalOpen( true ) }>
 							{ __( 'Change primary site address' ) }
@@ -126,7 +99,7 @@ const PrimaryDomainSelectorNotice = ( {
 				<ChangePrimaryDomainModal
 					site={ site }
 					currentPrimaryDomain={ currentPrimaryDomain }
-					eligibleDomains={ domainsList }
+					eligibleDomains={ eligibleDomains }
 					onClose={ () => setIsModalOpen( false ) }
 				/>
 			) }
