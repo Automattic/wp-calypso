@@ -4,13 +4,14 @@ import {
 	agencyLeadMatchingQuery,
 	agencyProfileMutation,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, ToggleControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { NavigationBlocker } from '../../../app/navigation-blocker';
@@ -22,6 +23,7 @@ import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
 import { PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE } from '../paths';
 import { getAvailabilityUpdate } from './availability';
+import ContactOptionsPreview from './contact-options-preview';
 import {
 	REQUIRED_LEAD_MATCHING_FIELDS,
 	getAnsweredRequiredFieldCount,
@@ -111,11 +113,22 @@ function LeadMatchingPreferencesForm( {
 
 	const hasAvailabilityChange = isAvailable !== savedAvailability;
 	const hasAnswerChanges = toComparable( formData ) !== toComparable( savedFormData );
+	const previewSearch = isEnabled( 'a4a-lead-matching-contact-preview' )
+		? {
+				flags:
+					new URLSearchParams( window.location.search.replace( /\+/g, '%2B' ) ).get( 'flags' ) ??
+					'a4a-lead-matching-contact-preview',
+			}
+		: undefined;
 
 	// Leaving after a save skips the unsaved-changes prompt: the saved data
 	// can reach the form after this navigation starts.
 	const backToLeadMatching = () =>
-		navigate( { to: PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE, ignoreBlocker: true } );
+		navigate( {
+			to: PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE,
+			search: previewSearch,
+			ignoreBlocker: true,
+		} );
 
 	const onSubmit = async () => {
 		recordTracksEvent( 'calypso_a4a_partner_directory_lead_matching_submit', {
@@ -180,28 +193,33 @@ function LeadMatchingPreferencesForm( {
 				shouldBlock={ ( hasAvailabilityChange || hasAnswerChanges ) && ! isSubmitting }
 			/>
 			{ LEAD_MATCHING_SECTIONS.map( ( section ) => (
-				<Card key={ section }>
-					<CardBody>
-						<VStack spacing={ 4 }>
-							<SectionHeader level={ 3 } title={ getLeadMatchingSectionTitle( section ) } />
-							{ section === 'availability' ? (
-								<ToggleControl
-									__nextHasNoMarginBottom
-									label={ __( 'Accepting new clients' ) }
-									help={ __( 'Agencies not accepting new clients are not eligible for leads.' ) }
-									checked={ isAvailable }
-									onChange={ onAvailabilityChange }
-								/>
-							) : (
-								<LeadMatchingSectionFields
-									section={ section }
-									formData={ formData }
-									onChange={ onFieldsChange }
-								/>
-							) }
-						</VStack>
-					</CardBody>
-				</Card>
+				<Fragment key={ section }>
+					<Card>
+						<CardBody>
+							<VStack spacing={ 4 }>
+								<SectionHeader level={ 3 } title={ getLeadMatchingSectionTitle( section ) } />
+								{ section === 'availability' ? (
+									<ToggleControl
+										__nextHasNoMarginBottom
+										label={ __( 'Accepting new clients' ) }
+										help={ __( 'Agencies not accepting new clients are not eligible for leads.' ) }
+										checked={ isAvailable }
+										onChange={ onAvailabilityChange }
+									/>
+								) : (
+									<LeadMatchingSectionFields
+										section={ section }
+										formData={ formData }
+										onChange={ onFieldsChange }
+									/>
+								) }
+							</VStack>
+						</CardBody>
+					</Card>
+					{ section === 'availability' && isEnabled( 'a4a-lead-matching-contact-preview' ) && (
+						<ContactOptionsPreview key={ agencyId } />
+					) }
+				</Fragment>
 			) ) }
 
 			<ButtonStack justify="flex-start">
@@ -218,6 +236,7 @@ function LeadMatchingPreferencesForm( {
 					__next40pxDefaultSize
 					variant="tertiary"
 					to={ PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE }
+					search={ previewSearch }
 					disabled={ isSubmitting }
 				>
 					{ __( 'Cancel' ) }

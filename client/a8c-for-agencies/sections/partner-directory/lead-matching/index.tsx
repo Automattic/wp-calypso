@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card, CardBody, ToggleControl, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
@@ -33,6 +34,7 @@ import {
 	LeadMatchingDetails,
 } from '../types';
 import { mapAgencyDetailsFormData } from '../utils/map-application-form-data';
+import ContactOptionsPreview from './contact-options-preview';
 import useLeadMatchingForm from './hooks/use-lead-matching-form';
 import useLeadMatchingFormValidation from './hooks/use-lead-matching-form-validation';
 import useLeadMatchingSaveState from './hooks/use-lead-matching-save-state';
@@ -584,6 +586,10 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						/>
 					</FormField>
 				</FormSection>
+
+				{ isEnabled( 'a4a-lead-matching-contact-preview' ) && (
+					<ContactOptionsPreview key={ agency?.id } />
+				) }
 
 				<FormSection
 					title={ __( 'Regions and languages' ) }
