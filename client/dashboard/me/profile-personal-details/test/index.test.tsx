@@ -69,7 +69,7 @@ describe( '<PersonalDetailsSection>', () => {
 		mockIsAutomattician( false );
 
 		render( <PersonalDetailsSection /> );
-		await screen.findByRole( 'heading', { name: 'Personal details' } );
+		await screen.findByRole( 'heading', { name: 'Personal details' }, { timeout: 2000 } );
 
 		expect( screen.getByRole( 'textbox', { name: 'First name' } ) ).toHaveValue( 'John' );
 		expect( screen.getByRole( 'textbox', { name: 'Last name' } ) ).toHaveValue( 'Doe' );

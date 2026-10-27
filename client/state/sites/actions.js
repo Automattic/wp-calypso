@@ -193,7 +193,9 @@ export function requestSite( siteFragment, atomicCapabilitiesRetriesLeft = 3 ) {
 					( error?.status === 403 &&
 						error?.message === 'API calls to this blog have been disabled.' ) ||
 					( error?.status === 400 &&
-						( error?.name === 'ApiNotFoundError' || error?.name === 'JetpackNotFoundError' ) )
+						( error?.name === 'ApiNotFoundError' || error?.name === 'JetpackNotFoundError' ) ) ||
+					// A site that errors on every request, e.g. after a PHP fatal, is still known to WPCOM.
+					error?.message?.startsWith( 'The Jetpack site is inaccessible' )
 				) {
 					return doRequest( true );
 				}

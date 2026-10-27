@@ -1,10 +1,7 @@
 const globals = require( 'globals' );
-const nodeConfig = require( './node' );
 
-module.exports.nodeConfig = nodeConfig;
-
-// Flat-config version of `nodeConfig`, keeping the surrounding `sourceType` as its `env: { node: true }`
-// did. Top-level `return` works where files are scripts or CommonJS, such as `.cjs` files.
+// For code that runs in Node.js, keeping the surrounding `sourceType`. Top-level `return` works where
+// files are scripts or CommonJS, such as `.cjs` files.
 module.exports.flatNodeConfig = {
 	name: 'calypso/node',
 	languageOptions: {
@@ -14,5 +11,9 @@ module.exports.flatNodeConfig = {
 			return { ecmaFeatures: { globalReturn: true } };
 		},
 	},
-	rules: nodeConfig.rules,
+	rules: {
+		'import/no-nodejs-modules': 'off',
+		'no-console': 'off',
+		'no-process-exit': 'off',
+	},
 };

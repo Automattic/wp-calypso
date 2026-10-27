@@ -2,10 +2,15 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
-import { useSelect } from '@wordpress/data';
+import { resolveSelect, useSelect } from '@wordpress/data';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
+import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { setSignupCompleteFlowName } from 'calypso/signup/storageUtils';
+import { useStepNavigationWithTracking } from '../../../internals/hooks/use-step-navigation-with-tracking';
+import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import onboarding from '../onboarding';
 
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
@@ -50,6 +55,10 @@ jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale', () => ( {
 jest.mock( 'calypso/state', () => ( {
 	useSelector: jest.fn(),
 	useDispatch: () => jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/lib/analytics/survicate', () => ( {
@@ -126,6 +135,143 @@ describe( 'onboarding flow side effects', () => {
 		renderSideEffect( 'domains' );
 
 		expect( clearSessionStorageQuery ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'post-checkout hand-off from the site-selected signup flow', () => {
+		afterEach( () => {
+			window.history.replaceState( null, '', '/' );
+		} );
+
+		it( 'drops store state left behind by an earlier onboarding run', () => {
+			window.history.replaceState(
+				null,
+				'',
+				'/setup/onboarding/post-checkout-onboarding?siteSlug=example.com&ref=site-selected'
+			);
+
+			renderSideEffect( 'post-checkout-onboarding' );
+
+			expect( mockResetOnboardStore ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'keeps the store for an onboarding run returning from its own checkout', () => {
+			window.history.replaceState(
+				null,
+				'',
+				'/setup/onboarding/post-checkout-onboarding?siteSlug=example.com'
+			);
+
+			renderSideEffect( 'post-checkout-onboarding' );
+
+			expect( mockResetOnboardStore ).not.toHaveBeenCalled();
+		} );
+
+		// The ref stays in the URL past post-checkout-onboarding, and a reset there would also
+		// clear the pending action that step just set for processing to run.
+		it.each( [ 'processing', 'setup-your-site-ai' ] )(
+			'keeps the store on %s after the hand-off',
+			( step ) => {
+				window.history.replaceState(
+					null,
+					'',
+					`/setup/onboarding/${ step }?siteSlug=example.com&ref=site-selected`
+				);
+
+				renderSideEffect( step );
+
+				expect( mockResetOnboardStore ).not.toHaveBeenCalled();
+			}
+		);
+	} );
+} );
+
+describe( 'onboarding flow step props', () => {
+	const renderStepsProps = ( search: string ) => {
+		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( search ) );
+		return renderHook( () => onboarding.useStepsProps?.call( onboarding ) ).result.current;
+	};
+
+	it( 'skips the processing completion of a site-selected hand-off, which signup already recorded', () => {
+		expect( renderStepsProps( '?siteSlug=example.com&ref=site-selected' ) ).toEqual( {
+			processing: { skipSignupComplete: true },
+		} );
+	} );
+
+	it( 'records the processing completion of an onboarding run', () => {
+		expect( renderStepsProps( '?siteSlug=example.com' ) ).toEqual( {
+			processing: { skipSignupComplete: false },
+		} );
+	} );
+} );
+
+describe( 'onboarding flow post-checkout processing', () => {
+	const originalLocation = window.location;
+	const navigate = jest.fn();
+
+	const submitProcessing = async (
+		search: string,
+		providedDependencies: Record< string, unknown > = {}
+	) => {
+		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( search ) );
+
+		const { result } = renderHook( () =>
+			onboarding.useStepNavigation.call(
+				onboarding,
+				'processing' as Parameters< typeof onboarding.useStepNavigation >[ 0 ],
+				navigate
+			)
+		);
+
+		await result.current.submit?.( {
+			slug: 'processing',
+			providedDependencies: {
+				processingResult: ProcessingResult.SUCCESS,
+				siteSlug: 'example.com',
+				...providedDependencies,
+			},
+		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
+	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		// A site without the Launchpad options lands on My Home.
+		( resolveSelect as jest.Mock ).mockReturnValue( { getSite: async () => ( { options: {} } ) } );
+		Object.defineProperty( window, 'location', {
+			value: { ...originalLocation, replace: jest.fn() },
+			writable: true,
+			configurable: true,
+		} );
+	} );
+
+	afterAll( () => {
+		Object.defineProperty( window, 'location', {
+			value: originalLocation,
+			writable: true,
+			configurable: true,
+		} );
+	} );
+
+	it( 'sends a site-selected purchase with Big Sky to the setup-your-site-ai chooser', async () => {
+		await submitProcessing( '?siteSlug=example.com&ref=site-selected', {
+			postCheckoutBigSky: true,
+		} );
+
+		expect( navigate ).toHaveBeenCalledWith( 'setup-your-site-ai' );
+		expect( window.location.replace ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps a site-selected purchase attributed to that flow', async () => {
+		await submitProcessing( '?siteSlug=example.com&ref=site-selected' );
+
+		expect( window.location.replace ).toHaveBeenCalledWith( '/home/example.com?ref=site-selected' );
+		expect( setSignupCompleteFlowName ).toHaveBeenCalledWith( 'site-selected' );
+	} );
+
+	it( 'attributes an onboarding purchase to onboarding', async () => {
+		await submitProcessing( '?siteSlug=example.com' );
+
+		expect( window.location.replace ).toHaveBeenCalledWith( '/home/example.com?ref=onboarding' );
+		expect( setSignupCompleteFlowName ).toHaveBeenCalledWith( 'onboarding' );
 	} );
 } );
 
@@ -334,7 +480,9 @@ describe( 'onboarding flow tracks event props', () => {
 	// The consumer keys its effect on object identity, so a new object each render records
 	// another signup start.
 	it( 'returns a stable object across renders', () => {
-		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( 'plan=personal-bundle' ) );
+		( useQuery as jest.Mock ).mockReturnValue(
+			new URLSearchParams( 'plan=personal-bundle&coupon=WC_ABC' )
+		);
 
 		const { result, rerender } = renderHook( () =>
 			onboarding.useTracksEventProps?.call( onboarding )
@@ -345,6 +493,15 @@ describe( 'onboarding flow tracks event props', () => {
 		expect( result.current ).toBe( first );
 		expect( first?.eventsProperties.calypso_signup_start ).toEqual( {
 			preselected_plan: 'personal-bundle',
+			coupon: 'WC_ABC',
+		} );
+
+		// WordCamp coupon links name no plan.
+		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( 'coupon=WC_ABC' ) );
+		rerender();
+
+		expect( result.current?.eventsProperties.calypso_signup_start ).toEqual( {
+			coupon: 'WC_ABC',
 		} );
 	} );
 } );
@@ -382,5 +539,97 @@ describe( 'onboarding flow plans-page experiment enrolment', () => {
 		expect( loadExperimentAssignment ).toHaveBeenCalledWith(
 			'calypso_plans_page_visual_separation_2025_09_v2'
 		);
+	} );
+} );
+
+describe( 'onboarding flow playground navigation', () => {
+	const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' );
+	const assign = jest.fn();
+
+	const mockLocation = ( search: string ) => {
+		window.history.replaceState( null, '', `/setup/onboarding/playground${ search }` );
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			value: { ...window.location, assign },
+		} );
+	};
+
+	const submitPlayground = ( search: string ) => {
+		mockLocation( search );
+
+		const navigate = jest.fn();
+		const { result } = renderHook( () =>
+			// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
+			onboarding.useStepNavigation.call(
+				onboarding,
+				'playground' as Parameters< typeof onboarding.useStepNavigation >[ 0 ],
+				navigate
+			)
+		);
+
+		result.current.submit?.( {
+			slug: 'playground',
+			providedDependencies: {},
+		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
+
+		return { navigate };
+	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		jest.useFakeTimers();
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+		Object.defineProperty( window, 'location', locationDescriptor as PropertyDescriptor );
+		window.history.replaceState( null, '', '/' );
+	} );
+
+	it( 'leaves for the entrepreneur flow only once Tracks has had time to send the submit events', () => {
+		const { navigate } = submitPlayground( '?intent=woocommerce&playground=abc' );
+
+		expect( assign ).not.toHaveBeenCalled();
+		jest.advanceTimersByTime( 249 );
+		expect( assign ).not.toHaveBeenCalled();
+
+		jest.advanceTimersByTime( 1 );
+		expect( assign ).toHaveBeenCalledTimes( 1 );
+		expect( assign ).toHaveBeenCalledWith(
+			'/setup/entrepreneur?from=playground-publish&playground=abc'
+		);
+		expect( navigate ).not.toHaveBeenCalled();
+	} );
+
+	it( 'records the Stepper submit event before leaving for the entrepreneur flow', () => {
+		mockLocation( '?intent=woocommerce&playground=abc' );
+
+		const { result } = renderHook( () =>
+			useStepNavigationWithTracking( {
+				flow: onboarding,
+				currentStepRoute: 'playground',
+				navigate: jest.fn(),
+			} )
+		);
+		result.current.submit?.();
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
+			expect.objectContaining( { flow: 'onboarding', step: 'playground' } )
+		);
+		expect( assign ).not.toHaveBeenCalled();
+
+		jest.advanceTimersByTime( 250 );
+		expect( assign ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'stays in Stepper and goes to the domains step straight away without the WooCommerce intent', () => {
+		const { navigate } = submitPlayground( '?playground=abc' );
+
+		expect( navigate ).toHaveBeenCalledWith(
+			'domains?back_to=%2Fsetup%2Fonboarding%2Fplayground%3Fplayground%3Dabc'
+		);
+		jest.runAllTimers();
+		expect( assign ).not.toHaveBeenCalled();
 	} );
 } );

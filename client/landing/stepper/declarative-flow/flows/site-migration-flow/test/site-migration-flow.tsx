@@ -7,7 +7,7 @@ import { PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { act, waitFor } from '@testing-library/react';
-import { select } from '@wordpress/data';
+import { dispatch, select } from '@wordpress/data';
 import nock from 'nock';
 import { MemoryRouter, useLocation, useNavigate, useNavigationType } from 'react-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
@@ -16,21 +16,27 @@ import { useFlowNavigation } from 'calypso/landing/stepper/declarative-flow/inte
 import { useStepNavigationWithTracking } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-step-navigation-with-tracking';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
+import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import {
 	getAssertionConditionResult,
+	getFlowLocation,
 	renderFlow,
 	runFlowNavigation,
 } from 'calypso/landing/stepper/declarative-flow/test/helpers';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
+import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import * as siteData from 'calypso/landing/stepper/hooks/use-site-data';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useRecordSignupComplete } from '../../../../hooks/use-record-signup-complete';
 import siteMigrationFlow from '../site-migration-flow';
+import type { ReactNode } from 'react';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
 
@@ -39,9 +45,18 @@ jest.mock( '@tanstack/react-query', () => ( {
 	useQueryClient: jest.fn( jest.requireActual( '@tanstack/react-query' ).useQueryClient ),
 } ) );
 jest.mock( 'calypso/landing/stepper/utils/checkout' );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
+	recordTracksEvent: jest.fn(),
+} ) );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/state/current-user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
+jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+	...jest.requireActual( 'calypso/landing/stepper/hooks/use-site' ),
+	useSiteQuery: jest.fn(),
+} ) );
+jest.mock( 'calypso/landing/stepper/hooks/use-site-copy' );
 jest.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
 	triggerGuidesForStep: jest.fn(),
 } ) );
@@ -121,6 +136,17 @@ describe( 'Site Migration Flow', () => {
 		} );
 		( getSiteOption as jest.Mock ).mockReturnValue( 'https://example.wpcomstaging.com/wp-admin/' );
 		jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
+		jest.mocked( useSiteQuery ).mockReturnValue( {
+			data: null,
+			isLoading: false,
+			isError: false,
+			refetch: jest.fn(),
+		} );
+		jest.mocked( useSiteCopy ).mockReturnValue( {
+			shouldShowSiteCopyItem: false,
+			isFetching: false,
+			startSiteCopy: jest.fn(),
+		} );
 		jest.mocked( useFlowState().get ).mockReturnValue( undefined );
 
 		const apiBaseUrl = 'https://public-api.wordpress.com';
@@ -309,6 +335,10 @@ describe( 'Site Migration Flow', () => {
 			};
 			act( () => result.current.navigation.submit( { action: 'continue', ...source } ) );
 			expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-check' );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_site_migration_hosting_detected',
+				expect.objectContaining( { hosting_provider: 'automattic', redirected_to_ssh: false } )
+			);
 			act( () => result.current.navigation.submit( { action: 'continue', ...source } ) );
 			expect( result.current.location.pathname ).toBe( '/site-migration/plans' );
 			expect( Object.fromEntries( new URLSearchParams( result.current.location.search ) ) ).toEqual(
@@ -399,6 +429,53 @@ describe( 'Site Migration Flow', () => {
 			expect( window.location.replace ).toHaveBeenCalledWith(
 				`/setup/site-migration/site-migration-identify${ search }#test`
 			);
+		} );
+
+		describe( 'landing page site picker entry', () => {
+			const landingPageSearch =
+				'?from=https%3A%2F%2Fexample.com&ref=move-lp&start=true&platform=wordpress';
+			let replaceState: jest.SpyInstance;
+
+			beforeEach( () => {
+				replaceState = jest.spyOn( window.history, 'replaceState' ).mockImplementation( () => {} );
+			} );
+
+			it( 'rewrites WordPress sources to the site checks in place with the flag', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+				Object.assign( window.location, {
+					pathname: '/setup/site-migration/sitePicker',
+					search: landingPageSearch,
+				} );
+
+				expect( siteMigrationFlow.initialize() ).not.toBe( false );
+				expect( replaceState ).toHaveBeenCalledWith(
+					null,
+					'',
+					`/setup/site-migration/site-migration-identify${ landingPageSearch }`
+				);
+				expect( window.location.replace ).not.toHaveBeenCalled();
+			} );
+
+			it.each( [
+				[ 'the flag is off', false, landingPageSearch ],
+				[ 'it is not a landing page entry', true, landingPageSearch.replace( '&start=true', '' ) ],
+				[
+					'the source is not WordPress',
+					true,
+					landingPageSearch.replace( 'wordpress', 'blogger' ),
+				],
+				[ 'the flow is already under way', true, `${ landingPageSearch }&sessionId=abc` ],
+			] )( 'keeps the site picker when %s', ( _, flagEnabled, search ) => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flagEnabled && flag === 'migration/reprint-flow' );
+				Object.assign( window.location, { pathname: '/setup/site-migration/sitePicker', search } );
+
+				expect( siteMigrationFlow.initialize() ).not.toBe( false );
+				expect( replaceState ).not.toHaveBeenCalled();
+			} );
 		} );
 
 		it.each( [ '', '/', '/pt-br', '/pt-br/' ] )(
@@ -546,6 +623,56 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
+			it( 'checks a handed-over address once, then shows the form on return', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+				const state = jest.mocked( useFlowState )();
+				let checked: boolean | undefined;
+				jest
+					.mocked( state.get )
+					.mockImplementation( ( key ) =>
+						key === 'migrationArrivalChecked' ? checked : undefined
+					);
+				const wrapper = ( { children }: { children: ReactNode } ) => (
+					<MemoryRouter initialEntries={ [ '/?from=https://example.com&start=true' ] }>
+						{ children }
+					</MemoryRouter>
+				);
+				try {
+					const { result: props, rerender } = renderHookWithProvider(
+						() => siteMigrationFlow.useStepsProps(),
+						{ wrapper }
+					);
+					expect( props.current[ STEPS.SITE_MIGRATION_IDENTIFY.slug ] ).toEqual( {
+						checkOnArrival: true,
+					} );
+
+					const setQueryData = jest.spyOn( QueryClient.prototype, 'setQueryData' );
+					runNavigation( {
+						from: STEPS.SITE_MIGRATION_IDENTIFY,
+						dependencies: { action: 'skip_platform_identification' },
+					} );
+					const arrivalWrite = setQueryData.mock.calls.find(
+						( [ key ] ) => key === state.queryKey
+					);
+					expect( arrivalWrite ).toBeDefined();
+					const updater = arrivalWrite?.[ 1 ] as ( previous: object ) => object;
+					expect( updater( { flow: { entryPoint: 'move-lp' } } ) ).toEqual( {
+						flow: { entryPoint: 'move-lp' },
+						migrationArrivalChecked: true,
+					} );
+
+					checked = true;
+					rerender();
+					expect( props.current[ STEPS.SITE_MIGRATION_IDENTIFY.slug ] ).toEqual( {
+						checkOnArrival: false,
+					} );
+				} finally {
+					jest.mocked( state.get ).mockReset();
+				}
+			} );
+
 			it( 'retains the destination-first escape when the flag is off', () => {
 				jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
 				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
@@ -580,6 +707,26 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'PROCESSING', () => {
+			it.each( [
+				[ ProcessingResult.SUCCESS, 'site_not_created' ],
+				[ ProcessingResult.NO_ACTION, 'processing_no_action' ],
+				[ ProcessingResult.FAILURE, 'processing_failed' ],
+			] )(
+				'names the cause when processing ends with %s and no site',
+				( processingResult, errorReason ) => {
+					const destination = runNavigation( {
+						from: STEPS.PROCESSING,
+						dependencies: { siteCreated: false, processingResult },
+					} );
+
+					expect( destination ).toMatchDestination( { step: STEPS.ERROR, query: null } );
+					expect( getFlowLocation().state ).toEqual( {
+						message: 'Site not created',
+						errorReason,
+					} );
+				}
+			);
+
 			it( 'redirects to SITE_MIGRATION_HOW_TO_MIGRATE when the platform is wordpress', () => {
 				const destination = runNavigation( {
 					from: STEPS.PROCESSING,
@@ -749,6 +896,148 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'Reprint address routes', () => {
+			it( 'initializes the source plan and marketplace purchases before opening the copy flow', async () => {
+				jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+				const source = {
+					ID: 456,
+					site_owner: 789,
+					URL: 'https://source.wordpress.com',
+					plan: { product_slug: 'business-bundle' },
+					options: { is_wpcom_atomic: true },
+				};
+				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+					siteId: 123,
+					siteSlug: 'destination.wordpress.com',
+					site: { plan: { product_slug: 'value_bundle' } },
+				} );
+				jest.mocked( useSiteQuery ).mockReturnValue( { data: source, isLoading: false } );
+				jest.mocked( getCurrentUserId ).mockReturnValue( source.site_owner );
+				jest
+					.mocked( useSiteCopy )
+					.mockImplementation(
+						jest.requireActual( 'calypso/landing/stepper/hooks/use-site-copy' ).useSiteCopy
+					);
+				dispatch( SITE_STORE ).receiveSite( source.ID, source );
+				dispatch( SITE_STORE ).finishResolution( 'getSite', [ source.ID ] );
+				nock( 'https://public-api.wordpress.com' )
+					.persist()
+					.get( '/rest/v1.1/sites/456/features' )
+					.reply( 200, { active: [ 'copy-site' ] } );
+				nock( 'https://public-api.wordpress.com' )
+					.get( '/rest/v1.2/upgrades' )
+					.reply( 200, [
+						{ blog_id: 456, product_type: 'marketplace_plugin', product_slug: 'source-plugin' },
+						{ blog_id: 456, product_type: 'marketplace_theme', product_slug: 'source-theme' },
+						{ blog_id: 123, product_type: 'marketplace_plugin', product_slug: 'other-site-plugin' },
+						{ blog_id: 456, product_type: 'plan', product_slug: 'business-bundle' },
+					] );
+				let cartAtRedirect;
+				jest.mocked( window.location.assign ).mockImplementationOnce( () => {
+					cartAtRedirect = {
+						plan: select( ONBOARD_STORE ).getPlanCartItem(),
+						products: select( ONBOARD_STORE ).getProductCartItems(),
+					};
+				} );
+				const { result } = renderHookWithProvider(
+					() => {
+						siteMigrationFlow.useSideEffect();
+						return {
+							props: siteMigrationFlow.useStepsProps(),
+							navigation: siteMigrationFlow.useStepNavigation(
+								STEPS.SITE_MIGRATION_CHECK.slug,
+								jest.fn()
+							),
+						};
+					},
+					{
+						wrapper: ( { children } ) => (
+							<MemoryRouter
+								initialEntries={ [
+									'/setup/site-migration/site-migration-check?from=https://source.wordpress.com&platform=wordpress&isWpcom=true&siteSlug=destination.wordpress.com&siteId=123',
+								] }
+							>
+								{ children }
+							</MemoryRouter>
+						),
+					}
+				);
+				await waitFor( () =>
+					expect(
+						result.current.props[ STEPS.SITE_MIGRATION_CHECK.slug ].copySiteEligibility
+					).toBe( 'eligible' )
+				);
+				act( () =>
+					result.current.navigation.submit( {
+						slug: STEPS.SITE_MIGRATION_CHECK.slug,
+						providedDependencies: { action: 'copy-site', from: source.URL, platform: 'wordpress' },
+					} )
+				);
+				expect( cartAtRedirect ).toEqual( {
+					plan: { product_slug: 'business-bundle' },
+					products: [ { product_slug: 'source-plugin' }, { product_slug: 'source-theme' } ],
+				} );
+				expect( window.location.assign ).toMatchURL( {
+					path: '/setup/copy-site',
+					query: { sourceSlug: 'source.wordpress.com' },
+				} );
+			} );
+
+			it.each( [
+				[ true, false, false, 'eligible' ],
+				[ false, false, false, 'ineligible' ],
+				[ true, true, false, 'loading' ],
+				[ true, false, true, 'loading' ],
+				[ false, true, false, 'loading' ],
+				[ false, false, true, 'loading' ],
+			] )(
+				'checks copy eligibility on the source: eligible=%s, loading=%s, fetching=%s',
+				( eligible, isLoading, isFetching, expected ) => {
+					jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+					const source = { ID: 456, site_owner: 789 };
+					jest.mocked( useSiteQuery ).mockReturnValue( { data: source, isLoading } );
+					jest
+						.mocked( useSiteCopy )
+						.mockReturnValue( { shouldShowSiteCopyItem: eligible, isFetching } );
+					const { result } = renderHookWithProvider( () => siteMigrationFlow.useStepsProps(), {
+						wrapper: ( { children } ) => (
+							<MemoryRouter
+								initialEntries={ [
+									'/setup/site-migration/site-migration-check?from=https://cotrim.dev/path&platform=wordpress&isWpcom=true&siteSlug=destination.wordpress.com',
+								] }
+							>
+								{ children }
+							</MemoryRouter>
+						),
+					} );
+					expect( useSiteQuery ).toHaveBeenLastCalledWith( 'cotrim.dev', { enabled: true } );
+					expect( useSiteCopy ).toHaveBeenLastCalledWith( source, { enabled: true } );
+					expect( result.current[ STEPS.SITE_MIGRATION_CHECK.slug ].copySiteEligibility ).toBe(
+						expected
+					);
+				}
+			);
+
+			it.each( [
+				[ 'copy-site', '/setup/copy-site', { sourceSlug: 'cotrim.dev' } ],
+				[ 'transfer-domain', '/setup/domain-transfer/intro', { new: 'cotrim.dev' } ],
+				[ 'get-access', 'https://wordpress.com/support/account-recovery/', {} ],
+			] )( 'opens the existing destination for %s', ( action, path, query ) => {
+				jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_CHECK,
+					query: {
+						from: 'https://cotrim.dev/path',
+						platform: 'wordpress',
+						isWpcom: 'true',
+						siteSlug: 'destination.wordpress.com',
+						siteId: 123,
+					},
+					dependencies: { action, from: 'https://cotrim.dev/path', platform: 'wordpress' },
+				} );
+				expect( window.location.assign ).toMatchURL( { path, query } );
+				expect( goToCheckout ).not.toHaveBeenCalled();
+			} );
+
 			it.each( [ 'wordpress', 'squarespace' ] )(
 				'opens the existing %s path after manual selection for a supplied destination',
 				( platform ) => {
@@ -1124,10 +1413,13 @@ describe( 'Site Migration Flow', () => {
 						}
 					);
 					expect( props.current[ STEPS.SITE_MIGRATION_CHECK.slug ] ).toEqual( {
+						copySiteEligibility: 'ineligible',
 						destinationSiteSlug: 'example.wordpress.com',
 						destinationPlanName: plan?.product_name_short,
 						needsUpgrade: !! plan,
 						isLoadingDestination: ! plan,
+						destinationFailed: false,
+						onRetryDestination: expect.any( Function ),
 					} );
 					const result = runNavigation( {
 						from: STEPS.SITE_MIGRATION_CHECK,
@@ -1178,6 +1470,34 @@ describe( 'Site Migration Flow', () => {
 				expect( goToCheckout ).not.toHaveBeenCalled();
 			} );
 
+			it( 'reports a destination that can’t be loaded instead of waiting on it', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+				const refetch = jest.fn();
+				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+					siteId: 123,
+					siteSlug: 'example.wordpress.com',
+					site: null,
+				} as unknown as ReturnType< typeof siteData.useSiteData > );
+				jest.mocked( useSiteQuery ).mockReturnValue( {
+					data: null,
+					isLoading: false,
+					isError: true,
+					refetch,
+				} );
+				const { result: props } = renderHookWithProvider( () => siteMigrationFlow.useStepsProps(), {
+					wrapper: MemoryRouter,
+				} );
+				expect( props.current[ STEPS.SITE_MIGRATION_CHECK.slug ] ).toEqual(
+					expect.objectContaining( {
+						isLoadingDestination: false,
+						destinationFailed: true,
+						onRetryDestination: refetch,
+					} )
+				);
+			} );
+
 			it( 'configures an eligible destination before handing off to MSD with original entry context', async () => {
 				jest.mocked( useFlowState().get ).mockReturnValue( { entryPoint: 'move-lp' } );
 				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
@@ -1191,10 +1511,13 @@ describe( 'Site Migration Flow', () => {
 					wrapper: MemoryRouter,
 				} );
 				expect( props.current[ STEPS.SITE_MIGRATION_CHECK.slug ] ).toEqual( {
+					copySiteEligibility: 'ineligible',
 					destinationSiteSlug: destination.siteSlug,
 					destinationPlanName: 'Personal',
 					needsUpgrade: false,
 					isLoadingDestination: false,
+					destinationFailed: false,
+					onRetryDestination: expect.any( Function ),
 				} );
 				const configure = nock( 'https://public-api.wordpress.com' )
 					.post( '/wpcom/v2/sites/123/wordpress-migration/configure', { source_url: context.from } )

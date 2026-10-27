@@ -6,7 +6,6 @@ import userEvent from '@testing-library/user-event';
 import { init } from '..';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from '../record-widget-event';
 
-jest.mock( '@automattic/calypso-polyfills', () => ( {} ) );
 jest.mock( '../../lib/config-api', () => ( {
 	__esModule: true,
 	default: ( key ) => ( { blog_id: 123, gmt_offset: 0, i18n_locale_slug: 'en' } )[ key ],

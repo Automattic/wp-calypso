@@ -147,6 +147,7 @@ export default function AgencyOverview() {
 				onRelaunchTour={ openTour }
 				tourLabel={ __( 'Take the full tour' ) }
 				hidesPendingCard={ isWelcomeBandVisible || isWelcomeBandLoading }
+				partnerManager={ agency.partner_manager }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</PageLayout>

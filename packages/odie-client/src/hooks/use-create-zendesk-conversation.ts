@@ -25,6 +25,7 @@ export const useCreateZendeskConversation = () => {
 		selectedSiteURL,
 		userFieldMessage,
 		userFieldFlowName,
+		zendeskConversationTags,
 		setChat,
 		chat,
 		trackEvent,
@@ -195,6 +196,9 @@ export const useCreateZendeskConversation = () => {
 				conversation = await Smooch.createConversation( {
 					metadata: {
 						createdAt: Date.now(),
+						...( zendeskConversationTags?.length
+							? { 'zen:ticket:tags': zendeskConversationTags.join() }
+							: {} ),
 						...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
 						...( chatId ? { odieChatId: chatId } : {} ),
 						...ticketFieldMetadata,

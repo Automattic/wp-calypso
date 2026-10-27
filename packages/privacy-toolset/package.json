@@ -58,10 +58,10 @@
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
-		"postcss": "^8.5.15",
+		"postcss": "^8.5.30",
 		"require-from-string": "^2.0.2",
 		"storybook": "^10.6.2",
 		"typescript": "^6.0.3",
-		"webpack": "^5.99.8"
+		"webpack": "^5.111.1"
 	}
 }

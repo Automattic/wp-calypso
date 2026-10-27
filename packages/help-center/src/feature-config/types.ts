@@ -1,3 +1,5 @@
+import type { SmoochIntegrationKey } from '@automattic/zendesk-client';
+
 /**
  * Nested feature configuration for the help center.
  * Each key maps to a UI area; each value controls visibility or behavior.
@@ -16,6 +18,10 @@ export type HelpCenterFeatureConfig = {
 		hasPremiumSupport: boolean;
 		/** Skip fetching support status. */
 		skipSupportStatus: boolean;
+		/** Key into `SMOOCH_INTEGRATION_ID_CUSTOM` selecting a dedicated Zendesk messaging integration. Null uses the default. */
+		zendeskIntegrationKey: SmoochIntegrationKey | null;
+		/** Tags written on the Zendesk conversation at escalation, for routing triggers. */
+		zendeskConversationTags: string[];
 	};
 	home: {
 		/** Show the recent conversations section on the home screen. */

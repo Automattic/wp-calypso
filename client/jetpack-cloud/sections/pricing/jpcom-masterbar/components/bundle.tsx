@@ -46,6 +46,19 @@ const Bundle: FC< BundleType > = ( { bundle } ) => {
 			];
 		}
 
+		if ( bundle.includes( 'pro' ) ) {
+			return [
+				<BackupIcon key="backup" />,
+				<AntispamIcon key="anti-spam" />,
+				<ScanIcon key="scan" />,
+				<SearchIcon key="search" />,
+				<SocialIcon key="social" />,
+				<VideopressIcon key="videopress" />,
+				<CRMIcon key="crm" />,
+				<BoostIcon key="boost" />,
+			];
+		}
+
 		if ( bundle.includes( 'security' ) ) {
 			return [
 				<BackupIcon key="backup" />,

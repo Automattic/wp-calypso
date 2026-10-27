@@ -2,9 +2,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { openStudioCheckoutReturn } from '../studio-return/deep-link';
 import { getStudioCheckoutParams } from '../studio-return/round-trip';
 import type { FunctionComponent } from 'react';
@@ -25,7 +24,6 @@ interface StudioHandoffProps {
  */
 const StudioHandoff: FunctionComponent< StudioHandoffProps > = ( { siteId, receiptId } ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	// The query string does not change while this page is mounted.
 	const studioCheckoutParams = useMemo( () => getStudioCheckoutParams( getQueryArgs() ), [] );
@@ -35,22 +33,20 @@ const StudioHandoff: FunctionComponent< StudioHandoffProps > = ( { siteId, recei
 			if ( ! studioCheckoutParams ) {
 				return;
 			}
-			dispatch(
-				recordTracksEvent( 'calypso_studio_checkout_return', {
-					checkout_result: 'success',
-					click: fromUserClick,
-					studio_site_id: studioCheckoutParams.studioSiteId,
-					studio_return_to: studioCheckoutParams.studioReturnTo,
-					blog_id: siteId,
-					receipt_id: receiptId,
-				} )
-			);
+			recordTracksEvent( 'calypso_studio_checkout_return', {
+				checkout_result: 'success',
+				click: fromUserClick,
+				studio_site_id: studioCheckoutParams.studioSiteId,
+				studio_return_to: studioCheckoutParams.studioReturnTo,
+				blog_id: siteId,
+				receipt_id: receiptId,
+			} );
 			openStudioCheckoutReturn( {
 				...studioCheckoutParams,
 				checkoutResult: 'success',
 			} );
 		},
-		[ dispatch, studioCheckoutParams, siteId, receiptId ]
+		[ studioCheckoutParams, siteId, receiptId ]
 	);
 
 	const hasAttemptedHandoff = useRef( false );

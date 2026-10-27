@@ -1,4 +1,4 @@
-import { NEWSLETTER_FLOW, WRITE_FLOW, BUILD_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW, BUILD_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { TranslatedLaunchpadStrings } from './types';
 
@@ -18,7 +18,6 @@ export function getLaunchpadTranslations(
 			translatedStrings.title = translate( "Your newsletter's ready!" );
 			translatedStrings.subtitle = translate( 'Now it’s time to let your readers know.' );
 			break;
-		case WRITE_FLOW:
 		case BUILD_FLOW:
 			if ( hasSkippedCheckout ) {
 				translatedStrings.title = translate( 'Get started with WordPress.com' );

@@ -1,11 +1,10 @@
-import { Button, VisuallyHidden } from '@wordpress/components';
+import { VisuallyHidden } from '@wordpress/components';
 import { useReducedMotion } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { Text } from '../../text';
 import { DIFM_OFFER_REVIEW_MAX_RATING, getDifmOfferReviews } from './data';
-import { pauseIcon, playIcon } from './icons';
 import type { DifmOfferReview } from './data';
 
 import './style.scss';
@@ -116,9 +115,10 @@ function ReviewCard( {
 
 /**
  * Trustpilot reviews of the DIFM service, one card at a time. The cards fade from one to
- * the next. The rotation stops while the pointer is on the cards and while the user has
- * paused it. It starts paused when the user prefers reduced motion. A card with a review URL
- * links to the review on Trustpilot in a new tab, so the modal stays open.
+ * the next. The rotation stops while the pointer or the focus is on the reviews. It stops
+ * for good when the user picks a review with the dots, and it does not start when the user
+ * prefers reduced motion. A card with a review URL links to the review on Trustpilot in a
+ * new tab, so the modal stays open.
  */
 export function DifmOfferReviews( {
 	className,
@@ -135,15 +135,11 @@ export function DifmOfferReviews( {
 	const prefersReducedMotion = useReducedMotion();
 	const [ activeIndex, setActiveIndex ] = useState( 0 );
 	const [ isHovered, setIsHovered ] = useState( false );
-	const [ isPaused, setIsPaused ] = useState( prefersReducedMotion );
+	const [ hasFocus, setHasFocus ] = useState( false );
+	// A user who picks a review chose what to read, so the rotation must not move it on.
+	const [ hasPickedReview, setHasPickedReview ] = useState( false );
 
-	useEffect( () => {
-		if ( prefersReducedMotion ) {
-			setIsPaused( true );
-		}
-	}, [ prefersReducedMotion ] );
-
-	const isRotating = ! isPaused && ! isHovered;
+	const isRotating = ! prefersReducedMotion && ! hasPickedReview && ! isHovered && ! hasFocus;
 
 	useEffect( () => {
 		if ( ! isRotating ) {
@@ -159,6 +155,13 @@ export function DifmOfferReviews( {
 		<section
 			className={ clsx( 'difm-offer-reviews', className ) }
 			aria-label={ __( 'Customer reviews' ) }
+			onFocus={ () => setHasFocus( true ) }
+			onBlur={ ( event ) => {
+				// Focus that moves from one dot to the next stays inside the reviews.
+				if ( ! event.currentTarget.contains( event.relatedTarget ) ) {
+					setHasFocus( false );
+				}
+			} }
 		>
 			{ /* Each change is a rotation the user did not ask for, so it is not announced. */ }
 			<div
@@ -176,15 +179,27 @@ export function DifmOfferReviews( {
 					/>
 				) ) }
 			</div>
-			<div className="difm-offer-reviews__controls">
-				<Button
-					className="difm-offer-reviews__toggle"
-					__next40pxDefaultSize
-					icon={ isPaused ? playIcon : pauseIcon }
-					label={ isPaused ? __( 'Play reviews' ) : __( 'Pause reviews' ) }
-					size="small"
-					onClick={ () => setIsPaused( ! isPaused ) }
-				/>
+			<div className="difm-offer-reviews__dots">
+				{ reviews.map( ( review, index ) => (
+					<button
+						key={ review.id }
+						type="button"
+						className={ clsx( 'difm-offer-reviews__dot', {
+							'is-active': index === activeIndex,
+						} ) }
+						aria-label={ sprintf(
+							/* translators: %1$d is the number of a review, %2$d is the number of reviews. */
+							__( 'Show review %1$d of %2$d' ),
+							index + 1,
+							reviews.length
+						) }
+						aria-pressed={ index === activeIndex }
+						onClick={ () => {
+							setActiveIndex( index );
+							setHasPickedReview( true );
+						} }
+					/>
+				) ) }
 			</div>
 		</section>
 	);

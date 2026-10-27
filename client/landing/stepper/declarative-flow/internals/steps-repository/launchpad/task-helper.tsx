@@ -1,6 +1,5 @@
 import { type SiteDetails } from '@automattic/data-stores';
 import { type ChecklistStatuses } from '@automattic/launchpad';
-import { isReadymadeFlow } from '@automattic/onboarding';
 import { LaunchpadChecklist } from './types';
 
 export function isDomainUpsellCompleted(
@@ -9,14 +8,6 @@ export function isDomainUpsellCompleted(
 ): boolean {
 	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
 }
-
-export const getSiteIdOrSlug = (
-	flow: string,
-	site: SiteDetails | null,
-	siteSlug?: string | null
-) => {
-	return isReadymadeFlow( flow ) ? { siteId: site?.ID } : { siteSlug };
-};
 
 /*
  * Confirms if final task for a given site_intent is completed.

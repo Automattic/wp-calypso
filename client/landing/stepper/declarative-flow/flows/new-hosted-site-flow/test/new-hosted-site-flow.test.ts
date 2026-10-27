@@ -12,6 +12,11 @@ jest.mock( '@automattic/onboarding', () => ( {
 	clearStepPersistedState: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/state', () => ( {
+	useDispatch: () => jest.fn(),
+	useSelector: () => false,
+} ) );
+
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );

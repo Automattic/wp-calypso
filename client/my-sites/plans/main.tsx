@@ -322,6 +322,7 @@ class PlansComponent extends Component< Props > {
 				coupon={ this.props.coupon }
 				redirectTo={ this.props.redirectTo }
 				pluginSlug={ this.props.pluginSlug }
+				checkoutAttribution={ this.props.checkoutAttribution }
 				discountEndDate={ this.props.discountEndDate }
 			/>
 		);

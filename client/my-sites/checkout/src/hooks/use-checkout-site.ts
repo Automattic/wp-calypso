@@ -54,3 +54,11 @@ export function getJetpackCheckoutRedirectUrl( site: Site | undefined ): string 
 export function getActivePlanSlug( site: Site | undefined ): string | undefined {
 	return site?.plan && ! site.plan.expired ? site.plan.product_slug : undefined;
 }
+
+/**
+ * Whether the site is on a paid plan. Unlike `getActivePlanSlug`, an expired
+ * paid plan still counts.
+ */
+export function siteHasPaidPlan( site: Site | undefined ): boolean {
+	return !! site?.plan && ! site.plan.is_free;
+}

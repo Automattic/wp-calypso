@@ -1,3 +1,10 @@
+// The light muted token is 4.49:1 on the popover; a touch of foreground clears 4.5:1.
+$credits-meter-muted-foreground: color-mix(
+	in srgb,
+	var( --color-muted-foreground ) 95%,
+	var( --color-foreground )
+);
+
 .agents-manager-credits-meter {
 	display: inline-flex;
 
@@ -9,10 +16,20 @@
 		min-width: 32px;
 		padding: 0;
 		border-radius: 50%;
+		color: var( --color-muted-foreground );
 
 		&:hover:not( :disabled ),
 		&[aria-expanded='true'] {
 			background-color: var( --color-muted );
+			color: var( --color-foreground );
+		}
+
+		// Low or out: the alert icon on a 20% red tint in every state, per the Figma spec.
+		&.is-alert,
+		&.is-alert:hover:not( :disabled ),
+		&.is-alert[aria-expanded='true'] {
+			background-color: color-mix( in srgb, var( --color-error-accent ) 20%, transparent );
+			color: var( --color-error-strong );
 		}
 
 		// Show the focus ring for keyboard focus only.
@@ -55,7 +72,7 @@
 .agents-manager-credits-meter__manage.components-button {
 	height: auto;
 	padding: 0;
-	color: var( --color-muted-foreground );
+	color: $credits-meter-muted-foreground;
 	font-size: 13px;
 	text-decoration: none;
 
@@ -84,12 +101,12 @@
 
 // A balance-only row leads with its amount, so its label is muted instead.
 .agents-manager-credits-meter__pool.is-balance-only .agents-manager-credits-meter__pool-label {
-	color: var( --color-muted-foreground );
+	color: $credits-meter-muted-foreground;
 }
 
 .agents-manager-credits-meter__pool-date,
 .agents-manager-credits-meter__pool-detail {
-	color: var( --color-muted-foreground );
+	color: $credits-meter-muted-foreground;
 	font-size: 12px;
 }
 
@@ -97,7 +114,7 @@
 	font-weight: 600;
 
 	&.is-exhausted {
-		color: var( --color-error-accent );
+		color: var( --color-error-strong );
 	}
 }
 
@@ -116,7 +133,7 @@
 
 .agents-manager-credits-meter__message {
 	margin: 0;
-	color: var( --color-muted-foreground );
+	color: $credits-meter-muted-foreground;
 	font-size: 12px;
 }
 

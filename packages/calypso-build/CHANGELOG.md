@@ -2,6 +2,18 @@
 
 ## trunk
 
+- Fixed: Depend on `@babel/cli`, which `transpile` runs. It was only found when `@automattic/calypso-babel-config`'s copy was hoisted, so `transpile` failed under pnpm and other installs that don't hoist.
+- Breaking: `--env WP` no longer compiles JSX to `createElement` imported from `@wordpress/element`. JSX now uses React's automatic runtime (`react/jsx-runtime`) as in every other build, which WordPress registers as the `react-jsx-runtime` script since 6.6.
+- Fixed: `minify` reads the `transform-*` feature names from `@babel/compat-data`, which Babel 8 kept, instead of the `proposal-*` names it removed. The chosen Terser `ecma` target is unchanged on Babel 7.
+- Updated dependencies:
+  - babel-loader to ^10.1.1 (needs thread-loader 4, below, for `this.utils` in workers)
+  - thread-loader to ^4.0.4
+  - css-minimizer-webpack-plugin to ^8.0.0 (cssnano 7)
+- Changed: `minify` turns off cssnano's `:is()` selector folding, which changes what selectors containing combinators match. Passing your own `preset` in `cssMinimizerOptions` replaces this default and turns folding back on.
+- Updated css-loader to ^7.1.5. The Sass loader keeps css-loader 6's CSS Modules exports (a default object with class names as written), so `import styles from './style.module.scss'` and `styles[ 'is-current' ]` keep working.
+- Breaking: The `webpack` peer dependency is now `^5.101.0`, the minimum webpack-cli 7 supports.
+- Updated dependencies:
+  - webpack-cli to ^7.2.3
 - Changed: `minify`'s `extractComments` option now defaults to `false`. With the SWC minifier it previously had no effect, and terser-webpack-plugin 5.6+ rejects it unless `@swc/core` supports comment extraction. Minified output is unchanged.
 - Breaking: Sass loader no longer implicitly prepends `process.cwd()` to `includePaths`. Callers must include it explicitly when project-root-relative imports (e.g., `client/assets/...`) need to resolve.
 - Updated dependencies:

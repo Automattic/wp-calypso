@@ -6,6 +6,7 @@ import {
 	getCreditsPurchaseAction,
 	getCreditsPurchaseLink,
 	getCreditsPurchaseOptions,
+	getTopUpCreditsLeft,
 	parseCreditsAccess,
 	parseLiveCreditsStatus,
 } from '@automattic/agents-manager';
@@ -64,6 +65,7 @@ function getMeterDetails(
 		state: level ? CREDITS_STATE_BY_LEVEL[ level ] : 'ok',
 		planTier: status.planTier ?? 'none',
 		creditsLeft: status.remaining,
+		topUpCreditsLeft: getTopUpCreditsLeft( status ),
 	};
 }
 
@@ -94,10 +96,11 @@ function getSitePurchaseLink( status: PaidCreditsStatus, blogId: number ) {
 	);
 }
 
-/** Resolves to undefined when the site is not on AI credits or the request fails. */
+/** Resolves to undefined when the site is not on AI credits or the request fails or is aborted. */
 async function fetchSiteCredits(
 	blogId: number,
-	authProvider: AuthProvider
+	authProvider: AuthProvider,
+	signal: AbortSignal
 ): Promise< { aiCredits: unknown; access: CreditsAccess } | undefined > {
 	try {
 		const headers = await authProvider();
@@ -105,6 +108,7 @@ async function fetchSiteCredits(
 			method: 'GET',
 			headers,
 			cache: 'no-store',
+			signal,
 		} );
 		// A site that is not on AI credits answers 404.
 		if ( ! response.ok ) {
@@ -113,7 +117,10 @@ async function fetchSiteCredits(
 		const data = await response.json();
 		return { aiCredits: data?.ai_credits, access: parseCreditsAccess( data ) };
 	} catch ( error ) {
-		window.console?.error?.( '[Image Studio] Failed to fetch site AI credits:', error );
+		// An abort means the modal closed or its credentials changed, not that the request failed.
+		if ( ! signal.aborted ) {
+			window.console?.error?.( '[Image Studio] Failed to fetch site AI credits:', error );
+		}
 		return undefined;
 	}
 }
@@ -126,9 +133,9 @@ export interface AiCreditsState {
 	isLoading: boolean;
 	/** For the chat config: a turn's final update carries the new balance. */
 	onTaskUpdate: ( update: TaskUpdate ) => void;
-	/** For the chat container: at zero, blocks Send and opens the dot's details, keeping the draft. */
+	/** For the chat container: at zero, blocks Send and opens the meter's details, keeping the draft. */
 	beforeSubmit: () => boolean;
-	/** The Agent's credits dot, for sites on a paid plan. */
+	/** The Agent's credits meter, for sites on a paid plan. */
 	meter?: {
 		status: CreditsStatus;
 		/** Upgrade or Add credits, by the site's plan. Its click joins the notice's events. */
@@ -141,9 +148,11 @@ export interface AiCreditsState {
 }
 
 /**
- * Reads the site's AI credit balance when the modal opens; each turn's final update brings
- * the next one. While credits are only on internal test sites, pages outside dev mode don't
- * ask, since nearly every site answers 404; a turn's balance still shows.
+ * Reads the site's AI credit balance when the modal opens, and again when the page regains
+ * focus or comes back online, as after buying credits in checkout's tab; each turn's final
+ * update brings the next one. Only one read runs at a time. While credits are only on
+ * internal test sites, pages outside dev mode don't ask, since nearly every site answers 404;
+ * a turn's balance still shows.
  * @param options              - Hook options
  * @param options.mode         - Image Studio mode ('edit' or 'generate') for tracking
  * @param options.authProvider - The agent's credentials, once its config has loaded
@@ -162,12 +171,15 @@ export function useAiCredits( {
 	const [ isLoading, setIsLoading ] = useState( blogId !== null && ! isRequestSkipped );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
 	const [ isMeterOpen, setIsMeterOpen ] = useState( false );
-	// Only the opening check says who may buy; a turn's balance doesn't.
+	// Only a credits check says who may buy; a turn's balance doesn't.
 	const [ access, setAccess ] = useState< CreditsAccess >();
 	const accessRef = useRef< CreditsAccess | undefined >( undefined );
 	const canCheck = blogId !== null && ! isRequestSkipped && !! authProvider;
 	// Cancelled when the credentials change or the modal closes, so an older check's answer is dropped.
 	const checkToken = useRef( { isCancelled: false } );
+	// The check in flight, aborted when its token is cancelled. Returning to the page fires focus
+	// and visibilitychange together, so another check doesn't start while one runs.
+	const runningCheck = useRef< AbortController | undefined >( undefined );
 	// A notice event waits for a running check to answer or fail, so it can say whether
 	// Upgrade or Add credits shows; a skipped check leaves nothing to wait for. The opening
 	// check's 5-second timeout doesn't count: a late answer can still add the button.
@@ -230,7 +242,7 @@ export function useAiCredits( {
 		}
 	);
 
-	// The Agent's parser, so the notice, the send block and the dot always agree. An unreadable
+	// The Agent's parser, so the notice, the send block and the meter always agree. An unreadable
 	// balance keeps whatever was known, so a fluke never clears or shows a notice.
 	const applyCredits = useEvent(
 		( snapshot: unknown, trigger: UpgradeNoticeTrigger, holdNotice = false ) => {
@@ -243,7 +255,7 @@ export function useAiCredits( {
 			}
 			latestStatus.current = next;
 			const level = getSiteCreditsLevel( next.remaining );
-			// A known balance running out opens the dot's details once. The first read stays quiet.
+			// A known balance running out opens the meter's details once. The first read stays quiet.
 			if ( level === 'out' && shown.current.level !== undefined && shown.current.level !== 'out' ) {
 				openMeter( next, level, 'exhausted' );
 			}
@@ -268,11 +280,19 @@ export function useAiCredits( {
 		if ( blogId === null || ! authProvider ) {
 			return Promise.resolve();
 		}
+		if ( runningCheck.current ) {
+			return Promise.resolve();
+		}
 		const token = checkToken.current;
 		const turnBalancesBefore = turnBalanceCount.current;
+		const request = new AbortController();
+		runningCheck.current = request;
 		isAccessSettled.current = false;
 
-		return fetchSiteCredits( blogId, authProvider ).then( ( result ) => {
+		return fetchSiteCredits( blogId, authProvider, request.signal ).then( ( result ) => {
+			if ( runningCheck.current === request ) {
+				runningCheck.current = undefined;
+			}
 			if ( token.isCancelled ) {
 				return;
 			}
@@ -298,9 +318,24 @@ export function useAiCredits( {
 		const timeout = setTimeout( () => setIsLoading( false ), SITE_CREDITS_TIMEOUT_MS );
 		checkCredits( 'open' ).then( () => clearTimeout( timeout ) );
 
+		// Checkout opens in a new tab: the balance can change while the page is out of view or offline.
+		const refresh = () => {
+			if ( document.visibilityState !== 'hidden' ) {
+				checkCredits( 'refresh' );
+			}
+		};
+		window.addEventListener( 'focus', refresh );
+		window.addEventListener( 'online', refresh );
+		document.addEventListener( 'visibilitychange', refresh );
+
 		return () => {
 			token.isCancelled = true;
+			runningCheck.current?.abort();
+			runningCheck.current = undefined;
 			clearTimeout( timeout );
+			window.removeEventListener( 'focus', refresh );
+			window.removeEventListener( 'online', refresh );
+			document.removeEventListener( 'visibilitychange', refresh );
 		};
 	}, [ canCheck, authProvider, checkCredits ] );
 

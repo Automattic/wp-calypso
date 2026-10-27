@@ -1,5 +1,5 @@
 import PostCard from './post-card';
-import Thread from './thread';
+import Thread, { ThreadParent } from './thread';
 import type { Note } from '../../types';
 
 export default function Context( { note }: { note: Note } ) {
@@ -7,8 +7,12 @@ export default function Context( { note }: { note: Note } ) {
 
 	return (
 		<>
-			{ post && <PostCard post={ post } site={ site } /> }
-			{ comment && <Thread repliedTo={ comment } /> }
+			{ post && <PostCard post={ post } site={ site } url={ comment?.url } /> }
+			{ comment && (
+				<Thread>
+					<ThreadParent comment={ comment } />
+				</Thread>
+			) }
 		</>
 	);
 }

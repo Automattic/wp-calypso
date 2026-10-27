@@ -20,13 +20,6 @@
 		height: 18px;
 	}
 
-	.step-container-v2__top-bar-left-element::before {
-		content: '';
-		height: 16px;
-		border-inline-start: 1px solid var( --color-neutral-5 );
-		margin-inline: 8px 16px;
-	}
-
 	.step-container-v2__back-button {
 		text-decoration: none;
 		font-weight: 400;
@@ -118,6 +111,37 @@
 		line-height: 1.5;
 	}
 
+	.site-migration-check__preview-label {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.site-migration-check__preview-heading {
+		font-size: 1rem;
+		font-weight: 500;
+	}
+
+	.site-migration-check__preview-address {
+		display: flex;
+		gap: 4px;
+		max-width: 100%;
+		align-self: flex-start;
+		white-space: nowrap;
+		color: var( --color-neutral-50 );
+		text-decoration: none;
+
+		&:hover,
+		&:focus-visible {
+			color: var( --color-link );
+			text-decoration: underline;
+		}
+	}
+
+	.site-migration-check__preview-address-text {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
 	.site-migration-check__preview-description {
 		color: var( --color-neutral-50 );
 	}
@@ -155,10 +179,18 @@
 		&:disabled {
 			color: var( --color-neutral-50 );
 		}
+	}
 
-		&:not( :disabled ):hover {
-			border-color: var( --color-link );
-		}
+	.site-migration-check__choice--ineligible.components-button {
+		color: var( --color-neutral-50 );
+	}
+
+	.site-migration-check__choice.components-button:not(
+			:disabled,
+			[aria-disabled='true'],
+			.site-migration-check__choice--ineligible
+		):hover {
+		border-color: var( --color-link );
 	}
 
 	.site-migration-check__choice-content {
@@ -186,6 +218,15 @@
 		font-size: 1.375rem;
 		line-height: 1.09;
 		color: var( --color-neutral-50 );
+	}
+
+	.site-migration-check__choice-arrow--external {
+		font-size: 1rem;
+	}
+
+	.site-migration-check__choice-learn-more {
+		color: var( --color-link );
+		text-decoration: underline;
 	}
 
 	.migration-instructions-from-preview {

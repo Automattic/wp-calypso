@@ -24,6 +24,10 @@ packages/calypso-color-schemes/css
 packages/calypso-color-schemes/js
 packages/calypso-color-schemes/root-only
 
+# Built apps
+/apps/*/release-files/
+/apps/happy-blocks/block-library/*/build/
+
 # Generated JSON files
 /stats.json
 /chart.json

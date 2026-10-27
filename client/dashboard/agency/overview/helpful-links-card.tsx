@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
-import NewTabLabel from './new-tab-label';
+import NewTabLabel from '../components/new-tab-label';
 import type { RecordTracksEvent } from '../tiers/types';
 
 export interface HelpfulLink {

@@ -10,6 +10,8 @@ const wpcomPreset: HelpCenterFeatureConfig = {
 		filterByBotSlug: false,
 		hasPremiumSupport: false,
 		skipSupportStatus: false,
+		zendeskIntegrationKey: null,
+		zendeskConversationTags: [],
 	},
 	home: {
 		recentConversations: true,
@@ -39,6 +41,8 @@ const a4aPreset: HelpCenterFeatureConfig = {
 		filterByBotSlug: false,
 		hasPremiumSupport: false,
 		skipSupportStatus: false,
+		zendeskIntegrationKey: null,
+		zendeskConversationTags: [],
 	},
 	home: {
 		recentConversations: false,
@@ -69,6 +73,9 @@ const wooPreset: HelpCenterFeatureConfig = {
 		// Testing: open to all in sandbox. Production will gate on WordPress.com connection.
 		hasPremiumSupport: true,
 		skipSupportStatus: true,
+		zendeskIntegrationKey: 'woo',
+		// Routes the conversation to the Woo queue (Zendesk trigger, WOOPUBR-2382).
+		zendeskConversationTags: [ 'woo_support_flow_help_center' ],
 	},
 	home: {
 		recentConversations: true,

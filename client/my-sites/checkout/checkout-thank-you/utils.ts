@@ -17,7 +17,7 @@ import JetpackSocialPluginImage from 'calypso/assets/images/jetpack/jetpack-plug
 import JetpackVideopressPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-videopress.svg';
 import JetpackPluginImage from 'calypso/assets/images/jetpack/licensing-activation-plugin-install.svg';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
-import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+import type { ReceiptPurchase } from 'calypso/my-sites/checkout/checkout-thank-you/receipt';
 
 const buildKeyValuePairByProductSlugs = (
 	productSlugs: ReadonlyArray< string >,
@@ -113,13 +113,11 @@ export type FindPredicate = (
 export function getDomainPurchaseTypeAndPredicate(
 	purchases: ReceiptPurchase[]
 ): [ string, FindPredicate ] {
-	const hasDomainMapping = purchases.some( isDomainMapping );
-
-	if ( hasDomainMapping && purchases.some( isDomainRegistration ) ) {
+	if ( purchases.some( isDomainRegistration ) ) {
 		return [ 'REGISTRATION', isDomainRegistration ];
 	}
 
-	if ( hasDomainMapping ) {
+	if ( purchases.some( isDomainMapping ) ) {
 		return [ 'MAPPING', isDomainMapping ];
 	}
 

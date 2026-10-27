@@ -23,22 +23,24 @@ function queryTopPosts( siteId: number, params: QueryTopPostsParams ) {
  * Top posts and pages over a range's days, totalled rather than broken down by day.
  * @param siteId The site to query.
  * @param days   The range's first and last day.
+ * @param max    How many posts to ask for: the number the caller renders.
  */
 export default function useTopPostsQuery(
 	siteId: number,
-	days: Pick< ResolvedDateRange, 'startDate' | 'endDate' >
+	days: Pick< ResolvedDateRange, 'startDate' | 'endDate' >,
+	max: number
 ) {
 	const { startDate, endDate } = days;
 	return useQuery( {
 		...getDefaultQueryParams< TopPostsResponse >(),
-		queryKey: [ 'stats-widget', 'top-posts', siteId, startDate, endDate ],
+		queryKey: [ 'stats-widget', 'top-posts', siteId, startDate, endDate, max ],
 		queryFn: () =>
 			queryTopPosts( siteId, {
 				period: 'day',
 				start_date: startDate,
 				date: endDate,
 				summarize: 1,
-				max: 0,
+				max,
 			} ),
 		select: ( data ) => data?.summary?.postviews,
 		staleTime: 5 * 60 * 1000,

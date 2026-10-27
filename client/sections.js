@@ -777,12 +777,6 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
-		name: 'woocommerce-installation',
-		paths: [ '/woocommerce-installation' ],
-		module: 'calypso/my-sites/woocommerce',
-		group: 'woocommerce-installation',
-	},
-	{
 		name: 'woocommerce',
 		paths: [ '/store' ],
 		module: 'calypso/my-sites/store',
@@ -850,6 +844,13 @@ const sections = [
 		name: 'a8c-for-agencies-auth',
 		paths: [ '/log-in', '/connect', '/connect/oauth/token' ],
 		module: 'calypso/a8c-for-agencies/sections/auth',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-error',
+		paths: [ '/error' ],
+		module: 'calypso/a8c-for-agencies/sections/error',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
 	},

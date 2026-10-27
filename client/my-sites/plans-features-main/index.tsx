@@ -112,6 +112,13 @@ import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import { useRenewalPricingExperiment } from './hooks/use-renewal-price-experiment';
 import useSelectedFeature from './hooks/use-selected-feature';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
+import {
+	getSitePlanNameWithTerm,
+	getSitePlanRenewalPriceWithTerm,
+	isScheduledOnlyPlanChange,
+	isScheduledTermChangeEnabled,
+	isShorterTermPlanChange,
+} from './scheduled-term-change';
 import type { CheckoutAttribution } from './hooks/use-generate-action-callback';
 import type { PlanChangeLostFeature } from '@automattic/api-core';
 import type {
@@ -324,7 +331,8 @@ const PlansFeaturesMain = ( {
 	const sitePlansData = useSelector( ( state: IAppState ) =>
 		siteId ? getPlansBySiteId( state, siteId )?.data : null
 	);
-	const isPlanExpired = !! sitePlansData?.find( ( p ) => p.currentPlan )?.expired;
+	const currentSitePlan = sitePlansData?.find( ( p ) => p.currentPlan );
+	const isPlanExpired = !! currentSitePlan?.expired;
 
 	// Refund-window instant downgrade: when the server reports the plan can be
 	// downgraded instantly, the downgrade is performed via the cancel endpoint
@@ -350,12 +358,29 @@ const PlansFeaturesMain = ( {
 	} );
 	const isInstantDowngradeAvailable =
 		!! currentPurchase && currentPurchase.is_instant_downgrade_available;
+	const getScheduledOnlySitePlan = ( planSlug: PlanSlug | null ) => {
+		if ( ! isScheduledTermChangeEnabled() || ! planSlug || isPlanExpired ) {
+			return null;
+		}
+		const sitePlan = sitePlansData?.find( ( p ) => p.productSlug === planSlug );
+		return isScheduledOnlyPlanChange( sitePlan ) ? sitePlan : null;
+	};
+	const pendingDowngradeSitePlan = sitePlansData?.find(
+		( p ) => p.productSlug === pendingDowngradePlanSlug
+	);
+	const isPendingDowngradeScheduledOnly = !! getScheduledOnlySitePlan( pendingDowngradePlanSlug );
+	const isPendingDowngradeTermChange =
+		isScheduledTermChangeEnabled() &&
+		isShorterTermPlanChange( currentSitePlan, pendingDowngradeSitePlan );
 	// Three downgrade modes:
 	//   'instant'  — server allows it now: cancel+refund via the cancel endpoint
 	//   'checkout' — expired plan: route to checkout to purchase the new plan
 	//   'delayed'  — active plan, no instant downgrade: schedule downgrade at renewal
+	// Some targets, such as a shorter term, can only ever be scheduled for renewal.
 	let downgradeMode: 'instant' | 'checkout' | 'delayed';
-	if ( isInstantDowngradeAvailable ) {
+	if ( isPendingDowngradeScheduledOnly ) {
+		downgradeMode = 'delayed';
+	} else if ( isInstantDowngradeAvailable ) {
 		downgradeMode = 'instant';
 	} else if ( ! isPlanExpired ) {
 		downgradeMode = 'delayed';
@@ -384,6 +409,28 @@ const PlansFeaturesMain = ( {
 	const downgradeRenewalDate = currentPurchase?.renew_date
 		? moment( currentPurchase.renew_date ).format( 'LL' )
 		: undefined;
+
+	// For a term change, name the terms (two terms of the same plan share a
+	// product name) and what the renewal will charge.
+	const downgradeRenewalPriceText =
+		isPendingDowngradeTermChange && pendingDowngradeSitePlan
+			? getSitePlanRenewalPriceWithTerm(
+					pendingDowngradeSitePlan,
+					( amount, currencyCode ) =>
+						formatCurrency( amount, currencyCode, { isSmallestUnit: true, stripZeros: true } ),
+					translate
+				)
+			: null;
+	const downgradeCurrentPlanName = String(
+		isPendingDowngradeTermChange && currentSitePlan
+			? getSitePlanNameWithTerm( currentSitePlan, translate )
+			: ( currentSitePlan?.productName ?? '' )
+	);
+	const downgradeTargetPlanName = String(
+		isPendingDowngradeTermChange && pendingDowngradeSitePlan
+			? getSitePlanNameWithTerm( pendingDowngradeSitePlan, translate )
+			: ( pendingDowngradeSitePlan?.productName ?? '' )
+	);
 
 	// Ignore dismiss requests (X/Escape/overlay) while an instant downgrade is in
 	// flight so the loader stays visible until the redirect.
@@ -628,10 +675,12 @@ const PlansFeaturesMain = ( {
 		displayedIntervals,
 		flowName,
 		paidDomainName,
+		sitePlans: sitePlansData,
 	} );
 
 	// Ensure intervalType is compatible with the current plan's term
-	// Users can only select interval types that are equal to or longer than their current plan's interval
+	// Users can only select interval types that are equal to or longer than their current plan's interval,
+	// or a shorter one the interval filter kept because its plans can be scheduled for renewal.
 	// Only apply this fix in the plan-upgrade flow to avoid breaking other flows
 	const currentPlanTerm =
 		isStepperUpgradeFlow &&
@@ -641,8 +690,11 @@ const PlansFeaturesMain = ( {
 			? getPlan( sitePlanSlug )?.term
 			: null;
 	const compatibleIntervalType = useMemo(
-		() => ensureCompatibleIntervalType( currentPlanTerm, intervalType ),
-		[ currentPlanTerm, intervalType ]
+		() =>
+			isScheduledTermChangeEnabled() && filteredDisplayedIntervals.includes( intervalType )
+				? intervalType
+				: ensureCompatibleIntervalType( currentPlanTerm, intervalType ),
+		[ currentPlanTerm, intervalType, filteredDisplayedIntervals ]
 	);
 
 	const term = usePlanBillingPeriod( {
@@ -742,7 +794,7 @@ const PlansFeaturesMain = ( {
 		if ( currentPlanPurchaseId ) {
 			try {
 				await queryClient.ensureQueryData(
-					purchaseCancelFeaturesQuery( currentPlanPurchaseId, 'treatment', planSlug )
+					purchaseCancelFeaturesQuery( currentPlanPurchaseId, 'control', planSlug )
 				);
 			} catch {
 				// Open the modal regardless; its own query will retry and show a spinner.
@@ -781,6 +833,13 @@ const PlansFeaturesMain = ( {
 			! isFreePlan( planSlug ) &&
 			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
 		) {
+			await openDowngradeModal( planSlug );
+			return true;
+		}
+
+		// Targets the server only allows at renewal, such as a shorter term, are
+		// always scheduled, even while the current plan could be downgraded now.
+		if ( getScheduledOnlySitePlan( planSlug ) ) {
 			await openDowngradeModal( planSlug );
 			return true;
 		}
@@ -894,7 +953,8 @@ const PlansFeaturesMain = ( {
 	const isUpgradeOrDowngradeFlow =
 		intent === 'plans-upgrade' || intent === 'plans-upgrade-or-downgrade';
 	const isDelayedDowngradePending =
-		isUpgradeOrDowngradeFlow && !! currentPurchase?.is_delayed_downgrade_pending;
+		( isUpgradeOrDowngradeFlow || isScheduledTermChangeEnabled() ) &&
+		!! currentPurchase?.is_delayed_downgrade_pending;
 	const delayedDowngradeToProductSlug = isDelayedDowngradePending
 		? ( currentPurchase?.delayed_downgrade_to_product_slug ?? null )
 		: null;
@@ -965,9 +1025,22 @@ const PlansFeaturesMain = ( {
 		}
 		return {
 			...highlightLabelOverrides,
-			[ delayedDowngradeToProductSlug as PlanSlug ]: translate( 'Downgrade scheduled' ),
+			[ delayedDowngradeToProductSlug as PlanSlug ]:
+				isScheduledTermChangeEnabled() &&
+				isShorterTermPlanChange(
+					currentSitePlan,
+					sitePlansData?.find( ( p ) => p.productSlug === delayedDowngradeToProductSlug )
+				)
+					? translate( 'Change scheduled' )
+					: translate( 'Downgrade scheduled' ),
 		};
-	}, [ highlightLabelOverrides, delayedDowngradeToProductSlug, translate ] );
+	}, [
+		highlightLabelOverrides,
+		delayedDowngradeToProductSlug,
+		currentSitePlan,
+		sitePlansData,
+		translate,
+	] );
 
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
@@ -1510,16 +1583,17 @@ const PlansFeaturesMain = ( {
 				/>
 				<DowngradeConfirmationModal
 					isOpen={ !! pendingDowngradePlanSlug }
-					currentPlanName={ sitePlansData?.find( ( p ) => p.currentPlan )?.productName ?? '' }
-					targetPlanName={
-						sitePlansData?.find( ( p ) => p.productSlug === pendingDowngradePlanSlug )
-							?.productName ?? ''
-					}
+					currentPlanName={ downgradeCurrentPlanName }
+					targetPlanName={ downgradeTargetPlanName }
 					targetPlanSlug={ pendingDowngradePlanSlug }
 					purchaseId={ currentPlan?.purchaseId }
 					isInstantDowngrade={ downgradeMode === 'instant' }
 					isDelayedDowngrade={ downgradeMode === 'delayed' }
 					renewalDate={ downgradeRenewalDate }
+					isTermChange={ isPendingDowngradeTermChange }
+					renewalPriceText={
+						downgradeRenewalPriceText ? String( downgradeRenewalPriceText ) : undefined
+					}
 					refundText={ downgradeRefundText }
 					isConfirming={ cancelAndRefundMutation.isPending || isDowngrading }
 					isRechargeable={ currentPurchase?.is_rechargeable ?? false }

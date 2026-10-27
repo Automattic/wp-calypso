@@ -24,6 +24,7 @@ import SiteVerification from 'calypso/my-sites/site-settings/seo-settings/site-v
 import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
 import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
+import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isBlazeEnabled from 'calypso/state/selectors/is-blaze-enabled';
 import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
@@ -44,6 +45,15 @@ const loadVisibilityNotice = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-my-sites-site-settings-seo-settings-visibility-notice" */ 'calypso/my-sites/site-settings/seo-settings/visibility-notice'
 	);
+
+// Temporary: detects the new Jetpack › SEO page from the site's admin menu, which lists it
+// only once the page is live there. The page covers SEO, Sitemaps and Site verification, so
+// once a rollback is unlikely, remove this check and the legacy cards it hides.
+export const isJetpackSeoPageAvailable = ( state, siteId ) => {
+	const menu = getAdminMenu( state, siteId ) ?? [];
+
+	return menu.some( ( item ) => item.children?.some( ( child ) => child.slug === 'jetpack-seo' ) );
+};
 
 export const shouldShowBlazeAdvertisingOption = ( state, siteId ) => {
 	return isBlazeEnabled( state, siteId ) || isSiteComingSoon( state, siteId );
@@ -70,6 +80,7 @@ const SiteSettingsTraffic = ( {
 	siteId,
 	siteSlug,
 	shouldShowAdvertisingOption,
+	showSeoSettings,
 	showSeoVisibilityNotice,
 	translate,
 } ) => {
@@ -112,7 +123,7 @@ const SiteSettingsTraffic = ( {
 						<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 					) }
 					<JetpackDevModeNotice />
-					{ isAdmin && showSeoVisibilityNotice && (
+					{ isAdmin && showSeoSettings && showSeoVisibilityNotice && (
 						<AsyncLoad require={ loadVisibilityNotice } placeholder={ null } />
 					) }
 					{ isAdmin && shouldShowAdvertisingOption && (
@@ -130,10 +141,12 @@ const SiteSettingsTraffic = ( {
 							href={ blazeAdvertisingUrl }
 						/>
 					) }
-					{ isAdmin && (
+					{ isAdmin && showSeoSettings && (
 						<SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } />
 					) }
-					{ isAdmin && <AsyncLoad key={ siteId } require={ loadForm } placeholder={ null } /> }
+					{ isAdmin && showSeoSettings && (
+						<AsyncLoad key={ siteId } require={ loadForm } placeholder={ null } />
+					) }
 					{ isJetpackAdmin && (
 						<JetpackSiteStats
 							handleAutosavingToggle={ handleAutosavingToggle }
@@ -154,14 +167,14 @@ const SiteSettingsTraffic = ( {
 							onSubmitForm={ handleSubmitForm }
 						/>
 					) }
-					{ isAdmin && (
+					{ isAdmin && showSeoSettings && (
 						<Sitemaps
 							isSavingSettings={ isSavingSettings }
 							isRequestingSettings={ isRequestingSettings }
 							fields={ fields }
 						/>
 					) }
-					{ isAdmin && <SiteVerification /> }
+					{ isAdmin && showSeoSettings && <SiteVerification /> }
 				</div>
 			</Page>
 			<JetpackFooter />
@@ -184,6 +197,7 @@ const connectComponent = connect( ( state ) => {
 		isJetpackAdmin,
 		siteSlug,
 		shouldShowAdvertisingOption: showAdvertisingOption,
+		showSeoSettings: ! isJetpackSeoPageAvailable( state, siteId ),
 		showSeoVisibilityNotice:
 			siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
 			( isPrivateSite( state, siteId ) || isHiddenSite( state, siteId ) ),

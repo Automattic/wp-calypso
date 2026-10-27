@@ -32,7 +32,25 @@ const {
 	supportsPrivacyProtectionPurchase,
 	titanMailMonthly,
 	titanMailYearly,
+	hasTitanMail,
 } = cartItems;
+
+describe( 'hasTitanMail()', () => {
+	it.each( [
+		'wp_titan_mail_monthly',
+		'wp_titan_mail_yearly',
+		'wp_titan_mail_premium_monthly',
+		'wp_titan_mail_premium_yearly',
+		'wp_titan_mail_ultra_monthly',
+		'wp_titan_mail_ultra_yearly',
+	] )( 'recognizes %s', ( productSlug ) => {
+		expect( hasTitanMail( { products: [ { product_slug: productSlug } ] } ) ).toBe( true );
+	} );
+
+	it( 'ignores carts without Titan products', () => {
+		expect( hasTitanMail( { products: [ { product_slug: GSUITE_BASIC_SLUG } ] } ) ).toBe( false );
+	} );
+} );
 
 describe( 'planItem()', () => {
 	test( 'should return null for free plan', () => {
@@ -527,19 +545,6 @@ describe( 'getDomainPriceRule()', () => {
 					{ domain_name: 'domain.com', product_slug: 'domain' },
 					false,
 					'free'
-				)
-			).toBe( 'PRICE' );
-		} );
-
-		test( 'should return PRICE if flowName is ecommerce-monthly', () => {
-			expect(
-				getDomainPriceRule(
-					true,
-					null,
-					{},
-					{ domain_name: 'domain.com', product_slug: 'domain' },
-					false,
-					'ecommerce-monthly'
 				)
 			).toBe( 'PRICE' );
 		} );

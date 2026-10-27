@@ -34,6 +34,21 @@ type PurchaseItem = ReferralPurchase & { _id: string };
 const REFERRAL_LIST_VIEW: View = { type: 'list', titleField: 'summary', fields: [ 'status' ] };
 const PURCHASE_LIST_VIEW: View = { type: 'list', titleField: 'product', fields: [ 'status' ] };
 
+function WrappableEmail( { email }: { email: string } ) {
+	const atIndex = email.lastIndexOf( '@' );
+	if ( atIndex <= 0 ) {
+		return email;
+	}
+
+	return (
+		<span style={ { wordBreak: 'break-word', hyphens: 'none' } }>
+			{ email.slice( 0, atIndex ) }
+			<wbr />
+			{ email.slice( atIndex ) }
+		</span>
+	);
+}
+
 function StatusBadge( { status }: { status: string } ) {
 	const { status: label, type } = getReferralStatus( status );
 	return <Badge intent={ type }>{ label }</Badge>;
@@ -111,7 +126,7 @@ export default function ReferralOverview() {
 		<PageLayout
 			header={
 				<PageHeader
-					title={ referral.client.email }
+					title={ <WrappableEmail email={ referral.client.email } /> }
 					description={
 						<HStack spacing={ 2 } justify="flex-start" alignment="center" expanded={ false }>
 							<Text>{ __( 'Payment status' ) }</Text>

@@ -36,4 +36,21 @@ describe( 'step mount registry', () => {
 		expect( describeStepMount( 'processing' ).step_component_type ).toBe( 'raw' );
 		now.mockRestore();
 	} );
+
+	it( 'tells whether a step is the only route mounted in the document', () => {
+		// A fresh copy, because the routes recorded by the tests above stay in module state.
+		jest.isolateModules( () => {
+			const registry =
+				jest.requireActual< typeof import( '../step-mount-registry' ) >( '../step-mount-registry' );
+
+			expect( registry.isOnlyStepMounted( 'error' ) ).toBe( false );
+
+			registry.recordStepRouteMount( 'error' );
+			expect( registry.isOnlyStepMounted( 'error' ) ).toBe( true );
+			expect( registry.isOnlyStepMounted( 'processing' ) ).toBe( false );
+
+			registry.recordStepRouteMount( 'processing' );
+			expect( registry.isOnlyStepMounted( 'error' ) ).toBe( false );
+		} );
+	} );
 } );

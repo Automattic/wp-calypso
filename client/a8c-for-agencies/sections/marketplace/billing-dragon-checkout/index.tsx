@@ -23,6 +23,7 @@ import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
 import getPurchasedWPCOMPlanSlug from './lib/get-purchased-wpcom-plan-slug';
 import getSuccessRedirectUrl from './lib/get-success-redirect-url';
+import PressableCheckoutBack from './pressable-checkout-back';
 import usePreparedCart from './use-prepared-cart';
 import type { ShoppingCartItem } from '../types';
 
@@ -51,6 +52,7 @@ function BillingDragonCheckoutContent( {
 	const translate = useTranslate();
 	const [ isFilled, setIsFilled ] = useState( false );
 	const [ fillError, setFillError ] = useState< string | null >( null );
+	const [ isCheckoutFormSubmitting, setIsCheckoutFormSubmitting ] = useState( false );
 
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
@@ -263,23 +265,58 @@ function BillingDragonCheckoutContent( {
 		return <ClientCheckoutPlaceholder />;
 	}
 
+	const extra = responseCart.products[ 0 ]?.extra;
+	const pressableExtra =
+		skipActiveCart &&
+		! isPlanCheckout &&
+		extra &&
+		agency &&
+		Number( extra.agency_id ) === agency.id &&
+		'pressableCancelUrl' in extra
+			? extra
+			: undefined;
+	const successUrl =
+		typeof pressableExtra?.afterPurchaseUrl === 'string'
+			? pressableExtra.afterPurchaseUrl
+			: undefined;
+	const cancelUrl =
+		typeof pressableExtra?.pressableCancelUrl === 'string'
+			? pressableExtra.pressableCancelUrl
+			: undefined;
+
 	return (
 		<div className="client-checkout-v2">
-			{ withA8cLogo && (
-				<div className="client-checkout-v2__top-bar">
-					<div className="client-checkout-v2__top-bar-logo">
-						<A4ALogo full size={ 14 } />
-					</div>
+			{ ( withA8cLogo || cancelUrl ) && (
+				<div
+					className={
+						cancelUrl ? 'client-checkout-v2-pressable-top-bar' : 'client-checkout-v2__top-bar'
+					}
+				>
+					{ cancelUrl && (
+						<PressableCheckoutBack
+							cancelUrl={ cancelUrl }
+							isFormSubmitting={ isCheckoutFormSubmitting }
+						/>
+					) }
+					{ withA8cLogo && (
+						<div className="client-checkout-v2__top-bar-logo">
+							<A4ALogo full size={ 14 } />
+						</div>
+					) }
 				</div>
 			) }
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
-				redirectTo={ getSuccessRedirectUrl(
-					window.location.origin,
-					shouldClearCartOnSuccess && ! isPlanCheckout,
-					isPlanCheckout ? null : getPurchasedWPCOMPlanSlug( cartItems )
-				) }
+				redirectTo={
+					successUrl ??
+					getSuccessRedirectUrl(
+						window.location.origin,
+						shouldClearCartOnSuccess && ! isPlanCheckout,
+						isPlanCheckout ? null : getPurchasedWPCOMPlanSlug( cartItems )
+					)
+				}
 				customizedPreviousPath="/marketplace"
+				onFormSubmittingChange={ cancelUrl ? setIsCheckoutFormSubmitting : undefined }
 				siteSlug={ siteSlug ?? '' }
 				siteId={ siteId ?? 0 }
 			/>

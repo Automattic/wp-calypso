@@ -1,3 +1,4 @@
+import { TitanMailSlugs } from '@automattic/api-core';
 import {
 	camelOrSnakeSlug,
 	getPlan,
@@ -46,7 +47,11 @@ import {
 	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { getTld } from '@automattic/domain-search';
-import { isDomainForGravatarFlow, isHundredYearDomainFlow } from '@automattic/onboarding';
+import {
+	FREE_FLOW,
+	isDomainForGravatarFlow,
+	isHundredYearDomainFlow,
+} from '@automattic/onboarding';
 import { parseNextDomainCondition } from '@automattic/shopping-cart';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
@@ -499,6 +504,16 @@ export function titanMailYearly( properties: TitanProductProps ): MinimalRequest
 }
 
 /**
+ * Creates a new shopping cart item for any Titan Mail product slug.
+ */
+export function titanMail(
+	properties: TitanProductProps,
+	productSlug: string
+): MinimalRequestCartProduct {
+	return titanMailProduct( withNewMailboxCount( properties ), productSlug );
+}
+
+/**
  * Creates a new shopping cart item for Titan Mail Monthly.
  */
 export function titanMailMonthly( properties: TitanProductProps ): MinimalRequestCartProduct {
@@ -509,8 +524,12 @@ export function hasGoogleApps( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 }
 
+const TITAN_MAIL_PRODUCT_SLUGS: readonly string[] = Object.values( TitanMailSlugs );
+
 export function hasTitanMail( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).some( isTitanMail );
+	return getAllCartItems( cart ).some( ( item ) =>
+		TITAN_MAIL_PRODUCT_SLUGS.includes( item.product_slug )
+	);
 }
 
 export function customDesignItem(): MinimalRequestCartProduct {
@@ -858,10 +877,6 @@ export function isPaidDomain( domainPriceRule: string ): boolean {
 	return DOMAIN_PRICE_RULE.PRICE === domainPriceRule;
 }
 
-export const isMonthlyOrFreeFlow = ( flowName: string | undefined ): boolean => {
-	return Boolean( flowName && [ 'free', 'ecommerce-monthly' ].includes( flowName ) );
-};
-
 export function getDomainPriceRule(
 	withPlansOnly: boolean,
 	selectedSite: undefined | SiteDetails,
@@ -895,7 +910,7 @@ export function getDomainPriceRule(
 		return DOMAIN_PRICE_RULE.DOMAIN_MOVE_PRICE;
 	}
 
-	if ( isMonthlyOrFreeFlow( flowName ) ) {
+	if ( flowName === FREE_FLOW ) {
 		return DOMAIN_PRICE_RULE.PRICE;
 	}
 

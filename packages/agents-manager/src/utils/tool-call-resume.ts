@@ -42,8 +42,9 @@ export function buildToolCallResume( pending: PendingClientTools ): {
 }
 
 /**
- * Whether a resume brought a reply: a new agent message with text. The send
- * rewrites history (drops stale results), so a reply is a message it did not have.
+ * Whether a resume brought a reply: a new agent message with text or an
+ * interactive UI surface. The send rewrites history (drops stale results), so a
+ * reply is a message it did not have.
  * @param messageIdsBefore The ids of the messages in history before the resume.
  * @param history          The conversation history after the resume.
  */
@@ -52,6 +53,10 @@ export function hasNewAgentReply( messageIdsBefore: Set< string >, history: Mess
 		( message ) =>
 			! messageIdsBefore.has( message.messageId ) &&
 			message.role === 'agent' &&
-			message.parts.some( ( part ) => part.type === 'text' && part.text.trim() )
+			message.parts.some(
+				( part ) =>
+					( part.type === 'text' && part.text.trim() ) ||
+					( part.type === 'data' && part.metadata?.mimeType === 'application/a2ui+json' )
+			)
 	);
 }

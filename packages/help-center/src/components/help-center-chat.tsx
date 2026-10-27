@@ -88,6 +88,8 @@ export function HelpCenterChat( {
 			selectedSiteURL={ siteUrl || ( site?.URL as string ) }
 			userFieldMessage={ userFieldMessage }
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
+			zendeskConversationTags={ featureConfig.chat.zendeskConversationTags }
+			zendeskIntegrationKey={ featureConfig.chat.zendeskIntegrationKey }
 			externalChatProvider={ externalChatProvider }
 			externalChatId={ externalChatId }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }

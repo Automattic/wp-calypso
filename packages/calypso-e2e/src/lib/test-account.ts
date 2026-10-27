@@ -85,9 +85,9 @@ export class TestAccount {
 				await browserContext.clearCookies();
 			}
 			await this.ensureFreshAuthCookies( page, rejected );
+		} else {
+			await this.waitForLandingRedirect( page );
 		}
-
-		await this.waitForLandingRedirect( page );
 
 		if ( url ) {
 			await page.waitForURL( url, { timeout: 20 * 1000 } );
@@ -128,12 +128,16 @@ export class TestAccount {
 				return undefined;
 			} );
 
+			// Both ways out leave the page on /home with its landing redirect pending, and a
+			// caller's next goto started before it fires is aborted with net::ERR_ABORTED.
 			if ( ! adopted ) {
+				await this.waitForLandingRedirect( page );
 				return;
 			}
 
 			await page.goto( getCalypsoURL( '/home' ) );
 			if ( ! TestAccount.isLoginPage( page.url() ) ) {
+				await this.waitForLandingRedirect( page );
 				return;
 			}
 

@@ -14,7 +14,8 @@ import type { BuildAgencyCartLines } from '../agency-checkout/use-filled-agency-
 export default function useSitePlanCart(
 	siteId: number,
 	productSlug: string,
-	term: AgencyCheckoutTerm
+	term: AgencyCheckoutTerm,
+	notApprovedExitUrl: string
 ) {
 	const translate = useTranslate();
 	const buildLines = useCallback< BuildAgencyCartLines >(
@@ -37,6 +38,7 @@ export default function useSitePlanCart(
 	return useFilledAgencyCart(
 		siteId,
 		buildLines,
-		translate( 'This plan is not available to your agency.' )
+		translate( 'This plan is not available to your agency.' ),
+		notApprovedExitUrl
 	);
 }

@@ -249,7 +249,7 @@ describe( 'UpsellNudge', () => {
 		await user.type( await screen.findByLabelText( /Enter email address/ ), 'testuser' );
 		await user.type(
 			await screen.findByLabelText( /Set password/ ),
-			'aadjhaduhaidwahdawdhakjdbakdjbw'
+			'aadjhaduhaidwahdawdhakjdbakdjbw1!'
 		);
 		await user.click( await screen.findByText( 'Add Professional Email' ) );
 		expect(
@@ -289,7 +289,7 @@ describe( 'UpsellNudge', () => {
 		await user.type( await screen.findByLabelText( /Enter email address/ ), 'testuser' );
 		await user.type(
 			await screen.findByLabelText( /Set password/ ),
-			'aadjhaduhaidwahdawdhakjdbakdjbw'
+			'aadjhaduhaidwahdawdhakjdbakdjbw1!'
 		);
 		await user.click( await screen.findByText( 'Add Professional Email' ) );
 		expect( screen.findByText( mockProducts.wp_titan_mail_monthly.product_name ) ).toNeverAppear();
@@ -343,7 +343,7 @@ describe( 'UpsellNudge', () => {
 		await user.type( await screen.findByLabelText( /Enter email address/ ), 'testuser' );
 		await user.type(
 			await screen.findByLabelText( /Set password/ ),
-			'aadjhaduhaidwahdawdhakjdbakdjbw'
+			'aadjhaduhaidwahdawdhakjdbakdjbw1!'
 		);
 		await user.click( await screen.findByText( 'Add Professional Email' ) );
 		await waitFor( () => {

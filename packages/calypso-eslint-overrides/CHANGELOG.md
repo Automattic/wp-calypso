@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `flatNodeConfig`, a flat-config version of `nodeConfig` for ESLint 9. Like `nodeConfig`, it keeps the surrounding source type and allows top-level `return` in scripts and CommonJS files.
+- `flatNodeConfig`, a flat-config version of `nodeConfig`. Like `nodeConfig`, it keeps the surrounding source type and allows top-level `return` in scripts and CommonJS files.
+
+### Removed
+
+- Breaking: `nodeConfig` and the `@automattic/calypso-eslint-overrides/node` entry point, eslintrc config that ESLint 10 can't load. Use `flatNodeConfig` in flat config instead.
 
 ## [1.0.0]
 

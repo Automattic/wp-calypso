@@ -147,6 +147,11 @@ export const Swipeable = ( {
 			let dragPosition = getDragPositionAndTime( event );
 
 			if ( dragPosition.x === 0 ) {
+				// Some end events (e.g. after pointercancel) report x=0 instead of the real position.
+				if ( ! dragData.last ) {
+					resetDragData();
+					return;
+				}
 				dragPosition = dragData.last;
 			}
 
@@ -206,6 +211,7 @@ export const Swipeable = ( {
 			pagesStyle,
 			containerWidth,
 			isClickEnabled,
+			resetDragData,
 		]
 	);
 
@@ -216,6 +222,9 @@ export const Swipeable = ( {
 			}
 
 			const dragPosition = getDragPositionAndTime( event );
+			if ( dragPosition.x === 0 ) {
+				return;
+			}
 			const delta = dragPosition.x - dragData.start.x;
 			const absoluteDelta = Math.abs( delta );
 			const offset = getOffset( currentPage ) + delta;

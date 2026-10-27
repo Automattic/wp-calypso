@@ -91,8 +91,6 @@ export const nodeConfig = {
 
 export const browserGlobals = globals.browser;
 
-const nodeOverrides = ( files ) => ( { ...nodeConfig, files } );
-
 // The config for the checkout at `rootDir`, with its paths and patterns relative to it.
 function build( rootDir ) {
 	const reactVersion = JSON.parse(
@@ -358,19 +356,6 @@ function build( rootDir ) {
 			files: [ '**/*.jsx' ],
 		},
 		{
-			// Code blocks inside markdown are illustrative snippets, not real
-			// components. Rules that depend on lexical context (hook call sites,
-			// unused vars, undefined globals, etc.) produce noise without value.
-			files: [ '**/*.md/*.{js,jsx,ts,tsx}' ],
-			rules: {
-				'react-hooks/rules-of-hooks': 'off',
-				'react-hooks/exhaustive-deps': 'off',
-				'no-unused-vars': 'off',
-				'no-undef': 'off',
-				'@typescript-eslint/no-unused-vars': 'off',
-			},
-		},
-		{
 			// Lints the code blocks in Markdown files, not the Markdown itself.
 			name: 'calypso/markdown',
 			files: [ '**/*.md' ],
@@ -385,7 +370,10 @@ function build( rootDir ) {
 				'no-restricted-modules': [ 'error', { patterns: [ 'calypso/*' ] } ],
 			},
 		},
-		nodeOverrides( [ '**/bin/**', '**/test/**', '**/webpack.config.js', '**/eslint.config.mjs' ] ),
+		{
+			...nodeConfig,
+			files: [ '**/bin/**', '**/test/**', '**/webpack.config.js', '**/eslint.config.mjs' ],
+		},
 		{
 			files: [ '**/test/**' ],
 			rules: {
@@ -494,8 +482,12 @@ function build( rootDir ) {
 			},
 		},
 		{
+			// Code blocks inside markdown are illustrative snippets, not real components. Rules that
+			// depend on lexical context (hook call sites, unused vars, undefined globals) are noise there.
 			files: markdownCodeBlocks,
 			rules: {
+				'react-hooks/rules-of-hooks': 'off',
+				'react-hooks/exhaustive-deps': 'off',
 				// These are ok for examples
 				'import/no-extraneous-dependencies': 'off',
 				'jest/expect-expect': 'off',
