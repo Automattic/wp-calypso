@@ -938,6 +938,7 @@ __metadata:
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@babel/core": "npm:^7.29.7"
     "@babel/plugin-transform-class-properties": "npm:^7.29.7"
     "@storybook/addon-docs": "npm:^10.6.2"
     "@storybook/addon-themes": "npm:^10.6.2"
