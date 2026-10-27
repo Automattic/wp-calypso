@@ -26,6 +26,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/viewport-react#readme",
 	"dependencies": {
 		"@automattic/viewport": "workspace:^",
+		"@babel/runtime": "^7.29.10",
 		"@wordpress/compose": "^8.2.0"
 	},
 	"peerDependencies": {

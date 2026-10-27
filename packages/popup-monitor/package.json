@@ -39,6 +39,7 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
+		"@babel/runtime": "^7.29.10",
 		"events": "^3.3.0"
 	},
 	"devDependencies": {

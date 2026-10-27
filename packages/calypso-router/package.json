@@ -39,5 +39,8 @@
 	},
 	"license": "GPL-2.0-or-later",
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-router#readme"
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-router#readme",
+	"dependencies": {
+		"@babel/runtime": "^7.29.10"
+	}
 }
