@@ -8,48 +8,17 @@ import type { Note } from '../types';
 
 import './style.scss';
 
-function getNoteRow( noteListRef: React.RefObject< HTMLObjectElement | null >, note?: Note ) {
+function getNoteRow(
+	noteListRef: React.RefObject< HTMLObjectElement | null >,
+	noteId?: Note[ 'id' ] | string
+) {
 	return noteListRef.current?.querySelector< HTMLElement >(
-		`.dataviews-view-list__item[id$="-${ note?.id }-item-wrapper"]`
+		`.dataviews-view-list__item[id$="-${ noteId }-item-wrapper"]`
 	);
 }
 
 function focusToNote( noteListRef: React.RefObject< HTMLObjectElement | null >, note?: Note ) {
-	getNoteRow( noteListRef, note )?.focus();
-}
-
-/**
- * Returns the given note, or the nearest visible one when it has been hidden.
- */
-function findNoteToFocus(
-	notes: Note[],
-	noteId: number,
-	hiddenNoteIds: Record< number, boolean >
-): Note | undefined {
-	const noteIndex = notes.findIndex( ( note ) => note.id === noteId );
-	if ( noteIndex < 0 ) {
-		return undefined;
-	}
-
-	if ( hiddenNoteIds[ notes[ noteIndex ].id ] !== true ) {
-		return notes[ noteIndex ];
-	}
-
-	// Find the nearest visible note forwards.
-	for ( let i = noteIndex + 1; i < notes.length; i++ ) {
-		if ( hiddenNoteIds[ notes[ i ].id ] !== true ) {
-			return notes[ i ];
-		}
-	}
-
-	// Find the nearest visible note backwards.
-	for ( let i = noteIndex - 1; i >= 0; i-- ) {
-		if ( hiddenNoteIds[ notes[ i ].id ] !== true ) {
-			return notes[ i ];
-		}
-	}
-
-	return undefined;
+	getNoteRow( noteListRef, note?.id )?.focus();
 }
 
 // Set the focus in the note list to the last selected note,
@@ -66,8 +35,41 @@ export function useNoteListFocusToLastSelectedNote( {
 
 	useEffect(
 		() => {
+			let noteToFocus: Note | undefined = undefined;
+
 			if ( lastSelectedNoteId ) {
-				focusToNote( noteListRef, findNoteToFocus( notes, lastSelectedNoteId, hiddenNoteIds ) );
+				const noteIndex = notes.findIndex( ( note ) => note.id === lastSelectedNoteId );
+				if ( noteIndex < 0 ) {
+					return;
+				}
+
+				if ( hiddenNoteIds[ notes[ noteIndex ].id ] === true ) {
+					// The last selected note is no longer visible.
+
+					// Find the nearest visible note forwards.
+					for ( let i = noteIndex + 1; i < notes.length; i++ ) {
+						if ( hiddenNoteIds[ notes[ i ].id ] !== true ) {
+							noteToFocus = notes[ i ];
+							break;
+						}
+					}
+
+					if ( ! noteToFocus ) {
+						// Find the nearest visible note backwards.
+						for ( let i = noteIndex - 1; i >= 0; i-- ) {
+							if ( hiddenNoteIds[ notes[ i ].id ] !== true ) {
+								noteToFocus = notes[ i ];
+								break;
+							}
+						}
+					}
+				} else {
+					noteToFocus = notes[ noteIndex ];
+				}
+			}
+
+			if ( noteToFocus ) {
+				focusToNote( noteListRef, noteToFocus );
 			}
 		},
 
@@ -78,19 +80,15 @@ export function useNoteListFocusToLastSelectedNote( {
 }
 
 /**
- * Moves focus back to the closed note's row, the nearest visible one, or the first row
- * when a note closes while focus is in the detail pane.
+ * Moves focus back to the closed note's row when a note closes while focus is in the detail pane.
  */
 export function useNoteListFocusOnNoteClose( {
 	noteListRef,
-	notes,
 	selectedNoteId,
 }: {
 	noteListRef: React.RefObject< HTMLObjectElement | null >;
-	notes: Note[];
 	selectedNoteId: string | undefined;
 } ) {
-	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
 	const previousNoteIdRef = useRef( selectedNoteId );
 
 	useEffect( () => {
@@ -101,18 +99,10 @@ export function useNoteListFocusOnNoteClose( {
 		}
 
 		const { activeElement } = document;
-		const shouldRestoreFocus =
-			activeElement === document.body || !! activeElement?.closest( '.wpnc-app__detail-pane' );
-		if ( ! shouldRestoreFocus ) {
-			return;
+		if ( activeElement === document.body || activeElement?.closest( '.wpnc-app__detail-pane' ) ) {
+			getNoteRow( noteListRef, previousNoteId )?.focus( { preventScroll: true } );
 		}
-
-		const noteToFocus = findNoteToFocus( notes, Number( previousNoteId ), hiddenNoteIds );
-		const rowToFocus =
-			getNoteRow( noteListRef, noteToFocus ) ??
-			noteListRef.current?.querySelector< HTMLElement >( '.dataviews-view-list__item' );
-		rowToFocus?.focus( { preventScroll: true } );
-	}, [ selectedNoteId, notes, hiddenNoteIds, noteListRef ] );
+	}, [ selectedNoteId, noteListRef ] );
 }
 
 export function useNoteListNavigationKeyboardShortcuts( {
@@ -152,7 +142,7 @@ export function useNoteListNavigationKeyboardShortcuts( {
 
 			if ( event.key === 'ArrowLeft' && selectedNoteId === undefined ) {
 				const focusedNote = visibleNotes.find(
-					( note ) => getNoteRow( noteListRef, note ) === document.activeElement
+					( note ) => getNoteRow( noteListRef, note.id ) === document.activeElement
 				);
 				if ( focusedNote ) {
 					stopEvent( event );
