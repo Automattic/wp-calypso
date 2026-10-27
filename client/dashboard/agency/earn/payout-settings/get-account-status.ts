@@ -11,6 +11,23 @@ interface AccountStatus {
 	actionRequired: boolean;
 }
 
+// One sentence per combination, so the reason reads as an instruction rather than a list.
+function getNotPayableReason( reasons: string[] = [] ) {
+	const isBankDetailsMissing = reasons.includes( 'No PM' );
+	const isTaxFormMissing = reasons.includes( 'Tax' );
+
+	if ( isBankDetailsMissing && isTaxFormMissing ) {
+		return __( 'Add your tax form and bank details in Tipalti to get paid.' );
+	}
+	if ( isTaxFormMissing ) {
+		return __( 'Add your tax form in Tipalti to get paid.' );
+	}
+	if ( isBankDetailsMissing ) {
+		return __( 'Add your bank details in Tipalti to get paid.' );
+	}
+	return __( 'Complete your details in Tipalti to get paid.' );
+}
+
 export function getAccountStatus( data: TipaltiPayee | null | undefined ): AccountStatus | null {
 	if ( ! data ) {
 		return null;
@@ -23,15 +40,7 @@ export function getAccountStatus( data: TipaltiPayee | null | undefined ): Accou
 				statusMeta = {
 					statusType: 'warning',
 					status: __( 'Not Payable' ),
-					statusReason: PayableReason?.map( ( reason ) => {
-						if ( reason === 'No PM' ) {
-							return __( 'Bank details are missing' );
-						}
-						if ( reason === 'Tax' ) {
-							return __( 'Tax form is missing' );
-						}
-						return reason;
-					} ).join( ', ' ),
+					statusReason: getNotPayableReason( PayableReason ),
 				};
 				break;
 			}
@@ -50,14 +59,14 @@ export function getAccountStatus( data: TipaltiPayee | null | undefined ): Accou
 			statusMeta = {
 				statusType: 'error',
 				status: __( 'Blocked' ),
-				statusReason: __( 'Your account is blocked' ),
+				statusReason: __( 'Your account is blocked.' ),
 			};
 			break;
 		case 'Closed':
 			statusMeta = {
 				statusType: 'error',
 				status: __( 'Closed' ),
-				statusReason: __( 'Your account is closed' ),
+				statusReason: __( 'Your account is closed.' ),
 			};
 			break;
 		default:
