@@ -115,6 +115,11 @@ describe( 'WordPressMigration', () => {
 		expect(
 			screen.getAllByRole( 'progressbar' ).map( ( bar ) => bar.getAttribute( 'aria-label' ) )
 		).toEqual( [ 'Verifying', 'Copying', 'Finishing' ] );
+		expect(
+			screen.getByText(
+				'You can leave this page. The migration carries on in the background. We will email you at test@example.com when the migration is ready.'
+			)
+		).toBeVisible();
 		expect( configure.isDone() ).toBe( true );
 		expect( run.isDone() ).toBe( true );
 	} );

@@ -1,5 +1,6 @@
 import { __experimentalVStack as VStack, Button, ProgressBar } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { useAuth } from '../../../app/auth';
 import { useHelpCenter } from '../../../app/help-center';
 import Grid from '../../../components/grid';
 import { Text } from '../../../components/text';
@@ -10,6 +11,7 @@ import './style.scss';
 type Phase = WordPressMigrationStatus[ 'phase' ];
 
 export function Running( { phase, sourceHost }: { phase: Phase; sourceHost: string } ) {
+	const { user } = useAuth();
 	const { setShowHelpCenter } = useHelpCenter();
 
 	const steps: { label: string; phases: Phase[] }[] = [
@@ -50,7 +52,13 @@ export function Running( { phase, sourceHost }: { phase: Phase; sourceHost: stri
 				} ) }
 			</Grid>
 			<Text variant="muted">
-				{ __( 'You can leave this page. The migration carries on in the background.' ) }
+				{ sprintf(
+					/* translators: %s: the email address of the current user. */
+					__(
+						'You can leave this page. The migration carries on in the background. We will email you at %s when the migration is ready.'
+					),
+					user.email
+				) }
 			</Text>
 		</MigrationCard>
 	);
