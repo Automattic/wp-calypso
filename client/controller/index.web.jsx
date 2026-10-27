@@ -29,7 +29,7 @@ import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import { getLogoutUrl, rawCurrentUserFetch } from 'calypso/lib/user/shared-utils';
 import {
 	getProductSlugFromContext,
-	isContextSourceMyJetpack,
+	isSitelessCheckoutSource,
 } from 'calypso/my-sites/checkout/utils';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { hasDashboardForcedOptIn } from 'calypso/state/dashboard/selectors';
@@ -372,7 +372,8 @@ export function redirectLoggedOutToSignup( context, next ) {
 }
 
 /**
- * Middleware to redirect users coming from My Jetpack when necessary
+ * Middleware to send logged-out users coming from My Jetpack or the Premium
+ * Analytics upgrade page to siteless checkout
  * @see pbNhbs-ag3-p2
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
@@ -385,13 +386,13 @@ export function redirectMyJetpack( context, next ) {
 	const product = productSlug.replace( /:-q-\d+/, '' );
 	const isJetpackProduct = isJetpackPlanSlug( product ) || isJetpackProductSlug( product );
 
-	if ( isJetpackProduct && ! isUserLoggedIn( state ) && isContextSourceMyJetpack( context ) ) {
+	if ( isJetpackProduct && ! isUserLoggedIn( state ) && isSitelessCheckoutSource( context ) ) {
 		// Redirect to the siteless checkout page
 		const redirectUrl = addQueryArgs(
 			{
 				connect_after_checkout: true,
 				from_site_slug: context.query.site,
-				admin_url: context.query.redirect_to.split( '?' )[ 0 ],
+				admin_url: context.query.redirect_to?.split( '?' )[ 0 ],
 			},
 			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
 		);

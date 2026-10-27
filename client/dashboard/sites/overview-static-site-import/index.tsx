@@ -202,13 +202,12 @@ export function StaticSiteImportNotice( {
 	const { setShowHelpCenter } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const [ hasPreviewed, setHasPreviewed ] = useState( false );
-	const { from, platform, domainChoice } = search;
+	const { from, platform } = search;
 	const sourceHost = getSourceHost( from );
 	const isReady = siteImport.status === 'finished';
 	const trackingProps = {
 		site_id: site.ID,
 		source_platform: platform,
-		domain_choice: domainChoice,
 	};
 
 	// Counts notices shown, so clicks on its buttons can be read as a rate.
@@ -221,9 +220,8 @@ export function StaticSiteImportNotice( {
 		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_impression', {
 			site_id: site.ID,
 			source_platform: platform,
-			domain_choice: domainChoice,
 		} );
-	}, [ isReady, recordTracksEvent, site.ID, platform, domainChoice ] );
+	}, [ isReady, recordTracksEvent, site.ID, platform ] );
 
 	const recordClick = ( action: 'connect_domain' | 'preview_site' ) =>
 		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_click', {
@@ -270,9 +268,8 @@ export function StaticSiteImportNotice( {
 		);
 	}
 
-	const keepsDomain = domainChoice === 'keep' && Boolean( sourceHost );
 	const connectDomainUrl = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
-		initialQuery: keepsDomain ? sourceHost : undefined,
+		initialQuery: sourceHost || undefined,
 		siteSlug: site.slug,
 		dashboard: getCurrentDashboard(),
 		back_to: redirectToDashboardLink(),
@@ -301,7 +298,7 @@ export function StaticSiteImportNotice( {
 								href={ connectDomainUrl }
 								onClick={ () => recordClick( 'connect_domain' ) }
 							>
-								{ keepsDomain
+								{ sourceHost
 									? sprintf(
 											/* translators: %s: the site's domain, e.g. example.com. */
 											__( 'Connect %s' ),

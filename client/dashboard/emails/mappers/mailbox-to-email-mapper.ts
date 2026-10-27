@@ -34,6 +34,7 @@ export const mapMailboxToEmail = ( box: EmailBox, emailAccount: EmailAccount ): 
 	return {
 		id,
 		subscriptionId: emailAccount.subscription_id?.toString() ?? emailAccount.account_id?.toString(),
+		productSlug: emailAccount.product_slug ?? undefined,
 		emailAddress: `${ box.mailbox }@${ box.domain }`,
 		type,
 		provider,

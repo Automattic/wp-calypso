@@ -19,7 +19,6 @@ const search = {
 	importSessionId: 'abc123',
 	from: 'busybearscleaning.com',
 	platform: 'wix',
-	domainChoice: 'keep',
 };
 
 const session = ( state: string, extra = {} ) => ( {
@@ -99,25 +98,17 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'offers to connect a domain when the old address was not kept', async () => {
-		mockApi()
-			.get( '/wpcom/v2/static-site-import-session/abc123' )
-			.query( true )
-			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+	it( 'offers a generic Connect domain when the old address is missing', () => {
+		render(
+			<StaticSiteImportNotice
+				site={ site }
+				siteImport={ { status: 'finished', needsRestart: false } }
+				search={ { ...search, from: undefined } }
+			/>
+		);
 
-		function FreeAddressImport() {
-			const siteImport = useStaticSiteImport( site, search.importSessionId );
-			return siteImport && siteImport.status !== 'moving' ? (
-				<StaticSiteImportNotice
-					site={ site }
-					siteImport={ siteImport }
-					search={ { ...search, domainChoice: 'free' } }
-				/>
-			) : null;
-		}
-		render( <FreeAddressImport /> );
-
-		const connect = await screen.findByRole( 'link', { name: 'Connect domain' } );
+		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
+		const connect = screen.getByRole( 'link', { name: 'Connect domain' } );
 		expect( connect ).toHaveClass( 'is-primary' );
 		expect( connect ).toHaveAttribute(
 			'href',
@@ -217,7 +208,7 @@ describe( 'StaticSiteImportCard', () => {
 				.get( '/wpcom/v2/static-site-import-session/abc123' )
 				.query( true )
 				.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
-		const props = { site_id: 42, source_platform: 'wix', domain_choice: 'keep' };
+		const props = { site_id: 42, source_platform: 'wix' };
 
 		it( 'records the ready notice being shown once', async () => {
 			finished();
