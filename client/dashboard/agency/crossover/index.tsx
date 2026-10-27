@@ -96,15 +96,15 @@ function CrossoverModal( { request }: { request: CrossoverRequest } ) {
 			onRequestClose={ onCancel }
 			__experimentalHideHeader
 		>
-			<div className="a4a-crossover">
-				<div className="a4a-crossover-close">
+			<VStack className="a4a-crossover" spacing={ 0 }>
+				<HStack className="a4a-crossover-close" justify="flex-end" alignment="top">
 					<Button
 						__next40pxDefaultSize
 						icon={ close }
 						label={ __( 'Close' ) }
 						onClick={ onCancel }
 					/>
-				</div>
+				</HStack>
 				<HStack
 					className="a4a-crossover-field"
 					style={ { backgroundImage: `url(${ glow })` } }
@@ -132,7 +132,14 @@ function CrossoverModal( { request }: { request: CrossoverRequest } ) {
 					</Heading>
 					<VStack as="ul" spacing={ 4 } className="a4a-crossover-rows">
 						{ rows.map( ( row ) => (
-							<HStack as="li" key={ row.text } spacing={ 3 } alignment="top" justify="flex-start">
+							<HStack
+								as="li"
+								key={ row.text }
+								className="a4a-crossover-row"
+								spacing={ 3 }
+								alignment="top"
+								justify="flex-start"
+							>
 								<Icon className="a4a-crossover-row-icon" icon={ row.icon } size={ 24 } />
 								<Text>{ row.text }</Text>
 							</HStack>
@@ -160,7 +167,7 @@ function CrossoverModal( { request }: { request: CrossoverRequest } ) {
 						</Button>
 					</ButtonStack>
 				</HStack>
-			</div>
+			</VStack>
 		</Modal>
 	);
 }
@@ -171,7 +178,7 @@ function CrossoverModal( { request }: { request: CrossoverRequest } ) {
  */
 export default function CrossoverModalHost() {
 	const request = useCrossoverRequest();
-	// Loads the preferences `leaveDashboard` reads within the click.
+	// Keeps the preferences `leaveDashboard` reads within the click in the cache.
 	useQuery( userPreferenceQuery( CROSSOVER_DISMISSED_PREFERENCE ) );
 
 	if ( ! request ) {

@@ -2,6 +2,7 @@ import { queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
 import { useSyncExternalStore } from 'react';
 import type { CrossoverDestinationId } from './destinations';
 import type { UserPreferences } from '@automattic/api-core';
+import type { MouseEvent } from 'react';
 
 export const CROSSOVER_DISMISSED_PREFERENCE = 'a4a-crossover-dismissed';
 
@@ -67,13 +68,20 @@ export function leaveDashboard(
 	setCurrent( request );
 }
 
-/** For links that open the destination themselves: the click goes to `leaveDashboard` instead. */
+/**
+ * For links that open the destination themselves: the click goes to `leaveDashboard` instead.
+ * A modifier click already asks the browser for a background tab or window, so it goes through.
+ */
 export function onLeaveClick(
 	destination: CrossoverDestinationId,
 	url: string,
 	onLeave?: () => void
 ) {
-	return ( event: { preventDefault: () => void } ) => {
+	return ( event: MouseEvent ) => {
+		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
+			onLeave?.();
+			return;
+		}
 		event.preventDefault();
 		leaveDashboard( destination, url, onLeave );
 	};

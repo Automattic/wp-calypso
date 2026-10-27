@@ -174,6 +174,8 @@ const agencyRoute = createRoute( {
 			throw redirectAsNotAllowed( { to: '/overview' } );
 		}
 	},
+	// For the crossover modal's "Don't show this again"; prefetched so a failed load can't block the page.
+	loader: () => queryClient.prefetchQuery( rawUserPreferencesQuery() ),
 } ).lazy( () =>
 	import( '../../agency/layout' ).then( ( d ) =>
 		createLazyRoute( 'agency' )( {

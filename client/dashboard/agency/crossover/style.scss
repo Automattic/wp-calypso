@@ -15,8 +15,6 @@ $modal-padding: $grid-unit-30;
 .a4a-crossover-close {
 	position: relative;
 	z-index: 1;
-	display: flex;
-	justify-content: flex-end;
 	block-size: 0;
 	padding-inline-end: $grid-unit-10;
 	translate: 0 $grid-unit-10;
@@ -89,10 +87,10 @@ $modal-padding: $grid-unit-30;
 	margin: 0;
 	padding: 0;
 	list-style: none;
+}
 
-	li {
-		text-wrap: pretty;
-	}
+.a4a-crossover-row {
+	text-wrap: pretty;
 }
 
 .a4a-crossover-row-icon {
