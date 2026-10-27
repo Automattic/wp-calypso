@@ -27,8 +27,3 @@ export const TIER_ORDER: AgencyTierId[] = [
 	'vip-pro-agency-partner',
 	'premier-partner',
 ];
-
-/** Each agency keeps one coupon code for as long as it is in the program. */
-export function getCertificationCode( agencyId: number ) {
-	return `A4A-${ agencyId }-APWD`;
-}

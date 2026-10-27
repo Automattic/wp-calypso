@@ -14,6 +14,7 @@ import Grid from '../../components/grid';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import NewTabLabel from '../components/new-tab-label';
+import CertificationCardSkeleton from './certification-card-skeleton';
 import CertificationCodeField from './certification-code-field';
 import { CERTIFICATION_EXAM_URL } from './constants';
 import { useCertification } from './use-certification';
@@ -22,13 +23,30 @@ import { useCertification } from './use-certification';
  * Leads the Dev tools page, written to the developers who take the exam. The
  * same code sits on the Agency tier page, with every tier's discount.
  */
-export default function CertificationDevToolsSection() {
-	const { isEligible, code, discount, isPromo, promoLastDay } = useCertification();
+export default function CertificationDevToolsSection( {
+	tiersHref,
+	onCodeCopy,
+}: {
+	/** The tier page link for hosts without the dashboard router; without it, the link goes through the router. */
+	tiersHref?: string;
+	onCodeCopy?: () => void;
+} ) {
+	const { isEligible, isLoading, code, discount, isPromo, promoLastDay } = useCertification();
 	const isSmallViewport = useViewportMatch( 'large', '<' );
+
+	if ( isLoading ) {
+		return <CertificationCardSkeleton size="large" />;
+	}
 
 	if ( ! isEligible ) {
 		return null;
 	}
+
+	const tiersLinkProps = {
+		__next40pxDefaultSize: true,
+		variant: 'tertiary',
+		children: __( 'See every tier’s discount' ),
+	} as const;
 
 	const facts = [
 		__( '120 minutes, online or at a test center' ),
@@ -105,6 +123,7 @@ export default function CertificationDevToolsSection() {
 						<div style={ { width: '100%' } }>
 							<CertificationCodeField
 								code={ code }
+								onCopy={ onCodeCopy }
 								label={ __( 'Discount code' ) }
 								help={ __(
 									'Enter it when you buy the exam on Webassessor. One use per developer.'
@@ -121,14 +140,11 @@ export default function CertificationDevToolsSection() {
 							>
 								<NewTabLabel>{ __( 'Sign up for the exam' ) }</NewTabLabel>
 							</Button>
-							<RouterLinkButton
-								__next40pxDefaultSize
-								variant="tertiary"
-								to="/tiers"
-								hash="certification"
-							>
-								{ __( 'See every tier’s discount' ) }
-							</RouterLinkButton>
+							{ tiersHref ? (
+								<Button { ...tiersLinkProps } href={ tiersHref } />
+							) : (
+								<RouterLinkButton { ...tiersLinkProps } to="/tiers" hash="certification" />
+							) }
 						</HStack>
 					</VStack>
 				</Grid>

@@ -7,10 +7,13 @@ export default function CertificationCodeField( {
 	code,
 	label = __( 'Your agency’s discount code' ),
 	help = __( 'Each developer can use it once, when buying the exam on Webassessor.' ),
+	onCopy,
 }: {
 	code: string;
 	label?: string;
 	help?: string;
+	/** Replaces the snackbar, for hosts that don't render `@wordpress/notices`. */
+	onCopy?: () => void;
 } ) {
 	const { createSuccessNotice } = useDispatch( noticesStore );
 
@@ -20,8 +23,10 @@ export default function CertificationCodeField( {
 			value={ code }
 			readOnly
 			help={ help }
-			onCopy={ () =>
-				createSuccessNotice( __( 'Discount code copied to clipboard.' ), { type: 'snackbar' } )
+			onCopy={
+				onCopy ??
+				( () =>
+					createSuccessNotice( __( 'Discount code copied to clipboard.' ), { type: 'snackbar' } ) )
 			}
 		/>
 	);

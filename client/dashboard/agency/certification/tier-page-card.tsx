@@ -12,6 +12,7 @@ import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import NewTabLabel from '../components/new-tab-label';
+import CertificationCardSkeleton from './certification-card-skeleton';
 import CertificationCodeField from './certification-code-field';
 import { CERTIFICATION_EXAM_URL } from './constants';
 import TierDiscountList from './tier-discount-list';
@@ -21,11 +22,28 @@ import { useCertification } from './use-certification';
  * The discount is a tier benefit, so it leads the benefit cards on the Agency
  * tier page, with the code and what every tier gets.
  */
-export default function CertificationTierPageCard() {
-	const { isEligible, code, tierId, discount, isPromo, promoLastDay } = useCertification();
+export default function CertificationTierPageCard( {
+	onCodeCopy,
+}: {
+	onCodeCopy?: () => void;
+} = {} ) {
+	const { isEligible, isLoading, code, tierId, discount, isPromo, promoLastDay } =
+		useCertification();
 	const isSmallViewport = useViewportMatch( 'large', '<' );
 	// Same widths as the benefit cards below it.
 	const isMediumViewport = useViewportMatch( 'huge', '<' );
+	const width = {
+		width: isMediumViewport ? '100%' : '50%',
+		minWidth: isMediumViewport ? 'unset' : '600px',
+	};
+
+	if ( isLoading ) {
+		return (
+			<VStack style={ { alignItems: 'center' } }>
+				<CertificationCardSkeleton style={ width } />
+			</VStack>
+		);
+	}
 
 	if ( ! isEligible ) {
 		return null;
@@ -37,8 +55,7 @@ export default function CertificationTierPageCard() {
 				id="certification"
 				className="a4a-certification-tier-card"
 				style={ {
-					width: isMediumViewport ? '100%' : '50%',
-					minWidth: isMediumViewport ? 'unset' : '600px',
+					...width,
 					// Links to #certification land below the fixed top bar.
 					scrollMarginTop: '64px',
 				} }
@@ -93,7 +110,7 @@ export default function CertificationTierPageCard() {
 								</Text>
 							</VStack>
 							<div style={ { width: '100%', maxWidth: '440px' } }>
-								<CertificationCodeField code={ code } />
+								<CertificationCodeField code={ code } onCopy={ onCodeCopy } />
 							</div>
 							<Button
 								__next40pxDefaultSize

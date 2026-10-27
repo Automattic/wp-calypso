@@ -1,13 +1,8 @@
-import { activeAgencyQuery } from '@automattic/api-queries';
+import { activeAgencyQuery, agencyApwdDiscountCodeQuery } from '@automattic/api-queries';
+import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
-import { useIntlLocale } from '../../app/locale';
-import {
-	BASE_DISCOUNT,
-	PROMO_LAST_DAY,
-	PROMO_MULTIPLIER,
-	TIER_ORDER,
-	getCertificationCode,
-} from './constants';
+import { getIntlLocale } from '../../utils/locale';
+import { BASE_DISCOUNT, PROMO_LAST_DAY, PROMO_MULTIPLIER, TIER_ORDER } from './constants';
 import type { AgencyTierId } from '@automattic/api-core';
 
 function readSearchParam( name: string ) {
@@ -31,11 +26,18 @@ export function getDiscount( tierId: AgencyTierId, isPromo: boolean ) {
 
 export function useCertification() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
-	const locale = useIntlLocale();
+	// Not the dashboard's useIntlLocale(): it needs the dashboard's AuthProvider,
+	// and classic A4A renders these cards too.
+	const locale = getIntlLocale( useLocale() );
 
 	const approvalStatus = agency?.approval_status;
 	// Agencies predating the field report an empty string and are treated as approved.
-	const isEligible = !! agency && ( approvalStatus === 'approved' || approvalStatus === '' );
+	const isApproved = !! agency && ( approvalStatus === 'approved' || approvalStatus === '' );
+
+	const { data: coupon, isLoading } = useQuery( {
+		...agencyApwdDiscountCodeQuery( agency?.id ?? 0 ),
+		enabled: isApproved,
+	} );
 
 	// Review switch to see another tier's discount on the same agency.
 	const tierOverride = readSearchParam( 'certtier' ) as AgencyTierId | null;
@@ -51,11 +53,16 @@ export function useCertification() {
 		year: 'numeric',
 	} );
 
+	// HubSpot leaves the property empty when it isn't set on the coupon.
+	const couponDiscount = Number.parseFloat( coupon?.discount_percent ?? '' );
+
 	return {
-		isEligible,
-		code: agency ? getCertificationCode( agency.id ) : '',
+		// Nothing to show unless the agency has an active coupon.
+		isEligible: isApproved && !! coupon?.code,
+		isLoading,
+		code: coupon?.code ?? '',
 		tierId,
-		discount: getDiscount( tierId, isPromo ),
+		discount: Number.isFinite( couponDiscount ) ? couponDiscount : getDiscount( tierId, isPromo ),
 		isPromo,
 		promoLastDay,
 	};
