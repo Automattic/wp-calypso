@@ -52,10 +52,10 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 	const onActivateProduct = () => {
 		setDisabled( true );
 		setFailure( null );
-		activateProduct().catch( ( activationError: { message?: string } ) => {
+		activateProduct().catch( ( activationError: { code?: string; message?: string } ) => {
 			setDisabled( false );
 			setFailure(
-				activationError?.message ||
+				( activationError?.code && activationError.message ) ||
 					( translate( 'Something went wrong. Please try again.' ) as string )
 			);
 		} );

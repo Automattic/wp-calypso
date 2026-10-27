@@ -211,9 +211,13 @@ describe( 'Modules', () => {
 			expect( wpcom.req.post ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		it( 'falls back to a generic message for a failure that carries none', async () => {
+		it( 'falls back to a generic message when the failure is not a REST error', async () => {
 			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_active' ) } );
-			wpcom.req.post.mockRejectedValueOnce( new TypeError( '' ) );
+			wpcom.req.post.mockRejectedValueOnce(
+				Object.assign( new Error( '500 status code for "POST /site/products/anti-spam"' ), {
+					status: 500,
+				} )
+			);
 			renderModules();
 
 			await userEvent.click( screen.getByRole( 'button', { name: 'Activate' } ) );
@@ -225,7 +229,10 @@ describe( 'Modules', () => {
 
 		it( 'clears the message when they try again', async () => {
 			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_active' ) } );
-			wpcom.req.post.mockRejectedValueOnce( { message: 'Sorry, you are not allowed to do that.' } );
+			wpcom.req.post.mockRejectedValueOnce( {
+				code: 'rest_forbidden',
+				message: 'Sorry, you are not allowed to do that.',
+			} );
 			renderModules();
 
 			await userEvent.click( screen.getByRole( 'button', { name: 'Activate' } ) );
