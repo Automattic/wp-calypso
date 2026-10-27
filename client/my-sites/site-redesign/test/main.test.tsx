@@ -137,7 +137,7 @@ describe( 'SiteRedesign', () => {
 		jest.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
 		renderPage();
 
-		expect( await screen.findByText( 'Making four designs from your content…' ) ).toBeVisible();
+		expect( await screen.findByText( 'Making new designs from your content…' ) ).toBeVisible();
 		expect( generateRedesign ).toHaveBeenCalledTimes( 1 );
 		expect( openRedesign ).not.toHaveBeenCalled();
 	} );
@@ -166,7 +166,7 @@ describe( 'SiteRedesign', () => {
 		const retry = await screen.findByRole( 'button', { name: 'Retry' } );
 		expect( generateRedesign ).not.toHaveBeenCalled();
 		await userEvent.click( retry );
-		expect( await screen.findByText( 'Making four designs from your content…' ) ).toBeVisible();
+		expect( await screen.findByText( 'Making new designs from your content…' ) ).toBeVisible();
 		expect( generateRedesign ).toHaveBeenCalledTimes( 1 );
 	} );
 
@@ -211,11 +211,11 @@ describe( 'SiteRedesign', () => {
 		expect( generateRedesign ).toHaveBeenCalledTimes( 1 );
 		jest.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
 		await userEvent.click( retry );
-		expect( await screen.findByText( 'Making four designs from your content…' ) ).toBeVisible();
+		expect( await screen.findByText( 'Making new designs from your content…' ) ).toBeVisible();
 		expect( generateRedesign ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	it( 'shows the four candidates of the newest batch in opaque frames', async () => {
+	it( 'shows every candidate of the newest batch in opaque frames', async () => {
 		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
 		renderPage();
 
@@ -226,7 +226,8 @@ describe( 'SiteRedesign', () => {
 			expect( frame ).toHaveAttribute( 'srcdoc', '<p>preview</p>' );
 		} );
 		expect( fetchPreview ).not.toHaveBeenCalledWith( 1, REDESIGN_ID, candidate( 5, 1 ).id );
-		expect( screen.getAllByRole( 'button', { name: /Choose design/ } ) ).toHaveLength( 4 );
+		expect( screen.getByText( 'Design 1 of 4' ) ).toBeVisible();
+		expect( screen.getAllByRole( 'button', { name: /Choose/ } ) ).toHaveLength( 1 );
 	} );
 
 	it( 'keeps unfinished candidates from being chosen', async () => {
@@ -248,10 +249,73 @@ describe( 'SiteRedesign', () => {
 		);
 		renderPage();
 
+		const choose = await screen.findByRole( 'button', { name: 'Choose this one' } );
+		for ( let n = 1; n <= 4; n++ ) {
+			expect( screen.getByText( `Design ${ n } of 4` ) ).toBeVisible();
+			expect( choose ).toHaveAttribute( 'aria-disabled', 'true' );
+			await userEvent.click( choose );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Next design' } ) );
+		}
+		expect( screen.getByText( 'This one broke.' ) ).toBeVisible();
+		expect( applyRedesign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'holds placeholder slides behind a single status while the session opens', () => {
+		jest.mocked( openRedesign ).mockReturnValue( new Promise( () => {} ) );
+		const { container } = renderPage( false, null );
+
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Getting your designs ready…' );
+		expect(
+			container.querySelectorAll( '.site-redesign__slide .site-redesign__skeleton' )
+		).toHaveLength( 3 );
+		expect( screen.queryByRole( 'button', { name: /Choose/ } ) ).toBeNull();
+	} );
+
+	it( 'keeps a placeholder over each design until its preview has loaded', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue(
+			session( {
+				status: 'generating',
+				candidates: [
+					candidate( 1 ),
+					{ ...candidate( 2 ), status: 'running', routes: null },
+					{ ...candidate( 3 ), status: 'queued', routes: null },
+					{
+						...candidate( 4 ),
+						status: 'failed',
+						routes: null,
+						error: { code: 'x', message: 'This one broke.' },
+					},
+				],
+			} )
+		);
+		let showPreview = () => {};
+		jest.mocked( fetchPreview ).mockReturnValue(
+			new Promise( ( resolve ) => {
+				showPreview = () =>
+					resolve( {
+						generation_id: candidate( 1 ).id,
+						path: '/',
+						html: '<p>preview</p>',
+						routes: [],
+					} );
+			} )
+		);
+		const { container } = renderPage();
+		const skeletons = () => container.querySelectorAll( '.site-redesign__skeleton' );
+
 		expect( await screen.findByText( 'This one broke.' ) ).toBeVisible();
-		screen
-			.getAllByRole( 'button', { name: /Choose design/ } )
-			.forEach( ( button ) => expect( button ).toBeDisabled() );
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent(
+			'Making new designs from your content…'
+		);
+		expect( skeletons() ).toHaveLength( 3 );
+		expect( screen.queryByTitle( 'Preview of design 1' ) ).toBeNull();
+
+		showPreview();
+
+		await waitFor( () =>
+			expect( screen.getByTitle( 'Preview of design 1' ) ).toHaveClass( 'is-loaded' )
+		);
+		expect( skeletons() ).toHaveLength( 2 );
 	} );
 
 	it( 'sends the user to checkout with the URL from the 402', async () => {
@@ -263,8 +327,10 @@ describe( 'SiteRedesign', () => {
 		} );
 		renderPage();
 
-		const [ , second ] = await screen.findAllByRole( 'button', { name: /Choose design/ } );
-		await userEvent.click( second );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Next design' } ) );
+		const choose = screen.getByRole( 'button', { name: 'Choose this one' } );
+		await waitFor( () => expect( choose ).not.toHaveAttribute( 'aria-disabled' ) );
+		await userEvent.click( choose );
 
 		expect( applyRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID, candidate( 2 ).id );
 		await waitFor( () => expect( page ).toHaveBeenCalledWith( CHECKOUT_URL ) );
@@ -285,8 +351,9 @@ describe( 'SiteRedesign', () => {
 		} );
 		renderPage();
 
-		const [ first ] = await screen.findAllByRole( 'button', { name: /Choose design/ } );
-		await userEvent.click( first );
+		const choose = await screen.findByRole( 'button', { name: 'Choose this one' } );
+		await waitFor( () => expect( choose ).not.toHaveAttribute( 'aria-disabled' ) );
+		await userEvent.click( choose );
 
 		expect(
 			await screen.findByText( 'Upgrade to the Personal plan or higher to use this design.', {
@@ -354,7 +421,7 @@ describe( 'SiteRedesign', () => {
 		renderPage( true );
 
 		expect( await screen.findByText( 'Finishing your purchase…' ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: /Choose design/ } ) ).toBeNull();
+		expect( screen.queryByRole( 'button', { name: /Choose/ } ) ).toBeNull();
 		expect( applyRedesign ).not.toHaveBeenCalled();
 	} );
 

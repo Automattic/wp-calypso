@@ -1,30 +1,36 @@
-.site-redesign__grid {
-	display: grid;
-	gap: 24px;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+body.is-section-site-redesign {
+	background: var( --color-surface );
+
+	.layout__content {
+		padding: 0;
+	}
+
+	// The gallery takes the height the shell leaves, so the shell measures the visible viewport.
+	.step-container-v2 {
+		min-height: 100dvh;
+	}
+
+	// Short phones keep the stage and the controls under it on one screen.
+	@media ( max-width: 599px ) and ( max-height: 740px ) {
+		.step-container-v2__content-wrapper {
+			gap: 1.5rem;
+			padding-block: 1rem;
+		}
+	}
 }
 
-.site-redesign__thumbnail {
-	position: relative;
+// The previews use the whole width of a wide screen; the heading keeps the shell's columns.
+body.is-section-site-redesign .step-container-v2__content-wrapper,
+.step-container-v2__content-row.site-redesign {
+	max-width: none;
+}
+
+.step-container-v2__content-row.site-redesign {
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	aspect-ratio: 16 / 10;
-	overflow: hidden;
-	border: 1px solid var(--color-border-subtle);
-	border-radius: 4px;
-	background: var(--color-surface);
+	flex: 1;
+	flex-direction: column;
 }
 
-// The document is laid out at desktop width and scaled down to the card.
-.site-redesign__frame {
-	position: absolute;
-	inset-block-start: 0;
-	inset-inline-start: 0;
-	width: 400%;
-	height: 400%;
-	border: 0;
-	transform: scale(0.25);
-	transform-origin: top left;
-	pointer-events: none;
+.site-redesign__fill {
+	flex: 1;
 }

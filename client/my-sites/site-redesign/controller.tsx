@@ -5,6 +5,7 @@ import SiteRedesign from './main';
 export const renderSiteRedesign: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const { redesign } = context.query;
+	context.secondary = null;
 	context.primary = (
 		<SiteRedesign
 			siteId={ getSelectedSiteId( state ) as number }

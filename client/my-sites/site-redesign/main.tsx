@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { Step } from '@automattic/onboarding';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
@@ -11,23 +12,23 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
+import { useDispatch } from 'calypso/state';
+import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
 import {
 	activateRedesign,
 	applyRedesign,
 	currentBatch,
 	errorCode,
-	fetchPreview,
 	fetchRedesign,
 	generateRedesign,
 	getCheckoutUrl,
 	openRedesign,
-	type Candidate,
 	type Redesign,
 } from './api';
+import { CandidateGallery, GalleryPlaceholder } from './candidate-gallery';
+import { messageOf } from './candidate-preview';
 
 import './style.scss';
 
@@ -59,13 +60,6 @@ function httpUrl( url: string | undefined ): string | undefined {
 	}
 }
 
-function messageOf( error: unknown ): string {
-	const message = ( error as { message?: unknown } | null )?.message;
-	return typeof message === 'string' && message
-		? message
-		: __( 'Something went wrong. Please try again.' );
-}
-
 function applyStepLabel( step: string | undefined ): string {
 	switch ( step ) {
 		case 'awaiting_atomic':
@@ -79,94 +73,9 @@ function applyStepLabel( step: string | undefined ): string {
 	}
 }
 
-function CandidatePreview( {
-	siteId,
-	redesignId,
-	candidate,
-	index,
-}: {
-	siteId: number;
-	redesignId: string;
-	candidate: Candidate;
-	index: number;
-} ) {
-	const preview = useQuery( {
-		queryKey: [ 'site-redesign-preview', siteId, redesignId, candidate.id ],
-		queryFn: () => fetchPreview( siteId, redesignId, candidate.id ),
-		staleTime: Infinity,
-	} );
-	if ( preview.isError ) {
-		return <Text>{ messageOf( preview.error ) }</Text>;
-	}
-	if ( ! preview.data ) {
-		return <Spinner />;
-	}
-	return (
-		<iframe
-			className="site-redesign__frame"
-			title={ sprintf(
-				/* translators: %d is the design number, 1 to 4. */
-				__( 'Preview of design %d' ),
-				index + 1
-			) }
-			// Opaque origin: the server's own script may run, nothing in it can reach Calypso.
-			sandbox="allow-scripts"
-			srcDoc={ preview.data.html }
-			tabIndex={ -1 }
-		/>
-	);
-}
-
-function CandidateCard( {
-	siteId,
-	redesignId,
-	candidate,
-	index,
-	canChoose,
-	onChoose,
-}: {
-	siteId: number;
-	redesignId: string;
-	candidate: Candidate;
-	index: number;
-	canChoose: boolean;
-	onChoose: () => void;
-} ) {
-	return (
-		<VStack className="site-redesign__candidate" spacing={ 3 }>
-			<div className="site-redesign__thumbnail">
-				{ candidate.status === 'succeeded' && (
-					<CandidatePreview
-						siteId={ siteId }
-						redesignId={ redesignId }
-						candidate={ candidate }
-						index={ index }
-					/>
-				) }
-				{ ( candidate.status === 'queued' || candidate.status === 'running' ) && <Spinner /> }
-				{ candidate.status === 'failed' && (
-					<Text>{ candidate.error?.message ?? __( 'This design could not be made.' ) }</Text>
-				) }
-			</div>
-			<Button
-				__next40pxDefaultSize
-				variant="primary"
-				disabled={ ! canChoose || candidate.status !== 'succeeded' }
-				onClick={ onChoose }
-				aria-label={ sprintf(
-					/* translators: %d is the design number, 1 to 4. */
-					__( 'Choose design %d' ),
-					index + 1
-				) }
-			>
-				{ __( 'Choose this design' ) }
-			</Button>
-		</VStack>
-	);
-}
-
 export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: Props ) {
 	const queryClient = useQueryClient();
+	const dispatch = useDispatch();
 	const [ notice, setNotice ] = useState< string | null >( null );
 	const resumed = useRef( false );
 	const started = useRef< string | null >( null );
@@ -187,6 +96,13 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		},
 	} );
 	const redesign = redesignQuery.data;
+
+	useLayoutEffect( () => {
+		dispatch( hideMasterbar() );
+		return () => {
+			dispatch( showMasterbar() );
+		};
+	}, [ dispatch ] );
 
 	const store = ( next: Redesign ) => {
 		queryClient.setQueryData( redesignKey( siteId, next.id ), next );
@@ -284,16 +200,11 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 	}, [ resume, redesign, chooseCandidate ] );
 
 	const title = __( 'Redesign your site' );
-	const header = (
-		<>
-			<DocumentHead title={ title } />
-			<NavigationHeader
-				title={ title }
-				subtitle={ __(
-					'Pick one of four new designs made from the content already on your site.'
-				) }
-			/>
-		</>
+	const heading = (
+		<Step.Heading
+			text={ title }
+			subText={ __( 'Pick a new design made from the content already on your site.' ) }
+		/>
 	);
 
 	const retryButton = (
@@ -308,10 +219,10 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		</Button>
 	);
 	const opening = (
-		<HStack justify="flex-start" role="status">
-			<Spinner />
-			<Text>{ __( 'Getting your designs ready…' ) }</Text>
-		</HStack>
+		<VStack className="site-redesign__fill" spacing={ 4 }>
+			<Text role="status">{ __( 'Getting your designs ready…' ) }</Text>
+			<GalleryPlaceholder />
+		</VStack>
 	);
 
 	const renderBody = () => {
@@ -319,11 +230,11 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 			return start.isError ? retryButton : opening;
 		}
 		if ( ! redesign ) {
-			return redesignQuery.isError ? (
-				<Text>{ messageOf( redesignQuery.error ) }</Text>
-			) : (
-				<Spinner />
-			);
+			if ( redesignQuery.isError ) {
+				return <Text>{ messageOf( redesignQuery.error ) }</Text>;
+			}
+			// Back from checkout the page moves on to the purchase, not to the designs.
+			return resume ? <Spinner /> : opening;
 		}
 
 		if ( isWaitingForPurchase( redesign, resume ) ) {
@@ -411,57 +322,56 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 				);
 		}
 
+		const candidates = currentBatch( redesign );
 		return (
-			<VStack spacing={ 4 }>
+			<VStack className="site-redesign__fill" spacing={ 4 }>
 				{ redesign.status === 'generating' && (
-					<HStack justify="flex-start">
-						<Spinner />
-						<Text>{ __( 'Making four designs from your content…' ) }</Text>
-					</HStack>
+					<Text role="status">{ __( 'Making new designs from your content…' ) }</Text>
 				) }
-				<div className="site-redesign__grid">
-					{ currentBatch( redesign ).map( ( candidate, index ) => (
-						<CandidateCard
-							key={ candidate.id }
-							siteId={ siteId }
-							redesignId={ redesign.id }
-							candidate={ candidate }
-							index={ index }
-							canChoose={ redesign.status === 'preview_ready' && ! choose.isPending }
-							onChoose={ () => chooseCandidate( candidate.id ) }
-						/>
-					) ) }
-				</div>
+				{ candidates.length === 0 ? (
+					<GalleryPlaceholder />
+				) : (
+					<CandidateGallery
+						siteId={ siteId }
+						redesignId={ redesign.id }
+						candidates={ candidates }
+						sessionReady={ redesign.status === 'preview_ready' }
+						isChoosing={ choose.isPending }
+						onChoose={ chooseCandidate }
+					/>
+				) }
 			</VStack>
 		);
 	};
 
 	const applyError = redesign?.apply?.error;
 	return (
-		<Main wideLayout className="site-redesign">
-			{ header }
-			<VStack spacing={ 4 }>
-				{ notice && (
-					<Notice status="error" isDismissible={ false }>
-						{ notice }
-					</Notice>
-				) }
-				{ applyError && redesign?.status === 'installed' && (
-					<Notice status="warning" isDismissible={ false }>
-						{ sprintf(
-							/* translators: %s is the reason the switch failed. */
-							__( 'We couldn’t switch to the new design, so your site kept its current one. %s' ),
-							applyError.message
-						) }
-					</Notice>
-				) }
-				{ applyError && redesign?.status === 'preview_ready' && (
-					<Notice status="error" isDismissible={ false }>
-						{ applyError.message }
-					</Notice>
-				) }
-				{ renderBody() }
-			</VStack>
-		</Main>
+		<>
+			<DocumentHead title={ title } />
+			<Step.WideLayout className="site-redesign" topBar={ <Step.TopBar /> } heading={ heading }>
+				<VStack className="site-redesign__fill" spacing={ 4 }>
+					{ notice && (
+						<Notice status="error" isDismissible={ false }>
+							{ notice }
+						</Notice>
+					) }
+					{ applyError && redesign?.status === 'installed' && (
+						<Notice status="warning" isDismissible={ false }>
+							{ sprintf(
+								/* translators: %s is the reason the switch failed. */
+								__( 'We couldn’t switch to the new design, so your site kept its current one. %s' ),
+								applyError.message
+							) }
+						</Notice>
+					) }
+					{ applyError && redesign?.status === 'preview_ready' && (
+						<Notice status="error" isDismissible={ false }>
+							{ applyError.message }
+						</Notice>
+					) }
+					{ renderBody() }
+				</VStack>
+			</Step.WideLayout>
+		</>
 	);
 }

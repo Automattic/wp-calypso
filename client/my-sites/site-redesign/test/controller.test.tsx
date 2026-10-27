@@ -76,4 +76,10 @@ describe( 'renderSiteRedesign', () => {
 		renderSiteRedesign( context, jest.fn() );
 		expect( context.primary.props ).toMatchObject( { redesignId: null, resume: false } );
 	} );
+
+	it( 'renders without the site sidebar', () => {
+		const context = contextFor();
+		renderSiteRedesign( context, jest.fn() );
+		expect( context.secondary ).toBeNull();
+	} );
 } );
