@@ -25,6 +25,7 @@ const migration = ( status: string, extra = {} ) => ( {
 	source_url: 'https://www.example.com',
 	started_at: null,
 	completed_at: null,
+	notification_email: null,
 	...extra,
 } );
 
@@ -35,7 +36,10 @@ const finding = ( code: string, severity: string ) => ( {
 	message: `${ code } message`,
 } );
 
-const running = migration( 'running', { phase: 'migration' } );
+const running = migration( 'running', {
+	phase: 'migration',
+	notification_email: 'owner@example.com',
+} );
 
 const configuration = {
 	source_url: 'https://www.example.com',
@@ -117,7 +121,7 @@ describe( 'WordPressMigration', () => {
 		).toEqual( [ 'Verifying', 'Copying', 'Finishing' ] );
 		expect(
 			screen.getByText(
-				'You can leave this page. The migration carries on in the background. We will email you at test@example.com when the migration is ready.'
+				'You can leave this page. The migration carries on in the background. We will email you at owner@example.com when the migration is ready.'
 			)
 		).toBeVisible();
 		expect( configure.isDone() ).toBe( true );
@@ -208,6 +212,21 @@ describe( 'WordPressMigration', () => {
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
 		expect( configure.isDone() ).toBe( true );
 		expect( run.isDone() ).toBe( true );
+	} );
+
+	it( 'leaves out the email promise when no one will be notified', async () => {
+		mockApi()
+			.get( statusPath )
+			.query( true )
+			.reply( 200, { ...running, notification_email: null } )
+			.persist();
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
+		expect(
+			screen.getByText( 'You can leave this page. The migration carries on in the background.' )
+		).toBeVisible();
 	} );
 
 	it( 'catches up with the migration when a run is refused', async () => {
