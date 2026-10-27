@@ -253,9 +253,9 @@ describe( 'getWpcomPlanChangeUrl', () => {
 		expect( url ).not.toContain( '/setup/plan-upgrade' );
 	} );
 
-	test( 'sends a Woo-hosted plan to the Woo plans flow', () => {
-		const url = changeUrl( makeDotcomPlan( { is_woo_hosted_product: true } ) );
-		expect( url ).toContain( '/setup/woo-hosted-plans' );
+	test( 'sends a Woo-hosted trial to the stepper flow rather than the plans page', () => {
+		const url = changeUrl( makeDotcomPlan( { is_trial_plan: true, is_woo_hosted_product: true } ) );
+		expect( url ).toContain( '/setup/plan-upgrade' );
 	} );
 
 	test( 'returns undefined for anything that is not a WordPress.com plan', () => {
