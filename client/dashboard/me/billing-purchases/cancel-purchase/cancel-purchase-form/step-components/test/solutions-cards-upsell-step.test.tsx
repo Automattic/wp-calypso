@@ -44,12 +44,6 @@ const premiumAnnual = {
 	is_plan_type_downgradable: true,
 } as Purchase;
 
-async function getChangePlanHref() {
-	const link = await screen.findByRole( 'link', { name: /Switch to a different plan/ } );
-	expect( link ).toHaveAttribute( 'href' );
-	return link.getAttribute( 'href' ) as string;
-}
-
 describe( '<SolutionsCardsUpsellStep />', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -229,74 +223,66 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 		);
 	} );
 
-	test( 'switch-to-monthly card on an annual plan is a button that calls onSwitchToMonthly and stays on the cards step', async () => {
-		const user = userEvent.setup();
-		const onSwitchToMonthly = jest.fn();
+	test.each( [
+		{ card: 'change-plan', name: /Switch to a different plan/, ref: 'cancel-flow-change-plan' },
+	] )(
+		'$card card click records the event and opens its ref=$ref link',
+		async ( { card, name, ref } ) => {
+			const user = userEvent.setup();
+			const recordEvent = jest.fn();
 
-		render(
-			<SolutionsCardsUpsellStep
-				cancellationReason="tooExpensive"
-				purchase={ purchase }
-				closeDialog={ jest.fn() }
-				onDeclineUpsell={ jest.fn() }
-				onSwitchToMonthly={ onSwitchToMonthly }
-			/>
-		);
+			render(
+				<SolutionsCardsUpsellStep
+					cancellationReason="tooExpensive"
+					purchase={ premiumAnnual }
+					closeDialog={ jest.fn() }
+					onDeclineUpsell={ jest.fn() }
+					recordEvent={ recordEvent }
+				/>
+			);
 
-		const monthlyCard = await screen.findByRole( 'button', {
-			name: /Switch to monthly payments/,
-		} );
-		await user.click( monthlyCard );
+			const link = await screen.findByRole( 'link', { name } );
+			const href = link.getAttribute( 'href' ) as string;
+			expect( new URL( href ).searchParams.get( 'ref' ) ).toBe( ref );
 
-		expect( onSwitchToMonthly ).toHaveBeenCalledTimes( 1 );
-		expect( monthlyCard ).toBeVisible();
-		expect(
-			screen.queryByRole( 'heading', { name: 'Switch to flexible monthly payments' } )
-		).not.toBeInTheDocument();
-	} );
+			// jsdom ignores navigation, so swap in a plain object to read the href the click sets.
+			const originalLocation = window.location;
+			Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
+			try {
+				await user.click( link );
 
-	test( 'change-plan card links to the plans page with the cancel-flow ref', async () => {
-		render(
-			<SolutionsCardsUpsellStep
-				cancellationReason="tooExpensive"
-				purchase={ premiumAnnual }
-				closeDialog={ jest.fn() }
-				onDeclineUpsell={ jest.fn() }
-			/>
-		);
-
-		const url = new URL( await getChangePlanHref() );
-		expect( url.searchParams.get( 'ref' ) ).toBe( 'cancel-flow-change-plan' );
-	} );
-
-	test( 'clicking change-plan records the click and goes where the card links', async () => {
-		const user = userEvent.setup();
-		const recordEvent = jest.fn();
-
-		render(
-			<SolutionsCardsUpsellStep
-				cancellationReason="tooExpensive"
-				purchase={ premiumAnnual }
-				closeDialog={ jest.fn() }
-				onDeclineUpsell={ jest.fn() }
-				recordEvent={ recordEvent }
-			/>
-		);
-		const href = await getChangePlanHref();
-
-		// jsdom ignores navigation, so swap in a plain object to read the href the click sets.
-		const originalLocation = window.location;
-		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
-		try {
-			await user.click( screen.getByRole( 'link', { name: /Switch to a different plan/ } ) );
-
-			expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_card_click', {
-				solution_id: 'change-plan',
-				cancellation_reason: 'tooExpensive',
-			} );
-			expect( window.location.href ).toBe( href );
-		} finally {
-			Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
+				expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_card_click', {
+					solution_id: card,
+					cancellation_reason: 'tooExpensive',
+				} );
+				expect( window.location.href ).toBe( href );
+			} finally {
+				Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
+			}
 		}
+	);
+
+	test( 'change-plan card on P2+ links to the bare /plans/<site> page', async () => {
+		const p2PlusMonthly = {
+			...purchase,
+			product_slug: 'wp_p2_plus_monthly',
+			is_plan: true,
+			is_upgradable: false,
+			is_plan_type_downgradable: false,
+			bill_period_days: 31,
+		} as Purchase;
+
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="tooExpensive"
+				purchase={ p2PlusMonthly }
+				closeDialog={ jest.fn() }
+				onDeclineUpsell={ jest.fn() }
+			/>
+		);
+
+		expect(
+			await screen.findByRole( 'link', { name: /Switch to a different plan/ } )
+		).toHaveAttribute( 'href', 'https://wordpress.com/plans/example.wordpress.com' );
 	} );
 } );
