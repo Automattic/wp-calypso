@@ -3,15 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	Icon,
 } from '@wordpress/components';
-import { useInstanceId } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { chevronDown, chevronUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Fragment, useMemo, useState } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
+import { CollapsibleCard } from '../../../components/collapsible-card';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
 import {
@@ -156,12 +154,10 @@ function NewsRow( {
 	canToggle: boolean;
 	onToggle: () => void;
 } & AnnouncementActionProps ) {
-	const panelId = useInstanceId( NewsRow, 'a4a-news-panel' ) as string;
-	// Spans, not divs: the summary sits inside the toggle button.
 	const summary = (
-		<HStack as="span" spacing={ 3 } justify="flex-start" alignment="flex-start">
+		<HStack spacing={ 3 } justify="flex-start" alignment="flex-start" className="a4a-news-summary">
 			<AnnouncementLogo announcement={ announcement } size={ 32 } />
-			<VStack as="span" spacing={ 1 } className="a4a-news-text">
+			<VStack spacing={ 1 } className="a4a-news-text">
 				<AnnouncementEyebrow>{ announcement.eyebrow }</AnnouncementEyebrow>
 				<Text size={ 13 } weight={ 500 } lineHeight="20px" className="a4a-news-balance">
 					{ bindLastWords( announcement.headline ) }
@@ -173,34 +169,36 @@ function NewsRow( {
 				) }
 			</VStack>
 			<AnnouncementDate announcement={ announcement } />
-			{ canToggle && (
-				<Icon icon={ isOpen ? chevronUp : chevronDown } className="a4a-news-chevron" />
-			) }
 		</HStack>
 	);
+	const panel = (
+		<VStack spacing={ 4 } className="a4a-news-row-panel">
+			<AnnouncementDescription announcement={ announcement } />
+			<AnnouncementCtas announcement={ announcement } { ...actionProps } />
+		</VStack>
+	);
+
+	// A single item has nothing to choose between, so it stays open with no toggle.
+	if ( ! canToggle ) {
+		return (
+			<CardBody>
+				{ summary }
+				{ panel }
+			</CardBody>
+		);
+	}
 
 	return (
-		<CardBody className="a4a-news-row">
-			{ canToggle ? (
-				<button
-					type="button"
-					className="a4a-news-row-toggle"
-					aria-expanded={ isOpen }
-					aria-controls={ panelId }
-					onClick={ onToggle }
-				>
-					{ summary }
-				</button>
-			) : (
-				summary
-			) }
-			{ isOpen && (
-				<VStack spacing={ 4 } id={ panelId } className="a4a-news-row-panel">
-					<AnnouncementDescription announcement={ announcement } />
-					<AnnouncementCtas announcement={ announcement } { ...actionProps } />
-				</VStack>
-			) }
-		</CardBody>
+		<CollapsibleCard
+			isBorderless
+			header={ summary }
+			toggleLabel={ announcement.headline }
+			toggleAlignment="top"
+			expanded={ isOpen }
+			onToggle={ onToggle }
+		>
+			{ panel }
+		</CollapsibleCard>
 	);
 }
 

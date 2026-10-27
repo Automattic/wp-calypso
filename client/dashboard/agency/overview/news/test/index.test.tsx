@@ -80,7 +80,9 @@ describe( '<NewsCard>', () => {
 			/>
 		);
 
-		await user.click( await screen.findByRole( 'button', { name: /Free Pressable\shosting/ } ) );
+		// The row and its chevron are both toggles named after the headline; click the row.
+		const [ row ] = await screen.findAllByRole( 'button', { name: /Free Pressable\shosting/ } );
+		await user.click( row );
 		await user.click( screen.getByRole( 'link', { name: 'View promo details' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_overview_news_item_open', {
