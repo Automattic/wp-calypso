@@ -232,6 +232,7 @@ export const getCertificationPromoEvent = ( tiersHref: string ): FeaturedEvent =
 			id: 'get-your-code',
 			label: __( 'Get your code' ),
 			url: `${ tiersHref }#certification`,
+			variant: 'primary',
 		},
 		{
 			id: 'about-the-exam',
