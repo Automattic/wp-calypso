@@ -153,6 +153,19 @@ it( 'shows an AudioPlayer’s description as its name', () => {
 	expect( screen.getByLabelText( 'Intro' ) ).toHaveAttribute( 'src', 'https://example.com/a.mp3' );
 } );
 
+it( 'moves a Slider without `steps` in whole numbers', () => {
+	const surface = createSurface( [
+		{ id: 'root', component: 'Slider', label: 'Volume', max: 100, value: 50 },
+	] );
+
+	render( <InteractiveUiSurface surface={ surface } /> );
+
+	[
+		screen.getByRole( 'slider', { name: 'Volume' } ),
+		screen.getByRole( 'spinbutton', { name: 'Volume' } ),
+	].forEach( ( input ) => expect( input ).toHaveAttribute( 'step', '1' ) );
+} );
+
 it( 'disables a disabled surface’s inputs and actions, but not its tabs or modal', async () => {
 	const surface = createSurface( [
 		{
@@ -314,38 +327,89 @@ describe( 'checks', () => {
 		);
 	} );
 
-	it( 'shows every field’s failed check once the person clicks a Button whose checks fail', async () => {
-		const surface = createSurface( [
-			{ id: 'root', component: 'Column', children: [ 'name', 'save' ] },
-			{
-				id: 'name',
-				component: 'TextField',
-				label: 'Name',
-				value: { '@path': '/name' },
-				checks: [ required( '/name' ) ],
-			},
-			{
-				id: 'save',
-				component: 'Button',
-				child: 'label',
-				action: { event: { name: 'save' } },
-				checks: [ required( '/name' ) ],
-			},
-			{ id: 'label', component: 'Text', text: 'Save' },
-		] );
+	it.each( [
+		[ 'clicks', ( button: HTMLElement ) => fireEvent.click( button ) ],
+		[
+			'presses Enter on',
+			( button: HTMLElement ) => fireEvent.keyDown( button, { key: 'Enter' } ),
+		],
+	] )(
+		'shows every field’s failed check once the person %s a Button whose checks fail',
+		async ( _action, activate ) => {
+			const surface = createSurface( [
+				{ id: 'root', component: 'Column', children: [ 'name', 'save' ] },
+				{
+					id: 'name',
+					component: 'TextField',
+					label: 'Name',
+					value: { '@path': '/name' },
+					checks: [ required( '/name' ) ],
+				},
+				{
+					id: 'save',
+					component: 'Button',
+					child: 'label',
+					action: { event: { name: 'save' } },
+					checks: [ required( '/name' ) ],
+				},
+				{ id: 'label', component: 'Text', text: 'Save' },
+			] );
 
-		render( <InteractiveUiSurface surface={ surface } /> );
+			render( <InteractiveUiSurface surface={ surface } /> );
 
-		const name = screen.getByRole( 'textbox', { name: 'Name' } );
+			const name = screen.getByRole( 'textbox', { name: 'Name' } );
 
-		expect( name ).not.toHaveAccessibleDescription();
+			expect( name ).not.toHaveAccessibleDescription();
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+			activate( screen.getByRole( 'button', { name: 'Save' } ) );
 
-		await waitFor( () => expect( name ).toHaveAccessibleDescription( 'Fill this in.' ) );
-		expect( name ).toHaveFocus();
-		expect( onAction ).not.toHaveBeenCalled();
-	} );
+			await waitFor( () => expect( name ).toHaveAccessibleDescription( 'Fill this in.' ) );
+			expect( name ).toHaveFocus();
+			expect( onAction ).not.toHaveBeenCalled();
+		}
+	);
+
+	it.each( [
+		[ 'CheckBox', { label: 'Agree' }, 'checkbox' ],
+		[ 'ChoicePicker', { options: [ { label: 'News', value: 'news' } ] }, 'radio' ],
+	] )(
+		'shows a %s’s failed check without changing it once the person presses Space on a Button whose checks fail',
+		async ( component, props, role ) => {
+			const surface = createSurface( [
+				{ id: 'root', component: 'Column', children: [ 'field', 'save' ] },
+				{
+					id: 'field',
+					component,
+					...props,
+					value: { '@path': '/value' },
+					checks: [ required( '/value' ) ],
+				},
+				{
+					id: 'save',
+					component: 'Button',
+					child: 'label',
+					action: { event: { name: 'save' } },
+					checks: [ required( '/value' ) ],
+				},
+				{ id: 'label', component: 'Text', text: 'Save' },
+			] );
+
+			render( <InteractiveUiSurface surface={ surface } /> );
+
+			const field = screen.getByRole( role );
+			const save = screen.getByRole( 'button', { name: 'Save' } );
+
+			save.focus();
+			fireEvent.keyDown( save, { key: ' ' } );
+			// The browser sends the keyup to whatever has focus by then.
+			fireEvent.keyUp( document.activeElement as HTMLElement, { key: ' ' } );
+
+			await waitFor( () => expect( field ).toHaveAccessibleDescription( 'Fill this in.' ) );
+			expect( field ).toHaveFocus();
+			expect( field ).not.toBeChecked();
+			expect( onAction ).not.toHaveBeenCalled();
+		}
+	);
 
 	it.each( [
 		[ 'TextField', { label: 'Name' } ],

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import type { View } from '@wordpress/dataviews';
 
 export const DEFAULT_VIEW: View = {
@@ -7,7 +8,12 @@ export const DEFAULT_VIEW: View = {
 	},
 	perPage: 10,
 	sort: { field: 'emailAddress', direction: 'asc' },
-	fields: [ 'domainName', 'type', 'status' ],
+	fields: [
+		'domainName',
+		'type',
+		...( isEnabled( 'emails/titan-tiers' ) ? [ 'plan' ] : [] ),
+		'status',
+	],
 	titleField: 'emailAddress',
 	showLevels: false,
 };

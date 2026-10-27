@@ -4,7 +4,6 @@
 // @ts-nocheck - the flow test helpers are untyped
 import config from '@automattic/calypso-config';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
-import { dispatch, select } from '@wordpress/data';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import {
@@ -14,7 +13,6 @@ import {
 } from 'calypso/landing/stepper/declarative-flow/test/helpers';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import staticSiteImportFlow from '../static-site-import-flow';
@@ -188,15 +186,18 @@ describe( 'Static site import flow', () => {
 	} );
 
 	describe( 'results', () => {
-		it( 'asks for an address when there is no site yet', () => {
+		it.each( [
+			[ 'a new site', SESSION ],
+			[ 'an existing free site', { ...SESSION, ...SITE } ],
+		] )( 'goes directly to plans for %s', ( _, query ) => {
 			const destination = runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_RESULTS,
 				dependencies: { action: 'continue' },
-				query: SESSION,
+				query,
 			} );
 
 			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_ADDRESS,
+				step: STEPS.UNIFIED_PLANS,
 				query: null,
 			} );
 		} );
@@ -222,7 +223,7 @@ describe( 'Static site import flow', () => {
 			} );
 
 			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_ADDRESS,
+				step: STEPS.UNIFIED_PLANS,
 				query: null,
 			} );
 		} );
@@ -260,19 +261,34 @@ describe( 'Static site import flow', () => {
 		} );
 	} );
 
-	describe( 'choosing an address and plan', () => {
+	describe( 'choosing a plan', () => {
 		it.each( [
-			[ 'keep', STEPS.UNIFIED_PLANS ],
-			[ 'free', STEPS.UNIFIED_PLANS ],
-			[ 'register', STEPS.DOMAIN_SEARCH ],
-		] )( 'routes the %s address choice', ( domainChoice, step ) => {
+			[ 'a new site', SESSION ],
+			[ 'an existing site', { ...SESSION, ...SITE } ],
+		] )( 'returns to results from plans for %s', ( _, query ) => {
+			const destination = runFlowNavigation(
+				staticSiteImportFlow,
+				{ from: STEPS.UNIFIED_PLANS, query },
+				'back'
+			);
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.STATIC_SITE_IMPORT_RESULTS,
+				query: null,
+			} );
+		} );
+
+		it( 'creates a new site after choosing a plan', () => {
 			const destination = runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_ADDRESS,
-				dependencies: { domainChoice },
+				from: STEPS.UNIFIED_PLANS,
+				dependencies: { cartItems: [ { product_slug: 'business-bundle' } ] },
 				query: SESSION,
 			} );
 
-			expect( destination ).toMatchDestination( { step, query: { domainChoice } } );
+			expect( destination ).toMatchDestination( {
+				step: STEPS.SITE_CREATION_STEP,
+				query: null,
+			} );
 		} );
 
 		it.each( [
@@ -300,7 +316,7 @@ describe( 'Static site import flow', () => {
 			runNavigation( {
 				from: STEPS.PROCESSING,
 				dependencies: { siteCreated: true, goToCheckout: true, ...SITE },
-				query: { ...SESSION, domainChoice: 'keep' },
+				query: SESSION,
 			} );
 
 			const { destination, siteSlug, plan } = jest.mocked( goToCheckout ).mock.calls[ 0 ][ 0 ];
@@ -309,10 +325,7 @@ describe( 'Static site import flow', () => {
 			expect( siteSlug ).toBe( SITE.siteSlug );
 			expect( plan ).toBeUndefined();
 			expect( path ).toMatch( new RegExp( `/sites/${ SITE.siteSlug }$` ) );
-			expect( Object.fromEntries( new URLSearchParams( query ) ) ).toEqual( {
-				...SESSION,
-				domainChoice: 'keep',
-			} );
+			expect( Object.fromEntries( new URLSearchParams( query ) ) ).toEqual( SESSION );
 		} );
 
 		it( 'adds the plan to checkout for an existing site', () => {
@@ -327,46 +340,5 @@ describe( 'Static site import flow', () => {
 				plan: 'business-bundle',
 			} );
 		} );
-		it.each( [ 'keep', 'free' ] )(
-			'clears a previous domain registration when choosing %s',
-			( domainChoice ) => {
-				const actions = dispatch( ONBOARD_STORE );
-				actions.resetOnboardStore();
-				actions.setDomain( {
-					domain_name: 'busybearscleaning.com',
-					is_free: false,
-				} );
-				actions.setDomainCartItem( {
-					product_slug: 'domain_reg',
-					meta: 'busybearscleaning.com',
-				} );
-				actions.setDomainCartItems( [
-					{ product_slug: 'domain_reg', meta: 'busybearscleaning.com' },
-				] );
-				actions.setSiteUrl( 'busybearscleaning.com' );
-				const siteUrl = domainChoice === 'free' ? 'busybears.wordpress.com' : undefined;
-
-				try {
-					const destination = runNavigation( {
-						from: STEPS.STATIC_SITE_IMPORT_ADDRESS,
-						dependencies: { domainChoice, siteUrl },
-						query: { ...SESSION, domainChoice: 'register' },
-					} );
-
-					expect( destination ).toMatchDestination( {
-						step: STEPS.UNIFIED_PLANS,
-						query: { domainChoice },
-					} );
-
-					const onboard = select( ONBOARD_STORE );
-					expect( onboard.getSelectedDomain() ).toBeUndefined();
-					expect( onboard.getDomainCartItem() ).toBeUndefined();
-					expect( onboard.getDomainCartItems() ).toEqual( [] );
-					expect( onboard.getSiteUrl() ).toBe( siteUrl ?? '' );
-				} finally {
-					actions.resetOnboardStore();
-				}
-			}
-		);
 	} );
 } );

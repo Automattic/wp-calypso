@@ -3,7 +3,11 @@
  */
 
 import { logger } from '../client/utils/logger';
-import { serverChatToLoadResult, ServerConversationError } from './serverTypes';
+import {
+	serverChatToLoadResult,
+	ServerConversationError,
+	withUniqueMessageIds,
+} from './serverTypes';
 import type { ServerChat, ServerConversationListItem, ServerLoadResult } from './serverTypes';
 import type { AuthProvider } from '../client/types/index';
 
@@ -233,7 +237,7 @@ export async function loadAllMessagesFromServer(
 
 		return {
 			...firstPage,
-			messages: allMessages,
+			messages: withUniqueMessageIds( allMessages ),
 			pagination: {
 				...firstPage.pagination,
 				currentPage: totalPagesToLoad,

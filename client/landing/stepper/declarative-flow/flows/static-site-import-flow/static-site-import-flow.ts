@@ -25,10 +25,7 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { siteSetupImportListPath } from '../site-migration-flow/paths';
 import { canUseStaticSiteImport } from './helpers';
-import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions } from '@automattic/data-stores';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { StaticSiteImportDomainChoice } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/static-site-import-address';
 import type {
 	AssertConditionResult,
 	FlowV2,
@@ -40,8 +37,6 @@ import type { ImporterPlatform } from 'calypso/lib/importer/types';
 const BASE_STEPS = [
 	STEPS.STATIC_SITE_IMPORT_READING,
 	STEPS.STATIC_SITE_IMPORT_RESULTS,
-	STEPS.STATIC_SITE_IMPORT_ADDRESS,
-	STEPS.DOMAIN_SEARCH,
 	STEPS.UNIFIED_PLANS,
 	STEPS.SITE_CREATION_STEP,
 	STEPS.PROCESSING,
@@ -86,10 +81,6 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
 				isInSignup: ! hasDestinationSite,
 			},
-			// "Keep my domain" is its own choice on the address step.
-			[ STEPS.DOMAIN_SEARCH.slug ]: {
-				hideUseMyDomainLink: true,
-			},
 		};
 	},
 	useSideEffect() {
@@ -123,19 +114,9 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 		const urlQueryParams = useQuery();
 		const from = urlQueryParams.get( 'from' ) ?? '';
 		const platform = ( urlQueryParams.get( 'platform' ) || 'unknown' ) as ImporterPlatform;
-		const domainChoice = urlQueryParams.get(
-			'domainChoice'
-		) as StaticSiteImportDomainChoice | null;
 		const siteCount = useSelector( getCurrentUserSiteCount );
 		const recordSignupComplete = useRecordSignupComplete( flowPath );
-		const {
-			setDomain,
-			setDomainCartItem,
-			setDomainCartItems,
-			setPlanCartItem,
-			setSignupDomainOrigin,
-			setSiteUrl,
-		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
+		const { setPlanCartItem } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 
 		const isSiteOnPaidPlan = Boolean( site?.plan ) && ! site?.plan?.is_free;
 
@@ -182,7 +163,6 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 					importSessionId: urlQueryParams.get( 'importSessionId' ),
 					from,
 					platform,
-					domainChoice,
 				},
 				dashboardLink( `/sites/${ destinationSiteSlug }` )
 			);
@@ -235,37 +215,8 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 						return navigate( STEPS.STATIC_SITE_IMPORT_EXPERT.slug );
 					}
 
-					if ( hasSite( siteId, siteSlug ) ) {
-						return isSiteOnPaidPlan
-							? exitFlow( getSiteOverviewUrl( siteSlug ) )
-							: navigate( STEPS.UNIFIED_PLANS.slug );
-					}
-
-					return navigate( STEPS.STATIC_SITE_IMPORT_ADDRESS.slug );
-				}
-
-				case STEPS.STATIC_SITE_IMPORT_ADDRESS.slug: {
-					const { domainChoice: choice, siteUrl } = providedDependencies;
-					if ( choice === 'register' ) {
-						return navigate( `${ STEPS.DOMAIN_SEARCH.slug }?domainChoice=${ choice }` );
-					}
-					setDomain( undefined );
-					setDomainCartItem( undefined );
-					setDomainCartItems( [] );
-					setSignupDomainOrigin( undefined );
-					setSiteUrl( choice === 'free' ? ( siteUrl ?? '' ) : '' );
-
-					return navigate( `${ STEPS.UNIFIED_PLANS.slug }?domainChoice=${ choice }` );
-				}
-
-				case STEPS.DOMAIN_SEARCH.slug: {
-					// The use-my-domain link is hidden, so this is always a picked domain.
-					if ( ! providedDependencies.navigateToUseMyDomain ) {
-						setSiteUrl( providedDependencies.siteUrl as string );
-						setDomain( providedDependencies.suggestion as DomainSuggestion );
-						setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
-						setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
-						setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
+					if ( hasSite( siteId, siteSlug ) && isSiteOnPaidPlan ) {
+						return exitFlow( getSiteOverviewUrl( siteSlug ) );
 					}
 
 					return navigate( STEPS.UNIFIED_PLANS.slug );
@@ -322,7 +273,7 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.STATIC_SITE_IMPORT_EXPERT.slug:
-					return navigate( STEPS.STATIC_SITE_IMPORT_ADDRESS.slug );
+					return navigate( STEPS.UNIFIED_PLANS.slug );
 			}
 		};
 
@@ -340,19 +291,8 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 							`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`
 						)
 					);
-				case STEPS.STATIC_SITE_IMPORT_ADDRESS.slug:
-					return navigate( STEPS.STATIC_SITE_IMPORT_RESULTS.slug );
-				case STEPS.DOMAIN_SEARCH.slug:
-					return navigate( STEPS.STATIC_SITE_IMPORT_ADDRESS.slug );
 				case STEPS.UNIFIED_PLANS.slug:
-					if ( hasSite( siteId, siteSlug ) ) {
-						return navigate( STEPS.STATIC_SITE_IMPORT_RESULTS.slug );
-					}
-					return navigate(
-						domainChoice === 'register'
-							? STEPS.DOMAIN_SEARCH.slug
-							: STEPS.STATIC_SITE_IMPORT_ADDRESS.slug
-					);
+					return navigate( STEPS.STATIC_SITE_IMPORT_RESULTS.slug );
 			}
 		};
 

@@ -235,7 +235,6 @@ export const siteOverviewRoute = createRoute( {
 			importSessionId: asString( search.importSessionId ),
 			from: asString( search.from ),
 			platform: asString( search.platform ),
-			domainChoice: asString( search.domainChoice ),
 			difmOffer:
 				search.difmOffer === 'purchased' || search.difmOffer === 'open'
 					? search.difmOffer
