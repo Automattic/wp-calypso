@@ -409,6 +409,7 @@ describe( '<PersonalDetailsSection>', () => {
 				.reply( 400, {
 					error: 'invalid_input',
 					message: 'That e-mail address is already being used.',
+					data: { field: 'user_email' },
 				} );
 
 			await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
@@ -426,6 +427,33 @@ describe( '<PersonalDetailsSection>', () => {
 				screen.queryByText( 'That e-mail address is already being used.' )
 			).not.toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeEnabled();
+		} );
+
+		test( 'does not attach errors to the email field when the server does not flag it', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+
+			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
+			await user.clear( emailInput );
+			await user.type( emailInput, 'new@example.com' );
+
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings' )
+				.reply( 400, {
+					error: 'invalid_input',
+					message: 'Daily limit of 5 email change requests reached.',
+				} );
+
+			await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+
+			await waitFor( () => expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeEnabled() );
+			expect(
+				screen.queryByText( 'Daily limit of 5 email change requests reached.' )
+			).not.toBeInTheDocument();
 		} );
 	} );
 } );

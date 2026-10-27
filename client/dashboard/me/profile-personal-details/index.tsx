@@ -5,7 +5,7 @@ import {
 	userSettingsMutation,
 	userSettingsQuery,
 } from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalHStack as HStack,
@@ -29,6 +29,18 @@ import UsernameSection from './username-section';
 import type { UserSettings } from '@automattic/api-core';
 import './style.scss';
 
+// The server flags errors about the address itself, as opposed to e.g. rate limits.
+function isEmailFieldError( error: unknown ) {
+	return (
+		isWpError( error ) &&
+		error.statusCode === 400 &&
+		typeof error.data === 'object' &&
+		error.data !== null &&
+		'field' in error.data &&
+		error.data.field === 'user_email'
+	);
+}
+
 export default function PersonalDetailsSection() {
 	const { user } = useAuth();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
@@ -41,6 +53,7 @@ export default function PersonalDetailsSection() {
 		null
 	);
 	const { createErrorNotice } = useDispatch( noticesStore );
+	const queryClient = useQueryClient();
 
 	const snackbar = { success: __( 'Settings saved.' ), error: { source: 'server' as const } };
 	const mutation = useMutation( withSnackbar( userSettingsMutation(), snackbar ) );
@@ -82,8 +95,10 @@ export default function PersonalDetailsSection() {
 				if ( save !== emailMutation ) {
 					return;
 				}
-				if ( isWpError( error ) && error.error === 'invalid_input' ) {
+				if ( isEmailFieldError( error ) ) {
 					setEmailError( { email: submissionEdits.user_email ?? '', message: error.message } );
+					// Rejecting the address also cancels any change that was pending.
+					queryClient.invalidateQueries( userSettingsQuery() );
 					return;
 				}
 				createErrorNotice( error.message, { type: 'snackbar' } );
