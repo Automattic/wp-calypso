@@ -56,7 +56,9 @@ export function fetchSiteSetupTasks( siteId: number ): Promise< SiteSetupTasks >
  * Runs the write ability through the Abilities REST API, a POST with the input
  * in the body, as `webmcp/server-ability-provider` does. The backend records
  * the task as started, or as done for a task that completes on click, exactly
- * as the Site Setup page's own "Get started" does.
+ * as the Site Setup page's own "Get started" does. The ability's schema types
+ * `wpcom_site` as a string, which a query string gives for free and a JSON
+ * body does not.
  */
 export function startSiteSetupTask(
 	siteId: number,
@@ -65,6 +67,6 @@ export function startSiteSetupTask(
 	return apiFetch< SiteSetupTaskStart >( {
 		method: 'POST',
 		path: `/wp-abilities/v1/abilities/${ START_ABILITY_NAME }/run`,
-		data: { input: { wpcom_site: siteId, task_id: taskId } },
+		data: { input: { wpcom_site: String( siteId ), task_id: taskId } },
 	} );
 }

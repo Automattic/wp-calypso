@@ -43,7 +43,7 @@ describe( 'fetchSiteSetupTasks', () => {
 } );
 
 describe( 'startSiteSetupTask', () => {
-	it( 'runs the write ability with a POST and the site and task in the body', async () => {
+	it( 'runs the write ability with a POST, the site as a string and the task in the body', async () => {
 		const result = { task_id: 'design', status: 'in-progress', summary: '' };
 		mockApiFetch.mockResolvedValue( result );
 
@@ -52,7 +52,7 @@ describe( 'startSiteSetupTask', () => {
 		expect( mockApiFetch ).toHaveBeenCalledWith( {
 			method: 'POST',
 			path: '/wp-abilities/v1/abilities/wpcom/start-site-setup-task/run',
-			data: { input: { wpcom_site: 456, task_id: 'design' } },
+			data: { input: { wpcom_site: '456', task_id: 'design' } },
 		} );
 	} );
 } );
