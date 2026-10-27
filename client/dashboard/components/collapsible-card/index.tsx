@@ -13,6 +13,8 @@ interface CollapsibleCardProps {
 	isBorderless?: boolean;
 	size?: React.ComponentProps< typeof Card >[ 'size' ];
 	toggleLabel?: string;
+	// `top` keeps a small toggle level with the first line of a header that wraps.
+	toggleAlignment?: 'center' | 'top';
 	initialExpanded?: boolean;
 	className?: string;
 	// When disabled, the card is forced collapsed and can't be toggled.
@@ -26,6 +28,7 @@ export const CollapsibleCard = ( {
 	header,
 	children,
 	toggleLabel,
+	toggleAlignment = 'center',
 	size = 'medium',
 	isBorderless = false,
 	initialExpanded = false,
@@ -109,10 +112,14 @@ export const CollapsibleCard = ( {
 					aria-disabled={ disabled || undefined }
 					aria-label={ label }
 				>
-					<HStack justify="space-between">
+					<HStack
+						justify="space-between"
+						alignment={ toggleAlignment === 'top' ? 'flex-start' : 'center' }
+					>
 						{ header }
 						<Button
 							icon={ chevronUp }
+							size={ toggleAlignment === 'top' ? 'small' : undefined }
 							className={ clsx( 'collapsible-card__toggle', { collapsed: ! isExpanded } ) }
 							disabled={ disabled }
 							onClick={ ( event: React.MouseEvent< HTMLButtonElement > ) => {
