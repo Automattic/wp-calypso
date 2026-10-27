@@ -30,7 +30,6 @@ import './style.scss';
 
 type NewsFilter = 'all' | AnnouncementType;
 
-const DIVIDER_STYLE = { borderColor: 'var(--color-gray-100)' };
 // Five rows a page: past about five, choosing among them gets slower.
 const PER_PAGE = 5;
 const NO_ANNOUNCEMENTS: Announcement[] = [];
@@ -300,7 +299,7 @@ export default function NewsCard( { agencyId, ...actionProps }: NewsCardProps ) 
 				</NewsHeader>
 				{ data.map( ( announcement, index ) => (
 					<Fragment key={ announcement.id }>
-						{ index > 0 && <CardDivider style={ DIVIDER_STYLE } /> }
+						{ index > 0 && <CardDivider /> }
 						<NewsRow
 							announcement={ announcement }
 							isOpen={ openItemId === announcement.id }
@@ -322,7 +321,7 @@ export default function NewsCard( { agencyId, ...actionProps }: NewsCardProps ) 
 				) ) }
 				{ paginationInfo.totalPages > 1 && (
 					<>
-						<CardDivider style={ DIVIDER_STYLE } />
+						<CardDivider />
 						<CardBody>
 							<DataViews.Pagination />
 						</CardBody>
