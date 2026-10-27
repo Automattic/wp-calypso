@@ -158,8 +158,10 @@ export default function AgencyOverviewContent( {
 					isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
 					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 					isEligibleForCertificationOffer={ certification.isEligible && certification.isPromo }
-					certificationDiscount={ certification.discount }
-					certificationShareMessage={ certification.shareMessage }
+					certificationOffer={ {
+						discount: certification.discount,
+						shareMessage: certification.shareMessage,
+					} }
 					onCertificationShareCopy={ onCertificationShareCopy }
 					aiMcpHref={ links.aiMcp }
 					tiersHref={ links.tiers }

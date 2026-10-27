@@ -28,10 +28,12 @@ interface EventCardProps {
 	isEligibleForPressableIntroOffer?: boolean;
 	isEligibleForPressableExpansionOffer?: boolean;
 	isEligibleForCertificationOffer?: boolean;
-	/** The agency's own certification discount, already doubled while the offer runs. */
-	certificationDiscount?: number;
-	/** What "Share with your team" puts on the clipboard. */
-	certificationShareMessage?: string;
+	certificationOffer?: {
+		/** The agency's own discount, already doubled while the offer runs. */
+		discount: number;
+		/** What "Share with your team" puts on the clipboard. */
+		shareMessage: string;
+	};
 	onCertificationShareCopy?: () => void;
 	aiMcpHref: string;
 	tiersHref?: string;
@@ -154,8 +156,7 @@ export default function EventCard( {
 	isEligibleForPressableIntroOffer,
 	isEligibleForPressableExpansionOffer,
 	isEligibleForCertificationOffer,
-	certificationDiscount,
-	certificationShareMessage,
+	certificationOffer,
 	onCertificationShareCopy,
 	aiMcpHref,
 	tiersHref,
@@ -164,24 +165,22 @@ export default function EventCard( {
 	recordTracksEvent,
 }: EventCardProps ) {
 	const now = new Date();
-	const certificationShareCta: FeaturedEventActionCta | undefined = certificationShareMessage
-		? {
-				id: 'share-with-your-team',
-				render: ( buttonProps ) => (
-					<CertificationShareButton
-						{ ...buttonProps }
-						message={ certificationShareMessage }
-						source="overview"
-						onCopy={ onCertificationShareCopy }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				),
-			}
-		: undefined;
+	const certificationShareCta: FeaturedEventActionCta | undefined = certificationOffer && {
+		id: 'share-with-your-team',
+		render: ( buttonProps ) => (
+			<CertificationShareButton
+				{ ...buttonProps }
+				message={ certificationOffer.shareMessage }
+				source="overview"
+				onCopy={ onCertificationShareCopy }
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		),
+	};
 	const events = [
 		FEATURED_EVENT,
-		isEligibleForCertificationOffer && tiersHref && certificationDiscount
-			? getCertificationPromoEvent( tiersHref, certificationDiscount, certificationShareCta )
+		isEligibleForCertificationOffer && tiersHref && certificationOffer
+			? getCertificationPromoEvent( tiersHref, certificationOffer.discount, certificationShareCta )
 			: null,
 		isEligibleForPressableIntroOffer ? getPressableIntroOfferEvent( pressableHostingHref ) : null,
 		isEligibleForPressableExpansionOffer
