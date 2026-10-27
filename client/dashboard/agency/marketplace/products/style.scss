@@ -81,10 +81,6 @@
 		0 2px 6px rgba( 0, 0, 0, 0.08 );
 }
 
-// Product details: content on the left, price rail on the right, so the price
-// and its button stay put while the benefits list runs long. The modal has no
-// size of its own; these columns set its width, so it doesn't stretch on wide
-// screens.
 // With the modal's own header hidden, the close control sits in the top corner.
 .dashboard-marketplace-products__modal-close {
 	position: absolute;
@@ -92,6 +88,10 @@
 	inset-inline-end: 0;
 }
 
+// Product details: content on the left, price rail on the right, so the price
+// and its button stay put while the benefits list runs long. The modal has no
+// size of its own; these columns set its width, so it doesn't stretch on wide
+// screens.
 .dashboard-marketplace-products__modal-layout {
 	position: relative;
 	display: grid;
