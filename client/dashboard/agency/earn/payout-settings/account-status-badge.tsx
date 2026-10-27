@@ -50,6 +50,7 @@ export default function AccountStatusBadge( {
 					anchor={ reasonButton }
 					offset={ 12 }
 					placement="bottom-start"
+					shift
 					focusOnMount
 					onClose={ () => setIsReasonOpen( false ) }
 				>
