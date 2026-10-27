@@ -44,6 +44,7 @@ export interface AgencyOverviewContentProps {
 	capabilities?: string[];
 	/** Whether the agency already has an approved Partner Directory listing. */
 	hasPartnerDirectoryListing?: boolean;
+	showMatchingProfilePreview?: boolean;
 	/** Shows the Pressable introductory offer in the news column. */
 	isEligibleForPressableIntroOffer?: boolean;
 	/** Shows the Pressable expansion offer in the news column. */
@@ -73,6 +74,7 @@ export default function AgencyOverviewContent( {
 	approvalStatus,
 	capabilities,
 	hasPartnerDirectoryListing,
+	showMatchingProfilePreview = false,
 	isEligibleForPressableIntroOffer,
 	isEligibleForPressableExpansionOffer,
 	links,
@@ -122,13 +124,15 @@ export default function AgencyOverviewContent( {
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
-				{ isEnabled( 'a4a-lead-matching-design-preview' ) && links.leadMatching && (
-					<MatchingProfilePreview
-						href={ links.leadMatching }
-						agencyId={ agencyId }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				) }
+				{ isEnabled( 'a4a-lead-matching-design-preview' ) &&
+					showMatchingProfilePreview &&
+					links.leadMatching && (
+						<MatchingProfilePreview
+							href={ links.leadMatching }
+							agencyId={ agencyId }
+							recordTracksEvent={ recordTracksEvent }
+						/>
+					) }
 				{ ! isRejected && (
 					<GrowthCard
 						isPending={ isPending }

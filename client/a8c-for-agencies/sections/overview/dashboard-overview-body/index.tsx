@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
@@ -15,12 +16,14 @@ import {
 	A4A_SITES_LINK,
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useLeadMatchingProfile from 'calypso/a8c-for-agencies/data/partner-directory/use-lead-matching-profile';
 import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
 import { PARTNER_DIRECTORY_LEAD_MATCHING_SLUG } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import {
 	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
 	PROGRAM_INCENTIVES_URL,
 } from 'calypso/dashboard/agency/overview/constants';
+import { hasIncompleteSavedMatchingProfile } from 'calypso/dashboard/agency/overview/matching-profile-visibility';
 import AgencyOverviewContent from 'calypso/dashboard/agency/overview/overview-content';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -39,6 +42,13 @@ function DashboardOverviewBodyContent( {
 		!! agency?.profile?.partner_directory_application?.directories.some(
 			( { status } ) => status === 'approved'
 		);
+	const isLeadMatchingEnabled =
+		isEnabled( 'a4a-lead-matching-design-preview' ) &&
+		!! agency?.id &&
+		!! agency?.partner_directory?.allowed &&
+		!! agency?.user?.capabilities?.includes( 'a4a_read_partner_directory' ) &&
+		hasPartnerDirectoryListing;
+	const leadMatchingQuery = useLeadMatchingProfile( isLeadMatchingEnabled );
 
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall();
 
@@ -65,6 +75,11 @@ function DashboardOverviewBodyContent( {
 			approvalStatus={ approvalStatus }
 			capabilities={ agency.user?.capabilities }
 			hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+			showMatchingProfilePreview={
+				isLeadMatchingEnabled &&
+				leadMatchingQuery.isSuccess &&
+				hasIncompleteSavedMatchingProfile( agency.id, leadMatchingQuery.data )
+			}
 			isEligibleForPressableIntroOffer={ isEligibleForIntroductoryOffer }
 			isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 			links={ {

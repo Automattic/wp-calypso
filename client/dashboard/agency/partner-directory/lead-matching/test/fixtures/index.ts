@@ -56,6 +56,12 @@ export const completeProfile = getLeadMatchingProfile(
 	true
 );
 
+export const incompleteProfile = {
+	...completeProfile,
+	availability: { ...completeProfile.availability, accepting_work: false },
+	service_and_budget: { ...completeProfile.service_and_budget, max_service_level: '' },
+};
+
 export function mockAgency( isAvailable = true ) {
 	nock( API )
 		.get( '/wpcom/v2/agency' )
